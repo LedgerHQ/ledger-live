@@ -3,7 +3,7 @@ import { Pressable } from "react-native";
 import styled, { useTheme } from "styled-components/native";
 import Text from "../../Text";
 import Flex from "../../Layout/Flex";
-import CheckAlone from "@ledgerhq/icons-ui/native/CheckAloneMedium";
+import CheckAlone from "@ledgerhq/icons-ui/nativeLegacy/CheckAloneMedium";
 
 import type { BaseTextProps } from "../../Text";
 

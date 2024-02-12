@@ -1,29 +1,8 @@
-import { View, StyleSheet } from "react-native";
-import React, { PureComponent } from "react";
 import { useTheme } from "@react-navigation/native";
-import LiveLogo from "../../icons/LiveLogoIcon";
-import Spinning from "../../components/Spinning";
-
-export const PendingSpinner = () => {
-  const { colors } = useTheme();
-  return (
-    <Spinning>
-      <LiveLogo color={colors.grey} size={32} />
-    </Spinning>
-  );
-};
-
-class PendingContainer extends PureComponent<{ children: React.ReactNode }> {
-  render() {
-    const { children } = this.props;
-    return (
-      <View style={styles.root}>
-        <PendingSpinner />
-        {children}
-      </View>
-    );
-  }
-}
+import React from "react";
+import { StyleSheet, View } from "react-native";
+import Spinning from "~/components/Spinning";
+import LiveLogo from "~/icons/LiveLogoIcon";
 
 const styles = StyleSheet.create({
   root: {
@@ -32,4 +11,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
+
+const PendingContainer = ({ children }: { children: React.ReactNode }) => {
+  const { colors } = useTheme();
+
+  return (
+    <View style={styles.root}>
+      <Spinning>
+        <LiveLogo color={colors.grey} size={32} />
+      </Spinning>
+
+      {children}
+    </View>
+  );
+};
+
 export default PendingContainer;

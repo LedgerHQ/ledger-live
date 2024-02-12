@@ -1,5 +1,7 @@
 import { Observable } from "rxjs";
 
+import { ExchangeTypes } from "@ledgerhq/hw-app-exchange";
+
 import type {
   CompleteExchangeInputFund,
   CompleteExchangeInputSell,
@@ -10,15 +12,13 @@ import type {
 import completeExchangeSwap from "../swap/completeExchange";
 import completeExchangeTransfer from "./transfer/completeExchange";
 
-import { ExchangeTypes } from "@ledgerhq/hw-app-exchange";
-
 type CompleteExchangeInput =
   | CompleteExchangeInputSell
   | CompleteExchangeInputSwap
   | CompleteExchangeInputFund;
 
 const completeExchange = (
-  input: CompleteExchangeInput
+  input: CompleteExchangeInput,
 ): Observable<CompleteExchangeRequestEvent> => {
   switch (input.exchangeType) {
     case ExchangeTypes.Swap:

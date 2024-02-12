@@ -3,33 +3,28 @@ import { View, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
-import { accountScreenSelector } from "../../../reducers/accounts";
-import { TrackScreen } from "../../../analytics";
-import { ScreenName } from "../../../const";
-import PreventNativeBack from "../../../components/PreventNativeBack";
-import ValidateSuccess from "../../../components/ValidateSuccess";
+import { accountScreenSelector } from "~/reducers/accounts";
+import { TrackScreen } from "~/analytics";
+import { ScreenName } from "~/const";
+import PreventNativeBack from "~/components/PreventNativeBack";
+import ValidateSuccess from "~/components/ValidateSuccess";
 import type {
   BaseComposite,
   StackNavigatorNavigation,
   StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
-import type { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
+} from "~/components/RootNavigator/types/helpers";
+import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import type { NearUnstakingFlowParamList } from "./types";
 
 type Props = BaseComposite<
-  StackNavigatorProps<
-    NearUnstakingFlowParamList,
-    ScreenName.NearUnstakingValidationSuccess
-  >
+  StackNavigatorProps<NearUnstakingFlowParamList, ScreenName.NearUnstakingValidationSuccess>
 >;
 
 export default function ValidationSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
   const goToOperationDetails = useCallback(() => {
     if (!account) return;
@@ -49,17 +44,19 @@ export default function ValidationSuccess({ navigation, route }: Props) {
         },
       ]}
     >
-      <TrackScreen category="NearUnstaking" name="ValidationSuccess" />
+      <TrackScreen
+        category="NearUnstaking"
+        name="ValidationSuccess"
+        flow="stake"
+        action="unstaking"
+        currency="near"
+      />
       <PreventNativeBack />
       <ValidateSuccess
         onClose={onClose}
         onViewDetails={goToOperationDetails}
-        title={
-          <Trans i18nKey="near.unstaking.flow.steps.verification.success.title" />
-        }
-        description={
-          <Trans i18nKey="near.staking.flow.steps.verification.success.text" />
-        }
+        title={<Trans i18nKey="near.unstaking.flow.steps.verification.success.title" />}
+        description={<Trans i18nKey="near.staking.flow.steps.verification.success.text" />}
       />
     </View>
   );

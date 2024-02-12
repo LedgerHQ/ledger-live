@@ -2,8 +2,8 @@ import React, { Component, useCallback } from "react";
 import { FlatList, StyleSheet } from "react-native";
 import { Box } from "@ledgerhq/native-ui";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { track } from "../analytics";
-import SettingsRow from "../components/SettingsRow";
+import { track } from "~/analytics";
+import SettingsRow from "~/components/SettingsRow";
 
 type EntryProps<Item> = {
   item: Item;
@@ -35,12 +35,7 @@ function getEntryFromOptions<Item>(opts: Opts<Item>): EntryComponent<Item> {
     }, [onPress, item]);
 
     return (
-      <SettingsRow
-        title={formatItem(item)}
-        onPress={onPressAction}
-        selected={!!selected}
-        compact
-      />
+      <SettingsRow title={formatItem(item)} onPress={onPressAction} selected={!!selected} compact />
     );
   };
 
@@ -62,9 +57,9 @@ type GenericScreenProps<Item> = {
   cancelNavigateBack?: boolean;
 };
 
-export default function makeGenericSelectScreen<
-  Item extends { value: string; label: string },
->(opts: Opts<Item>) {
+export default function makeGenericSelectScreen<Item extends { value: string; label: string }>(
+  opts: Opts<Item>,
+) {
   const { id, itemEventProperties, keyExtractor } = opts;
   const Entry: EntryComponent<Item> = getEntryFromOptions(opts);
 

@@ -19,7 +19,7 @@ type ItemProps = {
 
 const Bar = styled.div`
   display: inline-flex;
-  border: 1px solid ${(p) => p.theme.colors.neutral.c40};
+  border: 1px solid ${p => p.theme.colors.neutral.c40};
   border-radius: 33px;
   padding: 2px;
 `;
@@ -32,8 +32,8 @@ const Item = styled(Flex).attrs({
   cursor: pointer;
   padding: 8px 12px 8px 12px;
   border-radius: 33px;
-  color: ${(p) => (p.active ? p.theme.colors.neutral.c00 : p.theme.colors.neutral.c80)};
-  background-color: ${(p) => (p.active ? p.theme.colors.neutral.c100 : "unset")};
+  color: ${p => (p.active ? p.theme.colors.neutral.c00 : p.theme.colors.neutral.c80)};
+  background-color: ${p => (p.active ? p.theme.colors.neutral.c100 : "unset")};
 `;
 
 export default function BarTabs({ children, onTabChange, initialActiveIndex }: Props): JSX.Element {

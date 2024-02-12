@@ -30,11 +30,13 @@ const Button = styled(ButtonBase).attrs(() => ({
   padding: 0;
   height: unset;
 `;
+
 export const NoValuePlaceholder = () => (
   <TextBase color="palette.text.shade40" mr={3} fontSize={4} fontWeight="600">
     {"-"}
   </TextBase>
 );
+
 const SummaryValue = ({
   value,
   handleChange,
@@ -45,6 +47,7 @@ const SummaryValue = ({
   children?: React.ReactNode;
 }) => {
   const { t } = useTranslation();
+
   return (
     <Container>
       {children}
@@ -57,4 +60,5 @@ const SummaryValue = ({
     </Container>
   );
 };
+
 export default SummaryValue;

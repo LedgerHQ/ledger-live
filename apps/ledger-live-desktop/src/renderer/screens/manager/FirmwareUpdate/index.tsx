@@ -1,11 +1,12 @@
-import React, { useCallback, useContext, useRef } from "react";
+import React, { useEffect, useState, useCallback, useContext, useRef } from "react";
 import { Trans } from "react-i18next";
 import { InstalledItem } from "@ledgerhq/live-common/apps/types";
 import { getDeviceModel } from "@ledgerhq/devices";
 import manager from "@ledgerhq/live-common/manager/index";
 import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import UpdateModal, { StepId } from "~/renderer/modals/UpdateFirmwareModal";
+import UpdateModal, { Props as UpdateModalProps } from "~/renderer/modals/UpdateFirmwareModal";
+import { StepId } from "~/renderer/modals/UpdateFirmwareModal/types";
 import Text from "~/renderer/components/Text";
 import IconInfoCircle from "~/renderer/icons/InfoCircle";
 import Box from "~/renderer/components/Box";
@@ -15,11 +16,13 @@ import FirmwareUpdateBanner from "~/renderer/components/FirmwareUpdateBanner";
 import { FakeLink } from "~/renderer/components/TopBanner";
 import { context } from "~/renderer/drawers/Provider";
 import { track } from "~/renderer/analytics/segment";
+import { LocalTracer } from "@ledgerhq/logs";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 
 type Props = {
   deviceInfo: DeviceInfo;
   device: Device;
-  setFirmwareUpdateOpened: (a: boolean) => void;
+  setPreventResetOnDeviceChange: (value: boolean) => void;
   disableFirmwareUpdate?: boolean;
   installed?: InstalledItem[];
   onReset: (a: string[]) => void;
@@ -29,7 +32,7 @@ type Props = {
   openFirmwareUpdate?: boolean;
 };
 
-const initialStepId = ({
+export const initialStepId = ({
   deviceInfo,
   device,
 }: {
@@ -43,15 +46,16 @@ const initialStepId = ({
     : "idCheck";
 
 /**
- * The rewrite of this flow didn't change the behaviour. This renders a banner if
- * needed and interacting with the banner shows a drawer (used to be a modal) to start
- * the firmware update flow.
+ * Entry point of the firmware update
+ *
+ * This renders a banner if needed and interacting with the banner shows a drawer
+ * (used to be a modal) to start the firmware update flow.
  */
 const FirmwareUpdate = (props: Props) => {
   const {
     deviceInfo,
     device,
-    setFirmwareUpdateOpened,
+    setPreventResetOnDeviceChange,
     disableFirmwareUpdate,
     installed,
     firmware,
@@ -61,10 +65,12 @@ const FirmwareUpdate = (props: Props) => {
   const { setDrawer } = useContext(context);
   const stepId = initialStepId(props);
   const firmwareUpdateCompletedRef = useRef(false);
+  const [autoOpened, setAutoOpened] = useState(false);
   const modal = deviceInfo.isOSU ? "install" : props.openFirmwareUpdate ? "disclaimer" : "closed";
   const deviceSpecs = getDeviceModel(device.modelId);
   const isDeprecated = manager.firmwareUnsupported(device.modelId, deviceInfo);
-
+  const [tracer] = useState(() => new LocalTracer("manager", { component: "FirmwareUpdate" }));
+  const contactSupportUrl = useLocalizedUrl(urls.contactSupport);
   const onDrawerClose = useCallback(() => {
     onReset((installed || []).map(({ name }) => name));
   }, [installed, onReset]);
@@ -74,47 +80,52 @@ const FirmwareUpdate = (props: Props) => {
   }, []);
 
   const onRequestClose = useCallback(() => {
+    setPreventResetOnDeviceChange(false);
     setDrawer();
     if (firmwareUpdateCompletedRef.current) {
       onReset([]);
     }
-  }, [onReset, setDrawer]);
+  }, [onReset, setDrawer, setPreventResetOnDeviceChange]);
 
-  const onShowDisclaimer = useCallback(() => {
+  const onOpenDrawer = useCallback(() => {
+    tracer.trace("Opening drawer", { hasFirmware: !!firmware, function: "onOpenDrawer" });
+
     if (!firmware) return;
     track("Manager Firmware Update Click", {
       firmwareName: firmware.final.name,
     });
 
-    setFirmwareUpdateOpened(true); // Prevents manager from reacting to device changes (?)
-    setDrawer(
-      UpdateModal,
-      {
-        withAppsToReinstall:
-          !!installed &&
-          installed.length > 0 &&
-          manager.firmwareUpdateWillUninstallApps(deviceInfo, device.modelId),
-        withResetStep: manager.firmwareUpdateNeedsLegacyBlueResetInstructions(
-          deviceInfo,
-          device.modelId,
-        ),
-        onDrawerClose,
-        status: modal,
-        stepId: stepId,
-        installed: installed,
-        firmware: firmware,
-        deviceInfo: deviceInfo,
-        device: device,
-        error: error,
-        deviceModelId: deviceSpecs.id,
-        setFirmwareUpdateOpened,
-        setFirmwareUpdateCompleted,
-      },
-      {
-        preventBackdropClick: true,
-        onRequestClose,
-      },
-    );
+    // Prevents manager from reacting to device changes
+    setPreventResetOnDeviceChange(true);
+
+    const updateModalProps: UpdateModalProps = {
+      withAppsToReinstall:
+        !!installed &&
+        installed.length > 0 &&
+        manager.firmwareUpdateWillUninstallApps(deviceInfo, device.modelId),
+      withResetStep: manager.firmwareUpdateNeedsLegacyBlueResetInstructions(
+        deviceInfo,
+        device.modelId,
+      ),
+      onDrawerClose,
+      onRequestClose,
+      status: modal,
+      stepId: stepId,
+      installed: installed,
+      firmware: firmware,
+      deviceInfo: deviceInfo,
+      device: device,
+      error: error,
+      deviceModelId: deviceSpecs.id,
+      setFirmwareUpdateCompleted,
+      shouldReloadManagerOnCloseIfUpdateRefused: true,
+    };
+    setDrawer(UpdateModal, updateModalProps, {
+      preventBackdropClick: true,
+      forceDisableFocusTrap: true,
+      onRequestClose: undefined,
+      withPaddingTop: false,
+    });
   }, [
     device,
     deviceInfo,
@@ -127,9 +138,23 @@ const FirmwareUpdate = (props: Props) => {
     onRequestClose,
     setDrawer,
     setFirmwareUpdateCompleted,
-    setFirmwareUpdateOpened,
+    setPreventResetOnDeviceChange,
     stepId,
+    tracer,
   ]);
+
+  useEffect(() => {
+    // NB Open automatically the firmware update drawer if needed
+    if (firmware && modal === "install" && !autoOpened) {
+      track("Manager Firmware Update Auto", {
+        firmwareName: firmware.final.name,
+      });
+      tracer.trace("Automatically opening firmware update drawer", { modal, autoOpened, firmware });
+
+      setAutoOpened(true);
+      onOpenDrawer();
+    }
+  }, [autoOpened, modal, onOpenDrawer, firmware, tracer]);
 
   if (!firmware) {
     if (!isDeprecated) return null;
@@ -137,7 +162,7 @@ const FirmwareUpdate = (props: Props) => {
       <FirmwareUpdateBanner
         old
         right={
-          <FakeLink onClick={() => openURL(urls.contactSupport)}>
+          <FakeLink onClick={() => openURL(contactSupportUrl)}>
             <Trans i18nKey="manager.firmware.banner.old.cta" />
           </FakeLink>
         }
@@ -166,7 +191,12 @@ const FirmwareUpdate = (props: Props) => {
           <FakeLink
             data-test-id="manager-update-firmware-button"
             disabled={!!disableFirmwareUpdate}
-            onClick={onShowDisclaimer}
+            onClick={() => {
+              track("Manager Firmware Update Click", {
+                firmwareName: firmware.final.name,
+              });
+              onOpenDrawer();
+            }}
           >
             <Trans i18nKey="manager.firmware.banner.cta2" />
           </FakeLink>

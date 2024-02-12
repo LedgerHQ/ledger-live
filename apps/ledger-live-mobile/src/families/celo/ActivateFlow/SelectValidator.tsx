@@ -1,29 +1,27 @@
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
 import React, { useCallback, useMemo } from "react";
-import { FlatList, StyleSheet, View, SafeAreaView } from "react-native";
+import { FlatList, StyleSheet, View, SafeAreaView, ListRenderItem } from "react-native";
 import { useSelector } from "react-redux";
 import {
   CeloAccount,
   CeloValidatorGroup,
+  CeloVote,
 } from "@ledgerhq/live-common/families/celo/types";
 import { useCeloPreloadData } from "@ledgerhq/live-common/families/celo/react";
 import {
   activatableVotes,
   fallbackValidatorGroup,
 } from "@ledgerhq/live-common/families/celo/logic";
-import { TrackScreen } from "../../../analytics";
-import { ScreenName } from "../../../const";
-import { accountScreenSelector } from "../../../reducers/accounts";
+import { TrackScreen } from "~/analytics";
+import { ScreenName } from "~/const";
+import { accountScreenSelector } from "~/reducers/accounts";
 import ValidatorHead from "../ValidatorHead";
 import ValidatorRow from "../ValidatorRow";
-import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CeloActivateFlowParamList } from "./types";
 
-type Props = StackNavigatorProps<
-  CeloActivateFlowParamList,
-  ScreenName.CeloActivateValidatorSelect
->;
+type Props = StackNavigatorProps<CeloActivateFlowParamList, ScreenName.CeloActivateValidatorSelect>;
 
 export default function SelectValidator({ navigation, route }: Props) {
   const { colors } = useTheme();
@@ -57,22 +55,29 @@ export default function SelectValidator({ navigation, route }: Props) {
     [navigation, route.params],
   );
 
-  const renderItem = useCallback(
-    ({ item }) => (
-      <ValidatorRow
-        account={account}
-        validator={item.validatorGroup}
-        vote={item.vote}
-        onPress={onItemPress}
-        amount={item.vote.amount}
-      />
-    ),
-    [onItemPress, account],
-  );
+  const renderItem: ListRenderItem<{ vote: CeloVote; validatorGroup: CeloValidatorGroup }> =
+    useCallback(
+      ({ item }) => (
+        <ValidatorRow
+          account={account}
+          validator={item.validatorGroup}
+          vote={item.vote}
+          onPress={onItemPress}
+          amount={item.vote.amount}
+        />
+      ),
+      [onItemPress, account],
+    );
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-      <TrackScreen category="ActivateFlow" name="SelectValidator" />
+      <TrackScreen
+        category="ActivateFlow"
+        name="SelectValidator"
+        flow="stake"
+        action="activate"
+        currency="celo"
+      />
       <View style={styles.header}>
         <ValidatorHead />
       </View>
@@ -98,8 +103,5 @@ const styles = StyleSheet.create({
   },
 });
 
-const keyExtractor = ({
-  validatorGroup,
-}: {
-  validatorGroup: CeloValidatorGroup;
-}) => validatorGroup.address;
+const keyExtractor = ({ validatorGroup }: { validatorGroup: CeloValidatorGroup }) =>
+  validatorGroup.address;

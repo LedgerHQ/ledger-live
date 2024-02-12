@@ -1,9 +1,9 @@
 import React, { memo } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components/native";
-import { Text, Flex, Icons, Button } from "@ledgerhq/native-ui";
+import { Text, Flex, IconsLegacy, Button } from "@ledgerhq/native-ui";
 
-import QueuedDrawer from "../../../components/QueuedDrawer";
+import QueuedDrawer from "~/components/QueuedDrawer";
 
 type Props = {
   warning: string | null;
@@ -39,17 +39,14 @@ const StorageWarningModal = ({ warning, onClose }: Props) => (
   <QueuedDrawer isRequestingToBeOpened={!!warning} onClose={onClose}>
     <Flex alignItems="center">
       <IconContainer borderColor="neutral.c40">
-        <Icons.StorageMedium size={24} color="error.c50" />
+        <IconsLegacy.StorageMedium size={24} color="error.c50" />
       </IconContainer>
       <TextContainer>
         <ModalText color="neutral.c100" fontWeight="medium" variant="h2">
           <Trans i18nKey="errors.ManagerNotEnoughSpace.title" />
         </ModalText>
         <ModalText color="neutral.c70" fontWeight="medium" variant="body">
-          <Trans
-            i18nKey="errors.ManagerNotEnoughSpace.info"
-            values={{ app: warning }}
-          />
+          <Trans i18nKey="errors.ManagerNotEnoughSpace.info" values={{ app: warning }} />
         </ModalText>
       </TextContainer>
       <ButtonsContainer>

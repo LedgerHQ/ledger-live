@@ -2,20 +2,41 @@ import { handleActions } from "redux-actions";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { State } from "~/renderer/reducers";
 import { Handlers } from "./types";
+import { Data as CompleteExchangeData } from "~/renderer/modals/Platform/Exchange/CompleteExchange/Body";
 
 export type PlatformAppDrawerInfo = {
   type: "DAPP_INFO";
   manifest?: LiveAppManifest | null;
   title: string;
 };
+
 export type PlatformAppDrawerDisclaimer = {
   type: "DAPP_DISCLAIMER";
   manifest?: LiveAppManifest | null;
-  disclaimerId: string;
   title: string;
   next: () => void;
 };
-export type PlatformAppDrawers = PlatformAppDrawerInfo | PlatformAppDrawerDisclaimer;
+
+export type StartExchangeAppDrawer = {
+  type: "EXCHANGE_START";
+  title: string;
+  data: {
+    exchangeType: number;
+    onResult: () => void;
+    onCancel: () => void;
+  };
+};
+
+export type CompleteExchangeAppDrawer = {
+  type: "EXCHANGE_COMPLETED";
+  title: string;
+  data: CompleteExchangeData;
+};
+
+export type ExchangeAppDrawer = CompleteExchangeAppDrawer & StartExchangeAppDrawer;
+
+export type PlatformAppDrawers = PlatformAppDrawerInfo & PlatformAppDrawerDisclaimer;
+
 export type UIState = {
   informationCenter: {
     isOpen: boolean;
@@ -26,6 +47,7 @@ export type UIState = {
     payload?: PlatformAppDrawers | null;
   };
 };
+
 const initialState: UIState = {
   informationCenter: {
     isOpen: false,
@@ -36,6 +58,7 @@ const initialState: UIState = {
     payload: undefined,
   },
 };
+
 type OpenPayload = {
   tabId?: string;
 };
@@ -46,6 +69,7 @@ type HandlersPayloads = {
   INFORMATION_CENTER_CLOSE: never;
   PLATFORM_APP_DRAWER_OPEN: PlatformAppDrawers;
   PLATFORM_APP_DRAWER_CLOSE: never;
+  EXCHANGE_APP_DRAWER_OPEN: ExchangeAppDrawer;
 };
 type UIHandlers<PreciseKey = true> = Handlers<UIState, HandlersPayloads, PreciseKey>;
 
@@ -98,6 +122,15 @@ const handlers: UIHandlers = {
       },
     };
   },
+  EXCHANGE_APP_DRAWER_OPEN: (state, { payload }) => {
+    return {
+      ...state,
+      platformAppDrawer: {
+        isOpen: true,
+        payload,
+      },
+    };
+  },
 };
 
 // Selectors
@@ -111,6 +144,6 @@ export const platformAppDrawerStateSelector = (state: State): UIState["platformA
 // Exporting reducer
 
 export default handleActions<UIState, HandlersPayloads[keyof HandlersPayloads]>(
-  (handlers as unknown) as UIHandlers<false>,
+  handlers as unknown as UIHandlers<false>,
   initialState,
 );

@@ -3,22 +3,22 @@ import { useSelector, useDispatch } from "react-redux";
 import { add, isBefore, parseISO } from "date-fns";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { accountsWithPositiveBalanceCountSelector } from "../reducers/accounts";
+import { accountsWithPositiveBalanceCountSelector } from "~/reducers/accounts";
 import {
   ratingsModalOpenSelector,
   ratingsModalLockedSelector,
   ratingsCurrentRouteNameSelector,
   ratingsHappyMomentSelector,
   ratingsDataOfUserSelector,
-} from "../reducers/ratings";
+} from "~/reducers/ratings";
 import {
   setRatingsModalOpen,
   setRatingsCurrentRouteName,
   setRatingsHappyMoment,
   setRatingsDataOfUser,
-} from "../actions/ratings";
-import { track } from "../analytics";
-import { setNotificationsModalLocked } from "../actions/notifications";
+} from "~/actions/ratings";
+import { track } from "~/analytics";
+import { setNotificationsModalLocked } from "~/actions/notifications";
 
 export type RatingsHappyMoment = {
   timeout?: number;
@@ -55,20 +55,13 @@ export type RatingsDataOfUser = {
 const ratingsDataOfUserAsyncStorageKey = "ratingsDataOfUser";
 
 async function getRatingsDataOfUserFromStorage() {
-  const ratingsDataOfUser = await AsyncStorage.getItem(
-    ratingsDataOfUserAsyncStorageKey,
-  );
+  const ratingsDataOfUser = await AsyncStorage.getItem(ratingsDataOfUserAsyncStorageKey);
   if (!ratingsDataOfUser) return null;
   return JSON.parse(ratingsDataOfUser);
 }
 
-async function setRatingsDataOfUserInStorage(
-  ratingsDataOfUser: RatingsDataOfUser,
-) {
-  await AsyncStorage.setItem(
-    ratingsDataOfUserAsyncStorageKey,
-    JSON.stringify(ratingsDataOfUser),
-  );
+async function setRatingsDataOfUserInStorage(ratingsDataOfUser: RatingsDataOfUser) {
+  await AsyncStorage.setItem(ratingsDataOfUserAsyncStorageKey, JSON.stringify(ratingsDataOfUser));
 }
 
 const useRatings = () => {
@@ -80,14 +73,12 @@ const useRatings = () => {
   const ratingsHappyMoment = useSelector(ratingsHappyMomentSelector);
   const ratingsDataOfUser = useSelector(ratingsDataOfUserSelector);
 
-  const accountsWithAmountCount = useSelector(
-    accountsWithPositiveBalanceCountSelector,
-  );
+  const accountsWithAmountCount = useSelector(accountsWithPositiveBalanceCountSelector);
 
   const dispatch = useDispatch();
 
   const setRatingsModalOpenCallback = useCallback(
-    isRatingsModalOpen => {
+    (isRatingsModalOpen: boolean) => {
       if (!isRatingsModalOpen) {
         dispatch(setRatingsModalOpen(isRatingsModalOpen));
         dispatch(setNotificationsModalLocked(false));
@@ -118,16 +109,15 @@ const useRatings = () => {
     }
 
     // minimum accounts number criteria
+    // @ts-expect-error TYPINGS
     const minimumAccountsNumber: number =
       ratingsFeature?.params?.conditions?.minimum_accounts_number;
-    if (
-      minimumAccountsNumber &&
-      accountsWithAmountCount < minimumAccountsNumber
-    ) {
+    if (minimumAccountsNumber && accountsWithAmountCount < minimumAccountsNumber) {
       return false;
     }
 
     // minimum app start number criteria
+    // @ts-expect-error TYPINGS
     const minimumAppStartsNumber: number =
       ratingsFeature?.params?.conditions?.minimum_app_starts_number;
     if (
@@ -138,31 +128,27 @@ const useRatings = () => {
     }
 
     // duration since first app start long enough criteria
+    // @ts-expect-error TYPINGS
     const minimumDurationSinceAppFirstStart: Duration =
-      ratingsFeature?.params?.conditions
-        ?.minimum_duration_since_app_first_start;
+      ratingsFeature?.params?.conditions?.minimum_duration_since_app_first_start;
 
     if (
       ratingsDataOfUser.appFirstStartDate &&
       isBefore(
         Date.now(),
-        add(
-          ratingsDataOfUser.appFirstStartDate,
-          minimumDurationSinceAppFirstStart,
-        ),
+        add(ratingsDataOfUser.appFirstStartDate, minimumDurationSinceAppFirstStart),
       )
     ) {
       return false;
     }
 
     // No crash in last session criteria
+    // @ts-expect-error TYPINGS
     const minimumNumberOfAppStartsSinceLastCrash: number =
-      ratingsFeature?.params?.conditions
-        ?.minimum_number_of_app_starts_since_last_crash;
+      ratingsFeature?.params?.conditions?.minimum_number_of_app_starts_since_last_crash;
     if (
       ratingsDataOfUser.numberOfAppStartsSinceLastCrash &&
-      ratingsDataOfUser.numberOfAppStartsSinceLastCrash <
-        minimumNumberOfAppStartsSinceLastCrash
+      ratingsDataOfUser.numberOfAppStartsSinceLastCrash < minimumNumberOfAppStartsSinceLastCrash
     ) {
       return false;
     }
@@ -174,21 +160,18 @@ const useRatings = () => {
     ratingsFeature?.params?.conditions?.minimum_accounts_number,
     ratingsFeature?.params?.conditions?.minimum_app_starts_number,
     ratingsFeature?.params?.conditions?.minimum_duration_since_app_first_start,
-    ratingsFeature?.params?.conditions
-      ?.minimum_number_of_app_starts_since_last_crash,
+    ratingsFeature?.params?.conditions?.minimum_number_of_app_starts_since_last_crash,
   ]);
 
   const isHappyMomentTriggered = useCallback(
     (happyMoment: RatingsHappyMoment, ratingsNewRoute?: string) =>
-      (happyMoment.type === "on_enter" &&
-        happyMoment.route_name === ratingsNewRoute) ||
-      (happyMoment.type === "on_leave" &&
-        happyMoment.route_name === ratingsOldRoute),
+      (happyMoment.type === "on_enter" && happyMoment.route_name === ratingsNewRoute) ||
+      (happyMoment.type === "on_leave" && happyMoment.route_name === ratingsOldRoute),
     [ratingsOldRoute],
   );
 
   const onRatingsRouteChange = useCallback(
-    (ratingsNewRoute, isOtherModalOpened = false) => {
+    (ratingsNewRoute: string, isOtherModalOpened = false) => {
       if (ratingsHappyMoment?.timeout) {
         dispatch(setNotificationsModalLocked(false));
         clearTimeout(ratingsHappyMoment?.timeout);
@@ -196,7 +179,9 @@ const useRatings = () => {
 
       if (isOtherModalOpened || !areRatingsConditionsMet()) return false;
 
+      // @ts-expect-error TYPINGS
       for (const happyMoment of ratingsFeature?.params?.happy_moments) {
+        // @ts-expect-error TYPINGS
         if (isHappyMomentTriggered(happyMoment, ratingsNewRoute)) {
           dispatch(setNotificationsModalLocked(true));
           const timeout = setTimeout(() => {
@@ -205,6 +190,7 @@ const useRatings = () => {
           dispatch(
             setRatingsHappyMoment({
               ...happyMoment,
+              // @ts-expect-error TYPINGS
               timeout,
             }),
           );
@@ -226,7 +212,7 @@ const useRatings = () => {
   );
 
   const updateRatingsDataOfUserInStateAndStore = useCallback(
-    ratingsDataOfUserUpdated => {
+    (ratingsDataOfUserUpdated: RatingsDataOfUser) => {
       dispatch(setRatingsDataOfUser(ratingsDataOfUserUpdated));
       setRatingsDataOfUserInStorage(ratingsDataOfUserUpdated);
     },
@@ -265,15 +251,10 @@ const useRatings = () => {
       params: ratingsFeature?.params,
     });
     setRatingsModalOpenCallback(true);
-  }, [
-    isRatingsModalLocked,
-    dispatch,
-    ratingsFeature?.params,
-    setRatingsModalOpenCallback,
-  ]);
+  }, [isRatingsModalLocked, dispatch, ratingsFeature?.params, setRatingsModalOpenCallback]);
 
   const handleRatingsSetDateOfNextAllowedRequest = useCallback(
-    (delay, additionalParams = {}) => {
+    (delay: Duration, additionalParams = {}) => {
       if (delay !== null && delay !== undefined) {
         const dateOfNextAllowedRequest: Date = add(Date.now(), delay);
         updateRatingsDataOfUserInStateAndStore({
@@ -298,7 +279,7 @@ const useRatings = () => {
       });
     } else {
       handleRatingsSetDateOfNextAllowedRequest(
-        ratingsFeature?.params?.conditions?.satisfied_then_not_now_delay,
+        ratingsFeature?.params?.conditions?.satisfied_then_not_now_delay as Duration,
         {
           alreadyClosedFromEnjoyStep: true,
         },
@@ -322,7 +303,7 @@ const useRatings = () => {
       });
     } else {
       handleRatingsSetDateOfNextAllowedRequest(
-        ratingsFeature?.params?.conditions?.not_now_delay,
+        ratingsFeature?.params?.conditions?.not_now_delay as Duration,
         {
           alreadyClosedFromInitStep: true,
         },

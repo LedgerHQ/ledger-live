@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Icons, Flex, ProgressLoader, Text } from "@ledgerhq/native-ui";
+import { IconsLegacy, Flex, ProgressLoader, Text } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import Circle from "../../Circle";
 
@@ -34,9 +34,9 @@ const Item = ({ appName, state, itemProgress, productName, i }: Props) => {
             strokeWidth={2}
           />
         ) : state === ItemState.Installed ? (
-          <Icons.CheckAloneMedium size={20} color={"success.c50"} />
+          <IconsLegacy.CheckAloneMedium size={20} color={"success.c50"} />
         ) : state === ItemState.Skipped ? (
-          <Icons.InfoAltMedium size={20} color={"neutral.c100"} />
+          <IconsLegacy.InfoAltMedium size={20} color={"neutral.c100"} />
         ) : (
           <Text color="neutral.c100" variant="body">
             {i + 1}

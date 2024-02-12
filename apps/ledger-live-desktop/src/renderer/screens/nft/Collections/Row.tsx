@@ -1,9 +1,6 @@
 import React, { useMemo, memo } from "react";
 import styled from "styled-components";
-import {
-  useNftCollectionMetadata,
-  useNftMetadata,
-} from "@ledgerhq/live-common/nft/NftMetadataProvider/index";
+import { useNftCollectionMetadata, useNftMetadata } from "@ledgerhq/live-nft-react";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import { rgba } from "~/renderer/styles/helpers";
@@ -42,10 +39,10 @@ const Row = ({ nfts, contract, account, onClick }: Props) => {
     account.currency.id,
   );
   const { tokenName } = collectionMetadata || {};
-  const loading = useMemo(() => nftStatus === "loading" || collectionStatus === "loading", [
-    collectionStatus,
-    nftStatus,
-  ]);
+  const loading = useMemo(
+    () => nftStatus === "loading" || collectionStatus === "loading",
+    [collectionStatus, nftStatus],
+  );
   return (
     <NFTCollectionContextMenu
       collectionName={tokenName || undefined}

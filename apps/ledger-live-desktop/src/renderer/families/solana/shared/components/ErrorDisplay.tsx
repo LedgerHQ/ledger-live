@@ -7,7 +7,7 @@ const ErrorBox = styled(Box)`
   color: ${p => p.theme.colors.pearl};
 `;
 type Props = {
-  error: Error;
+  error: Error | undefined;
 };
 export default function ErrorDisplay({ error }: Props) {
   return (

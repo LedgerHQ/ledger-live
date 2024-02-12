@@ -1,19 +1,6 @@
-import {
-  Account,
-  AccountLike,
-  Operation,
-  SignedOperation,
-  TransactionCommon,
-} from "@ledgerhq/types-live";
-
-import {
-  accountToPlatformAccount,
-  getPlatformTransactionSignFlowInfos,
-} from "./converters";
-import {
-  RawPlatformTransaction,
-  RawPlatformSignedTransaction,
-} from "./rawTypes";
+import { Account, AccountLike, AnyMessage, Operation, SignedOperation } from "@ledgerhq/types-live";
+import { accountToPlatformAccount, getPlatformTransactionSignFlowInfos } from "./converters";
+import { RawPlatformTransaction, RawPlatformSignedTransaction } from "./rawTypes";
 import {
   deserializePlatformTransaction,
   deserializePlatformSignedTransaction,
@@ -23,15 +10,10 @@ import { LiveAppManifest, TranslatableString } from "./types";
 import { isTokenAccount, getMainAccount, isAccount } from "../account/index";
 import { getAccountBridge } from "../bridge/index";
 import { Transaction } from "../generated/types";
-import { MessageData } from "../hw/signMessage/types";
 import { prepareMessageToSign } from "../hw/signMessage/index";
-import { TypedMessageData } from "../families/ethereum/types";
 import { Exchange } from "../exchange/platform/types";
 
-export function translateContent(
-  content: string | TranslatableString,
-  locale = "en"
-): string {
+export function translateContent(content: string | TranslatableString, locale = "en"): string {
   if (!content || typeof content === "string") return content;
   return content[locale] || content.en;
 }
@@ -42,12 +24,9 @@ export type WebPlatformContext = {
   tracking: Record<string, TrackFunction>;
 };
 
-function getParentAccount(
-  account: AccountLike,
-  fromAccounts: AccountLike[]
-): Account | undefined {
+function getParentAccount(account: AccountLike, fromAccounts: AccountLike[]): Account | undefined {
   return isTokenAccount(account)
-    ? (fromAccounts.find((a) => a.id === account.parentId) as Account)
+    ? (fromAccounts.find(a => a.id === account.parentId) as Account)
     : undefined;
 }
 
@@ -57,12 +36,12 @@ export function receiveOnAccountLogic(
   uiNavigation: (
     account: AccountLike,
     parentAccount: Account | undefined,
-    accountAddress: string
-  ) => Promise<string>
+    accountAddress: string,
+  ) => Promise<string>,
 ): Promise<string> {
   tracking.platformReceiveRequested(manifest);
 
-  const account = accounts.find((account) => account.id === accountId);
+  const account = accounts.find(account => account.id === accountId);
 
   if (!account) {
     tracking.platformReceiveFail(manifest);
@@ -70,10 +49,7 @@ export function receiveOnAccountLogic(
   }
 
   const parentAccount = getParentAccount(account, accounts);
-  const accountAddress = accountToPlatformAccount(
-    account,
-    parentAccount
-  ).address;
+  const accountAddress = accountToPlatformAccount(account, parentAccount).address;
 
   return uiNavigation(account, parentAccount, accountAddress);
 }
@@ -89,8 +65,8 @@ export function signTransactionLogic(
       canEditFees: boolean;
       hasFeesProvided: boolean;
       liveTx: Partial<Transaction>;
-    }
-  ) => Promise<RawPlatformSignedTransaction>
+    },
+  ) => Promise<RawPlatformSignedTransaction>,
 ): Promise<RawPlatformSignedTransaction> {
   tracking.platformSignTransactionRequested(manifest);
 
@@ -100,7 +76,7 @@ export function signTransactionLogic(
   }
 
   const platformTransaction = deserializePlatformTransaction(transaction);
-  const account = accounts.find((account) => account.id === accountId);
+  const account = accounts.find(account => account.id === accountId);
 
   if (!account) {
     tracking.platformSignTransactionFail(manifest);
@@ -113,15 +89,16 @@ export function signTransactionLogic(
     ? parentAccount?.currency.family
     : account.currency.family;
 
-  if (accountFamily !== platformTransaction.family) {
-    return Promise.reject(
-      new Error(`Transaction family not matching account currency family. Account family: ${accountFamily}, Transaction family: ${platformTransaction.family}
-      `)
-    );
-  }
-
   const { canEditFees, liveTx, hasFeesProvided } =
     getPlatformTransactionSignFlowInfos(platformTransaction);
+
+  if (accountFamily !== liveTx.family) {
+    return Promise.reject(
+      new Error(
+        `Account and transaction must be from the same family. Account family: ${accountFamily}, Transaction family: ${liveTx.family}`,
+      ),
+    );
+  }
 
   return uiNavigation(account, parentAccount, {
     canEditFees,
@@ -137,15 +114,15 @@ export function broadcastTransactionLogic(
   uiNavigation: (
     account: AccountLike,
     parentAccount: Account | undefined,
-    signedOperation: SignedOperation
-  ) => Promise<string>
+    signedOperation: SignedOperation,
+  ) => Promise<string>,
 ): Promise<string> {
   if (!signedTransaction) {
     tracking.platformBroadcastFail(manifest);
     return Promise.reject(new Error("Transaction required"));
   }
 
-  const account = accounts.find((account) => account.id === accountId);
+  const account = accounts.find(account => account.id === accountId);
   if (!account) {
     tracking.platformBroadcastFail(manifest);
     return Promise.reject(new Error("Account required"));
@@ -153,10 +130,7 @@ export function broadcastTransactionLogic(
 
   const parentAccount = getParentAccount(account, accounts);
 
-  const signedOperation = deserializePlatformSignedTransaction(
-    signedTransaction,
-    accountId
-  );
+  const signedOperation = deserializePlatformSignedTransaction(signedTransaction, accountId);
 
   return uiNavigation(account, parentAccount, signedOperation);
 }
@@ -174,11 +148,13 @@ export type CompleteExchangeRequest = {
 export type CompleteExchangeUiRequest = {
   provider: string;
   exchange: Exchange;
-  transaction: TransactionCommon;
+  transaction: Transaction;
   binaryPayload: string;
   signature: string;
   feesStrategy: string;
   exchangeType: number;
+  swapId?: string;
+  rate?: number;
 };
 export function completeExchangeLogic(
   { manifest, accounts, tracking }: WebPlatformContext,
@@ -192,14 +168,14 @@ export function completeExchangeLogic(
     feesStrategy,
     exchangeType,
   }: CompleteExchangeRequest,
-  uiNavigation: (request: CompleteExchangeUiRequest) => Promise<Operation>
+  uiNavigation: (request: CompleteExchangeUiRequest) => Promise<Operation>,
 ): Promise<Operation> {
   tracking.platformCompleteExchangeRequested(manifest);
 
   // Nb get a hold of the actual accounts, and parent accounts
-  const fromAccount = accounts.find((a) => a.id === fromAccountId);
+  const fromAccount = accounts.find(a => a.id === fromAccountId);
 
-  const toAccount = accounts.find((a) => a.id === toAccountId);
+  const toAccount = accounts.find(a => a.id === toAccountId);
 
   if (!fromAccount) {
     return Promise.reject();
@@ -211,9 +187,7 @@ export function completeExchangeLogic(
   }
 
   const fromParentAccount = getParentAccount(fromAccount, accounts);
-  const toParentAccount = toAccount
-    ? getParentAccount(toAccount, accounts)
-    : undefined;
+  const toParentAccount = toAccount ? getParentAccount(toAccount, accounts) : undefined;
   const exchange = {
     fromAccount,
     fromParentAccount,
@@ -225,17 +199,16 @@ export function completeExchangeLogic(
   const mainFromAccount = getMainAccount(fromAccount, fromParentAccount);
   const mainFromAccountFamily = mainFromAccount.currency.family;
 
-  if (transaction.family !== mainFromAccountFamily) {
+  const platformTransaction = deserializePlatformTransaction(transaction);
+  const { liveTx: liveTransaction } = getPlatformTransactionSignFlowInfos(platformTransaction);
+
+  if (liveTransaction.family !== mainFromAccountFamily) {
     return Promise.reject(
       new Error(
-        `Account and transaction must be from the same family. Account family: ${mainFromAccountFamily}, Transaction family: ${transaction.family}`
-      )
+        `Account and transaction must be from the same family. Account family: ${mainFromAccountFamily}, Transaction family: ${liveTransaction.family}`,
+      ),
     );
   }
-
-  const platformTransaction = deserializePlatformTransaction(transaction);
-  const { liveTx: liveTransaction } =
-    getPlatformTransactionSignFlowInfos(platformTransaction);
 
   /**
    * 'subAccountId' is used for ETH and it's ERC-20 tokens.
@@ -258,7 +231,7 @@ export function completeExchangeLogic(
       ...liveTransaction,
       feesStrategy,
       subAccountId,
-    }
+    },
   );
 
   return uiNavigation({
@@ -276,22 +249,17 @@ export function signMessageLogic(
   { manifest, accounts, tracking }: WebPlatformContext,
   accountId: string,
   message: string,
-  uiNavigation: (
-    account: AccountLike,
-    message: MessageData | TypedMessageData
-  ) => Promise<string>
+  uiNavigation: (account: AccountLike, message: AnyMessage) => Promise<string>,
 ): Promise<string> {
   tracking.platformSignMessageRequested(manifest);
 
-  const account = accounts.find((account) => account.id === accountId);
+  const account = accounts.find(account => account.id === accountId);
   if (account === undefined) {
     tracking.platformSignMessageFail(manifest);
-    return Promise.reject(
-      new Error(`account with id "${accountId}" not found`)
-    );
+    return Promise.reject(new Error(`account with id "${accountId}" not found`));
   }
 
-  let formattedMessage: MessageData | TypedMessageData;
+  let formattedMessage: AnyMessage;
   try {
     if (isAccount(account)) {
       formattedMessage = prepareMessageToSign(account, message);

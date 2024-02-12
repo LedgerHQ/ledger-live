@@ -5,20 +5,11 @@ import {
   signDomainResolution,
   signAddressResolution,
 } from "@ledgerhq/domain-service/signers/index";
-import {
-  LedgerEthTransactionResolution,
-  LedgerEthTransactionService,
-  LoadConfig,
-} from "../types";
+import { LedgerEthTransactionResolution, LedgerEthTransactionService, LoadConfig } from "../types";
 import { byContractAddressAndChainId, findERC20SignaturesInfo } from "./erc20";
 import { loadInfosForContractMethod } from "./contracts";
 import { getNFTInfo, loadNftPlugin } from "./nfts";
-import {
-  decodeTxInfo,
-  tokenSelectors,
-  nftSelectors,
-  mergeResolutions,
-} from "../../utils";
+import { decodeTxInfo, tokenSelectors, nftSelectors, mergeResolutions } from "../../utils";
 
 type PotentialResolutions = {
   token: boolean | undefined;
@@ -37,31 +28,20 @@ const getAdditionalDataForContract = async (
   contractAddress: string,
   chainIdTruncated: number,
   loadConfig: LoadConfig,
-  shouldResolve: PotentialResolutions
+  shouldResolve: PotentialResolutions,
 ): Promise<Pick<LedgerEthTransactionResolution, "nfts" | "erc20Tokens">> => {
-  const resolution: Pick<
-    LedgerEthTransactionResolution,
-    "nfts" | "erc20Tokens"
-  > = {
+  const resolution: Pick<LedgerEthTransactionResolution, "nfts" | "erc20Tokens"> = {
     nfts: [],
     erc20Tokens: [],
   };
 
   if (shouldResolve.nft) {
-    const nftInfo = await getNFTInfo(
-      contractAddress,
-      chainIdTruncated,
-      loadConfig
-    );
+    const nftInfo = await getNFTInfo(contractAddress, chainIdTruncated, loadConfig);
 
     if (nftInfo) {
       log(
         "ethereum",
-        "loaded nft info for " +
-          nftInfo.contractAddress +
-          " (" +
-          nftInfo.collectionName +
-          ")"
+        "loaded nft info for " + nftInfo.contractAddress + " (" + nftInfo.collectionName + ")",
       );
       resolution.nfts.push(nftInfo.data);
     } else {
@@ -70,24 +50,17 @@ const getAdditionalDataForContract = async (
   }
 
   if (shouldResolve.token) {
-    const erc20SignaturesBlob = await findERC20SignaturesInfo(
-      loadConfig,
-      chainIdTruncated
-    );
+    const erc20SignaturesBlob = await findERC20SignaturesInfo(loadConfig, chainIdTruncated);
     const erc20Info = byContractAddressAndChainId(
       contractAddress,
       chainIdTruncated,
-      erc20SignaturesBlob
+      erc20SignaturesBlob,
     );
 
     if (erc20Info) {
       log(
         "ethereum",
-        "loaded erc20token info for " +
-          erc20Info.contractAddress +
-          " (" +
-          erc20Info.ticker +
-          ")"
+        "loaded erc20token info for " + erc20Info.contractAddress + " (" + erc20Info.ticker + ")",
       );
       resolution.erc20Tokens.push(erc20Info.data.toString("hex"));
     } else {
@@ -111,7 +84,7 @@ const loadNanoAppPlugins = async (
   decodedTx,
   chainIdTruncated: number,
   loadConfig: LoadConfig,
-  shouldResolve: PotentialResolutions
+  shouldResolve: PotentialResolutions,
 ): Promise<LedgerEthTransactionResolution> => {
   let resolution: LedgerEthTransactionResolution = {
     externalPlugin: [],
@@ -126,7 +99,7 @@ const loadNanoAppPlugins = async (
       contractAddress,
       selector,
       chainIdTruncated,
-      loadConfig
+      loadConfig,
     );
 
     if (nftPluginPayload) {
@@ -134,10 +107,7 @@ const loadNanoAppPlugins = async (
     } else {
       log(
         "ethereum",
-        "no NFT plugin payload for selector " +
-          selector +
-          " and address " +
-          contractAddress
+        "no NFT plugin payload for selector " + selector + " and address " + contractAddress,
       );
     }
   }
@@ -147,15 +117,14 @@ const loadNanoAppPlugins = async (
       contractAddress,
       selector,
       chainIdTruncated,
-      loadConfig
+      loadConfig,
     );
 
     if (contractMethodInfos) {
-      const { plugin, payload, signature, erc20OfInterest, abi } =
-        contractMethodInfos;
+      const { plugin, payload, signature, erc20OfInterest, abi } = contractMethodInfos;
 
       if (plugin) {
-        log("ethereum", "found plugin for " + selector);
+        log("ethereum", `found plugin (${plugin}) for selector: ${selector}`);
         resolution.externalPlugin.push({ payload, signature });
       }
 
@@ -179,7 +148,7 @@ const loadNanoAppPlugins = async (
               nft: false,
               externalPlugins: false,
               token: true, // enforcing resolution of tokens for external plugins that need info on assets (e.g. for a swap)
-            }
+            },
           );
           resolution = mergeResolutions([resolution, externalPluginResolution]);
         }
@@ -198,57 +167,59 @@ const loadNanoAppPlugins = async (
  * In charge of collecting the different APDUs necessary for clear signing
  * a transaction based on a specified configuration.
  */
-const resolveTransaction: LedgerEthTransactionService["resolveTransaction"] =
-  async (rawTxHex, loadConfig, resolutionConfig) => {
-    const rawTx = Buffer.from(rawTxHex, "hex");
-    const { decodedTx, chainIdTruncated } = decodeTxInfo(rawTx);
-    const { domains } = resolutionConfig;
+const resolveTransaction: LedgerEthTransactionService["resolveTransaction"] = async (
+  rawTxHex,
+  loadConfig,
+  resolutionConfig,
+) => {
+  const rawTx = Buffer.from(rawTxHex, "hex");
+  const { decodedTx, chainIdTruncated } = decodeTxInfo(rawTx);
+  const { domains } = resolutionConfig;
 
-    const contractAddress = decodedTx.to;
-    const selector =
-      decodedTx.data.length >= 10 && decodedTx.data.substring(0, 10);
+  const contractAddress = decodedTx.to;
+  const selector = decodedTx.data.length >= 10 && decodedTx.data.substring(0, 10);
 
-    const resolutions: Partial<LedgerEthTransactionResolution>[] = [];
-    if (selector) {
-      const shouldResolve: PotentialResolutions = {
-        token: resolutionConfig.erc20 && tokenSelectors.includes(selector),
-        nft: resolutionConfig.nft && nftSelectors.includes(selector),
-        externalPlugins: resolutionConfig.externalPlugins,
-      };
+  const resolutions: Partial<LedgerEthTransactionResolution>[] = [];
+  if (selector) {
+    const shouldResolve: PotentialResolutions = {
+      token: resolutionConfig.erc20 && tokenSelectors.includes(selector),
+      nft: resolutionConfig.nft && nftSelectors.includes(selector),
+      externalPlugins: resolutionConfig.externalPlugins,
+    };
 
-      const pluginsResolution = await loadNanoAppPlugins(
-        contractAddress,
-        selector,
-        decodedTx,
-        chainIdTruncated,
-        loadConfig,
-        shouldResolve
-      );
-      if (pluginsResolution) {
-        resolutions.push(pluginsResolution);
-      }
-
-      const contractResolution = await getAdditionalDataForContract(
-        contractAddress,
-        chainIdTruncated,
-        loadConfig,
-        shouldResolve
-      );
-      if (contractResolution) {
-        resolutions.push(contractResolution);
-      }
+    const pluginsResolution = await loadNanoAppPlugins(
+      contractAddress,
+      selector,
+      decodedTx,
+      chainIdTruncated,
+      loadConfig,
+      shouldResolve,
+    );
+    if (pluginsResolution) {
+      resolutions.push(pluginsResolution);
     }
 
-    // Passthrough to be accessible to the Domains module
-    if (domains) {
-      const domainResolutions: Partial<LedgerEthTransactionResolution> = {
-        domains,
-      };
-      resolutions.push(domainResolutions);
+    const contractResolution = await getAdditionalDataForContract(
+      contractAddress,
+      chainIdTruncated,
+      loadConfig,
+      shouldResolve,
+    );
+    if (contractResolution) {
+      resolutions.push(contractResolution);
     }
+  }
 
-    return mergeResolutions(resolutions);
-  };
+  // Passthrough to be accessible to the Domains module
+  if (domains) {
+    const domainResolutions: Partial<LedgerEthTransactionResolution> = {
+      domains,
+    };
+    resolutions.push(domainResolutions);
+  }
+
+  return mergeResolutions(resolutions);
+};
 
 export default {
   resolveTransaction,

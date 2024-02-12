@@ -21,8 +21,10 @@ import Tooltip from "~/renderer/components/Tooltip";
 import IconInfoCircle from "~/renderer/icons/InfoCircle";
 import * as S from "./Row.styles";
 import ManageDropDown from "./ManageDropDown";
-const voteActions = vote => {
-  const actions = [];
+import { ModalActions } from "../modals";
+import { DropDownItemType } from "~/renderer/components/DropDownSelector";
+const voteActions = (vote: CeloVote): Array<{ key: ModalActions; label: React.ReactNode }> => {
+  const actions: Array<{ key: ModalActions; label: React.ReactNode }> = [];
   if (vote.activatable)
     actions.push({
       key: "MODAL_CELO_ACTIVATE",
@@ -38,13 +40,13 @@ const voteActions = vote => {
 type Props = {
   account: Account;
   vote: CeloVote;
-  onManageAction: (vote: CeloVote, action: string) => void;
-  onExternalLink: (address: string) => void;
+  onManageAction: (vote: CeloVote, action: ModalActions) => void;
+  onExternalLink: (vote: CeloVote) => void;
 };
 export const Row = ({ account, vote, onManageAction, onExternalLink }: Props) => {
   const onSelect = useCallback(
-    action => {
-      onManageAction(vote, action.key);
+    (action: DropDownItemType) => {
+      onManageAction(vote, action?.key as ModalActions);
     },
     [onManageAction, vote],
   );
@@ -106,23 +108,13 @@ export const Row = ({ account, vote, onManageAction, onExternalLink }: Props) =>
           <Trans i18nKey={`celo.revoke.steps.vote.${status}`} />
         </Box>
       </S.Column>
-      <S.Column>{formatAmount(vote.amount ?? 0)}</S.Column>
+      <S.Column>{formatAmount(vote.amount.toNumber() ?? 0)}</S.Column>
       <S.Column>
         {actions.length > 0 && <ManageDropDown actions={actions} onSelect={onSelect} />}
         {actions.length === 0 && (
           <S.ManageInfoIconWrapper>
-            <Tooltip
-              content={
-                <Trans
-                  i18nKey={"celo.delegation.manageMultipleVoteWarning"}
-                  count={2}
-                  values={{
-                    count: 2,
-                  }}
-                />
-              }
-            >
-              <IconInfoCircle height={16} width={16} />
+            <Tooltip content={<Trans i18nKey={"celo.delegation.manageMultipleVoteWarning"} />}>
+              <IconInfoCircle />
             </Tooltip>
           </S.ManageInfoIconWrapper>
         )}

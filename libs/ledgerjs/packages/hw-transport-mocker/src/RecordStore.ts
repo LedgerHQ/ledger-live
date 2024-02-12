@@ -23,11 +23,7 @@ RecordStoreQueueEmpty.prototype = new Error();
 /**
  * thrown by replayer if it meets an unexpected apdu
  */
-export function RecordStoreWrongAPDU(
-  expected: string,
-  got: string,
-  line: number
-) {
+export function RecordStoreWrongAPDU(expected: string, got: string, line: number) {
   this.name = "RecordStoreWrongAPDU";
   this.message = `wrong apdu to replay line ${line}. Expected ${expected}, Got ${got}`;
   this.expectedAPDU = expected;
@@ -63,7 +59,7 @@ export type RecordStoreOptions = {
 };
 const defaultOpts: RecordStoreOptions = {
   autoSkipUnknownApdu: false,
-  warning: (log) => console.warn(log),
+  warning: log => console.warn(log),
 };
 
 /**
@@ -75,10 +71,7 @@ export class RecordStore {
   queue: Queue;
   opts: RecordStoreOptions;
 
-  constructor(
-    queue?: Queue | null | undefined,
-    opts?: Partial<RecordStoreOptions>
-  ) {
+  constructor(queue?: Queue | null | undefined, opts?: Partial<RecordStoreOptions>) {
     this.queue = queue || [];
     this.opts = { ...defaultOpts, ...opts };
   }
@@ -115,13 +108,7 @@ export class RecordStore {
         return Buffer.from(head[1], "hex");
       } else {
         if (opts.autoSkipUnknownApdu) {
-          opts.warning(
-            "skipped unmatched apdu (line " +
-              line +
-              " – expected " +
-              head[0] +
-              ")"
-          );
+          opts.warning("skipped unmatched apdu (line " + line + " – expected " + head[0] + ")");
           ++this.passed;
         } else {
           throw new RecordStoreWrongAPDU(head[0], apduHex, line);
@@ -146,11 +133,7 @@ export class RecordStore {
    * Print out the series of apdus
    */
   toString(): string {
-    return (
-      this.queue
-        .map(([send, receive]) => `=> ${send}\n<= ${receive}`)
-        .join("\n") + "\n"
-    );
+    return this.queue.map(([send, receive]) => `=> ${send}\n<= ${receive}`).join("\n") + "\n";
   }
 
   /**
@@ -158,17 +141,14 @@ export class RecordStore {
    * @param {string} series of APDUs
    * @param {$Shape<RecordStoreOptions>} opts
    */
-  static fromString(
-    str: string,
-    opts?: Partial<RecordStoreOptions>
-  ): RecordStore {
+  static fromString(str: string, opts?: Partial<RecordStoreOptions>): RecordStore {
     const queue: Queue = [];
     let value: string[] = [];
     str
       .split("\n")
-      .map((line) => line.replace(/ /g, ""))
-      .filter((o) => o)
-      .forEach((line) => {
+      .map(line => line.replace(/ /g, ""))
+      .filter(o => o)
+      .forEach(line => {
         if (value.length === 0) {
           const m = line.match(/^=>([0-9a-fA-F]+)$/);
 

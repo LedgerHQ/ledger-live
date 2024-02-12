@@ -5,43 +5,38 @@ import { TouchableOpacity, View, StyleSheet, SectionList } from "react-native";
 import { findTokenById } from "@ledgerhq/live-common/currencies/index";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { DefaultTheme, useTheme } from "styled-components/native";
-import SettingsRow from "../../../components/SettingsRow";
-import { showToken } from "../../../actions/settings";
+import SettingsRow from "~/components/SettingsRow";
+import { showToken } from "~/actions/settings";
 import {
   blacklistedTokenIdsSelector,
-  hiddenNftCollectionsSelector,
-} from "../../../reducers/settings";
-import { cryptoCurrenciesSelector } from "../../../reducers/accounts";
-import LText from "../../../components/LText";
-import CurrencyIcon from "../../../components/CurrencyIcon";
-import { TrackScreen } from "../../../analytics";
+  // TODO: hiddenNftCollection is never used 😱 is it safe to remove
+  // hiddenNftCollectionsSelector,
+} from "~/reducers/settings";
+import { cryptoCurrenciesSelector } from "~/reducers/accounts";
+import LText from "~/components/LText";
+import CurrencyIcon from "~/components/CurrencyIcon";
+import { TrackScreen } from "~/analytics";
 import HideEmptyTokenAccountsRow from "./HideEmptyTokenAccountsRow";
 import FilterTokenOperationsZeroAmountRow from "./FilterTokenOperationsZeroAmountRow";
-import Close from "../../../icons/Close";
-import { ScreenName } from "../../../const";
-import { SettingsNavigatorStackParamList } from "../../../components/RootNavigator/types/SettingsNavigator";
+import Close from "~/icons/Close";
+import { ScreenName } from "~/const";
+import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
 import type { Theme } from "../../../colors";
-import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 
 export default function AccountsSettings({
   navigation,
-}: StackNavigatorProps<
-  SettingsNavigatorStackParamList,
-  ScreenName.AccountsSettings
->) {
+}: StackNavigatorProps<SettingsNavigatorStackParamList, ScreenName.AccountsSettings>) {
   const { colors } = useTheme() as DefaultTheme & Theme;
   const { t } = useTranslation();
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const currencies = useSelector(cryptoCurrenciesSelector);
-  const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
+  // TODO: hiddenNftCollection is never used 😱 is it safe to remove
+  // const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
   const dispatch = useDispatch();
 
   const renderSectionHeader = useCallback(
-    ({
-      section: { parentCurrency },
-    }: {
-      section: { parentCurrency: CryptoCurrency };
-    }) => (
+    ({ section: { parentCurrency } }: { section: { parentCurrency: CryptoCurrency } }) => (
       <View style={styles.section}>
         <LText style={[styles.sectionTitle, { backgroundColor: colors.card }]}>
           {parentCurrency.name}
@@ -70,7 +65,7 @@ export default function AccountsSettings({
     [colors, dispatch],
   );
 
-  const keyExtractor = useCallback(token => token.id, []);
+  const keyExtractor = useCallback((token: TokenCurrency) => token.id, []);
 
   const renderHeader = useCallback(
     () => (
@@ -84,27 +79,13 @@ export default function AccountsSettings({
             onPress={() => navigation.navigate(ScreenName.CryptoAssetsSettings)}
           />
         )}
-        {hiddenNftCollections.length > 0 && (
-          <SettingsRow
-            event="HiddenNftCollectionsSettings"
-            title={t("settings.accounts.hiddenNFTCollections")}
-            desc={t("settings.accounts.hiddenNFTCollectionsDesc")}
-            arrowRight
-            onPress={() => navigation.navigate(ScreenName.HiddenNftCollections)}
-          />
-        )}
         <HideEmptyTokenAccountsRow />
         <FilterTokenOperationsZeroAmountRow />
-        <SettingsRow
-          event="HideEmptyTokenAccountsRow"
-          title={t("settings.accounts.blacklistedTokens")}
-          desc={t("settings.accounts.blacklistedTokensDesc")}
-        >
-          {null}
-        </SettingsRow>
       </>
     ),
-    [currencies.length, t, hiddenNftCollections.length, navigation],
+    // TODO: hiddenNftCollection is never used 😱 is it safe to remove
+    // [currencies.length, t, hiddenNftCollections.length, navigation],
+    [currencies.length, t, navigation],
   );
 
   const sections = useMemo(() => {

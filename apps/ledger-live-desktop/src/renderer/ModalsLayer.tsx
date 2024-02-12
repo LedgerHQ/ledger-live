@@ -2,12 +2,10 @@ import React from "react";
 import styled from "styled-components";
 import { Transition, TransitionStatus } from "react-transition-group";
 import { connect } from "react-redux";
-import { createStructuredSelector, createSelector } from "reselect";
-import { modalsStateSelector } from "~/renderer/reducers/modals";
+import { createStructuredSelector } from "reselect";
+import { ModalsState, modalsStateSelector } from "~/renderer/reducers/modals";
+import { ModalData } from "~/renderer/modals/types";
 import modals from "~/renderer/modals";
-
-// TODO: SNOOOOOOOOWW
-// import Snow, { isSnowTime } from '~/renderer/components/extra/Snow'
 
 const BackDrop = styled.div.attrs<{ state: TransitionStatus }>(({ state }) => ({
   style: {
@@ -25,21 +23,30 @@ const BackDrop = styled.div.attrs<{ state: TransitionStatus }>(({ state }) => ({
   opacity: 0;
   transition: opacity 200ms cubic-bezier(0.3, 1, 0.5, 0.8);
 `;
-const ModalsLayer = ({
-  visibleModals,
-}: {
-  visibleModals: { name: string; MODAL_SHOW_ONCE?: boolean }[];
-}) => {
-  const filteredModals = visibleModals
-    .filter(({ name, MODAL_SHOW_ONCE }) => !MODAL_SHOW_ONCE || !global.sessionStorage.getItem(name))
-    .slice(0, 1);
-  filteredModals.forEach(
-    ({ name, MODAL_SHOW_ONCE }) =>
-      MODAL_SHOW_ONCE && global.sessionStorage.setItem(name, "" + Date.now()),
-  );
+
+function renderNameState<Name extends keyof ModalData>(name: Name, data: ModalData[Name]) {
+  const ModalComponent = modals[name];
+  if (ModalComponent) {
+    // @ts-expect-error unclear why it can't prove this part
+    return <ModalComponent key={name} name={name} {...data} />;
+  }
+}
+
+function renderFirst(modalsState: ModalsState) {
+  for (const key in modalsState) {
+    const name = key as keyof ModalData;
+    const state = modalsState[name];
+    if (state?.isOpened) {
+      return renderNameState(name, state.data);
+    }
+  }
+}
+
+const ModalsLayer = ({ modalsState }: { modalsState: ModalsState }) => {
+  const first = renderFirst(modalsState);
   return (
     <Transition
-      in={filteredModals.length > 0}
+      in={!!first}
       appear
       mountOnEnter
       unmountOnExit
@@ -49,29 +56,13 @@ const ModalsLayer = ({
         exit: 200,
       }}
     >
-      {state => (
-        <BackDrop state={state}>
-          {/* {// Will only render at the end of december
-           isSnowTime() ? <Snow numFlakes={200} /> : null} */}
-          {filteredModals.map(({ name, ...data }) => {
-            const ModalComponent = modals[name];
-            return <ModalComponent key={name} name={name} {...data} />;
-          })}
-        </BackDrop>
-      )}
+      {state => <BackDrop state={state}>{first || null}</BackDrop>}
     </Transition>
   );
 };
-const visibleModalsSelector = createSelector(modalsStateSelector, state =>
-  Object.keys(state)
-    .filter((name: string) => !!modals[name] && state[name].isOpened)
-    .map((name: string) => ({
-      name,
-      ...(state[name].data as object),
-    })),
-);
+
 const mapStateToProps = createStructuredSelector({
-  visibleModals: visibleModalsSelector,
+  modalsState: modalsStateSelector,
 });
 
 export default connect(mapStateToProps)(ModalsLayer);

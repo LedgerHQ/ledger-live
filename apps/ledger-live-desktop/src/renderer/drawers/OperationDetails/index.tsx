@@ -1,11 +1,3 @@
-import React, { useMemo, Component, useCallback } from "react";
-import { connect } from "react-redux";
-import { useHistory, useLocation } from "react-router-dom";
-import { Trans, withTranslation, TFunction } from "react-i18next";
-import styled from "styled-components";
-import uniq from "lodash/uniq";
-import { getEnv } from "@ledgerhq/live-common/env";
-import { colors } from "~/renderer/styles/theme";
 import {
   findSubAccountById,
   getAccountCurrency,
@@ -15,68 +7,88 @@ import {
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
 import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
-import { getDefaultExplorerView, getTransactionExplorer } from "@ledgerhq/live-common/explorers";
+import {
+  getDefaultExplorerView,
+  getTransactionExplorer as getDefaultTransactionExplorer,
+} from "@ledgerhq/live-common/explorers";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useNftMetadata } from "@ledgerhq/live-nft-react";
 import {
   findOperationInAccount,
   getOperationAmountNumber,
   getOperationConfirmationDisplayableNumber,
   isConfirmedOperation,
+  isEditableOperation,
+  isStuckOperation,
 } from "@ledgerhq/live-common/operation";
-import { Account, AccountLike, NFTMetadata, Operation } from "@ledgerhq/types-live";
-import { useNftMetadata } from "@ledgerhq/live-common/nft/NftMetadataProvider/index";
-import Skeleton from "~/renderer/components/Nft/Skeleton";
+import { getEnv } from "@ledgerhq/live-env";
+import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+import { Account, AccountLike, NFTMetadata, Operation, OperationType } from "@ledgerhq/types-live";
+import { TFunction } from "i18next";
+import invariant from "invariant";
+import uniq from "lodash/uniq";
+import React, { Component, useCallback, useMemo } from "react";
+import { Trans, useTranslation } from "react-i18next";
+import { connect, useDispatch } from "react-redux";
+import { useHistory, useLocation } from "react-router-dom";
+import styled from "styled-components";
 import { urls } from "~/config/urls";
+import { openModal } from "~/renderer/actions/modals";
 import TrackPage, { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
+import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
-import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import CopyWithFeedback from "~/renderer/components/CopyWithFeedback";
 import CounterValue from "~/renderer/components/CounterValue";
+import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import Ellipsis from "~/renderer/components/Ellipsis";
 import FakeLink from "~/renderer/components/FakeLink";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import LabelInfoTooltip from "~/renderer/components/LabelInfoTooltip";
 import Link from "~/renderer/components/Link";
 import LinkHelp from "~/renderer/components/LinkHelp";
+import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
+import Skeleton from "~/renderer/components/Nft/Skeleton";
+import { SplitAddress } from "~/renderer/components/OperationsList/AddressCell";
 import ConfirmationCheck from "~/renderer/components/OperationsList/ConfirmationCheck";
 import OperationComponent from "~/renderer/components/OperationsList/Operation";
 import Text, { TextProps } from "~/renderer/components/Text";
-import byFamiliesOperationDetails from "~/renderer/generated/operationDetails";
+import ToolTip from "~/renderer/components/Tooltip";
+import { getLLDCoinFamily } from "~/renderer/families";
 import IconChevronRight from "~/renderer/icons/ChevronRight";
 import IconExternalLink from "~/renderer/icons/ExternalLink";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import { openURL } from "~/renderer/linking";
+import { State } from "~/renderer/reducers";
 import { accountSelector } from "~/renderer/reducers/accounts";
 import { confirmationsNbForCurrencySelector } from "~/renderer/reducers/settings";
-import { getMarketColor, centerEllipsis } from "~/renderer/styles/helpers";
-import {
-  OpDetailsSection,
-  OpDetailsTitle,
-  GradientHover,
-  OpDetailsData,
-  B,
-  TextEllipsis,
-  Separator,
-  HashContainer,
-  OpDetailsSideButton,
-} from "./styledComponents";
-import ToolTip from "~/renderer/components/Tooltip";
-import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
-import FormattedDate from "~/renderer/components/FormattedDate";
+import { centerEllipsis, getMarketColor } from "~/renderer/styles/helpers";
+import { colors } from "~/renderer/styles/theme";
 import { setDrawer } from "../Provider";
-import { SplitAddress } from "~/renderer/components/OperationsList/AddressCell";
-import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import AmountDetails from "./AmountDetails";
 import NFTOperationDetails from "./NFTOperationDetails";
-import { State } from "~/renderer/reducers";
+import {
+  B,
+  GradientHover,
+  HashContainer,
+  OpDetailsData,
+  OpDetailsSection,
+  OpDetailsSideButton,
+  OpDetailsTitle,
+  Separator,
+  TextEllipsis,
+} from "./styledComponents";
+import { dayAndHourFormat, useDateFormatted } from "~/renderer/hooks/useDateFormatter";
 
 const mapStateToProps = (
   state: State,
-  {
-    operationId,
-    accountId,
-    parentId,
-  }: { operationId: string; accountId: string; parentId: string | undefined | null },
+  props: {
+    operationId: string;
+    accountId: string;
+    parentId?: string | null;
+  },
 ) => {
+  const { operationId, accountId, parentId } = props;
   const parentAccount: Account | undefined =
     typeof parentId !== "undefined" && parentId !== null
       ? accountSelector(state, {
@@ -107,36 +119,34 @@ const mapStateToProps = (
     parentAccount,
     operation,
     confirmationsNb,
+    onRequestBack: () => setDrawer(OperationDetails, props),
   };
 };
-type OwnProps = {
-  t: TFunction;
-  operation: Operation;
-  account: AccountLike;
+
+type RestProps = {
   onClose?: () => void;
-};
-type Props = OwnProps & {
-  parentAccount: Account | undefined | null;
   confirmationsNb: number;
   parentOperation?: Operation;
+  onRequestBack: () => void;
 };
+
+type Props = RestProps & {
+  operation: Operation;
+  account: AccountLike;
+  parentAccount: Account | undefined;
+};
+
 type openOperationType = "goBack" | "subOperation" | "internalOperation";
-const OperationD: React.ComponentType<Props> = (props: Props) => {
-  const { t, onClose, operation, account, parentAccount, confirmationsNb } = props;
+const OperationD = (props: Props) => {
+  const { t } = useTranslation();
+  const { onClose, operation, account, parentAccount, confirmationsNb } = props;
   const history = useHistory();
   const location = useLocation();
   const mainAccount = getMainAccount(account, parentAccount);
-  const {
-    extra,
-    hash,
-    date,
-    senders,
-    type,
-    fee,
-    recipients: _recipients,
-    contract,
-    tokenId,
-  } = operation;
+  const { hash, date, senders, type, fee, recipients: _recipients, contract, tokenId } = operation;
+
+  const dateFormatted = useDateFormatted(date, dayAndHourFormat);
+  const uniqueSenders = uniq(senders);
   const recipients = _recipients.filter(Boolean);
   const { name } = mainAccount;
   const isNftOperation = ["NFT_IN", "NFT_OUT"].includes(operation.type);
@@ -152,36 +162,35 @@ const OperationD: React.ComponentType<Props> = (props: Props) => {
   });
   const confirmationsString = getOperationConfirmationDisplayableNumber(operation, mainAccount);
   const isConfirmed = isConfirmedOperation(operation, mainAccount, confirmationsNb);
-  const specific =
-    byFamiliesOperationDetails[
-      mainAccount.currency.family as keyof typeof byFamiliesOperationDetails
-    ];
-  const IconElement =
-    specific && "confirmationCell" in specific && specific.confirmationCell
-      ? specific.confirmationCell[operation.type as keyof typeof specific.confirmationCell]
-      : null;
-  const AmountTooltip =
-    specific && "amountTooltip" in specific && specific.amountTooltip
-      ? specific.amountTooltip[operation.type as keyof typeof specific.amountTooltip]
-      : null;
-  const urlWhatIsThis =
-    specific &&
-    "getURLWhatIsThis" in specific &&
-    specific.getURLWhatIsThis &&
-    specific.getURLWhatIsThis({ op: operation, currencyId: mainAccount.currency.id });
-  const urlFeesInfo =
-    specific &&
-    "getURLFeesInfo" in specific &&
-    specific.getURLFeesInfo &&
-    specific.getURLFeesInfo({ op: operation, currencyId: mainAccount.currency.id });
-  const url = getTransactionExplorer(getDefaultExplorerView(mainAccount.currency), operation.hash);
-  const uniqueSenders = uniq(senders);
-  const OpDetailsExtra =
-    specific && "OperationDetailsExtra" in specific && specific.OperationDetailsExtra
-      ? specific.OperationDetailsExtra
-      : OperationDetailsExtra;
+
+  const cryptoCurrency = mainAccount.currency;
+  const specific = cryptoCurrency ? getLLDCoinFamily(cryptoCurrency.family) : null;
+  const confirmationCell = specific?.operationDetails?.confirmationCell;
+  const IconElement = confirmationCell ? confirmationCell[operation.type] : null;
+  const amountTooltip = specific?.operationDetails?.amountTooltip;
+  const AmountTooltip = amountTooltip ? amountTooltip[operation.type] : null;
+
+  const getURLWhatIsThis = specific?.operationDetails?.getURLWhatIsThis;
+  const urlWhatIsThis = getURLWhatIsThis
+    ? getURLWhatIsThis({ op: operation, currencyId: cryptoCurrency.id })
+    : null;
+
+  const getURLFeesInfo = specific?.operationDetails?.getURLFeesInfo;
+  const urlFeesInfo = getURLFeesInfo
+    ? getURLFeesInfo({ op: operation, currencyId: cryptoCurrency.id })
+    : null;
+
+  const getTransactionExplorer = specific?.getTransactionExplorer;
+  const url = getTransactionExplorer
+    ? getTransactionExplorer(getDefaultExplorerView(mainAccount.currency), operation)
+    : getDefaultTransactionExplorer(getDefaultExplorerView(mainAccount.currency), operation.hash);
+
+  const OpDetailsExtra = specific?.operationDetails?.OperationDetailsExtra || OperationDetailsExtra;
   const { hasFailed } = operation;
-  const subOperations = operation.subOperations || [];
+  const subOperations: Operation[] = useMemo(
+    () => operation.subOperations || [],
+    [operation.subOperations],
+  );
   const internalOperations = operation.internalOperations || [];
   const isToken = listTokenTypesForCryptoCurrency(mainAccount.currency).length > 0;
   const openOperation = useCallback(
@@ -202,7 +211,7 @@ const OperationD: React.ComponentType<Props> = (props: Props) => {
           ? () => openOperation("goBack", parentOperation)
           : undefined;
       }
-      setDrawer(OperationDetails, data as React.ComponentProps<typeof OperationDetails>);
+      setDrawer(OperationDetails, data);
     },
     [account],
   );
@@ -210,9 +219,7 @@ const OperationD: React.ComponentType<Props> = (props: Props) => {
     const data = {
       operation,
       account,
-      onRequestBack: () =>
-        // @ts-expect-error TODO: the props type seems quite suspicious here…
-        setDrawer(OperationDetails, props),
+      onRequestBack: props.onRequestBack,
     };
     setDrawer(AmountDetails, data);
   }, [operation, props, account]);
@@ -242,6 +249,33 @@ const OperationD: React.ComponentType<Props> = (props: Props) => {
       : currency.name
     : undefined;
 
+  const { enabled: isEditEvmTxEnabled, params } = useFeature("editEvmTx") ?? {};
+  const isCurrencySupported =
+    params?.supportedCurrencyIds?.includes(mainAccount.currency.id as CryptoCurrencyId) || false;
+
+  const editable =
+    isEditEvmTxEnabled &&
+    isCurrencySupported &&
+    isEditableOperation({ account: mainAccount, operation });
+
+  const dispatch = useDispatch();
+
+  const handleOpenEditModal = useCallback(() => {
+    setDrawer(undefined);
+
+    invariant(operation.transactionRaw, "operation.transactionRaw is required");
+
+    dispatch(
+      openModal("MODAL_EVM_EDIT_TRANSACTION", {
+        account,
+        parentAccount,
+        transactionRaw: operation.transactionRaw,
+        transactionHash: operation.hash,
+      }),
+    );
+  }, [dispatch, account, parentAccount, operation.transactionRaw, operation.hash]);
+
+  const isStuck = isStuckOperation({ family: mainAccount.currency.family, operation });
   const feesCurrency = useMemo(() => getFeesCurrency(mainAccount), [mainAccount]);
   const feesUnit = useMemo(() => getFeesUnit(feesCurrency), [feesCurrency]);
 
@@ -256,6 +290,7 @@ const OperationD: React.ComponentType<Props> = (props: Props) => {
         {IconElement ? (
           <IconElement
             operation={operation}
+            type={type}
             marketColor={marketColor}
             isConfirmed={isConfirmed}
             hasFailed={!!hasFailed}
@@ -289,7 +324,7 @@ const OperationD: React.ComponentType<Props> = (props: Props) => {
         mt={0}
         mb={1}
       >
-        <Trans i18nKey={`operation.type.${operation.type}`} />
+        <Trans i18nKey={`operation.type.${editable ? "SENDING" : operation.type}`} />
       </Text>
       {/* TODO clean up these conditional components into currency specific blocks */}
       {!isNftOperation ? (
@@ -347,6 +382,7 @@ const OperationD: React.ComponentType<Props> = (props: Props) => {
           <LinkWithExternalIcon
             fontSize={4}
             onClick={() =>
+              url &&
               openURL(url, "viewOperationInExplorer", {
                 currencyId: currencyName,
               })
@@ -354,6 +390,21 @@ const OperationD: React.ComponentType<Props> = (props: Props) => {
             label={t("operationDetails.viewOperation")}
           />
         </Box>
+      ) : null}
+      {editable ? (
+        <Alert type={isStuck ? "warning" : "primary"}>
+          <Trans
+            i18nKey={isStuck ? "operation.edit.stuckDescription" : "operation.edit.description"}
+          />
+          <div>
+            <Link
+              style={{ textDecoration: "underline", fontSize: "13px" }}
+              onClick={handleOpenEditModal}
+            >
+              <Trans i18nKey="operation.edit.title" />
+            </Link>
+          </div>
+        </Alert>
       ) : null}
       {!isNftOperation ? (
         <OpDetailsSection>
@@ -437,9 +488,7 @@ const OperationD: React.ComponentType<Props> = (props: Props) => {
                 onClick={() => openURL(urlWhatIsThis)}
               />
             </Box>
-          ) : (
-            undefined
-          )}
+          ) : undefined}
           <Text ff="Inter|SemiBold" textAlign="center" fontSize={4} color="palette.text.shade60">
             <Trans i18nKey={`operation.type.${operation.type}`} />
           </Text>
@@ -578,9 +627,7 @@ const OperationD: React.ComponentType<Props> = (props: Props) => {
       {isNftOperation ? <NFTOperationDetails operation={operation} /> : null}
       <OpDetailsSection>
         <OpDetailsTitle>{t("operationDetails.date")}</OpDetailsTitle>
-        <OpDetailsData>
-          <FormattedDate date={date} />
-        </OpDetailsData>
+        <OpDetailsData>{dateFormatted}</OpDetailsData>
       </OpDetailsSection>
       <B />
       <OpDetailsSection>
@@ -625,49 +672,52 @@ const OperationD: React.ComponentType<Props> = (props: Props) => {
         </OpDetailsSection>
       ) : null}
       {OpDetailsExtra && (
-        <OpDetailsExtra
-          operation={operation}
-          extra={extra}
-          type={type}
-          account={account as Account}
-        />
+        <OpDetailsExtra operation={operation} type={type} account={account as Account} />
       )}
       <B />
     </Box>
   );
 };
 const OpDetails = (
-  props: Omit<Props, "operation" | "account"> & {
+  props: RestProps & {
     operation: Operation | null | undefined;
-    account: AccountLike | undefined | null;
+    account: AccountLike | null | undefined;
+    parentAccount: Account | undefined;
   },
 ) => {
-  const { operation, account } = props;
-  if (!operation || !account) return null;
-  return <OperationD {...(props as Props)} />;
+  const { operation, account, parentAccount, ...rest } = props;
+  if (!operation || !account || !operation) return null;
+  return (
+    <OperationD account={account} parentAccount={parentAccount} operation={operation} {...rest} />
+  );
 };
-export const OperationDetails = withTranslation()(connect(mapStateToProps)(OpDetails));
+export const OperationDetails = connect(mapStateToProps)(OpDetails);
+
 type OperationDetailsExtraProps = {
-  extra: {
-    [key: string]: string;
-  };
-  type: string;
-  account: AccountLike | undefined | null;
+  operation: Operation;
+  account: Account;
+  type: OperationType;
 };
-const OperationDetailsExtra = ({ extra }: OperationDetailsExtraProps) => {
-  const jsx = Object.entries(extra).map(([key, value]) => {
-    if (typeof value === "object" || typeof value === "function") return null;
-    return (
-      <OpDetailsSection key={key}>
-        <OpDetailsTitle>
-          <Trans i18nKey={`operationDetails.extra.${key}`} defaults={key} />
-        </OpDetailsTitle>
-        <OpDetailsData>
-          <Ellipsis>{value}</Ellipsis>
-        </OpDetailsData>
-      </OpDetailsSection>
-    );
-  });
+const OperationDetailsExtra = ({ operation }: OperationDetailsExtraProps) => {
+  let jsx = null;
+
+  // Safety type checks
+  if (operation.extra && typeof operation.extra === "object" && !Array.isArray(operation.extra)) {
+    jsx = Object.entries(operation.extra as Object).map(([key, value]) => {
+      if (typeof value === "object" || typeof value === "function") return null;
+      return (
+        <OpDetailsSection key={key}>
+          <OpDetailsTitle>
+            <Trans i18nKey={`operationDetails.extra.${key}`} defaults={key} />
+          </OpDetailsTitle>
+          <OpDetailsData>
+            <Ellipsis>{value}</Ellipsis>
+          </OpDetailsData>
+        </OpDetailsSection>
+      );
+    });
+  }
+
   return <>{jsx}</>;
 };
 const More = styled(Text).attrs<TextProps>(p => ({

@@ -1,14 +1,9 @@
 import HttpTransport from "./HttpTransport";
 import WebSocketTransport from "./WebSocketTransport";
 import Transport from "@ledgerhq/hw-transport";
-import type {
-  Observer,
-  DescriptorEvent,
-  Subscription,
-} from "@ledgerhq/hw-transport";
+import type { Observer, DescriptorEvent, Subscription } from "@ledgerhq/hw-transport";
 
-const getTransport = (url) =>
-  !url.startsWith("ws") ? HttpTransport : WebSocketTransport;
+const getTransport = url => (!url.startsWith("ws") ? HttpTransport : WebSocketTransport);
 
 type InS = string | string[];
 type InP = Promise<InS> | InS;
@@ -24,29 +19,27 @@ export default (urls: In): typeof Transport => {
     static isSupported = HttpTransport.isSupported;
     static list = (): Promise<string[]> =>
       inferURLs(urls)
-        .then((urls) =>
+        .then(urls =>
           Promise.all(
-            urls.map((url) =>
+            urls.map(url =>
               getTransport(url)
                 .check(url)
                 .then(() => [url])
-                .catch(() => [])
-            )
-          )
+                .catch(() => []),
+            ),
+          ),
         )
-        .then((arrs) => arrs.reduce<string[]>((acc, a) => acc.concat(a), []));
-    static listen = (
-      observer: Observer<DescriptorEvent<unknown>>
-    ): Subscription => {
+        .then(arrs => arrs.reduce<string[]>((acc, a) => acc.concat(a), []));
+    static listen = (observer: Observer<DescriptorEvent<unknown>>): Subscription => {
       let unsubscribed = false;
       const seen = {};
 
       function checkLoop() {
         if (unsubscribed) return;
         inferURLs(urls)
-          .then((urls) =>
+          .then(urls =>
             Promise.all(
-              urls.map(async (url) => {
+              urls.map(async url => {
                 if (unsubscribed) return;
 
                 try {
@@ -70,10 +63,10 @@ export default (urls: In): typeof Transport => {
                     });
                   }
                 }
-              })
-            )
+              }),
+            ),
           )
-          .then(() => new Promise((success) => setTimeout(success, 5000)))
+          .then(() => new Promise(success => setTimeout(success, 5000)))
           .then(checkLoop);
       }
 
@@ -84,7 +77,7 @@ export default (urls: In): typeof Transport => {
         },
       };
     };
-    static open = (url) => getTransport(url).open(url);
+    static open = url => getTransport(url).open(url);
   }
 
   return StaticTransport;

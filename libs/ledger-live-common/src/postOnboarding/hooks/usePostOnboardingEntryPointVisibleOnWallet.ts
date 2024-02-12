@@ -12,9 +12,7 @@ import { useAllPostOnboardingActionsCompleted } from "./useAllPostOnboardingActi
  */
 export function usePostOnboardingEntryPointVisibleOnWallet(): boolean {
   const deviceModelId = useSelector(postOnboardingDeviceModelIdSelector);
-  const dismissed = useSelector(
-    walletPostOnboardingEntryPointDismissedSelector
-  );
+  const dismissed = useSelector(walletPostOnboardingEntryPointDismissedSelector);
   const allCompleted = useAllPostOnboardingActionsCompleted();
 
   return !!deviceModelId && !(dismissed || allCompleted);

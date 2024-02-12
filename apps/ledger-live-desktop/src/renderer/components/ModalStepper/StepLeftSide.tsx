@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { Button, Icons, Flex, Text } from "@ledgerhq/react-ui";
+import { Button, IconsLegacy, Flex, Text } from "@ledgerhq/react-ui";
 
 const Container = styled(Flex).attrs(() => ({
   flexDirection: "column",
@@ -62,7 +62,7 @@ const StepLeftSide = ({
             data-test-id={dataTestId}
             disabled={continueDisabled}
             variant="main"
-            Icon={Icons.ArrowRightMedium}
+            Icon={IconsLegacy.ArrowRightMedium}
             onClick={onClickContinue}
           >
             {continueLabel}

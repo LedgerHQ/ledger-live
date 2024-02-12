@@ -15,35 +15,29 @@ import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import type { Transaction as PolkadotTransaction } from "@ledgerhq/live-common/families/polkadot/types";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
-import {
-  getAccountUnit,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { StackScreenProps } from "@react-navigation/stack";
-import { accountScreenSelector } from "../../../reducers/accounts";
-import { ScreenName } from "../../../const";
-import { TrackScreen } from "../../../analytics";
-import LText from "../../../components/LText";
-import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
-import Button from "../../../components/Button";
-import KeyboardView from "../../../components/KeyboardView";
-import CurrencyInput from "../../../components/CurrencyInput";
-import TranslatedError from "../../../components/TranslatedError";
+import { accountScreenSelector } from "~/reducers/accounts";
+import { ScreenName } from "~/const";
+import { TrackScreen } from "~/analytics";
+import LText from "~/components/LText";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import Button from "~/components/Button";
+import KeyboardView from "~/components/KeyboardView";
+import CurrencyInput from "~/components/CurrencyInput";
+import TranslatedError from "~/components/TranslatedError";
 import { getFirstStatusError, hasStatusError } from "../../helpers";
 import FlowErrorBottomModal from "../components/FlowErrorBottomModal";
 import SendRowsFee from "../SendRowsFee";
-import { BaseComposite } from "../../../components/RootNavigator/types/helpers";
+import { BaseComposite } from "~/components/RootNavigator/types/helpers";
 import { PolkadotRebondFlowParamList } from "./type";
 
 type NavigationProps = BaseComposite<
   StackScreenProps<PolkadotRebondFlowParamList, ScreenName.PolkadotRebondAmount>
 >;
 
-export default function PolkadotRebondAmount({
-  navigation,
-  route,
-}: NavigationProps) {
+export default function PolkadotRebondAmount({ navigation, route }: NavigationProps) {
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   invariant(account, "account is required");
@@ -60,8 +54,7 @@ export default function PolkadotRebondAmount({
       transaction,
     };
   });
-  const { setTransaction, status, bridgePending, bridgeError } =
-    bridgeTransaction;
+  const { setTransaction, status, bridgePending, bridgeError } = bridgeTransaction;
   const transaction = bridgeTransaction.transaction as PolkadotTransaction;
   const debouncedTransaction = useDebounce(transaction, 500);
   useEffect(() => {
@@ -83,7 +76,7 @@ export default function PolkadotRebondAmount({
     };
   }, [account, parentAccount, debouncedTransaction]);
   const onChange = useCallback(
-    amount => {
+    (amount: BigNumber) => {
       if (!amount.isNaN()) {
         setTransaction(
           bridge.updateTransaction(transaction, {
@@ -116,15 +109,18 @@ export default function PolkadotRebondAmount({
   const { useAllAmount } = transaction;
   const { amount } = status;
   const unit = getAccountUnit(account);
-  const error =
-    amount.eq(0) || bridgePending
-      ? null
-      : getFirstStatusError(status, "errors");
+  const error = amount.eq(0) || bridgePending ? null : getFirstStatusError(status, "errors");
   const warning = getFirstStatusError(status, "warnings");
   const hasErrors = hasStatusError(status);
   return (
     <>
-      <TrackScreen category="RebondFlow" name="Amount" />
+      <TrackScreen
+        category="RebondFlow"
+        name="Amount"
+        flow="stake"
+        action="rebond"
+        currency="dot"
+      />
       <SafeAreaView
         style={[
           styles.root,
@@ -182,11 +178,7 @@ export default function PolkadotRebondAmount({
                     </LText>
                     <LText semiBold>
                       {maxSpendable ? (
-                        <CurrencyUnitValue
-                          showCode
-                          unit={unit}
-                          value={maxSpendable}
-                        />
+                        <CurrencyUnitValue showCode unit={unit} value={maxSpendable} />
                       ) : (
                         "-"
                       )}
@@ -212,11 +204,7 @@ export default function PolkadotRebondAmount({
                     type="primary"
                     title={
                       <Trans
-                        i18nKey={
-                          !bridgePending
-                            ? "common.continue"
-                            : "send.amount.loadingNetwork"
-                        }
+                        i18nKey={!bridgePending ? "common.continue" : "send.amount.loadingNetwork"}
                       />
                     }
                     onPress={onContinue}

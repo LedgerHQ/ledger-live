@@ -6,14 +6,12 @@ import type { RecordStore } from "./RecordStore";
  * create a transport replayer with a record store.
  * @param recordStore
  */
-const createTransportReplayer = (
-  recordStore: RecordStore
-): new () => Transport => {
+const createTransportReplayer = (recordStore: RecordStore): new () => Transport => {
   console.warn("TO BE DEPRECATED: use openTransportReplayer instead");
   class TransportReplayer extends Transport {
     static isSupported = () => Promise.resolve(true);
     static list = () => Promise.resolve([null]);
-    static listen = (o) => {
+    static listen = o => {
       let unsubscribed;
       setTimeout(() => {
         if (unsubscribed) return;

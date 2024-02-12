@@ -1,7 +1,8 @@
 import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import { FeeNotLoaded } from "@ledgerhq/errors";
-import type { Transaction, CeloOperationMode, CeloAccount } from "./types";
+import type { OperationType, SignOperationFnSignature } from "@ledgerhq/types-live";
+import type { Transaction, CeloOperationMode, CeloAccount, CeloOperation } from "./types";
 import { encodeOperationId } from "../../operation";
 import { CeloApp } from "./hw-app-celo";
 import buildTransaction from "./js-buildTransaction";
@@ -20,27 +21,20 @@ const MODE_TO_TYPE: { [key in CeloOperationMode | "default"]: string } = {
   register: "REGISTER",
   default: "FEE",
 };
-import type {
-  Account,
-  Operation,
-  OperationType,
-  SignOperationEvent,
-} from "@ledgerhq/types-live";
 
 const buildOptimisticOperation = (
-  account: Account,
+  account: CeloAccount,
   transaction: Transaction,
-  fee: BigNumber
-): Operation => {
-  const type = (MODE_TO_TYPE[transaction.mode] ??
-    MODE_TO_TYPE.default) as OperationType;
+  fee: BigNumber,
+): CeloOperation => {
+  const type = (MODE_TO_TYPE[transaction.mode] ?? MODE_TO_TYPE.default) as OperationType;
 
   const value =
     type === "OUT" || type === "LOCK"
       ? new BigNumber(transaction.amount).plus(fee)
       : new BigNumber(transaction.amount);
 
-  const operation: Operation = {
+  const operation: CeloOperation = {
     id: encodeOperationId(account.id, "", type),
     hash: "",
     type,
@@ -52,14 +46,20 @@ const buildOptimisticOperation = (
     recipients: [transaction.recipient].filter(Boolean),
     accountId: account.id,
     date: new Date(),
-    extra: {},
+    extra: {
+      celoOperationValue: new BigNumber(transaction.amount),
+      ...(["ACTIVATE", "VOTE", "REVOKE"].includes(type)
+        ? {
+            celoSourceValidator: transaction.recipient,
+          }
+        : {}),
+    },
   };
 
   return operation;
 };
 
-const trimLeading0x = (input: string) =>
-  input.startsWith("0x") ? input.slice(2) : input;
+const trimLeading0x = (input: string) => (input.startsWith("0x") ? input.slice(2) : input);
 
 const parseSigningResponse = (
   response: {
@@ -67,7 +67,7 @@ const parseSigningResponse = (
     v: string;
     r: string;
   },
-  chainId: number
+  chainId: number,
 ): {
   s: Buffer;
   v: number;
@@ -90,18 +90,10 @@ const parseSigningResponse = (
 /**
  * Sign Transaction with Ledger hardware
  */
-const signOperation = ({
-  account,
-  deviceId,
-  transaction,
-}: {
-  account: Account;
-  deviceId: any;
-  transaction: Transaction;
-}): Observable<SignOperationEvent> =>
+const signOperation: SignOperationFnSignature<Transaction> = ({ account, deviceId, transaction }) =>
   withDevice(deviceId)(
-    (transport) =>
-      new Observable((o) => {
+    transport =>
+      new Observable(o => {
         let cancelled;
 
         async function main() {
@@ -110,10 +102,7 @@ const signOperation = ({
           }
 
           const celo = new CeloApp(transport);
-          const unsignedTransaction = await buildTransaction(
-            account as CeloAccount,
-            transaction
-          );
+          const unsignedTransaction = await buildTransaction(account as CeloAccount, transaction);
           const { chainId, to } = unsignedTransaction;
           const rlpEncodedTransaction = rlpEncodedTx(unsignedTransaction);
 
@@ -126,7 +115,7 @@ const signOperation = ({
 
           const response = await celo.signTransaction(
             account.freshAddressPath,
-            trimLeading0x(rlpEncodedTransaction.rlpEncode)
+            trimLeading0x(rlpEncodedTransaction.rlpEncode),
           );
 
           if (cancelled) return;
@@ -135,15 +124,12 @@ const signOperation = ({
 
           o.next({ type: "device-signature-granted" });
 
-          const encodedTransaction = await encodeTransaction(
-            rlpEncodedTransaction,
-            signature
-          );
+          const encodedTransaction = await encodeTransaction(rlpEncodedTransaction, signature);
 
           const operation = buildOptimisticOperation(
-            account,
+            account as CeloAccount,
             transaction,
-            transaction.fees ?? new BigNumber(0)
+            transaction.fees ?? new BigNumber(0),
           );
 
           o.next({
@@ -151,20 +137,19 @@ const signOperation = ({
             signedOperation: {
               operation,
               signature: encodedTransaction.raw,
-              expirationDate: null,
             },
           });
         }
 
         main().then(
           () => o.complete(),
-          (e) => o.error(e)
+          e => o.error(e),
         );
 
         return () => {
           cancelled = true;
         };
-      })
+      }),
   );
 
 export default signOperation;

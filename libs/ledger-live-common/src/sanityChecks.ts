@@ -8,7 +8,7 @@ export function checkLibs(
     React: typeof React;
     log: typeof log;
     Transport: typeof Transport;
-  }>
+  }>,
 ): void {
   check(libs.NotEnoughBalance, NotEnoughBalance, "@ledgerhq/errors");
   check(libs.log, log, "@ledgerhq/logs");

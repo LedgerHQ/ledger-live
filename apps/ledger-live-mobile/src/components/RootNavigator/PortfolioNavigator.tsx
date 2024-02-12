@@ -1,9 +1,9 @@
 import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "styled-components/native";
-import { NavigatorName } from "../../const";
+import { NavigatorName } from "~/const";
 import AccountsNavigator from "./AccountsNavigator";
-import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
+import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import WalletTabNavigator from "./WalletTabNavigator";
 import { PortfolioNavigatorStackParamList } from "./types/PortfolioNavigator";
 
@@ -11,10 +11,7 @@ const Stack = createStackNavigator<PortfolioNavigatorStackParamList>();
 
 export default function PortfolioNavigator() {
   const { colors } = useTheme();
-  const stackNavigationConfig = useMemo(
-    () => getStackNavigatorConfig(colors, true),
-    [colors],
-  );
+  const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
 
   return (
     <Stack.Navigator

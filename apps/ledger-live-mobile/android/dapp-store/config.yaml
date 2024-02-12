@@ -23,7 +23,7 @@ release:
   catalog:
     en-US:
       name: "Ledger Live: Crypto & NFT App"
-      short_description: Ledger Live Mobile 3.22.0
+      short_description: Ledger Live Mobile 3.39.0
       long_description: >-
         From the company that produced the world's most secure crypto hardware
         device comes the world's most accessible and complete Web3 wallet:
@@ -115,11 +115,14 @@ release:
         **Rewards are not guaranteed. Ledger provides no advice or
         recommendations on use of staking services.
       new_in_version: >-
-        Features
-        Those who want to buy crypto worth 50000€ and more can now use the OTC Desk and enjoy competitive rates, high liquidity, and personalized service.
-
         Fixes
-        This release includes small security improvements, UI tweaks, and minor bug fixes.
+        You can now clear nominations for your bonded DOT.
+
+        A bug that caused the app to crash when accessing TRC20 accounts has been resolved.
+
+        We've fixed the bug that prevented the hiding of token accounts.
+
+        Adding a Solana (SOL) account or sending a transaction would sometimes result in an error. We've patched this up.
       saga_features: ""
   media:
     - purpose: screenshot

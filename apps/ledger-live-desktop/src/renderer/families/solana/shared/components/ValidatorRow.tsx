@@ -1,6 +1,6 @@
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
-import { ValidatorAppValidator } from "@ledgerhq/live-common/families/solana/validator-app";
+import { ValidatorsAppValidator } from "@ledgerhq/live-common/families/solana/validator-app/index";
 import { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 import { BigNumber } from "bignumber.js";
 import React, { useCallback } from "react";
@@ -19,9 +19,9 @@ import { openURL } from "~/renderer/linking";
 
 type Props = {
   currency: CryptoCurrency;
-  validator: ValidatorAppValidator;
+  validator: ValidatorsAppValidator;
   active?: boolean;
-  onClick?: (v: ValidatorAppValidator) => void;
+  onClick?: (v: { address: string }) => void;
   disableHover?: boolean;
   unit: Unit;
 };
@@ -95,19 +95,23 @@ function SolanaValidatorRow({ validator, active, onClick, unit, currency, disabl
     ></StyledValidatorRow>
   );
 }
-const StyledValidatorRow: ThemedComponent<ValidatorRowProps & {
-  disableHover: boolean;
-}> = styled(ValidatorRow)`
+const StyledValidatorRow = styled(ValidatorRow)<
+  ValidatorRowProps & {
+    disableHover: boolean;
+  }
+>`
   border-color: transparent;
   margin-bottom: 0;
   ${p => (p.disableHover ? "&:hover { border-color: transparent; }" : "")}
 `;
-const ChosenMark: ThemedComponent<{
-  active: boolean;
-}> = styled(Check).attrs(p => ({
+const ChosenMark = styled(Check).attrs<{
+  active?: boolean;
+}>(p => ({
   color: p.active ? p.theme.colors.palette.primary.main : "transparent",
   size: 14,
-}))``;
+}))<{
+  active?: boolean;
+}>``;
 const TotalStakeTitle = styled(Text)`
   font-size: 11px;
   font-weight: 500;

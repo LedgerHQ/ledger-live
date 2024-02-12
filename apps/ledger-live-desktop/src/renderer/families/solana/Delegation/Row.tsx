@@ -21,19 +21,24 @@ import ChevronRight from "~/renderer/icons/ChevronRight";
 import ExclamationCircleThin from "~/renderer/icons/ExclamationCircleThin";
 import Loader from "~/renderer/icons/Loader";
 import { TableLine } from "./Header";
+import { DelegateModalName } from "../modals";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   padding: 16px 20px;
 `;
-const Column: ThemedComponent<{
+const Column = styled(TableLine).attrs<{
   clickable?: boolean;
-}> = styled(TableLine).attrs(p => ({
+  strong?: boolean;
+}>(p => ({
   ff: "Inter|SemiBold",
   color: p.strong ? "palette.text.shade100" : "palette.text.shade80",
   fontSize: 3,
-}))`
+}))<{
+  clickable?: boolean;
+  strong?: boolean;
+}>`
   cursor: ${p => (p.clickable ? "pointer" : "cursor")};
   ${p =>
     p.clickable
@@ -57,9 +62,9 @@ const ManageDropDownItem = ({
 }: {
   item: {
     key: string;
-    label: string;
-    disabled: boolean;
-    tooltip: React.ReactNode;
+    label: React.ReactNode;
+    disabled?: boolean;
+    tooltip?: React.ReactNode;
   };
   isActive: boolean;
 }) => {
@@ -83,18 +88,20 @@ const ManageDropDownItem = ({
 type Props = {
   account: Account;
   stakeWithMeta: SolanaStakeWithMeta;
-  onManageAction: (stakeWithMeta: SolanaStakeWithMeta, action: string) => void;
-  onExternalLink: (address: string) => void;
+  onManageAction: (stakeWithMeta: SolanaStakeWithMeta, action: DelegateModalName) => void;
+  onExternalLink: (stakeWithMeta: SolanaStakeWithMeta) => void;
 };
 export function Row({ account, stakeWithMeta, onManageAction, onExternalLink }: Props) {
+  const { stake, meta } = stakeWithMeta;
+  const stakeActions = solanaStakeActions(stake).map(toStakeDropDownItem);
+
   const onSelect = useCallback(
-    action => {
+    (action: (typeof stakeActions)[number]) => {
       onManageAction(stakeWithMeta, action.key);
     },
     [onManageAction, stakeWithMeta],
   );
-  const { stake, meta } = stakeWithMeta;
-  const stakeActions = solanaStakeActions(stake).map(toStakeDropDownItem);
+
   const validatorName = meta.validator?.name ?? stake.delegation?.voteAccAddr ?? "-";
   const onExternalLinkClick = () => onExternalLink(stakeWithMeta);
   const formatAmount = (amount: number) => {
@@ -147,7 +154,7 @@ export function Row({ account, stakeWithMeta, onManageAction, onExternalLink }: 
         <DropDown items={stakeActions} renderItem={ManageDropDownItem} onChange={onSelect}>
           {() => {
             return (
-              <Box flex horizontal alignItems="center">
+              <Box flex="1" horizontal alignItems="center">
                 <Trans i18nKey="common.manage" />
                 <div
                   style={{
@@ -164,7 +171,11 @@ export function Row({ account, stakeWithMeta, onManageAction, onExternalLink }: 
     </Wrapper>
   );
 }
-function toStakeDropDownItem(stakeAction: string) {
+
+function toStakeDropDownItem(stakeAction: string): {
+  key: DelegateModalName;
+  label: React.ReactNode;
+} {
   switch (stakeAction) {
     case "activate":
       return {

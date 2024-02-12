@@ -9,14 +9,7 @@ export default function TouchID({ size = 16, color }: Props) {
   return (
     <Svg viewBox="0 0 80 80" width={size} height={size}>
       <G fill="none" fill-rule="evenodd">
-        <Circle
-          cx="40"
-          cy="40"
-          r="40"
-          fill={color}
-          fillOpacity=".08"
-          fillRule="nonzero"
-        />
+        <Circle cx="40" cy="40" r="40" fill={color} fillOpacity=".08" fillRule="nonzero" />
         <G stroke={color} strokeLinecap="round" strokeWidth="1.5">
           <Path d="M18.66 29.09a23.863 23.863 0 0 0-2.153 15.647m34.038-26.259a23.86 23.86 0 0 0-15.282-1.97 23.877 23.877 0 0 0-14.618 9.359m42.847 9.397a23.883 23.883 0 0 0-9.723-14.879M16.52 44.735c.07.344.146.685.23 1.023m17.063 17.398c5.369-6.11 7.925-14.568 6.193-23.157M35.912 54.03a24.114 24.114 0 0 1-5.197 8.065" />
           <Path d="M37.168 63.802c5.203-6.658 7.576-15.462 5.775-24.395l.01-.003a3.012 3.012 0 1 0-5.905 1.191l.021-.004a23.917 23.917 0 0 1-.05 9.755m-2.659-7.813c.94 6.932-1.65 13.627-6.477 18.142" />

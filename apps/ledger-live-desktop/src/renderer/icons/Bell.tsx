@@ -1,4 +1,4 @@
-import { Icons } from "@ledgerhq/react-ui";
+import { IconsLegacy } from "@ledgerhq/react-ui";
 import React from "react";
 import styled from "styled-components";
 const Container = styled.div`
@@ -26,7 +26,7 @@ const NotifBadge = styled.div`
 const BellIcon = ({ size, count }: { size: number; count?: number }) => {
   return (
     <Container>
-      <Icons.NotificationsMedium size={size} />
+      <IconsLegacy.NotificationsMedium size={size} />
       {count && count > 0 ? <NotifBadge>{count}</NotifBadge> : null}
     </Container>
   );

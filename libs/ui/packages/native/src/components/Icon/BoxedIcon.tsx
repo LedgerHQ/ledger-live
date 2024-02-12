@@ -4,7 +4,7 @@ import { PixelRatio } from "react-native";
 import { Rect, ClipPath, Svg, Defs } from "react-native-svg";
 import Flex from "../Layout/Flex";
 import Box from "../Layout/Box";
-import { IconOrElementType, IconType } from "./type";
+import { IconOrElementType, NewIconOrElementType, NewIconProps, IconType } from "./type";
 
 export const DEFAULT_BOX_SIZE = 40;
 export const DEFAULT_ICON_SIZE = 16;
@@ -80,13 +80,13 @@ export type IconBoxProps = {
 
 export type BoxedIconProps = IconBoxProps & {
   /**
-   * Component that takes `{size?: number; color?: string}` as props. Will be rendered at the top right with the size provided in `iconSize` or a default size.
+   * Component that takes `{size?: number | "XS/S/M/L/XL"; color?: string}` as props. Will be rendered at the top right with the size provided in `iconSize` or a default size.
    */
-  Icon: IconOrElementType;
+  Icon: IconOrElementType | NewIconOrElementType;
   /**
    * Icon size, will be applied to the component provided in the `Icon` prop
    */
-  iconSize?: number;
+  iconSize?: number | NewIconProps["size"];
   /**
    * Icon color, will be applied to the component provided in the `Icon` prop
    */
@@ -200,6 +200,7 @@ const BoxedIcon = ({
       {React.isValidElement(Icon) ? (
         Icon
       ) : (
+        /* @ts-expect-error TS 5 can't seem to be able to prove this is a react comopnent here */
         <Icon size={iconSize || DEFAULT_ICON_SIZE} color={iconColor} />
       )}
     </IconBox>

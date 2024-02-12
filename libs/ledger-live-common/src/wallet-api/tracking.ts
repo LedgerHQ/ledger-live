@@ -8,7 +8,7 @@ import type { AppManifest } from "./types";
 type TrackWalletAPI = (
   event: string,
   properties: Record<string, any> | null,
-  mandatory: boolean | null
+  mandatory: boolean | null,
 ) => void;
 
 /**
@@ -168,6 +168,18 @@ export default function trackingWrapper(trackCall: TrackWalletAPI) {
     deviceTransportFail: (manifest: AppManifest) => {
       track("WalletAPI device transport fail", getEventData(manifest));
     },
+    deviceSelectRequested: (manifest: AppManifest) => {
+      track("WalletAPI device select requested", getEventData(manifest));
+    },
+    deviceSelectSuccess: (manifest: AppManifest) => {
+      track("WalletAPI device select success", getEventData(manifest));
+    },
+    deviceSelectFail: (manifest: AppManifest) => {
+      track("WalletAPI device select fail", getEventData(manifest));
+    },
+    deviceOpenRequested: (manifest: AppManifest) => {
+      track("WalletAPI device open requested", getEventData(manifest));
+    },
     deviceExchangeRequested: (manifest: AppManifest) => {
       track("WalletAPI device exchange requested", getEventData(manifest));
     },
@@ -187,22 +199,13 @@ export default function trackingWrapper(trackCall: TrackWalletAPI) {
       track("WalletAPI device close fail", getEventData(manifest));
     },
     bitcoinFamillyAccountXpubRequested: (manifest: AppManifest) => {
-      track(
-        "WalletAPI bitcoin familly account xpub requested",
-        getEventData(manifest)
-      );
+      track("WalletAPI bitcoin familly account xpub requested", getEventData(manifest));
     },
     bitcoinFamillyAccountXpubFail: (manifest: AppManifest) => {
-      track(
-        "WalletAPI bitcoin familly account xpub fail",
-        getEventData(manifest)
-      );
+      track("WalletAPI bitcoin familly account xpub fail", getEventData(manifest));
     },
     bitcoinFamillyAccountXpubSuccess: (manifest: AppManifest) => {
-      track(
-        "WalletAPI bitcoin familly account xpub success",
-        getEventData(manifest)
-      );
+      track("WalletAPI bitcoin familly account xpub success", getEventData(manifest));
     },
   } as const;
 }

@@ -1,28 +1,18 @@
-import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { Flex, SearchInput } from "@ledgerhq/native-ui";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { SearchBarValues } from "../types";
+import { Search } from "../../types";
 
 export function SearchBar({
-  input,
-  inputRef,
-  onChange,
-  onFocus,
-}: Omit<
-  SearchBarValues<LiveAppManifest>,
-  "result" | "isSearching" | "isActive" | "onCancel"
->) {
+  search: { input, inputRef, onChange, onFocus },
+}: {
+  search: Pick<Search, "input" | "inputRef" | "onChange" | "onFocus">;
+}) {
   const { t } = useTranslation();
 
   return (
     <>
-      <Flex
-        backgroundColor="background.main"
-        marginBottom={16}
-        flexDirection={"row"}
-        zIndex={10}
-      >
+      <Flex backgroundColor="background.main" marginBottom={16} flexDirection={"row"} zIndex={10}>
         <SearchInput
           containerStyle={{
             flexGrow: 1,
@@ -32,7 +22,7 @@ export function SearchBar({
           ref={inputRef}
           value={input}
           onChange={onChange}
-          placeholder={t("common.search")}
+          placeholder={t("common.searchProvider")}
           onFocus={onFocus}
         />
       </Flex>

@@ -32,26 +32,10 @@ const NanoToNano = (
       d="M71.5 41.5a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5Zm-3.25 2.25a3.25 3.25 0 1 1 6.5 0 3.25 3.25 0 0 1-6.5 0Z"
       clipRule="evenodd"
     />
-    <Path
-      fill="#BBB0FF"
-      d="M114 75a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"
-      opacity={0.2}
-    />
-    <Path
-      fill="#BBB0FF"
-      d="M128 75a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"
-      opacity={0.4}
-    />
-    <Path
-      fill="#BBB0FF"
-      d="M142 75a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"
-      opacity={0.6}
-    />
-    <Path
-      fill="#BBB0FF"
-      d="M156 75a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"
-      opacity={0.8}
-    />
+    <Path fill="#BBB0FF" d="M114 75a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" opacity={0.2} />
+    <Path fill="#BBB0FF" d="M128 75a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" opacity={0.4} />
+    <Path fill="#BBB0FF" d="M142 75a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" opacity={0.6} />
+    <Path fill="#BBB0FF" d="M156 75a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" opacity={0.8} />
     <Path fill="#BBB0FF" d="M170 75a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
     <Path
       fill="#fff"

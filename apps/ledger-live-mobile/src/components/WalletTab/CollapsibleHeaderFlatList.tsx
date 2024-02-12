@@ -1,14 +1,7 @@
-import { Flex } from "@ledgerhq/native-ui";
 import { useIsFocused, useRoute } from "@react-navigation/native";
 import React, { useContext, useCallback } from "react";
-import {
-  Dimensions,
-  Animated,
-  StatusBar,
-  FlatList,
-  FlatListProps,
-} from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Dimensions, Animated, StatusBar, FlatList, FlatListProps } from "react-native";
+import SafeAreaView from "../SafeAreaView";
 import { WalletTabNavigatorScrollContext } from "./WalletTabNavigatorScrollManager";
 import AnimatedProps = Animated.AnimatedProps;
 
@@ -17,8 +10,9 @@ function CollapsibleHeaderFlatList<T>({
   contentContainerStyle,
   ...otherProps
 }: AnimatedProps<FlatListProps<T>>) {
-  const { scrollY, onGetRef, syncScrollOffset, tabBarHeight, headerHeight } =
-    useContext(WalletTabNavigatorScrollContext);
+  const { scrollY, onGetRef, syncScrollOffset, tabBarHeight, headerHeight } = useContext(
+    WalletTabNavigatorScrollContext,
+  );
   const windowHeight = Dimensions.get("window").height;
   const route = useRoute();
   const isFocused = useIsFocused();
@@ -27,38 +21,26 @@ function CollapsibleHeaderFlatList<T>({
     syncScrollOffset(route.name);
   }, [route.name, syncScrollOffset]);
 
-  const insets = useSafeAreaInsets();
-
   return (
-    <Flex
-      /**
-       * NB: not using SafeAreaView because it flickers during navigation
-       * https://github.com/th3rdwave/react-native-safe-area-context/issues/219
-       */
-      flex={1}
-      mt={insets.top}
-    >
+    <SafeAreaView isFlex>
       <Animated.FlatList<T>
         scrollToOverflowEnabled={true}
         ref={(ref: FlatList) => onGetRef({ key: route.name, value: ref })}
         scrollEventThrottle={16}
         onScroll={
           isFocused
-            ? Animated.event(
-                [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-                {
-                  useNativeDriver: true,
-                },
-              )
+            ? Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
+                useNativeDriver: true,
+              })
             : undefined
         }
         onScrollEndDrag={onMomentumScrollEnd}
         onMomentumScrollEnd={onMomentumScrollEnd}
         contentContainerStyle={[
           {
-            paddingTop: headerHeight + tabBarHeight,
+            paddingTop: headerHeight,
             minHeight: windowHeight + (StatusBar.currentHeight || 0),
-            paddingBottom: tabBarHeight + (StatusBar.currentHeight || 0 / 2),
+            paddingBottom: tabBarHeight + (StatusBar.currentHeight || 0),
           },
           contentContainerStyle,
         ]}
@@ -68,7 +50,7 @@ function CollapsibleHeaderFlatList<T>({
       >
         {children}
       </Animated.FlatList>
-    </Flex>
+    </SafeAreaView>
   );
 }
 

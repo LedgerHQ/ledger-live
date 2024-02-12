@@ -30,12 +30,12 @@ export const GlobalStyle = createGlobalStyle<GlobalStyleProps>`
   }
 
   ::selection {
-    background: ${(p) => rgba(p.theme.colors.primary.c100, 0.1)};
+    background: ${p => rgba(p.theme.colors.primary.c100, 0.1)};
   }
 
   --track-color: rgba(0,0,0,0);
 
-  ${(props) => (typeof props.fontsPath === "string" ? fontStyles : "")}
+  ${props => (typeof props.fontsPath === "string" ? fontStyles : "")}
 
   ${tippyStyles}
 

@@ -1,18 +1,12 @@
 import React, { useState } from "react";
-import FastImage, {
-  OnLoadEvent,
-  FastImageProps,
-  ResizeMode,
-} from "react-native-fast-image";
+import FastImage, { OnLoadEvent, FastImageProps, ResizeMode } from "react-native-fast-image";
 import { View, StyleSheet, Animated, StyleProp, ViewStyle } from "react-native";
-import ImageNotFoundIcon from "../../icons/ImageNotFound";
+import ImageNotFoundIcon from "~/icons/ImageNotFound";
 import { Theme, withTheme } from "../../colors";
 import Skeleton from "../Skeleton";
 
 const ImageComponent: React.FC<FastImageProps> = props =>
-  typeof props?.source === "object" && props?.source?.uri ? (
-    <FastImage {...props} />
-  ) : null;
+  typeof props?.source === "object" && props?.source?.uri ? <FastImage {...props} /> : null;
 
 const NotFound: React.FC<{
   colors: { [key: string]: string };

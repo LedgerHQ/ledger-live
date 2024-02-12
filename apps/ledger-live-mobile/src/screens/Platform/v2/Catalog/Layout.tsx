@@ -1,6 +1,6 @@
 import { Flex, ScrollContainer, Text } from "@ledgerhq/native-ui";
 import React from "react";
-import { Platform, SafeAreaView, StatusBar, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import Animated, {
   Extrapolate,
   interpolate,
@@ -55,7 +55,7 @@ export function Layout({
   });
 
   return (
-    <SafeAreaView style={styles.container}>
+    <>
       <Flex
         style={[
           styles.marginHorizontal,
@@ -67,12 +67,7 @@ export function Layout({
       >
         {topHeaderContent}
         <Animated.View style={[opacityStyle]}>
-          <Text
-            fontSize={20}
-            marginLeft={4}
-            fontWeight="semiBold"
-            variant="large"
-          >
+          <Text fontSize={20} marginLeft={4} fontWeight="semiBold" variant="large">
             {title}
           </Text>
         </Animated.View>
@@ -84,9 +79,7 @@ export function Layout({
         showsVerticalScrollIndicator={false}
         stickyHeaderIndices={listStickyElement}
       >
-        {titleHeaderContent && (
-          <Flex style={[styles.marginHorizontal]}>{titleHeaderContent}</Flex>
-        )}
+        {titleHeaderContent && <Flex style={[styles.marginHorizontal]}>{titleHeaderContent}</Flex>}
         {middleHeaderContent && (
           <Flex style={[styles.marginHorizontal]}>{middleHeaderContent}</Flex>
         )}
@@ -102,19 +95,11 @@ export function Layout({
         )}
         <Flex style={[styles.marginHorizontal]}>{bodyContent}</Flex>
       </ScrollContainer>
-    </SafeAreaView>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
-  },
-  topHeader: {
-    flexDirection: "row",
-    alignContent: "center",
-    height: 55,
-  },
   marginHorizontal: {
     marginHorizontal: 16,
   },

@@ -15,7 +15,7 @@ import { textVariantStyle } from "./styles";
 const uppercase = system({
   uppercase: {
     property: "textTransform",
-    transform: (value) => (value ? "uppercase" : "none"),
+    transform: value => (value ? "uppercase" : "none"),
   },
 });
 
@@ -52,7 +52,7 @@ const Text = baseStyled.span.attrs<TextProps, TextProps>(
   }),
 )`
   font-weight: 500;
-  white-space: ${(props) => props.whiteSpace ?? "normal"};
+  white-space: ${props => props.whiteSpace ?? "normal"};
   ${(p: TextProps) => textVariantStyle[p.variant || "body"]}
   ${compose(
     uppercase,
@@ -66,7 +66,7 @@ const Text = baseStyled.span.attrs<TextProps, TextProps>(
       textOverflow: true,
     }),
   )}
-  ${(p) => (p.textTransform ? `text-transform: ${p.textTransform};` : "")}
+  ${p => (p.textTransform ? `text-transform: ${p.textTransform};` : "")}
 `;
 
 export default Text;

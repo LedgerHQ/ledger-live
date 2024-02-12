@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import invariant from "invariant";
-import { withTranslation, TFunction } from "react-i18next";
+import { withTranslation } from "react-i18next";
+import { TFunction } from "i18next";
 import { ModalBody } from "~/renderer/components/Modal";
 import { useDeviceBlocked } from "~/renderer/components/DeviceAction/DeviceBlocker";
 import Breadcrumb from "./Breadcrumb";
@@ -12,8 +13,8 @@ export type Step<T, StepProps> = {
   id: T;
   label?: React.ReactNode;
   excludeFromBreadcrumb?: boolean;
-  component: React.ComponentType<StepProps>;
-  footer?: React.ComponentType<StepProps>;
+  component: React.FC<StepProps> | React.ComponentType<StepProps>;
+  footer?: React.FC<StepProps> | React.ComponentType<StepProps>;
   onBack?: ((a: StepProps) => void) | null;
   backButtonComponent?: React.ReactNode;
   noScroll?: boolean;
@@ -53,7 +54,7 @@ const Stepper = <T, StepProps>({
 }: Props<T, StepProps>) => {
   const deviceBlocked = useDeviceBlocked();
   const transitionTo = useCallback(
-    stepId => {
+    (stepId: number) => {
       const stepIndex = steps.findIndex(s => s.id === stepId);
       const step = steps[stepIndex];
       invariant(step, "Stepper: step %s doesn't exists", stepId);

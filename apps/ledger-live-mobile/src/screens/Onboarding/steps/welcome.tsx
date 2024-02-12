@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components/native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -8,19 +8,16 @@ import { Linking, StyleSheet } from "react-native";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { useDispatch } from "react-redux";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { NavigatorName, ScreenName } from "../../../const";
-import StyledStatusBar from "../../../components/StyledStatusBar";
-import { urls } from "../../../config/urls";
-import { TermsContext } from "../../../logic/terms";
-import { setAnalytics } from "../../../actions/settings";
-import useIsAppInBackground from "../../../components/useIsAppInBackground";
-import ForceTheme from "../../../components/theme/ForceTheme";
-import Button from "../../../components/wrappedUi/Button";
-import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
+import { NavigatorName, ScreenName } from "~/const";
+import StyledStatusBar from "~/components/StyledStatusBar";
+import { urls } from "~/utils/urls";
+import { useAcceptGeneralTerms } from "~/logic/terms";
+import { setAnalytics } from "~/actions/settings";
+import useIsAppInBackground from "~/components/useIsAppInBackground";
+import ForceTheme from "~/components/theme/ForceTheme";
+import Button from "~/components/wrappedUi/Button";
+import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 
 import videoSources from "../../../../assets/videos";
 import LanguageSelect from "../../SyncOnboarding/LanguageSelect";
@@ -38,44 +35,49 @@ const SafeFlex = styled(SafeAreaView)`
 `;
 
 type NavigationProps = BaseComposite<
-  StackNavigatorProps<
-    OnboardingNavigatorParamList,
-    ScreenName.OnboardingWelcome
-  >
+  StackNavigatorProps<OnboardingNavigatorParamList, ScreenName.OnboardingWelcome>
 >;
 
 function OnboardingStepWelcome({ navigation }: NavigationProps) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  const { accept: acceptTerms } = useContext(TermsContext);
+  const acceptTerms = useAcceptGeneralTerms();
+  const llmAnalyticsOptInPromptFeature = useFeature("llmAnalyticsOptInPrompt");
 
   const {
     i18n: { language: locale },
   } = useTranslation();
 
   const onTermsLink = useCallback(
-    () =>
-      Linking.openURL(
-        (urls.terms as Record<string, string>)[locale] || urls.terms.en,
-      ),
+    () => Linking.openURL((urls.terms as Record<string, string>)[locale] || urls.terms.en),
     [locale],
   );
 
   const onPrivacyLink = useCallback(
     () =>
       Linking.openURL(
-        (urls.privacyPolicy as Record<string, string>)[locale] ||
-          urls.privacyPolicy.en,
+        (urls.privacyPolicy as Record<string, string>)[locale] || urls.privacyPolicy.en,
       ),
     [locale],
   );
 
   const next = useCallback(() => {
     acceptTerms();
-    dispatch(setAnalytics(true));
 
-    navigation.navigate(ScreenName.OnboardingDoYouHaveALedgerDevice);
-  }, [acceptTerms, dispatch, navigation]);
+    if (llmAnalyticsOptInPromptFeature?.enabled) {
+      navigation.navigate(NavigatorName.AnalyticsOptInPrompt, {
+        screen: ScreenName.AnalyticsOptInPromptMain,
+      });
+    } else {
+      dispatch(setAnalytics(true));
+      navigation.navigate({
+        name: ScreenName.OnboardingPostWelcomeSelection,
+        params: {
+          userHasDevice: true,
+        },
+      });
+    }
+  }, [acceptTerms, dispatch, navigation, llmAnalyticsOptInPromptFeature?.enabled]);
 
   const videoMounted = !useIsAppInBackground();
 
@@ -84,7 +86,7 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
   const timeout = useRef<ReturnType<typeof setTimeout>>();
 
   const handleNavigateToFeatureFlagsSettings = useCallback(
-    nb => {
+    (nb: string) => {
       if (nb === "1") countTitle.current++;
       else if (nb === "2") countSubtitle.current++;
       if (countTitle.current > 3 && countSubtitle.current > 5) {
@@ -153,20 +155,9 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
               <Stop offset="100%" stopOpacity={0.8} stopColor="black" />
             </LinearGradient>
           </Defs>
-          <Rect
-            x="0"
-            y="0"
-            width="100%"
-            height="100%"
-            fill="url(#myGradient)"
-          />
+          <Rect x="0" y="0" width="100%" height="100%" fill="url(#myGradient)" />
         </Svg>
-        <Flex
-          justifyContent="center"
-          alignItems="center"
-          flex={1}
-          overflow="hidden"
-        >
+        <Flex justifyContent="center" alignItems="center" flex={1} overflow="hidden">
           {/* @ts-expect-error Bindings for SafeAreaView are not written properly. */}
           <SafeFlex position="absolute" top={0} right={0}>
             <Flex pr={4}>
@@ -200,10 +191,10 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
           <Button
             type="main"
             size="large"
-            event="Onboarding - Start"
             onPress={next}
             mt={0}
             mb={7}
+            testID="onboarding-getStarted-button"
           >
             {t("onboarding.stepWelcome.start")}
           </Button>

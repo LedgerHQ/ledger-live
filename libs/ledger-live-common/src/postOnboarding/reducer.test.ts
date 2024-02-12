@@ -1,8 +1,5 @@
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import {
-  PostOnboardingActionId,
-  PostOnboardingState,
-} from "@ledgerhq/types-live";
+import { PostOnboardingActionId, PostOnboardingState } from "@ledgerhq/types-live";
 import reducer, {
   hubStateSelector,
   initialState,
@@ -44,6 +41,7 @@ const stateA0: PostOnboardingState = {
     [PostOnboardingActionId.personalizeMock]: false,
   },
   lastActionCompleted: null,
+  postOnboardingInProgress: true,
 };
 
 // stateA0 -> setPostOnboardingActionCompleted(claimMock)
@@ -61,6 +59,7 @@ const stateA1: PostOnboardingState = {
     [PostOnboardingActionId.personalizeMock]: false,
   },
   lastActionCompleted: PostOnboardingActionId.claimMock, // stateA0 -> setPostOnboardingActionCompleted(claimMock)
+  postOnboardingInProgress: true,
 };
 
 // stateA1 -> clearPostOnboardingLastActionCompleted()
@@ -78,6 +77,7 @@ const stateA2: PostOnboardingState = {
     [PostOnboardingActionId.personalizeMock]: false,
   },
   lastActionCompleted: null, // stateA1 -> clearPostOnboardingLastActionCompleted()
+  postOnboardingInProgress: true,
 };
 
 // stateA2 -> setPostOnboardingActionCompleted(personalizeMock)
@@ -95,6 +95,7 @@ const stateA3: PostOnboardingState = {
     [PostOnboardingActionId.personalizeMock]: true, // stateA2 -> setPostOnboardingActionCompleted(personalizeMock)
   },
   lastActionCompleted: PostOnboardingActionId.personalizeMock, // stateA2 -> setPostOnboardingActionCompleted(personalizeMock)
+  postOnboardingInProgress: true,
 };
 
 // stateA3 -> hidePostOnboardingWalletEntryPoint()
@@ -112,6 +113,7 @@ const stateA4: PostOnboardingState = {
     [PostOnboardingActionId.personalizeMock]: true,
   },
   lastActionCompleted: PostOnboardingActionId.personalizeMock,
+  postOnboardingInProgress: true,
 };
 
 const initializationParamsB: Parameters<typeof initPostOnboarding> = [
@@ -128,6 +130,7 @@ const stateB0 = {
   actionsToComplete: [PostOnboardingActionId.claimMock],
   actionsCompleted: { [PostOnboardingActionId.claimMock]: false },
   lastActionCompleted: null,
+  postOnboardingInProgress: true,
 };
 
 // stateB0 -> setPostOnboardingActionCompleted(claimMock)
@@ -137,6 +140,7 @@ const stateB1 = {
   actionsToComplete: [PostOnboardingActionId.claimMock],
   actionsCompleted: { [PostOnboardingActionId.claimMock]: true },
   lastActionCompleted: PostOnboardingActionId.claimMock,
+  postOnboardingInProgress: true,
 };
 
 const initializationParamsC: Parameters<typeof initPostOnboarding> = [
@@ -153,6 +157,7 @@ const stateC0 = {
   actionsToComplete: [],
   actionsCompleted: {},
   lastActionCompleted: null,
+  postOnboardingInProgress: true,
 };
 
 describe("postOnboarding reducer (& action creators)", () => {
@@ -184,7 +189,7 @@ describe("postOnboarding reducer (& action creators)", () => {
       state,
       setPostOnboardingActionCompleted({
         actionId: PostOnboardingActionId.claimMock,
-      })
+      }),
     );
     expect(state).toEqual(stateA1);
   });
@@ -192,7 +197,7 @@ describe("postOnboarding reducer (& action creators)", () => {
   it("it should handle clearPostOnboardingLastActionCompleted", () => {
     state = stateA1;
     state = reducer(state, clearPostOnboardingLastActionCompleted());
-    expect(state).toEqual(stateA2);
+    expect(state).toEqual({ ...stateA2 });
   });
 
   it("it should handle hidePostOnboardingWalletEntryPoint", () => {
@@ -211,7 +216,7 @@ describe("postOnboarding reducer (& action creators)", () => {
       state,
       setPostOnboardingActionCompleted({
         actionId: PostOnboardingActionId.claimMock,
-      })
+      }),
     );
     expect(state).toEqual(stateA1);
 
@@ -224,7 +229,7 @@ describe("postOnboarding reducer (& action creators)", () => {
       state,
       setPostOnboardingActionCompleted({
         actionId: PostOnboardingActionId.personalizeMock,
-      })
+      }),
     );
     expect(state).toEqual(stateA3);
 
@@ -241,7 +246,7 @@ describe("postOnboarding reducer (& action creators)", () => {
       state,
       setPostOnboardingActionCompleted({
         actionId: PostOnboardingActionId.claimMock,
-      })
+      }),
     );
     expect(state).toEqual(stateB1);
 
@@ -259,6 +264,7 @@ describe("postOnboarding selectors", () => {
       actionsToComplete: [],
       actionsCompleted: {},
       lastActionCompleted: null,
+      postOnboardingInProgress: false,
     };
     const storeState = { postOnboarding: stateValidDeviceId };
 
@@ -271,6 +277,7 @@ describe("postOnboarding selectors", () => {
       actionsToComplete: stateValidDeviceId.actionsToComplete,
       actionsCompleted: stateValidDeviceId.actionsCompleted,
       lastActionCompleted: stateValidDeviceId.lastActionCompleted,
+      postOnboardingInProgress: false,
     });
 
     const deviceModelId = postOnboardingDeviceModelIdSelector(storeState);
@@ -284,6 +291,7 @@ describe("postOnboarding selectors", () => {
       actionsToComplete: [],
       actionsCompleted: {},
       lastActionCompleted: null,
+      postOnboardingInProgress: false,
     } as unknown as PostOnboardingState;
     const storeState = { postOnboarding: stateValidDeviceId };
 
@@ -299,6 +307,7 @@ describe("postOnboarding selectors", () => {
       actionsToComplete: stateValidDeviceId.actionsToComplete,
       actionsCompleted: stateValidDeviceId.actionsCompleted,
       lastActionCompleted: stateValidDeviceId.lastActionCompleted,
+      postOnboardingInProgress: false,
     });
 
     const deviceModelId = postOnboardingDeviceModelIdSelector(storeState);

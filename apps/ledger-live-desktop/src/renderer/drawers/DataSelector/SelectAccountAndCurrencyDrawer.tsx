@@ -6,23 +6,24 @@ import { Account, AccountLike } from "@ledgerhq/types-live";
 import { CryptoOrTokenCurrency, Currency } from "@ledgerhq/types-cryptoassets";
 import { setDrawer } from "../Provider";
 import Fuse from "fuse.js";
-import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/index";
+import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/hooks";
 import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import Text from "~/renderer/components/Text";
 import { CurrencyList } from "./CurrencyList";
 import SelectAccountDrawer from "./SelectAccountDrawer";
-import { Observable } from "rxjs7";
+import { Observable } from "rxjs";
+import { getEnv } from "@ledgerhq/live-env";
+
 const options = {
   includeScore: false,
   threshold: 0.1,
-  // Search in `ticker` and in `name` values
-  keys: ["name", "ticker"],
+  // Search in `ticker`, `name`, `keywords` values
+  keys: getEnv("CRYPTO_ASSET_SEARCH_KEYS"),
   shouldSort: false,
 };
 function fuzzySearch(currencies: Currency[], searchValue: string): Currency[] {
   const fuse = new Fuse(currencies, options);
-  const result = fuse.search(searchValue);
-  return result as Currency[];
+  return fuse.search(searchValue).map(res => res.item);
 }
 const SelectAccountAndCurrencyDrawerContainer = styled.div`
   display: flex;
@@ -74,7 +75,7 @@ function SelectAccountAndCurrencyDrawer(props: SelectAccountAndCurrencyDrawerPro
     return fuzzySearch(sortedCurrencies, searchValue);
   }, [searchValue, sortedCurrencies]);
   const handleCurrencySelected = useCallback(
-    currency => {
+    (currency: CryptoOrTokenCurrency) => {
       setDrawer(
         SelectAccountDrawer,
         {
@@ -94,7 +95,13 @@ function SelectAccountAndCurrencyDrawer(props: SelectAccountAndCurrencyDrawerPro
     [onAccountSelected, props, onClose, accounts$],
   );
   if (currencies.length === 1) {
-    return <SelectAccountDrawer currency={currencies[0]} onAccountSelected={onAccountSelected} />;
+    return (
+      <SelectAccountDrawer
+        currency={currencies[0]}
+        onAccountSelected={onAccountSelected}
+        accounts$={accounts$}
+      />
+    );
   }
   return (
     <SelectAccountAndCurrencyDrawerContainer>
@@ -119,6 +126,7 @@ function SelectAccountAndCurrencyDrawer(props: SelectAccountAndCurrencyDrawerPro
             onChange={setSearchValue}
           />
         </SearchInputContainer>
+        {/* @ts-expect-error compatibility issue betwenn CryptoOrTokenCurrency and Currency (which includes Fiat) and the SelectAccountDrawer components  */}
         <CurrencyList currencies={filteredCurrencies} onCurrencySelect={handleCurrencySelected} />
       </SelectorContent>
     </SelectAccountAndCurrencyDrawerContainer>

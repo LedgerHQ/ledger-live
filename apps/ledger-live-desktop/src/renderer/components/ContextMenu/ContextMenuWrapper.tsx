@@ -153,6 +153,7 @@ class ContextMenuWrapper extends PureComponent<Props, State> {
           if (callback) callback(e);
           this.hideContextMenu();
         }}
+        data-test-id={`accounts-context-menu-${label.split(".").pop()}`}
       >
         <Box horizontal>
           {Icon && (

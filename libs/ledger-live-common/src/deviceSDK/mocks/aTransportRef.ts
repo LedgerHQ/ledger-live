@@ -1,7 +1,4 @@
-import {
-  RecordStore,
-  openTransportReplayer,
-} from "@ledgerhq/hw-transport-mocker";
+import { RecordStore, openTransportReplayer } from "@ledgerhq/hw-transport-mocker";
 import { TransportRef } from "../transports/core";
 
 /**

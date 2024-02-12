@@ -7,7 +7,6 @@ import SummaryLabel from "./SummaryLabel";
 import SummaryValue, { NoValuePlaceholder } from "./SummaryValue";
 import SummarySection from "./SummarySection";
 import FeesDrawer from "../FeesDrawer";
-import sendAmountByFamily from "~/renderer/generated/SendAmountFields";
 import {
   SwapTransactionType,
   SwapSelectorStateType,
@@ -22,6 +21,7 @@ import TachometerLow from "~/renderer/icons/TachometerLow";
 import TachometerMedium from "~/renderer/icons/TachometerMedium";
 import styled from "styled-components";
 import { useGetSwapTrackingProperties } from "../../utils/index";
+import { getLLDCoinFamily } from "~/renderer/families";
 
 type Strategies = "slow" | "medium" | "fast" | "advanced";
 
@@ -46,6 +46,7 @@ const Separator = styled.div`
   align-self: center;
   margin-left: 2px;
 `;
+
 type Props = {
   transaction: SwapTransactionType["transaction"];
   account: SwapSelectorStateType["account"];
@@ -57,6 +58,7 @@ type Props = {
   provider: string | undefined | null;
   hasRates: boolean;
 };
+
 const SectionFees = ({
   transaction,
   account,
@@ -76,16 +78,11 @@ const SectionFees = ({
   const estimatedFees = status?.estimatedFees;
   const showSummaryValue = mainFromAccount && estimatedFees && estimatedFees.gt(0);
   const family = mainFromAccount?.currency.family;
+  const sendAmountSpecific = account && family && getLLDCoinFamily(family)?.sendAmountFields;
   const canEdit =
-    hasRates &&
-    showSummaryValue &&
-    transaction &&
-    "networkInfo" in transaction &&
-    transaction.networkInfo &&
-    account &&
-    family &&
-    sendAmountByFamily[family as keyof typeof sendAmountByFamily];
+    hasRates && showSummaryValue && transaction && account && family && sendAmountSpecific;
   const swapDefaultTrack = useGetSwapTrackingProperties();
+
   const StrategyIcon = useMemo(
     () =>
       (transaction?.feesStrategy &&
@@ -107,11 +104,12 @@ const SectionFees = ({
     // eslint-disable-next-line
     [transaction?.feesStrategy, exchangeRate?.tradeMethod, updateTransaction],
   );
+
   const handleChange = useMemo(
     () =>
       (canEdit &&
         (() => {
-          track("button_clicked", {
+          track("button_clicked2", {
             button: "change network fees",
             page: "Page Swap Form",
             ...swapDefaultTrack,
@@ -122,6 +120,7 @@ const SectionFees = ({
               setTransaction,
               updateTransaction,
               mainAccount: mainFromAccount,
+              parentAccount: parentAccount,
               currency,
               status,
               disableSlowStrategy: exchangeRate?.tradeMethod === "fixed",
@@ -140,12 +139,14 @@ const SectionFees = ({
       setTransaction,
       updateTransaction,
       mainFromAccount,
+      parentAccount,
       currency,
       status,
       exchangeRate?.tradeMethod,
       provider,
     ],
   );
+
   const summaryValue = canEdit ? (
     <>
       <IconSection>
@@ -165,9 +166,20 @@ const SectionFees = ({
         alwaysShowValue
       />
     </>
+  ) : estimatedFees ? (
+    <FormattedVal
+      color="palette.text.shade100"
+      val={estimatedFees}
+      unit={mainAccountUnit}
+      fontSize={3}
+      ff="Inter|SemiBold"
+      showCode
+      alwaysShowValue
+    />
   ) : (
     <NoValuePlaceholder />
   );
+
   return (
     <SummarySection>
       <SummaryLabel label={t("swap2.form.details.label.fees")} />
@@ -175,4 +187,5 @@ const SectionFees = ({
     </SummarySection>
   );
 };
+
 export default React.memo<Props>(SectionFees);

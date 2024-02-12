@@ -1,17 +1,15 @@
 import Config from "react-native-config";
 import { Observable, timer } from "rxjs";
 import { map, debounce } from "rxjs/operators";
-import { listen } from "@ledgerhq/logs";
+import { TraceContext, listen } from "@ledgerhq/logs";
 import HIDTransport from "@ledgerhq/react-native-hid";
 import withStaticURLs from "@ledgerhq/hw-transport-http";
 import { retry } from "@ledgerhq/live-common/promise";
-import { setEnv } from "@ledgerhq/live-common/env";
+import { setEnv } from "@ledgerhq/live-env";
 import {
   getCryptoCurrencyById,
   setSupportedCurrencies,
 } from "@ledgerhq/live-common/currencies/index";
-import { setPlatformVersion } from "@ledgerhq/live-common/platform/version";
-import { PLATFORM_VERSION } from "@ledgerhq/live-common/platform/constants";
 import { setWalletAPIVersion } from "@ledgerhq/live-common/wallet-api/version";
 import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 import { registerTransportModule } from "@ledgerhq/live-common/hw/index";
@@ -27,17 +25,28 @@ import { setGlobalOnBridgeError } from "@ledgerhq/live-common/bridge/useBridgeTr
 import { prepareCurrency } from "./bridge/cache";
 import BluetoothTransport from "./react-native-hw-transport-ble";
 import "./experimental";
-import logger from "./logger";
+import logger, { ConsoleLogger } from "./logger";
+
+const consoleLogger = ConsoleLogger.getLogger();
+listen(log => {
+  consoleLogger.log(log);
+});
 
 setGlobalOnBridgeError(e => logger.critical(e));
 setDeviceMode("polling");
-setPlatformVersion(PLATFORM_VERSION);
 setWalletAPIVersion(WALLET_API_VERSION);
+
 setSupportedCurrencies([
   "avalanche_c_chain",
   "axelar",
   "nyx",
+  "stargaze",
+  "secret_network",
+  "umee",
+  "desmos",
+  "dydx",
   "onomy",
+  "sei_network",
   "quicksilver",
   "persistence",
   "bitcoin",
@@ -74,6 +83,8 @@ setSupportedCurrencies([
   "bitcoin_testnet",
   "ethereum_ropsten",
   "ethereum_goerli",
+  "ethereum_sepolia",
+  "ethereum_holesky",
   "elrond",
   "hedera",
   "cardano",
@@ -100,20 +111,27 @@ setSupportedCurrencies([
   "moonriver",
   "velas_evm",
   "syscoin",
+  "vechain",
+  "internet_computer",
+  "klaytn",
+  "polygon_zk_evm",
+  "polygon_zk_evm_testnet",
+  "base",
+  "base_goerli",
+  "stacks",
+  "telos_evm",
+  "coreum",
+  "injective",
+  "casper",
+  "neon_evm",
+  "lukso",
+  "linea",
+  "linea_goerli",
 ]);
 
-if (Config.VERBOSE) {
-  listen(({ type, message, ...rest }) => {
-    if (Object.keys(rest).length) {
-      console.log(`${type}: ${message || ""}`, rest); // eslint-disable-line no-console
-    } else {
-      console.log(`${type}: ${message || ""}`); // eslint-disable-line no-console
-    }
-  });
-}
-
 if (Config.BLE_LOG_LEVEL) BluetoothTransport.setLogLevel(Config.BLE_LOG_LEVEL);
-if (Config.FORCE_PROVIDER) setEnv("FORCE_PROVIDER", Config.FORCE_PROVIDER);
+if (Config.FORCE_PROVIDER && !isNaN(parseInt(Config.FORCE_PROVIDER, 10)))
+  setEnv("FORCE_PROVIDER", parseInt(Config.FORCE_PROVIDER, 10));
 // Add support of HID (experimental until we stabilize it)
 registerTransportModule({
   id: "hid",
@@ -131,9 +149,7 @@ registerTransportModule({
     id.startsWith("usb|")
       ? Promise.resolve() // nothing to do
       : null,
-  discovery: new Observable<DescriptorEvent<string>>(o =>
-    HIDTransport.listen(o),
-  ).pipe(
+  discovery: new Observable<DescriptorEvent<string>>(o => HIDTransport.listen(o)).pipe(
     map(({ type, descriptor, deviceModel }) => {
       const name = deviceModel?.productName ?? "";
       return {
@@ -151,8 +167,7 @@ registerTransportModule({
 let DebugHttpProxy: ReturnType<typeof withStaticURLs>;
 const httpdebug: TransportModule = {
   id: "httpdebug",
-  open: id =>
-    id.startsWith("httpdebug|") ? DebugHttpProxy.open(id.slice(10)) : null,
+  open: id => (id.startsWith("httpdebug|") ? DebugHttpProxy.open(id.slice(10)) : null),
   disconnect: id =>
     id.startsWith("httpdebug|")
       ? Promise.resolve() // nothing to do
@@ -161,15 +176,11 @@ const httpdebug: TransportModule = {
 
 if (__DEV__ && Config.DEVICE_PROXY_URL) {
   DebugHttpProxy = withStaticURLs(Config.DEVICE_PROXY_URL.split("|"));
-  httpdebug.discovery = new Observable<DescriptorEvent<string>>(o =>
-    DebugHttpProxy.listen(o),
-  ).pipe(
+  httpdebug.discovery = new Observable<DescriptorEvent<string>>(o => DebugHttpProxy.listen(o)).pipe(
     map(({ type, descriptor }) => ({
       type,
       id: `httpdebug|${descriptor}`,
-      deviceModel: getDeviceModel(
-        (Config?.FALLBACK_DEVICE_MODEL_ID as DeviceModelId) || "nanoX",
-      ),
+      deviceModel: getDeviceModel((Config?.FALLBACK_DEVICE_MODEL_ID as DeviceModelId) || "nanoX"),
       wired: Config?.FALLBACK_DEVICE_WIRED === "YES",
       name: descriptor,
     })),
@@ -182,8 +193,9 @@ registerTransportModule(httpdebug);
 // BLE is always the fallback choice because we always keep raw id in it
 registerTransportModule({
   id: "ble",
-  open: id => BluetoothTransport.open(id),
-  disconnect: id => BluetoothTransport.disconnect(id),
+  open: (id: string, timeoutMs?: number, context?: TraceContext) =>
+    BluetoothTransport.open(id, timeoutMs, context),
+  disconnect: id => BluetoothTransport.disconnectDevice(id),
 });
 
 if (process.env.NODE_ENV === "production") {

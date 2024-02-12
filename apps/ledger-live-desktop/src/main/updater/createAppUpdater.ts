@@ -8,9 +8,7 @@ type Opts = {
   getHashFile: () => Promise<string>;
   getHashFileSignature: () => Promise<Buffer>;
 };
-export default function createAppUpdater(
-  opts: Opts,
-): {
+export default function createAppUpdater(opts: Opts): {
   verify: () => Promise<void>;
 } {
   const {

@@ -10,21 +10,21 @@ import {
   Platform,
 } from "react-native";
 import { v4 as uuid } from "uuid";
-import { from, Observable, Subscription } from "rxjs";
+import { firstValueFrom, from, Observable, Subscription } from "rxjs";
 import { listen } from "@ledgerhq/logs";
 import type { Log } from "@ledgerhq/logs";
 import { bufferTime, shareReplay } from "rxjs/operators";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { disconnect } from "@ledgerhq/live-common/hw/index";
 import { useTheme } from "@react-navigation/native";
-import { Button, Icons } from "@ledgerhq/native-ui";
+import { Button, IconsLegacy } from "@ledgerhq/native-ui";
 import BluetoothTransport from "@ledgerhq/react-native-hw-transport-ble";
-import LText from "../../../../components/LText";
-import KeyboardView from "../../../../components/KeyboardView";
-import Switch from "../../../../components/Switch";
-import { ScreenName } from "../../../../const";
-import { SettingsNavigatorStackParamList } from "../../../../components/RootNavigator/types/SettingsNavigator";
-import { StackNavigatorProps } from "../../../../components/RootNavigator/types/helpers";
+import LText from "~/components/LText";
+import KeyboardView from "~/components/KeyboardView";
+import Switch from "~/components/Switch";
+import { ScreenName } from "~/const";
+import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { Theme } from "../../../../colors";
 
 const tags = ["apdu", "ble-verbose", "error", "ble-frame"];
@@ -168,13 +168,15 @@ class DebugBLE extends Component<
     const msg = Buffer.from(useBLEframe ? bleframe : apdu, "hex");
 
     try {
-      await withDevice(deviceId)(t =>
-        from(
-          useBLEframe
-            ? (t as BluetoothTransport).write(msg)
-            : (t as BluetoothTransport).exchange(msg),
+      await firstValueFrom(
+        withDevice(deviceId)(t =>
+          from(
+            useBLEframe
+              ? (t as BluetoothTransport).write(msg)
+              : (t as BluetoothTransport).exchange(msg),
+          ),
         ),
-      ).toPromise();
+      );
     } catch (error) {
       this.addError(error as Error, "send");
     }
@@ -183,9 +185,9 @@ class DebugBLE extends Component<
     const deviceId = this.props.route.params?.deviceId;
 
     try {
-      const mtu = await withDevice(deviceId)(t =>
-        from((t as BluetoothTransport).inferMTU()),
-      ).toPromise();
+      const mtu = await firstValueFrom(
+        withDevice(deviceId)(t => from((t as BluetoothTransport).inferMTU())),
+      );
 
       if (Platform.OS === "android") {
         ToastAndroid.show("mtu set to " + mtu, ToastAndroid.SHORT);
@@ -201,20 +203,17 @@ class DebugBLE extends Component<
     const deviceId = this.props.route.params?.deviceId;
     const choices = ["Balanced", "High", "LowPower"] as const;
     const nextPriority =
-      choices[
-        (choices.indexOf(this.currentConnectionPriority) + 1) % choices.length
-      ];
+      choices[(choices.indexOf(this.currentConnectionPriority) + 1) % choices.length];
     this.currentConnectionPriority = nextPriority;
 
     try {
-      await withDevice(deviceId)(t =>
-        from((t as BluetoothTransport).requestConnectionPriority(nextPriority)),
-      ).toPromise();
+      await firstValueFrom(
+        withDevice(deviceId)(t =>
+          from((t as BluetoothTransport).requestConnectionPriority(nextPriority)),
+        ),
+      );
       if (Platform.OS === "android") {
-        ToastAndroid.show(
-          "connection priority set to " + nextPriority,
-          ToastAndroid.SHORT,
-        );
+        ToastAndroid.show("connection priority set to " + nextPriority, ToastAndroid.SHORT);
       } else {
         Alert.alert("connection priority set to " + nextPriority);
       }
@@ -226,7 +225,7 @@ class DebugBLE extends Component<
     const deviceId = this.props.route.params?.deviceId;
     // TODO with auto disconnect this wouldn't work.
     try {
-      await withDevice(deviceId)(() => from([{}])).toPromise();
+      await firstValueFrom(withDevice(deviceId)(() => from([{}])));
     } catch (error) {
       this.addError(error as Error, "connect");
     }
@@ -289,19 +288,13 @@ class DebugBLE extends Component<
             }}
             selectTextOnFocus
             placeholder={useBLEframe ? "BLE frame here" : "APDU here"}
-            onChangeText={
-              useBLEframe ? this.onBLEframeChange : this.onAPDUChange
-            }
+            onChangeText={useBLEframe ? this.onBLEframeChange : this.onAPDUChange}
             value={useBLEframe ? this.state.bleframe : this.state.apdu}
             autoCapitalize="characters"
             autoCorrect={false}
             onSubmitEditing={this.send}
           />
-          <Button
-            type="main"
-            Icon={Icons.ArrowRightMedium}
-            onPress={this.send}
-          />
+          <Button type="main" Icon={IconsLegacy.ArrowRightMedium} onPress={this.send} />
           <Switch value={useBLEframe} onValueChange={this.onBleFrameChange} />
         </View>
         <LText

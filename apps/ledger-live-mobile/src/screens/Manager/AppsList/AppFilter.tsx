@@ -1,7 +1,7 @@
 import React, { memo, useState, useCallback } from "react";
 import { TouchableOpacity } from "react-native";
 
-import { Icons, Box } from "@ledgerhq/native-ui";
+import { IconsLegacy, Box } from "@ledgerhq/native-ui";
 
 import styled from "styled-components/native";
 import { AppType, SortOptions } from "@ledgerhq/live-common/apps/filtering";
@@ -30,15 +30,7 @@ const FilterButtonContainer = styled(Box).attrs({
   justifyContent: "center",
 })``;
 
-const AppFilter = ({
-  filter,
-  setFilter,
-  sort,
-  setSort,
-  order,
-  setOrder,
-  disabled,
-}: Props) => {
+const AppFilter = ({ filter, setFilter, sort, setSort, order, setOrder, disabled }: Props) => {
   const [isOpened, setOpenModal] = useState(false);
   const openModal = useCallback(() => setOpenModal(true), [setOpenModal]);
   const closeModal = useCallback(() => setOpenModal(false), [setOpenModal]);
@@ -48,7 +40,7 @@ const AppFilter = ({
       <TouchableOpacity disabled={disabled} onPress={openModal}>
         <FilterButtonContainer borderColor="neutral.c40">
           <Box>
-            <Icons.FiltersMedium size={18} color="neutral.c100" />
+            <IconsLegacy.FiltersMedium size={18} color="neutral.c100" />
             {filter !== "all" && <NotifBadge />}
           </Box>
         </FilterButtonContainer>

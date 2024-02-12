@@ -1,23 +1,10 @@
 import { DeviceId, DeviceInfo } from "@ledgerhq/types-live";
 import { concat, Observable, of } from "rxjs";
 import { scan, switchMap } from "rxjs/operators";
-import {
-  updateFirmwareTask,
-  UpdateFirmwareTaskEvent,
-} from "../tasks/updateFirmware";
-import {
-  getDeviceInfoTask,
-  GetDeviceInfoTaskErrorEvent,
-} from "../tasks/getDeviceInfo";
-import {
-  FullActionState,
-  initialSharedActionState,
-  sharedReducer,
-} from "./core";
-import {
-  getLatestFirmwareTask,
-  GetLatestFirmwareTaskErrorEvent,
-} from "../tasks/getLatestFirmware";
+import { updateFirmwareTask, UpdateFirmwareTaskEvent } from "../tasks/updateFirmware";
+import { getDeviceInfoTask, GetDeviceInfoTaskErrorEvent } from "../tasks/getDeviceInfo";
+import { FullActionState, initialSharedActionState, sharedReducer } from "./core";
+import { getLatestFirmwareTask, GetLatestFirmwareTaskErrorEvent } from "../tasks/getLatestFirmware";
 
 export type updateFirmwareActionArgs = {
   deviceId: DeviceId;
@@ -28,6 +15,8 @@ export type UpdateFirmwareActionState = FullActionState<{
     | "preparingUpdate"
     // initial step where we retrieve all the necessary information for the update
     | "allowSecureChannelRequested"
+    // the user has refused the allow secure channel that could have been triggered at the initial step
+    | "allowSecureChannelDenied"
     // we need a secure connection to the HSM to install the operating system updater (osu)
     | "installingOsu"
     // step that installs the operating system updater, always happen
@@ -66,14 +55,14 @@ export function updateFirmwareAction({
   return concat(
     of(initialState),
     getDeviceInfoTask({ deviceId }).pipe(
-      switchMap((event) => {
+      switchMap(event => {
         if (event.type !== "data") {
           return of(event);
         }
         const { deviceInfo } = event;
         return getLatestFirmwareTask({ deviceId, deviceInfo });
       }),
-      switchMap((event) => {
+      switchMap(event => {
         if (event.type !== "data") {
           return of(event);
         } else {
@@ -84,15 +73,13 @@ export function updateFirmwareAction({
         }
       }),
       scan<
-        | UpdateFirmwareTaskEvent
-        | GetLatestFirmwareTaskErrorEvent
-        | GetDeviceInfoTaskErrorEvent,
+        UpdateFirmwareTaskEvent | GetLatestFirmwareTaskErrorEvent | GetDeviceInfoTaskErrorEvent,
         UpdateFirmwareActionState
-      >((_, event) => {
+      >((currentState, event) => {
         switch (event.type) {
           case "taskError":
             return {
-              ...initialState,
+              ...currentState,
               error: {
                 type: "UpdateFirmwareError",
                 name: event.error,
@@ -107,6 +94,7 @@ export function updateFirmwareAction({
               progress: event.progress,
             };
           case "allowSecureChannelRequested":
+          case "allowSecureChannelDenied":
           case "installOsuDevicePermissionRequested":
           case "installOsuDevicePermissionGranted":
           case "installOsuDevicePermissionDenied":
@@ -119,13 +107,13 @@ export function updateFirmwareAction({
             };
           default:
             return {
-              ...initialState,
+              ...currentState,
               ...sharedReducer({
                 event,
               }),
             };
         }
-      }, initialState)
-    )
+      }, initialState),
+    ),
   );
 }

@@ -8,8 +8,8 @@ import type { Account } from "@ledgerhq/types-live";
 import { BridgeCacheSystem } from "../bridge/cache";
 import { getAccountBridge } from "../bridge";
 import { promiseAllBatched } from "../promise";
-import { getEnv } from "../env";
-import { Observable } from "rxjs";
+import { getEnv } from "@ledgerhq/live-env";
+import { Observable, firstValueFrom } from "rxjs";
 import { reduce } from "rxjs/operators";
 
 const itemModeDisplaySort = {
@@ -34,10 +34,8 @@ export const importAccountsMakeItems = ({
   items?: ImportItem[];
 }): ImportItem[] =>
   result.accounts
-    .map((accInput) => {
-      const prevItem = (items || []).find(
-        (item) => item.account.id === accInput.id
-      );
+    .map(accInput => {
+      const prevItem = (items || []).find(item => item.account.id === accInput.id);
       if (prevItem) return prevItem;
 
       try {
@@ -52,7 +50,7 @@ export const importAccountsMakeItems = ({
           };
         }
 
-        const existingAccount = accounts.find((a) => a.id === accInput.id);
+        const existingAccount = accounts.find(a => a.id === accInput.id);
 
         if (existingAccount) {
           // only the name is supposed to change. rest is never changing
@@ -72,10 +70,7 @@ export const importAccountsMakeItems = ({
             account: {
               ...existingAccount,
               name: accInput.name,
-              swapHistory: joinSwapHistories(
-                existingAccount.swapHistory,
-                account.swapHistory
-              ),
+              swapHistory: joinSwapHistories(existingAccount.swapHistory, account.swapHistory),
             },
             mode: "update",
           };
@@ -94,8 +89,7 @@ export const importAccountsMakeItems = ({
     .filter(Boolean)
     .sort(
       (a, b) =>
-        itemModeDisplaySort[(a as ImportItem).mode] -
-        itemModeDisplaySort[(b as ImportItem).mode]
+        itemModeDisplaySort[(a as ImportItem).mode] - itemModeDisplaySort[(b as ImportItem).mode],
     ) as ImportItem[];
 
 /**
@@ -124,35 +118,29 @@ export type SyncNewAccountsInput = {
 export const syncNewAccountsToImport = async (
   { items, selectedAccounts }: SyncNewAccountsInput,
   bridgeCache: BridgeCacheSystem,
-  blacklistedTokenIds?: string[]
+  blacklistedTokenIds?: string[],
 ): Promise<SyncNewAccountsOutput> => {
-  const selectedItems = items.filter((item) =>
-    selectedAccounts.includes(item.account.id)
-  );
+  const selectedItems = items.filter(item => selectedAccounts.includes(item.account.id));
   const synchronized = {};
   const failed = {};
-  await promiseAllBatched(
-    getEnv("SYNC_MAX_CONCURRENT"),
-    selectedItems,
-    async ({ account }) => {
-      try {
-        const bridge = getAccountBridge(account);
-        await bridgeCache.prepareCurrency(account.currency);
-        const syncConfig = {
-          paginationConfig: {},
-          blacklistedTokenIds,
-        };
-        const observable = bridge.sync(account, syncConfig);
-        const reduced: Observable<Account> = observable.pipe(
-          reduce((a, f: (_: Account) => Account) => f(a), account)
-        );
-        const synced = await reduced.toPromise();
-        synchronized[account.id] = synced;
-      } catch (e) {
-        failed[account.id] = e;
-      }
+  await promiseAllBatched(getEnv("SYNC_MAX_CONCURRENT"), selectedItems, async ({ account }) => {
+    try {
+      const bridge = getAccountBridge(account);
+      await bridgeCache.prepareCurrency(account.currency);
+      const syncConfig = {
+        paginationConfig: {},
+        blacklistedTokenIds,
+      };
+      const observable = bridge.sync(account, syncConfig);
+      const reduced: Observable<Account> = observable.pipe(
+        reduce((a, f: (_: Account) => Account) => f(a), account),
+      );
+      const synced = await firstValueFrom(reduced);
+      synchronized[account.id] = synced;
+    } catch (e) {
+      failed[account.id] = e;
     }
-  );
+  });
   return { synchronized, failed };
 };
 
@@ -172,12 +160,10 @@ export type ImportAccountsReduceInput = {
  */
 export const importAccountsReduce = (
   existingAccounts: Account[],
-  { items, selectedAccounts, syncResult }: ImportAccountsReduceInput
+  { items, selectedAccounts, syncResult }: ImportAccountsReduceInput,
 ): Account[] => {
   const accounts = existingAccounts.slice(0);
-  const selectedItems = items.filter((item) =>
-    selectedAccounts.includes(item.account.id)
-  );
+  const selectedItems = items.filter(item => selectedAccounts.includes(item.account.id));
 
   for (const {
     mode,
@@ -188,9 +174,7 @@ export const importAccountsReduce = (
     if (!account) continue;
     switch (mode) {
       case "create": {
-        const exists = accounts.find(
-          (a) => a.id === initialAccountId || a.id === id
-        );
+        const exists = accounts.find(a => a.id === initialAccountId || a.id === id);
         if (!exists) {
           // prevent duplicate cases to happen (in case of race condition)
           accounts.push(account);
@@ -199,9 +183,7 @@ export const importAccountsReduce = (
       }
 
       case "update": {
-        const item = accounts.find(
-          (a) => a.id === initialAccountId || a.id === id
-        );
+        const item = accounts.find(a => a.id === initialAccountId || a.id === id);
         const i = accounts.indexOf(item as Account);
         if (i !== -1) {
           accounts[i] = account;

@@ -1,7 +1,4 @@
-import {
-  openTransportReplayer,
-  RecordStore,
-} from "@ledgerhq/hw-transport-mocker";
+import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
 import getDeviceInfo from "../../hw/getDeviceInfo";
 
 test("1.2.0", async () => {
@@ -11,7 +8,7 @@ test("1.2.0", async () => {
       <= 0105424f4c4f5305312e362e3001029000
       => e001000000
       <= 3110000203312e32040600000004312e30009000
-    `)
+    `),
   );
   const res = await getDeviceInfo(t);
   expect(res).toMatchObject({
@@ -33,7 +30,7 @@ test("1.3.1", async () => {
       <= 0105424f4c4f5305312e362e3001029000
       => e001000000
       <= 3110000205312e332e31048e00000004312e31009000
-    `)
+    `),
   );
   const res = await getDeviceInfo(t);
   expect(res).toMatchObject({
@@ -55,7 +52,7 @@ test("1.3.1 BL", async () => {
       <= 0105424f4c4f5305312e362e3001029000
       => e001000000
       <= 010000019000
-    `)
+    `),
   );
   const res = await getDeviceInfo(t);
   expect(res).toMatchObject({
@@ -77,7 +74,7 @@ test("1.5.5", async () => {
       <= 0105424f4c4f5305312e362e3001029000
       => e001000000
       <= 3110000405312e352e35042300000004312e37002013fe17e06cf2f710d33328aa46d1053f8fadd48dcaeca2c5512dd79e2158d5779000
-    `)
+    `),
   );
   const res = await getDeviceInfo(t);
   expect(res).toMatchObject({
@@ -99,7 +96,7 @@ test("1.5.5 manager allowed", async () => {
         <= 0105424f4c4f5305312e362e3001029000
         => e001000000
         <= 3110000405312e352e35042b00000004312e37002013fe17e06cf2f710d33328aa46d1053f8fadd48dcaeca2c5512dd79e2158d5779000
-      `)
+      `),
   );
   const res = await getDeviceInfo(t);
   expect(res).toMatchObject({
@@ -121,7 +118,7 @@ test("1.4.2", async () => {
         <= 0105424f4c4f5305312e362e3001029000
         => e001000000
         <= 3110000305312e342e3204a600000004312e36002034c8e1ed994a446ef70c9b256d8a6e01eb949aba4b18b9f9a39b7f38782531039000
-      `)
+      `),
   );
   const res = await getDeviceInfo(t);
   expect(res).toMatchObject({
@@ -143,7 +140,7 @@ test("1.4.2 manager allowed", async () => {
     <= 0105424f4c4f5305312e362e3001029000
     => e001000000
     <= 3110000305312e342e3204ae00000004312e36002034c8e1ed994a446ef70c9b256d8a6e01eb949aba4b18b9f9a39b7f38782531039000
-    `)
+    `),
   );
   const res = await getDeviceInfo(t);
   expect(res).toMatchObject({
@@ -165,7 +162,7 @@ test("1.6 bootloader", async () => {
     <= 0105424f4c4f5305312e362e3001029000
     => e001000000
     <= 0100000103302e36080030009000
-    `)
+    `),
   );
   const res = await getDeviceInfo(t);
   expect(res).toMatchObject({
@@ -183,7 +180,7 @@ test("1.7 bootloader", async () => {
     <= 0105424f4c4f5305312e362e3001029000
     => e001000000
     <= 0100000103302e37080030009000
-    `)
+    `),
   );
   const res = await getDeviceInfo(t);
   expect(res).toMatchObject({
@@ -201,7 +198,7 @@ test("0.9 bootloader", async () => {
     <= 0105424f4c4f5305312e362e3001029000
     => e001000000
     <= 0100000103302e39080030009000
-    `)
+    `),
   );
   const res = await getDeviceInfo(t);
   expect(res).toMatchObject({
@@ -219,7 +216,7 @@ test("0.11 bootloader", async () => {
     <= 0105424f4c4f5305312e362e3001029000
     => e001000000
     <= 0100000104302e3131080030009000
-    `)
+    `),
   );
   const res = await getDeviceInfo(t);
   expect(res).toMatchObject({
@@ -237,7 +234,7 @@ test("0.11 BL (2)", async () => {
     <= 0105424f4c4f5305312e362e3001029000
     => e001000000
     <= 0100000104302e313104f4d8aa439000
-    `)
+    `),
   );
   const res = await getDeviceInfo(t);
   expect(res).toMatchObject({
@@ -259,7 +256,7 @@ test("0.0 bootloader", async () => {
     <= 0105424f4c4f5305312e362e3001029000
     => e001000000
     <= 010000019000
-    `)
+    `),
   );
   const res = await getDeviceInfo(t);
   expect(res).toMatchObject({
@@ -277,7 +274,7 @@ test("OSU 1.4.2", async () => {
     <= 0105424f4c4f5305312e362e3001029000
     => e001000000
     <= 3110000309312e342e322d6f7375042000000004312e37002000000000000000000000000000000000000000000000000000000000000000009000
-    `)
+    `),
   );
   const res = await getDeviceInfo(t);
   expect(res).toMatchObject({
@@ -295,7 +292,7 @@ test("0SU 1.5.2", async () => {
     <= 0105424f4c4f5305312e362e3001029000
     => e001000000
     <= 3110000409312e352e322d6f7375042400000004312e35002000000000000000000000000000000000000000000000000000000000000000009000
-    `)
+    `),
   );
   const res = await getDeviceInfo(t);
   expect(res).toMatchObject({
@@ -313,7 +310,7 @@ test("OSU 1.5.5", async () => {
     <= 0105424f4c4f5305312e362e3001029000
     => e001000000
     <= 3110000409312e352e352d6f7375042400000004312e35002000000000000000000000000000000000000000000000000000000000000000009000
-    `)
+    `),
   );
   const res = await getDeviceInfo(t);
   expect(res).toMatchObject({
@@ -328,7 +325,7 @@ test("1.6.0-dev", async () => {
     <= 0105424f4c4f5305312e362e3001029000
       => e001000000
       <= 3110000409312e362e302d646576042300000004312e36002000000000000000000000000000000000000000000000000000000000000000009000
-      `)
+      `),
   );
   const res = await getDeviceInfo(t);
   expect(res).toMatchObject({
@@ -346,7 +343,7 @@ test("1.6.0-dev-osu", async () => {
     <= 0105424f4c4f5305312e362e3001029000
         => e001000000
         <= 311000040d312e362e302d6465762d6f7375042300000004312e36002000000000000000000000000000000000000000000000000000000000000000009000
-        `)
+        `),
   );
   const res = await getDeviceInfo(t);
   expect(res).toMatchObject({
@@ -364,7 +361,7 @@ test("1.6.0-rc1 osu", async () => {
     <= 0105424f4c4f5305312e362e3001029000
     => e001000000
     <= 311000040d312e362e302d7263312d6f7375042000000004312e37002000000000000000000000000000000000000000000000000000000000000000009000
-    `)
+    `),
   );
   const res = await getDeviceInfo(t);
   expect(res).toMatchObject({
@@ -382,7 +379,7 @@ test("nano x 1.1.6", async () => {
     <= 0105424f4c4f5305312e362e3001029000
     => e001000000
     <= 3300000405312e312e3604a600000003322e339000
-    `)
+    `),
   );
   const res = await getDeviceInfo(t);
   expect(res).toMatchObject({
@@ -404,7 +401,7 @@ test("nano x 1.2.4-1", async () => {
     <= 0105424f4c4f5305312e362e3001029000
     => e001000000
     <= 3300000407312e322e342d3104ae00000003322e389000
-    `)
+    `),
   );
   const res = await getDeviceInfo(t);
   expect(res).toMatchObject({
@@ -426,7 +423,7 @@ test("nanoS 1.4.2 BL", async () => {
         <= 0105424f4c4f5305312e362e3001029000
         => e001000000
         <= 0100000103302e37080030009000
-        `)
+        `),
   );
   const res = await getDeviceInfo(t);
   expect(res).toMatchObject({
@@ -448,7 +445,7 @@ test("nanoS das", async () => {
     <= 0105424f4c4f5305312e362e3001029000
     => e001000000
     <= 3110000309312e342e322d64617304a600000004312e350020f52add41aaa8c065df5a412af1e8c57fe589b85469133cb9c7e0ccd5c81b57859000
-    `)
+    `),
   );
   const res = await getDeviceInfo(t);
   expect(res).toMatchObject({
@@ -471,7 +468,7 @@ test("Nano X BL < 2", async () => {
     <= 6e00
     => e001000000
     <= 0501000203312e3404f4d8aa43043300000404f13089749000
-    `)
+    `),
   );
   const res = await getDeviceInfo(t);
   expect(res).toMatchObject({
@@ -497,7 +494,7 @@ test("Nano X BL >= 2", async () => {
     <= 6e00
     => e001000000
     <= 0501000203312e3404f4d8aa4305322e302e3004330000049000
-    `)
+    `),
   );
   const res = await getDeviceInfo(t);
   expect(res).toMatchObject({
@@ -522,7 +519,7 @@ test("Nano X 1.2.4-6", async () => {
     <= 01054f4c4f5300072e322e342d36009000
     => e001000000
     <= 3300000407312e322e342d3604a600000004322e31329000
-    `)
+    `),
   );
   const res = await getDeviceInfo(t);
   expect(res).toMatchObject({
@@ -548,7 +545,7 @@ test("Nano X 2.0.0", async () => {
     <= 0105424f4c4f5305322e302e309000
     => e001000000
     <= 3300000405322e302e3004a600000004322e323804312e313601009000
-    `)
+    `),
   );
   const res = await getDeviceInfo(t);
   expect(res).toMatchObject({
@@ -576,7 +573,7 @@ test("Nano X 2.1.0-lo2", async () => {
     <= 0105424f4c4f5309322e312e302d6c6f329000
     => e001000000
     <= 3300000409322e312e302d6c6f3204e600000004322e333004312e3136010001019000
-    `)
+    `),
   );
   const res = await getDeviceInfo(t);
   expect(res).toMatchObject({
@@ -605,7 +602,7 @@ test("Nano S 2.1.0", async () => {
     <= 0105424f4c4f5305322e312e309000
     => e001000000
     <= 3110000405322e312e3004a600000004312e313204302e31319000
-    `)
+    `),
   );
   const res = await getDeviceInfo(t);
   expect(res).toMatchObject({
@@ -632,7 +629,7 @@ test("Nano S+ 1.0.2", async () => {
     <= 0105424f4c4f5305312e302e329000
     => e001000000
     <= 3310000405312e302e3204a600000004342e303204332e31329000
-    `)
+    `),
   );
   const res = await getDeviceInfo(t);
   expect(res).toMatchObject({

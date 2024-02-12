@@ -1,5 +1,6 @@
 import { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
-import { FILTER } from "~/renderer/screens/exchange/Swap2/Form/utils";
+import { FILTER } from "@ledgerhq/live-common/exchange/swap/utils/index";
+
 export const filterRates = (
   rates: ExchangeRate[] | undefined,
   filters: string[],

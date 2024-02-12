@@ -1,6 +1,6 @@
 import React from "react";
 import { Flex, ProgressBar, Button, Text } from "../../../src/components";
-import { Icons } from "../../../src/assets";
+import { IconsLegacy } from "../../../src/assets";
 
 const description = `
 ### An animated progress bar.
@@ -66,16 +66,41 @@ export const Default = (args: typeof DefaultArgs): JSX.Element => {
           Active index: {index} / {length - 1}
         </Text>
         <Flex flexDirection="row" justifyContent="space-around" width="100%">
-          <Button Icon={Icons.MinusMedium} onPress={remove} mr={2} />
-          <Button Icon={Icons.PlusMedium} onPress={add} />
+          <Button Icon={IconsLegacy.MinusMedium} onPress={remove} mr={2} />
+          <Button Icon={IconsLegacy.PlusMedium} onPress={add} />
         </Flex>
       </Flex>
     </>
   );
 };
+
 Default.storyName = "ProgressBar";
 const DefaultArgs = {
   length: 5,
   index: 1,
 };
 Default.args = DefaultArgs;
+
+export const Custom = (): JSX.Element => {
+  return (
+    <Flex
+      width={300}
+      height={64}
+      px={6}
+      bg={"neutral.c30"}
+      alignItems={"center"}
+      justifyContent={"center"}
+    >
+      <ProgressBar
+        index={3}
+        length={10}
+        bg={"neutral.c40"}
+        height={8}
+        borderRadius={2}
+        activeBarProps={{ bg: "primary.c80", borderRadius: 2 }}
+      />
+    </Flex>
+  );
+};
+
+Custom.storyName = "ProgressBar (custom style)";

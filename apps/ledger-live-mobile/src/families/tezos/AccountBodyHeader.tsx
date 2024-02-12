@@ -10,12 +10,12 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import { useDelegation } from "@ledgerhq/live-common/families/tezos/bakers";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import LText from "../../components/LText";
-import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import CounterValue from "../../components/CounterValue";
+import LText from "~/components/LText";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import CounterValue from "~/components/CounterValue";
 import DelegationDetailsModal from "./DelegationDetailsModal";
 import BakerImage from "./BakerImage";
-import Button from "../../components/wrappedUi/Button";
+import Button from "~/components/wrappedUi/Button";
 
 const styles = StyleSheet.create({
   root: {
@@ -106,9 +106,7 @@ export default function TezosAccountBodyHeader({
     return null;
   }
 
-  const name = delegation.baker
-    ? delegation.baker.name
-    : shortAddressPreview(delegation.address);
+  const name = delegation.baker ? delegation.baker.name : shortAddressPreview(delegation.address);
   const amount = account.balance;
   const currency = getAccountCurrency(account);
   const unit = getAccountUnit(account);
@@ -144,11 +142,7 @@ export default function TezosAccountBodyHeader({
             <View style={styles.row}>
               <LText style={styles.subtitle} color="grey">
                 {days ? (
-                  <Trans
-                    i18nKey="delegation.durationDays"
-                    count={days}
-                    values={{ count: days }}
-                  />
+                  <Trans i18nKey="delegation.durationDays" count={days} values={{ count: days }} />
                 ) : (
                   <Trans i18nKey="delegation.durationDays0" />
                 )}

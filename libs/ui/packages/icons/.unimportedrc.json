@@ -1,0 +1,29 @@
+{
+  "entry": [
+    "src/react/index.ts",
+    "src/native/index.ts",
+    "src/reactLegacy/index.ts",
+    "src/nativeLegacy/index.ts"
+  ],
+  "ignoreUnimported": [],
+  "ignoreUnresolved": [
+    "@styled-system/border",
+    "@styled-system/background",
+    "@styled-system/core",
+    "@styled-system/color",
+    "@styled-system/flexbox",
+    "@styled-system/grid",
+    "@styled-system/layout",
+    "@styled-system/position",
+    "@styled-system/shadow",
+    "@styled-system/space",
+    "@styled-system/typography",
+    "@styled-system/variant",
+    "styled-components",
+    "styled-components/native",
+    "react-native",
+    "css-select",
+    "css-tree",
+    "regenerator-runtime"
+  ]
+}

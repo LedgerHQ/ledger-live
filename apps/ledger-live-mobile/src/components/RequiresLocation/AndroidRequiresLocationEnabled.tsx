@@ -21,8 +21,7 @@ const AndroidRequiresLocationEnabled: React.FC<Props> = ({
   children,
   forceOpenSettingsOnErrorButton = false,
 }) => {
-  const { locationServicesState, checkAndRequestAgain } =
-    useAndroidEnableLocation();
+  const { locationServicesState, checkAndRequestAgain } = useAndroidEnableLocation();
 
   if (locationServicesState === "disabled") {
     return (

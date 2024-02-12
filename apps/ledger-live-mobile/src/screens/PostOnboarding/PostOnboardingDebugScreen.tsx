@@ -3,10 +3,10 @@ import { Flex } from "@ledgerhq/native-ui";
 import React, { useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useStartPostOnboardingCallback } from "@ledgerhq/live-common/postOnboarding/hooks/index";
-import PostOnboardingEntryPointCard from "../../components/PostOnboarding/PostOnboardingEntryPointCard";
-import SettingsRow from "../../components/SettingsRow";
-import { useNavigateToPostOnboardingHubCallback } from "../../logic/postOnboarding/useNavigateToPostOnboardingHubCallback";
-import { NavigatorName } from "../../const";
+import PostOnboardingEntryPointCard from "~/components/PostOnboarding/PostOnboardingEntryPointCard";
+import SettingsRow from "~/components/SettingsRow";
+import { useNavigateToPostOnboardingHubCallback } from "~/logic/postOnboarding/useNavigateToPostOnboardingHubCallback";
+import { NavigatorName } from "~/const";
 
 export default () => {
   const navigation = useNavigation();
@@ -40,10 +40,7 @@ export default () => {
         desc="Pressing this should not do anything. (no actions configured for this device)."
         onPress={() => handleInitPostOnboardingHub(DeviceModelId.nanoX, true)}
       />
-      <SettingsRow
-        title="Open post onboarding hub"
-        onPress={navigateToPostOnboardingHub}
-      />
+      <SettingsRow title="Open post onboarding hub" onPress={navigateToPostOnboardingHub} />
       <Flex m={6}>
         <PostOnboardingEntryPointCard />
       </Flex>

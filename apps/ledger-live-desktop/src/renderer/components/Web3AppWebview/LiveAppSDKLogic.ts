@@ -1,9 +1,9 @@
 import { Dispatch } from "redux";
-import { TFunction } from "react-i18next";
+import { TFunction } from "i18next";
 import { Account, AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import { ToastData } from "@ledgerhq/live-common/notifications/ToastProvider/types";
 import { accountToPlatformAccount } from "@ledgerhq/live-common/platform/converters";
 import { broadcastTransactionLogic as broadcastTransactionCommonLogic } from "@ledgerhq/live-common/platform/logic";
@@ -17,12 +17,13 @@ import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { track } from "~/renderer/analytics/segment";
 
-const tracking = trackingWrapper(track);
+const trackingLiveAppSDKLogic = trackingWrapper(track);
 
 type WebPlatformContext = {
   manifest: LiveAppManifest;
   dispatch: Dispatch;
   accounts: AccountLike[];
+  tracking: typeof trackingLiveAppSDKLogic;
 };
 
 export type RequestAccountParams = {
@@ -31,10 +32,10 @@ export type RequestAccountParams = {
   includeTokens?: boolean;
 };
 export const requestAccountLogic = async (
-  { manifest }: Omit<WebPlatformContext, "accounts" | "dispatch">,
+  { manifest }: Omit<WebPlatformContext, "accounts" | "dispatch" | "tracking">,
   { currencies, includeTokens }: RequestAccountParams,
 ) => {
-  tracking.platformRequestAccountRequested(manifest);
+  trackingLiveAppSDKLogic.platformRequestAccountRequested(manifest);
 
   /**
    * make sure currencies are strings
@@ -50,7 +51,7 @@ export const requestAccountLogic = async (
 };
 
 export const broadcastTransactionLogic = (
-  { manifest, dispatch, accounts }: WebPlatformContext,
+  { manifest, dispatch, accounts, tracking }: WebPlatformContext,
   accountId: string,
   signedTransaction: RawPlatformSignedTransaction,
   pushToast: (data: ToastData) => void,

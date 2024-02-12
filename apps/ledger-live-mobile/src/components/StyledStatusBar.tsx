@@ -20,8 +20,7 @@ function StyledStatusBar({
   barStyle = "dark-content",
 }: Props) {
   const { colors, dark } = useTheme();
-  const newColor =
-    oldAndroid && barStyle === "dark-content" ? colors.live : backgroundColor;
+  const newColor = oldAndroid && barStyle === "dark-content" ? colors.live : backgroundColor;
   const statusBarStyle = dark ? "light-content" : barStyle;
   return (
     <StatusBar

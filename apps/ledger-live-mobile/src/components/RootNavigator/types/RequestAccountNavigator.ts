@@ -1,13 +1,10 @@
 import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
-import type {
-  CryptoOrTokenCurrency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { Observable } from "rxjs7";
+import { Observable } from "rxjs";
 import { NavigatorScreenParams } from "@react-navigation/native";
-import { NavigatorName, ScreenName } from "../../../const";
+import { NavigatorName, ScreenName } from "~/const";
 import { AddAccountsNavigatorParamList } from "./AddAccountsNavigator";
 
 export type RequestAccountNavigatorParamList = {
@@ -16,14 +13,13 @@ export type RequestAccountNavigatorParamList = {
     currencies: CryptoOrTokenCurrency[];
     allowAddAccount?: boolean;
     onSuccess?: (account: AccountLike, parentAccount?: Account) => void;
-    onError?: (_: Error) => void;
   };
   [ScreenName.RequestAccountsSelectAccount]: {
     accounts$?: Observable<WalletAPIAccount[]>;
+    currencies?: CryptoOrTokenCurrency[];
     currency: CryptoOrTokenCurrency;
     allowAddAccount?: boolean;
     onSuccess?: (account: AccountLike, parentAccount?: Account) => void;
-    onError?: (_: Error) => void;
   };
   [NavigatorName.RequestAccountsAddAccounts]: NavigatorScreenParams<AddAccountsNavigatorParamList> &
     Partial<{
@@ -33,6 +29,5 @@ export type RequestAccountNavigatorParamList = {
       returnToSwap?: boolean;
       analyticsPropertyFlow?: string;
       onSuccess?: (account: AccountLike, parentAccount?: Account) => void;
-      onError?: (_: Error) => void;
     }>;
 };

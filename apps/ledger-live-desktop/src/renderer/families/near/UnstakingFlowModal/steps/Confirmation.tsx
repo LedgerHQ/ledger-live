@@ -36,7 +36,13 @@ export default function StepConfirmation({
       });
     return (
       <Container>
-        <TrackPage category="Unstake NEAR Flow" name="Step Confirmed" />
+        <TrackPage
+          category="Unstake NEAR Flow"
+          name="Step Confirmed"
+          flow="stake"
+          action="unstaking"
+          currency="near"
+        />
         <SyncOneAccountOnMount priority={10} accountId={optimisticOperation.accountId} />
         <SuccessDisplay
           title={t("near.unstake.flow.steps.confirmation.success.title")}
@@ -60,7 +66,13 @@ export default function StepConfirmation({
   if (error) {
     return (
       <Container shouldSpace={signed}>
-        <TrackPage category="Unstake NEAR Flow" name="Step Confirmation Error" />
+        <TrackPage
+          category="Unstake NEAR Flow"
+          name="Step Confirmation Error"
+          flow="stake"
+          action="unstaking"
+          currency="near"
+        />
         {signed ? (
           <BroadcastErrorDisclaimer
             title={t("near.unstake.flow.steps.confirmation.broadcastError")}
@@ -72,18 +84,17 @@ export default function StepConfirmation({
   }
   return null;
 }
-const Container: ThemedComponent<{
-  shouldSpace?: boolean;
-}> = styled(Box).attrs(() => ({
+const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   grow: true,
   color: "palette.text.shade100",
-}))`
+}))<{
+  shouldSpace?: boolean;
+}>`
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
 `;
 export function StepConfirmationFooter({
   account,
-  parentAccount,
   error,
   onClose,
   onRetry,
@@ -101,10 +112,9 @@ export function StepConfirmationFooter({
       setDrawer(OperationDetails, {
         operationId: concernedOperation.id,
         accountId: account.id,
-        parentId: parentAccount && parentAccount.id,
       });
     }
-  }, [onClose, account, concernedOperation, parentAccount]);
+  }, [onClose, account, concernedOperation]);
   return (
     <Box horizontal alignItems="right">
       <Button ml={2} onClick={onClose}>

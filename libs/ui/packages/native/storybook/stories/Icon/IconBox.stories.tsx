@@ -1,5 +1,5 @@
 import React from "react";
-import { Icons } from "../../../src/assets";
+import { IconsLegacy } from "../../../src/assets";
 import { IconBox } from "../../../src/components";
 
 export default {
@@ -7,5 +7,5 @@ export default {
   component: IconBox,
 };
 
-export const IconBoxSample = () => <IconBox Icon={Icons.InfoMedium} />;
+export const IconBoxSample = () => <IconBox Icon={IconsLegacy.InfoMedium} />;
 IconBoxSample.storyName = "IconBox";

@@ -1,6 +1,7 @@
 import React, { PureComponent } from "react";
 import styled from "styled-components";
-import { withTranslation, TFunction } from "react-i18next";
+import { withTranslation } from "react-i18next";
+import { TFunction } from "i18next";
 import { darken, lighten } from "~/renderer/styles/helpers";
 import IconCopy from "~/renderer/icons/Copy";
 import Box from "~/renderer/components/Box";

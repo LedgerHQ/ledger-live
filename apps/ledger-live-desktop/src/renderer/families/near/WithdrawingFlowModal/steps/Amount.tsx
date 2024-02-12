@@ -18,11 +18,10 @@ export default function StepAmount({
   status,
   error,
 }: StepProps) {
-  invariant(account && account.nearResources && transaction, "account and transaction required");
   const [available, setAvailable] = useState(transaction.amount);
   const bridge = getAccountBridge(account);
   const updateValidator = useCallback(
-    ({ address, amount }) => {
+    ({ address, amount }: { address: string; amount: BigNumber }) => {
       onUpdateTransaction(tx =>
         bridge.updateTransaction(tx, {
           ...tx,
@@ -35,11 +34,12 @@ export default function StepAmount({
     [onUpdateTransaction, bridge, available],
   );
   const onChangeValidator = useCallback(
-    ({ validatorId, available }: NearMappedStakingPosition) => {
-      setAvailable(available);
+    (validator?: NearMappedStakingPosition | null) => {
+      if (!validator) return;
+      setAvailable(validator.available);
       updateValidator({
-        address: validatorId,
-        amount: available,
+        address: validator.validatorId,
+        amount: validator.available,
       });
     },
     [updateValidator],
@@ -62,7 +62,13 @@ export default function StepAmount({
   const amount = useMemo(() => (validator ? validator.amount : new BigNumber(0)), [validator]);
   return (
     <Box flow={1}>
-      <TrackPage category="Withdrawing Flow" name="Step 1" />
+      <TrackPage
+        category="Withdrawing Flow"
+        name="Step 1"
+        flow="stake"
+        action="withdrawing"
+        currency="near"
+      />
       {error && <ErrorBanner error={error} />}
       <ValidatorField account={account} transaction={transaction} onChange={onChangeValidator} />
       <AmountField

@@ -2,13 +2,13 @@ export const encodeNftId = (
   accountId: string,
   contract: string,
   tokenId: string,
-  currencyId: string
+  currencyId: string,
 ): string => {
   return `${accountId}+${contract}+${tokenId}+${currencyId}`;
 };
 
 export const decodeNftId = (
-  id: string
+  id: string,
 ): {
   accountId: string;
   contract: string;

@@ -1,6 +1,6 @@
 import React from "react";
 import { Dimensions, PixelRatio, Platform, StyleSheet } from "react-native";
-import { CircledCheckSolidMedium } from "@ledgerhq/icons-ui/native";
+import { CircledCheckSolidMedium } from "@ledgerhq/icons-ui/nativeLegacy";
 import styled, { useTheme } from "styled-components/native";
 import Svg, { Line } from "react-native-svg";
 
@@ -36,6 +36,7 @@ const TopSegmentSvg: React.FC<SegmentProps> = ({ status, hidden, height }) => {
           preserveAspectRatio="xMinYMin slice"
         >
           <Line
+            key={status + " " + hidden}
             x1="0"
             y1="0"
             x2="0"
@@ -65,6 +66,7 @@ const BottomSegmentSvg: React.FC<SegmentProps> = ({ status, hidden }) => {
           preserveAspectRatio="xMinYMin slice"
         >
           <Line
+            key={status + " " + hidden}
             x1="0"
             y1="0"
             x2="0"

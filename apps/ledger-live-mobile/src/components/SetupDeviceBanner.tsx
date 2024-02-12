@@ -15,13 +15,7 @@ function SetupDeviceBanner({ screen }: Props) {
     <BuyDeviceBanner
       variant={"setup"}
       topLeft={
-        <Text
-          color="primary.c40"
-          uppercase
-          mb={3}
-          fontSize="11px"
-          fontWeight="semiBold"
-        >
+        <Text color="primary.c40" uppercase mb={3} fontSize="11px" fontWeight="semiBold">
           {t("postBuyDeviceSetupNanoWall.bannerTitle")}
         </Text>
       }

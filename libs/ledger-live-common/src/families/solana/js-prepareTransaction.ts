@@ -6,12 +6,10 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/errors";
-import BigNumber from "bignumber.js";
 import { findSubAccountById } from "../../account";
 import type { Account } from "@ledgerhq/types-live";
 import { ChainAPI } from "./api";
 import {
-  getAccountMinimumBalanceForRentExemption,
   getMaybeTokenAccount,
   getMaybeVoteAccount,
   getStakeAccountAddressWithSeed,
@@ -42,7 +40,6 @@ import {
   isValidBase58Address,
   MAX_MEMO_LENGTH,
 } from "./logic";
-import { estimateTxFee } from "./tx-fees";
 import type {
   CommandDescriptor,
   SolanaAccount,
@@ -61,11 +58,13 @@ import type {
   TransferTransaction,
 } from "./types";
 import { assertUnreachable } from "./utils";
+import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { estimateFeeAndSpendable } from "./js-estimateMaxSpendable";
 
 async function deriveCommandDescriptor(
   mainAccount: SolanaAccount,
   tx: Transaction,
-  api: ChainAPI
+  api: ChainAPI,
 ): Promise<CommandDescriptor> {
   const { model } = tx;
 
@@ -75,22 +74,13 @@ async function deriveCommandDescriptor(
     case "token.transfer":
       return deriveTokenTransferCommandDescriptor(mainAccount, tx, model, api);
     case "token.createATA":
-      return deriveCreateAssociatedTokenAccountCommandDescriptor(
-        mainAccount,
-        model,
-        api
-      );
+      return deriveCreateAssociatedTokenAccountCommandDescriptor(mainAccount, tx, model, api);
     case "stake.createAccount":
-      return deriveStakeCreateAccountCommandDescriptor(
-        mainAccount,
-        tx,
-        model,
-        api
-      );
+      return deriveStakeCreateAccountCommandDescriptor(mainAccount, tx, model, api);
     case "stake.delegate":
-      return deriveStakeDelegateCommandDescriptor(mainAccount, model, api);
+      return deriveStakeDelegateCommandDescriptor(mainAccount, tx, model, api);
     case "stake.undelegate":
-      return deriveStakeUndelegateCommandDescriptor(mainAccount, model, api);
+      return deriveStakeUndelegateCommandDescriptor(mainAccount, tx, model, api);
     case "stake.withdraw":
       return deriveStakeWithdrawCommandDescriptor(mainAccount, tx, model, api);
     case "stake.split":
@@ -103,45 +93,34 @@ async function deriveCommandDescriptor(
 const prepareTransaction = async (
   mainAccount: SolanaAccount,
   tx: Transaction,
-  api: ChainAPI
+  api: ChainAPI,
 ): Promise<Transaction> => {
   const txToDeriveFrom = updateModelIfSubAccountIdPresent(tx);
 
-  const commandDescriptor = await deriveCommandDescriptor(
-    mainAccount,
-    txToDeriveFrom,
-    api
-  );
+  const commandDescriptor = await deriveCommandDescriptor(mainAccount, txToDeriveFrom, api);
 
   const model: TransactionModel = {
     ...tx.model,
     commandDescriptor,
   };
 
-  const preparedTx: Transaction = {
-    ...tx,
+  const patch: Partial<Transaction> = {
     model,
   };
 
-  // LLM requires this field to be truthy to show fees
-  (preparedTx as any).networkInfo = true;
-
-  return preparedTx;
+  return defaultUpdateTransaction(tx, patch);
 };
 
 const deriveTokenTransferCommandDescriptor = async (
   mainAccount: Account,
   tx: Transaction,
   model: TransactionModel & { kind: TokenTransferTransaction["kind"] },
-  api: ChainAPI
+  api: ChainAPI,
 ): Promise<CommandDescriptor> => {
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
 
-  const subAccount = findSubAccountById(
-    mainAccount,
-    model.uiState.subAccountId
-  );
+  const subAccount = findSubAccountById(mainAccount, model.uiState.subAccountId);
 
   if (!subAccount || subAccount.type !== "TokenAccount") {
     throw new Error("subaccount not found");
@@ -159,13 +138,11 @@ const deriveTokenTransferCommandDescriptor = async (
   const mintAddress = tokenIdParts[tokenIdParts.length - 1];
   const mintDecimals = subAccount.token.units[0].magnitude;
 
-  const senderAssociatedTokenAccountAddress =
-    decodeAccountIdWithTokenAccountAddress(subAccount.id).address;
+  const senderAssociatedTokenAccountAddress = decodeAccountIdWithTokenAccountAddress(
+    subAccount.id,
+  ).address;
 
-  if (
-    !errors.recipient &&
-    tx.recipient === senderAssociatedTokenAccountAddress
-  ) {
+  if (!errors.recipient && tx.recipient === senderAssociatedTokenAccountAddress) {
     errors.recipient = new SolanaTokenRecipientIsSenderATA();
   }
 
@@ -188,25 +165,25 @@ const deriveTokenTransferCommandDescriptor = async (
       ? defaultRecipientDescriptor
       : recipientDescriptorOrError;
 
-  const txFee = await estimateTxFee(api, mainAccount, "token.transfer");
-
-  const assocAccRentExempt =
-    recipientDescriptor.shouldCreateAsAssociatedTokenAccount
-      ? await api.getAssocTokenAccMinNativeBalance()
-      : 0;
+  const assocAccRentExempt = recipientDescriptor.shouldCreateAsAssociatedTokenAccount
+    ? await api.getAssocTokenAccMinNativeBalance()
+    : 0;
 
   if (recipientDescriptor.shouldCreateAsAssociatedTokenAccount) {
-    warnings.recipient =
-      new SolanaRecipientAssociatedTokenAccountWillBeFunded();
+    warnings.recipient = new SolanaRecipientAssociatedTokenAccountWillBeFunded();
+  }
+
+  const { fee, spendable: spendableSol } = await estimateFeeAndSpendable(api, mainAccount, tx);
+
+  if (spendableSol.lt(assocAccRentExempt)) {
+    errors.fee = new NotEnoughBalance();
   }
 
   if (!tx.useAllAmount && tx.amount.lte(0)) {
     errors.amount = new AmountRequired();
   }
 
-  const txAmount = tx.useAllAmount
-    ? subAccount.spendableBalance.toNumber()
-    : tx.amount.toNumber();
+  const txAmount = tx.useAllAmount ? subAccount.spendableBalance.toNumber() : tx.amount.toNumber();
 
   if (!errors.amount && txAmount > subAccount.spendableBalance.toNumber()) {
     errors.amount = new NotEnoughBalance();
@@ -223,7 +200,7 @@ const deriveTokenTransferCommandDescriptor = async (
       recipientDescriptor: recipientDescriptor,
       memo: model.uiState.memo,
     },
-    fee: txFee + assocAccRentExempt,
+    fee: fee + assocAccRentExempt,
     warnings,
     errors,
   };
@@ -232,12 +209,9 @@ const deriveTokenTransferCommandDescriptor = async (
 async function getTokenRecipient(
   recipientAddress: string,
   mintAddress: string,
-  api: ChainAPI
+  api: ChainAPI,
 ): Promise<TokenRecipientDescriptor | Error> {
-  const recipientTokenAccount = await getMaybeTokenAccount(
-    recipientAddress,
-    api
-  );
+  const recipientTokenAccount = await getMaybeTokenAccount(recipientAddress, api);
 
   if (recipientTokenAccount instanceof Error) {
     throw recipientTokenAccount;
@@ -248,12 +222,14 @@ async function getTokenRecipient(
       return new SolanaAddressOffEd25519();
     }
 
-    const recipientAssociatedTokenAccountAddress =
-      await api.findAssocTokenAccAddress(recipientAddress, mintAddress);
+    const recipientAssociatedTokenAccountAddress = await api.findAssocTokenAccAddress(
+      recipientAddress,
+      mintAddress,
+    );
 
     const shouldCreateAsAssociatedTokenAccount = !(await isAccountFunded(
       recipientAssociatedTokenAccountAddress,
-      api
+      api,
     ));
 
     return {
@@ -279,23 +255,29 @@ async function getTokenRecipient(
 
 async function deriveCreateAssociatedTokenAccountCommandDescriptor(
   mainAccount: Account,
+  tx: Transaction,
   model: TransactionModel & { kind: TokenCreateATATransaction["kind"] },
-  api: ChainAPI
+  api: ChainAPI,
 ): Promise<CommandDescriptor> {
+  const errors: Record<string, Error> = {};
+
   const token = getTokenById(model.uiState.tokenId);
   const tokenIdParts = token.id.split("/");
   const mint = tokenIdParts[tokenIdParts.length - 1];
 
   const associatedTokenAccountAddress = await api.findAssocTokenAccAddress(
     mainAccount.freshAddress,
-    mint
+    mint,
   );
 
-  const txFee = await estimateTxFee(api, mainAccount, "token.createATA");
-  const assocAccRentExempt = await api.getAssocTokenAccMinNativeBalance();
+  const { fee } = await estimateFeeAndSpendable(api, mainAccount, tx);
+
+  if (mainAccount.spendableBalance.lt(fee)) {
+    errors.fee = new NotEnoughBalance();
+  }
 
   return {
-    fee: txFee + assocAccRentExempt,
+    fee,
     command: {
       kind: model.kind,
       mint: mint,
@@ -303,7 +285,7 @@ async function deriveCreateAssociatedTokenAccountCommandDescriptor(
       associatedTokenAccountAddress,
     },
     warnings: {},
-    errors: {},
+    errors,
   };
 }
 
@@ -311,7 +293,7 @@ async function deriveTransferCommandDescriptor(
   mainAccount: Account,
   tx: Transaction,
   model: TransactionModel & { kind: TransferTransaction["kind"] },
-  api: ChainAPI
+  api: ChainAPI,
 ): Promise<CommandDescriptor> {
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
@@ -324,19 +306,8 @@ async function deriveTransferCommandDescriptor(
     validateMemoCommon(memo, errors);
   }
 
-  const fee = await estimateTxFee(api, mainAccount, "transfer");
-
-  const rentExemptMin = await getAccountMinimumBalanceForRentExemption(
-    api,
-    mainAccount.freshAddress
-  );
-
-  const txAmount = tx.useAllAmount
-    ? BigNumber.max(
-        mainAccount.spendableBalance.minus(fee).minus(rentExemptMin),
-        0
-      )
-    : tx.amount;
+  const { fee, spendable } = await estimateFeeAndSpendable(api, mainAccount, tx);
+  const txAmount = tx.useAllAmount ? spendable : tx.amount;
 
   if (tx.useAllAmount) {
     if (txAmount.eq(0)) {
@@ -345,12 +316,11 @@ async function deriveTransferCommandDescriptor(
   } else {
     if (txAmount.lte(0)) {
       errors.amount = new AmountRequired();
-    } else if (
-      txAmount.plus(fee).plus(rentExemptMin).gt(mainAccount.spendableBalance)
-    ) {
+    } else if (txAmount.gt(spendable)) {
       errors.amount = new NotEnoughBalance();
     }
   }
+
   const command: TransferCommand = {
     kind: "transfer",
     amount: txAmount.toNumber(),
@@ -371,39 +341,24 @@ async function deriveStakeCreateAccountCommandDescriptor(
   mainAccount: Account,
   tx: Transaction,
   model: TransactionModel & { kind: StakeCreateAccountTransaction["kind"] },
-  api: ChainAPI
+  api: ChainAPI,
 ): Promise<CommandDescriptor> {
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
 
-  if (!tx.useAllAmount && tx.amount.lte(0)) {
-    errors.amount = new AmountRequired();
-  }
+  const { fee, spendable } = await estimateFeeAndSpendable(api, mainAccount, tx);
+  const txAmount = tx.useAllAmount ? spendable : tx.amount;
 
-  const txFee = await estimateTxFee(api, mainAccount, "stake.createAccount");
-
-  const stakeAccRentExemptAmount =
-    await getStakeAccountMinimumBalanceForRentExemption(api);
-
-  const rentExemptMin = await getAccountMinimumBalanceForRentExemption(
-    api,
-    mainAccount.freshAddress
-  );
-
-  const fee = txFee + stakeAccRentExemptAmount;
-
-  const amount = tx.useAllAmount
-    ? BigNumber.max(
-        mainAccount.spendableBalance.minus(fee).minus(rentExemptMin),
-        0
-      )
-    : tx.amount;
-
-  if (
-    !errors.amount &&
-    mainAccount.spendableBalance.lt(amount.plus(fee).plus(rentExemptMin))
-  ) {
-    errors.amount = new NotEnoughBalance();
+  if (tx.useAllAmount) {
+    if (txAmount.eq(0)) {
+      errors.amount = new NotEnoughBalance();
+    }
+  } else {
+    if (txAmount.lte(0)) {
+      errors.amount = new AmountRequired();
+    } else if (txAmount.gt(spendable)) {
+      errors.amount = new NotEnoughBalance();
+    }
   }
 
   const {
@@ -417,11 +372,12 @@ async function deriveStakeCreateAccountCommandDescriptor(
     fromAddress: mainAccount.freshAddress,
     seed: stakeAccAddressSeed,
   });
+  const stakeAccRentExemptAmount = await getStakeAccountMinimumBalanceForRentExemption(api);
 
   return {
     command: {
       kind: "stake.createAccount",
-      amount: amount.toNumber(),
+      amount: txAmount.toNumber(),
       stakeAccRentExemptAmount,
       fromAccAddress: mainAccount.freshAddress,
       stakeAccAddress,
@@ -436,18 +392,15 @@ async function deriveStakeCreateAccountCommandDescriptor(
 
 async function deriveStakeDelegateCommandDescriptor(
   mainAccount: SolanaAccount,
+  tx: Transaction,
   model: TransactionModel & { kind: StakeDelegateTransaction["kind"] },
-  api: ChainAPI
+  api: ChainAPI,
 ): Promise<CommandDescriptor> {
   const errors: Record<string, Error> = {};
 
   const { uiState } = model;
 
-  const stake = validateAndTryGetStakeAccount(
-    mainAccount,
-    uiState.stakeAccAddr,
-    errors
-  );
+  const stake = validateAndTryGetStakeAccount(mainAccount, uiState.stakeAccAddr, errors);
 
   if (stake !== undefined && !stake.hasStakeAuth && !stake.hasWithdrawAuth) {
     errors.stakeAccAddr = new SolanaStakeNoStakeAuth();
@@ -473,9 +426,9 @@ async function deriveStakeDelegateCommandDescriptor(
     }
   }
 
-  const txFee = await estimateTxFee(api, mainAccount, "stake.delegate");
+  const { fee } = await estimateFeeAndSpendable(api, mainAccount, tx);
 
-  if (mainAccount.spendableBalance.lt(txFee)) {
+  if (mainAccount.spendableBalance.lt(fee)) {
     errors.fee = new NotEnoughBalance();
   }
 
@@ -486,7 +439,7 @@ async function deriveStakeDelegateCommandDescriptor(
       stakeAccAddr: uiState.stakeAccAddr,
       voteAccAddr: uiState.voteAccAddr,
     },
-    fee: txFee,
+    fee,
     warnings: {},
     errors,
   };
@@ -494,18 +447,15 @@ async function deriveStakeDelegateCommandDescriptor(
 
 async function deriveStakeUndelegateCommandDescriptor(
   mainAccount: SolanaAccount,
+  tx: Transaction,
   model: TransactionModel & { kind: StakeUndelegateTransaction["kind"] },
-  api: ChainAPI
+  api: ChainAPI,
 ): Promise<CommandDescriptor> {
   const errors: Record<string, Error> = {};
 
   const { uiState } = model;
 
-  const stake = validateAndTryGetStakeAccount(
-    mainAccount,
-    uiState.stakeAccAddr,
-    errors
-  );
+  const stake = validateAndTryGetStakeAccount(mainAccount, uiState.stakeAccAddr, errors);
 
   if (stake !== undefined) {
     switch (stake.activation.state) {
@@ -525,9 +475,8 @@ async function deriveStakeUndelegateCommandDescriptor(
     }
   }
 
-  const txFee = await estimateTxFee(api, mainAccount, "stake.undelegate");
-
-  if (mainAccount.spendableBalance.lt(txFee)) {
+  const { fee } = await estimateFeeAndSpendable(api, mainAccount, tx);
+  if (mainAccount.solanaResources.unstakeReserve.lt(fee)) {
     errors.fee = new NotEnoughBalance();
   }
 
@@ -537,7 +486,7 @@ async function deriveStakeUndelegateCommandDescriptor(
       authorizedAccAddr: mainAccount.freshAddress,
       stakeAccAddr: uiState.stakeAccAddr,
     },
-    fee: txFee,
+    fee,
     warnings: {},
     errors,
   };
@@ -547,16 +496,12 @@ async function deriveStakeWithdrawCommandDescriptor(
   mainAccount: SolanaAccount,
   tx: Transaction,
   model: TransactionModel & { kind: StakeWithdrawTransaction["kind"] },
-  api: ChainAPI
+  api: ChainAPI,
 ): Promise<CommandDescriptor> {
   const errors: Record<string, Error> = {};
   const { uiState } = model;
 
-  const stake = validateAndTryGetStakeAccount(
-    mainAccount,
-    uiState.stakeAccAddr,
-    errors
-  );
+  const stake = validateAndTryGetStakeAccount(mainAccount, uiState.stakeAccAddr, errors);
 
   if (!errors.stakeAccAddr && stake !== undefined) {
     if (!stake.hasWithdrawAuth) {
@@ -566,9 +511,8 @@ async function deriveStakeWithdrawCommandDescriptor(
     }
   }
 
-  const txFee = await estimateTxFee(api, mainAccount, "stake.withdraw");
-
-  if (mainAccount.spendableBalance.lt(txFee)) {
+  const { fee } = await estimateFeeAndSpendable(api, mainAccount, tx);
+  if (mainAccount.solanaResources.unstakeReserve.lt(fee)) {
     errors.fee = new NotEnoughBalance();
   }
 
@@ -580,7 +524,7 @@ async function deriveStakeWithdrawCommandDescriptor(
       amount: stake?.withdrawable ?? 0,
       toAccAddr: mainAccount.freshAddress,
     },
-    fee: txFee,
+    fee,
     warnings: {},
     errors,
   };
@@ -590,7 +534,7 @@ async function deriveStakeSplitCommandDescriptor(
   mainAccount: SolanaAccount,
   tx: Transaction,
   model: TransactionModel & { kind: StakeSplitTransaction["kind"] },
-  api: ChainAPI
+  api: ChainAPI,
 ): Promise<CommandDescriptor> {
   const errors: Record<string, Error> = {};
 
@@ -604,7 +548,9 @@ async function deriveStakeSplitCommandDescriptor(
   // TODO: else if amount > stake balance
 
   if (!isValidBase58Address(uiState.stakeAccAddr)) {
-    errors.stakeAccAddr = new InvalidAddress();
+    errors.stakeAccAddr = new InvalidAddress("", {
+      currencyName: mainAccount.currency.name,
+    });
   }
 
   mainAccount.solanaResources?.stakes ?? [];
@@ -650,10 +596,7 @@ function updateModelIfSubAccountIdPresent(tx: Transaction): Transaction {
   return tx;
 }
 
-async function isAccountFunded(
-  address: string,
-  api: ChainAPI
-): Promise<boolean> {
+async function isAccountFunded(address: string, api: ChainAPI): Promise<boolean> {
   const balance = await api.getBalance(address);
   return balance > 0;
 }
@@ -663,19 +606,18 @@ async function validateRecipientCommon(
   tx: Transaction,
   errors: Record<string, Error>,
   warnings: Record<string, Error>,
-  api: ChainAPI
+  api: ChainAPI,
 ) {
   if (!tx.recipient) {
     errors.recipient = new RecipientRequired();
   } else if (mainAccount.freshAddress === tx.recipient) {
     errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
   } else if (!isValidBase58Address(tx.recipient)) {
-    errors.recipient = new InvalidAddress();
+    errors.recipient = new InvalidAddress("", {
+      currencyName: mainAccount.currency.name,
+    });
   } else {
-    const recipientWalletIsUnfunded = !(await isAccountFunded(
-      tx.recipient,
-      api
-    ));
+    const recipientWalletIsUnfunded = !(await isAccountFunded(tx.recipient, api));
 
     if (recipientWalletIsUnfunded) {
       warnings.recipient = new SolanaAccountNotFunded();
@@ -697,15 +639,13 @@ function validateMemoCommon(memo: string, errors: Record<string, Error>) {
   }
 }
 
-async function validateValidatorCommon(
-  addr: string,
-  errors: Record<string, Error>,
-  api: ChainAPI
-) {
+async function validateValidatorCommon(addr: string, errors: Record<string, Error>, api: ChainAPI) {
   if (addr.length === 0) {
     errors.voteAccAddr = new SolanaValidatorRequired();
   } else if (!isValidBase58Address(addr)) {
-    errors.voteAccAddr = new InvalidAddress();
+    errors.voteAccAddr = new InvalidAddress("", {
+      currencyName: "Solana",
+    });
   } else {
     const voteAcc = await getMaybeVoteAccount(addr, api);
 
@@ -718,17 +658,19 @@ async function validateValidatorCommon(
 function validateAndTryGetStakeAccount(
   account: SolanaAccount,
   stakeAccAddr: string,
-  errors: Record<string, Error>
+  errors: Record<string, Error>,
 ): SolanaStake | undefined {
   if (stakeAccAddr.length === 0) {
     errors.stakeAccAddr = new SolanaStakeAccountRequired();
   } else if (!isValidBase58Address(stakeAccAddr)) {
-    errors.stakeAccAddr = new InvalidAddress();
+    errors.stakeAccAddr = new InvalidAddress("", {
+      currencyName: account.currency.name,
+    });
   }
 
   if (!errors.stakeAccAddr) {
     const stake = account.solanaResources?.stakes.find(
-      (stake) => stake.stakeAccAddr === stakeAccAddr
+      stake => stake.stakeAccAddr === stakeAccAddr,
     );
 
     if (stake === undefined) {

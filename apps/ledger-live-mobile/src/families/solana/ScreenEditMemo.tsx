@@ -7,12 +7,12 @@ import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Button from "../../components/Button";
-import TextInput from "../../components/FocusedTextInput";
-import KeyboardView from "../../components/KeyboardView";
-import { BaseComposite } from "../../components/RootNavigator/types/helpers";
-import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
-import { ScreenName } from "../../const";
+import Button from "~/components/Button";
+import TextInput from "~/components/FocusedTextInput";
+import KeyboardView from "~/components/KeyboardView";
+import { BaseComposite } from "~/components/RootNavigator/types/helpers";
+import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
+import { ScreenName } from "~/const";
 
 type NavigationProps = BaseComposite<
   StackScreenProps<SendFundsNavigatorStackParamList, ScreenName.SolanaEditMemo>
@@ -49,13 +49,8 @@ function SolanaEditMemo({ navigation, route }: NavigationProps) {
 
   return (
     <SafeAreaView style={styles.root}>
-      <KeyboardView
-        style={[styles.body, { backgroundColor: colors.background }]}
-      >
-        <ScrollView
-          contentContainerStyle={styles.root}
-          keyboardShouldPersistTaps="always"
-        >
+      <KeyboardView style={[styles.body, { backgroundColor: colors.background }]}>
+        <ScrollView contentContainerStyle={styles.root} keyboardShouldPersistTaps="always">
           <TextInput
             allowFontScaling={false}
             autoFocus

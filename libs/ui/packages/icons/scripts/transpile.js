@@ -6,22 +6,25 @@ const commonConfig = {
   logLevel: "error",
 };
 
-const globEntryPoints = () =>
-  Promise.all(
-    ["src/react/**/*.ts", "src/react/**/*.tsx"].map((path) => glob(path)),
-  ).then(([ts, tsx]) => [...ts, ...tsx]);
+const globEntryPoints = folder =>
+  Promise.all([`${folder}/**/*.ts`, `${folder}/**/*.tsx`].map(path => glob(path))).then(
+    ([ts, tsx]) => [...ts, ...tsx],
+  );
 
-const commonjs = () =>
-  globEntryPoints().then((entryPoints) =>
+const buildForFolder = (folder, outputFolder) =>
+  globEntryPoints(folder).then(entryPoints =>
     esbuild.build({
       ...commonConfig,
       entryPoints,
-      outdir: "react/cjs",
+      outdir: `${outputFolder}/cjs`,
       format: "cjs",
     }),
   );
 
-commonjs().catch((error) => {
+Promise.all([
+  buildForFolder("src/react", "react"),
+  buildForFolder("src/reactLegacy", "reactLegacy"),
+]).catch(error => {
   console.error(error);
   process.exit(1);
 });

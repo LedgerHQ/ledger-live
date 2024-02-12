@@ -4,14 +4,11 @@ import { useTranslation } from "react-i18next";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "@react-navigation/native";
 
-import StepHeader from "../../../../../components/StepHeader";
-import ClaimRewardsSelectDevice from "../../../../../screens/SelectDevice";
-import ClaimRewardsConnectDevice from "../../../../../screens/ConnectDevice";
-import {
-  getStackNavigatorConfig,
-  defaultNavigationOptions,
-} from "../../../../../navigation/navigatorConfig";
-import { ScreenName } from "../../../../../const";
+import StepHeader from "~/components/StepHeader";
+import ClaimRewardsSelectDevice from "~/screens/SelectDevice";
+import ClaimRewardsConnectDevice from "~/screens/ConnectDevice";
+import { getStackNavigatorConfig, defaultNavigationOptions } from "~/navigation/navigatorConfig";
+import { ScreenName } from "~/const";
 
 import PickValidator from "./components/PickValidator";
 import PickMethod from "./components/PickMethod";
@@ -34,10 +31,7 @@ const Claim = () => {
   const { t } = useTranslation();
   const { colors } = useTheme();
 
-  const stackNavigationConfig = useMemo(
-    () => getStackNavigatorConfig(colors, true),
-    [colors],
-  );
+  const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
 
   /*
    * Return the rendered component.
@@ -78,9 +72,7 @@ const Claim = () => {
         name={ScreenName.ElrondClaimRewardsMethod}
         component={PickMethod}
         options={{
-          headerTitle: () => (
-            <StepHeader title={t("elrond.claimRewards.stepperHeader.method")} />
-          ),
+          headerTitle: () => <StepHeader title={t("elrond.claimRewards.stepperHeader.method")} />,
         }}
       />
 

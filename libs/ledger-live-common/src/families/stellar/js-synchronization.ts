@@ -1,12 +1,11 @@
-import type { Operation } from "@ledgerhq/types-live";
-import { encodeAccountId } from "../../account";
 import type { GetAccountShape } from "../../bridge/jsHelpers";
 import { makeScanAccounts, makeSync, mergeOps } from "../../bridge/jsHelpers";
 import { fetchAccount, fetchOperations } from "./api";
 import { buildSubAccounts } from "./tokens";
-import { inferSubOperations } from "../../account";
+import { inferSubOperations, encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { STELLAR_BURN_ADDRESS } from "./logic";
 import { StellarBurnAddressError } from "./errors";
+import { StellarOperation } from "./types";
 
 const getAccountShape: GetAccountShape = async (info, syncConfig) => {
   const { address, currency, initialAccount, derivationMode } = info;
@@ -21,12 +20,10 @@ const getAccountShape: GetAccountShape = async (info, syncConfig) => {
     xpubOrAddress: address,
     derivationMode,
   });
-  const { blockHeight, balance, spendableBalance, assets } = await fetchAccount(
-    address
-  );
+  const { blockHeight, balance, spendableBalance, assets } = await fetchAccount(address);
 
-  const oldOperations = initialAccount?.operations || [];
-  const lastPagingToken = oldOperations[0]?.extra?.pagingToken || 0;
+  const oldOperations = (initialAccount?.operations || []) as StellarOperation[];
+  const lastPagingToken = oldOperations[0]?.extra.pagingToken || "0";
 
   const newOperations =
     (await fetchOperations({
@@ -36,10 +33,10 @@ const getAccountShape: GetAccountShape = async (info, syncConfig) => {
       cursor: lastPagingToken,
     })) || [];
 
-  const allOperations = mergeOps(oldOperations, newOperations);
-  const assetOperations: Operation[] = [];
+  const allOperations = mergeOps(oldOperations, newOperations) as StellarOperation[];
+  const assetOperations: StellarOperation[] = [];
 
-  allOperations.forEach((op) => {
+  allOperations.forEach(op => {
     if (
       op?.extra?.assetCode &&
       op?.extra?.assetIssuer &&
@@ -68,7 +65,7 @@ const getAccountShape: GetAccountShape = async (info, syncConfig) => {
   };
   return {
     ...shape,
-    operations: allOperations.map((op) => {
+    operations: allOperations.map(op => {
       const subOperations = inferSubOperations(op.hash, subAccounts);
 
       return {

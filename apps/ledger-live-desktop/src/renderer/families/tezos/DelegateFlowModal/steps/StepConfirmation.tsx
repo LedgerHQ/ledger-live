@@ -1,11 +1,11 @@
 import invariant from "invariant";
 import React from "react";
-import styled, { withTheme } from "styled-components";
+import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import { multiline } from "~/renderer/styles/helpers";
-import { urls } from "~/config/urls";
 import TrackPage from "~/renderer/analytics/TrackPage";
+import { track } from "~/renderer/analytics/segment";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import RetryButton from "~/renderer/components/RetryButton";
@@ -17,13 +17,16 @@ import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDiscla
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { StepProps } from "../types";
-const Container: ThemedComponent<{
-  shouldSpace?: boolean;
-}> = styled(Box).attrs(() => ({
+import { useEffect } from "react";
+import { useBaker } from "@ledgerhq/live-common/families/tezos/bakers";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+import { urls } from "~/config/urls";
+
+const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   grow: true,
   color: "palette.text.shade100",
-}))`
+}))<{ shouldSpace?: boolean }>`
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
   min-height: 220px;
 `;
@@ -34,18 +37,35 @@ const StepConfirmation = ({
   signed,
   transaction,
   eventType,
+  source,
 }: StepProps) => {
   invariant(
     transaction && transaction.family === "tezos",
     "transaction is required and must be of tezos family",
   );
+  const baker = useBaker(transaction.recipient);
   const undelegating = transaction.mode === "undelegate";
+
+  useEffect(() => {
+    if (optimisticOperation) {
+      track("staking_completed", {
+        currency: "XTZ",
+        validator: baker?.name || transaction.recipient,
+        source,
+        delegation: transaction.mode,
+        flow: "stake",
+      });
+    }
+  }, [baker?.name, optimisticOperation, transaction.mode, transaction.recipient, source]);
   if (optimisticOperation) {
     return (
       <Container>
         <TrackPage
           category={`Delegation Flow${eventType ? ` (${eventType})` : ""}`}
           name="Step Confirmed"
+          flow="stake"
+          action="delegation"
+          currency="xtz"
         />
         <SyncOneAccountOnMount
           reason="transaction-flow-confirmation"
@@ -74,7 +94,13 @@ const StepConfirmation = ({
   if (error) {
     return (
       <Container shouldSpace={signed}>
-        <TrackPage category="Delegation Flow" name="Step Confirmation Error" />
+        <TrackPage
+          category="Delegation Flow"
+          name="Step Confirmation Error"
+          flow="stake"
+          action="delegation"
+          currency="xtz"
+        />
         {signed ? (
           <BroadcastErrorDisclaimer
             title={<Trans i18nKey="delegation.flow.steps.confirmation.broadcastError" />}
@@ -94,8 +120,9 @@ export const StepConfirmationFooter = ({
   onRetry,
   optimisticOperation,
   error,
-  closeModal,
+  onClose,
 }: StepProps) => {
+  const stakingUrl = useLocalizedUrl(urls.stakingTezos);
   const concernedOperation = optimisticOperation
     ? optimisticOperation.subOperations && optimisticOperation.subOperations.length > 0
       ? optimisticOperation.subOperations[0]
@@ -106,7 +133,7 @@ export const StepConfirmationFooter = ({
       <Box mr={2} ff="Inter|SemiBold" fontSize={4}>
         <LinkWithExternalIcon
           label={<Trans i18nKey="delegation.howItWorks" />}
-          onClick={() => openURL(urls.stakingTezos)}
+          onClick={() => openURL(stakingUrl)}
         />
       </Box>
       {concernedOperation ? (
@@ -115,7 +142,7 @@ export const StepConfirmationFooter = ({
           id={"delegate-confirmation-details-button"}
           event="Delegation Flow Step 4 View OpD Clicked"
           onClick={() => {
-            closeModal();
+            onClose();
             if (account && concernedOperation) {
               setDrawer(OperationDetails, {
                 operationId: concernedOperation.id,
@@ -141,4 +168,4 @@ export const StepConfirmationFooter = ({
     </>
   );
 };
-export default withTheme(StepConfirmation);
+export default StepConfirmation;

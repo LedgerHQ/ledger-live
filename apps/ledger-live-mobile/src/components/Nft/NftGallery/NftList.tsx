@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from "react";
-import { FlatListProps } from "react-native";
+import { FlatListProps, Platform } from "react-native";
 import { ProtoNFT } from "@ledgerhq/types-live";
-import { Button, Flex, Text } from "@ledgerhq/native-ui";
+import { Button, Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import { BigNumber } from "bignumber.js";
 import { Stop } from "react-native-svg";
 import styled, { useTheme } from "styled-components/native";
@@ -10,16 +10,30 @@ import NftListItem from "./NftListItem";
 import { AddNewItem } from "./AddNewItemList";
 import CollapsibleHeaderFlatList from "../../WalletTab/CollapsibleHeaderFlatList";
 import globalSyncRefreshControl from "../../globalSyncRefreshControl";
-import { TrackScreen } from "../../../analytics";
+import { TrackScreen, track } from "~/analytics";
 import { useNftList } from "./NftList.hook";
 import BackgroundGradient from "../../TabBar/BackgroundGradient";
+import NftFilterDrawer from "./NftFilterDrawer";
+import EmptyState from "./EmptyState";
+import ScrollToTopButton from "./ScrollToTopButton";
+import NftFilterChip from "./NftFilterChip";
+import FiltersIcon from "~/icons/Filters";
+import { ScreenName } from "~/const";
+import WalletTabSafeAreaView from "../../WalletTab/WalletTabSafeAreaView";
+import { withDiscreetMode } from "~/context/DiscreetModeContext";
 
-const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl<
-  FlatListProps<ProtoNFT>
->(CollapsibleHeaderFlatList, { progressViewOffset: 64 });
+const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl<FlatListProps<ProtoNFT>>(
+  CollapsibleHeaderFlatList,
+  { progressViewOffset: Platform.OS === "android" ? 64 : 0 },
+);
 
 type Props = {
   data: ProtoNFT[];
+  fetchNextPage: () => void;
+  hasNextPage: boolean;
+  isLoading: boolean;
+  error: unknown;
+  refetch: () => void;
 };
 
 // Fake ProtoNFT to be able to display "Add new" button at the end of the list
@@ -36,7 +50,7 @@ const NB_COLUMNS = 2;
 
 const keyExtractor = (item: ProtoNFT) => item.id;
 
-export function NftList({ data }: Props) {
+const NftList = ({ data, hasNextPage, fetchNextPage, isLoading }: Props) => {
   const { space, colors } = useTheme();
   const dataWithAdd = data.concat(ADD_NEW);
 
@@ -50,43 +64,29 @@ export function NftList({ data }: Props) {
     handleSelectableNftPressed,
     nftsToHide,
     multiSelectModeEnabled,
+    closeFilterDrawer,
+    openFilterDrawer,
+    chainFilters,
+    toggleChainFilter,
+    isFilterDrawerVisible,
   } = useNftList({ nftList: data });
 
   const gradient = {
     height: 145,
     opacity: 1,
     stops: [
-      <Stop
-        key="0%"
-        offset="0%"
-        stopOpacity={0}
-        stopColor={colors.background.main}
-      />,
-      <Stop
-        key="25%"
-        offset="25%"
-        stopOpacity={0.5}
-        stopColor={colors.background.main}
-      />,
-      <Stop
-        key="50%"
-        offset="50%"
-        stopOpacity={1}
-        stopColor={colors.background.main}
-      />,
+      <Stop key="0%" offset="0%" stopOpacity={0} stopColor={colors.background.main} />,
+      <Stop key="25%" offset="25%" stopOpacity={0.5} stopColor={colors.background.main} />,
+      <Stop key="50%" offset="50%" stopOpacity={1} stopColor={colors.background.main} />,
     ],
   };
 
   const renderItem = useCallback(
     ({ item, index }: { item: ProtoNFT; index: number; count?: number }) => (
       <Flex
-        flex={
-          item.id === ADD_NEW.id && (index + 1) % NB_COLUMNS !== 0
-            ? 1 / NB_COLUMNS
-            : 1
-        }
+        flex={item.id === ADD_NEW.id && (index + 1) % NB_COLUMNS !== 0 ? 1 / NB_COLUMNS : 1}
         mr={(index + 1) % NB_COLUMNS > 0 ? 6 : 0}
-        testID={"wallet-nft-gallery-list-item"}
+        testID={`wallet-nft-gallery-list-item-${index}`}
       >
         {item.id === ADD_NEW.id ? (
           <>{!multiSelectModeEnabled && <AddNewItem />}</>
@@ -94,9 +94,7 @@ export function NftList({ data }: Props) {
           <NftListItem
             nft={item}
             onPress={() =>
-              multiSelectModeEnabled
-                ? handleSelectableNftPressed(item)
-                : navigateToNftViewer(item)
+              multiSelectModeEnabled ? handleSelectableNftPressed(item) : navigateToNftViewer(item)
             }
             onLongPress={() => {
               triggerMultiSelectMode();
@@ -117,10 +115,7 @@ export function NftList({ data }: Props) {
     ],
   );
 
-  const total = useMemo(
-    () => [...new Set(nftsToHide.map(n => n.contract))].length,
-    [nftsToHide],
-  );
+  const total = useMemo(() => [...new Set(nftsToHide.map(n => n.contract))].length, [nftsToHide]);
 
   return (
     <>
@@ -129,35 +124,74 @@ export function NftList({ data }: Props) {
       <RefreshableCollapsibleHeaderFlatList
         numColumns={2}
         ListHeaderComponent={
-          <Animated.View>
-            {!multiSelectModeEnabled && (
-              <Animated.View entering={FadeInDown} exiting={FadeOutDown}>
-                <Flex
-                  width="100%"
-                  flexDirection="row"
-                  alignItems="center"
-                  justifyContent="flex-start"
-                >
-                  <StyledButton
-                    onPress={onPressMultiselect}
-                    type="default"
-                    iconName="Tasks"
-                    iconPosition="left"
-                    size="small"
+          <WalletTabSafeAreaView edges={["left", "right"]}>
+            <Animated.View>
+              {!multiSelectModeEnabled && (
+                <Animated.View entering={FadeInDown}>
+                  <StyledFilterBar
+                    width="100%"
+                    flexDirection="row"
+                    justifyContent="flex-end"
+                    alignItems="flex-end"
                   >
-                    <Text variant="body" fontWeight="semiBold">
-                      {t("wallet.nftGallery.filters.selectAndHide")}
-                    </Text>
-                  </StyledButton>
-                </Flex>
-              </Animated.View>
-            )}
-          </Animated.View>
+                    {data.length > 0 ? (
+                      <NftFilterChip
+                        onPress={onPressMultiselect}
+                        testID="wallet-nft-gallery-select-and-hide"
+                      >
+                        {t("wallet.nftGallery.filters.select")}
+                      </NftFilterChip>
+                    ) : null}
+                    <NftFilterChip
+                      onPress={() => {
+                        track("button_clicked", {
+                          button: "Open Filter",
+                          page: ScreenName.WalletNftGallery,
+                        });
+                        openFilterDrawer();
+                      }}
+                    >
+                      <FiltersIcon
+                        active={Object.values(chainFilters).some(val => !val)}
+                        dotColor={colors.constant.purple}
+                        size={20}
+                        color={colors.neutral.c100}
+                      />
+                    </NftFilterChip>
+                  </StyledFilterBar>
+                </Animated.View>
+              )}
+            </Animated.View>
+          </WalletTabSafeAreaView>
         }
         ListHeaderComponentStyle={{
           marginBottom: multiSelectModeEnabled ? 0 : space[3],
         }}
-        data={dataWithAdd}
+        ListFooterComponent={
+          !isLoading && hasNextPage ? (
+            <Flex paddingBottom={25} paddingTop={25}>
+              <InfiniteLoader />
+            </Flex>
+          ) : null
+        }
+        ListEmptyComponent={
+          isLoading ? (
+            <Flex flexGrow={1} justifyContent="center" paddingBottom={150}>
+              <InfiniteLoader />
+            </Flex>
+          ) : (
+            <EmptyState
+              onPress={() => {
+                track("button_clicked", {
+                  button: "Reset Filters",
+                  page: ScreenName.WalletNftGallery,
+                });
+                openFilterDrawer();
+              }}
+            />
+          )
+        }
+        data={data.length > 0 ? dataWithAdd : data}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         showsVerticalScrollIndicator={false}
@@ -165,7 +199,10 @@ export function NftList({ data }: Props) {
         windowSize={11}
         contentContainerStyle={{ marginTop: 0, marginHorizontal: space[6] }}
         testID={"wallet-nft-gallery-list"}
+        onEndReached={fetchNextPage}
+        onEndReachedThreshold={0.2}
       />
+      {data.length > 12 ? <ScrollToTopButton /> : null}
       <Animated.View>
         {multiSelectModeEnabled && (
           <Animated.View entering={FadeInDown} exiting={FadeOutDown}>
@@ -173,6 +210,7 @@ export function NftList({ data }: Props) {
 
             <ButtonsContainer width="100%" justifyContent={"space-between"}>
               <StyledButton
+                testID="wallet-nft-gallery-confirm-hide"
                 onPress={onPressHide}
                 type="main"
                 iconName="EyeNone"
@@ -198,9 +236,17 @@ export function NftList({ data }: Props) {
           </Animated.View>
         )}
       </Animated.View>
+      <NftFilterDrawer
+        filters={chainFilters}
+        isOpen={isFilterDrawerVisible}
+        toggleFilter={toggleChainFilter}
+        onClose={closeFilterDrawer}
+      />
     </>
   );
-}
+};
+
+export default withDiscreetMode(NftList);
 
 const StyledButton = styled(Button)`
   padding: 0;
@@ -212,4 +258,9 @@ const ButtonsContainer = styled(Flex)`
   bottom: ${props => props.theme.space[6]}px;
   z-index: 5;
   padding: 0 ${props => props.theme.space[6]}px;
+`;
+
+const StyledFilterBar = styled(Flex)`
+  margin-bottom: ${props => props.theme.space[2]}px;
+  gap: ${props => props.theme.space[3]}px;
 `;

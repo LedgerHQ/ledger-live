@@ -21,7 +21,7 @@ export const StepValidatorGroupFooter = ({
 }: StepProps) => {
   invariant(account, "account required");
   const canNext = !bridgePending && transaction?.recipient;
-  const displayTC = isDefaultValidatorGroupAddress(transaction?.recipient);
+  const displayTC = isDefaultValidatorGroupAddress(transaction.recipient);
   return (
     <>
       {displayTC && <LedgerByFigmentTC />}
@@ -48,7 +48,6 @@ const StepValidatorGroup = ({
   transaction,
   status,
   error,
-  t,
 }: StepProps) => {
   invariant(
     account && account.celoResources && transaction,
@@ -56,7 +55,7 @@ const StepValidatorGroup = ({
   );
   const updateValidatorGroup = ({ address }: { address: string }) => {
     const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
-    onUpdateTransaction(tx => {
+    onUpdateTransaction(_tx => {
       return bridge.updateTransaction(transaction, {
         recipient: address,
       });
@@ -65,14 +64,19 @@ const StepValidatorGroup = ({
   const chosenValidatorGroupAddress = transaction.recipient;
   return (
     <Box flow={1}>
-      <TrackPage category="Celo Vote" name="Step ValidatorGroup" />
+      <TrackPage
+        category="Celo Vote"
+        name="Step ValidatorGroup"
+        flow="stake"
+        action="vote"
+        currency="celo"
+      />
       {error && <ErrorBanner error={error} />}
       <ValidatorGroupsField
         account={account}
         chosenValidatorGroupAddress={chosenValidatorGroupAddress}
         onChangeValidatorGroup={updateValidatorGroup}
         status={status}
-        t={t}
       />
     </Box>
   );

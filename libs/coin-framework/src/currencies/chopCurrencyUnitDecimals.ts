@@ -7,10 +7,7 @@
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 
 // - useGrouping: true
-export const chopCurrencyUnitDecimals = (
-  unit: Unit,
-  valueString: string
-): string => {
+export const chopCurrencyUnitDecimals = (unit: Unit, valueString: string): string => {
   let str = "";
   let decimals = -1;
 

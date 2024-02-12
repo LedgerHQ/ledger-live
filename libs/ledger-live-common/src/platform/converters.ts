@@ -1,19 +1,20 @@
+import { FAMILIES } from "@ledgerhq/live-app-sdk";
 import { Account, AccountLike } from "@ledgerhq/types-live";
+import { isSubAccount, isTokenAccount } from "../account";
 import byFamily from "../generated/platformAdapter";
 import type { Transaction } from "../generated/types";
-import { isTokenAccount, isSubAccount } from "../account";
 import {
   PlatformAccount,
   PlatformCurrency,
-  PlatformTransaction,
   PlatformCurrencyType,
-  PlatformTokenStandard,
   PlatformSupportedCurrency,
+  PlatformTokenStandard,
+  PlatformTransaction,
 } from "./types";
 
 export function accountToPlatformAccount(
   account: AccountLike,
-  parentAccount?: Account
+  parentAccount?: Account,
 ): PlatformAccount {
   if (isSubAccount(account)) {
     if (!parentAccount) {
@@ -52,9 +53,7 @@ export function accountToPlatformAccount(
   };
 }
 
-export function currencyToPlatformCurrency(
-  currency: PlatformSupportedCurrency
-): PlatformCurrency {
+export function currencyToPlatformCurrency(currency: PlatformSupportedCurrency): PlatformCurrency {
   if (currency.type === "TokenCurrency") {
     return {
       type: PlatformCurrencyType.TokenCurrency,
@@ -65,7 +64,7 @@ export function currencyToPlatformCurrency(
       name: currency.name,
       parent: currency.parentCurrency.id,
       color: currency.parentCurrency.color,
-      units: currency.units.map((unit) => ({
+      units: currency.units.map(unit => ({
         name: unit.name,
         code: unit.code,
         magnitude: unit.magnitude,
@@ -80,7 +79,7 @@ export function currencyToPlatformCurrency(
     name: currency.name,
     family: currency.family,
     color: currency.color,
-    units: currency.units.map((unit) => ({
+    units: currency.units.map(unit => ({
       name: unit.name,
       code: unit.code,
       magnitude: unit.magnitude,
@@ -89,16 +88,20 @@ export function currencyToPlatformCurrency(
 }
 
 export const getPlatformTransactionSignFlowInfos = (
-  platformTx: PlatformTransaction
+  platformTx: PlatformTransaction,
 ): {
   canEditFees: boolean;
   hasFeesProvided: boolean;
   liveTx: Partial<Transaction>;
 } => {
-  const family = byFamily[platformTx.family];
+  // This is a hack to link WalletAPI "ethereum" family to new "evm" family
+  const isEthereumFamily = platformTx.family === FAMILIES.ETHEREUM;
+  const liveFamily = isEthereumFamily ? "evm" : platformTx.family;
 
-  if (family) {
-    return family.getPlatformTransactionSignFlowInfos(platformTx);
+  const familyModule = byFamily[liveFamily];
+
+  if (familyModule) {
+    return familyModule.getPlatformTransactionSignFlowInfos(platformTx);
   }
 
   return {

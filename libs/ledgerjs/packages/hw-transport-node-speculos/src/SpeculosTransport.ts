@@ -40,7 +40,7 @@ export default class SpeculosTransport extends Transport {
   static open = (opts: SpeculosTransportOpts): Promise<SpeculosTransport> =>
     new Promise((resolve, reject) => {
       const socket = new net.Socket();
-      socket.on("error", (e) => {
+      socket.on("error", e => {
         socket.destroy();
         reject(e);
       });
@@ -56,8 +56,8 @@ export default class SpeculosTransport extends Transport {
     });
   apduSocket: net.Socket;
   opts: SpeculosTransportOpts;
-  rejectExchange: (arg0: Error) => void = (_e) => {};
-  resolveExchange: (arg0: Buffer) => void = (_b) => {};
+  rejectExchange: (arg0: Error) => void = _e => {};
+  resolveExchange: (arg0: Buffer) => void = _b => {};
   automationSocket: net.Socket | null | undefined;
   automationEvents: Subject<Record<string, any>> = new Subject();
 
@@ -65,7 +65,7 @@ export default class SpeculosTransport extends Transport {
     super();
     this.opts = opts;
     this.apduSocket = apduSocket;
-    apduSocket.on("error", (e) => {
+    apduSocket.on("error", e => {
       this.emit("disconnect", new DisconnectedDevice(e.message));
       this.rejectExchange(e);
       this.apduSocket.destroy();
@@ -74,7 +74,7 @@ export default class SpeculosTransport extends Transport {
       this.emit("disconnect", new DisconnectedDevice());
       this.rejectExchange(new DisconnectedDeviceDuringOperation());
     });
-    apduSocket.on("data", (data) => {
+    apduSocket.on("data", data => {
       try {
         this.resolveExchange(decodeAPDUPayload(data));
       } catch (e: any) {
@@ -86,16 +86,16 @@ export default class SpeculosTransport extends Transport {
     if (automationPort) {
       const socket = new net.Socket();
       this.automationSocket = socket;
-      socket.on("error", (e) => {
+      socket.on("error", e => {
         log("speculos-automation-error", String(e));
         socket.destroy();
       });
-      socket.on("data", (data) => {
+      socket.on("data", data => {
         log("speculos-automation-data", data.toString("ascii"));
         const split = data.toString("ascii").split("\n");
         split
-          .filter((ascii) => !!ascii)
-          .forEach((ascii) => {
+          .filter(ascii => !!ascii)
+          .forEach(ascii => {
             const json = JSON.parse(ascii);
             this.automationEvents.next(json);
           });
@@ -116,7 +116,7 @@ export default class SpeculosTransport extends Transport {
       const { buttonPort, host } = this.opts;
       if (!buttonPort) throw new Error("buttonPort is missing");
       const socket = new net.Socket();
-      socket.on("error", (e) => {
+      socket.on("error", e => {
         socket.destroy();
         reject(e);
       });
@@ -163,10 +163,7 @@ function decodeAPDUPayload(data: Buffer) {
   const payload = data.slice(4);
 
   if (payload.length !== size) {
-    throw new TransportError(
-      `Expected payload of length ${size} but got ${payload.length}`,
-      ""
-    );
+    throw new TransportError(`Expected payload of length ${size} but got ${payload.length}`, "");
   }
 
   return payload;

@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Provider, useSelector } from "react-redux";
 import { Store } from "redux";
 import { HashRouter as Router } from "react-router-dom";
-import { NftMetadataProvider } from "@ledgerhq/live-common/nft/NftMetadataProvider/index";
+import { NftMetadataProvider } from "@ledgerhq/live-nft-react";
+import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import "./global.css";
 import "tippy.js/dist/tippy.css";
 import "tippy.js/animations/shift-away.css";
@@ -13,7 +14,6 @@ import StyleProvider from "~/renderer/styles/StyleProvider";
 import { UpdaterProvider } from "~/renderer/components/Updater/UpdaterContext";
 import ThrowBlock from "~/renderer/components/ThrowBlock";
 import LiveStyleSheetManager from "~/renderer/styles/LiveStyleSheetManager";
-import { RemoteConfigProvider } from "~/renderer/components/RemoteConfig";
 import { FirebaseRemoteConfigProvider } from "~/renderer/components/FirebaseRemoteConfig";
 import { FirebaseFeatureFlagsProvider } from "~/renderer/components/FirebaseFeatureFlags";
 import CountervaluesProvider from "~/renderer/components/CountervaluesProvider";
@@ -27,16 +27,23 @@ import MarketDataProvider from "~/renderer/screens/market/MarketDataProviderWrap
 import { ConnectEnvsToSentry } from "~/renderer/components/ConnectEnvsToSentry";
 import PostOnboardingProviderWrapped from "~/renderer/components/PostOnboardingHub/logic/PostOnboardingProviderWrapped";
 import { useBraze } from "./hooks/useBraze";
-import { CounterValuesStateRaw } from "@ledgerhq/live-common/countervalues/types";
+import { StorylyProvider } from "~/storyly/StorylyProvider";
+import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
+import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+
 const reloadApp = (event: KeyboardEvent) => {
   if ((event.ctrlKey || event.metaKey) && event.key === "r") {
     window.api?.reloadRenderer();
   }
 };
+
 type Props = {
   store: Store<State>;
   initialCountervalues: CounterValuesStateRaw;
 };
+
+const queryClient = new QueryClient();
+
 const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValuesStateRaw }) => {
   const [reloadEnabled, setReloadEnabled] = useState(true);
 
@@ -51,7 +58,9 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
     window.addEventListener("keydown", reload);
     return () => window.removeEventListener("keydown", reload);
   }, [reloadEnabled]);
+
   const selectedPalette = useSelector(themeSelector) || "light";
+
   return (
     <StyleProvider selectedPalette={selectedPalette}>
       <ThrowBlock
@@ -61,38 +70,41 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
           }
         }}
       >
-        <RemoteConfigProvider>
-          <FirebaseRemoteConfigProvider>
-            <FirebaseFeatureFlagsProvider>
-              <ConnectEnvsToSentry />
-              <UpdaterProvider>
-                <CountervaluesProvider initialState={initialCountervalues}>
-                  <ToastProvider>
-                    <AnnouncementProviderWrapper>
-                      <Router>
-                        <PostOnboardingProviderWrapped>
-                          <PlatformAppProviderWrapper>
-                            <DrawerProvider>
-                              <NftMetadataProvider>
-                                <MarketDataProvider>
-                                  <Default />
-                                </MarketDataProvider>
-                              </NftMetadataProvider>
-                            </DrawerProvider>
-                          </PlatformAppProviderWrapper>
-                        </PostOnboardingProviderWrapped>
-                      </Router>
-                    </AnnouncementProviderWrapper>
-                  </ToastProvider>
-                </CountervaluesProvider>
-              </UpdaterProvider>
-            </FirebaseFeatureFlagsProvider>
-          </FirebaseRemoteConfigProvider>
-        </RemoteConfigProvider>
+        <FirebaseRemoteConfigProvider>
+          <FirebaseFeatureFlagsProvider>
+            <ConnectEnvsToSentry />
+            <UpdaterProvider>
+              <CountervaluesProvider initialState={initialCountervalues}>
+                <ToastProvider>
+                  <AnnouncementProviderWrapper>
+                    <Router>
+                      <PostOnboardingProviderWrapped>
+                        <PlatformAppProviderWrapper>
+                          <DrawerProvider>
+                            <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
+                              <MarketDataProvider>
+                                <StorylyProvider>
+                                  <QueryClientProvider client={queryClient}>
+                                    <Default />
+                                  </QueryClientProvider>
+                                </StorylyProvider>
+                              </MarketDataProvider>
+                            </NftMetadataProvider>
+                          </DrawerProvider>
+                        </PlatformAppProviderWrapper>
+                      </PostOnboardingProviderWrapped>
+                    </Router>
+                  </AnnouncementProviderWrapper>
+                </ToastProvider>
+              </CountervaluesProvider>
+            </UpdaterProvider>
+          </FirebaseFeatureFlagsProvider>
+        </FirebaseRemoteConfigProvider>
       </ThrowBlock>
     </StyleProvider>
   );
 };
+
 const App = ({ store, initialCountervalues }: Props) => {
   return (
     <LiveStyleSheetManager>

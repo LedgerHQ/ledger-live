@@ -15,12 +15,7 @@ export interface DenominateType {
  */
 
 export const denominate = (parameters: DenominateType) => {
-  const {
-    denomination,
-    decimals,
-    showLastNonZeroDecimal = false,
-    addCommas = true,
-  } = parameters;
+  const { denomination, decimals, showLastNonZeroDecimal = false, addCommas = true } = parameters;
   let { input } = parameters;
 
   if (input === "...") {
@@ -35,12 +30,10 @@ export const denominate = (parameters: DenominateType) => {
     denomination = 18,
     decimals = 2,
     showLastNonZeroDecimal: boolean,
-    addCommas: boolean
+    addCommas: boolean,
   ) => {
     const showLastNonZeroDecimalCheck =
-      typeof showLastNonZeroDecimal !== "undefined"
-        ? showLastNonZeroDecimal
-        : false;
+      typeof showLastNonZeroDecimal !== "undefined" ? showLastNonZeroDecimal : false;
 
     let array = big.toString().split("");
     if (denomination !== 0) {
@@ -74,9 +67,7 @@ export const denominate = (parameters: DenominateType) => {
     if (addCommas) {
       // add comas every 3 characters
       array = array.reverse();
-      const reference = denomination
-        ? array.length - array.indexOf(".") - 1
-        : array.length;
+      const reference = denomination ? array.length - array.indexOf(".") - 1 : array.length;
       const count = Math.floor(reference / 3);
       for (let i = 1; i <= count; i++) {
         const position = array.indexOf(".") + 3 * i + i;
@@ -89,7 +80,7 @@ export const denominate = (parameters: DenominateType) => {
 
     const allDecimalsZero = array
       .slice(array.indexOf(".") + 1)
-      .every((digit) => digit.toString() === "0");
+      .every(digit => digit.toString() === "0");
 
     const string = array.join("");
 
@@ -100,11 +91,5 @@ export const denominate = (parameters: DenominateType) => {
     return decimals === 0 ? string.split(".").join("") : string;
   };
 
-  return format(
-    input,
-    denomination,
-    decimals,
-    showLastNonZeroDecimal,
-    addCommas
-  );
+  return format(input, denomination, decimals, showLastNonZeroDecimal, addCommas);
 };

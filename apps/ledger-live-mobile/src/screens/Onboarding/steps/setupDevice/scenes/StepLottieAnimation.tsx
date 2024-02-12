@@ -4,7 +4,7 @@ import type { StyleProp, ViewStyle } from "react-native";
 import { Flex } from "@ledgerhq/native-ui";
 
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import Animation from "../../../../../components/Animation";
+import Animation from "~/components/Animation";
 
 import pinCodeNanoXLight from "../../../assets/nanoX/pinCode/light.json";
 import pinCodeNanoXDark from "../../../assets/nanoX/pinCode/dark.json";
@@ -166,7 +166,7 @@ export default function StepLottieAnimation({
   style,
 }: {
   stepId: string;
-  deviceModelId: DeviceModelId;
+  deviceModelId?: DeviceModelId;
   theme: "dark" | "light";
   style?: StyleProp<ViewStyle>;
 }) {

@@ -10,15 +10,10 @@ import { DomainServiceResolution } from "../../types";
 jest.mock("axios");
 jest.mock("../../resolvers");
 
-const mockedResolvedDomain = jest.mocked(resolveDomain, true);
-const mockedResolvedAddress = jest.mocked(resolveAddress, true);
+const mockedResolvedDomain = jest.mocked(resolveDomain);
+const mockedResolvedAddress = jest.mocked(resolveAddress);
 
-const resolutionKeys: (keyof DomainServiceResolution)[] = [
-  "registry",
-  "address",
-  "domain",
-  "type",
-];
+const resolutionKeys: (keyof DomainServiceResolution)[] = ["registry", "address", "domain", "type"];
 
 const CustomTest = ({ str }: { str: string }) => {
   const result = useDomain(str);
@@ -27,9 +22,7 @@ const CustomTest = ({ str }: { str: string }) => {
   return (
     <div>
       <div data-testid="status">{status}</div>
-      {status === "error" && (
-        <div data-testid="error-name">{result.error.name}</div>
-      )}
+      {status === "error" && <div data-testid="error-name">{result.error.name}</div>}
       {status === "loaded" && (
         <div data-testid="resolutions">
           {result.resolutions.map((resolution, index) => (
@@ -46,7 +39,7 @@ const CustomTest = ({ str }: { str: string }) => {
   );
 };
 
-const wrapper: React.ComponentType<string> = ({ children }) => (
+const wrapper: React.ComponentType<{ children?: React.ReactNode }> = ({ children }) => (
   <DomainServiceProvider>{children}</DomainServiceProvider>
 );
 
@@ -72,6 +65,7 @@ describe("useDomain", () => {
   it("should return an error when no resolution is found", async () => {
     const { result } = renderHook(useDomain, {
       initialProps: "",
+      // @ts-expect-error weird ts error
       wrapper,
     });
 
@@ -83,6 +77,7 @@ describe("useDomain", () => {
   it("should return an error when no resolution is found", async () => {
     const { result, waitForValueToChange } = renderHook(useDomain, {
       initialProps: "404-Not-Found.eth",
+      // @ts-expect-error weird ts error
       wrapper,
     });
 
@@ -94,6 +89,7 @@ describe("useDomain", () => {
   it("should return an error when the input has a forward registry but content is invalid", async () => {
     const { result, waitForValueToChange } = renderHook(useDomain, {
       initialProps: "not|valid|👋.eth",
+      // @ts-expect-error weird ts error
       wrapper,
     });
 
@@ -116,26 +112,24 @@ describe("useDomain", () => {
     render(
       <DomainServiceProvider>
         <CustomTest str="vitalik.eth" />
-      </DomainServiceProvider>
+      </DomainServiceProvider>,
     );
 
     await waitFor(
       () => {
         expect(screen.getByTestId("status").textContent).toBe("loaded");
       },
-      { timeout: 5000 }
+      { timeout: 5000 },
     );
 
     expect(screen.getByTestId("status").textContent).toBe("loaded");
     expect(screen.getByTestId("resolutions")).toBeInTheDocument();
     resolutions.forEach((resolution, index) => {
-      resolutionKeys.forEach((field) => {
+      resolutionKeys.forEach(field => {
         expect(screen.getByTestId("resolutions")).toContainElement(
-          screen.getByTestId(`${index}-${field}`)
+          screen.getByTestId(`${index}-${field}`),
         );
-        expect(screen.getByTestId(`${index}-${field}`).textContent).toBe(
-          resolution[field]
-        );
+        expect(screen.getByTestId(`${index}-${field}`).textContent).toBe(resolution[field]);
       });
     });
   });
@@ -149,14 +143,12 @@ describe("useDomain", () => {
         type: "reverse",
       },
     ];
-    mockedResolvedAddress.mockImplementationOnce(
-      async () => reverseResolutions
-    );
+    mockedResolvedAddress.mockImplementationOnce(async () => reverseResolutions);
 
     render(
       <DomainServiceProvider>
         <CustomTest str="0xd8da6bf26964af9d7eed9e03e53415d37aa96045" />
-      </DomainServiceProvider>
+      </DomainServiceProvider>,
     );
 
     await waitFor(() => {
@@ -166,13 +158,11 @@ describe("useDomain", () => {
     expect(screen.getByTestId("status").textContent).toBe("loaded");
     expect(screen.getByTestId("resolutions")).toBeInTheDocument();
     reverseResolutions.forEach((resolution, index) => {
-      resolutionKeys.forEach((field) => {
+      resolutionKeys.forEach(field => {
         expect(screen.getByTestId("resolutions")).toContainElement(
-          screen.getByTestId(`${index}-${field}`)
+          screen.getByTestId(`${index}-${field}`),
         );
-        expect(screen.getByTestId(`${index}-${field}`).textContent).toBe(
-          resolution[field]
-        );
+        expect(screen.getByTestId(`${index}-${field}`).textContent).toBe(resolution[field]);
       });
     });
   });

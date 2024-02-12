@@ -15,7 +15,7 @@ const ShareAnalyticsButton = () => {
   );
   return (
     <>
-      <Track onUpdate event={shareAnalytics ? "AnalyticsEnabled" : "AnalyticsDisabled"} />
+      <Track mandatory onUpdate event={shareAnalytics ? "AnalyticsEnabled" : "AnalyticsDisabled"} />
       <Switch
         isChecked={shareAnalytics}
         onChange={onChangeShareAnalytics}

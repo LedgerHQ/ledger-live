@@ -1,11 +1,12 @@
-import { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { Account } from "@ledgerhq/types-live";
+import { ExchangeRate, MappedSwapOperation } from "@ledgerhq/live-common/exchange/swap/types";
+import { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { MaterialTopTabScreenProps } from "@react-navigation/material-top-tabs";
 import { StackScreenProps } from "@react-navigation/stack";
-import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
-import { ScreenName } from "../../const";
-import { BaseComposite } from "../../components/RootNavigator/types/helpers";
+import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
+import { ScreenName } from "~/const";
+import { BaseComposite } from "~/components/RootNavigator/types/helpers";
 
 export type SwapFormParamList = MaterialTopTabScreenProps<
   SwapFormNavParamList,
@@ -31,21 +32,6 @@ export type SelectFeesParamList = BaseComposite<
   StackScreenProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>
 >;
 
-export type LoginParamList = StackScreenProps<
-  SwapNavigatorParamList,
-  ScreenName.SwapLogin
->;
-
-export type KYCParamList = StackScreenProps<
-  SwapNavigatorParamList,
-  ScreenName.SwapKYC
->;
-
-export type MFAParamList = StackScreenProps<
-  SwapNavigatorParamList,
-  ScreenName.SwapMFA
->;
-
 export type PendingOperationParamList = StackScreenProps<
   SwapNavigatorParamList,
   ScreenName.SwapPendingOperation
@@ -58,15 +44,33 @@ export type OperationDetailsParamList = StackScreenProps<
 
 export type Target = "from" | "to";
 
+export type DetailsSwapParamList = {
+  accountId?: string;
+  currency?: CryptoCurrency | TokenCurrency;
+  rate?: ExchangeRate;
+  transaction?: Transaction;
+  target?: Target;
+};
+
+export type SwapSelectCurrency = {
+  currencies: Currency[];
+  provider?: string;
+};
+
+export type SwapOperation = Omit<MappedSwapOperation, "fromAccount" | "toAccount"> & {
+  fromAccountId: string;
+  toAccountId: string;
+};
+
+export type SwapPendingOperation = { swapOperation: SwapOperation };
+
+export type DefaultAccountSwapParamList = {
+  defaultAccount?: Account;
+  defaultParentAccount?: Account;
+  defaultCurrency?: CryptoCurrency | TokenCurrency;
+};
+
 export type SwapFormNavParamList = {
-  SwapForm:
-    | {
-        accountId?: string;
-        currency?: CryptoCurrency | TokenCurrency;
-        rate?: ExchangeRate;
-        transaction?: Transaction;
-        target?: Target;
-      }
-    | undefined;
+  SwapForm: DetailsSwapParamList | DefaultAccountSwapParamList | undefined;
   SwapHistory: undefined;
 };

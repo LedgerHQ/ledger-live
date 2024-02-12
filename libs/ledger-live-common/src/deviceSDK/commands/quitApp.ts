@@ -17,14 +17,14 @@ import Transport from "@ledgerhq/hw-transport";
  * @param transport a Transport instance
  */
 export function quitApp(transport: Transport): Observable<void> {
-  return new Observable((observer) => {
+  return new Observable(observer => {
     transport
       .send(0xb0, 0xa7, 0x00, 0x00)
       .then(() => {
         observer.next();
         observer.complete();
       })
-      .catch((error) => {
+      .catch(error => {
         observer.error(error);
       });
   });

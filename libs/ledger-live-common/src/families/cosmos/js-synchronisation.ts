@@ -4,152 +4,167 @@ import {
   makeScanAccounts,
   GetAccountShape,
   mergeOps,
+  AccountShapeInfo,
 } from "../../bridge/jsHelpers";
 import { encodeAccountId } from "../../account";
 import { CosmosAPI } from "./api/Cosmos";
 import { encodeOperationId } from "../../operation";
-import { CosmosDelegationInfo } from "./types";
-import type { Operation, OperationType } from "@ledgerhq/types-live";
+import { CosmosOperation, CosmosMessage, CosmosTx } from "./types";
+import type { OperationType } from "@ledgerhq/types-live";
 import { getMainMessage } from "./helpers";
+import { parseAmountStringToNumber } from "./logic";
 
-const getBlankOperation = (tx, fees, id) => ({
-  id: "",
-  hash: tx.txhash,
-  type: "" as OperationType,
-  value: new BigNumber(0),
-  fee: fees,
-  blockHash: null,
-  blockHeight: tx.height,
-  senders: [] as string[],
-  recipients: [] as string[],
-  accountId: id,
-  date: new Date(tx.timestamp),
-  extra: {
-    validators: [] as CosmosDelegationInfo[],
-  },
-  transactionSequenceNumber: parseInt(tx.tx.auth_info.signer_infos[0].sequence),
-});
+const getBlankOperation = (tx: CosmosTx, fees: BigNumber, accountId: string): CosmosOperation => {
+  return {
+    id: "",
+    hash: tx.txhash,
+    type: "" as OperationType,
+    value: new BigNumber(0),
+    fee: fees,
+    blockHash: null,
+    blockHeight: parseInt(tx.height),
+    senders: [] as string[],
+    recipients: [] as string[],
+    accountId,
+    date: new Date(tx.timestamp),
+    extra: {},
+    transactionSequenceNumber: parseInt(tx?.tx?.auth_info?.signer_infos[0]?.sequence || "0"),
+  };
+};
 
-const txToOps = (info: any, id: string, txs: any): Operation[] => {
+const txToOps = (info: AccountShapeInfo, accountId: string, txs: CosmosTx[]): CosmosOperation[] => {
   const { address, currency } = info;
-  const ops: Operation[] = [];
-
+  const unitCode = currency.units[1].code;
+  const ops: CosmosOperation[] = [];
   for (const tx of txs) {
-    let fees = new BigNumber(0);
+    const amounts = tx?.tx?.auth_info?.fee?.amount;
 
-    tx.tx.auth_info.fee.amount.forEach((elem) => {
-      if (elem.denom === currency.units[1].code) fees = fees.plus(elem.amount);
-    });
+    const fees = !amounts
+      ? new BigNumber(0)
+      : amounts.reduce((acc: BigNumber, curr: { denom: string; amount: string }) => {
+          if (curr.denom === unitCode) {
+            return acc.plus(curr.amount);
+          }
+          return acc;
+        }, new BigNumber(0));
 
-    const op: Operation = getBlankOperation(tx, fees, id);
+    const op: CosmosOperation = getBlankOperation(tx, fees, accountId);
 
-    const messages = tx.logs.map((log) => log.events).flat(1);
+    const messages: CosmosMessage[] = tx.logs.map(log => log.events).flat(1);
 
-    const message = getMainMessage(messages);
+    const mainMessage = getMainMessage(messages);
 
-    if (message == null) {
+    if (mainMessage === undefined) {
+      // happens when we don't know this message type in our implementation, example : proposal_vote
       continue;
     }
 
-    // parse attributes as key:value
-    const attributes: { [id: string]: any } = {};
-    message.attributes.forEach((item) => (attributes[item.key] = item.value));
+    const correspondingMessages = messages.filter(m => m.type === mainMessage.type);
 
-    // https://docs.cosmos.network/v0.42/modules/staking/07_events.html
-    switch (message.type) {
+    switch (mainMessage.type) {
       case "transfer":
-        if (attributes.sender && attributes.recipient && attributes.amount) {
-          op.senders.push(attributes.sender);
-          op.recipients.push(attributes.recipient);
-
-          if (attributes.amount.indexOf(currency.units[1].code) != -1) {
-            op.value = op.value.plus(
-              attributes.amount.replace(currency.units[1].code, "")
-            );
+        // TODO: handle IBC transfers here
+        for (const message of correspondingMessages) {
+          const amount = message.attributes.find(attr => attr.key === "amount")?.value;
+          const sender = message.attributes.find(attr => attr.key === "sender")?.value;
+          const recipient = message.attributes.find(attr => attr.key === "recipient")?.value;
+          if (amount && sender && recipient && amount.endsWith(unitCode)) {
+            if (op.senders.indexOf(sender) === -1) op.senders.push(sender);
+            if (op.recipients.indexOf(recipient) === -1) op.recipients.push(recipient);
+            op.value = op.value.plus(parseAmountStringToNumber(amount, unitCode));
+            if (sender === address) {
+              op.type = "OUT";
+            } else if (recipient === address) {
+              op.type = "IN";
+            }
           }
+        }
+        if (op.type === "OUT") {
+          op.value = op.value.plus(fees);
+        }
+        break;
 
-          if (!op.type && attributes.sender === address) {
-            op.type = "OUT";
-            op.value = op.value.plus(fees);
-          } else if (!op.type && attributes.recipient === address) {
-            op.type = "IN";
+      case "withdraw_rewards": {
+        op.type = "REWARD";
+        const rewardShards: { amount: BigNumber; address: string }[] = [];
+        let txRewardValue = new BigNumber(0);
+        for (const message of correspondingMessages) {
+          const validator = message.attributes.find(attr => attr.key === "validator")?.value;
+          const amount = message.attributes.find(attr => attr.key === "amount")?.value;
+          if (validator && amount && amount.endsWith(unitCode)) {
+            const amountString = parseAmountStringToNumber(amount, unitCode);
+            rewardShards.push({
+              amount: new BigNumber(amountString),
+              address: validator,
+            });
+            txRewardValue = txRewardValue.plus(amountString);
           }
         }
+        op.value = txRewardValue;
+        op.extra.validators = rewardShards;
         break;
-
-      case "withdraw_rewards":
-        if (
-          (attributes.amount &&
-            attributes.amount.indexOf(currency.units[1].code) != -1) ||
-          // handle specifc case with empty amount value like
-          // tx DF458FE6A82C310837D7A33735FA5298BCF71B0BFF7A4134641AAE30F6F1050
-          attributes.amount === ""
-        ) {
-          op.type = "REWARD";
-          const reward = message.attributes
-            .find((attr) => attr.key === "amount")
-            .value.replace("uatom", "");
-          op.value = new BigNumber(reward || 0);
-          op.extra.validators.push({
-            address: attributes.validator,
-            amount: attributes.amount.replace(currency.units[1].code, "") || 0,
-          });
+      }
+      case "delegate": {
+        op.type = "DELEGATE";
+        op.value = new BigNumber(fees);
+        const delegateShards: { amount: BigNumber; address: string }[] = [];
+        for (const message of correspondingMessages) {
+          const amount = message.attributes.find(attr => attr.key === "amount")?.value;
+          const validator = message.attributes.find(attr => attr.key === "validator")?.value;
+          if (amount && validator && amount.endsWith(unitCode)) {
+            delegateShards.push({
+              amount: new BigNumber(parseAmountStringToNumber(amount, unitCode)),
+              address: validator,
+            });
+          }
         }
+        op.extra.validators = delegateShards;
         break;
-
-      case "delegate":
-        if (
-          attributes.amount &&
-          attributes.amount.indexOf(currency.units[1].code) != -1
-        ) {
-          op.type = "DELEGATE";
-          op.value = new BigNumber(fees);
-          op.extra.validators.push({
-            address: attributes.validator,
-            amount: attributes.amount.replace(currency.units[1].code, ""),
-          });
+      }
+      case "redelegate": {
+        op.type = "REDELEGATE";
+        op.value = new BigNumber(fees);
+        const redelegateShards: { amount: BigNumber; address: string }[] = [];
+        for (const message of correspondingMessages) {
+          const amount = message.attributes.find(attr => attr.key === "amount")?.value;
+          const validatorDst = message.attributes.find(attr => attr.key === "destination_validator")
+            ?.value;
+          const validatorSrc = message.attributes.find(attr => attr.key === "source_validator")
+            ?.value;
+          if (amount && validatorDst && validatorSrc && amount.endsWith(unitCode)) {
+            op.extra.sourceValidator = validatorSrc;
+            redelegateShards.push({
+              amount: new BigNumber(parseAmountStringToNumber(amount, unitCode)),
+              address: validatorDst,
+            });
+          }
         }
+        op.extra.validators = redelegateShards;
         break;
-
-      case "redelegate":
-        if (
-          attributes.amount &&
-          attributes.amount.indexOf(currency.units[1].code) != -1 &&
-          attributes.destination_validator &&
-          attributes.source_validator
-        ) {
-          op.type = "REDELEGATE";
-          op.value = new BigNumber(fees);
-          op.extra.validators.push({
-            address: attributes.destination_validator,
-            amount: attributes.amount.replace(currency.units[1].code, ""),
-          });
-          op.extra.sourceValidator = attributes.source_validator;
+      }
+      case "unbond": {
+        op.type = "UNDELEGATE";
+        op.value = new BigNumber(fees);
+        const unbondShards: { amount: BigNumber; address: string }[] = [];
+        for (const message of correspondingMessages) {
+          const amount = message.attributes.find(attr => attr.key === "amount")?.value;
+          const validator = message.attributes.find(attr => attr.key === "validator")?.value;
+          if (amount && validator && amount.endsWith(unitCode)) {
+            unbondShards.push({
+              amount: new BigNumber(parseAmountStringToNumber(amount, unitCode)),
+              address: validator,
+            });
+          }
         }
+        op.extra.validators = unbondShards;
         break;
-
-      case "unbond":
-        if (
-          attributes.amount &&
-          attributes.amount.indexOf(currency.units[1].code) != -1 &&
-          attributes.validator
-        ) {
-          op.type = "UNDELEGATE";
-          op.value = new BigNumber(fees);
-          op.extra.validators.push({
-            address: attributes.validator,
-            amount: attributes.amount.replace(currency.units[1].code, ""),
-          });
-        }
-        break;
+      }
     }
 
-    if (!["IN", "OUT"].includes(op.type)) {
-      op.senders = [];
-      op.recipients = [];
+    if (tx.tx.body.memo != null) {
+      op.extra.memo = tx.tx.body.memo;
     }
-
-    op.id = encodeOperationId(id, tx.txhash, op.type);
+    op.id = encodeOperationId(accountId, tx.txhash, op.type);
 
     if (op.type) {
       ops.push(op);
@@ -159,7 +174,7 @@ const txToOps = (info: any, id: string, txs: any): Operation[] => {
   return ops;
 };
 
-export const getAccountShape: GetAccountShape = async (info) => {
+export const getAccountShape: GetAccountShape = async info => {
   const { address, currency, derivationMode, initialAccount } = info;
   const accountId = encodeAccountId({
     type: "js",
@@ -170,6 +185,7 @@ export const getAccountShape: GetAccountShape = async (info) => {
   });
 
   const {
+    accountInfo,
     balances,
     blockHeight,
     txs,
@@ -190,9 +206,7 @@ export const getAccountShape: GetAccountShape = async (info) => {
     delegatedBalance = delegatedBalance.plus(delegation.amount);
     balance = balance.plus(delegation.amount);
 
-    pendingRewardsBalance = pendingRewardsBalance.plus(
-      delegation.pendingRewards
-    );
+    pendingRewardsBalance = pendingRewardsBalance.plus(delegation.pendingRewards);
   }
 
   for (const unbonding of unbondings) {
@@ -221,6 +235,7 @@ export const getAccountShape: GetAccountShape = async (info) => {
       pendingRewardsBalance,
       unbondingBalance,
       withdrawAddress,
+      sequence: accountInfo.sequence,
     },
   };
 

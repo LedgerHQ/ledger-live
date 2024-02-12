@@ -59,13 +59,7 @@ export default function useDBSaveEffect<D, S>({
 const flushes: Array<() => void> = [];
 export const flushAll = () => Promise.all(flushes.map(flush => flush()));
 
-function useFlushMechanism({
-  flush,
-  cancel,
-}: {
-  flush: () => void;
-  cancel: () => void;
-}) {
+function useFlushMechanism({ flush, cancel }: { flush: () => void; cancel: () => void }) {
   const cancelRef = useRef(cancel);
   useEffect(() => () => cancelRef.current(), []);
   useEffect(() => {

@@ -1,66 +1,64 @@
-import React, {
-  useMemo,
-  useCallback,
-  useState,
-  useEffect,
-  useRef,
-  useContext,
-} from "react";
+import React, { useMemo, useCallback, useState, useEffect, useRef, useContext } from "react";
 import { useTheme } from "styled-components/native";
 import {
   Flex,
-  Button,
   Text,
   ScrollContainerHeader,
   Icon,
   ScrollContainer,
   InfiniteLoader,
-  Icons,
+  IconsLegacy,
 } from "@ledgerhq/native-ui";
 import { useDispatch, useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
+import TabBarSafeAreaView from "~/components/TabBar/TabBarSafeAreaView";
 import { useMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
-import { FlatList, RefreshControl, TouchableOpacity } from "react-native";
-import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
+import { Platform, ListRenderItem, RefreshControl, TouchableOpacity, FlatList } from "react-native";
+import { CurrencyData, MarketListRequestParams } from "@ledgerhq/live-common/market/types";
 import { useRoute, useFocusEffect } from "@react-navigation/native";
 import { useNetInfo } from "@react-native-community/netinfo";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import {
   marketFilterByStarredAccountsSelector,
   starredMarketCoinsSelector,
-} from "../../reducers/settings";
+} from "~/reducers/settings";
 import MarketRowItem from "./MarketRowItem";
-import { useLocale } from "../../context/Locale";
+import { useLocale } from "~/context/Locale";
 import SortBadge, { Badge } from "./SortBadge";
 import SearchHeader from "./SearchHeader";
-import { ScreenName } from "../../const";
-import { track } from "../../analytics";
-import TrackScreen from "../../analytics/TrackScreen";
-import { useProviders } from "../Swap/Form/index";
-import Illustration from "../../images/illustration/Illustration";
-import { TAB_BAR_SAFE_HEIGHT } from "../../components/TabBar/TabBarSafeAreaView";
-import {
-  setMarketFilterByStarredAccounts,
-  setMarketRequestParams,
-} from "../../actions/settings";
-import { AnalyticsContext } from "../../analytics/AnalyticsContext";
+import { ScreenName } from "~/const";
+import { track } from "~/analytics";
+import TrackScreen from "~/analytics/TrackScreen";
+import globalSyncRefreshControl from "~/components/globalSyncRefreshControl";
+import { TAB_BAR_SAFE_HEIGHT } from "~/components/TabBar/TabBarSafeAreaView";
+import CollapsibleHeaderFlatList from "~/components/WalletTab/CollapsibleHeaderFlatList";
+import WalletTabSafeAreaView from "~/components/WalletTab/WalletTabSafeAreaView";
+import { setMarketFilterByStarredAccounts, setMarketRequestParams } from "~/actions/settings";
+import { AnalyticsContext } from "~/analytics/AnalyticsContext";
 import EmptyStarredCoins from "./EmptyStarredCoins";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
-import { MarketNavigatorStackParamList } from "../../components/RootNavigator/types/MarketNavigator";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { MarketNavigatorStackParamList } from "~/components/RootNavigator/types/MarketNavigator";
+import EmptyState from "./EmptyState";
+
+const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl(
+  CollapsibleHeaderFlatList<CurrencyData>,
+  {
+    progressViewOffset: Platform.OS === "android" ? 64 : 0,
+  },
+);
 
 const noResultIllustration = {
-  dark: require("../../images/illustration/Dark/_051.png"),
-  light: require("../../images/illustration/Light/_051.png"),
+  dark: require("~/images/illustration/Dark/_051.png"),
+  light: require("~/images/illustration/Light/_051.png"),
 };
 
 const noNetworkIllustration = {
-  dark: require("../../images/illustration/Dark/_078.png"),
-  light: require("../../images/illustration/Light/_078.png"),
+  dark: require("~/images/illustration/Dark/_078.png"),
+  light: require("~/images/illustration/Light/_078.png"),
 };
+
+const keyExtractor = (item: CurrencyData, index: number) => item.id + index;
 
 function getAnalyticsProperties<P extends object>(
   requestParams: MarketListRequestParams,
@@ -80,19 +78,13 @@ type NavigationProps = BaseComposite<
   StackNavigatorProps<MarketNavigatorStackParamList, ScreenName.MarketList>
 >;
 
-const BottomSection = ({
-  navigation,
-}: {
-  navigation: NavigationProps["navigation"];
-}) => {
+const BottomSection = ({ navigation }: { navigation: NavigationProps["navigation"] }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { requestParams, counterCurrency, refresh } = useMarketData();
   const { range, orderBy, order, top100 } = requestParams;
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
-  const filterByStarredAccount: boolean = useSelector(
-    marketFilterByStarredAccountsSelector,
-  );
+  const filterByStarredAccount: boolean = useSelector(marketFilterByStarredAccountsSelector);
   const firstMount = useRef(true); // To known if this is the first mount of the page
 
   useEffect(() => {
@@ -166,7 +158,7 @@ const BottomSection = ({
     >
       <TrackScreen category="Page" name={"Market"} access={true} />
 
-      <TouchableOpacity onPress={toggleFilterByStarredAccounts}>
+      <TouchableOpacity onPress={toggleFilterByStarredAccounts} testID="starred">
         <Badge bg={filterByStarredAccount ? "primary.c80" : "neutral.c30"}>
           <Icon
             name={filterByStarredAccount ? "StarSolid" : "Star"}
@@ -178,16 +170,14 @@ const BottomSection = ({
       <SortBadge
         label={t("market.filters.sort")}
         valueLabel={t(
-          top100
-            ? `market.filters.order.topGainers`
-            : `market.filters.order.${orderBy}`,
+          top100 ? `market.filters.order.topGainers` : `market.filters.order.${orderBy}`,
         )}
         Icon={
           top100
-            ? Icons.GraphGrowMedium
+            ? IconsLegacy.GraphGrowMedium
             : order === "asc"
-            ? Icons.ArrowTopMedium
-            : Icons.ArrowBottomMedium
+            ? IconsLegacy.ArrowTopMedium
+            : IconsLegacy.ArrowBottomMedium
         }
         value={top100 ? "top100" : `${orderBy}_${order}`}
         options={[
@@ -245,39 +235,11 @@ const BottomSection = ({
           <Text fontWeight="semiBold" variant="body">
             {t("market.filters.currency")}
           </Text>
-          <Text
-            ml={2}
-            fontWeight="semiBold"
-            variant="body"
-            color="primary.c80"
-            uppercase
-          >
+          <Text ml={2} fontWeight="semiBold" variant="body" color="primary.c80" uppercase>
             {counterCurrency}
           </Text>
         </Badge>
       </TouchableOpacity>
-
-      {/* The following is disabled for now as the mapping for supported coins is not 100% working (ERC20 etc.) */}
-      {/* <SortBadge
-        label={t("market.filters.view.label")}
-        value={liveCompatible ? "liveCompatible" : "all"}
-        valueLabel={t(
-          `market.filters.view.${liveCompatible ? "liveCompatible" : "all"}`,
-        )}
-        options={[
-          {
-            label: t(`market.filters.view.all_label`),
-            requestParam: { liveCompatible: false },
-            value: "all",
-          },
-          {
-            label: t(`market.filters.view.liveCompatible_label`),
-            requestParam: { liveCompatible: true },
-            value: "liveCompatible",
-          },
-        ]}
-        onChange={onChange}
-      /> */}
     </ScrollContainer>
   );
 };
@@ -290,11 +252,8 @@ export default function Market({ navigation }: NavigationProps) {
   const initialTop100 = params?.top100;
   const { isConnected } = useNetInfo();
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
-  const filterByStarredAccount: boolean = useSelector(
-    marketFilterByStarredAccountsSelector,
-  );
-
-  useProviders();
+  const filterByStarredAccount: boolean = useSelector(marketFilterByStarredAccountsSelector);
+  const ptxEarnFeature = useFeature("ptxEarn");
 
   const {
     requestParams,
@@ -346,7 +305,7 @@ export default function Market({ navigation }: NavigationProps) {
     }
   }, [initialTop100, refresh]);
 
-  const renderItems = useCallback(
+  const renderItems: ListRenderItem<CurrencyData> = useCallback(
     ({ item, index }) => (
       <TouchableOpacity
         onPress={() => {
@@ -368,76 +327,50 @@ export default function Market({ navigation }: NavigationProps) {
     [counterCurrency, locale, navigation, range, selectCurrency, t],
   );
 
-  const renderEmptyComponent = useCallback(
-    () =>
-      search ? ( // shows up in case of no search results
-        <Flex
-          flex={1}
-          flexDirection="column"
-          alignItems="stretch"
-          p="4"
-          mt={70}
-        >
-          <Flex alignItems="center">
-            <Illustration
-              size={164}
-              lightSource={noResultIllustration.light}
-              darkSource={noResultIllustration.dark}
-            />
-          </Flex>
-          <Text textAlign="center" variant="h4" my={3}>
-            {t("market.warnings.noCryptosFound")}
-          </Text>
-          <Text textAlign="center" variant="body" color="neutral.c70">
-            <Trans
-              i18nKey="market.warnings.noSearchResultsFor"
-              values={{ search }}
-            >
+  const renderEmptyComponent = useCallback(() => {
+    if (marketDataFiltered?.length === 0 && search && !loading) {
+      // No search results
+      return (
+        <EmptyState
+          illustrationSource={noResultIllustration}
+          title={t("market.warnings.noCryptosFound")}
+          description={
+            <Trans i18nKey="market.warnings.noSearchResultsFor" values={{ search }}>
               <Text fontWeight="bold" variant="body" color="neutral.c70">
                 {""}
               </Text>
             </Trans>
-          </Text>
-          <Button mt={8} onPress={resetSearch} type="main">
-            {t("market.warnings.browseAssets")}
-          </Button>
-        </Flex>
-      ) : !isConnected ? ( // shows up in case of network down
-        <Flex
-          flex={1}
-          flexDirection="column"
-          alignItems="stretch"
-          p="4"
-          mt={70}
-        >
-          <Flex alignItems="center">
-            <Illustration
-              size={164}
-              lightSource={noNetworkIllustration.light}
-              darkSource={noNetworkIllustration.dark}
-            />
-          </Flex>
-          <Text textAlign="center" variant="h4" my={3}>
-            {t("errors.NetworkDown.title")}
-          </Text>
-          <Text textAlign="center" variant="body" color="neutral.c70">
-            {t("errors.NetworkDown.description")}
-          </Text>
-        </Flex>
-      ) : filterByStarredAccount && starredMarketCoins.length <= 0 ? (
-        <EmptyStarredCoins />
-      ) : (
-        <InfiniteLoader size={30} />
-      ), // shows up in case loading is ongoing
-    [
-      search,
-      t,
-      resetSearch,
-      isConnected,
-      filterByStarredAccount,
-      starredMarketCoins.length,
-    ],
-  );
+          }
+          buttonText={t("market.warnings.browseAssets")}
+          onButtonClick={resetSearch}
+        />
+      );
+    } else if (!isConnected) {
+      // Network down
+      return (
+        <EmptyState
+          illustrationSource={noNetworkIllustration}
+          title={t("errors.NetworkDown.title")}
+          description={t("errors.NetworkDown.description")}
+        />
+      );
+    } else if (filterByStarredAccount && starredMarketCoins.length <= 0) {
+      // Empty starred coins
+      return <EmptyStarredCoins />;
+    } else {
+      // Loading ongoing
+      return <InfiniteLoader size={30} />;
+    }
+  }, [
+    marketDataFiltered?.length,
+    search,
+    loading,
+    isConnected,
+    filterByStarredAccount,
+    starredMarketCoins.length,
+    t,
+    resetSearch,
+  ]);
 
   const onEndReached = useCallback(() => {
     if (
@@ -497,49 +430,57 @@ export default function Market({ navigation }: NavigationProps) {
     }, [setScreen, setSource]),
   );
 
-  const insets = useSafeAreaInsets();
+  const listProps = {
+    contentContainerStyle: {
+      paddingHorizontal: 16,
+      paddingBottom: TAB_BAR_SAFE_HEIGHT,
+    },
+    data: marketDataFiltered,
+    renderItem: renderItems,
+    onEndReached: onEndReached,
+    onEndReachedThreshold: 0.5,
+    scrollEventThrottle: 50,
+    initialNumToRender: limit,
+    keyExtractor,
+    ListFooterComponent: renderFooter,
+    ListEmptyComponent: renderEmptyComponent,
+    refreshControl: (
+      <RefreshControl
+        refreshing={refreshControlVisible}
+        colors={[colors.primary.c80]}
+        tintColor={colors.primary.c80}
+        onRefresh={handlePullToRefresh}
+      />
+    ),
+  };
+
+  if (!ptxEarnFeature?.enabled) {
+    return (
+      <TabBarSafeAreaView>
+        <Flex px={6} pt={ptxEarnFeature?.enabled ? 6 : 0}>
+          <Text my={3} variant="h4" fontWeight="semiBold">
+            {t("market.title")}
+          </Text>
+          <SearchHeader search={search} refresh={refresh} />
+          <BottomSection navigation={navigation} />
+        </Flex>
+        <FlatList {...listProps} />
+      </TabBarSafeAreaView>
+    );
+  }
 
   return (
-    <Flex
-      /**
-       * NB: not using SafeAreaView because it flickers during navigation
-       * https://github.com/th3rdwave/react-native-safe-area-context/issues/219
-       */
-      flex={1}
-      mt={insets.top}
-      bg="background.main"
-    >
-      <Flex px={6}>
-        <Text my={3} variant="h4" fontWeight="semiBold">
-          {t("market.title")}
-        </Text>
-        <SearchHeader search={search} refresh={refresh} />
-        <BottomSection navigation={navigation} />
-      </Flex>
-
-      <FlatList
-        contentContainerStyle={{
-          paddingHorizontal: 16,
-          paddingBottom: TAB_BAR_SAFE_HEIGHT,
-        }}
-        data={marketDataFiltered}
-        renderItem={renderItems}
-        onEndReached={onEndReached}
-        onEndReachedThreshold={0.5}
-        scrollEventThrottle={50}
-        initialNumToRender={limit}
-        keyExtractor={(item, index) => item.id + index}
-        ListFooterComponent={renderFooter}
-        ListEmptyComponent={renderEmptyComponent}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshControlVisible}
-            colors={[colors.primary.c80]}
-            tintColor={colors.primary.c80}
-            onRefresh={handlePullToRefresh}
-          />
-        }
-      />
-    </Flex>
+    <RefreshableCollapsibleHeaderFlatList
+      {...listProps}
+      stickyHeaderIndices={[0]}
+      ListHeaderComponent={
+        <WalletTabSafeAreaView edges={["left", "right"]}>
+          <Flex backgroundColor={colors.background.main}>
+            <SearchHeader search={search} refresh={refresh} />
+            <BottomSection navigation={navigation} />
+          </Flex>
+        </WalletTabSafeAreaView>
+      }
+    />
   );
 }

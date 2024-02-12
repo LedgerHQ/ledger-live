@@ -1,15 +1,13 @@
 // cross helps dealing with cross-project feature like export/import & cross project conversions
 import { BigNumber } from "bignumber.js";
 import compressjs from "@ledgerhq/compressjs";
+import type { DeviceModelId } from "@ledgerhq/devices";
 import {
   runDerivationScheme,
   getDerivationScheme,
   asDerivationMode,
 } from "@ledgerhq/coin-framework/derivation";
-import {
-  decodeAccountId,
-  emptyHistoryCache,
-} from "@ledgerhq/coin-framework/account/index";
+import { decodeAccountId, emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
 import { getCryptoCurrencyById } from "./currencies";
 import type { Account, CryptoCurrencyIds } from "@ledgerhq/types-live";
 
@@ -46,11 +44,15 @@ export type DataIn = {
   exporterName: string;
   // the version of the exporter. e.g. the desktop app version
   exporterVersion: string;
+  modelId?: DeviceModelId;
+  modelIdList?: DeviceModelId[];
 };
 
 type Meta = {
   exporterName: string;
   exporterVersion: string;
+  modelId?: DeviceModelId;
+  modelIdList?: DeviceModelId[];
 };
 
 export type Result = {
@@ -64,6 +66,8 @@ export function encode({
   settings,
   exporterName,
   exporterVersion,
+  modelId,
+  modelIdList,
 }: DataIn): string {
   return Buffer.from(
     compressjs.Bzip2.compressFile(
@@ -72,12 +76,14 @@ export function encode({
           meta: {
             exporterName,
             exporterVersion,
+            modelId,
+            modelIdList,
           },
           accounts: accounts.map(accountToAccountData),
           settings,
-        })
-      )
-    )
+        }),
+      ),
+    ),
   ).toString("binary");
 }
 
@@ -86,7 +92,7 @@ const asResultMeta = (unsafe: Record<string, any>): Meta => {
     throw new Error("invalid meta data");
   }
 
-  const { exporterName, exporterVersion } = unsafe;
+  const { exporterName, exporterVersion, modelId, modelIdList } = unsafe;
 
   if (typeof exporterName !== "string") {
     throw new Error("invalid meta.exporterName");
@@ -96,9 +102,19 @@ const asResultMeta = (unsafe: Record<string, any>): Meta => {
     throw new Error("invalid meta.exporterVersion");
   }
 
+  if (modelId && typeof modelId !== "string") {
+    throw new Error("invalid meta.modelId");
+  }
+
+  if (modelIdList && modelIdList.some(id => typeof id !== "string")) {
+    throw new Error("invalid meta.modelIdList");
+  }
+
   return {
     exporterName,
     exporterVersion,
+    modelId,
+    modelIdList,
   };
 };
 
@@ -107,16 +123,8 @@ const asResultAccount = (unsafe: Record<string, any>): AccountData => {
     throw new Error("invalid account data");
   }
 
-  const {
-    id,
-    currencyId,
-    freshAddress,
-    seedIdentifier,
-    derivationMode,
-    name,
-    index,
-    balance,
-  } = unsafe;
+  const { id, currencyId, freshAddress, seedIdentifier, derivationMode, name, index, balance } =
+    unsafe;
 
   if (typeof id !== "string") {
     throw new Error("invalid account.id");
@@ -249,9 +257,7 @@ const asResultSettings = (unsafe: Record<string, any>): Settings => {
 
 export function decode(bytes: string): Result {
   const unsafe: Record<string, any> = JSON.parse(
-    Buffer.from(
-      compressjs.Bzip2.decompressFile(Buffer.from(bytes, "binary"))
-    ).toString()
+    Buffer.from(compressjs.Bzip2.decompressFile(Buffer.from(bytes, "binary"))).toString(),
   );
 
   if (typeof unsafe !== "object" || !unsafe) {
@@ -317,7 +323,7 @@ export const accountDataToAccount = ({
     // In bitcoin implementation, xpubOrAddress field always go in the xpub
     xpub = xpubOrAddress;
   } else {
-    if (currency.family === "tezos") {
+    if (currency.family === "tezos" || currency.family === "stacks") {
       xpub = xpubOrAddress;
     } else if (!freshAddress) {
       // otherwise, it's the freshAddress
@@ -332,7 +338,7 @@ export const accountDataToAccount = ({
       currency,
       {
         account: index,
-      }
+      },
     );
   }
 

@@ -6,7 +6,7 @@ import { create, Infer } from "superstruct";
 import { PARSED_PROGRAMS } from "../../program/constants";
 
 export function parseSplTokenInstruction(
-  ix: ParsedInstruction & { program: typeof PARSED_PROGRAMS.SPL_TOKEN }
+  ix: ParsedInstruction & { program: typeof PARSED_PROGRAMS.SPL_TOKEN },
 ): TokenInstructionDescriptor {
   const parsed = create(ix.parsed, ParsedInfo);
   const { type: rawType, info } = parsed;
@@ -23,8 +23,8 @@ export function parseSplTokenInstruction(
 
 export type TokenInstructionDescriptor = {
   [K in TokenInstructionType]: {
-    title: typeof IX_TITLES[K];
+    title: (typeof IX_TITLES)[K];
     type: K;
-    info: Infer<typeof IX_STRUCTS[K]>;
+    info: Infer<(typeof IX_STRUCTS)[K]>;
   };
 }[TokenInstructionType];

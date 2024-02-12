@@ -36,7 +36,7 @@ export const localeIds = Object.keys(allLocales) as localeKeys[];
  */
 export const supportedLocales: localeKeys[] = Config.LEDGER_DEBUG_ALL_LANGS
   ? localeIds
-  : ["en", "fr", "es", "ru", "zh", "de", "tr", "ja", "ko", "pt", "ar"];
+  : ["en", "fr", "es", "ru", "zh", "de", "tr", "ja", "ko", "pt"];
 
 export type Locale = keyof typeof languages;
 
@@ -71,23 +71,22 @@ export const fullySupportedLocales: Locale[] = [
   "ja",
   "ko",
   "pt",
-  "ar",
 ];
-export const locales = supportedLocales.reduce((obj, key) => {
-  obj[key] = allLocales[key]; // eslint-disable-line no-param-reassign
-  return obj;
-}, {} as { [k in localeKeys]: ResourceLanguage });
+export const locales = supportedLocales.reduce(
+  (obj, key) => {
+    obj[key] = allLocales[key]; // eslint-disable-line no-param-reassign
+    return obj;
+  },
+  {} as { [k in localeKeys]: ResourceLanguage },
+);
 
 /** For the "language" setting which is used for translations. */
 export const DEFAULT_LANGUAGE_LOCALE = "en";
 /** This allows us to have the language set by default to the system language
  * if & only if that language is supported.
  */
-export const getDefaultLanguageLocale = (
-  fallbackLocale: string = DEFAULT_LANGUAGE_LOCALE,
-) =>
-  RNLocalize.findBestAvailableLanguage(fullySupportedLocales)?.languageTag ||
-  fallbackLocale;
+export const getDefaultLanguageLocale = (fallbackLocale: string = DEFAULT_LANGUAGE_LOCALE) =>
+  RNLocalize.findBestAvailableLanguage(fullySupportedLocales)?.languageTag || fallbackLocale;
 const languageLocaleToDefaultLocaleMap: {
   [k: string]: string;
 } = {
@@ -119,7 +118,5 @@ export const DEFAULT_LOCALE = "en-US";
  * to the system language if & only if that language is supported. */
 export const getDefaultLocale = () => {
   const defaultLanguageLocale = getDefaultLanguageLocale() as Locale;
-  return (
-    languageLocaleToDefaultLocaleMap[defaultLanguageLocale] || DEFAULT_LOCALE
-  );
+  return languageLocaleToDefaultLocaleMap[defaultLanguageLocale] || DEFAULT_LOCALE;
 };

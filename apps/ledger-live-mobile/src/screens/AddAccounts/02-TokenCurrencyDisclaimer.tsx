@@ -4,33 +4,27 @@ import { StyleSheet, View, SafeAreaView } from "react-native";
 import { useSelector } from "react-redux";
 import { findTokenAccountByCurrency } from "@ledgerhq/live-common/account/index";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
-import { accountsSelector } from "../../reducers/accounts";
-import CurrencyIcon from "../../components/CurrencyIcon";
-import Button from "../../components/Button";
-import Alert from "../../components/Alert";
-import LText from "../../components/LText";
-import { urls } from "../../config/urls";
-import { ScreenName, NavigatorName } from "../../const";
-import { TrackScreen } from "../../analytics";
-import { AddAccountsNavigatorParamList } from "../../components/RootNavigator/types/AddAccountsNavigator";
+import { accountsSelector } from "~/reducers/accounts";
+import CurrencyIcon from "~/components/CurrencyIcon";
+import Button from "~/components/Button";
+import Alert from "~/components/Alert";
+import LText from "~/components/LText";
+import { urls } from "~/utils/urls";
+import { ScreenName, NavigatorName } from "~/const";
+import { TrackScreen } from "~/analytics";
+import { AddAccountsNavigatorParamList } from "~/components/RootNavigator/types/AddAccountsNavigator";
 import {
   StackNavigatorNavigation,
   StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
-import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
+} from "~/components/RootNavigator/types/helpers";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 
 type Props = CompositeScreenProps<
-  StackNavigatorProps<
-    AddAccountsNavigatorParamList,
-    ScreenName.AddAccountsTokenCurrencyDisclaimer
-  >,
+  StackNavigatorProps<AddAccountsNavigatorParamList, ScreenName.AddAccountsTokenCurrencyDisclaimer>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
 
-export default function AddAccountsTokenCurrencyDisclaimer({
-  navigation,
-  route,
-}: Props) {
+export default function AddAccountsTokenCurrencyDisclaimer({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const accounts = useSelector(accountsSelector);
@@ -40,9 +34,7 @@ export default function AddAccountsTokenCurrencyDisclaimer({
   const accountData = findTokenAccountByCurrency(token, accounts);
   const parentTokenAccount = accountData ? accountData.parentAccount : null;
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
   // specific cta in case of token accounts
   const onTokenCta = useCallback(() => {
@@ -64,14 +56,7 @@ export default function AddAccountsTokenCurrencyDisclaimer({
         currency: parentCurrency,
       });
     }
-  }, [
-    parentTokenAccount,
-    onClose,
-    navigation,
-    token,
-    route.params,
-    parentCurrency,
-  ]);
+  }, [parentTokenAccount, onClose, navigation, token, route.params, parentCurrency]);
   return (
     <SafeAreaView
       style={[

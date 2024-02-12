@@ -3,11 +3,11 @@ import { useSelector } from "react-redux";
 import { AccountLike } from "@ledgerhq/types-live";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
-import NoResultsFound from "../icons/NoResultsFound";
+import NoResultsFound from "~/icons/NoResultsFound";
 import AccountList from "./AccountList";
 import FilteredSearchBar from "./FilteredSearchBar";
-import { formatSearchResults } from "../helpers/formatAccountSearchResults";
-import { accountsSelector } from "../reducers/accounts";
+import { formatSearchResults } from "~/helpers/formatAccountSearchResults";
+import { accountsSelector } from "~/reducers/accounts";
 
 const SEARCH_KEYS = ["name", "unit.code", "token.name", "token.ticker"];
 
@@ -33,23 +33,11 @@ const AccountSelector = ({
     () => (
       <Flex alignItems="center" justifyContent="center" pb="50px" pt="30px">
         <NoResultsFound />
-        <Text
-          color="neutral.c100"
-          fontWeight="medium"
-          variant="h2"
-          mt={6}
-          textAlign="center"
-        >
+        <Text color="neutral.c100" fontWeight="medium" variant="h2" mt={6} textAlign="center">
           {t("transfer.receive.noResultsFound")}
         </Text>
         <Flex>
-          <Text
-            color="neutral.c80"
-            fontWeight="medium"
-            variant="body"
-            pt={6}
-            textAlign="center"
-          >
+          <Text color="neutral.c80" fontWeight="medium" variant="body" pt={6} textAlign="center">
             {t("transfer.receive.noResultsDesc")}
           </Text>
         </Flex>
@@ -59,7 +47,7 @@ const AccountSelector = ({
   );
 
   const renderList = useCallback(
-    items => {
+    (items: AccountLike[]) => {
       const formatedList = formatSearchResults(items, accounts);
 
       return (

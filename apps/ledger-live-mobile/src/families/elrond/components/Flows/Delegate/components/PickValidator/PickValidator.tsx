@@ -9,8 +9,8 @@ import { useSearchValidators } from "@ledgerhq/live-common/families/elrond/react
 
 import type { onSelectType, PickValidatorPropsType } from "./types";
 
-import { TrackScreen } from "../../../../../../../analytics";
-import { ScreenName } from "../../../../../../../const";
+import { TrackScreen } from "~/analytics";
+import { ScreenName } from "~/const";
 
 import Item from "./components/Item";
 
@@ -59,7 +59,13 @@ const PickValidator = (props: PickValidatorPropsType) => {
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
-      <TrackScreen category="DelegationFlow" name="SelectValidator" />
+      <TrackScreen
+        category="DelegationFlow"
+        name="SelectValidator"
+        flow="stake"
+        action="delegate"
+        currency="MultiversX"
+      />
 
       <Box mx={6} mt={3} mb={4}>
         <SearchInput
@@ -100,9 +106,7 @@ const PickValidator = (props: PickValidatorPropsType) => {
         contentContainerStyle={styles.list}
         data={providers}
         keyExtractor={validator => validator.contract}
-        renderItem={props => (
-          <Item account={account} onSelect={onSelect} {...props} />
-        )}
+        renderItem={props => <Item account={account} onSelect={onSelect} {...props} />}
       />
     </View>
   );

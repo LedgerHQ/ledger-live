@@ -1,4 +1,4 @@
-import { Flex, Icons, Text } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import React, { useMemo } from "react";
 import { Image, StyleProp, ViewStyle, StyleSheet } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -35,23 +35,14 @@ const Illustration = styled(Image).attrs({
 
 const Border: React.FC<{ seen: boolean }> = ({ seen }) => {
   const { colors } = useTheme();
-  const containerSize =
-    innerImageSize + 2 * borderWidth + 2 * borderInnerPadding;
+  const containerSize = innerImageSize + 2 * borderWidth + 2 * borderInnerPadding;
   return (
     <Flex position="absolute" height={containerSize} width={containerSize}>
       <Svg height={containerSize} width={containerSize}>
         <Defs>
           <LinearGradient id="grad" x1="0" y1="1" x2="1" y2="0">
-            <Stop
-              offset="0"
-              stopColor={seen ? colors.neutral.c30 : "#461AF7"}
-              stopOpacity="1"
-            />
-            <Stop
-              offset="1"
-              stopColor={seen ? colors.neutral.c30 : "#FF6E33"}
-              stopOpacity="1"
-            />
+            <Stop offset="0" stopColor={seen ? colors.neutral.c30 : "#461AF7"} stopOpacity="1" />
+            <Stop offset="1" stopColor={seen ? colors.neutral.c30 : "#FF6E33"} stopOpacity="1" />
           </LinearGradient>
         </Defs>
         <Circle
@@ -59,6 +50,7 @@ const Border: React.FC<{ seen: boolean }> = ({ seen }) => {
           cy={containerSize / 2}
           r={innerImageSize / 2 + borderInnerPadding}
           strokeWidth={borderWidth}
+          fill="none"
           stroke="url(#grad)"
         />
       </Svg>
@@ -110,7 +102,7 @@ const StoryGroupItem: React.FC<Props> = props => {
             backgroundColor="rgba(255,255,255,0.03)"
             borderRadius={innerImageSize}
           >
-            <Icons.PlayMedium size={24} color="constant.white" />
+            <IconsLegacy.PlayMedium size={24} color="constant.white" />
           </Flex>
         </Flex>
         <Border seen={seen} />

@@ -1,28 +1,13 @@
-import {
-  ParsedInstruction,
-  PartiallyDecodedInstruction,
-} from "@solana/web3.js";
-import {
-  parseSplTokenInstruction,
-  TokenInstructionDescriptor,
-} from "../instruction/token";
+import { ParsedInstruction, PartiallyDecodedInstruction } from "@solana/web3.js";
+import { parseSplTokenInstruction, TokenInstructionDescriptor } from "../instruction/token";
 import { PARSED_PROGRAMS } from "./constants";
 import {
   AssociatedTokenAccountInstructionDescriptor,
   parseAssociatedTokenAccountInstruction,
 } from "../instruction/associated-token-account";
-import {
-  MemoInstructionDescriptor,
-  parseSplMemoInstruction,
-} from "../instruction/memo";
-import {
-  parseStakeInstruction,
-  StakeInstructionDescriptor,
-} from "../instruction/stake";
-import {
-  parseSystemInstruction,
-  SystemInstructionDescriptor,
-} from "../instruction/system";
+import { MemoInstructionDescriptor, parseSplMemoInstruction } from "../instruction/memo";
+import { parseStakeInstruction, StakeInstructionDescriptor } from "../instruction/stake";
+import { parseSystemInstruction, SystemInstructionDescriptor } from "../instruction/system";
 
 type ParsedProgram =
   | {
@@ -56,12 +41,9 @@ type ParsedProgram =
       instruction: undefined;
     };
 
-export const parse = (
-  ix: ParsedInstruction | PartiallyDecodedInstruction
-): ParsedProgram => {
+export const parse = (ix: ParsedInstruction | PartiallyDecodedInstruction): ParsedProgram => {
   if ("parsed" in ix) {
-    const program: typeof PARSED_PROGRAMS[keyof typeof PARSED_PROGRAMS] =
-      ix.program as any;
+    const program: (typeof PARSED_PROGRAMS)[keyof typeof PARSED_PROGRAMS] = ix.program as any;
 
     switch (program) {
       case "system":
@@ -117,9 +99,7 @@ export const parse = (
   return unknown();
 };
 
-export const parseQuiet = (
-  ix: ParsedInstruction | PartiallyDecodedInstruction
-): ParsedProgram => {
+export const parseQuiet = (ix: ParsedInstruction | PartiallyDecodedInstruction): ParsedProgram => {
   try {
     return parse(ix);
   } catch (_) {

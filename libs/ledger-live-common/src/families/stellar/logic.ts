@@ -1,45 +1,37 @@
+import type { CacheRes } from "@ledgerhq/live-network/cache";
+import { makeLRUCache } from "@ledgerhq/live-network/cache";
+import type { Account, OperationType, TokenAccount } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import StellarSdk, { ServerApi } from "stellar-sdk";
+import { ServerApi, StrKey, MuxedAccount } from "stellar-sdk";
 import { findSubAccountById } from "../../account";
-import type { CacheRes } from "../../cache";
-import { makeLRUCache } from "../../cache";
-import type {
-  Account,
-  Operation,
-  OperationType,
-  TokenAccount,
-} from "@ledgerhq/types-live";
-import {
-  fetchSigners,
-  fetchBaseFee,
-  loadAccount,
-  BASE_RESERVE,
-  BASE_RESERVE_MIN_COUNT,
-} from "./api";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import { encodeOperationId } from "../../operation";
+import {
+  BASE_RESERVE,
+  BASE_RESERVE_MIN_COUNT,
+  fetchBaseFee,
+  fetchSigners,
+  loadAccount,
+} from "./api";
 import type {
-  Transaction,
-  TransactionRaw,
   BalanceAsset,
   RawOperation,
+  StellarOperation,
+  Transaction,
+  TransactionRaw,
 } from "./types";
 
-export const STELLAR_BURN_ADDRESS =
-  "GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF";
+export const STELLAR_BURN_ADDRESS = "GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF";
 
 const currency = getCryptoCurrencyById("stellar");
 
 const getMinimumBalance = (account: ServerApi.AccountRecord): BigNumber => {
-  return parseCurrencyUnit(
-    currency.units[0],
-    getReservedBalance(account).toString()
-  );
+  return parseCurrencyUnit(currency.units[0], getReservedBalance(account).toString());
 };
 
 export const getAccountSpendableBalance = async (
   balance: BigNumber,
-  account: ServerApi.AccountRecord
+  account: ServerApi.AccountRecord,
 ): Promise<BigNumber> => {
   const minimumBalance = getMinimumBalance(account);
   const { recommendedFee } = await fetchBaseFee();
@@ -49,17 +41,12 @@ export const getAccountSpendableBalance = async (
 export const getAmountValue = (
   account: Account,
   transaction: Transaction,
-  fees: BigNumber
+  fees: BigNumber,
 ): BigNumber => {
   // Asset
   if (transaction.subAccountId) {
-    const asset = findSubAccountById(
-      account,
-      transaction.subAccountId
-    ) as TokenAccount;
-    return transaction.useAllAmount
-      ? new BigNumber(asset.spendableBalance)
-      : transaction.amount;
+    const asset = findSubAccountById(account, transaction.subAccountId) as TokenAccount;
+    return transaction.useAllAmount ? new BigNumber(asset.spendableBalance) : transaction.amount;
   }
 
   // Native
@@ -82,17 +69,13 @@ export const getBalanceId = (balance: BalanceAsset): string | null => {
   }
 };
 
-export const getReservedBalance = (
-  account: ServerApi.AccountRecord
-): BigNumber => {
+export const getReservedBalance = (account: ServerApi.AccountRecord): BigNumber => {
   const numOfSponsoringEntries = Number(account.num_sponsoring);
   const numOfSponsoredEntries = Number(account.num_sponsored);
 
-  const nativeAsset = account.balances?.find(
-    (b) => b.asset_type === "native"
-  ) as BalanceAsset;
+  const nativeAsset = account.balances?.find(b => b.asset_type === "native") as BalanceAsset;
 
-  const amountInOffers = new BigNumber(nativeAsset?.buying_liabilities || 0);
+  const amountInOffers = new BigNumber(nativeAsset?.selling_liabilities || 0);
   const numOfEntries = new BigNumber(account.subentry_count);
 
   return new BigNumber(BASE_RESERVE_MIN_COUNT)
@@ -103,10 +86,7 @@ export const getReservedBalance = (
     .plus(amountInOffers);
 };
 
-export const getOperationType = (
-  operation: RawOperation,
-  addr: string
-): OperationType => {
+export const getOperationType = (operation: RawOperation, addr: string): OperationType => {
   switch (operation.type) {
     case "create_account":
       return operation.funder === addr ? "OUT" : "IN";
@@ -141,9 +121,7 @@ export const getOperationType = (
   }
 };
 
-export const getAssetCodeIssuer = (
-  tr: Transaction | TransactionRaw
-): string[] => {
+export const getAssetCodeIssuer = (tr: Transaction | TransactionRaw): string[] => {
   if (tr.subAccountId) {
     const assetString = tr.subAccountId.split("+")[1];
     return assetString.split(":");
@@ -171,8 +149,8 @@ const getRecipients = (operation): string[] => {
 export const formatOperation = async (
   rawOperation: RawOperation,
   accountId: string,
-  addr: string
-): Promise<Operation> => {
+  addr: string,
+): Promise<StellarOperation> => {
   const transaction = await rawOperation.transaction();
   const type = getOperationType(rawOperation, addr);
   const value = getValue(rawOperation, transaction, type);
@@ -182,19 +160,15 @@ export const formatOperation = async (
       ? Buffer.from(transaction.memo, "base64").toString("hex")
       : transaction.memo
     : null;
-  const operation = {
+
+  const operation: StellarOperation = {
     id: encodeOperationId(accountId, rawOperation.transaction_hash, type),
     accountId,
     fee: new BigNumber(transaction.fee_charged),
-    value: rawOperation?.asset_code
-      ? new BigNumber(transaction.fee_charged)
-      : value,
+    value: rawOperation?.asset_code ? new BigNumber(transaction.fee_charged) : value,
     // Using type NONE to hide asset operations from the main account (show them
     // only on sub-account)
-    type:
-      rawOperation?.asset_code && !["OPT_IN", "OPT_OUT"].includes(type)
-        ? "NONE"
-        : type,
+    type: rawOperation?.asset_code && !["OPT_IN", "OPT_OUT"].includes(type) ? "NONE" : type,
     hash: rawOperation.transaction_hash,
     blockHeight: transaction.ledger_attr,
     date: new Date(rawOperation.created_at),
@@ -204,21 +178,31 @@ export const formatOperation = async (
     hasFailed: !rawOperation.transaction_successful,
     blockHash: null,
     extra: {
-      pagingToken: rawOperation.paging_token,
-      assetCode: rawOperation?.asset_code,
-      assetIssuer: rawOperation?.asset_issuer,
-      assetAmount: rawOperation?.asset_code ? value.toString() : undefined,
       ledgerOpType: type,
-      memo,
     },
   };
+
+  if (rawOperation.paging_token) {
+    operation.extra.pagingToken = rawOperation.paging_token;
+  }
+  if (rawOperation.asset_code) {
+    operation.extra.assetCode = rawOperation.asset_code;
+    operation.extra.assetAmount = rawOperation.asset_code ? value.toString() : undefined;
+  }
+  if (rawOperation.asset_issuer) {
+    operation.extra.assetIssuer = rawOperation.asset_issuer;
+  }
+  if (memo) {
+    operation.extra.memo = memo;
+  }
+
   return operation;
 };
 
 const getValue = (
   operation: RawOperation,
   transaction: ServerApi.TransactionRecord,
-  type: OperationType
+  type: OperationType,
 ): BigNumber => {
   let value = new BigNumber(0);
 
@@ -274,9 +258,7 @@ export const isMemoValid = (memoType: string, memoValue: string): boolean => {
   return true;
 };
 
-export const isAccountMultiSign = async (
-  account: Account
-): Promise<boolean> => {
+export const isAccountMultiSign = async (account: Account): Promise<boolean> => {
   const signers = await fetchSigners(account);
   return signers.length > 1;
 };
@@ -293,10 +275,7 @@ export const isAddressValid = (address: string): boolean => {
   if (address === STELLAR_BURN_ADDRESS) return false;
 
   try {
-    return (
-      StellarSdk.StrKey.isValidEd25519PublicKey(address) ||
-      StellarSdk.StrKey.isValidMed25519PublicKey(address)
-    );
+    return StrKey.isValidEd25519PublicKey(address) || StrKey.isValidMed25519PublicKey(address);
   } catch (err) {
     return false;
   }
@@ -314,15 +293,15 @@ export const getRecipientAccount: CacheRes<
   } | null
 > = makeLRUCache(
   async ({ recipient }) => await recipientAccount(recipient),
-  (extract) => extract.recipient,
+  extract => extract.recipient,
   {
     max: 300,
     ttl: 5 * 60,
-  } // 5 minutes
+  }, // 5 minutes
 );
 
 export const recipientAccount = async (
-  address?: string
+  address?: string,
 ): Promise<{
   id: string | null;
   isMuxedAccount: boolean;
@@ -334,12 +313,10 @@ export const recipientAccount = async (
 
   let accountAddress = address;
 
-  const isMuxedAccount = Boolean(
-    StellarSdk.StrKey.isValidMed25519PublicKey(address)
-  );
+  const isMuxedAccount = StrKey.isValidMed25519PublicKey(address);
 
   if (isMuxedAccount) {
-    const muxedAccount = new StellarSdk.MuxedAccount.fromAddress(address, "0");
+    const muxedAccount = MuxedAccount.fromAddress(address, "0");
     accountAddress = muxedAccount.baseAccount().accountId();
   }
 
@@ -358,11 +335,11 @@ export const recipientAccount = async (
   };
 };
 
-export const rawOperationsToOperations = async (
+export const rawOperationsToOperations = (
   operations: RawOperation[],
   addr: string,
-  accountId: string
-): Promise<Operation[]> => {
+  accountId: string,
+): Promise<StellarOperation[]> => {
   const supportedOperationTypes = [
     "create_account",
     "payment",
@@ -373,7 +350,7 @@ export const rawOperationsToOperations = async (
 
   return Promise.all(
     operations
-      .filter((operation) => {
+      .filter(operation => {
         return (
           operation.from === addr ||
           operation.to === addr ||
@@ -383,7 +360,7 @@ export const rawOperationsToOperations = async (
           operation.source_account === addr
         );
       })
-      .filter((operation) => supportedOperationTypes.includes(operation.type))
-      .map((operation) => formatOperation(operation, accountId, addr))
+      .filter(operation => supportedOperationTypes.includes(operation.type))
+      .map(operation => formatOperation(operation, accountId, addr)),
   );
 };

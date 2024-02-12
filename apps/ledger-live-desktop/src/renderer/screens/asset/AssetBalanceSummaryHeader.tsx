@@ -16,13 +16,12 @@ import Button from "~/renderer/components/ButtonV3";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
-import { getAllSupportedCryptoCurrencyIds } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
-import { useProviders } from "../exchange/Swap2/Form";
+import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import useStakeFlow from "~/renderer/screens/stake";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 import { BalanceHistoryWithCountervalue, ValueChange } from "@ledgerhq/types-live";
+import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 type Props = {
   isAvailable: boolean;
   cryptoChange: ValueChange;
@@ -43,13 +42,12 @@ export default function AssetBalanceSummaryHeader({
   currency,
   unit,
 }: Props) {
+  const { data: currenciesAll } = useFetchCurrencyAll();
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const history = useHistory();
 
-  // PTX smart routing feature flag - buy sell live app flag
-  const ptxSmartRouting = useFeature("ptxSmartRouting");
   const cvUnit = counterValue.units[0];
   const data = useMemo(
     () => [
@@ -73,40 +71,31 @@ export default function AssetBalanceSummaryHeader({
   }, [countervalueFirst, data]);
   const primaryKey = data[0].unit.code;
   const secondaryKey = data[1].unit.code;
-  const rampCatalog = useRampCatalog();
-  const availableOnBuy = useMemo(() => {
-    if (!rampCatalog.value) {
-      return false;
-    }
-    const allBuyableCryptoCurrencyIds = getAllSupportedCryptoCurrencyIds(rampCatalog.value.onRamp);
-    return allBuyableCryptoCurrencyIds.includes(currency.id);
-  }, [rampCatalog.value, currency.id]);
-  const { providers, storedProviders } = useProviders();
+  const { isCurrencyAvailable } = useRampCatalog();
+
+  const availableOnBuy = !!currency && isCurrencyAvailable(currency.id, "onRamp");
+
   const startStakeFlow = useStakeFlow();
   const stakeProgramsFeatureFlag = useFeature("stakePrograms");
   const listFlag = stakeProgramsFeatureFlag?.params?.list ?? [];
   const stakeProgramsEnabled = stakeProgramsFeatureFlag?.enabled ?? false;
   const availableOnStake = stakeProgramsEnabled && currency && listFlag.includes(currency?.id);
-  const availableOnSwap = providers?.concat(storedProviders ?? []).some(({ pairs }) => {
-    return pairs && pairs.find(({ from, to }) => [from, to].includes(currency.id));
-  });
+
+  const availableOnSwap = currenciesAll.includes(currency.id);
+
   const onBuy = useCallback(() => {
     setTrackingSource("asset header actions");
     history.push({
       pathname: "/exchange",
-      state: ptxSmartRouting?.enabled
-        ? {
-            currency: currency?.id,
-            mode: "buy", // buy or sell
-          }
-        : {
-            mode: "onRamp",
-            currencyId: currency.id,
-          },
+      state: {
+        currency: currency?.id,
+        mode: "buy", // buy or sell
+      },
     });
-  }, [currency.id, history, ptxSmartRouting]);
+  }, [currency.id, history]);
+
   const onSwap = useCallback(() => {
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "swap",
       currency: currency?.ticker,
       page: "Page Asset",
@@ -120,8 +109,9 @@ export default function AssetBalanceSummaryHeader({
       },
     });
   }, [currency, history, swapDefaultTrack]);
+
   const onStake = useCallback(() => {
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "stake",
       currency: currency?.ticker,
       page: "Page Asset",
@@ -132,6 +122,7 @@ export default function AssetBalanceSummaryHeader({
       currencies: currency ? [currency.id] : undefined,
     });
   }, [currency, startStakeFlow]);
+
   return (
     <Box flow={5}>
       <Box horizontal>

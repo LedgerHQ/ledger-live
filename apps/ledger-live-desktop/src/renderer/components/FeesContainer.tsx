@@ -1,5 +1,6 @@
 import React from "react";
-import { withTranslation, TFunction } from "react-i18next";
+import { withTranslation } from "react-i18next";
+import { TFunction } from "i18next";
 import { openURL } from "~/renderer/linking";
 import Box from "~/renderer/components/Box";
 import LabelWithExternalIcon from "~/renderer/components/LabelWithExternalIcon";

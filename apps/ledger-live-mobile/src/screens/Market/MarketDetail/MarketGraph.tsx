@@ -1,17 +1,12 @@
 import React, { useMemo, useCallback, memo } from "react";
 import { useTheme } from "styled-components/native";
-import {
-  Flex,
-  GraphTabs,
-  InfiniteLoader,
-  Transitions,
-} from "@ledgerhq/native-ui";
+import { Flex, GraphTabs, InfiniteLoader, Transitions } from "@ledgerhq/native-ui";
 import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
 import { useTranslation } from "react-i18next";
 import { SingleCoinProviderData } from "@ledgerhq/live-common/market/MarketDataProvider";
-import Graph from "../../../components/Graph";
-import getWindowDimensions from "../../../logic/getWindowDimensions";
-import { Item } from "../../../components/Graph/types";
+import Graph from "~/components/Graph";
+import getWindowDimensions from "~/logic/getWindowDimensions";
+import { Item } from "~/components/Graph/types";
 
 const { width } = getWindowDimensions();
 
@@ -56,7 +51,7 @@ function MarketGraph({
   );
 
   const setRange = useCallback(
-    index => {
+    (index: number) => {
       if (isLoading) return;
       const newRange = ranges[index]?.value;
       if (range !== newRange) refreshChart({ range: newRange });
@@ -64,7 +59,7 @@ function MarketGraph({
     [isLoading, range, ranges, refreshChart],
   );
 
-  const mapGraphValue = useCallback(d => d?.value || 0, []);
+  const mapGraphValue = useCallback((d: Item) => d?.value || 0, []);
 
   return (
     <Flex flexDirection="column" mt={20} borderRadius={8}>

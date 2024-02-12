@@ -23,17 +23,9 @@ const TooltipLabel = ({ label, tooltip, color = "grey", style }: Props) => {
         <LText style={[styles.label, style]} color={color}>
           {label}
         </LText>
-        <Icon
-          size={13}
-          color={colors[color as keyof typeof colors]}
-          name={"info-circle"}
-        />
+        <Icon size={13} color={colors[color as keyof typeof colors]} name={"info-circle"} />
       </TouchableOpacity>
-      <QueuedDrawer
-        isRequestingToBeOpened={isOpened}
-        onClose={close}
-        style={styles.modal}
-      >
+      <QueuedDrawer isRequestingToBeOpened={isOpened} onClose={close} style={styles.modal}>
         <LText semiBold style={styles.tooltip}>
           {tooltip}
         </LText>

@@ -3,7 +3,6 @@ import invariant from "invariant";
 import { useDispatch } from "react-redux";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
-import { Account } from "@ledgerhq/live-common/types/index";
 import { useNearMappedStakingPositions } from "@ledgerhq/live-common/families/near/react";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
 import { urls } from "~/config/urls";
@@ -16,16 +15,15 @@ import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import IconChartLine from "~/renderer/icons/ChartLine";
 import { Header } from "./Header";
 import { Row } from "./Row";
-import {
-  FIGMENT_NEAR_VALIDATOR_ADDRESS,
-  canStake,
-} from "@ledgerhq/live-common/families/near/logic";
+import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/near/constants";
+import { canStake } from "@ledgerhq/live-common/families/near/logic";
 import ToolTip from "~/renderer/components/Tooltip";
 import DelegateIcon from "~/renderer/icons/Delegate";
 import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
-type Props = {
-  account: Account;
-};
+import { NearAccount } from "@ledgerhq/live-common/families/near/types";
+import { SubAccount } from "@ledgerhq/types-live";
+import { DelegateModalName } from "../modals";
+
 const Wrapper = styled(Box).attrs(() => ({
   p: 3,
 }))`
@@ -33,7 +31,7 @@ const Wrapper = styled(Box).attrs(() => ({
   justify-content: space-between;
   align-items: center;
 `;
-const Staking = ({ account }: Props) => {
+const Staking = ({ account }: { account: NearAccount }) => {
   const dispatch = useDispatch();
   const { nearResources } = account;
   invariant(nearResources, "near account expected");
@@ -41,21 +39,13 @@ const Staking = ({ account }: Props) => {
   const mappedStakingPositions = useNearMappedStakingPositions(account);
   const stakingEnabled = canStake(account);
   const onStake = useCallback(() => {
-    dispatch(
-      openModal("MODAL_NEAR_STAKE", {
-        account,
-      }),
-    );
+    dispatch(openModal("MODAL_NEAR_STAKE", { account }));
   }, [account, dispatch]);
   const onEarnRewards = useCallback(() => {
-    dispatch(
-      openModal("MODAL_NEAR_REWARDS_INFO", {
-        account,
-      }),
-    );
+    dispatch(openModal("MODAL_NEAR_REWARDS_INFO", { account }));
   }, [account, dispatch]);
   const onRedirect = useCallback(
-    (validatorAddress: string, modalName: string) => {
+    (validatorAddress: string, modalName: DelegateModalName) => {
       dispatch(
         openModal(modalName, {
           account,
@@ -164,8 +154,9 @@ const Staking = ({ account }: Props) => {
     </>
   );
 };
-const StakingPositions = ({ account }: Props) => {
-  if (!account.nearResources) return null;
+const StakingPositions = ({ account }: { account: NearAccount | SubAccount }) => {
+  if (account.type !== "Account") return null;
   return <Staking account={account} />;
 };
+
 export default StakingPositions;

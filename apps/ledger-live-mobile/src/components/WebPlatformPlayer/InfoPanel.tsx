@@ -1,21 +1,14 @@
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
-import { useSelector } from "react-redux";
 import { useTheme } from "@react-navigation/native";
-import {
-  StyleSheet,
-  View,
-  TouchableOpacity,
-  Linking,
-  ScrollView,
-} from "react-native";
+import { StyleSheet, View, TouchableOpacity, Linking, ScrollView } from "react-native";
 import { translateContent } from "@ledgerhq/live-common/platform/logic";
 import type { TranslatableString } from "@ledgerhq/live-common/platform/types";
-import { languageSelector } from "../../reducers/settings";
-import ExternalLinkIcon from "../../icons/ExternalLink";
-import AppIcon from "../../screens/Platform/AppIcon";
+import ExternalLinkIcon from "~/icons/ExternalLink";
+import AppIcon from "~/screens/Platform/AppIcon";
 import QueuedDrawer from "../QueuedDrawer";
 import LText from "../LText";
+import { useSettings } from "~/hooks";
 
 type Props = {
   name: string;
@@ -27,21 +20,13 @@ type Props = {
   setIsOpened: (_: boolean) => void;
 };
 
-export function InfoPanel({
-  name,
-  icon,
-  description,
-  url,
-  uri,
-  isOpened,
-  setIsOpened,
-}: Props) {
-  const settingsLocale = useSelector(languageSelector);
+export function InfoPanel({ name, icon, description, url, uri, isOpened, setIsOpened }: Props) {
+  const { language } = useSettings();
   const { colors } = useTheme();
   const onClose = useCallback(() => {
     setIsOpened(false);
   }, [setIsOpened]);
-  const onLinkPress = useCallback(url => {
+  const onLinkPress = useCallback((url: string) => {
     Linking.openURL(url);
   }, []);
   return (
@@ -68,7 +53,7 @@ export function InfoPanel({
             color: colors.text,
           }}
         >
-          {translateContent(description, settingsLocale)}
+          {translateContent(description, language)}
         </LText>
         {url ? (
           <>
@@ -76,14 +61,8 @@ export function InfoPanel({
             <LText semiBold style={styles.subSectionTitle}>
               <Trans i18nKey="platform.webPlatformPlayer.infoPanel.website" />
             </LText>
-            <TouchableOpacity
-              style={styles.flexRow}
-              onPress={() => onLinkPress(url)}
-            >
-              <LText
-                semiBold
-                style={{ ...styles.basicFontStyle, color: colors.live }}
-              >
+            <TouchableOpacity style={styles.flexRow} onPress={() => onLinkPress(url)}>
+              <LText semiBold style={{ ...styles.basicFontStyle, color: colors.live }}>
                 {url}
               </LText>
               <View style={styles.externalLinkIcon}>
@@ -98,14 +77,8 @@ export function InfoPanel({
             <LText semiBold style={styles.subSectionTitle}>
               URI:
             </LText>
-            <TouchableOpacity
-              style={styles.flexRow}
-              onPress={() => onLinkPress(uri)}
-            >
-              <LText
-                semiBold
-                style={{ ...styles.basicFontStyle, color: colors.live }}
-              >
+            <TouchableOpacity style={styles.flexRow} onPress={() => onLinkPress(uri)}>
+              <LText semiBold style={{ ...styles.basicFontStyle, color: colors.live }}>
                 {uri}
               </LText>
               <View style={styles.externalLinkIcon}>

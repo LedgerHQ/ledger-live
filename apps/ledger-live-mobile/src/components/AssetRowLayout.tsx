@@ -50,21 +50,11 @@ const AssetRowLayout = ({
           mb={2}
         />
       )}
-      <Flex
-        flexDirection="row"
-        pt={topLink ? 0 : 6}
-        pb={bottomLink ? 0 : 6}
-        alignItems="center"
-      >
+      <Flex flexDirection="row" pt={topLink ? 0 : 6} pb={bottomLink ? 0 : 6} alignItems="center">
         <ParentCurrencyIcon currency={currency} size={40} />
         <Flex flex={1} justifyContent="center" ml={4}>
           <Flex mb={1} flexDirection="row" justifyContent="space-between">
-            <Flex
-              flexGrow={1}
-              flexShrink={1}
-              flexDirection="row"
-              alignItems="center"
-            >
+            <Flex flexGrow={1} flexShrink={1} flexDirection="row" alignItems="center">
               <Flex flexShrink={1}>
                 <Text
                   variant="large"
@@ -83,23 +73,20 @@ const AssetRowLayout = ({
               )}
             </Flex>
             <Flex flexDirection="row" alignItems="flex-end" flexShrink={0}>
-              <Text variant="large" fontWeight="semiBold" color="neutral.c100">
-                <CounterValue
-                  currency={currency}
-                  value={balance}
-                  joinFragmentsSeparator=""
-                />
+              <Text
+                variant="large"
+                fontWeight="semiBold"
+                color="neutral.c100"
+                testID="asset-balance"
+              >
+                <CounterValue currency={currency} value={balance} joinFragmentsSeparator="" />
               </Text>
             </Flex>
           </Flex>
           <Flex flexDirection="row" justifyContent="space-between">
             <Text variant="body" fontWeight="medium" color="neutral.c70">
               {currencyUnit ? (
-                <CurrencyUnitValue
-                  showCode
-                  unit={currencyUnit}
-                  value={balance}
-                />
+                <CurrencyUnitValue showCode unit={currencyUnit} value={balance} />
               ) : null}
             </Text>
             {!hideDelta && countervalueChange && (

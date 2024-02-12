@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/types-live";
-import { ScreenName } from "../../../const";
+import { ScreenName } from "~/const";
 
 export type AccountSettingsNavigatorParamList = {
   [ScreenName.AccountSettingsMain]: {

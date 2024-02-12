@@ -1,0 +1,51 @@
+{
+  "data": {
+    "PLAYWRIGHT_RUN": {
+      "localStorage": {
+        "acceptedTermsVersion": "2042-01-01"
+      }
+    },
+    "settings": { "hasCompletedOnboarding": true },
+    "accounts": [
+      {
+        "data": {
+          "id": "mock:1:polkadot:15jLBbe9LD6VSUYFkV5Fmo5LhZU5cns9E6g8qcDv5KrKM1eP:polkadotbip44",
+          "seedIdentifier": "02461faf90e6f4884d2c1e3fd873a5cdbb2ba510c35e02163ec0b2fc20945e7b",
+          "name": "Polkadot 1",
+          "starred": false,
+          "derivationMode": "polkadotbip44",
+          "index": 0,
+          "freshAddress": "15jLBbe9LD6VSUYFkV5Fmo5LhZU5cns9E6g8qcDv5KrKM1eP",
+          "freshAddressPath": "44'/354'/0'/0'/0'",
+          "freshAddresses": [],
+          "blockHeight": 11516410,
+          "creationDate": "2022-02-24T14:39:00.007Z",
+          "operationsCount": 61,
+          "operations": [],
+          "pendingOperations": [],
+          "currencyId": "polkadot",
+          "unitMagnitude": 10,
+          "lastSyncDate": "2022-08-08T13:11:24.506Z",
+          "balance": "11035994621",
+          "spendableBalance": "1035994621",
+          "polkadotResources": {
+            "controller": "15jLBbe9LD6VSUYFkV5Fmo5LhZU5cns9E6g8qcDv5KrKM1eP",
+            "stash": "15jLBbe9LD6VSUYFkV5Fmo5LhZU5cns9E6g8qcDv5KrKM1eP",
+            "nonce": 60,
+            "lockedBalance": "999999999999999999999",
+            "unlockedBalance": "0",
+            "unlockingBalance": "10000000000",
+            "unlockings": [
+              { "amount": "10000000000", "completionDate": "2022-08-15T15:36:18.013Z" }
+            ],
+            "nominations": [],
+            "numSlashingSpans": 0
+          },
+          "swapHistory": [],
+          "subAccounts": []
+        },
+        "version": 1
+      }
+    ]
+  }
+}

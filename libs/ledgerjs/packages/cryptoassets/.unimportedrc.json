@@ -1,0 +1,8 @@
+{
+  "entry": [
+    "src/index.ts",
+    "src/crypto-assets-importer/index.ts"
+  ],
+  "ignorePatterns": ["src/data/**/*.ts", "src/**/*.test.ts"],
+  "ignoreUnimported": ["src/data/**", "src/**/*.test.ts"]
+}

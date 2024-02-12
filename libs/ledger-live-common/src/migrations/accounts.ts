@@ -1,10 +1,6 @@
 import type { Account, AccountLike, SubAccount } from "@ledgerhq/types-live";
 import type { SwapOperation } from "../exchange/swap/types";
-import {
-  encodeTokenAccountId,
-  decodeTokenAccountId,
-  decodeAccountId,
-} from "../account";
+import { encodeTokenAccountId, decodeTokenAccountId, decodeAccountId } from "../account";
 import { encodeOperationId, decodeOperationId } from "../operation";
 
 function sameSwap(a: SwapOperation, b: SwapOperation) {
@@ -32,7 +28,7 @@ export const implicitMigration = (accounts: Account[]): Account[] => {
 
       return `js:2:${decoded.currencyId}:${a.freshAddress}:${decoded.derivationMode}`;
     } else if (a.type === "TokenAccount") {
-      const parent = accounts.find((p) => p.id === a.parentId);
+      const parent = accounts.find(p => p.id === a.parentId);
 
       if (parent) {
         const { token } = decodeTokenAccountId(a.id);
@@ -49,7 +45,7 @@ export const implicitMigration = (accounts: Account[]): Account[] => {
     // duplicate the history of "ethereum libcore:" into a "ethereum js:" one
     // we keep both libcore and js ids because there is going to be a transient time where some accounts will still be in libcore before migration.. we can consider clean up later.
     const all = swapHistory.slice(0);
-    swapHistory.forEach((swap) => {
+    swapHistory.forEach(swap => {
       let copy;
       // migrate swap.operationId
       const accountId = targetEthereumJSaccountId(a);
@@ -62,9 +58,7 @@ export const implicitMigration = (accounts: Account[]): Account[] => {
       }
 
       // migrate swap.receiverAccountId
-      const receiverAccount = accounts.find(
-        (a) => a.id === swap.receiverAccountId
-      );
+      const receiverAccount = accounts.find(a => a.id === swap.receiverAccountId);
 
       if (receiverAccount) {
         const newId = targetEthereumJSaccountId(receiverAccount);
@@ -78,7 +72,7 @@ export const implicitMigration = (accounts: Account[]): Account[] => {
       // if a change was expected, update. but only if it was not already there
       const newOp = copy;
 
-      if (newOp && !all.some((s) => sameSwap(s, newOp))) {
+      if (newOp && !all.some(s => sameSwap(s, newOp))) {
         all.push(newOp);
       }
     });

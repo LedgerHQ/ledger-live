@@ -22,10 +22,10 @@ const histoFormatters = {
           formatCurrencyUnit(account.unit, new BigNumber(value), {
             showCode: true,
             disableRounding: true,
-          })
+          }),
       )
       .join("\n"),
-  json: (histo) => toBalanceHistoryRaw(histo),
+  json: histo => toBalanceHistoryRaw(histo),
   asciichart: (history, account) =>
     "\n" +
     "".padStart(22) +
@@ -37,33 +37,25 @@ const histoFormatters = {
     }) +
     "\n" +
     asciichart.plot(
-      history.map((h) =>
-        h.value.div(new BigNumber(10).pow(account.unit.magnitude)).toNumber()
-      ),
+      history.map(h => h.value.div(new BigNumber(10).pow(account.unit.magnitude)).toNumber()),
       {
         height: 10,
-        format: (value) =>
+        format: value =>
           formatCurrencyUnit(
             account.unit,
-            new BigNumber(value).times(
-              new BigNumber(10).pow(account.unit.magnitude)
-            ),
+            new BigNumber(value).times(new BigNumber(10).pow(account.unit.magnitude)),
             {
               showCode: true,
               disableRounding: true,
-            }
+            },
           ).padStart(20),
-      }
+      },
     ),
 };
 
 function asPortfolioRange(period: string): PortfolioRange {
   const ranges = getRanges();
-  invariant(
-    ranges.includes(period),
-    "invalid period. valid values are %s",
-    ranges.join(" | ")
-  );
+  invariant(ranges.includes(period), "invalid period. valid values are %s", ranges.join(" | "));
   return period as PortfolioRange;
 }
 
@@ -89,15 +81,15 @@ export default {
     opts: ScanCommonOpts & {
       format: string;
       period: string;
-    }
+    },
   ) =>
     scan(opts).pipe(
-      map((account) => {
+      map(account => {
         const range = asPortfolioRange(opts.period || "month");
         const count = getPortfolioCount([account], range);
         const histo = getBalanceHistory(account, range, count);
         const format = histoFormatters[opts.format || "default"];
         return format(histo, account);
-      })
+      }),
     ),
 };

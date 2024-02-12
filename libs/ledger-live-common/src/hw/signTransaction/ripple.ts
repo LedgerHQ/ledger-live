@@ -6,7 +6,7 @@ export default async (
   currency: CryptoCurrency,
   transport: Transport,
   path: string,
-  txArg: Record<string, any>
+  txArg: Record<string, any>,
 ) => {
   const tx = { ...txArg };
   const xrp = new Xrp(transport);

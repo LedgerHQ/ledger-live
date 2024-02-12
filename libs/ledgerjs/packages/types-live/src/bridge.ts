@@ -13,7 +13,7 @@ import type {
   TransactionCommon,
   TransactionStatusCommon,
 } from "./transaction";
-import type { Operation } from "./operation";
+import type { Operation, OperationExtra, OperationExtraRaw } from "./operation";
 import type { DerivationMode } from "./derivation";
 import type { SyncConfig } from "./pagination";
 import {
@@ -69,10 +69,23 @@ export type SignOperationArg0<T> = {
  *
  */
 export type SignOperationFnSignature<T> = (
-  arg0: SignOperationArg0<T>
+  arg0: SignOperationArg0<T>,
 ) => Observable<SignOperationEvent>;
 
 export type BroadcastFnSignature = (arg0: BroadcastArg0) => Promise<Operation>;
+
+export type Bridge<T extends TransactionCommon> = {
+  currencyBridge: CurrencyBridge;
+  accountBridge: AccountBridge<T>;
+};
+
+export type ScanInfo = {
+  currency: CryptoCurrency;
+  deviceId: DeviceId;
+  scheme?: DerivationMode | null | undefined;
+  syncConfig: SyncConfig;
+  preferredNewAccountScheme?: DerivationMode;
+};
 
 /**
  * Abstraction related to a currency
@@ -87,13 +100,7 @@ export interface CurrencyBridge {
   // method need to treat the data object as unsafe and validate all fields / be backward compatible.
   hydrate(data: unknown, currency: CryptoCurrency): void;
   // Scan all available accounts with a device
-  scanAccounts(arg0: {
-    currency: CryptoCurrency;
-    deviceId: DeviceId;
-    scheme?: DerivationMode | null | undefined;
-    syncConfig: SyncConfig;
-    preferredNewAccountScheme?: DerivationMode;
-  }): Observable<ScanAccountEvent>;
+  scanAccounts(info: ScanInfo): Observable<ScanAccountEvent>;
   getPreloadStrategy?: (currency: CryptoCurrency) => PreloadStrategy;
   nftResolvers?: {
     nftMetadata: (arg: {
@@ -119,10 +126,7 @@ export interface AccountBridge<T extends TransactionCommon> {
   // an update function is just a Account => Account that perform the changes (to avoid race condition issues)
   // initialAccount parameter is used to point which account is the synchronization on, but it should not be used in the emitted values.
   // the sync can be stopped at any time using Observable's subscription.unsubscribe()
-  sync(
-    initialAccount: Account,
-    syncConfig: SyncConfig
-  ): Observable<(arg0: Account) => Account>;
+  sync(initialAccount: Account, syncConfig: SyncConfig): Observable<(arg0: Account) => Account>;
   receive(
     account: Account,
     arg1: {
@@ -130,7 +134,7 @@ export interface AccountBridge<T extends TransactionCommon> {
       deviceId: string;
       subAccountId?: string;
       freshAddressIndex?: number;
-    }
+    },
   ): Observable<{
     address: string;
     path: string;
@@ -139,16 +143,17 @@ export interface AccountBridge<T extends TransactionCommon> {
   // There are a bunch of edit and get functions to edit and extract information out ot this black box.
   // it needs to be a serializable JS object
   createTransaction(account: AccountLike): T;
+  // NOTE: because of a dependency to React at the moment, if updateTransaction doesn't modify the transaction
+  // it must return the unmodified input transaction object (reference stability)
   updateTransaction(t: T, patch: Partial<T>): T;
   // prepare the remaining missing part of a transaction typically from network (e.g. fees)
   // and fulfill it in a new transaction object that is returned (async)
   // It can fails if the the network is down.
+  // NOTE: because of a dependency to React at the moment, if prepareTransaction doesn't modify the transaction
+  // it must return the unmodified input transaction object (reference stability)
   prepareTransaction(account: Account, transaction: T): Promise<T>;
   // calculate derived state of the Transaction, useful to display summary / errors / warnings. tells if the transaction is ready.
-  getTransactionStatus(
-    account: Account,
-    transaction: T
-  ): Promise<TransactionStatusCommon>;
+  getTransactionStatus(account: Account, transaction: T): Promise<TransactionStatusCommon>;
   // heuristic that provides the estimated max amount that can be set to a send.
   // this is usually the balance minus the fees, but it really depends between coins (reserve, burn, frozen part of the balance,...).
   // it is a heuristic in that this is not necessarily correct and it can be +-delta (so the info can exceed the spendable or leave some dust).
@@ -191,32 +196,23 @@ export interface AccountBridge<T extends TransactionCommon> {
   // broadcasting a signed transaction to network
   // returns an optimistic Operation that this transaction is likely to create in the future
   broadcast: BroadcastFnSignature;
+  fromOperationExtraRaw?: (extraRaw: OperationExtraRaw) => OperationExtra;
+  toOperationExtraRaw?: (extra: OperationExtra) => OperationExtraRaw;
 }
 
 type ExpectFn = (...args: Array<any>) => any;
 
 type CurrencyTransaction<T extends TransactionCommon> = {
   name: string;
-  transaction:
-    | T
-    | ((
-        transaction: T,
-        account: Account,
-        accountBridge: AccountBridge<T>
-      ) => T);
+  transaction: T | ((transaction: T, account: Account, accountBridge: AccountBridge<T>) => T);
   expectedStatus?:
     | Partial<TransactionStatusCommon>
     | ((
         account: Account,
         transaction: T,
-        status: TransactionStatusCommon
+        status: TransactionStatusCommon,
       ) => Partial<TransactionStatusCommon>);
-  test?: (
-    arg0: ExpectFn,
-    arg1: T,
-    arg2: TransactionStatusCommon,
-    arg3: AccountBridge<T>
-  ) => any;
+  test?: (arg0: ExpectFn, arg1: T, arg2: TransactionStatusCommon, arg3: AccountBridge<T>) => any;
   apdus?: string;
   testSignedOperation?: (
     arg0: ExpectFn,
@@ -224,7 +220,7 @@ type CurrencyTransaction<T extends TransactionCommon> = {
     arg2: Account,
     arg3: T,
     arg4: TransactionStatusCommon,
-    arg5: AccountBridge<T>
+    arg5: AccountBridge<T>,
   ) => any;
 };
 
@@ -235,16 +231,13 @@ export type CurrenciesData<T extends TransactionCommon> = {
   FIXME_ignoreAccountFields?: string[];
   FIXME_ignoreOperationFields?: string[];
   FIXME_ignorePreloadFields?: string[];
+  IgnorePrepareTransactionFields?: string[];
   mockDeviceOptions?: any;
   scanAccounts?: Array<{
     name: string;
     apdus: string;
     unstableAccounts?: boolean;
-    test?: (
-      expect: ExpectFn,
-      scanned: Account[],
-      bridge: CurrencyBridge
-    ) => any;
+    test?: (expect: ExpectFn, scanned: Account[], bridge: CurrencyBridge) => any;
   }>;
   accounts?: Array<{
     implementations?: string[];
@@ -261,7 +254,5 @@ export type CurrenciesData<T extends TransactionCommon> = {
  */
 export type DatasetTest<T extends TransactionCommon> = {
   implementations: string[];
-  currencies:
-    | Record<CryptoCurrencyIds, CurrenciesData<T>>
-    | Record<string, never>;
+  currencies: Record<CryptoCurrencyIds, CurrenciesData<T>> | Record<string, never>;
 };

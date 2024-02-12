@@ -1,24 +1,21 @@
-import { EMPTY, Observable, interval } from "rxjs";
+import { Observable, interval, of } from "rxjs";
 import { debounce, scan, tap } from "rxjs/operators";
 import { useEffect, useCallback, useState } from "react";
 import { log } from "@ledgerhq/logs";
 import type { DeviceInfo } from "@ledgerhq/types-live";
 import type { ListAppsResult } from "../../apps/types";
 import { useReplaySubject } from "../../observable";
-import manager from "../../manager";
-import type {
-  Input as ConnectManagerInput,
-  ConnectManagerEvent,
-} from "../connectManager";
+import type { Input as ConnectManagerInput, ConnectManagerEvent } from "../connectManager";
 import type { Action, Device } from "./types";
 import { currentMode } from "./app";
 import { getImplementation } from "./implementations";
+import { getLatestFirmwareForDeviceUseCase } from "../../device/use-cases/getLatestFirmwareForDeviceUseCase";
 
 type State = {
   isLoading: boolean;
   requestQuitApp: boolean;
   unresponsive: boolean;
-  allowManagerRequestedWording: string | null | undefined;
+  allowManagerRequested: boolean;
   allowManagerGranted: boolean;
   device: Device | null | undefined;
   deviceInfo: DeviceInfo | null | undefined;
@@ -81,7 +78,7 @@ const getInitialState = (device?: Device | null | undefined): State => ({
   requestQuitApp: false,
   unresponsive: false,
   isLocked: false,
-  allowManagerRequestedWording: null,
+  allowManagerRequested: false,
   allowManagerGranted: false,
   device,
   deviceInfo: null,
@@ -142,7 +139,7 @@ const reducer = (state: State, e: Event): State => {
         ...state,
         unresponsive: false,
         isLocked: false,
-        allowManagerRequestedWording: e.wording,
+        allowManagerRequested: true,
       };
 
     case "device-permission-granted":
@@ -150,7 +147,7 @@ const reducer = (state: State, e: Event): State => {
         ...state,
         unresponsive: false,
         isLocked: false,
-        allowManagerRequestedWording: null,
+        allowManagerRequested: false,
         allowManagerGranted: true,
       };
 
@@ -168,11 +165,11 @@ const reducer = (state: State, e: Event): State => {
 };
 
 export const createAction = (
-  task: (arg0: ConnectManagerInput) => Observable<ConnectManagerEvent>
+  task: (arg0: ConnectManagerInput) => Observable<ConnectManagerEvent>,
 ): ConnectManagerAction => {
   const useHook = (
     device: Device | null | undefined,
-    request: ManagerRequest = {}
+    request: ManagerRequest = {},
   ): ManagerState => {
     const [state, setState] = useState(() => getInitialState());
     const [resetIndex, setResetIndex] = useState(0);
@@ -186,23 +183,19 @@ export const createAction = (
     useEffect(() => {
       if (request?.cancelExecution) return;
 
-      const impl = getImplementation(currentMode)<
-        ConnectManagerEvent,
-        ManagerRequest
-      >({
+      const impl = getImplementation(currentMode)<ConnectManagerEvent, ManagerRequest>({
         deviceSubject,
         task,
         request,
+        retryableWithDelayDisconnectedErrors: [],
       });
 
       if (repairModalOpened) return;
       const sub = impl
         .pipe(
           tap((e: any) => log("actions-manager-event", e.type, e)),
-          debounce((e: Event) =>
-            "replaceable" in e && e.replaceable ? interval(100) : EMPTY
-          ),
-          scan(reducer, getInitialState())
+          debounce((e: Event) => ("replaceable" in e && e.replaceable ? interval(100) : of(null))),
+          scan(reducer, getInitialState()),
         )
         .subscribe(setState);
       return () => {
@@ -214,25 +207,25 @@ export const createAction = (
     useEffect(() => {
       if (!deviceInfo) return;
       // Preload latest firmware in parallel
-      manager.getLatestFirmwareForDevice(deviceInfo).catch((e: Error) => {
+      getLatestFirmwareForDeviceUseCase(deviceInfo).catch((e: Error) => {
         log("warn", e.message);
       });
     }, [deviceInfo]);
 
-    const onRepairModal = useCallback((open) => {
+    const onRepairModal = useCallback(open => {
       setRepairModalOpened(
         open
           ? {
               auto: false,
             }
-          : null
+          : null,
       );
     }, []);
 
     const closeRepairModal = useCallback(() => {
       // Sets isBootloader to true to avoid having the renderBootloaderStep rendered,
       // on which the user could re-trigger a bootloader repairing scenario that is not needed
-      setState((prevState) => {
+      setState(prevState => {
         return {
           ...prevState,
           deviceInfo: prevState.deviceInfo
@@ -244,8 +237,8 @@ export const createAction = (
     }, []);
 
     const onRetry = useCallback(() => {
-      setResetIndex((currIndex) => currIndex + 1);
-      setState((s) => getInitialState(s.device));
+      setResetIndex(currIndex => currIndex + 1);
+      setState(s => getInitialState(s.device));
     }, []);
 
     const onAutoRepair = useCallback(() => {

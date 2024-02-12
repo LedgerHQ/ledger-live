@@ -1,12 +1,6 @@
 import BigNumber from "bignumber.js";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import type {
-  Account,
-  AccountLike,
-  NFTStandard,
-  Operation,
-  ProtoNFT,
-} from "@ledgerhq/types-live";
+import type { Account, AccountLike, NFTStandard, Operation, ProtoNFT } from "@ledgerhq/types-live";
 import { cryptocurrenciesById } from "@ledgerhq/cryptoassets";
 import Prando from "prando";
 import { inferSubOperations } from "../../account";
@@ -63,8 +57,7 @@ export const NFTs = [
   },
   {
     id: "js:2:ethereum:0xB98d10d9f6d07bA283bFD21B2dFEc050f9Ae282A:+0x495f947276749Ce646f68AC8c248420045cb7b5e+15219551248750507857885240633851073364192113972571174309573660185104102719489",
-    tokenId:
-      "15219551248750507857885240633851073364192113972571174309573660185104102719489",
+    tokenId: "15219551248750507857885240633851073364192113972571174309573660185104102719489",
     amount: "1",
     collection: {
       contract: "0x495f947276749Ce646f68AC8c248420045cb7b5e",
@@ -310,12 +303,12 @@ export const NFTs = [
 // Ethereum NFTs with the special "staxImage" metadata designed to fit the Ledger Stax screen
 export const NFTs_ETHEREUM_STAX_METADATA = [
   {
-    id: "js:2:ethereum:0xB98d10d9f6d07bA283bFD21B2dFEc050f9Ae282A:+0xf4ac11a8967bc88c9ce5acf886bce605c9db9d6e+8482",
-    tokenId: "8482",
+    id: "js:2:ethereum:0xB98d10d9f6d07bA283bFD21B2dFEc050f9Ae282A:+0x0b51eb9d0e54c562fedc07ceba453f05b70c4b79+1",
+    tokenId: "1",
     amount: "1",
     collection: {
-      contract: "0xf4ac11a8967bc88c9ce5acf886bce605c9db9d6e",
-      standard: "ERC721",
+      contract: "0x0b51eb9d0e54c562fedc07ceba453f05b70c4b79",
+      standard: "ERC1155",
     },
   },
 ];
@@ -354,24 +347,15 @@ export const NFTs_POLYGON = [
 export function createFixtureNFT(
   accountId: string,
   currency: CryptoCurrency = defaultEthCryptoFamily,
-  useStaxNFTs?: boolean
+  useStaxNFTs?: boolean,
 ): ProtoNFT {
   const nfts =
-    currency.id === "ethereum"
-      ? useStaxNFTs
-        ? NFTs_ETHEREUM_STAX_METADATA
-        : NFTs
-      : NFTs_POLYGON;
+    currency.id === "ethereum" ? (useStaxNFTs ? NFTs_ETHEREUM_STAX_METADATA : NFTs) : NFTs_POLYGON;
   const index = Math.floor(Math.random() * nfts.length);
 
   const nft = nfts[index];
   return {
-    id: encodeNftId(
-      accountId,
-      nft.collection.contract,
-      nft.tokenId,
-      currency.id
-    ),
+    id: encodeNftId(accountId, nft.collection.contract, nft.tokenId, currency.id),
     tokenId: nft.tokenId,
     amount: new BigNumber(0),
     contract: nft.collection.contract,
@@ -391,22 +375,18 @@ export function genNFTOperation(
   rng: Prando,
   contract: string,
   standard: NFTStandard,
-  tokenId: string
+  tokenId: string,
 ): Operation {
-  const ticker =
-    account.type === "TokenAccount"
-      ? account.token.ticker
-      : account.currency.ticker;
+  const ticker = account.type === "TokenAccount" ? account.token.ticker : account.currency.ticker;
   const lastOp = ops[ops.length - 1];
   const date = new Date(
-    (lastOp ? lastOp.date : Date.now()) -
-      rng.nextInt(0, 100000000 * rng.next() * rng.next())
+    (lastOp ? lastOp.date : Date.now()) - rng.nextInt(0, 100000000 * rng.next() * rng.next()),
   );
   const address = genAddress(superAccount.currency, rng);
   const type = rng.next() < 0.3 ? "NFT_OUT" : "NFT_IN";
   const divider = 2;
   const value = new BigNumber(
-    Math.floor(rng.nextInt(0, 100000 * rng.next() * rng.next()) / divider)
+    Math.floor(rng.nextInt(0, 100000 * rng.next() * rng.next()) / divider),
   );
 
   if (Number.isNaN(value)) {
@@ -420,16 +400,10 @@ export function genNFTOperation(
     type,
     value,
     fee: new BigNumber(Math.round(value.toNumber() * 0.01)),
-    senders: [
-      type !== "NFT_IN" ? genAddress(superAccount.currency, rng) : address,
-    ],
-    recipients: [
-      type === "NFT_IN" ? genAddress(superAccount.currency, rng) : address,
-    ],
+    senders: [type !== "NFT_IN" ? genAddress(superAccount.currency, rng) : address],
+    recipients: [type === "NFT_IN" ? genAddress(superAccount.currency, rng) : address],
     blockHash: genHex(64, rng),
-    blockHeight:
-      superAccount.blockHeight -
-      Math.floor((Date.now() - (date as any)) / 900000),
+    blockHeight: superAccount.blockHeight - Math.floor((Date.now() - (date as any)) / 900000),
     accountId: account.id,
     date,
     extra: {},

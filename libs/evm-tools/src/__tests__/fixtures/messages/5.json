@@ -1,0 +1,92 @@
+{
+  "types": {
+      "EIP712Domain": [
+          {
+              "type": "string",
+              "name": "name"
+          }
+      ],
+      "LDPSigningRequest": [
+          {
+              "type": "string[3][]",
+              "name": "document"
+          },
+          {
+              "type": "string[][4]",
+              "name": "proof"
+          },
+          {
+              "type": "uint8[][][][]",
+              "name": "depthy"
+          }
+      ]
+  },
+  "primaryType": "LDPSigningRequest",
+  "domain": {
+      "name": "Eip712Method2021"
+  },
+  "message": {
+      "depthy": [
+          [
+              [
+                  [
+                      "1",
+                      "2"
+                  ],
+                  [
+                      "3"
+                  ]
+              ]
+          ]
+      ],
+      "document": [
+          [
+              "<did:key:z6MkgFneaaMjN6zybqLNXgt4YfmVx2XZhzPdDyk4ZK81daHZ>",
+              "<https://www.w3.org/TR/owl-ref/#sameAs-def>",
+              "\"did:ethr:0xf7398bacf610bb4e3b567811279fcb3c41919f89\""
+          ],
+          [
+              "<urn:uuid:14ab6047-bf2d-4fde-9564-51dead126ffb>",
+              "<https://www.w3.org/2018/credentials#credentialSubject>",
+              "<did:key:z6MkgFneaaMjN6zybqLNXgt4YfmVx2XZhzPdDyk4ZK81daHZ>"
+          ],
+          [
+              "<urn:uuid:14ab6047-bf2d-4fde-9564-51dead126ffb>",
+              "<https://www.w3.org/2018/credentials#issuanceDate>",
+              "\"2021-03-04T21:08:22.615Z\"^^<http://www.w3.org/2001/XMLSchema#dateTime>"
+          ],
+          [
+              "<urn:uuid:14ab6047-bf2d-4fde-9564-51dead126ffb>",
+              "<https://www.w3.org/2018/credentials#issuer>",
+              "<did:ethr:0xf7398bacf610bb4e3b567811279fcb3c41919f89>"
+          ],
+          [
+              "<urn:uuid:14ab6047-bf2d-4fde-9564-51dead126ffb>",
+              "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>",
+              "<https://www.w3.org/2018/credentials#VerifiableCredential>"
+          ]
+      ],
+      "proof": [
+          [
+              "_:c14n0",
+              "<http://purl.org/dc/terms/created>",
+              "\"2021-03-04T21:08:22.616Z\"^^<http://www.w3.org/2001/XMLSchema#dateTime>"
+          ],
+          [
+              "_:c14n0",
+              "<https://w3id.org/security#proofPurpose>",
+              "<https://w3id.org/security#assertionMethod>"
+          ],
+          [
+              "_:c14n0",
+              "<https://w3id.org/security#verificationMethod>",
+              "<did:ethr:0xf7398bacf610bb4e3b567811279fcb3c41919f89#Eip712Method2021>"
+          ],
+          [
+              "_:c14n0",
+              "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>",
+              "<https://w3id.org/security#Eip712Signature2021>"
+          ]
+      ]
+  }
+}

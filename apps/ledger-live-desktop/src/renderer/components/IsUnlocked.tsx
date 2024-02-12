@@ -59,12 +59,14 @@ export default function IsUnlocked({ children }: { children: React.ReactNode }):
     },
     [inputValue, dispatch],
   );
-  const handleOpenHardResetModal = useCallback(() => setIsHardResetModalOpened(true), [
-    setIsHardResetModalOpened,
-  ]);
-  const handleCloseHardResetModal = useCallback(() => setIsHardResetModalOpened(false), [
-    setIsHardResetModalOpened,
-  ]);
+  const handleOpenHardResetModal = useCallback(
+    () => setIsHardResetModalOpened(true),
+    [setIsHardResetModalOpened],
+  );
+  const handleCloseHardResetModal = useCallback(
+    () => setIsHardResetModalOpened(false),
+    [setIsHardResetModalOpened],
+  );
   const handleHardReset = useCallback(async () => {
     setIsHardResetting(true);
     try {
@@ -104,11 +106,7 @@ export default function IsUnlocked({ children }: { children: React.ReactNode }):
               icon={<Logo size={50} />}
             />
             <PageTitle>{t("common.lockScreen.title")}</PageTitle>
-            <LockScreenDesc>
-              {t("common.lockScreen.subTitle")}
-              <br />
-              {t("common.lockScreen.description")}
-            </LockScreenDesc>
+            <LockScreenDesc>{t("common.lockScreen.description")}</LockScreenDesc>
             <Box horizontal alignItems="center">
               <Box
                 style={{

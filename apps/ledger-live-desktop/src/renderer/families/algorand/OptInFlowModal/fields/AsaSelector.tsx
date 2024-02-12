@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from "react";
+import { TFunction } from "i18next";
 import { Trans } from "react-i18next";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { listTokensForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
@@ -9,6 +10,8 @@ import Select from "~/renderer/components/Select";
 import Text from "~/renderer/components/Text";
 import ToolTip from "~/renderer/components/Tooltip";
 import ExclamationCircleThin from "~/renderer/icons/ExclamationCircleThin";
+import { AlgorandAccount, Transaction } from "@ledgerhq/live-common/families/algorand/types";
+
 const renderItem = ({
   data: { id, name },
   isDisabled,
@@ -29,7 +32,6 @@ const renderItem = ({
         <FirstLetterIcon
           color={isDisabled ? "palette.text.shade40" : "palette.text.shade100"}
           label={name}
-          mr={2}
         />
         <Text ff="Inter|Medium">{name}</Text>
         <Text fontSize={3} color="palette.text.shade40">
@@ -46,21 +48,33 @@ const renderItem = ({
     </Box>
   );
 };
-export default function DelegationSelectorField({ account, transaction, t, onChange }: any) {
+export default function DelegationSelectorField({
+  account,
+  transaction,
+  t,
+  onChange,
+}: {
+  account: AlgorandAccount;
+  transaction: Transaction;
+  onChange: (token?: TokenCurrency | null) => void;
+  t: TFunction;
+}) {
   const [query, setQuery] = useState("");
   const subAccounts = account.subAccounts;
   const options = listTokensForCryptoCurrency(account.currency);
-  const value = useMemo(() => options.find(({ id }) => id === transaction.assetId), [
-    options,
-    transaction,
-  ]);
+  const value = useMemo(
+    () => options.find(({ id }) => id === transaction.assetId),
+    [options, transaction],
+  );
   return (
     <Box flow={1} mb={4}>
       <Select
         value={value}
         options={options}
         getOptionValue={({ name }) => name}
-        isOptionDisabled={({ id }) => subAccounts.some(({ token }) => token.id === id)}
+        isOptionDisabled={({ id }) =>
+          subAccounts?.some(o => o.type === "TokenAccount" && o.token.id === id) || false
+        }
         renderValue={renderItem}
         renderOption={renderItem}
         onInputChange={setQuery}

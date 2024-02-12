@@ -10,12 +10,7 @@ type Props = {
   team: string;
 };
 
-export default function AccountSubHeaderDrawer({
-  isOpen,
-  onClose,
-  family,
-  team,
-}: Props) {
+export default function AccountSubHeaderDrawer({ isOpen, onClose, family, team }: Props) {
   const { t } = useTranslation();
   return (
     <QueuedDrawer

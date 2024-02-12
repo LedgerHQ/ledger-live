@@ -15,16 +15,19 @@ export const commands = (
       name: string;
       arguments?: string;
       commentId?: number;
-    }
-  ) => {}
+    },
+  ) => Promise<void>,
 ) => {
   const matcher = /^\/([\w-]+)\b *(.*)?$/m;
 
-  app.on(["issue_comment.created" /*, "issues.opened" */], async (context) => {
+  // @ts-expect-error complicated typings
+  app.on(["issue_comment.created" /*, "issues.opened" */], async context => {
     if (context.isBot) return;
 
     const { payload, octokit } = context;
     const isPR = (issue: any) => issue.pull_request !== undefined;
+
+    context.log.info(`[⚙️ Commands](issue_comment.created) PR #${payload.issue.number}`);
 
     const issue = payload.issue;
     const comment = payload.comment;

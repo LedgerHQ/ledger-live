@@ -50,9 +50,7 @@ export default class SpeculosHttpTransport extends Transport {
     [SpeculosButton.LEFT]: "left",
   };
 
-  static open = (
-    opts: SpeculosHttpTransportOpts
-  ): Promise<SpeculosHttpTransport> =>
+  static open = (opts: SpeculosHttpTransportOpts): Promise<SpeculosHttpTransport> =>
     new Promise((resolve, reject) => {
       const instance = axios.create({
         baseURL: `http://localhost:${opts.apiPort || "5000"}`,
@@ -65,8 +63,8 @@ export default class SpeculosHttpTransport extends Transport {
         url: "/events?stream=true",
         responseType: "stream",
       })
-        .then((response) => {
-          response.data.on("data", (chunk) => {
+        .then(response => {
+          response.data.on("data", chunk => {
             log("speculos-event", chunk.toString());
             const split = chunk.toString().replace("data: ", "");
             const json = JSON.parse(split);
@@ -74,16 +72,13 @@ export default class SpeculosHttpTransport extends Transport {
           });
           response.data.on("close", () => {
             log("speculos-event", "close");
-            transport.emit(
-              "disconnect",
-              new DisconnectedDevice("Speculos exited!")
-            );
+            transport.emit("disconnect", new DisconnectedDevice("Speculos exited!"));
           });
           transport.eventStream = response.data;
           // we are connected to speculos
           resolve(transport);
         })
-        .catch((error) => {
+        .catch(error => {
           reject(error);
         });
     });
@@ -99,10 +94,10 @@ export default class SpeculosHttpTransport extends Transport {
       log("speculos-button", "press-and-release", input);
       this.instance
         .post(`/button/${input}`, { action: "press-and-release" })
-        .then((response) => {
+        .then(response => {
           resolve(response.data);
         })
-        .catch((e) => {
+        .catch(e => {
           reject(e);
         });
     });
@@ -110,7 +105,7 @@ export default class SpeculosHttpTransport extends Transport {
   async exchange(apdu: Buffer): Promise<any> {
     const hex = apdu.toString("hex");
     log("apdu", "=> " + hex);
-    return this.instance.post("/apdu", { data: hex }).then((r) => {
+    return this.instance.post("/apdu", { data: hex }).then(r => {
       // r.data is {"data": "hex value of response"}
       const data = r.data.data;
       log("apdu", "<= " + data);

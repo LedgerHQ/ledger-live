@@ -10,16 +10,11 @@ import {
 import type { Transaction } from "./types";
 import transactionTransformer from "./transaction";
 import { StellarWrongMemoFormat } from "../../errors";
-import {
-  addNotCreatedStellarMockAddresses,
-  addMultisignStellarMockAddresses,
-} from "./bridge/mock";
+import { addNotCreatedStellarMockAddresses, addMultisignStellarMockAddresses } from "./bridge/mock";
 
-const notCreatedStellarMockAddress =
-  "GAW46JE3SHIAYLNNNQCAZFQ437WB5ZH7LDRDWR5LVDWHCTHCKYB6RCCH";
+const notCreatedStellarMockAddress = "GAW46JE3SHIAYLNNNQCAZFQ437WB5ZH7LDRDWR5LVDWHCTHCKYB6RCCH";
 
-const multisignStellarMockAddress =
-  "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS";
+const multisignStellarMockAddress = "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS";
 
 addNotCreatedStellarMockAddresses(notCreatedStellarMockAddress);
 addMultisignStellarMockAddresses(multisignStellarMockAddress);
@@ -52,19 +47,16 @@ const dataset: DatasetTest<Transaction> = {
           FIXME_tests: ["balance is sum of ops"],
           raw: {
             id: "libcore:1:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
-            seedIdentifier:
-              "3544cee0d67187d277cd9c7e26a2bf70425b1bee8e92003f45d150c5513d531a",
+            seedIdentifier: "3544cee0d67187d277cd9c7e26a2bf70425b1bee8e92003f45d150c5513d531a",
             name: "Stellar 1",
             xpub: "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
             derivationMode: "sep5",
             index: 0,
-            freshAddress:
-              "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+            freshAddress: "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
             freshAddressPath: "44'/148'/0'",
             freshAddresses: [
               {
-                address:
-                  "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+                address: "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
                 derivationPath: "44'/148'/0'",
               },
             ],
@@ -86,11 +78,10 @@ const dataset: DatasetTest<Transaction> = {
           transactions: [
             {
               name: "Same as Recipient",
-              transaction: (t) => ({
+              transaction: t => ({
                 ...t,
                 amount: new BigNumber(100),
-                recipient:
-                  "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+                recipient: "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
               }),
               expectedStatus: {
                 errors: {
@@ -133,8 +124,7 @@ const dataset: DatasetTest<Transaction> = {
               transaction: (t, account) => ({
                 ...t,
                 amount: account.balance,
-                recipient:
-                  "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
+                recipient: "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
               }),
               expectedStatus: {
                 errors: {
@@ -148,8 +138,7 @@ const dataset: DatasetTest<Transaction> = {
               transaction: (t, account) => ({
                 ...t,
                 amount: account.balance.minus("100"),
-                recipient:
-                  "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
+                recipient: "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
               }),
               expectedStatus: {
                 errors: {
@@ -162,8 +151,7 @@ const dataset: DatasetTest<Transaction> = {
               name: "send max to new account (explicit)",
               transaction: transactionTransformer.fromTransactionRaw({
                 amount: "0",
-                recipient:
-                  "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
+                recipient: "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
                 useAllAmount: true,
                 family: "stellar",
                 baseReserve: "1500000",
@@ -180,7 +168,7 @@ const dataset: DatasetTest<Transaction> = {
                 assetCode: "",
                 assetIssuer: "",
               }),
-              expectedStatus: (account) => ({
+              expectedStatus: account => ({
                 errors: {},
                 warnings: {},
                 estimatedFees: new BigNumber("100"),
@@ -190,11 +178,10 @@ const dataset: DatasetTest<Transaction> = {
             },
             {
               name: "memo text - success",
-              transaction: (t) => ({
+              transaction: t => ({
                 ...t,
                 amount: new BigNumber(100),
-                recipient:
-                  "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
+                recipient: "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
                 memoType: "MEMO_TEXT",
                 memoValue: "01234",
               }),
@@ -205,11 +192,10 @@ const dataset: DatasetTest<Transaction> = {
             },
             {
               name: "memo text - error",
-              transaction: (t) => ({
+              transaction: t => ({
                 ...t,
                 amount: new BigNumber(100),
-                recipient:
-                  "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
+                recipient: "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
                 memoType: "MEMO_TEXT",
                 memoValue: "0123456789012345678901234567890123456789",
               }),
@@ -222,11 +208,10 @@ const dataset: DatasetTest<Transaction> = {
             },
             {
               name: "memo id - success",
-              transaction: (t) => ({
+              transaction: t => ({
                 ...t,
                 amount: new BigNumber(100),
-                recipient:
-                  "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
+                recipient: "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
                 memoType: "MEMO_ID",
                 memoValue: "22",
               }),
@@ -237,11 +222,10 @@ const dataset: DatasetTest<Transaction> = {
             },
             {
               name: "memo id - error",
-              transaction: (t) => ({
+              transaction: t => ({
                 ...t,
                 amount: new BigNumber(100),
-                recipient:
-                  "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
+                recipient: "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
                 memoType: "MEMO_ID",
                 memoValue: "btest2",
               }),
@@ -254,11 +238,10 @@ const dataset: DatasetTest<Transaction> = {
             },
             {
               name: "memo hash - error",
-              transaction: (t) => ({
+              transaction: t => ({
                 ...t,
                 amount: new BigNumber(100),
-                recipient:
-                  "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
+                recipient: "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
                 memoType: "MEMO_HASH",
                 memoValue: "dsadsdasdsasseeee",
               }),
@@ -280,18 +263,15 @@ const dataset: DatasetTest<Transaction> = {
           ],
           raw: {
             id: "libcore:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5",
-            seedIdentifier:
-              "3544cee0d67187d277cd9c7e26a2bf70425b1bee8e92003f45d150c5513d531a",
+            seedIdentifier: "3544cee0d67187d277cd9c7e26a2bf70425b1bee8e92003f45d150c5513d531a",
             xpub: "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
             derivationMode: "sep5",
             index: 2,
-            freshAddress:
-              "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
+            freshAddress: "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
             freshAddressPath: "44'/148'/2'",
             freshAddresses: [
               {
-                address:
-                  "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
+                address: "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
                 derivationPath: "44'/148'/2'",
               },
             ],
@@ -314,11 +294,10 @@ const dataset: DatasetTest<Transaction> = {
           transactions: [
             {
               name: "Multisign - error",
-              transaction: (t) => ({
+              transaction: t => ({
                 ...t,
                 amount: new BigNumber(100),
-                recipient:
-                  "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
+                recipient: "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
                 memoType: "MEMO_HASH",
                 memoValue: "dsadsdasdsasseeee",
               }),
@@ -372,6 +351,50 @@ const dataset: DatasetTest<Transaction> = {
             pendingOperations: [],
             unitMagnitude: 7,
           },
+        },
+        {
+          FIXME_tests: ["balance is sum of ops"],
+          raw: {
+            id: "libcore:1:stellar:GAS5NQ2VU6LA3QPDSCVBH66IHP2RE52VFCLFQKSGRF7VKMZA2KTLGI3M:sep5",
+            seedIdentifier: "25d6c355a7960dc1e390aa13fbc83bf51277552896582a46897f553320d2a6b3",
+            name: "Stellar 4",
+            xpub: "GAS5NQ2VU6LA3QPDSCVBH66IHP2RE52VFCLFQKSGRF7VKMZA2KTLGI3M",
+            derivationMode: "sep5",
+            index: 0,
+            freshAddress: "GAS5NQ2VU6LA3QPDSCVBH66IHP2RE52VFCLFQKSGRF7VKMZA2KTLGI3M",
+            freshAddressPath: "44'/148'/0'",
+            freshAddresses: [
+              {
+                address: "GAS5NQ2VU6LA3QPDSCVBH66IHP2RE52VFCLFQKSGRF7VKMZA2KTLGI3M",
+                derivationPath: "44'/148'/0'",
+              },
+            ],
+            balance: "0",
+            blockHeight: 0,
+            currencyId: "stellar",
+            lastSyncDate: "",
+            operations: [],
+            pendingOperations: [],
+            unitMagnitude: 7,
+          },
+          transactions: [
+            {
+              name: "check spendable balance (selling_liabilities is not zero)",
+              transaction: t => ({
+                ...t,
+                useAllAmount: true,
+                fees: new BigNumber("0"),
+                recipient: "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
+              }),
+              expectedStatus: {
+                // You can get the spenaable balance here
+                // https://stellar.expert/explorer/public/account/GAS5NQ2VU6LA3QPDSCVBH66IHP2RE52VFCLFQKSGRF7VKMZA2KTLGI3M
+                amount: new BigNumber(12485498),
+                errors: {},
+                warnings: {},
+              },
+            },
+          ],
         },
       ],
     },

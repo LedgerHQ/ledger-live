@@ -24,13 +24,16 @@ export const selectRowStylesMap: <T extends OptionTypeBase>(
     height: "100%",
   }),
 });
+
 export const amountInputContainerProps = {
   noBorderLeftRadius: true,
 };
+
 export const renderAccountValue = ({ data }: { data: SelectAccountOption }) =>
   data.account ? (
     <AccountOption account={data.account} isValue singleLineLayout={false} hideDerivationTag />
   ) : null;
+
 export const renderCurrencyValue = ({ data: currency }: { data: CryptoOrTokenCurrency }) => {
   return currency ? (
     <CurrencyOption currency={currency} singleLineLayout={false} tagVariant="thin" />

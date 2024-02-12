@@ -49,12 +49,12 @@ import powerOnRecoveryNanoSPLight from "../assets/nanoSP/powerOnRecovery/light.j
 import powerOnRecoveryNanoSPDark from "../assets/nanoSP/powerOnRecovery/dark.json";
 import powerOnRecoveryStaxLight from "../assets/stax/powerOnRecovery/light.json";
 import powerOnRecoveryStaxDark from "../assets/stax/powerOnRecovery/dark.json";
-import Check from "../../../icons/Check";
-import WarningOutline from "../../../icons/WarningOutline";
-import Close from "../../../icons/Close";
-import ArrowRight from "../../../icons/ArrowRight";
-import LText from "../../../components/LText";
-import { urls } from "../../../config/urls";
+import Check from "~/icons/Check";
+import WarningOutline from "~/icons/WarningOutline";
+import Close from "~/icons/Close";
+import ArrowRight from "~/icons/ArrowRight";
+import LText from "~/components/LText";
+import { urls } from "~/utils/urls";
 
 export const lottieAnimations = {
   nanoS: {
@@ -210,9 +210,7 @@ const recoveryWarningInfoModalProps = [
 ];
 const pinCodeInfoModalProps = [
   {
-    title: (
-      <Trans i18nKey="onboarding.stepSetupDevice.pinCodeSetup.infoModal.title" />
-    ),
+    title: <Trans i18nKey="onboarding.stepSetupDevice.pinCodeSetup.infoModal.title" />,
     bullets: [
       {
         Icon: Check,
@@ -275,28 +273,18 @@ const pinCodeInfoModalProps = [
 ];
 const recoveryPhraseInfoModalProps = [
   {
-    title: (
-      <Trans i18nKey="onboarding.stepSetupDevice.recoveryPhraseSetup.infoModal.title" />
-    ),
-    desc: (
-      <Trans i18nKey="onboarding.stepSetupDevice.recoveryPhraseSetup.infoModal.desc" />
-    ),
+    title: <Trans i18nKey="onboarding.stepSetupDevice.recoveryPhraseSetup.infoModal.title" />,
+    desc: <Trans i18nKey="onboarding.stepSetupDevice.recoveryPhraseSetup.infoModal.desc" />,
   },
   {
-    desc: (
-      <Trans i18nKey="onboarding.stepSetupDevice.recoveryPhraseSetup.infoModal.desc_1" />
-    ),
+    desc: <Trans i18nKey="onboarding.stepSetupDevice.recoveryPhraseSetup.infoModal.desc_1" />,
     link: {
-      label: (
-        <Trans i18nKey="onboarding.stepSetupDevice.recoveryPhraseSetup.infoModal.link" />
-      ),
+      label: <Trans i18nKey="onboarding.stepSetupDevice.recoveryPhraseSetup.infoModal.link" />,
       url: urls.recoveryPhraseInfo,
     },
   },
   {
-    title: (
-      <Trans i18nKey="onboarding.stepSetupDevice.recoveryPhraseSetup.infoModal.title_1" />
-    ),
+    title: <Trans i18nKey="onboarding.stepSetupDevice.recoveryPhraseSetup.infoModal.title_1" />,
     bullets: [
       {
         Icon: ArrowRight,
@@ -321,9 +309,7 @@ const recoveryPhraseInfoModalProps = [
 ];
 const hideRecoveryPhraseInfoModalProps = [
   {
-    title: (
-      <Trans i18nKey="onboarding.stepSetupDevice.hideRecoveryPhrase.infoModal.title" />
-    ),
+    title: <Trans i18nKey="onboarding.stepSetupDevice.hideRecoveryPhrase.infoModal.title" />,
     bullets: [
       {
         Icon: ArrowRight,
@@ -392,56 +378,36 @@ const pairNewErrorInfoModalProps = [
   ...(Platform.OS === "android"
     ? [
         {
-          title: (
-            <Trans i18nKey="onboarding.stepPairNew.errorInfoModal.title_1" />
-          ),
-          desc: (
-            <Trans i18nKey="onboarding.stepPairNew.errorInfoModal.desc_3" />
-          ),
+          title: <Trans i18nKey="onboarding.stepPairNew.errorInfoModal.title_1" />,
+          desc: <Trans i18nKey="onboarding.stepPairNew.errorInfoModal.desc_3" />,
         },
         {
-          desc: (
-            <Trans i18nKey="onboarding.stepPairNew.errorInfoModal.desc_4" />
-          ),
+          desc: <Trans i18nKey="onboarding.stepPairNew.errorInfoModal.desc_4" />,
           bullets: [
             {
               Icon: ArrowRight,
-              label: (
-                <Trans i18nKey="onboarding.stepPairNew.errorInfoModal.bullets.0.label" />
-              ),
+              label: <Trans i18nKey="onboarding.stepPairNew.errorInfoModal.bullets.0.label" />,
             },
             {
               Icon: ArrowRight,
-              label: (
-                <Trans i18nKey="onboarding.stepPairNew.errorInfoModal.bullets.1.label" />
-              ),
+              label: <Trans i18nKey="onboarding.stepPairNew.errorInfoModal.bullets.1.label" />,
             },
             {
               Icon: ArrowRight,
-              label: (
-                <Trans i18nKey="onboarding.stepPairNew.errorInfoModal.bullets.2.label" />
-              ),
+              label: <Trans i18nKey="onboarding.stepPairNew.errorInfoModal.bullets.2.label" />,
             },
             {
               Icon: ArrowRight,
-              label: (
-                <Trans i18nKey="onboarding.stepPairNew.errorInfoModal.bullets.3.label" />
-              ),
+              label: <Trans i18nKey="onboarding.stepPairNew.errorInfoModal.bullets.3.label" />,
             },
           ],
         },
         {
-          desc: (
-            <Trans i18nKey="onboarding.stepPairNew.errorInfoModal.desc_5" />
-          ),
+          desc: <Trans i18nKey="onboarding.stepPairNew.errorInfoModal.desc_5" />,
         },
         {
-          title: (
-            <Trans i18nKey="onboarding.stepPairNew.errorInfoModal.title_2" />
-          ),
-          desc: (
-            <Trans i18nKey="onboarding.stepPairNew.errorInfoModal.desc_6" />
-          ),
+          title: <Trans i18nKey="onboarding.stepPairNew.errorInfoModal.title_2" />,
+          desc: <Trans i18nKey="onboarding.stepPairNew.errorInfoModal.desc_6" />,
         },
       ]
     : []),

@@ -6,7 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { ModalOnDisabledClickComponentProps } from "../index";
 import ParentCurrencyIcon from "../../ParentCurrencyIcon";
-import { NavigatorName, ScreenName } from "../../../const";
+import { NavigatorName, ScreenName } from "~/const";
 import Button from "../../wrappedUi/Button";
 import {
   RootNavigationComposite,
@@ -25,11 +25,7 @@ function ZeroBalanceDisabledModalContent({
 }: ModalOnDisabledClickComponentProps) {
   const { t } = useTranslation();
   const navigation =
-    useNavigation<
-      RootNavigationComposite<
-        StackNavigatorNavigation<BaseNavigatorStackParamList>
-      >
-    >();
+    useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
 
   const actionCurrency = account ? getAccountCurrency(account) : currency;
 
@@ -52,8 +48,7 @@ function ZeroBalanceDisabledModalContent({
           currency: actionCurrency,
           accountId: account?.id || "",
           parentId:
-            parentAccount?.id ||
-            (account?.type === "TokenAccount" ? account?.parentId : undefined),
+            parentAccount?.id || (account?.type === "TokenAccount" ? account?.parentId : undefined),
         },
       });
     } else {
@@ -78,28 +73,13 @@ function ZeroBalanceDisabledModalContent({
         currencyTicker: actionCurrency?.ticker,
         actionName: action.label,
       })}
-      Icon={
-        <ParentCurrencyIcon size={48} currency={actionCurrency as Currency} />
-      }
+      Icon={<ParentCurrencyIcon size={48} currency={actionCurrency as Currency} />}
     >
       <Flex mx={16} flexDirection={"row"}>
-        <Button
-          onPress={goToBuy}
-          type="main"
-          size={"large"}
-          outline
-          flex={1}
-          mr={3}
-        >
+        <Button onPress={goToBuy} type="main" size={"large"} outline flex={1} mr={3}>
           {t("account.buy")}
         </Button>
-        <Button
-          onPress={goToReceive}
-          type="main"
-          size={"large"}
-          outline
-          flex={1}
-        >
+        <Button onPress={goToReceive} type="main" size={"large"} outline flex={1}>
           {t("account.receive")}
         </Button>
       </Flex>

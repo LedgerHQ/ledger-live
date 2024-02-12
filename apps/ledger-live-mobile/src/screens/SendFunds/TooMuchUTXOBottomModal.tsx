@@ -2,11 +2,11 @@ import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
-import QueuedDrawer from "../../components/QueuedDrawer";
-import LText from "../../components/LText";
-import Button from "../../components/Button";
-import Info from "../../icons/Info";
-import TrackScreen from "../../analytics/TrackScreen";
+import QueuedDrawer from "~/components/QueuedDrawer";
+import LText from "~/components/LText";
+import Button from "~/components/Button";
+import Info from "~/icons/Info";
+import TrackScreen from "~/analytics/TrackScreen";
 
 type Props = {
   isOpened: boolean;
@@ -23,9 +23,7 @@ function ConfirmationModal({ isOpened, onClose, onPress, ...rest }: Props) {
       onClose={onClose}
       style={styles.confirmationModal}
     >
-      {isOpened ? (
-        <TrackScreen category="LendingNoTokenAccountInfoModal" />
-      ) : null}
+      {isOpened ? <TrackScreen category="LendingNoTokenAccountInfoModal" /> : null}
       <View
         style={[
           styles.icon,

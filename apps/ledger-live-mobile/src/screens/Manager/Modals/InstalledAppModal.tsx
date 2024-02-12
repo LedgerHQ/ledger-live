@@ -8,18 +8,15 @@ import { isLiveSupportedApp } from "@ledgerhq/live-common/apps/logic";
 import styled from "styled-components/native";
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
 import { App } from "@ledgerhq/types-live";
-import { urls } from "../../../config/urls";
+import { urls } from "~/utils/urls";
 
-import { NavigatorName, ScreenName } from "../../../const";
+import { NavigatorName, ScreenName } from "~/const";
 
 import AppIcon from "../AppsList/AppIcon";
 
-import QueuedDrawer from "../../../components/QueuedDrawer";
-import type {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
-import { ManagerNavigatorStackParamList } from "../../../components/RootNavigator/types/ManagerNavigator";
+import QueuedDrawer from "~/components/QueuedDrawer";
+import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { ManagerNavigatorStackParamList } from "~/components/RootNavigator/types/ManagerNavigator";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<ManagerNavigatorStackParamList, ScreenName.ManagerMain>
@@ -51,13 +48,7 @@ const ButtonsContainer = styled(Flex).attrs({
 
 const InstallSuccessBar = ({ state, navigation, disable }: Props) => {
   const [hasBeenShown, setHasBeenShown] = useState(disable);
-  const {
-    installQueue,
-    uninstallQueue,
-    recentlyInstalledApps,
-    appByName,
-    installed,
-  } = state;
+  const { installQueue, uninstallQueue, recentlyInstalledApps, appByName, installed } = state;
 
   const onAddAccount = useCallback(() => {
     navigation.navigate(NavigatorName.AddAccounts);
@@ -87,9 +78,7 @@ const InstallSuccessBar = ({ state, navigation, disable }: Props) => {
   );
 
   const app: App | undefined = useMemo(
-    () =>
-      (successInstalls && successInstalls.length > 0 && successInstalls[0]) ||
-      undefined,
+    () => (successInstalls && successInstalls.length > 0 && successInstalls[0]) || undefined,
     [successInstalls],
   );
 
@@ -101,10 +90,7 @@ const InstallSuccessBar = ({ state, navigation, disable }: Props) => {
   const onClose = useCallback(() => setHasBeenShown(true), []);
 
   return (
-    <QueuedDrawer
-      isRequestingToBeOpened={successInstalls.length >= 1}
-      onClose={onClose}
-    >
+    <QueuedDrawer isRequestingToBeOpened={successInstalls.length >= 1} onClose={onClose}>
       <Flex alignItems="center">
         {app && <AppIcon app={app} size={48} radius={14} />}
         <TextContainer>
@@ -113,10 +99,7 @@ const InstallSuccessBar = ({ state, navigation, disable }: Props) => {
           </ModalText>
           <ModalText color="neutral.c70" fontWeight="medium" variant="body">
             {hasLiveSupported ? (
-              <Trans
-                i18nKey="AppAction.install.done.description"
-                values={{ app: app?.name }}
-              />
+              <Trans i18nKey="AppAction.install.done.description" values={{ app: app?.name }} />
             ) : (
               <Trans i18nKey="manager.installSuccess.notSupported" />
             )}

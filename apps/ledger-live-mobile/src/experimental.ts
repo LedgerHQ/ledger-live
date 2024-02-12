@@ -2,13 +2,12 @@ import { useState, useEffect } from "react";
 import Config from "react-native-config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { concatMap } from "rxjs/operators";
-import { setEnvUnsafe, isEnvDefault, changes } from "@ledgerhq/live-common/env";
-import type { EnvName } from "@ledgerhq/live-common/env";
+import { setEnvUnsafe, isEnvDefault, changes } from "@ledgerhq/live-env";
+import type { EnvName } from "@ledgerhq/live-env";
 
 import { FeatureId } from "@ledgerhq/types-live";
 
 import logger from "./logger";
-import { i18n } from "./context/Locale";
 
 export type FeatureCommon = {
   name: EnvName;
@@ -36,8 +35,7 @@ export type FeatureFloat = {
   maxValue?: number;
 };
 
-export type Feature = FeatureCommon &
-  (FeatureToggle | FeatureInteger | FeatureFloat);
+export type Feature = FeatureCommon & (FeatureToggle | FeatureInteger | FeatureFloat);
 
 // comma-separated list of currencies that we want to enable as experimental, e.g:
 // const experimentalCurrencies = "solana,cardano";
@@ -55,10 +53,8 @@ export const experimentalFeatures: Feature[] = [
         {
           type: "toggle",
           name: "EXPERIMENTAL_CURRENCIES",
-          title: i18n.t(i18nKey("experimentalIntegrations", "title")),
-          description: i18n.t(
-            i18nKey("experimentalIntegrations", "description"),
-          ),
+          title: i18nKey("experimentalIntegrations", "title"),
+          description: i18nKey("experimentalIntegrations", "description"),
           valueOn: experimentalCurrencies,
           valueOff: "",
         },
@@ -67,78 +63,59 @@ export const experimentalFeatures: Feature[] = [
   {
     type: "toggle",
     name: "MANAGER_DEV_MODE",
-    title: i18n.t(i18nKey("developerMode", "title")),
-    description: i18n.t(i18nKey("developerMode", "description")),
-  },
-  {
-    type: "toggle",
-    name: "LIST_APPS_V2",
-    title: i18n.t(i18nKey("experimentalListAppsV2", "title")),
-    description: i18n.t(i18nKey("experimentalListAppsV2", "description")),
+    title: i18nKey("developerMode", "title"),
+    description: i18nKey("developerMode", "description"),
   },
   {
     type: "integer",
     name: "FORCE_PROVIDER",
-    title: i18n.t(i18nKey("managerProvider", "title")),
-    description: i18n.t(i18nKey("managerProvider", "description")),
+    title: i18nKey("managerProvider", "title"),
+    description: i18nKey("managerProvider", "description"),
     minValue: 1,
   },
   {
     type: "toggle",
     name: "EXPERIMENTAL_EXPLORERS",
-    title: i18n.t(i18nKey("experimentalExplorers", "title")),
-    description: i18n.t(i18nKey("experimentalExplorers", "description")),
-  },
-  {
-    type: "toggle",
-    name: "LEDGER_COUNTERVALUES_API",
-    title: i18n.t(i18nKey("experimentalCountervalues", "title")),
-    description: i18n.t(i18nKey("experimentalCountervalues", "description")),
-    valueOn: "https://countervalues-experimental.live.ledger.com",
-    valueOff: "https://countervalues.live.ledger.com",
+    title: i18nKey("experimentalExplorers", "title"),
+    description: i18nKey("experimentalExplorers", "description"),
   },
   {
     type: "toggle",
     name: "EIP1559_MINIMUM_FEES_GATE",
-    title: "Deactivate EIP-1559 minimum priority fee gate",
-    description:
-      "This will allow a transaction to be sent without any minimum priority fee expected. This may result in a transaction getting stuck in the mempool forever.",
+    title: i18nKey("1559DeactivateGate", "title"),
+    description: i18nKey("1559DeactivateGate", "description"),
     valueOn: false,
     valueOff: true,
   },
   {
     type: "integer",
     name: "EIP1559_PRIORITY_FEE_LOWER_GATE",
-    title: "Custom priority fee gate",
-    description:
-      "Customize the percentage of our estimated minimal priority fee allowed for an advanced EIP1559 transaction",
+    title: i18nKey("1559CustomPriorityLowerGate", "title"),
+    description: i18nKey("1559CustomPriorityLowerGate", "description"),
     minValue: 0,
     maxValue: 1,
   },
   {
     type: "float",
     name: "EIP1559_BASE_FEE_MULTIPLIER",
-    title: "Custom multiplier for the base fee",
-    description:
-      "Customize the multiplier used for the base fee composing the maxFeePerGas",
+    title: i18nKey("1559CustomBaseFeeMultiplier", "title"),
+    description: i18nKey("1559CustomBaseFeeMultiplier", "description"),
     minValue: 0,
     maxValue: 10,
   },
   {
     type: "toggle",
     name: "ENABLE_NETWORK_LOGS",
-    title: i18n.t(i18nKey("experimentalEnableNetworkLogs", "title")),
-    description: i18n.t(
-      i18nKey("experimentalEnableNetworkLogs", "description"),
-    ),
+    title: i18nKey("experimentalEnableNetworkLogs", "title"),
+    description: i18nKey("experimentalEnableNetworkLogs", "description"),
   },
   ...(__DEV__
     ? [
         {
           type: "toggle",
           name: "EXPERIMENTAL_SWAP",
-          title: i18n.t(i18nKey("experimentalSwap", "title")),
-          description: i18n.t(i18nKey("experimentalSwap", "description")),
+          title: i18nKey("experimentalSwap", "title"),
+          description: i18nKey("experimentalSwap", "description"),
         },
       ]
     : []),
@@ -148,20 +125,20 @@ export const developerFeatures: Feature[] = [
   {
     type: "toggle",
     name: "PLATFORM_DEBUG",
-    title: i18n.t(i18nKeyDeveloper("debugApps", "title")),
-    description: i18n.t(i18nKeyDeveloper("debugApps", "description")),
+    title: i18nKeyDeveloper("debugApps", "title"),
+    description: i18nKeyDeveloper("debugApps", "description"),
   },
   {
     type: "toggle",
     name: "PLATFORM_EXPERIMENTAL_APPS",
-    title: i18n.t(i18nKeyDeveloper("experimentalApps", "title")),
-    description: i18n.t(i18nKeyDeveloper("experimentalApps", "description")),
+    title: i18nKeyDeveloper("experimentalApps", "title"),
+    description: i18nKeyDeveloper("experimentalApps", "description"),
   },
   {
     type: "toggle",
     name: "USE_LEARN_STAGING_URL",
-    title: i18n.t(i18nKeyDeveloper("staggingUrl", "title")),
-    description: i18n.t(i18nKeyDeveloper("staggingUrl", "description")),
+    title: i18nKeyDeveloper("staggingUrl", "title"),
+    description: i18nKeyDeveloper("staggingUrl", "description"),
   },
 ];
 
@@ -190,9 +167,7 @@ export const setStorageEnvs = async (key: EnvName, val: string) => {
 export const isReadOnly = (key: EnvName) => key in Config;
 
 export const enabledExperimentalFeatures = (): string[] =>
-  [...experimentalFeatures, ...developerFeatures]
-    .map(e => e.name)
-    .filter(k => !isEnvDefault(k));
+  [...experimentalFeatures, ...developerFeatures].map(e => e.name).filter(k => !isEnvDefault(k));
 
 (async () => {
   const envs = await getStorageEnv();
@@ -209,24 +184,18 @@ export const enabledExperimentalFeatures = (): string[] =>
 
   const saveEnvs = async (name: EnvName, value: string) => {
     if (
-      [...experimentalFeatures, ...developerFeatures].find(
-        f => f.name === name,
-      ) &&
+      [...experimentalFeatures, ...developerFeatures].find(f => f.name === name) &&
       !isReadOnly(name)
     ) {
       await setStorageEnvs(name, value);
     }
   };
 
-  changes
-    .pipe(concatMap(({ name, value }) => saveEnvs(name, value)))
-    .subscribe();
+  changes.pipe(concatMap(({ name, value }) => saveEnvs(name, value))).subscribe();
 })();
 
 export function useExperimental(): boolean {
-  const [state, setState] = useState(
-    () => enabledExperimentalFeatures().length > 0,
-  );
+  const [state, setState] = useState(() => enabledExperimentalFeatures().length > 0);
 
   useEffect(() => {
     const sub = changes.subscribe(() => {

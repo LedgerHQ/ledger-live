@@ -8,9 +8,7 @@ let currentPreloadedData: ElrondPreloadData = {
   validators: [],
 };
 
-function fromHydrateValidator(
-  validatorRaw: Record<string, any>
-): ElrondProvider {
+function fromHydrateValidator(validatorRaw: Record<string, any>): ElrondProvider {
   return {
     contract: validatorRaw.contract,
     owner: validatorRaw.owner,
@@ -31,8 +29,7 @@ function fromHydrateValidator(
     featured: !!validatorRaw.featured,
     numNodes: Number(validatorRaw.numNodes),
     numUsers: Number(validatorRaw.numUsers),
-    ownerBelowRequiredBalanceThreshold:
-      !!validatorRaw.ownerBelowRequiredBalanceThreshold,
+    ownerBelowRequiredBalanceThreshold: !!validatorRaw.ownerBelowRequiredBalanceThreshold,
     unBondPeriod: Number(validatorRaw.unBondPeriod),
     withDelegationCap: !!validatorRaw.withDelegationCap,
     disabled: !!validatorRaw.disabled,
@@ -41,8 +38,7 @@ function fromHydrateValidator(
       name: validatorRaw.identity.name,
       avatar: validatorRaw.identity.avatar,
       description: validatorRaw.identity.description,
-      location:
-        validatorRaw.identity.location === null ? null : validatorRaw.location,
+      location: validatorRaw.identity.location === null ? null : validatorRaw.location,
       twitter: validatorRaw.identity.twitter,
       url: validatorRaw.identity.url,
     },
@@ -89,9 +85,6 @@ export const preload = async (): Promise<ElrondPreloadData> => {
 };
 export const hydrate = (data: unknown) => {
   const hydrated = fromHydratePreloadData(data);
-  log(
-    "elrond/preload",
-    `hydrated ${hydrated.validators.length} elrond validators`
-  );
+  log("elrond/preload", `hydrated ${hydrated.validators.length} elrond validators`);
   setElrondPreloadData(hydrated);
 };

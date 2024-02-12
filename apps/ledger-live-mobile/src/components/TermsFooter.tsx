@@ -3,7 +3,7 @@ import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { Linking } from "react-native";
 import styled from "styled-components/native";
-import { urls } from "../config/urls";
+import { urls } from "~/utils/urls";
 
 const CenteredText = styled(Text).attrs({
   fontWeight: "medium",
@@ -36,7 +36,7 @@ const TermsFooter: React.FC<{
         i18nKey="DeviceAction.confirmSwap.acceptTerms"
         values={{ provider }}
         components={[
-          <UnderlinedText onPress={onLinkClick} textAlign="center">
+          <UnderlinedText onPress={onLinkClick} textAlign="center" key="ProviderText">
             <Text textTransform="capitalize" textAlign="center">
               {provider}
             </Text>

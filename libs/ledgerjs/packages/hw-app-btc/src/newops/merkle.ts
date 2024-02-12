@@ -10,10 +10,7 @@ export class Merkle {
   private rootNode: Node;
   private leafNodes: Node[];
   private h: (buf: Buffer) => Buffer;
-  constructor(
-    leaves: Buffer[],
-    hasher: (buf: Buffer) => Buffer = crypto.sha256
-  ) {
+  constructor(leaves: Buffer[], hasher: (buf: Buffer) => Buffer = crypto.sha256) {
     this.leaves = leaves;
     this.h = hasher;
     const nodes = this.calculateRoot(leaves);
@@ -68,16 +65,12 @@ export class Merkle {
 
 export function hashLeaf(
   buf: Buffer,
-  hashFunction: (buf: Buffer) => Buffer = crypto.sha256
+  hashFunction: (buf: Buffer) => Buffer = crypto.sha256,
 ): Buffer {
   return hashConcat(Buffer.from([0]), buf, hashFunction);
 }
 
-function hashConcat(
-  bufA: Buffer,
-  bufB: Buffer,
-  hashFunction: (buf: Buffer) => Buffer
-): Buffer {
+function hashConcat(bufA: Buffer, bufB: Buffer, hashFunction: (buf: Buffer) => Buffer): Buffer {
   return hashFunction(Buffer.concat([bufA, bufB]));
 }
 

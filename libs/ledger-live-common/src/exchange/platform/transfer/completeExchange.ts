@@ -1,5 +1,5 @@
 import secp256k1 from "secp256k1";
-import { from, Observable } from "rxjs";
+import { firstValueFrom, from, Observable } from "rxjs";
 import { TransportStatusError, WrongDeviceForAccount } from "@ledgerhq/errors";
 
 import { delay } from "../../../promise";
@@ -9,7 +9,7 @@ import { getAccountCurrency, getMainAccount } from "../../../account";
 import { getAccountBridge } from "../../../bridge";
 import { TransactionRefusedOnDevice } from "../../../errors";
 import { withDevice } from "../../../hw/deviceAccess";
-import { getCurrencyExchangeConfig } from "../..";
+import { convertToAppExchangePartnerKey, getCurrencyExchangeConfig } from "../..";
 import { getProvider } from ".";
 
 import type {
@@ -19,10 +19,10 @@ import type {
 } from "../types";
 
 const withDevicePromise = (deviceId, fn) =>
-  withDevice(deviceId)((transport) => from(fn(transport))).toPromise();
+  firstValueFrom(withDevice(deviceId)(transport => from(fn(transport))));
 
 const completeExchange = (
-  input: CompleteExchangeInputFund | CompleteExchangeInputSell
+  input: CompleteExchangeInputFund | CompleteExchangeInputSell,
 ): Observable<CompleteExchangeRequestEvent> => {
   let { transaction } = input; // TODO build a tx from the data
 
@@ -38,22 +38,17 @@ const completeExchange = (
 
   const { fromAccount, fromParentAccount } = exchange;
 
-  return new Observable((o) => {
+  return new Observable(o => {
     let unsubscribed = false;
     let ignoreTransportError = false;
 
     const confirmExchange = async () => {
-      await withDevicePromise(deviceId, async (transport) => {
+      await withDevicePromise(deviceId, async transport => {
         const providerNameAndSignature = getProvider(exchangeType, provider);
 
-        if (!providerNameAndSignature)
-          throw new Error("Could not get provider infos");
+        if (!providerNameAndSignature) throw new Error("Could not get provider infos");
 
-        const exchange = new ExchangeTransport(
-          transport,
-          exchangeType,
-          rateType
-        );
+        const exchange = new ExchangeTransport(transport, exchangeType, rateType);
 
         const mainAccount = getMainAccount(fromAccount, fromParentAccount);
         const accountBridge = getAccountBridge(mainAccount);
@@ -61,75 +56,54 @@ const completeExchange = (
         const payoutCurrency = getAccountCurrency(fromAccount);
 
         if (mainPayoutCurrency.type !== "CryptoCurrency")
-          throw new Error(
-            `This should be a cryptocurrency, got ${mainPayoutCurrency.type}`
-          );
+          throw new Error(`This should be a cryptocurrency, got ${mainPayoutCurrency.type}`);
 
-        transaction = await accountBridge.prepareTransaction(
-          mainAccount,
-          transaction
-        );
+        transaction = await accountBridge.prepareTransaction(mainAccount, transaction);
         if (unsubscribed) return;
 
-        const { errors, estimatedFees } =
-          await accountBridge.getTransactionStatus(mainAccount, transaction);
+        const { errors, estimatedFees } = await accountBridge.getTransactionStatus(
+          mainAccount,
+          transaction,
+        );
         if (unsubscribed) return;
 
         const errorsKeys = Object.keys(errors);
         if (errorsKeys.length > 0) throw errors[errorsKeys[0]]; // throw the first error
 
-        await exchange.setPartnerKey(providerNameAndSignature.nameAndPubkey);
+        await exchange.setPartnerKey(convertToAppExchangePartnerKey(providerNameAndSignature));
         if (unsubscribed) return;
 
         await exchange.checkPartner(providerNameAndSignature.signature);
         if (unsubscribed) return;
 
-        await exchange.processTransaction(
-          Buffer.from(binaryPayload, "hex"),
-          estimatedFees
-        );
+        await exchange.processTransaction(Buffer.from(binaryPayload, "hex"), estimatedFees);
         if (unsubscribed) return;
 
         const bufferSignature = Buffer.from(signature, "hex");
-        /**
-         * For the Fund and Swap flow, the signature sent to the nano needs to
-         * be in DER format, which is not the case for Sell flow. Hence the
-         * ternary.
-         * cf. https://github.com/LedgerHQ/app-exchange/blob/e67848f136dc7227521791b91f608f7cd32e7da7/src/check_tx_signature.c#L14-L32
-         */
-        const goodSign =
-          exchangeType === ExchangeTypes.Sell
-            ? bufferSignature
-            : Buffer.from(secp256k1.signatureExport(bufferSignature));
-
-        if (!goodSign) {
-          throw new Error("Could not check provider signature");
-        }
+        const goodSign = convertSignature(bufferSignature, exchangeType);
 
         await exchange.checkTransactionSignature(goodSign);
         if (unsubscribed) return;
 
         const payoutAddressParameters = await perFamily[
           mainPayoutCurrency.family
-        ].getSerializedAddressParameters(
-          mainAccount.freshAddressPath,
-          mainAccount.derivationMode
-        );
+        ].getSerializedAddressParameters(mainAccount.freshAddressPath, mainAccount.derivationMode);
         if (unsubscribed) return;
 
-        const {
-          config: payoutAddressConfig,
-          signature: payoutAddressConfigSignature,
-        } = getCurrencyExchangeConfig(payoutCurrency);
+        const { config: payoutAddressConfig, signature: payoutAddressConfigSignature } =
+          getCurrencyExchangeConfig(payoutCurrency);
 
         try {
+          o.next({
+            type: "complete-exchange-requested",
+            estimatedFees: estimatedFees.toString(),
+          });
           await exchange.checkPayoutAddress(
             payoutAddressConfig,
             payoutAddressConfigSignature,
-            payoutAddressParameters.addressParameters
+            payoutAddressParameters.addressParameters,
           );
         } catch (e) {
-          // @ts-expect-error TransportStatusError to be typed on ledgerjs
           if (e instanceof TransportStatusError && e.statusCode === 0x6a83) {
             throw new WrongDeviceForAccount(undefined, {
               accountName: mainAccount.name,
@@ -139,18 +113,12 @@ const completeExchange = (
           throw e;
         }
 
-        o.next({
-          type: "complete-exchange-requested",
-          estimatedFees,
-        });
-
         if (unsubscribed) return;
         ignoreTransportError = true;
         await exchange.signCoinTransaction();
-      }).catch((e) => {
+      }).catch(e => {
         if (ignoreTransportError) return;
 
-        // @ts-expect-error TransportStatusError to be typed on ledgerjs
         if (e instanceof TransportStatusError && e.statusCode === 0x6a84) {
           throw new TransactionRefusedOnDevice();
         }
@@ -158,11 +126,11 @@ const completeExchange = (
         throw e;
       });
       await delay(3000);
-      if (unsubscribed) return;
       o.next({
         type: "complete-exchange-result",
         completeExchangeResult: transaction,
       });
+      if (unsubscribed) return;
     };
 
     confirmExchange().then(
@@ -170,19 +138,41 @@ const completeExchange = (
         o.complete();
         unsubscribed = true;
       },
-      (e) => {
+      e => {
         o.next({
           type: "complete-exchange-error",
           error: e,
         });
         o.complete();
         unsubscribed = true;
-      }
+      },
     );
     return () => {
       unsubscribed = true;
     };
   });
 };
+
+/**
+ * For the Fund and Swap flow, the signature sent to the nano needs to
+ * be in DER format, which is not the case for Sell flow. Hence the
+ * ternary.
+ * cf. https://github.com/LedgerHQ/app-exchange/blob/e67848f136dc7227521791b91f608f7cd32e7da7/src/check_tx_signature.c#L14-L32
+ * @param {Buffer} bufferSignature
+ * @param {ExchangeTypes} exchangeType
+ * @return {Buffer} The correct format Buffer for AppExchange call.
+ */
+function convertSignature(bufferSignature: Buffer, exchangeType: ExchangeTypes): Buffer {
+  const goodSign =
+    exchangeType === ExchangeTypes.Sell
+      ? bufferSignature
+      : Buffer.from(secp256k1.signatureExport(bufferSignature));
+
+  if (!goodSign) {
+    throw new Error("Could not check provider signature");
+  }
+
+  return goodSign;
+}
 
 export default completeExchange;

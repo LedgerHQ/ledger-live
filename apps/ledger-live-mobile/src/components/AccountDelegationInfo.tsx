@@ -1,7 +1,7 @@
 import React from "react";
 import { View, StyleSheet, TouchableOpacity, Linking } from "react-native";
 import { useTheme } from "@react-navigation/native";
-import ExternalLink from "../icons/ExternalLink";
+import ExternalLink from "~/icons/ExternalLink";
 import Button from "./Button";
 import LText from "./LText";
 
@@ -56,13 +56,7 @@ export default function AccountDelegationInfo({
             <ExternalLink size={11} color={colors.live} />
           </TouchableOpacity>
         </View>
-        <Button
-          type="primary"
-          disabled={disabled}
-          onPress={onPress}
-          title={ctaTitle}
-          event=""
-        />
+        <Button type="primary" disabled={disabled} onPress={onPress} title={ctaTitle} event="" />
       </View>
     </View>
   );

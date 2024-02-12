@@ -1,4 +1,4 @@
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import {
   Exchange,
   ExchangeRate,
@@ -6,6 +6,7 @@ import {
   SwapTransaction,
   SwapTransactionType,
 } from "@ledgerhq/live-common/exchange/swap/types";
+import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
 import { createAction as initSwapCreateAction } from "@ledgerhq/live-common/hw/actions/initSwap";
 import { createAction as transactionCreateAction } from "@ledgerhq/live-common/hw/actions/transaction";
 import { Operation, SignedOperation } from "@ledgerhq/types-live";
@@ -17,17 +18,17 @@ import Box from "~/renderer/components/Box";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import Text from "~/renderer/components/Text";
-import { useBroadcast } from "~/renderer/hooks/useBroadcast";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-import { swapKYCSelector } from "~/renderer/reducers/settings";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import initSwap from "@ledgerhq/live-common/exchange/swap/initSwap";
 import { Device } from "@ledgerhq/types-devices";
+
 const transactionAction = transactionCreateAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
 const initAction = initSwapCreateAction(
   getEnv("MOCK") ? mockedEventEmitter : connectApp,
   getEnv("MOCK") ? mockedEventEmitter : initSwap,
 );
+
 const TransactionResult = (
   props:
     | { signedOperation: SignedOperation; device?: Device; swapId?: string | undefined }
@@ -50,12 +51,14 @@ const TransactionResult = (
     </Box>
   );
 };
+
 type Props = {
   swapTransaction: SwapTransactionType;
   exchangeRate: ExchangeRate;
   onCompletion: (a: { operation: Operation; swapId: string }) => void;
   onError: (a: { error: Error; swapId?: string }) => void;
 };
+
 export default function SwapAction({
   swapTransaction,
   exchangeRate,
@@ -66,18 +69,17 @@ export default function SwapAction({
   const [signedOperation, setSignedOperation] = useState<SignedOperation | null>(null);
   const device = useSelector(getCurrentDevice);
   const deviceRef = useRef(device);
-  const swapKYC = useSelector(swapKYCSelector);
   const { account: fromAccount, parentAccount: fromParentAccount } = swapTransaction.swap.from;
   const { account: toAccount, parentAccount: toParentAccount } = swapTransaction.swap.to;
   const { transaction, status } = swapTransaction;
-  const provider = exchangeRate?.provider;
-  const providerKYC = swapKYC?.[provider];
   const tokenCurrency =
     fromAccount && fromAccount.type === "TokenAccount" ? fromAccount.token : null;
+
   const broadcast = useBroadcast({
     account: fromAccount,
     parentAccount: fromParentAccount,
   });
+
   const exchange = useMemo(
     () => ({
       fromParentAccount,
@@ -87,6 +89,7 @@ export default function SwapAction({
     }),
     [fromAccount, fromParentAccount, toAccount, toParentAccount],
   );
+
   useEffect(() => {
     if (initData && signedOperation) {
       const { swapId } = initData;
@@ -106,18 +109,34 @@ export default function SwapAction({
       );
     }
   }, [broadcast, onCompletion, onError, initData, signedOperation]);
+
+  const request = useMemo(
+    () => ({
+      exchange: exchange as Exchange,
+      exchangeRate,
+      transaction: transaction as SwapTransaction,
+      status,
+      device: deviceRef,
+    }),
+    [exchange, exchangeRate, status, transaction],
+  );
+
+  const signRequest = useMemo(
+    () => ({
+      tokenCurrency,
+      parentAccount: fromParentAccount,
+      account: fromAccount!,
+      transaction: initData?.transaction,
+      appName: "Exchange",
+    }),
+    [fromAccount, fromParentAccount, initData?.transaction, tokenCurrency],
+  );
+
   return !initData || !transaction ? (
     <DeviceAction
       key={"initSwap"}
       action={initAction}
-      request={{
-        exchange: exchange as Exchange,
-        exchangeRate,
-        transaction: transaction as SwapTransaction,
-        status,
-        device: deviceRef,
-        userId: providerKYC?.id,
-      }}
+      request={request}
       onResult={result => {
         if ("initSwapError" in result && result.initSwapError) {
           onError({
@@ -134,13 +153,8 @@ export default function SwapAction({
     <DeviceAction
       key={"send"}
       action={transactionAction}
-      request={{
-        tokenCurrency,
-        parentAccount: fromParentAccount,
-        account: fromAccount!,
-        transaction: initData.transaction,
-        appName: "Exchange",
-      }}
+      // @ts-expect-error This type is not compatible with the one expected by the action
+      request={signRequest}
       Result={TransactionResult}
       onResult={result => {
         if ("transactionSignError" in result) {

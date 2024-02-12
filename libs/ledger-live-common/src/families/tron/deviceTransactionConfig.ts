@@ -15,7 +15,7 @@ export type ExtraDeviceTransactionField =
     };
 
 function getDeviceTransactionConfig({
-  transaction: { votes, resource, mode },
+  transaction: { votes, resource, mode, recipient },
   account,
   parentAccount,
   status: { amount },
@@ -32,8 +32,7 @@ function getDeviceTransactionConfig({
     fields.push({
       type: "tron.resource",
       label: "Resource",
-      value:
-        resource.slice(0, 1).toUpperCase() + resource.slice(1).toLowerCase(),
+      value: resource.slice(0, 1).toUpperCase() + resource.slice(1).toLowerCase(),
     });
   }
 
@@ -60,11 +59,27 @@ function getDeviceTransactionConfig({
     });
   }
 
-  if (mode === "unfreeze") {
+  if (mode === "unfreeze" || mode === "legacyUnfreeze") {
     fields.push({
       type: "address",
-      label: "Delegated To",
+      label: "Unfreeze To",
       address: mainAccount.freshAddress,
+    });
+  }
+
+  if (mode === "withdrawExpireUnfreeze") {
+    fields.push({
+      type: "address",
+      label: "Withdraw unfrozen to",
+      address: mainAccount.freshAddress,
+    });
+  }
+
+  if (mode === "unDelegateResource") {
+    fields.push({
+      type: "address",
+      label: "Undelegate from",
+      address: recipient,
     });
   }
 

@@ -1,22 +1,20 @@
+import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import React from "react";
 import { Trans } from "react-i18next";
-import { withTheme } from "styled-components";
-import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { multiline } from "~/renderer/styles/helpers";
 import Box from "~/renderer/components/Box";
-import Button from "~/renderer/components/Button";
-import RetryButton from "~/renderer/components/RetryButton";
-import ErrorDisplay from "~/renderer/components/ErrorDisplay";
-import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDisclaimer";
+import Button from "~/renderer/components/Button";
+import ErrorDisplay from "~/renderer/components/ErrorDisplay";
+import RetryButton from "~/renderer/components/RetryButton";
+import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import * as S from "./StepConfirmation.styles";
+import { multiline } from "~/renderer/styles/helpers";
 import { StepProps } from "../types";
+import * as S from "./StepConfirmation.styles";
 export const StepConfirmationFooter = ({
   account,
-  parentAccount,
   onRetry,
   error,
   onClose,
@@ -45,7 +43,6 @@ export const StepConfirmationFooter = ({
               setDrawer(OperationDetails, {
                 operationId: optimisticOperation.id,
                 accountId: account.id,
-                parentId: parentAccount && parentAccount.id,
               });
             }
           }}
@@ -62,7 +59,13 @@ const StepConfirmation = ({ t, optimisticOperation, error, signed }: StepProps) 
   if (optimisticOperation) {
     return (
       <S.Container>
-        <TrackPage category="Celo Unlock" name="Step Confirmed" />
+        <TrackPage
+          category="Celo Unlock"
+          name="Step Confirmed"
+          flow="stake"
+          action="unlock"
+          currency="celo"
+        />
         <SuccessDisplay
           title={<Trans i18nKey="celo.unlock.steps.confirmation.success.title" />}
           description={multiline(t("celo.unlock.steps.confirmation.success.text"))}
@@ -73,7 +76,13 @@ const StepConfirmation = ({ t, optimisticOperation, error, signed }: StepProps) 
   if (error) {
     return (
       <S.Container shouldSpace={signed}>
-        <TrackPage category="Celo Unlock" name="Step Confirmation Error" />
+        <TrackPage
+          category="Celo Unlock"
+          name="Step Confirmation Error"
+          flow="stake"
+          action="unlock"
+          currency="celo"
+        />
         {signed ? (
           <BroadcastErrorDisclaimer
             title={<Trans i18nKey="celo.unlock.steps.confirmation.broadcastError" />}
@@ -85,4 +94,4 @@ const StepConfirmation = ({ t, optimisticOperation, error, signed }: StepProps) 
   }
   return null;
 };
-export default withTheme(StepConfirmation);
+export default StepConfirmation;

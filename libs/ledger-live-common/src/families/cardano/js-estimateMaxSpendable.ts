@@ -7,6 +7,7 @@ import { createTransaction } from "./js-transaction";
 import {
   address as TyphonAddress,
   types as TyphonTypes,
+  Transaction as TyphonTransaction,
 } from "@stricahq/typhonjs";
 import { buildTransaction } from "./js-buildTransaction";
 
@@ -39,7 +40,7 @@ const estimateMaxSpendable = async ({
     amount: new BigNumber(0),
     useAllAmount: true,
   };
-  let typhonTransaction;
+  let typhonTransaction: TyphonTransaction;
   try {
     typhonTransaction = await buildTransaction(a as CardanoAccount, t);
   } catch (error) {
@@ -49,10 +50,10 @@ const estimateMaxSpendable = async ({
   const transactionAmount = typhonTransaction
     .getOutputs()
     .filter(
-      (o) =>
+      o =>
         !(o.address instanceof TyphonAddress.BaseAddress) ||
         !(o.address.paymentCredential.type === TyphonTypes.HashType.ADDRESS) ||
-        o.address.paymentCredential.bipPath === undefined
+        o.address.paymentCredential.bipPath === undefined,
     )
     .reduce((total, o) => total.plus(o.amount), new BigNumber(0));
 

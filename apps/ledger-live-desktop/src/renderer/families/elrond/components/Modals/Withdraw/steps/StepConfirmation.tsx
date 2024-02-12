@@ -1,6 +1,6 @@
 import React from "react";
 import { Trans } from "react-i18next";
-import styled, { withTheme } from "styled-components";
+import styled from "styled-components";
 import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
@@ -18,19 +18,27 @@ const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   grow: true,
   color: "palette.text.shade100",
-}))`
+}))<{
+  shouldSpace?: boolean;
+}>`
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
 `;
 const StepConfirmation = (props: StepProps) => {
   const { optimisticOperation, error, signed, account, transaction } = props;
-  if (optimisticOperation) {
+  if (optimisticOperation && account && transaction) {
     const amount = `${denominate({
       input: String(transaction.amount),
       decimals: 4,
     })} ${getAccountUnit(account).code || "EGLD"}`;
     return (
       <Container>
-        <TrackPage category="Withdraw Elrond Flow" name="Step Confirmed" />
+        <TrackPage
+          category="Withdraw Elrond Flow"
+          name="Step Confirmed"
+          flow="stake"
+          action="withdraw"
+          currency="MultiversX"
+        />
         <SyncOneAccountOnMount priority={10} accountId={optimisticOperation.accountId} />
         <SuccessDisplay
           title={<Trans i18nKey="elrond.withdraw.flow.steps.confirmation.success.title" />}
@@ -53,7 +61,13 @@ const StepConfirmation = (props: StepProps) => {
   if (error) {
     return (
       <Container shouldSpace={signed}>
-        <TrackPage category="Withdraw Elrond Flow" name="Step Confirmation Error" />
+        <TrackPage
+          category="Withdraw Elrond Flow"
+          name="Step Confirmation Error"
+          flow="stake"
+          action="withdraw"
+          currency="MultiversX"
+        />
         {signed ? (
           <BroadcastErrorDisclaimer
             title={<Trans i18nKey="elrond.withdraw.flow.steps.confirmation.broadcastError" />}
@@ -66,7 +80,7 @@ const StepConfirmation = (props: StepProps) => {
   return null;
 };
 const StepConfirmationFooter = (props: StepProps) => {
-  const { account, parentAccount, onRetry, error, onClose, optimisticOperation } = props;
+  const { account, onRetry, error, onClose, optimisticOperation } = props;
   const concernedOperation = optimisticOperation
     ? optimisticOperation.subOperations && optimisticOperation.subOperations.length > 0
       ? optimisticOperation.subOperations[0]
@@ -89,7 +103,6 @@ const StepConfirmationFooter = (props: StepProps) => {
               setDrawer(OperationDetails, {
                 operationId: concernedOperation.id,
                 accountId: account.id,
-                parentId: parentAccount && parentAccount.id,
               });
             }
           }}
@@ -103,4 +116,4 @@ const StepConfirmationFooter = (props: StepProps) => {
   );
 };
 export { StepConfirmationFooter };
-export default withTheme(StepConfirmation);
+export default StepConfirmation;

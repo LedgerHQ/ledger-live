@@ -2,39 +2,42 @@ import { useMemo } from "react";
 import { AccountLikeArray } from "@ledgerhq/types-live";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { Icons } from "@ledgerhq/native-ui";
-import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
-import { filterRampCatalogEntries } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
+import { IconsLegacy } from "@ledgerhq/native-ui";
+import { getParentAccount, isTokenAccount } from "@ledgerhq/live-common/account/index";
+import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { NavigatorName, ScreenName } from "../../../const";
-import {
-  readOnlyModeEnabledSelector,
-  swapSelectableCurrenciesSelector,
-} from "../../../reducers/settings";
+import { useRoute } from "@react-navigation/native";
+import { NavigatorName, ScreenName } from "~/const";
+import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { ActionButtonEvent } from "..";
 import ZeroBalanceDisabledModalContent from "../modals/ZeroBalanceDisabledModalContent";
-import { sharedSwapTracking } from "../../../screens/Swap/utils";
+import { sharedSwapTracking } from "~/screens/Swap/utils";
+import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
+import { flattenAccountsSelector } from "~/reducers/accounts";
+import { PtxToast } from "../../Toast/PtxToast";
 
 type useAssetActionsProps = {
   currency?: CryptoCurrency | TokenCurrency;
   accounts?: AccountLikeArray;
 };
 
-const iconBuy = Icons.PlusMedium;
-const iconSell = Icons.MinusMedium;
-const iconSwap = Icons.BuyCryptoMedium;
-const iconReceive = Icons.ArrowBottomMedium;
-const iconSend = Icons.ArrowTopMedium;
-const iconAddAccount = Icons.WalletMedium;
-const iconStake = Icons.ClaimRewardsMedium;
+const iconBuy = IconsLegacy.PlusMedium;
+const iconSell = IconsLegacy.MinusMedium;
+const iconSwap = IconsLegacy.BuyCryptoMedium;
+const iconReceive = IconsLegacy.ArrowBottomMedium;
+const iconSend = IconsLegacy.ArrowTopMedium;
+const iconAddAccount = IconsLegacy.WalletMedium;
+const iconStake = IconsLegacy.CoinsMedium;
 
-export default function useAssetActions({
-  currency,
-  accounts,
-}: useAssetActionsProps): {
+export default function useAssetActions({ currency, accounts }: useAssetActionsProps): {
   mainActions: ActionButtonEvent[];
 } {
+  const route = useRoute();
+  const { data: currenciesAll } = useFetchCurrencyAll();
+
+  const ptxServiceCtaScreens = useFeature("ptxServiceCtaScreens");
+
   const { t } = useTranslation();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const hasAccounts = accounts?.length && accounts.length > 0;
@@ -46,50 +49,38 @@ export default function useAssetActions({
     () => (accounts && accounts.length === 1 ? accounts[0] : undefined),
     [accounts],
   );
+  const availableOnSwap = currency && currenciesAll.includes(currency.id);
 
-  const hasMultipleAccounts = useMemo(
-    () => !!(accounts && accounts.length > 1),
-    [accounts],
-  );
+  const { isCurrencyAvailable } = useRampCatalog();
 
-  const swapSelectableCurrencies = useSelector(
-    swapSelectableCurrenciesSelector,
-  );
-  const availableOnSwap =
-    currency && swapSelectableCurrencies.includes(currency.id);
-
-  const rampCatalog = useRampCatalog();
-  const [canBeBought, canBeSold] = useMemo(() => {
-    if (!rampCatalog.value || !currency) {
-      return [false, false];
-    }
-
-    const onRampProviders = filterRampCatalogEntries(rampCatalog.value.onRamp, {
-      tickers: [currency.ticker],
-    });
-    const offRampProviders = filterRampCatalogEntries(
-      rampCatalog.value.offRamp,
-      {
-        tickers: [currency.ticker],
-      },
-    );
-
-    return [onRampProviders.length > 0, offRampProviders.length > 0];
-  }, [rampCatalog.value, currency]);
+  const canBeBought = !!currency && isCurrencyAvailable(currency.id, "onRamp");
+  const canBeSold = !!currency && isCurrencyAvailable(currency.id, "offRamp");
 
   const featureFlag = useFeature("stakePrograms");
   const stakeFlagEnabled = featureFlag?.enabled;
   const listFlag = featureFlag?.params?.list;
-  const canBeStaken = stakeFlagEnabled && listFlag.includes(currency?.id);
 
-  const actions = useMemo<ActionButtonEvent[]>(
-    () => [
+  const canBeStaken = stakeFlagEnabled && listFlag && currency && listFlag.includes(currency?.id);
+  const totalAccounts = useSelector(flattenAccountsSelector);
+  const parentAccount = isTokenAccount(defaultAccount)
+    ? getParentAccount(defaultAccount, totalAccounts)
+    : undefined;
+
+  const actions = useMemo<ActionButtonEvent[]>(() => {
+    const isPtxServiceCtaScreensDisabled = !(ptxServiceCtaScreens?.enabled ?? true);
+
+    return [
       ...(canBeBought
         ? [
             {
               id: "buy",
               label: t("exchange.buy.tabTitle"),
               Icon: iconBuy,
+              disabled: isPtxServiceCtaScreensDisabled,
+              modalOnDisabledClick: {
+                component: PtxToast,
+              },
+              testId: "market-buy-btn",
               navigationParams: [
                 NavigatorName.Exchange,
                 {
@@ -117,12 +108,12 @@ export default function useAssetActions({
                   },
                 },
               ] as const,
-              disabled: areAccountsBalanceEmpty,
-              modalOnDisabledClick: !readOnlyModeEnabled
-                ? {
-                    component: ZeroBalanceDisabledModalContent,
-                  }
-                : undefined,
+              disabled: isPtxServiceCtaScreensDisabled || areAccountsBalanceEmpty,
+              modalOnDisabledClick: {
+                component: isPtxServiceCtaScreensDisabled
+                  ? PtxToast
+                  : ZeroBalanceDisabledModalContent,
+              },
             },
           ]
         : []),
@@ -131,7 +122,7 @@ export default function useAssetActions({
             ...(availableOnSwap
               ? [
                   {
-                    label: t("transfer.swap.title"),
+                    label: t("account.swap"),
                     Icon: iconSwap,
                     event: "button_clicked",
                     eventProperties: {
@@ -142,12 +133,18 @@ export default function useAssetActions({
                       NavigatorName.Swap,
                       {
                         screen: ScreenName.Swap,
-                        params: { currencyId: currency?.id, defaultAccount },
+                        params: {
+                          defaultAccount,
+                          defaultCurrency: currency,
+                          defaultParentAccount: parentAccount,
+                        },
                       },
                     ] as const,
-                    disabled: areAccountsBalanceEmpty,
+                    disabled: isPtxServiceCtaScreensDisabled || areAccountsBalanceEmpty,
                     modalOnDisabledClick: {
-                      component: ZeroBalanceDisabledModalContent,
+                      component: isPtxServiceCtaScreensDisabled
+                        ? PtxToast
+                        : ZeroBalanceDisabledModalContent,
                     },
                   },
                 ]
@@ -155,7 +152,7 @@ export default function useAssetActions({
             ...(canBeStaken
               ? [
                   {
-                    label: t("transfer.stake.title"),
+                    label: t("account.stake"),
                     Icon: iconStake,
                     event: "button_clicked",
                     eventProperties: {
@@ -168,7 +165,10 @@ export default function useAssetActions({
                       NavigatorName.StakeFlow,
                       {
                         screen: ScreenName.Stake,
-                        params: { currencies: [currency?.id] },
+                        params: {
+                          currencies: [currency?.id],
+                          parentRoute: route,
+                        },
                       },
                     ] as const,
                   },
@@ -180,31 +180,12 @@ export default function useAssetActions({
               Icon: iconReceive,
               navigationParams: [
                 NavigatorName.ReceiveFunds,
-                defaultAccount
-                  ? {
-                      screen: ScreenName.ReceiveConfirmation,
-                      params: {
-                        accountId: defaultAccount.id,
-                        parentId:
-                          defaultAccount.type === "TokenAccount"
-                            ? defaultAccount.parentId
-                            : undefined,
-                        currency,
-                      },
-                    }
-                  : hasMultipleAccounts
-                  ? {
-                      screen: ScreenName.ReceiveSelectAccount,
-                      params: {
-                        currency,
-                      },
-                    }
-                  : {
-                      screen: ScreenName.ReceiveSelectCrypto,
-                      params: {
-                        filterCurrencyIds: currency ? [currency.id] : undefined,
-                      },
-                    },
+                {
+                  screen: ScreenName.ReceiveSelectAccount,
+                  params: {
+                    currency,
+                  },
+                },
               ] as const,
             },
             {
@@ -247,9 +228,7 @@ export default function useAssetActions({
                       {
                         screen: ScreenName.AddAccountsSelectCrypto,
                         params: {
-                          filterCurrencyIds: currency
-                            ? [currency.id]
-                            : undefined,
+                          filterCurrencyIds: currency ? [currency.id] : undefined,
                         },
                       },
                     ] as const,
@@ -257,21 +236,22 @@ export default function useAssetActions({
                 ]
               : []),
           ]),
-    ],
-    [
-      areAccountsBalanceEmpty,
-      availableOnSwap,
-      canBeBought,
-      canBeSold,
-      canBeStaken,
-      currency,
-      defaultAccount,
-      hasAccounts,
-      hasMultipleAccounts,
-      readOnlyModeEnabled,
-      t,
-    ],
-  );
+    ];
+  }, [
+    ptxServiceCtaScreens,
+    areAccountsBalanceEmpty,
+    availableOnSwap,
+    canBeBought,
+    canBeSold,
+    canBeStaken,
+    currency,
+    defaultAccount,
+    hasAccounts,
+    parentAccount,
+    readOnlyModeEnabled,
+    t,
+    route,
+  ]);
 
   return {
     mainActions: actions,

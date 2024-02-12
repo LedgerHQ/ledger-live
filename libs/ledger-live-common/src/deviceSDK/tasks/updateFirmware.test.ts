@@ -14,9 +14,7 @@ test("getFlashMcuOrBootloaderDetails", () => {
   });
 
   // Bootloader version majMin formatting
-  expect(
-    getFlashMcuOrBootloaderDetails("1.90", "1.91.whatever-it-doesnt-matter")
-  ).toEqual({
+  expect(getFlashMcuOrBootloaderDetails("1.90", "1.91.whatever-it-doesnt-matter")).toEqual({
     bootloaderVersion: "1.91",
     isMcuUpdate: false,
   });

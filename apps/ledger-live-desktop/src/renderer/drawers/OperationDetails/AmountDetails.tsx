@@ -5,15 +5,15 @@ import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { getOperationAmountNumber } from "@ledgerhq/live-common/operation";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { useCalculate } from "@ledgerhq/live-common/countervalues/react";
+import { useCalculate } from "@ledgerhq/live-countervalues-react";
 import { AccountLike, Operation } from "@ledgerhq/types-live";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import Box from "~/renderer/components/Box/Box";
 import Text from "~/renderer/components/Text";
-import FormattedDate from "~/renderer/components/FormattedDate";
 import { B, OpDetailsData, OpDetailsSection, OpDetailsTitle } from "./styledComponents";
 import { NoCountervaluePlaceholder } from "~/renderer/components/CounterValue";
+import { dayFormat, useDateFormatter } from "~/renderer/hooks/useDateFormatter";
 const Column = styled(Box).attrs(() => ({
   justifyContent: "flex-start",
   alignItems: "flex-start",
@@ -59,6 +59,9 @@ export default function AmountDetails({ operation, account }: Props) {
     disableRounding: true,
     date: compareDate,
   });
+  const formatDate = useDateFormatter(dayFormat);
+  const dateFormatted = useMemo(() => formatDate(date), [date, formatDate]);
+  const compareDateFormatted = useMemo(() => formatDate(compareDate), [compareDate, formatDate]);
   const val = countervalue && BigNumber(countervalue);
   const compareVal = compareCountervalue && BigNumber(compareCountervalue);
   return (
@@ -73,9 +76,7 @@ export default function AmountDetails({ operation, account }: Props) {
             <Title>
               <Trans i18nKey={"calendar.transactionDate"} />
             </Title>
-            <Subtitle>
-              <FormattedDate date={date} format="L" />
-            </Subtitle>
+            <Subtitle>{dateFormatted}</Subtitle>
           </Column>
         </OpDetailsTitle>
         <OpDetailsData>
@@ -103,9 +104,7 @@ export default function AmountDetails({ operation, account }: Props) {
             <Title>
               <Trans i18nKey={"operationDetails.currentValue"} />
             </Title>
-            <Subtitle>
-              <FormattedDate date={compareDate} format="L" />
-            </Subtitle>
+            <Subtitle>{compareDateFormatted}</Subtitle>
           </Column>
         </OpDetailsTitle>
         <OpDetailsData>

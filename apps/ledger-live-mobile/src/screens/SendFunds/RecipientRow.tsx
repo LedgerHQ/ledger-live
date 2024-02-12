@@ -1,11 +1,11 @@
 import React, { memo } from "react";
 import { Platform, StyleSheet, View } from "react-native";
-import Clipboard from "@react-native-community/clipboard";
+import Clipboard from "@react-native-clipboard/clipboard";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
-import TranslatedError from "../../components/TranslatedError";
-import SupportLinkError from "../../components/SupportLinkError";
-import LText from "../../components/LText";
-import RecipientInput from "../../components/RecipientInput";
+import TranslatedError from "~/components/TranslatedError";
+import SupportLinkError from "~/components/SupportLinkError";
+import LText from "~/components/LText";
+import RecipientInput from "~/components/RecipientInput";
 
 type Props = {
   onChangeText: (value: string) => void;
@@ -32,8 +32,6 @@ const RecipientRow = ({
           }}
           onFocus={onRecipientFieldFocus}
           onChangeText={onChangeText}
-          // FIXME: onInputCleared PROP DOES NOT EXISTS
-          // onInputCleared={clear}
           value={transaction.recipient}
         />
       </View>

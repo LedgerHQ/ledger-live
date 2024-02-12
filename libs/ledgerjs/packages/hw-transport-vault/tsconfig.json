@@ -1,0 +1,8 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "lib",
+    "lib": ["DOM", "ES2017"]
+  },
+  "include": ["src/**/*"]
+}

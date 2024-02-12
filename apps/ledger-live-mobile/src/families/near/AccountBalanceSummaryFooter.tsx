@@ -6,40 +6,28 @@ import invariant from "invariant";
 import React, { useCallback, useMemo, useState } from "react";
 import { TFunction, useTranslation } from "react-i18next";
 import { ScrollView } from "react-native";
-import InfoItem from "../../components/BalanceSummaryInfoItem";
-import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import type { ModalInfo } from "../../modals/Info";
-import InfoModal from "../../modals/Info";
+import InfoItem from "~/components/BalanceSummaryInfoItem";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import type { ModalInfo } from "~/modals/Info";
+import InfoModal from "~/modals/Info";
 
 type Props = {
   account: NearAccount;
 };
-type InfoName =
-  | "available"
-  | "storageUsage"
-  | "staked"
-  | "pending"
-  | "withdrawable";
+type InfoName = "available" | "storageUsage" | "staked" | "pending" | "withdrawable";
 
 function AccountBalanceSummaryFooter({ account }: Props) {
   const { t } = useTranslation();
   const [infoName, setInfoName] = useState<InfoName>();
   const info = useMemo(() => getInfo(t), [t]);
   const { spendableBalance, nearResources } = account;
-  const {
-    storageUsageBalance,
-    stakedBalance,
-    pendingBalance,
-    availableBalance,
-  } = nearResources || {};
+  const { storageUsageBalance, stakedBalance, pendingBalance, availableBalance } =
+    nearResources || {};
   const unit = getAccountUnit(account);
   const onCloseModal = useCallback(() => {
     setInfoName(undefined);
   }, []);
-  const onPressInfoCreator = useCallback(
-    (infoName: InfoName) => () => setInfoName(infoName),
-    [],
-  );
+  const onPressInfoCreator = useCallback((infoName: InfoName) => () => setInfoName(infoName), []);
 
   return (
     <ScrollView
@@ -59,62 +47,32 @@ function AccountBalanceSummaryFooter({ account }: Props) {
       <InfoItem
         title={t("account.availableBalance")}
         onPress={onPressInfoCreator("available")}
-        value={
-          <CurrencyUnitValue
-            unit={unit}
-            value={spendableBalance}
-            disableRounding
-          />
-        }
+        value={<CurrencyUnitValue unit={unit} value={spendableBalance} disableRounding />}
       />
       <InfoItem
         title={t("near.info.storageUsage.title")}
         onPress={onPressInfoCreator("storageUsage")}
-        value={
-          <CurrencyUnitValue
-            unit={unit}
-            value={storageUsageBalance}
-            disableRounding
-          />
-        }
+        value={<CurrencyUnitValue unit={unit} value={storageUsageBalance} disableRounding />}
       />
       {stakedBalance.gt(0) && (
         <InfoItem
           title={t("near.info.staked.title")}
           onPress={onPressInfoCreator("staked")}
-          value={
-            <CurrencyUnitValue
-              unit={unit}
-              value={stakedBalance}
-              disableRounding
-            />
-          }
+          value={<CurrencyUnitValue unit={unit} value={stakedBalance} disableRounding />}
         />
       )}
       {pendingBalance.gt(0) && (
         <InfoItem
           title={t("near.info.pending.title")}
           onPress={onPressInfoCreator("pending")}
-          value={
-            <CurrencyUnitValue
-              unit={unit}
-              value={pendingBalance}
-              disableRounding
-            />
-          }
+          value={<CurrencyUnitValue unit={unit} value={pendingBalance} disableRounding />}
         />
       )}
       {availableBalance.gt(0) && (
         <InfoItem
           title={t("near.info.withdrawable.title")}
           onPress={onPressInfoCreator("withdrawable")}
-          value={
-            <CurrencyUnitValue
-              unit={unit}
-              value={availableBalance}
-              disableRounding
-            />
-          }
+          value={<CurrencyUnitValue unit={unit} value={availableBalance} disableRounding />}
         />
       )}
     </ScrollView>

@@ -13,7 +13,7 @@ const TextContent = styled.div`
 type Props<T extends TransactionCommon> = {
   account: AccountLike;
   transaction: T;
-  parentAccount: Account | undefined | null;
+  parentAccount?: Account | undefined | null;
 };
 const SpendableBanner = <T extends TransactionCommon>({
   account,

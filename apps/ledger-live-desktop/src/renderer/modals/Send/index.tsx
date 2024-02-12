@@ -1,16 +1,17 @@
 import React, { useCallback, useState } from "react";
 import { DomainServiceProvider } from "@ledgerhq/domain-service/hooks/index";
-import Modal, { RenderProps } from "~/renderer/components/Modal";
-import Body, { Data } from "./Body";
+import Modal from "~/renderer/components/Modal";
+import Body from "./Body";
 import { StepId } from "./types";
+
 type Props = {
-  stepId: StepId;
-  onClose: () => void;
+  stepId?: StepId;
+  onClose?: () => void;
 };
 const MODAL_LOCKED: {
   [key in StepId]: boolean;
 } = {
-  recipient: true,
+  recipient: false,
   amount: true,
   summary: true,
   device: true,
@@ -20,7 +21,7 @@ const MODAL_LOCKED: {
 const SendModal = ({ stepId: initialStepId, onClose }: Props) => {
   const [stepId, setStep] = useState(() => initialStepId || "recipient");
   const handleReset = useCallback(() => setStep("recipient"), []);
-  const handleStepChange = useCallback(stepId => setStep(stepId), []);
+  const handleStepChange = useCallback((stepId: StepId) => setStep(stepId), []);
   const isModalLocked = MODAL_LOCKED[stepId as StepId];
   return (
     <DomainServiceProvider>
@@ -30,7 +31,7 @@ const SendModal = ({ stepId: initialStepId, onClose }: Props) => {
         onHide={handleReset}
         onClose={onClose}
         preventBackdropClick={isModalLocked}
-        render={({ onClose, data }: RenderProps<Data>) => (
+        render={({ onClose, data }) => (
           <Body
             stepId={stepId}
             onClose={onClose}

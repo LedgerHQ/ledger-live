@@ -6,34 +6,42 @@ import type {
   ElrondProvider,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/elrond/types";
-import type { ScreenName } from "../../../../../const";
+import type { ScreenName } from "~/const";
+import { ParamListBase, RouteProp } from "@react-navigation/native";
 
 export type ElrondDelegationFlowParamList = {
   [ScreenName.ElrondDelegationStarted]: {
     validators: ElrondProvider[];
     account: ElrondAccount;
+    source?: RouteProp<ParamListBase, ScreenName>;
   };
   [ScreenName.ElrondDelegationValidator]: {
     validators: ElrondProvider[];
     account: ElrondAccount;
     transaction?: Transaction;
+    source?: RouteProp<ParamListBase, ScreenName>;
+    skipStartedStep?: boolean;
   };
   [ScreenName.ElrondDelegationValidatorList]: {
     transaction: Transaction | null | undefined;
     validators: ElrondProvider[];
     account: ElrondAccount;
+    source?: RouteProp<ParamListBase, ScreenName>;
   };
   [ScreenName.ElrondDelegationAmount]: {
     transaction: Transaction;
     validators: ElrondProvider[];
     account: ElrondAccount;
     validatorName: string;
+    source?: RouteProp<ParamListBase, ScreenName>;
   };
   [ScreenName.ElrondDelegationSelectDevice]: {
     accountId: string;
     parentId?: string;
     transaction?: Transaction | null | undefined;
     status?: TransactionStatus;
+    validators: ElrondProvider[];
+    source?: RouteProp<ParamListBase, ScreenName>;
   };
   [ScreenName.ElrondDelegationConnectDevice]: {
     device: Device;
@@ -47,17 +55,22 @@ export type ElrondDelegationFlowParamList = {
     onError?: (error: Error) => void;
     analyticsPropertyFlow?: string;
     forceSelectDevice?: boolean;
+    validators: ElrondProvider[];
+    source?: RouteProp<ParamListBase, ScreenName>;
   };
   [ScreenName.ElrondDelegationValidationError]: {
     accountId: string;
     deviceId: string;
     transaction: Transaction;
     error: Error;
+    source?: RouteProp<ParamListBase, ScreenName>;
   };
   [ScreenName.ElrondDelegationValidationSuccess]: {
     accountId: string;
     deviceId: string;
     transaction: Transaction;
     result: Operation;
+    validators: ElrondProvider[];
+    source?: RouteProp<ParamListBase, ScreenName>;
   };
 };

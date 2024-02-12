@@ -7,7 +7,6 @@
       "outputs": ["dist/**", "lib/**", "lib-es/**", "build/**"]
     },
     "lint": {
-      "outputs": ["lint.json"],
       "env": ["CI_OS"]
     },
     "lint:fix": {
@@ -19,13 +18,16 @@
       "env": ["CI_OS"]
     },
     "test": {
-      "dependsOn": ["lint", "typecheck", "build"],
+      "dependsOn": ["build"],
       "env": ["CI_OS"],
       "outputs": []
     },
     "start": {
       "cache": false,
       "dependsOn": ["^build"]
+    },
+    "unimported": {
+      "cache": false
     },
     "android:apk:local": {
       "dependsOn": ["^build"]
@@ -61,13 +63,18 @@
     "doc": {
       "cache": false
     },
+    "web-tools#build": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "!.next/cache/**"],
+      "cache": false
+    },
     "ledger-live-desktop#build": {
       "dependsOn": ["^build"],
       "cache": false
     },
     "@ledgerhq/icons-ui#build": {
       "dependsOn": ["^build"],
-      "outputs": ["react/**", "native/**", "index.js"]
+      "outputs": ["react/**", "native/**", "reactLegacy/**", "nativeLegacy/**", "index.js"]
     },
     "@ledgerhq/crypto-icons-ui#build": {
       "dependsOn": ["^build"],
@@ -75,14 +82,7 @@
     },
     "@ledgerhq/live-common#build": {
       "dependsOn": ["^build"],
-      "outputs": [
-        "lib/**",
-        "lib-es/**",
-        "src/data/icons/react/**",
-        "src/data/icons/reactNative/**",
-        "src/data/flags/react/**",
-        "src/data/flags/reactNative/**"
-      ]
+      "outputs": ["lib/**", "lib-es/**"]
     },
     "@ledgerhq/live-common#typecheck": {
       "dependsOn": ["build"],
@@ -97,7 +97,7 @@
     "ledger-live-desktop#lint": {
       "dependsOn": ["^build"],
       "env": ["CI_OS"],
-      "outputs": []
+      "outputs": ["lint.json"]
     },
     "ledger-live-desktop#test": {
       "dependsOn": ["ledger-live-desktop#build:testing"],

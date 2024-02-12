@@ -1,5 +1,5 @@
 import { groupedFeatures } from "@ledgerhq/live-common/featureFlags/groupedFeatures";
-import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/provider";
+import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/FeatureFlagsContext";
 import { Divider, Flex, Link, Switch, Tag } from "@ledgerhq/native-ui";
 import { FeatureId } from "@ledgerhq/types-live";
 import React, { useCallback, useMemo, useState } from "react";
@@ -14,12 +14,7 @@ type Props = {
   isLast: boolean;
 };
 
-const GroupedFeatures: React.FC<Props> = ({
-  groupName,
-  focused,
-  setFocusedGroupName,
-  isLast,
-}) => {
+const GroupedFeatures: React.FC<Props> = ({ groupName, focused, setFocusedGroupName, isLast }) => {
   const [focusedName, setFocusedName] = useState<string | undefined>();
   const { featureIds } = groupedFeatures[groupName];
   const { t } = useTranslation();
@@ -52,7 +47,7 @@ const GroupedFeatures: React.FC<Props> = ({
   });
 
   const handleSwitchChange = useCallback(
-    enabled => {
+    (enabled: boolean) => {
       featureIds.forEach(featureId =>
         overrideFeature(featureId, { ...getFeature(featureId), enabled }),
       );
@@ -66,22 +61,12 @@ const GroupedFeatures: React.FC<Props> = ({
 
   return (
     <Flex mb={2}>
-      <Pressable
-        onPress={() => setFocusedGroupName(focused ? undefined : groupName)}
-      >
-        <Flex
-          flexDirection="row"
-          alignItems="center"
-          justifyContent="space-between"
-        >
+      <Pressable onPress={() => setFocusedGroupName(focused ? undefined : groupName)}>
+        <Flex flexDirection="row" alignItems="center" justifyContent="space-between">
           <Flex flexDirection={"row"} alignItems="center">
             <TagEnabled
               backgroundColor={
-                allEnabled
-                  ? "success.c50"
-                  : someEnabled
-                  ? "warning.c50"
-                  : "error.c50"
+                allEnabled ? "success.c50" : someEnabled ? "warning.c50" : "error.c50"
               }
             >
               {groupName}

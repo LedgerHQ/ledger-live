@@ -1,11 +1,11 @@
 import invariant from "invariant";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { prepareCurrency } from "~/renderer/bridge/cache";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import { createAction } from "@ledgerhq/live-common/hw/actions/app";
 import { StepProps } from "..";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
 const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
@@ -23,14 +23,19 @@ const StepConnectDevice = ({ currency, transitionTo, flow }: StepProps) => {
       ? currency.parentCurrency.name
       : currency.name
     : undefined;
+
+  const request = useMemo(
+    () => ({
+      currency: currency.type === "TokenCurrency" ? currency.parentCurrency : currency,
+    }),
+    [currency],
+  );
   return (
     <>
       <TrackPage category="AddAccounts" name="Step2" currencyName={currencyName} />
       <DeviceAction
         action={action}
-        request={{
-          currency: currency.type === "TokenCurrency" ? currency.parentCurrency : currency,
-        }}
+        request={request}
         onResult={() => {
           transitionTo("import");
         }}

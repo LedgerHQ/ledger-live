@@ -1,30 +1,26 @@
-import { DeviceCommunication } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { FeeNotLoaded } from "@ledgerhq/errors";
-import Algorand from "@ledgerhq/hw-app-algorand";
 import type {
   Account,
-  Operation,
+  DeviceId,
   SignOperationEvent,
   SignOperationFnSignature,
-  SignedOperation,
 } from "@ledgerhq/types-live";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import { AlgorandAPI } from "./api";
-import {
-  buildTransactionPayload,
-  encodeToBroadcast,
-  encodeToSign,
-} from "./buildTransaction";
-import type { Transaction } from "./types";
+import { buildTransactionPayload, encodeToBroadcast, encodeToSign } from "./buildTransaction";
+import type { AlgorandAddress, AlgorandSignature, AlgorandSigner } from "./signer";
+import type { Transaction, AlgorandOperation } from "./types";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 
 /**
  * Sign Transaction with Ledger hardware
  */
 export const buildSignOperation =
   (
-    withDevice: DeviceCommunication,
-    algorandAPI: AlgorandAPI
+    signerContext: SignerContext<AlgorandSigner, AlgorandAddress | AlgorandSignature>,
+    algorandAPI: AlgorandAPI,
   ): SignOperationFnSignature<Transaction> =>
   ({
     account,
@@ -33,69 +29,63 @@ export const buildSignOperation =
   }: {
     account: Account;
     transaction: Transaction;
-    deviceId: any;
+    deviceId: DeviceId;
   }): Observable<SignOperationEvent> =>
-    withDevice(deviceId)(
-      (transport) =>
-        new Observable((o) => {
-          let cancelled = false;
+    new Observable(o => {
+      let cancelled = false;
 
-          async function main() {
-            if (!transaction.fees) {
-              throw new FeeNotLoaded();
-            }
+      async function main() {
+        if (!transaction.fees) {
+          throw new FeeNotLoaded();
+        }
 
-            const algoTx = await buildTransactionPayload(algorandAPI)(
-              account,
-              transaction
-            );
+        const algoTx = await buildTransactionPayload(algorandAPI)(account, transaction);
 
-            const toSign = encodeToSign(algoTx);
+        const toSign = encodeToSign(algoTx);
 
-            const hwApp = new Algorand(transport);
-            const { freshAddressPath } = account;
+        const { freshAddressPath } = account;
 
-            o.next({ type: "device-signature-requested" });
+        o.next({ type: "device-signature-requested" });
 
-            const { signature } = await hwApp.sign(freshAddressPath, toSign);
+        const { signature } = (await signerContext(deviceId, signer =>
+          signer.sign(freshAddressPath, toSign),
+        )) as AlgorandSignature;
 
-            if (cancelled) return;
+        if (cancelled) return;
 
-            o.next({ type: "device-signature-granted" });
+        o.next({ type: "device-signature-granted" });
 
-            if (!signature) {
-              throw new Error("No signature");
-            }
+        if (!signature) {
+          throw new Error("No signature");
+        }
 
-            const toBroadcast = encodeToBroadcast(algoTx, signature);
+        const toBroadcast = encodeToBroadcast(algoTx, signature);
 
-            const operation = buildOptimisticOperation(account, transaction);
+        const operation = buildOptimisticOperation(account, transaction);
 
-            o.next({
-              type: "signed",
-              signedOperation: {
-                operation,
-                signature: toBroadcast.toString("hex"),
-                expirationDate: null,
-              } as SignedOperation,
-            });
-          }
+        o.next({
+          type: "signed",
+          signedOperation: {
+            operation,
+            signature: toBroadcast.toString("hex"),
+          },
+        });
+      }
 
-          main().then(
-            () => o.complete(),
-            (e) => o.error(e)
-          );
+      main().then(
+        () => o.complete(),
+        e => o.error(e),
+      );
 
-          return () => {
-            cancelled = true;
-          };
-        })
-    );
+      return () => {
+        cancelled = true;
+      };
+    });
 
 const buildOptimisticOperation = (
   account: Account,
-  transaction: Transaction
-): Operation => {
+  transaction: Transaction,
+): AlgorandOperation => {
   const { spendableBalance, id, freshAddress, subAccounts } = account;
 
   const senders = [freshAddress];
@@ -112,14 +102,10 @@ const buildOptimisticOperation = (
     ? spendableBalance
     : transaction.amount.plus(fees);
 
-  const type = subAccountId
-    ? "FEES"
-    : transaction.mode === "optIn"
-    ? "OPT_IN"
-    : "OUT";
+  const type = subAccountId ? "FEES" : transaction.mode === "optIn" ? "OPT_IN" : "OUT";
 
-  const op: Operation = {
-    id: `${id}--${type}`,
+  const op: AlgorandOperation = {
+    id: encodeOperationId(id, "", type),
     hash: "",
     type,
     value,
@@ -135,7 +121,7 @@ const buildOptimisticOperation = (
 
   const tokenAccount = !subAccountId
     ? null
-    : subAccounts && subAccounts.find((ta) => ta.id === subAccountId);
+    : subAccounts && subAccounts.find(ta => ta.id === subAccountId);
 
   if (tokenAccount && subAccountId) {
     op.subOperations = [
@@ -143,9 +129,7 @@ const buildOptimisticOperation = (
         id: `${subAccountId}--OUT`,
         hash: "",
         type: "OUT",
-        value: transaction.useAllAmount
-          ? tokenAccount.balance
-          : transaction.amount,
+        value: transaction.useAllAmount ? tokenAccount.balance : transaction.amount,
         fee: new BigNumber(0),
         blockHash: null,
         blockHeight: null,

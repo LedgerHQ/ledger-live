@@ -1,39 +1,30 @@
 import React, { useMemo, useState, useCallback } from "react";
 import { FlatList, LayoutChangeEvent } from "react-native";
-import Animated, {
-  useAnimatedScrollHandler,
-  useSharedValue,
-} from "react-native-reanimated";
+import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Flex } from "@ledgerhq/native-ui";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
 import BigNumber from "bignumber.js";
 import { AccountLike } from "@ledgerhq/types-live";
-import accountSyncRefreshControl from "../../../components/accountSyncRefreshControl";
-import { withDiscreetMode } from "../../../context/DiscreetModeContext";
-import TabBarSafeAreaView, {
-  TAB_BAR_SAFE_HEIGHT,
-} from "../../../components/TabBar/TabBarSafeAreaView";
+import accountSyncRefreshControl from "~/components/accountSyncRefreshControl";
+import { withDiscreetMode } from "~/context/DiscreetModeContext";
+import TabBarSafeAreaView, { TAB_BAR_SAFE_HEIGHT } from "~/components/TabBar/TabBarSafeAreaView";
 import SectionContainer from "../../WalletCentricSections/SectionContainer";
 import SectionTitle from "../../WalletCentricSections/SectionTitle";
 import EmptyAccountCard from "../../Account/EmptyAccountCard";
-import CurrencyBackgroundGradient from "../../../components/CurrencyBackgroundGradient";
+import CurrencyBackgroundGradient from "~/components/CurrencyBackgroundGradient";
 import Header from "../Header";
-import { hasOrderedNanoSelector } from "../../../reducers/settings";
-import BuyDeviceBanner, {
-  IMAGE_PROPS_BIG_NANO,
-} from "../../../components/BuyDeviceBanner";
-import SetupDeviceBanner from "../../../components/SetupDeviceBanner";
-import { FabAssetActions } from "../../../components/FabActions/actionsList/asset";
-import { TrackScreen } from "../../../analytics";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
-import { AccountsNavigatorParamList } from "../../../components/RootNavigator/types/AccountsNavigator";
-import { ScreenName } from "../../../const";
+import { hasOrderedNanoSelector } from "~/reducers/settings";
+import BuyDeviceBanner, { IMAGE_PROPS_BIG_NANO } from "~/components/BuyDeviceBanner";
+import SetupDeviceBanner from "~/components/SetupDeviceBanner";
+import { FabAssetActions } from "~/components/FabActions/actionsList/asset";
+import { TrackScreen } from "~/analytics";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
+import { ScreenName } from "~/const";
 import AssetMarketSection from "../AssetMarketSection";
 import AssetGraph from "../AssetGraph";
 import { ReferralProgram } from "../referralProgram";
@@ -50,6 +41,7 @@ const currencyBalanceBigNumber = BigNumber(0);
 const accounts: AccountLike[] = [];
 
 const ReadOnlyAssetScreen = ({ route }: NavigationProps) => {
+  const featureReferralProgramMobile = useFeature("referralProgramMobile");
   const { t } = useTranslation();
   const currency = route?.params?.currency;
   const { colors } = useTheme();
@@ -68,7 +60,7 @@ const ReadOnlyAssetScreen = ({ route }: NavigationProps) => {
 
   const data = useMemo(
     () => [
-      <Flex mt={6} onLayout={onAssetCardLayout}>
+      <Flex mt={6} onLayout={onAssetCardLayout} key="AssetGraph">
         <AssetGraph
           currentPositionY={currentPositionY}
           graphCardEndPosition={graphCardEndPosition}
@@ -78,19 +70,20 @@ const ReadOnlyAssetScreen = ({ route }: NavigationProps) => {
           accountsAreEmpty
         />
       </Flex>,
-      currency.ticker === "BTC" ? <ReferralProgram /> : null,
-      <SectionContainer px={6} isFirst>
-        <SectionTitle
-          title={t("account.quickActions")}
-          containerProps={{ mb: 6 }}
-        />
+      featureReferralProgramMobile?.enabled &&
+      featureReferralProgramMobile?.params?.path &&
+      currency.ticker === "BTC" ? (
+        <ReferralProgram key="ReferralProgram" />
+      ) : null,
+      <SectionContainer px={6} isFirst key="EmptyAccountCard">
+        <SectionTitle title={t("account.quickActions")} containerProps={{ mb: 6 }} />
         <FabAssetActions currency={currency} />
         <Flex minHeight={220}>
           <EmptyAccountCard currencyTicker={currency.ticker} />
         </Flex>
       </SectionContainer>,
-      <AssetMarketSection currency={currency} />,
-      <SectionContainer mx={6}>
+      <AssetMarketSection currency={currency} key="AssetMarketSection" />,
+      <SectionContainer mx={6} key="BuyDeviceBanner">
         {hasOrderedNano ? (
           <SetupDeviceBanner screen="Assets" />
         ) : (
@@ -105,7 +98,7 @@ const ReadOnlyAssetScreen = ({ route }: NavigationProps) => {
             event="button_clicked"
             eventProperties={{
               button: "Discover the Nano",
-              screen: "Account",
+              page: "Account",
               currency: currency.name,
             }}
             screen="Account"
@@ -121,6 +114,8 @@ const ReadOnlyAssetScreen = ({ route }: NavigationProps) => {
       currency,
       t,
       hasOrderedNano,
+      featureReferralProgramMobile?.enabled,
+      featureReferralProgramMobile?.params?.path,
     ],
   );
 

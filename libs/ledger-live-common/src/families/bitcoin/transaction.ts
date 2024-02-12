@@ -9,7 +9,7 @@ import type {
   BitcoinAccount,
 } from "./types";
 import { bitcoinPickingStrategy } from "./types";
-import { getEnv } from "../../env";
+import { getEnv } from "@ledgerhq/live-env";
 import {
   formatTransactionStatusCommon,
   fromTransactionCommonRaw,
@@ -26,10 +26,10 @@ import {
   toBitcoinInputRaw,
   toBitcoinOutputRaw,
 } from "./serialization";
-import { formatInput, formatOutput } from "./account";
+import { formatInput, formatOutput } from "./formatters";
 
 const fromFeeItemsRaw = (fir: FeeItemsRaw): FeeItems => ({
-  items: fir.items.map((fi) => ({
+  items: fir.items.map(fi => ({
     key: fi.key,
     speed: fi.speed,
     feePerByte: new BigNumber(fi.feePerByte),
@@ -38,7 +38,7 @@ const fromFeeItemsRaw = (fir: FeeItemsRaw): FeeItems => ({
 });
 
 const toFeeItemsRaw = (fir: FeeItems): FeeItemsRaw => ({
-  items: fir.items.map((fi) => ({
+  items: fir.items.map(fi => ({
     key: fi.key,
     speed: fi.speed,
     feePerByte: fi.feePerByte.toString(),
@@ -80,16 +80,12 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
   };
 };
 
-const fromTransactionStatusRaw = (
-  tr: TransactionStatusRaw
-): TransactionStatus => {
+const fromTransactionStatusRaw = (tr: TransactionStatusRaw): TransactionStatus => {
   const common = fromTransactionStatusRawCommon(tr);
   return {
     ...common,
     txInputs: tr.txInputs ? tr.txInputs.map(fromBitcoinInputRaw) : undefined,
-    txOutputs: tr.txOutputs
-      ? tr.txOutputs.map(fromBitcoinOutputRaw)
-      : undefined,
+    txOutputs: tr.txOutputs ? tr.txOutputs.map(fromBitcoinOutputRaw) : undefined,
     opReturnData: tr.opReturnData,
   };
 };
@@ -107,7 +103,7 @@ const toTransactionStatusRaw = (t: TransactionStatus): TransactionStatusRaw => {
 export const formatTransactionStatus = (
   t: Transaction,
   ts: TransactionStatus,
-  mainAccount: Account
+  mainAccount: Account,
 ): string => {
   let str = "";
   const txInputs = ts.txInputs || [];
@@ -118,7 +114,7 @@ export const formatTransactionStatus = (
     `\nTX INPUTS (${txInputs.length}):\n` +
     txInputs
       .slice(0, displayAll ? txInputs.length : n)
-      .map((o) => formatInput(mainAccount as BitcoinAccount, o))
+      .map(o => formatInput(mainAccount as BitcoinAccount, o))
       .join("\n");
 
   if (!displayAll) {
@@ -127,9 +123,7 @@ export const formatTransactionStatus = (
 
   str +=
     `\nTX OUTPUTS (${txOutputs.length}):\n` +
-    txOutputs
-      .map((o) => formatOutput(mainAccount as BitcoinAccount, o))
-      .join("\n");
+    txOutputs.map(o => formatOutput(mainAccount as BitcoinAccount, o)).join("\n");
 
   str += formatTransactionStatusCommon(t, ts, mainAccount);
 
@@ -142,11 +136,11 @@ const formatNetworkInfo = (
         feeItems: FeeItems;
       }
     | null
-    | undefined
+    | undefined,
 ) => {
   if (!networkInfo) return "network info not loaded";
   return `network fees: ${networkInfo.feeItems.items
-    .map((i) => i.key + "=" + i.feePerByte.toString())
+    .map(i => i.key + "=" + i.feePerByte.toString())
     .join(", ")}`;
 };
 
@@ -164,20 +158,18 @@ SEND ${
         })
   }
 TO ${t.recipient}
-with feePerByte=${
-    t.feePerByte ? t.feePerByte.toString() : "?"
-  } (${formatNetworkInfo(t.networkInfo)})
+with feePerByte=${t.feePerByte ? t.feePerByte.toString() : "?"} (${formatNetworkInfo(
+    t.networkInfo,
+  )})
 ${[
-  Object.keys(bitcoinPickingStrategy).find(
-    (k) => bitcoinPickingStrategy[k] === strategy
-  ),
+  Object.keys(bitcoinPickingStrategy).find(k => bitcoinPickingStrategy[k] === strategy),
   "pick-unconfirmed",
   t.rbf && "RBF-enabled",
 ]
   .filter(Boolean)
   .join(" ")}${excludeUTXOs
     .slice(0, displayAll ? excludeUTXOs.length : n)
-    .map((utxo) => `\nexclude ${utxo.hash} @${utxo.outputIndex}`)
+    .map(utxo => `\nexclude ${utxo.hash} @${utxo.outputIndex}`)
     .join("")}`;
 };
 

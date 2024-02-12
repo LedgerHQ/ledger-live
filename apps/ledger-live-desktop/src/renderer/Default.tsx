@@ -1,27 +1,12 @@
-import React, { useEffect } from "react";
+import React, { useEffect, lazy, Suspense } from "react";
 import styled from "styled-components";
 import { ipcRenderer } from "electron";
 import { Redirect, Route, Switch, useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import TrackAppStart from "~/renderer/components/TrackAppStart";
+import { LiveApp } from "~/renderer/screens/platform";
 import { BridgeSyncProvider } from "~/renderer/bridge/BridgeSyncContext";
 import { SyncNewAccounts } from "~/renderer/bridge/SyncNewAccounts";
-import Dashboard from "~/renderer/screens/dashboard";
-import Settings from "~/renderer/screens/settings";
-import Accounts from "~/renderer/screens/accounts";
-import Card from "~/renderer/screens/card";
-import Manager from "~/renderer/screens/manager";
-import Exchange from "~/renderer/screens/exchange";
-import Earn from "./screens/earn";
-import Swap2 from "~/renderer/screens/exchange/Swap2";
-import USBTroubleshooting from "~/renderer/screens/USBTroubleshooting";
-import Account from "~/renderer/screens/account";
-import Asset from "~/renderer/screens/asset";
-import PlatformCatalog from "~/renderer/screens/platform";
-import PlatformApp from "~/renderer/screens/platform/App";
-import NFTGallery from "~/renderer/screens/nft/Gallery";
-import NFTCollection from "~/renderer/screens/nft/Gallery/Collection";
 import Box from "~/renderer/components/Box/Box";
 import { useListenToHidDevices } from "./hooks/useListenToHidDevices";
 import ExportLogsButton from "~/renderer/components/ExportLogsButton";
@@ -51,33 +36,93 @@ import { ToastOverlay } from "~/renderer/components/ToastOverlay";
 import Drawer from "~/renderer/drawers/Drawer";
 import UpdateBanner from "~/renderer/components/Updater/Banner";
 import FirmwareUpdateBanner from "~/renderer/components/FirmwareUpdateBanner";
-import Onboarding from "~/renderer/components/Onboarding";
-import PostOnboardingScreen from "~/renderer/components/PostOnboardingScreen";
+import VaultSignerBanner from "~/renderer/components/VaultSignerBanner";
 import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
-import Market from "~/renderer/screens/market";
-import MarketCoinScreen from "~/renderer/screens/market/MarketCoinScreen";
-import Learn from "~/renderer/screens/learn";
-import { useProviders } from "~/renderer/screens/exchange/Swap2/Form";
-import WelcomeScreenSettings from "~/renderer/screens/settings/WelcomeScreenSettings";
-import SyncOnboarding from "./components/SyncOnboarding";
-import RecoverPlayer from "~/renderer/screens/recover/Player";
+import { updateIdentify } from "./analytics/segment";
+import { useFeature, FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
+import { enableListAppsV2 } from "@ledgerhq/live-common/apps/hw";
+import {
+  useFetchCurrencyAll,
+  useFetchCurrencyFrom,
+} from "@ledgerhq/live-common/exchange/swap/hooks/index";
+import { Flex, InfiniteLoader } from "@ledgerhq/react-ui";
+import useAccountsWithFundsListener from "@ledgerhq/live-common/hooks/useAccountsWithFundsListener";
+import { accountsSelector } from "./reducers/accounts";
+
+const PlatformCatalog = lazy(() => import("~/renderer/screens/platform"));
+const Dashboard = lazy(() => import("~/renderer/screens/dashboard"));
+const Settings = lazy(() => import("~/renderer/screens/settings"));
+const Accounts = lazy(() => import("~/renderer/screens/accounts"));
+const Card = lazy(() => import("~/renderer/screens/card"));
+const Manager = lazy(() => import("~/renderer/screens/manager"));
+const Exchange = lazy(() => import("~/renderer/screens/exchange"));
+const Earn = lazy(() => import("~/renderer/screens/earn"));
+const SwapWeb = lazy(() => import("~/renderer/screens/swapWeb"));
+const Swap2 = lazy(() => import("~/renderer/screens/exchange/Swap2"));
+
+const Market = lazy(() => import("~/renderer/screens/market"));
+const MarketCoinScreen = lazy(() => import("~/renderer/screens/market/MarketCoinScreen"));
+const Learn = lazy(() => import("~/renderer/screens/learn"));
+const WelcomeScreenSettings = lazy(
+  () => import("~/renderer/screens/settings/WelcomeScreenSettings"),
+);
+const SyncOnboarding = lazy(() => import("./components/SyncOnboarding"));
+const RecoverPlayer = lazy(() => import("~/renderer/screens/recover/Player"));
+
+const NFTGallery = lazy(() => import("~/renderer/screens/nft/Gallery"));
+const NFTCollection = lazy(() => import("~/renderer/screens/nft/Gallery/Collection"));
+const RecoverRestore = lazy(() => import("~/renderer/components/RecoverRestore"));
+const Onboarding = lazy(() => import("~/renderer/components/Onboarding"));
+const PostOnboardingScreen = lazy(() => import("~/renderer/components/PostOnboardingScreen"));
+const USBTroubleshooting = lazy(() => import("~/renderer/screens/USBTroubleshooting"));
+const Asset = lazy(() => import("~/renderer/screens/asset"));
+const Account = lazy(() => import("~/renderer/screens/account"));
+
+const LoaderWrapper = styled.div`
+  padding: 24px;
+  align-self: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+`;
+
+const Fallback = () => (
+  <LoaderWrapper>
+    <Flex alignItems="center" justifyContent="center" borderRadius={9999} size={60} mb={5}>
+      <InfiniteLoader size={58} />
+    </Flex>
+  </LoaderWrapper>
+);
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+// eslint-disable-next-line react/display-name
+const withSuspense = Component => props => (
+  <Suspense fallback={<Fallback />}>
+    <Component {...props} />
+  </Suspense>
+);
 
 // in order to test sentry integration, we need the ability to test it out.
 const LetThisCrashForCrashTest = () => {
   throw new Error("CrashTestRendering");
 };
+
 const LetMainSendCrashTest = () => {
   useEffect(() => {
     ipcRenderer.send("mainCrashTest");
   }, []);
   return null;
 };
+
 const LetInternalSendCrashTest = () => {
   useEffect(() => {
     ipcRenderer.send("internalCrashTest");
   }, []);
   return null;
 };
+
 export const TopBannerContainer = styled.div`
   position: sticky;
   top: 0;
@@ -86,6 +131,7 @@ export const TopBannerContainer = styled.div`
     display: none;
   }
 `;
+
 const NightlyLayerR = () => {
   const children = [];
   const w = 200;
@@ -127,21 +173,32 @@ const NightlyLayerR = () => {
     </div>
   );
 };
+
 const NightlyLayer = React.memo(NightlyLayerR);
 
 export default function Default() {
   const history = useHistory();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
+  const accounts = useSelector(accountsSelector);
 
+  useAccountsWithFundsListener(accounts, updateIdentify);
   useListenToHidDevices();
   useDeeplink();
   useUSBTroubleshooting();
-  useProviders(); // prefetch data from swap providers here
+  useFetchCurrencyAll();
+  useFetchCurrencyFrom();
+
+  const listAppsV2 = useFeature("listAppsV2minor1");
+  useEffect(() => {
+    if (!listAppsV2) return;
+    enableListAppsV2(listAppsV2.enabled);
+  }, [listAppsV2]);
 
   useEffect(() => {
     if (!hasCompletedOnboarding) {
       history.push("/onboarding");
     }
+    updateIdentify();
   }, [history, hasCompletedOnboarding]);
   return (
     <>
@@ -166,23 +223,38 @@ export default function Default() {
               <DisableTransactionBroadcastWarning />
             ) : null}
             <Switch>
-              <Route path="/onboarding" component={Onboarding} />
-              <Route path="/sync-onboarding" component={SyncOnboarding} />
               <Route
-                path="/post-onboarding"
+                path="/onboarding"
                 render={() => (
                   <>
-                    <PostOnboardingScreen />
+                    <Suspense fallback={<Fallback />}>
+                      <Onboarding />
+                    </Suspense>
                     <Drawer />
                   </>
                 )}
               />
+              <Route path="/sync-onboarding" render={withSuspense(SyncOnboarding)} />
+              <Route
+                path="/post-onboarding"
+                render={() => (
+                  <>
+                    <Suspense fallback={<Fallback />}>
+                      <PostOnboardingScreen />
+                    </Suspense>
+                    <Drawer />
+                  </>
+                )}
+              />
+              <Route path="/recover-restore" render={withSuspense(RecoverRestore)} />
 
               <Route path="/USBTroubleshooting">
-                <USBTroubleshooting onboarding={!hasCompletedOnboarding} />
+                <Suspense fallback={<Fallback />}>
+                  <USBTroubleshooting onboarding={!hasCompletedOnboarding} />
+                </Suspense>
               </Route>
               {!hasCompletedOnboarding ? (
-                <Route path="/settings" component={WelcomeScreenSettings} />
+                <Route path="/settings" render={withSuspense(WelcomeScreenSettings)} />
               ) : (
                 <Route>
                   <Switch>
@@ -202,9 +274,9 @@ export default function Default() {
                           height: "100%",
                         }}
                       >
-                        <FeatureToggle feature="protectServicesDesktop">
+                        <FeatureToggle featureId="protectServicesDesktop">
                           <Switch>
-                            <Route path="/recover/:appId" component={RecoverPlayer} />
+                            <Route path="/recover/:appId" render={withSuspense(RecoverPlayer)} />
                           </Switch>
                         </FeatureToggle>
                         <MainSideBar />
@@ -212,35 +284,40 @@ export default function Default() {
                           <TopBannerContainer>
                             <UpdateBanner />
                             <FirmwareUpdateBanner />
+                            <VaultSignerBanner />
                           </TopBannerContainer>
                           <Switch>
-                            <Route path="/" exact component={Dashboard} />
-                            <Route path="/settings" component={Settings} />
-                            <Route path="/accounts" component={Accounts} />
-                            <Route path="/card" component={Card} />
+                            <Route path="/" exact render={withSuspense(Dashboard)} />
+                            <Route path="/settings" render={withSuspense(Settings)} />
+                            <Route path="/accounts" render={withSuspense(Accounts)} />
+                            <Route path="/card" render={withSuspense(Card)} />
                             <Redirect from="/manager/reload" to="/manager" />
-                            <Route path="/manager" component={Manager} />
-                            <Route path="/platform" component={PlatformCatalog} exact />
-                            <Route path="/platform/:appId?" component={PlatformApp} />
-                            <Route path="/earn" component={Earn} />
-                            <Route path="/exchange" component={Exchange} />
+                            <Route path="/manager" render={withSuspense(Manager)} />
+                            <Route path="/platform" render={withSuspense(PlatformCatalog)} exact />
+                            <Route path="/platform/:appId?" component={LiveApp} />
+                            <Route path="/earn" render={withSuspense(Earn)} />
+                            <Route exact path="/exchange/:appId?" render={withSuspense(Exchange)} />
                             <Route
                               exact
                               path="/account/:id/nft-collection"
-                              component={NFTGallery}
+                              render={withSuspense(NFTGallery)}
                             />
+                            <Route path="/swap-web" render={withSuspense(SwapWeb)} />
                             <Route
                               path="/account/:id/nft-collection/:collectionAddress?"
-                              component={NFTCollection}
+                              render={withSuspense(NFTCollection)}
                             />
-                            <Route path="/account/:parentId/:id" component={Account} />
-                            <Route path="/account/:id" component={Account} />
-                            <Route path="/asset/:assetId+" component={Asset} />
-                            <Route path="/swap" component={Swap2} />
-                            <Route path="/market/:currencyId" component={MarketCoinScreen} />
-                            <Route path="/market" component={Market} />
-                            <FeatureToggle feature="learn">
-                              <Route path="/learn" component={Learn} />
+                            <Route path="/account/:parentId/:id" render={withSuspense(Account)} />
+                            <Route path="/account/:id" render={withSuspense(Account)} />
+                            <Route path="/asset/:assetId+" render={withSuspense(Asset)} />
+                            <Route path="/swap" render={withSuspense(Swap2)} />
+                            <Route
+                              path="/market/:currencyId"
+                              render={withSuspense(MarketCoinScreen)}
+                            />
+                            <Route path="/market" render={withSuspense(Market)} />
+                            <FeatureToggle featureId="learn">
+                              <Route path="/learn" render={withSuspense(Learn)} />
                             </FeatureToggle>
                           </Switch>
                         </Page>

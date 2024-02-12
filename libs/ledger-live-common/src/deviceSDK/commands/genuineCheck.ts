@@ -3,12 +3,8 @@ import URL from "url";
 import Transport from "@ledgerhq/hw-transport";
 import type { DeviceInfo, SocketEvent } from "@ledgerhq/types-live";
 import { version as livecommonversion } from "../../../package.json";
-import { getEnv } from "../../env";
-import {
-  createMockSocket,
-  resultMock,
-  secureChannelMock,
-} from "../../socket/socket.mock";
+import { getEnv } from "@ledgerhq/live-env";
+import { createMockSocket, resultMock, secureChannelMock } from "../../socket/socket.mock";
 import { log } from "@ledgerhq/logs";
 import { createDeviceSocket } from "../../socket";
 import { map } from "rxjs/operators";
@@ -23,7 +19,7 @@ export type GenuineCheckCommandEvent = SocketEvent;
 
 export function genuineCheckCommand(
   transport: Transport,
-  { targetId, perso }: GenuineCheckCommandRequest
+  { targetId, perso }: GenuineCheckCommandRequest,
 ): Observable<GenuineCheckCommandEvent> {
   if (getEnv("MOCK")) {
     return createMockSocket(secureChannelMock(false), resultMock("0000"));
@@ -44,7 +40,7 @@ export function genuineCheckCommand(
       },
     }),
   }).pipe(
-    map((e) => {
+    map(e => {
       if (e.type === "result") {
         return {
           type: "result",
@@ -53,6 +49,6 @@ export function genuineCheckCommand(
       }
 
       return e;
-    })
+    }),
   );
 }

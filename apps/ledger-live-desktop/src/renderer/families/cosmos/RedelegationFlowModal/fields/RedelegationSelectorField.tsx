@@ -1,8 +1,11 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useCosmosFamilyDelegationsQuerySelector } from "@ledgerhq/live-common/families/cosmos/react";
-import { CosmosMappedDelegation, Transaction } from "@ledgerhq/live-common/families/cosmos/types";
-import { Account } from "@ledgerhq/types-live";
+import {
+  CosmosAccount,
+  CosmosMappedDelegation,
+  Transaction,
+} from "@ledgerhq/live-common/families/cosmos/types";
 import Box from "~/renderer/components/Box";
 import CosmosFamilyLedgerValidatorIcon from "~/renderer/families/cosmos/shared/components/CosmosFamilyLedgerValidatorIcon";
 import Label from "~/renderer/components/Label";
@@ -27,9 +30,9 @@ const renderItem = ({
   );
 };
 type RedelegationSelectorFieldProps = {
-  account: Account;
+  account: CosmosAccount;
   transaction: Transaction;
-  onChange: (delegation: CosmosMappedDelegation) => void;
+  onChange: (delegation?: CosmosMappedDelegation | null) => void;
 };
 export default function RedelegationSelectorField({
   account,
@@ -47,12 +50,14 @@ export default function RedelegationSelectorField({
       <Select
         value={value}
         options={options}
-        getOptionValue={({ address }) => address}
+        getOptionValue={({ validator, validatorAddress }) =>
+          validator?.validatorAddress || validatorAddress
+        }
         renderValue={renderItem}
         renderOption={renderItem}
         onInputChange={setQuery}
         inputValue={query}
-        filterOption={false}
+        filterOption={() => false}
         isDisabled={options.length <= 1}
         placeholder={t("common.selectAccount")}
         noOptionsMessage={({ inputValue }) =>

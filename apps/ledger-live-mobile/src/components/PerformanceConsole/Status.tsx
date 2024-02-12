@@ -7,8 +7,7 @@ import usePerformanceReportsLog, {
 
 const Status = () => {
   const { colors } = useTheme();
-  const { lastCompleteRenderPassReport, timeToBootJs } =
-    usePerformanceReportsLog();
+  const { lastCompleteRenderPassReport, timeToBootJs } = usePerformanceReportsLog();
 
   const navigationVitalsStatusStyle = getNavigationVitalsStatusStyle(
     lastCompleteRenderPassReport,
@@ -49,8 +48,7 @@ const Status = () => {
 
       <Flex>
         <Text variant={"small"}>
-          RN-performance timeToBootJs :{" "}
-          <Text fontWeight={"semiBold"}>{timeToBootJs} ms</Text>
+          RN-performance timeToBootJs : <Text fontWeight={"semiBold"}>{timeToBootJs} ms</Text>
         </Text>
       </Flex>
     </>

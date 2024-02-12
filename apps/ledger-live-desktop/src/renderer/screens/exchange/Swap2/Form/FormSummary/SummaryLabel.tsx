@@ -3,6 +3,7 @@ import styled from "styled-components";
 import Text from "~/renderer/components/Text";
 import Tooltip from "~/renderer/components/Tooltip";
 import IconInfoCircle from "~/renderer/icons/InfoCircle";
+
 const Container = styled.div`
   display: flex;
   align-items: end;
@@ -19,9 +20,11 @@ const Label = styled(Text).attrs(() => ({
     text-transform: uppercase;
   }
 `;
+
 type DetailsProps = {
   details?: string;
 };
+
 const Details = ({ details }: DetailsProps) => {
   if (!details) return null;
   return (
@@ -42,4 +45,5 @@ const SummaryLabel = ({ label, details }: { label: string; details?: string }) =
     </Container>
   );
 };
+
 export default SummaryLabel;

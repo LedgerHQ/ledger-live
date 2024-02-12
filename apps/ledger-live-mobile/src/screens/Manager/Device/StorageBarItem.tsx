@@ -21,7 +21,7 @@ const StorageBarItem = (props: FlexBoxProps & { installing: boolean }) => {
     return {
       opacity: withRepeat(
         withTiming(opacityValue, { duration: 800 }),
-        -1,
+        installing ? -1 : undefined,
         true,
       ),
     };

@@ -25,7 +25,7 @@ export type UseGenuineCheckArgs = {
 
 export type UseGenuineCheckDependencies = {
   getGenuineCheckFromDeviceId?: (
-    args: GetGenuineCheckFromDeviceIdArgs
+    args: GetGenuineCheckFromDeviceIdArgs,
   ) => GetGenuineCheckFromDeviceIdOutput;
 };
 
@@ -57,8 +57,7 @@ export const useGenuineCheck = ({
   isHookEnabled = true,
   deviceId,
   lockedDeviceTimeoutMs = 1000,
-}: UseGenuineCheckArgs &
-  UseGenuineCheckDependencies): UseGenuineCheckResult => {
+}: UseGenuineCheckArgs & UseGenuineCheckDependencies): UseGenuineCheckResult => {
   const [genuineState, setGenuineState] = useState<GenuineState>("unchecked");
   const [devicePermissionState, setDevicePermissionState] =
     useState<DevicePermissionState>("unrequested");
@@ -79,10 +78,7 @@ export const useGenuineCheck = ({
       deviceId,
       lockedDeviceTimeoutMs,
     }).subscribe({
-      next: ({
-        socketEvent,
-        lockedDevice,
-      }: GetGenuineCheckFromDeviceIdResult) => {
+      next: ({ socketEvent, lockedDevice }: GetGenuineCheckFromDeviceIdResult) => {
         if (socketEvent) {
           switch (socketEvent.type) {
             case "device-permission-requested":
@@ -123,12 +119,7 @@ export const useGenuineCheck = ({
     return () => {
       sub.unsubscribe();
     };
-  }, [
-    isHookEnabled,
-    deviceId,
-    lockedDeviceTimeoutMs,
-    getGenuineCheckFromDeviceId,
-  ]);
+  }, [isHookEnabled, deviceId, lockedDeviceTimeoutMs, getGenuineCheckFromDeviceId]);
 
   return {
     genuineState,

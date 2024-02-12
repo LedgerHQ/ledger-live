@@ -10,6 +10,8 @@ import Text from "~/renderer/components/Text";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
 import { localeSelector } from "~/renderer/reducers/settings";
+import { TronAccount } from "@ledgerhq/live-common/families/tron/types";
+import { SubAccount } from "@ledgerhq/types-live";
 const Wrapper = styled(Box).attrs(() => ({
   horizontal: true,
   mt: 4,
@@ -44,14 +46,15 @@ const AmountValue = styled(Text).attrs(() => ({
   ff: "Inter|SemiBold",
   color: "palette.text.shade100",
 }))``;
+
 type Props = {
-  account: any;
-  countervalue: any;
+  account: TronAccount | SubAccount;
 };
 const AccountBalanceSummaryFooter = ({ account }: Props) => {
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
-  if (!account.tronResources) return null;
+  if (account.type !== "Account") return null;
+  const { tronResources } = account;
   const formatConfig = {
     disableRounding: true,
     alwaysShowSign: false,
@@ -59,25 +62,37 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
     discreet,
     locale,
   };
-  const {
-    frozen: {
-      bandwidth: { amount: bandwidthAmount } = {},
-      energy: { amount: energyAmount } = {},
-    } = {},
-    energy,
-    bandwidth: { freeUsed, freeLimit, gainedUsed, gainedLimit } = {},
-  } = account.tronResources;
+  const energy = tronResources.energy;
+  const frozenBandwidthAmount = tronResources.frozen.bandwidth?.amount;
+  const frozenEnergyAmount = tronResources.frozen.energy?.amount;
+  const delegatedFrozenBandwidthAmount = tronResources.delegatedFrozen.bandwidth?.amount;
+  const delegatedFrozenEnergyAmount = tronResources.delegatedFrozen.energy?.amount;
+  const unfrozenBandwidthAmount = tronResources.unFrozen.bandwidth
+    ? tronResources.unFrozen.bandwidth.reduce((accum, cur) => {
+        return accum.plus(cur.amount);
+      }, new BigNumber(0))
+    : new BigNumber(0);
+  const unfrozenEnergyAmount = tronResources.unFrozen.energy
+    ? tronResources.unFrozen.energy.reduce((accum, cur) => {
+        return accum.plus(cur.amount);
+      }, new BigNumber(0))
+    : new BigNumber(0);
+
+  const { freeUsed, freeLimit, gainedUsed, gainedLimit } = tronResources.bandwidth;
+
   const spendableBalance = formatCurrencyUnit(account.unit, account.spendableBalance, formatConfig);
   const frozenAmount = formatCurrencyUnit(
     account.unit,
-    BigNumber(bandwidthAmount || 0).plus(BigNumber(energyAmount || 0)),
+    BigNumber(frozenBandwidthAmount || 0)
+      .plus(BigNumber(frozenEnergyAmount || 0))
+      .plus(BigNumber(delegatedFrozenBandwidthAmount || 0))
+      .plus(BigNumber(delegatedFrozenEnergyAmount || 0))
+      .plus(BigNumber(unfrozenBandwidthAmount))
+      .plus(BigNumber(unfrozenEnergyAmount)),
     formatConfig,
   );
   const formatedEnergy = energy && energy.gt(0) ? energy : null;
-  const formatedBandwidth = freeLimit
-    .plus(gainedLimit)
-    .minus(gainedUsed)
-    .minus(freeUsed);
+  const formatedBandwidth = freeLimit.plus(gainedLimit).minus(gainedUsed).minus(freeUsed);
   return (
     <Wrapper>
       <BalanceDetail>

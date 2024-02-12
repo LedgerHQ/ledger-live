@@ -4,7 +4,7 @@ import { action } from "@storybook/addon-actions";
 import { ComponentStory } from "@storybook/react-native";
 import BottomDrawer from "../../../../src/components/Layout/Modals/BottomDrawer";
 import { Alert, Text } from "../../../../src/components";
-import { Icons } from "../../../../src/assets";
+import { IconsLegacy } from "../../../../src/assets";
 
 export default {
   title: "Layout/Drawer/Bottom",
@@ -31,7 +31,7 @@ const Template = (args: typeof BaseStoryArgs & typeof WithoutStoryArgs) => {
           ? {}
           : {
               ...args,
-              Icon: Icons.TrashMedium,
+              Icon: IconsLegacy.TrashMedium,
             })}
         noCloseButton={args.noCloseButton}
       >
@@ -78,7 +78,7 @@ export const ScrollViewStory = (args: any) => {
         title={args.title}
         description={args.description}
         subtitle={args.subtitle}
-        Icon={Icons.TrashMedium}
+        Icon={IconsLegacy.TrashMedium}
       >
         <ScrollView>
           <Text>

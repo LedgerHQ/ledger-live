@@ -11,7 +11,7 @@ function DeviceActionProgress({ progress }: Props) {
       progress={progress}
       infinite={!progress || progress === 1}
       radius={32}
-      strokeWidth={8}
+      strokeWidth={6}
     >
       <Text color="primary.c80" variant="paragraph" fontWeight="semiBold">
         {progress && progress < 1 ? `${Math.round(progress * 100)}%` : ""}

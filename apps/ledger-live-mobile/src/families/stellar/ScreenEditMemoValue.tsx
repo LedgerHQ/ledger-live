@@ -7,32 +7,20 @@ import { useTranslation } from "react-i18next";
 import i18next from "i18next";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useIsFocused, useTheme } from "@react-navigation/native";
-import KeyboardView from "../../components/KeyboardView";
-import Button from "../../components/Button";
-import { ScreenName } from "../../const";
-import { accountScreenSelector } from "../../reducers/accounts";
-import TextInput from "../../components/FocusedTextInput";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
-import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
-import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
-import { SwapFormNavigatorParamList } from "../../components/RootNavigator/types/SwapFormNavigator";
+import KeyboardView from "~/components/KeyboardView";
+import Button from "~/components/Button";
+import { ScreenName } from "~/const";
+import { accountScreenSelector } from "~/reducers/accounts";
+import TextInput from "~/components/FocusedTextInput";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
+import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
+import { SwapFormNavigatorParamList } from "~/components/RootNavigator/types/SwapFormNavigator";
 
 type NavigationProps = BaseComposite<
-  | StackNavigatorProps<
-      SendFundsNavigatorStackParamList,
-      ScreenName.StellarEditMemoValue
-    >
-  | StackNavigatorProps<
-      SignTransactionNavigatorParamList,
-      ScreenName.StellarEditMemoType
-    >
-  | StackNavigatorProps<
-      SwapFormNavigatorParamList,
-      ScreenName.StellarEditMemoType
-    >
+  | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.StellarEditMemoValue>
+  | StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.StellarEditMemoType>
+  | StackNavigatorProps<SwapFormNavigatorParamList, ScreenName.StellarEditMemoType>
 >;
 
 function StellarEditMemoValue({ navigation, route }: NavigationProps) {
@@ -41,9 +29,7 @@ function StellarEditMemoValue({ navigation, route }: NavigationProps) {
   const { t } = useTranslation();
   const { account } = useSelector(accountScreenSelector(route));
   invariant(account, "account is required");
-  const [memoValue, setMemoValue] = useState(
-    route.params.transaction.memoValue,
-  );
+  const [memoValue, setMemoValue] = useState(route.params.transaction.memoValue);
   const onChangeMemoValue = useCallback((str: string) => {
     setMemoValue(str);
   }, []);
@@ -69,10 +55,7 @@ function StellarEditMemoValue({ navigation, route }: NavigationProps) {
           },
         ]}
       >
-        <ScrollView
-          contentContainerStyle={styles.root}
-          keyboardShouldPersistTaps="always"
-        >
+        <ScrollView contentContainerStyle={styles.root} keyboardShouldPersistTaps="always">
           {isFocused && (
             <TextInput
               allowFontScaling={false}

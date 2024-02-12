@@ -54,10 +54,10 @@ const Progression = styled(Bar).attrs<{
     : {
         transformOrigin: p.infinite ? "center" : "left",
         animation: css`
-      ${p.timing}ms ${p.infinite ? infiniteAnimation : fillInAnimation} ${
-          p.infinite ? "infinite" : "ease-out forwards"
-        }
-    `,
+          ${p.timing}ms ${p.infinite ? infiniteAnimation : fillInAnimation} ${p.infinite
+            ? "infinite"
+            : "ease-out forwards"}
+        `,
       },
 )<{
   infinite?: boolean;

@@ -3,7 +3,7 @@ import { Trans } from "react-i18next";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import styled from "styled-components";
-import { listSubAccounts } from "@ledgerhq/live-common/account/helpers";
+import { getAccountCurrency, listSubAccounts } from "@ledgerhq/live-common/account/helpers";
 import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import { Account, TokenAccount, AccountLike, PortfolioRange } from "@ledgerhq/types-live";
 import Box from "~/renderer/components/Box";
@@ -18,9 +18,12 @@ import Countervalue from "./Countervalue";
 import Delta from "./Delta";
 import Header from "./Header";
 import Star from "~/renderer/components/Stars/Star";
-import { hideEmptyTokenAccountsSelector } from "~/renderer/reducers/settings";
+import {
+  blacklistedTokenIdsSelector,
+  hideEmptyTokenAccountsSelector,
+} from "~/renderer/reducers/settings";
 import Button from "~/renderer/components/Button";
-import perFamilyTokenList from "~/renderer/generated/TokenList";
+import { getLLDCoinFamily } from "~/renderer/families";
 
 const Row = styled(Box)`
   background: ${p => p.theme.colors.palette.background.paper};
@@ -120,6 +123,7 @@ type Props = {
   parentAccount?: Account | null;
   disableRounding?: boolean;
   hideEmptyTokens?: boolean;
+  blacklistedTokenIds: string[];
   onClick: (b: AccountLike, a?: Account | null) => void;
   hidden?: boolean;
   range: PortfolioRange;
@@ -188,6 +192,7 @@ class AccountRowItem extends PureComponent<Props, State> {
       disableRounding,
       search,
       hideEmptyTokens,
+      blacklistedTokenIds,
     } = this.props;
     const { expanded } = this.state;
     let currency;
@@ -206,14 +211,15 @@ class AccountRowItem extends PureComponent<Props, State> {
       currency = account.currency;
       unit = account.unit;
       mainAccount = account;
-      tokens = listSubAccounts(account);
+      tokens = listSubAccounts(account).filter(
+        subAccount => !blacklistedTokenIds.includes(getAccountCurrency(subAccount).id),
+      );
       disabled = !matchesSearch(search, account);
       isToken = listTokenTypesForCryptoCurrency(currency).length > 0;
       if (tokens) tokens = tokens.filter(t => matchesSearch(search, t));
     }
     const showTokensIndicator = Boolean(tokens && tokens.length > 0 && !hidden);
-    const specific =
-      perFamilyTokenList[mainAccount.currency.family as keyof typeof perFamilyTokenList];
+    const specific = mainAccount ? getLLDCoinFamily(mainAccount.currency.family).tokenList : null;
     const hasSpecificTokenWording = specific?.hasSpecificTokenWording;
     const translationMap = isToken
       ? {
@@ -325,8 +331,8 @@ class AccountRowItem extends PureComponent<Props, State> {
 }
 const mapStateToProps = createStructuredSelector({
   hideEmptyTokenAccounts: hideEmptyTokenAccountsSelector,
+  blacklistedTokenIds: blacklistedTokenIdsSelector,
 });
-const ConnectedAccountRowItem: React.ComponentType<Props> = connect(mapStateToProps)(
-  AccountRowItem,
-);
+const ConnectedAccountRowItem: React.ComponentType<Props> =
+  connect(mapStateToProps)(AccountRowItem);
 export default ConnectedAccountRowItem;

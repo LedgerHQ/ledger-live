@@ -4,9 +4,9 @@ import { useTranslation } from "react-i18next";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "@react-navigation/native";
 
-import StepHeader from "../../../../../components/StepHeader";
-import { getStackNavigatorConfig } from "../../../../../navigation/navigatorConfig";
-import { ScreenName } from "../../../../../const";
+import StepHeader from "~/components/StepHeader";
+import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
+import { ScreenName } from "~/const";
 
 import EarnRewards from "./components/EarnRewards";
 import SetDelegation from "./components/SetDelegation";
@@ -15,8 +15,8 @@ import PickAmount from "./components/PickAmount";
 import ValidationError from "./components/ValidationError";
 import ValidationSuccess from "./components/ValidationSuccess";
 
-import SelectDevice from "../../../../../screens/SelectDevice";
-import ConnectDevice from "../../../../../screens/ConnectDevice";
+import SelectDevice from "~/screens/SelectDevice";
+import ConnectDevice from "~/screens/ConnectDevice";
 
 import type { ElrondDelegationFlowParamList } from "./types";
 
@@ -35,10 +35,7 @@ const Delegate = () => {
   const { t } = useTranslation();
   const { colors } = useTheme();
 
-  const stackNavigationConfig = useMemo(
-    () => getStackNavigatorConfig(colors, true),
-    [colors],
-  );
+  const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
 
   /*
    * Return the rendered component.
@@ -55,9 +52,7 @@ const Delegate = () => {
         name={ScreenName.ElrondDelegationStarted}
         component={EarnRewards}
         options={{
-          headerTitle: () => (
-            <StepHeader title={t("delegation.started.title")} />
-          ),
+          headerTitle: () => <StepHeader title={t("delegation.started.title")} />,
         }}
       />
 
@@ -83,9 +78,7 @@ const Delegate = () => {
         component={PickValidator}
         options={{
           gestureEnabled: false,
-          headerTitle: () => (
-            <StepHeader title={t("delegation.selectValidatorTitle")} />
-          ),
+          headerTitle: () => <StepHeader title={t("delegation.selectValidatorTitle")} />,
         }}
       />
 

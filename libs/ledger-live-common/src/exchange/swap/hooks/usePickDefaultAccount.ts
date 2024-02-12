@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { AccountLike } from "@ledgerhq/types-live";
-import { useCurrenciesByMarketcap } from "../../../currencies/sortByMarketcap";
+import { useCurrenciesByMarketcap } from "../../../currencies/hooks";
 import { listCryptoCurrencies, listTokens } from "../../../currencies";
 import { getAvailableAccountsById } from "../utils";
 
@@ -8,7 +8,7 @@ import { getAvailableAccountsById } from "../utils";
 export const usePickDefaultAccount = (
   accounts: (AccountLike & { disabled?: boolean })[],
   fromAccount: AccountLike | null | undefined,
-  setFromAccount: (account: AccountLike) => void
+  setFromAccount: (account: AccountLike) => void,
 ): void => {
   const list = [...listCryptoCurrencies(), ...listTokens()];
   const allCurrencies = useCurrenciesByMarketcap(list);
@@ -17,14 +17,13 @@ export const usePickDefaultAccount = (
     if (!fromAccount && allCurrencies.length > 0) {
       const defaultAccount: AccountLike | undefined = allCurrencies
         .map(({ id }) =>
-          getAvailableAccountsById(id, accounts).filter((account) =>
-            account.balance.gt(0)
-          )
+          getAvailableAccountsById(id, accounts).filter(account => account.balance.gt(0)),
         )
         .flat(1)
         .find(Boolean);
 
-      if (defaultAccount) setFromAccount(defaultAccount);
+      if (defaultAccount && defaultAccount?.id !== fromAccount?.["id"])
+        setFromAccount(defaultAccount);
     }
   }, [accounts, allCurrencies, fromAccount, setFromAccount]);
 };

@@ -4,7 +4,7 @@ export type StellarToken = [
   string, // assetType (note: only used in Receive asset message and always should be "Stellar")
   string, // name
   number, // precision
-  boolean // enableCountervalues
+  boolean, // enableCountervalues
 ];
 
 import tokens from "./stellar.json";

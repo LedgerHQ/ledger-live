@@ -14,17 +14,17 @@ const Bar = styled.div<{ on?: boolean; fill: string | number }>`
   height: 4px;
   border-radius: 2px;
   /* Disable left/right border radius to match the handler */
-  border-top-${(p) => (p.on ? "right" : "left")}-radius: 0;
-  border-bottom-${(p) => (p.on ? "right" : "left")}-radius: 0;
-  flex: ${(p) => p.fill};
-  background: ${(p) => (p.on ? p.theme.colors.neutral.c100 : p.theme.colors.neutral.c40)};
+  border-top-${p => (p.on ? "right" : "left")}-radius: 0;
+  border-bottom-${p => (p.on ? "right" : "left")}-radius: 0;
+  flex: ${p => p.fill};
+  background: ${p => (p.on ? p.theme.colors.neutral.c100 : p.theme.colors.neutral.c40)};
 `;
 
 const Handler = styled.div`
   transition: all 600ms linear;
   padding: 4px;
-  background: ${(p) => p.theme.colors.neutral.c100};
-  border-radius: ${(p) => `${p.theme.radii[1]}px`};
+  background: ${p => p.theme.colors.neutral.c100};
+  border-radius: ${p => `${p.theme.radii[1]}px`};
 
   display: flex;
   align-items: center;
@@ -38,8 +38,8 @@ const Handler = styled.div`
     width: 16px;
     justify-content: center;
     align-items: center;
-    color: ${(p) => p.theme.colors.neutral.c100};
-    background: ${(p) => p.theme.colors.neutral.c00};
+    color: ${p => p.theme.colors.neutral.c100};
+    background: ${p => p.theme.colors.neutral.c00};
   }
 `;
 

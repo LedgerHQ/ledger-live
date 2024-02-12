@@ -1,10 +1,14 @@
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-common/families/cosmos/react";
-import { CosmosDelegation, CosmosValidatorItem } from "@ledgerhq/live-common/families/cosmos/types";
-import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import {
+  CosmosDelegation,
+  CosmosValidatorItem,
+  TransactionStatus,
+} from "@ledgerhq/live-common/families/cosmos/types";
 import { Account } from "@ledgerhq/types-live";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { TFunction, Trans } from "react-i18next";
+import React, { useCallback, useMemo, useState } from "react";
+import { TFunction } from "i18next";
+import { Trans } from "react-i18next";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
 import ValidatorSearchInput from "~/renderer/components/Delegation/ValidatorSearchInput";
@@ -26,7 +30,10 @@ const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props
   const unit = getAccountUnit(account);
   const currencyId = account.currency.id;
   const validators = useLedgerFirstShuffledValidatorsCosmosFamily(currencyId, search);
-  const onSearch = useCallback(evt => setSearch(evt.target.value), [setSearch]);
+  const onSearch = useCallback(
+    (evt: React.ChangeEvent<HTMLInputElement>) => setSearch(evt.target.value),
+    [setSearch],
+  );
   const chosenValidator = useMemo(() => {
     return [validators.find(v => v.validatorAddress === chosenVoteAccAddr) || validators[0]];
   }, [validators, chosenVoteAccAddr]);
@@ -77,9 +84,9 @@ const ValidatorsFieldContainer = styled(Box)`
   border: 1px solid ${p => p.theme.colors.palette.divider};
   border-radius: 4px;
 `;
-const SeeAllButton: ThemedComponent<{
+const SeeAllButton = styled.div<{
   expanded: boolean;
-}> = styled.div`
+}>`
   display: flex;
   color: ${p => p.theme.colors.wallet};
   align-items: center;

@@ -1,19 +1,32 @@
 const currencyFamiliesRules = {
   files: ["src/**"],
-  excludedFiles: [
-    "src/generated/**",
-    "src/renderer/families/**",
-    "src/renderer/screens/lend/**", // FIXME lend screen should be migrated to ethereum family (if we don't sunset it)
-  ],
+  excludedFiles: ["**/families/generated.ts", "**/families/*/**"],
   rules: {
     "no-restricted-imports": [
       "error",
       {
         patterns: [
           {
-            group: ["**/families/**"],
+            group: ["**/families/*/**"],
             message:
-              "families files must not be imported directly. use the bridge or export through 'generated/' folder instead.",
+              "families files must not be imported directly. use the bridge or export them through the LLDCoinFamily interface instead.",
+          },
+        ],
+      },
+    ],
+  },
+};
+
+const livecommonRules = {
+  files: ["src/**"],
+  rules: {
+    "no-restricted-imports": [
+      "error",
+      {
+        patterns: [
+          {
+            group: ["@ledgerhq/live-common/lib/**", "@ledgerhq/live-common/lib-es/**"],
+            message: "Please remove the /lib import from live-common import.",
           },
         ],
       },
@@ -26,17 +39,9 @@ module.exports = {
     browser: true,
     es6: true,
     node: true,
-    "jest/globals": true,
   },
-  extends: [
-    "plugin:react/recommended",
-    "plugin:react-hooks/recommended",
-    "standard",
-    "plugin:prettier/recommended",
-    "plugin:jest/recommended",
-    "plugin:jest/style",
-    "plugin:json/recommended",
-  ],
+  plugins: ["react", "react-hooks"],
+  extends: ["plugin:react/recommended", "plugin:react-hooks/recommended"],
   globals: {
     __DEV__: "readonly",
     INDEX_URL: "readonly",
@@ -57,54 +62,51 @@ module.exports = {
     ecmaVersion: 2018,
     sourceType: "module",
   },
-  plugins: ["react", "react-hooks", "jest"],
   rules: {
-    "space-before-function-paren": 0,
-    "comma-dangle": 0,
-    "no-prototype-builtins": 0,
-    "promise/param-names": 0,
+    "no-prototype-builtins": "off",
+    "no-use-before-define": "off",
+    "promise/param-names": "off",
+    "react/prop-types": "off",
     "react-hooks/rules-of-hooks": "error", // Checks rules of Hooks
     "react-hooks/exhaustive-deps": "error", // Checks effect dependencies
-    "jest/no-done-callback": 0,
-    "react/jsx-filename-extension": "error",
-    "no-restricted-imports": ["error", { paths: ["lodash"] }],
+    "react/jsx-filename-extension": "off",
+    "space-before-function-paren": "off",
+    "@typescript-eslint/ban-types": "off", // FIXME make an error later
+    "@typescript-eslint/no-explicit-any": "error",
+    "@typescript-eslint/no-use-before-define": "off", // FIXME make an error later
+    "@typescript-eslint/no-non-null-assertion": "off", // Useful sometimes. Should not be abused.
+
+    // Ignore live-common for the moment because this rule does not work with subpath exports
+    // See: https://github.com/import-js/eslint-plugin-import/issues/1810
+    // "import/no-unresolved": [
+    //   "error",
+    //   { ignore: ["^@ledgerhq/live-common/.*", "^@ledgerhq/react-ui/.*"] },
+    // ],
   },
   overrides: [
+    currencyFamiliesRules,
+    livecommonRules,
     {
-      files: ["**/*.ts", "**/*.tsx"],
-      plugins: ["react", "react-hooks", "@typescript-eslint"],
+      files: ["tests/**/*.test.ts", "tests/**/*.test.tsx", "tests/**/*.ts", "tests/**/*.tsx"],
+      env: {
+        browser: true,
+        es6: true,
+        node: true,
+        "jest/globals": true,
+      },
+      plugins: ["react", "react-hooks", "jest"],
       extends: [
         "plugin:react/recommended",
         "plugin:react-hooks/recommended",
-        "standard",
         "plugin:prettier/recommended",
+        "plugin:json/recommended",
         "plugin:jest/recommended",
         "plugin:jest/style",
-        "plugin:@typescript-eslint/eslint-recommended",
-        "plugin:@typescript-eslint/recommended",
       ],
-      parser: "@typescript-eslint/parser",
       rules: {
-        "space-before-function-paren": 0,
-        "no-prototype-builtins": 0,
-        "promise/param-names": 0,
-        "react-hooks/rules-of-hooks": "error", // Checks rules of Hooks
-        "react-hooks/exhaustive-deps": "error", // Checks effect dependencies
-        "no-use-before-define": "off",
-        "@typescript-eslint/ban-types": 0, // FIXME make an error later
-        "@typescript-eslint/no-use-before-define": 0, // FIXME make an error later
-        "react/jsx-filename-extension": 0,
-        "@typescript-eslint/no-non-null-assertion": 0, // Useful sometimes. Should not be abused.
-
-        // Ignore live-common for the moment because this rule does not work with subpath exports
-        // See: https://github.com/import-js/eslint-plugin-import/issues/1810
-        // "import/no-unresolved": [
-        //   "error",
-        //   { ignore: ["^@ledgerhq/live-common/.*", "^@ledgerhq/react-ui/.*"] },
-        // ],
+        "@typescript-eslint/no-explicit-any": "warn",
       },
     },
-    currencyFamiliesRules,
   ],
   settings: {
     react: {

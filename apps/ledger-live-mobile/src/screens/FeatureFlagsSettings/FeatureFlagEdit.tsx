@@ -1,20 +1,27 @@
-import React, { useCallback, useState, useMemo } from "react";
+import React, { useCallback, useState, useMemo, useEffect } from "react";
 import { ScrollView } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
 import type { FeatureId, Feature } from "@ledgerhq/types-live";
 
-import { BaseInput, Text, Flex, Button, Switch } from "@ledgerhq/native-ui";
+import { Text, Flex, Button, Switch } from "@ledgerhq/native-ui";
 import { InputRenderRightContainer } from "@ledgerhq/native-ui/components/Form/Input/BaseInput/index";
-import Alert from "../../components/Alert";
+import { TextInput } from "react-native";
+import { useTheme } from "styled-components/native";
+
+const formatValue = (value: Feature) => {
+  return JSON.stringify(value, null, 2);
+};
 
 const FeatureFlagEdit: React.FC<{
   flagName: FeatureId;
   flagValue: Feature;
 }> = props => {
+  const { colors } = useTheme();
+  const featureFlagsProvider = useFeatureFlags();
+  const { t } = useTranslation();
   const { flagName, flagValue } = props;
   const [error, setError] = useState<Error | unknown | undefined>();
-  const [inputValue, setInputValue] = useState<string | undefined>(undefined);
 
   /**
    * pureValue is the value of the flag without the keys set programmatically
@@ -24,29 +31,34 @@ const FeatureFlagEdit: React.FC<{
     overriddenByEnv,
     overridesRemote,
     enabledOverriddenForCurrentLanguage,
-    enabledOverriddenForCurrentMobileVersion,
+    enabledOverriddenForCurrentVersion,
     ...pureValue
   } = flagValue || {};
 
-  const stringifiedPureValue = useMemo(
-    () => (pureValue ? JSON.stringify(pureValue) : undefined),
-    [pureValue],
-  );
+  const [featureFlagValue, setFeatureFlagValue] = useState<Feature>(pureValue);
+  const [inputValueStringified, setInputValueStringified] = useState(formatValue(pureValue));
 
-  const inputValueDefaulted = inputValue || stringifiedPureValue;
+  useEffect(() => {
+    if (formatValue(pureValue) !== formatValue(featureFlagValue)) {
+      setFeatureFlagValue(pureValue);
+      setInputValueStringified(formatValue(pureValue));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pureValue]);
 
-  const featureFlagsProvider = useFeatureFlags();
-
-  const { t } = useTranslation();
-
-  const handleInputChange = useCallback(value => {
-    setError(undefined);
-    setInputValue(value);
-  }, []);
+  const handleInputChange = (value: string) => {
+    try {
+      setInputValueStringified(value);
+      // If value is invalid or missing, JSON parse will fail and error will be set
+      JSON.parse(value);
+      setError(undefined);
+    } catch (err) {
+      setError("Bad Format");
+    }
+  };
 
   const handleRestoreFeature = useCallback(() => {
     setError(undefined);
-    setInputValue(undefined);
     featureFlagsProvider.resetFeature(flagName);
   }, [featureFlagsProvider, flagName]);
 
@@ -54,52 +66,67 @@ const FeatureFlagEdit: React.FC<{
     setError(undefined);
     try {
       // Nb if value is invalid or missing, JSON parse will fail
-      const newValue = inputValue ? JSON.parse(inputValue) : undefined;
+      const newValue = inputValueStringified ? JSON.parse(inputValueStringified) : undefined;
+      setFeatureFlagValue(newValue);
       featureFlagsProvider.overrideFeature(flagName, newValue);
     } catch (e) {
       setError(e);
     }
-  }, [inputValue, flagName, featureFlagsProvider]);
+  }, [inputValueStringified, flagName, featureFlagsProvider]);
 
   const isChecked = useMemo(() => {
-    if (!inputValueDefaulted) return false;
+    if (!featureFlagValue) return false;
     try {
-      return JSON.parse(inputValueDefaulted)?.enabled;
+      return featureFlagValue?.enabled;
     } catch (e) {
       return false;
     }
-  }, [inputValueDefaulted]);
+  }, [featureFlagValue]);
 
   const handleSwitchChange = useCallback(
-    enabled => {
-      featureFlagsProvider.overrideFeature(flagName, { ...flagValue, enabled });
+    (enabled: boolean) => {
+      const newValue = { ...featureFlagValue, enabled };
+      setFeatureFlagValue(newValue);
+      setInputValueStringified(formatValue(newValue));
+      featureFlagsProvider.overrideFeature(flagName, newValue);
     },
-    [featureFlagsProvider, flagName, flagValue],
+    [featureFlagsProvider, flagName, featureFlagValue],
   );
 
   return (
     <Flex>
+      <Text mb={2}>Edit here :</Text>
+      <TextInput
+        style={{
+          borderWidth: 1,
+          borderColor: error ? colors.error.c60 : colors.primary.c80,
+          borderRadius: 8,
+          padding: 4,
+          backgroundColor: colors.neutral.c30,
+          color: colors.neutral.c100,
+        }}
+        value={inputValueStringified}
+        onChangeText={handleInputChange}
+        multiline={true}
+        underlineColorAndroid="transparent"
+      />
       {error ? (
-        <Flex mb={5}>
-          <Alert type="warning">{error.toString()}</Alert>
+        <Flex mt={2}>
+          <Text color="error.c60">Error : {error.toString()}</Text>
         </Flex>
       ) : null}
-      <BaseInput
-        value={inputValueDefaulted}
-        onChange={handleInputChange}
-        renderRight={() => (
-          <InputRenderRightContainer>
-            <Switch checked={isChecked} onChange={handleSwitchChange} />
-          </InputRenderRightContainer>
-        )}
-      />
       <Flex flexDirection="row" mt={3}>
+        <InputRenderRightContainer>
+          <Switch checked={isChecked} onChange={handleSwitchChange} />
+        </InputRenderRightContainer>
         <Button size="small" type="main" outline onPress={handleRestoreFeature}>
           {t("settings.debug.featureFlagsRestore")}
         </Button>
         <Button
           size="small"
-          disabled={!inputValue}
+          disabled={
+            !!error || !inputValueStringified || inputValueStringified === formatValue(pureValue)
+          }
           type="main"
           onPress={handleOverrideFeature}
           ml="3"
@@ -107,9 +134,10 @@ const FeatureFlagEdit: React.FC<{
           {t("common.apply")}
         </Button>
       </Flex>
-      <Flex mt={3} backgroundColor="neutral.c30">
+      <Text mt={2}>Current value :</Text>
+      <Flex mt={2} backgroundColor="neutral.c30" p={2}>
         <ScrollView horizontal>
-          <Text selectable>{JSON.stringify(pureValue, null, 2)}</Text>
+          <Text selectable>{formatValue(pureValue)}</Text>
         </ScrollView>
       </Flex>
     </Flex>

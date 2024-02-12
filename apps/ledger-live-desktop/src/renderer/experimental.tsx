@@ -1,5 +1,5 @@
 import React from "react";
-import { isEnvDefault, changes, EnvName } from "@ledgerhq/live-common/env";
+import { isEnvDefault, changes, EnvName } from "@ledgerhq/live-env";
 import { Trans } from "react-i18next";
 import { setEnvOnAllThreads } from "./../helpers/env";
 export type FeatureCommon = {
@@ -32,7 +32,7 @@ export type Feature = FeatureCommon & FeatureToggle;
 // const experimentalCurrencies = "solana,cardano";
 const experimentalCurrencies = "";
 export const experimentalFeatures: Feature[] = [
-  ...(experimentalCurrencies.length
+  ...((experimentalCurrencies.length
     ? [
         {
           type: "toggle" as const,
@@ -45,15 +45,7 @@ export const experimentalFeatures: Feature[] = [
           valueOff: "",
         },
       ]
-    : []),
-  {
-    type: "toggle",
-    name: "EXPERIMENTAL_LANGUAGES",
-    title: <Trans i18nKey="settings.experimental.features.experimentalLanguages.title" />,
-    description: (
-      <Trans i18nKey="settings.experimental.features.experimentalLanguages.description" />
-    ),
-  },
+    : []) as Feature[]),
   {
     type: "toggle",
     name: "MANAGER_DEV_MODE",
@@ -62,26 +54,9 @@ export const experimentalFeatures: Feature[] = [
   },
   {
     type: "toggle",
-    name: "LIST_APPS_V2",
-    title: <Trans i18nKey="settings.experimental.features.listAppsV2.title" />,
-    description: <Trans i18nKey="settings.experimental.features.listAppsV2.description" />,
-    dirty: true,
-  },
-  {
-    type: "toggle",
     name: "SCAN_FOR_INVALID_PATHS",
     title: <Trans i18nKey="settings.experimental.features.scanForInvalidPaths.title" />,
     description: <Trans i18nKey="settings.experimental.features.scanForInvalidPaths.description" />,
-  },
-  {
-    type: "toggle",
-    name: "LEDGER_COUNTERVALUES_API",
-    title: <Trans i18nKey="settings.experimental.features.experimentalCountervalues.title" />,
-    description: (
-      <Trans i18nKey="settings.experimental.features.experimentalCountervalues.description" />
-    ),
-    valueOn: "https://countervalues-experimental.live.ledger.com",
-    valueOff: "https://countervalues.live.ledger.com",
   },
   {
     type: "integer",

@@ -1,6 +1,7 @@
 import React, { memo, useCallback, useState, useMemo } from "react";
-import { Flex, Icons } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy } from "@ledgerhq/native-ui";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import SafeAreaView from "~/components/SafeAreaView";
 import { useNavigation } from "@react-navigation/native";
 import { WebViewMessageEvent } from "react-native-webview";
 import { useTranslation } from "react-i18next";
@@ -8,14 +9,14 @@ import { useDispatch } from "react-redux";
 
 import { Adjust, AdjustEvent } from "react-native-adjust";
 import Config from "react-native-config";
-import Button from "../../components/wrappedUi/Button";
+import Button from "~/components/wrappedUi/Button";
 import logger from "../../logger";
 import DebugURLDrawer from "./DebugURLDrawer";
 import { PurchaseMessage } from "./types";
 import DebugMessageDrawer from "./DebugMessageDrawer";
-import WebViewScreen from "../../components/WebViewScreen";
-import { completeOnboarding, setReadOnlyMode } from "../../actions/settings";
-import { urls } from "../../config/urls";
+import WebViewScreen from "~/components/WebViewScreen";
+import { completeOnboarding, setReadOnlyMode } from "~/actions/settings";
+import { urls } from "~/utils/urls";
 
 const defaultURL = urls.buyNanoX;
 
@@ -56,8 +57,7 @@ const PurchaseDevice = () => {
       nanoSP: Config.ADJUST_BUY_NANOSP_EVENT_ID,
     };
     const id = data.value?.deviceId
-      ? ids[data.value.deviceId as keyof typeof ids] ||
-        Config.ADJUST_BUY_GENERIC_EVENT_ID
+      ? ids[data.value.deviceId as keyof typeof ids] || Config.ADJUST_BUY_GENERIC_EVENT_ID
       : Config.ADJUST_BUY_GENERIC_EVENT_ID;
 
     if (!id) {
@@ -104,7 +104,7 @@ const PurchaseDevice = () => {
   );
 
   return (
-    <>
+    <SafeAreaView isFlex>
       <WebViewScreen
         screenName={t("purchaseDevice.pageTitle")}
         uri={urlWithParam}
@@ -118,9 +118,9 @@ const PurchaseDevice = () => {
             height={48}
             zIndex={1}
           >
-            <Button Icon={Icons.ArrowLeftMedium} onPress={handleBack} />
+            <Button Icon={IconsLegacy.ArrowLeftMedium} onPress={handleBack} />
             {buyDeviceFromLive?.params?.debug && (
-              <Button Icon={Icons.FiltersMedium} onPress={handleOpenDrawer} />
+              <Button Icon={IconsLegacy.FiltersMedium} onPress={handleOpenDrawer} />
             )}
           </Flex>
         )}
@@ -140,7 +140,7 @@ const PurchaseDevice = () => {
           onChange={setUrl}
         />
       )}
-    </>
+    </SafeAreaView>
   );
 };
 

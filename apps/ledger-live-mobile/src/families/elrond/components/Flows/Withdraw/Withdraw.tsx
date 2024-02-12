@@ -4,12 +4,12 @@ import { useTranslation } from "react-i18next";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "@react-navigation/native";
 
-import StepHeader from "../../../../../components/StepHeader";
-import WithdrawSelectDevice from "../../../../../screens/SelectDevice";
-import WithdrawConnectDevice from "../../../../../screens/ConnectDevice";
+import StepHeader from "~/components/StepHeader";
+import WithdrawSelectDevice from "~/screens/SelectDevice";
+import WithdrawConnectDevice from "~/screens/ConnectDevice";
 
-import { getStackNavigatorConfig } from "../../../../../navigation/navigatorConfig";
-import { ScreenName } from "../../../../../const";
+import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
+import { ScreenName } from "~/const";
 
 import WithdrawFunds from "./components/WithdrawFunds";
 import ValidationError from "./components/ValidationError";
@@ -31,10 +31,7 @@ const Withdraw = () => {
   const { t } = useTranslation();
   const { colors } = useTheme();
 
-  const stackNavigationConfig = useMemo(
-    () => getStackNavigatorConfig(colors, true),
-    [colors],
-  );
+  const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
 
   /*
    * Return the rendered component.
@@ -51,9 +48,7 @@ const Withdraw = () => {
         name={ScreenName.ElrondWithdrawFunds}
         component={WithdrawFunds}
         options={{
-          headerTitle: () => (
-            <StepHeader title={t("elrond.withdraw.stepperHeader.method")} />
-          ),
+          headerTitle: () => <StepHeader title={t("elrond.withdraw.stepperHeader.method")} />,
         }}
       />
 

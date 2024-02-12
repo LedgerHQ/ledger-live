@@ -3,10 +3,10 @@ import { Trans } from "react-i18next";
 import { Linking, Platform, TouchableOpacity } from "react-native";
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
-import { urls } from "../../config/urls";
-import { track, TrackScreen } from "../../analytics";
-import useRatings from "../../logic/ratings";
-import Love from "../../icons/Love";
+import { urls } from "~/utils/urls";
+import { track, TrackScreen } from "~/analytics";
+import useRatings from "~/logic/ratings";
+import Love from "~/icons/Love";
 
 const NotNowButton = styled(TouchableOpacity)`
   align-items: center;
@@ -19,12 +19,8 @@ type Props = {
 };
 
 const Enjoy = ({ closeModal }: Props) => {
-  const {
-    ratingsFeatureParams,
-    ratingsHappyMoment,
-    handleEnjoyNotNow,
-    handleGoToStore,
-  } = useRatings();
+  const { ratingsFeatureParams, ratingsHappyMoment, handleEnjoyNotNow, handleGoToStore } =
+    useRatings();
   const goToStore = useCallback(() => {
     track("RedirectedToStore", { source: ratingsHappyMoment?.route_name });
     track("button_clicked", {
@@ -34,17 +30,10 @@ const Enjoy = ({ closeModal }: Props) => {
       source: ratingsHappyMoment?.route_name,
       params: ratingsFeatureParams,
     });
-    Linking.openURL(
-      Platform.OS === "ios" ? urls.applestoreRate : urls.playstore,
-    );
+    Linking.openURL(Platform.OS === "ios" ? urls.applestoreRate : urls.playstore);
     closeModal();
     handleGoToStore();
-  }, [
-    ratingsHappyMoment?.route_name,
-    ratingsFeatureParams,
-    closeModal,
-    handleGoToStore,
-  ]);
+  }, [ratingsHappyMoment?.route_name, ratingsFeatureParams, closeModal, handleGoToStore]);
   const onNotNow = useCallback(() => {
     track("button_clicked", {
       flow: "review",
@@ -55,12 +44,7 @@ const Enjoy = ({ closeModal }: Props) => {
     });
     closeModal();
     handleEnjoyNotNow();
-  }, [
-    ratingsHappyMoment?.route_name,
-    ratingsFeatureParams,
-    closeModal,
-    handleEnjoyNotNow,
-  ]);
+  }, [ratingsHappyMoment?.route_name, ratingsFeatureParams, closeModal, handleEnjoyNotNow]);
 
   return (
     <Flex flex={1} alignItems="center" justifyContent="center" mt={3}>

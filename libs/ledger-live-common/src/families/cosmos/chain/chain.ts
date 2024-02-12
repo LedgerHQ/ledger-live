@@ -13,19 +13,19 @@ import Stargaze from "./Stargaze";
 import Stride from "./Stride";
 import Umee from "./Umee";
 import BinanceBeaconChain from "./BinanceBeaconChain";
+import Coreum from "./Coreum";
+import Injective from "./Injective";
+import Dydx from "./Dydx";
 
 const cosmosChainParams: { [key: string]: CosmosBase } = {};
 export default function cryptoFactory(currencyId: string): CosmosBase {
-  const initialized =
-    currencyId === "osmosis" || currencyId === "osmo"
-      ? cosmosChainParams["osmo"] != null
-      : cosmosChainParams[currencyId] != null;
+  currencyId = currencyId === "osmosis" ? "osmo" : currencyId;
+  const initialized = cosmosChainParams[currencyId] != null;
   if (!initialized) {
     switch (currencyId) {
       case "osmo":
-      case "osmosis":
-        cosmosChainParams["osmo"] = new Osmosis();
-        return cosmosChainParams["osmo"];
+        cosmosChainParams[currencyId] = new Osmosis();
+        break;
       case "cosmos":
         cosmosChainParams[currencyId] = new Cosmos();
         break;
@@ -37,6 +37,9 @@ export default function cryptoFactory(currencyId: string): CosmosBase {
         break;
       case "desmos":
         cosmosChainParams[currencyId] = new Desmos();
+        break;
+      case "dydx":
+        cosmosChainParams[currencyId] = new Dydx();
         break;
       case "nyx":
         cosmosChainParams[currencyId] = new Nyx();
@@ -64,6 +67,12 @@ export default function cryptoFactory(currencyId: string): CosmosBase {
         break;
       case "umee":
         cosmosChainParams[currencyId] = new Umee();
+        break;
+      case "coreum":
+        cosmosChainParams[currencyId] = new Coreum();
+        break;
+      case "injective":
+        cosmosChainParams[currencyId] = new Injective();
         break;
       default:
         throw new Error(`${currencyId} is not supported`);

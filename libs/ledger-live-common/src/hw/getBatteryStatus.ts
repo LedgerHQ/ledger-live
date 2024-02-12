@@ -1,6 +1,9 @@
 import Transport from "@ledgerhq/hw-transport";
 import { BatteryStatusFlags, ChargingModes } from "@ledgerhq/types-devices";
 import { TransportStatusError, StatusCodes } from "@ledgerhq/errors";
+import { LocalTracer } from "@ledgerhq/logs";
+
+import { LOG_TYPE } from ".";
 
 export enum BatteryStatusTypes {
   BATTERY_PERCENTAGE = 0x00,
@@ -12,7 +15,7 @@ export enum BatteryStatusTypes {
 
 // Nb USB and BLE masks not used by implementation since we have
 // them from the model.
-enum FlagMasks {
+export enum FlagMasks {
   CHARGING = 0x00000001,
   USB = 0x00000002,
   USB_POWERED = 0x00000008,
@@ -31,12 +34,16 @@ type BatteryStatusTuple<Statuses extends ReadonlyArray<BatteryStatusTypes>> = {
     : number;
 };
 
-const getBatteryStatus = async <
-  StatusesType extends ReadonlyArray<BatteryStatusTypes>
->(
+const getBatteryStatus = async <StatusesType extends ReadonlyArray<BatteryStatusTypes>>(
   transport: Transport,
-  statuses: StatusesType
+  statuses: StatusesType,
 ): Promise<BatteryStatusTuple<StatusesType>> => {
+  const tracer = new LocalTracer(LOG_TYPE, {
+    function: "getBatteryStatus",
+    statuses,
+  });
+  tracer.trace(`Starting`);
+
   const result: (BatteryStatusFlags | number)[] = [];
 
   for (let i = 0; i < statuses.length; i++) {
@@ -44,6 +51,7 @@ const getBatteryStatus = async <
     const status = res.readUInt16BE(res.length - 2);
 
     if (status !== StatusCodes.OK) {
+      tracer.trace(`Error: status ${status}`, { status, res });
       throw new TransportStatusError(status);
     }
 

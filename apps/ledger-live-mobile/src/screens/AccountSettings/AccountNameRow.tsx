@@ -2,9 +2,9 @@ import React, { PureComponent } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet } from "react-native";
 import type { Account } from "@ledgerhq/types-live";
-import { ScreenName } from "../../const";
-import SettingsRow from "../../components/SettingsRow";
-import LText from "../../components/LText";
+import { ScreenName } from "~/const";
+import SettingsRow from "~/components/SettingsRow";
+import LText from "~/components/LText";
 import type { NavigationProps } from "./index";
 
 type Props = {
@@ -27,12 +27,7 @@ class AccountNameRow extends PureComponent<Props> {
           })
         }
       >
-        <LText
-          semiBold
-          numberOfLines={1}
-          style={styles.accountName}
-          color="grey"
-        >
+        <LText semiBold numberOfLines={1} style={styles.accountName} color="grey">
           {account.name}
         </LText>
       </SettingsRow>

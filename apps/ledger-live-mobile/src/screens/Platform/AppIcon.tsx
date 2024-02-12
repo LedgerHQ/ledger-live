@@ -2,7 +2,7 @@ import React, { memo, useState, useCallback } from "react";
 import { Image, View, StyleSheet } from "react-native";
 import { DefaultTheme, useTheme } from "styled-components/native";
 import { Theme } from "../../colors";
-import LText from "../../components/LText";
+import LText from "~/components/LText";
 
 type Props = {
   name?: string | null;
@@ -16,8 +16,7 @@ function AppIcon({ size = 48, name, icon, isDisabled }: Props) {
   const [imageLoaded, setImageLoaded] = useState(true);
   const handleImageLoad = useCallback(() => setImageLoaded(true), []);
   const handleImageError = useCallback(() => setImageLoaded(false), []);
-  const firstLetter =
-    typeof name === "string" && name[0] ? name[0].toUpperCase() : "";
+  const firstLetter = typeof name === "string" && name[0] ? name[0].toUpperCase() : "";
   return (
     <View
       style={[

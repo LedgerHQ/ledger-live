@@ -1,14 +1,18 @@
 import { setSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
-import { setPlatformVersion } from "@ledgerhq/live-common/platform/version";
-import { PLATFORM_VERSION } from "@ledgerhq/live-common/platform/constants";
 import { setWalletAPIVersion } from "@ledgerhq/live-common/wallet-api/version";
 import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
-setPlatformVersion(PLATFORM_VERSION);
+
 setWalletAPIVersion(WALLET_API_VERSION);
 setSupportedCurrencies([
   "axelar",
   "nyx",
+  "stargaze",
+  "secret_network",
+  "umee",
+  "desmos",
+  "dydx",
   "onomy",
+  "sei_network",
   "quicksilver",
   "persistence",
   "avalanche_c_chain",
@@ -47,6 +51,8 @@ setSupportedCurrencies([
   "bitcoin_testnet",
   "ethereum_ropsten",
   "ethereum_goerli",
+  "ethereum_sepolia",
+  "ethereum_holesky",
   "hedera",
   "cardano",
   "filecoin",
@@ -72,4 +78,20 @@ setSupportedCurrencies([
   "moonriver",
   "velas_evm",
   "syscoin",
+  "vechain",
+  "internet_computer",
+  "klaytn",
+  "polygon_zk_evm",
+  "polygon_zk_evm_testnet",
+  "base",
+  "base_goerli",
+  "stacks",
+  "telos_evm",
+  "coreum",
+  "injective",
+  "casper",
+  "neon_evm",
+  "lukso",
+  "linea",
+  "linea_goerli",
 ]);

@@ -3,13 +3,13 @@ import Video from "react-native-video";
 import { Dimensions } from "react-native";
 import Animated, { SlideInDown, SlideInLeft } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Button, Flex, Icons, Text, Link } from "@ledgerhq/native-ui";
+import { Button, Flex, IconsLegacy, Text, Link } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
-import { TrackScreen, track } from "../../analytics";
-import { useCompleteActionCallback } from "../../logic/postOnboarding/useCompleteAction";
-import { NavigatorName, ScreenName } from "../../const";
+import { TrackScreen, track } from "~/analytics";
+import { useCompleteActionCallback } from "~/logic/postOnboarding/useCompleteAction";
+import { NavigatorName, ScreenName } from "~/const";
 import videoSources from "../../../assets/videos";
 
 const AnimatedFlex = Animated.createAnimatedComponent(Flex);
@@ -18,7 +18,7 @@ const BulletItem = ({ textKey }: { textKey: string }) => {
   const { t } = useTranslation();
   return (
     <Flex flexDirection="row" mb={6} alignItems="center">
-      <Icons.CircledCheckSolidMedium color="primary.c80" />
+      <IconsLegacy.CircledCheckSolidMedium color="primary.c80" />
       <Text ml={4}>{t(textKey)}</Text>
     </Flex>
   );
@@ -33,8 +33,7 @@ const ClaimNftWelcome = () => {
   const { t } = useTranslation();
   const navigation = useNavigation();
   const [isFirstVideo, setIsFirstVideo] = useState(true);
-  const [firstVideoReadyForDisplay, setFirstVideoReadyForDisplay] =
-    useState(false);
+  const [firstVideoReadyForDisplay, setFirstVideoReadyForDisplay] = useState(false);
 
   const theme = useTheme();
   const completePostOnboardingAction = useCompleteActionCallback();
@@ -85,9 +84,7 @@ const ClaimNftWelcome = () => {
           disableFocus
           paused={isFirstVideo}
           source={
-            theme.dark
-              ? videoSources.infinityPassPart02Dark
-              : videoSources.infinityPassPart02Light
+            theme.dark ? videoSources.infinityPassPart02Dark : videoSources.infinityPassPart02Light
           }
           muted
           repeat
@@ -115,13 +112,7 @@ const ClaimNftWelcome = () => {
       {firstVideoReadyForDisplay ? (
         <AnimatedFlex flex={2} px={6} justifyContent="space-evenly">
           <AnimatedFlex entering={SlideInLeft.delay(1800)}>
-            <Text
-              variant="h4"
-              fontWeight="semiBold"
-              mt={7}
-              mb={7}
-              textAlign="center"
-            >
+            <Text variant="h4" fontWeight="semiBold" mt={7} mb={7} textAlign="center">
               {t("claimNft.welcomePage.title")}
             </Text>
 
@@ -138,9 +129,7 @@ const ClaimNftWelcome = () => {
                 {t("claimNft.welcomePage.claimButton")}
               </Button>
 
-              <Link onPress={handleSkipQrScan}>
-                {t("claimNft.welcomePage.backButton")}
-              </Link>
+              <Link onPress={handleSkipQrScan}>{t("claimNft.welcomePage.backButton")}</Link>
             </Flex>
           </AnimatedFlex>
         </AnimatedFlex>

@@ -5,12 +5,7 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import { Platform } from "react-native";
 import { log } from "@ledgerhq/logs";
 import { useRoute, useNavigation } from "@react-navigation/native";
-import type {
-  Account,
-  AccountLike,
-  SignedOperation,
-  Operation,
-} from "@ledgerhq/types-live";
+import type { Account, AccountLike, SignedOperation, Operation } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
@@ -22,69 +17,43 @@ import {
 import { formatTransaction } from "@ledgerhq/live-common/transaction/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { execAndWaitAtLeast } from "@ledgerhq/live-common/promise";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import { useDispatch } from "react-redux";
 import { TransactionRefusedOnDevice } from "@ledgerhq/live-common/errors";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { updateAccountWithUpdater } from "../actions/accounts";
 import logger from "../logger";
-import { ScreenName } from "../const";
+import { ScreenName } from "~/const";
 import type {
   StackNavigatorNavigation,
   StackNavigatorRoute,
 } from "../components/RootNavigator/types/helpers";
 import type { SendFundsNavigatorStackParamList } from "../components/RootNavigator/types/SendFundsNavigator";
 import type { SignTransactionNavigatorParamList } from "../components/RootNavigator/types/SignTransactionNavigator";
-import type { AlgorandClaimRewardsFlowParamList } from "../families/algorand/Rewards/ClaimRewardsFlow/type";
-import type { StellarAddAssetFlowParamList } from "../families/stellar/AddAssetFlow/types";
+import type { AlgorandClaimRewardsFlowParamList } from "~/families/algorand/Rewards/ClaimRewardsFlow/type";
+import type { StellarAddAssetFlowParamList } from "~/families/stellar/AddAssetFlow/types";
 
 type Navigation =
-  | StackNavigatorNavigation<
-      SendFundsNavigatorStackParamList,
-      ScreenName.SendSummary
-    >
-  | StackNavigatorNavigation<
-      SignTransactionNavigatorParamList,
-      ScreenName.SignTransactionSummary
-    >
+  | StackNavigatorNavigation<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
+  | StackNavigatorNavigation<SignTransactionNavigatorParamList, ScreenName.SignTransactionSummary>
   | StackNavigatorNavigation<
       AlgorandClaimRewardsFlowParamList,
       ScreenName.AlgorandClaimRewardsSummary
     >
-  | StackNavigatorNavigation<
-      StellarAddAssetFlowParamList,
-      ScreenName.StellarAddAssetValidation
-    >;
+  | StackNavigatorNavigation<StellarAddAssetFlowParamList, ScreenName.StellarAddAssetValidation>;
 
 type Route =
-  | StackNavigatorRoute<
-      SendFundsNavigatorStackParamList,
-      ScreenName.SendSummary
-    >
-  | StackNavigatorRoute<
-      SignTransactionNavigatorParamList,
-      ScreenName.SignTransactionSummary
-    >
-  | StackNavigatorRoute<
-      AlgorandClaimRewardsFlowParamList,
-      ScreenName.AlgorandClaimRewardsSummary
-    >
-  | StackNavigatorRoute<
-      StellarAddAssetFlowParamList,
-      ScreenName.StellarAddAssetValidation
-    >;
+  | StackNavigatorRoute<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
+  | StackNavigatorRoute<SignTransactionNavigatorParamList, ScreenName.SignTransactionSummary>
+  | StackNavigatorRoute<AlgorandClaimRewardsFlowParamList, ScreenName.AlgorandClaimRewardsSummary>
+  | StackNavigatorRoute<StellarAddAssetFlowParamList, ScreenName.StellarAddAssetValidation>;
 
-export const useTransactionChangeFromNavigation = (
-  setTransaction: (_: Transaction) => void,
-) => {
+export const useTransactionChangeFromNavigation = (setTransaction: (_: Transaction) => void) => {
   const route = useRoute<Route>();
   const navigationTransaction = route.params?.transaction;
   const navigationTxRef = useRef(navigationTransaction);
   useEffect(() => {
-    if (
-      navigationTransaction &&
-      navigationTxRef.current !== navigationTransaction
-    ) {
+    if (navigationTransaction && navigationTxRef.current !== navigationTransaction) {
       navigationTxRef.current = navigationTransaction;
       setTransaction(navigationTransaction);
     }
@@ -100,10 +69,7 @@ export const useSignWithDevice = ({
   context: string;
   account: AccountLike;
   parentAccount: Account | null | undefined;
-  updateAccountWithUpdater: (
-    arg0: string,
-    arg1: (arg0: Account) => Account,
-  ) => void;
+  updateAccountWithUpdater: (arg0: string, arg1: (arg0: Account) => Account) => void;
 }) => {
   const route = useRoute<Route>();
   const navigation = useNavigation<Navigation>();
@@ -121,9 +87,7 @@ export const useSignWithDevice = ({
     log("transaction-summary", `→ FROM ${formatAccount(mainAccount, "basic")}`);
     log(
       "transaction-summary",
-      `✔️ transaction ${
-        transaction && formatTransaction(transaction, mainAccount)
-      }`,
+      `✔️ transaction ${transaction && formatTransaction(transaction, mainAccount)}`,
     );
     subscription.current = bridge
       .signOperation({
@@ -145,8 +109,7 @@ export const useSignWithDevice = ({
                 bridge
                   .broadcast({
                     account: mainAccount,
-                    signedOperation: (e as { signedOperation: SignedOperation })
-                      .signedOperation,
+                    signedOperation: (e as { signedOperation: SignedOperation }).signedOperation,
                   })
                   .then(operation => ({
                     type: "broadcasted",
@@ -172,16 +135,17 @@ export const useSignWithDevice = ({
             case "broadcasted":
               log(
                 "transaction-summary",
-                `✔️ broadcasted! optimistic operation: ${formatOperation(
-                  mainAccount,
-                )(e.operation)}`,
+                `✔️ broadcasted! optimistic operation: ${formatOperation(mainAccount)(
+                  e.operation,
+                )}`,
               );
-              (
-                navigation as StackNavigationProp<{ [key: string]: object }>
-              ).replace(context + "ValidationSuccess", {
-                ...route.params,
-                result: e.operation,
-              });
+              (navigation as StackNavigationProp<{ [key: string]: object }>).replace(
+                context + "ValidationSuccess",
+                {
+                  ...route.params,
+                  result: e.operation,
+                },
+              );
               updateAccountWithUpdater(mainAccount.id, account =>
                 addPendingOperation(account, e.operation),
               );
@@ -199,22 +163,16 @@ export const useSignWithDevice = ({
             logger.critical(error);
           }
 
-          (
-            navigation as StackNavigationProp<{ [key: string]: object }>
-          ).replace(context + "ValidationError", {
-            ...route.params,
-            error,
-          });
+          (navigation as StackNavigationProp<{ [key: string]: object }>).replace(
+            context + "ValidationError",
+            {
+              ...route.params,
+              error,
+            },
+          );
         },
       });
-  }, [
-    context,
-    account,
-    navigation,
-    parentAccount,
-    updateAccountWithUpdater,
-    route.params,
-  ]);
+  }, [context, account, navigation, parentAccount, updateAccountWithUpdater, route.params]);
   useEffect(() => {
     signWithDevice();
     return () => {
@@ -256,9 +214,7 @@ export const broadcastSignedTx = async (
       .then(op => {
         log(
           "transaction-summary",
-          `✔️ broadcasted! optimistic operation: ${formatOperation(mainAccount)(
-            op,
-          )}`,
+          `✔️ broadcasted! optimistic operation: ${formatOperation(mainAccount)(op)}`,
         );
         return op;
       }),
@@ -292,7 +248,13 @@ export function useSignedTxHandler({
   return useCallback(
     // TODO: fix type error
 
-    async ({ signedOperation, transactionSignError }) => {
+    async ({
+      signedOperation,
+      transactionSignError,
+    }: {
+      signedOperation: SignedOperation;
+      transactionSignError?: Error;
+    }) => {
       try {
         if (transactionSignError) {
           throw transactionSignError;
@@ -301,9 +263,7 @@ export function useSignedTxHandler({
         const operation = await broadcast(signedOperation);
         log(
           "transaction-summary",
-          `✔️ broadcasted! optimistic operation: ${formatOperation(mainAccount)(
-            operation,
-          )}`,
+          `✔️ broadcasted! optimistic operation: ${formatOperation(mainAccount)(operation)}`,
         );
         (navigation as StackNavigationProp<{ [key: string]: object }>).replace(
           route.name.replace("ConnectDevice", "ValidationSuccess"),
@@ -317,10 +277,7 @@ export function useSignedTxHandler({
         );
       } catch (error) {
         if (
-          !(
-            error instanceof UserRefusedOnDevice ||
-            error instanceof TransactionRefusedOnDevice
-          )
+          !(error instanceof UserRefusedOnDevice || error instanceof TransactionRefusedOnDevice)
         ) {
           logger.critical(error as Error);
         }
@@ -342,7 +299,13 @@ export function useSignedTxHandlerWithoutBroadcast({
   const navigation = useNavigation();
   const route = useRoute();
   return useCallback(
-    async ({ signedOperation, transactionSignError }) => {
+    async ({
+      signedOperation,
+      transactionSignError,
+    }: {
+      signedOperation: SignedOperation;
+      transactionSignError?: Error;
+    }) => {
       try {
         if (transactionSignError) {
           throw transactionSignError;
@@ -353,10 +316,7 @@ export function useSignedTxHandlerWithoutBroadcast({
         });
       } catch (error) {
         if (
-          !(
-            error instanceof UserRefusedOnDevice ||
-            error instanceof TransactionRefusedOnDevice
-          )
+          !(error instanceof UserRefusedOnDevice || error instanceof TransactionRefusedOnDevice)
         ) {
           logger.critical(error as Error);
         }

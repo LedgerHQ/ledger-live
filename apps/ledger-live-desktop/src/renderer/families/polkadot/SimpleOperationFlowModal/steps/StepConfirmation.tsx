@@ -1,6 +1,6 @@
 import React from "react";
 import { Trans } from "react-i18next";
-import styled, { withTheme } from "styled-components";
+import styled from "styled-components";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
@@ -10,20 +10,28 @@ import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDisclaimer";
 import { StepProps } from "../types";
-const Container: ThemedComponent<{
-  shouldSpace?: boolean;
-}> = styled(Box).attrs(() => ({
+
+const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   grow: true,
   color: "palette.text.shade100",
-}))`
+}))<{
+  shouldSpace?: boolean;
+}>`
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
 `;
-function StepConfirmation({ optimisticOperation, error, signed }: StepProps) {
+function StepConfirmation({ optimisticOperation, error, signed, mode }: StepProps) {
+  const action = mode.replace(/([A-Z])/g, "_$1").toLowerCase();
   if (optimisticOperation) {
     return (
       <Container>
-        <TrackPage category="Polkadot SimpleOperationFlow" name="Step Confirmed" />
+        <TrackPage
+          category="Polkadot SimpleOperationFlow"
+          name="Step Confirmed"
+          flow="stake"
+          action={action}
+          currency="dot"
+        />
         <SyncOneAccountOnMount
           reason="transaction-flow-confirmation"
           priority={10}
@@ -45,7 +53,13 @@ function StepConfirmation({ optimisticOperation, error, signed }: StepProps) {
   if (error) {
     return (
       <Container shouldSpace={signed}>
-        <TrackPage category="Polkadot Flow" name="Step Confirmation Error" />
+        <TrackPage
+          category="Polkadot Flow"
+          name="Step Confirmation Error"
+          flow="stake"
+          action={action}
+          currency="dot"
+        />
         {signed ? (
           <BroadcastErrorDisclaimer
             title={<Trans i18nKey="polkadot.simpleOperation.steps.confirmation.broadcastError" />}
@@ -75,4 +89,4 @@ export function StepConfirmationFooter({ onRetry, error, onClose }: StepProps) {
     </Box>
   );
 }
-export default withTheme(StepConfirmation);
+export default StepConfirmation;

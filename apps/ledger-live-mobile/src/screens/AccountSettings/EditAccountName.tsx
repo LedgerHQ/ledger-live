@@ -7,29 +7,23 @@ import { Trans } from "react-i18next";
 import { compose } from "redux";
 import { Box } from "@ledgerhq/native-ui";
 import { Account } from "@ledgerhq/types-live";
-import { accountScreenSelector } from "../../reducers/accounts";
-import { updateAccount } from "../../actions/accounts";
-import TextInput from "../../components/TextInput";
-import { getFontStyle } from "../../components/LText";
+import { accountScreenSelector } from "~/reducers/accounts";
+import { updateAccount } from "~/actions/accounts";
+import TextInput from "~/components/TextInput";
+import { getFontStyle } from "~/components/LText";
 import { Theme, withTheme } from "../../colors";
-import Button from "../../components/wrappedUi/Button";
-import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { ScreenName } from "../../const";
-import { AddAccountsNavigatorParamList } from "../../components/RootNavigator/types/AddAccountsNavigator";
-import { State } from "../../reducers/types";
-import { AccountSettingsNavigatorParamList } from "../../components/RootNavigator/types/AccountSettingsNavigator";
+import Button from "~/components/wrappedUi/Button";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { ScreenName } from "~/const";
+import { AddAccountsNavigatorParamList } from "~/components/RootNavigator/types/AddAccountsNavigator";
+import { State } from "~/reducers/types";
+import { AccountSettingsNavigatorParamList } from "~/components/RootNavigator/types/AccountSettingsNavigator";
 
 export const MAX_ACCOUNT_NAME_LENGHT = 50;
 
 type NavigationProps =
-  | StackNavigatorProps<
-      AddAccountsNavigatorParamList,
-      ScreenName.EditAccountName
-    >
-  | StackNavigatorProps<
-      AccountSettingsNavigatorParamList,
-      ScreenName.EditAccountName
-    >;
+  | StackNavigatorProps<AddAccountsNavigatorParamList, ScreenName.EditAccountName>
+  | StackNavigatorProps<AccountSettingsNavigatorParamList, ScreenName.EditAccountName>;
 
 type Props = {
   updateAccount: typeof updateAccount;
@@ -61,16 +55,14 @@ class EditAccountName extends PureComponent<
   onNameEndEditing = () => {
     const { updateAccount, account, navigation } = this.props;
     const { accountName } = this.state;
-    const { onAccountNameChange, account: accountFromAdd } =
-      this.props.route.params || {};
+    const { onAccountNameChange, account: accountFromAdd } = this.props.route.params || {};
 
     const isImportingAccounts = !!accountFromAdd;
     const cleanAccountName = accountName.trim();
 
     if (cleanAccountName.length) {
       if (isImportingAccounts) {
-        onAccountNameChange &&
-          onAccountNameChange(cleanAccountName, accountFromAdd);
+        onAccountNameChange && onAccountNameChange(cleanAccountName, accountFromAdd);
       } else {
         updateAccount({
           ...account,
@@ -89,9 +81,7 @@ class EditAccountName extends PureComponent<
     const initialAccountName = account ? account.name : accountFromAdd?.name;
 
     return (
-      <SafeAreaView
-        style={[styles.safeArea, { backgroundColor: colors.background }]}
-      >
+      <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
         <Box px={6} flex={1}>
           <TextInput
             autoFocus

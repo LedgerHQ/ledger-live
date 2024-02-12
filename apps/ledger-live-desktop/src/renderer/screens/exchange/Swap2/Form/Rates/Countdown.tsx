@@ -20,11 +20,12 @@ export default function Countdown({ refreshTime, rates }: Props) {
   const getSeconds = (time: number) => Math.round(time / 1000);
   const [countdown, setCountdown] = useState(getSeconds(refreshTime));
   const [iconKey, setIconKey] = useState(0);
+
   useEffect(() => {
     setIconKey(key => key + 1);
     const startTime = new Date().getTime();
     setCountdown(getSeconds(refreshTime));
-    const countdownInterval = setInterval(() => {
+    const countdownInterval = window.setInterval(() => {
       const now = new Date().getTime();
       const newCountdown = refreshTime + startTime - now;
       setCountdown(getSeconds(newCountdown));
@@ -33,6 +34,7 @@ export default function Countdown({ refreshTime, rates }: Props) {
       clearInterval(countdownInterval);
     };
   }, [rates, refreshTime]);
+
   return (
     <>
       {countdown >= 0 ? (

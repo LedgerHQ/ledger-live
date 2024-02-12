@@ -2,12 +2,14 @@ import React, { useState, useCallback } from "react";
 import { Trans } from "react-i18next";
 import Box from "~/renderer/components/Box";
 import styled from "styled-components";
-import { FILTER } from "../utils";
+import { FILTER } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import Button from "~/renderer/components/Button";
-import { Icons } from "@ledgerhq/react-ui";
+import { IconsLegacy } from "@ledgerhq/react-ui";
+
 type Props = {
   onClick: (newFilter: string[]) => void;
 };
+
 const Container = styled(Box).attrs(() => ({}))`
   flex-direction: row;
   margin: 10px 0;
@@ -32,10 +34,11 @@ export const Btn = styled(Button).attrs(p => {
     color: ${p => (p.selected ? p.theme.colors.primary.c80 : p.theme.colors.neutral.c100)};
   }
 `;
+
 export default function Filter({ onClick }: Props) {
   const [filter, setFilter] = useState<string[]>([]);
   const updateFilter = useCallback(
-    type => {
+    (type: keyof typeof FILTER) => {
       let newFilter: string[] = [];
       if (filter.includes(type)) {
         newFilter = filter.filter(e => e !== type);
@@ -61,6 +64,7 @@ export default function Filter({ onClick }: Props) {
     },
     [filter, onClick],
   );
+
   return (
     <Container>
       {[FILTER.centralised, FILTER.decentralised, FILTER.float, FILTER.fixed].map(type => {
@@ -74,7 +78,7 @@ export default function Filter({ onClick }: Props) {
           <Btn key={type} {...props} data-test-id={`${type}-quote-filter-button`}>
             {selected ? (
               <Box mr={1}>
-                <Icons.CloseMedium size={16} />
+                <IconsLegacy.CloseMedium size={16} />
               </Box>
             ) : null}
             {<Trans i18nKey={`swap.providers.filter.${type}`} />}

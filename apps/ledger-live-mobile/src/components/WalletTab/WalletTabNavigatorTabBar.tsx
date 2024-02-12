@@ -2,19 +2,19 @@ import { MaterialTopTabBarProps } from "@react-navigation/material-top-tabs";
 import { useTheme } from "styled-components/native";
 import React, { memo, useCallback, useContext } from "react";
 import styled, { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
-import { Box, Flex, Icons, Text } from "@ledgerhq/native-ui";
+import { Box, Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import { Animated, Linking } from "react-native";
 import { useSelector } from "react-redux";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { track } from "../../analytics";
+import { track } from "~/analytics";
 import { rgba } from "../../colors";
 import { WalletTabNavigatorScrollContext } from "./WalletTabNavigatorScrollManager";
 import WalletTabBackgroundGradient from "./WalletTabBackgroundGradient";
-import { readOnlyModeEnabledSelector } from "../../reducers/settings";
-import { hasNoAccountsSelector } from "../../reducers/accounts";
-import { ScreenName } from "../../const";
+import { readOnlyModeEnabledSelector } from "~/reducers/settings";
+import { hasNoAccountsSelector } from "~/reducers/accounts";
+import { NavigatorName, ScreenName } from "~/const";
 
 const StyledTouchableOpacity = styled.TouchableOpacity`
   height: 32px;
@@ -29,7 +29,8 @@ const StyledReferral = styled.TouchableOpacity`
   align-items: center;
   justify-content: center;
   border-radius: 200px;
-  width: 58px;
+  width: auto;
+  padding: 0px 8px;
   background-color: ${p => p.theme.colors.opacityDefault.c10};
 `;
 
@@ -39,6 +40,18 @@ const StyledAnimatedView = styled(Animated.View)<BaseStyledProps>`
   height: 100%;
   width: 100%;
 `;
+
+function getAnalyticsEvent(route: string) {
+  switch (route) {
+    case ScreenName.WalletNftGallery:
+      return "NFTs";
+    case NavigatorName.Market:
+      return "Market";
+    case ScreenName.Portfolio:
+    default:
+      return "Crypto";
+  }
+}
 
 function Tab({
   route,
@@ -78,17 +91,14 @@ function Tab({
 
     if (!isActive && !event.defaultPrevented) {
       track("tab_clicked", {
-        tab: route.name === ScreenName.WalletNftGallery ? "NFTs" : "Crypto",
+        tab: getAnalyticsEvent(route.name),
       });
       navigation.navigate(route.name);
     }
-  }, [isActive, navigation, route.key, route.name]);
+  }, [isActive, navigation, route]);
 
   return (
-    <StyledTouchableOpacity
-      onPress={onPress}
-      testID={`wallet-tab-${route.name}`}
-    >
+    <StyledTouchableOpacity onPress={onPress} testID={`wallet-tab-${route.name}`}>
       <StyledAnimatedView
         backgroundColor={rgba(colors.constant.white, 0.08)}
         borderRadius={2}
@@ -129,9 +139,7 @@ function WalletTabNavigatorTabBar({
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const hasNoAccounts = useSelector(hasNoAccountsSelector);
 
-  const { scrollY, headerHeight, tabBarHeight } = useContext(
-    WalletTabNavigatorScrollContext,
-  );
+  const { scrollY, headerHeight, tabBarHeight } = useContext(WalletTabNavigatorScrollContext);
 
   const y = scrollY.interpolate({
     inputRange: [0, headerHeight],
@@ -144,17 +152,15 @@ function WalletTabNavigatorTabBar({
     outputRange: [0, 1],
     extrapolate: "clamp",
   });
-
   const insets = useSafeAreaInsets();
-
   const accessReferralProgram = useCallback(() => {
-    const path = referralProgramMobile?.params.path;
+    const path = referralProgramMobile?.params?.path;
     if (referralProgramMobile?.enabled && path) {
       Linking.canOpenURL(path).then(() => Linking.openURL(path));
 
       track("button_clicked", {
         button: "Referral program",
-        screen: ScreenName.Portfolio,
+        page: ScreenName.Portfolio,
       });
     }
   }, [referralProgramMobile]);
@@ -163,9 +169,7 @@ function WalletTabNavigatorTabBar({
     <>
       <WalletTabBackgroundGradient
         scrollX={position}
-        color={
-          readOnlyModeEnabled && hasNoAccounts ? colors.neutral.c30 : undefined
-        }
+        color={readOnlyModeEnabled && hasNoAccounts ? colors.neutral.c30 : undefined}
       />
       <AnimatedFlex
         style={{
@@ -188,11 +192,7 @@ function WalletTabNavigatorTabBar({
           }}
         />
         <Flex px={6} py={2} justifyContent={"flex-end"}>
-          <Flex
-            flexDirection={"row"}
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
+          <Flex flexDirection={"row"} justifyContent={"space-between"} alignItems={"center"}>
             <Flex flexDirection={"row"}>
               {state.routes.map((route, index) => {
                 const { options } = descriptors[route.key];
@@ -211,15 +211,14 @@ function WalletTabNavigatorTabBar({
               })}
             </Flex>
 
-            {referralProgramMobile?.enabled &&
-              referralProgramMobile?.params?.path && (
-                <StyledReferral onPress={accessReferralProgram}>
-                  <Icons.GiftMedium />
-                  <Text ml={"6px"} variant="small" fontWeight="semiBold">
-                    {t("wallet.referralProgram")}
-                  </Text>
-                </StyledReferral>
-              )}
+            {referralProgramMobile?.enabled && referralProgramMobile?.params?.path && (
+              <StyledReferral onPress={accessReferralProgram}>
+                <IconsLegacy.GiftMedium />
+                <Text ml={"6px"} variant="small" fontWeight="semiBold">
+                  {t("wallet.referralProgram")}
+                </Text>
+              </StyledReferral>
+            )}
           </Flex>
         </Flex>
       </AnimatedFlex>

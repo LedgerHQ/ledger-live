@@ -1,10 +1,7 @@
 import React, { useState, useCallback, useMemo, memo } from "react";
 import { FlatList, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
-import {
-  listTokens,
-  isCurrencySupported,
-} from "@ledgerhq/live-common/currencies/index";
+import { listTokens, isCurrencySupported } from "@ledgerhq/live-common/currencies/index";
 import {
   distribute,
   Action,
@@ -22,8 +19,8 @@ import { Trans } from "react-i18next";
 import { ListAppsResult } from "@ledgerhq/live-common/apps/types";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { AppType, SortOptions } from "@ledgerhq/live-common/apps/filtering";
-import useLatestFirmware from "@ledgerhq/live-common/hooks/useLatestFirmware";
-import { ManagerTab } from "../../const/manager";
+import { useLatestFirmware } from "@ledgerhq/live-common/device/hooks/useLatestFirmware";
+import { ManagerTab } from "~/const/manager";
 
 import AppFilter from "./AppsList/AppFilter";
 
@@ -35,20 +32,18 @@ import Searchbar from "./AppsList/Searchbar";
 
 import InstalledAppModal from "./Modals/InstalledAppModal";
 
-import NoResultsFound from "../../icons/NoResultsFound";
+import NoResultsFound from "~/icons/NoResultsFound";
 import AppIcon from "./AppsList/AppIcon";
 import AppUpdateAll from "./AppsList/AppUpdateAll";
-import Search from "../../components/Search";
-import FirmwareUpdateBanner from "../../components/FirmwareUpdateBanner";
-import { TAB_BAR_SAFE_HEIGHT } from "../../components/TabBar/shared";
-import type {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
-import { ManagerNavigatorStackParamList } from "../../components/RootNavigator/types/ManagerNavigator";
-import { ScreenName } from "../../const";
-import { lastSeenDeviceSelector } from "../../reducers/settings";
+import Search from "~/components/Search";
+import FirmwareUpdateBanner from "~/components/FirmwareUpdateBanner";
+import { TAB_BAR_SAFE_HEIGHT } from "~/components/TabBar/shared";
+import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { ManagerNavigatorStackParamList } from "~/components/RootNavigator/types/ManagerNavigator";
+import { ScreenName } from "~/const";
+import { lastSeenDeviceSelector } from "~/reducers/settings";
 import ProviderWarning from "./ProviderWarning";
+import { UpdateStep } from "../FirmwareUpdate";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<ManagerNavigatorStackParamList, ScreenName.ManagerMain>
@@ -57,8 +52,6 @@ type NavigationProps = BaseComposite<
 type Props = {
   state: State;
   dispatch: (_: Action) => void;
-  setAppInstallWithDependencies: (_: { app: App; dependencies: App[] }) => void;
-  setAppUninstallWithDependencies: (_: { dependents: App[]; app: App }) => void;
   setStorageWarning: (value: string | null) => void;
   deviceId: string;
   initialDeviceName?: string | null;
@@ -72,14 +65,12 @@ type Props = {
   optimisticState: State;
   result: ListAppsResult;
   onLanguageChange: () => void;
-  onBackFromUpdate: () => void;
+  onBackFromUpdate: (updateState: UpdateStep) => void;
 };
 
 const AppsScreen = ({
   state,
   dispatch,
-  setAppInstallWithDependencies,
-  setAppUninstallWithDependencies,
   setStorageWarning,
   updateModalOpened,
   deviceId,
@@ -107,12 +98,8 @@ const AppsScreen = ({
   }, [state]);
 
   const [appFilter, setFilter] = useState<AppType | null | undefined>("all");
-  const [sort, setSort] = useState<SortOptions["type"] | null | undefined>(
-    "marketcap",
-  );
-  const [order, setOrder] = useState<SortOptions["order"] | null | undefined>(
-    "desc",
-  );
+  const [sort, setSort] = useState<SortOptions["type"] | null | undefined>("marketcap");
+  const [order, setOrder] = useState<SortOptions["order"] | null | undefined>("desc");
 
   const sortOptions = useMemo(
     () => ({
@@ -157,10 +144,7 @@ const AppsScreen = ({
     () =>
       found &&
       found.parentCurrency &&
-      installed.find(
-        ({ name }) =>
-          name.toLowerCase() === found.parentCurrency.name.toLowerCase(),
-      ),
+      installed.find(({ name }) => name.toLowerCase() === found.parentCurrency.name.toLowerCase()),
     [found, installed],
   );
 
@@ -168,10 +152,7 @@ const AppsScreen = ({
     () =>
       found &&
       found.parentCurrency &&
-      apps.find(
-        ({ name }) =>
-          name.toLowerCase() === found.parentCurrency.name.toLowerCase(),
-      ),
+      apps.find(({ name }) => name.toLowerCase() === found.parentCurrency.name.toLowerCase()),
     [found, apps],
   );
 
@@ -192,13 +173,7 @@ const AppsScreen = ({
               <AppIcon app={parent} size={18} radius={100} />
             </Flex>
           </Flex>
-          <Text
-            color="neutral.c100"
-            fontWeight="medium"
-            variant="h2"
-            mt={6}
-            textAlign="center"
-          >
+          <Text color="neutral.c100" fontWeight="medium" variant="h2" mt={6} textAlign="center">
             <Trans
               i18nKey="manager.token.title"
               values={{
@@ -207,13 +182,7 @@ const AppsScreen = ({
             />
           </Text>
           <Flex>
-            <Text
-              color="neutral.c80"
-              fontWeight="medium"
-              variant="body"
-              pt={6}
-              textAlign="center"
-            >
+            <Text color="neutral.c80" fontWeight="medium" variant="body" pt={6} textAlign="center">
               {parentInstalled ? (
                 <Trans
                   i18nKey="manager.token.noAppNeeded"
@@ -237,23 +206,11 @@ const AppsScreen = ({
       ) : (
         <Flex alignItems="center" justifyContent="center" pb="50px" pt="30px">
           <NoResultsFound />
-          <Text
-            color="neutral.c100"
-            fontWeight="medium"
-            variant="h2"
-            mt={6}
-            textAlign="center"
-          >
+          <Text color="neutral.c100" fontWeight="medium" variant="h2" mt={6} textAlign="center">
             <Trans i18nKey="manager.appList.noResultsFound" />
           </Text>
           <Flex>
-            <Text
-              color="neutral.c80"
-              fontWeight="medium"
-              variant="body"
-              pt={6}
-              textAlign="center"
-            >
+            <Text color="neutral.c80" fontWeight="medium" variant="body" pt={6} textAlign="center">
               <Trans i18nKey="manager.appList.noResultsDesc" />
             </Text>
           </Flex>
@@ -268,20 +225,11 @@ const AppsScreen = ({
         app={item}
         state={state}
         dispatch={dispatch}
-        setAppInstallWithDependencies={setAppInstallWithDependencies}
-        setAppUninstallWithDependencies={setAppUninstallWithDependencies}
         setStorageWarning={setStorageWarning}
         optimisticState={optimisticState}
       />
     ),
-    [
-      state,
-      dispatch,
-      setAppInstallWithDependencies,
-      setAppUninstallWithDependencies,
-      setStorageWarning,
-      optimisticState,
-    ],
+    [state, dispatch, setStorageWarning, optimisticState],
   );
 
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
@@ -295,11 +243,6 @@ const AppsScreen = ({
         data={items}
         ListHeaderComponent={
           <Flex mt={4}>
-            {showFwUpdateBanner && newFwUpdateUxFeatureFlag?.enabled ? (
-              <Flex mb={5}>
-                <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
-              </Flex>
-            ) : null}
             <DeviceCard
               distribution={distribution}
               state={state}
@@ -308,12 +251,17 @@ const AppsScreen = ({
               initialDeviceName={initialDeviceName}
               pendingInstalls={pendingInstalls}
               deviceInfo={deviceInfo}
-              setAppUninstallWithDependencies={setAppUninstallWithDependencies}
               dispatch={dispatch}
               device={device}
               appList={deviceApps}
               onLanguageChange={onLanguageChange}
-            />
+            >
+              {showFwUpdateBanner && newFwUpdateUxFeatureFlag?.enabled ? (
+                <Flex p={6} pb={0}>
+                  <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
+                </Flex>
+              ) : null}
+            </DeviceCard>
             <ProviderWarning />
             <Benchmarking state={state} />
             {showFwUpdateBanner && !newFwUpdateUxFeatureFlag?.enabled ? (
@@ -326,12 +274,7 @@ const AppsScreen = ({
                 isModalOpened={updateModalOpened}
               />
             )}
-            <Flex
-              flexDirection="row"
-              mt={8}
-              mb={6}
-              backgroundColor="background.main"
-            >
+            <Flex flexDirection="row" mt={8} mb={6} backgroundColor="background.main">
               <Searchbar searchQuery={query} onQueryUpdate={setQuery} />
               <Flex ml={6}>
                 <AppFilter
@@ -365,7 +308,6 @@ const AppsScreen = ({
       initialDeviceName,
       pendingInstalls,
       deviceInfo,
-      setAppUninstallWithDependencies,
       dispatch,
       device,
       deviceApps,

@@ -2,16 +2,16 @@ import React, { useCallback } from "react";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
-import { TrackScreen } from "../../../../analytics";
-import ValidateError from "../../../../components/ValidateError";
-import { ScreenName } from "../../../../const";
+import { TrackScreen } from "~/analytics";
+import ValidateError from "~/components/ValidateError";
+import { ScreenName } from "~/const";
 import type {
   BaseComposite,
   StackNavigatorNavigation,
   StackNavigatorProps,
-} from "../../../../components/RootNavigator/types/helpers";
+} from "~/components/RootNavigator/types/helpers";
 import type { AlgorandClaimRewardsFlowParamList } from "./type";
-import { BaseNavigatorStackParamList } from "../../../../components/RootNavigator/types/BaseNavigator";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 
 type Props = BaseComposite<
   StackNavigatorProps<
@@ -23,9 +23,7 @@ type Props = BaseComposite<
 export default function ValidationError({ navigation, route }: Props) {
   const { colors } = useTheme();
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
   const retry = useCallback(() => {
     navigation.goBack();
@@ -40,7 +38,13 @@ export default function ValidationError({ navigation, route }: Props) {
         },
       ]}
     >
-      <TrackScreen category="AlgorandClaimRewards" name="ValidationError" />
+      <TrackScreen
+        category="AlgorandClaimRewards"
+        name="ValidationError"
+        flow="stake"
+        action="claim_rewards"
+        currency="algo"
+      />
       <ValidateError error={error} onRetry={retry} onClose={onClose} />
     </SafeAreaView>
   );

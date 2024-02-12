@@ -70,15 +70,13 @@ const RequiresBluetoothDrawer = ({
     <>
       <QueuedDrawer
         isRequestingToBeOpened={
-          isOpenedOnIssue &&
-          bluetoothRequirementsState === "bluetooth_permissions_ungranted"
+          isOpenedOnIssue && bluetoothRequirementsState === "bluetooth_permissions_ungranted"
         }
         onClose={onCloseBuilder("bluetooth_permissions_ungranted")}
         preventBackdropClick
         onModalHide={onDrawerHide}
       >
         <BluetoothPermissionsDenied
-          componentType="drawer"
           onRetry={retryRequestOnIssue}
           neverAskAgain={cannotRetryRequest}
         />
@@ -92,23 +90,18 @@ const RequiresBluetoothDrawer = ({
         preventBackdropClick
         onModalHide={onDrawerHide}
       >
-        <BluetoothDisabled
-          componentType="drawer"
-          onRetry={retryRequestOnIssue}
-        />
+        <BluetoothDisabled onRetry={retryRequestOnIssue} />
       </QueuedDrawer>
 
       <QueuedDrawer
         isRequestingToBeOpened={
-          isOpenedOnIssue &&
-          bluetoothRequirementsState === "location_permission_ungranted"
+          isOpenedOnIssue && bluetoothRequirementsState === "location_permission_ungranted"
         }
         onClose={onCloseBuilder("location_permission_ungranted")}
         preventBackdropClick
         onModalHide={onDrawerHide}
       >
         <LocationPermissionDenied
-          componentType="drawer"
           onRetry={retryRequestOnIssue}
           neverAskAgain={cannotRetryRequest}
         />
@@ -122,10 +115,7 @@ const RequiresBluetoothDrawer = ({
         preventBackdropClick
         onModalHide={onDrawerHide}
       >
-        <LocationDisabled
-          componentType="drawer"
-          onRetry={retryRequestOnIssue}
-        />
+        <LocationDisabled onRetry={retryRequestOnIssue} />
       </QueuedDrawer>
     </>
   );

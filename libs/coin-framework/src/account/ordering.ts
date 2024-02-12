@@ -2,10 +2,7 @@ import { BigNumber } from "bignumber.js";
 import { flattenAccounts, getAccountCurrency } from "./helpers";
 import type { FlattenAccountsOptions } from "./helpers";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type {
-  CryptoCurrency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 export type AccountComparator = (a: AccountLike, b: AccountLike) => number;
 
@@ -29,8 +26,8 @@ export const sortAccountsComparatorFromOrder = (
   orderAccounts: string,
   calculateCountervalue: (
     currency: TokenCurrency | CryptoCurrency,
-    value: BigNumber
-  ) => BigNumber | null | undefined
+    value: BigNumber,
+  ) => BigNumber | null | undefined,
 ): AccountComparator => {
   const [order, sort] = orderAccounts.split("|");
   const ascValue = sort === "desc" ? -1 : 1;
@@ -47,9 +44,7 @@ export const sortAccountsComparatorFromOrder = (
 
   const lazyCalcCV = (a: AccountLike) => {
     if (a.id in cvCaches) return cvCaches[a.id];
-    const v =
-      calculateCountervalue(getAccountCurrency(a), a.balance) ||
-      new BigNumber(-1);
+    const v = calculateCountervalue(getAccountCurrency(a), a.balance) || new BigNumber(-1);
     cvCaches[a.id] = v;
     return v;
   };
@@ -62,7 +57,7 @@ export const sortAccountsComparatorFromOrder = (
 };
 export const comparatorSortAccounts = <TA extends AccountLike>(
   accounts: TA[],
-  comparator: AccountComparator
+  comparator: AccountComparator,
 ): TA[] => {
   const meta = accounts
     .map((ta, index) => ({
@@ -77,24 +72,24 @@ export const comparatorSortAccounts = <TA extends AccountLike>(
   }
 
   // otherwise, need to reorder
-  return meta.map((m) => accounts[m.index]);
+  return meta.map(m => accounts[m.index]);
 };
 // flatten accounts and sort between them (used for grid mode)
 export const flattenSortAccounts = (
   accounts: Account[],
   comparator: AccountComparator,
-  o?: FlattenAccountsOptions
+  o?: FlattenAccountsOptions,
 ): AccountLike[] => {
   return comparatorSortAccounts(flattenAccounts(accounts, o), comparator);
 };
 // sort top level accounts and the inner sub accounts if necessary (used for lists)
 export const nestedSortAccounts = (
   topAccounts: Account[],
-  comparator: AccountComparator
+  comparator: AccountComparator,
 ): Account[] => {
   let oneAccountHaveChanged = false;
   // first of all we sort the inner token accounts
-  const accounts = topAccounts.map((a) => {
+  const accounts = topAccounts.map(a => {
     if (!a.subAccounts) return a;
     const subAccounts = comparatorSortAccounts(a.subAccounts, comparator);
     if (subAccounts === a.subAccounts) return a;
@@ -102,8 +97,5 @@ export const nestedSortAccounts = (
     return { ...a, subAccounts };
   });
   // then we sort again between them
-  return comparatorSortAccounts(
-    oneAccountHaveChanged ? accounts : topAccounts,
-    comparator
-  );
+  return comparatorSortAccounts(oneAccountHaveChanged ? accounts : topAccounts, comparator);
 };

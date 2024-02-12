@@ -17,9 +17,9 @@ import Animated, {
 } from "react-native-reanimated";
 import { useTheme } from "@react-navigation/native";
 import LText from "./LText";
-import Chevron from "../icons/Chevron";
+import Chevron from "~/icons/Chevron";
 
-const renderListItem = <T,>({ item, index }: { item: T; index: number }) => (
+const renderListItem = <T extends React.ReactNode>({ item, index }: { item: T; index: number }) => (
   <View key={index}>{item}</View>
 );
 
@@ -76,11 +76,7 @@ const CollapsibleList = <T,>({
   // Animated style updating the height depending on the opening anim state of the list container
   const heightStyle = useAnimatedStyle(() => {
     return {
-      height: interpolate(
-        openState.value,
-        [0, 1],
-        [itemHeight, 61 + itemHeight * data.length],
-      ),
+      height: interpolate(openState.value, [0, 1], [itemHeight, 61 + itemHeight * data.length]),
     };
   });
 

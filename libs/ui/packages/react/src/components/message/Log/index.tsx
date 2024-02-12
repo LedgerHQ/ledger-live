@@ -15,7 +15,7 @@ const Container = styled(FlexBox)`
   justify-content: center;
   flex-wrap: wrap;
   align-items: stretch;
-  min-height: ${(p) => p.theme.space[12]}px;
+  min-height: ${p => p.theme.space[12]}px;
 `;
 
 const TextContainer = styled(FlexBox).attrs(() => ({

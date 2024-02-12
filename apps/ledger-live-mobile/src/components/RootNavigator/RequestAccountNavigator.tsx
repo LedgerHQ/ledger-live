@@ -2,10 +2,10 @@ import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
-import { NavigatorName, ScreenName } from "../../const";
-import RequestAccountSelectCrypto from "../../screens/RequestAccount/01-SelectCrypto";
-import RequestAccountSelectAccount from "../../screens/RequestAccount/02-SelectAccount";
-import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
+import { NavigatorName, ScreenName } from "~/const";
+import RequestAccountSelectCrypto from "~/screens/RequestAccount/01-SelectCrypto";
+import RequestAccountSelectAccount from "~/screens/RequestAccount/02-SelectAccount";
+import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import AddAccountsNavigator from "./AddAccountsNavigator";
 import StepHeader from "../StepHeader";
 import type { RequestAccountNavigatorParamList } from "./types/RequestAccountNavigator";
@@ -14,10 +14,7 @@ const totalSteps = "2";
 export default function RequestAccountNavigator() {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const stackNavConfig = useMemo(
-    () => getStackNavigatorConfig(colors),
-    [colors],
-  );
+  const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [colors]);
   return (
     <Stack.Navigator screenOptions={{ ...stackNavConfig }}>
       <Stack.Screen

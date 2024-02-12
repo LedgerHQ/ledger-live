@@ -3,7 +3,7 @@ import styled from "styled-components/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { CurrencyData } from "@ledgerhq/live-common/market/types";
-import { useLocale } from "../../../context/Locale";
+import { useLocale } from "~/context/Locale";
 import { counterValueFormatter } from "../utils";
 import DeltaVariation from "../DeltaVariation";
 
@@ -48,13 +48,7 @@ const StatValue = styled(Flex).attrs({
   alignItems: "flex-end",
 })``;
 
-const StatRow = ({
-  label,
-  children,
-}: {
-  label: string;
-  children?: React.ReactNode;
-}) => (
+const StatRow = ({ label, children }: { label: string; children?: React.ReactNode }) => (
   <StatRowContainer>
     <Label>{label}</Label>
     <StatValue>{children}</StatValue>
@@ -192,13 +186,7 @@ export default function MarketStats({
         ) : null}
       </StatRow>
       <StatRow label={t("market.detailsPage.marketCapRank")}>
-        <TextLabel
-          bg="neutral.c40"
-          px={2}
-          py={1}
-          overflow="hidden"
-          borderRadius={4}
-        >
+        <TextLabel bg="neutral.c40" px={2} py={1} overflow="hidden" borderRadius={4}>
           {marketcapRank}
         </TextLabel>
       </StatRow>

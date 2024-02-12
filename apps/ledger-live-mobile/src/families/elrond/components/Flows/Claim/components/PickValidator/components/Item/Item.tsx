@@ -5,12 +5,12 @@ import { Trans } from "react-i18next";
 import BigNumber from "bignumber.js";
 import { ELROND_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/elrond/constants";
 
-import LText from "../../../../../../../../../components/LText";
-import FirstLetterIcon from "../../../../../../../../../components/FirstLetterIcon";
-import CurrencyUnitValue from "../../../../../../../../../components/CurrencyUnitValue";
-import ArrowRight from "../../../../../../../../../icons/ArrowRight";
-import Circle from "../../../../../../../../../components/Circle";
-import LedgerLogo from "../../../../../../../../../icons/LiveLogo";
+import LText from "~/components/LText";
+import FirstLetterIcon from "~/components/FirstLetterIcon";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import ArrowRight from "~/icons/ArrowRight";
+import Circle from "~/components/Circle";
+import LedgerLogo from "~/icons/LiveLogo";
 
 import type { ItemPropsType } from "./types";
 
@@ -31,21 +31,13 @@ const Item = (props: ItemPropsType) => {
    */
 
   return (
-    <TouchableOpacity
-      onPress={() => onSelect(validator, claimableRewards)}
-      style={styles.wrapper}
-    >
+    <TouchableOpacity onPress={() => onSelect(validator, claimableRewards)} style={styles.wrapper}>
       <View style={styles.iconWrapper}>
         <Circle crop={true} size={32}>
           {ELROND_LEDGER_VALIDATOR_ADDRESS === contract ? (
             <LedgerLogo size={32 * 0.7} color={colors.text} />
           ) : (
-            <FirstLetterIcon
-              label={name || "-"}
-              round={true}
-              size={32}
-              fontSize={24}
-            />
+            <FirstLetterIcon label={name || "-"} round={true} size={32} fontSize={24} />
           )}
         </Circle>
       </View>

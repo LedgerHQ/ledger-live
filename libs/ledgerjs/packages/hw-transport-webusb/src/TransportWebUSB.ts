@@ -1,9 +1,5 @@
 import Transport from "@ledgerhq/hw-transport";
-import type {
-  Observer,
-  DescriptorEvent,
-  Subscription,
-} from "@ledgerhq/hw-transport";
+import type { Observer, DescriptorEvent, Subscription } from "@ledgerhq/hw-transport";
 import hidFraming from "@ledgerhq/devices/hid-framing";
 import { identifyUSBProductId } from "@ledgerhq/devices";
 import type { DeviceModel } from "@ledgerhq/devices";
@@ -15,12 +11,7 @@ import {
   DisconnectedDeviceDuringOperation,
   DisconnectedDevice,
 } from "@ledgerhq/errors";
-import {
-  getLedgerDevices,
-  getFirstLedgerDevice,
-  requestLedgerDevice,
-  isSupported,
-} from "./webusb";
+import { getLedgerDevices, getFirstLedgerDevice, requestLedgerDevice, isSupported } from "./webusb";
 
 const configurationValue = 1;
 const endpointNumber = 3;
@@ -62,12 +53,10 @@ export default class TransportWebUSB extends Transport {
    *
    * Important: it must be called in the context of a UI click!
    */
-  static listen = (
-    observer: Observer<DescriptorEvent<USBDevice>>
-  ): Subscription => {
+  static listen = (observer: Observer<DescriptorEvent<USBDevice>>): Subscription => {
     let unsubscribed = false;
     getFirstLedgerDevice().then(
-      (device) => {
+      device => {
         if (!unsubscribed) {
           const deviceModel = identifyUSBProductId(device.productId);
           observer.next({
@@ -78,17 +67,13 @@ export default class TransportWebUSB extends Transport {
           observer.complete();
         }
       },
-      (error) => {
-        if (
-          window.DOMException &&
-          error instanceof window.DOMException &&
-          error.code === 18
-        ) {
+      error => {
+        if (window.DOMException && error instanceof window.DOMException && error.code === 18) {
           observer.error(new TransportWebUSBGestureRequired(error.message));
         } else {
           observer.error(new TransportOpenUserCancelled(error.message));
         }
-      }
+      },
     );
 
     function unsubscribe() {
@@ -129,12 +114,12 @@ export default class TransportWebUSB extends Transport {
 
     await gracefullyResetDevice(device);
     const iface = device.configurations[0].interfaces.find(({ alternates }) =>
-      alternates.some((a) => a.interfaceClass === 255)
+      alternates.some(a => a.interfaceClass === 255),
     );
 
     if (!iface) {
       throw new TransportInterfaceNotAvailable(
-        "No WebUSB interface found for your Ledger device. Please upgrade firmware or contact techsupport."
+        "No WebUSB interface found for your Ledger device. Please upgrade firmware or contact techsupport.",
       );
     }
 
@@ -149,7 +134,7 @@ export default class TransportWebUSB extends Transport {
 
     const transport = new TransportWebUSB(device, interfaceNumber);
 
-    const onDisconnect = (e) => {
+    const onDisconnect = e => {
       if (device === e.device) {
         // $FlowFixMe
         navigator.usb.removeEventListener("disconnect", onDisconnect);
@@ -211,7 +196,7 @@ export default class TransportWebUSB extends Transport {
 
       log("apdu", "<= " + result.toString("hex"));
       return result;
-    }).catch((e) => {
+    }).catch(e => {
       if (e && e.message && e.message.includes("disconnected")) {
         this._emitDisconnect(e);
 

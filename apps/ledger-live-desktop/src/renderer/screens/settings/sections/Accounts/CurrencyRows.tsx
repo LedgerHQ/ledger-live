@@ -1,5 +1,6 @@
 import React, { PureComponent } from "react";
-import { Trans, withTranslation, TFunction } from "react-i18next";
+import { Trans, withTranslation } from "react-i18next";
+import { TFunction } from "i18next";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";

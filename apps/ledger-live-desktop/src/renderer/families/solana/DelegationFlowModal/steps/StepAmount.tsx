@@ -1,4 +1,5 @@
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { SOLANA_DELEGATION_RESERVE } from "@ledgerhq/live-common/families/solana/utils";
 import React, { Fragment, PureComponent } from "react";
 import { Trans } from "react-i18next";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -7,9 +8,11 @@ import Button from "~/renderer/components/Button";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import SpendableBanner from "~/renderer/components/SpendableBanner";
+import Alert from "~/renderer/components/Alert";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import AmountField from "~/renderer/modals/Send/fields/AmountField";
 import { StepProps } from "../types";
+
 const StepAmount = ({
   t,
   account,
@@ -24,7 +27,13 @@ const StepAmount = ({
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   return (
     <Box flow={4}>
-      <TrackPage category="Solana Delegation" name="Step Amount" />
+      <TrackPage
+        category="Solana Delegation"
+        name="Step Amount"
+        flow="stake"
+        action="delegation"
+        currency="sol"
+      />
       {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
       {error ? <ErrorBanner error={error} /> : null}
       {account && transaction && mainAccount && (
@@ -46,6 +55,14 @@ const StepAmount = ({
             t={t}
             withUseMaxLabel={true}
           />
+          <Alert type="warning" small>
+            <Trans
+              i18nKey="solana.delegation.flow.steps.amount.reserveWarning"
+              values={{
+                amount: SOLANA_DELEGATION_RESERVE,
+              }}
+            />
+          </Alert>
         </Fragment>
       )}
     </Box>

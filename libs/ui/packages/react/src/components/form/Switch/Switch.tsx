@@ -5,7 +5,7 @@ import Flex from "../../layout/Flex";
 
 const Container = styled(Flex).attrs({ alignItems: "center", flexDirection: "row" })`
   width: fit-content;
-  column-gap: ${(p) => p.theme.space[5]}px;
+  column-gap: ${p => p.theme.space[5]}px;
   cursor: pointer;
 
   /* reversed VARIANT */
@@ -30,15 +30,15 @@ const Label = styled(Text)`
 `;
 
 const Switcher = styled.div`
-  --ll-switch-width: ${(p) => p.theme.space[14]}px;
-  --ll-switch-height: ${(p) => p.theme.space[9]}px;
-  --ll-switch-padding: ${(p) => p.theme.space[2]}px;
+  --ll-switch-width: ${p => p.theme.space[14]}px;
+  --ll-switch-height: ${p => p.theme.space[9]}px;
+  --ll-switch-padding: ${p => p.theme.space[2]}px;
 
   position: relative;
   display: inline-block;
 
-  background: ${(props) => props.theme.colors.neutral.c60};
-  border-radius: ${(p) => p.theme.space[6]}px;
+  background: ${props => props.theme.colors.neutral.c60};
+  border-radius: ${p => p.theme.space[6]}px;
   width: var(--ll-switch-width);
   height: var(--ll-switch-height);
 
@@ -51,16 +51,16 @@ const Switcher = styled.div`
 
   &:focus {
     outline-style: auto;
-    outline: 1px solid ${(props) => props.theme.colors.neutral.c90};
-    outline-offset: ${(p) => p.theme.space[1]}px;
+    outline: 1px solid ${props => props.theme.colors.neutral.c90};
+    outline-offset: ${p => p.theme.space[1]}px;
   }
 
   /* CIRCLE ELEMENT */
   &:before {
     position: absolute;
     display: block;
-    background: ${(props) => props.theme.colors.constant.white};
-    border-radius: ${(p) => p.theme.space[12]}px;
+    background: ${props => props.theme.colors.constant.white};
+    border-radius: ${p => p.theme.space[12]}px;
 
     width: calc(calc(var(--ll-switch-width) / 2) - var(--ll-switch-padding));
     height: calc(calc(var(--ll-switch-width) / 2) - var(--ll-switch-padding));
@@ -71,32 +71,32 @@ const Switcher = styled.div`
 
   /* SMALL VARIANT */
   &[data-size="small"] {
-    --ll-switch-width: ${(p) => p.theme.space[8]}px;
-    --ll-switch-height: ${(p) => p.theme.space[6]}px;
+    --ll-switch-width: ${p => p.theme.space[8]}px;
+    --ll-switch-height: ${p => p.theme.space[6]}px;
   }
 
   &:hover {
-    background-color: ${(props) => props.theme.colors.neutral.c70};
+    background-color: ${props => props.theme.colors.neutral.c70};
   }
 
   &:active {
-    background-color: ${(props) => props.theme.colors.neutral.c80};
+    background-color: ${props => props.theme.colors.neutral.c80};
   }
 
   /* CHECKED VARIANT */
   ${Input}:checked ~ & {
-    background: ${(props) => props.theme.colors.primary.c80};
+    background: ${props => props.theme.colors.primary.c80};
 
     &:before {
       transform: translateX(calc(var(--ll-switch-width) / 2));
     }
 
     &:hover {
-      background: ${(props) => props.theme.colors.primary.c90};
+      background: ${props => props.theme.colors.primary.c90};
     }
 
     :active {
-      background: ${(props) => props.theme.colors.primary.c100};
+      background: ${props => props.theme.colors.primary.c100};
     }
   }
 `;

@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Flex, Icons, Popin, Text } from "@ledgerhq/react-ui";
+import { Button, Flex, IconsLegacy, Popin, Text } from "@ledgerhq/react-ui";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 
@@ -21,7 +21,7 @@ const LockedModal = ({ isOpen, productName, onClose }: Props) => {
     <AppInstallPopin isOpen={isOpen}>
       <Flex flex={1} justifyContent="center" alignItems="center">
         <Flex borderRadius={9999} p={6} bg="neutral.c20">
-          <Icons.WarningSolidMedium size={32} color="warning.c70" />
+          <IconsLegacy.WarningSolidMedium size={32} color="warning.c70" />
         </Flex>
       </Flex>
       <Flex flex={1} flexDirection="column" justifyContent="center" alignItems="center" px={12}>

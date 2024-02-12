@@ -8,7 +8,7 @@ import {
   troubleshootOverObservable,
   troubleshootOverObservableReducer,
 } from "@ledgerhq/live-common/network-troubleshooting/index";
-import NavigationScrollView from "../../../../components/NavigationScrollView";
+import NavigationScrollView from "~/components/NavigationScrollView";
 
 const Bullet = styled(Flex).attrs((p: { backgroundColor: string }) => ({
   backgroundColor: p.backgroundColor,
@@ -37,11 +37,7 @@ export default function Network() {
         />
         {state.map(({ title, status }) => (
           <Flex flexDirection="row" key={title} alignItems="center" mt={4}>
-            <Bullet
-              backgroundColor={
-                status === "success" ? colors.success : colors.alert
-              }
-            />
+            <Bullet backgroundColor={status === "success" ? colors.success : colors.alert} />
             <Text variant="body">{title}</Text>
           </Flex>
         ))}

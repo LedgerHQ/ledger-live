@@ -12,7 +12,7 @@ import BigNumber from "bignumber.js";
 import BIPPath from "bip32-path";
 import JSLong from "long";
 
-const tokenTypeToInt = (tokenType) => {
+const tokenTypeToInt = tokenType => {
   if (!tokenType) return 0;
 
   switch (tokenType) {
@@ -40,9 +40,7 @@ const serializePath = (path: number[]): Buffer => {
 export const pathToBuffer = (originalPath: string): Buffer => {
   const path = originalPath
     .split("/")
-    .map((value) =>
-      value.endsWith("'") || value.endsWith("h") ? value : value + "'"
-    )
+    .map(value => (value.endsWith("'") || value.endsWith("h") ? value : value + "'"))
     .join("/");
   const pathNums: number[] = BIPPath.fromString(path).toPathArray();
   return serializePath(pathNums);
@@ -54,8 +52,7 @@ const serializeNumber = (amount: number | BigNumber | undefined): Buffer => {
   const len = Math.floor(hex.length / 2);
   if (len > 8) throw "Invalid transaction.";
   const u8 = new Uint8Array(8);
-  for (let i = 0; i < len; i += 1)
-    u8[len - i - 1] = parseInt(hex.slice(i * 2, i * 2 + 2), 16);
+  for (let i = 0; i < len; i += 1) u8[len - i - 1] = parseInt(hex.slice(i * 2, i * 2 + 2), 16);
   return Buffer.from(u8);
 };
 
@@ -86,9 +83,7 @@ export const serializePaymentV2 = (txn: PaymentV2): Buffer => {
   return Buffer.from(txSerialized);
 };
 
-export const serializeSecurityExchangeV1 = (
-  txn: SecurityExchangeV1
-): Buffer => {
+export const serializeSecurityExchangeV1 = (txn: SecurityExchangeV1): Buffer => {
   if (!txn.payee) throw "Payee required";
 
   const payee = txn.payee as Address;
@@ -139,9 +134,7 @@ export const serializeStakeValidatorV1 = (txn: StakeValidatorV1): Buffer => {
   return Buffer.from(txSerialized);
 };
 
-export const serializeTransferValidatorStakeV1 = (
-  txn: TransferValidatorStakeV1
-): Buffer => {
+export const serializeTransferValidatorStakeV1 = (txn: TransferValidatorStakeV1): Buffer => {
   if (!txn.newOwner) throw "New owner required";
   if (!txn.oldOwner) throw "Old owner required";
   if (!txn.newAddress) throw "New address required";
@@ -173,9 +166,7 @@ export const serializeTransferValidatorStakeV1 = (
   return Buffer.from(txSerialized);
 };
 
-export const serializeUnstakeValidatorV1 = (
-  txn: UnstakeValidatorV1
-): Buffer => {
+export const serializeUnstakeValidatorV1 = (txn: UnstakeValidatorV1): Buffer => {
   if (!txn.address) throw "Address required";
 
   const address = txn.address as Address;

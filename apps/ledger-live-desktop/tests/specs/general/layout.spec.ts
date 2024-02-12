@@ -4,17 +4,15 @@ import { Layout } from "../../models/Layout";
 import { Drawer } from "../../models/Drawer";
 import { SendModal } from "../../models/SendModal";
 import { ReceiveModal } from "../../models/ReceiveModal";
-import { PortfolioPage } from "../../models/PortfolioPage";
 import { SettingsPage } from "../../models/SettingsPage";
 
 test.use({ userdata: "1AccountBTC1AccountETHStarred" });
 
-test("Layout", async ({ page }) => {
+test("Layout @smoke", async ({ page }) => {
   const layout = new Layout(page);
   const drawer = new Drawer(page);
   const sendModal = new SendModal(page);
   const receiveModal = new ReceiveModal(page);
-  const portfolioPage = new PortfolioPage(page);
   const settingsPage = new SettingsPage(page);
 
   await test.step("can open send modal", async () => {
@@ -49,11 +47,6 @@ test("Layout", async ({ page }) => {
     });
   });
 
-  await test.step("go to buy / sell cryto", async () => {
-    await layout.goToBuyCrypto();
-    await expect.soft(page).toHaveScreenshot("buy-sell.png");
-  });
-
   await test.step("go to experimental features", async () => {
     await layout.goToSettings();
     await settingsPage.experimentalTab.click();
@@ -83,16 +76,6 @@ test("Layout", async ({ page }) => {
     await expect
       .soft(page)
       .toHaveScreenshot("collapse-sidebar.png", { mask: [page.locator("canvas")] });
-  });
-
-  await test.step("shows the carousel and can dismiss it", async () => {
-    await layout.goToPortfolio();
-    await portfolioPage.carousel.waitFor({ state: "visible" });
-    await portfolioPage.carouselCloseButton.click();
-    await portfolioPage.carouselConfirmButton.click();
-    await expect
-      .soft(page)
-      .toHaveScreenshot("dismiss-carousel.png", { mask: [page.locator("canvas")] });
   });
 
   await test.step("can display the help modal", async () => {

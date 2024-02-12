@@ -8,7 +8,7 @@ const AllowExperimentalAppsToggle = () => {
   const dispatch = useDispatch();
   const allowExperimentalApps = useSelector(allowExperimentalAppsSelector);
   const onSetAllowExperimentalApps = useCallback(
-    checked => dispatch(setAllowExperimentalApps(checked)),
+    (checked: boolean) => dispatch(setAllowExperimentalApps(checked)),
     [dispatch],
   );
   return (

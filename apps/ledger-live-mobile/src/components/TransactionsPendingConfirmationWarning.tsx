@@ -5,12 +5,12 @@ import type { AccountLike } from "@ledgerhq/types-live";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import { isAccountBalanceUnconfirmed } from "@ledgerhq/live-common/account/helpers";
-import { areSomeAccountsBalanceUnconfirmedSelector } from "../reducers/accounts";
+import { areSomeAccountsBalanceUnconfirmedSelector } from "~/reducers/accounts";
 import QueuedDrawer from "./QueuedDrawer";
 import LText from "./LText";
 import Circle from "./Circle";
-import ClockIcon from "../icons/Clock";
-import IconInfo from "../icons/Info";
+import ClockIcon from "~/icons/Clock";
+import IconInfo from "~/icons/Info";
 import { rgba } from "../colors";
 
 const hitSlop = {
@@ -25,10 +25,7 @@ const TransactionsPendingConfirmationWarningContent = () => {
   const [isModalOpened, setIsModalOpened] = useState(false);
   return (
     <View style={styles.wrapper}>
-      <TouchableOpacity
-        hitSlop={hitSlop}
-        onPress={() => setIsModalOpened(true)}
-      >
+      <TouchableOpacity hitSlop={hitSlop} onPress={() => setIsModalOpened(true)}>
         <ClockIcon color={colors.grey} size={12} />
       </TouchableOpacity>
       <QueuedDrawer
@@ -61,9 +58,7 @@ export const TransactionsPendingConfirmationWarningForAccount = ({
 };
 
 export const TransactionsPendingConfirmationWarningAllAccounts = () => {
-  const areSomeAccountsBalanceUnconfirmed = useSelector(
-    areSomeAccountsBalanceUnconfirmedSelector,
-  );
+  const areSomeAccountsBalanceUnconfirmed = useSelector(areSomeAccountsBalanceUnconfirmedSelector);
   return areSomeAccountsBalanceUnconfirmed ? (
     <TransactionsPendingConfirmationWarningContent />
   ) : null;

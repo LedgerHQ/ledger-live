@@ -1,0 +1,23 @@
+{
+  "name": "@actions/build-checks",
+  "version": "1.0.1",
+  "description": "Performs various checks on bundle and comment on pull request",
+  "author": "Valentin D. Pinkman <valentin.d.pinkman@icloud.com>",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "tsup -d build src/main.ts",
+    "lint": "eslint ./ --cache",
+    "lint:fix": "pnpm lint --fix",
+    "dev": "pnpm dlx ts-node src/test.ts"
+  },
+  "devDependencies": {
+    "@actions/core": "^1.10.1",
+    "@actions/github": "^6.0.0",
+    "@types/stream-json": "^1.7.5",
+    "@types/unzipper": "0.10.9",
+    "stream-json": "1.8.0",
+    "tsup": "^7.0.0",
+    "unzipper": "0.10.14"
+  }
+}

@@ -1,18 +1,12 @@
 import React, { useCallback } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
-import {
-  StyleSheet,
-  View,
-  Platform,
-  TouchableOpacity,
-  Linking,
-} from "react-native";
-import { urls } from "../../../config/urls";
-import IconClose from "../../../icons/Close";
-import LText from "../../../components/LText";
-import IconTwitter from "../../../icons/Twitter";
-import { useBanner } from "../../../components/banners/hooks";
+import { StyleSheet, View, Platform, TouchableOpacity, Linking } from "react-native";
+import { urls } from "~/utils/urls";
+import IconClose from "~/icons/Close";
+import LText from "~/components/LText";
+import IconTwitter from "~/icons/Twitter";
+import { useBanner } from "~/components/banners/hooks";
 
 const CatalogTwitterBanner = () => {
   const { t } = useTranslation();
@@ -20,10 +14,7 @@ const CatalogTwitterBanner = () => {
   const [isDismiss, dismiss] = useBanner("CatalogTwitterBanner");
   const sendTweet = useCallback(() => {
     const twitterURL = new URL(urls.banners.twitterIntent);
-    twitterURL.searchParams.set(
-      "text",
-      t("platform.catalog.twitterBanner.tweetText"),
-    );
+    twitterURL.searchParams.set("text", t("platform.catalog.twitterBanner.tweetText"));
     twitterURL.searchParams.set("hashtags", "LedgerLiveApp");
     Linking.openURL(twitterURL.toString());
   }, [t]);

@@ -1,6 +1,6 @@
 import { isSwapOperationPending, getSwapAPIVersion } from ".";
 
-import { getEnv, setEnv } from "../../env";
+import { getEnv, setEnv } from "@ledgerhq/live-env";
 
 describe("swap/index", () => {
   describe("isSwapOperationPending", () => {
@@ -47,7 +47,7 @@ describe("swap/index", () => {
     test("should return version when SWAP_API_BASE contains one", () => {
       const result = getSwapAPIVersion();
 
-      expect(result).toBe(4);
+      expect(result).toBe(5);
     });
 
     test("should throw an error if no version in SWAP_API_BASE", () => {
@@ -55,7 +55,7 @@ describe("swap/index", () => {
 
       expect(getSwapAPIVersion).toThrow(Error);
       expect(getSwapAPIVersion).toThrow(
-        "Configured swap API base URL is invalid, should end with /v<number>"
+        "Configured swap API base URL is invalid, should end with /v<number>",
       );
     });
 
@@ -64,7 +64,7 @@ describe("swap/index", () => {
 
       expect(getSwapAPIVersion).toThrow(Error);
       expect(getSwapAPIVersion).toThrow(
-        "Configured swap API base URL is invalid, should end with /v<number>"
+        "Configured swap API base URL is invalid, should end with /v<number>",
       );
     });
   });

@@ -6,7 +6,7 @@ import { StackHeaderProps } from "@react-navigation/stack";
 import { getHeaderTitle } from "@react-navigation/elements";
 import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex/index";
 import { NavigationHeaderBackButton } from "./NavigationHeaderBackButton";
-import { NavigationHeaderCloseButton } from "./NavigationHeaderCloseButton";
+import { NavigationHeaderCloseButtonAdvanced } from "./NavigationHeaderCloseButton";
 
 type NavigationHeaderProps = StackHeaderProps & {
   containerProps?: FlexBoxProps;
@@ -35,21 +35,15 @@ function NavigationHeader({
       mb={5}
       {...containerProps}
     >
-      {back && !hideBack ? (
-        <NavigationHeaderBackButton onPress={onPressBack} />
-      ) : (
-        <View />
-      )}
+      {back && !hideBack ? <NavigationHeaderBackButton onPress={onPressBack} /> : <View />}
       {title.length ? (
         <Text variant="large" fontWeight="semiBold">
           {title}
         </Text>
       ) : null}
-      <NavigationHeaderCloseButton onPress={onPressClose} />
+      <NavigationHeaderCloseButtonAdvanced onClose={onPressClose} />
     </Flex>
   );
 }
 
-export default (props: NavigationHeaderProps) => (
-  <NavigationHeader {...props} />
-);
+export default (props: NavigationHeaderProps) => <NavigationHeader {...props} />;

@@ -4,13 +4,14 @@ import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { Account } from "@ledgerhq/live-common/types/index";
 import { localeSelector } from "~/renderer/reducers/settings";
 import Discreet, { useDiscreetMode } from "~/renderer/components/Discreet";
 import Box from "~/renderer/components/Box/Box";
 import Text from "~/renderer/components/Text";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
+import { NearFamily } from "./types";
+
 const Wrapper = styled(Box).attrs(() => ({
   horizontal: true,
   mt: 4,
@@ -42,15 +43,14 @@ const AmountValue = styled(Text).attrs(() => ({
   fontSize: 6,
   ff: "Inter|SemiBold",
   color: "palette.text.shade100",
-}))`
+}))<{ paddingRight?: number }>`
   ${p => p.paddingRight && `padding-right: ${p.paddingRight}px`};
 `;
-type Props = {
-  account: Account;
-};
-const AccountBalanceSummaryFooter = ({ account }: Props) => {
+
+const AccountBalanceSummaryFooter: NearFamily["AccountBalanceSummaryFooter"] = ({ account }) => {
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
+  if (account.type !== "Account") return null;
   const {
     spendableBalance: _spendableBalance,
     nearResources: {

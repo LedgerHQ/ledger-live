@@ -1,22 +1,19 @@
 import React, { useCallback, useRef } from "react";
-import { Icons, Alert as AlertBox, Flex } from "@ledgerhq/native-ui";
+import { IconsLegacy, Alert as AlertBox, Flex } from "@ledgerhq/native-ui";
 import { Alert, TouchableWithoutFeedback, View } from "react-native";
-import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/provider";
+import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/FeatureFlagsContext";
 import { groupedFeatures } from "@ledgerhq/live-common/featureFlags/groupedFeatures";
-import { TrackScreen } from "../../../analytics";
-import SettingsRow from "../../../components/SettingsRow";
-import { ScreenName } from "../../../const";
+import { TrackScreen } from "~/analytics";
+import SettingsRow from "~/components/SettingsRow";
+import { ScreenName } from "~/const";
 import SettingsNavigationScrollView from "../SettingsNavigationScrollView";
-import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
-import { SettingsNavigatorStackParamList } from "../../../components/RootNavigator/types/SettingsNavigator";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
 import PoweredByLedger from "../PoweredByLedger";
 
 export default function DebugSettings({
   navigation: { navigate },
-}: StackNavigatorProps<
-  SettingsNavigatorStackParamList,
-  ScreenName.DebugSettings
->) {
+}: StackNavigatorProps<SettingsNavigatorStackParamList, ScreenName.DebugSettings>) {
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pressCount = useRef(0);
 
@@ -26,9 +23,7 @@ export default function DebugSettings({
     groupedFeatures.stax.featureIds.forEach(featureId =>
       overrideFeature(featureId, { ...getFeature(featureId), enabled: true }),
     );
-    Alert.alert(
-      "I can only show you the door, you're the one that has to walk through it.",
-    );
+    Alert.alert("I can only show you the door, you're the one that has to walk through it.");
   }, [overrideFeature, getFeature]);
 
   const onDebugHiddenPress = useCallback(() => {
@@ -53,58 +48,55 @@ export default function DebugSettings({
     <SettingsNavigationScrollView>
       <TrackScreen category="Settings" name="Debug" />
       <Flex p={6} pt={0}>
-        <AlertBox
-          type={"warning"}
-          title={"Tools for development, debugging and QA."}
-        />
+        <AlertBox type={"warning"} title={"Tools for development, debugging and QA."} />
       </Flex>
       <SettingsRow
         hasBorderTop
         title="Configuration"
         desc="Env variables, feature-flags, and toggles."
-        iconLeft={<Icons.SettingsMedium size={24} color="black" />}
+        iconLeft={<IconsLegacy.SettingsMedium size={24} color="black" />}
         onPress={() => navigate(ScreenName.DebugConfiguration)}
       />
       <SettingsRow
         title="Features & flows"
         desc="Specific flows and tools"
-        iconLeft={<Icons.BoxMedium size={24} color="black" />}
+        iconLeft={<IconsLegacy.BoxMedium size={24} color="black" />}
         onPress={() => navigate(ScreenName.DebugFeatures)}
       />
       <SettingsRow
         title="Connectivity"
         desc="Transports, proxy, benchmarking, repl"
-        iconLeft={<Icons.NanoXAltMedium size={24} color="black" />}
+        iconLeft={<IconsLegacy.NanoXAltMedium size={24} color="black" />}
         onPress={() => navigate(ScreenName.DebugConnectivity)}
       />
       <SettingsRow
         title="Generators and Destructors"
         desc="Create new accounts, announcements, etc"
-        iconLeft={<Icons.MicrochipMedium size={24} color="black" />}
+        iconLeft={<IconsLegacy.MicrochipMedium size={24} color="black" />}
         onPress={() => navigate(ScreenName.DebugGenerators)}
       />
       <SettingsRow
         title="Debugging"
         desc="Logs, application state, errors"
-        iconLeft={<Icons.LogsMedium size={24} color="black" />}
+        iconLeft={<IconsLegacy.LogsMedium size={24} color="black" />}
         onPress={() => navigate(ScreenName.DebugDebugging)}
       />
       <SettingsRow
         title="Information"
         desc="Get information on your current setup"
-        iconLeft={<Icons.InfoAltMedium size={24} color="black" />}
+        iconLeft={<IconsLegacy.InfoAltMedium size={24} color="black" />}
         onPress={() => navigate(ScreenName.DebugInformation)}
       />
       <SettingsRow
         title="Performance"
         desc="Get performance information about your setup"
-        iconLeft={<Icons.BarChartMedium size={24} color="black" />}
+        iconLeft={<IconsLegacy.BarChartMedium size={24} color="black" />}
         onPress={() => navigate(ScreenName.DebugPerformance)}
       />
       <SettingsRow
         title="Playground"
         desc="Easy to access blank debugging screen"
-        iconLeft={<Icons.EmojiHappyMedium size={24} color="black" />}
+        iconLeft={<IconsLegacy.EmojiHappyMedium size={24} color="black" />}
         onPress={() => navigate(ScreenName.DebugPlayground)}
       />
       <TouchableWithoutFeedback onPress={onDebugHiddenPress}>

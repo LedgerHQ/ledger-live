@@ -3,41 +3,31 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 
 import { useDispatch } from "react-redux";
 import { StackNavigationProp } from "@react-navigation/stack";
-import Illustration from "../../../images/illustration/Illustration";
-import { NavigatorName, ScreenName } from "../../../const";
+import Illustration from "~/images/illustration/Illustration";
+import { NavigatorName, ScreenName } from "~/const";
 import BaseStepperView, { SyncDesktop, Metadata } from "./setupDevice/scenes";
-import { TrackScreen } from "../../../analytics";
+import { TrackScreen } from "~/analytics";
 
-import {
-  completeOnboarding,
-  setHasOrderedNano,
-  setReadOnlyMode,
-} from "../../../actions/settings";
+import { completeOnboarding, setHasOrderedNano, setReadOnlyMode } from "~/actions/settings";
 import { useNavigationInterceptor } from "../onboardingContext";
-import {
-  RootComposite,
-  StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
-import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
-import { RootStackParamList } from "../../../components/RootNavigator/types/RootNavigator";
+import { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
+import { RootStackParamList } from "~/components/RootNavigator/types/RootNavigator";
 import { Step } from "./setupDevice/scenes/BaseStepperView";
 
 const images = {
   light: {
-    Intro: require("../../../images/illustration/Light/_074.png"),
+    Intro: require("~/images/illustration/Light/_074.png"),
   },
   dark: {
-    Intro: require("../../../images/illustration/Dark/_074.png"),
+    Intro: require("~/images/illustration/Dark/_074.png"),
   },
 };
 
 const scenes = [SyncDesktop, SyncDesktop] as Step[];
 
 type NavigationProps = RootComposite<
-  StackNavigatorProps<
-    OnboardingNavigatorParamList,
-    ScreenName.OnboardingImportAccounts
-  >
+  StackNavigatorProps<OnboardingNavigatorParamList, ScreenName.OnboardingImportAccounts>
 >;
 
 function OnboardingStepPairNew() {
@@ -54,11 +44,7 @@ function OnboardingStepPairNew() {
       id: SyncDesktop.id,
       // @TODO: Replace this placeholder with the correct illustration asap
       illustration: (
-        <Illustration
-          size={200}
-          darkSource={images.dark.Intro}
-          lightSource={images.light.Intro}
-        />
+        <Illustration size={200} darkSource={images.dark.Intro} lightSource={images.light.Intro} />
       ),
       drawer: null,
     },
@@ -70,8 +56,7 @@ function OnboardingStepPairNew() {
     dispatch(setHasOrderedNano(false));
     resetCurrentStep();
 
-    const parentNav =
-      navigation.getParent<StackNavigationProp<RootStackParamList>>();
+    const parentNav = navigation.getParent<StackNavigationProp<RootStackParamList>>();
     if (parentNav) {
       parentNav.popToTop();
     }
@@ -81,23 +66,14 @@ function OnboardingStepPairNew() {
     });
   }, [dispatch, navigation, resetCurrentStep]);
 
-  const onNext = useCallback(
-    () =>
-      navigation.navigate(NavigatorName.ImportAccounts, {
-        screen: ScreenName.ScanAccounts,
-        params: {
-          onFinish,
-        },
-      }),
-    [navigation, onFinish],
-  );
-
   const nextPage = useCallback(() => {
-    navigation.navigate(NavigatorName.OnboardingCarefulWarning, {
-      screen: ScreenName.OnboardingModalSyncDesktopInformation,
-      params: { onNext },
+    navigation.navigate(NavigatorName.ImportAccounts, {
+      screen: ScreenName.ScanAccounts,
+      params: {
+        onFinish,
+      },
     });
-  }, [navigation, onNext]);
+  }, [navigation, onFinish]);
 
   return (
     <>

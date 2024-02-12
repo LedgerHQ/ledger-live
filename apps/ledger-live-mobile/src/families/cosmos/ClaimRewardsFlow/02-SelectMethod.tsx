@@ -4,10 +4,7 @@ import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
-import type {
-  CosmosAccount,
-  Transaction,
-} from "@ledgerhq/live-common/families/cosmos/types";
+import type { CosmosAccount, Transaction } from "@ledgerhq/live-common/families/cosmos/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import {
   getAccountUnit,
@@ -17,50 +14,40 @@ import {
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useTheme } from "@react-navigation/native";
 import cosmosBase from "@ledgerhq/live-common/families/cosmos/chain/cosmosBase";
-import { accountScreenSelector } from "../../../reducers/accounts";
-import Button from "../../../components/Button";
-import LText from "../../../components/LText";
-import { ScreenName } from "../../../const";
-import ToggleButton from "../../../components/ToggleButton";
-import InfoModal from "../../../modals/Info";
-import Info from "../../../icons/Info";
-import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
-import CounterValue from "../../../components/CounterValue";
-import TranslatedError from "../../../components/TranslatedError";
+import { accountScreenSelector } from "~/reducers/accounts";
+import Button from "~/components/Button";
+import LText from "~/components/LText";
+import { ScreenName } from "~/const";
+import ToggleButton from "~/components/ToggleButton";
+import InfoModal from "~/modals/Info";
+import Info from "~/icons/Info";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import CounterValue from "~/components/CounterValue";
+import TranslatedError from "~/components/TranslatedError";
 import ValidatorImage from "../shared/ValidatorImage";
-import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { CosmosClaimRewardsFlowParamList } from "./types";
 
 const options = [
   {
     value: "claimRewardCompound",
-    label: (
-      <Trans i18nKey="cosmos.claimRewards.flow.steps.method.claimRewardCompound" />
-    ),
+    label: <Trans i18nKey="cosmos.claimRewards.flow.steps.method.claimRewardCompound" />,
   },
   {
     value: "claimReward",
-    label: (
-      <Trans i18nKey="cosmos.claimRewards.flow.steps.method.claimReward" />
-    ),
+    label: <Trans i18nKey="cosmos.claimRewards.flow.steps.method.claimReward" />,
   },
 ];
 const infoModalData = [
   {
-    title: (
-      <Trans i18nKey="cosmos.claimRewards.flow.steps.method.claimRewardCompound" />
-    ),
+    title: <Trans i18nKey="cosmos.claimRewards.flow.steps.method.claimRewardCompound" />,
     description: (
       <Trans i18nKey="cosmos.claimRewards.flow.steps.method.claimRewardCompoundTooltip" />
     ),
   },
   {
-    title: (
-      <Trans i18nKey="cosmos.claimRewards.flow.steps.method.claimReward" />
-    ),
-    description: (
-      <Trans i18nKey="cosmos.claimRewards.flow.steps.method.claimRewardTooltip" />
-    ),
+    title: <Trans i18nKey="cosmos.claimRewards.flow.steps.method.claimReward" />,
+    description: <Trans i18nKey="cosmos.claimRewards.flow.steps.method.claimRewardTooltip" />,
   },
 ];
 
@@ -71,12 +58,8 @@ type Props = StackNavigatorProps<
 
 function ClaimRewardsAmount({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const account = useSelector(accountScreenSelector(route))
-    .account as CosmosAccount;
-  invariant(
-    account && account.cosmosResources,
-    "account and cosmos transaction required",
-  );
+  const account = useSelector(accountScreenSelector(route)).account as CosmosAccount;
+  invariant(account && account.cosmosResources, "account and cosmos transaction required");
   const bridge = getAccountBridge(account, undefined);
   const mainAccount = getMainAccount(account, undefined);
   const unit = getAccountUnit(mainAccount);
@@ -134,7 +117,7 @@ function ClaimRewardsAmount({ navigation, route }: Props) {
     });
   }, [navigation, transaction, route]);
   const onChangeMode = useCallback(
-    mode => {
+    (mode: string) => {
       updateTransaction(() =>
         bridge.updateTransaction(transaction, {
           mode,
@@ -151,19 +134,12 @@ function ClaimRewardsAmount({ navigation, route }: Props) {
     setInfoModalOpen(false);
   }, [setInfoModalOpen]);
   const value = route.params.value;
-  const name =
-    route.params.validator?.name ??
-    route.params.validator?.validatorAddress ??
-    "";
+  const name = route.params.validator?.name ?? route.params.validator?.validatorAddress ?? "";
   const mode = transaction.mode ? transaction.mode : "";
   const error =
-    status.errors &&
-    Object.keys(status.errors).length > 0 &&
-    Object.values(status.errors)[0];
+    status.errors && Object.keys(status.errors).length > 0 && Object.values(status.errors)[0];
   const warning =
-    status.warnings &&
-    Object.keys(status.warnings).length > 0 &&
-    Object.values(status.warnings)[0];
+    status.warnings && Object.keys(status.warnings).length > 0 && Object.values(status.warnings)[0];
   return (
     <SafeAreaView
       style={[
@@ -190,12 +166,7 @@ function ClaimRewardsAmount({ navigation, route }: Props) {
             <CurrencyUnitValue unit={unit} value={value} showCode />
           </LText>
           <LText semiBold style={styles.subLabel} color="grey">
-            <CounterValue
-              currency={currency}
-              showCode
-              value={value}
-              withPlaceholder
-            />
+            <CounterValue currency={currency} showCode value={value} withPlaceholder />
           </LText>
         </View>
         <View style={styles.sectionLabel}>
@@ -217,9 +188,7 @@ function ClaimRewardsAmount({ navigation, route }: Props) {
         </View>
         <View style={styles.sectionLabel}>
           <LText style={styles.desc}>
-            <Trans
-              i18nKey={`cosmos.claimRewards.flow.steps.method.${mode}Info`}
-            />
+            <Trans i18nKey={`cosmos.claimRewards.flow.steps.method.${mode}Info`} />
           </LText>
         </View>
         <View style={styles.spacer} />
@@ -234,23 +203,11 @@ function ClaimRewardsAmount({ navigation, route }: Props) {
       >
         <View style={styles.warningSection}>
           {error && error instanceof Error ? (
-            <LText
-              selectable
-              secondary
-              semiBold
-              style={styles.warning}
-              color="alert"
-            >
+            <LText selectable secondary semiBold style={styles.warning} color="alert">
               <TranslatedError error={error} />
             </LText>
           ) : warning && warning instanceof Error ? (
-            <LText
-              selectable
-              secondary
-              semiBold
-              style={styles.warning}
-              color="alert"
-            >
+            <LText selectable secondary semiBold style={styles.warning} color="alert">
               <TranslatedError error={warning} />
             </LText>
           ) : null}
@@ -263,11 +220,7 @@ function ClaimRewardsAmount({ navigation, route }: Props) {
           type="primary"
         />
       </View>
-      <InfoModal
-        isOpened={!!infoModalOpen}
-        onClose={closeInfoModal}
-        data={infoModalData}
-      />
+      <InfoModal isOpened={!!infoModalOpen} onClose={closeInfoModal} data={infoModalData} />
     </SafeAreaView>
   );
 }

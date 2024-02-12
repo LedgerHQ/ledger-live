@@ -14,7 +14,8 @@ import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import ErrorDisplay from "../../shared/components/ErrorDisplay";
 import ValidatorRow from "../../shared/components/ValidatorRow";
 import { StepProps } from "../types";
-export default function StepValidator({ account, transaction, status, error, t }: StepProps) {
+
+export default function StepValidator({ account, transaction, status, error, t: _t }: StepProps) {
   if (account === null || transaction === null || account?.solanaResources === undefined) {
     throw new Error("account, transaction and solana resouces required");
   }
@@ -37,7 +38,13 @@ export default function StepValidator({ account, transaction, status, error, t }
   }
   return (
     <Box flow={1}>
-      <TrackPage category="Solana Delegation Deactivate" name="Step Validator" />
+      <TrackPage
+        category="Solana Delegation Deactivate"
+        name="Step Validator"
+        flow="stake"
+        action="deactivate"
+        currency="sol"
+      />
       {error && <ErrorBanner error={error} />}
       <ValidatorRow
         disableHover
@@ -72,6 +79,7 @@ export function StepValidatorFooter({
         <Button
           id="delegate-continue-button"
           disabled={!canNext}
+          isLoading={bridgePending}
           primary
           onClick={() => transitionTo("connectDevice")}
         >

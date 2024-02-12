@@ -1,7 +1,7 @@
 import { DeviceModelId } from "@ledgerhq/devices";
 import { DeviceInfo } from "@ledgerhq/types-live";
 import { satisfies, coerce } from "semver";
-import { getEnv } from "../env";
+import { getEnv } from "@ledgerhq/live-env";
 
 const deviceVersionRangesForUpdate: { [key in DeviceModelId]?: string } = {
   nanoS: ">=1.6.1",
@@ -15,7 +15,4 @@ const deviceVersionRangesForUpdate: { [key in DeviceModelId]?: string } = {
 export default (deviceInfo: DeviceInfo, modelId: DeviceModelId): boolean =>
   getEnv("DISABLE_FW_UPDATE_VERSION_CHECK") ||
   (Boolean(deviceVersionRangesForUpdate[modelId]) &&
-    satisfies(
-      coerce(deviceInfo.version),
-      deviceVersionRangesForUpdate[modelId] as string
-    ));
+    satisfies(coerce(deviceInfo.version), deviceVersionRangesForUpdate[modelId] as string));

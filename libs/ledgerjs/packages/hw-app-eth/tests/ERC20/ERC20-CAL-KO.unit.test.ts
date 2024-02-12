@@ -1,11 +1,8 @@
 import axios from "axios";
 import fs from "fs/promises";
 import path from "path";
-import {
-  openTransportReplayer,
-  RecordStore,
-} from "@ledgerhq/hw-transport-mocker";
 import evms from "@ledgerhq/cryptoassets/data/evm/index";
+import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
 import { EthAppPleaseEnableContractData } from "../../src/errors";
 import SignatureCALEth from "../fixtures/SignatureCALEth";
 import ledgerService from "../../src/services/ledger";
@@ -31,21 +28,17 @@ describe("ERC20 dynamic cal", () => {
       jest.spyOn(evms, "signatures", "get").mockReturnValueOnce({
         1: "",
       } as any);
-      jest
-        .spyOn(axios, "get")
-        .mockImplementationOnce(async () => ({ data: { 123: "ok" } })); // malformed response. Should be a string but here returning an object imcompatible w/ buffer.from
+      jest.spyOn(axios, "get").mockImplementationOnce(async () => ({ data: { 123: "ok" } })); // malformed response. Should be a string but here returning an object imcompatible w/ buffer.from
       const apdusBuffer = await fs.readFile(
         path.resolve("./tests/fixtures/apdus/ERC20-KO.apdus"),
-        "utf-8"
+        "utf-8",
       );
-      const transport = await openTransportReplayer(
-        RecordStore.fromString(`${apdusBuffer}`)
-      );
+      const transport = await openTransportReplayer(RecordStore.fromString(`${apdusBuffer}`));
       const resolutionConfig = { erc20: true };
       const resolution = await ledgerService.resolveTransaction(
         txHex,
         { cryptoassetsBaseURL: "working" },
-        resolutionConfig
+        resolutionConfig,
       );
 
       const eth = new Eth(transport);
@@ -56,8 +49,8 @@ describe("ERC20 dynamic cal", () => {
       } catch (e) {
         expect(e).toStrictEqual(
           new EthAppPleaseEnableContractData(
-            "Please enable Blind signing or Contract data in the Ethereum app Settings"
-          )
+            "Please enable Blind signing or Contract data in the Ethereum app Settings",
+          ),
         );
       }
     });
@@ -69,16 +62,14 @@ describe("ERC20 dynamic cal", () => {
 
       const apdusBuffer = await fs.readFile(
         path.resolve("./tests/fixtures/apdus/ERC20-KO.apdus"),
-        "utf-8"
+        "utf-8",
       );
-      const transport = await openTransportReplayer(
-        RecordStore.fromString(`${apdusBuffer}`)
-      );
+      const transport = await openTransportReplayer(RecordStore.fromString(`${apdusBuffer}`));
       const resolutionConfig = { erc20: true };
       const resolution = await ledgerService.resolveTransaction(
         txHex,
         { cryptoassetsBaseURL: "notworking" },
-        resolutionConfig
+        resolutionConfig,
       );
 
       const eth = new Eth(transport);
@@ -89,8 +80,8 @@ describe("ERC20 dynamic cal", () => {
       } catch (e) {
         expect(e).toStrictEqual(
           new EthAppPleaseEnableContractData(
-            "Please enable Blind signing or Contract data in the Ethereum app Settings"
-          )
+            "Please enable Blind signing or Contract data in the Ethereum app Settings",
+          ),
         );
       }
     });
@@ -98,23 +89,13 @@ describe("ERC20 dynamic cal", () => {
     it("should be successfully signin transaction from dynamic CAL", async () => {
       const apdusBuffer = await fs.readFile(
         path.resolve("./tests/fixtures/apdus/ERC20-OK.apdus"),
-        "utf-8"
+        "utf-8",
       );
-      const transport = await openTransportReplayer(
-        RecordStore.fromString(`${apdusBuffer}`)
-      );
+      const transport = await openTransportReplayer(RecordStore.fromString(`${apdusBuffer}`));
       const resolutionConfig = { erc20: true };
-      const resolution = await ledgerService.resolveTransaction(
-        txHex,
-        {},
-        resolutionConfig
-      );
+      const resolution = await ledgerService.resolveTransaction(txHex, {}, resolutionConfig);
       const eth = new Eth(transport);
-      const result = await eth.signTransaction(
-        "44'/60'/0'/0/0",
-        txHex,
-        resolution
-      );
+      const result = await eth.signTransaction("44'/60'/0'/0/0", txHex, resolution);
 
       expect(result).toMatchObject({
         v: "26",

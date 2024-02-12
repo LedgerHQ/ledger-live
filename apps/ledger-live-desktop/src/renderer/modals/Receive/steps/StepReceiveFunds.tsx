@@ -27,15 +27,15 @@ import Modal from "~/renderer/components/Modal";
 import Alert from "~/renderer/components/Alert";
 import ModalBody from "~/renderer/components/Modal/ModalBody";
 import QRCode from "~/renderer/components/QRCode";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
-import byFamily from "~/renderer/generated/StepReceiveFunds";
-import byFamilyPostAlert from "~/renderer/generated/StepReceiveFundsPostAlert";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { LOCAL_STORAGE_KEY_PREFIX } from "./StepReceiveStakingFlow";
 import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { getLLDCoinFamily } from "~/renderer/families";
+import { firstValueFrom } from "rxjs";
 
 const Separator = styled.div`
   border-top: 1px solid #99999933;
@@ -135,6 +135,7 @@ const Receive2Device = ({ name, device }: { name: string; device: Device }) => {
     </>
   );
 };
+
 const StepReceiveFunds = (props: StepProps) => {
   const {
     isAddressVerified,
@@ -149,9 +150,20 @@ const StepReceiveFunds = (props: StepProps) => {
     onClose,
     eventType,
     currencyName,
+    receiveTokenMode,
+    receiveNFTMode,
   } = props;
   const dispatch = useDispatch();
   const receiveStakingFlowConfig = useFeature("receiveStakingFlowConfigDesktop");
+  const receivedCurrencyId: string | undefined =
+    account && account.type !== "TokenAccount" ? account?.currency?.id : undefined;
+  const isStakingEnabledForAccount =
+    !!receivedCurrencyId &&
+    receiveStakingFlowConfig?.enabled &&
+    receiveStakingFlowConfig?.params?.[receivedCurrencyId]?.enabled;
+  const isDirectStakingEnabledForAccount =
+    !!receivedCurrencyId && receiveStakingFlowConfig?.params?.[receivedCurrencyId]?.direct;
+
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   invariant(account && mainAccount, "No account given");
   const name = token ? token.name : getAccountName(account);
@@ -171,12 +183,12 @@ const StepReceiveFunds = (props: StepProps) => {
         if (!device) {
           throw new DisconnectedDevice();
         }
-        await getAccountBridge(mainAccount)
-          .receive(mainAccount, {
+        await firstValueFrom(
+          getAccountBridge(mainAccount).receive(mainAccount, {
             deviceId: device.deviceId,
             verify: true,
-          })
-          .toPromise();
+          }),
+        );
         onChangeAddressVerified(true);
         hideQRCodeModal();
         transitionTo("receive");
@@ -186,6 +198,7 @@ const StepReceiveFunds = (props: StepProps) => {
       hideQRCodeModal();
     }
   }, [device, mainAccount, transitionTo, onChangeAddressVerified, hideQRCodeModal]);
+
   const onVerify = useCallback(() => {
     // if device has changed since the beginning, we need to re-entry device
     if (device !== initialDevice.current || !isAddressVerified) {
@@ -194,15 +207,12 @@ const StepReceiveFunds = (props: StepProps) => {
     onChangeAddressVerified(null);
     onResetSkip();
   }, [device, onChangeAddressVerified, onResetSkip, transitionTo, isAddressVerified]);
+
   const onFinishReceiveFlow = useCallback(() => {
-    const id = mainAccount?.currency?.id;
-    const dismissModal = global.localStorage.getItem(`${LOCAL_STORAGE_KEY_PREFIX}${id}`) === "true";
-    if (
-      !dismissModal &&
-      receiveStakingFlowConfig?.enabled &&
-      receiveStakingFlowConfig?.params[id]?.enabled
-    ) {
-      track("button_clicked", {
+    const dismissModal =
+      global.localStorage.getItem(`${LOCAL_STORAGE_KEY_PREFIX}${receivedCurrencyId}`) === "true";
+    if (!dismissModal && !receiveNFTMode && !receiveTokenMode && isStakingEnabledForAccount) {
+      track("button_clicked2", {
         button: "continue",
         page: window.location.hash
           .split("/")
@@ -212,11 +222,12 @@ const StepReceiveFunds = (props: StepProps) => {
         modal: "receive",
         account: name,
       });
-      if (receiveStakingFlowConfig?.params?.[id]?.direct) {
+      // Only open EVM staking modal if the user received ETH or an EVM currency supported by the providers
+      if (isDirectStakingEnabledForAccount) {
         dispatch(
-          openModal("MODAL_ETH_STAKE", {
-            account,
-            checkbox: true,
+          openModal("MODAL_EVM_STAKE", {
+            account: mainAccount,
+            hasCheckbox: true,
             singleProviderRedirectMode: false,
             source: "receive",
           }),
@@ -229,14 +240,16 @@ const StepReceiveFunds = (props: StepProps) => {
       onClose();
     }
   }, [
-    account,
-    mainAccount?.currency?.id,
+    receivedCurrencyId,
+    receiveNFTMode,
+    receiveTokenMode,
+    isStakingEnabledForAccount,
+    isDirectStakingEnabledForAccount,
     currencyName,
-    dispatch,
     name,
+    dispatch,
+    mainAccount,
     onClose,
-    receiveStakingFlowConfig?.enabled,
-    receiveStakingFlowConfig?.params,
     transitionTo,
   ]);
 
@@ -248,13 +261,13 @@ const StepReceiveFunds = (props: StepProps) => {
   }, [isAddressVerified, confirmAddress]);
 
   // custom family UI for StepReceiveFunds
-  const CustomStepReceiveFunds = byFamily[mainAccount.currency.family as keyof typeof byFamily];
+  const specific = getLLDCoinFamily(mainAccount.currency.family);
+  const CustomStepReceiveFunds = specific?.StepReceiveFunds;
   if (CustomStepReceiveFunds) {
     return <CustomStepReceiveFunds {...props} />;
   }
 
-  const CustomPostAlertReceiveFunds =
-    byFamilyPostAlert[mainAccount.currency.family as keyof typeof byFamilyPostAlert];
+  const CustomPostAlertReceiveFunds = specific?.StepReceiveFundsPostAlert;
 
   return (
     <>
@@ -264,73 +277,78 @@ const StepReceiveFunds = (props: StepProps) => {
           name="Step 3"
           currencyName={currencyName}
         />
-        {verifyAddressError ? (
-          <ErrorDisplay error={verifyAddressError} onRetry={onVerify} />
-        ) : isAddressVerified === true ? (
-          // Address was confirmed on device! we display a success screen!
+        {
+          verifyAddressError ? (
+            <ErrorDisplay error={verifyAddressError} onRetry={onVerify} />
+          ) : isAddressVerified === true ? (
+            // Address was confirmed on device! we display a success screen!
 
-          <Box alignItems="center">
-            <SuccessDisplay
-              title={<Trans i18nKey="receive.successTitle" />}
-              description={
-                <LinkWithExternalIcon
-                  style={{
-                    display: "inline-flex",
-                    marginLeft: "10px",
-                  }}
-                  onClick={() => openURL(urls.recipientAddressInfo)}
-                  label={<Trans i18nKey="common.learnMore" />}
-                />
-              }
-            >
-              <Box flow={4} pt={4} horizontal justifyContent="center">
-                <Button event="Page Receive Step 3 re-verify" outlineGrey onClick={onVerify}>
-                  <Trans i18nKey="common.reverify" />
-                </Button>
-                <Button data-test-id="modal-continue-button" primary onClick={onFinishReceiveFlow}>
-                  <Trans i18nKey="common.done" />
-                </Button>
-              </Box>
-            </SuccessDisplay>
-          </Box>
-        ) : isAddressVerified === false ? (
-          // User explicitly bypass device verification (no device)
-          <>
-            <Receive1ShareAddress
-              account={mainAccount}
-              name={name}
-              address={address}
-              showQRCodeModal={showQRCodeModal}
-            />
-            {CustomPostAlertReceiveFunds && <CustomPostAlertReceiveFunds {...props} />}
-            <Alert type="security" learnMoreUrl={urls.recipientAddressInfo} mt={4}>
-              <Trans
-                i18nKey="currentAddress.messageIfSkipped"
-                values={{
-                  name,
-                }}
+            <Box alignItems="center">
+              <SuccessDisplay
+                title={<Trans i18nKey="receive.successTitle" />}
+                description={
+                  <LinkWithExternalIcon
+                    style={{
+                      display: "inline-flex",
+                      marginLeft: "10px",
+                    }}
+                    onClick={() => openURL(urls.recipientAddressInfo)}
+                    label={<Trans i18nKey="common.learnMore" />}
+                  />
+                }
+              >
+                <Box flow={4} pt={4} horizontal justifyContent="center">
+                  <Button event="Page Receive Step 3 re-verify" outlineGrey onClick={onVerify}>
+                    <Trans i18nKey="common.reverify" />
+                  </Button>
+                  <Button
+                    data-test-id="modal-continue-button"
+                    primary
+                    onClick={onFinishReceiveFlow}
+                  >
+                    <Trans i18nKey="common.done" />
+                  </Button>
+                </Box>
+              </SuccessDisplay>
+            </Box>
+          ) : isAddressVerified === false ? (
+            // User explicitly bypass device verification (no device)
+            <>
+              <Receive1ShareAddress
+                account={mainAccount}
+                name={name}
+                address={address}
+                showQRCodeModal={showQRCodeModal}
               />
-            </Alert>
-            <Separator2 />
-            <Receive2NoDevice
-              onVerify={onVerify}
-              onContinue={() => onChangeAddressVerified(true)}
-            />
-          </>
-        ) : device ? (
-          // verification with device
-          <>
-            <Receive1ShareAddress
-              account={mainAccount}
-              name={name}
-              address={address}
-              showQRCodeModal={showQRCodeModal}
-            />
-            {CustomPostAlertReceiveFunds && <CustomPostAlertReceiveFunds {...props} />}
-            <Separator />
-            <Receive2Device device={device} name={name} />
-          </>
-        ) : null // should not happen
+              {CustomPostAlertReceiveFunds && <CustomPostAlertReceiveFunds {...props} />}
+              <Alert type="security" learnMoreUrl={urls.recipientAddressInfo} mt={4}>
+                <Trans
+                  i18nKey="currentAddress.messageIfSkipped"
+                  values={{
+                    name,
+                  }}
+                />
+              </Alert>
+              <Separator2 />
+              <Receive2NoDevice
+                onVerify={onVerify}
+                onContinue={() => onChangeAddressVerified(true)}
+              />
+            </>
+          ) : device ? (
+            // verification with device
+            <>
+              <Receive1ShareAddress
+                account={mainAccount}
+                name={name}
+                address={address}
+                showQRCodeModal={showQRCodeModal}
+              />
+              {CustomPostAlertReceiveFunds && <CustomPostAlertReceiveFunds {...props} />}
+              <Separator />
+              <Receive2Device device={device} name={name} />
+            </>
+          ) : null // should not happen
         }
       </Box>
       <Modal isOpened={modalVisible} onClose={hideQRCodeModal} centered width={460}>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { changes } from "@ledgerhq/live-common/env";
+import { changes } from "@ledgerhq/live-env";
 import { enabledExperimentalFeatures } from "./../experimental";
 const useExperimental = (): boolean => {
   const [state, setState] = useState(() => enabledExperimentalFeatures().length > 0);

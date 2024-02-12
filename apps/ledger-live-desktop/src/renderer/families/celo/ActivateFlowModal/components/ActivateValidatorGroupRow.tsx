@@ -11,12 +11,13 @@ import Logo from "~/renderer/icons/Logo";
 import * as S from "./ActivateValidatorGroupRow.styles";
 import { isDefaultValidatorGroup } from "@ledgerhq/live-common/families/celo/logic";
 import { CeloValidatorGroup } from "@ledgerhq/live-common/families/celo/types";
-import { CryptoCurrency, Unit } from "@ledgerhq/types-live";
+import { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
+
 type Props = {
   currency: CryptoCurrency;
   validatorGroup: CeloValidatorGroup;
   active?: boolean;
-  onClick?: (v: CeloValidatorGroup) => void;
+  onClick?: () => void;
   unit: Unit;
   amount: BigNumber;
 };
@@ -71,7 +72,7 @@ const CeloActivateValidatorGroupRow = ({
             </Text>
           </Box>
           <Box ml={3}>
-            <S.ChosenMark active={active ?? false} />
+            <S.ChosenMark size={14} active={active ?? false} />
           </Box>
         </Box>
       }

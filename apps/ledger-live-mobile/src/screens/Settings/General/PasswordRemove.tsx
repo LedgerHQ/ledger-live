@@ -5,17 +5,14 @@ import { compose } from "redux";
 import { TFunction, withTranslation } from "react-i18next";
 import { PasswordsDontMatchError } from "@ledgerhq/errors";
 import { Vibration } from "react-native";
-import { disablePrivacy } from "../../../actions/settings";
+import { disablePrivacy } from "~/actions/settings";
 import PasswordForm from "./PasswordForm";
-import { VIBRATION_PATTERN_ERROR } from "../../../constants";
-import { ScreenName } from "../../../const";
-import type { PasswordModifyFlowParamList } from "../../../components/RootNavigator/types/PasswordModifyFlowNavigator";
-import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import { VIBRATION_PATTERN_ERROR } from "~/utils/constants";
+import { ScreenName } from "~/const";
+import type { PasswordModifyFlowParamList } from "~/components/RootNavigator/types/PasswordModifyFlowNavigator";
+import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 
-type NavigationProps = StackNavigatorProps<
-  PasswordModifyFlowParamList,
-  ScreenName.PasswordRemove
->;
+type NavigationProps = StackNavigatorProps<PasswordModifyFlowParamList, ScreenName.PasswordRemove>;
 
 type Props = {
   t: TFunction;

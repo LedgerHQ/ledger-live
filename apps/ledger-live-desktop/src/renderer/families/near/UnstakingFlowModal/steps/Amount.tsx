@@ -20,11 +20,10 @@ export default function StepAmount({
   status,
   error,
 }: StepProps) {
-  invariant(account && account.nearResources && transaction, "account and transaction required");
   const [staked, setStaked] = useState(transaction.amount);
   const bridge = getAccountBridge(account);
   const updateValidator = useCallback(
-    ({ address, amount }) => {
+    ({ address, amount }: { address: string; amount: BigNumber }) => {
       onUpdateTransaction(tx =>
         bridge.updateTransaction(tx, {
           ...tx,
@@ -36,12 +35,14 @@ export default function StepAmount({
     },
     [onUpdateTransaction, bridge, staked],
   );
+
   const onChangeValidator = useCallback(
-    ({ validatorId, staked }: NearMappedStakingPosition) => {
-      setStaked(staked);
+    (validator?: NearMappedStakingPosition | null) => {
+      if (!validator) return;
+      setStaked(validator.staked);
       updateValidator({
-        address: validatorId,
-        amount: staked,
+        address: validator.validatorId,
+        amount: validator.staked,
       });
     },
     [updateValidator],
@@ -64,7 +65,13 @@ export default function StepAmount({
   const amount = useMemo(() => (validator ? validator.amount : new BigNumber(0)), [validator]);
   return (
     <Box flow={1}>
-      <TrackPage category="Unstaking Flow" name="Step 1" />
+      <TrackPage
+        category="Unstaking Flow"
+        name="Step 1"
+        flow="stake"
+        action="unstaking"
+        currency="near"
+      />
       {error && <ErrorBanner error={error} />}
       <Box horizontal justifyContent="center" mb={2}>
         <Text ff="Inter|Medium" fontSize={4}>
@@ -82,7 +89,7 @@ export default function StepAmount({
         onChange={onChangeAmount}
         label={<Trans i18nKey="near.unstake.flow.steps.amount.fields.amount" />}
       />
-      <Alert info="primary" mt={2}>
+      <Alert mt={2}>
         <Trans i18nKey="near.unstake.flow.steps.amount.warning">
           <b></b>
         </Trans>

@@ -6,10 +6,7 @@
 const errorClasses = {};
 const deserializers = {};
 
-export const addCustomErrorDeserializer = (
-  name: string,
-  deserializer: (obj: any) => any
-): void => {
+export const addCustomErrorDeserializer = (name: string, deserializer: (obj: any) => any): void => {
   deserializers[name] = deserializer;
 };
 
@@ -22,9 +19,9 @@ export interface LedgerErrorConstructor<F extends { [key: string]: unknown }>
 
 export const createCustomErrorClass = <
   F extends { [key: string]: unknown },
-  T extends LedgerErrorConstructor<F>
+  T extends LedgerErrorConstructor<F>,
 >(
-  name: string
+  name: string,
 ): T => {
   class CustomErrorClass extends Error {
     cause?: Error;
@@ -42,12 +39,7 @@ export const createCustomErrorClass = <
           this[k] = fields[k];
         }
       }
-      if (
-        options &&
-        isObject(options) &&
-        "cause" in options &&
-        !("cause" in this)
-      ) {
+      if (options && isObject(options) && "cause" in options && !("cause" in this)) {
         // .cause was specified but the superconstructor
         // did not create an instance property.
         const cause = options.cause;
@@ -123,7 +115,7 @@ export const deserializeError = (object: any): Error | undefined => {
 
 // inspired from https://github.com/sindresorhus/serialize-error/blob/master/index.js
 export const serializeError = (
-  value: undefined | To | string | (() => unknown)
+  value: undefined | To | string | (() => unknown),
 ): undefined | To | string => {
   if (!value) return value;
   if (typeof value === "object") {

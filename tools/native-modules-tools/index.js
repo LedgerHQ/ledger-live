@@ -1,23 +1,22 @@
 const path = require("path");
 const fs = require("fs");
+const { cp } = require("fs/promises");
 
 // Copy a folder and its contents recursively.
-function copyFolderRecursivelySync(source, target) {
-  if (!fs.existsSync(target)) {
-    fs.mkdirSync(target, { recursive: true });
+async function copyFolderRecursively(source, target) {
+  if (fs.existsSync(target) && !fs.lstatSync(target).isDirectory()) {
+    return; // we skip if the top level folder already exists and isn't a dir (e.g. a symlink)
   }
-
-  if (fs.statSync(source).isDirectory()) {
-    const files = fs.readdirSync(source);
-    files.forEach(function (file) {
-      var curSource = path.join(source, file);
-      if (fs.statSync(curSource).isDirectory()) {
-        copyFolderRecursivelySync(curSource, path.join(target, file));
-      } else {
-        fs.copyFileSync(curSource, path.join(target, path.basename(file)));
+  await cp(source, target, {
+    recursive: true,
+    filter: (src, dest) => {
+      if (fs.existsSync(dest) && fs.lstatSync(dest).isSymbolicLink()) {
+        // cp don't manage to copy symlinks, if the dest exists
+        return false;
       }
-    });
-  }
+      return true;
+    },
+  });
 }
 
 // Given a module subfolder, finds the nearest root.
@@ -41,7 +40,7 @@ function findNativeModules(root) {
 
   while ((currentPath = stack.shift())) {
     const package = JSON.parse(
-      fs.readFileSync(path.resolve(currentPath, "package.json")).toString()
+      fs.readFileSync(path.resolve(currentPath, "package.json")).toString(),
     );
     // A module is considered native if it contains a binding.gyp file.
     const isNative = fs.existsSync(path.resolve(currentPath, "binding.gyp"));
@@ -49,7 +48,7 @@ function findNativeModules(root) {
       nativeModules.push(currentPath);
     }
     const dependencies = package.dependencies || [];
-    Object.keys(dependencies).forEach((dependency) => {
+    Object.keys(dependencies).forEach(dependency => {
       // Symlinks must be resolved otherwise node.js will fail to resolve.
       const realPath = fs.realpathSync([currentPath]);
       let resolvedPath = null;
@@ -57,12 +56,9 @@ function findNativeModules(root) {
         resolvedPath = require.resolve(dependency, { paths: [realPath] });
       } catch (_) {
         try {
-          resolvedPath = require.resolve(
-            path.resolve(dependency, "package.json"),
-            {
-              paths: [realPath],
-            }
-          );
+          resolvedPath = require.resolve(path.resolve(dependency, "package.json"), {
+            paths: [realPath],
+          });
         } catch (error) {
           // swallow the error
           // console.error(error)
@@ -88,21 +84,16 @@ function findNativeModules(root) {
 }
 
 // Copy a module to a target location and exposes some options to handle renaming.
-function copyNodeModule(
-  modulePath,
-  { root, destination = "", appendVersion = false } = {}
-) {
+async function copyNodeModule(modulePath, { root, destination = "", appendVersion = false } = {}) {
   const source = root ? path.resolve(root, modulePath) : modulePath;
-  const package = JSON.parse(
-    fs.readFileSync(path.resolve(source, "package.json")).toString()
-  );
+  const package = JSON.parse(fs.readFileSync(path.resolve(source, "package.json")).toString());
   const { name, version } = package;
   const target = path.resolve(
     destination,
     "node_modules",
-    appendVersion ? name + "@" + version : name
+    appendVersion ? name + "@" + version : name,
   );
-  copyFolderRecursivelySync(source, target);
+  await copyFolderRecursively(source, target);
   return { name, version, source, target };
 }
 
@@ -130,7 +121,7 @@ function dependencyTree(modulePath, { root } = {}) {
   while ((current = stack.shift())) {
     const [currentPath, currentTree] = current;
     const package = JSON.parse(
-      fs.readFileSync(path.resolve(currentPath, "package.json")).toString()
+      fs.readFileSync(path.resolve(currentPath, "package.json")).toString(),
     );
     const dependencies = package.dependencies || [];
     currentTree.module = package.name;
@@ -138,7 +129,7 @@ function dependencyTree(modulePath, { root } = {}) {
     currentTree.path = currentPath;
     currentTree.dependencies = new Map();
 
-    Object.keys(dependencies).forEach((dependency) => {
+    Object.keys(dependencies).forEach(dependency => {
       try {
         // console.log("Requiring: ", dependency)
         // console.log("Paths: ", [currentPath])
@@ -178,10 +169,7 @@ function buildWebpackExternals(nativeModules) {
       const resolvedRoot = findPackageRoot(realResolvedPath);
       const nativeModule = nativeModules[resolvedRoot];
       if (nativeModule) {
-        return callback(
-          null,
-          "commonjs " + nativeModule.name + "@" + nativeModule.version
-        );
+        return callback(null, "commonjs " + nativeModule.name + "@" + nativeModule.version);
       }
     } catch (error) {
       // swallow error
@@ -198,8 +186,8 @@ function esBuildExternalsPlugin(nativeModules) {
   return {
     name: "Externals Plugin (native-modules-tools)",
     setup(build) {
-      Object.values(nativeModules).forEach((module) => {
-        build.onResolve({ filter: new RegExp(`^${module.name}`) }, (args) => {
+      Object.values(nativeModules).forEach(module => {
+        build.onResolve({ filter: new RegExp(`^${module.name}`) }, args => {
           if (args.resolveDir === "") {
             return; // Ignore unresolvable paths
           }
@@ -214,7 +202,7 @@ function esBuildExternalsPlugin(nativeModules) {
               return {
                 path: args.path.replace(
                   new RegExp(`^${nativeModule.name}`),
-                  nativeModule.name + "@" + nativeModule.version
+                  nativeModule.name + "@" + nativeModule.version,
                 ),
                 external: true,
               };
@@ -229,7 +217,7 @@ function esBuildExternalsPlugin(nativeModules) {
   };
 }
 
-function processNativeModules({ root, destination, silent = false }) {
+async function processNativeModules({ root, destination, silent = false }) {
   // First, we crawl the production dependencies and find every node.js native modules.
   const nativeModulesPaths = findNativeModules(root);
   if (!silent) {
@@ -237,9 +225,10 @@ function processNativeModules({ root, destination, silent = false }) {
   }
 
   // Then for each one of these native modules…
-  const mappedNativeModules = nativeModulesPaths.reduce((acc, module) => {
+  const mappedNativeModules = {};
+  for (const module of nativeModulesPaths) {
     // We copy the module to a special directory that will be copied by electron-bundler in place of the node_modules.
-    const copyResults = copyNodeModule(module, {
+    const copyResults = await copyNodeModule(module, {
       destination,
       appendVersion: true,
     });
@@ -251,31 +240,29 @@ function processNativeModules({ root, destination, silent = false }) {
     let current = null;
     while ((current = stack.shift())) {
       const [path, dependencies] = current;
-      Array.from(dependencies.values()).forEach((dependency) => {
-        const copyResult = copyNodeModule(dependency.path, {
+      for (const dependency of dependencies.values()) {
+        const copyResult = await copyNodeModule(dependency.path, {
           destination: path,
         });
         stack.push([copyResult.target, dependency.dependencies]);
-      });
+      }
     }
-    acc[copyResults.source] = copyResults;
 
     // And finally we return an object containing useful data for the module.
     // (its source/destination directories, name and version)
     // This will be used to tell webpack to treat them as externals and to require from the correct path.
     // (something like 'dist/node_modules/name@version')
-    return acc;
-  }, {});
+    mappedNativeModules[copyResults.source] = copyResults;
+  }
 
   return mappedNativeModules;
 }
 
 module.exports = {
   findNativeModules,
-  copyNodeModule,
   dependencyTree,
   buildWebpackExternals,
   esBuildExternalsPlugin,
-  copyFolderRecursivelySync,
+  copyFolderRecursively,
   processNativeModules,
 };

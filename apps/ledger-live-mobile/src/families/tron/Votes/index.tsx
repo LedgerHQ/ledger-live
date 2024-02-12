@@ -3,10 +3,7 @@ import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { Trans, useTranslation } from "react-i18next";
 import { BigNumber } from "bignumber.js";
-import {
-  getAccountUnit,
-  getAccountCurrency,
-} from "@ledgerhq/live-common/account/helpers";
+import { getAccountUnit, getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import {
   useTronSuperRepresentatives,
   formatVotes,
@@ -15,20 +12,20 @@ import {
 } from "@ledgerhq/live-common/families/tron/react";
 import { getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { Box, Button, Icons, Text } from "@ledgerhq/native-ui";
+import { Box, Button, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import { TronAccount } from "@ledgerhq/live-common/families/tron/types";
-import { urls } from "../../../config/urls";
+import { urls } from "~/utils/urls";
 import Row from "./Row";
 import Header from "./Header";
-import LText from "../../../components/LText";
-import ArrowRight from "../../../icons/ArrowRight";
-import DateFromNow from "../../../components/DateFromNow";
-import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
-import CounterValue from "../../../components/CounterValue";
-import IlluRewards from "../../../icons/images/Rewards";
-import ProgressCircle from "../../../components/ProgressCircle";
-import AccountDelegationInfo from "../../../components/AccountDelegationInfo";
-import AccountSectionLabel from "../../../components/AccountSectionLabel";
+import LText from "~/components/LText";
+import ArrowRight from "~/icons/ArrowRight";
+import DateFromNow from "~/components/DateFromNow";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import CounterValue from "~/components/CounterValue";
+import IlluRewards from "~/icons/images/Rewards";
+import ProgressCircle from "~/components/ProgressCircle";
+import AccountDelegationInfo from "~/components/AccountDelegationInfo";
+import AccountSectionLabel from "~/components/AccountSectionLabel";
 
 type Props = {
   account: TronAccount;
@@ -42,9 +39,7 @@ const Delegation = ({ account }: Props) => {
   const superRepresentatives = useTronSuperRepresentatives();
   const lastVotedDate = useMemo(() => getLastVotedDate(account), [account]);
 
-  const lastDate = lastVotedDate ? (
-    <DateFromNow date={lastVotedDate.valueOf()} />
-  ) : null;
+  const lastDate = lastVotedDate ? <DateFromNow date={lastVotedDate.valueOf()} /> : null;
 
   const currency = getAccountCurrency(account);
   const unit = getAccountUnit(account);
@@ -52,8 +47,7 @@ const Delegation = ({ account }: Props) => {
 
   const { spendableBalance, tronResources } = account;
 
-  const canFreeze =
-    spendableBalance && spendableBalance.gt(MIN_TRANSACTION_AMOUNT);
+  const canFreeze = spendableBalance && spendableBalance.gt(MIN_TRANSACTION_AMOUNT);
 
   const { votes, tronPower, unwithdrawnReward } = tronResources || {};
 
@@ -61,10 +55,7 @@ const Delegation = ({ account }: Props) => {
 
   const formattedVotes = formatVotes(votes, superRepresentatives);
 
-  const totalVotesUsed = votes.reduce(
-    (sum, { voteCount }) => sum + voteCount,
-    0,
-  );
+  const totalVotesUsed = votes.reduce((sum, { voteCount }) => sum + voteCount, 0);
   const hasRewards = BigNumber(unwithdrawnReward).gt(0);
   const percentVotesUsed = totalVotesUsed / tronPower;
 
@@ -78,26 +69,16 @@ const Delegation = ({ account }: Props) => {
         <>
           <AccountSectionLabel
             name={t("tron.voting.rewards.title")}
-            Icon={Icons.InfoMedium}
+            Icon={IconsLegacy.InfoMedium}
           />
           <View style={[styles.rewardSection]}>
             <View style={styles.labelSection}>
               <Text fontWeight={"semiBold"} variant={"h4"}>
-                <CurrencyUnitValue
-                  unit={unit}
-                  value={formattedUnwidthDrawnReward}
-                />
+                <CurrencyUnitValue unit={unit} value={formattedUnwidthDrawnReward} />
               </Text>
-              <Text
-                variant={"body"}
-                fontWeight={"semiBold"}
-                color="neutral.c80"
-              >
+              <Text variant={"body"} fontWeight={"semiBold"} color="neutral.c80">
                 {currency && (
-                  <CounterValue
-                    currency={currency}
-                    value={formattedUnwidthDrawnReward}
-                  />
+                  <CounterValue currency={currency} value={formattedUnwidthDrawnReward} />
                 )}
               </Text>
             </View>
@@ -113,20 +94,18 @@ const Delegation = ({ account }: Props) => {
             <Header count={formattedVotes.length} onPress={() => undefined} />
             <View style={[styles.container, styles.noPadding]}>
               <Box mb={5}>
-                {formattedVotes.map(
-                  ({ validator, address, voteCount, isSR }, index) => (
-                    <Row
-                      key={index}
-                      validator={validator}
-                      address={address}
-                      amount={voteCount}
-                      duration={lastDate}
-                      explorerView={explorerView ?? undefined}
-                      isSR={isSR}
-                      isLast={index === formattedVotes.length - 1}
-                    />
-                  ),
-                )}
+                {formattedVotes.map(({ validator, address, voteCount, isSR }, index) => (
+                  <Row
+                    key={index}
+                    validator={validator}
+                    address={address}
+                    amount={voteCount}
+                    duration={lastDate}
+                    explorerView={explorerView ?? undefined}
+                    isSR={isSR}
+                    isLast={index === formattedVotes.length - 1}
+                  />
+                ))}
               </Box>
               {percentVotesUsed < 1 && (
                 <View style={{ marginBottom: 24 }}>
@@ -140,10 +119,7 @@ const Delegation = ({ account }: Props) => {
                       backgroundColor={colors.fog}
                     />
                     <View style={styles.warnSection}>
-                      <LText
-                        semiBold
-                        style={[styles.warnText, styles.warnTitle]}
-                      >
+                      <LText semiBold style={[styles.warnText, styles.warnTitle]}>
                         <Trans i18nKey="tron.voting.remainingVotes.title" />
                       </LText>
                       <LText style={styles.warnText} color="live">
@@ -269,10 +245,5 @@ export default function Votes({
 }: { account: AccountLike } & Omit<Props, "account">) {
   if (!account || !(account as TronAccount).tronResources) return null;
 
-  return (
-    <Delegation
-      account={account as TronAccount}
-      parentAccount={parentAccount}
-    />
-  );
+  return <Delegation account={account as TronAccount} parentAccount={parentAccount} />;
 }

@@ -6,25 +6,33 @@ import noop from "lodash/noop";
 import { Transition, TransitionStatus } from "react-transition-group";
 import { closeModal } from "~/renderer/actions/modals";
 import { isModalOpened, getModalData } from "~/renderer/reducers/modals";
+import { ModalData } from "~/renderer/modals/types";
 import Snow, { isSnowTime } from "~/renderer/extra/Snow";
 import { State } from "~/renderer/reducers";
 import { Dispatch } from "redux";
 export { default as ModalBody } from "./ModalBody";
+
 const domNode = document.getElementById("modals");
-const mapStateToProps = <Data,>(state: State, { name, isOpened, onBeforeOpen }: Props<Data>) => {
-  const data = getModalData(state, name || "");
+
+const mapStateToProps = <Name extends keyof ModalData>(
+  state: State,
+  { name, isOpened, onBeforeOpen }: Props<Name>,
+) => {
+  const data = name ? getModalData(state, name) : undefined;
   const modalOpened = isOpened || (name && isModalOpened(state, name));
   if (onBeforeOpen && modalOpened) {
-    onBeforeOpen({
-      data,
-    } as { data: Data });
+    onBeforeOpen({ data });
   }
   return {
     isOpened: !!modalOpened,
     data,
   };
 };
-const mapDispatchToProps = <Data,>(dispatch: Dispatch, { name, onClose = noop }: Props<Data>) => ({
+
+const mapDispatchToProps = <Name extends keyof ModalData>(
+  dispatch: Dispatch,
+  { name, onClose = noop }: Props<Name>,
+) => ({
   onClose: name
     ? () => {
         dispatch(closeModal(name));
@@ -32,6 +40,7 @@ const mapDispatchToProps = <Data,>(dispatch: Dispatch, { name, onClose = noop }:
       }
     : onClose,
 });
+
 const transitionsOpacity = {
   entering: {
     opacity: 0,
@@ -115,30 +124,31 @@ const BodyWrapper = styled.div.attrs(({ state }: { state: TransitionStatus }) =>
   opacity: 0;
   transition: all 200ms cubic-bezier(0.3, 1, 0.5, 0.8);
 `;
-export type RenderProps<Data> = {
-  onClose?: (() => void) | undefined;
-  data: Data;
+export type RenderProps<Name extends keyof ModalData> = {
+  onClose: () => void;
+  data: ModalData[Name];
 };
-type Props<Data> = {
+
+type Props<Name extends keyof ModalData> = {
   isOpened?: boolean;
   children?: React.ReactNode;
   centered?: boolean;
   onClose?: (() => void) | undefined;
   onHide?: (() => void) | undefined;
-  render?: (a: RenderProps<Data>) => React.ReactNode;
-  data?: Data;
+  render?: (a: RenderProps<Name>) => React.ReactNode;
+  data?: ModalData[Name];
   preventBackdropClick?: boolean;
   width?: number;
   theme?: DefaultTheme;
-  name?: string;
+  name?: Name;
   // eslint-disable-line
-  onBeforeOpen?: (a: { data: Data }) => void;
+  onBeforeOpen?: (a: { data: ModalData[Name] | undefined }) => void;
   // eslint-disable-line
   backdropColor?: boolean | undefined | null;
   bodyStyle?: CSSProperties;
 };
-class Modal<Data> extends PureComponent<
-  Props<Data>,
+class Modal<Name extends keyof ModalData> extends PureComponent<
+  Props<Name>,
   {
     directlyClickedBackdrop: boolean;
   }
@@ -152,7 +162,7 @@ class Modal<Data> extends PureComponent<
     document.addEventListener("keydown", this.preventFocusEscape);
   }
 
-  componentDidUpdate({ isOpened, onHide }: Props<Data>) {
+  componentDidUpdate({ isOpened, onHide }: Props<Name>) {
     if (!isOpened && onHide) onHide();
   }
 
@@ -175,9 +185,9 @@ class Modal<Data> extends PureComponent<
         "input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), *[tabindex]";
       const modalWrapper = document.getElementById("modals");
       if (!modalWrapper || !(target instanceof window.HTMLElement)) return;
-      const focusableElements = modalWrapper.querySelectorAll(focusableQuery) as NodeListOf<
-        HTMLElement
-      >;
+      const focusableElements = modalWrapper.querySelectorAll(
+        focusableQuery,
+      ) as NodeListOf<HTMLElement>;
       if (!focusableElements.length) return;
       const firstFocusable = focusableElements[0];
       const lastFocusable = focusableElements[focusableElements.length - 1];
@@ -223,20 +233,11 @@ class Modal<Data> extends PureComponent<
   };
 
   render() {
-    const {
-      children,
-      render,
-      centered,
-      onClose,
-      data,
-      isOpened,
-      width,
-      backdropColor,
-      bodyStyle,
-    } = this.props;
-    const renderProps: RenderProps<Data> = {
-      onClose,
-      data: data as Data,
+    const { children, render, centered, onClose, data, isOpened, width, backdropColor, bodyStyle } =
+      this.props;
+    const renderProps = {
+      onClose: onClose!,
+      data: data!,
     };
     const modal = (
       <Transition
@@ -287,4 +288,4 @@ class Modal<Data> extends PureComponent<
   }
 }
 
-export default (connect(mapStateToProps, mapDispatchToProps)(Modal) as unknown) as typeof Modal; // to preserve generics
+export default connect(mapStateToProps, mapDispatchToProps)(Modal) as unknown as typeof Modal; // to preserve generics

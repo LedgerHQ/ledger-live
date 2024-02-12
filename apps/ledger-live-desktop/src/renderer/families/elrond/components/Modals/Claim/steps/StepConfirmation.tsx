@@ -1,6 +1,6 @@
 import React from "react";
 import { Trans } from "react-i18next";
-import styled, { withTheme } from "styled-components";
+import styled from "styled-components";
 import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
@@ -13,30 +13,37 @@ import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDisclaimer";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import { ElrondProvider } from "@ledgerhq/live-common/families/elrond/types";
 import { StepProps } from "../types";
+
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   grow: true,
   color: "palette.text.shade100",
-}))`
+}))<{
+  shouldSpace?: boolean;
+}>`
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
 `;
 const StepConfirmation = (props: StepProps) => {
   const { optimisticOperation, error, signed, account, transaction, validators } = props;
   if (optimisticOperation) {
     const provider: string | undefined = transaction && transaction.recipient;
-    const v: ElrondProvider | undefined =
-      provider && validators.find(validator => validator.contract === provider);
+    const v = provider ? validators?.find(validator => validator.contract === provider) : undefined;
     const amount = `${denominate({
-      input: String(transaction.amount),
+      input: String(transaction?.amount),
       decimals: 4,
     })} ${getAccountUnit(account).code || "EGLD"}`;
     const titleKey = transaction?.mode === "claimRewards" ? "title" : "titleCompound";
     const textKey = transaction?.mode === "claimRewards" ? "text" : "textCompound";
     return (
       <Container>
-        <TrackPage category="ClaimRewards Elrond Flow" name="Step Confirmed" />
+        <TrackPage
+          category="ClaimRewards Elrond Flow"
+          name="Step Confirmed"
+          flow="stake"
+          action="claim"
+          currency="MultiversX"
+        />
         <SyncOneAccountOnMount priority={10} accountId={optimisticOperation.accountId} />
 
         <SuccessDisplay
@@ -49,7 +56,7 @@ const StepConfirmation = (props: StepProps) => {
                 i18nKey={`elrond.claimRewards.flow.steps.confirmation.success.${textKey}`}
                 values={{
                   amount,
-                  validator: v && v.name,
+                  validator: v?.identity.name,
                 }}
               >
                 <b></b>
@@ -63,7 +70,13 @@ const StepConfirmation = (props: StepProps) => {
   if (error) {
     return (
       <Container shouldSpace={signed}>
-        <TrackPage category="ClaimRewards Elrond Flow" name="Step Confirmation Error" />
+        <TrackPage
+          category="ClaimRewards Elrond Flow"
+          name="Step Confirmation Error"
+          flow="stake"
+          action="claim"
+          currency="MultiversX"
+        />
         {signed ? (
           <BroadcastErrorDisclaimer
             title={<Trans i18nKey="elrond.claimRewards.flow.steps.confirmation.broadcastError" />}
@@ -76,7 +89,7 @@ const StepConfirmation = (props: StepProps) => {
   return null;
 };
 const StepConfirmationFooter = (props: StepProps) => {
-  const { account, parentAccount, onRetry, error, onClose, optimisticOperation } = props;
+  const { account, onRetry, error, onClose, optimisticOperation } = props;
   const concernedOperation = optimisticOperation
     ? optimisticOperation.subOperations && optimisticOperation.subOperations.length > 0
       ? optimisticOperation.subOperations[0]
@@ -99,7 +112,6 @@ const StepConfirmationFooter = (props: StepProps) => {
               setDrawer(OperationDetails, {
                 operationId: concernedOperation.id,
                 accountId: account.id,
-                parentId: parentAccount && parentAccount.id,
               });
             }
           }}
@@ -113,4 +125,4 @@ const StepConfirmationFooter = (props: StepProps) => {
   );
 };
 export { StepConfirmationFooter };
-export default withTheme(StepConfirmation);
+export default StepConfirmation;

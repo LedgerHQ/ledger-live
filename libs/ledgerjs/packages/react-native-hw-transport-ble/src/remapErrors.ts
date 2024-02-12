@@ -7,7 +7,8 @@ import {
 } from "@ledgerhq/errors";
 import { BleATTErrorCode, BleError, BleErrorCode } from "react-native-ble-plx";
 
-type IOBleErrorRemap = Error | BleError | null | undefined;
+export type IOBleErrorRemap = Error | BleError | null | undefined;
+
 export const remapError = (error: IOBleErrorRemap): IOBleErrorRemap => {
   if (!error || !error.message) return error;
 
@@ -24,10 +25,7 @@ export const remapError = (error: IOBleErrorRemap): IOBleErrorRemap => {
     }
   }
 
-  if (
-    error.message.includes("was disconnected") ||
-    error.message.includes("not found")
-  ) {
+  if (error.message.includes("was disconnected") || error.message.includes("not found")) {
     return new DisconnectedDevice();
   }
 
@@ -43,10 +41,7 @@ export const decoratePromiseErrors = <A>(promise: Promise<A>): Promise<A> =>
 
 export const bleErrorToHwTransportError = new Map([
   [BleErrorCode.ScanStartFailed, HwTransportErrorType.BluetoothScanStartFailed],
-  [
-    BleErrorCode.LocationServicesDisabled,
-    HwTransportErrorType.LocationServicesDisabled,
-  ],
+  [BleErrorCode.LocationServicesDisabled, HwTransportErrorType.LocationServicesDisabled],
   [
     // BluetoothUnauthorized actually represents a location service unauthorized error
     BleErrorCode.BluetoothUnauthorized,
@@ -54,9 +49,7 @@ export const bleErrorToHwTransportError = new Map([
   ],
 ]);
 
-export const mapBleErrorToHwTransportError = (
-  bleError: BleError
-): HwTransportError => {
+export const mapBleErrorToHwTransportError = (bleError: BleError): HwTransportError => {
   const message = `${bleError.message}. Origin: ${bleError.errorCode}`;
 
   const inferedType = bleErrorToHwTransportError.get(bleError.errorCode);

@@ -1,3 +1,4 @@
+import semver from "semver";
 import type Transport from "@ledgerhq/hw-transport";
 import BtcNew from "./BtcNew";
 import BtcOld from "./BtcOld";
@@ -47,14 +48,21 @@ export default class Btc {
         "getTrustedInput",
         "getTrustedInputBIP143",
       ],
-      scrambleKey
+      scrambleKey,
     );
-    // new APDU (nano app API) for bitcoin and old APDU for altcoin
-    if (currency === "bitcoin" || currency === "bitcoin_testnet") {
-      this._impl = new BtcNew(new AppClient(this._transport));
-    } else {
-      this._impl = new BtcOld(this._transport);
-    }
+
+    this._impl = (() => {
+      switch (currency) {
+        case "bitcoin":
+        case "bitcoin_testnet":
+        case "qtum":
+          // new APDU (nano app API) for currencies using app-bitcoin-new implementation
+          return new BtcNew(new AppClient(this._transport));
+        default:
+          // old APDU (legacy API) for currencies using legacy bitcoin app implementation
+          return new BtcOld(this._transport);
+      }
+    })();
   }
 
   /**
@@ -65,7 +73,7 @@ export default class Btc {
    * @returns XPUB of the account
    */
   getWalletXpub(arg: { path: string; xpubVersion: number }): Promise<string> {
-    return this.changeImplIfNecessary().then((impl) => {
+    return this.changeImplIfNecessary().then(impl => {
       return impl.getWalletXpub(arg);
     });
   }
@@ -97,7 +105,7 @@ export default class Btc {
     opts?: {
       verify?: boolean;
       format?: AddressFormat;
-    }
+    },
   ): Promise<{
     publicKey: string;
     bitcoinAddress: string;
@@ -106,7 +114,7 @@ export default class Btc {
     let options;
     if (arguments.length > 2 || typeof opts === "boolean") {
       console.warn(
-        "btc.getWalletPublicKey deprecated signature used. Please switch to getWalletPublicKey(path, { format, verify })"
+        "btc.getWalletPublicKey deprecated signature used. Please switch to getWalletPublicKey(path, { format, verify })",
       );
       options = {
         verify: !!opts,
@@ -116,7 +124,7 @@ export default class Btc {
     } else {
       options = opts || {};
     }
-    return this.changeImplIfNecessary().then((impl) => {
+    return this.changeImplIfNecessary().then(impl => {
       return impl.getWalletPublicKey(path, options);
     });
   }
@@ -132,13 +140,13 @@ export default class Btc {
    */
   signMessage(
     path: string,
-    messageHex: string
+    messageHex: string,
   ): Promise<{
     v: number;
     r: string;
     s: string;
   }> {
-    return this.changeImplIfNecessary().then((impl) => {
+    return this.changeImplIfNecessary().then(impl => {
       return impl.signMessage({
         path,
         messageHex,
@@ -182,10 +190,10 @@ export default class Btc {
   createPaymentTransaction(arg: CreateTransactionArg): Promise<string> {
     if (arguments.length > 1) {
       throw new Error(
-        "@ledgerhq/hw-app-btc: createPaymentTransaction multi argument signature is deprecated. please switch to named parameters."
+        "@ledgerhq/hw-app-btc: createPaymentTransaction multi argument signature is deprecated. please switch to named parameters.",
       );
     }
-    return this.changeImplIfNecessary().then((impl) => {
+    return this.changeImplIfNecessary().then(impl => {
       return impl.createPaymentTransaction(arg);
     });
   }
@@ -223,14 +231,14 @@ export default class Btc {
     isSegwitSupported: boolean | null | undefined = false,
     hasTimestamp = false,
     hasExtraData = false,
-    additionals: Array<string> = []
+    additionals: Array<string> = [],
   ): Transaction {
     return splitTransaction(
       transactionHex,
       isSegwitSupported,
       hasTimestamp,
       hasExtraData,
-      additionals
+      additionals,
     );
   }
 
@@ -246,56 +254,48 @@ export default class Btc {
   getTrustedInput(
     indexLookup: number,
     transaction: Transaction,
-    additionals: Array<string> = []
+    additionals: Array<string> = [],
   ): Promise<string> {
-    return getTrustedInput(
-      this._transport,
-      indexLookup,
-      transaction,
-      additionals
-    );
+    return getTrustedInput(this._transport, indexLookup, transaction, additionals);
   }
 
   getTrustedInputBIP143(
     indexLookup: number,
     transaction: Transaction,
-    additionals: Array<string> = []
+    additionals: Array<string> = [],
   ): string {
-    return getTrustedInputBIP143(
-      this._transport,
-      indexLookup,
-      transaction,
-      additionals
-    );
+    return getTrustedInputBIP143(this._transport, indexLookup, transaction, additionals);
   }
 
   async changeImplIfNecessary(): Promise<BtcOld | BtcNew> {
     // if BtcOld was instantiated, stick with it
     if (this._impl instanceof BtcOld) return this._impl;
 
-    const appAndVersion = await getAppAndVersion(this._transport);
-    let isBtcLegacy = true; // default for all altcoins
+    const { name, version } = await getAppAndVersion(this._transport);
 
-    if (
-      appAndVersion.name === "Bitcoin" ||
-      appAndVersion.name === "Bitcoin Test"
-    ) {
-      const [major, minor] = appAndVersion.version.split(".");
-      // we use the legacy protocol for versions below 2.1.0 of the Bitcoin app.
-      isBtcLegacy =
-        parseInt(major) <= 1 || (parseInt(major) == 2 && parseInt(minor) == 0);
-    } else if (
-      appAndVersion.name === "Bitcoin Legacy" ||
-      appAndVersion.name === "Bitcoin Test Legacy"
-    ) {
-      // the "Bitcoin Legacy" and "Bitcoin Testnet Legacy" app use the legacy protocol, regardless of the version
-      isBtcLegacy = true;
-    } else if (appAndVersion.name === "Exchange") {
-      // We can't query the version of the Bitcoin app if we're coming from Exchange;
-      // therefore, we use a workaround to distinguish legacy and new versions.
-      // This can be removed once Ledger Live enforces minimum bitcoin version >= 2.1.0.
-      isBtcLegacy = await checkIsBtcLegacy(this._transport);
-    }
+    const isBtcLegacy = await (async () => {
+      switch (name) {
+        case "Bitcoin":
+        case "Bitcoin Test": {
+          // we use the legacy protocol for versions below 2.1.0 of the Bitcoin app.
+          return semver.lt(version, "2.1.0");
+        }
+        case "Bitcoin Legacy":
+        case "Bitcoin Test Legacy":
+          // the "Bitcoin Legacy" and "Bitcoin Testnet Legacy" app use the legacy protocol, regardless of the version
+          return true;
+        case "Exchange":
+          // We can't query the version of the Bitcoin app if we're coming from Exchange;
+          // therefore, we use a workaround to distinguish legacy and new versions.
+          // This can be removed once Ledger Live enforces minimum bitcoin version >= 2.1.0.
+          return await checkIsBtcLegacy(this._transport);
+        case "Qtum":
+          // we use the legacy protocol for versions below 3.0.0 of the Qtum app.
+          return semver.lt(version, "3.0.0");
+        default:
+          return true;
+      }
+    })();
 
     if (isBtcLegacy) {
       this._impl = new BtcOld(this._transport);

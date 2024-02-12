@@ -2,10 +2,11 @@ import {
   CantOpenDevice,
   DisconnectedDevice,
   DisconnectedDeviceDuringOperation,
-  LockedDeviceError,
+  UnresponsiveDeviceError,
+  UserRefusedAllowManager,
   UserRefusedFirmwareUpdate,
 } from "@ledgerhq/errors";
-import { log } from "@ledgerhq/logs";
+import { LocalTracer } from "@ledgerhq/logs";
 import type {
   DeviceId,
   DeviceInfo,
@@ -28,6 +29,7 @@ import {
   SharedTaskEvent,
   sharedLogicTaskWrapper,
   retryOnErrorsCommandWrapper,
+  LOG_TYPE,
 } from "./core";
 import { TransportRef, withTransport } from "../transports/core";
 import { parseDeviceInfo } from "./getDeviceInfo";
@@ -52,6 +54,7 @@ export type UpdateFirmwareTaskEvent =
   | { type: "installOsuDevicePermissionGranted" }
   | { type: "installOsuDevicePermissionDenied" }
   | { type: "allowSecureChannelRequested" }
+  | { type: "allowSecureChannelDenied" }
   | { type: "taskError"; error: UpdateFirmwareTaskError }
   | SharedTaskEvent;
 
@@ -61,10 +64,7 @@ export type UpdateFirmwareTaskEvent =
 const waitForGetVersion = retryOnErrorsCommandWrapper({
   command: ({ transport }: GetVersionCmdArgs) =>
     getVersion({ transport }).pipe(
-      filter(
-        (e): e is { type: "data"; firmwareInfo: FirmwareInfo } =>
-          e.type === "data"
-      )
+      filter((e): e is { type: "data"; firmwareInfo: FirmwareInfo } => e.type === "data"),
     ),
   allowedErrors: [
     { maxRetries: "infinite", errorClass: DisconnectedDeviceDuringOperation },
@@ -77,12 +77,19 @@ function internalUpdateFirmwareTask({
   deviceId,
   updateContext,
 }: UpdateFirmwareTaskArgs): Observable<UpdateFirmwareTaskEvent> {
-  return new Observable((subscriber) => {
+  const tracer = new LocalTracer(LOG_TYPE, {
+    function: "updateFirmwareTask",
+  });
+
+  return new Observable(subscriber => {
     const sub = withTransport(deviceId)(({ transportRef }) =>
       concat(
         quitApp(transportRef.current).pipe(
-          switchMap(() => waitForGetVersion(transportRef, {})),
-          switchMap((value) => {
+          switchMap(() => {
+            tracer.updateContext({ transportContext: transportRef.current.getTraceContext() });
+            return waitForGetVersion(transportRef, {});
+          }),
+          switchMap(value => {
             const { firmwareInfo } = value;
 
             return subscriber.closed
@@ -91,43 +98,44 @@ function internalUpdateFirmwareTask({
                   firmwareInfo,
                   updateContext,
                   transport: transportRef.current,
+                  tracer,
                 }).pipe(
-                  map((e) => {
+                  map(e => {
                     if (e.type === "unresponsive") {
                       return {
                         type: "error" as const,
-                        error: new LockedDeviceError(),
+                        error: new UnresponsiveDeviceError(),
+                        // If unresponsive, the command is still waiting for a response
+                        retrying: true,
                       };
                     }
 
                     return e;
-                  })
+                  }),
                 );
-          })
+          }),
         ),
         waitForGetVersion(transportRef, {}).pipe(
           switchMap(({ firmwareInfo }) => {
             return subscriber.closed
               ? EMPTY
-              : flashMcuOrBootloader(
-                  updateContext,
-                  firmwareInfo,
-                  transportRef,
-                  deviceId
-                );
-          })
-        )
-      )
+              : flashMcuOrBootloader(updateContext, firmwareInfo, transportRef, deviceId);
+          }),
+        ),
+      ),
     ).subscribe({
-      next: (event) => {
+      next: event => {
         switch (event.type) {
           case "allowSecureChannelRequested":
+            tracer.trace("allowSecureChannelRequested");
             subscriber.next(event);
             break;
           case "firmwareInstallPermissionRequested":
+            tracer.trace("firmwareInstallPermissionRequested");
             subscriber.next({ type: "installOsuDevicePermissionRequested" });
             break;
           case "firmwareInstallPermissionGranted":
+            tracer.trace("firmwareInstallPermissionGranted");
             subscriber.next({ type: "installOsuDevicePermissionGranted" });
             break;
           case "progress":
@@ -141,11 +149,15 @@ function internalUpdateFirmwareTask({
         }
       },
       complete: () => subscriber.complete(),
-      error: (error) => {
+      error: error => {
+        tracer.trace(`Error: ${error}`, { error });
+
         if (error instanceof UserRefusedFirmwareUpdate) {
           subscriber.next({ type: "installOsuDevicePermissionDenied" });
+        } else if (error instanceof UserRefusedAllowManager) {
+          subscriber.next({ type: "allowSecureChannelDenied" });
         } else {
-          subscriber.next({ type: "error", error });
+          subscriber.next({ type: "error", error, retrying: false });
           subscriber.complete();
         }
       },
@@ -172,13 +184,10 @@ function internalUpdateFirmwareTask({
  */
 export function getFlashMcuOrBootloaderDetails(
   deviceMajMin: string,
-  mcuFromBootloaderVersion: string
+  mcuFromBootloaderVersion: string,
 ): { bootloaderVersion: string; isMcuUpdate: boolean } {
   // converts the version into the majMin format
-  const bootloaderVersion = (mcuFromBootloaderVersion || "")
-    .split(".")
-    .slice(0, 2)
-    .join(".");
+  const bootloaderVersion = (mcuFromBootloaderVersion || "").split(".").slice(0, 2).join(".");
 
   const isMcuUpdate = deviceMajMin === bootloaderVersion;
 
@@ -194,9 +203,9 @@ const flashMcuOrBootloader = (
   firmwareInfo: FirmwareInfo,
   transportRef: TransportRef,
   deviceId: string,
-  repetitions = 0
+  repetitions = 0,
 ) => {
-  return new Observable<UpdateFirmwareTaskEvent>((subscriber) => {
+  return new Observable<UpdateFirmwareTaskEvent>(subscriber => {
     if (!updateContext.shouldFlashMCU) {
       // if we don't need to flash the MCU then OSU install was all that was needed
       // that means that only the Secure Element firmware has been updated, the update is complete
@@ -216,18 +225,15 @@ const flashMcuOrBootloader = (
       subscriber.complete();
     }
 
-    ManagerAPI.retrieveMcuVersion(updateContext.final).then((mcuVersion) => {
+    ManagerAPI.retrieveMcuVersion(updateContext.final).then(mcuVersion => {
       if (mcuVersion && !subscriber.closed) {
-        const majMinRegexMatch = firmwareInfo.rawVersion.match(
-          /([0-9]+.[0-9]+)(.[0-9]+)?(-(.*))?/
-        );
+        const majMinRegexMatch = firmwareInfo.rawVersion.match(/([0-9]+.[0-9]+)(.[0-9]+)?(-(.*))?/);
         const [, majMin] = majMinRegexMatch ?? [];
 
-        const { bootloaderVersion, isMcuUpdate } =
-          getFlashMcuOrBootloaderDetails(
-            majMin,
-            mcuVersion.from_bootloader_version
-          );
+        const { bootloaderVersion, isMcuUpdate } = getFlashMcuOrBootloaderDetails(
+          majMin,
+          mcuVersion.from_bootloader_version,
+        );
 
         flashMcuOrBootloaderCommand(transportRef.current, {
           targetId: firmwareInfo.targetId,
@@ -235,7 +241,7 @@ const flashMcuOrBootloader = (
           // whether this is an mcu update or a bootloader one is decided by the isMcuUpdate variable
           // we only need to use the correct version here to flash the right thing
         }).subscribe({
-          next: (event) =>
+          next: event =>
             subscriber.next({
               type: isMcuUpdate ? "flashingMcu" : "flashingBootloader",
               progress: event.progress,
@@ -260,7 +266,7 @@ const flashMcuOrBootloader = (
                         firmwareInfo,
                         transportRef,
                         deviceId,
-                        repetitions + 1
+                        repetitions + 1,
                       );
                     }
                   } else {
@@ -270,12 +276,12 @@ const flashMcuOrBootloader = (
                       updatedDeviceInfo: parseDeviceInfo(firmwareInfo),
                     });
                   }
-                })
+                }),
               )
               .subscribe(subscriber);
           },
           error: (error: Error) => {
-            subscriber.next({ type: "error", error: error });
+            subscriber.next({ type: "error", error: error, retrying: false });
             subscriber.complete();
           },
         });
@@ -294,14 +300,17 @@ const installOsuFirmware = ({
   transport,
   updateContext,
   firmwareInfo,
+  tracer,
 }: {
   firmwareInfo: FirmwareInfo;
   updateContext: FirmwareUpdateContext;
   transport: Transport;
+  tracer: LocalTracer;
 }) => {
   const { targetId } = firmwareInfo;
   const { osu } = updateContext;
-  log("hw", "initiating osu firmware installation", { targetId, osu });
+  tracer.trace("Initiating osu firmware installation", { targetId, osu });
+
   // install OSU firmware
   return installFirmwareCommand(transport, {
     targetId,
@@ -314,5 +323,5 @@ const FIRMWARE_UPDATE_TIMEOUT = 60000;
 
 export const updateFirmwareTask = sharedLogicTaskWrapper(
   internalUpdateFirmwareTask,
-  FIRMWARE_UPDATE_TIMEOUT
+  FIRMWARE_UPDATE_TIMEOUT,
 );

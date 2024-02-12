@@ -8,6 +8,7 @@ import { isSwapOperationPending } from "@ledgerhq/live-common/exchange/swap/inde
 import { MappedSwapOperation } from "@ledgerhq/live-common/exchange/swap/types";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { getDefaultExplorerView, getTransactionExplorer } from "@ledgerhq/live-common/explorers";
+import { Account, SubAccount } from "@ledgerhq/types-live";
 import uniq from "lodash/uniq";
 import React, { useCallback } from "react";
 import { Trans, useTranslation } from "react-i18next";
@@ -20,7 +21,6 @@ import Box from "~/renderer/components/Box";
 import CopyWithFeedback from "~/renderer/components/CopyWithFeedback";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import Ellipsis from "~/renderer/components/Ellipsis";
-import FormattedDate from "~/renderer/components/FormattedDate";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import Link from "~/renderer/components/Link";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
@@ -34,6 +34,7 @@ import {
   OpDetailsSection,
   OpDetailsTitle,
 } from "~/renderer/drawers/OperationDetails/styledComponents";
+import { dayFormat, useDateFormatted } from "~/renderer/hooks/useDateFormatter";
 import useTheme from "~/renderer/hooks/useTheme";
 import IconArrowDown from "~/renderer/icons/ArrowDown";
 import IconClock from "~/renderer/icons/Clock";
@@ -43,6 +44,7 @@ import { openURL } from "~/renderer/linking";
 import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
 import { getStatusColor } from "~/renderer/screens/exchange/Swap2/History/OperationRow";
 import { rgba } from "~/renderer/styles/helpers";
+
 const Value = styled(Box).attrs(() => ({
   fontSize: 4,
   color: "palette.text.shade50",
@@ -100,6 +102,7 @@ const SelectableTextWrapper = styled(Box).attrs(p => ({
   }
 }
 `;
+
 const SwapOperationDetails = ({
   mappedSwapOperation,
   onClose,
@@ -107,16 +110,9 @@ const SwapOperationDetails = ({
   mappedSwapOperation: MappedSwapOperation;
   onClose?: () => void;
 }) => {
-  const {
-    fromAccount,
-    toAccount,
-    operation,
-    provider,
-    swapId,
-    status,
-    fromAmount,
-    toAmount,
-  } = mappedSwapOperation;
+  const { fromAccount, toAccount, operation, provider, swapId, status, fromAmount, toAmount } =
+    mappedSwapOperation;
+  const dateFormatted = useDateFormatted(operation.date, dayFormat);
   const history = useHistory();
   const fromUnit = getAccountUnit(fromAccount);
   const fromCurrency = getAccountCurrency(fromAccount);
@@ -130,8 +126,9 @@ const SwapOperationDetails = ({
   const url =
     fromCurrency.type === "CryptoCurrency" &&
     getTransactionExplorer(getDefaultExplorerView(fromCurrency), operation.hash);
+
   const openAccount = useCallback(
-    account => {
+    (account: Account | SubAccount) => {
       const parentAccount =
         account.type !== "Account" ? accounts.find(a => a.id === account.parentId) : null;
       const mainAccount = getMainAccount(account, parentAccount);
@@ -153,6 +150,7 @@ const SwapOperationDetails = ({
       ? fromCurrency.parentCurrency.name
       : fromCurrency.name
     : undefined;
+
   return (
     <Box flow={3} px={20} mt={20}>
       <Status status={status}>
@@ -176,6 +174,7 @@ const SwapOperationDetails = ({
             val={normalisedFromAmount}
             fontSize={6}
             disableRounding
+            data-test-id="swap-amount-from"
           />
         </Box>
         <Box my={1} color={"palette.text.shade50"}>
@@ -191,6 +190,7 @@ const SwapOperationDetails = ({
             fontSize={6}
             disableRounding
             color={statusColor}
+            data-test-id="swap-amount-to"
           />
         </Box>
       </Box>
@@ -273,9 +273,7 @@ const SwapOperationDetails = ({
           <Trans i18nKey="swap.operationDetailsModal.date" />
         </OpDetailsTitle>
         <OpDetailsData>
-          <Box>
-            <FormattedDate date={operation.date} format="L" />
-          </Box>
+          <Box>{dateFormatted}</Box>
         </OpDetailsData>
       </OpDetailsSection>
       <B />
@@ -288,7 +286,7 @@ const SwapOperationDetails = ({
             <Box mr={1} alignItems={"center"}>
               <CryptoCurrencyIcon size={16} currency={fromCurrency} />
             </Box>
-            <Box flex={1} color={"palette.text.shade100"}>
+            <Box flex={1} color={"palette.text.shade100"} data-test-id="swap-account-from">
               <Ellipsis>
                 <Link onClick={() => openAccount(fromAccount)}>{getAccountName(fromAccount)}</Link>
               </Ellipsis>
@@ -330,7 +328,7 @@ const SwapOperationDetails = ({
             <Box mr={1} alignItems={"center"}>
               <CryptoCurrencyIcon size={16} currency={toCurrency} />
             </Box>
-            <Box flex={1} color={"palette.text.shade100"}>
+            <Box flex={1} color={"palette.text.shade100"} data-test-id="swap-account-to">
               <Ellipsis>
                 <Link onClick={() => openAccount(toAccount)}>{getAccountName(toAccount)}</Link>
               </Ellipsis>
@@ -366,4 +364,5 @@ const SwapOperationDetails = ({
     </Box>
   );
 };
+
 export default SwapOperationDetails;

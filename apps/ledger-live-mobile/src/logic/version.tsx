@@ -40,7 +40,5 @@ export default function getFullAppVersion(
   buildVersionArg = buildVersion,
   separator = " ",
 ) {
-  return `${appVersionArg || ""}${separator}(${
-    cleanBuildVersion(buildVersionArg) || ""
-  })`;
+  return `${appVersionArg || ""}${separator}(${cleanBuildVersion(buildVersionArg) || ""})`;
 }

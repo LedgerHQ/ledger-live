@@ -1,10 +1,13 @@
-import BigNumber from "bignumber.js";
-import { CosmosAccount, Transaction } from "./types";
-import { calculateFees, getEstimatedFees } from "./js-prepareTransaction";
-import network from "../../network";
-jest.mock("../../network");
-import * as jsPrepareTransaction from "./js-prepareTransaction";
+import network from "@ledgerhq/live-network/network";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+import BigNumber from "bignumber.js";
+import * as jsPrepareTransaction from "./js-prepareTransaction";
+import { calculateFees, getEstimatedFees } from "./js-prepareTransaction";
+import { CosmosAccount, Transaction } from "./types";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import liveConfig from "../../config/sharedConfig";
+
+jest.mock("@ledgerhq/live-network/network");
 
 const account = {
   id: "accountId",
@@ -20,6 +23,8 @@ const transaction = {
   useAllAmount: false,
 } as unknown as Transaction;
 
+LiveConfig.setConfig(liveConfig);
+
 describe("getEstimatedFees", () => {
   it("should return gas higher than estimate", async () => {
     const gasSimulationMock = 42000;
@@ -31,8 +36,8 @@ describe("getEstimatedFees", () => {
         },
       },
     });
-    const { estimatedGas } = await getEstimatedFees(account, transaction);
-    expect(estimatedGas.gt(new BigNumber(gasSimulationMock))).toEqual(true);
+    const { gasWanted } = await getEstimatedFees(account, transaction);
+    expect(gasWanted.gt(new BigNumber(gasSimulationMock))).toEqual(true);
   });
 
   it("should calculate fees for a transaction", async () => {
@@ -44,12 +49,9 @@ describe("getEstimatedFees", () => {
         },
       },
     });
-    const { estimatedFees, estimatedGas } = await getEstimatedFees(
-      account,
-      transaction
-    );
-    expect(estimatedFees.gt(0)).toEqual(true);
-    expect(estimatedGas.gt(0)).toEqual(true);
+    const { gasWantedFees, gasWanted } = await getEstimatedFees(account, transaction);
+    expect(gasWantedFees.gt(0)).toEqual(true);
+    expect(gasWanted.gt(0)).toEqual(true);
   });
 });
 
@@ -57,9 +59,7 @@ describe("calculateFees", () => {
   let getEstimatedFeesSpy: jest.SpyInstance;
 
   beforeEach(() => {
-    getEstimatedFeesSpy = jest
-      .spyOn(jsPrepareTransaction, "getEstimatedFees")
-      .mockImplementation();
+    getEstimatedFeesSpy = jest.spyOn(jsPrepareTransaction, "getEstimatedFees").mockImplementation();
   });
 
   afterEach(() => {
@@ -84,8 +84,7 @@ describe("calculateFees", () => {
 
   it("should estimate fees again if account currency changed", async () => {
     await calculateFees({ account, transaction });
-    account.currency.id =
-      "i am a currency that changed hehe" as CryptoCurrencyId;
+    account.currency.id = "i am a currency that changed hehe" as CryptoCurrencyId;
     await calculateFees({ account, transaction });
     expect(getEstimatedFeesSpy).toHaveBeenCalledTimes(2);
   });
@@ -124,9 +123,7 @@ describe("calculateFees", () => {
     transaction.validators = [{ address: "toto", amount: new BigNumber(1) }];
     await calculateFees({ account, transaction });
     transaction.mode = "delegate";
-    transaction.validators = [
-      { address: "totoleretour", amount: new BigNumber(1) },
-    ];
+    transaction.validators = [{ address: "totoleretour", amount: new BigNumber(1) }];
     await calculateFees({ account, transaction });
     expect(getEstimatedFeesSpy).toHaveBeenCalledTimes(2);
   });

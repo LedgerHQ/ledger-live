@@ -28,15 +28,13 @@ async function checkBluetoothPermissions(): Promise<boolean> {
   if (bluetoothPermissions.length === 0) return true;
 
   return Promise.all(
-    bluetoothPermissions.map(permission =>
-      PermissionsAndroid.check(permission),
-    ),
+    bluetoothPermissions.map(permission => PermissionsAndroid.check(permission)),
   ).then(results => results.every(res => res));
 }
 
 type RequestMultipleResult = {
   allGranted: boolean;
-  generalStatus: typeof PermissionsAndroid.RESULTS[number];
+  generalStatus: (typeof PermissionsAndroid.RESULTS)[number];
 };
 
 /**
@@ -50,14 +48,10 @@ async function requestBluetoothPermissions(): Promise<RequestMultipleResult> {
 
   return PermissionsAndroid.requestMultiple(bluetoothPermissions).then(res => {
     const permissionStatuses = Object.values(res);
-    const allGranted = permissionStatuses.every(
-      status => status === RESULTS.GRANTED,
-    );
+    const allGranted = permissionStatuses.every(status => status === RESULTS.GRANTED);
 
     /** https://developer.android.com/about/versions/11/privacy/permissions#dialog-visibility */
-    const someNeverAskAgain = permissionStatuses.some(
-      status => status === RESULTS.NEVER_ASK_AGAIN,
-    );
+    const someNeverAskAgain = permissionStatuses.some(status => status === RESULTS.NEVER_ASK_AGAIN);
 
     return {
       allGranted,

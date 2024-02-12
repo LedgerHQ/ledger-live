@@ -26,7 +26,7 @@ const Link = styled(Text).attrs({
   :hover,
   :active,
   :focus {
-    color: ${(p) => p.theme.colors.neutral.c100};
+    color: ${p => p.theme.colors.neutral.c100};
     text-decoration: underline;
   }
 `;
@@ -53,13 +53,13 @@ export default memo(function Breadcrumb({ segments, onChange }: Props): JSX.Elem
               label=""
               options={segment.options}
               value={segment.value}
-              onChange={(elt) => elt && onChange([...values, elt.value])}
+              onChange={elt => elt && onChange([...values, elt.value])}
               styles={{
                 control: (provided, state) => ({
                   ...ControlModule.getStyles<Element>(theme)(provided, state),
                   cursor: "pointer",
                 }),
-                singleValue: (provided) => ({
+                singleValue: provided => ({
                   ...provided,
                   margin: 0,
                   top: undefined,

@@ -8,5 +8,5 @@ export default {
     device,
   }: Partial<{
     device: string;
-  }>) => withDevice(device || "")((t) => from(getVersion(t))),
+  }>) => withDevice(device || "")(t => from(getVersion(t))),
 };

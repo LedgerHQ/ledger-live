@@ -1,10 +1,11 @@
 import React, { useCallback } from "react";
 import { compose } from "redux";
 import { connect, useSelector } from "react-redux";
-import { withTranslation, TFunction } from "react-i18next";
+import { withTranslation } from "react-i18next";
+import { TFunction } from "i18next";
 import { Redirect } from "react-router";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
-import { isNFTActive } from "@ledgerhq/live-common/nft/support";
+import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
 import { isAddressPoisoningOperation } from "@ledgerhq/live-common/operation";
 import { getCurrencyColor } from "~/renderer/getCurrencyColor";
 import { accountSelector } from "~/renderer/reducers/accounts";
@@ -23,8 +24,6 @@ import {
   hiddenNftCollectionsSelector,
 } from "~/renderer/reducers/settings";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import perFamilyAccountBodyHeader from "~/renderer/generated/AccountBodyHeader";
-import perFamilyAccountSubHeader from "~/renderer/generated/AccountSubHeader";
 import Box from "~/renderer/components/Box";
 import OperationsList from "~/renderer/components/OperationsList";
 import useTheme from "~/renderer/hooks/useTheme";
@@ -37,6 +36,7 @@ import TokensList from "./TokensList";
 import { AccountStakeBanner } from "~/renderer/screens/account/AccountStakeBanner";
 import { AccountLike, Account, Operation } from "@ledgerhq/types-live";
 import { State } from "~/renderer/reducers";
+import { getLLDCoinFamily } from "~/renderer/families";
 
 type Params = {
   id: string;
@@ -89,16 +89,9 @@ const AccountPage = ({
   setCountervalueFirst,
 }: Props) => {
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
-  const AccountBodyHeader = mainAccount
-    ? perFamilyAccountBodyHeader[
-        mainAccount.currency.family as keyof typeof perFamilyAccountBodyHeader
-      ]
-    : null;
-  const AccountSubHeader = mainAccount
-    ? perFamilyAccountSubHeader[
-        mainAccount.currency.family as keyof typeof perFamilyAccountSubHeader
-      ]
-    : null;
+  const specific = mainAccount ? getLLDCoinFamily(mainAccount.currency.family) : null;
+  const AccountBodyHeader = specific?.AccountBodyHeader;
+  const AccountSubHeader = specific?.AccountSubHeader;
   const bgColor = useTheme().colors.palette.background.paper;
   const [shouldFilterTokenOpsZeroAmount] = useFilterTokenOperationsZeroAmount();
   const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
@@ -115,9 +108,11 @@ const AccountPage = ({
     },
     [hiddenNftCollections, shouldFilterTokenOpsZeroAmount],
   );
+
   if (!account || !mainAccount) {
     return <Redirect to="/accounts" />;
   }
+
   const currency = getAccountCurrency(account);
   const color = getCurrencyColor(currency, bgColor);
   return (
@@ -153,7 +148,6 @@ const AccountPage = ({
         <AccountHeaderActions account={account} parentAccount={parentAccount} />
       </Box>
       {AccountSubHeader ? (
-        // @ts-expect-error Need to update type in families
         <AccountSubHeader account={account} parentAccount={parentAccount} />
       ) : null}
       {!isAccountEmpty(account) ? (
@@ -170,7 +164,6 @@ const AccountPage = ({
           </Box>
           <AccountStakeBanner account={account} />
           {AccountBodyHeader ? (
-            // @ts-expect-error Need to update type in families
             <AccountBodyHeader account={account} parentAccount={parentAccount} />
           ) : null}
           {account.type === "Account" && isNFTActive(account.currency) ? (

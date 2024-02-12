@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Flex, Alert, Switch } from "@ledgerhq/native-ui";
-import NavigationScrollView from "../../../../components/NavigationScrollView";
-import RequiresBLE from "../../../../components/RequiresBLE";
-import { useDebouncedRequireBluetooth } from "../../../../components/RequiresBLE/hooks/useRequireBluetooth";
-import RequiresBluetoothDrawer from "../../../../components/RequiresBLE/RequiresBluetoothDrawer";
+import NavigationScrollView from "~/components/NavigationScrollView";
+import RequiresBLE from "~/components/RequiresBLE";
+import { useDebouncedRequireBluetooth } from "~/components/RequiresBLE/hooks/useRequireBluetooth";
+import RequiresBluetoothDrawer from "~/components/RequiresBLE/RequiresBluetoothDrawer";
 
 /**
  * Debugging screen to test:
@@ -18,13 +18,11 @@ import RequiresBluetoothDrawer from "../../../../components/RequiresBLE/Requires
  */
 export default function DebugBluetoothAndLocationServices() {
   const [openSettings, setOpenSettings] = useState(false);
-  const [useCustomizedRequirements, setUseCustomizedRequirements] =
-    useState(true);
+  const [useCustomizedRequirements, setUseCustomizedRequirements] = useState(true);
   const [isBleRequired, setIsBleRequired] = useState(false);
   const [doesBleNeedScanning, setDoesBleNeedScanning] = useState(false);
 
-  const isRequireCustomizedBluetoothEnabled =
-    useCustomizedRequirements && isBleRequired;
+  const isRequireCustomizedBluetoothEnabled = useCustomizedRequirements && isBleRequired;
 
   // Makes sure we are not using the custom requirements hook and the RequiresBLE component
   useEffect(() => {
@@ -37,14 +35,11 @@ export default function DebugBluetoothAndLocationServices() {
     setIsBleRequired(false);
   }, []);
 
-  const {
-    bluetoothRequirementsState,
-    retryRequestOnIssue,
-    cannotRetryRequest,
-  } = useDebouncedRequireBluetooth({
-    requiredFor: doesBleNeedScanning ? "scanning" : "connecting",
-    isHookEnabled: isRequireCustomizedBluetoothEnabled,
-  });
+  const { bluetoothRequirementsState, retryRequestOnIssue, cannotRetryRequest } =
+    useDebouncedRequireBluetooth({
+      requiredFor: doesBleNeedScanning ? "scanning" : "connecting",
+      isHookEnabled: isRequireCustomizedBluetoothEnabled,
+    });
 
   return (
     <NavigationScrollView>
@@ -53,9 +48,7 @@ export default function DebugBluetoothAndLocationServices() {
           <Switch
             checked={useCustomizedRequirements}
             onChange={val => setUseCustomizedRequirements(val)}
-            label={
-              "Use customizable bluetooth requirements - a drawer is used to display issues"
-            }
+            label={"Use customizable bluetooth requirements - a drawer is used to display issues"}
           />
         </Flex>
         <Flex mb="2">
@@ -81,9 +74,7 @@ export default function DebugBluetoothAndLocationServices() {
               <Switch
                 checked={doesBleNeedScanning}
                 onChange={val => setDoesBleNeedScanning(val)}
-                label={`Need bluetooth for scanning ? ${
-                  doesBleNeedScanning ? "📡" : "🗣"
-                }`}
+                label={`Need bluetooth for scanning ? ${doesBleNeedScanning ? "📡" : "🗣"}`}
               />
             </Flex>
             <Flex mt={5}>
@@ -101,15 +92,9 @@ export default function DebugBluetoothAndLocationServices() {
                   title="We have all the permissions for the services and they are enabled ✅"
                 />
               ) : bluetoothRequirementsState === "unknown" ? (
-                <Alert
-                  type="info"
-                  title="Unknwon state on permissions/services 🤷"
-                />
+                <Alert type="info" title="Unknwon state on permissions/services 🤷" />
               ) : (
-                <Alert
-                  type="error"
-                  title="Missing some permissions/services ..."
-                />
+                <Alert type="error" title="Missing some permissions/services ..." />
               )}
             </Flex>
           </>

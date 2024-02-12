@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { getUTXOStatus } from "@ledgerhq/live-common/families/bitcoin/logic";
-import { Account } from "@ledgerhq/types-live";
+import { AccountBridge } from "@ledgerhq/types-live";
 import Checkbox from "~/renderer/components/CheckBox";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import Box from "~/renderer/components/Box";
@@ -10,22 +10,33 @@ import Text from "~/renderer/components/Text";
 import Tooltip from "~/renderer/components/Tooltip";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import { SplitAddress, Cell } from "~/renderer/components/OperationsList/AddressCell";
+import {
+  BitcoinAccount,
+  BitcoinOutput,
+  Transaction,
+  TransactionStatus,
+  UtxoStrategy,
+} from "@ledgerhq/live-common/families/bitcoin/types";
+
 type CoinControlRowProps = {
-  utxo: any;
-  utxoStrategy: any;
-  status: any;
-  account: Account;
+  utxo: BitcoinOutput;
+  utxoStrategy: UtxoStrategy;
+  status: TransactionStatus;
+  account: BitcoinAccount;
   totalExcludedUTXOS: number;
-  updateTransaction: (updater: any) => void;
-  bridge: any;
+  updateTransaction: (updater: (t: Transaction) => Transaction) => void;
+  bridge: AccountBridge<Transaction>;
 };
-const Container: ThemedComponent<{
+const Container = styled(Box).attrs<{
   disabled: boolean;
   onClick: () => void;
-}> = styled(Box).attrs(p => ({
+}>(p => ({
   opacity: p.disabled ? 0.5 : 1,
   horizontal: true,
-}))`
+}))<{
+  disabled: boolean;
+  onClick: () => void;
+}>`
   padding: 15px;
   border-radius: 4px;
   align-items: center;
@@ -54,7 +65,7 @@ export const CoinControlRow = ({
   bridge,
 }: CoinControlRowProps) => {
   const s = getUTXOStatus(utxo, utxoStrategy);
-  const utxoStatus = s.reason || "";
+  const utxoStatus = s.excluded ? s.reason || "" : "";
   const input = (status.txInputs || []).find(
     input => input.previousOutputIndex === utxo.outputIndex && input.previousTxHash === utxo.hash,
   );
@@ -76,7 +87,7 @@ export const CoinControlRow = ({
             ),
       },
     };
-    updateTransaction(t => bridge.updateTransaction(t, patch));
+    updateTransaction((t: Transaction) => bridge.updateTransaction(t, patch));
   };
   return (
     <Container disabled={unconfirmed} flow={2} horizontal alignItems="center" onClick={onClick}>
@@ -139,7 +150,7 @@ export const CoinControlRow = ({
         }}
       >
         <Text color="palette.text.shade100" ff="Inter|SemiBold" fontSize={4}>
-          <SplitAddress value={utxo.address} />
+          <SplitAddress value={utxo.address || ""} />
         </Text>
 
         <Box horizontal justifyContent="flex-start">

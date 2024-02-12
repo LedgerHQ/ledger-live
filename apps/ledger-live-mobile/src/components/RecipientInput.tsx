@@ -31,17 +31,13 @@ type Props = TextInputProps & {
   placeholderTranslationKey: string;
 };
 
-const RecipientInput = ({
-  ref,
-  onPaste,
-  placeholderTranslationKey,
-  ...props
-}: Props) => {
+const RecipientInput = ({ ref, onPaste, placeholderTranslationKey, ...props }: Props) => {
   const { t } = useTranslation();
 
   return (
     <TextInput
       ref={ref}
+      testID="recipient-input"
       placeholder={t(placeholderTranslationKey)}
       renderRight={
         <Flex alignItems="center" justifyContent="center" pr={2}>

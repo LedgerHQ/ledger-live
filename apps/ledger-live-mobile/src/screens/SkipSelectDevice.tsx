@@ -2,28 +2,19 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useSelector } from "react-redux";
 import { discoverDevices } from "@ledgerhq/live-common/hw/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { lastConnectedDeviceSelector } from "../reducers/settings";
-import { knownDevicesSelector } from "../reducers/ble";
-import { AddAccountsNavigatorParamList } from "../components/RootNavigator/types/AddAccountsNavigator";
-import { StackNavigatorProps } from "../components/RootNavigator/types/helpers";
-import { ReceiveFundsStackParamList } from "../components/RootNavigator/types/ReceiveFundsNavigator";
-import { ScreenName } from "../const";
-import { useDebouncedRequireBluetooth } from "../components/RequiresBLE/hooks/useRequireBluetooth";
-import RequiresBluetoothDrawer from "../components/RequiresBLE/RequiresBluetoothDrawer";
+import { lastConnectedDeviceSelector } from "~/reducers/settings";
+import { knownDevicesSelector } from "~/reducers/ble";
+import { AddAccountsNavigatorParamList } from "~/components/RootNavigator/types/AddAccountsNavigator";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { ReceiveFundsStackParamList } from "~/components/RootNavigator/types/ReceiveFundsNavigator";
+import { ScreenName } from "~/const";
+import { useDebouncedRequireBluetooth } from "~/components/RequiresBLE/hooks/useRequireBluetooth";
+import RequiresBluetoothDrawer from "~/components/RequiresBLE/RequiresBluetoothDrawer";
 
 type Navigation =
-  | StackNavigatorProps<
-      AddAccountsNavigatorParamList,
-      ScreenName.AddAccountsSelectDevice
-    >
-  | StackNavigatorProps<
-      ReceiveFundsStackParamList,
-      ScreenName.ReceiveAddAccountSelectDevice
-    >
-  | StackNavigatorProps<
-      ReceiveFundsStackParamList,
-      ScreenName.ReceiveConnectDevice
-    >;
+  | StackNavigatorProps<AddAccountsNavigatorParamList, ScreenName.AddAccountsSelectDevice>
+  | StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveAddAccountSelectDevice>
+  | StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveConnectDevice>;
 
 type Props = {
   onResult: (device: Device) => void;
@@ -54,22 +45,14 @@ export default function SkipSelectDevice({ onResult, route }: Props) {
 
   // Enforces the BLE requirements for a "connecting" action. The requirements are only enforced
   // if the bluetooth is needed (isBleRequired is true).
-  const {
-    bluetoothRequirementsState,
-    retryRequestOnIssue,
-    cannotRetryRequest,
-  } = useDebouncedRequireBluetooth({
-    requiredFor: "connecting",
-    isHookEnabled: isBleRequired,
-  });
+  const { bluetoothRequirementsState, retryRequestOnIssue, cannotRetryRequest } =
+    useDebouncedRequireBluetooth({
+      requiredFor: "connecting",
+      isHookEnabled: isBleRequired,
+    });
 
   useEffect(() => {
-    if (
-      !forceSelectDevice &&
-      knownDevices?.length > 0 &&
-      !hasUSB &&
-      lastConnectedDevice
-    ) {
+    if (!forceSelectDevice && knownDevices?.length > 0 && !hasUSB && lastConnectedDevice) {
       // Timeout to give some time to detect an usb connection
       usbTimeout = setTimeout(() => {
         // If it's a BLE device, the bluetooth requirements are enforced
@@ -82,13 +65,7 @@ export default function SkipSelectDevice({ onResult, route }: Props) {
     } else {
       clearTimeout(usbTimeout);
     }
-  }, [
-    forceSelectDevice,
-    hasUSB,
-    knownDevices?.length,
-    lastConnectedDevice,
-    onResult,
-  ]);
+  }, [forceSelectDevice, hasUSB, knownDevices?.length, lastConnectedDevice, onResult]);
 
   useEffect(() => {
     // If the bluetooth requirements are met, the device is selected

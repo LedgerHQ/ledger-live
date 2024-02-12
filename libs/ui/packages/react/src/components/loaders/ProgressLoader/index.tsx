@@ -60,11 +60,11 @@ const StyledCircle = styled.circle.attrs({
   transform-origin: 50% 50%;
 `;
 
-const StyledCircleBackground = styled(StyledCircle).attrs((props) => ({
+const StyledCircleBackground = styled(StyledCircle).attrs(props => ({
   stroke: props.stroke || props.theme.colors.primary.c30,
 }))``;
 
-const StyledCircleFront = styled(StyledCircle).attrs((props) => ({
+const StyledCircleFront = styled(StyledCircle).attrs(props => ({
   stroke: props.stroke || props.theme.colors.primary.c80,
 }))``;
 
@@ -149,7 +149,7 @@ export default function ProgressLoader({
     <StyledProgressLoaderContainer>
       {showPercentage && (
         <StyledCenteredText variant="body" color={textColor || "primary.c80"}>
-          {progress}%
+          {Math.floor(progress)}%
         </StyledCenteredText>
       )}
       {infinite ? (

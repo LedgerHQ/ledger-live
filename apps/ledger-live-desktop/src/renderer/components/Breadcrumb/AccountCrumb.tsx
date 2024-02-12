@@ -21,6 +21,12 @@ import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { Separator, Item, TextLink, AngleDown, Check } from "./common";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 
+type ItemShape = {
+  key: string;
+  label: string;
+  account: Account | SubAccount;
+};
+
 const AccountCrumb = () => {
   const history = useHistory();
   const { t } = useTranslation();
@@ -48,13 +54,12 @@ const AccountCrumb = () => {
     [tokenAccount, account],
   );
 
-  const items = useMemo(() => (parentId && account ? listSubAccounts(account) : accounts), [
-    parentId,
-    account,
-    accounts,
-  ]);
+  const items = useMemo(
+    () => (parentId && account ? listSubAccounts(account) : accounts),
+    [parentId, account, accounts],
+  );
 
-  const renderItem = useCallback(({ item, isActive }) => {
+  const renderItem = useCallback(({ item, isActive }: { item: ItemShape; isActive: boolean }) => {
     const currency = getAccountCurrency(item.account);
     return (
       <Item key={item.key} isActive={isActive}>
@@ -72,7 +77,7 @@ const AccountCrumb = () => {
   }, []);
 
   const onAccountSelected = useCallback(
-    item => {
+    (item: ItemShape) => {
       if (!item) {
         return;
       }
@@ -121,10 +126,10 @@ const AccountCrumb = () => {
     [],
   );
 
-  const processedItems = useMemo(() => processItemsForDropdown(items || []), [
-    items,
-    processItemsForDropdown,
-  ]);
+  const processedItems = useMemo(
+    () => processItemsForDropdown(items || []),
+    [items, processItemsForDropdown],
+  );
 
   // no more id can happens if the account were just deleted
   if (!id) {

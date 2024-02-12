@@ -1,7 +1,7 @@
 const childProcess = require("child_process");
 const { prerelease } = require("semver");
 const path = require("path");
-const { DotEnvPlugin, nodeExternals } = require("esbuild-utils");
+const { DotEnvPlugin, nodeExternals } = require("@ledgerhq/esbuild-utils");
 const electronPlugin = require("vite-plugin-electron/renderer");
 const reactPlugin = require("@vitejs/plugin-react");
 const { defineConfig } = require("vite");
@@ -13,10 +13,7 @@ const lldRoot = path.resolve(__dirname, "..", "..");
 let GIT_REVISION = process.env.GIT_REVISION;
 
 if (!GIT_REVISION) {
-  GIT_REVISION = childProcess
-    .execSync("git rev-parse --short HEAD")
-    .toString("utf8")
-    .trim();
+  GIT_REVISION = childProcess.execSync("git rev-parse --short HEAD").toString("utf8").trim();
 }
 
 const parsed = prerelease(pkg.version);
@@ -91,21 +88,6 @@ const buildViteConfig = argv =>
           path.dirname(require.resolve("@ledgerhq/react-ui/package.json")),
           "lib",
         ),
-        // This is not the best way to do this, but it works for now.
-        // The problem is that vitejs has trouble resolving everything under the /bridge subfolder.
-        // Even though the files are there, it can't find them - and it manages to resolve other paths just fine.
-        "@ledgerhq/coin-framework": path.join(
-          path.resolve(__dirname, "..", "..", "..", "..", "libs", "coin-framework"),
-          "lib-es",
-        ),
-        "@ledgerhq/coin-polkadot": path.join(
-          path.resolve(__dirname, "..", "..", "..", "..", "libs", "coin-polkadot"),
-          "lib-es",
-        ),
-        "@ledgerhq/coin-algorand": path.join(
-          path.resolve(__dirname, "..", "..", "..", "..", "libs", "coin-algorand"),
-          "lib-es",
-        ),
         electron: path.join(__dirname, "electronRendererStubs.js"),
       },
     },
@@ -120,7 +102,7 @@ const buildViteConfig = argv =>
             name: "Externalize Nodejs Standard Library",
             setup(build) {
               nodeExternals.forEach(external => {
-                build.onResolve({ filter: new RegExp(`^${external}$`) }, args => ({
+                build.onResolve({ filter: new RegExp(`^${external}$`) }, _args => ({
                   path: external,
                   external: true,
                 }));

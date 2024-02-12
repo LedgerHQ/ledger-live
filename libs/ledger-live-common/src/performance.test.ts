@@ -2,7 +2,7 @@ import { connectLogsToSentry, startSpan } from "./performance";
 
 test("connectLogsToSentry", () => {
   const finish = jest.fn();
-  const startChild = jest.fn((arg) => ({ arg, finish }));
+  const startChild = jest.fn(arg => ({ arg, finish }));
   const getSpan = jest.fn(() => ({ startChild }));
   const Sentry = {
     getCurrentHub: () => ({

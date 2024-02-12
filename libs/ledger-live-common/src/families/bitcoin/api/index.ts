@@ -1,34 +1,33 @@
+import { FeeEstimationFailed } from "@ledgerhq/errors";
+import { makeLRUCache } from "@ledgerhq/live-network/cache";
+import network from "@ledgerhq/live-network/network";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { BigNumber } from "bignumber.js";
-import type { FeeItems } from "../types";
-import { makeLRUCache } from "../../../cache";
-import { blockchainBaseURL } from "../../../explorer";
 import invariant from "invariant";
-import network from "../../../network";
-import { FeeEstimationFailed } from "@ledgerhq/errors";
+import { blockchainBaseURL } from "../../../explorer";
+import type { FeeItems } from "../types";
 
 type Fees = Record<string, number>;
 
-const getEstimatedFees: (currency: CryptoCurrency) => Promise<Fees> =
-  makeLRUCache(
-    async (currency) => {
-      const baseURL = blockchainBaseURL(currency);
-      invariant(baseURL, `Fees for ${currency.id} are not supported`);
-      const { data, status } = await network({
-        method: "GET",
-        url: `${baseURL}/fees`,
-      });
+const getEstimatedFees: (currency: CryptoCurrency) => Promise<Fees> = makeLRUCache(
+  async currency => {
+    const baseURL = blockchainBaseURL(currency);
+    invariant(baseURL, `Fees for ${currency.id} are not supported`);
+    const { data, status } = await network({
+      method: "GET",
+      url: `${baseURL}/fees`,
+    });
 
-      if (data) {
-        return data;
-      }
+    if (data) {
+      return data;
+    }
 
-      throw new FeeEstimationFailed(`FeeEstimationFailed ${status}`, {
-        httpStatus: status,
-      });
-    },
-    (c) => c.id
-  );
+    throw new FeeEstimationFailed(`FeeEstimationFailed ${status}`, {
+      httpStatus: status,
+    });
+  },
+  c => c.id,
+);
 
 export const speeds = {
   "1": "fast",
@@ -38,9 +37,10 @@ export const speeds = {
 
 export const defaultBlockCount = 3;
 
-export const getFeeItems = async (
-  currency: CryptoCurrency
-): Promise<FeeItems> => {
+/**
+ * Returns the current network fee rate(fast, medium, slow) from our backend for a given currency
+ */
+export const getFeeItems = async (currency: CryptoCurrency): Promise<FeeItems> => {
   const all: Array<{
     key: string;
     speed: string;
@@ -55,11 +55,7 @@ export const getFeeItems = async (
     const blockCount = parseInt(key, 10);
     if (blockCount === defaultBlockCount) defaultFeePerByte = feePerByte;
 
-    if (
-      !Number.isNaN(blockCount) &&
-      !feePerByte.isNaN() &&
-      blockCount in speeds
-    ) {
+    if (!Number.isNaN(blockCount) && !feePerByte.isNaN() && blockCount in speeds) {
       all.push({
         key,
         speed: speeds[blockCount],

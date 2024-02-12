@@ -1,8 +1,5 @@
-import {
-  createExchangeProviderNameAndSignature,
-  SwapProviderConfig,
-} from "../";
-import { getEnv } from "../../env";
+import { SwapProviderConfig } from "../";
+import { getEnv } from "@ledgerhq/live-env";
 import {
   AccessDeniedError,
   CurrencyDisabledAsInputError,
@@ -19,14 +16,13 @@ import {
   UnexpectedError,
   ValidationError,
 } from "../../errors";
-import checkQuote from "./checkQuote";
 import getCompleteSwapHistory from "./getCompleteSwapHistory";
-import getExchangeRates from "./getExchangeRates";
-import getKYCStatus from "./getKYCStatus";
-import getProviders from "./getProviders";
 import initSwap from "./initSwap";
 import { postSwapAccepted, postSwapCancelled } from "./postSwapState";
-import submitKYC from "./submitKYC";
+import getExchangeRates from "./getExchangeRates";
+import getProviders from "./getProviders";
+import { isIntegrationTestEnv } from "./utils/isIntegrationTestEnv";
+import { maybeTezosAccountUnrevealedAccount } from "./maybeTezosAccountUnrevealedAccount";
 
 export const operationStatusList = {
   finishedOK: ["finished"],
@@ -34,7 +30,7 @@ export const operationStatusList = {
 };
 
 // A swap operation is considered pending if it is not in a finishedOK or finishedKO state
-export const isSwapOperationPending: (status: string) => boolean = (status) =>
+export const isSwapOperationPending: (status: string) => boolean = status =>
   !operationStatusList.finishedOK.includes(status) &&
   !operationStatusList.finishedKO.includes(status);
 
@@ -42,86 +38,85 @@ const getSwapAPIBaseURL: () => string = () => getEnv("SWAP_API_BASE");
 
 const SWAP_API_BASE_PATTERN = /.*\/v(?<version>\d+)\/*$/;
 const getSwapAPIVersion: () => number = () => {
-  const version = Number(
-    getSwapAPIBaseURL().match(SWAP_API_BASE_PATTERN)?.groups?.version
-  );
+  const version = Number(getSwapAPIBaseURL().match(SWAP_API_BASE_PATTERN)?.groups?.version);
   if (version == null || isNaN(version)) {
     throw new SwapGenericAPIError(
-      "Configured swap API base URL is invalid, should end with /v<number>"
+      "Configured swap API base URL is invalid, should end with /v<number>",
     );
   }
   return version;
 };
 
-const ftx: ProviderConfig = {
-  ...createExchangeProviderNameAndSignature({
-    name: "FTX",
-    publicKey:
-      "04c89f3e48cde252f6cd6fcccc47c2f6ca6cf05f9f921703d31b7a7dddbf0bd6a690744662fe599f8761612021ba1fc0e8a5a4b7d5910c625b6dd09aa40762e5cd",
-    signature:
-      "3044022029c0fb80d6e524f811f30cc04a349fa7f8896ce1ba84010da55f7be5eb9d528802202727985361cab969ad9b4f56570f3f6120c1d77d04ba10e5d99366d8eecee8e2",
-  }),
-  needsKYC: true,
-  needsBearerToken: true,
-  type: "CEX",
-};
-
 type CEXProviderConfig = SwapProviderConfig & { type: "CEX" };
 type DEXProviderConfig = {
+  type: "DEX";
   needsKYC: boolean;
   needsBearerToken: boolean;
-  type: "DEX";
 };
 type ProviderConfig = CEXProviderConfig | DEXProviderConfig;
 
 const swapProviders: Record<string, ProviderConfig> = {
   changelly: {
-    ...createExchangeProviderNameAndSignature({
-      name: "Changelly",
-      publicKey:
+    name: "Changelly",
+    publicKey: {
+      curve: "secp256k1",
+      data: Buffer.from(
         "0480d7c0d3a9183597395f58dda05999328da6f18fabd5cda0aff8e8e3fc633436a2dbf48ecb23d40df7c3c7d3e774b77b4b5df0e9f7e08cf1cdf2dba788eb085b",
-      signature:
-        "3045022100e73339e5071b5d232e8cacecbd7c118c919122a43f8abb8b2062d4bfcd58274e022050b11605d8b7e199f791266146227c43fd11d7645b1d881f705a2f8841d21de5",
-    }),
+        "hex",
+      ),
+    },
+    signature: Buffer.from(
+      "3045022100e73339e5071b5d232e8cacecbd7c118c919122a43f8abb8b2062d4bfcd58274e022050b11605d8b7e199f791266146227c43fd11d7645b1d881f705a2f8841d21de5",
+      "hex",
+    ),
     needsKYC: false,
     needsBearerToken: false,
     type: "CEX",
   },
   cic: {
-    ...createExchangeProviderNameAndSignature({
-      name: "CIC",
-      publicKey:
+    name: "CIC",
+    publicKey: {
+      curve: "secp256k1",
+      data: Buffer.from(
         "0444a71652995d15ef0d4d6fe8de21a0c8ad48bdbfea7f789319973669785ca96abca9fd0c504c3074d9b654f0e3a76dde642a03efe4ccdee3af3ca4ba4afa202d",
-      signature:
-        "3044022078a73433ab6289027b7a169a260f180d16346f7ab55b06a22109f68a756d691d0220190edd6e1214c3309dc1b0afe90d217b728377491561383f2ee543e2c90188eb",
-    }),
+        "hex",
+      ),
+    },
+    signature: Buffer.from(
+      "3044022078a73433ab6289027b7a169a260f180d16346f7ab55b06a22109f68a756d691d0220190edd6e1214c3309dc1b0afe90d217b728377491561383f2ee543e2c90188eb",
+      "hex",
+    ),
     needsKYC: false,
     needsBearerToken: false,
     type: "CEX",
   },
-  wyre: {
-    ...createExchangeProviderNameAndSignature({
-      name: "Wyre",
-      publicKey:
-        "04AD01A6241929A5EC331046868FBACB424696FD7C8A4D824FEE61268374E9F4F87FFC5301F0E0A84CEA69FFED46E14C771F9CA1EEA345F6531994291C816E8AE6",
-      signature:
-        "304402207b49e46d458a55daee9bc8ed96e1b404c2d99dbbc3d3c3c15430026eb7e01a05022011ab86db08a4c956874a83f23d918319a073fdd9df23a1c7eed8a0a22c98b1e3",
-    }),
+  moonpay: {
+    name: "moonpay",
+    publicKey: {
+      curve: "secp256k1",
+      data: Buffer.from(
+        "044989cad389020fadfb9d7a85d29338a450beec571347d2989fb57b99ecddbc8907cf8c229deee30fb8ac139e978cab8f6efad76bde2a9c6d6710ceda1fe0a4d8",
+        "hex",
+      ),
+    },
+    signature: Buffer.from(
+      "304402202ea20dd1a67185a14503f073a387ec22564cc06bbb2545444efc929d69c70d1002201622ac8e34a7f332ac50d67c1d9221dcc3334ad7c1fb84e674654cd306bbda73",
+      "hex",
+    ),
     needsKYC: true,
     needsBearerToken: false,
     type: "CEX",
+    version: 2,
   },
-  ftx,
-  ftxus: ftx,
   oneinch: {
+    type: "DEX",
     needsKYC: false,
     needsBearerToken: false,
-    type: "DEX",
   },
   paraswap: {
+    type: "DEX",
     needsKYC: false,
     needsBearerToken: false,
-    type: "DEX",
   },
 };
 
@@ -135,7 +130,12 @@ const getProviderConfig = (providerName: string): ProviderConfig => {
   return res;
 };
 
-export const getAvailableProviders = (): string[] => Object.keys(swapProviders);
+export const getAvailableProviders = (): string[] => {
+  if (isIntegrationTestEnv()) {
+    return Object.keys(swapProviders).filter(p => p !== "changelly");
+  }
+  return Object.keys(swapProviders);
+};
 
 const USStates = {
   AL: "Alabama",
@@ -212,8 +212,7 @@ const swapBackendErrorCodes = {
 };
 
 export const getSwapAPIError = (errorCode: number, errorMessage?: string) => {
-  if (errorCode in swapBackendErrorCodes)
-    return new swapBackendErrorCodes[errorCode](errorMessage);
+  if (errorCode in swapBackendErrorCodes) return new swapBackendErrorCodes[errorCode](errorMessage);
   return new Error(errorMessage);
 };
 
@@ -221,15 +220,13 @@ export {
   getSwapAPIBaseURL,
   getSwapAPIVersion,
   getProviderConfig,
-  getProviders,
-  getExchangeRates,
   getCompleteSwapHistory,
+  maybeTezosAccountUnrevealedAccount,
   postSwapAccepted,
+  getExchangeRates,
+  getProviders,
   postSwapCancelled,
   initSwap,
-  getKYCStatus,
-  submitKYC,
-  checkQuote,
   USStates,
   countries,
 };

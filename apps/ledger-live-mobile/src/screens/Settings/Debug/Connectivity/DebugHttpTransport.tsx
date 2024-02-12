@@ -6,29 +6,22 @@ import { useNavigation } from "@react-navigation/native";
 
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { addKnownDevice } from "../../../../actions/ble";
-import TextInput from "../../../../components/TextInput";
-import Button from "../../../../components/Button";
-import NavigationScrollView from "../../../../components/NavigationScrollView";
-import { NavigatorName, ScreenName } from "../../../../const";
+import { addKnownDevice } from "~/actions/ble";
+import TextInput from "~/components/TextInput";
+import Button from "~/components/Button";
+import NavigationScrollView from "~/components/NavigationScrollView";
+import { NavigatorName, ScreenName } from "~/const";
 
 const DebugHttpTransport = () => {
-  const models = [
-    DeviceModelId.nanoX,
-    DeviceModelId.nanoSP,
-    DeviceModelId.stax,
-  ];
-  const navigation =
-    useNavigation<StackNavigationProp<Record<string, object | undefined>>>();
+  const models = [DeviceModelId.nanoX, DeviceModelId.nanoSP, DeviceModelId.stax];
+  const navigation = useNavigation<StackNavigationProp<Record<string, object | undefined>>>();
   const dispatch = useDispatch();
   const [address, setAddress] = useState("");
   const [name, setName] = useState("");
   const [model, setModelId] = useState(DeviceModelId.nanoX);
 
   const onAdd = useCallback(() => {
-    const m = address
-      .trim()
-      .match(/^((?:[0-9]{1,3}\.){3}[0-9]{1,3})(:([0-9]+))?/);
+    const m = address.trim().match(/^((?:[0-9]{1,3}\.){3}[0-9]{1,3})(:([0-9]+))?/);
     if (!m) return;
     // eslint-disable-next-line prefer-const
     let [, ip, , port] = m;

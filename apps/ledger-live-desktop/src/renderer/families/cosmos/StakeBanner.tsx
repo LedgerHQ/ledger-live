@@ -10,15 +10,18 @@ import { openModal } from "~/renderer/actions/modals";
 import { useDispatch } from "react-redux";
 import { track } from "~/renderer/analytics/segment";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+import { urls } from "~/config/urls";
 
 const StakeBanner: React.FC<{ account: CosmosAccount }> = ({ account }) => {
   const dispatch = useDispatch();
+  const stakingUrl = useLocalizedUrl(urls.stakingCosmos);
   const { t } = useTranslation();
   const stakeAccountBanner = useFeature("stakeAccountBanner");
   const stakeAccountBannerParams: StakeAccountBannerParams | null =
     stakeAccountBanner?.params ?? null;
   const state = getAccountBannerState(account);
-  const { redelegate, ledgerValidator, validatorSrcAddress } = state;
+  const { redelegate, ledgerValidator, validatorSrcAddress, display } = state;
 
   if (redelegate && !stakeAccountBannerParams?.cosmos?.redelegate) return null;
   if (!redelegate && !(stakeAccountBannerParams?.cosmos?.delegate && canDelegate(account)))
@@ -39,7 +42,7 @@ const StakeBanner: React.FC<{ account: CosmosAccount }> = ({ account }) => {
     : t("account.banner.delegation.cta");
 
   const onClick = () => {
-    track("button_clicked", {
+    track("button_clicked2", {
       ...stakeDefaultTrack,
       delegation: "stake",
       page: "Page Account",
@@ -71,9 +74,9 @@ const StakeBanner: React.FC<{ account: CosmosAccount }> = ({ account }) => {
       description={description}
       cta={cta}
       onClick={onClick}
-      display={true}
+      display={display}
       linkText={t("account.banner.delegation.linkText")}
-      linkUrl={"https://www.ledger.com/staking-ethereum"}
+      linkUrl={stakingUrl}
     />
   );
 };

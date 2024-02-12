@@ -16,27 +16,30 @@ import DropDown, { DropDownItem } from "~/renderer/components/DropDownSelector";
 import { Ellipsis, Column, Wrapper, Divider } from "~/renderer/families/elrond/blocks/Delegation";
 import { openURL } from "~/renderer/linking";
 import { openModal } from "~/renderer/actions/modals";
-import { modals } from "~/renderer/families/elrond/modals";
 import {
   ELROND_EXPLORER_URL,
   ELROND_LEDGER_VALIDATOR_ADDRESS,
 } from "@ledgerhq/live-common/families/elrond/constants";
-import { DelegationType, ElrondProvider, UnbondingType } from "~/renderer/families/elrond/types";
-import { Account as AccountType } from "@ledgerhq/types-live";
+import { DelegationType } from "~/renderer/families/elrond/types";
+import {
+  ElrondProvider,
+  ElrondAccount as AccountType,
+} from "@ledgerhq/live-common/families/elrond/types";
+import { ModalsData } from "~/renderer/families/elrond/modals";
+
 interface RenderDropdownItemType {
   isActive: boolean;
   item: {
-    key: string;
+    key?: string;
     label: string;
-    disabled: boolean;
-    tooltip: ReactNode;
-    show: boolean;
+    disabled?: boolean;
+    tooltip?: ReactNode;
+    divider?: boolean;
   };
 }
 interface DropDownItemType {
-  key: string;
+  key: keyof ModalsData;
   label: string;
-  show: boolean;
   divider?: boolean;
   parameters: {
     account: AccountType;
@@ -46,14 +49,16 @@ interface DropDownItemType {
     amount?: string;
   };
 }
-type Props = DelegationType &
-  AccountType &
-  Array<DelegationType> &
-  Array<ElrondProvider> &
-  Array<UnbondingType>;
+
+type Props = DelegationType & {
+  account: AccountType;
+  delegations: Array<DelegationType>;
+  validators: Array<ElrondProvider>;
+};
+
 const RenderDropdownItem = ({ item, isActive }: RenderDropdownItemType) => (
   <Fragment>
-    {item.key === modals.claim && item.divider && <Divider />}
+    {item.key === "MODAL_ELROND_CLAIM_REWARDS" && item.divider && <Divider />}
 
     <ToolTip
       content={item.tooltip}
@@ -88,36 +93,36 @@ const Delegation = (props: Props) => {
     },
     [dispatch],
   );
-  const dropDownItems = useMemo(
-    (): Array<DropDownItemType> =>
-      [
-        {
-          key: modals.unstake,
-          label: "elrond.delegation.undelegate",
-          show: BigNumber(userActiveStake).gt(0),
-          parameters: {
-            account,
-            contract,
-            validators,
-            delegations,
-            amount: userActiveStake,
-          },
+  const dropDownItems = useMemo(() => {
+    const items = [] as DropDownItemType[];
+    if (BigNumber(userActiveStake).gt(0)) {
+      items.push({
+        key: "MODAL_ELROND_UNDELEGATE",
+        label: "elrond.delegation.undelegate",
+        parameters: {
+          account,
+          contract,
+          validators,
+          delegations,
+          amount: userActiveStake,
         },
-        {
-          key: modals.claim,
-          label: "elrond.delegation.reward",
-          divider: BigNumber(userActiveStake).gt(0),
-          show: BigNumber(claimableRewards).gt(0),
-          parameters: {
-            account,
-            contract,
-            delegations,
-            validators,
-          },
+      });
+    }
+    if (BigNumber(claimableRewards).gt(0)) {
+      items.push({
+        key: "MODAL_ELROND_CLAIM_REWARDS",
+        label: "elrond.delegation.reward",
+        divider: BigNumber(userActiveStake).gt(0),
+        parameters: {
+          account,
+          contract,
+          delegations,
+          validators,
         },
-      ].filter(item => item.show),
-    [claimableRewards, account, userActiveStake, contract, delegations, validators],
-  );
+      });
+    }
+    return items;
+  }, [claimableRewards, account, userActiveStake, contract, delegations, validators]);
   const name = validator ? validator.identity.name || contract : contract;
   const amount = useMemo(
     () =>
@@ -172,7 +177,7 @@ const Delegation = (props: Props) => {
       <Column>
         <DropDown items={dropDownItems} renderItem={RenderDropdownItem} onChange={onSelect}>
           {() => (
-            <Box flex={true} horizontal={true} alignItems="center">
+            <Box horizontal={true} alignItems="center">
               <Trans i18nKey="common.manage" />
 
               <div

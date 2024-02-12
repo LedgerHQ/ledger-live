@@ -7,11 +7,7 @@ const names: { [key: string]: string } = {};
 const transport = Config.MOCK
   ? makeMock({
       // TODO E2E: This could be dynamically set in bridge/server.js
-      createTransportDeviceMock: (
-        id: string,
-        name: string,
-        serviceUUID: string,
-      ) => {
+      createTransportDeviceMock: (id: string, name: string, serviceUUID: string) => {
         names[id] = name;
         const serviceUUIDs = [serviceUUID];
         const apduMock = createAPDUMock({
@@ -24,8 +20,7 @@ const transport = Config.MOCK
             Promise.resolve({
               publicKey: "00000000000000000000",
               address: "11111111111111111111111111111",
-              chainCode:
-                "0000000000000000000000000000000000000000000000000000000000000000",
+              chainCode: "0000000000000000000000000000000000000000000000000000000000000000",
             }),
           getAppAndVersion: () =>
             Promise.resolve({

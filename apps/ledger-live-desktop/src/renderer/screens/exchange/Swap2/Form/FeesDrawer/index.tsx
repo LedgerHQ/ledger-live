@@ -10,28 +10,33 @@ import {
 import { DrawerTitle } from "../DrawerTitle";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { useGetSwapTrackingProperties } from "../../utils/index";
-import { Account } from "@ledgerhq/types-live";
+import { Account, FeeStrategy } from "@ledgerhq/types-live";
+
 type Props = {
   setTransaction: SwapTransactionType["setTransaction"];
   updateTransaction: SwapTransactionType["updateTransaction"];
   mainAccount: SwapSelectorStateType["account"];
+  parentAccount: SwapSelectorStateType["parentAccount"];
   currency: SwapSelectorStateType["currency"];
   status: SwapTransactionType["status"];
   disableSlowStrategy?: boolean;
   provider: string | undefined | null;
 };
+
 export default function FeesDrawer({
   setTransaction,
   updateTransaction,
   mainAccount,
+  parentAccount,
   status,
   provider,
   disableSlowStrategy = false,
 }: Props) {
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const transaction = useSelector(transactionSelector);
+
   const mapStrategies = useCallback(
-    strategy =>
+    (strategy: FeeStrategy) =>
       strategy.label === "slow" && disableSlowStrategy
         ? {
             ...strategy,
@@ -40,6 +45,7 @@ export default function FeesDrawer({
         : strategy,
     [disableSlowStrategy],
   );
+
   return (
     <Box height="100%">
       <TrackPage
@@ -50,9 +56,10 @@ export default function FeesDrawer({
       />
       <DrawerTitle i18nKey="swap2.form.details.label.fees" />
       <Box mt={3} flow={4} mx={3}>
-        {transaction && "networkInfo" in transaction && transaction.networkInfo && mainAccount && (
+        {transaction && mainAccount && (
           <SendAmountFields
             account={mainAccount as Account}
+            parentAccount={parentAccount}
             status={status}
             transaction={transaction}
             onChange={setTransaction}

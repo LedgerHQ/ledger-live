@@ -15,26 +15,26 @@ import invariant from "invariant";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
-import { GraphTabs, Text, Icons } from "@ledgerhq/native-ui";
+import { GraphTabs, Text, IconsLegacy } from "@ledgerhq/native-ui";
 import { Transaction } from "@ledgerhq/live-common/families/tron/types";
-import { accountScreenSelector } from "../../reducers/accounts";
-import { ScreenName } from "../../const";
-import { TrackScreen } from "../../analytics";
-import LText from "../../components/LText";
-import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import KeyboardView from "../../components/KeyboardView";
-import RetryButton from "../../components/RetryButton";
-import CancelButton from "../../components/CancelButton";
-import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
-import CurrencyInput from "../../components/CurrencyInput";
-import TranslatedError from "../../components/TranslatedError";
-import InfoModal from "../../modals/Info";
-import BandwidthIcon from "../../icons/Bandwidth";
-import EnergyIcon from "../../icons/Energy";
-import Button from "../../components/wrappedUi/Button";
-import { FreezeNavigatorParamList } from "../../components/RootNavigator/types/FreezeNavigator";
-import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
+import { accountScreenSelector } from "~/reducers/accounts";
+import { ScreenName } from "~/const";
+import { TrackScreen } from "~/analytics";
+import LText from "~/components/LText";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import KeyboardView from "~/components/KeyboardView";
+import RetryButton from "~/components/RetryButton";
+import CancelButton from "~/components/CancelButton";
+import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
+import CurrencyInput from "~/components/CurrencyInput";
+import TranslatedError from "~/components/TranslatedError";
+import InfoModal from "~/modals/Info";
+import BandwidthIcon from "~/icons/Bandwidth";
+import EnergyIcon from "~/icons/Energy";
+import Button from "~/components/wrappedUi/Button";
+import { FreezeNavigatorParamList } from "~/components/RootNavigator/types/FreezeNavigator";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 
 const infoModalData = [
   {
@@ -69,12 +69,12 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
   const defaultUnit = getAccountUnit(account);
   const { spendableBalance } = account;
 
-  const [selectedRatio, selectRatio] = useState();
+  const [selectedRatio, selectRatio] = useState<BigNumber>();
 
   const [infoModalOpen, setInfoModalOpen] = useState<boolean>();
 
-  const { transaction, setTransaction, status, bridgePending, bridgeError } =
-    useBridgeTransaction(() => {
+  const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
+    () => {
       const t = bridge.createTransaction(account);
 
       const transaction = bridge.updateTransaction(t, {
@@ -83,7 +83,8 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
       });
 
       return { account, transaction };
-    });
+    },
+  );
 
   const options = useMemo(
     () => [
@@ -156,7 +157,7 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
   }, [setInfoModalOpen]);
 
   const onRatioPress = useCallback(
-    value => {
+    (value: BigNumber) => {
       blur();
       selectRatio(value);
       onChange(value, true);
@@ -165,7 +166,7 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
   );
 
   const onChangeResource = useCallback(
-    optionIndex => {
+    (optionIndex: number) => {
       setTransaction(
         bridge.updateTransaction(transaction, {
           resource: options[optionIndex].value,
@@ -215,9 +216,7 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
   return (
     <>
       <TrackScreen category="FreezeFunds" name="Amount" />
-      <SafeAreaView
-        style={[styles.root, { backgroundColor: colors.background }]}
-      >
+      <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
         <KeyboardView style={styles.container}>
           <View style={styles.topContainer}>
             <GraphTabs
@@ -232,7 +231,7 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
                 <Text variant={"paragraph"} color="neutral.c70" mr={3}>
                   <Trans i18nKey="freeze.amount.infoLabel" />
                 </Text>
-                <Icons.InfoMedium size={20} color="neutral.c70" />
+                <IconsLegacy.InfoMedium size={20} color="neutral.c70" />
               </TouchableOpacity>
               <View style={styles.wrapper}>
                 <CurrencyInput
@@ -247,11 +246,7 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
                   hasError={!!error}
                   hasWarning={!!warning}
                 />
-                <LText
-                  style={[styles.error]}
-                  color={error ? "alert" : "orange"}
-                  numberOfLines={2}
-                >
+                <LText style={[styles.error]} color={error ? "alert" : "orange"} numberOfLines={2}>
                   <TranslatedError error={error || warning} />
                 </LText>
               </View>
@@ -290,10 +285,7 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
                     <CurrencyUnitValue
                       showCode
                       unit={unit}
-                      value={getDecimalPart(
-                        account.spendableBalance,
-                        defaultUnit.magnitude,
-                      )}
+                      value={getDecimalPart(account.spendableBalance, defaultUnit.magnitude)}
                     />
                   </Text>
                 </View>
@@ -314,21 +306,14 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
         </KeyboardView>
       </SafeAreaView>
 
-      <InfoModal
-        isOpened={!!infoModalOpen}
-        onClose={closeInfoModal}
-        data={infoModalData}
-      />
+      <InfoModal isOpened={!!infoModalOpen} onClose={closeInfoModal} data={infoModalData} />
 
       <GenericErrorBottomModal
         error={bridgeErr}
         onClose={onBridgeErrorRetry}
         footerButtons={
           <>
-            <CancelButton
-              containerStyle={styles.button}
-              onPress={onBridgeErrorCancel}
-            />
+            <CancelButton containerStyle={styles.button} onPress={onBridgeErrorCancel} />
             <RetryButton
               containerStyle={[styles.button, styles.buttonRight]}
               onPress={onBridgeErrorRetry}

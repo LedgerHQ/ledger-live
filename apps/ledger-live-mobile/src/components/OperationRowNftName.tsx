@@ -1,16 +1,8 @@
 import React, { memo } from "react";
 
-import {
-  Account,
-  AccountLike,
-  NFTMetadata,
-  Operation,
-} from "@ledgerhq/types-live";
-import {
-  getMainAccount,
-  getAccountCurrency,
-} from "@ledgerhq/live-common/account/index";
-import { useNftMetadata } from "@ledgerhq/live-common/nft/index";
+import { Account, AccountLike, NFTMetadata, Operation } from "@ledgerhq/types-live";
+import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { useNftMetadata } from "@ledgerhq/live-nft-react";
 import { View, StyleSheet, ViewStyle, StyleProp } from "react-native";
 import { Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
@@ -23,30 +15,16 @@ type Props = {
   parentAccount?: Account | null;
 };
 
-const OperationRowNftName = ({
-  style,
-  operation,
-  account,
-  parentAccount,
-}: Props) => {
+const OperationRowNftName = ({ style, operation, account, parentAccount }: Props) => {
   const { t } = useTranslation();
   const mainAccount = getMainAccount(account, parentAccount);
   const currency = getAccountCurrency(mainAccount);
-  const { status, metadata } = useNftMetadata(
-    operation.contract,
-    operation.tokenId,
-    currency.id,
-  );
+  const { status, metadata } = useNftMetadata(operation.contract, operation.tokenId, currency.id);
 
   return (
     <View style={style}>
       <Skeleton style={styles.skeleton} loading={status === "loading"}>
-        <Text
-          numberOfLines={1}
-          ellipsizeMode="tail"
-          variant="body"
-          fontWeight="semiBold"
-        >
+        <Text numberOfLines={1} ellipsizeMode="tail" variant="body" fontWeight="semiBold">
           {(metadata as Partial<NFTMetadata>)?.nftName || "-"}
         </Text>
       </Skeleton>

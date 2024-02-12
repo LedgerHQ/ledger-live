@@ -19,7 +19,7 @@ export function upToDate(app: Probot) {
       // …even though the docs say that it's supposed to be .synchronize, it's not.
       "pull_request.edited",
     ],
-    async (context) => {
+    async context => {
       const { payload, octokit } = context;
       const { owner, repo } = context.repo();
       const prHead = payload.pull_request.head;
@@ -61,10 +61,11 @@ export function upToDate(app: Probot) {
           check_run_id: checkRun.id,
         });
       }
-    }
+    },
   );
 
-  app.on("push", async (context) => {
+  /** @ts-expect-error it seems TypeScript have issues inferring the types here... */
+  app.on("push", async context => {
     const { payload, octokit } = context;
     const { owner, repo } = context.repo();
 
@@ -78,7 +79,7 @@ export function upToDate(app: Probot) {
       base: payload.ref.split("/").pop(),
     });
 
-    const tasks = matchingPullRequests.map((pr) => async () => {
+    const tasks = matchingPullRequests.map(pr => async () => {
       // Retrieve the check run by name.
       const checkRunResponse = await octokit.checks.listForRef({
         owner: pr.base.repo.owner.login,
@@ -104,7 +105,7 @@ export function upToDate(app: Probot) {
   });
 
   // Perform the actual check when created or retriggered.
-  app.on(["check_run.rerequested", "check_run.created"], async (context) => {
+  app.on(["check_run.rerequested", "check_run.created"], async context => {
     const { payload, octokit } = context;
     const { owner, repo } = context.repo();
 

@@ -4,10 +4,7 @@ import { BigNumber } from "bignumber.js";
 import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
 import { useElrondRandomizedValidators } from "@ledgerhq/live-common/families/elrond/react";
 
-import type {
-  ElrondProvider,
-  ElrondAccount,
-} from "@ledgerhq/live-common/families/elrond/types";
+import type { ElrondProvider, ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
 import type { BodyPropsType, WithBodyPropsType } from "./types";
 import type { DrawerPropsType } from "./components/Drawer/types";
 import type { DelegationType } from "../../types";
@@ -23,24 +20,23 @@ import styles from "./styles";
  * Create a higher order component that will return null if there are no resources for Elrond staking.
  */
 
-const withBody =
-  (Component: FC<BodyPropsType>) => (props: WithBodyPropsType) => {
-    const account = props.account as ElrondAccount;
+const withBody = (Component: FC<BodyPropsType>) => (props: WithBodyPropsType) => {
+  const account = props.account as ElrondAccount;
 
-    /*
-     * Return nothing if there isn't any data for the "elrondResources" key.
-     */
+  /*
+   * Return nothing if there isn't any data for the "elrondResources" key.
+   */
 
-    if (!account.elrondResources) {
-      return null;
-    }
+  if (!account.elrondResources) {
+    return null;
+  }
 
-    /*
-     * Return the rendered wrapped component and pass along the account.
-     */
+  /*
+   * Return the rendered wrapped component and pass along the account.
+   */
 
-    return <Component account={account} />;
-  };
+  return <Component account={account} />;
+};
 
 /*
  * Handle the component declaration.
@@ -54,9 +50,9 @@ const Body = (props: BodyPropsType) => {
    */
 
   const [drawer, setDrawer] = useState<DrawerPropsType["data"] | false>();
-  const [delegationResources, setDelegationResources] = useState<
-    DelegationType[]
-  >(account.elrondResources ? account.elrondResources.delegations : []);
+  const [delegationResources, setDelegationResources] = useState<DelegationType[]>(
+    account.elrondResources ? account.elrondResources.delegations : [],
+  );
 
   /*
    * Randomize the list of the memoized validators..
@@ -88,14 +84,10 @@ const Body = (props: BodyPropsType) => {
    */
 
   const fetchDelegations = useCallback(() => {
-    setDelegationResources(
-      account.elrondResources ? account.elrondResources.delegations : [],
-    );
+    setDelegationResources(account.elrondResources ? account.elrondResources.delegations : []);
 
     return () =>
-      setDelegationResources(
-        account.elrondResources ? account.elrondResources.delegations : [],
-      );
+      setDelegationResources(account.elrondResources ? account.elrondResources.delegations : []);
   }, [account.elrondResources]);
 
   /*
@@ -112,11 +104,7 @@ const Body = (props: BodyPropsType) => {
       });
 
     const sortDelegations = (alpha: DelegationType, beta: DelegationType) =>
-      transform(alpha.userActiveStake).isGreaterThan(
-        transform(beta.userActiveStake),
-      )
-        ? -1
-        : 1;
+      transform(alpha.userActiveStake).isGreaterThan(transform(beta.userActiveStake)) ? -1 : 1;
 
     return delegationResources.sort(sortDelegations).map(formatDelegations);
   }, [findValidator, delegationResources]);
@@ -133,13 +121,7 @@ const Body = (props: BodyPropsType) => {
 
   return (
     <View style={styles.root}>
-      {drawer && (
-        <Drawer
-          account={account}
-          onClose={() => setDrawer(false)}
-          data={drawer}
-        />
-      )}
+      {drawer && <Drawer account={account} onClose={() => setDrawer(false)} data={drawer} />}
 
       <Rewards account={account} delegations={delegations} />
 
@@ -150,11 +132,7 @@ const Body = (props: BodyPropsType) => {
         validators={validators}
       />
 
-      <Unbondings
-        onDrawer={onDrawer}
-        delegations={delegations}
-        account={account}
-      />
+      <Unbondings onDrawer={onDrawer} delegations={delegations} account={account} />
     </View>
   );
 };

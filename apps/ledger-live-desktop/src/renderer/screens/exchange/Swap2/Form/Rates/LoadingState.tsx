@@ -2,14 +2,16 @@ import React, { useEffect, useState } from "react";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import { useTranslation } from "react-i18next";
+
 function Loader() {
   const [dots, setDots] = useState("");
   useEffect(() => {
-    const interval = setInterval(() => {
+    const interval = window.setInterval(() => {
       setDots(dots => (dots.length < 3 ? dots + "." : ""));
     }, 500);
     return () => clearInterval(interval);
   }, []);
+
   return (
     <Text
       style={{
@@ -20,8 +22,10 @@ function Loader() {
     </Text>
   );
 }
+
 function LoadingState() {
   const { t } = useTranslation();
+
   return (
     <Box alignItems={"center"}>
       <Text
@@ -52,4 +56,5 @@ function LoadingState() {
     </Box>
   );
 }
+
 export default LoadingState;

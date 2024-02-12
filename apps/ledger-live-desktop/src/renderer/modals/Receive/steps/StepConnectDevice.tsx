@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -9,7 +9,7 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { StepProps } from "../Body";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
 export default function StepConnectDevice({
   account,
@@ -19,15 +19,19 @@ export default function StepConnectDevice({
 }: StepProps) {
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   const tokenCurrency = (account && account.type === "TokenAccount" && account.token) || token;
+  const request = useMemo(
+    () => ({
+      account: mainAccount || undefined,
+      tokenCurrency: tokenCurrency || undefined,
+    }),
+    [mainAccount, tokenCurrency],
+  );
   return (
     <>
       {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
       <DeviceAction
         action={action}
-        request={{
-          account: mainAccount || undefined,
-          tokenCurrency: tokenCurrency || undefined,
-        }}
+        request={request}
         onResult={() => transitionTo("receive")}
         analyticsPropertyFlow="receive"
       />

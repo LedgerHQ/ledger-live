@@ -44,7 +44,7 @@ export const getTransactionStatus =
     const warnings: any = {};
     const tokenAccount = !t.subAccountId
       ? null
-      : a.subAccounts && a.subAccounts.find((ta) => ta.id === t.subAccountId);
+      : a.subAccounts && a.subAccounts.find(ta => ta.id === t.subAccountId);
 
     if (!t.recipient) {
       errors.recipient = new RecipientRequired();
@@ -60,10 +60,7 @@ export const getTransactionStatus =
     let amount = t.amount;
     let totalSpent = estimatedFees;
 
-    invariant(
-      (a as AlgorandAccount).algorandResources,
-      "Algorand family expected"
-    );
+    invariant((a as AlgorandAccount).algorandResources, "Algorand family expected");
     const algorandResources = (a as AlgorandAccount).algorandResources;
 
     const algoSpendableBalance = computeAlgoMaxSpendable({
@@ -88,7 +85,7 @@ export const getTransactionStatus =
           !errors.recipient &&
           !(await recipientHasAsset(algorandAPI)(
             t.recipient,
-            extractTokenId(tokenAccount.token.id)
+            extractTokenId(tokenAccount.token.id),
           ))
         ) {
           errors.recipient = new AlgorandASANotOptInInRecipient();
@@ -106,20 +103,13 @@ export const getTransactionStatus =
 
         totalSpent = tokenAccount ? amount : amount.plus(estimatedFees);
 
-        if (
-          !errors.recipient &&
-          !(await isAmountValid(algorandAPI)(t.recipient, amount))
-        ) {
+        if (!errors.recipient && !(await isAmountValid(algorandAPI)(t.recipient, amount))) {
           errors.amount = new NotEnoughBalanceBecauseDestinationNotCreated("", {
             minimalAmount: "0.1 ALGO",
           });
         }
 
-        if (
-          !tokenAccount &&
-          amount.gt(0) &&
-          estimatedFees.times(10).gt(amount)
-        ) {
+        if (!tokenAccount && amount.gt(0) && estimatedFees.times(10).gt(amount)) {
           warnings.feeTooHigh = new FeeTooHigh();
         }
 
@@ -133,11 +123,7 @@ export const getTransactionStatus =
         }
 
         // if spendable balance lower than fees for token
-        if (
-          !errors.amount &&
-          tokenAccount &&
-          algoSpendableBalance.lt(estimatedFees)
-        ) {
+        if (!errors.amount && tokenAccount && algoSpendableBalance.lt(estimatedFees)) {
           errors.amount = new NotEnoughBalanceInParentAccount();
         }
 

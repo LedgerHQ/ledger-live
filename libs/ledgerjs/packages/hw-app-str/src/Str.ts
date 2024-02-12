@@ -58,24 +58,21 @@ export default class Str {
     transport.decorateAppAPIMethods(
       this,
       ["getAppConfiguration", "getPublicKey", "signTransaction", "signHash"],
-      scrambleKey
+      scrambleKey,
     );
   }
 
   getAppConfiguration(): Promise<{
     version: string;
   }> {
-    return this.transport
-      .send(CLA, INS_GET_CONF, 0x00, 0x00)
-      .then((response) => {
-        const multiOpsEnabled = response[0] === 0x01 || response[1] < 0x02;
-        const version =
-          "" + response[1] + "." + response[2] + "." + response[3];
-        return {
-          version: version,
-          multiOpsEnabled: multiOpsEnabled,
-        };
-      });
+    return this.transport.send(CLA, INS_GET_CONF, 0x00, 0x00).then(response => {
+      const multiOpsEnabled = response[0] === 0x01 || response[1] < 0x02;
+      const version = "" + response[1] + "." + response[2] + "." + response[3];
+      return {
+        version: version,
+        multiOpsEnabled: multiOpsEnabled,
+      };
+    });
   }
 
   /**
@@ -91,7 +88,7 @@ export default class Str {
   getPublicKey(
     path: string,
     boolValidate?: boolean,
-    boolDisplay?: boolean
+    boolDisplay?: boolean,
   ): Promise<{
     publicKey: string;
     raw: Buffer;
@@ -108,7 +105,7 @@ export default class Str {
     const verifyMsg = Buffer.from("via lumina", "ascii");
     apdus.push(Buffer.concat([buffer, verifyMsg]));
     let keepAlive = false;
-    return foreach(apdus, (data) =>
+    return foreach(apdus, data =>
       this.transport
         .send(
           CLA,
@@ -116,12 +113,10 @@ export default class Str {
           boolValidate ? 0x01 : 0x00,
           boolDisplay ? 0x01 : 0x00,
           data,
-          [SW_OK, SW_KEEP_ALIVE]
+          [SW_OK, SW_KEEP_ALIVE],
         )
-        .then((apduResponse) => {
-          const status = Buffer.from(
-            apduResponse.slice(apduResponse.length - 2)
-          ).readUInt16BE(0);
+        .then(apduResponse => {
+          const status = Buffer.from(apduResponse.slice(apduResponse.length - 2)).readUInt16BE(0);
 
           if (status === SW_KEEP_ALIVE) {
             keepAlive = true;
@@ -129,7 +124,7 @@ export default class Str {
           }
 
           response = apduResponse;
-        })
+        }),
     ).then(() => {
       // response = Buffer.from(response, 'hex');
       let offset = 0;
@@ -141,9 +136,7 @@ export default class Str {
         const signature = response.slice(offset, offset + 64);
 
         if (!verifyEd25519Signature(verifyMsg, signature, rawPublicKey)) {
-          throw new Error(
-            "Bad signature. Keypair is invalid. Please report this."
-          );
+          throw new Error("Bad signature. Keypair is invalid. Please report this.");
         }
       }
 
@@ -164,7 +157,7 @@ export default class Str {
    */
   signTransaction(
     path: string,
-    transaction: Buffer
+    transaction: Buffer,
   ): Promise<{
     signature: Buffer;
   }> {
@@ -172,10 +165,7 @@ export default class Str {
 
     if (transaction.length > TX_MAX_SIZE) {
       throw new Error(
-        "Transaction too large: max = " +
-          TX_MAX_SIZE +
-          "; actual = " +
-          transaction.length
+        "Transaction too large: max = " + TX_MAX_SIZE + "; actual = " + transaction.length,
       );
     }
 
@@ -220,12 +210,10 @@ export default class Str {
           i === 0 ? P1_FIRST_APDU : P1_MORE_APDU,
           i === apdus.length - 1 ? P2_LAST_APDU : P2_MORE_APDU,
           data,
-          [SW_OK, SW_CANCEL, SW_UNKNOWN_OP, SW_MULTI_OP, SW_KEEP_ALIVE]
+          [SW_OK, SW_CANCEL, SW_UNKNOWN_OP, SW_MULTI_OP, SW_KEEP_ALIVE],
         )
-        .then((apduResponse) => {
-          const status = Buffer.from(
-            apduResponse.slice(apduResponse.length - 2)
-          ).readUInt16BE(0);
+        .then(apduResponse => {
+          const status = Buffer.from(apduResponse.slice(apduResponse.length - 2)).readUInt16BE(0);
 
           if (status === SW_KEEP_ALIVE) {
             keepAlive = true;
@@ -233,11 +221,9 @@ export default class Str {
           }
 
           response = apduResponse;
-        })
+        }),
     ).then(() => {
-      const status = Buffer.from(
-        response.slice(response.length - 2)
-      ).readUInt16BE(0);
+      const status = Buffer.from(response.slice(response.length - 2)).readUInt16BE(0);
 
       if (status === SW_OK) {
         const signature = Buffer.from(response.slice(0, response.length - 2));
@@ -266,7 +252,7 @@ export default class Str {
    */
   signHash(
     path: string,
-    hash: Buffer
+    hash: Buffer,
   ): Promise<{
     signature: Buffer;
   }> {
@@ -276,7 +262,7 @@ export default class Str {
 
   signHash_private(
     path: string,
-    hash: Buffer
+    hash: Buffer,
   ): Promise<{
     signature: Buffer;
   }> {
@@ -290,20 +276,17 @@ export default class Str {
     });
     apdus.push(Buffer.concat([buffer, hash]));
     let keepAlive = false;
-    return foreach(apdus, (data) =>
+    return foreach(apdus, data =>
       this.transport
-        .send(
-          CLA,
-          keepAlive ? INS_KEEP_ALIVE : INS_SIGN_TX_HASH,
-          0x00,
-          0x00,
-          data,
-          [SW_OK, SW_CANCEL, SW_NOT_ALLOWED, SW_UNSUPPORTED, SW_KEEP_ALIVE]
-        )
-        .then((apduResponse) => {
-          const status = Buffer.from(
-            apduResponse.slice(apduResponse.length - 2)
-          ).readUInt16BE(0);
+        .send(CLA, keepAlive ? INS_KEEP_ALIVE : INS_SIGN_TX_HASH, 0x00, 0x00, data, [
+          SW_OK,
+          SW_CANCEL,
+          SW_NOT_ALLOWED,
+          SW_UNSUPPORTED,
+          SW_KEEP_ALIVE,
+        ])
+        .then(apduResponse => {
+          const status = Buffer.from(apduResponse.slice(apduResponse.length - 2)).readUInt16BE(0);
 
           if (status === SW_KEEP_ALIVE) {
             keepAlive = true;
@@ -311,11 +294,9 @@ export default class Str {
           }
 
           response = apduResponse;
-        })
+        }),
     ).then(() => {
-      const status = Buffer.from(
-        response.slice(response.length - 2)
-      ).readUInt16BE(0);
+      const status = Buffer.from(response.slice(response.length - 2)).readUInt16BE(0);
 
       if (status === SW_OK) {
         const signature = Buffer.from(response.slice(0, response.length - 2));
@@ -327,9 +308,7 @@ export default class Str {
       } else if (status === SW_UNSUPPORTED) {
         throw new Error("Hash signing is not supported");
       } else {
-        throw new Error(
-          "Hash signing not allowed. Have you enabled it in the app settings?"
-        );
+        throw new Error("Hash signing not allowed. Have you enabled it in the app settings?");
       }
     });
   }

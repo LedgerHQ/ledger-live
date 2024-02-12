@@ -17,8 +17,7 @@ const WebSocket = global.WebSocket || require("ws");
  */
 
 export default class WebSocketTransport extends Transport {
-  static isSupported = (): Promise<boolean> =>
-    Promise.resolve(typeof WebSocket === "function");
+  static isSupported = (): Promise<boolean> => Promise.resolve(typeof WebSocket === "function");
   // this transport is not discoverable
   static list = (): any => Promise.resolve([]);
   static listen = (_observer: any) => ({
@@ -43,8 +42,8 @@ export default class WebSocketTransport extends Transport {
           reject(
             new TransportError(
               "failed to access WebSocketTransport(" + url + ")",
-              "WebSocketTransportNotAccessible"
-            )
+              "WebSocketTransportNotAccessible",
+            ),
           );
         }
       };
@@ -53,8 +52,8 @@ export default class WebSocketTransport extends Transport {
         reject(
           new TransportError(
             "failed to access WebSocketTransport(" + url + "): error",
-            "WebSocketTransportNotAccessible"
-          )
+            "WebSocketTransportNotAccessible",
+          ),
         );
       };
     });
@@ -68,14 +67,14 @@ export default class WebSocketTransport extends Transport {
           rejectExchange: (_e: any) => {},
           onDisconnect: () => {},
           close: () => socket.close(),
-          send: (msg) => socket.send(msg),
+          send: msg => socket.send(msg),
         };
 
         socket.onopen = () => {
           socket.send("open");
         };
 
-        socket.onerror = (e) => {
+        socket.onerror = e => {
           exchangeMethods.onDisconnect();
           reject(e);
         };
@@ -85,7 +84,7 @@ export default class WebSocketTransport extends Transport {
           reject(new TransportError("OpenFailed", "OpenFailed"));
         };
 
-        socket.onmessage = (e) => {
+        socket.onmessage = e => {
           if (typeof e.data !== "string") return;
           const data = JSON.parse(e.data);
 
@@ -95,14 +94,10 @@ export default class WebSocketTransport extends Transport {
 
             case "error":
               reject(new Error(data.error));
-              return exchangeMethods.rejectExchange(
-                new TransportError(data.error, "WSError")
-              );
+              return exchangeMethods.rejectExchange(new TransportError(data.error, "WSError"));
 
             case "response":
-              return exchangeMethods.resolveExchange(
-                Buffer.from(data.data, "hex")
-              );
+              return exchangeMethods.resolveExchange(Buffer.from(data.data, "hex"));
           }
         };
       } catch (e) {
@@ -120,9 +115,7 @@ export default class WebSocketTransport extends Transport {
 
     hook.onDisconnect = () => {
       this.emit("disconnect");
-      this.hook.rejectExchange(
-        new TransportError("WebSocket disconnected", "WSDisconnect")
-      );
+      this.hook.rejectExchange(new TransportError("WebSocket disconnected", "WSDisconnect"));
     };
   }
 
@@ -144,7 +137,7 @@ export default class WebSocketTransport extends Transport {
 
   async close() {
     this.hook.close();
-    return new Promise<void>((success) => {
+    return new Promise<void>(success => {
       setTimeout(() => {
         success(undefined);
       }, 200);

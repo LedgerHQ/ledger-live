@@ -1,7 +1,7 @@
 import React, { useCallback, useState, useMemo, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  defaultFeatures,
+  DEFAULT_FEATURES,
   groupedFeatures,
   useFeature,
   useFeatureFlags,
@@ -23,15 +23,12 @@ import { includes, lowerCase, trim } from "lodash";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Keyboard } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import NavigationScrollView from "../../components/NavigationScrollView";
-import FeatureFlagDetails, {
-  TagDisabled,
-  TagEnabled,
-} from "./FeatureFlagDetails";
-import Alert from "../../components/Alert";
+import NavigationScrollView from "~/components/NavigationScrollView";
+import FeatureFlagDetails, { TagDisabled, TagEnabled } from "./FeatureFlagDetails";
+import Alert from "~/components/Alert";
 import GroupedFeatures from "./GroupedFeatures";
-import { featureFlagsBannerVisibleSelector } from "../../reducers/settings";
-import { setFeatureFlagsBannerVisible } from "../../actions/settings";
+import { featureFlagsBannerVisibleSelector } from "~/reducers/settings";
+import { setFeatureFlagsBannerVisible } from "~/actions/settings";
 
 const addFlagHint = `\
 If a feature flag is defined in the Firebase project \
@@ -41,16 +38,14 @@ the search field.`;
 export default function DebugFeatureFlags() {
   const { t } = useTranslation();
   const [focusedName, setFocusedName] = useState<string | undefined>();
-  const [focusedGroupName, setFocusedGroupName] = useState<
-    string | undefined
-  >();
+  const [focusedGroupName, setFocusedGroupName] = useState<string | undefined>();
   const [searchInput, setSearchInput] = useState<string>("");
   const searchInputTrimmed = trim(searchInput);
   const [activeTab, setActiveTab] = useState(0);
   const { resetFeatures, isFeature } = useFeatureFlags();
 
   const featureFlags = useMemo(() => {
-    const featureKeys = Object.keys(defaultFeatures);
+    const featureKeys = Object.keys(DEFAULT_FEATURES);
 
     if (searchInputTrimmed && !featureKeys.includes(searchInputTrimmed)) {
       const isHiddenFeature = isFeature(searchInputTrimmed);
@@ -64,17 +59,14 @@ export default function DebugFeatureFlags() {
     return featureKeys;
   }, [isFeature, searchInputTrimmed]);
 
-  const handleSearch = useCallback(value => {
+  const handleSearch = useCallback((value: string) => {
     setSearchInput(value);
   }, []);
 
   const filteredFlags = useMemo(() => {
     return featureFlags
       .sort()
-      .filter(
-        name =>
-          !searchInput || includes(lowerCase(name), lowerCase(searchInput)),
-      );
+      .filter(name => !searchInput || includes(lowerCase(name), lowerCase(searchInput)));
   }, [featureFlags, searchInput]);
 
   const filteredGroups = useMemo(() => {
@@ -129,12 +121,8 @@ export default function DebugFeatureFlags() {
 
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   useEffect(() => {
-    const listenerShow = Keyboard.addListener("keyboardDidShow", () =>
-      setKeyboardVisible(true),
-    );
-    const listenerHide = Keyboard.addListener("keyboardDidHide", () =>
-      setKeyboardVisible(false),
-    );
+    const listenerShow = Keyboard.addListener("keyboardDidShow", () => setKeyboardVisible(true));
+    const listenerHide = Keyboard.addListener("keyboardDidHide", () => setKeyboardVisible(false));
     return () => {
       listenerShow.remove();
       listenerHide.remove();
@@ -144,12 +132,10 @@ export default function DebugFeatureFlags() {
   const additionalInfo = <Alert title={addFlagHint} type="hint" noIcon />;
 
   const hasLocallyOverriddenFlags = useHasLocallyOverriddenFeatureFlags();
-  const featureFlagsBannerVisible = useSelector(
-    featureFlagsBannerVisibleSelector,
-  );
+  const featureFlagsBannerVisible = useSelector(featureFlagsBannerVisibleSelector);
   const dispatch = useDispatch();
   const setFeatureFlagBannerVisible = useCallback(
-    newVal => {
+    (newVal: boolean) => {
       dispatch(setFeatureFlagsBannerVisible(newVal));
     },
     [dispatch],
@@ -157,7 +143,7 @@ export default function DebugFeatureFlags() {
 
   return (
     <SafeAreaView edges={["bottom"]} style={{ flex: 1 }}>
-      <NavigationScrollView>
+      <NavigationScrollView keyboardShouldPersistTaps="handled">
         <Flex px={16}>
           <Alert type="primary" noIcon>
             {t("settings.debug.featureFlagsTitle")}
@@ -173,10 +159,7 @@ export default function DebugFeatureFlags() {
           </Tag>
           <Flex flexDirection="row" justifyContent="space-between">
             <Text mt={3}>{t("settings.debug.showBannerDesc")}</Text>
-            <Switch
-              checked={featureFlagsBannerVisible}
-              onChange={setFeatureFlagBannerVisible}
-            />
+            <Switch checked={featureFlagsBannerVisible} onChange={setFeatureFlagBannerVisible} />
           </Flex>
           <Divider />
           <ChipTabs

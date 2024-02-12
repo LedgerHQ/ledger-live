@@ -10,7 +10,7 @@ import type Eth from "../../Eth";
  */
 export const domainResolutionFlow = async (
   appBinding: Eth,
-  domainDescriptor: DomainDescriptor
+  domainDescriptor: DomainDescriptor,
 ): Promise<void> => {
   if (!domainDescriptor) return;
   const { domain, address, registry, type } = domainDescriptor;

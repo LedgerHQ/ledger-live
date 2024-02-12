@@ -14,7 +14,7 @@ export class CeloApp {
 
   async signTransaction(
     path: string,
-    rawTxHex: string
+    rawTxHex: string,
   ): Promise<{
     s: string;
     v: string;
@@ -35,17 +35,12 @@ export class CeloApp {
     while (offset !== rawTx.length) {
       const first = offset === 0;
       const maxChunkSize = first ? 150 - 1 - paths.length * 4 : 150;
-      let chunkSize =
-        offset + maxChunkSize > rawTx.length
-          ? rawTx.length - offset
-          : maxChunkSize;
+      let chunkSize = offset + maxChunkSize > rawTx.length ? rawTx.length - offset : maxChunkSize;
       if (rlpOffset != 0 && offset + chunkSize == rlpOffset) {
         // Make sure that the chunk doesn't end right on the EIP 155 marker if set
         chunkSize--;
       }
-      const buffer = Buffer.alloc(
-        first ? 1 + paths.length * 4 + chunkSize : chunkSize
-      );
+      const buffer = Buffer.alloc(first ? 1 + paths.length * 4 + chunkSize : chunkSize);
       if (first) {
         buffer[0] = paths.length;
         paths.forEach((element, index) => {
@@ -58,7 +53,7 @@ export class CeloApp {
 
       response = await this.transport
         .send(0xe0, 0x04, first ? 0x00 : 0x80, 0x00, buffer)
-        .catch((e) => {
+        .catch(e => {
           throw e;
         });
 
@@ -79,7 +74,7 @@ export class CeloApp {
 function splitPath(path: string): number[] {
   const result: number[] = [];
   const components = path.split("/");
-  components.forEach((element) => {
+  components.forEach(element => {
     let number = parseInt(element, 10);
     if (isNaN(number)) {
       return; // FIXME shouldn't it throws instead?
@@ -92,17 +87,14 @@ function splitPath(path: string): number[] {
   return result;
 }
 
-function provideERC20TokenInformation(
-  transport: Transport,
-  data: Buffer
-): Promise<boolean> {
+function provideERC20TokenInformation(transport: Transport, data: Buffer): Promise<boolean> {
   return transport.send(0xe0, 0x0a, 0x00, 0x00, data).then(
     () => true,
-    (e) => {
+    e => {
       if (e && e.statusCode === 0x6d00) {
         return false;
       }
       throw e;
-    }
+    },
   );
 }

@@ -1,11 +1,7 @@
 import { PostOnboardingHubState } from "@ledgerhq/types-live";
 import { renderHook } from "@testing-library/react-hooks";
 import { useAllPostOnboardingActionsCompleted } from "./useAllPostOnboardingActionsCompleted";
-import {
-  claimTestMock,
-  personalizeTestMock,
-  migrateAssetsTestMock,
-} from "../mock";
+import { claimTestMock, personalizeTestMock, migrateAssetsTestMock } from "../mock";
 
 import { usePostOnboardingHubState } from "./usePostOnboardingHubState";
 jest.mock("./usePostOnboardingHubState");
@@ -17,6 +13,7 @@ const mockedStateNoActions: PostOnboardingHubState = {
   deviceModelId: null,
   lastActionCompleted: null,
   actionsState: [],
+  postOnboardingInProgress: false,
 };
 
 const mockedStateAllActionsCompleted: PostOnboardingHubState = {
@@ -27,6 +24,7 @@ const mockedStateAllActionsCompleted: PostOnboardingHubState = {
     { ...personalizeTestMock, completed: true },
     { ...migrateAssetsTestMock, completed: true },
   ],
+  postOnboardingInProgress: false,
 };
 
 const mockedStateNoActionsCompleted: PostOnboardingHubState = {
@@ -37,6 +35,7 @@ const mockedStateNoActionsCompleted: PostOnboardingHubState = {
     { ...personalizeTestMock, completed: false },
     { ...migrateAssetsTestMock, completed: false },
   ],
+  postOnboardingInProgress: false,
 };
 
 const mockedStateSomeActionsCompleted: PostOnboardingHubState = {
@@ -47,6 +46,7 @@ const mockedStateSomeActionsCompleted: PostOnboardingHubState = {
     { ...personalizeTestMock, completed: true },
     { ...migrateAssetsTestMock, completed: false },
   ],
+  postOnboardingInProgress: false,
 };
 
 describe("useAllPostOnboardingActionsCompleted", () => {
@@ -57,25 +57,19 @@ describe("useAllPostOnboardingActionsCompleted", () => {
   });
 
   it("should return true if all actions are completed", () => {
-    mockedUsePostOnboardingHubState.mockReturnValue(
-      mockedStateAllActionsCompleted
-    );
+    mockedUsePostOnboardingHubState.mockReturnValue(mockedStateAllActionsCompleted);
     const { result } = renderHook(() => useAllPostOnboardingActionsCompleted());
     expect(result.current).toBe(true);
   });
 
   it("should return false if some actions are completed", () => {
-    mockedUsePostOnboardingHubState.mockReturnValue(
-      mockedStateSomeActionsCompleted
-    );
+    mockedUsePostOnboardingHubState.mockReturnValue(mockedStateSomeActionsCompleted);
     const { result } = renderHook(() => useAllPostOnboardingActionsCompleted());
     expect(result.current).toBe(false);
   });
 
   it("should return false if no actions are completed", () => {
-    mockedUsePostOnboardingHubState.mockReturnValue(
-      mockedStateNoActionsCompleted
-    );
+    mockedUsePostOnboardingHubState.mockReturnValue(mockedStateNoActionsCompleted);
     const { result } = renderHook(() => useAllPostOnboardingActionsCompleted());
     expect(result.current).toBe(false);
   });

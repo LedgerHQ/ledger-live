@@ -1,9 +1,7 @@
 import { Platform } from "react-native";
 
 const mega = 1048576;
-export const getAndroidArchitecture = (
-  buildVersion?: string | null | undefined,
-) => {
+export const getAndroidArchitecture = (buildVersion?: string | null | undefined) => {
   if (!buildVersion) return "";
   const buildVersionNumber = parseInt(buildVersion, 10);
   if (!buildVersionNumber) return "";
@@ -16,15 +14,11 @@ export const getAndroidArchitecture = (
 
   return buildVersion;
 };
-export const getAndroidVersionCode = (
-  buildVersion?: string | null | undefined,
-) => {
+export const getAndroidVersionCode = (buildVersion?: string | null | undefined) => {
   if (!buildVersion) return "";
   const buildVersionNumber = parseInt(buildVersion, 10);
   if (!buildVersionNumber) return "";
-  return Platform.OS === "android" && buildVersionNumber
-    ? buildVersionNumber % mega
-    : buildVersion;
+  return Platform.OS === "android" && buildVersionNumber ? buildVersionNumber % mega : buildVersion;
 };
 export default (buildVersion?: string | null | undefined) => {
   if (Platform.OS === "android" && buildVersion) {

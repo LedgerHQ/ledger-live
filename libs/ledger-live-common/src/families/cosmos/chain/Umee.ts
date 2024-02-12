@@ -10,8 +10,7 @@ class Umee extends CosmosBase {
 
   constructor() {
     super();
-    this.stakingDocUrl =
-      "https://support.ledger.com/hc/en-us/articles/9604941727261?support=true";
+    this.stakingDocUrl = "https://support.ledger.com/hc/en-us/articles/9604941727261?support=true";
     this.unbondingPeriod = 28;
     this.prefix = "umee";
     this.validatorPrefix = `${this.prefix}valoper`;

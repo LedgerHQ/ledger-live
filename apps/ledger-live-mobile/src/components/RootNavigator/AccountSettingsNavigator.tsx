@@ -2,16 +2,16 @@ import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
-import { ScreenName } from "../../const";
-import Accounts from "../../screens/Accounts";
-import AccountSettingsMain from "../../screens/AccountSettings";
-import EditAccountUnits from "../../screens/AccountSettings/EditAccountUnits";
-import EditAccountName from "../../screens/AccountSettings/EditAccountName";
-import AdvancedLogs from "../../screens/AccountSettings/AdvancedLogs";
-import AccountOrder from "../../screens/Accounts/AccountOrder";
-import AddAccount from "../../screens/Accounts/AddAccount";
-import CurrencySettings from "../../screens/Settings/CryptoAssets/Currencies/CurrencySettings";
-import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
+import { ScreenName } from "~/const";
+import Accounts from "~/screens/Accounts";
+import AccountSettingsMain from "~/screens/AccountSettings";
+import EditAccountUnits from "~/screens/AccountSettings/EditAccountUnits";
+import EditAccountName from "~/screens/AccountSettings/EditAccountName";
+import AdvancedLogs from "~/screens/AccountSettings/AdvancedLogs";
+import AccountOrder from "~/screens/Accounts/AccountOrder";
+import AddAccount from "~/screens/Accounts/AddAccount";
+import CurrencySettings from "~/screens/Settings/CryptoAssets/Currencies/CurrencySettings";
+import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import { AccountSettingsNavigatorParamList } from "./types/AccountSettingsNavigator";
 
 const Stack = createStackNavigator<AccountSettingsNavigatorParamList>();
@@ -19,10 +19,7 @@ const Stack = createStackNavigator<AccountSettingsNavigatorParamList>();
 export default function AccountSettingsNavigator() {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const stackNavConfig = useMemo(
-    () => getStackNavigatorConfig(colors),
-    [colors],
-  );
+  const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [colors]);
   return (
     <Stack.Navigator screenOptions={stackNavConfig}>
       <Stack.Screen
@@ -54,10 +51,7 @@ export default function AccountSettingsNavigator() {
           title: t("account.settings.advanced.title"),
         }}
       />
-      <Stack.Screen
-        name={ScreenName.CurrencySettings}
-        component={CurrencySettings}
-      />
+      <Stack.Screen name={ScreenName.CurrencySettings} component={CurrencySettings} />
       <Stack.Screen
         name={ScreenName.Accounts}
         component={Accounts}

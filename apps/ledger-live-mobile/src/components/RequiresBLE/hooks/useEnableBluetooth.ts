@@ -58,11 +58,7 @@ export function usePromptEnableBluetoothCallback() {
   }, []);
 }
 
-export type BluetoothServicesState =
-  | "unknown"
-  | "enabled"
-  | "disabled"
-  | "unauthorized";
+export type BluetoothServicesState = "unknown" | "enabled" | "disabled" | "unauthorized";
 
 export type UseEnableBluetoothArgs = {
   isHookEnabled?: boolean;
@@ -94,8 +90,7 @@ export function useEnableBluetooth(
     isHookEnabled: true,
   },
 ) {
-  const [observedTransportState, setObservedTransportState] =
-    useState<string>("Unknown");
+  const [observedTransportState, setObservedTransportState] = useState<string>("Unknown");
 
   const promptBluetoothCallback = usePromptEnableBluetoothCallback();
 
@@ -137,7 +132,7 @@ export function useEnableBluetooth(
 
   let bluetoothServicesState: BluetoothServicesState = "disabled";
 
-  if (observedTransportState === "PoweredOn") {
+  if (__DEV__ || observedTransportState === "PoweredOn") {
     bluetoothServicesState = "enabled";
   } else if (observedTransportState === "PoweredOff") {
     bluetoothServicesState = "disabled";

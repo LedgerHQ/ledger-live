@@ -4,18 +4,31 @@ import { asDerivationMode } from "../derivation";
 import { getCryptoCurrencyById, findTokenById } from "../currencies";
 import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
 import type { AccountIdParams, DerivationMode } from "@ledgerhq/types-live";
-import type {
-  CryptoCurrency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 function ensureNoColon(value: string, ctx: string): string {
-  invariant(
-    !value.includes(":"),
-    "AccountId '%s' component must not use colon",
-    ctx
-  );
+  invariant(!value.includes(":"), "AccountId '%s' component must not use colon", ctx);
   return value;
+}
+
+export function safeEncodeTokenId(tokenId: string): string {
+  if (!tokenId) return "";
+
+  const URIEncoded = encodeURIComponent(tokenId);
+  const dashUnderscoreSafe = URIEncoded.replace(/-/g, "~!dash!~").replace(/_/g, "~!underscore!~");
+
+  return dashUnderscoreSafe;
+}
+
+export function safeDecodeTokenId(encodedTokenId: string): string {
+  if (!encodedTokenId) return "";
+
+  const dashUnderscoreUnsafe = encodedTokenId
+    .replace(/~!dash!~/g, "-")
+    .replace(/~!underscore!~/g, "_");
+  const decodedURIComponent = decodeURIComponent(dashUnderscoreUnsafe);
+
+  return decodedURIComponent;
 }
 
 export function encodeAccountId({
@@ -25,26 +38,23 @@ export function encodeAccountId({
   xpubOrAddress,
   derivationMode,
 }: AccountIdParams): string {
-  return `${ensureNoColon(type, "type")}:${ensureNoColon(
-    version,
-    "version"
-  )}:${ensureNoColon(currencyId, "currencyId")}:${ensureNoColon(
-    xpubOrAddress,
-    "xpubOrAddress"
-  )}:${ensureNoColon(derivationMode, "derivationMode")}`;
+  return `${ensureNoColon(type, "type")}:${ensureNoColon(version, "version")}:${ensureNoColon(
+    currencyId,
+    "currencyId",
+  )}:${ensureNoColon(xpubOrAddress, "xpubOrAddress")}:${ensureNoColon(
+    derivationMode,
+    "derivationMode",
+  )}`;
 }
-export function encodeTokenAccountId(
-  accountId: string,
-  token: TokenCurrency
-): string {
-  return accountId + "+" + encodeURIComponent(token.id);
+export function encodeTokenAccountId(accountId: string, token: TokenCurrency): string {
+  return accountId + "+" + safeEncodeTokenId(token.id);
 }
 export function decodeTokenAccountId(id: string): {
   accountId: string;
   token: TokenCurrency | null | undefined;
 } {
   const [accountId, tokenId] = id.split("+");
-  const decodedTokenId = decodeURIComponent(tokenId);
+  const decodedTokenId = safeDecodeTokenId(tokenId);
   let token = findTokenById(decodedTokenId);
   if (!token) {
     const { currencyId } = decodeAccountId(accountId);
@@ -81,13 +91,13 @@ export function getWalletName({
 }): string {
   return `${seedIdentifier}_${currency.id}_${derivationMode}`;
 }
-export const inferFamilyFromAccountId: (
-  accountId: string
-) => string | null | undefined = memoize((accountId) => {
-  try {
-    const { currencyId } = decodeAccountId(accountId);
-    return getCryptoCurrencyById(currencyId).family;
-  } catch (e) {
-    return null;
-  }
-});
+export const inferFamilyFromAccountId: (accountId: string) => string | null | undefined = memoize(
+  accountId => {
+    try {
+      const { currencyId } = decodeAccountId(accountId);
+      return getCryptoCurrencyById(currencyId).family;
+    } catch (e) {
+      return null;
+    }
+  },
+);

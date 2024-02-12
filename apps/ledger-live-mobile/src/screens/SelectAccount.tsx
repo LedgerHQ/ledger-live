@@ -1,27 +1,20 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
-import {
-  accountWithMandatoryTokens,
-  flattenAccounts,
-} from "@ledgerhq/live-common/account/helpers";
+import { accountWithMandatoryTokens, flattenAccounts } from "@ledgerhq/live-common/account/helpers";
 import { Flex } from "@ledgerhq/native-ui";
-import {
-  isAccountEmpty,
-  getAccountSpendableBalance,
-} from "@ledgerhq/live-common/account/index";
+import { isAccountEmpty, getAccountSpendableBalance } from "@ledgerhq/live-common/account/index";
 import { NotEnoughBalance } from "@ledgerhq/errors";
-import { ScreenName } from "../const";
-import { accountsSelector } from "../reducers/accounts";
-import { TrackScreen } from "../analytics";
-import AccountSelector from "../components/AccountSelector";
-import GenericErrorBottomModal from "../components/GenericErrorBottomModal";
-import { SendFundsNavigatorStackParamList } from "../components/RootNavigator/types/SendFundsNavigator";
-import { StackNavigatorProps } from "../components/RootNavigator/types/helpers";
+import { ScreenName } from "~/const";
+import { accountsSelector } from "~/reducers/accounts";
+import { TrackScreen } from "~/analytics";
+import AccountSelector from "~/components/AccountSelector";
+import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
+import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import SafeAreaView from "~/components/SafeAreaView";
+import { AccountLike } from "@ledgerhq/types-live";
 
-type Props = StackNavigatorProps<
-  SendFundsNavigatorStackParamList,
-  ScreenName.SendCoin
->;
+type Props = StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendCoin>;
 
 export default function ReceiveFunds({ navigation, route }: Props) {
   const {
@@ -48,14 +41,11 @@ export default function ReceiveFunds({ navigation, route }: Props) {
       if (selectedCurrency.type === "TokenCurrency") {
         // add in the token subAccount if it does not exist
         return flattenAccounts(
-          filteredAccounts.map(acc =>
-            accountWithMandatoryTokens(acc, [selectedCurrency]),
-          ),
+          filteredAccounts.map(acc => accountWithMandatoryTokens(acc, [selectedCurrency])),
         ).filter(
           acc =>
             acc.type === "Account" ||
-            (acc.type === "TokenAccount" &&
-              acc.token.id === selectedCurrency.id),
+            (acc.type === "TokenAccount" && acc.token.id === selectedCurrency.id),
         );
       }
       return flattenAccounts(filteredAccounts);
@@ -67,14 +57,10 @@ export default function ReceiveFunds({ navigation, route }: Props) {
     : enhancedAccounts;
 
   const handleSelectAccount = useCallback(
-    account => {
+    (account: AccountLike) => {
       const balance = getAccountSpendableBalance(account);
 
-      if (
-        typeof minBalance !== "undefined" &&
-        !isNaN(minBalance) &&
-        balance.lte(minBalance)
-      ) {
+      if (typeof minBalance !== "undefined" && !isNaN(minBalance) && balance.lte(minBalance)) {
         setError(new NotEnoughBalance());
       } else {
         // FIXME: Double check if this works because it seems very weird.
@@ -96,21 +82,16 @@ export default function ReceiveFunds({ navigation, route }: Props) {
   );
 
   return (
-    <Flex flex={1} color="background.main">
+    <SafeAreaView isFlex edges={["left", "right"]}>
       <TrackScreen category={category || ""} name="SelectAccount" />
-      <Flex p={6}>
+      <Flex m={6} style={{ flex: 1 }}>
         <AccountSelector
           list={allAccounts}
           onSelectAccount={handleSelectAccount}
           initialCurrencySelected={initialCurrencySelected}
         />
       </Flex>
-      {error ? (
-        <GenericErrorBottomModal
-          error={error}
-          onClose={() => setError(undefined)}
-        />
-      ) : null}
-    </Flex>
+      {error ? <GenericErrorBottomModal error={error} onClose={() => setError(undefined)} /> : null}
+    </SafeAreaView>
   );
 }

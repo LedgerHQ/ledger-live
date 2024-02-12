@@ -5,10 +5,10 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import RequiresBLE from "../RequiresBLE";
 import BleDevicesScanning from "./BleDevicesScanning";
 import BleDevicePairing from "./BleDevicePairing";
-import { addKnownDevice } from "../../actions/ble";
+import { addKnownDevice } from "~/actions/ble";
 import type { BleDevicesScanningProps } from "./BleDevicesScanning";
 import type { BleDevicePairingProps } from "./BleDevicePairing";
-import { track } from "../../analytics";
+import { track } from "~/analytics";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import { NavigationHeaderCloseButton } from "../NavigationHeaderCloseButton";
 
@@ -88,8 +88,7 @@ const BleDevicePairingFlow: React.FC<BleDevicePairingFlowProps> = ({
 }) => {
   const dispatchRedux = useDispatch();
 
-  const [pairingFlowStep, setPairingFlowStep] =
-    useState<PairingFlowStep>("scanning");
+  const [pairingFlowStep, setPairingFlowStep] = useState<PairingFlowStep>("scanning");
 
   const [deviceToPair, setDeviceToPair] = useState<Device | null>(null);
   const [isPaired, setIsPaired] = useState(false);
@@ -166,9 +165,7 @@ const BleDevicePairingFlow: React.FC<BleDevicePairingFlowProps> = ({
       requestToSetHeaderOptions({
         type: "set",
         options: {
-          headerLeft: () => (
-            <NavigationHeaderBackButton onPress={onGoBackFromScanning} />
-          ),
+          headerLeft: () => <NavigationHeaderBackButton onPress={onGoBackFromScanning} />,
           headerRight: () => null,
         },
       });
@@ -178,9 +175,7 @@ const BleDevicePairingFlow: React.FC<BleDevicePairingFlowProps> = ({
           type: "set",
           options: {
             headerLeft: () => null,
-            headerRight: () => (
-              <NavigationHeaderCloseButton onPress={onRetryPairingFlow} />
-            ),
+            headerRight: () => <NavigationHeaderCloseButton onPress={onRetryPairingFlow} />,
           },
         });
       } else {

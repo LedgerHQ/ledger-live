@@ -14,24 +14,24 @@ import {
 } from "../../load/speculos";
 import { makeBridgeCacheSystem } from "../../bridge/cache";
 import { getCurrencyBridge } from "../../bridge";
-import { filter, map, reduce, timeoutWith } from "rxjs/operators";
+import { filter, map, reduce, timeout } from "rxjs/operators";
 import { getEnv } from "@ledgerhq/live-env";
-import { throwError } from "rxjs";
+import { firstValueFrom, throwError } from "rxjs";
 import { Report } from "./types";
 import { toAccountRaw } from "../../account";
 import { Audit } from "./audits";
 
 main().then(
-  (r) => {
+  r => {
     // eslint-disable-next-line no-console
     console.log(JSON.stringify(r));
     process.exit(0);
   },
-  (error) => {
+  error => {
     // eslint-disable-next-line no-console
     console.log(JSON.stringify({ error: String(error) }));
     process.exit(0);
-  }
+  },
 );
 
 async function main(): Promise<Report> {
@@ -52,7 +52,7 @@ async function main(): Promise<Report> {
 
   const appCandidates = await listAppCandidates(COINAPPS);
 
-  const { appQuery, currency, dependency } = spec;
+  const { appQuery, currency, dependency, onSpeculosDeviceCreated } = spec;
   const appCandidate = findAppCandidate(appCandidates, appQuery);
   if (!appCandidate) {
     console.warn("no app found for " + spec.name);
@@ -60,9 +60,7 @@ async function main(): Promise<Report> {
     console.warn(JSON.stringify(appCandidates, undefined, 2));
   }
   if (!appCandidate) {
-    throw new Error(
-      `no app found for ${spec.name}. Are you sure your COINAPPS is up to date?`
-    );
+    throw new Error(`no app found for ${spec.name}. Are you sure your COINAPPS is up to date?`);
   }
   const deviceParams = {
     ...(appCandidate as AppCandidate),
@@ -70,6 +68,7 @@ async function main(): Promise<Report> {
     seed: SEED,
     dependency,
     coinapps: COINAPPS,
+    onSpeculosDeviceCreated,
   };
 
   const device = await createSpeculosDevice(deviceParams);
@@ -97,24 +96,24 @@ async function main(): Promise<Report> {
     };
 
     await cache.prepareCurrency(currency);
-    const accounts = await bridge
-      .scanAccounts({
-        currency,
-        deviceId: device.id,
-        syncConfig,
-      })
-      .pipe(
-        filter((e) => e.type === "discovered"),
-        map((e) => e.account),
-        reduce<Account, Account[]>((all, a) => all.concat(a), []),
-        timeoutWith(
-          getEnv("BOT_TIMEOUT_SCAN_ACCOUNTS"),
-          throwError(
-            new Error("scan accounts timeout for currency " + currency.name)
-          )
-        )
-      )
-      .toPromise();
+    const accounts = await firstValueFrom(
+      bridge
+        .scanAccounts({
+          currency,
+          deviceId: device.id,
+          syncConfig,
+        })
+        .pipe(
+          filter(e => e.type === "discovered"),
+          map(e => e.account),
+          reduce<Account, Account[]>((all, a) => all.concat(a), []),
+          timeout({
+            each: getEnv("BOT_TIMEOUT_SCAN_ACCOUNTS"),
+            with: () =>
+              throwError(() => new Error("scan accounts timeout for currency " + currency.name)),
+          }),
+        ),
+    );
 
     audit.end();
 
@@ -132,9 +131,9 @@ async function main(): Promise<Report> {
     */
 
     report.refillAddress = accounts[0]?.freshAddress;
-    report.accountBalances = accounts.map((a) => a.balance.toString());
-    report.accountIds = accounts.map((a) => a.id);
-    report.accountOperationsLength = accounts.map((a) => a.operations.length);
+    report.accountBalances = accounts.map(a => a.balance.toString());
+    report.accountIds = accounts.map(a => a.id);
+    report.accountOperationsLength = accounts.map(a => a.operations.length);
     report.auditResult = audit.result();
   } finally {
     await releaseSpeculosDevice(device.id);

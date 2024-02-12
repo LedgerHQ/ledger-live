@@ -13,8 +13,7 @@ import { inferTransactions, inferTransactionsOpts } from "../transaction";
 const getTransactionStatusFormatters = {
   default: ({ status, transaction, account }) =>
     "TRANSACTION " +
-    (formatTransaction(transaction, account) ||
-      JSON.stringify(toTransactionRaw(transaction))) +
+    (formatTransaction(transaction, account) || JSON.stringify(toTransactionRaw(transaction))) +
     "\n" +
     "STATUS " +
     formatTransactionStatus(transaction, status, account),
@@ -26,8 +25,7 @@ const getTransactionStatusFormatters = {
     JSON.stringify(toTransactionStatusRaw(status, account.currency.family)),
 };
 export default {
-  description:
-    "Prepare a transaction and returns 'TransactionStatus' meta information",
+  description: "Prepare a transaction and returns 'TransactionStatus' meta information",
   args: [
     ...scanCommonOpts,
     ...inferTransactionsOpts,
@@ -43,12 +41,12 @@ export default {
     opts: ScanCommonOpts &
       InferTransactionsOpts & {
         format: string;
-      }
+      },
   ) =>
     scan(opts).pipe(
-      concatMap((account) =>
+      concatMap(account =>
         from(inferTransactions(account, opts)).pipe(
-          mergeMap((inferred) =>
+          mergeMap(inferred =>
             inferred.reduce(
               (acc, [transaction, status]) =>
                 concat(
@@ -57,25 +55,23 @@ export default {
                     transaction,
                     status,
                     account,
-                  })
+                  }),
                 ),
-              EMPTY as Observable<any>
-            )
+              EMPTY as Observable<any>,
+            ),
           ),
-          map((e) => {
+          map(e => {
             const f = getTransactionStatusFormatters[opts.format || "default"];
 
             if (!f) {
               throw new Error(
-                "getTransactionStatusFormatters: no such formatter '" +
-                  opts.format +
-                  "'"
+                "getTransactionStatusFormatters: no such formatter '" + opts.format + "'",
               );
             }
 
             return f(e);
-          })
-        )
-      )
+          }),
+        ),
+      ),
     ),
 };

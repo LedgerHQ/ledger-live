@@ -2,26 +2,26 @@ import React, { memo, useCallback, useEffect, useState } from "react";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { Account } from "@ledgerhq/types-live";
-import { TFunction } from "react-i18next";
+import type { TFunction } from "i18next";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import RecipientFieldBase from "./RecipientFieldBase";
 import RecipientFieldDomainService from "./RecipientFieldDomainService";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { OnChangeExtra } from "~/renderer/components/RecipientAddress";
 
-type Props = {
+type Props<T extends Transaction, TS extends TransactionStatus> = {
   account: Account;
-  transaction: Transaction;
+  transaction: T;
   autoFocus?: boolean;
-  status: TransactionStatus;
-  onChangeTransaction: (tx: Transaction) => void;
+  status: TS;
+  onChangeTransaction: (tx: T) => void;
   t: TFunction;
   label?: React.ReactNode;
   initValue?: string;
   resetInitValue?: () => void;
 };
 
-const RecipientField = ({
+const RecipientField = <T extends Transaction, TS extends TransactionStatus>({
   t,
   account,
   transaction,
@@ -31,14 +31,13 @@ const RecipientField = ({
   label,
   initValue,
   resetInitValue,
-}: Props) => {
+}: Props<T, TS>) => {
   const bridge = getAccountBridge(account, null);
   const [value, setValue] = useState(
     initValue || transaction?.recipientDomain?.domain || transaction.recipient || "",
   );
 
-  const { enabled: isDomainResolutionEnabled, params } =
-    useFeature<{ supportedCurrencyIds: CryptoCurrencyId[] }>("domainInputResolution") || {};
+  const { enabled: isDomainResolutionEnabled, params } = useFeature("domainInputResolution") || {};
   const isCurrencySupported =
     params?.supportedCurrencyIds?.includes(account.currency.id as CryptoCurrencyId) || false;
 
@@ -91,4 +90,4 @@ const RecipientField = ({
   );
 };
 
-export default memo(RecipientField);
+export default memo(RecipientField) as typeof RecipientField;

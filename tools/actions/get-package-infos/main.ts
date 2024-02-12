@@ -29,4 +29,4 @@ const main = async (): Promise<void> => {
   }
 };
 
-main().catch((err) => core.setFailed(err.message));
+main().catch(err => core.setFailed(err.message));

@@ -15,7 +15,7 @@ export default class GeneralSettingsPage {
   isLocalized = (localization: string) => getElementByText(localization);
 
   async togglePassword() {
-    await this.passwordSettingsSwitch().atIndex(0).tap();
+    await this.passwordSettingsSwitch().tap();
   }
 
   async enterNewPassword(passwordText: string) {

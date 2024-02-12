@@ -4,10 +4,7 @@ import {
   UnavailableTezosOriginatedAccountReceive,
 } from "@ledgerhq/errors";
 import { getEnv } from "@ledgerhq/live-env";
-import {
-  getAllDerivationModes,
-  getDerivationModesForCurrency,
-} from "../derivation";
+import { getAllDerivationModes, getDerivationModesForCurrency } from "../derivation";
 import { isCurrencySupported } from "../currencies";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
@@ -15,7 +12,7 @@ import type { DerivationMode } from "../derivation";
 
 export const shouldShowNewAccount = (
   currency: CryptoCurrency,
-  derivationMode: DerivationMode
+  derivationMode: DerivationMode,
 ): boolean => {
   const modes = getDerivationModesForCurrency(currency);
   // last mode is always creatable by convention
@@ -37,25 +34,18 @@ export const shouldShowNewAccount = (
 };
 export const getReceiveFlowError = (
   account: AccountLike,
-  parentAccount: Account | null | undefined
+  parentAccount: Account | null | undefined,
 ): Error | null | undefined => {
   if (parentAccount && parentAccount.currency.id === "tezos") {
     return new UnavailableTezosOriginatedAccountReceive("");
   }
 };
 
-export function checkAccountSupported(
-  account: Account
-): Error | null | undefined {
-  if (
-    !getAllDerivationModes().includes(account.derivationMode as DerivationMode)
-  ) {
-    return new AccountNotSupported(
-      "derivation not supported " + account.derivationMode,
-      {
-        reason: account.derivationMode,
-      }
-    );
+export function checkAccountSupported(account: Account): Error | null | undefined {
+  if (!getAllDerivationModes().includes(account.derivationMode as DerivationMode)) {
+    return new AccountNotSupported("derivation not supported " + account.derivationMode, {
+      reason: account.derivationMode,
+    });
   }
 
   if (!isCurrencySupported(account.currency)) {

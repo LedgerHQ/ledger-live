@@ -5,17 +5,14 @@ import { Trans } from "react-i18next";
 import i18next from "i18next";
 import { StellarMemoType } from "@ledgerhq/live-common/families/stellar/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import LText from "../../components/LText";
-import type { State } from "../../reducers/types";
-import { ScreenName } from "../../const";
-import makeGenericSelectScreen from "../../screens/makeGenericSelectScreen";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
-import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
-import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
-import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
+import LText from "~/components/LText";
+import type { State } from "~/reducers/types";
+import { ScreenName } from "~/const";
+import makeGenericSelectScreen from "~/screens/makeGenericSelectScreen";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
+import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
+import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 
 const items = StellarMemoType.map(type => ({
   label: type,
@@ -23,14 +20,8 @@ const items = StellarMemoType.map(type => ({
 }));
 
 type NavigationProps = BaseComposite<
-  | StackNavigatorProps<
-      SendFundsNavigatorStackParamList,
-      ScreenName.StellarEditMemoType
-    >
-  | StackNavigatorProps<
-      SignTransactionNavigatorParamList,
-      ScreenName.StellarEditMemoType
-    >
+  | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.StellarEditMemoType>
+  | StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.StellarEditMemoType>
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.StellarEditMemoType>
 >;
 
@@ -72,7 +63,7 @@ const Screen = connect(mapStateToProps)(
       memoType: item.value,
     }),
     keyExtractor: item => item.value,
-    formatItem: item => i18next.t(`stellar.memoType.${item.label}`),
+    formatItem: item => i18next.t(`stellar.memoType.${item.label}`) as React.ReactNode,
     ListHeaderComponent: () => (
       <View style={styles.memo}>
         <LText style={styles.text}>

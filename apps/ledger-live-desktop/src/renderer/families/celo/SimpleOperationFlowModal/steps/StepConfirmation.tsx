@@ -1,16 +1,15 @@
+import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import React from "react";
 import { Trans } from "react-i18next";
-import { withTheme } from "styled-components";
-import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
-import Button from "~/renderer/components/Button";
-import RetryButton from "~/renderer/components/RetryButton";
-import ErrorDisplay from "~/renderer/components/ErrorDisplay";
-import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDisclaimer";
-import * as S from "./StepConfirmation.styles";
+import Button from "~/renderer/components/Button";
+import ErrorDisplay from "~/renderer/components/ErrorDisplay";
+import RetryButton from "~/renderer/components/RetryButton";
+import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import { StepProps } from "../types";
+import * as S from "./StepConfirmation.styles";
 export const StepConfirmationFooter = ({ account, onRetry, error, onClose }: StepProps) => {
   return (
     <Box horizontal alignItems="right">
@@ -35,7 +34,13 @@ const StepConfirmation = ({ optimisticOperation, error, signed, mode }: StepProp
   if (optimisticOperation) {
     return (
       <S.Container>
-        <TrackPage category="Celo SimpleOperation" name="Step Confirmed" />
+        <TrackPage
+          category="Celo SimpleOperation"
+          name="Step Confirmed"
+          flow="stake"
+          action={mode}
+          currency="celo"
+        />
         <SuccessDisplay
           title={
             <Trans
@@ -56,7 +61,13 @@ const StepConfirmation = ({ optimisticOperation, error, signed, mode }: StepProp
   if (error) {
     return (
       <S.Container shouldSpace={signed}>
-        <TrackPage category="Celo SimpleOperation" name="Step Confirmation Error" />
+        <TrackPage
+          category="Celo SimpleOperation"
+          name="Step Confirmation Error"
+          flow="stake"
+          action={mode}
+          currency="celo"
+        />
         {signed ? (
           <BroadcastErrorDisclaimer
             title={<Trans i18nKey="celo.simpleOperation.steps.confirmation.broadcastError" />}
@@ -68,4 +79,4 @@ const StepConfirmation = ({ optimisticOperation, error, signed, mode }: StepProp
   }
   return null;
 };
-export default withTheme(StepConfirmation);
+export default StepConfirmation;

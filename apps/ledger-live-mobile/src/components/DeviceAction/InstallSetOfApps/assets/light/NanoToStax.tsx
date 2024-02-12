@@ -32,26 +32,10 @@ const NanoToStax = (
       d="M71.5 41.5a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5Zm-3.25 2.25a3.25 3.25 0 1 1 6.5 0 3.25 3.25 0 0 1-6.5 0Z"
       clipRule="evenodd"
     />
-    <Path
-      fill="#7469C9"
-      d="M114 75a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"
-      opacity={0.2}
-    />
-    <Path
-      fill="#7469C9"
-      d="M128 75a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"
-      opacity={0.4}
-    />
-    <Path
-      fill="#7469C9"
-      d="M142 75a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"
-      opacity={0.6}
-    />
-    <Path
-      fill="#7469C9"
-      d="M156 75a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"
-      opacity={0.8}
-    />
+    <Path fill="#7469C9" d="M114 75a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" opacity={0.2} />
+    <Path fill="#7469C9" d="M128 75a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" opacity={0.4} />
+    <Path fill="#7469C9" d="M142 75a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" opacity={0.6} />
+    <Path fill="#7469C9" d="M156 75a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" opacity={0.8} />
     <Path fill="#7469C9" d="M170 75a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
     <Path
       fill="#000"
@@ -59,16 +43,8 @@ const NanoToStax = (
       d="M224 48h-27v9.5h-1v-10a1.5 1.5 0 0 1 1.5-1.5H224a5 5 0 0 1 5 5v43a5 5 0 0 1-5 5h-26.5a1.5 1.5 0 0 1-1.5-1.5V97h28a3 3 0 0 0 3-3V51a3 3 0 0 0-3-3Z"
       clipRule="evenodd"
     />
-    <Path
-      fill="#000"
-      fillRule="evenodd"
-      d="M196 97V48h1v49h-1Z"
-      clipRule="evenodd"
-    />
-    <Path
-      fill="#000"
-      d="M229 54h.5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-.5.5h-.5v-8Z"
-    />
+    <Path fill="#000" fillRule="evenodd" d="M196 97V48h1v49h-1Z" clipRule="evenodd" />
+    <Path fill="#000" d="M229 54h.5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-.5.5h-.5v-8Z" />
   </Svg>
 );
 export default NanoToStax;

@@ -1,5 +1,5 @@
 import { NavigatorScreenParams } from "@react-navigation/native";
-import { NavigatorName } from "../../../const";
+import { NavigatorName } from "~/const";
 import { BaseNavigatorStackParamList } from "./BaseNavigator";
 import { BaseOnboardingNavigatorParamList } from "./BaseOnboardingNavigator";
 import { ImportAccountsNavigatorParamList } from "./ImportAccountsNavigator";

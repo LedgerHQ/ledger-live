@@ -2,7 +2,7 @@ import fs from "fs";
 import { Observable } from "rxjs";
 import { map, concatMap } from "rxjs/operators";
 export const fromNodeStream = (stream: any): Observable<Buffer> =>
-  Observable.create((o) => {
+  Observable.create(o => {
     const endHandler = () => o.complete();
 
     const errorHandler = (e: Error) => o.error(e);
@@ -22,25 +22,25 @@ export const fromFile = (file: string) =>
   fromNodeStream(file === "-" ? process.stdin : fs.createReadStream(file));
 export const apdusFromFile = (file: string) =>
   fromFile(file).pipe(
-    map((b) => b.toString()),
-    concatMap((str) =>
+    map(b => b.toString()),
+    concatMap(str =>
       str
         .replace(/ /g, "")
         .split("\n") // we supports => <= recorded files but will just clear out the <= and =>
-        .filter((line) => !line.startsWith("<=")) // we remove the responses
-        .map((line) => (line.startsWith("=>") ? line.slice(2) : line)) // we just keep the sending
-        .filter(Boolean)
+        .filter(line => !line.startsWith("<=")) // we remove the responses
+        .map(line => (line.startsWith("=>") ? line.slice(2) : line)) // we just keep the sending
+        .filter(Boolean),
     ),
-    map((line) => Buffer.from(line, "hex"))
+    map(line => Buffer.from(line, "hex")),
   );
 export const jsonFromFile = (file: string, rawValue = false): Observable<any> =>
-  Observable.create((o) => {
+  Observable.create(o => {
     let acc = "";
     let count = 0;
     return fromFile(file).subscribe({
-      error: (e) => o.error(e),
+      error: e => o.error(e),
       complete: () => o.complete(),
-      next: (chunk) => {
+      next: chunk => {
         let lastIndex = 0;
         const str = chunk.toString();
 

@@ -1,5 +1,5 @@
 import { Observable } from "rxjs";
-import { getDeviceInfoAction } from "@ledgerhq/live-common/deviceSDK/actions/getDeviceInfo"; 
+import { getDeviceInfoAction } from "@ledgerhq/live-common/deviceSDK/actions/getDeviceInfo";
 import { deviceOpt } from "../scan";
 
 export default {
@@ -14,6 +14,6 @@ export default {
       return getDeviceInfoAction({
         deviceId: device ?? "",
       }).subscribe(o);
-    })
-  }
+    });
+  },
 };

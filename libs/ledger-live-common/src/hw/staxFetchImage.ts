@@ -47,20 +47,17 @@ export type Input = {
   request: FetchImageRequest;
 };
 
-export default function fetchImage({
-  deviceId,
-  request,
-}: Input): Observable<FetchImageEvent> {
+export default function fetchImage({ deviceId, request }: Input): Observable<FetchImageEvent> {
   const { backupHash, allowedEmpty = false } = request;
 
   const sub = withDevice(deviceId)(
-    (transport) =>
-      new Observable((subscriber) => {
+    transport =>
+      new Observable(subscriber => {
         const timeoutSub = of<FetchImageEvent>({
           type: "unresponsiveDevice",
         })
           .pipe(delay(1000))
-          .subscribe((e) => subscriber.next(e));
+          .subscribe(e => subscriber.next(e));
 
         const sub = from(getDeviceInfo(transport))
           .pipe(
@@ -85,24 +82,16 @@ export default function fetchImage({
 
               // If we are here, either we didn't provide a backupHash or we are
               // not up to date with the device, in either case, continue to fetch
-              const imageLengthResponse = await transport.send(
-                0xe0,
-                0x64,
-                0x00,
-                0x00
-              );
+              const imageLengthResponse = await transport.send(0xe0, 0x64, 0x00, 0x00);
 
               const imageLengthStatus = imageLengthResponse.readUInt16BE(
-                imageLengthResponse.length - 2
+                imageLengthResponse.length - 2,
               );
 
               if (imageLengthStatus !== StatusCodes.OK) {
                 // this answer success even when no image is set, but the length of the image is 0
                 return subscriber.error(
-                  new TransportError(
-                    "Unexpected device response",
-                    imageLengthStatus.toString(16)
-                  )
+                  new TransportError("Unexpected device response", imageLengthStatus.toString(16)),
                 );
               }
 
@@ -122,34 +111,20 @@ export default function fetchImage({
                   progress: (currentOffset + 1) / imageLength,
                 });
                 // 253 bytes for data, 2 for status
-                const chunkSize = Math.min(
-                  MAX_APDU_SIZE - 2,
-                  imageLength - currentOffset
-                );
+                const chunkSize = Math.min(MAX_APDU_SIZE - 2, imageLength - currentOffset);
 
                 const chunkRequest = Buffer.alloc(5);
                 chunkRequest.writeUInt32BE(currentOffset);
                 chunkRequest.writeUInt8(chunkSize, 4);
 
-                const imageChunk = await transport.send(
-                  0xe0,
-                  0x65,
-                  0x00,
-                  0x00,
-                  chunkRequest
-                );
+                const imageChunk = await transport.send(0xe0, 0x65, 0x00, 0x00, chunkRequest);
 
-                const chunkStatus = imageChunk.readUInt16BE(
-                  imageChunk.length - 2
-                );
+                const chunkStatus = imageChunk.readUInt16BE(imageChunk.length - 2);
 
                 if (chunkStatus !== StatusCodes.OK) {
                   // TODO: map all proper errors
                   return subscriber.error(
-                    new TransportError(
-                      "Unexpected device response",
-                      chunkStatus.toString(16)
-                    )
+                    new TransportError("Unexpected device response", chunkStatus.toString(16)),
                   );
                 }
 
@@ -172,23 +147,20 @@ export default function fetchImage({
                 e instanceof DeviceOnDashboardExpected ||
                 (e &&
                   e instanceof TransportStatusError &&
-                  [0x6e00, 0x6d00, 0x6e01, 0x6d01, 0x6d02].includes(
-                    // @ts-expect-error typescript not checking against the instanceof
-                    e.statusCode
-                  ))
+                  [0x6e00, 0x6d00, 0x6e01, 0x6d01, 0x6d02].includes(e.statusCode))
               ) {
                 return from(getAppAndVersion(transport)).pipe(
-                  concatMap((appAndVersion) => {
+                  concatMap(appAndVersion => {
                     return !isDashboardName(appAndVersion.name)
                       ? attemptToQuitApp(transport, appAndVersion)
                       : of<FetchImageEvent>({
                           type: "appDetected",
                         });
-                  })
+                  }),
                 );
               }
-              return throwError(e);
-            })
+              return throwError(() => e);
+            }),
           )
           .subscribe(subscriber);
 
@@ -196,52 +168,50 @@ export default function fetchImage({
           timeoutSub.unsubscribe();
           sub.unsubscribe();
         };
-      })
+      }),
   );
 
   return sub as Observable<FetchImageEvent>;
 }
 
 // transforms from a Stax binary image format to an LLM hex string format
-const parseStaxImageFormat: (staxImageBuffer: Buffer) => Promise<string> =
-  async (staxImageBuffer) => {
-    // const width = staxImageBuffer.readUint16LE(0); // always 400
-    // const height = staxImageBuffer.readUint16LE(2); // always 672
-    const bppCompressionByte = staxImageBuffer.readUInt8(4);
+const parseStaxImageFormat: (
+  staxImageBuffer: Buffer,
+) => Promise<string> = async staxImageBuffer => {
+  // const width = staxImageBuffer.readUint16LE(0); // always 400
+  // const height = staxImageBuffer.readUint16LE(2); // always 672
+  const bppCompressionByte = staxImageBuffer.readUInt8(4);
 
-    // const bpp = bppCompressionByte >> 4; // always 2
-    const compression = bppCompressionByte & 0x0f;
+  // const bpp = bppCompressionByte >> 4; // always 2
+  const compression = bppCompressionByte & 0x0f;
 
-    const dataLengthBuffer = Buffer.from([
-      staxImageBuffer.readUInt8(5),
-      staxImageBuffer.readUInt8(6),
-      staxImageBuffer.readUInt8(7),
-      0x00,
-    ]);
+  const dataLengthBuffer = Buffer.from([
+    staxImageBuffer.readUInt8(5),
+    staxImageBuffer.readUInt8(6),
+    staxImageBuffer.readUInt8(7),
+    0x00,
+  ]);
 
-    const dataLength = dataLengthBuffer.readUInt32LE();
-    const imageData = staxImageBuffer.slice(8);
+  const dataLength = dataLengthBuffer.readUInt32LE();
+  const imageData = staxImageBuffer.slice(8);
 
-    if (compression === 0) {
-      return imageData.toString("hex");
-    }
+  if (compression === 0) {
+    return imageData.toString("hex");
+  }
 
-    let uncompressedImageData = Buffer.from([]);
+  let uncompressedImageData = Buffer.from([]);
 
-    let offset = 0;
-    while (offset < dataLength) {
-      const currentChunkSize = imageData.readUInt16LE(offset);
-      offset += 2;
+  let offset = 0;
+  while (offset < dataLength) {
+    const currentChunkSize = imageData.readUInt16LE(offset);
+    offset += 2;
 
-      const chunk = imageData.slice(offset, offset + currentChunkSize);
-      const uncompressedChunk = await ungzip(chunk);
+    const chunk = imageData.slice(offset, offset + currentChunkSize);
+    const uncompressedChunk = await ungzip(chunk);
 
-      uncompressedImageData = Buffer.concat([
-        uncompressedImageData,
-        uncompressedChunk,
-      ]);
-      offset += currentChunkSize;
-    }
+    uncompressedImageData = Buffer.concat([uncompressedImageData, uncompressedChunk]);
+    offset += currentChunkSize;
+  }
 
-    return uncompressedImageData.toString("hex");
-  };
+  return uncompressedImageData.toString("hex");
+};

@@ -8,11 +8,10 @@ import { Account, AccountRaw, Operation } from "@ledgerhq/types-live";
 /**
  * @memberof models/account
  */
-export const opRetentionStategy = (maxDaysOld: number, keepFirst: number) => (
-  op: Operation,
-  index: number,
-): boolean =>
-  index < keepFirst || Date.now() - op.date.getTime() < 1000 * 60 * 60 * 24 * maxDaysOld;
+export const opRetentionStategy =
+  (maxDaysOld: number, keepFirst: number) =>
+  (op: Operation, index: number): boolean =>
+    index < keepFirst || Date.now() - op.date.getTime() < 1000 * 60 * 60 * 24 * maxDaysOld;
 
 const opRetentionFilter = opRetentionStategy(366, 500);
 

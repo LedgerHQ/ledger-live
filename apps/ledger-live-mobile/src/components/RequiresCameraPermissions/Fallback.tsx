@@ -4,7 +4,7 @@ import Icon from "react-native-vector-icons/Feather";
 import { useTheme } from "styled-components/native";
 import { Text, Flex } from "@ledgerhq/native-ui";
 import Button from "../Button";
-import FallbackCamera from "../../icons/FallbackCamera";
+import FallbackCamera from "~/icons/FallbackCamera";
 
 type Props = {
   title: string;
@@ -14,9 +14,7 @@ type Props = {
   event: string;
 };
 
-const IconSettings = () => (
-  <Icon name="settings" size={16} color="neutral.c100" />
-);
+const IconSettings = () => <Icon name="settings" size={16} color="neutral.c100" />;
 
 const FallbackCameraBody: React.FC<Props> = ({
   title,

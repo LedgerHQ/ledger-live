@@ -1,13 +1,12 @@
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { useCallback, useState, useRef, useEffect } from "react";
-import { TFunction, Trans } from "react-i18next";
+import { TFunction } from "i18next";
+import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
-import { Account } from "@ledgerhq/types-live";
-import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import {
   MAX_NOMINATIONS,
   hasMinimumBondBalance,
@@ -17,9 +16,11 @@ import {
   useSortedValidators,
 } from "@ledgerhq/live-common/families/polkadot/react";
 import {
+  PolkadotAccount,
   PolkadotNominationInfo,
   PolkadotNomination,
   PolkadotValidator,
+  TransactionStatus,
 } from "@ledgerhq/live-common/families/polkadot/types";
 import { PolkadotValidatorsRequired } from "@ledgerhq/live-common/families/polkadot/errors";
 import { radii } from "~/renderer/styles/theme";
@@ -47,7 +48,9 @@ const DrawerWrapper = styled(Box).attrs(() => ({
   left: 0;
   width: 100%;
 `;
-const NominationError = styled(Box).attrs(p => ({
+const NominationError = styled(Box).attrs<{
+  isError?: boolean;
+}>(p => ({
   flex: 1,
   horizontal: true,
   alignItems: "center",
@@ -57,7 +60,9 @@ const NominationError = styled(Box).attrs(p => ({
   bg: "palette.background.default",
   ff: "Inter|SemiBold",
   color: p.isError ? p.theme.colors.pearl : p.theme.colors.orange,
-}))`
+}))<{
+  isError?: boolean;
+}>`
   border-style: solid;
   border-width: 1px 1px 0 1px;
   border-color: ${p => p.theme.colors.palette.divider};
@@ -80,20 +85,22 @@ const SimpleList = styled.ul`
 `;
 
 // returns the first error
-function getStatusError(status, type = "errors"): Error | undefined | null {
-  if (!status || !status[type]) return null;
-  const firstKey = Object.keys(status[type])[0];
+function getStatusError(status: TransactionStatus, type = "errors"): Error | undefined | null {
+  if (!status || !status[type as keyof TransactionStatus]) return null;
+  const firstKey = Object.keys(status[type as keyof TransactionStatus]!)[0];
+  // @ts-expect-error This is complicated to prove that type / firstKey are the right keys
   return firstKey ? status[type][firstKey] : null;
 }
+
 type Props = {
   t: TFunction;
   validators: PolkadotNominationInfo[];
   nominations: PolkadotNomination[];
-  account: Account;
+  account: PolkadotAccount;
   status: TransactionStatus;
   onChangeNominations: (updater: (a: PolkadotNominationInfo[]) => PolkadotNominationInfo[]) => void;
   bridgePending: boolean;
-  onGoToChill: Function;
+  onGoToChill: React.MouseEventHandler;
 };
 const ValidatorField = ({
   account,
@@ -116,7 +123,8 @@ const ValidatorField = ({
   };
   const preloaded = usePolkadotPreloadData();
   const { staking, validators: polkadotValidators } = preloaded;
-  const { maxNominatorRewardedPerValidator } = staking ?? {};
+  const maxNominatorRewardedPerValidator = staking?.maxNominatorRewardedPerValidator ?? 0;
+
   const SR = useSortedValidators(search, polkadotValidators, nominations);
   const hasMinBondBalance = hasMinimumBondBalance(account);
   const minimumBondBalance = BigNumber(preloaded.minimumBondBalance);
@@ -128,7 +136,7 @@ const ValidatorField = ({
     .map(nomination => nomination.address);
   const validatorsSelected = validators.length;
   const onUpdateNomination = useCallback(
-    (address, isSelected) => {
+    (address: string, isSelected: boolean) => {
       onChangeNominations(existing => {
         const update = existing.filter(v => v !== address);
         if (isSelected) {
@@ -139,7 +147,7 @@ const ValidatorField = ({
     },
     [onChangeNominations],
   );
-  const containerRef = useRef();
+  const containerRef = useRef<HTMLDivElement>(null);
   const explorerView = getDefaultExplorerView(account.currency);
   const onExternalLink = useCallback(
     (address: string) => {
@@ -148,7 +156,10 @@ const ValidatorField = ({
     },
     [explorerView],
   );
-  const onSearch = useCallback(evt => setSearch(evt.target.value), [setSearch]);
+  const onSearch = useCallback(
+    (evt: React.ChangeEvent<HTMLInputElement>) => setSearch(evt.target.value),
+    [setSearch],
+  );
 
   /** auto focus first input on mount */
   useEffect(() => {
@@ -158,7 +169,7 @@ const ValidatorField = ({
     }
   }, []);
   const renderItem = useCallback(
-    (validator: PolkadotValidator, i) => {
+    (validator: PolkadotValidator, i: number): React.ReactNode => {
       const isSelected = validators.indexOf(validator.address) > -1;
       const disabled = validators.length >= MAX_NOMINATIONS;
       return (
@@ -210,7 +221,7 @@ const ValidatorField = ({
           </SimpleList>
         </Alert>
       ) : null}
-      <ValidatorSearchInput id="nominate-search-bar" search={search} onSearch={onSearch} />
+      <ValidatorSearchInput search={search} onSearch={onSearch} />
       <ValidatorListHeader
         votesSelected={validatorsSelected}
         votesAvailable={MAX_NOMINATIONS}
@@ -232,7 +243,7 @@ const ValidatorField = ({
         />
         {!ignoreError && (error || warning) && (
           <DrawerWrapper>
-            <NominationError isError={!!error} isWarning={!!warning}>
+            <NominationError isError={!!error}>
               <Ellipsis>
                 <TranslatedError error={error || warning} />
               </Ellipsis>

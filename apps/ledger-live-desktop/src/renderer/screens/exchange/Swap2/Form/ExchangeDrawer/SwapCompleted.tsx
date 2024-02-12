@@ -13,6 +13,7 @@ import IconCheck from "~/renderer/icons/Check";
 import IconClock from "~/renderer/icons/Clock";
 import { openURL } from "~/renderer/linking";
 import { colors } from "~/renderer/styles/theme";
+
 const IconWrapper = styled(Box)`
   background: ${colors.lightGreen};
   color: ${colors.positiveGreen};
@@ -63,6 +64,7 @@ const WrapperClock = styled(Box).attrs(() => ({
   right: -2px;
   padding: 2px;
 `;
+
 const SwapCompleted = ({
   swapId,
   provider,
@@ -75,6 +77,7 @@ const SwapCompleted = ({
   const openProviderSupport = useCallback(() => {
     openURL(urls.swap.providers[provider as keyof typeof urls.swap.providers]?.support);
   }, [provider]);
+
   const SwapPill = ({ swapId }: { swapId: string }) => (
     <SwapIdWrapper>
       <Pill color="palette.text.shade100" ff="Inter|SemiBold" fontSize={4} data-test-id="swap-id">
@@ -85,6 +88,7 @@ const SwapCompleted = ({
       </GradientHover>
     </SwapIdWrapper>
   );
+
   return (
     <Box alignItems="center">
       <IconWrapper>
@@ -126,4 +130,5 @@ const SwapCompleted = ({
     </Box>
   );
 };
+
 export default SwapCompleted;

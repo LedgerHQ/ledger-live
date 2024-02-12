@@ -30,10 +30,7 @@ const Restore = ({
       </Flex>
       <Text variant="h5" fontWeight="bold" textAlign="center">
         {deviceName ? (
-          <Trans
-            i18nKey="installSetOfApps.restore.title"
-            values={{ deviceName }}
-          />
+          <Trans i18nKey="installSetOfApps.restore.title" values={{ deviceName }} />
         ) : (
           <Trans i18nKey="installSetOfApps.restore.titleNoDeviceName" />
         )}

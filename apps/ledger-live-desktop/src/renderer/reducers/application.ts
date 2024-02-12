@@ -1,12 +1,11 @@
 import { handleActions } from "redux-actions";
 import { getParsedSystemLocale } from "~/helpers/systemLocale";
-import { getLanguages } from "~/config/languages";
+import { LanguageIds } from "~/config/languages";
 import { LangAndRegion } from "~/renderer/reducers/settings";
 import { Handlers } from "./types";
 export type ApplicationState = {
   isLocked?: boolean;
   hasPassword?: boolean;
-  dismissedCarousel?: boolean;
   osDarkMode?: boolean;
   osLanguage?: LangAndRegion;
   navigationLocked?: boolean;
@@ -15,8 +14,7 @@ export type ApplicationState = {
   };
 };
 const { language, region } = getParsedSystemLocale();
-const languages = getLanguages();
-const osLangSupported = languages.includes(language);
+const osLangSupported = LanguageIds.includes(language);
 const state: ApplicationState = {
   osDarkMode: window.matchMedia("(prefers-color-scheme: dark)").matches,
   osLanguage: {
@@ -25,7 +23,6 @@ const state: ApplicationState = {
     useSystem: true,
   },
   hasPassword: false,
-  dismissedCarousel: false,
   debug: {
     alwaysShowSkeletons: false,
   },
@@ -55,8 +52,6 @@ export const isLocked = (state: { application: ApplicationState }) =>
   state.application.isLocked === true;
 export const hasPasswordSelector = (state: { application: ApplicationState }) =>
   state.application.hasPassword === true;
-export const hasDismissedCarouselSelector = (state: { application: ApplicationState }) =>
-  state.application.dismissedCarousel === true;
 export const osDarkModeSelector = (state: { application: ApplicationState }) =>
   state.application.osDarkMode;
 export const alwaysShowSkeletonsSelector = (state: { application: ApplicationState }) =>
@@ -69,6 +64,6 @@ export const isNavigationLocked = (state: { application: ApplicationState }) =>
 // Exporting reducer
 
 export default handleActions<ApplicationState, HandlersPayloads[keyof HandlersPayloads]>(
-  (handlers as unknown) as ApplicationHandlers<false>,
+  handlers as unknown as ApplicationHandlers<false>,
   state,
 );

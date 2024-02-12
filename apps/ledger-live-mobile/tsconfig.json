@@ -4,18 +4,18 @@
     "allowJs": false,
     "checkJs": false,
     "jsx": "react-native",
-    "lib": ["es2017"],
+    "lib": ["es2017", "DOM"],
     "types": ["jest", "@testing-library/jest-native/extend-expect"],
     "noEmit": true,
     "target": "esnext",
-    "incremental": true
+    "incremental": true,
+    "baseUrl": ".",
+    "rootDir": ".",
+    "paths": {
+      "~/*": ["src/*"],
+      "@tests/*": ["src/__tests__/*"]
+    }
   },
   "include": ["src/**/*", "e2e/**/*", "**/*.d.ts", "services/**/*"],
-  "exclude": [
-    "node_modules",
-    "babel.config.js",
-    "metro.config.js",
-    "jest.config.js",
-    "**/*.js"
-  ]
+  "exclude": ["node_modules", "babel.config.js", "metro.config.js", "jest.config.js", "**/*.js"]
 }

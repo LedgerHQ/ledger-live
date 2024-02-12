@@ -1,6 +1,10 @@
 import cbor from "@zondax/cbor";
-import { Transaction } from "../../types";
+import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+
+import { Transaction } from "../../types";
+import { getAddress } from "./utils";
+import { validateAddress } from "./addresses";
 
 const bigNumberToArray = (v: BigNumber) => {
   let tmp;
@@ -24,30 +28,27 @@ const bigNumberToArray = (v: BigNumber) => {
 };
 
 export const toCBOR = (
-  from: Buffer,
-  recipient: Buffer,
-  tx: Transaction
-): Buffer => {
-  const {
-    method,
-    version,
-    nonce,
-    gasLimit,
-    gasPremium,
-    gasFeeCap,
-    params,
-    amount,
-  } = tx;
+  account: Account,
+  tx: Transaction,
+): { txPayload: Buffer; parsedRecipient: string; parsedSender: string } => {
+  const { address: from } = getAddress(account);
+  const { method, version, nonce, gasLimit, gasPremium, gasFeeCap, params, amount, recipient } = tx;
   const answer: any[] = [];
+
+  const recipientValidation = validateAddress(recipient);
+  const fromValidation = validateAddress(from);
+
+  if (!recipientValidation.isValid || !fromValidation.isValid)
+    throw new Error("recipient and/or from address are not valid");
 
   // "version" field
   answer.push(version);
 
   // "to" field
-  answer.push(recipient);
+  answer.push(recipientValidation.parsedAddress.toBytes());
 
   // "from" field
-  answer.push(from);
+  answer.push(fromValidation.parsedAddress.toBytes());
 
   // "nonce" field
   answer.push(nonce);
@@ -73,5 +74,9 @@ export const toCBOR = (
   if (params) answer.push(params);
   else answer.push(Buffer.alloc(0));
 
-  return cbor.encode(answer);
+  return {
+    txPayload: cbor.encode(answer),
+    parsedRecipient: recipientValidation.parsedAddress.toString(),
+    parsedSender: fromValidation.parsedAddress.toString(),
+  };
 };

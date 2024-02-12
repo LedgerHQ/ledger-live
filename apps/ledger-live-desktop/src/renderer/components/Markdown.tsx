@@ -132,7 +132,7 @@ export const Notes = styled(Box).attrs(() => ({
 `;
 export const Terms = Notes;
 type Props = {
-  children: React.ReactNode;
+  children: string;
 };
 
 export default class Markdown extends PureComponent<Props> {
@@ -156,6 +156,7 @@ export default class Markdown extends PureComponent<Props> {
     const { children } = this.props;
     return (
       <div id="terms-markdown" ref={c => (this.parent = c)}>
+        {/* @ts-expect-error ReactMarkdown being weird, also we are using v4, and v8 has been out for a while */}
         <ReactMarkdown>{children}</ReactMarkdown>
       </div>
     );

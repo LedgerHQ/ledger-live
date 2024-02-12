@@ -5,19 +5,16 @@ import { Box, Text } from "@ledgerhq/native-ui";
 import { Trans, useTranslation } from "react-i18next";
 import { StyleSheet, View, FlatList } from "react-native";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
-import { nftsByCollections } from "@ledgerhq/live-common/nft/index";
+import { nftsByCollections } from "@ledgerhq/live-nft";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { Account, ProtoNFT } from "@ledgerhq/types-live";
-import {
-  ChevronRightMedium,
-  PlusMedium,
-} from "@ledgerhq/native-ui/assets/icons";
-import NftCollectionOptionsMenu from "../../components/Nft/NftCollectionOptionsMenu";
-import { hiddenNftCollectionsSelector } from "../../reducers/settings";
-import NftCollectionRow from "../../components/Nft/NftCollectionRow";
-import { NavigatorName, ScreenName } from "../../const";
-import Button from "../../components/wrappedUi/Button";
-import Touchable from "../../components/Touchable";
+import { ChevronRightMedium, PlusMedium } from "@ledgerhq/native-ui/assets/icons";
+import NftCollectionOptionsMenu from "~/components/Nft/NftCollectionOptionsMenu";
+import { hiddenNftCollectionsSelector } from "~/reducers/settings";
+import NftCollectionRow from "~/components/Nft/NftCollectionRow";
+import { NavigatorName, ScreenName } from "~/const";
+import Button from "~/components/wrappedUi/Button";
+import Touchable from "~/components/Touchable";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
 
 const MAX_COLLECTIONS_TO_SHOW = 3;
@@ -38,17 +35,16 @@ export default function NftCollectionsList({ account }: Props) {
   const nftCollections = useMemo(
     () =>
       Object.entries(nftsByCollections(nfts)).filter(
-        ([contract]) =>
-          !hiddenNftCollections.includes(`${account.id}|${contract}`),
+        ([contract]) => !hiddenNftCollections.includes(`${account.id}|${contract}`),
       ),
     [account.id, hiddenNftCollections, nfts],
   ) as [string, ProtoNFT[]][];
 
   const [isCollectionMenuOpen, setIsCollectionMenuOpen] = useState(false);
-  const [selectedCollection, setSelectedCollection] = useState();
+  const [selectedCollection, setSelectedCollection] = useState<ProtoNFT[]>();
 
   const onSelectCollection = useCallback(
-    collection => {
+    (collection: ProtoNFT[]) => {
       setSelectedCollection(collection);
       setIsCollectionMenuOpen(true);
     },
@@ -56,10 +52,7 @@ export default function NftCollectionsList({ account }: Props) {
   );
 
   const data = useMemo(
-    () =>
-      nftCollections
-        .slice(0, MAX_COLLECTIONS_TO_SHOW)
-        .map(([, collection]) => collection),
+    () => nftCollections.slice(0, MAX_COLLECTIONS_TO_SHOW).map(([, collection]) => collection),
     [nftCollections],
   );
 
@@ -75,7 +68,7 @@ export default function NftCollectionsList({ account }: Props) {
   );
 
   const navigateToCollection = useCallback(
-    collection =>
+    (collection: ProtoNFT[]) =>
       navigation.navigate(NavigatorName.Accounts, {
         screen: ScreenName.NftCollection,
         params: {
@@ -131,10 +124,7 @@ export default function NftCollectionsList({ account }: Props) {
           <Trans i18nKey="nft.account.seeAllNfts" />
         </Button>
       ) : (
-        <Touchable
-          event="AccountReceiveSubAccount"
-          onPress={navigateToReceiveConnectDevice}
-        >
+        <Touchable event="AccountReceiveSubAccount" onPress={navigateToReceiveConnectDevice}>
           <View
             style={[
               styles.footer,
@@ -146,10 +136,7 @@ export default function NftCollectionsList({ account }: Props) {
             <PlusMedium color={"primary.c80"} size={26} />
             <View style={styles.footerText}>
               <Text variant={"large"}>
-                <Trans
-                  i18nKey={`account.nft.howTo`}
-                  values={{ currency: account.currency.family }}
-                >
+                <Trans i18nKey={`account.nft.howTo`} values={{ currency: account.currency.family }}>
                   <Text variant={"large"} fontWeight={"semiBold"}>
                     PLACEHOLDER_TEXT
                   </Text>

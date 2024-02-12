@@ -8,9 +8,9 @@ import SideProvider, { setSide } from "./Provider";
 
 const DummyContentWrapper = styled.div`
   width: 100%;
-  background-color: ${(p) => p.color};
+  background-color: ${p => p.color};
   align-items: center;
-  padding: ${(p) => p.theme.space[4]}px;
+  padding: ${p => p.theme.space[4]}px;
 `;
 
 const onBackLvl1 = () =>
@@ -83,7 +83,6 @@ export default {
     title: {
       type: "text",
       description: "Side default title",
-      defaultValue: "Default title",
       control: {
         type: "text",
       },
@@ -98,6 +97,10 @@ export default {
         type: "boolean",
       },
     },
+  },
+  args: {
+    title: "Default title",
+    isOpen: true,
   },
 };
 

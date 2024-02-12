@@ -8,11 +8,11 @@ import { createStructuredSelector } from "reselect";
 import { encode, Settings } from "@ledgerhq/live-common/cross";
 import { dataToFrames } from "qrloop";
 import { Account } from "@ledgerhq/types-live";
-import { accountsSelector } from "../../../../reducers/accounts";
-import { exportSettingsSelector } from "../../../../reducers/settings";
-import LText from "../../../../components/LText";
-import NavigationScrollView from "../../../../components/NavigationScrollView";
-import { State } from "../../../../reducers/types";
+import { accountsSelector } from "~/reducers/accounts";
+import { exportSettingsSelector } from "~/reducers/settings";
+import LText from "~/components/LText";
+import NavigationScrollView from "~/components/NavigationScrollView";
+import { State } from "~/reducers/types";
 
 export type Props = {
   accounts: Account[];

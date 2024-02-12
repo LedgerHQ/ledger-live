@@ -53,8 +53,8 @@ Speculos TCP transport implementation
 
 #### Parameters
 
-*   `instance` **AxiosInstance** 
-*   `opts` **SpeculosHttpTransportOpts** 
+*   `instance` **AxiosInstance**&#x20;
+*   `opts` **SpeculosHttpTransportOpts**&#x20;
 
 #### Examples
 
@@ -71,6 +71,6 @@ buttons available: left, right, both
 
 ##### Parameters
 
-*   `but` **any** 
+*   `but` **any**&#x20;
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<void>** 
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<void>**&#x20;

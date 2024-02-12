@@ -10,40 +10,31 @@ import {
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { Transaction as RippleTransaction } from "@ledgerhq/live-common/families/ripple/types";
-import SummaryRow from "../../screens/SendFunds/SummaryRow";
-import LText from "../../components/LText";
-import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import CounterValue from "../../components/CounterValue";
-import ExternalLink from "../../icons/ExternalLink";
-import { urls } from "../../config/urls";
-import { ScreenName } from "../../const";
-import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
+import SummaryRow from "~/screens/SendFunds/SummaryRow";
+import LText from "~/components/LText";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import CounterValue from "~/components/CounterValue";
+import ExternalLink from "~/icons/ExternalLink";
+import { urls } from "~/utils/urls";
+import { ScreenName } from "~/const";
+import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import type {
   BaseComposite,
   StackNavigatorNavigation,
   StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
-import type { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
-import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
-import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
+} from "~/components/RootNavigator/types/helpers";
+import type { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
+import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
+import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 
 type Navigation = CompositeNavigationProp<
-  StackNavigatorNavigation<
-    SendFundsNavigatorStackParamList,
-    ScreenName.SendSummary
-  >,
+  StackNavigatorNavigation<SendFundsNavigatorStackParamList, ScreenName.SendSummary>,
   StackNavigatorNavigation<BaseNavigatorStackParamList>
 >;
 
 type Route = BaseComposite<
-  | StackNavigatorProps<
-      SendFundsNavigatorStackParamList,
-      ScreenName.SendSummary
-    >
-  | StackNavigatorProps<
-      SignTransactionNavigatorParamList,
-      ScreenName.SignTransactionSummary
-    >
+  | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
+  | StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.SignTransactionSummary>
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>
 >["route"];
 
@@ -52,11 +43,8 @@ type Props = {
   parentAccount?: Account | null;
   transaction: Transaction;
 };
-export default function RippleFeeRow({
-  account,
-  transaction,
-  parentAccount,
-}: Props) {
+
+export default function RippleFeeRow({ account, transaction, parentAccount }: Props) {
   const { colors } = useTheme();
   const navigation = useNavigation<Navigation>();
   const route = useRoute<Route>();
@@ -92,10 +80,7 @@ export default function RippleFeeRow({
         <View style={styles.accountContainer}>
           {fee ? (
             <LText style={styles.valueText}>
-              <CurrencyUnitValue
-                unit={feeCustomUnit || account.unit}
-                value={fee}
-              />
+              <CurrencyUnitValue unit={feeCustomUnit || account.unit} value={fee} />
             </LText>
           ) : null}
 
@@ -113,14 +98,13 @@ export default function RippleFeeRow({
           </LText>
         </View>
         <LText style={styles.countervalue} color="grey">
-          {fee ? (
-            <CounterValue before="≈ " value={fee} currency={account.currency} />
-          ) : null}
+          {fee ? <CounterValue before="≈ " value={fee} currency={account.currency} /> : null}
         </LText>
       </View>
     </SummaryRow>
   );
 }
+
 const styles = StyleSheet.create({
   accountContainer: {
     flex: 1,

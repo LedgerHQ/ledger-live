@@ -1,11 +1,11 @@
-import React, { PureComponent } from "react";
-import { View, StyleSheet } from "react-native";
-import { BigNumber } from "bignumber.js";
 import { shortAddressPreview } from "@ledgerhq/live-common/account/index";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 import { useTheme } from "@react-navigation/native";
-import LText from "./LText";
+import { BigNumber } from "bignumber.js";
+import React from "react";
+import { StyleSheet, View } from "react-native";
 import CurrencyUnitValue from "./CurrencyUnitValue";
+import LText from "./LText";
 
 const styles = StyleSheet.create({
   dataRow: {
@@ -65,11 +65,7 @@ export function DataRow({
       ]}
     >
       {label ? (
-        <LText
-          numberOfLines={numberOfLines ?? 1}
-          style={styles.dataRowLabel}
-          color="grey"
-        >
+        <LText numberOfLines={numberOfLines ?? 1} style={styles.dataRowLabel} color="grey">
           {label}
         </LText>
       ) : null}
@@ -96,11 +92,7 @@ export function TextValueField({
         },
       ]}
     >
-      <LText
-        numberOfLines={numberOfLines}
-        style={styles.dataRowLabel}
-        color="grey"
-      >
+      <LText numberOfLines={numberOfLines} style={styles.dataRowLabel} color="grey">
         {label}
       </LText>
       <LText numberOfLines={numberOfLines} style={styles.dataRowValue}>
@@ -172,11 +164,7 @@ export function DataColumn({
       ]}
     >
       {label ? (
-        <LText
-          numberOfLines={numberOfLines ?? 1}
-          style={styles.dataRowLabel}
-          color="grey"
-        >
+        <LText numberOfLines={numberOfLines ?? 1} style={styles.dataRowLabel} color="grey">
           {label}
         </LText>
       ) : null}
@@ -184,19 +172,19 @@ export function DataColumn({
     </View>
   );
 }
-export class DataRowUnitValue extends PureComponent<{
+
+type Props = {
   label: React.ReactNode;
   value: BigNumber;
   unit: Unit;
-}> {
-  render() {
-    const { label, value, unit } = this.props;
-    return (
-      <DataRow label={label}>
-        <LText semiBold style={styles.dataRowValue}>
-          <CurrencyUnitValue unit={unit} value={value} disableRounding />
-        </LText>
-      </DataRow>
-    );
-  }
-}
+};
+
+export const DataRowUnitValue = ({ label, value, unit }: Props) => {
+  return (
+    <DataRow label={label}>
+      <LText semiBold style={styles.dataRowValue}>
+        <CurrencyUnitValue unit={unit} value={value} disableRounding />
+      </LText>
+    </DataRow>
+  );
+};

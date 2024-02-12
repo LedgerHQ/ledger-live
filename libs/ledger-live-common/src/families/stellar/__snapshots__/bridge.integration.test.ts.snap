@@ -1,15 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`stellar currency bridge scanAccounts stellar seed 1 1`] = `
-Array [
-  Object {
+[
+  {
     "balance": "341064600",
     "currencyId": "stellar",
     "derivationMode": "sep5",
     "freshAddress": "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
     "freshAddressPath": "44'/148'/0'",
-    "freshAddresses": Array [
-      Object {
+    "freshAddresses": [
+      {
         "address": "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
         "derivationPath": "44'/148'/0'",
       },
@@ -19,24 +19,24 @@ Array [
     "name": "Stellar 1",
     "nfts": undefined,
     "operationsCount": 52,
-    "pendingOperations": Array [],
+    "pendingOperations": [],
     "seedIdentifier": "27c586f8499294c64d57f8d7956eef4431de58ab20e1c88001f6cf131c97d6f3",
     "spendableBalance": "311064500",
     "starred": false,
-    "subAccounts": Array [],
-    "swapHistory": Array [],
+    "subAccounts": [],
+    "swapHistory": [],
     "syncHash": undefined,
     "unitMagnitude": 7,
     "used": true,
   },
-  Object {
+  {
     "balance": "89999825",
     "currencyId": "stellar",
     "derivationMode": "sep5",
     "freshAddress": "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
     "freshAddressPath": "44'/148'/1'",
-    "freshAddresses": Array [
-      Object {
+    "freshAddresses": [
+      {
         "address": "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
         "derivationPath": "44'/148'/1'",
       },
@@ -46,24 +46,24 @@ Array [
     "name": "Stellar 2",
     "nfts": undefined,
     "operationsCount": 17,
-    "pendingOperations": Array [],
+    "pendingOperations": [],
     "seedIdentifier": "27c586f8499294c64d57f8d7956eef4431de58ab20e1c88001f6cf131c97d6f3",
     "spendableBalance": "79999725",
     "starred": false,
-    "subAccounts": Array [],
-    "swapHistory": Array [],
+    "subAccounts": [],
+    "swapHistory": [],
     "syncHash": undefined,
     "unitMagnitude": 7,
     "used": true,
   },
-  Object {
+  {
     "balance": "59999325",
     "currencyId": "stellar",
     "derivationMode": "sep5",
     "freshAddress": "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
     "freshAddressPath": "44'/148'/2'",
-    "freshAddresses": Array [
-      Object {
+    "freshAddresses": [
+      {
         "address": "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
         "derivationPath": "44'/148'/2'",
       },
@@ -73,24 +73,24 @@ Array [
     "name": "Stellar 3",
     "nfts": undefined,
     "operationsCount": 10,
-    "pendingOperations": Array [],
+    "pendingOperations": [],
     "seedIdentifier": "27c586f8499294c64d57f8d7956eef4431de58ab20e1c88001f6cf131c97d6f3",
     "spendableBalance": "44999225",
     "starred": false,
-    "subAccounts": Array [],
-    "swapHistory": Array [],
+    "subAccounts": [],
+    "swapHistory": [],
     "syncHash": undefined,
     "unitMagnitude": 7,
     "used": true,
   },
-  Object {
+  {
     "balance": "20145800",
     "currencyId": "stellar",
     "derivationMode": "sep5",
     "freshAddress": "GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC",
     "freshAddressPath": "44'/148'/3'",
-    "freshAddresses": Array [
-      Object {
+    "freshAddresses": [
+      {
         "address": "GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC",
         "derivationPath": "44'/148'/3'",
       },
@@ -100,24 +100,24 @@ Array [
     "name": "Stellar 4",
     "nfts": undefined,
     "operationsCount": 14,
-    "pendingOperations": Array [],
+    "pendingOperations": [],
     "seedIdentifier": "27c586f8499294c64d57f8d7956eef4431de58ab20e1c88001f6cf131c97d6f3",
     "spendableBalance": "10145700",
     "starred": false,
-    "subAccounts": Array [],
-    "swapHistory": Array [],
+    "subAccounts": [],
+    "swapHistory": [],
     "syncHash": undefined,
     "unitMagnitude": 7,
     "used": true,
   },
-  Object {
+  {
     "balance": "10000000",
     "currencyId": "stellar",
     "derivationMode": "sep5",
     "freshAddress": "GBQMOU2WYJUP6AKY53FFKZJGQMDWCMTWSOUTZ5DVIAQPVW7AJUHSX2M5",
     "freshAddressPath": "44'/148'/4'",
-    "freshAddresses": Array [
-      Object {
+    "freshAddresses": [
+      {
         "address": "GBQMOU2WYJUP6AKY53FFKZJGQMDWCMTWSOUTZ5DVIAQPVW7AJUHSX2M5",
         "derivationPath": "44'/148'/4'",
       },
@@ -127,24 +127,24 @@ Array [
     "name": "Stellar 5",
     "nfts": undefined,
     "operationsCount": 3,
-    "pendingOperations": Array [],
+    "pendingOperations": [],
     "seedIdentifier": "27c586f8499294c64d57f8d7956eef4431de58ab20e1c88001f6cf131c97d6f3",
     "spendableBalance": "0",
     "starred": false,
-    "subAccounts": Array [],
-    "swapHistory": Array [],
+    "subAccounts": [],
+    "swapHistory": [],
     "syncHash": undefined,
     "unitMagnitude": 7,
     "used": true,
   },
-  Object {
+  {
     "balance": "0",
     "currencyId": "stellar",
     "derivationMode": "sep5",
     "freshAddress": "GAJEKFXY76YWDSKJESDOKS2EGKRMCHSIC5AU32SU7OF54E5VVREUHXLH",
     "freshAddressPath": "44'/148'/5'",
-    "freshAddresses": Array [
-      Object {
+    "freshAddresses": [
+      {
         "address": "GAJEKFXY76YWDSKJESDOKS2EGKRMCHSIC5AU32SU7OF54E5VVREUHXLH",
         "derivationPath": "44'/148'/5'",
       },
@@ -154,12 +154,12 @@ Array [
     "name": "Stellar 6",
     "nfts": undefined,
     "operationsCount": 0,
-    "pendingOperations": Array [],
+    "pendingOperations": [],
     "seedIdentifier": "27c586f8499294c64d57f8d7956eef4431de58ab20e1c88001f6cf131c97d6f3",
     "spendableBalance": "0",
     "starred": false,
-    "subAccounts": Array [],
-    "swapHistory": Array [],
+    "subAccounts": [],
+    "swapHistory": [],
     "syncHash": undefined,
     "unitMagnitude": 7,
     "used": false,
@@ -168,19 +168,15 @@ Array [
 `;
 
 exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
-Array [
-  Array [
-    Object {
+[
+  [
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 27766392,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "OUT",
-        "memo": null,
         "pagingToken": "119255745567977473",
       },
       "fee": "100",
@@ -188,10 +184,10 @@ Array [
       "hash": "046f4a64e6bba9ace4e5a0bd49036f7612a99982d8c5f32926cbf58dc7a3bc07",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-046f4a64e6bba9ace4e5a0bd49036f7612a99982d8c5f32926cbf58dc7a3bc07-OUT",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -200,17 +196,13 @@ Array [
       "type": "OUT",
       "value": "10000000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 27952591,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "OUT",
-        "memo": null,
         "pagingToken": "120055464183619585",
       },
       "fee": "100",
@@ -218,10 +210,10 @@ Array [
       "hash": "0489921c8cf5dae8620dfedf273c77c4d3eb54fb51794395e267ccde173b2fbd",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-0489921c8cf5dae8620dfedf273c77c4d3eb54fb51794395e267ccde173b2fbd-OUT",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -230,17 +222,13 @@ Array [
       "type": "OUT",
       "value": "10000000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 29205836,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "OUT",
-        "memo": null,
         "pagingToken": "125438110472704001",
       },
       "fee": "100",
@@ -248,10 +236,10 @@ Array [
       "hash": "0492d31e3cf8cc04cdbf652b9e263361640b9d0f6953bc8221b2dbad1c59239a",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-0492d31e3cf8cc04cdbf652b9e263361640b9d0f6953bc8221b2dbad1c59239a-OUT",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -260,15 +248,12 @@ Array [
       "type": "OUT",
       "value": "10000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 27890199,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "OUT",
         "memo": "3",
         "pagingToken": "119787492583981057",
@@ -278,10 +263,10 @@ Array [
       "hash": "05affa5c85544e750ff01ec0afb243b17d49b894195c719fdf91db786de511a6",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-05affa5c85544e750ff01ec0afb243b17d49b894195c719fdf91db786de511a6-OUT",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -290,17 +275,13 @@ Array [
       "type": "OUT",
       "value": "10000000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 28194270,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "OUT",
-        "memo": null,
         "pagingToken": "121093467584729089",
       },
       "fee": "100",
@@ -308,10 +289,10 @@ Array [
       "hash": "0a9332fab11e5f3e93b6a9b2b41effcbe50cd51f4064089bf7c9dca8aab664fe",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-0a9332fab11e5f3e93b6a9b2b41effcbe50cd51f4064089bf7c9dca8aab664fe-OUT",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GBQMOU2WYJUP6AKY53FFKZJGQMDWCMTWSOUTZ5DVIAQPVW7AJUHSX2M5",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -320,17 +301,13 @@ Array [
       "type": "OUT",
       "value": "10000000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 27736926,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "OUT",
-        "memo": null,
         "pagingToken": "119129190061592577",
       },
       "fee": "100",
@@ -338,10 +315,10 @@ Array [
       "hash": "1b5ffdaa7e2c0f20e2adc109a5a7128086bb51c1da9abb93f64ed2c359c2b83f",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-1b5ffdaa7e2c0f20e2adc109a5a7128086bb51c1da9abb93f64ed2c359c2b83f-OUT",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GDWDBMV7VPHFHDQXIBYJJVLVAXF4NIL5SCFETGDN3LFK3X37LMCCRPYR",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -350,17 +327,13 @@ Array [
       "type": "OUT",
       "value": "10000000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 29205667,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "OUT",
-        "memo": null,
         "pagingToken": "125437384622931969",
       },
       "fee": "100",
@@ -368,10 +341,10 @@ Array [
       "hash": "20fd7a667f5b82e3ffac3688cadeb03ddf34d024178309b2292a99e922e4fcb3",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-20fd7a667f5b82e3ffac3688cadeb03ddf34d024178309b2292a99e922e4fcb3-OUT",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -380,15 +353,12 @@ Array [
       "type": "OUT",
       "value": "1000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 28318748,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "OUT",
         "memo": "1",
         "pagingToken": "121628096523747329",
@@ -398,10 +368,10 @@ Array [
       "hash": "23d408a0e82cc0ac1099a9c828096ca6c65554e2c2486df92a7cfe485ae92a97",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-23d408a0e82cc0ac1099a9c828096ca6c65554e2c2486df92a7cfe485ae92a97-OUT",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -410,17 +380,13 @@ Array [
       "type": "OUT",
       "value": "10000000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 27222055,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "IN",
-        "memo": null,
         "pagingToken": "116917835955011585",
       },
       "fee": "100",
@@ -428,10 +394,10 @@ Array [
       "hash": "30a8756bf5c44c8ca6a14aeb3804567a4b1cf34ddc5c3b50672aa18e76b50a71",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-30a8756bf5c44c8ca6a14aeb3804567a4b1cf34ddc5c3b50672aa18e76b50a71-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
-      "senders": Array [
+      "senders": [
         "GAKIUNMYLO4BBWTQA3ELZO3BM3W3YP4MO3HSLP4FAHRF56YKQYITFB7Q",
       ],
       "standard": undefined,
@@ -440,17 +406,13 @@ Array [
       "type": "IN",
       "value": "750000000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 27746937,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "OUT",
-        "memo": null,
         "pagingToken": "119172186979196929",
       },
       "fee": "100",
@@ -458,10 +420,10 @@ Array [
       "hash": "3199a930cce7f1ead8ffe0862d7012b82fb8cea3bf1a6d71465da86c51ac758e",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-3199a930cce7f1ead8ffe0862d7012b82fb8cea3bf1a6d71465da86c51ac758e-OUT",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GDWDBMV7VPHFHDQXIBYJJVLVAXF4NIL5SCFETGDN3LFK3X37LMCCRPYR",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -470,17 +432,13 @@ Array [
       "type": "OUT",
       "value": "10000000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 28379715,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "OUT",
-        "memo": null,
         "pagingToken": "121889947794821121",
       },
       "fee": "100",
@@ -488,10 +446,10 @@ Array [
       "hash": "3410664d432d0533d8f3d8ee65b486804abe1cf9e622f442077369644eab85c4",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-3410664d432d0533d8f3d8ee65b486804abe1cf9e622f442077369644eab85c4-OUT",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GB5ENPTOCLM6LFP5L4YC4ZOBOTBQ2VTZXPPGTGUVH6JTTVQFFOUXR772",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -500,17 +458,13 @@ Array [
       "type": "OUT",
       "value": "50000100",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 28114251,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "OUT",
-        "memo": null,
         "pagingToken": "120749788596604929",
       },
       "fee": "100",
@@ -518,10 +472,10 @@ Array [
       "hash": "39ec4c35d0e3c0ff141af3ad0288c62b80747822b72ca458b83d33f4c2d5f339",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-39ec4c35d0e3c0ff141af3ad0288c62b80747822b72ca458b83d33f4c2d5f339-OUT",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -530,17 +484,13 @@ Array [
       "type": "OUT",
       "value": "10000000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 27963532,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "IN",
-        "memo": null,
         "pagingToken": "120102455420669953",
       },
       "fee": "100",
@@ -548,10 +498,10 @@ Array [
       "hash": "3eee721816da039e7b9a30fa283dcbd1b10fe7fab64ccada7dbab3db7e5cfe19",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-3eee721816da039e7b9a30fa283dcbd1b10fe7fab64ccada7dbab3db7e5cfe19-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
-      "senders": Array [
+      "senders": [
         "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
       ],
       "standard": undefined,
@@ -560,17 +510,13 @@ Array [
       "type": "IN",
       "value": "10000000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 29107888,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "OUT",
-        "memo": null,
         "pagingToken": "125017427015831553",
       },
       "fee": "100",
@@ -578,10 +524,10 @@ Array [
       "hash": "4366cffe88da0b8ff379ab1f533ae4ef48a2cc0b8fddabef65160ba546cc1724",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-4366cffe88da0b8ff379ab1f533ae4ef48a2cc0b8fddabef65160ba546cc1724-OUT",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GA2S6CABCO4OBFX7PQSK6WQ3ZSX3WYF52TVBXQFLJAEPKKRFUXVFJUSD",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -590,17 +536,13 @@ Array [
       "type": "OUT",
       "value": "30000000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 29205672,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "OUT",
-        "memo": null,
         "pagingToken": "125437406098026497",
       },
       "fee": "100",
@@ -608,10 +550,10 @@ Array [
       "hash": "4a25fb6b27c284a13dd15e78ddeb2e3d1c585986c07db88bfa7b0566af5e781d",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-4a25fb6b27c284a13dd15e78ddeb2e3d1c585986c07db88bfa7b0566af5e781d-OUT",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -620,17 +562,16 @@ Array [
       "type": "OUT",
       "value": "10000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 28220386,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "assetAmount": "100",
         "assetCode": "ETH",
         "assetIssuer": "GCNSGHUCG5VMGLT5RIYYZSO7VQULQKAJ62QA33DBC5PPBSO57LFWVV6P",
         "ledgerOpType": "OPT_IN",
-        "memo": null,
         "pagingToken": "121205634950537217",
       },
       "fee": "100",
@@ -638,8 +579,8 @@ Array [
       "hash": "4d2c5152cac45ee9fb8c0c15eb7974a956a23cf10d0833c90ca36d48328b9d46",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-4d2c5152cac45ee9fb8c0c15eb7974a956a23cf10d0833c90ca36d48328b9d46-OPT_IN",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -648,17 +589,13 @@ Array [
       "type": "OPT_IN",
       "value": "100",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 27889269,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "IN",
-        "memo": null,
         "pagingToken": "119783498264412161",
       },
       "fee": "100",
@@ -666,10 +603,10 @@ Array [
       "hash": "4fc400b0ec784adf4b7b4d57d6f349fa5530fc2846d719f3f22b8f0cdb290fd6",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-4fc400b0ec784adf4b7b4d57d6f349fa5530fc2846d719f3f22b8f0cdb290fd6-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
-      "senders": Array [
+      "senders": [
         "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
       ],
       "standard": undefined,
@@ -678,15 +615,12 @@ Array [
       "type": "IN",
       "value": "10000000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 27843368,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "OUT",
         "memo": "821966803",
         "pagingToken": "119586354970836993",
@@ -696,10 +630,10 @@ Array [
       "hash": "53d170a3a4d1f3bfbb177785344af83a2fe168a721445191dc5fecbc47a9c71d",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-53d170a3a4d1f3bfbb177785344af83a2fe168a721445191dc5fecbc47a9c71d-OUT",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GDQP2KPQGKIHYJGXNUIYOMHARUARCA7DJT5FO2FFOOKY3B2WSQHG4W37",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -708,17 +642,13 @@ Array [
       "type": "OUT",
       "value": "10000000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 28101387,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "OUT",
-        "memo": null,
         "pagingToken": "120694538137272321",
       },
       "fee": "100",
@@ -726,10 +656,10 @@ Array [
       "hash": "58c4f25ff4403c55e598a687d8614799e422bf9ce30fd6710eeb8cd74dece4c6",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-58c4f25ff4403c55e598a687d8614799e422bf9ce30fd6710eeb8cd74dece4c6-OUT",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -738,15 +668,12 @@ Array [
       "type": "OUT",
       "value": "10000000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 34526066,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "IN",
         "memo": "Establish trustline to $RUM",
         "pagingToken": "148288324330012717",
@@ -756,10 +683,10 @@ Array [
       "hash": "5da822764dba9d8537f96132c9e3239c97ed08adc52aa7dc43b43a79f70b6ade",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-5da822764dba9d8537f96132c9e3239c97ed08adc52aa7dc43b43a79f70b6ade-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
-      "senders": Array [
+      "senders": [
         "GDAXCWDQAYP2VC2UR2KRLVD7JQYIYMQ7BGFY647BCG4CFANT7JYNSO4S",
       ],
       "standard": undefined,
@@ -768,17 +695,13 @@ Array [
       "type": "IN",
       "value": "1",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 27735937,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "OUT",
-        "memo": null,
         "pagingToken": "119124942339112961",
       },
       "fee": "100",
@@ -786,10 +709,10 @@ Array [
       "hash": "5dde32f5de5c5c0cabb2a9ef5504c8cd981027ca45f47c66fa40905c1a4ba649",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-5dde32f5de5c5c0cabb2a9ef5504c8cd981027ca45f47c66fa40905c1a4ba649-OUT",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GDWDBMV7VPHFHDQXIBYJJVLVAXF4NIL5SCFETGDN3LFK3X37LMCCRPYR",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -798,17 +721,13 @@ Array [
       "type": "OUT",
       "value": "10000000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 27902342,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "OUT",
-        "memo": null,
         "pagingToken": "119839646372044801",
       },
       "fee": "100",
@@ -816,10 +735,10 @@ Array [
       "hash": "5fe3083a1d8ad7f2c08c188c0bb19e98ba1c9602e414f1f23502a69a242e809d",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-5fe3083a1d8ad7f2c08c188c0bb19e98ba1c9602e414f1f23502a69a242e809d-OUT",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -828,17 +747,13 @@ Array [
       "type": "OUT",
       "value": "10000000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 29205265,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "OUT",
-        "memo": null,
         "pagingToken": "125435658046103553",
       },
       "fee": "100",
@@ -846,10 +761,10 @@ Array [
       "hash": "660cf0e3cdf927066136e9b2baf289cc522233b5bd680038a60d93448c7dd85f",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-660cf0e3cdf927066136e9b2baf289cc522233b5bd680038a60d93448c7dd85f-OUT",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -858,17 +773,13 @@ Array [
       "type": "OUT",
       "value": "100000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 27641409,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "OUT",
-        "memo": null,
         "pagingToken": "118718947670560769",
       },
       "fee": "100",
@@ -876,10 +787,10 @@ Array [
       "hash": "6cb7ea4ac8592257b8f00096444b7370a2c97c1a76668608c89ff2f309c1ffae",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-6cb7ea4ac8592257b8f00096444b7370a2c97c1a76668608c89ff2f309c1ffae-OUT",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GDWDBMV7VPHFHDQXIBYJJVLVAXF4NIL5SCFETGDN3LFK3X37LMCCRPYR",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -888,15 +799,12 @@ Array [
       "type": "OUT",
       "value": "10000000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 34308375,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "IN",
         "memo": "$RUM will beat $ADA.",
         "pagingToken": "147353348604919817",
@@ -906,10 +814,10 @@ Array [
       "hash": "7531d748aa70ebdd98c7c3a1b6d9b9b2086f87cae59ce38c9ed98af01ce6bcb7",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-7531d748aa70ebdd98c7c3a1b6d9b9b2086f87cae59ce38c9ed98af01ce6bcb7-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
-      "senders": Array [
+      "senders": [
         "GDXDJWBHJWFDRBZB4OAECN7D5IXZUWD2TP62GJK2CEORL5WUIVZZSC22",
       ],
       "standard": undefined,
@@ -918,17 +826,13 @@ Array [
       "type": "IN",
       "value": "1",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 27889433,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "OUT",
-        "memo": null,
         "pagingToken": "119784202639093761",
       },
       "fee": "100",
@@ -936,10 +840,10 @@ Array [
       "hash": "75f104f0a7ae375df05d24f634eca7932a5eac88bc6621a2e42ed7c279e253e6",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-75f104f0a7ae375df05d24f634eca7932a5eac88bc6621a2e42ed7c279e253e6-OUT",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -948,17 +852,13 @@ Array [
       "type": "OUT",
       "value": "40000000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 29206210,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "OUT",
-        "memo": null,
         "pagingToken": "125439716790431745",
       },
       "fee": "100",
@@ -966,10 +866,10 @@ Array [
       "hash": "76ef44740c68be97957fc2254d37c86a5887a600ba9dc43d021a56c128a0adea",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-76ef44740c68be97957fc2254d37c86a5887a600ba9dc43d021a56c128a0adea-OUT",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -978,17 +878,13 @@ Array [
       "type": "OUT",
       "value": "1000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 27904466,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "OUT",
-        "memo": null,
         "pagingToken": "119848768882610177",
       },
       "fee": "100",
@@ -996,10 +892,10 @@ Array [
       "hash": "86e373f47ff5f85bea68bd7a656fa38a3213b49740e9ea391d7ed58ac17cfe05",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-86e373f47ff5f85bea68bd7a656fa38a3213b49740e9ea391d7ed58ac17cfe05-OUT",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -1008,17 +904,13 @@ Array [
       "type": "OUT",
       "value": "10000000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 27751970,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "OUT",
-        "memo": null,
         "pagingToken": "119193803549724673",
       },
       "fee": "100",
@@ -1026,10 +918,10 @@ Array [
       "hash": "8f7c0205e08720e3297a500f668e865d4dd8a32064b7445697c7b29ca8a41980",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-8f7c0205e08720e3297a500f668e865d4dd8a32064b7445697c7b29ca8a41980-OUT",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -1038,17 +930,13 @@ Array [
       "type": "OUT",
       "value": "10000100",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 28085073,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "IN",
-        "memo": null,
         "pagingToken": "120624470040944641",
       },
       "fee": "100",
@@ -1056,10 +944,10 @@ Array [
       "hash": "93e9739d77458ab76d0f017c1ac895f78f52bbd0b08c0a67acd2cfbc339ed931",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-93e9739d77458ab76d0f017c1ac895f78f52bbd0b08c0a67acd2cfbc339ed931-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
-      "senders": Array [
+      "senders": [
         "GA2S6CABCO4OBFX7PQSK6WQ3ZSX3WYF52TVBXQFLJAEPKKRFUXVFJUSD",
       ],
       "standard": undefined,
@@ -1068,17 +956,13 @@ Array [
       "type": "IN",
       "value": "10000000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 28437182,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "IN",
-        "memo": null,
         "pagingToken": "122136766680686593",
       },
       "fee": "100",
@@ -1086,10 +970,10 @@ Array [
       "hash": "9694b85754c3016ae776d5e4217a6275c6bdcdd575747926d5fafe7a4aff11e0",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-9694b85754c3016ae776d5e4217a6275c6bdcdd575747926d5fafe7a4aff11e0-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
-      "senders": Array [
+      "senders": [
         "GD7TWVUJZXLZA33CYJCUDURT3ZV2BX2VRFKA6FTDU3GDM5WYN2GMISYH",
       ],
       "standard": undefined,
@@ -1098,17 +982,13 @@ Array [
       "type": "IN",
       "value": "123400",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 27888571,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "OUT",
-        "memo": null,
         "pagingToken": "119780500377280513",
       },
       "fee": "100",
@@ -1116,10 +996,10 @@ Array [
       "hash": "9be71a1ecae1b036b1d9090fcf2f432e5373fbe49718b49ab486d7c914462f5b",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-9be71a1ecae1b036b1d9090fcf2f432e5373fbe49718b49ab486d7c914462f5b-OUT",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -1128,15 +1008,12 @@ Array [
       "type": "OUT",
       "value": "10000000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 28114936,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "OUT",
         "memo": "Errr",
         "pagingToken": "120752730649231361",
@@ -1146,10 +1023,10 @@ Array [
       "hash": "9daaa7da4df2422a5f9d21b1b600977b5af91232a8ae917d2933f3cb42bc65a1",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-9daaa7da4df2422a5f9d21b1b600977b5af91232a8ae917d2933f3cb42bc65a1-OUT",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -1158,17 +1035,13 @@ Array [
       "type": "OUT",
       "value": "10000000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 29206206,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "OUT",
-        "memo": null,
         "pagingToken": "125439699611508737",
       },
       "fee": "100",
@@ -1176,10 +1049,10 @@ Array [
       "hash": "9ec4ca5ab1833f7e13d96914fea7a718efd531927139849765e2c71abe9ded5e",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-9ec4ca5ab1833f7e13d96914fea7a718efd531927139849765e2c71abe9ded5e-OUT",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -1188,17 +1061,16 @@ Array [
       "type": "OUT",
       "value": "1000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 27671179,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "assetAmount": "100",
         "assetCode": "XRP",
         "assetIssuer": "GCNSGHUCG5VMGLT5RIYYZSO7VQULQKAJ62QA33DBC5PPBSO57LFWVV6P",
         "ledgerOpType": "OPT_IN",
-        "memo": null,
         "pagingToken": "118846808846880769",
       },
       "fee": "100",
@@ -1206,8 +1078,8 @@ Array [
       "hash": "b862ee6db59117c8b7a1598f82ee93173c394426b5cc9244fd61e9c5320b4647",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-b862ee6db59117c8b7a1598f82ee93173c394426b5cc9244fd61e9c5320b4647-OPT_IN",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -1216,15 +1088,12 @@ Array [
       "type": "OPT_IN",
       "value": "100",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 28437162,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "IN",
         "memo": "test",
         "pagingToken": "122136680781512705",
@@ -1234,10 +1103,10 @@ Array [
       "hash": "b90e70067891120418780d42e10974f551df51c5b22f40741324b5f208a262d0",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-b90e70067891120418780d42e10974f551df51c5b22f40741324b5f208a262d0-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
-      "senders": Array [
+      "senders": [
         "GD7TWVUJZXLZA33CYJCUDURT3ZV2BX2VRFKA6FTDU3GDM5WYN2GMISYH",
       ],
       "standard": undefined,
@@ -1246,15 +1115,12 @@ Array [
       "type": "IN",
       "value": "123450",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 37858200,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "IN",
         "memo": "tRAstME a.MERA.one",
         "pagingToken": "162599730886103043",
@@ -1264,10 +1130,10 @@ Array [
       "hash": "ba681d2552040f496777ab93a3821e75ca9f1257f14a1f4646050b63735098a6",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-ba681d2552040f496777ab93a3821e75ca9f1257f14a1f4646050b63735098a6-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
-      "senders": Array [
+      "senders": [
         "GBMUUOW2BNIBWPN2DJIB55RWH3MWPDTSIEG22HXBK4MTBN3G4QQ23ZEV",
       ],
       "standard": undefined,
@@ -1276,17 +1142,13 @@ Array [
       "type": "IN",
       "value": "1111",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 29206434,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "OUT",
-        "memo": null,
         "pagingToken": "125440678864154625",
       },
       "fee": "100",
@@ -1294,10 +1156,10 @@ Array [
       "hash": "bb90e5b53f69471a7c657d554757c8b306ece17a1fe8fcda4234935fd2f572d4",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-bb90e5b53f69471a7c657d554757c8b306ece17a1fe8fcda4234935fd2f572d4-OUT",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -1306,17 +1168,13 @@ Array [
       "type": "OUT",
       "value": "1000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 29205869,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "OUT",
-        "memo": null,
         "pagingToken": "125438252206436353",
       },
       "fee": "100",
@@ -1324,10 +1182,10 @@ Array [
       "hash": "c049a43a3dd47e48b041e75c5cbdf4fcf96d02a99b54883aa97b907aab3c4550",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-c049a43a3dd47e48b041e75c5cbdf4fcf96d02a99b54883aa97b907aab3c4550-OUT",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -1336,17 +1194,13 @@ Array [
       "type": "OUT",
       "value": "1000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 29205644,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "OUT",
-        "memo": null,
         "pagingToken": "125437285838716929",
       },
       "fee": "100",
@@ -1354,10 +1208,10 @@ Array [
       "hash": "cac86fec139ce2df2148eeb76faae481f7a79b42e9b79a55820418a43cb4b417",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-cac86fec139ce2df2148eeb76faae481f7a79b42e9b79a55820418a43cb4b417-OUT",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -1366,17 +1220,13 @@ Array [
       "type": "OUT",
       "value": "10000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 27966558,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "OUT",
-        "memo": null,
         "pagingToken": "120115451994812417",
       },
       "fee": "100",
@@ -1384,10 +1234,10 @@ Array [
       "hash": "cc7f0359eee003abb45b15e68250917914a45933d554357a367732b0c1834d44",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-cc7f0359eee003abb45b15e68250917914a45933d554357a367732b0c1834d44-OUT",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -1396,15 +1246,12 @@ Array [
       "type": "OUT",
       "value": "10000000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 37735917,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "IN",
         "memo": "airdrop softbalanced.com",
         "pagingToken": "162074529399820318",
@@ -1414,10 +1261,10 @@ Array [
       "hash": "d7984614fc013dbce8c1a94a74d4f486ac18656535820d479310361e72ae2df9",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-d7984614fc013dbce8c1a94a74d4f486ac18656535820d479310361e72ae2df9-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
-      "senders": Array [
+      "senders": [
         "GAFAUHBHVSQAZORS3HXVRT7O6XGVH4R3GO3ZMZYUZLLDJEWCVWXUWRBD",
       ],
       "standard": undefined,
@@ -1426,17 +1273,16 @@ Array [
       "type": "IN",
       "value": "25",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 28220445,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "assetAmount": "100",
         "assetCode": "BCH",
         "assetIssuer": "GCNSGHUCG5VMGLT5RIYYZSO7VQULQKAJ62QA33DBC5PPBSO57LFWVV6P",
         "ledgerOpType": "OPT_IN",
-        "memo": null,
         "pagingToken": "121205888354127873",
       },
       "fee": "100",
@@ -1444,8 +1290,8 @@ Array [
       "hash": "d7c5d9182edd0e5454c85e20da7dd43706f0c2a403706d5dfdd65b06c9d77d12",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-d7c5d9182edd0e5454c85e20da7dd43706f0c2a403706d5dfdd65b06c9d77d12-OPT_IN",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -1454,17 +1300,13 @@ Array [
       "type": "OPT_IN",
       "value": "100",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 28163178,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "OUT",
-        "memo": null,
         "pagingToken": "120959928461459457",
       },
       "fee": "100",
@@ -1472,10 +1314,10 @@ Array [
       "hash": "d8152867f53b514f107b4b37df58b5379463a8d0d71ee7f1cdb426f20f37759d",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-d8152867f53b514f107b4b37df58b5379463a8d0d71ee7f1cdb426f20f37759d-OUT",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -1484,17 +1326,13 @@ Array [
       "type": "OUT",
       "value": "10000000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 29205269,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "OUT",
-        "memo": null,
         "pagingToken": "125435675226099713",
       },
       "fee": "100",
@@ -1502,10 +1340,10 @@ Array [
       "hash": "d95664684f4795409b54f1b57ae8204dfe67b667f6acd572afdd6c46d40ba738",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-d95664684f4795409b54f1b57ae8204dfe67b667f6acd572afdd6c46d40ba738-OUT",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -1514,17 +1352,13 @@ Array [
       "type": "OUT",
       "value": "10000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 27746942,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "OUT",
-        "memo": null,
         "pagingToken": "119172208454135809",
       },
       "fee": "100",
@@ -1532,10 +1366,10 @@ Array [
       "hash": "dbf7564976ab4f04ada93589922c3e44dbeec34414375db8f04685132e8b2915",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-dbf7564976ab4f04ada93589922c3e44dbeec34414375db8f04685132e8b2915-OUT",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GDWDBMV7VPHFHDQXIBYJJVLVAXF4NIL5SCFETGDN3LFK3X37LMCCRPYR",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -1544,17 +1378,13 @@ Array [
       "type": "OUT",
       "value": "10000000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 27735951,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "OUT",
-        "memo": null,
         "pagingToken": "119125002468630529",
       },
       "fee": "100",
@@ -1562,10 +1392,10 @@ Array [
       "hash": "f132af10bcfdce5575de3032673cc642e41c203ade0eb1d82cf20aecc23a6bb7",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-f132af10bcfdce5575de3032673cc642e41c203ade0eb1d82cf20aecc23a6bb7-OUT",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GDWDBMV7VPHFHDQXIBYJJVLVAXF4NIL5SCFETGDN3LFK3X37LMCCRPYR",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -1574,17 +1404,16 @@ Array [
       "type": "OUT",
       "value": "10000000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 28219748,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "assetAmount": "100",
         "assetCode": "KIN",
         "assetIssuer": "GBDEVU63Y6NTHJQQZIKVTC23NWLQVP3WJ2RI2OTSJTNYOIGICST6DUXR",
         "ledgerOpType": "OPT_IN",
-        "memo": null,
         "pagingToken": "121202894761410561",
       },
       "fee": "100",
@@ -1592,8 +1421,8 @@ Array [
       "hash": "f3a375d6f3d49ad633299bcce17b5d6347f970a9cd2d72feffd23d337b180392",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-f3a375d6f3d49ad633299bcce17b5d6347f970a9cd2d72feffd23d337b180392-OPT_IN",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -1602,17 +1431,13 @@ Array [
       "type": "OPT_IN",
       "value": "100",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 28437169,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "IN",
-        "memo": null,
         "pagingToken": "122136710846099457",
       },
       "fee": "100",
@@ -1620,10 +1445,10 @@ Array [
       "hash": "f896be213846497621d4b376218dba2cd476adb549041038ee36a7415e6bcf65",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-f896be213846497621d4b376218dba2cd476adb549041038ee36a7415e6bcf65-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
-      "senders": Array [
+      "senders": [
         "GD7TWVUJZXLZA33CYJCUDURT3ZV2BX2VRFKA6FTDU3GDM5WYN2GMISYH",
       ],
       "standard": undefined,
@@ -1632,17 +1457,13 @@ Array [
       "type": "IN",
       "value": "123400",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 28162919,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "OUT",
-        "memo": null,
         "pagingToken": "120958816065163265",
       },
       "fee": "100",
@@ -1650,10 +1471,10 @@ Array [
       "hash": "fba909935eeec6bee5355cf544690e586545e20dcc515ff525a3dc3c48c482d1",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-fba909935eeec6bee5355cf544690e586545e20dcc515ff525a3dc3c48c482d1-OUT",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -1662,17 +1483,13 @@ Array [
       "type": "OUT",
       "value": "10000000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 29205676,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "OUT",
-        "memo": null,
         "pagingToken": "125437423277637633",
       },
       "fee": "100",
@@ -1680,10 +1497,10 @@ Array [
       "hash": "ff36ffa1eac29029f71f7df1dbd40a989af25174dc8924fee81f7b23e2e7be34",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-ff36ffa1eac29029f71f7df1dbd40a989af25174dc8924fee81f7b23e2e7be34-OUT",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -1692,17 +1509,13 @@ Array [
       "type": "OUT",
       "value": "1000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": null,
       "blockHeight": 27889406,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "OUT",
-        "memo": null,
         "pagingToken": "119784086676713473",
       },
       "fee": "100",
@@ -1710,10 +1523,10 @@ Array [
       "hash": "ff5b3538a608de48cfe0054c89448be0d4d13d17923e8b53cc71da7a1c4c9896",
       "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-ff5b3538a608de48cfe0054c89448be0d4d13d17923e8b53cc71da7a1c4c9896-OUT",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -1723,18 +1536,14 @@ Array [
       "value": "10000100",
     },
   ],
-  Array [
-    Object {
+  [
+    {
       "accountId": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5",
       "blockHash": null,
       "blockHeight": 27766392,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "IN",
-        "memo": null,
         "pagingToken": "119255745567977473",
       },
       "fee": "100",
@@ -1742,10 +1551,10 @@ Array [
       "hash": "046f4a64e6bba9ace4e5a0bd49036f7612a99982d8c5f32926cbf58dc7a3bc07",
       "id": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5-046f4a64e6bba9ace4e5a0bd49036f7612a99982d8c5f32926cbf58dc7a3bc07-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -1754,17 +1563,13 @@ Array [
       "type": "IN",
       "value": "10000000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5",
       "blockHash": null,
       "blockHeight": 27952591,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "IN",
-        "memo": null,
         "pagingToken": "120055464183619585",
       },
       "fee": "100",
@@ -1772,10 +1577,10 @@ Array [
       "hash": "0489921c8cf5dae8620dfedf273c77c4d3eb54fb51794395e267ccde173b2fbd",
       "id": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5-0489921c8cf5dae8620dfedf273c77c4d3eb54fb51794395e267ccde173b2fbd-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -1784,15 +1589,12 @@ Array [
       "type": "IN",
       "value": "10000000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5",
       "blockHash": null,
       "blockHeight": 27890199,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "IN",
         "memo": "3",
         "pagingToken": "119787492583981057",
@@ -1802,10 +1604,10 @@ Array [
       "hash": "05affa5c85544e750ff01ec0afb243b17d49b894195c719fdf91db786de511a6",
       "id": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5-05affa5c85544e750ff01ec0afb243b17d49b894195c719fdf91db786de511a6-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -1814,15 +1616,12 @@ Array [
       "type": "IN",
       "value": "10000000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5",
       "blockHash": null,
       "blockHeight": 28318748,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "IN",
         "memo": "1",
         "pagingToken": "121628096523747329",
@@ -1832,10 +1631,10 @@ Array [
       "hash": "23d408a0e82cc0ac1099a9c828096ca6c65554e2c2486df92a7cfe485ae92a97",
       "id": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5-23d408a0e82cc0ac1099a9c828096ca6c65554e2c2486df92a7cfe485ae92a97-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -1844,17 +1643,13 @@ Array [
       "type": "IN",
       "value": "10000000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5",
       "blockHash": null,
       "blockHeight": 28114251,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "IN",
-        "memo": null,
         "pagingToken": "120749788596604929",
       },
       "fee": "100",
@@ -1862,10 +1657,10 @@ Array [
       "hash": "39ec4c35d0e3c0ff141af3ad0288c62b80747822b72ca458b83d33f4c2d5f339",
       "id": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5-39ec4c35d0e3c0ff141af3ad0288c62b80747822b72ca458b83d33f4c2d5f339-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -1874,17 +1669,13 @@ Array [
       "type": "IN",
       "value": "10000000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5",
       "blockHash": null,
       "blockHeight": 27963532,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "OUT",
-        "memo": null,
         "pagingToken": "120102455420669953",
       },
       "fee": "100",
@@ -1892,10 +1683,10 @@ Array [
       "hash": "3eee721816da039e7b9a30fa283dcbd1b10fe7fab64ccada7dbab3db7e5cfe19",
       "id": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5-3eee721816da039e7b9a30fa283dcbd1b10fe7fab64ccada7dbab3db7e5cfe19-OUT",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
-      "senders": Array [
+      "senders": [
         "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
       ],
       "standard": undefined,
@@ -1904,17 +1695,13 @@ Array [
       "type": "OUT",
       "value": "10000000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5",
       "blockHash": null,
       "blockHeight": 27889727,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "OUT",
-        "memo": null,
         "pagingToken": "119785465359474689",
       },
       "fee": "100",
@@ -1922,10 +1709,10 @@ Array [
       "hash": "473dc1bcdacbc99201595e9005beb9f0531fb5341b4cd20a083e1db6a9ffcf22",
       "id": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5-473dc1bcdacbc99201595e9005beb9f0531fb5341b4cd20a083e1db6a9ffcf22-OUT",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
       ],
-      "senders": Array [
+      "senders": [
         "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
       ],
       "standard": undefined,
@@ -1934,17 +1721,13 @@ Array [
       "type": "OUT",
       "value": "9999800",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5",
       "blockHash": null,
       "blockHeight": 27889269,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "OUT",
-        "memo": null,
         "pagingToken": "119783498264412161",
       },
       "fee": "100",
@@ -1952,10 +1735,10 @@ Array [
       "hash": "4fc400b0ec784adf4b7b4d57d6f349fa5530fc2846d719f3f22b8f0cdb290fd6",
       "id": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5-4fc400b0ec784adf4b7b4d57d6f349fa5530fc2846d719f3f22b8f0cdb290fd6-OUT",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
-      "senders": Array [
+      "senders": [
         "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
       ],
       "standard": undefined,
@@ -1964,17 +1747,13 @@ Array [
       "type": "OUT",
       "value": "10000000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5",
       "blockHash": null,
       "blockHeight": 28101387,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "IN",
-        "memo": null,
         "pagingToken": "120694538137272321",
       },
       "fee": "100",
@@ -1982,10 +1761,10 @@ Array [
       "hash": "58c4f25ff4403c55e598a687d8614799e422bf9ce30fd6710eeb8cd74dece4c6",
       "id": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5-58c4f25ff4403c55e598a687d8614799e422bf9ce30fd6710eeb8cd74dece4c6-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -1994,17 +1773,13 @@ Array [
       "type": "IN",
       "value": "10000000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5",
       "blockHash": null,
       "blockHeight": 27902342,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "IN",
-        "memo": null,
         "pagingToken": "119839646372044801",
       },
       "fee": "100",
@@ -2012,10 +1787,10 @@ Array [
       "hash": "5fe3083a1d8ad7f2c08c188c0bb19e98ba1c9602e414f1f23502a69a242e809d",
       "id": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5-5fe3083a1d8ad7f2c08c188c0bb19e98ba1c9602e414f1f23502a69a242e809d-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -2024,17 +1799,13 @@ Array [
       "type": "IN",
       "value": "10000000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5",
       "blockHash": null,
       "blockHeight": 27751970,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "IN",
-        "memo": null,
         "pagingToken": "119193803549724673",
       },
       "fee": "100",
@@ -2042,10 +1813,10 @@ Array [
       "hash": "8f7c0205e08720e3297a500f668e865d4dd8a32064b7445697c7b29ca8a41980",
       "id": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5-8f7c0205e08720e3297a500f668e865d4dd8a32064b7445697c7b29ca8a41980-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -2054,17 +1825,13 @@ Array [
       "type": "IN",
       "value": "10000000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5",
       "blockHash": null,
       "blockHeight": 28115381,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "OUT",
-        "memo": null,
         "pagingToken": "120754641909706753",
       },
       "fee": "100",
@@ -2072,10 +1839,10 @@ Array [
       "hash": "9953b7669bc2e5773087c00bd4d308e59730d9c0027bc99dbd11983b1cbef143",
       "id": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5-9953b7669bc2e5773087c00bd4d308e59730d9c0027bc99dbd11983b1cbef143-OUT",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GBQMOU2WYJUP6AKY53FFKZJGQMDWCMTWSOUTZ5DVIAQPVW7AJUHSX2M5",
       ],
-      "senders": Array [
+      "senders": [
         "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
       ],
       "standard": undefined,
@@ -2084,17 +1851,13 @@ Array [
       "type": "OUT",
       "value": "10000100",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5",
       "blockHash": null,
       "blockHeight": 27888571,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "IN",
-        "memo": null,
         "pagingToken": "119780500377280513",
       },
       "fee": "100",
@@ -2102,10 +1865,10 @@ Array [
       "hash": "9be71a1ecae1b036b1d9090fcf2f432e5373fbe49718b49ab486d7c914462f5b",
       "id": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5-9be71a1ecae1b036b1d9090fcf2f432e5373fbe49718b49ab486d7c914462f5b-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -2114,15 +1877,12 @@ Array [
       "type": "IN",
       "value": "10000000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5",
       "blockHash": null,
       "blockHeight": 37734402,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "IN",
         "memo": "airdrop softbalanced.com",
         "pagingToken": "162068022524194819",
@@ -2132,10 +1892,10 @@ Array [
       "hash": "9d9a31c907e8f7bd11273482e9dc88e7d12225798376f3ea80603ad4f13f7d69",
       "id": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5-9d9a31c907e8f7bd11273482e9dc88e7d12225798376f3ea80603ad4f13f7d69-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
       ],
-      "senders": Array [
+      "senders": [
         "GAFAUHBHVSQAZORS3HXVRT7O6XGVH4R3GO3ZMZYUZLLDJEWCVWXUWRBD",
       ],
       "standard": undefined,
@@ -2144,15 +1904,12 @@ Array [
       "type": "IN",
       "value": "25",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5",
       "blockHash": null,
       "blockHeight": 28114936,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "IN",
         "memo": "Errr",
         "pagingToken": "120752730649231361",
@@ -2162,10 +1919,10 @@ Array [
       "hash": "9daaa7da4df2422a5f9d21b1b600977b5af91232a8ae917d2933f3cb42bc65a1",
       "id": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5-9daaa7da4df2422a5f9d21b1b600977b5af91232a8ae917d2933f3cb42bc65a1-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -2174,17 +1931,13 @@ Array [
       "type": "IN",
       "value": "10000000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5",
       "blockHash": null,
       "blockHeight": 27966569,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "IN",
-        "memo": null,
         "pagingToken": "120115499236392961",
       },
       "fee": "100",
@@ -2192,10 +1945,10 @@ Array [
       "hash": "bc65cd36c6d53b6a1b14c7a83eb412f1e37fcfdfcc527f3a8ee37896d3662e57",
       "id": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5-bc65cd36c6d53b6a1b14c7a83eb412f1e37fcfdfcc527f3a8ee37896d3662e57-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
       ],
-      "senders": Array [
+      "senders": [
         "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
       ],
       "standard": undefined,
@@ -2204,17 +1957,13 @@ Array [
       "type": "IN",
       "value": "20000000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5",
       "blockHash": null,
       "blockHeight": 27966558,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "IN",
-        "memo": null,
         "pagingToken": "120115451994812417",
       },
       "fee": "100",
@@ -2222,10 +1971,10 @@ Array [
       "hash": "cc7f0359eee003abb45b15e68250917914a45933d554357a367732b0c1834d44",
       "id": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5-cc7f0359eee003abb45b15e68250917914a45933d554357a367732b0c1834d44-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -2235,18 +1984,14 @@ Array [
       "value": "10000000",
     },
   ],
-  Array [
-    Object {
+  [
+    {
       "accountId": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5",
       "blockHash": null,
       "blockHeight": 27889727,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "IN",
-        "memo": null,
         "pagingToken": "119785465359474689",
       },
       "fee": "100",
@@ -2254,10 +1999,10 @@ Array [
       "hash": "473dc1bcdacbc99201595e9005beb9f0531fb5341b4cd20a083e1db6a9ffcf22",
       "id": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5-473dc1bcdacbc99201595e9005beb9f0531fb5341b4cd20a083e1db6a9ffcf22-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
       ],
-      "senders": Array [
+      "senders": [
         "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
       ],
       "standard": undefined,
@@ -2266,17 +2011,13 @@ Array [
       "type": "IN",
       "value": "9999800",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5",
       "blockHash": null,
       "blockHeight": 27889433,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "IN",
-        "memo": null,
         "pagingToken": "119784202639093761",
       },
       "fee": "100",
@@ -2284,10 +2025,10 @@ Array [
       "hash": "75f104f0a7ae375df05d24f634eca7932a5eac88bc6621a2e42ed7c279e253e6",
       "id": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5-75f104f0a7ae375df05d24f634eca7932a5eac88bc6621a2e42ed7c279e253e6-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -2296,17 +2037,13 @@ Array [
       "type": "IN",
       "value": "40000000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5",
       "blockHash": null,
       "blockHeight": 27904466,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "IN",
-        "memo": null,
         "pagingToken": "119848768882610177",
       },
       "fee": "100",
@@ -2314,10 +2051,10 @@ Array [
       "hash": "86e373f47ff5f85bea68bd7a656fa38a3213b49740e9ea391d7ed58ac17cfe05",
       "id": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5-86e373f47ff5f85bea68bd7a656fa38a3213b49740e9ea391d7ed58ac17cfe05-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -2326,15 +2063,12 @@ Array [
       "type": "IN",
       "value": "10000000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5",
       "blockHash": null,
       "blockHeight": 37742747,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "IN",
         "memo": "airdrop softbalanced.com",
         "pagingToken": "162103864026546198",
@@ -2344,10 +2078,10 @@ Array [
       "hash": "a02ab6e9d7e9c962b9b36219cf964df99a37d309247ac125b78ce413188eafd6",
       "id": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5-a02ab6e9d7e9c962b9b36219cf964df99a37d309247ac125b78ce413188eafd6-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
       ],
-      "senders": Array [
+      "senders": [
         "GAFAUHBHVSQAZORS3HXVRT7O6XGVH4R3GO3ZMZYUZLLDJEWCVWXUWRBD",
       ],
       "standard": undefined,
@@ -2356,17 +2090,13 @@ Array [
       "type": "IN",
       "value": "25",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5",
       "blockHash": null,
       "blockHeight": 27966569,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "OUT",
-        "memo": null,
         "pagingToken": "120115499236392961",
       },
       "fee": "100",
@@ -2374,10 +2104,10 @@ Array [
       "hash": "bc65cd36c6d53b6a1b14c7a83eb412f1e37fcfdfcc527f3a8ee37896d3662e57",
       "id": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5-bc65cd36c6d53b6a1b14c7a83eb412f1e37fcfdfcc527f3a8ee37896d3662e57-OUT",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
       ],
-      "senders": Array [
+      "senders": [
         "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
       ],
       "standard": undefined,
@@ -2386,17 +2116,13 @@ Array [
       "type": "OUT",
       "value": "20000000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5",
       "blockHash": null,
       "blockHeight": 28163178,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "IN",
-        "memo": null,
         "pagingToken": "120959928461459457",
       },
       "fee": "100",
@@ -2404,10 +2130,10 @@ Array [
       "hash": "d8152867f53b514f107b4b37df58b5379463a8d0d71ee7f1cdb426f20f37759d",
       "id": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5-d8152867f53b514f107b4b37df58b5379463a8d0d71ee7f1cdb426f20f37759d-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -2416,17 +2142,13 @@ Array [
       "type": "IN",
       "value": "10000000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5",
       "blockHash": null,
       "blockHeight": 28055813,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "OUT",
-        "memo": null,
         "pagingToken": "120498799297777665",
       },
       "fee": "100",
@@ -2434,10 +2156,10 @@ Array [
       "hash": "e4c9d9e7e7f41dd9be0a606c1b11c9e06480cb10438483cb54838ab11f3548b0",
       "id": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5-e4c9d9e7e7f41dd9be0a606c1b11c9e06480cb10438483cb54838ab11f3548b0-OUT",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC",
       ],
-      "senders": Array [
+      "senders": [
         "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
       ],
       "standard": undefined,
@@ -2446,17 +2168,13 @@ Array [
       "type": "OUT",
       "value": "100",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5",
       "blockHash": null,
       "blockHeight": 28067899,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "OUT",
-        "memo": null,
         "pagingToken": "120550708272582657",
       },
       "fee": "100",
@@ -2464,10 +2182,10 @@ Array [
       "hash": "f36e2dbc049d9c9a953623f2d91420f56c7c54d491ba8f34444742f7a1dc3283",
       "id": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5-f36e2dbc049d9c9a953623f2d91420f56c7c54d491ba8f34444742f7a1dc3283-OUT",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC",
       ],
-      "senders": Array [
+      "senders": [
         "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
       ],
       "standard": undefined,
@@ -2476,17 +2194,13 @@ Array [
       "type": "OUT",
       "value": "10000100",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5",
       "blockHash": null,
       "blockHeight": 28162919,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "IN",
-        "memo": null,
         "pagingToken": "120958816065163265",
       },
       "fee": "100",
@@ -2494,10 +2208,10 @@ Array [
       "hash": "fba909935eeec6bee5355cf544690e586545e20dcc515ff525a3dc3c48c482d1",
       "id": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5-fba909935eeec6bee5355cf544690e586545e20dcc515ff525a3dc3c48c482d1-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -2506,17 +2220,13 @@ Array [
       "type": "IN",
       "value": "10000000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5",
       "blockHash": null,
       "blockHeight": 27889406,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "IN",
-        "memo": null,
         "pagingToken": "119784086676713473",
       },
       "fee": "100",
@@ -2524,10 +2234,10 @@ Array [
       "hash": "ff5b3538a608de48cfe0054c89448be0d4d13d17923e8b53cc71da7a1c4c9896",
       "id": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5-ff5b3538a608de48cfe0054c89448be0d4d13d17923e8b53cc71da7a1c4c9896-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -2537,18 +2247,14 @@ Array [
       "value": "10000000",
     },
   ],
-  Array [
-    Object {
+  [
+    {
       "accountId": "js:2:stellar:GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC:sep5",
       "blockHash": null,
       "blockHeight": 29205836,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "IN",
-        "memo": null,
         "pagingToken": "125438110472704001",
       },
       "fee": "100",
@@ -2556,10 +2262,10 @@ Array [
       "hash": "0492d31e3cf8cc04cdbf652b9e263361640b9d0f6953bc8221b2dbad1c59239a",
       "id": "js:2:stellar:GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC:sep5-0492d31e3cf8cc04cdbf652b9e263361640b9d0f6953bc8221b2dbad1c59239a-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -2568,17 +2274,13 @@ Array [
       "type": "IN",
       "value": "10000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC:sep5",
       "blockHash": null,
       "blockHeight": 29205667,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "IN",
-        "memo": null,
         "pagingToken": "125437384622931969",
       },
       "fee": "100",
@@ -2586,10 +2288,10 @@ Array [
       "hash": "20fd7a667f5b82e3ffac3688cadeb03ddf34d024178309b2292a99e922e4fcb3",
       "id": "js:2:stellar:GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC:sep5-20fd7a667f5b82e3ffac3688cadeb03ddf34d024178309b2292a99e922e4fcb3-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -2598,17 +2300,13 @@ Array [
       "type": "IN",
       "value": "1000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC:sep5",
       "blockHash": null,
       "blockHeight": 29205672,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "IN",
-        "memo": null,
         "pagingToken": "125437406098026497",
       },
       "fee": "100",
@@ -2616,10 +2314,10 @@ Array [
       "hash": "4a25fb6b27c284a13dd15e78ddeb2e3d1c585986c07db88bfa7b0566af5e781d",
       "id": "js:2:stellar:GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC:sep5-4a25fb6b27c284a13dd15e78ddeb2e3d1c585986c07db88bfa7b0566af5e781d-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -2628,17 +2326,13 @@ Array [
       "type": "IN",
       "value": "10000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC:sep5",
       "blockHash": null,
       "blockHeight": 29205265,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "IN",
-        "memo": null,
         "pagingToken": "125435658046103553",
       },
       "fee": "100",
@@ -2646,10 +2340,10 @@ Array [
       "hash": "660cf0e3cdf927066136e9b2baf289cc522233b5bd680038a60d93448c7dd85f",
       "id": "js:2:stellar:GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC:sep5-660cf0e3cdf927066136e9b2baf289cc522233b5bd680038a60d93448c7dd85f-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -2658,17 +2352,13 @@ Array [
       "type": "IN",
       "value": "100000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC:sep5",
       "blockHash": null,
       "blockHeight": 29206210,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "IN",
-        "memo": null,
         "pagingToken": "125439716790431745",
       },
       "fee": "100",
@@ -2676,10 +2366,10 @@ Array [
       "hash": "76ef44740c68be97957fc2254d37c86a5887a600ba9dc43d021a56c128a0adea",
       "id": "js:2:stellar:GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC:sep5-76ef44740c68be97957fc2254d37c86a5887a600ba9dc43d021a56c128a0adea-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -2688,17 +2378,13 @@ Array [
       "type": "IN",
       "value": "1000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC:sep5",
       "blockHash": null,
       "blockHeight": 28389951,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "OUT",
-        "memo": null,
         "pagingToken": "121933911080058881",
       },
       "fee": "100",
@@ -2706,10 +2392,10 @@ Array [
       "hash": "9a5824dade4c4ff7199749c3aebb1107fd0a5967f9c35c3cdb9ee90f5a4f132d",
       "id": "js:2:stellar:GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC:sep5-9a5824dade4c4ff7199749c3aebb1107fd0a5967f9c35c3cdb9ee90f5a4f132d-OUT",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GBQMOU2WYJUP6AKY53FFKZJGQMDWCMTWSOUTZ5DVIAQPVW7AJUHSX2M5",
       ],
-      "senders": Array [
+      "senders": [
         "GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC",
       ],
       "standard": undefined,
@@ -2718,17 +2404,13 @@ Array [
       "type": "OUT",
       "value": "10000100",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC:sep5",
       "blockHash": null,
       "blockHeight": 29206206,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "IN",
-        "memo": null,
         "pagingToken": "125439699611508737",
       },
       "fee": "100",
@@ -2736,10 +2418,10 @@ Array [
       "hash": "9ec4ca5ab1833f7e13d96914fea7a718efd531927139849765e2c71abe9ded5e",
       "id": "js:2:stellar:GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC:sep5-9ec4ca5ab1833f7e13d96914fea7a718efd531927139849765e2c71abe9ded5e-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -2748,17 +2430,13 @@ Array [
       "type": "IN",
       "value": "1000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC:sep5",
       "blockHash": null,
       "blockHeight": 29206434,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "IN",
-        "memo": null,
         "pagingToken": "125440678864154625",
       },
       "fee": "100",
@@ -2766,10 +2444,10 @@ Array [
       "hash": "bb90e5b53f69471a7c657d554757c8b306ece17a1fe8fcda4234935fd2f572d4",
       "id": "js:2:stellar:GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC:sep5-bb90e5b53f69471a7c657d554757c8b306ece17a1fe8fcda4234935fd2f572d4-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -2778,17 +2456,13 @@ Array [
       "type": "IN",
       "value": "1000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC:sep5",
       "blockHash": null,
       "blockHeight": 29205869,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "IN",
-        "memo": null,
         "pagingToken": "125438252206436353",
       },
       "fee": "100",
@@ -2796,10 +2470,10 @@ Array [
       "hash": "c049a43a3dd47e48b041e75c5cbdf4fcf96d02a99b54883aa97b907aab3c4550",
       "id": "js:2:stellar:GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC:sep5-c049a43a3dd47e48b041e75c5cbdf4fcf96d02a99b54883aa97b907aab3c4550-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -2808,17 +2482,13 @@ Array [
       "type": "IN",
       "value": "1000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC:sep5",
       "blockHash": null,
       "blockHeight": 29205644,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "IN",
-        "memo": null,
         "pagingToken": "125437285838716929",
       },
       "fee": "100",
@@ -2826,10 +2496,10 @@ Array [
       "hash": "cac86fec139ce2df2148eeb76faae481f7a79b42e9b79a55820418a43cb4b417",
       "id": "js:2:stellar:GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC:sep5-cac86fec139ce2df2148eeb76faae481f7a79b42e9b79a55820418a43cb4b417-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -2838,17 +2508,13 @@ Array [
       "type": "IN",
       "value": "10000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC:sep5",
       "blockHash": null,
       "blockHeight": 29205269,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "IN",
-        "memo": null,
         "pagingToken": "125435675226099713",
       },
       "fee": "100",
@@ -2856,10 +2522,10 @@ Array [
       "hash": "d95664684f4795409b54f1b57ae8204dfe67b667f6acd572afdd6c46d40ba738",
       "id": "js:2:stellar:GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC:sep5-d95664684f4795409b54f1b57ae8204dfe67b667f6acd572afdd6c46d40ba738-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -2868,17 +2534,13 @@ Array [
       "type": "IN",
       "value": "10000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC:sep5",
       "blockHash": null,
       "blockHeight": 28055813,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "IN",
-        "memo": null,
         "pagingToken": "120498799297777665",
       },
       "fee": "100",
@@ -2886,10 +2548,10 @@ Array [
       "hash": "e4c9d9e7e7f41dd9be0a606c1b11c9e06480cb10438483cb54838ab11f3548b0",
       "id": "js:2:stellar:GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC:sep5-e4c9d9e7e7f41dd9be0a606c1b11c9e06480cb10438483cb54838ab11f3548b0-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC",
       ],
-      "senders": Array [
+      "senders": [
         "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
       ],
       "standard": undefined,
@@ -2898,17 +2560,13 @@ Array [
       "type": "IN",
       "value": "0",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC:sep5",
       "blockHash": null,
       "blockHeight": 28067899,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "IN",
-        "memo": null,
         "pagingToken": "120550708272582657",
       },
       "fee": "100",
@@ -2916,10 +2574,10 @@ Array [
       "hash": "f36e2dbc049d9c9a953623f2d91420f56c7c54d491ba8f34444742f7a1dc3283",
       "id": "js:2:stellar:GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC:sep5-f36e2dbc049d9c9a953623f2d91420f56c7c54d491ba8f34444742f7a1dc3283-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC",
       ],
-      "senders": Array [
+      "senders": [
         "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
       ],
       "standard": undefined,
@@ -2928,17 +2586,13 @@ Array [
       "type": "IN",
       "value": "10000000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC:sep5",
       "blockHash": null,
       "blockHeight": 29205676,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "IN",
-        "memo": null,
         "pagingToken": "125437423277637633",
       },
       "fee": "100",
@@ -2946,10 +2600,10 @@ Array [
       "hash": "ff36ffa1eac29029f71f7df1dbd40a989af25174dc8924fee81f7b23e2e7be34",
       "id": "js:2:stellar:GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC:sep5-ff36ffa1eac29029f71f7df1dbd40a989af25174dc8924fee81f7b23e2e7be34-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -2959,18 +2613,14 @@ Array [
       "value": "1000",
     },
   ],
-  Array [
-    Object {
+  [
+    {
       "accountId": "js:2:stellar:GBQMOU2WYJUP6AKY53FFKZJGQMDWCMTWSOUTZ5DVIAQPVW7AJUHSX2M5:sep5",
       "blockHash": null,
       "blockHeight": 28194270,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "IN",
-        "memo": null,
         "pagingToken": "121093467584729089",
       },
       "fee": "100",
@@ -2978,10 +2628,10 @@ Array [
       "hash": "0a9332fab11e5f3e93b6a9b2b41effcbe50cd51f4064089bf7c9dca8aab664fe",
       "id": "js:2:stellar:GBQMOU2WYJUP6AKY53FFKZJGQMDWCMTWSOUTZ5DVIAQPVW7AJUHSX2M5:sep5-0a9332fab11e5f3e93b6a9b2b41effcbe50cd51f4064089bf7c9dca8aab664fe-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GBQMOU2WYJUP6AKY53FFKZJGQMDWCMTWSOUTZ5DVIAQPVW7AJUHSX2M5",
       ],
-      "senders": Array [
+      "senders": [
         "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
       ],
       "standard": undefined,
@@ -2990,17 +2640,13 @@ Array [
       "type": "IN",
       "value": "10000000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GBQMOU2WYJUP6AKY53FFKZJGQMDWCMTWSOUTZ5DVIAQPVW7AJUHSX2M5:sep5",
       "blockHash": null,
       "blockHeight": 28115381,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "IN",
-        "memo": null,
         "pagingToken": "120754641909706753",
       },
       "fee": "100",
@@ -3008,10 +2654,10 @@ Array [
       "hash": "9953b7669bc2e5773087c00bd4d308e59730d9c0027bc99dbd11983b1cbef143",
       "id": "js:2:stellar:GBQMOU2WYJUP6AKY53FFKZJGQMDWCMTWSOUTZ5DVIAQPVW7AJUHSX2M5:sep5-9953b7669bc2e5773087c00bd4d308e59730d9c0027bc99dbd11983b1cbef143-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GBQMOU2WYJUP6AKY53FFKZJGQMDWCMTWSOUTZ5DVIAQPVW7AJUHSX2M5",
       ],
-      "senders": Array [
+      "senders": [
         "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
       ],
       "standard": undefined,
@@ -3020,17 +2666,13 @@ Array [
       "type": "IN",
       "value": "10000000",
     },
-    Object {
+    {
       "accountId": "js:2:stellar:GBQMOU2WYJUP6AKY53FFKZJGQMDWCMTWSOUTZ5DVIAQPVW7AJUHSX2M5:sep5",
       "blockHash": null,
       "blockHeight": 28389951,
       "contract": undefined,
-      "extra": Object {
-        "assetAmount": undefined,
-        "assetCode": undefined,
-        "assetIssuer": undefined,
+      "extra": {
         "ledgerOpType": "IN",
-        "memo": null,
         "pagingToken": "121933911080058881",
       },
       "fee": "100",
@@ -3038,10 +2680,10 @@ Array [
       "hash": "9a5824dade4c4ff7199749c3aebb1107fd0a5967f9c35c3cdb9ee90f5a4f132d",
       "id": "js:2:stellar:GBQMOU2WYJUP6AKY53FFKZJGQMDWCMTWSOUTZ5DVIAQPVW7AJUHSX2M5:sep5-9a5824dade4c4ff7199749c3aebb1107fd0a5967f9c35c3cdb9ee90f5a4f132d-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "GBQMOU2WYJUP6AKY53FFKZJGQMDWCMTWSOUTZ5DVIAQPVW7AJUHSX2M5",
       ],
-      "senders": Array [
+      "senders": [
         "GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC",
       ],
       "standard": undefined,
@@ -3051,6 +2693,6 @@ Array [
       "value": "10000000",
     },
   ],
-  Array [],
+  [],
 ]
 `;

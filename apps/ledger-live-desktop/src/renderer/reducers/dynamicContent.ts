@@ -50,6 +50,6 @@ export const notificationsContentCardSelector = (state: { dynamicContent: Dynami
 // Exporting reducer
 
 export default handleActions<DynamicContentState, HandlersPayloads[keyof HandlersPayloads]>(
-  (handlers as unknown) as DynamicContentHandlers<false>,
+  handlers as unknown as DynamicContentHandlers<false>,
   state,
 );

@@ -3,11 +3,12 @@ import { Trans } from "react-i18next";
 import Unbonding from "~/renderer/families/elrond/components/Unbondings/components/Unbonding";
 import TableContainer, { HeaderWrapper, TableHeader } from "~/renderer/components/TableContainer";
 import { TableLine } from "~/renderer/families/elrond/blocks/Delegation";
-import { Account } from "@ledgerhq/types-live";
 import { UnbondingType } from "~/renderer/families/elrond/types";
+import { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
+
 interface UnbondingsType {
   unbondings: Array<UnbondingType>;
-  account: Account;
+  account: ElrondAccount;
 }
 const Unbondings = (props: UnbondingsType) => {
   const { unbondings, account } = props;

@@ -7,11 +7,13 @@ export class AppUpdater {
     this.page = page;
   }
 
-  async setStatus(s: string) {
+  async setStatus(s: UpdateStatus) {
     await this.page.evaluate(
       args => {
         [s] = args;
-        (window as any).mock.updater.setStatus(s);
+        if (window && window.mock && window.mock.updater && window.mock.updater.setStatus) {
+          window?.mock?.updater?.setStatus(s);
+        }
       },
       [s],
     );

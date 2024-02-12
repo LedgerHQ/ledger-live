@@ -5,7 +5,7 @@ describe("Currencies helpers", () => {
   test("listCurrencies without includeTokens", () => {
     const currencies = listCurrencies(false);
 
-    currencies.forEach((currency) => {
+    currencies.forEach(currency => {
       expect(isCryptoCurrency(currency)).toBeTruthy();
     });
   });
@@ -13,10 +13,8 @@ describe("Currencies helpers", () => {
   test("listCurrencies with includeTokens", () => {
     const currencies = listCurrencies(true);
 
-    currencies.forEach((currency) => {
-      expect(
-        isCryptoCurrency(currency) || isTokenCurrency(currency)
-      ).toBeTruthy();
+    currencies.forEach(currency => {
+      expect(isCryptoCurrency(currency) || isTokenCurrency(currency)).toBeTruthy();
     });
   });
 });

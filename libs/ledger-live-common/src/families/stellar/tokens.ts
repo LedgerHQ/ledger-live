@@ -1,23 +1,14 @@
 import BigNumber from "bignumber.js";
 import { emptyHistoryCache } from "../../account";
-import {
-  listTokensForCryptoCurrency,
-  findTokenById,
-  parseCurrencyUnit,
-} from "../../currencies";
-import type { BalanceAsset } from "./types";
+import { listTokensForCryptoCurrency, findTokenById, parseCurrencyUnit } from "../../currencies";
+import type { BalanceAsset, StellarOperation } from "./types";
 import { encodeOperationId } from "../../operation";
-import type {
-  CryptoCurrency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
-import type { Operation, SyncConfig, TokenAccount } from "@ledgerhq/types-live";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 
-export const getAssetIdFromTokenId = (tokenId: string): string =>
-  tokenId.split("/")[2];
+export const getAssetIdFromTokenId = (tokenId: string): string => tokenId.split("/")[2];
 
-const getAssetIdFromAsset = (asset: BalanceAsset) =>
-  `${asset.asset_code}:${asset.asset_issuer}`;
+const getAssetIdFromAsset = (asset: BalanceAsset) => `${asset.asset_code}:${asset.asset_issuer}`;
 
 const buildStellarTokenAccount = ({
   parentAccountId,
@@ -28,22 +19,16 @@ const buildStellarTokenAccount = ({
   parentAccountId: string;
   stellarAsset: BalanceAsset;
   token: TokenCurrency;
-  operations: Operation[];
+  operations: StellarOperation[];
 }): TokenAccount => {
   const assetId = getAssetIdFromTokenId(token.id);
   const id = `${parentAccountId}+${assetId}`;
-  const balance = parseCurrencyUnit(
-    token.units[0],
-    stellarAsset.balance || "0"
-  );
+  const balance = parseCurrencyUnit(token.units[0], stellarAsset.balance || "0");
 
   const reservedBalance = new BigNumber(stellarAsset.balance).minus(
-    stellarAsset.buying_liabilities || 0
+    stellarAsset.selling_liabilities || 0,
   );
-  const spendableBalance = parseCurrencyUnit(
-    token.units[0],
-    reservedBalance.toString()
-  );
+  const spendableBalance = parseCurrencyUnit(token.units[0], reservedBalance.toString());
 
   return {
     type: "TokenAccount",
@@ -52,21 +37,18 @@ const buildStellarTokenAccount = ({
     starred: false,
     token,
     operationsCount: operations.length,
-    operations: operations.map((op) => ({
+    operations: operations.map(op => ({
       ...op,
       id: encodeOperationId(id, op.hash, op.extra.ledgerOpType),
       accountId: id,
       type: op.extra.ledgerOpType,
-      value: new BigNumber(op.extra.assetAmount) ?? op.value,
+      value: op.extra.assetAmount ? new BigNumber(op.extra.assetAmount) : op.value,
     })),
     pendingOperations: [],
     balance,
     spendableBalance,
     swapHistory: [],
-    creationDate:
-      operations.length > 0
-        ? operations[operations.length - 1].date
-        : new Date(),
+    creationDate: operations.length > 0 ? operations[operations.length - 1].date : new Date(),
     balanceHistoryCache: emptyHistoryCache, // calculated in the jsHelpers
   };
 };
@@ -82,7 +64,7 @@ export const buildSubAccounts = ({
   accountId: string;
   assets: BalanceAsset[];
   syncConfig: SyncConfig;
-  operations: Operation[];
+  operations: StellarOperation[];
 }): TokenAccount[] | undefined => {
   const { blacklistedTokenIds = [] } = syncConfig;
   const allTokens = listTokensForCryptoCurrency(currency);
@@ -93,7 +75,7 @@ export const buildSubAccounts = ({
 
   const tokenAccounts: TokenAccount[] = [];
 
-  assets.map((asset) => {
+  assets.map(asset => {
     const token = findTokenById(`stellar/asset/${getAssetIdFromAsset(asset)}`);
 
     if (token && !blacklistedTokenIds.includes(token.id)) {
@@ -103,11 +85,11 @@ export const buildSubAccounts = ({
           stellarAsset: asset,
           token,
           operations: operations.filter(
-            (op) =>
+            op =>
               op.extra.assetCode === asset.asset_code &&
-              op.extra.assetIssuer === asset.asset_issuer
+              op.extra.assetIssuer === asset.asset_issuer,
           ),
-        })
+        }),
       );
     }
   });

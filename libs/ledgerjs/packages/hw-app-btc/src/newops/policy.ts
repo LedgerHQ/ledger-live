@@ -3,11 +3,7 @@ import { pathArrayToString } from "../bip32";
 import { BufferWriter } from "../buffertools";
 import { hashLeaf, Merkle } from "./merkle";
 
-export type DefaultDescriptorTemplate =
-  | "pkh(@0)"
-  | "sh(wpkh(@0))"
-  | "wpkh(@0)"
-  | "tr(@0)";
+export type DefaultDescriptorTemplate = "pkh(@0)" | "sh(wpkh(@0))" | "wpkh(@0)" | "tr(@0)";
 
 /**
  * The Bitcon hardware app uses a descriptors-like thing to describe
@@ -34,10 +30,10 @@ export class WalletPolicy {
   }
 
   serialize(): Buffer {
-    const keyBuffers = this.keys.map((k) => {
+    const keyBuffers = this.keys.map(k => {
       return Buffer.from(k, "ascii");
     });
-    const m = new Merkle(keyBuffers.map((k) => hashLeaf(k)));
+    const m = new Merkle(keyBuffers.map(k => hashLeaf(k)));
 
     const buf = new BufferWriter();
     buf.writeUInt8(0x01); // wallet type (policy map)
@@ -48,13 +44,7 @@ export class WalletPolicy {
   }
 }
 
-export function createKey(
-  masterFingerprint: Buffer,
-  path: number[],
-  xpub: string
-): string {
+export function createKey(masterFingerprint: Buffer, path: number[], xpub: string): string {
   const accountPath = pathArrayToString(path);
-  return `[${masterFingerprint.toString("hex")}${accountPath.substring(
-    1
-  )}]${xpub}/**`;
+  return `[${masterFingerprint.toString("hex")}${accountPath.substring(1)}]${xpub}/**`;
 }

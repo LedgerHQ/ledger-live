@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import type { Action, Device } from "@ledgerhq/live-common/hw/actions/types";
 import {
   DeviceNotOnboarded,
+  ImageDoesNotExistOnDevice,
   LatestFirmwareVersionRequired,
 } from "@ledgerhq/live-common/errors";
 import {
@@ -11,29 +12,18 @@ import {
   UserRefusedOnDevice,
 } from "@ledgerhq/errors";
 import { useTranslation } from "react-i18next";
-import {
-  ParamListBase,
-  useNavigation,
-  useTheme,
-} from "@react-navigation/native";
+import { ParamListBase, useNavigation, useTheme } from "@react-navigation/native";
 import { useTheme as useThemeFromStyledComponents } from "styled-components/native";
 import { Flex, Text, Icons } from "@ledgerhq/native-ui";
 import type { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
-import type { InitSellResult } from "@ledgerhq/live-common/exchange/sell/types";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import type { AccountLike, DeviceInfo } from "@ledgerhq/types-live";
+import type { AccountLike, AnyMessage, DeviceInfo } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
-import {
-  Exchange,
-  ExchangeRate,
-  InitSwapResult,
-} from "@ledgerhq/live-common/exchange/swap/types";
+import { Exchange, ExchangeRate, InitSwapResult } from "@ledgerhq/live-common/exchange/swap/types";
 import { AppAndVersion } from "@ledgerhq/live-common/hw/connectApp";
 import { LedgerErrorConstructor } from "@ledgerhq/errors/lib/helpers";
-import { TypedMessageData } from "@ledgerhq/live-common/families/ethereum/types";
-import { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { setLastSeenDeviceInfo } from "../../actions/settings";
+import { setLastSeenDeviceInfo } from "~/actions/settings";
 import ValidateOnDevice from "../ValidateOnDevice";
 import ValidateMessageOnDevice from "../ValidateMessageOnDevice";
 import {
@@ -50,7 +40,6 @@ import {
   renderBootloaderStep,
   renderExchange,
   renderConfirmSwap,
-  renderConfirmSell,
   LoadingAppInstall,
   AutoRepair,
   renderAllowLanguageInstallation,
@@ -63,12 +52,10 @@ import {
 import PreventNativeBack from "../PreventNativeBack";
 import SkipLock from "../behaviour/SkipLock";
 import DeviceActionProgress from "../DeviceActionProgress";
-import { PartialNullable } from "../../types/helpers";
+import { PartialNullable } from "~/types/helpers";
 import ModalLock from "../ModalLock";
 
-type LedgerError = InstanceType<
-  LedgerErrorConstructor<{ [key: string]: unknown }>
->;
+type LedgerError = InstanceType<LedgerErrorConstructor<{ [key: string]: unknown }>>;
 
 type Status = PartialNullable<{
   appAndVersion: AppAndVersion;
@@ -80,7 +67,8 @@ type Status = PartialNullable<{
     managerAppName?: string;
   };
   isLoading: boolean;
-  allowManagerRequestedWording: string;
+  allowManagerRequested: boolean;
+  allowRenamingRequested: boolean;
   requestQuitApp: boolean;
   deviceInfo: DeviceInfo;
   requestOpenApp: string;
@@ -108,14 +96,11 @@ type Status = PartialNullable<{
   installingLanguage: boolean;
   languageInstallationRequested: boolean;
   imageRemoveRequested: boolean;
-  signMessageRequested: TypedMessageData | MessageData;
+  signMessageRequested: AnyMessage;
   allowOpeningGranted: boolean;
   completeExchangeStarted: boolean;
   completeExchangeResult: Transaction;
   completeExchangeError: Error;
-  initSellRequested: boolean;
-  initSellResult: InitSellResult;
-  initSellError: Error;
   installingApp: boolean;
   progress: number;
   listingApps: boolean;
@@ -136,6 +121,11 @@ type Props<H extends Status, P> = {
   payload?: P | null;
   onSelectDeviceLink?: () => void;
   analyticsPropertyFlow?: string;
+  /*
+   * Defines in what type of component this action will be rendered in.
+   *
+   * Used to adapt the UI to either a drawer or a view.
+   */
 };
 
 export default function DeviceAction<R, H extends Status, P>({
@@ -190,7 +180,8 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     isLocked,
     error,
     isLoading,
-    allowManagerRequestedWording,
+    allowManagerRequested,
+    allowRenamingRequested,
     requestQuitApp,
     deviceInfo,
     requestOpenApp,
@@ -216,9 +207,6 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     completeExchangeStarted,
     completeExchangeResult,
     completeExchangeError,
-    initSellRequested,
-    initSellResult,
-    initSellError,
     installingApp,
     progress,
     listingApps,
@@ -281,8 +269,10 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   if (installingLanguage) {
     return (
       <Flex>
-        <DeviceActionProgress progress={progress} />
-        <Flex mt={5}>
+        <Flex my={7}>
+          <DeviceActionProgress progress={progress} />
+        </Flex>
+        <Flex mb={5}>
           <Text variant="h4">{t("deviceLocalization.installingLanguage")}</Text>
         </Flex>
         <ModalLock />
@@ -318,15 +308,22 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
       theme,
     });
   }
-
-  if (allowManagerRequestedWording) {
-    const wording = allowManagerRequestedWording;
+  if (allowManagerRequested) {
     return renderAllowManager({
       t,
       device: selectedDevice,
-      wording,
       colors,
       theme,
+    });
+  }
+
+  if (allowRenamingRequested) {
+    return renderAllowManager({
+      t,
+      device: selectedDevice,
+      colors,
+      theme,
+      requestType: "rename",
     });
   }
 
@@ -342,18 +339,19 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   // level instead of being an exception here.
   if (imageRemoveRequested) {
     if (error) {
-      if ((error as Status["error"]) instanceof UserRefusedOnDevice) {
+      const refused = (error as Status["error"]) instanceof UserRefusedOnDevice;
+      const noImage = (error as Status["error"]) instanceof ImageDoesNotExistOnDevice;
+      if (refused || noImage) {
         return renderError({
           t,
           navigation,
           error,
-          onRetry,
+          onRetry: refused ? onRetry : undefined,
           colors,
           theme,
-          iconColor: palette.neutral.c20,
-          Icon: () => (
-            <Icons.InfoAltFillMedium size={28} color={palette.primary.c80} />
-          ),
+          hasExportLogButton: false,
+          Icon: Icons.InformationFill,
+          iconColor: palette.primary.c80,
           device: device ?? undefined,
         });
       }
@@ -375,11 +373,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     });
   }
 
-  if (
-    completeExchangeStarted &&
-    !completeExchangeResult &&
-    !completeExchangeError
-  ) {
+  if (completeExchangeStarted && !completeExchangeResult && !completeExchangeError) {
     return renderExchange({
       exchangeType: (request as { exchangeType: number })?.exchangeType,
       t,
@@ -410,13 +404,6 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     });
   }
 
-  if (initSellRequested && !initSellResult && !initSellError) {
-    return renderConfirmSell({
-      t,
-      device: selectedDevice,
-    });
-  }
-
   if (allowOpeningRequestedWording || requestOpenApp) {
     // requestOpenApp for Nano S 1.3.1 (need to ask user to open the app.)
     const wording = allowOpeningRequestedWording || requestOpenApp;
@@ -425,8 +412,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
       navigation,
       device: selectedDevice,
       wording: wording!,
-      tokenContext: (request as { tokenCurrency?: TokenCurrency })
-        ?.tokenCurrency,
+      tokenContext: (request as { tokenCurrency?: TokenCurrency })?.tokenCurrency,
       isDeviceBlocker: !requestOpenApp,
       colors,
       theme,
@@ -469,13 +455,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     }
 
     if (error instanceof LatestFirmwareVersionRequired) {
-      return (
-        <RequiredFirmwareUpdate
-          t={t}
-          navigation={navigation}
-          device={selectedDevice}
-        />
-      );
+      return <RequiredFirmwareUpdate t={t} navigation={navigation} device={selectedDevice} />;
     }
 
     if ((error as Status["error"]) instanceof UserRefusedDeviceNameChange) {
@@ -486,10 +466,8 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
         onRetry,
         colors,
         theme,
-        iconColor: palette.opacityDefault.c10,
-        Icon: () => (
-          <Icons.WarningSolidMedium size={28} color={colors.warning} />
-        ),
+        iconColor: "warning.c60",
+        Icon: Icons.WarningFill,
         device: device ?? undefined,
       });
     }
@@ -568,11 +546,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
       <>
         <PreventNativeBack />
         <SkipLock />
-        <ValidateMessageOnDevice
-          device={device}
-          account={account}
-          message={signMessageRequested}
-        />
+        <ValidateMessageOnDevice device={device} account={account} message={signMessageRequested} />
       </>
     );
   }

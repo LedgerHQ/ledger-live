@@ -1,8 +1,8 @@
 import React from "react";
 import { StyleSheet, Text } from "react-native";
 import { Trans } from "react-i18next";
-import { urls } from "../../../config/urls";
-import Alert from "../../../components/Alert";
+import { urls } from "~/utils/urls";
+import Alert from "~/components/Alert";
 
 export const ExternalControllerUnsupportedWarning = ({
   address,
@@ -15,9 +15,7 @@ export const ExternalControllerUnsupportedWarning = ({
     <Trans
       i18nKey="polkadot.nomination.externalControllerUnsupported"
       values={{
-        controllerAddress: address
-          ? [address.substr(0, 5), address.substr(-5)].join("...")
-          : null,
+        controllerAddress: address ? [address.substr(0, 5), address.substr(-5)].join("...") : null,
       }}
     >
       <Text onPress={() => onOpenExplorer(address)} style={styles.underline} />
@@ -35,9 +33,7 @@ export const ExternalStashUnsupportedWarning = ({
     <Trans
       i18nKey="polkadot.nomination.externalStashUnsupported"
       values={{
-        stashAddress: address
-          ? [address.substr(0, 5), address.substr(-5)].join("...")
-          : null,
+        stashAddress: address ? [address.substr(0, 5), address.substr(-5)].join("...") : null,
       }}
     >
       <Text onPress={() => onOpenExplorer(address)} style={styles.underline} />

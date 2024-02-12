@@ -1,8 +1,10 @@
-import { TFunction } from "react-i18next";
+import { TFunction } from "i18next";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
-import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/tezos/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { Step } from "~/renderer/components/Stepper";
+import { Step as StepperProps } from "~/renderer/components/Stepper";
+import { OpenModal } from "~/renderer/actions/modals";
+
 export type StepId =
   | "starter"
   | "account"
@@ -11,6 +13,7 @@ export type StepId =
   | "custom"
   | "device"
   | "confirmation";
+
 export type StepProps = {
   t: TFunction;
   transitionTo: (a: string) => void;
@@ -24,8 +27,8 @@ export type StepProps = {
   bridgePending: boolean;
   error: Error | undefined | null;
   optimisticOperation: Operation | undefined | null;
-  closeModal: (a: void) => void;
-  openModal: (b: string, a: any) => void;
+  onClose: () => void;
+  openModal: OpenModal;
   onChangeAccount: (b?: AccountLike | null, a?: Account | null) => void;
   onChangeTransaction: (a: Transaction) => void;
   onTransactionError: (a: Error) => void;
@@ -33,7 +36,8 @@ export type StepProps = {
   onRetry: (a: void) => void;
   setSigned: (a: boolean) => void;
   signed: boolean;
-  isRandomChoice: boolean;
   openedWithAccount: boolean;
+  source?: string;
 };
-export type St = Step<StepId, StepProps>;
+
+export type Step = StepperProps<StepId, StepProps>;

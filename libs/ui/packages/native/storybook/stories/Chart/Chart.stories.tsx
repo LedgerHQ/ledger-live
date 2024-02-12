@@ -25,7 +25,7 @@ function getRandomChartValue() {
 const generateData = () => {
   return new Array(20)
     .fill({})
-    .map(() => ({ value: getRandomChartValue(), date: getRandomChartDate() } as Item))
+    .map(() => ({ value: getRandomChartValue(), date: getRandomChartDate() }) as Item)
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 };
 

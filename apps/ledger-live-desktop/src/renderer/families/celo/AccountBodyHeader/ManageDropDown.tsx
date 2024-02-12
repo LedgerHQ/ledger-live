@@ -5,22 +5,18 @@ import DropDown, { DropDownItem, DropDownItemType } from "~/renderer/components/
 import Text from "~/renderer/components/Text";
 import ToolTip from "~/renderer/components/Tooltip";
 import ChevronRight from "~/renderer/icons/ChevronRight";
-const ManageDropDownItem = ({
-  item,
-  isActive,
-}: {
-  item: {
-    key: string;
-    label: string;
-    disabled: boolean;
-    tooltip: React.ReactNode;
-  };
-  isActive: boolean;
-}) => {
+type Item = {
+  key?: string;
+  label: React.ReactNode;
+  disabled?: boolean;
+  content?: React.ReactNode;
+};
+
+const ManageDropDownItem = ({ item, isActive }: { item: Item; isActive: boolean }) => {
   return (
     <>
       <ToolTip
-        content={item.tooltip}
+        content={item.content}
         containerStyle={{
           width: "100%",
         }}
@@ -42,10 +38,11 @@ const ManageDropDown = ({
   onSelect: (action: DropDownItemType) => void;
 }) => {
   return (
+    // @ts-expect-error cannot fix renderItem correctly...
     <DropDown items={actions} renderItem={ManageDropDownItem} onChange={onSelect}>
       {() => {
         return (
-          <Box flex horizontal alignItems="center">
+          <Box horizontal alignItems="center">
             <Trans i18nKey="common.manage" />
             <div
               style={{

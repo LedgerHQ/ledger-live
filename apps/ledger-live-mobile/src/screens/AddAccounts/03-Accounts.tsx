@@ -1,21 +1,10 @@
-import React, {
-  PureComponent,
-  useEffect,
-  useCallback,
-  useState,
-  useRef,
-  memo,
-  useMemo,
-} from "react";
+import React, { useEffect, useCallback, useState, useRef, memo, useMemo } from "react";
 import { StyleSheet, View, Linking, SafeAreaView } from "react-native";
 import { concat, from, Subscription } from "rxjs";
 import { ignoreElements } from "rxjs/operators";
 import { connect } from "react-redux";
 import { compose } from "redux";
-import {
-  isAccountEmpty,
-  groupAddAccounts,
-} from "@ledgerhq/live-common/account/index";
+import { isAccountEmpty, groupAddAccounts } from "@ledgerhq/live-common/account/index";
 import type { AddAccountSupportLink } from "@ledgerhq/live-common/account/index";
 import { createStructuredSelector } from "reselect";
 import uniq from "lodash/uniq";
@@ -26,39 +15,40 @@ import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/index";
 import type { DerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { useTheme } from "@react-navigation/native";
-import { replaceAccounts } from "../../actions/accounts";
-import { accountsSelector } from "../../reducers/accounts";
+import { replaceAccounts } from "~/actions/accounts";
+import { accountsSelector } from "~/reducers/accounts";
 import logger from "../../logger";
 import { Theme, withTheme } from "../../colors";
-import { NavigatorName, ScreenName } from "../../const";
-import { TrackScreen } from "../../analytics";
-import Button from "../../components/Button";
-import PreventNativeBack from "../../components/PreventNativeBack";
-import SelectableAccountsList from "../../components/SelectableAccountsList";
-import LiveLogo from "../../icons/LiveLogoIcon";
-import IconPause from "../../icons/Pause";
-import ExternalLink from "../../icons/ExternalLink";
-import Chevron from "../../icons/Chevron";
-import Info from "../../icons/Info";
-import Spinning from "../../components/Spinning";
-import LText from "../../components/LText";
-import RetryButton from "../../components/RetryButton";
-import CancelButton from "../../components/CancelButton";
-import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
-import NavigationScrollView from "../../components/NavigationScrollView";
-import { prepareCurrency } from "../../bridge/cache";
-import { blacklistedTokenIdsSelector } from "../../reducers/settings";
-import QueuedDrawer from "../../components/QueuedDrawer";
-import { urls } from "../../config/urls";
+import { NavigatorName, ScreenName } from "~/const";
+import { TrackScreen } from "~/analytics";
+import Button from "~/components/Button";
+import PreventNativeBack from "~/components/PreventNativeBack";
+import SelectableAccountsList from "~/components/SelectableAccountsList";
+import LiveLogo from "~/icons/LiveLogoIcon";
+import IconPause from "~/icons/Pause";
+import ExternalLink from "~/icons/ExternalLink";
+import Chevron from "~/icons/Chevron";
+import Info from "~/icons/Info";
+import Spinning from "~/components/Spinning";
+import LText from "~/components/LText";
+import RetryButton from "~/components/RetryButton";
+import CancelButton from "~/components/CancelButton";
+import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
+import NavigationScrollView from "~/components/NavigationScrollView";
+import { prepareCurrency } from "~/bridge/cache";
+import { blacklistedTokenIdsSelector } from "~/reducers/settings";
+import QueuedDrawer from "~/components/QueuedDrawer";
+import { urls } from "~/utils/urls";
 import noAssociatedAccountsByFamily from "../../generated/NoAssociatedAccounts";
-import { State } from "../../reducers/types";
+import { State } from "~/reducers/types";
 import {
   BaseComposite,
   StackNavigatorNavigation,
   StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
-import { AddAccountsNavigatorParamList } from "../../components/RootNavigator/types/AddAccountsNavigator";
-import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
+} from "~/components/RootNavigator/types/helpers";
+import { AddAccountsNavigatorParamList } from "~/components/RootNavigator/types/AddAccountsNavigator";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import Config from "react-native-config";
 
 const SectionAccounts = ({
   defaultSelected,
@@ -75,10 +65,7 @@ const SectionAccounts = ({
 };
 
 type NavigationProps = BaseComposite<
-  StackNavigatorProps<
-    AddAccountsNavigatorParamList,
-    ScreenName.AddAccountsAccounts
-  >
+  StackNavigatorProps<AddAccountsNavigatorParamList, ScreenName.AddAccountsAccounts>
 >;
 type Props = {
   replaceAccounts: (_: {
@@ -111,8 +98,7 @@ function AddAccountsAccounts({
   const { colors } = useTheme();
   const [scanning, setScanning] = useState(true);
   const [error, setError] = useState(null);
-  const [latestScannedAccount, setLatestScannedAccount] =
-    useState<Account | null>(null);
+  const [latestScannedAccount, setLatestScannedAccount] = useState<Account | null>(null);
   const [scannedAccounts, setScannedAccounts] = useState<Account[]>([]);
   const [onlyNewAccounts, setOnlyNewAccounts] = useState(true);
   const [showAllCreatedAccounts, setShowAllCreatedAccounts] = useState(false);
@@ -125,17 +111,19 @@ function AddAccountsAccounts({
     inline,
     returnToSwap,
   } = route.params || {};
-  // Find accounts that are (scanned && !existing && !used)
-  const newAccountSchemes = scannedAccounts
-    ?.filter(
-      a1 => !existingAccounts.map(a2 => a2.id).includes(a1.id) && !a1.used,
-    )
-    .map(a => a.derivationMode);
+
+  const newAccountSchemes = useMemo(() => {
+    // Find accounts that are (scanned && !existing && !used)
+    const accountSchemes = scannedAccounts
+      ?.filter(a1 => !existingAccounts.map(a2 => a2.id).includes(a1.id) && !a1.used)
+      .map(a => a.derivationMode);
+
+    // Make sure to return a list of unique derivationModes (i.e: avoid duplicates)
+    return [...new Set(accountSchemes)];
+  }, [existingAccounts, scannedAccounts]);
+
   const preferredNewAccountScheme = useMemo(
-    () =>
-      newAccountSchemes && newAccountSchemes.length > 0
-        ? newAccountSchemes[0]
-        : undefined,
+    () => (newAccountSchemes && newAccountSchemes.length > 0 ? newAccountSchemes[0] : undefined),
     [newAccountSchemes],
   );
   useEffect(() => {
@@ -146,12 +134,8 @@ function AddAccountsAccounts({
 
   useEffect(() => {
     if (latestScannedAccount) {
-      const hasAlreadyBeenScanned = scannedAccounts.some(
-        a => latestScannedAccount.id === a.id,
-      );
-      const hasAlreadyBeenImported = existingAccounts.some(
-        a => latestScannedAccount.id === a.id,
-      );
+      const hasAlreadyBeenScanned = scannedAccounts.some(a => latestScannedAccount.id === a.id);
+      const hasAlreadyBeenImported = existingAccounts.some(a => latestScannedAccount.id === a.id);
       const isNewAccount = isAccountEmpty(latestScannedAccount);
 
       if (!isNewAccount && !hasAlreadyBeenImported) {
@@ -171,17 +155,9 @@ function AddAccountsAccounts({
         );
       }
     }
-  }, [
-    existingAccounts,
-    latestScannedAccount,
-    onlyNewAccounts,
-    scannedAccounts,
-    selectedIds,
-  ]);
+  }, [existingAccounts, latestScannedAccount, onlyNewAccounts, scannedAccounts, selectedIds]);
   const startSubscription = useCallback(() => {
-    const cryptoCurrency = isTokenCurrency(currency)
-      ? currency.parentCurrency
-      : currency;
+    const cryptoCurrency = isTokenCurrency(currency) ? currency.parentCurrency : currency;
     const bridge = getCurrencyBridge(cryptoCurrency);
     const syncConfig = {
       paginationConfig: {
@@ -247,9 +223,7 @@ function AddAccountsAccounts({
   );
   const unselectAll = useCallback(
     (accounts: Account[]) => {
-      setSelectedIds(
-        selectedIds.filter(id => !accounts.find(a => a.id === id)),
-      );
+      setSelectedIds(selectedIds.filter(id => !accounts.find(a => a.id === id)));
     },
     [selectedIds],
   );
@@ -275,30 +249,17 @@ function AddAccountsAccounts({
           currency,
         });
     }
-  }, [
-    currency,
-    inline,
-    navigation,
-    replaceAccounts,
-    route.params,
-    scannedAccounts,
-    selectedIds,
-  ]);
+  }, [currency, inline, navigation, replaceAccounts, route.params, scannedAccounts, selectedIds]);
   const onCancel = useCallback(() => {
     setError(null);
     setCancelled(true);
   }, []);
   const onModalHide = useCallback(() => {
     if (cancelled) {
-      navigation
-        .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-        .pop();
+      navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
     }
   }, [cancelled, navigation]);
-  const viewAllCreatedAccounts = useCallback(
-    () => setShowAllCreatedAccounts(true),
-    [],
-  );
+  const viewAllCreatedAccounts = useCallback(() => setShowAllCreatedAccounts(true), []);
   const onAccountNameChange = useCallback(
     (name: string, changedAccount: Account) => {
       setScannedAccounts(
@@ -331,9 +292,7 @@ function AddAccountsAccounts({
   );
   const CustomNoAssociatedAccounts =
     currency.type === "CryptoCurrency"
-      ? noAssociatedAccountsByFamily[
-          currency.family as keyof typeof noAssociatedAccountsByFamily
-        ]
+      ? noAssociatedAccountsByFamily[currency.family as keyof typeof noAssociatedAccountsByFamily]
       : null;
   const emptyTexts = {
     creatable: alreadyEmptyAccount ? (
@@ -365,16 +324,9 @@ function AddAccountsAccounts({
         },
       ]}
     >
-      <TrackScreen
-        category="AddAccounts"
-        name="Accounts"
-        currencyName={currency.name}
-      />
+      <TrackScreen category="AddAccounts" name="Accounts" currencyName={currency.name} />
       <PreventNativeBack />
-      <NavigationScrollView
-        style={styles.inner}
-        contentContainerStyle={styles.innerContent}
-      >
+      <NavigationScrollView style={styles.inner} contentContainerStyle={styles.innerContent}>
         {sections.map(({ id, selectable, defaultSelected, data }, i) => {
           const hasMultipleSchemes =
             id === "creatable" &&
@@ -387,7 +339,7 @@ function AddAccountsAccounts({
               <SectionAccounts
                 defaultSelected={defaultSelected}
                 key={id}
-                showHint={selectable && i === 0}
+                showHint={selectable && i === 0 && !Config.MOCK}
                 header={
                   <Trans
                     values={{
@@ -398,13 +350,9 @@ function AddAccountsAccounts({
                 }
                 index={i}
                 accounts={data}
-                onAccountNameChange={
-                  !selectable ? undefined : onAccountNameChange
-                }
+                onAccountNameChange={!selectable ? undefined : onAccountNameChange}
                 onPressAccount={!selectable ? undefined : onPressAccount}
-                onSelectAll={
-                  !selectable || id === "creatable" ? undefined : selectAll
-                }
+                onSelectAll={!selectable || id === "creatable" ? undefined : selectAll}
                 onUnselectAll={!selectable ? undefined : unselectAll}
                 selectedIds={selectedIds}
                 emptyState={emptyTexts[id as keyof typeof emptyTexts]}
@@ -501,11 +449,7 @@ const AddressTypeTooltip = ({
         onPress={onOpen}
         IconRight={Info}
       />
-      <QueuedDrawer
-        isRequestingToBeOpened={isOpen}
-        onClose={onClose}
-        style={styles.modal}
-      >
+      <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={onClose} style={styles.modal}>
         <View style={styles.modalContainer}>
           <LText style={styles.subtitle} color="grey">
             <Trans i18nKey="addAccounts.addressTypeInfo.subtitle" />
@@ -544,7 +488,7 @@ const AddressTypeTooltip = ({
   );
 };
 
-class Footer extends PureComponent<{
+type FooterProps = {
   isScanning: boolean;
   canRetry: boolean;
   canDone: boolean;
@@ -556,87 +500,86 @@ class Footer extends PureComponent<{
   supportLink?: AddAccountSupportLink;
   colors: Theme["colors"];
   returnToSwap?: boolean;
-}> {
-  render() {
-    const {
-      isDisabled,
-      onContinue,
-      isScanning,
-      onStop,
-      canRetry,
-      canDone,
-      onRetry,
-      onDone,
-      colors,
-    } = this.props;
-    return (
-      <View
-        style={[
-          styles.footer,
-          {
-            borderColor: colors.lightFog,
-          },
-        ]}
-      >
-        {isScanning ? (
-          <Button
-            event="AddAccountsStopScan"
-            type="tertiary"
-            title={<Trans i18nKey="addAccounts.stopScanning" />}
-            onPress={onStop}
-            IconLeft={IconPause}
-          />
-        ) : canRetry ? (
-          <Button
-            event="AddAccountsRetryScan"
-            type="primary"
-            title={<Trans i18nKey="addAccounts.retryScanning" />}
-            onPress={onRetry}
-          />
-        ) : canDone ? (
-          <Button
-            event="AddAccountsDone"
-            type="primary"
-            title={<Trans i18nKey="addAccounts.done" />}
-            onPress={onDone}
-          />
-        ) : (
-          <Button
-            event="AddAccountsSelected"
-            type="primary"
-            title={<Trans i18nKey="addAccounts.finalCta" />}
-            onPress={isDisabled ? undefined : onContinue}
-          />
-        )}
-      </View>
-    );
-  }
-}
+};
 
-class ScanLoading extends PureComponent<{
+const Footer = ({
+  isDisabled,
+  onContinue,
+  isScanning,
+  onStop,
+  canRetry,
+  canDone,
+  onRetry,
+  onDone,
+  colors,
+}: FooterProps) => {
+  return (
+    <View
+      style={[
+        styles.footer,
+        {
+          borderColor: colors.lightFog,
+        },
+      ]}
+    >
+      {isScanning ? (
+        <Button
+          event="AddAccountsStopScan"
+          type="tertiary"
+          title={<Trans i18nKey="addAccounts.stopScanning" />}
+          onPress={onStop}
+          IconLeft={IconPause}
+        />
+      ) : canRetry ? (
+        <Button
+          event="AddAccountsRetryScan"
+          type="primary"
+          title={<Trans i18nKey="addAccounts.retryScanning" />}
+          onPress={onRetry}
+        />
+      ) : canDone ? (
+        <Button
+          event="AddAccountsDone"
+          type="primary"
+          title={<Trans i18nKey="addAccounts.done" />}
+          onPress={onDone}
+        />
+      ) : (
+        <Button
+          testID="add-accounts-continue-button"
+          event="AddAccountsSelected"
+          type="primary"
+          title={<Trans i18nKey="addAccounts.finalCta" />}
+          onPress={isDisabled ? undefined : onContinue}
+        />
+      )}
+    </View>
+  );
+};
+
+type ScanProps = {
   colors: Theme["colors"];
-}> {
-  render() {
-    const { colors } = this.props;
-    return (
-      <View
-        style={[
-          styles.scanLoadingRoot,
-          {
-            borderColor: colors.fog,
-          },
-        ]}
-      >
-        <Spinning>
-          <LiveLogo color={colors.grey} size={16} />
-        </Spinning>
-        <LText semiBold style={styles.scanLoadingText} color="grey">
-          <Trans i18nKey="addAccounts.synchronizing" />
-        </LText>
-      </View>
-    );
-  }
-}
+};
+
+const ScanLoading = ({ colors }: ScanProps) => {
+  return (
+    <View
+      style={[
+        styles.scanLoadingRoot,
+        {
+          borderColor: colors.fog,
+        },
+      ]}
+    >
+      <Spinning>
+        <LiveLogo color={colors.grey} size={16} />
+      </Spinning>
+      <LText semiBold style={styles.scanLoadingText} color="grey">
+        <Trans i18nKey="addAccounts.synchronizing" />
+      </LText>
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   root: {

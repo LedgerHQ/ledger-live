@@ -3,12 +3,12 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { DomainServiceProvider } from "@ledgerhq/domain-service/hooks/index";
-import { ScreenName } from "../../const";
-import SignTransactionSummary from "../../screens/SendFunds/04-Summary";
-import SelectDevice from "../../screens/SelectDevice";
-import SignTransactionConnectDevice from "../../screens/SignTransaction/02-ConnectDevice";
-import SignTransactionValidationError from "../../screens/SignTransaction/03-ValidationError";
-import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
+import { ScreenName } from "~/const";
+import SignTransactionSummary from "~/screens/SendFunds/04-Summary";
+import SelectDevice from "~/screens/SelectDevice";
+import SignTransactionConnectDevice from "~/screens/SignTransaction/02-ConnectDevice";
+import SignTransactionValidationError from "~/screens/SignTransaction/03-ValidationError";
+import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
 import { SignTransactionNavigatorParamList } from "./types/SignTransactionNavigator";
 import { StackNavigatorProps } from "./types/helpers";
@@ -19,10 +19,7 @@ const totalSteps = "3";
 export default function SignTransactionNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const stackNavigationConfig = useMemo(
-    () => getStackNavigatorConfig(colors, true),
-    [colors],
-  );
+  const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
 
   // @TODO replace with correct error
   const listeners = ({
@@ -35,9 +32,7 @@ export default function SignTransactionNavigator() {
   >) => ({
     beforeRemove: () =>
       route.params?.onError &&
-      route.params?.onError(
-        route.params.error || new Error("Signature interrupted by user"),
-      ),
+      route.params?.onError(route.params.error || new Error("Signature interrupted by user")),
   });
 
   return (

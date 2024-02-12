@@ -14,33 +14,25 @@ import { Trans } from "react-i18next";
 import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
-import {
-  getAccountUnit,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { Transaction as CeloTransaction } from "@ledgerhq/live-common/families/celo/types";
-import { accountScreenSelector } from "../../../reducers/accounts";
-import { ScreenName } from "../../../const";
-import { TrackScreen } from "../../../analytics";
-import LText from "../../../components/LText";
-import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
-import Button from "../../../components/Button";
-import KeyboardView from "../../../components/KeyboardView";
-import CurrencyInput from "../../../components/CurrencyInput";
-import TranslatedError from "../../../components/TranslatedError";
+import { accountScreenSelector } from "~/reducers/accounts";
+import { ScreenName } from "~/const";
+import { TrackScreen } from "~/analytics";
+import LText from "~/components/LText";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import Button from "~/components/Button";
+import KeyboardView from "~/components/KeyboardView";
+import CurrencyInput from "~/components/CurrencyInput";
+import TranslatedError from "~/components/TranslatedError";
 
 import { getFirstStatusError, hasStatusError } from "../../helpers";
 import SendRowsFee from "../SendRowsFee";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CeloLockFlowParamList } from "./types";
 
-type Props = BaseComposite<
-  StackNavigatorProps<CeloLockFlowParamList, ScreenName.CeloLockAmount>
->;
+type Props = BaseComposite<StackNavigatorProps<CeloLockFlowParamList, ScreenName.CeloLockAmount>>;
 
 export default function LockAmount({ navigation, route }: Props) {
   const { colors } = useTheme();
@@ -52,16 +44,15 @@ export default function LockAmount({ navigation, route }: Props) {
 
   const [maxSpendable, setMaxSpendable] = useState<BigNumber | null>(null);
 
-  const { transaction, setTransaction, status, bridgePending } =
-    useBridgeTransaction(() => {
-      const t = bridge.createTransaction(mainAccount);
+  const { transaction, setTransaction, status, bridgePending } = useBridgeTransaction(() => {
+    const t = bridge.createTransaction(mainAccount);
 
-      const transaction = bridge.updateTransaction(t, {
-        mode: "lock",
-      });
-
-      return { account: mainAccount, transaction };
+    const transaction = bridge.updateTransaction(t, {
+      mode: "lock",
     });
+
+    return { account: mainAccount, transaction };
+  });
 
   const debouncedTransaction = useDebounce(transaction, 500);
 
@@ -88,7 +79,7 @@ export default function LockAmount({ navigation, route }: Props) {
   }, [account, parentAccount, debouncedTransaction]);
 
   const onChange = useCallback(
-    amount => {
+    (amount: BigNumber) => {
       if (!amount.isNaN()) {
         setTransaction(bridge.updateTransaction(transaction, { amount }));
       }
@@ -124,19 +115,14 @@ export default function LockAmount({ navigation, route }: Props) {
   const { amount } = status;
   const unit = getAccountUnit(account);
 
-  const error =
-    amount.eq(0) || bridgePending
-      ? null
-      : getFirstStatusError(status, "errors");
+  const error = amount.eq(0) || bridgePending ? null : getFirstStatusError(status, "errors");
   const warning = getFirstStatusError(status, "warnings");
   const hasErrors = hasStatusError(status);
 
   return (
     <>
-      <TrackScreen category="LockFlow" name="Amount" />
-      <SafeAreaView
-        style={[styles.root, { backgroundColor: colors.background }]}
-      >
+      <TrackScreen category="LockFlow" name="Amount" flow="stake" action="lock" currency="celo" />
+      <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
         <KeyboardView style={styles.container}>
           <TouchableWithoutFeedback onPress={blur}>
             <View style={[styles.root, { backgroundColor: colors.background }]}>
@@ -184,11 +170,7 @@ export default function LockAmount({ navigation, route }: Props) {
                     </LText>
                     <LText semiBold>
                       {maxSpendable ? (
-                        <CurrencyUnitValue
-                          showCode
-                          unit={unit}
-                          value={maxSpendable}
-                        />
+                        <CurrencyUnitValue showCode unit={unit} value={maxSpendable} />
                       ) : (
                         "-"
                       )}
@@ -219,11 +201,7 @@ export default function LockAmount({ navigation, route }: Props) {
                     type="primary"
                     title={
                       <Trans
-                        i18nKey={
-                          !bridgePending
-                            ? "common.continue"
-                            : "send.amount.loadingNetwork"
-                        }
+                        i18nKey={!bridgePending ? "common.continue" : "send.amount.loadingNetwork"}
                       />
                     }
                     onPress={onContinue}

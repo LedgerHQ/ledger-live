@@ -3,17 +3,17 @@ import { StyleSheet, ScrollView, View, Linking } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans } from "react-i18next";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
-import { ScreenName } from "../../const";
-import { TrackScreen } from "../../analytics";
-import Button from "../../components/Button";
-import LText from "../../components/LText";
-import ExternalLink from "../../components/ExternalLink";
-import BulletList, { BulletGreenCheck } from "../../components/BulletList";
-import IlluRewards from "../../icons/images/Rewards";
-import { urls } from "../../config/urls";
-import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
-import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { FreezeNavigatorParamList } from "../../components/RootNavigator/types/FreezeNavigator";
+import { ScreenName } from "~/const";
+import { TrackScreen } from "~/analytics";
+import Button from "~/components/Button";
+import LText from "~/components/LText";
+import ExternalLink from "~/components/ExternalLink";
+import BulletList, { BulletGreenCheck } from "~/components/BulletList";
+import IlluRewards from "~/icons/images/Rewards";
+import { urls } from "~/utils/urls";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { FreezeNavigatorParamList } from "~/components/RootNavigator/types/FreezeNavigator";
 
 type NavigatorProps = CompositeScreenProps<
   StackNavigatorProps<FreezeNavigatorParamList, ScreenName.FreezeInfo>,
@@ -40,10 +40,7 @@ export default function FreezeInfo({ navigation, route }: NavigatorProps) {
         },
       ]}
     >
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContainer}
-      >
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
         <TrackScreen category="FreezeFlow" name="Info" />
         <IlluRewards />
         <LText secondary style={styles.description}>
@@ -54,11 +51,11 @@ export default function FreezeInfo({ navigation, route }: NavigatorProps) {
           itemContainerStyle={styles.bulletItemContainer}
           Bullet={BulletGreenCheck}
           list={[
-            <Trans i18nKey="freeze.info.steps.0" />,
-            <Trans i18nKey="freeze.info.steps.1" />,
-            <Trans i18nKey="freeze.info.steps.2" />,
+            <Trans i18nKey="freeze.info.steps.0" key="FreezeText1" />,
+            <Trans i18nKey="freeze.info.steps.1" key="FreezeText2" />,
+            <Trans i18nKey="freeze.info.steps.2" key="FreezeText3" />,
           ].map(wording => (
-            <LText secondary semiBold style={[styles.bulletItem]}>
+            <LText secondary semiBold style={[styles.bulletItem]} key={wording.key}>
               {wording}
             </LText>
           ))}

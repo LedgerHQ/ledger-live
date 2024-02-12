@@ -74,13 +74,7 @@ const TouchHintCircle = ({ stopAnimation, ...props }: Props) => {
         },
       ]}
     >
-      <Flex
-        alignItems="center"
-        justifyContent="center"
-        opacity={0.7}
-        height="100%"
-        {...props}
-      >
+      <Flex alignItems="center" justifyContent="center" opacity={0.7} height="100%" {...props}>
         <Flex
           height={40}
           width={40}
@@ -89,12 +83,7 @@ const TouchHintCircle = ({ stopAnimation, ...props }: Props) => {
           justifyContent="center"
           backgroundColor="primary.c70"
         >
-          <Flex
-            height={20}
-            width={20}
-            borderRadius={20}
-            backgroundColor="primary.c40"
-          />
+          <Flex height={20} width={20} borderRadius={20} backgroundColor="primary.c40" />
         </Flex>
       </Flex>
     </Animated.View>

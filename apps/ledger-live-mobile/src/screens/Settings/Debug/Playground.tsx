@@ -1,8 +1,8 @@
 import React from "react";
 import { StyleSheet } from "react-native";
 import { Flex, Alert } from "@ledgerhq/native-ui";
-import NavigationScrollView from "../../../components/NavigationScrollView";
-import Button from "../../../components/Button";
+import NavigationScrollView from "~/components/NavigationScrollView";
+import Button from "~/components/Button";
 
 export default function DebugPlayground() {
   return (
@@ -12,13 +12,7 @@ export default function DebugPlayground() {
           type="info"
           title="Convenience screen for testing purposes, please leave empty when committing."
         />
-        <Button
-          mt={4}
-          type={"primary"}
-          event={""}
-          onPress={undefined}
-          title={"Action"}
-        />
+        <Button mt={4} type={"primary"} event={""} onPress={undefined} title={"Action"} />
       </Flex>
     </NavigationScrollView>
   );

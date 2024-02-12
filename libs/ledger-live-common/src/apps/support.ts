@@ -1,7 +1,7 @@
 import semver from "semver";
 import { shouldUseTrustedInputForSegwit } from "@ledgerhq/hw-app-btc/shouldUseTrustedInputForSegwit";
 import { getDependencies } from "./polyfill";
-import { getEnv } from "../env";
+import { getEnv } from "@ledgerhq/live-env";
 
 export function shouldUpgrade(appName: string, appVersion: string): boolean {
   if (getEnv("DISABLE_APP_VERSION_REQUIREMENTS")) return false;
@@ -16,29 +16,37 @@ export function shouldUpgrade(appName: string, appVersion: string): boolean {
     appName === "Bitcoin"
   ) {
     // https://donjon.ledger.com/lsb/010/
-    return !semver.satisfies(appVersion || "", ">= 1.4.0-0"); // the `-0` is here to allow for pre-release tags
+    // the `-0` is here to allow for pre-release tags of the 1.4.0
+    return !semver.satisfies(appVersion || "", ">= 1.4.0-0", {
+      includePrerelease: true, // this will allow pre-release tags for higher versions (> 1.4.0)
+    });
   }
 
   return false;
 }
+
 const appVersionsRequired = {
-  Cosmos: ">= 2.34.4",
+  Cosmos: ">= 2.34.12",
   Algorand: ">= 1.2.9",
   MultiversX: ">= 1.0.18",
-  Polkadot: ">= 20.9370.0",
-  Ethereum: ">= 1.10.2-0", // the `-0` is here to allow for pre-release tags
+  Polkadot: ">= 24.9430.1",
+  Ethereum: ">= 1.10.3-0", // the `-0` is here to allow for pre-release tags of the same version (1.10.3)
   Solana: ">= 1.2.0",
   Celo: ">= 1.1.8",
   "Cardano ADA": ">= 4.1.0",
   Zcash: "> 2.0.6",
   NEAR: ">= 1.2.1",
+  "Tezos Wallet": ">= 2.4.5",
 };
+
 export function mustUpgrade(appName: string, appVersion: string): boolean {
   if (getEnv("DISABLE_APP_VERSION_REQUIREMENTS")) return false;
   const range = appVersionsRequired[appName];
 
   if (range) {
-    return !semver.satisfies(appVersion || "", range);
+    return !semver.satisfies(appVersion || "", range, {
+      includePrerelease: true, // this will allow pre-release tags for higher versions than the minimum one
+    });
   }
 
   return false;

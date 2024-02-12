@@ -1,16 +1,13 @@
 import invariant from "invariant";
 import React from "react";
-import { Trans, withTranslation, TFunction } from "react-i18next";
+import { Trans, withTranslation } from "react-i18next";
+import { TFunction } from "i18next";
 import styled from "styled-components";
 import { getAccountUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
-import { Account, AccountLike } from "@ledgerhq/types-live";
+import { Account, AccountLike, TransactionCommon } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import {
-  getDeviceTransactionConfig,
-  DeviceTransactionField,
-} from "@ledgerhq/live-common/transaction/index";
+import { getDeviceTransactionConfig } from "@ledgerhq/live-common/transaction/index";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import transactionConfirmFieldsPerFamily from "~/renderer/generated/TransactionConfirmFields";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import WarnBox from "~/renderer/components/WarnBox";
@@ -18,6 +15,9 @@ import useTheme from "~/renderer/hooks/useTheme";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import { renderVerifyUnwrapped } from "~/renderer/components/DeviceAction/rendering";
 import TransactionConfirmField from "./TransactionConfirmField";
+import { getLLDCoinFamily } from "~/renderer/families";
+import { FieldComponentProps as FCPGeneric } from "~/renderer/families/types";
+
 const FieldText = styled(Text).attrs(() => ({
   ml: 1,
   ff: "Inter|Medium",
@@ -28,14 +28,10 @@ const FieldText = styled(Text).attrs(() => ({
   text-align: right;
   max-width: 50%;
 `;
-export type FieldComponentProps = {
-  account: AccountLike;
-  parentAccount: Account | undefined | null;
-  transaction: Transaction;
-  status: TransactionStatus;
-  field: DeviceTransactionField;
-};
+
+export type FieldComponentProps = FCPGeneric<Account, TransactionCommon, TransactionStatus>;
 export type FieldComponent = React.ComponentType<FieldComponentProps>;
+
 const AmountField = ({ account, status: { amount }, field }: FieldComponentProps) => (
   <TransactionConfirmField label={field.label}>
     <FormattedVal
@@ -58,6 +54,7 @@ const FeesField = ({ account, parentAccount, status, field }: FieldComponentProp
     <TransactionConfirmField label={field.label}>
       <FormattedVal
         color={"palette.text.shade80"}
+        disableRounding
         unit={feesUnit}
         val={estimatedFees}
         fontSize={3}
@@ -123,17 +120,15 @@ const TransactionConfirm = ({ t, device, account, parentAccount, transaction, st
   const mainAccount = getMainAccount(account, parentAccount);
   const type = useTheme().colors.palette.type;
   if (!device) return null;
-  const r =
-    transactionConfirmFieldsPerFamily[
-      mainAccount.currency.family as keyof typeof transactionConfirmFieldsPerFamily
-    ];
+  const specific = getLLDCoinFamily(mainAccount.currency.family);
+  const r = specific?.transactionConfirmFields;
   const fieldComponents: Record<string, FieldComponent> = {
     ...commonFieldComponents,
-    ...(r && "fieldComponents" in r && r.fieldComponents),
+    ...r?.fieldComponents,
   };
-  const Warning = r && "warning" in r && r.warning;
-  const Title = r && "title" in r && r.title;
-  const Footer = r && "footer" in r && r.footer;
+  const Warning = r?.warning;
+  const Title = r?.title;
+  const Footer = r?.footer;
   const fields = getDeviceTransactionConfig({
     account,
     parentAccount,
@@ -146,7 +141,6 @@ const TransactionConfirm = ({ t, device, account, parentAccount, transaction, st
     <Container>
       {Warning ? (
         <Warning
-          // @ts-expect-error it seems like "account" is a non-existing prop?
           account={account}
           parentAccount={parentAccount}
           transaction={transaction}
@@ -165,7 +159,6 @@ const TransactionConfirm = ({ t, device, account, parentAccount, transaction, st
       )}
       {Title ? (
         <Title
-          // @ts-expect-error it seems like "account" is a non-existing prop?
           account={account}
           parentAccount={parentAccount}
           transaction={transaction}

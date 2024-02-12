@@ -1,9 +1,6 @@
 import React from "react";
 import { Flex } from "@ledgerhq/native-ui";
-import {
-  SwapTransactionType,
-  ExchangeRate,
-} from "@ledgerhq/live-common/exchange/swap/types";
+import { SwapTransactionType, ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
 import { From } from "./From";
 import { To } from "./To";
 
@@ -12,6 +9,7 @@ interface Props {
   provider?: string;
   exchangeRate?: ExchangeRate;
   swapError?: Error;
+  swapWarning?: Error;
   isSendMaxLoading: boolean;
 }
 
@@ -20,6 +18,7 @@ export function TxForm({
   provider,
   exchangeRate,
   swapError,
+  swapWarning,
   isSendMaxLoading,
 }: Props) {
   return (
@@ -28,6 +27,7 @@ export function TxForm({
         swapTx={swapTx}
         provider={provider}
         swapError={swapError}
+        swapWarning={swapWarning}
         isSendMaxLoading={isSendMaxLoading}
       />
       <To swapTx={swapTx} exchangeRate={exchangeRate} provider={provider} />

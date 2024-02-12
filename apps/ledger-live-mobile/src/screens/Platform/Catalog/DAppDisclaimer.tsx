@@ -1,16 +1,9 @@
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Flex,
-  IconBox,
-  Text,
-  Checkbox,
-  Icons,
-  Button,
-} from "@ledgerhq/native-ui";
-import QueuedDrawer from "../../../components/QueuedDrawer";
+import { Flex, IconBox, Text, Checkbox, IconsLegacy, Button } from "@ledgerhq/native-ui";
+import QueuedDrawer from "~/components/QueuedDrawer";
 import AppIcon from "../AppIcon";
-import LedgerIcon from "../../../icons/Ledger";
+import LedgerIcon from "~/icons/Ledger";
 
 export type Props = {
   closeDisclaimer: () => void;
@@ -26,13 +19,7 @@ const IconsSeparator = React.memo(() => (
     {Array(6)
       .fill(undefined)
       .map((_, i) => (
-        <Flex
-          key={i}
-          width="3px"
-          height={1}
-          marginX={2}
-          backgroundColor="neutral.c40"
-        />
+        <Flex key={i} width="3px" height={1} marginX={2} backgroundColor="neutral.c40" />
       ))}
   </Flex>
 ));
@@ -46,8 +33,7 @@ const DAppDisclaimer = ({
   name,
 }: Props) => {
   const { t } = useTranslation();
-  const [disableDisclaimerChecked, setDisableDisclaimerChecked] =
-    useState(false);
+  const [disableDisclaimerChecked, setDisableDisclaimerChecked] = useState(false);
 
   const onClose = useCallback(() => {
     closeDisclaimer();
@@ -63,12 +49,7 @@ const DAppDisclaimer = ({
 
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpened} onClose={onClose}>
-      <Flex
-        flexDirection="row"
-        justifyContent="center"
-        alignItems="center"
-        mb={10}
-      >
+      <Flex flexDirection="row" justifyContent="center" alignItems="center" mb={10}>
         <IconBox iconSize={28} boxSize={40} Icon={LedgerIcon} />
         {icon ? (
           <>
@@ -80,13 +61,7 @@ const DAppDisclaimer = ({
         ) : null}
       </Flex>
 
-      <Text
-        variant="h2"
-        mb={6}
-        textAlign="center"
-        color="neutral.c100"
-        uppercase
-      >
+      <Text variant="h2" mb={6} textAlign="center" color="neutral.c100" uppercase>
         {name}
       </Text>
 
@@ -103,7 +78,7 @@ const DAppDisclaimer = ({
         backgroundColor="primary.c20"
         borderRadius={2}
       >
-        <Icons.InfoMedium color="primary.c90" size={20} />
+        <IconsLegacy.InfoMedium color="primary.c90" size={20} />
         <Text variant="body" color="primary.c90" ml={5}>
           {t("platform.disclaimer.legalAdviceShort")}
         </Text>
@@ -120,9 +95,7 @@ const DAppDisclaimer = ({
         <Checkbox
           label={t("platform.disclaimer.checkbox")}
           checked={disableDisclaimerChecked}
-          onChange={() =>
-            setDisableDisclaimerChecked(!disableDisclaimerChecked)
-          }
+          onChange={() => setDisableDisclaimerChecked(!disableDisclaimerChecked)}
         />
       </Flex>
 

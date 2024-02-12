@@ -3,27 +3,23 @@ import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { ScrollView } from "react-native-gesture-handler";
-import { Flex, Icons, Text, Box } from "@ledgerhq/native-ui";
-import { StyleProp, ViewStyle } from "react-native";
+import { Flex, Text, Box } from "@ledgerhq/native-ui";
+import { Linking, StyleProp, ViewStyle } from "react-native";
 import { snakeCase } from "lodash";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { NavigatorName, ScreenName } from "../../const";
-import {
-  accountsCountSelector,
-  areAccountsEmptySelector,
-} from "../../reducers/accounts";
-import {
-  hasOrderedNanoSelector,
-  readOnlyModeEnabledSelector,
-} from "../../reducers/settings";
+import { NavigatorName } from "~/const";
+import { hasOrderedNanoSelector, readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { Props as ModalProps } from "../QueuedDrawer";
 import TransferButton from "../TransferButton";
 import BuyDeviceBanner, { IMAGE_PROPS_SMALL_NANO } from "../BuyDeviceBanner";
 import SetupDeviceBanner from "../SetupDeviceBanner";
-import { track, useAnalytics } from "../../analytics";
-import { sharedSwapTracking } from "../../screens/Swap/utils";
+import { track, useAnalytics } from "~/analytics";
+import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
+import useQuickActions from "~/hooks/useQuickActions";
+import { PTX_SERVICES_TOAST_ID } from "~/utils/constants";
+import { useQuickAccessURI } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 
 type ButtonItem = {
   title: string;
@@ -31,90 +27,54 @@ type ButtonItem = {
   tag?: string;
   Icon: IconType;
   onPress?: (() => void) | null;
+  onDisabledPress?: () => void;
   disabled?: boolean;
   event?: string;
   eventProperties?: Parameters<typeof track>[1];
   style?: StyleProp<ViewStyle>;
+  testID?: string;
 };
 
-export default function TransferDrawer({
-  onClose,
-}: Omit<ModalProps, "isRequestingToBeOpened">) {
+export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequestingToBeOpened">) {
   const navigation = useNavigation();
+  const {
+    quickActionsList: { SEND, RECEIVE, BUY, SELL, SWAP, STAKE, RECOVER },
+  } = useQuickActions();
   const { t } = useTranslation();
+  const { pushToast, dismissToast } = useToasts();
 
-  const { page, track } = useAnalytics();
+  const { page } = useAnalytics();
 
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
-  const accountsCount: number = useSelector(accountsCountSelector);
   const hasOrderedNano = useSelector(hasOrderedNanoSelector);
-  const areAccountsEmpty = useSelector(areAccountsEmptySelector);
 
-  const walletConnectEntryPoint = useFeature("walletConnectEntryPoint");
-  const stakePrograms = useFeature("stakePrograms");
+  const ptxServiceCtaExchangeDrawer = useFeature("ptxServiceCtaExchangeDrawer");
+
+  const isPtxServiceCtaExchangeDrawerDisabled = useMemo(
+    () => !(ptxServiceCtaExchangeDrawer?.enabled ?? true),
+    [ptxServiceCtaExchangeDrawer],
+  );
+
+  const recoverConfig = useFeature("protectServicesMobile");
+
+  const quickAccessURI = useQuickAccessURI(recoverConfig);
 
   const onNavigate = useCallback(
     (name: string, options?: object) => {
-      (
-        navigation as StackNavigationProp<{ [key: string]: object | undefined }>
-      ).navigate(name, options);
-
-      if (onClose) {
-        onClose();
-      }
+      (navigation as StackNavigationProp<{ [key: string]: object | undefined }>).navigate(
+        name,
+        options,
+      );
+      onClose?.();
     },
     [navigation, onClose],
   );
-
-  const onSendFunds = useCallback(
-    () =>
-      onNavigate(NavigatorName.SendFunds, {
-        screen: ScreenName.SendCoin,
-      }),
-    [onNavigate],
-  );
-  const onReceiveFunds = useCallback(
-    () => onNavigate(NavigatorName.ReceiveFunds),
-    [onNavigate],
-  );
-
-  const onStake = useCallback(() => {
-    track("button_clicked", {
-      button: "exchange",
-      page,
-      flow: "stake",
-    });
-    onNavigate(NavigatorName.StakeFlow);
-  }, [onNavigate, page, track]);
-
-  const onWalletConnect = useCallback(
-    () =>
-      onNavigate(NavigatorName.WalletConnect, {
-        screen: ScreenName.WalletConnectConnect,
-      }),
-    [onNavigate],
-  );
-
-  const onSwap = useCallback(() => {
-    track("button_clicked", {
-      ...sharedSwapTracking,
-      button: "swap",
-      page,
-    });
-    onNavigate(NavigatorName.Swap, {
-      screen: ScreenName.SwapForm,
-    });
-  }, [onNavigate, page, track]);
-  const onBuy = useCallback(
-    () =>
-      onNavigate(NavigatorName.Exchange, { screen: ScreenName.ExchangeBuy }),
-    [onNavigate],
-  );
-  const onSell = useCallback(
-    () =>
-      onNavigate(NavigatorName.Exchange, { screen: ScreenName.ExchangeSell }),
-    [onNavigate],
-  );
+  const onNavigateRecover = useCallback(() => {
+    if (quickAccessURI) {
+      Linking.canOpenURL(quickAccessURI).then(() => Linking.openURL(quickAccessURI));
+    }
+    onClose?.();
+  }, [onClose, quickAccessURI]);
 
   const buttonsList: ButtonItem[] = [
     {
@@ -125,12 +85,10 @@ export default function TransferDrawer({
       },
       title: t("transfer.send.title"),
       description: t("transfer.send.description"),
-      onPress:
-        accountsCount > 0 && !readOnlyModeEnabled && !areAccountsEmpty
-          ? onSendFunds
-          : null,
-      Icon: Icons.ArrowTopMedium,
-      disabled: !accountsCount || readOnlyModeEnabled || areAccountsEmpty,
+      onPress: () => onNavigate(...SEND.route),
+      Icon: SEND.icon,
+      disabled: SEND.disabled,
+      testID: "transfer-send-button",
     },
     {
       eventProperties: {
@@ -140,9 +98,10 @@ export default function TransferDrawer({
       },
       title: t("transfer.receive.title"),
       description: t("transfer.receive.description"),
-      onPress: onReceiveFunds,
-      Icon: Icons.ArrowBottomMedium,
-      disabled: readOnlyModeEnabled,
+      onPress: () => onNavigate(...RECEIVE.route),
+      Icon: RECEIVE.icon,
+      disabled: RECEIVE.disabled,
+      testID: "transfer-receive-button",
     },
     {
       eventProperties: {
@@ -152,10 +111,22 @@ export default function TransferDrawer({
       },
       title: t("transfer.buy.title"),
       description: t("transfer.buy.description"),
-      tag: t("common.popular"),
-      Icon: Icons.PlusMedium,
-      onPress: onBuy,
-      disabled: readOnlyModeEnabled,
+      Icon: BUY.icon,
+      onPress: () => onNavigate(...BUY.route),
+      onDisabledPress: () => {
+        if (isPtxServiceCtaExchangeDrawerDisabled) {
+          onClose?.();
+          dismissToast(PTX_SERVICES_TOAST_ID);
+          pushToast({
+            id: PTX_SERVICES_TOAST_ID,
+            type: "success",
+            title: t("notifications.ptxServices.toast.title"),
+            icon: "info",
+          });
+        }
+      },
+      disabled: BUY.disabled,
+      testID: "transfer-buy-button",
     },
     {
       eventProperties: {
@@ -165,15 +136,25 @@ export default function TransferDrawer({
       },
       title: t("transfer.sell.title"),
       description: t("transfer.sell.description"),
-      Icon: Icons.MinusMedium,
-      onPress:
-        accountsCount > 0 && !readOnlyModeEnabled && !areAccountsEmpty
-          ? onSell
-          : null,
-      disabled: !accountsCount || readOnlyModeEnabled || areAccountsEmpty,
+      Icon: SELL.icon,
+      onPress: () => onNavigate(...SELL.route),
+      onDisabledPress: () => {
+        if (isPtxServiceCtaExchangeDrawerDisabled) {
+          onClose?.();
+          dismissToast(PTX_SERVICES_TOAST_ID);
+          pushToast({
+            id: PTX_SERVICES_TOAST_ID,
+            type: "success",
+            title: t("notifications.ptxServices.toast.title"),
+            icon: "info",
+          });
+        }
+      },
+      disabled: SELL.disabled,
+      testID: "transfer-sell-button",
     },
 
-    ...(stakePrograms?.enabled
+    ...(STAKE
       ? [
           {
             eventProperties: {
@@ -183,9 +164,10 @@ export default function TransferDrawer({
             },
             title: t("transfer.stake.title"),
             description: t("transfer.stake.description"),
-            Icon: Icons.ClaimRewardsMedium,
-            onPress: onStake,
-            disabled: readOnlyModeEnabled,
+            Icon: STAKE.icon,
+            onPress: () => onNavigate(...STAKE.route),
+            disabled: STAKE.disabled,
+            testID: "transfer-stake-button",
           },
         ]
       : []),
@@ -197,27 +179,40 @@ export default function TransferDrawer({
       },
       title: t("transfer.swap.title"),
       description: t("transfer.swap.description"),
-      Icon: Icons.BuyCryptoMedium,
-      onPress:
-        accountsCount > 0 && !readOnlyModeEnabled && !areAccountsEmpty
-          ? onSwap
-          : null,
-      disabled: !accountsCount || readOnlyModeEnabled || areAccountsEmpty,
+      Icon: SWAP.icon,
+      tag: t("common.popular"),
+      onPress: () => onNavigate(...SWAP.route),
+      onDisabledPress: () => {
+        if (isPtxServiceCtaExchangeDrawerDisabled) {
+          onClose?.();
+          dismissToast(PTX_SERVICES_TOAST_ID);
+          pushToast({
+            id: PTX_SERVICES_TOAST_ID,
+            type: "success",
+            title: t("notifications.ptxServices.toast.title"),
+            icon: "info",
+          });
+        }
+      },
+      disabled: SWAP.disabled,
+      testID: "swap-transfer-button",
     },
 
-    ...(walletConnectEntryPoint?.enabled
+    ...(RECOVER
       ? [
           {
             eventProperties: {
-              button: "transfer_walletConnect",
+              button: "transfer_recover",
               page,
               drawer: "trade",
             },
-            title: t("transfer.walletConnect.title"),
-            description: t("transfer.walletConnect.description"),
-            Icon: Icons.WalletConnectMedium,
-            onPress: onWalletConnect,
-            disabled: readOnlyModeEnabled,
+            tag: t("transfer.recover.tag"),
+            title: t("transfer.recover.title"),
+            description: t("transfer.recover.description"),
+            Icon: RECOVER.icon,
+            onPress: () => onNavigateRecover(),
+            disabled: RECOVER.disabled,
+            testID: "transfer-recover-button",
           },
         ]
       : []),
@@ -257,23 +252,21 @@ export default function TransferDrawer({
 
   return (
     <Flex flexDirection="column" alignItems="flex-start" p={7} pt={9} flex={1}>
-      <ScrollView alwaysBounceVertical={false} style={{ width: "100%" }}>
+      <ScrollView
+        alwaysBounceVertical={false}
+        style={{ width: "100%" }}
+        testID="transfer-scroll-list"
+      >
         {buttonsList.map((button, index) => (
           <Box mb={index === buttonsList.length - 1 ? 0 : 8} key={button.title}>
-            <TransferButton {...button} />
+            <TransferButton {...button} testID={button.testID} />
           </Box>
         ))}
       </ScrollView>
       {readOnlyModeEnabled && !hasOrderedNano && (
         <BuyDeviceBanner
           topLeft={
-            <Text
-              color="primary.c40"
-              uppercase
-              mb={3}
-              fontSize="11px"
-              fontWeight="semiBold"
-            >
+            <Text color="primary.c40" uppercase mb={3} fontSize="11px" fontWeight="semiBold">
               {t("buyDevice.bannerTitle2")}
             </Text>
           }

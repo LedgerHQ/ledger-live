@@ -1,11 +1,11 @@
 import React, { useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { InfoMedium } from "@ledgerhq/native-ui/assets/icons";
-import { useCleanCache } from "../../../actions/general";
-import SettingsRow from "../../../components/SettingsRow";
-import { useReboot } from "../../../context/Reboot";
-import Button from "../../../components/wrappedUi/Button";
-import QueuedDrawer from "../../../components/QueuedDrawer";
+import { useCleanCache } from "~/actions/general";
+import SettingsRow from "~/components/SettingsRow";
+import { useReboot } from "~/context/Reboot";
+import Button from "~/components/wrappedUi/Button";
+import QueuedDrawer from "~/components/QueuedDrawer";
 
 export default function ClearCacheRow() {
   const { t } = useTranslation();
@@ -44,20 +44,10 @@ export default function ClearCacheRow() {
         title={t("settings.help.clearCache")}
         description={t("settings.help.clearCacheModalDesc")}
       >
-        <Button
-          type={"main"}
-          mt={4}
-          onPress={onClearCache}
-          event="DoClearCache"
-        >
+        <Button type={"main"} mt={4} onPress={onClearCache} event="DoClearCache">
           {t("settings.help.clearCacheButton")}
         </Button>
-        <Button
-          type={"default"}
-          mt={4}
-          onPress={onRequestClose}
-          event="CancelClearCache"
-        >
+        <Button type={"default"} mt={4} onPress={onRequestClose} event="CancelClearCache">
           {t("common.cancel")}
         </Button>
       </QueuedDrawer>

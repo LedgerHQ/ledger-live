@@ -4,28 +4,20 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
-import { ScreenName, NavigatorName } from "../../../../const";
-import Button from "../../../../components/Button";
-import LText from "../../../../components/LText";
-import ExternalLink from "../../../../components/ExternalLink";
-import BulletList, {
-  BulletGreenCheck,
-} from "../../../../components/BulletList";
-import NavigationScrollView from "../../../../components/NavigationScrollView";
-import { urls } from "../../../../config/urls";
-import { TrackScreen } from "../../../../analytics";
-import Illustration from "../../../../images/illustration/Illustration";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../../../components/RootNavigator/types/helpers";
+import { ScreenName, NavigatorName } from "~/const";
+import Button from "~/components/Button";
+import LText from "~/components/LText";
+import ExternalLink from "~/components/ExternalLink";
+import BulletList, { BulletGreenCheck } from "~/components/BulletList";
+import NavigationScrollView from "~/components/NavigationScrollView";
+import { urls } from "~/utils/urls";
+import { TrackScreen } from "~/analytics";
+import Illustration from "~/images/illustration/Illustration";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { AlgorandClaimRewardsFlowParamList } from "./type";
 
 type Props = BaseComposite<
-  StackNavigatorProps<
-    AlgorandClaimRewardsFlowParamList,
-    ScreenName.AlgorandClaimRewardsInfo
-  >
+  StackNavigatorProps<AlgorandClaimRewardsFlowParamList, ScreenName.AlgorandClaimRewardsInfo>
 >;
 
 export default function ClaimRewardsStarted({ navigation, route }: Props) {
@@ -49,16 +41,19 @@ export default function ClaimRewardsStarted({ navigation, route }: Props) {
         },
       ]}
     >
-      <NavigationScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContainer}
-      >
-        <TrackScreen category="ClaimRewardsFlow" name="Started" />
+      <NavigationScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
+        <TrackScreen
+          category="ClaimRewardsFlow"
+          name="Started"
+          flow="stake"
+          action="claim_rewards"
+          currency="algo"
+        />
         <Flex alignItems="center" justifyContent="center" mb={6}>
           <Illustration
             size={200}
-            lightSource={require("../../../../images/illustration/Light/_003.png")}
-            darkSource={require("../../../../images/illustration/Dark/_003.png")}
+            lightSource={require("~/images/illustration/Light/_003.png")}
+            darkSource={require("~/images/illustration/Dark/_003.png")}
           />
         </Flex>
         <LText semiBold style={styles.description}>
@@ -67,11 +62,20 @@ export default function ClaimRewardsStarted({ navigation, route }: Props) {
         <BulletList
           Bullet={BulletGreenCheck}
           list={[
-            <Trans i18nKey="algorand.claimRewards.flow.steps.info.steps.0" />,
-            <Trans i18nKey="algorand.claimRewards.flow.steps.info.steps.1" />,
-            <Trans i18nKey="algorand.claimRewards.flow.steps.info.steps.2" />,
+            <Trans
+              i18nKey="algorand.claimRewards.flow.steps.info.steps.0"
+              key="claimRewardsText1"
+            />,
+            <Trans
+              i18nKey="algorand.claimRewards.flow.steps.info.steps.1"
+              key="claimRewardsText2"
+            />,
+            <Trans
+              i18nKey="algorand.claimRewards.flow.steps.info.steps.2"
+              key="claimRewardsText3"
+            />,
           ].map(wording => (
-            <LText semiBold style={styles.bulletItem} color="black">
+            <LText semiBold style={styles.bulletItem} color="black" key={wording.key}>
               {wording}
             </LText>
           ))}
@@ -87,9 +91,7 @@ export default function ClaimRewardsStarted({ navigation, route }: Props) {
           <ExternalLink
             event="AlgorandHowRewardsWork"
             onPress={howClaimRewardsWorks}
-            text={
-              <Trans i18nKey="algorand.claimRewards.flow.steps.info.howItWorks" />
-            }
+            text={<Trans i18nKey="algorand.claimRewards.flow.steps.info.howItWorks" />}
           />
         </View>
       </NavigationScrollView>
@@ -97,9 +99,7 @@ export default function ClaimRewardsStarted({ navigation, route }: Props) {
         <Button
           event="ClaimRewardsStartedBtn"
           onPress={onNext}
-          title={
-            <Trans i18nKey="algorand.claimRewards.flow.steps.starter.cta" />
-          }
+          title={<Trans i18nKey="algorand.claimRewards.flow.steps.starter.cta" />}
           type="primary"
         />
       </View>

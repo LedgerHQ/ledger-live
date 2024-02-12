@@ -8,7 +8,7 @@ import Label from "~/renderer/components/Label";
 import LabelInfoTooltip from "~/renderer/components/LabelInfoTooltip";
 type Props = {
   isCustomMode: boolean;
-  setCustomMode: any;
+  setCustomMode: (isCustom: boolean) => void;
 };
 const SelectorContainer = styled.div`
   display: inline-flex;
@@ -16,7 +16,7 @@ const SelectorContainer = styled.div`
   overflow: hidden;
   border-radius: 9999px;
 `;
-const Selector = styled(Tabbable)`
+const Selector = styled(Tabbable)<{ active?: boolean }>`
   color: ${p =>
     p.active ? p.theme.colors.palette.primary.contrastText : p.theme.colors.palette.text.shade20};
   background: ${p =>

@@ -115,29 +115,7 @@
         "en": "Swap your crypto with ParaSwap that aggregates and provides the best quotes decentralised exchanges."
       }
     },
-    "permissions": [
-      {
-        "method": "account.list",
-        "params": {
-          "currencies": ["ethereum", "bsc"]
-        }
-      },
-      {
-        "method": "account.request",
-        "params": {
-          "currencies": ["ethereum", "bsc"]
-        }
-      },
-      {
-        "method": "transaction.sign",
-        "params": {
-          "nanoApp": ["paraswap"]
-        }
-      },
-      {
-        "method": "transaction.broadcast"
-      }
-    ],
+    "permissions": ["account.list", "account.request", "transaction.sign", "transaction.broadcast"],
     "domains": ["https://*"],
     "visibility": "complete"
   },
@@ -430,37 +408,6 @@
     },
     "permissions": [],
     "domains": []
-  },
-  {
-    "id": "wyre_buy",
-    "name": "Wyre",
-    "url": "https://platform.apps.ledger.com/app/wyre",
-    "homepageUrl": "https://www.sendwyre.com/",
-    "icon": "https://cdn.live.ledger.com/icons/platform/wyre.png",
-    "platforms": ["ios", "android", "desktop"],
-    "apiVersion": "^1.0.0 || ~0.0.1",
-    "manifestVersion": "1",
-    "branch": "stable",
-    "categories": ["exchange", "buy"],
-    "currencies": ["ethereum", "bitcoin", "algorand"],
-    "content": {
-      "shortDescription": {
-        "en": "Purchase Bitcoin, Ethereum and more crypto with Wyre, only available to our US customers."
-      },
-      "description": {
-        "en": "Purchase Bitcoin, Ethereum and more crypto with Wyre, only available to our US customers."
-      }
-    },
-    "permissions": [
-      {
-        "method": "account.request",
-        "params": {
-          "currencies": ["ethereum", "bitcoin", "algorand"]
-        }
-      }
-    ],
-    "domains": ["https://*"],
-    "visibility": "complete"
   },
   {
     "id": "zerion",

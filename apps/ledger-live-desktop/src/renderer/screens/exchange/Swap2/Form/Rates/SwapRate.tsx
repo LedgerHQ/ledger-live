@@ -28,6 +28,7 @@ const SecondaryText = styled(Text)`
 const StyledCounterValue = styled(CounterValue)`
   color: ${p => p.theme.colors.neutral.c70};
 `;
+
 function SwapRate({ value, selected, onSelect, fromCurrency, toCurrency }: Props) {
   const { toAmount: amount, provider } = value;
   return (
@@ -99,4 +100,5 @@ function SwapRate({ value, selected, onSelect, fromCurrency, toCurrency }: Props
     ></Rate>
   );
 }
+
 export default React.memo<Props>(SwapRate);

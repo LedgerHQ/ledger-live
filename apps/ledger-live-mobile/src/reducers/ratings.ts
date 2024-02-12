@@ -27,14 +27,12 @@ const handlers: ReducerMap<RatingsState, RatingsPayload> = {
 
   [RatingsActionTypes.RATINGS_SET_MODAL_LOCKED]: (state, action) => ({
     ...state,
-    isRatingsModalLocked: (action as Action<RatingsSetModalLockedPayload>)
-      .payload,
+    isRatingsModalLocked: (action as Action<RatingsSetModalLockedPayload>).payload,
   }),
 
   [RatingsActionTypes.RATINGS_SET_CURRENT_ROUTE_NAME]: (state, action) => ({
     ...state,
-    currentRouteName: (action as Action<RatingsSetCurrentRouteNamePayload>)
-      .payload,
+    currentRouteName: (action as Action<RatingsSetCurrentRouteNamePayload>).payload,
   }),
 
   [RatingsActionTypes.RATINGS_SET_HAPPY_MOMENT]: (state, action) => ({
@@ -47,28 +45,18 @@ const handlers: ReducerMap<RatingsState, RatingsPayload> = {
     dataOfUser: (action as Action<RatingsDataOfUserPayload>).payload,
   }),
 
-  [RatingsActionTypes.DANGEROUSLY_OVERRIDE_STATE]: (
-    state: RatingsState,
-    action,
-  ): RatingsState => ({
+  [RatingsActionTypes.DANGEROUSLY_OVERRIDE_STATE]: (state: RatingsState, action): RatingsState => ({
     ...state,
     ...(action as Action<DangerouslyOverrideStatePayload>).payload.ratings,
   }),
 };
 
 // Selectors
-export const ratingsModalOpenSelector = (s: State) =>
-  s.ratings.isRatingsModalOpen;
-export const ratingsModalLockedSelector = (s: State) =>
-  s.ratings.isRatingsModalLocked;
-export const ratingsCurrentRouteNameSelector = (s: State) =>
-  s.ratings.currentRouteName;
+export const ratingsModalOpenSelector = (s: State) => s.ratings.isRatingsModalOpen;
+export const ratingsModalLockedSelector = (s: State) => s.ratings.isRatingsModalLocked;
+export const ratingsCurrentRouteNameSelector = (s: State) => s.ratings.currentRouteName;
 export const ratingsHappyMomentSelector = (s: State) => s.ratings.happyMoment;
 export const ratingsDataOfUserSelector = (s: State) => s.ratings.dataOfUser;
-export const satisfactionSelector = (s: State) =>
-  s.ratings.dataOfUser?.satisfaction;
+export const satisfactionSelector = (s: State) => s.ratings.dataOfUser?.satisfaction;
 
-export default handleActions<RatingsState, RatingsPayload>(
-  handlers,
-  INITIAL_STATE,
-);
+export default handleActions<RatingsState, RatingsPayload>(handlers, INITIAL_STATE);

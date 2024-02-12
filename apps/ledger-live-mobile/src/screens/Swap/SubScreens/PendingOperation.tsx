@@ -6,23 +6,19 @@ import { Trans } from "react-i18next";
 
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useSelector } from "react-redux";
-import LText from "../../../components/LText";
-import Button from "../../../components/Button";
-import IconCheck from "../../../icons/Check";
-import IconClock from "../../../icons/Clock";
+import LText from "~/components/LText";
+import Button from "~/components/Button";
+import IconCheck from "~/icons/Check";
+import IconClock from "~/icons/Clock";
 import { rgba } from "../../../colors";
-import { TrackScreen } from "../../../analytics";
+import { TrackScreen } from "~/analytics";
 import { PendingOperationParamList } from "../types";
-import { flattenAccountsSelector } from "../../../reducers/accounts";
-import { ScreenName } from "../../../const";
+import { flattenAccountsSelector } from "~/reducers/accounts";
+import { ScreenName } from "~/const";
 
-export function PendingOperation({
-  route,
-  navigation,
-}: PendingOperationParamList) {
+export function PendingOperation({ route, navigation }: PendingOperationParamList) {
   const { colors } = useTheme();
-  const { swapId, provider, toAccountId, fromAccountId } =
-    route.params.swapOperation;
+  const { swapId, provider, toAccountId, fromAccountId } = route.params.swapOperation;
   const accounts = useSelector(flattenAccountsSelector);
   const fromAccount = useMemo(
     () => accounts.find(a => a.id === fromAccountId),
@@ -54,19 +50,9 @@ export function PendingOperation({
       />
       <View style={styles.wrapper}>
         <View style={styles.content}>
-          <View
-            style={[
-              styles.iconWrapper,
-              { backgroundColor: rgba(colors.success, 0.1) },
-            ]}
-          >
+          <View style={[styles.iconWrapper, { backgroundColor: rgba(colors.success, 0.1) }]}>
             <IconCheck color={colors.success} size={20} />
-            <View
-              style={[
-                styles.wrapperClock,
-                { backgroundColor: colors.background },
-              ]}
-            >
+            <View style={[styles.wrapperClock, { backgroundColor: colors.background }]}>
               <IconClock color={colors.grey} size={14} />
             </View>
           </View>

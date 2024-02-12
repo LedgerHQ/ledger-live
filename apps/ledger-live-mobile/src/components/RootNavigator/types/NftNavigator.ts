@@ -1,6 +1,6 @@
-import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
+import { NFTResource } from "@ledgerhq/live-nft/types";
 import type { NFTMediaSize, NFTMetadata, ProtoNFT } from "@ledgerhq/types-live";
-import { ScreenName } from "../../../const";
+import { ScreenName } from "~/const";
 
 export type NftNavigatorParamList = {
   [ScreenName.NftViewer]: {
@@ -11,4 +11,5 @@ export type NftNavigatorParamList = {
     mediaFormat: NFTMediaSize;
     status: NFTResource["status"];
   };
+  [ScreenName.HiddenNftCollections]: undefined;
 };

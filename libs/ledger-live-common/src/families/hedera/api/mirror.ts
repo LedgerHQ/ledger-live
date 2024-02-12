@@ -1,15 +1,15 @@
-import BigNumber from "bignumber.js";
-import network from "../../../network";
-import { getAccountBalance } from "./network";
-import { Operation, OperationType } from "@ledgerhq/types-live";
-import { encodeOperationId } from "../../../operation";
 import { AccountId } from "@hashgraph/sdk";
-import { getEnv } from "../../../env";
+import network from "@ledgerhq/live-network/network";
+import { Operation, OperationType } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
+import { getEnv } from "@ledgerhq/live-env";
+import { encodeOperationId } from "../../../operation";
+import { getAccountBalance } from "./network";
 import { base64ToUrlSafeBase64 } from "../utils";
 
 const getMirrorApiUrl = (): string => getEnv("API_HEDERA_MIRROR");
 
-const fetch = (path) => {
+const fetch = path => {
   return network({
     method: "GET",
     url: `${getMirrorApiUrl()}${path}`,
@@ -21,14 +21,10 @@ export interface Account {
   balance: BigNumber;
 }
 
-export async function getAccountsForPublicKey(
-  publicKey: string
-): Promise<Account[]> {
+export async function getAccountsForPublicKey(publicKey: string): Promise<Account[]> {
   let r;
   try {
-    r = await fetch(
-      `/api/v1/accounts?account.publicKey=${publicKey}&balance=false`
-    );
+    r = await fetch(`/api/v1/accounts?account.publicKey=${publicKey}&balance=false`);
   } catch (e: any) {
     if (e.name === "LedgerAPI4xx") return [];
     throw e;
@@ -63,11 +59,11 @@ interface HederaMirrorTransfer {
 export async function getOperationsForAccount(
   ledgerAccountId: string,
   address: string,
-  latestOperationTimestamp: string
+  latestOperationTimestamp: string,
 ): Promise<Operation[]> {
   const operations: Operation[] = [];
   let r = await fetch(
-    `/api/v1/transactions?account.id=${address}&timestamp=gt:${latestOperationTimestamp}`
+    `/api/v1/transactions?account.id=${address}&timestamp=gt:${latestOperationTimestamp}`,
   );
   const rawOperations = r.data.transactions as HederaMirrorTransaction[];
 
@@ -79,9 +75,7 @@ export async function getOperationsForAccount(
 
   for (const raw of rawOperations) {
     const { consensus_timestamp } = raw;
-    const timestamp = new Date(
-      parseInt(consensus_timestamp.split(".")[0], 10) * 1000
-    );
+    const timestamp = new Date(parseInt(consensus_timestamp.split(".")[0], 10) * 1000);
     const senders: string[] = [];
     const recipients: string[] = [];
     const fee = new BigNumber(raw.charged_tx_fee);
@@ -137,7 +131,7 @@ export async function getOperationsForAccount(
       // Set a value just so that it's considered confirmed according to isConfirmedOperation
       blockHeight: 5,
       blockHash: null,
-      extra: {},
+      extra: { consensusTimestamp: consensus_timestamp },
       fee,
       hash,
       recipients,

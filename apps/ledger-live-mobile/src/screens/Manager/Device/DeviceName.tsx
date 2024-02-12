@@ -8,8 +8,8 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { TouchableOpacity } from "react-native";
 import { DeviceInfo } from "@ledgerhq/types-live";
-import { deviceNameByDeviceIdSelectorCreator } from "../../../reducers/ble";
-import { ScreenName } from "../../../const";
+import { deviceNameByDeviceIdSelectorCreator } from "~/reducers/ble";
+import { ScreenName } from "~/const";
 
 type Props = {
   device: Device;
@@ -25,16 +25,9 @@ const hitSlop = {
   top: 8,
 };
 
-export default function DeviceName({
-  device,
-  initialDeviceName,
-  disabled,
-  deviceInfo,
-}: Props) {
+export default function DeviceName({ device, initialDeviceName, disabled, deviceInfo }: Props) {
   const navigation = useNavigation();
-  const savedName = useSelector(
-    deviceNameByDeviceIdSelectorCreator(device.deviceId),
-  );
+  const savedName = useSelector(deviceNameByDeviceIdSelectorCreator(device.deviceId));
   const productName = device
     ? getDeviceModel(device.modelId).productName || device.modelId
     : "Ledger Device";
@@ -56,8 +49,8 @@ export default function DeviceName({
     <Flex flexDirection={"row"} flexWrap={"nowrap"} alignItems="center">
       <Text
         maxWidth="90%"
-        variant="large"
-        fontSize={24}
+        fontWeight="semiBold"
+        variant="h4"
         uppercase={false}
         numberOfLines={2}
         ellipsizeMode="tail"
@@ -66,21 +59,17 @@ export default function DeviceName({
         {displayedName}
       </Text>
       {(id === DeviceModelId.nanoX || id === DeviceModelId.stax) && (
-        <TouchableOpacity
-          onPress={onPress}
-          disabled={disabled}
-          hitSlop={hitSlop}
-        >
+        <TouchableOpacity onPress={onPress} disabled={disabled} hitSlop={hitSlop}>
           <Flex
             ml={3}
-            backgroundColor={"palette.primary.c30"}
+            backgroundColor={disabled ? "palette.neutral.c30" : "palette.primary.c30"}
             borderRadius={14}
             width={28}
             height={28}
             alignItems="center"
             justifyContent="center"
           >
-            <PenMedium size={16} color={"palette.primary.c80"} />
+            <PenMedium size={16} color={disabled ? "palette.neutral.c80" : "palette.primary.c80"} />
           </Flex>
         </TouchableOpacity>
       )}

@@ -3,9 +3,9 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useTheme } from "styled-components/native";
-import { getDeviceAnimation } from "../../helpers/getDeviceAnimation";
+import { getDeviceAnimation } from "~/helpers/getDeviceAnimation";
 import Animation from "../Animation";
-import Track from "../../analytics/Track";
+import Track from "~/analytics/Track";
 
 type Props = {
   device: Device;
@@ -31,9 +31,7 @@ const ConfirmPinStep = ({ device }: Props) => {
         </Text>
       </Flex>
       <Flex mt={7}>
-        <Log>
-          {t("FirmwareUpdate.finishUpdate", { deviceName: device.deviceName })}
-        </Log>
+        <Log>{t("FirmwareUpdate.finishUpdate", { deviceName: device.deviceName })}</Log>
       </Flex>
       <Flex
         border={1}

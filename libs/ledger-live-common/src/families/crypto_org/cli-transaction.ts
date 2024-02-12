@@ -21,7 +21,7 @@ function inferTransactions(
     account: AccountLike;
     transaction: Transaction;
   }>,
-  opts: Record<string, any>
+  opts: Record<string, any>,
 ): Transaction[] {
   return flatMap(transactions, ({ transaction, account }) => {
     invariant(transaction.family === "crypto_org", "crypto_org family");
@@ -33,8 +33,7 @@ function inferTransactions(
       const cryptoOrgAccount = account as CryptoOrgAccount;
       // We are doing the job twice... maybe use either invariant or if() throw
       invariant(cryptoOrgAccount.cryptoOrgResources, "unactivated account");
-      if (!cryptoOrgAccount.cryptoOrgResources)
-        throw new Error("unactivated account");
+      if (!cryptoOrgAccount.cryptoOrgResources) throw new Error("unactivated account");
     }
 
     return {

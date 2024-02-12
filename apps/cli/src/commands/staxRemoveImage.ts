@@ -6,8 +6,6 @@ import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 
 export default {
   description: "Remove custom lock screen",
-  arg: [
-    deviceOpt,
-  ],
-  job: (arg: ScanCommonOpts): any => withDevice(arg?.device || "")((t) => from(staxRemoveImage(t)))
+  args: [deviceOpt],
+  job: (arg: ScanCommonOpts): any => withDevice(arg?.device || "")(t => from(staxRemoveImage(t))),
 };

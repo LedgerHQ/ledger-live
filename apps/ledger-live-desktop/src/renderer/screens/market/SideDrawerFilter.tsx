@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { TFunction } from "react-i18next";
+import { TFunction } from "i18next";
 import Dropdown from "./DropDown";
 
 export default function SideDrawerFilter({
@@ -15,11 +15,12 @@ export default function SideDrawerFilter({
   t: TFunction;
 }) {
   const { starred, liveCompatible } = filters;
-  const resetFilters = useCallback(() => refresh({ starred: [], liveCompatible: false }), [
-    refresh,
-  ]);
+  const resetFilters = useCallback(
+    () => refresh({ starred: [], liveCompatible: false }),
+    [refresh],
+  );
   const onChange = useCallback(
-    option => {
+    (option?: { label: string; value: string } | null) => {
       if (!option) return;
       switch (option.value) {
         case "all":

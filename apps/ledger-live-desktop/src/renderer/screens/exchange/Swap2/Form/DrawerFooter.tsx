@@ -8,6 +8,7 @@ import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import Text from "~/renderer/components/Text";
 import { openURL } from "~/renderer/linking";
 import { Separator } from "./Separator";
+
 const Terms = styled(Text).attrs({
   ff: "Inter|SemiBold",
   color: "palette.text.shade60",
@@ -15,6 +16,7 @@ const Terms = styled(Text).attrs({
 })`
   white-space: pre-line;
 `;
+
 export function DrawerFooter({ provider }: { provider: string }) {
   const swapProvider = urls.swap.providers[provider as keyof typeof urls.swap.providers];
   const url = ("tos" in swapProvider && swapProvider?.tos) || undefined;
@@ -23,6 +25,7 @@ export function DrawerFooter({ provider }: { provider: string }) {
     return null;
   }
   const providerName = getProviderName(provider);
+
   return (
     <>
       <Separator />

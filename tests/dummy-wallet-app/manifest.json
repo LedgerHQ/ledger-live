@@ -1,0 +1,38 @@
+{
+  "id": "dummy",
+  "name": "Dummy Wallet App",
+  "url": "http://localhost:5173",
+  "homepageUrl": "http://localhost:5173",
+  "icon": "",
+  "platform": "all",
+  "apiVersion": "^2.0.0 || ~0.0.1",
+  "manifestVersion": "1",
+  "branch": "experimental",
+  "categories": [],
+  "currencies": ["**"],
+  "content": {
+    "shortDescription": {
+      "en": ""
+    },
+    "description": {
+      "en": ""
+    }
+  },
+  "permissions": [
+    "account.list",
+    "account.receive",
+    "account.request",
+    "currency.list",
+    "device.close",
+    "device.exchange",
+    "device.transport",
+    "message.sign",
+    "transaction.sign",
+    "transaction.signAndBroadcast",
+    "wallet.capabilities",
+    "custom.logger.log",
+    "storage.set",
+    "event.custom.test"
+  ],
+  "domains": ["http://*", "https://*"]
+}

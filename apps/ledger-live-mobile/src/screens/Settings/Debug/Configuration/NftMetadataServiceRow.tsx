@@ -1,9 +1,9 @@
 import React, { useCallback, useState } from "react";
 import { Switch } from "@ledgerhq/native-ui";
-import { setEnvUnsafe, getEnv } from "@ledgerhq/live-common/env";
-import { useNftAPI } from "@ledgerhq/live-common/nft/NftMetadataProvider/index";
+import { setEnvUnsafe, getEnv } from "@ledgerhq/live-env";
+import { useNftAPI } from "@ledgerhq/live-nft-react";
 
-import SettingsRow from "../../../../components/SettingsRow";
+import SettingsRow from "~/components/SettingsRow";
 
 const PRODUCTION_URL = "https://nft.api.live.ledger.com";
 const STAGING_URL = "https://nft.api.live.ledger-stg.com";
@@ -20,10 +20,7 @@ const NftMetadataServiceRow = () => {
   const onChange = useCallback(
     (enabled: boolean) => {
       setStagingNftMetadataService(enabled);
-      setEnvUnsafe(
-        "NFT_ETH_METADATA_SERVICE",
-        enabled ? STAGING_URL : PRODUCTION_URL,
-      );
+      setEnvUnsafe("NFT_ETH_METADATA_SERVICE", enabled ? STAGING_URL : PRODUCTION_URL);
       clearCache();
     },
     [clearCache],

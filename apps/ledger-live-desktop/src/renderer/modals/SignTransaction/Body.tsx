@@ -1,10 +1,9 @@
-import React, { useCallback, useState, useMemo } from "react";
+import React, { useCallback, useState, useMemo, useEffect } from "react";
 import { BigNumber } from "bignumber.js";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { Account, AccountLike, SignedOperation } from "@ledgerhq/types-live";
-import { PlatformTransaction } from "@ledgerhq/live-common/platform/types";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import Stepper from "~/renderer/components/Stepper";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
@@ -21,14 +20,16 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import logger from "~/renderer/logger";
 import Text from "~/renderer/components/Text";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import { ModalData } from "../types";
 
 export type Params = {
   canEditFees: boolean;
+  stepId?: StepId;
   useApp?: string;
   account: AccountLike;
-  transactionData: PlatformTransaction & { gasLimit: BigNumber };
+  transactionData: Partial<Transaction>;
   onResult: (signedOperation: SignedOperation) => void;
-  onCancel: (reason: unknown) => void;
+  onCancel: (error: Error) => void;
   parentAccount: Account | undefined | null;
   startWithWarning?: boolean;
   recipient?: string;
@@ -56,9 +57,7 @@ function useSteps(canEditFees = false): St[] {
           <Text ff="Inter|Bold" fontSize={4} color="palette.primary.main">
             {t("common.adjustFees")}
           </Text>
-        ) : (
-          undefined
-        ),
+        ) : undefined,
       },
       {
         id: "device",
@@ -103,6 +102,13 @@ function getStatusError(status: TransactionStatus, type = "errors"): Error | und
   return firstKey ? status[type][firstKey] : null;
 }
 export default function Body({ onChangeStepId, onClose, setError, stepId, params }: Props) {
+  useEffect(() => {
+    // Check for stepId params on first mount to update if diff
+    if (params.stepId && stepId !== params.stepId) {
+      onChangeStepId(params.stepId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const device = useSelector(getCurrentDevice);
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -129,10 +135,7 @@ export default function Body({ onChangeStepId, onClose, setError, stepId, params
       recipient,
       subAccountId: isTokenAccount(account) ? account.id : undefined,
     });
-    const transaction = bridge.updateTransaction(tx2, {
-      userGasLimit: txData.gasLimit,
-      ...txData,
-    });
+    const transaction = bridge.updateTransaction(tx2, txData);
     return {
       account,
       parentAccount,
@@ -140,7 +143,11 @@ export default function Body({ onChangeStepId, onClose, setError, stepId, params
     };
   });
   const [transactionError, setTransactionError] = useState<Error | null>(null);
-  const handleOpenModal = useCallback((name, data) => dispatch(openModal(name, data)), [dispatch]);
+  const handleOpenModal = useCallback(
+    <Name extends keyof ModalData>(name: Name, data: ModalData[Name]) =>
+      dispatch(openModal(name, data)),
+    [dispatch],
+  );
   const handleCloseModal = useCallback(() => {
     dispatch(closeModal("MODAL_SIGN_TRANSACTION"));
   }, [dispatch]);
@@ -166,7 +173,7 @@ export default function Body({ onChangeStepId, onClose, setError, stepId, params
     },
     [setError],
   );
-  const handleStepChange = useCallback(e => onChangeStepId(e.id), [onChangeStepId]);
+  const handleStepChange = useCallback((e: St) => onChangeStepId(e.id), [onChangeStepId]);
   const handleTransactionSigned = useCallback(
     (signedTransaction: SignedOperation) => {
       params.onResult(signedTransaction);

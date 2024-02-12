@@ -1,7 +1,7 @@
 import React, { useCallback, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { Flex, Text, Icons, Link } from "@ledgerhq/react-ui";
+import { Flex, Text, IconsLegacy, Link } from "@ledgerhq/react-ui";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { StepProps } from "../Body";
 import StakingIllustration from "../assets/StakingIllustration";
@@ -10,9 +10,10 @@ import { openURL } from "~/renderer/linking";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import Button from "~/renderer/components/ButtonV3";
 import CheckBox from "~/renderer/components/CheckBox";
-import perFamilyManageActions from "~/renderer/generated/AccountHeaderManageActions";
 import { getAccountName } from "@ledgerhq/live-common/account/index";
 import { Account } from "@ledgerhq/types-live";
+import { getLLDCoinFamily } from "~/renderer/families";
+import { ManageAction } from "~/renderer/families/types";
 
 export const LOCAL_STORAGE_KEY_PREFIX = "receive_staking_";
 
@@ -34,38 +35,13 @@ export const CheckBoxContainer: typeof Flex = styled(Flex)`
 const StepReceiveStakingFlow = (props: StepProps) => {
   const { t } = useTranslation();
   const receiveStakingFlowConfig = useFeature("receiveStakingFlowConfigDesktop");
+  const { account } = props;
   const [doNotShowAgain, setDoNotShowAgain] = useState<boolean>(false);
-  const [action, setAction] = useState<object>({});
-  const [title, setTitle] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
-  const { account, parentAccount } = props;
 
   const id = account && "currency" in account ? account.currency?.id : undefined;
-  const supportLink = id ? receiveStakingFlowConfig?.params[id]?.supportLink : undefined;
-  const manage =
-    account && "currency" in account
-      ? perFamilyManageActions[account.currency.family as keyof typeof perFamilyManageActions]
-      : undefined;
-  const familyManageActions =
-    account && manage ? manage({ account: account as Account, parentAccount }) : undefined;
-
-  useEffect(() => {
-    const manageList =
-      familyManageActions && familyManageActions.length > 0 ? familyManageActions : [];
-    // @ts-expect-error ts seems to have issues with union of arrays of different types
-    const newAction = manageList && manageList.find(item => item.key === "Stake");
-    const newTitle = t(`receive.steps.staking.${id}.title`);
-    const newDescription = t(`receive.steps.staking.${id}.description`);
-    if (JSON.stringify(title) !== JSON.stringify(newTitle)) {
-      setTitle(newTitle);
-    }
-    if (JSON.stringify(description) !== JSON.stringify(newDescription)) {
-      setDescription(newDescription);
-    }
-    if (JSON.stringify(action) !== JSON.stringify(newAction)) {
-      setAction(newAction);
-    }
-  }, [action, description, familyManageActions, id, t, title]);
+  const supportLink = id ? receiveStakingFlowConfig?.params?.[id]?.supportLink : undefined;
+  const title = t(`receive.steps.staking.${id}.title`);
+  const description = t(`receive.steps.staking.${id}.description`);
 
   const getTrackProperties = useCallback(() => {
     return {
@@ -79,19 +55,22 @@ const StepReceiveStakingFlow = (props: StepProps) => {
   }, []);
 
   const openLink = useCallback(() => {
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "learn_more",
       ...getTrackProperties(),
       link: supportLink,
     });
-    openURL(supportLink, "OpenURL", getTrackProperties());
+
+    if (supportLink) {
+      openURL(supportLink, "OpenURL", getTrackProperties());
+    }
   }, [getTrackProperties, supportLink]);
 
   const onChange = useCallback(() => {
     const value = !doNotShowAgain;
     global.localStorage.setItem(`${LOCAL_STORAGE_KEY_PREFIX}${id}`, "" + value);
     setDoNotShowAgain(value);
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "not_show",
       ...getTrackProperties(),
       value,
@@ -108,7 +87,7 @@ const StepReceiveStakingFlow = (props: StepProps) => {
         {description}
       </Text>
       {supportLink && (
-        <Link Icon={Icons.ExternalLinkMedium} onClick={openLink} mt={7} mb={7} type={"color"}>
+        <Link Icon={IconsLegacy.ExternalLinkMedium} onClick={openLink} mt={7} mb={7} type={"color"}>
           {t("receive.steps.staking.link")}
         </Link>
       )}
@@ -119,51 +98,45 @@ const StepReceiveStakingFlow = (props: StepProps) => {
   );
 };
 
-type Manage = ReturnType<typeof perFamilyManageActions[keyof typeof perFamilyManageActions]>;
+const providerName = "Ledger";
+
 export const StepReceiveStakingFooter = (props: StepProps) => {
   const { t } = useTranslation();
-  const [action, setAction] = useState<Manage>({} as Manage);
+  const [action, setAction] = useState<ManageAction | undefined>();
   const { account, parentAccount, closeModal } = props;
-  const manage =
-    account &&
-    "currency" in account &&
-    perFamilyManageActions[account.currency.family as keyof typeof perFamilyManageActions];
+  const specific =
+    account && account.type === "Account" ? getLLDCoinFamily(account.currency.family) : null;
+  const manage = specific?.accountHeaderManageActions;
   const familyManageActions =
     manage && account && manage({ account: account as Account, parentAccount });
 
   useEffect(() => {
     const manageList =
       familyManageActions && familyManageActions.length > 0 ? familyManageActions : [];
-    // @ts-expect-error ts seems to have issues with union of arrays of different types
     const newAction = manageList && manageList.find(item => item.key === "Stake");
-    if (JSON.stringify(newAction) !== JSON.stringify(action)) {
+
+    if (newAction?.key !== action?.key || newAction?.label !== action?.label) {
       setAction(newAction);
     }
   }, [action, familyManageActions]);
 
-  const getTrackProperties = useCallback(
-    () => {
-      return {
-        page: window.location.hash
-          .split("/")
-          .filter(e => e !== "#")
-          .join("/"),
-        flow: "stake",
-        currency: account && "currency" in account ? account?.currency?.name : undefined,
-        // @ts-expect-error this is a valid check
-        provider: (action && "provider" in action && action?.provider?.name) || "Ledger",
-        modal: "receive",
-        account: account && getAccountName(account),
-      };
-    },
-    // @ts-expect-error this is a valid check
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [account, action?.provider?.name],
-  );
+  const getTrackProperties = useCallback(() => {
+    return {
+      page: window.location.hash
+        .split("/")
+        .filter(e => e !== "#")
+        .join("/"),
+      flow: "stake",
+      currency: account && "currency" in account ? account?.currency?.name : undefined,
+      provider: providerName,
+      modal: "receive",
+      account: account && getAccountName(account),
+    };
+  }, [account]);
 
   const onStake = useCallback(() => {
     if (action && "onClick" in action && action?.onClick) {
-      track("button_clicked", {
+      track("button_clicked2", {
         button: "stake",
         ...getTrackProperties(),
       });
@@ -176,7 +149,7 @@ export const StepReceiveStakingFooter = (props: StepProps) => {
   }, [action, closeModal, getTrackProperties]);
 
   const onCloseModal = useCallback(() => {
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "skip",
       ...getTrackProperties(),
     });
@@ -188,8 +161,7 @@ export const StepReceiveStakingFooter = (props: StepProps) => {
       <Button onClick={onCloseModal}>{t("receive.steps.staking.footer.dismiss")}</Button>
       <Button variant="color" onClick={onStake}>
         {t("receive.steps.staking.footer.stake", {
-          // @ts-expect-error this is a valid check
-          provider: action?.provider?.name ? action?.provider?.name : "Ledger",
+          provider: providerName,
         })}
       </Button>
     </>

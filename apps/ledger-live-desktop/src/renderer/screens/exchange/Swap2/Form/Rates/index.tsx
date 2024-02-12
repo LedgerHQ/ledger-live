@@ -7,11 +7,12 @@ import Text from "~/renderer/components/Text";
 import NoQuoteSwapRate from "./NoQuoteSwapRate";
 import SwapRate from "./SwapRate";
 import Countdown from "./Countdown";
-import EmptyState from "./EmptyState";
+import LoadingState from "./LoadingState";
 import Filter from "./Filter";
 import {
   SwapSelectorStateType,
   RatesReducerState,
+  ExchangeRate,
 } from "@ledgerhq/live-common/exchange/swap/types";
 import { rateSelector, updateRateAction } from "~/renderer/actions/swap";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -20,6 +21,9 @@ import styled from "styled-components";
 import Tooltip from "~/renderer/components/Tooltip";
 import IconInfoCircle from "~/renderer/icons/InfoCircle";
 import { filterRates } from "./filterRates";
+import { getFeesUnit } from "@ledgerhq/live-common/account/index";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+
 type Props = {
   fromCurrency: SwapSelectorStateType["currency"];
   toCurrency: SwapSelectorStateType["currency"];
@@ -28,6 +32,7 @@ type Props = {
   refreshTime: number;
   countdown: boolean;
 };
+
 const TableHeader = styled(Box).attrs({
   horizontal: true,
   alignItems: "center",
@@ -43,6 +48,7 @@ const TableHeader = styled(Box).attrs({
 })`
   border-bottom: 1px solid ${p => p.theme.colors.neutral.c30};
 `;
+
 export default function ProviderRate({
   fromCurrency,
   toCurrency,
@@ -57,9 +63,14 @@ export default function ProviderRate({
   const [defaultPartner, setDefaultPartner] = useState<string | null>(null);
   const selectedRate = useSelector(rateSelector);
   const filteredRates = useMemo(() => filterRates(rates, filter), [rates, filter]);
+  const providers = [...new Set(rates?.map(rate => rate.provider) ?? [])];
+  const exchangeRates =
+    toCurrency && rates
+      ? rates.map(({ toAmount }) => formatCurrencyUnit(getFeesUnit(toCurrency), toAmount))
+      : [];
   const updateRate = useCallback(
-    rate => {
-      const value = rate ?? rate.provider;
+    (rate: ExchangeRate) => {
+      const value = rate.rate ?? rate.provider;
       track("partner_clicked", {
         page: "Page Swap Form",
         ...swapDefaultTrack,
@@ -72,6 +83,7 @@ export default function ProviderRate({
     },
     [defaultPartner, dispatch, swapDefaultTrack],
   );
+
   useEffect(() => {
     // if the selected rate in redux is not in the filtered rates, we need to update it
     if (
@@ -99,9 +111,10 @@ export default function ProviderRate({
       dispatch(updateRateAction(null));
     }
   }, [filteredRates, selectedRate, dispatch]);
+
   const updateFilter = useCallback(
     (newFilter: string[]) => {
-      track("button_clicked", {
+      track("button_clicked2", {
         button: "Filter selected",
         page: "Page Swap Form",
         ...swapDefaultTrack,
@@ -111,12 +124,17 @@ export default function ProviderRate({
     },
     [swapDefaultTrack],
   );
+
   return (
     <Box height="100%" width="100%">
       <TrackPage
         category="Swap"
         name="Form - Edit Rates"
         provider={provider}
+        partnersList={providers}
+        exchangeRateList={exchangeRates}
+        sourceCurrency={fromCurrency?.id}
+        targetCurrency={toCurrency?.id}
         {...swapDefaultTrack}
       />
       <Box horizontal justifyContent="space-between" fontSize={5}>
@@ -229,7 +247,7 @@ export default function ProviderRate({
           );
         })}
       </Box>
-      {!filteredRates.length && <EmptyState />}
+      {!filteredRates.length && <LoadingState />}
     </Box>
   );
 }

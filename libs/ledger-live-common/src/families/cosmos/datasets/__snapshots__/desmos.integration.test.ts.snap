@@ -1,0 +1,65 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`desmos currency bridge scanAccounts desmos seed 1 1`] = `
+[
+  {
+    "balance": "6798191",
+    "currencyId": "desmos",
+    "derivationMode": "",
+    "freshAddress": "desmos1gyauvl44q2apn3u3aujm36q8zrj74vrypqn8c3",
+    "freshAddressPath": "44'/118'/0'/0/0",
+    "freshAddresses": [
+      {
+        "address": "desmos1gyauvl44q2apn3u3aujm36q8zrj74vrypqn8c3",
+        "derivationPath": "44'/118'/0'/0/0",
+      },
+    ],
+    "id": "js:2:desmos:desmos1gyauvl44q2apn3u3aujm36q8zrj74vrypqn8c3:",
+    "index": 0,
+    "name": "Desmos 1",
+    "nfts": undefined,
+    "pendingOperations": [],
+    "seedIdentifier": "03d5e0ebb3f1ae2afe87e5d5a24b5029a59cc12f8fd1056840091b2f0b97e54e83",
+    "spendableBalance": "6748191",
+    "starred": false,
+    "swapHistory": [],
+    "syncHash": undefined,
+    "unitMagnitude": 6,
+    "used": true,
+    "xpub": "desmos1gyauvl44q2apn3u3aujm36q8zrj74vrypqn8c3",
+  },
+  {
+    "balance": "0",
+    "currencyId": "desmos",
+    "derivationMode": "",
+    "freshAddress": "desmos1v2mp0m7k96dm9qv60fkspcqlzpkzrwneka7amk",
+    "freshAddressPath": "44'/118'/1'/0/0",
+    "freshAddresses": [
+      {
+        "address": "desmos1v2mp0m7k96dm9qv60fkspcqlzpkzrwneka7amk",
+        "derivationPath": "44'/118'/1'/0/0",
+      },
+    ],
+    "id": "js:2:desmos:desmos1v2mp0m7k96dm9qv60fkspcqlzpkzrwneka7amk:",
+    "index": 1,
+    "name": "Desmos 2",
+    "nfts": undefined,
+    "pendingOperations": [],
+    "seedIdentifier": "03d5e0ebb3f1ae2afe87e5d5a24b5029a59cc12f8fd1056840091b2f0b97e54e83",
+    "spendableBalance": "0",
+    "starred": false,
+    "swapHistory": [],
+    "syncHash": undefined,
+    "unitMagnitude": 6,
+    "used": false,
+    "xpub": "desmos1v2mp0m7k96dm9qv60fkspcqlzpkzrwneka7amk",
+  },
+]
+`;
+
+exports[`desmos currency bridge scanAccounts desmos seed 1 2`] = `
+[
+  [],
+  [],
+]
+`;

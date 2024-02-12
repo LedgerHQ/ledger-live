@@ -5,13 +5,14 @@ import type { NFTMetadataResponse, Operation } from "@ledgerhq/types-live";
 import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import type { BigNumber } from "bignumber.js";
 import { useTranslation } from "react-i18next";
-import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import DoubleCounterValue from "../../components/DoubleCountervalue";
-import Skeleton from "../../components/Skeleton";
-import LText from "../../components/LText";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import DoubleCounterValue from "~/components/DoubleCountervalue";
+import Skeleton from "~/components/Skeleton";
+import LText from "~/components/LText";
 
 type Props = {
   hasFailed: boolean;
+  isConfirmed: boolean;
   amount: BigNumber;
   operation: Operation;
   currency: Currency;
@@ -25,6 +26,7 @@ type Props = {
 const Title = ({
   operation,
   hasFailed,
+  isConfirmed,
   amount,
   isNftOperation,
   currency,
@@ -36,7 +38,7 @@ const Title = ({
   const { t } = useTranslation();
   const { colors } = useTheme();
   const isNegative = amount.isNegative();
-  const valueColor = isNegative ? colors.smoke : colors.green;
+  const valueColor = isNegative ? colors.smoke : isConfirmed ? colors.green : colors.warning;
 
   if (isNftOperation) {
     return (
@@ -80,6 +82,7 @@ const Title = ({
             color: valueColor,
           },
         ]}
+        testID="operationDetails-amount"
       >
         <CurrencyUnitValue
           showCode

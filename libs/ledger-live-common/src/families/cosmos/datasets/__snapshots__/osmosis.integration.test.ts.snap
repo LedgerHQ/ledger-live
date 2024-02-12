@@ -1,0 +1,65 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`osmo currency bridge scanAccounts osmo seed 1 1`] = `
+[
+  {
+    "balance": "124344",
+    "currencyId": "osmo",
+    "derivationMode": "",
+    "freshAddress": "osmo17gmcxyc5ccd5kwqqatpgfdgh380w2hc77zm0zw",
+    "freshAddressPath": "44'/118'/0'/0/0",
+    "freshAddresses": [
+      {
+        "address": "osmo17gmcxyc5ccd5kwqqatpgfdgh380w2hc77zm0zw",
+        "derivationPath": "44'/118'/0'/0/0",
+      },
+    ],
+    "id": "js:2:osmo:osmo17gmcxyc5ccd5kwqqatpgfdgh380w2hc77zm0zw:",
+    "index": 0,
+    "name": "Osmosis 1",
+    "nfts": undefined,
+    "pendingOperations": [],
+    "seedIdentifier": "02dc75cfe8137450ae2259dc7f29fd8767951956cc943adb4387e91c37a058a9f0",
+    "spendableBalance": "124344",
+    "starred": false,
+    "swapHistory": [],
+    "syncHash": undefined,
+    "unitMagnitude": 6,
+    "used": true,
+    "xpub": "osmo17gmcxyc5ccd5kwqqatpgfdgh380w2hc77zm0zw",
+  },
+  {
+    "balance": "0",
+    "currencyId": "osmo",
+    "derivationMode": "",
+    "freshAddress": "osmo19h8cennrkf09sjxqt36lmk93fzyrcwrfxw784y",
+    "freshAddressPath": "44'/118'/1'/0/0",
+    "freshAddresses": [
+      {
+        "address": "osmo19h8cennrkf09sjxqt36lmk93fzyrcwrfxw784y",
+        "derivationPath": "44'/118'/1'/0/0",
+      },
+    ],
+    "id": "js:2:osmo:osmo19h8cennrkf09sjxqt36lmk93fzyrcwrfxw784y:",
+    "index": 1,
+    "name": "Osmosis 2",
+    "nfts": undefined,
+    "pendingOperations": [],
+    "seedIdentifier": "02dc75cfe8137450ae2259dc7f29fd8767951956cc943adb4387e91c37a058a9f0",
+    "spendableBalance": "0",
+    "starred": false,
+    "swapHistory": [],
+    "syncHash": undefined,
+    "unitMagnitude": 6,
+    "used": false,
+    "xpub": "osmo19h8cennrkf09sjxqt36lmk93fzyrcwrfxw784y",
+  },
+]
+`;
+
+exports[`osmo currency bridge scanAccounts osmo seed 1 2`] = `
+[
+  [],
+  [],
+]
+`;

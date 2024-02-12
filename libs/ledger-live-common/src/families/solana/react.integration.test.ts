@@ -1,13 +1,13 @@
 import { renderHook } from "@testing-library/react-hooks";
 import { getAccountBridge, getCurrencyBridge } from "../../bridge";
 import { getCryptoCurrencyById } from "../../currencies";
-import { setEnv } from "../../env";
+import { setEnv } from "@ledgerhq/live-env";
 import { makeBridgeCacheSystem } from "../../bridge/cache";
 import { genAccount, genAddingOperationsInAccount } from "../../mock/account";
 import type { Account, CurrencyBridge } from "@ledgerhq/types-live";
 import type { Transaction } from "./types";
 import { getCurrentSolanaPreloadData } from "./js-preload-data";
-import { LEDGER_VALIDATOR_ADDRESS } from "./utils";
+import { LEDGER_VALIDATOR } from "./utils";
 import * as hooks from "./react";
 
 jest.setTimeout(2 * 60 * 1000);
@@ -28,9 +28,7 @@ describe("solana/react", () => {
     it("should return validators", async () => {
       const { prepare, account } = setup();
       await prepare();
-      const { result } = renderHook(() =>
-        hooks.useValidators(account.currency)
-      );
+      const { result } = renderHook(() => hooks.useValidators(account.currency));
       const data = getCurrentSolanaPreloadData(account.currency);
 
       expect(result.current).toStrictEqual(data.validators);
@@ -39,14 +37,10 @@ describe("solana/react", () => {
     it("should return validators", async () => {
       const { prepare, account } = setup();
       await prepare();
-      const { result } = renderHook(() =>
-        hooks.useValidators(account.currency, "Ledger")
-      );
+      const { result } = renderHook(() => hooks.useValidators(account.currency, "Ledger"));
 
       expect(
-        result.current.some(
-          (validator) => validator.voteAccount === LEDGER_VALIDATOR_ADDRESS
-        )
+        result.current.some(validator => validator.voteAccount === LEDGER_VALIDATOR.voteAccount),
       ).toBe(true);
     });
   });
@@ -58,7 +52,7 @@ function setup(): {
   transaction: Transaction;
   prepare: () => Promise<any>;
 } {
-  setEnv("MOCK", 1);
+  setEnv("MOCK", "1");
   setEnv("EXPERIMENTAL_CURRENCIES", "solana");
   const seed = "solana-2";
   const currency = getCryptoCurrencyById("solana");

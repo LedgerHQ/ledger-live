@@ -4,16 +4,16 @@ import { useTranslation } from "react-i18next";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "@react-navigation/native";
 
-import StepHeader from "../../../../../components/StepHeader";
-import { getStackNavigatorConfig } from "../../../../../navigation/navigatorConfig";
-import { ScreenName } from "../../../../../const";
+import StepHeader from "~/components/StepHeader";
+import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
+import { ScreenName } from "~/const";
 
 import PickAmount from "./components/PickAmount";
 import ValidationError from "./components/ValidationError";
 import ValidationSuccess from "./components/ValidationSuccess";
 
-import ElrondUndelegationSelectDevice from "../../../../../screens/SelectDevice";
-import ElrondUndelegationConnectDevice from "../../../../../screens/ConnectDevice";
+import ElrondUndelegationSelectDevice from "~/screens/SelectDevice";
+import ElrondUndelegationConnectDevice from "~/screens/ConnectDevice";
 
 import type { ElrondUndelegationFlowParamList } from "./types";
 
@@ -31,10 +31,7 @@ const Undelegate = () => {
   const { t } = useTranslation();
   const { colors } = useTheme();
 
-  const stackNavigationConfig = useMemo(
-    () => getStackNavigatorConfig(colors, true),
-    [colors],
-  );
+  const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
 
   /*
    * Return the rendered component.

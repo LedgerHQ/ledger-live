@@ -1,11 +1,8 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-require("@electron/remote/main").initialize();
-
-/* eslint-disable import/first */
-import "./setup";
-import { app, Menu, ipcMain, session, webContents, shell, BrowserWindow } from "electron";
+import "./setup"; // Needs to be imported first
+import { app, Menu, ipcMain, session, webContents, shell, BrowserWindow, dialog } from "electron";
 import Store from "electron-store";
 import menu from "./menu";
+import path from "path";
 import {
   createMainWindow,
   getMainWindow,
@@ -13,7 +10,6 @@ import {
   loadWindow,
 } from "./window-lifecycle";
 import { getSentryEnabled, setUserId } from "./internal-lifecycle";
-import resolveUserDataDirectory from "~/helpers/resolveUserDataDirectory";
 import db from "./db";
 import debounce from "lodash/debounce";
 import sentry from "~/sentry/main";
@@ -23,7 +19,9 @@ import { User } from "~/renderer/storage";
 Store.initRenderer();
 
 const gotLock = app.requestSingleInstanceLock();
-const userDataDirectory = resolveUserDataDirectory();
+const { LEDGER_CONFIG_DIRECTORY } = process.env;
+const userDataDirectory = LEDGER_CONFIG_DIRECTORY || app.getPath("userData");
+
 if (!gotLock) {
   app.quit();
 } else {
@@ -82,7 +80,7 @@ app.on("ready", async () => {
     setUserId(userId);
     sentry(() => {
       const value = getSentryEnabled();
-      if (value === null) return settings?.sentryLogs;
+      if (value === undefined) return settings?.sentryLogs;
       return value;
     }, userId);
   }
@@ -134,7 +132,7 @@ app.on("ready", async () => {
   // cf. https://gist.github.com/codebytere/409738fcb7b774387b5287db2ead2ccb
   ipcMain.on("webview-dom-ready", (_, id) => {
     const wc = webContents.fromId(id);
-    wc.setWindowOpenHandler(({ url }) => {
+    wc?.setWindowOpenHandler(({ url }) => {
       const protocol = new URL(url).protocol;
       if (["https:", "http:"].includes(protocol)) {
         shell.openExternal(url);
@@ -171,6 +169,33 @@ app.on("ready", async () => {
   );
   await clearSessionCache(window.webContents.session);
 });
+
+ipcMain.on("set-background-color", (_, color) => {
+  const w = getMainWindow();
+  if (w) {
+    w.setBackgroundColor(color);
+  }
+});
+
+ipcMain.on("app-quit", () => {
+  app.quit();
+});
+
+ipcMain.handle("show-open-dialog", (_, opts) => dialog.showOpenDialog(opts));
+ipcMain.handle("show-save-dialog", (_, opts) => dialog.showSaveDialog(opts));
+
+ipcMain.on("deep-linking", (_, l) => {
+  const win = getMainWindow();
+  if (win) win.webContents.send("deep-linking", l);
+});
+
+ipcMain.on("app-reload", () => {
+  const w = getMainWindow();
+  if (w) {
+    w.reload();
+  }
+});
+
 ipcMain.on("ready-to-show", () => {
   const w = getMainWindow();
   if (w) {
@@ -192,7 +217,11 @@ async function installExtensions() {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const installer = require("electron-devtools-installer");
   const forceDownload = true; // process.env.UPGRADE_EXTENSIONS
-  const extensions = ["REACT_DEVELOPER_TOOLS", "REDUX_DEVTOOLS"];
+  const extensions = [/*"REACT_DEVELOPER_TOOLS",*/ "REDUX_DEVTOOLS"];
+  // Temporary solution while Electron doesn't support manifest V3 extensions
+  // https://github.com/electron/electron/issues/36545
+  const reactDevToolsPath = path.dirname(require.resolve("@ledgerhq/react-devtools/package.json"));
+  session.defaultSession.loadExtension(reactDevToolsPath);
   return Promise.all(
     extensions.map(name =>
       installer.default(installer[name], {

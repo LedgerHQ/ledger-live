@@ -1,15 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`solana currency bridge scanAccounts solana seed 1 1`] = `
-Array [
-  Object {
+[
+  {
     "balance": "83389840",
     "currencyId": "solana",
     "derivationMode": "solanaMain",
     "freshAddress": "AQbkEagmPgmsdAfS4X8V8UyJnXXjVPMvjeD15etqQ3Jh",
     "freshAddressPath": "44'/501'",
-    "freshAddresses": Array [
-      Object {
+    "freshAddresses": [
+      {
         "address": "AQbkEagmPgmsdAfS4X8V8UyJnXXjVPMvjeD15etqQ3Jh",
         "derivationPath": "44'/501'",
       },
@@ -19,26 +19,27 @@ Array [
     "name": "Solana 1",
     "nfts": undefined,
     "operationsCount": 2,
-    "pendingOperations": Array [],
+    "pendingOperations": [],
     "seedIdentifier": "AQbkEagmPgmsdAfS4X8V8UyJnXXjVPMvjeD15etqQ3Jh",
-    "solanaResources": Object {
+    "solanaResources": {
       "stakes": "[]",
+      "unstakeReserve": "0",
     },
-    "spendableBalance": "83389840",
+    "spendableBalance": "82498960",
     "starred": false,
-    "swapHistory": Array [],
+    "swapHistory": [],
     "syncHash": undefined,
     "unitMagnitude": 9,
     "used": true,
   },
-  Object {
+  {
     "balance": "0",
     "currencyId": "solana",
     "derivationMode": "solanaSub",
     "freshAddress": "6rEgdtB3sgjKJnRE172YEr9z6qUyr4nFW28vJokuD36A",
     "freshAddressPath": "44'/501'/0'",
-    "freshAddresses": Array [
-      Object {
+    "freshAddresses": [
+      {
         "address": "6rEgdtB3sgjKJnRE172YEr9z6qUyr4nFW28vJokuD36A",
         "derivationPath": "44'/501'/0'",
       },
@@ -48,14 +49,15 @@ Array [
     "name": "Solana 1",
     "nfts": undefined,
     "operationsCount": 0,
-    "pendingOperations": Array [],
+    "pendingOperations": [],
     "seedIdentifier": "AQbkEagmPgmsdAfS4X8V8UyJnXXjVPMvjeD15etqQ3Jh",
-    "solanaResources": Object {
+    "solanaResources": {
       "stakes": "[]",
+      "unstakeReserve": "0",
     },
     "spendableBalance": "0",
     "starred": false,
-    "swapHistory": Array [],
+    "swapHistory": [],
     "syncHash": undefined,
     "unitMagnitude": 9,
     "used": false,
@@ -64,23 +66,23 @@ Array [
 `;
 
 exports[`solana currency bridge scanAccounts solana seed 1 2`] = `
-Array [
-  Array [
-    Object {
+[
+  [
+    {
       "accountId": "js:2:solana:AQbkEagmPgmsdAfS4X8V8UyJnXXjVPMvjeD15etqQ3Jh:solanaMain",
       "blockHash": "4NSL4VrfWd2eUccMD95dLQsdy5UGz8yhokpfH1et1R2c",
       "blockHeight": 108520722,
       "contract": undefined,
-      "extra": Object {},
+      "extra": {},
       "fee": "0",
       "hasFailed": false,
       "hash": "25KWBvKtVgKR3yoRmozTY6wmiW8atwrnzAnTXdsms8jqg5aR8GnCDxdJzWXtzMZPvbsE6SUuBkGFXudy2mrcTYna",
       "id": "js:2:solana:AQbkEagmPgmsdAfS4X8V8UyJnXXjVPMvjeD15etqQ3Jh:solanaMain-25KWBvKtVgKR3yoRmozTY6wmiW8atwrnzAnTXdsms8jqg5aR8GnCDxdJzWXtzMZPvbsE6SUuBkGFXudy2mrcTYna-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "AQbkEagmPgmsdAfS4X8V8UyJnXXjVPMvjeD15etqQ3Jh",
       ],
-      "senders": Array [
+      "senders": [
         "7CZgkK494jMdoY8xpXY3ViLjpDGMbNikCzMtAT5cAjKk",
       ],
       "standard": undefined,
@@ -89,21 +91,21 @@ Array [
       "type": "IN",
       "value": "93394840",
     },
-    Object {
+    {
       "accountId": "js:2:solana:AQbkEagmPgmsdAfS4X8V8UyJnXXjVPMvjeD15etqQ3Jh:solanaMain",
       "blockHash": "9tPbgLaETEenufCt5SzXMuWijgFJj549W9j5cJLbaogn",
       "blockHeight": 108521109,
       "contract": undefined,
-      "extra": Object {},
+      "extra": {},
       "fee": "5000",
       "hasFailed": false,
       "hash": "A29zPnK1jPr2tGziTnaAvSnadYR2kLCv9sPywj9FJsaEFjtpwmUonspN3WJgz4u6XWmjtVpoFsDrygEnvW51cgk",
       "id": "js:2:solana:AQbkEagmPgmsdAfS4X8V8UyJnXXjVPMvjeD15etqQ3Jh:solanaMain-A29zPnK1jPr2tGziTnaAvSnadYR2kLCv9sPywj9FJsaEFjtpwmUonspN3WJgz4u6XWmjtVpoFsDrygEnvW51cgk-OUT",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "8RtwWeqdFz4EFuZU3MAadfYMWSdRMamjFrfq6BXkHuNN",
       ],
-      "senders": Array [
+      "senders": [
         "AQbkEagmPgmsdAfS4X8V8UyJnXXjVPMvjeD15etqQ3Jh",
       ],
       "standard": undefined,
@@ -113,6 +115,6 @@ Array [
       "value": "10005000",
     },
   ],
-  Array [],
+  [],
 ]
 `;

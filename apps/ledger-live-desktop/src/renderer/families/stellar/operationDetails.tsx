@@ -9,14 +9,12 @@ import {
 import Ellipsis from "~/renderer/components/Ellipsis";
 import { SplitAddress } from "~/renderer/components/OperationsList/AddressCell";
 import { Account } from "@ledgerhq/types-live";
-type OperationDetailsExtraProps = {
-  extra: {
-    [key: string]: any;
-  };
-  type: string;
-  account: Account;
-};
-const OperationDetailsExtra = ({ extra }: OperationDetailsExtraProps) => {
+import { OperationDetailsExtraProps } from "../types";
+import { StellarOperation } from "@ledgerhq/live-common/families/stellar/types";
+
+const OperationDetailsExtra = ({
+  operation: { extra },
+}: OperationDetailsExtraProps<Account, StellarOperation>) => {
   return (
     <>
       {Object.keys(extra).map(key => {
@@ -29,11 +27,11 @@ const OperationDetailsExtra = ({ extra }: OperationDetailsExtraProps) => {
               <OpDetailsData>
                 {key === "assetIssuer" ? (
                   <HashContainer>
-                    <SplitAddress value={extra[key]} />
+                    <SplitAddress value={extra[key] ?? ""} />
                   </HashContainer>
-                ) : (
-                  <Ellipsis>{extra[key]}</Ellipsis>
-                )}
+                ) : null}
+                {key === "assetCode" ? <Ellipsis>{extra[key]}</Ellipsis> : null}
+                {key === "memo" ? <Ellipsis>{extra[key]}</Ellipsis> : null}
               </OpDetailsData>
             </OpDetailsSection>
           );

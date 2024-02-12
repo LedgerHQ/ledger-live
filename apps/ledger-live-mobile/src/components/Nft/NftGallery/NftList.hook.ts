@@ -1,16 +1,22 @@
-import { decodeNftId } from "@ledgerhq/live-common/nft/index";
+import { decodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { ProtoNFT, NFTMetadata } from "@ledgerhq/types-live";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { v4 as uuid } from "uuid";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { BackHandler } from "react-native";
 import { hideNftCollection } from "../../../actions/settings";
 import { track } from "../../../analytics";
-import { NavigatorName, ScreenName } from "../../../const";
+import { NavigatorName, ScreenName } from "~/const";
 import { updateMainNavigatorVisibility } from "../../../actions/appstate";
+import {
+  galleryFilterDrawerVisibleSelector,
+  galleryChainFiltersSelector,
+} from "../../../reducers/nft";
+import { setGalleryChainFilter, setGalleryFilterDrawerVisible } from "../../../actions/nft";
+import { NftGalleryChainFiltersState } from "../../../reducers/types";
 
 const TOAST_ID = "SUCCESS_HIDE";
 
@@ -20,8 +26,9 @@ export function useNftList({ nftList }: { nftList?: ProtoNFT[] }) {
   const { t } = useTranslation();
   const { pushToast } = useToasts();
   const navigation = useNavigation();
-
   const [multiSelectModeEnabled, setMultiSelectMode] = useState<boolean>(false);
+  const isFilterDrawerVisible = useSelector(galleryFilterDrawerVisibleSelector);
+  const chainFilters = useSelector(galleryChainFiltersSelector);
 
   const [nftsToHide, setNftsToHide] = useState<ProtoNFT[]>([]);
 
@@ -51,10 +58,7 @@ export function useNftList({ nftList }: { nftList?: ProtoNFT[] }) {
   }, [exitMultiSelectMode, multiSelectModeEnabled]);
 
   useEffect(() => {
-    const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      handleBackPress,
-    );
+    const backHandler = BackHandler.addEventListener("hardwareBackPress", handleBackPress);
     return () => backHandler.remove();
   }, [handleBackPress]);
 
@@ -121,7 +125,7 @@ export function useNftList({ nftList }: { nftList?: ProtoNFT[] }) {
   const onPressMultiselect = useCallback(() => {
     track("button_clicked", {
       button: "Hide NFTs",
-      screen: ScreenName.WalletNftGallery,
+      page: ScreenName.WalletNftGallery,
     });
     triggerMultiSelectMode();
   }, [triggerMultiSelectMode]);
@@ -129,15 +133,30 @@ export function useNftList({ nftList }: { nftList?: ProtoNFT[] }) {
   const onPressHide = useCallback(() => {
     track("button_clicked", {
       button: "Multi Hide NFTs",
-      screen: ScreenName.WalletNftGallery,
+      page: ScreenName.WalletNftGallery,
     });
     onClickHide();
   }, [onClickHide]);
 
+  const openFilterDrawer = useCallback(() => {
+    dispatch(setGalleryFilterDrawerVisible(true));
+  }, [dispatch]);
+
+  const closeFilterDrawer = useCallback(() => {
+    dispatch(setGalleryFilterDrawerVisible(false));
+  }, [dispatch]);
+
+  const toggleChainFilter = useCallback(
+    (filter: keyof NftGalleryChainFiltersState) => {
+      dispatch(setGalleryChainFilter([filter, !chainFilters[filter]]));
+    },
+    [chainFilters, dispatch],
+  );
+
   const onCancelHide = useCallback(() => {
     track("button_clicked", {
       button: "Cancel  Hide NFTs",
-      screen: ScreenName.WalletNftGallery,
+      page: ScreenName.WalletNftGallery,
     });
     exitMultiSelectMode();
   }, [exitMultiSelectMode]);
@@ -154,5 +173,10 @@ export function useNftList({ nftList }: { nftList?: ProtoNFT[] }) {
     onPressMultiselect,
     onPressHide,
     onCancelHide,
+    isFilterDrawerVisible,
+    chainFilters,
+    toggleChainFilter,
+    closeFilterDrawer,
+    openFilterDrawer,
   };
 }

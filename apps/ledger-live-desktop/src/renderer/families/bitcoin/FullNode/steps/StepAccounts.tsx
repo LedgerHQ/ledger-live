@@ -38,7 +38,7 @@ const Accounts = ({
   const currency = getCryptoCurrencyById("bitcoin");
   const bitcoinAccounts = accounts.filter(a => getAccountCurrency(a) === currency);
   const onUpdateNumberOfAccountsToScan = useCallback(
-    value => {
+    (value: string) => {
       if (value) {
         let newNumberOfAccounts = parseInt(value, 10) || 1;
         if (
@@ -87,7 +87,7 @@ const Accounts = ({
           placeholder="10"
           maxLength={3}
           onChange={onUpdateNumberOfAccountsToScan}
-          value={numberOfAccountsToScan}
+          value={numberOfAccountsToScan?.toString()}
         />
       </Box>
 
@@ -150,7 +150,7 @@ export const StepAccountsFooter = ({
   const goToDeviceStep = useCallback(() => onStepChange("device"), [onStepChange]);
   return (
     <>
-      <CurrencyBadge mr="auto" currency={currency} />
+      <CurrencyBadge currency={currency} />
       <Button disabled={!numberOfAccountsToScan} primary onClick={goToDeviceStep}>
         <Trans i18nKey="common.continue" />
       </Button>

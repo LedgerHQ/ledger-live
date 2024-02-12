@@ -37,7 +37,7 @@ export function defer<T>(): Defer<T> {
 export function splitPath(path: string): number[] {
   const result: number[] = [];
   const components = path.split("/");
-  components.forEach((element) => {
+  components.forEach(element => {
     let number = parseInt(element, 10);
 
     if (isNaN(number)) {
@@ -53,15 +53,12 @@ export function splitPath(path: string): number[] {
   return result;
 }
 // TODO use async await
-export function eachSeries<A>(
-  arr: A[],
-  fun: (arg0: A) => Promise<any>
-): Promise<any> {
+export function eachSeries<A>(arr: A[], fun: (arg0: A) => Promise<any>): Promise<any> {
   return arr.reduce((p, e) => p.then(() => fun(e)), Promise.resolve());
 }
 export function foreach<T, A>(
   arr: T[],
-  callback: (arg0: T, arg1: number) => Promise<A>
+  callback: (arg0: T, arg1: number) => Promise<A>,
 ): Promise<A[]> {
   function iterate(index, array, result) {
     if (index >= array.length) {
@@ -75,10 +72,7 @@ export function foreach<T, A>(
 
   return Promise.resolve().then(() => iterate(0, arr, []));
 }
-export function doIf(
-  condition: boolean,
-  callback: () => any | Promise<any>
-): Promise<void> {
+export function doIf(condition: boolean, callback: () => any | Promise<any>): Promise<void> {
   return Promise.resolve().then(() => {
     if (condition) {
       return callback();
@@ -87,13 +81,13 @@ export function doIf(
 }
 export function asyncWhile<T>(
   predicate: () => boolean,
-  callback: () => Promise<T>
+  callback: () => Promise<T>,
 ): Promise<Array<T>> {
   function iterate(result) {
     if (!predicate()) {
       return result;
     } else {
-      return callback().then((res) => {
+      return callback().then(res => {
         result.push(res);
         return iterate(result);
       });

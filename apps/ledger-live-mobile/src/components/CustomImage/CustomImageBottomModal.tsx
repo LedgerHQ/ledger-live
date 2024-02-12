@@ -2,22 +2,20 @@ import { useNavigation } from "@react-navigation/native";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, Flex, InfiniteLoader } from "@ledgerhq/native-ui";
-import { createAction } from "@ledgerhq/live-common/hw/actions/staxRemoveImage";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import removeImage from "@ledgerhq/live-common/hw/staxRemoveImage";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
-import { NavigatorName, ScreenName } from "../../const";
+import { ImageDoesNotExistOnDevice } from "@ledgerhq/live-common/errors";
+import { NavigatorName, ScreenName } from "~/const";
 import QueuedDrawer, { Props as BottomModalProps } from "../QueuedDrawer";
 import ModalChoice from "./ModalChoice";
 import { importImageFromPhoneGallery } from "./imageUtils";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { StackNavigatorNavigation } from "../RootNavigator/types/helpers";
-import { TrackScreen } from "../../analytics";
+import { TrackScreen } from "~/analytics";
 import DeviceAction from "../DeviceAction";
+import { useStaxRemoveImageDeviceAction } from "~/hooks/deviceActions";
 
-const action = createAction(removeImage);
-
-const analyticsDrawerName = "Choose an image to set as your Stax lockscreen";
+const analyticsDrawerName = "Choose an image to set as your device lockscreen";
 
 const analyticsButtonChoosePhoneGalleryEventProps = {
   button: "Choose from my picture gallery",
@@ -40,13 +38,11 @@ type Props = {
 const CustomImageBottomModal: React.FC<Props> = props => {
   const [isLoading, setIsLoading] = useState(false);
   const [isRemovingCustomImage, setIsRemovingCustomImage] = useState(false);
-  const { isOpened, onClose, device, deviceHasImage, setDeviceHasImage } =
-    props;
+  const { isOpened, onClose, device, deviceHasImage, setDeviceHasImage } = props;
   const { t } = useTranslation();
   const { pushToast } = useToasts();
 
-  const navigation =
-    useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
+  const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
 
   const handleUploadFromPhone = useCallback(async () => {
     try {
@@ -81,10 +77,7 @@ const CustomImageBottomModal: React.FC<Props> = props => {
     onClose && onClose();
   }, [navigation, device, onClose]);
 
-  const request = useMemo(
-    () => ({ deviceId: device?.deviceId || "", request: {} }),
-    [device],
-  );
+  const request = useMemo(() => ({ deviceId: device?.deviceId || "", request: {} }), [device]);
 
   useEffect(() => {
     return () => {
@@ -111,17 +104,26 @@ const CustomImageBottomModal: React.FC<Props> = props => {
     });
   }, [setDeviceHasImage, wrappedOnClose, pushToast, t]);
 
+  const onError = useCallback(
+    (error: Error) => {
+      if (error instanceof ImageDoesNotExistOnDevice) {
+        if (setDeviceHasImage) {
+          setDeviceHasImage(false);
+        }
+      }
+    },
+    [setDeviceHasImage],
+  );
+
+  const action = useStaxRemoveImageDeviceAction();
+
   return (
     <QueuedDrawer
       isRequestingToBeOpened={!!isOpened}
       onClose={wrappedOnClose}
       preventBackdropClick={isRemovingCustomImage}
     >
-      <TrackScreen
-        category={analyticsDrawerName}
-        type="drawer"
-        refreshSource={false}
-      />
+      <TrackScreen category={analyticsDrawerName} type="drawer" refreshSource={false} />
       {isRemovingCustomImage && device ? (
         <Flex alignItems="center">
           <Flex flexDirection="row">
@@ -130,6 +132,7 @@ const CustomImageBottomModal: React.FC<Props> = props => {
               request={request}
               action={action}
               onResult={onSuccess}
+              onError={onError}
             />
           </Flex>
         </Flex>

@@ -4,7 +4,10 @@ import React, { useCallback, useMemo } from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { StepProps } from "../types";
-import { CosmosMappedDelegation } from "@ledgerhq/live-common/families/cosmos/types";
+import {
+  CosmosDelegationInfo,
+  CosmosMappedDelegation,
+} from "@ledgerhq/live-common/families/cosmos/types";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -14,6 +17,7 @@ import Alert from "~/renderer/components/Alert";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
+
 export default function StepAmount({
   account,
   transaction,
@@ -24,7 +28,7 @@ export default function StepAmount({
   invariant(account && transaction && transaction.validators, "account and transaction required");
   const bridge = getAccountBridge(account);
   const updateValidator = useCallback(
-    validatorFields => {
+    (validatorFields: Partial<CosmosDelegationInfo>) => {
       onUpdateTransaction(tx =>
         bridge.updateTransaction(tx, {
           ...tx,
@@ -43,7 +47,9 @@ export default function StepAmount({
     [onUpdateTransaction, bridge],
   );
   const onChangeValidator = useCallback(
-    ({ validatorAddress, amount }: CosmosMappedDelegation) => {
+    (delegation?: CosmosMappedDelegation | null) => {
+      if (!delegation) return;
+      const { validatorAddress, amount } = delegation;
       updateValidator({
         address: validatorAddress,
         amount,
@@ -59,14 +65,21 @@ export default function StepAmount({
     },
     [updateValidator],
   );
-  const validator = useMemo(() => transaction.validators && transaction.validators[0], [
-    transaction,
-  ]);
+  const validator = useMemo(
+    () => transaction.validators && transaction.validators[0],
+    [transaction],
+  );
   const amount = useMemo(() => (validator ? validator.amount : BigNumber(0)), [validator]);
   const crypto = cryptoFactory(account.currency.id);
   return (
     <Box flow={1}>
-      <TrackPage category="Undelegation Flow" name="Step 1" />
+      <TrackPage
+        category="Undelegation Flow"
+        name="Step 1"
+        flow="stake"
+        action="undelegation"
+        currency={account.currency.id}
+      />
       {error && <ErrorBanner error={error} />}
       <Box horizontal justifyContent="center" mb={2}>
         <Text ff="Inter|Medium" fontSize={4}>
@@ -89,7 +102,7 @@ export default function StepAmount({
         onChange={onChangeAmount}
         label={<Trans i18nKey={"cosmos.undelegation.flow.steps.amount.fields.amount"} />}
       />
-      <Alert info="primary" mt={2}>
+      <Alert type="primary" mt={2}>
         <Trans
           i18nKey={"cosmos.undelegation.flow.steps.amount.warning"}
           values={{

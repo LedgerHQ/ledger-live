@@ -1,7 +1,7 @@
 import "../test-helpers/staticTime";
 import { genAccount } from "../../mock/account";
 import { getBalanceHistory } from "../../portfolio/v2";
-import { getEnv, setEnv } from "../../env";
+import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { setSupportedCurrencies } from "../../currencies";
 setSupportedCurrencies(["ethereum", "ethereum_classic", "ripple"]);
 
@@ -36,7 +36,7 @@ test("mock generators don't generate negative balances", () => {
   for (let i = 0; i < 100; i++) {
     const account = genAccount("negative?" + i);
     const history = getBalanceHistory(account, "year", 300);
-    const invalidDataPoints = history.filter((h) => h.value < 0);
+    const invalidDataPoints = history.filter(h => h.value < 0);
     expect(invalidDataPoints).toMatchObject([]);
   }
 });

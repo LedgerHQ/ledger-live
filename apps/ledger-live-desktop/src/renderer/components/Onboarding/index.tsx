@@ -62,12 +62,13 @@ export const OnboardingContext = createContext<OnboardingContextTypes>({
 });
 
 export function Onboarding() {
+  const { path } = useRouteMatch();
+  const matchRecover = useRouteMatch(`${path}/${UseCase.recover}`);
   const [imgsLoaded, setImgsLoaded] = useState(false);
-  const [useCase, setUseCase] = useState<UseCase | null>(null);
+  const [useCase, setUseCase] = useState<UseCase | null>(matchRecover ? UseCase.recover : null);
   const [deviceModelId, setDeviceModelId] = useState<NullableDeviceModelId>(null);
   const [openedPedagogyModal, setOpenedPedagogyModal] = useState(false);
   const [openedRecoveryPhraseWarningHelp, setOpenedRecoveryPhraseWarningHelp] = useState(false);
-  const { path } = useRouteMatch();
 
   useEffect(() => {
     preloadAssets().then(() => setImgsLoaded(true));
@@ -105,15 +106,13 @@ export function Onboarding() {
               <Route path={`${path}/sync`} component={SyncOnboarding} />
               <Route
                 path={`${path}/select-use-case`}
-                render={props =>
-                  setUseCase && (
-                    <SelectUseCase
-                      {...props}
-                      setOpenedPedagogyModal={setOpenedPedagogyModal}
-                      setUseCase={setUseCase}
-                    />
-                  )
-                }
+                render={props => (
+                  <SelectUseCase
+                    {...props}
+                    setOpenedPedagogyModal={setOpenedPedagogyModal}
+                    setUseCase={setUseCase}
+                  />
+                )}
               />
               <Route
                 path={[
@@ -122,7 +121,20 @@ export function Onboarding() {
                   `${path}/${UseCase.recoveryPhrase}`,
                   `${path}/${UseCase.recover}`,
                 ]}
-                render={props => useCase && <Tutorial {...props} useCase={useCase} />}
+                render={props =>
+                  useCase ? (
+                    <Tutorial {...props} useCase={useCase} />
+                  ) : (
+                    /**
+                     * In case we navigate to another screen then do a
+                     * history.goBack() we lose the state here so we fallback to
+                     * displaying the stateless device selection screen
+                     * One case for that is when we navigate to the USB
+                     * troubleshoot screen.
+                     */
+                    <SelectDevice />
+                  )
+                }
               />
             </Switch>
           </ScreenContainer>

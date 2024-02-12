@@ -1,6 +1,15 @@
+export const BroadcastBlockIncl = 1;
+
+export enum TxStatus {
+  Ok = "Ok",
+  Fail = "Fail",
+}
+
 export interface EstimatedFeesRequest {
   to?: string;
   from: string;
+  methodNum?: number;
+  blockIncl?: number;
 }
 
 export interface EstimatedFeesResponse {

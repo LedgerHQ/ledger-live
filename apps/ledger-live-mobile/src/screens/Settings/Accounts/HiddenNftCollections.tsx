@@ -1,24 +1,18 @@
 import React, { useCallback, useMemo } from "react";
 import { FlatList } from "react-native";
-import { Box, Flex, Text, Icons } from "@ledgerhq/native-ui";
+import { Box, Flex, Text, IconsLegacy } from "@ledgerhq/native-ui";
 import { useDispatch, useSelector } from "react-redux";
 import { Account, NFTMetadata } from "@ledgerhq/types-live";
-import {
-  useNftCollectionMetadata,
-  useNftMetadata,
-} from "@ledgerhq/live-common/nft/NftMetadataProvider/index";
+import { useNftCollectionMetadata, useNftMetadata } from "@ledgerhq/live-nft-react";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import styled from "styled-components/native";
-import {
-  NFTResource,
-  NFTResourceLoaded,
-} from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
-import { hiddenNftCollectionsSelector } from "../../../reducers/settings";
-import { accountSelector } from "../../../reducers/accounts";
-import NftMedia from "../../../components/Nft/NftMedia";
-import Skeleton from "../../../components/Skeleton";
-import { unhideNftCollection } from "../../../actions/settings";
-import { State } from "../../../reducers/types";
+import { NFTResource, NFTResourceLoaded } from "@ledgerhq/live-nft/types";
+import { hiddenNftCollectionsSelector } from "~/reducers/settings";
+import { accountSelector } from "~/reducers/accounts";
+import NftMedia from "~/components/Nft/NftMedia";
+import Skeleton from "~/components/Skeleton";
+import { unhideNftCollection } from "~/actions/settings";
+import { State } from "~/reducers/types";
 
 const CollectionFlatList = styled(FlatList)`
   min-height: 100%;
@@ -53,11 +47,10 @@ const HiddenNftCollectionRow = ({
   const nfts = account?.nfts || [];
   const nft = nfts.find(nft => nft?.contract === contractAddress);
 
-  const { status: collectionStatus, metadata: collectionMetadata } =
-    useNftCollectionMetadata(
-      contractAddress,
-      nft?.currencyId,
-    ) as NFTResource & { metadata?: NFTResourceLoaded["metadata"] };
+  const { status: collectionStatus, metadata: collectionMetadata } = useNftCollectionMetadata(
+    contractAddress,
+    nft?.currencyId,
+  ) as NFTResource & { metadata?: NFTResourceLoaded["metadata"] };
   const { status: nftStatus, metadata: nftMetadata } = useNftMetadata(
     contractAddress,
     nft?.tokenId,
@@ -75,26 +68,16 @@ const HiddenNftCollectionRow = ({
         metadata={nftMetadata as NFTMetadata}
         mediaFormat={"preview"}
       />
-      <Flex
-        flexDirection="row"
-        alignItems="center"
-        flexShrink={1}
-        justifyContent="space-between"
-      >
+      <Flex flexDirection="row" alignItems="center" flexShrink={1} justifyContent="space-between">
         <Flex mx={6} flexGrow={1} flexShrink={1} flexDirection="column">
           <CollectionNameSkeleton loading={loading}>
-            <Text
-              fontWeight={"semiBold"}
-              variant={"large"}
-              ellipsizeMode="tail"
-              numberOfLines={2}
-            >
+            <Text fontWeight={"semiBold"} variant={"large"} ellipsizeMode="tail" numberOfLines={2}>
               {collectionMetadata?.tokenName || contractAddress}
             </Text>
           </CollectionNameSkeleton>
         </Flex>
         <TouchableOpacity onPress={onUnhide}>
-          <Icons.CloseMedium color="neutral.c100" size={24} />
+          <IconsLegacy.CloseMedium color="neutral.c100" size={24} />
         </TouchableOpacity>
       </Flex>
     </Flex>
@@ -119,7 +102,7 @@ const HiddenNftCollections = () => {
     [dispatch],
   );
 
-  const keyExtractor = useCallback(item => item, []);
+  const keyExtractor = useCallback((item: string) => item, []);
 
   return (
     <Box backgroundColor={"background.main"} height={"100%"}>

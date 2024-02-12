@@ -2,7 +2,7 @@ import React from "react";
 import { action } from "@storybook/addon-actions";
 
 import { StoryTemplate } from "../../../helpers";
-import WalletIcon from "@ledgerhq/icons-ui/react/WalletMedium";
+import WalletIcon from "@ledgerhq/icons-ui/reactLegacy/WalletMedium";
 import Text from "../../../asorted/Text";
 import Flex from "../../../layout/Flex";
 import SideBarContext from "..";

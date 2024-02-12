@@ -1,12 +1,11 @@
 import { ipcRenderer } from "electron";
-import * as remote from "@electron/remote";
 import React, { memo, useState, useCallback } from "react";
 import { Trans } from "react-i18next";
 import { connect } from "react-redux";
 import styled from "styled-components";
 import moment from "moment";
 import { createStructuredSelector } from "reselect";
-import { useCountervaluesState } from "@ledgerhq/live-common/countervalues/react";
+import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
 import { accountsOpToCSV } from "@ledgerhq/live-common/csvExport";
 import { Account } from "@ledgerhq/types-live";
 import { Currency } from "@ledgerhq/types-cryptoassets";
@@ -23,12 +22,15 @@ import AccountsList from "~/renderer/components/AccountsList";
 import IconDownloadCloud from "~/renderer/icons/DownloadCloud";
 import IconCheckCircle from "~/renderer/icons/CheckCircle";
 import Alert from "~/renderer/components/Alert";
+import { ModalData } from "../types";
+
 type OwnProps = {};
 type Props = OwnProps & {
-  closeModal: (a: string) => void;
+  closeModal: (a: keyof ModalData) => void;
   accounts: Account[];
   countervalueCurrency?: Currency;
 };
+
 const mapStateToProps = createStructuredSelector({
   accounts: activeAccountsSelector,
   countervalueCurrency: counterValueCurrencySelector,
@@ -46,14 +48,16 @@ const exportOperations = async (
     if (res && callback) {
       callback();
     }
-  } catch (error) {}
+  } catch (error) {
+    // ignore
+  }
 };
 function ExportOperations({ accounts, closeModal, countervalueCurrency }: Props) {
   const [checkedIds, setCheckedIds] = useState<string[]>([]);
   const [success, setSuccess] = useState(false);
   const countervalueState = useCountervaluesState();
   const exportCsv = useCallback(async () => {
-    const path = await remote.dialog.showSaveDialog({
+    const path = await ipcRenderer.invoke("show-save-dialog", {
       title: "Exported account transactions",
       defaultPath: `ledgerlive-operations-${moment().format("YYYY.MM.DD")}.csv`,
       filters: [
@@ -183,7 +187,7 @@ const LabelWrapper = styled(Box)`
   text-align: center;
   font-size: 13px;
   font-family: "Inter";
-  font-weight: ;
+  font-weight:;
 `;
 const IconWrapperCircle = styled(Box)<{ green?: boolean }>`
   width: 50px;
@@ -214,4 +218,5 @@ const ConnectedExportOperations: React.ComponentType<OwnProps> = connect(
   mapStateToProps,
   mapDispatchToProps,
 )(ExportOperations);
-export default memo<Props>(ConnectedExportOperations);
+
+export default memo(ConnectedExportOperations);

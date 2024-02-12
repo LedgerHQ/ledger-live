@@ -1,8 +1,8 @@
 import { genAddress, genHex } from "@ledgerhq/coin-framework/mocks/helpers";
-import { Account, Operation, OperationType } from "@ledgerhq/types-live";
+import { Account, OperationType } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import Prando from "prando";
-import type { AlgorandAccount } from "./types";
+import type { AlgorandAccount, AlgorandOperation } from "./types";
 
 function setAlgorandResources(account: Account): Account {
   /** format algorandResources given the new delegations */
@@ -17,14 +17,14 @@ function genBaseOperation(
   account: Account,
   rng: Prando,
   type: OperationType,
-  index: number
-): Operation {
+  index: number,
+): AlgorandOperation {
   const { operations: ops } = account;
   const address = genAddress(account.currency, rng);
   const lastOp = ops[index];
   const date = new Date(
     (lastOp ? lastOp.date.valueOf() : Date.now()) -
-      rng.nextInt(0, 100000000 * rng.next() * rng.next())
+      rng.nextInt(0, 100000000 * rng.next() * rng.next()),
   );
   const hash = genHex(64, rng);
 
@@ -110,7 +110,7 @@ function postScanAccount(
     isEmpty,
   }: {
     isEmpty: boolean;
-  }
+  },
 ): Account {
   if (isEmpty) {
     (account as AlgorandAccount).algorandResources = {

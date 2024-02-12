@@ -1,16 +1,5 @@
-import React, {
-  createContext,
-  useContext,
-  useMemo,
-  useCallback,
-  ReactElement,
-} from "react";
-import type {
-  State,
-  ServiceStatusUserSettings,
-  Incident,
-  ServiceStatusApi,
-} from "./types";
+import React, { createContext, useContext, useMemo, useCallback, ReactElement } from "react";
+import type { State, ServiceStatusUserSettings, Incident, ServiceStatusApi } from "./types";
 import defaultNetworkApi from "./api";
 import { useMachine } from "@xstate/react";
 import { serviceStatusMachine } from "./machine";
@@ -45,14 +34,9 @@ function escapeRegExp(string) {
 
 export function filterServiceStatusIncidents(
   incidents: Incident[],
-  tickers: string[] = []
+  tickers: string[] = [],
 ): Incident[] {
-  if (
-    !tickers ||
-    tickers.length === 0 ||
-    !incidents ||
-    incidents.length === 0
-  ) {
+  if (!tickers || tickers.length === 0 || !incidents || incidents.length === 0) {
     return [];
   }
 
@@ -61,21 +45,16 @@ export function filterServiceStatusIncidents(
     ({ components }) =>
       !components || // dont filter out if no components
       components.length === 0 ||
-      components.some(({ name }) => tickersRegex.test(name)) // component name should hold currency ticker
+      components.some(({ name }) => tickersRegex.test(name)), // component name should hold currency ticker
   );
 }
 
 // filter out service status incidents by given currencies or fallback on context currencies
-export function useFilteredServiceStatus(
-  filters?: ServiceStatusUserSettings
-): StatusContextType {
+export function useFilteredServiceStatus(filters?: ServiceStatusUserSettings): StatusContextType {
   const stateData = useContext(ServiceStatusContext);
   const { incidents, context } = stateData;
   const filteredIncidents = useMemo(() => {
-    return filterServiceStatusIncidents(
-      incidents,
-      filters?.tickers || context?.tickers
-    );
+    return filterServiceStatusIncidents(incidents, filters?.tickers || context?.tickers);
   }, [incidents, context, filters?.tickers]);
 
   return { ...stateData, incidents: filteredIncidents };
@@ -111,12 +90,8 @@ export const ServiceStatusProvider = ({
         });
       },
     }),
-    [send]
+    [send],
   );
   const value = { ...(state.context || {}), ...api, context };
-  return (
-    <ServiceStatusContext.Provider value={value}>
-      {children}
-    </ServiceStatusContext.Provider>
-  );
+  return <ServiceStatusContext.Provider value={value}>{children}</ServiceStatusContext.Provider>;
 };

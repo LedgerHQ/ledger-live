@@ -7,11 +7,12 @@ import {
   useRef,
   useState,
 } from "react";
-import { addParamsToURL } from "@ledgerhq/live-common/wallet-api/helpers";
+import { getInitialURL } from "@ledgerhq/live-common/wallet-api/helpers";
 import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
-import { LiveAppManifest } from "~/../../../libs/ledger-live-common/lib/platform/types";
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { WebviewAPI, WebviewState, WebviewTag } from "./types";
 import { track } from "~/renderer/analytics/segment";
+import { WalletAPIServer } from "@ledgerhq/live-common/wallet-api/types";
 
 export const initialWebviewState: WebviewState = {
   url: "",
@@ -24,7 +25,7 @@ export const initialWebviewState: WebviewState = {
 
 type UseWebviewStateParams = {
   manifest: LiveAppManifest;
-  inputs?: Record<string, string>;
+  inputs?: Record<string, string | boolean | undefined>;
 };
 
 type UseWebviewStateReturn = {
@@ -39,32 +40,12 @@ type UseWebviewStateReturn = {
 export function useWebviewState(
   params: UseWebviewStateParams,
   webviewAPIRef: React.ForwardedRef<WebviewAPI>,
+  serverRef?: React.MutableRefObject<WalletAPIServer | undefined>,
 ): UseWebviewStateReturn {
   const webviewRef = useRef<WebviewTag>(null);
   const { manifest, inputs } = params;
-
-  const initialURL = useMemo(() => {
-    const url = new URL(manifest.url);
-    addParamsToURL(url, inputs);
-    if (manifest.params) {
-      url.searchParams.set("params", JSON.stringify(manifest.params));
-    }
-    return url.toString();
-  }, [manifest, inputs]);
-
+  const initialURL = useMemo(() => getInitialURL(inputs, manifest), [manifest, inputs]);
   const [state, setState] = useState<WebviewState>(initialWebviewState);
-
-  /*
-  TODO: find a way to send custom headers
-  const { theme } = useTheme();
-
-  const headers = useMemo(() => {
-    return getClientHeaders({
-      client: "ledger-live-desktop",
-      theme,
-    });
-  }, [theme]);
-  */
 
   useImperativeHandle(
     webviewAPIRef,
@@ -100,9 +81,15 @@ export function useWebviewState(
 
           webview.clearHistory();
         },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        notify: (method: `event.${string}`, params: any) => {
+          serverRef?.current?.sendMessage(method, params);
+        },
       };
     },
-    [webviewRef],
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
   );
 
   const [isMounted, setMounted] = useState<boolean>(false);
@@ -184,7 +171,7 @@ export function useWebviewState(
     }));
   }, [webviewRef]);
 
-  const handleFailLoad = (useCallback(
+  const handleFailLoad = useCallback(
     (errorEvent: {
       errorCode: number;
       errorDescription: string;
@@ -209,7 +196,7 @@ export function useWebviewState(
       }
     },
     [],
-  ) as unknown) as EventListenerOrEventListenerObject;
+  ) as unknown as EventListenerOrEventListenerObject;
 
   const handleCrashed = useCallback(() => {
     setState(oldState => ({

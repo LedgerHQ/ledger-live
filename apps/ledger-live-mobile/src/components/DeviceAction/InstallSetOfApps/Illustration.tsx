@@ -46,14 +46,8 @@ const Illustration = () => (
     </Mask>
     <G mask="url(#mask1_6211_193898)">
       <Rect width="40" height="40" x="34" fill="#0EBDCD" rx="20" />
-      <Path
-        fill="#fff"
-        d="M60.248 19.5L53.999 10l-6.249 9.5L54 23.128l6.248-3.628z"
-      />
-      <Path
-        fill="#fff"
-        d="M54 30l6.252-8.651L54 24.976 47.75 21.35l6.25 8.65z"
-      />
+      <Path fill="#fff" d="M60.248 19.5L53.999 10l-6.249 9.5L54 23.128l6.248-3.628z" />
+      <Path fill="#fff" d="M54 30l6.252-8.651L54 24.976 47.75 21.35l6.25 8.65z" />
     </G>
     <Rect width="40" height="40" x="66" fill="#8247E5" rx="20" />
     <Path

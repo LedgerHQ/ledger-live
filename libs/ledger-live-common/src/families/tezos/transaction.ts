@@ -22,11 +22,10 @@ export const formatTransaction = (
     useAllAmount,
     estimatedFees,
   }: Transaction,
-  mainAccount: Account
+  mainAccount: Account,
 ): string => {
   const account =
-    (subAccountId &&
-      (mainAccount.subAccounts || []).find((a) => a.id === subAccountId)) ||
+    (subAccountId && (mainAccount.subAccounts || []).find(a => a.id === subAccountId)) ||
     mainAccount;
   return `
 ${mode.toUpperCase()} ${
@@ -41,9 +40,7 @@ TO ${recipient}
 with fees=${!fees ? "?" : formatCurrencyUnit(mainAccount.unit, fees)}
 with gasLimit=${!gasLimit ? "?" : gasLimit.toString()}
 with storageLimit=${!storageLimit ? "?" : storageLimit.toString()}
-(estimatedFees ${
-    !estimatedFees ? "?" : formatCurrencyUnit(mainAccount.unit, estimatedFees)
-  })`;
+(estimatedFees ${!estimatedFees ? "?" : formatCurrencyUnit(mainAccount.unit, estimatedFees)})`;
 };
 export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(tr);

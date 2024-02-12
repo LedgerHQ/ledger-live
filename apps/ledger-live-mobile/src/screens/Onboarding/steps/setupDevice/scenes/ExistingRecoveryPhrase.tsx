@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Text, Switch } from "@ledgerhq/native-ui";
-import Button from "../../../../../components/PreventDoubleClickButton";
+import Button from "~/components/PreventDoubleClickButton";
 
 const ExistingRecoveryPhraseScene = () => {
   const { t } = useTranslation();
@@ -34,9 +34,8 @@ const Next = ({ onNext }: { onNext: () => void }) => {
       <Switch
         checked={checked}
         onChange={onChange}
-        label={t(
-          "onboarding.stepRecoveryPhrase.existingRecoveryPhrase.checkboxDesc",
-        )}
+        label={t("onboarding.stepRecoveryPhrase.existingRecoveryPhrase.checkboxDesc")}
+        testID="onboarding-existingRecoveryPhrase-switch"
       />
       <Button
         mt={6}
@@ -44,6 +43,7 @@ const Next = ({ onNext }: { onNext: () => void }) => {
         type="main"
         size="large"
         onPress={onNext}
+        testID="onboarding-existingRecoveryPhrase-cta"
       >
         {t("onboarding.stepRecoveryPhrase.existingRecoveryPhrase.nextStep")}
       </Button>

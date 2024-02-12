@@ -17,14 +17,8 @@ class BitcoinCash extends Base {
     this.network.usesTimestampedTransaction = false;
   }
 
-  async getLegacyBitcoinCashAddress(
-    xpub: string,
-    account: number,
-    index: number
-  ): Promise<string> {
-    return bchaddr.toCashAddress(
-      await super.getLegacyAddress(xpub, account, index)
-    );
+  async getLegacyBitcoinCashAddress(xpub: string, account: number, index: number): Promise<string> {
+    return bchaddr.toCashAddress(await super.getLegacyAddress(xpub, account, index));
   }
 
   // get address given an address type
@@ -32,7 +26,7 @@ class BitcoinCash extends Base {
     derivationMode: string,
     xpub: string,
     account: number,
-    index: number
+    index: number,
   ): Promise<string> {
     return await this.getLegacyBitcoinCashAddress(xpub, account, index);
   }

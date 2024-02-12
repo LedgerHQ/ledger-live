@@ -1,16 +1,15 @@
 import React, { memo, useCallback } from "react";
-import { Flex, Text, Icons } from "@ledgerhq/native-ui";
-import { useSelector } from "react-redux";
+import { Flex, Text, IconsLegacy } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { SingleCoinProviderData } from "@ledgerhq/live-common/market/MarketDataProvider";
-import { withDiscreetMode } from "../../context/DiscreetModeContext";
-import { ScreenName } from "../../const";
-import { localeSelector } from "../../reducers/settings";
+import { withDiscreetMode } from "~/context/DiscreetModeContext";
+import { ScreenName } from "~/const";
 import DeltaVariation from "../Market/DeltaVariation";
-import Touchable from "../../components/Touchable";
+import Touchable from "~/components/Touchable";
+import { useSettings } from "~/hooks";
 
 type Props = {
   currency: CryptoOrTokenCurrency;
@@ -18,13 +17,9 @@ type Props = {
   counterCurrency: string | undefined;
 };
 
-const MarketPrice = ({
-  currency,
-  selectedCoinData,
-  counterCurrency,
-}: Props) => {
+const MarketPrice = ({ currency, selectedCoinData, counterCurrency }: Props) => {
   const { t } = useTranslation();
-  const locale = useSelector(localeSelector);
+  const { locale } = useSettings();
   const navigation = useNavigation();
 
   let loc = locale;
@@ -47,18 +42,8 @@ const MarketPrice = ({
         onPress={goToMarketPage}
       >
         <Flex flex={1} flexDirection="row" alignItems="center">
-          <Flex
-            flexDirection="column"
-            pr={7}
-            borderRightWidth={1}
-            borderRightColor="neutral.c30"
-          >
-            <Text
-              variant="small"
-              fontWeight="medium"
-              lineHeight="20px"
-              color="neutral.c70"
-            >
+          <Flex flexDirection="column" pr={7} borderRightWidth={1} borderRightColor="neutral.c30">
+            <Text variant="small" fontWeight="medium" lineHeight="20px" color="neutral.c70">
               {t("portfolio.marketPriceSection.currencyPrice", {
                 currencyTicker: currency.ticker,
               })}
@@ -71,26 +56,13 @@ const MarketPrice = ({
               })}
             </Text>
           </Flex>
-          <Flex
-            flex={1}
-            flexDirection="column"
-            pl={7}
-            alignItems={"flex-start"}
-          >
-            <Text
-              variant="small"
-              fontWeight="medium"
-              lineHeight="20px"
-              color="neutral.c70"
-            >
+          <Flex flex={1} flexDirection="column" pl={7} alignItems={"flex-start"}>
+            <Text variant="small" fontWeight="medium" lineHeight="20px" color="neutral.c70">
               {t("portfolio.marketPriceSection.currencyPriceChange")}
             </Text>
-            <DeltaVariation
-              percent
-              value={selectedCoinData?.priceChangePercentage || 0}
-            />
+            <DeltaVariation percent value={selectedCoinData?.priceChangePercentage || 0} />
           </Flex>
-          <Icons.ChevronRightMedium size={24} />
+          <IconsLegacy.ChevronRightMedium size={24} />
         </Flex>
       </Touchable>
     </Flex>

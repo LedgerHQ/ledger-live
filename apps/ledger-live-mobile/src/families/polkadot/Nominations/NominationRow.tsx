@@ -1,24 +1,21 @@
 import React from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { useTranslation } from "react-i18next";
-import { Polkadot as PolkadotIdenticon } from "@polkadot/reactnative-identicon/icons";
 
 import {
   PolkadotNomination,
   PolkadotValidator,
 } from "@ledgerhq/live-common/families/polkadot/types";
 import { Account } from "@ledgerhq/types-live";
-import {
-  getAccountCurrency,
-  getAccountUnit,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
 
 import { useTheme } from "styled-components/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
-import CounterValue from "../../../components/CounterValue";
-import LText from "../../../components/LText";
-import ArrowRight from "../../../icons/ArrowRight";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import CounterValue from "~/components/CounterValue";
+import LText from "~/components/LText";
+import ArrowRight from "~/icons/ArrowRight";
+import FirstLetterIcon from "~/components/FirstLetterIcon";
 
 type Props = {
   nomination: PolkadotNomination;
@@ -28,12 +25,7 @@ type Props = {
   isLast?: boolean;
 };
 
-export default function NominationRow({
-  nomination,
-  validator,
-  account,
-  onPress,
-}: Props) {
+export default function NominationRow({ nomination, validator, account, onPress }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
 
@@ -49,18 +41,11 @@ export default function NominationRow({
     <TouchableOpacity onPress={() => onPress(nomination)}>
       <Flex flexDirection={"row"} alignItems={"center"} py={5}>
         <View style={styles.icon}>
-          {/* FIXME: I HAD TO ADD publicKey IN HERE. I LOOKED INTO THE LIB AND IT
-            SEEMS THAT THE DEFAULT VALUE FOR publicKey IS "0x" */}
-          <PolkadotIdenticon publicKey="0x" address={address} size={32} />
+          <FirstLetterIcon label={validator?.identity || "-"} />
         </View>
 
         <View style={styles.nameWrapper}>
-          <Text
-            variant={"body"}
-            fontWeight={"semiBold"}
-            numberOfLines={1}
-            pb={2}
-          >
+          <Text variant={"body"} fontWeight={"semiBold"} numberOfLines={1} pb={2}>
             {name}
           </Text>
 
@@ -85,9 +70,7 @@ export default function NominationRow({
                 {t("polkadot.nomination.notValidator")}
               </LText>
             )}
-            <View
-              style={[styles.seeMore, { borderLeftColor: colors.neutral.c70 }]}
-            >
+            <View style={[styles.seeMore, { borderLeftColor: colors.neutral.c70 }]}>
               <LText style={styles.seeMoreText} color={colors.primary.c80}>
                 {t("common.seeMore")}
               </LText>
@@ -98,19 +81,11 @@ export default function NominationRow({
 
         {status === "active" || status === "inactive" ? (
           <View style={styles.rightWrapper}>
-            <Text
-              variant={"large"}
-              fontWeight={"semiBold"}
-              color={"neutral.c100"}
-            >
+            <Text variant={"large"} fontWeight={"semiBold"} color={"neutral.c100"}>
               <CurrencyUnitValue value={value} unit={unit} />
             </Text>
 
-            <Text
-              variant={"paragraph"}
-              fontWeight={"medium"}
-              color={"neutral.c80"}
-            >
+            <Text variant={"paragraph"} fontWeight={"medium"} color={"neutral.c80"}>
               <CounterValue
                 currency={currency}
                 showCode

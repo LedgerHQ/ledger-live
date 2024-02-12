@@ -3,11 +3,11 @@ import { createStackNavigator } from "@react-navigation/stack";
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Platform } from "react-native";
-import StepHeader from "../../../components/StepHeader";
-import { ScreenName } from "../../../const";
-import { getStackNavigatorConfig } from "../../../navigation/navigatorConfig";
-import ConnectDevice from "../../../screens/ConnectDevice";
-import SelectDevice from "../../../screens/SelectDevice";
+import StepHeader from "~/components/StepHeader";
+import { ScreenName } from "~/const";
+import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
+import ConnectDevice from "~/screens/ConnectDevice";
+import SelectDevice from "~/screens/SelectDevice";
 import SelectValidator from "./SelectValidator";
 import ActivateSummary from "./02-Summary";
 import DelegationValidationError from "./ValidationError";
@@ -19,10 +19,7 @@ const totalSteps = "3";
 function ActivateFlow() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const stackNavigationConfig = useMemo(
-    () => getStackNavigatorConfig(colors, true),
-    [colors],
-  );
+  const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
   return (
     <Stack.Navigator
       screenOptions={{
@@ -52,9 +49,7 @@ function ActivateFlow() {
         component={SelectValidator}
         options={{
           gestureEnabled: false,
-          headerTitle: () => (
-            <StepHeader title={t("delegation.selectValidatorTitle")} />
-          ),
+          headerTitle: () => <StepHeader title={t("delegation.selectValidatorTitle")} />,
         }}
       />
 

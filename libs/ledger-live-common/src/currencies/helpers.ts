@@ -8,9 +8,7 @@ import { makeRe } from "minimatch";
 import { listTokens } from "@ledgerhq/cryptoassets";
 import { listSupportedCurrencies } from "@ledgerhq/coin-framework/currencies/index";
 
-export function isCryptoCurrency(
-  currency: Currency
-): currency is CryptoCurrency {
+export function isCryptoCurrency(currency: Currency): currency is CryptoCurrency {
   return currency.type === "CryptoCurrency";
 }
 
@@ -18,9 +16,7 @@ export function isTokenCurrency(currency: Currency): currency is TokenCurrency {
   return currency.type === "TokenCurrency";
 }
 
-export function listCurrencies(
-  includeTokens: boolean
-): CryptoOrTokenCurrency[] {
+export function listCurrencies(includeTokens: boolean): CryptoOrTokenCurrency[] {
   const currencies = listSupportedCurrencies();
 
   if (!includeTokens) {
@@ -38,17 +34,17 @@ export type CurrencyFilters = {
 
 export function filterCurrencies(
   currencies: CryptoOrTokenCurrency[],
-  filters: CurrencyFilters
+  filters: CurrencyFilters,
 ): CryptoOrTokenCurrency[] {
   const filterCurrencyRegexes = filters.currencies
-    ? filters.currencies.map((filter) => makeRe(filter))
+    ? filters.currencies.map(filter => makeRe(filter))
     : null;
 
-  return currencies.filter((currency) => {
+  return currencies.filter(currency => {
     if (
       filterCurrencyRegexes &&
       filterCurrencyRegexes.length &&
-      !filterCurrencyRegexes.some((regex) => currency.id.match(regex))
+      !filterCurrencyRegexes.some(regex => currency.id.match(regex))
     ) {
       return false;
     }

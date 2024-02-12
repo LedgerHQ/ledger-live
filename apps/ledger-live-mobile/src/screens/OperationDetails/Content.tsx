@@ -4,16 +4,8 @@ import uniq from "lodash/uniq";
 import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import type {
-  Account,
-  Operation,
-  AccountLike,
-  NFTMetadataResponse,
-  NFTCollectionMetadataResponse,
-} from "@ledgerhq/types-live";
+import type { Account, Operation, AccountLike, NFTMetadataResponse } from "@ledgerhq/types-live";
 import {
-  getMainAccount,
-  getAccountCurrency,
   getAccountUnit,
   getAccountName,
   getFeesCurrency,
@@ -23,37 +15,38 @@ import {
   getOperationAmountNumber,
   isConfirmedOperation,
   getOperationConfirmationDisplayableNumber,
+  isEditableOperation,
+  isStuckOperation,
 } from "@ledgerhq/live-common/operation";
-import {
-  useNftCollectionMetadata,
-  useNftMetadata,
-} from "@ledgerhq/live-common/nft/index";
-import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
-import { NavigatorName, ScreenName } from "../../const";
-import LText from "../../components/LText";
-import OperationIcon from "../../components/OperationIcon";
-import OperationRow from "../../components/OperationRow";
-import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import CounterValue from "../../components/CounterValue";
-import Touchable from "../../components/Touchable";
-import { urls } from "../../config/urls";
-import Info from "../../icons/Info";
-import ExternalLink from "../../icons/ExternalLink";
-import { currencySettingsForAccountSelector } from "../../reducers/settings";
+import { useNftCollectionMetadata, useNftMetadata } from "@ledgerhq/live-nft-react";
+import { NFTResource } from "@ledgerhq/live-nft/types";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { NavigatorName, ScreenName } from "~/const";
+import LText from "~/components/LText";
+import OperationIcon from "~/components/OperationIcon";
+import OperationRow from "~/components/OperationRow";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import CounterValue from "~/components/CounterValue";
+import Touchable from "~/components/Touchable";
+import { urls } from "~/utils/urls";
+import Info from "~/icons/Info";
+import ExternalLink from "~/icons/ExternalLink";
+import { currencySettingsForAccountSelector } from "~/reducers/settings";
 import DataList from "./DataList";
 import Modal from "./Modal";
 import Section, { styles as sectionStyles } from "./Section";
 import byFamiliesOperationDetails from "../../generated/operationDetails";
+import byFamiliesEditOperationPanel from "../../generated/EditOperationPanel";
 import DefaultOperationDetailsExtra from "./Extra";
-import Skeleton from "../../components/Skeleton";
-import type { State } from "../../reducers/types";
+import Skeleton from "~/components/Skeleton";
+import type { State } from "~/reducers/types";
 import Title from "./Title";
-import FormatDate from "../../components/DateFormat/FormatDate";
+import FormatDate from "~/components/DateFormat/FormatDate";
 import type {
   RootNavigationComposite,
   StackNavigatorNavigation,
-} from "../../components/RootNavigator/types/helpers";
-import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
+} from "~/components/RootNavigator/types/helpers";
+import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 
 type HelpLinkProps = {
   event: string;
@@ -78,22 +71,24 @@ type Props = {
   parentAccount?: Account | null;
   operation: Operation;
   disableAllLinks?: boolean;
+  currency: CryptoCurrency | TokenCurrency;
+  mainAccount: Account;
 };
+
 export default function Content({
   account,
+  mainAccount,
   parentAccount,
   operation,
   disableAllLinks,
+  currency,
 }: Props) {
   const { colors } = useTheme();
   const navigation =
-    useNavigation<
-      RootNavigationComposite<
-        StackNavigatorNavigation<BaseNavigatorStackParamList>
-      >
-    >();
+    useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
   const { t } = useTranslation();
   const [isModalOpened, setIsModalOpened] = useState(false);
+
   const onPress = useCallback(() => {
     navigation.navigate(NavigatorName.Accounts, {
       screen: ScreenName.Account,
@@ -103,84 +98,91 @@ export default function Content({
       },
     });
   }, [account.id, navigation, parentAccount]);
+
   const onPressInfo = useCallback(() => {
     setIsModalOpened(true);
   }, []);
+
   const onModalClose = useCallback(() => {
     setIsModalOpened(false);
   }, []);
-  const mainAccount = getMainAccount(account, parentAccount);
+
   const currencySettings = useSelector((s: State) =>
     currencySettingsForAccountSelector(s, {
       account: mainAccount,
     }),
   );
-  const currency = getAccountCurrency(account);
+
   const isToken = currency.type === "TokenCurrency";
   const unit = getAccountUnit(account);
   const feeCurrency = getFeesCurrency(mainAccount);
   const feeUnit = getFeesUnit(feeCurrency);
   const amount = getOperationAmountNumber(operation);
   const isNegative = amount.isNegative();
-  const confirmationsString = getOperationConfirmationDisplayableNumber(
-    operation,
-    mainAccount,
-  );
-  const uniqueSenders = uniq<typeof operation.senders[0]>(operation.senders);
-  const uniqueRecipients = uniq<typeof operation.recipients[0]>(
-    operation.recipients,
-  );
-  const { extra, type } = operation;
-  const { hasFailed } = operation;
+  const confirmationsString = getOperationConfirmationDisplayableNumber(operation, mainAccount);
+  const uniqueSenders = uniq<(typeof operation.senders)[0]>(operation.senders);
+  const uniqueRecipients = uniq<(typeof operation.recipients)[0]>(operation.recipients);
+  const { type, hasFailed } = operation;
   const subOperations = operation.subOperations || [];
   const internalOperations = operation.internalOperations || [];
   const shouldDisplayTo = uniqueRecipients.length > 0 && !!uniqueRecipients[0];
+
   const isConfirmed = isConfirmedOperation(
     operation,
     mainAccount,
     currencySettings.confirmationsNb,
   );
-  const specific =
+
+  const isEditable = isEditableOperation({ account: mainAccount, operation });
+  const isOperationStuck = isStuckOperation({ family: mainAccount.currency.family, operation });
+
+  const specificOperationDetails =
     byFamiliesOperationDetails[
       mainAccount.currency.family as keyof typeof byFamiliesOperationDetails
     ];
+
+  const { EditOperationPanel: SpecificEditOperationPanel = undefined } =
+    byFamiliesEditOperationPanel[
+      mainAccount.currency.family as keyof typeof byFamiliesEditOperationPanel
+    ] || {};
+
   const urlFeesInfo =
-    specific &&
-    (specific as { getURLFeesInfo: (o: Operation, c: string) => string })
+    specificOperationDetails &&
+    (specificOperationDetails as { getURLFeesInfo: (o: Operation, c: string) => string })
       ?.getURLFeesInfo &&
     (
-      specific as { getURLFeesInfo: (o: Operation, c: string) => string }
+      specificOperationDetails as { getURLFeesInfo: (o: Operation, c: string) => string }
     )?.getURLFeesInfo(operation, mainAccount.currency.id);
+
   const Extra =
-    specific &&
-    (specific as { OperationDetailsExtra: React.ComponentType })
+    specificOperationDetails &&
+    (specificOperationDetails as { OperationDetailsExtra: React.ComponentType })
       .OperationDetailsExtra
       ? (
-          specific as {
+          specificOperationDetails as {
             OperationDetailsExtra: React.ComponentType<{
               type: typeof type;
               account: AccountLike;
               operation: Operation;
-              extra: Record<string, unknown>;
             }>;
           }
         ).OperationDetailsExtra
       : DefaultOperationDetailsExtra;
+
   const isNftOperation =
-    ["NFT_IN", "NFT_OUT"].includes(type) &&
-    operation.contract &&
-    operation.tokenId;
-  const { status: collectionStatus, metadata: collectionMetadata } =
-    useNftCollectionMetadata(operation.contract, currency.id) as NFTResource & {
-      metadata: NFTCollectionMetadataResponse["result"];
-    };
+    ["NFT_IN", "NFT_OUT"].includes(type) && operation.contract && operation.tokenId;
+  const { status: collectionStatus, metadata: collectionMetadata } = useNftCollectionMetadata(
+    operation.contract,
+    mainAccount.currency.id,
+  );
   const { status: nftStatus, metadata: nftMetadata } = useNftMetadata(
     operation.contract,
     operation.tokenId,
-    currency.id,
+    mainAccount.currency.id,
   ) as NFTResource & {
     metadata: NFTMetadataResponse["result"];
   };
+
   return (
     <>
       <View style={styles.header}>
@@ -195,6 +197,7 @@ export default function Content({
 
         <Title
           hasFailed={!!hasFailed}
+          isConfirmed={isConfirmed}
           amount={amount}
           operation={operation}
           currency={currency}
@@ -204,7 +207,6 @@ export default function Content({
           metadata={nftMetadata}
           styles={styles}
         />
-
         <View style={styles.confirmationContainer}>
           <View
             style={[
@@ -271,29 +273,23 @@ export default function Content({
               />
             </LText>
             {isToken ? (
-              <Touchable
-                style={styles.info}
-                onPress={onPressInfo}
-                event="TokenOperationsInfo"
-              >
+              <Touchable style={styles.info} onPress={onPressInfo} event="TokenOperationsInfo">
                 <Info size={12} color={colors.grey} />
               </Touchable>
             ) : null}
           </View>
           {subOperations.map((op, i) => {
-            const opAccount = (account.subAccounts || []).find(
-              acc => acc.id === op.accountId,
-            );
+            const opAccount = (account.subAccounts || []).find(acc => acc.id === op.accountId);
             if (!opAccount) return null;
             return (
               <View
+                key={op.id}
                 style={{
                   marginHorizontal: 16,
                 }}
               >
                 <OperationRow
                   isSubOperation
-                  key={op.id}
                   operation={op}
                   parentAccount={account}
                   account={opAccount}
@@ -330,37 +326,35 @@ export default function Content({
         />
       ) : null}
 
+      {isEditable && SpecificEditOperationPanel ? (
+        <SpecificEditOperationPanel
+          isOperationStuck={isOperationStuck}
+          account={account}
+          parentAccount={parentAccount}
+          operation={operation}
+        />
+      ) : null}
+
       {!disableAllLinks ? (
         <Section
           title={t("operationDetails.account")}
           value={getAccountName(account)}
           onPress={onPress}
+          testID="operationDetails-account"
         />
       ) : null}
 
       {isNftOperation ? (
         <>
           <Section title={t("operationDetails.tokenName")}>
-            <Skeleton
-              style={styles.tokenNameSkeleton}
-              loading={collectionStatus === "loading"}
-            >
+            <Skeleton style={styles.tokenNameSkeleton} loading={collectionStatus === "loading"}>
               <LText semiBold>{collectionMetadata?.tokenName || "-"}</LText>
             </Skeleton>
           </Section>
-          <Section
-            title={t("operationDetails.collectionContract")}
-            value={operation.contract}
-          />
-          <Section
-            title={t("operationDetails.tokenId")}
-            value={operation.tokenId}
-          />
+          <Section title={t("operationDetails.collectionContract")} value={operation.contract} />
+          <Section title={t("operationDetails.tokenId")} value={operation.tokenId} />
           {operation.standard === "ERC1155" && (
-            <Section
-              title={t("operationDetails.quantity")}
-              value={operation.value.toFixed()}
-            />
+            <Section title={t("operationDetails.quantity")} value={operation.value.toFixed()} />
           )}
         </>
       ) : null}
@@ -388,11 +382,7 @@ export default function Content({
           {operation.fee ? (
             <View style={styles.feeValueContainer}>
               <LText style={sectionStyles.value} semiBold>
-                <CurrencyUnitValue
-                  showCode
-                  unit={feeUnit}
-                  value={operation.fee}
-                />
+                <CurrencyUnitValue showCode unit={feeUnit} value={operation.fee} />
               </LText>
               <LText style={styles.feeCounterValue} color="smoke" semiBold>
                 ≈
@@ -416,17 +406,11 @@ export default function Content({
         </Section>
       ) : null}
 
-      <Section
-        title={t("operationDetails.identifier")}
-        value={operation.hash}
-      />
+      <Section title={t("operationDetails.identifier")} value={operation.hash} />
 
       {uniqueSenders.length > 0 && (
         <View style={sectionStyles.wrapper}>
-          <DataList
-            data={uniqueSenders}
-            title={<Trans i18nKey="operationDetails.from" />}
-          />
+          <DataList data={uniqueSenders} title={<Trans i18nKey="operationDetails.from" />} />
         </View>
       )}
 
@@ -445,9 +429,7 @@ export default function Content({
                   <HelpLink
                     event="MultipleAddressesSupport"
                     onPress={() => Linking.openURL(urls.multipleAddresses)}
-                    title={
-                      <Trans i18nKey="operationDetails.multipleAddresses" />
-                    }
+                    title={<Trans i18nKey="operationDetails.multipleAddresses" />}
                   />
                 </View>
               ) : null
@@ -456,18 +438,9 @@ export default function Content({
         </View>
       ) : null}
 
-      <Extra
-        operation={operation}
-        extra={extra}
-        type={type}
-        account={account}
-      />
+      <Extra operation={operation} type={type} account={account} />
 
-      <Modal
-        isOpened={isModalOpened}
-        onClose={onModalClose}
-        currency={currency}
-      />
+      <Modal isOpened={isModalOpened} onClose={onModalClose} currency={currency} />
     </>
   );
 }

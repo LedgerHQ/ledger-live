@@ -218,6 +218,7 @@ type Props = BoxProps & {
   horizontal?: boolean;
   noIcon?: boolean;
   small?: boolean;
+  style?: React.CSSProperties;
 };
 
 export default function Alert({

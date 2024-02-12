@@ -1,20 +1,22 @@
-import {
-  currencyParam,
-  getElementById,
-  openDeeplink,
-  tapByElement,
-  waitForElementByID,
-} from "../../helpers";
+import { getElementById, openDeeplink, waitForElementById, tapByElement } from "../../helpers";
 
-let baseLink: string = "accounts";
+const baseLink = "accounts";
 
 export default class accountsPage {
   accountTitle = (coin: string) => getElementById(`accounts-title-${coin}`);
+  addAccountButton = () => getElementById("add-account-button");
 
   async openViaDeeplink() {
     await openDeeplink(baseLink);
   }
   async waitForAccountsPageToLoad() {
-    await waitForElementByID("accounts-list-title");
+    await waitForElementById("accounts-list-title");
+  }
+  async waitForAccountsCoinPageToLoad(coin: string) {
+    await waitForElementById(`accounts-title-${coin}`);
+  }
+
+  async addAccount() {
+    await tapByElement(this.addAccountButton());
   }
 }

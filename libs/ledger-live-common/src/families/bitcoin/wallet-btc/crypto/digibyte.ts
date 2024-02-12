@@ -25,8 +25,7 @@ class Digibyte extends Base {
     const res = bs58check.decodeUnsafe(address);
     if (!res) return false;
     return (
-      res.length > 3 &&
-      (res[0] === this.network.pubKeyHash || res[0] === this.network.scriptHash)
+      res.length > 3 && (res[0] === this.network.pubKeyHash || res[0] === this.network.scriptHash)
     );
   }
 }

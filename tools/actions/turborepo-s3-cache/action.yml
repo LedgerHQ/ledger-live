@@ -1,0 +1,39 @@
+name: turborepo-s3-cache
+description: Starts a proxy server which upses S3 API to cache turborepo outputs
+author: valpinkman
+inputs:
+  server-token:
+    description: "An access token of the local turbo-server"
+    required: true
+  cleanup-cache-folder:
+    description: "If 'true' will delete the .cache/turbo folder as a post-action step"
+    required: false
+  aws-access-key:
+    description: "aws access key"
+    required: true
+  aws-secret-key:
+    description: "aws secret key"
+    required: true
+  aws-session-token:
+    description: "generated session token"
+    required: true
+  bucket-name:
+    description: "aws bucket name"
+    required: false
+    default: "ll-gha-s3-cache"
+  region:
+    description: "aws bucket region"
+    required: false
+    default: "eu-west-1"
+outputs:
+  port:
+    description: "The port the local server runs on"
+
+runs:
+  using: node20
+  main: build/main.js
+  post: build/cleanup.js
+
+branding:
+  icon: archive
+  color: green

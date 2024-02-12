@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect } from "react";
 import { BigNumber } from "bignumber.js";
-import { Trans, TFunction } from "react-i18next";
+import { Trans } from "react-i18next";
+import { TFunction } from "i18next";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { Account, AccountBridge, AccountLike, TransactionCommon } from "@ledgerhq/types-live";
+import { Account, AccountLike, TransactionCommon } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
@@ -14,7 +15,7 @@ type Props<T extends TransactionCommon> = {
   parentAccount?: Account | null;
   account: AccountLike;
   transaction: Transaction;
-  onChangeTransaction: (_: AccountBridge<T>) => void;
+  onChangeTransaction: (_: T) => void;
   status: TransactionStatus;
   bridgePending: boolean;
   t: TFunction;
@@ -69,7 +70,7 @@ const AmountField = <T extends TransactionCommon>({
 
   const { useAllAmount } = transaction;
   const { amount, errors, warnings } = status;
-  const { amount: amountError, dustLimit: messageDust, gasPrice: messageGas } = errors;
+  const { amount: amountError, dustLimit: messageDust } = errors;
   const { amount: amountWarning } = warnings;
 
   let amountErrMessage: Error | undefined = amountError;
@@ -114,6 +115,7 @@ const AmountField = <T extends TransactionCommon>({
               isChecked={useAllAmount}
               onChange={onChangeSendMax}
               disabled={walletConnectProxy}
+              data-test-id="modal-max-checkbox"
             />
           </Box>
         ) : null}
@@ -121,7 +123,7 @@ const AmountField = <T extends TransactionCommon>({
       <RequestAmount
         disabled={!!useAllAmount || walletConnectProxy}
         account={account}
-        validTransactionError={amountErrMessage || messageGas || messageDust}
+        validTransactionError={amountErrMessage || messageDust}
         validTransactionWarning={amountWarnMessage}
         onChange={onChange}
         value={walletConnectProxy ? transaction.amount : amount}

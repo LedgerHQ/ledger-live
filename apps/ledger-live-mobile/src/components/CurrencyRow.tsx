@@ -1,9 +1,6 @@
 import React, { useCallback } from "react";
 import { RectButton } from "react-native-gesture-handler";
-import type {
-  CryptoCurrency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useTheme } from "@react-navigation/native";
 
 import styled from "styled-components/native";
@@ -25,13 +22,7 @@ type Props = {
   iconSize?: number;
 };
 
-const CurrencyRow = ({
-  currency,
-  style,
-  isOK = true,
-  iconSize = 32,
-  onPress,
-}: Props) => {
+const CurrencyRow = ({ currency, style, isOK = true, iconSize = 32, onPress }: Props) => {
   const onPressAction = useCallback(() => {
     onPress(currency);
   }, [onPress, currency]);
@@ -39,18 +30,17 @@ const CurrencyRow = ({
   const { colors } = useTheme();
 
   return (
-    <StyledRectButton style={[style]} onPress={onPressAction}>
+    <StyledRectButton
+      testID={"currency-row-" + currency.id}
+      style={[style]}
+      onPress={onPressAction}
+    >
       <CircleCurrencyIcon
         size={iconSize}
         currency={currency}
         color={!isOK ? colors.lightFog : undefined}
       />
-      <Flex
-        flexDirection="row"
-        flex={1}
-        alignItems="center"
-        justifyContent="flex-start"
-      >
+      <Flex flexDirection="row" flex={1} alignItems="center" justifyContent="flex-start">
         <LText
           semiBold
           variant="body"

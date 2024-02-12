@@ -1,9 +1,5 @@
 import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
-import type {
-  Account,
-  AccountLike,
-  AccountLikeArray,
-} from "@ledgerhq/types-live";
+import type { Account, AccountLike, AccountLikeArray } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import flatMap from "lodash/flatMap";
 import { extractTokenId } from "./tokens";
@@ -39,10 +35,7 @@ const options = [
   },
 ];
 
-function inferAccounts(
-  account: Account,
-  opts: Record<string, any>
-): AccountLikeArray {
+function inferAccounts(account: Account, opts: Record<string, any>): AccountLikeArray {
   invariant(account.currency.family === "algorand", "algorand family");
 
   if (!opts.token || opts.mode === "optIn") {
@@ -54,7 +47,7 @@ function inferAccounts(
     const subAccounts = account.subAccounts || [];
 
     if (token) {
-      const subAccount = subAccounts.find((t) => {
+      const subAccount = subAccounts.find(t => {
         const currency = getAccountCurrency(t);
         return (
           token.toLowerCase() === currency.ticker.toLowerCase() ||
@@ -67,7 +60,7 @@ function inferAccounts(
           "token account '" +
             token +
             "' not found. Available: " +
-            subAccounts.map((t) => getAccountCurrency(t).ticker).join(", ")
+            subAccounts.map(t => getAccountCurrency(t).ticker).join(", "),
         );
       }
 
@@ -82,16 +75,13 @@ function inferTransactions(
     transaction: Transaction;
   }>,
   opts: Record<string, any>,
-  { inferAmount }: any
+  { inferAmount }: any,
 ): Transaction[] {
   return flatMap(transactions, ({ transaction, account }) => {
     invariant(transaction.family === "algorand", "algorand family");
 
     if (account.type === "Account") {
-      invariant(
-        (account as AlgorandAccount).algorandResources,
-        "unactivated account"
-      );
+      invariant((account as AlgorandAccount).algorandResources, "unactivated account");
     }
 
     if (account.type === "TokenAccount") {
@@ -111,11 +101,7 @@ function inferTransactions(
   });
 }
 
-/**
- * FIXME: unsued network and cache params are passed to makeCliTools because of how the
- * libs/ledger-live-common/scripts/sync-families-dispatch.mjs script works.
- */
-export default function makeCliTools(_network: unknown, _cache: unknown) {
+export default function makeCliTools() {
   return {
     options,
     inferAccounts,

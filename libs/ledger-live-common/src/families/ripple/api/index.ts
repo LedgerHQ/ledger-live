@@ -1,7 +1,7 @@
+import network from "@ledgerhq/live-network/network";
 import { BigNumber } from "bignumber.js";
-import { getEnv } from "../../../env";
-import network from "../../../network";
-import { parseCurrencyUnit, getCryptoCurrencyById } from "../../../currencies";
+import { getCryptoCurrencyById, parseCurrencyUnit } from "../../../currencies";
+import { getEnv } from "@ledgerhq/live-env";
 import { retry } from "../../../promise";
 import { NEW_ACCOUNT_ERROR_MESSAGE } from "../bridge/js";
 
@@ -11,8 +11,7 @@ export const connectionTimeout = 30 * 1000; // default connectionTimeout is 2s a
 
 const rippleUnit = getCryptoCurrencyById("ripple").units[0];
 
-export const parseAPIValue = (value: string): BigNumber =>
-  parseCurrencyUnit(rippleUnit, value);
+export const parseAPIValue = (value: string): BigNumber => parseCurrencyUnit(rippleUnit, value);
 
 export const submit = async (signature: string): Promise<any> => {
   const res = await network({
@@ -47,7 +46,7 @@ type AccountInfo = {
 
 export const getAccountInfo = async (
   recipient: string,
-  current?: boolean
+  current?: boolean,
 ): Promise<AccountInfo> => {
   const res = async () => {
     const res = await network({
@@ -78,9 +77,7 @@ export const getAccountInfo = async (
   });
 };
 
-export const getServerInfo = async (
-  endpointConfig?: string | null | undefined
-): Promise<any> => {
+export const getServerInfo = async (endpointConfig?: string | null | undefined): Promise<any> => {
   const res = async () => {
     const res = await network({
       method: "POST",
@@ -107,10 +104,7 @@ export const getServerInfo = async (
   });
 };
 
-export const getTransactions = async (
-  address: string,
-  options: any | undefined
-): Promise<any> => {
+export const getTransactions = async (address: string, options: any | undefined): Promise<any> => {
   const res = async () => {
     const res = await network({
       method: "POST",

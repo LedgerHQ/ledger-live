@@ -9,20 +9,20 @@ import Toggle from "../../../navigation/sideBar/Toggle";
 
 const Nav = styled(Flex)`
   position: relative;
-  padding: ${(p) => `${p.theme.space[19]}px ${p.theme.space[5]}px 0`};
+  padding: ${p => `${p.theme.space[19]}px ${p.theme.space[5]}px 0`};
   row-gap: 1.5rem;
   height: 100vh;
   width: 14.875rem;
-  color: ${(props) => props.theme.colors.neutral.c100};
-  border-right: 1px solid ${(props) => props.theme.colors.neutral.c40};
-  background-color: ${(props) => props.theme.colors.background.main};
+  color: ${props => props.theme.colors.neutral.c100};
+  border-right: 1px solid ${props => props.theme.colors.neutral.c40};
+  background-color: ${props => props.theme.colors.background.main};
   transition: width 200ms;
   will-change: width;
   flex-shrink: 0;
-  z-index: ${(p) => p.theme.zIndexes[2]};
+  z-index: ${p => p.theme.zIndexes[2]};
 
   &.nav-enter {
-    width: ${(p) => p.theme.space[19]}px;
+    width: ${p => p.theme.space[19]}px;
   }
   &.nav-enter-done {
     width: 14.875rem;
@@ -31,7 +31,7 @@ const Nav = styled(Flex)`
     width: 14.875rem;
   }
   &.nav-exit-done {
-    width: ${(p) => `${p.theme.space[19]}px`};
+    width: ${p => `${p.theme.space[19]}px`};
   }
 `;
 
@@ -39,7 +39,7 @@ const TransparentMouseZone = styled.div`
   position: absolute;
   left: 100%;
   top: 0;
-  width: ${(p) => `${p.theme.space[8]}px`};
+  width: ${p => `${p.theme.space[8]}px`};
   height: 100%;
 `;
 

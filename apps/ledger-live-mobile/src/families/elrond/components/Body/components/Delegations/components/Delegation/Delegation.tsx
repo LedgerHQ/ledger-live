@@ -7,12 +7,12 @@ import { BigNumber } from "bignumber.js";
 import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
 import { ELROND_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/elrond/constants";
 
-import CounterValue from "../../../../../../../../components/CounterValue";
-import ArrowRight from "../../../../../../../../icons/ArrowRight";
-import LText from "../../../../../../../../components/LText";
-import LedgerLogo from "../../../../../../../../icons/LiveLogo";
-import FirstLetterIcon from "../../../../../../../../components/FirstLetterIcon";
-import Circle from "../../../../../../../../components/Circle";
+import CounterValue from "~/components/CounterValue";
+import ArrowRight from "~/icons/ArrowRight";
+import LText from "~/components/LText";
+import LedgerLogo from "~/icons/LiveLogo";
+import FirstLetterIcon from "~/components/FirstLetterIcon";
+import Circle from "~/components/Circle";
 
 import type { DelegationPropsType } from "./types";
 
@@ -23,20 +23,11 @@ import styles from "./styles";
  */
 
 const Delegation = (props: DelegationPropsType) => {
-  const {
-    last,
-    validator,
-    currency,
-    userActiveStake,
-    claimableRewards,
-    onDrawer,
-  } = props;
+  const { last, validator, currency, userActiveStake, claimableRewards, onDrawer } = props;
   const { colors } = useTheme();
   const { t } = useTranslation();
 
-  const name: string = validator
-    ? validator.identity.name || validator.contract
-    : "";
+  const name: string = validator ? validator.identity.name || validator.contract : "";
 
   /*
    * Memoize the denominate active stake as the amount.
@@ -74,11 +65,7 @@ const Delegation = (props: DelegationPropsType) => {
     <View style={styles.delegationsWrapper}>
       <TouchableOpacity
         onPress={onPress}
-        style={[
-          styles.row,
-          styles.wrapper,
-          last ? undefined : styles.borderBottom,
-        ]}
+        style={[styles.row, styles.wrapper, last ? undefined : styles.borderBottom]}
       >
         <View style={styles.icon}>
           {validator && (
@@ -86,12 +73,7 @@ const Delegation = (props: DelegationPropsType) => {
               {ELROND_LEDGER_VALIDATOR_ADDRESS === validator.contract ? (
                 <LedgerLogo size={42 * 0.7} color={colors.text} />
               ) : (
-                <FirstLetterIcon
-                  label={name || "-"}
-                  round={true}
-                  size={42}
-                  fontSize={24}
-                />
+                <FirstLetterIcon label={name || "-"} round={true} size={42} fontSize={24} />
               )}
             </Circle>
           )}

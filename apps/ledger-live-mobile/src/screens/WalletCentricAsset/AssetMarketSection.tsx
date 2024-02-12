@@ -7,25 +7,19 @@ import SectionContainer from "../WalletCentricSections/SectionContainer";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
 import MarketPriceSection from "../WalletCentricSections/MarketPrice";
 
-// @FIXME workarround for main tokens
+// @FIXME workaround for main tokens
 const tokenIDToMarketID = {
   "ethereum/erc20/usd_tether__erc20_": "tether",
-  "ethereum/erc20/usd__coin": "usd",
+  "ethereum/erc20/usd__coin": "usd-coin",
 };
 
-const AssetMarketSection = ({
-  currency,
-}: {
-  currency: CryptoOrTokenCurrency;
-}) => {
+const AssetMarketSection = ({ currency }: { currency: CryptoOrTokenCurrency }) => {
   const { t } = useTranslation();
-  const { selectedCoinData, selectCurrency, counterCurrency } =
-    useSingleCoinMarketData();
+  const { selectedCoinData, selectCurrency, counterCurrency } = useSingleCoinMarketData();
 
   useEffect(() => {
     selectCurrency(
-      tokenIDToMarketID[currency.id as keyof typeof tokenIDToMarketID] ||
-        currency.id,
+      tokenIDToMarketID[currency.id as keyof typeof tokenIDToMarketID] || currency.id,
       undefined,
       "24h",
     );

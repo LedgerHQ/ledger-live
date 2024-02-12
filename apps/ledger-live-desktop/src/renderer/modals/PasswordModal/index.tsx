@@ -19,10 +19,10 @@ const PasswordModal = () => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [incorrectPassword, setIncorrectPassword] = useState<MaybePasswordIncorrectError>(null);
-  const isValid = useCallback(() => confirmPassword === newPassword, [
-    confirmPassword,
-    newPassword,
-  ]);
+  const isValid = useCallback(
+    () => confirmPassword === newPassword,
+    [confirmPassword, newPassword],
+  );
   const setPassword = useCallback(
     async (password?: string | null) => {
       if (password) {

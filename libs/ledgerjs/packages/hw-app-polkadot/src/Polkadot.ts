@@ -16,11 +16,7 @@
  ********************************************************************************/
 import type Transport from "@ledgerhq/hw-transport";
 import BIPPath from "bip32-path";
-import {
-  UserRefusedOnDevice,
-  UserRefusedAddress,
-  TransportError,
-} from "@ledgerhq/errors";
+import { UserRefusedOnDevice, UserRefusedAddress, TransportError } from "@ledgerhq/errors";
 const CHUNK_SIZE = 250;
 const CLA = 0x90;
 const INS = {
@@ -67,7 +63,7 @@ export default class Polkadot {
    */
   async getAddress(
     path: string,
-    requireConfirmation = false
+    requireConfirmation = false,
   ): Promise<{
     pubKey: string;
     address: string;
@@ -76,15 +72,11 @@ export default class Polkadot {
     const bipPath = BIPPath.fromString(path).toPathArray();
     const bip44Path = this.serializePath(bipPath);
     return this.transport
-      .send(
-        CLA,
-        INS.GET_ADDR_ED25519,
-        requireConfirmation ? 1 : 0,
-        0,
-        bip44Path,
-        [SW_OK, SW_CANCEL]
-      )
-      .then((response) => {
+      .send(CLA, INS.GET_ADDR_ED25519, requireConfirmation ? 1 : 0, 0, bip44Path, [
+        SW_OK,
+        SW_CANCEL,
+      ])
+      .then(response => {
         const errorCodeData = response.slice(-2);
         const returnCode = errorCodeData[0] * 256 + errorCodeData[1];
 
@@ -100,10 +92,7 @@ export default class Polkadot {
       });
   }
 
-  foreach<T, A>(
-    arr: T[],
-    callback: (arg0: T, arg1: number) => Promise<A>
-  ): Promise<A[]> {
+  foreach<T, A>(arr: T[], callback: (arg0: T, arg1: number) => Promise<A>): Promise<A[]> {
     function iterate(index, array, result) {
       if (index >= array.length) {
         return result;
@@ -125,7 +114,7 @@ export default class Polkadot {
    */
   async sign(
     path: string,
-    message: string
+    message: string,
   ): Promise<{
     signature: null | string;
     return_code: number;
@@ -159,9 +148,9 @@ export default class Polkadot {
             : PAYLOAD_TYPE_ADD,
           0,
           data,
-          [SW_OK, SW_CANCEL, SW_ERROR_DATA_INVALID, SW_ERROR_BAD_KEY_HANDLE]
+          [SW_OK, SW_CANCEL, SW_ERROR_DATA_INVALID, SW_ERROR_BAD_KEY_HANDLE],
         )
-        .then((apduResponse) => (response = apduResponse))
+        .then(apduResponse => (response = apduResponse)),
     ).then(() => {
       const errorCodeData = response.slice(-2);
       const returnCode = errorCodeData[0] * 256 + errorCodeData[1];
@@ -170,13 +159,8 @@ export default class Polkadot {
         throw new UserRefusedOnDevice();
       }
 
-      if (
-        returnCode === SW_ERROR_DATA_INVALID ||
-        returnCode === SW_ERROR_BAD_KEY_HANDLE
-      ) {
-        const errorMessage = response
-          .slice(0, response.length - 2)
-          .toString("ascii");
+      if (returnCode === SW_ERROR_DATA_INVALID || returnCode === SW_ERROR_BAD_KEY_HANDLE) {
+        const errorMessage = response.slice(0, response.length - 2).toString("ascii");
         throw new TransportError(errorMessage, "Sign");
       }
 

@@ -6,11 +6,12 @@ import Alert from "~/renderer/components/Alert";
 import Modal, { ModalBody } from "~/renderer/components/Modal";
 import { ScrollArea } from "~/renderer/components/Onboarding/ScrollArea";
 import LanguageSelect from "~/renderer/screens/settings/sections/General/LanguageSelect";
+import { StorylyBase } from "~/storyly";
 
-const StorylyDebugger = ({ name }: { name: string }) => {
+const StorylyDebugger = () => {
   return (
     <Modal
-      name={name}
+      name="MODAL_STORYLY_DEBUGGER"
       centered
       render={({ onClose }: { onClose?: () => void }) => (
         <ModalBody
@@ -22,14 +23,13 @@ const StorylyDebugger = ({ name }: { name: string }) => {
             <ScrollArea>
               <Flex flexDirection="column" rowGap={4}>
                 <Alert type="warning">
-                  {
-                    "This is a tool provided as-is for the team to validate storyly stories used in the app."
-                  }
+                  <Trans i18nKey="settings.experimental.features.testStories.longDesc" />
                 </Alert>
                 <LanguageSelect disableLanguagePrompt />
-                {Object.entries(StorylyInstanceID).map(([key]) => (
+                {Object.entries(StorylyInstanceID).map(([key, instanceId]) => (
                   <Box key={key}>
                     <Text variant="paragraph">{key}</Text>
+                    <StorylyBase {...{ instanceId }} />
                   </Box>
                 ))}
               </Flex>

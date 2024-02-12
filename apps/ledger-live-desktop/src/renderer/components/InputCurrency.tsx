@@ -216,15 +216,8 @@ class InputCurrency extends PureComponent<Props, State> {
   };
 
   render() {
-    const {
-      renderRight,
-      showAllDigits,
-      unit,
-      subMagnitude,
-      locale,
-      placeholder,
-      ...rest
-    } = this.props;
+    const { renderRight, showAllDigits, unit, subMagnitude, locale, placeholder, ...rest } =
+      this.props;
     const { displayValue } = this.state;
     return (
       <Input

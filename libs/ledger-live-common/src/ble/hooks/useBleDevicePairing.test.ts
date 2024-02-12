@@ -14,7 +14,7 @@ jest.useFakeTimers();
 const mockedGetVersion = jest.mocked(getVersion);
 const mockedWithDevice = jest.mocked(withDevice);
 
-mockedWithDevice.mockReturnValue((job) => from(job(new Transport())));
+mockedWithDevice.mockReturnValue(job => from(job(new Transport())));
 
 const aFirmwareInfo = {
   isBootloader: false,
@@ -55,7 +55,7 @@ describe("useBleDevicePairing", () => {
       const { result } = renderHook(() =>
         useBleDevicePairing({
           deviceId: aDevice.deviceId,
-        })
+        }),
       );
 
       await act(async () => {
@@ -77,7 +77,7 @@ describe("useBleDevicePairing", () => {
       const { result } = renderHook(() =>
         useBleDevicePairing({
           deviceId: aDevice.deviceId,
-        })
+        }),
       );
 
       await act(async () => {

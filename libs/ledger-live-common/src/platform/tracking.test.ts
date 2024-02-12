@@ -124,9 +124,9 @@ describe("trackingWrapper", () => {
         {
           platform: appManifest.name,
         },
-        null
+        null,
       );
-    }
+    },
   );
 });
 

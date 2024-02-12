@@ -3,10 +3,11 @@ import URL from "url";
 import Transport from "@ledgerhq/hw-transport";
 import type { DeviceInfo, SocketEvent } from "@ledgerhq/types-live";
 import { version as livecommonversion } from "../../../../package.json";
-import { getEnv } from "../../../env";
-import { log } from "@ledgerhq/logs";
+import { getEnv } from "@ledgerhq/live-env";
+import { LocalTracer } from "@ledgerhq/logs";
 import { createDeviceSocket } from "../../../socket";
 import { filter, map } from "rxjs/operators";
+import { LOG_TYPE } from "../core";
 
 export type FlashMcuOrBootloaderCommandRequest = {
   targetId: DeviceInfo["targetId"];
@@ -20,8 +21,7 @@ type ProgressEvent = {
   total: number;
 };
 
-const filterProgressEvent = (e: SocketEvent): e is ProgressEvent =>
-  e.type === "bulk-progress";
+const filterProgressEvent = (e: SocketEvent): e is ProgressEvent => e.type === "bulk-progress";
 
 export type FlashMcuCommandEvent = {
   type: "progress";
@@ -37,9 +37,11 @@ export type FlashMcuCommandEvent = {
  */
 export function flashMcuOrBootloaderCommand(
   transport: Transport,
-  { targetId, version }: FlashMcuOrBootloaderCommandRequest
+  { targetId, version }: FlashMcuOrBootloaderCommandRequest,
 ): Observable<FlashMcuCommandEvent> {
-  log("device-command", "flashMcuOrBootloader", {
+  const tracer = new LocalTracer(LOG_TYPE, { function: "flashMcuOrBootloaderCommand" });
+
+  tracer.trace("Starting", {
     targetId,
     version,
   });
@@ -53,11 +55,12 @@ export function flashMcuOrBootloaderCommand(
         version,
       },
     }),
+    context: tracer.getContext(),
   }).pipe(
     filter<SocketEvent, ProgressEvent>(filterProgressEvent),
-    map((e) => ({
+    map(e => ({
       type: "progress",
       progress: e.progress,
-    }))
+    })),
   );
 }

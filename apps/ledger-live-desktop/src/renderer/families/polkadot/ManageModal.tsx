@@ -3,7 +3,6 @@ import invariant from "invariant";
 import { useDispatch } from "react-redux";
 import styled, { css } from "styled-components";
 import { Trans } from "react-i18next";
-import { Account } from "@ledgerhq/types-live";
 import { usePolkadotPreloadData } from "@ledgerhq/live-common/families/polkadot/react";
 import {
   canNominate,
@@ -21,6 +20,9 @@ import ChillIcon from "~/renderer/icons/VoteNay";
 import WithdrawUnbondedIcon from "~/renderer/icons/Coins";
 import Text from "~/renderer/components/Text";
 import ElectionStatusWarning from "./ElectionStatusWarning";
+import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
+import { ModalData } from "~/renderer/modals/types";
+
 const IconWrapper = styled.div`
   width: 32px;
   height: 32px;
@@ -32,6 +34,7 @@ const IconWrapper = styled.div`
   align-items: center;
   margin-top: ${p => p.theme.space[2]}px;
 `;
+
 const ManageButton = styled.button`
   min-height: 88px;
   padding: 16px;
@@ -68,20 +71,27 @@ const ManageButton = styled.button`
       cursor: pointer;
   `};
 `;
+
 const InfoWrapper = styled(Box).attrs(() => ({
   flex: 1,
   ml: 3,
   textAlign: "start",
 }))``;
+
 const Title = styled(Text).attrs(() => ({
   ff: "Inter|SemiBold",
   fontSize: 4,
 }))``;
-const Description = styled(Text).attrs(({ isPill }) => ({
+
+const Description = styled(Text).attrs<{
+  isPill?: boolean;
+}>(({ isPill }) => ({
   ff: isPill ? "Inter|SemiBold" : "Inter|Regular",
   fontSize: isPill ? 2 : 3,
   color: "palette.text.shade60",
-}))`
+}))<{
+  isPill?: boolean;
+}>`
   ${p =>
     p.isPill
       ? `
@@ -89,41 +99,46 @@ const Description = styled(Text).attrs(({ isPill }) => ({
   `
       : ""}
 `;
+
 type Props = {
-  name?: string;
-  account: Account;
+  account: PolkadotAccount;
+  source: string;
 };
-const ManageModal = ({ name, account, ...rest }: Props) => {
+
+const ManageModal = ({ account, source, ...rest }: Props) => {
   const dispatch = useDispatch();
   const { staking } = usePolkadotPreloadData();
   const { polkadotResources } = account;
   invariant(polkadotResources, "polkadot account expected");
   const { unlockedBalance, nominations } = polkadotResources;
   const onSelectAction = useCallback(
-    (onClose, name, params = {}) => {
+    (onClose: () => void, name: keyof ModalData, params = {}) => {
       onClose();
       dispatch(
         openModal(name, {
           account,
+          source,
           ...params,
         }),
       );
     },
-    [dispatch, account],
+    [dispatch, account, source],
   );
+
   const electionOpen = staking?.electionClosed !== undefined ? !staking?.electionClosed : false;
+  const accountCanNominate = canNominate(account);
   const hasUnlockedBalance = unlockedBalance && unlockedBalance.gt(0);
   const hasPendingWithdrawUnbondedOperation = hasPendingOperationType(account, "WITHDRAW_UNBONDED");
-  const nominationEnabled = !electionOpen && canNominate(account);
-  const chillEnabled = !electionOpen && canNominate(account) && nominations?.length;
+  const nominationEnabled = !electionOpen && accountCanNominate;
+  const chillEnabled = !electionOpen && nominations?.length;
   const bondingEnabled = !electionOpen && canBond(account);
   const unbondingEnabled = !electionOpen && canUnbond(account);
   const withdrawEnabled =
     !electionOpen && hasUnlockedBalance && !hasPendingWithdrawUnbondedOperation;
+
   return (
     <Modal
       {...rest}
-      name={name}
       centered
       render={({ onClose }) => (
         <ModalBody

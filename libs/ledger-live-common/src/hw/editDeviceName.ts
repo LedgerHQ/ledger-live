@@ -8,7 +8,7 @@ import { StatusCodes, UserRefusedDeviceNameChange } from "@ledgerhq/errors";
  * command user level.
  */
 export default async (transport: Transport, name: string): Promise<void> => {
-  await transport.send(0xe0, 0xd4, 0x00, 0x00, Buffer.from(name)).catch((e) => {
+  await transport.send(0xe0, 0xd4, 0x00, 0x00, Buffer.from(name)).catch(e => {
     if (
       e.statusCode === StatusCodes.CONDITIONS_OF_USE_NOT_SATISFIED ||
       e.statusCode === StatusCodes.USER_REFUSED_ON_DEVICE

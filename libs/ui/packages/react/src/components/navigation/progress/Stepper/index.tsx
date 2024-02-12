@@ -1,7 +1,7 @@
 import React, { memo, Fragment } from "react";
 import styled from "styled-components";
 import { border, BorderProps, color, ColorProps, space, SpaceProps } from "styled-system";
-import { Icons } from "../../../../index";
+import { IconsLegacy } from "../../../../index";
 import Text from "../../../asorted/Text";
 import Flex, { FlexBoxProps } from "../../../layout/Flex";
 
@@ -31,6 +31,14 @@ export interface Props extends FlexBoxProps {
    * Steps with indexes contained inside the array will be shown as disabled.
    */
   disabledIndexes?: number[];
+  /**
+   * Delete steps with same following labels
+   */
+  filterDuplicate?: boolean;
+  /**
+   * Complete all the steps
+   */
+  isOver?: boolean;
 }
 
 export type StepProps = {
@@ -61,8 +69,8 @@ export const Item = {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: ${(p) => p.theme.space[8]}px;
-    height: ${(p) => p.theme.space[8]}px;
+    width: ${p => p.theme.space[8]}px;
+    height: ${p => p.theme.space[8]}px;
     ${color}
     ${border}
     ${space}
@@ -83,18 +91,20 @@ export const Item = {
   Pending: styled.div.attrs({
     backgroundColor: "neutral.c70",
   })<ColorProps>`
-    width: ${(p) => p.theme.space[2]}px;
-    height: ${(p) => p.theme.space[2]}px;
-    border-radius: ${(p) => p.theme.space[2]}px;
+    width: ${p => p.theme.space[2]}px;
+    height: ${p => p.theme.space[2]}px;
+    border-radius: ${p => p.theme.space[2]}px;
     ${color}
   `,
-  Completed: (): JSX.Element => <Icons.CheckAloneMedium size={16} />,
-  Disabled: (): JSX.Element => <Icons.CloseMedium size={16} />,
-  Errored: (): JSX.Element => <Icons.CloseMedium size={16} />,
+  Completed: (): JSX.Element => <IconsLegacy.CheckAloneMedium size={16} />,
+  Disabled: (): JSX.Element => <IconsLegacy.CloseMedium size={16} />,
+  Errored: (): JSX.Element => <IconsLegacy.CloseMedium size={16} />,
 };
 
 export const StepText = styled(Text)<{ state: StepState }>`
-  color: ${(p) => {
+  text-align: center;
+  white-space: pre-wrap;
+  color: ${p => {
     if (p.state === "errored") {
       return p.theme.colors.error.c50;
     }
@@ -112,9 +122,9 @@ const BaseSeparator = styled.div<{ inactive?: boolean }>`
   flex: 1;
   position: relative;
   overflow-x: hidden;
-  background-color: ${(p) => p.theme.colors.neutral.c40};
+  background-color: ${p => p.theme.colors.neutral.c40};
   height: 1px;
-  top: ${(p) => p.theme.space[5]}px;
+  top: ${p => p.theme.space[5]}px;
 `;
 
 const Separator = {
@@ -160,7 +170,7 @@ export const Step = memo(function Step({
   const nextInactive = state === "pending";
 
   return (
-    <Flex flexDirection="column" alignItems="center">
+    <Flex flexDirection="column" alignItems="center" flex={20}>
       <Item.Spacer mb={5}>
         {(!hideLeftSeparator && <Separator.Item inactive={inactive} position="left" />) || (
           <Flex flex="1" />
@@ -181,7 +191,16 @@ export const Step = memo(function Step({
   );
 });
 
-function getState(activeIndex: number, index: number, errored?: boolean, disabled?: boolean) {
+function getState(
+  activeIndex: number,
+  index: number,
+  errored?: boolean,
+  disabled?: boolean,
+  completed?: boolean,
+) {
+  if (completed) {
+    return "completed";
+  }
   if (disabled) {
     return "disabled";
   }
@@ -194,12 +213,34 @@ function getState(activeIndex: number, index: number, errored?: boolean, disable
   return "completed";
 }
 
-function Stepper({ steps, activeIndex = 0, errored, disabledIndexes, ...extraProps }: Props) {
+function Stepper({
+  steps,
+  activeIndex = 0,
+  errored,
+  disabledIndexes,
+  filterDuplicate,
+  isOver,
+  ...extraProps
+}: Props) {
+  const displayedSteps = filterDuplicate
+    ? steps.filter((step, index) => index === 0 || step !== steps[index - 1])
+    : steps;
+  const dislayedActiveIndex = filterDuplicate
+    ? displayedSteps.findIndex(step => step === steps[activeIndex])
+    : activeIndex;
+
   return (
     <Flex flexWrap="nowrap" justifyContent="space-between" {...extraProps}>
-      {steps.map((step, idx) => {
-        const state = getState(activeIndex, idx, errored, disabledIndexes?.includes(idx));
-        const nextState = idx < steps.length - 1 ? getState(activeIndex, idx + 1) : undefined;
+      {displayedSteps.map((step, idx) => {
+        const state = getState(
+          dislayedActiveIndex,
+          idx,
+          errored,
+          disabledIndexes?.includes(idx),
+          isOver,
+        );
+        const nextState =
+          idx < displayedSteps.length - 1 ? getState(dislayedActiveIndex, idx + 1) : undefined;
         return (
           <Fragment key={idx}>
             {idx > 0 && <Separator.Step inactive={state === "pending"} />}

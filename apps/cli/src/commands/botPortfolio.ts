@@ -1,12 +1,11 @@
 import { from, defer, throwError } from "rxjs";
-import { catchError, filter, map, mergeAll, timeoutWith } from "rxjs/operators";
+import { catchError, filter, map, mergeAll, timeout } from "rxjs/operators";
 import { listSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { accountFormatters } from "@ledgerhq/live-common/account/index";
 const blacklist = ["decred", "tezos", "stellar", "ethereum_classic"];
 export default {
-  description:
-    "Use speculos and a list of supported coins to retrieve all accounts",
+  description: "Use speculos and a list of supported coins to retrieve all accounts",
   args: [
     {
       name: "format",
@@ -18,8 +17,8 @@ export default {
   ],
   job: (opts: { format: string }) => {
     return from(listSupportedCurrencies()).pipe(
-      filter((c) => !blacklist.includes(c.id) && !c.isTestnetFor),
-      map((currency) =>
+      filter(c => !blacklist.includes(c.id) && !c.isTestnetFor),
+      map(currency =>
         defer(() =>
           getCurrencyBridge(currency)
             .scanAccounts({
@@ -30,22 +29,20 @@ export default {
               },
             })
             .pipe(
-              timeoutWith(
-                200 * 1000,
-                throwError(new Error("scan account timeout"))
-              ),
-              catchError((e) => {
+              timeout({
+                each: 200 * 1000,
+                with: () => throwError(() => new Error("scan account timeout")),
+              }),
+              catchError(e => {
                 console.error("scan accounts failed for " + currency.id, e);
                 return from([]);
-              })
-            )
-        )
+              }),
+            ),
+        ),
       ),
       mergeAll(5),
-      filter((e) => e.type === "discovered"),
-      map((e) =>
-        (accountFormatters[opts.format] || accountFormatters.default)(e.account)
-      )
+      filter(e => e.type === "discovered"),
+      map(e => (accountFormatters[opts.format] || accountFormatters.default)(e.account)),
     );
   },
 };

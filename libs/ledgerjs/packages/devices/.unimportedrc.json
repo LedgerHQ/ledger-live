@@ -1,0 +1,10 @@
+{
+  "entry": [
+    "src/index.ts",
+    "src/helpers.ts",
+    "src/hid-framing.ts",
+    "src/ble/receiveAPDU.ts",
+    "src/ble/sendAPDU.ts"
+  ],
+  "ignoreUnimported": []
+}

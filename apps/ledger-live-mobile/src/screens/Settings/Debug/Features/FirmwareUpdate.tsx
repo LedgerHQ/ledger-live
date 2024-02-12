@@ -85,23 +85,13 @@ const mockDevice: Device = {
 };
 
 export default function DebugFirmwareUpdate() {
-  const [actionState, setActionState] =
-    useState<UpdateFirmwareActionState>(initialState);
-  const updateFirmwareSubject = useMemo(
-    () => new Subject<UpdateFirmwareActionState>(),
-    [],
-  );
+  const [actionState, setActionState] = useState<UpdateFirmwareActionState>(initialState);
+  const updateFirmwareSubject = useMemo(() => new Subject<UpdateFirmwareActionState>(), []);
   const [isDebugBoardOpen, setIsDebugBoardOpen] = useState(false);
 
-  useEffect(
-    () => updateFirmwareSubject.next(actionState),
-    [actionState, updateFirmwareSubject],
-  );
+  useEffect(() => updateFirmwareSubject.next(actionState), [actionState, updateFirmwareSubject]);
 
-  const updateFirmwareAction = useCallback(
-    () => updateFirmwareSubject,
-    [updateFirmwareSubject],
-  );
+  const updateFirmwareAction = useCallback(() => updateFirmwareSubject, [updateFirmwareSubject]);
 
   const updateStep = useCallback(
     (newStep: UpdateFirmwareActionState["step"]) =>
@@ -137,23 +127,13 @@ export default function DebugFirmwareUpdate() {
     ) =>
       setActionState((oldState: UpdateFirmwareActionState) => ({
         ...oldState,
-        error: { type: errorType, name: error, message: error },
+        error: { type: errorType, name: error, message: error, retrying: false },
       })),
     [],
   );
 
-  const ChangeStepButton = ({
-    step,
-  }: {
-    step: UpdateFirmwareActionState["step"];
-  }) => (
-    <Button
-      size="small"
-      type="main"
-      m={1}
-      onPress={() => updateStep(step)}
-      width={130}
-    >
+  const ChangeStepButton = ({ step }: { step: UpdateFirmwareActionState["step"] }) => (
+    <Button size="small" type="main" m={1} onPress={() => updateStep(step)} width={130}>
       <Text color="neutral0" variant="tiny">
         {step}
       </Text>
@@ -225,10 +205,7 @@ export default function DebugFirmwareUpdate() {
             <Text variant="h5" mb={2} mt={4}>
               Locked Device:
             </Text>
-            <Switch
-              checked={actionState.lockedDevice}
-              onChange={updateLockedDevice}
-            />
+            <Switch checked={actionState.lockedDevice} onChange={updateLockedDevice} />
             <Text variant="h5" mb={2} mt={4}>
               Progress:
             </Text>
@@ -255,14 +232,8 @@ export default function DebugFirmwareUpdate() {
                 errorType="UpdateFirmwareError"
                 error="FailedToRetrieveFirmwareUpdateInfo"
               />
-              <ChangeErrorButton
-                errorType="UpdateFirmwareError"
-                error="FirmwareUpToDate"
-              />
-              <ChangeErrorButton
-                errorType="UpdateFirmwareError"
-                error="McuVersionNotFound"
-              />
+              <ChangeErrorButton errorType="UpdateFirmwareError" error="FirmwareUpToDate" />
+              <ChangeErrorButton errorType="UpdateFirmwareError" error="McuVersionNotFound" />
               <ChangeErrorButton
                 errorType="UpdateFirmwareError"
                 error="TooManyMcuOrBootloaderFlashes"
@@ -272,11 +243,7 @@ export default function DebugFirmwareUpdate() {
         </Flex>
       ) : (
         <Flex position="absolute" bottom={10} mx={8} borderRadius={5}>
-          <Button
-            type="main"
-            size="small"
-            onPress={() => setIsDebugBoardOpen(true)}
-          >
+          <Button type="main" size="small" onPress={() => setIsDebugBoardOpen(true)}>
             +
           </Button>
         </Flex>

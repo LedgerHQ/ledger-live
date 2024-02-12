@@ -1,4 +1,4 @@
-import * as icons from "@ledgerhq/icons-ui/native";
+import * as icons from "@ledgerhq/icons-ui/nativeLegacy";
 import React from "react";
 
 export type Props = {

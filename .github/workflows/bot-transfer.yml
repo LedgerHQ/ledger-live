@@ -19,6 +19,10 @@ on:
         description: "a comma separated list of currencies to transfer. If not specified, all currencies will be transferred."
         required: false
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   run-bot:
     runs-on: [ledger-live-medium-linux]
@@ -29,9 +33,9 @@ jobs:
         with:
           app_id: ${{ secrets.GH_BOT_APP_ID }}
           private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Retrieving coin apps
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: generated/ledger-live-bot
           repository: LedgerHQ/coin-apps
@@ -39,6 +43,11 @@ jobs:
           path: coin-apps
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
+        with:
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - name: pull docker image
         run: docker pull ghcr.io/ledgerhq/speculos
       - name: install and build

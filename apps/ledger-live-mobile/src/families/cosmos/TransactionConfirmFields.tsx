@@ -2,21 +2,16 @@ import invariant from "invariant";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { useTranslation } from "react-i18next";
-import {
-  getAccountUnit,
-  shortAddressPreview,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountUnit, shortAddressPreview } from "@ledgerhq/live-common/account/index";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/families/cosmos/types";
 import { useCosmosFamilyPreloadData } from "@ledgerhq/live-common/families/cosmos/react";
 import { mapDelegationInfo } from "@ledgerhq/live-common/families/cosmos/logic";
 import { useTheme } from "@react-navigation/native";
-import LText from "../../components/LText";
-import {
-  DataRow,
-  TextValueField,
-} from "../../components/ValidateOnDeviceDataRow";
-import Info from "../../icons/Info";
+import LText from "~/components/LText";
+import { DataRow, TextValueField } from "~/components/ValidateOnDeviceDataRow";
+import Info from "~/icons/Info";
+import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
 
 type FieldProps = {
   account: Account;
@@ -31,18 +26,11 @@ function CosmosDelegateValidatorsField({ account, transaction }: FieldProps) {
   const { t } = useTranslation();
   const unit = getAccountUnit(account);
   const { validators } = useCosmosFamilyPreloadData(account.currency.id);
-  const mappedDelegations = mapDelegationInfo(
-    transaction.validators,
-    validators,
-    unit,
-  );
+  const mappedDelegations = mapDelegationInfo(transaction.validators, validators, unit);
   const { validator, formattedAmount, address } = mappedDelegations[0];
   return (
     <>
-      <TextValueField
-        label={t("ValidateOnDevice.amount")}
-        value={formattedAmount}
-      />
+      <TextValueField label={t("ValidateOnDevice.amount")} value={formattedAmount} />
       <TextValueField
         label={t("ValidateOnDevice.validator")}
         value={
@@ -58,21 +46,10 @@ function CosmosDelegateValidatorsField({ account, transaction }: FieldProps) {
   );
 }
 
-function CosmosValidatorNameField({
-  account,
-  field,
-  transaction: tx,
-}: FieldProps) {
+function CosmosValidatorNameField({ account, field, transaction: tx }: FieldProps) {
   const { validators } = useCosmosFamilyPreloadData(account.currency.id);
-  const validator = validators.find(
-    v => v.validatorAddress === tx.validators[0].address,
-  );
-  return (
-    <TextValueField
-      label={field.label}
-      value={validator?.name ?? tx.validators[0].address}
-    />
-  );
+  const validator = validators.find(v => v.validatorAddress === tx.validators[0].address);
+  return <TextValueField label={field.label} value={validator?.name ?? tx.validators[0].address} />;
 }
 
 function CosmosSourceValidatorNameField({
@@ -86,21 +63,15 @@ function CosmosSourceValidatorNameField({
     return null;
   }
 
-  const validator = validators.find(
-    v => v.validatorAddress === sourceValidator,
-  );
-  return (
-    <TextValueField
-      label={field.label}
-      value={validator?.name ?? sourceValidator}
-    />
-  );
+  const validator = validators.find(v => v.validatorAddress === sourceValidator);
+  return <TextValueField label={field.label} value={validator?.name ?? sourceValidator} />;
 }
 
-function Warning({ transaction }: FieldProps) {
+function Warning({ account, transaction }: FieldProps) {
   invariant(transaction.family === "cosmos", "cosmos transaction");
   const { colors } = useTheme();
   const { t } = useTranslation();
+  const crypto = cryptoFactory(account.currency.id);
 
   switch (transaction.mode) {
     case "redelegate":
@@ -109,13 +80,10 @@ function Warning({ transaction }: FieldProps) {
       return (
         <DataRow>
           <Info size={22} color={colors.live} />
-          <LText
-            semiBold
-            style={[styles.text, styles.infoText]}
-            color="live"
-            numberOfLines={3}
-          >
-            {t(`ValidateOnDevice.infoWording.cosmos.${transaction.mode}`)}
+          <LText semiBold style={[styles.text, styles.infoText]} color="live" numberOfLines={3}>
+            {t(`ValidateOnDevice.infoWording.cosmos.${transaction.mode}`, {
+              numberOfDays: crypto.unbondingPeriod,
+            })}
           </LText>
         </DataRow>
       );

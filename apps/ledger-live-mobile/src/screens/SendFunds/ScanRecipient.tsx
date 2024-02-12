@@ -3,18 +3,15 @@ import Config from "react-native-config";
 import { decodeURIScheme } from "@ledgerhq/live-common/currencies/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useSelector } from "react-redux";
-import { ScreenName } from "../../const";
-import { accountScreenSelector } from "../../reducers/accounts";
-import Scanner from "../../components/Scanner";
-import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
-import type { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
-import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import { ScreenName } from "~/const";
+import { accountScreenSelector } from "~/reducers/accounts";
+import Scanner from "~/components/Scanner";
+import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import type { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
+import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 
 type NavigationProps =
-  | StackNavigatorProps<
-      SendFundsNavigatorStackParamList,
-      ScreenName.SendSelectRecipient
-    >
+  | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSelectRecipient>
   | StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.ScanRecipient>;
 
 const ScanRecipient = ({ route, navigation }: NavigationProps) => {

@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import { EMPTY, interval, Observable } from "rxjs";
+import { interval, Observable, of } from "rxjs";
 import { scan, debounce, tap, takeWhile } from "rxjs/operators";
 import { useEffect, useCallback, useState, useMemo, useRef } from "react";
 import { log } from "@ledgerhq/logs";
@@ -20,15 +20,8 @@ import type { Device, Action } from "./types";
 import { shouldUpgrade } from "../../apps";
 import { AppOp, SkippedAppOp } from "../../apps/types";
 import perFamilyAccount from "../../generated/account";
-import type {
-  Account,
-  DeviceInfo,
-  FirmwareUpdateContext,
-} from "@ledgerhq/types-live";
-import type {
-  CryptoCurrency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import type { Account, DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getImplementation, ImplementationType } from "./implementations";
 
 export type State = {
@@ -47,7 +40,7 @@ export type State = {
   unresponsive: boolean;
   allowOpeningRequestedWording: string | null | undefined;
   allowOpeningGranted: boolean;
-  allowManagerRequestedWording: string | null | undefined;
+  allowManagerRequested: boolean;
   allowManagerGranted: boolean;
   device: Device | null | undefined;
   deviceInfo?: DeviceInfo | null | undefined;
@@ -109,7 +102,7 @@ export type AppResult = {
 
 type AppAction = Action<AppRequest, AppState, AppResult>;
 
-type Event =
+export type Event =
   | {
       type: "error";
       error: Error;
@@ -138,10 +131,7 @@ const mapResult = ({
       }
     : null;
 
-const getInitialState = (
-  device?: Device | null | undefined,
-  request?: AppRequest
-): State => ({
+const getInitialState = (device?: Device | null | undefined, request?: AppRequest): State => ({
   isLoading: !!device,
   requestQuitApp: false,
   requestOpenApp: null,
@@ -150,7 +140,7 @@ const getInitialState = (
   requiresAppInstallation: null,
   allowOpeningRequestedWording: null,
   allowOpeningGranted: false,
-  allowManagerRequestedWording: null,
+  allowManagerRequested: false,
   allowManagerGranted: false,
   device: null,
   deviceInfo: null,
@@ -169,6 +159,7 @@ const getInitialState = (
   listedApps: false, // Nb maybe expose the result
   skippedAppOps: [],
   itemProgress: 0,
+  progress: undefined,
 });
 
 const reducer = (state: State, e: Event): State => {
@@ -189,6 +180,9 @@ const reducer = (state: State, e: Event): State => {
       };
 
     case "disconnected":
+      // disconnected event can happen for example:
+      // - when the wired device is unplugged
+      // - before a ask-open-app event when an other app is already open
       return {
         ...getInitialState(null, state.request),
         isLoading: !!e.expected,
@@ -205,25 +199,17 @@ const reducer = (state: State, e: Event): State => {
       };
     case "inline-install":
       return {
+        ...getInitialState(state.device, state.request),
         isLoading: false,
-        requestQuitApp: false,
-        requiresAppInstallation: null,
-        allowOpeningRequestedWording: null,
         allowOpeningGranted: true,
-        allowManagerRequestedWording: null,
+        allowManagerRequested: false,
         allowManagerGranted: true,
         device: state.device,
-        opened: false,
-        appAndVersion: null,
-        error: null,
-        derivation: null,
-        displayUpgradeWarning: false,
-        unresponsive: false,
-        isLocked: false,
         installingApp: true,
         progress: e.progress || 0,
-        requestOpenApp: null,
-        listingApps: false,
+
+        deviceInfo: undefined,
+        latestFirmware: undefined,
 
         request: state.request,
         skippedAppOps: state.skippedAppOps,
@@ -256,94 +242,70 @@ const reducer = (state: State, e: Event): State => {
 
     case "ask-open-app":
       return {
+        ...getInitialState(state.device, state.request),
         isLoading: false,
-        requestQuitApp: false,
-        requiresAppInstallation: null,
-        allowOpeningRequestedWording: null,
-        allowOpeningGranted: false,
-        allowManagerRequestedWording: null,
-        allowManagerGranted: false,
         device: state.device,
-        opened: false,
-        appAndVersion: null,
-        error: null,
-        derivation: null,
-        displayUpgradeWarning: false,
-        unresponsive: false,
-        isLocked: false,
         requestOpenApp: e.appName,
 
-        request: state.request,
+        deviceInfo: undefined,
+        latestFirmware: undefined,
+        installingApp: undefined,
+        listingApps: undefined,
+        installQueue: undefined,
+        listedApps: undefined,
+        itemProgress: undefined,
+
         skippedAppOps: state.skippedAppOps,
       };
 
     case "ask-quit-app":
       return {
+        ...getInitialState(state.device, state.request),
         isLoading: false,
-        requestOpenApp: null,
-        requiresAppInstallation: null,
-        allowOpeningRequestedWording: null,
-        allowOpeningGranted: false,
-        allowManagerRequestedWording: null,
-        allowManagerGranted: false,
         device: state.device,
-        opened: false,
-        appAndVersion: null,
-        error: null,
-        derivation: null,
-        displayUpgradeWarning: false,
-        unresponsive: false,
-        isLocked: false,
         requestQuitApp: true,
 
-        request: state.request,
+        installingApp: undefined,
+        listingApps: undefined,
+        installQueue: undefined,
+        listedApps: undefined,
+        itemProgress: undefined,
+
         skippedAppOps: state.skippedAppOps,
       };
 
     case "device-permission-requested":
       return {
+        ...getInitialState(state.device, state.request),
         isLoading: false,
-        requestQuitApp: false,
-        requestOpenApp: null,
-        requiresAppInstallation: null,
         device: state.device,
-        opened: false,
-        appAndVersion: null,
-        error: null,
-        derivation: null,
-        displayUpgradeWarning: false,
-        unresponsive: false,
-        isLocked: false,
-        allowOpeningGranted: false,
-        allowOpeningRequestedWording: null,
-        allowManagerGranted: false,
-        allowManagerRequestedWording: e.wording,
+        allowManagerRequested: true,
 
-        request: state.request,
+        deviceInfo: undefined,
+        latestFirmware: undefined,
+        installingApp: undefined,
+        listingApps: undefined,
+        listedApps: undefined,
+        itemProgress: undefined,
+
         skippedAppOps: state.skippedAppOps,
         installQueue: state.installQueue,
       };
 
     case "device-permission-granted":
       return {
+        ...getInitialState(state.device, state.request),
         isLoading: false,
-        requestQuitApp: false,
-        requestOpenApp: null,
-        requiresAppInstallation: null,
         device: state.device,
-        opened: false,
-        appAndVersion: null,
-        error: null,
-        derivation: null,
-        displayUpgradeWarning: false,
-        unresponsive: false,
-        isLocked: false,
         allowOpeningGranted: true,
-        allowOpeningRequestedWording: null,
         allowManagerGranted: true,
-        allowManagerRequestedWording: null,
 
-        request: state.request,
+        deviceInfo: undefined,
+        latestFirmware: undefined,
+        installingApp: undefined,
+        listingApps: undefined,
+        itemProgress: undefined,
+
         skippedAppOps: state.skippedAppOps,
         installQueue: state.installQueue,
         listedApps: state.listedApps,
@@ -351,27 +313,22 @@ const reducer = (state: State, e: Event): State => {
 
     case "app-not-installed":
       return {
-        requestQuitApp: false,
-        requestOpenApp: null,
-        device: state.device,
-        opened: false,
-        appAndVersion: null,
-        error: null,
-        derivation: null,
-        displayUpgradeWarning: false,
+        ...getInitialState(state.device, state.request),
         isLoading: false,
-        unresponsive: false,
-        isLocked: false,
-        allowOpeningGranted: false,
-        allowOpeningRequestedWording: null,
-        allowManagerGranted: false,
-        allowManagerRequestedWording: null,
+        device: state.device,
         requiresAppInstallation: {
           appNames: e.appNames,
           appName: e.appName,
         },
 
-        request: state.request,
+        deviceInfo: undefined,
+        latestFirmware: undefined,
+        installingApp: undefined,
+        listingApps: undefined,
+        installQueue: undefined,
+        listedApps: undefined,
+        itemProgress: undefined,
+
         skippedAppOps: state.skippedAppOps,
       };
 
@@ -384,29 +341,25 @@ const reducer = (state: State, e: Event): State => {
 
     case "opened":
       return {
-        requestQuitApp: false,
-        requestOpenApp: null,
-        requiresAppInstallation: null,
-        allowOpeningGranted: false,
-        allowOpeningRequestedWording: null,
-        allowManagerGranted: false,
-        allowManagerRequestedWording: null,
-        device: state.device,
-        error: null,
+        ...getInitialState(state.device, state.request),
         isLoading: false,
-        unresponsive: false,
-        isLocked: false,
+        device: state.device,
         opened: true,
         appAndVersion: e.app,
         derivation: e.derivation,
+
+        deviceInfo: undefined,
+        latestFirmware: undefined,
+        installingApp: undefined,
+        listingApps: undefined,
+        installQueue: undefined,
+        itemProgress: undefined,
 
         request: state.request,
         skippedAppOps: state.skippedAppOps,
         listedApps: state.listedApps,
         displayUpgradeWarning:
-          state.device && e.app
-            ? shouldUpgrade(e.app.name, e.app.version)
-            : false,
+          state.device && e.app ? shouldUpgrade(e.app.name, e.app.version) : false,
       };
   }
 
@@ -422,8 +375,7 @@ function inferCommandParams(appRequest: AppRequest) {
   let derivationMode;
   let derivationPath;
 
-  const { account, requireLatestFirmware, allowPartialDependencies } =
-    appRequest;
+  const { account, requireLatestFirmware, allowPartialDependencies } = appRequest;
   let { appName, currency, dependencies } = appRequest;
 
   if (!currency && account) {
@@ -437,7 +389,7 @@ function inferCommandParams(appRequest: AppRequest) {
   invariant(appName, "appName or currency or account is missing");
 
   if (dependencies) {
-    dependencies = dependencies.map((d) => inferCommandParams(d).appName);
+    dependencies = dependencies.map(d => inferCommandParams(d).appName);
   }
 
   if (!currency) {
@@ -467,7 +419,7 @@ function inferCommandParams(appRequest: AppRequest) {
         currency,
         derivationMode,
       }),
-      currency
+      currency,
     );
   }
 
@@ -491,12 +443,9 @@ export function setDeviceMode(mode: keyof typeof ImplementationType): void {
 }
 
 export const createAction = (
-  connectAppExec: (arg0: ConnectAppInput) => Observable<ConnectAppEvent>
+  connectAppExec: (arg0: ConnectAppInput) => Observable<ConnectAppEvent>,
 ): AppAction => {
-  const useHook = (
-    device: Device | null | undefined,
-    appRequest: AppRequest
-  ): AppState => {
+  const useHook = (device: Device | null | undefined, appRequest: AppRequest): AppState => {
     const dependenciesResolvedRef = useRef(false);
     const firmwareResolvedRef = useRef(false);
     const outdatedAppRef = useRef<AppAndVersion>();
@@ -509,11 +458,11 @@ export const createAction = (
         appRequest.account && appRequest.account.id, // eslint-disable-next-line react-hooks/exhaustive-deps
         appRequest.currency && appRequest.currency.id,
         appRequest.dependencies,
-      ]
+      ],
     );
 
-    const task: (arg0: ConnectAppInput) => Observable<ConnectAppEvent> =
-      useCallback(({ deviceId, request }: ConnectAppInput) => {
+    const task: (arg0: ConnectAppInput) => Observable<ConnectAppEvent> = useCallback(
+      ({ deviceId, request }: ConnectAppInput) => {
         //To avoid redundant checks, we remove passed checks from the request.
         const { dependencies, requireLatestFirmware } = request;
 
@@ -521,16 +470,12 @@ export const createAction = (
           deviceId,
           request: {
             ...request,
-            dependencies: dependenciesResolvedRef.current
-              ? undefined
-              : dependencies,
-            requireLatestFirmware: firmwareResolvedRef.current
-              ? undefined
-              : requireLatestFirmware,
+            dependencies: dependenciesResolvedRef.current ? undefined : dependencies,
+            requireLatestFirmware: firmwareResolvedRef.current ? undefined : requireLatestFirmware,
             outdatedApp: outdatedAppRef.current,
           },
         }).pipe(
-          tap((e) => {
+          tap(e => {
             // These events signal the resolution of pending checks.
             if (e.type === "dependencies-resolved") {
               dependenciesResolvedRef.current = true;
@@ -539,9 +484,11 @@ export const createAction = (
             } else if (e.type === "has-outdated-app") {
               outdatedAppRef.current = e.outdatedApp as AppAndVersion;
             }
-          })
+          }),
         );
-      }, []);
+      },
+      [],
+    );
 
     // repair modal will interrupt everything and be rendered instead of the background content
     const [state, setState] = useState(() => getInitialState(device));
@@ -551,10 +498,7 @@ export const createAction = (
     useEffect(() => {
       if (state.opened) return;
 
-      const impl = getImplementation(currentMode)<
-        ConnectAppEvent,
-        ConnectAppRequest
-      >({
+      const impl = getImplementation(currentMode)<ConnectAppEvent, ConnectAppRequest>({
         deviceSubject,
         task,
         request,
@@ -563,11 +507,9 @@ export const createAction = (
       const sub = impl
         .pipe(
           tap((e: any) => log("actions-app-event", e.type, e)),
-          debounce((e: Event) =>
-            "replaceable" in e && e.replaceable ? interval(100) : EMPTY
-          ),
+          debounce((e: Event) => ("replaceable" in e && e.replaceable ? interval(100) : of(null))),
           scan(reducer, getInitialState()),
-          takeWhile((s: State) => !s.requiresAppInstallation && !s.error, true)
+          takeWhile((s: State) => !s.requiresAppInstallation && !s.error, true),
         )
         .subscribe(setState);
 
@@ -582,12 +524,12 @@ export const createAction = (
       firmwareResolvedRef.current = false;
 
       // The nonce change triggers a refresh.
-      setResetIndex((i) => i + 1);
+      setResetIndex(i => i + 1);
       setState(getInitialState(device));
     }, [device]);
 
     const passWarning = useCallback(() => {
-      setState((currState) => ({
+      setState(currState => ({
         ...currState,
         displayUpgradeWarning: false,
       }));

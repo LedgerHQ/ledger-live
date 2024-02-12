@@ -1,14 +1,10 @@
-import {
-  getElementById,
-  tapByElement,
-  waitForElementByID,
-} from "../../helpers";
+import { getElementById, tapByElement, waitForElementById } from "../../helpers";
 
 export default class SettingsPage {
   generalSettingsButton = () => getElementById("general-settings-card");
 
   async navigateToGeneralSettings() {
-    await waitForElementByID("general-settings-card");
+    await waitForElementById("general-settings-card");
     await tapByElement(this.generalSettingsButton());
   }
 }

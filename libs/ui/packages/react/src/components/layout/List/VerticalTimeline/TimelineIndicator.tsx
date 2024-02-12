@@ -1,21 +1,21 @@
 import React from "react";
-import CircledCheckSolidMedium from "@ledgerhq/icons-ui/react/CircledCheckSolidMedium";
+import CircledCheckSolidMedium from "@ledgerhq/icons-ui/reactLegacy/CircledCheckSolidMedium";
 import styled, { useTheme } from "styled-components";
 
 import Flex, { FlexBoxProps as FlexProps } from "../../Flex";
 import { ItemStatus } from "./index";
-import { Theme } from "src/styles/theme";
+import { Theme } from "../../../../styles/theme";
 
 const linesWidth = 2;
 
 const BottomSegment = styled(Flex)<{ status: ItemStatus; hidden?: boolean }>`
   flex: 1;
-  border-left-width: ${(p) => (p.hidden ? 0 : linesWidth)}px;
+  border-left-width: ${p => (p.hidden ? 0 : linesWidth)}px;
   border-right-width: 0;
   border-style: dashed;
-  border-color: ${(p) =>
+  border-color: ${p =>
     p.status === "completed" ? p.theme.colors.primary.c80 : p.theme.colors.neutral.c40};
-  background: ${(p) => p.status === "completed" && p.theme.colors.primary.c80};
+  background: ${p => p.status === "completed" && p.theme.colors.primary.c80};
 `;
 
 const getIconBackground = (theme: Theme, status: ItemStatus, isLastItem?: boolean) => {
@@ -41,8 +41,8 @@ const getIconBorder = (theme: Theme, status: ItemStatus, isLastItem?: boolean) =
 const CenterCircle = styled(Flex)<{ status: ItemStatus; isLastItem?: boolean }>`
   border-radius: 9999px;
   width: 100%;
-  background: ${(p) => getIconBackground(p.theme, p.status, p.isLastItem)};
-  border: 2px solid ${(p) => getIconBorder(p.theme, p.status, p.isLastItem)};
+  background: ${p => getIconBackground(p.theme, p.status, p.isLastItem)};
+  border: 2px solid ${p => getIconBorder(p.theme, p.status, p.isLastItem)};
   align-items: center;
   justify-content: center;
   position: relative;

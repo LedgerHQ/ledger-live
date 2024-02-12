@@ -1,23 +1,18 @@
 import React, { useCallback, useState } from "react";
-import { Account } from "@ledgerhq/types-live";
+import { AccountLike, AnyMessage } from "@ledgerhq/types-live";
 import Track from "~/renderer/analytics/Track";
 import { Trans, useTranslation } from "react-i18next";
 import StepSummary, { StepSummaryFooter } from "./steps/StepSummary";
 import StepSign from "./steps/StepSign";
 import { St, StepProps } from "./types";
 import Stepper from "~/renderer/components/Stepper";
-// TODO move the specific parts to each family!
-// eslint-disable-next-line no-restricted-imports
-import { TypedMessageData } from "@ledgerhq/live-common/families/ethereum/types";
-// TODO move the specific parts to each family!
-// eslint-disable-next-line no-restricted-imports
-import { MessageData } from "@ledgerhq/live-common/hw/signMessage/types";
 
 export type Data = {
-  account: Account;
-  message: MessageData | TypedMessageData;
+  account: AccountLike;
+  message: AnyMessage;
   onConfirmationHandler: Function;
   onFailHandler: Function;
+  onClose: () => void;
 };
 
 type OwnProps = {
@@ -44,7 +39,15 @@ const steps: Array<St> = [
 const Body = ({ onClose, data }: Props) => {
   const { t } = useTranslation();
   const [stepId, setStepId] = useState("summary");
-  const handleStepChange = useCallback(e => setStepId(e.id), [setStepId]);
+  const handleStepChange = useCallback((e: { id: string }) => setStepId(e.id), [setStepId]);
+  const stepperOnClose = useCallback(() => {
+    if (onClose) {
+      onClose();
+    }
+    if (data.onClose) {
+      data.onClose();
+    }
+  }, [data, onClose]);
   const stepperProps = {
     title: t("signmessage.title"),
     account: data.account,
@@ -54,7 +57,7 @@ const Body = ({ onClose, data }: Props) => {
     message: data.message,
     onConfirmationHandler: data.onConfirmationHandler,
     onFailHandler: data.onFailHandler,
-    onClose,
+    onClose: stepperOnClose,
   };
   return (
     <Stepper {...stepperProps}>

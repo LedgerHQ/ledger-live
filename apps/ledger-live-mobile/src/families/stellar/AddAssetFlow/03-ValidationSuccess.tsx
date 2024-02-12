@@ -4,33 +4,28 @@ import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { listTokensForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "@react-navigation/native";
-import { accountScreenSelector } from "../../../reducers/accounts";
-import { TrackScreen } from "../../../analytics";
-import { ScreenName } from "../../../const";
-import PreventNativeBack from "../../../components/PreventNativeBack";
-import ValidateSuccess from "../../../components/ValidateSuccess";
+import { accountScreenSelector } from "~/reducers/accounts";
+import { TrackScreen } from "~/analytics";
+import { ScreenName } from "~/const";
+import PreventNativeBack from "~/components/PreventNativeBack";
+import ValidateSuccess from "~/components/ValidateSuccess";
 import type {
   BaseComposite,
   StackNavigatorNavigation,
   StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
+} from "~/components/RootNavigator/types/helpers";
 import type { StellarAddAssetFlowParamList } from "./types";
-import type { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
+import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 
 type Props = BaseComposite<
-  StackNavigatorProps<
-    StellarAddAssetFlowParamList,
-    ScreenName.StellarAddAssetValidationSuccess
-  >
+  StackNavigatorProps<StellarAddAssetFlowParamList, ScreenName.StellarAddAssetValidationSuccess>
 >;
 export default function ValidationSuccess({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
   const { transaction } = route.params;
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
   const goToOperationDetails = useCallback(() => {
     if (!account) return;
@@ -43,13 +38,10 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   }, [account, route.params, navigation]);
   const token = useMemo(() => {
     const options =
-      account && account.type === "Account"
-        ? listTokensForCryptoCurrency(account.currency)
-        : [];
+      account && account.type === "Account" ? listTokensForCryptoCurrency(account.currency) : [];
     return options.find(
       ({ tokenType, contractAddress }) =>
-        tokenType === transaction.assetCode &&
-        contractAddress === transaction.assetIssuer,
+        tokenType === transaction.assetCode && contractAddress === transaction.assetIssuer,
     );
   }, [account, transaction]);
   return (

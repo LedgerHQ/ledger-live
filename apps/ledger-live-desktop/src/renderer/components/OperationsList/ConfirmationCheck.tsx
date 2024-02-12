@@ -2,7 +2,7 @@ import React, { PureComponent } from "react";
 import styled, { DefaultTheme, ThemedStyledProps } from "styled-components";
 import { OperationType } from "@ledgerhq/types-live";
 import { rgba, mix } from "~/renderer/styles/helpers";
-import { TFunction } from "react-i18next";
+import { TFunction } from "i18next";
 import IconClock from "~/renderer/icons/Clock";
 import IconReceive from "~/renderer/icons/Receive";
 import IconDelegate from "~/renderer/icons/Delegate";
@@ -93,6 +93,9 @@ const iconsComponent = {
   NONE: IconSend,
   FREEZE: Freeze,
   UNFREEZE: Unfreeze,
+  LEGACY_UNFREEZE: Unfreeze,
+  UNDELEGATE_RESOURCE: IconUndelegate,
+  WITHDRAW_EXPIRE_UNFREEZE: ClaimRewards,
   VOTE: Vote,
   REWARD: ClaimRewards,
   FEES: IconFees,

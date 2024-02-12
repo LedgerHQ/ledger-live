@@ -1,8 +1,6 @@
 import { createCustomErrorClass } from "@ledgerhq/errors";
 
 export const EthAppPleaseEnableContractData = createCustomErrorClass(
-  "EthAppPleaseEnableContractData"
+  "EthAppPleaseEnableContractData",
 );
-export const EthAppNftNotSupported = createCustomErrorClass(
-  "EthAppNftNotSupported"
-);
+export const EthAppNftNotSupported = createCustomErrorClass("EthAppNftNotSupported");

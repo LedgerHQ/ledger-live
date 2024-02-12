@@ -5,16 +5,14 @@ import {
   getAccountDelegationSync,
   isAccountDelegating,
 } from "@ledgerhq/live-common/families/tezos/bakers";
-import { Icons } from "@ledgerhq/native-ui";
-import { NavigatorName, ScreenName } from "../../const";
-import { ActionButtonEvent } from "../../components/FabActions";
-
-type NavigationParamsType = readonly [name: string, options: object];
+import { ParamListBase, RouteProp } from "@react-navigation/native";
+import { IconsLegacy } from "@ledgerhq/native-ui";
+import { NavigatorName, ScreenName } from "~/const";
+import { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions";
 
 const getExtraSendActionParams = ({ account }: { account: AccountLike }) => {
   const delegation = getAccountDelegationSync(account);
-  const sendShouldWarnDelegation =
-    delegation && delegation.sendShouldWarnDelegation;
+  const sendShouldWarnDelegation = delegation && delegation.sendShouldWarnDelegation;
 
   return sendShouldWarnDelegation
     ? {
@@ -29,8 +27,7 @@ const getExtraSendActionParams = ({ account }: { account: AccountLike }) => {
 
 const getExtraReceiveActionParams = ({ account }: { account: AccountLike }) => {
   const delegation = getAccountDelegationSync(account);
-  const sendShouldWarnDelegation =
-    delegation && delegation.receiveShouldWarnDelegation;
+  const sendShouldWarnDelegation = delegation && delegation.receiveShouldWarnDelegation;
 
   return sendShouldWarnDelegation
     ? {
@@ -46,13 +43,14 @@ const getExtraReceiveActionParams = ({ account }: { account: AccountLike }) => {
 const getMainActions = ({
   account,
   parentAccount,
+  parentRoute,
 }: {
   account: Account;
   parentAccount: Account;
-}): ActionButtonEvent[] | null | undefined => {
-  const delegationDisabled =
-    isAccountDelegating(account) || account.type !== "Account";
-  const navigationParams = delegationDisabled
+  parentRoute?: RouteProp<ParamListBase, ScreenName>;
+}): ActionButtonEvent[] => {
+  const delegationDisabled = isAccountDelegating(account) || account.type !== "Account";
+  const navigationParams: NavigationParamsType = delegationDisabled
     ? [
         NavigatorName.NoFundsFlow,
         {
@@ -70,6 +68,7 @@ const getMainActions = ({
           params: {
             accountId: account.id,
             parentId: parentAccount ? parentAccount.id : undefined,
+            source: parentRoute,
           },
         },
       ];
@@ -77,9 +76,9 @@ const getMainActions = ({
   return [
     {
       id: "stake",
-      navigationParams: navigationParams as unknown as NavigationParamsType,
+      navigationParams,
       label: <Trans i18nKey="account.stake" />,
-      Icon: Icons.ClaimRewardsMedium,
+      Icon: IconsLegacy.CoinsMedium,
       event: "button_clicked",
       eventProperties: {
         button: "stake",

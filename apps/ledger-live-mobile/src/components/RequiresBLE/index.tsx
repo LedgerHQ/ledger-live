@@ -21,18 +21,13 @@ type Props = {
  *   Otherwise it will try to prompt the user (to allow permission, or enable the service) if possible.
  *   Defaults to false.
  */
-const RequiresBLE: React.FC<Props> = ({
-  children,
-  forceOpenSettingsOnErrorButton = false,
-}) => {
+const RequiresBLE: React.FC<Props> = ({ children, forceOpenSettingsOnErrorButton = false }) => {
   if (Platform.OS === "android") {
     return (
       <AndroidRequiresBluetoothPermissions
         forceOpenSettingsOnErrorButton={forceOpenSettingsOnErrorButton}
       >
-        <RequiresBluetoothEnabled
-          forceOpenSettingsOnErrorButton={forceOpenSettingsOnErrorButton}
-        >
+        <RequiresBluetoothEnabled forceOpenSettingsOnErrorButton={forceOpenSettingsOnErrorButton}>
           <AndroidRequiresLocationPermission
             forceOpenSettingsOnErrorButton={forceOpenSettingsOnErrorButton}
           >
@@ -49,9 +44,7 @@ const RequiresBLE: React.FC<Props> = ({
 
   // On iOS, only Bluetooth service is needed. Its permission is directly handled by `RequiresBluetoothEnabled`.
   return (
-    <RequiresBluetoothEnabled
-      forceOpenSettingsOnErrorButton={forceOpenSettingsOnErrorButton}
-    >
+    <RequiresBluetoothEnabled forceOpenSettingsOnErrorButton={forceOpenSettingsOnErrorButton}>
       {children}
     </RequiresBluetoothEnabled>
   );

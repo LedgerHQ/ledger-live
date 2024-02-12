@@ -1,13 +1,14 @@
 import React from "react";
-import { setEnvUnsafe, isEnvDefault, getEnv } from "@ledgerhq/live-common/env";
+import { setEnvUnsafe, isEnvDefault, getEnv } from "@ledgerhq/live-env";
 
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { FeatureId } from "@ledgerhq/types-live";
 import { Feature, isReadOnly } from "../../../experimental";
-import SettingsRow from "../../../components/SettingsRow";
+import SettingsRow from "~/components/SettingsRow";
 import FeatureSwitch from "./FeatureSwitch";
 import FeatureInteger from "./FeatureInteger";
 import FeatureFloat from "./FeatureFloat";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   feature: Feature;
@@ -34,23 +35,21 @@ const FeatureRowWithFeatureFlag = ({
 const FeatureRow = ({ feature }: Props) => {
   const { type, ...rest } = feature;
   const Children = experimentalTypesMap[type];
-
+  const { t } = useTranslation();
   // we only display a feature as experimental if it is not enabled already via feature flag
   return (
     <SettingsRow
       event={`${feature.name}Row`}
-      title={feature.title}
-      desc={feature.description}
+      title={t(feature.title)}
+      desc={t(feature.description)}
     >
       <Children
         checked={!isEnvDefault(feature.name)}
         readOnly={isReadOnly(feature.name)}
         onChange={setEnvUnsafe}
-        isDefault={
-          isEnvDefault(feature.name) || getEnv(feature.name) === undefined
-        }
+        isDefault={isEnvDefault(feature.name) || getEnv(feature.name) === undefined}
         {...rest}
-        value={getEnv(feature.name)}
+        value={getEnv(feature.name) as number}
       />
     </SettingsRow>
   );
@@ -58,10 +57,7 @@ const FeatureRow = ({ feature }: Props) => {
 
 const FeatureRowCommon = ({ feature }: Props) =>
   feature.rolloutFeatureFlag ? (
-    <FeatureRowWithFeatureFlag
-      feature={feature}
-      featureFlagId={feature.rolloutFeatureFlag}
-    />
+    <FeatureRowWithFeatureFlag feature={feature} featureFlagId={feature.rolloutFeatureFlag} />
   ) : (
     <FeatureRow feature={feature} />
   );

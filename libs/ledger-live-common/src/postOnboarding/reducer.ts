@@ -1,8 +1,5 @@
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import {
-  PostOnboardingActionId,
-  PostOnboardingState,
-} from "@ledgerhq/types-live";
+import { PostOnboardingActionId, PostOnboardingState } from "@ledgerhq/types-live";
 import { handleActions } from "redux-actions";
 import type { ReducerMap } from "redux-actions";
 import { createSelector, Selector } from "reselect";
@@ -13,6 +10,7 @@ export const initialState: PostOnboardingState = {
   actionsToComplete: [],
   actionsCompleted: {},
   lastActionCompleted: null,
+  postOnboardingInProgress: false,
 };
 
 type PartialNewStatePayload = { newState: Partial<PostOnboardingState> };
@@ -23,11 +21,7 @@ type InitPayload = {
 type SetActionCompletedPayload = {
   actionId: PostOnboardingActionId;
 };
-export type Payload =
-  | undefined
-  | PartialNewStatePayload
-  | InitPayload
-  | SetActionCompletedPayload;
+export type Payload = undefined | PartialNewStatePayload | InitPayload | SetActionCompletedPayload;
 
 const handlers: ReducerMap<PostOnboardingState, Payload> = {
   POST_ONBOARDING_IMPORT_STATE: (_, { payload }): PostOnboardingState =>
@@ -38,8 +32,9 @@ const handlers: ReducerMap<PostOnboardingState, Payload> = {
       deviceModelId,
       walletEntryPointDismissed: false,
       actionsToComplete: actionsIds,
-      actionsCompleted: Object.fromEntries(actionsIds.map((id) => [id, false])),
+      actionsCompleted: Object.fromEntries(actionsIds.map(id => [id, false])),
       lastActionCompleted: null,
+      postOnboardingInProgress: true,
     };
   },
   POST_ONBOARDING_SET_ACTION_COMPLETED: (state, { payload }) => {
@@ -51,29 +46,29 @@ const handlers: ReducerMap<PostOnboardingState, Payload> = {
       lastActionCompleted: actionId,
     };
   },
-  POST_ONBOARDING_CLEAR_LAST_ACTION_COMPLETED: (state) => ({
+  POST_ONBOARDING_CLEAR_LAST_ACTION_COMPLETED: state => ({
     ...state,
     lastActionCompleted: null,
   }),
-  POST_ONBOARDING_HIDE_WALLET_ENTRY_POINT: (state) => ({
+  POST_ONBOARDING_HIDE_WALLET_ENTRY_POINT: state => ({
     ...state,
     walletEntryPointDismissed: true,
   }),
+
+  POST_ONBOARDING_SET_FINISHED: state => ({
+    ...state,
+    postOnboardingInProgress: false,
+  }),
 };
 
-export default handleActions<PostOnboardingState, Payload>(
-  handlers,
-  initialState
-);
+export default handleActions<PostOnboardingState, Payload>(handlers, initialState);
 
 /**
  * remove this function once we can safely assume no user has a LL holding in
  * storage a ref to the old identifier "nanoFTS" which was changed in this PR
  * https://github.com/LedgerHQ/ledger-live/pull/2144
  * */
-function sanitizeDeviceModelId(
-  deviceModelId: DeviceModelId | null
-): DeviceModelId | null {
+function sanitizeDeviceModelId(deviceModelId: DeviceModelId | null): DeviceModelId | null {
   if (deviceModelId === null) return null;
   // Nb workaround to prevent crash for dev/qa that have nanoFTS references.
   // to be removed in a while.
@@ -87,37 +82,36 @@ export const postOnboardingSelector: Selector<
   { postOnboarding: PostOnboardingState },
   PostOnboardingState
 > = createSelector(
-  (state) => state.postOnboarding,
-  (postOnboarding) => ({
+  (state: { postOnboarding: PostOnboardingState }) => state.postOnboarding,
+  postOnboarding => ({
     ...postOnboarding,
     deviceModelId: sanitizeDeviceModelId(postOnboarding.deviceModelId),
-  })
+  }),
 );
 
-export const hubStateSelector = createSelector(
-  postOnboardingSelector,
-  (postOnboarding) => {
-    const {
-      deviceModelId,
-      actionsToComplete,
-      actionsCompleted,
-      lastActionCompleted,
-    } = postOnboarding;
-    return {
-      deviceModelId: sanitizeDeviceModelId(deviceModelId),
-      actionsToComplete,
-      actionsCompleted,
-      lastActionCompleted,
-    };
-  }
-);
+export const hubStateSelector = createSelector(postOnboardingSelector, postOnboarding => {
+  const {
+    deviceModelId,
+    actionsToComplete,
+    actionsCompleted,
+    lastActionCompleted,
+    postOnboardingInProgress,
+  } = postOnboarding;
+  return {
+    deviceModelId: sanitizeDeviceModelId(deviceModelId),
+    actionsToComplete,
+    actionsCompleted,
+    lastActionCompleted,
+    postOnboardingInProgress,
+  };
+});
 
 export const postOnboardingDeviceModelIdSelector = createSelector(
   postOnboardingSelector,
-  (postOnboarding) => sanitizeDeviceModelId(postOnboarding.deviceModelId)
+  postOnboarding => sanitizeDeviceModelId(postOnboarding.deviceModelId),
 );
 
 export const walletPostOnboardingEntryPointDismissedSelector = createSelector(
   postOnboardingSelector,
-  (postOnboarding) => postOnboarding.walletEntryPointDismissed
+  postOnboarding => postOnboarding.walletEntryPointDismissed,
 );

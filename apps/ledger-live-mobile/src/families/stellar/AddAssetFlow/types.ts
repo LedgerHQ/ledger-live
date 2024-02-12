@@ -1,11 +1,8 @@
-import type {
-  Transaction,
-  TransactionStatus,
-} from "@ledgerhq/live-common/families/stellar/types";
+import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/stellar/types";
 import type { Operation } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { ScreenName } from "../../../const";
+import { ScreenName } from "~/const";
 
 export type StellarAddAssetFlowParamList = {
   [ScreenName.StellarAddAssetSelectAsset]: {

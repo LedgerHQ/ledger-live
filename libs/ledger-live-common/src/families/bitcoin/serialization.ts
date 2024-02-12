@@ -18,12 +18,7 @@ export function toBitcoinInputRaw({
   previousTxHash,
   previousOutputIndex,
 }: BitcoinInput): BitcoinInputRaw {
-  return [
-    address,
-    value ? value.toString() : undefined,
-    previousTxHash,
-    previousOutputIndex,
-  ];
+  return [address, value ? value.toString() : undefined, previousTxHash, previousOutputIndex];
 }
 export function fromBitcoinInputRaw([
   address,
@@ -47,15 +42,7 @@ export function toBitcoinOutputRaw({
   rbf,
   isChange,
 }: BitcoinOutput): BitcoinOutputRaw {
-  return [
-    hash,
-    outputIndex,
-    blockHeight,
-    address,
-    value.toString(),
-    rbf ? 1 : 0,
-    isChange ? 1 : 0,
-  ];
+  return [hash, outputIndex, blockHeight, address, value.toString(), rbf ? 1 : 0, isChange ? 1 : 0];
 }
 export function fromBitcoinOutputRaw([
   hash,
@@ -77,24 +64,17 @@ export function fromBitcoinOutputRaw([
   };
 }
 
-export function toBitcoinResourcesRaw(
-  r: BitcoinResources
-): BitcoinResourcesRaw {
+export function toBitcoinResourcesRaw(r: BitcoinResources): BitcoinResourcesRaw {
   return {
     utxos: r.utxos.map(toBitcoinOutputRaw),
-    walletAccount:
-      r.walletAccount && wallet.exportToSerializedAccountSync(r.walletAccount),
+    walletAccount: r.walletAccount && wallet.exportToSerializedAccountSync(r.walletAccount),
   };
 }
 
-export function fromBitcoinResourcesRaw(
-  r: BitcoinResourcesRaw
-): BitcoinResources {
+export function fromBitcoinResourcesRaw(r: BitcoinResourcesRaw): BitcoinResources {
   return {
     utxos: r.utxos.map(fromBitcoinOutputRaw),
-    walletAccount:
-      r.walletAccount &&
-      wallet.importFromSerializedAccountSync(r.walletAccount),
+    walletAccount: r.walletAccount && wallet.importFromSerializedAccountSync(r.walletAccount),
   };
 }
 
@@ -102,15 +82,13 @@ export function assignToAccountRaw(account: Account, accountRaw: AccountRaw) {
   const bitcoinAccount = account as BitcoinAccount;
   if (bitcoinAccount.bitcoinResources) {
     (accountRaw as BitcoinAccountRaw).bitcoinResources = toBitcoinResourcesRaw(
-      bitcoinAccount.bitcoinResources
+      bitcoinAccount.bitcoinResources,
     );
   }
 }
 
 export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account) {
-  const bitcoinResourcesRaw = (accountRaw as BitcoinAccountRaw)
-    .bitcoinResources;
+  const bitcoinResourcesRaw = (accountRaw as BitcoinAccountRaw).bitcoinResources;
   if (bitcoinResourcesRaw)
-    (account as BitcoinAccount).bitcoinResources =
-      fromBitcoinResourcesRaw(bitcoinResourcesRaw);
+    (account as BitcoinAccount).bitcoinResources = fromBitcoinResourcesRaw(bitcoinResourcesRaw);
 }

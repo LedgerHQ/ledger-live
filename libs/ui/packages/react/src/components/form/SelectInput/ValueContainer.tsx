@@ -7,7 +7,7 @@ export function getStyles<
   M extends boolean = false,
   G extends GroupBase<O> = GroupBase<O>,
 >(): StylesConfig<O, M, G>["valueContainer"] {
-  return (provided) => ({
+  return provided => ({
     ...provided,
     padding: 0,
   });

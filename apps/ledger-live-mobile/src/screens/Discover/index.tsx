@@ -5,48 +5,44 @@ import { useTranslation } from "react-i18next";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Illustration from "../../images/illustration/Illustration";
-import { NavigatorName, ScreenName } from "../../const";
+import TabBarSafeAreaView from "~/components/TabBar/TabBarSafeAreaView";
+import Illustration from "~/images/illustration/Illustration";
+import { NavigatorName, ScreenName } from "~/const";
 import DiscoverCard from "./DiscoverCard";
-import { urls } from "../../config/urls";
-import { TrackScreen, track } from "../../analytics";
-import { TAB_BAR_SAFE_HEIGHT } from "../../components/TabBar/TabBarSafeAreaView";
-import { AnalyticsContext } from "../../analytics/AnalyticsContext";
-import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
-import { MainNavigatorParamList } from "../../components/RootNavigator/types/MainNavigator";
-import useDynamicContent from "../../dynamicContent/dynamicContent";
-import { useIsNewsfeedAvailable } from "../../hooks/newsfeed/useIsNewsfeedAvailable";
+import { urls } from "~/utils/urls";
+import { TrackScreen, track } from "~/analytics";
+import { AnalyticsContext } from "~/analytics/AnalyticsContext";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { MainNavigatorParamList } from "~/components/RootNavigator/types/MainNavigator";
+import useDynamicContent from "~/dynamicContent/useDynamicContent";
+import { useIsNewsfeedAvailable } from "~/hooks/newsfeed/useIsNewsfeedAvailable";
 
 const images = {
   light: {
-    learnImg: require("../../images/illustration/Light/_063.png"),
-    appsImg: require("../../images/illustration/Light/_086.png"),
-    earnImg: require("../../images/illustration/Light/_088.png"),
-    mintImg: require("../../images/illustration/Light/_087.png"),
-    referralImg: require("../../images/illustration/Light/_ReferralProgram.png"),
+    learnImg: require("~/images/illustration/Light/_063.png"),
+    appsImg: require("~/images/illustration/Light/_086.png"),
+    earnImg: require("~/images/illustration/Light/_088.png"),
+    mintImg: require("~/images/illustration/Light/_087.png"),
+    referralImg: require("~/images/illustration/Light/_ReferralProgram.png"),
   },
   dark: {
-    learnImg: require("../../images/illustration/Dark/_063.png"),
-    appsImg: require("../../images/illustration/Dark/_086.png"),
-    earnImg: require("../../images/illustration/Dark/_088.png"),
-    mintImg: require("../../images/illustration/Dark/_087.png"),
-    referralImg: require("../../images/illustration/Dark/_ReferralProgram.png"),
+    learnImg: require("~/images/illustration/Dark/_063.png"),
+    appsImg: require("~/images/illustration/Dark/_086.png"),
+    earnImg: require("~/images/illustration/Dark/_088.png"),
+    mintImg: require("~/images/illustration/Dark/_087.png"),
+    referralImg: require("~/images/illustration/Dark/_ReferralProgram.png"),
   },
 };
 
 function Discover() {
   const { t } = useTranslation();
   const navigation =
-    useNavigation<
-      StackNavigationProp<BaseNavigatorStackParamList & MainNavigatorParamList>
-    >();
+    useNavigation<StackNavigationProp<BaseNavigatorStackParamList & MainNavigatorParamList>>();
 
   const learn = useFeature("brazeLearn");
   const isNewsfeedAvailable = useIsNewsfeedAvailable();
   const referralProgramConfig = useFeature("referralProgramDiscoverCard");
-  const isNFTDisabled =
-    useFeature("disableNftLedgerMarket")?.enabled && Platform.OS === "ios";
+  const isNFTDisabled = useFeature("disableNftLedgerMarket")?.enabled && Platform.OS === "ios";
 
   const readOnlyTrack = useCallback((bannerName: string) => {
     track("banner_clicked", {
@@ -72,7 +68,7 @@ function Discover() {
   }[] = useMemo(
     () =>
       [
-        ...(config?.enabled && config?.params.version === "2"
+        ...(config?.enabled && config?.params?.version === "2"
           ? [
               {
                 title: t("discover.sections.browseWeb3.title"),
@@ -200,7 +196,7 @@ function Discover() {
                 ),
               },
             ]),
-        ...(referralProgramConfig?.enabled && referralProgramConfig?.params.url
+        ...(referralProgramConfig?.enabled && referralProgramConfig?.params?.url
           ? [
               {
                 title: t("discover.sections.referralProgram.title"),
@@ -208,9 +204,10 @@ function Discover() {
                 onPress: () => {
                   readOnlyTrack("referralProgram");
                   track("Discover - Refer Program - OpenUrl", {
-                    url: referralProgramConfig?.params.url,
+                    url: referralProgramConfig?.params?.url,
                   });
-                  Linking.openURL(referralProgramConfig?.params.url);
+                  // @ts-expect-error TYPINGS
+                  Linking.openURL(referralProgramConfig?.params?.url);
                 },
                 disabled: false,
                 Image: (
@@ -230,7 +227,7 @@ function Discover() {
       learnCards,
       isNFTDisabled,
       referralProgramConfig?.enabled,
-      referralProgramConfig?.params.url,
+      referralProgramConfig?.params?.url,
       navigation,
       readOnlyTrack,
       isNewsfeedAvailable,
@@ -250,17 +247,8 @@ function Discover() {
     }, [setSource, setScreen]),
   );
 
-  const insets = useSafeAreaInsets();
-
   return (
-    <Flex
-      /**
-       * NB: not using SafeAreaView because it flickers during navigation
-       * https://github.com/th3rdwave/react-native-safe-area-context/issues/219
-       */
-      flex={1}
-      mt={insets.top}
-    >
+    <TabBarSafeAreaView>
       <TrackScreen category="Discover" />
       <Flex px={6} pb={6} flexDirection="row">
         <Flex flex={1} justifyContent="flex-start" alignItems="flex-start">
@@ -269,32 +257,28 @@ function Discover() {
           </Text>
         </Flex>
       </Flex>
-      <ScrollView
-        contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
-      >
-        {featuresList.map(
-          ({ title, subTitle, onPress, disabled, labelBadge, Image }, i) => (
-            <DiscoverCard
-              key={i}
-              title={title}
-              subTitle={subTitle}
-              onPress={onPress}
-              disabled={disabled}
-              labelBadge={labelBadge}
-              imageContainerProps={{
-                position: "relative",
-                height: "auto",
-                alignItems: "center",
-                justifyContent: "center",
-                flex: 1,
-                paddingRight: 4,
-              }}
-              Image={Image}
-            />
-          ),
-        )}
+      <ScrollView>
+        {featuresList.map(({ title, subTitle, onPress, disabled, labelBadge, Image }, i) => (
+          <DiscoverCard
+            key={i}
+            title={title}
+            subTitle={subTitle}
+            onPress={onPress}
+            disabled={disabled}
+            labelBadge={labelBadge}
+            imageContainerProps={{
+              position: "relative",
+              height: "auto",
+              alignItems: "center",
+              justifyContent: "center",
+              flex: 1,
+              paddingRight: 4,
+            }}
+            Image={Image}
+          />
+        ))}
       </ScrollView>
-    </Flex>
+    </TabBarSafeAreaView>
   );
 }
 

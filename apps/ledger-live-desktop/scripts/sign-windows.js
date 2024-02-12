@@ -1,7 +1,8 @@
-const execa = require("execa");
 const chalk = require("chalk");
 
 require("dotenv").config();
+
+let execa;
 
 const info = str => {
   console.log(chalk.blue(str));
@@ -16,6 +17,10 @@ async function azureSign(filePath) {
     );
   }
 
+  await import("execa").then(mod => {
+    execa = mod.execa;
+  });
+
   info(`Signing ${filePath}`);
 
   const args = [
@@ -29,7 +34,7 @@ async function azureSign(filePath) {
     "-kvs",
     AZURE_SECRET,
     "-kvc",
-    "LL20220419-02",
+    "LL20230519-01",
     "-v",
     "-tr",
     "http://timestamp.digicert.com",

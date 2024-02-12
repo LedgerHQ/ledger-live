@@ -10,7 +10,7 @@ import Input from "~/renderer/components/Input";
 import Label from "~/renderer/components/Label";
 import Switch from "~/renderer/components/Switch";
 import { urls } from "~/config/urls";
-import useEnv from "~/renderer/hooks/useEnv";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import Tooltip from "~/renderer/components/Tooltip";
 import IconInfoCircle from "~/renderer/icons/InfoCircle";
 const FormWrapper = styled(Box)`
@@ -34,26 +34,49 @@ export type RPCNodeConfig = {
   password: string;
   tls?: boolean;
 };
-const maybeError = (errors, field, satStackAlreadyConfigured, ignoredErrorClass) => {
-  const error = errors.find(e => e.field === field)?.error;
+
+type RPCNodeConfigKey = keyof RPCNodeConfig;
+
+export type RpcNodeConfigOption = {
+  [K in RPCNodeConfigKey]: RPCNodeConfig[K];
+};
+
+const maybeError = (
+  errors: { field: string; error: Error }[] | null,
+  field: unknown,
+  satStackAlreadyConfigured: boolean,
+  ignoredErrorClass: Function,
+) => {
+  const error = errors?.find(e => e.field === field)?.error;
   return error && (satStackAlreadyConfigured || !(error instanceof ignoredErrorClass))
     ? error
     : null;
 };
+
 const Form = ({
   nodeConfig,
   patchNodeConfig,
   errors,
 }: {
   nodeConfig?: RPCNodeConfig;
-  patchNodeConfig: (a: { [x: keyof RPCNodeConfig]: any }) => void;
-  errors: any;
+  patchNodeConfig: (a: Partial<RpcNodeConfigOption>) => void;
+  errors: { field: string; error: Error }[] | null;
 }) => {
   const { t } = useTranslation();
   const satStackAlreadyConfigured = useEnv("SATSTACK");
-  const hostError = maybeError(errors, "host", satStackAlreadyConfigured, RPCHostRequired);
-  const usernameError = maybeError(errors, "username", satStackAlreadyConfigured, RPCUserRequired);
-  const passwordError = maybeError(errors, "password", satStackAlreadyConfigured, RPCPassRequired);
+  const hostError = maybeError(errors, "host", !!satStackAlreadyConfigured, RPCHostRequired);
+  const usernameError = maybeError(
+    errors,
+    "username",
+    !!satStackAlreadyConfigured,
+    RPCUserRequired,
+  );
+  const passwordError = maybeError(
+    errors,
+    "password",
+    !!satStackAlreadyConfigured,
+    RPCPassRequired,
+  );
   return (
     <Box>
       <Text
@@ -119,7 +142,7 @@ const Form = ({
               />
               <InputPassword
                 error={passwordError}
-                onChange={password =>
+                onChange={(password: string) =>
                   patchNodeConfig({
                     password,
                   })
@@ -134,7 +157,7 @@ const Form = ({
         </Box>
         <Box flow={1} mt={32} horizontal>
           <Switch
-            onChange={tls =>
+            onChange={(tls: boolean) =>
               patchNodeConfig({
                 tls,
               })

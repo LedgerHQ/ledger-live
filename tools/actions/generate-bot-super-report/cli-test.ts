@@ -12,7 +12,7 @@ async function main() {
   console.log(res);
 }
 
-main().catch((e) => {
+main().catch(e => {
   console.error(String(e));
   process.exit(1);
 });

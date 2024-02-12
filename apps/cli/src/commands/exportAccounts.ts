@@ -21,14 +21,11 @@ export default {
     opts: ScanCommonOpts &
       Partial<{
         out: boolean;
-      }>
+      }>,
   ) =>
     scan(opts).pipe(
-      reduce<Account, Account[]>(
-        (accounts, account) => accounts.concat(account),
-        []
-      ),
-      mergeMap((accounts) => {
+      reduce<Account, Account[]>((accounts, account) => accounts.concat(account), []),
+      mergeMap(accounts => {
         const data = encode({
           accounts,
           settings: {
@@ -43,14 +40,10 @@ export default {
         if (opts.out) {
           return of(Buffer.from(JSON.stringify(frames)).toString("base64"));
         } else {
-          const qrObservables = frames.map((str) =>
-            asQR(str).pipe(shareReplay())
-          );
-          return interval(300).pipe(
-            mergeMap((i) => qrObservables[i % qrObservables.length])
-          );
+          const qrObservables = frames.map(str => asQR(str).pipe(shareReplay()));
+          return interval(300).pipe(mergeMap(i => qrObservables[i % qrObservables.length]));
         }
       }),
-      tap(() => console.clear()) // eslint-disable-line no-console
+      tap(() => console.clear()), // eslint-disable-line no-console
     ),
 };

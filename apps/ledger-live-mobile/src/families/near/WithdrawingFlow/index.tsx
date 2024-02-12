@@ -3,12 +3,12 @@ import { Platform } from "react-native";
 import { useTranslation } from "react-i18next";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "@react-navigation/native";
-import { getStackNavigatorConfig } from "../../../navigation/navigatorConfig";
-import StepHeader from "../../../components/StepHeader";
-import { ScreenName } from "../../../const";
+import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
+import StepHeader from "~/components/StepHeader";
+import { ScreenName } from "~/const";
 import WithdrawingAmount from "./01-Amount";
-import SelectDevice from "../../../screens/SelectDevice";
-import ConnectDevice from "../../../screens/ConnectDevice";
+import SelectDevice from "~/screens/SelectDevice";
+import ConnectDevice from "~/screens/ConnectDevice";
 import WithdrawingValidationError from "./03-ValidationError";
 import WithdrawingValidationSuccess from "./03-ValidationSuccess";
 import { NearWithdrawingFlowParamList } from "./types";
@@ -18,10 +18,7 @@ const totalSteps = "3";
 function WithdrawingFlow() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const stackNavigationConfig = useMemo(
-    () => getStackNavigatorConfig(colors, true),
-    [colors],
-  );
+  const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
   return (
     <Stack.Navigator
       screenOptions={{
@@ -35,9 +32,7 @@ function WithdrawingFlow() {
         options={({ route }) => ({
           headerTitle: () => (
             <StepHeader
-              title={
-                route.params?.stakingPosition?.validator?.validatorAddress ?? ""
-              }
+              title={route.params?.stakingPosition?.validator?.validatorAddress ?? ""}
               subtitle={t("near.withdrawing.stepperHeader.amountSubTitle")}
             />
           ),

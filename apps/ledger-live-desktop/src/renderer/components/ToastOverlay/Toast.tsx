@@ -94,10 +94,12 @@ export function Toast({
     },
     enter: {
       height: "auto",
+      pointerEvents: "auto",
       opacity: 1,
     },
     leave: {
       height: 0,
+      pointerEvents: "none",
       opacity: 0,
     },
     config: {
@@ -116,7 +118,7 @@ export function Toast({
       scheduledDismiss(duration);
     }
   }, [duration, id, onDismiss]);
-  const onClick = useCallback(
+  const onClick: React.MouseEventHandler<HTMLInputElement> = useCallback(
     event => {
       if (typeof callback === "function") {
         callback();

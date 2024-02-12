@@ -1,19 +1,16 @@
 import React, { PureComponent } from "react";
 import { StyleSheet, View } from "react-native";
-import Scanner from "../../../../components/Scanner";
-import LText from "../../../../components/LText";
+import Scanner from "~/components/Scanner";
+import LText from "~/components/LText";
 import { rgba, Theme, withTheme } from "../../../../colors";
-import getWindowDimensions from "../../../../logic/getWindowDimensions";
-import { ScreenName } from "../../../../const";
-import { SettingsNavigatorStackParamList } from "../../../../components/RootNavigator/types/SettingsNavigator";
-import { StackNavigatorProps } from "../../../../components/RootNavigator/types/helpers";
+import getWindowDimensions from "~/logic/getWindowDimensions";
+import { ScreenName } from "~/const";
+import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 
 type Props = {
   colors: Theme["colors"];
-} & StackNavigatorProps<
-  SettingsNavigatorStackParamList,
-  ScreenName.BenchmarkQRStream
->;
+} & StackNavigatorProps<SettingsNavigatorStackParamList, ScreenName.BenchmarkQRStream>;
 
 type Benchmark = {
   count: number;
@@ -65,17 +62,13 @@ class BenchmarkQRStream extends PureComponent<Props, State> {
   render() {
     const { colors } = this.props;
     const { benchmarks, end } = this.state;
-    const summary = benchmarks
-      .map((b: Benchmark) => `${b.dataSize}:${b.count}`)
-      .join(" ");
+    const summary = benchmarks.map((b: Benchmark) => `${b.dataSize}:${b.count}`).join(" ");
 
     if (end) {
       return (
         <View style={styles.resultRoot}>
           <LText selectable>
-            {benchmarks
-              .map((b: Benchmark) => `${b.dataSize} ${b.count}`)
-              .join("\n")}
+            {benchmarks.map((b: Benchmark) => `${b.dataSize} ${b.count}`).join("\n")}
           </LText>
         </View>
       );

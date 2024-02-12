@@ -1,4 +1,3 @@
-import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { useCallback, useMemo, useEffect, useState } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
@@ -7,99 +6,39 @@ import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import type { Account } from "@ledgerhq/types-live";
-import {
-  getMainAccount,
-  getAccountUnit,
-} from "@ledgerhq/live-common/account/index";
+import { getMainAccount, getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import type {
   TronAccount,
   Transaction as TronTransaction,
 } from "@ledgerhq/live-common/families/tron/types";
-import { accountScreenSelector } from "../../reducers/accounts";
-import { ScreenName } from "../../const";
-import { TrackScreen } from "../../analytics";
-import LText from "../../components/LText";
-import Button from "../../components/Button";
-import RetryButton from "../../components/RetryButton";
-import CancelButton from "../../components/CancelButton";
-import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
-import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import TranslatedError from "../../components/TranslatedError";
-import Info from "../../icons/Info";
-import CheckBox from "../../components/CheckBox";
-import Bandwidth from "../../icons/Bandwidth";
-import Bolt from "../../icons/Bolt";
-import ClockIcon from "../../icons/Clock";
-import DateFromNow from "../../components/DateFromNow";
+import { accountScreenSelector } from "~/reducers/accounts";
+import { ScreenName } from "~/const";
+import { TrackScreen } from "~/analytics";
+import LText from "~/components/LText";
+import Button from "~/components/Button";
+import RetryButton from "~/components/RetryButton";
+import CancelButton from "~/components/CancelButton";
+import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import TranslatedError from "~/components/TranslatedError";
+import Info from "~/icons/Info";
+import CheckBox from "~/components/CheckBox";
+import Bandwidth from "~/icons/Bandwidth";
+import Bolt from "~/icons/Bolt";
+
 import {
   StackNavigatorNavigation,
   StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
-import { UnfreezeNavigatorParamList } from "../../components/RootNavigator/types/UnfreezeNavigator";
+} from "~/components/RootNavigator/types/helpers";
+import { UnfreezeNavigatorParamList } from "~/components/RootNavigator/types/UnfreezeNavigator";
+import { getUnfreezeData } from "@ledgerhq/live-common/families/tron/react";
 
-/** @TODO move this to common */
-const getUnfreezeData = (
-  account: Account,
-): {
-  unfreezeBandwidth: BigNumber;
-  unfreezeEnergy: BigNumber;
-  canUnfreezeBandwidth: boolean;
-  canUnfreezeEnergy: boolean;
-  bandwidthExpiredAt?: Date;
-  energyExpiredAt?: Date;
-} => {
-  const { tronResources } = account as TronAccount;
-  const {
-    frozen: { bandwidth, energy },
-  } = tronResources || {};
-
-  /** ! expiredAt should always be set with the amount if not this will disable the field by default ! */
-  const { amount: bandwidthAmount, expiredAt: bandwidthExpiredAt } =
-    bandwidth || {};
-
-  // eslint-disable-next-line no-underscore-dangle
-  const _bandwidthExpiredAt = bandwidthExpiredAt
-    ? +new Date(bandwidthExpiredAt)
-    : +new Date();
-
-  const { amount: energyAmount, expiredAt: energyExpiredAt } = energy || {};
-
-  // eslint-disable-next-line no-underscore-dangle
-  const _energyExpiredAt = energyExpiredAt
-    ? +new Date(energyExpiredAt)
-    : +new Date();
-
-  const unfreezeBandwidth = BigNumber(bandwidthAmount || 0);
-
-  const canUnfreezeBandwidth =
-    unfreezeBandwidth.gt(0) && Date.now() > _bandwidthExpiredAt;
-
-  const unfreezeEnergy = BigNumber(energyAmount || 0);
-
-  const canUnfreezeEnergy =
-    unfreezeEnergy.gt(0) && Date.now() > _energyExpiredAt;
-
-  return {
-    unfreezeBandwidth,
-    unfreezeEnergy,
-    canUnfreezeBandwidth,
-    canUnfreezeEnergy,
-    bandwidthExpiredAt,
-    energyExpiredAt,
-  };
-};
-
-type Props = StackNavigatorProps<
-  UnfreezeNavigatorParamList,
-  ScreenName.UnfreezeAmount
->;
+type Props = StackNavigatorProps<UnfreezeNavigatorParamList, ScreenName.UnfreezeAmount>;
 
 export default function UnfreezeAmount({ route }: Props) {
-  const { account: accountLike, parentAccount } = useSelector(
-    accountScreenSelector(route),
-  );
+  const { account: accountLike, parentAccount } = useSelector(accountScreenSelector(route));
 
   if (!accountLike) {
     return null;
@@ -114,22 +53,17 @@ type InnerProps = {
 
 function UnfreezeAmountInner({ account }: InnerProps) {
   const { colors } = useTheme();
-  const navigation =
-    useNavigation<StackNavigatorNavigation<UnfreezeNavigatorParamList>>();
+  const navigation = useNavigation<StackNavigatorNavigation<UnfreezeNavigatorParamList>>();
   const bridge = getAccountBridge(account, undefined);
   const unit = getAccountUnit(account);
   const { tronResources } = account as TronAccount;
   invariant(tronResources, "tron resources expected");
-  const {
-    unfreezeBandwidth,
-    unfreezeEnergy,
-    canUnfreezeBandwidth,
-    canUnfreezeEnergy,
-    bandwidthExpiredAt,
-    energyExpiredAt,
-  } = useMemo(() => getUnfreezeData(account), [account]);
-  const { transaction, setTransaction, status, bridgePending, bridgeError } =
-    useBridgeTransaction(() => {
+  const { unfreezeBandwidth, unfreezeEnergy, canUnfreezeBandwidth, canUnfreezeEnergy } = useMemo(
+    () => getUnfreezeData(account as TronAccount),
+    [account],
+  );
+  const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
+    () => {
       const t = bridge.createTransaction(account);
       const transaction = bridge.updateTransaction(t, {
         mode: "unfreeze",
@@ -139,7 +73,8 @@ function UnfreezeAmountInner({ account }: InnerProps) {
         account,
         transaction,
       };
-    });
+    },
+  );
   const resource =
     transaction && (transaction as TronTransaction).resource
       ? (transaction as TronTransaction).resource
@@ -200,27 +135,11 @@ function UnfreezeAmountInner({ account }: InnerProps) {
               disabled={!canUnfreezeBandwidth}
               onPress={() => onChangeResource("BANDWIDTH")}
             >
-              <Bandwidth
-                size={16}
-                color={!canUnfreezeBandwidth ? colors.grey : colors.darkBlue}
-              />
+              <Bandwidth size={16} color={!canUnfreezeBandwidth ? colors.grey : colors.darkBlue} />
               <View style={styles.selectCardLabelContainer}>
-                <LText
-                  semiBold
-                  color={!canUnfreezeBandwidth ? "grey" : "darkBlue"}
-                >
+                <LText semiBold color={!canUnfreezeBandwidth ? "grey" : "darkBlue"}>
                   <Trans i18nKey="account.bandwidth" />
                 </LText>
-                {bandwidthExpiredAt &&
-                unfreezeBandwidth.gt(0) &&
-                !canUnfreezeBandwidth ? (
-                  <View style={styles.timeWarn}>
-                    <ClockIcon color={colors.grey} size={12} />
-                    <LText style={styles.timeLabel} semiBold color="grey">
-                      <DateFromNow date={+bandwidthExpiredAt} />
-                    </LText>
-                  </View>
-                ) : null}
               </View>
               <LText
                 semiBold
@@ -244,34 +163,11 @@ function UnfreezeAmountInner({ account }: InnerProps) {
               disabled={!canUnfreezeEnergy}
               onPress={() => onChangeResource("ENERGY")}
             >
-              <Bolt
-                size={16}
-                color={!canUnfreezeEnergy ? colors.grey : colors.darkBlue}
-              />
+              <Bolt size={16} color={!canUnfreezeEnergy ? colors.grey : colors.darkBlue} />
               <View style={styles.selectCardLabelContainer}>
-                <LText
-                  semiBold
-                  color={!canUnfreezeEnergy ? "grey" : "darkBlue"}
-                >
+                <LText semiBold color={!canUnfreezeEnergy ? "grey" : "darkBlue"}>
                   <Trans i18nKey="account.energy" />
                 </LText>
-                {energyExpiredAt &&
-                unfreezeEnergy.gt(0) &&
-                !canUnfreezeEnergy ? (
-                  <View
-                    style={[
-                      styles.timeWarn,
-                      {
-                        backgroundColor: colors.lightFog,
-                      },
-                    ]}
-                  >
-                    <ClockIcon color={colors.grey} size={12} />
-                    <LText style={styles.timeLabel} semiBold color="grey">
-                      <DateFromNow date={+energyExpiredAt} />
-                    </LText>
-                  </View>
-                ) : null}
               </View>
               <LText
                 semiBold
@@ -305,11 +201,7 @@ function UnfreezeAmountInner({ account }: InnerProps) {
               </LText>
             </View>
 
-            <LText
-              style={[styles.error]}
-              numberOfLines={2}
-              color={error ? "alert" : "orange"}
-            >
+            <LText style={[styles.error]} numberOfLines={2} color={error ? "alert" : "orange"}>
               <TranslatedError error={error || warning} />
             </LText>
           </View>
@@ -334,10 +226,7 @@ function UnfreezeAmountInner({ account }: InnerProps) {
         onClose={onBridgeErrorRetry}
         footerButtons={
           <>
-            <CancelButton
-              containerStyle={styles.button}
-              onPress={onBridgeErrorCancel}
-            />
+            <CancelButton containerStyle={styles.button} onPress={onBridgeErrorCancel} />
             <RetryButton
               containerStyle={[styles.button, styles.buttonRight]}
               onPress={onBridgeErrorRetry}

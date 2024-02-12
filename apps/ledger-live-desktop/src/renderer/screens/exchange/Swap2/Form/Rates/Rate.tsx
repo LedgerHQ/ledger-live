@@ -2,8 +2,9 @@ import React, { useCallback } from "react";
 import styled from "styled-components";
 import { Text } from "@ledgerhq/react-ui";
 import Box from "~/renderer/components/Box";
+import ProviderIcon from "~/renderer/components/ProviderIcon";
 import { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
-import { iconByProviderName } from "../../utils";
+
 const ProviderContainer = styled(Box).attrs({
   horizontal: true,
   alignItems: "center",
@@ -27,6 +28,7 @@ const ProviderContainer = styled(Box).attrs({
 const SecondaryText = styled(Text)`
   color: ${p => p.theme.colors.neutral.c70};
 `;
+
 export type Props = {
   value: ExchangeRate;
   onSelect: (a: ExchangeRate) => void;
@@ -37,6 +39,7 @@ export type Props = {
   centerContainer?: JSX.Element;
   rightContainer: JSX.Element;
 };
+
 function Rate({
   value,
   selected,
@@ -48,7 +51,7 @@ function Rate({
   rightContainer,
 }: Props) {
   const handleSelection = useCallback(() => onSelect(value), [value, onSelect]);
-  const ProviderIcon = iconByProviderName[icon as keyof typeof iconByProviderName];
+
   return (
     <ProviderContainer
       p={3}
@@ -60,7 +63,7 @@ function Rate({
     >
       {icon && (
         <Box mr={2}>
-          <ProviderIcon size={28} />
+          <ProviderIcon size="S" name={icon} />
         </Box>
       )}
       <Box flex={1}>
@@ -82,4 +85,5 @@ function Rate({
     </ProviderContainer>
   );
 }
+
 export default React.memo<Props>(Rate);

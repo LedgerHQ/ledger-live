@@ -1,14 +1,7 @@
 import React, { useCallback, useMemo, useState } from "react";
-import {
-  View,
-  Keyboard,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  Platform,
-} from "react-native";
+import { View, Keyboard, TouchableOpacity, TouchableWithoutFeedback, Platform } from "react-native";
 import { Trans } from "react-i18next";
 import { BigNumber } from "bignumber.js";
-import { useSelector } from "react-redux";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
@@ -19,16 +12,16 @@ import { MIN_DELEGATION_AMOUNT } from "@ledgerhq/live-common/families/elrond/con
 
 import type { PickAmountPropsType, RatioType } from "./types";
 
-import { localeSelector } from "../../../../../../../reducers/settings";
-import { ScreenName } from "../../../../../../../const";
-import Button from "../../../../../../../components/Button";
-import CurrencyInput from "../../../../../../../components/CurrencyInput";
-import LText from "../../../../../../../components/LText";
-import Warning from "../../../../../../../icons/Warning";
-import Check from "../../../../../../../icons/Check";
-import KeyboardView from "../../../../../../../components/KeyboardView";
+import { ScreenName } from "~/const";
+import Button from "~/components/Button";
+import CurrencyInput from "~/components/CurrencyInput";
+import LText from "~/components/LText";
+import Warning from "~/icons/Warning";
+import Check from "~/icons/Check";
+import KeyboardView from "~/components/KeyboardView";
 
 import styles from "./styles";
+import { useSettings } from "~/hooks";
 
 /*
  * Handle the component declaration.
@@ -41,7 +34,7 @@ const PickAmount = (props: PickAmountPropsType) => {
 
   const unit = getAccountUnit(account);
   const bridge = getAccountBridge(account, undefined);
-  const locale = useSelector(localeSelector);
+  const { locale } = useSettings();
 
   const [value, setValue] = useState(new BigNumber(amount));
 
@@ -75,27 +68,20 @@ const PickAmount = (props: PickAmountPropsType) => {
    * Check if the currently selected amount exceeds the maximum amount of assets available.
    */
 
-  const amountAboveMaximum = useMemo(
-    () => value.isGreaterThan(amount),
-    [amount, value],
-  );
+  const amountAboveMaximum = useMemo(() => value.isGreaterThan(amount), [amount, value]);
 
   /*
    * Check if all the assets have been chosen for undelegation.
    */
 
-  const allAssetsUndelegated = useMemo(
-    () => amount.minus(value).isZero(),
-    [amount, value],
-  );
+  const allAssetsUndelegated = useMemo(() => amount.minus(value).isZero(), [amount, value]);
 
   /*
    * Check if the assets chosen for undelegation are below the minimum required.
    */
 
   const amountBelowMinimum = useMemo(
-    () =>
-      value.isEqualTo(amount) ? false : value.isLessThan(MIN_DELEGATION_AMOUNT),
+    () => (value.isEqualTo(amount) ? false : value.isLessThan(MIN_DELEGATION_AMOUNT)),
     [amount, value],
   );
 
@@ -104,9 +90,7 @@ const PickAmount = (props: PickAmountPropsType) => {
    */
 
   const amountRemainingInvalid = useMemo(
-    () =>
-      amount.minus(value).isLessThan(MIN_DELEGATION_AMOUNT) &&
-      !amount.minus(value).isZero(),
+    () => amount.minus(value).isLessThan(MIN_DELEGATION_AMOUNT) && !amount.minus(value).isZero(),
     [amount, value],
   );
 
@@ -197,9 +181,7 @@ const PickAmount = (props: PickAmountPropsType) => {
                         backgroundColor: ratio.value.isEqualTo(value)
                           ? colors.primary.c80
                           : undefined,
-                        borderColor: ratio.value.isEqualTo(value)
-                          ? undefined
-                          : colors.neutral.c60,
+                        borderColor: ratio.value.isEqualTo(value) ? undefined : colors.neutral.c60,
                       },
                     ]}
                     onPress={() => onRatioPress(ratio)}
@@ -207,9 +189,7 @@ const PickAmount = (props: PickAmountPropsType) => {
                     <LText
                       style={styles.ratioLabel}
                       color={
-                        ratio.value.isEqualTo(value)
-                          ? colors.neutral.c100
-                          : colors.neutral.c60
+                        ratio.value.isEqualTo(value) ? colors.neutral.c100 : colors.neutral.c60
                       }
                     >
                       {ratio.label}
@@ -219,20 +199,12 @@ const PickAmount = (props: PickAmountPropsType) => {
               </View>
             </View>
 
-            <View
-              style={[
-                styles.footer,
-                { backgroundColor: colors.background.main },
-              ]}
-            >
+            <View style={[styles.footer, { backgroundColor: colors.background.main }]}>
               {hasErrors && (
                 <View style={styles.labelContainer}>
                   <Warning size={16} color={colors.error.c50} />
 
-                  <LText
-                    style={styles.assetsRemaining}
-                    color={colors.error.c50}
-                  >
+                  <LText style={styles.assetsRemaining} color={colors.error.c50}>
                     <Trans
                       i18nKey={
                         amountAboveMaximum
@@ -253,10 +225,7 @@ const PickAmount = (props: PickAmountPropsType) => {
               {allAssetsUndelegated && (
                 <View style={styles.labelContainer}>
                   <Check size={16} color={colors.success.c50} />
-                  <LText
-                    style={styles.assetsRemaining}
-                    color={colors.success.c50}
-                  >
+                  <LText style={styles.assetsRemaining} color={colors.success.c50}>
                     <Trans i18nKey="elrond.undelegation.flow.steps.amount.allAssetsUsed" />
                   </LText>
                 </View>
@@ -270,7 +239,7 @@ const PickAmount = (props: PickAmountPropsType) => {
                       values={{
                         amount: formatCurrencyUnit(unit, amount.minus(value), {
                           showCode: true,
-                          locale,
+                          locale: locale,
                         }),
                       }}
                     >
@@ -285,9 +254,7 @@ const PickAmount = (props: PickAmountPropsType) => {
                 event="Elrond UndelegationAmountContinueBtn"
                 onPress={onContinue}
                 type="primary"
-                title={
-                  <Trans i18nKey="elrond.delegation.flow.steps.amount.cta" />
-                }
+                title={<Trans i18nKey="elrond.delegation.flow.steps.amount.cta" />}
               />
             </View>
           </View>

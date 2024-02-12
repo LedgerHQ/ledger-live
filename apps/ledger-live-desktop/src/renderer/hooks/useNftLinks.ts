@@ -1,20 +1,21 @@
 import { useMemo } from "react";
-import { useDispatch } from "react-redux";
-import { TFunction, useTranslation } from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
+import { TFunction } from "i18next";
+import { useTranslation } from "react-i18next";
 import { Account, ProtoNFT, NFTMetadata, NFTMedias } from "@ledgerhq/types-live";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { Icons } from "@ledgerhq/react-ui";
+import { IconsLegacy } from "@ledgerhq/react-ui";
 import { openModal } from "~/renderer/actions/modals";
 import IconOpensea from "~/renderer/icons/Opensea";
 import IconRarible from "~/renderer/icons/Rarible";
-import IconGlobe from "~/renderer/icons/Globe";
 import { openURL } from "~/renderer/linking";
-import IconBan from "~/renderer/icons/Ban";
 import { getMetadataMediaTypes } from "~/helpers/nft";
 import { setDrawer } from "../drawers/Provider";
 import CustomImage from "~/renderer/screens/customImage";
 import NFTViewerDrawer from "~/renderer/drawers/NFTViewerDrawer";
 import { ContextMenuItemType } from "../components/ContextMenu/ContextMenuWrapper";
+import { devicesModelListSelector } from "../reducers/settings";
+import { DeviceModelId } from "@ledgerhq/devices";
 
 function safeList(items: (ContextMenuItemType | "" | undefined)[]): ContextMenuItemType[] {
   return items.filter(Boolean) as ContextMenuItemType[];
@@ -54,7 +55,7 @@ const linksPerCurrency: Record<
         label: t("NFT.viewer.actions.open", {
           viewer: "Explorer",
         }),
-        Icon: IconGlobe,
+        Icon: IconsLegacy.GlobeMedium,
         type: "external",
         callback: () => openURL(links.explorer),
       },
@@ -89,7 +90,7 @@ const linksPerCurrency: Record<
         label: t("NFT.viewer.actions.open", {
           viewer: "Explorer",
         }),
-        Icon: IconGlobe,
+        Icon: IconsLegacy.GlobeMedium,
         type: "external",
         callback: () => openURL(links.explorer),
       },
@@ -109,7 +110,7 @@ export default (
     () => ({
       id: "hide-collection",
       label: t("hideNftCollection.hideCTA"),
-      Icon: IconBan,
+      Icon: IconsLegacy.NoneMedium,
       callback: () => {
         return dispatch(
           openModal("MODAL_HIDE_NFT_COLLECTION", {
@@ -137,44 +138,55 @@ export default (
   const customImage = useMemo(() => {
     const img: ContextMenuItemType = {
       id: "custom-image",
-      label: "Custom image",
-      // TODO: get proper wording for this
-      Icon: Icons.ToolsMedium,
+      label: t("customImage.cta"),
+      Icon: IconsLegacy.PhotographMedium,
       callback: () => {
         if (customImageUri)
-          setDrawer(CustomImage, {
-            imageUri: customImageUri,
-            isFromNFTEntryPoint: true,
-            reopenPreviousDrawer: isInsideDrawer
-              ? () =>
-                  setDrawer(NFTViewerDrawer, {
-                    account,
-                    nftId: nft.id,
-                    isOpen: true,
-                  })
-              : undefined,
-          });
+          setDrawer(
+            CustomImage,
+            {
+              imageUri: customImageUri,
+              isFromNFTEntryPoint: true,
+              reopenPreviousDrawer: isInsideDrawer
+                ? () =>
+                    setDrawer(
+                      NFTViewerDrawer,
+                      {
+                        account,
+                        nftId: nft.id,
+                        isOpen: true,
+                      },
+                      { forceDisableFocusTrap: true },
+                    )
+                : undefined,
+            },
+            { forceDisableFocusTrap: true },
+          );
       },
     };
     return img;
-  }, [account, customImageUri, isInsideDrawer, nft.id]);
+  }, [account, customImageUri, isInsideDrawer, nft.id, t]);
 
   const customImageEnabled = useFeature("customImage")?.enabled;
+  const devicesModelList = useSelector(devicesModelListSelector);
   const links = useMemo(() => {
     const metadataLinks = linksPerCurrency[account.currency.id]?.(t, metadata?.links) || [];
     return [
       ...metadataLinks,
-      ...(customImageEnabled && customImageUri ? [customImage] : []),
+      ...(devicesModelList?.includes(DeviceModelId.stax) && customImageEnabled && customImageUri
+        ? [customImage]
+        : []),
       hideCollection,
     ];
   }, [
     account.currency.id,
-    hideCollection,
-    metadata?.links,
-    customImageUri,
-    customImageEnabled,
-    customImage,
     t,
+    metadata?.links,
+    devicesModelList,
+    customImageEnabled,
+    customImageUri,
+    customImage,
+    hideCollection,
   ]);
   return links;
 };

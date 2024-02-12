@@ -2,14 +2,14 @@ import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "styled-components/native";
-import { ScreenName } from "../../const";
-import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
-import Info from "../../screens/FreezeFunds/01-Info";
-import Amount from "../../screens/FreezeFunds/02-Amount";
-import SelectDevice from "../../screens/SelectDevice";
-import ConnectDevice from "../../screens/ConnectDevice";
-import ValidationSuccess from "../../screens/FreezeFunds/04-ValidationSuccess";
-import ValidationError from "../../screens/FreezeFunds/04-ValidationError";
+import { ScreenName } from "~/const";
+import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
+import Info from "~/screens/FreezeFunds/01-Info";
+import Amount from "~/screens/FreezeFunds/02-Amount";
+import SelectDevice from "~/screens/SelectDevice";
+import ConnectDevice from "~/screens/ConnectDevice";
+import ValidationSuccess from "~/screens/FreezeFunds/04-ValidationSuccess";
+import ValidationError from "~/screens/FreezeFunds/04-ValidationError";
 import StepHeader from "../StepHeader";
 import { FreezeNavigatorParamList } from "./types/FreezeNavigator";
 
@@ -19,19 +19,14 @@ const totalSteps = "3";
 export default function FreezeNavigator() {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const stackNavConfig = useMemo(
-    () => getStackNavigatorConfig(colors, true),
-    [colors],
-  );
+  const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
   return (
     <Stack.Navigator screenOptions={stackNavConfig}>
       <Stack.Screen
         name={ScreenName.FreezeInfo}
         component={Info}
         options={{
-          headerTitle: () => (
-            <StepHeader title={t("freeze.stepperHeader.info")} />
-          ),
+          headerTitle: () => <StepHeader title={t("freeze.stepperHeader.info")} />,
         }}
       />
       <Stack.Screen

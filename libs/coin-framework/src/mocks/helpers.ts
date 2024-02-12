@@ -1,8 +1,5 @@
 import Prando from "prando";
-import type {
-  CryptoCurrency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 /**
  * @memberof mock/account
@@ -22,13 +19,10 @@ export function genHex(length: number, rng: Prando): string {
 /**
  * @memberof mock/account
  */
-export function genAddress(
-  currency: CryptoCurrency | TokenCurrency,
-  rng: Prando
-): string {
+export function genAddress(currency: CryptoCurrency | TokenCurrency, rng: Prando): string {
   if (
     currency.type === "CryptoCurrency"
-      ? currency.family === "ethereum" // all eth family
+      ? currency.family === "evm" // all evm family
       : currency.id.startsWith("ethereum") // erc20 case
   ) {
     return `0x${genHex(40, rng)}`;

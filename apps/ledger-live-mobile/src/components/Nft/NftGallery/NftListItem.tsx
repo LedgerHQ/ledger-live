@@ -1,8 +1,8 @@
 import React, { memo, useCallback } from "react";
 import { StyleSheet } from "react-native";
-import { useNftMetadata } from "@ledgerhq/live-common/nft/index";
+import { useNftMetadata } from "@ledgerhq/live-nft-react";
 import { NFTMetadata, ProtoNFT } from "@ledgerhq/types-live";
-import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
+import { NFTResource } from "@ledgerhq/live-nft/types";
 import { Box, Flex, Tag, Text } from "@ledgerhq/native-ui";
 import styled, { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
 import { useTranslation } from "react-i18next";
@@ -15,7 +15,7 @@ import Skeleton from "../../Skeleton";
 import { NftSelectionCheckbox } from "../NftSelectionCheckbox";
 import NftListItemFloorPriceRow from "./NftListItemFloorPriceRow";
 import { DesignedForStaxText } from "../DesignedForStax";
-import { knownDeviceModelIdsSelector } from "../../../reducers/settings";
+import { knownDeviceModelIdsSelector } from "~/reducers/settings";
 
 type Props = {
   nft: ProtoNFT;
@@ -26,7 +26,7 @@ type Props = {
 };
 
 const StyledTouchableOpacity = styled.TouchableOpacity<BaseStyledProps>`
-  margin-bottom: ${p => p.theme.space[3]}px;
+  margin-bottom: ${p => p.theme.space[7]}px;
   border-radius: ${p => p.theme.radii[1]}px;
   background-color: ${props => props.theme.colors.background.main};
 `;
@@ -53,11 +53,7 @@ const NftCardView = ({
   const loading = status === "loading";
 
   return (
-    <StyledTouchableOpacity
-      bg="background.main"
-      onPress={onPress}
-      onLongPress={onLongPress}
-    >
+    <StyledTouchableOpacity bg="background.main" onPress={onPress} onLongPress={onLongPress}>
       <NftMediaComponent
         status={status}
         metadata={metadata}
@@ -85,7 +81,7 @@ const NftCardView = ({
               {displayText(metadata?.nftName)}
             </Text>
           </Skeleton>
-          <FeatureToggle feature="counterValue">
+          <FeatureToggle featureId="counterValue">
             <NftListItemFloorPriceRow nft={nft} />
           </FeatureToggle>
         </Flex>
@@ -97,18 +93,8 @@ const NftCardView = ({
 const NftCardMemo = memo(NftCardView);
 // this technique of splitting the usage of context and memoing the presentational component is used to prevent
 // the rerender of all NftCards whenever the NFT cache changes (whenever a new NFT is loaded)
-const NftListItem = ({
-  nft,
-  onPress,
-  onLongPress,
-  isSelected,
-  selectable,
-}: Props) => {
-  const nftMetadata = useNftMetadata(
-    nft?.contract,
-    nft?.tokenId,
-    nft?.currencyId,
-  );
+const NftListItem = ({ nft, onPress, onLongPress, isSelected, selectable }: Props) => {
+  const nftMetadata = useNftMetadata(nft?.contract, nft?.tokenId, nft?.currencyId);
   // FIXME: wtf is this metadata property and where does it come from?
   const { status, metadata } = nftMetadata as NFTResource & {
     metadata: NFTMetadata;

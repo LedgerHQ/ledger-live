@@ -1,12 +1,6 @@
-import {
-  getAccountCurrency,
-  getAccountUnit,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import {
-  formatCurrencyUnit,
-  getCurrencyColor,
-} from "@ledgerhq/live-common/currencies/index";
+import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useValidators } from "@ledgerhq/live-common/families/solana/react";
 import {
   Transaction as SolanaTransaction,
@@ -20,36 +14,28 @@ import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import { capitalize } from "lodash/fp";
-import React, {
-  ReactNode,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { Trans } from "react-i18next";
 import { Animated, StyleSheet, View, TextStyle, StyleProp } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/Feather";
 import { useSelector } from "react-redux";
-import { TrackScreen } from "../../../analytics";
+import { TrackScreen } from "~/analytics";
 import { rgba } from "../../../colors";
-import Button from "../../../components/Button";
-import Circle from "../../../components/Circle";
-import CurrencyIcon from "../../../components/CurrencyIcon";
-import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
-import Touchable from "../../../components/Touchable";
-import { ScreenName } from "../../../const";
-import { accountScreenSelector } from "../../../reducers/accounts";
+import Button from "~/components/Button";
+import Circle from "~/components/Circle";
+import CurrencyIcon from "~/components/CurrencyIcon";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import Touchable from "~/components/Touchable";
+import { ScreenName } from "~/const";
+import { accountScreenSelector } from "~/reducers/accounts";
 import DelegatingContainer from "../../tezos/DelegatingContainer";
 import ValidatorImage from "../shared/ValidatorImage";
-import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { DelegationAction, SolanaDelegationFlowParamList } from "./types";
+import TranslatedError from "../../../components/TranslatedError";
 
-type Props = StackNavigatorProps<
-  SolanaDelegationFlowParamList,
-  ScreenName.DelegationSummary
->;
+type Props = StackNavigatorProps<SolanaDelegationFlowParamList, ScreenName.DelegationSummary>;
 
 export default function DelegationSummary({ navigation, route }: Props) {
   const { delegationAction, validator } = route.params;
@@ -77,13 +63,11 @@ export default function DelegationSummary({ navigation, route }: Props) {
       return undefined;
     }
 
-    return validators.find(
-      v => v.voteAccount === stake.delegation?.voteAccAddr,
-    );
+    return validators.find(v => v.voteAccount === stake.delegation?.voteAccAddr);
   }, [validators, validator, delegationAction]);
 
-  const { transaction, setTransaction, status, bridgePending, bridgeError } =
-    useBridgeTransaction(() => ({
+  const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
+    () => ({
       account,
       parentAccount,
       transaction: tx({
@@ -92,7 +76,8 @@ export default function DelegationSummary({ navigation, route }: Props) {
         amount: route.params.amount,
         chosenValidator,
       }),
-    }));
+    }),
+  );
 
   useEffect(() => {
     setTransaction(
@@ -103,13 +88,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
         chosenValidator,
       }),
     );
-  }, [
-    delegationAction,
-    chosenValidator,
-    validators,
-    setTransaction,
-    route.params.amount,
-  ]);
+  }, [delegationAction, chosenValidator, validators, setTransaction, route.params.amount]);
 
   invariant(transaction, "transaction must be defined");
   invariant(transaction.family === "solana", "transaction solana");
@@ -162,18 +141,35 @@ export default function DelegationSummary({ navigation, route }: Props) {
 
   const onContinue = useCallback(async () => {
     navigation.navigate(ScreenName.DelegationSelectDevice, {
+      ...route.params,
       accountId: account.id,
       parentId: parentAccount?.id,
       transaction: transaction as SolanaTransaction,
       status,
+      validatorName: chosenValidator?.name,
     });
-  }, [navigation, account.id, parentAccount?.id, transaction, status]);
+  }, [
+    route.params,
+    navigation,
+    account.id,
+    parentAccount?.id,
+    transaction,
+    status,
+    chosenValidator?.name,
+  ]);
 
   const hasErrors = Object.keys(status.errors).length > 0;
+  const error = Object.values(status.errors)[0];
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-      <TrackScreen category="DelegationFlow" name="Summary" />
+      <TrackScreen
+        category="DelegationFlow"
+        name="Summary"
+        flow="stake"
+        action="delegation"
+        currency="sol"
+      />
 
       <View style={styles.body}>
         <DelegatingContainer
@@ -188,17 +184,8 @@ export default function DelegationSummary({ navigation, route }: Props) {
           }
           right={
             supportValidatorChange(delegationAction) ? (
-              <Touchable
-                event="DelegationFlowSummaryChangeCircleBtn"
-                onPress={onChangeDelegator}
-              >
-                <Circle
-                  size={70}
-                  style={[
-                    styles.validatorCircle,
-                    { borderColor: colors.primary },
-                  ]}
-                >
+              <Touchable event="DelegationFlowSummaryChangeCircleBtn" onPress={onChangeDelegator}>
+                <Circle size={70} style={[styles.validatorCircle, { borderColor: colors.primary }]}>
                   <Animated.View
                     style={{
                       transform: [
@@ -210,9 +197,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
                   >
                     <ValidatorImage
                       imgUrl={chosenValidator?.avatarUrl}
-                      name={
-                        chosenValidator?.name ?? chosenValidator?.voteAccount
-                      }
+                      name={chosenValidator?.name ?? chosenValidator?.voteAccount}
                     />
                   </Animated.View>
                   <ChangeDelegator />
@@ -239,6 +224,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
         </View>
       </View>
       <View style={styles.footer}>
+        <TranslatedError error={error} />
         <Button
           event="SummaryContinue"
           type="primary"
@@ -267,16 +253,10 @@ function tx({
   return {
     family: "solana",
     amount: new BigNumber(
-      delegationAction.kind === "new"
-        ? amount ?? 0
-        : txAmount(delegationAction),
+      delegationAction.kind === "new" ? amount ?? 0 : txAmount(delegationAction),
     ),
     recipient: "",
-    model: txModelByDelegationAction(
-      delegationAction,
-      defaultValidator,
-      chosenValidator,
-    ),
+    model: txModelByDelegationAction(delegationAction, defaultValidator, chosenValidator),
   };
 }
 
@@ -408,8 +388,7 @@ function txModelByDelegationAction(
         kind: "stake.delegate",
         uiState: {
           stakeAccAddr,
-          voteAccAddr:
-            chosenValidator?.voteAccount ?? delegation?.voteAccAddr ?? "-",
+          voteAccAddr: chosenValidator?.voteAccount ?? delegation?.voteAccAddr ?? "-",
         },
       };
     case "deactivate":
@@ -432,10 +411,7 @@ function txModelByDelegationAction(
 }
 
 function supportValidatorChange(delegationAction: DelegationAction) {
-  return (
-    delegationAction.kind === "new" ||
-    delegationAction.stakeAction === "activate"
-  );
+  return delegationAction.kind === "new" || delegationAction.stakeAction === "activate";
 }
 
 function undelegation(delegationAction: DelegationAction) {
@@ -462,9 +438,7 @@ function SummaryWords({
   onChangeAmount: () => void;
 }) {
   const i18nActionKey =
-    delegationAction.kind === "new"
-      ? "iDelegate"
-      : `i${capitalize(delegationAction.stakeAction)}`;
+    delegationAction.kind === "new" ? "iDelegate" : `i${capitalize(delegationAction.stakeAction)}`;
 
   const unit = getAccountUnit(account);
   const formattedAmount = formatCurrencyUnit(unit, new BigNumber(amount), {
@@ -494,18 +468,12 @@ function SummaryWords({
             <Trans i18nKey="solana.delegation.delegatedTo" />
           )}
         </Words>
-        {delegationAction.kind === "new" ||
-        delegationAction.stakeAction === "activate" ? (
+        {delegationAction.kind === "new" || delegationAction.stakeAction === "activate" ? (
           <Touchable onPress={onChangeValidator}>
-            <Selectable
-              name={validator?.name ?? validator?.voteAccount ?? "-"}
-            />
+            <Selectable name={validator?.name ?? validator?.voteAccount ?? "-"} />
           </Touchable>
         ) : (
-          <Selectable
-            readOnly
-            name={validator?.name ?? validator?.voteAccount ?? "-"}
-          />
+          <Selectable readOnly name={validator?.name ?? validator?.voteAccount ?? "-"} />
         )}
       </Line>
     </>
@@ -516,9 +484,7 @@ const AccountBalanceTag = ({ account }: { account: AccountLike }) => {
   const unit = getAccountUnit(account);
   const { colors } = useTheme();
   return (
-    <View
-      style={[styles.accountBalanceTag, { backgroundColor: colors.lightFog }]}
-    >
+    <View style={[styles.accountBalanceTag, { backgroundColor: colors.lightFog }]}>
       <Text
         fontWeight="semiBold"
         numberOfLines={1}
@@ -563,36 +529,15 @@ const Words = ({
   </Text>
 );
 
-const Selectable = ({
-  name,
-  readOnly,
-}: {
-  name: string;
-  readOnly?: boolean;
-}) => {
+const Selectable = ({ name, readOnly }: { name: string; readOnly?: boolean }) => {
   const { colors } = useTheme();
   return (
-    <View
-      style={[
-        styles.validatorSelection,
-        { backgroundColor: rgba(colors.live, 0.2) },
-      ]}
-    >
-      <Text
-        fontWeight="bold"
-        numberOfLines={1}
-        style={styles.validatorSelectionText}
-        color="live"
-      >
+    <View style={[styles.validatorSelection, { backgroundColor: rgba(colors.live, 0.2) }]}>
+      <Text fontWeight="bold" numberOfLines={1} style={styles.validatorSelectionText} color="live">
         {name}
       </Text>
       {readOnly ? null : (
-        <View
-          style={[
-            styles.validatorSelectionIcon,
-            { backgroundColor: colors.live },
-          ]}
-        >
+        <View style={[styles.validatorSelectionIcon, { backgroundColor: colors.live }]}>
           <Icon size={16} name="edit-2" color={colors.white} />
         </View>
       )}

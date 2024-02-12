@@ -65,19 +65,17 @@ describe("Domain Service", () => {
       it.each(
         // According to doc, max value possible for caracters is a uint16.
         // @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/fromCharCode#parameters
-        new Array(0xffff)
-          .fill(null)
-          .map((_, i) => ({ code: i, value: String.fromCharCode(i) }))
+        new Array(0xffff).fill(null).map((_, i) => ({ code: i, value: String.fromCharCode(i) })),
       )(
         "should accept or reject a domain depending on if it's containing ASCII or non ASCII caracters. Testing: {%o}",
-        (char) => {
+        char => {
           if (validCharCodes.includes(char.code)) {
             // 127 => "~" everything after that caracter is refused
             expect(validateDomain("randomDomain" + char.value)).toBe(true);
           } else {
             expect(validateDomain("randomDomain" + char.value)).toBe(false);
           }
-        }
+        },
       );
     });
   });

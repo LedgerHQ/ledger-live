@@ -3,37 +3,20 @@ import { Subject } from "rxjs";
 import flatMap from "lodash/flatMap";
 import semver from "semver";
 import { getDeviceModel } from "@ledgerhq/devices";
-import {
-  AppOp,
-  State,
-  Action,
-  ListAppsResult,
-  AppsDistribution,
-  SkipReason,
-} from "./types";
-import {
-  findCryptoCurrency,
-  findCryptoCurrencyById,
-  isCurrencySupported,
-} from "../currencies";
+import { AppOp, State, Action, ListAppsResult, AppsDistribution, SkipReason } from "./types";
+import { findCryptoCurrency, findCryptoCurrencyById, isCurrencySupported } from "../currencies";
 import { LatestFirmwareVersionRequired, NoSuchAppOnProvider } from "../errors";
 import { App } from "@ledgerhq/types-live";
 
 export const initState = (
-  {
-    deviceModelId,
-    appsListNames,
-    installed,
-    appByName,
-    ...listAppsResult
-  }: ListAppsResult,
-  appsToRestore?: string[]
+  { deviceModelId, appsListNames, installed, appByName, ...listAppsResult }: ListAppsResult,
+  appsToRestore?: string[],
 ): State => {
   let state: State = {
     ...listAppsResult,
     installed,
     appByName,
-    apps: appsListNames.map((name) => appByName[name]).filter(Boolean),
+    apps: appsListNames.map(name => appByName[name]).filter(Boolean),
     deviceModel: getDeviceModel(deviceModelId),
     recentlyInstalledApps: [],
     installQueue: [],
@@ -47,15 +30,13 @@ export const initState = (
 
   if (appsToRestore) {
     state = appsToRestore
-      .filter(
-        (name) => appByName[name] && !installed.some((a) => a.name === name)
-      )
+      .filter(name => appByName[name] && !installed.some(a => a.name === name))
       .map(
-        (name) =>
+        name =>
           <Action>{
             type: "install",
             name,
-          }
+          },
       )
       .reduce(reducer, state);
   }
@@ -65,17 +46,14 @@ export const initState = (
 
 // ^TODO move this to legacyDependencies.js
 // we should have dependency as part of the data!
-const reorderInstallQueue = (
-  appByName: Record<string, App>,
-  apps: string[]
-): string[] => {
+const reorderInstallQueue = (appByName: Record<string, App>, apps: string[]): string[] => {
   const list: string[] = [];
-  apps.forEach((app) => {
+  apps.forEach(app => {
     if (list.includes(app)) return;
 
     if (app in appByName) {
       const deps = appByName[app].dependencies;
-      deps.forEach((dep) => {
+      deps.forEach(dep => {
         if (apps.includes(dep) && !list.includes(dep)) {
           list.push(dep);
         }
@@ -87,16 +65,10 @@ const reorderInstallQueue = (
   return list;
 };
 
-const reorderUninstallQueue = (
-  appByName: Record<string, App>,
-  apps: string[]
-): string[] =>
+const reorderUninstallQueue = (appByName: Record<string, App>, apps: string[]): string[] =>
   reorderInstallQueue(appByName, apps.slice(0).reverse()).reverse();
 
-const findDependents = (
-  appByName: Record<string, App>,
-  name: string
-): string[] => {
+const findDependents = (appByName: Record<string, App>, name: string): string[] => {
   const all: string[] = [];
 
   for (const k in appByName) {
@@ -133,33 +105,26 @@ export const reducer = (state: State, action: Action): State => {
         let nextState;
 
         if (appOp.type === "install") {
-          const app = state.apps.find((a) => a.name === appOp.name);
+          const app = state.apps.find(a => a.name === appOp.name);
           nextState = {
             ...state,
             currentAppOp: null,
             currentProgressSubject: null,
             currentError: null,
-            recentlyInstalledApps: state.recentlyInstalledApps.concat(
-              appOp.name
-            ),
+            recentlyInstalledApps: state.recentlyInstalledApps.concat(appOp.name),
             // append the app to known installed apps
             installed: state.installed
-              .filter((o) => o.name !== appOp.name)
+              .filter(o => o.name !== appOp.name)
               .concat({
                 name: appOp.name,
                 updated: true,
                 hash: app ? app.hash : "",
-                blocks:
-                  app && app.bytes
-                    ? Math.ceil(app.bytes / getBlockSize(state))
-                    : 0,
+                blocks: app && app.bytes ? Math.ceil(app.bytes / getBlockSize(state)) : 0,
                 version: app ? app.version : "",
                 availableVersion: app ? app.version : "",
               }),
             // remove the install action
-            installQueue: state.installQueue.filter(
-              (name) => appOp.name !== name
-            ),
+            installQueue: state.installQueue.filter(name => appOp.name !== name),
           };
         } else {
           nextState = {
@@ -168,18 +133,13 @@ export const reducer = (state: State, action: Action): State => {
             currentProgressSubject: null,
             currentError: null,
             // remove apps to known installed apps
-            installed: state.installed.filter((i) => appOp.name !== i.name),
+            installed: state.installed.filter(i => appOp.name !== i.name),
             // remove the uninstall action
-            uninstallQueue: state.uninstallQueue.filter(
-              (name) => appOp.name !== name
-            ),
+            uninstallQueue: state.uninstallQueue.filter(name => appOp.name !== name),
           };
         }
 
-        if (
-          nextState.installQueue.length + nextState.uninstallQueue.length ===
-          0
-        ) {
+        if (nextState.installQueue.length + nextState.uninstallQueue.length === 0) {
           nextState.updateAllQueue = [];
         }
 
@@ -231,7 +191,12 @@ export const reducer = (state: State, action: Action): State => {
 
     case "recover":
       return { ...state, currentError: null };
-
+    case "wiped":
+      // Reconciliate an already achieved wipe via single uninstall apdu
+      return {
+        ...state,
+        installed: [],
+      };
     case "wipe":
       return {
         ...state,
@@ -239,7 +204,7 @@ export const reducer = (state: State, action: Action): State => {
         installQueue: [],
         uninstallQueue: reorderUninstallQueue(
           state.appByName,
-          state.installed.map(({ name }) => name)
+          state.installed.map(({ name }) => name),
         ),
       };
 
@@ -248,21 +213,18 @@ export const reducer = (state: State, action: Action): State => {
       let uninstallList = state.uninstallQueue.slice(0);
       state.installed
         .filter(({ updated, name }) => !updated && state.appByName[name])
-        .forEach((app) => {
+        .forEach(app => {
           const dependents = state.installed
-            .filter((a) => {
+            .filter(a => {
               const depApp = state.appByName[a.name];
               return depApp && depApp.dependencies.includes(app.name);
             })
-            .map((a) => a.name);
+            .map(a => a.name);
           uninstallList = uninstallList.concat([app.name, ...dependents]);
           installList = installList.concat([app.name, ...dependents]);
         });
       const installQueue = reorderInstallQueue(state.appByName, installList);
-      const uninstallQueue = reorderUninstallQueue(
-        state.appByName,
-        uninstallList
-      );
+      const uninstallQueue = reorderUninstallQueue(state.appByName, uninstallList);
 
       /** since install queue === uninstall queue in this case we can map the update queue to either one */
       const updateAllQueue = installQueue;
@@ -283,7 +245,7 @@ export const reducer = (state: State, action: Action): State => {
         return state;
       }
 
-      const existing = state.installed.find((app) => app.name === name);
+      const existing = state.installed.find(app => app.name === name);
       const skippedAppOps = [...state.skippedAppOps];
 
       if (existing && existing.updated && state.installedAvailable) {
@@ -302,18 +264,12 @@ export const reducer = (state: State, action: Action): State => {
       if (
         !appToInstall &&
         state.firmware?.updateAvailable?.final?.version &&
-        semver.lt(
-          state.deviceInfo.version,
-          state.firmware?.updateAvailable?.final?.version || ""
-        )
+        semver.lt(state.deviceInfo.version, state.firmware?.updateAvailable?.final?.version || "")
       ) {
-        throw new LatestFirmwareVersionRequired(
-          "LatestFirmwareVersionRequired",
-          {
-            current: state.deviceInfo.version,
-            latest: state.firmware?.updateAvailable?.final?.version,
-          }
-        );
+        throw new LatestFirmwareVersionRequired("LatestFirmwareVersionRequired", {
+          current: state.deviceInfo.version,
+          latest: state.firmware?.updateAvailable?.final?.version,
+        });
       }
 
       // The target application was not found in the specified provider.
@@ -332,18 +288,14 @@ export const reducer = (state: State, action: Action): State => {
       }
 
       const dependencies = appToInstall.dependencies;
-      const dependentsOfDep = flatMap(dependencies, (dep) =>
-        findDependents(state.appByName, dep)
-      );
+      const dependentsOfDep = flatMap(dependencies, dep => findDependents(state.appByName, dep));
       const depsInstalledOutdated = state.installed.filter(
-        (a) => dependencies.includes(a.name) && !a.updated
+        a => dependencies.includes(a.name) && !a.updated,
       );
       let installList = state.installQueue;
 
       // installing an app will remove if planned for uninstalling
-      let uninstallList = state.uninstallQueue.filter(
-        (u) => name !== u && !dependencies.includes(u)
-      );
+      let uninstallList = state.uninstallQueue.filter(u => name !== u && !dependencies.includes(u));
 
       if (state.uninstallQueue.length !== uninstallList.length) {
         // app was asked for uninstall so it means we need to just cancel.
@@ -352,38 +304,28 @@ export const reducer = (state: State, action: Action): State => {
         // if app is already installed but outdated, we'll need to update related deps
         if ((existing && !existing.updated) || depsInstalledOutdated.length) {
           // if app has installed direct dependent apps, we'll need to update them too
-          const directDependents = findDependents(state.appByName, name).filter(
-            (d) => state.installed.some((a) => a.name === d)
+          const directDependents = findDependents(state.appByName, name).filter(d =>
+            state.installed.some(a => a.name === d),
           );
           const outdated = state.installed
             .filter(
-              (a) =>
+              a =>
                 !a.updated &&
-                [
-                  name,
-                  ...dependencies,
-                  ...directDependents,
-                  ...dependentsOfDep,
-                ].includes(a.name)
+                [name, ...dependencies, ...directDependents, ...dependentsOfDep].includes(a.name),
             )
-            .map((a) => a.name);
+            .map(a => a.name);
           uninstallList = uninstallList.concat(outdated);
           installList = installList.concat(outdated);
         }
 
         installList = installList.concat([
-          ...dependencies.filter(
-            (d) => !state.installed.some((a) => a.name === d)
-          ),
+          ...dependencies.filter(d => !state.installed.some(a => a.name === d)),
           name,
         ]);
       }
 
       const installQueue = reorderInstallQueue(state.appByName, installList);
-      const uninstallQueue = reorderUninstallQueue(
-        state.appByName,
-        uninstallList
-      );
+      const uninstallQueue = reorderUninstallQueue(state.appByName, uninstallList);
       return { ...state, currentError: null, installQueue, uninstallQueue };
     }
     case "setCustomImage": {
@@ -404,11 +346,11 @@ export const reducer = (state: State, action: Action): State => {
       }
 
       // uninstalling an app will remove from installQueue as well as direct deps
-      const installQueue = state.installQueue.filter((u) => name !== u);
+      const installQueue = state.installQueue.filter(u => name !== u);
       let uninstallQueue = state.uninstallQueue;
 
       if (
-        state.installed.some((a) => a.name === name || a.name === "") ||
+        state.installed.some(a => a.name === name || a.name === "") ||
         action.force || // if installed unavailable and it was not a cancellation
         // TODO cover this in tests...
         (!state.installedAvailable && !state.installQueue.includes(name))
@@ -416,11 +358,11 @@ export const reducer = (state: State, action: Action): State => {
         uninstallQueue = reorderUninstallQueue(
           state.appByName,
           uninstallQueue.concat([
-            ...findDependents(state.appByName, name).filter((d) =>
-              state.installed.some((a) => a.name === d)
+            ...findDependents(state.appByName, name).filter(d =>
+              state.installed.some(a => a.name === d),
             ),
             name,
-          ])
+          ]),
         );
       }
 
@@ -435,7 +377,7 @@ const defaultConfig = {
 // calculate all size information useful for display
 export const distribute = (
   state: State,
-  config?: $Shape<typeof defaultConfig>
+  config?: $Shape<typeof defaultConfig>,
 ): AppsDistribution => {
   const { customImageBlocks } = state;
   const { warnMemoryRatio, sortApps } = { ...defaultConfig, ...config };
@@ -444,17 +386,19 @@ export const distribute = (
   const totalBlocks = Math.floor(totalBytes / blockSize);
   const osBytes = (state.firmware && state.firmware.bytes) || 0;
   const osBlocks = Math.ceil(osBytes / blockSize);
-  const appsSpaceBlocks = totalBlocks - osBlocks - customImageBlocks;
+  const languagePackBytes = state.installedLanguagePack?.bytes || 0;
+  const languagePackBlocks = Math.ceil(languagePackBytes / blockSize);
+  const appsSpaceBlocks = totalBlocks - osBlocks - customImageBlocks - languagePackBlocks;
   const appsSpaceBytes = appsSpaceBlocks * blockSize;
   let totalAppsBlocks = 0;
-  const apps = state.installed.map((app) => {
+  const apps = state.installed.map(app => {
     const { name, blocks } = app;
     totalAppsBlocks += blocks;
     const currency =
       // try to find the "official" currency when possible (2 currencies can have the same manager app and ticker)
-      findCryptoCurrency((c) => c.name === name) ||
+      findCryptoCurrency(c => c.name === name) ||
       // Else take the first one with that manager app
-      findCryptoCurrency((c) => c.managerAppName === name);
+      findCryptoCurrency(c => c.managerAppName === name);
     return {
       currency,
       name,
@@ -481,6 +425,7 @@ export const distribute = (
     appsSpaceBytes,
     totalAppsBlocks,
     customImageBlocks,
+    languagePackBlocks,
     totalAppsBytes,
     freeSpaceBlocks,
     freeSpaceBytes,
@@ -492,26 +437,14 @@ export function getBlockSize(state: State): number {
 }
 // tells if the state is "incomplete" to implement the Manager v2 feature
 // this happens when some apps are unrecognized
-export const isIncompleteState = (state: State): boolean =>
-  state.installed.some((a) => !a.name);
+export const isIncompleteState = (state: State): boolean => state.installed.some(a => !a.name);
 // calculate if a given state (typically a predicted one) is out of memory (meaning impossible to reach with a device)
 export const isOutOfMemoryState = (state: State): boolean => {
-  const blockSize = getBlockSize(state);
-  const totalBytes = state.deviceModel.memorySize;
-  const totalBlocks = Math.floor(totalBytes / blockSize);
-  const osBytes = (state.firmware && state.firmware.bytes) || 0;
-  const osBlocks = Math.ceil(osBytes / blockSize);
-  const appsSpaceBlocks = totalBlocks - osBlocks;
-  const totalAppsBlocks = state.installed.reduce(
-    (sum, app) => sum + app.blocks,
-    0
-  );
+  const { totalAppsBlocks, appsSpaceBlocks } = distribute(state);
   return totalAppsBlocks > appsSpaceBlocks;
 };
 export const isLiveSupportedApp = (app: App): boolean => {
-  const currency = app?.currencyId
-    ? findCryptoCurrencyById(app.currencyId)
-    : null;
+  const currency = app?.currencyId ? findCryptoCurrencyById(app.currencyId) : null;
   return currency ? isCurrencySupported(currency) : false;
 };
 export const updateAllProgress = (state: State): number => {
@@ -526,20 +459,20 @@ export const updateAllProgress = (state: State): number => {
 export const getActionPlan = (state: State): AppOp[] =>
   state.uninstallQueue
     .map(
-      (name) =>
+      name =>
         <AppOp>{
           type: "uninstall",
           name,
-        }
+        },
     )
     .concat(
       state.installQueue.map(
-        (name) =>
+        name =>
           <AppOp>{
             type: "install",
             name,
-          }
-      )
+          },
+      ),
     );
 // get next operation to perform
 export const getNextAppOp = (state: State): AppOp | null | undefined => {
@@ -560,14 +493,14 @@ export const predictOptimisticState = (state: State): State => {
   const s = { ...state, currentProgressSubject: null };
   return getActionPlan(s)
     .map(
-      (appOp) =>
+      appOp =>
         <Action>{
           type: "onRunnerEvent",
           event: {
             type: "runSuccess",
             appOp,
           },
-        }
+        },
     )
     .reduce(reducer, s);
 };

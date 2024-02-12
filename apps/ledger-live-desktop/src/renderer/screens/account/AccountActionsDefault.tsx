@@ -1,17 +1,17 @@
-import React, { ReactElement } from "react";
+import { Flex } from "@ledgerhq/react-ui";
+import React from "react";
 import { Trans } from "react-i18next";
+import Button from "~/renderer/components/ButtonV3";
+import IconExchange from "~/renderer/icons/Exchange";
+import IconSell from "~/renderer/icons/Plus";
 import IconReceive from "~/renderer/icons/Receive";
 import IconSend from "~/renderer/icons/Send";
 import IconSwap from "~/renderer/icons/Swap";
-import IconExchange from "~/renderer/icons/Exchange";
-import IconSell from "~/renderer/icons/Plus";
-import Button from "~/renderer/components/ButtonV3";
-import { Flex } from "@ledgerhq/react-ui";
 
 type Props = {
   onClick: () => void;
   iconComponent: JSX.Element;
-  labelComponent: ReactElement;
+  labelComponent: React.ReactNode;
   event?: string;
   eventProperties?: Record<string, unknown>;
   disabled?: boolean;

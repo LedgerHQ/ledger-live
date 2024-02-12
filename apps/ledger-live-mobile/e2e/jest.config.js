@@ -1,17 +1,14 @@
-module.exports = {
+module.exports = async () => ({
   rootDir: "..",
-  maxWorkers: 1,
+  maxWorkers: process.env.CI ? 2 : 1,
   preset: "ts-jest",
-  globals: {
-    "ts-jest": {
-      babelConfig: true,
-    },
-  },
   transform: {
-    "^.+\\.[tj]sx?$": [
+    "^.+\\.(js|jsx)?$": "babel-jest",
+    "^.+\\.(ts|tsx)?$": [
       "ts-jest",
       {
         babelConfig: "<rootDir>/e2e/babel.config.detox.js",
+        tsconfig: "<rootDir>/e2e/tsconfig.test.json",
       },
     ],
   },
@@ -23,4 +20,4 @@ module.exports = {
   globalTeardown: "detox/runners/jest/globalTeardown",
   testEnvironment: "<rootDir>/e2e/environment.js",
   verbose: true,
-};
+});

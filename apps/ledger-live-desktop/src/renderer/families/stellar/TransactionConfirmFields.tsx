@@ -1,10 +1,10 @@
 import invariant from "invariant";
 import React from "react";
-import { Transaction } from "@ledgerhq/live-common/generated/types";
+import { Transaction } from "@ledgerhq/live-common/families/stellar/types";
 import styled from "styled-components";
 import TransactionConfirmField from "~/renderer/components/TransactionConfirm/TransactionConfirmField";
 import Text from "~/renderer/components/Text";
-import { FieldComponentProps } from "~/renderer/components/TransactionConfirm";
+import { StellarFieldComponentProps } from "./types";
 const deviceMemoLabels = {
   MEMO_TEXT: "Memo Text",
   NO_MEMO: "Memo",
@@ -12,11 +12,7 @@ const deviceMemoLabels = {
   MEMO_HASH: "Memo Hash",
   MEMO_RETURN: "Memo Return",
 };
-const addressStyle = {
-  wordBreak: "break-all",
-  textAlign: "right",
-  maxWidth: "70%",
-};
+
 const WrappedAssetIssuer = styled(Text)`
   word-break: break-all;
   text-align: right;
@@ -24,10 +20,21 @@ const WrappedAssetIssuer = styled(Text)`
   padding-left: 20px;
 `;
 const StellarMemoField = ({ transaction }: { transaction: Transaction }) => {
-  invariant(transaction.family === "stellar", "stellar transaction");
   return (
-    <TransactionConfirmField label={deviceMemoLabels[transaction.memoType || "NO_MEMO"]}>
-      <Text style={addressStyle} ml={1} ff="Inter|Medium" color="palette.text.shade80" fontSize={3}>
+    <TransactionConfirmField
+      label={deviceMemoLabels[(transaction.memoType as keyof typeof deviceMemoLabels) || "NO_MEMO"]}
+    >
+      <Text
+        style={{
+          wordBreak: "break-all",
+          textAlign: "right",
+          maxWidth: "70%",
+        }}
+        ml={1}
+        ff="Inter|Medium"
+        color="palette.text.shade80"
+        fontSize={3}
+      >
         {transaction.memoValue ? `${transaction.memoValue} ` : "[none]"}
       </Text>
     </TransactionConfirmField>
@@ -35,14 +42,14 @@ const StellarMemoField = ({ transaction }: { transaction: Transaction }) => {
 };
 
 // NB once we support other networks, we can make this not hardcoded.
-const StellarNetworkField = ({ field }: FieldComponentProps) => (
+const StellarNetworkField = ({ field }: StellarFieldComponentProps) => (
   <TransactionConfirmField label={field.label}>
     <Text ff="Inter|Medium" color="palette.text.shade80" fontSize={3}>
       {"Public"}
     </Text>
   </TransactionConfirmField>
 );
-const StellarAssetCodeField = ({ transaction, field }: FieldComponentProps) => {
+const StellarAssetCodeField = ({ transaction, field }: StellarFieldComponentProps) => {
   invariant(transaction.family === "stellar", "stellar transaction");
   return (
     <TransactionConfirmField label={field.label}>
@@ -52,7 +59,7 @@ const StellarAssetCodeField = ({ transaction, field }: FieldComponentProps) => {
     </TransactionConfirmField>
   );
 };
-const StellarAssetIssuerField = ({ transaction, field }: FieldComponentProps) => {
+const StellarAssetIssuerField = ({ transaction, field }: StellarFieldComponentProps) => {
   invariant(transaction.family === "stellar", "stellar transaction");
   return (
     <TransactionConfirmField label={field.label}>

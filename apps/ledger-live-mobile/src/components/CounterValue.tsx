@@ -2,24 +2,18 @@ import React, { useState, useCallback, useMemo, useEffect } from "react";
 import { BigNumber } from "bignumber.js";
 import { useSelector } from "react-redux";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
-import {
-  useCalculate,
-  useCountervaluesPolling,
-} from "@ledgerhq/live-common/countervalues/react";
+import { useCalculate, useCountervaluesPolling } from "@ledgerhq/live-countervalues-react";
 import { TouchableOpacity, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
-import { counterValueCurrencySelector } from "../reducers/settings";
-import {
-  useTrackingPairs,
-  addExtraSessionTrackingPair,
-} from "../actions/general";
+import { counterValueCurrencySelector } from "~/reducers/settings";
+import { useTrackingPairs, addExtraSessionTrackingPair } from "~/actions/general";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import type { CurrencyUnitValueProps } from "./CurrencyUnitValue";
 import LText from "./LText";
 import Circle from "./Circle";
-import IconHelp from "../icons/Info";
+import IconHelp from "~/icons/Info";
 import QueuedDrawer from "./QueuedDrawer";
 
 type Props = {
@@ -33,7 +27,7 @@ type Props = {
   placeholderProps?: unknown;
   // as we can't render View inside Text, provide ability to pass
   // wrapper component from outside
-  Wrapper?: React.ComponentType;
+  Wrapper?: React.ComponentType<{ children: React.ReactNode }>;
   subMagnitude?: number;
   joinFragmentsSeparator?: string;
   alwaysShowValue?: boolean;
@@ -73,17 +67,12 @@ export default function CounterValue({
   currency,
   ...props
 }: Props) {
-  const value = BigNumber.isBigNumber(valueProp)
-    ? valueProp.toNumber()
-    : valueProp;
+  const value = BigNumber.isBigNumber(valueProp) ? valueProp.toNumber() : valueProp;
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const trackingPairs = useTrackingPairs();
   const cvPolling = useCountervaluesPolling();
   const hasTrackingPair = useMemo(
-    () =>
-      trackingPairs.some(
-        tp => tp.from === currency && tp.to === counterValueCurrency,
-      ),
+    () => trackingPairs.some(tp => tp.from === currency && tp.to === counterValueCurrency),
     [counterValueCurrency, currency, trackingPairs],
   );
   useEffect(() => {
@@ -93,6 +82,7 @@ export default function CounterValue({
       addExtraSessionTrackingPair({
         from: currency,
         to: counterValueCurrency,
+        startDate: new Date(),
       });
       t = setTimeout(cvPolling.poll, 2000); // poll after 2s to ensure debounced CV userSettings are effective after this update
     }
@@ -100,14 +90,7 @@ export default function CounterValue({
     return () => {
       if (t) clearTimeout(t);
     };
-  }, [
-    counterValueCurrency,
-    currency,
-    cvPolling,
-    cvPolling.poll,
-    hasTrackingPair,
-    trackingPairs,
-  ]);
+  }, [counterValueCurrency, currency, cvPolling, cvPolling.poll, hasTrackingPair, trackingPairs]);
   const countervalue = useCalculate({
     from: currency,
     to: counterValueCurrency,
@@ -121,11 +104,7 @@ export default function CounterValue({
   }
 
   const inner = (
-    <CurrencyUnitValue
-      {...props}
-      unit={counterValueCurrency.units[0]}
-      value={countervalue}
-    />
+    <CurrencyUnitValue {...props} unit={counterValueCurrency.units[0]} value={countervalue} />
   );
 
   if (Wrapper) {

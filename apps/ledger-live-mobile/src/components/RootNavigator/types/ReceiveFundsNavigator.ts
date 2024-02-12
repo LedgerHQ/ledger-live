@@ -1,17 +1,27 @@
 import {
   CryptoCurrency,
+  CryptoOrTokenCurrency,
   Currency,
   TokenCurrency,
 } from "@ledgerhq/types-cryptoassets";
 import { Device, DeviceModelId } from "@ledgerhq/types-devices";
 import { AccountLike } from "@ledgerhq/types-live";
-import type { ScreenName } from "../../../const";
+import type { ScreenName } from "~/const";
 
 export type ReceiveFundsStackParamList = {
   [ScreenName.ReceiveSelectCrypto]:
     | {
         filterCurrencyIds?: string[];
         currency?: string;
+      }
+    | undefined;
+  [ScreenName.DepositSelectNetwork]:
+    | {
+        filterCurrencyIds?: string[];
+        provider: {
+          currenciesByNetwork: CryptoOrTokenCurrency[];
+          providerId: string;
+        };
       }
     | undefined;
   [ScreenName.ReceiveSelectAccount]: {
@@ -54,19 +64,6 @@ export type ReceiveFundsStackParamList = {
     onError?: () => void;
   };
   [ScreenName.ReceiveConfirmation]: {
-    account?: AccountLike;
-    accountId: string;
-    parentId?: string;
-    modelId?: DeviceModelId;
-    verified?: boolean;
-    wired?: boolean;
-    device?: Device;
-    currency?: Currency;
-    createTokenAccount?: boolean;
-    onSuccess?: (_?: string) => void;
-    onError?: () => void;
-  };
-  [ScreenName.ReceiveVerificationConfirmation]: {
     account?: AccountLike;
     accountId: string;
     parentId?: string;

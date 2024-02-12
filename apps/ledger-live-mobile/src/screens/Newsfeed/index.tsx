@@ -5,15 +5,15 @@ import { TouchableHighlight } from "react-native-gesture-handler";
 import styled, { useTheme } from "styled-components/native";
 import { InAppBrowser } from "react-native-inappbrowser-reborn";
 import { useTranslation } from "react-i18next";
-import { track, TrackScreen } from "../../analytics";
-import { CryptopanicNewsWithMetadata } from "../../hooks/newsfeed/cryptopanicApi";
-import { inAppBrowserDefaultParams } from "../../components/InAppBrowser";
-import { useCryptopanicPosts } from "../../hooks/newsfeed/useCryptopanicPosts";
-import CryptopanicIcon from "../../icons/Cryptopanic";
-import Button from "../../components/wrappedUi/Button";
-import Skeleton from "../../components/Skeleton";
-import { ScreenName } from "../../const";
-import FormatRelativeTime from "../../components/DateFormat/FormatRelativeTime";
+import { track, TrackScreen } from "~/analytics";
+import { CryptopanicNewsWithMetadata } from "~/hooks/newsfeed/cryptopanicApi";
+import { inAppBrowserDefaultParams } from "~/components/InAppBrowser";
+import { useCryptopanicPosts } from "~/hooks/newsfeed/useCryptopanicPosts";
+import CryptopanicIcon from "~/icons/Cryptopanic";
+import Button from "~/components/wrappedUi/Button";
+import Skeleton from "~/components/Skeleton";
+import { ScreenName } from "~/const";
+import FormatRelativeTime from "~/components/DateFormat/FormatRelativeTime";
 
 const keyExtractor = (item: CryptopanicNewsWithMetadata) => item.id.toString();
 
@@ -33,24 +33,17 @@ function NewsfeedPage() {
   const theme = useTheme();
   const { colors, space, radii } = theme;
   const inAppBrowserParams = inAppBrowserDefaultParams(theme);
-  const {
-    posts,
-    hasMore,
-    loadingState,
-    ready,
-    loadMore,
-    refresh,
-    lastDataLoadingDate,
-  } = useCryptopanicPosts({
-    ...CRYPTOPANIC_DEFAULT_PARAMS,
-  });
+  const { posts, hasMore, loadingState, ready, loadMore, refresh, lastDataLoadingDate } =
+    useCryptopanicPosts({
+      ...CRYPTOPANIC_DEFAULT_PARAMS,
+    });
 
   const onClickItem = useCallback(
     async (news: CryptopanicNewsWithMetadata) => {
       const url = news?.source?.url || news.url;
       track("card_clicked", {
         url,
-        screen: ScreenName.Newsfeed,
+        page: ScreenName.Newsfeed,
       });
       if (await InAppBrowser.isAvailable()) {
         await InAppBrowser.open(url, {
@@ -76,10 +69,7 @@ function NewsfeedPage() {
         my={`${space[3]}px`}
         borderRadius={`${radii[2]}px`}
       >
-        <Container
-          underlayColor={colors.neutral.c30}
-          onPress={() => onClickItem(item)}
-        >
+        <Container underlayColor={colors.neutral.c30} onPress={() => onClickItem(item)}>
           <InformativeCard
             imageUrl={item?.metadata?.image || undefined}
             tag={
@@ -97,14 +87,7 @@ function NewsfeedPage() {
         </Container>
       </Skeleton>
     ),
-    [
-      colors.neutral.c30,
-      lastDataLoadingDate,
-      loadingState,
-      onClickItem,
-      radii,
-      space,
-    ],
+    [colors.neutral.c30, lastDataLoadingDate, loadingState, onClickItem, radii, space],
   );
 
   const ListHeaderComponent = useMemo(

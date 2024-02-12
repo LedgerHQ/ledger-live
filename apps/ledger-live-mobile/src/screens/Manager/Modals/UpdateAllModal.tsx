@@ -4,12 +4,12 @@ import { Trans } from "react-i18next";
 import { InstalledItem, State } from "@ledgerhq/live-common/apps/index";
 import { App } from "@ledgerhq/types-live";
 import styled from "styled-components/native";
-import { Flex, Icons, Text, Button } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy, Text, Button } from "@ledgerhq/native-ui";
 
-import QueuedDrawer from "../../../components/QueuedDrawer";
+import QueuedDrawer from "~/components/QueuedDrawer";
 
 import AppIcon from "../AppsList/AppIcon";
-import ByteSize from "../../../components/ByteSize";
+import ByteSize from "~/components/ByteSize";
 
 const keyExtractor = (item: App, index: number) => String(item.id) + index;
 
@@ -76,14 +76,14 @@ const FlatListContainer = styled(FlatList).attrs({
   marginBottom: 20,
 })`` as unknown as typeof FlatList;
 
-const UpdateAllModal = ({
+export default memo(function UpdateAllModal({
   isOpened,
   onClose,
   onConfirm,
   apps,
   installed,
   state,
-}: Props) => {
+}: Props) {
   const { deviceInfo } = state;
 
   const data = apps.map(app => ({
@@ -98,30 +98,17 @@ const UpdateAllModal = ({
     }: {
       item: App & { installed: InstalledItem | null | undefined };
     }) => {
-      const version = (installed && installed.version) || appVersion;
+      const version = installed?.availableVersion || appVersion;
 
       return (
         <AppLine>
-          <Flex
-            flexDirection="row"
-            alignItems="center"
-            style={{ width: "60%" }}
-          >
+          <Flex flexDirection="row" alignItems="center" style={{ width: "60%" }}>
             <AppIcon size={32} radius={10} app={item} />
-            <AppName
-              color="neutral.c100"
-              fontWeight="semiBold"
-              variant="body"
-              numberOfLines={1}
-            >
+            <AppName color="neutral.c100" fontWeight="semiBold" variant="body" numberOfLines={1}>
               {name}
             </AppName>
           </Flex>
-          <Flex
-            flexDirection="row"
-            justifyContent="space-between"
-            style={{ width: "35%" }}
-          >
+          <Flex flexDirection="row" justifyContent="space-between" style={{ width: "35%" }}>
             <AppVersion
               color="neutral.c80"
               fontWeight="semiBold"
@@ -155,7 +142,7 @@ const UpdateAllModal = ({
     <QueuedDrawer isRequestingToBeOpened={!!isOpened} onClose={onClose}>
       <Flex alignItems="center">
         <IconContainer borderColor="neutral.c40">
-          <Icons.RefreshMedium size={24} color="neutral.c100" />
+          <IconsLegacy.RefreshMedium size={24} color="neutral.c100" />
         </IconContainer>
         <TextContainer>
           <ModalText color="neutral.c100" fontWeight="medium" variant="h2">
@@ -179,6 +166,4 @@ const UpdateAllModal = ({
       </Flex>
     </QueuedDrawer>
   );
-};
-
-export default memo(UpdateAllModal);
+});

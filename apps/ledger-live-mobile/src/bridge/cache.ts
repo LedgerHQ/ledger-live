@@ -1,13 +1,11 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import deviceStorage from "../logic/storeWrapper";
 import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
 import { log } from "@ledgerhq/logs";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 export async function clearBridgeCache() {
-  const keys = await AsyncStorage.getAllKeys();
-  await AsyncStorage.multiRemove(
-    keys.filter(k => k.startsWith("bridgeproxypreload")),
-  );
+  const keys = await deviceStorage.keys();
+  await deviceStorage.delete(keys.filter(k => k.startsWith("bridgeproxypreload")));
 }
 
 function currencyCacheId(currency: CryptoCurrency) {
@@ -15,39 +13,28 @@ function currencyCacheId(currency: CryptoCurrency) {
 }
 
 export async function listCachedCurrencyIds() {
-  const keys = await AsyncStorage.getAllKeys();
+  const keys = await deviceStorage.keys();
   return keys
     .filter(k => k.startsWith("bridgeproxypreload"))
     .map(k => k.replace("bridgeproxypreload_", ""));
 }
 
-export async function setCurrencyCache(
-  currency: CryptoCurrency,
-  data: unknown,
-) {
+export async function setCurrencyCache(currency: CryptoCurrency, data: unknown) {
   if (data) {
-    const serialized = JSON.stringify(data);
-
-    if (serialized) {
-      await AsyncStorage.setItem(currencyCacheId(currency), serialized);
-    }
+    await deviceStorage.save(currencyCacheId(currency), data);
   }
 }
-export async function getCurrencyCache(
-  currency: CryptoCurrency,
-): Promise<unknown> {
-  const res = await AsyncStorage.getItem(currencyCacheId(currency));
 
-  if (res) {
-    try {
-      return JSON.parse(res);
-    } catch (e) {
-      log("bridge/cache", `failure to retrieve cache ${String(e)}`);
-    }
+export async function getCurrencyCache(currency: CryptoCurrency): Promise<unknown> {
+  try {
+    const res = await deviceStorage.get(currencyCacheId(currency));
+    return res;
+  } catch (e) {
+    log("bridge/cache", `failure to retrieve cache ${String(e)}`);
   }
-
   return undefined;
 }
+
 export const bridgeCache = makeBridgeCacheSystem({
   saveData: setCurrencyCache,
   getData: getCurrencyCache,

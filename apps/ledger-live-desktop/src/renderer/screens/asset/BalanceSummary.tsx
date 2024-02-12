@@ -6,12 +6,16 @@ import { CryptoCurrency, Currency, TokenCurrency, Unit } from "@ledgerhq/types-c
 import Chart from "~/renderer/components/Chart";
 import Box, { Card } from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
-import { useCurrencyPortfolio } from "~/renderer/actions/portfolio";
+import { useCurrencyPortfolio, usePortfolio } from "~/renderer/actions/portfolio";
 import AssetBalanceSummaryHeader from "./AssetBalanceSummaryHeader";
 import { discreetModeSelector } from "~/renderer/reducers/settings";
-import FormattedDate from "~/renderer/components/FormattedDate";
 import { Data } from "~/renderer/components/Chart/types";
 import { PortfolioRange } from "@ledgerhq/types-live";
+import PlaceholderChart from "~/renderer/components/PlaceholderChart";
+import Alert from "~/renderer/components/Alert";
+import { useTranslation } from "react-i18next";
+import { tokensWithUnsupportedGraph } from "~/helpers/tokensWithUnsupportedGraph";
+import { dayFormat, useDateFormatter } from "~/renderer/hooks/useDateFormatter";
 
 type Props = {
   counterValue: Currency;
@@ -29,6 +33,8 @@ export default function BalanceSummary({
   chartColor,
   currency,
 }: Props) {
+  const { t } = useTranslation();
+  const portfolio = usePortfolio();
   const { history, countervalueAvailable, countervalueChange, cryptoChange } = useCurrencyPortfolio(
     {
       currency,
@@ -36,11 +42,12 @@ export default function BalanceSummary({
     },
   );
   const discreetMode = useSelector(discreetModeSelector);
+  const formatDate = useDateFormatter(dayFormat);
 
   const displayCountervalue = countervalueFirst && countervalueAvailable;
   const chartMagnitude = displayCountervalue ? counterValue.units[0].magnitude : unit.magnitude;
   const renderTooltip = useCallback(
-    d => {
+    (d: Data[number]) => {
       const data = [
         {
           val: d.value,
@@ -59,12 +66,12 @@ export default function BalanceSummary({
             <FormattedVal fontSize={4} color="warmGrey" showCode {...data[1]} />
           ) : null}
           <Box ff="Inter|Regular" color="palette.text.shade60" fontSize={3} mt={2}>
-            <FormattedDate date={d.date} format="L" />
+            {formatDate(d.date)}
           </Box>
         </>
       );
     },
-    [counterValue.units, countervalueAvailable, displayCountervalue, unit],
+    [counterValue.units, countervalueAvailable, displayCountervalue, unit, formatDate],
   );
   const renderTickYCryptoValue = useCallback(
     (val: number | string) => formatShort(unit, BigNumber(val)),
@@ -90,23 +97,36 @@ export default function BalanceSummary({
       </Box>
 
       <Box px={5} ff="Inter" fontSize={4} color="palette.text.shade80" pt={6}>
-        <Chart
-          magnitude={chartMagnitude}
-          color={chartColor}
-          // TODO make date non optional
-          data={history as Data}
-          height={200}
-          tickXScale={range}
-          valueKey={displayCountervalue ? "countervalue" : "value"}
-          renderTickY={
-            discreetMode
-              ? () => ""
-              : displayCountervalue
-              ? renderTickYCounterValue
-              : renderTickYCryptoValue
-          }
-          renderTooltip={renderTooltip}
-        />
+        {currency.type === "TokenCurrency" && tokensWithUnsupportedGraph.includes(currency.id) ? (
+          <>
+            <Alert type="secondary" noIcon={false}>
+              <span>{t("graph.noGraphWarning")}</span>
+            </Alert>
+            <PlaceholderChart
+              magnitude={counterValue.units[0].magnitude}
+              data={portfolio.balanceHistory}
+              tickXScale={range}
+            />
+          </>
+        ) : (
+          <Chart
+            magnitude={chartMagnitude}
+            color={chartColor}
+            // TODO make date non optional
+            data={history as Data}
+            height={200}
+            tickXScale={range}
+            valueKey={displayCountervalue ? "countervalue" : "value"}
+            renderTickY={
+              discreetMode
+                ? () => ""
+                : displayCountervalue
+                ? renderTickYCounterValue
+                : renderTickYCryptoValue
+            }
+            renderTooltip={renderTooltip}
+          />
+        )}
       </Box>
     </Card>
   );

@@ -1,12 +1,11 @@
-import { getEnv } from "../../env";
-import network from "../../network";
-import { getSwapAPIBaseURL } from "./";
+import network from "@ledgerhq/live-network/network";
 import { mockGetStatus } from "./mock";
 import type { GetMultipleStatus } from "./types";
+import { isIntegrationTestEnv } from "./utils/isIntegrationTestEnv";
+import { getSwapAPIBaseURL } from ".";
 
-export const getMultipleStatus: GetMultipleStatus = async (statusList) => {
-  if (getEnv("MOCK") && !getEnv("PLAYWRIGHT_RUN"))
-    return mockGetStatus(statusList);
+export const getMultipleStatus: GetMultipleStatus = async statusList => {
+  if (isIntegrationTestEnv()) return mockGetStatus(statusList);
 
   const res = await network({
     method: "POST",

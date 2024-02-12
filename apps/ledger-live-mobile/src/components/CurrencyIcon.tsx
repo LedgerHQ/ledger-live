@@ -1,21 +1,11 @@
 import React, { ComponentType, useMemo, memo } from "react";
-import {
-  getCryptoCurrencyIcon,
-  getTokenCurrencyIcon,
-} from "@ledgerhq/live-common/reactNative";
+import { getCryptoCurrencyIcon, getTokenCurrencyIcon } from "@ledgerhq/live-common/reactNative";
 
-import {
-  CryptoCurrency,
-  Currency,
-  TokenCurrency,
-} from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Flex, Text, ensureContrast } from "@ledgerhq/native-ui";
 import styled, { useTheme } from "styled-components/native";
 
-import {
-  getCurrencyColor,
-  useCurrencyColor,
-} from "../helpers/getCurrencyColor";
+import { getCurrencyColor, useCurrencyColor } from "~/helpers/getCurrencyColor";
 
 const DefaultWrapper = styled(Flex)<{ disabled?: boolean }>`
   height: ${p => p.size}px;
@@ -70,15 +60,7 @@ type Props = {
   disabled?: boolean;
 };
 
-const CurrencyIcon = ({
-  size,
-  currency,
-  circle,
-  color,
-  radius,
-  bg,
-  disabled,
-}: Props) => {
+const CurrencyIcon = ({ size, currency, circle, color, radius, bg, disabled }: Props) => {
   const { colors } = useTheme();
   const bgColor = useMemo(
     () => ensureContrast(getCurrencyColor(currency), colors.constant.white),
@@ -103,12 +85,7 @@ const CurrencyIcon = ({
   }
 
   return (
-    <DefaultWrapper
-      size={size}
-      borderRadius={radius}
-      bg={bg}
-      disabled={disabled}
-    >
+    <DefaultWrapper size={size} borderRadius={radius} bg={bg} disabled={disabled}>
       <IconComponent size={iconSize} color={overrideColor} />
     </DefaultWrapper>
   );

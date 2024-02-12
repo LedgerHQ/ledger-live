@@ -177,22 +177,18 @@ const fadeInUp = keyframes`
     }
   `;
 const animations = {
-  fadeIn: () =>
-    css`
-      ${fadeIn} ${animationDuration} ${easings.outQuadratic} forwards
-    `,
-  fadeOut: () =>
-    css`
-      ${fadeOut} ${animationDuration} ${easings.outQuadratic} forwards
-    `,
-  fadeInGrowX: () =>
-    css`
-      ${fadeInGrowX} 0.6s ${easings.outQuadratic} forwards
-    `,
-  fadeInUp: () =>
-    css`
-      ${fadeInUp} ${animationDuration} ${easings.outQuadratic} forwards
-    `,
+  fadeIn: () => css`
+    ${fadeIn} ${animationDuration} ${easings.outQuadratic} forwards
+  `,
+  fadeOut: () => css`
+    ${fadeOut} ${animationDuration} ${easings.outQuadratic} forwards
+  `,
+  fadeInGrowX: () => css`
+    ${fadeInGrowX} 0.6s ${easings.outQuadratic} forwards
+  `,
+  fadeInUp: () => css`
+    ${fadeInUp} ${animationDuration} ${easings.outQuadratic} forwards
+  `,
 };
 const overflow = {
   x: css`
@@ -200,7 +196,7 @@ const overflow = {
     overflow-x: scroll;
     will-change: transform;
     &:hover {
-      --track-color: ${(p) => p.theme.colors.neutral.c30};
+      --track-color: ${p => p.theme.colors.neutral.c30};
     }
   `,
   y: css`
@@ -208,7 +204,7 @@ const overflow = {
     overflow-y: scroll;
     will-change: transform;
     &:hover {
-      --track-color: ${(p) => p.theme.colors.neutral.c30};
+      --track-color: ${p => p.theme.colors.neutral.c30};
     }
   `,
   yAuto: css`
@@ -216,14 +212,14 @@ const overflow = {
     overflow-y: auto;
     will-change: transform;
     &:hover {
-      --track-color: ${(p) => p.theme.colors.neutral.c30};
+      --track-color: ${p => p.theme.colors.neutral.c30};
     }
   `,
   xy: css`
     overflow: scroll;
     will-change: transform;
     &:hover {
-      --track-color: ${(p) => p.theme.colors.neutral.c30};
+      --track-color: ${p => p.theme.colors.neutral.c30};
     }
   `,
   trackSize: 12,

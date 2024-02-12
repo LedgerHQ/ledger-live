@@ -1,42 +1,31 @@
-// TODO: this file will be moved to a @ledgerhq/env library
-import mapValues from "lodash/mapValues";
 // set and get environment & config variables
 import { Subject } from "rxjs";
 import { $ElementType } from "utility-types";
-type EnvDef<V> = {
-  desc: string;
-  def: V;
-  parser: (arg0: unknown) => V | null | undefined;
-};
 // type ExtractEnvValue = <V>(arg0: EnvDef<V>) => V;
 type EnvDefs = typeof envDefinitions;
 type Env = typeof env;
+
+type EnvDef<T extends string> = T extends EnvName ? EnvDefs[T] : undefined;
+
 export type EnvName = keyof EnvDefs;
 export type EnvValue<Name extends EnvName> = $ElementType<Env, Name>;
 
-const intParser = (v: any): number | null | undefined => {
+const intParser = (v: any): number | undefined => {
   if (!Number.isNaN(v)) return parseInt(v, 10);
 };
 
-const floatParser = (v: any): number | null | undefined => {
+const floatParser = (v: any): number | undefined => {
   if (!Number.isNaN(v)) return parseFloat(v);
 };
 
-const boolParser = (v: unknown): boolean | null | undefined => {
+const boolParser = (v: unknown): boolean | undefined => {
   if (typeof v === "boolean") return v;
   return !(v === "0" || v === "false");
 };
 
-const stringParser = (v: unknown): string | null | undefined =>
-  typeof v === "string" ? v : undefined;
+const stringParser = (v: unknown): string | undefined => (typeof v === "string" ? v : undefined);
 
-type JSONValue =
-  | string
-  | number
-  | boolean
-  | null
-  | { [x: string]: JSONValue }
-  | Array<JSONValue>;
+type JSONValue = string | number | boolean | { [x: string]: JSONValue } | Array<JSONValue>;
 
 const jsonParser = (v: unknown): JSONValue | undefined => {
   try {
@@ -47,17 +36,14 @@ const jsonParser = (v: unknown): JSONValue | undefined => {
   }
 };
 
-const stringArrayParser = (v: any): string[] | null | undefined => {
+const stringArrayParser = (v: unknown): string[] | undefined => {
   const v_array = typeof v === "string" ? v.split(",") : null;
   if (Array.isArray(v_array) && v_array.length > 0) return v_array;
 };
 
-const envDefinitions: Record<
-  string,
-  EnvDef<boolean | string | number | string[] | unknown>
-> = {
+const envDefinitions = {
   ADDRESS_POISONING_FAMILIES: {
-    def: "ethereum,evm,tron",
+    def: "evm,tron",
     parser: stringParser,
     desc: "List of families impacted by the address poisoning attack",
   },
@@ -70,6 +56,21 @@ const envDefinitions: Record<
     def: false,
     parser: boolParser,
     desc: "Show theme debug overlay UI",
+  },
+  API_ICP_ENDPOINT: {
+    def: "https://icp.coin.ledger.com/",
+    parser: stringParser,
+    desc: "Rosetta API for ICP",
+  },
+  API_CASPER_INDEXER_ENDPOINT: {
+    parser: stringParser,
+    def: "https://casper.coin.ledger.com/indexer",
+    desc: "Casper API url indexer",
+  },
+  API_CASPER_NODE_ENDPOINT: {
+    parser: stringParser,
+    def: "https://casper.coin.ledger.com/node/",
+    desc: "Casper API url node",
   },
   API_ALGORAND_BLOCKCHAIN_EXPLORER_API_ENDPOINT: {
     def: "https://algorand.coin.ledger.com",
@@ -87,7 +88,7 @@ const envDefinitions: Record<
     desc: "Node endpoint for celo",
   },
   COSMOS_GAS_AMPLIFIER: {
-    def: 1.2,
+    def: 1.5,
     parser: intParser,
     desc: "Cosmos gas estimate multiplier",
   },
@@ -115,6 +116,11 @@ const envDefinitions: Record<
     def: "https://validators-near.coin.ledger.com/",
     parser: stringParser,
     desc: "NEAR staking positions API",
+  },
+  API_STACKS_ENDPOINT: {
+    parser: stringParser,
+    def: "https://stacks.coin.ledger.com",
+    desc: "Stacks API url",
   },
   API_POLKADOT_INDEXER: {
     parser: stringParser,
@@ -151,11 +157,6 @@ const envDefinitions: Record<
     parser: boolParser,
     desc: "Static fee for Stellar account",
   },
-  API_OSMOSIS_NODE: {
-    def: "https://osmosis.coin.ledger.com/lcd",
-    parser: stringParser,
-    desc: "Endpoint for Osmosis Node",
-  },
   API_TEZOS_BAKER: {
     parser: stringParser,
     def: "https://tezos-bakers.api.live.ledger.com",
@@ -188,8 +189,13 @@ const envDefinitions: Record<
   },
   SOLANA_VALIDATORS_APP_BASE_URL: {
     parser: stringParser,
-    def: "https://validators-solana.coin.ledger.com/api/v1/validators",
+    def: "https://earn.api.live.ledger.com/v0/network/solana/validator-details",
     desc: "base url for validators.app validator list",
+  },
+  SOLANA_TESTNET_VALIDATORS_APP_BASE_URL: {
+    parser: stringParser,
+    def: "https://validators-solana.coin.ledger.com/api/v1/validators",
+    desc: "base url for testnet validators.app validator list",
   },
   SOLANA_TX_CONFIRMATION_TIMEOUT: {
     def: 100 * 1000,
@@ -200,6 +206,11 @@ const envDefinitions: Record<
     def: "https://hedera.coin.ledger.com",
     parser: stringParser,
     desc: "mirror node API for Hedera",
+  },
+  API_VECHAIN_THOREST: {
+    def: "https://vechain.coin.ledger.com",
+    parser: stringParser,
+    desc: "Thorest API for VeChain",
   },
   BASE_SOCKET_URL: {
     def: "wss://scriptrunner.api.live.ledger.com/update",
@@ -216,6 +227,13 @@ const envDefinitions: Record<
     parser: intParser,
     desc: "define the default value of spec.skipMutationsTimeout (if not overriden by spec)",
   },
+  BUY_API_BASE: {
+    def: "https://buy.api.live.ledger.com/buy/v1",
+
+    parser: stringParser,
+    desc: "Buy crypto API base url - version 1",
+  },
+
   CARDANO_API_ENDPOINT: {
     def: "https://cardano.coin.ledger.com/api",
     parser: stringParser,
@@ -234,22 +252,22 @@ const envDefinitions: Record<
   CRYPTO_ORG_INDEXER: {
     def: "https://cryptoorg-rpc-indexer.coin.ledger.com",
     parser: stringParser,
-    desc: "location of the crypto.org indexer API",
+    desc: "location of the Cronos POS Chain (formerly Crypto.org) indexer API",
   },
   CRYPTO_ORG_TESTNET_INDEXER: {
-    def: "https://crypto.org/explorer/croeseid4",
+    def: "https://cronos-pos.org/explorer/croeseid4",
     parser: stringParser,
-    desc: "location of the crypto.org indexer testnet API",
+    desc: "location of the Cronos POS Chain (formerly Crypto.org) indexer testnet API",
   },
   CRYPTO_ORG_RPC_URL: {
     def: "https://cryptoorg-rpc-node.coin.ledger.com",
     parser: stringParser,
-    desc: "location of the crypto.org chain node",
+    desc: "location of the Cronos POS Chain (formerly Crypto.org) chain node",
   },
   CRYPTO_ORG_TESTNET_RPC_URL: {
     def: "https://rpc-testnet-croeseid-4.crypto.org",
     parser: stringParser,
-    desc: "location of the crypto.org chain testnet node",
+    desc: "location of the Cronos POS Chain (formerly Crypto.org) chain testnet node",
   },
   DEBUG_UTXO_DISPLAY: {
     def: 4,
@@ -292,7 +310,7 @@ const envDefinitions: Record<
     desc: "disable the version check for firmware update eligibility",
   },
   EIP1559_ENABLED_CURRENCIES: {
-    def: "ethereum,ethereum_goerli,polygon",
+    def: "ethereum,ethereum_goerli,ethereum_sepolia,ethereum_holesky,polygon",
     parser: stringArrayParser,
     desc: "set the currency ids where EIP1559 is enabled",
   },
@@ -446,11 +464,6 @@ const envDefinitions: Record<
     parser: boolParser,
     desc: "enable sending to KT accounts. Not tested.",
   },
-  LIST_APPS_V2: {
-    def: false,
-    parser: boolParser,
-    desc: "use new version of list apps for My Ledger",
-  },
   MANAGER_API_BASE: {
     def: "https://manager.api.live.ledger.com/api",
     parser: stringParser,
@@ -466,6 +479,11 @@ const envDefinitions: Record<
     parser: intParser,
     desc: "defines the time to wait before installing apps to prevent known glitch (<=1.5.5) when chaining installs",
   },
+  MAPPING_SERVICE: {
+    def: "https://mapping-service.api.ledger.com",
+    parser: stringParser,
+    desc: "",
+  },
   MAX_ACCOUNT_NAME_SIZE: {
     def: 50,
     parser: intParser,
@@ -480,21 +498,6 @@ const envDefinitions: Record<
     def: "",
     parser: stringParser,
     desc: "switch the countervalues resolution into a MOCK mode for test purpose",
-  },
-  MOCK_SWAP_KYC: {
-    def: "",
-    parser: stringParser,
-    desc: "mock the server response for the exchange KYC check, options are 'open', 'pending', 'closed' or 'approved'.",
-  },
-  MOCK_SWAP_CHECK_QUOTE: {
-    def: "",
-    parser: stringParser,
-    desc: "mock the server response for the exchange check quote, options are 'RATE_VALID', 'KYC_FAILED', 'KYC_PENDING', 'KYC_UNDEFINED', 'KYC_UPGRADE_REQUIRED', 'MFA_REQUIRED', 'OVER_TRADE_LIMIT', 'UNKNOW_USER' or 'UNKNOWN_ERROR'.",
-  },
-  MOCK_SWAP_WIDGET_BASE_URL: {
-    def: "",
-    parser: stringParser,
-    desc: "mock the FTX swap widget base url",
   },
   /**
    * Note: the mocked cryptoassets config and test partner are signed with the
@@ -514,6 +517,11 @@ const envDefinitions: Record<
     def: "",
     parser: stringParser,
     desc: "if defined, overrides the os and version. format: os@version. Example: Windows_NT@6.1.7601",
+  },
+  MOCK_NO_BYPASS: {
+    def: false,
+    parser: boolParser,
+    desc: "if defined, avoids bypass of the currentDevice in the store.",
   },
   NFT_CURRENCIES: {
     def: "ethereum,polygon",
@@ -565,6 +573,11 @@ const envDefinitions: Record<
     parser: boolParser,
     desc: "allow the creation of legacy accounts",
   },
+  SIMPLE_HASH_API_BASE: {
+    def: "https://simplehash.api.live.ledger.com/api/v0",
+    parser: stringParser,
+    desc: "SimpleHash API base url",
+  },
   SKIP_ONBOARDING: {
     def: false,
     parser: boolParser,
@@ -575,8 +588,20 @@ const envDefinitions: Record<
     parser: intParser,
     desc: "offset to be added to the speculos pid and avoid collision with other instances",
   },
+  /**
+   * It's just here as a backup, the REST API is supposed to be the right mode
+   * We can always fallback on the previous method if we need to.
+   * The websocket option is harmless, we can remove it at some point but let's
+   * keep it for a while just in case.
+   * Introduced on June 27th 2023 by https://github.com/LedgerHQ/ledger-live/pull/3824
+   */
+  SPECULOS_USE_WEBSOCKET: {
+    def: false,
+    parser: boolParser,
+    desc: "Use speculos websocket interface instead of Rest API",
+  },
   SWAP_API_BASE: {
-    def: "https://swap.ledger.com/v4",
+    def: "https://swap.ledger.com/v5",
     parser: stringParser,
     desc: "Swap API base",
   },
@@ -720,11 +745,6 @@ const envDefinitions: Record<
     parser: stringParser,
     desc: "bucket S3 of the dynamic cryptoassets list",
   },
-  CURRENCY_CONFIG_BASE_URL: {
-    def: "https://ledger-live-production-default-rtdb.europe-west1.firebasedatabase.app/",
-    parser: stringParser,
-    desc: "Currency config firebase url",
-  },
   FEATURE_FLAGS: {
     def: "{}",
     parser: jsonParser,
@@ -740,36 +760,75 @@ const envDefinitions: Record<
     parser: intParser,
     desc: "Time after which an optimisc operation is considered stuck",
   },
+  EVM_REPLACE_TX_LEGACY_GASPRICE_FACTOR: {
+    def: 1.3,
+    parser: floatParser,
+    desc: "Replace transaction gasprice factor for legacy evm transaction. This value should be 1.1 minimum since this is the minimum increase required by most nodes",
+  },
+  EVM_REPLACE_TX_EIP1559_MAXFEE_FACTOR: {
+    def: 1.3,
+    parser: floatParser,
+    desc: "Replace transaction max fee factor for EIP1559 evm transaction. This value should be 1.1 minimum since this is the minimum increase required by most nodes",
+  },
+  EVM_REPLACE_TX_EIP1559_MAXPRIORITYFEE_FACTOR: {
+    def: 1.1,
+    parser: floatParser,
+    desc: "Replace transaction max priority fee factor for EIP1559 evm transaction. This value should be 1.1 minimum since this is the minimum increase required by most nodes",
+  },
   ENABLE_NETWORK_LOGS: {
     def: false,
     parser: boolParser,
     desc: "Enable network request and responses logs. Errors are always logged",
   },
+  CRYPTO_ASSET_SEARCH_KEYS: {
+    def: ["ticker", "name", "keywords"],
+    parser: stringArrayParser,
+    desc: "Fuse search attributes to find a currency according to user input",
+  },
+  VERBOSE: {
+    def: [] as Array<string>,
+    parser: stringArrayParser,
+    desc: 'Sets up debug console printing of logs. `VERBOSE=1` or `VERBOSE=true`: to print all logs | `VERBOSE="apdu,hw,transport,hid-verbose"` : filtering on a list of log `type` separated by a `,`',
+  },
+  DEFAULT_TRANSACTION_POLLING_INTERVAL: {
+    def: 30 * 1000,
+    parser: intParser,
+    desc: "Default interval to poll for transaction confirmation in speedup/cancel evm flow (in ms)",
+  },
+  LOW_BATTERY_PERCENTAGE: {
+    def: 20,
+    parser: intParser,
+    desc: "Configure the low battery percentage threshold",
+  },
 };
 
-export const getDefinition = (name: string): EnvDef<any> | null | undefined =>
-  envDefinitions[name];
+export const getDefinition = (name: string): EnvDef<any> => {
+  if (name in envDefinitions) {
+    return envDefinitions[name];
+  }
+  return undefined;
+};
 
-envDefinitions as Record<EnvName, EnvDef<any>>;
-const defaults: Record<EnvName, any> = mapValues(
-  envDefinitions,
-  (o) => o.def
-) as unknown as Record<EnvName, any>;
+const defaults = Object.keys(envDefinitions).reduce<{ [Key in EnvName]: EnvDefs[Key]["def"] }>(
+  (acc, curr) => {
+    return {
+      ...acc,
+      [curr]: envDefinitions[curr].def,
+    };
+  },
+  {} as { [Key in EnvName]: EnvDefs[Key]["def"] },
+);
+
 // private local state
-const env: Record<EnvName, any> = { ...defaults };
-export const getAllEnvNames = (): EnvName[] =>
-  Object.keys(envDefinitions) as EnvName[];
+const env = { ...defaults };
+export const getAllEnvNames = (): EnvName[] => Object.keys(envDefinitions) as EnvName[];
 export const getAllEnvs = (): Env => ({ ...env });
 // Usage: you must use getEnv at runtime because the env might be settled over time. typically will allow us to dynamically change them on the interface (e.g. some sort of experimental flags system)
-export const getEnv = <Name extends EnvName>(name: Name): EnvValue<Name> =>
-  env[name];
-export const getEnvDefault = <Name extends EnvName>(
-  name: Name
-): EnvValue<Name> => defaults[name];
+export const getEnv = <Name extends EnvName>(name: Name): EnvValue<Name> => env[name];
+export const getEnvDefault = <Name extends EnvName>(name: Name): EnvValue<Name> => defaults[name];
 export const isEnvDefault = <Name extends EnvName>(name: Name): boolean =>
   env[name] === defaults[name];
-export const getEnvDesc = <Name extends EnvName>(name: Name): string =>
-  envDefinitions[name].desc;
+export const getEnvDesc = <Name extends EnvName>(name: Name): string => envDefinitions[name].desc;
 type ChangeValue<T extends EnvName> = {
   name: EnvName;
   value: EnvValue<T>;
@@ -777,10 +836,7 @@ type ChangeValue<T extends EnvName> = {
 };
 export const changes: Subject<ChangeValue<any>> = new Subject();
 // change one environment
-export const setEnv = <Name extends EnvName>(
-  name: Name,
-  value: EnvValue<Name>
-): void => {
+export const setEnv = <Name extends EnvName>(name: Name, value: EnvValue<Name>): void => {
   const oldValue = env[name];
 
   if (oldValue !== value) {
@@ -793,7 +849,7 @@ export const setEnv = <Name extends EnvName>(
   }
 };
 // change one environment with safety. returns true if it succeed
-export const setEnvUnsafe = (name: EnvName, unsafeValue: unknown): boolean => {
+export const setEnvUnsafe = (name: string, unsafeValue: unknown): boolean => {
   const definition = getDefinition(name);
   if (!definition) return false;
   const { parser } = definition;
@@ -804,7 +860,6 @@ export const setEnvUnsafe = (name: EnvName, unsafeValue: unknown): boolean => {
     return false;
   }
 
-  // $FlowFixMe flow don't seem to type proof it
-  setEnv(name, value);
+  setEnv(name as EnvName, value);
   return true;
 };

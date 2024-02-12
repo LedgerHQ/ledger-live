@@ -1,79 +1,21 @@
-import React, { Component } from "react";
-import { StyleSheet, View } from "react-native";
 import * as Sentry from "@sentry/react-native";
-import Button from "../../../../components/Button";
-import GenericErrorView from "../../../../components/GenericErrorView";
-import { ScreenName } from "../../../../const";
-import { SettingsNavigatorStackParamList } from "../../../../components/RootNavigator/types/SettingsNavigator";
-import { StackNavigatorProps } from "../../../../components/RootNavigator/types/helpers";
+import React, { useState } from "react";
+import { StyleSheet, View } from "react-native";
+import Button from "~/components/Button";
+import GenericErrorView from "~/components/GenericErrorView";
+import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { ScreenName } from "~/const";
 
-class Crashes extends Component<
-  StackNavigatorProps<SettingsNavigatorStackParamList, ScreenName.DebugCrash>,
-  {
-    renderCrash: boolean;
-    renderErrorModal: boolean;
-  }
-> {
-  state: {
-    renderCrash: boolean;
-    renderErrorModal: boolean;
-  } = {
-    renderCrash: false,
-    renderErrorModal: false,
-  };
-  jsCrash: () => Error = () => {
-    throw new Error("DEBUG jsCrash");
-  };
-  nativeCrash: () => void = () => {
-    Sentry.nativeCrash();
-  };
-  displayRenderCrash: () => void = () =>
-    this.setState({
-      renderCrash: true,
-    });
-  displayErrorModal: () => void = () =>
-    this.setState({
-      renderErrorModal: true,
-    });
-
-  render() {
-    const { renderCrash, renderErrorModal } = this.state;
-    return (
-      <View style={styles.root}>
-        <Button
-          event="DebugCrashJS"
-          type="primary"
-          title="JS Crash"
-          onPress={this.jsCrash}
-          containerStyle={styles.buttonStyle}
-        />
-        <Button
-          event="DebugCrashNative"
-          type="primary"
-          title="Native Crash"
-          onPress={this.nativeCrash}
-          containerStyle={styles.buttonStyle}
-        />
-        <Button
-          event="DebugCrashRender"
-          type="primary"
-          title="Render unhandled error"
-          onPress={this.displayRenderCrash}
-          containerStyle={styles.buttonStyle}
-        />
-        <Button
-          event="DebugCrashRender"
-          type="primary"
-          title="Render handled error component"
-          onPress={this.displayErrorModal}
-          containerStyle={styles.buttonStyle}
-        />
-        {renderCrash && <CrashingComponent />}
-        {renderErrorModal && <CrashingComponent handled />}
-      </View>
-    );
-  }
-}
+const styles = StyleSheet.create({
+  root: {
+    padding: 16,
+    flex: 1,
+  },
+  buttonStyle: {
+    marginBottom: 8,
+  },
+});
 
 const CrashingComponent = ({ handled }: { handled?: boolean }) => {
   const error = new Error("DEBUG render crash error");
@@ -85,13 +27,54 @@ const CrashingComponent = ({ handled }: { handled?: boolean }) => {
   throw error;
 };
 
-const styles = StyleSheet.create({
-  root: {
-    padding: 16,
-    flex: 1,
-  },
-  buttonStyle: {
-    marginBottom: 8,
-  },
-});
+type Props = StackNavigatorProps<SettingsNavigatorStackParamList, ScreenName.DebugCrash>;
+
+const Crashes = (_: Props) => {
+  const [renderCrash, setRenderCrash] = useState(false);
+  const [renderErrorModal, setRenderErrorModal] = useState(false);
+
+  const jsCrash = () => {
+    throw new Error("DEBUG jsCrash");
+  };
+
+  return (
+    <View style={styles.root}>
+      <Button
+        event="DebugCrashJS"
+        type="primary"
+        title="JS Crash"
+        onPress={jsCrash}
+        containerStyle={styles.buttonStyle}
+      />
+
+      <Button
+        event="DebugCrashNative"
+        type="primary"
+        title="Native Crash"
+        onPress={Sentry.nativeCrash}
+        containerStyle={styles.buttonStyle}
+      />
+
+      <Button
+        event="DebugCrashRender"
+        type="primary"
+        title="Render unhandled error"
+        onPress={() => setRenderCrash(true)}
+        containerStyle={styles.buttonStyle}
+      />
+
+      <Button
+        event="DebugCrashRender"
+        type="primary"
+        title="Render handled error component"
+        onPress={() => setRenderErrorModal(true)}
+        containerStyle={styles.buttonStyle}
+      />
+
+      {renderCrash && <CrashingComponent />}
+      {renderErrorModal && <CrashingComponent handled />}
+    </View>
+  );
+};
+
 export default Crashes;

@@ -1,7 +1,8 @@
-import React, { useMemo, useCallback } from "react";
+import React, { useCallback } from "react";
 import { connect } from "react-redux";
 import { compose } from "redux";
-import { withTranslation, Trans, TFunction } from "react-i18next";
+import { withTranslation, Trans } from "react-i18next";
+import { TFunction } from "i18next";
 import { openModal } from "~/renderer/actions/modals";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
@@ -14,13 +15,11 @@ import lightEmptyStateAccount from "~/renderer/images/light-empty-state-account.
 import darkEmptyStateAccount from "~/renderer/images/dark-empty-state-account.svg";
 import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";
-import { getAllSupportedCryptoCurrencyIds } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/helpers";
 import styled from "styled-components";
 import { useHistory, withRouter } from "react-router-dom";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
-import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 const mapDispatchToProps = {
   openModal,
 };
@@ -36,21 +35,11 @@ type Props = OwnProps & {
 function EmptyStateAccount({ t, account, parentAccount, openModal }: Props) {
   const mainAccount = getMainAccount(account, parentAccount);
   const currency = getAccountCurrency(account);
-  const rampCatalog = useRampCatalog();
+  const { isCurrencyAvailable } = useRampCatalog();
   const history = useHistory();
 
-  // PTX smart routing feature flag - buy sell live app flag
-  const ptxSmartRouting = useFeature("ptxSmartRouting");
+  const availableOnBuy = !!currency && isCurrencyAvailable(currency.id, "onRamp");
 
-  // eslint-disable-next-line no-unused-vars
-  const availableOnBuy = useMemo(() => {
-    if (!rampCatalog.value) {
-      return false;
-    }
-    const allBuyableCryptoCurrencyIds = getAllSupportedCryptoCurrencyIds(rampCatalog.value.onRamp);
-
-    return allBuyableCryptoCurrencyIds.includes(currency.id);
-  }, [rampCatalog.value, currency.id]);
   const hasTokens =
     mainAccount.subAccounts &&
     mainAccount.subAccounts.length &&
@@ -59,19 +48,13 @@ function EmptyStateAccount({ t, account, parentAccount, openModal }: Props) {
     setTrackingSource("empty state account");
     history.push({
       pathname: "/exchange",
-      state: ptxSmartRouting?.enabled
-        ? {
-            currency: currency?.id,
-            account: mainAccount?.id,
-            mode: "buy", // buy or sell
-          }
-        : {
-            mode: "onRamp",
-            currencyId: currency.id,
-            accountId: mainAccount.id,
-          },
+      state: {
+        currency: currency?.id,
+        account: mainAccount?.id,
+        mode: "buy", // buy or sell
+      },
     });
-  }, [currency, history, mainAccount, ptxSmartRouting]);
+  }, [currency, history, mainAccount]);
   if (!mainAccount) return null;
   return (
     <Box mt={10} alignItems="center" selectable>

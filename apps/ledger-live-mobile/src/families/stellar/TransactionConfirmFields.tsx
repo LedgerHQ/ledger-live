@@ -3,8 +3,8 @@ import { StyleSheet } from "react-native";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/families/stellar/types";
 import { Trans } from "react-i18next";
-import { DataRow } from "../../components/ValidateOnDeviceDataRow";
-import LText from "../../components/LText";
+import { DataRow } from "~/components/ValidateOnDeviceDataRow";
+import LText from "~/components/LText";
 
 type Props = {
   transaction: Transaction;
@@ -17,9 +17,7 @@ const StellarMemoField = (props: Props) => {
       transaction.memoType &&
       deviceMemoLabels[transaction.memoType as keyof typeof deviceMemoLabels]
     ) {
-      return deviceMemoLabels[
-        transaction.memoType as keyof typeof deviceMemoLabels
-      ];
+      return deviceMemoLabels[transaction.memoType as keyof typeof deviceMemoLabels];
     }
     return deviceMemoLabels.NO_MEMO;
   }, [transaction.memoType]);

@@ -11,7 +11,7 @@ export function serializeTransactionOutputs({ outputs }: Transaction): Buffer {
 
   if (typeof outputs !== "undefined") {
     outputBuffer = Buffer.concat([outputBuffer, createVarint(outputs.length)]);
-    outputs.forEach((output) => {
+    outputs.forEach(output => {
       outputBuffer = Buffer.concat([
         outputBuffer,
         output.amount,
@@ -27,15 +27,14 @@ export function serializeTransaction(
   transaction: Transaction,
   skipWitness: boolean,
   timestamp?: Buffer,
-  additionals: string[] = []
+  additionals: string[] = [],
 ) {
   const isDecred = additionals.includes("decred");
   const isZcash = additionals.includes("zcash");
   const isBech32 = additionals.includes("bech32");
   let inputBuffer = Buffer.alloc(0);
-  const useWitness =
-    typeof transaction["witness"] != "undefined" && !skipWitness;
-  transaction.inputs.forEach((input) => {
+  const useWitness = typeof transaction["witness"] != "undefined" && !skipWitness;
+  transaction.inputs.forEach(input => {
     inputBuffer =
       isDecred || isBech32
         ? Buffer.concat([
@@ -54,10 +53,7 @@ export function serializeTransaction(
   });
   let outputBuffer = serializeTransactionOutputs(transaction);
 
-  if (
-    typeof transaction.outputs !== "undefined" &&
-    typeof transaction.locktime !== "undefined"
-  ) {
+  if (typeof transaction.outputs !== "undefined" && typeof transaction.locktime !== "undefined") {
     outputBuffer = Buffer.concat([
       outputBuffer,
       (useWitness && transaction.witness) || Buffer.alloc(0),

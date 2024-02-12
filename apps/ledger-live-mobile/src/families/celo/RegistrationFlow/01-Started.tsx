@@ -9,19 +9,16 @@ import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { Transaction as CeloTransaction } from "@ledgerhq/live-common/families/celo/types";
 import { useSelector } from "react-redux";
-import { TrackScreen } from "../../../analytics";
-import Button from "../../../components/Button";
-import { ScreenName } from "../../../const";
-import { accountScreenSelector } from "../../../reducers/accounts";
-import LText from "../../../components/LText";
-import TranslatedError from "../../../components/TranslatedError";
-import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import { TrackScreen } from "~/analytics";
+import Button from "~/components/Button";
+import { ScreenName } from "~/const";
+import { accountScreenSelector } from "~/reducers/accounts";
+import LText from "~/components/LText";
+import TranslatedError from "~/components/TranslatedError";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CeloRegistrationFlowParamList } from "./types";
 
-type Props = StackNavigatorProps<
-  CeloRegistrationFlowParamList,
-  ScreenName.CeloRegistrationStarted
->;
+type Props = StackNavigatorProps<CeloRegistrationFlowParamList, ScreenName.CeloRegistrationStarted>;
 
 export default function RegisterAccountStarted({ navigation, route }: Props) {
   const { colors } = useTheme();
@@ -52,14 +49,10 @@ export default function RegisterAccountStarted({ navigation, route }: Props) {
   }, [navigation, route.params, transaction]);
 
   const error =
-    status.errors &&
-    Object.keys(status.errors).length > 0 &&
-    Object.values(status.errors)[0];
+    status.errors && Object.keys(status.errors).length > 0 && Object.values(status.errors)[0];
 
   const warning =
-    status.warnings &&
-    Object.keys(status.warnings).length > 0 &&
-    Object.values(status.warnings)[0];
+    status.warnings && Object.keys(status.warnings).length > 0 && Object.values(status.warnings)[0];
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
@@ -68,30 +61,24 @@ export default function RegisterAccountStarted({ navigation, route }: Props) {
         // FIXME: PROP DOESN'T EXIST ON View BUT DOES ON ScrollView
         // contentContainerStyle={styles.scrollContainer}
       >
-        <TrackScreen category="CeloRegistrationFlow" name="Started" />
+        <TrackScreen
+          category="CeloRegistrationFlow"
+          name="Started"
+          flow="stake"
+          action="registration"
+          currency="celo"
+        />
         <Text fontWeight="semiBold" style={styles.title}>
           <Trans i18nKey="celo.register.flow.steps.started.description" />
         </Text>
       </View>
       <View style={styles.warningSection}>
         {error && error instanceof Error ? (
-          <LText
-            selectable
-            secondary
-            semiBold
-            style={styles.warning}
-            color="alert"
-          >
+          <LText selectable secondary semiBold style={styles.warning} color="alert">
             <TranslatedError error={error} />
           </LText>
         ) : warning && warning instanceof Error ? (
-          <LText
-            selectable
-            secondary
-            semiBold
-            style={styles.warning}
-            color="alert"
-          >
+          <LText selectable secondary semiBold style={styles.warning} color="alert">
             <TranslatedError error={warning} />
           </LText>
         ) : null}

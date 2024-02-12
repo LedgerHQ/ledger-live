@@ -16,8 +16,7 @@ export type GetGenuineCheckFromDeviceIdResult = {
   lockedDevice: boolean;
 };
 
-export type GetGenuineCheckFromDeviceIdOutput =
-  Observable<GetGenuineCheckFromDeviceIdResult>;
+export type GetGenuineCheckFromDeviceIdOutput = Observable<GetGenuineCheckFromDeviceIdResult>;
 
 /**
  * Get a genuine check for a device only from its id
@@ -32,7 +31,7 @@ export const getGenuineCheckFromDeviceId = ({
   deviceId,
   lockedDeviceTimeoutMs = 1000,
 }: GetGenuineCheckFromDeviceIdArgs): GetGenuineCheckFromDeviceIdOutput => {
-  return new Observable((subscriber) => {
+  return new Observable(subscriber => {
     // In order to know if a device is locked or not.
     // As we're not timing out inside the genuineCheckObservable flow (with rxjs timeout for ex)
     // once the device is unlock, getDeviceInfo should return the device info and
@@ -43,14 +42,14 @@ export const getGenuineCheckFromDeviceId = ({
 
     // Returns a Subscription that can be unsubscribed/cleaned
     return (
-      withDevice(deviceId)((t) =>
+      withDevice(deviceId)(t =>
         from(getDeviceInfo(t)).pipe(
-          mergeMap((deviceInfo) => {
+          mergeMap(deviceInfo => {
             clearTimeout(lockedDeviceTimeout);
             subscriber.next({ socketEvent: null, lockedDevice: false });
             return genuineCheck(t, deviceInfo);
-          })
-        )
+          }),
+        ),
       )
         // Needs to retry with withDevice
         .pipe(
@@ -65,13 +64,12 @@ export const getGenuineCheckFromDeviceId = ({
               }
 
               return false;
-            })
-          )
+            }),
+          ),
         )
         .subscribe({
-          next: (socketEvent: SocketEvent) =>
-            subscriber.next({ socketEvent, lockedDevice: false }),
-          error: (e) => subscriber.error(e),
+          next: (socketEvent: SocketEvent) => subscriber.next({ socketEvent, lockedDevice: false }),
+          error: e => subscriber.error(e),
           complete: () => subscriber.complete(),
         })
     );

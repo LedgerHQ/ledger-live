@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import StellarSdk from "stellar-sdk";
+import { Memo, Operation as StellarSdkOperation, xdr } from "stellar-sdk";
 import { AmountRequired, FeeNotLoaded, NetworkDown } from "@ledgerhq/errors";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "./types";
@@ -11,29 +11,15 @@ import {
   loadAccount,
 } from "./api";
 import { getRecipientAccount, getAmountValue } from "./logic";
-import {
-  StellarAssetRequired,
-  StellarMuxedAccountNotExist,
-} from "../../errors";
+import { StellarAssetRequired, StellarMuxedAccountNotExist } from "../../errors";
 
 /**
  * @param {Account} a
  * @param {Transaction} t
  */
-export const buildTransaction = async (
-  account: Account,
-  transaction: Transaction
-): Promise<any> => {
-  const {
-    recipient,
-    networkInfo,
-    fees,
-    memoType,
-    memoValue,
-    mode,
-    assetCode,
-    assetIssuer,
-  } = transaction;
+export const buildTransaction = async (account: Account, transaction: Transaction) => {
+  const { recipient, networkInfo, fees, memoType, memoValue, mode, assetCode, assetIssuer } =
+    transaction;
 
   if (!fees) {
     throw new FeeNotLoaded();
@@ -48,7 +34,7 @@ export const buildTransaction = async (
   invariant(networkInfo && networkInfo.family === "stellar", "stellar family");
 
   const transactionBuilder = buildTransactionBuilder(source, fees);
-  let operation = null;
+  let operation: xdr.Operation<StellarSdkOperation.ChangeTrust> | null = null;
 
   if (mode === "changeTrust") {
     if (!assetCode || !assetIssuer) {
@@ -87,24 +73,24 @@ export const buildTransaction = async (
 
   transactionBuilder.addOperation(operation);
 
-  let memo = null;
+  let memo: Memo | null = null;
 
   if (memoType && memoValue) {
     switch (memoType) {
       case "MEMO_TEXT":
-        memo = StellarSdk.Memo.text(memoValue);
+        memo = Memo.text(memoValue);
         break;
 
       case "MEMO_ID":
-        memo = StellarSdk.Memo.id(memoValue);
+        memo = Memo.id(memoValue);
         break;
 
       case "MEMO_HASH":
-        memo = StellarSdk.Memo.hash(memoValue);
+        memo = Memo.hash(memoValue);
         break;
 
       case "MEMO_RETURN":
-        memo = StellarSdk.Memo.return(memoValue);
+        memo = Memo.return(memoValue);
         break;
     }
   }
@@ -116,4 +102,5 @@ export const buildTransaction = async (
   const built = transactionBuilder.setTimeout(0).build();
   return built;
 };
+
 export default buildTransaction;

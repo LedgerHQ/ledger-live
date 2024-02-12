@@ -12,13 +12,14 @@ import Logo from "~/renderer/icons/Logo";
 import { isDefaultValidatorGroup } from "@ledgerhq/live-common/families/celo/logic";
 import * as S from "./ValidatorGroupRow.styles";
 import { CeloValidatorGroup } from "@ledgerhq/live-common/families/celo/types";
-import { CryptoCurrency, Unit } from "@ledgerhq/types-live";
+import { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
+
 type Props = {
   currency: CryptoCurrency;
   validatorGroup: CeloValidatorGroup;
   active?: boolean;
   showStake?: boolean;
-  onClick?: (v: CeloValidatorGroup) => void;
+  onClick?: (v: Pick<CeloValidatorGroup, "address">) => void;
   unit: Unit;
 };
 const CeloValidatorGroupRow = ({
@@ -77,7 +78,7 @@ const CeloValidatorGroupRow = ({
             </Box>
           )}
           <Box ml={3}>
-            <S.ChosenMark active={active ?? false} />
+            <S.ChosenMark active={active ?? false} size={14} />
           </Box>
         </Box>
       }

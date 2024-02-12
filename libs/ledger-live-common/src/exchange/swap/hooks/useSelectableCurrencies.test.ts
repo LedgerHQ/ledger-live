@@ -7,9 +7,7 @@ describe("useSelectableCurrencies", () => {
   test("returns an empty array when empty list are passed", () => {
     const allCurrencies = [];
 
-    const { result } = renderHook(() =>
-      useSelectableCurrencies({ allCurrencies })
-    );
+    const { result } = renderHook(() => useSelectableCurrencies({ allCurrencies }));
 
     expect(result.current).toEqual([]);
   });
@@ -17,9 +15,7 @@ describe("useSelectableCurrencies", () => {
   test("returns an empty array when incorrect ids are passed", () => {
     const allCurrencies = ["ethercoin", "bitether", "polkamos"];
 
-    const { result } = renderHook(() =>
-      useSelectableCurrencies({ allCurrencies })
-    );
+    const { result } = renderHook(() => useSelectableCurrencies({ allCurrencies }));
 
     expect(result.current).toEqual([]);
   });
@@ -29,9 +25,7 @@ describe("useSelectableCurrencies", () => {
     const ethereumCurrency = getCryptoCurrencyById("ethereum");
     const bitcoinCurrency = getCryptoCurrencyById("bitcoin");
 
-    const { result } = renderHook(() =>
-      useSelectableCurrencies({ allCurrencies })
-    );
+    const { result } = renderHook(() => useSelectableCurrencies({ allCurrencies }));
 
     expect(result.current).toHaveLength(2);
     expect(result.current).toEqual([ethereumCurrency, bitcoinCurrency]);

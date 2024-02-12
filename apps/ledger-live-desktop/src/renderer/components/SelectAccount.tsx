@@ -5,7 +5,8 @@ import {
   getAccountName,
   listSubAccounts,
 } from "@ledgerhq/live-common/account/index";
-import { TFunction, withTranslation, Trans } from "react-i18next";
+import { TFunction } from "i18next";
+import { Trans, withTranslation } from "react-i18next";
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import styled from "styled-components";
 import React, { useCallback, useState, useMemo } from "react";
@@ -56,36 +57,35 @@ const defaultFilter = createFilter({
     return `${currency.ticker}|${currency.name}|${name}`;
   },
 });
-const filterOption = (o: { withSubAccounts?: boolean; enforceHideEmptySubAccounts?: boolean }) => (
-  candidate: ReactSelectOption,
-  input: string,
-) => {
-  const selfMatches = defaultFilter(candidate, input);
-  if (selfMatches) return [selfMatches, true];
-  if (candidate.data.type === "Account" && o.withSubAccounts) {
-    const subAccounts = o.enforceHideEmptySubAccounts
-      ? listSubAccounts(candidate.data)
-      : candidate.data.subAccounts;
-    if (subAccounts) {
-      for (let i = 0; i < subAccounts.length; i++) {
-        const ta = subAccounts[i];
-        if (
-          defaultFilter(
-            {
-              label: ta.id, // might cause UI regression :dogkek:
-              value: ta.id,
-              data: ta,
-            },
-            input,
-          )
-        ) {
-          return [true, false];
+const filterOption =
+  (o: { withSubAccounts?: boolean; enforceHideEmptySubAccounts?: boolean }) =>
+  (candidate: ReactSelectOption, input: string) => {
+    const selfMatches = defaultFilter(candidate, input);
+    if (selfMatches) return [selfMatches, true];
+    if (candidate.data.type === "Account" && o.withSubAccounts) {
+      const subAccounts = o.enforceHideEmptySubAccounts
+        ? listSubAccounts(candidate.data)
+        : candidate.data.subAccounts;
+      if (subAccounts) {
+        for (let i = 0; i < subAccounts.length; i++) {
+          const ta = subAccounts[i];
+          if (
+            defaultFilter(
+              {
+                label: ta.id, // might cause UI regression :dogkek:
+                value: ta.id,
+                data: ta,
+              },
+              input,
+            )
+          ) {
+            return [true, false];
+          }
         }
       }
     }
-  }
-  return [false, false];
-};
+    return [false, false];
+  };
 const OptionMultilineContainer = styled(Box)`
   line-height: 1.3em;
 `;

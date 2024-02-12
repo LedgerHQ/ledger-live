@@ -31,11 +31,9 @@ import { useEffect, useRef, useState } from "react";
 export const useThrottledFunction = <FnReturnType, Args extends unknown[]>(
   callbackFunction: (...args: Args) => FnReturnType,
   throttleMs: number,
-  args: Args
+  args: Args,
 ): FnReturnType => {
-  const [state, setState] = useState<FnReturnType>(() =>
-    callbackFunction(...args)
-  );
+  const [state, setState] = useState<FnReturnType>(() => callbackFunction(...args));
   const timeout = useRef<ReturnType<typeof setTimeout>>();
   const timeoutMs = useRef<number>(throttleMs);
   const skipInitialValue = useRef(true);
@@ -76,7 +74,7 @@ export const useThrottledFunction = <FnReturnType, Args extends unknown[]>(
     () => () => {
       timeout.current && clearTimeout(timeout.current);
     },
-    []
+    [],
   );
 
   return state;
@@ -113,11 +111,8 @@ export const useThrottledFunction = <FnReturnType, Args extends unknown[]>(
  *
  * ```
  */
-export const useThrottledValue = <ValueType>(
-  value: ValueType,
-  throttleMs: number
-): ValueType => {
-  return useThrottledFunction((value) => value, throttleMs, [value]);
+export const useThrottledValue = <ValueType>(value: ValueType, throttleMs: number): ValueType => {
+  return useThrottledFunction(value => value, throttleMs, [value]);
 };
 
 /**
@@ -153,7 +148,7 @@ export const useThrottledValue = <ValueType>(
  */
 export const useThrottledValues = <Args extends unknown[]>(
   args: Args,
-  throttleMs: number
+  throttleMs: number,
 ): Args => {
   return useThrottledFunction((...args) => args, throttleMs, args);
 };

@@ -9,11 +9,11 @@ import Svg, { Path } from "react-native-svg";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { useTheme } from "@react-navigation/native";
 import { Slider } from "@ledgerhq/native-ui";
-import LText from "../../../../components/LText";
-import TranslatedError from "../../../../components/TranslatedError";
-import { ScreenName } from "../../../../const";
-import { SettingsNavigatorStackParamList } from "../../../../components/RootNavigator/types/SettingsNavigator";
-import { StackNavigatorProps } from "../../../../components/RootNavigator/types/helpers";
+import LText from "~/components/LText";
+import TranslatedError from "~/components/TranslatedError";
+import { ScreenName } from "~/const";
+import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 
 type GraphProps = {
   width: number;
@@ -48,12 +48,7 @@ function GraphComponent({ width, height, data }: GraphProps) {
     .curve(shape.curveLinear)(points);
   return (
     <Svg height={height} width={width}>
-      <Path
-        d={line as string}
-        stroke={colors.live}
-        strokeWidth={4}
-        fill="none"
-      />
+      <Path d={line as string} stroke={colors.live} strokeWidth={4} fill="none" />
     </Svg>
   );
 }
@@ -80,10 +75,7 @@ const benchmark = ({
 
 const speedStatusSize = 10;
 class DebugBLEBenchmark extends Component<
-  StackNavigatorProps<
-    SettingsNavigatorStackParamList,
-    ScreenName.DebugBLEBenchmark
-  >,
+  StackNavigatorProps<SettingsNavigatorStackParamList, ScreenName.DebugBLEBenchmark>,
   {
     exchangeStats: number[][];
     speedStats: number[];

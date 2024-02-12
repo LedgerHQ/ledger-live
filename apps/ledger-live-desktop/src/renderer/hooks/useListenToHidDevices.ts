@@ -45,8 +45,8 @@ export const useListenToHidDevices = () => {
     const timeoutSyncDevices = setTimeout(syncDevices, 1000);
 
     return () => {
-      clearTimeout(timeoutSyncDevices);
-      sub.unsubscribe();
+      clearTimeout?.(timeoutSyncDevices);
+      sub?.unsubscribe?.();
     };
   }, [dispatch]);
 

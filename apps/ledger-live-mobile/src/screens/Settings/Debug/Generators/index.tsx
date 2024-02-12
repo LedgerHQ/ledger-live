@@ -1,8 +1,8 @@
 import React, { useCallback } from "react";
 import config from "react-native-config";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import { Alert as Confirmation } from "react-native";
-import { Alert, Flex, Icons } from "@ledgerhq/native-ui";
+import { Alert, Flex, IconsLegacy } from "@ledgerhq/native-ui";
 import { useDispatch } from "react-redux";
 import GenerateMockAccounts from "./GenerateMockAccounts";
 import GenerateMockAccountsNft from "./GenerateMockAccountsNFTs";
@@ -11,13 +11,13 @@ import GenerateMockAccount from "./GenerateMockAccountsSelect";
 import GenerateAnnouncement from "./GenerateAnnouncementMockData";
 import SettingsNavigationScrollView from "../../SettingsNavigationScrollView";
 import ToggleServiceStatusIncident from "./ToggleServiceStatus";
-import SettingsRow from "../../../../components/SettingsRow";
-import { dangerouslyOverrideState } from "../../../../actions/settings";
-import { useReboot } from "../../../../context/Reboot";
+import SettingsRow from "~/components/SettingsRow";
+import { dangerouslyOverrideState } from "~/actions/settings";
+import { useReboot } from "~/context/Reboot";
 
-import { INITIAL_STATE as INITIAL_SETTINGS_STATE } from "../../../../reducers/settings";
-import { INITIAL_STATE as INITIAL_ACCOUNTS_STATE } from "../../../../reducers/accounts";
-import { INITIAL_STATE as INITIAL_BLE_STATE } from "../../../../reducers/ble";
+import { INITIAL_STATE as INITIAL_SETTINGS_STATE } from "~/reducers/settings";
+import { INITIAL_STATE as INITIAL_ACCOUNTS_STATE } from "~/reducers/accounts";
+import { INITIAL_STATE as INITIAL_BLE_STATE } from "~/reducers/ble";
 
 export default function Generators() {
   const dispatch = useDispatch();
@@ -95,7 +95,7 @@ export default function Generators() {
       {getEnv("MOCK") ? <ToggleServiceStatusIncident /> : null}
       <ImportBridgeStreamData
         title="Import .env BRIDGESTREAM_DATA"
-        dataStr={config.BRIDGESTREAM_DATA}
+        dataStr={config.BRIDGESTREAM_DATA as string}
       />
       <Flex p={6}>
         <Alert
@@ -107,25 +107,25 @@ export default function Generators() {
         hasBorderTop
         title="Refresh?"
         desc="You may want to reload the app after wiping data"
-        iconLeft={<Icons.RefreshMedium size={24} color="black" />}
+        iconLeft={<IconsLegacy.RefreshMedium size={24} color="black" />}
         onPress={onForceRefresh}
       />
       <SettingsRow
         title="Settings"
         desc="Restores all settings to their default values"
-        iconLeft={<Icons.SettingsMedium size={24} color="black" />}
+        iconLeft={<IconsLegacy.SettingsMedium size={24} color="black" />}
         onPress={onWipeSettings}
       />
       <SettingsRow
         title="Accounts"
         desc="Get rid of all the accounts"
-        iconLeft={<Icons.UserMedium size={24} color="black" />}
+        iconLeft={<IconsLegacy.UserMedium size={24} color="black" />}
         onPress={onWipeUsers}
       />
       <SettingsRow
         title="BLE devices"
         desc="Forget all seed devices"
-        iconLeft={<Icons.NanoMedium size={24} color="black" />}
+        iconLeft={<IconsLegacy.NanoMedium size={24} color="black" />}
         onPress={onWipeBLE}
       />
     </SettingsNavigationScrollView>

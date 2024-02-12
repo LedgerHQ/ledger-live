@@ -3,25 +3,23 @@ import { useDispatch, useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
 import { View } from "react-native";
 
-import { Icons } from "@ledgerhq/native-ui";
+import { IconsLegacy } from "@ledgerhq/native-ui";
 import QueuedDrawer from "./QueuedDrawer";
 import ModalBottomAction from "./ModalBottomAction";
-import {
-  languageSelector,
-  languageIsSetByUserSelector,
-} from "../reducers/settings";
-import { setLanguage } from "../actions/settings";
+import { languageIsSetByUserSelector } from "~/reducers/settings";
+import { setLanguage } from "~/actions/settings";
 import { getDefaultLanguageLocale } from "../languages";
-import { useLanguageAvailableChecked } from "../context/Locale";
-import { Track, updateIdentify } from "../analytics";
+import { useLanguageAvailableChecked } from "~/context/Locale";
+import { Track, updateIdentify } from "~/analytics";
 import Button from "./wrappedUi/Button";
+import { useSettings } from "~/hooks";
 
 export default function CheckLanguageAvailability() {
   const { t } = useTranslation();
+  const { language } = useSettings();
   const [modalOpened, setModalOpened] = useState(true);
   const dispatch = useDispatch();
   const defaultLanguage = getDefaultLanguageLocale();
-  const currAppLanguage = useSelector(languageSelector);
   const [hasAnswered, answer] = useLanguageAvailableChecked();
   const isLanguageSetByUser = useSelector(languageIsSetByUserSelector);
 
@@ -45,8 +43,8 @@ export default function CheckLanguageAvailability() {
     modalOpened &&
     !isLanguageSetByUser &&
     !hasAnswered &&
-    currAppLanguage !== defaultLanguage &&
-    currAppLanguage === "en";
+    language !== defaultLanguage &&
+    language === "en";
 
   if (!toShow) {
     return null;
@@ -62,14 +60,12 @@ export default function CheckLanguageAvailability() {
       <QueuedDrawer isRequestingToBeOpened onClose={onRequestClose}>
         <ModalBottomAction
           title={<Trans i18nKey="systemLanguageAvailable.title" />}
-          icon={<Icons.LanguageMedium color="primary.c80" size={50} />}
+          icon={<IconsLegacy.LanguageMedium color="primary.c80" size={50} />}
           description={
             <Trans
               i18nKey="systemLanguageAvailable.description.newSupport"
               values={{
-                language: t(
-                  `systemLanguageAvailable.languages.${defaultLanguage}`,
-                ),
+                language: t(`systemLanguageAvailable.languages.${defaultLanguage}`),
               }}
             />
           }
@@ -84,9 +80,7 @@ export default function CheckLanguageAvailability() {
                 <Trans
                   i18nKey="systemLanguageAvailable.switchButton"
                   values={{
-                    language: t(
-                      `systemLanguageAvailable.languages.${defaultLanguage}`,
-                    ),
+                    language: t(`systemLanguageAvailable.languages.${defaultLanguage}`),
                   }}
                 />
               </Button>

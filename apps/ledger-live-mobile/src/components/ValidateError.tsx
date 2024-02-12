@@ -14,6 +14,7 @@ type Props = {
 
 function ValidateError({ error, onClose, onRetry }: Props) {
   const { colors } = useTheme();
+
   return (
     <View
       style={[
@@ -74,4 +75,5 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
   },
 });
+
 export default memo<Props>(ValidateError);

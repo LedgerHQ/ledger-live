@@ -12,11 +12,10 @@ import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 export const formatTransaction = (
   { mode, amount, recipient, useAllAmount, subAccountId }: Transaction,
-  mainAccount: Account
+  mainAccount: Account,
 ): string => {
   const account =
-    (subAccountId &&
-      (mainAccount.subAccounts || []).find((a) => a.id === subAccountId)) ||
+    (subAccountId && (mainAccount.subAccounts || []).find(a => a.id === subAccountId)) ||
     mainAccount;
   return `
 ${mode.toUpperCase()} ${

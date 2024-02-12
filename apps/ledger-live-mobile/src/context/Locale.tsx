@@ -1,22 +1,11 @@
-import React, {
-  useMemo,
-  useContext,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import React, { useMemo, useContext, useCallback, useEffect, useState } from "react";
 import i18next from "i18next";
 import { initReactI18next } from "react-i18next";
 import type { TFunction } from "react-i18next";
 import { getTimeZone } from "react-native-localize";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useSelector } from "react-redux";
-import {
-  DEFAULT_LANGUAGE_LOCALE,
-  getDefaultLanguageLocale,
-  locales,
-} from "../languages";
-import { languageSelector } from "../reducers/settings";
+import { DEFAULT_LANGUAGE_LOCALE, getDefaultLanguageLocale, locales } from "../languages";
+import { useSettings } from "~/hooks";
 
 try {
   if ("__setDefaultTimeZone" in Intl.DateTimeFormat) {
@@ -66,7 +55,7 @@ function getLocaleState(i18n: typeof i18next): LocaleState {
 
 const LocaleContext = React.createContext(getLocaleState(i18next));
 export default function LocaleProvider({ children }: Props) {
-  const language = useSelector(languageSelector);
+  const { language } = useSettings();
   useEffect(() => {
     i18next.changeLanguage(language);
   }, [language]);
@@ -78,9 +67,7 @@ export default function LocaleProvider({ children }: Props) {
     }),
     [language],
   );
-  return (
-    <LocaleContext.Provider value={value}>{children}</LocaleContext.Provider>
-  );
+  return <LocaleContext.Provider value={value}>{children}</LocaleContext.Provider>;
 }
 export function useLocale() {
   return useContext(LocaleContext);
@@ -92,10 +79,7 @@ export async function hasAnsweredLanguageAvailable() {
   return memory === lastAskedLanguageAvailable;
 }
 export async function answerLanguageAvailable() {
-  return AsyncStorage.setItem(
-    "hasAnsweredLanguageAvailable",
-    lastAskedLanguageAvailable,
-  );
+  return AsyncStorage.setItem("hasAnsweredLanguageAvailable", lastAskedLanguageAvailable);
 }
 export const useLanguageAvailableChecked = () => {
   const [checked, setChecked] = useState(true);

@@ -47,7 +47,7 @@ export default {
     },
   },
   argTypes: {
-    content: { type: "string", defaultValue: "Hello World!" },
+    content: { type: "string" },
     visible: { options: [true, false, undefined] },
     disabled: { type: "boolean" },
     placement: {
@@ -71,9 +71,12 @@ export default {
       ],
     },
   },
+  args: {
+    content: "Hello World!",
+  },
 };
 
-export const Tooltip: StoryTemplate<Props> = (args) => (
+export const Tooltip: StoryTemplate<Props> = args => (
   <FlexBox alignItems="center" justifyContent="center">
     <TooltipComponent {...args}>
       <div style={{ margin: "50px" }}>

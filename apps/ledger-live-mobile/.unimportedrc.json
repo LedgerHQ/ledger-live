@@ -23,11 +23,14 @@
     "src/**/*.android.*",
     "src/**/*.ios.*",
     "src/components/RootNavigator/types.ts",
-    "src/logic/keyboardVisible.ts"
+    "src/logic/keyboardVisible.ts",
+    "src/contentCards/cards/vertical/*"
   ],
   "ignoreUnused": [
     "@ledgerhq/react-native-passcode-auth",
     "@react-native-masked-view/masked-view",
+    "@react-native/gradle-plugin",
+    "@react-native/metro-config",
     "@segment/sovran-react-native",
     "expo-file-system",
     "expo-image-loader",
@@ -41,7 +44,6 @@
     "react-native-randombytes",
     "react-native-tcp",
     "react-native-tcp-socket",
-    "react-native-udp",
-    "rxjs-compat"
+    "react-native-udp"
   ]
 }

@@ -1,11 +1,12 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { compose } from "redux";
 import { connect } from "react-redux";
-import { TFunction, Trans, withTranslation } from "react-i18next";
+import { TFunction } from "i18next";
+import { Trans, withTranslation } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import Track from "~/renderer/analytics/Track";
-import { Account, AccountLike } from "@ledgerhq/types-live";
+import { Account, AccountLike, SubAccount } from "@ledgerhq/types-live";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
@@ -18,7 +19,18 @@ import StepConnectDevice, { StepConnectDeviceFooter } from "./steps/StepConnectD
 import StepWarning, { StepWarningFooter } from "./steps/StepWarning";
 import StepReceiveFunds from "./steps/StepReceiveFunds";
 import StepReceiveStakingFlow, { StepReceiveStakingFooter } from "./steps/StepReceiveStakingFlow";
+
 export type StepId = "warning" | "account" | "device" | "receive" | "stakingFlow";
+
+export type Data = {
+  account?: AccountLike | undefined | null;
+  parentAccount?: Account | undefined | null;
+  startWithWarning?: boolean;
+  receiveTokenMode?: boolean;
+  receiveNFTMode?: boolean;
+  eventType?: string;
+};
+
 type OwnProps = {
   stepId: StepId;
   onClose?: () => void | undefined;
@@ -26,13 +38,7 @@ type OwnProps = {
   isAddressVerified: boolean | undefined | null;
   verifyAddressError: Error | undefined | null;
   onChangeAddressVerified: (isAddressVerified?: boolean | null, err?: Error | null) => void;
-  params: {
-    account: AccountLike | undefined | null;
-    parentAccount: Account | undefined | null;
-    startWithWarning?: boolean;
-    receiveTokenMode?: boolean;
-    eventType?: string;
-  };
+  params: Data;
 };
 type StateProps = {
   t: TFunction;
@@ -50,6 +56,7 @@ export type StepProps = {
   parentAccount: Account | undefined | null;
   token: TokenCurrency | undefined | null;
   receiveTokenMode: boolean;
+  receiveNFTMode: boolean;
   closeModal: () => void;
   isAddressVerified: boolean | undefined | null;
   verifyAddressError: Error | undefined | null;
@@ -125,7 +132,7 @@ const Body = ({
   const currency = getAccountCurrency(account);
   const currencyName = currency ? currency.name : undefined;
   const handleChangeAccount = useCallback(
-    (account, parentAccount) => {
+    (account: Account | SubAccount, parentAccount?: Account | null) => {
       setAccount(account);
       setParentAccount(parentAccount);
     },
@@ -134,7 +141,11 @@ const Body = ({
   const handleCloseModal = useCallback(() => {
     closeModal("MODAL_RECEIVE");
   }, [closeModal]);
-  const handleStepChange = useCallback(e => onChangeStepId(e.id), [onChangeStepId]);
+
+  const handleStepChange = useCallback(
+    (e: Step<StepId, StepProps>) => onChangeStepId(e.id),
+    [onChangeStepId],
+  );
   const handleResetSkip = useCallback(() => {
     setDisabledSteps([]);
   }, [setDisabledSteps]);
@@ -157,9 +168,9 @@ const Body = ({
   useEffect(() => {
     if (!account) {
       if (params && params.account) {
-        handleChangeAccount(params.account, params.parentAccount);
+        handleChangeAccount(params.account, params?.parentAccount);
       } else {
-        handleChangeAccount(accounts[0], null);
+        handleChangeAccount(accounts[0]);
       }
     }
   }, [accounts, account, params, handleChangeAccount]);
@@ -193,6 +204,7 @@ const Body = ({
     errorSteps,
     disabledSteps,
     receiveTokenMode: !!params.receiveTokenMode,
+    receiveNFTMode: !!params.receiveNFTMode,
     hideBreadcrumb,
     token,
     isAddressVerified,

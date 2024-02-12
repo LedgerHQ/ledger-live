@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, memo } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { nftsByCollections } from "@ledgerhq/live-common/nft/index";
+import { nftsByCollections } from "@ledgerhq/live-nft";
 import { accountSelector } from "~/renderer/reducers/accounts";
 import DropDownSelector, { DropDownItemType } from "~/renderer/components/DropDownSelector";
 import Button from "~/renderer/components/Button";
@@ -59,7 +59,7 @@ const NFTCrumb = () => {
     [collectionAddress, items],
   );
   const onCollectionSelected = useCallback(
-    item => {
+    (item: DropDownItemType<ProtoNFT>) => {
       if (!item) return;
       setTrackingSource("NFT breadcrumb");
       history.push({

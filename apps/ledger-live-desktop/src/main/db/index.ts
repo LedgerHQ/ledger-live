@@ -3,11 +3,11 @@ import path from "path";
 import cloneDeep from "lodash/cloneDeep";
 import get from "lodash/get";
 import set from "lodash/set";
-import { getEnv } from "@ledgerhq/live-common/env";
+import fs from "fs/promises";
+import { getEnv } from "@ledgerhq/live-env";
 import { NoDBPathGiven, DBWrongPassword } from "@ledgerhq/errors";
 import { encryptData, decryptData } from "~/main/db/crypto";
 import { readFile, writeFile } from "~/main/db/fsHelper";
-import { fsUnlink } from "~/helpers/fs";
 
 const debounce = <T, R>(fn: (...args: T[]) => R, ms: number) => {
   let timeout: NodeJS.Timeout | undefined;
@@ -181,7 +181,6 @@ async function saveToDisk(ns: string) {
         if (!encryptionKey) continue; // eslint-disable-line no-continue
         const val = get(clone, keyPath);
         if (!val) continue; // eslint-disable-line no-continue
-        // eslint-disable-next-line node/no-deprecated-api
         const encrypted = encryptData(JSON.stringify(val), encryptionKey);
         set(clone as object, keyPath, encrypted);
       }
@@ -199,7 +198,7 @@ async function cleanCache() {
 async function resetAll() {
   if (!DBPath) throw new NoDBPathGiven();
   memoryNamespaces.app = null;
-  await fsUnlink(path.resolve(DBPath, "app.json"));
+  await fs.unlink(path.resolve(DBPath, "app.json"));
 }
 function isEncryptionKeyCorrect(ns: string, keyPath: string, encryptionKey: string) {
   try {

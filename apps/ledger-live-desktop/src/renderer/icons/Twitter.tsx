@@ -1,5 +1,5 @@
 import React from "react";
-const Twitter = ({ size, color = "currentColor" }: { size: number; color: string }) => (
+const Twitter = ({ size, color = "currentColor" }: { size: number; color?: string }) => (
   <svg viewBox="0 0 24 25" height={size} width={size}>
     <path
       fill={color}

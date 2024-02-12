@@ -3,7 +3,7 @@ import { ComponentStory } from "@storybook/react-native";
 
 import Flex from "../../../src/components/Layout/Flex";
 import Box from "../../../src/components/Layout/Box";
-import { Icons } from "../../../src/assets";
+import { IconsLegacy } from "../../../src/assets";
 import BoxedIcon from "../../../src/components/Icon/BoxedIcon";
 import Text from "../../../src/components/Text";
 
@@ -24,11 +24,11 @@ export const BoxedIconStory: ComponentStory<typeof BoxedIcon> = (
   const variant = args.variant;
   return (
     <Flex flexDirection="column" alignItems="center">
-      <BoxedIcon Icon={Icons.HandshakeMedium} variant={variant} />
+      <BoxedIcon Icon={IconsLegacy.HandshakeMedium} variant={variant} />
       <Box height={20} />
       <BoxedIcon
-        Icon={Icons.HandshakeMedium}
-        Badge={Icons.CircledCheckSolidMedium}
+        Icon={IconsLegacy.HandshakeMedium}
+        Badge={IconsLegacy.CircledCheckSolidMedium}
         iconColor="success.c50"
         borderColor="success.c40"
         badgeColor="success.c50"
@@ -36,8 +36,8 @@ export const BoxedIconStory: ComponentStory<typeof BoxedIcon> = (
       />
       <Box height={20} />
       <BoxedIcon
-        Icon={Icons.HandshakeMedium}
-        Badge={Icons.CircledCrossSolidMedium}
+        Icon={IconsLegacy.HandshakeMedium}
+        Badge={IconsLegacy.CircledCrossSolidMedium}
         iconColor="error.c50"
         borderColor="error.c40"
         badgeColor="error.c50"
@@ -45,8 +45,8 @@ export const BoxedIconStory: ComponentStory<typeof BoxedIcon> = (
       />
       <Box height={20} />
       <BoxedIcon
-        Icon={Icons.HandshakeMedium}
-        Badge={Icons.ClockSolidMedium}
+        Icon={IconsLegacy.HandshakeMedium}
+        Badge={IconsLegacy.ClockSolidMedium}
         iconColor="neutral.c50"
         badgeColor="neutral.c70"
         variant={variant}

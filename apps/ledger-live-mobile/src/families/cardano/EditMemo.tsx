@@ -5,17 +5,14 @@ import { useTranslation } from "react-i18next";
 import i18next from "i18next";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useTheme } from "@react-navigation/native";
-import KeyboardView from "../../components/KeyboardView";
-import Button from "../../components/Button";
-import { ScreenName } from "../../const";
-import TextInput from "../../components/FocusedTextInput";
-import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
+import KeyboardView from "~/components/KeyboardView";
+import Button from "~/components/Button";
+import { ScreenName } from "~/const";
+import TextInput from "~/components/FocusedTextInput";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
 
-type Props = StackNavigatorProps<
-  SendFundsNavigatorStackParamList,
-  ScreenName.CardanoEditMemo
->;
+type Props = StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.CardanoEditMemo>;
 
 function CardanoEditMemo({ navigation, route }: Props) {
   const { colors } = useTheme();
@@ -44,10 +41,7 @@ function CardanoEditMemo({ navigation, route }: Props) {
           },
         ]}
       >
-        <ScrollView
-          contentContainerStyle={styles.root}
-          keyboardShouldPersistTaps="always"
-        >
+        <ScrollView contentContainerStyle={styles.root} keyboardShouldPersistTaps="always">
           <TextInput
             allowFontScaling={false}
             autoFocus

@@ -1,5 +1,314 @@
 # @ledgerhq/native-ui
 
+## 0.22.6
+
+### Patch Changes
+
+- [#5945](https://github.com/LedgerHQ/ledger-live/pull/5945) [`f551cd4`](https://github.com/LedgerHQ/ledger-live/commit/f551cd4d9798fddb4286f46bfa4632510af6d637) Thanks [@mle-gall](https://github.com/mle-gall)! - Created analytics prompt screens for variant A and B (main and secondary screens)
+
+- [#6015](https://github.com/LedgerHQ/ledger-live/pull/6015) [`c8a9d49`](https://github.com/LedgerHQ/ledger-live/commit/c8a9d49bd5b82ba9dde23c8b397256f9d344ceef) Thanks [@mle-gall](https://github.com/mle-gall)! - Fix : Switch has a black thumb in light-mode. Thumb should always be white, in both dark and light mode.
+
+## 0.22.6-next.1
+
+### Patch Changes
+
+- [#6015](https://github.com/LedgerHQ/ledger-live/pull/6015) [`c8a9d49`](https://github.com/LedgerHQ/ledger-live/commit/c8a9d49bd5b82ba9dde23c8b397256f9d344ceef) Thanks [@mle-gall](https://github.com/mle-gall)! - Fix : Switch has a black thumb in light-mode. Thumb should always be white, in both dark and light mode.
+
+## 0.22.6-next.0
+
+### Patch Changes
+
+- [#5945](https://github.com/LedgerHQ/ledger-live/pull/5945) [`f551cd4`](https://github.com/LedgerHQ/ledger-live/commit/f551cd4d9798fddb4286f46bfa4632510af6d637) Thanks [@mle-gall](https://github.com/mle-gall)! - Created analytics prompt screens for variant A and B (main and secondary screens)
+
+## 0.22.5
+
+### Patch Changes
+
+- [#5859](https://github.com/LedgerHQ/ledger-live/pull/5859) [`e1f967e`](https://github.com/LedgerHQ/ledger-live/commit/e1f967eb617a749a9f6dc58a7d1f4b6633f56d1c) Thanks [@mle-gall](https://github.com/mle-gall)! - Fixed warning on animatedInput (forwardRef not needed)
+
+- Updated dependencies [[`fc2cf04`](https://github.com/LedgerHQ/ledger-live/commit/fc2cf04c8d3cd55503ea19aeb21fd12ee55046f6)]:
+  - @ledgerhq/crypto-icons-ui@1.0.1
+
+## 0.22.5-next.0
+
+### Patch Changes
+
+- [#5859](https://github.com/LedgerHQ/ledger-live/pull/5859) [`e1f967e`](https://github.com/LedgerHQ/ledger-live/commit/e1f967eb617a749a9f6dc58a7d1f4b6633f56d1c) Thanks [@mle-gall](https://github.com/mle-gall)! - Fixed warning on animatedInput (forwardRef not needed)
+
+- Updated dependencies [[`fc2cf04`](https://github.com/LedgerHQ/ledger-live/commit/fc2cf04c8d3cd55503ea19aeb21fd12ee55046f6)]:
+  - @ledgerhq/crypto-icons-ui@1.0.1-next.0
+
+## 0.22.4
+
+### Patch Changes
+
+- [#5630](https://github.com/LedgerHQ/ledger-live/pull/5630) [`ad8f999`](https://github.com/LedgerHQ/ledger-live/commit/ad8f99994341b10d3f7af96543dd2c2028140573) Thanks [@mle-gall](https://github.com/mle-gall)! - New animated input (label morphes from placeholder to fixed label onFocus)
+
+- Updated dependencies [[`0e2287b`](https://github.com/LedgerHQ/ledger-live/commit/0e2287b1ce4200004ed2c06f3e74cd3b03100784)]:
+  - @ledgerhq/crypto-icons-ui@1.0.0
+
+## 0.22.4-next.0
+
+### Patch Changes
+
+- [#5630](https://github.com/LedgerHQ/ledger-live/pull/5630) [`ad8f999`](https://github.com/LedgerHQ/ledger-live/commit/ad8f99994341b10d3f7af96543dd2c2028140573) Thanks [@mle-gall](https://github.com/mle-gall)! - New animated input (label morphes from placeholder to fixed label onFocus)
+
+- Updated dependencies [[`0e2287b`](https://github.com/LedgerHQ/ledger-live/commit/0e2287b1ce4200004ed2c06f3e74cd3b03100784)]:
+  - @ledgerhq/crypto-icons-ui@1.0.0-next.0
+
+## 0.22.3
+
+### Patch Changes
+
+- [#5595](https://github.com/LedgerHQ/ledger-live/pull/5595) [`c094e4e`](https://github.com/LedgerHQ/ledger-live/commit/c094e4ed0c3220877d13703e20c77a0b013cd3ea) Thanks [@ak-ledger](https://github.com/ak-ledger)! - update react/native libs Storybook to 7.5.3
+
+- [#5464](https://github.com/LedgerHQ/ledger-live/pull/5464) [`c4bc268`](https://github.com/LedgerHQ/ledger-live/commit/c4bc2688de43ad1f5ecec5e83d8e5c88edb6d372) Thanks [@mle-gall](https://github.com/mle-gall)! - Adding icons instructions
+
+- Updated dependencies [[`2edfa53`](https://github.com/LedgerHQ/ledger-live/commit/2edfa533bccafbfd8a61aea0f5422c0db79825ea), [`335ce83`](https://github.com/LedgerHQ/ledger-live/commit/335ce8366c8c997cdd77f191262a9dedee9888f6)]:
+  - @ledgerhq/crypto-icons-ui@0.7.0
+
+## 0.22.3-next.0
+
+### Patch Changes
+
+- [#5595](https://github.com/LedgerHQ/ledger-live/pull/5595) [`c094e4e`](https://github.com/LedgerHQ/ledger-live/commit/c094e4ed0c3220877d13703e20c77a0b013cd3ea) Thanks [@ak-ledger](https://github.com/ak-ledger)! - update react/native libs Storybook to 7.5.3
+
+- [#5464](https://github.com/LedgerHQ/ledger-live/pull/5464) [`c4bc268`](https://github.com/LedgerHQ/ledger-live/commit/c4bc2688de43ad1f5ecec5e83d8e5c88edb6d372) Thanks [@mle-gall](https://github.com/mle-gall)! - Adding icons instructions
+
+- Updated dependencies [[`2edfa53`](https://github.com/LedgerHQ/ledger-live/commit/2edfa533bccafbfd8a61aea0f5422c0db79825ea), [`335ce83`](https://github.com/LedgerHQ/ledger-live/commit/335ce8366c8c997cdd77f191262a9dedee9888f6)]:
+  - @ledgerhq/crypto-icons-ui@0.7.0-next.0
+
+## 0.22.2
+
+### Patch Changes
+
+- Updated dependencies [[`08dde174fd`](https://github.com/LedgerHQ/ledger-live/commit/08dde174fdeaadbce85dcd914383839f788f21dd)]:
+  - @ledgerhq/crypto-icons-ui@0.6.1
+
+## 0.22.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`08dde174fd`](https://github.com/LedgerHQ/ledger-live/commit/08dde174fdeaadbce85dcd914383839f788f21dd)]:
+  - @ledgerhq/crypto-icons-ui@0.6.1-next.0
+
+## 0.22.1
+
+### Patch Changes
+
+- [#4289](https://github.com/LedgerHQ/ledger-live/pull/4289) [`29d9d40f11`](https://github.com/LedgerHQ/ledger-live/commit/29d9d40f11515de9502995349f2fd7fbd5cb8757) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Upgrade peerDependency react-native-reanimated to 3.3.0, devDependency expo to expo SDK 49 and metro to 0.79.0
+
+- [#4827](https://github.com/LedgerHQ/ledger-live/pull/4827) [`fc121ce96d`](https://github.com/LedgerHQ/ledger-live/commit/fc121ce96dbcc4f30cfd9836644f778b85f997b7) Thanks [@valpinkman](https://github.com/valpinkman)! - Update react to react 18
+
+- Updated dependencies [[`fc121ce96d`](https://github.com/LedgerHQ/ledger-live/commit/fc121ce96dbcc4f30cfd9836644f778b85f997b7), [`f5a5c315ea`](https://github.com/LedgerHQ/ledger-live/commit/f5a5c315ea2200cd5b52ef3a0b377d1327b1144e), [`22df6b230c`](https://github.com/LedgerHQ/ledger-live/commit/22df6b230c72d82d18375fb7ae7e8da599f41070)]:
+  - @ledgerhq/crypto-icons-ui@0.6.0
+  - @ledgerhq/icons-ui@0.6.2
+
+## 0.22.1-next.0
+
+### Patch Changes
+
+- [#4289](https://github.com/LedgerHQ/ledger-live/pull/4289) [`29d9d40f11`](https://github.com/LedgerHQ/ledger-live/commit/29d9d40f11515de9502995349f2fd7fbd5cb8757) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Upgrade peerDependency react-native-reanimated to 3.3.0, devDependency expo to expo SDK 49 and metro to 0.79.0
+
+- [#4827](https://github.com/LedgerHQ/ledger-live/pull/4827) [`fc121ce96d`](https://github.com/LedgerHQ/ledger-live/commit/fc121ce96dbcc4f30cfd9836644f778b85f997b7) Thanks [@valpinkman](https://github.com/valpinkman)! - Update react to react 18
+
+- Updated dependencies [[`fc121ce96d`](https://github.com/LedgerHQ/ledger-live/commit/fc121ce96dbcc4f30cfd9836644f778b85f997b7), [`f5a5c315ea`](https://github.com/LedgerHQ/ledger-live/commit/f5a5c315ea2200cd5b52ef3a0b377d1327b1144e), [`22df6b230c`](https://github.com/LedgerHQ/ledger-live/commit/22df6b230c72d82d18375fb7ae7e8da599f41070)]:
+  - @ledgerhq/crypto-icons-ui@0.6.0-next.0
+  - @ledgerhq/icons-ui@0.6.2-next.0
+
+## 0.22.0
+
+### Minor Changes
+
+- [#4628](https://github.com/LedgerHQ/ledger-live/pull/4628) [`d1d0977f33`](https://github.com/LedgerHQ/ledger-live/commit/d1d0977f338beb860d40f4b38a9e123cbbb5ebbb) Thanks [@KVNLS](https://github.com/KVNLS)! - [LIVE-8347] Add quick actions on the wallet
+
+## 0.22.0-next.0
+
+### Minor Changes
+
+- [#4628](https://github.com/LedgerHQ/ledger-live/pull/4628) [`d1d0977f33`](https://github.com/LedgerHQ/ledger-live/commit/d1d0977f338beb860d40f4b38a9e123cbbb5ebbb) Thanks [@KVNLS](https://github.com/KVNLS)! - [LIVE-8347] Add quick actions on the wallet
+
+## 0.21.1
+
+### Patch Changes
+
+- [#4519](https://github.com/LedgerHQ/ledger-live/pull/4519) [`ea97040266`](https://github.com/LedgerHQ/ledger-live/commit/ea97040266cc0b0b084882739bd38a90908d2b98) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - VerticalStepper: pixel polish
+  VerticalTimeline: fix aspect of lines
+
+- [#4519](https://github.com/LedgerHQ/ledger-live/pull/4519) [`ea97040266`](https://github.com/LedgerHQ/ledger-live/commit/ea97040266cc0b0b084882739bd38a90908d2b98) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Text: fix the line height for bodyLineHeight variant
+
+- Updated dependencies [[`41a38e953b`](https://github.com/LedgerHQ/ledger-live/commit/41a38e953b17075b5ab7bec307c147d8f74b7501)]:
+  - @ledgerhq/icons-ui@0.6.1
+
+## 0.21.0
+
+### Minor Changes
+
+- [#4421](https://github.com/LedgerHQ/ledger-live/pull/4421) [`00c1159356`](https://github.com/LedgerHQ/ledger-live/commit/00c11593565ac8b370df77af13dc3f1d8de90914) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Allow passing of onPressWhenDisabled prop to native ui button
+
+### Patch Changes
+
+- [#4385](https://github.com/LedgerHQ/ledger-live/pull/4385) [`87cbec4062`](https://github.com/LedgerHQ/ledger-live/commit/87cbec4062f95d2348d7dd134cb4f13f071425d5) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Upgrade "react-native-svg" to 13.11.0
+
+- [#3928](https://github.com/LedgerHQ/ledger-live/pull/3928) [`5b2247695c`](https://github.com/LedgerHQ/ledger-live/commit/5b2247695c80af26d8c3187df1cb53c95e3317b1) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add new type of Card in DS
+
+- [#4169](https://github.com/LedgerHQ/ledger-live/pull/4169) [`75ef6eb224`](https://github.com/LedgerHQ/ledger-live/commit/75ef6eb2240901a049fb11724760642b891c333a) Thanks [@gre](https://github.com/gre)! - Introduce testID prop on Form/SelectableList
+
+- Updated dependencies [[`5fb60bc6bb`](https://github.com/LedgerHQ/ledger-live/commit/5fb60bc6bb0bc6a9452d580cdace16ca87e478ff)]:
+  - @ledgerhq/icons-ui@0.6.0
+
+## 0.21.0-next.0
+
+### Minor Changes
+
+- [#4421](https://github.com/LedgerHQ/ledger-live/pull/4421) [`00c1159356`](https://github.com/LedgerHQ/ledger-live/commit/00c11593565ac8b370df77af13dc3f1d8de90914) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Allow passing of onPressWhenDisabled prop to native ui button
+
+### Patch Changes
+
+- [#4385](https://github.com/LedgerHQ/ledger-live/pull/4385) [`87cbec4062`](https://github.com/LedgerHQ/ledger-live/commit/87cbec4062f95d2348d7dd134cb4f13f071425d5) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Upgrade "react-native-svg" to 13.11.0
+
+- [#3928](https://github.com/LedgerHQ/ledger-live/pull/3928) [`5b2247695c`](https://github.com/LedgerHQ/ledger-live/commit/5b2247695c80af26d8c3187df1cb53c95e3317b1) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add new type of Card in DS
+
+- [#4169](https://github.com/LedgerHQ/ledger-live/pull/4169) [`75ef6eb224`](https://github.com/LedgerHQ/ledger-live/commit/75ef6eb2240901a049fb11724760642b891c333a) Thanks [@gre](https://github.com/gre)! - Introduce testID prop on Form/SelectableList
+
+- Updated dependencies [[`5fb60bc6bb`](https://github.com/LedgerHQ/ledger-live/commit/5fb60bc6bb0bc6a9452d580cdace16ca87e478ff)]:
+  - @ledgerhq/icons-ui@0.6.0-next.0
+
+## 0.20.6
+
+### Patch Changes
+
+- Updated dependencies [[`27e4a76f6c`](https://github.com/LedgerHQ/ledger-live/commit/27e4a76f6cc66aa6a7480f48329db04d33200c65)]:
+  - @ledgerhq/icons-ui@0.5.0
+
+## 0.20.6-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`27e4a76f6c`](https://github.com/LedgerHQ/ledger-live/commit/27e4a76f6cc66aa6a7480f48329db04d33200c65)]:
+  - @ledgerhq/icons-ui@0.5.0-hotfix.0
+
+## 0.20.5
+
+### Patch Changes
+
+- [#4214](https://github.com/LedgerHQ/ledger-live/pull/4214) [`5bbcea12f9`](https://github.com/LedgerHQ/ledger-live/commit/5bbcea12f93e3cda41705a4d61d50845628a6de6) Thanks [@mle-gall](https://github.com/mle-gall)! - Changes on the new icons to allow for correct rendering in Native environments + types changes in NativeUI
+
+- Updated dependencies [[`5bbcea12f9`](https://github.com/LedgerHQ/ledger-live/commit/5bbcea12f93e3cda41705a4d61d50845628a6de6)]:
+  - @ledgerhq/icons-ui@0.4.4
+
+## 0.20.5-next.0
+
+### Patch Changes
+
+- [#4214](https://github.com/LedgerHQ/ledger-live/pull/4214) [`5bbcea12f9`](https://github.com/LedgerHQ/ledger-live/commit/5bbcea12f93e3cda41705a4d61d50845628a6de6) Thanks [@mle-gall](https://github.com/mle-gall)! - Changes on the new icons to allow for correct rendering in Native environments + types changes in NativeUI
+
+- Updated dependencies [[`5bbcea12f9`](https://github.com/LedgerHQ/ledger-live/commit/5bbcea12f93e3cda41705a4d61d50845628a6de6)]:
+  - @ledgerhq/icons-ui@0.4.4-next.0
+
+## 0.20.4
+
+### Patch Changes
+
+- [#4259](https://github.com/LedgerHQ/ledger-live/pull/4259) [`5696f24b93`](https://github.com/LedgerHQ/ledger-live/commit/5696f24b93151bc0ee063d1cb88cef1e2d052f9e) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - publish ui libraries with fixed tests
+
+- Updated dependencies [[`5696f24b93`](https://github.com/LedgerHQ/ledger-live/commit/5696f24b93151bc0ee063d1cb88cef1e2d052f9e)]:
+  - @ledgerhq/crypto-icons-ui@0.5.1
+  - @ledgerhq/icons-ui@0.4.3
+  - @ledgerhq/ui-shared@0.2.1
+
+## 0.20.3
+
+### Patch Changes
+
+- [#4091](https://github.com/LedgerHQ/ledger-live/pull/4091) [`eeab77fba0`](https://github.com/LedgerHQ/ledger-live/commit/eeab77fba08eedc09dc28780f1a4d270d90569e7) Thanks [@mle-gall](https://github.com/mle-gall)! - UILib - New icons + renamed old icon set to Legacy (should not be used anymore by consumers eg LLD and LLM)
+
+- [#3792](https://github.com/LedgerHQ/ledger-live/pull/3792) [`9428e776cd`](https://github.com/LedgerHQ/ledger-live/commit/9428e776cd2f42f08472ab53a3c050d00a93b31c) Thanks [@grsoares21](https://github.com/grsoares21)! - Add background color as a configurable prop to the IconBadge component
+
+- Updated dependencies [[`eeab77fba0`](https://github.com/LedgerHQ/ledger-live/commit/eeab77fba08eedc09dc28780f1a4d270d90569e7), [`e5f9cc46d6`](https://github.com/LedgerHQ/ledger-live/commit/e5f9cc46d69b82ad7267296b350e9d97a47f9e86), [`5840cdbb4f`](https://github.com/LedgerHQ/ledger-live/commit/5840cdbb4fad09865d672a009f98b4fea3cffebe), [`cfbff52724`](https://github.com/LedgerHQ/ledger-live/commit/cfbff527241534aba69bff3d86733b50a14eb4ce)]:
+  - @ledgerhq/icons-ui@0.4.2
+  - @ledgerhq/crypto-icons-ui@0.5.0
+
+## 0.20.3-next.0
+
+### Patch Changes
+
+- [#4091](https://github.com/LedgerHQ/ledger-live/pull/4091) [`eeab77fba0`](https://github.com/LedgerHQ/ledger-live/commit/eeab77fba08eedc09dc28780f1a4d270d90569e7) Thanks [@mle-gall](https://github.com/mle-gall)! - UILib - New icons + renamed old icon set to Legacy (should not be used anymore by consumers eg LLD and LLM)
+
+- [#3792](https://github.com/LedgerHQ/ledger-live/pull/3792) [`9428e776cd`](https://github.com/LedgerHQ/ledger-live/commit/9428e776cd2f42f08472ab53a3c050d00a93b31c) Thanks [@grsoares21](https://github.com/grsoares21)! - Add background color as a configurable prop to the IconBadge component
+
+- Updated dependencies [[`eeab77fba0`](https://github.com/LedgerHQ/ledger-live/commit/eeab77fba08eedc09dc28780f1a4d270d90569e7), [`e5f9cc46d6`](https://github.com/LedgerHQ/ledger-live/commit/e5f9cc46d69b82ad7267296b350e9d97a47f9e86), [`5840cdbb4f`](https://github.com/LedgerHQ/ledger-live/commit/5840cdbb4fad09865d672a009f98b4fea3cffebe), [`cfbff52724`](https://github.com/LedgerHQ/ledger-live/commit/cfbff527241534aba69bff3d86733b50a14eb4ce)]:
+  - @ledgerhq/icons-ui@0.4.2-next.0
+  - @ledgerhq/crypto-icons-ui@0.5.0-next.0
+
+## 0.20.2
+
+### Patch Changes
+
+- Updated dependencies [[`9692adc2a6`](https://github.com/LedgerHQ/ledger-live/commit/9692adc2a6774feb4424fc7a984810918c946b1b)]:
+  - @ledgerhq/crypto-icons-ui@0.4.0
+
+## 0.20.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`9692adc2a6`](https://github.com/LedgerHQ/ledger-live/commit/9692adc2a6774feb4424fc7a984810918c946b1b)]:
+  - @ledgerhq/crypto-icons-ui@0.4.0-next.0
+
+## 0.20.1
+
+### Patch Changes
+
+- [#3659](https://github.com/LedgerHQ/ledger-live/pull/3659) [`c7168de9e2`](https://github.com/LedgerHQ/ledger-live/commit/c7168de9e270c4ee9444c9eadefd6f5549fa0312) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Adding new type of Modal with background image
+
+- [#3659](https://github.com/LedgerHQ/ledger-live/pull/3659) [`c7168de9e2`](https://github.com/LedgerHQ/ledger-live/commit/c7168de9e270c4ee9444c9eadefd6f5549fa0312) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Update Bottom Drawer Modal
+
+- Updated dependencies [[`7ae4766e09`](https://github.com/LedgerHQ/ledger-live/commit/7ae4766e094d928f58e820319a33900b88a67502)]:
+  - @ledgerhq/icons-ui@0.4.1
+
+## 0.20.1-next.0
+
+### Patch Changes
+
+- [#3659](https://github.com/LedgerHQ/ledger-live/pull/3659) [`c7168de9e2`](https://github.com/LedgerHQ/ledger-live/commit/c7168de9e270c4ee9444c9eadefd6f5549fa0312) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Adding new type of Modal with background image
+
+- [#3659](https://github.com/LedgerHQ/ledger-live/pull/3659) [`c7168de9e2`](https://github.com/LedgerHQ/ledger-live/commit/c7168de9e270c4ee9444c9eadefd6f5549fa0312) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Update Bottom Drawer Modal
+
+- Updated dependencies [[`7ae4766e09`](https://github.com/LedgerHQ/ledger-live/commit/7ae4766e094d928f58e820319a33900b88a67502)]:
+  - @ledgerhq/icons-ui@0.4.1-next.0
+
+## 0.20.0
+
+### Minor Changes
+
+- [#2977](https://github.com/LedgerHQ/ledger-live/pull/2977) [`43cdd2624c`](https://github.com/LedgerHQ/ledger-live/commit/43cdd2624cd2965ddb6e346e9a77a3cc12476500) Thanks [@grsoares21](https://github.com/grsoares21)! - Memo vertical timeline component and export ItemStatus differently
+
+- [#2977](https://github.com/LedgerHQ/ledger-live/pull/2977) [`43cdd2624c`](https://github.com/LedgerHQ/ledger-live/commit/43cdd2624cd2965ddb6e346e9a77a3cc12476500) Thanks [@grsoares21](https://github.com/grsoares21)! - Add IconBadge component
+
+## 0.20.0-next.0
+
+### Minor Changes
+
+- [#2977](https://github.com/LedgerHQ/ledger-live/pull/2977) [`43cdd2624c`](https://github.com/LedgerHQ/ledger-live/commit/43cdd2624cd2965ddb6e346e9a77a3cc12476500) Thanks [@grsoares21](https://github.com/grsoares21)! - Memo vertical timeline component and export ItemStatus differently
+
+- [#2977](https://github.com/LedgerHQ/ledger-live/pull/2977) [`43cdd2624c`](https://github.com/LedgerHQ/ledger-live/commit/43cdd2624cd2965ddb6e346e9a77a3cc12476500) Thanks [@grsoares21](https://github.com/grsoares21)! - Add IconBadge component
+
+## 0.19.1
+
+### Patch Changes
+
+- [#3324](https://github.com/LedgerHQ/ledger-live/pull/3324) [`186e82c88b`](https://github.com/LedgerHQ/ledger-live/commit/186e82c88b196976f62e776e9d060eab565234f9) Thanks [@alexandremgo](https://github.com/alexandremgo)! - chore: bumped react-native-reanimated to v3.1.0
+
+- [#3365](https://github.com/LedgerHQ/ledger-live/pull/3365) [`ff962bbe95`](https://github.com/LedgerHQ/ledger-live/commit/ff962bbe95ec68c6de09fbe4c76cb164f139936a) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Updated Vertical Timeline (fixed crash + pixel polish) + pixel polish of the Sync Onboarding including language selection (now used in welcome screen)
+
+## 0.19.1-next.0
+
+### Patch Changes
+
+- [#3324](https://github.com/LedgerHQ/ledger-live/pull/3324) [`186e82c88b`](https://github.com/LedgerHQ/ledger-live/commit/186e82c88b196976f62e776e9d060eab565234f9) Thanks [@alexandremgo](https://github.com/alexandremgo)! - chore: bumped react-native-reanimated to v3.1.0
+
+- [#3365](https://github.com/LedgerHQ/ledger-live/pull/3365) [`ff962bbe95`](https://github.com/LedgerHQ/ledger-live/commit/ff962bbe95ec68c6de09fbe4c76cb164f139936a) Thanks [@mlegall-ledger](https://github.com/mlegall-ledger)! - Updated Vertical Timeline (fixed crash + pixel polish) + pixel polish of the Sync Onboarding including language selection (now used in welcome screen)
+
 ## 0.19.0
 
 ### Minor Changes

@@ -4,34 +4,27 @@ import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Box, Text } from "@ledgerhq/native-ui";
-import { ScreenName } from "../../../../const";
-import { cryptoCurrenciesSelector } from "../../../../reducers/accounts";
-import SettingsRow from "../../../../components/SettingsRow";
-import CurrencyIcon from "../../../../components/CurrencyIcon";
+import { ScreenName } from "~/const";
+import { cryptoCurrenciesSelector } from "~/reducers/accounts";
+import SettingsRow from "~/components/SettingsRow";
+import CurrencyIcon from "~/components/CurrencyIcon";
 import { getCurrencyHasSettings } from "./CurrencySettings";
-import { State } from "../../../../reducers/types";
-import { SettingsNavigatorStackParamList } from "../../../../components/RootNavigator/types/SettingsNavigator";
-import { StackNavigatorProps } from "../../../../components/RootNavigator/types/helpers";
+import { State } from "~/reducers/types";
+import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 
 type Props = {
   currencies: CryptoCurrency[];
 };
 
-const mapStateToProps = createStructuredSelector<
-  State,
-  { currencies: CryptoCurrency[] }
->({
+const mapStateToProps = createStructuredSelector<State, { currencies: CryptoCurrency[] }>({
   currencies: cryptoCurrenciesSelector,
 });
 
 function CurrenciesList({
   navigation,
   currencies,
-}: Props &
-  StackNavigatorProps<
-    SettingsNavigatorStackParamList,
-    ScreenName.CryptoAssetsSettings
-  >) {
+}: Props & StackNavigatorProps<SettingsNavigatorStackParamList, ScreenName.CryptoAssetsSettings>) {
   const currenciesWithSetting = useMemo(
     () => currencies.filter(getCurrencyHasSettings),
     [currencies],
@@ -46,12 +39,7 @@ function CurrenciesList({
           <>
             {item.name}
             {"  "}
-            <Text
-              variant={"body"}
-              fontWeight={"medium"}
-              color={"neutral.c70"}
-              ml={3}
-            >
+            <Text variant={"body"} fontWeight={"medium"} color={"neutral.c70"} ml={3}>
               {item.ticker}
             </Text>
           </>
@@ -69,7 +57,7 @@ function CurrenciesList({
     [navigation],
   );
 
-  const keyExtractor = useCallback(item => item.id, []);
+  const keyExtractor = useCallback((item: CryptoCurrency) => item.id, []);
 
   return (
     <Box backgroundColor={"background.main"} height={"100%"}>

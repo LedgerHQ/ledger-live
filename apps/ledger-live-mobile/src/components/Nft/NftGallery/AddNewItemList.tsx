@@ -1,11 +1,11 @@
-import { Flex, Icons, Text } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { TouchableOpacity } from "react-native";
 import styled from "@ledgerhq/native-ui/components/styled";
-import ReceiveNFTsModal from "../../../screens/Nft/NftGallery/ReceiveNFTsModal";
-import { useReceiveNFTsModal } from "../../../screens/Nft/NftGallery/ReceiveNFTsModal.hook";
+import ReceiveNFTsModal from "~/screens/Nft/NftGallery/ReceiveNFTsModal";
+import { useReceiveNFTsModal } from "~/screens/Nft/NftGallery/ReceiveNFTsModal.hook";
 
 const StyledTouchableOpacity = styled(TouchableOpacity)`
   background-color: ${props => props.theme.colors.background.main};
@@ -29,9 +29,9 @@ export const AddNewItem = () => {
   });
 
   return (
-    <StyledTouchableOpacity onPress={openModal}>
+    <StyledTouchableOpacity testID="wallet-nft-gallery-add-new-list-item" onPress={openModal}>
       <Flex flexDirection="column" alignItems="center" justifyContent="center">
-        <Icons.PlusMedium size={24} color={colors.neutral.c100} />
+        <IconsLegacy.PlusMedium size={24} color={colors.neutral.c100} />
         <Text
           variant="body"
           fontWeight="semiBold"

@@ -1,6 +1,11 @@
 import invariant from "invariant";
 import React, { useCallback, useMemo, useState } from "react";
-import type { Account, AccountLike, FeeStrategy } from "@ledgerhq/types-live";
+import type {
+  Account,
+  AccountLike,
+  FeeStrategy,
+  TransactionStatusCommon,
+} from "@ledgerhq/types-live";
 import { Trans } from "react-i18next";
 import type { Transaction as BitcoinTransaction } from "@ledgerhq/live-common/families/bitcoin/types";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
@@ -8,28 +13,23 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useFeesStrategy } from "@ledgerhq/live-common/families/bitcoin/react";
 import { CompositeScreenProps } from "@react-navigation/native";
 import BigNumber from "bignumber.js";
-import { ScreenName } from "../../const";
-import SelectFeesStrategy from "../../components/SelectFeesStrategy";
-import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import type { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
-import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
-import type { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
-import type { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
+import { ScreenName } from "~/const";
+import SelectFeesStrategy, { SelectFeeStrategy } from "~/components/SelectFeesStrategy";
+import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import type { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
+import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import type { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
+import type { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 
 type Props = {
   transaction: Transaction;
   account: AccountLike;
   parentAccount?: Account | null;
   setTransaction: (..._: Array<Transaction>) => void;
+  status?: TransactionStatusCommon;
 } & CompositeScreenProps<
-  | StackNavigatorProps<
-      SendFundsNavigatorStackParamList,
-      ScreenName.SendSummary
-    >
-  | StackNavigatorProps<
-      SignTransactionNavigatorParamList,
-      ScreenName.SignTransactionSummary
-    >
+  | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
+  | StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.SignTransactionSummary>
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
@@ -41,13 +41,11 @@ export default function BitcoinSendRowsFee({
   setTransaction,
   route,
   navigation,
+  status,
   ...props
 }: Props) {
   invariant(account.type === "Account", "account not found");
-  const defaultStrategies = useFeesStrategy(
-    account,
-    transaction as BitcoinTransaction,
-  );
+  const defaultStrategies = useFeesStrategy(account, transaction as BitcoinTransaction);
   const [satPerByte, setSatPerByte] = useState<BigNumber | null>(null);
   const strategies = useMemo(
     () =>
@@ -65,7 +63,7 @@ export default function BitcoinSendRowsFee({
     [defaultStrategies, transaction],
   );
   const onFeesSelected = useCallback(
-    ({ amount, label }) => {
+    ({ amount, label }: SelectFeeStrategy) => {
       const bridge = getAccountBridge(account, parentAccount);
       setTransaction(
         bridge.updateTransaction(transaction, {
@@ -85,14 +83,8 @@ export default function BitcoinSendRowsFee({
       satPerByte,
       setSatPerByte,
     });
-  }, [
-    navigation,
-    route.params,
-    account.id,
-    parentAccount?.id,
-    transaction,
-    satPerByte,
-  ]);
+  }, [navigation, route.params, account.id, parentAccount?.id, transaction, satPerByte]);
+
   return (
     <SelectFeesStrategy
       {...props}
@@ -103,6 +95,7 @@ export default function BitcoinSendRowsFee({
       parentAccount={parentAccount}
       transaction={transaction}
       forceUnitLabel={<Trans i18nKey="common.satPerByte" />}
+      status={status}
     />
   );
 }

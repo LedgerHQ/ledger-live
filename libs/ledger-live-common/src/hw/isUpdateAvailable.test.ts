@@ -1,5 +1,5 @@
 import isUpdateAvailable from "./isUpdateAvailable";
-import { deviceInfo155, deviceInfo210 } from "../apps/mock";
+import { deviceInfo155, deviceInfo222 } from "../apps/mock";
 import { AppAndVersion } from "../hw/connectApp";
 
 describe("isUpdateAvailable tests", () => {
@@ -37,7 +37,7 @@ describe("isUpdateAvailable tests", () => {
     // > dump the generated data in a new deviceInfo and use it here
     {
       name: "New device, outdated app expects an update",
-      deviceInfo: deviceInfo210,
+      deviceInfo: deviceInfo222,
       expectedResult: true,
       outdatedApp: {
         name: "Ethereum",
@@ -53,10 +53,7 @@ describe("isUpdateAvailable tests", () => {
     it(name, async () => {
       jest.mock("../manager/api");
       // I don't know how to avoid the internal API calls to the Manager API.
-      const result = await isUpdateAvailable(
-        deviceInfo,
-        outdatedApp as AppAndVersion
-      );
+      const result = await isUpdateAvailable(deviceInfo, outdatedApp as AppAndVersion);
       expect(result).toBe(expectedResult);
     });
   });

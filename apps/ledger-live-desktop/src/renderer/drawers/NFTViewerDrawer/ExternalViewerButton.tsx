@@ -1,14 +1,14 @@
 import React, { useCallback, memo } from "react";
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { useHistory } from "react-router-dom";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import DropDownSelector, { DropDownItem } from "~/renderer/components/DropDownSelector";
-import IconDots from "~/renderer/icons/Dots";
 import IconExternal from "~/renderer/icons/ExternalLink";
 import useNftLinks from "~/renderer/hooks/useNftLinks";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { Account, ProtoNFT, NFTMetadata } from "@ledgerhq/types-live";
+import { IconsLegacy } from "@ledgerhq/react-ui";
 
 const Separator = styled.div`
   background-color: ${p => p.theme.colors.palette.divider};
@@ -62,6 +62,7 @@ type ExternalViewerButtonProps = {
 };
 const ExternalViewerButton = ({ nft, account, metadata }: ExternalViewerButtonProps) => {
   const history = useHistory();
+  const theme = useTheme();
   const onHideCollection = useCallback(() => {
     setDrawer();
     history.replace(`/account/${account.id}/`);
@@ -79,7 +80,7 @@ const ExternalViewerButton = ({ nft, account, metadata }: ExternalViewerButtonPr
               height: 40,
             }}
           >
-            <IconDots size={14} />
+            <IconsLegacy.OthersMedium size={14} color={theme.colors.palette.text.shade50} />
           </Button>
         </Box>
       )}

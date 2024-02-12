@@ -4,28 +4,21 @@ import { Trans } from "react-i18next";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { useSelector } from "react-redux";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import { useBanner } from "../../../components/banners/hooks";
-import TrackScreen from "../../../analytics/TrackScreen";
-import { ScreenName } from "../../../const";
+import { useBanner } from "~/components/banners/hooks";
+import TrackScreen from "~/analytics/TrackScreen";
+import { ScreenName } from "~/const";
 import TwitterBanner from "./TwitterBanner";
 import DAppDisclaimer, { Props as DisclaimerProps } from "./DAppDisclaimer";
 import Banner from "./Banner";
 import AppCard from "./AppCard";
-import AnimatedHeaderView from "../../../components/AnimatedHeader";
-import { TAB_BAR_SAFE_HEIGHT } from "../../../components/TabBar/shared";
-import TabBarSafeAreaView from "../../../components/TabBar/TabBarSafeAreaView";
-import { readOnlyModeEnabledSelector } from "../../../reducers/settings";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
-import { DiscoverNavigatorStackParamList } from "../../../components/RootNavigator/types/DiscoverNavigator";
+import AnimatedHeaderView from "~/components/AnimatedHeader";
+import TabBarSafeAreaView from "~/components/TabBar/TabBarSafeAreaView";
+import { readOnlyModeEnabledSelector } from "~/reducers/settings";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { DiscoverNavigatorStackParamList } from "~/components/RootNavigator/types/DiscoverNavigator";
 
 export type Props = BaseComposite<
-  StackNavigatorProps<
-    DiscoverNavigatorStackParamList,
-    ScreenName.PlatformCatalog
-  >
+  StackNavigatorProps<DiscoverNavigatorStackParamList, ScreenName.PlatformCatalog>
 >;
 
 type DisclaimerOpts =
@@ -45,8 +38,7 @@ export function Catalog({ route, navigation }: Props) {
   // Disclaimer State
   const [disclaimerOpts, setDisclaimerOpts] = useState<DisclaimerOpts>(null);
   const [disclaimerOpened, setDisclaimerOpened] = useState<boolean>(false);
-  const [disclaimerDisabled, setDisclaimerDisabled] =
-    useBanner(DAPP_DISCLAIMER_ID);
+  const [disclaimerDisabled, setDisclaimerDisabled] = useBanner(DAPP_DISCLAIMER_ID);
   const handlePressCard = useCallback(
     (manifest: LiveAppManifest) => {
       const openDApp = () =>
@@ -59,8 +51,7 @@ export function Catalog({ route, navigation }: Props) {
       if (!disclaimerDisabled && !readOnlyModeEnabled) {
         setDisclaimerOpts({
           disableDisclaimer: () => {
-            if (typeof setDisclaimerDisabled === "function")
-              setDisclaimerDisabled();
+            if (typeof setDisclaimerDisabled === "function") setDisclaimerDisabled();
           },
           closeDisclaimer: () => {
             setDisclaimerOpened(false);
@@ -75,13 +66,7 @@ export function Catalog({ route, navigation }: Props) {
         openDApp();
       }
     },
-    [
-      navigation,
-      routeParams,
-      setDisclaimerDisabled,
-      disclaimerDisabled,
-      readOnlyModeEnabled,
-    ],
+    [navigation, routeParams, setDisclaimerDisabled, disclaimerDisabled, readOnlyModeEnabled],
   );
   useEffect(() => {
     // platform can be predefined when coming from a deeplink
@@ -98,7 +83,7 @@ export function Catalog({ route, navigation }: Props) {
     }
   }, [platform, manifests, navigation, routeParams]);
   return (
-    <TabBarSafeAreaView edges={["bottom", "left", "right"]}>
+    <TabBarSafeAreaView edges={["left", "right"]}>
       <AnimatedHeaderView
         edges={[]}
         titleStyle={styles.title}
@@ -126,7 +111,7 @@ export function Catalog({ route, navigation }: Props) {
             onPress={handlePressCard}
           />
         ))}
-        <View style={styles.bottomPadding} />
+        <View />
       </AnimatedHeaderView>
     </TabBarSafeAreaView>
   );
@@ -136,8 +121,5 @@ const styles = StyleSheet.create({
   title: {
     lineHeight: 40,
     textAlign: "left",
-  },
-  bottomPadding: {
-    paddingBottom: TAB_BAR_SAFE_HEIGHT,
   },
 });

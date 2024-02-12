@@ -12,10 +12,9 @@ export type PullRequestMetadata = {
   base_branch: string;
   base_owner: string;
   is_fork: boolean;
+  ref: string;
 };
-export type CheckSuite = Awaited<
-  ReturnType<Octokit["checks"]["getSuite"]>
->["data"];
+export type CheckSuite = Awaited<ReturnType<Octokit["checks"]["getSuite"]>>["data"];
 
 export const SYNC_ACTION = "sync_action";
 export const REPO_OWNER = "LedgerHQ";
@@ -30,19 +29,14 @@ export enum RUNNERS {
 const commonGetInputs = (
   payload: GetInputsPayload,
   metadata?: PullRequestMetadata,
-  localRef?: string
+  localRef?: string,
 ) => {
   return "workflow_run" in payload
     ? {
         login: payload.workflow_run.actor.login,
-        ref:
-          localRef ??
-          metadata?.head_branch ??
-          payload.workflow_run.pull_requests[0]?.head.ref,
+        ref: localRef ?? metadata?.ref ?? payload.workflow_run.pull_requests[0]?.head.ref,
         base_ref:
-          metadata?.base_branch ||
-          payload.workflow_run.pull_requests[0]?.base.ref ||
-          "develop",
+          metadata?.base_branch || payload.workflow_run.pull_requests[0]?.base.ref || "develop",
       }
     : {
         login: payload.sender.login,
@@ -59,7 +53,13 @@ export const WORKFLOWS = {
     required: true,
     affected: ["ledger-live-desktop"],
     summaryFile: "summary.json",
-    getInputs: commonGetInputs,
+    getInputs: (payload: GetInputsPayload, metadata?: PullRequestMetadata, localRef?: string) => {
+      const common = commonGetInputs(payload, metadata, localRef);
+      return {
+        ...common,
+        prNumber: typeof metadata?.number === "number" ? `${metadata?.number}` : undefined,
+      };
+    },
   },
   "build-desktop-external.yml": {
     checkRunName: "@Desktop • Build App (external)",
@@ -93,18 +93,22 @@ export const WORKFLOWS = {
   },
   "build-mobile.yml": {
     checkRunName: "@Mobile • Build App",
-    description:
-      "Build the Ledger Live Mobile application and attach the apk to the workflow run.",
+    description: "Build the Ledger Live Mobile application and attach the apk to the workflow run.",
     runsOn: RUNNERS.internal,
     required: true,
     affected: ["live-mobile"],
     summaryFile: "summary.json",
-    getInputs: commonGetInputs,
+    getInputs: (payload: GetInputsPayload, metadata?: PullRequestMetadata, localRef?: string) => {
+      const common = commonGetInputs(payload, metadata, localRef);
+      return {
+        ...common,
+        prNumber: typeof metadata?.number === "number" ? `${metadata?.number}` : undefined,
+      };
+    },
   },
   "build-mobile-external.yml": {
     checkRunName: "@Mobile • Build App (external)",
-    description:
-      "Build the Ledger Live Mobile application and attach the apk to the workflow run.",
+    description: "Build the Ledger Live Mobile application and attach the apk to the workflow run.",
     runsOn: RUNNERS.external,
     required: true,
     affected: ["live-mobile"],
@@ -125,7 +129,7 @@ export const WORKFLOWS = {
     checkRunName: "@Mobile • Test App End-2-End",
     description: "Run Detox end-to-end tests on Ledger Live Mobile",
     runsOn: RUNNERS.internal,
-    required: false,
+    required: true,
     affected: ["live-mobile"],
     summaryFile: "summary.json",
     getInputs: commonGetInputs,
@@ -137,28 +141,18 @@ export const WORKFLOWS = {
     required: true,
     affected: [/^libs\/.*/],
     summaryFile: "summary.json",
-    getInputs: (
-      payload: GetInputsPayload,
-      metadata?: PullRequestMetadata,
-      localRef?: string
-    ) => {
+    getInputs: (payload: GetInputsPayload, metadata?: PullRequestMetadata, localRef?: string) => {
       return "workflow_run" in payload
         ? {
             login: payload.workflow_run.actor.login,
-            ref:
-              localRef ??
-              metadata?.head_branch ??
-              payload.workflow_run.pull_requests[0]?.head.ref,
+            ref: localRef ?? metadata?.ref ?? payload.workflow_run.pull_requests[0]?.head.ref,
             since_branch:
-              metadata?.base_branch ||
-              payload.workflow_run.pull_requests[0]?.base.ref ||
-              "develop",
+              metadata?.base_branch || payload.workflow_run.pull_requests[0]?.base.ref || "develop",
           }
         : {
             login: payload.sender.login,
             ref: payload.check_run.pull_requests[0]?.head.ref,
-            since_branch:
-              payload.check_run.pull_requests[0]?.base.ref || "develop",
+            since_branch: payload.check_run.pull_requests[0]?.base.ref || "develop",
           };
     },
   },

@@ -1,9 +1,6 @@
 import { useCallback, useMemo } from "react";
 import { AccountLike } from "@ledgerhq/types-live";
-import {
-  accountToPlatformAccount,
-  currencyToPlatformCurrency,
-} from "./converters";
+import { accountToPlatformAccount, currencyToPlatformCurrency } from "./converters";
 import {
   filterPlatformAccounts,
   filterPlatformCurrencies,
@@ -29,18 +26,16 @@ import { listCurrencies } from "../currencies";
  */
 export function usePlatformUrl(
   manifest: LiveAppManifest,
-  inputs?: Record<string, string>
+  inputs?: Record<string, string | undefined>,
 ): URL {
   return useMemo(() => {
     const url = new URL(manifest.url.toString());
 
     if (inputs) {
       for (const key in inputs) {
-        if (
-          Object.prototype.hasOwnProperty.call(inputs, key) &&
-          inputs[key] !== undefined
-        ) {
-          url.searchParams.set(key, inputs[key]);
+        const value = inputs[key];
+        if (Object.prototype.hasOwnProperty.call(inputs, key) && value !== undefined) {
+          url.searchParams.set(key, value);
         }
       }
     }
@@ -53,11 +48,9 @@ export function usePlatformUrl(
   }, [manifest.url, manifest.params, inputs]);
 }
 
-export function usePlatformAccounts(
-  accounts: AccountLike[]
-): PlatformAccount[] {
+export function usePlatformAccounts(accounts: AccountLike[]): PlatformAccount[] {
   return useMemo(() => {
-    return accounts.map((account) => {
+    return accounts.map(account => {
       const parentAccount = getParentAccount(account, accounts);
 
       return accountToPlatformAccount(account, parentAccount);
@@ -65,29 +58,24 @@ export function usePlatformAccounts(
   }, [accounts]);
 }
 
-export function useListPlatformAccounts(
-  accounts: AccountLike[]
-): ListPlatformAccount {
+export function useListPlatformAccounts(accounts: AccountLike[]): ListPlatformAccount {
   const platformAccounts = usePlatformAccounts(accounts);
   return useCallback(
     (filters: AccountFilters = {}) => {
       return filterPlatformAccounts(platformAccounts, filters);
     },
-    [platformAccounts]
+    [platformAccounts],
   );
 }
 
 export function usePlatformCurrencies(): PlatformCurrency[] {
   return useMemo(() => {
-    return listCurrencies(true).reduce<PlatformCurrency[]>(
-      (filtered, currency) => {
-        if (isPlatformSupportedCurrency(currency)) {
-          filtered.push(currencyToPlatformCurrency(currency));
-        }
-        return filtered;
-      },
-      []
-    );
+    return listCurrencies(true).reduce<PlatformCurrency[]>((filtered, currency) => {
+      if (isPlatformSupportedCurrency(currency)) {
+        filtered.push(currencyToPlatformCurrency(currency));
+      }
+      return filtered;
+    }, []);
   }, []);
 }
 
@@ -98,6 +86,6 @@ export function useListPlatformCurrencies(): ListPlatformCurrency {
     (filters?: CurrencyFilters) => {
       return filterPlatformCurrencies(currencies, filters || {});
     },
-    [currencies]
+    [currencies],
   );
 }

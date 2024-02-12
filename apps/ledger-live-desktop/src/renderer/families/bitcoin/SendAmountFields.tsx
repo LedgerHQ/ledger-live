@@ -1,44 +1,38 @@
-import invariant from "invariant";
-import React, { useState, useCallback, useEffect } from "react";
-import { Trans, withTranslation } from "react-i18next";
-import styled from "styled-components";
-import { Account, FeeStrategy } from "@ledgerhq/types-live";
-import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import { context } from "~/renderer/drawers/Provider";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { useFeesStrategy } from "@ledgerhq/live-common/families/bitcoin/react";
+import { Transaction } from "@ledgerhq/live-common/families/bitcoin/types";
+import React, { useCallback, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import styled from "styled-components";
+import { track } from "~/renderer/analytics/segment";
 import Box from "~/renderer/components/Box";
-import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";
+import SelectFeeStrategy, { OnClickType } from "~/renderer/components/SelectFeeStrategy";
+import SendFeeMode from "~/renderer/components/SendFeeMode";
+import Text from "~/renderer/components/Text";
 import Tooltip from "~/renderer/components/Tooltip";
-import SelectFeeStrategy from "~/renderer/components/SelectFeeStrategy";
+import { context } from "~/renderer/drawers/Provider";
 import CoinControlModal from "./CoinControlModal";
 import { FeesField } from "./FeesField";
+import { BitcoinFamily } from "./types";
 import useBitcoinPickingStrategy from "./useBitcoinPickingStrategy";
-import { useFeesStrategy } from "@ledgerhq/live-common/families/bitcoin/react";
-import SendFeeMode from "~/renderer/components/SendFeeMode";
-import { track } from "~/renderer/analytics/segment";
-type Props = {
-  account: Account;
-  parentAccount: Account | undefined | null;
-  transaction: Transaction;
-  onChange: (a: Transaction) => void;
-  status: TransactionStatus;
-  bridgePending: boolean;
-  updateTransaction: (updater: any) => void;
-  mapStrategies?: (
-    a: FeeStrategy,
-  ) => FeeStrategy & {
-    [x: string]: any;
-  };
-  trackProperties?: object;
-};
+import Alert from "~/renderer/components/Alert";
+import TranslatedError from "~/renderer/components/TranslatedError";
+import { useDispatch } from "react-redux";
+import { useHistory } from "react-router";
+import { closeAllModal } from "~/renderer/actions/modals";
+import { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import { Flex } from "@ledgerhq/react-ui";
+
+type Props = NonNullable<BitcoinFamily["sendAmountFields"]>["component"];
+
 const Separator = styled.div`
   width: 100%;
   height: 1px;
   background-color: ${p => p.theme.colors.palette.text.shade10};
   margin: 20px 0;
 `;
-const Fields = ({
+const Fields: Props = ({
   transaction,
   account,
   parentAccount,
@@ -47,9 +41,9 @@ const Fields = ({
   updateTransaction,
   mapStrategies,
   trackProperties = {},
-}: Props) => {
-  invariant(transaction.family === "bitcoin", "FeeField: bitcoin family expected");
+}) => {
   const bridge = getAccountBridge(account);
+  const { t } = useTranslation();
   const { state: drawerState, setDrawer } = React.useContext(context);
   const [coinControlOpened, setCoinControlOpened] = useState(false);
   const [isAdvanceMode, setAdvanceMode] = useState(!transaction.feesStrategy);
@@ -59,11 +53,29 @@ const Fields = ({
   const { item } = useBitcoinPickingStrategy(transaction.utxoStrategy.strategy);
   const canNext = account.bitcoinResources?.utxos?.length;
 
+  const dispatch = useDispatch();
+  const history = useHistory();
+
+  const onBuyClick = useCallback(() => {
+    dispatch(closeAllModal());
+    setTrackingSource("send flow");
+    history.push({
+      pathname: "/exchange",
+      state: {
+        currency: account.currency.id,
+        account: account.id,
+        mode: "buy", // buy or sell
+      },
+    });
+  }, [account.currency.id, account.id, dispatch, history]);
+
+  const { errors } = status;
+  const { gasPrice: messageGas } = errors;
   /* TODO: How do we set default RBF to be true ? (@gre)
    * Meanwhile, using this trick (please don't kill me)
    */
   useEffect(() => {
-    updateTransaction(t =>
+    updateTransaction((t: Transaction) =>
       bridge.updateTransaction(t, {
         rbf: true,
       }),
@@ -71,13 +83,13 @@ const Fields = ({
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const onFeeStrategyClick = useCallback(
-    ({ amount, feesStrategy }) => {
-      track("button_clicked", {
+    ({ amount, feesStrategy }: OnClickType) => {
+      track("button_clicked2", {
         ...trackProperties,
         button: feesStrategy,
         feePerByte: amount,
       });
-      updateTransaction(transaction =>
+      updateTransaction((transaction: Transaction) =>
         bridge.updateTransaction(transaction, {
           feePerByte: amount,
           feesStrategy,
@@ -89,8 +101,8 @@ const Fields = ({
     [updateTransaction, bridge],
   );
   const setAdvanceModeAndTrack = useCallback(
-    state => {
-      track("button_clicked", {
+    (state: boolean) => {
+      track("button_clicked2", {
         ...trackProperties,
         button: state ? "advanced" : "standard",
       });
@@ -99,8 +111,8 @@ const Fields = ({
     [trackProperties],
   );
   const onChangeAndTrack = useCallback(
-    params => {
-      track("button_clicked", {
+    (params: Transaction) => {
+      track("button_clicked2", {
         ...trackProperties,
         button: "fees",
         value: params,
@@ -125,7 +137,7 @@ const Fields = ({
             <Box horizontal alignItems="center">
               <Box>
                 <Text ff="Inter|Regular" fontSize={12} color="palette.text.shade50">
-                  <Trans i18nKey="bitcoin.strategy" />
+                  {t("bitcoin.strategy")}
                 </Text>
                 <Text ff="Inter|Regular" fontSize={13} color="palette.text.shade100">
                   {item ? item.label : null}
@@ -135,12 +147,12 @@ const Fields = ({
               <Box horizontal alignItems="center">
                 {canNext ? (
                   <Button secondary onClick={onCoinControlOpen} disabled={!canNext}>
-                    <Trans i18nKey="bitcoin.coincontrol" />
+                    {t("bitcoin.coincontrol")}
                   </Button>
                 ) : (
-                  <Tooltip content={<Trans i18nKey="bitcoin.ctaDisabled" />}>
+                  <Tooltip content={t("bitcoin.ctaDisabled")}>
                     <Button secondary onClick={onCoinControlOpen} disabled={!canNext}>
-                      <Trans i18nKey="bitcoin.coincontrol" />
+                      {t("bitcoin.coincontrol")}
                     </Button>
                   </Tooltip>
                 )}
@@ -150,6 +162,7 @@ const Fields = ({
             <CoinControlModal
               transaction={transaction}
               account={account}
+              // @ts-expect-error We use the same onChangeTrack function on 2 components yet their onChange signature is different, please halp
               onChange={onChangeAndTrack}
               status={status}
               isOpened={coinControlOpened}
@@ -159,20 +172,30 @@ const Fields = ({
           </Box>
         </Box>
       ) : (
-        <SelectFeeStrategy
-          strategies={strategies}
-          onClick={onFeeStrategyClick}
-          transaction={transaction}
-          account={account}
-          parentAccount={parentAccount}
-          suffixPerByte={true}
-          mapStrategies={mapStrategies}
-        />
+        <>
+          <SelectFeeStrategy
+            strategies={strategies}
+            onClick={onFeeStrategyClick}
+            transaction={transaction}
+            account={account}
+            parentAccount={parentAccount}
+            suffixPerByte={true}
+            mapStrategies={mapStrategies}
+            status={status}
+          />
+          {messageGas && (
+            <Flex onClick={onBuyClick}>
+              <Alert type="warning">
+                <TranslatedError error={messageGas} noLink />
+              </Alert>
+            </Flex>
+          )}
+        </>
       )}
     </>
   );
 };
 export default {
-  component: withTranslation()(Fields),
+  component: Fields,
   fields: ["feePerByte", "rbf"],
 };

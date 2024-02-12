@@ -15,11 +15,8 @@ import Text from "~/renderer/components/Text";
 import ClaimRewardsIllu from "~/renderer/images/rewards.svg";
 import Image from "~/renderer/components/Image";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
-export default function StepInfo({ account, transaction, warning, error }: StepProps) {
-  invariant(
-    account && account.algorandResources && transaction,
-    "account and transaction required",
-  );
+
+export default function StepInfo({ account, warning, error }: StepProps) {
   const unit = getAccountUnit(account);
   const locale = useSelector(localeSelector);
   const { algorandResources } = account;
@@ -30,7 +27,13 @@ export default function StepInfo({ account, transaction, warning, error }: StepP
   });
   return (
     <Box flow={1}>
-      <TrackPage category="OptIn Flow" name="Step 1" />
+      <TrackPage
+        category="OptIn Flow"
+        name="Step 1"
+        flow="stake"
+        action="claim_rewards"
+        currency="algo"
+      />
       {warning && !error ? <ErrorBanner error={warning} warning /> : null}
       {error ? <ErrorBanner error={error} /> : null}
       <Box px={5} py={2}>

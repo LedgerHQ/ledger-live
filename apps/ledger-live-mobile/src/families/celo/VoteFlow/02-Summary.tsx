@@ -5,10 +5,7 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import {
-  formatCurrencyUnit,
-  getCurrencyColor,
-} from "@ledgerhq/live-common/currencies/index";
+import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useValidatorGroups } from "@ledgerhq/live-common/families/celo/react";
 import { CeloValidatorGroup } from "@ledgerhq/live-common/families/celo/types";
 import { defaultValidatorGroupAddress } from "@ledgerhq/live-common/families/celo/logic";
@@ -22,27 +19,24 @@ import { Trans } from "react-i18next";
 import { Animated, SafeAreaView, StyleSheet, View } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 import { useSelector } from "react-redux";
-import { TrackScreen } from "../../../analytics";
+import { TrackScreen } from "~/analytics";
 import { rgba } from "../../../colors";
-import Button from "../../../components/Button";
-import Circle from "../../../components/Circle";
-import CurrencyIcon from "../../../components/CurrencyIcon";
-import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
-import Touchable from "../../../components/Touchable";
-import { ScreenName } from "../../../const";
+import Button from "~/components/Button";
+import Circle from "~/components/Circle";
+import CurrencyIcon from "~/components/CurrencyIcon";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import Touchable from "~/components/Touchable";
+import { ScreenName } from "~/const";
 import DelegatingContainer from "../../tezos/DelegatingContainer";
-import { accountScreenSelector } from "../../../reducers/accounts";
+import { accountScreenSelector } from "~/reducers/accounts";
 import ValidatorImage from "../ValidatorImage";
 import Selectable from "../components/Selectable";
 import Line from "../components/Line";
 import Words from "../components/Words";
-import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CeloVoteFlowParamList } from "./types";
 
-type Props = StackNavigatorProps<
-  CeloVoteFlowParamList,
-  ScreenName.CeloVoteSummary
->;
+type Props = StackNavigatorProps<CeloVoteFlowParamList, ScreenName.CeloVoteSummary>;
 
 export default function VoteSummary({ navigation, route }: Props) {
   const { validator } = route.params;
@@ -63,31 +57,25 @@ export default function VoteSummary({ navigation, route }: Props) {
     return validators[0];
   }, [validators, validator]);
 
-  const {
-    transaction,
-    updateTransaction,
-    setTransaction,
-    status,
-    bridgePending,
-    bridgeError,
-  } = useBridgeTransaction(() => {
-    const tx = route.params.transaction;
+  const { transaction, updateTransaction, setTransaction, status, bridgePending, bridgeError } =
+    useBridgeTransaction(() => {
+      const tx = route.params.transaction;
 
-    if (!tx) {
-      const t = bridge.createTransaction(mainAccount);
+      if (!tx) {
+        const t = bridge.createTransaction(mainAccount);
 
-      return {
-        account,
-        transaction: bridge.updateTransaction(t, {
-          mode: "vote",
-          recipient: defaultValidatorGroupAddress(),
-          amount: route.params.amount ?? 0,
-        }),
-      };
-    }
+        return {
+          account,
+          transaction: bridge.updateTransaction(t, {
+            mode: "vote",
+            recipient: defaultValidatorGroupAddress(),
+            amount: route.params.amount ?? 0,
+          }),
+        };
+      }
 
-    return { account, transaction: tx };
-  });
+      return { account, transaction: tx };
+    });
 
   invariant(transaction, "transaction must be defined");
   invariant(transaction.family === "celo", "transaction celo");
@@ -100,13 +88,7 @@ export default function VoteSummary({ navigation, route }: Props) {
       }),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    route.params.amount,
-    updateTransaction,
-    bridge,
-    setTransaction,
-    chosenValidator,
-  ]);
+  }, [route.params.amount, updateTransaction, bridge, setTransaction, chosenValidator]);
 
   const [rotateAnim] = useState(() => new Animated.Value(0));
 
@@ -173,7 +155,7 @@ export default function VoteSummary({ navigation, route }: Props) {
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-      <TrackScreen category="VoteFlow" name="Summary" />
+      <TrackScreen category="VoteFlow" name="Summary" flow="stake" action="vote" currency="celo" />
 
       <View style={styles.body}>
         <DelegatingContainer
@@ -186,17 +168,8 @@ export default function VoteSummary({ navigation, route }: Props) {
             </View>
           }
           right={
-            <Touchable
-              event="VoteFlowSummaryChangeCircleBtn"
-              onPress={onChangeDelegator}
-            >
-              <Circle
-                size={70}
-                style={[
-                  styles.validatorCircle,
-                  { borderColor: colors.primary },
-                ]}
-              >
+            <Touchable event="VoteFlowSummaryChangeCircleBtn" onPress={onChangeDelegator}>
+              <Circle size={70} style={[styles.validatorCircle, { borderColor: colors.primary }]}>
                 <Animated.View
                   style={{
                     transform: [
@@ -207,9 +180,7 @@ export default function VoteSummary({ navigation, route }: Props) {
                   }}
                 >
                   <ValidatorImage
-                    isLedger={
-                      chosenValidator.address === defaultValidatorGroupAddress()
-                    }
+                    isLedger={chosenValidator.address === defaultValidatorGroupAddress()}
                     name={chosenValidator?.name ?? chosenValidator?.address}
                   />
                 </Animated.View>
@@ -341,9 +312,7 @@ const AccountBalanceTag = ({ account }: { account: AccountLike }) => {
   const unit = getAccountUnit(account);
   const { colors } = useTheme();
   return (
-    <View
-      style={[styles.accountBalanceTag, { backgroundColor: colors.border }]}
-    >
+    <View style={[styles.accountBalanceTag, { backgroundColor: colors.border }]}>
       <Text
         fontWeight="semiBold"
         numberOfLines={1}

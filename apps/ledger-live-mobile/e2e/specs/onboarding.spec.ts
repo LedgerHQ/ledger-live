@@ -1,10 +1,12 @@
-import { expect } from "detox";
-import { waitForElementByText } from "../helpers";
+import { device, expect } from "detox";
 import OnboardingSteps from "../models/onboarding/onboardingSteps";
 import PortfolioPage from "../models/wallet/portfolioPage";
+import { isAndroid } from "../helpers";
+import { launchApp } from "../setup";
 
 let onboardingSteps: OnboardingSteps;
 let portfolioPage: PortfolioPage;
+let isFirstTest = true;
 
 describe("Onboarding", () => {
   beforeAll(() => {
@@ -12,47 +14,72 @@ describe("Onboarding", () => {
     portfolioPage = new PortfolioPage();
   });
 
-  it("starts Onboarding", async () => {
+  beforeEach(async () => {
+    if (!isFirstTest) {
+      await device.uninstallApp();
+      await device.installApp();
+      await launchApp();
+    } else isFirstTest = false;
+  });
+
+  it("does the Onboarding and choose to access wallet", async () => {
     await onboardingSteps.startOnboarding();
-  });
-
-  it("selects already owned nano", async () => {
-    await onboardingSteps.DoIOwnDevice(true);
-  });
-
-  it("goes to setup my ledger nano", async () => {
-    await onboardingSteps.chooseToSetupLedger();
-    await waitForElementByText("Ledger\u00A0Nano\u00A0X");
-  });
-
-  it("chooses Nano X", async () => {
-    await onboardingSteps.selectYourDevice("Ledger\u00A0Nano\u00A0X");
-  });
-
-  it("connects to Nano X", async () => {
-    await onboardingSteps.chooseToConnectYourNano();
-    await onboardingSteps.verifyContentsOfBoxAreChecked();
-  });
-
-  it("choses to Pair Nano", async () => {
-    await onboardingSteps.chooseToPairMyNano();
-  });
-
-  it("selects Pair with Bluetooth", async () => {
-    await onboardingSteps.selectPairWithBluetooth();
-  });
-
-  it("adds device via Bluetooth", async () => {
-    await onboardingSteps.addDeviceViaBluetooth("David");
-  });
-
-  it("opens Ledger Live", async () => {
+    await onboardingSteps.chooseToAccessYourWallet();
+    await onboardingSteps.chooseToConnectYourLedger();
+    await onboardingSteps.selectPairMyNano();
+    await onboardingSteps.addDeviceViaBluetooth();
     await onboardingSteps.openLedgerLive();
     await portfolioPage.waitForPortfolioPageToLoad();
     await expect(portfolioPage.portfolioSettingsButton()).toBeVisible();
+    //should see an empty portfolio page
+    await expect(portfolioPage.emptyPortfolioList()).toBeVisible();
   });
 
-  it("should see an empty portfolio page", async () => {
-    await expect(portfolioPage.emptyPortfolioComponent()).toBeVisible();
+  it("does the Onboarding and choose to restore a Nano X", async () => {
+    await onboardingSteps.startOnboarding();
+    await onboardingSteps.chooseSetupLedger();
+    await onboardingSteps.chooseDevice("nanoX");
+    await onboardingSteps.goesThroughRestorePhrase();
+    await onboardingSteps.selectPairMyNano();
+    await onboardingSteps.addDeviceViaBluetooth();
+    await onboardingSteps.openLedgerLive();
+    await portfolioPage.waitForPortfolioPageToLoad();
+    await expect(portfolioPage.portfolioSettingsButton()).toBeVisible();
+    await expect(portfolioPage.emptyPortfolioList()).toBeVisible();
+  });
+
+  it("does the Onboarding and choose to restore a Nano SP", async () => {
+    await onboardingSteps.startOnboarding();
+    await onboardingSteps.chooseSetupLedger();
+    await onboardingSteps.chooseDevice("nanoSP");
+    if (!isAndroid()) {
+      await onboardingSteps.checkDeviceNotCompatible();
+      await onboardingSteps.chooseDevice("nanoS");
+      await onboardingSteps.checkDeviceNotCompatible();
+    } else {
+      await onboardingSteps.goesThroughRestorePhrase();
+      await onboardingSteps.selectPairMyNano();
+      await onboardingSteps.addDeviceViaUSB("nanoSP");
+      await portfolioPage.waitForPortfolioPageToLoad();
+    }
+  });
+
+  it("does the Onboarding and choose to setup a new Nano X", async () => {
+    await onboardingSteps.startOnboarding();
+    await onboardingSteps.chooseSetupLedger();
+    await onboardingSteps.chooseDevice("nanoX");
+    await onboardingSteps.goesThroughCreateWallet();
+    await onboardingSteps.selectPairMyNano();
+    await onboardingSteps.addDeviceViaBluetooth();
+    await onboardingSteps.openLedgerLive();
+    await portfolioPage.waitForPortfolioPageToLoad();
+  });
+
+  it("does the Onboarding and choose to synchronize with Ledger Live Desktop", async () => {
+    await onboardingSteps.startOnboarding();
+    await onboardingSteps.chooseToAccessYourWallet();
+    await onboardingSteps.chooseToSyncWithLedgerLiveDesktop();
+    await onboardingSteps.goesThroughLedgerLiveDesktopScanning();
+    await onboardingSteps.waitForScanningPage();
   });
 });

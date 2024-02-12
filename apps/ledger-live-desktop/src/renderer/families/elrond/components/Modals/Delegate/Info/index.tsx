@@ -6,38 +6,37 @@ import WarnBox from "~/renderer/components/WarnBox";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
-import { modals } from "~/renderer/families/elrond/modals";
-import { openModal, closeModal } from "~/renderer/actions/modals";
-import { Account } from "@ledgerhq/types-live";
-import { DelegationType, ElrondProvider } from "~/renderer/families/elrond/types";
+import { openModal } from "~/renderer/actions/modals";
+import { DelegationType } from "~/renderer/families/elrond/types";
+import { ElrondAccount, ElrondProvider } from "@ledgerhq/live-common/families/elrond/types";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+
 export interface Props {
-  name: string;
-  account: Account;
-  parentAccount?: Account;
+  account: ElrondAccount;
   validators: Array<ElrondProvider>;
-  delegations: Array<DelegationType>;
+  delegations?: Array<DelegationType>;
 }
 const ElrondEarnRewardsInfoModal = (props: Props) => {
-  const { name, account, parentAccount, validators, delegations } = props;
+  const { account, validators, delegations } = props;
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const onNext = useCallback(() => {
-    dispatch(closeModal(name));
     dispatch(
-      openModal(modals.stake, {
-        parentAccount,
+      openModal("MODAL_ELROND_DELEGATE", {
         account,
         validators,
         delegations,
       }),
     );
-  }, [parentAccount, account, dispatch, validators, delegations, name]);
-  const onLearnMore = useCallback(() => {
-    openURL(urls.elrondStaking);
-  }, []);
+  }, [account, dispatch, validators, delegations]);
+
+  const elrondUrl = useLocalizedUrl(urls.elrondStaking);
+  const onLearnMore = () => {
+    openURL(elrondUrl);
+  };
   return (
     <EarnRewardsInfoModal
-      name={name}
+      name="MODAL_ELROND_REWARDS_INFO"
       onNext={onNext}
       description={t("elrond.delegation.flow.steps.starter.description")}
       bullets={Array.from({
@@ -46,6 +45,7 @@ const ElrondEarnRewardsInfoModal = (props: Props) => {
       additional={
         <WarnBox>{t("elrond.delegation.flow.steps.starter.warning.description")}</WarnBox>
       }
+      currency="elrond"
       footerLeft={
         <LinkWithExternalIcon
           label={t("elrond.delegation.emptyState.info")}

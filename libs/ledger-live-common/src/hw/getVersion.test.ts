@@ -1,8 +1,5 @@
 import { DeviceModelId } from "@ledgerhq/devices";
-import {
-  isBootloaderVersionSupported,
-  isHardwareVersionSupported,
-} from "./getVersion";
+import { isBootloaderVersionSupported, isHardwareVersionSupported } from "./getVersion";
 const { nanoS, nanoSP, nanoX, stax } = DeviceModelId;
 
 test("isBootloaderVersionSupported", () => {

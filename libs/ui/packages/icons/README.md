@@ -40,21 +40,21 @@ declare type Props = {
 ### React
 
 ```js
-import { AppleRegular, ChristmasMedium } from "@ledgerhq/icons-ui/react"
+import { Airplane, LedgerLogo } from "@ledgerhq/icons-ui/react"
 
 /* … */
 
-<ChristmasMedium color="green" />
-<Apple size={20} color="red" />
+<Airplane color="green" />
+<LedgerLogo size="XL" color="black" />
 ```
 
 ### React Native
 
 ```js
-import { AppleRegular, ChristmasMedium } from "@ledgerhq/icons-ui/native"
+import { Airplane, LedgerLogo } from "@ledgerhq/icons-ui/native"
 
 /* … */
 
-<ChristmasMedium color="green" />
-<Apple size={20} color="red" />
+<Airplane color="green" />
+<LedgerLogo size="XL" color="black" />
 ```

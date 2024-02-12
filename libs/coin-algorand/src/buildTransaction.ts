@@ -16,15 +16,10 @@ import type { Transaction } from "./types";
 
 export const buildTransactionPayload =
   (algorandAPI: AlgorandAPI) =>
-  async (
-    account: Account,
-    transaction: Transaction
-  ): Promise<AlgoTransactionPayload> => {
-    const { amount, recipient, mode, memo, assetId, subAccountId } =
-      transaction;
+  async (account: Account, transaction: Transaction): Promise<AlgoTransactionPayload> => {
+    const { amount, recipient, mode, memo, assetId, subAccountId } = transaction;
     const subAccount = subAccountId
-      ? account.subAccounts &&
-        account.subAccounts.find((t) => t.id === subAccountId)
+      ? account.subAccounts && account.subAccounts.find(t => t.id === subAccountId)
       : null;
 
     const note = memo ? new TextEncoder().encode(memo) : undefined;
@@ -53,7 +48,7 @@ export const buildTransactionPayload =
         note,
         Number(targetAssetId),
         params,
-        undefined
+        undefined,
       );
     } else {
       algoTxn = makePaymentTxnWithSuggestedParams(
@@ -62,7 +57,7 @@ export const buildTransactionPayload =
         amount.toNumber(),
         undefined,
         note,
-        params
+        params,
       );
     }
 
@@ -72,7 +67,7 @@ export const buildTransactionPayload =
 
     // Flaw in the SDK: payload isn't sorted, but it needs to be for msgPack encoding
     const sorted = Object.fromEntries(
-      Object.entries(algoTxn.get_obj_for_encoding()).sort()
+      Object.entries(algoTxn.get_obj_for_encoding()).sort(),
     ) as AlgoTransactionPayload;
 
     return sorted;
@@ -84,10 +79,7 @@ export const encodeToSign = (payload: AlgoTransactionPayload): string => {
   return Buffer.from(msgPackEncoded).toString("hex");
 };
 
-export const encodeToBroadcast = (
-  payload: AlgoTransactionPayload,
-  signature: Buffer
-): Buffer => {
+export const encodeToBroadcast = (payload: AlgoTransactionPayload, signature: Buffer): Buffer => {
   const signedPayload: AlgoSignedTransactionPayload = {
     sig: signature,
     txn: payload,

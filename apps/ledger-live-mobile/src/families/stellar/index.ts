@@ -3,9 +3,4 @@ import * as StellarEditMemoType from "./ScreenEditMemoType";
 import * as StellarEditCustomFees from "./ScreenEditCustomFees";
 import * as StellarAddAssetFlow from "./AddAssetFlow";
 
-export {
-  StellarEditMemoValue,
-  StellarEditMemoType,
-  StellarEditCustomFees,
-  StellarAddAssetFlow,
-};
+export { StellarEditMemoValue, StellarEditMemoType, StellarEditCustomFees, StellarAddAssetFlow };

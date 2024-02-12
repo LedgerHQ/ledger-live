@@ -7,8 +7,11 @@ const Container = styled.div`
   justify-content: space-between;
   min-height: 20px;
 `;
+
 type SummarySectionProps = {
   children: React.ReactNode;
 };
+
 const SummarySection = ({ children }: SummarySectionProps) => <Container>{children}</Container>;
+
 export default SummarySection;

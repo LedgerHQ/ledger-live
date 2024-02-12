@@ -20,10 +20,6 @@ export const groupedFeatures: Record<
     ],
   },
   disableNft: {
-    featureIds: [
-      "disableNftLedgerMarket",
-      "disableNftRaribleOpensea",
-      "disableNftSend",
-    ],
+    featureIds: ["disableNftLedgerMarket", "disableNftRaribleOpensea", "disableNftSend"],
   },
 };

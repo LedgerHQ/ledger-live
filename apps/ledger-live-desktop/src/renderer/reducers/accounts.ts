@@ -10,9 +10,9 @@ import {
   nestedSortAccounts,
   AccountComparator,
 } from "@ledgerhq/live-common/account/index";
-import { decodeNftId } from "@ledgerhq/live-common/nft/index";
-import { orderByLastReceived } from "@ledgerhq/live-common/nft/helpers";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { decodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
+import { orderByLastReceived } from "@ledgerhq/live-nft";
+import { getEnv } from "@ledgerhq/live-env";
 import isEqual from "lodash/isEqual";
 import logger from "../logger";
 import { State } from ".";
@@ -60,7 +60,7 @@ const handlers: AccountsHandlers = {
 };
 
 export default handleActions<AccountsState, HandlersPayloads[keyof HandlersPayloads]>(
-  (handlers as unknown) as AccountsHandlers<false>,
+  handlers as unknown as AccountsHandlers<false>,
   state,
 );
 
@@ -73,7 +73,7 @@ export const accountsSelector = (state: { accounts: AccountsState }): Account[] 
 const accountHash = (a: AccountLike) =>
   `${a.type === "Account" ? a.name : ""}-${a.id}${
     a.starred ? "-*" : ""
-  }-${a.balance.toString()}-swapHistory(${a.swapHistory.length})`;
+  }-${a.balance.toString()}-swapHistory(${a.swapHistory?.length || "0"})`;
 const shallowAccountsSelectorCreator = createSelectorCreator(defaultMemoize, (a, b) =>
   isEqual(flattenAccounts(a).map(accountHash), flattenAccounts(b).map(accountHash)),
 );
@@ -159,8 +159,9 @@ export const accountSelector = createSelector(
   ) => accountId,
   (accounts, accountId) => accounts.find(a => a.id === accountId),
 );
-export const getAccountById = createSelector(accountsSelector, accounts => (accountId: string) =>
-  accounts.find(a => a.id === accountId),
+export const getAccountById = createSelector(
+  accountsSelector,
+  accounts => (accountId: string) => accounts.find(a => a.id === accountId),
 );
 
 export const starredAccountsSelector = createSelector(shallowAccountsSelector, accounts =>

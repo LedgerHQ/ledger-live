@@ -14,6 +14,9 @@ import Text from "~/renderer/components/Text";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import TriangleWarning from "~/renderer/icons/TriangleWarning";
 import ToolTip from "~/renderer/components/Tooltip";
+import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
+import { SubAccount } from "@ledgerhq/types-live";
+
 const Wrapper = styled(Box).attrs(() => ({
   horizontal: true,
   mt: 4,
@@ -30,12 +33,16 @@ const BalanceDetail = styled(Box).attrs(() => ({
     flex: 0.75;
   }
 `;
-const TitleWrapper = styled(Box).attrs(props => ({
+const TitleWrapper = styled(Box).attrs<{
+  warning?: boolean;
+}>(props => ({
   color: props.warning ? props.theme.colors.orange : "palette.text.shade60",
   horizontal: true,
   alignItems: "center",
   mb: 1,
-}))``;
+}))<{
+  warning?: boolean;
+}>``;
 const Title = styled(Text).attrs(() => ({
   fontSize: 4,
   ff: "Inter|Medium",
@@ -43,19 +50,23 @@ const Title = styled(Text).attrs(() => ({
   line-height: ${p => p.theme.space[4]}px;
   margin-right: ${p => p.theme.space[1]}px;
 `;
-const AmountValue = styled(Text).attrs(props => ({
+const AmountValue = styled(Text).attrs<{
+  warning?: boolean;
+}>(props => ({
   fontSize: 6,
   ff: "Inter|SemiBold",
   color: props.warning ? props.theme.colors.orange : "palette.text.shade100",
-}))``;
+}))<{
+  warning?: boolean;
+}>``;
 type Props = {
-  account: any;
+  account: PolkadotAccount | SubAccount;
 };
 const AccountBalanceSummaryFooter = ({ account }: Props) => {
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
   const preloaded = usePolkadotPreloadData();
-  if (!account.polkadotResources) return null;
+  if (account.type !== "Account") return null;
   const { spendableBalance: _spendableBalance, polkadotResources } = account;
   const {
     lockedBalance: _lockedBalance,

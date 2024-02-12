@@ -19,20 +19,11 @@ function GenericErrorBottomModal({
   ...otherProps
 }: Props) {
   return (
-    <QueuedDrawer
-      {...otherProps}
-      isRequestingToBeOpened={!!error}
-      onClose={onClose}
-    >
+    <QueuedDrawer {...otherProps} isRequestingToBeOpened={!!error} onClose={onClose}>
       {error ? (
         <View style={styles.root}>
-          <GenericErrorView
-            error={error}
-            hasExportLogButton={hasExportLogButton}
-          />
-          {footerButtons ? (
-            <View style={styles.buttonsContainer}>{footerButtons}</View>
-          ) : null}
+          <GenericErrorView error={error} hasExportLogButton={hasExportLogButton} />
+          {footerButtons ? <View style={styles.buttonsContainer}>{footerButtons}</View> : null}
         </View>
       ) : null}
     </QueuedDrawer>

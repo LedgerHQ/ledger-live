@@ -2,9 +2,9 @@ import React, { memo, useCallback } from "react";
 import { Trans } from "react-i18next";
 import { Linking } from "react-native";
 import { ExternalLinkMedium } from "@ledgerhq/native-ui/assets/icons";
-import SettingsRow from "../../../components/SettingsRow";
-import { urls } from "../../../config/urls";
-import { useLocale } from "../../../context/Locale";
+import SettingsRow from "~/components/SettingsRow";
+import { urls } from "~/utils/urls";
+import { useLocale } from "~/context/Locale";
 
 function PrivacyPolicyRow() {
   const { locale } = useLocale();
@@ -12,8 +12,7 @@ function PrivacyPolicyRow() {
   const onPrivacyLink = useCallback(
     () =>
       Linking.openURL(
-        (urls.privacyPolicy as Record<string, string>)[locale] ||
-          urls.privacyPolicy.en,
+        (urls.privacyPolicy as Record<string, string>)[locale] || urls.privacyPolicy.en,
       ),
     [locale],
   );

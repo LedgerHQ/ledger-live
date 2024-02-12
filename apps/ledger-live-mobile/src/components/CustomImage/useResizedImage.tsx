@@ -53,13 +53,7 @@ function useResizedImage(params: Params) {
     return () => {
       dead = true;
     };
-  }, [
-    imageFileUri,
-    targetDimensions?.height,
-    targetDimensions?.width,
-    onError,
-    onResult,
-  ]);
+  }, [imageFileUri, targetDimensions?.height, targetDimensions?.width, onError, onResult]);
 }
 
 export default useResizedImage;

@@ -8,27 +8,19 @@ const rootDirectory = path.resolve(__dirname, "..", "..", "..");
 const llmDirectory = path.resolve(__dirname, "..");
 
 function compile() {
-  const config = ts.parseJsonConfigFileContent(
-    require("../tsconfig.json"),
-    ts.sys,
-    process.cwd(),
-  );
+  const config = ts.parseJsonConfigFileContent(require("../tsconfig.json"), ts.sys, process.cwd());
   const program = ts.createProgram(config.fileNames, {
     ...config.options,
     noEmit: true,
   });
 
-  console.log(
-    `⏳ - Running typescript type checker on ${config.fileNames.length} files…`,
-  );
+  console.log(`⏳ - Running typescript type checker on ${config.fileNames.length} files…`);
 
   const allDiagnostics = ts
     .getPreEmitDiagnostics(program)
     // Ignore js files
     .filter(
-      diag =>
-        diag.file.fileName.startsWith(llmDirectory) &&
-        /\.tsx?/.test(diag.file.fileName),
+      diag => diag.file.fileName.startsWith(llmDirectory) && /\.tsx?/.test(diag.file.fileName),
     );
 
   const formatDiagnosticHost = {
@@ -37,12 +29,7 @@ function compile() {
     getCanonicalFileName: path => path,
   };
 
-  console.log(
-    ts.formatDiagnosticsWithColorAndContext(
-      allDiagnostics,
-      formatDiagnosticHost,
-    ),
-  );
+  console.log(ts.formatDiagnosticsWithColorAndContext(allDiagnostics, formatDiagnosticHost));
 
   if (allDiagnostics.length > 0) {
     console.log(`⚠️ - Found ${allDiagnostics.length} errors.`);

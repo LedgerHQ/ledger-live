@@ -1,13 +1,8 @@
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import {
-  PostOnboardingActionId,
-  PostOnboardingState,
-} from "@ledgerhq/types-live";
+import { PostOnboardingActionId, PostOnboardingState } from "@ledgerhq/types-live";
 
 type ActionCreatorPlain<T = undefined> = () => { type: string; payload: T };
-type ActionCreator<T> = (
-  arg0: T
-) => ReturnType<ActionCreatorPlain<T>> & { payload: T };
+type ActionCreator<T> = (arg0: T) => ReturnType<ActionCreatorPlain<T>> & { payload: T };
 
 export const actionTypePrefix = "POST_ONBOARDING_";
 
@@ -33,13 +28,17 @@ export const setPostOnboardingActionCompleted: ActionCreator<{
   payload: { actionId },
 });
 
-export const clearPostOnboardingLastActionCompleted: ActionCreatorPlain =
-  () => ({
-    type: `${actionTypePrefix}CLEAR_LAST_ACTION_COMPLETED`,
-    payload: undefined,
-  });
+export const clearPostOnboardingLastActionCompleted: ActionCreatorPlain = () => ({
+  type: `${actionTypePrefix}CLEAR_LAST_ACTION_COMPLETED`,
+  payload: undefined,
+});
 
 export const hidePostOnboardingWalletEntryPoint: ActionCreatorPlain = () => ({
   type: `${actionTypePrefix}HIDE_WALLET_ENTRY_POINT`,
+  payload: undefined,
+});
+
+export const postOnboardingSetFinished: ActionCreatorPlain = () => ({
+  type: `${actionTypePrefix}SET_FINISHED`,
   payload: undefined,
 });

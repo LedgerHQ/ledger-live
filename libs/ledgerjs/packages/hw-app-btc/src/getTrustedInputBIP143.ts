@@ -6,7 +6,7 @@ export function getTrustedInputBIP143(
   transport: Transport,
   indexLookup: number,
   transaction: Transaction,
-  additionals: Array<string> = []
+  additionals: Array<string> = [],
 ): string {
   if (!transaction) {
     throw new Error("getTrustedInputBIP143: missing tx");
@@ -19,9 +19,7 @@ export function getTrustedInputBIP143(
   }
 
   let hash = shajs("sha256")
-    .update(
-      shajs("sha256").update(serializeTransaction(transaction, true)).digest()
-    )
+    .update(shajs("sha256").update(serializeTransaction(transaction, true)).digest())
     .digest();
   const data = Buffer.alloc(4);
   data.writeUInt32LE(indexLookup, 0);

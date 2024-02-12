@@ -1,16 +1,17 @@
+import { Button, Flex, IconsLegacy, InvertThemeV3, Logos, Text } from "@ledgerhq/react-ui";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useHistory } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
 import styled, { useTheme } from "styled-components";
-import { openURL } from "~/renderer/linking";
-import LangSwitcher from "~/renderer/components/Onboarding/LangSwitcher";
-import { urls } from "~/config/urls";
-import { acceptTerms } from "~/renderer/terms";
-import { Text, Button, Logos, Icons, InvertThemeV3, Flex } from "@ledgerhq/react-ui";
 import { saveSettings } from "~/renderer/actions/settings";
+import LangSwitcher from "~/renderer/components/Onboarding/LangSwitcher";
+import { openURL } from "~/renderer/linking";
+import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
+import { acceptTerms } from "~/renderer/terms";
 import BuyNanoX from "./assets/buyNanoX.webm";
-import { hasCompletedOnboardingSelector, languageSelector } from "~/renderer/reducers/settings";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+import { urls } from "~/config/urls";
 
 const StyledLink = styled(Text)`
   text-decoration: underline;
@@ -85,38 +86,26 @@ export function Welcome() {
   const history = useHistory();
   const dispatch = useDispatch();
   const { colors } = useTheme();
-  const locale = useSelector(languageSelector) || "en";
 
-  if (hasCompletedOnboarding) {
-    history.push("/onboarding/select-device");
-  }
+  useEffect(() => {
+    if (hasCompletedOnboarding) {
+      history.push("/onboarding/select-device");
+    }
+  }, [hasCompletedOnboarding, history]);
 
-  const buyNanoX = useCallback(() => {
-    openURL(
-      urls.noDevice.buyNew[
-        locale in urls.terms ? (locale as keyof typeof urls.noDevice.buyNew) : "en"
-      ],
-    );
-  }, [locale]);
+  const urlBuyNew = useLocalizedUrl(urls.buyNew);
+  const buyNanoX = () => openURL(urlBuyNew);
 
-  const openTermsAndConditions = useCallback(() => {
-    openURL(urls.terms[locale in urls.terms ? (locale as keyof typeof urls.terms) : "en"]);
-  }, [locale]);
+  const urlTerms = useLocalizedUrl(urls.terms);
+  const openTermsAndConditions = () => openURL(urlTerms);
 
-  const openPrivacyPolicy = useCallback(() => {
-    openURL(
-      urls.privacyPolicy[
-        locale in urls.privacyPolicy ? (locale as keyof typeof urls.privacyPolicy) : "en"
-      ],
-    );
-  }, [locale]);
+  const urlPrivacyPolicy = useLocalizedUrl(urls.privacyPolicy);
+  const openPrivacyPolicy = () => openURL(urlPrivacyPolicy);
 
   const countTitle = useRef(0);
   const countSubtitle = useRef(0);
-  const [
-    isFeatureFlagsSettingsButtonDisplayed,
-    setIsFeatureFlagsSettingsButtonDisplayed,
-  ] = useState<boolean>(false);
+  const [isFeatureFlagsSettingsButtonDisplayed, setIsFeatureFlagsSettingsButtonDisplayed] =
+    useState<boolean>(false);
 
   const timeout = useRef<ReturnType<typeof setTimeout>>();
 
@@ -125,7 +114,7 @@ export function Welcome() {
     history.push("/settings");
   }, [dispatch, history]);
 
-  const handleOpenFeatureFlagsDrawer = useCallback(nb => {
+  const handleOpenFeatureFlagsDrawer = useCallback((nb: string) => {
     if (nb === "1") countTitle.current++;
     else if (nb === "2") countSubtitle.current++;
     if (countTitle.current > 3 && countSubtitle.current > 5) {
@@ -172,10 +161,10 @@ export function Welcome() {
           <Button
             data-test-id="v3-onboarding-get-started-button"
             iconPosition="right"
-            Icon={Icons.ArrowRightMedium}
+            Icon={IconsLegacy.ArrowRightMedium}
             variant="main"
             onClick={handleAcceptTermsAndGetStarted}
-            mb="24px"
+            mb="5"
           >
             {t("onboarding.screens.welcome.nextButton")}
           </Button>

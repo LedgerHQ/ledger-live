@@ -9,7 +9,7 @@ export async function signMessage(
   }: {
     path: string;
     messageHex: string;
-  }
+  },
 ): Promise<{
   v: number;
   r: string;
@@ -21,16 +21,10 @@ export async function signMessage(
 
   while (offset !== message.length) {
     const maxChunkSize =
-      offset === 0
-        ? MAX_SCRIPT_BLOCK - 1 - paths.length * 4 - 4
-        : MAX_SCRIPT_BLOCK;
+      offset === 0 ? MAX_SCRIPT_BLOCK - 1 - paths.length * 4 - 4 : MAX_SCRIPT_BLOCK;
     const chunkSize =
-      offset + maxChunkSize > message.length
-        ? message.length - offset
-        : maxChunkSize;
-    const buffer = Buffer.alloc(
-      offset === 0 ? 1 + paths.length * 4 + 2 + chunkSize : chunkSize
-    );
+      offset + maxChunkSize > message.length ? message.length - offset : maxChunkSize;
+    const buffer = Buffer.alloc(offset === 0 ? 1 + paths.length * 4 + 2 + chunkSize : chunkSize);
 
     if (offset === 0) {
       buffer[0] = paths.length;
@@ -38,12 +32,7 @@ export async function signMessage(
         buffer.writeUInt32BE(element, 1 + 4 * index);
       });
       buffer.writeUInt16BE(message.length, 1 + 4 * paths.length);
-      message.copy(
-        buffer,
-        1 + 4 * paths.length + 2,
-        offset,
-        offset + chunkSize
-      );
+      message.copy(buffer, 1 + 4 * paths.length + 2, offset, offset + chunkSize);
     } else {
       message.copy(buffer, 0, offset, offset + chunkSize);
     }

@@ -4,14 +4,14 @@ import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 
-import { accountScreenSelector } from "../../../../../../../reducers/accounts";
-import { TrackScreen } from "../../../../../../../analytics";
-import { ScreenName } from "../../../../../../../const";
-import PreventNativeBack from "../../../../../../../components/PreventNativeBack";
-import ValidateSuccess from "../../../../../../../components/ValidateSuccess";
+import { accountScreenSelector } from "~/reducers/accounts";
+import { TrackScreen } from "~/analytics";
+import { ScreenName } from "~/const";
+import PreventNativeBack from "~/components/PreventNativeBack";
+import ValidateSuccess from "~/components/ValidateSuccess";
 
-import type { StackNavigatorNavigation } from "../../../../../../../components/RootNavigator/types/helpers";
-import type { BaseNavigatorStackParamList } from "../../../../../../../components/RootNavigator/types/BaseNavigator";
+import type { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
+import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import type { ValidationSuccessPropsType } from "./types";
 
 import styles from "./styles";
@@ -64,7 +64,13 @@ const ValidationSuccess = (props: ValidationSuccessPropsType) => {
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
-      <TrackScreen category="ElrondDelegation" name="ValidationSuccess" />
+      <TrackScreen
+        category="ElrondDelegation"
+        name="ValidationSuccess"
+        flow="stake"
+        action="claim"
+        currency="MultiversX"
+      />
       <PreventNativeBack />
 
       <ValidateSuccess
@@ -77,9 +83,7 @@ const ValidationSuccess = (props: ValidationSuccessPropsType) => {
             i18nKey={`elrond.claimRewards.flow.steps.verification.success.${transaction.mode}Success`}
           />
         }
-        description={
-          <Trans i18nKey="elrond.claimRewards.flow.steps.verification.success.text" />
-        }
+        description={<Trans i18nKey="elrond.claimRewards.flow.steps.verification.success.text" />}
       />
     </View>
   );

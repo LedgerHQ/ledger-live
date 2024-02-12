@@ -5,20 +5,20 @@ import {
   runDerivationScheme,
   getDerivationScheme,
 } from "@ledgerhq/coin-framework/derivation";
-import { setEnv, getEnv } from "@ledgerhq/live-common/env";
+import { setEnv, getEnv } from "@ledgerhq/live-env";
 import { getAccountPlaceholderName } from "@ledgerhq/live-common/account/index";
 export default {
   args: [],
   job: () =>
     of(
       listSupportedCurrencies()
-        .map((currency) => {
+        .map(currency => {
           const value = getEnv("SCAN_FOR_INVALID_PATHS");
           setEnv("SCAN_FOR_INVALID_PATHS", true);
           const modes = getDerivationModesForCurrency(currency);
           setEnv("SCAN_FOR_INVALID_PATHS", value);
           return modes
-            .map((derivationMode) => {
+            .map(derivationMode => {
               const scheme = getDerivationScheme({
                 derivationMode,
                 currency,
@@ -43,6 +43,6 @@ export default {
             })
             .join("\n");
         })
-        .join("\n")
+        .join("\n"),
     ),
 };

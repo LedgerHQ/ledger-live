@@ -1,22 +1,15 @@
 import React, { useCallback, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { useTheme } from "@react-navigation/native";
-import {
-  Button,
-  Flex,
-  SelectableList,
-  Switch,
-  Text,
-  VerticalTimeline,
-} from "@ledgerhq/native-ui";
+import { Button, Flex, SelectableList, Switch, Text, VerticalTimeline } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import NavigationScrollView from "../../../../components/NavigationScrollView";
-import InstallSetOfApps from "../../../../components/DeviceAction/InstallSetOfApps";
-import SelectDevice from "../../../../components/SelectDevice";
+import NavigationScrollView from "~/components/NavigationScrollView";
+import InstallSetOfApps from "~/components/DeviceAction/InstallSetOfApps";
+import SelectDevice from "~/components/SelectDevice";
 
 export default function DebugMultiAppInstall() {
   const feature = useFeature("deviceInitialApps");
@@ -35,9 +28,7 @@ export default function DebugMultiAppInstall() {
   }, []);
 
   const [device, setDevice] = useState<Device | null>(null);
-  const list = override
-    ? ["Puerto", "Bitcoin", "Ethereum", "Ripple"]
-    : feature?.params?.apps || [];
+  const list = override ? ["Puerto", "Bitcoin", "Ethereum", "Ripple"] : feature?.params?.apps || [];
 
   const formatEstimatedTime = (estimatedTime: number) =>
     t("installSetOfApps.landing.estimatedTime", {
@@ -48,9 +39,7 @@ export default function DebugMultiAppInstall() {
     setOnCompleted(true);
   }, []);
 
-  const [selectedLastSeenDevice, setSelectedLastSeenDevice] = useState(
-    DeviceModelId.stax,
-  );
+  const [selectedLastSeenDevice, setSelectedLastSeenDevice] = useState(DeviceModelId.stax);
 
   const [restoreMode, setRestoreMode] = useState(false);
 
@@ -68,11 +57,7 @@ export default function DebugMultiAppInstall() {
   return (
     <NavigationScrollView>
       <Flex px={8}>
-        <Switch
-          checked={restoreMode}
-          onChange={setRestoreMode}
-          label="Restore mode"
-        />
+        <Switch checked={restoreMode} onChange={setRestoreMode} label="Restore mode" />
         {restoreMode && (
           <>
             <Text py={6}>Select last model id</Text>
@@ -108,9 +93,7 @@ export default function DebugMultiAppInstall() {
               feature?.enabled
                 ? {
                     key: "fakeStep2",
-                    title: isCompleted
-                      ? "Blockchain apps installed"
-                      : "Install Blockchain apps",
+                    title: isCompleted ? "Blockchain apps installed" : "Install Blockchain apps",
                     status: isCompleted ? "completed" : "active",
                     estimatedTime: 180,
                     renderBody: (isDisplayed: boolean) =>
@@ -145,9 +128,7 @@ export default function DebugMultiAppInstall() {
           <Flex>
             <SelectDevice onSelect={setDevice} />
             <Button type="main" onPress={onOverrideDependencies}>
-              {override
-                ? "Use app list from feature flag"
-                : "Use known bad app list"}
+              {override ? "Use app list from feature flag" : "Use known bad app list"}
             </Button>
           </Flex>
         )}

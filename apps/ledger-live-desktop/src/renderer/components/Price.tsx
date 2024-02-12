@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useSelector } from "react-redux";
 import { BigNumber } from "bignumber.js";
 import { Currency, Unit } from "@ledgerhq/types-cryptoassets";
-import { useCalculate } from "@ledgerhq/live-common/countervalues/react";
+import { useCalculate } from "@ledgerhq/live-countervalues-react";
 import { getCurrencyColor } from "~/renderer/getCurrencyColor";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import { colors } from "~/renderer/styles/theme";
@@ -66,23 +66,28 @@ export default function Price({
     : typeof rawCounterValue === "number"
     ? BigNumber(rawCounterValue)
     : rawCounterValue;
-  const bgColor = useTheme().colors.palette.background.paper;
+  const theme = useTheme();
+  const textColor = useMemo(
+    () => (color ? colors[color] : theme.colors.palette.text.shade100),
+    [color, theme],
+  );
+  const bgColor = theme.colors.palette.background.paper;
   const activityColor = useMemo(
     () =>
       withActivityColor
         ? colors[withActivityColor]
         : !withActivityCurrencyColor
-        ? color
-          ? colors[color]
+        ? textColor
+          ? textColor
           : undefined
         : getCurrencyColor(from, bgColor),
-    [bgColor, color, from, withActivityColor, withActivityCurrencyColor],
+    [bgColor, textColor, from, withActivityColor, withActivityCurrencyColor],
   );
   if (!counterValue || counterValue.isZero())
     return <NoCountervaluePlaceholder placeholder={placeholder} />;
   const subMagnitude = counterValue.lt(1) || showAllDigits ? 1 : 0;
   return (
-    <PriceWrapper color={color} fontSize={fontSize} fontWeight={fontWeight}>
+    <PriceWrapper color={textColor} fontSize={fontSize} fontWeight={fontWeight}>
       {withIcon ? (
         <IconActivity
           size={iconSize || 12}

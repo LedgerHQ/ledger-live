@@ -2,7 +2,7 @@ import React from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { BaseTextProps } from "@ledgerhq/native-ui/components/Text/index";
 import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex/index";
-import Touchable from "../../components/Touchable";
+import Touchable from "~/components/Touchable";
 
 const DiscoverCard = ({
   title,
@@ -56,11 +56,7 @@ const DiscoverCard = ({
         alignItems="flex-start"
         flexDirection={subtitleFirst ? "column-reverse" : "column"}
       >
-        <Flex
-          flexDirection="row"
-          alignItems="center"
-          mb={subtitleFirst ? 0 : 3}
-        >
+        <Flex flexDirection="row" alignItems="center" mb={subtitleFirst ? 0 : 3}>
           <Text
             mt={2}
             variant={"h5"}

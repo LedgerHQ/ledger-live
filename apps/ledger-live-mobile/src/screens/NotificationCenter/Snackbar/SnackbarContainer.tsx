@@ -7,8 +7,8 @@ import type { ToastData } from "@ledgerhq/live-common/notifications/ToastProvide
 import { useSelector } from "react-redux";
 import Snackbar from "./Snackbar";
 import * as RootNavigation from "../../../rootnavigation";
-import { NavigatorName, ScreenName } from "../../../const";
-import { hasCompletedOnboardingSelector } from "../../../reducers/settings";
+import { NavigatorName, ScreenName } from "~/const";
+import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 
 export default function SnackbarContainer() {
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
@@ -43,8 +43,7 @@ export default function SnackbarContainer() {
     icon: "info",
   };
 
-  const lastToastIsSuccess =
-    toasts && toasts[toasts.length - 1]?.type === "success";
+  const lastToastIsSuccess = toasts && toasts[toasts.length - 1]?.type === "success";
 
   // Needed to force re-rendering of Snackbar when toasts is updated:
   // it was not re-render when a toast was removed on the Android version.
@@ -67,11 +66,7 @@ export default function SnackbarContainer() {
         data={[toasts[0]]} // NB in case we change our minds about the max
         keyExtractor={item => item.id}
         renderItem={({ item }) => (
-          <Snackbar
-            toast={item}
-            onPress={navigate}
-            onClose={handleDismissToast}
-          />
+          <Snackbar toast={item} onPress={navigate} onClose={handleDismissToast} />
         )}
       />
     ) : (
@@ -82,16 +77,8 @@ export default function SnackbarContainer() {
         }}
       >
         <Snackbar
-          toast={
-            lastToastIsSuccess
-              ? toasts[toasts.length - 1]
-              : groupedSnackbarsItems
-          }
-          cta={
-            lastToastIsSuccess
-              ? undefined
-              : t("notificationCenter.groupedToast.cta")
-          }
+          toast={lastToastIsSuccess ? toasts[toasts.length - 1] : groupedSnackbarsItems}
+          cta={lastToastIsSuccess ? undefined : t("notificationCenter.groupedToast.cta")}
           onPress={navigate}
           onClose={lastToastIsSuccess ? handleDismissToast : undefined}
           key={nonce}

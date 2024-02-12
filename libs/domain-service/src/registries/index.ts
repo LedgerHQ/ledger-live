@@ -4,14 +4,12 @@ const REGISTRIES: Registry[] = [
   {
     name: "ens",
     resolvers: {
-      forward:
-        "https://explorers.api.live.ledger.com/blockchain/v4/eth/ens/resolve/{name}",
+      forward: "https://explorers.api.live.ledger.com/blockchain/v4/eth/ens/resolve/{name}",
       reverse:
         "https://explorers.api.live.ledger.com/blockchain/v4/eth/ens/reverse-resolve/{address}",
     },
     signatures: {
-      forward:
-        "https://nft.api.live.ledger.com/v1/names/ens/forward/{name}?challenge={challenge}",
+      forward: "https://nft.api.live.ledger.com/v1/names/ens/forward/{name}?challenge={challenge}",
       reverse:
         "https://nft.api.live.ledger.com/v1/names/ens/reverse/{address}?challenge={challenge}",
     },
@@ -34,14 +32,10 @@ export const getRegistries = async (): Promise<Registry[]> => REGISTRIES;
  * @param {string} domain
  * @returns {Promise<AddressResolutionResponse[]>}
  */
-export const getRegistriesForDomain = async (
-  domain: string
-): Promise<Registry[]> => {
+export const getRegistriesForDomain = async (domain: string): Promise<Registry[]> => {
   const registries = await getRegistries();
 
-  return registries.filter((registry) =>
-    registry.patterns.forward.test(domain)
-  );
+  return registries.filter(registry => registry.patterns.forward.test(domain));
 };
 
 /**
@@ -50,12 +44,8 @@ export const getRegistriesForDomain = async (
  * @param {string} address
  * @returns {Promise<AddressResolutionResponse[]>}
  */
-export const getRegistriesForAddress = async (
-  address: string
-): Promise<Registry[]> => {
+export const getRegistriesForAddress = async (address: string): Promise<Registry[]> => {
   const registries = await getRegistries();
 
-  return registries.filter((registry) =>
-    registry.patterns.reverse.test(address)
-  );
+  return registries.filter(registry => registry.patterns.reverse.test(address));
 };

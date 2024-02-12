@@ -3,7 +3,7 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { usePostOnboardingContext } from "./usePostOnboardingContext";
 import { useCallback } from "react";
 import { useFeatureFlags } from "../../featureFlags";
-import { initPostOnboarding } from "../actions";
+import { initPostOnboarding, postOnboardingSetFinished } from "../actions";
 
 type StartPostOnboardingOptions = {
   deviceModelId: DeviceModelId;
@@ -22,9 +22,7 @@ type StartPostOnboardingOptions = {
  * hub.
  * TODO: unit test this
  */
-export function useStartPostOnboardingCallback(): (
-  options: StartPostOnboardingOptions
-) => void {
+export function useStartPostOnboardingCallback(): (options: StartPostOnboardingOptions) => void {
   const dispatch = useDispatch();
   const { getFeature } = useFeatureFlags();
   const { getPostOnboardingActionsForDevice, navigateToPostOnboardingHub } =
@@ -32,40 +30,27 @@ export function useStartPostOnboardingCallback(): (
 
   return useCallback(
     (options: StartPostOnboardingOptions) => {
-      const {
-        deviceModelId,
-        mock = false,
-        fallbackIfNoAction,
-        resetNavigationStack,
-      } = options;
-      const actions = getPostOnboardingActionsForDevice(
-        deviceModelId,
-        mock
-      ).filter(
-        (actionWithState) =>
-          !actionWithState.featureFlagId ||
-          getFeature(actionWithState.featureFlagId)?.enabled
+      const { deviceModelId, mock = false, fallbackIfNoAction, resetNavigationStack } = options;
+      const actions = getPostOnboardingActionsForDevice(deviceModelId, mock).filter(
+        actionWithState =>
+          !actionWithState.featureFlagId || getFeature(actionWithState.featureFlagId)?.enabled,
       );
       dispatch(
         initPostOnboarding({
           deviceModelId,
-          actionsIds: actions.map((action) => action.id),
-        })
+          actionsIds: actions.map(action => action.id),
+        }),
       );
 
       if (actions.length === 0) {
         if (fallbackIfNoAction) {
+          dispatch(postOnboardingSetFinished());
           fallbackIfNoAction();
         }
         return;
       }
       navigateToPostOnboardingHub(resetNavigationStack);
     },
-    [
-      dispatch,
-      getFeature,
-      getPostOnboardingActionsForDevice,
-      navigateToPostOnboardingHub,
-    ]
+    [dispatch, getFeature, getPostOnboardingActionsForDevice, navigateToPostOnboardingHub],
   );
 }

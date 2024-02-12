@@ -8,7 +8,6 @@ import { useSelector } from "react-redux";
 import { RemoteLiveAppProvider } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { LocalLiveAppProvider } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import { RampCatalogProvider } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
-import { getPlatformVersion } from "@ledgerhq/live-common/platform/version";
 
 type PlatformAppProviderWrapperProps = {
   children: ReactNode;
@@ -24,11 +23,10 @@ export function PlatformAppProviderWrapper({ children }: PlatformAppProviderWrap
   return (
     <RemoteLiveAppProvider
       parameters={{
-        apiVersion: getPlatformVersion(),
-        private: false,
         platform: "desktop",
         allowDebugApps,
         allowExperimentalApps,
+        llVersion: __APP_VERSION__,
       }}
       updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}
     >

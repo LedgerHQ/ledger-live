@@ -27,8 +27,7 @@ export const useUpdateFirmware = ({
   updateState: UpdateFirmwareActionState;
   triggerUpdate: () => void;
 } => {
-  const [updateState, setUpdateState] =
-    useState<UpdateFirmwareActionState>(initialState);
+  const [updateState, setUpdateState] = useState<UpdateFirmwareActionState>(initialState);
   const [nonce, setNonce] = useState(0);
 
   useEffect(() => {
@@ -40,11 +39,11 @@ export const useUpdateFirmware = ({
           // in order to correctly throttle the events without losing any important events
           // we need to buffer them according to the throttle time and always return the latest event from the buffer
           bufferTime(STATE_UPDATE_THROTTLE),
-          map((events) => events[events.length - 1]),
-          filter((e) => e !== undefined)
+          map(events => events[events.length - 1]),
+          filter(e => e !== undefined),
         )
         .subscribe({
-          next: (state) => setUpdateState(state),
+          next: state => setUpdateState(state),
         });
 
       return () => {
@@ -53,7 +52,10 @@ export const useUpdateFirmware = ({
     }
   }, [deviceId, updateFirmwareAction, nonce]);
 
-  const triggerUpdate = useCallback(() => setNonce((nonce) => nonce + 1), []);
+  const triggerUpdate = useCallback(() => {
+    setUpdateState(initialState);
+    setNonce(nonce => nonce + 1);
+  }, []);
 
   return { updateState, triggerUpdate };
 };

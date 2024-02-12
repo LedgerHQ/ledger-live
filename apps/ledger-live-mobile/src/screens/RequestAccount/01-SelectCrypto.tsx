@@ -1,19 +1,20 @@
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
-import { StyleSheet, View, FlatList, SafeAreaView } from "react-native";
+import { StyleSheet, View, FlatList, SafeAreaView, ListRenderItem } from "react-native";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/index";
+import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/hooks";
 import { useTheme } from "@react-navigation/native";
-import { ScreenName } from "../../const";
-import { TrackScreen } from "../../analytics";
-import FilteredSearchBar from "../../components/FilteredSearchBar";
-import KeyboardView from "../../components/KeyboardView";
-import CurrencyRow from "../../components/CurrencyRow";
-import LText from "../../components/LText";
-import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import type { RequestAccountNavigatorParamList } from "../../components/RootNavigator/types/RequestAccountNavigator";
+import { ScreenName } from "~/const";
+import { TrackScreen } from "~/analytics";
+import FilteredSearchBar from "~/components/FilteredSearchBar";
+import KeyboardView from "~/components/KeyboardView";
+import CurrencyRow from "~/components/CurrencyRow";
+import LText from "~/components/LText";
+import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import type { RequestAccountNavigatorParamList } from "~/components/RootNavigator/types/RequestAccountNavigator";
+import { getEnv } from "@ledgerhq/live-env";
 
-const SEARCH_KEYS = ["name", "ticker"];
+const SEARCH_KEYS = getEnv("CRYPTO_ASSET_SEARCH_KEYS");
 
 type Navigation = StackNavigatorProps<
   RequestAccountNavigatorParamList,
@@ -32,10 +33,7 @@ const renderEmptyList = () => (
   </View>
 );
 
-export default function RequestAccountsSelectCrypto({
-  navigation,
-  route,
-}: Props) {
+export default function RequestAccountsSelectCrypto({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { currencies } = route.params;
   const sortedCryptoCurrencies = useCurrenciesByMarketcap(currencies);
@@ -48,12 +46,12 @@ export default function RequestAccountsSelectCrypto({
     },
     [navigation, route.params],
   );
-  const renderItem = useCallback(
+  const renderItem: ListRenderItem<CryptoOrTokenCurrency> = useCallback(
     ({ item }) => <CurrencyRow currency={item} onPress={onPressCurrency} />,
     [onPressCurrency],
   );
   const renderList = useCallback(
-    items => (
+    (items: CryptoOrTokenCurrency[]) => (
       <FlatList
         initialNumToRender={20}
         contentContainerStyle={styles.list}

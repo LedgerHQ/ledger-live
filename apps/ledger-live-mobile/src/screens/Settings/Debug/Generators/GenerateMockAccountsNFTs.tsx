@@ -2,12 +2,12 @@ import React from "react";
 import sample from "lodash/sample";
 import { Alert } from "react-native";
 import { genAccount } from "@ledgerhq/live-common/mock/account";
-import { Icons } from "@ledgerhq/native-ui";
+import { IconsLegacy } from "@ledgerhq/native-ui";
 import { listSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
-import SettingsRow from "../../../../components/SettingsRow";
-import accountModel from "../../../../logic/accountModel";
+import SettingsRow from "~/components/SettingsRow";
+import accountModel from "~/logic/accountModel";
 import { saveAccounts } from "../../../../db";
-import { useReboot } from "../../../../context/Reboot";
+import { useReboot } from "~/context/Reboot";
 
 const CURRENCIES_FOR_NFT = ["ethereum", "polygon"];
 
@@ -19,9 +19,7 @@ async function injectMockAccountsInDB(count: number) {
         accountModel.encode(
           genAccount(String(Math.random()), {
             currency: sample(
-              listSupportedCurrencies().filter(c =>
-                CURRENCIES_FOR_NFT.includes(c.id),
-              ),
+              listSupportedCurrencies().filter(c => CURRENCIES_FOR_NFT.includes(c.id)),
             ),
             withNft: true,
           }),
@@ -44,7 +42,7 @@ export default function GenerateMockAccountsButton({
     <SettingsRow
       title={title}
       desc={desc}
-      iconLeft={<Icons.CameraMedium size={24} color="black" />}
+      iconLeft={<IconsLegacy.CameraMedium size={24} color="black" />}
       onPress={() => {
         Alert.alert(
           "This will erase existing accounts",

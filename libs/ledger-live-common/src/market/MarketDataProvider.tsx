@@ -31,10 +31,7 @@ type API = {
   refresh: (param?: MarketListRequestParams) => void;
   refreshChart: (param?: MarketCurrencyChartDataRequestParams) => void;
   selectCurrency: (id?: string, data?: CurrencyData, range?: string) => void;
-  loadNextPage: (
-    startIndex?: number,
-    stopIndex?: number
-  ) => void | Promise<void>;
+  loadNextPage: (startIndex?: number, stopIndex?: number) => void | Promise<void>;
   setCounterCurrency: (counterCurrency: string) => void;
 };
 
@@ -102,7 +99,7 @@ function marketDataReducer(state, action) {
     case ACTIONS.UPDATE_MARKET_DATA: {
       const newData = action.payload.marketData;
       const page = action.payload.page || state.requestParams.page;
-      const marketData = [...state.marketData.map((data) => ({ ...data }))];
+      const marketData = [...state.marketData.map(data => ({ ...data }))];
       if (!newData.length || marketData.some(({ id }) => id === newData[0].id))
         return { ...state, loading: false };
 
@@ -221,14 +218,8 @@ export const MarketDataProvider = ({
     ...initState,
   });
   const api = fetchApi || defaultFetchApi;
-  const {
-    requestParams,
-    chartRequestParams,
-    loading,
-    loadingChart,
-    page,
-    selectedCoinData,
-  } = useDebounce(state, 300);
+  const { requestParams, chartRequestParams, loading, loadingChart, page, selectedCoinData } =
+    useDebounce(state, 300);
 
   const handleError = useCallback((payload: Error) => {
     dispatch({ type: ACTIONS.SET_ERROR, payload });
@@ -238,7 +229,7 @@ export const MarketDataProvider = ({
     if (countervalue) {
       const ticker = countervalue.ticker.toLowerCase();
       api.supportedCounterCurrencies().then(
-        (supportedCounterCurrencies) =>
+        supportedCounterCurrencies =>
           api.setSupportedCoinsList().then((coins: SupportedCoins) => {
             dispatch({
               type: ACTIONS.IS_READY,
@@ -249,32 +240,26 @@ export const MarketDataProvider = ({
             });
             dispatch({
               type: ACTIONS.UPDATE_COUNTERVALUE,
-              payload: supportedCounterCurrencies.includes(ticker)
-                ? ticker
-                : "usd",
+              payload: supportedCounterCurrencies.includes(ticker) ? ticker : "usd",
             });
           }, handleError),
-        handleError
+        handleError,
       );
     }
   }, [api, countervalue, handleError]);
 
   useEffect(() => {
-    if (
-      chartRequestParams?.id &&
-      chartRequestParams?.counterCurrency &&
-      !loadingChart
-    ) {
+    if (chartRequestParams?.id && chartRequestParams?.counterCurrency && !loadingChart) {
       const range = chartRequestParams.range;
 
       if (selectedCoinData && !selectedCoinData?.chartData?.[range]) {
         api.currencyChartData(chartRequestParams).then(
-          (chartData) =>
+          chartData =>
             dispatch({
               type: ACTIONS.UPDATE_SINGLE_CHART_DATA,
               payload: { id: chartRequestParams.id, chartData },
             }),
-          handleError
+          handleError,
         );
       } else
         dispatch({
@@ -313,12 +298,12 @@ export const MarketDataProvider = ({
   useEffect(() => {
     if (requestParams?.counterCurrency) {
       api.listPaginated(requestParams).then(
-        (marketData) =>
+        marketData =>
           dispatch({
             type: ACTIONS.UPDATE_MARKET_DATA,
             payload: { marketData },
           }),
-        handleError
+        handleError,
       );
     }
   }, [api, handleError, requestParams]);
@@ -343,26 +328,26 @@ export const MarketDataProvider = ({
         } else {
           const newPage = page + 1;
           api.listPaginated({ ...requestParams, page: newPage }).then(
-            (marketData) => {
+            marketData => {
               dispatch({
                 type: ACTIONS.UPDATE_MARKET_DATA,
                 payload: { marketData, page: newPage },
               });
               resolve(true);
             },
-            (err) => {
+            err => {
               handleError(err);
               reject(new Error(err));
-            }
+            },
           );
         }
       }),
-    [loading, page, api, requestParams, handleError]
+    [loading, page, api, requestParams, handleError],
   );
 
   const setCounterCurrency = useCallback(
-    (payload) => dispatch({ type: ACTIONS.UPDATE_COUNTERVALUE, payload }),
-    [dispatch]
+    payload => dispatch({ type: ACTIONS.UPDATE_COUNTERVALUE, payload }),
+    [dispatch],
   );
 
   const value = {
@@ -374,11 +359,7 @@ export const MarketDataProvider = ({
     setCounterCurrency,
   };
 
-  return (
-    <MarketDataContext.Provider value={value}>
-      {children}
-    </MarketDataContext.Provider>
-  );
+  return <MarketDataContext.Provider value={value}>{children}</MarketDataContext.Provider>;
 };
 
 export function useMarketData(): MarketDataContextType {

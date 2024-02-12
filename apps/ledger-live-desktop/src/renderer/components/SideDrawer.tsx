@@ -3,35 +3,12 @@ import { useSelector } from "react-redux";
 import styled from "styled-components";
 import { color } from "styled-system";
 import { Transition, TransitionStatus } from "react-transition-group";
-import IconCross from "~/renderer/icons/Cross";
 import { createFocusTrap, FocusTrap } from "focus-trap";
-import Text from "./Text";
-import { Trans } from "react-i18next";
-import IconAngleLeft from "~/renderer/icons/AngleLeft";
-import { Base as Button } from "./Button";
-import Box from "./Box/Box";
 import { createPortal } from "react-dom";
 import { modalsStateSelector } from "~/renderer/reducers/modals";
 import { useDeviceBlocked } from "./DeviceAction/DeviceBlocker";
-const TouchButton = styled.button`
-  border: none;
-  background-color: rgba(0, 0, 0, 0);
-  display: inline-flex;
-  max-height: 100%;
-  -webkit-app-region: no-drag;
-  -webkit-tap-highlight-color: transparent;
-  user-select: none;
-  color: ${p => p.theme.colors.palette.text.shade80};
-  transition: filter 150ms ease-out;
-  cursor: pointer;
+import SideDrawerHeader from "./SideDrawerHeader";
 
-  :hover {
-    filter: opacity(0.8);
-  }
-  :active {
-    filter: opacity(0.5);
-  }
-`;
 const DURATION = 250;
 const transitionBackdropStyles = {
   entering: {},
@@ -87,6 +64,7 @@ const DrawerContent = styled.div.attrs(({ state }: { state: TransitionStatus }) 
   flex-direction: column;
   will-change: transform;
   overflow: hidden;
+  -webkit-app-region: no-drag;
 `;
 const transitionContainerStyles = {
   entering: {},
@@ -109,19 +87,21 @@ const DrawerContainer = styled.div.attrs(({ state }: { state: TransitionStatus }
   bottom: 0;
   right: 0;
   overflow: hidden;
+  -webkit-app-region: no-drag;
   z-index: 50;
 `;
 export type DrawerProps = {
   children?: React.ReactNode;
   isOpen?: boolean;
-  onRequestClose?: (a: React.MouseEvent) => void;
-  onRequestBack?: (a: React.MouseEvent) => void;
+  onRequestClose?: (a: React.MouseEvent | KeyboardEvent) => void;
+  onRequestBack?: (a: React.MouseEvent | KeyboardEvent) => void;
   direction?: "right" | "left";
   paper?: boolean;
   title?: string;
   preventBackdropClick?: boolean;
   forceDisableFocusTrap?: boolean;
   style?: React.CSSProperties;
+  withPaddingTop?: boolean;
 };
 const domNode = document.getElementById("modals");
 
@@ -139,11 +119,11 @@ export function SideDrawer({
   const deviceBlocked = useDeviceBlocked();
 
   const onKeyPress = useCallback(
-    e => {
+    (e: React.MouseEvent | KeyboardEvent) => {
       if (
         isOpen &&
         !preventBackdropClick &&
-        e.key === "Escape" &&
+        (e as KeyboardEvent).key === "Escape" &&
         onRequestClose &&
         !deviceBlocked
       ) {
@@ -212,48 +192,11 @@ export function SideDrawer({
                 direction={direction}
                 data-test-id="drawer-content"
               >
-                {onRequestClose || onRequestBack || title ? (
-                  <Box
-                    horizontal
-                    justifyContent="space-between"
-                    height={62}
-                    alignItems="center"
-                    m={0}
-                    p="24px"
-                    style={{
-                      zIndex: 200,
-                    }}
-                  >
-                    {onRequestBack ? (
-                      <Button
-                        onClick={onRequestBack}
-                        className="sidedrawer-close"
-                        data-test-id="drawer-close-button"
-                      >
-                        <IconAngleLeft size={12} />
-                        <Text ff="Inter|Medium" fontSize={4} color="palette.text.shade40">
-                          <Trans i18nKey="common.back" />
-                        </Text>
-                      </Button>
-                    ) : (
-                      <Box />
-                    )}
-
-                    {title && (
-                      <Text ff="Inter|SemiBold" fontWeight="600" fontSize="18px">
-                        {title}
-                      </Text>
-                    )}
-
-                    {onRequestClose && !deviceBlocked ? (
-                      <TouchButton onClick={onRequestClose} data-test-id="drawer-close-button">
-                        <IconCross size={16} />
-                      </TouchButton>
-                    ) : (
-                      <Box />
-                    )}
-                  </Box>
-                ) : null}
+                <SideDrawerHeader
+                  onRequestClose={onRequestClose}
+                  onRequestBack={onRequestBack}
+                  title={title}
+                />
                 {children}
               </DrawerContent>
               <DrawerBackdrop

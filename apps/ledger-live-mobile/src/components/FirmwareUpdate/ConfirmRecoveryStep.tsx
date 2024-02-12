@@ -3,7 +3,7 @@ import {
   Flex,
   Text,
   Link,
-  Icons,
+  IconsLegacy,
   Button,
   Checkbox,
   Alert,
@@ -12,9 +12,9 @@ import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Linking, ScrollView } from "react-native";
-import { track } from "../../analytics";
-import Track from "../../analytics/Track";
-import { urls } from "../../config/urls";
+import { track } from "~/analytics";
+import Track from "~/analytics/Track";
+import { urls } from "~/utils/urls";
 import SafeMarkdown from "../SafeMarkdown";
 
 type Props = {
@@ -24,15 +24,9 @@ type Props = {
   device: Device;
 };
 
-const ConfirmRecoveryStep = ({
-  firmwareVersion,
-  firmwareNotes,
-  onContinue,
-  device,
-}: Props) => {
+const ConfirmRecoveryStep = ({ firmwareVersion, firmwareNotes, onContinue, device }: Props) => {
   const { t } = useTranslation();
-  const [confirmRecoveryPhraseBackup, setConfirmRecoveryPhraseBackup] =
-    useState(false);
+  const [confirmRecoveryPhraseBackup, setConfirmRecoveryPhraseBackup] = useState(false);
 
   const toggleConfirmRecoveryPhraseBackup = useCallback(() => {
     track("FirmwareUpdateSeedDisclaimerChecked");
@@ -62,21 +56,17 @@ const ConfirmRecoveryStep = ({
           </Text>
           <Alert
             type="info"
-            title={t(
-              "FirmwareUpdateReleaseNotes.recoveryPhraseBackupInstructions",
-            )}
+            title={t("FirmwareUpdateReleaseNotes.recoveryPhraseBackupInstructions")}
           />
           <Flex mt={6}>
             <Link
               onPress={openRecoveryPhraseInfo}
-              Icon={Icons.ExternalLinkMedium}
+              Icon={IconsLegacy.ExternalLinkMedium}
               iconPosition="right"
               type="color"
               style={{ justifyContent: "flex-start" }}
             >
-              {t(
-                "onboarding.stepSetupDevice.recoveryPhraseSetup.infoModal.link",
-              )}
+              {t("onboarding.stepSetupDevice.recoveryPhraseSetup.infoModal.link")}
             </Link>
           </Flex>
           {firmwareNotes ? <SafeMarkdown markdown={firmwareNotes} /> : null}
@@ -90,12 +80,7 @@ const ConfirmRecoveryStep = ({
           label={t("FirmwareUpdateReleaseNotes.confirmRecoveryPhrase")}
         />
       </Flex>
-      <Button
-        onPress={onContinue}
-        type="main"
-        mt={6}
-        disabled={!confirmRecoveryPhraseBackup}
-      >
+      <Button onPress={onContinue} type="main" mt={6} disabled={!confirmRecoveryPhraseBackup}>
         {t("common.continue")}
       </Button>
     </Flex>

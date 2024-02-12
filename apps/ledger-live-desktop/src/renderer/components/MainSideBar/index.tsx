@@ -1,13 +1,13 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useHistory, useLocation } from "react-router-dom";
+import { Link, useHistory, useLocation, PromptProps } from "react-router-dom";
 import { Transition } from "react-transition-group";
 import styled from "styled-components";
 import { useManagerBlueDot } from "@ledgerhq/live-common/manager/hooks";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { Icons, Tag as TagComponent } from "@ledgerhq/react-ui";
+import { IconsLegacy, Tag as TagComponent } from "@ledgerhq/react-ui";
 import { accountsSelector, starredAccountsSelector } from "~/renderer/reducers/accounts";
 import {
   sidebarCollapsedSelector,
@@ -29,11 +29,14 @@ import Space from "~/renderer/components/Space";
 import UpdateDot from "~/renderer/components/Updater/UpdateDot";
 import { Dot } from "~/renderer/components/Dot";
 import Stars from "~/renderer/components/Stars";
-import useEnv from "~/renderer/hooks/useEnv";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { CARD_APP_ID } from "~/renderer/screens/card";
 import TopGradient from "./TopGradient";
 import Hide from "./Hide";
 import { track } from "~/renderer/analytics/segment";
+import { useAccountPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
+
+type Location = Parameters<Exclude<PromptProps["message"], string>>[0];
 
 const MAIN_SIDEBAR_WIDTH = 230;
 const TagText = styled.div.attrs<{ collapsed?: boolean }>(p => ({
@@ -205,11 +208,16 @@ const TagContainerFeatureFlags = ({ collapsed }: { collapsed: boolean }) => {
       }}
       onClick={() => setTrackingSource("sidebar")}
     >
-      <Icons.ChartNetworkMedium size={16} />
+      <IconsLegacy.ChartNetworkMedium size={16} />
       <TagText collapsed={collapsed}>{t("common.featureFlags")}</TagText>
     </Tag>
   ) : null;
 };
+
+// Check if the selected tab is a Live-App under discovery tab
+const checkLiveAppTabSelection = (location: Location, liveAppPaths: Array<string>) =>
+  liveAppPaths.find((liveTab: string) => location?.pathname?.includes(liveTab));
+
 const MainSideBar = () => {
   const history = useHistory();
   const location = useLocation();
@@ -227,6 +235,10 @@ const MainSideBar = () => {
   const displayBlueDot = useManagerBlueDot(lastSeenDevice);
 
   const referralProgramConfig = useFeature("referralProgramDesktopSidebar");
+  const ptxEarnConfig = useFeature("ptxEarn");
+  const recoverFeature = useFeature("protectServicesDesktop");
+  const recoverHomePath = useAccountPath(recoverFeature);
+
   const handleCollapse = useCallback(() => {
     dispatch(setSidebarCollapsed(!collapsed));
   }, [dispatch, collapsed]);
@@ -243,9 +255,10 @@ const MainSideBar = () => {
 
   const trackEntry = useCallback(
     (entry: string, flagged = false) => {
-      track(flagged ? "menu_entry_click_flagged" : "menuentry_clicked", {
+      track("menuentry_clicked", {
         entry,
         page: history.location.pathname,
+        flagged,
       });
     },
     [history.location.pathname],
@@ -260,7 +273,7 @@ const MainSideBar = () => {
   }, [push, trackEntry]);
   const handleClickDashboard = useCallback(() => {
     push("/");
-    trackEntry("/");
+    trackEntry("/portfolio");
   }, [push, trackEntry]);
   const handleClickMarket = useCallback(() => {
     push("/market");
@@ -291,7 +304,7 @@ const MainSideBar = () => {
     trackEntry("swap");
   }, [push, trackEntry]);
   const handleClickRefer = useCallback(() => {
-    if (referralProgramConfig?.enabled && referralProgramConfig?.params.path) {
+    if (referralProgramConfig?.enabled && referralProgramConfig?.params?.path) {
       push(referralProgramConfig?.params.path);
       trackEntry("refer-a-friend", referralProgramConfig?.params.isNew);
     }
@@ -309,11 +322,34 @@ const MainSideBar = () => {
   }, [dispatch, maybeRedirectToAccounts]);
 
   const handleClickRecover = useCallback(() => {
-    track("button_clicked", {
+    const enabled = recoverFeature?.enabled;
+    const openRecoverFromSidebar = recoverFeature?.params?.openRecoverFromSidebar;
+    const liveAppId = recoverFeature?.params?.protectId;
+
+    if (enabled && openRecoverFromSidebar && liveAppId && recoverHomePath) {
+      history.push(recoverHomePath);
+    } else if (enabled) {
+      dispatch(openModal("MODAL_PROTECT_DISCOVER", undefined));
+    }
+    track("button_clicked2", {
       button: "Protect",
     });
-    dispatch(openModal("MODAL_PROTECT_DISCOVER", undefined));
-  }, [dispatch]);
+  }, [
+    recoverFeature?.enabled,
+    recoverFeature?.params?.openRecoverFromSidebar,
+    recoverFeature?.params?.protectId,
+    recoverHomePath,
+    history,
+    dispatch,
+  ]);
+
+  // Add your live-app path here if you don't want discovery and the live-app tabs to be both selected
+  const isLiveAppTabSelected = checkLiveAppTabSelection(
+    location,
+    [
+      referralProgramConfig?.params?.path, // Refer-a-friend
+    ].filter((path): path is string => !!path), // Filter undefined values,
+  );
 
   return (
     <Transition
@@ -345,29 +381,29 @@ const MainSideBar = () => {
                 <SideBarListItem
                   id={"dashboard"}
                   label={t("dashboard.title")}
-                  icon={Icons.HouseMedium}
+                  icon={IconsLegacy.HouseMedium}
                   iconSize={20}
                   iconActiveColor="wallet"
                   onClick={handleClickDashboard}
-                  isActive={location.pathname === "/"}
+                  isActive={location.pathname === "/" || location.pathname.startsWith("/asset/")}
                   NotifComponent={<UpdateDot collapsed={collapsed} />}
                   collapsed={secondAnim}
                 />
                 <SideBarListItem
                   id={"market"}
                   label={t("sidebar.market")}
-                  icon={Icons.GraphGrowMedium}
+                  icon={IconsLegacy.GraphGrowMedium}
                   iconSize={20}
                   iconActiveColor="wallet"
                   onClick={handleClickMarket}
-                  isActive={location.pathname === "/market"}
+                  isActive={location.pathname.startsWith("/market")}
                   collapsed={secondAnim}
                 />
-                <FeatureToggle feature="learn">
+                <FeatureToggle featureId="learn">
                   <SideBarListItem
                     id="learn"
                     label={t("sidebar.learn")}
-                    icon={Icons.NewsMedium}
+                    icon={IconsLegacy.NewsMedium}
                     iconSize={20}
                     iconActiveColor="wallet"
                     isActive={location.pathname.startsWith("/learn")}
@@ -378,7 +414,7 @@ const MainSideBar = () => {
                 <SideBarListItem
                   id={"accounts"}
                   label={t("sidebar.accounts")}
-                  icon={Icons.WalletMedium}
+                  icon={IconsLegacy.WalletMedium}
                   iconSize={20}
                   iconActiveColor="wallet"
                   isActive={location.pathname.startsWith("/account")}
@@ -389,17 +425,17 @@ const MainSideBar = () => {
                 <SideBarListItem
                   id={"catalog"}
                   label={t("sidebar.catalog")}
-                  icon={Icons.PlanetMedium}
+                  icon={IconsLegacy.PlanetMedium}
                   iconSize={20}
                   iconActiveColor="wallet"
-                  isActive={location.pathname.startsWith("/platform")}
+                  isActive={location.pathname.startsWith("/platform") && !isLiveAppTabSelected}
                   onClick={handleClickCatalog}
                   collapsed={secondAnim}
                 />
                 <SideBarListItem
                   id={"send"}
                   label={t("send.title")}
-                  icon={Icons.ArrowFromBottomMedium}
+                  icon={IconsLegacy.ArrowFromBottomMedium}
                   iconSize={20}
                   iconActiveColor="wallet"
                   onClick={handleOpenSendModal}
@@ -409,29 +445,36 @@ const MainSideBar = () => {
                 <SideBarListItem
                   id={"receive"}
                   label={t("receive.title")}
-                  icon={Icons.ArrowToBottomMedium}
+                  icon={IconsLegacy.ArrowToBottomMedium}
                   iconSize={20}
                   iconActiveColor="wallet"
                   onClick={handleOpenReceiveModal}
                   disabled={noAccounts || navigationLocked}
                   collapsed={secondAnim}
                 />
-                <FeatureToggle feature="ptxEarn">
+                <FeatureToggle featureId="ptxEarn">
                   <SideBarListItem
                     id={"earn"}
                     label={t("sidebar.earn")}
-                    icon={Icons.LendMedium}
+                    icon={IconsLegacy.LendMedium}
                     iconSize={20}
                     iconActiveColor="wallet"
                     onClick={handleClickEarn}
                     isActive={location.pathname === "/earn"}
                     collapsed={secondAnim}
+                    NotifComponent={
+                      ptxEarnConfig?.params?.isNew ? (
+                        <CustomTag active type="plain" size="small">
+                          {t("common.new")}
+                        </CustomTag>
+                      ) : null
+                    }
                   />
                 </FeatureToggle>
                 <SideBarListItem
                   id={"exchange"}
                   label={t("sidebar.exchange")}
-                  icon={Icons.BuyCryptoAltMedium}
+                  icon={IconsLegacy.BuyCryptoAltMedium}
                   iconSize={20}
                   iconActiveColor="wallet"
                   onClick={handleClickExchange}
@@ -442,7 +485,7 @@ const MainSideBar = () => {
                 <SideBarListItem
                   id={"swap"}
                   label={t("sidebar.swap")}
-                  icon={Icons.BuyCryptoMedium}
+                  icon={IconsLegacy.BuyCryptoMedium}
                   iconSize={20}
                   iconActiveColor="wallet"
                   onClick={handleClickSwap}
@@ -450,18 +493,25 @@ const MainSideBar = () => {
                   disabled={noAccounts}
                   collapsed={secondAnim}
                 />
-                <FeatureToggle feature="referralProgramDesktopSidebar">
+                <FeatureToggle featureId="referralProgramDesktopSidebar">
                   <SideBarListItem
                     id={"refer"}
                     label={t("sidebar.refer")}
-                    icon={Icons.GiftCardMedium}
+                    icon={IconsLegacy.GiftCardMedium}
                     iconSize={20}
                     iconActiveColor="wallet"
                     onClick={handleClickRefer}
-                    isActive={location.pathname.startsWith(referralProgramConfig?.params.path)}
+                    isActive={
+                      referralProgramConfig?.params &&
+                      location.pathname.startsWith(referralProgramConfig.params.path)
+                    }
                     collapsed={secondAnim}
                     NotifComponent={
-                      referralProgramConfig?.params.isNew ? (
+                      referralProgramConfig?.params?.amount ? (
+                        <CustomTag active type="plain" size="small">
+                          {referralProgramConfig?.params.amount}
+                        </CustomTag>
+                      ) : referralProgramConfig?.params?.isNew ? (
                         <CustomTag active type="plain" size="small">
                           {t("common.new")}
                         </CustomTag>
@@ -472,7 +522,7 @@ const MainSideBar = () => {
                 <SideBarListItem
                   id={"card"}
                   label={t("sidebar.card")}
-                  icon={Icons.CardMedium}
+                  icon={IconsLegacy.CardMedium}
                   iconSize={20}
                   iconActiveColor="wallet"
                   isActive={location.pathname === "/card"}
@@ -480,21 +530,28 @@ const MainSideBar = () => {
                   collapsed={secondAnim}
                   disabled={isCardDisabled}
                 />
-                <FeatureToggle feature="protectServicesDesktop">
+                <FeatureToggle featureId="protectServicesDesktop">
                   <SideBarListItem
-                    id={"send"}
+                    id={"recover"}
                     label={t("sidebar.recover")}
-                    icon={Icons.ShieldCheckMedium}
+                    icon={IconsLegacy.ShieldCheckMedium}
                     iconSize={20}
                     iconActiveColor="wallet"
                     onClick={handleClickRecover}
                     collapsed={secondAnim}
+                    NotifComponent={
+                      recoverFeature?.params?.isNew && (
+                        <CustomTag active type="plain" size="small">
+                          {t("common.new")}
+                        </CustomTag>
+                      )
+                    }
                   />
                 </FeatureToggle>
                 <SideBarListItem
                   id={"manager"}
                   label={t("sidebar.manager")}
-                  icon={Icons.NanoXFoldedMedium}
+                  icon={IconsLegacy.NanoXFoldedMedium}
                   iconSize={20}
                   iconActiveColor="wallet"
                   onClick={handleClickManager}

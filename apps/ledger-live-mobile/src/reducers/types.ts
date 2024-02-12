@@ -8,14 +8,10 @@ import type {
 } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { DeviceModelId } from "@ledgerhq/devices";
-import type { Currency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrencyId, Currency } from "@ledgerhq/types-cryptoassets";
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
 import { PostOnboardingState } from "@ledgerhq/types-live";
-import {
-  AvailableProviderV3,
-  ExchangeRate,
-  KYCStatus,
-} from "@ledgerhq/live-common/exchange/swap/types";
+import { AvailableProviderV3, ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { EventTrigger, DataOfUser } from "../logic/notifications";
 import type { RatingsHappyMoment, RatingsDataOfUser } from "../logic/ratings";
@@ -25,6 +21,8 @@ import {
   AssetContentCard,
   LearnContentCard,
   NotificationContentCard,
+  CategoryContentCard,
+  BrazeContentCard,
 } from "../dynamicContent/types";
 import { ProtectStateNumberEnum } from "../components/ServicesWidget/types";
 import { ImageType } from "../components/CustomImage/types";
@@ -73,7 +71,8 @@ export type AppState = {
   modalLock: boolean;
   backgroundEvents: Array<FwUpdateBackgroundEvent>;
   isMainNavigatorVisible: boolean;
-  wiredDevice: DeviceLike | null;
+  /** For deep links that inadvertently trigger privacy lock. Reset to false on close. */
+  isPasswordLockBlocked: boolean;
 };
 
 // === BLE STATE ===
@@ -121,6 +120,10 @@ export type DynamicContentState = {
   learnCards: LearnContentCard[];
   /** Dynamic content cards displayed in Notification Center */
   notificationCards: NotificationContentCard[];
+  /** Dynamic content cards handling flexible categories throughout the app */
+  categoriesCards: CategoryContentCard[];
+  /** Dynamic content cards for Ledger Live Mobile */
+  mobileCards: BrazeContentCard[];
 };
 
 // === RATINGS STATE ===
@@ -147,6 +150,12 @@ export type RatingsState = {
 
 // === SETTINGS STATE ===
 
+export enum OnboardingType {
+  restore = "restore",
+  connect = "connect",
+  setupNew = "setup new",
+}
+
 export type CurrencySettings = {
   confirmationsNb: number;
   // FIXME: SEEMS TO NEVER BE USED - DROPPING ?
@@ -154,6 +163,8 @@ export type CurrencySettings = {
 };
 
 export type Privacy = {
+  // Is a password setted by the user ?
+  hasPassword: boolean;
   // when we set the privacy, we also retrieve the biometricsType info
   biometricsType?: string | null;
   // this tells if the biometrics was enabled by user yet
@@ -168,11 +179,19 @@ export type Pair = {
 
 export type Theme = "system" | "light" | "dark";
 
+export type supportedCountervaluesData = {
+  value: string;
+  ticker: string;
+  label: string;
+  currency: Currency;
+};
+
 export type SettingsState = {
   counterValue: string;
   counterValueExchange: string | null | undefined;
   reportErrorsEnabled: boolean;
   analyticsEnabled: boolean;
+  personalizedRecommendationsEnabled: boolean;
   privacy: Privacy | null | undefined;
   currenciesSettings: Record<string, CurrencySettings>;
   pairExchanges: Record<string, string | null | undefined>;
@@ -203,9 +222,6 @@ export type SettingsState = {
     hasAcceptedIPSharing: false;
     acceptedProviders: string[];
     selectableCurrencies: string[];
-    KYC: {
-      [key: string]: KYCStatus;
-    };
   };
   lastSeenDevice: DeviceModelInfo | null | undefined;
   knownDeviceModelIds: Record<DeviceModelId, boolean>;
@@ -216,8 +232,8 @@ export type SettingsState = {
   marketCounterCurrency: string | null | undefined;
   marketFilterByStarredAccounts: boolean;
   sensitiveAnalytics: boolean;
-  firstConnectionHasDevice: boolean | null;
-  firstConnectHasDeviceUpdated: boolean | null;
+  onboardingHasDevice: boolean | null;
+  onboardingType: OnboardingType | null;
   customImageType: ImageType | null;
   customImageBackup?: { hex: string; hash: string };
   lastSeenCustomImage: {
@@ -225,6 +241,8 @@ export type SettingsState = {
     hash: string;
   };
   notifications: NotificationsSettings;
+  /** True if user never clicked on the AllowNotifications button in the notifications settings */
+  neverClickedOnAllowNotificationsButton: boolean;
   walletTabNavigatorLastVisitedTab: keyof WalletTabNavigatorStackParamList;
   overriddenFeatureFlags: { [key in FeatureId]?: Feature | undefined };
   featureFlagsBannerVisible: boolean;
@@ -232,6 +250,12 @@ export type SettingsState = {
   dateFormat: string;
   hasBeenUpsoldProtect: boolean;
   generalTermsVersionAccepted?: string;
+  depositFlow: {
+    hasClosedNetworkBanner: boolean;
+    hasClosedWithdrawBanner: boolean;
+  };
+  userNps: number | null;
+  supportedCounterValues: supportedCountervaluesData[];
 };
 
 export type NotificationsSettings = {
@@ -239,6 +263,7 @@ export type NotificationsSettings = {
   announcementsCategory: boolean;
   recommendationsCategory: boolean;
   largeMoverCategory: boolean;
+  transactionsAlertsCategory: boolean;
 };
 
 // === WALLET CONNECT STATE ===
@@ -255,6 +280,15 @@ export type SwapStateType = {
   transaction?: Transaction;
   exchangeRate?: ExchangeRate;
   exchangeRateExpiration?: Date;
+};
+
+// === EARN STATE ===
+
+export type EarnState = {
+  infoModal: {
+    message?: string;
+    messageTitle?: string;
+  };
 };
 
 // === PROTECT STATE ===
@@ -281,6 +315,18 @@ export type ProtectState = {
   protectStatus: ProtectStateNumberEnum;
 };
 
+// === NFT STATE ===
+
+export type NftState = {
+  filterDrawerVisible: boolean;
+  galleryChainFilters: NftGalleryChainFiltersState;
+};
+
+export type NftGalleryChainFiltersState = Pick<
+  Record<CryptoCurrencyId, boolean>,
+  "polygon" | "ethereum"
+>;
+
 // === ROOT STATE ===
 
 export type State = {
@@ -292,7 +338,9 @@ export type State = {
   dynamicContent: DynamicContentState;
   notifications: NotificationsState;
   swap: SwapStateType;
+  earn: EarnState;
   walletconnect: WalletConnectState;
   postOnboarding: PostOnboardingState;
   protect: ProtectState;
+  nft: NftState;
 };

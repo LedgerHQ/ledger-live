@@ -10,12 +10,12 @@ import { useTheme } from "@react-navigation/native";
 import Share from "react-native-share";
 import Node from "./Node";
 import logger from "../../../../logger";
-import { dangerouslyOverrideState } from "../../../../actions/settings";
-import Button from "../../../../components/Button";
-import { SettingsActionTypes } from "../../../../actions/types";
-import { State } from "../../../../reducers/types";
-import QueuedDrawer from "../../../../components/QueuedDrawer";
-import TextInput from "../../../../components/FocusedTextInput";
+import { dangerouslyOverrideState } from "~/actions/settings";
+import Button from "~/components/Button";
+import { SettingsActionTypes } from "~/actions/types";
+import { State } from "~/reducers/types";
+import QueuedDrawer from "~/components/QueuedDrawer";
+import TextInput from "~/components/FocusedTextInput";
 
 const Separator = styled(Flex).attrs({
   width: "100%",
@@ -38,7 +38,7 @@ export default function Store() {
   const dispatch = useDispatch();
 
   const onEdit = useCallback(
-    (path, type) => {
+    (path: string, type: string) => {
       const currentValue = get(modifiedState, path);
       setTargetType(type);
 
@@ -54,6 +54,7 @@ export default function Store() {
   );
 
   const onChangeText = useCallback(
+    // @ts-expect-error string | number but it means casting in the function
     value => {
       const currentValue = get(state, targetPath);
 
@@ -129,10 +130,7 @@ export default function Store() {
       try {
         await Share.open(options);
       } catch (err) {
-        if (
-          (err as { error?: { code?: string } })?.error?.code !==
-          "ECANCELLED500"
-        ) {
+        if ((err as { error?: { code?: string } })?.error?.code !== "ECANCELLED500") {
           logger.critical(err as Error);
         }
       }
@@ -143,10 +141,7 @@ export default function Store() {
     <SafeAreaView>
       <Flex p={4}>
         {hasMadeChanges ? (
-          <Alert
-            type="warning"
-            title="Changes are not persisted until you confirm."
-          />
+          <Alert type="warning" title="Changes are not persisted until you confirm." />
         ) : (
           <Alert type="info" title="Read and modify the application state." />
         )}
@@ -167,23 +162,14 @@ export default function Store() {
           disabled={!hasMadeChanges}
           onPress={onRestore}
         />
-        <Button
-          ml={3}
-          type="shade"
-          iconName={"Share"}
-          onPress={onExportState}
-        />
+        <Button ml={3} type="shade" iconName={"Share"} onPress={onExportState} />
         {__DEV__ ? (
-          <Button
-            ml={3}
-            type="shade"
-            iconName={"Warning"}
-            onPress={onStoreDebug}
-          />
+          <Button ml={3} type="shade" iconName={"Warning"} onPress={onStoreDebug} />
         ) : null}
       </Flex>
       <Separator />
       <ScrollView contentContainerStyle={{ flex: 0, paddingBottom: 170 }}>
+        {/* @ts-expect-error onEdit gives (a: string, type?: string) => but our function needs type (and it seems always defined anyway) */}
         <Node data={modifiedState} onEdit={onEdit} />
       </ScrollView>
       <QueuedDrawer isRequestingToBeOpened={isModalOpen} onClose={onRestore}>

@@ -8,11 +8,7 @@ import { getTronSuperRepresentativeData } from "./api";
 import type { Transaction as TronTransaction, TronAccount } from "./types";
 import type { Transaction } from "../../generated/types";
 import type { SuperRepresentativeData, Vote } from "./types";
-import type {
-  Account,
-  AccountLike,
-  AccountLikeArray,
-} from "@ledgerhq/types-live";
+import type { Account, AccountLike, AccountLikeArray } from "@ledgerhq/types-live";
 const options = [
   {
     name: "token",
@@ -23,7 +19,7 @@ const options = [
   {
     name: "mode",
     type: String,
-    desc: "mode of transaction: send, freeze, unfreeze",
+    desc: "mode of transaction: send, freeze, unfreeze, withdrawExpireUnfreeze, unDelegateResource, legacyUnfreeze",
   },
   {
     name: "duration",
@@ -49,10 +45,7 @@ const options = [
   },
 ];
 
-function inferAccounts(
-  account: Account,
-  opts: Record<string, any>
-): AccountLikeArray {
+function inferAccounts(account: Account, opts: Record<string, any>): AccountLikeArray {
   invariant(account.currency.family === "tron", "tron family");
 
   if (!opts.token) {
@@ -60,11 +53,11 @@ function inferAccounts(
     return accounts;
   }
 
-  return opts.token.map((token) => {
+  return opts.token.map(token => {
     const subAccounts = account.subAccounts || [];
 
     if (token) {
-      const subAccount = subAccounts.find((t) => {
+      const subAccount = subAccounts.find(t => {
         const currency = getAccountCurrency(t);
         return (
           token.toLowerCase() === currency.ticker.toLowerCase() ||
@@ -77,7 +70,7 @@ function inferAccounts(
           "token account '" +
             token +
             "' not found. Available: " +
-            subAccounts.map((t) => getAccountCurrency(t).ticker).join(", ")
+            subAccounts.map(t => getAccountCurrency(t).ticker).join(", "),
         );
       }
 
@@ -91,24 +84,30 @@ function inferTransactions(
     account: AccountLike;
     transaction: Transaction;
   }>,
-  opts: Record<string, any>
+  opts: Record<string, any>,
 ): Transaction[] {
   const mode = opts.mode || "send";
   invariant(
-    ["send", "freeze", "unfreeze", "vote", "claimReward"].includes(mode),
-    `Unexpected mode: ${mode}`
+    [
+      "send",
+      "freeze",
+      "unfreeze",
+      "vote",
+      "claimReward",
+      "withdrawExpireUnfreeze",
+      "unDelegateResource",
+      "legacyUnfreeze",
+    ].includes(mode),
+    `Unexpected mode: ${mode}`,
   );
   const resource = opts.resource ? opts.resource.toUpperCase() : undefined;
 
   if (resource) {
-    invariant(
-      ["BANDWIDTH", "ENERGY"].includes(resource),
-      `Unexpected resource: ${resource}`
-    );
+    invariant(["BANDWIDTH", "ENERGY"].includes(resource), `Unexpected resource: ${resource}`);
   }
 
   const voteAddresses: string[] = opts["tronVoteAddress"] || [];
-  const voteCounts: number[] = (opts["tronVoteCount"] || []).map((value) => {
+  const voteCounts: number[] = (opts["tronVoteCount"] || []).map(value => {
     invariant(Number.isInteger(Number(value)), `Invalid integer: ${value}`);
     return parseInt(value);
   });
@@ -146,10 +145,10 @@ const superRepresentativesFormatters = {
   default: (srData): string => {
     const headerList = 'address "name" url voteCount brokerage isJobs';
     const strList = srData.list.map(
-      (sr) =>
-        `${sr.address} "${formatOptStr(sr.name)}" ${formatOptStr(sr.url)} ${
-          sr.voteCount
-        } ${sr.brokerage} ${sr.isJobs}`
+      sr =>
+        `${sr.address} "${formatOptStr(sr.name)}" ${formatOptStr(sr.url)} ${sr.voteCount} ${
+          sr.brokerage
+        } ${sr.isJobs}`,
     );
     const metaData = [
       `nextVotingDate: ${srData.nextVotingDate}`,
@@ -184,7 +183,7 @@ const tronSuperRepresentative = {
           (format && superRepresentativesFormatters[format]) ||
           superRepresentativesFormatters.default;
         return f(srData);
-      })
+      }),
     ),
 };
 export default {

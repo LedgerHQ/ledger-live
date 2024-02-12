@@ -1,11 +1,7 @@
 import "./test-helpers/staticTime";
 import { BigNumber } from "bignumber.js";
 import flatMap from "lodash/flatMap";
-import {
-  getCryptoCurrencyById,
-  getTokenById,
-  setSupportedCurrencies,
-} from "./currencies";
+import { getCryptoCurrencyById, getTokenById, setSupportedCurrencies } from "./currencies";
 import {
   groupAccountOperationsByDay,
   groupAccountsOperationsByDay,
@@ -22,6 +18,7 @@ setSupportedCurrencies(["ethereum", "ethereum_classic", "tron"]);
 describe("groupAccountOperationsByDay", () => {
   test("basic", () => {
     const account = genAccount("seed_7", {
+      currency: getCryptoCurrencyById("zcash"),
       operationsSize: 20,
     });
     const res1 = groupAccountOperationsByDay(account, {
@@ -35,10 +32,10 @@ describe("groupAccountOperationsByDay", () => {
     expect(res2.completed).toBe(true);
     expect(
       // $FlowFixMe
-      flatMap(res2.sections, (s) => s.data).slice(0, 10)
+      flatMap(res2.sections, s => s.data).slice(0, 10),
     ).toMatchObject(
       // $FlowFixMe
-      flatMap(res1.sections, (s) => s.data)
+      flatMap(res1.sections, s => s.data),
     );
   });
   test("basic 2", () => {
@@ -56,10 +53,10 @@ describe("groupAccountOperationsByDay", () => {
     expect(res2.completed).toBe(true);
     expect(
       // $FlowFixMe
-      flatMap(res2.sections, (s) => s.data).slice(0, 100)
+      flatMap(res2.sections, s => s.data).slice(0, 100),
     ).toMatchObject(
       // $FlowFixMe
-      flatMap(res1.sections, (s) => s.data)
+      flatMap(res1.sections, s => s.data),
     );
   });
   test("filterOperation", () => {
@@ -78,7 +75,7 @@ describe("groupAccountOperationsByDay", () => {
     expect(res2).toEqual(
       groupAccountOperationsByDay(account, {
         count: 10,
-      })
+      }),
     );
     const res3 = groupAccountOperationsByDay(account, {
       count: 10,
@@ -91,15 +88,13 @@ describe("groupAccountOperationsByDay", () => {
       groupAccountOperationsByDay(
         {
           ...account,
-          operations: account.operations.filter((op) => op.type === "OUT"),
-          pendingOperations: account.pendingOperations.filter(
-            (op) => op.type === "OUT"
-          ),
+          operations: account.operations.filter(op => op.type === "OUT"),
+          pendingOperations: account.pendingOperations.filter(op => op.type === "OUT"),
         },
         {
           count: 10,
-        }
-      )
+        },
+      ),
     );
   });
   test("provide at least the requested count even if some op yield nothing", () => {
@@ -119,8 +114,7 @@ describe("groupAccountOperationsByDay", () => {
     });
     expect(res1.completed).toBe(false);
     expect(
-      res1.sections.reduce((acc, s) => acc.concat(s.data), <Operation[]>[])
-        .length
+      res1.sections.reduce((acc, s) => acc.concat(s.data), <Operation[]>[]).length,
     ).toBeGreaterThanOrEqual(100);
   });
   test("to dedup", () => {
@@ -137,12 +131,12 @@ describe("groupAccountOperationsByDay", () => {
   });
 });
 test("shortAddressPreview", () => {
-  expect(
-    shortAddressPreview("0x112233445566778899001234567890aAbBcCdDeEfF")
-  ).toBe("0x112233...cCdDeEfF");
-  expect(
-    shortAddressPreview("0x112233445566778899001234567890aAbBcCdDeEfF", 30)
-  ).toBe("0x11223344556...0aAbBcCdDeEfF");
+  expect(shortAddressPreview("0x112233445566778899001234567890aAbBcCdDeEfF")).toBe(
+    "0x112233...cCdDeEfF",
+  );
+  expect(shortAddressPreview("0x112233445566778899001234567890aAbBcCdDeEfF", 30)).toBe(
+    "0x11223344556...0aAbBcCdDeEfF",
+  );
 });
 test("accountWithMandatoryTokens ethereum", () => {
   const currency = getCryptoCurrencyById("ethereum");
@@ -150,9 +144,7 @@ test("accountWithMandatoryTokens ethereum", () => {
     currency,
     subAccountsCount: 5,
   });
-  const enhance = accountWithMandatoryTokens(account, [
-    getTokenById("ethereum/erc20/0x_project"),
-  ]);
+  const enhance = accountWithMandatoryTokens(account, [getTokenById("ethereum/erc20/0x_project")]);
   const doubleEnhance = accountWithMandatoryTokens(enhance, [
     getTokenById("ethereum/erc20/0x_project"),
   ]);
@@ -161,7 +153,7 @@ test("accountWithMandatoryTokens ethereum", () => {
     ...account,
     subAccounts: [],
   });
-  expect((enhance.subAccounts || []).map((a) => a.id)).toMatchSnapshot();
+  expect((enhance.subAccounts || []).map(a => a.id)).toMatchSnapshot();
 });
 test("withoutToken ethereum", () => {
   const isTokenAccount = (account: SubAccount, tokenId: string) =>
@@ -179,10 +171,7 @@ test("withoutToken ethereum", () => {
     subAccountsCount: 0,
   });
   //Enhance the account with some tokens
-  const enhance = accountWithMandatoryTokens(
-    account,
-    tokenIds.map(getTokenById)
-  );
+  const enhance = accountWithMandatoryTokens(account, tokenIds.map(getTokenById));
   //Get a version of that account without all the tokens
   let demote = enhance;
 
@@ -195,8 +184,8 @@ test("withoutToken ethereum", () => {
 
   //See if we have added/removed them correctly
   for (const tokenId of tokenIds) {
-    expect(saTokens.find((a) => isTokenAccount(a, tokenId))).toBeTruthy();
-    expect(saNoTokens.find((a) => isTokenAccount(a, tokenId))).toBeFalsy();
+    expect(saTokens.find(a => isTokenAccount(a, tokenId))).toBeTruthy();
+    expect(saNoTokens.find(a => isTokenAccount(a, tokenId))).toBeFalsy();
   }
 });
 test("withoutToken tron", () => {
@@ -215,10 +204,7 @@ test("withoutToken tron", () => {
     subAccountsCount: 0,
   });
   //Enhance the account with some tokens
-  const enhance = accountWithMandatoryTokens(
-    account,
-    tokenIds.map(getTokenById)
-  );
+  const enhance = accountWithMandatoryTokens(account, tokenIds.map(getTokenById));
   //Get a version of that account without all the tokens
   let demote = enhance;
 
@@ -231,7 +217,7 @@ test("withoutToken tron", () => {
 
   //See if we have added/removed them correctly
   for (const tokenId of tokenIds) {
-    expect(saTokens.find((a) => isTokenAccount(a, tokenId))).toBeTruthy();
-    expect(saNoTokens.find((a) => isTokenAccount(a, tokenId))).toBeFalsy();
+    expect(saTokens.find(a => isTokenAccount(a, tokenId))).toBeTruthy();
+    expect(saNoTokens.find(a => isTokenAccount(a, tokenId))).toBeFalsy();
   }
 });

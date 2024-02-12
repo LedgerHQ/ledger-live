@@ -42,17 +42,17 @@ export type ConnectManagerEvent =
 
 const cmd = ({ deviceId, request }: Input): Observable<ConnectManagerEvent> =>
   withDevice(deviceId)(
-    (transport) =>
-      new Observable((o) => {
+    transport =>
+      new Observable(o => {
         const timeoutSub = of({
           type: "unresponsiveDevice",
         } as ConnectManagerEvent)
           .pipe(delay(1000))
-          .subscribe((e) => o.next(e));
+          .subscribe(e => o.next(e));
 
         const sub = from(getDeviceInfo(transport))
           .pipe(
-            concatMap((deviceInfo) => {
+            concatMap(deviceInfo => {
               timeoutSub.unsubscribe();
 
               if (!deviceInfo.onboarded && !deviceInfo.isRecoveryMode) {
@@ -78,7 +78,7 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectManagerEvent> =>
                   type: "listingApps",
                   deviceInfo,
                 } as ConnectManagerEvent),
-                listApps(transport, deviceInfo)
+                listApps(transport, deviceInfo),
               );
             }),
             catchError((e: unknown) => {
@@ -96,25 +96,21 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectManagerEvent> =>
                     0x6e01, // No StatusCodes definition
                     0x6d01, // No StatusCodes definition
                     0x6d02, // No StatusCodes definition
-                  ].includes(
-                    // @ts-expect-error typescript not checking agains the instanceof
-                    e.statusCode
-                  ))
+                  ].includes(e.statusCode))
               ) {
                 return from(getAppAndVersion(transport)).pipe(
-                  concatMap((appAndVersion) => {
-                    return !request?.autoQuitAppDisabled &&
-                      !isDashboardName(appAndVersion.name)
+                  concatMap(appAndVersion => {
+                    return !request?.autoQuitAppDisabled && !isDashboardName(appAndVersion.name)
                       ? attemptToQuitApp(transport, appAndVersion)
                       : of({
                           type: "appDetected",
                         } as ConnectManagerEvent);
-                  })
+                  }),
                 );
               }
 
-              return throwError(e);
-            })
+              return throwError(() => e);
+            }),
           )
           .subscribe(o);
 
@@ -122,7 +118,7 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectManagerEvent> =>
           timeoutSub.unsubscribe();
           sub.unsubscribe();
         };
-      })
+      }),
   );
 
 export default cmd;

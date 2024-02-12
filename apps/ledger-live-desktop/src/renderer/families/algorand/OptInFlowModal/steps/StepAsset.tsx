@@ -2,6 +2,7 @@ import invariant from "invariant";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { StepProps } from "../types";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
@@ -12,7 +13,6 @@ import Alert from "~/renderer/components/Alert";
 import AsaSelector from "../fields/AsaSelector";
 export default function StepAsset({
   account,
-  parentAccount,
   onUpdateTransaction,
   transaction,
   warning,
@@ -20,9 +20,12 @@ export default function StepAsset({
   t,
 }: StepProps) {
   invariant(account && transaction, "account and transaction required");
-  const bridge = getAccountBridge(account, parentAccount);
+  const bridge = getAccountBridge(account);
   const onUpdateAsset = useCallback(
-    ({ id: assetId }) => {
+    (t?: TokenCurrency | null) => {
+      // NOTE: to match the signature of AsaSelector, i had to change a bit the function
+      if (!t) return;
+      const { id: assetId } = t;
       onUpdateTransaction(transaction =>
         bridge.updateTransaction(transaction, {
           assetId,
@@ -46,7 +49,6 @@ export default function StepAsset({
 export function StepAssetFooter({
   transitionTo,
   account,
-  parentAccount,
   onClose,
   status,
   bridgePending,
@@ -57,7 +59,7 @@ export function StepAssetFooter({
   const canNext = !bridgePending && !hasErrors;
   return (
     <>
-      <AccountFooter parentAccount={parentAccount} account={account} status={status} />
+      <AccountFooter account={account} status={status} />
       <Box horizontal>
         <Button mr={1} secondary onClick={onClose}>
           <Trans i18nKey="common.cancel" />

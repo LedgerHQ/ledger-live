@@ -12,6 +12,8 @@ const BTC = getCryptoCurrencyById("bitcoin");
 const ETH = getCryptoCurrencyById("ethereum");
 const USDT = getTokenById("ethereum/erc20/usd_tether__erc20_");
 
+jest.useFakeTimers();
+
 const mockedAccounts: Account[] = [
   genAccount("mocked-account-1"),
   genAccount("mocked-account-2", {
@@ -108,7 +110,7 @@ describe("useFromState", () => {
     });
   });
 
-  test("call hook and set the amount", () => {
+  test("call hook and set the amount after 400ms", () => {
     const { result } = renderHook(() => {
       const bridgeTransaction = useBridgeTransaction();
       return useFromState({
@@ -128,7 +130,77 @@ describe("useFromState", () => {
     expect(result.current).toMatchObject({
       fromState: {
         ...selectorStateDefaultValues,
+        amount: undefined,
+      },
+    });
+
+    act(() => {
+      jest.advanceTimersByTime(400);
+    });
+
+    expect(result.current).toMatchObject({
+      fromState: {
+        ...selectorStateDefaultValues,
         amount: new BigNumber(10),
+      },
+    });
+  });
+
+  test("call hook and set the the most recent amount input after 400ms", () => {
+    const { result } = renderHook(() => {
+      const bridgeTransaction = useBridgeTransaction();
+      return useFromState({
+        accounts: allAccounts,
+        bridgeTransaction,
+      });
+    });
+
+    expect(result.current).toMatchObject({
+      fromState: selectorStateDefaultValues,
+    });
+
+    act(() => {
+      result.current.setFromAmount(new BigNumber(10));
+    });
+
+    expect(result.current).toMatchObject({
+      fromState: {
+        ...selectorStateDefaultValues,
+        amount: undefined,
+      },
+    });
+
+    act(() => {
+      jest.advanceTimersByTime(300);
+    });
+
+    expect(result.current).toMatchObject({
+      fromState: {
+        ...selectorStateDefaultValues,
+        amount: undefined,
+      },
+    });
+
+    act(() => {
+      result.current.setFromAmount(new BigNumber(20));
+      jest.advanceTimersByTime(100);
+    });
+
+    expect(result.current).toMatchObject({
+      fromState: {
+        ...selectorStateDefaultValues,
+        amount: undefined,
+      },
+    });
+
+    act(() => {
+      jest.advanceTimersByTime(300);
+    });
+
+    expect(result.current).toMatchObject({
+      fromState: {
+        ...selectorStateDefaultValues,
+        amount: new BigNumber(20),
       },
     });
   });

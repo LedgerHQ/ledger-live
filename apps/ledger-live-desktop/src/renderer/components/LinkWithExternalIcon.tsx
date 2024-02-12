@@ -21,6 +21,7 @@ const Wrapper = styled(Label).attrs<{
   }
 
   &:after {
+    // prettier-ignore
     -webkit-mask: url('${externalLink}');
     -webkit-mask-size: cover;
     width: 12px;

@@ -13,47 +13,39 @@ import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
 import { BigNumber } from "bignumber.js";
 import type { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
+import { getMaxEstimatedBalance } from "@ledgerhq/live-common/families/cosmos/logic";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
-import { accountScreenSelector } from "../../../reducers/accounts";
-import { localeSelector } from "../../../reducers/settings";
-import Button from "../../../components/Button";
-import CurrencyInput from "../../../components/CurrencyInput";
-import LText from "../../../components/LText";
-import Warning from "../../../icons/Warning";
-import Check from "../../../icons/Check";
-import KeyboardView from "../../../components/KeyboardView";
-import { ScreenName } from "../../../const";
-import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import { accountScreenSelector } from "~/reducers/accounts";
+import Button from "~/components/Button";
+import CurrencyInput from "~/components/CurrencyInput";
+import LText from "~/components/LText";
+import Warning from "~/icons/Warning";
+import Check from "~/icons/Check";
+import KeyboardView from "~/components/KeyboardView";
+import { ScreenName } from "~/const";
+import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { CosmosDelegationFlowParamList } from "../DelegationFlow/types";
 import type { CosmosRedelegationFlowParamList } from "../RedelegationFlow/types";
 import { CosmosUndelegationFlowParamList } from "../UndelegationFlow/types";
+import { useSettings } from "~/hooks";
 
 type Props =
-  | StackNavigatorProps<
-      CosmosDelegationFlowParamList,
-      ScreenName.CosmosDelegationAmount
-    >
+  | StackNavigatorProps<CosmosDelegationFlowParamList, ScreenName.CosmosDelegationAmount>
   | StackNavigatorProps<
       CosmosRedelegationFlowParamList,
-      | ScreenName.CosmosDefaultRedelegationAmount
-      | ScreenName.CosmosRedelegationAmount
+      ScreenName.CosmosDefaultRedelegationAmount | ScreenName.CosmosRedelegationAmount
     >
-  | StackNavigatorProps<
-      CosmosUndelegationFlowParamList,
-      ScreenName.CosmosUndelegationAmount
-    >;
+  | StackNavigatorProps<CosmosUndelegationFlowParamList, ScreenName.CosmosUndelegationAmount>;
 
 function DelegationAmount({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
-  const locale = useSelector(localeSelector);
+  const { locale } = useSettings();
   invariant(
-    account &&
-      (account as CosmosAccount).cosmosResources &&
-      route.params.transaction,
+    account && (account as CosmosAccount).cosmosResources && route.params.transaction,
     "account and cosmos transaction required",
   );
   const tx = route.params.transaction;
@@ -64,10 +56,7 @@ function DelegationAmount({ navigation, route }: Props) {
 
   const bridge = getAccountBridge(account, undefined);
   const unit = getAccountUnit(account);
-  const initialValue = useMemo(
-    () => route?.params?.value ?? BigNumber(0),
-    [route],
-  );
+  const initialValue = useMemo(() => route?.params?.value ?? BigNumber(0), [route]);
   const redelegatedBalance = route?.params?.redelegatedBalance ?? BigNumber(0);
   const mode = route?.params?.mode ?? "delegation";
   const [value, setValue] = useState(() => initialValue);
@@ -80,9 +69,7 @@ function DelegationAmount({ navigation, route }: Props) {
   const onNext = useCallback(() => {
     const validators = tx.validators;
     const validatorAddress = route.params.validator.validatorAddress;
-    const i = validators.findIndex(
-      ({ address }) => address === validatorAddress,
-    );
+    const i = validators.findIndex(({ address }) => address === validatorAddress);
 
     if (i >= 0) {
       validators[i].amount = value;
@@ -94,9 +81,7 @@ function DelegationAmount({ navigation, route }: Props) {
     }
 
     const filteredValidators =
-      tx.mode === "delegate"
-        ? validators.filter(v => !v.amount.eq(0))
-        : validators;
+      tx.mode === "delegate" ? validators.filter(v => !v.amount.eq(0)) : validators;
     const transaction = bridge.updateTransaction(
       tx,
       tx.mode === "delegate"
@@ -111,6 +96,7 @@ function DelegationAmount({ navigation, route }: Props) {
     // @ts-expect-error navigate cannot infer the correct navigator + route
     navigation.navigate(route.params.nextScreen, {
       ...route.params,
+      validatorName: route.params.validator.name,
       transaction,
       fromSelectAmount: true,
     });
@@ -121,7 +107,12 @@ function DelegationAmount({ navigation, route }: Props) {
       value: initialMax.plus(initialValue).multipliedBy(ratio).integerValue(),
     })),
   );
-  const error = useMemo(
+  // not enough available balance to pay fees for the delegate/undelegate/redelegate transaction
+  const isNotEnoughBalance: boolean = useMemo(
+    () => getMaxEstimatedBalance(account as CosmosAccount, tx.fees || new BigNumber(0)).isZero(),
+    [account, tx.fees],
+  );
+  const isAmountOutOfRange: boolean = useMemo(
     () =>
       max.lt(0) ||
       value.lt(min) ||
@@ -153,7 +144,7 @@ function DelegationAmount({ navigation, route }: Props) {
                 value={value}
                 onChange={setValue}
                 inputStyle={styles.inputStyle}
-                hasError={error}
+                hasError={isAmountOutOfRange || isNotEnoughBalance}
               />
               <View style={styles.ratioButtonContainer}>
                 {ratioButtons.map(({ label, value: v }) => (
@@ -176,9 +167,8 @@ function DelegationAmount({ navigation, route }: Props) {
                   >
                     <LText
                       style={[styles.ratioLabel]}
-                      color={
-                        value.eq(v) ? colors.neutral.c100 : colors.neutral.c60
-                      }
+                      color={value.eq(v) ? colors.neutral.c100 : colors.neutral.c60}
+                      testID={"delegate-ratio-" + label}
                     >
                       {label}
                     </LText>
@@ -195,16 +185,15 @@ function DelegationAmount({ navigation, route }: Props) {
                 },
               ]}
             >
-              {error && !value.eq(0) && (
+              {(isNotEnoughBalance || (isAmountOutOfRange && !value.eq(0))) && (
                 <View style={styles.labelContainer}>
                   <Warning size={16} color={colors.error.c50} />
-                  <LText
-                    style={[styles.assetsRemaining]}
-                    color={colors.error.c50}
-                  >
+                  <LText style={[styles.assetsRemaining]} color={colors.error.c50}>
                     <Trans
                       i18nKey={
-                        value.gte(min)
+                        isNotEnoughBalance
+                          ? "errors.NotEnoughBalance.title"
+                          : value.gte(min)
                           ? "cosmos.delegation.flow.steps.amount.minAmount"
                           : "cosmos.delegation.flow.steps.amount.incorrectAmount"
                       }
@@ -212,12 +201,12 @@ function DelegationAmount({ navigation, route }: Props) {
                         min: formatCurrencyUnit(unit, min, {
                           showCode: true,
                           showAllDigits: true,
-                          locale,
+                          locale: locale,
                         }),
                         max: formatCurrencyUnit(unit, initialMax, {
                           showCode: true,
                           showAllDigits: true,
-                          locale,
+                          locale: locale,
                         }),
                       }}
                     >
@@ -232,22 +221,21 @@ function DelegationAmount({ navigation, route }: Props) {
                   <LText
                     style={[styles.assetsRemaining]}
                     color={colors.success.c50}
+                    testID="cosmos-all-assets-used-text"
                   >
-                    <Trans
-                      i18nKey={`cosmos.${mode}.flow.steps.amount.allAssetsUsed`}
-                    />
+                    <Trans i18nKey={`cosmos.${mode}.flow.steps.amount.allAssetsUsed`} />
                   </LText>
                 </View>
               )}
-              {max.gt(0) && !error && (
+              {max.gt(0) && !isAmountOutOfRange && !isNotEnoughBalance && (
                 <View style={styles.labelContainer}>
-                  <LText style={styles.assetsRemaining}>
+                  <LText style={styles.assetsRemaining} testID="cosmos-assets-remaining">
                     <Trans
                       i18nKey="cosmos.delegation.flow.steps.amount.assetsRemaining"
                       values={{
                         amount: formatCurrencyUnit(unit, max, {
                           showCode: true,
-                          locale,
+                          locale: locale,
                         }),
                       }}
                     >
@@ -256,20 +244,16 @@ function DelegationAmount({ navigation, route }: Props) {
                   </LText>
                 </View>
               )}
-              {!error && redelegatedBalance.gt(0) && (
+              {!isAmountOutOfRange && !isNotEnoughBalance && redelegatedBalance.gt(0) && (
                 <View style={[styles.labelContainer, styles.labelSmall]}>
                   <LText style={[styles.assetsRemaining, styles.small]}>
                     <Trans
                       i18nKey="cosmos.redelegation.flow.steps.amount.newRedelegatedBalance"
                       values={{
-                        amount: formatCurrencyUnit(
-                          unit,
-                          redelegatedBalance.plus(value),
-                          {
-                            showCode: true,
-                            locale,
-                          },
-                        ),
+                        amount: formatCurrencyUnit(unit, redelegatedBalance.plus(value), {
+                          showCode: true,
+                          locale: locale,
+                        }),
                         name: route.params.validator?.name ?? "",
                       }}
                     >
@@ -279,13 +263,12 @@ function DelegationAmount({ navigation, route }: Props) {
                 </View>
               )}
               <Button
-                disabled={error}
+                disabled={isAmountOutOfRange || isNotEnoughBalance}
                 event="Cosmos DelegationAmountContinueBtn"
                 onPress={onNext}
-                title={
-                  <Trans i18nKey="cosmos.delegation.flow.steps.amount.cta" />
-                }
+                title={<Trans i18nKey="cosmos.delegation.flow.steps.amount.cta" />}
                 type="primary"
+                testID="cosmos-delegation-amount-continue"
               />
             </View>
           </View>

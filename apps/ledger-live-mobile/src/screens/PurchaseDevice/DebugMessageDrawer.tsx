@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Flex, Text } from "@ledgerhq/native-ui";
 
-import QueuedDrawer from "../../components/QueuedDrawer";
+import QueuedDrawer from "~/components/QueuedDrawer";
 import { PurchaseMessage } from "./types";
 
 export type Props = {
@@ -24,16 +24,12 @@ const DebugMessageDrawer = ({ isOpen, message, onClose }: Props) => {
       onClose={handleClose}
       title={t(
         `purchaseDevice.debugDrawers.message.${
-          message?.type === "ledgerLiveOrderFail"
-            ? "errorTitle"
-            : "successTitle"
+          message?.type === "ledgerLiveOrderFail" ? "errorTitle" : "successTitle"
         }`,
       )}
       subtitle={t("purchaseDevice.debugDrawers.message.subtitle")}
     >
-      <Text>
-        {t("purchaseDevice.debugDrawers.message.type", { type: message?.type })}
-      </Text>
+      <Text>{t("purchaseDevice.debugDrawers.message.type", { type: message?.type })}</Text>
       {message?.value ? (
         <Flex>
           <Text>

@@ -15,9 +15,16 @@ export default function StepInfo({ account, transaction, warning, error, mode }:
     account && account.polkadotResources && transaction,
     "account and transaction required",
   );
+  const action = mode.replace(/([A-Z])/g, "_$1").toLowerCase();
   return (
     <Box flow={1}>
-      <TrackPage category="SimpleOperationFlow Flow" name="Step 1" />
+      <TrackPage
+        category="SimpleOperationFlow Flow"
+        name="Step 1"
+        flow="stake"
+        action={action}
+        currency="dot"
+      />
       {warning && !error ? <ErrorBanner error={warning} warning /> : null}
       {error ? <ErrorBanner error={error} /> : null}
       <Box px={5} py={2}>

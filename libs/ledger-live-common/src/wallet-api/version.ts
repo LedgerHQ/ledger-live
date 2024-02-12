@@ -5,10 +5,7 @@
 import invariant from "invariant";
 let version = "";
 export function getWalletAPIVersion(): string {
-  invariant(
-    version,
-    "setWalletAPIVersion must be called before anything else."
-  );
+  invariant(version, "setWalletAPIVersion must be called before anything else.");
   return version;
 }
 export function setWalletAPIVersion(v: string): void {

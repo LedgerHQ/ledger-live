@@ -25,10 +25,8 @@ export type GetSeparators = (locale: string) => {
   decimal: string | null | undefined;
   thousands: string | null | undefined;
 };
-export const getSeparators: GetSeparators = memoize((locale) => {
-  const res = localeNotAvailable
-    ? getFallback(locale)[1]
-    : (10000.2).toLocaleString(locale);
+export const getSeparators: GetSeparators = memoize(locale => {
+  const res = localeNotAvailable ? getFallback(locale)[1] : (10000.2).toLocaleString(locale);
   let decimal;
   let thousands;
 

@@ -1,18 +1,12 @@
 import invariant from "invariant";
 import { Observable, defer, of, range, empty } from "rxjs";
-import {
-  catchError,
-  switchMap,
-  concatMap,
-  takeWhile,
-  map,
-} from "rxjs/operators";
+import { catchError, switchMap, concatMap, takeWhile, map } from "rxjs/operators";
 import { log } from "@ledgerhq/logs";
 import { TransportStatusError, UserRefusedAddress } from "@ledgerhq/errors";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "./currencies";
 import { getEnv } from "@ledgerhq/live-env";
-import type { CryptoCurrencyIds } from "@ledgerhq/types-live";
+
 export type ModeSpec = {
   mandatoryEmptyAccountSkip?: number;
   isNonIterable?: boolean;
@@ -70,19 +64,6 @@ const modes = Object.freeze({
     skipFirst: true,
     // already included in the normal bip44,
     tag: "metamask",
-  },
-  // Deprecated and should no longer be used.
-  bch_on_bitcoin_segwit: {
-    overridesCoinType: 0,
-    isInvalid: true,
-    isSegwit: true,
-    purpose: 49,
-    addressFormat: "p2sh",
-  },
-  // many users have wrongly sent BTC on BCH paths
-  legacy_on_bch: {
-    overridesCoinType: 145,
-    isInvalid: true,
   },
   // chrome app and LL wrongly used to derivate vertcoin on 128
   vertcoin_128: {
@@ -143,20 +124,6 @@ const modes = Object.freeze({
     tag: "segwit",
     addressFormat: "p2sh",
   },
-  segwit_on_legacy: {
-    isSegwit: true,
-    purpose: 44,
-    addressFormat: "p2sh",
-    isInvalid: true,
-  },
-  legacy_on_segwit: {
-    purpose: 49,
-    isInvalid: true,
-  },
-  legacy_on_native_segwit: {
-    purpose: 84,
-    isInvalid: true,
-  },
   segwit_unsplit: {
     isSegwit: true,
     purpose: 49,
@@ -174,14 +141,24 @@ const modes = Object.freeze({
   polkadotbip44: {
     overridesDerivation: "44'/354'/<account>'/0'/<address>'",
   },
-  gliflegacy: {
+  glifLegacy: {
     overridesDerivation: "44'/1'/0'/0/<account>",
     tag: "legacy",
+    mandatoryEmptyAccountSkip: 5,
   },
   glif: {
     overridesDerivation: "44'/461'/0'/0/<account>",
-    startsAt: 1,
     tag: "third-party",
+    mandatoryEmptyAccountSkip: 5,
+  },
+  filecoinBIP44: {
+    overridesDerivation: "44'/<coin_type>'/<account>'/<node>/<address>",
+    startsAt: 1,
+    tag: "bip44",
+    mandatoryEmptyAccountSkip: 5,
+  },
+  casper_wallet: {
+    overridesDerivation: "44'/506'/0'/0/<account>",
   },
   solanaMain: {
     isNonIterable: true,
@@ -201,81 +178,70 @@ const modes = Object.freeze({
     overridesDerivation: "44'/397'/0'/0'/<account>'",
     mandatoryEmptyAccountSkip: 1,
   },
+  vechain: {
+    overridesDerivation: "44'/818'/0'/0/<account>",
+  },
+  internet_computer: {
+    overridesDerivation: "44'/223'/0'/0/<account>",
+  },
+  stacks_wallet: {
+    overridesDerivation: "44'/5757'/0'/0/<account>",
+    startsAt: 1,
+    tag: "third-party",
+  },
 });
 modes as Record<DerivationMode, ModeSpec>; // eslint-disable-line
 
-// FIXME: CryptoCurrencyConfig was a flowtype we could not easily convert to ts so it has been deleted
-// previous types: Partial<CryptoCurrencyConfig<DerivationMode[]>>
-const legacyDerivations: Record<CryptoCurrencyIds, DerivationMode[]> = {
+const legacyDerivations: Partial<Record<CryptoCurrency["id"], DerivationMode[]>> = {
   aeternity: ["aeternity"],
   bitcoin_cash: [],
-  bitcoin: ["legacy_on_bch"],
   vertcoin: ["vertcoin_128", "vertcoin_128_segwit"],
-  ethereum_classic: ["etcM"],
   tezos: ["galleonL", "tezboxL", "tezosbip44h", "tezbox"],
   stellar: ["sep5"],
   polkadot: ["polkadotbip44"],
   hedera: ["hederaBip44"],
-  filecoin: ["gliflegacy", "glif"],
+  filecoin: ["glifLegacy", "filecoinBIP44", "glif"],
+  internet_computer: ["internet_computer"],
+  casper: ["casper_wallet"],
   cardano: ["cardano"],
   cardano_testnet: ["cardano"],
   near: ["nearbip44h"],
-};
-
-const legacyDerivationsPerFamily: Record<string, DerivationMode[]> = {
+  vechain: ["vechain"],
+  stacks: ["stacks_wallet"],
   ethereum: ["ethM", "ethMM"],
+  ethereum_classic: ["ethM", "ethMM", "etcM"],
+  solana: ["solanaMain", "solanaSub"],
+  solana_devnet: ["solanaMain", "solanaSub"],
+  solana_testnet: ["solanaMain", "solanaSub"],
 };
 
 export const asDerivationMode = (derivationMode: string): DerivationMode => {
-  invariant(
-    derivationMode in modes,
-    "not a derivationMode. Got: '%s'",
-    derivationMode
-  );
+  invariant(derivationMode in modes, "not a derivationMode. Got: '%s'", derivationMode);
   return derivationMode as DerivationMode;
 };
-export const getAllDerivationModes = (): DerivationMode[] =>
-  Object.keys(modes) as DerivationMode[];
-export const getMandatoryEmptyAccountSkip = (
-  derivationMode: DerivationMode
-): number =>
-  (modes[derivationMode] as { mandatoryEmptyAccountSkip: number })
-    .mandatoryEmptyAccountSkip || 0;
-export const isInvalidDerivationMode = (
-  derivationMode: DerivationMode
-): boolean =>
+export const getAllDerivationModes = (): DerivationMode[] => Object.keys(modes) as DerivationMode[];
+export const getMandatoryEmptyAccountSkip = (derivationMode: DerivationMode): number =>
+  (modes[derivationMode] as { mandatoryEmptyAccountSkip: number }).mandatoryEmptyAccountSkip || 0;
+export const isInvalidDerivationMode = (derivationMode: DerivationMode): boolean =>
   (modes[derivationMode] as { isInvalid: boolean }).isInvalid || false;
-export const isSegwitDerivationMode = (
-  derivationMode: DerivationMode
-): boolean =>
+export const isSegwitDerivationMode = (derivationMode: DerivationMode): boolean =>
   (modes[derivationMode] as { isSegwit: boolean }).isSegwit || false;
-export const isNativeSegwitDerivationMode = (
-  derivationMode: DerivationMode
-): boolean =>
-  (modes[derivationMode] as { isNativeSegwit: boolean }).isNativeSegwit ||
-  false;
-export const isTaprootDerivationMode = (
-  derivationMode: DerivationMode
-): boolean =>
+export const isNativeSegwitDerivationMode = (derivationMode: DerivationMode): boolean =>
+  (modes[derivationMode] as { isNativeSegwit: boolean }).isNativeSegwit || false;
+export const isTaprootDerivationMode = (derivationMode: DerivationMode): boolean =>
   (modes[derivationMode] as { isTaproot: boolean }).isTaproot || false;
 
-export const isUnsplitDerivationMode = (
-  derivationMode: DerivationMode
-): boolean =>
+export const isUnsplitDerivationMode = (derivationMode: DerivationMode): boolean =>
   (modes[derivationMode] as { isUnsplit: boolean }).isUnsplit || false;
-export const isIterableDerivationMode = (
-  derivationMode: DerivationMode
-): boolean =>
+export const isIterableDerivationMode = (derivationMode: DerivationMode): boolean =>
   !(modes[derivationMode] as { isNonIterable: boolean }).isNonIterable;
-export const getDerivationModeStartsAt = (
-  derivationMode: DerivationMode
-): number => (modes[derivationMode] as { startsAt: number }).startsAt || 0;
-export const getPurposeDerivationMode = (
-  derivationMode: DerivationMode
-): number => (modes[derivationMode] as { purpose: number }).purpose || 44;
+export const getDerivationModeStartsAt = (derivationMode: DerivationMode): number =>
+  (modes[derivationMode] as { startsAt: number }).startsAt || 0;
+export const getPurposeDerivationMode = (derivationMode: DerivationMode): number =>
+  (modes[derivationMode] as { purpose: number }).purpose || 44;
 export const getTagDerivationMode = (
   currency: CryptoCurrency,
-  derivationMode: DerivationMode
+  derivationMode: DerivationMode,
 ): string | null | undefined => {
   const mode = modes[derivationMode] as { tag: any; isInvalid: any };
 
@@ -293,14 +259,11 @@ export const getTagDerivationMode = (
 
   return null;
 };
-export const getAddressFormatDerivationMode = (
-  derivationMode: DerivationMode
-): string =>
-  (modes[derivationMode] as { addressFormat: string }).addressFormat ||
-  "legacy";
+export const getAddressFormatDerivationMode = (derivationMode: DerivationMode): string =>
+  (modes[derivationMode] as { addressFormat: string }).addressFormat || "legacy";
 export const derivationModeSupportsIndex = (
   derivationMode: DerivationMode,
-  index: number
+  index: number,
 ): boolean => {
   const mode = modes[derivationMode];
   if ((mode as { skipFirst: boolean }).skipFirst && index === 0) return false;
@@ -326,8 +289,7 @@ export const getDerivationScheme = ({
     overridesCoinType: string;
   };
   if (overridesDerivation) return overridesDerivation;
-  const splitFrom =
-    isUnsplitDerivationMode(derivationMode) && currency.forkedFrom;
+  const splitFrom = isUnsplitDerivationMode(derivationMode) && currency.forkedFrom;
   const coinType = splitFrom
     ? getCryptoCurrencyById(splitFrom).coinType
     : typeof overridesCoinType === "number"
@@ -350,7 +312,7 @@ export const runDerivationScheme = (
     account?: number | string;
     node?: number | string;
     address?: number | string;
-  } = {}
+  } = {},
 ) =>
   derivationScheme
     .replace("<coin_type>", String(coinType))
@@ -365,7 +327,7 @@ export const runAccountDerivationScheme = (
   },
   opts: {
     account?: number | string;
-  } = {}
+  } = {},
 ) =>
   runDerivationScheme(scheme, currency, {
     ...opts,
@@ -383,6 +345,10 @@ const disableBIP44: Record<string, boolean> = {
   cardano: true,
   cardano_testnet: true,
   near: true,
+  vechain: true,
+  internet_computer: true,
+  casper: true,
+  filecoin: true,
 };
 type SeedInfo = {
   purpose: number;
@@ -392,24 +358,24 @@ type SeedPathFn = (info: SeedInfo) => string;
 const seedIdentifierPath: Record<string, SeedPathFn> = {
   neo: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   filecoin: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
+  stacks: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   solana: ({ purpose, coinType }) => `${purpose}'/${coinType}'`,
   hedera: ({ purpose, coinType }) => `${purpose}/${coinType}`,
+  casper: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   cardano: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   cardano_testnet: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
+  internet_computer: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   near: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0'/0'`,
+  vechain: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   _: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'`,
 };
 export const getSeedIdentifierDerivation = (
   currency: CryptoCurrency,
-  derivationMode: DerivationMode
+  derivationMode: DerivationMode,
 ): string => {
-  const unsplitFork = isUnsplitDerivationMode(derivationMode)
-    ? currency.forkedFrom
-    : null;
+  const unsplitFork = isUnsplitDerivationMode(derivationMode) ? currency.forkedFrom : null;
   const purpose = getPurposeDerivationMode(derivationMode);
-  const { coinType } = unsplitFork
-    ? getCryptoCurrencyById(unsplitFork)
-    : currency;
+  const { coinType } = unsplitFork ? getCryptoCurrencyById(unsplitFork) : currency;
   const f = seedIdentifierPath[currency.id] || seedIdentifierPath._;
   return f({
     purpose,
@@ -417,15 +383,10 @@ export const getSeedIdentifierDerivation = (
   });
 };
 // return an array of ways to derivate, by convention the latest is the standard one.
-export const getDerivationModesForCurrency = (
-  currency: CryptoCurrency
-): DerivationMode[] => {
+export const getDerivationModesForCurrency = (currency: CryptoCurrency): DerivationMode[] => {
   let all: DerivationMode[] = [];
-  if (currency.family in legacyDerivationsPerFamily) {
-    all = all.concat(legacyDerivationsPerFamily[currency.family]);
-  }
   if (currency.id in legacyDerivations) {
-    all = all.concat(legacyDerivations[currency.id]);
+    all = all.concat(legacyDerivations[currency.id] || []);
   }
   if (currency.forkedFrom) {
     all.push("unsplit");
@@ -433,12 +394,6 @@ export const getDerivationModesForCurrency = (
     if (currency.supportsSegwit) {
       all.push("segwit_unsplit");
     }
-  }
-
-  if (currency.supportsSegwit) {
-    all.push("segwit_on_legacy");
-    all.push("legacy_on_segwit");
-    all.push("legacy_on_native_segwit");
   }
 
   if (currency.supportsNativeSegwit) {
@@ -452,6 +407,7 @@ export const getDerivationModesForCurrency = (
     }
   }
 
+  // Can't this be concatenated with the first `supportsSegwit` condition ?
   if (currency.supportsSegwit) {
     all.push("segwit");
   }
@@ -460,37 +416,26 @@ export const getDerivationModesForCurrency = (
     all.push("");
   }
 
-  if (currency.family === "solana") {
-    all.push("solanaMain", "solanaSub");
-  }
-
   if (!getEnv("SCAN_FOR_INVALID_PATHS")) {
-    return all.filter((a) => !isInvalidDerivationMode(a));
+    return all.filter(a => !isInvalidDerivationMode(a));
   }
 
   return all;
 };
-const preferredList: DerivationMode[] = [
-  "native_segwit",
-  "taproot",
-  "segwit",
-  "",
-];
+const preferredList: DerivationMode[] = ["native_segwit", "taproot", "segwit", ""];
 // null => no settings
 // [ .. ]
 export const getPreferredNewAccountScheme = (
-  currency: CryptoCurrency
+  currency: CryptoCurrency,
 ): DerivationMode[] | null | undefined => {
   if (currency.family !== "bitcoin") return null;
   const derivationsModes = getDerivationModesForCurrency(currency);
-  const list = preferredList.filter((p) =>
-    derivationsModes.includes(p as DerivationMode)
-  );
+  const list = preferredList.filter(p => derivationsModes.includes(p as DerivationMode));
   if (list.length === 1) return null;
   return list as DerivationMode[];
 };
 export const getDefaultPreferredNewAccountScheme = (
-  currency: CryptoCurrency
+  currency: CryptoCurrency,
 ): DerivationMode | null | undefined => {
   const list = getPreferredNewAccountScheme(currency);
   return list && list[0];
@@ -527,23 +472,19 @@ export function walletDerivation<R>({
       path,
       derivationMode,
     }).pipe(
-      catchError((e) => {
-        if (
-          e instanceof TransportStatusError ||
-          e instanceof UserRefusedAddress
-        ) {
+      catchError(e => {
+        if (e instanceof TransportStatusError || e instanceof UserRefusedAddress) {
           log("scanAccounts", "ignore derivationMode=" + derivationMode);
         }
 
         return empty();
-      })
-    )
+      }),
+    ),
   ).pipe(
-    switchMap((parentDerivation) => {
+    switchMap(parentDerivation => {
       const seedIdentifier = parentDerivation.publicKey;
       const emptyCount = 0;
-      const mandatoryEmptyAccountSkip =
-        getMandatoryEmptyAccountSkip(derivationMode);
+      const mandatoryEmptyAccountSkip = getMandatoryEmptyAccountSkip(derivationMode);
       const derivationScheme = getDerivationScheme({
         derivationMode,
         currency,
@@ -552,7 +493,7 @@ export function walletDerivation<R>({
       const startsAt = getDerivationModeStartsAt(derivationMode);
       return range(startsAt, stopAt - startsAt).pipe(
         // derivate addresses/xpubs
-        concatMap((index) => {
+        concatMap(index => {
           if (!derivationModeSupportsIndex(derivationMode, index)) {
             return empty();
           }
@@ -569,11 +510,11 @@ export function walletDerivation<R>({
             path,
             derivationMode,
           }).pipe(
-            map((accountDerivation) => ({
+            map(accountDerivation => ({
               parentDerivation,
               accountDerivation,
               index,
-            }))
+            })),
           );
         }), // do action with these derivations (e.g. synchronize)
         concatMap(({ parentDerivation, accountDerivation, index }) =>
@@ -584,12 +525,12 @@ export function walletDerivation<R>({
             derivationMode,
             shouldSkipEmpty: emptyCount < mandatoryEmptyAccountSkip,
             seedIdentifier,
-          })
+          }),
         ), // take until the list is complete (based on criteria defined by stepAddress)
         // $FlowFixMe
-        takeWhile((r) => !r.complete, true), // emit just the results
-        concatMap(({ result }) => (result ? of(result) : empty()))
+        takeWhile(r => !r.complete, true), // emit just the results
+        concatMap(({ result }) => (result ? of(result) : empty())),
       );
-    })
+    }),
   );
 }

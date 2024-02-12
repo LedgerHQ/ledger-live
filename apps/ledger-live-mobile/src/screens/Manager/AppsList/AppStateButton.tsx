@@ -16,8 +16,6 @@ type Props = {
   dispatch: (_: Action) => void;
   notEnoughMemoryToInstall: boolean;
   isInstalled: boolean;
-  setAppInstallWithDependencies: (_: { app: App; dependencies: App[] }) => void;
-  setAppUninstallWithDependencies: (_: { dependents: App[]; app: App }) => void;
   storageWarning: (appName: string) => void;
 };
 
@@ -34,27 +32,16 @@ const AppStateButton = ({
   dispatch,
   notEnoughMemoryToInstall,
   isInstalled,
-  setAppInstallWithDependencies,
-  setAppUninstallWithDependencies,
   storageWarning,
 }: Props) => {
   const { installed, installQueue, uninstallQueue, updateAllQueue } = state;
   const { name } = app;
 
-  const installing = useMemo(
-    () => installQueue.includes(name),
-    [installQueue, name],
-  );
+  const installing = useMemo(() => installQueue.includes(name), [installQueue, name]);
 
-  const updating = useMemo(
-    () => updateAllQueue.includes(name),
-    [updateAllQueue, name],
-  );
+  const updating = useMemo(() => updateAllQueue.includes(name), [updateAllQueue, name]);
 
-  const uninstalling = useMemo(
-    () => uninstallQueue.includes(name),
-    [uninstallQueue, name],
-  );
+  const uninstalling = useMemo(() => uninstallQueue.includes(name), [uninstallQueue, name]);
 
   const canUpdate = useMemo(
     () => installed.some(({ name, updated }) => name === app.name && !updated),
@@ -72,14 +59,7 @@ const AppStateButton = ({
       case canUpdate:
         return <AppUpdateButton app={app} state={state} dispatch={dispatch} />;
       case isInstalled:
-        return (
-          <AppUninstallButton
-            app={app}
-            state={state}
-            dispatch={dispatch}
-            setAppUninstallWithDependencies={setAppUninstallWithDependencies}
-          />
-        );
+        return <AppUninstallButton app={app} state={state} dispatch={dispatch} />;
       default:
         return (
           <AppInstallButton
@@ -87,7 +67,6 @@ const AppStateButton = ({
             dispatch={dispatch}
             app={app}
             notEnoughMemoryToInstall={notEnoughMemoryToInstall}
-            setAppInstallWithDependencies={setAppInstallWithDependencies}
             storageWarning={storageWarning}
           />
         );

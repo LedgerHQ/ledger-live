@@ -6,7 +6,7 @@ import { AccountId } from "@hashgraph/sdk";
 import { HederaAddAccountError } from "../errors";
 
 export function broadcastTransaction(
-  transaction: hedera.Transaction
+  transaction: hedera.Transaction,
 ): Promise<hedera.TransactionResponse> {
   return transaction.execute(getClient());
 }
@@ -34,9 +34,7 @@ export interface AccountBalance {
   balance: BigNumber;
 }
 
-export async function getAccountBalance(
-  address: string
-): Promise<AccountBalance> {
+export async function getAccountBalance(address: string): Promise<AccountBalance> {
   const accountId = AccountId.fromString(address);
   let accountBalance;
 

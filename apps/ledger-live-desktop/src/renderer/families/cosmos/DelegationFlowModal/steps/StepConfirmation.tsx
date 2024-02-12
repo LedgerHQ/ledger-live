@@ -1,9 +1,8 @@
 import React, { useEffect } from "react";
 import { Trans } from "react-i18next";
-import styled, { withTheme } from "styled-components";
+import styled from "styled-components";
 import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-common/families/cosmos/react";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
-import { Theme } from "@ledgerhq/react-ui";
 import { track } from "~/renderer/analytics/segment";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { multiline } from "~/renderer/styles/helpers";
@@ -17,13 +16,13 @@ import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { StepProps } from "../types";
 
-const Container: ThemedComponent<{
-  shouldSpace?: boolean;
-}> = styled(Box).attrs(() => ({
+const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   grow: true,
   color: "palette.text.shade100",
-}))`
+}))<{
+  shouldSpace?: boolean;
+}>`
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
 `;
 function StepConfirmation({
@@ -34,31 +33,34 @@ function StepConfirmation({
   transaction,
   source,
   account,
-}: StepProps & {
-  theme: Theme;
-}) {
+}: StepProps) {
   const voteAccAddress = transaction?.validators[0]?.address;
-  const currencyName = account.currency.name.toLowerCase();
-  const validators = useLedgerFirstShuffledValidatorsCosmosFamily(currencyName);
+  const currencyId = account.currency.id;
+  const validators = useLedgerFirstShuffledValidatorsCosmosFamily(currencyId);
 
   useEffect(() => {
     if (optimisticOperation && voteAccAddress && validators) {
       const chosenValidator = validators.find(v => v.validatorAddress === voteAccAddress);
-      const currency = account?.currency?.id?.toUpperCase();
       track("staking_completed", {
-        currency,
-        validator: chosenValidator.name || voteAccAddress,
-        source,
+        currency: currencyId.toUpperCase(),
+        validator: chosenValidator?.name || voteAccAddress,
         delegation: "delegation",
         flow: "stake",
+        source,
       });
     }
-  }, [optimisticOperation, validators, account?.currency?.id, voteAccAddress, source]);
+  }, [currencyId, optimisticOperation, validators, voteAccAddress, source]);
 
   if (optimisticOperation) {
     return (
       <Container>
-        <TrackPage category="Delegation Cosmos" name="Step Confirmed" />
+        <TrackPage
+          category="Delegation Cosmos"
+          name="Step Confirmed"
+          flow="stake"
+          action="delegation"
+          currency={account.currency.id}
+        />
         <SyncOneAccountOnMount
           reason="transaction-flow-confirmation"
           priority={10}
@@ -74,7 +76,13 @@ function StepConfirmation({
   if (error) {
     return (
       <Container shouldSpace={signed}>
-        <TrackPage category="Delegation Cosmos" name="Step Confirmation Error" />
+        <TrackPage
+          category="Delegation Cosmos"
+          name="Step Confirmation Error"
+          flow="stake"
+          action="delegation"
+          currency={account.currency.id}
+        />
         {signed ? (
           <BroadcastErrorDisclaimer
             title={<Trans i18nKey="cosmos.delegation.flow.steps.confirmation.broadcastError" />}
@@ -88,7 +96,6 @@ function StepConfirmation({
 }
 export function StepConfirmationFooter({
   account,
-  parentAccount,
   onRetry,
   error,
   onClose,
@@ -118,7 +125,6 @@ export function StepConfirmationFooter({
               setDrawer(OperationDetails, {
                 operationId: concernedOperation.id,
                 accountId: account.id,
-                parentId: parentAccount && parentAccount.id,
               });
             }
           }}
@@ -131,4 +137,4 @@ export function StepConfirmationFooter({
     </Box>
   );
 }
-export default withTheme(StepConfirmation);
+export default StepConfirmation;

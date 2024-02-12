@@ -14,23 +14,20 @@ import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { rgba, Text } from "@ledgerhq/native-ui";
 import { CeloAccount } from "@ledgerhq/live-common/families/celo/types";
 import Icon from "react-native-vector-icons/Feather";
-import { accountScreenSelector } from "../../../reducers/accounts";
-import { ScreenName } from "../../../const";
-import { TrackScreen } from "../../../analytics";
-import Button from "../../../components/Button";
-import Touchable from "../../../components/Touchable";
+import { accountScreenSelector } from "~/reducers/accounts";
+import { ScreenName } from "~/const";
+import { TrackScreen } from "~/analytics";
+import Button from "~/components/Button";
+import Touchable from "~/components/Touchable";
 import SendRowsFee from "../SendRowsFee";
-import Clock from "../../../icons/Clock";
-import LText from "../../../components/LText";
-import QueuedDrawer from "../../../components/QueuedDrawer";
-import InfoIcon from "../../../components/InfoIcon";
+import Clock from "~/icons/Clock";
+import LText from "~/components/LText";
+import QueuedDrawer from "~/components/QueuedDrawer";
+import InfoIcon from "~/components/InfoIcon";
 import Line from "../components/Line";
 import Words from "../components/Words";
 import ErrorAndWarning from "../components/ErrorAndWarning";
-import type {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
+import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { CeloWithdrawFlowParamList } from "./types";
 
 type Props = BaseComposite<
@@ -39,14 +36,8 @@ type Props = BaseComposite<
 
 export default function WithdrawAmount({ navigation, route }: Props) {
   const [infoModalOpen, setInfoModalOpen] = useState(false);
-  const openModal = useCallback(
-    time => setInfoModalOpen(time),
-    [setInfoModalOpen],
-  );
-  const closeModal = useCallback(
-    () => setInfoModalOpen(false),
-    [setInfoModalOpen],
-  );
+  const openModal = useCallback((time: boolean) => setInfoModalOpen(time), [setInfoModalOpen]);
+  const closeModal = useCallback(() => setInfoModalOpen(false), [setInfoModalOpen]);
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   invariant(account, "account is required");
@@ -54,14 +45,15 @@ export default function WithdrawAmount({ navigation, route }: Props) {
   const bridge = getAccountBridge(account, parentAccount);
   const mainAccount = getMainAccount(account, parentAccount);
 
-  const { transaction, setTransaction, status, bridgeError, bridgePending } =
-    useBridgeTransaction(() => {
+  const { transaction, setTransaction, status, bridgeError, bridgePending } = useBridgeTransaction(
+    () => {
       const t = bridge.createTransaction(mainAccount);
       const transaction = bridge.updateTransaction(t, {
         mode: "withdraw",
       });
       return { account: mainAccount, transaction };
-    });
+    },
+  );
 
   invariant(transaction, "transaction must be defined");
   invariant(transaction.family === "celo", "not a celo transaction");
@@ -74,7 +66,7 @@ export default function WithdrawAmount({ navigation, route }: Props) {
   }, [account, parentAccount, transaction, bridge, debouncedTransaction]);
 
   const onChange = useCallback(
-    index => {
+    (index: number) => {
       if (index != null) {
         setTransaction(bridge.updateTransaction(transaction, { index }));
       }
@@ -93,10 +85,7 @@ export default function WithdrawAmount({ navigation, route }: Props) {
   const { pendingWithdrawals } = (account as CeloAccount).celoResources;
 
   if (pendingWithdrawals) {
-    if (
-      (transaction.index === null || transaction.index === undefined) &&
-      pendingWithdrawals[0]
-    ) {
+    if ((transaction.index === null || transaction.index === undefined) && pendingWithdrawals[0]) {
       onChange(pendingWithdrawals[0].index);
     }
   }
@@ -116,17 +105,19 @@ export default function WithdrawAmount({ navigation, route }: Props) {
 
   const hasErrors = Object.keys(status.errors).length > 0;
   const error =
-    status.errors &&
-    Object.keys(status.errors).length > 0 &&
-    Object.values(status.errors)[0];
+    status.errors && Object.keys(status.errors).length > 0 && Object.values(status.errors)[0];
   const warning =
-    status.warnings &&
-    Object.keys(status.warnings).length > 0 &&
-    Object.values(status.warnings)[0];
+    status.warnings && Object.keys(status.warnings).length > 0 && Object.values(status.warnings)[0];
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-      <TrackScreen category="CeloWithdraw" name="Amount" />
+      <TrackScreen
+        category="CeloWithdraw"
+        name="Amount"
+        flow="stake"
+        action="withdraw"
+        currency="celo"
+      />
       <View style={styles.body}>
         <View style={styles.amount}>
           <Line>
@@ -140,17 +131,10 @@ export default function WithdrawAmount({ navigation, route }: Props) {
               const withdrawalTime = new Date(time.toNumber() * 1000);
               const disabled = withdrawalTime > new Date();
               return transaction.index === index ? (
-                <CustomSelectable
-                  selected={true}
-                  name={formatAmount(value)}
-                  hasClock={disabled}
-                />
+                <CustomSelectable selected={true} name={formatAmount(value)} hasClock={disabled} />
               ) : (
-                <Touchable
-                  onPress={
-                    disabled ? () => openModal(time) : () => onChange(index)
-                  }
-                >
+                // @ts-expect-error we are giving a bignumber to be used as a boolean, whut ?
+                <Touchable onPress={disabled ? () => openModal(time) : () => onChange(index)}>
                   <CustomSelectable
                     selected={false}
                     name={formatAmount(value)}
@@ -168,12 +152,8 @@ export default function WithdrawAmount({ navigation, route }: Props) {
       </View>
 
       <View style={styles.footer}>
-        {!!(error && error instanceof Error) && (
-          <ErrorAndWarning error={error} />
-        )}
-        {!!(warning && warning instanceof Error) && (
-          <ErrorAndWarning warning={warning} />
-        )}
+        {!!(error && error instanceof Error) && <ErrorAndWarning error={error} />}
+        {!!(warning && warning instanceof Error) && <ErrorAndWarning warning={warning} />}
         <View style={styles.feesRow}>
           <SendRowsFee
             account={account}
@@ -186,13 +166,7 @@ export default function WithdrawAmount({ navigation, route }: Props) {
           event="CeloWithdrawAmountContinue"
           type="primary"
           title={
-            <Trans
-              i18nKey={
-                !bridgePending
-                  ? "common.continue"
-                  : "send.amount.loadingNetwork"
-              }
-            />
+            <Trans i18nKey={!bridgePending ? "common.continue" : "send.amount.loadingNetwork"} />
           }
           containerStyle={styles.continueButton}
           onPress={onContinue}
@@ -200,10 +174,7 @@ export default function WithdrawAmount({ navigation, route }: Props) {
           pending={bridgePending}
         />
       </View>
-      <QueuedDrawer
-        isRequestingToBeOpened={!!infoModalOpen}
-        onClose={closeModal}
-      >
+      <QueuedDrawer isRequestingToBeOpened={!!infoModalOpen} onClose={closeModal}>
         <View style={styles.modal}>
           <View style={styles.infoIcon}>
             <InfoIcon bg={colors.lightLive}>
@@ -228,24 +199,11 @@ export default function WithdrawAmount({ navigation, route }: Props) {
 }
 
 const CustomSelectable = React.memo(
-  ({
-    name,
-    selected,
-    hasClock,
-  }: {
-    name: string;
-    selected: boolean;
-    hasClock: boolean;
-  }) => {
+  ({ name, selected, hasClock }: { name: string; selected: boolean; hasClock: boolean }) => {
     const { colors } = useTheme();
     const color = selected ? colors.primary : colors.grey;
     return (
-      <View
-        style={[
-          styles.validatorSelection,
-          { backgroundColor: rgba(color, 0.2) },
-        ]}
-      >
+      <View style={[styles.validatorSelection, { backgroundColor: rgba(color, 0.2) }]}>
         <View style={styles.clockContainer}>
           <View style={styles.clockIcon}>
             {!!hasClock && <Clock color={colors.grey} size={18} />}
@@ -260,9 +218,7 @@ const CustomSelectable = React.memo(
           {name}
         </Text>
 
-        <View
-          style={[styles.validatorSelectionIcon, { backgroundColor: color }]}
-        >
+        <View style={[styles.validatorSelectionIcon, { backgroundColor: color }]}>
           {!!selected && <Icon size={16} name="check" color={colors.white} />}
         </View>
       </View>

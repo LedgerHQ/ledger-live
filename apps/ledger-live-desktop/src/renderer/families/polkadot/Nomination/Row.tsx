@@ -2,7 +2,6 @@ import React, { useCallback, useMemo } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import moment from "moment";
-import { Polkadot as PolkadotIdenticon } from "@polkadot/react-identicon/icons";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import {
@@ -19,17 +18,21 @@ import ClockIcon from "~/renderer/icons/Clock";
 import ExclamationCircle from "~/renderer/icons/ExclamationCircle";
 import ToolTip from "~/renderer/components/Tooltip";
 import ExternalLink from "~/renderer/icons/ExternalLink";
+import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
+
 const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   padding: 16px 20px;
 `;
+
 const Column = styled(TableLine).attrs(() => ({
   ff: "Inter|SemiBold",
   color: "palette.text.shade80",
   fontSize: 3,
 }))``;
+
 const IconContainer = styled.div`
   display: flex;
   align-items: center;
@@ -38,6 +41,7 @@ const IconContainer = styled.div`
   height: 24px;
   color: ${p => p.theme.colors.palette.primary.main};
 `;
+
 const ValidatorName = styled(TableLine).attrs(() => ({
   ff: "Inter|SemiBold",
   color: "palette.text.shade100",
@@ -56,23 +60,27 @@ const ValidatorName = styled(TableLine).attrs(() => ({
     opacity: 1;
   }
 `;
+
 const Ellipsis = styled.div`
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 `;
+
 const StatusLabel = styled.div`
   flex: 1;
   display: block;
   margin-left: 8px;
 `;
+
 type Props = {
   account: Account;
   nomination: PolkadotNomination;
   validator?: PolkadotValidator;
   onExternalLink: (address: string) => void;
 };
+
 export function Row({
   account,
   nomination: { value, address, status },
@@ -96,6 +104,7 @@ export function Row({
         : "-",
     [status, unit, value, discreet],
   );
+
   const formattedTotal = useMemo(
     () =>
       total && total.gt(0)
@@ -108,16 +117,18 @@ export function Row({
         : "-",
     [unit, total],
   );
+
   const formattedCommission = useMemo(
     () => (commission ? `${commission.multipliedBy(100).toFixed(2)} %` : "-"),
     [commission],
   );
+
   const onExternalLinkClick = useCallback(() => onExternalLink(address), [onExternalLink, address]);
   return (
     <Wrapper>
       <ValidatorName onClick={onExternalLinkClick}>
         <Box mr={2}>
-          <PolkadotIdenticon address={address} size={24} />
+          <FirstLetterIcon label={validator?.identity || "-"} />
         </Box>
         <ToolTip content={validator?.identity ? address : null}>
           <Ellipsis>{name}</Ellipsis>
@@ -174,17 +185,20 @@ export function Row({
     </Wrapper>
   );
 }
+
 type UnlockingRowProps = {
   account: Account;
   unlocking: PolkadotUnlocking;
 };
+
 export function UnlockingRow({
   account,
   unlocking: { amount, completionDate },
 }: UnlockingRowProps) {
-  const date = useMemo(() => (completionDate ? moment(completionDate).fromNow() : "N/A"), [
-    completionDate,
-  ]);
+  const date = useMemo(
+    () => (completionDate ? moment(completionDate).fromNow() : "N/A"),
+    [completionDate],
+  );
   const isUnbonded = useMemo(() => moment(completionDate).isBefore(moment()), [completionDate]);
   const unit = getAccountUnit(account);
   const formattedAmount = useMemo(
@@ -196,6 +210,7 @@ export function UnlockingRow({
       }),
     [unit, amount],
   );
+
   return (
     <Wrapper>
       <Column>{formattedAmount}</Column>

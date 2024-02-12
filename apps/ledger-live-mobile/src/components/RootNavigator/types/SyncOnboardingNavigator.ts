@@ -1,5 +1,5 @@
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { ScreenName } from "../../../const";
+import { ScreenName } from "~/const";
 
 export type SyncOnboardingStackParamList = {
   [ScreenName.SyncOnboardingCompanion]: {

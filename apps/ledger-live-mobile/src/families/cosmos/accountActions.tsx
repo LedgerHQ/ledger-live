@@ -1,23 +1,27 @@
 import React from "react";
-import { canDelegate } from "@ledgerhq/live-common/families/cosmos/logic";
-import { Icons } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
+import { ParamListBase, RouteProp } from "@react-navigation/native";
+
+import { canDelegate } from "@ledgerhq/live-common/families/cosmos/logic";
+import { IconsLegacy } from "@ledgerhq/native-ui";
 import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import { Account } from "@ledgerhq/types-live";
-import { NavigatorName, ScreenName } from "../../const";
-import { ActionButtonEvent } from "../../components/FabActions";
-
-type NavigationParamsType = readonly [name: string, options: object];
+import { NavigatorName, ScreenName } from "~/const";
+import { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions";
 
 const getMainActions = ({
   account,
   parentAccount,
+  parentRoute,
 }: {
   account: CosmosAccount;
   parentAccount?: Account;
-}): ActionButtonEvent[] | null | undefined => {
+  parentRoute: RouteProp<ParamListBase, ScreenName>;
+}): ActionButtonEvent[] => {
   const delegationDisabled = !canDelegate(account);
-  const navigationParams = delegationDisabled
+  const startWithValidator =
+    account.cosmosResources && account.cosmosResources?.delegations.length > 0;
+  const navigationParams: NavigationParamsType = delegationDisabled
     ? [
         NavigatorName.NoFundsFlow,
         {
@@ -31,19 +35,22 @@ const getMainActions = ({
     : [
         NavigatorName.CosmosDelegationFlow,
         {
-          screen:
-            account.cosmosResources &&
-            account.cosmosResources?.delegations.length > 0
-              ? ScreenName.CosmosDelegationValidator
-              : ScreenName.CosmosDelegationStarted,
+          screen: startWithValidator
+            ? ScreenName.CosmosDelegationValidator
+            : ScreenName.CosmosDelegationStarted,
+          params: {
+            source: parentRoute,
+            skipStartedStep: startWithValidator,
+          },
         },
       ];
+
   return [
     {
       id: "stake",
-      navigationParams: navigationParams as unknown as NavigationParamsType,
+      navigationParams,
       label: <Trans i18nKey="account.stake" />,
-      Icon: Icons.ClaimRewardsMedium,
+      Icon: IconsLegacy.CoinsMedium,
       event: "button_clicked",
       eventProperties: {
         button: "stake",

@@ -23,12 +23,14 @@ export type CryptoCurrencyId =
   | "cardano_testnet"
   | "celo"
   | "clubcoin"
+  | "coreum"
   | "cosmos"
   | "cosmos_testnet"
   | "dash"
   | "decred"
   | "desmos"
   | "dexon"
+  | "dydx"
   | "ellaism"
   | "dogecoin"
   | "digibyte"
@@ -53,7 +55,6 @@ export type CryptoCurrencyId =
   | "hpb"
   | "hycon"
   | "icon"
-  | "icp"
   | "iota"
   | "iov"
   | "kin"
@@ -124,6 +125,8 @@ export type CryptoCurrencyId =
   | "bitcoin_testnet"
   | "ethereum_ropsten"
   | "ethereum_goerli"
+  | "ethereum_sepolia"
+  | "ethereum_holesky"
   | "stacks"
   | "crypto_org_croeseid"
   | "solana_testnet"
@@ -149,7 +152,54 @@ export type CryptoCurrencyId =
   | "boba"
   | "moonriver"
   | "velas_evm"
-  | "syscoin";
+  | "syscoin"
+  | "internet_computer"
+  | "injective"
+  | "telos_evm"
+  | "klaytn"
+  | "polygon_zk_evm"
+  | "polygon_zk_evm_testnet"
+  | "base"
+  | "base_goerli"
+  | "casper"
+  | "neon_evm"
+  | "lukso"
+  | "linea"
+  | "linea_goerli";
+
+export type LedgerExplorerId =
+  | "btc"
+  | "btc_testnet"
+  | "bch"
+  | "btg"
+  | "club"
+  | "dash"
+  | "dcr"
+  | "dgb"
+  | "doge"
+  | "hsr"
+  | "kmd"
+  | "ltc"
+  | "ppc"
+  | "pivx"
+  | "posw"
+  | "qtum"
+  | "xsn"
+  | "strat"
+  | "xst"
+  | "vtc"
+  | "via"
+  | "zec"
+  | "zen"
+  | "avax"
+  | "eth"
+  | "eth_ropsten"
+  | "eth_goerli"
+  | "eth_sepolia"
+  | "eth_holesky"
+  | "etc"
+  | "matic"
+  | "bnb";
 
 /**
  *
@@ -180,11 +230,13 @@ type CurrencyCommon = {
   units: Unit[];
   // a shorter version of code using the symbol of the currency. like Ƀ . not all cryptocurrencies have a symbol
   symbol?: string;
-  // tells if countervalue need to be disabled (typically because colliding with other coins)
+  /*
+   * tells if countervalue need to be disabled (typically because colliding with other coins)
+   * @deprecated this field will soon be dropped. this is the API that drives this dynamically.
+   */
   disableCountervalue?: boolean;
+  // tells if countervalue need to be disabled (typically because colliding with other coins)
   delisted?: boolean;
-  // some countervalue will have a ticker alias
-  countervalueTicker?: string;
   // keywords to be able to find currency from "obvious" terms
   keywords?: string[];
 };
@@ -217,6 +269,44 @@ export type ExplorerView = {
   tx?: string;
   address?: string;
   token?: string;
+  stakePool?: string;
+};
+
+export type EthereumLikeInfo = {
+  chainId: number;
+  // used by evm coin integration
+  node:
+    | {
+        type: "external";
+        uri: string;
+      }
+    | {
+        type: "ledger";
+        explorerId: LedgerExplorerId;
+      };
+  // used by evm coin integration
+  explorer?:
+    | {
+        type: "etherscan" | "blockscout" | "teloscan" | "klaytnfinder";
+        uri: string;
+      }
+    | {
+        type: "ledger";
+        explorerId: LedgerExplorerId;
+      };
+  // used by evm coin integration
+  gasTracker?: {
+    type: "ledger";
+    explorerId: LedgerExplorerId;
+  };
+};
+
+export type BitcoinLikeInfo = {
+  P2PKH: number;
+  P2SH: number;
+  XPUBVersion?: number;
+  // FIXME optional as we miss some data to fill
+  hasTimestamp?: boolean;
 };
 
 /**
@@ -239,40 +329,22 @@ export type CryptoCurrency = CurrencyCommon & {
   // used for UI
   color: string;
   family: string;
+  // the average time between 2 blocks, in seconds
   blockAvgTime?: number;
-  // in seconds
   supportsSegwit?: boolean;
   supportsNativeSegwit?: boolean;
   // if defined this coin is a testnet for another crypto (id)};
   isTestnetFor?: string;
   // TODO later we could express union of types with mandatory bitcoinLikeInfo for "bitcoin" family...
-  bitcoinLikeInfo?: {
-    P2PKH: number;
-    P2SH: number;
-    XPUBVersion?: number;
-    // FIXME optional as we miss some data to fill
-    hasTimestamp?: boolean;
-  };
-  ethereumLikeInfo?: {
-    chainId: number;
-    networkId?: number;
-    baseChain?: "mainnet" | "goerli" | "ropsten";
-    hardfork?: string;
-    // used by evm light integration
-    rpc?: string;
-    // used by evm light integration
-    explorer?: {
-      uri: string;
-      type: "etherscan" | "blockscout";
-    };
-  };
+  bitcoinLikeInfo?: BitcoinLikeInfo;
+  ethereumLikeInfo?: EthereumLikeInfo;
   explorerViews: ExplorerView[];
   terminated?: {
     link: string;
   };
   deviceTicker?: string;
   // Used to connect to the right endpoint url since it is different from currencyId and ticker
-  explorerId?: string;
+  explorerId?: LedgerExplorerId;
 };
 
 /**

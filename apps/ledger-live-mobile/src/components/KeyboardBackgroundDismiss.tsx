@@ -1,10 +1,5 @@
 import React, { PureComponent } from "react";
-import {
-  Platform,
-  TouchableWithoutFeedback,
-  Keyboard,
-  EmitterSubscription,
-} from "react-native";
+import { Platform, TouchableWithoutFeedback, Keyboard, EmitterSubscription } from "react-native";
 
 type Props = {
   children?: React.ReactNode;
@@ -16,10 +11,7 @@ class KeyboardBackgroundDismiss extends PureComponent<Props> {
   // eslint-disable-next-line camelcase
   UNSAFE_componentWillMount() {
     if (Platform.OS === "android") {
-      this.keyboardDidHideListener = Keyboard.addListener(
-        "keyboardDidHide",
-        Keyboard.dismiss,
-      );
+      this.keyboardDidHideListener = Keyboard.addListener("keyboardDidHide", Keyboard.dismiss);
     }
   }
 
@@ -32,9 +24,7 @@ class KeyboardBackgroundDismiss extends PureComponent<Props> {
   render() {
     const { children } = this.props;
     return (
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        {children}
-      </TouchableWithoutFeedback>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>{children}</TouchableWithoutFeedback>
     );
   }
 }

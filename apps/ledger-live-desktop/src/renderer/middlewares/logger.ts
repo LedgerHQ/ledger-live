@@ -1,5 +1,10 @@
+import { Middleware } from "redux";
 import logger from "~/renderer/logger";
-export default () => (next: any) => (action: any) => {
+import { State } from "../reducers";
+
+const loggerMiddleware: Middleware<{}, State> = () => next => action => {
   logger.onReduxAction(action);
   return next(action);
 };
+
+export default loggerMiddleware;

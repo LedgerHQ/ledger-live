@@ -13,8 +13,8 @@ import { reorderAccounts } from "~/renderer/actions/accounts";
 import {
   useCalculateCountervalueCallback as useCalculateCountervalueCallbackCommon,
   useTrackingPairForAccounts,
-} from "@ledgerhq/live-common/countervalues/react";
-import { TrackingPair } from "@ledgerhq/live-common/countervalues/types";
+} from "@ledgerhq/live-countervalues-react";
+import { TrackingPair } from "@ledgerhq/live-countervalues/types";
 import { useDistribution as useDistributionRaw } from "@ledgerhq/live-common/portfolio/v2/react";
 import { accountsSelector, activeAccountsSelector } from "~/renderer/reducers/accounts";
 import { osDarkModeSelector } from "~/renderer/reducers/application";
@@ -30,12 +30,15 @@ const extraSessionTrackingPairsChanges: BehaviorSubject<TrackingPair[]> = new Be
 
 // provide redux states via custom hook wrapper
 
-export function useDistribution() {
+export function useDistribution(
+  opts: Omit<Parameters<typeof useDistributionRaw>[0], "accounts" | "to">,
+) {
   const accounts = useSelector(accountsSelector);
   const to = useSelector(counterValueCurrencySelector);
   return useDistributionRaw({
     accounts,
     to,
+    ...opts,
   });
 }
 export function useCalculateCountervalueCallback() {
@@ -52,11 +55,10 @@ export function useSortAccountsComparator() {
 export function useFlattenSortAccounts(options?: FlattenAccountsOptions) {
   const accounts = useSelector(accountsSelector);
   const comparator = useSortAccountsComparator();
-  return useMemo(() => flattenSortAccounts(accounts, comparator, options), [
-    accounts,
-    comparator,
-    options,
-  ]);
+  return useMemo(
+    () => flattenSortAccounts(accounts, comparator, options),
+    [accounts, comparator, options],
+  );
 }
 export const delegatableAccountsSelector = createSelector(activeAccountsSelector, accounts =>
   accounts.filter(acc => acc.currency.family === "tezos" && !isAccountDelegating(acc)),
@@ -130,8 +132,8 @@ export function useTrackingPairs(): TrackingPair[] {
   const countervalue = useSelector(counterValueCurrencySelector);
   const trPairs = useTrackingPairForAccounts(accounts, countervalue);
   const extraSessionTrackingPairs = useExtraSessionTrackingPair();
-  return useMemo(() => extraSessionTrackingPairs.concat(trPairs), [
-    extraSessionTrackingPairs,
-    trPairs,
-  ]);
+  return useMemo(
+    () => extraSessionTrackingPairs.concat(trPairs),
+    [extraSessionTrackingPairs, trPairs],
+  );
 }

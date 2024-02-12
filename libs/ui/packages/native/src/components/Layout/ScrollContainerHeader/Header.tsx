@@ -3,6 +3,7 @@ import styled from "styled-components/native";
 import Animated, { useAnimatedStyle, interpolate, Extrapolate } from "react-native-reanimated";
 
 import Flex from "../Flex";
+import { LayoutChangeEvent } from "react-native";
 
 export type HeaderProps = {
   TopLeftSection?: JSX.Element;
@@ -38,20 +39,20 @@ const Header = ({
   const [topLeftWidth, setTopLeftWidth] = useState(0);
   const [middleWidth, setMiddleWidth] = useState(0);
 
-  const onLayout = useCallback(({ nativeEvent: { layout } }) => {
+  const onLayout = useCallback(({ nativeEvent: { layout } }: LayoutChangeEvent) => {
     setTopSectionHeight(layout.height);
     setTopSectionWidth(layout.width);
   }, []);
 
-  const onLayoutTopLeft = useCallback(({ nativeEvent: { layout } }) => {
+  const onLayoutTopLeft = useCallback(({ nativeEvent: { layout } }: LayoutChangeEvent) => {
     setTopLeftWidth(layout.width);
   }, []);
 
-  const onLayoutTopMiddle = useCallback(({ nativeEvent: { layout } }) => {
+  const onLayoutTopMiddle = useCallback(({ nativeEvent: { layout } }: LayoutChangeEvent) => {
     setTopMiddleWidth(layout.width);
   }, []);
 
-  const onLayoutMiddle = useCallback(({ nativeEvent: { layout } }) => {
+  const onLayoutMiddle = useCallback(({ nativeEvent: { layout } }: LayoutChangeEvent) => {
     setMiddleWidth(layout.width);
   }, []);
 

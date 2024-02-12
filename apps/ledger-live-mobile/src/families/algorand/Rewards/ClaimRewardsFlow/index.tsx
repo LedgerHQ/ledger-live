@@ -7,12 +7,12 @@ import {
   getStackNavigatorConfig,
   defaultNavigationOptions,
 } from "../../../../navigation/navigatorConfig";
-import StepHeader from "../../../../components/StepHeader";
-import { ScreenName } from "../../../../const";
+import StepHeader from "~/components/StepHeader";
+import { ScreenName } from "~/const";
 import ClaimRewardsInfo from "./01-Info";
 import ClaimRewardsStarted from "./01-Started";
-import ClaimRewardsSelectDevice from "../../../../screens/SelectDevice";
-import ClaimRewardsConnectDevice from "../../../../screens/ConnectDevice";
+import ClaimRewardsSelectDevice from "~/screens/SelectDevice";
+import ClaimRewardsConnectDevice from "~/screens/ConnectDevice";
 import ClaimRewardsValidation from "./03-Validation";
 import ClaimRewardsValidationError from "./03-ValidationError";
 import ClaimRewardsValidationSuccess from "./03-ValidationSuccess";
@@ -21,10 +21,7 @@ import type { AlgorandClaimRewardsFlowParamList } from "./type";
 function ClaimRewardsFlow() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const stackNavigationConfig = useMemo(
-    () => getStackNavigatorConfig(colors, true),
-    [colors],
-  );
+  const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
   return (
     <Stack.Navigator
       screenOptions={{
@@ -123,9 +120,7 @@ function ClaimRewardsFlow() {
         name={ScreenName.AlgorandClaimRewardsInfo}
         component={ClaimRewardsInfo}
         options={{
-          headerTitle: () => (
-            <StepHeader title={t("algorand.claimRewards.stepperHeader.info")} />
-          ),
+          headerTitle: () => <StepHeader title={t("algorand.claimRewards.stepperHeader.info")} />,
           headerLeft: () => null,
           headerStyle: {
             ...defaultNavigationOptions.headerStyle,

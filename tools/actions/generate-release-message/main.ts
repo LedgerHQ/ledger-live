@@ -3,7 +3,7 @@ import { promises as fs } from "fs";
 import * as path from "path";
 import semver from "semver";
 
-const getCleanVersion = (str) => {
+const getCleanVersion = str => {
   return str.replace("## ", "").trim();
 };
 
@@ -27,9 +27,7 @@ const main = async () => {
     const clean = getCleanVersion(line);
     if (isVersionLine) {
       currentVersion = clean;
-      if (
-        !semver.eq(clean, `${parsed.major}.${parsed.minor}.${parsed.patch}`)
-      ) {
+      if (!semver.eq(clean, `${parsed.major}.${parsed.minor}.${parsed.patch}`)) {
         currentVersion = null;
       } else {
         saved = `${line}`;
@@ -45,4 +43,4 @@ const main = async () => {
   await fs.writeFile(path.join(outputPath, `${name}.md`), saved, "utf8");
 };
 
-main().catch((err) => core.setFailed(err));
+main().catch(err => core.setFailed(err));

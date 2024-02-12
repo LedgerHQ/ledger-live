@@ -111,14 +111,10 @@ function getDeviceTransactionConfig({
       fields.push({
         type: "text",
         label: "Amount",
-        value: formatCurrencyUnit(
-          getAccountUnit(account),
-          validators[0].amount,
-          {
-            showCode: true,
-            disableRounding: true,
-          }
-        ),
+        value: formatCurrencyUnit(getAccountUnit(account), validators[0].amount, {
+          showCode: true,
+          disableRounding: true,
+        }),
       });
       fields.push({
         type: "cosmos.validatorName",
@@ -135,14 +131,10 @@ function getDeviceTransactionConfig({
       fields.push({
         type: "text",
         label: "Amount",
-        value: formatCurrencyUnit(
-          getAccountUnit(account),
-          validators[0].amount,
-          {
-            showCode: true,
-            disableRounding: true,
-          }
-        ),
+        value: formatCurrencyUnit(getAccountUnit(account), validators[0].amount, {
+          showCode: true,
+          disableRounding: true,
+        }),
       });
       fields.push({
         type: "cosmos.validatorName",

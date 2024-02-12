@@ -15,20 +15,20 @@ export type CacheRes<A extends Array<any>, T> = {
 export type LRUCacheFn = <A extends Array<any>, T>(
   f: (...args: A) => Promise<T>,
   keyExtractor?: (...args: A) => string,
-  lruOpts?: LRU.Options<string, any>
+  lruOpts?: LRU.Options<string, any>,
 ) => CacheRes<A, T>;
 
 export const makeNoCache: LRUCacheFn = <A extends Array<any>, T>(
-  f: (...args: A) => Promise<T>
+  f: (...args: A) => Promise<T>,
 ): CacheRes<A, T> => {
   const result = (...args: A) => {
-    return f(...args).catch((e) => {
+    return f(...args).catch(e => {
       throw e;
     });
   };
 
   result.force = (...args: A) => {
-    return f(...args).catch((e) => {
+    return f(...args).catch(e => {
       throw e;
     });
   };

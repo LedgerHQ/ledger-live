@@ -1,3 +1,122 @@
+# 2.75.0
+
+### 🚀 Features
+
+Starting today, you can swap an additional 300 Ethereum and 100 Binance Smart Chain tokens through Ledger Live. 
+
+### 🐛 Fix
+
+Internal transactions for Ethereum, Polygon, and Binance Smart Chain are now visible in the transaction history.
+
+The bug that prevented the hiding of token accounts has been fixed.
+
+You can now clear nominations for your bonded DOT. 
+
+# 2.73.1
+
+### 🐛 Fix
+
+We’ve resolved the bug that caused an error when staking or unstaking the entire Solana (SOL) balance.
+
+# 2.73.0
+
+### 🌷 Improvements
+
+Ledger Live will now display the fiat value of your TRC20/TRC10 tokens.
+
+### 🐛 Fixes
+
+Using the Max toggle to swap the entire balance would block the transaction. The issue has been resolved.
+
+We've fixed a few search bar glitches in the Discover section. 
+
+Some users reported issues when importing legacy Ethereum accounts or accounts with the legacy derivation path from MetaMask to Ledger Live. This has been fixed.
+
+# 2.71.1
+
+### 🐛 Fixes
+
+Some users reported issues when accessing the CL Card tab. We've patched this up.
+
+We've fixed the bug that prevented swapping coins or tokens with values above 1,000.
+
+# 2.71.0
+
+### 🚀 Features
+
+ParaSwap and 1inch, which you can access through the Discover section, are now supporting more EVM-compatible chains, including Base and Polygon zkEVM.
+
+### 🐛 Fixes
+
+We fixed a bug that led to an infinite loading error when trying to access the My Ledger tab. 
+
+The bug that caused the UTK tokens not to be displayed in the MultiversX account is now fixed. 
+
+Some users reported that their undelegated Tezos (XTZ) coins are not visible in the transaction history. This has been fixed. 
+
+# 2.69.0
+
+This release includes minor bug fixes and security improvements.
+
+# 2.68.1
+
+This release includes minor bug fixes and security improvements.
+
+# 2.66.0
+
+### 🚀 Features
+
+Starting today, you can stake Cardano (ADA) through Ledger Live and earn rewards.
+
+When swapping crypto assets, a warning message will alert you if you don’t have enough funds to pay the network fees.
+
+### 🐛 Fixes
+
+Optimism is now Op Mainnet. We’ve made the name change in Ledger Live.
+
+# 2.64.2
+
+Some users reported issues when adding accounts and trying to swap crypto. We've patched this up, and everything is running smoothly again.
+
+# 2.64.1
+
+### 🚀 Features
+
+- Navigating the Discover section just got easier. A nifty search bar and categories will help you quickly find dApps and services you're looking for.
+- Ledger Live now supports an f4/t4 address format that allows you to directly transfer your FIL to an Ethereum-style (0x) address.
+
+### 🌷 Improvements
+
+When the latest version of the Ledger Live desktop app is available, it will now be automatically downloaded, same as the current experience on your Ledger Live mobile app, so the update will not interrupt you while using the app. You can revert to the previous setting by using older versions of the Ledger Live desktop app.
+
+# 2.62.2
+
+### 🚀 Features
+
+Ledger Live now supports eight new Cardano tokens and twelve ESDT tokens, including WrappedUSDT (USDT).
+
+We've made a few improvements to speed up synchronization between your Bitcoin account and the Bitcoin network.
+
+### 🐛 Fixes
+
+Some users reported wrong countervalues for certain tokens. This has been fixed.
+
+We’ve resolved the bug that caused an error when adding Solana (SOL) accounts.
+
+A bug that caused the NEAR commission fee to be displayed incorrectly has been fixed.
+
+We fixed a bug that prevented users to manage their Polkadot (DOT) account.
+
+# 2.60.0
+
+### 🚀 Features
+
+Those who want to buy crypto worth 50000€ and more can now use the OTC Desk and enjoy competitive rates, high liquidity, and personalized service.
+
+### 🐛 Fixes
+
+We fixed a few minor bugs.
+
 # 2.58.0
 
 This release features small security improvements, UI tweaks, and minor bug fixes.
@@ -14,18 +133,18 @@ We've squished some minor bugs and spruced up a few UI elements.
 
 # 2.55.0
 
-This release includes performance improvements and minor bug fixes. 
+This release includes performance improvements and minor bug fixes.
 
 # 2.54.0
 
 ### 🚀 Features
 
-- Starting today, you can manage 100+ tokens on Cronos, Fantom, and Moonbeam networks with Ledger Live. 
+- Starting today, you can manage 100+ tokens on Cronos, Fantom, and Moonbeam networks with Ledger Live.
 - Ledger Live will no longer display zero-amount transactions in the transaction history. If you want to view zero-amount transactions nonetheless, navigate to Settings -> Accounts -> Zero-amount transactions and flip the toggle switch to the on position.
 
 ### 🐛 Fixes
 
-- We squished the bug that was triggering an error message instead of undelegating ATOM. 
+- We squished the bug that was triggering an error message instead of undelegating ATOM.
 
 # 2.53.2
 

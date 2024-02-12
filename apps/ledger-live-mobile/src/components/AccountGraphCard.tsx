@@ -1,11 +1,4 @@
-import React, {
-  useState,
-  useCallback,
-  useMemo,
-  ReactNode,
-  memo,
-  useEffect,
-} from "react";
+import React, { useState, useCallback, useMemo, ReactNode, memo, useEffect } from "react";
 import { useTheme } from "styled-components/native";
 import {
   AccountLike,
@@ -20,33 +13,27 @@ import {
   getAccountUnit,
   getAccountName,
 } from "@ledgerhq/live-common/account/index";
-import {
-  Box,
-  Flex,
-  Text,
-  Transitions,
-  InfiniteLoader,
-  GraphTabs,
-  Tag,
-} from "@ledgerhq/native-ui";
+import { Box, Flex, Text, Transitions, InfiniteLoader, GraphTabs, Tag } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { QrCodeMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useNavigation } from "@react-navigation/native";
-import { useTimeRange } from "../actions/settings";
+import { useTimeRange } from "~/actions/settings";
 import Delta from "./Delta";
 import CurrencyUnitValue, { CurrencyUnitValueProps } from "./CurrencyUnitValue";
 import { Item } from "./Graph/types";
-import getWindowDimensions from "../logic/getWindowDimensions";
+import getWindowDimensions from "~/logic/getWindowDimensions";
 import Graph from "./Graph";
 import Touchable from "./Touchable";
 import { TransactionsPendingConfirmationWarningForAccount } from "./TransactionsPendingConfirmationWarning";
 import { NoCountervaluePlaceholder } from "./CounterValue";
 import { ensureContrast } from "../colors";
-import { NavigatorName, ScreenName } from "../const";
-import { track } from "../analytics";
+import { NavigatorName, ScreenName } from "~/const";
+import { track } from "~/analytics";
 import { StackNavigatorNavigation } from "./RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "./RootNavigator/types/BaseNavigator";
+import { GraphPlaceholder } from "./Graph/Placeholder";
+import { tokensWithUnsupportedGraph } from "./Graph/tokensWithUnsupportedGraph";
 
 const { width } = getWindowDimensions();
 
@@ -57,12 +44,7 @@ type FooterProps = {
 const Footer = ({ renderAccountSummary }: FooterProps) => {
   const accountSummary = renderAccountSummary && renderAccountSummary();
   return accountSummary ? (
-    <Box
-      flexDirection={"row"}
-      alignItems={"center"}
-      marginTop={5}
-      overflow={"hidden"}
-    >
+    <Box flexDirection={"row"} alignItems={"center"} marginTop={5} overflow={"hidden"}>
       {accountSummary}
     </Box>
   ) : null;
@@ -122,7 +104,7 @@ function AccountGraphCard({
   const activeRangeIndex = ranges.findIndex(r => r.value === timeRange);
 
   const updateRange = useCallback(
-    index => {
+    (index: number) => {
       if (ranges[index]) {
         const range = ranges[index].value as PortfolioRange;
         track("timeframe_clicked", { timeframe: range });
@@ -148,16 +130,13 @@ function AccountGraphCard({
 
   const [hoveredItem, setHoverItem] = useState<Item | null>();
 
-  const mapCryptoValue = useCallback(d => d.value || 0, []);
+  const mapCryptoValue = useCallback((d: Item) => d.value || 0, []);
   const mapCounterValue = useCallback(
-    d => (d.countervalue ? d.countervalue : 0),
+    (d: Item) => (d && "countervalue" in d ? d.countervalue : 0),
     [],
   );
 
-  const graphColor = ensureContrast(
-    getCurrencyColor(currency),
-    colors.background.main,
-  );
+  const graphColor = ensureContrast(getCurrencyColor(currency), colors.background.main);
 
   return (
     <Flex mt={2}>
@@ -173,38 +152,43 @@ function AccountGraphCard({
         parentAccount={parentAccount}
         currency={currency}
       />
-
-      <Flex
-        height={120}
-        alignItems="center"
-        justifyContent="center"
-        onTouchEnd={handleGraphTouch}
-      >
-        {!loading ? (
-          <Transitions.Fade duration={400} status="entering">
-            <Graph
-              isInteractive
-              height={120}
-              width={width}
-              color={graphColor}
-              data={history}
-              mapValue={useCounterValue ? mapCounterValue : mapCryptoValue}
-              onItemHover={setHoverItem}
-              verticalRangeRatio={10}
-              fill={colors.background.main}
+      {account.type === "TokenAccount" && tokensWithUnsupportedGraph.includes(account.token.id) ? (
+        <GraphPlaceholder />
+      ) : (
+        <>
+          <Flex
+            height={120}
+            alignItems="center"
+            justifyContent="center"
+            onTouchEnd={handleGraphTouch}
+          >
+            {!loading ? (
+              <Transitions.Fade duration={400} status="entering">
+                <Graph
+                  isInteractive
+                  height={120}
+                  width={width}
+                  color={graphColor}
+                  data={history}
+                  mapValue={useCounterValue ? mapCounterValue : mapCryptoValue}
+                  onItemHover={setHoverItem}
+                  verticalRangeRatio={10}
+                  fill={colors.background.main}
+                />
+              </Transitions.Fade>
+            ) : (
+              <InfiniteLoader size={32} />
+            )}
+          </Flex>
+          <Flex bg="background.main">
+            <GraphTabs
+              activeIndex={activeRangeIndex}
+              onChange={updateRange}
+              labels={rangesLabels}
             />
-          </Transitions.Fade>
-        ) : (
-          <InfiniteLoader size={32} />
-        )}
-      </Flex>
-      <Flex bg="background.main">
-        <GraphTabs
-          activeIndex={activeRangeIndex}
-          onChange={updateRange}
-          labels={rangesLabels}
-        />
-      </Flex>
+          </Flex>
+        </>
+      )}
       <Footer renderAccountSummary={renderAccountSummary} />
     </Flex>
   );
@@ -254,8 +238,7 @@ const GraphCardHeader = ({
   }
   const isToken = parentAccount && parentAccount.name !== undefined;
 
-  const navigation =
-    useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
+  const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
 
   const openReceive = useCallback(() => {
     navigation.navigate(NavigatorName.ReceiveFunds, {
@@ -289,21 +272,14 @@ const GraphCardHeader = ({
         </Flex>
 
         <Flex flexDirection="row" mb={4}>
-          <Text
-            variant={"large"}
-            fontWeight={"medium"}
-            color={"neutral.c70"}
-            numberOfLines={1}
-          >
+          <Text variant={"large"} fontWeight={"medium"} color={"neutral.c70"} numberOfLines={1}>
             {typeof items[1]?.value === "number" ? (
               <CurrencyUnitValue {...items[1]} />
             ) : (
               <NoCountervaluePlaceholder />
             )}
           </Text>
-          <TransactionsPendingConfirmationWarningForAccount
-            maybeAccount={account}
-          />
+          <TransactionsPendingConfirmationWarningForAccount maybeAccount={account} />
         </Flex>
         <Text
           fontFamily="Inter"
@@ -331,9 +307,7 @@ const GraphCardHeader = ({
           px={6}
           mt={4}
         >
-          {isToken
-            ? parentAccount.freshAddress
-            : (account as Account).freshAddress}
+          {isToken ? parentAccount.freshAddress : (account as Account).freshAddress}
         </Tag>
       </Touchable>
     </Flex>

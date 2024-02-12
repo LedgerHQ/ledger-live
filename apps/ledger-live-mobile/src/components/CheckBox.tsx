@@ -14,14 +14,7 @@ function CheckBox({ isChecked, disabled, onChange, ...props }: Props) {
     onChange(!isChecked);
   }, [isChecked, onChange]);
 
-  return (
-    <RNCheckbox
-      checked={isChecked}
-      onChange={onPress}
-      disabled={disabled}
-      {...props}
-    />
-  );
+  return <RNCheckbox checked={isChecked} onChange={onPress} disabled={disabled} {...props} />;
 }
 
 export default memo<Props>(CheckBox);

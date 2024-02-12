@@ -1,20 +1,20 @@
 import React, { useCallback, useState } from "react";
 import * as Animatable from "react-native-animatable";
 import { useTranslation } from "react-i18next";
-import { Flex, Carousel, Text, Button, Icons } from "@ledgerhq/native-ui";
+import { Flex, Carousel, Text, Button, IconsLegacy } from "@ledgerhq/native-ui";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
 import { StyleSheet } from "react-native";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { ScreenName } from "../../../const";
-import Illustration from "../../../images/illustration/Illustration";
+import { ScreenName } from "~/const";
+import Illustration from "~/images/illustration/Illustration";
 
-import { normalize } from "../../../helpers/normalizeSize";
+import { normalize } from "~/helpers/normalizeSize";
 
-import ForceTheme from "../../../components/theme/ForceTheme";
-import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
-import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
+import ForceTheme from "~/components/theme/ForceTheme";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 
 const StyledSafeAreaView = styled(SafeAreaView)`
   flex: 1;
@@ -24,11 +24,11 @@ const StyledSafeAreaView = styled(SafeAreaView)`
 
 const images = {
   light: [
-    require("../../../images/illustration/Light/_049.png"),
-    require("../../../images/illustration/Light/_073.png"),
-    require("../../../images/illustration/Light/_070.png"),
-    require("../../../images/illustration/Light/_069.png"),
-    require("../../../images/illustration/Light/_066.png"),
+    require("~/images/illustration/Light/_049.png"),
+    require("~/images/illustration/Light/_073.png"),
+    require("~/images/illustration/Light/_070.png"),
+    require("~/images/illustration/Light/_069.png"),
+    require("~/images/illustration/Light/_066.png"),
   ],
 };
 
@@ -55,6 +55,7 @@ const Card = ({ index /* , deviceModelId */ }: CardType) => {
         textAlign="center"
         color="constant.black"
         lineHeight="34.8px"
+        testID={`onboarding-stepNewDevice-title${index}`}
       >
         {t(`onboarding.stepNewDevice.${index}.title`)}
       </Text>
@@ -94,6 +95,7 @@ const Footer = ({ index }: { index: number }) => {
       style={styles.animatable}
       animation="fadeIn"
       useNativeDriver
+      testID="onboarding-stepNewDevice-cta"
     >
       <Component label={t(`onboarding.stepNewDevice.cta`)} />
     </Animatable.View>
@@ -118,9 +120,7 @@ function OnboardingStepNewDevice() {
         height={48}
       >
         <Button
-          Icon={() => (
-            <Icons.ArrowLeftMedium color="constant.black" size={24} />
-          )}
+          Icon={() => <IconsLegacy.ArrowLeftMedium color="constant.black" size={24} />}
           onPress={handleBack}
           style={styles.backArrow}
         />
@@ -135,12 +135,7 @@ function OnboardingStepNewDevice() {
           ))}
         </Carousel>
 
-        <Flex
-          minHeight="60px"
-          width="100%"
-          justifyContent="center"
-          alignItems="center"
-        >
+        <Flex minHeight="60px" width="100%" justifyContent="center" alignItems="center">
           <Footer index={currentIndex} />
         </Flex>
       </ForceTheme>

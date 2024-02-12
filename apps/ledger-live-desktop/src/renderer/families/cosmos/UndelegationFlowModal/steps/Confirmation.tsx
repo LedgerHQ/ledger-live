@@ -43,7 +43,13 @@ export default function StepConfirmation({
       });
     return (
       <Container>
-        <TrackPage category="Undelegation Cosmos Flow" name="Step Confirmed" />
+        <TrackPage
+          category="Undelegation Cosmos Flow"
+          name="Step Confirmed"
+          flow="stake"
+          action="undelegation"
+          currency={currencyId}
+        />
         <SyncOneAccountOnMount
           reason="transaction-flow-confirmation"
           priority={10}
@@ -71,7 +77,13 @@ export default function StepConfirmation({
   if (error) {
     return (
       <Container shouldSpace={signed}>
-        <TrackPage category="Undelegation Cosmos Flow" name="Step Confirmation Error" />
+        <TrackPage
+          category="Undelegation Cosmos Flow"
+          name="Step Confirmation Error"
+          flow="stake"
+          action="undelegation"
+          currency={currencyId}
+        />
         {signed ? (
           <BroadcastErrorDisclaimer
             title={t("cosmos.undelegation.flow.steps.confirmation.broadcastError")}
@@ -83,18 +95,19 @@ export default function StepConfirmation({
   }
   return null;
 }
-const Container: ThemedComponent<{
+const Container = styled(Box).attrs<{
   shouldSpace?: boolean;
-}> = styled(Box).attrs(() => ({
+}>(() => ({
   alignItems: "center",
   grow: true,
   color: "palette.text.shade100",
-}))`
+}))<{
+  shouldSpace?: boolean;
+}>`
   justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
 `;
 export function StepConfirmationFooter({
   account,
-  parentAccount,
   error,
   onClose,
   onRetry,
@@ -112,10 +125,9 @@ export function StepConfirmationFooter({
       setDrawer(OperationDetails, {
         operationId: concernedOperation.id,
         accountId: account.id,
-        parentId: parentAccount && parentAccount.id,
       });
     }
-  }, [onClose, account, concernedOperation, parentAccount]);
+  }, [onClose, account, concernedOperation]);
   const currencyName = account.currency.name;
   return (
     <Box horizontal alignItems="right">

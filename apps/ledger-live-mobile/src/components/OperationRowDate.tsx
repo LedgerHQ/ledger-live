@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
 import { createSelector } from "reselect";
-import { localeSelector } from "../reducers/settings";
+import { localeSelector } from "~/reducers/settings";
 
 type Props = {
   date: Date;
@@ -18,9 +18,6 @@ const localeDateTimeFormatSelector = createSelector(
 
 export default function OperationRowDate({ date }: Props) {
   const dateTimeFormat = useSelector(localeDateTimeFormatSelector);
-  const localeTimeString = useMemo(
-    () => dateTimeFormat.format(date),
-    [date, dateTimeFormat],
-  );
+  const localeTimeString = useMemo(() => dateTimeFormat.format(date), [date, dateTimeFormat]);
   return <>{localeTimeString}</>;
 }

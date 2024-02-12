@@ -8,11 +8,11 @@ import { BigNumber } from "bignumber.js";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
-import CounterValue from "../../../components/CounterValue";
-import ArrowRight from "../../../icons/ArrowRight";
-import CheckCircle from "../../../icons/CheckCircle";
-import Clock from "../../../icons/Clock";
-import ExclamationCircle from "../../../icons/ExclamationCircle";
+import CounterValue from "~/components/CounterValue";
+import ArrowRight from "~/icons/ArrowRight";
+import CheckCircle from "~/icons/CheckCircle";
+import Clock from "~/icons/Clock";
+import ExclamationCircle from "~/icons/ExclamationCircle";
 import ValidatorImage from "../shared/ValidatorImage";
 
 type Props = {
@@ -40,9 +40,7 @@ export default function DelegationRow({
         styles.row,
         styles.wrapper,
         { backgroundColor: colors.card },
-        !isLast
-          ? { ...styles.borderBottom, borderBottomColor: colors.lightGrey }
-          : undefined,
+        !isLast ? { ...styles.borderBottom, borderBottomColor: colors.lightGrey } : undefined,
       ]}
       onPress={() => onPress(stakeWithMeta)}
     >

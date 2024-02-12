@@ -1,7 +1,7 @@
 import React, { useCallback, useState, memo } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { listSubAccounts } from "@ledgerhq/live-common/account/helpers";
+import { getAccountCurrency, listSubAccounts } from "@ledgerhq/live-common/account/helpers";
 import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import styled from "styled-components";
 import { useHistory } from "react-router-dom";
@@ -17,16 +17,18 @@ import LabelWithExternalIcon from "~/renderer/components/LabelWithExternalIcon";
 import { openURL } from "~/renderer/linking";
 import { track } from "~/renderer/analytics/segment";
 import AccountContextMenu from "~/renderer/components/ContextMenu/AccountContextMenu";
-import perFamilyTokenList from "~/renderer/generated/TokenList";
 import { useTimeRange } from "~/renderer/actions/settings";
 import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
 import AngleDown from "~/renderer/icons/AngleDown";
+import { getLLDCoinFamily } from "~/renderer/families";
+import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
 type Props = {
   account: Account;
 };
 export default memo<Props>(TokensList);
 function TokensList({ account }: Props) {
   const { t } = useTranslation();
+  const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const [range] = useTimeRange();
   const dispatch = useDispatch();
   const history = useHistory();
@@ -52,7 +54,11 @@ function TokensList({ account }: Props) {
   const [collapsed, setCollapsed] = useState(true);
   const toggleCollapse = useCallback(() => setCollapsed(s => !s), []);
   if (!account.subAccounts) return null;
-  const subAccounts = listSubAccounts(account);
+
+  const subAccounts = listSubAccounts(account).filter(subAccount => {
+    return !blacklistedTokenIds.includes(getAccountCurrency(subAccount).id);
+  });
+
   const { currency } = account;
   const family = currency.family;
   const tokenTypes = listTokenTypesForCryptoCurrency(currency);
@@ -64,9 +70,9 @@ function TokensList({ account }: Props) {
     currency && currency.type && tokenTypes && tokenTypes.length > 0
       ? supportLinkByTokenType[tokenTypes[0] as keyof typeof supportLinkByTokenType]
       : null;
-  const specific = perFamilyTokenList[family as keyof typeof perFamilyTokenList];
+  const specific = getLLDCoinFamily(family)?.tokenList;
   const hasSpecificTokenWording = specific?.hasSpecificTokenWording;
-  const ReceiveButtonComponent = specific ? specific.ReceiveButton : ReceiveButton;
+  const ReceiveButtonComponent = specific?.ReceiveButton || ReceiveButton;
   const titleLabel = t(hasSpecificTokenWording ? `tokensList.${family}.title` : "tokensList.title");
   const placeholderLabel = t(
     hasSpecificTokenWording ? `tokensList.${family}.placeholder` : "tokensList.placeholder",
@@ -144,7 +150,7 @@ function TokensList({ account }: Props) {
 }
 
 // Fixme Temporarily hiding the receive token button
-function ReceiveButton(props: { onClick: (account: Account) => void }) {
+function ReceiveButton(props: { account: Account; onClick: () => void }) {
   const { t } = useTranslation();
   return (
     <Button small primary onClick={props.onClick}>

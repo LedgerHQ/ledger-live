@@ -1,5 +1,5 @@
 import { setSecp256k1Instance } from "@ledgerhq/live-common/families/bitcoin/wallet-btc/crypto/secp256k1";
-import { Subject } from "rxjs";
+import { Subject, firstValueFrom } from "rxjs";
 import { first } from "rxjs/operators";
 import { initWorker } from "../../webworkers";
 
@@ -20,7 +20,7 @@ function runJob(message: { publicKey: string; tweak: string }): Promise<{ respon
   const id = idCounter++;
   const worker = workers[id % publicKeyTweakAddWorkerCount]; // round robin with the counter
   return worker.then(w => {
-    const promise = publicKeyTweakAddWorkerResponses.pipe(first(e => e.id === id)).toPromise();
+    const promise = firstValueFrom(publicKeyTweakAddWorkerResponses.pipe(first(e => e.id === id)));
     w.postMessage({ ...message, id });
     return promise;
   });

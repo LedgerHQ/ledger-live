@@ -15,7 +15,7 @@ import {
 } from "./satstack";
 import dataset from "./datasets/bitcoin";
 import { inferDescriptorFromAccount, AccountDescriptor } from "./descriptor";
-import { setEnv } from "../../env";
+import { setEnv } from "@ledgerhq/live-env";
 import { fromAccountRaw } from "../../account";
 import { setSupportedCurrencies } from "../../currencies";
 
@@ -28,7 +28,7 @@ describe("validateRPCNodeConfig", () => {
         host: "192.168.0.1:9999",
         username: "user",
         password: "pass",
-      })
+      }),
     ).toEqual([]);
     expect(
       validateRPCNodeConfig({
@@ -36,7 +36,7 @@ describe("validateRPCNodeConfig", () => {
         username: "user",
         password: "pass",
         tls: false,
-      })
+      }),
     ).toEqual([]);
     expect(
       validateRPCNodeConfig({
@@ -44,14 +44,14 @@ describe("validateRPCNodeConfig", () => {
         username: "user",
         password: "pass",
         tls: true,
-      })
+      }),
     ).toEqual([]);
     expect(
       validateRPCNodeConfig({
         host: "ledger.com",
         username: "user",
         password: "pass",
-      })
+      }),
     ).toEqual([]);
   });
   test("invalid cases", () => {
@@ -61,12 +61,8 @@ describe("validateRPCNodeConfig", () => {
       password: "",
     });
     expect(errors.length).toEqual(3);
-    expect(errors.map((e) => e.field).sort()).toEqual([
-      "host",
-      "password",
-      "username",
-    ]);
-    expect(errors.every((e) => e.error instanceof Error)).toBe(true);
+    expect(errors.map(e => e.field).sort()).toEqual(["host", "password", "username"]);
+    expect(errors.every(e => e.error instanceof Error)).toBe(true);
   });
 });
 describe("isValidHost", () => {
@@ -141,7 +137,7 @@ describe("parseSatStackConfig", () => {
         "rpcpass": "pass",
         "notls": true,
         "_whatever": {"a":"b"}
-      }`)
+      }`),
     ).toEqual({
       accounts: [
         {
@@ -183,17 +179,13 @@ describe("parseSatStackConfig", () => {
     expect(parseSatStackConfig("{}")).toBeUndefined();
     expect(parseSatStackConfig('{"accounts":[]}')).toBeUndefined();
     expect(
-      parseSatStackConfig(
-        '{"accounts":[],"rpcurl":"localhost","rpcuser":"user"}'
-      )
+      parseSatStackConfig('{"accounts":[],"rpcurl":"localhost","rpcuser":"user"}'),
     ).toBeUndefined();
     expect(
-      parseSatStackConfig(
-        '{"accounts":[],"rpcurl":"localhost","rpcpass":"pass"}'
-      )
+      parseSatStackConfig('{"accounts":[],"rpcurl":"localhost","rpcpass":"pass"}'),
     ).toBeUndefined();
     expect(
-      parseSatStackConfig('{"accounts":[],"rpcuser":"user","rpcpass": "pass"}')
+      parseSatStackConfig('{"accounts":[],"rpcuser":"user","rpcpass": "pass"}'),
     ).toBeUndefined();
   });
 });
@@ -207,7 +199,7 @@ describe("stringifySatStackConfig", () => {
         },
         accounts: (
           (dataset.accounts || [])
-            .map((a) => inferDescriptorFromAccount(fromAccountRaw(a.raw)))
+            .map(a => inferDescriptorFromAccount(fromAccountRaw(a.raw)))
             .filter(Boolean) as AccountDescriptor[]
         ).map((descriptor, i) => ({
           descriptor,
@@ -215,7 +207,7 @@ describe("stringifySatStackConfig", () => {
             i,
           },
         })),
-      })
+      }),
     ).toEqual(`{
   "accounts": [
     {
@@ -244,7 +236,7 @@ describe("editSatStackConfig", () => {
       foo: "bar",
     },
     accounts: (dataset.accounts || [])
-      .map((a) => inferDescriptorFromAccount(fromAccountRaw(a.raw)))
+      .map(a => inferDescriptorFromAccount(fromAccountRaw(a.raw)))
       .filter(Boolean)
       .map((descriptor, i) => ({
         descriptor,
@@ -254,9 +246,7 @@ describe("editSatStackConfig", () => {
       })),
   };
   test("restore identity", () => {
-    expect(
-      parseSatStackConfig(stringifySatStackConfig(config as SatStackConfig))
-    ).toEqual(config);
+    expect(parseSatStackConfig(stringifySatStackConfig(config as SatStackConfig))).toEqual(config);
   });
   test("update node config", () => {
     expect(
@@ -271,18 +261,15 @@ describe("editSatStackConfig", () => {
         } as SatStackConfig,
         {
           node: config.node,
-        }
-      )
+        },
+      ),
     ).toEqual(config);
   });
   test("append accounts", () => {
     expect(
-      editSatStackConfig(
-        { ...config, accounts: config.accounts.slice(0, 1) } as any,
-        {
-          accounts: config.accounts.slice(1) as any,
-        }
-      )
+      editSatStackConfig({ ...config, accounts: config.accounts.slice(0, 1) } as any, {
+        accounts: config.accounts.slice(1) as any,
+      }),
     ).toEqual(config);
   });
   test("dedup accounts", () => {
@@ -291,8 +278,8 @@ describe("editSatStackConfig", () => {
         { ...config, accounts: config.accounts.slice(0, 1) } as any,
         {
           accounts: config.accounts,
-        } as any
-      )
+        } as any,
+      ),
     ).toEqual(config);
   });
 });
@@ -379,13 +366,13 @@ describe("statusObservable", () => {
       },
     ];
     let success;
-    const p = new Promise((s) => {
+    const p = new Promise(s => {
       success = s;
     });
     let last = {
       type: "ready",
     };
-    const u = statusObservable.subscribe((e) => {
+    const u = statusObservable.subscribe(e => {
       if (stack.length === 0) {
         u.unsubscribe();
         success();

@@ -14,8 +14,7 @@ export default {
       name: "interactive",
       alias: "i",
       type: Boolean,
-      desc:
-        "interactive mode that accumulate the events instead of showing them",
+      desc: "interactive mode that accumulate the events instead of showing them",
     },
   ],
   job: ({
@@ -25,9 +24,7 @@ export default {
     module: string;
     interactive: boolean;
   }>) => {
-    const events = discoverDevices((m) =>
-      !module ? true : module.split(",").includes(m.id)
-    );
+    const events = discoverDevices(m => (!module ? true : module.split(",").includes(m.id)));
     if (!interactive) return events;
     return events
       .pipe(
@@ -35,9 +32,9 @@ export default {
           let copy;
 
           if (value.type === "remove") {
-            copy = acc.filter((a) => a.id === value.id);
+            copy = acc.filter(a => a.id === value.id);
           } else {
-            const existing = acc.find((o) => o.id === value.id);
+            const existing = acc.find(o => o.id === value.id);
 
             if (existing) {
               const i = acc.indexOf(existing);
@@ -48,24 +45,20 @@ export default {
               }
             } else {
               copy = acc.concat({
-                ...value
+                ...value,
               });
             }
           }
 
           return copy;
-        }, [])
+        }, []),
       )
       .pipe(
         tap(() => {
           // eslint-disable-next-line no-console
           console.clear();
         }),
-        map((acc) =>
-          acc
-            .map((o) => `${(o.name || "(no name)").padEnd(40)} ${o.id}`)
-            .join("\n")
-        )
+        map(acc => acc.map(o => `${(o.name || "(no name)").padEnd(40)} ${o.id}`).join("\n")),
       );
   },
 };

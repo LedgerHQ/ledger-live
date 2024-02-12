@@ -1,28 +1,18 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { Button, Flex, Icon, Link, Text } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import ErrorNoBorder from "~/renderer/icons/ErrorNoBorder";
-import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
-import { languageSelector } from "~/renderer/reducers/settings";
-import { useSelector } from "react-redux";
 import ExportLogsButton from "~/renderer/components/ExportLogsButton";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+import { urls } from "~/config/urls";
 
 export const NetworkErrorScreen = ({ refresh }: { refresh: () => void }) => {
   const { t } = useTranslation();
-  const locale = useSelector(languageSelector) || "en";
 
-  const handleContactSupport = useCallback(
-    () =>
-      openURL(
-        urls.contactSupportWebview[
-          locale in urls.contactSupportWebview
-            ? (locale as keyof typeof urls.contactSupportWebview)
-            : "en"
-        ],
-      ),
-    [locale],
-  );
+  const urlContactSupportWebview = useLocalizedUrl(urls.contactSupportWebview);
+
+  const handleContactSupport = () => openURL(urlContactSupportWebview);
 
   return (
     <Flex alignItems="center" justifyContent="center" flexGrow={1} flexDirection="column">
@@ -55,7 +45,7 @@ export const NetworkErrorScreen = ({ refresh }: { refresh: () => void }) => {
         onClick={refresh}
         borderRadius="44px"
       >
-        {t("webview.networkError.tryAgain")}
+        {t("common.tryAgain")}
       </Button>
       <ExportLogsButton
         customComponent={(handleSaveLogPress: () => Promise<void>) => (

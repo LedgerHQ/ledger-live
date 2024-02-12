@@ -27,10 +27,7 @@ import {
 export * from "./support";
 import { parseCurrencyUnit } from "./parseCurrencyUnit";
 import { chopCurrencyUnitDecimals } from "./chopCurrencyUnitDecimals";
-import {
-  formatCurrencyUnit,
-  formatCurrencyUnitFragment,
-} from "./formatCurrencyUnit";
+import { formatCurrencyUnit, formatCurrencyUnitFragment } from "./formatCurrencyUnit";
 import { formatShort } from "./formatShort";
 import { valueFromUnit } from "./valueFromUnit";
 import type { Currency } from "@ledgerhq/types-cryptoassets";

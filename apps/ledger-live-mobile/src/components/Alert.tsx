@@ -3,9 +3,9 @@ import { Trans } from "react-i18next";
 import { Linking, TouchableOpacity } from "react-native";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
-import { Icons, Alert as BaseAlert, Flex } from "@ledgerhq/native-ui";
+import { IconsLegacy, Alert as BaseAlert, Flex } from "@ledgerhq/native-ui";
 import { AlertProps as BaseAlertProps } from "@ledgerhq/native-ui/components/message/Alert/index";
-import { dismissedBannersSelector } from "../reducers/settings";
+import { dismissedBannersSelector } from "~/reducers/settings";
 
 type AlertType =
   | "primary"
@@ -43,43 +43,43 @@ const alertPropsByType: Record<
 > = {
   primary: {
     type: "info",
-    Icon: Icons.InfoMedium,
+    Icon: IconsLegacy.InfoMedium,
   },
   secondary: {
     type: "info",
-    Icon: Icons.InfoMedium,
+    Icon: IconsLegacy.InfoMedium,
   },
   success: {
     type: "info",
-    Icon: Icons.CircledCheckMedium,
+    Icon: IconsLegacy.CircledCheckMedium,
   },
   warning: {
     type: "warning",
-    Icon: Icons.CircledAlertMedium,
+    Icon: IconsLegacy.CircledAlertMedium,
   },
   error: {
     type: "error",
-    Icon: Icons.CircledCrossMedium,
+    Icon: IconsLegacy.CircledCrossMedium,
   },
   hint: {
     type: "info",
-    Icon: Icons.LightbulbMedium,
+    Icon: IconsLegacy.LightbulbMedium,
   },
   security: {
     type: "warning",
-    Icon: Icons.ShieldSecurityMedium,
+    Icon: IconsLegacy.ShieldSecurityMedium,
   },
   help: {
     type: "info",
-    Icon: Icons.ShieldSecurityMedium,
+    Icon: IconsLegacy.ShieldSecurityMedium,
   },
   danger: {
     type: "error",
-    Icon: Icons.ShieldSecurityMedium,
+    Icon: IconsLegacy.ShieldSecurityMedium,
   },
   update: {
     type: "warning",
-    Icon: Icons.WarningMedium,
+    Icon: IconsLegacy.WarningMedium,
   },
 };
 
@@ -105,7 +105,7 @@ export const LearnMoreLink = ({
   learnMoreKey,
   Icon,
 }: LearnMoreLinkProps) => {
-  const IconComponent = Icon || Icons.ExternalLinkMedium;
+  const IconComponent = Icon || IconsLegacy.ExternalLinkMedium;
   return (
     <LinkTouchable onPress={onPress}>
       <BaseAlert.UnderlinedText mr="5px">
@@ -149,12 +149,7 @@ export default function Alert(props: Props) {
 
   const hasLearnMore = !!onLearnMore || !!learnMoreUrl;
   const handleLearnMore = useCallback(
-    () =>
-      onLearnMore
-        ? onLearnMore()
-        : learnMoreUrl
-        ? Linking.openURL(learnMoreUrl)
-        : undefined,
+    () => (onLearnMore ? onLearnMore() : learnMoreUrl ? Linking.openURL(learnMoreUrl) : undefined),
     [onLearnMore, learnMoreUrl],
   );
 
@@ -168,10 +163,7 @@ export default function Alert(props: Props) {
       <Container>
         {title && <BaseAlert.BodyText>{title}</BaseAlert.BodyText>}
         {description && (
-          <BaseAlert.BodyText
-            mt={title ? 2 : undefined}
-            mb={hasLearnMore ? 2 : undefined}
-          >
+          <BaseAlert.BodyText mt={title ? 2 : undefined} mb={hasLearnMore ? 2 : undefined}>
             {description}
           </BaseAlert.BodyText>
         )}

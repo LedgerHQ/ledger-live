@@ -1,28 +1,16 @@
 import { Observable } from "rxjs";
 import { PublicKey } from "@hashgraph/sdk";
-import {
-  Account,
-  DeviceId,
-  Operation,
-  SignOperationEvent,
-} from "@ledgerhq/types-live";
+import { Account, Operation, SignOperationFnSignature } from "@ledgerhq/types-live";
 import { withDevice } from "../../hw/deviceAccess";
 import { Transaction } from "./types";
 import { buildUnsignedTransaction } from "./api/network";
 import { getEstimatedFees } from "./utils";
 import Hedera from "./hw-app-hedera";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 
-const signOperation = ({
-  account,
-  transaction,
-  deviceId,
-}: {
-  account: Account;
-  transaction: Transaction;
-  deviceId: DeviceId;
-}): Observable<SignOperationEvent> =>
-  withDevice(deviceId)((transport) => {
-    return new Observable((o) => {
+const signOperation: SignOperationFnSignature<Transaction> = ({ account, transaction, deviceId }) =>
+  withDevice(deviceId)(transport => {
+    return new Observable(o => {
       void (async function () {
         try {
           o.next({
@@ -36,12 +24,9 @@ const signOperation = ({
 
           const accountPublicKey = PublicKey.fromString(account.seedIdentifier);
 
-          await hederaTransaction.signWith(
-            accountPublicKey,
-            async (bodyBytes) => {
-              return await new Hedera(transport).signTransaction(bodyBytes);
-            }
-          );
+          await hederaTransaction.signWith(accountPublicKey, async bodyBytes => {
+            return await new Hedera(transport).signTransaction(bodyBytes);
+          });
 
           o.next({
             type: "device-signature-granted",
@@ -57,10 +42,7 @@ const signOperation = ({
             signedOperation: {
               operation,
               // NOTE: this needs to match the inverse operation in js-broadcast
-              signature: Buffer.from(hederaTransaction.toBytes()).toString(
-                "base64"
-              ),
-              expirationDate: null,
+              signature: Buffer.from(hederaTransaction.toBytes()).toString("base64"),
             },
           });
 
@@ -80,11 +62,11 @@ async function buildOptimisticOperation({
   transaction: Transaction;
 }): Promise<Operation> {
   const operation: Operation = {
-    id: `${account.id}--OUT`,
+    id: encodeOperationId(account.id, "", "OUT"),
     hash: "",
     type: "OUT",
     value: transaction.amount,
-    fee: await getEstimatedFees(),
+    fee: await getEstimatedFees(account),
     blockHash: null,
     blockHeight: null,
     senders: [account.freshAddress.toString()],

@@ -21,7 +21,7 @@ import { sha256 } from "sha.js";
 export function splitPath(path: string): number[] {
   const result: number[] = [];
   const components = path.split("/");
-  components.forEach((element) => {
+  components.forEach(element => {
     let number = parseInt(element, 10);
 
     if (isNaN(number)) {
@@ -38,7 +38,7 @@ export function splitPath(path: string): number[] {
 }
 export function foreach<T, A>(
   arr: T[],
-  callback: (arg0: T, arg1: number) => Promise<A>
+  callback: (arg0: T, arg1: number) => Promise<A>,
 ): Promise<A[]> {
   function iterate(index, array, result) {
     if (index >= array.length) {
@@ -85,12 +85,12 @@ export function encodeEd25519PublicKey(rawPublicKey: Buffer): string {
 export function verifyEd25519Signature(
   data: Buffer,
   signature: Buffer,
-  publicKey: Buffer
+  publicKey: Buffer,
 ): boolean {
   return nacl.sign.detached.verify(
     new Uint8Array(data.toJSON().data),
     new Uint8Array(signature.toJSON().data),
-    new Uint8Array(publicKey.toJSON().data)
+    new Uint8Array(publicKey.toJSON().data),
   );
 }
 export function hash(data: Buffer) {
@@ -104,7 +104,7 @@ export function checkStellarBip32Path(path: string): void {
       throw new Error(
         "Detected a non-hardened path element in requested BIP32 path." +
           " Non-hardended paths are not supported at this time. Please use an all-hardened path." +
-          " Example: 44'/148'/0'"
+          " Example: 44'/148'/0'",
       );
     }
   });

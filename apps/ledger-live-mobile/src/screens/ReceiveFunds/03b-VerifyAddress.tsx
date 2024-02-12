@@ -5,44 +5,38 @@ import { TouchableOpacity, Linking } from "react-native";
 import { useSelector } from "react-redux";
 import { useTranslation, Trans } from "react-i18next";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
-import {
-  getMainAccount,
-  getAccountCurrency,
-} from "@ledgerhq/live-common/account/index";
+import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import styled, { useTheme } from "styled-components/native";
 import { Flex } from "@ledgerhq/native-ui";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
-import { track, TrackScreen } from "../../analytics";
-import { accountScreenSelector } from "../../reducers/accounts";
-import PreventNativeBack from "../../components/PreventNativeBack";
-import SkipLock from "../../components/behaviour/SkipLock";
+import { track, TrackScreen } from "~/analytics";
+import { accountScreenSelector } from "~/reducers/accounts";
+import PreventNativeBack from "~/components/PreventNativeBack";
+import SkipLock from "~/components/behaviour/SkipLock";
 import logger from "../../logger";
-import { rejectionOp } from "../../logic/debugReject";
-import { ScreenName } from "../../const";
-import LText from "../../components/LText";
-import Button from "../../components/Button";
-import Animation from "../../components/Animation";
-import { getDeviceAnimation } from "../../helpers/getDeviceAnimation";
-import Illustration from "../../images/illustration/Illustration";
-import { urls } from "../../config/urls";
-import { ReceiveFundsStackParamList } from "../../components/RootNavigator/types/ReceiveFundsNavigator";
-import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import { rejectionOp } from "~/logic/debugReject";
+import { ScreenName } from "~/const";
+import LText from "~/components/LText";
+import Button from "~/components/Button";
+import Animation from "~/components/Animation";
+import { getDeviceAnimation } from "~/helpers/getDeviceAnimation";
+import Illustration from "~/images/illustration/Illustration";
+import { urls } from "~/utils/urls";
+import { ReceiveFundsStackParamList } from "~/components/RootNavigator/types/ReceiveFundsNavigator";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 
 const illustrations = {
-  dark: require("../../images/illustration/Dark/_080.png"),
-  light: require("../../images/illustration/Light/_080.png"),
+  dark: require("~/images/illustration/Dark/_080.png"),
+  light: require("~/images/illustration/Light/_080.png"),
 };
 
 type Props = {
   account?: TokenAccount | Account;
   parentAccount?: Account;
   readOnlyModeEnabled?: boolean;
-} & StackNavigatorProps<
-  ReceiveFundsStackParamList,
-  ScreenName.ReceiveVerifyAddress
->;
+} & StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveVerifyAddress>;
 
 const AnimationContainer = styled(Flex).attrs({
   alignSelf: "stretch",
@@ -73,7 +67,7 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
 
       sub.current = (
         mainAccount.id.startsWith("mock")
-          ? of({}).pipe(delay(1000), rejectionOp())
+          ? of({}).pipe(delay(5000), rejectionOp())
           : getAccountBridge(mainAccount).receive(mainAccount, {
               deviceId: device.deviceId,
               verify: true,
@@ -82,7 +76,7 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
         complete: () => {
           if (onSuccess) onSuccess(mainAccount.freshAddress);
           else
-            navigation.navigate(ScreenName.ReceiveVerificationConfirmation, {
+            navigation.navigate(ScreenName.ReceiveConfirmation, {
               ...route.params,
               verified: true,
               createTokenAccount: false,
@@ -101,8 +95,7 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
   );
 
   const mainAccount = account && getMainAccount(account, parentAccount);
-  const currency =
-    route.params?.currency || (account && getAccountCurrency(account));
+  const currency = route.params?.currency || (account && getAccountCurrency(account));
 
   const onRetry = useCallback(() => {
     track("button_clicked", {
@@ -147,7 +140,7 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
       <SyncSkipUnderPriority priority={100} />
       {error ? (
         <>
-          <TrackScreen category="Receive" name="Address Verification Denied" />
+          <TrackScreen category="Deposit" name="Address Verification Denied" />
           <Flex flex={1} alignItems="center" justifyContent="center" p={6}>
             <Illustration
               lightSource={illustrations.light}
@@ -164,45 +157,31 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
             <TouchableOpacity onPress={redirectToSupport}>
               <LText variant="body" color="neutral.c70" textAlign="center">
                 <Trans i18nKey="transfer.receive.verifyAddress.cancel.info">
-                  <LText
-                    color="primary.c80"
-                    style={{ textDecorationLine: "underline" }}
-                  />
+                  <LText color="primary.c80" style={{ textDecorationLine: "underline" }} />
                 </Trans>
               </LText>
             </TouchableOpacity>
           </Flex>
-          <Flex
-            p={6}
-            flexDirection="row"
-            justifyContent="space-between"
-            alignItems="center"
-          >
+          <Flex p={6} flexDirection="row" justifyContent="space-between" alignItems="center">
             <Button flex={1} type="secondary" outline onPress={goBack}>
               {t("common.cancel")}
             </Button>
-            <Button
-              flex={1}
-              type="main"
-              ml={6}
-              outline={false}
-              onPress={onRetry}
-            >
+            <Button flex={1} type="main" ml={6} outline={false} onPress={onRetry}>
               {t("common.retry")}
             </Button>
           </Flex>
         </>
       ) : (
         <Flex flex={1} alignItems="center" justifyContent="center" p={6}>
-          <TrackScreen category="ReceiveFunds" name="Verify Address" />
-          <LText variant="h4" textAlign="center" mb={6}>
+          <TrackScreen category="Deposit" name="Verify Address" />
+          <LText variant="h4" textAlign="center" mb={6} testID={"receive-verifyAddress-title"}>
             {t("transfer.receive.verifyAddress.title")}
           </LText>
           <LText variant="body" color="neutral.c70" textAlign="center">
             {t("transfer.receive.verifyAddress.subtitle")}
           </LText>
           <Flex mt={10} bg={"neutral.c30"} borderRadius={8} p={6} mx={6}>
-            <LText semiBold textAlign="center">
+            <LText semiBold textAlign="center" testID={"receive-verifyAddress-freshAdress"}>
               {mainAccount.freshAddress}
             </LText>
           </Flex>

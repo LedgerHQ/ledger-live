@@ -1,4 +1,5 @@
-const { defaults: tsjPreset } = require("ts-jest/presets");
+const { pathsToModuleNameMapper } = require("ts-jest");
+const { compilerOptions } = require("./tsconfig");
 
 const transformIncludePatterns = [
   "@react-native/polyfills",
@@ -10,43 +11,43 @@ const transformIncludePatterns = [
   "react-native-animatable",
   "@sentry/react-native",
   "react-native-startup-time",
+  "@segment/analytics-react-native",
+  "uuid",
 ];
 
 /** @type {import('ts-jest').JestConfigWithTsJest} */
 module.exports = {
-  ...tsjPreset,
   verbose: true,
   preset: "react-native",
-  setupFilesAfterEnv: [
-    "@testing-library/jest-native/extend-expect",
-    "./jest-setup.js",
-  ],
-  globals: {
-    "ts-jest": {
-      babelConfig: true,
-    },
-  },
+  modulePaths: [compilerOptions.baseUrl],
+  setupFilesAfterEnv: ["@testing-library/jest-native/extend-expect", "./jest-setup.js"],
   testMatch: ["**/src/**/*.test.(ts|tsx)"],
   transform: {
-    "^.+\\.js?$": "babel-jest",
-    "^.+\\.tsx?$": "ts-jest",
+    "^.+\\.(t)sx?$": [
+      "@swc/jest",
+      {
+        jsc: {
+          target: "esnext",
+        },
+      },
+    ],
   },
   transformIgnorePatterns: [
     `node_modules/(?!(.pnpm|${transformIncludePatterns.join("|")})/)`,
     "\\.pnp\\.[^\\/]+$",
   ],
   testPathIgnorePatterns: ["<rootDir>/node_modules/"],
-  coverageReporters: ["json"],
-  coverageDirectory: "<rootDir>/coverage",
+  moduleDirectories: ["node_modules"],
+  collectCoverageFrom: [
+    "src/**/*.{ts,tsx}",
+    "!src/**/*.test.{ts,tsx}",
+    "!src/**/*.spec.{ts,tsx}",
+    "!src/__tests__/*.{ts,tsx}",
+    "!src/__mocks__/*.{ts,tsx}",
+  ],
+  coverageReporters: ["json", "lcov", "json-summary"],
   moduleNameMapper: {
-    "^@ledgerhq/coin-framework(.*)$":
-      "<rootDir>/../../libs/coin-framework/lib$1.js",
-    "^@ledgerhq/icons-ui/native(.*)$":
-      "<rootDir>/../../libs/ui/packages/icons/native/$1",
-    "^@ledgerhq/crypto-icons-ui/native(.*)$":
-      "<rootDir>/../../libs/ui/packages/crypto-icons/native/$1",
-    "^@ledgerhq/native-ui(.*)$":
-      "<rootDir>/../../libs/ui/packages/native/lib/$1",
+    ...pathsToModuleNameMapper(compilerOptions.paths),
     "^react-native/(.*)$": "<rootDir>/node_modules/react-native/$1",
     "^react-native$": "<rootDir>/node_modules/react-native",
     "^victory-native$": "victory",

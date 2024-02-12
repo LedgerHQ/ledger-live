@@ -6,7 +6,8 @@ export type FilterParams = {
   branches?: string[];
   platform?: AppPlatform;
   private?: boolean;
-  apiVersion?: string;
+  apiVersion?: string[] | string;
+  llVersion?: string;
 };
 
 export type AccountFilters = {
@@ -15,16 +16,16 @@ export type AccountFilters = {
 
 export function filterPlatformAccounts(
   accounts: PlatformAccount[],
-  filters: AccountFilters
+  filters: AccountFilters,
 ): PlatformAccount[] {
   const filterCurrencyRegexes = filters.currencies
-    ? filters.currencies.map((filter) => makeRe(filter))
+    ? filters.currencies.map(filter => makeRe(filter))
     : null;
 
-  return accounts.filter((account) => {
+  return accounts.filter(account => {
     if (
       filterCurrencyRegexes &&
-      !filterCurrencyRegexes.some((regex) => account.currency.match(regex))
+      !filterCurrencyRegexes.some(regex => account.currency.match(regex))
     ) {
       return false;
     }
@@ -39,21 +40,18 @@ export type CurrencyFilters = {
 
 export function filterPlatformCurrencies(
   currencies: PlatformCurrency[],
-  filters: CurrencyFilters
+  filters: CurrencyFilters,
 ): PlatformCurrency[] {
   const filterCurrencyRegexes = filters.currencies
-    ? filters.currencies.map((filter) => makeRe(filter))
+    ? filters.currencies.map(filter => makeRe(filter))
     : null;
 
-  return currencies.filter((currency) => {
+  return currencies.filter(currency => {
     if (!filters.includeTokens && isPlatformTokenCurrency(currency)) {
       return false;
     }
 
-    if (
-      filterCurrencyRegexes &&
-      !filterCurrencyRegexes.some((regex) => currency.id.match(regex))
-    ) {
+    if (filterCurrencyRegexes && !filterCurrencyRegexes.some(regex => currency.id.match(regex))) {
       return false;
     }
 

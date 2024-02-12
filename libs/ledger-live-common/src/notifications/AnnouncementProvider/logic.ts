@@ -1,20 +1,14 @@
-import type {
-  RawAnnouncement,
-  Announcement,
-  AnnouncementsUserSettings,
-} from "./types";
+import type { RawAnnouncement, Announcement, AnnouncementsUserSettings } from "./types";
 import semver from "semver";
 import { version as LLCommonVersion } from "../../../package.json";
 
 export function localizeAnnouncements(
   rawAnnouncements: RawAnnouncement[],
-  context: AnnouncementsUserSettings
+  context: AnnouncementsUserSettings,
 ): Announcement[] {
   return rawAnnouncements.map((rawAnnouncement: RawAnnouncement) => ({
     ...rawAnnouncement,
-    content:
-      rawAnnouncement.content[context.language] ||
-      rawAnnouncement.content["en"],
+    content: rawAnnouncement.content[context.language] || rawAnnouncement.content["en"],
   }));
 }
 const platformFilters = {
@@ -28,7 +22,7 @@ const platformFilters = {
 };
 export function filterAnnouncements(
   announcements: Announcement[],
-  context: AnnouncementsUserSettings
+  context: AnnouncementsUserSettings,
 ): Announcement[] {
   const {
     language,
@@ -54,33 +48,17 @@ export function filterAnnouncements(
         return false;
       }
 
-      if (
-        currencies &&
-        !currencies.some((c) => contextCurrencies.includes(c))
-      ) {
+      if (currencies && !currencies.some(c => contextCurrencies.includes(c))) {
         return false;
       }
 
       // filter out by device info
       if (device && lastSeenDevice) {
         const { modelIds, versions, apps } = device;
-        if (
-          modelIds &&
-          modelIds.length &&
-          !modelIds.includes(lastSeenDevice.modelId)
-        )
+        if (modelIds && modelIds.length && !modelIds.includes(lastSeenDevice.modelId)) return false;
+        if (versions && versions.length && !versions.includes(lastSeenDevice.deviceInfo.version))
           return false;
-        if (
-          versions &&
-          versions.length &&
-          !versions.includes(lastSeenDevice.deviceInfo.version)
-        )
-          return false;
-        if (
-          apps &&
-          apps.length &&
-          !lastSeenDevice.apps.some(({ name }) => apps.includes(name))
-        )
+        if (apps && apps.length && !lastSeenDevice.apps.some(({ name }) => apps.includes(name)))
           return false;
       }
       if (
@@ -97,18 +75,15 @@ export function filterAnnouncements(
         platforms &&
         platforms.length > 0 &&
         contextPlatform &&
-        !platforms.some(
-          (p) =>
-            platformFilters[p] && platformFilters[p].includes(contextPlatform)
-        )
+        !platforms.some(p => platformFilters[p] && platformFilters[p].includes(contextPlatform))
       ) {
         return false;
       }
 
       // filter out by app version
       if (appVersions?.length && contextAppVersion) {
-        const isAppVersionMatch = appVersions.some((version) =>
-          semver.satisfies(contextAppVersion, version)
+        const isAppVersionMatch = appVersions.some(version =>
+          semver.satisfies(contextAppVersion, version),
         );
 
         if (isAppVersionMatch === false) return false;
@@ -116,8 +91,8 @@ export function filterAnnouncements(
 
       // filter out by ll-comon version
       if (liveCommonVersions?.length) {
-        const isLLCommonVersionMatch = liveCommonVersions.some((version) =>
-          semver.satisfies(LLCommonVersion, version)
+        const isLLCommonVersionMatch = liveCommonVersions.some(version =>
+          semver.satisfies(LLCommonVersion, version),
         );
 
         if (isLLCommonVersionMatch === false) return false;
@@ -134,6 +109,6 @@ export function filterAnnouncements(
       }
 
       return true;
-    }
+    },
   );
 }

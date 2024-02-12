@@ -5,13 +5,11 @@ import InputCurrency from "~/renderer/components/InputCurrency";
 import SelectCurrency from "~/renderer/components/SelectCurrency";
 import { amountInputContainerProps, renderCurrencyValue, selectRowStylesMap } from "./utils";
 import { FormLabel } from "./FormLabel";
-import { toSelector } from "~/renderer/actions/swap";
-import { useSelector } from "react-redux";
 import {
+  useFetchCurrencyTo,
   usePickDefaultCurrency,
   useSelectableCurrencies,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import {
   SwapSelectorStateType,
   SwapTransactionType,
@@ -26,6 +24,7 @@ import CounterValue from "~/renderer/components/CounterValue";
 import { track } from "~/renderer/analytics/segment";
 import { useGetSwapTrackingProperties } from "../../utils/index";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+
 type Props = {
   fromAccount: SwapSelectorStateType["account"];
   toAccount: SwapSelectorStateType["account"];
@@ -36,6 +35,7 @@ type Props = {
   loadingRates: boolean;
   updateSelectedRate: SwapDataType["updateSelectedRate"];
 };
+
 const InputCurrencyContainer = styled(Box)`
   ${InputContainer} {
     display: flex;
@@ -49,6 +49,7 @@ const InputCurrencyContainer = styled(Box)`
     flex: 0;
   }
 `;
+
 function ToRow({
   toCurrency,
   setToCurrency,
@@ -57,23 +58,24 @@ function ToRow({
   loadingRates,
   updateSelectedRate,
 }: Props) {
-  const fromCurrencyId = fromAccount ? getAccountCurrency(fromAccount).id : undefined;
+  const { data: currenciesTo, isLoading: currenciesToIsLoading } = useFetchCurrencyTo({
+    fromCurrencyAccount: fromAccount,
+  });
   const swapDefaultTrack = useGetSwapTrackingProperties();
-  const allCurrencies = useSelector(toSelector)(fromCurrencyId);
   const currencies = useSelectableCurrencies({
-    allCurrencies,
+    allCurrencies: currenciesTo ?? [],
   });
   const unit = toCurrency?.units[0];
   usePickDefaultCurrency(currencies, toCurrency, setToCurrency);
   const trackEditCurrency = () =>
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "Edit target currency",
       page: "Page Swap Form",
       ...swapDefaultTrack,
     });
   const setCurrencyAndTrack = (currency: CryptoOrTokenCurrency | null | undefined) => {
     updateSelectedRate();
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "New target currency",
       page: "Page Swap Form",
       ...swapDefaultTrack,
@@ -81,6 +83,7 @@ function ToRow({
     });
     setToCurrency(currency || undefined);
   };
+
   return (
     <>
       <Box horizontal color={"palette.text.shade40"} fontSize={3} mb={1}>
@@ -95,7 +98,7 @@ function ToRow({
             onChange={setCurrencyAndTrack}
             value={toCurrency}
             stylesMap={selectRowStylesMap}
-            isDisabled={!fromAccount}
+            isDisabled={!fromAccount || currenciesToIsLoading}
             renderValueOverride={renderCurrencyValue}
             onMenuOpen={trackEditCurrency}
           />

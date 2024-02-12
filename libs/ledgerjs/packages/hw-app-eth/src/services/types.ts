@@ -49,7 +49,7 @@ export type LedgerEthTransactionService = {
   resolveTransaction: (
     rawTxHex: string,
     loadConfig: LoadConfig,
-    resolutionConfig: ResolutionConfig
+    resolutionConfig: ResolutionConfig,
   ) => Promise<LedgerEthTransactionResolution>;
   signDomainResolution: typeof signDomainResolution;
   signAddressResolution: typeof signAddressResolution;

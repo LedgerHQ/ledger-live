@@ -10,25 +10,16 @@ import invariant from "invariant";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
-import { ScreenName } from "../../const";
-import SummaryRow from "../../screens/SendFunds/SummaryRow";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
-import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
-import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
-import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
+import { ScreenName } from "~/const";
+import SummaryRow from "~/screens/SendFunds/SummaryRow";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
+import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
+import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 
 type Navigation = BaseComposite<
-  | StackNavigatorProps<
-      SendFundsNavigatorStackParamList,
-      ScreenName.SendSummary
-    >
-  | StackNavigatorProps<
-      SignTransactionNavigatorParamList,
-      ScreenName.SignTransactionSummary
-    >
+  | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
+  | StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.SignTransactionSummary>
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>
 >;
 
@@ -37,12 +28,7 @@ type Props = {
   transaction: Transaction;
 } & Navigation;
 
-export default function SolanaSendRowsCustom({
-  account,
-  transaction,
-  navigation,
-  route,
-}: Props) {
+export default function SolanaSendRowsCustom({ account, transaction, navigation, route }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { model } = transaction as SolanaTransaction;
@@ -62,12 +48,7 @@ export default function SolanaSendRowsCustom({
     <View>
       <SummaryRow title={t("send.summary.memo.title")} onPress={editMemo}>
         {model.uiState.memo ? (
-          <Text
-            fontWeight="semiBold"
-            style={styles.tagText}
-            onPress={editMemo}
-            numberOfLines={1}
-          >
+          <Text fontWeight="semiBold" style={styles.tagText} onPress={editMemo} numberOfLines={1}>
             {model.uiState.memo}
           </Text>
         ) : (

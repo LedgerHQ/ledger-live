@@ -19,17 +19,11 @@ import { Currency } from "./wallet-btc";
 import cryptoFactory from "./wallet-btc/crypto/factory";
 import { OP_RETURN_DATA_SIZE_LIMIT } from "./wallet-btc/crypto/base";
 
-const getTransactionStatus = async (
-  a: Account,
-  t: Transaction
-): Promise<TransactionStatus> => {
+const getTransactionStatus = async (a: Account, t: Transaction): Promise<TransactionStatus> => {
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
   const useAllAmount = !!t.useAllAmount;
-  const { recipientError, recipientWarning } = await validateRecipient(
-    a.currency,
-    t.recipient
-  );
+  const { recipientError, recipientWarning } = await validateRecipient(a.currency, t.recipient);
 
   if (recipientError) {
     errors.recipient = recipientError;
@@ -40,12 +34,7 @@ const getTransactionStatus = async (
   }
 
   // Safeguard before Taproot activation
-  if (
-    t.recipient &&
-    !errors.recipient &&
-    a.currency.id === "bitcoin" &&
-    a.blockHeight <= 709632
-  ) {
+  if (t.recipient && !errors.recipient && a.currency.id === "bitcoin" && a.blockHeight <= 709632) {
     const isTaproot = await isTaprootRecipient(a.currency, t.recipient);
     if (isTaproot) {
       errors.recipient = new TaprootNotActivated();
@@ -66,12 +55,12 @@ const getTransactionStatus = async (
       account: a,
       transaction: t,
     }).then(
-      (res) => {
+      res => {
         txInputs = res.txInputs;
         txOutputs = res.txOutputs;
         estimatedFees = res.fees;
       },
-      (error) => {
+      error => {
         if (error.name === "NotEnoughBalance") {
           errors.amount = error;
         } else if (error.name === "DustLimit") {
@@ -79,17 +68,17 @@ const getTransactionStatus = async (
         } else {
           throw error;
         }
-      }
+      },
     );
   }
 
   const sumOfInputs = (txInputs || []).reduce(
     (sum, input) => sum.plus(input.value),
-    new BigNumber(0)
+    new BigNumber(0),
   );
 
   const sumOfChanges = (txOutputs || [])
-    .filter((o) => o.isChange)
+    .filter(o => o.isChange)
     .reduce((sum, output) => sum.plus(output.value), new BigNumber(0));
 
   if (txInputs) {
@@ -97,23 +86,15 @@ const getTransactionStatus = async (
   }
 
   if (txOutputs) {
-    log(
-      "bitcoin",
-      `${txOutputs.length} outputs, sum of changes: ${sumOfChanges.toString()}`
-    );
+    log("bitcoin", `${txOutputs.length} outputs, sum of changes: ${sumOfChanges.toString()}`);
   }
 
   const totalSpent = sumOfInputs.minus(sumOfChanges);
   const amount = useAllAmount ? totalSpent.minus(estimatedFees) : t.amount;
-  log(
-    "bitcoin",
-    `totalSpent ${totalSpent.toString()} amount ${amount.toString()}`
-  );
+  log("bitcoin", `totalSpent ${totalSpent.toString()} amount ${amount.toString()}`);
 
   if (!errors.amount && !amount.gt(0)) {
-    errors.amount = useAllAmount
-      ? new NotEnoughBalance()
-      : new AmountRequired();
+    errors.amount = useAllAmount ? new NotEnoughBalance() : new AmountRequired();
   }
 
   if (amount.gt(0) && estimatedFees.times(10).gt(amount)) {
@@ -121,9 +102,7 @@ const getTransactionStatus = async (
   }
 
   if (t.feePerByte) {
-    const txSize = Math.ceil(
-      estimatedFees.toNumber() / t.feePerByte.toNumber()
-    );
+    const txSize = Math.ceil(estimatedFees.toNumber() / t.feePerByte.toNumber());
     const crypto = cryptoFactory(a.currency.id as Currency);
     const dustAmount = computeDustAmount(crypto, txSize);
 

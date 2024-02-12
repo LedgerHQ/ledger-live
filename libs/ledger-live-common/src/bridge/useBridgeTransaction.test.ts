@@ -16,7 +16,7 @@ describe("useBridgeTransaction", () => {
   test("initialize with a BTC account settles the transaction", async () => {
     const mainAccount = genAccount("mocked-account-1", { currency: BTC });
     const { result, waitForNextUpdate } = renderHook(() =>
-      useBridgeTransaction(() => ({ account: mainAccount }))
+      useBridgeTransaction(() => ({ account: mainAccount })),
     );
     await waitForNextUpdate();
     expect(result.current.bridgePending).toBeFalsy();
@@ -30,12 +30,11 @@ describe("useBridgeTransaction", () => {
     const { result, waitForNextUpdate } = renderHook(() =>
       useBridgeTransaction(() => {
         const bridge = getAccountBridge(mainAccount);
-        const transaction = bridge.updateTransaction(
-          bridge.createTransaction(mainAccount),
-          { recipient: "criticalcrash" }
-        );
+        const transaction = bridge.updateTransaction(bridge.createTransaction(mainAccount), {
+          recipient: "criticalcrash",
+        });
         return { account: mainAccount, transaction };
-      })
+      }),
     );
     await waitForNextUpdate();
     expect(result.current.bridgeError).not.toBeFalsy();
@@ -45,24 +44,21 @@ describe("useBridgeTransaction", () => {
     const before = getGlobalOnBridgeError();
     try {
       const errors: Array<any> = [];
-      setGlobalOnBridgeError((error) => errors.push(error));
+      setGlobalOnBridgeError(error => errors.push(error));
       const mainAccount = genAccount("mocked-account-1", { currency: BTC });
       const { waitForNextUpdate } = renderHook(() =>
         useBridgeTransaction(() => {
           const bridge = getAccountBridge(mainAccount);
-          const transaction = bridge.updateTransaction(
-            bridge.createTransaction(mainAccount),
-            { recipient: "criticalcrash" }
-          );
+          const transaction = bridge.updateTransaction(bridge.createTransaction(mainAccount), {
+            recipient: "criticalcrash",
+          });
           return { account: mainAccount, transaction };
-        })
+        }),
       );
       await waitForNextUpdate();
 
       expect(errors.length).toBe(1);
-      expect(errors[0]).toMatchObject(
-        new Error("isInvalidRecipient_mock_criticalcrash")
-      );
+      expect(errors[0]).toMatchObject(new Error("isInvalidRecipient_mock_criticalcrash"));
     } finally {
       setGlobalOnBridgeError(before);
     }

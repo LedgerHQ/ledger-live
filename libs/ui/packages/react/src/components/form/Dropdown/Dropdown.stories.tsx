@@ -12,7 +12,10 @@ export default {
     isDisabled: { type: "boolean" },
     error: { type: "string" },
     menuIsOpen: { type: "boolean" },
-    label: { type: "string", defaultValue: "Label" },
+    label: { type: "string" },
+  },
+  args: {
+    label: "Label",
   },
 };
 
@@ -22,7 +25,7 @@ const options = [
   { value: "lemon", label: "Lemon" },
   { value: "vanilla", label: "Vanilla" },
 ];
-type Option = typeof options[0];
+type Option = (typeof options)[0];
 
 export const Dropdown = (args: DropdownProps<Option>): React.ReactNode => {
   const [value, setValue] = React.useState<Option | null>(null);

@@ -1,15 +1,15 @@
 import React, { memo, useCallback } from "react";
 import { Linking } from "react-native";
-import { Flex, Icons, Text } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import Button from "../../../components/wrappedUi/Button";
-import { urls } from "../../../config/urls";
-import Link from "../../../components/wrappedUi/Link";
+import Button from "~/components/wrappedUi/Button";
+import { urls } from "~/utils/urls";
+import Link from "~/components/wrappedUi/Link";
 import ReceiveNFTsModal from "./ReceiveNFTsModal";
 import { useReceiveNFTsModal } from "./ReceiveNFTsModal.hook";
-import { track, TrackScreen } from "../../../analytics";
-import { readOnlyModeEnabledSelector } from "../../../reducers/settings";
+import { track, TrackScreen } from "~/analytics";
+import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 
 const NftGalleryEmptyState = () => {
   const { t } = useTranslation();
@@ -27,40 +27,34 @@ const NftGalleryEmptyState = () => {
   }, []);
 
   return (
-    <Flex flex={1} alignItems={"center"} justifyContent={"center"}>
+    <Flex flex={1} alignItems="center" justifyContent="center">
       <TrackScreen
-        category={
-          readOnlyModeEnabled
-            ? "NFT Gallery Start Read-only"
-            : "NFT Gallery Start"
-        }
+        category={readOnlyModeEnabled ? "NFT Gallery Start Read-only" : "NFT Gallery Start"}
       />
-      <Text
-        variant={"h1Inter"}
-        fontWeight={"semiBold"}
-        color={"neutral.c100"}
-        mb={6}
-      >
+      <Text variant={"h1Inter"} fontWeight={"semiBold"} color={"neutral.c100"} mb={6}>
         {t("wallet.nftGallery.empty.title")}
       </Text>
-      <Text
-        variant={"bodyLineHeight"}
-        fontWeight={"semiBold"}
-        color={"neutral.c80"}
-        mb={8}
-      >
+      <Text variant={"bodyLineHeight"} fontWeight={"semiBold"} color={"neutral.c80"} mb={8}>
         {t("wallet.nftGallery.empty.subtitle")}
       </Text>
-      <Button onPress={openModal} size={"large"} type={"main"} mb={8}>
+      <Button
+        testID="wallet-nft-gallery-receive-nft-button"
+        onPress={openModal}
+        size={"large"}
+        type={"main"}
+        mb={8}
+      >
         {t("wallet.nftGallery.empty.receive")}
       </Button>
       <Link
         onPress={openSupportLink}
         size={"medium"}
-        Icon={Icons.ExternalLinkMedium}
+        Icon={IconsLegacy.ExternalLinkMedium}
         iconPosition="right"
       >
-        {t("wallet.nftGallery.empty.supportLink")}
+        <Text fontWeight="semiBold" variant="paragraph">
+          {t("wallet.nftGallery.empty.supportLink")}
+        </Text>
       </Link>
 
       <ReceiveNFTsModal isOpened={isModalOpened} onClose={closeModal} />

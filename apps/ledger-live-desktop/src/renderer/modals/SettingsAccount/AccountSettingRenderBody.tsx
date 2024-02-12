@@ -3,12 +3,13 @@ import styled from "styled-components";
 import get from "lodash/get";
 import { compose } from "redux";
 import { connect } from "react-redux";
-import { TFunction, withTranslation, Trans } from "react-i18next";
+import { TFunction } from "i18next";
+import { Trans, withTranslation } from "react-i18next";
 import { Account } from "@ledgerhq/types-live";
 import { Unit } from "@ledgerhq/types-cryptoassets";
 import { validateNameEdition } from "@ledgerhq/live-common/account/index";
 import { AccountNameRequiredError } from "@ledgerhq/errors";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import { urls } from "~/config/urls";
 import { setDataModal } from "~/renderer/actions/modals";
 import { removeAccount, updateAccount } from "~/renderer/actions/accounts";
@@ -79,33 +80,33 @@ class AccountSettingRenderBody extends PureComponent<Props, State> {
       accountName: value,
     });
 
-  handleSubmit = (account: Account, onClose: () => void) => (
-    e: React.SyntheticEvent<HTMLFormElement | HTMLInputElement>,
-  ) => {
-    e.preventDefault();
-    const { updateAccount, setDataModal } = this.props;
-    const { accountName, accountUnit, endpointConfig, endpointConfigError } = this.state;
-    if (!account.name.length) {
-      this.setState({
-        accountNameError: new AccountNameRequiredError(),
-      });
-    } else if (!endpointConfigError) {
-      const name = validateNameEdition(account, accountName);
-      account = {
-        ...account,
-        unit: accountUnit || account.unit,
-        name,
-      };
-      if (endpointConfig && !endpointConfigError) {
-        account.endpointConfig = endpointConfig;
+  handleSubmit =
+    (account: Account, onClose: () => void) =>
+    (e: React.SyntheticEvent<HTMLFormElement | HTMLInputElement>) => {
+      e.preventDefault();
+      const { updateAccount, setDataModal } = this.props;
+      const { accountName, accountUnit, endpointConfig, endpointConfigError } = this.state;
+      if (!account.name.length) {
+        this.setState({
+          accountNameError: new AccountNameRequiredError(),
+        });
+      } else if (!endpointConfigError) {
+        const name = validateNameEdition(account, accountName);
+        account = {
+          ...account,
+          unit: accountUnit || account.unit,
+          name,
+        };
+        if (endpointConfig && !endpointConfigError) {
+          account.endpointConfig = endpointConfig;
+        }
+        updateAccount(account);
+        setDataModal("MODAL_SETTINGS_ACCOUNT", {
+          account,
+        });
+        onClose();
       }
-      updateAccount(account);
-      setDataModal("MODAL_SETTINGS_ACCOUNT", {
-        account,
-      });
-      onClose();
-    }
-  };
+    };
 
   handleFocus = (e: React.FocusEvent<HTMLInputElement>, name: string) => {
     e.target.select();
@@ -253,12 +254,12 @@ class AccountSettingRenderBody extends PureComponent<Props, State> {
               danger
               type="button"
               onClick={this.handleOpenRemoveAccountModal}
-              id="account-settings-delete"
+              data-test-id="account-settings-delete-button"
             >
               {t("settings.removeAccountModal.delete")}
             </Button>
             <Button
-              id="account-settings-apply"
+              data-test-id="account-settings-apply-button"
               event="DoneEditingAccount"
               ml="auto"
               onClick={onSubmit}

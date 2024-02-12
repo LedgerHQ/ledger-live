@@ -19,10 +19,7 @@ describe("getAccountBannerState", () => {
         } as ElrondProvider,
       ],
     };
-    const result = getAccountBannerState(
-      account as unknown as ElrondAccount,
-      elrondPreloadData
-    );
+    const result = getAccountBannerState(account as unknown as ElrondAccount, elrondPreloadData);
     expect(result).toEqual({
       bannerType: "delegate",
     });
@@ -47,10 +44,7 @@ describe("getAccountBannerState", () => {
         } as ElrondProvider,
       ],
     };
-    const result = getAccountBannerState(
-      account as unknown as ElrondAccount,
-      elrondPreloadData
-    );
+    const result = getAccountBannerState(account as unknown as ElrondAccount, elrondPreloadData);
     expect(result).toEqual({
       bannerType: "hidden",
     });
@@ -74,10 +68,7 @@ describe("getAccountBannerState", () => {
         } as ElrondProvider,
       ],
     };
-    const result = getAccountBannerState(
-      account as unknown as ElrondAccount,
-      elrondPreloadData
-    );
+    const result = getAccountBannerState(account as unknown as ElrondAccount, elrondPreloadData);
     expect(result).toEqual({
       bannerType: "hidden",
     });
@@ -110,10 +101,7 @@ describe("getAccountBannerState", () => {
         } as ElrondProvider,
       ],
     };
-    const result = getAccountBannerState(
-      account as unknown as ElrondAccount,
-      elrondPreloadData
-    );
+    const result = getAccountBannerState(account as unknown as ElrondAccount, elrondPreloadData);
     expect(result).toEqual({
       bannerType: "redelegate",
       worstDelegation: {
@@ -149,10 +137,7 @@ describe("getAccountBannerState", () => {
         } as ElrondProvider,
       ],
     };
-    const result = getAccountBannerState(
-      account as unknown as ElrondAccount,
-      elrondPreloadData
-    );
+    const result = getAccountBannerState(account as unknown as ElrondAccount, elrondPreloadData);
     expect(result).toEqual({
       bannerType: "delegate",
     });
@@ -185,10 +170,7 @@ describe("getAccountBannerState", () => {
         } as ElrondProvider,
       ],
     };
-    const result = getAccountBannerState(
-      account as unknown as ElrondAccount,
-      elrondPreloadData
-    );
+    const result = getAccountBannerState(account as unknown as ElrondAccount, elrondPreloadData);
     expect(result).toEqual({
       bannerType: "hidden",
     });

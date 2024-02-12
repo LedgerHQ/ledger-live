@@ -1,6 +1,6 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import invariant from "invariant";
-import { getEnv } from "./env";
+import { getEnv } from "@ledgerhq/live-env";
 
 type LedgerExplorer = {
   version: string;
@@ -9,7 +9,7 @@ type LedgerExplorer = {
 };
 
 export const findCurrencyExplorer = (
-  currency: CryptoCurrency
+  currency: CryptoCurrency,
 ): LedgerExplorer | null | undefined => {
   if (getEnv("SATSTACK") && currency.id === "bitcoin") {
     return {
@@ -30,9 +30,7 @@ export const findCurrencyExplorer = (
   };
 };
 
-export const getCurrencyExplorer = (
-  currency: CryptoCurrency
-): LedgerExplorer => {
+export const getCurrencyExplorer = (currency: CryptoCurrency): LedgerExplorer => {
   const res = findCurrencyExplorer(currency);
   invariant(res, `no Ledger explorer for ${currency.id}`);
   return <LedgerExplorer>res;

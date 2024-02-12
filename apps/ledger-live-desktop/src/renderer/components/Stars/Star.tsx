@@ -24,7 +24,7 @@ export default function Star({ accountId, parentId, yellow, rounded }: Props) {
   );
   const dispatch = useDispatch();
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
-  const toggleStar = useCallback(
+  const toggleStar: React.MouseEventHandler<HTMLInputElement> = useCallback(
     e => {
       track(isAccountStarred ? "Account Unstar" : "Account Star");
       e.stopPropagation();
@@ -100,11 +100,12 @@ const StarIcon = styled.div<{
 
   height: 50px;
   width: 50px;
-  background-image: url("${p => (p.yellow ? starAnim2 : starAnim)}");
+  // prettier-ignore
+  background-image: url('${p => (p.yellow ? starAnim2 : starAnim)}');
   background-repeat: no-repeat;
   background-size: 3000%;
   filter: brightness(1);
-  transition: filter .1s ease-out;
+  transition: filter 0.1s ease-out;
   &:hover {
     filter: ${p =>
       p.theme.colors.palette.type === "dark" ? "brightness(1.3)" : "brightness(0.8)"};

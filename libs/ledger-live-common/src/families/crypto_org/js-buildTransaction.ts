@@ -27,17 +27,10 @@ const getTransactionAmount = (a: Account, t: Transaction) => {
  * @param {Account} a
  * @param {Transaction} t
  */
-export const buildTransaction = async (
-  a: Account,
-  t: Transaction,
-  publicKey: string
-) => {
+export const buildTransaction = async (a: Account, t: Transaction, publicKey: string) => {
   const croSdk = getCroSdk(a.currency.id);
   const address = a.freshAddress;
-  const { accountNumber, sequence } = await getAccountParams(
-    address,
-    a.currency.id
-  );
+  const { accountNumber, sequence } = await getAccountParams(address, a.currency.id);
   const rawTx = new croSdk.RawTransaction();
   rawTx.setFee(new croSdk.Coin((t.fees || 0).toString(), Units.BASE));
 

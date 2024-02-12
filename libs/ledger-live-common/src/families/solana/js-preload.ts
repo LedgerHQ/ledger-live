@@ -6,8 +6,8 @@ import { SolanaPreloadData, SolanaPreloadDataV1 } from "./types";
 import {
   assertUnreachable,
   clusterByCurrencyId,
-  ledgerFirstValidators,
   profitableValidators,
+  ledgerFirstValidators,
 } from "./utils";
 import { getValidators, ValidatorsAppValidator } from "./validator-app";
 
@@ -15,24 +15,19 @@ export const PRELOAD_MAX_AGE = 15 * 60 * 1000; // 15min
 
 export async function preloadWithAPI(
   currency: CryptoCurrency,
-  getAPI: () => Promise<ChainAPI>
-): Promise<Record<string, any>> {
+  getAPI: () => Promise<ChainAPI>,
+): Promise<SolanaPreloadDataV1> {
   const api = await getAPI();
 
   const cluster = clusterByCurrencyId(currency.id);
 
   const validators: ValidatorsAppValidator[] =
-    cluster === "devnet"
-      ? await loadDevnetValidators(api)
-      : await getValidators(cluster);
+    cluster === "devnet" ? await loadDevnetValidators(api) : await getValidators(cluster);
 
   const data: SolanaPreloadData = {
     version: "1",
     validatorsWithMeta: [],
-    validators:
-      cluster === "mainnet-beta"
-        ? preprocessMainnetValidators(validators)
-        : validators,
+    validators: cluster === "mainnet-beta" ? preprocessMainnetValidators(validators) : validators,
   };
 
   setPreloadData(data, currency);
@@ -41,14 +36,14 @@ export async function preloadWithAPI(
 }
 
 function preprocessMainnetValidators(
-  validators: ValidatorsAppValidator[]
+  validators: ValidatorsAppValidator[],
 ): ValidatorsAppValidator[] {
   return flow(() => validators, profitableValidators, ledgerFirstValidators)();
 }
 
 async function loadDevnetValidators(api: ChainAPI) {
   const voteAccs = await api.getVoteAccounts();
-  const validators: ValidatorsAppValidator[] = voteAccs.current.map((acc) => ({
+  const validators: ValidatorsAppValidator[] = voteAccs.current.map(acc => ({
     activeStake: acc.activatedStake,
     commission: acc.commission,
     totalScore: 0,
@@ -57,10 +52,7 @@ async function loadDevnetValidators(api: ChainAPI) {
   return validators;
 }
 
-export function hydrate(
-  data: SolanaPreloadData | undefined,
-  currency: CryptoCurrency
-): void {
+export function hydrate(data: SolanaPreloadData | undefined, currency: CryptoCurrency): void {
   if (data === undefined) {
     return;
   }
@@ -70,9 +62,7 @@ export function hydrate(
       hydrateV1(data, currency);
       return;
     case "2":
-      throw new Error(
-        "version 2 for now exists only to support discriminated union"
-      );
+      throw new Error("version 2 for now exists only to support discriminated union");
     default:
       return assertUnreachable(data);
   }

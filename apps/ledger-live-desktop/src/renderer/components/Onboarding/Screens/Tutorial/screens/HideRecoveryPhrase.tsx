@@ -9,7 +9,7 @@ import {
   IllustrationContainer,
   AsideFooter,
 } from "../shared";
-import { Button, Icons } from "@ledgerhq/react-ui";
+import { Button, IconsLegacy } from "@ledgerhq/react-ui";
 import hideRecoverySheet from "../assets/hideRecoverySheet.png";
 type Props = {
   handleHelp: () => void;
@@ -33,7 +33,12 @@ export function HideRecoveryPhrase({ handleHelp }: Props) {
         text={t("onboarding.screens.tutorial.screens.hideRecoveryPhrase.neverShowToAnyone")}
       />
       <Row>
-        <Button onClick={handleHelp} Icon={Icons.HelpMedium} iconSize={18} iconPosition="right">
+        <Button
+          onClick={handleHelp}
+          Icon={IconsLegacy.HelpMedium}
+          iconSize={18}
+          iconPosition="right"
+        >
           {t("onboarding.screens.tutorial.screens.hideRecoveryPhrase.buttons.learn")}
         </Button>
       </Row>

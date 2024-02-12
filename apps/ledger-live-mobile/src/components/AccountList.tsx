@@ -6,7 +6,7 @@ import { Flex, Link } from "@ledgerhq/native-ui";
 import { PlusMedium } from "@ledgerhq/native-ui/assets/icons";
 import { Trans } from "react-i18next";
 
-import { SearchResult } from "../helpers/formatAccountSearchResults";
+import { SearchResult } from "~/helpers/formatAccountSearchResults";
 import AccountCard from "./AccountCard";
 
 type Props = {
@@ -16,12 +16,7 @@ type Props = {
   onAddAccount?: () => void;
 };
 
-const AccountList = ({
-  list,
-  showAddAccount,
-  onPress,
-  onAddAccount,
-}: Props): JSX.Element => {
+const AccountList = ({ list, showAddAccount, onPress, onAddAccount }: Props): JSX.Element => {
   const keyExtractor = (item: SearchResult) => item.account.id;
   const { colors } = useTheme();
 
@@ -34,9 +29,7 @@ const AccountList = ({
           width="1px"
           height="16px"
           marginLeft="16px"
-          backgroundColor={
-            account.type === "TokenAccount" ? colors.neutral.c40 : "transparent"
-          }
+          backgroundColor={account.type === "TokenAccount" ? colors.neutral.c40 : "transparent"}
         />
         <AccountCard
           account={account}

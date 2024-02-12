@@ -17,52 +17,42 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
-import { accountScreenSelector } from "../../../reducers/accounts";
-import { localeSelector } from "../../../reducers/settings";
-import Button from "../../../components/Button";
-import CurrencyInput from "../../../components/CurrencyInput";
-import LText from "../../../components/LText";
-import Check from "../../../icons/Check";
-import KeyboardView from "../../../components/KeyboardView";
-import TranslatedError from "../../../components/TranslatedError";
+import { accountScreenSelector } from "~/reducers/accounts";
+import Button from "~/components/Button";
+import CurrencyInput from "~/components/CurrencyInput";
+import LText from "~/components/LText";
+import Check from "~/icons/Check";
+import KeyboardView from "~/components/KeyboardView";
+import TranslatedError from "~/components/TranslatedError";
 import { getFirstStatusError } from "../../helpers";
-import { ScreenName } from "../../../const";
-import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import { ScreenName } from "~/const";
+import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { NearStakingFlowParamList } from "../StakingFlow/types";
 import { NearUnstakingFlowParamList } from "../UnstakingFlow/types";
 import { NearWithdrawingFlowParamList } from "../WithdrawingFlow/types";
+import { useSettings } from "~/hooks";
 
 type Props =
   | StackNavigatorProps<NearStakingFlowParamList, ScreenName.NearStakingAmount>
-  | StackNavigatorProps<
-      NearUnstakingFlowParamList,
-      ScreenName.NearUnstakingAmount
-    >
-  | StackNavigatorProps<
-      NearWithdrawingFlowParamList,
-      ScreenName.NearWithdrawingAmount
-    >;
+  | StackNavigatorProps<NearUnstakingFlowParamList, ScreenName.NearUnstakingAmount>
+  | StackNavigatorProps<NearWithdrawingFlowParamList, ScreenName.NearWithdrawingAmount>;
 
 function StakingAmount({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const account = useSelector(accountScreenSelector(route))
-    .account as NearAccount;
-  const locale = useSelector(localeSelector);
+  const account = useSelector(accountScreenSelector(route)).account as NearAccount;
+  const { locale } = useSettings();
+
   invariant(
     account && account.nearResources && route.params.transaction,
     "account and near transaction required",
   );
   const bridge = getAccountBridge(account, undefined);
   const unit = getAccountUnit(account);
-  const initialValue = useMemo(
-    () => route?.params?.value ?? new BigNumber(0),
-    [route],
-  );
+  const initialValue = useMemo(() => route?.params?.value ?? new BigNumber(0), [route]);
   const [value, setValue] = useState(() => initialValue);
   const max = useMemo(() => route?.params?.max ?? new BigNumber(0), [route]);
   const remaining = useMemo(() => max.minus(value), [max, value]);
-  const { transaction, updateTransaction, bridgePending, status } =
-    route.params;
+  const { transaction, updateTransaction, bridgePending, status } = route.params;
   const onNext = useCallback(() => {
     const tx = route.params.transaction;
 
@@ -78,7 +68,7 @@ function StakingAmount({ navigation, route }: Props) {
     });
   }, [navigation, route.params, bridge, value, max]);
   const onChange = useCallback(
-    amount => {
+    (amount: BigNumber) => {
       if (!amount.isNaN()) {
         setValue(amount);
         updateTransaction && updateTransaction(oldTx => ({ ...oldTx, amount }));
@@ -93,9 +83,7 @@ function StakingAmount({ navigation, route }: Props) {
     })),
   );
   const error =
-    transaction.amount.eq(0) || bridgePending
-      ? null
-      : getFirstStatusError(status, "errors");
+    transaction.amount.eq(0) || bridgePending ? null : getFirstStatusError(status, "errors");
   const warning = getFirstStatusError(status, "warnings");
 
   let behaviorParam: KeyboardAvoidingViewProps["behavior"] | undefined;
@@ -153,9 +141,7 @@ function StakingAmount({ navigation, route }: Props) {
                   >
                     <LText
                       style={[styles.ratioLabel]}
-                      color={
-                        value.eq(v) ? colors.neutral.c100 : colors.neutral.c60
-                      }
+                      color={value.eq(v) ? colors.neutral.c100 : colors.neutral.c60}
                     >
                       {label}
                     </LText>
@@ -175,13 +161,8 @@ function StakingAmount({ navigation, route }: Props) {
               {remaining.isZero() && (
                 <View style={styles.labelContainer}>
                   <Check size={16} color={colors.success.c50} />
-                  <LText
-                    style={[styles.assetsRemaining]}
-                    color={colors.success.c50}
-                  >
-                    <Trans
-                      i18nKey={`near.staking.flow.steps.amount.allAssetsUsed`}
-                    />
+                  <LText style={[styles.assetsRemaining]} color={colors.success.c50}>
+                    <Trans i18nKey={`near.staking.flow.steps.amount.allAssetsUsed`} />
                   </LText>
                 </View>
               )}
@@ -193,7 +174,7 @@ function StakingAmount({ navigation, route }: Props) {
                       values={{
                         amount: formatCurrencyUnit(unit, remaining, {
                           showCode: true,
-                          locale,
+                          locale: locale,
                         }),
                       }}
                     >

@@ -1,7 +1,7 @@
 import React from "react";
 import { Trans, useTranslation } from "react-i18next";
-import AccountSectionLabel from "../../../components/AccountSectionLabel";
-import Link from "../../../components/wrappedUi/Link";
+import AccountSectionLabel from "~/components/AccountSectionLabel";
+import Link from "~/components/wrappedUi/Link";
 
 type Props = {
   count: number;

@@ -4,14 +4,14 @@ import { Edge, SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
 import Config from "react-native-config";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { Flex, Icons } from "@ledgerhq/native-ui";
-import Button from "../../../../components/Button";
-import LText from "../../../../components/LText";
-import Animation from "../../../../components/Animation";
-import { getDeviceAnimation } from "../../../../helpers/getDeviceAnimation";
-import QueuedDrawer from "../../../../components/QueuedDrawer";
-import Touchable from "../../../../components/Touchable";
-import Check from "../../../../icons/Check";
+import { Flex, IconsLegacy } from "@ledgerhq/native-ui";
+import Button from "~/components/Button";
+import LText from "~/components/LText";
+import Animation from "~/components/Animation";
+import { getDeviceAnimation } from "~/helpers/getDeviceAnimation";
+import QueuedDrawer from "~/components/QueuedDrawer";
+import Touchable from "~/components/Touchable";
+import Check from "~/icons/Check";
 import { lottieAnimations } from "../../../Onboarding/shared/infoPagesData";
 
 const edges: Edge[] = ["bottom"];
@@ -110,18 +110,14 @@ const DebugLottie = () => {
               borderWidth: 1,
             }}
           >
-            {animationLight && (
-              <Animation key={animationNodeKey} source={animationLight} />
-            )}
+            {animationLight && <Animation key={animationNodeKey} source={animationLight} />}
           </View>
           <View
             style={{
               backgroundColor: "#121212",
             }}
           >
-            {animationDark && (
-              <Animation key={animationNodeKey} source={animationDark} />
-            )}
+            {animationDark && <Animation key={animationNodeKey} source={animationDark} />}
           </View>
         </ScrollView>
       </Flex>
@@ -157,9 +153,7 @@ const DebugLottie = () => {
         type="primary"
         outline={false}
         title={`Show ${wired ? "Bluetooth" : "Wired"}`}
-        disabled={
-          !["nanoX", "stax"].includes(selectedModelId) || !keys.includes(key)
-        }
+        disabled={!["nanoX", "stax"].includes(selectedModelId) || !keys.includes(key)}
         onPress={() => setWired(wired => !wired)}
       />
       <Flex mt={8} flexDirection="row">
@@ -169,14 +163,10 @@ const DebugLottie = () => {
             setKey(allKeys[Math.max(keyIndex - 1, 0)]);
           }}
           type="primary"
-          Icon={Icons.ChevronLeftMedium}
+          Icon={IconsLegacy.ChevronLeftMedium}
         />
         <Flex mx={3} flex={1}>
-          <Button
-            type="primary"
-            title="Animation key"
-            onPress={() => setKeyModalVisible(true)}
-          />
+          <Button type="primary" title="Animation key" onPress={() => setKeyModalVisible(true)} />
         </Flex>
         <Button
           disabled={keyIndex === allKeys.length - 1}
@@ -184,7 +174,7 @@ const DebugLottie = () => {
             setKey(allKeys[Math.min(keyIndex + 1, allKeys.length - 1)]);
           }}
           type="primary"
-          Icon={Icons.ChevronRightMedium}
+          Icon={IconsLegacy.ChevronRightMedium}
         />
       </Flex>
       <QueuedDrawer

@@ -4,8 +4,9 @@ import * as logic from "./logic";
 import type { CosmosAccount, CosmosValidatorItem } from "./types";
 import data from "./preloadedData.mock";
 import cryptoFactory from "./chain/chain";
-import defaultConfig from "../../config/defaultConfig";
 import { BigNumber } from "bignumber.js";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import liveConfig from "../../config/sharedConfig";
 
 jest.mock("./js-prepareTransaction", () => ({
   calculateFees: jest.fn(() => Promise.resolve({})),
@@ -13,21 +14,16 @@ jest.mock("./js-prepareTransaction", () => ({
 
 jest.mock("./chain/chain");
 
-const LEDGER_VALIDATOR_ADDRESS =
-  defaultConfig.config.cosmos.cosmos.ledgerValidator;
+LiveConfig.setConfig(liveConfig);
+const LEDGER_VALIDATOR_ADDRESS = LiveConfig.getValueByKey("config_currency_cosmos").ledgerValidator;
 const ledgerValidator: CosmosValidatorItem | undefined = data.validators.find(
-  (x) => x.validatorAddress === LEDGER_VALIDATOR_ADDRESS
+  x => x.validatorAddress === LEDGER_VALIDATOR_ADDRESS,
 );
-const expensiveValidator: CosmosValidatorItem | undefined =
-  data.validators.find(
-    (x) =>
-      x.validatorAddress ===
-      "cosmosvaloper1qs8tnw2t8l6amtzvdemnnsq9dzk0ag0z52uzay"
-  );
+const expensiveValidator: CosmosValidatorItem | undefined = data.validators.find(
+  x => x.validatorAddress === "cosmosvaloper1qs8tnw2t8l6amtzvdemnnsq9dzk0ag0z52uzay",
+);
 const cheapValidator: CosmosValidatorItem | undefined = data.validators.find(
-  (x) =>
-    x.validatorAddress ===
-    "cosmosvaloper1qaa9zej9a0ge3ugpx3pxyx602lxh3ztqgfnp42"
+  x => x.validatorAddress === "cosmosvaloper1qaa9zej9a0ge3ugpx3pxyx602lxh3ztqgfnp42",
 );
 
 const account: CosmosAccount = {
@@ -35,8 +31,7 @@ const account: CosmosAccount = {
   id: "js:2:cosmos:cosmos1f9y7wdychcdhwvyrhff3zvs3gy3qxcu2th4g8u:",
   starred: false,
   used: false,
-  seedIdentifier:
-    "02d4c121ce2bb160ebf39aa0be0050b4d553e18872985ac3a4e21904fd1442defe",
+  seedIdentifier: "02d4c121ce2bb160ebf39aa0be0050b4d553e18872985ac3a4e21904fd1442defe",
   derivationMode: "",
   index: 1,
   freshAddress: "cosmos1f9y7wdychcdhwvyrhff3zvs3gy3qxcu2th4g8u",
@@ -86,8 +81,7 @@ const account: CosmosAccount = {
         amount: new BigNumber("50000"),
         status: "bonded",
         pendingRewards: new BigNumber("112"),
-        validatorAddress:
-          "cosmosvaloper1c4k24jzduc365kywrsvf5ujz4ya6mwympnc4en",
+        validatorAddress: "cosmosvaloper1c4k24jzduc365kywrsvf5ujz4ya6mwympnc4en",
       },
     ],
     redelegations: [],
@@ -96,6 +90,7 @@ const account: CosmosAccount = {
     pendingRewardsBalance: new BigNumber("0"),
     unbondingBalance: new BigNumber("0"),
     withdrawAddress: "",
+    sequence: 0,
   },
 };
 
@@ -118,9 +113,7 @@ describe("cosmos/banner", () => {
       jest.restoreAllMocks();
     });
     it("should not display the banner", async () => {
-      jest
-        .spyOn(preloadedData, "getCurrentCosmosPreloadData")
-        .mockReturnValue(validatorsMap);
+      jest.spyOn(preloadedData, "getCurrentCosmosPreloadData").mockReturnValue(validatorsMap);
       jest.spyOn(logic, "canDelegate").mockReturnValue(false);
       jest.spyOn(logic, "canRedelegate").mockReturnValue(false);
       const result = getAccountBannerState(account);
@@ -132,9 +125,7 @@ describe("cosmos/banner", () => {
       });
     });
     it("should return display delegate mode", async () => {
-      jest
-        .spyOn(preloadedData, "getCurrentCosmosPreloadData")
-        .mockReturnValue(validatorsMap);
+      jest.spyOn(preloadedData, "getCurrentCosmosPreloadData").mockReturnValue(validatorsMap);
       jest.spyOn(logic, "canDelegate").mockReturnValue(true);
       jest.spyOn(logic, "canRedelegate").mockReturnValue(false);
       const result = getAccountBannerState(account);
@@ -146,9 +137,7 @@ describe("cosmos/banner", () => {
       });
     });
     it("should return display redelegate mode", async () => {
-      jest
-        .spyOn(preloadedData, "getCurrentCosmosPreloadData")
-        .mockReturnValue(validatorsMap);
+      jest.spyOn(preloadedData, "getCurrentCosmosPreloadData").mockReturnValue(validatorsMap);
       jest.spyOn(logic, "canDelegate").mockReturnValue(false);
       jest.spyOn(logic, "canRedelegate").mockReturnValue(true);
       account.cosmosResources.redelegations.push({
@@ -170,9 +159,7 @@ describe("cosmos/banner", () => {
       });
     });
     it("should return not display redelegate mode", async () => {
-      jest
-        .spyOn(preloadedData, "getCurrentCosmosPreloadData")
-        .mockReturnValue(validatorsMap);
+      jest.spyOn(preloadedData, "getCurrentCosmosPreloadData").mockReturnValue(validatorsMap);
       jest.spyOn(logic, "canDelegate").mockReturnValue(false);
       jest.spyOn(logic, "canRedelegate").mockReturnValue(false);
       account.cosmosResources.redelegations.push({

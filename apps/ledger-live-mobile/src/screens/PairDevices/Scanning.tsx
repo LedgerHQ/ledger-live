@@ -9,30 +9,23 @@ import { DescriptorEvent } from "@ledgerhq/hw-transport";
 import { Device as DeviceMeta } from "@ledgerhq/live-common/hw/actions/types";
 import { TransportBleDevice } from "@ledgerhq/live-common/ble/types";
 import logger from "../../logger";
-import { BLE_SCANNING_NOTHING_TIMEOUT } from "../../constants";
-import { knownDevicesSelector } from "../../reducers/ble";
+import { BLE_SCANNING_NOTHING_TIMEOUT } from "~/utils/constants";
+import { knownDevicesSelector } from "~/reducers/ble";
 import TransportBLE from "../../react-native-hw-transport-ble";
-import { TrackScreen } from "../../analytics";
-import DeviceItem from "../../components/SelectDevice/DeviceItem";
+import { TrackScreen } from "~/analytics";
+import DeviceItem from "~/components/SelectDevice/DeviceItem";
 import ScanningHeader from "./ScanningHeader";
+import Config from "react-native-config";
 
 type Props = {
-  onSelect: (
-    device: TransportBleDevice,
-    deviceMeta?: DeviceMeta,
-  ) => Promise<void>;
+  onSelect: (device: TransportBleDevice, deviceMeta?: DeviceMeta) => Promise<void>;
   onError: (_: Error) => void;
   onTimeout: () => void;
   /** If defined, only show devices that have a device model id in this array */
   deviceModelIds?: DeviceModelId[];
 };
 
-export default function Scanning({
-  onTimeout,
-  onError,
-  onSelect,
-  deviceModelIds,
-}: Props) {
+export default function Scanning({ onTimeout, onError, onSelect, deviceModelIds }: Props) {
   const { t } = useTranslation();
   const knownDevices = useSelector(knownDevicesSelector);
   const [devices, setDevices] = useState<TransportBleDevice[]>([]);
@@ -41,8 +34,7 @@ export default function Scanning({
     if (!deviceModelIds) return devices;
     return devices.filter(device => {
       let modelId = "nanoX" as DeviceModelId;
-      const infos =
-        device?.serviceUUIDs && getInfosForServiceUuid(device.serviceUUIDs[0]);
+      const infos = device?.serviceUUIDs && getInfosForServiceUuid(device.serviceUUIDs[0]);
       if (infos) modelId = infos.deviceModel.id;
       return deviceModelIds.includes(modelId);
     });
@@ -52,8 +44,7 @@ export default function Scanning({
     ({ item }: { item: TransportBleDevice }) => {
       const knownDevice = knownDevices.find(d => d.id === item.id);
       let modelId = "nanoX" as DeviceModelId;
-      const infos =
-        item.serviceUUIDs && getInfosForServiceUuid(item.serviceUUIDs[0]);
+      const infos = item.serviceUUIDs && getInfosForServiceUuid(item.serviceUUIDs[0]);
       if (infos) modelId = infos.deviceModel.id;
 
       const deviceMeta = {
@@ -86,9 +77,7 @@ export default function Scanning({
           const device = e.descriptor;
           // FIXME seems like we have dup. ideally we'll remove them on the listen side!
           setDevices(devices =>
-            devices.some(i => i.id === device.id)
-              ? devices
-              : [...devices, device],
+            devices.some(i => i.id === device.id) ? devices : [...devices, device],
           );
         }
       },
@@ -113,7 +102,7 @@ export default function Scanning({
           renderItem={renderItem}
           keyExtractor={item => item.id}
           ListHeaderComponent={ScanningHeader}
-          ListEmptyComponent={<InfiniteLoader size={58} />}
+          ListEmptyComponent={<InfiniteLoader size={58} mock={Config.MOCK} />}
         />
       </Flex>
     </>

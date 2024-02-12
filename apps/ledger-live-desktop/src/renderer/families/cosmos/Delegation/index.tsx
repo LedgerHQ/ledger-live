@@ -1,9 +1,8 @@
 import React, { useCallback } from "react";
-import invariant from "invariant";
 import { useDispatch } from "react-redux";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
-import { Account } from "@ledgerhq/types-live";
+import { SubAccount } from "@ledgerhq/types-live";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import {
   useCosmosFamilyPreloadData,
@@ -26,9 +25,11 @@ import ToolTip from "~/renderer/components/Tooltip";
 import ClaimRewards from "~/renderer/icons/ClaimReward";
 import DelegateIcon from "~/renderer/icons/Delegate";
 import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
-type Props = {
-  account: Account;
-};
+import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
+import { DelegationActionsModalName } from "../modals";
+import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+
 const Wrapper = styled(Box).attrs(() => ({
   p: 3,
 }))`
@@ -36,16 +37,18 @@ const Wrapper = styled(Box).attrs(() => ({
   justify-content: space-between;
   align-items: center;
 `;
-const Delegation = ({ account }: Props) => {
+const Delegation = ({ account }: { account: CosmosAccount }) => {
   const dispatch = useDispatch();
   const { cosmosResources } = account;
-  invariant(cosmosResources, "cosmos account expected");
   const {
     delegations,
     pendingRewardsBalance: _pendingRewardsBalance,
     /** $FlowFixMe */
     unbondings,
   } = cosmosResources;
+
+  const stakingUrl = useLocalizedUrl(urls.stakingCosmos);
+  const validatorUrl = useLocalizedUrl(urls.ledgerValidator);
   const delegationEnabled = canDelegate(account);
   const mappedDelegations = useCosmosFamilyMappedDelegations(account);
   const currencyId = account.currency.id;
@@ -74,7 +77,7 @@ const Delegation = ({ account }: Props) => {
     );
   }, [account, dispatch]);
   const onRedirect = useCallback(
-    (validatorAddress: string, modalName: string) => {
+    (validatorAddress: string, modalName: DelegationActionsModalName) => {
       dispatch(
         openModal(modalName, {
           account,
@@ -88,17 +91,18 @@ const Delegation = ({ account }: Props) => {
   const onExternalLink = useCallback(
     (address: string) => {
       if (cosmosBase.COSMOS_FAMILY_LEDGER_VALIDATOR_ADDRESSES.includes(address)) {
-        openURL(urls.ledgerValidator);
+        openURL(validatorUrl);
       } else {
         const srURL = explorerView && getAddressExplorer(explorerView, address);
         if (srURL) openURL(srURL);
       }
     },
-    [explorerView],
+    [explorerView, validatorUrl],
   );
   const hasDelegations = delegations.length > 0;
   const hasUnbondings = unbondings && unbondings.length > 0;
   const hasRewards = _pendingRewardsBalance.gt(0);
+  const crypto = cryptoFactory(account.currency.id);
   return (
     <>
       <TableContainer mb={6}>
@@ -186,7 +190,7 @@ const Delegation = ({ account }: Props) => {
               <Box mt={2}>
                 <LinkWithExternalIcon
                   label={<Trans i18nKey="cosmos.delegation.emptyState.info" />}
-                  onClick={() => openURL(urls.stakingCosmos)}
+                  onClick={() => openURL(stakingUrl)}
                 />
               </Box>
             </Box>
@@ -216,7 +220,12 @@ const Delegation = ({ account }: Props) => {
             titleProps={{
               "data-e2e": "title_Undelegation",
             }}
-            tooltip={<Trans i18nKey="cosmos.undelegation.headerTooltip" />}
+            tooltip={
+              <Trans
+                i18nKey="cosmos.undelegation.headerTooltip"
+                values={{ numberOfDays: crypto.unbondingPeriod }}
+              />
+            }
           />
           <UnbondingHeader />
           {mappedUnbondings.map((delegation, index) => (
@@ -227,8 +236,9 @@ const Delegation = ({ account }: Props) => {
     </>
   );
 };
-const Delegations = ({ account }: Props) => {
-  if (!account.cosmosResources) return null;
+const Delegations = ({ account }: { account: CosmosAccount | SubAccount }) => {
+  if (account.type !== "Account") return null;
+
   return <Delegation account={account} />;
 };
 export default Delegations;

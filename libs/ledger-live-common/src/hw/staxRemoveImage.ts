@@ -9,6 +9,7 @@ import { Observable, from, of } from "rxjs";
 import { withDevice } from "./deviceAccess";
 import { delay, mergeMap } from "rxjs/operators";
 import getDeviceInfo from "./getDeviceInfo";
+import { ImageDoesNotExistOnDevice } from "../errors";
 
 export type RemoveImageEvent =
   | {
@@ -23,7 +24,7 @@ export type RemoveImageEvent =
 
 export type Input = {
   deviceId: string;
-  request: {};
+  request: Record<string, unknown>;
 };
 
 /**
@@ -36,6 +37,7 @@ export const command = async (transport: Transport): Promise<void> => {
     StatusCodes.OK,
     StatusCodes.CUSTOM_IMAGE_BOOTLOADER,
     StatusCodes.USER_REFUSED_ON_DEVICE,
+    StatusCodes.CUSTOM_IMAGE_EMPTY,
     StatusCodes.UNKNOWN_APDU,
   ]);
 
@@ -44,6 +46,8 @@ export const command = async (transport: Transport): Promise<void> => {
   switch (status) {
     case StatusCodes.OK:
       return;
+    case StatusCodes.CUSTOM_IMAGE_EMPTY:
+      throw new ImageDoesNotExistOnDevice();
     case StatusCodes.CUSTOM_IMAGE_BOOTLOADER:
       throw new UnexpectedBootloader();
     case StatusCodes.USER_REFUSED_ON_DEVICE:
@@ -52,17 +56,15 @@ export const command = async (transport: Transport): Promise<void> => {
   throw new TransportStatusError(status);
 };
 
-export default function removeImage({
-  deviceId,
-}: Input): Observable<RemoveImageEvent> {
+export default function removeImage({ deviceId }: Input): Observable<RemoveImageEvent> {
   const sub = withDevice(deviceId)(
-    (transport) =>
-      new Observable((subscriber) => {
+    transport =>
+      new Observable(subscriber => {
         const timeoutSub = of<RemoveImageEvent>({
           type: "unresponsiveDevice",
         })
           .pipe(delay(1000))
-          .subscribe((e) => subscriber.next(e));
+          .subscribe(e => subscriber.next(e));
 
         const sub = from(getDeviceInfo(transport))
           .pipe(
@@ -71,7 +73,7 @@ export default function removeImage({
               subscriber.next({ type: "removeImagePermissionRequested" });
               await command(transport);
               subscriber.next({ type: "imageRemoved" });
-            })
+            }),
           )
           .subscribe(subscriber);
 
@@ -79,7 +81,7 @@ export default function removeImage({
           timeoutSub.unsubscribe();
           sub.unsubscribe();
         };
-      })
+      }),
   );
 
   return sub as Observable<RemoveImageEvent>;

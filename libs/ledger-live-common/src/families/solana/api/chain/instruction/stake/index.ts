@@ -5,7 +5,7 @@ import { StakeInstructionType, IX_STRUCTS, IX_TITLES } from "./types";
 import { PARSED_PROGRAMS } from "../../program/constants";
 
 export function parseStakeInstruction(
-  ix: ParsedInstruction & { program: typeof PARSED_PROGRAMS.STAKE }
+  ix: ParsedInstruction & { program: typeof PARSED_PROGRAMS.STAKE },
 ): StakeInstructionDescriptor {
   const parsed = create(ix.parsed, ParsedInfo);
   const { type: rawType, info } = parsed;
@@ -22,8 +22,8 @@ export function parseStakeInstruction(
 
 export type StakeInstructionDescriptor = {
   [K in StakeInstructionType]: {
-    title: typeof IX_TITLES[K];
+    title: (typeof IX_TITLES)[K];
     type: K;
-    info: Infer<typeof IX_STRUCTS[K]>;
+    info: Infer<(typeof IX_STRUCTS)[K]>;
   };
 }[StakeInstructionType];

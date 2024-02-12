@@ -48,8 +48,7 @@ const IconContainer = styled.div<{
   iconPosition: "right" | "left";
   iconLink?: boolean;
 }>`
-  ${(p) =>
-    p.iconLink ? "" : p.iconPosition === "left" ? `margin-right: 6px;` : `margin-left: 6px;`}
+  ${p => (p.iconLink ? "" : p.iconPosition === "left" ? `margin-right: 6px;` : `margin-left: 6px;`)}
   display: flex;
   align-items: center;
   justify-content: center;
@@ -74,7 +73,7 @@ export const Base = baseStyled.a<LinkProps>`
     text-decoration: underline;
   }
 
-  text-decoration: ${(p) => (p.alwaysUnderline ? "underline" : "none")};
+  text-decoration: ${p => (p.alwaysUnderline ? "underline" : "none")};
 
 `;
 

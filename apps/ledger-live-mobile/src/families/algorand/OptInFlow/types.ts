@@ -1,11 +1,8 @@
-import {
-  Transaction,
-  TransactionStatus,
-} from "@ledgerhq/live-common/families/algorand/types";
+import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/algorand/types";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { Operation } from "@ledgerhq/types-live";
-import { ScreenName } from "../../../const";
+import { ScreenName } from "~/const";
 
 export type AlgorandOptInFlowParamList = {
   [ScreenName.AlgorandOptInSelectToken]: {

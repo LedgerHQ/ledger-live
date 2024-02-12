@@ -1,14 +1,17 @@
 import React from "react";
 import Transport from "@ledgerhq/hw-transport";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { implicitMigration } from "@ledgerhq/live-common/migrations/accounts";
 import { log } from "@ledgerhq/logs";
+import "../config/configInit";
 import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
 import i18n from "i18next";
 import { webFrame, ipcRenderer } from "electron";
-import * as remote from "@electron/remote";
+// We can't use new createRoot for now. We have issues we react-redux 7.x and lazy load of components
+// https://github.com/reduxjs/react-redux/issues/1977
+// eslint-disable-next-line react/no-deprecated
 import { render } from "react-dom";
 import moment from "moment";
 import each from "lodash/each";
@@ -43,19 +46,48 @@ import {
 import ReactRoot from "~/renderer/ReactRoot";
 import AppError from "~/renderer/AppError";
 import { expectOperatingSystemSupportStatus } from "~/support/os";
+import { addDevice, removeDevice, resetDevices } from "~/renderer/actions/devices";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { listCachedCurrencyIds } from "./bridge/cache";
-if (process.env.VERBOSE) {
-  enableDebugLogger();
-}
+import { LogEntry } from "winston";
+
 const rootNode = document.getElementById("react-root");
 const TAB_KEY = 9;
+
 async function init() {
+  // at this step. we know the app error handling will happen here. so we can unset the global onerror
+  window.onerror = null;
+
+  const logVerbose = getEnv("VERBOSE");
+
+  // Sets up a debug console printing of logs (from the renderer process)
+  //
+  // Usage: a filtering (only on console printing) on Ledger libs are possible:
+  // - VERBOSE="apdu,hw,transport,hid-verbose" : filtering on a list of log `type` separated by a `,`
+  // - VERBOSE=1 or VERBOSE=true : to print all logs
+  if (logVerbose) {
+    const everyLogs =
+      logVerbose.length === 1 && (logVerbose[0] === "true" || logVerbose[0] === "1");
+
+    const filters = everyLogs ? [] : logVerbose;
+
+    // eslint-disable-next-line no-console
+    console.log(
+      `Logs console display setup (renderer process): ${JSON.stringify({
+        everyLogs,
+        filters,
+      })}`,
+    );
+    enableDebugLogger((log: LogEntry) => everyLogs || (log?.type && filters.includes(log.type)));
+  }
+
   checkLibs({
     NotEnoughBalance,
     React,
     log,
     Transport,
   });
+
   expectOperatingSystemSupportStatus();
   if (getEnv("PLAYWRIGHT_RUN")) {
     const spectronData = await getKey("app", "PLAYWRIGHT_RUN", {});
@@ -87,11 +119,16 @@ async function init() {
     }
   });
   let deepLinkUrl; // Nb In some cases `fetchSettings` runs after this, voiding the deep link.
+  if (process.env.LEDGER_LIVE_DEEPLINK) {
+    deepLinkUrl = process.env.LEDGER_LIVE_DEEPLINK;
+    store.dispatch(setDeepLinkUrl(deepLinkUrl));
+  }
   ipcRenderer.once("deep-linking", (_, url: string) => {
     store.dispatch(setDeepLinkUrl(url));
     deepLinkUrl = url;
   });
   const initialSettings = (await getKey("app", "settings")) || {};
+
   fetchSettings(
     deepLinkUrl
       ? {
@@ -118,7 +155,6 @@ async function init() {
   setEnvOnAllThreads("HIDE_EMPTY_TOKEN_ACCOUNTS", hideEmptyTokenAccounts);
   const filterTokenOperationsZeroAmount = filterTokenOperationsZeroAmountSelector(state);
   setEnvOnAllThreads("FILTER_ZERO_AMOUNT_ERC20_EVENTS", filterTokenOperationsZeroAmount);
-  const isMainWindow = remote.getCurrentWindow().name === "MainWindow";
 
   // hydrate the store with the bridge/cache
   await Promise.allSettled(
@@ -149,28 +185,27 @@ async function init() {
       }),
     );
   }
-  if (isMainWindow) {
-    webFrame.setVisualZoomLevelLimits(1, 1);
-    const matcher = window.matchMedia("(prefers-color-scheme: dark)");
-    const updateOSTheme = () => store.dispatch(setOSDarkMode(matcher.matches));
-    matcher.addListener(updateOSTheme);
-    events({
-      store,
-    });
-    window.addEventListener("keydown", (e: KeyboardEvent) => {
-      if (e.which === TAB_KEY) {
-        if (!isGlobalTabEnabled()) enableGlobalTab();
-        logger.onTabKey(document.activeElement as HTMLElement);
-      }
-    });
-    window.addEventListener("click", () => {
-      if (isGlobalTabEnabled()) disableGlobalTab();
-    });
-    window.addEventListener("beforeunload", async () => {
-      // This event is triggered when we reload the app, we want it to forget what it knows
-      reload();
-    });
-  }
+  webFrame.setVisualZoomLevelLimits(1, 1);
+  const matcher = window.matchMedia("(prefers-color-scheme: dark)");
+  const updateOSTheme = () => store.dispatch(setOSDarkMode(matcher.matches));
+  matcher.addListener(updateOSTheme);
+  events({
+    store,
+  });
+  window.addEventListener("keydown", (e: KeyboardEvent) => {
+    if (e.which === TAB_KEY) {
+      if (!isGlobalTabEnabled()) enableGlobalTab();
+      logger.onTabKey(document.activeElement as HTMLElement);
+    }
+  });
+  window.addEventListener("click", () => {
+    if (isGlobalTabEnabled()) disableGlobalTab();
+  });
+  window.addEventListener("beforeunload", async () => {
+    // This event is triggered when we reload the app, we want it to forget what it knows
+    reload();
+  });
+
   document.addEventListener(
     "dragover",
     (event: Event) => {
@@ -205,6 +240,15 @@ async function init() {
   // expose stuff in Windows for DEBUG purpose
   window.ledger = {
     store,
+    addDevice: (device: Device) => {
+      store.dispatch(addDevice(device));
+    },
+    removeDevice: (device: Device) => {
+      store.dispatch(removeDevice(device));
+    },
+    resetDevices: () => {
+      store.dispatch(resetDevices());
+    },
   };
 }
 function r(Comp: JSX.Element) {

@@ -9,7 +9,7 @@ test.use({ userdata: "skip-onboarding" });
 
 // TODO Cover stax, figure out a good changelog and correct device info
 // this e2e is only testing the very old firmware update path.
-test("Firmware Update", async ({ page }) => {
+test("Firmware Update @smoke", async ({ page }) => {
   const managerPage = new ManagerPage(page);
   const firmwareUpdateModal = new FirmwareUpdateModal(page);
   const deviceAction = new DeviceAction(page);

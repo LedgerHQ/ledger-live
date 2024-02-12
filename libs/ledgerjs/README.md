@@ -1,4 +1,4 @@
-**[We are hiring, join us! 👨‍💻👩‍💻](https://jobs.lever.co/ledger/?department=Engineering)**
+**[We are hiring, join us! 👨‍💻👩‍💻](https://jobs.lever.co/ledger/?department=Tech)**
 
 <img src="https://user-images.githubusercontent.com/3273751/151214602-f5153588-1911-4456-ae65-604d56821b36.png" height="80" /> <img src="https://user-images.githubusercontent.com/211411/52533081-e679d380-2d2e-11e9-9c5e-571e4ad0107b.png" height="80" />
 
@@ -178,9 +178,17 @@ Lint all packages
 pnpm lint --filter="./libs/ledgerjs/**"
 ```
 
+### Typecheck
+
+Typecheck all packages
+
+```bash
+pnpm typecheck --filter="./libs/ledgerjs/**"
+```
+
 ### Run Tests
 
-First of all, this ensure the libraries are correctly building, and passing lint and flow:
+First of all, this ensure the libraries are correctly building, and passing tests:
 
 ```bash
 pnpm test --filter="./libs/ledgerjs/**"

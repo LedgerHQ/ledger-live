@@ -14,18 +14,17 @@ export const createRegisterAccountMutation = (): MutationSpec<Transaction> => ({
 
     invariant(
       !celoResources?.registrationStatus,
-      "Celo: Register Account | Celo account is already registered"
+      "Celo: Register Account | Celo account is already registered",
     );
     invariant(
       maxSpendable.gt(minimalAmount),
-      "Celo: Register Account | Celo account balance is too low to register account"
+      "Celo: Register Account | Celo account balance is too low to register account",
     );
 
     return {
       transaction: bridge.createTransaction(account),
       updates: [
         {
-          memo: "LedgerLiveBot",
           mode: "register",
         },
       ],

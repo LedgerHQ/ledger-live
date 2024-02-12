@@ -1,5 +1,5 @@
 import React from "react";
-import { TextVariants } from "src/styles/theme";
+import { TextVariants } from "../../styles/theme";
 import { border, BorderProps } from "styled-system";
 import Text, { TextProps } from "../asorted/Text";
 import baseStyled, { BaseStyledProps } from "../styled";
@@ -95,7 +95,7 @@ function getTextProps({ size }: TagProps): {
   }
 }
 
-const TagContainer = baseStyled.div.attrs<TagProps, TagProps>((props) => ({
+const TagContainer = baseStyled.div.attrs<TagProps, TagProps>(props => ({
   backgroundColor: props.bg || props.backgroundColor || getBgColor(props),
   color: props.color || getColor(props),
   borderColor: getBorderColor(props),
@@ -103,8 +103,8 @@ const TagContainer = baseStyled.div.attrs<TagProps, TagProps>((props) => ({
   display: inline-flex;
   justify-content: center;
   border: 1px solid transparent;
-  border-radius: ${(p) => `${p.theme.radii[1]}px`};
-  padding: ${(p) => getPadding(p)};
+  border-radius: ${p => `${p.theme.radii[1]}px`};
+  padding: ${p => getPadding(p)};
   ${border}
 `;
 

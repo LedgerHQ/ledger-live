@@ -1,8 +1,13 @@
-import { TFunction } from "react-i18next";
+import { TFunction } from "i18next";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Step } from "~/renderer/components/Stepper";
-import { Account, Operation } from "@ledgerhq/types-live";
-import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/cosmos/types";
+import {
+  CosmosAccount,
+  Transaction,
+  TransactionStatus,
+} from "@ledgerhq/live-common/families/cosmos/types";
+import { OpenModal } from "~/renderer/actions/modals";
+import { Operation } from "@ledgerhq/types-live";
 export type StepId =
   | "starter"
   | "validators"
@@ -13,15 +18,15 @@ export type StepProps = {
   t: TFunction;
   transitionTo: (a: string) => void;
   device: Device | undefined | null;
-  account: Account | undefined | null;
-  parentAccount: Account | undefined | null;
+  account: CosmosAccount;
+  parentAccount: never;
   onRetry: (a: void) => void;
   onClose: () => void;
-  openModal: (key: string, config?: any) => void;
-  optimisticOperation: any;
-  error: any;
+  openModal: OpenModal;
+  optimisticOperation: Operation | undefined;
+  error: Error | undefined;
   signed: boolean;
-  transaction: Transaction | undefined | null;
+  transaction?: Transaction | null;
   status: TransactionStatus;
   onChangeTransaction: (a: Transaction) => void;
   onUpdateTransaction: (a: (a: Transaction) => Transaction) => void;
@@ -29,5 +34,6 @@ export type StepProps = {
   onOperationBroadcasted: (a: Operation) => void;
   setSigned: (a: boolean) => void;
   bridgePending: boolean;
+  source?: string;
 };
 export type St = Step<StepId, StepProps>;

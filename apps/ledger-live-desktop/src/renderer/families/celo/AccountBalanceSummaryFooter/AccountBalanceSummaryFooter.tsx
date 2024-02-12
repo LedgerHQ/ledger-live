@@ -9,14 +9,12 @@ import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
 import { withdrawableBalance } from "@ledgerhq/live-common/families/celo/logic";
 import * as S from "./AccountBalanceSummaryFooter.styles";
-type Props = {
-  account: any;
-  countervalue: any;
-};
-const AccountBalanceSummaryFooter = ({ account }: Props) => {
+import { CeloFamily } from "../types";
+
+const AccountBalanceSummaryFooter: CeloFamily["AccountBalanceSummaryFooter"] = ({ account }) => {
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
-  if (!account.celoResources) return null;
+  if (account.type !== "Account") return null;
   const { spendableBalance, celoResources } = account;
   const { lockedBalance, nonvotingLockedBalance } = celoResources;
   const withdrawableBalanceAmount = withdrawableBalance(account);

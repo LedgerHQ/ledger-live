@@ -7,7 +7,7 @@ import {
 } from "@ledgerhq/live-common/currencies/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { BigNumber } from "bignumber.js";
-import { getFloorPrice } from "@ledgerhq/live-common/nft/index";
+import { getFloorPrice } from "@ledgerhq/live-nft/api/metadataservice";
 import { FloorPrice, NFTMetadata, ProtoNFT } from "@ledgerhq/types-live";
 import CurrencyIcon from "../../CurrencyIcon";
 import Skeleton from "../../Skeleton";
@@ -24,15 +24,12 @@ type Props = {
 
 const NftListItemFloorPriceRow = ({ nft }: Props) => {
   const [floorPriceLoading, setFloorPriceLoading] = useState(true);
-  const [floorPriceCurrency, setFloorPriceCurrency] = useState<
-    CryptoCurrency | null | undefined
-  >(null);
+  const [floorPriceCurrency, setFloorPriceCurrency] = useState<CryptoCurrency | null | undefined>(
+    null,
+  );
   const [floorPrice, setFloorPrice] = useState<BigNumber | null>(null);
 
-  const currency = useMemo(
-    () => getCryptoCurrencyById(nft.currencyId),
-    [nft.currencyId],
-  );
+  const currency = useMemo(() => getCryptoCurrencyById(nft.currencyId), [nft.currencyId]);
 
   useEffect(() => {
     let cancelled = false;
@@ -41,16 +38,11 @@ const NftListItemFloorPriceRow = ({ nft }: Props) => {
       .then((result: FloorPrice | null) => {
         if (cancelled) return;
         if (result) {
-          const foundFloorPriceCurrency = findCryptoCurrencyByTicker(
-            result.ticker,
-          );
+          const foundFloorPriceCurrency = findCryptoCurrencyByTicker(result.ticker);
           setFloorPriceCurrency(foundFloorPriceCurrency);
           if (foundFloorPriceCurrency) {
             setFloorPrice(
-              valueFromUnit(
-                new BigNumber(result.value),
-                foundFloorPriceCurrency.units[0],
-              ),
+              valueFromUnit(new BigNumber(result.value), foundFloorPriceCurrency.units[0]),
             );
           }
         }
@@ -74,13 +66,7 @@ const NftListItemFloorPriceRow = ({ nft }: Props) => {
         flex={1}
         ml={1}
       >
-        <Skeleton
-          loading={floorPriceLoading}
-          height={13}
-          width={35}
-          borderRadius={4}
-          my={1}
-        >
+        <Skeleton loading={floorPriceLoading} height={13} width={35} borderRadius={4} my={1}>
           <Text
             variant="small"
             fontWeight="medium"
@@ -103,13 +89,7 @@ const NftListItemFloorPriceRow = ({ nft }: Props) => {
             )}
           </Text>
         </Skeleton>
-        <Skeleton
-          loading={floorPriceLoading}
-          height={13}
-          width={60}
-          borderRadius={4}
-          my={1}
-        >
+        <Skeleton loading={floorPriceLoading} height={13} width={60} borderRadius={4} my={1}>
           <Text
             variant="small"
             fontWeight="medium"
@@ -120,11 +100,7 @@ const NftListItemFloorPriceRow = ({ nft }: Props) => {
           >
             {(floorPrice || floorPrice === 0) && floorPriceCurrency ? (
               <>
-                <CounterValue
-                  currency={currency}
-                  value={floorPrice}
-                  joinFragmentsSeparator=""
-                />
+                <CounterValue currency={currency} value={floorPrice} joinFragmentsSeparator="" />
               </>
             ) : (
               "--"

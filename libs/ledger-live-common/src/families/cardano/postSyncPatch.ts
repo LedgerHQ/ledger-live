@@ -10,16 +10,16 @@ import type { AccountLike, Account, Operation } from "@ledgerhq/types-live";
 const postSyncPatchGen = <T extends AccountLike>(
   initial: T,
   synced: T,
-  parentPendingOperation?: Operation[]
+  parentPendingOperation?: Operation[],
 ): T => {
   const pendingOperations = initial.pendingOperations || [];
   if (pendingOperations.length === 0) return synced;
   const { operations } = synced;
   synced.pendingOperations = pendingOperations.filter(
-    (op) =>
+    op =>
       (!parentPendingOperation || // a child pending parent need to disappear if parent ada op disappear
-        parentPendingOperation.some((o) => o.hash === op.hash)) &&
-      !operations.some((o) => o.hash === op.hash) // after retain logic, we need operation to appear
+        parentPendingOperation.some(o => o.hash === op.hash)) &&
+      !operations.some(o => o.hash === op.hash), // after retain logic, we need operation to appear
   );
   return synced;
 };
@@ -30,10 +30,8 @@ const postSyncPatch = (initial: Account, synced: Account): Account => {
   const initialSubAccounts = initial.subAccounts;
 
   if (subAccounts && initialSubAccounts) {
-    acc.subAccounts = subAccounts.map((subAccount) => {
-      const initialSubAccount = initialSubAccounts.find(
-        (a) => a.id === subAccount.id
-      );
+    acc.subAccounts = subAccounts.map(subAccount => {
+      const initialSubAccount = initialSubAccounts.find(a => a.id === subAccount.id);
       if (!initialSubAccount) return subAccount;
       return postSyncPatchGen(initialSubAccount, subAccount, pendingOperations);
     });

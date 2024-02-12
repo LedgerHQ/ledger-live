@@ -1,15 +1,12 @@
 import React, { useMemo, useCallback, useState } from "react";
-import {
-  SwapTransactionType,
-  ExchangeRate,
-} from "@ledgerhq/live-common/exchange/swap/types";
+import { SwapTransactionType, ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
 import { postSwapCancelled } from "@ledgerhq/live-common/exchange/swap/index";
 import { useDispatch } from "react-redux";
-import GenericErrorBottomModal from "../../../../components/GenericErrorBottomModal";
+import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
 import { Confirmation, DeviceMeta } from "./Confirmation";
 import { Terms } from "./Terms";
-import { swapAcceptProvider } from "../../../../actions/settings";
-import { useAnalytics } from "../../../../analytics";
+import { swapAcceptProvider } from "~/actions/settings";
+import { useAnalytics } from "~/analytics";
 import { sharedSwapTracking } from "../../utils";
 
 export function Modal({
@@ -49,22 +46,20 @@ export function Modal({
   }, [confirmed, termsAccepted, deviceMeta]);
 
   const onAcceptTerms = useCallback(() => {
-    if (!provider || provider === "ftx" || provider === "ftxus") {
-      return;
+    if (provider) {
+      dispatch(swapAcceptProvider(provider));
     }
-
-    dispatch(swapAcceptProvider(provider));
   }, [dispatch, provider]);
 
   const onError = useCallback(
-    ({ error, swapId }) => {
+    ({ error, swapId }: { error?: Error; swapId?: string }) => {
       track("error_message", {
         ...sharedSwapTracking,
         message: "drawer_error",
         page: "Page Swap Drawer",
         error: error?.name ?? "unknown",
       });
-      if (!exchangeRate) {
+      if (!exchangeRate || !swapId) {
         return;
       }
       // Consider the swap as cancelled (on provider perspective) in case of error
@@ -86,14 +81,12 @@ export function Modal({
 
   return (
     <>
-      {provider !== "ftx" && provider !== "ftxus" && (
-        <Terms
-          provider={provider}
-          onClose={onClose}
-          onCTA={onAcceptTerms}
-          isOpen={target === Target.Terms}
-        />
-      )}
+      <Terms
+        provider={provider}
+        onClose={onClose}
+        onCTA={onAcceptTerms}
+        isOpen={target === Target.Terms}
+      />
 
       {deviceMeta && confirmed && !error && (
         <Confirmation

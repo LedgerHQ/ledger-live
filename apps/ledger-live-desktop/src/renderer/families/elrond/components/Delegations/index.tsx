@@ -3,8 +3,12 @@ import { Trans } from "react-i18next";
 import { HeaderWrapper } from "~/renderer/components/TableContainer";
 import { TableLine } from "~/renderer/families/elrond/blocks/Delegation";
 import Delegation from "~/renderer/families/elrond/components/Delegations/components/Delegation";
-import { Account as AccountType } from "@ledgerhq/types-live";
-import { DelegationType, ElrondProvider } from "~/renderer/families/elrond/types";
+import { DelegationType } from "~/renderer/families/elrond/types";
+import {
+  ElrondProvider,
+  ElrondAccount as AccountType,
+} from "@ledgerhq/live-common/families/elrond/types";
+
 export interface Props {
   delegations: Array<DelegationType>;
   validators: Array<ElrondProvider>;

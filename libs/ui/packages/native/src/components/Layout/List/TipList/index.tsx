@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import List, { BaseListItemProps, BaseListProps } from "../List";
-import Check from "@ledgerhq/icons-ui/native/CheckAloneMedium";
-import Close from "@ledgerhq/icons-ui/native/CloseMedium";
+import Check from "@ledgerhq/icons-ui/nativeLegacy/CheckAloneMedium";
+import Close from "@ledgerhq/icons-ui/nativeLegacy/CloseMedium";
 
 export type TipListItemProps = Omit<BaseListItemProps, "bullet"> & {
   isPositive: boolean;

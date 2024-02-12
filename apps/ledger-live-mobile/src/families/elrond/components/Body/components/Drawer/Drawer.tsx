@@ -3,10 +3,10 @@ import { useTheme } from "@react-navigation/native";
 import BigNumber from "bignumber.js";
 import { ELROND_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/elrond/constants";
 
-import DelegationDrawer from "../../../../../../components/DelegationDrawer";
-import Circle from "../../../../../../components/Circle";
-import FirstLetterIcon from "../../../../../../components/FirstLetterIcon";
-import LedgerLogo from "../../../../../../icons/LiveLogo";
+import DelegationDrawer from "~/components/DelegationDrawer";
+import Circle from "~/components/Circle";
+import FirstLetterIcon from "~/components/FirstLetterIcon";
+import LedgerLogo from "~/icons/LiveLogo";
 
 import useDrawerActions from "./hooks/useDrawerActions";
 import useDrawerItems from "./hooks/useDrawerItems";
@@ -50,12 +50,7 @@ const Drawer = (props: DrawerPropsType) => {
           {ELROND_LEDGER_VALIDATOR_ADDRESS === data.validator.contract ? (
             <LedgerLogo size={size * 0.7} color={colors.text} />
           ) : (
-            <FirstLetterIcon
-              label={name || "-"}
-              round={true}
-              size={size}
-              fontSize={24}
-            />
+            <FirstLetterIcon label={name || "-"} round={true} size={size} fontSize={24} />
           )}
         </Circle>
       )}

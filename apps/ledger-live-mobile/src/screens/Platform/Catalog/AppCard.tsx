@@ -2,14 +2,11 @@ import React, { useCallback, useMemo, memo } from "react";
 import { useTheme } from "@react-navigation/native";
 import { StyleSheet, View, Platform, TouchableOpacity } from "react-native";
 import { useTranslation } from "react-i18next";
-import type {
-  AppBranch,
-  LiveAppManifest,
-} from "@ledgerhq/live-common/platform/types";
+import type { AppBranch, LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { translateContent } from "@ledgerhq/live-common/platform/logic";
-import { useLocale } from "../../../context/Locale";
-import LText from "../../../components/LText";
-import IconChevron from "../../../icons/ArrowRight";
+import { useLocale } from "~/context/Locale";
+import LText from "~/components/LText";
+import IconChevron from "~/icons/ArrowRight";
 import AppIcon from "../AppIcon";
 import { Theme } from "../../../colors";
 
@@ -87,12 +84,7 @@ const AppCard = ({ manifest, onPress }: Props) => {
           },
         ]}
       >
-        <AppIcon
-          isDisabled={isDisabled}
-          size={48}
-          name={manifest.name}
-          icon={manifest.icon}
-        />
+        <AppIcon isDisabled={isDisabled} size={48} name={manifest.name} icon={manifest.icon} />
         <View style={styles.content}>
           <View style={styles.header}>
             <LText

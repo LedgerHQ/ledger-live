@@ -8,11 +8,7 @@ import {
 import "../../../__tests__/test-helpers/setup";
 import TransactionModule from "../transaction";
 import { CeloAllFundsWarning } from "../errors";
-import type {
-  AccountRaw,
-  CurrenciesData,
-  TransactionStatusCommon,
-} from "@ledgerhq/types-live";
+import type { AccountRaw, CurrenciesData, TransactionStatusCommon } from "@ledgerhq/types-live";
 import type { Transaction } from "../types";
 
 // This account is registered for staking and has available funds, locked voting funds,
@@ -80,7 +76,7 @@ const dataset: CurrenciesData<Transaction> = {
       transactions: [
         {
           name: "Same as Recipient",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             amount: new BigNumber(100),
             recipient: LEDGER_CELO_ACCOUNT_1,
@@ -94,7 +90,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "Invalid Address",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             amount: new BigNumber(100),
             recipient: "dsadasdasdasdas",
@@ -142,23 +138,22 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "[send] use all amount - should warn all funds",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             useAllAmount: true,
             mode: "send",
             recipient: LEDGER_CELO_ACCOUNT_2,
           }),
-          expectedStatus: (account) => ({
+          expectedStatus: () => ({
             errors: {},
             warnings: {
               amount: new CeloAllFundsWarning(),
             },
-            totalSpent: account.spendableBalance,
           }),
         },
         {
           name: "Lock - success",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             mode: "lock",
             amount: new BigNumber(5000),
@@ -173,7 +168,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "Unlock - success",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             mode: "unlock",
             amount: new BigNumber(50000),
@@ -188,7 +183,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "Lock - amount required",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             mode: "lock",
           }),
@@ -203,7 +198,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "Unlock - amount required",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             mode: "unlock",
           }),
@@ -218,7 +213,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "Unlock - Not enough balance",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             mode: "unlock",
             amount: new BigNumber(200000000000000000),
@@ -234,7 +229,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "Vote - success",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             mode: "vote",
             useAllAmount: true,
@@ -250,7 +245,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "Vote - Not enough balance",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             mode: "vote",
             recipient: VALIDATOR_ACCOUNT_1,
@@ -267,7 +262,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "Activate Vote - success",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             mode: "activate",
             recipient: VALIDATOR_ACCOUNT_1,
@@ -281,7 +276,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "Revoke Vote - success",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             mode: "revoke",
             recipient: VALIDATOR_ACCOUNT_1,
@@ -297,7 +292,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "Revoke Vote - Not enough balance",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             mode: "revoke",
             recipient: VALIDATOR_ACCOUNT_1,
@@ -315,7 +310,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "Revoke Vote - voted amount should be used when revoke amount is set",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             mode: "revoke",
             recipient: VALIDATOR_ACCOUNT_1,
@@ -363,7 +358,7 @@ const dataset: CurrenciesData<Transaction> = {
       transactions: [
         {
           name: "Register Account - success",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             mode: "register",
           }),

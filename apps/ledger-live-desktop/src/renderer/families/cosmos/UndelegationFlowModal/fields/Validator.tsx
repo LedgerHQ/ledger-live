@@ -1,17 +1,20 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useCosmosFamilyDelegationsQuerySelector } from "@ledgerhq/live-common/families/cosmos/react";
-import { Transaction, CosmosMappedDelegation } from "@ledgerhq/live-common/families/cosmos/types";
+import {
+  Transaction,
+  CosmosMappedDelegation,
+  CosmosAccount,
+} from "@ledgerhq/live-common/families/cosmos/types";
 import CosmosFamilyLedgerValidatorIcon from "~/renderer/families/cosmos/shared/components/CosmosFamilyLedgerValidatorIcon";
-import { Account } from "@ledgerhq/types-live";
 import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
 import Select from "~/renderer/components/Select";
 import Text from "~/renderer/components/Text";
 type Props = {
-  account: Account;
+  account: CosmosAccount;
   transaction: Transaction;
-  onChange: (delegaiton: CosmosMappedDelegation) => void;
+  onChange: (delegation?: CosmosMappedDelegation | null) => void;
 };
 export default function ValidatorField({ account, transaction, onChange }: Props) {
   const { t } = useTranslation();

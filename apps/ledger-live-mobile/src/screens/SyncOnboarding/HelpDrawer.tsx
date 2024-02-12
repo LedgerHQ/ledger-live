@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { Button, Link, Text } from "@ledgerhq/native-ui";
 import { ExternalLinkMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useTranslation } from "react-i18next";
-import QueuedDrawer from "../../components/QueuedDrawer";
+import QueuedDrawer from "~/components/QueuedDrawer";
 
 export type Props = {
   isOpen: boolean;

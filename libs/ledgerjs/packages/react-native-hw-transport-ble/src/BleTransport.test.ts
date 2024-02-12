@@ -1,5 +1,10 @@
+import { TransportExchangeTimeoutError } from "@ledgerhq/errors";
 import BleTransport from "../src/BleTransport";
-import { Subscription } from "rxjs";
+import { Subscription, VirtualTimeScheduler } from "rxjs";
+
+let mockNoResponseFromDevice = false;
+const mockCancelTransaction = jest.fn();
+let mockNegotiatedMtu: Buffer;
 
 /**
  * It is essential to mock the BLE component of a BLE transport to verify
@@ -12,7 +17,6 @@ import { Subscription } from "rxjs";
  * to cover test cases. It should be noted that this mock is not comprehensive
  * and may require further refinement to meet all requirements.
  */
-
 jest.mock("react-native-ble-plx", () => {
   class BleError {
     iosErrorCode: number;
@@ -42,7 +46,7 @@ jest.mock("react-native-ble-plx", () => {
       };
 
       return {
-        onStateChange: (callback) => {
+        onStateChange: callback => {
           setTimeout(() => callback("PoweredOn"), 500);
           return new Subscription();
         },
@@ -77,12 +81,12 @@ jest.mock("react-native-ble-plx", () => {
               return dynamicProps.isConnected;
             },
 
-            onDisconnected: (callback) => {
+            onDisconnected: callback => {
               callbacks["onDisconnected"] = () => callback(null); // Disconnect without an error
               return new Subscription();
             },
             discoverAllServicesAndCharacteristics: () => {},
-            characteristicsForService: (uuid) => {
+            characteristicsForService: uuid => {
               if (uuid === "13d63400-2c97-6004-0000-4c6564676572") {
                 return [
                   {
@@ -96,11 +100,10 @@ jest.mock("react-native-ble-plx", () => {
                     isReadable: false,
                     deviceID: "20EDD96F-7430-6E33-AB22-DD8AAB857CD4",
                     isNotifying: false,
-                    value:
-                      "BQAAACMzIAAECTEuMC4wLXJjOQTuAAALBDUuMTUEMC4zNQEAAQCQAA==",
+                    value: "BQAAACMzIAAECTEuMC4wLXJjOQTuAAALBDUuMTUEMC4zNQEAAQCQAA==",
                     id: 105553399124864,
                     uuid: "13d63400-2c97-6004-0001-4c6564676572",
-                    monitor: (cb) => {
+                    monitor: cb => {
                       callbacks["onDeviceResponse"] = cb;
                       return new Subscription();
                     },
@@ -134,7 +137,14 @@ jest.mock("react-native-ble-plx", () => {
                     uuid: "13d63400-2c97-6004-0003-4c6564676572",
                     serviceUUID: "13d63400-2c97-6004-0000-4c6564676572",
                     serviceID: 105553179758272,
-                    writeWithoutResponse: async (raw) => {
+                    writeWithoutResponse: async raw => {
+                      // No response are sent back from the device (using `onDeviceResponse`)
+                      // Imitates the case where the device is still connected but does not responds
+                      // when saving the newly confirmed seed.
+                      if (mockNoResponseFromDevice) {
+                        return;
+                      }
+
                       if (!dynamicProps.isConnected)
                         throw new BleError(22, "Device is not connected");
 
@@ -144,13 +154,13 @@ jest.mock("react-native-ble-plx", () => {
                       switch (hex) {
                         // MTU handshake
                         case "0800000000":
-                          value = Buffer.from("080000000199", "hex");
+                          value = mockNegotiatedMtu;
                           break;
                         // getAppAndVersion - returning BOLOS on 1.0.0-rc9
                         case "0500000005b010000000":
                           value = Buffer.from(
                             "05000000130105424f4c4f5309312e302e302d7263399000",
-                            "hex"
+                            "hex",
                           );
                           break;
                         // just used for a non resolving apdu
@@ -176,6 +186,7 @@ jest.mock("react-native-ble-plx", () => {
             },
           };
         },
+        cancelTransaction: mockCancelTransaction,
       };
     },
   };
@@ -183,6 +194,13 @@ jest.mock("react-native-ble-plx", () => {
 
 describe("BleTransport connectivity test coverage", () => {
   const deviceId = "20EDD96F-7430-6E33-AB22-DD8AAB857CD4";
+
+  beforeEach(() => {
+    mockNoResponseFromDevice = false;
+    // MTU of 153 bytes
+    mockNegotiatedMtu = Buffer.from("080000000099", "hex");
+    mockCancelTransaction.mockClear();
+  });
 
   describe("Device available and already paired", () => {
     it("should find the device, connect, negotiate MTU", async () => {
@@ -192,7 +210,7 @@ describe("BleTransport connectivity test coverage", () => {
 
     it("should be disconnectable, and cleanup", async () => {
       const transport = await BleTransport.open(deviceId);
-      await BleTransport.disconnect(deviceId);
+      await BleTransport.disconnectDevice(deviceId);
       expect(transport.isConnected).toBe(false);
     });
 
@@ -244,32 +262,108 @@ describe("BleTransport connectivity test coverage", () => {
       // Nb due to the different environments, the timeout behaves differently here
       // and I can't check against a number for it to be cleared or not.
       expect((transport.disconnectTimeout as any)._destroyed).toBe(false);
-      await BleTransport.disconnect(deviceId);
+      await BleTransport.disconnectDevice(deviceId);
       expect((transport.disconnectTimeout as any)._destroyed).toBe(true);
     });
 
-    it("should handle exchanges if all goes well", async () => {
-      const transport = await BleTransport.open(deviceId);
-      expect(transport.isConnected).toBe(true);
+    describe("When the message to exchange fits in 1 frame", () => {
+      it("should handle exchanges if all goes well", async () => {
+        const transport = await BleTransport.open(deviceId);
+        expect(transport.isConnected).toBe(true);
 
-      const response = await transport.exchange(
-        Buffer.from("b010000000", "hex")
-      );
-      expect(response.toString("hex")).toBe(
-        "0105424f4c4f5309312e302e302d7263399000"
-      );
+        const response = await transport.exchange(Buffer.from("b010000000", "hex"));
+        expect(response.toString("hex")).toBe("0105424f4c4f5309312e302e302d7263399000");
+      });
+
+      it("should throw on exchanges if disconnected", async () => {
+        const transport = await BleTransport.open(deviceId);
+        expect(transport.isConnected).toBe(true);
+        await BleTransport.disconnectDevice(deviceId);
+        await expect(transport.exchange(Buffer.from("b010000000", "hex"))).rejects.toThrow(); // More specific errors some day.
+      });
+
+      describe("And when an abort timeout is set", () => {
+        const abortTimeoutMs = 1000;
+
+        it("should throw an error and cancel the transaction if the abort timeout was reached", done => {
+          const rxjsScheduler = new VirtualTimeScheduler();
+
+          async function asyncFn() {
+            const transport = await BleTransport.open(deviceId);
+            expect(transport.isConnected).toBe(true);
+            // Once we got the transport (MTU exchanged), we stop the communication
+            mockNoResponseFromDevice = true;
+
+            transport
+              .exchange(Buffer.from("b010000000", "hex"), { abortTimeoutMs })
+              .then(() => {
+                done("It should not succeed");
+              })
+              .catch(error => {
+                expect(error).toBeInstanceOf(TransportExchangeTimeoutError);
+                expect(mockCancelTransaction).toHaveBeenCalledTimes(1);
+                done();
+              });
+
+            rxjsScheduler.flush();
+          }
+
+          asyncFn();
+        });
+      });
     });
 
-    it("should throw on exchanges if disconnected", async () => {
-      const transport = await BleTransport.open(deviceId);
-      expect(transport.isConnected).toBe(true);
-      await BleTransport.disconnect(deviceId);
-      await expect(
-        transport.exchange(Buffer.from("b010000000", "hex"))
-      ).rejects.toThrow(); // More specific errors some day.
+    // Multi-frames message response is not handled by our current mocked react-native-ble-plx
+    // The logic of encoding a message into several frames is tested directly with unit tests on ledgerhq/devices/lib/ble/sendAPDU
+    describe("When the message to exchange needs more than 1 frame", () => {
+      beforeEach(async () => {
+        // Triggering a disconnection and clearing the transport cache
+        await BleTransport.disconnectDevice(deviceId);
+
+        // MTU of 25 bytes
+        mockNegotiatedMtu = Buffer.from("080000000019", "hex");
+      });
+
+      afterEach(async () => {
+        // Triggering a disconnection and clearing the transport cache
+        await BleTransport.disconnectDevice(deviceId);
+      });
+
+      describe("And when an abort timeout is set", () => {
+        const abortTimeoutMs = 1000;
+
+        it("should throw an error and cancel the transactions of all operations if the abort timeout was reached", done => {
+          const rxjsScheduler = new VirtualTimeScheduler();
+
+          async function asyncFn() {
+            const transport = await BleTransport.open(deviceId);
+            expect(transport.isConnected).toBe(true);
+            // Once we got the transport (MTU exchanged), we stop the communication
+            mockNoResponseFromDevice = true;
+
+            // Imaginary APDU that will create an encoded message longer than MTU = 25 bytes
+            transport
+              .exchange(Buffer.from("b010000000b010000000b010000000b010000000b010000000", "hex"), {
+                abortTimeoutMs,
+              })
+              .then(() => {
+                done("It should not succeed");
+              })
+              .catch(error => {
+                expect(error).toBeInstanceOf(TransportExchangeTimeoutError);
+                expect(mockCancelTransaction).toHaveBeenCalledTimes(2);
+                done();
+              });
+
+            rxjsScheduler.flush();
+          }
+
+          asyncFn();
+        });
+      });
     });
 
-    it("should disconnect if close is called, even if pending response", (done) => {
+    it("should disconnect if close is called, even if pending response", done => {
       // This is actually a very important test, if we have an ongoing apdu response,
       // as in, the device never replied, but we expressed the intention of disconnecting
       // we will give it a few seconds and then disconnect regardless. Otherwise we fall

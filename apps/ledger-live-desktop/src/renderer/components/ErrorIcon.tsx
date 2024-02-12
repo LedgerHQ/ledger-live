@@ -16,8 +16,10 @@ import {
   DeviceNotOnboarded,
   NoSuchAppOnProvider,
   LanguageInstallRefusedOnDevice,
+  ImageDoesNotExistOnDevice,
+  ImageLoadRefusedOnDevice,
 } from "@ledgerhq/live-common/errors";
-import { Icons } from "@ledgerhq/react-ui";
+import { IconsLegacy } from "@ledgerhq/react-ui";
 
 export type ErrorIconProps = {
   error: unknown;
@@ -37,9 +39,11 @@ const ErrorIcon = ({ error, size = 44 }: ErrorIconProps) => {
     error instanceof UserRefusedOnDevice ||
     error instanceof UserRefusedAddress ||
     error instanceof LanguageInstallRefusedOnDevice ||
+    error instanceof ImageDoesNotExistOnDevice ||
+    error instanceof ImageLoadRefusedOnDevice ||
     error instanceof UserRefusedDeviceNameChange
   ) {
-    return <Icons.InfoMedium size={size} />;
+    return <IconsLegacy.InfoMedium size={size} color="primary.c80" />;
   }
 
   if (error instanceof SwapGenericAPIError || error instanceof NoSuchAppOnProvider) {

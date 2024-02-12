@@ -3,21 +3,23 @@ import ValidatorRow, { ValidatorRowProps } from "~/renderer/components/Delegatio
 import Text from "~/renderer/components/Text";
 import Check from "~/renderer/icons/Check";
 
-export const Status: ThemedComponent<{
+export const Status = styled(Text)<{
   type?: string;
-}> = styled(Text)`
+}>`
   font-size: 11px;
   font-weight: 700;
   color: ${p =>
     p.type === "active" ? p.theme.colors.positiveGreen : p.theme.colors.palette.text.shade60};
 `;
-export const StyledValidatorRow: ThemedComponent<ValidatorRowProps> = styled(ValidatorRow)`
+export const StyledValidatorRow = styled(ValidatorRow)<ValidatorRowProps>`
   border-color: transparent;
   margin-bottom: 0;
 `;
-export const ChosenMark: ThemedComponent<{
-  active: boolean;
-}> = styled(Check).attrs(p => ({
+export const ChosenMark = styled(Check).attrs<{
+  active?: boolean;
+}>(p => ({
   color: p.active ? p.theme.colors.palette.primary.main : "transparent",
   size: 14,
-}))``;
+}))<{
+  active?: boolean;
+}>``;

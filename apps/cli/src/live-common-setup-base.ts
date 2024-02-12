@@ -1,15 +1,12 @@
 /* eslint-disable no-console */
 import winston from "winston";
-import { EnvName, setEnv, setEnvUnsafe } from "@ledgerhq/live-common/env";
+import { EnvName, setEnv, setEnvUnsafe } from "@ledgerhq/live-env";
 import simple from "@ledgerhq/live-common/logs/simple";
 import { listen } from "@ledgerhq/logs";
 import { setSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
-import { setPlatformVersion } from "@ledgerhq/live-common/platform/version";
-import { PLATFORM_VERSION } from "@ledgerhq/live-common/platform/constants";
 import { setWalletAPIVersion } from "@ledgerhq/live-common/wallet-api/version";
 import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 
-setPlatformVersion(PLATFORM_VERSION);
 setWalletAPIVersion(WALLET_API_VERSION);
 
 setSupportedCurrencies([
@@ -45,6 +42,8 @@ setSupportedCurrencies([
   "bitcoin_testnet",
   "ethereum_ropsten",
   "ethereum_goerli",
+  "ethereum_sepolia",
+  "ethereum_holesky",
   "crypto_org",
   "crypto_org_croeseid",
   "celo",
@@ -75,9 +74,32 @@ setSupportedCurrencies([
   "syscoin",
   "axelar",
   "nyx",
+  "stargaze",
+  "secret_network",
+  "umee",
+  "desmos",
+  "dydx",
   "onomy",
+  "sei_network",
   "persistence",
   "quicksilver",
+  "vechain",
+  "internet_computer",
+  "klaytn",
+  "polygon_zk_evm",
+  "polygon_zk_evm_testnet",
+  "base",
+  "base_goerli",
+  "stacks",
+  "telos_evm",
+  "coreum",
+  "injective",
+  "casper",
+  "neon_evm",
+  "lukso",
+  "filecoin",
+  "linea",
+  "linea_goerli",
 ]);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);
@@ -96,7 +118,7 @@ const winstonFormatConsole = combine(
     message: `${type}: ${message}`,
   }))(),
   format.colorize(),
-  simple()
+  simple(),
 );
 const levels = {
   error: 0,
@@ -115,7 +137,7 @@ if (VERBOSE_FILE) {
       format: winstonFormatJSON,
       filename: VERBOSE_FILE,
       level,
-    })
+    }),
   );
 }
 
@@ -126,7 +148,7 @@ if (VERBOSE && VERBOSE !== "json") {
       // FIXME: this option is not recognzed by winston API
       // colorize: true,
       level,
-    })
+    }),
   );
 } else {
   logger.add(
@@ -134,20 +156,15 @@ if (VERBOSE && VERBOSE !== "json") {
       format: winstonFormatJSON,
       silent: !VERBOSE,
       level,
-    })
+    }),
   );
 }
 
-listen((log) => {
+listen(log => {
   const { type } = log;
   let level = "info";
 
-  if (
-    type === "apdu" ||
-    type === "hw" ||
-    type === "speculos" ||
-    type.includes("debug")
-  ) {
+  if (type === "apdu" || type === "hw" || type === "speculos" || type.includes("debug")) {
     level = "debug";
   } else if (type.includes("warn")) {
     level = "warn";

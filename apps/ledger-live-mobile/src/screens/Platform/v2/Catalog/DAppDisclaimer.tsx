@@ -1,46 +1,21 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Flex,
-  IconBox,
-  Text,
-  Checkbox,
-  Icons,
-  Button,
-} from "@ledgerhq/native-ui";
+import { Flex, IconBox, Text, Checkbox, IconsLegacy, Button } from "@ledgerhq/native-ui";
+import { Disclaimer } from "../hooks";
 import { AppIcon } from "../AppIcon";
-import LedgerIcon from "../../../../icons/Ledger";
-import QueuedDrawer from "../../../../components/QueuedDrawer";
-
-interface Props {
-  name?: string | null;
-  icon?: string | null;
-  isOpened: boolean;
-  isChecked: boolean;
-  onClose: () => void;
-  onContinue: () => void;
-  toggleCheck: () => void;
-}
+import LedgerIcon from "~/icons/Ledger";
+import QueuedDrawer from "~/components/QueuedDrawer";
 
 export function DAppDisclaimer({
-  name,
-  icon,
-  isOpened,
-  isChecked,
-  onClose,
-  onContinue,
-  toggleCheck,
-}: Props) {
+  disclaimer: { name, icon, isChecked, isOpened, onClose, toggleCheck, onConfirm },
+}: {
+  disclaimer: Disclaimer;
+}) {
   const { t } = useTranslation();
 
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpened} onClose={onClose}>
-      <Flex
-        flexDirection="row"
-        justifyContent="center"
-        alignItems="center"
-        mb={10}
-      >
+      <Flex flexDirection="row" justifyContent="center" alignItems="center" mb={10}>
         <IconBox iconSize={28} boxSize={40} Icon={LedgerIcon} />
         {icon && (
           <>
@@ -52,13 +27,7 @@ export function DAppDisclaimer({
         )}
       </Flex>
 
-      <Text
-        variant="h2"
-        mb={6}
-        textAlign="center"
-        color="neutral.c100"
-        uppercase
-      >
+      <Text variant="h2" mb={6} textAlign="center" color="neutral.c100" uppercase>
         {name}
       </Text>
 
@@ -75,7 +44,7 @@ export function DAppDisclaimer({
         backgroundColor="primary.c20"
         borderRadius={2}
       >
-        <Icons.InfoMedium color="primary.c90" size={20} />
+        <IconsLegacy.InfoMedium color="primary.c90" size={20} />
         <Text variant="body" color="primary.c90" ml={5}>
           {t("platform.disclaimer.legalAdviceShort")}
         </Text>
@@ -97,7 +66,7 @@ export function DAppDisclaimer({
       </Flex>
 
       <Flex mt={8}>
-        <Button type="main" onPress={onContinue}>
+        <Button type="main" onPress={onConfirm}>
           {t("platform.disclaimer.CTA")}
         </Button>
       </Flex>
@@ -110,13 +79,7 @@ const IconsSeparator = React.memo(() => (
     {Array(6)
       .fill(undefined)
       .map((_, i) => (
-        <Flex
-          key={i}
-          width="3px"
-          height={1}
-          marginX={2}
-          backgroundColor="neutral.c40"
-        />
+        <Flex key={i} width="3px" height={1} marginX={2} backgroundColor="neutral.c40" />
       ))}
   </Flex>
 ));

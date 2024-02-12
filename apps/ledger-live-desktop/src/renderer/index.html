@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <script>
-      !(function() {
+      !(function () {
         const analytics = (window.analytics = window.analytics || []);
         if (!analytics.initialize)
           if (analytics.invoked)
@@ -28,8 +28,8 @@
               "off",
               "on",
             ];
-            analytics.factory = function(t) {
-              return function() {
+            analytics.factory = function (t) {
+              return function () {
                 const e = Array.prototype.slice.call(arguments);
                 e.unshift(t);
                 analytics.push(e);
@@ -43,6 +43,10 @@
             analytics.SNIPPET_VERSION = "4.1.0";
           }
       })();
+    </script>
+    <!-- https://github.com/parcel-bundler/parcel/issues/1401#issuecomment-1065893254 -->
+    <script>
+      var parcelRequire;
     </script>
     <script defer type="module" src="./index.ts"></script>
     <script

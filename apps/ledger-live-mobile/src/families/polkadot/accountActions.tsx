@@ -1,5 +1,6 @@
 import React from "react";
 import { Trans } from "react-i18next";
+import invariant from "invariant";
 import type { Account } from "@ledgerhq/types-live";
 import {
   canNominate,
@@ -11,24 +12,24 @@ import {
   isElectionOpen,
   isStash,
 } from "@ledgerhq/live-common/families/polkadot/logic";
-import { Icons } from "@ledgerhq/native-ui";
+import { IconsLegacy } from "@ledgerhq/native-ui";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
-import BondIcon from "../../icons/LinkIcon";
-import UnbondIcon from "../../icons/Undelegate";
-import WithdrawUnbondedIcon from "../../icons/Coins";
-import NominateIcon from "../../icons/Vote";
-import ChillIcon from "../../icons/VoteNay";
-import { NavigatorName, ScreenName } from "../../const";
-import { ActionButtonEvent } from "../../components/FabActions";
-
-type NavigationParamsType = readonly [name: string, options: object];
+import { ParamListBase, RouteProp } from "@react-navigation/native";
+import BondIcon from "~/icons/LinkIcon";
+import UnbondIcon from "~/icons/Undelegate";
+import WithdrawUnbondedIcon from "~/icons/Coins";
+import NominateIcon from "~/icons/Vote";
+import ChillIcon from "~/icons/VoteNay";
+import { NavigatorName, ScreenName } from "~/const";
+import { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions";
 
 const getMainActions = (args: {
   account: PolkadotAccount;
   parentAccount?: Account;
+  parentRoute?: RouteProp<ParamListBase, ScreenName>;
 }): ActionButtonEvent[] | null => {
-  const { account, parentAccount } = args;
-  if (!account.polkadotResources) return null;
+  const { account, parentAccount, parentRoute } = args;
+  invariant(account.polkadotResources, "polkadot resources required");
   const accountId = account.id;
   const { lockedBalance } = account.polkadotResources || {};
   const electionOpen = isElectionOpen();
@@ -36,14 +37,13 @@ const getMainActions = (args: {
   const hasPendingBondOperation = hasPendingOperationType(account, "BOND");
   const nominationEnabled = !electionOpen && canNominate(account);
 
-  const earnRewardsEnabled =
-    !electionOpen && !hasBondedBalance && !hasPendingBondOperation;
+  const earnRewardsEnabled = !electionOpen && !hasBondedBalance && !hasPendingBondOperation;
 
   if (hasExternalController(account) || hasExternalStash(account)) {
     return null;
   }
 
-  const getNavigationParams = () => {
+  const getNavigationParams = (): NavigationParamsType => {
     if (!earnRewardsEnabled && !nominationEnabled) {
       return [
         NavigatorName.NoFundsFlow,
@@ -63,6 +63,7 @@ const getMainActions = (args: {
           screen: ScreenName.PolkadotNominateSelectValidators,
           params: {
             accountId,
+            source: parentRoute,
           },
         },
       ];
@@ -83,9 +84,9 @@ const getMainActions = (args: {
   return [
     {
       id: "stake",
-      navigationParams: navigationParams as unknown as NavigationParamsType,
+      navigationParams,
       label: <Trans i18nKey="account.stake" />,
-      Icon: Icons.ClaimRewardsMedium,
+      Icon: IconsLegacy.CoinsMedium,
       event: "button_clicked",
       eventProperties: {
         button: "stake",
@@ -99,27 +100,22 @@ const getMainActions = (args: {
 const getSecondaryActions = (args: {
   account: PolkadotAccount;
   parentAccount?: Account;
+  parentRoute?: RouteProp<ParamListBase, ScreenName>;
 }): ActionButtonEvent[] | null => {
-  const { account } = args;
+  const { account, parentRoute } = args;
   if (!account.polkadotResources) return null;
   const accountId = account.id;
-  const { unlockedBalance, lockedBalance, nominations } =
-    account.polkadotResources || {};
+  const { unlockedBalance, lockedBalance, nominations } = account.polkadotResources || {};
   const electionOpen = isElectionOpen();
   const hasUnlockedBalance = unlockedBalance && unlockedBalance.gt(0);
   const hasBondedBalance = lockedBalance && lockedBalance.gt(0);
   const hasPendingBondOperation = hasPendingOperationType(account, "BOND");
-  const hasPendingWithdrawUnbondedOperation = hasPendingOperationType(
-    account,
-    "WITHDRAW_UNBONDED",
-  );
+  const hasPendingWithdrawUnbondedOperation = hasPendingOperationType(account, "WITHDRAW_UNBONDED");
   const nominationEnabled = !electionOpen && canNominate(account);
-  const chillEnabled =
-    !electionOpen && canNominate(account) && nominations?.length;
+  const chillEnabled = !electionOpen && nominations?.length;
   const bondingEnabled =
     !electionOpen &&
-    ((!hasBondedBalance && !hasPendingBondOperation) ||
-      (hasBondedBalance && canBond(account)));
+    ((!hasBondedBalance && !hasPendingBondOperation) || (hasBondedBalance && canBond(account)));
   const unbondingEnabled = !electionOpen && canUnbond(account);
   const withdrawEnabled =
     !electionOpen && hasUnlockedBalance && !hasPendingWithdrawUnbondedOperation;
@@ -175,9 +171,7 @@ const getSecondaryActions = (args: {
         },
       ],
       label: <Trans i18nKey="polkadot.manage.withdrawUnbonded.title" />,
-      description: (
-        <Trans i18nKey="polkadot.manage.withdrawUnbonded.description" />
-      ),
+      description: <Trans i18nKey="polkadot.manage.withdrawUnbonded.description" />,
       Icon: WithdrawUnbondedIcon,
     },
     {
@@ -189,6 +183,7 @@ const getSecondaryActions = (args: {
           screen: ScreenName.PolkadotNominateSelectValidators,
           params: {
             accountId,
+            source: parentRoute,
           },
         },
       ],

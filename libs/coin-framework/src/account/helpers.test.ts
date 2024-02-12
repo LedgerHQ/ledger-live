@@ -1,15 +1,5 @@
-import {
-  CryptoCurrency,
-  TokenCurrency,
-  Unit,
-} from "@ledgerhq/types-cryptoassets";
-import {
-  Account,
-  ChildAccount,
-  Operation,
-  SubAccount,
-  TokenAccount,
-} from "@ledgerhq/types-live";
+import { CryptoCurrency, TokenCurrency, Unit } from "@ledgerhq/types-cryptoassets";
+import { Account, ChildAccount, Operation, SubAccount, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import {
   areAllOperationsLoaded,
@@ -20,11 +10,7 @@ import {
   getAccountUnit,
   getFeesCurrency,
 } from ".";
-import {
-  isAccountEmpty,
-  isAccountBalanceSignificant,
-  clearAccount,
-} from "./helpers";
+import { isAccountEmpty, isAccountBalanceSignificant, clearAccount } from "./helpers";
 
 const mockAccount = {} as Account;
 const childAccount = {
@@ -251,9 +237,7 @@ describe(getAccountSpendableBalance.name, () => {
     it("should return the account spendable balance", () => {
       const sampleAccountBalance = new BigNumber(10);
       mockAccount.spendableBalance = sampleAccountBalance;
-      expect(getAccountSpendableBalance(mockAccount)).toEqual(
-        sampleAccountBalance
-      );
+      expect(getAccountSpendableBalance(mockAccount)).toEqual(sampleAccountBalance);
     });
   });
 
@@ -261,9 +245,7 @@ describe(getAccountSpendableBalance.name, () => {
     it("should return the account balance", () => {
       const sampleAccountBalance = new BigNumber(10);
       childAccount.balance = sampleAccountBalance;
-      expect(getAccountSpendableBalance(childAccount)).toEqual(
-        sampleAccountBalance
-      );
+      expect(getAccountSpendableBalance(childAccount)).toEqual(sampleAccountBalance);
     });
   });
 
@@ -271,9 +253,7 @@ describe(getAccountSpendableBalance.name, () => {
     it("should return the token account spendable balance", () => {
       const sampleAccountBalance = new BigNumber(10);
       tokenAccount.spendableBalance = sampleAccountBalance;
-      expect(getAccountSpendableBalance(tokenAccount)).toEqual(
-        sampleAccountBalance
-      );
+      expect(getAccountSpendableBalance(tokenAccount)).toEqual(sampleAccountBalance);
     });
   });
 
@@ -301,7 +281,7 @@ describe(isAccountEmpty.name, () => {
   describe("given an account", () => {
     beforeEach(() => {
       mockAccount.type = "Account";
-      mockAccount.currency = { family: "ethereum" } as CryptoCurrency;
+      mockAccount.currency = { family: "evm" } as CryptoCurrency;
     });
     describe("when account has no subaccounts", () => {
       beforeEach(() => {
@@ -465,7 +445,7 @@ describe(clearAccount.name, () => {
 
   describe("given an Account", () => {
     const ethereumCurrency = {
-      family: "ethereum",
+      family: "evm",
     } as CryptoCurrency;
     const withSubAccounts = {
       ...mockAccount,

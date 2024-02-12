@@ -1,1 +1,1 @@
-export * from "@ledgerhq/icons-ui/react";
+export * from "@ledgerhq/icons-ui/reactLegacy";

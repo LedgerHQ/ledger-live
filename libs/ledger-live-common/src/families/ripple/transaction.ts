@@ -12,7 +12,7 @@ import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 export const formatTransaction = (
   { amount, recipient, fee, tag, useAllAmount }: Transaction,
-  account: Account
+  account: Account,
 ): string => `
 SEND ${
   useAllAmount

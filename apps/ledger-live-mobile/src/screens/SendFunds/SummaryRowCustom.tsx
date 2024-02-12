@@ -1,27 +1,7 @@
-import React, { PureComponent } from "react";
-import { View, StyleSheet } from "react-native";
-import LText from "../../components/LText/index";
+import React from "react";
+import { StyleSheet, View } from "react-native";
+import LText from "~/components/LText/index";
 
-export default class SummaryRowCustom extends PureComponent<{
-  label: string;
-  data: React.ReactNode;
-  iconLeft: React.ReactElement;
-}> {
-  render() {
-    const { label, data, iconLeft } = this.props;
-    return (
-      <View style={styles.root}>
-        <View style={styles.iconLeft}>{iconLeft}</View>
-        <View style={styles.right}>
-          <LText style={styles.labelStyle} color="grey">
-            {label}
-          </LText>
-          {data}
-        </View>
-      </View>
-    );
-  }
-}
 const styles = StyleSheet.create({
   root: {
     flexDirection: "row",
@@ -37,3 +17,25 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
+
+type Props = {
+  label: string;
+  data: React.ReactNode;
+  iconLeft: React.ReactElement;
+};
+
+const SummaryRowCustom = ({ label, data, iconLeft }: Props) => {
+  return (
+    <View style={styles.root}>
+      <View style={styles.iconLeft}>{iconLeft}</View>
+      <View style={styles.right}>
+        <LText style={styles.labelStyle} color="grey">
+          {label}
+        </LText>
+        {data}
+      </View>
+    </View>
+  );
+};
+
+export default SummaryRowCustom;

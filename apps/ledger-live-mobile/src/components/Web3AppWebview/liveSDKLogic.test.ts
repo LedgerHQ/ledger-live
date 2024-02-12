@@ -1,11 +1,13 @@
 import BigNumber from "bignumber.js";
 import {
+  CoinType,
   CryptoCurrency,
   CryptoCurrencyId,
   TokenCurrency,
 } from "@ledgerhq/types-cryptoassets";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
+import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
 
 import prepareSignTransaction from "./liveSDKLogic";
 
@@ -18,36 +20,28 @@ describe("prepareSignTransaction", () => {
   it("returns a Transaction", () => {
     // Given
     const parentAccount = createAccount("12");
-    const childAccount = createTokenAccount(
-      "22",
-      "ethereumjs:2:ethereum:0x012:",
-    );
-    const expectedResult = {
+    const childAccount = createTokenAccount("22", "js:2:ethereum:0x012:");
+    const expectedResult: EvmTransaction = {
       amount: new BigNumber("1000"),
       data: Buffer.from([]),
-      estimatedGasLimit: null,
-      family: "ethereum",
-      feeCustomUnit: { code: "Gwei", magnitude: 9, name: "Gwei" },
+      family: "evm",
       feesStrategy: "medium",
       gasPrice: new BigNumber("700000"),
       gasLimit: new BigNumber("1200000"),
-      userGasLimit: new BigNumber("1200000"),
+      customGasLimit: new BigNumber("1200000"),
       mode: "send",
-      networkInfo: null,
       nonce: 8,
       recipient: "0x0123456",
-      subAccountId: "ethereumjs:2:ethereum:0x022:",
+      subAccountId: "js:2:ethereum:0x022:",
       useAllAmount: false,
-      maxFeePerGas: null,
-      maxPriorityFeePerGas: null,
+      maxFeePerGas: undefined,
+      maxPriorityFeePerGas: undefined,
+      type: 1,
+      chainId: 0,
     };
 
     // When
-    const result = prepareSignTransaction(
-      childAccount,
-      parentAccount,
-      createEtherumTransaction(),
-    );
+    const result = prepareSignTransaction(childAccount, parentAccount, createEtherumTransaction());
 
     // Then
     expect(result).toEqual(expectedResult);
@@ -55,11 +49,9 @@ describe("prepareSignTransaction", () => {
 });
 
 // *** UTIL FUNCTIONS ***
-function createEtherumTransaction(): Partial<
-  Transaction & { gasLimit: BigNumber }
-> {
+function createEtherumTransaction(): Partial<Transaction & { gasLimit: BigNumber }> {
   return {
-    family: "ethereum",
+    family: "evm",
     amount: new BigNumber("1000"),
     recipient: "0x0123456",
     nonce: 8,
@@ -72,12 +64,11 @@ function createEtherumTransaction(): Partial<
 const createCryptoCurrency = (family: string): CryptoCurrency => ({
   type: "CryptoCurrency",
   id: "testCoinId" as CryptoCurrencyId,
-  coinType: 8008,
+  coinType: 8008 as CoinType,
   name: "ethereum",
   managerAppName: "ethereum",
   ticker: "MYC",
-  countervalueTicker: "MYC",
-  scheme: "ethereum",
+  scheme: "evm",
   color: "#ff0000",
   family,
   units: [
@@ -101,13 +92,10 @@ const createCryptoCurrency = (family: string): CryptoCurrency => ({
   ],
 });
 
-const defaultEthCryptoFamily = createCryptoCurrency("ethereum");
-const createAccount = (
-  id: string,
-  crypto: CryptoCurrency = defaultEthCryptoFamily,
-): Account => ({
+const defaultEthCryptoFamily = createCryptoCurrency("evm");
+const createAccount = (id: string, crypto: CryptoCurrency = defaultEthCryptoFamily): Account => ({
   type: "Account",
-  id: `ethereumjs:2:ethereum:0x0${id}:`,
+  id: `js:2:ethereum:0x0${id}:`,
   seedIdentifier: "0x01",
   derivationMode: "ethM",
   index: 0,
@@ -151,7 +139,7 @@ const createAccount = (
 function createTokenAccount(id = "32", parentId = "whatever"): TokenAccount {
   return {
     type: "TokenAccount",
-    id: `ethereumjs:2:ethereum:0x0${id}:`,
+    id: `js:2:ethereum:0x0${id}:`,
     parentId,
     token: createTokenCurrency(),
     balance: new BigNumber(0),

@@ -3,6 +3,7 @@ import { Trans } from "react-i18next";
 import Box from "~/renderer/components/Box/Box";
 import { Separator } from "./Separator";
 import Text from "~/renderer/components/Text";
+
 export function DrawerTitle({ i18nKey }: { i18nKey: string }) {
   return (
     <>

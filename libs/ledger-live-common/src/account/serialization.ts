@@ -5,7 +5,6 @@ import {
   getTokenById,
   findTokenById,
 } from "../currencies";
-import accountByFamily from "../generated/account";
 import { isAccountEmpty } from "./helpers";
 import type { SwapOperation, SwapOperationRaw } from "../exchange/swap/types";
 import {
@@ -37,6 +36,7 @@ import {
   fromOperationRaw as commonFromOperationRaw,
 } from "@ledgerhq/coin-framework/account/serialization";
 import { getAccountBridge } from "../bridge";
+import { getAccountBridgeByFamily } from "../bridge/impl";
 
 export function toBalanceHistoryRaw(b: BalanceHistory): BalanceHistoryRaw {
   return b.map(({ date, value }) => [date.toISOString(), value.toString()]);
@@ -49,63 +49,45 @@ export function fromBalanceHistoryRaw(b: BalanceHistoryRaw): BalanceHistory {
 }
 export const toOperationRaw = (
   operation: Operation,
-  preserveSubOperation?: boolean
+  preserveSubOperation?: boolean,
 ): OperationRaw => {
-  const copy: OperationRaw = commonToOperationRaw(
-    operation,
-    preserveSubOperation
-  );
+  const operationRaw: OperationRaw = commonToOperationRaw(operation, preserveSubOperation);
 
-  let e = copy.extra;
-
-  if (e) {
-    const family = inferFamilyFromAccountId(copy.accountId);
+  if (operation.extra) {
+    const family = inferFamilyFromAccountId(operation.accountId);
 
     if (family) {
-      const abf = accountByFamily[family];
-
-      if (abf && abf.toOperationExtraRaw) {
-        e = abf.toOperationExtraRaw(e);
+      const bridge = getAccountBridgeByFamily(family, operation.accountId);
+      if (bridge.toOperationExtraRaw) {
+        operationRaw.extra = bridge.toOperationExtraRaw(operation.extra);
       }
     }
   }
 
-  return {
-    ...copy,
-    extra: e,
-  };
+  return operationRaw;
 };
-export { inferSubOperations } from "@ledgerhq/coin-framework/account/serialization";
+
 export const fromOperationRaw = (
-  operation: OperationRaw,
+  operationRaw: OperationRaw,
   accountId: string,
-  subAccounts?: SubAccount[] | null | undefined
+  subAccounts?: SubAccount[] | null | undefined,
 ): Operation => {
-  const res: Operation = commonFromOperationRaw(
-    operation,
-    accountId,
-    subAccounts
-  );
+  const operation: Operation = commonFromOperationRaw(operationRaw, accountId, subAccounts);
 
-  let e = res.extra;
-
-  if (e) {
-    const family = inferFamilyFromAccountId(res.accountId);
+  if (operationRaw.extra) {
+    const family = inferFamilyFromAccountId(operationRaw.accountId);
 
     if (family) {
-      const abf = accountByFamily[family];
-
-      if (abf && abf.fromOperationExtraRaw) {
-        e = abf.fromOperationExtraRaw(e);
+      const bridge = getAccountBridgeByFamily(family, accountId);
+      if (bridge.fromOperationExtraRaw) {
+        operation.extra = bridge.fromOperationExtraRaw(operationRaw.extra);
       }
     }
   }
 
-  return {
-    ...res,
-    extra: e || {},
-  };
+  return operation;
 };
+
 export function fromSwapOperationRaw(raw: SwapOperationRaw): SwapOperation {
   const { fromAmount, toAmount } = raw;
   return {
@@ -139,7 +121,7 @@ export function fromTokenAccountRaw(raw: TokenAccountRaw): TokenAccount {
   } = raw;
   const token = getTokenById(tokenId);
 
-  const convertOperation = (op) => fromOperationRaw(op, id);
+  const convertOperation = op => fromOperationRaw(op, id);
 
   const res = {
     type: "TokenAccount",
@@ -148,12 +130,9 @@ export function fromTokenAccountRaw(raw: TokenAccountRaw): TokenAccount {
     token,
     starred: starred || false,
     balance: new BigNumber(balance),
-    spendableBalance: spendableBalance
-      ? new BigNumber(spendableBalance)
-      : new BigNumber(balance),
+    spendableBalance: spendableBalance ? new BigNumber(spendableBalance) : new BigNumber(balance),
     creationDate: new Date(creationDate || Date.now()),
-    operationsCount:
-      raw.operationsCount || (operations && operations.length) || 0,
+    operationsCount: raw.operationsCount || (operations && operations.length) || 0,
     operations: (operations || []).map(convertOperation),
     pendingOperations: (pendingOperations || []).map(convertOperation),
     swapHistory: (swapHistory || []).map(fromSwapOperationRaw),
@@ -189,8 +168,8 @@ export function toTokenAccountRaw(ta: TokenAccount): TokenAccountRaw {
     balanceHistoryCache,
     creationDate: ta.creationDate.toISOString(),
     operationsCount,
-    operations: operations.map((o) => toOperationRaw(o)),
-    pendingOperations: pendingOperations.map((o) => toOperationRaw(o)),
+    operations: operations.map(o => toOperationRaw(o)),
+    pendingOperations: pendingOperations.map(o => toOperationRaw(o)),
     swapHistory: (swapHistory || []).map(toSwapOperationRaw),
     approvals,
   };
@@ -213,7 +192,7 @@ export function fromChildAccountRaw(raw: ChildAccountRaw): ChildAccount {
   } = raw;
   const currency = getCryptoCurrencyById(currencyId);
 
-  const convertOperation = (op) => fromOperationRaw(op, id);
+  const convertOperation = op => fromOperationRaw(op, id);
 
   const res: ChildAccount = {
     type: "ChildAccount",
@@ -262,8 +241,8 @@ export function toChildAccountRaw(ca: ChildAccount): ChildAccountRaw {
     balance: balance.toString(),
     balanceHistoryCache,
     creationDate: creationDate.toISOString(),
-    operations: operations.map((o) => toOperationRaw(o)),
-    pendingOperations: pendingOperations.map((o) => toOperationRaw(o)),
+    operations: operations.map(o => toOperationRaw(o)),
+    pendingOperations: pendingOperations.map(o => toOperationRaw(o)),
     swapHistory: (swapHistory || []).map(toSwapOperationRaw),
   };
 }
@@ -288,14 +267,10 @@ export function toSubAccountRaw(subAccount: SubAccount): SubAccountRaw {
       return toTokenAccountRaw(subAccount);
 
     default:
-      throw new Error(
-        "invalid subAccount.type=" + (subAccount as SubAccount).type
-      );
+      throw new Error("invalid subAccount.type=" + (subAccount as SubAccount).type);
   }
 }
-export function fromAccountLikeRaw(
-  rawAccountLike: AccountRawLike
-): AccountLike {
+export function fromAccountLikeRaw(rawAccountLike: AccountRawLike): AccountLike {
   if ("type" in rawAccountLike) {
     //$FlowFixMe
     return fromSubAccountRaw(rawAccountLike);
@@ -348,7 +323,7 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
   const subAccounts =
     subAccountsRaw &&
     subAccountsRaw
-      .map((ta) => {
+      .map(ta => {
         if (ta.type === "TokenAccountRaw") {
           if (findTokenById(ta.tokenId)) {
             return fromTokenAccountRaw(ta);
@@ -360,16 +335,11 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
       .filter(Boolean);
   const currency = getCryptoCurrencyById(currencyId);
   const feesCurrency =
-    (feesCurrencyId &&
-      (findCryptoCurrencyById(feesCurrencyId) ||
-        findTokenById(feesCurrencyId))) ||
+    (feesCurrencyId && (findCryptoCurrencyById(feesCurrencyId) || findTokenById(feesCurrencyId))) ||
     undefined;
-  const unit =
-    currency.units.find((u) => u.magnitude === unitMagnitude) ||
-    currency.units[0];
+  const unit = currency.units.find(u => u.magnitude === unitMagnitude) || currency.units[0];
 
-  const convertOperation = (op) =>
-    fromOperationRaw(op, id, subAccounts as SubAccount[]);
+  const convertOperation = op => fromOperationRaw(op, id, subAccounts as SubAccount[]);
 
   const res: Account = {
     type: "Account",
@@ -404,7 +374,7 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     swapHistory: [],
     syncHash,
     balanceHistoryCache: balanceHistoryCache || emptyHistoryCache,
-    nfts: nfts?.map((n) => fromNFTRaw(n)),
+    nfts: nfts?.map(n => fromNFTRaw(n)),
   };
   res.balanceHistoryCache = generateHistoryFromOperations(res);
 
@@ -489,14 +459,14 @@ export function toAccountRaw(account: Account): AccountRaw {
     syncHash,
     creationDate: creationDate.toISOString(),
     operationsCount,
-    operations: (operations || []).map((o) => toOperationRaw(o)),
-    pendingOperations: (pendingOperations || []).map((o) => toOperationRaw(o)),
+    operations: (operations || []).map(o => toOperationRaw(o)),
+    pendingOperations: (pendingOperations || []).map(o => toOperationRaw(o)),
     currencyId: currency.id,
     unitMagnitude: unit.magnitude,
     lastSyncDate: lastSyncDate.toISOString(),
     balance: balance.toFixed(),
     spendableBalance: spendableBalance.toFixed(),
-    nfts: nfts?.map((n) => toNFTRaw(n)),
+    nfts: nfts?.map(n => toNFTRaw(n)),
   };
 
   if (feesCurrency) {

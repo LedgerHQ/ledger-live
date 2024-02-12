@@ -1,18 +1,18 @@
-import { Button, Icons } from "@ledgerhq/native-ui";
+import { Button, IconsLegacy } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
 import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useStartProfiler } from "@shopify/react-native-performance";
 import { GestureResponderEvent } from "react-native";
-import { useDistribution } from "../../actions/general";
-import { TrackScreen } from "../../analytics";
-import { NavigatorName, ScreenName } from "../../const";
-import {
-  blacklistedTokenIdsSelector,
-  discreetModeSelector,
-} from "../../reducers/settings";
+import { useDistribution } from "~/actions/general";
+import { TrackScreen } from "~/analytics";
+import { NavigatorName, ScreenName } from "~/const";
+import { Box } from "@ledgerhq/native-ui";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { blacklistedTokenIdsSelector, discreetModeSelector } from "~/reducers/settings";
 import Assets from "./Assets";
+import PortfolioQuickActionsBar from "./PortfolioQuickActionsBar";
 
 type Props = {
   hideEmptyTokenAccount: boolean;
@@ -23,6 +23,7 @@ const maxAssetsToDisplay = 5;
 
 const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
   const { t } = useTranslation();
+  const llmWalletQuickActions = useFeature("llmWalletQuickActions");
   const navigation = useNavigation();
   const startNavigationTTITimer = useStartProfiler();
   const distribution = useDistribution({
@@ -32,6 +33,7 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
   const discreetMode = useSelector(discreetModeSelector);
 
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
+  const blacklistedTokenIdsSet = useMemo(() => new Set(blacklistedTokenIds), [blacklistedTokenIds]);
 
   const assetsToDisplay = useMemo(
     () =>
@@ -39,11 +41,11 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
         .filter(asset => {
           return (
             asset.currency.type !== "TokenCurrency" ||
-            !blacklistedTokenIds.includes(asset.currency.id)
+            !blacklistedTokenIdsSet.has(asset.currency.id)
           );
         })
         .slice(0, maxAssetsToDisplay),
-    [distribution, blacklistedTokenIds],
+    [distribution, blacklistedTokenIdsSet],
   );
 
   const goToAssets = useCallback(
@@ -63,6 +65,11 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
         accountsLength={distribution.list && distribution.list.length}
         discreet={discreetMode}
       />
+      {llmWalletQuickActions?.enabled ? (
+        <Box mb={24} mt={18}>
+          <PortfolioQuickActionsBar />
+        </Box>
+      ) : null}
       <Assets assets={assetsToDisplay} />
       {distribution.list.length < maxAssetsToDisplay ? (
         <Button
@@ -71,7 +78,7 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
           outline
           mt={6}
           iconPosition="left"
-          Icon={Icons.PlusMedium}
+          Icon={IconsLegacy.PlusMedium}
           onPress={openAddModal}
         >
           {t("account.emptyState.addAccountCta")}

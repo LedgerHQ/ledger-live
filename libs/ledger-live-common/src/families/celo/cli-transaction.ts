@@ -1,8 +1,4 @@
-import type {
-  Account,
-  AccountLike,
-  AccountLikeArray,
-} from "@ledgerhq/types-live";
+import type { Account, AccountLike, AccountLikeArray } from "@ledgerhq/types-live";
 
 import { from } from "rxjs";
 import { map } from "rxjs/operators";
@@ -37,21 +33,12 @@ function inferTransactions(
     transaction: Transaction;
     mainAccount: Account;
   }>,
-  opts: Record<string, any>
+  opts: Record<string, any>,
 ): Transaction[] {
   const mode = opts.mode || "send";
   invariant(
-    [
-      "send",
-      "lock",
-      "unlock",
-      "withdraw",
-      "vote",
-      "revoke",
-      "activate",
-      "register",
-    ].includes(mode),
-    `Unexpected mode: ${mode}`
+    ["send", "lock", "unlock", "withdraw", "vote", "revoke", "activate", "register"].includes(mode),
+    `Unexpected mode: ${mode}`,
   );
 
   return flatMap(transactions, ({ transaction }) => {
@@ -68,10 +55,7 @@ function inferTransactions(
 
 const celoValidatorGroups = {
   args: [],
-  job: () =>
-    from(getValidatorGroups()).pipe(
-      map((validatorGroup) => JSON.stringify(validatorGroup))
-    ),
+  job: () => from(getValidatorGroups()).pipe(map(validatorGroup => JSON.stringify(validatorGroup))),
 };
 
 export default {

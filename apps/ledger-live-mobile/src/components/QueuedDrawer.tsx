@@ -4,8 +4,9 @@ import { BottomDrawer } from "@ledgerhq/native-ui";
 import { useFocusEffect } from "@react-navigation/native";
 import type { BaseModalProps } from "@ledgerhq/native-ui/components/Layout/Modals/BaseModal/index";
 import { useSelector } from "react-redux";
-import { isModalLockedSelector } from "../reducers/appstate";
-import { Merge } from "../types/helpers";
+import { isModalLockedSelector } from "~/reducers/appstate";
+import { Merge } from "~/types/helpers";
+import { IsInDrawerProvider } from "~/context/IsInDrawerContext";
 
 // Purposefully removes isOpen prop so consumers can't use it directly
 export type Props = Merge<
@@ -199,7 +200,7 @@ const QueuedDrawer = ({
       isOpen={isDisplayed}
       {...rest}
     >
-      {children}
+      <IsInDrawerProvider>{children}</IsInDrawerProvider>
     </BottomDrawer>
   );
 };
@@ -225,9 +226,7 @@ const waitingDrawers: ToBeDisplayedDrawer[] = [];
  *   It should set a state that makes the drawer visible/not visible.
  * @returns the id of the drawer
  */
-function addToWaitingDrawers(
-  onNotifyDrawer: ToBeDisplayedDrawer["onNotifyDrawer"],
-) {
+function addToWaitingDrawers(onNotifyDrawer: ToBeDisplayedDrawer["onNotifyDrawer"]) {
   const id = drawersCounter++;
 
   waitingDrawers.push({ id, onNotifyDrawer });
@@ -253,9 +252,7 @@ function removeFromWaitingDrawers(id: ToBeDisplayedDrawer["id"]) {
     return;
   }
 
-  const index = waitingDrawers.findIndex(
-    waitingDrawer => waitingDrawer.id === id,
-  );
+  const index = waitingDrawers.findIndex(waitingDrawer => waitingDrawer.id === id);
 
   if (index >= 0) {
     waitingDrawers.splice(index, 1);
@@ -321,4 +318,16 @@ function cleanCurrentDisplayedDrawer() {
  */
 function checkCurrentDisplayedDrawer() {
   return !!currentDisplayedDrawer;
+}
+
+/**
+ * Reset displayed and waiting list drawers
+ *
+ * Only used when lock screen appears.
+ */
+export function resetQueuedDrawer() {
+  if (checkCurrentDisplayedDrawer()) {
+    cleanWaitingDrawers();
+    cleanCurrentDisplayedDrawer();
+  }
 }

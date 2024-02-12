@@ -2,7 +2,6 @@ import { BigNumber } from "bignumber.js";
 import React, { useCallback, useMemo, memo } from "react";
 import styled, { css } from "styled-components";
 import { Trans } from "react-i18next";
-import { Polkadot as PolkadotIdenticon } from "@polkadot/react-identicon/icons";
 import { Unit } from "@ledgerhq/types-cryptoassets";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { PolkadotValidator } from "@ledgerhq/live-common/families/polkadot/types";
@@ -11,6 +10,8 @@ import Text from "~/renderer/components/Text";
 import CheckBox from "~/renderer/components/CheckBox";
 import Tooltip from "~/renderer/components/Tooltip";
 import ExternalLink from "~/renderer/icons/ExternalLink";
+import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
+
 const IconContainer = styled.div`
   display: flex;
   align-items: center;
@@ -19,11 +20,13 @@ const IconContainer = styled.div`
   height: 24px;
   color: ${p => p.theme.colors.palette.text.shade60};
 `;
+
 const InfoContainer = styled(Box).attrs(() => ({
   ml: 2,
   flexShrink: 0,
   mr: "auto",
 }))``;
+
 const Title = styled(Box).attrs(() => ({
   horizontal: true,
   alignItems: "center",
@@ -53,6 +56,7 @@ const Title = styled(Box).attrs(() => ({
     white-space: nowrap;
   }
 `;
+
 const SubTitle = styled(Box).attrs(() => ({
   horizontal: true,
 }))`
@@ -60,43 +64,52 @@ const SubTitle = styled(Box).attrs(() => ({
   font-weight: 500;
   color: ${p => p.theme.colors.palette.text.shade60};
 `;
-const Status = styled(Text)`
+
+const Status = styled(Text)<{
+  isElected?: boolean;
+}>`
   font-size: 11px;
   font-weight: 700;
   color: ${p => (p.isElected ? p.theme.colors.positiveGreen : p.theme.colors.palette.text.shade60)};
 `;
+
 const TotalStake = styled.span`
   margin-left: 4px;
   padding-left: 4px;
   border-left: 1px solid ${p => p.theme.colors.palette.text.shade30};
 `;
-const NominatorsCount = styled.span`
+const NominatorsCount = styled.span<{
+  isOversubscribed?: boolean;
+}>`
   font-size: 11px;
   font-weight: 700;
   color: ${p =>
     p.isOversubscribed ? p.theme.colors.warning : p.theme.colors.palette.text.shade100};
 `;
+
 const Commission = styled.span`
   font-size: 11px;
   font-weight: 500;
 `;
+
 const SideInfo = styled(Box).attrs(() => ({
   alignItems: "flex-end",
   textAlign: "right",
 }))`
   margin-right: 8px;
 `;
-const Row: ThemedComponent<{
-  active: boolean;
-  disabled: boolean;
-}> = styled(Box).attrs(() => ({
+
+const Row = styled(Box).attrs(() => ({
   horizontal: true,
   flex: "0 0 56px",
   mb: 2,
   alignItems: "center",
   justifyContent: "flex-start",
   p: 2,
-}))`
+}))<{
+  active: boolean;
+  disabled: boolean;
+}>`
   border-radius: 4px;
   border: 1px solid transparent;
   position: relative;
@@ -123,6 +136,7 @@ const Row: ThemedComponent<{
         `
       : ""}
 `;
+
 type ValidatorRowProps = {
   validator: PolkadotValidator;
   unit: Unit;
@@ -133,6 +147,7 @@ type ValidatorRowProps = {
   onExternalLink: (address: string) => void;
   style?: React.CSSProperties;
 };
+
 const ValidatorRow = ({
   validator,
   unit,
@@ -155,20 +170,23 @@ const ValidatorRow = ({
   const commissionBN = BigNumber(commission); // FIXME: Y U NO BIGNUMBER ?
   const totalBN = BigNumber(totalBonded); // FIXME: Y U NO BIGNUMBER ?
 
-  const onTitleClick = useCallback(
+  const onTitleClick: React.MouseEventHandler<HTMLDivElement> = useCallback(
     e => {
       e.stopPropagation();
       onExternalLink(address);
     },
     [onExternalLink, address],
   );
+
   const onToggle = useCallback(() => {
     onUpdateVote && (!disabled || isSelected) && onUpdateVote(address, !isSelected);
   }, [onUpdateVote, address, disabled, isSelected]);
+
   const formattedCommission = useMemo(
     () => (commissionBN ? `${commissionBN.multipliedBy(100).toFixed(2)} %` : "-"),
     [commissionBN],
   );
+
   const formattedTotal = useMemo(
     () =>
       totalBN && totalBN.gt(0)
@@ -181,10 +199,11 @@ const ValidatorRow = ({
         : "",
     [unit, totalBN],
   );
+
   return (
     <Row style={style} disabled={!!disabled} active={!!isSelected}>
       <IconContainer>
-        <PolkadotIdenticon address={address} size={24} />
+        <FirstLetterIcon label={identity || "-"} />
       </IconContainer>
       <InfoContainer>
         <Tooltip content={identity ? address : null}>

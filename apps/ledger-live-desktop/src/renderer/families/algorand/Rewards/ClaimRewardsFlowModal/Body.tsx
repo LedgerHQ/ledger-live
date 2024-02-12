@@ -2,7 +2,8 @@ import invariant from "invariant";
 import React, { useState, useCallback } from "react";
 import { compose } from "redux";
 import { connect, useDispatch } from "react-redux";
-import { Trans, withTranslation, TFunction } from "react-i18next";
+import { Trans, withTranslation } from "react-i18next";
+import { TFunction } from "i18next";
 import { createStructuredSelector } from "reselect";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import Track from "~/renderer/analytics/Track";
@@ -10,34 +11,36 @@ import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { StepId, StepProps, St } from "./types";
-import { Account, Operation } from "@ledgerhq/types-live";
+import { Account, Operation, SubAccount } from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-import { closeModal, openModal } from "~/renderer/actions/modals";
+import { OpenModal, openModal } from "~/renderer/actions/modals";
+
 import Stepper from "~/renderer/components/Stepper";
 import StepInfo, { StepInfoFooter } from "./steps/StepInfo";
 import GenericStepConnectDevice from "~/renderer/modals/Send/steps/GenericStepConnectDevice";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import logger from "~/renderer/logger";
+import { AlgorandAccount } from "@ledgerhq/live-common/families/algorand/types";
+
+export type Data = {
+  account: AlgorandAccount | SubAccount;
+  parentAccount: AlgorandAccount | undefined | null;
+};
+
 type OwnProps = {
   stepId: StepId;
   onClose: () => void;
   onChangeStepId: (a: StepId) => void;
-  params: {
-    account: Account;
-    parentAccount: Account | undefined | null;
-  };
-  name: string;
+  params: Data;
 };
 type StateProps = {
   t: TFunction;
-  device: Device | undefined | null;
   accounts: Account[];
   device: Device | undefined | null;
-  closeModal: (a: string) => void;
-  openModal: (a: string) => void;
+  openModal: OpenModal;
 };
 type Props = OwnProps & StateProps;
 const steps: Array<St> = [
@@ -64,21 +67,11 @@ const mapStateToProps = createStructuredSelector({
   device: getCurrentDevice,
 });
 const mapDispatchToProps = {
-  closeModal,
   openModal,
 };
-const Body = ({
-  t,
-  stepId,
-  device,
-  closeModal,
-  openModal,
-  onChangeStepId,
-  params,
-  name,
-}: Props) => {
-  const [optimisticOperation, setOptimisticOperation] = useState(null);
-  const [transactionError, setTransactionError] = useState(null);
+const Body = ({ t, stepId, device, onClose, openModal, onChangeStepId, params }: Props) => {
+  const [optimisticOperation, setOptimisticOperation] = useState<Operation | null>(null);
+  const [transactionError, setTransactionError] = useState<Error | null>(null);
   const [signed, setSigned] = useState(false);
   const dispatch = useDispatch();
   const {
@@ -104,10 +97,8 @@ const Body = ({
       transaction,
     };
   });
-  const handleCloseModal = useCallback(() => {
-    closeModal(name);
-  }, [closeModal, name]);
-  const handleStepChange = useCallback(e => onChangeStepId(e.id), [onChangeStepId]);
+
+  const handleStepChange = useCallback((e: St) => onChangeStepId(e.id), [onChangeStepId]);
   const handleRetry = useCallback(() => {
     setTransactionError(null);
     onChangeStepId("connectDevice");
@@ -153,7 +144,7 @@ const Body = ({
     hideBreadcrumb: !!error || !!warning,
     onRetry: handleRetry,
     onStepChange: handleStepChange,
-    onClose: handleCloseModal,
+    onClose,
     error,
     warning,
     status,
@@ -174,7 +165,7 @@ const Body = ({
     </Stepper>
   );
 };
-const C: React.ComponentType<OwnProps> = compose(
+const C = compose<React.ComponentType<OwnProps>>(
   connect(mapStateToProps, mapDispatchToProps),
   withTranslation(),
 )(Body);

@@ -6,7 +6,7 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { useHistory } from "react-router-dom";
 import { stakeDefaultTrack } from "./constants";
-import { track, page } from "~/renderer/analytics/segment";
+import { track, trackPage } from "~/renderer/analytics/segment";
 import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
 import { getAccountName } from "@ledgerhq/live-common/account/index";
@@ -16,6 +16,8 @@ type Props = {
   shouldRedirect?: boolean;
   alwaysShowNoFunds?: boolean;
   source?: string;
+  /** "get-funds" shows different text on no funds modal if entry point is "get coins" button. Default is undefined. */
+  entryPoint?: "get-funds" | undefined;
 };
 
 const useStakeFlow = () => {
@@ -24,12 +26,18 @@ const useStakeFlow = () => {
   const dispatch = useDispatch();
 
   return useCallback(
-    ({ currencies, shouldRedirect = true, alwaysShowNoFunds = false, source }: Props = {}) => {
+    ({
+      currencies,
+      shouldRedirect = true,
+      alwaysShowNoFunds = false,
+      source,
+      entryPoint,
+    }: Props = {}) => {
       const cryptoCurrencies = filterCurrencies(listCurrencies(true), {
         currencies: currencies || list,
       });
 
-      page("Stake", "Drawer - Choose Asset", {
+      trackPage("Stake", "Drawer - Choose Asset", {
         ...stakeDefaultTrack,
         page: history.location.pathname,
         type: "drawer",
@@ -39,7 +47,7 @@ const useStakeFlow = () => {
         {
           currencies: cryptoCurrencies,
           onAccountSelected: (account: AccountLike, parentAccount: Account | null = null) => {
-            track("button_clicked", {
+            track("button_clicked2", {
               ...stakeDefaultTrack,
               button: "asset",
               page: history.location.pathname,
@@ -51,7 +59,13 @@ const useStakeFlow = () => {
             setDrawer();
 
             if (alwaysShowNoFunds) {
-              dispatch(openModal("MODAL_NO_FUNDS_STAKE", { account, parentAccount }));
+              dispatch(
+                openModal("MODAL_NO_FUNDS_STAKE", {
+                  account,
+                  parentAccount,
+                  entryPoint,
+                }),
+              );
             } else {
               dispatch(openModal("MODAL_START_STAKE", { account, parentAccount, source }));
             }
@@ -66,7 +80,7 @@ const useStakeFlow = () => {
         {
           onRequestClose: () => {
             setDrawer();
-            track("button_clicked", {
+            track("button_clicked2", {
               ...stakeDefaultTrack,
               button: "close",
               page: history.location.pathname,

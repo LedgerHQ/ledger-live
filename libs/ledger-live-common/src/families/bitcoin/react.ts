@@ -6,7 +6,7 @@ export const useFeesStrategy = (a: Account, t: Transaction): FeeStrategy[] => {
   if (!networkInfo) return [];
 
   const strategies = (networkInfo as NetworkInfo).feeItems.items
-    .map((feeItem) => {
+    .map(feeItem => {
       return {
         label: feeItem.speed,
         amount: feeItem.feePerByte,

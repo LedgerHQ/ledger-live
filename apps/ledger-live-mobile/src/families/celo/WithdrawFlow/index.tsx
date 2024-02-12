@@ -3,11 +3,11 @@ import { createStackNavigator } from "@react-navigation/stack";
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Platform } from "react-native";
-import StepHeader from "../../../components/StepHeader";
-import { ScreenName } from "../../../const";
-import { getStackNavigatorConfig } from "../../../navigation/navigatorConfig";
-import ConnectDevice from "../../../screens/ConnectDevice";
-import SelectDevice from "../../../screens/SelectDevice";
+import StepHeader from "~/components/StepHeader";
+import { ScreenName } from "~/const";
+import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
+import ConnectDevice from "~/screens/ConnectDevice";
+import SelectDevice from "~/screens/SelectDevice";
 import WithdrawAmount from "./WithdrawAmount";
 import ValidationError from "./ValidationError";
 import ValidationSuccess from "./ValidationSuccess";
@@ -18,10 +18,7 @@ const totalSteps = "3"; // Withdraw, Device, Confirmation
 function WithdrawFlow() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const stackNavigationConfig = useMemo(
-    () => getStackNavigatorConfig(colors, true),
-    [colors],
-  );
+  const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
   return (
     <Stack.Navigator
       screenOptions={{

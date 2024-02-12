@@ -14,10 +14,18 @@ export default function StepAmount({ account, transaction, status, error }: Step
   const { t } = useTranslation();
   return (
     <Box flow={1}>
-      <TrackPage category="Solana Delegation Withdraw" name="Step Amount" />
+      <TrackPage
+        category="Solana Delegation Withdraw"
+        name="Step Amount"
+        flow="stake"
+        action="withdraw"
+        currency="sol"
+      />
       {error && <ErrorBanner error={error} />}
       <Label>{t("send.steps.details.amount")}</Label>
-      <AmountField transaction={transaction} account={account} status={status} />
+      {transaction ? (
+        <AmountField transaction={transaction} account={account} status={status} />
+      ) : null}
       {status.errors.fee && <ErrorDisplay error={status.errors.fee} />}
     </Box>
   );
@@ -42,7 +50,12 @@ export function StepAmountFooter({
         <Button mr={1} secondary onClick={onClose}>
           {t("common.cancel")}
         </Button>
-        <Button disabled={!canNext} primary onClick={() => transitionTo("connectDevice")}>
+        <Button
+          disabled={!canNext}
+          isLoading={bridgePending}
+          primary
+          onClick={() => transitionTo("connectDevice")}
+        >
           {t("common.continue")}
         </Button>
       </Box>

@@ -7,20 +7,22 @@ import Text from "~/renderer/components/Text";
 import ScrollLoadingList from "~/renderer/components/ScrollLoadingList";
 import IconAngleDown from "~/renderer/icons/AngleDown";
 import ValidatorSearchInput from "~/renderer/components/Delegation/ValidatorSearchInput";
-import ValidatorItem, { ValidatorItemType } from "./ValidatorItem";
+import ValidatorItem from "./ValidatorItem";
 import { ELROND_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/elrond/constants";
 import { useSearchValidators } from "@ledgerhq/live-common/families/elrond/react";
-import { Account } from "@ledgerhq/types-live";
-import { Transaction } from "@ledgerhq/live-common/generated/types";
-import { ElrondProvider } from "@ledgerhq/live-common/families/elrond/types";
+import {
+  ElrondAccount,
+  ElrondProvider,
+  Transaction,
+} from "@ledgerhq/live-common/families/elrond/types";
 
 const ValidatorsFieldContainer = styled(Box)`
   border: 1px solid ${p => p.theme.colors.palette.divider};
   border-radius: 4px;
 `;
-const SeeAllButton: ThemedComponent<{
+const SeeAllButton = styled.div<{
   expanded: boolean;
-}> = styled.div`
+}>`
   display: flex;
   color: ${p => p.theme.colors.wallet};
   align-items: center;
@@ -39,7 +41,7 @@ const SeeAllButton: ThemedComponent<{
   }
 `;
 type Props = {
-  account: Account;
+  account: ElrondAccount;
   validators: Array<ElrondProvider>;
   onSelectValidator: (recipient: string) => void;
   transaction: Transaction;
@@ -67,7 +69,7 @@ const ValidatorList = (props: Props) => {
     [transaction.recipient],
   );
   const renderItem = useCallback(
-    (props: ValidatorItemType) =>
+    (props: ElrondProvider & { disabled: boolean }) =>
       props ? (
         <ValidatorItem
           unit={unit}
@@ -80,7 +82,7 @@ const ValidatorList = (props: Props) => {
     [onSelectValidator, account, unit, isActiveValidator],
   );
   const onSearch = useCallback(
-    (event: SyntheticInputEvent<HTMLInputElement>) => setSearch(event.target.value),
+    (event: React.ChangeEvent<HTMLInputElement>) => setSearch(event.target.value),
     [],
   );
   return (

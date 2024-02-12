@@ -1,6 +1,8 @@
 import { ServerApi } from "stellar-sdk";
 import type { BigNumber } from "bignumber.js";
 import type {
+  Operation,
+  OperationType,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
@@ -29,13 +31,7 @@ export enum NetworkCongestionLevel {
   HIGH = "HIGH",
 }
 
-export const StellarMemoType = [
-  "NO_MEMO",
-  "MEMO_TEXT",
-  "MEMO_ID",
-  "MEMO_HASH",
-  "MEMO_RETURN",
-];
+export const StellarMemoType = ["NO_MEMO", "MEMO_TEXT", "MEMO_ID", "MEMO_HASH", "MEMO_RETURN"];
 
 export type StellarTransactionMode = "send" | "changeTrust";
 
@@ -97,3 +93,14 @@ export type Signer = {
 export type TransactionStatus = TransactionStatusCommon;
 
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
+
+export type StellarOperation = Operation<StellarOperationExtra>;
+
+export type StellarOperationExtra = {
+  pagingToken?: string;
+  assetCode?: string;
+  assetIssuer?: string;
+  assetAmount?: string;
+  ledgerOpType: OperationType;
+  memo?: string;
+};

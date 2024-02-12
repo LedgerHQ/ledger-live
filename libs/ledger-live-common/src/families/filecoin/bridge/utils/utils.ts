@@ -1,48 +1,79 @@
 import { Account, Address, Operation } from "@ledgerhq/types-live";
-import {
-  getCryptoCurrencyById,
-  parseCurrencyUnit,
-} from "../../../../currencies";
+import { log } from "@ledgerhq/logs";
+import { getCryptoCurrencyById, parseCurrencyUnit } from "../../../../currencies";
 import { BigNumber } from "bignumber.js";
-import { BroadcastTransactionRequest, TransactionResponse } from "./types";
-import {
-  GetAccountShape,
-  AccountShapeInfo,
-} from "../../../../bridge/jsHelpers";
+import { BroadcastTransactionRequest, TransactionResponse, TxStatus } from "./types";
+import { GetAccountShape, AccountShapeInfo } from "../../../../bridge/jsHelpers";
 import { fetchBalances, fetchBlockHeight, fetchTxs } from "./api";
 import { encodeAccountId } from "../../../../account";
 import { encodeOperationId } from "../../../../operation";
 import flatMap from "lodash/flatMap";
 
 type TxsById = {
-  [id: string]: {
-    Send: TransactionResponse;
-    Fee?: TransactionResponse;
-  };
+  [id: string]:
+    | {
+        Send: TransactionResponse;
+        Fee?: TransactionResponse;
+      }
+    | {
+        InvokeContract: TransactionResponse;
+        Fee?: TransactionResponse;
+      };
 };
 
 export const getUnit = () => getCryptoCurrencyById("filecoin").units[0];
 
-export const processTxs = (
-  txs: TransactionResponse[]
-): TransactionResponse[] => {
-  const txsById = txs.reduce((result: TxsById, currentTx) => {
-    const { hash, type } = currentTx;
-    const txById = result[hash] || {};
+export const processTxs = (txs: TransactionResponse[]): TransactionResponse[] => {
+  // Group all tx types related to same tx cid into the same object
+  const txsByTxCid = txs.reduce((txsByTxCidResult: TxsById, currentTx) => {
+    const { hash: txCid, type: txType } = currentTx;
+    const txByType = txsByTxCidResult[txCid] || {};
 
-    if (type == "Send" || type == "Fee") txById[type] = currentTx;
+    switch (txType) {
+      case "Send":
+      case "InvokeContract":
+      case "Fee":
+        txByType[txType] = currentTx;
+        break;
+      default:
+        log("warn", `tx type [${txType}] on tx cid [${txCid}] was not recognized.`);
+        break;
+    }
 
-    result[hash] = txById;
-    return result;
+    txsByTxCidResult[txCid] = txByType;
+    return txsByTxCidResult;
   }, {});
 
+  // Once all tx types have been grouped, we want to find
   const processedTxs: TransactionResponse[] = [];
-  for (const txId in txsById) {
-    const { Fee: feeTx, Send: sendTx } = txsById[txId];
+  for (const txCid in txsByTxCid) {
+    const item = txsByTxCid[txCid];
+    const feeTx = item.Fee;
+    let mainTx: TransactionResponse | undefined;
+    if ("Send" in item) {
+      mainTx = item.Send;
+    } else if ("InvokeContract" in item) {
+      mainTx = item.InvokeContract;
+    } else {
+      log(
+        "warn",
+        `unexpected tx type, tx with cid [${txCid}] and payload [${JSON.stringify(item)}]`,
+      );
+    }
 
-    if (feeTx) sendTx.fee = feeTx.amount;
+    if (!mainTx) {
+      if (feeTx) {
+        log("warn", `feeTx [${feeTx.hash}] found without a mainTx linked to it.`);
+      }
 
-    processedTxs.push(sendTx);
+      continue;
+    }
+
+    if (feeTx) {
+      mainTx.fee = feeTx.amount;
+    }
+
+    processedTxs.push(mainTx);
   }
 
   return processedTxs;
@@ -51,7 +82,7 @@ export const processTxs = (
 export const mapTxToOps =
   (accountId, { address }: AccountShapeInfo) =>
   (tx: TransactionResponse): Operation[] => {
-    const { to, from, hash, timestamp, amount, fee } = tx;
+    const { to, from, hash, timestamp, amount, fee, status } = tx;
     const ops: Operation[] = [];
     const date = new Date(timestamp * 1000);
     const value = parseCurrencyUnit(getUnit(), amount.toString());
@@ -59,6 +90,7 @@ export const mapTxToOps =
 
     const isSending = address === from;
     const isReceiving = address === to;
+    const hasFailed = status !== TxStatus.Ok;
 
     if (isSending) {
       ops.push({
@@ -74,6 +106,7 @@ export const mapTxToOps =
         recipients: [to],
         date,
         extra: {},
+        hasFailed,
       });
     }
 
@@ -91,6 +124,7 @@ export const mapTxToOps =
         recipients: [to],
         date,
         extra: {},
+        hasFailed,
       });
     }
 
@@ -104,18 +138,11 @@ export const getAddress = (a: Account): Address =>
 
 export const getTxToBroadcast = (
   operation: Operation,
-  signature: string
+  signature: string,
+  rawData: Record<string, any>,
 ): BroadcastTransactionRequest => {
-  const { extra, senders, recipients, value, fee } = operation;
-  const {
-    gasLimit,
-    gasFeeCap,
-    gasPremium,
-    method,
-    version,
-    nonce,
-    signatureType,
-  } = extra;
+  const { senders, recipients, value, fee } = operation;
+  const { gasLimit, gasFeeCap, gasPremium, method, version, nonce, signatureType } = rawData;
 
   return {
     message: {
@@ -137,7 +164,7 @@ export const getTxToBroadcast = (
   };
 };
 
-export const getAccountShape: GetAccountShape = async (info) => {
+export const getAccountShape: GetAccountShape = async info => {
   const { address, currency, derivationMode } = info;
 
   const accountId = encodeAccountId({

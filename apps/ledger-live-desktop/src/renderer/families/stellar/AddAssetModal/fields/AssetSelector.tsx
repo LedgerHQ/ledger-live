@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from "react";
+import { TFunction } from "i18next";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -9,6 +10,9 @@ import Select from "~/renderer/components/Select";
 import Text from "~/renderer/components/Text";
 import ToolTip from "~/renderer/components/Tooltip";
 import ExclamationCircleThin from "~/renderer/icons/ExclamationCircleThin";
+import { Account } from "@ledgerhq/types-live";
+import { Transaction } from "@ledgerhq/live-common/families/stellar/types";
+
 const EllipsisMiddle = ({ children }: { children: string }) => {
   const Start = styled(Box)`
     width: 50%;
@@ -53,7 +57,6 @@ const renderItem = ({
           <FirstLetterIcon
             color={isDisabled ? "palette.text.shade40" : "palette.text.shade100"}
             label={name}
-            mr={1}
           />
           <Text ff="Inter|Medium">{name}</Text>
           <Text fontSize={3} color="palette.text.shade40" mr="4px">
@@ -81,21 +84,47 @@ const renderItem = ({
     </Box>
   );
 };
-export default function DelegationSelectorField({ account, transaction, t, onChange }: any) {
+
+export const getAssetObject = (assetId: string) => {
+  const assetString = assetId.split("/")[2];
+  const [assetCode, assetIssuer] = assetString.split(":");
+  return {
+    assetCode,
+    assetIssuer,
+  };
+};
+
+export default function DelegationSelectorField({
+  account,
+  transaction,
+  t,
+  onChange,
+}: {
+  account: Account;
+  transaction: Transaction;
+  t: TFunction;
+  onChange: (_: TokenCurrency | undefined | null) => void;
+}) {
   const [query, setQuery] = useState("");
   const subAccounts = account.subAccounts;
   const options = listTokensForCryptoCurrency(account.currency);
-  const value = useMemo(() => options.find(({ id }) => id === transaction.assetId), [
-    options,
-    transaction,
-  ]);
+  const value = useMemo(
+    () =>
+      options.find(({ id }) => {
+        const { assetCode, assetIssuer } = getAssetObject(id);
+        return assetCode === transaction.assetCode && assetIssuer === transaction.assetIssuer;
+      }),
+    [options, transaction],
+  );
   return (
     <Box flow={1} mb={4}>
       <Select
         value={value}
         options={options}
         getOptionValue={({ name }) => name}
-        isOptionDisabled={({ id }) => subAccounts.some(({ token }) => token.id === id)}
+        isOptionDisabled={({ id }) =>
+          subAccounts?.some(acc => acc.type === "TokenAccount" && acc.token.id === id) || false
+        }
         renderValue={renderItem}
         renderOption={renderItem}
         onInputChange={setQuery}

@@ -24,11 +24,7 @@ const Container = styled(Flex).attrs({
 const ModalChoice: React.FC<Props> = props => {
   const { iconName, title, onPress, event, eventProperties } = props;
   return (
-    <Touchable
-      onPress={onPress}
-      event={event}
-      eventProperties={eventProperties}
-    >
+    <Touchable onPress={onPress} event={event} eventProperties={eventProperties}>
       <Container>
         <Text flex={1} variant="large" fontWeight="semiBold">
           {title}
@@ -41,9 +37,7 @@ const ModalChoice: React.FC<Props> = props => {
           alignItems="center"
           justifyContent="center"
         >
-          {iconName ? (
-            <Icon name={iconName} size={24} color="primary.c80" />
-          ) : null}
+          {iconName ? <Icon name={iconName} size={24} color="primary.c80" /> : null}
         </Flex>
       </Container>
     </Touchable>

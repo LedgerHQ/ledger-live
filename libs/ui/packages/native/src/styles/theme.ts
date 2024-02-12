@@ -8,6 +8,7 @@ export const textVariants = [
   "h1Inter",
   "h2",
   "h3",
+  "h3Inter",
   "h4",
   "h5",
   "large",
@@ -22,7 +23,7 @@ export const textVariants = [
   "tinyAlpha",
 ] as const;
 
-export type TextVariants = typeof textVariants[number];
+export type TextVariants = (typeof textVariants)[number];
 
 export type ThemeScale<Type, Aliases extends string> = Array<Type> & Record<Aliases, Type>;
 

@@ -19,22 +19,35 @@ import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
 import FullNodeStatus from "~/renderer/modals/AddAccounts/FullNodeStatus";
 import useSatStackStatus from "~/renderer/hooks/useSatStackStatus";
-import useEnv from "~/renderer/hooks/useEnv";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 // TODO move to bitcoin family
 // eslint-disable-next-line no-restricted-imports
 import { SatStackStatus } from "@ledgerhq/live-common/families/bitcoin/satstack";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { NetworkDown } from "@ledgerhq/errors";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-const listSupportedTokens = () => listTokens().filter(t => isCurrencySupported(t.parentCurrency));
+import { CryptoCurrencyId, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { Feature } from "@ledgerhq/types-live";
+
+const listSupportedTokens = () =>
+  listTokens().filter(token => isCurrencySupported(token.parentCurrency));
+
 const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
+  const mock = useEnv("MOCK");
+
   const axelar = useFeature("currencyAxelar");
   const nyx = useFeature("currencyNyx");
+  const stargaze = useFeature("currencyStargaze");
+  const secretNetwork = useFeature("currencySecretNetwork");
+  const umee = useFeature("currencyUmee");
+  const desmos = useFeature("currencyDesmos");
+  const dydx = useFeature("currencyDydx");
   const onomy = useFeature("currencyOnomy");
+  const seiNetwork = useFeature("currencySeiNetwork");
   const quicksilver = useFeature("currencyQuicksilver");
   const persistence = useFeature("currencyPersistence");
   const avaxCChain = useFeature("currencyAvalancheCChain");
+  const stacks = useFeature("currencyStacks");
   const optimism = useFeature("currencyOptimism");
   const optimismGoerli = useFeature("currencyOptimismGoerli");
   const arbitrum = useFeature("currencyArbitrum");
@@ -50,15 +63,37 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const moonriver = useFeature("currencyMoonriver");
   const velasEvm = useFeature("currencyVelasEvm");
   const syscoin = useFeature("currencySyscoin");
+  const internetComputer = useFeature("currencyInternetComputer");
+  const telosEvm = useFeature("currencyTelosEvm");
+  const coreum = useFeature("currencyCoreum");
+  const polygonZkEvm = useFeature("currencyPolygonZkEvm");
+  const polygonZkEvmTestnet = useFeature("currencyPolygonZkEvmTestnet");
+  const base = useFeature("currencyBase");
+  const baseGoerli = useFeature("currencyBaseGoerli");
+  const klaytn = useFeature("currencyKlaytn");
+  const injective = useFeature("currencyInjective");
+  const vechain = useFeature("currencyVechain");
+  const casper = useFeature("currencyCasper");
+  const neonEvm = useFeature("currencyNeonEvm");
+  const lukso = useFeature("currencyLukso");
+  const linea = useFeature("currencyLinea");
+  const lineaGoerli = useFeature("currencyLineaGoerli");
 
   const featureFlaggedCurrencies = useMemo(
-    () => ({
+    (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
       axelar,
       nyx,
+      stargaze,
+      secret_network: secretNetwork,
+      umee,
+      desmos,
+      dydx,
       onomy,
+      sei_network: seiNetwork,
       quicksilver,
       persistence,
       avalanche_c_chain: avaxCChain,
+      stacks,
       optimism,
       optimism_goerli: optimismGoerli,
       arbitrum,
@@ -74,9 +109,35 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       moonriver,
       velas_evm: velasEvm,
       syscoin,
+      internet_computer: internetComputer,
+      telos_evm: telosEvm,
+      coreum,
+      polygon_zk_evm: polygonZkEvm,
+      polygon_zk_evm_testnet: polygonZkEvmTestnet,
+      base,
+      base_goerli: baseGoerli,
+      klaytn,
+      injective,
+      vechain,
+      casper,
+      neon_evm: neonEvm,
+      lukso,
+      linea,
+      linea_goerli: lineaGoerli,
     }),
     [
+      axelar,
+      stargaze,
+      secretNetwork,
+      umee,
+      desmos,
+      dydx,
+      onomy,
+      seiNetwork,
+      quicksilver,
+      persistence,
       avaxCChain,
+      stacks,
       optimism,
       optimismGoerli,
       arbitrum,
@@ -97,21 +158,49 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       onomy,
       persistence,
       quicksilver,
+      internetComputer,
+      telosEvm,
+      coreum,
+      polygonZkEvm,
+      polygonZkEvmTestnet,
+      base,
+      baseGoerli,
+      klaytn,
+      injective,
+      vechain,
+      casper,
+      neonEvm,
+      lukso,
+      linea,
+      lineaGoerli,
     ],
   );
+
   const currencies = useMemo(() => {
-    const currencies = (listSupportedCurrencies() as CryptoOrTokenCurrency[]).concat(
-      listSupportedTokens(),
+    const supportedCurrenciesAndTokens = (
+      listSupportedCurrencies() as CryptoOrTokenCurrency[]
+    ).concat(listSupportedTokens());
+
+    const deactivatedCurrencyIds = new Set(
+      mock
+        ? [] // mock mode: all currencies are available for playwrigth tests
+        : Object.entries(featureFlaggedCurrencies)
+            .filter(([, feature]) => !feature?.enabled)
+            .map(([id]) => id),
     );
-    const deactivatedCurrencies = Object.entries(featureFlaggedCurrencies)
-      .filter(([, feature]) => !feature?.enabled)
-      .map(([name]) => name);
-    return currencies.filter(c => !deactivatedCurrencies.includes(c.id));
-  }, [featureFlaggedCurrencies]);
+
+    return supportedCurrenciesAndTokens.filter(
+      c =>
+        (c.type === "CryptoCurrency" && !deactivatedCurrencyIds.has(c.id)) ||
+        (c.type === "TokenCurrency" && !deactivatedCurrencyIds.has(c.parentCurrency.id)),
+    );
+  }, [featureFlaggedCurrencies, mock]);
+
   const url =
     currency && currency.type === "TokenCurrency"
       ? supportLinkByTokenType[currency.tokenType as keyof typeof supportLinkByTokenType]
       : null;
+
   return (
     <>
       {!navigator.onLine ? (
@@ -121,7 +210,6 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       ) : currency ? (
         <CurrencyDownStatusAlert currencies={[currency]} />
       ) : null}
-      {/* $FlowFixMe: onChange type is not good */}
       <SelectCurrency currencies={currencies} autoFocus onChange={setCurrency} value={currency} />
       <FullNodeStatus currency={currency} />
       {currency && currency.type === "TokenCurrency" ? (
@@ -142,6 +230,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
     </>
   );
 };
+
 export const StepChooseCurrencyFooter = ({
   transitionTo,
   currency,
@@ -201,6 +290,7 @@ export const StepChooseCurrencyFooter = ({
     tokenAccount,
     transitionTo,
   ]);
+
   return (
     <>
       <TrackPage category="AddAccounts" name="Step1" />
@@ -230,4 +320,5 @@ export const StepChooseCurrencyFooter = ({
     </>
   );
 };
+
 export default StepChooseCurrency;

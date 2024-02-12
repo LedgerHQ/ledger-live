@@ -4,7 +4,7 @@ import { useTheme } from "styled-components/native";
 import FlexBox from "../../../src/components/Layout/Flex";
 import Row from "../../../src/components/Layout/Table/Row";
 import Text from "../../../src/components/Text";
-import { Icons } from "../../../src/assets";
+import { IconsLegacy } from "../../../src/assets";
 
 export default {
   title: "Layout/Table/Row",
@@ -31,7 +31,7 @@ const TopLeft = ({ text }: { text: string | undefined }) => {
       <Text color={neutral.c100} variant="body" fontWeight="semiBold" mr={2}>
         {text}
       </Text>
-      <Icons.CircledCheckMedium size={12.5} color={success.c50} />
+      <IconsLegacy.CircledCheckMedium size={12.5} color={success.c50} />
     </FlexBox>
   );
 };

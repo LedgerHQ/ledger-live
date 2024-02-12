@@ -1,7 +1,7 @@
 import React, { useMemo, useEffect, useCallback, useState } from "react";
 import { useSelector } from "react-redux";
 import { Account, NFT, ProtoNFT } from "@ledgerhq/types-live";
-import { nftsByCollections } from "@ledgerhq/live-common/nft/helpers";
+import { nftsByCollections } from "@ledgerhq/live-nft";
 import { hiddenNftCollectionsSelector } from "~/renderer/reducers/settings";
 import Select from "~/renderer/components/Select";
 import Option from "./Option";
@@ -16,7 +16,8 @@ const SelectNFT = ({
   maybeNFTCollection?: string;
   account: Account;
 }) => {
-  const [token, setToken] = useState(null);
+  const [token, setToken] = useState<ProtoNFT | NFT | null>(null);
+  // @ts-expect-error impossible to type this, we need to bump react-select to v5
   const getOptionValue = useCallback(item => item, []);
   const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
   const filteredNFTs = useMemo(
@@ -29,7 +30,7 @@ const SelectNFT = ({
     [maybeNFTCollection, account.nfts, account.id, hiddenNftCollections],
   );
   const onTokenSelected = useCallback(
-    token => {
+    (token: ProtoNFT | NFT) => {
       onSelect(token);
       setToken(token);
     },
@@ -51,6 +52,7 @@ const SelectNFT = ({
   return (
     <Select
       isSearchable={false}
+      // @ts-expect-error Select hell again, we need to upgrade
       onChange={onTokenSelected}
       options={filteredNFTs}
       value={token}

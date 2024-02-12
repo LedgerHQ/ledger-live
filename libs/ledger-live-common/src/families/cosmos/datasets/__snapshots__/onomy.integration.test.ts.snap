@@ -1,0 +1,65 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`onomy currency bridge scanAccounts onomy seed 1 1`] = `
+[
+  {
+    "balance": "3108838947096625518",
+    "currencyId": "onomy",
+    "derivationMode": "",
+    "freshAddress": "onomy1gyauvl44q2apn3u3aujm36q8zrj74vry0e2p7v",
+    "freshAddressPath": "44'/118'/0'/0/0",
+    "freshAddresses": [
+      {
+        "address": "onomy1gyauvl44q2apn3u3aujm36q8zrj74vry0e2p7v",
+        "derivationPath": "44'/118'/0'/0/0",
+      },
+    ],
+    "id": "js:2:onomy:onomy1gyauvl44q2apn3u3aujm36q8zrj74vry0e2p7v:",
+    "index": 0,
+    "name": "Onomy 1",
+    "nfts": undefined,
+    "pendingOperations": [],
+    "seedIdentifier": "03d5e0ebb3f1ae2afe87e5d5a24b5029a59cc12f8fd1056840091b2f0b97e54e83",
+    "spendableBalance": "2056240423338275653",
+    "starred": false,
+    "swapHistory": [],
+    "syncHash": undefined,
+    "unitMagnitude": 18,
+    "used": true,
+    "xpub": "onomy1gyauvl44q2apn3u3aujm36q8zrj74vry0e2p7v",
+  },
+  {
+    "balance": "0",
+    "currencyId": "onomy",
+    "derivationMode": "",
+    "freshAddress": "onomy1v2mp0m7k96dm9qv60fkspcqlzpkzrwnecy8mat",
+    "freshAddressPath": "44'/118'/1'/0/0",
+    "freshAddresses": [
+      {
+        "address": "onomy1v2mp0m7k96dm9qv60fkspcqlzpkzrwnecy8mat",
+        "derivationPath": "44'/118'/1'/0/0",
+      },
+    ],
+    "id": "js:2:onomy:onomy1v2mp0m7k96dm9qv60fkspcqlzpkzrwnecy8mat:",
+    "index": 1,
+    "name": "Onomy 2",
+    "nfts": undefined,
+    "pendingOperations": [],
+    "seedIdentifier": "03d5e0ebb3f1ae2afe87e5d5a24b5029a59cc12f8fd1056840091b2f0b97e54e83",
+    "spendableBalance": "0",
+    "starred": false,
+    "swapHistory": [],
+    "syncHash": undefined,
+    "unitMagnitude": 18,
+    "used": false,
+    "xpub": "onomy1v2mp0m7k96dm9qv60fkspcqlzpkzrwnecy8mat",
+  },
+]
+`;
+
+exports[`onomy currency bridge scanAccounts onomy seed 1 2`] = `
+[
+  [],
+  [],
+]
+`;

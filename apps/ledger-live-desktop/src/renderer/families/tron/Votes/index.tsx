@@ -1,9 +1,8 @@
 import React, { useMemo } from "react";
-import invariant from "invariant";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
-import { Account } from "@ledgerhq/types-live";
+import { SubAccount } from "@ledgerhq/types-live";
 import {
   useTronSuperRepresentatives,
   getLastVotedDate,
@@ -13,7 +12,6 @@ import {
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
-import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
 import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";
@@ -31,9 +29,10 @@ import ClaimRewards from "~/renderer/icons/ClaimReward";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
 import { localeSelector } from "~/renderer/reducers/settings";
 import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
-type Props = {
-  account: Account;
-};
+import { TronAccount } from "@ledgerhq/live-common/families/tron/types";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+import { urls } from "~/config/urls";
+
 const Wrapper = styled(Box).attrs(() => ({
   p: 3,
 }))`
@@ -41,17 +40,18 @@ const Wrapper = styled(Box).attrs(() => ({
   justify-content: space-between;
   align-items: center;
 `;
-const Delegation = ({ account }: Props) => {
+const Delegation = ({ account }: { account: TronAccount }) => {
   const locale = useSelector(localeSelector);
   const superRepresentatives = useTronSuperRepresentatives();
+  const stakingUrl = useLocalizedUrl(urls.stakingTron);
   const lastVoteDate = getLastVotedDate(account);
-  const duration = useMemo(() => (lastVoteDate ? moment().diff(lastVoteDate, "days") : 0), [
-    lastVoteDate,
-  ]);
+  const duration = useMemo(
+    () => (lastVoteDate ? moment().diff(lastVoteDate, "days") : 0),
+    [lastVoteDate],
+  );
   const unit = getAccountUnit(account);
   const explorerView = getDefaultExplorerView(account.currency);
   const { tronResources } = account;
-  invariant(tronResources, "tron account expected");
   const { votes, tronPower, unwithdrawnReward } = tronResources;
   const discreet = useDiscreetMode();
   const formattedUnwidthDrawnReward = formatCurrencyUnit(unit, BigNumber(unwithdrawnReward || 0), {
@@ -152,7 +152,6 @@ const Delegation = ({ account }: Props) => {
                 )
               }
               percentTP={String(Math.round(100 * Number((voteCount * 1e2) / tronPower)) / 100)}
-              currency={account.currency}
               explorerView={explorerView}
             />
           ))}
@@ -180,7 +179,7 @@ const Delegation = ({ account }: Props) => {
             <Box mt={2}>
               <LinkWithExternalIcon
                 label={<Trans i18nKey="tron.voting.emptyState.info" />}
-                onClick={() => openURL(urls.stakingTron)}
+                onClick={() => openURL(stakingUrl)}
               />
             </Box>
           </Box>
@@ -201,8 +200,8 @@ const Delegation = ({ account }: Props) => {
     </TableContainer>
   );
 };
-const Votes = ({ account }: Props) => {
-  if (!account.tronResources) return null;
+const Votes = ({ account }: { account: TronAccount | SubAccount }) => {
+  if (account.type !== "Account") return null;
   return <Delegation account={account} />;
 };
 export default Votes;

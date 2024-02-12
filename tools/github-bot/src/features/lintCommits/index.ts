@@ -17,7 +17,7 @@ export function lintCommits(app: Probot) {
       // …even though the docs say that it's supposed to be .synchronize, it's not.
       "pull_request.edited",
     ],
-    async (context) => {
+    async context => {
       const { payload, octokit } = context;
       const { owner, repo } = context.repo();
       const login = payload.sender.login;
@@ -35,7 +35,7 @@ export function lintCommits(app: Probot) {
           login: login,
         },
       });
-    }
+    },
   );
 
   monitorWorkflow(app, {
@@ -44,10 +44,14 @@ export function lintCommits(app: Probot) {
     description:
       "Lint the Pull Request commit messages according to the [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) specification.",
     summaryFile: "summary.json",
-    getInputs: (payload) => ({
+    getInputs: payload => ({
       ref: payload.check_run.head_sha,
       from: payload.check_run.pull_requests[0]?.base.ref,
       login: payload.sender.login,
     }),
+    getConclusion: conclusion => {
+      if (conclusion == "failure") return "neutral";
+      return conclusion;
+    },
   });
 }

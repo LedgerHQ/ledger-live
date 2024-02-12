@@ -1,1 +1,1 @@
-export { default } from "./StakingRewardsBanner";
+export { default } from "./Delegations";

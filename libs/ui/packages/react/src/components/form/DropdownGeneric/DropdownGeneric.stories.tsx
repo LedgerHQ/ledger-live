@@ -87,7 +87,7 @@ const DropdownStoryTemplate = (
 
 export const DropdownGeneric = (args: DropdownGenericProps): React.ReactNode => {
   const alignItemsPossibilities = ["flex-start", "center", "flex-end"];
-  const containerPropsPossibilities = alignItemsPossibilities.map((alignItems) => ({ alignItems }));
+  const containerPropsPossibilities = alignItemsPossibilities.map(alignItems => ({ alignItems }));
   return (
     <Flex flexDirection="column" rowGap={5}>
       {/**
@@ -95,12 +95,12 @@ export const DropdownGeneric = (args: DropdownGenericProps): React.ReactNode => 
        * the actual code in "show code" instead of an opaque "DropdownTemplate" component
        *  */}
       <Text variant="h5">Small content:</Text>
-      {containerPropsPossibilities.map((containerProps) =>
+      {containerPropsPossibilities.map(containerProps =>
         DropdownStoryTemplate({ ...args, containerProps }),
       )}
       <Divider />
       <Text variant="h5">Big content:</Text>
-      {containerPropsPossibilities.map((containerProps) =>
+      {containerPropsPossibilities.map(containerProps =>
         DropdownStoryTemplate({ ...args, big: true, containerProps }),
       )}
       <Divider />
@@ -110,7 +110,7 @@ export const DropdownGeneric = (args: DropdownGenericProps): React.ReactNode => 
         title="In the following examples, the component passed as a child has its own internal maxHeight
         setup"
       ></Alert>
-      {containerPropsPossibilities.map((containerProps) =>
+      {containerPropsPossibilities.map(containerProps =>
         DropdownStoryTemplate({ ...args, big: true, bigWithMaxHeight: true, containerProps }),
       )}
     </Flex>
@@ -121,11 +121,19 @@ export default {
   title: "Form/SelectAndDialogs",
   component: DropdownGenericComponent,
   argTypes: {
-    label: { type: "string", defaultValue: "Label" },
-    placement: { control: { type: "select", defaultValue: "bottom" } },
-    closeOnClickOutside: { type: "boolean", defaultValue: true },
-    closeOnClickInside: { type: "boolean", defaultValue: false },
-    disabled: { type: "boolean", defaultValue: false },
-    flipDisabled: { type: "boolean", defaultValue: false },
+    label: { type: "string" },
+    placement: { control: { type: "select" } },
+    closeOnClickOutside: { type: "boolean" },
+    closeOnClickInside: { type: "boolean" },
+    disabled: { type: "boolean" },
+    flipDisabled: { type: "boolean" },
+  },
+  args: {
+    label: "Label",
+    placement: "bottom",
+    closeOnClickOutside: true,
+    closeOnClickInside: false,
+    disabled: false,
+    flipDisabled: false,
   },
 };

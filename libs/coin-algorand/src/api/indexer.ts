@@ -13,8 +13,7 @@ const LIMIT = 100; // Max nb of transactions per request
 const BASE_URL = getEnv("API_ALGORAND_BLOCKCHAIN_EXPLORER_API_ENDPOINT");
 const INDEXER_URL = `${BASE_URL}/idx2/v2`;
 
-const fullUrl = (route: string): string =>
-  `${INDEXER_URL}${route}?limit=${LIMIT}`;
+const fullUrl = (route: string): string => `${INDEXER_URL}${route}?limit=${LIMIT}`;
 
 export const getAccountTransactions =
   (network: NetworkRequestCall) =>
@@ -42,7 +41,7 @@ export const getAccountTransactions =
       // @ts-ignore
       nextToken = data["next-token"];
       newRawTxs = data.transactions;
-      newRawTxs.map(parseRawTransaction).forEach((tx) => mergedTxs.push(tx));
+      newRawTxs.map(parseRawTransaction).forEach(tx => mergedTxs.push(tx));
     } while (newRawTxs.length >= LIMIT);
 
     return mergedTxs;
@@ -56,9 +55,7 @@ const parseRawTransaction = (tx: any): AlgoTransaction => {
       amount: new BigNumber(info.amount),
       recipientAddress: info.receiver,
       closeAmount:
-        info["close-amount"] === undefined
-          ? undefined
-          : new BigNumber(info["close-amount"]),
+        info["close-amount"] === undefined ? undefined : new BigNumber(info["close-amount"]),
       closeToAddress: info["close-remainder-to"],
     };
     details = paymentInfo;
@@ -70,9 +67,7 @@ const parseRawTransaction = (tx: any): AlgoTransaction => {
       assetRecipientAddress: info.receiver,
       assetSenderAddress: info.sender,
       assetCloseAmount:
-        info["close-amount"] === undefined
-          ? undefined
-          : new BigNumber(info["close-amount"]),
+        info["close-amount"] === undefined ? undefined : new BigNumber(info["close-amount"]),
       assetCloseToAddress: tx["close-to"],
     };
     details = assetTransferInfo;
@@ -86,13 +81,9 @@ const parseRawTransaction = (tx: any): AlgoTransaction => {
     senderRewards: new BigNumber(tx["sender-rewards"]),
     recipientRewards: new BigNumber(tx["receiver-rewards"]),
     closeRewards:
-      tx["close-rewards"] === undefined
-        ? undefined
-        : new BigNumber(tx["close-rewards"]),
+      tx["close-rewards"] === undefined ? undefined : new BigNumber(tx["close-rewards"]),
     closeAmount:
-      tx["closing-amount"] === undefined
-        ? undefined
-        : new BigNumber(tx["closing-amount"]),
+      tx["closing-amount"] === undefined ? undefined : new BigNumber(tx["closing-amount"]),
     fee: new BigNumber(tx.fee),
     note: tx.note,
 

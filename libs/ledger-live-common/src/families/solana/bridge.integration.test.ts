@@ -29,14 +29,11 @@ import {
   SolanaTokenAccountHoldsAnotherToken,
   SolanaValidatorRequired,
 } from "./errors";
-import {
-  encodeAccountIdWithTokenAccountAddress,
-  MAX_MEMO_LENGTH,
-} from "./logic";
+import { encodeAccountIdWithTokenAccountAddress, MAX_MEMO_LENGTH } from "./logic";
 import createTransaction from "./js-createTransaction";
 import { compact } from "lodash/fp";
 import { assertUnreachable } from "./utils";
-import { getEnv } from "../../env";
+import { getEnv } from "@ledgerhq/live-env";
 import { ChainAPI } from "./api";
 import {
   SolanaStakeAccountIsNotDelegatable,
@@ -44,11 +41,7 @@ import {
 } from "./errors";
 import getTransactionStatus from "./js-getTransactionStatus";
 import { prepareTransaction } from "./js-prepareTransaction";
-import type {
-  Account,
-  CurrenciesData,
-  DatasetTest,
-} from "@ledgerhq/types-live";
+import type { Account, CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
 import { encodeAccountId } from "../../account";
 import { LATEST_BLOCKHASH_MOCK } from "./bridge/mock-data";
 
@@ -61,12 +54,10 @@ const testOnChainData = {
   fundedSenderBalance: new BigNumber(83389840),
   // 1000/0
   fundedAddress: "ARRKL4FT4LMwpkhUw4xNbfiHqR7UdePtzGLvkszgydqZ",
-  wSolSenderAssocTokenAccAddress:
-    "8RtwWeqdFz4EFuZU3MAadfYMWSdRMamjFrfq6BXkHuNN",
+  wSolSenderAssocTokenAccAddress: "8RtwWeqdFz4EFuZU3MAadfYMWSdRMamjFrfq6BXkHuNN",
   wSolSenderAssocTokenAccBalance: new BigNumber(7960720),
   // 1000/0, mint - wrapped sol
-  wSolFundedAccountAssocTokenAccAddress:
-    "Ax69sAxqBSdT3gMAUqXb8pUvgxSLCiXfTitMALEnFZTS",
+  wSolFundedAccountAssocTokenAccAddress: "Ax69sAxqBSdT3gMAUqXb8pUvgxSLCiXfTitMALEnFZTS",
   // 0/0
   notWSolTokenAccAddress: "Hsm3S2rhX4HwxYBaCyqgJ1cCtFyFSBu6HLy1bdvh7fKs",
   validatorAddress: "9QU2QSxhb24FUX3Tu2FpczXjpK3VYrvRudywSZaM29mF",
@@ -91,7 +82,7 @@ const mainAccId = encodeAccountId({
 /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
 const wSolSubAccId = encodeAccountIdWithTokenAccountAddress(
   mainAccId,
-  testOnChainData.wSolSenderAssocTokenAccAddress
+  testOnChainData.wSolSenderAssocTokenAccAddress,
 );
 
 const fees = (signatureCount: number) =>
@@ -196,7 +187,7 @@ function recipientRequired(): TransactionTestSpec[] {
       uiState: {},
     },
   ];
-  return models.map((model) => {
+  return models.map(model => {
     return {
       name: `${model.kind} :: status is error: recipient required`,
       transaction: {
@@ -219,7 +210,7 @@ function recipientRequired(): TransactionTestSpec[] {
 }
 
 function recipientNotValid(): TransactionTestSpec[] {
-  return recipientRequired().map((spec) => {
+  return recipientRequired().map(spec => {
     return {
       ...spec,
       transaction: {
@@ -237,7 +228,7 @@ function recipientNotValid(): TransactionTestSpec[] {
 }
 
 function recipientIsSameAsSender(): TransactionTestSpec[] {
-  return recipientRequired().map((spec) => {
+  return recipientRequired().map(spec => {
     return {
       ...spec,
       transaction: {
@@ -256,7 +247,7 @@ function recipientIsSameAsSender(): TransactionTestSpec[] {
 
 function memoIsTooLong(): TransactionTestSpec[] {
   return compact(
-    recipientRequired().map((spec) => {
+    recipientRequired().map(spec => {
       const tx = spec.transaction as Transaction;
       switch (tx.model.kind) {
         case "transfer":
@@ -285,7 +276,7 @@ function memoIsTooLong(): TransactionTestSpec[] {
         default:
           return assertUnreachable(tx.model);
       }
-    })
+    }),
   );
 }
 
@@ -307,9 +298,7 @@ function transferTests(): TransactionTestSpec[] {
         warnings: {},
         estimatedFees: fees(1),
         amount: testOnChainData.fundedSenderBalance.dividedBy(2),
-        totalSpent: testOnChainData.fundedSenderBalance
-          .dividedBy(2)
-          .plus(fees(1)),
+        totalSpent: testOnChainData.fundedSenderBalance.dividedBy(2).plus(fees(1)),
       },
     },
     {
@@ -332,7 +321,7 @@ function transferTests(): TransactionTestSpec[] {
           .minus(fees(1))
           .minus(testOnChainData.fees.systemAccountRentExempt),
         totalSpent: testOnChainData.fundedSenderBalance.minus(
-          testOnChainData.fees.systemAccountRentExempt
+          testOnChainData.fees.systemAccountRentExempt,
         ),
       },
     },
@@ -554,8 +543,7 @@ function tokenTests(): TransactionTestSpec[] {
         errors: {},
         warnings: {
           recipient: new SolanaAccountNotFunded(),
-          recipientAssociatedTokenAccount:
-            new SolanaRecipientAssociatedTokenAccountWillBeFunded(),
+          recipientAssociatedTokenAccount: new SolanaRecipientAssociatedTokenAccountWillBeFunded(),
         },
         // this fee is dynamic, skip
         //estimatedFees: new BigNumber(2044280),
@@ -583,9 +571,7 @@ function stakingTests(): TransactionTestSpec[] {
       },
       expectedStatus: {
         amount: new BigNumber(-1),
-        estimatedFees: fees(1).plus(
-          testOnChainData.fees.stakeAccountRentExempt
-        ),
+        estimatedFees: fees(1).plus(testOnChainData.fees.stakeAccountRentExempt),
         totalSpent: zero,
         errors: {
           amount: new AmountRequired(),
@@ -607,9 +593,7 @@ function stakingTests(): TransactionTestSpec[] {
       },
       expectedStatus: {
         amount: zero,
-        estimatedFees: fees(1).plus(
-          testOnChainData.fees.stakeAccountRentExempt
-        ),
+        estimatedFees: fees(1).plus(testOnChainData.fees.stakeAccountRentExempt),
         totalSpent: fees(1).plus(testOnChainData.fees.stakeAccountRentExempt),
         errors: {
           amount: new AmountRequired(),
@@ -631,9 +615,7 @@ function stakingTests(): TransactionTestSpec[] {
       },
       expectedStatus: {
         amount: testOnChainData.fundedSenderBalance,
-        estimatedFees: fees(1).plus(
-          testOnChainData.fees.stakeAccountRentExempt
-        ),
+        estimatedFees: fees(1).plus(testOnChainData.fees.stakeAccountRentExempt),
         totalSpent: fees(1)
           .plus(testOnChainData.fees.stakeAccountRentExempt)
           .plus(testOnChainData.fundedSenderBalance),
@@ -657,12 +639,8 @@ function stakingTests(): TransactionTestSpec[] {
       },
       expectedStatus: {
         amount: new BigNumber(1),
-        estimatedFees: fees(1).plus(
-          testOnChainData.fees.stakeAccountRentExempt
-        ),
-        totalSpent: fees(1)
-          .plus(testOnChainData.fees.stakeAccountRentExempt)
-          .plus(1),
+        estimatedFees: fees(1).plus(testOnChainData.fees.stakeAccountRentExempt),
+        totalSpent: fees(1).plus(testOnChainData.fees.stakeAccountRentExempt).plus(1),
         errors: {
           voteAccAddr: new SolanaValidatorRequired(),
         },
@@ -683,12 +661,8 @@ function stakingTests(): TransactionTestSpec[] {
       },
       expectedStatus: {
         amount: new BigNumber(1),
-        estimatedFees: fees(1).plus(
-          testOnChainData.fees.stakeAccountRentExempt
-        ),
-        totalSpent: fees(1)
-          .plus(testOnChainData.fees.stakeAccountRentExempt)
-          .plus(1),
+        estimatedFees: fees(1).plus(testOnChainData.fees.stakeAccountRentExempt),
+        totalSpent: fees(1).plus(testOnChainData.fees.stakeAccountRentExempt).plus(1),
         errors: {
           voteAccAddr: new InvalidAddress(),
         },
@@ -709,12 +683,8 @@ function stakingTests(): TransactionTestSpec[] {
       },
       expectedStatus: {
         amount: new BigNumber(1),
-        estimatedFees: fees(1).plus(
-          testOnChainData.fees.stakeAccountRentExempt
-        ),
-        totalSpent: fees(1)
-          .plus(testOnChainData.fees.stakeAccountRentExempt)
-          .plus(1),
+        estimatedFees: fees(1).plus(testOnChainData.fees.stakeAccountRentExempt),
+        totalSpent: fees(1).plus(testOnChainData.fees.stakeAccountRentExempt).plus(1),
         errors: {
           voteAccAddr: new SolanaInvalidValidator(),
         },
@@ -735,12 +705,8 @@ function stakingTests(): TransactionTestSpec[] {
       },
       expectedStatus: {
         amount: new BigNumber(1),
-        estimatedFees: fees(1).plus(
-          testOnChainData.fees.stakeAccountRentExempt
-        ),
-        totalSpent: fees(1)
-          .plus(testOnChainData.fees.stakeAccountRentExempt)
-          .plus(1),
+        estimatedFees: fees(1).plus(testOnChainData.fees.stakeAccountRentExempt),
+        totalSpent: fees(1).plus(testOnChainData.fees.stakeAccountRentExempt).plus(1),
         errors: {},
       },
     },
@@ -760,15 +726,14 @@ function stakingTests(): TransactionTestSpec[] {
       },
       expectedStatus: {
         amount: testOnChainData.fundedSenderBalance
-          .minus(fees(1))
+          .minus(fees(1)) // transaction fee
+          .minus(fees(1).multipliedBy(2)) // undelegate + withdraw fees reserve
           .minus(testOnChainData.fees.stakeAccountRentExempt)
           .minus(testOnChainData.fees.systemAccountRentExempt),
-        estimatedFees: fees(1).plus(
-          testOnChainData.fees.stakeAccountRentExempt
-        ),
-        totalSpent: testOnChainData.fundedSenderBalance.minus(
-          testOnChainData.fees.systemAccountRentExempt
-        ),
+        estimatedFees: fees(1).plus(testOnChainData.fees.stakeAccountRentExempt),
+        totalSpent: testOnChainData.fundedSenderBalance
+          .minus(testOnChainData.fees.systemAccountRentExempt)
+          .minus(fees(1).multipliedBy(2)), // undelegate + withdraw fees reserve,
         errors: {},
       },
     },
@@ -993,8 +958,7 @@ const baseTx = {
 
 const baseAPI = {
   getLatestBlockhash: () => Promise.resolve(LATEST_BLOCKHASH_MOCK),
-  getFeeForMessage: (_msg: unknown) =>
-    Promise.resolve(testOnChainData.fees.lamportsPerSignature),
+  getFeeForMessage: (_msg: unknown) => Promise.resolve(testOnChainData.fees.lamportsPerSignature),
 } as ChainAPI;
 
 type StakeTestSpec = {
@@ -1087,6 +1051,7 @@ async function runStakeTest(stakeTestSpec: StakeTestSpec) {
           },
         } as SolanaStake,
       ],
+      unstakeReserve: BigNumber(0),
     },
   };
 

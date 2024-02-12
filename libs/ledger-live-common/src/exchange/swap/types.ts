@@ -1,37 +1,8 @@
 import { BigNumber } from "bignumber.js";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import {
-  Account,
-  AccountLike,
-  AccountRaw,
-  AccountRawLike,
-  Operation,
-} from "@ledgerhq/types-live";
+import { Account, AccountLike, AccountRaw, AccountRawLike, Operation } from "@ledgerhq/types-live";
 import { Transaction, TransactionRaw } from "../../generated/types";
 import { Result as UseBridgeTransactionResult } from "../../bridge/useBridgeTransaction";
-
-/// v3 changes here, move me to another folder soon
-export type ValidKYCStatus = "open" | "pending" | "approved" | "closed";
-export type KYCStatus = { id: string; status: ValidKYCStatus | "rejected" };
-export type GetKYCStatus = (arg0: string, arg1: string) => Promise<KYCStatus>;
-export type SubmitKYC = (
-  str: string,
-  data: KYCData
-) => Promise<KYCStatus | { error: Error }>;
-
-export type KYCData = {
-  firstName: string;
-  lastName: string;
-  residenceAddress: {
-    street1: string;
-    street2: string;
-    city: string;
-    state: string;
-    country: string;
-    postalCode: string;
-  };
-};
-///
 
 export type Exchange = {
   fromParentAccount: Account | null | undefined;
@@ -45,8 +16,16 @@ export type ExchangeRaw = {
   toParentAccount: AccountRaw | null | undefined;
   toAccount: AccountRawLike;
 };
+
+export type ExchangeRateError = {
+  name?: string;
+  amount?: BigNumber;
+  minAmountFromFormatted?: string;
+  maxAmountFromFormatted?: string;
+};
+
 export type ExchangeRate = {
-  rate: BigNumber | undefined;
+  rate?: BigNumber;
   // NB Raw rate, for display
   magnitudeAwareRate: BigNumber;
   // NB rate between satoshi units
@@ -56,12 +35,70 @@ export type ExchangeRate = {
   // There's a delta somewhere between from times rate and the api.
   rateId?: string;
   provider: string;
-  providerType: "CEX" | "DEX";
+  providerType: ExchangeProviderType;
   tradeMethod: "fixed" | "float";
-  error?: Error;
-  providerURL?: string | null | undefined;
+  error?: ExchangeRateError;
+  providerURL?: string;
   expirationTime?: number;
 };
+
+type ExchangeProviderType = "CEX" | "DEX";
+
+type ExchangeRateCommonRaw = {
+  provider: string;
+  providerType: ExchangeProviderType;
+  from: string;
+  to: string;
+  amountFrom: string;
+  amountRequested?: string;
+  amountTo: string;
+  payoutNetworkFees: string;
+  status: "success";
+  errorCode?: number;
+  errorMessage?: string;
+  providerURL?: string;
+};
+
+type ExchangeRateFloatRateRaw = ExchangeRateCommonRaw & {
+  tradeMethod: "float";
+  rateId?: string;
+  minAmountFrom: string;
+  maxAmountFrom?: string;
+};
+
+type ExchangeRateFixedRateRaw = ExchangeRateCommonRaw & {
+  tradeMethod: "fixed";
+  rateId: string;
+  expirationTime: string;
+  rate: string;
+};
+
+type ExchangeRateErrorCommon = {
+  status: "error";
+  tradeMethod: TradeMethod;
+  from: string;
+  to: string;
+  providerType: ExchangeProviderType;
+  provider: string;
+};
+
+type ExchangeRateErrorDefault = ExchangeRateErrorCommon & {
+  errorCode: number;
+  errorMessage: string;
+};
+
+type ExchangeRateErrorMinMaxAmount = ExchangeRateErrorCommon & {
+  amountRequested: string;
+  minAmountFrom: string;
+  maxAmountFrom: string;
+};
+
+export type ExchangeRateErrors = ExchangeRateErrorDefault | ExchangeRateErrorMinMaxAmount;
+
+export type ExchangeRateResponseRaw =
+  | ExchangeRateFloatRateRaw
+  | ExchangeRateFixedRateRaw
+  | ExchangeRateErrors;
 
 export type TradeMethod = "fixed" | "float";
 
@@ -75,7 +112,7 @@ export type ExchangeRateRaw = {
   providerType: "CEX" | "DEX";
   tradeMethod: TradeMethod;
   error?: string;
-  providerURL?: string | null | undefined;
+  providerURL?: string;
 };
 
 export type AvailableProviderV2 = {
@@ -94,6 +131,8 @@ export interface Pair {
   tradeMethod: string;
 }
 
+export type GetProviders = () => Promise<AvailableProvider[]>;
+
 type TradeMethodGroup = {
   methods: TradeMethod[];
   pairs: {
@@ -106,61 +145,28 @@ export type ProvidersResponseV4 = {
   providers: { [providerName: string]: TradeMethodGroup[] };
 };
 
-type CheckQuoteOkStatus = {
-  codeName: "RATE_VALID";
-};
-
-export type ValidCheckQuoteErrorCodes =
-  | "UNKNOW_USER"
-  | "KYC_UNDEFINED"
-  | "KYC_PENDING"
-  | "KYC_FAILED"
-  | "KYC_UPGRADE_REQUIRED"
-  | "OVER_TRADE_LIMIT"
-  | "UNKNOWN_ERROR"
-  | "WITHDRAWALS_BLOCKED"
-  | "MFA_REQUIRED"
-  | "UNAUTHENTICATED_USER"
-  | "RATE_NOT_FOUND";
-
-type CheckQuoteErrorStatus = {
-  codeName: ValidCheckQuoteErrorCodes;
-  error: string;
-  description: string;
-};
-
-export type CheckQuoteStatus = CheckQuoteOkStatus | CheckQuoteErrorStatus;
-
-export type CheckQuote = ({
-  provider,
-  quoteId,
-  bearerToken,
-}: {
-  provider: string;
-  quoteId?: string;
-  bearerToken: string;
-}) => Promise<CheckQuoteStatus>;
 export type AvailableProvider = AvailableProviderV3;
+
+export type ExchangeObject = {
+  exchange: Exchange;
+  transaction: Transaction;
+  currencyTo?: TokenCurrency | CryptoCurrency | undefined | null;
+  providers?: AvailableProviderV3[];
+  timeout?: number;
+  timeoutErrorMessage?: string;
+};
+
 export type GetExchangeRates = (
-  arg0: Exchange,
-  arg1: Transaction,
-  wyreUserId?: string,
-  currencyTo?: TokenCurrency | CryptoCurrency | undefined | null,
-  providers?: AvailableProviderV3[],
-  includeDEX?: boolean
-) => Promise<ExchangeRate[]>;
-export type GetProviders = () => Promise<AvailableProvider[]>;
+  exchangeObject: ExchangeObject,
+) => Promise<(ExchangeRate & { expirationDate?: Date })[]>;
+
 export type InitSwapResult = {
   transaction: Transaction;
   swapId: string;
 };
 
-type ValidSwapStatus =
-  | "pending"
-  | "onhold"
-  | "expired"
-  | "finished"
-  | "refunded";
+type ValidSwapStatus = "pending" | "onhold" | "expired" | "finished" | "refunded";
+
 export type SwapStatusRequest = {
   provider: string;
   swapId: string;
@@ -185,22 +191,14 @@ export type SwapStateAcceptedRequest = SwapStateRequest & {
 
 export type SwapStateCancelledRequest = SwapStateRequest;
 
-export type PostSwapAccepted = (
-  arg0: SwapStateAcceptedRequest
-) => Promise<null>;
+export type PostSwapAccepted = (arg0: SwapStateAcceptedRequest) => Promise<null>;
 
-export type PostSwapCancelled = (
-  arg0: SwapStateCancelledRequest
-) => Promise<null>;
+export type PostSwapCancelled = (arg0: SwapStateCancelledRequest) => Promise<null>;
 
 // -----
 
-export type UpdateAccountSwapStatus = (
-  arg0: Account
-) => Promise<Account | null | undefined>;
-export type GetMultipleStatus = (
-  arg0: SwapStatusRequest[]
-) => Promise<SwapStatus[]>;
+export type UpdateAccountSwapStatus = (arg0: Account) => Promise<Account | null | undefined>;
+export type GetMultipleStatus = (arg0: SwapStatusRequest[]) => Promise<SwapStatus[]>;
 export type SwapRequestEvent =
   | { type: "init-swap" }
   | {
@@ -281,7 +279,6 @@ export type InitSwapInput = {
   exchangeRate: ExchangeRate;
   transaction: SwapTransaction;
   deviceId: string;
-  userId?: string; // Nb for kyc purposes
 };
 
 export type InitSwapInputRaw = {
@@ -289,7 +286,6 @@ export type InitSwapInputRaw = {
   exchangeRate: ExchangeRateRaw;
   transaction: TransactionRaw;
   deviceId: string;
-  userId?: string;
 };
 
 export interface CustomMinOrMaxError extends Error {
@@ -307,6 +303,8 @@ export type OnNoRatesCallback = (arg: {
   fromState: SwapSelectorStateType;
   toState: SwapSelectorStateType;
 }) => void;
+
+export type OnBeforeFetchRates = () => void;
 
 export type RatesReducerState = {
   status?: string | null;
@@ -332,7 +330,7 @@ export type SwapTransactionType = UseBridgeTransactionResult & {
   setToAccount: (
     currency: SwapSelectorStateType["currency"],
     account: SwapSelectorStateType["account"],
-    parentAccount: SwapSelectorStateType["parentAccount"]
+    parentAccount: SwapSelectorStateType["parentAccount"],
   ) => void;
   setFromAmount: (amount: BigNumber) => void;
   setToAmount: (amount: BigNumber) => void;
@@ -340,16 +338,5 @@ export type SwapTransactionType = UseBridgeTransactionResult & {
   toggleMax: () => void;
   reverseSwap: () => void;
   fromAmountError?: Error;
+  fromAmountWarning?: Error;
 };
-
-export enum ActionRequired {
-  Login = "Login",
-  KYC = "KYC",
-  MFA = "MFA",
-  None = "None",
-}
-
-export type Message =
-  | { type: "navigation" }
-  | { type: "setToken"; token: string }
-  | { type: "closeWidget" };

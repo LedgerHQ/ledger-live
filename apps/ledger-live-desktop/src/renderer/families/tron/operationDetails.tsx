@@ -1,9 +1,9 @@
 /* eslint-disable consistent-return */
 import React, { useCallback } from "react";
 import { BigNumber } from "bignumber.js";
-import { Operation, Account } from "@ledgerhq/types-live";
+import { Operation } from "@ledgerhq/types-live";
 import { Currency, Unit } from "@ledgerhq/types-cryptoassets";
-import { Vote } from "@ledgerhq/live-common/families/tron/types";
+import { TronAccount, TronOperation, Vote } from "@ledgerhq/live-common/families/tron/types";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
 import { openURL } from "~/renderer/linking";
 import {
@@ -23,25 +23,24 @@ import Text from "~/renderer/components/Text";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import CounterValue from "~/renderer/components/CounterValue";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
+import { OperationDetailsExtraProps } from "../types";
 const helpURL = "https://support.ledger.com/hc/en-us/articles/360013062139";
-function getURLFeesInfo({ op }: { op: Operation; currencyId: string }): string | undefined | null {
+
+function getURLFeesInfo({ op }: { op: Operation; currencyId: string }): string | undefined {
   if (op.fee.gt(200000)) {
     return helpURL;
   }
 }
-function getURLWhatIsThis({
-  op,
-}: {
-  op: Operation;
-  currencyId: string;
-}): string | undefined | null {
+
+function getURLWhatIsThis({ op }: { op: Operation; currencyId: string }): string | undefined {
   if (op.type !== "IN" && op.type !== "OUT") {
     return helpURL;
   }
 }
+
 type OperationsDetailsVotesProps = {
   votes: Array<Vote> | undefined | null;
-  account: Account;
+  account: TronAccount;
   isTransactionField?: boolean;
 };
 export const OperationDetailsVotes = ({
@@ -52,7 +51,7 @@ export const OperationDetailsVotes = ({
   const sp = useTronSuperRepresentatives();
   const formattedVotes = formatVotes(votes, sp);
   const redirectAddress = useCallback(
-    address => {
+    (address: string) => {
       const url = getAddressExplorer(getDefaultExplorerView(account.currency), address);
       if (url) openURL(url);
     },
@@ -101,17 +100,37 @@ export const OperationDetailsVotes = ({
     </OpDetailsSection>
   );
 };
-type OperationDetailsExtraProps = {
-  extra: {
-    [key: string]: any;
-  };
-  type: string;
-  account: Account;
-};
-const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraProps) => {
+
+const OperationDetailsExtra = ({
+  operation,
+  type,
+  account,
+}: OperationDetailsExtraProps<TronAccount, TronOperation>) => {
+  const frozenAmount = operation.extra?.frozenAmount
+    ? (operation.extra.frozenAmount as BigNumber)
+    : new BigNumber(0);
+
+  const unfreezeAmount = operation.extra?.unfreezeAmount
+    ? (operation.extra.unfreezeAmount as BigNumber)
+    : new BigNumber(10);
+
+  const unDelegatedAmount = operation.extra?.unDelegatedAmount
+    ? (operation.extra.unDelegatedAmount as BigNumber)
+    : new BigNumber(0);
+
+  const receiverAddress = operation.extra?.receiverAddress ? operation.extra.receiverAddress : "";
+
+  const redirectAddress = useCallback(
+    (address: string) => {
+      const url = getAddressExplorer(getDefaultExplorerView(account.currency), address);
+      if (url) openURL(url);
+    },
+    [account],
+  );
+
   switch (type) {
     case "VOTE": {
-      const { votes } = extra;
+      const votes = operation.extra?.votes;
       if (!votes || !votes.length) return null;
       return <OperationDetailsVotes votes={votes} account={account} />;
     }
@@ -124,7 +143,7 @@ const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraPr
           <OpDetailsData>
             <Box>
               <FormattedVal
-                val={extra.frozenAmount}
+                val={frozenAmount}
                 unit={account.unit}
                 showCode
                 fontSize={4}
@@ -143,7 +162,59 @@ const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraPr
           <OpDetailsData>
             <Box>
               <FormattedVal
-                val={extra.unfreezeAmount}
+                val={unfreezeAmount}
+                unit={account.unit}
+                showCode
+                fontSize={4}
+                color="palette.text.shade60"
+              />
+            </Box>
+          </OpDetailsData>
+        </OpDetailsSection>
+      );
+    case "UNDELEGATE_RESOURCE":
+      return (
+        <>
+          <OpDetailsSection>
+            <OpDetailsTitle>
+              <Trans i18nKey="operationDetails.extra.undelegatedAmount" />
+            </OpDetailsTitle>
+            <OpDetailsData>
+              <Box>
+                <FormattedVal
+                  val={unDelegatedAmount}
+                  unit={account.unit}
+                  showCode
+                  fontSize={4}
+                  color="palette.text.shade60"
+                />
+              </Box>
+            </OpDetailsData>
+          </OpDetailsSection>
+          <OpDetailsSection>
+            <OpDetailsTitle>
+              <Trans i18nKey="operationDetails.extra.undelegatedFrom" />
+            </OpDetailsTitle>
+            <OpDetailsData>
+              <Box>
+                <Address onClick={() => redirectAddress(receiverAddress)}>
+                  {receiverAddress}
+                </Address>
+              </Box>
+            </OpDetailsData>
+          </OpDetailsSection>
+        </>
+      );
+    case "LEGACY_UNFREEZE":
+      return (
+        <OpDetailsSection>
+          <OpDetailsTitle>
+            <Trans i18nKey="operationDetails.extra.unfreezeAmount" />
+          </OpDetailsTitle>
+          <OpDetailsData>
+            <Box>
+              <FormattedVal
+                val={unfreezeAmount}
                 unit={account.unit}
                 showCode
                 fontSize={4}
@@ -157,66 +228,52 @@ const OperationDetailsExtra = ({ extra, type, account }: OperationDetailsExtraPr
       return null;
   }
 };
+
 type Props = {
-  operation: Operation;
+  operation: TronOperation;
   currency: Currency;
   unit: Unit;
 };
 const FreezeAmountCell = ({ operation, currency, unit }: Props) => {
-  const amount = new BigNumber(operation.extra ? operation.extra.frozenAmount : 0);
-  return (
-    !amount.isZero() && (
-      <>
-        <FormattedVal
-          val={amount}
-          unit={unit}
-          showCode
-          fontSize={4}
-          color={"palette.text.shade80"}
-        />
+  const amount = operation.extra?.frozenAmount;
+  return amount && !amount.isZero() ? (
+    <>
+      <FormattedVal val={amount} unit={unit} showCode fontSize={4} color={"palette.text.shade80"} />
 
-        <CounterValue
-          color="palette.text.shade60"
-          fontSize={3}
-          date={operation.date}
-          currency={currency}
-          value={amount}
-        />
-      </>
-    )
-  );
+      <CounterValue
+        color="palette.text.shade60"
+        fontSize={3}
+        date={operation.date}
+        currency={currency}
+        value={amount}
+      />
+    </>
+  ) : null;
 };
-const UnfreezeAmountCell = ({ operation, currency, unit }: Props) => {
-  const amount = new BigNumber(operation.extra ? operation.extra.unfreezeAmount : 0);
-  return (
-    !amount.isZero() && (
-      <>
-        <FormattedVal
-          val={amount}
-          unit={unit}
-          showCode
-          fontSize={4}
-          color={"palette.text.shade80"}
-        />
 
-        <CounterValue
-          color="palette.text.shade60"
-          fontSize={3}
-          date={operation.date}
-          currency={currency}
-          value={amount}
-        />
-      </>
-    )
-  );
+const UnfreezeAmountCell = ({ operation, currency, unit }: Props) => {
+  const amount = operation.extra?.unfreezeAmount;
+  return amount && !amount.isZero() ? (
+    <>
+      <FormattedVal val={amount} unit={unit} showCode fontSize={4} color={"palette.text.shade80"} />
+
+      <CounterValue
+        color="palette.text.shade60"
+        fontSize={3}
+        date={operation.date}
+        currency={currency}
+        value={amount}
+      />
+    </>
+  ) : null;
 };
 const VoteAmountCell = ({ operation }: Props) => {
   const discreet = useDiscreetMode();
+  const votes = operation.extra?.votes;
   const amount =
-    operation.extra && operation.extra.votes
-      ? operation.extra.votes.reduce((sum, { voteCount }) => sum + voteCount, 0)
-      : 0;
-  return amount > 0 ? (
+    votes &&
+    votes.reduce((sum: number, { voteCount }: { voteCount: number }) => sum + voteCount, 0);
+  return amount && amount > 0 ? (
     <Text ff="Inter|SemiBold" fontSize={4}>
       <Trans
         i18nKey={"operationDetails.extra.votes"}
@@ -230,6 +287,7 @@ const VoteAmountCell = ({ operation }: Props) => {
 const amountCellExtra = {
   FREEZE: FreezeAmountCell,
   UNFREEZE: UnfreezeAmountCell,
+  LEGACY_UNFREEZE: UnfreezeAmountCell,
   VOTE: VoteAmountCell,
 };
 export default {

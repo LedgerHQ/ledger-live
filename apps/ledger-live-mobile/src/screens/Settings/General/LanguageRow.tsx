@@ -2,12 +2,12 @@ import React, { useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { Text } from "@ledgerhq/native-ui";
-import SettingsRow from "../../../components/SettingsRow";
-import { ScreenName } from "../../../const";
-import { useLocale } from "../../../context/Locale";
+import SettingsRow from "~/components/SettingsRow";
+import { ScreenName } from "~/const";
+import { useLocale } from "~/context/Locale";
 import { languages } from "../../../languages";
-import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
-import { SettingsNavigatorStackParamList } from "../../../components/RootNavigator/types/SettingsNavigator";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
 
 type Navigation = StackNavigatorProps<SettingsNavigatorStackParamList>;
 

@@ -11,35 +11,21 @@ import type { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import type { AlgorandTransaction, AlgorandTransactionRaw } from "./types";
 export const formatTransaction = (
-  {
-    mode,
-    subAccountId,
-    amount,
-    recipient,
-    fees,
-    useAllAmount,
-  }: AlgorandTransaction,
-  mainAccount: Account
+  { mode, subAccountId, amount, recipient, fees, useAllAmount }: AlgorandTransaction,
+  mainAccount: Account,
 ): string => {
   const account =
-    (subAccountId &&
-      (mainAccount.subAccounts || []).find((a) => a.id === subAccountId)) ||
+    (subAccountId && (mainAccount.subAccounts || []).find(a => a.id === subAccountId)) ||
     mainAccount;
   return `
-    ${
-      mode === "claimReward"
-        ? "CLAIM REWARD"
-        : mode === "optIn"
-        ? "OPT_IN"
-        : "SEND"
-    } ${
-    useAllAmount
-      ? "MAX"
-      : formatCurrencyUnit(getAccountUnit(account), amount, {
-          showCode: true,
-          disableRounding: false,
-        })
-  }
+    ${mode === "claimReward" ? "CLAIM REWARD" : mode === "optIn" ? "OPT_IN" : "SEND"} ${
+      useAllAmount
+        ? "MAX"
+        : formatCurrencyUnit(getAccountUnit(account), amount, {
+            showCode: true,
+            disableRounding: false,
+          })
+    }
     TO ${recipient}
     with fees=${
       !fees
@@ -51,9 +37,7 @@ export const formatTransaction = (
     }`;
 };
 
-const fromTransactionRaw = (
-  tr: AlgorandTransactionRaw
-): AlgorandTransaction => {
+const fromTransactionRaw = (tr: AlgorandTransactionRaw): AlgorandTransaction => {
   const common = fromTransactionCommonRaw(tr);
   return {
     ...common,

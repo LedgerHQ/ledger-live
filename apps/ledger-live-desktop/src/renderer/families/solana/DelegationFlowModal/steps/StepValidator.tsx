@@ -1,5 +1,8 @@
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { Transaction } from "@ledgerhq/live-common/families/solana/types";
+import {
+  StakeCreateAccountTransaction,
+  Transaction,
+} from "@ledgerhq/live-common/families/solana/types";
 import { AccountBridge } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import React from "react";
@@ -19,7 +22,6 @@ export default function StepValidator({
   transaction,
   status,
   error,
-  t,
 }: StepProps) {
   invariant(
     account && account.solanaResources && transaction,
@@ -27,7 +29,7 @@ export default function StepValidator({
   );
   const updateValidator = ({ address }: { address: string }) => {
     const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
-    onUpdateTransaction(tx => {
+    onUpdateTransaction(_tx => {
       return bridge.updateTransaction(transaction, {
         model: {
           kind: "stake.createAccount",
@@ -40,18 +42,25 @@ export default function StepValidator({
       });
     });
   };
-  const chosenVoteAccAddr = transaction.model.uiState.delegate?.voteAccAddress;
+  const chosenVoteAccAddr = (transaction.model.uiState as StakeCreateAccountTransaction["uiState"])
+    .delegate?.voteAccAddress;
   return (
     <Box flow={1}>
-      <TrackPage category="Solana Delegation" name="Step Validator" />
+      <TrackPage
+        category="Delegation Flow"
+        name="Step Starter"
+        flow="stake"
+        action="delegation"
+        currency="sol"
+        type="modal"
+        page="Step Validator"
+      />
       {error && <ErrorBanner error={error} />}
       {status ? (
         <ValidatorsField
           account={account}
           chosenVoteAccAddr={chosenVoteAccAddr}
           onChangeValidator={updateValidator}
-          status={status}
-          t={t}
         />
       ) : null}
     </Box>
@@ -59,15 +68,14 @@ export default function StepValidator({
 }
 export function StepValidatorFooter({
   transitionTo,
-  account,
   onClose,
   status,
   bridgePending,
   transaction,
 }: StepProps) {
-  invariant(account, "account required");
   const { errors } = status;
   const canNext = !bridgePending && !errors.voteAccAddr;
+  if (!transaction) return null;
   return (
     <>
       <LedgerByFigmentTC transaction={transaction} />
@@ -78,6 +86,7 @@ export function StepValidatorFooter({
         <Button
           id="delegate-continue-button"
           disabled={!canNext}
+          isLoading={bridgePending}
           primary
           onClick={() => transitionTo("amount")}
         >

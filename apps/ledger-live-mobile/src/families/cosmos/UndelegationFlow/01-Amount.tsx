@@ -6,10 +6,10 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
-import { accountScreenSelector } from "../../../reducers/accounts";
+import { accountScreenSelector } from "~/reducers/accounts";
 import SelectAmount from "../shared/02-SelectAmount";
-import { ScreenName } from "../../../const";
-import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import { ScreenName } from "~/const";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CosmosUndelegationFlowParamList } from "./types";
 
 type Props = StackNavigatorProps<

@@ -1,17 +1,12 @@
 export interface ICrypto {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   network: any;
-  getAddress(
-    derivationMode: string,
-    xpub: string,
-    account: number,
-    index: number
-  ): Promise<string>;
+  getAddress(derivationMode: string, xpub: string, account: number, index: number): Promise<string>;
   customGetAddress(
     derivationMode: string,
     xpub: string,
     account: number,
-    index: number
+    index: number,
   ): Promise<string>;
   toOutputScript(address: string): Buffer;
   toOpReturnOutputScript(data: Buffer): Buffer;

@@ -7,12 +7,12 @@ import { useTranslation } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import { ELROND_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/elrond/constants";
 
-import CounterValue from "../../../../../../../../components/CounterValue";
-import ArrowRight from "../../../../../../../../icons/ArrowRight";
-import LText from "../../../../../../../../components/LText";
-import FirstLetterIcon from "../../../../../../../../components/FirstLetterIcon";
-import LedgerLogo from "../../../../../../../../icons/LiveLogo";
-import Circle from "../../../../../../../../components/Circle";
+import CounterValue from "~/components/CounterValue";
+import ArrowRight from "~/icons/ArrowRight";
+import LText from "~/components/LText";
+import FirstLetterIcon from "~/components/FirstLetterIcon";
+import LedgerLogo from "~/icons/LiveLogo";
+import Circle from "~/components/Circle";
 
 import type { UnbondingPropsType } from "./types";
 
@@ -27,9 +27,7 @@ const Unbonding = (props: UnbondingPropsType) => {
   const { t } = useTranslation();
   const { last, validator, currency, amount, onDrawer, seconds } = props;
 
-  const name: string = validator
-    ? validator.identity.name || validator.contract
-    : "";
+  const name: string = validator ? validator.identity.name || validator.contract : "";
 
   const value = denominate({
     input: amount,
@@ -59,11 +57,7 @@ const Unbonding = (props: UnbondingPropsType) => {
     <View style={styles.undelegationsWrapper}>
       <TouchableOpacity
         onPress={onPress}
-        style={[
-          styles.row,
-          styles.wrapper,
-          last ? undefined : styles.borderBottom,
-        ]}
+        style={[styles.row, styles.wrapper, last ? undefined : styles.borderBottom]}
       >
         <View style={styles.icon}>
           {validator && (
@@ -71,12 +65,7 @@ const Unbonding = (props: UnbondingPropsType) => {
               {ELROND_LEDGER_VALIDATOR_ADDRESS === validator.contract ? (
                 <LedgerLogo size={42 * 0.7} color={colors.text} />
               ) : (
-                <FirstLetterIcon
-                  label={name || "-"}
-                  round={true}
-                  size={42}
-                  fontSize={24}
-                />
+                <FirstLetterIcon label={name || "-"} round={true} size={42} fontSize={24} />
               )}
             </Circle>
           )}

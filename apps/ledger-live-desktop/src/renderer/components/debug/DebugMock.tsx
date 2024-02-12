@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
 import React, { useCallback, useState } from "react";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import Text from "~/renderer/components/Text";
 import { ReplaySubject } from "rxjs";
 import { deserializeError } from "@ledgerhq/errors";
@@ -23,6 +23,7 @@ import Box from "~/renderer/components/Box";
 import { Item, MockContainer, EllipsesText, MockedGlobalStyle } from "./shared";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { ListAppsResult } from "@ledgerhq/live-common/apps/types";
+import { AnnouncementDeviceModelId } from "@ledgerhq/live-common/notifications/AnnouncementProvider/types";
 
 const mockListAppsResult = (
   appDesc: string,
@@ -91,7 +92,6 @@ const helpfulEvents = [
     name: "permission requested",
     event: {
       type: "device-permission-requested",
-      wording: "Allow Ledger Manager",
     },
   },
   {
@@ -275,7 +275,7 @@ const localizationEvents = [
 ];
 
 interface RawEvents {
-  [key: string]: RawEvents | RawEvents[];
+  [key: string]: unknown;
 }
 
 if (getEnv("MOCK")) {
@@ -390,9 +390,10 @@ const DebugMock = () => {
   const toggleExpanded = useCallback(() => setExpanded(!expanded), [expanded, setExpanded]);
   const toggleExpandedQueue = useCallback(() => setExpandedQueue(!expandedQueue), [expandedQueue]);
   const toggleExpandedQuick = useCallback(() => setExpandedQuick(!expandedQuick), [expandedQuick]);
-  const toggleExpandedHistory = useCallback(() => setExpandedHistory(!expandedHistory), [
-    expandedHistory,
-  ]);
+  const toggleExpandedHistory = useCallback(
+    () => setExpandedHistory(!expandedHistory),
+    [expandedHistory],
+  );
   const toggleExpandedSwap = useCallback(() => setExpandedSwap(!expandedSwap), [expandedSwap]);
   const toggleExpandedLocalization = useCallback(
     () => setExpandedLocalization(!expandedLocalization),
@@ -400,24 +401,21 @@ const DebugMock = () => {
   );
   const toggleExpandedNotif = useCallback(() => setExpandedNotif(!expandedNotif), [expandedNotif]);
   const queueEvent = useCallback(
-    event => {
+    (event: RawEvents) => {
       setQueue([...queue, event]);
       window.mock.events.mockDeviceEvent(event);
     },
     [queue, setQueue],
   );
   const unQueueEventByIndex = useCallback(
-    i => {
+    (i: number) => {
       window.mock.events.queue.splice(i, 1);
       setQueue(window.mock.events.queue);
     },
     [setQueue],
   );
   const formatInputValue = useCallback((inputValue: string): string[] | undefined | null => {
-    const val: string[] = inputValue
-      .replace(/\s/g, "")
-      .split(",")
-      .filter(Boolean);
+    const val: string[] = inputValue.replace(/\s/g, "").split(",").filter(Boolean);
     return val.length > 0 ? val : undefined;
   }, []);
   const onNotifClick = useCallback(() => {
@@ -447,9 +445,9 @@ const DebugMock = () => {
     addMockAnnouncement({
       ...formattedParams,
       device: {
-        modelIds: formatInputValue(notifDeviceModelId),
-        versions: formatInputValue(notifDeviceVersion),
-        apps: formatInputValue(notifDeviceApps),
+        modelIds: formatInputValue(notifDeviceModelId) as AnnouncementDeviceModelId,
+        versions: formatInputValue(notifDeviceVersion) as string[],
+        apps: formatInputValue(notifDeviceApps) as string[],
       },
       ...extra,
     });
@@ -467,9 +465,11 @@ const DebugMock = () => {
     notifLiveCommonVersions,
     updateCache,
   ]);
+
   const setValue = useCallback(
-    setter => (evt: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-      setter(evt.target.value),
+    (setter: (value: string) => void) =>
+      (evt: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+        setter(evt.target.value),
     [],
   );
   return (

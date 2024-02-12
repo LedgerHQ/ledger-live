@@ -1,12 +1,12 @@
 import crypto from "crypto";
 import path from "path";
+import fsPromises from "fs/promises";
 import fs from "fs";
 import { UpdateFetchFileFail } from "@ledgerhq/errors";
-import network from "@ledgerhq/live-common/network";
-import { fsReadFile } from "~/helpers/fs";
+import network from "@ledgerhq/live-network/network";
 import createAppUpdater from "./createAppUpdater";
 import pubKey from "./ledger-pubkey";
-import { UpdateDownloadedEvent } from "@ledgerhq/electron-updater";
+import { UpdateDownloadedEvent } from "electron-updater";
 
 export default async ({ feedURL, info }: { feedURL: string; info: UpdateDownloadedEvent }) => {
   const { version: updateVersion, path: filename, downloadedFile: filePath } = info;
@@ -32,7 +32,7 @@ export default async ({ feedURL, info }: { feedURL: string; info: UpdateDownload
 // only 1 file to sign lel)
 export async function readUpdateInfos(updateFolder: string) {
   const updateInfoPath = path.resolve(updateFolder, "update-info.json");
-  const updateInfoContent = await fsReadFile(updateInfoPath);
+  const updateInfoContent = await fsPromises.readFile(updateInfoPath, "utf-8");
   return JSON.parse(updateInfoContent);
 }
 

@@ -1,39 +1,33 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TFunction, useTranslation } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { AppResult, createAction } from "@ledgerhq/live-common/hw/actions/app";
+import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { Flex } from "@ledgerhq/native-ui";
-import { TrackScreen } from "../../analytics";
-import SelectDevice2, {
-  SetHeaderOptionsRequest,
-} from "../../components/SelectDevice2";
-import SelectDevice from "../../components/SelectDevice";
-import RemoveDeviceMenu from "../../components/SelectDevice2/RemoveDeviceMenu";
-import DeviceActionModal from "../../components/DeviceActionModal";
-import NavigationScrollView from "../../components/NavigationScrollView";
+import { TrackScreen } from "~/analytics";
+import SelectDevice2, { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
+import SelectDevice from "~/components/SelectDevice";
+import RemoveDeviceMenu from "~/components/SelectDevice2/RemoveDeviceMenu";
+import DeviceActionModal from "~/components/DeviceActionModal";
+import NavigationScrollView from "~/components/NavigationScrollView";
 import {
   ReactNavigationHeaderOptions,
   RootComposite,
   StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
-import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
-import { ScreenName } from "../../const";
-import { NavigationHeaderBackButton } from "../../components/NavigationHeaderBackButton";
-
-const action = createAction(connectApp);
+} from "~/components/RootNavigator/types/helpers";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { ScreenName } from "~/const";
+import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
+import { useAppDeviceAction } from "~/hooks/deviceActions";
 
 type NavigationProps = RootComposite<
   StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.DeviceConnect>
 >;
 
-export const deviceConnectHeaderOptions = (
-  t: TFunction,
-): ReactNavigationHeaderOptions => ({
+export const deviceConnectHeaderOptions = (t: TFunction): ReactNavigationHeaderOptions => ({
   headerShown: true,
   title: t("deviceConnect.title"),
   headerRight: () => null,
@@ -94,6 +88,15 @@ export default function DeviceConnect({ navigation, route }: NavigationProps) {
     [navigation, t],
   );
 
+  const request = useMemo(
+    () => ({
+      appName,
+    }),
+    [appName],
+  );
+
+  const action = useAppDeviceAction();
+
   return (
     <SafeAreaView
       edges={["bottom"]}
@@ -114,21 +117,10 @@ export default function DeviceConnect({ navigation, route }: NavigationProps) {
           />
         </Flex>
       ) : (
-        <NavigationScrollView
-          style={styles.scroll}
-          contentContainerStyle={styles.scrollContainer}
-        >
-          <SelectDevice
-            autoSelectOnAdd
-            onSelect={setDevice}
-            onBluetoothDeviceAction={onShowMenu}
-          />
+        <NavigationScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
+          <SelectDevice autoSelectOnAdd onSelect={setDevice} onBluetoothDeviceAction={onShowMenu} />
           {chosenDevice ? (
-            <RemoveDeviceMenu
-              open={showMenu}
-              device={chosenDevice}
-              onHideMenu={onHideMenu}
-            />
+            <RemoveDeviceMenu open={showMenu} device={chosenDevice} onHideMenu={onHideMenu} />
           ) : null}
         </NavigationScrollView>
       )}
@@ -137,9 +129,7 @@ export default function DeviceConnect({ navigation, route }: NavigationProps) {
         device={device}
         onResult={handleSuccess}
         onClose={resetDevice}
-        request={{
-          appName,
-        }}
+        request={request}
         analyticsPropertyFlow={"device connect"}
       />
     </SafeAreaView>

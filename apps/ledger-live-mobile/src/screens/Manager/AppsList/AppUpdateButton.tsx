@@ -4,7 +4,7 @@ import { TouchableOpacity } from "react-native";
 import type { App } from "@ledgerhq/types-live";
 import type { Action, State } from "@ledgerhq/live-common/apps/index";
 import styled from "styled-components/native";
-import { Icons, Box } from "@ledgerhq/native-ui";
+import { IconsLegacy, Box } from "@ledgerhq/native-ui";
 
 type Props = {
   app: App;
@@ -20,11 +20,7 @@ const ButtonContainer = styled(Box).attrs({
   justifyContent: "center",
 })``;
 
-export default function AppUpdateButton({
-  app,
-  state,
-  dispatch: dispatchProps,
-}: Props) {
+export default function AppUpdateButton({ app, state, dispatch: dispatchProps }: Props) {
   const { name } = app;
   const { installed } = state;
 
@@ -41,7 +37,7 @@ export default function AppUpdateButton({
   return (
     <TouchableOpacity onPress={updateApp}>
       <ButtonContainer backgroundColor="primary.c80">
-        <Icons.RefreshMedium size={18} color="neutral.c00" />
+        <IconsLegacy.RefreshMedium size={18} color="neutral.c00" />
       </ButtonContainer>
     </TouchableOpacity>
   );

@@ -3,16 +3,16 @@ import { Dimensions, Linking, Platform, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
-import { CameraType } from "expo-camera/build/Camera.types";
+import { BarCodeScanningResult, CameraType } from "expo-camera/build/Camera.types";
 import { Camera } from "expo-camera";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { Svg, Defs, Rect, Mask } from "react-native-svg";
 import { useIsFocused } from "@react-navigation/native";
-import { TrackScreen } from "../../analytics";
-import { useNavigateToPostOnboardingHubCallback } from "../../logic/postOnboarding/useNavigateToPostOnboardingHubCallback";
-import { urls } from "../../config/urls";
-import RequiresCameraPermissions from "../../components/RequiresCameraPermissions";
-import CameraPermissionContext from "../../components/RequiresCameraPermissions/CameraPermissionContext";
+import { TrackScreen } from "~/analytics";
+import { useNavigateToPostOnboardingHubCallback } from "~/logic/postOnboarding/useNavigateToPostOnboardingHubCallback";
+import { urls } from "~/utils/urls";
+import RequiresCameraPermissions from "~/components/RequiresCameraPermissions";
+import CameraPermissionContext from "~/components/RequiresCameraPermissions/CameraPermissionContext";
 
 const cameraBoxDimensions = {
   width: Dimensions.get("screen").width,
@@ -22,11 +22,7 @@ const cameraBoxDimensions = {
 const viewBox = `0 0 ${cameraBoxDimensions.width} ${cameraBoxDimensions.height}`;
 
 const WrappedSvg = () => (
-  <Flex
-    {...StyleSheet.absoluteFillObject}
-    alignItems="center"
-    justifyContent="center"
-  >
+  <Flex {...StyleSheet.absoluteFillObject} alignItems="center" justifyContent="center">
     <Svg {...cameraBoxDimensions} viewBox={viewBox}>
       <Defs>
         <Mask id="qrmask">
@@ -77,9 +73,7 @@ const ClaimNftQrScan = () => {
       try {
         const [rh = "1", rw = "1"] = ratio.split(":");
         setCameraDimensions({
-          height:
-            (cameraBoxDimensions.width * Number.parseInt(rh, 10)) /
-            Number.parseInt(rw, 10),
+          height: (cameraBoxDimensions.width * Number.parseInt(rh, 10)) / Number.parseInt(rw, 10),
           width: cameraBoxDimensions.width,
         });
         setRatio(ratio);
@@ -102,17 +96,15 @@ const ClaimNftQrScan = () => {
     };
   }, [navigateToHub, isInFocus]);
 
-  const handleBarCodeScanned = useCallback(({ data }) => {
+  const handleBarCodeScanned = useCallback(({ data }: BarCodeScanningResult) => {
     try {
       const url = new URL(data);
       const { hostname } = url;
       const code = url.href.substring(url.href.lastIndexOf("/") + 1);
       const deeplink =
         hostname === "staging.claim.ledger.com"
-          ? urls.discover.linkDropStaging +
-            "?redirectToOnboarding=true&autoClaim=true&code="
-          : urls.discover.linkDrop +
-            "?redirectToOnboarding=true&autoClaim=true&code=";
+          ? urls.discover.linkDropStaging + "?redirectToOnboarding=true&autoClaim=true&code="
+          : urls.discover.linkDrop + "?redirectToOnboarding=true&autoClaim=true&code=";
       Linking.openURL(deeplink + code);
     } catch (e) {
       console.error(e);
@@ -162,13 +154,7 @@ const ClaimNftQrScan = () => {
                 )}
               </Flex>
               <Flex flex={1} px={7} alignItems="center">
-                <Text
-                  variant="h4"
-                  fontWeight="semiBold"
-                  mt={7}
-                  mb={6}
-                  textAlign="center"
-                >
+                <Text variant="h4" fontWeight="semiBold" mt={7} mb={6} textAlign="center">
                   {t("claimNft.qrScan.title")}
                 </Text>
                 <Text color="neutral.c70" textAlign="center">

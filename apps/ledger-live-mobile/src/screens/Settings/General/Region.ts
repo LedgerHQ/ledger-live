@@ -10,9 +10,7 @@ const items = Object.keys(regionByKeys)
   .map(key => {
     const { languageDisplayName, regionDisplayName } =
       regionByKeys[key as keyof typeof regionByKeys];
-    const label = `${upperFirst(regionDisplayName)} (${upperFirst(
-      languageDisplayName,
-    )})`;
+    const label = `${upperFirst(regionDisplayName)} (${upperFirst(languageDisplayName)})`;
     return {
       value: key,
       label,
@@ -24,8 +22,7 @@ const mapStateToProps = (state: State) => {
   const selectedKey = localeSelector(state);
   return {
     selectedKey,
-    initialSearchQuery:
-      items.find(item => item.value === selectedKey)?.label ?? "",
+    initialSearchQuery: items.find(item => item.value === selectedKey)?.label ?? "",
     items,
   };
 };

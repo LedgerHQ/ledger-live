@@ -1,5 +1,6 @@
 import React, { PureComponent } from "react";
-import { withTranslation, TFunction } from "react-i18next";
+import { withTranslation } from "react-i18next";
+import { TFunction } from "i18next";
 import styled from "styled-components";
 import { repairChoices } from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
 import { MCUNotGenuineToDashboard } from "@ledgerhq/errors";

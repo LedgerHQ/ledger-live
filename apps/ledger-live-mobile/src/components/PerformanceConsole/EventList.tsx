@@ -18,15 +18,9 @@ const EventList: React.FC<ListProps> = ({ showExtraProps }) => {
       <AnimatedFlex paddingBottom={200} flexDirection="column-reverse">
         {items.map(item => {
           const isLast =
-            Math.abs(
-              item.date.getTime() - items[items.length - 1].date.getTime(),
-            ) < 1000;
+            Math.abs(item.date.getTime() - items[items.length - 1].date.getTime()) < 1000;
           return (
-            <AnimatedFlex
-              key={item.report.reportId}
-              layout={Layout}
-              entering={SlideInLeft}
-            >
+            <AnimatedFlex key={item.report.reportId} layout={Layout} entering={SlideInLeft}>
               <Event
                 report={item.report}
                 date={item.date}

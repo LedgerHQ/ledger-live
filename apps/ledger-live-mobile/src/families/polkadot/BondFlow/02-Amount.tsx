@@ -17,33 +17,27 @@ import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
 import type { Transaction as PolkadotTransaction } from "@ledgerhq/live-common/families/polkadot/types";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
-import {
-  getAccountUnit,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { isFirstBond } from "@ledgerhq/live-common/families/polkadot/logic";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
-import { urls } from "../../../config/urls";
-import { accountScreenSelector } from "../../../reducers/accounts";
-import { ScreenName } from "../../../const";
-import { TrackScreen } from "../../../analytics";
-import LText from "../../../components/LText";
-import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
-import Button from "../../../components/Button";
-import ToggleButton from "../../../components/ToggleButton";
-import KeyboardView from "../../../components/KeyboardView";
-import CurrencyInput from "../../../components/CurrencyInput";
-import TranslatedError from "../../../components/TranslatedError";
-import InfoModal from "../../../modals/Info";
-import Info from "../../../icons/Info";
+import { urls } from "~/utils/urls";
+import { accountScreenSelector } from "~/reducers/accounts";
+import { ScreenName } from "~/const";
+import { TrackScreen } from "~/analytics";
+import LText from "~/components/LText";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import Button from "~/components/Button";
+import ToggleButton from "~/components/ToggleButton";
+import KeyboardView from "~/components/KeyboardView";
+import CurrencyInput from "~/components/CurrencyInput";
+import TranslatedError from "~/components/TranslatedError";
+import InfoModal from "~/modals/Info";
+import Info from "~/icons/Info";
 import { getFirstStatusError, hasStatusError } from "../../helpers";
 import FlowErrorBottomModal from "../components/FlowErrorBottomModal";
 import SendRowsFee from "../SendRowsFee";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { PolkadotBondFlowParamList } from "./types";
 
 const options = [
@@ -59,15 +53,11 @@ const options = [
 const infoModalData = [
   {
     title: <Trans i18nKey="polkadot.bond.rewardDestination.stash" />,
-    description: (
-      <Trans i18nKey="polkadot.bond.rewardDestination.stashDescription" />
-    ),
+    description: <Trans i18nKey="polkadot.bond.rewardDestination.stashDescription" />,
   },
   {
     title: <Trans i18nKey="polkadot.bond.rewardDestination.staked" />,
-    description: (
-      <Trans i18nKey="polkadot.bond.rewardDestination.stakedDescription" />
-    ),
+    description: <Trans i18nKey="polkadot.bond.rewardDestination.stakedDescription" />,
   },
   {
     title: <Trans i18nKey="polkadot.bond.rewardDestination.optionTitle" />,
@@ -106,8 +96,7 @@ export default function PolkadotBondAmount({ navigation, route }: Props) {
       transaction,
     };
   });
-  const { setTransaction, status, bridgePending, bridgeError } =
-    bridgeTransaction;
+  const { setTransaction, status, bridgePending, bridgeError } = bridgeTransaction;
   const transaction = bridgeTransaction.transaction as PolkadotTransaction;
   const debouncedTransaction = useDebounce(transaction, 500);
   useEffect(() => {
@@ -129,7 +118,7 @@ export default function PolkadotBondAmount({ navigation, route }: Props) {
     };
   }, [account, parentAccount, debouncedTransaction]);
   const onChange = useCallback(
-    amount => {
+    (amount: BigNumber) => {
       if (!amount.isNaN()) {
         setTransaction(
           bridge.updateTransaction(transaction, {
@@ -178,18 +167,14 @@ export default function PolkadotBondAmount({ navigation, route }: Props) {
   const { useAllAmount } = transaction;
   const { amount } = status;
   const unit = getAccountUnit(account);
-  const rewardDestination =
-    (transaction as { rewardDestination?: string }).rewardDestination || "";
+  const rewardDestination = (transaction as { rewardDestination?: string }).rewardDestination || "";
   const firstBond = isFirstBond(mainAccount);
-  const error =
-    amount.eq(0) || bridgePending
-      ? null
-      : getFirstStatusError(status, "errors");
+  const error = amount.eq(0) || bridgePending ? null : getFirstStatusError(status, "errors");
   const warning = getFirstStatusError(status, "warnings");
   const hasErrors = hasStatusError(status);
   return (
     <>
-      <TrackScreen category="BondFlow" name="Amount" />
+      <TrackScreen category="BondFlow" name="Amount" flow="stake" action="bond" currency="dot" />
       <SafeAreaView
         style={[
           styles.root,
@@ -268,11 +253,7 @@ export default function PolkadotBondAmount({ navigation, route }: Props) {
                     </LText>
                     <LText semiBold>
                       {maxSpendable ? (
-                        <CurrencyUnitValue
-                          showCode
-                          unit={unit}
-                          value={maxSpendable}
-                        />
+                        <CurrencyUnitValue showCode unit={unit} value={maxSpendable} />
                       ) : (
                         "-"
                       )}
@@ -303,11 +284,7 @@ export default function PolkadotBondAmount({ navigation, route }: Props) {
                     type="primary"
                     title={
                       <Trans
-                        i18nKey={
-                          !bridgePending
-                            ? "common.continue"
-                            : "send.amount.loadingNetwork"
-                        }
+                        i18nKey={!bridgePending ? "common.continue" : "send.amount.loadingNetwork"}
                       />
                     }
                     onPress={onContinue}
@@ -320,11 +297,7 @@ export default function PolkadotBondAmount({ navigation, route }: Props) {
         </KeyboardView>
       </SafeAreaView>
 
-      <InfoModal
-        isOpened={!!infoModalOpen}
-        onClose={closeInfoModal}
-        data={infoModalData}
-      />
+      <InfoModal isOpened={!!infoModalOpen} onClose={closeInfoModal} data={infoModalData} />
 
       <FlowErrorBottomModal
         navigation={navigation}

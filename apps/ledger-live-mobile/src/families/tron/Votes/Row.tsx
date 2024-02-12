@@ -9,7 +9,7 @@ import { Box, BoxedIcon, Flex, Text } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { MedalMedium, TrophyMedium } from "@ledgerhq/native-ui/assets/icons";
 import { SuperRepresentative } from "@ledgerhq/live-common/families/tron/types";
-import Clock from "../../../icons/Clock";
+import Clock from "~/icons/Clock";
 
 type Props = {
   validator?: SuperRepresentative | null;
@@ -21,14 +21,7 @@ type Props = {
   isLast?: boolean;
 };
 
-const Row = ({
-  validator,
-  address,
-  amount,
-  duration,
-  explorerView,
-  isSR,
-}: Props) => {
+const Row = ({ validator, address, amount, duration, explorerView, isSR }: Props) => {
   const { colors } = useTheme();
   const srURL = explorerView && getAddressExplorer(explorerView, address);
 
@@ -49,12 +42,7 @@ const Row = ({
           flex={1}
         >
           <TouchableOpacity onPress={openSR}>
-            <Text
-              variant={"body"}
-              fontWeight={"semiBold"}
-              numberOfLines={1}
-              pb={2}
-            >
+            <Text variant={"body"} fontWeight={"semiBold"} numberOfLines={1} pb={2}>
               {validator ? validator.name : address}
             </Text>
           </TouchableOpacity>

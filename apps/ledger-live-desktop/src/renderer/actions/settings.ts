@@ -18,11 +18,12 @@ import {
   filterTokenOperationsZeroAmountSelector,
   selectedTimeRangeSelector,
   SettingsState,
+  VaultSigner,
+  SupportedCountervaluesData,
 } from "~/renderer/reducers/settings";
 import { useRefreshAccountsOrdering } from "~/renderer/actions/general";
-export type SaveSettings = (
-  a: Partial<Settings>,
-) => {
+import { Language, Locale } from "~/config/languages";
+export type SaveSettings = (a: Partial<Settings>) => {
   type: string;
   payload: Partial<Settings>;
 };
@@ -53,10 +54,6 @@ export const setDeveloperMode = (developerMode: boolean) =>
 export const setDiscreetMode = (discreetMode: boolean) =>
   saveSettings({
     discreetMode,
-  });
-export const setCarouselVisibility = (carouselVisibility: number) =>
-  saveSettings({
-    carouselVisibility,
   });
 export const setSentryLogs = (sentryLogs: boolean) =>
   saveSettings({
@@ -105,7 +102,7 @@ export const setCounterValue = (counterValue: string) =>
     counterValue,
     pairExchanges: {},
   });
-export const setLanguage = (language?: string | null) =>
+export const setLanguage = (language?: Language | null) =>
   saveSettings({
     language,
   });
@@ -113,7 +110,7 @@ export const setTheme = (theme?: string | null) =>
   saveSettings({
     theme,
   });
-export const setLocale = (locale: string) =>
+export const setLocale = (locale: Locale) =>
   saveSettings({
     locale,
   });
@@ -248,9 +245,7 @@ type ExchangePairs = Array<{
   exchange: string | undefined | null;
 }>;
 
-type SetExchangePairs = (
-  a: ExchangePairs,
-) => {
+type SetExchangePairs = (a: ExchangePairs) => {
   type: "SETTINGS_SET_PAIRS";
   payload: ExchangePairs;
 };
@@ -286,6 +281,11 @@ export const setLastSeenDevice = ({ deviceInfo }: { deviceInfo: DeviceInfo }) =>
     deviceInfo,
   },
 });
+
+export const addNewDeviceModel = ({ deviceModelId }: { deviceModelId: DeviceModelId }) => ({
+  type: "ADD_NEW_DEVICE_MODEL",
+  payload: deviceModelId,
+});
 export const setDeepLinkUrl = (url?: string | null) => ({
   type: "SET_DEEPLINK_URL",
   payload: url,
@@ -301,17 +301,6 @@ export const setSwapHasAcceptedIPSharing = (hasAcceptedIPSharing: boolean) => ({
   type: "SET_SWAP_ACCEPTED_IP_SHARING",
   payload: hasAcceptedIPSharing,
 });
-export const setSwapKYCStatus = (payload: {
-  provider: string;
-  id?: string;
-  status?: string | null;
-}) => ({
-  type: "SET_SWAP_KYC",
-  payload,
-});
-export const resetSwapLoginAndKYCData = () => ({
-  type: "RESET_SWAP_LOGIN_AND_KYC_DATA",
-});
 export const addStarredMarketCoins = (payload: string) => ({
   type: "ADD_STARRED_MARKET_COINS",
   payload,
@@ -324,19 +313,20 @@ export const toggleStarredMarketCoins = (payload: string) => ({
   type: "TOGGLE_STARRED_MARKET_COINS",
   payload,
 });
-export const setOverriddenFeatureFlag = (key: FeatureId, value: Feature | undefined) => ({
+export const setOverriddenFeatureFlag = (featureFlag: {
+  key: FeatureId;
+  value: Feature | undefined;
+}) => ({
   type: "SET_OVERRIDDEN_FEATURE_FLAG",
   payload: {
-    key,
-    value,
+    key: featureFlag.key,
+    value: featureFlag.value,
   },
 });
 export const setOverriddenFeatureFlags = (
-  overriddenFeatureFlags: Partial<
-    {
-      [key in FeatureId]: Feature;
-    }
-  >,
+  overriddenFeatureFlags: Partial<{
+    [key in FeatureId]: Feature;
+  }>,
 ) => ({
   type: "SET_OVERRIDDEN_FEATURE_FLAGS",
   payload: {
@@ -348,4 +338,14 @@ export const setFeatureFlagsButtonVisible = (featureFlagsButtonVisible: boolean)
   payload: {
     featureFlagsButtonVisible,
   },
+});
+
+export const setVaultSigner = (payload: VaultSigner) => ({
+  type: "SET_VAULT_SIGNER",
+  payload,
+});
+
+export const setSupportedCounterValues = (payload: SupportedCountervaluesData[]) => ({
+  type: "SET_SUPPORTED_COUNTER_VALUES",
+  payload,
 });

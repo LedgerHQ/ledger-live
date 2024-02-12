@@ -3,24 +3,21 @@ import { View, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
-import { accountScreenSelector } from "../../../reducers/accounts";
-import { TrackScreen } from "../../../analytics";
-import { ScreenName } from "../../../const";
-import PreventNativeBack from "../../../components/PreventNativeBack";
-import ValidateSuccess from "../../../components/ValidateSuccess";
+import { accountScreenSelector } from "~/reducers/accounts";
+import { TrackScreen } from "~/analytics";
+import { ScreenName } from "~/const";
+import PreventNativeBack from "~/components/PreventNativeBack";
+import ValidateSuccess from "~/components/ValidateSuccess";
 import type {
   BaseComposite,
   StackNavigatorNavigation,
   StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
+} from "~/components/RootNavigator/types/helpers";
 import type { CeloVoteFlowParamList } from "./types";
-import type { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
+import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 
 type Props = BaseComposite<
-  StackNavigatorProps<
-    CeloVoteFlowParamList,
-    ScreenName.CeloVoteValidationSuccess
-  >
+  StackNavigatorProps<CeloVoteFlowParamList, ScreenName.CeloVoteValidationSuccess>
 >;
 
 export default function ValidationSuccess({ navigation, route }: Props) {
@@ -28,9 +25,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   const { account } = useSelector(accountScreenSelector(route));
 
   const onClose = useCallback(() => {
-    navigation
-      .getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>()
-      .pop();
+    navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
   }, [navigation]);
 
   const goToOperationDetails = useCallback(() => {
@@ -47,17 +42,19 @@ export default function ValidationSuccess({ navigation, route }: Props) {
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
-      <TrackScreen category="CeloVote" name="ValidationSuccess" />
+      <TrackScreen
+        category="CeloVote"
+        name="ValidationSuccess"
+        flow="stake"
+        action="vote"
+        currency="celo"
+      />
       <PreventNativeBack />
       <ValidateSuccess
         onClose={onClose}
         onViewDetails={goToOperationDetails}
-        title={
-          <Trans i18nKey="celo.vote.flow.steps.verification.success.title" />
-        }
-        description={
-          <Trans i18nKey="celo.vote.flow.steps.verification.success.text" />
-        }
+        title={<Trans i18nKey="celo.vote.flow.steps.verification.success.title" />}
+        description={<Trans i18nKey="celo.vote.flow.steps.verification.success.text" />}
       />
     </View>
   );

@@ -56,14 +56,8 @@ const dummyAccount: Account = {
 
 describe("Tron Accounts", () => {
   test("should always have tronResources", async () => {
-    const account = await syncAccount(
-      bridge.accountBridge,
-      dummyAccount,
-      defaultSyncConfig
-    );
+    const account = await syncAccount(bridge.accountBridge, dummyAccount, defaultSyncConfig);
 
-    expect((account as TronAccount).tronResources).toEqual(
-      defaultTronResources
-    );
+    expect((account as TronAccount).tronResources).toEqual(defaultTronResources);
   });
 });

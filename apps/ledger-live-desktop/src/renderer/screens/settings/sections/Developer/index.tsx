@@ -10,12 +10,14 @@ import EnablePlatformDevToolsToggle from "./EnablePlatformDevToolsToggle";
 import CatalogProviderInput from "./CatalogProviderInput";
 import CustomLockScreenToggle from "./CustomLockScreenToggle";
 import CustomLockScreen from "./CustomLockScreen";
-import CatalogRampProviderSelect from "./CatalogRampProviderSelect";
 import RunLocalAppButton from "./RunLocalAppButton";
 import FeatureFlagsSettings from "./FeatureFlagsSettings";
 import EnableLearnPageStagingUrlToggle from "./EnableLearnPageStagingUrlToggle";
 import OnboardingAppInstallDebugButton from "./OnboardingAppInstallDebug";
 import EnableStagingNftMetadataServiceToggle from "./EnableStagingNftMetadataServiceToggle";
+import LottieTester from "../Experimental/LottieTester";
+import StorylyTester from "../Experimental/StorylyTester";
+import PostOnboardingHubTester from "../Experimental/PostOnboardingHubTester";
 
 const Default = () => {
   const { t } = useTranslation();
@@ -25,7 +27,7 @@ const Default = () => {
     user().then(u => {
       setSegmentID(u.id);
     });
-  });
+  }, []);
 
   return (
     <Body>
@@ -46,12 +48,6 @@ const Default = () => {
         <CatalogProviderInput />
       </Row>
 
-      <Row
-        title={t("settings.developer.catalogRampServer")}
-        desc={t("settings.developer.catalogRampServerDesc")}
-      >
-        <CatalogRampProviderSelect />
-      </Row>
       <Row
         title={t("settings.developer.enablePlatformDevTools")}
         desc={t("settings.developer.enablePlatformDevToolsDesc")}
@@ -79,6 +75,9 @@ const Default = () => {
       >
         <OnboardingAppInstallDebugButton />
       </Row>
+      <LottieTester />
+      <PostOnboardingHubTester />
+      <StorylyTester />
     </Body>
   );
 };

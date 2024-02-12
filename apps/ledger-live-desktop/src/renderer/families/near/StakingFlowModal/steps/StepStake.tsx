@@ -6,10 +6,12 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
-import { AccountBridge, Transaction } from "@ledgerhq/live-common/types/index";
+import { AccountBridge } from "@ledgerhq/types-live";
 import ValidatorField from "../fields/ValidatorField";
 import LedgerByFigmentTCLink from "../components/LedgerByFigmentTCLink";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
+import { Transaction } from "@ledgerhq/live-common/families/near/types";
+
 export default function StepStake({
   account,
   parentAccount,
@@ -29,7 +31,15 @@ export default function StepStake({
   const chosenVoteAccAddr = transaction.recipient || "";
   return (
     <Box flow={1}>
-      <TrackPage category="Staking Flow" name="Step Validator" />
+      <TrackPage
+        category="Delegation Flow"
+        name="Step Starter"
+        page="Step Validator"
+        flow="stake"
+        action="staking"
+        currency="near"
+        type="modal"
+      />
       {error && <ErrorBanner error={error} />}
       <ValidatorField
         account={account}
@@ -52,7 +62,7 @@ export function StepStakeFooter({
   const canNext = !bridgePending && !errors.validators && transaction && transaction.recipient;
   return (
     <>
-      <LedgerByFigmentTCLink transaction={transaction} />
+      {transaction && <LedgerByFigmentTCLink transaction={transaction} />}
       <Box horizontal>
         <Button mr={1} secondary onClick={onClose}>
           <Trans i18nKey="common.cancel" />

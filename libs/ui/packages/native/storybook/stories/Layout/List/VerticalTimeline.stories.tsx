@@ -1,8 +1,18 @@
 import { ComponentStory } from "@storybook/react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import { View } from "react-native";
-import { Flex, VerticalTimeline, Button, Switch, Divider, ContinueOnDevice } from "../../../../src";
-import { ItemStatus } from "../../../../src";
+import Divider from "../../../../src/components/Layout/Divider";
+import Flex from "../../../../src/components/Layout/Flex";
+import Switch from "../../../../src/components/Form/Switch";
+import Button from "../../../../src/components/cta/Button";
+import VerticalTimeline from "../../../../src/components/Layout/List/VerticalTimeline";
+import ContinueOnDevice from "../../../../src/components/message/ContinueOnDevice";
+import { ItemStatus } from "../../../../src/components/Layout/List/types";
+
+export default {
+  title: "Layout/List",
+  component: VerticalTimeline,
+};
 
 const { BodyText, SubtitleText } = VerticalTimeline;
 

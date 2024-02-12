@@ -12,17 +12,13 @@ function round(n?: number): number | undefined {
 
 function makeCSV(data: (number | undefined | string)[][]): string {
   return data
-    .map((row) =>
-      row
-        .map((cell) => `"${typeof cell === "number" ? cell : cell || ""}"`)
-        .join(",")
-    )
+    .map(row => row.map(cell => `"${typeof cell === "number" ? cell : cell || ""}"`).join(","))
     .join("\n");
 }
 
 export function csvReports(
   reports: Report[],
-  specsPerBots: SpecPerBot[]
+  specsPerBots: SpecPerBot[],
 ): Array<{ filename: string; content: string }> {
   const data: Datapoint[] = reports.map((report, i) => ({
     report,
@@ -50,8 +46,7 @@ export function csvReports(
     },
     {
       label: "Operations count",
-      get: (d: Datapoint) =>
-        d.report.accountOperationsLength?.reduce((a, b) => a + b, 0),
+      get: (d: Datapoint) => d.report.accountOperationsLength?.reduce((a, b) => a + b, 0),
     },
     {
       label: "Sync Time (ms)",
@@ -79,41 +74,29 @@ export function csvReports(
 
   csvs.push({
     filename: "csvs/all.csv",
-    content: makeCSV([
-      columns.map((c) => c.label),
-      ...data.map((d) => columns.map((c) => c.get(d))),
-    ]),
+    content: makeCSV([columns.map(c => c.label), ...data.map(d => columns.map(c => c.get(d)))]),
   });
 
-  const byFamily = groupBy(data, (d) => d.family);
+  const byFamily = groupBy(data, d => d.family);
   for (const [family, data] of Object.entries(byFamily)) {
     csvs.push({
       filename: `csvs/by-family/${family}.csv`,
-      content: makeCSV([
-        columns.map((c) => c.label),
-        ...data.map((d) => columns.map((c) => c.get(d))),
-      ]),
+      content: makeCSV([columns.map(c => c.label), ...data.map(d => columns.map(c => c.get(d)))]),
     });
   }
 
-  const byCurrency = groupBy(data, (d) => d.spec.currency.id);
+  const byCurrency = groupBy(data, d => d.spec.currency.id);
   for (const [currencyId, data] of Object.entries(byCurrency)) {
     csvs.push({
       filename: `csvs/by-currency/${currencyId}.csv`,
-      content: makeCSV([
-        columns.map((c) => c.label),
-        ...data.map((d) => columns.map((c) => c.get(d))),
-      ]),
+      content: makeCSV([columns.map(c => c.label), ...data.map(d => columns.map(c => c.get(d)))]),
     });
   }
 
   return csvs;
 }
 
-export function finalMarkdownReport(
-  reports: Report[],
-  specsPerBots: SpecPerBot[]
-): string {
+export function finalMarkdownReport(reports: Report[], specsPerBots: SpecPerBot[]): string {
   const data = reports.map((report, i) => ({ report, ...specsPerBots[i] }));
   const { table, title } = markdownHelpers(data);
 
@@ -123,11 +106,11 @@ export function finalMarkdownReport(
 
   md += table<Datapoint>({
     title: "Funds status",
-    formatValue: (d) => {
+    formatValue: d => {
       const { spec } = d;
       if (!spec) return;
-      const viableAccounts = (d.report?.accountBalances || []).filter((b) =>
-        BigNumber(b).gt(spec.minViableAmount || 0)
+      const viableAccounts = (d.report?.accountBalances || []).filter(b =>
+        BigNumber(b).gt(spec.minViableAmount || 0),
       ).length;
       if (viableAccounts > 0) return "✅";
       const explorerView = getDefaultExplorerView(d.spec.currency);
@@ -147,20 +130,16 @@ export function finalMarkdownReport(
 
   md += table({
     title: "Balances",
-    lenseValue: (d) =>
-      (d.report?.accountBalances || []).reduce(
-        (acc, r) => acc.plus(r),
-        BigNumber(0)
-      ),
+    lenseValue: d =>
+      (d.report?.accountBalances || []).reduce((acc, r) => acc.plus(r), BigNumber(0)),
     reduce: (d, map) => d.reduce((acc, r) => acc.plus(map(r)), BigNumber(0)),
-    formatValue: (v, ctx) =>
-      formatCurrencyUnit(ctx.spec.currency.units[0], v, { showCode: true }),
+    formatValue: (v, ctx) => formatCurrencyUnit(ctx.spec.currency.units[0], v, { showCode: true }),
     totalPerCurrency: true,
   });
 
   md += table({
     title: "Accounts count",
-    lenseValue: (d) => d.report?.accountBalances?.length || 0,
+    lenseValue: d => d.report?.accountBalances?.length || 0,
     totalPerCurrency: true,
     totalPerSeed: true,
     totalPerFamily: true,
@@ -168,8 +147,7 @@ export function finalMarkdownReport(
 
   md += table({
     title: "Operations count",
-    lenseValue: (d) =>
-      d.report?.accountOperationsLength?.reduce((a, b) => a + b || 0, 0) || 0,
+    lenseValue: d => d.report?.accountOperationsLength?.reduce((a, b) => a + b || 0, 0) || 0,
     totalPerCurrency: true,
     totalPerSeed: true,
     totalPerFamily: true,
@@ -179,8 +157,8 @@ export function finalMarkdownReport(
 
   md += table({
     title: "Sync Times",
-    lenseValue: (d) => d.report?.auditResult?.totalTime,
-    formatValue: (v) => formatTime(v),
+    lenseValue: d => d.report?.auditResult?.totalTime,
+    formatValue: v => formatTime(v),
     totalPerCurrency: true,
     totalPerSeed: true,
     totalPerFamily: true,
@@ -188,7 +166,7 @@ export function finalMarkdownReport(
 
   md += table({
     title: "HTTP Calls Count",
-    lenseValue: (d) => d.report?.auditResult?.network?.totalCount || 0,
+    lenseValue: d => d.report?.auditResult?.network?.totalCount || 0,
     totalPerCurrency: true,
     totalPerSeed: true,
     totalPerFamily: true,
@@ -196,8 +174,8 @@ export function finalMarkdownReport(
 
   md += table({
     title: "HTTP Bandwidth",
-    lenseValue: (d) => d.report?.auditResult?.network?.totalResponseSize || 0,
-    formatValue: (v) => formatSize(v),
+    lenseValue: d => d.report?.auditResult?.network?.totalResponseSize || 0,
+    formatValue: v => formatSize(v),
     totalPerCurrency: true,
     totalPerSeed: true,
     totalPerFamily: true,
@@ -205,8 +183,7 @@ export function finalMarkdownReport(
 
   md += table({
     title: "Duplicate HTTP Calls",
-    lenseValue: (d) =>
-      d.report?.auditResult?.network?.totalDuplicateRequests || 0,
+    lenseValue: d => d.report?.auditResult?.network?.totalDuplicateRequests || 0,
     totalPerCurrency: true,
     totalPerSeed: true,
     totalPerFamily: true,
@@ -214,8 +191,8 @@ export function finalMarkdownReport(
 
   md += table({
     title: "Accounts Data Size",
-    lenseValue: (d) => d.report?.auditResult?.accountsJSONSize,
-    formatValue: (v) => formatSize(v),
+    lenseValue: d => d.report?.auditResult?.accountsJSONSize,
+    formatValue: v => formatSize(v),
     totalPerCurrency: true,
     totalPerSeed: true,
     totalPerFamily: true,
@@ -223,8 +200,8 @@ export function finalMarkdownReport(
 
   md += table({
     title: "Currency Preloaded Data Size",
-    lenseValue: (d) => d.report?.auditResult?.preloadJSONSize,
-    formatValue: (v) => formatSize(v),
+    lenseValue: d => d.report?.auditResult?.preloadJSONSize,
+    formatValue: v => formatSize(v),
     totalPerCurrency: true,
     totalPerSeed: true,
     totalPerFamily: true,
@@ -232,8 +209,8 @@ export function finalMarkdownReport(
 
   md += table({
     title: "CPU user time",
-    lenseValue: (d) => d.report?.auditResult?.cpuUserTime,
-    formatValue: (v) => formatTime(v),
+    lenseValue: d => d.report?.auditResult?.cpuUserTime,
+    formatValue: v => formatTime(v),
     totalPerCurrency: true,
     totalPerSeed: true,
     totalPerFamily: true,
@@ -252,14 +229,14 @@ export function finalMarkdownReport(
 
   md += table({
     title: "Memory RSS",
-    lenseValue: (d) => d.report?.auditResult?.memoryEnd.rss,
-    formatValue: (v) => formatSize(v),
+    lenseValue: d => d.report?.auditResult?.memoryEnd.rss,
+    formatValue: v => formatSize(v),
   });
 
   md += table({
     title: "JS Boot Time",
-    lenseValue: (d) => d.report?.auditResult?.jsBootTime,
-    formatValue: (v) => formatTime(v),
+    lenseValue: d => d.report?.auditResult?.jsBootTime,
+    formatValue: v => formatTime(v),
   });
 
   md += table<{ count: number; duration: number } | undefined>({
@@ -270,28 +247,23 @@ export function finalMarkdownReport(
           count: acc.count + (map(r)?.count || 0),
           duration: acc.duration + (map(r)?.duration || 0),
         }),
-        { count: 0, duration: 0 }
+        { count: 0, duration: 0 },
       ),
-    lenseValue: (d) => d.report?.auditResult?.slowFrames,
-    formatValue: (v) =>
-      v
-        ? v.count === 0
-          ? "✅"
-          : `${v.count} (${formatTime(v.duration)})`
-        : "",
+    lenseValue: d => d.report?.auditResult?.slowFrames,
+    formatValue: v => (v ? (v.count === 0 ? "✅" : `${v.count} (${formatTime(v.duration)})`) : ""),
     totalPerCurrency: true,
     totalPerSeed: true,
     totalPerFamily: true,
   });
 
-  const errors = data.filter((d) => d.report.error);
+  const errors = data.filter(d => d.report.error);
   if (errors.length) {
     md += "\n\n# Errors\n";
-    const sortKey = (d) => `${d.spec.name}: ${d.report.error}`;
+    const sortKey = d => `${d.spec.name}: ${d.report.error}`;
     md += errors
       .slice(0)
       .sort((a, b) => sortKey(a).localeCompare(sortKey(b)))
-      .map((d) => `- ${d.seed}: ${d.spec.name}: ${d.report.error}`)
+      .map(d => `- ${d.seed}: ${d.spec.name}: ${d.report.error}`)
       .join("\n");
   }
 
@@ -338,10 +310,10 @@ function markdownHelpers(data: Datapoint[]): {
   title: (txt: string) => string;
   strong: (txt: string) => string;
 } {
-  const seedNames = Array.from(new Set(data.map((d) => d.seed)));
+  const seedNames = Array.from(new Set(data.map(d => d.seed)));
   seedNames.sort();
   // specs are assumed to be grouped by family already
-  const specs = Array.from(new Set(data.map((d) => d.spec)));
+  const specs = Array.from(new Set(data.map(d => d.spec)));
 
   function strong(txt: string): string {
     return "**" + txt + "**";
@@ -357,7 +329,7 @@ function markdownHelpers(data: Datapoint[]): {
       totalPerFamily?: FormatDatapointMulti;
       totalPerCurrency?: FormatDatapointMulti;
       totalPerSeed?: FormatDatapointMulti;
-    } = {}
+    } = {},
   ): string {
     const { totalPerFamily, totalPerCurrency, totalPerSeed } = opts;
     let md = "\n\n";
@@ -380,25 +352,22 @@ function markdownHelpers(data: Datapoint[]): {
       if (totalPerFamily && spec.currency.family !== lastFamily) {
         lastFamily = spec.currency.family;
         soloInFamilyFactorisation = !specs.some(
-          (s) => s !== spec && s.currency.family === lastFamily
+          s => s !== spec && s.currency.family === lastFamily,
         );
         if (!soloInFamilyFactorisation) {
           const familyName =
-            findCryptoCurrencyById(spec.currency.family)?.name ||
-            spec.currency.family;
+            findCryptoCurrencyById(spec.currency.family)?.name || spec.currency.family;
           md += "| " + strong(familyName) + " family | ";
           md += seedNames
-            .map((seed) => {
+            .map(seed => {
               const all = data.filter(
-                (d) => d.seed === seed && d.spec.currency.family === lastFamily
+                d => d.seed === seed && d.spec.currency.family === lastFamily,
               );
               return (totalPerFamily(all) || "") + " |";
             })
             .join("");
           if (totalPerCurrency) {
-            const all = data.filter(
-              (d) => d.spec.currency.family === lastFamily
-            );
+            const all = data.filter(d => d.spec.currency.family === lastFamily);
             md += (totalPerCurrency(all) || "") + " |";
           }
           md += "\n";
@@ -408,24 +377,23 @@ function markdownHelpers(data: Datapoint[]): {
       md += "| " + (soloInFamilyFactorisation ? strong(name) : name) + " | ";
       md +=
         seedNames
-          .map((seed) => {
-            const d = data.find((d) => d.seed === seed && d.spec === spec);
+          .map(seed => {
+            const d = data.find(d => d.seed === seed && d.spec === spec);
             if (!d) return "?";
             if (d.report.error) return "❌";
             return f(d) || "";
           })
           .join(" | ") + " |";
       if (totalPerCurrency) {
-        md +=
-          (totalPerCurrency(data.filter((d) => d.spec === spec)) || "") + " |";
+        md += (totalPerCurrency(data.filter(d => d.spec === spec)) || "") + " |";
       }
       md += "\n";
     }
     if (totalPerSeed) {
       md += "| **Total** | ";
       md += seedNames
-        .map((seed) => {
-          const all = data.filter((d) => d.seed === seed);
+        .map(seed => {
+          const all = data.filter(d => d.seed === seed);
           return (totalPerSeed(all) || "") + " |";
         })
         .join("");
@@ -447,7 +415,7 @@ function markdownHelpers(data: Datapoint[]): {
       v.reduce((sum: number, v) => sum + Number(map(v)), 0) as any,
   };
 
-  const table: TableF = (opts) => {
+  const table: TableF = opts => {
     const {
       title,
       lenseValue,
@@ -457,9 +425,9 @@ function markdownHelpers(data: Datapoint[]): {
       totalPerSeed,
       reduce,
     } = { ...defaults, ...opts };
-    const total = (d) => formatValue(reduce(d, lenseValue), d[0]);
+    const total = d => formatValue(reduce(d, lenseValue), d[0]);
     let md = `\n<details><summary><b>${title}</b></summary>\n`;
-    md += genTable((d) => formatValue(lenseValue(d), d), {
+    md += genTable(d => formatValue(lenseValue(d), d), {
       totalPerFamily: totalPerFamily ? total : undefined,
       totalPerCurrency: totalPerCurrency ? total : undefined,
       totalPerSeed: totalPerSeed ? total : undefined,

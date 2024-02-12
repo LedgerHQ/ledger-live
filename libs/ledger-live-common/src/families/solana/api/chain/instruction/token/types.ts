@@ -1,16 +1,6 @@
 /* eslint-disable @typescript-eslint/no-redeclare */
 
-import {
-  enums,
-  type,
-  Infer,
-  number,
-  string,
-  optional,
-  array,
-  nullable,
-  union,
-} from "superstruct";
+import { enums, type, Infer, number, string, optional, array, nullable, union } from "superstruct";
 import { PublicKeyFromString } from "../../validators/pubkey";
 
 export type TokenAmountUi = Infer<typeof TokenAmountUi>;
@@ -68,12 +58,7 @@ const Revoke = type({
   signers: optional(array(PublicKeyFromString)),
 });
 
-const AuthorityType = enums([
-  "mintTokens",
-  "freezeAccount",
-  "accountOwner",
-  "closeAccount",
-]);
+const AuthorityType = enums(["mintTokens", "freezeAccount", "accountOwner", "closeAccount"]);
 
 const SetAuthority = type({
   mint: optional(PublicKeyFromString),

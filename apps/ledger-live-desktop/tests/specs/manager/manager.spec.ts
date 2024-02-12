@@ -6,7 +6,7 @@ import { Layout } from "../../models/Layout";
 
 test.use({ userdata: "skip-onboarding" });
 
-test("Manager", async ({ page }) => {
+test("Manager @smoke", async ({ page }) => {
   const managerPage = new ManagerPage(page);
   const deviceAction = new DeviceAction(page);
   const layout = new Layout(page);

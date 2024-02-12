@@ -13,7 +13,7 @@ module.exports = {
     jest: {
       setupTimeout: 500000,
     },
-    retries: 1,
+    retries: 0,
   },
   logger: {
     level: process.env.DEBUG_DETOX ? "trace" : "info",
@@ -25,33 +25,32 @@ module.exports = {
       exposeGlobals: false,
     },
     launchApp: "auto",
+    cleanup: {
+      shutdownDevice: process.env.CI ? true : false,
+    },
   },
   apps: {
     "ios.debug": {
       type: "ios.app",
       build: `export ENVFILE=.env.mock && xcodebuild ARCHS=${iosArch} ONLY_ACTIVE_ARCH=no -workspace ios/ledgerlivemobile.xcworkspace -scheme ledgerlivemobile -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build`,
-      binaryPath:
-        "ios/build/Build/Products/Debug-iphonesimulator/ledgerlivemobile.app",
+      binaryPath: "ios/build/Build/Products/Debug-iphonesimulator/ledgerlivemobile.app",
     },
     "ios.staging": {
       type: "ios.app",
       build: `export ENVFILE=.env.mock && xcodebuild ARCHS=${iosArch} ONLY_ACTIVE_ARCH=no -workspace ios/ledgerlivemobile.xcworkspace -scheme ledgerlivemobile -configuration Staging -sdk iphonesimulator -derivedDataPath ios/build`,
-      binaryPath:
-        "ios/build/Build/Products/Staging-iphonesimulator/ledgerlivemobile.app",
+      binaryPath: "ios/build/Build/Products/Staging-iphonesimulator/ledgerlivemobile.app",
     },
     "ios.release": {
       type: "ios.app",
       build: `export ENVFILE=.env.mock && xcodebuild ARCHS=${iosArch} ONLY_ACTIVE_ARCH=no -workspace ios/ledgerlivemobile.xcworkspace -scheme ledgerlivemobile -configuration Release -sdk iphonesimulator -derivedDataPath ios/build`,
-      binaryPath:
-        "ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app",
+      binaryPath: "ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app",
     },
     "android.debug": {
       type: "android.apk",
       build:
         "cd android && ENVFILE=.env.mock ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug && cd ..",
       binaryPath: `android/app/build/outputs/apk/debug/app-${androidArch}-debug.apk`,
-      testBinaryPath:
-        "android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk",
+      testBinaryPath: "android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk",
     },
     "android.release": {
       type: "android.apk",
@@ -66,14 +65,16 @@ module.exports = {
     simulator: {
       type: "ios.simulator",
       device: {
-        type: "iPhone 13",
+        type: "iPhone 14",
       },
     },
     emulator: {
       type: "android.emulator",
       device: {
-        avdName: "Pixel_5_API_31",
+        avdName: "Pixel_6_Pro_API_32",
       },
+      gpuMode: "swiftshader_indirect",
+      headless: process.env.CI ? true : false,
     },
   },
   configurations: {

@@ -1,0 +1,37 @@
+import React, { useCallback } from "react";
+import { TextInput } from "react-native";
+import styled from "styled-components/native";
+import Input, { InputProps, InputRenderLeftContainer } from "../SquaredInput";
+import SearchMedium from "@ledgerhq/icons-ui/nativeLegacy/SearchMedium";
+import Button from "../../../cta/Button";
+
+const Icon = styled(SearchMedium).attrs((p) => ({
+  color: p.theme.colors.neutral.c70,
+}))``;
+
+function SquaredSearchBar(
+  { onChange, value, ...props }: InputProps,
+  ref?: React.ForwardedRef<TextInput> | null,
+): JSX.Element {
+  const onClear = useCallback((): void => {
+    if (onChange) {
+      onChange("");
+    }
+  }, [onChange]);
+  return (
+    <Input
+      ref={ref}
+      onChange={onChange}
+      value={value}
+      {...props}
+      renderLeft={
+        <InputRenderLeftContainer>
+          <Icon size={20} />
+        </InputRenderLeftContainer>
+      }
+      renderRight={value ? <Button iconName="Close" onPress={onClear} /> : null}
+    />
+  );
+}
+
+export default React.forwardRef(SquaredSearchBar);

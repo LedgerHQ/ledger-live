@@ -1,15 +1,8 @@
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { NavigatorScreenParams } from "@react-navigation/native";
 
-import { NavigatorName, ScreenName } from "../../../const";
-
-export type OnboardingCarefulWarningParamList = {
-  [ScreenName.OnboardingModalWarning]: { onNext?: () => void };
-  [ScreenName.OnboardingModalSyncDesktopInformation]: { onNext?: () => void };
-  [ScreenName.OnboardingModalRecoveryPhraseWarning]: {
-    onNext?: () => void;
-  };
-};
+import { NavigatorName, ScreenName } from "~/const";
+import { AnalyticsOptInPromptNavigatorParamList } from "./AnalyticsOptInPromptNavigator";
 
 export type OnboardingPreQuizModalNavigatorParamList = {
   [ScreenName.OnboardingPreQuizModal]: { onNext?: () => void };
@@ -18,14 +11,13 @@ export type OnboardingPreQuizModalNavigatorParamList = {
 export type OnboardingNavigatorParamList = {
   [ScreenName.OnboardingWelcome]: undefined;
   [ScreenName.OnboardingPostWelcomeSelection]: { userHasDevice: boolean };
+  [ScreenName.OnboardingWelcomeBack]: undefined;
   [ScreenName.GetDevice]: undefined;
   [ScreenName.OnboardingLanguage]: undefined;
   [ScreenName.OnboardingTermsOfUse]: undefined;
   [ScreenName.OnboardingDeviceSelection]: undefined;
   [ScreenName.OnboardingUseCase]: { deviceModelId: DeviceModelId };
-  [NavigatorName.OnboardingCarefulWarning]: NavigatorScreenParams<OnboardingCarefulWarningParamList>;
   [NavigatorName.OnboardingPreQuiz]: NavigatorScreenParams<OnboardingPreQuizModalNavigatorParamList>;
-  [ScreenName.OnboardingDoYouHaveALedgerDevice]: undefined;
   [ScreenName.OnboardingModalDiscoverLive]: undefined;
   [ScreenName.OnboardingModalSetupNewDevice]: { deviceModelId: DeviceModelId };
   [ScreenName.OnboardingSetupDeviceInformation]: undefined;
@@ -42,7 +34,7 @@ export type OnboardingNavigatorParamList = {
     sceneInfoKey: string;
   };
   [ScreenName.OnboardingPairNew]: {
-    deviceModelId: DeviceModelId;
+    deviceModelId?: DeviceModelId;
     next?: ScreenName.OnboardingProtectFlow;
     showSeedWarning?: boolean;
     isProtectFlow?: boolean;
@@ -63,4 +55,6 @@ export type OnboardingNavigatorParamList = {
     success: boolean;
     deviceModelId: DeviceModelId;
   };
+  [ScreenName.OnboardingBleDevicePairingFlow]: undefined;
+  [NavigatorName.AnalyticsOptInPrompt]: NavigatorScreenParams<AnalyticsOptInPromptNavigatorParamList>;
 };

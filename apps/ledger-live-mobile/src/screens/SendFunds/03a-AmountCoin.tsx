@@ -18,44 +18,41 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
-import { ScreenName } from "../../const";
-import { urls } from "../../config/urls";
-import { accountScreenSelector } from "../../reducers/accounts";
-import { TrackScreen } from "../../analytics";
-import LText from "../../components/LText";
-import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import Touchable from "../../components/Touchable";
-import Button from "../../components/Button";
-import KeyboardView from "../../components/KeyboardView";
-import RetryButton from "../../components/RetryButton";
-import CancelButton from "../../components/CancelButton";
-import ExternalLink from "../../components/ExternalLink";
-import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
-import InfoModal from "../../modals/Info";
-import type { ModalInfo } from "../../modals/Info";
-import InfoIcon from "../../icons/Info";
+import { ScreenName } from "~/const";
+import { urls } from "~/utils/urls";
+import { accountScreenSelector } from "~/reducers/accounts";
+import { TrackScreen } from "~/analytics";
+import LText from "~/components/LText";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import Touchable from "~/components/Touchable";
+import Button from "~/components/Button";
+import KeyboardView from "~/components/KeyboardView";
+import RetryButton from "~/components/RetryButton";
+import CancelButton from "~/components/CancelButton";
+import ExternalLink from "~/components/ExternalLink";
+import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
+import InfoModal from "~/modals/Info";
+import type { ModalInfo } from "~/modals/Info";
+import InfoIcon from "~/icons/Info";
 import AmountInput from "./AmountInput";
-import type { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
-import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import type { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 
 type ModalInfoName = "maxSpendable";
-type Props = StackNavigatorProps<
-  SendFundsNavigatorStackParamList,
-  ScreenName.SendAmountCoin
->;
+type Props = StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendAmountCoin>;
 
 export default function SendAmountCoin({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const [maxSpendable, setMaxSpendable] = useState<BigNumber | null>(null);
-  const { modalInfos, modalInfoName, openInfoModal, closeInfoModal } =
-    useModalInfo();
-  const { transaction, setTransaction, status, bridgePending, bridgeError } =
-    useBridgeTransaction(() => ({
+  const { modalInfos, modalInfoName, openInfoModal, closeInfoModal } = useModalInfo();
+  const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
+    () => ({
       transaction: route.params.transaction,
       account,
       parentAccount,
-    }));
+    }),
+  );
   const debouncedTransaction = useDebounce(transaction, 500);
   useEffect(() => {
     if (!account) return;
@@ -77,7 +74,7 @@ export default function SendAmountCoin({ navigation, route }: Props) {
   }, [account, parentAccount, debouncedTransaction]);
   invariant(account, "account is needed");
   const onChange = useCallback(
-    amount => {
+    (amount: BigNumber) => {
       if (!amount.isNaN()) {
         if (!account) return;
         const bridge = getAccountBridge(account, parentAccount);
@@ -133,11 +130,7 @@ export default function SendAmountCoin({ navigation, route }: Props) {
 
   return (
     <>
-      <TrackScreen
-        category="SendFunds"
-        name="Amount"
-        currencyName={currency.name}
-      />
+      <TrackScreen category="SendFunds" name="Amount" currencyName={currency.name} />
       <SafeAreaView
         style={[
           styles.root,
@@ -150,6 +143,7 @@ export default function SendAmountCoin({ navigation, route }: Props) {
           <TouchableWithoutFeedback onPress={blur}>
             <View style={styles.amountWrapper}>
               <AmountInput
+                testID="amount-input"
                 editable={!useAllAmount}
                 account={account}
                 onChange={onChange}
@@ -157,8 +151,7 @@ export default function SendAmountCoin({ navigation, route }: Props) {
                 error={
                   status.errors.dustLimit
                     ? status.errors.dustLimit
-                    : amount.eq(0) &&
-                      (bridgePending || !transaction.useAllAmount)
+                    : amount.eq(0) && (bridgePending || !transaction.useAllAmount)
                     ? null
                     : status.errors.amount
                 }
@@ -179,11 +172,7 @@ export default function SendAmountCoin({ navigation, route }: Props) {
                       </LText>
                       {maxSpendable && (
                         <LText semiBold color="grey">
-                          <CurrencyUnitValue
-                            showCode
-                            unit={unit}
-                            value={maxSpendable}
-                          />
+                          <CurrencyUnitValue showCode unit={unit} value={maxSpendable} />
                         </LText>
                       )}
                     </View>
@@ -203,23 +192,16 @@ export default function SendAmountCoin({ navigation, route }: Props) {
                 </View>
                 <View style={styles.continueWrapper}>
                   <Button
+                    testID="amount-continue-button"
                     event="SendAmountCoinContinue"
                     type="primary"
                     title={
                       <Trans
-                        i18nKey={
-                          !bridgePending
-                            ? "common.continue"
-                            : "send.amount.loadingNetwork"
-                        }
+                        i18nKey={!bridgePending ? "common.continue" : "send.amount.loadingNetwork"}
                       />
                     }
                     onPress={onContinue}
-                    disabled={
-                      !!status.errors.amount ||
-                      !!status.errors.dustLimit ||
-                      bridgePending
-                    }
+                    disabled={!!status.errors.amount || !!status.errors.dustLimit || bridgePending}
                   />
                 </View>
               </View>
@@ -239,10 +221,7 @@ export default function SendAmountCoin({ navigation, route }: Props) {
         onClose={onBridgeErrorRetry}
         footerButtons={
           <>
-            <CancelButton
-              containerStyle={styles.button}
-              onPress={onBridgeErrorCancel}
-            />
+            <CancelButton containerStyle={styles.button} onPress={onBridgeErrorCancel} />
             <RetryButton
               containerStyle={[styles.button, styles.buttonRight]}
               onPress={onBridgeErrorRetry}
@@ -261,13 +240,8 @@ function useModalInfo(): {
   closeInfoModal: () => void;
 } {
   const { t } = useTranslation();
-  const [modalInfoName, setModalInfoName] = useState<ModalInfoName | null>(
-    null,
-  );
-  const onMaxSpendableLearnMore = useCallback(
-    () => Linking.openURL(urls.maxSpendable),
-    [],
-  );
+  const [modalInfoName, setModalInfoName] = useState<ModalInfoName | null>(null);
+  const onMaxSpendableLearnMore = useCallback(() => Linking.openURL(urls.maxSpendable), []);
   return {
     openInfoModal: (infoName: ModalInfoName) => setModalInfoName(infoName),
     closeInfoModal: () => setModalInfoName(null),

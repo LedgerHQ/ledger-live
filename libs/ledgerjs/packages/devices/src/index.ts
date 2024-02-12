@@ -49,9 +49,7 @@ const devices: { [key in DeviceModelId]: DeviceModel } = {
     memorySize: 320 * 1024,
     masks: [0x31100000],
     getBlockSize: (firmwareVersion: string): number =>
-      semver.lt(semver.coerce(firmwareVersion) ?? "", "2.0.0")
-        ? 4 * 1024
-        : 2 * 1024,
+      semver.lt(semver.coerce(firmwareVersion) ?? "", "2.0.0") ? 4 * 1024 : 2 * 1024,
   },
   [DeviceModelId.nanoSP]: {
     id: DeviceModelId.nanoSP,
@@ -59,7 +57,7 @@ const devices: { [key in DeviceModelId]: DeviceModel } = {
     productIdMM: 0x50,
     legacyUsbProductId: 0x0005,
     usbOnly: true,
-    memorySize: 1536 * 1024,
+    memorySize: 1533 * 1024,
     masks: [0x33100000],
     getBlockSize: (_firmwareVersion: string): number => 32,
   },
@@ -87,7 +85,7 @@ const devices: { [key in DeviceModelId]: DeviceModel } = {
     productIdMM: 0x60,
     legacyUsbProductId: 0x0006,
     usbOnly: false,
-    memorySize: 1536 * 1024,
+    memorySize: 1533 * 1024,
     masks: [0x33200000],
     getBlockSize: (_firmwareVersion: string): number => 32,
     bluetoothSpec: [
@@ -129,33 +127,30 @@ export const getDeviceModel = (id: DeviceModelId): DeviceModel => {
  * Given a `targetId`, return the deviceModel associated to it,
  * based on the first two bytes.
  */
-export const identifyTargetId = (
-  targetId: number
-): DeviceModel | null | undefined => {
+export const identifyTargetId = (targetId: number): DeviceModel | null | undefined => {
   const deviceModel = devicesList.find(({ masks }) =>
-    masks.find((mask) => (targetId & 0xffff0000) === mask)
+    masks.find(mask => (targetId & 0xffff0000) === mask),
   );
 
   return deviceModel;
 };
 
 /**
+ * From a given USB product id, return the deviceModel associated to it.
  *
+ * The mapping from the product id is only based on the 2 most significant bytes.
+ * For example, Stax is defined with a product id of 0x60ii, a product id 0x6011 would be mapped to it.
  */
-export const identifyUSBProductId = (
-  usbProductId: number
-): DeviceModel | null | undefined => {
-  const legacy = devicesList.find((d) => d.legacyUsbProductId === usbProductId);
+export const identifyUSBProductId = (usbProductId: number): DeviceModel | null | undefined => {
+  const legacy = devicesList.find(d => d.legacyUsbProductId === usbProductId);
   if (legacy) return legacy;
   const mm = usbProductId >> 8;
-  const deviceModel = devicesList.find((d) => d.productIdMM === mm);
+  const deviceModel = devicesList.find(d => d.productIdMM === mm);
   return deviceModel;
 };
 
-export const identifyProductName = (
-  productName: string
-): DeviceModel | null | undefined => {
-  const deviceModel = devicesList.find((d) => d.id === productMap[productName]);
+export const identifyProductName = (productName: string): DeviceModel | null | undefined => {
+  const deviceModel = devicesList.find(d => d.id === productMap[productName]);
   return deviceModel;
 };
 
@@ -187,9 +182,8 @@ export const getBluetoothServiceUuids = (): string[] => bluetoothServices;
 /**
  *
  */
-export const getInfosForServiceUuid = (
-  uuid: string
-): BluetoothInfos | undefined => serviceUuidToInfos[uuid.toLowerCase()];
+export const getInfosForServiceUuid = (uuid: string): BluetoothInfos | undefined =>
+  serviceUuidToInfos[uuid.toLowerCase()];
 
 /**
  *

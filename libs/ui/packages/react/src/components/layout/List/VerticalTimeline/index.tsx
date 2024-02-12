@@ -3,7 +3,7 @@ import React, { ReactNode } from "react";
 import TimelineItem from "./TimelineItem";
 import { Flex } from "../..";
 import Text, { TextProps } from "../../../asorted/Text";
-import { BaseStyledProps } from "src/components/styled";
+import { BaseStyledProps } from "../../../styled";
 
 export type ItemStatus = "inactive" | "active" | "completed";
 
@@ -12,6 +12,7 @@ export type Item = {
   title: string;
   renderBody?: (isDisplayed?: boolean) => ReactNode;
   estimatedTime?: number;
+  hasLoader?: boolean;
 };
 
 export type Props = BaseStyledProps & {
@@ -35,11 +36,11 @@ export default function VerticalTimeline({ steps, onClickIndex, ...props }: Prop
   );
 }
 
-const SubtitleText: React.FC<TextProps> = (props) => (
+const SubtitleText: React.FC<TextProps> = props => (
   <Text variant="body" fontWeight="semiBold" color="neutral.c100" mb={3} {...props} />
 );
 
-const BodyText: React.FC<TextProps> = (props) => (
+const BodyText: React.FC<TextProps> = props => (
   <Text variant="bodyLineHeight" fontWeight="medium" color="neutral.c80" {...props} />
 );
 

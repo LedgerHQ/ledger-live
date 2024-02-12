@@ -1,11 +1,11 @@
-import React, { memo } from "react";
+import React, { memo, useMemo } from "react";
 import { Flex, Text } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import LoadingPlaceholder from "~/renderer/components/LoadingPlaceholder";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
-import FormattedDate from "~/renderer/components/FormattedDate";
+import { dayAndHourFormat, useDateFormatted } from "~/renderer/hooks/useDateFormatter";
 
 const Title = styled(Text).attrs({ variant: "h5", color: "neutral.c100", mb: 2 })`
   font-size: 20px;
@@ -107,14 +107,19 @@ function MarketInfo({
   totalSupply?: number;
   maxSupply?: number;
   ath?: number;
-  athDate?: Date;
+  athDate?: string | Date;
   atl?: number;
-  atlDate?: Date;
+  atlDate?: string | Date;
   counterCurrency: string;
   loading: boolean;
   locale: string;
 }) {
   const { t } = useTranslation();
+
+  const athDateD = useMemo(() => (athDate ? new Date(athDate) : undefined), [athDate]);
+  const atlDateD = useMemo(() => (atlDate ? new Date(atlDate) : undefined), [atlDate]);
+  const athText = useDateFormatted(athDateD, dayAndHourFormat);
+  const atlText = useDateFormatted(atlDateD, dayAndHourFormat);
 
   return (
     <Flex flexDirection="row" my={2} alignItems="flex-start" justifyContent="space-between">
@@ -150,9 +155,9 @@ function MarketInfo({
         <Line>
           <Label>{t("market.detailsPage.24hLowHight")}</Label>
           <LoadingLabel loading={loading}>
-            {counterValueFormatter({ value: high24h, currency: counterCurrency, locale })}
-            {" / "}
             {counterValueFormatter({ value: low24h, currency: counterCurrency, locale })}
+            {" / "}
+            {counterValueFormatter({ value: high24h, currency: counterCurrency, locale })}
           </LoadingLabel>
         </Line>
         <Line>
@@ -162,7 +167,7 @@ function MarketInfo({
               {counterValueFormatter({ value: ath, currency: counterCurrency, locale })}
             </LoadingLabel>
             <LoadingLabel color="neutral.c80" loading={loading}>
-              {athDate ? <FormattedDate date={athDate} /> : "-"}
+              {athText || "-"}
             </LoadingLabel>
           </ColumnRight>
         </Line>
@@ -173,7 +178,7 @@ function MarketInfo({
               {counterValueFormatter({ value: atl, currency: counterCurrency, locale })}
             </LoadingLabel>
             <LoadingLabel color="neutral.c80" loading={loading}>
-              {atlDate ? <FormattedDate date={atlDate} /> : "-"}
+              {atlText || "-"}
             </LoadingLabel>
           </ColumnRight>
         </Line>

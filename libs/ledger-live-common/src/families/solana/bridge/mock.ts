@@ -1,12 +1,11 @@
-import { flow, isArray, isEqual, isObject } from "lodash/fp";
-import { isUndefined, mapValues, omitBy } from "lodash/fp";
-import { cached, ChainAPI, Config, getChainAPI, logged, queued } from "../api";
-import { makeBridges } from "./bridge";
-import { makeLRUCache } from "../../../cache";
-import { getMockedMethods } from "./mock-data";
-import { minutes } from "../api/cached";
+import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import { Message } from "@solana/web3.js";
+import { flow, isArray, isEqual, isObject, isUndefined, mapValues, omitBy } from "lodash/fp";
+import { ChainAPI, Config, cached, getChainAPI, logged, queued } from "../api";
+import { minutes } from "../api/cached";
 import { Functions } from "../utils";
+import { makeBridges } from "./bridge";
+import { getMockedMethods } from "./mock-data";
 
 function mockChainAPI(config: Config): ChainAPI {
   const mockedMethods = getMockedMethods();
@@ -21,25 +20,21 @@ function mockChainAPI(config: Config): ChainAPI {
           return undefined;
         }
         const method: Functions<ChainAPI> = propKey.toString() as any;
-        const mocks = mockedMethods.filter((mock) => mock.method === method);
+        const mocks = mockedMethods.filter(mock => mock.method === method);
         if (mocks.length === 0) {
           throw new Error(`no mock found for api method: ${method}`);
         }
         return function (...rawArgs: any[]) {
           const args = preprocessArgs(method, rawArgs);
-          const mock = mocks.find(({ params: mockArgs }) =>
-            isEqual(args)(mockArgs)
-          );
+          const mock = mocks.find(({ params: mockArgs }) => isEqual(args)(mockArgs));
           if (mock === undefined) {
             const argsJson = JSON.stringify(args);
-            throw new Error(
-              `no mock found for api method ${method} with args ${argsJson}`
-            );
+            throw new Error(`no mock found for api method ${method} with args ${argsJson}`);
           }
           return Promise.resolve(mock.answer);
         };
       },
-    }
+    },
   );
   return api as ChainAPI;
 }
@@ -71,11 +66,9 @@ function preprocessArgs(method: keyof ChainAPI, args: any) {
 function createMockDataForAPI() {
   const apiGetter = makeLRUCache(
     (config: Config) =>
-      Promise.resolve(
-        cached(queued(logged(getChainAPI(config), "/tmp/log"), 100))
-      ),
-    (config) => config.endpoint,
-    minutes(1000)
+      Promise.resolve(cached(queued(logged(getChainAPI(config), "/tmp/log"), 100))),
+    config => config.endpoint,
+    minutes(1000),
   );
   return {
     getAPI: apiGetter,

@@ -3,7 +3,7 @@ import { extractDappURLFromManifest } from "./extractDappURLFromManifest";
 
 export function appendQueryParamsToDappURL(
   manifest: LiveAppManifest,
-  queryString: Record<string, string | string[]> = {}
+  queryString: Record<string, string | string[]> = {},
 ): URL | undefined {
   const url = extractDappURLFromManifest(manifest);
 
@@ -13,7 +13,7 @@ export function appendQueryParamsToDappURL(
     // Append the new query strings to the existing ones
     Object.entries(queryString).forEach(([key, value]) => {
       if (Array.isArray(value)) {
-        value.forEach((item) => searchParams.append(key, item));
+        value.forEach(item => searchParams.append(key, item));
       } else {
         searchParams.append(key, value);
       }

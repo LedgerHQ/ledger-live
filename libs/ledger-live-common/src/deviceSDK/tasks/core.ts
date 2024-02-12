@@ -3,22 +3,20 @@ import {
   DisconnectedDevice,
   LockedDeviceError,
   TransportRaceCondition,
-  createCustomErrorClass,
+  UnresponsiveDeviceError,
+  TransportStatusErrorClassType,
+  CustomErrorClassType,
 } from "@ledgerhq/errors";
 import { Observable, from, of, throwError, timer } from "rxjs";
-import {
-  catchError,
-  concatMap,
-  retryWhen,
-  switchMap,
-  timeout,
-} from "rxjs/operators";
+import { catchError, concatMap, retry, switchMap, timeout } from "rxjs/operators";
 import { Transport, TransportRef } from "../transports/core";
 
-export type SharedTaskEvent = { type: "error"; error: Error };
+export type SharedTaskEvent = { type: "error"; error: Error; retrying: boolean };
 
 export const NO_RESPONSE_TIMEOUT_MS = 30000;
 export const RETRY_ON_ERROR_DELAY_MS = 500;
+
+export const LOG_TYPE = "device-sdk-task";
 
 /**
  * Wraps a task function to add some common logic to it:
@@ -31,53 +29,51 @@ export const RETRY_ON_ERROR_DELAY_MS = 500;
  */
 export function sharedLogicTaskWrapper<TaskArgsType, TaskEventsType>(
   task: (args: TaskArgsType) => Observable<TaskEventsType | SharedTaskEvent>,
-  defaultTimeoutOverride?: number
+  defaultTimeoutOverride?: number,
 ) {
   return (args: TaskArgsType): Observable<TaskEventsType | SharedTaskEvent> => {
-    return new Observable((subscriber) => {
+    return new Observable(subscriber => {
       return task(args)
         .pipe(
           timeout(defaultTimeoutOverride ?? NO_RESPONSE_TIMEOUT_MS),
-          retryWhen((attempts) =>
-            attempts.pipe(
-              // concatMap to sequentially handle errors
-              concatMap((error) => {
-                let acceptedError = false;
+          retry({
+            delay: error => {
+              let acceptedError = false;
 
-                // - LockedDeviceError: on every transport if there is a device but it is locked
-                // - CantOpenDevice: it can come from hw-transport-node-hid-singleton/TransportNodeHid
-                //   or react-native-hw-transport-ble/BleTransport when no device is found
-                // - DisconnectedDevice: it can come from TransportNodeHid while switching app
-                if (
-                  error instanceof LockedDeviceError ||
-                  error instanceof CantOpenDevice ||
-                  error instanceof DisconnectedDevice ||
-                  error instanceof TransportRaceCondition
-                ) {
-                  // Emits to the action a locked device error event so it is aware of it before retrying
-                  subscriber.next({ type: "error", error });
-                  acceptedError = true;
-                }
-
-                return acceptedError
-                  ? timer(RETRY_ON_ERROR_DELAY_MS)
-                  : throwError(error);
-              })
-            )
-          ),
-
+              // - LockedDeviceError and UnresponsiveDeviceError: on every transport if there is a device but it is locked
+              // - CantOpenDevice: it can come from hw-transport-node-hid-singleton/TransportNodeHid
+              //   or react-native-hw-transport-ble/BleTransport when no device is found
+              // - DisconnectedDevice: it can come from TransportNodeHid while switching app
+              if (
+                error instanceof LockedDeviceError ||
+                error instanceof UnresponsiveDeviceError ||
+                error instanceof CantOpenDevice ||
+                error instanceof DisconnectedDevice ||
+                error instanceof TransportRaceCondition
+              ) {
+                // Emits to the action an error event so it is aware of it (for ex locked device) before retrying
+                const event: SharedTaskEvent = {
+                  type: "error",
+                  error,
+                  retrying: true,
+                };
+                subscriber.next(event);
+                acceptedError = true;
+              }
+              return acceptedError ? timer(RETRY_ON_ERROR_DELAY_MS) : throwError(() => error);
+            },
+          }),
           catchError((error: Error) => {
             // Emits the error to the action, without throwing
-            return of<SharedTaskEvent>({ type: "error", error });
-          })
+            return of<SharedTaskEvent>({ type: "error", error, retrying: false });
+          }),
         )
         .subscribe(subscriber);
     });
   };
 }
 
-// To update once createCustomErrorClass is not used on Transports errors
-type ErrorClass = ReturnType<typeof createCustomErrorClass>;
+type ErrorClass = CustomErrorClassType | TransportStatusErrorClassType;
 
 // To be able to retry a command, the command needs to take an object containing a transport as its argument
 type CommandTransportArgs = { transport: Transport };
@@ -93,15 +89,12 @@ type CommandTransportArgs = { transport: Transport };
  *  - errorClass: the error class to retry on
  *  - maxRetries: the maximum number of retries for this error
  */
-export function retryOnErrorsCommandWrapper<
-  CommandArgsWithoutTransportType,
-  CommandEventsType
->({
+export function retryOnErrorsCommandWrapper<CommandArgsWithoutTransportType, CommandEventsType>({
   command,
   allowedErrors,
 }: {
   command: (
-    args: CommandArgsWithoutTransportType & CommandTransportArgs
+    args: CommandArgsWithoutTransportType & CommandTransportArgs,
   ) => Observable<CommandEventsType>;
   allowedErrors: {
     errorClass: ErrorClass;
@@ -112,7 +105,7 @@ export function retryOnErrorsCommandWrapper<
   // No need to pass the transport to the wrapped command
   return (
     transportRef: TransportRef,
-    argsWithoutTransport: CommandArgsWithoutTransportType
+    argsWithoutTransport: CommandArgsWithoutTransportType,
   ): Observable<CommandEventsType> => {
     let sameErrorInARowCount = 0;
     let shouldRefreshTransport = false;
@@ -140,43 +133,37 @@ export function retryOnErrorsCommandWrapper<
           transport: transportRef.current,
         });
       }),
-      retryWhen((attempts) =>
-        attempts.pipe(
-          // concatMap to sequentially handle errors
-          concatMap((error) => {
-            let isAllowedError = false;
+      retry({
+        delay: error => {
+          let isAllowedError = false;
 
-            if (latestErrorName !== error.name) {
-              sameErrorInARowCount = 0;
-            } else {
-              sameErrorInARowCount++;
-            }
+          if (latestErrorName !== error.name) {
+            sameErrorInARowCount = 0;
+          } else {
+            sameErrorInARowCount++;
+          }
 
-            latestErrorName = error.name;
+          latestErrorName = error.name;
 
-            for (const { errorClass, maxRetries } of allowedErrors) {
-              if (error instanceof errorClass) {
-                if (
-                  maxRetries === "infinite" ||
-                  sameErrorInARowCount < maxRetries
-                ) {
-                  isAllowedError = true;
-                }
-
-                break;
+          for (const { errorClass, maxRetries } of allowedErrors) {
+            if (error instanceof errorClass) {
+              if (maxRetries === "infinite" || sameErrorInARowCount < maxRetries) {
+                isAllowedError = true;
               }
-            }
 
-            if (isAllowedError) {
-              // Retries the whole pipe chain after the delay
-              return timer(RETRY_ON_ERROR_DELAY_MS);
+              break;
             }
+          }
 
-            // If the error is not part of the allowed errors, it is thrown
-            return throwError(error);
-          })
-        )
-      )
+          if (isAllowedError) {
+            // Retries the whole pipe chain after the delay
+            return timer(RETRY_ON_ERROR_DELAY_MS);
+          }
+
+          // If the error is not part of the allowed errors, it is thrown
+          return throwError(() => error);
+        },
+      }),
     );
   };
 }

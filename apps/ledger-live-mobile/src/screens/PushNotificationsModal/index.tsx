@@ -1,14 +1,14 @@
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Flex, Text, Link as TextLink, Button } from "@ledgerhq/native-ui";
-import useNotifications from "../../logic/notifications";
-import Illustration from "../../images/illustration/Illustration";
-import PromptNotifGenericDark from "../../images/illustration/Dark/_PromptNotifGeneric.png";
-import PromptNotifGenericLight from "../../images/illustration/Light/_PromptNotifGeneric.png";
-import PromptNotifMarketDark from "../../images/illustration/Dark/_PromptNotifMarket.png";
-import PromptNotifMarketLight from "../../images/illustration/Light/_PromptNotifMarket.png";
-import { TrackScreen } from "../../analytics";
-import QueuedDrawer from "../../components/QueuedDrawer";
+import useNotifications from "~/logic/notifications";
+import Illustration from "~/images/illustration/Illustration";
+import PromptNotifGenericDark from "~/images/illustration/Dark/_PromptNotifGeneric.png";
+import PromptNotifGenericLight from "~/images/illustration/Light/_PromptNotifGeneric.png";
+import PromptNotifMarketDark from "~/images/illustration/Dark/_PromptNotifMarket.png";
+import PromptNotifMarketLight from "~/images/illustration/Light/_PromptNotifMarket.png";
+import { TrackScreen } from "~/analytics";
+import QueuedDrawer from "~/components/QueuedDrawer";
 
 const PushNotificationsModal = () => {
   const { t } = useTranslation();
@@ -43,10 +43,7 @@ const PushNotificationsModal = () => {
       />
     );
   return (
-    <QueuedDrawer
-      isRequestingToBeOpened={isPushNotificationsModalOpen}
-      noCloseButton
-    >
+    <QueuedDrawer isRequestingToBeOpened={isPushNotificationsModalOpen} noCloseButton>
       <TrackScreen
         category="Notification Prompt"
         name={
@@ -76,7 +73,7 @@ const PushNotificationsModal = () => {
         <Button type={"main"} mt={8} mb={7} onPress={modalAllowNotifications}>
           {t("notifications.prompt.allow")}
         </Button>
-        <TextLink type={"shade"} onPress={modalDelayLater}>
+        <TextLink type={"shade"} onPress={modalDelayLater} testID="notifications-prompt-later">
           {t("notifications.prompt.later")}
         </TextLink>
       </Flex>

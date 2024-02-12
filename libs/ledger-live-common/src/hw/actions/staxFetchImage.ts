@@ -126,23 +126,16 @@ const reducer = (state: State, e: Event): State => {
 };
 
 export const createAction = (
-  task: (arg0: FetchImageInput) => Observable<FetchImageEvent>
+  task: (arg0: FetchImageInput) => Observable<FetchImageEvent>,
 ): FetchImageAction => {
-  const useHook = (
-    device: Device | null | undefined,
-    request: FetchImageRequest
-  ): ActionState => {
+  const useHook = (device: Device | null | undefined, request: FetchImageRequest): ActionState => {
     const [state, setState] = useState(() => getInitialState(device));
     const [resetIndex, setResetIndex] = useState(0);
     const deviceSubject = useReplaySubject(device);
 
     useEffect(() => {
-      if (state.imageFetched || state.imageAlreadyBackedUp || state.completed)
-        return;
-      const impl = getImplementation(currentMode)<
-        FetchImageEvent,
-        FetchImageRequest
-      >({
+      if (state.imageFetched || state.imageAlreadyBackedUp || state.completed) return;
+      const impl = getImplementation(currentMode)<FetchImageEvent, FetchImageRequest>({
         deviceSubject,
         task,
         request,
@@ -151,7 +144,7 @@ export const createAction = (
       const sub = impl
         .pipe(
           tap((e: any) => log("actions-fetch-stax-image-event", e.type, e)),
-          scan(reducer, getInitialState())
+          scan(reducer, getInitialState()),
         )
         .subscribe(setState);
       return () => {
@@ -167,8 +160,8 @@ export const createAction = (
     ]);
 
     const onRetry = useCallback(() => {
-      setResetIndex((currIndex) => currIndex + 1);
-      setState((s) => getInitialState(s.device));
+      setResetIndex(currIndex => currIndex + 1);
+      setState(s => getInitialState(s.device));
     }, []);
 
     return {

@@ -5,12 +5,7 @@ import { PublicKeyFromString } from "../validators/pubkey";
 import { BigNumFromString } from "../validators/bignum";
 
 export type StakeAccountType = Infer<typeof StakeAccountType>;
-export const StakeAccountType = enums([
-  "uninitialized",
-  "initialized",
-  "delegated",
-  "rewardsPool",
-]);
+export const StakeAccountType = enums(["uninitialized", "initialized", "delegated", "rewardsPool"]);
 
 export type StakeMeta = Infer<typeof StakeMeta>;
 export const StakeMeta = type({
@@ -39,7 +34,7 @@ export const StakeAccountInfo = type({
         warmupCooldownRate: number(),
       }),
       creditsObserved: number(),
-    })
+    }),
   ),
 });
 

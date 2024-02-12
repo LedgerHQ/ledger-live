@@ -15,50 +15,35 @@ import {
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import type { Transaction as TezosTransaction } from "@ledgerhq/live-common/families/tezos/types";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import {
-  useDelegation,
-  useBaker,
-  useBakers,
-  useRandomBaker,
-} from "@ledgerhq/live-common/families/tezos/bakers";
+import { useDelegation, useBaker, useBakers } from "@ledgerhq/live-common/families/tezos/bakers";
 import whitelist from "@ledgerhq/live-common/families/tezos/bakers.whitelist-default";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
 import { Alert } from "@ledgerhq/native-ui";
-import { accountScreenSelector } from "../../../reducers/accounts";
+import { accountScreenSelector } from "~/reducers/accounts";
 import { rgba } from "../../../colors";
-import { ScreenName } from "../../../const";
-import { TrackScreen } from "../../../analytics";
-import { useTransactionChangeFromNavigation } from "../../../logic/screenTransactionHooks";
-import Button from "../../../components/Button";
-import LText from "../../../components/LText";
-import Circle from "../../../components/Circle";
-import CurrencyIcon from "../../../components/CurrencyIcon";
-import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
-import Touchable from "../../../components/Touchable";
+import { ScreenName } from "~/const";
+import { TrackScreen } from "~/analytics";
+import { useTransactionChangeFromNavigation } from "~/logic/screenTransactionHooks";
+import Button from "~/components/Button";
+import LText from "~/components/LText";
+import Circle from "~/components/Circle";
+import CurrencyIcon from "~/components/CurrencyIcon";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import Touchable from "~/components/Touchable";
 import DelegatingContainer from "../DelegatingContainer";
 import BakerImage from "../BakerImage";
-import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { TezosDelegationFlowParamList } from "./types";
 
-type Props = StackNavigatorProps<
-  TezosDelegationFlowParamList,
-  ScreenName.DelegationSummary
->;
+type Props = StackNavigatorProps<TezosDelegationFlowParamList, ScreenName.DelegationSummary>;
 
 const AccountBalanceTag = ({ account }: { account: AccountLike }) => {
   const unit = getAccountUnit(account);
   const { colors } = useTheme();
   return (
-    <View
-      style={[styles.accountBalanceTag, { backgroundColor: colors.lightFog }]}
-    >
-      <LText
-        semiBold
-        numberOfLines={1}
-        style={styles.accountBalanceTagText}
-        color="smoke"
-      >
+    <View style={[styles.accountBalanceTag, { backgroundColor: colors.lightFog }]}>
+      <LText semiBold numberOfLines={1} style={styles.accountBalanceTagText} color="smoke">
         <CurrencyUnitValue showCode unit={unit} value={account.balance} />
       </LText>
     </View>
@@ -98,33 +83,15 @@ const Words = ({
   </LText>
 );
 
-const BakerSelection = ({
-  name,
-  readOnly,
-}: {
-  name: string;
-  readOnly?: boolean;
-}) => {
+const BakerSelection = ({ name, readOnly }: { name: string; readOnly?: boolean }) => {
   const { colors } = useTheme();
   return (
-    <View
-      style={[
-        styles.bakerSelection,
-        { backgroundColor: rgba(colors.live, 0.2) },
-      ]}
-    >
-      <LText
-        bold
-        numberOfLines={1}
-        style={styles.bakerSelectionText}
-        color="live"
-      >
+    <View style={[styles.bakerSelection, { backgroundColor: rgba(colors.live, 0.2) }]}>
+      <LText bold numberOfLines={1} style={styles.bakerSelectionText} color="live">
         {name}
       </LText>
       {readOnly ? null : (
-        <View
-          style={[styles.bakerSelectionIcon, { backgroundColor: colors.live }]}
-        >
+        <View style={[styles.bakerSelectionIcon, { backgroundColor: colors.live }]}>
           <Icon size={16} name="edit-2" color={colors.white} />
         </View>
       )}
@@ -136,14 +103,14 @@ export default function DelegationSummary({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const { t } = useTranslation();
-  const bakers = useBakers(whitelist);
-  const randomBaker = useRandomBaker(bakers);
+  const [defaultBaker] = useBakers(whitelist);
 
-  const { transaction, setTransaction, status, bridgePending, bridgeError } =
-    useBridgeTransaction(() => ({
+  const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
+    () => ({
       account,
       parentAccount,
-    }));
+    }),
+  );
 
   invariant(account, "account must be defined");
   invariant(transaction, "transaction must be defined");
@@ -163,28 +130,17 @@ export default function DelegationSummary({ navigation, route }: Props) {
     };
 
     // make sure that in delegate mode, a transaction recipient is set (random pick)
-    if (patch.mode === "delegate" && !transaction.recipient && randomBaker) {
-      patch.recipient = randomBaker.address;
+    if (patch.mode === "delegate" && !transaction.recipient && defaultBaker) {
+      patch.recipient = defaultBaker.address;
     }
 
     // when changes, we set again
-    if (patch.mode !== transaction.mode || "recipient" in patch) {
+    if (patch.mode !== transaction.mode || patch.recipient) {
       setTransaction(
-        getAccountBridge(account, parentAccount).updateTransaction(
-          transaction,
-          patch,
-        ),
+        getAccountBridge(account, parentAccount).updateTransaction(transaction, patch),
       );
     }
-  }, [
-    account,
-    randomBaker,
-    navigation,
-    parentAccount,
-    setTransaction,
-    transaction,
-    route.params,
-  ]);
+  }, [account, defaultBaker, navigation, parentAccount, setTransaction, transaction, route.params]);
 
   const [rotateAnim] = useState(() => new Animated.Value(0));
   useEffect(() => {
@@ -230,9 +186,8 @@ export default function DelegationSummary({ navigation, route }: Props) {
 
   const delegation = useDelegation(account);
   const addr =
-    transaction.mode === "undelegate"
-      ? (delegation && delegation.address) || ""
-      : transaction.recipient;
+    transaction.mode === "undelegate" ? delegation?.address || "" : transaction.recipient;
+
   const baker = useBaker(addr);
   const bakerName = baker ? baker.name : shortAddressPreview(addr);
   const currency = getAccountCurrency(account);
@@ -244,15 +199,22 @@ export default function DelegationSummary({ navigation, route }: Props) {
 
   const onContinue = useCallback(async () => {
     navigation.navigate(ScreenName.DelegationSelectDevice, {
+      ...route.params,
       accountId: account.id,
       transaction,
       status,
     });
-  }, [status, account, navigation, transaction]);
+  }, [navigation, route.params, account.id, transaction, status]);
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-      <TrackScreen category="DelegationFlow" name="Summary" />
+      <TrackScreen
+        category="DelegationFlow"
+        name="Summary"
+        flow="stake"
+        action="delegation"
+        currency="xtz"
+      />
 
       <View style={styles.body}>
         <DelegatingContainer
@@ -267,14 +229,8 @@ export default function DelegationSummary({ navigation, route }: Props) {
           }
           right={
             transaction.mode === "delegate" ? (
-              <Touchable
-                event="DelegationFlowSummaryChangeCircleBtn"
-                onPress={onChangeDelegator}
-              >
-                <Circle
-                  size={70}
-                  style={[styles.bakerCircle, { borderColor: colors.grey }]}
-                >
+              <Touchable event="DelegationFlowSummaryChangeCircleBtn" onPress={onChangeDelegator}>
+                <Circle size={70} style={[styles.bakerCircle, { borderColor: colors.grey }]}>
                   <Animated.View
                     style={{
                       transform: [
@@ -314,10 +270,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
               <Words>
                 <Trans i18nKey="delegation.to" />
               </Words>
-              <Touchable
-                event="DelegationFlowSummaryChangeBtn"
-                onPress={onChangeDelegator}
-              >
+              <Touchable event="DelegationFlowSummaryChangeBtn" onPress={onChangeDelegator}>
                 <BakerSelection name={bakerName} />
               </Touchable>
             </Line>
@@ -332,14 +285,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
 
           {baker && transaction.mode === "delegate" ? (
             baker.capacityStatus === "full" ? null : (
-              /*
               <Line>
-                <IconInfo size={16} color={colors.orange} />
-                <Words style={{ marginLeft: 8, color: colors.orange }}>
-                  <Trans i18nKey="delegation.overdelegated" />
-                </Words>
-              </Line>
-              */ <Line>
                 <Words>
                   <Trans i18nKey="delegation.forAnEstYield" />
                 </Words>

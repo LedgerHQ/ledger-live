@@ -1,11 +1,7 @@
 import groupBy from "lodash/groupBy";
 import { formatError } from "@ledgerhq/coin-framework/bot/formatters";
 import { formatOperation, formatAccount } from "../account";
-import {
-  toSignedOperationRaw,
-  formatTransaction,
-  formatTransactionStatus,
-} from "../transaction";
+import { toSignedOperationRaw, formatTransaction, formatTransactionStatus } from "../transaction";
 import { formatCurrencyUnit } from "../currencies";
 import type { MutationReport, AppCandidate } from "./types";
 import type { Transaction } from "../generated/types";
@@ -63,9 +59,7 @@ export function formatReportForConsole<T extends Transaction>({
   errorTime,
 }: MutationReport<T>): string {
   let str = "";
-  str += `necessary accounts resynced in ${formatTime(
-    resyncAccountsDuration
-  )}\n`;
+  str += `necessary accounts resynced in ${formatTime(resyncAccountsDuration)}\n`;
   str += `▬ ${formatAppCandidate(appCandidate)}\n`;
 
   if (account) {
@@ -110,45 +104,41 @@ export function formatReportForConsole<T extends Transaction>({
   }
 
   if (status && transaction && account) {
-    str += `STATUS (${formatDt(
-      mutationTime,
-      statusTime
-    )})${formatTransactionStatus(transaction, status, account)}\n`;
+    str += `STATUS (${formatDt(mutationTime, statusTime)})${formatTransactionStatus(
+      transaction,
+      status,
+      account,
+    )}\n`;
   }
 
   if (recoveredFromTransactionStatus && account) {
     str += `\n⚠️ recovered from transaction ${formatTransaction(
       recoveredFromTransactionStatus.transaction,
-      account
+      account,
     )}\nof status ${formatTransactionStatus(
       recoveredFromTransactionStatus.transaction,
       recoveredFromTransactionStatus.status,
-      account
+      account,
     )}\n\n`.replace(/\n/g, "\n  ");
   }
 
   if (signedOperation) {
     str += `✔️ has been signed! (${formatDt(statusTime, signedTime)}) ${
-      !optimisticOperation
-        ? JSON.stringify(toSignedOperationRaw(signedOperation))
-        : ""
+      !optimisticOperation ? JSON.stringify(toSignedOperationRaw(signedOperation)) : ""
     }\n`;
   }
 
   if (optimisticOperation) {
     str += `✔️ broadcasted! (${formatDt(
       signedTime,
-      broadcastedTime
-    )}) optimistic operation: ${formatOperation(account)(
-      optimisticOperation
-    )}\n`;
+      broadcastedTime,
+    )}) optimistic operation: ${formatOperation(account)(optimisticOperation)}\n`;
   }
 
   if (operation) {
-    str += `✔️ operation confirmed (${formatDt(
-      broadcastedTime,
-      confirmedTime
-    )}): ${formatOperation(finalAccount || account)(operation)}\n`;
+    str += `✔️ operation confirmed (${formatDt(broadcastedTime, confirmedTime)}): ${formatOperation(
+      finalAccount || account,
+    )(operation)}\n`;
   }
 
   if (finalAccount) {
@@ -161,7 +151,7 @@ export function formatReportForConsole<T extends Transaction>({
 
   if (finalDestination && finalDestinationOperation) {
     str += `✔️ destination operation ${formatOperation(finalDestination)(
-      finalDestinationOperation
+      finalDestinationOperation,
     )}\n`;
   }
 
@@ -173,7 +163,7 @@ export function formatReportForConsole<T extends Transaction>({
     str += `⚠️ ${formatError(error, true)}\n`;
     if (mutationTime && errorTime) {
       str += `(totally spent ${formatTime(
-        errorTime - mutationTime
+        errorTime - mutationTime,
       )} – ends at ${new Date().toISOString()})`;
     }
   }

@@ -5,10 +5,7 @@ import secp256k1 from "secp256k1";
  * The interface is made asynchronous to be more efficient to run in a renderer thread and defer the cryptography
  */
 export type Secp256k1Instance = {
-  publicKeyTweakAdd(
-    publicKey: Uint8Array,
-    tweak: Uint8Array
-  ): Promise<Uint8Array>;
+  publicKeyTweakAdd(publicKey: Uint8Array, tweak: Uint8Array): Promise<Uint8Array>;
 };
 
 // default uses node.js's secp256k1

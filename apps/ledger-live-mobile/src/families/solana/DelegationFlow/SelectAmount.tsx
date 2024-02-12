@@ -2,6 +2,7 @@ import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { SOLANA_DELEGATION_RESERVE } from "@ledgerhq/live-common/families/solana/utils";
 import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
@@ -18,30 +19,27 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 import { Text } from "@ledgerhq/native-ui";
-import { TrackScreen } from "../../../analytics";
-import Button from "../../../components/Button";
-import CancelButton from "../../../components/CancelButton";
-import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
-import ExternalLink from "../../../components/ExternalLink";
-import GenericErrorBottomModal from "../../../components/GenericErrorBottomModal";
-import KeyboardView from "../../../components/KeyboardView";
-import RetryButton from "../../../components/RetryButton";
-import Touchable from "../../../components/Touchable";
-import { urls } from "../../../config/urls";
-import { ScreenName } from "../../../const";
-import InfoIcon from "../../../icons/Info";
-import InfoModal, { ModalInfo } from "../../../modals/Info";
-import { accountScreenSelector } from "../../../reducers/accounts";
-import AmountInput from "../../../screens/SendFunds/AmountInput";
-import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import { TrackScreen } from "~/analytics";
+import Button from "~/components/Button";
+import CancelButton from "~/components/CancelButton";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import ExternalLink from "~/components/ExternalLink";
+import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
+import KeyboardView from "~/components/KeyboardView";
+import RetryButton from "~/components/RetryButton";
+import Touchable from "~/components/Touchable";
+import { urls } from "~/utils/urls";
+import { ScreenName } from "~/const";
+import InfoIcon from "~/icons/Info";
+import InfoModal, { ModalInfo } from "~/modals/Info";
+import { accountScreenSelector } from "~/reducers/accounts";
+import AmountInput from "~/screens/SendFunds/AmountInput";
+import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { SolanaDelegationFlowParamList } from "./types";
 
 type ModalInfoName = "maxSpendable";
 
-type Props = StackNavigatorProps<
-  SolanaDelegationFlowParamList,
-  ScreenName.SolanaEditAmount
->;
+type Props = StackNavigatorProps<SolanaDelegationFlowParamList, ScreenName.SolanaEditAmount>;
 
 export default function DelegationSelectAmount({ navigation, route }: Props) {
   const { colors } = useTheme();
@@ -53,8 +51,8 @@ export default function DelegationSelectAmount({ navigation, route }: Props) {
 
   const bridge = getAccountBridge(account);
 
-  const { transaction, setTransaction, status, bridgePending, bridgeError } =
-    useBridgeTransaction(() => ({
+  const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
+    () => ({
       account,
       transaction: {
         ...bridge.createTransaction(account),
@@ -67,7 +65,8 @@ export default function DelegationSelectAmount({ navigation, route }: Props) {
           },
         },
       },
-    }));
+    }),
+  );
 
   invariant(transaction, "transaction must be defined");
 
@@ -83,8 +82,7 @@ export default function DelegationSelectAmount({ navigation, route }: Props) {
     };
   }, [transaction, setMaxSpendable, bridge, account]);
 
-  const { modalInfos, modalInfoName, openInfoModal, closeInfoModal } =
-    useModalInfo();
+  const { modalInfos, modalInfoName, openInfoModal, closeInfoModal } = useModalInfo();
 
   const onChange = (amount: BigNumber) => {
     setTransaction(bridge.updateTransaction(transaction, { amount }));
@@ -133,10 +131,11 @@ export default function DelegationSelectAmount({ navigation, route }: Props) {
         category="SendFunds"
         name="Amount"
         currencyName={currency.name}
+        flow="stake"
+        action="delegation"
+        currency="sol"
       />
-      <SafeAreaView
-        style={[styles.root, { backgroundColor: colors.background }]}
-      >
+      <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
         <KeyboardView style={styles.container}>
           <TouchableWithoutFeedback onPress={blur}>
             <View style={styles.amountWrapper}>
@@ -167,11 +166,7 @@ export default function DelegationSelectAmount({ navigation, route }: Props) {
                       </Text>
                       {maxSpendable > 0 && (
                         <Text fontWeight="semiBold" color="grey">
-                          <CurrencyUnitValue
-                            showCode
-                            unit={unit}
-                            value={maxSpendable}
-                          />
+                          <CurrencyUnitValue showCode unit={unit} value={maxSpendable} />
                         </Text>
                       )}
                     </View>
@@ -187,17 +182,24 @@ export default function DelegationSelectAmount({ navigation, route }: Props) {
                     />
                   </View>
                 </View>
+                <View>
+                  <Text color="grey">
+                    <InfoIcon size={12} color="grey" />{" "}
+                    <Trans
+                      i18nKey="solana.delegation.reserveWarning"
+                      values={{
+                        amount: SOLANA_DELEGATION_RESERVE,
+                      }}
+                    />
+                  </Text>
+                </View>
                 <View style={styles.continueWrapper}>
                   <Button
                     event="SendAmountCoinContinue"
                     type="primary"
                     title={
                       <Trans
-                        i18nKey={
-                          !bridgePending
-                            ? "common.continue"
-                            : "send.amount.loadingNetwork"
-                        }
+                        i18nKey={!bridgePending ? "common.continue" : "send.amount.loadingNetwork"}
                       />
                     }
                     onPress={onContinue}
@@ -221,10 +223,7 @@ export default function DelegationSelectAmount({ navigation, route }: Props) {
         onClose={onBridgeErrorRetry}
         footerButtons={
           <>
-            <CancelButton
-              containerStyle={styles.button}
-              onPress={onBridgeErrorCancel}
-            />
+            <CancelButton containerStyle={styles.button} onPress={onBridgeErrorCancel} />
             <RetryButton
               containerStyle={[styles.button, styles.buttonRight]}
               onPress={onBridgeErrorRetry}
@@ -243,14 +242,9 @@ function useModalInfo(): {
   closeInfoModal: () => void;
 } {
   const { t } = useTranslation();
-  const [modalInfoName, setModalInfoName] = useState<ModalInfoName | null>(
-    null,
-  );
+  const [modalInfoName, setModalInfoName] = useState<ModalInfoName | null>(null);
 
-  const onMaxSpendableLearnMore = useCallback(
-    () => Linking.openURL(urls.maxSpendable),
-    [],
-  );
+  const onMaxSpendableLearnMore = useCallback(() => Linking.openURL(urls.maxSpendable), []);
 
   return {
     openInfoModal: (infoName: ModalInfoName) => setModalInfoName(infoName),

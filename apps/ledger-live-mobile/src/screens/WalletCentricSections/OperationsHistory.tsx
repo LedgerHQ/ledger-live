@@ -6,20 +6,21 @@ import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import {
+  AccountLike,
   AccountLikeArray,
   DailyOperationsSection,
   Operation,
   SubAccount,
 } from "@ledgerhq/types-live";
 import { isAddressPoisoningOperation } from "@ledgerhq/live-common/operation";
-import OperationRow from "../../components/OperationRow";
-import SectionHeader from "../../components/SectionHeader";
-import { withDiscreetMode } from "../../context/DiscreetModeContext";
-import { ScreenName } from "../../const";
-import { parentAccountSelector } from "../../reducers/accounts";
-import { track } from "../../analytics";
-import { State } from "../../reducers/types";
-import { filterTokenOperationsZeroAmountEnabledSelector } from "../../reducers/settings";
+import OperationRow from "~/components/OperationRow";
+import SectionHeader from "~/components/SectionHeader";
+import { withDiscreetMode } from "~/context/DiscreetModeContext";
+import { ScreenName } from "~/const";
+import { parentAccountSelector } from "~/reducers/accounts";
+import { track } from "~/analytics";
+import { State } from "~/reducers/types";
+import { filterTokenOperationsZeroAmountEnabledSelector } from "~/reducers/settings";
 
 type Props = {
   accounts: AccountLikeArray;
@@ -41,11 +42,10 @@ const OperationsHistory = ({ accounts }: Props) => {
     filterTokenOperationsZeroAmountEnabledSelector,
   );
   const filterOperation = useCallback(
-    (operation, account) => {
+    (operation: Operation, account: AccountLike) => {
       // Remove operations linked to address poisoning
       const removeZeroAmountTokenOp =
-        shouldFilterTokenOpsZeroAmount &&
-        isAddressPoisoningOperation(operation, account);
+        shouldFilterTokenOpsZeroAmount && isAddressPoisoningOperation(operation, account);
 
       return !removeZeroAmountTokenOp;
     },
@@ -63,11 +63,7 @@ const OperationsHistory = ({ accounts }: Props) => {
   );
 
   const renderItem = useCallback(
-    ({
-      item,
-      index,
-      section,
-    }: SectionListRenderItemInfo<Operation, DailyOperationsSection>) => {
+    ({ item, index, section }: SectionListRenderItemInfo<Operation, DailyOperationsSection>) => {
       const account = accounts.find(a => a.id === item.accountId) as SubAccount;
       // eslint-disable-next-line react-hooks/rules-of-hooks
       const parentAccount = useSelector((state: State) =>
@@ -115,6 +111,7 @@ const OperationsHistory = ({ accounts }: Props) => {
           outline
           mt={6}
           onPress={goToAnalyticsOperations}
+          testID="portfolio-seeAll-transaction"
         >
           {t("common.seeAll")}
         </Button>

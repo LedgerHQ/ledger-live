@@ -1,8 +1,10 @@
 import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import styled from "styled-components";
 import SectionFees from "./SectionFees";
 import SectionTarget from "./SectionTarget";
+
+// TODO fix the any types
 const Form = styled.section.attrs<{ ready?: boolean }>(({ ready }) => ({
   style: ready
     ? {
@@ -15,7 +17,8 @@ const Form = styled.section.attrs<{ ready?: boolean }>(({ ready }) => ({
   display: grid;
   row-gap: 1.25rem;
   color: white;
-  transition: max-height 800ms cubic-bezier(0.47, 0, 0.75, 0.72),
+  transition:
+    max-height 800ms cubic-bezier(0.47, 0, 0.75, 0.72),
     opacity 400ms 400ms cubic-bezier(0.47, 0, 0.75, 0.72);
   transform-origin: top;
   height: auto;
@@ -23,10 +26,12 @@ const Form = styled.section.attrs<{ ready?: boolean }>(({ ready }) => ({
   max-height: 0;
   overflow: hidden;
 `;
+
 type SwapFormSummaryProps = {
   swapTransaction: SwapTransactionType;
   provider?: string;
 };
+
 const SwapFormSummary = ({ swapTransaction, provider }: SwapFormSummaryProps) => {
   const {
     transaction,
@@ -36,18 +41,19 @@ const SwapFormSummary = ({ swapTransaction, provider }: SwapFormSummaryProps) =>
     setToAccount,
     swap: { targetAccounts },
   } = swapTransaction;
+
   const {
     currency: fromCurrency,
     account: fromAccount,
     parentAccount: fromParentAccount,
   } = swapTransaction.swap.from;
+
   const { currency: toCurrency, account: toAccount } = swapTransaction.swap.to;
   const ratesState = swapTransaction.swap.rates;
   const hasRates = ratesState?.value?.length && ratesState?.value?.length > 0;
-  const [hasFetchedRates, setHasFetchedRates] = useState(hasRates);
-  useEffect(() => setHasFetchedRates(v => (!v ? hasRates : v)), [hasRates]);
+
   return (
-    <Form ready={!!hasFetchedRates}>
+    <Form ready={!!hasRates}>
       <SectionTarget
         account={toAccount}
         currency={toCurrency}

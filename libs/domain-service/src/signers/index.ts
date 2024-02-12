@@ -15,15 +15,15 @@ import { validateDomain } from "../utils";
 export const signDomainResolution = async (
   domain: string,
   registryName: SupportedRegistries,
-  challenge: string
+  challenge: string,
 ): Promise<string | null> => {
   if (!validateDomain(domain)) {
     throw new Error(
-      `Domains with more than 255 caracters or with unicode are not supported on the nano. Domain: ${domain}`
+      `Domains with more than 255 caracters or with unicode are not supported on the nano. Domain: ${domain}`,
     );
   }
   const registries = await getRegistries();
-  const registry = registries.find((r) => r.name === registryName);
+  const registry = registries.find(r => r.name === registryName);
   if (!registry) return null;
 
   const url = registry.signatures.forward
@@ -36,7 +36,8 @@ export const signDomainResolution = async (
       url,
     })
     .then(({ data }) => data.payload)
-    .catch((error) => {
+    .catch(error => {
+      /* istanbul ignore next: don't test logs */
       if (error.status !== 404) {
         log("domain-service", "failed to get APDU for a domain", {
           domain,
@@ -58,10 +59,10 @@ export const signDomainResolution = async (
 export const signAddressResolution = async (
   address: string,
   registryName: SupportedRegistries,
-  challenge: string
+  challenge: string,
 ): Promise<string | null> => {
   const registries = await getRegistries();
-  const registry = registries.find((r) => r.name === registryName);
+  const registry = registries.find(r => r.name === registryName);
   if (!registry) return null;
 
   const url = registry.signatures.reverse
@@ -74,7 +75,8 @@ export const signAddressResolution = async (
       url,
     })
     .then(({ data }) => data.payload)
-    .catch((error) => {
+    .catch(error => {
+      /* istanbul ignore next: don't test logs */
       if (error.status !== 404) {
         log("domain-service", "failed to get APDU for an address", {
           address,

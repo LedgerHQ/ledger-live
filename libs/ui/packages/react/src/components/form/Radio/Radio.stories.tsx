@@ -30,7 +30,7 @@ export default {
 
 const TemplateElement = (args: RadioProps) => {
   const [currentArgs, updateArgs] = useArgs();
-  const handleChange: RadioProps["onChange"] = (value) => {
+  const handleChange: RadioProps["onChange"] = value => {
     // toggle the checked value on click to simulate onChange
     updateArgs({ currentValue: value });
     // trigger the storybook action
@@ -55,7 +55,7 @@ const TemplateElement = (args: RadioProps) => {
 
 const TemplateOutlinedElement = (args: RadioProps) => {
   const [currentArgs, updateArgs] = useArgs();
-  const handleChange: RadioProps["onChange"] = (value) => {
+  const handleChange: RadioProps["onChange"] = value => {
     // toggle the checked value on click to simulate onChange
     updateArgs({ currentValue: value });
     // trigger the storybook action
@@ -83,7 +83,7 @@ export const RadioGroupOutlined: StoryTemplate<RadioProps> = TemplateOutlinedEle
 
 const TemplateListElement = (args: RadioProps) => {
   const [currentArgs, updateArgs] = useArgs();
-  const handleChange: RadioProps["onChange"] = (value) => {
+  const handleChange: RadioProps["onChange"] = value => {
     // toggle the checked value on click to simulate onChange
     updateArgs({ currentValue: value });
     // trigger the storybook action

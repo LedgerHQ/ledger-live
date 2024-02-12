@@ -37,7 +37,7 @@ class Media extends React.PureComponent<Props, State> {
     const Component = contentType === "video" && !useFallback ? Video : Image;
     const { uri, mediaType } =
       metadata?.medias[
-        useFallback ? "preview" : (mediaFormat as keyof typeof metadata["medias"])
+        useFallback ? "preview" : (mediaFormat as keyof (typeof metadata)["medias"])
       ] || {};
     const squareWithDefault = (() => {
       if (typeof square !== "undefined") {

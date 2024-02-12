@@ -5,7 +5,7 @@ import { OptionProps, ValueContainerProps } from "react-select";
 import Text from "../../asorted/Text";
 import Flex from "../../layout/Flex";
 import Grid from "../../layout/Grid";
-import SearchMedium from "@ledgerhq/icons-ui/react/SearchMedium";
+import SearchMedium from "@ledgerhq/icons-ui/reactLegacy/SearchMedium";
 import SelectInput, { Props } from "./index";
 import { Option } from "./Option";
 import { VirtualMenuList } from "./VirtualMenuList";
@@ -317,7 +317,7 @@ const cssColors = [
 
 type SelectItem = { label: string; value: string };
 
-const colorOptions = cssColors.map((color) => ({ label: color, value: color }));
+const colorOptions = cssColors.map(color => ({ label: color, value: color }));
 const ColorOption = (props: OptionProps<SelectItem, false>) => {
   return (
     <Option
@@ -346,7 +346,7 @@ const ColorValueContainer = (props: ValueContainerProps<SelectItem, false>) => {
   );
 };
 
-export const Default: StoryTemplate<Props<SelectItem>> = (args) => {
+export const Default: StoryTemplate<Props<SelectItem>> = args => {
   const [value, setValue] = React.useState<SelectItem | null>(null);
 
   return (
@@ -356,17 +356,17 @@ export const Default: StoryTemplate<Props<SelectItem>> = (args) => {
       onChange={setValue}
       placeholder="Pick a color"
       isClearable
-      isOptionDisabled={(option) => option.value.startsWith("b")}
+      isOptionDisabled={option => option.value.startsWith("b")}
       components={{ Option: ColorOption, ValueContainer: ColorValueContainer }}
-      renderLeft={(_) => value && <Flex mr={4} p={4} style={{ background: value.value }} />}
+      renderLeft={_ => value && <Flex mr={4} p={4} style={{ background: value.value }} />}
       menuPortalTarget={document.body}
-      styles={{ menuPortal: (provided) => ({ ...provided, zIndex: 2 }) }}
+      styles={{ menuPortal: provided => ({ ...provided, zIndex: 2 }) }}
       {...args}
     />
   );
 };
 
-export const Minimal: StoryTemplate<Props<SelectItem>> = (args) => {
+export const Minimal: StoryTemplate<Props<SelectItem>> = args => {
   const [value, setValue] = React.useState<SelectItem | null>(null);
 
   return (
@@ -388,7 +388,7 @@ Minimal.parameters = {
   },
 };
 
-export const SideRenders: StoryTemplate<Props<SelectItem>> = (args) => {
+export const SideRenders: StoryTemplate<Props<SelectItem>> = args => {
   const [value, setValue] = React.useState<SelectItem | null>(null);
   const theme = useTheme();
 
@@ -397,7 +397,7 @@ export const SideRenders: StoryTemplate<Props<SelectItem>> = (args) => {
       options={options}
       value={value}
       onChange={setValue}
-      renderLeft={(props) => (
+      renderLeft={props => (
         <Flex mr={3}>
           <SearchMedium color={props.isDisabled ? "currentColor" : theme.colors.neutral.c70} />
         </Flex>
@@ -442,7 +442,7 @@ const CustomOption = (props: OptionProps<SelectItem, false>) => {
     />
   );
 };
-export const CustomOptions: StoryTemplate<Props<SelectItem>> = (args) => {
+export const CustomOptions: StoryTemplate<Props<SelectItem>> = args => {
   const [value, setValue] = React.useState<SelectItem | null>();
 
   return (
@@ -465,7 +465,7 @@ CustomOptions.parameters = {
   },
 };
 
-export const DisabledOption: StoryTemplate<Props<SelectItem>> = (args) => {
+export const DisabledOption: StoryTemplate<Props<SelectItem>> = args => {
   const [value, setValue] = React.useState<SelectItem | null>(null);
 
   return (
@@ -473,7 +473,7 @@ export const DisabledOption: StoryTemplate<Props<SelectItem>> = (args) => {
       options={options}
       value={value}
       onChange={setValue}
-      isOptionDisabled={(option) => option.value === "lemon"}
+      isOptionDisabled={option => option.value === "lemon"}
       menuPortalTarget={document.body}
       {...args}
     />
@@ -490,7 +490,7 @@ DisabledOption.parameters = {
 };
 
 const hugeOptions = new Array(10000).fill(0).map((_, i) => ({ label: "" + i, value: "" + i }));
-export const VirtualList: StoryTemplate<Props<SelectItem>> = (args) => {
+export const VirtualList: StoryTemplate<Props<SelectItem>> = args => {
   const [value, setValue] = React.useState<SelectItem | null>(null);
 
   return (
@@ -516,7 +516,7 @@ VirtualList.parameters = {
   },
 };
 
-export const MultiSelect: StoryTemplate<Props<SelectItem, true>> = (args) => {
+export const MultiSelect: StoryTemplate<Props<SelectItem, true>> = args => {
   const [value, setValue] = React.useState<readonly SelectItem[]>([]);
 
   return (

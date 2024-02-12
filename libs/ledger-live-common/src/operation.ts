@@ -1,92 +1,68 @@
-import type { NFTStandard, Operation, AccountLike } from "@ledgerhq/types-live";
-import { decodeAccountId } from "./account";
-import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
-import {
-  encodeERC1155OperationId,
-  encodeERC721OperationId,
-} from "./nft/nftOperationId";
+import { getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
+import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
+import byFamily from "./generated/operation";
 
-const nftOperationIdEncoderPerStandard: Record<
-  NFTStandard,
-  (...args: any[]) => string
-> = {
-  ERC721: encodeERC721OperationId,
-  ERC1155: encodeERC1155OperationId,
-};
+export * from "@ledgerhq/coin-framework/operation";
 
-import {
-  findOperationInAccount,
-  encodeOperationId,
-  decodeOperationId,
-  encodeSubOperationId,
-  decodeSubOperationId,
-  flattenOperationWithInternalsAndNfts,
-  getOperationAmountNumber,
-  getOperationAmountNumberWithInternals,
-  getOperationConfirmationNumber,
-  getOperationConfirmationDisplayableNumber,
-  isConfirmedOperation,
-  patchOperationWithHash as commonPatchOperationWithHash,
-  isAddressPoisoningOperation,
-} from "@ledgerhq/coin-framework/operation";
+/**
+ * Return weather an operation is editable or not.
+ */
+export const isEditableOperation = ({
+  account,
+  operation,
+}: {
+  account: Account;
+  operation: Operation;
+}): boolean => {
+  const specific = byFamily[account.currency.family];
 
-export {
-  findOperationInAccount,
-  encodeOperationId,
-  decodeOperationId,
-  encodeSubOperationId,
-  decodeSubOperationId,
-  flattenOperationWithInternalsAndNfts,
-  getOperationAmountNumber,
-  getOperationAmountNumberWithInternals,
-  getOperationConfirmationNumber,
-  getOperationConfirmationDisplayableNumber,
-  isConfirmedOperation,
-  isAddressPoisoningOperation,
-};
-
-export function patchOperationWithHash(
-  operation: Operation,
-  hash: string
-): Operation {
-  const commonOperation = commonPatchOperationWithHash(operation, hash);
-
-  return {
-    ...commonOperation,
-    nftOperations:
-      operation.nftOperations &&
-      operation.nftOperations.map((nftOp, i) => {
-        const { currencyId } = decodeAccountId(operation.accountId);
-        const nftId = encodeNftId(
-          operation.accountId,
-          nftOp.contract || "",
-          nftOp.tokenId || "",
-          currencyId
-        );
-        const nftOperationIdEncoder =
-          nftOperationIdEncoderPerStandard[nftOp?.standard || ""] ||
-          nftOperationIdEncoderPerStandard.ERC721;
-
-        return {
-          ...nftOp,
-          hash,
-          id: nftOperationIdEncoder(nftId, hash, nftOp.type, 0, i),
-        };
-      }),
-  };
-}
-
-export function isEditableOperation(
-  account: AccountLike,
-  operation: Operation
-): boolean {
-  let isEthFamily = false;
-  if (account.type === "Account") {
-    isEthFamily = account.currency.family === "ethereum";
-  } else if (account.type === "TokenAccount") {
-    isEthFamily = account.token.parentCurrency.family === "ethereum";
+  if (specific?.isEditableOperation) {
+    return specific.isEditableOperation(account, operation);
   }
-  return (
-    isEthFamily && operation.blockHeight === null && !!operation.transactionRaw
-  );
-}
+
+  return false;
+};
+
+/**
+ * Return weather an operation is considered stuck or not.
+ */
+export const isStuckOperation = ({
+  family,
+  operation,
+}: {
+  family: string;
+  operation: Operation;
+}): boolean => {
+  const specific = byFamily[family];
+
+  if (specific?.isStuckOperation) {
+    return specific.isStuckOperation(operation);
+  }
+
+  return false;
+};
+
+/**
+ * Return the oldest stuck pending operation and its corresponding account.
+ * If no stuck pending operation is found, returns undefined
+ */
+export const getStuckAccountAndOperation = (
+  account: AccountLike,
+  parentAccount: Account | undefined | null,
+):
+  | {
+      account: AccountLike;
+      parentAccount: Account | undefined;
+      operation: Operation;
+    }
+  | undefined => {
+  const mainAccount = getMainAccount(account, parentAccount);
+
+  const specific = byFamily[mainAccount.currency.family];
+
+  if (specific?.getStuckAccountAndOperation) {
+    return specific.getStuckAccountAndOperation(account, parentAccount);
+  }
+
+  return undefined;
+};

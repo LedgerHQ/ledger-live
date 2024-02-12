@@ -2,9 +2,7 @@ import { BigNumber } from "bignumber.js";
 import type { BitcoinLikeNetworkParameters } from "./types";
 import { BitcoinLikeFeePolicy, BitcoinLikeSigHashType } from "./types";
 
-export const getNetworkParameters = (
-  networkName: string
-): BitcoinLikeNetworkParameters => {
+export const getNetworkParameters = (networkName: string): BitcoinLikeNetworkParameters => {
   if (networkName === "bitcoin") {
     return {
       identifier: "btc",
@@ -44,9 +42,7 @@ export const getNetworkParameters = (
       messagePrefix: "Bitcoin signed Message:\n",
       usesTimestampedTransaction: false,
       timestampDelay: new BigNumber(0),
-      sigHash:
-        BitcoinLikeSigHashType.SIGHASH_ALL |
-        BitcoinLikeSigHashType.SIGHASH_FORKID,
+      sigHash: BitcoinLikeSigHashType.SIGHASH_ALL | BitcoinLikeSigHashType.SIGHASH_FORKID,
       additionalBIPs: [],
     };
   } else if (networkName === "bitcoin_gold") {
@@ -60,9 +56,7 @@ export const getNetworkParameters = (
       messagePrefix: "Bitcoin gold signed Message:\n",
       usesTimestampedTransaction: false,
       timestampDelay: new BigNumber(0),
-      sigHash:
-        BitcoinLikeSigHashType.SIGHASH_ALL |
-        BitcoinLikeSigHashType.SIGHASH_FORKID,
+      sigHash: BitcoinLikeSigHashType.SIGHASH_ALL | BitcoinLikeSigHashType.SIGHASH_FORKID,
       additionalBIPs: [],
     };
   } else if (networkName === "zcash") {

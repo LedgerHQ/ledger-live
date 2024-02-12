@@ -1,5 +1,5 @@
 import { Page, Locator } from "@playwright/test";
-import { waitFor } from "tests/utils/waitFor";
+import { waitFor } from "../utils/waitFor";
 
 export class SwapPage {
   readonly page: Page;
@@ -26,6 +26,7 @@ export class SwapPage {
   readonly decentralisedQuoteFilterButton: Locator;
   readonly floatQuoteFilterButton: Locator;
   readonly fixedQuoteFilterButton: Locator;
+  readonly swapProviderRates: Locator;
 
   constructor(page: Page) {
     // Misc Swap Components
@@ -77,10 +78,16 @@ export class SwapPage {
 
     // Swap History Components
     this.historyRow = page.locator(".swap-history-row").first();
+
+    // Swap Provider Rates
+    this.swapProviderRates = page.locator("data-test-id='swap2.provider-rates'");
   }
 
   async navigate() {
     await this.swapMenuButton.click();
+  }
+
+  async waitForSwapFormToLoad() {
     await this.maxSpendableToggle.waitFor({ state: "visible" });
   }
 
@@ -92,7 +99,23 @@ export class SwapPage {
     await this.destinationCurrencyDropdown.click();
   }
 
+  async waitForCurrenciesToExist() {
+    await this.page.getByRole("option");
+  }
+
+  async filterDestinationCurrencyDropdown(filter: string) {
+    await this.waitForCurrenciesToExist();
+    await this.destinationCurrencyDropdown.click();
+    await this.page.keyboard.type(filter);
+  }
+
+  async selectCurrencyFromCurrencyDropdown(textToSelect: string) {
+    await this.waitForCurrenciesToExist();
+    await this.page.getByRole("option").getByText(textToSelect).first().click();
+  }
+
   async selectCurrencyByName(accountName: string) {
+    await this.page.waitForTimeout(500); // TODO: Needs to be fixed once we have accessible element
     await this.currencyByName(accountName).click();
   }
 
@@ -102,6 +125,7 @@ export class SwapPage {
 
   async reverseSwapPair() {
     await this.reverseSwapPairButton.click();
+    await this.page.waitForTimeout(500); // TODO: Needs to be fixed once we have accessible element
   }
 
   async addDestinationAccount() {
@@ -163,9 +187,8 @@ export class SwapPage {
     await this.exchangeButton.click();
   }
 
-  async verifySuccessfulExchange() {
+  async waitForSuccessfulExchange() {
     await this.swapId.waitFor({ state: "visible" });
-    return this.swapId.innerText();
   }
 
   async navigateToExchangeDetails() {
@@ -173,14 +196,19 @@ export class SwapPage {
     await this.swapId.waitFor({ state: "hidden" }); // for some reason the detailsSwapId visible check below is not sufficient and we need to check that this element is gone before checking the new page is available.
   }
 
-  async verifyExchangeDetails() {
+  async waitForExchangeDetails() {
     await this.detailsSwapId.waitFor({ state: "visible" });
     return this.detailsSwapId.innerText();
   }
 
+  async waitForProviderRates() {
+    await this.centralisedQuoteFilterButton.waitFor({ state: "visible" });
+    await this.decentralisedQuoteFilterButton.waitFor({ state: "visible" });
+  }
+
   // TODO: pull this function out into a utility function so we can use it elsewhere
   async verifyHistoricalSwapsHaveLoadedFully() {
-    await this.page.waitForFunction(() => {
+    await this.page.waitForFunction(async () => {
       const swapHistoryRow = document.querySelector(".swap-history-row");
 
       let swapHistoryStyles;

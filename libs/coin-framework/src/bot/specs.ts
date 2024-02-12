@@ -1,19 +1,20 @@
-// helpers for spec
-import invariant from "invariant";
 import { log } from "@ledgerhq/logs";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { Account, TransactionCommon } from "@ledgerhq/types-live";
+import BigNumber from "bignumber.js";
 import expect from "expect";
+import invariant from "invariant";
 import sample from "lodash/sample";
 import { isAccountEmpty } from "../account";
+import { botTest } from "./bot-test-context";
 import type {
   DeviceAction,
   DeviceActionArg,
+  FlowDesc,
+  State,
+  Step,
   TransactionDestinationTestInput,
 } from "./types";
-import { Account, TransactionCommon } from "@ledgerhq/types-live";
-import { botTest } from "./bot-test-context";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import BigNumber from "bignumber.js";
-import { DeviceModelId } from "@ledgerhq/devices";
 
 export { botTest };
 
@@ -21,16 +22,13 @@ const stepValueTransformDefault = (s: string) => s.trim();
 
 // TODO should weight the choice to favorize accounts with small amounts
 export function pickSiblings(siblings: Account[], maxAccount = 5): Account {
-  const withoutEmpties = siblings.filter((a) => a.used);
+  const withoutEmpties = siblings.filter(a => a.used);
 
   if (withoutEmpties.length >= maxAccount) {
     // we are no longer creating accounts
     const maybeAccount = sample(withoutEmpties);
     if (!maybeAccount) {
-      throw new Error(
-        "at least one non-empty sibling account exists. maxAccount=" +
-          maxAccount
-      );
+      throw new Error("at least one non-empty sibling account exists. maxAccount=" + maxAccount);
     }
     return maybeAccount;
   }
@@ -40,28 +38,15 @@ export function pickSiblings(siblings: Account[], maxAccount = 5): Account {
   empties.sort((a, b) => a.index - b.index);
 
   if (empties.length > 0) {
-    empties = empties.filter((e) => e.index === empties[0].index);
+    empties = empties.filter(e => e.index === empties[0].index);
   }
 
   const maybeAccount = sample(withoutEmpties.concat(empties));
   if (!maybeAccount) {
-    throw new Error(
-      "at least one sibling account exists. maxAccount=" + maxAccount
-    );
+    throw new Error("at least one sibling account exists. maxAccount=" + maxAccount);
   }
   return maybeAccount;
 }
-
-type State<T extends TransactionCommon> = {
-  finalState: boolean;
-  stepTitle: string;
-  stepValue: string;
-  acc: Array<{
-    title: string;
-    value: string;
-  }>;
-  currentStep: Step<T> | null | undefined;
-};
 
 export enum SpeculosButton {
   LEFT = "Ll",
@@ -69,30 +54,9 @@ export enum SpeculosButton {
   BOTH = "LRlr",
 }
 
-type Step<T extends TransactionCommon> = {
-  title: string;
-  stepValueTransform?: (s: string) => string;
-  expectedValue?: (
-    arg0: DeviceActionArg<T, State<T>>,
-    acc: Array<{
-      title: string;
-      value: string;
-    }>
-  ) => string;
-  ignoreAssertionFailure?: boolean;
-  trimValue?: boolean;
-  button?: SpeculosButton;
-  // action to apply in term of button press
-  final?: boolean; // tells if there is no step after that and action should terminate all further action (hack to do deboncing)
-  maxY?: number; // check if text is bellow a certains Y coordinate on the screen, it happened that two text have the same content but different positions
-};
-type FlowDesc<T extends TransactionCommon> = {
-  steps: Array<Step<T>>;
-  fallback?: (arg0: DeviceActionArg<T, State<T>>) => Step<T> | null | undefined;
-};
 // generalized logic of device actions
 export function deviceActionFlow<T extends TransactionCommon>(
-  description: FlowDesc<T>
+  description: FlowDesc<T>,
 ): DeviceAction<T, State<T>> {
   return (arg: DeviceActionArg<T, State<T>>) => {
     const { transport, event, state, disableStrictStepValueValidation } = arg;
@@ -111,22 +75,14 @@ export function deviceActionFlow<T extends TransactionCommon>(
         // there were accumulated text and we are on new step, we need to release it and compare to expected
         if (currentStep && currentStep.expectedValue) {
           const { expectedValue, ignoreAssertionFailure } = currentStep;
-          const stepValueTransform =
-            currentStep.stepValueTransform || stepValueTransformDefault;
+          const stepValueTransform = currentStep.stepValueTransform || stepValueTransformDefault;
 
           if (!ignoreAssertionFailure && !disableStrictStepValueValidation) {
             botTest("deviceAction confirm step '" + stepTitle + "'", () => {
               expect({
                 [stepTitle]: stepValueTransform(stepValue),
               }).toMatchObject({
-                // FIXME: OCR of speculos couldn't retrieve S properly
-                // Issue on speculos repository : https://github.com/LedgerHQ/speculos/issues/204
-                [stepTitle]: expectedValue(arg, acc)
-                  .replace(
-                    /S/g,
-                    arg.appCandidate.model === DeviceModelId.nanoS ? "S" : ""
-                  )
-                  .trim(),
+                [stepTitle]: expectedValue(arg, acc).trim(),
               });
             });
           }
@@ -155,13 +111,12 @@ export function deviceActionFlow<T extends TransactionCommon>(
     }
 
     if (!finalState) {
-      let possibleKnownStep: Step<T> | null | undefined =
-        description.steps.find((s) => {
-          if (s.maxY) {
-            return event.text.startsWith(s.title) && event.y < s.maxY;
-          }
-          return event.text.startsWith(s.title);
-        });
+      let possibleKnownStep: Step<T> | null | undefined = description.steps.find(s => {
+        if (s.maxY) {
+          return event.text.startsWith(s.title) && event.y < s.maxY;
+        }
+        return event.text.startsWith(s.title);
+      });
 
       // if there is a fallback provided, we will run it to try to detect another possible known step
       if (!possibleKnownStep && description.fallback) {
@@ -211,7 +166,7 @@ const sep = " ";
 export function formatDeviceAmount(
   currency: CryptoCurrency | TokenCurrency,
   value: BigNumber,
-  options: Partial<DeviceAmountFormatOptions> = defaultFormatOptions
+  options: Partial<DeviceAmountFormatOptions> = defaultFormatOptions,
 ): string {
   const [unit] = currency.units;
   let code = unit.code;
@@ -220,9 +175,7 @@ export function formatDeviceAmount(
     if (deviceTicker) code = deviceTicker;
   }
   const fValue = value.div(new BigNumber(10).pow(unit.magnitude));
-  let v = options.showAllDigits
-    ? fValue.toFixed(unit.magnitude)
-    : fValue.toString(10);
+  let v = options.showAllDigits ? fValue.toFixed(unit.magnitude) : fValue.toString(10);
   if (options.forceFloating) {
     if (!v.includes(".")) {
       // if the value is pure integer, in the app it will automatically add an .0
@@ -238,20 +191,17 @@ export function formatDeviceAmount(
 // Usage: put these in your spec, on the mutation transaction functions that intend to do more "delegations"
 export function expectSiblingsHaveSpendablePartGreaterThan(
   siblings: Account[],
-  threshold: number
+  threshold: number,
 ): void {
   const spendableTotal = siblings.reduce(
     (acc, a) => acc.plus(a.spendableBalance),
-    new BigNumber(0)
+    new BigNumber(0),
   );
-  const total = siblings.reduce(
-    (acc, a) => acc.plus(a.balance),
-    new BigNumber(0)
-  );
+  const total = siblings.reduce((acc, a) => acc.plus(a.balance), new BigNumber(0));
   invariant(
     spendableTotal.div(total).gt(threshold),
     "the spendable part of accounts is sufficient (threshold: %s)",
-    threshold
+    threshold,
   );
 }
 
@@ -264,8 +214,8 @@ export const genericTestDestination = <T>({
   const amount = sendingOperation.value.minus(sendingOperation.fee);
   botTest("account balance increased with transaction amount", () =>
     expect(destination.balance.toString()).toBe(
-      destinationBeforeTransaction.balance.plus(amount).toString()
-    )
+      destinationBeforeTransaction.balance.plus(amount).toString(),
+    ),
   );
   botTest("operation amount is consistent with sendingOperation", () =>
     expect({
@@ -274,6 +224,6 @@ export const genericTestDestination = <T>({
     }).toMatchObject({
       type: "IN",
       amount: amount.toString(),
-    })
+    }),
   );
 };

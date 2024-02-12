@@ -52,13 +52,7 @@ const SectionTitle = ({
       alignItems={"center"}
       {...containerProps}
     >
-      <Text
-        variant="small"
-        fontWeight="semiBold"
-        color="neutral.c70"
-        uppercase
-        flexShrink={1}
-      >
+      <Text variant="small" fontWeight="semiBold" color="neutral.c70" uppercase flexShrink={1}>
         {title}
       </Text>
       {onSeeAllPress || navigatorName ? (

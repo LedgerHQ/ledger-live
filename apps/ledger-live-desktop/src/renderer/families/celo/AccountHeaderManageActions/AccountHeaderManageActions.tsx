@@ -1,22 +1,22 @@
-import React, { useCallback } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { useTranslation } from "react-i18next";
-import { isAccountRegistrationPending } from "@ledgerhq/live-common/families/celo/logic";
-import { accountsSelector } from "~/renderer/reducers/accounts";
-import { openModal } from "~/renderer/actions/modals";
-import Icon from "./Icon";
-import { Account } from "@ledgerhq/types-live";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
-type Props = {
-  account: Account;
-  parentAccount: Account | undefined | null;
-  source?: string;
-};
-const AccountHeaderManageActions = ({ account, parentAccount, source = "Account Page" }: Props) => {
+import { isAccountRegistrationPending } from "@ledgerhq/live-common/families/celo/logic";
+import { CeloAccount } from "@ledgerhq/live-common/families/celo/types";
+import React, { useCallback } from "react";
+import { useTranslation } from "react-i18next";
+import { useDispatch } from "react-redux";
+import { openModal } from "~/renderer/actions/modals";
+import { IconType } from "../../types";
+import { CeloFamily } from "../types";
+import Icon from "./Icon";
+
+const AccountHeaderManageActions: CeloFamily["accountHeaderManageActions"] = ({
+  account,
+  parentAccount,
+  source = "Account Page",
+}) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const accounts = useSelector(accountsSelector);
-  const isRegistrationPending = isAccountRegistrationPending(account.id, accounts);
+  const isRegistrationPending = isAccountRegistrationPending(account as CeloAccount);
   const onClick = useCallback(() => {
     if (isAccountEmpty(account)) {
       dispatch(
@@ -26,12 +26,14 @@ const AccountHeaderManageActions = ({ account, parentAccount, source = "Account 
         }),
       );
     } else {
-      dispatch(
-        openModal("MODAL_CELO_MANAGE", {
-          account,
-          source,
-        }),
-      );
+      if (account.type === "Account") {
+        dispatch(
+          openModal("MODAL_CELO_MANAGE", {
+            account,
+            source,
+          }),
+        );
+      }
     }
   }, [account, dispatch, parentAccount, source]);
   const disabledLabel = isRegistrationPending
@@ -41,11 +43,11 @@ const AccountHeaderManageActions = ({ account, parentAccount, source = "Account 
     {
       key: "Stake",
       onClick: onClick,
-      icon: (props: any) => <Icon {...props} isDisabled={isRegistrationPending} />,
+      icon: (props: IconType) => <Icon {...props} isDisabled={isRegistrationPending} />,
       disabled: isRegistrationPending,
       label: t("account.stake"),
       tooltip: disabledLabel,
-      event: "button_clicked",
+      event: "button_clicked2",
       eventProperties: {
         button: "stake",
       },

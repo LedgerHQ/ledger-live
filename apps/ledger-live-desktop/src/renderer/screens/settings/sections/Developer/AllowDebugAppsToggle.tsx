@@ -7,9 +7,10 @@ import Switch from "~/renderer/components/Switch";
 const AllowDebugAppsToggle = () => {
   const dispatch = useDispatch();
   const allowDebugApps = useSelector(allowDebugAppsSelector);
-  const onSetAllowDebugApps = useCallback(checked => dispatch(setAllowDebugApps(checked)), [
-    dispatch,
-  ]);
+  const onSetAllowDebugApps = useCallback(
+    (checked: boolean) => dispatch(setAllowDebugApps(checked)),
+    [dispatch],
+  );
   return (
     <>
       <Track onUpdate event="AllowDebugApps" />

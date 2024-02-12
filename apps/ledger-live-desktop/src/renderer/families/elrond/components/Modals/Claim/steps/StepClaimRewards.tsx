@@ -13,13 +13,12 @@ import Text from "~/renderer/components/Text";
 import DelegationSelectorField from "../fields/DelegationSelectorField";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
-import { Transaction, AccountBridge } from "@ledgerhq/types-live";
-import { ElrondProvider } from "@ledgerhq/live-common/families/elrond/types";
+import { ElrondTransactionMode, Transaction } from "@ledgerhq/live-common/families/elrond/types";
 import { StepProps } from "../types";
+
 const StepClaimRewards = (props: StepProps) => {
   const {
     account,
-    parentAccount,
     onUpdateTransaction,
     transaction,
     warning,
@@ -29,19 +28,16 @@ const StepClaimRewards = (props: StepProps) => {
     delegations,
     contract,
   } = props;
-  invariant(account && account.elrondResources && transaction, "account and transaction required");
-  const bridge: AccountBridge<Transaction> = getAccountBridge(account, parentAccount);
+
+  const bridge = getAccountBridge(account);
   const updateClaimRewards = useCallback(
-    (newTransaction: Transaction) => {
-      onUpdateTransaction(
-        (transaction: Transaction): AccountBridge<Transaction> =>
-          bridge.updateTransaction(transaction, newTransaction),
-      );
+    (newTransaction: Partial<Transaction>) => {
+      onUpdateTransaction(transaction => bridge.updateTransaction(transaction, newTransaction));
     },
     [bridge, onUpdateTransaction],
   );
   const onChangeMode = useCallback(
-    (mode: string) => {
+    (mode: ElrondTransactionMode) => {
       updateClaimRewards({
         ...transaction,
         mode,
@@ -50,7 +46,9 @@ const StepClaimRewards = (props: StepProps) => {
     [updateClaimRewards, transaction],
   );
   const onDelegationChange = useCallback(
-    (validator: ElrondProvider) => {
+    // @ts-expect-error the expected type should be ElrondProvider | null
+    // however if we do that, there is no `delegation` key on validator halp
+    validator => {
       updateClaimRewards({
         ...transaction,
         recipient: validator.delegation.contract,
@@ -59,10 +57,17 @@ const StepClaimRewards = (props: StepProps) => {
     },
     [updateClaimRewards, transaction],
   );
+  if (!transaction) return null;
   const key = transaction.mode === "claimRewards" ? "claimInfo" : "compoundInfo";
   return (
     <Box flow={1}>
-      <TrackPage category="ClaimRewards Flow" name="Step 1" />
+      <TrackPage
+        category="ClaimRewards Flow"
+        name="Step 1"
+        flow="stake"
+        action="claim"
+        currency="MultiversX"
+      />
       {warning && !error ? <ErrorBanner error={warning} warning={true} /> : null}
       {error ? <ErrorBanner error={error} /> : null}
       <ModeSelectorField mode={transaction.mode} onChange={onChangeMode} />
@@ -84,9 +89,9 @@ const StepClaimRewards = (props: StepProps) => {
       )}
 
       <DelegationSelectorField
-        contract={contract}
-        validators={validators}
-        delegations={delegations}
+        contract={contract!}
+        validators={validators!}
+        delegations={delegations!}
         bridge={bridge}
         onUpdateTransaction={onUpdateTransaction}
         onChange={onDelegationChange}
@@ -97,14 +102,14 @@ const StepClaimRewards = (props: StepProps) => {
   );
 };
 const StepClaimRewardsFooter = (props: StepProps) => {
-  const { transitionTo, account, parentAccount, onClose, status, bridgePending } = props;
+  const { transitionTo, account, onClose, status, bridgePending } = props;
   invariant(account, "account required");
   const { errors } = status;
   const hasErrors = Object.keys(errors).length;
   const canNext = !bridgePending && !hasErrors;
   return (
     <Fragment>
-      <AccountFooter parentAccount={parentAccount} account={account} status={status} />
+      <AccountFooter account={account} status={status} />
 
       <Box horizontal={true}>
         <Button mr={1} secondary={true} onClick={onClose}>

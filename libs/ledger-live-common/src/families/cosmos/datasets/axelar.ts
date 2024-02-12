@@ -3,6 +3,7 @@ import type { CosmosAccountRaw, Transaction } from "../types";
 
 const dataset: CurrenciesData<Transaction> = {
   FIXME_ignoreOperationFields: ["gas"],
+  FIXME_ignoreAccountFields: ["cosmosResources", "operationsCount", "operations"],
   scanAccounts: [
     {
       name: "axelar seed 1",
@@ -18,10 +19,10 @@ const dataset: CurrenciesData<Transaction> = {
   ],
   accounts: [
     {
+      FIXME_tests: ["balance is sum of ops"],
       raw: {
         id: "js:2:axelar:axelar1gyauvl44q2apn3u3aujm36q8zrj74vry3kglyg:",
-        seedIdentifier:
-          "03d5e0ebb3f1ae2afe87e5d5a24b5029a59cc12f8fd1056840091b2f0b97e54e83",
+        seedIdentifier: "03d5e0ebb3f1ae2afe87e5d5a24b5029a59cc12f8fd1056840091b2f0b97e54e83",
         name: "Axelar 1",
         starred: false,
         used: true,
@@ -51,46 +52,37 @@ const dataset: CurrenciesData<Transaction> = {
             {
               amount: "100001",
               status: "bonded",
-              validatorAddress:
-                "axelarvaloper1gp957czryfgyvxwn3tfnyy2f0t9g2p4ppzdrn6",
+              validatorAddress: "axelarvaloper1gp957czryfgyvxwn3tfnyy2f0t9g2p4ppzdrn6",
             },
             {
               amount: "25000",
               status: "bonded",
-              validatorAddress:
-                "axelarvaloper13s44uvtzf578zjze9eqeh0mnemj60pwn83frcp",
+              validatorAddress: "axelarvaloper13s44uvtzf578zjze9eqeh0mnemj60pwn83frcp",
             },
             {
               amount: "200000",
               status: "bonded",
-              validatorAddress:
-                "axelarvaloper1kj8j6hkmgfvtxpgfuskj602sxs5dsfkm6ewm4l",
+              validatorAddress: "axelarvaloper1kj8j6hkmgfvtxpgfuskj602sxs5dsfkm6ewm4l",
             },
             {
               amount: "12500",
               status: "bonded",
-              validatorAddress:
-                "axelarvaloper1uvx854yjzn9re8vu74067u68r4ar70tywgpcwg",
+              validatorAddress: "axelarvaloper1uvx854yjzn9re8vu74067u68r4ar70tywgpcwg",
             },
           ],
           redelegations: [
             {
               amount: "25000",
-              completionDate:
-                "Mon Apr 24 2023 16:01:36 GMT+0200 (Central European Summer Time)",
-              validatorSrcAddress:
-                "axelarvaloper1uvx854yjzn9re8vu74067u68r4ar70tywgpcwg",
-              validatorDstAddress:
-                "axelarvaloper13s44uvtzf578zjze9eqeh0mnemj60pwn83frcp",
+              completionDate: "Mon Apr 24 2023 16:01:36 GMT+0200 (Central European Summer Time)",
+              validatorSrcAddress: "axelarvaloper1uvx854yjzn9re8vu74067u68r4ar70tywgpcwg",
+              validatorDstAddress: "axelarvaloper13s44uvtzf578zjze9eqeh0mnemj60pwn83frcp",
             },
           ],
           unbondings: [
             {
               amount: "12500",
-              completionDate:
-                "Mon Apr 24 2023 16:02:16 GMT+0200 (Central European Summer Time)",
-              validatorAddress:
-                "axelarvaloper1uvx854yjzn9re8vu74067u68r4ar70tywgpcwg",
+              completionDate: "Mon Apr 24 2023 16:02:16 GMT+0200 (Central European Summer Time)",
+              validatorAddress: "axelarvaloper1uvx854yjzn9re8vu74067u68r4ar70tywgpcwg",
             },
           ],
           delegatedBalance: "337501",

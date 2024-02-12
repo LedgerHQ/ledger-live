@@ -1,10 +1,6 @@
 import BigNumber from "bignumber.js";
 import { assignFromAccountRaw, assignToAccountRaw } from "./serialization";
-import {
-  CryptoOrgAccount,
-  CryptoOrgAccountRaw,
-  CryptoOrgResourcesRaw,
-} from "./types";
+import { CryptoOrgAccount, CryptoOrgAccountRaw, CryptoOrgResourcesRaw } from "./types";
 
 describe("assignToAccountRaw", () => {
   let accountMock: CryptoOrgAccount = {} as CryptoOrgAccount;
@@ -36,9 +32,7 @@ describe("assignToAccountRaw", () => {
       };
       assignToAccountRaw(accountMock, accountRawMock);
       expect(accountRawMock.cryptoOrgResources.bondedBalance).toEqual("1");
-      expect(accountRawMock.cryptoOrgResources.redelegatingBalance).toEqual(
-        "2"
-      );
+      expect(accountRawMock.cryptoOrgResources.redelegatingBalance).toEqual("2");
       expect(accountRawMock.cryptoOrgResources.unbondingBalance).toEqual("3");
       expect(accountRawMock.cryptoOrgResources.commissions).toEqual("4");
     });
@@ -76,18 +70,10 @@ describe("assignFromAccountRaw", () => {
         commissions: "4",
       };
       assignFromAccountRaw(accountRawMock, accountMock);
-      expect(accountMock.cryptoOrgResources.bondedBalance).toEqual(
-        new BigNumber(1)
-      );
-      expect(accountMock.cryptoOrgResources.redelegatingBalance).toEqual(
-        new BigNumber(2)
-      );
-      expect(accountMock.cryptoOrgResources.unbondingBalance).toEqual(
-        new BigNumber(3)
-      );
-      expect(accountMock.cryptoOrgResources.commissions).toEqual(
-        new BigNumber(4)
-      );
+      expect(accountMock.cryptoOrgResources.bondedBalance).toEqual(new BigNumber(1));
+      expect(accountMock.cryptoOrgResources.redelegatingBalance).toEqual(new BigNumber(2));
+      expect(accountMock.cryptoOrgResources.unbondingBalance).toEqual(new BigNumber(3));
+      expect(accountMock.cryptoOrgResources.commissions).toEqual(new BigNumber(4));
     });
   });
 

@@ -32,10 +32,7 @@ async function listTsJsFilesPairs() {
   return executeAsync('git ls-files | grep -e ".\\.ts$" -e ".\\.tsx$"')
     .then(res =>
       res.split("\n").forEach(path => {
-        const beforeExtensionPath = path
-          .split(".")
-          .slice(0, -1)
-          .join(".");
+        const beforeExtensionPath = path.split(".").slice(0, -1).join(".");
         const jsFilePath = `${beforeExtensionPath}.js`;
         if (jsFilesPath[jsFilePath]) {
           jsTsPairs.push({
@@ -92,16 +89,12 @@ async function generateMarkdownTodoList() {
   let todoList = "";
   const res = await Promise.all(
     pairs
-      .filter(
-        ({ tsFilePath }) => !TEST_FILES || TS_TEST_FILES.includes(tsFilePath),
-      )
+      .filter(({ tsFilePath }) => !TEST_FILES || TS_TEST_FILES.includes(tsFilePath))
       .map(async ({ tsFilePath, jsFilePath }) => {
         const { date: tsFileCreationDate } = await getFileCreationDate(
           tsFilePath,
           branchRebrand,
-        ).then(res =>
-          res === null ? getFileCreationDate(tsFilePath, branchRelease) : res,
-        );
+        ).then(res => (res === null ? getFileCreationDate(tsFilePath, branchRelease) : res));
         const commits = tsFileCreationDate
           ? await listCommits(jsFilePath, tsFileCreationDate.toISOString())
           : [];

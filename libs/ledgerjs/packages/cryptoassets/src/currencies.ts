@@ -8,7 +8,7 @@
  * scheme is generally the id
  * color: is the dominant color of the currency logo, we will color the logo svg with it.
  * managerAppName: if any, is the exact name of the related Ledger's app in LL Manager.
- * blockAvgTime: the average time between 2 blocks. (check online / on explorers)
+ * blockAvgTime: the average time between 2 blocks, in seconds. (check online / on explorers)
  * scheme: the well accepted unique id to use in uri scheme (e.g. bitcoin:...)
  * units: specify the coin different units. There MUST be at least one. convention: it is desc ordered by magnitude, the last unit is the most divisible unit (e.g. satoshi)
  * terminated: Present when we no longer support this specific coin.
@@ -21,14 +21,9 @@
  * if bitcoin family, supportsSegwit defines if it supports segwit.
  */
 
-import {
-  CryptoCurrency,
-  CoinType,
-  Unit,
-  CryptoCurrencyId,
-} from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, CoinType, Unit, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 
-const makeTestnetUnit = (u) => ({ ...u, code: `𝚝${u.code}` });
+const makeTestnetUnit = u => ({ ...u, code: `𝚝${u.code}` });
 
 const bitcoinUnits: Unit[] = [
   {
@@ -109,8 +104,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        address: "https://explorer.near.org/accounts/$address",
-        tx: "https://explorer.near.org/transactions/$hash",
+        address: "https://nearblocks.io/address/$address",
+        tx: "https://nearblocks.io/txns/$hash",
       },
     ],
     keywords: ["near"],
@@ -166,7 +161,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ticker: "AKA",
     scheme: "akroma",
     color: "#AA0087",
-    family: "ethereum",
+    family: "evm",
     units: [
       {
         name: "AKA",
@@ -241,7 +236,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ticker: "ATH",
     scheme: "atheios",
     color: "#000000",
-    family: "ethereum",
+    family: "evm",
     units: [
       {
         name: "ATH",
@@ -260,7 +255,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ticker: "AVAX",
     scheme: "avalanche_c_chain",
     color: "#E84142",
-    family: "ethereum",
+    family: "evm",
     units: [
       {
         name: "AVAX",
@@ -269,16 +264,16 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
     ethereumLikeInfo: {
-      baseChain: "mainnet",
       chainId: 43114,
-      networkId: 43114,
+      node: { type: "ledger", explorerId: "avax" },
+      explorer: { type: "ledger", explorerId: "avax" },
+      gasTracker: { type: "ledger", explorerId: "avax" },
     },
     explorerViews: [
       {
         tx: "https://cchain.explorer.avax.network/tx/$hash",
         address: "https://cchain.explorer.avax.network/address/$address",
-        token:
-          "https://cchain.explorer.avax.network/token/$contractAddress?a=$address",
+        token: "https://cchain.explorer.avax.network/token/$contractAddress?a=$address",
       },
     ],
     keywords: ["avax", "avalanche", "c-chain"],
@@ -291,7 +286,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     name: "Axelar",
     managerAppName: "Cosmos",
     ticker: "AXL",
-    countervalueTicker: "axelar",
     scheme: "axelar",
     color: "#b2b6bc",
     family: "cosmos",
@@ -332,35 +326,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
     explorerViews: [],
-  },
-  binance_beacon_chain: {
-    type: "CryptoCurrency",
-    id: "binance_beacon_chain",
-    coinType: CoinType.ATOM,
-    name: "BinanceBeaconChain",
-    managerAppName: "Cosmos",
-    ticker: "BNB",
-    scheme: "BinanceBeaconChain",
-    color: "#f0b90b",
-    family: "cosmos",
-    units: [
-      {
-        name: "BNB",
-        code: "BNB",
-        magnitude: 6,
-      },
-      {
-        name: "Micro-BNB",
-        code: "ubnb",
-        magnitude: 0,
-      },
-    ],
-    explorerViews: [
-      {
-        tx: "https://binance.mintscan.io/txs/$hash",
-        address: "https://binance.mintscan.io/validators/$address",
-      },
-    ],
   },
   bitcoin: {
     type: "CryptoCurrency",
@@ -540,20 +505,14 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ticker: "BNB",
     scheme: "bsc",
     color: "#F0B90A",
-    family: "ethereum",
+    family: "evm",
     ethereumLikeInfo: {
-      baseChain: "mainnet",
       chainId: 56,
-      networkId: 56,
-      hardfork: "muirGlacier",
+      node: { type: "ledger", explorerId: "bnb" },
+      explorer: { type: "ledger", explorerId: "bnb" },
+      gasTracker: { type: "ledger", explorerId: "bnb" },
     },
-    units: [
-      {
-        name: "BNB",
-        code: "BNB",
-        magnitude: 18,
-      },
-    ],
+    units: ethereumUnits("BNB", "BNB"),
     explorerViews: [
       {
         tx: "https://bscscan.com/tx/$hash",
@@ -573,7 +532,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ticker: "CLO",
     scheme: "callisto",
     color: "#000000",
-    family: "ethereum",
+    family: "evm",
     units: [
       {
         name: "CLO",
@@ -610,6 +569,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       {
         tx: "https://cardanoscan.io/transaction/$hash",
         address: "https://cardanoscan.io/address/$address",
+        stakePool: "https://cardanoscan.io/pool/$poolId",
       },
     ],
     keywords: ["ada", "cardano"],
@@ -641,8 +601,9 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        tx: "https://testnet.cardanoscan.io/transaction/$hash",
-        address: "https://testnet.cardanoscan.io/address/$address",
+        tx: "https://preprod.cardanoscan.io/transaction/$hash",
+        address: "https://prerpod.cardanoscan.io/address/$address",
+        stakePool: "https://preprod.cardanoscan.io/pool/$poolId",
       },
     ],
   },
@@ -709,6 +670,35 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
     explorerId: "club",
+  },
+  coreum: {
+    type: "CryptoCurrency",
+    id: "coreum",
+    coinType: CoinType.ATOM,
+    name: "Coreum",
+    managerAppName: "Cosmos",
+    ticker: "COREUM",
+    scheme: "coreum",
+    color: "#6DD39A",
+    family: "cosmos",
+    units: [
+      {
+        name: "Core",
+        code: "CORE",
+        magnitude: 6,
+      },
+      {
+        name: "Micro-Core",
+        code: "ucore",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://www.mintscan.io/coreum/txs/$hash",
+        address: "https://www.mintscan.io/coreum/validators/$address",
+      },
+    ],
   },
   cosmos: {
     type: "CryptoCurrency",
@@ -890,10 +880,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ticker: "DXN",
     scheme: "dexon",
     color: "#000000",
-    family: "ethereum",
-    ethereumLikeInfo: {
-      chainId: 237,
-    },
+    family: "evm",
     units: [
       {
         name: "dexon",
@@ -984,6 +971,35 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     keywords: ["doge", "dogecoin"],
     explorerId: "doge",
   },
+  dydx: {
+    type: "CryptoCurrency",
+    id: "dydx",
+    coinType: CoinType.ATOM,
+    name: "dYdX",
+    managerAppName: "Cosmos",
+    ticker: "DYDX",
+    scheme: "dydx",
+    color: "#6666FF",
+    family: "cosmos",
+    units: [
+      {
+        name: "dYdX",
+        code: "dydx",
+        magnitude: 18,
+      },
+      {
+        name: "Micro-dydx",
+        code: "adydx",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://www.mintscan.io/dydx/txs/$hash",
+        address: "https://www.mintscan.io/dydx/validators/$address",
+      },
+    ],
+  },
   elastos: {
     type: "CryptoCurrency",
     id: "elastos",
@@ -1012,7 +1028,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ticker: "ELLA",
     scheme: "ellaism",
     color: "#000000",
-    family: "ethereum",
+    family: "evm",
     units: [
       {
         name: "ELLA",
@@ -1047,6 +1063,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         address: "https://explorer.elrond.com/accounts/$address",
       },
     ],
+    keywords: ["elrond"],
   },
   eos: {
     type: "CryptoCurrency",
@@ -1077,14 +1094,14 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     scheme: "ethereum",
     color: "#0ebdcd",
     symbol: "Ξ",
-    units: ethereumUnits("ether", "ETH"),
-    family: "ethereum",
+    family: "evm",
     blockAvgTime: 15,
+    units: ethereumUnits("ether", "ETH"),
     ethereumLikeInfo: {
-      baseChain: "mainnet",
       chainId: 1,
-      networkId: 1,
-      hardfork: "london",
+      node: { type: "ledger", explorerId: "eth" },
+      explorer: { type: "ledger", explorerId: "eth" },
+      gasTracker: { type: "ledger", explorerId: "eth" },
     },
     explorerViews: [
       {
@@ -1106,19 +1123,18 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     scheme: "ethereumclassic",
     color: "#3ca569",
     units: ethereumUnits("ETC", "ETC"),
-    family: "ethereum",
+    family: "evm",
     blockAvgTime: 15,
     ethereumLikeInfo: {
-      baseChain: "mainnet",
       chainId: 61,
-      networkId: 1,
-      hardfork: "dao",
+      node: { type: "ledger", explorerId: "etc" },
+      explorer: { type: "ledger", explorerId: "etc" },
+      gasTracker: { type: "ledger", explorerId: "etc" },
     },
     explorerViews: [
       {
         tx: "https://blockscout.com/etc/mainnet/tx/$hash/internal-transactions",
-        address:
-          "https://blockscout.com/etc/mainnet/address/$address/transactions",
+        address: "https://blockscout.com/etc/mainnet/address/$address/transactions",
       },
     ],
     keywords: ["etc", "ethereum classic"],
@@ -1134,11 +1150,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     scheme: "ether1",
     color: "#000000",
     units: ethereumUnits("ETHO", "ETHO"),
-    family: "ethereum",
+    family: "evm",
     blockAvgTime: 15,
-    ethereumLikeInfo: {
-      chainId: 1313114,
-    },
     explorerViews: [],
   },
   ethergem: {
@@ -1151,11 +1164,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     scheme: "ethergem",
     color: "#000000",
     units: ethereumUnits("EGEM", "EGEM"),
-    family: "ethereum",
+    family: "evm",
     blockAvgTime: 15,
-    ethereumLikeInfo: {
-      chainId: 1987,
-    },
     explorerViews: [],
   },
   ethersocial: {
@@ -1168,11 +1178,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     scheme: "ethersocial",
     color: "#000000",
     units: ethereumUnits("ESN", "ESN"),
-    family: "ethereum",
+    family: "evm",
     blockAvgTime: 15,
-    ethereumLikeInfo: {
-      chainId: 31102,
-    },
     explorerViews: [],
   },
   expanse: {
@@ -1184,7 +1191,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ticker: "EXP",
     scheme: "expanse",
     color: "#EE4500",
-    family: "ethereum",
+    family: "evm",
     units: [
       {
         name: "EXP",
@@ -1287,7 +1294,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ticker: "GO",
     scheme: "gochain",
     color: "#000000",
-    family: "ethereum",
+    family: "evm",
     units: [
       {
         name: "GO",
@@ -1418,10 +1425,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ticker: "HPB",
     scheme: "hpb",
     color: "#3B3BE2",
-    family: "ethereum",
-    ethereumLikeInfo: {
-      chainId: 269,
-    },
+    family: "evm",
     units: [
       {
         name: "hpb",
@@ -1479,30 +1483,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
     explorerViews: [],
-  },
-  icp: {
-    type: "CryptoCurrency",
-    id: "icp",
-    coinType: CoinType.ICP,
-    family: "icp",
-    ticker: "ICP",
-    scheme: "icp",
-    color: "#000",
-    managerAppName: "InternetComputer",
-    name: "Internet Computer (ICP)",
-    units: [
-      {
-        name: "ICP",
-        code: "ICP",
-        magnitude: 8,
-      },
-    ],
-    explorerViews: [
-      {
-        address: "https://dashboard.internetcomputer.org/account/$address",
-        tx: "https://dashboard.internetcomputer.org/transaction/$hash",
-      },
-    ],
   },
   iota: {
     type: "CryptoCurrency",
@@ -1714,10 +1694,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ticker: "MIX",
     scheme: "mix",
     color: "#00C4DF",
-    family: "ethereum",
-    ethereumLikeInfo: {
-      chainId: 76,
-    },
+    family: "evm",
     units: [
       {
         name: "MIX",
@@ -1760,10 +1737,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ticker: "MUSIC",
     scheme: "musicoin",
     color: "#000000",
-    family: "ethereum",
-    ethereumLikeInfo: {
-      chainId: 7762959,
-    },
+    family: "evm",
     units: [
       {
         name: "MUSIC",
@@ -2121,7 +2095,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ticker: "PIRL",
     scheme: "pirl",
     color: "#A2D729",
-    family: "ethereum",
+    family: "evm",
     units: [
       {
         name: "PIRL",
@@ -2180,7 +2154,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ticker: "POA",
     scheme: "poa",
     color: "#4D46BD",
-    family: "ethereum",
+    family: "evm",
     units: [
       {
         name: "POA",
@@ -2201,7 +2175,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     name: "Polkadot",
     managerAppName: "Polkadot",
     ticker: "DOT",
-    countervalueTicker: "PDOT",
     scheme: "polkadot",
     color: "#E6007A",
     family: "polkadot",
@@ -2238,19 +2211,14 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ticker: "MATIC",
     scheme: "polygon",
     color: "#6d29de",
-    family: "ethereum",
+    family: "evm",
     ethereumLikeInfo: {
-      baseChain: "mainnet",
       chainId: 137,
-      networkId: 137,
+      node: { type: "ledger", explorerId: "matic" },
+      explorer: { type: "ledger", explorerId: "matic" },
+      gasTracker: { type: "ledger", explorerId: "matic" },
     },
-    units: [
-      {
-        name: "MATIC",
-        code: "MATIC",
-        magnitude: 18,
-      },
-    ],
+    units: ethereumUnits("MATIC", "MATIC"),
     explorerViews: [
       {
         tx: "https://polygonscan.com/tx/$hash",
@@ -2471,10 +2439,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ticker: "REOSC",
     scheme: "reosc",
     color: "#0E00FF",
-    family: "ethereum",
-    ethereumLikeInfo: {
-      chainId: 2894,
-    },
+    family: "evm",
     units: [
       {
         name: "REOSC",
@@ -2647,7 +2612,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     name: "Stargaze",
     managerAppName: "Cosmos",
     ticker: "STARS",
-    countervalueTicker: "stargaze",
     scheme: "stargaze",
     color: "#e38cd4",
     family: "cosmos",
@@ -2896,10 +2860,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ticker: "TT",
     scheme: "thundercore",
     color: "#0844D2",
-    family: "ethereum",
-    ethereumLikeInfo: {
-      chainId: 108,
-    },
+    family: "evm",
     units: [
       {
         name: "TT",
@@ -2923,10 +2884,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ticker: "TOMO",
     scheme: "tomo",
     color: "#FF9933",
-    family: "ethereum",
-    ethereumLikeInfo: {
-      chainId: 88,
-    },
+    family: "evm",
     blockAvgTime: 2,
     units: [
       {
@@ -2976,10 +2934,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ticker: "UBQ",
     scheme: "ubiq",
     color: "#02e785",
-    family: "ethereum",
-    ethereumLikeInfo: {
-      chainId: 8,
-    },
+    family: "evm",
     blockAvgTime: 88,
     units: [
       {
@@ -3047,22 +3002,18 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     type: "CryptoCurrency",
     id: "vechain",
     coinType: CoinType.VECHAIN,
-    name: "VeChain",
+    name: "Vechain",
     managerAppName: "VeChain",
     ticker: "VET",
     scheme: "vechain",
-    color: "#00C2FF",
+    color: "#82BE00",
     family: "vechain",
-    units: [
-      {
-        name: "VET",
-        code: "VET",
-        magnitude: 8,
-      },
-    ],
+    blockAvgTime: 10,
+    units: ethereumUnits("VET", "VET"),
     explorerViews: [
       {
-        tx: "https://explore.veforge.com/transactions/$hash",
+        tx: "https://explore.vechain.org/transactions/$hash",
+        address: "https://explore.vechain.org/accounts/$address",
       },
     ],
   },
@@ -3149,7 +3100,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ticker: "WAN",
     scheme: "wanchain",
     color: "#276097",
-    family: "ethereum",
+    family: "evm",
     units: [
       {
         name: "WAN",
@@ -3212,8 +3163,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        tx: "https://chain.so/tx/ZEC/$hash",
-        address: "https://chain.so/address/ZEC/$address",
+        tx: "https://zcashblockexplorer.com/transactions/$hash",
+        address: "https://zcashblockexplorer.com/address/$address",
       },
     ],
     explorerId: "zec",
@@ -3335,11 +3286,12 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  // Cronos POS Chain (formerly Crypto.org)
   crypto_org: {
     type: "CryptoCurrency",
     id: "crypto_org",
     coinType: CoinType.CRYPTO_ORG,
-    name: "Crypto.org",
+    name: "Cronos POS Chain",
     managerAppName: "Crypto.org Chain",
     ticker: "CRO",
     scheme: "crypto_org",
@@ -3359,8 +3311,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        tx: "https://crypto.org/explorer/tx/$hash",
-        address: "https://crypto.org/explorer/account/$address",
+        tx: "https://cronos-pos.org/explorer/tx/$hash",
+        address: "https://cronos-pos.org/explorer/account/$address",
       },
     ],
   },
@@ -3409,13 +3361,13 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     units: ethereumUnits("ether", "ETH").map(makeTestnetUnit),
     isTestnetFor: "ethereum",
     disableCountervalue: true,
-    family: "ethereum",
+    family: "evm",
     blockAvgTime: 15,
     ethereumLikeInfo: {
-      baseChain: "ropsten",
       chainId: 3, // ropsten
-      networkId: 3,
-      hardfork: "petersburg",
+      node: { type: "ledger", explorerId: "eth_ropsten" },
+      explorer: { type: "ledger", explorerId: "eth_ropsten" },
+      gasTracker: { type: "ledger", explorerId: "eth_ropsten" },
     },
     explorerViews: [
       {
@@ -3438,13 +3390,13 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     units: ethereumUnits("ether", "ETH").map(makeTestnetUnit),
     isTestnetFor: "ethereum",
     disableCountervalue: true,
-    family: "ethereum",
+    family: "evm",
     blockAvgTime: 15,
     ethereumLikeInfo: {
-      baseChain: "goerli",
       chainId: 5, // goerli
-      networkId: 5,
-      hardfork: "london",
+      node: { type: "ledger", explorerId: "eth_goerli" },
+      explorer: { type: "ledger", explorerId: "eth_goerli" },
+      gasTracker: { type: "ledger", explorerId: "eth_goerli" },
     },
     explorerViews: [
       {
@@ -3453,6 +3405,64 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
     explorerId: "eth_goerli",
+  },
+  ethereum_sepolia: {
+    type: "CryptoCurrency",
+    id: "ethereum_sepolia",
+    coinType: CoinType.ETH,
+    name: "Ethereum Sepolia",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    deviceTicker: "ETH",
+    scheme: "eth_sepolia",
+    color: "#00ff00",
+    units: ethereumUnits("ether", "ETH").map(makeTestnetUnit),
+    isTestnetFor: "ethereum",
+    disableCountervalue: true,
+    family: "evm",
+    blockAvgTime: 15,
+    ethereumLikeInfo: {
+      chainId: 11155111,
+      node: { type: "ledger", explorerId: "eth_sepolia" },
+      explorer: { type: "ledger", explorerId: "eth_sepolia" },
+      gasTracker: { type: "ledger", explorerId: "eth_sepolia" },
+    },
+    explorerViews: [
+      {
+        tx: "https://sepolia.etherscan.io/tx/$hash",
+        address: "https://sepolia.etherscan.io/address/$address",
+      },
+    ],
+    explorerId: "eth_sepolia",
+  },
+  ethereum_holesky: {
+    type: "CryptoCurrency",
+    id: "ethereum_holesky",
+    coinType: CoinType.ETH,
+    name: "Ethereum Holesky",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    deviceTicker: "ETH",
+    scheme: "eth_holesky",
+    color: "#00ff00",
+    units: ethereumUnits("ether", "ETH").map(makeTestnetUnit),
+    isTestnetFor: "ethereum",
+    disableCountervalue: true,
+    family: "evm",
+    blockAvgTime: 15,
+    ethereumLikeInfo: {
+      chainId: 17000,
+      node: { type: "ledger", explorerId: "eth_holesky" },
+      explorer: { type: "ledger", explorerId: "eth_holesky" },
+      gasTracker: { type: "ledger", explorerId: "eth_holesky" },
+    },
+    explorerViews: [
+      {
+        tx: "https://holesky.etherscan.io/tx/$hash",
+        address: "https://holesky.etherscan.io/address/$address",
+      },
+    ],
+    explorerId: "eth_holesky",
   },
   stacks: {
     type: "CryptoCurrency",
@@ -3470,6 +3480,11 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         code: "STX",
         magnitude: 6,
       },
+      {
+        name: "uSTX",
+        code: "uSTX",
+        magnitude: 0,
+      },
     ],
     explorerViews: [
       {
@@ -3478,11 +3493,12 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  // Cronos POS Chain Croeseid (formerly Crypto.org Croeseid)
   crypto_org_croeseid: {
     type: "CryptoCurrency",
     id: "crypto_org_croeseid",
     coinType: CoinType.CRYPTO_ORG,
-    name: "Crypto.org Croeseid",
+    name: "Cronos POS Chain Croeseid",
     managerAppName: "Crypto.org Chain",
     ticker: "CRO",
     scheme: "crypto_org_croeseid",
@@ -3504,8 +3520,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     disableCountervalue: true,
     explorerViews: [
       {
-        tx: "https://crypto.org/explorer/croeseid/tx/$hash",
-        address: "https://crypto.org/explorer/croeseid/account/$address",
+        tx: "https://cronos-pos.org/explorer/croeseid/tx/$hash",
+        address: "https://cronos-pos.org/explorer/croeseid/account/$address",
       },
     ],
   },
@@ -3598,11 +3614,94 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        tx: "https://filfox.info/en/message/$hash",
-        address: "https://filfox.info/en/address/$address",
+        tx: "https://beryx.io/v1/explore/fil/mainnet/transactions/$hash",
+        address: "https://beryx.io/v1/explore/fil/mainnet/address/$address",
       },
     ],
   },
+  internet_computer: {
+    type: "CryptoCurrency",
+    id: "internet_computer",
+    coinType: CoinType.ICP,
+    name: "Internet Computer",
+    managerAppName: "InternetComputer",
+    ticker: "ICP",
+    scheme: "internet_computer",
+    color: "#e1effa",
+    family: "internet_computer",
+    units: [
+      {
+        name: "ICP",
+        code: "ICP",
+        magnitude: 8,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://dashboard.internetcomputer.org/transaction/$hash",
+        address: "https://dashboard.internetcomputer.org/account/$address",
+      },
+    ],
+  },
+  injective: {
+    type: "CryptoCurrency",
+    id: "injective",
+    coinType: 60,
+    name: "Injective",
+    managerAppName: "Cosmos",
+    ticker: "INJ",
+    scheme: "injective",
+    color: "#0bd",
+    family: "cosmos",
+    units: [
+      {
+        name: "Injective",
+        code: "INJ",
+        magnitude: 18,
+      },
+      {
+        name: "Micro-Injective",
+        code: "inj",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://www.mintscan.io/injective/txs/$hash",
+        address: "https://www.mintscan.io/injective/validators/$address",
+      },
+    ],
+  },
+  casper: {
+    name: "Casper",
+    ticker: "CSPR",
+    coinType: CoinType.CSPR,
+    color: "#000000",
+    family: "casper",
+    id: "casper",
+    managerAppName: "Casper",
+    scheme: "casper",
+    type: "CryptoCurrency",
+    explorerViews: [
+      {
+        tx: "https://cspr.live/deploy/$hash",
+        address: "https://cspr.live/account/$address",
+      },
+    ],
+    units: [
+      {
+        name: "CSPR",
+        code: "CSPR",
+        magnitude: 9,
+      },
+      {
+        name: "motes",
+        code: "motes",
+        magnitude: 0,
+      },
+    ],
+  },
+  // ethereum nanoapp currencies
   // Light Integrations are at the end of the list until we figure out a way to fix the ticker/managerApp collisions
   arbitrum: {
     type: "CryptoCurrency",
@@ -3616,10 +3715,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     family: "evm",
     units: ethereumUnits("ETH", "ETH"),
     ethereumLikeInfo: {
-      baseChain: "mainnet",
       chainId: 42161,
-      networkId: 42161,
-      rpc: "https://arb1.arbitrum.io/rpc",
+      node: { type: "external", uri: "https://arb1.arbitrum.io/rpc" },
       explorer: {
         uri: "https://api.arbiscan.io",
         type: "etherscan",
@@ -3649,10 +3746,9 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     disableCountervalue: true,
     ethereumLikeInfo: {
       chainId: 421613,
-      networkId: 421613,
-      rpc: "https://goerli-rollup.arbitrum.io/rpc",
+      node: { type: "external", uri: "https://goerli-rollup.arbitrum.io/rpc" },
       explorer: {
-        uri: "https://api-goerli.arbiscan.io/",
+        uri: "https://api-goerli.arbiscan.io",
         type: "etherscan",
       },
     },
@@ -3664,6 +3760,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  // Cronos EVM blockchain
   cronos: {
     type: "CryptoCurrency",
     id: "cronos",
@@ -3675,10 +3772,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     color: "#002D74",
     family: "evm",
     ethereumLikeInfo: {
-      baseChain: "mainnet",
       chainId: 25,
-      networkId: 25,
-      rpc: "https://evm.cronos.org",
+      node: { type: "external", uri: "https://evm.cronos.org" },
       explorer: {
         uri: "https://api.cronoscan.com",
         type: "etherscan",
@@ -3711,10 +3806,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     family: "evm",
     units: ethereumUnits("FTM", "FTM"),
     ethereumLikeInfo: {
-      baseChain: "mainnet",
       chainId: 250,
-      networkId: 250,
-      rpc: "https://rpcapi.fantom.network",
+      node: { type: "external", uri: "https://rpcapi.fantom.network" },
       explorer: {
         uri: "https://api.ftmscan.com",
         type: "etherscan",
@@ -3739,10 +3832,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     color: "#D95F6C",
     family: "evm",
     ethereumLikeInfo: {
-      baseChain: "mainnet",
       chainId: 14,
-      networkId: 14,
-      rpc: "https://flare-api.flare.network/ext/bc/C/rpc",
+      node: { type: "external", uri: "https://flare-api.flare.network/ext/bc/C/rpc" },
       explorer: {
         uri: "https://flare-explorer.flare.network",
         type: "blockscout",
@@ -3752,8 +3843,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     explorerViews: [
       {
         tx: "https://flare-explorer.flare.network/tx/$hash/internal-transactions",
-        address:
-          "https://flare-explorer.flare.network/address/$address/transactions",
+        address: "https://flare-explorer.flare.network/address/$address/transactions",
       },
     ],
   },
@@ -3768,10 +3858,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     color: "#61ACD4",
     family: "evm",
     ethereumLikeInfo: {
-      baseChain: "mainnet",
       chainId: 19,
-      networkId: 19,
-      rpc: "https://songbird-api.flare.network/ext/C/rpc",
+      node: { type: "external", uri: "https://songbird-api.flare.network/ext/C/rpc" },
       explorer: {
         uri: "https://songbird-explorer.flare.network",
         type: "blockscout",
@@ -3781,8 +3869,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     explorerViews: [
       {
         tx: "https://songbird-explorer.flare.network/tx/$hash/internal-transactions",
-        address:
-          "https://songbird-explorer.flare.network/address/$address/transactions",
+        address: "https://songbird-explorer.flare.network/address/$address/transactions",
       },
     ],
   },
@@ -3805,8 +3892,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     ethereumLikeInfo: {
       chainId: 1284,
-      networkId: 1284,
-      rpc: "https://rpc.api.moonbeam.network",
+      node: { type: "external", uri: "https://rpc.api.moonbeam.network" },
       explorer: {
         uri: "https://api-moonbeam.moonscan.io",
         type: "etherscan",
@@ -3833,8 +3919,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     units: ethereumUnits("RBTC", "RBTC"),
     ethereumLikeInfo: {
       chainId: 30,
-      networkId: 30,
-      rpc: "https://public-node.rsk.co",
+      node: { type: "external", uri: "https://public-node.rsk.co" },
       explorer: {
         uri: "https://blockscout.com/rsk/mainnet",
         type: "blockscout",
@@ -3858,17 +3943,10 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     scheme: "btt",
     color: "#000000",
     family: "evm",
-    units: [
-      {
-        name: "BTT",
-        code: "BTT",
-        magnitude: 18,
-      },
-    ],
+    units: ethereumUnits("BTT", "BTT"),
     ethereumLikeInfo: {
       chainId: 199,
-      networkId: 199,
-      rpc: "https://rpc.bt.io",
+      node: { type: "external", uri: "https://rpc.bt.io" },
       explorer: {
         uri: "https://api.bttcscan.com",
         type: "etherscan",
@@ -3892,17 +3970,10 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     scheme: "kava_evm",
     color: "#FF232F",
     family: "evm",
-    units: [
-      {
-        name: "KAVA",
-        code: "KAVA",
-        magnitude: 18,
-      },
-    ],
+    units: ethereumUnits("KAVA", "KAVA"),
     ethereumLikeInfo: {
       chainId: 2222,
-      networkId: 2222,
-      rpc: "https://evm2.kava.io",
+      node: { type: "external", uri: "https://evm2.kava.io" },
       explorer: {
         uri: "https://explorer.kava.io",
         type: "blockscout",
@@ -3926,17 +3997,10 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     scheme: "evmos",
     color: "#ED4E33",
     family: "evm",
-    units: [
-      {
-        name: "EVMOS",
-        code: "EVMOS",
-        magnitude: 18,
-      },
-    ],
+    units: ethereumUnits("EVMOS", "EVMOS"),
     ethereumLikeInfo: {
       chainId: 9001,
-      networkId: 9001,
-      rpc: "https://evmos-evm.publicnode.com",
+      node: { type: "external", uri: "https://evmos-evm.publicnode.com" },
       explorer: {
         uri: "https://blockscout.evmos.org",
         type: "blockscout",
@@ -3954,7 +4018,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     type: "CryptoCurrency",
     id: "optimism",
     coinType: CoinType.ETH,
-    name: "Optimism",
+    name: "OP Mainnet",
     managerAppName: "Ethereum",
     ticker: "ETH",
     scheme: "optimism",
@@ -3963,8 +4027,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     units: ethereumUnits("ether", "ETH"),
     ethereumLikeInfo: {
       chainId: 10,
-      networkId: 10,
-      rpc: "https://mainnet.optimism.io",
+      node: { type: "external", uri: "https://mainnet.optimism.io" },
       explorer: {
         uri: "https://api-optimistic.etherscan.io",
         type: "etherscan",
@@ -3974,10 +4037,10 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       {
         tx: "https://optimistic.etherscan.io/tx/$hash",
         address: "https://optimistic.etherscan.io/address/$address",
-        token:
-          "https://optimistic.etherscan.io/token/$contractAddress?a=$address",
+        token: "https://optimistic.etherscan.io/token/$contractAddress?a=$address",
       },
     ],
+    keywords: ["optimism"],
   },
   optimism_goerli: {
     type: "CryptoCurrency",
@@ -3995,8 +4058,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     disableCountervalue: true,
     ethereumLikeInfo: {
       chainId: 420,
-      networkId: 420,
-      rpc: "https://goerli.optimism.io",
+      node: { type: "external", uri: "https://goerli.optimism.io" },
       explorer: {
         uri: "https://api-goerli-optimistic.etherscan.io/",
         type: "etherscan",
@@ -4006,8 +4068,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       {
         tx: "https://goerli-optimism.etherscan.io/tx/$hash",
         address: "https://goerli-optimism.etherscan.io/address/$address",
-        token:
-          "https://goerli-optimism.etherscan.io/token/$contractAddress?a=$address",
+        token: "https://goerli-optimism.etherscan.io/token/$contractAddress?a=$address",
       },
     ],
   },
@@ -4024,8 +4085,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     units: ethereumUnits("EWT", "EWT"),
     ethereumLikeInfo: {
       chainId: 246,
-      networkId: 246,
-      rpc: "https://rpc.energyweb.org",
+      node: { type: "external", uri: "https://rpc.energyweb.org" },
       explorer: {
         uri: "https://explorer.energyweb.org",
         type: "blockscout",
@@ -4035,8 +4095,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       {
         tx: "https://explorer.energyweb.org/tx/$hash",
         address: "https://explorer.energyweb.org/address/$address",
-        token:
-          "https://explorer.energyweb.org/token/$contractAddress?a=$address",
+        token: "https://explorer.energyweb.org/token/$contractAddress?a=$address",
       },
     ],
   },
@@ -4053,8 +4112,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     units: ethereumUnits("ASTR", "ASTR"),
     ethereumLikeInfo: {
       chainId: 592,
-      networkId: 592,
-      rpc: "https://evm.astar.network",
+      node: { type: "external", uri: "https://evm.astar.network" },
       explorer: {
         uri: "https://blockscout.com/astar",
         type: "blockscout",
@@ -4081,8 +4139,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     units: ethereumUnits("METIS", "METIS"),
     ethereumLikeInfo: {
       chainId: 1088,
-      networkId: 1088,
-      rpc: "https://andromeda.metis.io/?owner=1088",
+      node: { type: "external", uri: "https://andromeda.metis.io/?owner=1088" },
       explorer: {
         uri: "https://andromeda-explorer.metis.io",
         type: "blockscout",
@@ -4092,8 +4149,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       {
         tx: "https://andromeda-explorer.metis.io/tx/$hash",
         address: "https://andromeda-explorer.metis.io/address/$address",
-        token:
-          "https://andromeda-explorer.metis.io/token/$contractAddress?a=$address",
+        token: "https://andromeda-explorer.metis.io/token/$contractAddress?a=$address",
       },
     ],
   },
@@ -4110,8 +4166,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     units: ethereumUnits("ETH", "ETH"),
     ethereumLikeInfo: {
       chainId: 288,
-      networkId: 288,
-      rpc: "https://mainnet.boba.network",
+      node: { type: "external", uri: "https://mainnet.boba.network" },
       explorer: {
         uri: "https://api.bobascan.com",
         type: "etherscan",
@@ -4135,17 +4190,10 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     scheme: "moonriver",
     color: "#F2B705",
     family: "evm",
-    units: [
-      {
-        name: "MOVR",
-        code: "MOVR",
-        magnitude: 18,
-      },
-    ],
+    units: ethereumUnits("MOVR", "MOVR"),
     ethereumLikeInfo: {
       chainId: 1285,
-      networkId: 1285,
-      rpc: "https://rpc.api.moonriver.moonbeam.network",
+      node: { type: "external", uri: "https://rpc.api.moonriver.moonbeam.network" },
       explorer: {
         uri: "https://api-moonriver.moonscan.io",
         type: "etherscan",
@@ -4155,8 +4203,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       {
         tx: "https://moonriver.moonscan.io/tx/$hash",
         address: "https://moonriver.moonscan.io/address/$address",
-        token:
-          "https://moonriver.moonscan.io/token/$contractAddress?a=$address",
+        token: "https://moonriver.moonscan.io/token/$contractAddress?a=$address",
       },
     ],
   },
@@ -4170,17 +4217,10 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     scheme: "velas",
     color: "#000000",
     family: "evm",
-    units: [
-      {
-        name: "VLX",
-        code: "VLX",
-        magnitude: 18,
-      },
-    ],
+    units: ethereumUnits("VLX", "VLX"),
     ethereumLikeInfo: {
       chainId: 106,
-      networkId: 106,
-      rpc: "https://evmexplorer.velas.com/rpc",
+      node: { type: "external", uri: "https://evmexplorer.velas.com/rpc" },
       explorer: {
         uri: "https://evmexplorer.velas.com",
         type: "blockscout",
@@ -4190,8 +4230,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       {
         tx: "https://evmexplorer.velas.com/tx/$hash",
         address: "https://evmexplorer.velas.com/address/$address",
-        token:
-          "https://evmexplorer.velas.com/token/$contractAddress?a=$address",
+        token: "https://evmexplorer.velas.com/token/$contractAddress?a=$address",
       },
     ],
   },
@@ -4208,8 +4247,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     units: ethereumUnits("SYS", "SYS"),
     ethereumLikeInfo: {
       chainId: 57,
-      networkId: 57,
-      rpc: "https://rpc.syscoin.org",
+      node: { type: "external", uri: "https://rpc.syscoin.org" },
       explorer: {
         uri: "https://explorer.syscoin.org",
         type: "blockscout",
@@ -4220,6 +4258,299 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         tx: "https://explorer.syscoin.org/tx/$hash",
         address: "https://explorer.syscoin.org/address/$address",
         token: "https://explorer.syscoin.org/token/$contractAddress?a=$address",
+      },
+    ],
+  },
+  telos_evm: {
+    type: "CryptoCurrency",
+    id: "telos_evm",
+    coinType: CoinType.ETH,
+    name: "Telos",
+    managerAppName: "Ethereum",
+    ticker: "TLOS",
+    scheme: "telos_evm",
+    color: "#AC72F9",
+    family: "evm",
+    units: ethereumUnits("TLOS", "TLOS"),
+    ethereumLikeInfo: {
+      chainId: 40,
+      node: { type: "external", uri: "https://mainnet.telos.net/evm" },
+      explorer: {
+        uri: "https://api.teloscan.io",
+        type: "teloscan",
+      },
+    },
+    explorerViews: [
+      {
+        tx: "https://www.teloscan.io/tx/$hash",
+        address: "https://www.teloscan.io/address/$address",
+        token: "https://www.teloscan.io/token/$contractAddress?a=$address",
+      },
+    ],
+  },
+  polygon_zk_evm: {
+    type: "CryptoCurrency",
+    id: "polygon_zk_evm",
+    coinType: CoinType.ETH,
+    name: "Polygon zkEVM",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    scheme: "polygon_zk_evm",
+    color: "#8247E5",
+    family: "evm",
+    units: ethereumUnits("ETH", "ETH"),
+    ethereumLikeInfo: {
+      chainId: 1101,
+      node: { type: "external", uri: "https://zkevm-rpc.com" },
+      explorer: { type: "etherscan", uri: "https://api-zkevm.polygonscan.com" },
+    },
+    explorerViews: [
+      {
+        tx: "https://zkevm.polygonscan.com/tx/$hash",
+        address: "https://zkevm.polygonscan.com/address/$address",
+        token: "https://zkevm.polygonscan.com/token/$contractAddress?a=$address",
+      },
+    ],
+  },
+  polygon_zk_evm_testnet: {
+    type: "CryptoCurrency",
+    id: "polygon_zk_evm_testnet",
+    coinType: CoinType.ETH,
+    name: "Polygon zkEVM Testnet",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    deviceTicker: "ETH",
+    scheme: "polygon_zk_evm_testnet",
+    color: "#E58247",
+    family: "evm",
+    units: ethereumUnits("ETH", "ETH").map(makeTestnetUnit),
+    disableCountervalue: true,
+    isTestnetFor: "polygon_zk_evm",
+    ethereumLikeInfo: {
+      chainId: 1442,
+      node: { type: "external", uri: "https://rpc.public.zkevm-test.net" },
+      explorer: { type: "etherscan", uri: "https://api-testnet-zkevm.polygonscan.com" },
+    },
+    explorerViews: [
+      {
+        tx: "https://testnet-zkevm.polygonscan.com/tx/$hash",
+        address: "https://testnet-zkevm.polygonscan.com/address/$address",
+        token: "https://testnet-zkevm.polygonscan.com/token/$contractAddress?a=$address",
+      },
+    ],
+  },
+  base: {
+    type: "CryptoCurrency",
+    id: "base",
+    coinType: CoinType.ETH,
+    name: "Base",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    scheme: "base",
+    color: "#1755FE",
+    family: "evm",
+    units: ethereumUnits("ETH", "ETH"),
+    ethereumLikeInfo: {
+      chainId: 8453,
+      node: { type: "external", uri: "https://developer-access-mainnet.base.org" },
+      explorer: { type: "etherscan", uri: "https://api.basescan.org" },
+    },
+    explorerViews: [
+      {
+        tx: "https://basescan.org/tx/$hash",
+        address: "https://basescan.org/address/$address",
+        token: "https://basescan.org/token/$contractAddress?a=$address",
+      },
+    ],
+  },
+  base_goerli: {
+    type: "CryptoCurrency",
+    id: "base_goerli",
+    coinType: CoinType.ETH,
+    name: "Base Goerli",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    deviceTicker: "ETH",
+    scheme: "base_goerli",
+    color: "#FF0052",
+    family: "evm",
+    units: ethereumUnits("ETH", "ETH").map(makeTestnetUnit),
+    disableCountervalue: true,
+    isTestnetFor: "base",
+    ethereumLikeInfo: {
+      chainId: 84531,
+      node: { type: "external", uri: "https://goerli.base.org" },
+      explorer: { type: "etherscan", uri: "https://api-goerli.basescan.org" },
+    },
+    explorerViews: [
+      {
+        tx: "https://goerli.basescan.org/tx/$hash",
+        address: "https://goerli.basescan.org/address/$address",
+        token: "https://goerli.basescan.org/token/$contractAddress?a=$address",
+      },
+    ],
+  },
+  klaytn: {
+    type: "CryptoCurrency",
+    id: "klaytn",
+    coinType: CoinType.ETH,
+    name: "Klaytn",
+    managerAppName: "Ethereum",
+    ticker: "KLAY",
+    scheme: "klaytn",
+    color: "#FF8B00",
+    family: "evm",
+    units: ethereumUnits("KLAY", "KLAY"),
+    ethereumLikeInfo: {
+      chainId: 8217,
+      node: { type: "external", uri: "https://public-node-api.klaytnapi.com/v1/cypress" },
+      explorer: { type: "klaytnfinder", uri: "https://cypress-oapi.klaytnfinder.io" },
+    },
+    explorerViews: [
+      {
+        tx: "https://www.klaytnfinder.io/tx/$hash",
+        address: "https://www.klaytnfinder.io/account/$address",
+        token: "https://www.klaytnfinder.io/token/$address",
+      },
+    ],
+  },
+  neon_evm: {
+    type: "CryptoCurrency",
+    id: "neon_evm",
+    coinType: CoinType.ETH,
+    name: "Neon EVM",
+    managerAppName: "Ethereum",
+    ticker: "NEON",
+    scheme: "neon_evm",
+    color: "#D13BB7",
+    family: "evm",
+    units: ethereumUnits("NEON", "NEON"),
+    ethereumLikeInfo: {
+      chainId: 245022934,
+      node: { type: "external", uri: "https://neon-mainnet.everstake.one" },
+      explorer: { type: "blockscout", uri: "https://neon.blockscout.com" },
+    },
+    explorerViews: [
+      {
+        tx: "https://neonscan.org/tx/$hash",
+        address: "https://neonscan.org/address/$address",
+        token: "https://neonscan.org/token/$address",
+      },
+    ],
+  },
+  lukso: {
+    type: "CryptoCurrency",
+    id: "lukso",
+    coinType: CoinType.ETH,
+    name: "Lukso",
+    managerAppName: "Ethereum",
+    ticker: "LYX",
+    scheme: "lukso",
+    color: "#FE0167",
+    family: "evm",
+    units: ethereumUnits("LYX", "LYX"),
+    disableCountervalue: false,
+    ethereumLikeInfo: {
+      chainId: 42,
+      node: { type: "external", uri: "https://rpc.mainnet.lukso.network" },
+      explorer: {
+        type: "blockscout",
+        uri: "https://api.explorer.execution.mainnet.lukso.network",
+      },
+    },
+    explorerViews: [
+      {
+        tx: "https://explorer.execution.mainnet.lukso.network/tx/$hash",
+        address: "https://explorer.execution.mainnet.lukso.network/address/$address",
+        token: "https://explorer.execution.mainnet.lukso.network/token/$address",
+      },
+    ],
+  },
+  linea: {
+    type: "CryptoCurrency",
+    id: "linea",
+    coinType: CoinType.ETH,
+    name: "Linea",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    scheme: "linea",
+    color: "#000000",
+    family: "evm",
+    units: ethereumUnits("ETH", "ETH"),
+    disableCountervalue: false,
+    ethereumLikeInfo: {
+      chainId: 59144,
+      node: { type: "external", uri: "https://rpc.linea.build" },
+      explorer: {
+        type: "etherscan",
+        uri: "https://api.lineascan.build",
+      },
+    },
+    explorerViews: [
+      {
+        tx: "https://lineascan.build/tx/$hash",
+        address: "https://lineascan.build/address/$address",
+        token: "https://lineascan.build/token/$address",
+      },
+    ],
+  },
+  linea_goerli: {
+    type: "CryptoCurrency",
+    id: "linea_goerli",
+    coinType: CoinType.ETH,
+    name: "Linea Goerli",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    scheme: "linea_goerli",
+    color: "#000000",
+    family: "evm",
+    units: ethereumUnits("ETH", "ETH").map(makeTestnetUnit),
+    disableCountervalue: false,
+    isTestnetFor: "linea",
+    ethereumLikeInfo: {
+      chainId: 59140,
+      node: { type: "external", uri: "https://rpc.goerli.linea.build" },
+      explorer: {
+        type: "etherscan",
+        uri: "https://explorer.goerli.linea.build",
+      },
+    },
+    explorerViews: [
+      {
+        tx: "https://goerli.lineascan.build/tx/$hash",
+        address: "https://goerli.lineascan.build/address/$address",
+        token: "https://goerli.lineascan.build/token/$address",
+      },
+    ],
+  },
+  // Keep it at the bottom
+  // Tickers dup
+  binance_beacon_chain: {
+    type: "CryptoCurrency",
+    id: "binance_beacon_chain",
+    coinType: CoinType.ATOM,
+    name: "BinanceBeaconChain",
+    managerAppName: "Cosmos",
+    ticker: "BNB",
+    scheme: "BinanceBeaconChain",
+    color: "#f0b90b",
+    family: "cosmos",
+    units: [
+      {
+        name: "BNB",
+        code: "BNB",
+        magnitude: 6,
+      },
+      {
+        name: "Micro-BNB",
+        code: "ubnb",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://binance.mintscan.io/txs/$hash",
+        address: "https://binance.mintscan.io/validators/$address",
       },
     ],
   },
@@ -4247,9 +4578,7 @@ export function registerCryptoCurrency(currency: CryptoCurrency): void {
 
   if (!currency.isTestnetFor) {
     const currencyAlreadySet = cryptocurrenciesByTicker[currency.ticker];
-    const curencyHasTickerinKeywords = Boolean(
-      currency?.keywords?.includes(currency.ticker)
-    );
+    const curencyHasTickerinKeywords = Boolean(currency?.keywords?.includes(currency.ticker));
 
     if (
       !currencyAlreadySet ||
@@ -4279,7 +4608,7 @@ export function registerCryptoCurrency(currency: CryptoCurrency): void {
  */
 export function listCryptoCurrencies(
   withDevCrypto = false,
-  withTerminated = false
+  withTerminated = false,
 ): CryptoCurrency[] {
   return withTerminated
     ? withDevCrypto
@@ -4295,7 +4624,7 @@ export function listCryptoCurrencies(
  * @param {*} f
  */
 export function findCryptoCurrency(
-  f: (arg0: CryptoCurrency) => boolean
+  f: (arg0: CryptoCurrency) => boolean,
 ): CryptoCurrency | null | undefined {
   return cryptocurrenciesArray.find(f);
 }
@@ -4304,9 +4633,7 @@ export function findCryptoCurrency(
  *
  * @param {*} scheme
  */
-export function findCryptoCurrencyByScheme(
-  scheme: string
-): CryptoCurrency | null | undefined {
+export function findCryptoCurrencyByScheme(scheme: string): CryptoCurrency | null | undefined {
   return cryptocurrenciesByScheme[scheme];
 }
 
@@ -4314,34 +4641,23 @@ export function findCryptoCurrencyByScheme(
  *
  * @param {*} ticker
  */
-export function findCryptoCurrencyByTicker(
-  ticker: string
-): CryptoCurrency | null | undefined {
+export function findCryptoCurrencyByTicker(ticker: string): CryptoCurrency | null | undefined {
   return cryptocurrenciesByTicker[ticker];
 }
 
-/**
- *
- * @param {*} id
- */
-export function findCryptoCurrencyById(
-  id: string
-): CryptoCurrency | null | undefined {
+export function findCryptoCurrencyById(id: string): CryptoCurrency | undefined {
   return cryptocurrenciesById[id];
 }
 
 const testsMap = {
-  keywords: (s) =>
-    findCryptoCurrency((c) =>
-      Boolean(
-        c?.keywords?.map((k) => k.replace(/ /, "").toLowerCase()).includes(s)
-      )
+  keywords: s =>
+    findCryptoCurrency(c =>
+      Boolean(c?.keywords?.map(k => k.replace(/ /, "").toLowerCase()).includes(s)),
     ),
-  name: (s) =>
-    findCryptoCurrency((c) => c.name.replace(/ /, "").toLowerCase() === s),
-  id: (s) => findCryptoCurrencyById(s.toLowerCase()),
-  ticker: (s) => findCryptoCurrencyByTicker(s.toUpperCase()),
-  manager: (s) => findCryptoCurrencyByManagerAppName(s),
+  name: s => findCryptoCurrency(c => c.name.replace(/ /, "").toLowerCase() === s),
+  id: s => findCryptoCurrencyById(s.toLowerCase()),
+  ticker: s => findCryptoCurrencyByTicker(s.toUpperCase()),
+  manager: s => findCryptoCurrencyByManagerAppName(s),
 };
 
 /**
@@ -4350,12 +4666,13 @@ const testsMap = {
  */
 export const findCryptoCurrencyByKeyword = (
   keyword: string,
-  tests = ["keywords", "name", "id", "ticker", "manager"]
+  tests = ["keywords", "name", "id", "ticker", "manager"],
 ): CryptoCurrency | null | undefined => {
   const search = keyword.replace(/ /, "").toLowerCase();
 
-  const conditions: Array<(string) => CryptoCurrency | null | undefined> =
-    tests.map((t) => testsMap[t]);
+  const conditions: Array<(string) => CryptoCurrency | null | undefined> = tests.map(
+    t => testsMap[t],
+  );
 
   for (const condition of conditions) {
     const currency = condition(search);
@@ -4367,17 +4684,14 @@ export const findCryptoCurrencyByKeyword = (
 };
 
 export const findCryptoCurrencyByManagerAppName = (
-  managerAppName: string
+  managerAppName: string,
 ): CryptoCurrency | null | undefined => {
   const search = managerAppName.replace(/ /, "").toLowerCase();
 
   return (
-    findCryptoCurrency((c) => c.managerAppName === managerAppName) ||
-    findCryptoCurrency((c) =>
-      Boolean(
-        c.managerAppName &&
-          c.managerAppName.replace(/ /, "").toLowerCase() === search
-      )
+    findCryptoCurrency(c => c.managerAppName === managerAppName) ||
+    findCryptoCurrency(c =>
+      Boolean(c.managerAppName && c.managerAppName.replace(/ /, "").toLowerCase() === search),
     )
   );
 };
@@ -4386,16 +4700,10 @@ export const findCryptoCurrencyByManagerAppName = (
  *
  * @param {*} id
  */
-export const hasCryptoCurrencyId = (id: string): boolean =>
-  id in cryptocurrenciesById;
+export const hasCryptoCurrencyId = (id: string): boolean => id in cryptocurrenciesById;
 
-// TODO: signature should be getCryptoCurrencyById(id: CryptoCurrencyId)
-/**
- *
- * @param {*} id
- */
-export function getCryptoCurrencyById(id: string | undefined): CryptoCurrency {
-  const currency = id && findCryptoCurrencyById(id);
+export function getCryptoCurrencyById(id: string): CryptoCurrency {
+  const currency = findCryptoCurrencyById(id);
 
   if (!currency) {
     throw new Error(`currency with id "${id}" not found`);

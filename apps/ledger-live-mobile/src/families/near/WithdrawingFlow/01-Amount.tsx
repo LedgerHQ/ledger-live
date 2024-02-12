@@ -2,28 +2,19 @@ import invariant from "invariant";
 import React from "react";
 import { useSelector } from "react-redux";
 import { BigNumber } from "bignumber.js";
-import type {
-  Transaction,
-  NearAccount,
-} from "@ledgerhq/live-common/families/near/types";
+import type { Transaction, NearAccount } from "@ledgerhq/live-common/families/near/types";
 import { getMaxAmount } from "@ledgerhq/live-common/families/near/logic";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { accountScreenSelector } from "../../../reducers/accounts";
+import { accountScreenSelector } from "~/reducers/accounts";
 import SelectAmount from "../shared/02-SelectAmount";
-import { ScreenName } from "../../../const";
-import type {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
+import { ScreenName } from "~/const";
+import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { NearWithdrawingFlowParamList } from "./types";
 
 type Props = BaseComposite<
-  StackNavigatorProps<
-    NearWithdrawingFlowParamList,
-    ScreenName.NearWithdrawingAmount
-  >
+  StackNavigatorProps<NearWithdrawingFlowParamList, ScreenName.NearWithdrawingAmount>
 >;
 
 function WithdrawingAmount({ navigation, route }: Props) {

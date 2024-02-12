@@ -17,14 +17,11 @@ const broadcast = async ({
   account: Account;
   signedOperation: SignedOperation;
 }): Promise<Operation> => {
-  const broadcastResponse = await broadcastTransaction(
-    signature,
-    account.currency.id
-  );
+  const broadcastResponse = await broadcastTransaction(signature, account.currency.id);
 
   if (isBroadcastTxFailure(broadcastResponse)) {
     throw new CryptoOrgErrorBroadcasting(
-      `broadcasting failed with error code ${broadcastResponse.code}`
+      `broadcasting failed with error code ${broadcastResponse.code}`,
     );
   }
 

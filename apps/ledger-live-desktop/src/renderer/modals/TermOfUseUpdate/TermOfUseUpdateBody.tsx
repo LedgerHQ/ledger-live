@@ -1,11 +1,12 @@
 import React from "react";
-import { Flex, Icons, Link, Log, Text } from "@ledgerhq/react-ui";
+import { Flex, IconsLegacy, Link, Log, Text } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { ModalBody } from "~/renderer/components/Modal";
 import Button from "~/renderer/components/ButtonV3";
 import { openURL } from "~/renderer/linking";
-import { useDynamicUrl } from "~/renderer/terms";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+import { urls } from "~/config/urls";
 
 type Props = {
   onClose: () => void;
@@ -29,7 +30,7 @@ const Update = styled(BodyText).attrs(() => ({
 
 const TermOfUseUpdateBody = ({ onClose }: Props) => {
   const { t } = useTranslation();
-  const termsUrl = useDynamicUrl("terms");
+  const termsUrl = useLocalizedUrl(urls.terms);
 
   const handleExternalLink = () => {
     openURL(termsUrl);
@@ -50,7 +51,7 @@ const TermOfUseUpdateBody = ({ onClose }: Props) => {
             justifyContent="center"
             mb="36px"
           >
-            <Icons.ClipboardListCheckMedium size={24} />
+            <IconsLegacy.ClipboardListCheckMedium size={24} />
           </Flex>
           <Log>{t("updatedTerms.title")}</Log>
           <Flex flexDirection="column">
@@ -68,7 +69,7 @@ const TermOfUseUpdateBody = ({ onClose }: Props) => {
       )}
       renderFooter={() => (
         <Flex justifyContent="flex-end">
-          <Link size="small" Icon={Icons.ExternalLinkMedium} onClick={handleExternalLink}>
+          <Link size="small" Icon={IconsLegacy.ExternalLinkMedium} onClick={handleExternalLink}>
             {t("updatedTerms.link")}
           </Link>
           <Button ml="24px" variant="main" outline={false} onClick={onClose}>

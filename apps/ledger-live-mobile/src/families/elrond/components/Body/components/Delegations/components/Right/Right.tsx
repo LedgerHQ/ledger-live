@@ -2,8 +2,8 @@ import React, { useState, useCallback } from "react";
 import { TouchableOpacity } from "react-native";
 import { useTranslation } from "react-i18next";
 
-import LText from "../../../../../../../../components/LText";
-import InfoModal from "../../../../../../../../modals/Info";
+import LText from "~/components/LText";
+import InfoModal from "~/modals/Info";
 
 import type { RightPropsType } from "./types";
 
@@ -22,10 +22,7 @@ const Right = (props: RightPropsType) => {
    */
 
   const onClose = useCallback(() => setOpen(false), []);
-  const onClick = useCallback(
-    () => (disabled ? setOpen(true) : onPress()),
-    [onPress, disabled],
-  );
+  const onClick = useCallback(() => (disabled ? setOpen(true) : onPress()), [onPress, disabled]);
 
   /*
    * Return the rendered component.

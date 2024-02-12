@@ -9,7 +9,7 @@ import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import { WarningMedium } from "@ledgerhq/native-ui/assets/icons";
 
 import styled from "styled-components/native";
-import ByteSize from "../../../components/ByteSize";
+import ByteSize from "~/components/ByteSize";
 import StorageBarItem from "./StorageBarItem";
 
 type Props = {
@@ -34,13 +34,7 @@ const StorageRepartition = styled(Box)`
 const DeviceAppStorage = ({
   deviceModel,
   deviceInfo,
-  distribution: {
-    totalAppsBytes,
-    freeSpaceBytes,
-    appsSpaceBytes,
-    shouldWarnMemory,
-    apps,
-  },
+  distribution: { totalAppsBytes, freeSpaceBytes, appsSpaceBytes, shouldWarnMemory, apps },
   installQueue,
   uninstallQueue,
 }: Props) => {
@@ -67,17 +61,8 @@ const DeviceAppStorage = ({
         mb={3}
       >
         <Flex flexDirection={"row"} alignItems={"center"}>
-          <Text
-            variant={"small"}
-            fontWeight={"medium"}
-            color={"palette.neutral.c100"}
-            mr={3}
-          >
-            <Text
-              variant={"small"}
-              fontWeight={"medium"}
-              color={"palette.neutral.c80"}
-            >
+          <Text variant={"small"} fontWeight={"medium"} color={"palette.neutral.c100"} mr={3}>
+            <Text variant={"small"} fontWeight={"medium"} color={"palette.neutral.c80"}>
               <Trans i18nKey="manager.storage.used" />
             </Text>{" "}
             <ByteSize
@@ -86,28 +71,16 @@ const DeviceAppStorage = ({
               firmwareVersion={deviceInfo.version}
             />
           </Text>
-          <Text
-            variant={"small"}
-            fontWeight={"medium"}
-            color={"palette.neutral.c80"}
-          >
+          <Text variant={"small"} fontWeight={"medium"} color={"palette.neutral.c80"}>
             <Trans
               count={apps.length}
               values={{ number: apps.length }}
               i18nKey="manager.storage.appsInstalled"
             >
-              <Text
-                variant={"small"}
-                fontWeight={"medium"}
-                color={"palette.neutral.c100"}
-              >
+              <Text variant={"small"} fontWeight={"medium"} color={"palette.neutral.c100"}>
                 {"placeholder"}
               </Text>
-              <Text
-                variant={"small"}
-                fontWeight={"medium"}
-                color={"palette.neutral.c80"}
-              >
+              <Text variant={"small"} fontWeight={"medium"} color={"palette.neutral.c80"}>
                 {"placeholder"}
               </Text>
             </Trans>
@@ -121,19 +94,11 @@ const DeviceAppStorage = ({
             </Box>
           )}
           {isDeviceFull ? (
-            <Text
-              variant={"small"}
-              fontWeight={"medium"}
-              color={"palette.warning.c30"}
-            >
+            <Text variant={"small"} fontWeight={"medium"} color={"palette.warning.c30"}>
               <Trans i18nKey="manager.storage.noFreeSpace" />
             </Text>
           ) : (
-            <Text
-              variant={"small"}
-              fontWeight={"medium"}
-              color={"palette.neutral.c80"}
-            >
+            <Text variant={"small"} fontWeight={"medium"} color={"palette.neutral.c80"}>
               <ByteSize
                 value={freeSpaceBytes}
                 deviceModel={deviceModel}
@@ -147,9 +112,7 @@ const DeviceAppStorage = ({
       <StorageRepartition bg="neutral.c40" style={{ flex: 1 }}>
         {appSizes.map(({ ratio, color, name }, i) => (
           <StorageBarItem
-            installing={
-              installQueue.includes(name) || uninstallQueue.includes(name)
-            }
+            installing={installQueue.includes(name) || uninstallQueue.includes(name)}
             key={`${i}${name}`}
             backgroundColor={color}
             flexBasis={`${ratio}%`}

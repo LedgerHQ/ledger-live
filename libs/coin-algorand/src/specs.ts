@@ -1,9 +1,5 @@
 import { isAccountEmpty } from "@ledgerhq/coin-framework/account/index";
-import {
-  botTest,
-  genericTestDestination,
-  pickSiblings,
-} from "@ledgerhq/coin-framework/bot/specs";
+import { botTest, genericTestDestination, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
 import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
 import {
   getCryptoCurrencyById,
@@ -27,37 +23,24 @@ const minBalanceNewAccount = parseCurrencyUnit(currency.units[0], "0.1");
 // Ensure that, when the recipient corresponds to an empty account,
 // the amount to send is greater or equal to the required minimum
 // balance for such a recipient
-const checkSendableToEmptyAccount = (
-  amount: BigNumber,
-  recipient: AccountLike
-) => {
+const checkSendableToEmptyAccount = (amount: BigNumber, recipient: AccountLike) => {
   if (isAccountEmpty(recipient) && amount.lte(minBalanceNewAccount)) {
-    invariant(
-      amount.gt(minBalanceNewAccount),
-      "not enough funds to send to new account"
-    );
+    invariant(amount.gt(minBalanceNewAccount), "not enough funds to send to new account");
   }
 };
 
 // Get list of ASAs associated with the account
 const getAssetsWithBalance = (account: Account): SubAccount[] => {
   return account.subAccounts
-    ? account.subAccounts.filter(
-        (a) => a.type === "TokenAccount" && a.balance.gt(0)
-      )
+    ? account.subAccounts.filter(a => a.type === "TokenAccount" && a.balance.gt(0))
     : [];
 };
 
-const pickSiblingsOptedIn = (
-  siblings: Account[],
-  assetId: string
-): Account | undefined => {
+const pickSiblingsOptedIn = (siblings: Account[], assetId: string): Account | undefined => {
   return sample(
-    siblings.filter((a) => {
-      return a.subAccounts?.some(
-        (sa) => sa.type === "TokenAccount" && sa.token.id.endsWith(assetId)
-      );
-    })
+    siblings.filter(a => {
+      return a.subAccounts?.some(sa => sa.type === "TokenAccount" && sa.token.id.endsWith(assetId));
+    }),
   );
 };
 
@@ -66,20 +49,15 @@ const pickSiblingsOptedIn = (
 // being opted-in by an account
 
 const getRandomAssetId = (account: Account): string | undefined => {
-  const optedInASA = account.subAccounts?.reduce(
-    (old: string[], current: SubAccount) => {
-      if (current.type === "TokenAccount") {
-        return [...old, current.token.id];
-      }
+  const optedInASA = account.subAccounts?.reduce((old: string[], current: SubAccount) => {
+    if (current.type === "TokenAccount") {
+      return [...old, current.token.id];
+    }
 
-      return old;
-    },
-    []
-  );
-  const ASAs = listTokensForCryptoCurrency(account.currency).map(
-    (asa) => asa.id
-  );
-  const diff = ASAs?.filter((asa) => !optedInASA?.includes(asa));
+    return old;
+  }, []);
+  const ASAs = listTokensForCryptoCurrency(account.currency).map(asa => asa.id);
+  const diff = ASAs?.filter(asa => !optedInASA?.includes(asa));
   invariant(diff && diff.length > 0, "already got all optin");
   return sample(diff);
 };
@@ -102,9 +80,7 @@ const algorand: AppSpec<AlgorandTransaction> = {
         const sibling = pickSiblings(siblings, 4);
         const recipient = sibling.freshAddress;
         const transaction = bridge.createTransaction(account);
-        const amount = maxSpendable
-          .div(1.9 + 0.2 * Math.random())
-          .integerValue();
+        const amount = maxSpendable.div(1.9 + 0.2 * Math.random()).integerValue();
         checkSendableToEmptyAccount(amount, sibling);
         const updates = [
           {
@@ -121,12 +97,11 @@ const algorand: AppSpec<AlgorandTransaction> = {
       },
       test: ({ account, accountBeforeTransaction, operation }) => {
         const rewards =
-          (accountBeforeTransaction as AlgorandAccount).algorandResources
-            ?.rewards || 0;
+          (accountBeforeTransaction as AlgorandAccount).algorandResources?.rewards || 0;
         botTest("account balance moved with the operation value", () =>
           expect(account.balance.plus(rewards).toString()).toBe(
-            accountBeforeTransaction.balance.minus(operation.value).toString()
-          )
+            accountBeforeTransaction.balance.minus(operation.value).toString(),
+          ),
         );
       },
     },
@@ -157,7 +132,7 @@ const algorand: AppSpec<AlgorandTransaction> = {
         // between the actual balance and the expected one to take into account
         // the eventual pending rewards added _after_ the transaction
         botTest("account spendable balance is very low", () =>
-          expect(account.spendableBalance.lt(20)).toBe(true)
+          expect(account.spendableBalance.lt(20)).toBe(true),
         );
       },
     },
@@ -167,18 +142,13 @@ const algorand: AppSpec<AlgorandTransaction> = {
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         invariant(maxSpendable.gt(0), "Spendable balance is too low");
         const subAccount = sample(getAssetsWithBalance(account));
-        invariant(
-          subAccount && subAccount.type === "TokenAccount",
-          "no subAccount with ASA"
-        );
+        invariant(subAccount && subAccount.type === "TokenAccount", "no subAccount with ASA");
         const assetId = subAccount.token.id;
         const sibling = pickSiblingsOptedIn(siblings, assetId);
         const transaction = bridge.createTransaction(account);
         const recipient = (sibling as Account).freshAddress;
         const mode = "send";
-        const amount = subAccount.balance
-          .div(1.9 + 0.2 * Math.random())
-          .integerValue();
+        const amount = subAccount.balance.div(1.9 + 0.2 * Math.random()).integerValue();
         const updates: Array<Partial<AlgorandTransaction>> = [
           {
             mode,
@@ -198,17 +168,14 @@ const algorand: AppSpec<AlgorandTransaction> = {
       },
       test: ({ account, accountBeforeTransaction, transaction, status }) => {
         const subAccountId = transaction.subAccountId;
-        const subAccount = account.subAccounts?.find(
-          (sa) => sa.id === subAccountId
+        const subAccount = account.subAccounts?.find(sa => sa.id === subAccountId);
+        const subAccountBeforeTransaction = accountBeforeTransaction.subAccounts?.find(
+          sa => sa.id === subAccountId,
         );
-        const subAccountBeforeTransaction =
-          accountBeforeTransaction.subAccounts?.find(
-            (sa) => sa.id === subAccountId
-          );
         botTest("subAccount balance moved with the tx status amount", () =>
           expect(subAccount?.balance.toString()).toBe(
-            subAccountBeforeTransaction?.balance.minus(status.amount).toString()
-          )
+            subAccountBeforeTransaction?.balance.minus(status.amount).toString(),
+          ),
         );
       },
     },
@@ -219,15 +186,12 @@ const algorand: AppSpec<AlgorandTransaction> = {
         // maxSpendable is expected to be greater than 100,000 micro-Algos
         // corresponding to the requirement that the main account will have
         // one more ASA after the opt-in; its minimum balance is updated accordingly
-        invariant(
-          maxSpendable.gt(new BigNumber(100000)),
-          "Spendable balance is too low"
-        );
+        invariant(maxSpendable.gt(new BigNumber(100000)), "Spendable balance is too low");
         const transaction = bridge.createTransaction(account);
         const mode = "optIn";
         const assetId = getRandomAssetId(account);
         const subAccount = account.subAccounts
-          ? account.subAccounts.find((a) => a.id.includes(assetId as string))
+          ? account.subAccounts.find(a => a.id.includes(assetId as string))
           : null;
         invariant(!subAccount, "already opt-in");
         const updates: Array<Partial<AlgorandTransaction>> = [
@@ -248,10 +212,9 @@ const algorand: AppSpec<AlgorandTransaction> = {
         invariant(transaction.assetId, "should have an assetId");
         const assetId = extractTokenId(transaction.assetId as string);
         botTest("have sub account with asset id", () =>
-          expect(
-            account.subAccounts &&
-              account.subAccounts.some((a) => a.id.endsWith(assetId))
-          ).toBe(true)
+          expect(account.subAccounts && account.subAccounts.some(a => a.id.endsWith(assetId))).toBe(
+            true,
+          ),
         );
       },
     },
@@ -280,8 +243,8 @@ const algorand: AppSpec<AlgorandTransaction> = {
         botTest("algoResources rewards is zero", () =>
           expect(
             (account as AlgorandAccount).algorandResources &&
-              (account as AlgorandAccount).algorandResources.rewards.eq(0)
-          ).toBe(true)
+              (account as AlgorandAccount).algorandResources.rewards.eq(0),
+          ).toBe(true),
         );
       },
     },

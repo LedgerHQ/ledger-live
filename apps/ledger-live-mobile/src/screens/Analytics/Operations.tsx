@@ -1,14 +1,11 @@
 import React, { memo, useMemo, useState, useCallback } from "react";
-import {
-  SectionList,
-  SectionListData,
-  SectionListRenderItem,
-} from "react-native";
+import { SectionList, SectionListData, SectionListRenderItem } from "react-native";
 import { Flex } from "@ledgerhq/native-ui";
 import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
 import {
   Account,
+  AccountLike,
   AccountLikeArray,
   DailyOperationsSection,
   Operation,
@@ -18,29 +15,26 @@ import { isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
 
 import { Trans } from "react-i18next";
 import { isAddressPoisoningOperation } from "@ledgerhq/live-common/operation";
-import { useRefreshAccountsOrdering } from "../../actions/general";
-import { flattenAccountsSelector } from "../../reducers/accounts";
+import { useRefreshAccountsOrdering } from "~/actions/general";
+import { flattenAccountsSelector } from "~/reducers/accounts";
 
-import NoOperationFooter from "../../components/NoOperationFooter";
-import NoMoreOperationFooter from "../../components/NoMoreOperationFooter";
+import NoOperationFooter from "~/components/NoOperationFooter";
+import NoMoreOperationFooter from "~/components/NoMoreOperationFooter";
 
 import EmptyStatePortfolio from "../Portfolio/EmptyStatePortfolio";
 import NoOpStatePortfolio from "../Portfolio/NoOpStatePortfolio";
-import OperationRow from "../../components/OperationRow";
-import SectionHeader from "../../components/SectionHeader";
-import LoadingFooter from "../../components/LoadingFooter";
-import Button from "../../components/Button";
-import { ScreenName } from "../../const";
-import { TrackScreen } from "../../analytics";
-import { withDiscreetMode } from "../../context/DiscreetModeContext";
-import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
-import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { filterTokenOperationsZeroAmountEnabledSelector } from "../../reducers/settings";
+import OperationRow from "~/components/OperationRow";
+import SectionHeader from "~/components/SectionHeader";
+import LoadingFooter from "~/components/LoadingFooter";
+import Button from "~/components/Button";
+import { ScreenName } from "~/const";
+import { TrackScreen } from "~/analytics";
+import { withDiscreetMode } from "~/context/DiscreetModeContext";
+import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { filterTokenOperationsZeroAmountEnabledSelector } from "~/reducers/settings";
 
-type Props = StackNavigatorProps<
-  BaseNavigatorStackParamList,
-  ScreenName.AnalyticsOperations
->;
+type Props = StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.AnalyticsOperations>;
 
 export function Operations({ navigation, route }: Props) {
   const accountsIds = route?.params?.accountsIds;
@@ -67,24 +61,20 @@ export function Operations({ navigation, route }: Props) {
     filterTokenOperationsZeroAmountEnabledSelector,
   );
   const filterOperation = useCallback(
-    (operation, account) => {
+    (operation: Operation, account: AccountLike) => {
       // Remove operations linked to address poisoning
       const removeZeroAmountTokenOp =
-        shouldFilterTokenOpsZeroAmount &&
-        isAddressPoisoningOperation(operation, account);
+        shouldFilterTokenOpsZeroAmount && isAddressPoisoningOperation(operation, account);
 
       return !removeZeroAmountTokenOp;
     },
     [shouldFilterTokenOpsZeroAmount],
   );
-  const { sections, completed } = groupAccountsOperationsByDay(
-    accountsFiltered,
-    {
-      count: opCount,
-      withSubAccounts: true,
-      filterOperation,
-    },
-  );
+  const { sections, completed } = groupAccountsOperationsByDay(accountsFiltered, {
+    count: opCount,
+    withSubAccounts: true,
+    filterOperation,
+  });
 
   function ListEmptyComponent() {
     if (accountsFiltered.length === 0) {
@@ -102,10 +92,11 @@ export function Operations({ navigation, route }: Props) {
     return item.id;
   }
 
-  const renderItem: SectionListRenderItem<
-    Operation,
-    DailyOperationsSection
-  > = ({ item, index, section }) => {
+  const renderItem: SectionListRenderItem<Operation, DailyOperationsSection> = ({
+    item,
+    index,
+    section,
+  }) => {
     const account = allAccounts.find(a => a.id === item.accountId);
     const parentAccount =
       account && account.type !== "Account"
@@ -163,9 +154,7 @@ export function Operations({ navigation, route }: Props) {
             ) : (
               <LoadingFooter />
             )
-          ) : accountsFiltered.every(
-              isAccountEmpty,
-            ) ? null : sections.length ? (
+          ) : accountsFiltered.every(isAccountEmpty) ? null : sections.length ? (
             <NoMoreOperationFooter />
           ) : (
             <NoOperationFooter />

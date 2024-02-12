@@ -4,22 +4,22 @@ import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denomi
 import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
 import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
-import Select, { Option } from "~/renderer/components/Select";
+import Select from "~/renderer/components/Select";
 import Text from "~/renderer/components/Text";
-import { DelegationType, ElrondProvider } from "~/renderer/families/elrond/types";
+import { DelegationType } from "~/renderer/families/elrond/types";
+import { Option } from "react-select/src/filters";
+
 type NoOptionsMessageCallbackType = {
   inputValue: string;
 };
-type OptionType = ElrondProvider & {
-  delegation: DelegationType | undefined;
-};
+
 export interface Props {
   delegations: Array<DelegationType>;
-  onChange: (delegation: DelegationType) => void;
+  onChange: (delegation: DelegationType | undefined | null) => void;
   contract: string;
 }
-const Item = (item: Option) => {
-  const label: string = item.data.validator.identity.name || item.data.validator.contract;
+const Item = (item: { data: DelegationType }) => {
+  const label = item.data.validator?.identity.name || item.data.validator?.contract;
   const amount = useMemo(
     () =>
       denominate({
@@ -36,7 +36,7 @@ const Item = (item: Option) => {
       justifyContent="space-between"
     >
       <Box horizontal={true} alignItems="center">
-        <FirstLetterIcon label={label} mr={2} />
+        <FirstLetterIcon label={label} />
         <Text ff="Inter|Medium">{label}</Text>
       </Box>
 
@@ -56,7 +56,7 @@ const Dropdown = (props: Props) => {
           delegation.contract === contract
             ? [delegation].concat(total)
             : total.concat([delegation]),
-        [],
+        [] as Array<DelegationType>,
       ),
     [delegations, contract],
   );
@@ -77,7 +77,8 @@ const Dropdown = (props: Props) => {
     [],
   );
   const onValueChange = useCallback(
-    (option: OptionType) => {
+    (option?: DelegationType | null) => {
+      if (!option) return;
       setValue(option);
       if (onChange) {
         onChange(option);

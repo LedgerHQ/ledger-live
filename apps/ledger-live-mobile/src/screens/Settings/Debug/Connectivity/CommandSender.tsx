@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { of } from "rxjs";
+import { firstValueFrom, of } from "rxjs";
 import { StyleSheet, ScrollView } from "react-native";
 import { Flex, Button, Alert, Tag } from "@ledgerhq/native-ui";
 
@@ -11,13 +11,13 @@ import getDeviceName from "@ledgerhq/live-common/hw/getDeviceName";
 import getBatteryStatus from "@ledgerhq/live-common/hw/getBatteryStatus";
 import listApps from "@ledgerhq/live-common/hw/listApps";
 import Transport from "@ledgerhq/hw-transport";
-import { ScreenName } from "../../../../const";
-import { StackNavigatorProps } from "../../../../components/RootNavigator/types/helpers";
-import { SettingsNavigatorStackParamList } from "../../../../components/RootNavigator/types/SettingsNavigator";
+import { ScreenName } from "~/const";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
 
-import NavigationScrollView from "../../../../components/NavigationScrollView";
-import LText from "../../../../components/LText";
-import QueuedDrawer from "../../../../components/QueuedDrawer";
+import NavigationScrollView from "~/components/NavigationScrollView";
+import LText from "~/components/LText";
+import QueuedDrawer from "~/components/QueuedDrawer";
 
 const commandsById: {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -31,10 +31,7 @@ const commandsById: {
   listApps,
 };
 
-type Props = StackNavigatorProps<
-  SettingsNavigatorStackParamList,
-  ScreenName.DebugCommandSender
->;
+type Props = StackNavigatorProps<SettingsNavigatorStackParamList, ScreenName.DebugCommandSender>;
 
 const CommandSender = ({ route }: Props) => {
   const { params } = route || {};
@@ -43,16 +40,17 @@ const CommandSender = ({ route }: Props) => {
   const [running, setRunning] = useState<boolean>(false);
 
   const onCommandSend = useCallback(
-    id => {
+    (id: keyof typeof commandsById) => {
       const { deviceId } = params;
       if (!deviceId) return;
 
       const runCommand = async () => {
-        withDevice(deviceId)(transport => {
-          setRunning(true);
-          return of(commandsById[id](transport));
-        })
-          .toPromise()
+        firstValueFrom(
+          withDevice(deviceId)(transport => {
+            setRunning(true);
+            return of(commandsById[id](transport));
+          }),
+        )
           .then(result => {
             setResult(result ?? "No output");
           })
@@ -70,19 +68,12 @@ const CommandSender = ({ route }: Props) => {
   return (
     <NavigationScrollView>
       <Flex style={styles.root}>
-        <Alert
-          type="info"
-          title="Run commands on the selected device and get the output if any."
-        />
+        <Alert type="info" title="Run commands on the selected device and get the output if any." />
         <Flex flex={1} mt={4}>
-          <Tag type={running ? "color" : "shade"}>
-            {running ? "Running" : "Not running"}
-          </Tag>
+          <Tag type={running ? "color" : "shade"}>{running ? "Running" : "Not running"}</Tag>
         </Flex>
         <Flex flex={1} mt={4}>
-          {result ? (
-            <LText monospace>{JSON.stringify(result, undefined, 4)} </LText>
-          ) : null}
+          {result ? <LText monospace>{JSON.stringify(result, undefined, 4)} </LText> : null}
         </Flex>
         {!modalVisible ? (
           <Button
@@ -95,10 +86,7 @@ const CommandSender = ({ route }: Props) => {
             {"Show commands"}
           </Button>
         ) : null}
-        <QueuedDrawer
-          isRequestingToBeOpened={modalVisible}
-          onClose={setModalVisible as () => void}
-        >
+        <QueuedDrawer isRequestingToBeOpened={modalVisible} onClose={setModalVisible as () => void}>
           <ScrollView>
             {Object.keys(commandsById).map((key, i) => (
               <Button

@@ -1,0 +1,16 @@
+{
+    "index": {
+      "title": "Home",
+      "display": "hidden",
+      "theme": {
+        "breadcrumb": true,
+        "footer": true,
+        "toc": true,
+        "pagination": false,
+        "layout": "full"
+      }
+    },
+    "getting-started": {
+        "title": "Getting Started"
+    }
+}

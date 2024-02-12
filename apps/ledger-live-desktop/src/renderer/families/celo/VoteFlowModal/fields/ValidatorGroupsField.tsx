@@ -12,13 +12,16 @@ import IconAngleDown from "~/renderer/icons/AngleDown";
 import ValidatorGroupRow from "../components/ValidatorGroupRow";
 import * as S from "./ValidatorGroupsField.styles";
 import { useValidatorGroups } from "@ledgerhq/live-common/families/celo/react";
-import { CeloValidatorGroup } from "@ledgerhq/live-common/families/celo/types";
-import { Account, TransactionStatus } from "@ledgerhq/types-live";
+import {
+  CeloValidatorGroup,
+  CeloAccount,
+  TransactionStatus,
+} from "@ledgerhq/live-common/families/celo/types";
 type Props = {
-  account: Account;
+  account: CeloAccount;
   status: TransactionStatus;
   chosenValidatorGroupAddress: string | undefined | null;
-  onChangeValidatorGroup: (v: CeloValidatorGroup) => void;
+  onChangeValidatorGroup: (v: Pick<CeloValidatorGroup, "address">) => void;
 };
 const ValidatorGroupsField = ({
   account,
@@ -31,13 +34,16 @@ const ValidatorGroupsField = ({
   const [showAll, setShowAll] = useState(false);
   const unit = getAccountUnit(account);
   const validatorGroups = useValidatorGroups(search);
-  const onSearch = useCallback(evt => setSearch(evt.target.value), [setSearch]);
+  const onSearch = useCallback(
+    (evt: React.ChangeEvent<HTMLInputElement>) => setSearch(evt.target.value),
+    [setSearch],
+  );
   const chosenValidatorGroup = useMemo(() => {
     if (chosenValidatorGroupAddress !== null) {
       return validatorGroups.find(v => v.address === chosenValidatorGroupAddress);
     }
   }, [validatorGroups, chosenValidatorGroupAddress]);
-  const containerRef = useRef();
+  const containerRef = useRef<HTMLDivElement>();
 
   /** auto focus first input on mount */
   useEffect(() => {

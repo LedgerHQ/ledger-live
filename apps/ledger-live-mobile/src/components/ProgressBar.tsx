@@ -1,10 +1,6 @@
 import React, { memo, useEffect } from "react";
 import { View, StyleSheet, StyleProp, ViewStyle } from "react-native";
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from "react-native-reanimated";
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { useTheme } from "@react-navigation/native";
 
 type Props = {

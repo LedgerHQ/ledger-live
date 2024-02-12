@@ -1,20 +1,14 @@
 import { BigNumber } from "bignumber.js";
 import { useState, useMemo, useEffect } from "react";
-import {
-  getCurrentElrondPreloadData,
-  getElrondPreloadDataUpdates,
-} from "./preload";
+import { getCurrentElrondPreloadData, getElrondPreloadDataUpdates } from "./preload";
 import { randomizeProviders } from "./helpers/randomizeProviders";
 import type { ElrondProvider } from "./types";
-import {
-  ELROND_LEDGER_VALIDATOR_ADDRESS,
-  MIN_DELEGATION_AMOUNT,
-} from "./constants";
+import { ELROND_LEDGER_VALIDATOR_ADDRESS, MIN_DELEGATION_AMOUNT } from "./constants";
 
 export function useElrondPreloadData() {
   const [state, setState] = useState(getCurrentElrondPreloadData);
   useEffect(() => {
-    const sub = getElrondPreloadDataUpdates().subscribe((data) => {
+    const sub = getElrondPreloadDataUpdates().subscribe(data => {
       setState(data);
     });
     return () => sub.unsubscribe();
@@ -29,10 +23,7 @@ export function useElrondRandomizedValidators(): ElrondProvider[] {
 
 type EnhancedValidator = ElrondProvider & { disabled: boolean };
 
-export function useSearchValidators(
-  validators: ElrondProvider[],
-  search: string
-) {
+export function useSearchValidators(validators: ElrondProvider[], search: string) {
   return useMemo(() => {
     const needle = search.toLowerCase();
 
@@ -40,9 +31,7 @@ export function useSearchValidators(
     const filter = (validator: ElrondProvider) => {
       const [foundByContract, foundByName]: Array<boolean> = [
         validator.contract.toLowerCase().includes(needle),
-        validator.identity.name
-          ? validator.identity.name.toLowerCase().includes(needle)
-          : false,
+        validator.identity.name ? validator.identity.name.toLowerCase().includes(needle) : false,
       ];
 
       return foundByName || foundByContract;
@@ -50,10 +39,7 @@ export function useSearchValidators(
 
     // Map the providers such that they'll be assigned the "disabled" key if conditions are met.
     const disable = (validator: ElrondProvider): EnhancedValidator => {
-      const [alpha, beta] = [
-        validator.maxDelegationCap,
-        validator.totalActiveStake,
-      ];
+      const [alpha, beta] = [validator.maxDelegationCap, validator.totalActiveStake];
       const delegative = alpha !== "0" && validator.withDelegationCap;
       const difference = new BigNumber(alpha).minus(beta);
 

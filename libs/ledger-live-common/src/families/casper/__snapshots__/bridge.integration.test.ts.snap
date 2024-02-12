@@ -1,0 +1,238 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`casper currency bridge scanAccounts casper seed 1 1`] = `
+[
+  {
+    "balance": "9750000000",
+    "currencyId": "casper",
+    "derivationMode": "casper_wallet",
+    "freshAddress": "02038C8cb0f62b4EFcD0C7868c2e749Dda649aFFE30fF0f95fc91CE48EA67F077D16",
+    "freshAddressPath": "44'/506'/0'/0/0",
+    "freshAddresses": [
+      {
+        "address": "02038C8cb0f62b4EFcD0C7868c2e749Dda649aFFE30fF0f95fc91CE48EA67F077D16",
+        "derivationPath": "44'/506'/0'/0/0",
+      },
+    ],
+    "id": "js:2:casper:02038C8cb0f62b4EFcD0C7868c2e749Dda649aFFE30fF0f95fc91CE48EA67F077D16:casper_wallet",
+    "index": 0,
+    "name": "Casper 1",
+    "nfts": undefined,
+    "operationsCount": 2,
+    "pendingOperations": [],
+    "seedIdentifier": "038c8cb0f62b4efcd0c7868c2e749dda649affe30ff0f95fc91ce48ea67f077d16",
+    "spendableBalance": "9750000000",
+    "starred": false,
+    "swapHistory": [],
+    "syncHash": undefined,
+    "unitMagnitude": 9,
+    "used": true,
+  },
+  {
+    "balance": "4550000000",
+    "currencyId": "casper",
+    "derivationMode": "casper_wallet",
+    "freshAddress": "0202bA6DC98cbE677711a45bf028A03646F9e588996eB223fad2485e8bc391b01581",
+    "freshAddressPath": "44'/506'/0'/0/1",
+    "freshAddresses": [
+      {
+        "address": "0202bA6DC98cbE677711a45bf028A03646F9e588996eB223fad2485e8bc391b01581",
+        "derivationPath": "44'/506'/0'/0/1",
+      },
+    ],
+    "id": "js:2:casper:0202bA6DC98cbE677711a45bf028A03646F9e588996eB223fad2485e8bc391b01581:casper_wallet",
+    "index": 1,
+    "name": "Casper 2",
+    "nfts": undefined,
+    "operationsCount": 4,
+    "pendingOperations": [],
+    "seedIdentifier": "038c8cb0f62b4efcd0c7868c2e749dda649affe30ff0f95fc91ce48ea67f077d16",
+    "spendableBalance": "4550000000",
+    "starred": false,
+    "swapHistory": [],
+    "syncHash": undefined,
+    "unitMagnitude": 9,
+    "used": true,
+  },
+  {
+    "balance": "0",
+    "currencyId": "casper",
+    "derivationMode": "casper_wallet",
+    "freshAddress": "02022AAB9B6ED404f8CFFE76ce493E1995d195B5F141Ee7D5B7fb20FCE60f2A49691",
+    "freshAddressPath": "44'/506'/0'/0/2",
+    "freshAddresses": [
+      {
+        "address": "02022AAB9B6ED404f8CFFE76ce493E1995d195B5F141Ee7D5B7fb20FCE60f2A49691",
+        "derivationPath": "44'/506'/0'/0/2",
+      },
+    ],
+    "id": "js:2:casper:02022AAB9B6ED404f8CFFE76ce493E1995d195B5F141Ee7D5B7fb20FCE60f2A49691:casper_wallet",
+    "index": 2,
+    "name": "Casper 3",
+    "nfts": undefined,
+    "operationsCount": 0,
+    "pendingOperations": [],
+    "seedIdentifier": "038c8cb0f62b4efcd0c7868c2e749dda649affe30ff0f95fc91ce48ea67f077d16",
+    "spendableBalance": "0",
+    "starred": false,
+    "swapHistory": [],
+    "syncHash": undefined,
+    "unitMagnitude": 9,
+    "used": false,
+  },
+]
+`;
+
+exports[`casper currency bridge scanAccounts casper seed 1 2`] = `
+[
+  [
+    {
+      "accountId": "js:2:casper:02038C8cb0f62b4EFcD0C7868c2e749Dda649aFFE30fF0f95fc91CE48EA67F077D16:casper_wallet",
+      "blockHash": null,
+      "blockHeight": 1,
+      "contract": undefined,
+      "extra": {
+        "transferId": undefined,
+      },
+      "fee": "100000000",
+      "hasFailed": false,
+      "hash": "17cc9162da13394478f4f00dc7be53cb4406b6762cc2341c60bfdbf9e137a03f",
+      "id": "js:2:casper:02038C8cb0f62b4EFcD0C7868c2e749Dda649aFFE30fF0f95fc91CE48EA67F077D16:casper_wallet-17cc9162da13394478f4f00dc7be53cb4406b6762cc2341c60bfdbf9e137a03f-IN",
+      "operator": undefined,
+      "recipients": [
+        "f74845d90933546a90faec6a605961d078b0fbf1a3b954cee8cd982e43b7c09d",
+      ],
+      "senders": [
+        "79e548dd1aed87e79e797704c1175266eb705757ba52d786784a72655eb53e7f",
+      ],
+      "standard": undefined,
+      "tokenId": undefined,
+      "type": "IN",
+      "value": "7250000000",
+    },
+    {
+      "accountId": "js:2:casper:02038C8cb0f62b4EFcD0C7868c2e749Dda649aFFE30fF0f95fc91CE48EA67F077D16:casper_wallet",
+      "blockHash": null,
+      "blockHeight": 1,
+      "contract": undefined,
+      "extra": {
+        "transferId": undefined,
+      },
+      "fee": "100000000",
+      "hasFailed": false,
+      "hash": "74c9cedc96bdde3e4dba8ceb0dc702e27bf259ad94f5e5e67adef25c388075b8",
+      "id": "js:2:casper:02038C8cb0f62b4EFcD0C7868c2e749Dda649aFFE30fF0f95fc91CE48EA67F077D16:casper_wallet-74c9cedc96bdde3e4dba8ceb0dc702e27bf259ad94f5e5e67adef25c388075b8-IN",
+      "operator": undefined,
+      "recipients": [
+        "f74845d90933546a90faec6a605961d078b0fbf1a3b954cee8cd982e43b7c09d",
+      ],
+      "senders": [
+        "79e548dd1aed87e79e797704c1175266eb705757ba52d786784a72655eb53e7f",
+      ],
+      "standard": undefined,
+      "tokenId": undefined,
+      "type": "IN",
+      "value": "2500000000",
+    },
+  ],
+  [
+    {
+      "accountId": "js:2:casper:0202bA6DC98cbE677711a45bf028A03646F9e588996eB223fad2485e8bc391b01581:casper_wallet",
+      "blockHash": null,
+      "blockHeight": 1,
+      "contract": undefined,
+      "extra": {
+        "transferId": undefined,
+      },
+      "fee": "100000000",
+      "hasFailed": false,
+      "hash": "17cc9162da13394478f4f00dc7be53cb4406b6762cc2341c60bfdbf9e137a03f",
+      "id": "js:2:casper:0202bA6DC98cbE677711a45bf028A03646F9e588996eB223fad2485e8bc391b01581:casper_wallet-17cc9162da13394478f4f00dc7be53cb4406b6762cc2341c60bfdbf9e137a03f-OUT",
+      "operator": undefined,
+      "recipients": [
+        "f74845d90933546a90faec6a605961d078b0fbf1a3b954cee8cd982e43b7c09d",
+      ],
+      "senders": [
+        "79e548dd1aed87e79e797704c1175266eb705757ba52d786784a72655eb53e7f",
+      ],
+      "standard": undefined,
+      "tokenId": undefined,
+      "type": "OUT",
+      "value": "7350000000",
+    },
+    {
+      "accountId": "js:2:casper:0202bA6DC98cbE677711a45bf028A03646F9e588996eB223fad2485e8bc391b01581:casper_wallet",
+      "blockHash": null,
+      "blockHeight": 1,
+      "contract": undefined,
+      "extra": {
+        "transferId": "7772882",
+      },
+      "fee": "100000000",
+      "hasFailed": false,
+      "hash": "6dd86840ad7bcd25f5344128cfc34ae9dcea53f5081eb8c6cbd21e2cf3cbabb8",
+      "id": "js:2:casper:0202bA6DC98cbE677711a45bf028A03646F9e588996eB223fad2485e8bc391b01581:casper_wallet-6dd86840ad7bcd25f5344128cfc34ae9dcea53f5081eb8c6cbd21e2cf3cbabb8-IN",
+      "operator": undefined,
+      "recipients": [
+        "79e548dd1aed87e79e797704c1175266eb705757ba52d786784a72655eb53e7f",
+      ],
+      "senders": [
+        "947cc343545c8215f1612f199b417e6fc1000139bb451c1554e63123ac9fb66e",
+      ],
+      "standard": undefined,
+      "tokenId": undefined,
+      "type": "IN",
+      "value": "12000000000",
+    },
+    {
+      "accountId": "js:2:casper:0202bA6DC98cbE677711a45bf028A03646F9e588996eB223fad2485e8bc391b01581:casper_wallet",
+      "blockHash": null,
+      "blockHeight": 1,
+      "contract": undefined,
+      "extra": {
+        "transferId": undefined,
+      },
+      "fee": "100000000",
+      "hasFailed": false,
+      "hash": "74c9cedc96bdde3e4dba8ceb0dc702e27bf259ad94f5e5e67adef25c388075b8",
+      "id": "js:2:casper:0202bA6DC98cbE677711a45bf028A03646F9e588996eB223fad2485e8bc391b01581:casper_wallet-74c9cedc96bdde3e4dba8ceb0dc702e27bf259ad94f5e5e67adef25c388075b8-OUT",
+      "operator": undefined,
+      "recipients": [
+        "f74845d90933546a90faec6a605961d078b0fbf1a3b954cee8cd982e43b7c09d",
+      ],
+      "senders": [
+        "79e548dd1aed87e79e797704c1175266eb705757ba52d786784a72655eb53e7f",
+      ],
+      "standard": undefined,
+      "tokenId": undefined,
+      "type": "OUT",
+      "value": "2600000000",
+    },
+    {
+      "accountId": "js:2:casper:0202bA6DC98cbE677711a45bf028A03646F9e588996eB223fad2485e8bc391b01581:casper_wallet",
+      "blockHash": null,
+      "blockHeight": 1,
+      "contract": undefined,
+      "extra": {
+        "transferId": undefined,
+      },
+      "fee": "100000000",
+      "hasFailed": false,
+      "hash": "d179d7aeb1e9046a1a50550f0e188a2a3c3cb257b9ebb1e225c9d8de6729625a",
+      "id": "js:2:casper:0202bA6DC98cbE677711a45bf028A03646F9e588996eB223fad2485e8bc391b01581:casper_wallet-d179d7aeb1e9046a1a50550f0e188a2a3c3cb257b9ebb1e225c9d8de6729625a-IN",
+      "operator": undefined,
+      "recipients": [
+        "79e548dd1aed87e79e797704c1175266eb705757ba52d786784a72655eb53e7f",
+      ],
+      "senders": [
+        "947cc343545c8215f1612f199b417e6fc1000139bb451c1554e63123ac9fb66e",
+      ],
+      "standard": undefined,
+      "tokenId": undefined,
+      "type": "IN",
+      "value": "2500000000",
+    },
+  ],
+  [],
+]
+`;

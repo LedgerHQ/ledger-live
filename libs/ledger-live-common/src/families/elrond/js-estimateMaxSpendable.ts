@@ -30,7 +30,7 @@ const estimateMaxSpendable = async ({
   const tokenAccount =
     tx.subAccountId &&
     mainAccount.subAccounts &&
-    mainAccount.subAccounts.find((ta) => ta.id === tx.subAccountId);
+    mainAccount.subAccounts.find(ta => ta.id === tx.subAccountId);
 
   if (tokenAccount) {
     return tokenAccount.balance;

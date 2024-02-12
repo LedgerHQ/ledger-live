@@ -3,10 +3,7 @@ import React, { useCallback } from "react";
 import { View, StyleSheet, SafeAreaView } from "react-native";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
-import {
-  getAccountUnit,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/helpers";
+import { getAccountUnit, getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -16,18 +13,18 @@ import type {
 } from "@ledgerhq/live-common/families/algorand/types";
 import { useTheme } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
-import { ScreenName } from "../../../../const";
-import Button from "../../../../components/Button";
-import LText from "../../../../components/LText";
-import { accountScreenSelector } from "../../../../reducers/accounts";
-import { localeSelector } from "../../../../reducers/settings";
-import NavigationScrollView from "../../../../components/NavigationScrollView";
-import { TrackScreen } from "../../../../analytics";
-import Alert from "../../../../components/Alert";
-import TranslatedError from "../../../../components/TranslatedError";
-import Illustration from "../../../../images/illustration/Illustration";
-import type { StackNavigatorProps } from "../../../../components/RootNavigator/types/helpers";
+import { ScreenName } from "~/const";
+import Button from "~/components/Button";
+import LText from "~/components/LText";
+import { accountScreenSelector } from "~/reducers/accounts";
+import NavigationScrollView from "~/components/NavigationScrollView";
+import { TrackScreen } from "~/analytics";
+import Alert from "~/components/Alert";
+import TranslatedError from "~/components/TranslatedError";
+import Illustration from "~/images/illustration/Illustration";
+import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { AlgorandClaimRewardsFlowParamList } from "./type";
+import { useSettings } from "~/hooks";
 
 type Props = StackNavigatorProps<
   AlgorandClaimRewardsFlowParamList,
@@ -37,14 +34,11 @@ type Props = StackNavigatorProps<
 export default function DelegationStarted({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
-  const locale = useSelector(localeSelector);
+  const { locale } = useSettings();
   invariant(account, "Account required");
   const mainAccount = getMainAccount(account, undefined) as AlgorandAccount;
   const bridge = getAccountBridge(mainAccount, undefined);
-  invariant(
-    mainAccount && mainAccount.algorandResources,
-    "algorand Account required",
-  );
+  invariant(mainAccount && mainAccount.algorandResources, "algorand Account required");
   const { rewards } = mainAccount.algorandResources;
   const unit = getAccountUnit(mainAccount);
   const { transaction, status } = useBridgeTransaction(() => {
@@ -59,7 +53,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
   const formattedRewards = formatCurrencyUnit(unit, rewards, {
     showCode: true,
     disableRounding: true,
-    locale,
+    locale: locale,
   });
   const onNext = useCallback(() => {
     navigation.navigate(ScreenName.AlgorandClaimRewardsSelectDevice, {
@@ -68,9 +62,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
     });
   }, [navigation, route.params, transaction]);
   const warning =
-    status.warnings &&
-    Object.keys(status.warnings).length > 0 &&
-    Object.values(status.warnings)[0];
+    status.warnings && Object.keys(status.warnings).length > 0 && Object.values(status.warnings)[0];
   return (
     <SafeAreaView
       style={[
@@ -80,16 +72,19 @@ export default function DelegationStarted({ navigation, route }: Props) {
         },
       ]}
     >
-      <NavigationScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContainer}
-      >
-        <TrackScreen category="DelegationFlow" name="Started" />
+      <NavigationScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
+        <TrackScreen
+          category="DelegationFlow"
+          name="Started"
+          flow="stake"
+          action="claim_rewards"
+          currency="algo"
+        />
         <Flex alignItems="center" justifyContent="center" mb={6}>
           <Illustration
             size={200}
-            lightSource={require("../../../../images/illustration/Light/_003.png")}
-            darkSource={require("../../../../images/illustration/Dark/_003.png")}
+            lightSource={require("~/images/illustration/Light/_003.png")}
+            darkSource={require("~/images/illustration/Dark/_003.png")}
           />
         </Flex>
         <LText semiBold style={styles.description}>
@@ -109,13 +104,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
       <View style={[styles.footer]}>
         {warning && warning instanceof Error ? (
           <View style={styles.warningSection}>
-            <LText
-              selectable
-              secondary
-              semiBold
-              style={styles.warningText}
-              color="alert"
-            >
+            <LText selectable secondary semiBold style={styles.warningText} color="alert">
               <TranslatedError error={warning} />
             </LText>
           </View>
@@ -123,9 +112,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
         <Button
           event="DelegationStartedBtn"
           onPress={onNext}
-          title={
-            <Trans i18nKey="algorand.claimRewards.flow.steps.starter.cta" />
-          }
+          title={<Trans i18nKey="algorand.claimRewards.flow.steps.starter.cta" />}
           type="primary"
         />
       </View>

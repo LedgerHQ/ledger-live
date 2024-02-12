@@ -11,7 +11,7 @@ const asContractAddress = (addr: string) => {
 
 export const findERC20SignaturesInfo = async (
   userLoadConfig: LoadConfig,
-  chainId: number
+  chainId: number,
 ): Promise<string | null> => {
   const { cryptoassetsBaseURL } = getLoadConfig(userLoadConfig);
   if (!cryptoassetsBaseURL) return null;
@@ -21,13 +21,11 @@ export const findERC20SignaturesInfo = async (
     .get<string>(url)
     .then(({ data }) => {
       if (!data || typeof data !== "string") {
-        throw new Error(
-          `ERC20 signatures for chainId ${chainId} file is malformed ${url}`
-        );
+        throw new Error(`ERC20 signatures for chainId ${chainId} file is malformed ${url}`);
       }
       return data;
     })
-    .catch((e) => {
+    .catch(e => {
       log("error", "could not fetch from " + url + ": " + String(e));
       return null;
     });
@@ -41,28 +39,19 @@ export const findERC20SignaturesInfo = async (
 export const byContractAddressAndChainId = (
   contract: string,
   chainId: number,
-  erc20SignaturesBlob?: string | null
+  erc20SignaturesBlob?: string | null,
 ): ReturnType<API["byContractAndChainId"]> => {
   // If we are able to fetch data from s3 bucket that contains dynamic CAL
   if (erc20SignaturesBlob) {
     try {
-      return parse(erc20SignaturesBlob).byContractAndChainId(
-        asContractAddress(contract),
-        chainId
-      );
+      return parse(erc20SignaturesBlob).byContractAndChainId(asContractAddress(contract), chainId);
     } catch (e) {
-      return get(chainId)?.byContractAndChainId(
-        asContractAddress(contract),
-        chainId
-      );
+      return get(chainId)?.byContractAndChainId(asContractAddress(contract), chainId);
     }
   }
 
   // the static fallback when dynamic cal is not provided
-  return get(chainId)?.byContractAndChainId(
-    asContractAddress(contract),
-    chainId
-  );
+  return get(chainId)?.byContractAndChainId(asContractAddress(contract), chainId);
 };
 
 export type TokenInfo = {
@@ -74,10 +63,7 @@ export type TokenInfo = {
   data: Buffer;
 };
 export type API = {
-  byContractAndChainId: (
-    addr: string,
-    id: number
-  ) => TokenInfo | null | undefined;
+  byContractAndChainId: (addr: string, id: number) => TokenInfo | null | undefined;
   list: () => TokenInfo[];
 };
 
@@ -96,9 +82,7 @@ const parse = (erc20SignaturesBlob: string): API => {
     j += 1;
     const ticker = item.slice(j, j + tickerLength).toString("ascii");
     j += tickerLength;
-    const contractAddress = asContractAddress(
-      item.slice(j, j + 20).toString("hex")
-    );
+    const contractAddress = asContractAddress(item.slice(j, j + 20).toString("hex"));
     j += 20;
     const decimals = item.readUInt32BE(j);
     j += 4;
@@ -128,7 +112,7 @@ const parse = (erc20SignaturesBlob: string): API => {
 // this internal get() will lazy load and cache the data from the erc20 data blob
 const get: (chainId: number) => API | null = (() => {
   const cache: Record<number, API> = {};
-  return (chainId) => {
+  return chainId => {
     if (cache[chainId]) return cache[chainId];
 
     const signatureBlob: string | undefined = signaturesByChainId[chainId];

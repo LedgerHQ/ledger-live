@@ -14,10 +14,7 @@ export const getAccountPlaceholderName = ({
 };
 export const getNewAccountPlaceholderName = getAccountPlaceholderName; // same naming
 
-export const validateNameEdition = (
-  account: Account,
-  name?: string | null | undefined
-): string =>
+export const validateNameEdition = (account: Account, name?: string | null | undefined): string =>
   (
     (name || account.name || "").replace(/\s+/g, " ").trim() ||
     account.name ||

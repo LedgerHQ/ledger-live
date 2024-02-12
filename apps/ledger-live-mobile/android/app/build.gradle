@@ -127,7 +127,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 36176158
-        versionName "3.16.1"
+        versionName "3.34.1"
         resValue "string", "build_config_package", "com.ledger.live"
         testBuildType System.getProperty('testBuildType', 'debug')
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
@@ -200,6 +200,9 @@ dependencies {
     // Needed to enable location services in a native module
     implementation 'com.google.android.gms:play-services-location:21.0.1'
 
+    // this should not be needed with expo autolinking, but somehow expo autolinking is partially broken
+    implementation project(path: ':expo')
+
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}")
     debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {
         exclude group:'com.squareup.okhttp3', module:'okhttp'
@@ -212,6 +215,8 @@ dependencies {
     }
 
     androidTestImplementation('com.wix:detox:+')
+    // Needed for Detox getAttributes on Android :  https://github.com/wix/Detox/issues/3147
+    implementation 'com.google.android.material:material:1.6.0'
     implementation 'com.facebook.soloader:soloader:0.10.4+'
 
     // implementation 'com.brentvatne.react:react-native-video'
@@ -225,4 +230,3 @@ dependencies {
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'

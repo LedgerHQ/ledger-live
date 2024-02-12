@@ -7,42 +7,28 @@ import RNRestart from "react-native-restart";
 import { useDispatch, useSelector } from "react-redux";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { from } from "rxjs";
+import { firstValueFrom, from } from "rxjs";
 import { DeviceModelInfo, idsToLanguage, Language } from "@ledgerhq/types-live";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { CompositeScreenProps } from "@react-navigation/native";
-import { useLocale } from "../../../context/Locale";
-import {
-  languages,
-  supportedLocales,
-  localeIdToDeviceLanguage,
-  Locale,
-} from "../../../languages";
-import { ScreenName } from "../../../const";
-import { setLanguage, setLastSeenDevice } from "../../../actions/settings";
-import {
-  lastConnectedDeviceSelector,
-  lastSeenDeviceSelector,
-} from "../../../reducers/settings";
-import ChangeDeviceLanguageAction from "../../../components/ChangeDeviceLanguageAction";
-import ChangeDeviceLanguagePrompt from "../../../components/ChangeDeviceLanguagePrompt";
-import { track, updateIdentify } from "../../../analytics";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
-import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
-import { BaseOnboardingNavigatorParamList } from "../../../components/RootNavigator/types/BaseOnboardingNavigator";
-import Button from "../../../components/Button";
-import QueuedDrawer from "../../../components/QueuedDrawer";
+import { useLocale } from "~/context/Locale";
+import { languages, supportedLocales, localeIdToDeviceLanguage, Locale } from "../../../languages";
+import { ScreenName } from "~/const";
+import { setLanguage, setLastSeenDevice } from "~/actions/settings";
+import { lastConnectedDeviceSelector, lastSeenDeviceSelector } from "~/reducers/settings";
+import ChangeDeviceLanguageAction from "~/components/ChangeDeviceLanguageAction";
+import ChangeDeviceLanguagePrompt from "~/components/ChangeDeviceLanguagePrompt";
+import { track, updateIdentify } from "~/analytics";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
+import { BaseOnboardingNavigatorParamList } from "~/components/RootNavigator/types/BaseOnboardingNavigator";
+import Button from "~/components/Button";
+import QueuedDrawer from "~/components/QueuedDrawer";
 
 type NavigationProps = CompositeScreenProps<
-  StackNavigatorProps<
-    OnboardingNavigatorParamList,
-    ScreenName.OnboardingLanguage
-  >,
+  StackNavigatorProps<OnboardingNavigatorParamList, ScreenName.OnboardingLanguage>,
   BaseComposite<StackNavigatorProps<BaseOnboardingNavigatorParamList>>
 >;
 
@@ -50,45 +36,35 @@ function OnboardingStepLanguage({ navigation }: NavigationProps) {
   const { locale: currentLocale } = useLocale();
   const dispatch = useDispatch();
 
-  const [isDeviceLanguagePromptOpen, setIsDeviceLanguagePromptOpen] =
-    useState<boolean>(false);
-  const [preventPromptBackdropClick, setPreventPromptBackdropClick] =
-    useState<boolean>(false);
+  const [isDeviceLanguagePromptOpen, setIsDeviceLanguagePromptOpen] = useState<boolean>(false);
+  const [preventPromptBackdropClick, setPreventPromptBackdropClick] = useState<boolean>(false);
 
   // Watchdog to prevent navigating back twice due onClose being called when user closes the drawer
   // and when the drawer is hidden (see BaseModal)
   const [wasNextCalled, setWasNextCalled] = useState<boolean>(false);
 
-  const lastSeenDevice: DeviceModelInfo | null | undefined = useSelector(
-    lastSeenDeviceSelector,
-  );
+  const lastSeenDevice: DeviceModelInfo | null | undefined = useSelector(lastSeenDeviceSelector);
 
-  const lastConnectedDevice = useSelector(
-    lastConnectedDeviceSelector,
-  ) as Device | null;
+  const lastConnectedDevice = useSelector(lastConnectedDeviceSelector) as Device | null;
 
   const onActionFinished = useCallback(() => {
     setPreventPromptBackdropClick(false);
     if (lastConnectedDevice && lastSeenDevice) {
-      withDevice(lastConnectedDevice?.deviceId)(transport =>
-        from(getDeviceInfo(transport)),
-      )
-        .toPromise()
-        .then(deviceInfo => {
-          dispatch(setLastSeenDevice(deviceInfo));
-        });
+      firstValueFrom(
+        withDevice(lastConnectedDevice?.deviceId)(transport => from(getDeviceInfo(transport))),
+      ).then(deviceInfo => {
+        dispatch(setLastSeenDevice(deviceInfo));
+      });
     }
   }, [lastConnectedDevice, lastSeenDevice, dispatch]);
 
-  const [deviceForChangeLanguageAction, setDeviceForChangeLanguageAction] =
-    useState<Device | null>(null);
-
-  const { availableLanguages, loaded } = useAvailableLanguagesForDevice(
-    lastSeenDevice?.deviceInfo,
+  const [deviceForChangeLanguageAction, setDeviceForChangeLanguageAction] = useState<Device | null>(
+    null,
   );
 
-  const [isRestartPromptOpened, setRestartPromptOpened] =
-    useState<boolean>(false);
+  const { availableLanguages, loaded } = useAvailableLanguagesForDevice(lastSeenDevice?.deviceInfo);
+
+  const [isRestartPromptOpened, setRestartPromptOpened] = useState<boolean>(false);
   const [selectedLanguage, setSelectedLanguage] = useState("");
 
   const toggleModal = useCallback(
@@ -167,19 +143,14 @@ function OnboardingStepLanguage({ navigation }: NavigationProps) {
     next();
   }, [next]);
 
-  const deviceModel = getDeviceModel(
-    lastSeenDevice?.modelId || DeviceModelId.nanoX,
-  );
+  const deviceModel = getDeviceModel(lastSeenDevice?.modelId || DeviceModelId.nanoX);
 
   return (
     <>
       <Flex flex={1} p={6}>
         <ScrollView testID="scrollView-language-change">
           <Flex mb={4}>
-            <SelectableList
-              currentValue={currentLocale}
-              onChange={changeLanguage}
-            >
+            <SelectableList currentValue={currentLocale} onChange={changeLanguage}>
               {supportedLocales.map((l, index) => (
                 <SelectableList.Element key={index + l} value={l}>
                   {languages[l]}
@@ -235,9 +206,7 @@ function OnboardingStepLanguage({ navigation }: NavigationProps) {
         isRequestingToBeOpened={isRestartPromptOpened}
         preventBackdropClick={false}
         title={<Trans i18nKey={"onboarding.stepLanguage.RestartModal.title"} />}
-        description={
-          <Trans i18nKey={"onboarding.stepLanguage.RestartModal.paragraph"} />
-        }
+        description={<Trans i18nKey={"onboarding.stepLanguage.RestartModal.paragraph"} />}
         onClose={closeRestartPromptModal}
       >
         <Flex flexDirection={"row"}>

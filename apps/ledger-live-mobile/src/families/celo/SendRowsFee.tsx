@@ -4,23 +4,20 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { Trans } from "react-i18next";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { Transaction as CeloTransaction } from "@ledgerhq/live-common/families/celo/types";
-import {
-  getAccountUnit,
-  getAccountCurrency,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountUnit, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
-import SummaryRow from "../../screens/SendFunds/SummaryRow";
-import LText from "../../components/LText";
-import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import CounterValue from "../../components/CounterValue";
-import ExternalLink from "../../icons/ExternalLink";
-import { urls } from "../../config/urls";
-import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
-import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import type { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
-import { ScreenName } from "../../const";
-import type { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
-import type { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
+import SummaryRow from "~/screens/SendFunds/SummaryRow";
+import LText from "~/components/LText";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import CounterValue from "~/components/CounterValue";
+import ExternalLink from "~/icons/ExternalLink";
+import { urls } from "~/utils/urls";
+import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import type { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
+import { ScreenName } from "~/const";
+import type { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
+import type { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 import type { CeloLockFlowParamList } from "./LockFlow/types";
 import type { CeloRevokeFlowFlowParamList } from "./RevokeFlow/types";
 import type { CeloUnlockFlowParamList } from "./UnlockFlow/types";
@@ -32,28 +29,17 @@ type Props = {
   parentAccount?: Account | null;
   transaction: Transaction;
 } & CompositeScreenProps<
-  | StackNavigatorProps<
-      SendFundsNavigatorStackParamList,
-      ScreenName.SendSummary
-    >
-  | StackNavigatorProps<
-      SignTransactionNavigatorParamList,
-      ScreenName.SignTransactionSummary
-    >
+  | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
+  | StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.SignTransactionSummary>
   | StackNavigatorProps<CeloLockFlowParamList, ScreenName.CeloLockAmount>
   | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>
-  | StackNavigatorProps<
-      CeloRevokeFlowFlowParamList,
-      ScreenName.CeloRevokeAmount
-    >
+  | StackNavigatorProps<CeloRevokeFlowFlowParamList, ScreenName.CeloRevokeAmount>
   | StackNavigatorProps<CeloUnlockFlowParamList, ScreenName.CeloUnlockAmount>
   | StackNavigatorProps<CeloVoteFlowParamList, ScreenName.CeloVoteAmount>
-  | StackNavigatorProps<
-      CeloWithdrawFlowParamList,
-      ScreenName.CeloWithdrawAmount
-    >,
+  | StackNavigatorProps<CeloWithdrawFlowParamList, ScreenName.CeloWithdrawAmount>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
+
 export default function CeloFeeRow({ account, transaction }: Props) {
   const { colors } = useTheme();
   const extraInfoFees = useCallback(() => {
@@ -81,9 +67,7 @@ export default function CeloFeeRow({ account, transaction }: Props) {
           </LText>
         ) : null}
         <LText style={styles.countervalue} color="grey">
-          {fees ? (
-            <CounterValue before="≈ " value={fees} currency={currency} />
-          ) : null}
+          {fees ? <CounterValue before="≈ " value={fees} currency={currency} /> : null}
         </LText>
       </View>
     </SummaryRow>

@@ -2,10 +2,14 @@ import { encode, decode } from "@ethersproject/rlp";
 import { BigNumber } from "bignumber.js";
 import { LedgerEthTransactionResolution } from "./services/types";
 
+export const padHexString = (str: string) => {
+  return str.length % 2 ? "0" + str : str;
+};
+
 export function splitPath(path: string): number[] {
   const result: number[] = [];
   const components = path.split("/");
-  components.forEach((element) => {
+  components.forEach(element => {
     let number = parseInt(element, 10);
     if (isNaN(number)) {
       return; // FIXME shouldn't it throws instead?
@@ -19,12 +23,11 @@ export function splitPath(path: string): number[] {
 }
 
 export function hexBuffer(str: string): Buffer {
-  return Buffer.from(str.startsWith("0x") ? str.slice(2) : str, "hex");
+  const strWithoutPrefix = str.startsWith("0x") ? str.slice(2) : str;
+  return Buffer.from(padHexString(strWithoutPrefix), "hex");
 }
 
-export function maybeHexBuffer(
-  str: string | null | undefined
-): Buffer | null | undefined {
+export function maybeHexBuffer(str: string | null | undefined): Buffer | null | undefined {
   if (!str) return null;
   return hexBuffer(str);
 }
@@ -33,7 +36,7 @@ export const decodeTxInfo = (rawTx: Buffer) => {
   const VALID_TYPES = [1, 2];
   const txType = VALID_TYPES.includes(rawTx[0]) ? rawTx[0] : null;
   const rlpData = txType === null ? rawTx : rawTx.slice(1);
-  const rlpTx = decode(rlpData).map((hex) => Buffer.from(hex.slice(2), "hex"));
+  const rlpTx = decode(rlpData).map(hex => Buffer.from(hex.slice(2), "hex"));
   let chainIdTruncated = 0;
   const rlpDecoded = decode(rlpData);
 
@@ -151,7 +154,7 @@ export const nftSelectors = [
 ];
 
 export const mergeResolutions = (
-  resolutionsArray: Partial<LedgerEthTransactionResolution>[]
+  resolutionsArray: Partial<LedgerEthTransactionResolution>[],
 ): LedgerEthTransactionResolution => {
   const mergedResolutions: LedgerEthTransactionResolution = {
     nfts: [],

@@ -4,13 +4,13 @@ import { Trans } from "react-i18next";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
 import { Currency } from "@ledgerhq/types-cryptoassets";
-import QueuedDrawer from "../../components/QueuedDrawer";
-import Circle from "../../components/Circle";
-import IconInfo from "../../icons/Info";
-import LText from "../../components/LText";
-import Button from "../../components/Button";
+import QueuedDrawer from "~/components/QueuedDrawer";
+import Circle from "~/components/Circle";
+import IconInfo from "~/icons/Info";
+import LText from "~/components/LText";
+import Button from "~/components/Button";
 import { rgba } from "../../colors";
-import { urls } from "../../config/urls";
+import { urls } from "~/utils/urls";
 
 export type Props = {
   isOpened: boolean;
@@ -20,8 +20,7 @@ export type Props = {
 
 function Modal({ isOpened, onClose, currency }: Props) {
   const { colors } = useTheme();
-  const tokenType =
-    currency.type === "TokenCurrency" ? currency.tokenType : "erc20";
+  const tokenType = currency.type === "TokenCurrency" ? currency.tokenType : "erc20";
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpened} onClose={onClose}>
       <SafeAreaView style={styles.modal}>
@@ -46,9 +45,7 @@ function Modal({ isOpened, onClose, currency }: Props) {
             containerStyle={[styles.modalBtn, styles.learnMore]}
             onPress={() =>
               Linking.openURL(
-                urls.supportLinkByTokenType[
-                  tokenType as keyof typeof urls.supportLinkByTokenType
-                ],
+                urls.supportLinkByTokenType[tokenType as keyof typeof urls.supportLinkByTokenType],
               )
             }
           />

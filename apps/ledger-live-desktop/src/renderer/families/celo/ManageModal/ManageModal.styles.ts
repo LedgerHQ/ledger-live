@@ -58,13 +58,15 @@ export const Title = styled(Text).attrs(() => ({
   ff: "Inter|SemiBold",
   fontSize: 4,
 }))``;
-export const Description: ThemedComponent<{
+export const Description = styled(Text).attrs<{
   isPill?: boolean;
-}> = styled(Text).attrs(({ isPill }) => ({
+}>(({ isPill }) => ({
   ff: isPill ? "Inter|SemiBold" : "Inter|Regular",
   fontSize: isPill ? 2 : 3,
   color: "palette.text.shade60",
-}))`
+}))<{
+  isPill?: boolean;
+}>`
   ${p =>
     p.isPill
       ? `

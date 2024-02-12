@@ -1,4 +1,4 @@
-**[We are hiring, join us! 👨‍💻👩‍💻](https://jobs.lever.co/ledger/?department=Engineering)**
+**[We are hiring, join us! 👨‍💻👩‍💻](https://jobs.lever.co/ledger/?department=Tech)**
 
 ## “Ledger Live Common” `@ledgerhq/live-common`
 

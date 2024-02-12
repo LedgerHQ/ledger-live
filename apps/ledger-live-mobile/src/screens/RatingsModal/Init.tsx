@@ -3,8 +3,8 @@ import { TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
 import styled from "styled-components/native";
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
-import { track, TrackScreen, updateIdentify } from "../../analytics";
-import useRatings from "../../logic/ratings";
+import { track, TrackScreen, updateIdentify } from "~/analytics";
+import useRatings from "~/logic/ratings";
 
 const NotNowButton = styled(TouchableOpacity)`
   align-items: center;
@@ -37,12 +37,7 @@ const Init = ({ closeModal, setStep }: Props) => {
       params: ratingsFeatureParams,
     });
     updateIdentify();
-  }, [
-    setStep,
-    handleSatisfied,
-    ratingsHappyMoment?.route_name,
-    ratingsFeatureParams,
-  ]);
+  }, [setStep, handleSatisfied, ratingsHappyMoment?.route_name, ratingsFeatureParams]);
   const goToDisappointed = useCallback(() => {
     setStep("disappointed");
     track("button_clicked", {
@@ -53,8 +48,10 @@ const Init = ({ closeModal, setStep }: Props) => {
       params: ratingsFeatureParams,
     });
     handleRatingsSetDateOfNextAllowedRequest(
-      ratingsFeatureParams?.conditions?.disappointed_delay,
-      { satisfaction: "disappointed" },
+      ratingsFeatureParams?.conditions?.disappointed_delay as Duration,
+      {
+        satisfaction: "disappointed",
+      },
     );
     updateIdentify();
   }, [
@@ -73,12 +70,7 @@ const Init = ({ closeModal, setStep }: Props) => {
       params: ratingsFeatureParams,
     });
     handleInitNotNow();
-  }, [
-    closeModal,
-    ratingsHappyMoment?.route_name,
-    ratingsFeatureParams,
-    handleInitNotNow,
-  ]);
+  }, [closeModal, ratingsHappyMoment?.route_name, ratingsFeatureParams, handleInitNotNow]);
 
   return (
     <Flex flex={1} alignItems="center" justifyContent="center" mt={3}>
@@ -113,13 +105,7 @@ const Init = ({ closeModal, setStep }: Props) => {
         <Button onPress={goToEnjoy} outline type="shade" size="large">
           <Trans i18nKey="ratings.init.cta.enjoy" />
         </Button>
-        <Button
-          onPress={goToDisappointed}
-          outline
-          type="shade"
-          mt={3}
-          size="large"
-        >
+        <Button onPress={goToDisappointed} outline type="shade" mt={3} size="large">
           <Trans i18nKey="ratings.init.cta.disappointed" />
         </Button>
         <NotNowButton onPress={onNotNow}>

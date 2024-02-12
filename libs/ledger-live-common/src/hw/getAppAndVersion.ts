@@ -1,7 +1,7 @@
 import { GetAppAndVersionUnsupportedFormat } from "../errors";
 import Transport from "@ledgerhq/hw-transport";
 export default async (
-  transport: Transport
+  transport: Transport,
 ): Promise<{
   name: string;
   version: string;
@@ -12,9 +12,7 @@ export default async (
   const format = r[i++];
 
   if (format !== 1) {
-    throw new GetAppAndVersionUnsupportedFormat(
-      "getAppAndVersion: format not supported"
-    );
+    throw new GetAppAndVersionUnsupportedFormat("getAppAndVersion: format not supported");
   }
 
   const nameLength = r[i++];

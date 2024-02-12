@@ -73,14 +73,16 @@ const SuccessLogoContainer = styled(Box).attrs<{
     & > circle {
       stroke-dasharray: 151px, 151px;
       stroke: #66be54;
-      animation: 1s cubic-bezier(0.77, 0, 0.175, 1) 0s 1 both ${drawCircle},
+      animation:
+        1s cubic-bezier(0.77, 0, 0.175, 1) 0s 1 both ${drawCircle},
         0.3s linear 0.9s 1 both ${fadeOut};
     }
 
     & > polyline {
       stroke-dasharray: 151px, 151px;
       stroke: #66be54;
-      animation: 1s cubic-bezier(0.77, 0, 0.175, 1) 0s 1 both ${drawCheck},
+      animation:
+        1s cubic-bezier(0.77, 0, 0.175, 1) 0s 1 both ${drawCheck},
         0.3s linear 0.9s 1 both ${fadeOut};
     }
   }

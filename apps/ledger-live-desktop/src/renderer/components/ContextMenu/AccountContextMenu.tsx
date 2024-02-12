@@ -9,7 +9,6 @@ import IconSend from "~/renderer/icons/Send";
 import IconStar from "~/renderer/icons/Star";
 import IconBuy from "~/renderer/icons/Exchange";
 import IconSwap from "~/renderer/icons/Swap";
-import IconBan from "~/renderer/icons/Ban";
 import IconAccountSettings from "~/renderer/icons/AccountSettings";
 import ContextMenuItem from "./ContextMenuItem";
 import { toggleStarAction } from "~/renderer/actions/accounts";
@@ -17,8 +16,9 @@ import { useRefreshAccountsOrdering } from "~/renderer/actions/general";
 import { swapSelectableCurrenciesSelector } from "~/renderer/reducers/settings";
 import { isCurrencySupported } from "~/renderer/screens/exchange/config";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { ContextMenuItemType } from "./ContextMenuWrapper";
+import { IconsLegacy } from "@ledgerhq/react-ui";
+
 type Props = {
   account: AccountLike;
   parentAccount?: Account | null;
@@ -38,8 +38,6 @@ export default function AccountContextMenu({
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
   const swapSelectableCurrencies = useSelector(swapSelectableCurrenciesSelector);
 
-  // PTX smart routing feature flag - buy sell live app flag
-  const ptxSmartRouting = useFeature("ptxSmartRouting");
   const menuItems = useMemo(() => {
     const currency = getAccountCurrency(account);
     const mainAccount = getMainAccount(account, parentAccount);
@@ -76,16 +74,11 @@ export default function AccountContextMenu({
           setTrackingSource("account context menu");
           history.push({
             pathname: "/exchange",
-            state: ptxSmartRouting?.enabled
-              ? {
-                  currency: currency?.id,
-                  account: mainAccount?.id,
-                  mode: "buy", // buy or sell
-                }
-              : {
-                  defaultCurrency: currency,
-                  defaultAccount: mainAccount,
-                },
+            state: {
+              currency: currency?.id,
+              account: mainAccount?.id,
+              mode: "buy", // buy or sell
+            },
           });
         },
       });
@@ -99,16 +92,11 @@ export default function AccountContextMenu({
           setTrackingSource("account context menu");
           history.push({
             pathname: "/exchange",
-            state: ptxSmartRouting?.enabled
-              ? {
-                  currency: currency?.id,
-                  account: mainAccount?.id,
-                  mode: "sell", // buy or sell
-                }
-              : {
-                  defaultCurrency: currency,
-                  defaultAccount: mainAccount,
-                },
+            state: {
+              currency: currency?.id,
+              account: mainAccount?.id,
+              mode: "sell", // buy or sell
+            },
           });
         },
       });
@@ -158,7 +146,7 @@ export default function AccountContextMenu({
     if (account.type === "TokenAccount") {
       items.push({
         label: "accounts.contextMenu.hideToken",
-        Icon: IconBan,
+        Icon: IconsLegacy.NoneMedium,
         id: "token-menu-hide",
         callback: () =>
           dispatch(
@@ -175,7 +163,6 @@ export default function AccountContextMenu({
     swapSelectableCurrencies,
     withStar,
     dispatch,
-    ptxSmartRouting,
     history,
     refreshAccountsOrdering,
   ]);

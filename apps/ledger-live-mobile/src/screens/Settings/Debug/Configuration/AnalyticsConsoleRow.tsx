@@ -1,9 +1,9 @@
 import React, { useCallback } from "react";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
-import { setEnv } from "@ledgerhq/live-common/env";
-import SettingsRow from "../../../../components/SettingsRow";
-import Track from "../../../../analytics/Track";
-import Switch from "../../../../components/Switch";
+import { setEnv } from "@ledgerhq/live-env";
+import SettingsRow from "~/components/SettingsRow";
+import Track from "~/analytics/Track";
+import Switch from "~/components/Switch";
 
 const AnalyticsConsoleRow = () => {
   const analyticsConsoleVisibility = useEnv("ANALYTICS_CONSOLE");
@@ -17,17 +17,10 @@ const AnalyticsConsoleRow = () => {
       desc="Toggle analytics console, making tracked events visible as an overlay"
     >
       <Track
-        event={
-          analyticsConsoleVisibility
-            ? "EnableAnalyticsConsole"
-            : "DisableAnalyticsConsole"
-        }
+        event={analyticsConsoleVisibility ? "EnableAnalyticsConsole" : "DisableAnalyticsConsole"}
         onUpdate
       />
-      <Switch
-        value={analyticsConsoleVisibility}
-        onValueChange={toggleAnalyticsConsole}
-      />
+      <Switch value={analyticsConsoleVisibility} onValueChange={toggleAnalyticsConsole} />
     </SettingsRow>
   );
 };

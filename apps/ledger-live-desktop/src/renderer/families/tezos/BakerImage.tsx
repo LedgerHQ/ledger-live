@@ -1,12 +1,11 @@
 import React from "react";
 import styled from "styled-components";
-import { Baker } from "@ledgerhq/live-common/families/tezos/bakers";
+import { Baker } from "@ledgerhq/live-common/families/tezos/types";
 import Box from "~/renderer/components/Box";
 import CustomValidator from "~/renderer/icons/CustomValidator";
 import Image from "~/renderer/components/Image";
-const Circle: ThemedComponent<{
-  size: number;
-}> = styled(Box).attrs(props => ({
+
+const Circle = styled(Box).attrs((props: { size: number }) => ({
   style: {
     width: props.size,
     height: props.size,
@@ -15,10 +14,12 @@ const Circle: ThemedComponent<{
   border-radius: 50%;
   overflow: hidden;
 `;
+
 type Props = {
   size?: number;
   baker: Baker | undefined | null;
 };
+
 const BakerImage = ({ size = 24, baker }: Props) => (
   <Circle size={size}>
     {baker ? (
@@ -28,4 +29,5 @@ const BakerImage = ({ size = 24, baker }: Props) => (
     )}
   </Circle>
 );
+
 export default BakerImage;

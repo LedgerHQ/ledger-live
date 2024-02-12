@@ -1,34 +1,29 @@
 import React, { useMemo } from "react";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getDeviceModel } from "@ledgerhq/devices";
-import { Text, Flex, Icons, IconBadge } from "@ledgerhq/native-ui";
+import { Text, Flex, IconsLegacy, IconBadge } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { TFunction } from "react-i18next";
-import Button from "../Button";
+import Button from "../wrappedUi/Button";
 import Animation from "../Animation";
-import { getDeviceAnimation } from "../../helpers/getDeviceAnimation";
+import { getDeviceAnimation } from "~/helpers/getDeviceAnimation";
+import Link from "../wrappedUi/Link";
+import { TrackScreen } from "~/analytics";
+import { ArrowRight } from "@ledgerhq/native-ui/assets/icons";
 
 // NEW DEVICE ACTION UX
 // area reserved to the project of redefining the UX of the device actions
 // new renderings should be define here in order to progressively move towards then new UX
-export const AllowManager = ({
-  wording,
-  device,
-}: {
-  wording: string;
-  device: Device;
-}) => {
+export const AllowManager = ({ wording, device }: { wording: string; device: Device }) => {
   const { theme } = useTheme();
   return (
-    <Flex pb={6} pt={6}>
+    <Flex pb={6} pt={6} alignItems="center">
       <Flex>
         <Text fontWeight="semiBold" fontSize={7} textAlign="center">
           {wording}
         </Text>
       </Flex>
-      <Animation
-        source={getDeviceAnimation({ device, key: "allowManager", theme })}
-      />
+      <Animation source={getDeviceAnimation({ device, key: "allowManager", theme })} />
     </Flex>
   );
 };
@@ -36,45 +31,37 @@ export const AllowManager = ({
 export const ConfirmFirmwareUpdate = ({
   t,
   device,
-  oldFirmwareVersion,
+  currentFirmwareVersion,
   newFirmwareVersion,
 }: {
   t: TFunction;
   device: Device;
-  oldFirmwareVersion: string;
+  currentFirmwareVersion: string;
   newFirmwareVersion: string;
 }) => {
-  const { theme } = useTheme();
+  const { theme, space } = useTheme();
   return (
-    <Flex pb={6} pt={6}>
-      <Flex mb={6}>
+    <Flex pt={6} alignItems="center">
+      <Flex mb={9}>
         <Text fontWeight="semiBold" fontSize={7} textAlign="center">
           {t("FirmwareUpdate.pleaseConfirmUpdateOnYourDevice", {
             deviceName: getDeviceModel(device.modelId).productName,
           })}
         </Text>
       </Flex>
+
       <Flex flexDirection="row" justifyContent="center">
-        <Flex
-          borderRadius={4}
-          px={3}
-          py={1}
-          backgroundColor="neutral.c40"
-          mr={3}
-        >
-          <Text>{oldFirmwareVersion}</Text>
+        <Flex borderRadius={4} px={3} py={1} backgroundColor="neutral.c40">
+          <Text>V {currentFirmwareVersion}</Text>
         </Flex>
-        <Icons.ArrowRightMedium />
-        <Flex
-          borderRadius={4}
-          px={3}
-          py={1}
-          backgroundColor="neutral.c40"
-          ml={3}
-        >
-          <Text>{newFirmwareVersion}</Text>
+        <Flex px={space[2]} justifyContent="center">
+          <ArrowRight size="S" />
+        </Flex>
+        <Flex borderRadius={4} px={3} py={1} backgroundColor="neutral.c40">
+          <Text>V {newFirmwareVersion}</Text>
         </Flex>
       </Flex>
+
       <Animation
         source={getDeviceAnimation({
           device,
@@ -86,13 +73,7 @@ export const ConfirmFirmwareUpdate = ({
   );
 };
 
-export const FinishFirmwareUpdate = ({
-  t,
-  device,
-}: {
-  t: TFunction;
-  device: Device;
-}) => {
+export const FinishFirmwareUpdate = ({ t, device }: { t: TFunction; device: Device }) => {
   const { theme } = useTheme();
 
   return (
@@ -115,9 +96,9 @@ export const FinishFirmwareUpdate = ({
           </Text>
         </Flex>
       </Flex>
-      <Animation
-        source={getDeviceAnimation({ device, key: "enterPinCode", theme })}
-      />
+      <Flex alignItems="center">
+        <Animation source={getDeviceAnimation({ device, key: "enterPinCode", theme })} />
+      </Flex>
     </Flex>
   );
 };
@@ -135,13 +116,11 @@ export const FirmwareUpdateDenied = ({
   onPressRestart: () => void;
   onPressQuit: () => void;
 }) => {
+  const drawerName = "Error: update cancelled on device";
   return (
     <Flex alignItems="center" justifyContent="center" px={1}>
-      <IconBadge
-        iconColor="primary.c100"
-        iconSize={32}
-        Icon={Icons.InfoAltFillMedium}
-      />
+      <TrackScreen category={drawerName} type="drawer" refreshSource={false} />
+      <IconBadge iconColor="primary.c100" iconSize={32} Icon={IconsLegacy.InfoAltFillMedium} />
       <Text fontSize={7} fontWeight="semiBold" textAlign="center" mt={6}>
         {t("FirmwareUpdate.updateCancelled", {
           deviceName: getDeviceModel(device.modelId).productName,
@@ -155,22 +134,31 @@ export const FirmwareUpdateDenied = ({
       </Text>
       <Button
         type="main"
+        event="button_clicked"
+        eventProperties={{
+          button: "Restart OS update",
+          page: "Firmware update",
+          drawer: drawerName,
+        }}
         outline={false}
         onPress={onPressRestart}
         mt={8}
+        mb={6}
         alignSelf="stretch"
       >
         {t("FirmwareUpdate.restartUpdate")}
       </Button>
-      <Button
-        type="default"
-        outline={false}
+      <Link
+        event="button_clicked"
+        eventProperties={{
+          button: "Exit update",
+          page: "Firmware update",
+          drawer: drawerName,
+        }}
         onPress={onPressQuit}
-        mt={6}
-        alignSelf="stretch"
       >
         {t("FirmwareUpdate.quitUpdate")}
-      </Button>
+      </Link>
     </Flex>
   );
 };
@@ -198,12 +186,9 @@ export const DeviceActionError = ({
     const contextSpecificErrorTitle = t(contextSpecificErrorTitleId, {
       deviceName: getDeviceModel(device.modelId).productName,
     });
-    const contextSpecificErrorDescription = t(
-      contextSpecificErrorDescriptionId,
-      {
-        deviceName: getDeviceModel(device.modelId).productName,
-      },
-    );
+    const contextSpecificErrorDescription = t(contextSpecificErrorDescriptionId, {
+      deviceName: getDeviceModel(device.modelId).productName,
+    });
 
     const genericErrorTitle = t(genericErrorTitleId, {
       deviceName: getDeviceModel(device.modelId).productName,
@@ -233,11 +218,7 @@ export const DeviceActionError = ({
 
   return (
     <Flex alignItems="center" justifyContent="center" px={1}>
-      <IconBadge
-        iconColor="warning.c100"
-        iconSize={32}
-        Icon={Icons.WarningSolidMedium}
-      />
+      <IconBadge iconColor="warning.c100" iconSize={32} Icon={IconsLegacy.WarningSolidMedium} />
       <Text fontSize={7} fontWeight="semiBold" textAlign="center" mt={6}>
         {errorTitle}
       </Text>

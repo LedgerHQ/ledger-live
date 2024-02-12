@@ -7,9 +7,7 @@ const CAN_EDIT_FEES = true;
 
 const areFeesProvided = (tx: PlatformTransaction): boolean => !!tx.feePerByte;
 
-const convertToLiveTransaction = (
-  tx: PlatformTransaction
-): Partial<Transaction> => {
+const convertToLiveTransaction = (tx: PlatformTransaction): Partial<Transaction> => {
   const hasFeesProvided = areFeesProvided(tx);
 
   const liveTx: Partial<Transaction> = {
@@ -23,7 +21,7 @@ const convertToLiveTransaction = (
 };
 
 const getPlatformTransactionSignFlowInfos = (
-  tx: PlatformTransaction
+  tx: PlatformTransaction,
 ): {
   canEditFees: boolean;
   hasFeesProvided: boolean;

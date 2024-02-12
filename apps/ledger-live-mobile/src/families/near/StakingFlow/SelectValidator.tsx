@@ -5,19 +5,16 @@ import invariant from "invariant";
 import React, { useCallback, useState } from "react";
 import { FlatList, StyleSheet, View, SafeAreaView } from "react-native";
 import { useSelector } from "react-redux";
-import { TrackScreen } from "../../../analytics";
-import { ScreenName } from "../../../const";
-import { accountScreenSelector } from "../../../reducers/accounts";
+import { TrackScreen } from "~/analytics";
+import { ScreenName } from "~/const";
+import { accountScreenSelector } from "~/reducers/accounts";
 import ValidatorHead from "../shared/ValidatorHead";
 import ValidatorRow from "../shared/ValidatorRow";
 import SelectValidatorSearchBox from "../../tron/VoteFlow/01-SelectValidator/SearchBox";
-import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { NearStakingFlowParamList } from "./types";
 
-type Props = StackNavigatorProps<
-  NearStakingFlowParamList,
-  ScreenName.NearStakingValidatorSelect
->;
+type Props = StackNavigatorProps<NearStakingFlowParamList, ScreenName.NearStakingValidatorSelect>;
 
 export default function SelectValidator({ navigation, route }: Props) {
   const { colors } = useTheme();
@@ -49,11 +46,14 @@ export default function SelectValidator({ navigation, route }: Props) {
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-      <TrackScreen category="DelegationFlow" name="SelectValidator" />
-      <SelectValidatorSearchBox
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
+      <TrackScreen
+        category="DelegationFlow"
+        name="SelectValidator"
+        flow="stake"
+        action="staking"
+        currency="near"
       />
+      <SelectValidatorSearchBox searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
       <View style={styles.header}>
         <ValidatorHead />
       </View>

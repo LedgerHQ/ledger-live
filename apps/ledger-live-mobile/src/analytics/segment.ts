@@ -4,7 +4,7 @@ import { v4 as uuid } from "uuid";
 import * as Sentry from "@sentry/react-native";
 import Config from "react-native-config";
 import { Platform } from "react-native";
-import { createClient, SegmentClient } from "@segment/analytics-react-native";
+import { createClient, SegmentClient, UserTraits } from "@segment/analytics-react-native";
 import VersionNumber from "react-native-version-number";
 import RNLocalize from "react-native-localize";
 import { ReplaySubject } from "rxjs";
@@ -15,58 +15,87 @@ import {
   useRoute,
 } from "@react-navigation/native";
 import { snakeCase } from "lodash";
-import { useCallback } from "react";
-import { idsToLanguage } from "@ledgerhq/types-live";
+import React, { MutableRefObject, useCallback } from "react";
+import { FeatureId, Features, idsToLanguage } from "@ledgerhq/types-live";
 import {
   hasNftInAccounts,
   GENESIS_PASS_COLLECTION_CONTRACT,
   INFINITY_PASS_COLLECTION_CONTRACT,
-} from "@ledgerhq/live-common/nft/helpers";
-import {
-  getAndroidArchitecture,
-  getAndroidVersionCode,
-} from "../logic/cleanBuildVersion";
+} from "@ledgerhq/live-nft";
+import { runOnceWhen } from "@ledgerhq/live-common/utils/runOnceWhen";
+import { getAndroidArchitecture, getAndroidVersionCode } from "../logic/cleanBuildVersion";
 import getOrCreateUser from "../user";
 import {
   analyticsEnabledSelector,
+  trackingEnabledSelector,
   languageSelector,
   localeSelector,
   lastSeenDeviceSelector,
   sensitiveAnalyticsSelector,
-  firstConnectionHasDeviceSelector,
-  firstConnectHasDeviceUpdatedSelector,
-  readOnlyModeEnabledSelector,
-  hasOrderedNanoSelector,
+  onboardingHasDeviceSelector,
   notificationsSelector,
   knownDeviceModelIdsSelector,
   customImageTypeSelector,
+  userNpsSelector,
+  personalizedRecommendationsEnabledSelector,
 } from "../reducers/settings";
 import { knownDevicesSelector } from "../reducers/ble";
 import { DeviceLike, State } from "../reducers/types";
 import { satisfactionSelector } from "../reducers/ratings";
 import { accountsSelector } from "../reducers/accounts";
 import type { AppStore } from "../reducers";
-import { NavigatorName } from "../const";
+import { NavigatorName } from "~/const";
 import { previousRouteNameRef, currentRouteNameRef } from "./screenRefs";
 import { AnonymousIpPlugin } from "./AnonymousIpPlugin";
 import { UserIdPlugin } from "./UserIdPlugin";
 import { Maybe } from "../types/helpers";
 import { appStartupTime } from "../StartupTimeMarker";
+import { aggregateData, getUniqueModelIdList } from "../logic/modelIdList";
 
 let sessionId = uuid();
-const appVersion = `${VersionNumber.appVersion || ""} (${
-  VersionNumber.buildVersion || ""
-})`;
+const appVersion = `${VersionNumber.appVersion || ""} (${VersionNumber.buildVersion || ""})`;
 const { ANALYTICS_LOGS, ANALYTICS_TOKEN } = Config;
+
+type MaybeAppStore = Maybe<AppStore>;
+
+let storeInstance: MaybeAppStore; // is the redux store. it's also used as a flag to know if analytics is on or off.
+let segmentClient: SegmentClient | undefined;
+let analyticsFeatureFlagMethod: null | (<T extends FeatureId>(key: T) => Features[T] | null);
+
+export function setAnalyticsFeatureFlagMethod(method: typeof analyticsFeatureFlagMethod): void {
+  analyticsFeatureFlagMethod = method;
+}
+
+const getFeatureFlagProperties = () => {
+  if (!analyticsFeatureFlagMethod || !segmentClient) return {};
+  (async () => {
+    const ptxEarnFeatureFlag = analyticsFeatureFlagMethod("ptxEarn");
+    const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
+
+    const isBatch1Enabled =
+      !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
+    const isBatch2Enabled =
+      !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 2;
+    const isBatch3Enabled =
+      !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 3;
+
+    updateIdentify({
+      ptxEarnEnabled: !!ptxEarnFeatureFlag?.enabled,
+      isBatch1Enabled,
+      isBatch2Enabled,
+      isBatch3Enabled,
+    });
+  })();
+};
+
+runOnceWhen(() => !!analyticsFeatureFlagMethod && !!segmentClient, getFeatureFlagProperties);
 
 export const updateSessionId = () => (sessionId = uuid());
 
 const extraProperties = async (store: AppStore) => {
   const state: State = store.getState();
   const sensitiveAnalytics = sensitiveAnalyticsSelector(state);
-  const systemLanguage = sensitiveAnalytics
-    ? null
-    : RNLocalize.getLocales()[0]?.languageTag;
+  const systemLanguage = sensitiveAnalytics ? null : RNLocalize.getLocales()[0]?.languageTag;
   const knownDeviceModelIds = knownDeviceModelIdsSelector(state);
   const customImageType = customImageTypeSelector(state);
   const language = sensitiveAnalytics ? null : languageSelector(state);
@@ -74,8 +103,7 @@ const extraProperties = async (store: AppStore) => {
   const devices = knownDevicesSelector(state);
   const satisfaction = satisfactionSelector(state);
   const accounts = accountsSelector(state);
-  const lastDevice =
-    lastSeenDeviceSelector(state) || devices[devices.length - 1];
+  const lastDevice = lastSeenDeviceSelector(state) || devices[devices.length - 1];
   const deviceInfo = lastDevice
     ? {
         deviceVersion: lastDevice.deviceInfo?.version,
@@ -87,16 +115,18 @@ const extraProperties = async (store: AppStore) => {
         modelId: lastDevice.modelId,
       }
     : {};
-  const firstConnectionHasDevice = firstConnectionHasDeviceSelector(state);
+  const onboardingHasDevice = onboardingHasDeviceSelector(state);
   const notifications = notificationsSelector(state);
-  const notificationsAllowed = notifications.areNotificationsAllowed;
+  const notificationsOptedIn = {
+    notificationsAllowed: notifications.areNotificationsAllowed,
+    optInAnnouncements: notifications.announcementsCategory,
+    optInRecommendations: notifications.recommendationsCategory,
+    optInLargeMovers: notifications.largeMoverCategory,
+    optInTxAlerts: notifications.transactionsAlertsCategory,
+  };
   const notificationsBlacklisted = Object.entries(notifications)
-    .filter(
-      ([key, value]) => key !== "areNotificationsAllowed" && value === false,
-    )
+    .filter(([key, value]) => key !== "areNotificationsAllowed" && value === false)
     .map(([key]) => key);
-  const firstConnectHasDeviceUpdated =
-    firstConnectHasDeviceUpdatedSelector(state);
   const { user } = await getOrCreateUser();
   const accountsWithFunds = accounts
     ? [
@@ -110,20 +140,16 @@ const extraProperties = async (store: AppStore) => {
   const blockchainsWithNftsOwned = accounts
     ? [
         ...new Set(
-          accounts
-            .filter(account => account.nfts?.length)
-            .map(account => account.currency.ticker),
+          accounts.filter(account => account.nfts?.length).map(account => account.currency.ticker),
         ),
       ]
     : [];
-  const hasGenesisPass = hasNftInAccounts(
-    GENESIS_PASS_COLLECTION_CONTRACT,
-    accounts,
-  );
-  const hasInfinityPass = hasNftInAccounts(
-    INFINITY_PASS_COLLECTION_CONTRACT,
-    accounts,
-  );
+  const hasGenesisPass = hasNftInAccounts(GENESIS_PASS_COLLECTION_CONTRACT, accounts);
+  const hasInfinityPass = hasNftInAccounts(INFINITY_PASS_COLLECTION_CONTRACT, accounts);
+  const nps = userNpsSelector(state);
+  const analyticsEnabled: boolean = analyticsEnabledSelector(state);
+  const personalizedRecommendationsEnabled: boolean =
+    personalizedRecommendationsEnabledSelector(state);
 
   return {
     appVersion,
@@ -138,17 +164,19 @@ const extraProperties = async (store: AppStore) => {
     platformVersion: Platform.Version,
     sessionId,
     devicesCount: devices.length,
-    firstConnectionHasDevice,
-    firstConnectHasDeviceUpdated,
+    modelIdQtyList: aggregateData(devices),
+    modelIdList: getUniqueModelIdList(devices),
+    onboardingHasDevice,
     ...(satisfaction
       ? {
           satisfaction,
         }
       : {}),
     ...deviceInfo,
-    notificationsAllowed,
     notificationsBlacklisted,
+    ...notificationsOptedIn,
     userId: user?.id,
+    braze_external_id: user?.id, // Needed for braze with this exact name
     accountsWithFunds,
     blockchainsWithNftsOwned,
     hasGenesisPass,
@@ -156,18 +184,14 @@ const extraProperties = async (store: AppStore) => {
     appTimeToInteractiveMilliseconds: appStartupTime,
     staxDeviceUser: knownDeviceModelIds.stax,
     staxLockscreen: customImageType || "none",
+    nps,
+    optInAnalytics: analyticsEnabled,
+    optInPersonalRecommendations: personalizedRecommendationsEnabled,
   };
 };
 
-type MaybeAppStore = Maybe<AppStore>;
-
-let storeInstance: MaybeAppStore; // is the redux store. it's also used as a flag to know if analytics is on or off.
-let segmentClient: SegmentClient | undefined;
-
 const token = ANALYTICS_TOKEN;
-export const start = async (
-  store: AppStore,
-): Promise<SegmentClient | undefined> => {
+export const start = async (store: AppStore): Promise<SegmentClient | undefined> => {
   const { user, created } = await getOrCreateUser();
   storeInstance = store;
 
@@ -176,7 +200,6 @@ export const start = async (
   }
 
   console.log("START ANALYTICS", ANALYTICS_LOGS);
-  const userExtraProperties = await extraProperties(store);
   if (token) {
     segmentClient = createClient({
       writeKey: token,
@@ -190,30 +213,33 @@ export const start = async (
     if (created) {
       segmentClient.reset();
     }
-    await segmentClient.identify(user.id, userExtraProperties);
+    await updateIdentify();
   }
-  await track("Start", userExtraProperties, true);
+  await track("Start");
 
   return segmentClient;
 };
-export const updateIdentify = async () => {
+
+export const updateIdentify = async (additionalProperties?: UserTraits) => {
   Sentry.addBreadcrumb({
     category: "identify",
     level: "debug",
   });
 
-  if (!storeInstance || !analyticsEnabledSelector(storeInstance.getState())) {
+  if (!storeInstance || !trackingEnabledSelector(storeInstance.getState())) {
     return;
   }
 
   const userExtraProperties = await extraProperties(storeInstance);
-  if (ANALYTICS_LOGS) console.log("analytics:identify", userExtraProperties);
+  const allProperties = {
+    ...userExtraProperties,
+    ...(additionalProperties || {}),
+  };
+  if (ANALYTICS_LOGS) console.log("analytics:identify", allProperties);
   if (!token) return;
-  await segmentClient?.identify(
-    userExtraProperties.userId,
-    userExtraProperties,
-  );
+  await segmentClient?.identify(userExtraProperties.userId, allProperties);
 };
+
 export const stop = () => {
   if (ANALYTICS_LOGS) console.log("analytics:stop");
   storeInstance = null;
@@ -232,19 +258,11 @@ type EventType = string | "button_clicked" | "error_message";
 
 export function getIsTracking(
   state: State | null | undefined,
-  mandatory?: boolean | null | undefined,
 ): { enabled: true } | { enabled: false; reason?: string } {
   if (!state) return { enabled: false, reason: "store not initialised" };
-  const readOnlyMode = state && readOnlyModeEnabledSelector(state);
-  const hasOrderedNano = state && hasOrderedNanoSelector(state);
-  const analyticsEnabled = state && analyticsEnabledSelector(state);
-  if (readOnlyMode && hasOrderedNano)
-    return {
-      enabled: false,
-      reason:
-        "not tracking anything in the reborn state post purchase pre device setup",
-    };
-  if (!mandatory && !analyticsEnabled) {
+  const trackingEnabled = state && trackingEnabledSelector(state);
+
+  if (!trackingEnabled) {
     return {
       enabled: false,
       reason: "analytics not enabled",
@@ -256,7 +274,6 @@ export function getIsTracking(
 export const track = async (
   event: EventType,
   eventProperties?: Error | Record<string, unknown> | null,
-  mandatory?: boolean | null,
 ) => {
   Sentry.addBreadcrumb({
     message: event,
@@ -267,18 +284,17 @@ export const track = async (
 
   const state = storeInstance && storeInstance.getState();
 
-  const isTracking = getIsTracking(state, mandatory);
+  const isTracking = getIsTracking(state);
   if (!isTracking.enabled) {
-    if (ANALYTICS_LOGS)
-      console.log("analytics:track: not tracking because: ", isTracking.reason);
+    if (ANALYTICS_LOGS) console.log("analytics:track: not tracking because: ", isTracking.reason);
     return;
   }
 
-  const screen = currentRouteNameRef.current;
+  const page = currentRouteNameRef.current;
 
   const userExtraProperties = await extraProperties(storeInstance as AppStore);
   const propertiesWithoutExtra = {
-    screen,
+    page,
     ...eventProperties,
   };
   const allProperties = {
@@ -296,31 +312,26 @@ export const track = async (
   segmentClient?.track(event, allProperties);
 };
 export const getPageNameFromRoute = (route: RouteProp<ParamListBase>) => {
-  const routeName =
-    getFocusedRouteNameFromRoute(route) || NavigatorName.Portfolio;
+  const routeName = getFocusedRouteNameFromRoute(route) || NavigatorName.Portfolio;
   return snakeCase(routeName);
 };
 export const trackWithRoute = (
   event: EventType,
   route: RouteProp<ParamListBase>,
   properties?: Record<string, unknown> | null,
-  mandatory?: boolean | null,
 ) => {
   const newProperties = {
     page: getPageNameFromRoute(route),
     // don't override page if it's already set
     ...(properties || {}),
   };
-  track(event, newProperties, mandatory);
+  track(event, newProperties);
 };
 export const useTrack = () => {
   const route = useRoute();
   const track = useCallback(
-    (
-      event: EventType,
-      properties?: Record<string, unknown> | null,
-      mandatory?: boolean | null,
-    ) => trackWithRoute(event, route, properties, mandatory),
+    (event: EventType, properties?: Record<string, unknown> | null) =>
+      trackWithRoute(event, route, properties),
     [route],
   );
   return track;
@@ -337,6 +348,8 @@ export const useAnalytics = () => {
     page,
   };
 };
+
+const lastScreenEventName: MutableRefObject<string | null | undefined> = React.createRef();
 
 /**
  * Track an event which will have the name `Page ${category}${name ? " " + name : ""}`.
@@ -373,15 +386,23 @@ export const screen = async (
    * any effect.
    */
   refreshSource?: boolean,
+  /**
+   * When true, event will not be emitted if it's a duplicate (if the last
+   * screen event emitted was the same screen event).
+   * This is practical in case a TrackScreen component gets remounted.
+   */
+  avoidDuplicates?: boolean,
 ) => {
-  const fullScreenName = category + (name ? ` ${name}` : "");
+  const fullScreenName = (category || "") + (category && name ? " " : "") + (name || "");
+  const eventName = `Page ${fullScreenName}`;
+  if (avoidDuplicates && eventName === lastScreenEventName.current) return;
+  lastScreenEventName.current = eventName;
   if (updateRoutes) {
     previousRouteNameRef.current = currentRouteNameRef.current;
     if (refreshSource) {
       currentRouteNameRef.current = fullScreenName;
     }
   }
-  const eventName = `Page ${fullScreenName}`;
   Sentry.addBreadcrumb({
     message: eventName,
     category: "screen",
@@ -393,11 +414,7 @@ export const screen = async (
 
   const isTracking = getIsTracking(state);
   if (!isTracking.enabled) {
-    if (ANALYTICS_LOGS)
-      console.log(
-        "analytics:screen: not tracking because: ",
-        isTracking.reason,
-      );
+    if (ANALYTICS_LOGS) console.log("analytics:screen: not tracking because: ", isTracking.reason);
     return;
   }
 
@@ -412,8 +429,7 @@ export const screen = async (
     ...eventPropertiesWithoutExtra,
     ...userExtraProperties,
   };
-  if (ANALYTICS_LOGS)
-    console.log("analytics:screen", category, name, allProperties);
+  if (ANALYTICS_LOGS) console.log("analytics:screen", category, name, allProperties);
   trackSubject.next({
     eventName,
     eventProperties: allProperties,

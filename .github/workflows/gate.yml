@@ -3,16 +3,15 @@ run-name: "@Gate triggered by ${{ github.actor }} ${{ format('on branch {0}', gi
 
 on:
   pull_request:
-    branches:
-      - develop
-      - main
-      - release
-      - hotfix
   merge_group:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ github.ref_name != 'develop' }}
+  group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
 
 env:
   number: ${{ github.event.pull_request.number || -1 }}
@@ -22,18 +21,16 @@ env:
   base_branch: ${{ github.event.pull_request.base.ref || github.event.merge_group.base_ref }}
   base_owner: ${{ github.event.pull_request.base.repo.owner.login || github.repository_owner }}
   is_fork: ${{ github.event.pull_request.head.repo.fork || false }}
+  ref: ${{ github.sha }}
 
 jobs:
   setup:
-    permissions:
-      contents: read
-      pull-requests: write
     name: "Setup"
     runs-on: ubuntu-latest
     outputs:
       affected: ${{ steps.affected.outputs.affected }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -47,8 +44,8 @@ jobs:
             const newHeadBranch = head_branch.replace("refs/heads/", "");
             const newBaseBranch = base_branch.replace("refs/heads/", "");
 
-            core.exportVariable("head_branch", newHeadBranch)
-            core.exportVariable("base_branch", newBaseBranch)
+            core.exportVariable("head_branch", newHeadBranch);
+            core.exportVariable("base_branch", newBaseBranch);
 
       - uses: ./tools/actions/turbo-affected
         id: affected
@@ -77,7 +74,8 @@ jobs:
               base_sha: "${{ env.base_sha }}",
               base_branch: "${{ env.base_branch }}",
               base_owner: "${{ env.base_owner }}",
-              is_fork: ${{ env.is_fork }}
+              is_fork: ${{ env.is_fork }},
+              ref: "${{ env.ref }}"
             }), "utf-8");
       - uses: actions/upload-artifact@v3
         with:

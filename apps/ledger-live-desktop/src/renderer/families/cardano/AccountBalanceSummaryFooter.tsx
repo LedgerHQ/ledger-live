@@ -10,6 +10,8 @@ import Box from "~/renderer/components/Box/Box";
 import Text from "~/renderer/components/Text";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
+import { CardanoFamily } from "./types";
+
 const Wrapper = styled(Box).attrs(() => ({
   horizontal: true,
   mt: 4,
@@ -44,13 +46,12 @@ const AmountValue = styled(Text).attrs(() => ({
   ff: "Inter|SemiBold",
   color: "palette.text.shade100",
 }))``;
-type Props = {
-  account: any;
-};
-const AccountBalanceSummaryFooter = ({ account }: Props) => {
+
+const AccountBalanceSummaryFooter: CardanoFamily["AccountBalanceSummaryFooter"] = ({ account }) => {
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
-  const { spendableBalance: _spendableBalance } = account;
+  if (account.type === "ChildAccount") return null;
+  const _spendableBalance = account.spendableBalance;
   const unit = getAccountUnit(account);
   const formatConfig = {
     disableRounding: true,

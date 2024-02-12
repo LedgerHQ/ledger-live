@@ -24,16 +24,16 @@ export function usePostOnboardingHubState(): PostOnboardingHubState {
         deviceModelId: hubState.deviceModelId,
         lastActionCompleted: null,
         actionsState: [],
+        postOnboardingInProgress: hubState.postOnboardingInProgress,
       };
     const actionsState = hubState.actionsToComplete
-      .map((actionId) => ({
+      .map(actionId => ({
         ...getPostOnboardingAction(actionId),
         completed: !!hubState.actionsCompleted[actionId],
       }))
       .filter(
-        (actionWithState) =>
-          !actionWithState.featureFlagId ||
-          getFeature(actionWithState.featureFlagId)?.enabled
+        actionWithState =>
+          !actionWithState.featureFlagId || getFeature(actionWithState.featureFlagId)?.enabled,
       );
     const lastActionCompleted = hubState.lastActionCompleted
       ? getPostOnboardingAction(hubState.lastActionCompleted)
@@ -46,10 +46,9 @@ export function usePostOnboardingHubState(): PostOnboardingHubState {
 
     return {
       deviceModelId: hubState.deviceModelId,
-      lastActionCompleted: isLastActionCompletedEnabled
-        ? lastActionCompleted
-        : null,
+      lastActionCompleted: isLastActionCompletedEnabled ? lastActionCompleted : null,
       actionsState,
+      postOnboardingInProgress: hubState.postOnboardingInProgress,
     };
   }, [getFeature, hubState, getPostOnboardingAction]);
 }

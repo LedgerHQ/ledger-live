@@ -9,14 +9,12 @@ describe("Domain Service", () => {
     describe("resolveDomain", () => {
       beforeEach(() => {
         jest.restoreAllMocks();
-        jest
-          .spyOn(mockedAxios, "request")
-          .mockImplementation(async ({ url }) => {
-            if (url?.endsWith("vitalik.eth")) {
-              return { data: "0x123" } as any;
-            }
-            return Promise.reject({ response: { status: 404 } }) as any;
-          });
+        jest.spyOn(mockedAxios, "request").mockImplementation(async ({ url }: { url: string }) => {
+          if (url?.endsWith("vitalik.eth")) {
+            return { data: "0x123" } as any;
+          }
+          return Promise.reject({ response: { status: 404 } }) as any;
+        });
       });
 
       it("should resolve a ENS domain by inferring the registries", async () => {
@@ -52,20 +50,16 @@ describe("Domain Service", () => {
     describe("resolveAddress", () => {
       beforeEach(() => {
         jest.restoreAllMocks();
-        jest
-          .spyOn(mockedAxios, "request")
-          .mockImplementation(async ({ url }) => {
-            if (url?.endsWith("0xd8da6bf26964af9d7eed9e03e53415d37aa96045")) {
-              return { data: "vitalik.eth" } as any;
-            }
-            return Promise.reject({ response: { status: 404 } }) as any;
-          });
+        jest.spyOn(mockedAxios, "request").mockImplementation(async ({ url }: { url: string }) => {
+          if (url?.endsWith("0xd8da6bf26964af9d7eed9e03e53415d37aa96045")) {
+            return { data: "vitalik.eth" } as any;
+          }
+          return Promise.reject({ response: { status: 404 } }) as any;
+        });
       });
 
       it("should resolve an address with a reverse record ENS by inferring registries", async () => {
-        const resolutions = await resolveAddress(
-          "0xd8da6bf26964af9d7eed9e03e53415d37aa96045"
-        );
+        const resolutions = await resolveAddress("0xd8da6bf26964af9d7eed9e03e53415d37aa96045");
         expect(resolutions).toEqual([
           {
             registry: "ens",
@@ -79,7 +73,7 @@ describe("Domain Service", () => {
       it("should resolve an address with a reverse record ENS by specify registry", async () => {
         const resolutions = await resolveAddress(
           "0xd8da6bf26964af9d7eed9e03e53415d37aa96045",
-          "ens"
+          "ens",
         );
         expect(resolutions).toEqual([
           {

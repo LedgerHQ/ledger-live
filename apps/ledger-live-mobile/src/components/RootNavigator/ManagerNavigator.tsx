@@ -3,20 +3,17 @@ import { TouchableOpacity } from "react-native";
 import styled, { useTheme } from "styled-components/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useSelector } from "react-redux";
-import { Box, Icons, Flex, Button } from "@ledgerhq/native-ui";
+import { Box, IconsLegacy, Flex, Button } from "@ledgerhq/native-ui";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { ScreenName } from "../../const";
-import {
-  hasAvailableUpdateSelector,
-  lastSeenDeviceSelector,
-} from "../../reducers/settings";
-import Manager, { managerHeaderOptions } from "../../screens/Manager";
-import ManagerMain from "../../screens/Manager/Manager";
-import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
+import { ScreenName } from "~/const";
+import { hasAvailableUpdateSelector, lastSeenDeviceSelector } from "~/reducers/settings";
+import Manager, { managerHeaderOptions } from "~/screens/Manager";
+import ManagerMain from "~/screens/Manager/Manager";
+import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import TabIcon from "../TabIcon";
 import { useIsNavLocked } from "./CustomBlockRouterNavigator";
 import { ManagerNavigatorStackParamList } from "./types/ManagerNavigator";
-import FirmwareUpdateScreen from "../../screens/FirmwareUpdate";
+import FirmwareUpdateScreen from "~/screens/FirmwareUpdate";
 
 const BadgeContainer = styled(Flex).attrs({
   position: "absolute",
@@ -42,10 +39,7 @@ const Badge = () => {
 
 export default function ManagerNavigator() {
   const { colors } = useTheme();
-  const stackNavConfig = useMemo(
-    () => getStackNavigatorConfig(colors),
-    [colors],
-  );
+  const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [colors]);
 
   return (
     <Stack.Navigator
@@ -60,7 +54,7 @@ export default function ManagerNavigator() {
           gestureEnabled: false,
           headerTitle: () => null,
           headerLeft: () => null,
-          headerRight: () => <Button Icon={Icons.CloseMedium} />,
+          headerRight: () => <Button Icon={IconsLegacy.CloseMedium} />,
         }}
       />
       <Stack.Screen
@@ -71,24 +65,14 @@ export default function ManagerNavigator() {
           gestureEnabled: false,
         }}
       />
-      <Stack.Screen
-        name={ScreenName.ManagerMain}
-        component={ManagerMain}
-        options={{ title: "" }}
-      />
+      <Stack.Screen name={ScreenName.ManagerMain} component={ManagerMain} options={{ title: "" }} />
     </Stack.Navigator>
   );
 }
 
 const Stack = createStackNavigator<ManagerNavigatorStackParamList>();
 
-const DeviceIcon = ({
-  color,
-  size = 16,
-}: {
-  color?: string;
-  size?: number;
-}) => {
+const DeviceIcon = ({ color, size = 16 }: { color?: string; size?: number }) => {
   const hasAvailableUpdate = useSelector(hasAvailableUpdateSelector);
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
 
@@ -96,14 +80,14 @@ const DeviceIcon = ({
   switch (lastSeenDevice?.modelId) {
     case DeviceModelId.nanoS:
     case DeviceModelId.nanoSP:
-      icon = <Icons.NanoSFoldedMedium size={size} color={color} />;
+      icon = <IconsLegacy.NanoSFoldedMedium size={size} color={color} />;
       break;
     case DeviceModelId.stax:
-      icon = <Icons.StaxMedium size={size} color={color} />;
+      icon = <IconsLegacy.StaxMedium size={size} color={color} />;
       break;
     case DeviceModelId.nanoX:
     default:
-      icon = <Icons.NanoXFoldedMedium size={size} color={color} />;
+      icon = <IconsLegacy.NanoXFoldedMedium size={size} color={color} />;
       break;
   }
 
@@ -122,9 +106,7 @@ export function ManagerTabIcon(
 ) {
   const isNavLocked = useIsNavLocked();
 
-  const content = (
-    <TabIcon {...props} Icon={DeviceIcon} i18nKey="tabs.manager" />
-  );
+  const content = <TabIcon {...props} Icon={DeviceIcon} i18nKey="tabs.manager" />;
 
   if (isNavLocked) {
     // eslint-disable-next-line @typescript-eslint/no-empty-function

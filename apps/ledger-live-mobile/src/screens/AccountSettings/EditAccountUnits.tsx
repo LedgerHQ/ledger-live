@@ -3,24 +3,21 @@ import React, { useCallback } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { Unit } from "@ledgerhq/types-cryptoassets";
-import { accountScreenSelector } from "../../reducers/accounts";
-import { updateAccount } from "../../actions/accounts";
-import SettingsRow from "../../components/SettingsRow";
-import Touchable from "../../components/Touchable";
-import NavigationScrollView from "../../components/NavigationScrollView";
-import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { AccountSettingsNavigatorParamList } from "../../components/RootNavigator/types/AccountSettingsNavigator";
-import { ScreenName } from "../../const";
+import { accountScreenSelector } from "~/reducers/accounts";
+import { updateAccount } from "~/actions/accounts";
+import SettingsRow from "~/components/SettingsRow";
+import Touchable from "~/components/Touchable";
+import NavigationScrollView from "~/components/NavigationScrollView";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { AccountSettingsNavigatorParamList } from "~/components/RootNavigator/types/AccountSettingsNavigator";
+import { ScreenName } from "~/const";
 
 type NavigationProps = StackNavigatorProps<
   AccountSettingsNavigatorParamList,
   ScreenName.EditAccountUnits
 >;
 
-export default function EditAccountUnits({
-  navigation,
-  route,
-}: NavigationProps) {
+export default function EditAccountUnits({ navigation, route }: NavigationProps) {
   const dispatch = useDispatch();
   const { account } = useSelector(accountScreenSelector(route));
   invariant(account?.type === "Account", "account must be a main account");
@@ -50,11 +47,7 @@ export default function EditAccountUnits({
                 onPressItem(item);
               }}
             >
-              <SettingsRow
-                title={item.code}
-                selected={account.unit.code === item.code}
-                compact
-              />
+              <SettingsRow title={item.code} selected={account.unit.code === item.code} compact />
             </Touchable>
           )}
         >

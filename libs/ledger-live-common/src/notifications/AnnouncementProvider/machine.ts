@@ -24,7 +24,7 @@ export const announcementMachine = createMachine(
             actions: assign((_, { data }) => {
               const { announcements, seenIds, lastUpdateTime } = data;
               const cache = {};
-              announcements.forEach((announcement) => {
+              announcements.forEach(announcement => {
                 cache[announcement.uuid] = announcement;
               });
               const allIds = Object.keys(cache);
@@ -65,7 +65,7 @@ export const announcementMachine = createMachine(
               assign((context: any, { data }: any) => {
                 const { announcements, updateTime } = data;
                 const cache = {};
-                announcements.forEach((announcement) => {
+                announcements.forEach(announcement => {
                   cache[announcement.uuid] = announcement;
                 });
                 const allIds = Object.keys(cache);
@@ -92,8 +92,7 @@ export const announcementMachine = createMachine(
     },
     on: {
       SET_AS_SEEN: {
-        cond: (context: any, event: any) =>
-          !context.seenIds.includes(event.seenId),
+        cond: (context: any, event: any) => !context.seenIds.includes(event.seenId),
         actions: ["setAsSeen", "saveData", "emitNewAnnouncement"],
       },
     },
@@ -104,5 +103,5 @@ export const announcementMachine = createMachine(
         seenIds: [...context.seenIds, event.seenId],
       })),
     },
-  }
+  },
 );

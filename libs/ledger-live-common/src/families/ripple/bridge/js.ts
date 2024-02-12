@@ -16,23 +16,19 @@ import invariant from "invariant";
 import bs58check from "ripple-bs58check";
 import { Observable } from "rxjs";
 import { getMainAccount } from "../../../account";
-import getLedgerIndex, {
-  getAccountInfo,
-  getServerInfo,
-  parseAPIValue,
-  submit,
-} from "../api";
+import getLedgerIndex, { getAccountInfo, getServerInfo, parseAPIValue, submit } from "../api";
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
+import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { formatCurrencyUnit } from "../../../currencies";
 import signTransaction from "../../../hw/signTransaction";
 import { withDevice } from "../../../hw/deviceAccess";
-import { patchOperationWithHash } from "../../../operation";
+import { encodeOperationId, patchOperationWithHash } from "../../../operation";
 import type {
   Account,
   AccountBridge,
   CurrencyBridge,
   Operation,
-  SignOperationEvent,
+  SignOperationFnSignature,
 } from "@ledgerhq/types-live";
 
 import { scanAccounts, sync } from "../js-synchronization";
@@ -45,13 +41,9 @@ const receive = makeAccountBridgeReceive();
 
 const uint32maxPlus1 = new BigNumber(2).pow(32);
 
-const validateTag = (tag) => {
+const validateTag = tag => {
   return (
-    !tag.isNaN() &&
-    tag.isFinite() &&
-    tag.isInteger() &&
-    tag.isPositive() &&
-    tag.lt(uint32maxPlus1)
+    !tag.isNaN() && tag.isFinite() && tag.isInteger() && tag.isPositive() && tag.lt(uint32maxPlus1)
   );
 };
 
@@ -60,19 +52,15 @@ const getNextValidSequence = async (account: Account) => {
   return accInfo.account_data.Sequence;
 };
 
-const signOperation = ({
-  account,
-  transaction,
-  deviceId,
-}): Observable<SignOperationEvent> =>
+const signOperation: SignOperationFnSignature<Transaction> = ({ account, transaction, deviceId }) =>
   withDevice(deviceId)(
-    (transport) =>
-      new Observable((o) => {
+    transport =>
+      new Observable(o => {
         delete cacheRecipientsNew[transaction.recipient];
-        const { fee } = transaction;
-        if (!fee) throw new FeeNotLoaded();
 
         async function main() {
+          const { fee } = transaction;
+          if (!fee) throw new FeeNotLoaded();
           try {
             const tag = transaction.tag ? transaction.tag : undefined;
             const nextSequenceNumber = await getNextValidSequence(account);
@@ -92,7 +80,7 @@ const signOperation = ({
                 validateTag(new BigNumber(tag)),
                 `tag is set but is not in a valid format, should be between [0 - ${uint32maxPlus1
                   .minus(1)
-                  .toString()}]`
+                  .toString()}]`,
               );
 
             o.next({
@@ -102,7 +90,7 @@ const signOperation = ({
               account.currency,
               transport,
               account.freshAddressPath,
-              payment
+              payment,
             );
             o.next({
               type: "device-signature-granted",
@@ -110,7 +98,7 @@ const signOperation = ({
 
             const hash = "";
             const operation: Operation = {
-              id: `${account.id}-${hash}-OUT`,
+              id: encodeOperationId(account.id, hash, "OUT"),
               hash,
               accountId: account.id,
               type: "OUT",
@@ -122,7 +110,7 @@ const signOperation = ({
               recipients: [transaction.recipient],
               date: new Date(),
               transactionSequenceNumber: nextSequenceNumber,
-              extra: {} as any,
+              extra: {},
             };
 
             o.next({
@@ -130,7 +118,6 @@ const signOperation = ({
               signedOperation: {
                 operation,
                 signature,
-                expirationDate: null,
               },
             });
           } catch (e: any) {
@@ -144,14 +131,12 @@ const signOperation = ({
 
         main().then(
           () => o.complete(),
-          (e) => o.error(e)
+          e => o.error(e),
         );
-      })
+      }),
   );
 
-const broadcast = async ({
-  signedOperation: { signature, operation },
-}): Promise<Operation> => {
+const broadcast = async ({ signedOperation: { signature, operation } }): Promise<Operation> => {
   const submittedPayment = await submit(signature);
 
   if (
@@ -185,13 +170,10 @@ const recipientIsNew = async (recipient: string): Promise<boolean> => {
 };
 
 // FIXME this could be cleaner
-const remapError = (error) => {
+const remapError = error => {
   const msg = error.message;
 
-  if (
-    msg.includes("Unable to resolve host") ||
-    msg.includes("Network is down")
-  ) {
+  if (msg.includes("Unable to resolve host") || msg.includes("Network is down")) {
     return new NetworkDown();
   }
 
@@ -222,23 +204,13 @@ const createTransaction = (): Transaction => ({
   feeCustomUnit: null,
 });
 
-const updateTransaction = (
-  t: Transaction,
-  patch: Transaction
-): Transaction => ({ ...t, ...patch });
-
-const prepareTransaction = async (
-  a: Account,
-  t: Transaction
-): Promise<Transaction> => {
+const prepareTransaction = async (a: Account, t: Transaction): Promise<Transaction> => {
   let networkInfo: NetworkInfo | null | undefined = t.networkInfo;
 
   if (!networkInfo) {
     try {
       const info = await getServerInfo(a.endpointConfig);
-      const serverFee = parseAPIValue(
-        info.info.validated_ledger.base_fee_xrp.toString()
-      );
+      const serverFee = parseAPIValue(info.info.validated_ledger.base_fee_xrp.toString());
       networkInfo = {
         family: "ripple",
         serverFee,
@@ -268,9 +240,7 @@ const getTransactionStatus = async (a: Account, t: Transaction) => {
     feeTooHigh?: Error;
   } = {};
   const r = await getServerInfo(a.endpointConfig);
-  const reserveBaseXRP = parseAPIValue(
-    r.info.validated_ledger.reserve_base_xrp.toString()
-  );
+  const reserveBaseXRP = parseAPIValue(r.info.validated_ledger.reserve_base_xrp.toString());
   const estimatedFees = new BigNumber(t.fee || 0);
   const totalSpent = new BigNumber(t.amount).plus(estimatedFees);
   const amount = new BigNumber(t.amount);
@@ -339,9 +309,7 @@ const estimateMaxSpendable = async ({
 }): Promise<BigNumber> => {
   const mainAccount = getMainAccount(account, parentAccount);
   const r = await getServerInfo(mainAccount.endpointConfig);
-  const reserveBaseXRP = parseAPIValue(
-    r.info.validated_ledger.reserve_base_xrp.toString()
-  );
+  const reserveBaseXRP = parseAPIValue(r.info.validated_ledger.reserve_base_xrp.toString());
   const t = await prepareTransaction(mainAccount, {
     ...createTransaction(),
     ...transaction,
@@ -350,15 +318,12 @@ const estimateMaxSpendable = async ({
     amount: new BigNumber(0),
   });
   const s = await getTransactionStatus(mainAccount, t);
-  return BigNumber.max(
-    0,
-    account.balance.minus(reserveBaseXRP).minus(s.estimatedFees)
-  );
+  return BigNumber.max(0, account.balance.minus(reserveBaseXRP).minus(s.estimatedFees));
 };
 
 const accountBridge: AccountBridge<Transaction> = {
   createTransaction,
-  updateTransaction,
+  updateTransaction: defaultUpdateTransaction,
   prepareTransaction,
   getTransactionStatus,
   estimateMaxSpendable,

@@ -12,7 +12,12 @@ export const decorators = [
       <div
         style={{ display: "flex", flexDirection: "column", height: "100vh", overflow: "hidden" }}
       >
-        <style> {`body { padding: 0!important;}`}</style>
+        <style> {`body { padding: 0!important;}
+          *:focus, *:active {
+            outline: none !important;
+          }` /* outline custom styling used to mask focus boxes on safari & chrome */
+        }
+        </style>
         <StyleProvider selectedPalette={theme}>
           <FontProvider>
             <Main>
@@ -45,9 +50,5 @@ export const parameters = {
       color: /(background|color)$/i,
       date: /Date$/,
     },
-  },
-  options: {
-    storySort: (a, b) =>
-      a[1].kind === b[1].kind ? 0 : a[1].id.localeCompare(b[1].id, undefined, { numeric: true }),
-  },
+  }
 };

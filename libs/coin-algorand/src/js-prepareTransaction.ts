@@ -1,3 +1,4 @@
+import { isEqual } from "lodash";
 import { BigNumber } from "bignumber.js";
 import { AlgorandAPI } from "./api";
 import { estimateMaxSpendable } from "./js-estimateMaxSpendable";
@@ -11,10 +12,7 @@ import type { AlgorandAccount, Transaction } from "./types";
  */
 const prepareTransaction =
   (algorandAPI: AlgorandAPI) =>
-  async (
-    account: AlgorandAccount,
-    transaction: Transaction
-  ): Promise<Transaction> => {
+  async (account: AlgorandAccount, transaction: Transaction): Promise<Transaction> => {
     let recipient: string;
     let amount: BigNumber;
     if (transaction.mode === "send") {
@@ -22,10 +20,7 @@ const prepareTransaction =
       amount = transaction.useAllAmount
         ? await estimateMaxSpendable(algorandAPI)({ account, transaction })
         : transaction.amount;
-    } else if (
-      transaction.mode === "optIn" ||
-      transaction.mode === "claimReward"
-    ) {
+    } else if (transaction.mode === "optIn" || transaction.mode === "claimReward") {
       recipient = account.freshAddress;
       amount = new BigNumber(0);
     } else {
@@ -34,7 +29,8 @@ const prepareTransaction =
 
     const fees = await getEstimatedFees(algorandAPI)(account, transaction);
 
-    return { ...transaction, fees, amount, recipient };
+    const newTx = { ...transaction, fees, amount, recipient };
+    return isEqual(transaction, newTx) ? transaction : newTx;
   };
 
 export default prepareTransaction;

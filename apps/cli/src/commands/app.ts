@@ -68,18 +68,16 @@ export default {
     quit: string;
     debug: string;
   }>) =>
-    withDevice(device || "")((t) => {
+    withDevice(device || "")(t => {
       if (quit) return from(quitApp(t));
       if (open) return from(openApp(t, inferManagerApp(open)));
       if (debug)
         return from(getDeviceInfo(t)).pipe(
           mergeMap((deviceInfo: DeviceInfo) =>
             from(manager.getAppsList(deviceInfo, true)).pipe(
-              mergeMap((list) => {
+              mergeMap(list => {
                 const app = list.find(
-                  (item) =>
-                    item.name.toLowerCase() ===
-                    inferManagerApp(debug).toLowerCase()
+                  item => item.name.toLowerCase() === inferManagerApp(debug).toLowerCase(),
                 );
 
                 if (!app) {
@@ -87,52 +85,44 @@ export default {
                 }
 
                 return [app];
-              })
-            )
-          )
+              }),
+            ),
+          ),
         );
       return from(getDeviceInfo(t)).pipe(
         mergeMap((deviceInfo: DeviceInfo) =>
           from(manager.getAppsList(deviceInfo, true)).pipe(
-            mergeMap((list) =>
+            mergeMap(list =>
               concat(
-                ...(uninstall || []).map((application) => {
+                ...(uninstall || []).map(application => {
                   const { targetId } = deviceInfo;
                   const app = list.find(
-                    (item) =>
-                      item.name.toLowerCase() ===
-                      inferManagerApp(application).toLowerCase()
+                    item => item.name.toLowerCase() === inferManagerApp(application).toLowerCase(),
                   );
 
                   if (!app) {
-                    throw new Error(
-                      "application '" + application + "' not found"
-                    );
+                    throw new Error("application '" + application + "' not found");
                   }
 
                   return uninstallApp(t, targetId, app);
                 }),
-                ...(install || []).map((application) => {
+                ...(install || []).map(application => {
                   const { targetId } = deviceInfo;
                   const app = list.find(
-                    (item) =>
-                      item.name.toLowerCase() ===
-                      inferManagerApp(application).toLowerCase()
+                    item => item.name.toLowerCase() === inferManagerApp(application).toLowerCase(),
                   );
 
                   if (!app) {
-                    throw new Error(
-                      "application '" + application + "' not found"
-                    );
+                    throw new Error("application '" + application + "' not found");
                   }
 
                   return installApp(t, targetId, app);
-                })
-              )
-            )
-          )
+                }),
+              ),
+            ),
+          ),
         ),
-        verbose ? map((a) => a) : ignoreElements()
+        verbose ? map(a => a) : ignoreElements(),
       );
     }),
 };

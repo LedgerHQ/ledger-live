@@ -3,21 +3,18 @@ import { View, StyleSheet, Linking } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import { Alert, Button, Flex, Text } from "@ledgerhq/native-ui";
-import { ScreenName } from "../../../const";
-import LText from "../../../components/LText";
+import { ScreenName } from "~/const";
+import LText from "~/components/LText";
 
-import ExternalLink from "../../../components/ExternalLink";
-import BulletList, { BulletGreenCheck } from "../../../components/BulletList";
-import NavigationScrollView from "../../../components/NavigationScrollView";
-import { urls } from "../../../config/urls";
-import { TrackScreen } from "../../../analytics";
-import Illustration from "../../../images/illustration/Illustration";
-import EarnLight from "../../../images/illustration/Light/_003.png";
-import EarnDark from "../../../images/illustration/Dark/_003.png";
-import type {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
+import ExternalLink from "~/components/ExternalLink";
+import BulletList, { BulletGreenCheck } from "~/components/BulletList";
+import NavigationScrollView from "~/components/NavigationScrollView";
+import { urls } from "~/utils/urls";
+import { TrackScreen } from "~/analytics";
+import Illustration from "~/images/illustration/Illustration";
+import EarnLight from "~/images/illustration/Light/_003.png";
+import EarnDark from "~/images/illustration/Dark/_003.png";
+import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { NearStakingFlowParamList } from "./types";
 
 type Props = BaseComposite<
@@ -39,17 +36,17 @@ export default function StakingStarted({ navigation, route }: Props) {
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
-      <NavigationScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContainer}
-      >
-        <TrackScreen category="StakingFlow" name="Started" />
+      <NavigationScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
+        <TrackScreen
+          category="Delegation Flow"
+          name="Step Starter"
+          screen="Started"
+          flow="stake"
+          action="staking"
+          currency="near"
+        />
         <Flex alignItems="center" mb={6}>
-          <Illustration
-            lightSource={EarnLight}
-            darkSource={EarnDark}
-            size={150}
-          />
+          <Illustration lightSource={EarnLight} darkSource={EarnDark} size={150} />
         </Flex>
         <Text fontWeight="semiBold" style={styles.description}>
           <Trans i18nKey="near.staking.flow.steps.starter.description" />
@@ -57,11 +54,13 @@ export default function StakingStarted({ navigation, route }: Props) {
         <BulletList
           Bullet={BulletGreenCheck}
           list={[
-            <Trans i18nKey="near.staking.flow.steps.starter.steps.0" />,
-            <Trans i18nKey="near.staking.flow.steps.starter.steps.1" />,
-            <Trans i18nKey="near.staking.flow.steps.starter.steps.2" />,
+            <Trans i18nKey="near.staking.flow.steps.starter.steps.0" key="StakingText0" />,
+            <Trans i18nKey="near.staking.flow.steps.starter.steps.1" key="StakingText1" />,
+            <Trans i18nKey="near.staking.flow.steps.starter.steps.2" key="StakingText2" />,
           ].map(wording => (
-            <LText semiBold>{wording}</LText>
+            <LText semiBold key={wording.key}>
+              {wording}
+            </LText>
           ))}
         />
         <View style={[styles.howStakingWorks]}>
@@ -74,10 +73,7 @@ export default function StakingStarted({ navigation, route }: Props) {
       </NavigationScrollView>
       <View style={[styles.footer]}>
         <View>
-          <Alert
-            type="info"
-            title={t("near.staking.flow.steps.starter.warning.description")}
-          />
+          <Alert type="info" title={t("near.staking.flow.steps.starter.warning.description")} />
         </View>
         <Button onPress={onNext} type="main" mt={6}>
           <Trans i18nKey="near.staking.flow.steps.starter.cta" />

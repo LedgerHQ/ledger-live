@@ -1,7 +1,4 @@
-import type {
-  ElrondAccount,
-  ElrondProvider,
-} from "@ledgerhq/live-common/families/elrond/types";
+import type { ElrondAccount, ElrondProvider } from "@ledgerhq/live-common/families/elrond/types";
 import type BigNumber from "bignumber.js";
 
 export interface DrawerPropsType {

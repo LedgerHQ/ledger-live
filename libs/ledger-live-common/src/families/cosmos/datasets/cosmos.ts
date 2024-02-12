@@ -11,32 +11,27 @@ import transactionTransformer from "../transaction";
 import { AccountRaw, CurrenciesData } from "@ledgerhq/types-live";
 
 const dataset: CurrenciesData<Transaction> = {
-  FIXME_ignoreAccountFields: [
-    "cosmosResources.unbondingBalance", // They move once all unbonding are done
-    "cosmosResources.pendingRewardsBalance", // They are always movings
-    "cosmosResources.delegations", // They are always movings because of pending Rewards
-    "cosmosResources.redelegations", // will change ince a redelegation it's done
-    "cosmosResources.unbondings", // will change once a unbonding it's done
-    "spendableBalance", // will change with the rewards that automatically up
-  ],
+  FIXME_ignoreAccountFields: ["cosmosResources", "operationsCount", "operations"],
   FIXME_ignorePreloadFields: ["validators"], // the APY of validators changes over time
   scanAccounts: [
     {
       name: "cosmos seed 1",
       apdus: `
-              => 550400001b06636f736d6f732c00008076000080000000800000000000000000
-              <= 0388459b2653519948b12492f1a0b464720110c147a8155d23d423a5cc3c21d89a636f736d6f73316738343933346a70753376356465357971756b6b6b68786d63767377337532616a787670646c9000
-              => 550400001b06636f736d6f732c00008076000080000000800000000000000000
-              <= 0388459b2653519948b12492f1a0b464720110c147a8155d23d423a5cc3c21d89a636f736d6f73316738343933346a70753376356465357971756b6b6b68786d63767377337532616a787670646c9000
-              => 550400001b06636f736d6f732c00008076000080010000800000000000000000
-              <= 02624ac83690d5ef627927104767d679aef73d3d3c9544abe4206b1d0c463c94ff636f736d6f7331303875793571396a743539677775677135797264686b7a6364396a7279736c6d706373746b359000
-              => 550400001b06636f736d6f732c00008076000080020000800000000000000000
-              <= 038ff98278402aa3e46ccfd020561dc9724ab63d7179ca507c8154b5257c7d5200636f736d6f733163676336393661793270673664346763656a656b3279386c6136366a376535793363376b79779000
-              => 550400001b06636f736d6f732c00008076000080030000800000000000000000
-              <= 02ecca2a8c647b50bcea2cb4667bb8b2c5f5b2b8439d51c842bc9fd20c4185a95c636f736d6f73313474673476736430713734356678687a6e333239706b78306b727174737a6378797a6c356b759000
-              => 550400001b06636f736d6f732c00008076000080040000800000000000000000
-              <= 03f9f9ddeefd1b762648af6b3ba3e14b0054d7137cf5ed67f501f01524a773c8d0636f736d6f733138713661643239346477357766376e7565713763746c656568786839666774386463656372399000
-          `,
+      => 550400001b06636f736d6f732c00008076000080000000800000000000000000
+      <= 0388459b2653519948b12492f1a0b464720110c147a8155d23d423a5cc3c21d89a636f736d6f73316738343933346a70753376356465357971756b6b6b68786d63767377337532616a787670646c9000
+      => 550400001b06636f736d6f732c00008076000080000000800000000000000000
+      <= 0388459b2653519948b12492f1a0b464720110c147a8155d23d423a5cc3c21d89a636f736d6f73316738343933346a70753376356465357971756b6b6b68786d63767377337532616a787670646c9000
+      => 550400001b06636f736d6f732c00008076000080010000800000000000000000
+      <= 02624ac83690d5ef627927104767d679aef73d3d3c9544abe4206b1d0c463c94ff636f736d6f7331303875793571396a743539677775677135797264686b7a6364396a7279736c6d706373746b359000
+      => 550400001b06636f736d6f732c00008076000080020000800000000000000000
+      <= 038ff98278402aa3e46ccfd020561dc9724ab63d7179ca507c8154b5257c7d5200636f736d6f733163676336393661793270673664346763656a656b3279386c6136366a376535793363376b79779000
+      => 550400001b06636f736d6f732c00008076000080030000800000000000000000
+      <= 02ecca2a8c647b50bcea2cb4667bb8b2c5f5b2b8439d51c842bc9fd20c4185a95c636f736d6f73313474673476736430713734356678687a6e333239706b78306b727174737a6378797a6c356b759000
+      => 550400001b06636f736d6f732c00008076000080040000800000000000000000
+      <= 03f9f9ddeefd1b762648af6b3ba3e14b0054d7137cf5ed67f501f01524a773c8d0636f736d6f733138713661643239346477357766376e7565713763746c656568786839666774386463656372399000
+      => 550400001b06636f736d6f732c00008076000080050000800000000000000000
+      <= 03b036c68d156c82e550bf5c0b015313221d618cf4022b96d23f1b559b557ed3ef636f736d6f7331756833396a7830647661387570767171716836393072687432766e36387a7439776d6d6871349000
+      `,
     },
   ],
   accounts: [
@@ -44,8 +39,7 @@ const dataset: CurrenciesData<Transaction> = {
       FIXME_tests: ["balance is sum of ops"],
       raw: {
         id: "libcore:1:cosmos:cosmospub1addwnpepqwyytxex2dgejj93yjf0rg95v3eqzyxpg75p2hfr6s36tnpuy8vf5p6kez4:",
-        seedIdentifier:
-          "0388459b2653519948b12492f1a0b464720110c147a8155d23d423a5cc3c21d89a",
+        seedIdentifier: "0388459b2653519948b12492f1a0b464720110c147a8155d23d423a5cc3c21d89a",
         xpub: "cosmospub1addwnpepqwyytxex2dgejj93yjf0rg95v3eqzyxpg75p2hfr6s36tnpuy8vf5p6kez4",
         derivationMode: "",
         index: 0,
@@ -71,7 +65,7 @@ const dataset: CurrenciesData<Transaction> = {
       transactions: [
         {
           name: "Same as Recipient",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             amount: new BigNumber(100),
             recipient: "cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl",
@@ -85,7 +79,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "Invalid Address",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             amount: new BigNumber(100),
             recipient: "dsadasdasdasdas",
@@ -112,14 +106,11 @@ const dataset: CurrenciesData<Transaction> = {
             memo: null,
             mode: "send",
           }),
-          expectedStatus: (account) => {
+          expectedStatus: account => {
             const { cosmosResources } = account as CosmosAccount;
-            if (!cosmosResources)
-              throw new Error("Should exist because it's cosmos");
+            if (!cosmosResources) throw new Error("Should exist because it's cosmos");
             const totalSpent = account.balance.minus(
-              cosmosResources.unbondingBalance.plus(
-                cosmosResources.delegatedBalance
-              )
+              cosmosResources.unbondingBalance.plus(cosmosResources.delegatedBalance),
             );
             return {
               errors: {},
@@ -145,13 +136,10 @@ const dataset: CurrenciesData<Transaction> = {
           }),
           expectedStatus: (account, t) => {
             const { cosmosResources } = account as CosmosAccount;
-            if (!cosmosResources)
-              throw new Error("Should exist because it's cosmos");
+            if (!cosmosResources) throw new Error("Should exist because it's cosmos");
             invariant(t.memo === "test", "Should have a memo");
             const totalSpent = account.balance.minus(
-              cosmosResources.unbondingBalance.plus(
-                cosmosResources.delegatedBalance
-              )
+              cosmosResources.unbondingBalance.plus(cosmosResources.delegatedBalance),
             );
             return {
               errors: {},
@@ -162,7 +150,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "Not Enough balance",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             amount: new BigNumber("99999999999999999"),
             recipient: "cosmos108uy5q9jt59gwugq5yrdhkzcd9jryslmpcstk5",
@@ -176,7 +164,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "Redelegation - success",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             amount: new BigNumber(100),
             validators: [
@@ -185,8 +173,7 @@ const dataset: CurrenciesData<Transaction> = {
                 amount: new BigNumber(100),
               },
             ],
-            sourceValidator:
-              "cosmosvaloper1sd4tl9aljmmezzudugs7zlaya7pg2895ws8tfs",
+            sourceValidator: "cosmosvaloper1sd4tl9aljmmezzudugs7zlaya7pg2895ws8tfs",
             mode: "redelegate",
           }),
           expectedStatus: (a, t) => {
@@ -199,7 +186,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "redelegation - AmountRequired",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             mode: "redelegate",
             validators: [
@@ -208,8 +195,7 @@ const dataset: CurrenciesData<Transaction> = {
                 amount: new BigNumber(0),
               },
             ],
-            sourceValidator:
-              "cosmosvaloper1sd4tl9aljmmezzudugs7zlaya7pg2895ws8tfs",
+            sourceValidator: "cosmosvaloper1sd4tl9aljmmezzudugs7zlaya7pg2895ws8tfs",
           }),
           expectedStatus: {
             errors: {
@@ -220,7 +206,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "redelegation - Source is Destination",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             mode: "redelegate",
             validators: [
@@ -229,8 +215,7 @@ const dataset: CurrenciesData<Transaction> = {
                 amount: new BigNumber(100),
               },
             ],
-            sourceValidator:
-              "cosmosvaloper1sd4tl9aljmmezzudugs7zlaya7pg2895ws8tfs",
+            sourceValidator: "cosmosvaloper1sd4tl9aljmmezzudugs7zlaya7pg2895ws8tfs",
           }),
           expectedStatus: {
             errors: {
@@ -241,7 +226,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "Unbonding - success",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             mode: "undelegate",
             validators: [
@@ -261,7 +246,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "Unbonding - AmountRequired",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             mode: "undelegate",
             validators: [
@@ -280,7 +265,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "Delegate - success",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             mode: "delegate",
             validators: [
@@ -300,7 +285,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "Delegate - not a valid",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             mode: "delegate",
             validators: [
@@ -319,7 +304,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "ClaimReward - success",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             validators: [
               {
@@ -339,7 +324,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "ClaimReward - not a cosmosvaloper",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             validators: [
               {
@@ -358,7 +343,7 @@ const dataset: CurrenciesData<Transaction> = {
         },
         {
           name: "claimRewardCompound - success",
-          transaction: (t) => ({
+          transaction: t => ({
             ...t,
             validators: [
               {

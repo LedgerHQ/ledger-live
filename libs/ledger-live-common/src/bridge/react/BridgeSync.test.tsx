@@ -8,13 +8,14 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { genAccount } from "../../mock/account";
 import { BridgeSync } from "./BridgeSync";
 import { setSupportedCurrencies } from "../../currencies";
+import { getAccountBridge } from "..";
 
 jest.setTimeout(30000);
 
 const defaultsBridgeSyncOpts = {
   accounts: [],
   updateAccountWithUpdater: () => {},
-  recoverError: (e) => e,
+  recoverError: e => e,
   trackAnalytics: () => {},
   prepareCurrency: () => Promise.resolve(),
   hydrateCurrency: () => Promise.resolve(),
@@ -30,32 +31,42 @@ describe("BridgeSync", () => {
   });
 
   test("executes a sync at start tracked as reason=initial", async () => {
-    await new Promise((resolve) => {
+    await new Promise(resolve => {
       const BTC = getCryptoCurrencyById("bitcoin");
-      const accounts = [genAccount("btc1", { currency: BTC })];
+      const account = genAccount("btc1", { currency: BTC });
+      const futureOpLength = account.operations.length;
+      // we remove the first operation to feed it back as a broadcasted one, the mock impl will make it go back to operations
+      const lastOp = account.operations.splice(0, 1)[0];
+      getAccountBridge(account).broadcast({
+        account,
+        signedOperation: {
+          operation: lastOp,
+          signature: "",
+        },
+      });
+      const accounts = [account];
+      expect(accounts[0].operations.length).toBe(futureOpLength - 1);
+
       function track(type, opts) {
         if (type === "SyncSuccess") {
           expect(opts).toMatchObject({
             reason: "initial",
             currencyName: "Bitcoin",
+            operationsLength: futureOpLength,
           });
           resolve(null);
         }
       }
       render(
-        <BridgeSync
-          {...defaultsBridgeSyncOpts}
-          accounts={accounts}
-          trackAnalytics={track}
-        >
+        <BridgeSync {...defaultsBridgeSyncOpts} accounts={accounts} trackAnalytics={track}>
           {null}
-        </BridgeSync>
+        </BridgeSync>,
       );
     });
   });
 
   test("sync all accounts in parallel at start tracked as reason=initial", async () => {
-    await new Promise((resolve) => {
+    await new Promise(resolve => {
       const BTC = getCryptoCurrencyById("bitcoin");
       const ETH = getCryptoCurrencyById("ethereum");
       const accounts = [
@@ -72,7 +83,7 @@ describe("BridgeSync", () => {
             setTimeout(
               reject,
               5000,
-              new Error("prepareCurrency doesn't seem to be called in parallel")
+              new Error("prepareCurrency doesn't seem to be called in parallel"),
             );
           });
         }
@@ -101,7 +112,7 @@ describe("BridgeSync", () => {
           trackAnalytics={track}
         >
           {null}
-        </BridgeSync>
+        </BridgeSync>,
       );
     });
   });

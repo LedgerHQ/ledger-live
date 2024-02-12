@@ -2,14 +2,14 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { Flex, ProgressLoader, Icons } from "@ledgerhq/react-ui";
+import { Flex, ProgressLoader, IconsLegacy } from "@ledgerhq/react-ui";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { FirmwareUpdateContext, DeviceInfo } from "@ledgerhq/types-live";
 import { hasFinalFirmware } from "@ledgerhq/live-common/hw/hasFinalFirmware";
 import staxFetchImage, { FetchImageEvent } from "@ledgerhq/live-common/hw/staxFetchImage";
 import firmwareUpdatePrepare from "@ledgerhq/live-common/hw/firmwareUpdate-prepare";
-import { getEnv } from "@ledgerhq/live-common/env";
-
+import { getEnv } from "@ledgerhq/live-env";
+import { UnexpectedBootloader } from "@ledgerhq/errors";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Track from "~/renderer/analytics/Track";
@@ -22,9 +22,10 @@ import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animation
 import { AnimationWrapper, Title } from "~/renderer/components/DeviceAction/rendering";
 import useTheme from "~/renderer/hooks/useTheme";
 import { EMPTY, concat } from "rxjs";
-import { map, tap } from "rxjs/operators";
+import { catchError, map, tap } from "rxjs/operators";
 import { DeviceBlocker } from "~/renderer/components/DeviceAction/DeviceBlocker";
-import { StepProps } from "..";
+import { StepProps } from "../types";
+import manager from "@ledgerhq/live-common/manager/index";
 
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
@@ -34,7 +35,7 @@ const Container = styled(Box).attrs(() => ({
 }))``;
 
 const HighlightVersion = styled(Text).attrs(() => ({
-  backgroundColor: "neutral.c30",
+  backgroundColor: "neutral.c40",
   color: "palette.text.shade100",
   ff: "Inter|SemiBold",
   variant: "subtitle",
@@ -42,7 +43,10 @@ const HighlightVersion = styled(Text).attrs(() => ({
   py: 1,
   mx: 3,
 }))`
+  display: inline-block;
+  word-break: break-word;
   border-radius: 4px;
+  text-align: center;
 `;
 
 const Body = ({
@@ -69,27 +73,6 @@ const Body = ({
   const from = deviceInfo.version;
   const to = firmware?.final.name;
   const normalProgress = (progress || 0) * 100;
-  const maybeHash = firmware?.osu?.hash;
-
-  if (!displayedOnDevice) {
-    return (
-      <Box my={5} alignItems="center">
-        <Flex alignItems="center" justifyContent="center" borderRadius={9999} size={60} mb={5}>
-          <ProgressLoader
-            stroke={8}
-            infinite={!normalProgress}
-            progress={normalProgress}
-            showPercentage={false}
-          />
-        </Flex>
-        <Title>
-          {step !== "transfer"
-            ? t("manager.modal.steps.preparingUpdate")
-            : t("manager.modal.steps.transferringUpdate", { productName: deviceModel.productName })}
-        </Title>
-      </Box>
-    );
-  }
 
   if (displayedOnDevice) {
     return (
@@ -108,26 +91,48 @@ const Body = ({
           </Box>
         ) : (
           <Box mb={8}>
-            <Animation animation={getDeviceAnimation(deviceModelId, type, "verify")} />
+            <Animation animation={getDeviceAnimation(deviceModelId, type, "allowManager")} />
           </Box>
         )}
-
-        <Flex flexDirection="row" alignItems="center" my={2}>
-          {hasHash ? (
-            <HighlightVersion>{maybeHash}</HighlightVersion>
-          ) : (
+        {hasHash ? (
+          <HighlightVersion>
+            {firmware.osu &&
+              manager
+                .formatHashName(firmware.osu.hash, deviceModelId, deviceInfo)
+                .map((hash, i) => <span key={`${i}-${hash}`}>{hash}</span>)}
+          </HighlightVersion>
+        ) : (
+          <Flex flexDirection="row" alignItems="center" mb={4}>
             <>
               <HighlightVersion>{`V ${from}`}</HighlightVersion>
-              <Icons.ArrowRightMedium size={14} />
+              <IconsLegacy.ArrowRightMedium size={14} />
               <HighlightVersion>{`V ${to}`}</HighlightVersion>
             </>
-          )}
-        </Flex>
+          </Flex>
+        )}
 
-        <Text ff="Inter|Regular" textAlign="center" color="palette.text.shade100">
-          {t("manager.modal.confirmIdentifierText", { productName: deviceModel.productName })}
-        </Text>
+        <Title>{t("manager.modal.confirmIdentifierText")}</Title>
       </>
+    );
+  } else {
+    const isStepTransfer = step !== "transfer";
+
+    return (
+      <Box my={5} alignItems="center">
+        <Flex alignItems="center" justifyContent="center" borderRadius={9999} size={60} mb={5}>
+          <ProgressLoader
+            stroke={8}
+            infinite={isStepTransfer || !normalProgress}
+            progress={normalProgress}
+            showPercentage={!isStepTransfer && !!normalProgress}
+          />
+        </Flex>
+        <Title>
+          {isStepTransfer
+            ? t("manager.modal.steps.preparingUpdate")
+            : t("manager.modal.steps.transferringUpdate", { productName: deviceModel.productName })}
+        </Title>
+      </Box>
     );
   }
 
@@ -182,13 +187,21 @@ const StepPrepare = ({
     // but only for stax.
     const deviceId = device ? device.deviceId : "";
     const maybeCLSBackup =
-      deviceModelId === DeviceModelId.stax
+      deviceInfo.onboarded && deviceModelId === DeviceModelId.stax
         ? staxFetchImage({ deviceId, request: { allowedEmpty: true } })
         : EMPTY;
 
     // Allow for multiple preparation flows in this paradigm.
     const task = concat(
       maybeCLSBackup.pipe(
+        catchError(e => {
+          if (e instanceof UnexpectedBootloader) {
+            // CLS checks fail when in recovery mode, preventing an update of an
+            // unseeded device. This bypasses that check.
+            return EMPTY;
+          }
+          throw e;
+        }),
         tap((e: FetchImageEvent) => {
           // bubble up this image to the main component and keep it in memory
           if (e.type === "imageFetched") {

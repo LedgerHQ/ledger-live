@@ -7,7 +7,7 @@ import type { App, ApplicationVersion } from "@ledgerhq/types-live";
 export default function uninstallApp(
   transport: Transport,
   targetId: string | number,
-  app: ApplicationVersion | App
+  app: ApplicationVersion | App,
 ): Observable<any> {
   return ManagerAPI.install(
     transport,
@@ -20,22 +20,23 @@ export default function uninstallApp(
       firmwareKey: app.delete_key,
       hash: app.hash,
     },
-    true
+    true,
   ).pipe(
     ignoreElements(),
     catchError((e: Error) => {
-      if (!e || !e.message) return throwError(e);
+      if (!e || !e.message) return throwError(() => e);
       const status = e.message.slice(e.message.length - 4);
 
       if (status === "6a83") {
         return throwError(
-          new ManagerAppDepUninstallRequired("", {
-            appName: app.name,
-          })
+          () =>
+            new ManagerAppDepUninstallRequired("", {
+              appName: app.name,
+            }),
         );
       }
 
-      return throwError(e);
-    })
+      return throwError(() => e);
+    }),
   );
 }

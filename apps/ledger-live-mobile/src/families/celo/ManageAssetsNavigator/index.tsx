@@ -11,20 +11,14 @@ import {
   hasRevokableVotes,
 } from "@ledgerhq/live-common/families/celo/logic";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { accountScreenSelector } from "../../../reducers/accounts";
-import { ScreenName, NavigatorName } from "../../../const";
-import Button from "../../../components/Button";
-import {
-  RootComposite,
-  StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
-import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
+import { accountScreenSelector } from "~/reducers/accounts";
+import { ScreenName, NavigatorName } from "~/const";
+import Button from "~/components/Button";
+import { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 
 type NavigationProps = RootComposite<
-  StackNavigatorProps<
-    BaseNavigatorStackParamList,
-    NavigatorName.CeloManageAssetsNavigator
-  >
+  StackNavigatorProps<BaseNavigatorStackParamList, NavigatorName.CeloManageAssetsNavigator>
 >;
 
 function ManageAssetsNavigator() {
@@ -49,13 +43,10 @@ function ManageAssetsNavigator() {
       params?: { [key: string]: unknown };
     }) => {
       // This is complicated (even impossible?) to type properly…
-      (navigation as StackNavigationProp<{ [key: string]: object }>).navigate(
-        route,
-        {
-          screen,
-          params: { ...params, accountId: account?.id },
-        },
-      );
+      (navigation as StackNavigationProp<{ [key: string]: object }>).navigate(route, {
+        screen,
+        params: { ...params, accountId: account?.id },
+      });
     },
     [navigation, account?.id],
   );
@@ -106,10 +97,7 @@ function ManageAssetsNavigator() {
   const onVote = useCallback(() => {
     onNavigate({
       route: NavigatorName.CeloVoteFlow,
-      screen:
-        votes?.length === 0
-          ? ScreenName.CeloVoteStarted
-          : ScreenName.CeloVoteSummary,
+      screen: votes?.length === 0 ? ScreenName.CeloVoteStarted : ScreenName.CeloVoteSummary,
       params: {},
     });
   }, [onNavigate, votes?.length]);
@@ -122,20 +110,15 @@ function ManageAssetsNavigator() {
     });
   }, [onNavigate]);
 
-  const isRegistered = (account as CeloAccount).celoResources
-    ?.registrationStatus;
+  const isRegistered = (account as CeloAccount).celoResources?.registrationStatus;
   const unlockingEnabled = celoResources.nonvotingLockedBalance?.gt(0);
   const votingEnabled = celoResources.nonvotingLockedBalance?.gt(0);
   const activatingEnabled = hasActivatableVotes(account as CeloAccount);
   const revokingEnabled = hasRevokableVotes(account as CeloAccount);
-  const withdrawEnabled = availablePendingWithdrawals(
-    account as CeloAccount,
-  ).length;
+  const withdrawEnabled = availablePendingWithdrawals(account as CeloAccount).length;
 
   return (
-    <SafeAreaView
-      style={{ flex: 1, justifyContent: "space-between", alignItems: "center" }}
-    >
+    <SafeAreaView style={{ flex: 1, justifyContent: "space-between", alignItems: "center" }}>
       <View>
         {!isRegistered ? (
           <Button

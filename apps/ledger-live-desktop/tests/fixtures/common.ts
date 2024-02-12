@@ -1,12 +1,23 @@
-import { _electron as electron } from "playwright";
-import { test as base, Page, ElectronApplication } from "@playwright/test";
+import {
+  test as base,
+  Page,
+  ElectronApplication,
+  _electron as electron,
+  ChromiumBrowserContext,
+} from "@playwright/test";
 import * as fs from "fs";
+import fsPromises from "fs/promises";
 import * as path from "path";
 import * as crypto from "crypto";
-import { Feature, FeatureId } from "@ledgerhq/types-live";
+import { OptionalFeatureMap } from "@ledgerhq/types-live";
+import { responseLogfilePath } from "../utils/networkResponseLogger";
 
 export function generateUUID(): string {
   return crypto.randomBytes(16).toString("hex");
+}
+
+function appendFileErrorHandler(e: Error | null) {
+  if (e) console.error("couldn't append file", e);
 }
 
 type TestFixtures = {
@@ -15,20 +26,24 @@ type TestFixtures = {
   userdata: string;
   userdataDestinationPath: string;
   userdataOriginalFile: string;
-  userdataFile: any;
-  env: Record<string, any>;
+  userdataFile: string;
+  env: Record<string, string>;
+  electronApp: ElectronApplication;
   page: Page;
-  featureFlags: { [key in FeatureId]?: Feature };
+  featureFlags: OptionalFeatureMap;
+  recordTestNamesForApiResponseLogging: void;
+  simulateCamera: string;
 };
 
 const IS_DEBUG_MODE = !!process.env.PWDEBUG;
 
-const test = base.extend<TestFixtures>({
+export const test = base.extend<TestFixtures>({
   env: undefined,
   lang: "en-US",
   theme: "dark",
   userdata: undefined,
   featureFlags: undefined,
+  simulateCamera: undefined,
   userdataDestinationPath: async ({}, use) => {
     use(path.join(__dirname, "../artifacts/userdata", generateUUID()));
   },
@@ -39,7 +54,7 @@ const test = base.extend<TestFixtures>({
     const fullFilePath = path.join(userdataDestinationPath, "app.json");
     use(fullFilePath);
   },
-  page: async (
+  electronApp: async (
     {
       lang,
       theme,
@@ -48,20 +63,22 @@ const test = base.extend<TestFixtures>({
       userdataOriginalFile,
       env,
       featureFlags,
-    }: TestFixtures,
-    use: (page: Page) => void,
+      simulateCamera,
+    },
+    use,
   ) => {
     // create userdata path
-    fs.mkdirSync(userdataDestinationPath, { recursive: true });
+    await fsPromises.mkdir(userdataDestinationPath, { recursive: true });
 
     if (userdata) {
-      fs.copyFileSync(userdataOriginalFile, `${userdataDestinationPath}/app.json`);
+      await fsPromises.copyFile(userdataOriginalFile, `${userdataDestinationPath}/app.json`);
     }
 
     // default environment variables
     env = Object.assign(
       {
         ...process.env,
+        VERBOSE: true,
         MOCK: true,
         MOCK_COUNTERVALUES: true,
         HIDE_DEBUG_MOCK: true,
@@ -70,7 +87,6 @@ const test = base.extend<TestFixtures>({
         CRASH_ON_INTERNAL_CRASH: true,
         LEDGER_MIN_HEIGHT: 768,
         FEATURE_FLAGS: JSON.stringify(featureFlags),
-        DESKTOP_LOGS_FILE: path.join(__dirname, "../artifacts/logs"),
       },
       env,
     );
@@ -88,6 +104,12 @@ const test = base.extend<TestFixtures>({
         // "--use-gl=swiftshader"
         "--no-sandbox",
         "--enable-logging",
+        ...(simulateCamera
+          ? [
+              "--use-fake-device-for-media-stream",
+              `--use-file-for-fake-video-capture=${simulateCamera}`,
+            ]
+          : []),
       ],
       recordVideo: {
         dir: `${path.join(__dirname, "../artifacts/videos/")}`,
@@ -100,13 +122,59 @@ const test = base.extend<TestFixtures>({
       timeout: 120000,
     });
 
+    await use(electronApp);
+
+    // close app
+    await electronApp.close();
+  },
+  page: async ({ electronApp }, use, testInfo) => {
     // app is ready
     const page = await electronApp.firstWindow();
+    // we need to give enough time for the playwright app to start. when the CI is slow, 30s was apprently not enough.
+    page.setDefaultTimeout(99000);
 
-    if (IS_DEBUG_MODE) {
-      // Direct Electron console to Node terminal.
-      page.on("console", console.log);
+    if (process.env.PLAYWRIGHT_CPU_THROTTLING_RATE) {
+      const client = await (page.context() as ChromiumBrowserContext).newCDPSession(page);
+      await client.send("Emulation.setCPUThrottlingRate", {
+        rate: parseInt(process.env.PLAYWRIGHT_CPU_THROTTLING_RATE),
+      });
     }
+
+    // record all logs into an artifact
+    const logFile = testInfo.outputPath("logs.log");
+    page.on("console", msg => {
+      const txt = msg.text();
+      if (msg.type() == "error") {
+        console.error(txt);
+      }
+      if (IS_DEBUG_MODE) {
+        // Direct Electron console to Node terminal.
+        console.log(txt);
+      }
+      fs.appendFile(logFile, `${txt}\n`, appendFileErrorHandler);
+    });
+
+    // start recording all network responses in artifacts/networkResponse.log
+    page.on("response", async data => {
+      const now = Date.now();
+      const timestamp = new Date(now).toISOString();
+
+      const headers = await data.allHeaders();
+
+      if (headers.teststatus && headers.teststatus === "mocked") {
+        fs.appendFile(
+          responseLogfilePath,
+          `[${timestamp}] MOCKED RESPONSE: ${data.request().url()}\n`,
+          appendFileErrorHandler,
+        );
+      } else {
+        fs.appendFile(
+          responseLogfilePath,
+          `[${timestamp}] REAL RESPONSE: ${data.request().url()}\n`,
+          appendFileErrorHandler,
+        );
+      }
+    });
 
     // app is loaded
     await page.waitForLoadState("domcontentloaded");
@@ -115,9 +183,24 @@ const test = base.extend<TestFixtures>({
     // use page in the test
     await use(page);
 
-    // close app
-    await electronApp.close();
+    console.log(`Video for test recorded at: ${await page.video()?.path()}\n`);
   },
+
+  // below is used for the logging file at `artifacts/networkResponses.log`
+  recordTestNamesForApiResponseLogging: [
+    async ({}, use, testInfo) => {
+      fs.appendFile(
+        responseLogfilePath,
+        `Network call responses for test: '${testInfo.title}':\n`,
+        appendFileErrorHandler,
+      );
+
+      await use();
+
+      fs.appendFile(responseLogfilePath, `\n`, appendFileErrorHandler);
+    },
+    { auto: true },
+  ],
 });
 
 export default test;

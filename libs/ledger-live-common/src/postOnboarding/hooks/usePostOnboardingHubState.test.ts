@@ -8,16 +8,17 @@ import { PostOnboardingActionId } from "@ledgerhq/types-live";
 import { usePostOnboardingHubState } from "./usePostOnboardingHubState";
 
 jest.mock("react-redux", () => ({
-  useSelector: (val) => val(),
+  useSelector: val => val(),
 }));
 jest.mock("../../featureFlags");
 jest.mock("./usePostOnboardingContext");
 jest.mock("../reducer");
 
 const mockedUseFeatureFlags = jest.mocked(useFeatureFlags);
-const mockedGetFeatureWithMockFeatureEnabled = (enabled) => ({
+
+const mockedGetFeatureWithMockFeatureEnabled = enabled => ({
   isFeature: () => true,
-  getFeature: (id) => {
+  getFeature: id => {
     if (id === mockedFeatureIdToTest) return { enabled };
     return { enabled: true };
   },
@@ -35,6 +36,7 @@ const defaultHubState = {
   actionsToComplete: [],
   actionsCompleted: {},
   lastActionCompleted: null,
+  postOnboardingInProgress: false,
 };
 
 const stateAllCompleted = {
@@ -50,6 +52,7 @@ const stateAllCompleted = {
     [PostOnboardingActionId.migrateAssetsMock]: true,
   },
   lastActionCompleted: PostOnboardingActionId.personalizeMock,
+  postOnboardingInProgress: true,
 };
 
 const stateAllNotCompleted = {
@@ -65,13 +68,12 @@ const stateAllNotCompleted = {
     [PostOnboardingActionId.migrateAssetsMock]: false,
   },
   lastActionCompleted: null,
+  postOnboardingInProgress: true,
 };
 
 describe("usePostOnboardingHubState", () => {
   beforeEach(() => {
-    mockedUseFeatureFlags.mockReturnValue(
-      mockedGetFeatureWithMockFeatureEnabled(true)
-    );
+    mockedUseFeatureFlags.mockReturnValue(mockedGetFeatureWithMockFeatureEnabled(true));
     mockedUsePostOnboardingContext.mockReturnValue({
       getPostOnboardingActionsForDevice: () => [],
       navigateToPostOnboardingHub: () => {},
@@ -94,6 +96,7 @@ describe("usePostOnboardingHubState", () => {
       deviceModelId: state.deviceModelId,
       lastActionCompleted: null,
       actionsState: [],
+      postOnboardingInProgress: true,
     });
   });
 
@@ -107,15 +110,14 @@ describe("usePostOnboardingHubState", () => {
       deviceModelId: state.deviceModelId,
       lastActionCompleted: null,
       actionsState: [],
+      postOnboardingInProgress: false,
     });
   });
 
   it("should not return actions that have a disabled feature flag ", () => {
     const state = stateAllCompleted;
     mockedHubStateSelector.mockReturnValue(state);
-    mockedUseFeatureFlags.mockReturnValue(
-      mockedGetFeatureWithMockFeatureEnabled(false)
-    );
+    mockedUseFeatureFlags.mockReturnValue(mockedGetFeatureWithMockFeatureEnabled(false));
 
     const {
       result: {
@@ -123,20 +125,16 @@ describe("usePostOnboardingHubState", () => {
       },
     } = renderHook(() => usePostOnboardingHubState());
 
-    expect(
-      actionsState.find(
-        (action) => action.featureFlagId === mockedFeatureIdToTest
-      )
-    ).toBe(undefined);
+    expect(actionsState.find(action => action.featureFlagId === mockedFeatureIdToTest)).toBe(
+      undefined,
+    );
     expect(lastActionCompleted).toBe(null);
   });
 
   it("should return actions that have a feature flag enabled", () => {
     const state = stateAllCompleted;
     mockedHubStateSelector.mockReturnValue(state);
-    mockedUseFeatureFlags.mockReturnValue(
-      mockedGetFeatureWithMockFeatureEnabled(true)
-    );
+    mockedUseFeatureFlags.mockReturnValue(mockedGetFeatureWithMockFeatureEnabled(true));
 
     const {
       result: {
@@ -145,9 +143,7 @@ describe("usePostOnboardingHubState", () => {
     } = renderHook(() => usePostOnboardingHubState());
 
     expect(
-      actionsState.find(
-        (action) => action.featureFlagId === mockedFeatureIdToTest
-      )
+      actionsState.find(action => action.featureFlagId === mockedFeatureIdToTest),
     ).toBeTruthy();
     expect(lastActionCompleted).toBeTruthy();
   });
@@ -155,9 +151,7 @@ describe("usePostOnboardingHubState", () => {
   it("should return actions in their correct state (all actions completed)", () => {
     const state = stateAllCompleted;
     mockedHubStateSelector.mockReturnValue(state);
-    mockedUseFeatureFlags.mockReturnValue(
-      mockedGetFeatureWithMockFeatureEnabled(true)
-    );
+    mockedUseFeatureFlags.mockReturnValue(mockedGetFeatureWithMockFeatureEnabled(true));
 
     const {
       result: {
@@ -165,15 +159,13 @@ describe("usePostOnboardingHubState", () => {
       },
     } = renderHook(() => usePostOnboardingHubState());
 
-    expect(actionsState.every((action) => action.completed)).toBe(true);
+    expect(actionsState.every(action => action.completed)).toBe(true);
   });
 
   it("should return actions in their correct state (no actions completed)", () => {
     const state = stateAllNotCompleted;
     mockedHubStateSelector.mockReturnValue(state);
-    mockedUseFeatureFlags.mockReturnValue(
-      mockedGetFeatureWithMockFeatureEnabled(true)
-    );
+    mockedUseFeatureFlags.mockReturnValue(mockedGetFeatureWithMockFeatureEnabled(true));
 
     const {
       result: {
@@ -181,6 +173,6 @@ describe("usePostOnboardingHubState", () => {
       },
     } = renderHook(() => usePostOnboardingHubState());
 
-    expect(actionsState.every((action) => action.completed)).toBe(false);
+    expect(actionsState.every(action => action.completed)).toBe(false);
   });
 });

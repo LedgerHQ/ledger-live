@@ -1,4 +1,4 @@
-import { DisconnectedDevice, LockedDeviceError } from "@ledgerhq/errors";
+import { DisconnectedDevice, UnresponsiveDeviceError } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import type { DeviceId, DeviceInfo, FirmwareInfo } from "@ledgerhq/types-live";
 
@@ -8,11 +8,7 @@ import isDevFirmware from "../../hw/isDevFirmware";
 import { PROVIDERS } from "../../manager/provider";
 import { Observable } from "rxjs";
 import { map, switchMap } from "rxjs/operators";
-import {
-  SharedTaskEvent,
-  retryOnErrorsCommandWrapper,
-  sharedLogicTaskWrapper,
-} from "./core";
+import { SharedTaskEvent, retryOnErrorsCommandWrapper, sharedLogicTaskWrapper } from "./core";
 import { quitApp } from "../commands/quitApp";
 import { withTransport } from "../transports/core";
 
@@ -34,24 +30,27 @@ export type GetDeviceInfoTaskEvent =
   | GetDeviceInfoTaskErrorEvent
   | SharedTaskEvent;
 
-function internalGetDeviceInfoTask({
+// Exported for tests
+export function internalGetDeviceInfoTask({
   deviceId,
 }: GetDeviceInfoTaskArgs): Observable<GetDeviceInfoTaskEvent> {
-  return new Observable((subscriber) => {
+  return new Observable(subscriber => {
     return (
       withTransport(deviceId)(({ transportRef }) =>
         quitApp(transportRef.current).pipe(
           switchMap(() => {
             return retryOnErrorsCommandWrapper({
               command: getVersion,
-              allowedErrors: [
-                { maxRetries: 3, errorClass: DisconnectedDevice },
-              ],
+              allowedErrors: [{ maxRetries: 3, errorClass: DisconnectedDevice }],
             })(transportRef, {});
           }),
-          map((value) => {
+          map(value => {
             if (value.type === "unresponsive") {
-              return { type: "error" as const, error: new LockedDeviceError() };
+              return {
+                type: "error" as const,
+                error: new UnresponsiveDeviceError(),
+                retrying: true,
+              };
             }
 
             const { firmwareInfo } = value;
@@ -59,8 +58,8 @@ function internalGetDeviceInfoTask({
             const deviceInfo = parseDeviceInfo(firmwareInfo);
 
             return { type: "data" as const, deviceInfo };
-          })
-        )
+          }),
+        ),
       )
         // Any error will be handled by the sharedLogicTaskWrapper, which will map it a relevant event
         .subscribe(subscriber)
@@ -107,7 +106,7 @@ export const parseDeviceInfo = (firmwareInfo: FirmwareInfo): DeviceInfo => {
       version +
       " mcu@" +
       mcuVersion +
-      (isOSU ? " (osu)" : isBootloader ? " (bootloader)" : "")
+      (isOSU ? " (osu)" : isBootloader ? " (bootloader)" : ""),
   );
 
   const hasDevFirmware = isDevFirmware(seVersion);
@@ -136,6 +135,10 @@ export const parseDeviceInfo = (firmwareInfo: FirmwareInfo): DeviceInfo => {
   return deviceInfo;
 };
 
-export const getDeviceInfoTask = sharedLogicTaskWrapper(
-  internalGetDeviceInfoTask
-);
+/**
+ * Task to get the `DeviceInfo` of a device
+ *
+ * @param `deviceId` A device id, or an empty string if device is usb plugged
+ * @returns An observable that emits `GetDeviceInfoTaskEvent` events
+ */
+export const getDeviceInfoTask = sharedLogicTaskWrapper(internalGetDeviceInfoTask);

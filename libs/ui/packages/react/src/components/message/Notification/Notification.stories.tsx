@@ -10,20 +10,15 @@ export default {
   argTypes: {
     title: {
       type: "string",
-      defaultValue: "Informational title",
     },
     description: {
       type: "string",
-      defaultValue:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc nibh felis, pom id...",
     },
     link: {
       type: "string",
-      defaultValue: "Learn more",
     },
     active: {
       type: "boolean",
-      defaultValue: false,
     },
     badge: {
       control: false,
@@ -31,6 +26,13 @@ export default {
     theme: { table: { disable: true } },
     as: { table: { disable: true } },
     forwardedAs: { table: { disable: true } },
+  },
+  args: {
+    title: "Informational title",
+    description:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc nibh felis, pom id...",
+    link: "Learn more",
+    active: false,
   },
 };
 

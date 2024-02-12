@@ -8,20 +8,9 @@ type Props = {
   color: string;
   style?: React.ComponentProps<typeof Svg>["style"];
 };
-export default function NanoX({
-  size,
-  width = 8,
-  height = 36,
-  color,
-  style,
-}: Props) {
+export default function NanoX({ size, width = 8, height = 36, color, style }: Props) {
   return (
-    <Svg
-      width={width || size}
-      height={height || size}
-      viewBox="0 0 8 36"
-      style={style}
-    >
+    <Svg width={width || size} height={height || size} viewBox="0 0 8 36" style={style}>
       <G stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
         <G fill={color}>
           <G>

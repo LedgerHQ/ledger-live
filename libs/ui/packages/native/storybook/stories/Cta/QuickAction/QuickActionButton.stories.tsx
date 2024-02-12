@@ -7,7 +7,7 @@ import {
   MinusMedium,
   ArrowTopMedium,
   DelegateMedium,
-} from "@ledgerhq/icons-ui/native";
+} from "@ledgerhq/icons-ui/nativeLegacy";
 import QuickActionButton from "../../../../src/components/cta/QuickAction/QuickActionButton";
 
 export default {
