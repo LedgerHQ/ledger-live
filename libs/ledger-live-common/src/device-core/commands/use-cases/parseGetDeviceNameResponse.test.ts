@@ -1,7 +1,7 @@
 import { parseGetDeviceNameResponse } from "./parseGetDeviceNameResponse";
 
 describe("getDeviceName", () => {
-  test("should return name if available", () => {
+  it("should return name if available", () => {
     const responseBuffer = Buffer.from("50756572746f9000", "hex");
 
     const result = parseGetDeviceNameResponse(responseBuffer);
@@ -25,7 +25,7 @@ describe("getDeviceName", () => {
     expect(result).toMatch("");
   });
 
-  test("unexpected bootloader or any other code, should throw", () => {
+  it("should throw for an unexpected bootloader or any other code", () => {
     const responseBuffer = Buffer.from("662d", "hex");
 
     expect(() => {
