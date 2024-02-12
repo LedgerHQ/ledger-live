@@ -12,16 +12,13 @@ import { Unit } from "@ledgerhq/types-cryptoassets";
 
 export function inferError(response: ExchangeRateErrors, unitFrom: Unit): Error {
   const isAMinMaxError =
-    "minAmountFrom" in response &&
-    "maxAmountFrom" in response &&
+    ("minAmountFrom" in response || "maxAmountFrom" in response) &&
     "amountRequested" in response &&
-    !!response.minAmountFrom &&
-    !!response.maxAmountFrom &&
+    (!!response.minAmountFrom || !!response.maxAmountFrom) &&
     !!response.amountRequested;
 
   const isADexMinMaxError =
-    !("minAmountFrom" in response) &&
-    !("maxAmountFrom" in response) &&
+    (!("minAmountFrom" in response) || !("maxAmountFrom" in response)) &&
     "errorCode" in response &&
     response.providerType === "DEX" &&
     response.errorCode !== 300;

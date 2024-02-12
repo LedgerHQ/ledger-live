@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { Flex, Text } from "@ledgerhq/react-ui";
 import { Logo } from "./Logo";
-import { PropsRaw } from "./types";
+import { PropsCard } from "./types";
 import { useCard } from "./hooks";
 import { Container, Subtitle } from "./Layout";
 import { useTranslation } from "react-i18next";
@@ -10,12 +10,13 @@ import { languageSelector } from "~/renderer/reducers/settings";
 import styled, { useTheme } from "styled-components";
 import { Cta } from "./Cta";
 import { translateContent } from "@ledgerhq/live-common/wallet-api/logic";
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
 export const Highlight = styled(Container).attrs({})`
   background: linear-gradient(${p => p.theme.colors.palette.background.default}, rgba(0, 0, 0, 0));
 `;
 
-export function FullCard(props: PropsRaw) {
+export function FullCard(props: PropsCard<LiveAppManifest>) {
   const language = useSelector(languageSelector);
   const { t } = useTranslation();
   const theme = useTheme();

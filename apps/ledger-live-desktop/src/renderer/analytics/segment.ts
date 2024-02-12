@@ -62,6 +62,7 @@ const getFeatureFlagProperties = () => {
     const analytics = getAnalytics();
     const ptxEarnFeatureFlag = analyticsFeatureFlagMethod("ptxEarn");
     const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
+    const stakingProviders = analyticsFeatureFlagMethod("ethStakingProviders");
 
     const isBatch1Enabled =
       !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
@@ -69,6 +70,8 @@ const getFeatureFlagProperties = () => {
       !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 2;
     const isBatch3Enabled =
       !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 3;
+    const stakingProvidersEnabled =
+      stakingProviders?.enabled && stakingProviders?.params?.listProvider.length;
 
     analytics.identify(
       id,
@@ -77,6 +80,7 @@ const getFeatureFlagProperties = () => {
         isBatch1Enabled,
         isBatch2Enabled,
         isBatch3Enabled,
+        stakingProvidersEnabled,
       },
       {
         context: getContext(),
@@ -95,6 +99,9 @@ const extraProperties = (store: ReduxStore) => {
   const device = lastSeenDeviceSelector(state);
   const devices = devicesModelListSelector(state);
   const accounts = accountsSelector(state);
+  const stakingProviders =
+    analyticsFeatureFlagMethod &&
+    analyticsFeatureFlagMethod("ethStakingProviders")?.params?.listProvider;
 
   const deviceInfo = device
     ? {
@@ -145,6 +152,7 @@ const extraProperties = (store: ReduxStore) => {
     hasGenesisPass,
     hasInfinityPass,
     modelIdList: devices,
+    stakingProvidersEnabled: stakingProviders?.length || "flag not loaded",
     ...deviceInfo,
   };
 };

@@ -5,7 +5,7 @@ import {
   FeatureMap,
   ABTestingVariants,
 } from "@ledgerhq/types-live";
-import { reduce } from "lodash";
+import reduce from "lodash/reduce";
 import { formatToFirebaseFeatureId } from "./firebaseFeatureFlags";
 
 /**
@@ -106,6 +106,7 @@ export const DEFAULT_FEATURES: Features = {
   protectServicesDiscoverDesktop: DEFAULT_FEATURE,
   llmWalletQuickActions: DEFAULT_FEATURE,
   listAppsV2minor1: DEFAULT_FEATURE,
+  llmMarketNewArch: DEFAULT_FEATURE,
   flexibleContentCards: DEFAULT_FEATURE,
   ethStakingProviders: initFeature(),
   referralProgramDiscoverCard: initFeature(),

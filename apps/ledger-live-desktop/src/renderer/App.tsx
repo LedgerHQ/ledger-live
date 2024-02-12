@@ -4,6 +4,7 @@ import { Store } from "redux";
 import { HashRouter as Router } from "react-router-dom";
 import { NftMetadataProvider } from "@ledgerhq/live-nft-react";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
+import { getFeature } from "@ledgerhq/live-common/featureFlags/index";
 import "./global.css";
 import "tippy.js/dist/tippy.css";
 import "tippy.js/animations/shift-away.css";
@@ -71,7 +72,7 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
         }}
       >
         <FirebaseRemoteConfigProvider>
-          <FirebaseFeatureFlagsProvider>
+          <FirebaseFeatureFlagsProvider getFeature={getFeature}>
             <ConnectEnvsToSentry />
             <UpdaterProvider>
               <CountervaluesProvider initialState={initialCountervalues}>

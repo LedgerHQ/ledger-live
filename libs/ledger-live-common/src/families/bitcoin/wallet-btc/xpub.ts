@@ -1,4 +1,6 @@
-import { maxBy, range, some } from "lodash";
+import maxBy from "lodash/maxBy";
+import range from "lodash/range";
+import some from "lodash/some";
 import BigNumber from "bignumber.js";
 import { TX, Address, IStorage } from "./storage/types";
 import { IExplorer } from "./explorer/types";

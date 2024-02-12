@@ -1,4 +1,4 @@
-import { flatten } from "lodash";
+import flatten from "lodash/flatten";
 import BigNumber from "bignumber.js";
 import Btc from "@ledgerhq/hw-app-btc";
 import { log } from "@ledgerhq/logs";

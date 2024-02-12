@@ -2,7 +2,7 @@ import Transport from "@ledgerhq/hw-transport";
 import { Observable, concat, of, from, EMPTY, defer } from "rxjs";
 import { ConnectAppEvent } from "../hw/connectApp";
 import getDeviceInfo from "../hw/getDeviceInfo";
-import { listApps, execWithTransport } from "./hw";
+import { listAppsUseCase, execWithTransport } from "../device/use-cases/listAppsUseCase";
 import { reducer, initState, isOutOfMemoryState, predictOptimisticState } from "./logic";
 import { runAllWithProgress } from "./runner";
 import { InlineAppInstallEvent } from "./types";
@@ -43,7 +43,7 @@ const inlineAppInstall = ({
     from(getDeviceInfo(transport)).pipe(
       mergeMap(deviceInfo => {
         tracer.trace("Got device info", { deviceInfo });
-        return listApps(transport, deviceInfo);
+        return listAppsUseCase(transport, deviceInfo);
       }),
       mergeMap(e => {
         // Bubble up events

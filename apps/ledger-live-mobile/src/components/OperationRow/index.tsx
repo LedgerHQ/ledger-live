@@ -19,7 +19,7 @@ import { Account, Operation, AccountLike } from "@ledgerhq/types-live";
 import { Box, Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { WarningMedium } from "@ledgerhq/native-ui/assets/icons";
 import debounce from "lodash/debounce";
-import { isEqual } from "lodash";
+import isEqual from "lodash/isEqual";
 import { useSelector } from "react-redux";
 import CurrencyUnitValue from "../CurrencyUnitValue";
 import CounterValue from "../CounterValue";

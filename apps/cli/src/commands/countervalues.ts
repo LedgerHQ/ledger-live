@@ -1,6 +1,3 @@
-import "lodash.product";
-// @ts-expect-error product is not inferred we need to extend lodash type
-import { product } from "lodash";
 import uniq from "lodash/uniq";
 import { BigNumber } from "bignumber.js";
 import asciichart from "asciichart";
@@ -162,7 +159,7 @@ export default {
         const currencies = await getCurrencies(opts);
         const countervalues = getCountervalues(opts);
         const format = histoFormatters[opts.format || "default"];
-        const startDate = getStartDate(opts);
+        const startDate = getStartDate(opts) || new Date();
         const dates = getDatesWithOpts(opts);
         const cvs = await loadCountervalues(initialState, {
           trackingPairs: resolveTrackingPairs(
@@ -257,4 +254,14 @@ function getDatesWithOpts(opts: Opts): Date[] {
   const range = asPortfolioRange(opts.period || "month");
   const count = getPortfolioCountByDate(startDate, range);
   return getDates(range, count);
+}
+
+function product<A, B>(arr1: A[], arr2: B[]): [A, B][] {
+  const result: [A, B][] = [];
+  arr1.forEach(item1 => {
+    arr2.forEach(item2 => {
+      result.push([item1, item2]);
+    });
+  });
+  return result;
 }

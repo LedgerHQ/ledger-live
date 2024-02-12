@@ -85,7 +85,7 @@ export default class DeviceAction {
   }
 
   async accessManager(
-    appDesc = "Bitcoin,Tron,Litecoin,Ethereum,Ripple,Stellar",
+    appDesc = "Bitcoin,Tron,Litecoin,Ethereum,XRP,Stellar",
     installedDesc = "Bitcoin,Litecoin,Ethereum (outdated)",
   ) {
     await this.waitForSpinner();

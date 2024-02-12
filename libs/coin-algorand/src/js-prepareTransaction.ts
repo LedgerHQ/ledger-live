@@ -1,4 +1,4 @@
-import { isEqual } from "lodash";
+import isEqual from "lodash/isEqual";
 import { BigNumber } from "bignumber.js";
 import { AlgorandAPI } from "./api";
 import { estimateMaxSpendable } from "./js-estimateMaxSpendable";
