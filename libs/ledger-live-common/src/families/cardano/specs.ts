@@ -25,7 +25,7 @@ const cardano: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoSP,
     appName: "CardanoADA",
-    appVersion: "6.0.3",
+    appVersion: "6.1.2",
   },
   minViableAmount: minBalanceRequired,
   genericDeviceAction: acceptTransaction,
