@@ -1,5 +1,13 @@
 # @ledgerhq/icons-ui
 
+## 1.0.2-next.0
+
+### Patch Changes
+
+- [#5987](https://github.com/LedgerHQ/ledger-live/pull/5987) [`97bafa2`](https://github.com/LedgerHQ/ledger-live/commit/97bafa2573436572fca63469b13214bfcd7eb85c) Thanks [@gre](https://github.com/gre)! - fix icon of PYUSD
+
+- [#6068](https://github.com/LedgerHQ/ledger-live/pull/6068) [`8096795`](https://github.com/LedgerHQ/ledger-live/commit/80967954758a5e1d2960ac593fc6314391737558) Thanks [@mle-gall](https://github.com/mle-gall)! - Fixed source SVG causing storybook build error
+
 ## 1.0.1
 
 ### Patch Changes
