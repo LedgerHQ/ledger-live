@@ -4,7 +4,10 @@ import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import { initState, ListAppsResult, reducer, runAll } from "@ledgerhq/live-common/apps/index";
 import ManagerAPI from "@ledgerhq/live-common/manager/api";
-import { listApps, execWithTransport } from "@ledgerhq/live-common/apps/hw";
+import {
+  listAppsUseCase,
+  execWithTransport,
+} from "@ledgerhq/live-common/device/use-cases/listAppsUseCase";
 import installApp from "@ledgerhq/live-common/hw/installApp";
 import { deviceOpt } from "../scan";
 import { Application } from "@ledgerhq/types-live";
@@ -64,7 +67,7 @@ export default {
       // $FlowFixMe
       return from(getDeviceInfo(t)).pipe(
         mergeMap(deviceInfo =>
-          listApps(t, deviceInfo).pipe(
+          listAppsUseCase(t, deviceInfo).pipe(
             filter<any>(e => e.type === "result"),
             map<{ type: "result"; result: ListAppsResult }, ListAppsResult>(e => e.result),
             mergeMap<ListAppsResult, Observable<Application[]>>(listAppsResult => {

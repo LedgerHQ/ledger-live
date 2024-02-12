@@ -9,7 +9,12 @@ import { TransactionRefusedOnDevice } from "../../errors";
 import perFamily from "../../generated/exchange";
 import { withDevice } from "../../hw/deviceAccess";
 import { delay } from "../../promise";
-import { ExchangeTypes, createExchange, getExchangeErrorMessage } from "@ledgerhq/hw-app-exchange";
+import {
+  ExchangeTypes,
+  createExchange,
+  getExchangeErrorMessage,
+  PayloadSignatureComputedFormat,
+} from "@ledgerhq/hw-app-exchange";
 import type { CompleteExchangeInputSwap, CompleteExchangeRequestEvent } from "../platform/types";
 import { getProviderConfig } from "./";
 
@@ -54,7 +59,7 @@ const completeExchange = (
 ): Observable<CompleteExchangeRequestEvent> => {
   let { transaction } = input; // TODO build a tx from the data
 
-  const { deviceId, exchange, provider, binaryPayload, signature, exchangeType, rateType } = input;
+  const { deviceId, exchange, provider, binaryPayload, signature, rateType, exchangeType } = input;
 
   const { fromAccount, fromParentAccount } = exchange;
   const { toAccount, toParentAccount } = exchange;
@@ -107,10 +112,15 @@ const completeExchange = (
         if (unsubscribed) return;
 
         currentStep = "PROCESS_TRANSACTION";
-        await exchange.processTransaction(Buffer.from(binaryPayload, "hex"), estimatedFees);
+
+        const { payload, format }: { payload: Buffer; format: PayloadSignatureComputedFormat } =
+          exchange.transactionType === ExchangeTypes.SwapNg
+            ? { payload: Buffer.from("." + binaryPayload), format: "jws" }
+            : { payload: Buffer.from(binaryPayload, "hex"), format: "raw" };
+        await exchange.processTransaction(payload, estimatedFees, format);
         if (unsubscribed) return;
 
-        const goodSign = convertSignature(signature, exchangeType);
+        const goodSign = convertSignature(signature, exchange.transactionType);
         currentStep = "CHECK_TRANSACTION_SIGNATURE";
 
         await exchange.checkTransactionSignature(goodSign);
