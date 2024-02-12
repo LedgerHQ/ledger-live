@@ -17,7 +17,7 @@ export type ExchangeStartSwapParams = ExchangeStartParams & {
   provider: string;
   fromAccountId: string;
   toAccountId: string;
-  tokenCurrency: string;
+  tokenCurrency?: string;
 };
 
 export type ExchangeStartResult = {
