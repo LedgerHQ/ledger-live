@@ -27,7 +27,6 @@ For a smooth and quick integration:
 
 #### Table of Contents
 
-*   [bippath](#bippath)
 *   [Btc](#btc)
     *   [Parameters](#parameters)
     *   [Examples](#examples)
@@ -116,15 +115,6 @@ For a smooth and quick integration:
 *   [TransactionInput](#transactioninput)
 *   [TransactionOutput](#transactionoutput)
 *   [Transaction](#transaction)
-
-### bippath
-
-BIP32 Path Handling for Bitcoin Wallets
-
-This file provides utility functions to handle BIP32 paths,
-which are commonly used in hierarchical deterministic (HD) wallets.
-It includes functions to convert BIP32 paths to and from different formats,
-extract components from extended public keys (xpubs), and manipulate path elements.
 
 ### Btc
 

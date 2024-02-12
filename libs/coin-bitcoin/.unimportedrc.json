@@ -36,7 +36,7 @@
     "src/descriptor.ts",
     "src/exchange.ts",
     "src/hw-signMessage.ts",
-    "src/mockBtc.ts"
+    "src/mockBtcSigner.ts"
   ],
   "ignoreUnimported": []
 }
