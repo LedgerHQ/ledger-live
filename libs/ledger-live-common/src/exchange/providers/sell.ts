@@ -1,4 +1,4 @@
-import { ExchangeProviderNameAndSignature } from "../";
+import { ExchangeProviderNameAndSignature } from ".";
 
 export const sellProviders: Record<string, ExchangeProviderNameAndSignature> = {
   coinify: {
@@ -17,7 +17,7 @@ export const sellProviders: Record<string, ExchangeProviderNameAndSignature> = {
   },
 };
 
-const getProvider = (providerName: string): ExchangeProviderNameAndSignature => {
+export const getSellProvider = (providerName: string): ExchangeProviderNameAndSignature => {
   const res = sellProviders[providerName.toLowerCase()];
 
   if (!res) {
@@ -26,5 +26,3 @@ const getProvider = (providerName: string): ExchangeProviderNameAndSignature => 
 
   return res;
 };
-
-export { getProvider };

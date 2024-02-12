@@ -7,7 +7,7 @@ import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import { Observable, firstValueFrom, from } from "rxjs";
 import secp256k1 from "secp256k1";
-import { convertToAppExchangePartnerKey, getCurrencyExchangeConfig } from "../";
+import { getCurrencyExchangeConfig } from "../";
 import { getAccountCurrency, getAccountUnit, getMainAccount } from "../../account";
 import { getAccountBridge } from "../../bridge";
 import { getEnv } from "@ledgerhq/live-env";
@@ -15,9 +15,11 @@ import { SwapGenericAPIError, TransactionRefusedOnDevice } from "../../errors";
 import perFamily from "../../generated/exchange";
 import { withDevice } from "../../hw/deviceAccess";
 import { delay } from "../../promise";
-import { getProviderConfig, getSwapAPIBaseURL } from "./";
+import { getSwapAPIBaseURL } from "./";
 import { mockInitSwap } from "./mock";
 import type { InitSwapInput, SwapRequestEvent } from "./types";
+import { getSwapProvider } from "../providers";
+import { convertToAppExchangePartnerKey } from "../providers";
 
 const withDevicePromise = (deviceId, fn) =>
   firstValueFrom(withDevice(deviceId)(transport => from(fn(transport))));
@@ -60,7 +62,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         // NB Added the try/catch because of the API stability issues.
         let res;
 
-        const swapProviderConfig = getProviderConfig(provider);
+        const swapProviderConfig = getSwapProvider(provider);
 
         const headers = {
           EquipmentId: getEnv("USER_ID"),

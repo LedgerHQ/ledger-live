@@ -3,20 +3,21 @@ import { firstValueFrom, from, Observable } from "rxjs";
 import { TransportStatusError, WrongDeviceForAccount } from "@ledgerhq/errors";
 
 import { delay } from "../../../promise";
-import ExchangeTransport, { ExchangeTypes } from "@ledgerhq/hw-app-exchange";
+import ExchangeTransport, { createExchange, ExchangeTypes } from "@ledgerhq/hw-app-exchange";
 import perFamily from "../../../generated/exchange";
 import { getAccountCurrency, getMainAccount } from "../../../account";
 import { getAccountBridge } from "../../../bridge";
 import { TransactionRefusedOnDevice } from "../../../errors";
 import { withDevice } from "../../../hw/deviceAccess";
-import { convertToAppExchangePartnerKey, getCurrencyExchangeConfig } from "../..";
-import { getProvider } from ".";
+import { getCurrencyExchangeConfig } from "../..";
+import { convertToAppExchangePartnerKey, getProviderConfig } from "../../providers";
 
 import type {
   CompleteExchangeInputFund,
   CompleteExchangeInputSell,
   CompleteExchangeRequestEvent,
 } from "../types";
+import { CompleteExchangeStep, convertTransportError } from "../../error";
 
 const withDevicePromise = (deviceId, fn) =>
   firstValueFrom(withDevice(deviceId)(transport => from(fn(transport))));
@@ -41,14 +42,15 @@ const completeExchange = (
   return new Observable(o => {
     let unsubscribed = false;
     let ignoreTransportError = false;
+    let currentStep: CompleteExchangeStep = "INIT";
 
     const confirmExchange = async () => {
       await withDevicePromise(deviceId, async transport => {
-        const providerNameAndSignature = getProvider(exchangeType, provider);
+        const providerNameAndSignature = getProviderConfig(exchangeType, provider);
 
         if (!providerNameAndSignature) throw new Error("Could not get provider infos");
 
-        const exchange = new ExchangeTransport(transport, exchangeType, rateType);
+        const exchange = createExchange(transport, exchangeType, rateType);
 
         const mainAccount = getMainAccount(fromAccount, fromParentAccount);
         const accountBridge = getAccountBridge(mainAccount);
@@ -70,18 +72,22 @@ const completeExchange = (
         const errorsKeys = Object.keys(errors);
         if (errorsKeys.length > 0) throw errors[errorsKeys[0]]; // throw the first error
 
+        currentStep = "SET_PARTNER_KEY";
         await exchange.setPartnerKey(convertToAppExchangePartnerKey(providerNameAndSignature));
         if (unsubscribed) return;
 
+        currentStep = "CHECK_PARTNER";
         await exchange.checkPartner(providerNameAndSignature.signature);
         if (unsubscribed) return;
 
+        currentStep = "PROCESS_TRANSACTION";
         await exchange.processTransaction(Buffer.from(binaryPayload, "hex"), estimatedFees);
         if (unsubscribed) return;
 
         const bufferSignature = Buffer.from(signature, "hex");
         const goodSign = convertSignature(bufferSignature, exchangeType);
 
+        currentStep = "CHECK_TRANSACTION_SIGNATURE";
         await exchange.checkTransactionSignature(goodSign);
         if (unsubscribed) return;
 
@@ -98,6 +104,7 @@ const completeExchange = (
             type: "complete-exchange-requested",
             estimatedFees: estimatedFees.toString(),
           });
+          currentStep = "CHECK_PAYOUT_ADDRESS";
           await exchange.checkPayoutAddress(
             payoutAddressConfig,
             payoutAddressConfigSignature,
@@ -110,11 +117,12 @@ const completeExchange = (
             });
           }
 
-          throw e;
+          throw convertTransportError(currentStep, e);
         }
 
         if (unsubscribed) return;
         ignoreTransportError = true;
+        currentStep = "SIGN_COIN_TRANSACTION";
         await exchange.signCoinTransaction();
       }).catch(e => {
         if (ignoreTransportError) return;
@@ -123,7 +131,7 @@ const completeExchange = (
           throw new TransactionRefusedOnDevice();
         }
 
-        throw e;
+        throw convertTransportError(currentStep, e);
       });
       await delay(3000);
       o.next({

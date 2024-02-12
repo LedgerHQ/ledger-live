@@ -1,8 +1,5 @@
-import { ExchangeProviderNameAndSignature } from "../..";
 import { getEnv } from "@ledgerhq/live-env";
-import { ExchangeTypes } from "@ledgerhq/hw-app-exchange";
-// FIXME: to be move in this file alongide 'fundProviders' once 'src/exchange/sell/' is deprecated
-import { sellProviders } from "../../sell";
+import { ExchangeProviderNameAndSignature } from ".";
 
 const testFundProvider: ExchangeProviderNameAndSignature = {
   name: "FUND_TEST",
@@ -64,26 +61,12 @@ const fundProviders: Record<string, ExchangeProviderNameAndSignature> = {
   },
 };
 
-const getProvider = (
-  exchangeType: ExchangeTypes,
-  providerName: string,
-): ExchangeProviderNameAndSignature => {
+export const getFundProvider = (providerName: string): ExchangeProviderNameAndSignature => {
   if (getEnv("MOCK_EXCHANGE_TEST_CONFIG")) {
     return testFundProvider;
   }
 
-  const res = (() => {
-    switch (exchangeType) {
-      case ExchangeTypes.Fund:
-        return fundProviders[providerName.toLowerCase()];
-
-      case ExchangeTypes.Sell:
-        return sellProviders[providerName.toLowerCase()];
-
-      default:
-        return null;
-    }
-  })();
+  const res = fundProviders[providerName.toLowerCase()];
 
   if (!res) {
     throw new Error(`Unknown partner ${providerName}`);
@@ -91,5 +74,3 @@ const getProvider = (
 
   return res;
 };
-
-export { getProvider };
