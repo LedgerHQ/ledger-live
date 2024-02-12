@@ -1,23 +1,25 @@
 import { BigNumber } from "bignumber.js";
-import { AlgorandAPI } from "./api";
+import algorandAPI from "./api";
 import type { AlgorandOperationMode } from "./types";
 
 export const ALGORAND_MAX_MEMO_SIZE = 32;
 export const ALGORAND_MIN_ACCOUNT_BALANCE = 100000;
 
-export const recipientHasAsset =
-  (algorandAPI: AlgorandAPI) =>
-  async (recipientAddress: string, assetId: string): Promise<boolean> => {
-    const recipientAccount = await algorandAPI.getAccount(recipientAddress);
-    return recipientAccount.assets.map(a => a.assetId).includes(assetId);
-  };
+export const recipientHasAsset = async (
+  recipientAddress: string,
+  assetId: string,
+): Promise<boolean> => {
+  const recipientAccount = await algorandAPI.getAccount(recipientAddress);
+  return recipientAccount.assets.map(a => a.assetId).includes(assetId);
+};
 
-export const isAmountValid =
-  (algorandAPI: AlgorandAPI) =>
-  async (recipientAddress: string, amount: BigNumber): Promise<boolean> => {
-    const recipientAccount = await algorandAPI.getAccount(recipientAddress);
-    return recipientAccount.balance.isZero() ? amount.gte(ALGORAND_MIN_ACCOUNT_BALANCE) : true;
-  };
+export const isAmountValid = async (
+  recipientAddress: string,
+  amount: BigNumber,
+): Promise<boolean> => {
+  const recipientAccount = await algorandAPI.getAccount(recipientAddress);
+  return recipientAccount.balance.isZero() ? amount.gte(ALGORAND_MIN_ACCOUNT_BALANCE) : true;
+};
 
 export const computeAlgoMaxSpendable = ({
   accountBalance,

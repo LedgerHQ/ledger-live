@@ -3,7 +3,7 @@ import {
   encodeAccountId,
   inferSubOperations,
 } from "@ledgerhq/coin-framework/account/index";
-import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import type { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import {
   findTokenById,
@@ -13,12 +13,11 @@ import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
 import { BigNumber } from "bignumber.js";
 
-import type {
-  AlgoAsset,
-  AlgoAssetTransferInfo,
-  AlgoPaymentInfo,
-  AlgoTransaction,
-  AlgorandAPI,
+import algorandAPI, {
+  type AlgoAsset,
+  type AlgoAssetTransferInfo,
+  type AlgoPaymentInfo,
+  type AlgoTransaction,
 } from "./api";
 
 import { AlgoTransactionType } from "./api";
@@ -225,67 +224,68 @@ const mapTransactionToASAOperation = (
   };
 };
 
-export function makeGetAccountShape(algorandAPI: AlgorandAPI): GetAccountShape {
-  return async (info, syncConfig): Promise<Partial<Account>> => {
-    const { address, initialAccount, currency, derivationMode } = info;
-    const oldOperations = initialAccount?.operations || [];
-    const startAt = oldOperations.length ? (oldOperations[0].blockHeight || 0) + 1 : 0;
-    const accountId = encodeAccountId({
-      type: "js",
-      version: "2",
-      currencyId: currency.id,
-      xpubOrAddress: address,
-      derivationMode,
-    });
+export async function getAccountShape(
+  info: AccountShapeInfo,
+  syncConfig: SyncConfig,
+): Promise<Partial<Account>> {
+  const { address, initialAccount, currency, derivationMode } = info;
+  const oldOperations = initialAccount?.operations || [];
+  const startAt = oldOperations.length ? (oldOperations[0].blockHeight || 0) + 1 : 0;
+  const accountId = encodeAccountId({
+    type: "js",
+    version: "2",
+    currencyId: currency.id,
+    xpubOrAddress: address,
+    derivationMode,
+  });
 
-    const { round, balance, pendingRewards, assets } = await algorandAPI.getAccount(address);
+  const { round, balance, pendingRewards, assets } = await algorandAPI.getAccount(address);
 
-    const nbAssets = assets.length;
+  const nbAssets = assets.length;
 
-    // NOTE Actual spendable amount depends on the transaction
-    const spendableBalance = computeAlgoMaxSpendable({
-      accountBalance: balance,
-      nbAccountAssets: nbAssets,
-      mode: "send",
-    });
+  // NOTE Actual spendable amount depends on the transaction
+  const spendableBalance = computeAlgoMaxSpendable({
+    accountBalance: balance,
+    nbAccountAssets: nbAssets,
+    mode: "send",
+  });
 
-    const newTransactions: AlgoTransaction[] = await algorandAPI.getAccountTransactions(
-      address,
-      startAt,
-    );
+  const newTransactions: AlgoTransaction[] = await algorandAPI.getAccountTransactions(
+    address,
+    startAt,
+  );
 
-    const subAccounts = await buildSubAccounts({
-      currency,
-      accountId,
-      initialAccount,
-      initialAccountAddress: address,
-      assets,
-      newTransactions,
-      syncConfig,
-    });
+  const subAccounts = await buildSubAccounts({
+    currency,
+    accountId,
+    initialAccount,
+    initialAccountAddress: address,
+    assets,
+    newTransactions,
+    syncConfig,
+  });
 
-    const newOperations = newTransactions.map(tx =>
-      mapTransactionToOperation(tx, accountId, address, subAccounts),
-    );
+  const newOperations = newTransactions.map(tx =>
+    mapTransactionToOperation(tx, accountId, address, subAccounts),
+  );
 
-    const operations = mergeOps(oldOperations, newOperations);
+  const operations = mergeOps(oldOperations, newOperations);
 
-    const shape = {
-      id: accountId,
-      xpub: address,
-      blockHeight: round,
-      balance,
-      spendableBalance,
-      operations,
-      operationsCount: operations.length,
-      subAccounts,
-      algorandResources: {
-        rewards: pendingRewards,
-        nbAssets,
-      },
-    };
-    return shape;
+  const shape = {
+    id: accountId,
+    xpub: address,
+    blockHeight: round,
+    balance,
+    spendableBalance,
+    operations,
+    operationsCount: operations.length,
+    subAccounts,
+    algorandResources: {
+      rewards: pendingRewards,
+      nbAssets,
+    },
   };
+  return shape;
 }
 
 async function buildSubAccount({
