@@ -4,6 +4,7 @@ import ActionCard from "~/renderer/components/ContentCards/ActionCard";
 import { portfolioContentCardSelector } from "~/renderer/reducers/dynamicContent";
 import * as braze from "@braze/web-sdk";
 import { setPortfolioCards } from "~/renderer/actions/dynamicContent";
+import { openURL } from "~/renderer/linking";
 
 const usePortfolioCards = () => {
   const dispatch = useDispatch();
@@ -27,11 +28,12 @@ const usePortfolioCards = () => {
     }
   };
 
-  const onClick = (cardId: string) => {
+  const onClick = (cardId: string, link?: string) => {
     const currentCard = findCard(cardId);
 
     if (currentCard) {
       braze.logContentCardClick(currentCard);
+      link && openURL(link);
     }
   };
 
@@ -43,11 +45,11 @@ const usePortfolioCards = () => {
       description={slide.description}
       actions={{
         primary: {
-          label: slide.cta,
-          action: () => onClick(slide.id),
+          label: slide.mainCta,
+          action: () => onClick(slide.id, slide.link),
         },
         dismiss: {
-          label: slide.dismissCta,
+          label: slide.secondaryCta,
           action: () => onDismiss(slide.id),
         },
       }}
