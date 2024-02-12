@@ -64,7 +64,7 @@ export default function WebviewErrorDrawer(error?: SwapLiveError) {
       }}
     />
   ) : null;
-  switch (error?.cause.message) {
+  switch (error?.cause?.message) {
     case "User refused":
       titleKey = "errors.TransactionRefusedOnDevice.title";
       descriptionKey = "errors.TransactionRefusedOnDevice.description";
