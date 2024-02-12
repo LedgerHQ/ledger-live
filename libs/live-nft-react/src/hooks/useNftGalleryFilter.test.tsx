@@ -2,7 +2,7 @@ import React, { ReactNode } from "react";
 import { BigNumber } from "bignumber.js";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { renderHook, waitFor, act } from "@testing-library/react";
-import { useNftGalleryFilter } from "./useNftGalleryFilter";
+import { isThresholdValid, useNftGalleryFilter } from "./useNftGalleryFilter";
 import { NFTs } from "@ledgerhq/coin-framework/mocks/fixtures/nfts";
 import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
 import { SimpleHashResponse } from "@ledgerhq/live-nft/api/types";
@@ -83,6 +83,7 @@ describe("useNftGalleryFilter", () => {
           addresses,
           nftsOwned,
           chains,
+          threshold: 80,
         }),
       {
         wrapper,
@@ -110,5 +111,14 @@ describe("useNftGalleryFilter", () => {
     }
     await act(() => expect(result.current.nfts).toEqual(expected));
     */
+  });
+
+  test("Threshold validity", async () => {
+    expect(isThresholdValid(101)).toBe(false);
+    expect(isThresholdValid(-1)).toBe(false);
+    expect(isThresholdValid("-1")).toBe(false);
+    expect(isThresholdValid("40")).toBe(true);
+    expect(isThresholdValid("101")).toBe(false);
+    expect(isThresholdValid("Not a number")).toBe(false);
   });
 });
