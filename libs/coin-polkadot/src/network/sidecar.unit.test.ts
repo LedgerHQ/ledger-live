@@ -5,7 +5,6 @@ const networkApiMock = jest.fn();
 
 describe("getAccount", () => {
   it("should estimate lockedBalance correctly with 1 locked balance type", async () => {
-    const lockedBalanceFn = getAccount(networkApiMock, jest.fn());
     networkApiMock.mockResolvedValue({
       data: {
         at: {
@@ -20,12 +19,11 @@ describe("getAccount", () => {
         targets: [],
       },
     });
-    const { lockedBalance } = await lockedBalanceFn("addr");
+    const { lockedBalance } = await getAccount("addr");
     expect(lockedBalance).toEqual(new BigNumber("60000000000"));
   });
 
   it("should estimate lockedBalance when one locked balance is higher than others", async () => {
-    const lockedBalanceFn = getAccount(networkApiMock, jest.fn());
     networkApiMock.mockResolvedValue({
       data: {
         at: {
@@ -48,7 +46,7 @@ describe("getAccount", () => {
         targets: [],
       },
     });
-    const { lockedBalance } = await lockedBalanceFn("addr");
+    const { lockedBalance } = await getAccount("addr");
     expect(lockedBalance).toEqual(new BigNumber("5"));
   });
 });

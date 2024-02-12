@@ -1,5 +1,19 @@
 import LRU from "lru-cache";
 
+export type CacheOptions = LRU.Options<string, unknown>; //{ max: number; ttl: number };
+export function seconds(num: number, max = 100): CacheOptions {
+  return {
+    max,
+    ttl: num * 1000,
+  };
+}
+export function minutes(num: number, max = 100): CacheOptions {
+  return seconds(num * 60, max);
+}
+export function hours(num: number, max = 100): CacheOptions {
+  return minutes(num * 60, max);
+}
+
 export type CacheRes<A extends Array<any>, T> = {
   (...args: A): Promise<T>;
   force: (...args: A) => Promise<T>;

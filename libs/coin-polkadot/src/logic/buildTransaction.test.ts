@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import { cryptocurrenciesById } from "@ledgerhq/cryptoassets";
 import { PolkadotAccount, PolkadotOperationMode, Transaction } from "../types";
 import { buildTransaction } from "./buildTransaction";
-import { PolkadotAPI } from "../network";
+import polkadotAPI from "../network";
 import { TypeRegistry } from "@polkadot/types";
 import { NetworkRequestCall } from "@ledgerhq/coin-framework/network";
 import { makeNoCache } from "@ledgerhq/coin-framework/cache";
@@ -24,8 +24,8 @@ const transactionParams = {
   tip: 8,
   transactionVersion: 22,
 };
-jest.mock("../network", () => ({
-  PolkadotAPI: jest.fn().mockImplementation(() => {
+jest.mock("../network", () =>
+  jest.fn().mockImplementation(() => {
     return {
       getRegistry: () => {
         return Promise.resolve({
@@ -42,7 +42,7 @@ jest.mock("../network", () => ({
       },
     };
   }),
-}));
+);
 
 describe("buildTransaction", () => {
   const mockCodec = jest.fn();
@@ -65,13 +65,9 @@ describe("buildTransaction", () => {
     // GIVEN
     const account = createAccount();
     const transaction = createTransaction();
-    const mockNetwork: NetworkRequestCall = (_): Promise<any> => {
-      return Promise.resolve();
-    };
-    const polkadotAPI = new PolkadotAPI(mockNetwork, makeNoCache);
 
     // WHEN
-    const result = await buildTransaction(polkadotAPI)(account, transaction);
+    const result = await buildTransaction(account, transaction);
 
     // THEN
     expect(mockRegistry).toHaveBeenCalledTimes(6);
