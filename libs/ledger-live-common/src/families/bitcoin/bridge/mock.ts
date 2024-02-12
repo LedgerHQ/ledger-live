@@ -8,7 +8,6 @@ import {
   DustLimit,
 } from "@ledgerhq/errors";
 import type { Transaction } from "@ledgerhq/coin-bitcoin/types";
-import { getAccountNetworkInfo } from "@ledgerhq/coin-bitcoin/getAccountNetworkInfo";
 import {
   makeAccountBridgeReceive,
   scanAccounts,
@@ -23,6 +22,7 @@ import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-liv
 import cryptoFactory from "@ledgerhq/coin-bitcoin/wallet-btc/crypto/factory";
 import { Currency } from "@ledgerhq/coin-bitcoin/wallet-btc/index";
 import { computeDustAmount } from "@ledgerhq/coin-bitcoin/wallet-btc/utils";
+import { getFeeItems } from "./api";
 
 const receive = makeAccountBridgeReceive();
 
@@ -104,10 +104,13 @@ const prepareTransaction = async (
 ): Promise<Transaction> => {
   // TODO it needs to set the fee if not in t as well
   if (!transaction.networkInfo) {
-    const networkInfo = await getAccountNetworkInfo(account);
+    const feeItems = await getFeeItems(account.currency);
     return {
       ...transaction,
-      networkInfo,
+      networkInfo: {
+        family: "bitcoin",
+        feeItems: feeItems,
+      },
     };
   }
 
