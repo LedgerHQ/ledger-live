@@ -1,4 +1,7 @@
-import { renderHook } from "@testing-library/react-hooks";
+/**
+ * @jest-environment jsdom
+ */
+import { renderHook } from "@testing-library/react";
 
 import { useSelectableCurrencies } from "./useSelectableCurrencies";
 import { getCryptoCurrencyById } from "../../../currencies";

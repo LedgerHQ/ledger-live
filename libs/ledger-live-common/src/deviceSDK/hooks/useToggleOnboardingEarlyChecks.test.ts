@@ -1,4 +1,7 @@
-import { renderHook, act } from "@testing-library/react-hooks";
+/**
+ * @jest-environment jsdom
+ */
+import { renderHook, act } from "@testing-library/react";
 import {
   UseToggleOnboardingEarlyCheckArgs,
   useToggleOnboardingEarlyCheck,

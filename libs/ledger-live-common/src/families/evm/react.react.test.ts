@@ -1,5 +1,8 @@
+/**
+ * @jest-environment jsdom
+ */
 import BigNumber from "bignumber.js";
-import { renderHook } from "@testing-library/react-hooks";
+import { renderHook, waitFor } from "@testing-library/react";
 import { Transaction } from "@ledgerhq/coin-evm/types/index";
 import { getGasTracker } from "@ledgerhq/coin-evm/api/gasTracker/index";
 import type { GasTrackerApi } from "@ledgerhq/coin-evm/api/gasTracker/types";
@@ -79,7 +82,7 @@ describe("useGasOptions", () => {
   });
 
   test("call hook with interval = 0", async () => {
-    const { result, waitForNextUpdate } = renderHook(() => {
+    const { result } = renderHook(() => {
       return useGasOptions({
         currency: fakeCurrency as CryptoCurrency,
         transaction: coinTransaction,
@@ -89,21 +92,21 @@ describe("useGasOptions", () => {
 
     expect(result.current).toMatchObject([undefined, null, true]);
 
-    await waitForNextUpdate();
+    await waitFor(() => {
+      expect(mockedGetGasTracker).toHaveBeenCalledTimes(1);
+      expect(mockedGetGasTracker).toHaveReturnedWith<GasTrackerApi>({
+        getGasOptions: mockedGetGasOptions,
+      });
+      expect(mockedGetGasOptions).toHaveBeenCalledTimes(1);
 
-    expect(mockedGetGasTracker).toHaveBeenCalledTimes(1);
-    expect(mockedGetGasTracker).toHaveReturnedWith<GasTrackerApi>({
-      getGasOptions: mockedGetGasOptions,
+      expect(setInterval).toHaveBeenCalledTimes(0);
+
+      expect(result.current).toMatchObject([expectedGasOptions, null, false]);
     });
-    expect(mockedGetGasOptions).toHaveBeenCalledTimes(1);
-
-    expect(setInterval).toHaveBeenCalledTimes(0);
-
-    expect(result.current).toMatchObject([expectedGasOptions, null, false]);
   });
 
   test("call hook with interval < 0", async () => {
-    const { result, waitForNextUpdate } = renderHook(() => {
+    const { result } = renderHook(() => {
       return useGasOptions({
         currency: fakeCurrency as CryptoCurrency,
         transaction: coinTransaction,
@@ -113,21 +116,21 @@ describe("useGasOptions", () => {
 
     expect(result.current).toMatchObject([undefined, null, true]);
 
-    await waitForNextUpdate();
+    await waitFor(() => {
+      expect(mockedGetGasTracker).toHaveBeenCalledTimes(1);
+      expect(mockedGetGasTracker).toHaveReturnedWith<GasTrackerApi>({
+        getGasOptions: mockedGetGasOptions,
+      });
+      expect(mockedGetGasOptions).toHaveBeenCalledTimes(1);
 
-    expect(mockedGetGasTracker).toHaveBeenCalledTimes(1);
-    expect(mockedGetGasTracker).toHaveReturnedWith<GasTrackerApi>({
-      getGasOptions: mockedGetGasOptions,
+      expect(setInterval).toHaveBeenCalledTimes(0);
+
+      expect(result.current).toMatchObject([expectedGasOptions, null, false]);
     });
-    expect(mockedGetGasOptions).toHaveBeenCalledTimes(1);
-
-    expect(setInterval).toHaveBeenCalledTimes(0);
-
-    expect(result.current).toMatchObject([expectedGasOptions, null, false]);
   });
 
   test("call hook with interval > 0", async () => {
-    const { result, waitForNextUpdate } = renderHook(() => {
+    const { result } = renderHook(() => {
       return useGasOptions({
         currency: fakeCurrency as CryptoCurrency,
         transaction: coinTransaction,
@@ -137,22 +140,22 @@ describe("useGasOptions", () => {
 
     expect(result.current).toMatchObject([undefined, null, true]);
 
-    await waitForNextUpdate();
+    await waitFor(() => {
+      expect(mockedGetGasTracker).toHaveBeenCalledTimes(1);
+      expect(mockedGetGasTracker).toHaveReturnedWith<GasTrackerApi>({
+        getGasOptions: mockedGetGasOptions,
+      });
+      expect(mockedGetGasOptions).toHaveBeenCalledTimes(1);
 
-    expect(mockedGetGasTracker).toHaveBeenCalledTimes(1);
-    expect(mockedGetGasTracker).toHaveReturnedWith<GasTrackerApi>({
-      getGasOptions: mockedGetGasOptions,
+      expect(setInterval).toHaveBeenCalledTimes(1);
+      expect(setInterval).toHaveBeenLastCalledWith(expect.any(Function), 1);
+
+      expect(result.current).toMatchObject([expectedGasOptions, null, false]);
     });
-    expect(mockedGetGasOptions).toHaveBeenCalledTimes(1);
-
-    expect(setInterval).toHaveBeenCalledTimes(1);
-    expect(setInterval).toHaveBeenLastCalledWith(expect.any(Function), 1);
-
-    expect(result.current).toMatchObject([expectedGasOptions, null, false]);
   });
 
   test("should use EIP-1559 when transaction is type 2", async () => {
-    const { waitForNextUpdate } = renderHook(() => {
+    renderHook(() => {
       return useGasOptions({
         currency: fakeCurrency as CryptoCurrency,
         transaction: coinTransaction,
@@ -160,16 +163,16 @@ describe("useGasOptions", () => {
       });
     });
 
-    await waitForNextUpdate();
-
-    expect(mockedGetGasOptions).toHaveBeenCalledWith({
-      currency: fakeCurrency,
-      options: { useEIP1559: true },
-    });
+    await waitFor(() =>
+      expect(mockedGetGasOptions).toHaveBeenCalledWith({
+        currency: fakeCurrency,
+        options: { useEIP1559: true },
+      }),
+    );
   });
 
   test("should not use EIP-1559 when transaction is not type 2", async () => {
-    const { waitForNextUpdate } = renderHook(() => {
+    renderHook(() => {
       return useGasOptions({
         currency: fakeCurrency as CryptoCurrency,
         transaction: {
@@ -183,12 +186,12 @@ describe("useGasOptions", () => {
       });
     });
 
-    await waitForNextUpdate();
-
-    expect(mockedGetGasOptions).toHaveBeenCalledWith({
-      currency: fakeCurrency,
-      options: { useEIP1559: false },
-    });
+    await waitFor(() =>
+      expect(mockedGetGasOptions).toHaveBeenCalledWith({
+        currency: fakeCurrency,
+        options: { useEIP1559: false },
+      }),
+    );
   });
 
   test("should not return gasOption if can't get gas tracker", async () => {
@@ -212,7 +215,7 @@ describe("useGasOptions", () => {
     mockedGetGasOptions.mockReset();
     mockedGetGasOptions.mockReturnValueOnce(Promise.reject(expectedError));
 
-    const { result, waitForNextUpdate } = renderHook(() => {
+    const { result } = renderHook(() => {
       return useGasOptions({
         currency: fakeCurrency as CryptoCurrency,
         transaction: coinTransaction,
@@ -221,8 +224,6 @@ describe("useGasOptions", () => {
     });
     expect(result.current).toMatchObject([undefined, null, true]);
 
-    await waitForNextUpdate();
-
-    expect(result.current).toMatchObject([undefined, expectedError, false]);
+    await waitFor(() => expect(result.current).toMatchObject([undefined, expectedError, false]));
   });
 });
