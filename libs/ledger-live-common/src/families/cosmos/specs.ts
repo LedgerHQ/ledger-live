@@ -591,7 +591,7 @@ const injective = {
 };
 
 const nyx = {
-  ...generateGenericCosmosTest("nyx"),
+  ...generateGenericCosmosTest("nyx", false),
 };
 
 export default {
