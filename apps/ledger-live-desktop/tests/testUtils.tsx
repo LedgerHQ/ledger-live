@@ -30,7 +30,6 @@ function render(
   ui: JSX.Element,
   {
     initialState = {},
-    //initialRoute = "/",
     store = createStore({ state: { ...(initialState || {}) } as State, dbMiddleware }),
     userEventOptions = {},
     ...renderOptions
