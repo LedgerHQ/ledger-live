@@ -112,3 +112,7 @@ libs/ledger-live-common/src/hooks/recoverFeatureFlag.ts                 @ledgerh
 # UI tests
 apps/ledger-live-desktop/tests/                          @ledgerhq/live-hub @ledgerhq/live-qa
 apps/ledger-live-mobile/e2e/                             @ledgerhq/live-hub @ledgerhq/live-qa
+
+# i18n files
+apps/ledger-live-desktop/static/i18n/        @ledgerhq/live-hub @ledgerhq/live-devices @ledgerhq/wallet-api @ledgerhq/live-blockchain-support @ledgerhq/ptx @ledgerhq/recover-software
+apps/ledger-live-mobile/src/locales/         @ledgerhq/live-hub @ledgerhq/live-devices @ledgerhq/wallet-api @ledgerhq/live-blockchain-support @ledgerhq/ptx @ledgerhq/recover-software
