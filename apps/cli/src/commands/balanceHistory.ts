@@ -7,7 +7,7 @@ import {
   getBalanceHistory,
   getPortfolioCount,
   getRanges,
-} from "@ledgerhq/live-common/portfolio/v2/index";
+} from "@ledgerhq/live-countervalues/portfolio";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { scan, scanCommonOpts } from "../scan";
 import type { ScanCommonOpts } from "../scan";

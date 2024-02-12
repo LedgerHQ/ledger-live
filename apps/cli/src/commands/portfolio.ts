@@ -6,7 +6,7 @@ import { reduce, concatMap, map } from "rxjs/operators";
 import type { Account, PortfolioRange } from "@ledgerhq/types-live";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
 import { flattenAccounts, getAccountName } from "@ledgerhq/live-common/account/index";
-import { getPortfolio, getRanges } from "@ledgerhq/live-common/portfolio/v2/index";
+import { getPortfolio, getRanges } from "@ledgerhq/live-countervalues/portfolio";
 import { formatCurrencyUnit, findCurrencyByTicker } from "@ledgerhq/live-common/currencies/index";
 import { scan, scanCommonOpts } from "../scan";
 import type { ScanCommonOpts } from "../scan";

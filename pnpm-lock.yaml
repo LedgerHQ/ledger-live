@@ -4355,6 +4355,9 @@ importers:
       '@ledgerhq/live-hooks':
         specifier: workspace:*
         version: link:../live-hooks
+      '@ledgerhq/logs':
+        specifier: workspace:*
+        version: link:../ledgerjs/packages/logs
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:*
         version: link:../ledgerjs/packages/types-cryptoassets

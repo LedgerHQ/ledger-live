@@ -102,10 +102,6 @@ exports[`Portfolio getAssetsDistribution snapshot 1`] = `
               "latestDate": 1520740800000,
             },
           },
-          "bitcoinResources": {
-            "utxos": [],
-            "walletAccount": undefined,
-          },
           "blockHeight": 132858,
           "creationDate": 2018-03-11T18:09:49.798Z,
           "currency": {
@@ -2418,10 +2414,6 @@ exports[`Portfolio getCurrencyPortfolio snapshot 1`] = `
           ],
           "latestDate": 1520740800000,
         },
-      },
-      "bitcoinResources": {
-        "utxos": [],
-        "walletAccount": undefined,
       },
       "blockHeight": 132858,
       "creationDate": 2018-03-11T18:09:49.798Z,
@@ -4761,10 +4753,6 @@ exports[`Portfolio getPortfolio snapshot 1`] = `
           "latestDate": 1520740800000,
         },
       },
-      "bitcoinResources": {
-        "utxos": [],
-        "walletAccount": undefined,
-      },
       "blockHeight": 132858,
       "creationDate": 2018-03-11T18:09:49.798Z,
       "currency": {
@@ -5401,10 +5389,6 @@ exports[`Portfolio getPortfolio snapshot 1`] = `
           ],
           "latestDate": 1520740800000,
         },
-      },
-      "bitcoinResources": {
-        "utxos": [],
-        "walletAccount": undefined,
       },
       "blockHeight": 132858,
       "creationDate": 2018-03-11T18:09:49.798Z,
