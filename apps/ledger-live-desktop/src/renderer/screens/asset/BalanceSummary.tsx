@@ -6,7 +6,7 @@ import { CryptoCurrency, Currency, TokenCurrency, Unit } from "@ledgerhq/types-c
 import Chart from "~/renderer/components/Chart";
 import Box, { Card } from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
-import { useCurrencyPortfolio, usePortfolio } from "~/renderer/actions/portfolio";
+import { useCurrencyPortfolio, usePortfolio } from "~/renderer/hooks/usePortfolio";
 import AssetBalanceSummaryHeader from "./AssetBalanceSummaryHeader";
 import { discreetModeSelector } from "~/renderer/reducers/settings";
 import { Data } from "~/renderer/components/Chart/types";

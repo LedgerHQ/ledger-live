@@ -1,5 +1,5 @@
 import React from "react";
-import { useBalanceHistoryWithCountervalue } from "~/renderer/actions/portfolio";
+import { useBalanceHistoryWithCountervalue } from "~/renderer/hooks/usePortfolio";
 import { PortfolioRange, AccountLike } from "@ledgerhq/types-live";
 import { useCurrencyColor } from "~/renderer/getCurrencyColor";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";

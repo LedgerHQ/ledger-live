@@ -1,6 +1,6 @@
 import React from "react";
 import { AccountLike, PortfolioRange } from "@ledgerhq/types-live";
-import { useBalanceHistoryWithCountervalue } from "~/renderer/actions/portfolio";
+import { useBalanceHistoryWithCountervalue } from "~/renderer/hooks/usePortfolio";
 import Box from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import { PlaceholderLine } from "~/renderer/components/Placeholder";

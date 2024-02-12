@@ -10,7 +10,7 @@ import FormattedVal from "~/renderer/components/FormattedVal";
 import PlaceholderChart from "~/renderer/components/PlaceholderChart";
 import { discreetModeSelector } from "~/renderer/reducers/settings";
 import BalanceInfos from "~/renderer/components/BalanceInfos";
-import { usePortfolio } from "~/renderer/actions/portfolio";
+import { usePortfolio } from "~/renderer/hooks/usePortfolio";
 import { hourFormat, dayFormat, useDateFormatter } from "~/renderer/hooks/useDateFormatter";
 type Props = {
   counterValue: Currency;
