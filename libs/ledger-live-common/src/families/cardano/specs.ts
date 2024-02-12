@@ -23,7 +23,7 @@ const cardano: AppSpec<Transaction> = {
   name: "cardano",
   currency: getCryptoCurrencyById("cardano"),
   appQuery: {
-    model: DeviceModelId.nanoS,
+    model: DeviceModelId.nanoSP,
     appName: "CardanoADA",
     appVersion: "6.0.3",
   },
