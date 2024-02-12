@@ -173,7 +173,7 @@
     "@ledgerhq/wallet-api-exchange-module": "workspace:^",
     "@ledgerhq/wallet-api-server": "^1.5.2",
     "@solana/spl-token": "^0.3.7",
-    "@solana/web3.js": "1.77.3",
+    "@solana/web3.js": "1.90.0",
     "@stacks/network": "6.10.0",
     "@stacks/transactions": "6.11.0",
     "@stricahq/bip32ed25519": "^1.0.3",
