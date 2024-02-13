@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import styled from "styled-components";
 import SectionRate from "./SectionRate";
 import { SwapDataType } from "@ledgerhq/live-common/exchange/swap/types";
@@ -10,17 +10,18 @@ const Form = styled.section`
 `;
 type SwapFormProvidersProps = {
   swap: SwapDataType;
-  countdownSecondsToRefresh: number | undefined;
   provider?: string;
+  refreshTime: number;
+  countdown: boolean;
 };
 
-const SwapFormProviders = ({
-  swap,
-  provider,
-  countdownSecondsToRefresh,
-}: SwapFormProvidersProps) => {
+const SwapFormProviders = ({ swap, provider, refreshTime, countdown }: SwapFormProvidersProps) => {
   const { currency: fromCurrency } = swap.from;
   const { currency: toCurrency } = swap.to;
+
+  const updatedRatesState = useMemo(() => {
+    return swap.rates;
+  }, [swap.rates]);
 
   return (
     <Form>
@@ -28,8 +29,9 @@ const SwapFormProviders = ({
         provider={provider}
         fromCurrency={fromCurrency}
         toCurrency={toCurrency}
-        ratesState={swap.rates}
-        countdownSecondsToRefresh={countdownSecondsToRefresh}
+        ratesState={updatedRatesState}
+        refreshTime={refreshTime}
+        countdown={countdown}
       />
     </Form>
   );
