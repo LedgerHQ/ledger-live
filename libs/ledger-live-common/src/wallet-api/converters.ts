@@ -33,6 +33,9 @@ export function accountToWalletAPIAccount(
 
     return {
       id: walletApiId,
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore Remove once wallet-api
+      parentAccountId: uuidv5(parentAccount.id, NAMESPACE),
       balance: account.balance,
       address: parentAccount.freshAddress,
       blockHeight: parentAccount.blockHeight,
