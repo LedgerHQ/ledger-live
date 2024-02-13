@@ -7,7 +7,7 @@ import { expandMetadata } from "@polkadot/types/metadata/decorate";
 import { Extrinsics } from "@polkadot/types/metadata/decorate/types";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
-import { makeLRUCache } from "@ledgerhq/live-network/cache";
+import { hours, makeLRUCache } from "@ledgerhq/live-network/cache";
 import type {
   PolkadotValidator,
   PolkadotStakingProgress,
@@ -665,10 +665,8 @@ export const getRegistry = async (): Promise<{
 const getConstants = makeLRUCache(
   async (): Promise<Record<string, any>> => fetchConstants(),
   () => "polkadot",
-  {
-    max: 1, // Store only one constants object since we only have polkadot.
-    ttl: 60 * 60 * 1000, // 1 hour
-  },
+  // Store only one constants object since we only have polkadot.
+  hours(1, 1),
 );
 
 /**
@@ -681,7 +679,5 @@ const getConstants = makeLRUCache(
 const getTransactionMaterialWithMetadata = makeLRUCache(
   async (): Promise<SidecarTransactionMaterial> => fetchTransactionMaterial(true),
   () => "polkadot",
-  {
-    ttl: 60 * 60 * 1000, // 1 hour - could be Infinity
-  },
+  hours(1),
 );

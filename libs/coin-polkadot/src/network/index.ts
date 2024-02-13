@@ -14,21 +14,9 @@ import {
   submitExtrinsic as sidecarSubmitExtrinsic,
   verifyValidatorAddresses as sidecarVerifyValidatorAddresses,
 } from "./sidecar";
-import { SidecarPaymentInfo } from "./sidecar.types";
 import BigNumber from "bignumber.js";
 import { PolkadotAccount, PolkadotNomination, PolkadotUnlocking, Transaction } from "../types";
-import { TypeRegistry } from "@polkadot/types";
-import { Extrinsics } from "@polkadot/types/metadata/decorate/types";
 
-type PaymentInfoParams = {
-  a: PolkadotAccount;
-  t: Transaction;
-  signedTx: string;
-};
-type Registry = {
-  registry: TypeRegistry;
-  extrinsics: Extrinsics;
-};
 type PolkadotAPIAccount = {
   blockHeight: number;
   balance: BigNumber;
