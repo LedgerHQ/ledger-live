@@ -6,13 +6,13 @@ export function makeAccount(
   name: string,
   pubkey: string,
   address: string,
-  derivationMode: string,
+  isRevelead: boolean,
 ): TezosAccount {
   return {
-    id: `js:2:tezos:${pubkey}:${derivationMode}`,
+    id: `js:2:tezos:${pubkey}:${"standard"}`,
     seedIdentifier: address,
     name: "Tezos " + name,
-    derivationMode,
+    derivationMode: "",
     index: 0,
     freshAddress: address,
     freshAddressPath: "",
@@ -38,6 +38,6 @@ export function makeAccount(
       DAY: { latestDate: 0, balances: [] },
       HOUR: { latestDate: 0, balances: [] },
     },
-    tezosResources: { revealed: true, counter: 0 },
+    tezosResources: { revealed: isRevelead, counter: 0 },
   };
 }
