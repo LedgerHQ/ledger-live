@@ -1756,7 +1756,7 @@
   "DeviceAction": {
     "allowAppPermission": "Open the {{wording}} app on your device",
     "allowAppPermissionSubtitleToken": "to manage your {{token}} tokens",
-    "allowManagerPermission": "Allow Ledger Manager on your {{productName}}",
+    "allowManagerPermission": "Allow secure connection",
     "allowRenaming": "Allow renaming on your device",
     "loading": "Loading...",
     "connectAndUnlockDevice": "Connect and unlock your device",
@@ -5454,7 +5454,7 @@
       "description": "Please restart your device without touching the buttons when the logo appears. Contact Ledger Support if the problem persists."
     },
     "UserRefusedAllowManager": {
-      "title": "My Ledger denied on device"
+      "title": "Secure connection denied on device"
     },
     "UserRefusedFirmwareUpdate": {
       "title": "OS update install cancelled\non device",
