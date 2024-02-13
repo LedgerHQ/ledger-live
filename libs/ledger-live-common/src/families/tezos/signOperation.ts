@@ -9,6 +9,95 @@ import { getEnv } from "@ledgerhq/live-env";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 
+export async function getOperationContents({
+  account,
+  transaction,
+  tezos,
+  counter,
+  public_key,
+  public_key_hash,
+}: {
+  account: TezosAccount;
+  transaction: Transaction;
+  tezos: TezosToolkit;
+  counter: number;
+  public_key: string;
+  public_key_hash: string;
+}) {
+  let type: OperationType = "NONE";
+  const { freshAddress } = account;
+
+  const transactionFees = {
+    fee: (transaction.fees || 0).toString(),
+    gas_limit: (transaction.gasLimit || 0).toString(),
+    storage_limit: (transaction.storageLimit || 0).toString(),
+  };
+
+  const contents: OperationContents[] = [];
+
+  if (!(account as TezosAccount).tezosResources.revealed) {
+    const revealFees = await tezos.estimate.reveal();
+
+    contents.push({
+      kind: OpKind.REVEAL,
+      fee: DEFAULT_FEE.REVEAL.toString(),
+      gas_limit: (revealFees?.gasLimit || 0).toString(),
+      storage_limit: (revealFees?.storageLimit || 0).toString(),
+      source: public_key_hash,
+      counter: (counter + 1).toString(),
+      public_key,
+    });
+  }
+
+  switch (transaction.mode) {
+    case "send": {
+      type = "OUT";
+
+      contents.push({
+        kind: OpKind.TRANSACTION,
+        amount: transaction.amount.toString(),
+        destination: transaction.recipient,
+        source: freshAddress,
+        counter: (counter + 1 + contents.length).toString(),
+        ...transactionFees,
+      });
+
+      break;
+    }
+    case "delegate": {
+      type = "DELEGATE";
+
+      contents.push({
+        kind: OpKind.DELEGATION,
+        source: freshAddress,
+        counter: (counter + 1 + contents.length).toString(),
+        delegate: transaction.recipient,
+        ...transactionFees,
+      });
+
+      break;
+    }
+    case "undelegate": {
+      type = "UNDELEGATE";
+
+      // we undelegate as there's no "delegate" field
+      // OpKind is still "DELEGATION"
+      contents.push({
+        kind: OpKind.DELEGATION,
+        source: freshAddress,
+        counter: (counter + 1 + contents.length).toString(),
+        ...transactionFees,
+      });
+
+      break;
+    }
+    default:
+      throw new Error("not supported");
+  }
+
+  return { type, contents };
+}
+
 export const signOperation: SignOperationFnSignature<Transaction> = ({
   account,
   deviceId,
@@ -36,8 +125,8 @@ export const signOperation: SignOperationFnSignature<Transaction> = ({
 
           tezos.setProvider({ signer: ledgerSigner });
 
-          const publicKeyHash = await ledgerSigner.publicKeyHash();
           const publicKey = await ledgerSigner.publicKey();
+          const publicKeyHash = await ledgerSigner.publicKeyHash();
 
           const { rpc } = tezos;
           const block = await rpc.getBlock();
@@ -45,79 +134,18 @@ export const signOperation: SignOperationFnSignature<Transaction> = ({
 
           o.next({ type: "device-signature-requested" });
 
-          let type: OperationType = "NONE";
-
-          const transactionFees = {
-            fee: (transaction.fees || 0).toString(),
-            gas_limit: (transaction.gasLimit || 0).toString(),
-            storage_limit: (transaction.storageLimit || 0).toString(),
-          };
-
-          const contents: OperationContents[] = [];
-
-          if (!(account as TezosAccount).tezosResources.revealed) {
-            const revealFees = await tezos.estimate.reveal();
-
-            contents.push({
-              kind: OpKind.REVEAL,
-              fee: DEFAULT_FEE.REVEAL.toString(),
-              gas_limit: (revealFees?.gasLimit || 0).toString(),
-              storage_limit: (revealFees?.storageLimit || 0).toString(),
-              source: publicKeyHash,
-              counter: (Number(sourceData.counter) + 1).toString(),
-              public_key: publicKey,
-            });
-          }
-
-          switch (transaction.mode) {
-            case "send": {
-              type = "OUT";
-
-              contents.push({
-                kind: OpKind.TRANSACTION,
-                amount: transaction.amount.toString(),
-                destination: transaction.recipient,
-                source: freshAddress,
-                counter: (Number(sourceData.counter) + 1 + contents.length).toString(),
-                ...transactionFees,
-              });
-
-              break;
-            }
-            case "delegate": {
-              type = "DELEGATE";
-
-              contents.push({
-                kind: OpKind.DELEGATION,
-                source: freshAddress,
-                counter: (Number(sourceData.counter) + 1 + contents.length).toString(),
-                delegate: transaction.recipient,
-                ...transactionFees,
-              });
-
-              break;
-            }
-            case "undelegate": {
-              type = "UNDELEGATE";
-
-              // we undelegate as there's no "delegate" field
-              // OpKind is still "DELEGATION"
-              contents.push({
-                kind: OpKind.DELEGATION,
-                source: freshAddress,
-                counter: (Number(sourceData.counter) + 1 + contents.length).toString(),
-                ...transactionFees,
-              });
-
-              break;
-            }
-            default:
-              throw new Error("not supported");
-          }
-
           if (cancelled) {
             return;
           }
+
+          const { type, contents } = await getOperationContents({
+            account: account as TezosAccount,
+            transaction,
+            tezos,
+            counter: Number(sourceData.counter),
+            public_key: publicKey,
+            public_key_hash: publicKeyHash,
+          });
 
           const forgedBytes = await rpc.forgeOperations({
             branch: block.hash,
