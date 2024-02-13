@@ -17,16 +17,16 @@ const descending = (a: ListProvider, b: ListProvider) => (b?.min || 0) - (a?.min
 export function EvmStakingDrawer() {
   const { isOpen, onModalHide, openDrawer, onClose, drawer } = useRootDrawerContext();
   const ethStakingProviders = useFeature("ethStakingProviders");
+  const isStakingProvidersEnabled = ethStakingProviders?.enabled;
+  const providers = ethStakingProviders?.params?.listProvider;
+
   const { theme: themeName } = useTheme();
 
   useEffect(() => {
-    if (
-      ethStakingProviders?.enabled ||
-      (ethStakingProviders?.params?.listProvider ?? []).length > 0
-    ) {
+    if (isStakingProvidersEnabled || (providers ?? []).length > 0) {
       openDrawer();
     }
-  }, [ethStakingProviders, openDrawer]);
+  }, [isStakingProvidersEnabled, openDrawer, providers]);
 
   if (!ethStakingProviders || drawer.id !== "EvmStakingDrawer") return null;
 

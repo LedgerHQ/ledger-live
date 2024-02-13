@@ -26,7 +26,6 @@ import ExchangeDrawer from "./ExchangeDrawer/index";
 import SwapFormSelectors from "./FormSelectors";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
-import useRefreshRates from "./hooks/useRefreshRates";
 import LoadingState from "./Rates/LoadingState";
 import EmptyState from "./Rates/EmptyState";
 import { AccountLike } from "@ledgerhq/types-live";
@@ -50,10 +49,6 @@ const Wrapper = styled(Box).attrs({
 })`
   row-gap: 2rem;
   max-width: 37rem;
-`;
-
-const Hide = styled.div`
-  opacity: 0;
 `;
 
 const idleTime = 60 * 60000; // 1 hour
@@ -127,11 +122,6 @@ const SwapForm = () => {
     undefined,
   );
   const { setDrawer } = React.useContext(context);
-
-  const pauseRefreshing = !!swapError || idleState;
-  const refreshTime = useRefreshRates(swapTransaction.swap, {
-    pause: pauseRefreshing,
-  });
 
   const getExchangeSDKParams = useCallback(() => {
     const { swap, transaction } = swapTransaction;
@@ -449,11 +439,6 @@ const SwapForm = () => {
       />
       {pageState === "empty" && <EmptyState />}
       {pageState === "loading" && <LoadingState />}
-      {pageState === "initial" && (
-        <Hide>
-          <LoadingState />
-        </Hide>
-      )}
 
       {pageState === "loaded" && (
         <>
@@ -477,8 +462,6 @@ const SwapForm = () => {
         pageState={pageState}
         swapTransaction={swapTransaction}
         provider={provider}
-        refreshTime={refreshTime}
-        countdown={!pauseRefreshing}
         // Demo 0 props
         disabled={!isSwapReady}
         onClick={onSubmit}

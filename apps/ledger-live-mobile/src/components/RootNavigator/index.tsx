@@ -10,7 +10,7 @@ import BaseOnboardingNavigator from "./BaseOnboardingNavigator";
 import { RootStackParamList } from "./types/RootNavigator";
 import { AnalyticsContextProvider } from "~/analytics/AnalyticsContext";
 import { StartupTimeMarker } from "../../StartupTimeMarker";
-import { enableListAppsV2 } from "@ledgerhq/live-common/apps/hw";
+import { enableListAppsV2 } from "@ledgerhq/live-common/device/use-cases/listAppsUseCase";
 
 export default function RootNavigator() {
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);

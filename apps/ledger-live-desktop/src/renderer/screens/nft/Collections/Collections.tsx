@@ -19,7 +19,7 @@ import Text from "~/renderer/components/Text";
 import { openURL } from "~/renderer/linking";
 import Box from "~/renderer/components/Box";
 import Row from "./Row";
-import { useNftGalleryFilter } from "@ledgerhq/live-nft-react";
+import { isThresholdValid, useNftGalleryFilter } from "@ledgerhq/live-nft-react";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const INCREMENT = 5;
@@ -46,6 +46,7 @@ type Props = {
 };
 const Collections = ({ account }: Props) => {
   const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
+  const thresold = nftsFromSimplehashFeature?.params?.threshold;
 
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -74,7 +75,9 @@ const Collections = ({ account }: Props) => {
     nftsOwned: account.nfts || [],
     addresses: account.freshAddress,
     chains: [account.currency.id],
+    threshold: isThresholdValid(thresold) ? Number(thresold) : 75,
   });
+
   const collections = useMemo(
     () => nftsByCollections(nftsFromSimplehashFeature?.enabled ? nfts : account.nfts),
     [account.nfts, nfts, nftsFromSimplehashFeature],

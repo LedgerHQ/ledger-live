@@ -5,6 +5,7 @@ import Exchange, {
   RateTypes,
   PartnerKeyInfo,
   isExchangeTypeNg,
+  PayloadSignatureComputedFormat,
 } from "./Exchange";
 
 export {
@@ -14,6 +15,7 @@ export {
   RateTypes,
   PartnerKeyInfo,
   isExchangeTypeNg,
+  PayloadSignatureComputedFormat,
 };
 
 export default Exchange;

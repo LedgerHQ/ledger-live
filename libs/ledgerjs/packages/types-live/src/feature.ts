@@ -494,6 +494,10 @@ export type Feature_LldPortfolioCarousel = Feature<{
   variant: ABTestingVariants;
 }>;
 
+export type Feature_NftsFromSimpleHash = Feature<{
+  threshold: number;
+}>;
+
 export type Feature_LlmNewFirmwareUpdateUx = DefaultFeature;
 export type Feature_CounterValue = DefaultFeature;
 export type Feature_MockFeature = DefaultFeature;
@@ -520,7 +524,6 @@ export type Feature_LlmWalletQuickActions = DefaultFeature;
 export type Feature_PtxSwapMoonpayProvider = DefaultFeature;
 export type Feature_FlexibleContentCards = DefaultFeature;
 export type Feature_MyLedgerDisplayAppDeveloperName = DefaultFeature;
-export type Feature_NftsFromSimpleHash = DefaultFeature;
 
 export type Feature_LlmMarketNewArch = DefaultFeature;
 /**
