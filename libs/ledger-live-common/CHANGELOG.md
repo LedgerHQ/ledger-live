@@ -1,5 +1,39 @@
 # @ledgerhq/live-common
 
+## 33.6.0-nightly.7
+
+### Minor Changes
+
+- [#6118](https://github.com/LedgerHQ/ledger-live/pull/6118) [`63099cc`](https://github.com/LedgerHQ/ledger-live/commit/63099cc6dc08dfde9957aeb246368252e5591ba1) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Return countdown and refresh rates from the useProviderRates hook
+
+### Patch Changes
+
+- [#6120](https://github.com/LedgerHQ/ledger-live/pull/6120) [`eb79c71`](https://github.com/LedgerHQ/ledger-live/commit/eb79c7141543991f6e8fa99e5b592fc7a7f43022) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Support base64 encodng for swap_ng type swaps
+
+- [#6144](https://github.com/LedgerHQ/ledger-live/pull/6144) [`d870e90`](https://github.com/LedgerHQ/ledger-live/commit/d870e904a0dde5f8abf05f930f5f545828eccbc9) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update Feature flag to handle threshold spam filter directly from FF
+
+- [#6055](https://github.com/LedgerHQ/ledger-live/pull/6055) [`9806dd6`](https://github.com/LedgerHQ/ledger-live/commit/9806dd604ab4feafbce0dde172c7de31596104a4) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Refactor list apps v2:
+
+  - move entrypoint to `live-common/src/device/use-cases/listAppsUseCase.ts`
+  - move more of the `manager/api.ts` logic to `ManagerApiRepository`
+  - create `StubManagerApiRepository` for mocks
+  - implement some unit tests for `listApps/v2.ts`
+
+  Implement `getProviderIdUseCase` that takes `forceProvider: number` as a parameter
+
+- Updated dependencies [[`6d40673`](https://github.com/LedgerHQ/ledger-live/commit/6d4067382b55827b00806a1b71ac0b249563d90f), [`eb79c71`](https://github.com/LedgerHQ/ledger-live/commit/eb79c7141543991f6e8fa99e5b592fc7a7f43022), [`d870e90`](https://github.com/LedgerHQ/ledger-live/commit/d870e904a0dde5f8abf05f930f5f545828eccbc9)]:
+  - @ledgerhq/hw-app-btc@10.2.2-nightly.1
+  - @ledgerhq/hw-app-exchange@0.4.5-nightly.2
+  - @ledgerhq/live-nft@0.2.0-nightly.4
+  - @ledgerhq/coin-algorand@0.3.10-nightly.4
+  - @ledgerhq/coin-evm@0.12.2-nightly.4
+  - @ledgerhq/coin-framework@0.11.1-nightly.4
+  - @ledgerhq/coin-near@0.3.9-nightly.1
+  - @ledgerhq/coin-polkadot@0.5.3-nightly.4
+  - @ledgerhq/hw-app-eth@6.35.5-nightly.3
+  - @ledgerhq/live-countervalues@0.1.1-nightly.4
+  - @ledgerhq/live-countervalues-react@0.1.1-nightly.4
+
 ## 33.6.0-nightly.6
 
 ### Patch Changes

@@ -1,5 +1,24 @@
 # live-mobile
 
+## 3.40.0-nightly.8
+
+### Patch Changes
+
+- [#6140](https://github.com/LedgerHQ/ledger-live/pull/6140) [`31ac87f`](https://github.com/LedgerHQ/ledger-live/commit/31ac87f1a72dfc0c2ba1f4504dda607da79a774a) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Add stakingProvidersEnabled A/B test trait to analytics identify for eth staking modal on both llm and lld.
+
+- [#6144](https://github.com/LedgerHQ/ledger-live/pull/6144) [`d870e90`](https://github.com/LedgerHQ/ledger-live/commit/d870e904a0dde5f8abf05f930f5f545828eccbc9) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update Feature flag to handle threshold spam filter directly from FF
+
+- Updated dependencies [[`63099cc`](https://github.com/LedgerHQ/ledger-live/commit/63099cc6dc08dfde9957aeb246368252e5591ba1), [`eb79c71`](https://github.com/LedgerHQ/ledger-live/commit/eb79c7141543991f6e8fa99e5b592fc7a7f43022), [`d870e90`](https://github.com/LedgerHQ/ledger-live/commit/d870e904a0dde5f8abf05f930f5f545828eccbc9), [`9806dd6`](https://github.com/LedgerHQ/ledger-live/commit/9806dd604ab4feafbce0dde172c7de31596104a4)]:
+  - @ledgerhq/live-common@33.6.0-nightly.7
+  - @ledgerhq/types-live@6.44.1-nightly.1
+  - @ledgerhq/live-nft-react@0.2.0-nightly.4
+  - @ledgerhq/live-nft@0.2.0-nightly.4
+  - @ledgerhq/coin-evm@0.12.2-nightly.4
+  - @ledgerhq/coin-framework@0.11.1-nightly.4
+  - @ledgerhq/domain-service@1.1.18-nightly.3
+  - @ledgerhq/live-countervalues@0.1.1-nightly.4
+  - @ledgerhq/live-countervalues-react@0.1.1-nightly.4
+
 ## 3.40.0-nightly.7
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/hw-app-btc
 
+## 10.2.2-nightly.1
+
+### Patch Changes
+
+- [#6105](https://github.com/LedgerHQ/ledger-live/pull/6105) [`6d40673`](https://github.com/LedgerHQ/ledger-live/commit/6d4067382b55827b00806a1b71ac0b249563d90f) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - update hw-app-btc doc
+
 ## 10.2.2-nightly.0
 
 ### Patch Changes

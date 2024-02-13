@@ -1,5 +1,11 @@
 # @ledgerhq/hw-app-exchange
 
+## 0.4.5-nightly.2
+
+### Patch Changes
+
+- [#6120](https://github.com/LedgerHQ/ledger-live/pull/6120) [`eb79c71`](https://github.com/LedgerHQ/ledger-live/commit/eb79c7141543991f6e8fa99e5b592fc7a7f43022) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Support base64 encodng for swap_ng type swaps
+
 ## 0.4.5-nightly.1
 
 ### Patch Changes
