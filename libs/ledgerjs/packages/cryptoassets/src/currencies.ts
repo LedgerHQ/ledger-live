@@ -199,7 +199,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        tx: "https://algoexplorer.io/tx/$hash",
+        tx: "https://explorer.perawallet.app/tx/$hash",
       },
     ],
     keywords: ["algo", "algorand"],
