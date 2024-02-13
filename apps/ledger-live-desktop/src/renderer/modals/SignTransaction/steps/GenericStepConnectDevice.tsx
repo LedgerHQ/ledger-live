@@ -34,13 +34,14 @@ export default function StepConnectDevice({
   account,
   parentAccount,
   transaction,
-  useApp,
   status,
   transitionTo,
   onTransactionSigned,
   onTransactionError,
   dependencies,
   requireLatestFirmware,
+  manifestId,
+  manifestName,
 }: {
   transitionTo: (a: string) => void;
   account: AccountLike | undefined | null;
@@ -52,6 +53,8 @@ export default function StepConnectDevice({
   onTransactionSigned: (a: SignedOperation) => void;
   dependencies?: AppRequest[];
   requireLatestFirmware?: boolean;
+  manifestId: string;
+  manifestName: string;
 }) {
   const tokenCurrency = account && account.type === "TokenAccount" ? account.token : undefined;
   const request = useMemo(
@@ -59,21 +62,23 @@ export default function StepConnectDevice({
       tokenCurrency,
       parentAccount,
       account,
-      appName: useApp,
       transaction,
       status,
       dependencies,
       requireLatestFirmware,
+      manifestId,
+      manifestName,
     }),
     [
       account,
       dependencies,
+      manifestId,
+      manifestName,
       parentAccount,
       requireLatestFirmware,
       status,
       tokenCurrency,
       transaction,
-      useApp,
     ],
   );
   if (!transaction || !account) return null;

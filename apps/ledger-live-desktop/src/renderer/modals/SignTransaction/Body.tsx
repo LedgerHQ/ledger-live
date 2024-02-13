@@ -21,6 +21,10 @@ import logger from "~/renderer/logger";
 import Text from "~/renderer/components/Text";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { ModalData } from "../types";
+import {
+  DeviceTransactionField,
+  getDeviceTransactionConfig,
+} from "@ledgerhq/live-common/transaction/index";
 
 export type Params = {
   canEditFees: boolean;
@@ -34,6 +38,8 @@ export type Params = {
   startWithWarning?: boolean;
   recipient?: string;
   amount?: BigNumber;
+  manifestId?: string;
+  manifestName?: string;
 };
 
 type Props = {
@@ -43,13 +49,16 @@ type Props = {
   params: Params;
   setError: (error?: Error) => void;
 };
-function useSteps(canEditFees = false): St[] {
+function useSteps(canEditFees = false, typeTransaction = ""): St[] {
   const { t } = useTranslation();
   return useMemo(() => {
     const steps: St[] = [
       {
         id: "summary",
-        label: t("send.steps.summary.title"),
+        label:
+          typeTransaction === "Approve"
+            ? t("send.steps.reviewSummary.title")
+            : t("send.steps.summary.title"),
         component: StepSummary,
         footer: StepSummaryFooter,
         onBack: canEditFees ? ({ transitionTo }) => transitionTo("amount") : null,
@@ -61,7 +70,10 @@ function useSteps(canEditFees = false): St[] {
       },
       {
         id: "device",
-        label: t("send.steps.device.title"),
+        label:
+          typeTransaction === "Approve"
+            ? t("send.steps.connectLedger.title")
+            : t("send.steps.device.title"),
         component: StepConnectDevice,
         onBack: ({ transitionTo }) => transitionTo("summary"),
       },
@@ -81,14 +93,17 @@ function useSteps(canEditFees = false): St[] {
       ? [
           {
             id: "amount",
-            label: t("send.steps.amount.title"),
+            label:
+              typeTransaction === "Approve"
+                ? t("send.steps.networkFee.title")
+                : t("send.steps.amount.title"),
             component: StepAmount,
             footer: StepAmountFooter,
           },
           ...steps,
         ]
       : steps;
-  }, [canEditFees, t]);
+  }, [canEditFees, t, typeTransaction]);
 }
 const STATUS_KEYS_IGNORE = ["recipient", "gasLimit"];
 
@@ -114,7 +129,6 @@ export default function Body({ onChangeStepId, onClose, setError, stepId, params
   const { t } = useTranslation();
   const { canEditFees, transactionData } = params;
   const openedFromAccount = !!params.account;
-  const steps = useSteps(canEditFees);
   const {
     transaction,
     setTransaction,
@@ -182,16 +196,38 @@ export default function Body({ onChangeStepId, onClose, setError, stepId, params
     [handleCloseModal, params],
   );
   const errorSteps = [];
+
+  const fields = getDeviceTransactionConfig({
+    account: params.account,
+    parentAccount,
+    transaction,
+    status,
+  });
+
+  const typeTransaction: string = (
+    fields.find(
+      (field: { label: string }) =>
+        field.label && (field.label === "Type" || field.label === "Data"),
+    ) as DeviceTransactionField & { value: string }
+  ).value;
+
+  const steps = useSteps(canEditFees, typeTransaction);
+
   if (transactionError) {
     errorSteps.push(steps.length - 2);
   } else if (bridgeError) {
     errorSteps.push(0);
   }
+
+  const title = typeTransaction === "Approve" ? "Approve token" : t("sign.title");
+
   const error = transactionError || bridgeError || getStatusError(status, "errors");
   const warning = getStatusError(status, "warnings");
   const stepperProps = {
-    title: t("sign.title"),
+    title,
     stepId,
+    manifestId: params.manifestId,
+    manifestName: params.manifestName,
     useApp: params.useApp,
     steps,
     errorSteps,
