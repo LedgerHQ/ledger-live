@@ -55,33 +55,33 @@ export function setAnalyticsFeatureFlagMethod(method: typeof analyticsFeatureFla
   analyticsFeatureFlagMethod = method;
 }
 
-let isBatch1Enabled: boolean,
-  isBatch2Enabled: boolean,
-  isBatch3Enabled: boolean,
-  ptxEarnEnabled: boolean,
-  stakingProvidersEnabled: number | string;
-
-const getFeatureFlagProperties = () => {
+const getPtxAttributes = () => {
   if (!analyticsFeatureFlagMethod) return {};
   const ptxEarnFeatureFlag = analyticsFeatureFlagMethod("ptxEarn");
   const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
   const stakingProviders = analyticsFeatureFlagMethod("ethStakingProviders");
 
-  isBatch1Enabled = !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
-  isBatch2Enabled = !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 2;
-  isBatch3Enabled = !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 3;
-  ptxEarnEnabled = !!ptxEarnFeatureFlag?.enabled;
-  stakingProvidersEnabled =
+  const ptxEarnEnabled: boolean = !!ptxEarnFeatureFlag?.enabled;
+  const isBatch1Enabled: boolean =
+    !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
+  const isBatch2Enabled: boolean =
+    !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 2;
+  const isBatch3Enabled: boolean =
+    !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 3;
+  const stakingProvidersEnabled: number | string =
     !!stakingProviders?.enabled &&
     stakingProviders?.params &&
     stakingProviders?.params?.listProvider?.length > 0
       ? stakingProviders?.params?.listProvider.length
       : "flag not loaded";
-
-  updateIdentify();
+  return {
+    ptxEarnEnabled,
+    isBatch1Enabled,
+    isBatch2Enabled,
+    isBatch3Enabled,
+    stakingProvidersEnabled,
+  };
 };
-
-runOnceWhen(() => !!analyticsFeatureFlagMethod && !!getAnalytics(), getFeatureFlagProperties);
 
 const extraProperties = (store: ReduxStore) => {
   const state: State = store.getState();
@@ -91,6 +91,13 @@ const extraProperties = (store: ReduxStore) => {
   const device = lastSeenDeviceSelector(state);
   const devices = devicesModelListSelector(state);
   const accounts = accountsSelector(state);
+  const {
+    ptxEarnEnabled,
+    isBatch1Enabled,
+    isBatch2Enabled,
+    isBatch3Enabled,
+    stakingProvidersEnabled,
+  } = getPtxAttributes();
 
   const deviceInfo = device
     ? {
@@ -229,6 +236,8 @@ export const updateIdentify = async () => {
     context: getContext(),
   });
 };
+/** Ensure PTX flag attributes are set as soon as feature flags load */
+runOnceWhen(() => !!analyticsFeatureFlagMethod && !!getAnalytics(), updateIdentify);
 
 export const track = (
   eventName: string,
