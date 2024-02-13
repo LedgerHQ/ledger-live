@@ -130,6 +130,8 @@ type States = PartialNullable<{
   loadingImage: boolean;
   imageLoaded: boolean;
   imageCommitRequested: boolean;
+  manifestName: string;
+  manifestId: string;
 }>;
 
 type InnerProps<P> = {
@@ -211,6 +213,8 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     completeExchangeError,
     allowOpeningGranted,
     signMessageRequested,
+    manifestId,
+    manifestName,
   } = hookState;
 
   const dispatch = useDispatch();
@@ -527,6 +531,8 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
           parentAccount={parentAccount}
           transaction={transaction}
           status={status}
+          manifestId={manifestId}
+          manifestName={manifestName}
         />
       );
     }
