@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.77.0-next.2
+
+### Patch Changes
+
+- [#6165](https://github.com/LedgerHQ/ledger-live/pull/6165) [`313ca8b`](https://github.com/LedgerHQ/ledger-live/commit/313ca8b5a8a703c0130c8626f1a0c80b8e6df053) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - fix: LLD wallet connect deep link handling for requests again [LIVE-11270]
+
 ## 2.77.0-next.1
 
 ### Patch Changes
