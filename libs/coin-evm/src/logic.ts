@@ -245,7 +245,10 @@ export const attachOperations = (
   _tokenOperations: Operation[],
   _nftOperations: Operation[],
   _internalOperations: Operation[],
+  filters: { blacklistedTokenIds?: string[] } = { blacklistedTokenIds: [] },
 ): Operation[] => {
+  const { blacklistedTokenIds } = filters;
+
   // Creating deep copies of each Operation[] to prevent mutating the originals
   const coinOperations = _coinOperations.map(op => ({ ...op }));
   const tokenOperations = _tokenOperations.map(op => ({ ...op }));
@@ -298,6 +301,9 @@ export const attachOperations = (
 
   // Looping through token operations to potentially copy them as a child operation of a coin operation
   for (const tokenOperation of tokenOperations) {
+    const { token } = decodeTokenAccountId(tokenOperation.accountId);
+    if (!token || blacklistedTokenIds?.includes(token.id)) continue;
+
     let mainOperations = coinOperationsByHash[tokenOperation.hash];
     if (!mainOperations?.length) {
       const noneOperation = makeCoinOpForOrphanChildOp(tokenOperation);
