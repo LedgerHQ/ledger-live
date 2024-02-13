@@ -13,8 +13,6 @@ import SearchBox from "./SearchBox";
 import DisplayOptions from "./DisplayOptions";
 import GridBody from "./GridBody";
 import ListBody from "./ListBody";
-import { useSelector } from "react-redux";
-import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
 type Props = {
   accounts: AccountLikeArray;
   mode: "card" | "list";
@@ -30,8 +28,6 @@ const BodyByMode = {
 export default function AccountList({ accounts, range, onAccountClick, mode }: Props) {
   const { t } = useTranslation();
   const [search, setSearch] = useState("");
-
-  const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
 
   const lookupParentAccount = useCallback(
     (id: string): Account | undefined | null => {
@@ -94,7 +90,6 @@ export default function AccountList({ accounts, range, onAccountClick, mode }: P
         showNewAccount={!search}
         onAccountClick={onAccountClick}
         lookupParentAccount={lookupParentAccount}
-        blacklistedTokenIds={blacklistedTokenIds}
       />
     </div>
   );

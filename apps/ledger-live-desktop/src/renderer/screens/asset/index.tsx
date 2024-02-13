@@ -4,7 +4,6 @@ import { useSelector } from "react-redux";
 import { Redirect } from "react-router";
 import { Account } from "@ledgerhq/types-live";
 import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
-import { accountsSelector } from "~/renderer/reducers/accounts";
 import Box from "~/renderer/components/Box";
 import OperationsList from "~/renderer/components/OperationsList";
 import useTheme from "~/renderer/hooks/useTheme";
@@ -19,6 +18,7 @@ import {
 import { useFlattenSortAccounts } from "~/renderer/actions/general";
 import AssetHeader from "./AssetHeader";
 import TrackPage from "~/renderer/analytics/TrackPage";
+import { useAccounts } from "~/renderer/hooks/usePortfolio";
 type Props = {
   match: {
     params: {
@@ -35,7 +35,7 @@ export default function AssetPage({ match }: Props) {
   const range = useSelector(selectedTimeRangeSelector);
   const counterValue = useSelector(counterValueCurrencySelector);
   const countervalueFirst = useSelector(countervalueFirstSelector);
-  const allAccounts = useSelector(accountsSelector);
+  const allAccounts = useAccounts() as Account[];
 
   const accounts = useFlattenSortAccounts({
     enforceHideEmptySubAccounts: true,

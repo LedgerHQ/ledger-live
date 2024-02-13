@@ -4,7 +4,6 @@ import { Account, PortfolioRange, AccountLike } from "@ledgerhq/types-live";
 import Box from "~/renderer/components/Box";
 import AccountCard from "../AccountGridItem";
 import AccountCardPlaceholder from "../AccountGridItem/Placeholder";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 type Props = {
   visibleAccounts: AccountLike[];
   hiddenAccounts: AccountLike[];
@@ -13,7 +12,6 @@ type Props = {
   range: PortfolioRange;
   showNewAccount: boolean;
   horizontal: boolean;
-  blacklistedTokenIds: string[];
 };
 export default function GridBody({
   visibleAccounts,
@@ -22,14 +20,12 @@ export default function GridBody({
   showNewAccount,
   onAccountClick,
   lookupParentAccount,
-  blacklistedTokenIds,
   ...rest
 }: Props) {
   return (
     <GridBox {...rest}>
-      {[...visibleAccounts, ...(showNewAccount ? [null] : []), ...hiddenAccounts]
-        .filter(acc => acc && !blacklistedTokenIds.includes(getAccountCurrency(acc).id))
-        .map((account, i) =>
+      {[...visibleAccounts, ...(showNewAccount ? [null] : []), ...hiddenAccounts].map(
+        (account, i) =>
           !account ? (
             <AccountCardPlaceholder key="placeholder" />
           ) : (
@@ -44,7 +40,7 @@ export default function GridBody({
               onClick={onAccountClick}
             />
           ),
-        )}
+      )}
     </GridBox>
   );
 }

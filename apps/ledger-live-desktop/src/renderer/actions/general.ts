@@ -24,6 +24,9 @@ import {
   userThemeSelector,
 } from "~/renderer/reducers/settings";
 import { BehaviorSubject } from "rxjs";
+import { useAccounts } from "../hooks/usePortfolio";
+import { Account } from "@ledgerhq/types-live";
+
 const extraSessionTrackingPairsChanges: BehaviorSubject<TrackingPair[]> = new BehaviorSubject(
   [] as TrackingPair[],
 );
@@ -33,10 +36,10 @@ const extraSessionTrackingPairsChanges: BehaviorSubject<TrackingPair[]> = new Be
 export function useDistribution(
   opts: Omit<Parameters<typeof useDistributionRaw>[0], "accounts" | "to">,
 ) {
-  const accounts = useSelector(accountsSelector);
+  const accounts = useAccounts();
   const to = useSelector(counterValueCurrencySelector);
   return useDistributionRaw({
-    accounts,
+    accounts: accounts as Account[],
     to,
     ...opts,
   });
@@ -53,10 +56,10 @@ export function useSortAccountsComparator() {
   return sortAccountsComparatorFromOrder(accounts, calc);
 }
 export function useFlattenSortAccounts(options?: FlattenAccountsOptions) {
-  const accounts = useSelector(accountsSelector);
+  const accounts = useAccounts();
   const comparator = useSortAccountsComparator();
   return useMemo(
-    () => flattenSortAccounts(accounts, comparator, options),
+    () => flattenSortAccounts(accounts as Account[], comparator, options),
     [accounts, comparator, options],
   );
 }

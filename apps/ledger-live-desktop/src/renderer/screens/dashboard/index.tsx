@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from "react";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { isAddressPoisoningOperation } from "@ledgerhq/live-common/operation";
 import Box from "~/renderer/components/Box";
-import { accountsSelector, currenciesSelector } from "~/renderer/reducers/accounts";
+import { currenciesSelector } from "~/renderer/reducers/accounts";
 import BalanceSummary from "./GlobalSummary";
 import { colors } from "~/renderer/styles/theme";
 import {
@@ -27,8 +27,9 @@ import EmptyStateAccounts from "~/renderer/screens/dashboard/EmptyStateAccounts"
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
 import PostOnboardingHubBanner from "~/renderer/components/PostOnboardingHub/PostOnboardingHubBanner";
 import FeaturedButtons from "~/renderer/screens/dashboard/FeaturedButtons";
-import { ABTestingVariants, AccountLike, Operation } from "@ledgerhq/types-live";
+import { ABTestingVariants, Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import PortfolioContentCards from "~/renderer/screens/dashboard/PortfolioContentCards";
+import { useAccounts } from "~/renderer/hooks/usePortfolio";
 
 // This forces only one visible top banner at a time
 export const TopBannerContainer = styled.div`
@@ -40,7 +41,7 @@ export const TopBannerContainer = styled.div`
 `;
 export default function DashboardPage() {
   const { t } = useTranslation();
-  const accounts = useSelector(accountsSelector);
+  const accounts = useAccounts() as Account[];
   const currencies = useSelector(currenciesSelector);
 
   const counterValue = useSelector(counterValueCurrencySelector);

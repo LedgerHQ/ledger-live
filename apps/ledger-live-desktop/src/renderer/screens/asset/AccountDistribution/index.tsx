@@ -9,21 +9,21 @@ import { AccountLike } from "@ledgerhq/types-live";
 import Box from "~/renderer/components/Box";
 import Header from "./Header";
 import Row from "./Row";
-import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
-import { useSelector } from "react-redux";
 import { useHistory } from "react-router";
+import { useAccounts } from "~/renderer/hooks/usePortfolio";
+
 type Props = {
   accounts: AccountLike[];
 };
+
 export default function AccountDistribution({ accounts }: Props) {
   const { t } = useTranslation();
   const history = useHistory();
-  const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
-  const total = accounts.reduce((total, a) => total.plus(a.balance), BigNumber(0));
+  const accountsFiltered = useAccounts(accounts);
+  const total = accountsFiltered.reduce((total, a) => total.plus(a.balance), BigNumber(0));
   const accountDistribution = useMemo(
     () =>
-      accounts
-        .filter(a => !blacklistedTokenIds.includes(getAccountCurrency(a).id))
+      accountsFiltered
         .map(a => {
           const from = getAccountCurrency(a);
 
@@ -35,7 +35,7 @@ export default function AccountDistribution({ accounts }: Props) {
           };
         })
         .sort((a, b) => b.distribution - a.distribution),
-    [accounts, blacklistedTokenIds, total],
+    [accountsFiltered, total],
   );
 
   if (accountDistribution.length === 0) {

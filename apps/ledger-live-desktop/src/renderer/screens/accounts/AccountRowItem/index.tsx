@@ -3,7 +3,7 @@ import { Trans } from "react-i18next";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import styled from "styled-components";
-import { getAccountCurrency, listSubAccounts } from "@ledgerhq/live-common/account/helpers";
+import { listSubAccounts } from "@ledgerhq/live-common/account/helpers";
 import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import { Account, TokenAccount, AccountLike, PortfolioRange } from "@ledgerhq/types-live";
 import Box from "~/renderer/components/Box";
@@ -123,7 +123,6 @@ type Props = {
   parentAccount?: Account | null;
   disableRounding?: boolean;
   hideEmptyTokens?: boolean;
-  blacklistedTokenIds: string[];
   onClick: (b: AccountLike, a?: Account | null) => void;
   hidden?: boolean;
   range: PortfolioRange;
@@ -192,7 +191,6 @@ class AccountRowItem extends PureComponent<Props, State> {
       disableRounding,
       search,
       hideEmptyTokens,
-      blacklistedTokenIds,
     } = this.props;
     const { expanded } = this.state;
     let currency;
@@ -211,9 +209,7 @@ class AccountRowItem extends PureComponent<Props, State> {
       currency = account.currency;
       unit = account.unit;
       mainAccount = account;
-      tokens = listSubAccounts(account).filter(
-        subAccount => !blacklistedTokenIds.includes(getAccountCurrency(subAccount).id),
-      );
+      tokens = listSubAccounts(account);
       disabled = !matchesSearch(search, account);
       isToken = listTokenTypesForCryptoCurrency(currency).length > 0;
       if (tokens) tokens = tokens.filter(t => matchesSearch(search, t));

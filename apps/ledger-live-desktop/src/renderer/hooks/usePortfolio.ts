@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import { AccountLike, PortfolioRange } from "@ledgerhq/types-live";
+import { Account, AccountLike, AccountLikeArray, PortfolioRange } from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   usePortfolio as usePortfolioRaw,
@@ -53,19 +53,20 @@ export function useCurrencyPortfolio({
   const accounts = useAccounts();
   const to = useSelector(counterValueCurrencySelector);
   return useCurrencyPortfolioRaw({
-    accounts,
+    accounts: accounts as Account[],
     range,
     to,
     currency,
   });
 }
 
-export function useAccounts() {
+export function useAccounts(localAccounts: AccountLikeArray = []): AccountLikeArray {
   const accounts = useSelector(accountsSelector);
+  const accountsToUse = localAccounts.length ? localAccounts : accounts;
 
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const blacklistedTokenIdsSet = useMemo(() => new Set(blacklistedTokenIds), [blacklistedTokenIds]);
-  const filteredAccounts = accounts.map(acc => {
+  const filteredAccounts = accountsToUse.map(acc => {
     const subAccounts = listSubAccounts(acc).filter(
       subAccount => !blacklistedTokenIdsSet.has(getAccountCurrency(subAccount).id),
     );

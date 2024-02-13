@@ -7,15 +7,16 @@ import TrackPage, { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import { Redirect } from "react-router";
 import { useFlattenSortAccounts } from "~/renderer/actions/general";
-import { accountsSelector, starredAccountsSelector } from "~/renderer/reducers/accounts";
+import { starredAccountsSelector } from "~/renderer/reducers/accounts";
 import { accountsViewModeSelector, selectedTimeRangeSelector } from "~/renderer/reducers/settings";
 import AccountList from "./AccountList";
 import AccountsHeader from "./AccountsHeader";
+import { useAccounts } from "~/renderer/hooks/usePortfolio";
 
 export default function AccountsPage() {
   const mode = useSelector(accountsViewModeSelector);
   const range = useSelector(selectedTimeRangeSelector);
-  const rawAccounts = useSelector(accountsSelector);
+  const rawAccounts = useAccounts();
   const starredAccounts = useSelector(starredAccountsSelector);
   const flattenedAccounts = useFlattenSortAccounts({
     enforceHideEmptySubAccounts: true,
