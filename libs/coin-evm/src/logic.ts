@@ -188,8 +188,13 @@ export const __testOnlyClearSyncHashMemoize = (): void => {
  * if the CAL files where to include an
  * already crafted hash per token
  */
-export const getSyncHash = (currency: CryptoCurrency): string => {
-  const tokens = listTokensForCryptoCurrency(currency);
+export const getSyncHash = (
+  currency: CryptoCurrency,
+  blacklistedTokenIds: string[] = [],
+): string => {
+  const tokens = listTokensForCryptoCurrency(currency).filter(
+    token => !blacklistedTokenIds.includes(token.id),
+  );
   const basicTokensListString = tokens
     .map(token => token.id + token.contractAddress + token.name + token.ticker)
     .join("");

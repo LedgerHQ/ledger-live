@@ -559,6 +559,11 @@ describe("EVM Family", () => {
 
         expect(hashes).toEqual(Array.from(uniqueSet));
       });
+
+      it("should provide a new hash if a token is added to the blacklistedTokenIds", () => {
+        const token = getTokenById("ethereum/erc20/usd__coin");
+        expect(getSyncHash(currency)).not.toEqual(getSyncHash(currency, [token.id]));
+      });
     });
 
     describe("attachOperations", () => {
