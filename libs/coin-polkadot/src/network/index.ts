@@ -50,56 +50,51 @@ type CacheOpts = {
   force: boolean;
 };
 
+const getMinimumBondBalance = makeLRUCache(
+  sidecarGetMinimumBondBalance,
+  () => "polkadot",
+  hours(1, 1),
+);
+const getRegistry = makeLRUCache(sidecarGetRegistry, () => "polkadot", hours(1));
 const getTransactionParamsFn = makeLRUCache(
   sidecarGetTransactionParams,
   () => "polkadot",
   minutes(5),
 );
+const getPaymentInfo = makeLRUCache(
+  async ({
+    signedTx,
+  }): Promise<{
+    partialFee: string;
+  }> => sidecarPaymentInfo(signedTx),
+  ({ a, t, signedTx }) => hashTransactionParams(a, t, signedTx),
+  minutes(5),
+);
+const isControllerAddress = makeLRUCache(
+  sidecarIsControllerAddress,
+  address => address,
+  minutes(5),
+);
+const isElectionClosed = makeLRUCache(sidecarIsElectionClosed, () => "", minutes(1));
+const isNewAccount = makeLRUCache(sidecarIsNewAccount, address => address, minutes(1));
 
 export default {
   getAccount: async (address: string): Promise<PolkadotAPIAccount> => sidecardGetAccount(address),
-
   getOperations: bisonGetOperations,
-
-  getMinimumBondBalance: async (): Promise<BigNumber> =>
-    makeLRUCache(sidecarGetMinimumBondBalance, () => "polkadot", hours(1, 1))(),
-
-  getRegistry: async (): Promise<Registry> =>
-    makeLRUCache(sidecarGetRegistry, () => "polkadot", hours(1))(),
-
+  getMinimumBondBalance,
+  getRegistry,
   getStakingProgress: sidecarGetStakingProgress,
-
   getValidators: sidecarGetValidators,
-
   getTransactionParams: async (
     { force }: CacheOpts = { force: false },
   ): Promise<Record<string, any>> => {
     return force ? getTransactionParamsFn.force() : getTransactionParamsFn();
   },
-
-  getPaymentInfo: async (
-    data: PaymentInfoParams,
-  ): Promise<Pick<SidecarPaymentInfo, "partialFee">> =>
-    makeLRUCache(
-      async ({
-        signedTx,
-      }): Promise<{
-        partialFee: string;
-      }> => sidecarPaymentInfo(signedTx),
-      ({ a, t, signedTx }) => hashTransactionParams(a, t, signedTx),
-      minutes(5),
-    )(data),
-
-  isControllerAddress: makeLRUCache(sidecarIsControllerAddress, address => address, minutes(5)),
-
-  isElectionClosed: async (): Promise<boolean> =>
-    makeLRUCache(sidecarIsElectionClosed, () => "", minutes(1))(),
-
-  isNewAccount: async (address: string): Promise<boolean> =>
-    makeLRUCache(sidecarIsNewAccount, address => address, minutes(1))(address),
-
+  getPaymentInfo,
+  isControllerAddress,
+  isElectionClosed,
+  isNewAccount,
   submitExtrinsic: async (extrinsic: string) => sidecarSubmitExtrinsic(extrinsic),
-
   verifyValidatorAddresses: async (validators: string[]): Promise<string[]> =>
     sidecarVerifyValidatorAddresses(validators),
 };
