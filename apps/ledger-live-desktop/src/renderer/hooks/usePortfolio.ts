@@ -30,7 +30,7 @@ export function useBalanceHistoryWithCountervalue({
   account: AccountLike;
   range: PortfolioRange;
 }) {
-  const accountFiltered = useAccount({ account });
+  const accountFiltered = useAccount(account);
   const to = useSelector(counterValueCurrencySelector);
   return useBalanceHistoryWithCountervalueRaw({
     account: accountFiltered,
@@ -80,7 +80,7 @@ export function useAccounts(localAccounts: AccountLikeArray = []): AccountLikeAr
   return filteredAccounts;
 }
 
-export function useAccount({ account }: { account: AccountLike }) {
+export function useAccount(account: AccountLike) {
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const blacklistedTokenIdsSet = useMemo(() => new Set(blacklistedTokenIds), [blacklistedTokenIds]);
 

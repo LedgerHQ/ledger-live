@@ -22,7 +22,6 @@ import AddAccountsModal from "../AddAccounts/AddAccountsModal";
 import { BaseNavigation } from "~/components/RootNavigator/types/helpers";
 import { Asset } from "~/types/asset";
 import { ScreenName } from "~/const";
-import { blacklistedTokenIdsSelector } from "~/reducers/settings";
 
 const List = globalSyncRefreshControl<FlatListProps<Asset>>(FlatList);
 
@@ -31,9 +30,6 @@ function Assets() {
   const isUpToDate = useSelector(isUpToDateSelector);
   const globalSyncState = useGlobalSyncState();
   const hideEmptyTokenAccount = useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
-
-  const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
-  const blacklistedTokenIdsSet = useMemo(() => new Set(blacklistedTokenIds), [blacklistedTokenIds]);
 
   const { t } = useTranslation();
   const distribution = useDistribution({
@@ -49,15 +45,6 @@ function Assets() {
   const assets: Asset[] = useMemo(
     () => (distribution.isAvailable && distribution.list.length > 0 ? distribution.list : []),
     [distribution],
-  );
-
-  const assetsToDisplay = useMemo(
-    () =>
-      assets.filter(
-        asset =>
-          asset.currency.type !== "TokenCurrency" || !blacklistedTokenIdsSet.has(asset.currency.id),
-      ),
-    [assets, blacklistedTokenIdsSet],
   );
 
   const [isAddModalOpened, setAddModalOpened] = useState(false);
@@ -91,7 +78,7 @@ function Assets() {
           )}
           <Flex px={6} flex={1}>
             <List
-              data={assetsToDisplay}
+              data={assets}
               renderItem={renderItem}
               keyExtractor={i => i.currency.id}
               showsVerticalScrollIndicator={false}

@@ -5,14 +5,12 @@ import { Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { DefaultTheme, useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
-import { useSelector } from "react-redux";
 import chunk from "lodash/chunk";
 import { ensureContrast } from "../../colors";
 import { ScreenName } from "~/const";
 import { useDistribution } from "~/actions/general";
 import RingChart, { ColorableDistributionItem } from "../Analytics/RingChart";
 import { track } from "~/analytics";
-import { blacklistedTokenIdsSelector } from "~/reducers/settings";
 
 const NUMBER_MAX_ALLOCATION_ASSETS_TO_DISPLAY = 4;
 
@@ -42,7 +40,6 @@ const Allocations = () => {
     hideEmptyTokenAccount: true,
   });
   const { colors } = useTheme();
-  const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
 
   const goToAnalyticsAllocations = useCallback(() => {
     track("analytics_clicked", {
@@ -54,10 +51,7 @@ const Allocations = () => {
   const distributionListFormatted: ColorableDistributionItem[] = useMemo(() => {
     const displayedCurrencies: ColorableDistributionItem[] = distribution.list
       .filter(asset => {
-        return (
-          asset.currency.type !== "TokenCurrency" ||
-          !blacklistedTokenIds.includes(asset.currency.id)
-        );
+        return asset.currency.type !== "TokenCurrency";
       })
       .map(obj => {
         const { accounts, ...other } = obj;
@@ -99,7 +93,7 @@ const Allocations = () => {
     data.push(othersAllocations);
 
     return data;
-  }, [distribution.list, colors.neutral.c70, t, blacklistedTokenIds]);
+  }, [distribution.list, colors.neutral.c70, t]);
 
   const allocations = useMemo(
     () =>

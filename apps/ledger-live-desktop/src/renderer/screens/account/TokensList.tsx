@@ -29,7 +29,7 @@ type Props = {
 export default memo<Props>(TokensList);
 function TokensList({ account }: Props) {
   const { t } = useTranslation();
-  const { subAccounts } = useAccount({ account });
+  const { subAccounts } = useAccount(account);
   const [range] = useTimeRange();
   const dispatch = useDispatch();
   const history = useHistory();

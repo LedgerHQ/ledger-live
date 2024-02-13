@@ -14,10 +14,11 @@ import {
 import { useDistribution as useDistributionCommon } from "@ledgerhq/live-common/portfolio/v2/react";
 import { BehaviorSubject } from "rxjs";
 import { cleanCache, reorderAccounts } from "./accounts";
-import { accountsSelector } from "../reducers/accounts";
 import { counterValueCurrencySelector, orderAccountsSelector } from "../reducers/settings";
 import { clearBridgeCache } from "../bridge/cache";
 import { flushAll } from "../components/DBSave";
+import { useAccounts } from "~/hooks/portfolio";
+import { Account } from "@ledgerhq/types-live";
 
 const extraSessionTrackingPairsChanges: BehaviorSubject<TrackingPair[]> = new BehaviorSubject<
   TrackingPair[]
@@ -25,7 +26,7 @@ const extraSessionTrackingPairsChanges: BehaviorSubject<TrackingPair[]> = new Be
 export function useDistribution(
   opts: Omit<Parameters<typeof useDistributionCommon>[0], "accounts" | "to">,
 ) {
-  const accounts = useSelector(accountsSelector);
+  const accounts = useAccounts() as Account[];
   const to = useSelector(counterValueCurrencySelector);
   return useDistributionCommon({ accounts, to, ...opts });
 }
@@ -41,7 +42,7 @@ export function useSortAccountsComparator() {
   return sortAccountsComparatorFromOrder(accounts, calc);
 }
 export function useFlattenSortAccounts(options?: FlattenAccountsOptions) {
-  const accounts = useSelector(accountsSelector);
+  const accounts = useAccounts() as Account[];
   const comparator = useSortAccountsComparator();
   return useMemo(
     () => flattenSortAccounts(accounts, comparator, options),
@@ -120,7 +121,7 @@ export function useExtraSessionTrackingPair() {
   return extraSessionTrackingPair;
 }
 export function useTrackingPairs(): TrackingPair[] {
-  const accounts = useSelector(accountsSelector);
+  const accounts = useAccounts() as Account[];
   const countervalue = useSelector(counterValueCurrencySelector);
   const trPairs = useTrackingPairForAccounts(accounts, countervalue);
   const extraSessionTrackingPairs = useExtraSessionTrackingPair();

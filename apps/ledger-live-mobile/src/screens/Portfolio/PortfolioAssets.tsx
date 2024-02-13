@@ -10,7 +10,7 @@ import { TrackScreen } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import { Box } from "@ledgerhq/native-ui";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { blacklistedTokenIdsSelector, discreetModeSelector } from "~/reducers/settings";
+import { discreetModeSelector } from "~/reducers/settings";
 import Assets from "./Assets";
 import PortfolioQuickActionsBar from "./PortfolioQuickActionsBar";
 
@@ -32,20 +32,14 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
   });
   const discreetMode = useSelector(discreetModeSelector);
 
-  const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
-  const blacklistedTokenIdsSet = useMemo(() => new Set(blacklistedTokenIds), [blacklistedTokenIds]);
-
   const assetsToDisplay = useMemo(
     () =>
       distribution.list
         .filter(asset => {
-          return (
-            asset.currency.type !== "TokenCurrency" ||
-            !blacklistedTokenIdsSet.has(asset.currency.id)
-          );
+          return asset.currency.type !== "TokenCurrency";
         })
         .slice(0, maxAssetsToDisplay),
-    [distribution, blacklistedTokenIdsSet],
+    [distribution],
   );
 
   const goToAssets = useCallback(

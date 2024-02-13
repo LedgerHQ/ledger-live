@@ -31,8 +31,6 @@ export default function AccountsSettings({
   const { t } = useTranslation();
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const currencies = useSelector(cryptoCurrenciesSelector);
-  // TODO: hiddenNftCollection is never used 😱 is it safe to remove
-  // const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
   const dispatch = useDispatch();
 
   const renderSectionHeader = useCallback(
