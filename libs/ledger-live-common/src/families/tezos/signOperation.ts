@@ -47,8 +47,6 @@ export const signOperation: SignOperationFnSignature<Transaction> = ({
 
           let type: OperationType = "NONE";
 
-          let forgedBytes: string;
-
           const transactionFees = {
             fee: (transaction.fees || 0).toString(),
             gas_limit: (transaction.gasLimit || 0).toString(),
@@ -84,11 +82,6 @@ export const signOperation: SignOperationFnSignature<Transaction> = ({
                 ...transactionFees,
               });
 
-              forgedBytes = await rpc.forgeOperations({
-                branch: block.hash,
-                contents,
-              });
-
               break;
             }
             case "delegate": {
@@ -100,11 +93,6 @@ export const signOperation: SignOperationFnSignature<Transaction> = ({
                 counter: (Number(sourceData.counter) + 1 + contents.length).toString(),
                 delegate: transaction.recipient,
                 ...transactionFees,
-              });
-
-              forgedBytes = await rpc.forgeOperations({
-                branch: block.hash,
-                contents,
               });
 
               break;
@@ -121,11 +109,6 @@ export const signOperation: SignOperationFnSignature<Transaction> = ({
                 ...transactionFees,
               });
 
-              forgedBytes = await rpc.forgeOperations({
-                branch: block.hash,
-                contents,
-              });
-
               break;
             }
             default:
@@ -135,6 +118,11 @@ export const signOperation: SignOperationFnSignature<Transaction> = ({
           if (cancelled) {
             return;
           }
+
+          const forgedBytes = await rpc.forgeOperations({
+            branch: block.hash,
+            contents,
+          });
 
           // 0x03 is a conventional prefix (aka a watermark) for tezos transactions
           const signature = await ledgerSigner.sign(
