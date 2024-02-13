@@ -8,6 +8,7 @@ import {
   SubAccount,
 } from "@ledgerhq/types-live";
 import murmurhash from "imurmurhash";
+import { log } from "@ledgerhq/logs";
 import { getEnv } from "@ledgerhq/live-env";
 import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
 import { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
@@ -16,7 +17,6 @@ import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets/tokens";
 import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { getEIP712FieldsDisplayedOnNano } from "@ledgerhq/evm-tools/message/EIP712/index";
-import { log } from "@ledgerhq/logs";
 import { getNodeApi } from "./api/node/index";
 import {
   EvmNftTransaction,
