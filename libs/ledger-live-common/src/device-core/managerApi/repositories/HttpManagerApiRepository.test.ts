@@ -1,9 +1,12 @@
-import network from "@ledgerhq/live-network/network";
-import { HttpManagerApiRepository } from "./HttpManagerApiRepository";
-import { FirmwareNotRecognized, ManagerDeviceLockedError, NetworkDown } from "@ledgerhq/errors";
-import mock from "../../../generated/mock";
+import { FirmwareNotRecognized, NetworkDown } from "@ledgerhq/errors";
+import { FinalFirmware } from "@ledgerhq/types-live";
 import { DeviceInfoEntity } from "../entities/DeviceInfoEntity";
 import { DeviceVersionEntity } from "../entities/DeviceVersionEntity";
+import {
+  LanguagePackageEntity,
+  LanguagePackageResponseEntity,
+} from "../entities/LanguagePackageEntity";
+import { HttpManagerApiRepository } from "./HttpManagerApiRepository";
 
 const getUserHashesModule = jest.requireActual("../../../user");
 const networkModule = jest.requireActual("@ledgerhq/live-network/network");
@@ -428,5 +431,64 @@ describe("HttpManagerApiRepository", () => {
       method: "GET",
       url: "http://managerApiBase.com/language-package?livecommonversion=1.2.3",
     });
+  });
+
+  test("getLanguagePackagesForDevice should return language packages", async () => {
+    const mockedDeviceVersionId = 123;
+    const mockedCurrentFirmwareId = 456;
+
+    jest
+      .spyOn(httpManagerApiRepository, "getDeviceVersion")
+      .mockReturnValue(Promise.resolve({ id: mockedDeviceVersionId } as DeviceVersionEntity));
+    jest
+      .spyOn(httpManagerApiRepository, "getCurrentFirmware")
+      .mockReturnValue(Promise.resolve({ id: mockedCurrentFirmwareId } as FinalFirmware));
+
+    networkSpy.mockResolvedValue({
+      data: [
+        {
+          language: "french",
+          language_package_version: [
+            {
+              device_versions: [mockedDeviceVersionId, 8888],
+              language: "french",
+              se_firmware_final_versions: [mockedCurrentFirmwareId, 9999],
+            } as LanguagePackageEntity,
+          ],
+        },
+        {
+          language: "spanish",
+          language_package_version: [
+            {
+              device_versions: [mockedDeviceVersionId],
+              language: "spanish",
+              se_firmware_final_versions: [9999], // this excludes the package from the result
+            } as LanguagePackageEntity,
+          ],
+        },
+        {
+          language: "english",
+          language_package_version: [
+            {
+              device_versions: [8888], // this excludes the package from the result
+              language: "spanish",
+              se_firmware_final_versions: [mockedCurrentFirmwareId],
+            } as LanguagePackageEntity,
+          ],
+        },
+      ] as LanguagePackageResponseEntity[],
+    });
+
+    const result = await httpManagerApiRepository.getLanguagePackagesForDevice(
+      {} as unknown as DeviceInfoEntity,
+    );
+
+    expect(result).toEqual([
+      {
+        device_versions: [mockedDeviceVersionId, 8888],
+        language: "french",
+        se_firmware_final_versions: [mockedCurrentFirmwareId, 9999],
+      },
+    ]);
   });
 });
