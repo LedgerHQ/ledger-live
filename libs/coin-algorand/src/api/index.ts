@@ -10,19 +10,13 @@ export * from "./algodv2.types";
 export * from "./indexer.types";
 
 export default {
-  getAccount: async (address: string): Promise<AlgoAccount> => {
-    return getAccount(network)(address);
-  },
+  getAccount: async (address: string): Promise<AlgoAccount> => getAccount(network)(address),
 
-  getTransactionParams: async (): Promise<AlgoTransactionParams> => {
-    return getTransactionParams(network)();
-  },
+  getTransactionParams: async (): Promise<AlgoTransactionParams> => getTransactionParams(network)(),
 
-  broadcastTransaction: async (payload: Buffer): Promise<string> => {
-    return broadcastTransaction(network)(payload);
-  },
+  broadcastTransaction: async (payload: Buffer): Promise<string> =>
+    broadcastTransaction(network)(payload),
 
-  getAccountTransactions: async (address: string, startAt?: number): Promise<AlgoTransaction[]> => {
-    return getAccountTransactions(network)(address, startAt);
-  },
+  getAccountTransactions: async (address: string, startAt?: number): Promise<AlgoTransaction[]> =>
+    getAccountTransactions(network)(address, startAt),
 };

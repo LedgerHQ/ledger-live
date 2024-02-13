@@ -2,10 +2,7 @@ import BigNumber from "bignumber.js";
 import { cryptocurrenciesById } from "@ledgerhq/cryptoassets";
 import { PolkadotAccount, PolkadotOperationMode, Transaction } from "../types";
 import { buildTransaction } from "./buildTransaction";
-import polkadotAPI from "../network";
 import { TypeRegistry } from "@polkadot/types";
-import { NetworkRequestCall } from "@ledgerhq/coin-framework/network";
-import { makeNoCache } from "@ledgerhq/coin-framework/cache";
 
 const registry = new TypeRegistry();
 
@@ -24,25 +21,23 @@ const transactionParams = {
   tip: 8,
   transactionVersion: 22,
 };
-jest.mock("../network", () =>
-  jest.fn().mockImplementation(() => {
-    return {
-      getRegistry: () => {
-        return Promise.resolve({
-          registry: registry,
-          extrinsics: {
-            balances: {
-              transferKeepAlive: extrinsicsMethod,
-            },
+jest.mock("../network", () => {
+  return {
+    getRegistry: () => {
+      return Promise.resolve({
+        registry: registry,
+        extrinsics: {
+          balances: {
+            transferKeepAlive: extrinsicsMethod,
           },
-        });
-      },
-      getTransactionParams: (): Promise<Record<string, any>> => {
-        return Promise.resolve(transactionParams);
-      },
-    };
-  }),
-);
+        },
+      });
+    },
+    getTransactionParams: (): Promise<Record<string, any>> => {
+      return Promise.resolve(transactionParams);
+    },
+  };
+});
 
 describe("buildTransaction", () => {
   const mockCodec = jest.fn();

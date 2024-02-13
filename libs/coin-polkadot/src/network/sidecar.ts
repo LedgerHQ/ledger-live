@@ -7,6 +7,7 @@ import { expandMetadata } from "@polkadot/types/metadata/decorate";
 import { Extrinsics } from "@polkadot/types/metadata/decorate/types";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
+import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import type {
   PolkadotValidator,
   PolkadotStakingProgress,
@@ -28,7 +29,6 @@ import type {
   SidecarPaymentInfo,
   SidecarRuntimeSpec,
 } from "./sidecar.types";
-import { makeLRUCache } from "@ledgerhq/live-network/cache";
 
 /**
  * Get indexer base url.
@@ -436,9 +436,8 @@ export const getStakingInfo = async (addr: string) => {
   const unlockings = stakingInfo?.staking.unlocking
     ? stakingInfo?.staking?.unlocking.map<PolkadotUnlocking>(lock => ({
         amount: new BigNumber(lock.value),
-        completionDate: new Date(
-          activeEraStart + (Number(lock.era) - activeEraIndex) * eraLength,
-        ), // This is an estimation of the date of completion, since it depends on block validation speed
+        // This is an estimation of the date of completion, since it depends on block validation speed
+        completionDate: new Date(activeEraStart + (Number(lock.era) - activeEraIndex) * eraLength),
       }))
     : [];
   const now = new Date();
