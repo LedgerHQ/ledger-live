@@ -1624,8 +1624,8 @@ importers:
         specifier: workspace:^
         version: link:../ledgerjs/packages/logs
       axios:
-        specifier: 0.26.1
-        version: 0.26.1
+        specifier: 0.28.0
+        version: 0.28.0
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
@@ -2289,8 +2289,8 @@ importers:
         specifier: ^3.2.3
         version: 3.2.3
       axios:
-        specifier: 0.26.1
-        version: 0.26.1
+        specifier: 0.28.0
+        version: 0.28.0
       bchaddrjs:
         specifier: ^0.5.2
         version: 0.5.2
@@ -2584,8 +2584,8 @@ importers:
   libs/ledgerjs:
     dependencies:
       axios:
-        specifier: ^0.27.2
-        version: 0.27.2
+        specifier: ^0.28.0
+        version: 0.28.0
       invariant:
         specifier: ^2.2.4
         version: 2.2.4
@@ -2823,8 +2823,8 @@ importers:
         specifier: ^20.8.10
         version: 20.8.10
       axios:
-        specifier: ^0.25.0
-        version: 0.25.0
+        specifier: ^0.28.0
+        version: 0.28.0
       documentation:
         specifier: 14.0.2
         version: 14.0.2
@@ -3040,8 +3040,8 @@ importers:
         specifier: ^20.8.10
         version: 20.8.10
       axios:
-        specifier: ^0.26.1
-        version: 0.26.1
+        specifier: ^0.28.0
+        version: 0.28.0
       documentation:
         specifier: 14.0.2
         version: 14.0.2
@@ -3163,8 +3163,8 @@ importers:
         specifier: ^20.8.10
         version: 20.8.10
       axios:
-        specifier: ^0.26.1
-        version: 0.26.1
+        specifier: ^0.28.0
+        version: 0.28.0
       documentation:
         specifier: 14.0.2
         version: 14.0.2
@@ -3439,8 +3439,8 @@ importers:
         specifier: workspace:^
         version: link:../logs
       axios:
-        specifier: ^0.26.1
-        version: 0.26.1
+        specifier: ^0.28.0
+        version: 0.28.0
       ws:
         specifier: ^7.5.2
         version: 7.5.7
@@ -3752,8 +3752,8 @@ importers:
         specifier: workspace:^
         version: link:../logs
       axios:
-        specifier: ^0.26.1
-        version: 0.26.1
+        specifier: ^0.28.0
+        version: 0.28.0
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
@@ -4426,8 +4426,8 @@ importers:
         specifier: workspace:^
         version: link:../ledgerjs/packages/logs
       axios:
-        specifier: 0.26.1
-        version: 0.26.1
+        specifier: 0.28.0
+        version: 0.28.0
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
@@ -13955,8 +13955,6 @@ packages:
       metro-core: '*'
       minimatch: '*'
     peerDependenciesMeta:
-      '@expo/metro-config':
-        optional: true
       glob:
         optional: true
       metro:
@@ -14046,8 +14044,6 @@ packages:
       metro-core: '*'
       minimatch: '*'
     peerDependenciesMeta:
-      '@expo/metro-config':
-        optional: true
       glob:
         optional: true
       metro:
@@ -19265,9 +19261,6 @@ packages:
 
   /@react-native-community/cli-tools@11.3.7:
     resolution: {integrity: sha512-peyhP4TV6Ps1hk+MBHTFaIR1eI3u+OfGBvr5r0wPwo3FAJvldRinMgcB/TcCcOBXVORu7ba1XYjkubPeYcqAyA==}
-    peerDependenciesMeta:
-      find-up:
-        optional: true
     dependencies:
       appdirsjs: 1.2.6
       chalk: 4.1.2
@@ -19283,9 +19276,6 @@ packages:
 
   /@react-native-community/cli-tools@11.3.9:
     resolution: {integrity: sha512-qWEUo/HQll/aj5xHYCw6itXGkPgultxTHa4UYSaBIRSfU15aSiwonJ/JP7fe+fHKbaFh6IdhaaRhj4ArfEOxuQ==}
-    peerDependenciesMeta:
-      find-up:
-        optional: true
     dependencies:
       appdirsjs: 1.2.6
       chalk: 4.1.2
@@ -26259,7 +26249,7 @@ packages:
     dependencies:
       '@bitcoinerlab/secp256k1': 1.0.4
       '@ipld/dag-cbor': 9.0.3
-      axios: 1.3.4
+      axios: 1.6.5
       base32-decode: 1.0.0
       bip32: 4.0.0
       bip39: 3.0.4
@@ -26634,9 +26624,6 @@ packages:
 
   /ajv-formats@2.1.1:
     resolution: {integrity: sha512-Wx0Kx52hxE7C18hkMEggYlEifqWZtYaRgouJor+WMdPnQyEK13vgEWyVNup7SoeeoLMsr4kf5h6dOW11I15MUA==}
-    peerDependenciesMeta:
-      ajv:
-        optional: true
     dependencies:
       ajv: 8.12.0
 
@@ -27407,43 +27394,45 @@ packages:
   /axios@0.21.1:
     resolution: {integrity: sha512-dKQiRHxGD9PPRIUNIWvZhPTPpl1rf/OxTYKsqKUDjBwYylTvV7SjSHJb9ratfyzM6wCdLCOYLzs73qpg5c4iGA==}
     dependencies:
-      follow-redirects: 1.15.3
+      follow-redirects: 1.15.5
     dev: false
 
   /axios@0.21.2:
     resolution: {integrity: sha512-87otirqUw3e8CzHTMO+/9kh/FSgXt/eVDvipijwDtEuwbkySWZ9SBm6VEubmJ/kLKEoLQV/POhxXFb66bfekfg==}
     dependencies:
-      follow-redirects: 1.15.3
+      follow-redirects: 1.15.5
     dev: false
 
   /axios@0.21.4:
     resolution: {integrity: sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==}
     dependencies:
-      follow-redirects: 1.15.3
+      follow-redirects: 1.15.5
     dev: false
 
   /axios@0.24.0:
     resolution: {integrity: sha512-Q6cWsys88HoPgAaFAVUb0WpPk0O8iTeisR9IMqy9G8AbO4NlpVknrnQS03zzF9PGAWgO3cgletO3VjV/P7VztA==}
     dependencies:
-      follow-redirects: 1.15.0
+      follow-redirects: 1.15.5
     dev: false
 
   /axios@0.25.0:
     resolution: {integrity: sha512-cD8FOb0tRH3uuEe6+evtAbgJtfxr7ly3fQjYcMcuPlgkwVS9xboaVIpcDV+cYQe+yGykgwZCs1pzjntcGa6l5g==}
     dependencies:
-      follow-redirects: 1.15.0
+      follow-redirects: 1.15.5
+    dev: false
 
   /axios@0.26.1:
     resolution: {integrity: sha512-fPwcX4EvnSHuInCMItEhAGnaSEXRBjtzh9fOtsE6E1G6p7vl7edEeZe11QHf18+6+9gR5PbKV/sGKNaD8YaMeA==}
     dependencies:
-      follow-redirects: 1.15.0
-
-  /axios@0.27.2:
-    resolution: {integrity: sha512-t+yRIyySRTp/wua5xEr+z1q60QmLq8ABsS5O9Me1AsE5dfKqgnCFzwiCZZ/cGNd1lq4/7akDWMxdhVlucjmnOQ==}
-    dependencies:
-      follow-redirects: 1.15.0
-      form-data: 4.0.0
+      follow-redirects: 1.15.5
     dev: false
+
+  /axios@0.28.0:
+    resolution: {integrity: sha512-Tu7NYoGY4Yoc7I+Npf9HhUMtEEpV7ZiLH9yndTCoNhcpBH0kwcvFbzYN9/u5QKI5A6uefjsNNWaz5olJVYS62Q==}
+    dependencies:
+      follow-redirects: 1.15.5
+      form-data: 4.0.0
+      proxy-from-env: 1.1.0
 
   /axios@1.3.4:
     resolution: {integrity: sha512-toYm+Bsyl6VC5wSkfkbbNB6ROv7KY93PEBBL6xyDczaIHasAiv4wPqQ/c4RjoQzipxRD2W5g21cOqQulZ7rHwQ==}
@@ -34788,7 +34777,6 @@ packages:
       is-hex-prefixed: 1.0.0
       strip-hex-prefix: 1.0.0
     dev: false
-    bundledDependencies: false
 
   /ev-emitter@1.1.1:
     resolution: {integrity: sha512-ipiDYhdQSCZ4hSbX4rMW+XzNKMD1prg/sTvoVmSLkuQ1MVlwjJQQA+sW8tMYR3BLUr9KjodFV4pvzunvRhd33Q==}
@@ -35033,8 +35021,6 @@ packages:
       react-native: '*'
     peerDependenciesMeta:
       expo-constants:
-        optional: true
-      expo-file-system:
         optional: true
       expo-modules-core:
         optional: true
@@ -36277,6 +36263,7 @@ packages:
   /follow-redirects@1.15.3:
     resolution: {integrity: sha512-1VzOtuEM8pC9SFU1E+8KfTjZyMztRsgEfwQl44z8A25uy13jSzTj6dyK2Df52iV0vgHCfBwLhDWevLn95w5v6Q==}
     engines: {node: '>=4.0'}
+    dev: false
 
   /follow-redirects@1.15.5:
     resolution: {integrity: sha512-vSFWUON1B+yAw1VN4xMfxgn5fTUiaOzAJCKBwIIgT/+7CuGy9+r+5gITvP62j3RmaD5Ph65UaERdOSRGUzZtgw==}
@@ -37919,7 +37906,7 @@ packages:
     engines: {node: '>=8.0.0'}
     dependencies:
       eventemitter3: 4.0.7
-      follow-redirects: 1.15.3
+      follow-redirects: 1.15.5
       requires-port: 1.0.0
 
   /http-server@14.0.0:
