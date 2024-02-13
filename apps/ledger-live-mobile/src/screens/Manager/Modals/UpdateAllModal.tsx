@@ -5,9 +5,7 @@ import { InstalledItem, State } from "@ledgerhq/live-common/apps/index";
 import { App } from "@ledgerhq/types-live";
 import styled from "styled-components/native";
 import { Flex, IconsLegacy, Text, Button } from "@ledgerhq/native-ui";
-
 import QueuedDrawer from "~/components/QueuedDrawer";
-
 import AppIcon from "../AppsList/AppIcon";
 import ByteSize from "~/components/ByteSize";
 
@@ -35,21 +33,18 @@ const AppName = styled(Text).attrs({
 })``;
 
 const AppVersion = styled(Text).attrs({
-  marginRight: 6,
+  width: 36,
+  height: 18,
   paddingLeft: 2,
   paddingRight: 1,
   paddingTop: 1,
-  borderWidth: 1,
+  textAlign: "center",
   borderRadius: 4,
-  alignItems: "center",
-  justifyContent: "center",
 })``;
 
 const IconContainer = styled(Flex).attrs({
-  marginVertical: 20,
-  padding: 22,
-  borderWidth: 1,
-  borderRadius: 8,
+  padding: 16,
+  borderRadius: 100,
 })``;
 
 const TextContainer = styled(Flex).attrs({
@@ -63,6 +58,7 @@ const TextContainer = styled(Flex).attrs({
 const ModalText = styled(Text).attrs({
   textAlign: "center",
   marginTop: 16,
+  textTransform: "none",
 })``;
 
 const ButtonsContainer = styled(Flex).attrs({
@@ -76,14 +72,7 @@ const FlatListContainer = styled(FlatList).attrs({
   marginBottom: 20,
 })`` as unknown as typeof FlatList;
 
-export default memo(function UpdateAllModal({
-  isOpened,
-  onClose,
-  onConfirm,
-  apps,
-  installed,
-  state,
-}: Props) {
+export default memo(function ({ isOpened, onClose, onConfirm, apps, installed, state }: Props) {
   const { deviceInfo } = state;
 
   const data = apps.map(app => ({
@@ -92,13 +81,14 @@ export default memo(function UpdateAllModal({
   }));
 
   const renderAppLine = useCallback(
-    ({
+    function ({
       item: { name, bytes, version: appVersion, installed },
       item,
     }: {
       item: App & { installed: InstalledItem | null | undefined };
-    }) => {
-      const version = installed?.availableVersion || appVersion;
+    }) {
+      const { availableVersion: newVersion = appVersion, version: curVersion = appVersion } =
+        installed ?? {};
 
       return (
         <AppLine>
@@ -108,15 +98,30 @@ export default memo(function UpdateAllModal({
               {name}
             </AppName>
           </Flex>
-          <Flex flexDirection="row" justifyContent="space-between" style={{ width: "35%" }}>
+          <Flex
+            flexDirection="row"
+            justifyContent="space-between"
+            style={{ width: "40%" }}
+            alignItems="center"
+          >
             <AppVersion
               color="neutral.c80"
               fontWeight="semiBold"
               variant="tiny"
               numberOfLines={1}
-              borderColor="neutral.c40"
+              backgroundColor="neutral.c30"
             >
-              {version}
+              {curVersion}
+            </AppVersion>
+            <IconsLegacy.ArrowRightMedium color="neutral.c80" />
+            <AppVersion
+              color="neutral.c80"
+              fontWeight="semiBold"
+              variant="tiny"
+              numberOfLines={1}
+              backgroundColor="neutral.c30"
+            >
+              {newVersion}
             </AppVersion>
             <Text
               textAlign="right"
@@ -141,8 +146,8 @@ export default memo(function UpdateAllModal({
   return (
     <QueuedDrawer isRequestingToBeOpened={!!isOpened} onClose={onClose}>
       <Flex alignItems="center">
-        <IconContainer borderColor="neutral.c40">
-          <IconsLegacy.RefreshMedium size={24} color="neutral.c100" />
+        <IconContainer backgroundColor="neutral.c30">
+          <IconsLegacy.InfoAltFillMedium size={40} color="primary.c80" />
         </IconContainer>
         <TextContainer>
           <ModalText color="neutral.c100" fontWeight="medium" variant="h2">
