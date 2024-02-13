@@ -38,11 +38,12 @@ export function listAppsUseCase(
   managerApiRepository: ManagerApiRepository = HttpManagerApiRepositoryFactory.getInstance(),
 ): Observable<ListAppsEvent> {
   return listAppsV2Enabled
-    ? listAppsV1(transport, deviceInfo, managerApiRepository)
-    : listAppsV2({
+    ? listAppsV2({
         transport,
         deviceInfo,
         deviceProxyModel: getEnv("DEVICE_PROXY_MODEL") as DeviceModelId,
         managerApiRepository,
-      });
+        forceProvider: getEnv("FORCE_PROVIDER"),
+      })
+    : listAppsV1(transport, deviceInfo, managerApiRepository);
 }
