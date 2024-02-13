@@ -310,7 +310,7 @@ export function useDeepLinkHandler() {
           if (location.pathname === "/platform/ledger-wallet-connect") {
             try {
               // Prevent a request from updating the live-app url and reloading it
-              if (query.uri && new URL(query.uri).searchParams.get("requestId")) {
+              if (!query.uri || new URL(query.uri).searchParams.get("requestId")) {
                 return;
               }
             } catch {
