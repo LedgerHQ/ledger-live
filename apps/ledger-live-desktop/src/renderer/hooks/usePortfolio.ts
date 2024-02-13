@@ -1,5 +1,11 @@
 import { useSelector } from "react-redux";
-import { Account, AccountLike, AccountLikeArray, PortfolioRange } from "@ledgerhq/types-live";
+import {
+  Account,
+  AccountLike,
+  AccountLikeArray,
+  PortfolioRange,
+  SubAccount,
+} from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   usePortfolio as usePortfolioRaw,
@@ -67,9 +73,7 @@ export function useAccounts(localAccounts: AccountLikeArray = []): AccountLikeAr
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const blacklistedTokenIdsSet = useMemo(() => new Set(blacklistedTokenIds), [blacklistedTokenIds]);
   const filteredAccounts = accountsToUse.map(acc => {
-    const subAccounts = listSubAccounts(acc).filter(
-      subAccount => !blacklistedTokenIdsSet.has(getAccountCurrency(subAccount).id),
-    );
+    const subAccounts = filterSubAccounts(listSubAccounts(acc), blacklistedTokenIdsSet);
     return { ...acc, subAccounts };
   });
 
@@ -80,8 +84,12 @@ export function useAccount({ account }: { account: AccountLike }) {
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const blacklistedTokenIdsSet = useMemo(() => new Set(blacklistedTokenIds), [blacklistedTokenIds]);
 
-  const subAccounts = listSubAccounts(account).filter(
+  const subAccounts = filterSubAccounts(listSubAccounts(account), blacklistedTokenIdsSet);
+  return { ...account, subAccounts };
+}
+
+export function filterSubAccounts(subAccounts: SubAccount[], blacklistedTokenIdsSet: Set<string>) {
+  return subAccounts.filter(
     subAccount => !blacklistedTokenIdsSet.has(getAccountCurrency(subAccount).id),
   );
-  return { ...account, subAccounts };
 }
