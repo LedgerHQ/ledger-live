@@ -18,10 +18,7 @@ import Countervalue from "./Countervalue";
 import Delta from "./Delta";
 import Header from "./Header";
 import Star from "~/renderer/components/Stars/Star";
-import {
-  blacklistedTokenIdsSelector,
-  hideEmptyTokenAccountsSelector,
-} from "~/renderer/reducers/settings";
+import { hideEmptyTokenAccountsSelector } from "~/renderer/reducers/settings";
 import Button from "~/renderer/components/Button";
 import { getLLDCoinFamily } from "~/renderer/families";
 
@@ -327,7 +324,6 @@ class AccountRowItem extends PureComponent<Props, State> {
 }
 const mapStateToProps = createStructuredSelector({
   hideEmptyTokenAccounts: hideEmptyTokenAccountsSelector,
-  blacklistedTokenIds: blacklistedTokenIdsSelector,
 });
 const ConnectedAccountRowItem: React.ComponentType<Props> =
   connect(mapStateToProps)(AccountRowItem);
