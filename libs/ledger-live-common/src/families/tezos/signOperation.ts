@@ -171,6 +171,8 @@ export const signOperation: SignOperationFnSignature<Transaction> = ({
             type: "signed",
             signedOperation: {
               operation,
+              // we slice the signature to remove the `03` prefix
+              // which souldn't be included in the signature
               signature: signature.sbytes.slice(2),
             },
           });
