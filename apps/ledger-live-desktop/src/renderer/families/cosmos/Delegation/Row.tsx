@@ -278,7 +278,9 @@ export function UnbondingRow({
           </ToolTip>
         </Box>
       </Column>
-      <Column>{formattedAmount}</Column>
+      <Column>
+        <Discreet>{formattedAmount} </Discreet>
+      </Column>
       <Column>{date}</Column>
     </Wrapper>
   );

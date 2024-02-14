@@ -11,7 +11,7 @@ import {
 } from "@ledgerhq/live-common/families/polkadot/types";
 import { Account } from "@ledgerhq/types-live";
 import { TableLine } from "./Header";
-import { useDiscreetMode } from "~/renderer/components/Discreet";
+import Discreet, { useDiscreetMode } from "~/renderer/components/Discreet";
 import Box from "~/renderer/components/Box/Box";
 import CheckCircle from "~/renderer/icons/CheckCircle";
 import ClockIcon from "~/renderer/icons/Clock";
@@ -213,7 +213,9 @@ export function UnlockingRow({
 
   return (
     <Wrapper>
-      <Column>{formattedAmount}</Column>
+      <Column>
+        <Discreet>{formattedAmount}</Discreet>
+      </Column>
       <Column>
         {isUnbonded ? (
           <Box color="positiveGreen" pl={2} horizontal={true}>
