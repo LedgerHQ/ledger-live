@@ -2231,6 +2231,9 @@ importers:
       '@stacks/transactions':
         specifier: 6.11.0
         version: 6.11.0
+      '@stellar/stellar-sdk':
+        specifier: ^11.2.2
+        version: 11.2.2
       '@stricahq/bip32ed25519':
         specifier: ^1.0.3
         version: 1.0.4
@@ -2420,9 +2423,6 @@ importers:
       simple-cbor:
         specifier: ^0.4.1
         version: 0.4.1
-      stellar-sdk:
-        specifier: ^10.4.1
-        version: 10.4.1
       superstruct:
         specifier: 0.14.2
         version: 0.14.2
@@ -21005,6 +21005,37 @@ packages:
       - encoding
     dev: false
 
+  /@stellar/js-xdr@3.1.0:
+    resolution: {integrity: sha512-mYTyFnhgyQgyvpAYZRO1LurUn2MxcIZRj74zZz/BxKEk7zrL4axhQ1ez0HL2BRi0wlG6cHn5BeD/t9Xcyp7CSQ==}
+    dev: false
+
+  /@stellar/stellar-base@11.0.0:
+    resolution: {integrity: sha512-KPTjaWJCG2m7hMCPRWFGGPaG5qOkgPLWvFVOhe1HUy7dlE4MxxPfdusz0mcLkf6VT7doqhLB1rIt0D9M2GgQcQ==}
+    dependencies:
+      '@stellar/js-xdr': 3.1.0
+      base32.js: 0.1.0
+      bignumber.js: 9.1.2
+      buffer: 6.0.3
+      sha.js: 2.4.11
+      tweetnacl: 1.0.3
+      typescript: 5.3.3
+    optionalDependencies:
+      sodium-native: 4.0.8
+    dev: false
+
+  /@stellar/stellar-sdk@11.2.2:
+    resolution: {integrity: sha512-50dpxpZE2e87LjIln1EZnBh7r+JFWwyGs+NiGPOZ+LzJd2YRf54+YxzDX6ELVOrUqp2TRTLnzthXXTNFeVobFw==}
+    dependencies:
+      '@stellar/stellar-base': 11.0.0
+      axios: 1.6.7
+      bignumber.js: 9.1.2
+      eventsource: 2.0.2
+      randombytes: 2.1.0
+      toml: 3.0.0
+      typescript: 5.3.3
+      urijs: 1.19.11
+    dev: false
+
   /@storybook/addon-actions@7.5.3(@types/react-dom@18.2.13)(@types/react@18.2.28)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-v3yL6Eq/jCiXfA24JjRdbEQUuorms6tmrywaKcd1tAy4Ftgof0KHB4tTcTyiajrI5bh6PVJoRBkE8IDqmNAHkA==}
     peerDependencies:
@@ -23897,10 +23928,6 @@ packages:
       '@types/node': 20.8.10
     dev: false
 
-  /@types/eventsource@1.1.8:
-    resolution: {integrity: sha512-fJQNt9LijJCZwYvM6O30uLzdpAK9zs52Uc9iUW9M2Zsg0HQM6DLf6QysjC/wuFX+0798B8AppVMvgdO6IftPKQ==}
-    dev: false
-
   /@types/express-serve-static-core@4.17.28:
     resolution: {integrity: sha512-P1BJAEAW3E2DJUlkgq4tOL3RyMunoWXqbSCygWo5ZIWTjUgN1YnaXWW4VWl/oc8vs/XoYibEGBKP0uZyF4AHig==}
     dependencies:
@@ -24319,12 +24346,6 @@ packages:
 
   /@types/qs@6.9.7:
     resolution: {integrity: sha512-FGa1F62FT09qcrueBA6qYTrJPVDzah9a+493+o2PCXsesWHIn27G98TsSMs3WPNbZIEj4+VJf6saSFpvD+3Zsw==}
-
-  /@types/randombytes@2.0.0:
-    resolution: {integrity: sha512-bz8PhAVlwN72vqefzxa14DKNT8jK/mV66CSjwdVQM/k3Th3EPKfUtdMniwZgMedQTFuywAsfjnZsg+pEnltaMA==}
-    dependencies:
-      '@types/node': 20.8.10
-    dev: false
 
   /@types/range-parser@1.2.4:
     resolution: {integrity: sha512-EEhsLsD6UsDM1yFhAvy0Cjr6VwmpMWqFBCb9w07wVugF7w9nfajxLuVmngTIpgS6svCnm6Vaw+MZhoDCKnOfsw==}
@@ -24819,10 +24840,6 @@ packages:
     dependencies:
       '@types/node': 20.8.10
     dev: true
-
-  /@types/urijs@1.19.19:
-    resolution: {integrity: sha512-FDJNkyhmKLw7uEvTxx5tSXfPeQpO0iy73Ry+PmYZJvQy0QIWX8a7kJ4kLWRf+EbTPJEPDSgPXHaM7pzr5lmvCg==}
-    dev: false
 
   /@types/utf8@2.1.6:
     resolution: {integrity: sha512-pRs2gYF5yoKYrgSaira0DJqVg2tFuF+Qjp838xS7K+mJyY2jJzjsrl6y17GbIa4uMRogMbxs+ghNCvKg6XyNrA==}
@@ -27407,7 +27424,7 @@ packages:
   /axios@0.21.1:
     resolution: {integrity: sha512-dKQiRHxGD9PPRIUNIWvZhPTPpl1rf/OxTYKsqKUDjBwYylTvV7SjSHJb9ratfyzM6wCdLCOYLzs73qpg5c4iGA==}
     dependencies:
-      follow-redirects: 1.15.3
+      follow-redirects: 1.15.5
     dev: false
 
   /axios@0.21.2:
@@ -27432,6 +27449,7 @@ packages:
     resolution: {integrity: sha512-cD8FOb0tRH3uuEe6+evtAbgJtfxr7ly3fQjYcMcuPlgkwVS9xboaVIpcDV+cYQe+yGykgwZCs1pzjntcGa6l5g==}
     dependencies:
       follow-redirects: 1.15.0
+    dev: true
 
   /axios@0.26.1:
     resolution: {integrity: sha512-fPwcX4EvnSHuInCMItEhAGnaSEXRBjtzh9fOtsE6E1G6p7vl7edEeZe11QHf18+6+9gR5PbKV/sGKNaD8YaMeA==}
@@ -27466,6 +27484,14 @@ packages:
       follow-redirects: 1.15.5
       form-data: 4.0.0
       proxy-from-env: 1.1.0
+
+  /axios@1.6.7:
+    resolution: {integrity: sha512-/hDJGff6/c7u0hDkvkGxR/oy6CbCs8ziCsC7SqmhjfozqiJGc8Z11wrv9z9lYfY4K8l+H9TpjcMDX0xOZmx+RA==}
+    dependencies:
+      follow-redirects: 1.15.5
+      form-data: 4.0.0
+      proxy-from-env: 1.1.0
+    dev: false
 
   /axobject-query@3.1.1:
     resolution: {integrity: sha512-goKlv8DZrK9hUh975fnHzhNIO4jUnFCfv/dszV5VwUGDFjI6vQ2VwoyjYjYNEbBE8AH87TduWP5uyDR1D+Iteg==}
@@ -28299,10 +28325,6 @@ packages:
     requiresBuild: true
     dependencies:
       bindings: 1.5.0
-    dev: false
-
-  /bignumber.js@4.1.0:
-    resolution: {integrity: sha512-eJzYkFYy9L4JzXsbymsFn3p54D+llV27oTQ+ziJG7WFRheJcNZilgVXMG0LoZtlQSKBsJdWtLFqOD0u+U0jZKA==}
     dev: false
 
   /bignumber.js@7.2.1:
@@ -30788,6 +30810,8 @@ packages:
     requiresBuild: true
     dependencies:
       buffer: 5.7.1
+    dev: true
+    optional: true
 
   /create-ecdh@4.0.4:
     resolution: {integrity: sha512-mf+TCx8wWc9VpuxfP2ht0iSISLZnt0JgWlrOKZiNqyUZWnjIaCIVNQArMHnCZKfEYRg6IM7A+NeJoN8gf/Ws0A==}
@@ -34844,13 +34868,6 @@ packages:
     dependencies:
       original: 1.0.2
     dev: true
-
-  /eventsource@1.1.1:
-    resolution: {integrity: sha512-qV5ZC0h7jYIAOhArFJgSfdyz6rALJyb270714o7ZtNnw2WSJ+eexhKtE0O8LYPRsHZHf2osHKZBxGPvm3kPkCA==}
-    engines: {node: '>=0.12.0'}
-    dependencies:
-      original: 1.0.2
-    dev: false
 
   /eventsource@2.0.2:
     resolution: {integrity: sha512-IzUmBGPR3+oUG9dUeXynyNmf91/3zUSJg1lCktzKw47OXuhco54U3r9B7O4XX+Rb1Itm9OZ2b0RkTs10bICOxA==}
@@ -41316,13 +41333,6 @@ packages:
   /js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
 
-  /js-xdr@1.3.0:
-    resolution: {integrity: sha512-fjLTm2uBtFvWsE3l2J14VjTuuB8vJfeTtYuNS7LiLHDWIX2kt0l1pqq9334F8kODUkKPMuULjEcbGbkFFwhx5g==}
-    dependencies:
-      lodash: 4.17.21
-      long: 2.4.0
-    dev: false
-
   /js-yaml@3.14.1:
     resolution: {integrity: sha512-okMH7OXXJ7YrN9Ok3/SXrnu4iX9yOk+25nqX4imS2npuvTYDmo/QEZoqwZkYaIDk3jVvBOTOIEgEhaLOynBS9g==}
     hasBin: true
@@ -42795,11 +42805,6 @@ packages:
       ansi-fragments: 0.2.1
       dayjs: 1.11.9
       yargs: 15.4.1
-
-  /long@2.4.0:
-    resolution: {integrity: sha512-ijUtjmO/n2A5PaosNG9ZGDsQ3vxJg7ZW8vsY8Kp0f2yIZWhSJvjmegV7t+9RPQKxKrvj8yKGehhS+po14hPLGQ==}
-    engines: {node: '>=0.6'}
-    dev: false
 
   /long@4.0.0:
     resolution: {integrity: sha512-XsP+KhQif4bjX1kbuSiySJFNAehNxgLb6hPRGJ9QsUr8ajHkuXGdrHmFUTUUXhDwVX2R5bY4JNZEwbUiMhV+MA==}
@@ -46244,6 +46249,7 @@ packages:
     resolution: {integrity: sha512-hyBVl6iqqUOJ8FqRe+l/gS8H+kKYjrEndd5Pm1MfBtsEKA038HkkdbAl/72EAXGyonD/PFsvmVG+EvcIpliMBg==}
     dependencies:
       url-parse: 1.5.10
+    dev: true
 
   /os-browserify@0.3.0:
     resolution: {integrity: sha1-hUNzx/XCMVkU/Jv8a9gjj92h7Cc=}
@@ -52234,8 +52240,8 @@ packages:
       uuid: 8.3.2
       websocket-driver: 0.7.4
 
-  /sodium-native@3.4.1:
-    resolution: {integrity: sha512-PaNN/roiFWzVVTL6OqjzYct38NSXewdl2wz8SRB51Br/MLIJPrbM3XexhVWkq7D3UWMysfrhKVf1v1phZq6MeQ==}
+  /sodium-native@4.0.8:
+    resolution: {integrity: sha512-2MOwB92RlCF0Y+teiTOgRMaKvcgXbXvwmSlyHaY5Gy8d4W3Bm++9cMv+hB/gf8INdMUxo69DbmGcvJ7HzLSL9w==}
     requiresBuild: true
     dependencies:
       node-gyp-build: 4.6.0
@@ -52590,41 +52596,6 @@ packages:
   /statuses@2.0.1:
     resolution: {integrity: sha512-RwNA9Z/7PrK06rYLIzFMlaF+l73iwpzsqRIFgbMLbTcLD6cOao82TaWefPXQvB2fOC4AjuYSEndS7N/mTCbkdQ==}
     engines: {node: '>= 0.8'}
-
-  /stellar-base@8.2.2:
-    resolution: {integrity: sha512-YVCIuJXU1bPn+vU0ded+g0D99DcpYXH9CEXfpYEDc4Gf04h65YjOVhGojQBm1hqVHq3rKT7m1tgfNACkU84FTA==}
-    dependencies:
-      base32.js: 0.1.0
-      bignumber.js: 4.1.0
-      crc: 3.8.0
-      js-xdr: 1.3.0
-      lodash: 4.17.21
-      sha.js: 2.4.11
-      tweetnacl: 1.0.3
-    optionalDependencies:
-      sodium-native: 3.4.1
-    dev: false
-
-  /stellar-sdk@10.4.1:
-    resolution: {integrity: sha512-Wdm2UoLuN9SNrSEHO0R/I+iZuRwUkfny1xg4akhGCpO8LQZw8QzuMTJvbEoMT3sHT4/eWYiteVLp7ND21xZf5A==}
-    dependencies:
-      '@types/eventsource': 1.1.8
-      '@types/node': 20.8.10
-      '@types/randombytes': 2.0.0
-      '@types/urijs': 1.19.19
-      axios: 0.25.0
-      bignumber.js: 4.1.0
-      detect-node: 2.1.0
-      es6-promise: 4.2.8
-      eventsource: 1.1.1
-      lodash: 4.17.21
-      randombytes: 2.1.0
-      stellar-base: 8.2.2
-      toml: 2.3.6
-      tslib: 1.14.1
-      urijs: 1.19.11
-      utility-types: 3.10.0
-    dev: false
 
   /store2@2.14.2:
     resolution: {integrity: sha512-siT1RiqlfQnGqgT/YzXVUNsom9S0H1OX+dpdGN1xkyYATo4I6sep5NmsRD/40s3IIOvlCq6akxkqG82urIZW1w==}
@@ -54367,8 +54338,8 @@ packages:
     resolution: {integrity: sha512-o5sSPKEkg/DIQNmH43V0/uerLrpzVedkUh8tGNvaeXpfpuwjKenlSox/2O/BTlZUtEe+JG7s5YhEz608PlAHRA==}
     engines: {node: '>=0.6'}
 
-  /toml@2.3.6:
-    resolution: {integrity: sha512-gVweAectJU3ebq//Ferr2JUY4WKSDe5N+z0FvjDncLGyHmIDoxgY/2Ie4qfEIDm4IS7OA6Rmdm7pdEEdMcV/xQ==}
+  /toml@3.0.0:
+    resolution: {integrity: sha512-y/mWCZinnvxjTKYhJ+pYxwD0mRLVvOtdS2Awbgxln6iEnt4rk0yBxeSBHkGJcPucRiG0e55mwWp+g/05rsrd6w==}
     dev: false
 
   /totalist@3.0.1:
@@ -55355,7 +55326,6 @@ packages:
     resolution: {integrity: sha512-pXWcraxM0uxAS+tN0AG/BF2TyqmHO014Z070UsJ+pFvYuRSq8KH8DmWpnbXe0pEPDHXZV3FcAbJkijJ5oNEnWw==}
     engines: {node: '>=14.17'}
     hasBin: true
-    dev: true
 
   /typical@4.0.0:
     resolution: {integrity: sha512-VAH4IvQ7BDFYglMd7BPRDfLgxZZX4O4TFcRDA6EN5X7erNJJq+McIEp8np9aVtxrCJ6qx4GTYVfOWNjcqwZgRw==}
