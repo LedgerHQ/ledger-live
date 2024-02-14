@@ -155,3 +155,12 @@ export interface ICPRosettaBroadcastResult extends SubmitResponse {
   txnHash?: string;
   blockHeight?: string;
 }
+
+export interface ICPRosettaConstructionDeriveRequest {
+  network_identifier: ICPRosettaNetworkIdentifier;
+  public_key: ICPRosettaPublickey;
+}
+
+export interface ICPRosettaConstructionDeriveResponse {
+  account_identifier: ICPRosettaAccountIdentifier;
+}
