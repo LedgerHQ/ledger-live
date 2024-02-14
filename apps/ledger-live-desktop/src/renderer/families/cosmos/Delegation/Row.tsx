@@ -22,6 +22,7 @@ import ToolTip from "~/renderer/components/Tooltip";
 import CosmosFamilyLedgerValidatorIcon from "~/renderer/families/cosmos/shared/components/CosmosFamilyLedgerValidatorIcon";
 import Text from "~/renderer/components/Text";
 import { DelegationActionsModalName } from "../modals";
+import Discreet from "~/renderer/components/Discreet";
 export const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -200,8 +201,12 @@ export function Row({
           </Box>
         )}
       </Column>
-      <Column>{formattedAmount}</Column>
-      <Column>{formattedPendingRewards}</Column>
+      <Column>
+        <Discreet>{formattedAmount}</Discreet>
+      </Column>
+      <Column>
+        <Discreet>{formattedPendingRewards}</Discreet>
+      </Column>
       <Column>
         <DropDown
           items={dropDownItems}
