@@ -26,6 +26,7 @@ const testTimeout = 10 * 60 * 1000;
 
 const minBalancePerCurrencyId: Partial<Record<CryptoCurrency["id"], number>> = {
   arbitrum: 0.001,
+  arbitrum_sepolia: 0.001,
   optimism: 0.001,
   optimism_goerli: 0.001,
   boba: 0.001,
@@ -63,7 +64,7 @@ const testCoinDestination = (args: TransactionDestinationTestInput<EvmTransactio
   // the transaction and not the effectively used gas price, which might differ.
   // This leads to not being able to correctly cost an operation and
   // therefore makes it impossible infer the sender's balance
-  if (["arbitrum"].includes(currency.id)) {
+  if (["arbitrum", "arbitrum_sepolia"].includes(currency.id)) {
     return;
   }
 
@@ -95,7 +96,7 @@ const testCoinBalance: MutationSpec<EvmTransaction>["test"] = ({
   // and their explorers are using the transaction gasPrice
   // instead of the effectiveGasPrice from the receipt
   const underValuedFeesCurrencies = ["optimism", "optimism_goerli", "base"];
-  const overValuedFeesCurrencies = ["arbitrum", "klaytn"];
+  const overValuedFeesCurrencies = ["arbitrum", "arbitrum_sepolia", "klaytn"];
   const currenciesWithFlakyBehaviour = [...underValuedFeesCurrencies, ...overValuedFeesCurrencies];
 
   // Classic test verifying exactly the balance

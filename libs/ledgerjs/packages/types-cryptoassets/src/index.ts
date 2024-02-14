@@ -133,6 +133,7 @@ export type CryptoCurrencyId =
   | "solana_devnet"
   | "filecoin"
   | "arbitrum"
+  | "arbitrum_sepolia"
   | "cronos"
   | "fantom"
   | "flare"

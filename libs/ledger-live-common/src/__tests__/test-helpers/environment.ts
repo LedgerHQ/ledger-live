@@ -71,6 +71,7 @@ setSupportedCurrencies([
   "near",
   "optimism",
   "optimism_goerli",
+  "arbitrum_sepolia",
   "rsk",
   "bittorrent",
   "kava_evm",

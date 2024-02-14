@@ -3730,6 +3730,36 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  arbitrum_sepolia: {
+    type: "CryptoCurrency",
+    id: "arbitrum_sepolia",
+    coinType: CoinType.ETH,
+    name: "Arbitrum Sepolia",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    deviceTicker: "ETH",
+    scheme: "arbitrum_sepolia",
+    color: "#ff0000",
+    family: "evm",
+    units: ethereumUnits("ether", "ETH").map(makeTestnetUnit),
+    isTestnetFor: "arbitrum",
+    disableCountervalue: true,
+    ethereumLikeInfo: {
+      chainId: 421614,
+      node: { type: "external", uri: "https://sepolia-rollup.arbitrum.io/rpc" },
+      explorer: {
+        uri: "https://api-sepolia.arbiscan.io",
+        type: "etherscan",
+      },
+    },
+    explorerViews: [
+      {
+        tx: "https://sepolia.arbiscan.io/tx/$hash",
+        address: "https://sepolia.arbiscan.io/address/$address",
+        token: "https://sepolia.arbiscan.io/token/$contractAddress?a=$address",
+      },
+    ],
+  },
   // Cronos EVM blockchain
   cronos: {
     type: "CryptoCurrency",

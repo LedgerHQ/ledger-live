@@ -60,6 +60,7 @@ setSupportedCurrencies([
   "optimism",
   "optimism_goerli",
   "arbitrum",
+  "arbitrum_sepolia",
   "rsk",
   "bittorrent",
   "kava_evm",
