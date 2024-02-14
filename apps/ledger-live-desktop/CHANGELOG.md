@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.77.0-next.3
+
+### Patch Changes
+
+- [#6190](https://github.com/LedgerHQ/ledger-live/pull/6190) [`67ebc91`](https://github.com/LedgerHQ/ledger-live/commit/67ebc91a1c3a04beff1327ea74dcc378a48c250a) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Use globals for FF identity flags and update identify func
+
 ## 2.77.0-next.2
 
 ### Patch Changes
