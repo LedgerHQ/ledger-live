@@ -36,6 +36,7 @@ describe("listApps v2", () => {
       transport,
       deviceInfo,
       managerApiRepository: mockedManagerApiRepository,
+      forceProvider: 1,
     }).subscribe({
       error: err => {
         expect(err).toBeInstanceOf(UnexpectedBootloader);
@@ -57,6 +58,7 @@ describe("listApps v2", () => {
       transport,
       deviceInfo,
       managerApiRepository: mockedManagerApiRepository,
+      forceProvider: 1,
     }).subscribe({
       error: err => {
         expect(err).toBeInstanceOf(UnexpectedBootloader);
@@ -78,6 +80,7 @@ describe("listApps v2", () => {
       transport,
       deviceInfo,
       managerApiRepository: mockedManagerApiRepository,
+      forceProvider: 1,
     }).subscribe({
       error: err => {
         expect(err.message).toBe("Bad usage of listAppsV2: missing deviceModelId");
@@ -109,6 +112,7 @@ describe("listApps v2", () => {
       transport,
       deviceInfo,
       managerApiRepository: mockedManagerApiRepository,
+      forceProvider: 1,
     }).subscribe({
       complete: () => {
         done();
@@ -142,6 +146,7 @@ describe("listApps v2", () => {
       transport,
       deviceInfo,
       managerApiRepository: mockedManagerApiRepository,
+      forceProvider: 1,
     }).subscribe();
     jest.advanceTimersByTime(1);
 
@@ -167,6 +172,7 @@ describe("listApps v2", () => {
       transport,
       deviceInfo,
       managerApiRepository: mockedManagerApiRepository,
+      forceProvider: 1,
     }).subscribe({
       error: err => {
         expect(err.message).toBe("getDeviceVersion failed");
@@ -198,6 +204,7 @@ describe("listApps v2", () => {
       transport,
       deviceInfo,
       managerApiRepository: mockedManagerApiRepository,
+      forceProvider: 1,
     }).subscribe({
       error: err => {
         expect(err.message).toBe("catalogForDevice failed");
@@ -231,6 +238,7 @@ describe("listApps v2", () => {
       transport,
       deviceInfo,
       managerApiRepository: mockedManagerApiRepository,
+      forceProvider: 1,
     }).subscribe({
       error: err => {
         expect(err.message).toBe("getLanguagePackagesForDevice failed");
