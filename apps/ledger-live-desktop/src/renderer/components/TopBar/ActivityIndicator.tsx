@@ -45,6 +45,7 @@ export default function ActivityIndicatorInner() {
       data-test-id="topbar-synchronize-button"
       disabled={isDisabled}
       onClick={isDisabled ? undefined : onClick}
+      isInteractive
     >
       <Rotating
         size={16}
@@ -89,6 +90,7 @@ export default function ActivityIndicatorInner() {
               style={{
                 textDecoration: "underline",
                 pointerEvents: "all",
+                cursor: "pointer",
               }}
               onClick={onClick}
             >
