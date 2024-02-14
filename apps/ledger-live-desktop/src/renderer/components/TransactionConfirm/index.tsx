@@ -16,13 +16,19 @@ import Text from "~/renderer/components/Text";
 import WarnBox from "~/renderer/components/WarnBox";
 import useTheme from "~/renderer/hooks/useTheme";
 import FormattedVal from "~/renderer/components/FormattedVal";
-import { renderVerifyUnwrapped } from "~/renderer/components/DeviceAction/rendering";
+import {
+  AnimationWrapper,
+  renderVerifyUnwrapped,
+} from "~/renderer/components/DeviceAction/rendering";
 import TransactionConfirmField from "./TransactionConfirmField";
 import { getLLDCoinFamily } from "~/renderer/families";
 import { FieldComponentProps as FCPGeneric } from "~/renderer/families/types";
 import { Link } from "react-router-dom";
 import { openURL } from "~/renderer/linking";
-import Alert from "@ledgerhq/react-ui/components/Alert";
+import Alert from "~/renderer/components/Alert";
+import { DeviceBlocker } from "../DeviceAction/DeviceBlocker";
+import { getDeviceAnimation } from "../DeviceAction/animations";
+import Animation from "~/renderer/animations";
 
 const FieldText = styled(Text).attrs(() => ({
   ml: 1,
@@ -179,50 +185,49 @@ const TransactionConfirm = ({
   ).value;
   return typeTransaction === "Approve" ? (
     <Container>
-      {renderVerifyUnwrapped({
-        modelId: device.modelId,
-        type,
-      })}
-      <Text ff={"Inter|Medium"} fontSize={6} marginBottom={20}>
-        {t("approve.description")}
-      </Text>
-      <Alert type="info" mt={3}>
-        <Trans
-          i18nKey={
-            amountTransaction === "Unlimited MATIC" ? "approve.unlimited" : "approve.limited"
-          }
-          values={{
-            recipientWording,
+      <Container paddingX={26}>
+        <DeviceBlocker />
+        <Animation animation={getDeviceAnimation(device.modelId, type, "verify")} />
+        <Text ff={"Inter|Medium"} textAlign={"center"} fontSize={22} marginBottom={12}>
+          {t("approve.description")}
+        </Text>
+        <Alert type="primary" mb={26}>
+          <Trans
+            i18nKey={
+              amountTransaction === "Unlimited MATIC" ? "approve.unlimited" : "approve.limited"
+            }
+            values={{
+              recipientWording,
+            }}
+          />
+        </Alert>
+        <Box
+          style={{
+            width: "100%",
           }}
-        />
-      </Alert>
-      <Box
-        style={{
-          width: "100%",
-        }}
-        px={30}
-        mb={20}
-      >
-        {fields.map((field, i) => {
-          const MaybeComponent = fieldComponents[field.type];
-          if (!MaybeComponent) {
-            console.log(
-              `TransactionConfirm field ${field.type} is not implemented! add a generic implementation in components/TransactionConfirm.js or inside families/*/TransactionConfirmFields.js`,
+          mb={20}
+        >
+          {fields.map((field, i) => {
+            const MaybeComponent = fieldComponents[field.type];
+            if (!MaybeComponent) {
+              console.log(
+                `TransactionConfirm field ${field.type} is not implemented! add a generic implementation in components/TransactionConfirm.js or inside families/*/TransactionConfirmFields.js`,
+              );
+              return null;
+            }
+            return (
+              <MaybeComponent
+                key={i}
+                field={field}
+                account={account}
+                parentAccount={parentAccount}
+                transaction={transaction}
+                status={status}
+              />
             );
-            return null;
-          }
-          return (
-            <MaybeComponent
-              key={i}
-              field={field}
-              account={account}
-              parentAccount={parentAccount}
-              transaction={transaction}
-              status={status}
-            />
-          );
-        })}
-      </Box>
+          })}
+        </Box>
+      </Container>
       {Footer ? (
         <>
           <HorizontalSeparator />
