@@ -94,7 +94,6 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   polygon_zk_evm: EVM_DEAD_ADDRESS,
   polygon_zk_evm_testnet: EVM_DEAD_ADDRESS,
   base: EVM_DEAD_ADDRESS,
-  base_goerli: EVM_DEAD_ADDRESS,
   stacks: "SP3KS7VMY2ZNE6SB88PHR4SKRK2EEPHS8N8MCCBR9",
   secret_network: "secret19rl4cm2hmr8afy4kldpxz3fka4jguq0a79e5zf",
   stargaze: "stars19rl4cm2hmr8afy4kldpxz3fka4jguq0agu6q5y",

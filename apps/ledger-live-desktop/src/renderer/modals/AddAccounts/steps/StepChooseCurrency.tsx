@@ -68,7 +68,6 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const polygonZkEvm = useFeature("currencyPolygonZkEvm");
   const polygonZkEvmTestnet = useFeature("currencyPolygonZkEvmTestnet");
   const base = useFeature("currencyBase");
-  const baseGoerli = useFeature("currencyBaseGoerli");
   const klaytn = useFeature("currencyKlaytn");
   const injective = useFeature("currencyInjective");
   const vechain = useFeature("currencyVechain");
@@ -113,7 +112,6 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       polygon_zk_evm: polygonZkEvm,
       polygon_zk_evm_testnet: polygonZkEvmTestnet,
       base,
-      base_goerli: baseGoerli,
       klaytn,
       injective,
       vechain,
@@ -157,7 +155,6 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       polygonZkEvm,
       polygonZkEvmTestnet,
       base,
-      baseGoerli,
       klaytn,
       injective,
       vechain,

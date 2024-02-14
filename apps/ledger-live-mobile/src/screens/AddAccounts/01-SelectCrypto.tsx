@@ -90,7 +90,6 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const polygonZkEvm = useFeature("currencyPolygonZkEvm");
   const polygonZkEvmTestnet = useFeature("currencyPolygonZkEvmTestnet");
   const base = useFeature("currencyBase");
-  const baseGoerli = useFeature("currencyBaseGoerli");
   const klaytn = useFeature("currencyKlaytn");
   const injective = useFeature("currencyInjective");
   const vechain = useFeature("currencyVechain");
@@ -135,7 +134,6 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       polygon_zk_evm: polygonZkEvm,
       polygon_zk_evm_testnet: polygonZkEvmTestnet,
       base,
-      base_goerli: baseGoerli,
       klaytn,
       injective,
       vechain,
@@ -179,7 +177,6 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       polygonZkEvm,
       polygonZkEvmTestnet,
       base,
-      baseGoerli,
       klaytn,
       injective,
       vechain,

@@ -38,7 +38,6 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyAvalancheCChain: DEFAULT_FEATURE,
   currencyAxelar: DEFAULT_FEATURE,
   currencyBase: DEFAULT_FEATURE,
-  currencyBaseGoerli: DEFAULT_FEATURE,
   currencyBittorrent: DEFAULT_FEATURE,
   currencyBoba: DEFAULT_FEATURE,
   currencyCoreum: DEFAULT_FEATURE,
