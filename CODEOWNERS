@@ -17,9 +17,9 @@ libs/env/                                                @ledgerhq/live-hub
 libs/ledger-live-common/                                 @ledgerhq/live-hub
 libs/promise/                                            @ledgerhq/live-hub
 libs/ui/                                                 @ledgerhq/live-hub
-libs/live-hooks/										 @ledgerhq/live-hub
-libs/live-countervalues/								 @ledgerhq/live-hub
-libs/live-countervalues-react/ 						     @ledgerhq/live-hub
+libs/live-hooks/                                         @ledgerhq/live-hub
+libs/live-countervalues/                                 @ledgerhq/live-hub
+libs/live-countervalues-react/                           @ledgerhq/live-hub
 libs/live-nft/                                           @ledgerhq/live-hub
 libs/live-nft-react/                                     @ledgerhq/live-hub
 
@@ -37,7 +37,7 @@ libs/ledger-live-common/src/families/                    @ledgerhq/live-blockcha
 libs/ledgerjs/packages/cryptoassets/                     @ledgerhq/live-blockchain-support
 libs/ledgerjs/packages/hw-app-*/                         @ledgerhq/live-blockchain-support
 libs/ledgerjs/packages/types-cryptoassets/               @ledgerhq/live-blockchain-support
-libs/live-config/									     @ledgerhq/live-blockchain-support
+libs/live-config/                                        @ledgerhq/live-blockchain-support
 libs/live-network/                                       @ledgerhq/live-blockchain-support
 
 # PTX team
@@ -69,15 +69,15 @@ libs/ledgerjs/packages/hw-app-exchange/                         @ledgerhq/ptx
 **/Web3AppWebview/                                       @ledgerhq/wallet-api
 **/WebPlatformPlayer/                                    @ledgerhq/wallet-api
 apps/ledger-live-desktop/src/renderer/screens/platform/  @ledgerhq/wallet-api
-apps/ledger-live-desktop/src/webviewPreloader/  	     @ledgerhq/wallet-api
+apps/ledger-live-desktop/src/webviewPreloader/           @ledgerhq/wallet-api
 apps/ledger-live-mobile/src/screens/Discover/            @ledgerhq/wallet-api
-apps/ledger-live-mobile/src/screens/Platform/ 		     @ledgerhq/wallet-api
+apps/ledger-live-mobile/src/screens/Platform/            @ledgerhq/wallet-api
 libs/ledger-live-common/src/platform/                    @ledgerhq/wallet-api
 libs/ledger-live-common/src/wallet-api/                  @ledgerhq/wallet-api
-**/platformAdapter.ts 									 @ledgerhq/wallet-api
-**/walletApiAdapter.ts									 @ledgerhq/wallet-api
-**/liveapp-sdk.spec.ts 								     @ledgerhq/wallet-api @ledgerhq/live-qa
-**/wallet-api.spec.ts 								     @ledgerhq/wallet-api @ledgerhq/live-qa
+**/platformAdapter.ts                                    @ledgerhq/wallet-api
+**/walletApiAdapter.ts                                   @ledgerhq/wallet-api
+**/liveapp-sdk.spec.ts                                   @ledgerhq/wallet-api @ledgerhq/live-qa
+**/wallet-api.spec.ts                                    @ledgerhq/wallet-api @ledgerhq/live-qa
 libs/test-utils/                                         @ledgerhq/wallet-api @ledgerhq/live-qa
 
 # Devices team
@@ -112,3 +112,7 @@ libs/ledger-live-common/src/hooks/recoverFeatureFlag.ts                 @ledgerh
 # UI tests
 apps/ledger-live-desktop/tests/                          @ledgerhq/live-hub @ledgerhq/live-qa
 apps/ledger-live-mobile/e2e/                             @ledgerhq/live-hub @ledgerhq/live-qa
+
+# i18n files (no code owner)
+apps/ledger-live-desktop/static/i18n/
+apps/ledger-live-mobile/src/locales/

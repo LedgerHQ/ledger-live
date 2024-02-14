@@ -4502,7 +4502,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     managerAppName: "Ethereum",
     ticker: "ETH",
     scheme: "linea_goerli",
-    color: "#000000",
+    color: "#00ff00",
     family: "evm",
     units: ethereumUnits("ETH", "ETH").map(makeTestnetUnit),
     disableCountervalue: false,
