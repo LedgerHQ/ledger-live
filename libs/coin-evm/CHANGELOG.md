@@ -1,5 +1,29 @@
 # @ledgerhq/coin-evm
 
+## 0.12.2-wc-test.0
+
+### Patch Changes
+
+- [#6041](https://github.com/LedgerHQ/ledger-live/pull/6041) [`9c83695`](https://github.com/LedgerHQ/ledger-live/commit/9c8369580b91d82021d4ec28ad7a49dc4ba42e4f) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Remove unnecessary logs
+
+- [#5682](https://github.com/LedgerHQ/ledger-live/pull/5682) [`4744c31`](https://github.com/LedgerHQ/ledger-live/commit/4744c3136021f1f47ad1617f2c84f47ac0647370) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Make `hw-app-eth` a devDep by relying on `clearSignTransaction` instead of importing the `ledgerService`
+
+- [#5682](https://github.com/LedgerHQ/ledger-live/pull/5682) [`4744c31`](https://github.com/LedgerHQ/ledger-live/commit/4744c3136021f1f47ad1617f2c84f47ac0647370) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add documentation
+
+- [#5682](https://github.com/LedgerHQ/ledger-live/pull/5682) [`4744c31`](https://github.com/LedgerHQ/ledger-live/commit/4744c3136021f1f47ad1617f2c84f47ac0647370) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Move clear signed selectors to evm-tools lib
+
+- [#5682](https://github.com/LedgerHQ/ledger-live/pull/5682) [`4744c31`](https://github.com/LedgerHQ/ledger-live/commit/4744c3136021f1f47ad1617f2c84f47ac0647370) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update `NotEnoughBalance` error for token transactions
+
+- Updated dependencies [[`4744c31`](https://github.com/LedgerHQ/ledger-live/commit/4744c3136021f1f47ad1617f2c84f47ac0647370), [`f456d69`](https://github.com/LedgerHQ/ledger-live/commit/f456d69a2f64b6a217d3c1d9c6a531f31c2817a8), [`4715e4c`](https://github.com/LedgerHQ/ledger-live/commit/4715e4c411fa2396330ebcb810aeb6bfc9892e88), [`9c83695`](https://github.com/LedgerHQ/ledger-live/commit/9c8369580b91d82021d4ec28ad7a49dc4ba42e4f), [`74ef384`](https://github.com/LedgerHQ/ledger-live/commit/74ef3840c17181fa779035f190f829e9537e1539), [`2fd465e`](https://github.com/LedgerHQ/ledger-live/commit/2fd465ee730b11594d231503cfb940b984fa2f5a), [`c6c58db`](https://github.com/LedgerHQ/ledger-live/commit/c6c58dbcff862af1ebcd1537dc76a81e61d5d328), [`4744c31`](https://github.com/LedgerHQ/ledger-live/commit/4744c3136021f1f47ad1617f2c84f47ac0647370), [`bd4ee6c`](https://github.com/LedgerHQ/ledger-live/commit/bd4ee6c938c27102c2d0529c2aab07ac000f7424)]:
+  - @ledgerhq/live-env@1.0.0-wc-test.0
+  - @ledgerhq/errors@6.16.2-wc-test.0
+  - @ledgerhq/cryptoassets@11.4.1-wc-test.0
+  - @ledgerhq/coin-framework@0.11.1-wc-test.0
+  - @ledgerhq/evm-tools@1.0.15-wc-test.0
+  - @ledgerhq/domain-service@1.1.18-wc-test.0
+  - @ledgerhq/live-network@1.1.12-wc-test.0
+  - @ledgerhq/devices@8.2.1-wc-test.0
+
 ## 0.12.1
 
 ### Patch Changes

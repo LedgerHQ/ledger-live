@@ -1,5 +1,14 @@
 # @ledgerhq/react-native-hid
 
+## 6.31.4-wc-test.0
+
+### Patch Changes
+
+- Updated dependencies [[`f456d69`](https://github.com/LedgerHQ/ledger-live/commit/f456d69a2f64b6a217d3c1d9c6a531f31c2817a8)]:
+  - @ledgerhq/errors@6.16.2-wc-test.0
+  - @ledgerhq/devices@8.2.1-wc-test.0
+  - @ledgerhq/hw-transport@6.30.4-wc-test.0
+
 ## 6.31.3
 
 ### Patch Changes

@@ -1,5 +1,15 @@
 # @ledgerhq/domain-service
 
+## 1.1.18-wc-test.0
+
+### Patch Changes
+
+- [#5803](https://github.com/LedgerHQ/ledger-live/pull/5803) [`bd4ee6c`](https://github.com/LedgerHQ/ledger-live/commit/bd4ee6c938c27102c2d0529c2aab07ac000f7424) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add bridge tests
+
+- Updated dependencies [[`f456d69`](https://github.com/LedgerHQ/ledger-live/commit/f456d69a2f64b6a217d3c1d9c6a531f31c2817a8), [`b34f5cd`](https://github.com/LedgerHQ/ledger-live/commit/b34f5cdda0b7bf34750d258cc8b1c91304516360), [`d870e90`](https://github.com/LedgerHQ/ledger-live/commit/d870e904a0dde5f8abf05f930f5f545828eccbc9)]:
+  - @ledgerhq/errors@6.16.2-wc-test.0
+  - @ledgerhq/types-live@6.44.1-wc-test.0
+
 ## 1.1.17
 
 ### Patch Changes
