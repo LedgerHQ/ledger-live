@@ -19,6 +19,7 @@ import {
   ELROND_LEDGER_VALIDATOR_ADDRESS,
 } from "@ledgerhq/live-common/families/elrond/constants";
 import { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
+import Discreet from "~/renderer/components/Discreet";
 
 // FIXME spreading UnbondingType is a bad pattern
 const Unbonding = (
@@ -105,7 +106,7 @@ const Unbonding = (
       </Column>
 
       <Column>
-        {balance} {getAccountUnit(account).code}
+        <Discreet>{balance}</Discreet> {getAccountUnit(account).code}
       </Column>
 
       <Column>
