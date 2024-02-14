@@ -33,7 +33,6 @@ export const initFeature = <T>(opts?: Feature<T>) => {
  */
 export const CURRENCY_DEFAULT_FEATURES = {
   currencyArbitrum: DEFAULT_FEATURE,
-  currencyArbitrumGoerli: DEFAULT_FEATURE,
   currencyAstar: DEFAULT_FEATURE,
   currencyAvalancheCChain: DEFAULT_FEATURE,
   currencyAxelar: DEFAULT_FEATURE,

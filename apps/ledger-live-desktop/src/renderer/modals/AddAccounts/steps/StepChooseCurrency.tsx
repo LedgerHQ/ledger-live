@@ -50,7 +50,6 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const optimism = useFeature("currencyOptimism");
   const optimismGoerli = useFeature("currencyOptimismGoerli");
   const arbitrum = useFeature("currencyArbitrum");
-  const arbitrumGoerli = useFeature("currencyArbitrumGoerli");
   const rsk = useFeature("currencyRsk");
   const bittorrent = useFeature("currencyBittorrent");
   const kavaEvm = useFeature("currencyKavaEvm");
@@ -94,7 +93,6 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       optimism,
       optimism_goerli: optimismGoerli,
       arbitrum,
-      arbitrum_goerli: arbitrumGoerli,
       rsk,
       bittorrent,
       kava_evm: kavaEvm,
@@ -137,7 +135,6 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       optimism,
       optimismGoerli,
       arbitrum,
-      arbitrumGoerli,
       rsk,
       bittorrent,
       kavaEvm,

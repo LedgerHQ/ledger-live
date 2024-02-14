@@ -72,7 +72,6 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const optimism = useFeature("currencyOptimism");
   const optimismGoerli = useFeature("currencyOptimismGoerli");
   const arbitrum = useFeature("currencyArbitrum");
-  const arbitrumGoerli = useFeature("currencyArbitrumGoerli");
   const rsk = useFeature("currencyRsk");
   const bittorrent = useFeature("currencyBittorrent");
   const kavaEvm = useFeature("currencyKavaEvm");
@@ -116,7 +115,6 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       optimism,
       optimism_goerli: optimismGoerli,
       arbitrum,
-      arbitrum_goerli: arbitrumGoerli,
       rsk,
       bittorrent,
       kava_evm: kavaEvm,
@@ -159,7 +157,6 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       optimism,
       optimismGoerli,
       arbitrum,
-      arbitrumGoerli,
       rsk,
       bittorrent,
       kavaEvm,

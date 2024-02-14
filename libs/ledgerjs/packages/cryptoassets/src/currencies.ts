@@ -3730,36 +3730,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
-  arbitrum_goerli: {
-    type: "CryptoCurrency",
-    id: "arbitrum_goerli",
-    coinType: CoinType.ETH,
-    name: "Arbitrum Goerli",
-    managerAppName: "Ethereum",
-    ticker: "ETH",
-    deviceTicker: "ETH",
-    scheme: "arbitrum_goerli",
-    color: "#00ff00",
-    family: "evm",
-    units: ethereumUnits("ether", "ETH").map(makeTestnetUnit),
-    isTestnetFor: "arbitrum",
-    disableCountervalue: true,
-    ethereumLikeInfo: {
-      chainId: 421613,
-      node: { type: "external", uri: "https://goerli-rollup.arbitrum.io/rpc" },
-      explorer: {
-        uri: "https://api-goerli.arbiscan.io",
-        type: "etherscan",
-      },
-    },
-    explorerViews: [
-      {
-        tx: "https://goerli.arbiscan.io/tx/$hash",
-        address: "https://goerli.arbiscan.io/address/$address",
-        token: "https://goerli.arbiscan.io/token/$contractAddress?a=$address",
-      },
-    ],
-  },
   // Cronos EVM blockchain
   cronos: {
     type: "CryptoCurrency",

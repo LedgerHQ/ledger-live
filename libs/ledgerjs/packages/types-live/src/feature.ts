@@ -82,7 +82,6 @@ export type CurrencyFeatures = {
   currencyOptimism: DefaultFeature;
   currencyOptimismGoerli: DefaultFeature;
   currencyArbitrum: DefaultFeature;
-  currencyArbitrumGoerli: DefaultFeature;
   currencyRsk: DefaultFeature;
   currencyBittorrent: DefaultFeature;
   currencyKavaEvm: DefaultFeature;

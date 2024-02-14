@@ -71,7 +71,6 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   optimism: EVM_DEAD_ADDRESS,
   optimism_goerli: EVM_DEAD_ADDRESS,
   arbitrum: EVM_DEAD_ADDRESS,
-  arbitrum_goerli: EVM_DEAD_ADDRESS,
   rsk: EVM_DEAD_ADDRESS,
   bittorrent: EVM_DEAD_ADDRESS,
   kava_evm: EVM_DEAD_ADDRESS,
