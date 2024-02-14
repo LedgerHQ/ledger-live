@@ -1,5 +1,25 @@
 # @ledgerhq/live-common
 
+## 33.6.0-nightly.8
+
+### Patch Changes
+
+- [#6157](https://github.com/LedgerHQ/ledger-live/pull/6157) [`85a47ad`](https://github.com/LedgerHQ/ledger-live/commit/85a47adc82598d0fb959c2ed67daa642d194c84b) Thanks [@Wozacosta](https://github.com/Wozacosta)! - pass parentAccount to wallet api when requesting account
+
+- Updated dependencies [[`4715e4c`](https://github.com/LedgerHQ/ledger-live/commit/4715e4c411fa2396330ebcb810aeb6bfc9892e88), [`4715e4c`](https://github.com/LedgerHQ/ledger-live/commit/4715e4c411fa2396330ebcb810aeb6bfc9892e88)]:
+  - @ledgerhq/crypto-icons-ui@1.0.2-nightly.2
+  - @ledgerhq/cryptoassets@11.4.1-nightly.0
+  - @ledgerhq/coin-algorand@0.3.10-nightly.5
+  - @ledgerhq/coin-evm@0.12.2-nightly.5
+  - @ledgerhq/coin-framework@0.11.1-nightly.5
+  - @ledgerhq/coin-polkadot@0.5.3-nightly.5
+  - @ledgerhq/hw-app-eth@6.35.5-nightly.4
+  - @ledgerhq/hw-app-vet@0.1.4-nightly.1
+  - @ledgerhq/live-countervalues@0.1.1-nightly.5
+  - @ledgerhq/live-countervalues-react@0.1.1-nightly.5
+  - @ledgerhq/live-nft@0.2.0-nightly.5
+  - @ledgerhq/coin-near@0.3.9-nightly.2
+
 ## 33.6.0-nightly.7
 
 ### Minor Changes

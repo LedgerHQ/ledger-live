@@ -1,5 +1,25 @@
 # live-mobile
 
+## 3.40.0-nightly.9
+
+### Patch Changes
+
+- [#6161](https://github.com/LedgerHQ/ledger-live/pull/6161) [`964cbca`](https://github.com/LedgerHQ/ledger-live/commit/964cbca018ff5f96751642831514ea490b2cdccc) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Ensure hasTag is boolean, add some type safety checks
+
+- [#6008](https://github.com/LedgerHQ/ledger-live/pull/6008) [`22be1f7`](https://github.com/LedgerHQ/ledger-live/commit/22be1f75e954f6c88fbb30ca722ef930e83b0e37) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Update allow device errors wording
+
+- [#6138](https://github.com/LedgerHQ/ledger-live/pull/6138) [`623fe76`](https://github.com/LedgerHQ/ledger-live/commit/623fe76ed8e37801e92dcc6eb0f5192e1e6e2d1d) Thanks [@Wozacosta](https://github.com/Wozacosta)! - accountScreenSelector handling parentAccount being the same as the account arg
+
+- Updated dependencies [[`85a47ad`](https://github.com/LedgerHQ/ledger-live/commit/85a47adc82598d0fb959c2ed67daa642d194c84b)]:
+  - @ledgerhq/live-common@33.6.0-nightly.8
+  - @ledgerhq/native-ui@0.22.7-nightly.1
+  - @ledgerhq/coin-evm@0.12.2-nightly.5
+  - @ledgerhq/coin-framework@0.11.1-nightly.5
+  - @ledgerhq/live-countervalues@0.1.1-nightly.5
+  - @ledgerhq/live-countervalues-react@0.1.1-nightly.5
+  - @ledgerhq/live-nft@0.2.0-nightly.5
+  - @ledgerhq/live-nft-react@0.2.0-nightly.5
+
 ## 3.40.0-nightly.8
 
 ### Patch Changes

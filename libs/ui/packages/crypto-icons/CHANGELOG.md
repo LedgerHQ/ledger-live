@@ -1,5 +1,11 @@
 # @ledgerhq/icons-ui
 
+## 1.0.2-nightly.2
+
+### Patch Changes
+
+- [#6159](https://github.com/LedgerHQ/ledger-live/pull/6159) [`4715e4c`](https://github.com/LedgerHQ/ledger-live/commit/4715e4c411fa2396330ebcb810aeb6bfc9892e88) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update Linea icons
+
 ## 1.0.2-nightly.1
 
 ### Patch Changes

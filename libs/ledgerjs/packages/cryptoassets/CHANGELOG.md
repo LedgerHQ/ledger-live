@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 11.4.1-nightly.0
+
+### Patch Changes
+
+- [#6159](https://github.com/LedgerHQ/ledger-live/pull/6159) [`4715e4c`](https://github.com/LedgerHQ/ledger-live/commit/4715e4c411fa2396330ebcb810aeb6bfc9892e88) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update Linea goerli's color
+
 ## 11.4.0
 
 ### Minor Changes

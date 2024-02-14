@@ -1,5 +1,26 @@
 # ledger-live-desktop
 
+## 2.77.0-nightly.8
+
+### Patch Changes
+
+- [#6176](https://github.com/LedgerHQ/ledger-live/pull/6176) [`9f4946e`](https://github.com/LedgerHQ/ledger-live/commit/9f4946e2be688dd1c7a46238850229a0d8ec8c5d) Thanks [@Justkant](https://github.com/Justkant)! - fix: LLD wallet connect deep link handling for requests again [LIVE-11270]
+
+- [#6008](https://github.com/LedgerHQ/ledger-live/pull/6008) [`22be1f7`](https://github.com/LedgerHQ/ledger-live/commit/22be1f75e954f6c88fbb30ca722ef930e83b0e37) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Replace lottie to allow manager on nanoSP, nano and nanoX
+  Change connection errors wording
+
+- [#6175](https://github.com/LedgerHQ/ledger-live/pull/6175) [`d16e6ea`](https://github.com/LedgerHQ/ledger-live/commit/d16e6eaf5ab2a2600b4e62eaeda2a6c6bc105416) Thanks [@Justkant](https://github.com/Justkant)! - fix: LLD wallet connect deeplink handling for requests [LIVE-11270]
+
+- Updated dependencies [[`85a47ad`](https://github.com/LedgerHQ/ledger-live/commit/85a47adc82598d0fb959c2ed67daa642d194c84b)]:
+  - @ledgerhq/live-common@33.6.0-nightly.8
+  - @ledgerhq/react-ui@0.14.15-nightly.3
+  - @ledgerhq/coin-evm@0.12.2-nightly.5
+  - @ledgerhq/coin-framework@0.11.1-nightly.5
+  - @ledgerhq/live-countervalues@0.1.1-nightly.5
+  - @ledgerhq/live-countervalues-react@0.1.1-nightly.5
+  - @ledgerhq/live-nft@0.2.0-nightly.5
+  - @ledgerhq/live-nft-react@0.2.0-nightly.5
+
 ## 2.77.0-nightly.7
 
 ### Patch Changes
