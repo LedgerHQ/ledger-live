@@ -116,6 +116,7 @@ setSupportedCurrencies([
   "polygon_zk_evm",
   "polygon_zk_evm_testnet",
   "base",
+  "base_sepolia",
   "stacks",
   "telos_evm",
   "coreum",

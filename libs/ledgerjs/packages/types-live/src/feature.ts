@@ -111,6 +111,7 @@ export type CurrencyFeatures = {
   currencyPolygonZkEvm: DefaultFeature;
   currencyPolygonZkEvmTestnet: DefaultFeature;
   currencyBase: DefaultFeature;
+  currencyBaseSepolia: DefaultFeature;
   currencyKlaytn: DefaultFeature;
   currencyVechain: DefaultFeature;
   currencyCasper: DefaultFeature;

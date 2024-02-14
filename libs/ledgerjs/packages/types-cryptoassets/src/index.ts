@@ -160,6 +160,7 @@ export type CryptoCurrencyId =
   | "polygon_zk_evm"
   | "polygon_zk_evm_testnet"
   | "base"
+  | "base_sepolia"
   | "casper"
   | "neon_evm"
   | "lukso"
