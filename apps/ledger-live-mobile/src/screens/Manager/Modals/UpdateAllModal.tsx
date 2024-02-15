@@ -4,7 +4,7 @@ import { Trans } from "react-i18next";
 import { InstalledItem, State } from "@ledgerhq/live-common/apps/index";
 import { App } from "@ledgerhq/types-live";
 import styled from "styled-components/native";
-import { Flex, IconsLegacy, Text, Button } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy, Text, Button, Icons } from "@ledgerhq/native-ui";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import AppIcon from "../AppsList/AppIcon";
 import ByteSize from "~/components/ByteSize";
@@ -59,6 +59,9 @@ const ModalText = styled(Text).attrs({
   textAlign: "center",
   marginTop: 16,
   textTransform: "none",
+  fontFamily: "Inter",
+  fontSize: 24,
+  lineHeight: "32",
 })``;
 
 const ButtonsContainer = styled(Flex).attrs({
@@ -147,10 +150,10 @@ export default memo(function ({ isOpened, onClose, onConfirm, apps, installed, s
     <QueuedDrawer isRequestingToBeOpened={!!isOpened} onClose={onClose}>
       <Flex alignItems="center">
         <IconContainer backgroundColor="neutral.c30">
-          <IconsLegacy.InfoAltFillMedium size={40} color="primary.c80" />
+          <Icons.InformationFill size={"L"} color="primary.c80" />
         </IconContainer>
         <TextContainer>
-          <ModalText color="neutral.c100" fontWeight="medium" variant="h2">
+          <ModalText color="neutral.c100" fontWeight="semiBold" variant="h4">
             <Trans i18nKey="manager.update.subtitle" />
           </ModalText>
         </TextContainer>
