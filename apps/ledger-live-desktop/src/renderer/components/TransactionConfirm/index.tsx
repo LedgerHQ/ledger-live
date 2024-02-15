@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import React from "react";
+import React, { useMemo } from "react";
 import { Trans, withTranslation } from "react-i18next";
 import { TFunction } from "i18next";
 import styled from "styled-components";
@@ -50,7 +50,7 @@ export type FieldComponent = React.ComponentType<FieldComponentProps>;
 const termsOfUse = {
   paraswap: "https://paraswap.io/tos",
   "1inch": "https://1inch.io/assets/1inch_network_terms_of_use.pdf",
-};
+} as const;
 
 const AmountField = ({ account, status: { amount }, field }: FieldComponentProps) => (
   <TransactionConfirmField label={field.label}>
@@ -150,6 +150,34 @@ const TransactionConfirm = ({
 }: Props) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const type = useTheme().colors.palette.type;
+
+  const fields = getDeviceTransactionConfig({
+    account,
+    parentAccount,
+    transaction,
+    status,
+  });
+
+  const typeTransaction: string = useMemo(
+    () =>
+      (
+        fields.find(
+          (field: { label: string }) => field.label && field.label === "Type",
+        ) as DeviceTransactionField & { value: string }
+      )?.value || "",
+    [fields],
+  );
+
+  const amountTransaction: string = useMemo(
+    () =>
+      (
+        fields.find(
+          (field: { label: string }) => field.label && field.label === "Amount",
+        ) as DeviceTransactionField & { value: string }
+      )?.value || "",
+    [fields],
+  );
+
   if (!device) return null;
   const specific = getLLDCoinFamily(mainAccount.currency.family);
   const r = specific?.transactionConfirmFields;
@@ -160,30 +188,10 @@ const TransactionConfirm = ({
   const Warning = r?.warning;
   const Title = r?.title;
   const Footer = r?.footer;
-  const fields = getDeviceTransactionConfig({
-    account,
-    parentAccount,
-    transaction,
-    status,
-  });
+
   const key = ("mode" in transaction && transaction.mode) || "send";
   const recipientWording = t(`TransactionConfirm.recipientWording.${key}`);
 
-  console.log(fields);
-
-  const typeTransaction: string =
-    (
-      fields.find(
-        (field: { label: string }) => field.label && field.label === "Type",
-      ) as DeviceTransactionField & { value: string }
-    )?.value || "";
-
-  const amountTransaction: string =
-    (
-      fields.find(
-        (field: { label: string }) => field.label && field.label === "Amount",
-      ) as DeviceTransactionField & { value: string }
-    )?.value || "";
   return typeTransaction === "Approve" ? (
     <Container style={{ paddingBottom: 0 }}>
       <Container paddingX={26}>
@@ -229,25 +237,32 @@ const TransactionConfirm = ({
           })}
         </Box>
       </Container>
-      {Footer ? (
+      {Footer && (
         <>
           <HorizontalSeparator />
           <Footer transaction={transaction} />
         </>
-      ) : manifestId && Object.keys(termsOfUse).includes(manifestId) ? (
+      )}
+      {!Footer && manifestId && Object.keys(termsOfUse).includes(manifestId) && (
         <>
           <HorizontalSeparator />
           <Text marginTop={30}>
-            <Trans i18nKey="approve.warning" />{" "}
-            <Link
-              onClick={() => openURL(termsOfUse[manifestId as keyof typeof termsOfUse])}
-              to={"https://www.ledger.com"}
-            >
-              <Trans i18nKey="approve.termsAndConditions" values={{ appName: manifestName }} />
-            </Link>
+            <Trans
+              i18nKey="approve.termsAndConditions"
+              values={{ appName: manifestName }}
+              components={[
+                <Link
+                  key={manifestId}
+                  onClick={() => openURL(termsOfUse[manifestId as keyof typeof termsOfUse])}
+                  to={"https://www.ledger.com"}
+                >
+                  {manifestId}`s terms of use.
+                </Link>,
+              ]}
+            />
           </Text>
         </>
-      ) : null}
+      )}
     </Container>
   ) : (
     <Container>
