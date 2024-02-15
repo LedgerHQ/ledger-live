@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.77.0-next.7
+
+### Patch Changes
+
+- [#6211](https://github.com/LedgerHQ/ledger-live/pull/6211) [`1eb8a32`](https://github.com/LedgerHQ/ledger-live/commit/1eb8a3295dcdad02872e04ee5faaafb7357c6d59) Thanks [@KVNLS](https://github.com/KVNLS)! - Fix underline on a tags in alert messages
+
 ## 2.77.0-next.6
 
 ### Patch Changes
