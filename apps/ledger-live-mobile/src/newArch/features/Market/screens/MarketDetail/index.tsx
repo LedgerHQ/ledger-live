@@ -24,8 +24,9 @@ import {
   MarketCurrencyChartDataRequestParams,
 } from "@ledgerhq/live-common/market/types";
 import usePullToRefresh from "../../hooks/usePullToRefresh";
+import useMarketDetailViewModel from "./useMarketDetailViewModel";
 
-interface MarketDetailProps {
+interface ViewProps {
   loading: boolean;
   loadingChart: boolean;
   refresh: (param?: MarketCurrencyChartDataRequestParams) => void;
@@ -39,7 +40,7 @@ interface MarketDetailProps {
   allAccounts: AccountLike[];
 }
 
-function MarketDetail({
+function View({
   loading,
   loadingChart,
   refresh,
@@ -51,7 +52,7 @@ function MarketDetail({
   counterCurrency,
   chartRequestParams,
   allAccounts,
-}: MarketDetailProps) {
+}: ViewProps) {
   const { range } = chartRequestParams;
   const { name, image, price, priceChangePercentage, internalCurrency, chartData } = currency || {};
   const { handlePullToRefresh, refreshControlVisible } = usePullToRefresh({ loading, refresh });
@@ -192,4 +193,10 @@ function MarketDetail({
   );
 }
 
-export default memo(withDiscreetMode(MarketDetail));
+const ViewWithDiscreetMode = withDiscreetMode(View);
+
+const MarketDetail = memo((props: Parameters<typeof useMarketDetailViewModel>[0]) => (
+  <ViewWithDiscreetMode {...useMarketDetailViewModel(props)} />
+));
+
+export default MarketDetail;

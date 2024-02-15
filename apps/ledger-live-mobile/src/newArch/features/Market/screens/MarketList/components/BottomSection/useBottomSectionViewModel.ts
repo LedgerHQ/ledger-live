@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
@@ -9,9 +9,8 @@ import {
 import { track } from "~/analytics";
 import { setMarketFilterByStarredAccounts, setMarketRequestParams } from "~/actions/settings";
 import { getAnalyticsProperties } from "LLM/features/Market/utils";
-import BottomSection from "./BottomSection";
 
-function BottomSectionCont() {
+function useBottomSectionViewModel() {
   const dispatch = useDispatch();
   const { requestParams, counterCurrency, refresh } = useMarketData();
   const { range, orderBy, order, top100 } = requestParams;
@@ -59,18 +58,16 @@ function BottomSectionCont() {
     [dispatch, refresh, requestParams],
   );
 
-  return (
-    <BottomSection
-      onFilterChange={onFilterChange}
-      filterByStarredAccount={filterByStarredAccount}
-      toggleFilterByStarredAccounts={toggleFilterByStarredAccounts}
-      range={range}
-      orderBy={orderBy}
-      order={order}
-      top100={top100}
-      counterCurrency={counterCurrency}
-    />
-  );
+  return {
+    onFilterChange,
+    filterByStarredAccount,
+    toggleFilterByStarredAccounts,
+    range,
+    orderBy,
+    order,
+    top100,
+    counterCurrency,
+  };
 }
 
-export default BottomSectionCont;
+export default useBottomSectionViewModel;

@@ -6,18 +6,21 @@ import Search from "~/components/Search";
 import SafeAreaView from "~/components/SafeAreaView";
 import EmptyList from "./components/EmptyList";
 import RowItem, { type Item } from "./components/RowItem";
+import useMarketCurrencySelectViewModel from "./useMarketCurrencySelectViewModel";
 
-interface MarketCurrencySelectProps {
+const styles = StyleSheet.create({
+  root: {
+    margin: 10,
+  },
+});
+
+interface ViewProps {
   items: Item[];
   onSelectCurrency: (value: string) => void;
   counterCurrency?: string;
 }
 
-function MarketCurrencySelect({
-  items,
-  onSelectCurrency,
-  counterCurrency,
-}: MarketCurrencySelectProps) {
+function View({ items, onSelectCurrency, counterCurrency }: ViewProps) {
   const { t } = useTranslation();
   const [search, setSearch] = useState("");
   const ref = useRef<TextInput | null>(null);
@@ -29,7 +32,6 @@ function MarketCurrencySelect({
   return (
     <SafeAreaView edges={["left", "right"]} isFlex style={styles.root}>
       <SearchInput placeholder={t("common.search")} value={search} onChange={setSearch} ref={ref} />
-
       <Search
         fuseOptions={{
           threshold: 0.1,
@@ -59,10 +61,6 @@ function MarketCurrencySelect({
   );
 }
 
-const styles = StyleSheet.create({
-  root: {
-    margin: 10,
-  },
-});
+const MarketCurrencySelect = memo(() => <View {...useMarketCurrencySelectViewModel()} />);
 
-export default memo(MarketCurrencySelect);
+export default MarketCurrencySelect;

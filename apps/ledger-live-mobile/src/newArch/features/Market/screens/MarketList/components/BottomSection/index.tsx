@@ -15,6 +15,7 @@ import { StyledBadge } from "../SortBadge/SortBadge.styled";
 import { ScreenName } from "~/const";
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
 import TrackScreen from "~/analytics/TrackScreen";
+import useBottomSectionViewModel from "./useBottomSectionViewModel";
 
 const SORT_OPTIONS = {
   top100: {
@@ -64,7 +65,7 @@ const TIME_RANGES = Object.keys(rangeDataTable)
     value,
   }));
 
-interface BottomSectionProps {
+interface ViewProps {
   top100?: boolean;
   orderBy?: string;
   order?: string;
@@ -75,7 +76,7 @@ interface BottomSectionProps {
   filterByStarredAccount: boolean;
 }
 
-function BottomSection({
+function View({
   top100,
   orderBy,
   order,
@@ -84,7 +85,7 @@ function BottomSection({
   onFilterChange,
   toggleFilterByStarredAccounts,
   filterByStarredAccount,
-}: BottomSectionProps) {
+}: ViewProps) {
   const navigation = useNavigation();
   const { t } = useTranslation();
 
@@ -160,5 +161,7 @@ function BottomSection({
     </ScrollContainer>
   );
 }
+
+const BottomSection = () => <View {...useBottomSectionViewModel()} />;
 
 export default BottomSection;

@@ -14,9 +14,10 @@ import SearchHeader from "./components/SearchHeader";
 import ListFooter from "./components/ListFooter";
 import ListEmpty from "./components/ListEmpty";
 import ListRow from "./components/ListRow";
-import BottomSectionCont from "./components/BottomSection/BottomSectionCont";
+import BottomSection from "./components/BottomSection";
 import globalSyncRefreshControl from "~/components/globalSyncRefreshControl";
 import usePullToRefresh from "../../hooks/usePullToRefresh";
+import useMarketListViewModel from "./useMarketListViewModel";
 
 const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl(
   CollapsibleHeaderFlatList<CurrencyData>,
@@ -27,7 +28,7 @@ const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl(
 
 const keyExtractor = (item: CurrencyData, index: number) => item.id + index;
 
-interface MarketListProps {
+interface ViewProps {
   marketData?: CurrencyData[];
   filterByStarredAccount: boolean;
   starredMarketCoins: string[];
@@ -40,7 +41,7 @@ interface MarketListProps {
   isLoading: boolean;
   onEndReached: () => Promise<void> | undefined;
 }
-function MarketList({
+function View({
   marketData,
   filterByStarredAccount,
   starredMarketCoins,
@@ -52,7 +53,7 @@ function MarketList({
   selectCurrency,
   isLoading,
   onEndReached,
-}: MarketListProps) {
+}: ViewProps) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const ptxEarnFF = useFeature("ptxEarn");
@@ -128,7 +129,7 @@ function MarketList({
             {t("market.title")}
           </Text>
           <SearchHeader search={search} refresh={refresh} />
-          <BottomSectionCont />
+          <BottomSection />
         </Flex>
         <FlatList {...listProps} />
       </TabBarSafeAreaView>
@@ -143,11 +144,14 @@ function MarketList({
         <WalletTabSafeAreaView edges={["left", "right"]}>
           <Flex backgroundColor={colors.background.main}>
             <SearchHeader search={search} refresh={refresh} />
-            <BottomSectionCont />
+            <BottomSection />
           </Flex>
         </WalletTabSafeAreaView>
       }
     />
   );
 }
+
+const MarketList = () => <View {...useMarketListViewModel()} />;
+
 export default MarketList;

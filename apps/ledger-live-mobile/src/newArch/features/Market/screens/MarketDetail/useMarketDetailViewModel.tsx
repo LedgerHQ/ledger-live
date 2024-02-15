@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useSingleCoinMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import { readOnlyModeEnabledSelector, starredMarketCoinsSelector } from "~/reducers/settings";
@@ -9,13 +9,12 @@ import { ScreenName } from "~/const";
 import useNotifications from "~/logic/notifications";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { MarketNavigatorStackParamList } from "LLM/features/Market/Navigator";
-import MarketDetails from "./MarketDetail";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<MarketNavigatorStackParamList, ScreenName.MarketDetail>
 >;
 
-function MarketDetailCont({ navigation, route }: NavigationProps) {
+function useMarketDetailViewModel({ navigation, route }: NavigationProps) {
   const { params } = route;
   const { currencyId, resetSearchOnUmount } = params;
   const dispatch = useDispatch();
@@ -94,21 +93,19 @@ function MarketDetailCont({ navigation, route }: NavigationProps) {
     }
   }, [readOnlyModeEnabled]);
 
-  return (
-    <MarketDetails
-      refresh={refreshChart}
-      loading={loading}
-      loadingChart={loadingChart}
-      toggleStar={toggleStar}
-      chartRequestParams={chartRequestParams}
-      defaultAccount={defaultAccount}
-      currency={currency}
-      isStarred={isStarred}
-      accounts={filteredAccounts}
-      counterCurrency={counterCurrency}
-      allAccounts={allAccounts}
-    />
-  );
+  return {
+    refresh: refreshChart,
+    currency,
+    loading,
+    loadingChart,
+    toggleStar,
+    chartRequestParams,
+    defaultAccount,
+    isStarred,
+    accounts: filteredAccounts,
+    counterCurrency,
+    allAccounts,
+  };
 }
 
-export default MarketDetailCont;
+export default useMarketDetailViewModel;
