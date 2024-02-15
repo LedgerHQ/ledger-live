@@ -4,22 +4,24 @@ module.exports = {
     reactDocgen: true,
   },
 
-  stories: ["../src/**/*.stories.mdx", "../src/**/*.stories.@(ts|tsx)"],
+  stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
   staticDirs: ['../src'],
 
   addons: [
-    getAbsolutePath("@storybook/addon-links"),
-    getAbsolutePath("@storybook/addon-essentials"),
+    "@storybook/addon-links",
+    "@storybook/addon-essentials",
+    "@storybook/blocks"
   ],
 
   framework: {
     name: getAbsolutePath("@storybook/react-webpack5"),
-    options: {}
+    options: {
+    }
   },
 
   docs: {
     autodocs: true
-  }
+  },
 };
 
 function getAbsolutePath(value) {
