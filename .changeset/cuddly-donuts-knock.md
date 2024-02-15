@@ -1,5 +1,4 @@
 ---
-"@ledgerhq/crypto-utils": minor
 "@ledgerhq/hw-app-btc": minor
 "@ledgerhq/types-live": minor
 "@ledgerhq/live-common": minor

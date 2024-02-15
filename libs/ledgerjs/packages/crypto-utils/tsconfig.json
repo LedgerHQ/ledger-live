@@ -1,8 +1,0 @@
-{
-  "extends": "../../tsconfig.json",
-  "compilerOptions": {
-    "outDir": "lib",
-    "lib": ["DOM", "ES2016"]
-  },
-  "include": ["src/**/*"]
-}

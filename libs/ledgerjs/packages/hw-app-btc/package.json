@@ -60,7 +60,6 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/crypto-utils": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "bip32-path": "^0.4.2",

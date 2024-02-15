@@ -6,7 +6,7 @@ import type { CreateTransactionArg } from "./createTransaction";
 import { createTransaction } from "./createTransaction";
 import type { AddressFormat } from "./getWalletPublicKey";
 import { getWalletPublicKey } from "./getWalletPublicKey";
-import { pathArrayToString, pathStringToArray } from "@ledgerhq/crypto-utils/bip32";
+import { pathArrayToString, pathStringToArray } from "./bip32";
 import { signMessage } from "./signMessage";
 export type { AddressFormat };
 

@@ -6,7 +6,7 @@ import {
   pathArrayToString,
   pathStringToArray,
   pubkeyFromXpub,
-} from "@ledgerhq/crypto-utils/bip32";
+} from "./bip32";
 import { BufferReader } from "./buffertools";
 import type { CreateTransactionArg } from "./createTransaction";
 import type { AddressFormat } from "./getWalletPublicKey";

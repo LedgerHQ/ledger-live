@@ -1,5 +1,5 @@
 import Transport from "@ledgerhq/hw-transport";
-import { pathElementsToBuffer } from "@ledgerhq/crypto-utils/bip32";
+import { pathElementsToBuffer } from "../bip32";
 import { PsbtV2 } from "./psbtv2";
 import { MerkelizedPsbt } from "./merkelizedPsbt";
 import { ClientCommandInterpreter } from "./clientCommands";
