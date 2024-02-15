@@ -2295,9 +2295,6 @@
       "estimatedFees": "Network fees"
     }
   },
-  "sign": {
-    "title": "Sign transaction"
-  },
   "releaseNotes": {
     "title": "Release notes",
     "version": "Ledger Live {{versionNb}}"
@@ -4235,6 +4232,13 @@
     "unlimited": "You're authorizing this provider to access an unlimited amount of the selected token from your wallet. Double-check the transaction details on your Ledger device before signing.",
     "limited": "You're authorizing this provider to access the selected token from your wallet. Double-check the transaction details on your Ledger device before signing.",
     "termsAndConditions": "By signing this transaction, you accept <0>{{appName}}'s terms of use.</0>"
+  },
+  "sign": {
+    "title": "Sign transaction",
+    "description": "Sign transaction on Ledger Device",
+    "securityCheck": "Double-check the transaction details on your Ledger device before signing.",
+    "warning": "By signing this transaction, you accept",
+    "termsAndConditions": "{{appName}}'s terms of use."
   },
   "exportOperationsModal": {
     "title": "Operation history",
