@@ -35,6 +35,7 @@ export default function StepConnectDevice({
   parentAccount,
   transaction,
   status,
+  useApp,
   transitionTo,
   onTransactionSigned,
   onTransactionError,
@@ -62,6 +63,7 @@ export default function StepConnectDevice({
       tokenCurrency,
       parentAccount,
       account,
+      appName: useApp,
       transaction,
       status,
       dependencies,
@@ -79,6 +81,7 @@ export default function StepConnectDevice({
       status,
       tokenCurrency,
       transaction,
+      useApp,
     ],
   );
   if (!transaction || !account) return null;
