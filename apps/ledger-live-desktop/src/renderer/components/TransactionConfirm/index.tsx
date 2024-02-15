@@ -146,7 +146,8 @@ const TransactionConfirm = ({
     () =>
       (
         fields.find(
-          (field: { label: string }) => field.label && field.label === "Type",
+          (field: { label: string }) =>
+            field.label && (field.label === "Type" || field.label === "Data"),
         ) as DeviceTransactionField & { value: string }
       )?.value || "",
     [fields],
