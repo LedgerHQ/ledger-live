@@ -64,7 +64,7 @@ export function getBipPathFromString(path: string): BipPath {
  * @returns true if the account can stake, false otherwise
  */
 export function canStake(account: CardanoAccount): boolean {
-  return !!account?.cardanoResources?.delegation?.poolId && !account.balance.isZero();
+  return !account?.cardanoResources?.delegation?.poolId && !account.balance.isZero();
 }
 
 /**
