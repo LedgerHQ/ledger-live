@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.77.0-next.6
+
+### Patch Changes
+
+- [#6178](https://github.com/LedgerHQ/ledger-live/pull/6178) [`4dbcacd`](https://github.com/LedgerHQ/ledger-live/commit/4dbcacdc1aa988cd5338f3019dfedcb9b51b7c55) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - Revert counter and refresh rate changes and fix moonpay not refreshing
+
 ## 2.77.0-next.5
 
 ### Patch Changes
