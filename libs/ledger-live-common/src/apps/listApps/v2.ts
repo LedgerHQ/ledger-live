@@ -32,7 +32,7 @@ type ListAppsParams = {
   deviceInfo: DeviceInfo;
   deviceProxyModel?: DeviceModelId;
   managerDevModeEnabled?: boolean;
-  forceProvider?: number;
+  forceProvider: number;
   managerApiRepository: ManagerApiRepository;
 };
 
