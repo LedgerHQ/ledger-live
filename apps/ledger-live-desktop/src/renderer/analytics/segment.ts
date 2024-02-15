@@ -60,6 +60,7 @@ const getPtxAttributes = () => {
   const ptxEarnFeatureFlag = analyticsFeatureFlagMethod("ptxEarn");
   const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
   const stakingProviders = analyticsFeatureFlagMethod("ethStakingProviders");
+  const ptxSwapMoonpayProviderFlag = analyticsFeatureFlagMethod("ptxSwapMoonpayProvider");
 
   const ptxEarnEnabled: boolean = !!ptxEarnFeatureFlag?.enabled;
   const isBatch1Enabled: boolean =
@@ -74,12 +75,14 @@ const getPtxAttributes = () => {
     stakingProviders?.params?.listProvider?.length > 0
       ? stakingProviders?.params?.listProvider.length
       : "flag not loaded";
+  const ptxSwapMoonpayProviderEnabled: boolean = !!ptxSwapMoonpayProviderFlag?.enabled;
   return {
     ptxEarnEnabled,
     isBatch1Enabled,
     isBatch2Enabled,
     isBatch3Enabled,
     stakingProvidersEnabled,
+    ptxSwapMoonpayProviderEnabled,
   };
 };
 
@@ -97,6 +100,7 @@ const extraProperties = (store: ReduxStore) => {
     isBatch2Enabled,
     isBatch3Enabled,
     stakingProvidersEnabled,
+    ptxSwapMoonpayProviderEnabled,
   } = getPtxAttributes();
 
   const deviceInfo = device
@@ -153,6 +157,7 @@ const extraProperties = (store: ReduxStore) => {
     isBatch2Enabled,
     isBatch3Enabled,
     ptxEarnEnabled,
+    ptxSwapMoonpayProviderEnabled,
     ...deviceInfo,
   };
 };
