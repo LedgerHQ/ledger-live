@@ -2924,6 +2924,9 @@ importers:
       bs58:
         specifier: ^4.0.1
         version: 4.0.1
+      bs58check:
+        specifier: ^2.1.2
+        version: 2.1.2
       invariant:
         specifier: ^2.2.4
         version: 2.2.4
@@ -2958,9 +2961,6 @@ importers:
       axios:
         specifier: ^0.25.0
         version: 0.25.0
-      bs58check:
-        specifier: ^2.1.2
-        version: 2.1.2
       documentation:
         specifier: 14.0.2
         version: 14.0.2
@@ -40088,7 +40088,7 @@ packages:
       pretty-format: 29.7.0
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.7.0(@types/node@20.8.10)(typescript@5.1.3)
+      ts-node: 10.7.0(@types/node@20.8.10)(source-map-support@0.5.21)(typescript@5.1.3)
     transitivePeerDependencies:
       - babel-plugin-macros
       - metro

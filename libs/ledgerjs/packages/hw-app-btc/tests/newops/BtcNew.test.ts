@@ -4,26 +4,14 @@ import { TransportReplayer } from "@ledgerhq/hw-transport-mocker/lib/openTranspo
 import ecc from "tiny-secp256k1";
 import { getXpubComponents, pathArrayToString } from "../../src/bip32";
 import BtcNew from "../../src/BtcNew";
-import { DefaultDescriptorTemplate, WalletPolicy } from "../../src/newops/policy";
+import {
+  DefaultDescriptorTemplate,
+  WalletPolicy
+} from "../../src/newops/policy";
 import { PsbtV2 } from "../../src/newops/psbtv2";
 import { splitTransaction } from "../../src/splitTransaction";
-import {
-  StandardPurpose,
-  addressFormatFromDescriptorTemplate,
-  creatDummyXpub,
-  masterFingerprint,
-  runSignTransaction,
-  TestingClient,
-} from "./integrationtools";
-import {
-  CoreInput,
-  CoreTx,
-  p2pkh,
-  p2tr,
-  p2wpkh,
-  wrappedP2wpkh,
-  wrappedP2wpkhTwoInputs,
-} from "./testtx";
+import { StandardPurpose, addressFormatFromDescriptorTemplate, creatDummyXpub, masterFingerprint, runSignTransaction, TestingClient } from "./integrationtools";
+import { CoreInput, CoreTx, p2pkh, p2tr, p2wpkh, wrappedP2wpkh, wrappedP2wpkhTwoInputs } from "./testtx";
 
 test("getWalletPublicKey p2pkh", async () => {
   await testGetWalletPublicKey("m/44'/1'/0'", "pkh(@0)");

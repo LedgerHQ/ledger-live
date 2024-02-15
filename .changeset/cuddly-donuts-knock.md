@@ -1,5 +1,4 @@
 ---
-"@ledgerhq/hw-app-btc": minor
 "@ledgerhq/types-live": minor
 "@ledgerhq/live-common": minor
 "@ledgerhq/coin-framework": minor
