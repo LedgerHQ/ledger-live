@@ -1,5 +1,19 @@
 # live-mobile
 
+## 3.40.0-nightly.10
+
+### Patch Changes
+
+- [#6199](https://github.com/LedgerHQ/ledger-live/pull/6199) [`b57714f`](https://github.com/LedgerHQ/ledger-live/commit/b57714f3996beef1b383dcc6c03bae1174af6cbd) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - - Fixed bad conditional branching for `listAppsUseCase`: list apps v1 and v2 were switched
+  - Added unit tests for that.
+  - Fixed `forceProvider` parameter missing in `listAppsV2` call in `listAppsUseCase`. It was resulting in "not found entity" errors regardless of the selected "My Ledger" provider in Ledger Live.
+    - Added a stricter typing (the parameter is now always required)
+  - Fixed bad error remapping for `HttpManagerApiRepository.getCurrentFirmware` which should throw a `FirmwareNotRecognized` in case of a `404`.
+    - Added a unit test for that.
+  - Added full unit testing coverage of `HttpManagerApiRepository`.
+- Updated dependencies [[`b57714f`](https://github.com/LedgerHQ/ledger-live/commit/b57714f3996beef1b383dcc6c03bae1174af6cbd)]:
+  - @ledgerhq/live-common@33.6.0-nightly.9
+
 ## 3.40.0-nightly.9
 
 ### Patch Changes

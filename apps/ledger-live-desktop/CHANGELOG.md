@@ -1,5 +1,25 @@
 # ledger-live-desktop
 
+## 2.77.0-nightly.9
+
+### Patch Changes
+
+- [#6193](https://github.com/LedgerHQ/ledger-live/pull/6193) [`f9b71a3`](https://github.com/LedgerHQ/ledger-live/commit/f9b71a39441a57b8b2f0deb811c73d68109079cb) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Cosmos and Solana staking discreet mode was not working well
+
+- [#6149](https://github.com/LedgerHQ/ledger-live/pull/6149) [`6ad9e5f`](https://github.com/LedgerHQ/ledger-live/commit/6ad9e5f56eb109f3d7de36e177a9f11bd6f13703) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Use globals for FF identity flags and update identify func
+
+- [#6180](https://github.com/LedgerHQ/ledger-live/pull/6180) [`42f0201`](https://github.com/LedgerHQ/ledger-live/commit/42f02018cf56a3c617934af219dd3807ac1dab21) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix Wrong icon when hovering over 'Refresh" CTA when synchronisation error and add pointer cursor when it's clickable"
+
+- [#6199](https://github.com/LedgerHQ/ledger-live/pull/6199) [`b57714f`](https://github.com/LedgerHQ/ledger-live/commit/b57714f3996beef1b383dcc6c03bae1174af6cbd) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - - Fixed bad conditional branching for `listAppsUseCase`: list apps v1 and v2 were switched
+  - Added unit tests for that.
+  - Fixed `forceProvider` parameter missing in `listAppsV2` call in `listAppsUseCase`. It was resulting in "not found entity" errors regardless of the selected "My Ledger" provider in Ledger Live.
+    - Added a stricter typing (the parameter is now always required)
+  - Fixed bad error remapping for `HttpManagerApiRepository.getCurrentFirmware` which should throw a `FirmwareNotRecognized` in case of a `404`.
+    - Added a unit test for that.
+  - Added full unit testing coverage of `HttpManagerApiRepository`.
+- Updated dependencies [[`b57714f`](https://github.com/LedgerHQ/ledger-live/commit/b57714f3996beef1b383dcc6c03bae1174af6cbd)]:
+  - @ledgerhq/live-common@33.6.0-nightly.9
+
 ## 2.77.0-nightly.8
 
 ### Patch Changes
