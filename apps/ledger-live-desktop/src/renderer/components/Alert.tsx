@@ -179,6 +179,10 @@ const Content = styled(Box).attrs(() => ({
   flex: 1,
 }))`
   word-break: break-word;
+  a {
+    cursor: pointer;
+    text-decoration: underline;
+  }
 `;
 const CloseContainer = styled(Box)`
   z-index: 1;
