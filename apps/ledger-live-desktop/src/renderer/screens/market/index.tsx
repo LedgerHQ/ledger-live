@@ -68,6 +68,7 @@ export default function Market() {
     setCounterCurrency,
     supportedCounterCurrencies,
   } = useMarketData();
+
   const { search = "", range, starred = [], liveCompatible, order } = requestParams;
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
   const starFilterOn = starred.length > 0;

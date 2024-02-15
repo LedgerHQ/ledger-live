@@ -294,6 +294,7 @@ function MarketList({
     counterCurrency,
     selectCurrency,
   } = useMarketData();
+
   const dispatch = useDispatch();
 
   const { orderBy, order, starred, search, range } = requestParams;

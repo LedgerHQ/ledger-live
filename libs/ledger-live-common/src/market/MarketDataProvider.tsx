@@ -7,6 +7,7 @@ import React, {
   ReactElement,
   useReducer,
   useEffect,
+  useState,
 } from "react";
 
 import { useDebounce } from "../hooks/useDebounce";
@@ -207,6 +208,9 @@ function marketDataReducer(state, action) {
   }
 }
 
+// 300000 milliseconds = 5 minutes
+const REFRESH_TIMEOUT = 300000;
+
 export const MarketDataProvider = ({
   children,
   fetchApi,
@@ -217,6 +221,9 @@ export const MarketDataProvider = ({
     ...initialState,
     ...initState,
   });
+
+  const [fetchNonce, setFetchNonce] = useState(0);
+
   const api = fetchApi || defaultFetchApi;
   const { requestParams, chartRequestParams, loading, loadingChart, page, selectedCoinData } =
     useDebounce(state, 300);
@@ -307,6 +314,27 @@ export const MarketDataProvider = ({
       );
     }
   }, [api, handleError, requestParams]);
+
+  /**
+   * This useEffect is used to refresh the market data every 5 minutes.
+   * Using same behavior as
+   * https://github.com/LedgerHQ/ledger-live/blob/f24d2d49def2176b21fff6ea93b0ecda1d25fae4/libs/live-countervalues-react/src/index.tsx#L85-L116
+   */
+  useEffect(() => {
+    let timeout: NodeJS.Timeout | null = null;
+    dispatch({
+      type: ACTIONS.REFRESH_MARKET_DATA,
+      payload: {},
+    });
+
+    timeout = setTimeout(() => setFetchNonce(n => n + 1), REFRESH_TIMEOUT);
+
+    return () => {
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+    };
+  }, [fetchNonce]);
 
   const refresh = useCallback((payload = {}) => {
     dispatch({ type: ACTIONS.REFRESH_MARKET_DATA, payload });
