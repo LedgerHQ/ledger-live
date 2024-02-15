@@ -144,7 +144,7 @@
       }
     },
     "ConnectManagerTimeout" : {
-      "title" : "Desculpe, falha na conexão da Minha Ledger",
+      "title" : "Sorry, secure connection with Ledger failed",
       "description" : {
         "ios" : {
           "nanoX" : "Certifique que sua {{productName}} esteja desbloqueada e com o Bluetooth habilitado."
@@ -492,7 +492,7 @@
       "description" : "Tente reinstalar o aplicativo através do My Ledger"
     },
     "NotEnoughGas" : {
-      "title" : "Você precisa de {{fees}} {{ticker}} para pagar as taxas, já que você está na rede {{cryptoName}}. <link0>Comprar {{ticker}}</link0>",
+      "title" : "You need {{fees}} {{ticker}} in your account to pay for transaction fees on the {{cryptoName}} network.  <link0>Buy {{ticker}}</link0> or deposit more into your account.",
       "description" : "Envie algumas moedas à sua conta para pagar transações de tokens."
     },
     "NotEnoughGasSwap" : {
@@ -622,8 +622,8 @@
       "primaryCTA" : "Abrir Minha Ledger"
     },
     "UserRefusedAllowManager" : {
-      "title" : "Manager desabilitado no dispositivo",
-      "description" : "Habilite o Manager no seu dispositivo, depois tente novamente."
+      "title" : "Secure connection denied on the device",
+      "description" : "Please allow the secure connection on your device and retry."
     },
     "UserRefusedAddress" : {
       "title" : "Endereço de recepção rejeitado",
@@ -3888,7 +3888,7 @@
     "stayInTheAppPlz" : "Fique no aplicativo Ledger Live e mantenha a Ledger por perto.",
     "allowAppPermission" : "Abra o aplicativo {{wording}} no seu dispositivo",
     "allowAppPermissionSubtitleToken" : "para gerenciar seus tokens {{token}}",
-    "allowManagerPermission" : "Permitir uma conexão segura na {{productName}}",
+    "allowManagerPermission" : "Permitir conexão segura com a Ledger",
     "allowRenaming" : "Permitir renomeação da sua {{productName}}",
     "allowRemoveCustomLockscreen" : "Confirme a remoção da imagem em sua Ledger Stax",
     "allowSecureConnection" : "Permitir uma conexão segura com a Ledger",
@@ -6530,7 +6530,7 @@
     "ethereum" : {
       "title" : "Multiplique suas posições de ETH",
       "subTitle" : "Aplique seu ETH e multiplique suas posições ganhando recompensas diárias de staking diretamente no Ledger Live.",
-      "tagMinimum" : "Requires {{min}} ETH",
+      "tagMinimum" : "Requer {{min}} ETH",
       "close" : "Fechar",
       "providers" : {
         "kiln_pooling" : {
