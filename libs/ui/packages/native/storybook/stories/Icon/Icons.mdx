@@ -1,0 +1,50 @@
+import { Canvas, Meta } from "@storybook/blocks";
+
+import * as IconStories from "./IconsList.stories";
+
+<Meta of={IconStories} />
+
+### Adding New Icons to @ledgerHQ/icons-ui Package:
+
+<details>
+<summary>Step by step guide</summary>
+1. **Access Figma Core File:**
+
+   - Navigate to the [Figma Core Library](https://www.figma.com/file/4ZD0Q8lAdv9Bcd7iiW6Cnk/%E2%AD%90-Icons?type=design&node-id=12-3578&mode=design&t=jwTufKP8kEAvyy4H-0).
+
+2. **Export Medium-sized Icons as SVG:**
+
+   - In Figma, open the medium-sized icons.
+   - Select all the icons you want to export.
+   - Right-click and choose **Export**.
+   - Ensure that the export parameters are already set as needed (no modifications required).
+   - Export the selected icons as SVG files.
+
+3. **Drop Exported SVGs to icons Package:**
+
+   - Move all the exported SVG files to the `libs/ui/packages/icons/src/svg` directory in your project.
+
+4. **Build @ledgerHQ/icons-ui Package:**
+
+   - Run the command to build the `@ledgerHQ/icons-ui` package:
+     ```
+      cd libs/ui/packages/icons && pnpm build
+     ```
+   - Alternatively, you can build app dependencies using:
+     ```
+      pnpm build:llm:deps
+     ```
+   - This step ensures that the updated icons are built into the `@ledgerHQ/icons-ui` package.
+
+5. **Verify Changes Locally:**
+   - Start your local Storybook to ensure the new icons are rendering correctly:
+     ```
+      cd libs/ui/packages/react && pnpm storybook
+     ```
+   - Open your browser and navigate to [http://localhost:6006](http://localhost:6006).
+   - Check that the new icons are visible and functional in the Storybook UI.
+</details>
+
+### Reference:
+
+<Canvas of={IconStories.IconGridStory} />
