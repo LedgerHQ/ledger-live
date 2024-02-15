@@ -16,10 +16,7 @@ import Text from "~/renderer/components/Text";
 import WarnBox from "~/renderer/components/WarnBox";
 import useTheme from "~/renderer/hooks/useTheme";
 import FormattedVal from "~/renderer/components/FormattedVal";
-import {
-  AnimationWrapper,
-  renderVerifyUnwrapped,
-} from "~/renderer/components/DeviceAction/rendering";
+import { renderVerifyUnwrapped } from "~/renderer/components/DeviceAction/rendering";
 import TransactionConfirmField from "./TransactionConfirmField";
 import { getLLDCoinFamily } from "~/renderer/families";
 import { FieldComponentProps as FCPGeneric } from "~/renderer/families/types";
@@ -184,7 +181,7 @@ const TransactionConfirm = ({
     ) as DeviceTransactionField & { value: string }
   ).value;
   return typeTransaction === "Approve" ? (
-    <Container>
+    <Container style={{ paddingBottom: 0 }}>
       <Container paddingX={26}>
         <DeviceBlocker />
         <Animation animation={getDeviceAnimation(device.modelId, type, "verify")} />
