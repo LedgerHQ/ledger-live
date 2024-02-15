@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.77.0-next.5
+
+### Patch Changes
+
+- [#6194](https://github.com/LedgerHQ/ledger-live/pull/6194) [`e6b5f82`](https://github.com/LedgerHQ/ledger-live/commit/e6b5f828ce4e3019036fadad610f23f857259ae6) Thanks [@mle-gall](https://github.com/mle-gall)! - Update copy on Parent Account Error
+
 ## 2.77.0-next.4
 
 ### Patch Changes
