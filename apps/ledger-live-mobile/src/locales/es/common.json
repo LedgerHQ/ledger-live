@@ -144,7 +144,7 @@
       }
     },
     "ConnectManagerTimeout" : {
-      "title" : "Lo sentimos, la conexión con Mi Ledger ha fallado",
+      "title" : "Sorry, secure connection with Ledger failed",
       "description" : {
         "ios" : {
           "nanoX" : "Asegúrate de que tu {{productName}} esté desbloqueado y el Bluetooth habilitado."
@@ -492,7 +492,7 @@
       "description" : "Prueba a reinstalar la aplicación desde Mi Ledger"
     },
     "NotEnoughGas" : {
-      "title" : "Necesitas {{fees}} {{ticker}} para tarifas porque estás en la red de {{cryptoName}}. <link0>Comprar {{ticker}}</link0>",
+      "title" : "You need {{fees}} {{ticker}} in your account to pay for transaction fees on the {{cryptoName}} network.  <link0>Buy {{ticker}}</link0> or deposit more into your account.",
       "description" : "Envía monedas a tu cuenta para pagar por transacciones de tokens."
     },
     "NotEnoughGasSwap" : {
@@ -622,8 +622,8 @@
       "primaryCTA" : "Abrir Mi Ledger"
     },
     "UserRefusedAllowManager" : {
-      "title" : "Manager deshabilitado en el dispositivo",
-      "description" : "Habilita Manager en tu dispositivo e inténtalo de nuevo."
+      "title" : "Secure connection denied on the device",
+      "description" : "Please allow the secure connection on your device and retry."
     },
     "UserRefusedAddress" : {
       "title" : "Dirección de recepción rechazada.",
@@ -3888,7 +3888,7 @@
     "stayInTheAppPlz" : "Mantente dentro de la aplicación Ledger Live y con tu Ledger disponible.",
     "allowAppPermission" : "Abre la aplicación {{wording}} en tu dispositivo",
     "allowAppPermissionSubtitleToken" : "para administrar los tokens {{token}}",
-    "allowManagerPermission" : "Permitir Ledger Manager en tu {{productName}}",
+    "allowManagerPermission" : "Permitir una conexión segura con Ledger",
     "allowRenaming" : "Permite el cambio de nombre en tu {{productName}}",
     "allowRemoveCustomLockscreen" : "Confirmar eliminación de imagen en tu Ledger Stax",
     "allowSecureConnection" : "Permitir una conexión segura con Ledger",
@@ -6530,7 +6530,7 @@
     "ethereum" : {
       "title" : "Rentabiliza tus tenencias en ETH",
       "subTitle" : "Pon en participación ETH y genera ganancias con recompensas diarias directamente desde Ledger Live.",
-      "tagMinimum" : "Requires {{min}} ETH",
+      "tagMinimum" : "Requiere {{min}} ETH",
       "close" : "Cerrar",
       "providers" : {
         "kiln_pooling" : {
