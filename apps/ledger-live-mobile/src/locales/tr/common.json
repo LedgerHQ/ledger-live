@@ -144,7 +144,7 @@
       }
     },
     "ConnectManagerTimeout" : {
-      "title" : "Üzgünüz, My Ledger bağlantısı başarısız",
+      "title" : "Sorry, secure connection with Ledger failed",
       "description" : {
         "ios" : {
           "nanoX" : "{{productName}} cihazınızın kilidinin açıldığından ve Bluetooth'un etkin olduğundan emin olun."
@@ -492,7 +492,7 @@
       "description" : "Uygulamayı My Ledger'dan yeniden yüklemeyi deneyin"
     },
     "NotEnoughGas" : {
-      "title" : "{{cryptoName}} ağında olduğunuzdan, {{fees}} {{ticker}} ücret ödemeniz gerekiyor. <link0>{{ticker}} Satın Alın</link0>",
+      "title" : "You need {{fees}} {{ticker}} in your account to pay for transaction fees on the {{cryptoName}} network.  <link0>Buy {{ticker}}</link0> or deposit more into your account.",
       "description" : "Token işlem ücretlerini ödemek için lütfen hesabınıza biraz coin gönderin."
     },
     "NotEnoughGasSwap" : {
@@ -622,8 +622,8 @@
       "primaryCTA" : "My Ledger'ı Aç"
     },
     "UserRefusedAllowManager" : {
-      "title" : "Cihazda Yönetici özelliği kapalı",
-      "description" : "Lütfen Yöneticiye cihazınızda izin verin, ardından tekrar deneyin."
+      "title" : "Secure connection denied on the device",
+      "description" : "Please allow the secure connection on your device and retry."
     },
     "UserRefusedAddress" : {
       "title" : "Alıcı adresi reddedildi",
@@ -751,7 +751,7 @@
       "primaryCTA" : "Tekrar dene"
     },
     "SolanaAccountNotFunded" : {
-      "title" : "Hesap fonlanmadı"
+      "title" : "Hesap daha önce fonlanmamış"
     },
     "SolanaAddressOfEd25519" : {
       "title" : "Adres ed25519 eğrisi dışında"
@@ -3888,7 +3888,7 @@
     "stayInTheAppPlz" : "Ledger Live uygulamasında kalın ve Ledger'ınızı yakınınızda tutun.",
     "allowAppPermission" : "Cihazınızda {{wording}} uygulamasını açın",
     "allowAppPermissionSubtitleToken" : "ve {{token}} token'larınızı yönetin",
-    "allowManagerPermission" : "{{productName}} cihazınızda Ledger Yöneticisine izin verin",
+    "allowManagerPermission" : "Allow a secure connection with Ledger",
     "allowRenaming" : "{{productName}} cihazınızda yeniden adlandırmaya izin verin",
     "allowRemoveCustomLockscreen" : "Ledger Stax'inizde görüntünün kaldırılmasını onaylayın",
     "allowSecureConnection" : "Ledger ile güvenli bir bağlantının kurulmasına izin verin",
@@ -4639,7 +4639,7 @@
         "revoke" : "İptal et"
       },
       "delegationUnavailable" : {
-        "title" : "Yetersiz Kilitli Fon"
+        "title" : "Yetersiz Kilitli Fon Miktarı"
       },
       "manageMultipleVoteWarning" : "Bu oyu yönetmeden önce, aynı doğrulayıcı grubundaki diğer oyları Etkinleştirmeli ya da İptal Etmelisiniz."
     },
