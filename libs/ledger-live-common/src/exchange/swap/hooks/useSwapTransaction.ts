@@ -154,7 +154,7 @@ export const useSwapTransaction = ({
     bridge: bridgeTransaction,
   });
 
-  const { rates, refetchRates, updateSelectedRate, countdown } = useProviderRates({
+  const { rates, refetchRates, updateSelectedRate } = useProviderRates({
     fromState,
     toState,
     onNoRates,
@@ -176,7 +176,6 @@ export const useSwapTransaction = ({
               value: rates.value.filter(v => v.tradeMethod !== "fixed"),
             }
           : rates,
-      countdown,
       refetchRates,
       updateSelectedRate,
       targetAccounts,
