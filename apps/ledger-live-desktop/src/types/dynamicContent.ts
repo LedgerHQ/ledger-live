@@ -19,9 +19,9 @@ export type ContentCard = {
 
 export type PortfolioContentCard = ContentCard & {
   image?: string;
-  cta?: string;
+  mainCta?: string;
   link?: string;
-  dismissCta?: string;
+  secondaryCta?: string;
 };
 
 export type NotificationContentCard = ContentCard & {
