@@ -219,7 +219,7 @@ export default function Body({ onChangeStepId, onClose, setError, stepId, params
     errorSteps.push(0);
   }
 
-  const title = typeTransaction === "Approve" ? "Approve token" : t("sign.title");
+  const title = typeTransaction === "Approve" ? t("approve.title") : t("sign.title");
 
   const error = transactionError || bridgeError || getStatusError(status, "errors");
   const warning = getStatusError(status, "warnings");
