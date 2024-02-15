@@ -144,7 +144,7 @@
       }
     },
     "ConnectManagerTimeout" : {
-      "title" : "Сбой подключения «Мой Ledger»",
+      "title" : "Sorry, secure connection with Ledger failed",
       "description" : {
         "ios" : {
           "nanoX" : "Убедитесь, что {{productName}} разблокирован и Bluetooth включён."
@@ -492,7 +492,7 @@
       "description" : "Попробуйте переустановить приложение через «Мой Ledger»."
     },
     "NotEnoughGas" : {
-      "title" : "Для операции нужно оплатить комиссию {{fees}} {{ticker}}, поскольку она проводится в сети {{cryptoName}}. <link0>Купить {{ticker}}</link0>",
+      "title" : "You need {{fees}} {{ticker}} in your account to pay for transaction fees on the {{cryptoName}} network.  <link0>Buy {{ticker}}</link0> or deposit more into your account.",
       "description" : "Пополните свой счёт для оплаты транзакций в токенах."
     },
     "NotEnoughGasSwap" : {
@@ -622,8 +622,8 @@
       "primaryCTA" : "Открыть «Мой Ledger»"
     },
     "UserRefusedAllowManager" : {
-      "title" : "Доступ к «Мой Ledger» отклонён на устройстве",
-      "description" : "Пожалуйста, одобрите работу «Мой Ledger» на устройстве, а затем повторите попытку."
+      "title" : "Secure connection denied on the device",
+      "description" : "Please allow the secure connection on your device and retry."
     },
     "UserRefusedAddress" : {
       "title" : "Адрес получателя отклонён",
@@ -3888,7 +3888,7 @@
     "stayInTheAppPlz" : "Оставайтесь в приложении и держите устройство Ledger при себе.",
     "allowAppPermission" : "Откройте приложение {{wording}} на устройстве",
     "allowAppPermissionSubtitleToken" : "для управления {{token}}",
-    "allowManagerPermission" : "Одобрите работу приложения на {{productName}}",
+    "allowManagerPermission" : "Одобрите безопасное подключение на устройстве",
     "allowRenaming" : "Одобрите переименование на {{productName}}",
     "allowRemoveCustomLockscreen" : "Подтвердите удаление изображения на Ledger Stax",
     "allowSecureConnection" : "Разрешите безопасное подключение на устройстве",
