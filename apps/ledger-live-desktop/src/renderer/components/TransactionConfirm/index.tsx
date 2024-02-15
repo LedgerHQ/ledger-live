@@ -234,12 +234,15 @@ const TransactionConfirm = ({
           <HorizontalSeparator />
           <Footer transaction={transaction} />
         </>
-      ) : manifestId === "paraswap" ? (
+      ) : manifestId && Object.keys(termsOfUse).includes(manifestId) ? (
         <>
           <HorizontalSeparator />
           <Text marginTop={30}>
             <Trans i18nKey="approve.warning" />{" "}
-            <Link onClick={() => openURL(termsOfUse[manifestId])} to={"https://www.ledger.com"}>
+            <Link
+              onClick={() => openURL(termsOfUse[manifestId as keyof typeof termsOfUse])}
+              to={"https://www.ledger.com"}
+            >
               <Trans i18nKey="approve.termsAndConditions" values={{ appName: manifestName }} />
             </Link>
           </Text>
