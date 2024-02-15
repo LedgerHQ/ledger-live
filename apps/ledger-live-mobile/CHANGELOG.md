@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.40.0-next.2
+
+### Patch Changes
+
+- [#6194](https://github.com/LedgerHQ/ledger-live/pull/6194) [`e6b5f82`](https://github.com/LedgerHQ/ledger-live/commit/e6b5f828ce4e3019036fadad610f23f857259ae6) Thanks [@mle-gall](https://github.com/mle-gall)! - Update copy on Parent Account Error
+
 ## 3.40.0-next.1
 
 ### Patch Changes
