@@ -243,7 +243,7 @@ const TransactionConfirm = ({
           <Footer transaction={transaction} />
         </>
       )}
-      {!Footer && manifestId && Object.keys(termsOfUse).includes(manifestId) && (
+      {!Footer && manifestId && manifestId in termsOfUse && (
         <>
           <HorizontalSeparator />
           <Text marginTop={30}>
