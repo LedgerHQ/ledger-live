@@ -169,17 +169,21 @@ const TransactionConfirm = ({
   const key = ("mode" in transaction && transaction.mode) || "send";
   const recipientWording = t(`TransactionConfirm.recipientWording.${key}`);
 
-  const typeTransaction: string = (
-    fields.find(
-      (field: { label: string }) => field.label && field.label === "Type",
-    ) as DeviceTransactionField & { value: string }
-  ).value;
+  console.log(fields);
 
-  const amountTransaction: string = (
-    fields.find(
-      (field: { label: string }) => field.label && field.label === "Amount",
-    ) as DeviceTransactionField & { value: string }
-  ).value;
+  const typeTransaction: string =
+    (
+      fields.find(
+        (field: { label: string }) => field.label && field.label === "Type",
+      ) as DeviceTransactionField & { value: string }
+    )?.value || "";
+
+  const amountTransaction: string =
+    (
+      fields.find(
+        (field: { label: string }) => field.label && field.label === "Amount",
+      ) as DeviceTransactionField & { value: string }
+    )?.value || "";
   return typeTransaction === "Approve" ? (
     <Container style={{ paddingBottom: 0 }}>
       <Container paddingX={26}>
