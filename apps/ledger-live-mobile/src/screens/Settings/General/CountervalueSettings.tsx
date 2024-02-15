@@ -3,13 +3,13 @@ import React from "react";
 import { connect } from "react-redux";
 import { Text } from "@ledgerhq/native-ui";
 import { setCountervalue } from "~/actions/settings";
-import { counterValueCurrencySelector, getSupportedCounterValues } from "~/reducers/settings";
+import { counterValueCurrencySelector, supportedCounterValuesSelector } from "~/reducers/settings";
 import { State } from "~/reducers/types";
 import makeGenericSelectScreen from "../../makeGenericSelectScreen";
 
 const mapStateToProps = (state: State) => ({
   selectedKey: counterValueCurrencySelector(state).ticker,
-  items: getSupportedCounterValues(state),
+  items: supportedCounterValuesSelector(state),
 });
 
 const mapDispatchToProps = {
@@ -23,7 +23,6 @@ const Screen = makeGenericSelectScreen({
   formatItem: item => (
     <>
       {item.label}
-      {"  "}
       <Text variant={"body"} fontWeight={"medium"} color={"neutral.c70"} ml={3}>
         {item.value}
       </Text>

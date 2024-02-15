@@ -70,24 +70,26 @@ export default class LedgerStoreProvider extends Component<
     const possibleIntermediaries = [bitcoin, ethereum];
 
     const getsupportedCountervalues = async () => {
-      const supportedFiats = await listSupportedFiats();
-      const supportedCounterValues = [...supportedFiats, ...possibleIntermediaries]
-        .map(currency => ({
-          value: currency.ticker,
-          ticker: currency.ticker,
-          label: `${currency.name} - ${currency.ticker}`,
-          currency,
-        }))
-        .sort((a, b) => (a.currency.name < b.currency.name ? -1 : 1));
-      return supportedCounterValues;
+      const supportedCounterValues = await listSupportedFiats().then(res =>
+        [...res, ...possibleIntermediaries]
+          .map(currency => ({
+            value: currency.ticker,
+            ticker: currency.ticker,
+            label: `${currency.name} - ${currency.ticker}`,
+            currency,
+          }))
+          .sort((a, b) => (a.currency.name < b.currency.name ? -1 : 1)),
+      );
+      this.props.store.dispatch(setSupportedCounterValues(supportedCounterValues));
+      return supportedCounterValues || [];
     };
-    const supportedCounterValues = await getsupportedCountervalues();
-    this.props.store.dispatch(setSupportedCounterValues(supportedCounterValues));
+
+    const supportedCV = await getsupportedCountervalues();
 
     if (
       settingsData &&
       settingsData.counterValue &&
-      !supportedCounterValues.find(({ ticker }) => ticker === settingsData.counterValue)
+      !supportedCV.find(({ ticker }) => ticker === settingsData.counterValue)
     ) {
       settingsData.counterValue = settingsState.counterValue;
     }

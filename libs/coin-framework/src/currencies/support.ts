@@ -52,22 +52,17 @@ export const locallySupportedFiats = [
 ];
 
 async function initializeUserSupportedFiats() {
-  try {
-    const ids = await fetchSupportedFiatsTokens();
-    let supportedTokens = locallySupportedFiats;
+  const ids = await fetchSupportedFiatsTokens();
+  let supportedTokens = locallySupportedFiats;
+  if (ids.length) {
+    const idsToUpper = ids?.map(id => id.toUpperCase());
 
-    if (ids.length) {
-      const idsToUpper = ids?.map(id => id.toUpperCase());
-
-      // This makes sure we only keep the elements supported in our API and that are available for getFiatCurrencyByTicker
-      supportedTokens = idsToUpper.filter(token => locallySupportedFiats.includes(token));
-    }
-    userSupportedFiats = supportedTokens.map(id => {
-      return getFiatCurrencyByTicker(id);
-    });
-  } catch (error) {
-    throw new Error(`Failed to get supported Fiats. Error Message: ${error}`);
+    // This makes sure we only keep the elements supported in our API and that are available for getFiatCurrencyByTicker
+    supportedTokens = idsToUpper.filter(token => locallySupportedFiats.includes(token));
   }
+  userSupportedFiats = supportedTokens.map(id => {
+    return getFiatCurrencyByTicker(id);
+  });
 }
 
 export async function fetchSupportedFiatsTokens(): Promise<string[]> {
@@ -87,7 +82,7 @@ export async function fetchSupportedFiatsTokens(): Promise<string[]> {
     return data;
   } catch (error) {
     log("debug", `Failed to fetch supported fiat tokens. Error Message: ${error}`);
-    throw error;
+    return [];
   }
 }
 
@@ -104,7 +99,7 @@ export async function listSupportedFiats(): Promise<FiatCurrency[]> {
     } catch (error) {
       // Handle initialization error
       log("debug", `Failed to initialize userSupportedFiats. Error Message: ${error}`);
-      return [];
+      return userSupportedFiats || [];
     }
     return userSupportedFiats || [];
   }

@@ -6,7 +6,7 @@ import { FlatList, TouchableOpacity, Image, TextInput } from "react-native";
 import styled, { useTheme } from "styled-components/native";
 import { useDispatch, useSelector } from "react-redux";
 import Search from "~/components/Search";
-import { getSupportedCounterValues } from "~/reducers/settings";
+import { supportedCounterValuesSelector } from "~/reducers/settings";
 import { setMarketCounterCurrency } from "~/actions/settings";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
@@ -52,7 +52,7 @@ type Props = StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.MarketC
 function MarketCurrencySelect({ navigation }: Props) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const supportedCountervalues = useSelector(getSupportedCounterValues);
+  const supportedCountervalues = useSelector(supportedCounterValuesSelector);
   const { colors } = useTheme();
   const { counterCurrency, supportedCounterCurrencies, setCounterCurrency } = useMarketData();
   const [search, setSearch] = useState("");

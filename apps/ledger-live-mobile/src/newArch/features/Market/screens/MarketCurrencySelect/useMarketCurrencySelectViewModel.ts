@@ -1,14 +1,14 @@
 import { useMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getSupportedCounterValues } from "~/reducers/settings";
+import { supportedCounterValuesSelector } from "~/reducers/settings";
 import { setMarketCounterCurrency } from "~/actions/settings";
 import { useNavigation } from "@react-navigation/native";
 
 function useMarketCurrencySelectViewModel() {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const supportedCountervalues = useSelector(getSupportedCounterValues);
+  const supportedCountervalues = useSelector(supportedCounterValuesSelector);
   const { counterCurrency, supportedCounterCurrencies, setCounterCurrency } = useMarketData();
 
   const items = supportedCountervalues
