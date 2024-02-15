@@ -6,11 +6,11 @@ import { from } from "rxjs";
 import { DeviceModelId } from "@ledgerhq/devices";
 import Transport from "@ledgerhq/hw-transport";
 import { withDevice } from "../../hw/deviceAccess";
-import getVersion from "../../hw/getVersion";
+import { getVersion } from "../../device/use-cases/getVersionUseCase";
 import { useBleDevicePairing } from "./useBleDevicePairing";
 
 jest.mock("../../hw/deviceAccess");
-jest.mock("../../hw/getVersion");
+jest.mock("../../device/use-cases/getVersionUseCase");
 jest.mock("@ledgerhq/hw-transport");
 jest.useFakeTimers();
 

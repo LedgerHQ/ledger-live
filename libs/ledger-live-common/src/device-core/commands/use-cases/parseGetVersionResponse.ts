@@ -1,58 +1,11 @@
-import { DeviceModelId, identifyTargetId } from "@ledgerhq/devices";
-import Transport from "@ledgerhq/hw-transport";
-import type { FirmwareInfo } from "@ledgerhq/types-live";
-import { satisfies as versionSatisfies, coerce as semverCoerce } from "semver";
-import { isDeviceLocalizationSupported } from "../manager/localization";
+import { identifyTargetId } from "@ledgerhq/devices";
+import { FirmwareInfoEntity } from "../entities/FirmwareInfoEntity";
+import { isDeviceLocalizationSupported } from "./isDeviceLocalizationSupported";
+import { isHardwareVersionSupported } from "./isHardwareVersionSupported";
+import { isBootloaderVersionSupported } from "./isBootloaderVersionSupported";
 
-const deviceVersionRangesForBootloaderVersion: {
-  [key in DeviceModelId]?: string;
-} = {
-  nanoS: ">=2.0.0",
-  nanoX: ">=2.0.0",
-  nanoSP: ">=1.0.0",
-  stax: ">=1.0.0",
-};
-export const isBootloaderVersionSupported = (seVersion: string, modelId?: DeviceModelId): boolean =>
-  !!modelId &&
-  !!deviceVersionRangesForBootloaderVersion[modelId] &&
-  !!versionSatisfies(
-    semverCoerce(seVersion) || seVersion,
-    deviceVersionRangesForBootloaderVersion[modelId] as string,
-  );
-
-const deviceVersionRangesForHardwareVersion: {
-  [key in DeviceModelId]?: string;
-} = {
-  nanoX: ">=2.0.0",
-};
-
-/**
- * @returns whether the Hardware Version bytes are included in the result of the
- * getVersion APDU
- * */
-export const isHardwareVersionSupported = (seVersion: string, modelId?: DeviceModelId): boolean =>
-  !!modelId &&
-  !!deviceVersionRangesForHardwareVersion[modelId] &&
-  !!versionSatisfies(
-    semverCoerce(seVersion) || seVersion,
-    deviceVersionRangesForHardwareVersion[modelId] as string,
-  );
-
-/**
- * Get the FirmwareInfo of a given device
- *
- * @param transport
- * @param options - Contains optional options:
- *  - abortTimeoutMs: aborts the APDU exchange after a given timeout
- */
-export default async function getVersion(
-  transport: Transport,
-  { abortTimeoutMs }: { abortTimeoutMs?: number } = {},
-): Promise<FirmwareInfo> {
-  const res = await transport.send(0xe0, 0x01, 0x00, 0x00, undefined, undefined, {
-    abortTimeoutMs,
-  });
-  const data = res.slice(0, res.length - 2);
+export function parseGetVersionResponse(response: Buffer): FirmwareInfoEntity {
+  const data = response.slice(0, response.length - 2);
   let i = 0;
 
   // parse the target id of either BL or SE
@@ -84,7 +37,7 @@ export default async function getVersion(
   let seTargetId: number | undefined;
   let languageId: number | undefined;
 
-  const isBootloader = (targetId & 0xf0000000) !== 0x30000000;
+  const isBootloader = (targetId & 4026531840) !== 805306368;
 
   if (isBootloader) {
     mcuBlVersion = rawVersion;
