@@ -9,9 +9,9 @@ import type {
   PortfolioRange,
 } from "@ledgerhq/types-live";
 import { useEffect, useRef, useState } from "react";
-import { getAccountCurrency, flattenAccounts } from "../../account";
-import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
-import { useThrottledValues } from "../../hooks/useThrottledFunction";
+import { getAccountCurrency, flattenAccounts } from "@ledgerhq/coin-framework/account/index";
+import { useCountervaluesState } from ".";
+import { useThrottledValues } from "@ledgerhq/live-hooks/useThrottledFunction";
 import {
   getBalanceHistoryWithCountervalue,
   getPortfolio,
@@ -19,7 +19,8 @@ import {
   getAssetsDistribution,
   getPortfolioCount,
   GetPortfolioOptionsType,
-} from "./";
+} from "@ledgerhq/live-countervalues/portfolio";
+
 export function useBalanceHistoryWithCountervalue({
   account,
   range,

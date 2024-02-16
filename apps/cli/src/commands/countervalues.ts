@@ -9,7 +9,7 @@ import {
   getRanges,
   getDates,
   getPortfolioCountByDate,
-} from "@ledgerhq/live-common/portfolio/v2/index";
+} from "@ledgerhq/live-countervalues/portfolio";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
 import {
   formatCurrencyUnit,

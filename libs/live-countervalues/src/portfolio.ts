@@ -1,6 +1,10 @@
-import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
-import { calculate, calculateMany } from "@ledgerhq/live-countervalues/logic";
-import { flattenAccounts, getAccountCurrency, getAccountHistoryBalances } from "../../account";
+import type { CounterValuesState } from "./types";
+import { calculate, calculateMany } from "./logic";
+import {
+  flattenAccounts,
+  getAccountCurrency,
+  getAccountHistoryBalances,
+} from "@ledgerhq/coin-framework/account/index";
 import { getEnv } from "@ledgerhq/live-env";
 import type {
   Account,
@@ -13,7 +17,6 @@ import type {
   Portfolio,
   CurrencyPortfolio,
   AssetsDistribution,
-  ValueChange,
 } from "@ledgerhq/types-live";
 import type { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
@@ -82,11 +85,11 @@ export function getDates(r: PortfolioRange, count: number): Date[] {
   const now = new Date(Date.now());
   if (count === 1) return [now];
   const conf = getPortfolioRangeConfig(r);
-  const last = new Date((conf.startOf(now) as any) - 1);
+  const last = new Date(conf.startOf(now).getTime() - 1).getTime();
   const dates = [now];
 
   for (let i = 0; i < count - 1; i++) {
-    dates.unshift(new Date((last as any) - conf.increment * i));
+    dates.unshift(new Date(last - conf.increment * i));
   }
 
   return dates;
@@ -116,7 +119,7 @@ export function getPortfolioCount(accounts: AccountLike[], range: PortfolioRange
 export function getPortfolioCountByDate(start: Date, range: PortfolioRange): number {
   const conf = getPortfolioRangeConfig(range);
   const now = Date.now();
-  const count = Math.ceil((now - (start as any)) / conf.increment) + 2;
+  const count = Math.ceil((now - start.getTime()) / conf.increment) + 2;
   const defaultYearCount = getPortfolioRangeConfig("year").count ?? 0; // just for type casting
 
   return count < defaultYearCount ? defaultYearCount : count;
@@ -135,7 +138,7 @@ export function getBalanceHistory(
     date: now,
     value: account.balance.toNumber(),
   });
-  const t = new Date((conf.startOf(now) as any) - 1).getTime(); // end of yesterday
+  const t = new Date(conf.startOf(now).getTime() - 1).getTime(); // end of yesterday
 
   for (let i = 0; i < count - 1; i++) {
     history.unshift({
@@ -161,7 +164,11 @@ export function getBalanceHistoryWithCountervalue(
     to: cvCurrency,
   });
   let countervalueAvailable = false;
-  const history: { date: any; value: any; countervalue: any }[] = [];
+  const history: Array<{
+    date: Date;
+    value: number;
+    countervalue: number | null | undefined;
+  }> = [];
 
   for (let i = 0; i < balanceHistory.length; i++) {
     const { date, value } = balanceHistory[i];
@@ -218,14 +225,6 @@ function meaningfulPercentage(
   }
 }
 
-type Available = {
-  account: AccountLike;
-  history: BalanceHistoryWithCountervalue;
-  change: ValueChange;
-  countervalueReceiveSum: number;
-  countervalueSendSum: number;
-};
-
 const defaultGetPortfolioOptions = {
   flattenSourceAccounts: true,
 };
@@ -253,36 +252,25 @@ export function getPortfolio(
   };
   const accounts = flattenSourceAccounts ? flattenAccounts(topAccounts) : topAccounts;
   const count = getPortfolioCount(accounts, range);
-  const { availables, unavailableAccounts } = accounts.reduce<{
-    availables: Available[];
-    unavailableAccounts: AccountLike[];
-  }>(
-    (prev, account) => {
-      const p = getBalanceHistoryWithCountervalue(account, range, count, cvState, cvCurrency);
-      return p.countervalueAvailable
-        ? {
-            ...prev,
-            availables: [
-              ...prev.availables,
-              {
-                account,
-                history: p.history,
-                change: p.countervalueChange,
-                countervalueReceiveSum: p.countervalueReceiveSum,
-                countervalueSendSum: p.countervalueSendSum,
-              },
-            ],
-          }
-        : {
-            ...prev,
-            unavailableAccounts: [...prev.unavailableAccounts, account],
-          };
-    },
-    {
-      availables: [],
-      unavailableAccounts: [],
-    },
-  );
+
+  const availables = [];
+  const unavailableAccounts = [];
+
+  for (const account of accounts) {
+    const p = getBalanceHistoryWithCountervalue(account, range, count, cvState, cvCurrency);
+    if (p.countervalueAvailable) {
+      availables.push({
+        account,
+        history: p.history,
+        change: p.countervalueChange,
+        countervalueReceiveSum: p.countervalueReceiveSum,
+        countervalueSendSum: p.countervalueSendSum,
+      });
+    } else {
+      unavailableAccounts.push(account);
+    }
+  }
+
   const histories = availables.map(a => a.history);
   const balanceHistory = getDates(range, count).map((date, i) => ({
     date,
@@ -307,7 +295,7 @@ export function getPortfolio(
     balanceHistory,
     balanceAvailable: accounts.length === 0 || availables.length > 0,
     availableAccounts: availables.map(a => a.account),
-    unavailableCurrencies: [...new Set(unavailableAccounts.map(getAccountCurrency))] as any[],
+    unavailableCurrencies: [...new Set(unavailableAccounts.map(getAccountCurrency))],
     accounts,
     range,
     histories,
@@ -412,26 +400,21 @@ export function getAssetsDistribution(
     }
   }
 
-  const { sum, idCountervalues } = Object.entries(idBalances).reduce(
-    (prev, [id, value]) => {
-      const cv = calculate(cvState, {
-        value: Number(value),
-        // just for casting mixed type.
-        from: idCurrencies[id],
-        to: cvCurrency,
-      });
-      return cv
-        ? {
-            sum: prev.sum + cv,
-            idCountervalues: { ...prev.idCountervalues, [id]: cv },
-          }
-        : prev;
-    },
-    {
-      sum: 0,
-      idCountervalues: {},
-    },
-  );
+  const idCountervalues: Record<string, number | undefined> = {};
+  let sum = 0;
+
+  for (const [id, value] of Object.entries(idBalances)) {
+    const cv = calculate(cvState, {
+      value: Number(value),
+      from: idCurrencies[id],
+      to: cvCurrency,
+    });
+    if (cv) {
+      sum += cv;
+      idCountervalues[id] = cv;
+    }
+  }
+
   const idCurrenciesKeys = Object.keys(idCurrencies);
 
   if (idCurrenciesKeys.length === 0) {
@@ -487,3 +470,63 @@ const assetsDistributionNotAvailable: AssetsDistribution = {
   showFirst: 0,
   sum: 0,
 };
+
+/**
+ * data structure to represent a market datapoint
+ * NB: the UI don't actual need the "current value" in this data, because it can directly calculate it with the countervalue context. but it's set in order to internally sort the data and possibly debug it
+ */
+export type PerformanceMarketDatapoint = {
+  currency: Currency;
+  change: number;
+  currentValue: number;
+  referenceValue: number;
+};
+
+/**
+ * retrieve the list of market datapoints to use for the Market Performance feature
+ * the data is sorted from best performer to worst performer.
+ * it possibly filters out any invalid data, therefore the list can be empty.
+ */
+export function makePerformanceMarketAssetsList(
+  /**
+   * the countervalue state to use to calculate the performance.
+   */
+  cvState: CounterValuesState,
+  /**
+   * countervalue is the currency to use as reference to calculate the performance.
+   */
+  countervalue: Currency,
+  /**
+   * assets is the list of assets to consider. it is expected for them to have data loaded in cvState.
+   */
+  assets: Currency[],
+  /**
+   * referenceDate is the date to use as reference to calculate the performance.
+   */
+  referenceDate: Date,
+): PerformanceMarketDatapoint[] {
+  const list: PerformanceMarketDatapoint[] = [];
+
+  for (const asset of assets) {
+    const from = asset;
+    const to = countervalue;
+    const value = 10 ** from.units[0].magnitude;
+    const referenceValue = calculate(cvState, { from, to, value, date: referenceDate });
+    const currentValue = calculate(cvState, { from, to, value });
+    if (referenceValue && currentValue) {
+      const change = meaningfulPercentage(currentValue - referenceValue, referenceValue);
+      if (change) {
+        list.push({
+          currency: asset,
+          change,
+          currentValue,
+          referenceValue,
+        });
+      }
+    }
+  }
+
+  list.sort((a, b) => b.change - a.change);
+
+  return list;
+}

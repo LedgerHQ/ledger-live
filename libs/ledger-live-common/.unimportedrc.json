@@ -253,8 +253,6 @@
     "src/platform/tracking.ts",
     "src/platform/types.ts",
     "src/platform/utils/appendQueryParamsToDappURL.ts",
-    "src/portfolio/v2/index.ts",
-    "src/portfolio/v2/react.ts",
     "src/postOnboarding/actions.ts",
     "src/postOnboarding/hooks/index.ts",
     "src/postOnboarding/hooks/usePostOnboardingEntryPointVisibleOnWallet.ts",

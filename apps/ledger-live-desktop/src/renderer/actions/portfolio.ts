@@ -5,7 +5,7 @@ import {
   usePortfolio as usePortfolioRaw,
   useBalanceHistoryWithCountervalue as useBalanceHistoryWithCountervalueRaw,
   useCurrencyPortfolio as useCurrencyPortfolioRaw,
-} from "@ledgerhq/live-common/portfolio/v2/react";
+} from "@ledgerhq/live-countervalues-react/portfolio";
 import { selectedTimeRangeSelector } from "~/renderer/reducers/settings";
 import { counterValueCurrencySelector } from "./../reducers/settings";
 import { accountsSelector } from "./../reducers/accounts";
