@@ -1,8 +1,8 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { ScreenName } from "~/const";
-import MarketCurrencySelect from "LLM/features/Market/screens/MarketCurrencySelect/MarketCurrencySelectCont";
-import MarketDetail from "LLM/features/Market/screens//MarketDetail/MarketDetailCont";
+import MarketCurrencySelect from "LLM/features/Market/screens/MarketCurrencySelect";
+import MarketDetail from "LLM/features/Market/screens//MarketDetail";
 import { createStackNavigator } from "@react-navigation/stack";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 

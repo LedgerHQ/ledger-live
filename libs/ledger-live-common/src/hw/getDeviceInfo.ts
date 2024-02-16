@@ -2,7 +2,7 @@
 import { DeviceOnDashboardExpected, TransportStatusError } from "@ledgerhq/errors";
 import { LocalTracer, log } from "@ledgerhq/logs";
 import Transport from "@ledgerhq/hw-transport";
-import getVersion from "./getVersion";
+import { getVersion } from "../device/use-cases/getVersionUseCase";
 import isDevFirmware from "./isDevFirmware";
 import getAppAndVersion from "./getAppAndVersion";
 import { PROVIDERS } from "../manager/provider";

@@ -26,7 +26,7 @@ const testTimeout = 10 * 60 * 1000;
 
 const minBalancePerCurrencyId: Partial<Record<CryptoCurrency["id"], number>> = {
   arbitrum: 0.001,
-  arbitrum_goerli: 0.001,
+  arbitrum_sepolia: 0.001,
   optimism: 0.001,
   optimism_goerli: 0.001,
   boba: 0.001,
@@ -36,7 +36,7 @@ const minBalancePerCurrencyId: Partial<Record<CryptoCurrency["id"], number>> = {
   polygon_zk_evm: 0.001,
   polygon_zk_evm_testnet: 0.001,
   base: 0.001,
-  base_goerli: 0.001,
+  base_sepolia: 0.001,
   avalanche_c_chain: 0.001,
   bsc: 0.005,
   polygon: 0.005,
@@ -65,7 +65,7 @@ const testCoinDestination = (args: TransactionDestinationTestInput<EvmTransactio
   // the transaction and not the effectively used gas price, which might differ.
   // This leads to not being able to correctly cost an operation and
   // therefore makes it impossible infer the sender's balance
-  if (["arbitrum", "arbitrum_goerli"].includes(currency.id)) {
+  if (["arbitrum", "arbitrum_sepolia"].includes(currency.id)) {
     return;
   }
 
@@ -96,8 +96,8 @@ const testCoinBalance: MutationSpec<EvmTransaction>["test"] = ({
   // Klaytn is not providing the right gasPrice either at the moment
   // and their explorers are using the transaction gasPrice
   // instead of the effectiveGasPrice from the receipt
-  const underValuedFeesCurrencies = ["optimism", "optimism_goerli", "base", "base_goerli"];
-  const overValuedFeesCurrencies = ["arbitrum", "arbitrum_goerli", "klaytn"];
+  const underValuedFeesCurrencies = ["optimism", "optimism_goerli", "base", "base_sepolia"];
+  const overValuedFeesCurrencies = ["arbitrum", "arbitrum_sepolia", "klaytn"];
   const currenciesWithFlakyBehaviour = [...underValuedFeesCurrencies, ...overValuedFeesCurrencies];
 
   // Classic test verifying exactly the balance
