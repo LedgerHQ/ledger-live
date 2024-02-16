@@ -24,7 +24,7 @@ export function MarketPerformanceWidgetHeader({ onChangeOrder, order }: HeaderPr
         {t("dashboard.marketPerformanceWidget.title")}
       </Text>
 
-      <Flex py={2} px={4} backgroundColor="opacityDefault.c05" borderRadius={32}>
+      <Flex py={2} px={4} backgroundColor="opacityDefault.c05" borderRadius={32} ml={2}>
         <StyledText
           variant="small"
           fontWeight="semiBold"
@@ -37,7 +37,7 @@ export function MarketPerformanceWidgetHeader({ onChangeOrder, order }: HeaderPr
           variant="small"
           fontWeight="semiBold"
           color={order === Order.asc ? neutral : primary}
-          ml={3}
+          ml={2}
           onClick={() => onClickButton(Order.desc)}
         >
           {t("dashboard.marketPerformanceWidget.losers")}
