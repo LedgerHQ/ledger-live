@@ -22,7 +22,7 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   invariant(cardanoResources, "cardano account expected");
 
   const disableStakeButton =
-    canStake(account as CardanoAccount) && !isAlreadyStaking(account as CardanoAccount);
+    !canStake(account as CardanoAccount) || isAlreadyStaking(account as CardanoAccount);
 
   const disabledLabel =
     cardanoResources.delegation && cardanoResources.delegation.poolId
