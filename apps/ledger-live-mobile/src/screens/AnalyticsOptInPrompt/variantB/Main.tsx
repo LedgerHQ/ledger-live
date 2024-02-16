@@ -3,9 +3,9 @@ import { Flex, Link, Text } from "@ledgerhq/native-ui";
 import { TrackScreen } from "~/analytics";
 import { useTranslation } from "react-i18next";
 import Button from "~/components/Button";
-import { View, Container, Titles, Content, Bottom } from "../Common";
+import { View, Container, Titles, Content, Bottom, ScrollableContainer } from "../Common";
 import headerAnalytics from "./illustrations/header_analytics.png";
-import { Image, ScrollView } from "react-native";
+import { Image } from "react-native";
 import useAnalyticsOptInPrompt from "~/hooks/useAnalyticsOptInPromptVariantB";
 
 function Main() {
@@ -20,7 +20,7 @@ function Main() {
   ];
 
   return (
-    <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
+    <ScrollableContainer>
       <Container alignItems="center">
         <View>
           <Image
@@ -75,7 +75,7 @@ function Main() {
         </Bottom>
         <TrackScreen category="Analytics Opt In Prompt" name="Main" variant="B" />
       </Container>
-    </ScrollView>
+    </ScrollableContainer>
   );
 }
 

@@ -5,9 +5,8 @@ import { TrackScreen } from "~/analytics";
 import { useTranslation } from "react-i18next";
 import Button from "~/components/Button";
 import Switch from "~/components/Switch";
-import { View, Container, Titles, Content, Bottom } from "../Common";
+import { View, Container, Titles, Content, Bottom, ScrollableContainer } from "../Common";
 import useAnalyticsOptInPrompt from "~/hooks/useAnalyticsOptInPromptVariantA";
-import { ScrollView } from "react-native";
 
 const OptionContainer = styled(Flex).attrs({
   width: "100%",
@@ -54,7 +53,7 @@ function Details() {
   const { clickOnMoreOptionsConfirm, clickOnLearnMore } = useAnalyticsOptInPrompt();
 
   return (
-    <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
+    <ScrollableContainer>
       <Container alignItems="center">
         <View>
           <Titles>
@@ -102,7 +101,7 @@ function Details() {
         </Bottom>
         <TrackScreen category="Analytics Opt In Prompt" name="Details" variant="A" />
       </Container>
-    </ScrollView>
+    </ScrollableContainer>
   );
 }
 

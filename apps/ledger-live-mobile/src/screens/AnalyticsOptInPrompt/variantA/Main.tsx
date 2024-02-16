@@ -4,9 +4,8 @@ import { TrackScreen } from "~/analytics";
 import { useTranslation } from "react-i18next";
 import { Check, Close } from "@ledgerhq/native-ui/assets/icons";
 import Button from "~/components/Button";
-import { View, Container, Titles, Content, Bottom } from "../Common";
+import { View, Container, Titles, Content, Bottom, ScrollableContainer } from "../Common";
 import useAnalyticsOptInPrompt from "~/hooks/useAnalyticsOptInPromptVariantA";
-import { ScrollView } from "react-native";
 
 interface RenderItemsProps {
   items: string[];
@@ -52,7 +51,7 @@ function Main() {
   ];
 
   return (
-    <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
+    <ScrollableContainer>
       <Container alignItems="center" justifyContent="space-between">
         <View>
           <Titles>
@@ -119,7 +118,7 @@ function Main() {
         </Bottom>
         <TrackScreen category="Analytics Opt In Prompt" name="Main" variant="A" />
       </Container>
-    </ScrollView>
+    </ScrollableContainer>
   );
 }
 
