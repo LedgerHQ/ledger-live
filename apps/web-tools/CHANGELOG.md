@@ -1,5 +1,28 @@
 # web-tools
 
+## 0.4.2-nightly.10
+
+### Patch Changes
+
+- [#6113](https://github.com/LedgerHQ/ledger-live/pull/6113) [`9de641d`](https://github.com/LedgerHQ/ledger-live/commit/9de641d1cd3e3130a49acbfc0c478bfa862aef72) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - - Refactoring of `getVersion`
+  - moved entrypoint to `@ledgerhq/live-common/device/use-cases/getVersionUseCase`
+  - moved logic to live-common/device-core
+  - pulled out parsing function in `parseGetDeviceVersionResponse.ts`, reused that same parsing function in legacy `deviceSDK/commands/getVersion.ts`
+  - added unit tests for `parseGetDeviceVersionResponse`, removed duplicated tests of parsing logic from `deviceSDK`
+  - moved out functions and tests for the version checks `isHardwareVersionSupported`, `isBootloaderVersionSupported`
+  - Refactoring of `getDeviceName`
+    - moved entrypoint to `@ledgerhq/live-common/device/use-cases/getDeviceNameUseCase`
+    - moved logic to live-common/device-core
+    - pulled out parsing function in `parseGetDeviceNameResponsed.ts`
+    - added unit tests for `parseGetDeviceVersionResponse`, removed duplicated tests of parsing logic from `deviceSDK`
+- Updated dependencies [[`9de641d`](https://github.com/LedgerHQ/ledger-live/commit/9de641d1cd3e3130a49acbfc0c478bfa862aef72), [`dfac39b`](https://github.com/LedgerHQ/ledger-live/commit/dfac39b2086f0475d1bc8065032bfe27cbf424f6), [`dfac39b`](https://github.com/LedgerHQ/ledger-live/commit/dfac39b2086f0475d1bc8065032bfe27cbf424f6), [`dfac39b`](https://github.com/LedgerHQ/ledger-live/commit/dfac39b2086f0475d1bc8065032bfe27cbf424f6), [`a42fcb0`](https://github.com/LedgerHQ/ledger-live/commit/a42fcb05669f897d991374d301fcd3fd216b8d5f)]:
+  - @ledgerhq/live-common@34.0.0-nightly.10
+  - @ledgerhq/types-cryptoassets@7.10.0-nightly.0
+  - @ledgerhq/types-live@6.45.0-nightly.2
+  - @ledgerhq/coin-framework@0.11.1-nightly.6
+  - @ledgerhq/hw-app-eth@6.35.5-nightly.5
+  - @ledgerhq/domain-service@1.1.18-nightly.4
+
 ## 0.4.2-nightly.9
 
 ### Patch Changes

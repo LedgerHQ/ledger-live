@@ -1,5 +1,11 @@
 # @ledgerhq/icons-ui
 
+## 1.1.0-nightly.3
+
+### Minor Changes
+
+- [#6195](https://github.com/LedgerHQ/ledger-live/pull/6195) [`dfac39b`](https://github.com/LedgerHQ/ledger-live/commit/dfac39b2086f0475d1bc8065032bfe27cbf424f6) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for Base Sepolia & Arbitrum Sepolia
+
 ## 1.0.2-nightly.2
 
 ### Patch Changes

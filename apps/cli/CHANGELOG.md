@@ -1,5 +1,34 @@
 # @ledgerhq/live-cli
 
+## 24.0.0-nightly.10
+
+### Major Changes
+
+- [#6195](https://github.com/LedgerHQ/ledger-live/pull/6195) [`dfac39b`](https://github.com/LedgerHQ/ledger-live/commit/dfac39b2086f0475d1bc8065032bfe27cbf424f6) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Deprecating Arbitrum goerli & Base goerli
+
+### Minor Changes
+
+- [#6195](https://github.com/LedgerHQ/ledger-live/pull/6195) [`dfac39b`](https://github.com/LedgerHQ/ledger-live/commit/dfac39b2086f0475d1bc8065032bfe27cbf424f6) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for Base Sepolia & Arbitrum Sepolia
+
+### Patch Changes
+
+- [#6113](https://github.com/LedgerHQ/ledger-live/pull/6113) [`9de641d`](https://github.com/LedgerHQ/ledger-live/commit/9de641d1cd3e3130a49acbfc0c478bfa862aef72) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - - Refactoring of `getVersion`
+  - moved entrypoint to `@ledgerhq/live-common/device/use-cases/getVersionUseCase`
+  - moved logic to live-common/device-core
+  - pulled out parsing function in `parseGetDeviceVersionResponse.ts`, reused that same parsing function in legacy `deviceSDK/commands/getVersion.ts`
+  - added unit tests for `parseGetDeviceVersionResponse`, removed duplicated tests of parsing logic from `deviceSDK`
+  - moved out functions and tests for the version checks `isHardwareVersionSupported`, `isBootloaderVersionSupported`
+  - Refactoring of `getDeviceName`
+    - moved entrypoint to `@ledgerhq/live-common/device/use-cases/getDeviceNameUseCase`
+    - moved logic to live-common/device-core
+    - pulled out parsing function in `parseGetDeviceNameResponsed.ts`
+    - added unit tests for `parseGetDeviceVersionResponse`, removed duplicated tests of parsing logic from `deviceSDK`
+- Updated dependencies [[`9de641d`](https://github.com/LedgerHQ/ledger-live/commit/9de641d1cd3e3130a49acbfc0c478bfa862aef72), [`dfac39b`](https://github.com/LedgerHQ/ledger-live/commit/dfac39b2086f0475d1bc8065032bfe27cbf424f6), [`dfac39b`](https://github.com/LedgerHQ/ledger-live/commit/dfac39b2086f0475d1bc8065032bfe27cbf424f6), [`2e5185b`](https://github.com/LedgerHQ/ledger-live/commit/2e5185b3dba497c956272068128e49db72e8af2a), [`a42fcb0`](https://github.com/LedgerHQ/ledger-live/commit/a42fcb05669f897d991374d301fcd3fd216b8d5f)]:
+  - @ledgerhq/live-common@34.0.0-nightly.10
+  - @ledgerhq/cryptoassets@12.0.0-nightly.1
+  - @ledgerhq/coin-framework@0.11.1-nightly.6
+  - @ledgerhq/live-countervalues@0.1.1-nightly.6
+
 ## 23.3.2-nightly.9
 
 ### Patch Changes

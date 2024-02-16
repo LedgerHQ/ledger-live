@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.45.0-nightly.2
+
+### Minor Changes
+
+- [#6195](https://github.com/LedgerHQ/ledger-live/pull/6195) [`dfac39b`](https://github.com/LedgerHQ/ledger-live/commit/dfac39b2086f0475d1bc8065032bfe27cbf424f6) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for Base Sepolia & Arbitrum Sepolia
+
 ## 6.44.1-nightly.1
 
 ### Patch Changes

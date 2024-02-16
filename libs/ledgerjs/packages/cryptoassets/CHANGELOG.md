@@ -1,5 +1,17 @@
 # @ledgerhq/cryptoassets
 
+## 12.0.0-nightly.1
+
+### Major Changes
+
+- [#6195](https://github.com/LedgerHQ/ledger-live/pull/6195) [`dfac39b`](https://github.com/LedgerHQ/ledger-live/commit/dfac39b2086f0475d1bc8065032bfe27cbf424f6) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Deprecating Arbitrum goerli & Base goerli
+
+### Minor Changes
+
+- [#6195](https://github.com/LedgerHQ/ledger-live/pull/6195) [`dfac39b`](https://github.com/LedgerHQ/ledger-live/commit/dfac39b2086f0475d1bc8065032bfe27cbf424f6) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for Base Sepolia & Arbitrum Sepolia
+
+- [#6183](https://github.com/LedgerHQ/ledger-live/pull/6183) [`2e5185b`](https://github.com/LedgerHQ/ledger-live/commit/2e5185b3dba497c956272068128e49db72e8af2a) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update algorand explorer links
+
 ## 11.4.1-nightly.0
 
 ### Patch Changes

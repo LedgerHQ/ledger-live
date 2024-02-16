@@ -1,5 +1,45 @@
 # ledger-live-desktop
 
+## 2.77.0-nightly.10
+
+### Minor Changes
+
+- [#6195](https://github.com/LedgerHQ/ledger-live/pull/6195) [`dfac39b`](https://github.com/LedgerHQ/ledger-live/commit/dfac39b2086f0475d1bc8065032bfe27cbf424f6) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Deprecating Arbitrum goerli & Base goerli
+
+- [#6195](https://github.com/LedgerHQ/ledger-live/pull/6195) [`dfac39b`](https://github.com/LedgerHQ/ledger-live/commit/dfac39b2086f0475d1bc8065032bfe27cbf424f6) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for Base Sepolia & Arbitrum Sepolia
+
+### Patch Changes
+
+- [#6113](https://github.com/LedgerHQ/ledger-live/pull/6113) [`9de641d`](https://github.com/LedgerHQ/ledger-live/commit/9de641d1cd3e3130a49acbfc0c478bfa862aef72) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - - Refactoring of `getVersion`
+
+  - moved entrypoint to `@ledgerhq/live-common/device/use-cases/getVersionUseCase`
+  - moved logic to live-common/device-core
+  - pulled out parsing function in `parseGetDeviceVersionResponse.ts`, reused that same parsing function in legacy `deviceSDK/commands/getVersion.ts`
+  - added unit tests for `parseGetDeviceVersionResponse`, removed duplicated tests of parsing logic from `deviceSDK`
+  - moved out functions and tests for the version checks `isHardwareVersionSupported`, `isBootloaderVersionSupported`
+  - Refactoring of `getDeviceName`
+    - moved entrypoint to `@ledgerhq/live-common/device/use-cases/getDeviceNameUseCase`
+    - moved logic to live-common/device-core
+    - pulled out parsing function in `parseGetDeviceNameResponsed.ts`
+    - added unit tests for `parseGetDeviceVersionResponse`, removed duplicated tests of parsing logic from `deviceSDK`
+
+- [#6210](https://github.com/LedgerHQ/ledger-live/pull/6210) [`e2d8f69`](https://github.com/LedgerHQ/ledger-live/commit/e2d8f69a941017f6f6ba5dfe334215cad1e33068) Thanks [@KVNLS](https://github.com/KVNLS)! - Fix underline on a tags in alert messages
+
+- [#6192](https://github.com/LedgerHQ/ledger-live/pull/6192) [`056f620`](https://github.com/LedgerHQ/ledger-live/commit/056f620872ec6f1b88371fda802115d4a0428703) Thanks [@mle-gall](https://github.com/mle-gall)! - Parent Account Error Copy update
+
+- Updated dependencies [[`486b0c8`](https://github.com/LedgerHQ/ledger-live/commit/486b0c8993715ce67a90b0a6c4fe177c04905719), [`9de641d`](https://github.com/LedgerHQ/ledger-live/commit/9de641d1cd3e3130a49acbfc0c478bfa862aef72), [`dfac39b`](https://github.com/LedgerHQ/ledger-live/commit/dfac39b2086f0475d1bc8065032bfe27cbf424f6), [`dfac39b`](https://github.com/LedgerHQ/ledger-live/commit/dfac39b2086f0475d1bc8065032bfe27cbf424f6), [`dfac39b`](https://github.com/LedgerHQ/ledger-live/commit/dfac39b2086f0475d1bc8065032bfe27cbf424f6), [`a42fcb0`](https://github.com/LedgerHQ/ledger-live/commit/a42fcb05669f897d991374d301fcd3fd216b8d5f)]:
+  - @ledgerhq/react-ui@0.14.15-nightly.4
+  - @ledgerhq/live-common@34.0.0-nightly.10
+  - @ledgerhq/coin-evm@1.0.0-nightly.6
+  - @ledgerhq/types-cryptoassets@7.10.0-nightly.0
+  - @ledgerhq/types-live@6.45.0-nightly.2
+  - @ledgerhq/coin-framework@0.11.1-nightly.6
+  - @ledgerhq/live-countervalues@0.1.1-nightly.6
+  - @ledgerhq/live-countervalues-react@0.1.1-nightly.6
+  - @ledgerhq/live-nft@0.2.0-nightly.6
+  - @ledgerhq/live-nft-react@0.2.0-nightly.6
+  - @ledgerhq/domain-service@1.1.18-nightly.4
+
 ## 2.77.0-nightly.9
 
 ### Patch Changes
