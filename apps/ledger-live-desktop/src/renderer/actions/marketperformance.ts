@@ -5,11 +5,14 @@ import { TrackingPair } from "@ledgerhq/live-countervalues/types";
 import { selectedTimeRangeSelector } from "~/renderer/reducers/settings";
 import { getPortfolioRangeConfig } from "@ledgerhq/live-countervalues/portfolio";
 import { Currency } from "@ledgerhq/types-cryptoassets";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { ABTestingVariants } from "@ledgerhq/types-live";
 
 export function useMarketPerformanceFeatureFlag() {
-  // TODO hook to the actual Feature Flag.
+  const marketperformanceWidgetDesktop = useFeature("marketperformanceWidgetDesktop");
   return {
-    enabled: false,
+    enabled: marketperformanceWidgetDesktop?.enabled || true,
+    variant: marketperformanceWidgetDesktop?.params?.variant || ABTestingVariants.variantA,
   };
 }
 
