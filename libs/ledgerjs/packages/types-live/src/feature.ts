@@ -190,6 +190,7 @@ export type Features = CurrencyFeatures & {
   nftsFromSimplehash: Feature_NftsFromSimpleHash;
   lldPortfolioCarousel: Feature_LldPortfolioCarousel;
   llmMarketNewArch: Feature_LlmMarketNewArch;
+  marketperformanceWidgetDesktop: Feature_MarketperformanceWidgetDesktop;
 };
 
 /**
@@ -491,6 +492,10 @@ export type Feature_LlmAnalyticsOptInPrompt = Feature<{
 }>;
 
 export type Feature_LldPortfolioCarousel = Feature<{
+  variant: ABTestingVariants;
+}>;
+
+export type Feature_MarketperformanceWidgetDesktop = Feature<{
   variant: ABTestingVariants;
 }>;
 

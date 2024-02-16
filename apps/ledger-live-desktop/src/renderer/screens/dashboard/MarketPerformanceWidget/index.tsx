@@ -7,8 +7,12 @@ import {
   useMarketPerformanceReferenceDate,
   useMarketPerformanceTrackingPairs,
 } from "~/renderer/actions/marketperformance";
+import { ABTestingVariants } from "@ledgerhq/types-live";
+import { MarketPerformanceWidgetContainer } from "./Container";
 
-type Props = unknown;
+type Props = {
+  variant: ABTestingVariants;
+};
 
 function usePerformanceMarketAssetsList() {
   const cvsState = useCountervaluesState();
@@ -27,12 +31,12 @@ function usePerformanceMarketAssetsList() {
   );
 }
 
-const PortfolioGraphCard = (_: Props) => {
+const MarketPerformanceWidget = ({ variant }: Props) => {
   const list = usePerformanceMarketAssetsList();
   console.log(
     list.map(o => o.currency.name + " \t" + Math.round(o.change * 10000) / 100 + "%").join("\n"),
   );
-  return null;
+  return <MarketPerformanceWidgetContainer />;
 };
 
-export default React.memo(PortfolioGraphCard);
+export default React.memo(MarketPerformanceWidget);
