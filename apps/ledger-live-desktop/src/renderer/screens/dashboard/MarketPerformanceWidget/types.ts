@@ -13,6 +13,8 @@ export type PropsBody = {
 
 export type PropsBodyElem = {
   data: PerformanceMarketDatapoint;
+  index: number;
+  isFirst: boolean;
 };
 
 export type Props = {
