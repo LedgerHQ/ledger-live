@@ -1,3 +1,9 @@
+# 2.77.0
+
+### 🚀 Features
+
+Gone are the days of unwanted NFTs in your gallery. Spam NFTs will now be filtered and removed automatically.
+
 # 2.75.0
 
 ### 🚀 Features
