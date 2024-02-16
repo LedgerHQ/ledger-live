@@ -4,7 +4,7 @@ import Card from "~/renderer/components/Box/Card";
 
 export function MarketPerformanceWidgetContainer() {
   return (
-    <Card p={0} py={5} grow>
+    <Card py={5} grow>
       <Flex alignItems={"center"} justifyContent={"center"} flex={1}>
         <Text>MarketPerformanceWidgetContainer</Text>
       </Flex>
