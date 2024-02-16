@@ -110,7 +110,7 @@ export default function DashboardPage() {
                 />
               </Box>
               {marketPerformanceEnabled ? (
-                <Box flex={1} ml={6}>
+                <Box flex={1} minWidth={250} ml={3}>
                   <MarketPerformanceWidget variant={marketPerformanceVariant} />
                 </Box>
               ) : null}
