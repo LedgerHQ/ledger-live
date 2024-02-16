@@ -11,7 +11,7 @@ import { ABTestingVariants } from "@ledgerhq/types-live";
 export function useMarketPerformanceFeatureFlag() {
   const marketperformanceWidgetDesktop = useFeature("marketperformanceWidgetDesktop");
   return {
-    enabled: marketperformanceWidgetDesktop?.enabled || true,
+    enabled: marketperformanceWidgetDesktop?.enabled || false,
     variant: marketperformanceWidgetDesktop?.params?.variant || ABTestingVariants.variantA,
   };
 }
