@@ -31,7 +31,7 @@ function usePerformanceMarketAssetsList() {
   );
 }
 
-const MarketPerformanceWidget = (_: Props) => {
+const MarketPerformanceWidget = ({ variant }: Props) => {
   const list = usePerformanceMarketAssetsList();
   console.log(
     list.map(o => o.currency.name + " \t" + Math.round(o.change * 10000) / 100 + "%").join("\n"),
