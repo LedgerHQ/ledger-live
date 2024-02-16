@@ -1,4 +1,4 @@
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setAnalytics, setPersonalizedRecommendations } from "~/actions/settings";
 import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
@@ -11,6 +11,7 @@ import { Linking } from "react-native";
 import { urls } from "~/utils/urls";
 import { useLocale } from "~/context/Locale";
 import { track, updateIdentify } from "~/analytics";
+import { trackingEnabledSelector } from "~/reducers/settings";
 
 const useAnalyticsOptInPrompt = () => {
   const { locale } = useLocale();
@@ -19,6 +20,9 @@ const useAnalyticsOptInPrompt = () => {
     useNavigation<
       RootNavigationComposite<StackNavigatorNavigation<OnboardingNavigatorParamList>>
     >();
+  const isTrackingEnabled = useSelector(trackingEnabledSelector);
+  // When the user has not made a choice yet, we can track the analytics opt in flow
+  const shouldWeTrack = isTrackingEnabled === true || isTrackingEnabled === null;
 
   const continueOnboarding = () => {
     navigation.navigate(NavigatorName.BaseOnboarding, {
@@ -30,34 +34,49 @@ const useAnalyticsOptInPrompt = () => {
         },
       },
     });
-    updateIdentify();
+    updateIdentify(undefined, shouldWeTrack);
   };
   const clickOnAcceptAll = () => {
     dispatch(setAnalytics(true));
     dispatch(setPersonalizedRecommendations(true));
     continueOnboarding();
-    track("button_clicked", {
-      button: "Accept All",
-      variant: "A",
-    });
+    track(
+      "button_clicked",
+      {
+        button: "Accept All",
+        variant: "A",
+        flow: "consent onboarding",
+      },
+      true,
+    );
   };
   const clickOnRefuseAll = () => {
     dispatch(setAnalytics(false));
     dispatch(setPersonalizedRecommendations(false));
     continueOnboarding();
-    track("button_clicked", {
-      button: "Refuse All",
-      variant: "A",
-    });
+    track(
+      "button_clicked",
+      {
+        button: "Refuse All",
+        variant: "A",
+        flow: "consent onboarding",
+      },
+      shouldWeTrack,
+    );
   };
   const navigateToMoreOptions = () => {
     navigation.navigate(NavigatorName.AnalyticsOptInPrompt, {
       screen: ScreenName.AnalyticsOptInPromptDetails,
     });
-    track("button_clicked", {
-      button: "More Options",
-      variant: "A",
-    });
+    track(
+      "button_clicked",
+      {
+        button: "More Options",
+        variant: "A",
+        flow: "consent onboarding",
+      },
+      shouldWeTrack,
+    );
   };
   const clickOnMoreOptionsConfirm = (
     isAnalyticsEnabled: boolean,
@@ -66,22 +85,33 @@ const useAnalyticsOptInPrompt = () => {
     dispatch(setAnalytics(isAnalyticsEnabled));
     dispatch(setPersonalizedRecommendations(isPersonalRecommendationsEnabled));
     continueOnboarding();
-    track("button_clicked", {
-      button: "Confirm",
-      variant: "A",
-    });
+    track(
+      "button_clicked",
+      {
+        button: "Confirm",
+        variant: "A",
+        flow: "consent onboarding",
+      },
+      shouldWeTrack,
+    );
   };
   const clickOnLearnMore = () => {
     Linking.openURL(
       (urls.privacyPolicy as Record<string, string>)[locale] || urls.privacyPolicy.en,
     );
-    track("button_clicked", {
-      button: "Learn More",
-      variant: "A",
-    });
+    track(
+      "button_clicked",
+      {
+        button: "Learn More",
+        variant: "A",
+        flow: "consent onboarding",
+      },
+      shouldWeTrack,
+    );
   };
 
   return {
+    shouldWeTrack,
     clickOnAcceptAll,
     clickOnRefuseAll,
     navigateToMoreOptions,

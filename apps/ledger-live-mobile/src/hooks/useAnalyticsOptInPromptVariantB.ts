@@ -2,6 +2,7 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   analyticsEnabledSelector,
   personalizedRecommendationsEnabledSelector,
+  trackingEnabledSelector,
 } from "~/reducers/settings";
 import { setAnalytics, setPersonalizedRecommendations } from "~/actions/settings";
 import { useNavigation } from "@react-navigation/native";
@@ -27,6 +28,9 @@ const useAnalyticsOptInPrompt = () => {
   const personalizedRecommendationsEnabled: boolean = useSelector(
     personalizedRecommendationsEnabledSelector,
   );
+  const isTrackingEnabled = useSelector(trackingEnabledSelector);
+  // When the user has not made a choice yet, we can track the analytics opt in flow
+  const shouldWeTrack = isTrackingEnabled === true || isTrackingEnabled === null;
 
   const continueOnboarding = () => {
     navigation.navigate(NavigatorName.BaseOnboarding, {
@@ -38,7 +42,7 @@ const useAnalyticsOptInPrompt = () => {
         },
       },
     });
-    updateIdentify();
+    updateIdentify(undefined, shouldWeTrack);
   };
   const goToPersonalizedRecommendationsStep = () => {
     navigation.navigate(NavigatorName.AnalyticsOptInPrompt, {
@@ -49,46 +53,72 @@ const useAnalyticsOptInPrompt = () => {
   const clickOnRefuseAnalytics = () => {
     dispatch(setAnalytics(false));
     goToPersonalizedRecommendationsStep();
-    track("button_clicked", {
-      button: "Refuse Analytics",
-      variant: "B",
-    });
+    track(
+      "button_clicked",
+      {
+        button: "Refuse Analytics",
+        variant: "B",
+        flow: "consent onboarding",
+      },
+      shouldWeTrack,
+    );
   };
   const clickOnAllowAnalytics = () => {
     dispatch(setAnalytics(true));
     goToPersonalizedRecommendationsStep();
-    track("button_clicked", {
-      button: "Accept Analytics",
-      variant: "B",
-    });
+    track(
+      "button_clicked",
+      {
+        button: "Accept Analytics",
+        variant: "B",
+        flow: "consent onboarding",
+      },
+      shouldWeTrack,
+    );
   };
   const clickOnAllowPersonalizedExperience = () => {
     dispatch(setPersonalizedRecommendations(true));
     continueOnboarding();
-    track("button_clicked", {
-      button: "Accept Personal Recommendations",
-      variant: "B",
-    });
+    track(
+      "button_clicked",
+      {
+        button: "Accept Personal Recommendations",
+        variant: "B",
+        flow: "consent onboarding",
+      },
+      shouldWeTrack,
+    );
   };
   const clickOnRefusePersonalizedExperience = () => {
     dispatch(setPersonalizedRecommendations(false));
     continueOnboarding();
-    track("button_clicked", {
-      button: "Refuse Personal Recommendations",
-      variant: "B",
-    });
+    track(
+      "button_clicked",
+      {
+        button: "Refuse Personal Recommendations",
+        variant: "B",
+        flow: "consent onboarding",
+      },
+      shouldWeTrack,
+    );
   };
   const clickOnLearnMore = () => {
     Linking.openURL(
       (urls.privacyPolicy as Record<string, string>)[locale] || urls.privacyPolicy.en,
     );
-    track("button_clicked", {
-      button: "Learn More",
-      variant: "B",
-    });
+    track(
+      "button_clicked",
+      {
+        button: "Learn More",
+        variant: "B",
+        flow: "consent onboarding",
+      },
+      shouldWeTrack,
+    );
   };
 
   return {
+    shouldWeTrack,
     analyticsEnabled,
     personalizedRecommendationsEnabled,
     clickOnRefuseAnalytics,

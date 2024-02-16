@@ -50,7 +50,7 @@ function Details() {
   const { t } = useTranslation();
   const [isAnalyticsEnabled, setIsAnalyticsEnabled] = useState(false);
   const [isPersonalRecommendationsEnabled, setIsPersonalRecommendationsEnabled] = useState(false);
-  const { clickOnMoreOptionsConfirm, clickOnLearnMore } = useAnalyticsOptInPrompt();
+  const { shouldWeTrack, clickOnMoreOptionsConfirm, clickOnLearnMore } = useAnalyticsOptInPrompt();
 
   return (
     <ScrollableContainer>
@@ -99,7 +99,13 @@ function Details() {
             {t("analyticsOptIn.variantA.details.infoText.link")}
           </Link>
         </Bottom>
-        <TrackScreen category="Analytics Opt In Prompt" name="Details" variant="A" />
+        <TrackScreen
+          category="Analytics Opt In Prompt"
+          name="Details"
+          variant="A"
+          flow="consent onboarding"
+          mandatory={shouldWeTrack}
+        />
       </Container>
     </ScrollableContainer>
   );

@@ -10,7 +10,7 @@ import useAnalyticsOptInPrompt from "~/hooks/useAnalyticsOptInPromptVariantB";
 
 function Main() {
   const { t } = useTranslation();
-  const { clickOnAllowAnalytics, clickOnRefuseAnalytics, clickOnLearnMore } =
+  const { shouldWeTrack, clickOnAllowAnalytics, clickOnRefuseAnalytics, clickOnLearnMore } =
     useAnalyticsOptInPrompt();
 
   const bulletPoints = [
@@ -73,7 +73,13 @@ function Main() {
             {t("analyticsOptIn.variantB.main.infoText.link")}
           </Link>
         </Bottom>
-        <TrackScreen category="Analytics Opt In Prompt" name="Main" variant="B" />
+        <TrackScreen
+          category="Analytics Opt In Prompt"
+          name="Main"
+          variant="B"
+          flow="consent onboarding"
+          mandatory={shouldWeTrack}
+        />
       </Container>
     </ScrollableContainer>
   );

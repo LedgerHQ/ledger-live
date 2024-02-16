@@ -190,8 +190,8 @@ export type SettingsState = {
   counterValue: string;
   counterValueExchange: string | null | undefined;
   reportErrorsEnabled: boolean;
-  analyticsEnabled: boolean;
-  personalizedRecommendationsEnabled: boolean;
+  analyticsEnabled: boolean | null;
+  personalizedRecommendationsEnabled: boolean | null;
   privacy: Privacy | null | undefined;
   currenciesSettings: Record<string, CurrencySettings>;
   pairExchanges: Record<string, string | null | undefined>;

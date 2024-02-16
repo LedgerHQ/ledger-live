@@ -11,6 +11,7 @@ import useAnalyticsOptInPrompt from "~/hooks/useAnalyticsOptInPromptVariantB";
 function Details() {
   const { t } = useTranslation();
   const {
+    shouldWeTrack,
     clickOnAllowPersonalizedExperience,
     clickOnRefusePersonalizedExperience,
     clickOnLearnMore,
@@ -75,7 +76,13 @@ function Details() {
             {t("analyticsOptIn.variantB.details.infoText.link")}
           </Link>
         </Bottom>
-        <TrackScreen category="Analytics Opt In Prompt" name="Details" variant="B" />
+        <TrackScreen
+          category="Analytics Opt In Prompt"
+          name="Details"
+          variant="B"
+          flow="consent onboarding"
+          mandatory={shouldWeTrack}
+        />
       </Container>
     </ScrollableContainer>
   );

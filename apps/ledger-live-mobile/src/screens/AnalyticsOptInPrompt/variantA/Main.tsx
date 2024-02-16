@@ -36,8 +36,13 @@ function renderItems({
 
 function Main() {
   const { t } = useTranslation();
-  const { navigateToMoreOptions, clickOnRefuseAll, clickOnAcceptAll, clickOnLearnMore } =
-    useAnalyticsOptInPrompt();
+  const {
+    shouldWeTrack,
+    navigateToMoreOptions,
+    clickOnRefuseAll,
+    clickOnAcceptAll,
+    clickOnLearnMore,
+  } = useAnalyticsOptInPrompt();
 
   const trackable = [
     t("analyticsOptIn.variantA.main.content.able.diagAndUsage"),
@@ -116,7 +121,13 @@ function Main() {
             {t("analyticsOptIn.variantA.main.content.infoText.link")}
           </Link>
         </Bottom>
-        <TrackScreen category="Analytics Opt In Prompt" name="Main" variant="A" />
+        <TrackScreen
+          category="Analytics Opt In Prompt"
+          name="Main"
+          variant="A"
+          flow="consent onboarding"
+          mandatory={shouldWeTrack}
+        />
       </Container>
     </ScrollableContainer>
   );
