@@ -36,7 +36,7 @@ const MarketPerformanceWidget = (_: Props) => {
   console.log(
     list.map(o => o.currency.name + " \t" + Math.round(o.change * 10000) / 100 + "%").join("\n"),
   );
-  return <MarketPerformanceWidgetContainer />;
+  return <MarketPerformanceWidgetContainer variant={variant} data={list} />;
 };
 
 export default React.memo(MarketPerformanceWidget);
