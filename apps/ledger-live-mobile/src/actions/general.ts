@@ -11,7 +11,7 @@ import {
   useCountervaluesPolling,
   useTrackingPairForAccounts,
 } from "@ledgerhq/live-countervalues-react";
-import { useDistribution as useDistributionCommon } from "@ledgerhq/live-common/portfolio/v2/react";
+import { useDistribution as useDistributionCommon } from "@ledgerhq/live-countervalues-react/portfolio";
 import { BehaviorSubject } from "rxjs";
 import { cleanCache, reorderAccounts } from "./accounts";
 import { accountsSelector } from "../reducers/accounts";

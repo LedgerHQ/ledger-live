@@ -147,7 +147,7 @@ const completeExchange = (
           );
         } catch (e) {
           if (e instanceof TransportStatusError && e.statusCode === 0x6a83) {
-            throw new WrongDeviceForAccount(undefined, {
+            throw new WrongDeviceForAccount(getExchangeErrorMessage(e.statusCode, currentStep), {
               accountName: payoutAccount.name,
             });
           }
@@ -186,7 +186,7 @@ const completeExchange = (
         } catch (e) {
           if (e instanceof TransportStatusError && e.statusCode === 0x6a83) {
             log(COMPLETE_EXCHANGE_LOG, "transport error");
-            throw new WrongDeviceForAccount(undefined, {
+            throw new WrongDeviceForAccount(getExchangeErrorMessage(e.statusCode, currentStep), {
               accountName: refundAccount.name,
             });
           }

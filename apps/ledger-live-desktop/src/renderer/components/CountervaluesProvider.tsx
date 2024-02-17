@@ -11,7 +11,8 @@ import {
 } from "@ledgerhq/live-countervalues/types";
 import { pairId } from "@ledgerhq/live-countervalues/helpers";
 import { setKey } from "~/renderer/storage";
-import { useUserSettings } from "../actions/general";
+import { useCalculateCountervaluesUserSettings } from "../actions/general";
+
 export default function CountervaluesProvider({
   children,
   initialState,
@@ -19,13 +20,14 @@ export default function CountervaluesProvider({
   children: React.ReactNode;
   initialState: CounterValuesStateRaw;
 }) {
-  const userSettings = useUserSettings();
+  const userSettings = useCalculateCountervaluesUserSettings();
   return (
     <Countervalues userSettings={userSettings} savedState={initialState}>
       <CountervaluesManager userSettings={userSettings}>{children}</CountervaluesManager>
     </Countervalues>
   );
 }
+
 function CountervaluesManager({
   children,
   userSettings,

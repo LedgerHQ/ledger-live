@@ -27,6 +27,7 @@
     "@ledgerhq/types-live": "workspace:*",
     "@ledgerhq/types-cryptoassets": "workspace:*",
     "@ledgerhq/cryptoassets": "workspace:*",
+    "@ledgerhq/logs": "workspace:*",
     "@ledgerhq/live-countervalues": "workspace:*",
     "@ledgerhq/coin-framework": "workspace:*",
     "@ledgerhq/live-hooks": "workspace:*",
@@ -67,5 +68,24 @@
         "lib-es/*"
       ]
     }
+  },
+  "exports": {
+    ".": {
+      "require": "./lib/index.js",
+      "default": "./lib-es/index.js"
+    },
+    "./lib/*": "./lib/*.js",
+    "./lib/*.js": "./lib/*.js",
+    "./lib-es/*": "./lib-es/*.js",
+    "./lib-es/*.js": "./lib-es/*.js",
+    "./*": {
+      "require": "./lib/*.js",
+      "default": "./lib-es/*.js"
+    },
+    "./*.js": {
+      "require": "./lib/*.js",
+      "default": "./lib-es/*.js"
+    },
+    "./package.json": "./package.json"
   }
 }

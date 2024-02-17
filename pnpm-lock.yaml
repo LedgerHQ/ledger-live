@@ -636,8 +636,8 @@ importers:
         specifier: ^3.1.0
         version: 3.1.0(vite@4.5.2)
       allure-playwright:
-        specifier: 2.12.0
-        version: 2.12.0
+        specifier: 2.12.1
+        version: 2.12.1
       axios:
         specifier: ^1.3.4
         version: 1.3.4
@@ -2043,8 +2043,8 @@ importers:
   libs/ledger-live-common:
     dependencies:
       '@cardano-foundation/ledgerjs-hw-app-cardano':
-        specifier: ^5.1.0
-        version: 5.1.0
+        specifier: ^6.0.1
+        version: 6.0.1
       '@celo/connect':
         specifier: ^3.0.1
         version: 3.0.1
@@ -4355,6 +4355,9 @@ importers:
       '@ledgerhq/live-hooks':
         specifier: workspace:*
         version: link:../live-hooks
+      '@ledgerhq/logs':
+        specifier: workspace:*
+        version: link:../ledgerjs/packages/logs
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:*
         version: link:../ledgerjs/packages/types-cryptoassets
@@ -10960,14 +10963,12 @@ packages:
       statuses: 2.0.1
     dev: true
 
-  /@cardano-foundation/ledgerjs-hw-app-cardano@5.1.0:
-    resolution: {integrity: sha512-ucuz/XbS/0ZD0Bal/GI/kiTm9jDIl8J+A7ypEqcAcBDGicFsyWmtPotOTwuDovTsiM8+eA/5OGTFX0oRqzxstQ==}
+  /@cardano-foundation/ledgerjs-hw-app-cardano@6.0.1:
+    resolution: {integrity: sha512-35LU2482b6mGA8NVhCut5sEid0zqy82lXmgoenkQfDxDJtx7zV6U7/Dx9OjuDLpcedEUm/7s2WPjjHv/lsinIQ==}
     dependencies:
-      '@ledgerhq/hw-transport': 5.51.1
-      '@types/ledgerhq__hw-transport': 4.21.4
+      '@ledgerhq/hw-transport': 6.30.0
       base-x: 3.0.9
       bech32: 1.1.4
-      blake2: 4.1.1
       int64-buffer: 1.0.1
     dev: false
 
@@ -13967,8 +13968,6 @@ packages:
       metro-core: '*'
       minimatch: '*'
     peerDependenciesMeta:
-      '@expo/metro-config':
-        optional: true
       glob:
         optional: true
       metro:
@@ -14058,8 +14057,6 @@ packages:
       metro-core: '*'
       minimatch: '*'
     peerDependenciesMeta:
-      '@expo/metro-config':
-        optional: true
       glob:
         optional: true
       metro:
@@ -19277,9 +19274,6 @@ packages:
 
   /@react-native-community/cli-tools@11.3.7:
     resolution: {integrity: sha512-peyhP4TV6Ps1hk+MBHTFaIR1eI3u+OfGBvr5r0wPwo3FAJvldRinMgcB/TcCcOBXVORu7ba1XYjkubPeYcqAyA==}
-    peerDependenciesMeta:
-      find-up:
-        optional: true
     dependencies:
       appdirsjs: 1.2.6
       chalk: 4.1.2
@@ -19295,9 +19289,6 @@ packages:
 
   /@react-native-community/cli-tools@11.3.9:
     resolution: {integrity: sha512-qWEUo/HQll/aj5xHYCw6itXGkPgultxTHa4UYSaBIRSfU15aSiwonJ/JP7fe+fHKbaFh6IdhaaRhj4ArfEOxuQ==}
-    peerDependenciesMeta:
-      find-up:
-        optional: true
     dependencies:
       appdirsjs: 1.2.6
       chalk: 4.1.2
@@ -22585,7 +22576,7 @@ packages:
       react-docgen-typescript: 2.2.2(typescript@5.1.3)
       tslib: 2.6.2
       typescript: 5.1.3
-      webpack: 5.89.0(esbuild@0.19.3)
+      webpack: 5.89.0(metro@0.80.0)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -26646,9 +26637,6 @@ packages:
 
   /ajv-formats@2.1.1:
     resolution: {integrity: sha512-Wx0Kx52hxE7C18hkMEggYlEifqWZtYaRgouJor+WMdPnQyEK13vgEWyVNup7SoeeoLMsr4kf5h6dOW11I15MUA==}
-    peerDependenciesMeta:
-      ajv:
-        optional: true
     dependencies:
       ajv: 8.12.0
 
@@ -26721,18 +26709,18 @@ packages:
       uuid: 3.4.0
     dev: true
 
-  /allure-js-commons@2.12.0:
-    resolution: {integrity: sha512-uVMKT2LBRJQ9nPTrfE61zwryF3WhaUGIaj0PrVP7AoUpAexzGx0nOUjsJxUes1BwomcTIH1ORZo6r3kmIs7N9g==}
+  /allure-js-commons@2.12.1:
+    resolution: {integrity: sha512-gx8DBwUrXpfoielzTp8bvUIa+IERaO0ZMlu7NioembuHawVOINQSuX63o1TH1S8k7K4A2gHoiHf+v2x4BAmAaQ==}
     dependencies:
       properties: 1.2.1
       strip-ansi: 5.2.0
     dev: true
 
-  /allure-playwright@2.12.0:
-    resolution: {integrity: sha512-H2S7bEGqH/I3kR+6cnUpgRMfUOD1i73Sa8kQtPUGzavAZ6ZuF0vITf8jrlddNo1o4NKm2/HymUp0NnDBphT7uQ==}
+  /allure-playwright@2.12.1:
+    resolution: {integrity: sha512-1JE2j9Vx1TPrwkUNfcgXDdOlb0NTuzWEZ70HJOae6VnostL/sTG5b1ISFPVmSax8G5H10iMQfwO7XjDOYIB4MQ==}
     dependencies:
       '@playwright/test': 1.41.2
-      allure-js-commons: 2.12.0
+      allure-js-commons: 2.12.1
     dev: true
 
   /anser@1.4.10:
@@ -27637,7 +27625,7 @@ packages:
       '@babel/core': 7.23.2
       find-cache-dir: 4.0.0
       schema-utils: 4.2.0
-      webpack: 5.89.0(@swc/core@1.3.95)(esbuild@0.19.3)
+      webpack: 5.89.0(@swc/core@1.3.95)(metro@0.80.0)
     dev: true
 
   /babel-plugin-add-react-displayname@0.0.5:
@@ -28449,13 +28437,6 @@ packages:
       node-addon-api: 3.2.1
       node-gyp-build: 4.4.0
       readable-stream: 3.6.2
-    dev: false
-
-  /blake2@4.1.1:
-    resolution: {integrity: sha512-HUmkY0MUDUVgejJVNrpNKAva8C4IWD/Rd862sdexoSibu86b6iu0gO0/RjovO2lM5+w6JqjIEmkuAgGhfHlnJw==}
-    engines: {node: '>= 8.0.0'}
-    dependencies:
-      nan: 2.17.0
     dev: false
 
   /blake2b-wasm@1.1.7:
@@ -35045,8 +35026,6 @@ packages:
     peerDependenciesMeta:
       expo-constants:
         optional: true
-      expo-file-system:
-        optional: true
       expo-modules-core:
         optional: true
       react:
@@ -36426,7 +36405,7 @@ packages:
       semver: 7.5.4
       tapable: 2.2.1
       typescript: 5.1.3
-      webpack: 5.89.0(@swc/core@1.3.95)(esbuild@0.19.3)
+      webpack: 5.89.0(@swc/core@1.3.95)(metro@0.80.0)
     dev: true
 
   /form-data@2.3.3:
@@ -45161,11 +45140,6 @@ packages:
     requiresBuild: true
     dev: false
 
-  /nan@2.17.0:
-    resolution: {integrity: sha512-2ZTgtl0nJsO0KQCjEpxcIr5D+Yv90plTitZt9JBfQvVJDS5seMl3FOvsh3+9CoYWXf/1l5OaZzzF6nDm4cagaQ==}
-    requiresBuild: true
-    dev: false
-
   /nan@2.18.0:
     resolution: {integrity: sha512-W7tfG7vMOGtD30sHoZSSc/JVYiyDPEyQVso/Zz+/uQd0B0L46gtC+pHha5FFMRpil6fm/AoEcRWyOVi4+E/f8w==}
     requiresBuild: true
@@ -53550,7 +53524,7 @@ packages:
       webpack: '>=2'
     dependencies:
       '@swc/core': 1.3.95
-      webpack: 5.89.0(@swc/core@1.3.95)(esbuild@0.19.3)
+      webpack: 5.89.0(@swc/core@1.3.95)(metro@0.80.0)
     dev: true
 
   /swiper@7.4.1:
@@ -57760,7 +57734,7 @@ packages:
       mime-types: 2.1.35
       range-parser: 1.2.1
       schema-utils: 4.2.0
-      webpack: 5.89.0(@swc/core@1.3.95)(esbuild@0.19.3)
+      webpack: 5.89.0(@swc/core@1.3.95)(metro@0.80.0)
     dev: true
 
   /webpack-dev-server@4.12.0(webpack@5.76.1):

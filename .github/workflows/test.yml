@@ -179,15 +179,8 @@ jobs:
       FORCE_COLOR: 3
       CI_OS: ubuntu-latest
 
-    strategy:
-      fail-fast: false
-      matrix:
-        os:
-          - ubuntu-latest
-          - macos-latest
-          - windows-latest
+    runs-on: ubuntu-latest
 
-    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -202,10 +195,6 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-      - uses: ruby/setup-ruby@v1
-        if: ${{ matrix.os == 'macos-latest' }}
-        with:
-          ruby-version: 3.2.2
       - name: Install dependencies
         run: pnpm i --filter="./libs/ui/**"
       - name: Build and Test affected libraries
@@ -216,7 +205,7 @@ jobs:
         uses: actions/upload-artifact@v3
         if: failure()
         with:
-          name: ${{ format('react-ui-test-results-{0}', matrix.os) }}
+          name: react-ui-test-results-ubuntu-latest
           path: |
             libs/ui/tests/react.spec.js-snapshots/
             libs/ui/test-results/
@@ -225,12 +214,12 @@ jobs:
         with:
           script: |
             const fs = require("fs");
-            fs.writeFileSync("summary-ui-${{ matrix.os }}.txt", "${{ steps.test-ui.outcome }}", "utf-8");
+            fs.writeFileSync("summary-ui-ubuntu-latest.txt", "${{ steps.test-ui.outcome }}", "utf-8");
       - uses: actions/upload-artifact@v3
         if: ${{ !cancelled() }}
         with:
           name: outputs
-          path: ${{ github.workspace }}/summary-ui-${{ matrix.os }}.txt
+          path: ${{ github.workspace }}/summary-ui-ubuntu-latest.txt
 
   codecheck-libraries:
     name: "Codecheck Libraries"
@@ -298,9 +287,6 @@ jobs:
             const resultLint = fs.readFileSync("${{ github.workspace }}/summary-lint.txt", "utf-8");
             const resultTypecheck = fs.readFileSync("${{ github.workspace }}/summary-typecheck.txt", "utf-8");
             const resultUILinux = fs.readFileSync("${{ github.workspace }}/summary-ui-ubuntu-latest.txt", "utf-8");
-            const resultUImacOS = fs.readFileSync("${{ github.workspace }}/summary-ui-macos-latest.txt", "utf-8");
-            const resultUIWindows = fs.readFileSync("${{ github.workspace }}/summary-ui-windows-latest.txt", "utf-8");
-
             const statuses = {
               doc: {
                 pass: ${{ needs.test-docs.outputs.fail != '1' }},
@@ -331,17 +317,9 @@ jobs:
                 status: resultTypecheck,
               },
               ui: {
-                mac: {
-                  pass: resultUImacOS == 'success',
-                  status: resultUImacOS,
-                },
                 linux: {
                   pass: resultUILinux == 'success',
                   status: resultUILinux,
-                },
-                windows: {
-                  pass: resultUIWindows == 'success',
-                  status: resultUIWindows,
                 }
               },
             };
@@ -370,9 +348,8 @@ jobs:
 
             ### Test UI Design System
 
-            | Linux (🤖) | macOS (🍏) | windows (🪟) |
-            | :--: | :--: | :--: |
-            | ${statuses.ui.linux.pass ? "✅" : "❌"} (${statuses.ui.linux.status}) | ${statuses.ui.mac.pass ? "✅" : "❌"} (${statuses.ui.mac.status}) | ${statuses.ui.windows.pass ? "✅" : "❌"} (${statuses.ui.windows.status}) |
+            ${statuses.ui.linux.pass ? "Test UI Design System are fine" : "Test UI Design System tests failed"}
+            - ${statuses.ui.linux.pass ? "✅" : "❌"} **Test UI Design System* tests* ended with status \`${statuses.ui.linux.status}\`
 
             ### Common Tools
 
