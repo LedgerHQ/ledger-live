@@ -1,5 +1,17 @@
 # @ledgerhq/live-common
 
+## 34.0.0-nightly.11
+
+### Minor Changes
+
+- [#6116](https://github.com/LedgerHQ/ledger-live/pull/6116) [`bb0e77a`](https://github.com/LedgerHQ/ledger-live/commit/bb0e77ab9acb8060bb3a666cf7f0a7b091f6609b) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update cardano hw-app
+
+### Patch Changes
+
+- [#5817](https://github.com/LedgerHQ/ledger-live/pull/5817) [`72654a7`](https://github.com/LedgerHQ/ledger-live/commit/72654a79a54b0bcdc85f1d38983118cf67c5b77f) Thanks [@sponomarev](https://github.com/sponomarev)! - Fix bot formatter to display mutation details properly
+
+- [#6182](https://github.com/LedgerHQ/ledger-live/pull/6182) [`0c1bc63`](https://github.com/LedgerHQ/ledger-live/commit/0c1bc636ab98ff8110965d56f406ba971b1260a5) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add error message to first throw
+
 ## 34.0.0-nightly.10
 
 ### Major Changes
