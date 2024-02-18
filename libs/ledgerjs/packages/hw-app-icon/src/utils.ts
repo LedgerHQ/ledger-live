@@ -19,7 +19,7 @@
 
 // TODO use bip32-path library
 export function splitPath(path: string): number[] {
-  const result: any = [];
+  const result: number[] = [];
   const components = path.split("/");
   components.forEach(element => {
     let number = parseInt(element, 10);
