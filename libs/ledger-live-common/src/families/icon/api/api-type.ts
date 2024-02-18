@@ -1,3 +1,5 @@
+import BigNumber from "bignumber.js";
+
 /**
  * Icon Account
  */
@@ -43,4 +45,21 @@ export type IconTransactionType = {
   type: number;
   value: string; //0x470de4df82000
   value_decimal: number; // 4
+};
+
+/**
+ *   Icon Delegation item Type
+ */
+export type IconDelegationItemType = {
+  address: string;
+  value: string;
+};
+
+/**
+ *   Icon DelegationType
+ */
+export type IconDelegationType = {
+  delegations: IconDelegationItemType[];
+  totalDelegated: BigNumber;
+  votingPower: BigNumber;
 };

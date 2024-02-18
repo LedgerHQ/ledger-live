@@ -12,7 +12,7 @@ import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
  * @param {string|number|BigNumber} value value as loop
  * @returns {BigNumber} value as ICX
  */
-export const convertLoopToIcx = (value: any): BigNumber => {
+export const convertLoopToIcx = (value: string | number | BigNumber): BigNumber => {
   return new BigNumber(IconAmount.fromLoop(value, IconAmount.Unit.ICX.toString()));
 };
 
@@ -20,7 +20,7 @@ export const convertLoopToIcx = (value: any): BigNumber => {
  * @param {string|number|BigNumber} value value as ICX
  * @returns {BigNumber} value as loop
  */
-export const convertICXtoLoop = (value: any): BigNumber => {
+export const convertICXtoLoop = (value: string | number | BigNumber): BigNumber => {
   return new BigNumber(IconAmount.toLoop(value, IconAmount.Unit.ICX.toString()));
 };
 

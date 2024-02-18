@@ -1,12 +1,13 @@
 import { BigNumber } from "bignumber.js";
 import IconService from "icon-sdk-js";
-import type { IcxTransaction } from "icon-sdk-js";
+import type { IcxTransaction, SignedTransaction } from "icon-sdk-js";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getEnv } from "@ledgerhq/live-env";
 import { isTestnet, roundedLoopAmount } from "../logic";
 import { GOVERNANCE_SCORE_ADDRESS, IISS_SCORE_ADDRESS } from "../constants";
 import { IconAccount } from "../types";
 import { SignedOperation } from "@ledgerhq/types-live";
+import { IconDelegationType } from "./api-type";
 
 const { HttpProvider } = IconService;
 const { IconBuilder } = IconService;
@@ -41,12 +42,14 @@ export const submit = async (signedOperation: SignedOperation, currency: CryptoC
   const httpProvider = new HttpProvider(rpcURL);
   const iconService = new IconService(httpProvider);
 
-  const signedTransaction: any = {
+  const signedTransaction = {
     getProperties: () => signedOperation.rawData,
     getSignature: () => signedOperation.signature,
   };
 
-  const response = await iconService.sendTransaction(signedTransaction).execute();
+  const response = await iconService
+    .sendTransaction(signedTransaction as SignedTransaction)
+    .execute();
   return {
     hash: response,
   };
@@ -80,17 +83,20 @@ export const getStepPrice = async (account: IconAccount): Promise<BigNumber> => 
   const rpcURL = getRpcUrl(account.currency);
   const httpProvider = new HttpProvider(rpcURL);
   const iconService = new IconService(httpProvider);
-  const txBuilder: any = new IconBuilder.CallBuilder();
+  const txBuilder = new IconBuilder.CallBuilder();
   const stepPriceTx = txBuilder.to(GOVERNANCE_SCORE_ADDRESS).method("getStepPrice").build();
   const res = await iconService.call(stepPriceTx).execute();
   return new BigNumber(res);
 };
 
-export const getDelegation = async (address: string, currency: CryptoCurrency): Promise<any> => {
+export const getDelegation = async (
+  address: string,
+  currency: CryptoCurrency,
+): Promise<IconDelegationType> => {
   const rpcURL = getRpcUrl(currency);
   const httpProvider = new HttpProvider(rpcURL);
   const iconService = new IconService(httpProvider);
-  const delegationTx: any = new IconBuilder.CallBuilder()
+  const delegationTx = new IconBuilder.CallBuilder()
     .to(IISS_SCORE_ADDRESS)
     .method("getDelegation")
     .params({
