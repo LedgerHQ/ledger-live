@@ -175,11 +175,11 @@ export default class Icx {
     patchVersion: number;
   }> {
     return this.transport.send(CLA, INS.GET_VERSION, 0x00, 0x00).then(response => {
-      const result: any = {};
-      result.majorVersion = response[0];
-      result.minorVersion = response[1];
-      result.patchVersion = response[2];
-      return result;
+      return {
+        majorVersion: response[0],
+        minorVersion: response[1],
+        patchVersion: response[2],
+      };
     });
   }
 }
