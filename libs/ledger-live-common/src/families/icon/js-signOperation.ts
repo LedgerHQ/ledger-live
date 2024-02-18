@@ -2,7 +2,7 @@ import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 
 import type { IconAccount, Transaction } from "./types";
-import type { Account, Operation, SignOperationEvent } from "@ledgerhq/types-live";
+import type { Account, DeviceId, Operation, SignOperationEvent } from "@ledgerhq/types-live";
 
 import { withDevice } from "../../hw/deviceAccess";
 import { encodeOperationId } from "../../operation";
@@ -11,7 +11,7 @@ import Icon from "@ledgerhq/hw-app-icon";
 import { buildTransaction } from "./js-buildTransaction";
 import { calculateAmount, getNonce } from "./logic";
 import { FeeNotLoaded } from "@ledgerhq/errors";
-import IconService from "icon-sdk-js";
+import IconService, { IcxTransaction } from "icon-sdk-js";
 const { IconUtil, IconConverter } = IconService;
 
 const buildOptimisticOperation = (
@@ -43,10 +43,12 @@ const buildOptimisticOperation = (
 /**
  * Adds signature to unsigned transaction. Will likely be a call to Icon SDK
  */
-const addSignature = (rawTransaction: any, signature: any) => {
-  rawTransaction.signature = signature;
+const addSignature = (rawTransaction: IcxTransaction, signature: string) => {
   return {
-    rawTransaction,
+    rawTransaction: {
+      ...rawTransaction,
+      signature: signature,
+    },
     signature,
   };
 };
@@ -60,7 +62,7 @@ const signOperation = ({
   transaction,
 }: {
   account: Account;
-  deviceId: any;
+  deviceId: DeviceId;
   transaction: Transaction;
 }): Observable<SignOperationEvent> =>
   withDevice(deviceId)(
