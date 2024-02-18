@@ -158,9 +158,8 @@ export const fetchOperationList = async (
 
   const mergedOp = [...prevOperations, ...operations];
   if (operations.length < LIMIT) {
-    return mergedOp.filter(Boolean).sort((a: any, b: any) => b.date - a.date);
+    return mergedOp;
   }
-
   return await fetchOperationList(accountId, addr, skip + LIMIT, currency, mergedOp);
 };
 
