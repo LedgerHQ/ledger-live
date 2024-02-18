@@ -32,7 +32,6 @@ export const broadcastTransaction = async (
   currency: CryptoCurrency,
 ) => {
   const { hash } = await submit(signedOperation, currency);
-  // Transaction hash is likely to be returned
   return { hash };
 };
 
