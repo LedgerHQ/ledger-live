@@ -24,6 +24,14 @@ export function getRpcUrl(currency: CryptoCurrency): string {
   return rpcUrl;
 }
 
+export function getDebugRpcUrl(currency: CryptoCurrency): string {
+  let rpcUrl = getEnv("ICON_DEBUG_ENDPOINT");
+  if (isTestnet(currency)) {
+    rpcUrl = getEnv("ICON_TESTNET_DEBUG_ENDPOINT");
+  }
+  return rpcUrl;
+}
+
 /**
  * Broadcast blob to blockchain
  */
@@ -61,15 +69,9 @@ export const getFees = async (
   unsigned: IcxTransaction,
   account: IconAccount,
 ): Promise<BigNumber> => {
-  const rpcURL = getRpcUrl(account.currency);
-  const debugRpcUrl = rpcURL + "d"; // d mean debug, only get estimate step with debug enpoint
+  const debugRpcUrl = getDebugRpcUrl(account.currency);
   const httpProvider = new HttpProvider(debugRpcUrl);
   const iconService = new IconService(httpProvider);
-
-  const formatConfig = {
-    disableRounding: true,
-    alwaysShowSign: false,
-  };
   unsigned.value = roundedLoopAmount(account, unsigned.value);
   const res = await iconService.estimateStep(unsigned).execute();
   return new BigNumber(res);
