@@ -84,23 +84,21 @@ export default class Icx {
         statusList,
       )
       .then(response => {
-        const result: any = {};
         const publicKeyLength = response[0];
-        result.publicKey = response.slice(1, 1 + publicKeyLength).toString("hex");
         const addressLength = response[1 + publicKeyLength];
-        result.address = response
-          .slice(1 + publicKeyLength + 1, 1 + publicKeyLength + 1 + addressLength)
-          .toString();
-        if (boolChaincode) {
-          result.chainCode = response.slice(-32).toString("hex");
-        }
         const errorCodeData = response.slice(-2);
         const returnCode = errorCodeData[0] * 0x100 + errorCodeData[1];
 
         if (returnCode === SW_CANCEL) {
           throw new UserRefusedAddress();
         }
-        return result;
+        return {
+          publicKey: response.slice(1, 1 + publicKeyLength).toString("hex"),
+          address: response
+            .slice(1 + publicKeyLength + 1, 1 + publicKeyLength + 1 + addressLength)
+            .toString(),
+          chainCode: boolChaincode ? response.slice(-32).toString("hex") : undefined,
+        };
       });
   }
 
@@ -127,8 +125,8 @@ export default class Icx {
     const paths = splitPath(path);
     let offset = 0;
     const rawTx = Buffer.from(rawTxAscii);
-    const toSend: any = [];
-    let response;
+    let toSend: Buffer[] = [];
+    let response: Buffer;
     while (offset !== rawTx.length) {
       const maxChunkSize = offset === 0 ? 150 - 1 - paths.length * 4 - 4 : 150;
       const chunkSize = offset + maxChunkSize > rawTx.length ? rawTx.length - offset : maxChunkSize;
@@ -155,15 +153,15 @@ export default class Icx {
     ).then(() => {
       const errorCodeData = response.slice(-2);
       const returnCode = errorCodeData[0] * 0x100 + errorCodeData[1];
-      const result: any = {};
 
       if (returnCode === SW_CANCEL) {
         throw new UserRefusedOnDevice();
       }
       // r, s, v are aligned sequencially
-      result.signedRawTxBase64 = hexToBase64(response.slice(0, 32 + 32 + 1).toString("hex"));
-      result.hashHex = response.slice(32 + 32 + 1, 32 + 32 + 1 + 32).toString("hex");
-      return result;
+      return {
+        signedRawTxBase64: hexToBase64(response.slice(0, 32 + 32 + 1).toString("hex")),
+        hashHex: response.slice(32 + 32 + 1, 32 + 32 + 1 + 32).toString("hex"),
+      };
     });
   }
 
