@@ -190,6 +190,7 @@ const SwapForm = () => {
           ),
       );
       moonpayURL.searchParams.set("language", language);
+      moonpayURL.searchParams.set("themeId", "92be4cb6-a57f-407b-8b1f-bc8055b60c9b");
       return moonpayURL;
     },
     [language],
