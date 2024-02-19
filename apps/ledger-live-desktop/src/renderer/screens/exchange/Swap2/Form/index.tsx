@@ -190,6 +190,9 @@ const SwapForm = () => {
           ),
       );
       moonpayURL.searchParams.set("language", language);
+
+      // Theme ID is defined by moonpay to tweak styling to more more closely match
+      // the existing theming within ledger live.
       moonpayURL.searchParams.set("themeId", "92be4cb6-a57f-407b-8b1f-bc8055b60c9b");
       return moonpayURL;
     },
