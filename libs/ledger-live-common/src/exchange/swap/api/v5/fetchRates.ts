@@ -2,7 +2,7 @@ import network from "@ledgerhq/live-network/network";
 import { DEFAULT_SWAP_TIMEOUT_MS } from "../../const/timeout";
 import axios from "axios";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
-import { ExchangeRate, ExchangeRateErrorDefault, ExchangeRateErrors, ExchangeRateResponseRaw } from "../../types";
+import { ExchangeRate, ExchangeRateErrorDefault, ExchangeRateResponseRaw } from "../../types";
 import { Unit } from "@ledgerhq/live-app-sdk";
 import { SwapGenericAPIError } from "../../../../errors";
 import { enrichRatesResponse } from "../../utils/enrichRatesResponse";
