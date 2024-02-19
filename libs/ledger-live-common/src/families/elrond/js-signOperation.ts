@@ -12,7 +12,6 @@ import { Account, Operation, OperationType, SignOperationFnSignature } from "@le
 import { BinaryUtils } from "./utils/binary.utils";
 import { decodeTokenAccountId } from "../../account";
 import { extractTokenId } from "./logic";
-import { InvalidToken } from "./errors";
 
 function getOptimisticOperationType(transactionMode: ElrondTransactionMode): OperationType {
   switch (transactionMode) {
@@ -141,7 +140,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({ account, deviceI
           if (tokenAccount) {
             const { token } = decodeTokenAccountId(tokenAccount.id);
             if (token == null) {
-              throw new InvalidToken();
+              throw new Error("Invalid token");
             }
 
             await elrond.provideESDTInfo(
