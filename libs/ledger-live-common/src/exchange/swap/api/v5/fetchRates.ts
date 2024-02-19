@@ -105,7 +105,7 @@ export async function fetchRates({
       data: requestBody,
     });
     const filteredData = data.filter(
-      response => ![300, 304, 308].includes((response as ExchangeRateErrorDefault)?.errorCode),
+      response => ![300, 304, 306, 308].includes((response as ExchangeRateErrorDefault)?.errorCode),
     ); // remove backend only errors
     const enrichedResponse = enrichRatesResponse(filteredData, unitTo, unitFrom);
 
