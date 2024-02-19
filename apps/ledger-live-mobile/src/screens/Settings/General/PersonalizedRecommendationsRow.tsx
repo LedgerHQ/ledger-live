@@ -11,7 +11,7 @@ import { updateIdentify } from "~/analytics";
 const PersonalizedRecommendationsRow = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const personalizedRecommendationsEnabled: boolean = useSelector(
+  const personalizedRecommendationsEnabled: boolean = !!useSelector(
     personalizedRecommendationsEnabledSelector,
   );
 

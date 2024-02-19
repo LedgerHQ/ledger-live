@@ -16,7 +16,7 @@ const AnalyticsRow = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const [isOpened, setIsOpened] = useState(false);
-  const analyticsEnabled: boolean = useSelector(analyticsEnabledSelector);
+  const analyticsEnabled: boolean = !!useSelector(analyticsEnabledSelector);
   const llmAnalyticsOptInPromptFeature = useFeature("llmAnalyticsOptInPrompt");
 
   const bulletList = [

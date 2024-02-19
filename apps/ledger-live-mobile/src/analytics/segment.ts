@@ -99,8 +99,8 @@ export const updateSessionId = () => (sessionId = uuid());
 const getMandatoryProperties = async (store: AppStore) => {
   const state: State = store.getState();
   const { user } = await getOrCreateUser();
-  const analyticsEnabled: boolean = analyticsEnabledSelector(state);
-  const personalizedRecommendationsEnabled: boolean =
+  const analyticsEnabled: boolean | null = analyticsEnabledSelector(state);
+  const personalizedRecommendationsEnabled: boolean | null =
     personalizedRecommendationsEnabledSelector(state);
 
   return {

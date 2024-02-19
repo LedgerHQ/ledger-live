@@ -24,10 +24,6 @@ const useAnalyticsOptInPrompt = () => {
     useNavigation<
       RootNavigationComposite<StackNavigatorNavigation<OnboardingNavigatorParamList>>
     >();
-  const analyticsEnabled: boolean = useSelector(analyticsEnabledSelector);
-  const personalizedRecommendationsEnabled: boolean = useSelector(
-    personalizedRecommendationsEnabledSelector,
-  );
   const isTrackingEnabled = useSelector(trackingEnabledSelector);
   // When the user has not made a choice yet, we can track the analytics opt in flow
   const shouldWeTrack = isTrackingEnabled === true || isTrackingEnabled === null;
@@ -119,8 +115,6 @@ const useAnalyticsOptInPrompt = () => {
 
   return {
     shouldWeTrack,
-    analyticsEnabled,
-    personalizedRecommendationsEnabled,
     clickOnRefuseAnalytics,
     clickOnAllowAnalytics,
     clickOnAllowPersonalizedExperience,
