@@ -1,5 +1,14 @@
 # @ledgerhq/hw-app-vet
 
+## 0.1.4
+
+### Patch Changes
+
+- Updated dependencies [[`ee88785`](https://github.com/LedgerHQ/ledger-live/commit/ee8878515671241ce1037362af5e8f7799b3673a)]:
+  - @ledgerhq/errors@6.16.2
+  - @ledgerhq/hw-transport@6.30.4
+  - @ledgerhq/hw-transport-mocker@6.28.4
+
 ## 0.1.4-next.0
 
 ### Patch Changes

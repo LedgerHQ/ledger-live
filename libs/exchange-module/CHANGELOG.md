@@ -1,5 +1,11 @@
 # @ledgerhq/wallet-api-exchange-module
 
+## 0.3.0
+
+### Minor Changes
+
+- [#6165](https://github.com/LedgerHQ/ledger-live/pull/6165) [`23d9911`](https://github.com/LedgerHQ/ledger-live/commit/23d991193313f49d25d5011c0f9fb1310fd97e69) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - update start exchange to support swap based on provider
+
 ## 0.3.0-next.0
 
 ### Minor Changes

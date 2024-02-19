@@ -1,5 +1,14 @@
 # @ledgerhq/hw-app-btc
 
+## 10.2.2
+
+### Patch Changes
+
+- [#6165](https://github.com/LedgerHQ/ledger-live/pull/6165) [`71b7001`](https://github.com/LedgerHQ/ledger-live/commit/71b70016650b5239b35ad2fb75d415ac092358d1) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - update hw-app-btc doc
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.30.4
+
 ## 10.2.2-next.0
 
 ### Patch Changes

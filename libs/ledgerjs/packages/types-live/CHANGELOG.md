@@ -1,5 +1,13 @@
 # @ledgerhq/types-live
 
+## 6.44.1
+
+### Patch Changes
+
+- [#6165](https://github.com/LedgerHQ/ledger-live/pull/6165) [`1cb83b5`](https://github.com/LedgerHQ/ledger-live/commit/1cb83b5baa4603e22f391609438e349ca0ce9b0e) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - feat(LIVE-10989): dynamic manifest id for swap live app in feature flag
+
+- [#6165](https://github.com/LedgerHQ/ledger-live/pull/6165) [`c217a6c`](https://github.com/LedgerHQ/ledger-live/commit/c217a6cfa59218278d25d2d987a06dfb33977cd9) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Update Feature flag to handle threshold spam filter directly from FF
+
 ## 6.44.1-next.0
 
 ### Patch Changes

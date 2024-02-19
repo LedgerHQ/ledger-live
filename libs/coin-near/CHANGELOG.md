@@ -1,5 +1,17 @@
 # @ledgerhq/coin-near
 
+## 0.3.9
+
+### Patch Changes
+
+- Updated dependencies [[`c18a0cf`](https://github.com/LedgerHQ/ledger-live/commit/c18a0cfdce5d1e44faf8d8bd5659ebdae38533fa), [`ee88785`](https://github.com/LedgerHQ/ledger-live/commit/ee8878515671241ce1037362af5e8f7799b3673a), [`8d99b81`](https://github.com/LedgerHQ/ledger-live/commit/8d99b81feaf5e8d46e0c26f34bc70b709a7e3c14), [`43eea9e`](https://github.com/LedgerHQ/ledger-live/commit/43eea9e8076f2c9d5aeb0f8a3b0738e97b3152c8), [`1cb83b5`](https://github.com/LedgerHQ/ledger-live/commit/1cb83b5baa4603e22f391609438e349ca0ce9b0e), [`c217a6c`](https://github.com/LedgerHQ/ledger-live/commit/c217a6cfa59218278d25d2d987a06dfb33977cd9)]:
+  - @ledgerhq/live-env@1.0.0
+  - @ledgerhq/errors@6.16.2
+  - @ledgerhq/coin-framework@0.11.1
+  - @ledgerhq/types-live@6.44.1
+  - @ledgerhq/live-network@1.1.12
+  - @ledgerhq/devices@8.2.1
+
 ## 0.3.9-next.0
 
 ### Patch Changes

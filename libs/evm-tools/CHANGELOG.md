@@ -1,5 +1,16 @@
 # @ledgerhq/evm-tools
 
+## 1.0.15
+
+### Patch Changes
+
+- [#6165](https://github.com/LedgerHQ/ledger-live/pull/6165) [`628fa73`](https://github.com/LedgerHQ/ledger-live/commit/628fa732866a6018287ca7bc3d463acb3f5cd6b9) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Remove live-network dependency
+
+- [#6165](https://github.com/LedgerHQ/ledger-live/pull/6165) [`c18a0cf`](https://github.com/LedgerHQ/ledger-live/commit/c18a0cfdce5d1e44faf8d8bd5659ebdae38533fa) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Move clear signed selectors to evm-tools lib
+
+- Updated dependencies [[`c18a0cf`](https://github.com/LedgerHQ/ledger-live/commit/c18a0cfdce5d1e44faf8d8bd5659ebdae38533fa)]:
+  - @ledgerhq/live-env@1.0.0
+
 ## 1.0.15-next.0
 
 ### Patch Changes

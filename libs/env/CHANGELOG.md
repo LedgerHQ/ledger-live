@@ -1,5 +1,11 @@
 # @ledgerhq/live-env
 
+## 1.0.0
+
+### Major Changes
+
+- [#6165](https://github.com/LedgerHQ/ledger-live/pull/6165) [`c18a0cf`](https://github.com/LedgerHQ/ledger-live/commit/c18a0cfdce5d1e44faf8d8bd5659ebdae38533fa) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Removing unused env var related to `Ethereum` transactions crafted with the old `ethereum` family
+
 ## 1.0.0-next.0
 
 ### Major Changes

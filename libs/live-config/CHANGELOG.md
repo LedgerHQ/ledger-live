@@ -1,5 +1,17 @@
 # @ledgerhq/live-config
 
+## 2.0.0
+
+### Major Changes
+
+- [#6165](https://github.com/LedgerHQ/ledger-live/pull/6165) [`65ce8a1`](https://github.com/LedgerHQ/ledger-live/commit/65ce8a16d8c10e2ffc68cd01ecd86b247506fa91) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - update live config lib
+
+### Patch Changes
+
+- [#6165](https://github.com/LedgerHQ/ledger-live/pull/6165) [`1cb83b5`](https://github.com/LedgerHQ/ledger-live/commit/1cb83b5baa4603e22f391609438e349ca0ce9b0e) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - feat(LIVE-10989): dynamic manifest id for swap live app in feature flag
+
+- [#6165](https://github.com/LedgerHQ/ledger-live/pull/6165) [`66504d5`](https://github.com/LedgerHQ/ledger-live/commit/66504d5874891f4432c5e31efdf7c59a9e5b2cc9) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Make live-config backward-compatible
+
 ## 2.0.0-next.0
 
 ### Major Changes
