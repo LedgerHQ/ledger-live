@@ -5217,8 +5217,8 @@ importers:
         specifier: ^3.0.11
         version: 3.0.11
       embla-carousel:
-        specifier: 8.0.0-rc17
-        version: 8.0.0-rc17
+        specifier: 8.0.0-rc23
+        version: 8.0.0-rc23
       esbuild:
         specifier: ^0.19.0
         version: 0.19.3
@@ -33016,6 +33016,11 @@ packages:
 
   /embla-carousel@8.0.0-rc17:
     resolution: {integrity: sha512-evF49b88VOitvqFtlvhvKVSu96Y8A+QSFdhok87Bfm8R7OYuk95FT+o8+M1GQLi/EhGDUlT193HTVAR0Wt2neQ==}
+    dev: false
+
+  /embla-carousel@8.0.0-rc23:
+    resolution: {integrity: sha512-ybuDHm+udElyH+XpuemS/W+x8ZhB3a/4UzeTBvsoZUxDSty12ch1f2T0CZxGqIs2FfdaofEOmpLMSvuEPVTMCg==}
+    dev: true
 
   /eme-encryption-scheme-polyfill@2.0.4:
     resolution: {integrity: sha512-MHYJX1v145Pjj2YJTrVVuJOYyXrxGVy8LWf6kV5M4jrV/GyoeuJKyTuD+GaD+VAiE8Ip+MptiH4dXk6ZVmMNow==}
