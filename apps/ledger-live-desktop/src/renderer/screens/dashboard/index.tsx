@@ -101,8 +101,8 @@ export default function DashboardPage() {
           <EmptyStateInstalledApps />
         ) : totalAccounts > 0 ? (
           <>
-            <Flex>
-              <Box flex={2}>
+            <Flex justifyContent="space-evenly">
+              <Box flex={2.02}>
                 <BalanceSummary
                   counterValue={counterValue}
                   chartColor={colors.wallet}
@@ -110,7 +110,7 @@ export default function DashboardPage() {
                 />
               </Box>
               {marketPerformanceEnabled ? (
-                <Box flex={1} minWidth={250} ml={3}>
+                <Box flex={0.98} minWidth={250} ml={4}>
                   <MarketPerformanceWidget variant={marketPerformanceVariant} />
                 </Box>
               ) : null}

@@ -1409,6 +1409,7 @@
   },
   "dashboard": {
     "title": "Portfolio",
+    "header": "Portfolio balance",
     "emptyAccountTile": {
       "desc": "Add accounts to manage other crypto assets",
       "createAccount": "Add account"
