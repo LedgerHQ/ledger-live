@@ -1,10 +1,10 @@
+import { useEffect, useState } from "react";
 import {
   HttpManagerApiRepository,
   getLatestFirmwareForDevice,
   DeviceInfoEntity,
   FirmwareUpdateContextEntity,
 } from "@ledgerhq/live-device-core";
-import { useEffect, useState } from "react";
 
 type UseGetLatestFirmwareForDeviceParams = {
   deviceInfo?: DeviceInfoEntity | null;

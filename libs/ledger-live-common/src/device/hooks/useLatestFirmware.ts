@@ -1,9 +1,8 @@
 import { getProviderId } from "../../manager/index";
 import { getEnv } from "@ledgerhq/live-env";
-import { HttpManagerApiRepository } from "../../device-core/managerApi/repositories/HttpManagerApiRepository";
-import { useGetLatestFirmware } from "../../device-react/hooks/useGetLatestFirmware";
-import { DeviceInfoEntity } from "../../device-core/managerApi/entities/DeviceInfoEntity";
 import { HttpManagerApiRepositoryFactory } from "../factories/HttpManagerApiRepositoryFactory";
+import { DeviceInfoEntity, HttpManagerApiRepository } from "@ledgerhq/live-device-core";
+import { useGetLatestFirmware } from "@ledgerhq/live-device-react";
 
 export function useLatestFirmware(
   deviceInfo?: DeviceInfoEntity | null,

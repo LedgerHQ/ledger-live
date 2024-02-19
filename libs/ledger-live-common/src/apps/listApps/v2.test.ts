@@ -4,8 +4,7 @@ import { aTransportBuilder } from "@ledgerhq/hw-transport-mocker";
 import { listApps } from "./v2";
 import ManagerAPI from "../../manager/api";
 import { aDeviceInfoBuilder } from "../../mock/fixtures/aDeviceInfo";
-import { ManagerApiRepository } from "../../device-core/managerApi/repositories/ManagerApiRepository";
-import { StubManagerApiRepository } from "../../device-core/managerApi/repositories/StubManagerApiRepository";
+import { ManagerApiRepository, StubManagerApiRepository } from "@ledgerhq/live-device-core";
 
 jest.useFakeTimers();
 

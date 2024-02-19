@@ -288,8 +288,6 @@
     "**/*.test.*",
     "**/datasets/**",
     "**/mock/fixtures/**",
-    "src/device-core/**",
-    "src/device-react/**",
     "src/device/**",
     "src/deviceSDK/**",
     "src/config/sharedConfig.ts",

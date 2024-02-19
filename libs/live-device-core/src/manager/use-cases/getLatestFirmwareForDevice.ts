@@ -1,6 +1,6 @@
 import { UnknownMCU } from "@ledgerhq/errors";
 import { ManagerApiRepository } from "../ManagerApiRepository";
-import type { DeviceInfoEntity, FirmwareUpdateContextEntity } from "../../types";
+import { DeviceInfoEntity, FirmwareUpdateContextEntity } from "../../types";
 
 type GetLatestFirmwareForDeviceParams = {
   deviceInfo: DeviceInfoEntity;

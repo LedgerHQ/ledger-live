@@ -1,8 +1,10 @@
+import {
+  DeviceInfoEntity,
+  FirmwareUpdateContextEntity,
+  ManagerApiRepository,
+  getLatestFirmwareForDevice,
+} from "@ledgerhq/live-device-core";
 import { useEffect, useState } from "react";
-import { DeviceInfoEntity } from "../../device-core/managerApi/entities/DeviceInfoEntity";
-import { ManagerApiRepository } from "../../device-core/managerApi/repositories/ManagerApiRepository";
-import { getLatestFirmwareForDevice } from "../../device-core/managerApi/use-cases/getLatestFirmwareForDevice";
-import { FirmwareUpdateContextEntity } from "../../device-core/managerApi/entities/FirmwareUpdateContextEntity";
 
 type UseGetLatestFirmwareForDeviceParams = {
   deviceInfo?: DeviceInfoEntity | null;

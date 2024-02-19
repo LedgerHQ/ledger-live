@@ -1,4 +1,4 @@
-import { getProviderIdUseCaseOptions } from "../../types";
+import { GetProviderIdUseCaseOptions } from "../../types";
 
 export const PROVIDERS: Record<string, number> = {
   default: 1,
@@ -11,7 +11,7 @@ export const PROVIDERS: Record<string, number> = {
 export function getProviderIdUseCase({
   deviceInfo,
   forceProvider,
-}: getProviderIdUseCaseOptions): number {
+}: GetProviderIdUseCaseOptions): number {
   if (forceProvider && forceProvider !== PROVIDERS.default) {
     return forceProvider;
   }

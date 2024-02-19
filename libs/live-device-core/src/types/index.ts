@@ -1,3 +1,13 @@
+type Language = "french" | "english" | "spanish";
+
+enum AppType {
+  app = "app", // NB Legacy from v1, drop after we default to v2.
+  currency = "currency",
+  plugin = "plugin",
+  tool = "tool",
+  swap = "swap",
+}
+
 export type FetchLatestFirmwareOptions = {
   current_se_firmware_final_version: number;
   device_version: number;
@@ -27,18 +37,10 @@ export type CatalogForDeviceOptions = {
 
 export type ResponseErrorType = { status?: number; response?: { status: number } };
 
-export type getProviderIdUseCaseOptions = {
+export type GetProviderIdUseCaseOptions = {
   deviceInfo: DeviceInfoEntity | undefined | null;
   forceProvider?: number;
 };
-
-enum AppType {
-  app = "app", // NB Legacy from v1, drop after we default to v2.
-  currency = "currency",
-  plugin = "plugin",
-  tool = "tool",
-  swap = "swap",
-}
 
 /** App is higher level on top of Application and ApplicationVersion
 with all fields Live needs and in normalized form (but still serializable) */
@@ -171,8 +173,6 @@ export type FirmwareUpdateContextEntity = {
   shouldFlashMCU: boolean;
 };
 
-type Language = "french" | "english" | "spanish";
-
 export type LanguagePackageEntity = {
   language: Language;
   languagePackageVersionId: number;
@@ -191,6 +191,35 @@ export type LanguagePackageResponseEntity = {
   id: number;
   language: Language;
   language_package_version: LanguagePackageEntity[];
+};
+
+export type DeviceVersion = {
+  id: number;
+  name: string;
+  display_name: string;
+  target_id: string;
+  description: string;
+  device: number;
+  providers: Array<number>;
+  mcu_versions: Array<number>;
+  se_firmware_final_versions: Array<number>;
+  osu_versions: Array<number>;
+  application_versions: Array<number>;
+  date_creation: string;
+  date_last_modified: string;
+};
+
+export type McuVersion = {
+  id: number;
+  mcu: number;
+  name: string;
+  description: string | null | undefined;
+  providers: Array<number>;
+  from_bootloader_version: string;
+  device_versions: Array<number>;
+  se_firmware_final_versions: Array<number>;
+  date_creation: string;
+  date_last_modified: string;
 };
 
 export type DeviceInfo = {
@@ -213,4 +242,10 @@ export type DeviceInfo = {
   bootloaderVersion?: string;
   hardwareVersion?: number;
   languageId?: number;
+};
+
+export type FirmwareUpdateContext = {
+  osu: OsuFirmware;
+  final: FinalFirmware;
+  shouldFlashMCU: boolean;
 };

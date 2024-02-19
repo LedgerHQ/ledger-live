@@ -23,7 +23,6 @@
   "dependencies": {
     "@ledgerhq/errors": "workspace:*",
     "@ledgerhq/live-network": "workspace:*",
-    "@ledgerhq/types-live": "workspace:*",
     "@types/sha.js": "^2.4.4",
     "sha.js": "^2.4.11"
   },

@@ -18,7 +18,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { calculateDependencies, polyfillApp, polyfillApplication } from "../polyfill";
 import { getDeviceName } from "../../device/use-cases/getDeviceNameUseCase";
 import { getLatestFirmwareForDeviceUseCase } from "../../device/use-cases/getLatestFirmwareForDeviceUseCase";
-import { ManagerApiRepository } from "../../device-core/managerApi/repositories/ManagerApiRepository";
+import { ManagerApiRepository } from "@ledgerhq/live-device-core";
 
 const appsThatKeepChangingHashes = ["Fido U2F", "Security Key"];
 

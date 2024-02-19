@@ -1,2 +1,2 @@
-export * from "./api";
+export * from "./manager";
 export * from "./types";

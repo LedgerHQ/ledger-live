@@ -5,8 +5,8 @@ import {
   DeviceInfoEntity,
   LanguagePackageEntity,
   LanguagePackageResponseEntity,
+  FinalFirmware,
 } from "../types";
-import { FinalFirmware } from "@ledgerhq/types-live";
 
 const getUserHashesModule = jest.requireActual("./use-cases/getUserHash");
 const networkModule = jest.requireActual("@ledgerhq/live-network/network");

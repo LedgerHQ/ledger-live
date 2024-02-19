@@ -9,8 +9,8 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import { App } from "@ledgerhq/types-live";
 import installApp from "../../hw/installApp";
 import uninstallApp from "../../hw/uninstallApp";
-import { ManagerApiRepository } from "../../device-core/managerApi/repositories/ManagerApiRepository";
 import { HttpManagerApiRepositoryFactory } from "../factories/HttpManagerApiRepositoryFactory";
+import { ManagerApiRepository } from "@ledgerhq/live-device-core";
 
 export const execWithTransport =
   (transport: Transport): Exec =>
