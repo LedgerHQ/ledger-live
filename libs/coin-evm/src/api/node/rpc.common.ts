@@ -257,10 +257,12 @@ export const getOptimismAdditionalFees: NodeApi["getOptimismAdditionalFees"] = m
             s: "0xffffffffffffffffffffffffffffffffffffffff",
             v: 0,
           });
-        } catch (e) {
+        } catch (error) {
+          log("coin-evm", "getOptimismAdditionalFees: Transaction serializing failed", { error });
           return null;
         }
       })();
+
       if (!serializedTransaction) {
         return new BigNumber(0);
       }
