@@ -19,12 +19,13 @@ import {
   // TODO: discreetMode is never used 😱 is it safe to remove
   // discreetModeSelector,
   hasBeenUpsoldProtectSelector,
+  hasSeenAnalyticsOptInPromptSelector,
   lastConnectedDeviceSelector,
   onboardingTypeSelector,
 } from "~/reducers/settings";
 import { setHasBeenUpsoldProtect } from "~/actions/settings";
 import Carousel from "~/components/Carousel";
-import { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import FirmwareUpdateBanner from "~/components/FirmwareUpdateBanner";
 import CheckLanguageAvailability from "~/components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "~/components/CheckTermOfUseUpdate";
@@ -118,6 +119,31 @@ function PortfolioScreen({ navigation }: NavigationProps) {
     recoverHomeURI,
     dispatch,
     protectFeature?.enabled,
+  ]);
+
+  const llmAnalyticsOptInPromptFeature = useFeature("llmAnalyticsOptInPrompt");
+  const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
+
+  useEffect(() => {
+    const entryPoints = llmAnalyticsOptInPromptFeature?.params?.entryPoints || [];
+
+    if (
+      !hasSeenAnalyticsOptInPrompt &&
+      llmAnalyticsOptInPromptFeature?.enabled &&
+      entryPoints.includes("Portfolio")
+    ) {
+      navigation.navigate(NavigatorName.AnalyticsOptInPrompt, {
+        screen: ScreenName.AnalyticsOptInPromptMain,
+        params: {
+          entryPoint: "Portfolio",
+        },
+      });
+    }
+  }, [
+    hasSeenAnalyticsOptInPrompt,
+    llmAnalyticsOptInPromptFeature?.enabled,
+    llmAnalyticsOptInPromptFeature?.params?.entryPoints,
+    navigation,
   ]);
 
   const openAddModal = useCallback(() => {
