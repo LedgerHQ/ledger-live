@@ -492,7 +492,7 @@
       "description" : "Uygulamayı My Ledger'dan yeniden yüklemeyi deneyin"
     },
     "NotEnoughGas" : {
-      "title" : "{{cryptoName}} ağında olduğunuzdan, {{fees}} {{ticker}} ücret ödemeniz gerekiyor. <link0>{{ticker}} Satın Alın</link0>",
+      "title" : "{{cryptoName}} ağındaki işlem ücretlerini ödemek için hesabınızda {{fees}} {{ticker}} olması gerekiyor.  <link0>{{ticker}} satın alın</link0> veya hesabınıza daha fazlasını yatırın.",
       "description" : "Token işlem ücretlerini ödemek için lütfen hesabınıza biraz coin gönderin."
     },
     "NotEnoughGasSwap" : {
@@ -751,7 +751,7 @@
       "primaryCTA" : "Tekrar dene"
     },
     "SolanaAccountNotFunded" : {
-      "title" : "Hesap fonlanmadı"
+      "title" : "Hesap daha önce fonlanmamış"
     },
     "SolanaAddressOfEd25519" : {
       "title" : "Adres ed25519 eğrisi dışında"
@@ -4639,7 +4639,7 @@
         "revoke" : "İptal et"
       },
       "delegationUnavailable" : {
-        "title" : "Yetersiz Kilitli Fon"
+        "title" : "Yetersiz Kilitli Fon Miktarı"
       },
       "manageMultipleVoteWarning" : "Bu oyu yönetmeden önce, aynı doğrulayıcı grubundaki diğer oyları Etkinleştirmeli ya da İptal Etmelisiniz."
     },
