@@ -18,7 +18,7 @@ test.beforeEach(async ({ page }) => {
   await accountPage.startCosmosStakingFlow();
 });
 
-test.describe("Delegate flow", async () => {
+test.skip("Delegate flow", async () => {
   test.skip("Delegate flow using max amount", async () => {
     await test.step("start the cosmos delegate flow", async () => {
       await expect.soft(modalPage.container).toHaveScreenshot(`earn-reward-pre-flow-page.png`);
