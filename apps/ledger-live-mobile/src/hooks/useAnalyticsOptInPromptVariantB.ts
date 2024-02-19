@@ -3,7 +3,11 @@ import {
   analyticsEnabledSelector,
   personalizedRecommendationsEnabledSelector,
 } from "~/reducers/settings";
-import { setAnalytics, setPersonalizedRecommendations } from "~/actions/settings";
+import {
+  setAnalytics,
+  setHasSeenAnalyticsOptInPrompt,
+  setPersonalizedRecommendations,
+} from "~/actions/settings";
 import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
 import {
@@ -16,7 +20,11 @@ import { urls } from "~/utils/urls";
 import { useLocale } from "~/context/Locale";
 import { track, updateIdentify } from "~/analytics";
 
-const useAnalyticsOptInPrompt = () => {
+type Props = {
+  entryPoint: "Portfolio" | "Onboarding";
+};
+
+const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
   const { locale } = useLocale();
   const dispatch = useDispatch();
   const navigation =
@@ -30,22 +38,44 @@ const useAnalyticsOptInPrompt = () => {
   const isTrackingEnabled = analyticsEnabled || personalizedRecommendationsEnabled;
   // When the user has not refused analytics, we can track the analytics opt in flow
   const shouldWeTrack = isTrackingEnabled !== false;
+  const flow = entryPoint === "Onboarding" ? "consent onboarding" : "consent existing users";
 
   const continueOnboarding = () => {
-    navigation.navigate(NavigatorName.BaseOnboarding, {
-      screen: NavigatorName.Onboarding,
-      params: {
-        screen: ScreenName.OnboardingPostWelcomeSelection,
-        params: {
-          userHasDevice: true,
-        },
-      },
-    });
+    dispatch(setHasSeenAnalyticsOptInPrompt(true));
+
+    switch (entryPoint) {
+      case "Portfolio":
+        navigation.navigate(NavigatorName.Base, {
+          screen: NavigatorName.Main,
+          params: {
+            screen: NavigatorName.Portfolio,
+            params: {
+              screen: NavigatorName.WalletTab,
+            },
+          },
+        });
+        break;
+      case "Onboarding":
+        navigation.navigate(NavigatorName.BaseOnboarding, {
+          screen: NavigatorName.Onboarding,
+          params: {
+            screen: ScreenName.OnboardingPostWelcomeSelection,
+            params: {
+              userHasDevice: true,
+            },
+          },
+        });
+        break;
+    }
     updateIdentify(undefined, shouldWeTrack);
   };
+
   const goToPersonalizedRecommendationsStep = () => {
     navigation.navigate(NavigatorName.AnalyticsOptInPrompt, {
       screen: ScreenName.AnalyticsOptInPromptDetails,
+      params: {
+        entryPoint,
+      },
     });
   };
 
@@ -57,7 +87,7 @@ const useAnalyticsOptInPrompt = () => {
       {
         button: "Refuse Analytics",
         variant: "B",
-        flow: "consent onboarding",
+        flow,
       },
       shouldWeTrack,
     );
@@ -70,7 +100,7 @@ const useAnalyticsOptInPrompt = () => {
       {
         button: "Accept Analytics",
         variant: "B",
-        flow: "consent onboarding",
+        flow,
       },
       shouldWeTrack,
     );
@@ -83,7 +113,7 @@ const useAnalyticsOptInPrompt = () => {
       {
         button: "Accept Personal Recommendations",
         variant: "B",
-        flow: "consent onboarding",
+        flow,
       },
       shouldWeTrack,
     );
@@ -96,7 +126,7 @@ const useAnalyticsOptInPrompt = () => {
       {
         button: "Refuse Personal Recommendations",
         variant: "B",
-        flow: "consent onboarding",
+        flow,
       },
       shouldWeTrack,
     );
@@ -110,7 +140,7 @@ const useAnalyticsOptInPrompt = () => {
       {
         button: "Learn More",
         variant: "B",
-        flow: "consent onboarding",
+        flow,
       },
       shouldWeTrack,
     );
@@ -123,6 +153,7 @@ const useAnalyticsOptInPrompt = () => {
     clickOnAllowPersonalizedExperience,
     clickOnRefusePersonalizedExperience,
     clickOnLearnMore,
+    flow,
   };
 };
 

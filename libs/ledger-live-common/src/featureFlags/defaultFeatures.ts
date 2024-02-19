@@ -446,6 +446,7 @@ export const DEFAULT_FEATURES: Features = {
     enabled: false,
     params: {
       variant: ABTestingVariants.variantA,
+      entryPoints: ["Onboarding", "Portfolio"],
     },
   },
 

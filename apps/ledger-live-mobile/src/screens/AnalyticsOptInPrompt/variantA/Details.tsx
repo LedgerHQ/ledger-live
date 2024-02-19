@@ -7,6 +7,7 @@ import Button from "~/components/Button";
 import Switch from "~/components/Switch";
 import { View, Container, Titles, Content, Bottom, ScrollableContainer } from "../Common";
 import useAnalyticsOptInPrompt from "~/hooks/useAnalyticsOptInPromptVariantA";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 
 const OptionContainer = styled(Flex).attrs({
   width: "100%",
@@ -46,11 +47,18 @@ function Option({ title, description, checked, onToggle }: OptionProps): React.R
   );
 }
 
-function Details() {
+type Props = StackNavigatorProps<{ entryPoint: Array<string> }>;
+
+function Details({ route }: Props) {
   const { t } = useTranslation();
+  const { entryPoint } = route.params;
+
   const [isAnalyticsEnabled, setIsAnalyticsEnabled] = useState(false);
   const [isPersonalRecommendationsEnabled, setIsPersonalRecommendationsEnabled] = useState(false);
-  const { shouldWeTrack, clickOnMoreOptionsConfirm, clickOnLearnMore } = useAnalyticsOptInPrompt();
+  const { shouldWeTrack, clickOnMoreOptionsConfirm, clickOnLearnMore, flow } =
+    useAnalyticsOptInPrompt({
+      entryPoint,
+    });
 
   return (
     <ScrollableContainer>
@@ -103,7 +111,7 @@ function Details() {
           category="Analytics Opt In Prompt"
           name="Details"
           variant="A"
-          flow="consent onboarding"
+          flow={flow}
           mandatory={shouldWeTrack}
         />
       </Container>

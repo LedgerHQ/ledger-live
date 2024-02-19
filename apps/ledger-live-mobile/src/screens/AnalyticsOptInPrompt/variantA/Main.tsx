@@ -6,6 +6,7 @@ import { Check, Close } from "@ledgerhq/native-ui/assets/icons";
 import Button from "~/components/Button";
 import { View, Container, Titles, Content, Bottom, ScrollableContainer } from "../Common";
 import useAnalyticsOptInPrompt from "~/hooks/useAnalyticsOptInPromptVariantA";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 
 interface RenderItemsProps {
   items: string[];
@@ -34,15 +35,20 @@ function renderItems({
   );
 }
 
-function Main() {
+type Props = StackNavigatorProps<{ entryPoint: Array<string> }>;
+
+function Main({ route }: Props) {
   const { t } = useTranslation();
+  const { entryPoint } = route.params;
+
   const {
     shouldWeTrack,
     navigateToMoreOptions,
     clickOnRefuseAll,
     clickOnAcceptAll,
     clickOnLearnMore,
-  } = useAnalyticsOptInPrompt();
+    flow,
+  } = useAnalyticsOptInPrompt({ entryPoint });
 
   const trackable = [
     t("analyticsOptIn.variantA.main.content.able.diagAndUsage"),
@@ -125,7 +131,7 @@ function Main() {
           category="Analytics Opt In Prompt"
           name="Main"
           variant="A"
-          flow="consent onboarding"
+          flow={flow}
           mandatory={shouldWeTrack}
         />
       </Container>

@@ -1,6 +1,6 @@
 import { ScreenName } from "~/const";
 
 export type AnalyticsOptInPromptNavigatorParamList = {
-  [ScreenName.AnalyticsOptInPromptMain]: undefined;
-  [ScreenName.AnalyticsOptInPromptDetails]: undefined;
+  [ScreenName.AnalyticsOptInPromptMain]: { entryPoint?: "Onboarding" | "Portfolio" };
+  [ScreenName.AnalyticsOptInPromptDetails]: { entryPoint?: "Onboarding" | "Portfolio" };
 };
