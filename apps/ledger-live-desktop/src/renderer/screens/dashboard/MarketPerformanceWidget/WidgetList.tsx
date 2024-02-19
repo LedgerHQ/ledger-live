@@ -4,8 +4,9 @@ import { Flex, Text } from "@ledgerhq/react-ui";
 import styled from "@ledgerhq/react-ui/components/styled";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import FormattedVal from "~/renderer/components/FormattedVal";
-import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import CurrencyUnitValue from "~/renderer/components/CurrencyUnitValue";
+import { usePrice } from "~/renderer/hooks/usePrice";
 
 const LIMIT = 5;
 
@@ -25,6 +26,8 @@ function WidgetRow({ data, index, isFirst }: PropsBodyElem) {
   const { currency, change } = data;
 
   const cryptCurrency = currency as CryptoCurrency;
+  const { counterValue, counterValueCurrency } = usePrice(cryptCurrency);
+  const subMagnitude = counterValue && counterValue.lt(1) ? 1 : 0;
 
   return (
     <Flex alignItems="center" mt={isFirst ? 0 : 2} justifyContent={"space-between"}>
@@ -62,9 +65,19 @@ function WidgetRow({ data, index, isFirst }: PropsBodyElem) {
             withIcon
           />
         </EllipsisText>
-        <EllipsisText variant="h5Inter" color="neutral.c100" textAlign="right">
-          $30,004.34
-          {/* {counterValueFormatter({ value: currentValue, currency: counterCurrency, locale })} */}
+
+        <EllipsisText variant="h5Inter" textAlign="right" color="neutral.c100">
+          {!counterValue ? (
+            "-"
+          ) : (
+            <CurrencyUnitValue
+              unit={counterValueCurrency.units[0]}
+              value={counterValue || 0}
+              disableRounding={!!subMagnitude}
+              subMagnitude={subMagnitude}
+              showCode
+            />
+          )}
         </EllipsisText>
       </Flex>
     </Flex>
