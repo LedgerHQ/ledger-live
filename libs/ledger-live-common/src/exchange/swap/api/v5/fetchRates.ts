@@ -2,7 +2,7 @@ import network from "@ledgerhq/live-network/network";
 import { DEFAULT_SWAP_TIMEOUT_MS } from "../../const/timeout";
 import axios from "axios";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
-import { ExchangeRate, ExchangeRateResponseRaw } from "../../types";
+import { ExchangeRate, ExchangeRateErrorDefault, ExchangeRateErrors, ExchangeRateResponseRaw } from "../../types";
 import { Unit } from "@ledgerhq/live-app-sdk";
 import { SwapGenericAPIError } from "../../../../errors";
 import { enrichRatesResponse } from "../../utils/enrichRatesResponse";
@@ -104,7 +104,10 @@ export async function fetchRates({
       timeout: DEFAULT_SWAP_TIMEOUT_MS,
       data: requestBody,
     });
-    const enrichedResponse = enrichRatesResponse(data, unitTo, unitFrom);
+    const filteredData = data.filter(
+      response => ![300, 304, 308].includes((response as ExchangeRateErrorDefault)?.errorCode),
+    ); // remove backend only errors
+    const enrichedResponse = enrichRatesResponse(filteredData, unitTo, unitFrom);
 
     const allErrored = enrichedResponse.every(res => !!res.error);
 
