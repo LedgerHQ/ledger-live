@@ -19,6 +19,7 @@ import type {
   AssetsDistribution,
 } from "@ledgerhq/types-live";
 import type { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { listSupportedCurrencies } from "@ledgerhq/coin-framework/currencies/support";
 
 export const defaultAssetsDistribution = {
   minShowFirst: 1,
@@ -507,7 +508,13 @@ export function makePerformanceMarketAssetsList(
 ): PerformanceMarketDatapoint[] {
   const list: PerformanceMarketDatapoint[] = [];
 
+  const supported = new Set(listSupportedCurrencies());
   for (const asset of assets) {
+    if (asset.type === "CryptoCurrency") {
+      if (!supported.has(asset)) continue;
+    } else if (asset.type === "TokenCurrency") {
+      if (!supported.has(asset.parentCurrency)) continue;
+    }
     const from = asset;
     const to = countervalue;
     const value = 10 ** from.units[0].magnitude;
