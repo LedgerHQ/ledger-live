@@ -636,8 +636,8 @@ importers:
         specifier: ^3.1.0
         version: 3.1.0(vite@4.5.2)
       allure-playwright:
-        specifier: 2.12.1
-        version: 2.12.1
+        specifier: 2.12.2
+        version: 2.12.2
       axios:
         specifier: ^1.3.4
         version: 1.3.4
@@ -26709,18 +26709,18 @@ packages:
       uuid: 3.4.0
     dev: true
 
-  /allure-js-commons@2.12.1:
-    resolution: {integrity: sha512-gx8DBwUrXpfoielzTp8bvUIa+IERaO0ZMlu7NioembuHawVOINQSuX63o1TH1S8k7K4A2gHoiHf+v2x4BAmAaQ==}
+  /allure-js-commons@2.12.2:
+    resolution: {integrity: sha512-bapkOHuwOYFR62aeNNwFmf8+LZSchzQ4Q8cFXWvEqP5fBTgADA+GujsRl936gjmTmKWVmKYwQfUt+PZw6tgFzw==}
     dependencies:
       properties: 1.2.1
       strip-ansi: 5.2.0
     dev: true
 
-  /allure-playwright@2.12.1:
-    resolution: {integrity: sha512-1JE2j9Vx1TPrwkUNfcgXDdOlb0NTuzWEZ70HJOae6VnostL/sTG5b1ISFPVmSax8G5H10iMQfwO7XjDOYIB4MQ==}
+  /allure-playwright@2.12.2:
+    resolution: {integrity: sha512-QvDyCHABYlZ02PyGevbBZc9tS+Li0zXhTaTC1IJ2wJrd8q9cSS3mUnzAJUjPUuCtofdLBwePd2AuzsYE2ZXEJQ==}
     dependencies:
       '@playwright/test': 1.41.2
-      allure-js-commons: 2.12.1
+      allure-js-commons: 2.12.2
     dev: true
 
   /anser@1.4.10:
