@@ -1,6 +1,6 @@
+import { DeviceInfo } from "@ledgerhq/live-device-core";
 import { enableListAppsV2, listAppsUseCase } from "./listAppsUseCase";
 import Transport from "@ledgerhq/hw-transport";
-import { DeviceInfo } from "@ledgerhq/types-live";
 
 const listAppsV2Module = jest.requireActual("../../apps/listApps/v2");
 const listAppsV1Module = jest.requireActual("../../apps/listApps/v1");

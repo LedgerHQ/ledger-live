@@ -2,13 +2,12 @@
 import { DeviceOnDashboardExpected, TransportStatusError } from "@ledgerhq/errors";
 import { LocalTracer, log } from "@ledgerhq/logs";
 import Transport from "@ledgerhq/hw-transport";
-import { getVersion } from "../device/use-cases/getVersionUseCase";
 import isDevFirmware from "./isDevFirmware";
 import getAppAndVersion from "./getAppAndVersion";
-import { PROVIDERS } from "../manager/provider";
 import { isDashboardName } from "./isDashboardName";
 import { DeviceNotOnboarded } from "../errors";
 import type { DeviceInfo } from "@ledgerhq/types-live";
+import { PROVIDERS, getVersion } from "@ledgerhq/live-device-core";
 const ManagerAllowedFlag = 0x08;
 const PinValidatedFlag = 0x80;
 export default async function getDeviceInfo(transport: Transport): Promise<DeviceInfo> {

@@ -3,10 +3,10 @@ import Transport from "@ledgerhq/hw-transport";
 import { Observable, from, of, concat, EMPTY } from "rxjs";
 import { mergeMap } from "rxjs/operators";
 import ManagerAPI from "../manager/api";
-import { getProviderId } from "../manager/provider";
 import getDeviceInfo from "./getDeviceInfo";
 import type { DeviceInfo, FinalFirmware, McuVersion } from "@ledgerhq/types-live";
 import { fetchMcusUseCase } from "../device/use-cases/fetchMcusUseCase";
+import { getProviderId } from "../manager";
 const blVersionAliases = {
   "0.0": "0.6",
 };
@@ -29,9 +29,10 @@ export default (finalFirmware: FinalFirmware) =>
                 .then(mcus => mcus.filter(mcu => mcu.from_bootloader_version !== "none"))
                 .then(mcus =>
                   ManagerAPI.findBestMCU(
-                    finalFirmware.mcu_versions
-                      .map(id => mcus.find(mcu => mcu.id === id))
-                      .filter(Boolean),
+                    mcus.filter(({ id }: McuVersion) => finalFirmware.mcu_versions.includes(id)),
+                    // finalFirmware.mcu_versions
+                    //   .map(id => mcus.find(mcu => mcu.id === id))
+                    //   .filter(Boolean),
                   ),
                 ),
             )

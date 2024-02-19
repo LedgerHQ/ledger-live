@@ -1,5 +1,4 @@
-import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/device-core/commands/use-cases/isDeviceLocalizationSupported";
-import { FirmwareUpdateContext } from "@ledgerhq/types-live";
+import { isDeviceLocalizationSupported, FirmwareUpdateContext } from "@ledgerhq/live-device-core";
 import { DeviceModelId } from "@ledgerhq/devices";
 import StepResetDevice, { StepResetFooter } from "../steps/00-step-reset-device";
 import StepPrepare from "../steps/01-step-prepare";

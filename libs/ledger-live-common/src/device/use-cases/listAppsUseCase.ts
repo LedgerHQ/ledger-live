@@ -1,6 +1,5 @@
 import { Observable } from "rxjs";
 import Transport from "@ledgerhq/hw-transport";
-import { DeviceInfo } from "@ledgerhq/types-live";
 import { listApps as listAppsV2 } from "../../apps/listApps/v2";
 import { listApps as listAppsV1 } from "../../apps/listApps/v1";
 import { AppOp, Exec, ListAppsEvent } from "../../apps";
@@ -10,7 +9,7 @@ import { App } from "@ledgerhq/types-live";
 import installApp from "../../hw/installApp";
 import uninstallApp from "../../hw/uninstallApp";
 import { HttpManagerApiRepositoryFactory } from "../factories/HttpManagerApiRepositoryFactory";
-import { ManagerApiRepository } from "@ledgerhq/live-device-core";
+import { DeviceInfo, ManagerApiRepository } from "@ledgerhq/live-device-core";
 
 export const execWithTransport =
   (transport: Transport): Exec =>

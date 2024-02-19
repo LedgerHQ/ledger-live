@@ -1,1 +1,1 @@
-export { getDeviceName } from "../../device-core/commands/use-cases/getDeviceName";
+export { getDeviceName } from "@ledgerhq/live-device-core";

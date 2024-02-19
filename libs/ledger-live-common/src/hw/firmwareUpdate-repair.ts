@@ -16,6 +16,7 @@ import {
 } from "../deviceWordings";
 import { getDeviceRunningMode } from "./getDeviceRunningMode";
 import { fetchMcusUseCase } from "../device/use-cases/fetchMcusUseCase";
+import { McuVersion } from "@ledgerhq/live-device-core";
 
 const wait2s = of({
   type: "wait",
@@ -152,9 +153,9 @@ const repair = (
                         });
 
                         const mcu = ManagerAPI.findBestMCU(
-                          finalFirmware.mcu_versions
-                            .map(id => validMcusForDeviceInfo.find(mcu => mcu.id === id))
-                            .filter(Boolean),
+                          mcus.filter(({ id }: McuVersion) =>
+                            finalFirmware.mcu_versions.includes(id),
+                          ),
                         );
 
                         log("hw", "firmwareUpdate-repair got mcu", { mcu });

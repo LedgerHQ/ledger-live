@@ -16,7 +16,7 @@ import { App, DeviceInfo, idsToLanguage } from "@ledgerhq/types-live";
 import { Flex, Text, Button, Divider, IconsLegacy } from "@ledgerhq/native-ui";
 import styled, { useTheme } from "styled-components/native";
 import { ListAppsResult } from "@ledgerhq/live-common/apps/types";
-import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/device-core/commands/use-cases/isDeviceLocalizationSupported";
+import { isDeviceLocalizationSupported } from "@ledgerhq/live-device-core";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { DeviceModelId } from "@ledgerhq/types-devices";

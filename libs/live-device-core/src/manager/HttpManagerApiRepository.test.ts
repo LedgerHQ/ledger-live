@@ -8,7 +8,7 @@ import {
   FinalFirmware,
 } from "../types";
 
-const getUserHashesModule = jest.requireActual("./use-cases/getUserHash");
+const getUserHashesModule = jest.requireActual("../utils/getUserHash");
 const networkModule = jest.requireActual("@ledgerhq/live-network/network");
 
 describe("HttpManagerApiRepository", () => {

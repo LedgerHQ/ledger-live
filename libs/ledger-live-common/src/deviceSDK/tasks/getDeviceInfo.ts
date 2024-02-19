@@ -5,12 +5,12 @@ import type { DeviceId, DeviceInfo, FirmwareInfo } from "@ledgerhq/types-live";
 import { getVersion } from "../commands/getVersion";
 
 import isDevFirmware from "../../hw/isDevFirmware";
-import { PROVIDERS } from "../../manager/provider";
 import { Observable } from "rxjs";
 import { map, switchMap } from "rxjs/operators";
 import { SharedTaskEvent, retryOnErrorsCommandWrapper, sharedLogicTaskWrapper } from "./core";
 import { quitApp } from "../commands/quitApp";
 import { withTransport } from "../transports/core";
+import { PROVIDERS } from "@ledgerhq/live-device-core";
 
 const ManagerAllowedFlag = 0x08;
 const PinValidatedFlag = 0x80;
