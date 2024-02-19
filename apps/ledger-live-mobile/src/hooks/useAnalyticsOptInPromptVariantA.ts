@@ -28,8 +28,8 @@ const useAnalyticsOptInPrompt = () => {
     personalizedRecommendationsEnabledSelector,
   );
   const isTrackingEnabled = analyticsEnabled || personalizedRecommendationsEnabled;
-  // When the user has not made a choice yet, we can track the analytics opt in flow
-  const shouldWeTrack = isTrackingEnabled === true || isTrackingEnabled === null;
+  // When the user has not refused analytics, we can track the analytics opt in flow
+  const shouldWeTrack = isTrackingEnabled !== false;
 
   const continueOnboarding = () => {
     navigation.navigate(NavigatorName.BaseOnboarding, {
