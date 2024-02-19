@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { timeout, tap } from "rxjs/operators";
 import { v4 as uuid } from "uuid";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
-import { getDeviceName } from "@ledgerhq/live-common/device/use-cases/getDeviceNameUseCase";
+import { getDeviceName } from "@ledgerhq/live-common/device/index";
 import { listAppsUseCase } from "@ledgerhq/live-common/device/use-cases/listAppsUseCase";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { delay } from "@ledgerhq/live-common/promise";

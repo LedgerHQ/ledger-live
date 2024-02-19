@@ -1,6 +1,6 @@
 import { from, of, throwError, Observable, TimeoutError, timer } from "rxjs";
 import { map, catchError, first, timeout, repeat } from "rxjs/operators";
-import { getVersion } from "../device/use-cases/getVersionUseCase";
+import { getVersion } from "@ledgerhq/live-device-core";
 import { withDevice } from "./deviceAccess";
 import {
   TransportStatusError,

@@ -12,7 +12,7 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import { OnboardingContext, UseCase } from "../Onboarding";
 import { ScreenId } from "../Onboarding/Screens/Tutorial";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
-import { getVersion } from "@ledgerhq/live-common/device/use-cases/getVersionUseCase";
+import { getVersion } from "@ledgerhq/live-common/device/index";
 import { first } from "rxjs/operators";
 import { Subscription, from } from "rxjs";
 import {

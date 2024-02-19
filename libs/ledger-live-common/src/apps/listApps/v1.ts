@@ -14,9 +14,8 @@ import {
 } from "../../currencies";
 import ManagerAPI from "../../manager/api";
 import { getEnv } from "@ledgerhq/live-env";
-
 import { calculateDependencies, polyfillApp, polyfillApplication } from "../polyfill";
-import { getDeviceName } from "../../device/use-cases/getDeviceNameUseCase";
+import { getDeviceName } from "../../device";
 import { getLatestFirmwareForDeviceUseCase } from "../../device/use-cases/getLatestFirmwareForDeviceUseCase";
 import { ManagerApiRepository } from "@ledgerhq/live-device-core";
 

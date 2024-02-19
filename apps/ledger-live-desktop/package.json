@@ -67,7 +67,6 @@
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/live-nft": "workspace:^",
     "@ledgerhq/live-nft-react": "workspace:^",
-    "@ledgerhq/live-device-core": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/react-ui": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",

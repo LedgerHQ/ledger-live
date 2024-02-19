@@ -13,8 +13,7 @@ import {
   findCryptoCurrencyById,
 } from "../../currencies";
 import ManagerAPI from "../../manager/api";
-
-import { getDeviceName } from "../../device/use-cases/getDeviceNameUseCase";
+import { getDeviceName } from "../../device";
 import { getLatestFirmwareForDeviceUseCase } from "../../device/use-cases/getLatestFirmwareForDeviceUseCase";
 import { mapApplicationV2ToApp } from "../polyfill";
 import { ManagerApiRepository, getProviderIdUseCase } from "@ledgerhq/live-device-core";

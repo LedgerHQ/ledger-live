@@ -7,7 +7,7 @@ import { DeviceAlreadySetup } from "@ledgerhq/live-common/errors";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { FirmwareInfo } from "@ledgerhq/types-live";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
-import { getVersion } from "@ledgerhq/live-common/device/use-cases/getVersionUseCase";
+import { getVersion } from "@ledgerhq/live-common/device/index";
 import { BleError } from "@ledgerhq/live-common/ble/types";
 import { Flex, Button, IconsLegacy } from "@ledgerhq/native-ui";
 import { useHeaderHeight } from "@react-navigation/elements";

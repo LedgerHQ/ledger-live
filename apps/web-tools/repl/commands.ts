@@ -1,9 +1,8 @@
 import editDeviceName from "@ledgerhq/live-common/hw/editDeviceName";
-import { getDeviceName } from "@ledgerhq/live-common/device/use-cases/getDeviceNameUseCase";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import getBatteryStatus from "@ledgerhq/live-common/hw/getBatteryStatus";
 import getAddress from "@ledgerhq/live-common/hw/getAddress/index";
-import { getVersion } from "@ledgerhq/live-common/device/use-cases/getVersionUseCase";
+import { getDeviceName, getVersion } from "@ledgerhq/live-common/device/index";
 import { createDeviceSocket as socket } from "@ledgerhq/live-common/socket/index";
 import getAppAndVersion from "@ledgerhq/live-common/hw/getAppAndVersion";
 import genuineCheck from "@ledgerhq/live-common/hw/genuineCheck";

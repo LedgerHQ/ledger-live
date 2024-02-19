@@ -10,7 +10,7 @@ import {
   UnexpectedBootloader,
 } from "@ledgerhq/errors";
 import { withDevice } from "./deviceAccess";
-import { getVersion } from "../device/use-cases/getVersionUseCase";
+import { getVersion } from "@ledgerhq/live-device-core";
 import { extractOnboardingState, OnboardingState, OnboardingStep } from "./extractOnboardingState";
 import { SeedPhraseType } from "@ledgerhq/types-live";
 

@@ -1,7 +1,8 @@
 import { from } from "rxjs";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
-import { getVersion } from "@ledgerhq/live-common/device/use-cases/getVersionUseCase";
+import { getVersion } from "@ledgerhq/live-common/device/index";
 import { deviceOpt } from "../../scan";
+
 export default {
   args: [deviceOpt],
   job: ({

@@ -4,7 +4,7 @@ import { first, retry } from "rxjs/operators";
 import type { FirmwareInfo } from "@ledgerhq/types-live";
 import { LockedDeviceError } from "@ledgerhq/errors";
 import { withDevice } from "../../hw/deviceAccess";
-import { getVersion } from "../../device/use-cases/getVersionUseCase";
+import { getVersion } from "../../device";
 import { BleError } from "../types";
 
 export type useBleDevicePairingArgs = {
