@@ -293,7 +293,7 @@ export default function Market({ navigation }: NavigationProps) {
     if (starredMarketCoins.length > 0) {
       refresh({ starred: starredMarketCoins });
     }
-  }, starredMarketCoins);
+  }, [refresh, starredMarketCoins]);
 
   useEffect(() => {
     if (initialTop100) {
