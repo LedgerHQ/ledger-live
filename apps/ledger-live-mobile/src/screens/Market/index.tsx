@@ -290,6 +290,10 @@ export default function Market({ navigation }: NavigationProps) {
   }, [isConnected]);
 
   useEffect(() => {
+    refresh({ starred: starredMarketCoins });
+  }, starredMarketCoins);
+
+  useEffect(() => {
     if (initialTop100) {
       refresh({
         limit: 100,
