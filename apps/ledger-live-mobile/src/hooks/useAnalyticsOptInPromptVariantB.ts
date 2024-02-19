@@ -2,7 +2,6 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   analyticsEnabledSelector,
   personalizedRecommendationsEnabledSelector,
-  trackingEnabledSelector,
 } from "~/reducers/settings";
 import { setAnalytics, setPersonalizedRecommendations } from "~/actions/settings";
 import { useNavigation } from "@react-navigation/native";
@@ -24,7 +23,11 @@ const useAnalyticsOptInPrompt = () => {
     useNavigation<
       RootNavigationComposite<StackNavigatorNavigation<OnboardingNavigatorParamList>>
     >();
-  const isTrackingEnabled = useSelector(trackingEnabledSelector);
+  const analyticsEnabled = useSelector(analyticsEnabledSelector);
+  const personalizedRecommendationsEnabled = useSelector(
+    personalizedRecommendationsEnabledSelector,
+  );
+  const isTrackingEnabled = analyticsEnabled || personalizedRecommendationsEnabled;
   // When the user has not made a choice yet, we can track the analytics opt in flow
   const shouldWeTrack = isTrackingEnabled === true || isTrackingEnabled === null;
 

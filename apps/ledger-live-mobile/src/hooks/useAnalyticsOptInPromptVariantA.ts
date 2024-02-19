@@ -11,7 +11,10 @@ import { Linking } from "react-native";
 import { urls } from "~/utils/urls";
 import { useLocale } from "~/context/Locale";
 import { track, updateIdentify } from "~/analytics";
-import { trackingEnabledSelector } from "~/reducers/settings";
+import {
+  analyticsEnabledSelector,
+  personalizedRecommendationsEnabledSelector,
+} from "~/reducers/settings";
 
 const useAnalyticsOptInPrompt = () => {
   const { locale } = useLocale();
@@ -20,7 +23,11 @@ const useAnalyticsOptInPrompt = () => {
     useNavigation<
       RootNavigationComposite<StackNavigatorNavigation<OnboardingNavigatorParamList>>
     >();
-  const isTrackingEnabled = useSelector(trackingEnabledSelector);
+  const analyticsEnabled = useSelector(analyticsEnabledSelector);
+  const personalizedRecommendationsEnabled = useSelector(
+    personalizedRecommendationsEnabledSelector,
+  );
+  const isTrackingEnabled = analyticsEnabled || personalizedRecommendationsEnabled;
   // When the user has not made a choice yet, we can track the analytics opt in flow
   const shouldWeTrack = isTrackingEnabled === true || isTrackingEnabled === null;
 
