@@ -167,9 +167,9 @@
       "VOTE" : "투표 완료",
       "FREEZE" : "동결됨",
       "UNFREEZE" : "동결 해제",
-      "UNDELEGATE_RESOURCE" : "Undelegated",
-      "WITHDRAW_EXPIRE_UNFREEZE" : "Withdrawal",
-      "LEGACYUNFREEZE" : "Unfrozen",
+      "UNDELEGATE_RESOURCE" : "위임 해제됨",
+      "WITHDRAW_EXPIRE_UNFREEZE" : "출금",
+      "LEGACYUNFREEZE" : "동결 해제",
       "REWARD" : "보상 수령됨",
       "FEES" : "수수료",
       "OPT_IN" : "참여",
@@ -2035,7 +2035,7 @@
         "energyDescription" : "스마트 계약을 시행하려면 에너지 포인트가 필요합니다. 스마트 계약을 실행하지 않으면, 에너지 보상을 선택할 필요가 없습니다.",
         "amountLabel" : "동결 금액",
         "available" : "이용 가능: {{amountAvailable}}",
-        "info" : "Frozen assets can be unfrozen immediately and accessible after the 14-day unfreezing period."
+        "info" : "동결된 자산은 즉시 동결 해제될 수 있으며 14일의 동결 해제 기간이 지나면 액세스할 수 있습니다."
       },
       "connectDevice" : {
         "title" : "장치"
@@ -2627,7 +2627,7 @@
             "description" : "TRX를 동결하여 리워드를 받으면서 자산에 대한 보안과 권한도 계속 유지할 수 있습니다.",
             "bullet" : {
               "delegate" : "위임된 자산의 소유권은 사용자에게 있습니다.",
-              "access" : "Frozen assets can be unfrozen immediately and will become accessible after the 14-day unfreezing period.",
+              "access" : "동결된 자산은 즉시 동결 해제될 수 있으며 14일의 동결 해제 기간이 지나면 액세스가 가능합니다.",
               "ledger" : "Ledger 장치로 자산을 동결하고 안전하게 투표하세요."
             },
             "help" : "투표는 어떤 원리인가요?",
@@ -3593,22 +3593,33 @@
     "stake" : {
       "title" : "ETH 보유량 늘리기",
       "subTitle" : "Ledger Live에서 직접 일일 보상을 받아 ETH를 스테이킹하고 보유량을 늘려보세요.",
+      "tagMinimum" : "{{min}} ETH 필요",
+      "kiln_pooling" : {
+        "title" : "Kiln 스테이킹 풀",
+        "description" : "최소 금액 없이 스테이킹하세요. 락업 기간 없이 복리 이자가 자동으로 적립되는 보상을 받으세요.",
+        "supportLink" : "Kiln 풀링에 대해 자세히 알아보기"
+      },
       "lido" : {
-        "title" : "Lido로 수익 창출",
-        "description" : "Lido를 통해 이더리움을 스테이킹하고 매일 보상을 받으세요. 락업 기간 없음. 최소 한도 없음",
+        "title" : "Lido",
+        "description" : "원하는 수량의 ETH를 스테이킹하여 매일 보상을 받고 유동성을 즉각적으로 확보하세요.",
         "supportLink" : "Lido에 대해 더 알아보기"
+      },
+      "stader-eth" : {
+        "title" : "Stade Labs",
+        "description" : "최소 금액 없이 스테이킹하세요. 복리 이자가 자동으로 적립되는 보상을 통해 유동성을 즉각적으로 확보하세요.",
+        "supportLink" : "Stader 풀링에 대해 자세히 알아보기"
       },
       "kiln" : {
         "title" : "Kiln 전용 스테이킹",
         "tag" : "32 ETH 필요",
-        "description" : "전용 검증인을 통해 스테이킹하세요. 32 ETH의 배수가 필요합니다. 보상은 수동으로 청구됩니다. 언제든지 중단할 수도 있습니다.",
+        "description" : "전용 검증인에게 32 ETH 이상을 스테이킹하고 간단히 보상을 받으세요.",
         "supportLink" : "Kiln 검증인에 대해 자세히 알아보기"
       },
-      "kiln_pooling" : {
-        "title" : "Kiln 스테이킹 풀",
-        "tag" : "최소 한도 없음",
-        "description" : "스테이킹 풀에 가입하세요. 최소 ETH가 필요하지 않습니다. 보상은 자동 합산됩니다. 언제든지 중단할 수도 있습니다.",
-        "supportLink" : "Kiln 풀링에 대해 자세히 알아보기"
+      "figment" : {
+        "title" : "Figment",
+        "tag" : "32 ETH 필요",
+        "description" : "전용 검증인에게 32 ETH 이상을 스테이킹하면 본인 계정으로 보상이 자동 지급됩니다.",
+        "supportLink" : "Figment 검증인에 대해 자세히 알아보기"
       }
     }
   },
@@ -4905,9 +4916,9 @@
       "claimReward" : "거래를 장치에서 확인하고 완료하세요",
       "freeze" : "거래를 장치에서 확인하고 완료하세요",
       "unfreeze" : "거래를 장치에서 확인하고 완료하세요",
-      "withdrawExpireUnfreeze" : "Please confirm on your device to finalize the operation",
-      "unDelegateResource" : "Please confirm on your device to finalize the operation",
-      "legacyUnfreeze" : "Please confirm on your device to finalize the operation",
+      "withdrawExpireUnfreeze" : "거래를 장치에서 확인하고 완료하세요",
+      "unDelegateResource" : "거래를 장치에서 확인하고 완료하세요",
+      "legacyUnfreeze" : "거래를 장치에서 확인하고 완료하세요",
       "vote" : "거래를 장치에서 확인하고 완료하세요",
       "delegate" : "거래를 장치에서 확인하고 완료하세요",
       "undelegate" : "거래를 장치에서 확인하고 완료하세요",
@@ -5339,7 +5350,7 @@
       "title" : "수취인 주소가 비활성화되어 있습니다. 활성화하려면 최소 {{minimalAmount}}를 보내주세요"
     },
     "NotEnoughGas" : {
-      "title" : "{{cryptoName}} 네트워크에서 스왑하려면 네트워크 수수료 명목으로 {{fees}} {{ticker}}가 필요합니다. <link0>{{ticker}} 구매</link0>"
+      "title" : "{{cryptoName}} 네트워크에서 트랜잭션 수수료를 지불하려면 계정에 {{fees}} {{ticker}}(이)가 필요합니다.  <link0>{{ticker}}(을)를 구매</link0>하거나 계정에 추가 입금하세요."
     },
     "NotEnoughGasSwap" : {
       "title" : "{{cryptoName}} 네트워크에서 스왑하려면 네트워크 수수료 명목으로 {{fees}} {{ticker}}가 필요합니다. <link0>{{ticker}} 구매</link0>"
@@ -5594,8 +5605,8 @@
       "description" : "동결 해제할 에너지와 관련 자산이 없습니다"
     },
     "TronLegacyUnfreezeNotExpired" : {
-      "title" : "Unfreeze is not available yet",
-      "description" : "You need to wait 3 days after your last Freeze operation"
+      "title" : "아직 동결 해제할 수 없습니다",
+      "description" : "최종 동결 거래 후 3일을 기다려야 합니다"
     },
     "TronVoteRequired" : {
       "title" : "최소 하나의 득표수가 필요합니다."
@@ -5632,14 +5643,14 @@
       "title" : "에너지가 필요한 것보다 낮습니다. 수수료로 최대 50 TRX를 지불할 수 있습니다."
     },
     "TronNoUnfrozenResource" : {
-      "title" : "No unfrozen resources to withdraw"
+      "title" : "인출할 동결 해제된 자산이 없습니다"
     },
     "TronInvalidUnDelegateResourceAmount" : {
-      "title" : "Not enough delegated resources"
+      "title" : "위임된 자산이 충분하지 않습니다"
     },
     "TronUnfreezeNotExpired" : {
-      "title" : "Resources not unfrozen yet",
-      "description" : "You need to wait until {{time}} to withdraw"
+      "title" : "자산이 아직 동결 해제되지 않았습니다",
+      "description" : "인출하려면 {{time}}까지 기다려야 합니다."
     },
     "PairingFailed" : {
       "title" : "페어링 실패",
@@ -5905,7 +5916,7 @@
       "description" : "문제가 발생했습니다. 확실하지 않을 경우 다시 시도하거나 Ledger 지원 부서에 연락하세요."
     },
     "TezosUnrevealedAccount" : {
-      "title" : "Swap unavailable: Initial send/delegate needed with Tezos account or change pair."
+      "title" : "스왑 불가: 테조스 계정이나 변경 쌍을 통해 초기 전송/위임이 필요합니다."
     }
   },
   "cryptoOrg" : {
