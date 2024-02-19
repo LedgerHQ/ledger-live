@@ -6,7 +6,7 @@ export function MarketPerformanceWidgetContainer() {
   return (
     <Card py={5} grow>
       <Flex alignItems={"center"} justifyContent={"center"} flex={1}>
-        <Text>MarketPerformanceWidgetContainer</Text>
+        <Text>MarketPerformanceWidget</Text>
       </Flex>
     </Card>
   );

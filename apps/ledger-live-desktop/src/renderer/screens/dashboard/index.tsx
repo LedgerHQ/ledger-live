@@ -31,7 +31,7 @@ import { ABTestingVariants, AccountLike, Operation } from "@ledgerhq/types-live"
 import PortfolioContentCards from "~/renderer/screens/dashboard/PortfolioContentCards";
 import MarketPerformanceWidget from "~/renderer/screens/dashboard/MarketPerformanceWidget";
 import { useMarketPerformanceFeatureFlag } from "~/renderer/actions/marketperformance";
-import { Flex } from "@ledgerhq/react-ui";
+import { Flex, Grid } from "@ledgerhq/react-ui";
 
 // This forces only one visible top banner at a time
 export const TopBannerContainer = styled.div`
@@ -101,20 +101,20 @@ export default function DashboardPage() {
           <EmptyStateInstalledApps />
         ) : totalAccounts > 0 ? (
           <>
-            <Flex>
-              <Box flex={2}>
-                <BalanceSummary
-                  counterValue={counterValue}
-                  chartColor={colors.wallet}
-                  range={selectedTimeRange}
-                />
-              </Box>
+            <PortfolioGrid>
+              <BalanceSummary
+                counterValue={counterValue}
+                chartColor={colors.wallet}
+                range={selectedTimeRange}
+              />
+
               {marketPerformanceEnabled ? (
-                <Box flex={1} minWidth={250} ml={3}>
+                <Box ml={2}>
                   <MarketPerformanceWidget variant={marketPerformanceVariant} />
                 </Box>
               ) : null}
-            </Flex>
+            </PortfolioGrid>
+
             <AssetDistribution />
             {totalOperations > 0 && (
               <OperationsList
@@ -134,3 +134,10 @@ export default function DashboardPage() {
     </>
   );
 }
+
+const PortfolioGrid = styled(Grid).attrs(() => ({
+  columnGap: 2,
+  columns: 2,
+}))`
+  grid-template-columns: 2fr 1fr;
+`;
