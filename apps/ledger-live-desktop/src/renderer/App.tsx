@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Provider, useSelector } from "react-redux";
 import { Store } from "redux";
 import { HashRouter as Router } from "react-router-dom";
-import { NftMetadataProvider } from "@ledgerhq/live-common/nft/NftMetadataProvider/index";
+import { NftMetadataProvider } from "@ledgerhq/live-nft-react";
+import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
+import { getFeature } from "@ledgerhq/live-common/featureFlags/index";
 import "./global.css";
 import "tippy.js/dist/tippy.css";
 import "tippy.js/animations/shift-away.css";
@@ -26,16 +28,23 @@ import MarketDataProvider from "~/renderer/screens/market/MarketDataProviderWrap
 import { ConnectEnvsToSentry } from "~/renderer/components/ConnectEnvsToSentry";
 import PostOnboardingProviderWrapped from "~/renderer/components/PostOnboardingHub/logic/PostOnboardingProviderWrapped";
 import { useBraze } from "./hooks/useBraze";
+import { StorylyProvider } from "~/storyly/StorylyProvider";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
+import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+
 const reloadApp = (event: KeyboardEvent) => {
   if ((event.ctrlKey || event.metaKey) && event.key === "r") {
     window.api?.reloadRenderer();
   }
 };
+
 type Props = {
   store: Store<State>;
   initialCountervalues: CounterValuesStateRaw;
 };
+
+const queryClient = new QueryClient();
+
 const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValuesStateRaw }) => {
   const [reloadEnabled, setReloadEnabled] = useState(true);
 
@@ -50,7 +59,9 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
     window.addEventListener("keydown", reload);
     return () => window.removeEventListener("keydown", reload);
   }, [reloadEnabled]);
+
   const selectedPalette = useSelector(themeSelector) || "light";
+
   return (
     <StyleProvider selectedPalette={selectedPalette}>
       <ThrowBlock
@@ -61,7 +72,7 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
         }}
       >
         <FirebaseRemoteConfigProvider>
-          <FirebaseFeatureFlagsProvider>
+          <FirebaseFeatureFlagsProvider getFeature={getFeature}>
             <ConnectEnvsToSentry />
             <UpdaterProvider>
               <CountervaluesProvider initialState={initialCountervalues}>
@@ -71,9 +82,13 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
                       <PostOnboardingProviderWrapped>
                         <PlatformAppProviderWrapper>
                           <DrawerProvider>
-                            <NftMetadataProvider>
+                            <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
                               <MarketDataProvider>
-                                <Default />
+                                <StorylyProvider>
+                                  <QueryClientProvider client={queryClient}>
+                                    <Default />
+                                  </QueryClientProvider>
+                                </StorylyProvider>
                               </MarketDataProvider>
                             </NftMetadataProvider>
                           </DrawerProvider>
@@ -90,6 +105,7 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
     </StyleProvider>
   );
 };
+
 const App = ({ store, initialCountervalues }: Props) => {
   return (
     <LiveStyleSheetManager>

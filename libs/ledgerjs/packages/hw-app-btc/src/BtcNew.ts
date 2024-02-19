@@ -27,8 +27,9 @@ import { serializeTransaction } from "./serializeTransaction";
 import type { Transaction } from "./types";
 
 /**
- * This class implements the same interface as BtcOld (formerly
- * named Btc), but interacts with Bitcoin hardware app version 2+
+ * @class BtcNew
+ * @description This class implements the same interface as BtcOld (formerly
+ * named Btc), but interacts with Bitcoin hardware app version 2.1.0+
  * which uses a totally new APDU protocol. This new
  * protocol is documented at
  * https://github.com/LedgerHQ/app-bitcoin-new/blob/master/doc/bitcoin.md
@@ -38,6 +39,7 @@ import type { Transaction } from "./types";
  * input data into the PSBT process. In the future, a new interface should
  * be developed that exposes PSBT to the outer world, which would render
  * a much cleaner implementation.
+ *
  */
 export default class BtcNew {
   constructor(private client: Client) {}
@@ -423,6 +425,11 @@ export default class BtcNew {
   }
 }
 
+/**
+ * This function returns a descriptor template based on the address format.
+ * See https://github.com/LedgerHQ/app-bitcoin-new/blob/develop/doc/wallet.md for details of
+ * the bitcoin descriptor template.
+ */
 function descrTemplFrom(addressFormat: AddressFormat): DefaultDescriptorTemplate {
   if (addressFormat == "legacy") return "pkh(@0)";
   if (addressFormat == "p2sh") return "sh(wpkh(@0))";

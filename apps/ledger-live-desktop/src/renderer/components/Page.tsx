@@ -3,6 +3,8 @@ import { useLocation } from "react-router-dom";
 import styled, { DefaultTheme, ThemedStyledProps } from "styled-components";
 import AngleUp from "~/renderer/icons/AngleUp";
 import TopBar from "~/renderer/components/TopBar";
+import PortfolioContentCards from "~/renderer/screens/dashboard/PortfolioContentCards";
+import { ABTestingVariants } from "@ledgerhq/types-live";
 
 type Props = {
   children: React.ReactNode;
@@ -151,6 +153,8 @@ const Page = ({ children }: Props) => {
       >
         <AngleUp size={20} />
       </ScrollUpButton>
+      {/* Only on dashboard page */}
+      {pathname === "/" && <PortfolioContentCards variant={ABTestingVariants.variantB} />}
     </PageContainer>
   );
 };

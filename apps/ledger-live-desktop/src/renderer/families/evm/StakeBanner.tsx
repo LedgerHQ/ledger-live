@@ -1,7 +1,7 @@
 import { Account } from "@ledgerhq/types-live";
 import { useHistory } from "react-router";
 import { useTranslation } from "react-i18next";
-import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { getAccountBannerState } from "@ledgerhq/live-common/families/evm/banner";
 import { AccountBanner } from "~/renderer/screens/account/AccountBanner";
 import { track } from "~/renderer/analytics/segment";
@@ -37,7 +37,7 @@ const StakeBanner: React.FC<{ account: Account }> = ({ account }) => {
   if (stakeProvider === "kiln" && !stakeAccountBannerParams?.eth?.kiln) return null;
 
   const stakeOnClick = (providerLiveAppId: string) => {
-    track("button_clicked", {
+    track("button_clicked2", {
       ...stakeDefaultTrack,
       delegation: "stake",
       page: "Page Account",

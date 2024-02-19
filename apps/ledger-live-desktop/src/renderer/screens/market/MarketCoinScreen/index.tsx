@@ -20,7 +20,7 @@ import { accountsSelector } from "~/renderer/reducers/accounts";
 import { openModal } from "~/renderer/actions/modals";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import { flattenAccounts } from "@ledgerhq/live-common/account/index";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import useStakeFlow from "../../stake";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
@@ -161,7 +161,7 @@ export default function MarketCoinScreen() {
       if (currency?.internalCurrency?.id) {
         e.preventDefault();
         e.stopPropagation();
-        track("button_clicked", {
+        track("button_clicked2", {
           button: "swap",
           currency: currency?.ticker,
           page: "Page Market Coin",
@@ -204,7 +204,7 @@ export default function MarketCoinScreen() {
     (e: React.SyntheticEvent<HTMLButtonElement>) => {
       e.preventDefault();
       e.stopPropagation();
-      track("button_clicked", {
+      track("button_clicked2", {
         button: "stake",
         currency: currency?.ticker,
         page: "Page Market Coin",

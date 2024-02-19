@@ -145,10 +145,20 @@ class Base implements ICrypto {
     }
   }
 
+  /**
+   * The output script sets the conditions under which the amount can be spent.
+   * It is a crucial part of Bitcoin's scripting system, ensuring that only the rightful owner can spend the bitcoins
+   * This function returns the output script for a given address
+   * see https://developer.bitcoin.org/devguide/transactions.html for more details
+   */
   toOutputScript(address: string): Buffer {
     return toOutputScript(address, this.network);
   }
 
+  /**
+   * OutputScript to with OP_RETURN data
+   * see https://developer.bitcoin.org/reference/transactions.html?highlight=op_return for more details
+   */
   toOpReturnOutputScript(data: Buffer): Buffer {
     const script = bjs.payments.embed({ data: [data] });
     return script.output!;

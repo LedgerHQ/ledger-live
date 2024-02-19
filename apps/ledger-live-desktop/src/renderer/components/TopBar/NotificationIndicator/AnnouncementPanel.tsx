@@ -15,7 +15,7 @@ import { closeInformationCenter } from "~/renderer/actions/UI";
 import { useNotifications } from "~/renderer/hooks/useNotifications";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { urls } from "~/config/urls";
-import useDateFormatter from "~/renderer/hooks/useDateFormatter";
+import { useDateFormatted } from "~/renderer/hooks/useDateFormatter";
 
 const DateRowContainer = styled.div`
   padding: 4px 16px;
@@ -81,11 +81,14 @@ const DateLabel = styled(Text).attrs({
     text-transform: uppercase;
   }
 `;
+
+const dateFull: Intl.DateTimeFormatOptions = { dateStyle: "full" };
+
 function DateRow({ date }: DateRowProps) {
-  const { f } = useDateFormatter({}, { dateStyle: "full" });
+  const txt = useDateFormatted(date, dateFull);
   return (
     <DateRowContainer>
-      <DateLabel>{f(date)}</DateLabel>
+      <DateLabel>{txt}</DateLabel>
     </DateRowContainer>
   );
 }

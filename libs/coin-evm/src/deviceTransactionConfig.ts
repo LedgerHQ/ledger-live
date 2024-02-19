@@ -1,10 +1,10 @@
+import { ethers } from "ethers";
+import BigNumber from "bignumber.js";
 import {
   ERC20_CLEAR_SIGNED_SELECTORS,
   ERC721_CLEAR_SIGNED_SELECTORS,
   ERC1155_CLEAR_SIGNED_SELECTORS,
-} from "@ledgerhq/hw-app-eth";
-import { ethers } from "ethers";
-import BigNumber from "bignumber.js";
+} from "@ledgerhq/evm-tools/selectors/index";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { findTokenByAddress } from "@ledgerhq/cryptoassets/tokens";
 import { validateDomain } from "@ledgerhq/domain-service/utils/index";

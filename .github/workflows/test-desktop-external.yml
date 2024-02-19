@@ -21,6 +21,10 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
   cancel-in-progress: true
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   codechecks:
     name: "Ledger Live code checks"
@@ -50,7 +54,7 @@ jobs:
         run: pnpm desktop typecheck
       - uses: actions/upload-artifact@v3
         name: upload eslint json output
-        if: always()
+        if: ${{ !cancelled() }}
         with:
           name: lint
           path: ${{ github.workspace }}/apps/ledger-live-desktop/lint.json
@@ -117,6 +121,11 @@ jobs:
           base: ${{ inputs.base_ref }}
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
+        with:
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
@@ -126,20 +135,17 @@ jobs:
         id: tests
         run: |
           xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright:smoke
-      # - name: upload diffs to s3
-      #   if: always() && !cancelled()
-      #   uses: ./tools/actions/upload-images
-      #   id: s3
-      #   with:
-      #     path: apps/ledger-live-desktop/tests/artifacts/test-results
-      #     workspace: ${{ github.workspace }}
-      #     os: linux
-      #     group-name: ${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_number }}
-      #   env:
-      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_S3_SCREENSHOTS_ACCESS_KEY }}
-      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_S3_SCREENSHOTS_SECRET_ACCESS_KEY }}
+      - name: upload diffs to s3
+        if: ${{ !cancelled() }}
+        uses: ./tools/actions/upload-images
+        id: s3
+        with:
+          path: apps/ledger-live-desktop/tests/artifacts/test-results
+          workspace: ${{ github.workspace }}
+          os: linux
+          group-name: ${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_number }}
       - name: upload ci suggested screenshots
-        if: always() && !cancelled()
+        if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v3
         with:
           name: images
@@ -156,7 +162,7 @@ jobs:
             apps/ledger-live-desktop/tests/artifacts/videos
             apps/ledger-live-desktop/tests/artifacts/logs
       - name: Upload Allure Report
-        if: always()
+        if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v3
         with:
           name: allure-results-linux
@@ -165,7 +171,7 @@ jobs:
   report:
     needs: [codechecks, deadcodecheck, unit-tests, e2e-tests-linux]
     runs-on: ubuntu-latest
-    if: always() && !cancelled() && github.event_name == 'workflow_dispatch'
+    if: ${{ !cancelled() && github.event_name == 'workflow_dispatch' }}
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
@@ -344,26 +350,3 @@ jobs:
           name: summary.json
           path: ${{ github.workspace }}/summary.json
 
-  allure-report:
-    name: "Allure Reports Export on Server"
-    needs: [e2e-tests-linux]
-    runs-on: [ledger-live-medium-linux]
-    if: ${{ always() && !cancelled() && github.ref_name == 'develop' }}
-    steps:
-      - name: checkout
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.ref_name }}
-      - name: Download Allure Report - Linux
-        uses: actions/download-artifact@v3
-        with:
-          name: allure-results-linux
-          path: allure-results-linux
-      - name: Send Results and Generate Allure Report - Linux
-        uses: ./tools/actions/composites/upload-allure-report
-        if: always()
-        with:
-          platform: linux
-          login: ${{ secrets.ALLURE_LOGIN }}
-          password: ${{ secrets.ALLURE_PASSWORD }}
-          path: allure-results-linux

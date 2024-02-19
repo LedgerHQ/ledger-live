@@ -1,6 +1,6 @@
-import { useRef, useMemo, useEffect } from "react";
+import { useRef, useEffect } from "react";
 import { SwapDataType } from "@ledgerhq/live-common/exchange/swap/types";
-import { getRefreshTime } from "~/renderer/screens/exchange/Swap2/utils/getRefreshTime";
+import { DEFAULT_SWAP_RATES_INTERVAL_MS } from "@ledgerhq/live-common/exchange/swap/const/timeout";
 
 const useRefreshRates = (
   swap: SwapDataType,
@@ -11,7 +11,7 @@ const useRefreshRates = (
   },
 ) => {
   const refreshInterval = useRef<NodeJS.Timeout>();
-  const refreshTime = useMemo(() => getRefreshTime(swap.rates?.value), [swap.rates?.value]);
+  const refreshTime = DEFAULT_SWAP_RATES_INTERVAL_MS;
 
   useEffect(() => {
     clearTimeout(refreshInterval.current);

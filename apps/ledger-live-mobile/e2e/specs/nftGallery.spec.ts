@@ -3,7 +3,7 @@ import PortfolioPage from "../models/wallet/portfolioPage";
 import WalletTabNavigatorPage from "../models/wallet/walletTabNavigator";
 import NftViewerPage from "../models/nft/nftViewerPage";
 import NftGalleryPage from "../models/wallet/nftGalleryPage";
-import { tapByElement, tapByText } from "../helpers";
+import { tapByElement, tapByText, waitForElementById } from "../helpers";
 import ReceivePage from "../models/trade/receivePage";
 import { loadConfig } from "../bridge/server";
 
@@ -15,7 +15,7 @@ let receivePage: ReceivePage;
 
 describe("NFT Gallery screen", () => {
   beforeAll(async () => {
-    loadConfig("1Account1NFTReadOnlyFalse");
+    loadConfig("1Account1NFTNotSpam");
 
     portfolioPage = new PortfolioPage();
     walletTabNavigatorPage = new WalletTabNavigatorPage();
@@ -42,6 +42,7 @@ describe("NFT Gallery screen", () => {
   });
 
   it("should have a list of NFTs", async () => {
+    await waitForElementById(nftGalleryPage.nftListComponentId);
     await expect(nftGalleryPage.nftListComponent()).toBeVisible();
     await expect(nftGalleryPage.nftListItem(0)).toBeVisible();
   });

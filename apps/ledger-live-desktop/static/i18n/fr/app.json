@@ -3593,22 +3593,33 @@
     "stake" : {
       "title" : "Faites fructifier vos ETH",
       "subTitle" : "Stakez vos ETH et et recevez des récompenses quotidiennes directement via Ledger Live.",
+      "tagMinimum" : "{{min}} ETH minimum",
+      "kiln_pooling" : {
+        "title" : "Staker avec un pool sur Kiln",
+        "description" : "Stakez sans durée, ni montant minimum. Gagnez des récompenses capitalisées automatiquement.",
+        "supportLink" : "En savoir plus sur les pools sur Kiln"
+      },
       "lido" : {
-        "title" : "Staker avec Lido",
-        "description" : "Stakez vos ETH avec Lido et gagnez des récompenses quotidiennes. Pas de période de blocage. Pas de montant minimum.",
+        "title" : "Lido",
+        "description" : "Stakez le montant d’ETH de votre choix : récompenses quotidiennes et liquidité instantanée.",
         "supportLink" : "En savoir plus sur Lido"
+      },
+      "stader-eth" : {
+        "title" : "Stader Labs",
+        "description" : "Stakez sans aucun minimum. Gagnez des récompenses capitalisées automatiquement et profitez d’une liquidité instantanée.",
+        "supportLink" : "En savoir plus sur les pools sur Stader"
       },
       "kiln" : {
         "title" : "Staker avec un validateur Kiln",
         "tag" : "32 ETH minimum",
-        "description" : "Stakez avec un validateur personnalisé. Minimum de 32 ETH (ou un multiple) requis. Récompenses à demander manuellement. Quittez à tout moment.",
+        "description" : "Stakez plus de 32 ETH avec un validateur personnalisé et demandez facilement vos récompenses.",
         "supportLink" : "En savoir plus sur les validateurs Kiln"
       },
-      "kiln_pooling" : {
-        "title" : "Staker avec un pool sur Kiln",
-        "tag" : "Pas de minimum",
-        "description" : "Rejoignez un pool de staking. Aucun montant minimum d’ETH requis. Récompenses capitalisées automatiquement. Quittez à tout moment.",
-        "supportLink" : "En savoir plus sur les pools sur Kiln"
+      "figment" : {
+        "title" : "Figment",
+        "tag" : "32 ETH minimum",
+        "description" : "Stakez plus de 32 ETH avec un validateur personnalisé et recevez automatiquement vos récompenses sur votre compte.",
+        "supportLink" : "En savoir plus sur les validateurs Figment"
       }
     }
   },
@@ -4303,7 +4314,7 @@
     "screens" : {
       "welcome" : {
         "title" : "Le wallet ultra-sécurisé pour vos cryptos et NFT",
-        "description" : "Gérez, achetez et faites fructifier vos cryptos et NFT en toute sécurité sur Ledger Live.",
+        "description" : "Gérez, achetez et faites fructifier vos cryptos et NFT en toute sécurité via Ledger Live.",
         "nextButton" : "Commencer",
         "noDevice" : "Pas encore d’appareil ?",
         "buyLink" : "Pas encore d’appareil ? Achetez un Ledger Nano X.",
@@ -5339,7 +5350,7 @@
       "title" : "L’adresse du bénéficiaire est inactive. Envoyez au minimum {{minimalAmount}} pour l’activer."
     },
     "NotEnoughGas" : {
-      "title" : "Vous avez besoin de {{fees}} {{ticker}} comme frais de réseau pour échanger sur la blockchain {{cryptoName}}. <link0>Acheter des {{ticker}}</link0>"
+      "title" : "Vous devez avoir {{fees}} {{ticker}} sur votre compte pour couvrir les frais de transaction sur le réseau {{cryptoName}}.  <link0>Achetez des {{ticker}}</link0> ou faites un dépôt sur votre compte."
     },
     "NotEnoughGasSwap" : {
       "title" : "Vous avez besoin de {{fees}} {{ticker}} comme frais de réseau pour échanger sur la blockchain {{cryptoName}}. <link0>Acheter des {{ticker}}</link0>"

@@ -7,7 +7,7 @@ import { Box, Flex } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { ReactNavigationPerformanceView } from "@shopify/react-native-performance-navigation";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import WalletTabSafeAreaView from "~/components/WalletTab/WalletTabSafeAreaView";
 import {
   useAlreadyOnboardedURI,
@@ -222,7 +222,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
         }}
         keyExtractor={(_: unknown, index: number) => String(index)}
         showsVerticalScrollIndicator={false}
-        testID={showAssets ? "PortfolioAccountsList" : "PortfolioEmptyAccount"}
+        testID={showAssets ? "PortfolioAccountsList" : "PortfolioEmptyList"}
       />
       <AddAccountsModal
         navigation={navigation as unknown as BaseNavigation}

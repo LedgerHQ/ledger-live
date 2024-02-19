@@ -3,7 +3,7 @@ import { useHistory } from "react-router-dom";
 import { useTranslation, Trans } from "react-i18next";
 import { Flex, Text } from "@ledgerhq/react-ui";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { useFeature, isRecoverDisplayed } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature, isRecoverDisplayed } from "@ledgerhq/live-common/featureFlags/index";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import { UseCaseOption } from "./UseCaseOption";

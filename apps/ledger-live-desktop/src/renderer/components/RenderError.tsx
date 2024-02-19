@@ -107,7 +107,7 @@ export default function RenderError({ error, withoutAppData, children }: Props) 
       <Box my={6} color="palette.text.shade80">
         <ErrContainer>{printError(error)}</ErrContainer>
       </Box>
-      <VersionContainer>{`Ledger Live ${__APP_VERSION__}`}</VersionContainer>
+      <VersionContainer data-test-id="app-version">{`Ledger Live ${__APP_VERSION__}`}</VersionContainer>
       {children}
     </Box>
   );

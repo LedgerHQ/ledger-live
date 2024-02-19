@@ -6,7 +6,7 @@ import { Transition } from "react-transition-group";
 import styled from "styled-components";
 import { useManagerBlueDot } from "@ledgerhq/live-common/manager/hooks";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import { FeatureToggle, useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { IconsLegacy, Tag as TagComponent } from "@ledgerhq/react-ui";
 import { accountsSelector, starredAccountsSelector } from "~/renderer/reducers/accounts";
 import {
@@ -331,7 +331,7 @@ const MainSideBar = () => {
     } else if (enabled) {
       dispatch(openModal("MODAL_PROTECT_DISCOVER", undefined));
     }
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "Protect",
     });
   }, [
@@ -385,7 +385,7 @@ const MainSideBar = () => {
                   iconSize={20}
                   iconActiveColor="wallet"
                   onClick={handleClickDashboard}
-                  isActive={location.pathname === "/"}
+                  isActive={location.pathname === "/" || location.pathname.startsWith("/asset/")}
                   NotifComponent={<UpdateDot collapsed={collapsed} />}
                   collapsed={secondAnim}
                 />
@@ -396,7 +396,7 @@ const MainSideBar = () => {
                   iconSize={20}
                   iconActiveColor="wallet"
                   onClick={handleClickMarket}
-                  isActive={location.pathname === "/market"}
+                  isActive={location.pathname.startsWith("/market")}
                   collapsed={secondAnim}
                 />
                 <FeatureToggle featureId="learn">

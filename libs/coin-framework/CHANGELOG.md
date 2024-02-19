@@ -1,5 +1,33 @@
 # @ledgerhq/coin-framework
 
+## 0.11.1
+
+### Patch Changes
+
+- [#6165](https://github.com/LedgerHQ/ledger-live/pull/6165) [`8d99b81`](https://github.com/LedgerHQ/ledger-live/commit/8d99b81feaf5e8d46e0c26f34bc70b709a7e3c14) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Remove unnecessary logs
+
+- [#6165](https://github.com/LedgerHQ/ledger-live/pull/6165) [`43eea9e`](https://github.com/LedgerHQ/ledger-live/commit/43eea9e8076f2c9d5aeb0f8a3b0738e97b3152c8) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Remove all invalid bitcoin derivation paths
+
+- Updated dependencies [[`c18a0cf`](https://github.com/LedgerHQ/ledger-live/commit/c18a0cfdce5d1e44faf8d8bd5659ebdae38533fa), [`ee88785`](https://github.com/LedgerHQ/ledger-live/commit/ee8878515671241ce1037362af5e8f7799b3673a), [`1cb83b5`](https://github.com/LedgerHQ/ledger-live/commit/1cb83b5baa4603e22f391609438e349ca0ce9b0e), [`c217a6c`](https://github.com/LedgerHQ/ledger-live/commit/c217a6cfa59218278d25d2d987a06dfb33977cd9)]:
+  - @ledgerhq/live-env@1.0.0
+  - @ledgerhq/errors@6.16.2
+  - @ledgerhq/types-live@6.44.1
+  - @ledgerhq/devices@8.2.1
+
+## 0.11.1-next.0
+
+### Patch Changes
+
+- [#6041](https://github.com/LedgerHQ/ledger-live/pull/6041) [`9c83695`](https://github.com/LedgerHQ/ledger-live/commit/9c8369580b91d82021d4ec28ad7a49dc4ba42e4f) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Remove unnecessary logs
+
+- [#6038](https://github.com/LedgerHQ/ledger-live/pull/6038) [`2fd465e`](https://github.com/LedgerHQ/ledger-live/commit/2fd465ee730b11594d231503cfb940b984fa2f5a) Thanks [@lvndry](https://github.com/lvndry)! - Remove all invalid bitcoin derivation paths
+
+- Updated dependencies [[`4744c31`](https://github.com/LedgerHQ/ledger-live/commit/4744c3136021f1f47ad1617f2c84f47ac0647370), [`f456d69`](https://github.com/LedgerHQ/ledger-live/commit/f456d69a2f64b6a217d3c1d9c6a531f31c2817a8), [`b34f5cd`](https://github.com/LedgerHQ/ledger-live/commit/b34f5cdda0b7bf34750d258cc8b1c91304516360), [`d870e90`](https://github.com/LedgerHQ/ledger-live/commit/d870e904a0dde5f8abf05f930f5f545828eccbc9)]:
+  - @ledgerhq/live-env@1.0.0-next.0
+  - @ledgerhq/errors@6.16.2-next.0
+  - @ledgerhq/types-live@6.44.1-next.0
+  - @ledgerhq/devices@8.2.1-next.0
+
 ## 0.11.0
 
 ### Minor Changes

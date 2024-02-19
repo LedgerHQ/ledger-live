@@ -1,5 +1,6 @@
 import BigNumber from "bignumber.js";
-import { flatten, sortBy } from "lodash";
+import flatten from "lodash/flatten";
+import sortBy from "lodash/sortBy";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { Output } from "../storage/types";
 import Xpub from "../xpub";
@@ -8,6 +9,9 @@ import * as utils from "../utils";
 import { log } from "@ledgerhq/logs";
 import { OutputInfo } from "..";
 
+/**
+ * prioritize using UTXOs with smaller denominations
+ */
 export class Merge extends PickingStrategy {
   async selectUnspentUtxosToUse(
     xpub: Xpub,

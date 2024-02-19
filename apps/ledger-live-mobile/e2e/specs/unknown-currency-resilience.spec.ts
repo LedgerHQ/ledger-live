@@ -42,6 +42,6 @@ describe("Portfolio to load with unknown currency data in accounts", () => {
 
   it("opens to empty state", async () => {
     await portfolioPage.waitForPortfolioPageToLoad();
-    await expect(await portfolioPage.emptyPortfolioComponent()).toBeVisible();
+    await expect(await portfolioPage.emptyPortfolioList()).toBeVisible();
   });
 });

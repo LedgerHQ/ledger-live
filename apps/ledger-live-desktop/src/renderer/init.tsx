@@ -4,6 +4,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { implicitMigration } from "@ledgerhq/live-common/migrations/accounts";
 import { log } from "@ledgerhq/logs";
+import "../config/configInit";
 import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
 import i18n from "i18next";
@@ -49,7 +50,6 @@ import { addDevice, removeDevice, resetDevices } from "~/renderer/actions/device
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { listCachedCurrencyIds } from "./bridge/cache";
 import { LogEntry } from "winston";
-import { LiveConfig } from "@ledgerhq/live-config/featureFlags/index";
 
 const rootNode = document.getElementById("react-root");
 const TAB_KEY = 9;
@@ -86,12 +86,6 @@ async function init() {
     React,
     log,
     Transport,
-  });
-
-  LiveConfig.init({
-    appVersion: __APP_VERSION__,
-    platform: "desktop",
-    environment: process.env.NODE_ENV || "development",
   });
 
   expectOperatingSystemSupportStatus();

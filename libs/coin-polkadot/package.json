@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-polkadot",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "description": "Ledger Polkadot Coin integration",
   "keywords": [
     "Ledger",
@@ -28,14 +28,57 @@
       "lib-es/*": [
         "lib-es/*"
       ],
+      "logic": [
+        "lib/logic/index"
+      ],
+      "specs": [
+        "lib/test/bot-specs"
+      ],
       "*": [
-        "lib/*"
+        "lib/*",
+        "lib/bridge/*",
+        "lib/logic/*",
+        "lib/signer/*",
+        "lib/test/*",
+        "lib/types/*"
       ]
     }
   },
   "exports": {
     "./lib/*": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
+    "./deviceTransactionConfig": {
+      "require": "./lib/bridge/deviceTransactionConfig.js",
+      "default": "./lib-es/bridge/deviceTransactionConfig.js"
+    },
+    "./errors": {
+      "require": "./lib/types/errors.js",
+      "default": "./lib-es/types/errors.js"
+    },
+    "./formatters": {
+      "require": "./lib/bridge/formatters.js",
+      "default": "./lib-es/bridge/formatters.js"
+    },
+    "./logic": {
+      "require": "./lib/logic/index.js",
+      "default": "./lib-es/logic/index.js"
+    },
+    "./preload": {
+      "require": "./lib/bridge/preload.js",
+      "default": "./lib-es/bridge/preload.js"
+    },
+    "./serialization": {
+      "require": "./lib/bridge/serialization.js",
+      "default": "./lib-es/bridge/serialization.js"
+    },
+    "./specs": {
+      "require": "./lib/test/bot-specs.js",
+      "default": "./lib-es/test/bot-specs.js"
+    },
+    "./transaction": {
+      "require": "./lib/bridge/transaction.js",
+      "default": "./lib-es/bridge/transaction.js"
+    },
     "./*": {
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"
@@ -48,7 +91,6 @@
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
-    "@ledgerhq/live-app-sdk": "^0.8.1",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",

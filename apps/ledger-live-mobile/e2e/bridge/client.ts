@@ -6,13 +6,13 @@ import { AccountRaw } from "@ledgerhq/types-live";
 import { ConnectAppEvent } from "@ledgerhq/live-common/hw/connectApp";
 import { Event as AppEvent } from "@ledgerhq/live-common/hw/actions/app";
 import { ConnectManagerEvent } from "@ledgerhq/live-common/hw/connectManager";
-import { store } from "../../src/context/LedgerStore";
-import { importSettings } from "../../src/actions/settings";
-import { importStore as importAccounts } from "../../src/actions/accounts";
-import { acceptGeneralTerms } from "../../src/logic/terms";
-import { navigate } from "../../src/rootnavigation";
-import { BleState, SettingsState } from "../../src/reducers/types";
-import { importBle } from "../../src/actions/ble";
+import { store } from "~/context/store";
+import { importSettings } from "~/actions/settings";
+import { importStore as importAccounts } from "~/actions/accounts";
+import { acceptGeneralTerms } from "~/logic/terms";
+import { navigate } from "~/rootnavigation";
+import { BleState, SettingsState } from "~/reducers/types";
+import { importBle } from "~/actions/ble";
 import { InstallLanguageEvent } from "@ledgerhq/live-common/hw/installLanguage";
 import { LoadImageEvent } from "@ledgerhq/live-common/hw/staxLoadImage";
 import { SwapRequestEvent } from "@ledgerhq/live-common/exchange/swap/types";
@@ -24,6 +24,7 @@ import { RenameDeviceEvent } from "@ledgerhq/live-common/hw/renameDevice";
 import { LaunchArguments } from "react-native-launch-arguments";
 import { DeviceEventEmitter } from "react-native";
 import { DeviceUSB } from "../models/devices";
+import logReport from "../../src/log-report";
 
 export type MockDeviceEvent =
   | ConnectAppEvent
@@ -75,6 +76,7 @@ export type MessageData =
     }
   | { type: "acceptTerms" }
   | { type: "addUSB"; payload: DeviceUSB }
+  | { type: "getLogs"; fileName: string }
   | { type: "navigate"; payload: string }
   | { type: "importSettings"; payload: Partial<SettingsState> }
   | {
@@ -154,6 +156,17 @@ function onMessage(event: WebSocketMessageEvent) {
       break;
     case "addUSB":
       DeviceEventEmitter.emit("onDeviceConnect", msg.payload);
+      break;
+    case "getLogs":
+      const payload = JSON.stringify(logReport.getLogs());
+
+      ws.send(
+        JSON.stringify({
+          type: "appLogs",
+          fileName: msg.fileName,
+          payload,
+        }),
+      );
     default:
       break;
   }

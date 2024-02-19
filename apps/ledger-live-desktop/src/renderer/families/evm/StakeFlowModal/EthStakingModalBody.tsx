@@ -2,13 +2,16 @@ import { Flex, Text } from "@ledgerhq/react-ui";
 import { Account } from "@ledgerhq/types-live";
 import React, { useCallback, useState } from "react";
 import { useHistory } from "react-router-dom";
+import BigNumber from "bignumber.js";
+import { useTranslation } from "react-i18next";
 
 import { appendQueryParamsToDappURL } from "@ledgerhq/live-common/platform/utils/appendQueryParamsToDappURL";
-import { useTranslation } from "react-i18next";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { track } from "~/renderer/analytics/segment";
 import CheckBox from "~/renderer/components/CheckBox";
 import EthStakeIllustration from "~/renderer/icons/EthStakeIllustration";
-import { openURL } from "~/renderer/linking";
+
 import {
   CheckBoxContainer,
   LOCAL_STORAGE_KEY_PREFIX,
@@ -16,8 +19,15 @@ import {
 import { ListProvider, ListProviders } from "./types";
 import { getTrackProperties } from "./utils/getTrackProperties";
 
-import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import ProviderItem from "./component/ProviderItem";
+
+const ethMagnitude = getCryptoCurrencyById("ethereum").units[0].magnitude;
+
+const ETH_LIMIT = BigNumber(32).times(BigNumber(10).pow(ethMagnitude));
+
+// Comparison fns for sorting providers by minimum ETH required
+const ascending = (a: ListProvider, b: ListProvider) => (a?.min || 0) - (b?.min || 0);
+const descending = (a: ListProvider, b: ListProvider) => (b?.min || 0) - (a?.min || 0);
 
 type Props = {
   account: Account;
@@ -52,7 +62,7 @@ export function EthStakingModalBody({
     }: StakeOnClickProps) => {
       const value = `/platform/${liveAppId}`;
       const customDappUrl = queryParams && appendQueryParamsToDappURL(manifest, queryParams);
-      track("button_clicked", {
+      track("button_clicked2", {
         button: providerConfigID,
         ...getTrackProperties({ value, modal: source }),
       });
@@ -68,17 +78,6 @@ export function EthStakingModalBody({
     [history, account.id, onClose, source],
   );
 
-  const infoOnClick = useCallback(({ supportLink, id: providerConfigID }: ListProvider) => {
-    if (supportLink) {
-      track("button_clicked", {
-        button: `learn_more_${providerConfigID}`,
-        ...getTrackProperties({ value: supportLink }),
-        link: supportLink,
-      });
-      openURL(supportLink, "OpenURL", getTrackProperties({ value: supportLink }));
-    }
-  }, []);
-
   const redirectIfOnlyProvider = useCallback(
     (stakeOnClickProps: StakeOnClickProps) => {
       if (singleProviderRedirectMode && listProviders.length === 1) {
@@ -92,11 +91,15 @@ export function EthStakingModalBody({
     const value = !doNotShowAgain;
     global.localStorage.setItem(`${LOCAL_STORAGE_KEY_PREFIX}${account?.currency?.id}`, `${value}`);
     setDoNotShowAgain(value);
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "not_show",
       ...getTrackProperties({ value, modal: source }),
     });
   }, [doNotShowAgain, account?.currency?.id, source]);
+
+  const hasMinValidatorEth = account.spendableBalance.isGreaterThan(ETH_LIMIT);
+
+  const listProvidersSorted = listProviders.sort(hasMinValidatorEth ? descending : ascending);
 
   return (
     <Flex flexDirection={"column"} alignItems="center" width={"100%"}>
@@ -115,11 +118,10 @@ export function EthStakingModalBody({
       </Flex>
       <Flex flexDirection={"column"} mt={5} px={20} width="100%">
         <Flex flexDirection={"column"} width="100%">
-          {listProviders.map(item => (
+          {listProvidersSorted.map(item => (
             <Flex key={item.id} width="100%" flexDirection={"column"}>
               <ProviderItem
                 provider={item}
-                infoOnClick={infoOnClick}
                 stakeOnClick={stakeOnClick}
                 redirectIfOnlyProvider={redirectIfOnlyProvider}
               />

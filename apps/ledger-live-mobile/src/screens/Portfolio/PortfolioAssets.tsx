@@ -9,7 +9,7 @@ import { useDistribution } from "~/actions/general";
 import { TrackScreen } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import { Box } from "@ledgerhq/native-ui";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { blacklistedTokenIdsSelector, discreetModeSelector } from "~/reducers/settings";
 import Assets from "./Assets";
 import PortfolioQuickActionsBar from "./PortfolioQuickActionsBar";

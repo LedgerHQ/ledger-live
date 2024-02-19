@@ -2,6 +2,7 @@ import type { Operation, AccountLike, Account, DeviceInfo } from "@ledgerhq/type
 import type { NavigatorScreenParams, ParamListBase } from "@react-navigation/native";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+// eslint-disable-next-line no-restricted-imports
 import type { PropertyPath } from "lodash";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { MappedSwapOperation } from "@ledgerhq/live-common/exchange/swap/types";
@@ -97,6 +98,7 @@ export type BaseNavigatorStackParamList = {
     defaultCurrencyId?: string;
     defaultTicker?: string;
     customDappURL?: string;
+    uri?: string;
   };
   [ScreenName.Recover]: {
     platform?: string;

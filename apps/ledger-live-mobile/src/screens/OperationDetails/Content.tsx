@@ -18,8 +18,8 @@ import {
   isEditableOperation,
   isStuckOperation,
 } from "@ledgerhq/live-common/operation";
-import { useNftCollectionMetadata, useNftMetadata } from "@ledgerhq/live-common/nft/index";
-import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
+import { useNftCollectionMetadata, useNftMetadata } from "@ledgerhq/live-nft-react";
+import { NFTResource } from "@ledgerhq/live-nft/types";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { NavigatorName, ScreenName } from "~/const";
 import LText from "~/components/LText";

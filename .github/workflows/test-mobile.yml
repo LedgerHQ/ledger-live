@@ -67,14 +67,14 @@ jobs:
         run: pnpm mobile test
       - uses: actions/upload-artifact@v3
         name: upload eslint json output
-        if: always()
+        if: ${{ !cancelled() }}
         with:
           name: lint
           path: ${{ github.workspace }}/apps/ledger-live-mobile/lint.json
 
   report:
     needs: codecheck
-    if: always() && !cancelled() && github.event_name == 'workflow_dispatch'
+    if: ${{ !cancelled() && github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     steps:
       - name: "download linter results"
@@ -83,7 +83,7 @@ jobs:
           name: lint
       - uses: actions/github-script@v6
         name: "format report"
-        if: always()
+        if: ${{ !cancelled() }}
         id: status
         with:
           script: |

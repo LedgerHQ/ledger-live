@@ -7,7 +7,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { NavigationContainerEventMap } from "@react-navigation/native";
 import { Box } from "@ledgerhq/native-ui";
-import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import Portfolio from "~/screens/Portfolio";
 import WalletNftGallery from "~/screens/Nft/WalletNftGallery";
 import {
@@ -24,6 +24,7 @@ import WalletTabNavigatorTabBarDisabled from "../WalletTab/WalletTabNavigatorTab
 import { WalletTabNavigatorStackParamList } from "./types/WalletTabNavigator";
 import { ScreenName, NavigatorName } from "~/const/navigation";
 import MarketNavigator from "./MarketNavigator";
+import MarketWalletTabNavigator from "LLM/features/Market/WalletTabNavigator";
 
 const WalletTab = createMaterialTopTabNavigator<WalletTabNavigatorStackParamList>();
 
@@ -36,6 +37,7 @@ const tabBarDisabledOptions = (props: MaterialTopTabBarProps) => (
 export default function WalletTabNavigator() {
   const walletNftGalleryFeature = useFeature("walletNftGallery");
   const ptxEarnFeature = useFeature("ptxEarn");
+  const marketNewArch = useFeature("llmMarketNewArch");
 
   const dispatch = useDispatch();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
@@ -93,7 +95,7 @@ export default function WalletTabNavigator() {
           {ptxEarnFeature?.enabled && (
             <WalletTab.Screen
               name={NavigatorName.Market}
-              component={MarketNavigator}
+              component={marketNewArch?.enabled ? MarketWalletTabNavigator : MarketNavigator}
               options={{
                 title: t("wallet.tabs.market"),
               }}

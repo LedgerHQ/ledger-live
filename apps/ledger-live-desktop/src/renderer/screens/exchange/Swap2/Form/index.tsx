@@ -24,7 +24,7 @@ import { flattenAccountsSelector, shallowAccountsSelector } from "~/renderer/red
 import { trackSwapError, useGetSwapTrackingProperties } from "../utils/index";
 import ExchangeDrawer from "./ExchangeDrawer/index";
 import SwapFormSelectors from "./FormSelectors";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 import useRefreshRates from "./hooks/useRefreshRates";
 import LoadingState from "./Rates/LoadingState";
@@ -39,6 +39,8 @@ import { SwapMigrationUI } from "./Migrations/SwapMigrationUI";
 import { useSwapLiveAppHook } from "~/renderer/hooks/swap-migrations/useSwapLiveAppHook";
 import { maybeTezosAccountUnrevealedAccount } from "@ledgerhq/live-common/exchange/swap/index";
 import SwapFormSummary from "./FormSummary";
+import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
+import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 
 const DAPP_PROVIDERS = ["paraswap", "oneinch", "moonpay"];
 
@@ -48,10 +50,6 @@ const Wrapper = styled(Box).attrs({
 })`
   row-gap: 2rem;
   max-width: 37rem;
-`;
-
-const Hide = styled.div`
-  opacity: 0;
 `;
 
 const idleTime = 60 * 60000; // 1 hour
@@ -351,7 +349,7 @@ const SwapForm = () => {
   const onSubmit = () => {
     if (!exchangeRate) return;
 
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "Request",
       page: "Page Swap Form",
       ...swapDefaultTrack,
@@ -408,7 +406,10 @@ const SwapForm = () => {
   };
 
   const swapLiveAppManifestID = useSwapLiveAppManifestID();
+  const localManifest = useLocalLiveAppManifest(swapLiveAppManifestID || undefined);
+  const remoteManifest = useRemoteLiveAppManifest(swapLiveAppManifestID || undefined);
 
+  const manifest = localManifest || remoteManifest;
   useSwapLiveAppHook({
     isSwapLiveAppEnabled: isSwapLiveAppEnabled.enabled,
     manifestID: swapLiveAppManifestID,
@@ -444,11 +445,6 @@ const SwapForm = () => {
       />
       {pageState === "empty" && <EmptyState />}
       {pageState === "loading" && <LoadingState />}
-      {pageState === "initial" && (
-        <Hide>
-          <LoadingState />
-        </Hide>
-      )}
 
       {pageState === "loaded" && (
         <>
@@ -459,9 +455,9 @@ const SwapForm = () => {
         manifestID={swapLiveAppManifestID}
         liveAppEnabled={isSwapLiveAppEnabled.enabled}
         liveApp={
-          swapLiveAppManifestID ? (
+          swapLiveAppManifestID && manifest ? (
             <SwapWebView
-              manifestID={swapLiveAppManifestID}
+              manifest={manifest}
               swapState={swapWebProps}
               // When live app crash, it should disable live app and fall back to native UI
               liveAppUnavailable={isSwapLiveAppEnabled.onLiveAppCrashed}

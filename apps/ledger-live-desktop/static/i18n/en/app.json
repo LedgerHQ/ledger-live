@@ -3609,22 +3609,33 @@
     "stake": {
       "title": "Grow your ETH holdings",
       "subTitle": "Stake your ETH and grow your holdings by receiving daily rewards directly into your Ledger Live.",
+      "tagMinimum": "Requires {{min}} ETH",
+      "kiln_pooling": {
+        "title": "Kiln staking pool",
+        "description": "Stake with no minimum. Earn auto-compounded rewards with no lock-up period.",
+        "supportLink": "Learn more about Kiln pooling"
+      },
       "lido": {
-        "title": "Earn with Lido",
-        "description": "Stake your Ethereum with Lido and earn rewards daily. No lock-up period. No minimum.",
+        "title": "Lido",
+        "description": "Stake any amount of ETH for instant liquidity and daily rewards.",
         "supportLink": "Learn more about Lido"
+      },
+      "stader-eth": {
+        "title": "Stader Labs",
+        "description": "Stake with no minimum. Earn auto-compounded rewards with access to instant liquidity.",
+        "supportLink": "Learn more about Stader pooling"
       },
       "kiln": {
         "title": "Kiln dedicated staking",
         "tag": "Requires 32 ETH",
-        "description": "Stake with dedicated validators. Requires multiples of 32 ETH. Rewards are manually claimed. Exit anytime.",
+        "description": "Stake over 32 ETH on dedicated validators and easily claim rewards.",
         "supportLink": "Learn more about Kiln validator"
       },
-      "kiln_pooling": {
-        "title": "Kiln staking pool",
-        "tag": "No minimum",
-        "description": "Join a staking pool. No minimum ETH is required. Rewards are compounded automatically. Exit anytime.",
-        "supportLink": "Learn more about Kiln pooling"
+      "figment": {
+        "title": "Figment",
+        "tag": "Requires 32 ETH",
+        "description": "Stake over 32 ETH on dedicated validators and get rewards automatically sent to your account.",
+        "supportLink": "Learn more about Figment validator"
       }
     }
   },
@@ -5362,7 +5373,7 @@
       "title": "Recipient address is inactive. Send at least {{minimalAmount}} to activate it"
     },
     "NotEnoughGas": {
-      "title": "You need {{fees}} {{ticker}} for network fees to swap as you are on {{cryptoName}} network. <link0>Buy {{ticker}}</link0>"
+      "title": "You need {{fees}} {{ticker}} in your account to pay for transaction fees on the {{cryptoName}} network.  <link0>Buy {{ticker}}</link0> or deposit more into your account."
     },
     "NotEnoughGasSwap": {
       "title": "You need {{fees}} {{ticker}} for network fees to swap as you are on {{cryptoName}} network. <link0>Buy {{ticker}}</link0>"

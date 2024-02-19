@@ -1,5 +1,6 @@
 import BigNumber from "bignumber.js";
-import { flatten, sortBy } from "lodash";
+import flatten from "lodash/flatten";
+import sortBy from "lodash/sortBy";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { Output } from "../storage/types";
 import Xpub from "../xpub";
@@ -9,6 +10,10 @@ import { DeepFirst } from "./DeepFirst";
 import { log } from "@ledgerhq/logs";
 import { OutputInfo } from "..";
 
+/**
+ * Coinselect algorithm
+ * Aims to pick the best UTXOs to minimize the transaction fees in the current transaction
+ */
 export class CoinSelect extends PickingStrategy {
   async selectUnspentUtxosToUse(
     xpub: Xpub,
