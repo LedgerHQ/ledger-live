@@ -73,6 +73,7 @@ const account_list_mock = {
     },
     {
       id: "7c99915b-f186-5b44-82cc-fb21fa084292",
+      parentAccountId: "e86e3bc1-49e1-53fd-a329-96ba6f1b06d3",
       name: "Ethereum 1 (DAI)",
       address: "0x6EB963EFD0FEF7A4CFAB6CE6F1421C3279D11707",
       currency: "ethereum/erc20/dai_stablecoin_v2_0",
@@ -91,6 +92,7 @@ const account_list_mock = {
     },
     {
       id: "f5a525d7-1ec6-57ca-a26a-d34fc5158e84",
+      parentAccountId: "d9d1d396-2081-53e1-9c67-f0623e0c4d3a",
       name: "Ethereum 2 (DAI)",
       address: "0x046615F0862392BC5E6FB43C92AAD73DE158D235",
       currency: "ethereum/erc20/dai_stablecoin_v2_0",
@@ -100,6 +102,7 @@ const account_list_mock = {
     },
     {
       id: "54b2563c-bd90-52c1-aca0-6099c701221f",
+      parentAccountId: "d9d1d396-2081-53e1-9c67-f0623e0c4d3a",
       name: "Ethereum 2 (USDT)",
       address: "0x046615F0862392BC5E6FB43C92AAD73DE158D235",
       currency: "ethereum/erc20/usd_tether__erc20_",
@@ -109,6 +112,7 @@ const account_list_mock = {
     },
     {
       id: "80828eb7-49ca-54e8-8454-79c0e5557aec",
+      parentAccountId: "d9d1d396-2081-53e1-9c67-f0623e0c4d3a",
       name: "Ethereum 2 (USDC)",
       address: "0x046615F0862392BC5E6FB43C92AAD73DE158D235",
       currency: "ethereum/erc20/usd__coin",
@@ -127,6 +131,7 @@ const account_list_mock = {
     },
     {
       id: "e9ee57d1-f29c-55ed-ad85-de9b6426ce45",
+      parentAccountId: "2f374bf7-948a-56b8-b967-fd6acd9e1f3d",
       name: "Ethereum 3 (DAI)",
       address: "0xE9CAF97C863A92EBB4D76FF37EE71C84D7E09723",
       currency: "ethereum/erc20/dai_stablecoin_v2_0",
@@ -136,6 +141,7 @@ const account_list_mock = {
     },
     {
       id: "753b0907-3616-5350-bccb-2484cefb2bec",
+      parentAccountId: "2f374bf7-948a-56b8-b967-fd6acd9e1f3d",
       name: "Ethereum 3 (USDT)",
       address: "0xE9CAF97C863A92EBB4D76FF37EE71C84D7E09723",
       currency: "ethereum/erc20/usd_tether__erc20_",
@@ -145,6 +151,7 @@ const account_list_mock = {
     },
     {
       id: "d53ce93d-61d1-5ae1-8258-85a03e47f096",
+      parentAccountId: "2f374bf7-948a-56b8-b967-fd6acd9e1f3d",
       name: "Ethereum 3 (USDC)",
       address: "0xE9CAF97C863A92EBB4D76FF37EE71C84D7E09723",
       currency: "ethereum/erc20/usd__coin",
