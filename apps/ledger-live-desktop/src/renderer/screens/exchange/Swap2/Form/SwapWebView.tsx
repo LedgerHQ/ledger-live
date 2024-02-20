@@ -20,7 +20,7 @@ import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-ap
 import { useRedirectToSwapHistory } from "../utils/index";
 
 import { captureException } from "~/sentry/internal";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { usePTXCustomHandlers } from "~/renderer/components/WebPTXPlayer/CustomHandlers";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
