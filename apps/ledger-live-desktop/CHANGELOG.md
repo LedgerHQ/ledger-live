@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.77.1
+
+### Patch Changes
+
+- [#6249](https://github.com/LedgerHQ/ledger-live/pull/6249) [`687dbd5`](https://github.com/LedgerHQ/ledger-live/commit/687dbd53234c6bf91583533421eedc196782b29d) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - import useFeature live-common
+
 ## 2.77.1-hotfix.0
 
 ### Patch Changes
