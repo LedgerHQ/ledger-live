@@ -911,9 +911,6 @@
     "FirmwareNotRecognized" : {
       "title" : "Proveedor no válido",
       "description" : "Tienes que cambiar el ajuste \"Proveedor de Mi Ledger\". Para cambiarlo, abre los \"Ajustes\" de Ledger Live, selecciona \"Funciones experimentales\" y, a continuación, elige un proveedor distinto."
-    },
-    "TezosUnrevealedAccount" : {
-      "title" : "Permuta no disponible: es necesario un envío o delegación inicial con la cuenta de Tezos o el cambio de par."
     }
   },
   "crash" : {
@@ -6530,7 +6527,7 @@
     "ethereum" : {
       "title" : "Rentabiliza tus tenencias en ETH",
       "subTitle" : "Pon en participación ETH y genera ganancias con recompensas diarias directamente desde Ledger Live.",
-      "tagMinimum" : "Requires {{min}} ETH",
+      "tagMinimum" : "Requiere {{min}} ETH",
       "close" : "Cerrar",
       "providers" : {
         "kiln_pooling" : {
