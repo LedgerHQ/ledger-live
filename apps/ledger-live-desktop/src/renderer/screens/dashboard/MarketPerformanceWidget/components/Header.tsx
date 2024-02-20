@@ -1,7 +1,7 @@
 import React from "react";
 import { Flex, Text } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
-import { HeaderProps, Order } from "./types";
+import { HeaderProps, Order } from "../types";
 import styled from "@ledgerhq/react-ui/components/styled";
 import { track } from "~/renderer/analytics/segment";
 

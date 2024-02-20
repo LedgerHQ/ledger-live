@@ -1457,7 +1457,11 @@
       "buy": "Buy",
       "swap": "Swap",
       "gainers": "Gainers",
-      "losers": "Losers"
+      "losers": "Losers",
+      "error": {
+        "title": "Sorry, we’re unable to load the trend",
+        "description": "Please try again later"
+      }
     }
   },
   "currentAddress": {

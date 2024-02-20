@@ -1,5 +1,5 @@
 import React from "react";
-import { PropsBody, PropsBodyElem } from "./types";
+import { PropsBody, PropsBodyElem } from "../types";
 import { Flex, Text } from "@ledgerhq/react-ui";
 import styled from "@ledgerhq/react-ui/components/styled";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
