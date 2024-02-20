@@ -492,7 +492,7 @@
       "description" : "Versuchen Sie, die App über My Ledger neu zu installieren."
     },
     "NotEnoughGas" : {
-      "title" : "Sie benötigen {{fees}} {{ticker}} für Gebühren, da Sie sich im {{cryptoName}}-Netzwerk befinden. <link0>{{ticker}} kaufen</link0>",
+      "title" : "Sie brauchen {{fees}} {{ticker}} auf Ihrem Konto, um die Transaktionsgebühren für das {{cryptoName}}-Netzwerk zu bezahlen.  <link0>Kaufen Sie {{ticker}}</link0> oder zahlen Sie zusätzliche Mittel auf Ihr Konto ein.",
       "description" : "Bitte senden Sie einige Coins an Ihr Konto, um Token-Transaktionen bezahlen zu können."
     },
     "NotEnoughGasSwap" : {
