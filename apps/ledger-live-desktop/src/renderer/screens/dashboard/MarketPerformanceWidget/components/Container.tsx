@@ -26,7 +26,10 @@ export function MarketPerformanceWidgetContainer({ variant, list, setOrder, orde
             <InfiniteLoader />
           </Flex>
         ) : state.hasError ? (
-          <Error />
+          <Error
+            title={"dashboard.marketPerformanceWidget.error.title"}
+            description={"dashboard.marketPerformanceWidget.error.description"}
+          />
         ) : (
           <Body data={list} order={order} />
         )}

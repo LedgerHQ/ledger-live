@@ -1,4 +1,7 @@
-import { makePerformanceMarketAssetsList } from "@ledgerhq/live-countervalues/portfolio";
+import {
+  PerformanceMarketDatapoint,
+  makePerformanceMarketAssetsList,
+} from "@ledgerhq/live-countervalues/portfolio";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
 import { useSelector } from "react-redux";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
@@ -10,6 +13,17 @@ import { useEffect, useMemo, useState } from "react";
 import { Order, State } from "./types";
 
 const TIMEOUT = 7500;
+
+const LIMIT = 5;
+
+function getSlicedList(list: PerformanceMarketDatapoint[], order: Order) {
+  const start = order === Order.asc ? 0 : list.length - LIMIT;
+  const end = order === Order.asc ? LIMIT : list.length;
+
+  return list
+    .slice(start, end)
+    .filter(elem => (order === Order.asc ? elem.change > 0 : elem.change < 0));
+}
 
 function usePerformanceMarketAssetsList() {
   const cvsState = useCountervaluesState();
@@ -35,9 +49,10 @@ export function useMarketPerformanceWidget() {
     hasError: false,
   });
   const list = usePerformanceMarketAssetsList();
-  console.log(
-    list.map(o => o.currency.name + " \t" + Math.round(o.change * 10000) / 100 + "%").join("\n"),
-  );
+
+  // console.log(
+  //   list.map(o => o.currency.name + " \t" + Math.round(o.change * 10000) / 100 + "%").join("\n"),
+  // );
 
   useEffect(() => {
     let timeout: NodeJS.Timeout;
@@ -54,8 +69,10 @@ export function useMarketPerformanceWidget() {
     return () => clearTimeout(timeout);
   }, [list.length]);
 
+  const sliced = useMemo(() => getSlicedList(list, order), [list, order]);
+
   return {
-    list,
+    list: sliced,
     order,
     setOrder,
     state,

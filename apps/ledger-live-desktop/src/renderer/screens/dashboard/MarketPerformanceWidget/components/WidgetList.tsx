@@ -1,5 +1,5 @@
 import React from "react";
-import { Order, PropsBody, PropsBodyElem } from "../types";
+import { PropsBody, PropsBodyElem } from "../types";
 import { Flex, Text } from "@ledgerhq/react-ui";
 import styled from "@ledgerhq/react-ui/components/styled";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
@@ -7,18 +7,18 @@ import FormattedVal from "~/renderer/components/FormattedVal";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import CurrencyUnitValue from "~/renderer/components/CurrencyUnitValue";
 import { usePrice } from "~/renderer/hooks/usePrice";
-
-const LIMIT = 5;
+import { MissingData } from "./MissingData";
 
 export function WidgetList({ data, order }: PropsBody) {
-  const start = order === Order.asc ? 0 : data.length - LIMIT;
-  const end = order === Order.asc ? LIMIT : data.length;
+  const noData = data.length === 0;
 
   return (
     <Flex flexDirection="column" flex={1}>
-      {data.slice(start, end).map((elem, i) => (
-        <WidgetRow key={i} index={i + 1} data={elem} isFirst={i === 0} />
-      ))}
+      {noData ? (
+        <MissingData order={order} />
+      ) : (
+        data.map((elem, i) => <WidgetRow key={i} index={i + 1} data={elem} isFirst={i === 0} />)
+      )}
     </Flex>
   );
 }
