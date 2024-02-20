@@ -144,7 +144,7 @@
       }
     },
     "ConnectManagerTimeout": {
-      "title": "Sorry, My Ledger connection failed",
+      "title": "Sorry, secure connection with Ledger failed",
       "description": {
         "ios": {
           "nanoX": "Please make sure your {{productName}} is unlocked and has Bluetooth enabled."
@@ -622,8 +622,8 @@
       "primaryCTA": "Open My Ledger"
     },
     "UserRefusedAllowManager": {
-      "title": "Manager disabled on device",
-      "description": "Please allow the Manager on your device, then try again."
+      "title": "Secure connection denied on the device",
+      "description": "Please allow the secure connection on your device and retry."
     },
     "UserRefusedAddress": {
       "title": "Receive address rejected",
@@ -3886,7 +3886,7 @@
     "stayInTheAppPlz": "Stay in the Ledger Live app and keep your Ledger nearby.",
     "allowAppPermission": "Open the {{wording}} app on your device",
     "allowAppPermissionSubtitleToken": "to manage your {{token}} tokens",
-    "allowManagerPermission": "Allow Ledger Manager on your {{productName}}",
+    "allowManagerPermission": "Allow a secure connection with Ledger",
     "allowRenaming": "Allow renaming on your {{productName}}",
     "allowRemoveCustomLockscreen": "Confirm removal of image on your Ledger Stax",
     "allowSecureConnection": "Allow a secure connection with Ledger",

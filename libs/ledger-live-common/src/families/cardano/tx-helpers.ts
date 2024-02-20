@@ -6,7 +6,7 @@ import {
   StakeDeregistrationParams,
   Withdrawal,
 } from "@cardano-foundation/ledgerjs-hw-app-cardano";
-import { str_to_path } from "@cardano-foundation/ledgerjs-hw-app-cardano/dist/utils";
+import { str_to_path } from "@cardano-foundation/ledgerjs-hw-app-cardano/dist/utils/address";
 import { types as TyphonTypes, address as TyphonAddress } from "@stricahq/typhonjs";
 import groupBy from "lodash/groupBy";
 import {

@@ -29,8 +29,7 @@ type Props = {
   toCurrency: SwapSelectorStateType["currency"];
   rates: RatesReducerState["value"];
   provider: string | undefined | null;
-  refreshTime: number;
-  countdown: boolean;
+  countdownSecondsToRefresh: number | undefined;
 };
 
 const TableHeader = styled(Box).attrs({
@@ -54,8 +53,7 @@ export default function ProviderRate({
   toCurrency,
   rates,
   provider,
-  refreshTime,
-  countdown,
+  countdownSecondsToRefresh,
 }: Props) {
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const dispatch = useDispatch();
@@ -63,11 +61,12 @@ export default function ProviderRate({
   const [defaultPartner, setDefaultPartner] = useState<string | null>(null);
   const selectedRate = useSelector(rateSelector);
   const filteredRates = useMemo(() => filterRates(rates, filter), [rates, filter]);
-  const providers = [...new Set(rates?.map(rate => rate.provider) ?? [])];
-  const exchangeRates =
-    toCurrency && rates
+  const providers = useMemo(() => [...new Set(rates?.map(rate => rate.provider) ?? [])], [rates]);
+  const exchangeRates = useMemo(() => {
+    return toCurrency && rates
       ? rates.map(({ toAmount }) => formatCurrencyUnit(getFeesUnit(toCurrency), toAmount))
       : [];
+  }, [toCurrency, rates]);
   const updateRate = useCallback(
     (rate: ExchangeRate) => {
       const value = rate.rate ?? rate.provider;
@@ -147,9 +146,9 @@ export default function ProviderRate({
         >
           <Trans i18nKey="swap2.form.rates.title" />
         </Text>
-        {countdown && (
+        {countdownSecondsToRefresh && (
           <Box horizontal fontSize={3}>
-            <Countdown refreshTime={refreshTime} rates={rates} />
+            <Countdown countdown={countdownSecondsToRefresh} />
           </Box>
         )}
       </Box>

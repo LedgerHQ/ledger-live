@@ -14,7 +14,7 @@ import { fromTransactionRaw } from "./transaction";
 import { testBridge } from "../../__tests__/test-helpers/bridge";
 
 const SEED_IDENTIFIER = "SP3KS7VMY2ZNE6SB88PHR4SKRK2EEPHS8N8MCCBR9";
-const DUMMY_PUBKEY = "022d82baea2d041ac281bebafab11571f45db4f163a9e3f8640b1c804a4ac6f662";
+const SEED_IDENTIFIER_PUBKEY = "022a460decc9dba8c452927fecb33d7ae25a8d79dc5442b84feaf8f3aa0e2b575d";
 const ACCOUNT_1 = "SP2DV2RVZP1A69Q6VAG5PHEQ6ZHQHZPCV84TMYNGN";
 
 const stacks: CurrenciesData<Transaction> = {
@@ -36,16 +36,17 @@ const stacks: CurrenciesData<Transaction> = {
   accounts: [
     {
       raw: {
-        id: `js:2:stacks:${DUMMY_PUBKEY}:`,
+        id: `js:2:stacks:${SEED_IDENTIFIER_PUBKEY}:`,
         seedIdentifier: SEED_IDENTIFIER,
         name: "Stacks 1",
         derivationMode: "",
         index: 0,
         freshAddress: SEED_IDENTIFIER,
-        freshAddressPath: "44'/5757'/0'/0/0",
+        freshAddressPath: "",
         freshAddresses: [],
         blockHeight: 0,
         operations: [],
+        xpub: SEED_IDENTIFIER_PUBKEY,
         pendingOperations: [],
         currencyId: "stacks",
         unitMagnitude: 6,

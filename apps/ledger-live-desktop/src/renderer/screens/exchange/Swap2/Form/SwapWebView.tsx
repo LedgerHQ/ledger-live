@@ -20,9 +20,9 @@ import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-ap
 import { useRedirectToSwapHistory } from "../utils/index";
 
 import { captureException } from "~/sentry/internal";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { usePTXCustomHandlers } from "~/renderer/components/WebPTXPlayer/CustomHandlers";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const isDevelopment = process.env.NODE_ENV === "development";
 

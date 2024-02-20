@@ -322,6 +322,7 @@ export type SwapDataType = {
   refetchRates: () => void;
   updateSelectedRate: (selected?: ExchangeRate) => void;
   targetAccounts?: Account[];
+  countdown: undefined | number;
 };
 
 export type SwapTransactionType = UseBridgeTransactionResult & {

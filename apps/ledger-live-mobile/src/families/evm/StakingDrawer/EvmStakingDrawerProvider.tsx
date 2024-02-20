@@ -34,7 +34,8 @@ export function EvmStakingDrawerProvider({
 }: Props) {
   const { t, i18n } = useTranslation();
   const manifest = useManifest(provider.liveAppId);
-  const hasTag = provider?.min && i18n.exists(`stake.ethereum.providers.${provider.id}.tag`);
+  const hasTag: boolean =
+    !!provider?.min && i18n.exists(`stake.ethereum.providers.${provider.id}.tag`);
 
   const providerPress = useCallback(() => {
     if (manifest) {

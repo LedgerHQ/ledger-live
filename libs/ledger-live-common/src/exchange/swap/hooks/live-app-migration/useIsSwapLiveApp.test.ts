@@ -1,4 +1,7 @@
-import { renderHook } from "@testing-library/react-hooks";
+/**
+ * @jest-environment jsdom
+ */
+import { renderHook } from "@testing-library/react";
 import { useFeature } from "../../../../featureFlags";
 import { useIsSwapLiveApp } from "./useIsSwapLiveApp";
 import { cryptocurrenciesById } from "@ledgerhq/cryptoassets/currencies";
