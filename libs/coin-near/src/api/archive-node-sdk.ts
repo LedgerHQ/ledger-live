@@ -5,7 +5,6 @@ import { getEnv } from "@ledgerhq/live-env";
 import { canUnstake, canWithdraw, getYoctoThreshold } from "../logic";
 import { getCurrentNearPreloadData } from "../preload";
 import { NearAccount } from "../types";
-import { getStakingDeposits } from "./index";
 import {
   NearAccessKey,
   NearAccountDetails,
@@ -159,8 +158,6 @@ export const getStakingPositions = async (
   totalAvailable: BigNumber;
   totalPending: BigNumber;
 }> => {
-  const stakingDeposits = await getStakingDeposits(address);
-
   const { connect, keyStores } = nearAPI;
 
   const config = {
@@ -177,16 +174,18 @@ export const getStakingPositions = async (
   let totalAvailable = new BigNumber(0);
   let totalPending = new BigNumber(0);
 
+  const activeDelegatedStakeBalance = await account.getActiveDelegatedStakeBalance();
+
   const stakingPositions = await Promise.all(
-    stakingDeposits.map(async ({ validator_id: validatorId, deposit }) => {
+    activeDelegatedStakeBalance.stakedValidators.map(async ({ validatorId, amount: rawTotal }) => {
       const contract = new nearAPI.Contract(account, validatorId, {
         viewMethods: [
           "get_account_staked_balance",
           "get_account_unstaked_balance",
           "is_account_unstaked_balance_available",
-          "get_account_total_balance",
         ],
         changeMethods: [],
+        useLocalViewExecution: false,
       }) as NearContract;
 
       const rawStaked = await contract.get_account_staked_balance({
@@ -196,9 +195,6 @@ export const getStakingPositions = async (
         account_id: address,
       });
       const isAvailable = await contract.is_account_unstaked_balance_available({
-        account_id: address,
-      });
-      const rawTotal = await contract.get_account_total_balance({
         account_id: address,
       });
 
@@ -215,7 +211,7 @@ export const getStakingPositions = async (
       const staked = new BigNumber(rawStaked);
       available = new BigNumber(available);
       pending = new BigNumber(pending);
-      rewards = new BigNumber(rawTotal).minus(deposit);
+      rewards = new BigNumber(rawTotal || "0").minus(staked);
 
       const stakingThreshold = getYoctoThreshold();
 
