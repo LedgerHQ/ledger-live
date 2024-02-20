@@ -61,8 +61,8 @@ export type NearAccessKey = {
 };
 
 export type NearStakingDeposit = {
-  deposit: string;
-  validator_id: string;
+  amount: string;
+  pool: string;
 };
 
 export type NearStakingPosition = {

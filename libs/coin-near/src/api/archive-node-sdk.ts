@@ -178,7 +178,7 @@ export const getStakingPositions = async (
   let totalPending = new BigNumber(0);
 
   const stakingPositions = await Promise.all(
-    stakingDeposits.map(async ({ validator_id: validatorId, deposit }) => {
+    stakingDeposits.map(async ({ pool: validatorId, amount: deposit }) => {
       const contract = new nearAPI.Contract(account, validatorId, {
         viewMethods: [
           "get_account_staked_balance",
