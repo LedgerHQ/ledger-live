@@ -163,7 +163,7 @@ const SwapOperationDetails = ({
             returnTo: "/swap",
             accountId: mainAccount.id,
             customDappUrl: undefined,
-            goToUrl: "https://buy.moonpay.com/trade_history",
+            goToURL: "https://buy.moonpay.com/trade_history?ledgerlive",
           },
         });
       } else {
