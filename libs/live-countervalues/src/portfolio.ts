@@ -1,4 +1,4 @@
-import type { CounterValuesState } from "./types";
+import type { CounterValuesState, MappedAsset } from "./types";
 import { calculate, calculateMany } from "./logic";
 import {
   flattenAccounts,
@@ -501,6 +501,10 @@ export function makePerformanceMarketAssetsList(
    * assets is the list of assets to consider. it is expected for them to have data loaded in cvState.
    */
   assets: Currency[],
+  /**
+   * mappedAssets result to be able to group the assets by network (e.g. USDT on Ethereum and on Polygon is one)
+   */
+  mappedAssets: Map<string, MappedAsset>,
   /**
    * referenceDate is the date to use as reference to calculate the performance.
    */

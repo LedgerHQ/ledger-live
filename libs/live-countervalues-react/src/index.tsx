@@ -24,12 +24,14 @@ import type {
   CounterValuesState,
   CounterValuesStateRaw,
   CountervaluesSettings,
+  MappedAsset,
   TrackingPair,
 } from "@ledgerhq/live-countervalues/types";
 import { useDebounce } from "@ledgerhq/live-hooks/useDebounce";
 import { log } from "@ledgerhq/logs";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
+import { getMappedAssets } from "@ledgerhq/live-countervalues/api/mapped-service";
 
 // Polling is the control object you get from the high level <PollingConsumer>{ polling => ...
 export type Polling = {
@@ -78,6 +80,8 @@ const CountervaluesContext = createContext<CounterValuesState>(initialState);
 
 const CountervaluesMarketcapIdsContext = createContext<string[]>([]);
 
+const MappedServiceContext = createContext<Map<string, MappedAsset>>(new Map());
+
 function trackingPairsHash(a: TrackingPair[]) {
   return a
     .map(p => `${p.from.ticker}:${p.to.ticker}:${p.startDate.toISOString().slice(0, 10) || ""}`)
@@ -116,6 +120,36 @@ function useMarketcap() {
   }, [fetchNonce]);
 
   return ids;
+}
+
+/**
+ * Internal only. fetch the marketcap and keep it in sync.
+ * the data is shared through a context, you can useMappedService to get it.
+ */
+function useMappedServiceFetching() {
+  const [mappedAssets, setMappedAssets] = useState<MappedAsset[]>([]);
+  const [fetchNonce, setFetchNonce] = useState(0);
+
+  useEffect(() => {
+    let timeout: NodeJS.Timeout | null = null;
+    getMappedAssets().then(
+      ids => {
+        setMappedAssets(ids);
+        timeout = setTimeout(() => setFetchNonce(n => n + 1), marketcapRefresh);
+      },
+      error => {
+        log("countervalues", "error fetching marketcap ids " + error);
+        timeout = setTimeout(() => setFetchNonce(n => n + 1), marketcapRefreshOnError);
+      },
+    );
+    return () => {
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+    };
+  }, [fetchNonce]);
+
+  return mappedAssets;
 }
 
 // infer the tracking pairs for the top coins that the portfolio needs to display itself
@@ -157,6 +191,14 @@ export function CountervaluesMarketcap({ children }: { children: React.ReactNode
     <CountervaluesMarketcapIdsContext.Provider value={marketcapIds}>
       {children}
     </CountervaluesMarketcapIdsContext.Provider>
+  );
+}
+
+export function MappedService({ children }: { children: React.ReactNode }): ReactElement {
+  const fetched = useMappedServiceFetching();
+  const mappedAssets = useMemo(() => new Map(fetched.map(a => [a.ledgerId, a])), [fetched]);
+  return (
+    <MappedServiceContext.Provider value={mappedAssets}>{children}</MappedServiceContext.Provider>
   );
 }
 
@@ -329,6 +371,11 @@ export function useCountervaluesState(): CounterValuesState {
 // allows consumer to access the coins ids sorted by marketcap. It's basically all the coins that the API supports.
 export function useMarketcapIds(): string[] {
   return useContext(CountervaluesMarketcapIdsContext);
+}
+
+// allows consumer to access the mapped assets
+export function useMappedService(): Map<string, MappedAsset> {
+  return useContext(MappedServiceContext);
 }
 
 // provides an export of the countervalues state

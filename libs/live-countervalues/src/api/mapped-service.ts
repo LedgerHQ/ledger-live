@@ -1,6 +1,6 @@
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
-import { MappedAsset } from "./type";
+import { MappedAsset } from "../types";
 
 const ROOT_PATH = getEnv("MAPPING_SERVICE");
 

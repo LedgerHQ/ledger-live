@@ -1,7 +1,11 @@
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { MappedAsset, CurrenciesByProviderId, GroupedCurrencies } from "./type";
+import {
+  MappedAsset,
+  CurrenciesByProviderId,
+  GroupedCurrencies,
+} from "@ledgerhq/live-countervalues/types";
 import { currenciesByMarketcap } from "../currencies";
-import { getMappedAssets } from "./api";
+import { getMappedAssets } from "@ledgerhq/live-countervalues/api/mapped-service";
 
 export const loadCurrenciesByProvider = async (
   coinsAndTokensSupported: CryptoOrTokenCurrency[],

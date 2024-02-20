@@ -1,6 +1,6 @@
 import { groupCurrenciesByProvider, searchByNameOrTicker, searchByProviderId } from "./helper";
 import { MOCK } from "./mock";
-import { MappedAsset } from "./type";
+import { MappedAsset } from "@ledgerhq/live-countervalues/types";
 import { getTokenById } from "../currencies/index";
 
 const MAPPED_ASSETS = MOCK as MappedAsset[];

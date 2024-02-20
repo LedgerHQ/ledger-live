@@ -1,6 +1,6 @@
 // CountervaluesSettings is user config that drives the countervalues logic.
 
-import type { Currency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency, Currency } from "@ledgerhq/types-cryptoassets";
 
 // we generally will just infer it from Accounts
 export type CountervaluesSettings = {
@@ -63,8 +63,41 @@ export type RateMapStats = {
   // most recent datapoint before the first "hole"
   earliestStableDate: Date | null | undefined;
 };
+
 export type PairRateMapCache = {
   fallback?: number;
   map: RateMap;
   stats: RateMapStats;
+};
+
+export type MappedAsset = {
+  $type: "Token" | "Coin";
+  ledgerId: string;
+  providerId: string;
+  name: string;
+  ticker: string;
+  network?: string;
+  contract?: string;
+  status: string;
+  reason: null;
+  data: {
+    img: string;
+    marketCapRank: number | null;
+  };
+  ledgerCurrency?: CryptoOrTokenCurrency;
+};
+
+export type GroupedCurrency = {
+  providerId: string;
+  currenciesByNetwork: MappedAsset[];
+};
+
+export type CurrenciesByProviderId = {
+  currenciesByNetwork: CryptoOrTokenCurrency[];
+  providerId: string;
+};
+
+export type GroupedCurrencies = {
+  currenciesByProvider: CurrenciesByProviderId[];
+  sortedCryptoCurrencies: CryptoOrTokenCurrency[];
 };

@@ -1,4 +1,4 @@
-import { GroupedCurrencies } from "./type";
+import { GroupedCurrencies } from "@ledgerhq/live-countervalues/types";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useEffect, useMemo, useState } from "react";
 import { isCurrencySupported, listSupportedCurrencies, listTokens } from "../currencies";

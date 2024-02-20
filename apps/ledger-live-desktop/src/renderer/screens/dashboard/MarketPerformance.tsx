@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { makePerformanceMarketAssetsList } from "@ledgerhq/live-countervalues/portfolio";
-import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
+import { useCountervaluesState, useMappedService } from "@ledgerhq/live-countervalues-react";
 import { useSelector } from "react-redux";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import {
@@ -15,15 +15,17 @@ function usePerformanceMarketAssetsList() {
   const countervalue = useSelector(counterValueCurrencySelector);
   const assets = useMarketPerformanceTrackingPairs(countervalue);
   const referenceDate = useMarketPerformanceReferenceDate();
+  const mappedAssets = useMappedService();
   return useMemo(
     () =>
       makePerformanceMarketAssetsList(
         cvsState,
         countervalue,
         assets.map(a => a.from),
+        mappedAssets,
         referenceDate,
       ),
-    [cvsState, countervalue, assets, referenceDate],
+    [cvsState, countervalue, assets, mappedAssets, referenceDate],
   );
 }
 

@@ -1365,6 +1365,9 @@ importers:
       '@ledgerhq/coin-framework':
         specifier: workspace:^
         version: link:../../libs/coin-framework
+      '@ledgerhq/crypto-icons-ui':
+        specifier: workspace:^
+        version: link:../../libs/ui/packages/crypto-icons
       '@ledgerhq/domain-service':
         specifier: workspace:^
         version: link:../../libs/domain-service
@@ -1395,6 +1398,12 @@ importers:
       '@ledgerhq/live-config':
         specifier: workspace:^
         version: link:../../libs/live-config
+      '@ledgerhq/live-countervalues':
+        specifier: workspace:^
+        version: link:../../libs/live-countervalues
+      '@ledgerhq/live-countervalues-react':
+        specifier: workspace:^
+        version: link:../../libs/live-countervalues-react
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../libs/env
@@ -13971,6 +13980,8 @@ packages:
       metro-core: '*'
       minimatch: '*'
     peerDependenciesMeta:
+      '@expo/metro-config':
+        optional: true
       glob:
         optional: true
       metro:
@@ -14060,6 +14071,8 @@ packages:
       metro-core: '*'
       minimatch: '*'
     peerDependenciesMeta:
+      '@expo/metro-config':
+        optional: true
       glob:
         optional: true
       metro:
@@ -19368,6 +19381,9 @@ packages:
 
   /@react-native-community/cli-tools@11.3.7:
     resolution: {integrity: sha512-peyhP4TV6Ps1hk+MBHTFaIR1eI3u+OfGBvr5r0wPwo3FAJvldRinMgcB/TcCcOBXVORu7ba1XYjkubPeYcqAyA==}
+    peerDependenciesMeta:
+      find-up:
+        optional: true
     dependencies:
       appdirsjs: 1.2.6
       chalk: 4.1.2
@@ -19383,6 +19399,9 @@ packages:
 
   /@react-native-community/cli-tools@11.3.9:
     resolution: {integrity: sha512-qWEUo/HQll/aj5xHYCw6itXGkPgultxTHa4UYSaBIRSfU15aSiwonJ/JP7fe+fHKbaFh6IdhaaRhj4ArfEOxuQ==}
+    peerDependenciesMeta:
+      find-up:
+        optional: true
     dependencies:
       appdirsjs: 1.2.6
       chalk: 4.1.2
@@ -34881,6 +34900,7 @@ packages:
       is-hex-prefixed: 1.0.0
       strip-hex-prefix: 1.0.0
     dev: false
+    bundledDependencies: false
 
   /ev-emitter@1.1.1:
     resolution: {integrity: sha512-ipiDYhdQSCZ4hSbX4rMW+XzNKMD1prg/sTvoVmSLkuQ1MVlwjJQQA+sW8tMYR3BLUr9KjodFV4pvzunvRhd33Q==}
@@ -35125,6 +35145,8 @@ packages:
       react-native: '*'
     peerDependenciesMeta:
       expo-constants:
+        optional: true
+      expo-file-system:
         optional: true
       expo-modules-core:
         optional: true
