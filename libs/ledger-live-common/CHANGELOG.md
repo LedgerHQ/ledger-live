@@ -1,5 +1,15 @@
 # @ledgerhq/live-common
 
+## 34.0.0-nightly.12
+
+### Patch Changes
+
+- [#6218](https://github.com/LedgerHQ/ledger-live/pull/6218) [`3b6b538`](https://github.com/LedgerHQ/ledger-live/commit/3b6b53800e29a47ff5792c17221fbfba31cd8500) Thanks [@Wozacosta](https://github.com/Wozacosta)! - use latest version of wallet api packages to handle parentAccountId being passed when requesting accounts
+
+- Updated dependencies [[`25fe5c4`](https://github.com/LedgerHQ/ledger-live/commit/25fe5c48d44d3d1b11e35b81bb4bf31d30fa1268), [`3b6b538`](https://github.com/LedgerHQ/ledger-live/commit/3b6b53800e29a47ff5792c17221fbfba31cd8500)]:
+  - @ledgerhq/coin-evm@1.0.0-nightly.7
+  - @ledgerhq/wallet-api-exchange-module@0.3.0-nightly.1
+
 ## 34.0.0-nightly.11
 
 ### Minor Changes

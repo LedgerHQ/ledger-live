@@ -1,5 +1,11 @@
 # @ledgerhq/coin-evm
 
+## 1.0.0-nightly.7
+
+### Minor Changes
+
+- [#6179](https://github.com/LedgerHQ/ledger-live/pull/6179) [`25fe5c4`](https://github.com/LedgerHQ/ledger-live/commit/25fe5c48d44d3d1b11e35b81bb4bf31d30fa1268) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update `DEFAULT_NONCE` (-1) behaviour when converting a Ledger Live transaction to an `ethers` transaction, because using an invalid nonce (like a negative value here) will make `ethers` throw with some of its methods, like `serializeTransaction`
+
 ## 1.0.0-nightly.6
 
 ### Major Changes

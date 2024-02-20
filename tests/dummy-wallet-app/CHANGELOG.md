@@ -1,5 +1,14 @@
 # dummy-wallet-app
 
+## 0.2.3-nightly.12
+
+### Patch Changes
+
+- [#6218](https://github.com/LedgerHQ/ledger-live/pull/6218) [`3b6b538`](https://github.com/LedgerHQ/ledger-live/commit/3b6b53800e29a47ff5792c17221fbfba31cd8500) Thanks [@Wozacosta](https://github.com/Wozacosta)! - use latest version of wallet api packages to handle parentAccountId being passed when requesting accounts
+
+- Updated dependencies [[`3b6b538`](https://github.com/LedgerHQ/ledger-live/commit/3b6b53800e29a47ff5792c17221fbfba31cd8500)]:
+  - @ledgerhq/live-common@34.0.0-nightly.12
+
 ## 0.2.3-nightly.11
 
 ### Patch Changes
