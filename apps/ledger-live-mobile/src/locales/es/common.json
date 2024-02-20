@@ -492,7 +492,7 @@
       "description" : "Prueba a reinstalar la aplicación desde Mi Ledger"
     },
     "NotEnoughGas" : {
-      "title" : "Necesitas {{fees}} {{ticker}} para tarifas porque estás en la red de {{cryptoName}}. <link0>Comprar {{ticker}}</link0>",
+      "title" : "Necesitas {{fees}} {{ticker}} en tu cuenta para pagar tarifas de transacción en la red {{cryptoName}}.  <link0>Compra {{ticker}}</link0> o deposita más en tu cuenta.",
       "description" : "Envía monedas a tu cuenta para pagar por transacciones de tokens."
     },
     "NotEnoughGasSwap" : {
@@ -6530,7 +6530,7 @@
     "ethereum" : {
       "title" : "Rentabiliza tus tenencias en ETH",
       "subTitle" : "Pon en participación ETH y genera ganancias con recompensas diarias directamente desde Ledger Live.",
-      "tagMinimum" : "Requires {{min}} ETH",
+      "tagMinimum" : "Requiere {{min}} ETH",
       "close" : "Cerrar",
       "providers" : {
         "kiln_pooling" : {
