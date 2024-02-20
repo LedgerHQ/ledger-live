@@ -1,4 +1,5 @@
-import { createAction } from "redux-actions";
+
+import { Action, ActionFunctionAny, createAction } from "redux-actions";
 import { ModalData } from "~/renderer/modals/types";
 
 function openModalF<Name extends keyof ModalData>(name: Name, data: ModalData[Name]) {

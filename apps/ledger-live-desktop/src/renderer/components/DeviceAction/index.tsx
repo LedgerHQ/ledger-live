@@ -213,6 +213,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     signMessageRequested,
   } = hookState;
 
+
   const dispatch = useDispatch();
   const preferredDeviceModel = useSelector(preferredDeviceModelSelector);
   const swapDefaultTrack = useGetSwapTrackingProperties();
@@ -220,6 +221,8 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   const type = useTheme().colors.palette.type;
 
   const modelId = device ? device.modelId : overridesPreferredDeviceModel || preferredDeviceModel;
+
+
   useEffect(() => {
     if (modelId !== preferredDeviceModel) {
       dispatch(setPreferredDeviceModel(modelId));
