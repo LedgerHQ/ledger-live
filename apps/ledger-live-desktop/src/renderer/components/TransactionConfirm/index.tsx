@@ -256,7 +256,7 @@ const TransactionConfirm = ({
                   onClick={() => openURL(termsOfUse[manifestId as keyof typeof termsOfUse])}
                   to={"https://www.ledger.com"}
                 >
-                  {manifestId}`s terms of use.
+                  {`${manifestId}'s terms of use.`}
                 </Link>,
               ]}
             />
