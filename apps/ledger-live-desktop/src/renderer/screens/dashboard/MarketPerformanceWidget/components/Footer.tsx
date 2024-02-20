@@ -13,7 +13,7 @@ export function MarketPerformanceWidgetFooter() {
   };
 
   return (
-    <Flex mt={5} justifyContent={"space-between"}>
+    <Flex mt={5} justifyContent="space-between">
       <ButtonV3
         variant="main"
         big
@@ -31,7 +31,7 @@ export function MarketPerformanceWidgetFooter() {
         width={"48%"}
         onClick={() => onClickButton("exchange")}
         event="button_clicked"
-        eventProperties={{ button: "swap", page: "portfolio" }}
+        eventProperties={{ button: "buy", page: "portfolio" }}
       >
         {t("dashboard.marketPerformanceWidget.buy")}
       </ButtonV3>
