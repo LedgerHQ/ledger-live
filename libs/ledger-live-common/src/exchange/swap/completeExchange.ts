@@ -1,4 +1,8 @@
-import { TransportStatusError, WrongDeviceForAccount } from "@ledgerhq/errors";
+import {
+  TransportStatusError,
+  WrongDeviceForAccountRefund,
+  WrongDeviceForAccountPayout,
+} from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { firstValueFrom, from, Observable } from "rxjs";
 import secp256k1 from "secp256k1";
@@ -147,9 +151,12 @@ const completeExchange = (
           );
         } catch (e) {
           if (e instanceof TransportStatusError && e.statusCode === 0x6a83) {
-            throw new WrongDeviceForAccount(getExchangeErrorMessage(e.statusCode, currentStep), {
-              accountName: payoutAccount.name,
-            });
+            throw new WrongDeviceForAccountPayout(
+              getExchangeErrorMessage(e.statusCode, currentStep),
+              {
+                accountName: payoutAccount.name,
+              },
+            );
           }
 
           throw convertTransportError(currentStep, e);
@@ -186,9 +193,12 @@ const completeExchange = (
         } catch (e) {
           if (e instanceof TransportStatusError && e.statusCode === 0x6a83) {
             log(COMPLETE_EXCHANGE_LOG, "transport error");
-            throw new WrongDeviceForAccount(getExchangeErrorMessage(e.statusCode, currentStep), {
-              accountName: refundAccount.name,
-            });
+            throw new WrongDeviceForAccountRefund(
+              getExchangeErrorMessage(e.statusCode, currentStep),
+              {
+                accountName: refundAccount.name,
+              },
+            );
           }
 
           throw convertTransportError(currentStep, e);
