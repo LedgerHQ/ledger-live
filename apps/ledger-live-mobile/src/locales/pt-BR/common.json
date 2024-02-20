@@ -911,9 +911,6 @@
     "FirmwareNotRecognized" : {
       "title" : "Provedor Inválido",
       "description" : "Você deve mudar a configuração em “Provedor da Minha Ledger”. Para desativá-la, abra as “Configurações” do Ledger Live, selecione “Recursos experimentais” e, em seguida, selecione um provedor diferente."
-    },
-    "TezosUnrevealedAccount" : {
-      "title" : "Troca indisponível: Necessário enviar/delegar primeiro com uma conta Tezos ou um par de troca Tezos."
     }
   },
   "crash" : {
@@ -6530,7 +6527,7 @@
     "ethereum" : {
       "title" : "Multiplique suas posições de ETH",
       "subTitle" : "Aplique seu ETH e multiplique suas posições ganhando recompensas diárias de staking diretamente no Ledger Live.",
-      "tagMinimum" : "Requires {{min}} ETH",
+      "tagMinimum" : "Requer {{min}} ETH",
       "close" : "Fechar",
       "providers" : {
         "kiln_pooling" : {
