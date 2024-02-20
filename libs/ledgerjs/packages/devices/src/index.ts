@@ -27,6 +27,7 @@ export enum DeviceModelId {
   nanoSP = "nanoSP",
   nanoX = "nanoX",
   stax = "stax",
+  europa = "europa",
 }
 
 const devices: { [key in DeviceModelId]: DeviceModel } = {
@@ -50,16 +51,6 @@ const devices: { [key in DeviceModelId]: DeviceModel } = {
     masks: [0x31100000],
     getBlockSize: (firmwareVersion: string): number =>
       semver.lt(semver.coerce(firmwareVersion) ?? "", "2.0.0") ? 4 * 1024 : 2 * 1024,
-  },
-  [DeviceModelId.nanoSP]: {
-    id: DeviceModelId.nanoSP,
-    productName: "Ledger Nano S Plus",
-    productIdMM: 0x50,
-    legacyUsbProductId: 0x0005,
-    usbOnly: true,
-    memorySize: 1533 * 1024,
-    masks: [0x33100000],
-    getBlockSize: (_firmwareVersion: string): number => 32,
   },
   [DeviceModelId.nanoX]: {
     id: DeviceModelId.nanoX,
@@ -97,6 +88,34 @@ const devices: { [key in DeviceModelId]: DeviceModel } = {
       },
     ],
   },
+  [DeviceModelId.nanoSP]: {
+    id: DeviceModelId.nanoSP,
+    productName: "Ledger Nano S Plus",
+    productIdMM: 0x50,
+    legacyUsbProductId: 0x0005,
+    usbOnly: true,
+    memorySize: 1533 * 1024,
+    masks: [0x33100000],
+    getBlockSize: (_firmwareVersion: string): number => 32,
+  },
+  [DeviceModelId.europa]: {
+    id: DeviceModelId.europa,
+    productName: "Ledger Europa",
+    productIdMM: 0x70, // TODO: to be defined
+    legacyUsbProductId: 0x0007, // TODO: to be defined
+    usbOnly: false,
+    memorySize: 1533 * 1024, // TODO: to be defined
+    masks: [0x33300000], // TODO: to be defined
+    getBlockSize: (_firmwareVersion: string): number => 32, // TODO: to be defined
+    bluetoothSpec: [
+      {
+        serviceUuid: "13d63400-2c97-6004-0000-4c6564676572", // TODO: to be defined
+        notifyUuid: "13d63400-2c97-6004-0001-4c6564676572", // TODO: to be defined
+        writeUuid: "13d63400-2c97-6004-0002-4c6564676572", // TODO: to be defined
+        writeCmdUuid: "13d63400-2c97-6004-0003-4c6564676572", // TODO: to be defined
+      },
+    ],
+  },
 };
 
 const productMap = {
@@ -105,6 +124,7 @@ const productMap = {
   "Nano S Plus": DeviceModelId.nanoSP,
   "Nano X": DeviceModelId.nanoX,
   Stax: DeviceModelId.stax,
+  Europa: DeviceModelId.europa,
 };
 
 const devicesList: DeviceModel[] = Object.values(devices);
