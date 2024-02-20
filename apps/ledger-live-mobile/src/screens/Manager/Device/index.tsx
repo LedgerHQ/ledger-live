@@ -18,8 +18,6 @@ import styled, { useTheme } from "styled-components/native";
 import { ListAppsResult } from "@ledgerhq/live-common/apps/types";
 import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/device-core/commands/use-cases/isDeviceLocalizationSupported";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { DeviceModelId } from "@ledgerhq/types-devices";
 import { lastSeenCustomImageSelector } from "~/reducers/settings";
 import DeviceAppStorage from "./DeviceAppStorage";
 
@@ -32,6 +30,7 @@ import InstalledAppsModal from "../Modals/InstalledAppsModal";
 
 import DeviceLanguage from "./DeviceLanguage";
 import CustomLockScreen from "./CustomLockScreen";
+import { isCustomLockScreenSupported } from "@ledgerhq/live-common/device-core/commands/use-cases/isCustomLockScreenSupported";
 
 const illustrations = {
   nanoS: NanoS,
@@ -110,8 +109,7 @@ const DeviceCard = ({
 
   const showDeviceLanguage = isLocalizationSupported && deviceInfo.languageId !== undefined;
 
-  const hasCustomImage =
-    useFeature("customImage")?.enabled && deviceModel.id === DeviceModelId.stax;
+  const customLockScreenAvailable = isCustomLockScreenSupported(deviceModel.id);
 
   const disableFlows = pendingInstalls;
 
@@ -160,12 +158,14 @@ const DeviceCard = ({
           </Flex>
         </Flex>
       </Flex>
-      {hasCustomImage || showDeviceLanguage ? (
+      {customLockScreenAvailable || showDeviceLanguage ? (
         <>
           <Flex px={6}>
-            {hasCustomImage && <CustomLockScreen disabled={disableFlows} device={device} />}
+            {customLockScreenAvailable && (
+              <CustomLockScreen disabled={disableFlows} device={device} />
+            )}
             {showDeviceLanguage && (
-              <Flex mt={hasCustomImage ? 6 : 0}>
+              <Flex mt={customLockScreenAvailable ? 6 : 0}>
                 <DeviceLanguage
                   disabled={disableFlows}
                   currentDeviceLanguage={

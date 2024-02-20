@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { TFunction } from "i18next";
 import { useTranslation } from "react-i18next";
 import { Account, ProtoNFT, NFTMetadata, NFTMedias } from "@ledgerhq/types-live";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { isCustomLockScreenSupported } from "@ledgerhq/live-common/device-core/commands/use-cases/isCustomLockScreenSupported";
 import { IconsLegacy } from "@ledgerhq/react-ui";
 import { openModal } from "~/renderer/actions/modals";
 import IconOpensea from "~/renderer/icons/Opensea";
@@ -15,7 +15,6 @@ import CustomImage from "~/renderer/screens/customImage";
 import NFTViewerDrawer from "~/renderer/drawers/NFTViewerDrawer";
 import { ContextMenuItemType } from "../components/ContextMenu/ContextMenuWrapper";
 import { devicesModelListSelector } from "../reducers/settings";
-import { DeviceModelId } from "@ledgerhq/devices";
 
 function safeList(items: (ContextMenuItemType | "" | undefined)[]): ContextMenuItemType[] {
   return items.filter(Boolean) as ContextMenuItemType[];
@@ -167,13 +166,13 @@ export default (
     return img;
   }, [account, customImageUri, isInsideDrawer, nft.id, t]);
 
-  const customImageEnabled = useFeature("customImage")?.enabled;
   const devicesModelList = useSelector(devicesModelListSelector);
   const links = useMemo(() => {
     const metadataLinks = linksPerCurrency[account.currency.id]?.(t, metadata?.links) || [];
     return [
       ...metadataLinks,
-      ...(devicesModelList?.includes(DeviceModelId.stax) && customImageEnabled && customImageUri
+      ...(devicesModelList?.find(deviceModelId => isCustomLockScreenSupported(deviceModelId)) &&
+      customImageUri
         ? [customImage]
         : []),
       hideCollection,
@@ -183,7 +182,6 @@ export default (
     t,
     metadata?.links,
     devicesModelList,
-    customImageEnabled,
     customImageUri,
     customImage,
     hideCollection,

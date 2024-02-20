@@ -5,6 +5,7 @@ import { NFTMetadata } from "@ledgerhq/types-live";
 import { View, StyleSheet, TouchableOpacity, Linking, Platform } from "react-native";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Box, Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
+import { supportedDeviceModelIds as customLockScreenSupportedDeviceModelIds } from "@ledgerhq/live-common/device-core/commands/use-cases/isCustomLockScreenSupported";
 import styled, { useTheme } from "styled-components/native";
 import { NavigatorName, ScreenName } from "~/const";
 import ExternalLinkIcon from "~/icons/ExternalLink";
@@ -72,7 +73,6 @@ const NftLinksPanel = ({ nftContract, nftId, links, isOpen, onClose, nftMetadata
   const { colors } = useTheme();
   const { t } = useTranslation();
   const navigation = useNavigation();
-  const customImage = useFeature("customImage");
   const [bottomHideCollectionOpen, setBottomHideCollectionOpen] = useState(false);
   const areRaribleOpenseaDisabled =
     useFeature("disableNftRaribleOpensea")?.enabled && Platform.OS === "ios";
@@ -81,7 +81,9 @@ const NftLinksPanel = ({ nftContract, nftId, links, isOpen, onClose, nftMetadata
   const knownDeviceModelIds = useSelector(knownDeviceModelIdsSelector);
 
   const showCustomImageButton =
-    knownDeviceModelIds.stax && customImage?.enabled && !!customImageUri;
+    customLockScreenSupportedDeviceModelIds.find(
+      deviceModelId => knownDeviceModelIds[deviceModelId],
+    ) && !!customImageUri;
 
   const handleOpenOpenSea = useCallback(() => {
     track("button_clicked", {

@@ -26,7 +26,6 @@ export const claimMock: PostOnboardingAction = {
 export const personalizeMock: PostOnboardingAction = {
   id: PostOnboardingActionId.personalizeMock,
   Icon: Icons.PictureImage,
-  featureFlagId: "customImage",
   title: `Personalize my ${getDeviceModel(DeviceModelId.stax).productName}`,
   titleCompleted: `Device personalized`,
   description: "By customizing the screen.",
