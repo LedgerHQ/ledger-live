@@ -144,7 +144,7 @@
       }
     },
     "ConnectManagerTimeout" : {
-      "title" : "Die Verbindung zu My Ledger ist fehlgeschlagen",
+      "title" : "Leider ist die sichere Verbindung mit Ledger fehlgeschlagen",
       "description" : {
         "ios" : {
           "nanoX" : "Bitte stellen Sie sicher, dass Ihr {{productName}} entsperrt ist, wenn Bluetooth aktiviert ist."
@@ -492,7 +492,7 @@
       "description" : "Versuchen Sie, die App über My Ledger neu zu installieren."
     },
     "NotEnoughGas" : {
-      "title" : "Sie benötigen {{fees}} {{ticker}} für Gebühren, da Sie sich im {{cryptoName}}-Netzwerk befinden. <link0>{{ticker}} kaufen</link0>",
+      "title" : "Sie brauchen {{fees}} {{ticker}} auf Ihrem Konto, um die Transaktionsgebühren für das {{cryptoName}}-Netzwerk zu bezahlen.  <link0>Kaufen Sie {{ticker}}</link0> oder zahlen Sie zusätzliche Mittel auf Ihr Konto ein.",
       "description" : "Bitte senden Sie einige Coins an Ihr Konto, um Token-Transaktionen bezahlen zu können."
     },
     "NotEnoughGasSwap" : {
@@ -622,8 +622,8 @@
       "primaryCTA" : "My Ledger öffnen"
     },
     "UserRefusedAllowManager" : {
-      "title" : "Manager auf dem Gerät deaktiviert",
-      "description" : "Bitte erlauben Sie den Manager auf Ihrem Gerät und versuchen Sie es dann erneut."
+      "title" : "Sichere Verbindung auf dem Gerät abgelehnt",
+      "description" : "Bitte lassen Sie die sichere Verbindung auf Ihrem Gerät zu und versuchen Sie es noch einmal."
     },
     "UserRefusedAddress" : {
       "title" : "Empfangsadresse abgelehnt",
@@ -3888,7 +3888,7 @@
     "stayInTheAppPlz" : "Bleiben Sie in der Ledger Live-App und halten Sie Ihren Ledger bereit.",
     "allowAppPermission" : "Öffnen Sie die {{wording}} App auf Ihrem Gerät",
     "allowAppPermissionSubtitleToken" : "zum Verwalten Ihrer {{token}}-Tokens",
-    "allowManagerPermission" : "Ledger Manager auf Ihrem {{productName}}-Gerät zulassen",
+    "allowManagerPermission" : "Lassen Sie eine sichere Verbindung mit Ledger zu",
     "allowRenaming" : "Umbenennen auf Ihrem {{productName}}-Gerät zulassen",
     "allowRemoveCustomLockscreen" : "Bestätigen Sie die Entfernung des Bildes auf Ihrem Ledger Stax",
     "allowSecureConnection" : "Lassen eine sichere Verbindung mit Ledger zu",
