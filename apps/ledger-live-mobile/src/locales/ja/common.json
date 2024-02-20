@@ -144,7 +144,7 @@
       }
     },
     "ConnectManagerTimeout" : {
-      "title" : "申し訳ありません。My Ledgerの接続に失敗しました",
+      "title" : "申し訳ありませんが、Ledgerとの安全な接続に失敗しました",
       "description" : {
         "ios" : {
           "nanoX" : "{{productName}} のロックが解除済みで、Bluetoothが有効であることを確認してください。"
@@ -492,7 +492,7 @@
       "description" : "My Ledgerからアプリの再インストールを試す"
     },
     "NotEnoughGas" : {
-      "title" : "{{cryptoName}}ネットワークを使用しているため、手数料{{fees}}{{ticker}}が必要です。<link0>{{ticker}}を購入する</link0>",
+      "title" : "{{cryptoName}}ネットワークでのトランザクション手数料を支払うには、アカウントに{{fees}}{{ticker}}が必要です。<link0>{{ticker}}を購入する</link0>か、アカウントにさらに入金してください。",
       "description" : "トークンのトランザクションの支払いに必要なコインをアカウントに送ってください。"
     },
     "NotEnoughGasSwap" : {
@@ -622,8 +622,8 @@
       "primaryCTA" : "My Ledgerを開く"
     },
     "UserRefusedAllowManager" : {
-      "title" : "デバイスのManagerが無効です。",
-      "description" : "デバイスで「Manager」のアクセスを許可してから、もう一度お試しください。"
+      "title" : "デバイス上で安全な接続が拒否されました",
+      "description" : "デバイスで安全な接続を許可して、再試行してください。"
     },
     "UserRefusedAddress" : {
       "title" : "受取アドレスが却下されました。",
@@ -3888,7 +3888,7 @@
     "stayInTheAppPlz" : "Ledger Liveアプリを開いた状態で、Ledgerを近くに置いてください。",
     "allowAppPermission" : "デバイスで{{wording}} アプリを開く",
     "allowAppPermissionSubtitleToken" : "{{token}} トークンを管理",
-    "allowManagerPermission" : "{{productName}}でLedger Managerを許可する",
+    "allowManagerPermission" : "Ledgerとの安全な接続を許可する",
     "allowRenaming" : "{{productName}}で名前の変更を許可する",
     "allowRemoveCustomLockscreen" : "Ledger Staxの画像の削除を確定する",
     "allowSecureConnection" : "Ledgerとの安全な接続を許可する",
