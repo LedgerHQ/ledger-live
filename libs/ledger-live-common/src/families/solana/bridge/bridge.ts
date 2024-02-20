@@ -25,7 +25,12 @@ import { PRELOAD_MAX_AGE, hydrate, preloadWithAPI } from "../js-preload";
 import { prepareTransaction as prepareTransactionWithAPI } from "../js-prepareTransaction";
 import { signOperationWithAPI } from "../js-signOperation";
 import { getAccountShapeWithAPI } from "../js-synchronization";
-import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
+import {
+  assignFromAccountRaw,
+  assignToAccountRaw,
+  fromOperationExtraRaw,
+  toOperationExtraRaw,
+} from "../serialization";
 import type { SolanaAccount, SolanaPreloadDataV1, Transaction } from "../types";
 import { endpointByCurrencyId } from "../utils";
 
@@ -164,6 +169,8 @@ export function makeBridges({
     signOperation: makeSign(getAPI),
     assignFromAccountRaw,
     assignToAccountRaw,
+    toOperationExtraRaw,
+    fromOperationExtraRaw,
   };
 
   const currencyBridge: CurrencyBridge = {
