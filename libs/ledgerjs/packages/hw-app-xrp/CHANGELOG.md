@@ -1,5 +1,12 @@
 # @ledgerhq/hw-app-xrp
 
+## 6.28.4-new-wc-test.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.30.4-new-wc-test.0
+
 ## 6.28.3
 
 ### Patch Changes
