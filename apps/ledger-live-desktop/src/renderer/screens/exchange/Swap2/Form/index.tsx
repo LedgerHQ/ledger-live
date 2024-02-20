@@ -40,6 +40,7 @@ import { maybeTezosAccountUnrevealedAccount } from "@ledgerhq/live-common/exchan
 import SwapFormSummary from "./FormSummary";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
+import { languageSelector } from "~/renderer/reducers/settings";
 
 const DAPP_PROVIDERS = ["paraswap", "oneinch", "moonpay"];
 
@@ -54,6 +55,7 @@ const Wrapper = styled(Box).attrs({
 const idleTime = 60 * 60000; // 1 hour
 
 const SwapForm = () => {
+  const language = useSelector(languageSelector);
   const [idleState, setIdleState] = useState(false);
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -187,9 +189,14 @@ const SwapForm = () => {
             ...[key, typeof value === "object" ? JSON.stringify(value) : value],
           ),
       );
+      moonpayURL.searchParams.set("language", language);
+
+      // Theme ID is defined by moonpay to tweak styling to more more closely match
+      // the existing theming within ledger live.
+      moonpayURL.searchParams.set("themeId", "92be4cb6-a57f-407b-8b1f-bc8055b60c9b");
       return moonpayURL;
     },
-    [],
+    [language],
   );
 
   const getProviderRedirectURLSearch = useCallback(() => {
