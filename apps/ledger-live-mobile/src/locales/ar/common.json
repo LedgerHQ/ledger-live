@@ -144,7 +144,7 @@
       }
     },
     "ConnectManagerTimeout" : {
-      "title" : "عذراً، فشل اتصال My Ledger (جهازي Ledger)",
+      "title" : "عذراً، فشل الاتصال الآمن مع Ledger",
       "description" : {
         "ios" : {
           "nanoX" : "يرجى أن تتأكد أن {{productName}} الخاص بك غير مُقفل و أنه تم تمكين البلوتوث."
@@ -492,7 +492,7 @@
       "description" : "حاول إعادة تثبيت التطبيق من My Ledger (جهازي Ledger)"
     },
     "NotEnoughGas" : {
-      "title" : "أنت بحاجة إلى {{fees}} {{ticker}} للرسوم حيث إنك على شبكة {{cryptoName}}. <link0>شراء {{ticker}}</link0>",
+      "title" : "تحتاج إلى {{fees}} {{ticker}} في حسابك لدفع رسوم المعاملة على شبكة {{cryptoName}}.  <link0>اشتر {{ticker}}</link0> أو قم بإيداع المزيد في حسابك.",
       "description" : "يرجى إرسال بعض العملات إلى حسابك لسداد قيمة معاملات رموز التوكن."
     },
     "NotEnoughGasSwap" : {
@@ -622,8 +622,8 @@
       "primaryCTA" : "افتح My Ledger (جهازي Ledger)"
     },
     "UserRefusedAllowManager" : {
-      "title" : "تم تعطيل المدير (Manager) على الجهاز",
-      "description" : "يرجى تمكين المدير (Manager) على جهازك، ثم حاول مرة أخرى."
+      "title" : "تم رفض الاتصال الآمن على الجهاز",
+      "description" : "يرجى السماح بالاتصال الآمن على جهازك وإعادة المحاولة."
     },
     "UserRefusedAddress" : {
       "title" : "عنوان التلقي مرفوض",
@@ -3888,7 +3888,7 @@
     "stayInTheAppPlz" : "لا تُغادر تطبيق Ledger Live وابق على Ledger خاصتك بالقرب منك.",
     "allowAppPermission" : "افتح تطبيق {{wording}} على جهازك",
     "allowAppPermissionSubtitleToken" : "لإدارة رموزك {{token}}",
-    "allowManagerPermission" : "اسمح بمدير Ledger على جهازك {{productName}}",
+    "allowManagerPermission" : "السماح بالاتصال الآمن مع Ledger",
     "allowRenaming" : "اسمح بإعادة التسمية على جهازك {{productName}}",
     "allowRemoveCustomLockscreen" : "قم بتأكيد إزالة الصورة على Ledger Stax الخاص بك",
     "allowSecureConnection" : "السماح باتصال آمن مع Ledger",
@@ -6530,7 +6530,7 @@
     "ethereum" : {
       "title" : "قم بتنمية ما تملك من ETH",
       "subTitle" : "قم بتكديس ETH خاصتك وتنمية ممتلكاتك من خلال كسب مكافآت يومية مباشرةً في Ledger Live لديك.",
-      "tagMinimum" : "Requires {{min}} ETH",
+      "tagMinimum" : "يتطلب {{min}} ETH",
       "close" : "إغلاق",
       "providers" : {
         "kiln_pooling" : {
