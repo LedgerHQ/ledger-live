@@ -33,6 +33,7 @@ export function Error({ title, description }: Props) {
       >
         {t(title)}
       </Text>
+
       <Text variant="small" fontWeight="medium" color="neutral.c70" textAlign="center">
         {t(description)}
       </Text>

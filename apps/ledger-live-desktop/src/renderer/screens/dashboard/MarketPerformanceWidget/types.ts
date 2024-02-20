@@ -2,7 +2,9 @@ import { PerformanceMarketDatapoint } from "@ledgerhq/live-countervalues/portfol
 import { ABTestingVariants } from "@ledgerhq/types-live";
 import { Dispatch, SetStateAction } from "react";
 
-// MarketPerformanceWidget
+/**
+ * MarketPerformanceWidget Hook
+ */
 export type State = {
   isLoading: boolean;
   hasError: boolean;

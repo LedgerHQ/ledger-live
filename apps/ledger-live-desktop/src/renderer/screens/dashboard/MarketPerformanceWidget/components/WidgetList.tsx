@@ -36,6 +36,7 @@ function WidgetRow({ data, index, isFirst }: PropsBodyElem) {
         <Text color="neutral.c80" variant="h5Inter" mr={2}>
           {index}
         </Text>
+
         <CryptoCurrencyIconWrapper>
           <CryptoCurrencyIcon
             currency={currency}
@@ -51,11 +52,13 @@ function WidgetRow({ data, index, isFirst }: PropsBodyElem) {
           <EllipsisText variant="paragraph" fontWeight="semiBold" color="neutral.c100">
             {cryptCurrency.name}
           </EllipsisText>
+
           <EllipsisText variant="small" color="neutral.c60">
             {cryptCurrency.ticker.toUpperCase()}
           </EllipsisText>
         </Flex>
       </Flex>
+
       <Flex flexDirection="column">
         <EllipsisText variant="h3Inter" textAlign="right">
           <FormattedVal

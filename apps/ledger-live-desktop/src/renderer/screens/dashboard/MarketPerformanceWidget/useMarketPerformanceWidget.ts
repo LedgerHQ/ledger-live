@@ -50,10 +50,6 @@ export function useMarketPerformanceWidget() {
   });
   const list = usePerformanceMarketAssetsList();
 
-  // console.log(
-  //   list.map(o => o.currency.name + " \t" + Math.round(o.change * 10000) / 100 + "%").join("\n"),
-  // );
-
   useEffect(() => {
     let timeout: NodeJS.Timeout;
     if (list.length === 0) {

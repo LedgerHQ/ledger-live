@@ -33,6 +33,7 @@ export function MarketPerformanceWidgetHeader({ onChangeOrder, order }: HeaderPr
         >
           {t("dashboard.marketPerformanceWidget.gainers")}
         </StyledText>
+
         <StyledText
           variant="small"
           fontWeight="semiBold"

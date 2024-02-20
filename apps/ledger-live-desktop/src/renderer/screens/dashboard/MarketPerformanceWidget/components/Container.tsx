@@ -34,6 +34,7 @@ export function MarketPerformanceWidgetContainer({ variant, list, setOrder, orde
           <Body data={list} order={order} />
         )}
       </Flex>
+
       <MarketPerformanceWidgetFooter />
     </Card>
   );
