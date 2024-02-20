@@ -1,5 +1,6 @@
 import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
+import { DEFAULT_NONCE } from "../../../createTransaction";
 import { transactionToEthersTransaction } from "../../../adapters";
 import { EvmTransactionEIP1559, EvmTransactionLegacy } from "../../../types";
 
@@ -90,6 +91,39 @@ describe("EVM Family", () => {
           };
 
           expect(transactionToEthersTransaction(txWithFloatingPoint)).toEqual(ethers1559Tx);
+        });
+
+        it("should replace the usage of DEFAULT_NONCE by a valid nonce (but unrealistic) instead", () => {
+          const createdTransactionWithDefaultNonce: EvmTransactionLegacy = {
+            amount: new BigNumber(100),
+            useAllAmount: false,
+            subAccountId: "id",
+            recipient: "0xkvn",
+            feesStrategy: "custom",
+            family: "evm",
+            mode: "send",
+            nonce: DEFAULT_NONCE,
+            gasLimit: new BigNumber(21000),
+            chainId: 1,
+            data: Buffer.from(testData, "hex"),
+            gasPrice: new BigNumber(10000),
+            type: 0,
+          };
+
+          const ethersTxWithUnrealisticNonce: ethers.Transaction = {
+            to: "0xkvn",
+            nonce: Number.MAX_SAFE_INTEGER - 1,
+            gasLimit: ethers.BigNumber.from(21000),
+            data: "0x" + testData,
+            value: ethers.BigNumber.from(100),
+            chainId: 1,
+            type: 0,
+            gasPrice: ethers.BigNumber.from(10000),
+          };
+
+          expect(transactionToEthersTransaction(createdTransactionWithDefaultNonce)).toEqual(
+            ethersTxWithUnrealisticNonce,
+          );
         });
       });
     });

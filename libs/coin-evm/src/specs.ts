@@ -17,6 +17,7 @@ import {
 } from "@ledgerhq/coin-framework/currencies/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { cryptocurrenciesById } from "@ledgerhq/cryptoassets/currencies";
+import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 import { botTest, genericTestDestination, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
 import { acceptTransaction, avalancheSpeculosDeviceAction } from "./speculos-deviceActions";
 import { Transaction as EvmTransaction } from "./types";
@@ -70,6 +71,59 @@ const testCoinDestination = (args: TransactionDestinationTestInput<EvmTransactio
   }
 
   return genericTestDestination(args);
+};
+
+/**
+ * Method in charge of verifying that both the recipient and sender of a *token* transaction
+ * have received/lost the expected amount and have now the right balances
+ *
+ * ⚠️ Some blockchains specific rules are included
+ */
+const testTokenDestination = (args: TransactionDestinationTestInput<EvmTransaction>): void => {
+  const {
+    sendingAccount,
+    operation: coinOperation,
+    destination: coinDestination,
+    destinationBeforeTransaction: coinDestinationBeforeTransaction,
+  } = args;
+  const { currency } = sendingAccount;
+
+  expect(coinOperation.subOperations?.[0]).toBeDefined();
+  const operation = coinOperation.subOperations![0]!;
+  const amount = operation.value;
+
+  // Because Arbitrum is an L2, gas is used in a specific way to ensure both the L2 and the L1 are getting paid.
+  // But as of right now the `arbiscan.io` API is only returning the proposed gas price of
+  // the transaction and not the effectively used gas price, which might differ.
+  // This leads to not being able to correctly cost an operation and
+  // therefore makes it impossible infer the sender's balance
+  if (["arbitrum", "arbitrum_sepolia"].includes(currency.id)) {
+    return;
+  }
+
+  const destination = findSubAccountById(coinDestination, operation.accountId);
+  botTest("token account exists in recipient's account", () => {
+    expect(destination).toBeDefined();
+  });
+
+  const destinationBeforeTransaction = findSubAccountById(
+    coinDestinationBeforeTransaction,
+    operation.accountId,
+  );
+  botTest("account balance increased with transaction amount", () =>
+    expect(destination!.balance.toString()).toBe(
+      (destinationBeforeTransaction?.balance || new BigNumber(0)).plus(amount).toString(),
+    ),
+  );
+  botTest("operation amount is consistent with sendingOperation", () =>
+    expect({
+      type: operation.type,
+      amount: operation.value.toString(),
+    }).toMatchObject({
+      type: "IN",
+      amount: amount.toString(),
+    }),
+  );
 };
 
 /**
@@ -259,7 +313,7 @@ const evmBasicMutations: ({
 const moveErc20Mutation: MutationSpec<EvmTransaction> = {
   name: "move some ERC20 like (ERC20, BEP20, etc...)",
   maxRun: 1,
-  testDestination: testCoinDestination,
+  testDestination: testTokenDestination,
   transaction: ({ account, siblings, bridge }): TransactionRes<EvmTransaction> => {
     const erc20Account = sample((account.subAccounts || []).filter(a => a.balance.gt(0)));
     invariant(erc20Account, "no erc20 account");
