@@ -63,7 +63,7 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
 
   const next = useCallback(() => {
     acceptTerms();
-    const entryPoints = llmAnalyticsOptInPromptFeature?.entryPoints || [];
+    const entryPoints = llmAnalyticsOptInPromptFeature?.params?.entryPoints || [];
 
     if (llmAnalyticsOptInPromptFeature?.enabled && entryPoints.includes("Onboarding")) {
       navigation.navigate(NavigatorName.AnalyticsOptInPrompt, {
@@ -84,7 +84,7 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
   }, [
     acceptTerms,
     llmAnalyticsOptInPromptFeature?.enabled,
-    llmAnalyticsOptInPromptFeature?.entryPoints,
+    llmAnalyticsOptInPromptFeature?.params?.entryPoints,
     navigation,
     dispatch,
   ]);

@@ -19,9 +19,15 @@ import {
   analyticsEnabledSelector,
   personalizedRecommendationsEnabledSelector,
 } from "~/reducers/settings";
+import { EntryPoint } from "~/components/RootNavigator/types/AnalyticsOptInPromptNavigator";
 
 type Props = {
-  entryPoint: "Portfolio" | "Onboarding";
+  entryPoint: EntryPoint;
+};
+
+const trackingKeysByFlow: Record<EntryPoint, string> = {
+  Onboarding: "consent onboarding",
+  Portfolio: "consent existing users",
 };
 
 const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
@@ -38,7 +44,7 @@ const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
   const isTrackingEnabled = analyticsEnabled || personalizedRecommendationsEnabled;
   // When the user has not refused analytics, we can track the analytics opt in flow
   const shouldWeTrack = isTrackingEnabled !== false;
-  const flow = entryPoint === "Onboarding" ? "consent onboarding" : "consent existing users";
+  const flow = trackingKeysByFlow?.[entryPoint];
 
   const continueOnboarding = () => {
     dispatch(setHasSeenAnalyticsOptInPrompt(true));
