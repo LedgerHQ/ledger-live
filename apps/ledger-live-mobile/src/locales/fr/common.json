@@ -144,7 +144,7 @@
       }
     },
     "ConnectManagerTimeout" : {
-      "title" : "Échec de la connexion à My Ledger",
+      "title" : "Échec de la connexion sécurisée avec Ledger",
       "description" : {
         "ios" : {
           "nanoX" : "Assurez-vous que votre {{productName}} est déverrouillé et que le Bluetooth est activé."
@@ -492,7 +492,7 @@
       "description" : "Veuillez essayer de réinstaller l’app depuis My Ledger."
     },
     "NotEnoughGas" : {
-      "title" : "Vous avez besoin de {{fees}} {{ticker}} pour les frais, car vous êtes sur le réseau {{cryptoName}}. <link0>Acheter des {{ticker}}.</link0>",
+      "title" : "Vous devez avoir {{fees}} {{ticker}} sur votre compte pour couvrir les frais de transaction sur le réseau {{cryptoName}}.  <link0>Achetez des {{ticker}}</link0> ou faites un dépôt sur votre compte.",
       "description" : "Envoyez des coins sur votre compte pour régler vos transactions de tokens."
     },
     "NotEnoughGasSwap" : {
@@ -622,8 +622,8 @@
       "primaryCTA" : "Ouvrir My Ledger"
     },
     "UserRefusedAllowManager" : {
-      "title" : "Gestionnaire désactivé sur l’appareil",
-      "description" : "Autorisez le Gestionnaire (\"Manager\") sur votre appareil et réessayez."
+      "title" : "Connexion sécurisée refusée sur l’appareil",
+      "description" : "Veuillez autoriser la connexion sécurisée sur votre appareil et réessayez."
     },
     "UserRefusedAddress" : {
       "title" : "Adresse de bénéficiaire rejetée",
@@ -3888,7 +3888,7 @@
     "stayInTheAppPlz" : "Restez dans Ledger Live et gardez votre appareil Ledger à portée de main.",
     "allowAppPermission" : "Ouvrez l’app {{wording}} sur votre appareil",
     "allowAppPermissionSubtitleToken" : "pour gérer vos tokens {{token}}",
-    "allowManagerPermission" : "Autorisez la connexion sécurisée sur votre {{productName}}",
+    "allowManagerPermission" : "Autorisez la connexion sécurisée avec Ledger",
     "allowRenaming" : "Autorisez le changement de nom sur votre {{productName}}",
     "allowRemoveCustomLockscreen" : "Confirmez la suppression du fond d’écran sur votre Ledger Stax",
     "allowSecureConnection" : "Autorisez la connexion sécurisée avec Ledger",
