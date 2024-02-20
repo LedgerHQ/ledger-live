@@ -5,6 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Platform } from "react-native";
+import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device-core/commands/use-cases/isSyncOnboardingSupported";
 import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import {
   BaseNavigationComposite,
@@ -43,6 +44,11 @@ const devices = {
     img: require("../../../../assets/images/devices/Stax.png"),
     setupTime: 300000,
   },
+  europa: {
+    id: DeviceModelId.europa,
+    img: require("../../../../assets/images/devices/Europa.png"),
+    setupTime: 300000,
+  },
 };
 
 const NOT_SUPPORTED_DEVICES_IOS = [DeviceModelId.nanoS, DeviceModelId.nanoSP];
@@ -50,23 +56,28 @@ const NOT_SUPPORTED_DEVICES_IOS = [DeviceModelId.nanoS, DeviceModelId.nanoSP];
 function OnboardingStepDeviceSelection() {
   const navigation = useNavigation<NavigationProp>();
   const { t } = useTranslation();
-  const syncOnboarding = useFeature("syncOnboarding" as const);
+  const deviceStaxSupported = useFeature("supportDeviceStax");
+  const deviceEuropaSupported = useFeature("supportDeviceEuropa");
 
   const [isOpen, setOpen] = useState<boolean>(false);
 
-  const availableDevices = useMemo(() => {
-    if (syncOnboarding?.enabled) {
-      return [devices.stax, devices.nanoX, devices.nanoSP, devices.nanoS];
-    }
-    return [devices.nanoX, devices.nanoSP, devices.nanoS];
-  }, [syncOnboarding?.enabled]);
+  const availableDevices = useMemo(
+    () => [
+      ...(deviceStaxSupported ? [devices.stax] : []),
+      ...(deviceEuropaSupported ? [devices.europa] : []),
+      devices.nanoX,
+      devices.nanoSP,
+      devices.nanoS,
+    ],
+    [deviceStaxSupported, deviceEuropaSupported],
+  );
 
   const getProductName = (modelId: DeviceModelId) =>
     getDeviceModel(modelId)?.productName.replace("Ledger", "").trimStart() || modelId;
 
   const next = (deviceModelId: DeviceModelId) => {
     // Add NanoX.id, NanoSP.id etc. when they will support the sync-onboarding
-    if ([devices.stax.id].includes(deviceModelId)) {
+    if (isSyncOnboardingSupported(deviceModelId)) {
       // On pairing success, navigate to the Sync Onboarding Companion
       // navigation.push on stack navigation because with navigation.navigate
       // it could not go back to this screen in certain cases.

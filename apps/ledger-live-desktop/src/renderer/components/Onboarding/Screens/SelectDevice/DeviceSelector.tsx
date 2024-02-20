@@ -15,15 +15,15 @@ const DeviceSelectContainer = styled(Flex).attrs({
 
 const allDevices = [
   {
-    id: "nanoS",
+    id: DeviceModelId.nanoS,
     enabled: true,
   },
   {
-    id: "nanoSP",
+    id: DeviceModelId.nanoSP,
     enabled: true,
   },
   {
-    id: "nanoX",
+    id: DeviceModelId.nanoX,
     enabled: true,
   },
 ];
@@ -32,16 +32,14 @@ interface DeviceSelectorProps {
 }
 
 export function DeviceSelector({ onClick }: DeviceSelectorProps) {
-  const syncOnboarding = useFeature("syncOnboarding");
+  const deviceStaxSupported = useFeature("supportDeviceStax");
+  const deviceEuropaSupported = useFeature("supportDeviceEuropa");
 
-  const devices = syncOnboarding?.enabled
-    ? [
-        {
-          id: "stax",
-          enabled: true,
-        },
-      ].concat(allDevices)
-    : allDevices;
+  const devices = [
+    ...(deviceStaxSupported ? [{ id: DeviceModelId.stax, enabled: true }] : []),
+    ...(deviceEuropaSupported ? [{ id: DeviceModelId.europa, enabled: true }] : []),
+    ...allDevices,
+  ];
 
   return (
     <DeviceSelectContainer>
