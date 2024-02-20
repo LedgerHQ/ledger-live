@@ -1,8 +1,5 @@
 import { useSelector, useDispatch } from "react-redux";
-import {
-  analyticsEnabledSelector,
-  personalizedRecommendationsEnabledSelector,
-} from "~/reducers/settings";
+import { hasSeenAnalyticsOptInPromptSelector, trackingEnabledSelector } from "~/reducers/settings";
 import {
   setAnalytics,
   setHasSeenAnalyticsOptInPrompt,
@@ -37,13 +34,9 @@ const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
     useNavigation<
       RootNavigationComposite<StackNavigatorNavigation<OnboardingNavigatorParamList>>
     >();
-  const analyticsEnabled = useSelector(analyticsEnabledSelector);
-  const personalizedRecommendationsEnabled = useSelector(
-    personalizedRecommendationsEnabledSelector,
-  );
-  const isTrackingEnabled = analyticsEnabled || personalizedRecommendationsEnabled;
-  // When the user has not refused analytics, we can track the analytics opt in flow
-  const shouldWeTrack = isTrackingEnabled !== false;
+  const isTrackingEnabled = useSelector(trackingEnabledSelector);
+  const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
+  const shouldWeTrack = isTrackingEnabled || !hasSeenAnalyticsOptInPrompt;
   const flow = trackingKeysByFlow?.[entryPoint];
 
   const continueOnboarding = () => {
@@ -94,6 +87,7 @@ const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
         button: "Refuse Analytics",
         variant: "B",
         flow,
+        page: "Analytics Opt In Prompt Main",
       },
       shouldWeTrack,
     );
@@ -107,6 +101,7 @@ const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
         button: "Accept Analytics",
         variant: "B",
         flow,
+        page: "Analytics Opt In Prompt Main",
       },
       shouldWeTrack,
     );
@@ -120,6 +115,7 @@ const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
         button: "Accept Personal Recommendations",
         variant: "B",
         flow,
+        page: "Recommendations Opt In Prompt Main",
       },
       shouldWeTrack,
     );
@@ -133,6 +129,7 @@ const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
         button: "Refuse Personal Recommendations",
         variant: "B",
         flow,
+        page: "Recommendations Opt In Prompt Main",
       },
       shouldWeTrack,
     );

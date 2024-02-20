@@ -15,10 +15,7 @@ import { Linking } from "react-native";
 import { urls } from "~/utils/urls";
 import { useLocale } from "~/context/Locale";
 import { track, updateIdentify } from "~/analytics";
-import {
-  analyticsEnabledSelector,
-  personalizedRecommendationsEnabledSelector,
-} from "~/reducers/settings";
+import { hasSeenAnalyticsOptInPromptSelector, trackingEnabledSelector } from "~/reducers/settings";
 import { EntryPoint } from "~/components/RootNavigator/types/AnalyticsOptInPromptNavigator";
 
 type Props = {
@@ -37,13 +34,9 @@ const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
     useNavigation<
       RootNavigationComposite<StackNavigatorNavigation<OnboardingNavigatorParamList>>
     >();
-  const analyticsEnabled = useSelector(analyticsEnabledSelector);
-  const personalizedRecommendationsEnabled = useSelector(
-    personalizedRecommendationsEnabledSelector,
-  );
-  const isTrackingEnabled = analyticsEnabled || personalizedRecommendationsEnabled;
-  // When the user has not refused analytics, we can track the analytics opt in flow
-  const shouldWeTrack = isTrackingEnabled !== false;
+  const isTrackingEnabled = useSelector(trackingEnabledSelector);
+  const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
+  const shouldWeTrack = isTrackingEnabled || !hasSeenAnalyticsOptInPrompt;
   const flow = trackingKeysByFlow?.[entryPoint];
 
   const continueOnboarding = () => {
@@ -86,6 +79,7 @@ const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
         button: "Accept All",
         variant: "A",
         flow,
+        page: "Analytics Opt In Prompt Main",
       },
       true,
     );
@@ -100,6 +94,7 @@ const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
         button: "Refuse All",
         variant: "A",
         flow,
+        page: "Analytics Opt In Prompt Main",
       },
       shouldWeTrack,
     );
@@ -114,9 +109,10 @@ const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
     track(
       "button_clicked",
       {
-        button: "More Options",
+        button: "Manage Preferences",
         variant: "A",
         flow,
+        page: "Analytics Opt In Prompt Main",
       },
       shouldWeTrack,
     );
@@ -131,9 +127,10 @@ const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
     track(
       "button_clicked",
       {
-        button: "Confirm",
+        button: "Share",
         variant: "A",
         flow,
+        page: "Analytics Opt In Prompt Preferences",
       },
       shouldWeTrack,
     );

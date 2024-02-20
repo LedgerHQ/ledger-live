@@ -99,8 +99,8 @@ export const INITIAL_STATE: SettingsState = {
   counterValueExchange: null,
   privacy: null,
   reportErrorsEnabled: true,
-  analyticsEnabled: null,
-  personalizedRecommendationsEnabled: null,
+  analyticsEnabled: false,
+  personalizedRecommendationsEnabled: false,
   currenciesSettings: {},
   pairExchanges: {},
   selectedTimeRange: "month",
@@ -704,7 +704,7 @@ export const personalizedRecommendationsEnabledSelector = createSelector(
 );
 export const trackingEnabledSelector = createSelector(
   storeSelector,
-  s => !!s.analyticsEnabled || !!s.personalizedRecommendationsEnabled,
+  s => s.analyticsEnabled || s.personalizedRecommendationsEnabled,
 );
 export const lastSeenCustomImageSelector = createSelector(
   storeSelector,

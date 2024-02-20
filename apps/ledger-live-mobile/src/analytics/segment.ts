@@ -38,6 +38,7 @@ import {
   customImageTypeSelector,
   userNpsSelector,
   personalizedRecommendationsEnabledSelector,
+  hasSeenAnalyticsOptInPromptSelector,
 } from "../reducers/settings";
 import { knownDevicesSelector } from "../reducers/ble";
 import { DeviceLike, State } from "../reducers/types";
@@ -99,15 +100,16 @@ export const updateSessionId = () => (sessionId = uuid());
 const getMandatoryProperties = async (store: AppStore) => {
   const state: State = store.getState();
   const { user } = await getOrCreateUser();
-  const analyticsEnabled: boolean | null = analyticsEnabledSelector(state);
-  const personalizedRecommendationsEnabled: boolean | null =
-    personalizedRecommendationsEnabledSelector(state);
+  const analyticsEnabled = analyticsEnabledSelector(state);
+  const personalizedRecommendationsEnabled = personalizedRecommendationsEnabledSelector(state);
+  const hasSeenAnalyticsOptInPrompt = hasSeenAnalyticsOptInPromptSelector(state);
 
   return {
     userId: user?.id,
     braze_external_id: user?.id, // Needed for braze with this exact name
     optInAnalytics: analyticsEnabled,
     optInPersonalRecommendations: personalizedRecommendationsEnabled,
+    hasSeenAnalyticsOptInPrompt,
   };
 };
 

@@ -6,21 +6,34 @@ import SettingsRow from "~/components/SettingsRow";
 import { setPersonalizedRecommendations } from "~/actions/settings";
 import { personalizedRecommendationsEnabledSelector } from "~/reducers/settings";
 import Track from "~/analytics/Track";
-import { updateIdentify } from "~/analytics";
+import { track, updateIdentify } from "~/analytics";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const PersonalizedRecommendationsRow = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const personalizedRecommendationsEnabled: boolean = Boolean(
-    useSelector(personalizedRecommendationsEnabledSelector),
+  const personalizedRecommendationsEnabled = useSelector(
+    personalizedRecommendationsEnabledSelector,
   );
+  const llmAnalyticsOptInPromptFeature = useFeature("llmAnalyticsOptInPrompt");
 
   const togglePersonalizedRecommendations = useCallback(
     (value: boolean) => {
       dispatch(setPersonalizedRecommendations(value));
       updateIdentify();
+      if (llmAnalyticsOptInPromptFeature?.enabled) {
+        track(
+          "toggle_clicked",
+          {
+            enabled: value,
+            toggle: "Recommendations",
+            page: "Page Settings General",
+          },
+          true,
+        );
+      }
     },
-    [dispatch],
+    [dispatch, llmAnalyticsOptInPromptFeature?.enabled],
   );
 
   return (

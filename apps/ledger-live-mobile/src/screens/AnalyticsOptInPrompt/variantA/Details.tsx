@@ -114,7 +114,7 @@ function Details({ route }: Props) {
         </Bottom>
         <TrackScreen
           category="Analytics Opt In Prompt"
-          name="Details"
+          name="Preferences"
           variant="A"
           flow={flow}
           mandatory={shouldWeTrack}
