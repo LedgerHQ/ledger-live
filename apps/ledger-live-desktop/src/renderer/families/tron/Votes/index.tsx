@@ -32,6 +32,11 @@ import { TronAccount } from "@ledgerhq/live-common/families/tron/types";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { urls } from "~/config/urls";
 import { useDateFromNow } from "~/renderer/hooks/useDateFormatter";
+import { tronStakingProvider } from "../AccountHeaderManageActions";
+import { useHistory } from "react-router";
+import noop from "lodash/noop";
+import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
+import { track } from "~/renderer/analytics/segment";
 
 const Wrapper = styled(Box).attrs(() => ({
   p: 3,
@@ -41,6 +46,8 @@ const Wrapper = styled(Box).attrs(() => ({
   align-items: center;
 `;
 const Delegation = ({ account }: { account: TronAccount }) => {
+  const history = useHistory();
+
   const locale = useSelector(localeSelector);
   const superRepresentatives = useTronSuperRepresentatives();
   const stakingUrl = useLocalizedUrl(urls.stakingTron);
@@ -54,6 +61,7 @@ const Delegation = ({ account }: { account: TronAccount }) => {
   const explorerView = getDefaultExplorerView(account.currency);
   const { tronResources } = account;
   const { votes, tronPower, unwithdrawnReward } = tronResources;
+
   const discreet = useDiscreetMode();
   const formattedUnwidthDrawnReward = formatCurrencyUnit(unit, BigNumber(unwithdrawnReward || 0), {
     disableRounding: true,
@@ -73,6 +81,49 @@ const Delegation = ({ account }: { account: TronAccount }) => {
   );
   const formattedNextRewardDate = useDateFromNow(nextRewardD);
 
+  const voteOnClick = ({ liveAppId }: { liveAppId: string }) => {
+    const value = `/platform/${liveAppId}`;
+
+    track("button_clicked2", {
+      ...stakeDefaultTrack,
+      delegation: "stake",
+      page: "Page Account",
+      button: "manage votes",
+      provider: "Stakekit",
+      currency: "TRX",
+    });
+    history.push({
+      pathname: value,
+      state: {
+        pendingaction: "REVOTE",
+        yieldId: "tron-trx-native-staking",
+        accountId: account.id,
+        returnTo: `/account/${account.id}`,
+      },
+    });
+  };
+
+  const claimOnClick = ({ liveAppId }: { liveAppId: string }) => {
+    const value = `/platform/${liveAppId}`;
+    track("button_clicked2", {
+      ...stakeDefaultTrack,
+      delegation: "stake",
+      page: "Page Account",
+      button: "claim rewards",
+      provider: "Stakekit",
+      currency: "TRX",
+    });
+    history.push({
+      pathname: value,
+      state: {
+        pendingaction: "CLAIM_REWARDS",
+        yieldId: "tron-trx-native-staking",
+        accountId: account.id,
+        returnTo: `/account/${account.id}`,
+      },
+    });
+  };
+
   const canClaimRewards = hasRewards && !formattedNextRewardDate;
   return (
     <TableContainer mb={6}>
@@ -83,7 +134,12 @@ const Delegation = ({ account }: { account: TronAccount }) => {
         }}
       >
         {tronPower > 0 && formattedVotes.length > 0 ? (
-          <Button small color="palette.primary.main" disabled={true} mr={2}>
+          <Button
+            small
+            color="palette.primary.main"
+            onClick={() => voteOnClick(tronStakingProvider)}
+            mr={2}
+          >
             <Box horizontal flow={1} alignItems="center">
               <Vote size={12} />
               <Box>
@@ -113,7 +169,12 @@ const Delegation = ({ account }: { account: TronAccount }) => {
               ) : null
             }
           >
-            <Button disabled={true} color="palette.primary.main" small>
+            <Button
+              onClick={hasRewards ? () => claimOnClick(tronStakingProvider) : noop}
+              color="palette.primary.main"
+              disabled={!hasRewards}
+              small
+            >
               <Box horizontal flow={1} alignItems="center">
                 <ClaimRewards size={12} />
                 <Box>
