@@ -36,7 +36,6 @@ import { OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
 import SwapWebView, { SwapWebProps, useSwapLiveAppManifestID } from "./SwapWebView";
 import { SwapMigrationUI } from "./Migrations/SwapMigrationUI";
 import { useSwapLiveAppHook } from "~/renderer/hooks/swap-migrations/useSwapLiveAppHook";
-import { maybeTezosAccountUnrevealedAccount } from "@ledgerhq/live-common/exchange/swap/index";
 import SwapFormSummary from "./FormSummary";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
@@ -110,10 +109,7 @@ const SwapForm = () => {
   }, []);
 
   const exchangeRatesState = swapTransaction.swap?.rates;
-  const swapError =
-    swapTransaction.fromAmountError ||
-    exchangeRatesState?.error ||
-    maybeTezosAccountUnrevealedAccount(swapTransaction);
+  const swapError = swapTransaction.fromAmountError || exchangeRatesState?.error;
   const swapWarning = swapTransaction.fromAmountWarning;
   const pageState = usePageState(swapTransaction, swapError);
   const provider = useMemo(() => exchangeRate?.provider, [exchangeRate?.provider]);
