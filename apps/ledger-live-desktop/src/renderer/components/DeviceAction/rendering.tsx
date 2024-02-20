@@ -784,7 +784,13 @@ export const renderError = ({
                 mx={1}
               />
             ) : null}
-
+            {withOpenManager ? (
+              <OpenManagerButton mt={0} ml={withExportLogs ? 4 : 0} />
+            ) : onRetry && inlineRetry ? (
+              <Button primary ml={withExportLogs ? 4 : 0} onClick={onRetry}>
+                {t("common.retry")}
+              </Button>
+            ) : null}
             {withOnboardingCTA ? <OpenOnboardingBtn /> : null}
             {buyLedger ? (
               <LinkWithExternalIcon

@@ -222,7 +222,6 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
 
   const modelId = device ? device.modelId : overridesPreferredDeviceModel || preferredDeviceModel;
 
-
   useEffect(() => {
     if (modelId !== preferredDeviceModel) {
       dispatch(setPreferredDeviceModel(modelId));
