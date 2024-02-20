@@ -47,10 +47,10 @@ const HorizontalSeparator = styled.div`
 export type FieldComponentProps = FCPGeneric<Account, TransactionCommon, TransactionStatus>;
 export type FieldComponent = React.ComponentType<FieldComponentProps>;
 
-const termsOfUse = {
-  paraswap: "https://paraswap.io/tos",
-  "1inch": "https://1inch.io/assets/1inch_network_terms_of_use.pdf",
-} as const;
+const termsOfUse = new Map<string, string>([
+  ["paraswap", "https://paraswap.io/tos"],
+  ["1inch", "https://1inch.io/assets/1inch_network_terms_of_use.pdf"],
+]);
 
 const AmountField = ({ account, status: { amount }, field }: FieldComponentProps) => (
   <TransactionConfirmField label={field.label}>
@@ -192,7 +192,43 @@ const TransactionConfirm = ({
   const key = ("mode" in transaction && transaction.mode) || "send";
   const recipientWording = t(`TransactionConfirm.recipientWording.${key}`);
 
-  return typeTransaction === "Approve" ? (
+  const ApproveFooter = () => {
+    if (Footer) {
+      return (
+        <>
+          <HorizontalSeparator />
+          <Footer transaction={transaction} />
+        </>
+      );
+    }
+    if (manifestId) {
+      const termsOfUseUrl = termsOfUse.get(manifestId);
+      if (termsOfUseUrl !== undefined) {
+        return (
+          <>
+            <HorizontalSeparator />
+            <Text marginTop={30}>
+              <Trans
+                i18nKey="approve.termsAndConditions"
+                values={{ appName: manifestName }}
+                components={[
+                  <Link
+                    key={manifestId}
+                    onClick={() => openURL(termsOfUseUrl)}
+                    to={"https://www.ledger.com"}
+                  >
+                    {`${manifestId}'s terms of use.`}
+                  </Link>,
+                ]}
+              />
+            </Text>
+          </>
+        );
+      }
+    }
+  };
+
+  const Approve = () => (
     <Container style={{ paddingBottom: 0 }}>
       <Container paddingX={26}>
         <DeviceBlocker />
@@ -237,101 +273,80 @@ const TransactionConfirm = ({
           })}
         </Box>
       </Container>
-      {Footer && (
-        <>
-          <HorizontalSeparator />
-          <Footer transaction={transaction} />
-        </>
-      )}
-      {!Footer && manifestId && manifestId in termsOfUse && (
-        <>
-          <HorizontalSeparator />
-          <Text marginTop={30}>
-            <Trans
-              i18nKey="approve.termsAndConditions"
-              values={{ appName: manifestName }}
-              components={[
-                <Link
-                  key={manifestId}
-                  onClick={() => openURL(termsOfUse[manifestId as keyof typeof termsOfUse])}
-                  to={"https://www.ledger.com"}
-                >
-                  {`${manifestId}'s terms of use.`}
-                </Link>,
-              ]}
-            />
-          </Text>
-        </>
-      )}
-    </Container>
-  ) : (
-    <Container>
-      {Warning ? (
-        <Warning
-          account={account}
-          parentAccount={parentAccount}
-          transaction={transaction}
-          recipientWording={recipientWording}
-          status={status}
-        />
-      ) : (
-        <WarnBox>
-          <Trans
-            i18nKey="TransactionConfirm.warning"
-            values={{
-              recipientWording,
-            }}
-          />
-        </WarnBox>
-      )}
-      {Title ? (
-        <Title
-          account={account}
-          parentAccount={parentAccount}
-          transaction={transaction}
-          status={status}
-        />
-      ) : (
-        <Info>
-          <Trans i18nKey="TransactionConfirm.title" />
-        </Info>
-      )}
-
-      <Box
-        style={{
-          width: "100%",
-        }}
-        px={30}
-        mb={20}
-      >
-        {fields.map((field, i) => {
-          const MaybeComponent = fieldComponents[field.type];
-          if (!MaybeComponent) {
-            console.log(
-              `TransactionConfirm field ${field.type} is not implemented! add a generic implementation in components/TransactionConfirm.js or inside families/*/TransactionConfirmFields.js`,
-            );
-            return null;
-          }
-          return (
-            <MaybeComponent
-              key={i}
-              field={field}
-              account={account}
-              parentAccount={parentAccount}
-              transaction={transaction}
-              status={status}
-            />
-          );
-        })}
-      </Box>
-
-      {Footer ? <Footer transaction={transaction} /> : null}
-
-      {renderVerifyUnwrapped({
-        modelId: device.modelId,
-        type,
-      })}
+      <ApproveFooter />
     </Container>
   );
+
+  if (typeTransaction == "Approve") return Approve();
+  else
+    return (
+      <Container>
+        {Warning ? (
+          <Warning
+            account={account}
+            parentAccount={parentAccount}
+            transaction={transaction}
+            recipientWording={recipientWording}
+            status={status}
+          />
+        ) : (
+          <WarnBox>
+            <Trans
+              i18nKey="TransactionConfirm.warning"
+              values={{
+                recipientWording,
+              }}
+            />
+          </WarnBox>
+        )}
+        {Title ? (
+          <Title
+            account={account}
+            parentAccount={parentAccount}
+            transaction={transaction}
+            status={status}
+          />
+        ) : (
+          <Info>
+            <Trans i18nKey="TransactionConfirm.title" />
+          </Info>
+        )}
+
+        <Box
+          style={{
+            width: "100%",
+          }}
+          px={30}
+          mb={20}
+        >
+          {fields.map((field, i) => {
+            const MaybeComponent = fieldComponents[field.type];
+            if (!MaybeComponent) {
+              console.log(
+                `TransactionConfirm field ${field.type} is not implemented! add a generic implementation in components/TransactionConfirm.js or inside families/*/TransactionConfirmFields.js`,
+              );
+              return null;
+            }
+            return (
+              <MaybeComponent
+                key={i}
+                field={field}
+                account={account}
+                parentAccount={parentAccount}
+                transaction={transaction}
+                status={status}
+              />
+            );
+          })}
+        </Box>
+
+        {Footer ? <Footer transaction={transaction} /> : null}
+
+        {renderVerifyUnwrapped({
+          modelId: device.modelId,
+          type,
+        })}
+      </Container>
+    );
 };
 export default withTranslation()(TransactionConfirm);
