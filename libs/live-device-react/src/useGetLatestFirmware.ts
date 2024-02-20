@@ -1,28 +1,18 @@
 import { useEffect, useState } from "react";
 import {
-  HttpManagerApiRepository,
   getLatestFirmwareForDevice,
-  DeviceInfoEntity,
   FirmwareUpdateContextEntity,
 } from "@ledgerhq/live-device-core";
 
-type UseGetLatestFirmwareForDeviceParams = {
-  deviceInfo?: DeviceInfoEntity | null;
-  providerId: number;
-  userId: string;
-  managerApiRepository: HttpManagerApiRepository;
-};
+import { UseGetLatestFirmwareForDeviceOptions } from "./types";
 
-export const useGetLatestFirmware: (
-  params: UseGetLatestFirmwareForDeviceParams,
-) => FirmwareUpdateContextEntity | null = ({
+export function useGetLatestFirmware({
   deviceInfo,
   providerId,
   userId,
   managerApiRepository,
-}) => {
-  const [latestFirmware, setLatestFirmware] = useState<FirmwareUpdateContextEntity | null>(null);
-
+}: UseGetLatestFirmwareForDeviceOptions): FirmwareUpdateContextEntity | null {
+  const [firmware, setFirmware] = useState<FirmwareUpdateContextEntity | null>(null);
   useEffect(() => {
     let unmounted = false;
     if (deviceInfo) {
@@ -31,15 +21,16 @@ export const useGetLatestFirmware: (
         providerId,
         userId,
         managerApiRepository,
-      }).then(latestFirmware => {
-        if (unmounted) return;
-        setLatestFirmware(latestFirmware);
+      }).then((latestFirmware: FirmwareUpdateContextEntity | null) => {
+        if (unmounted) {
+          return;
+        }
+        setFirmware(latestFirmware);
       });
     }
     return () => {
       unmounted = true;
     };
-  }, [deviceInfo, managerApiRepository, providerId, setLatestFirmware, userId]);
-
-  return latestFirmware;
-};
+  }, [deviceInfo, managerApiRepository, providerId, setFirmware, userId]);
+  return firmware;
+}

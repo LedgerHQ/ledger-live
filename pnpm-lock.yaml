@@ -4422,12 +4422,6 @@ importers:
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../ledgerjs/packages/logs
-      '@types/semver':
-        specifier: 7.5.7
-        version: 7.5.7
-      '@types/sha.js':
-        specifier: ^2.4.4
-        version: 2.4.4
       semver:
         specifier: ^7.3.5
         version: 7.5.4
@@ -4444,6 +4438,12 @@ importers:
       '@types/node':
         specifier: ^20.8.10
         version: 20.8.10
+      '@types/semver':
+        specifier: 7.5.7
+        version: 7.5.7
+      '@types/sha.js':
+        specifier: ^2.4.4
+        version: 2.4.4
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@20.8.10)
@@ -22924,7 +22924,7 @@ packages:
       react-docgen-typescript: 2.2.2(typescript@5.1.3)
       tslib: 2.6.2
       typescript: 5.1.3
-      webpack: 5.89.0(esbuild@0.19.3)
+      webpack: 5.89.0(metro@0.80.0)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -25064,7 +25064,6 @@ packages:
     resolution: {integrity: sha512-Qukd+D6S2Hm0wLVt2Vh+/eWBIoUt+wF8jWjBsG4F8EFQRwKtYvtXCPcNl2OEUQ1R+eTr3xuSaBYUyM3WD1x/Qw==}
     dependencies:
       '@types/node': 20.8.10
-    dev: false
 
   /@types/sockjs@0.3.33:
     resolution: {integrity: sha512-f0KEEe05NvUnat+boPTZ0dgaLZ4SfSouXUgv5noUiefG2ajgKjmETo9ZJyuqsl7dfl2aHlLJUiki6B4ZYldiiw==}
@@ -27865,7 +27864,7 @@ packages:
       '@babel/core': 7.23.6
       '@jest/transform': 27.5.1
       '@jest/types': 27.5.1
-      '@types/babel__core': 7.20.3
+      '@types/babel__core': 7.20.5
       babel-plugin-istanbul: 6.1.1
       babel-preset-jest: 27.5.1(@babel/core@7.23.6)
       chalk: 4.1.2
@@ -28017,7 +28016,7 @@ packages:
       '@babel/core': 7.23.2
       find-cache-dir: 4.0.0
       schema-utils: 4.2.0
-      webpack: 5.89.0(@swc/core@1.3.95)(esbuild@0.19.3)
+      webpack: 5.89.0(@swc/core@1.3.95)(metro@0.80.0)
     dev: true
 
   /babel-plugin-add-react-displayname@0.0.5:
@@ -28334,7 +28333,7 @@ packages:
       babel-plugin-syntax-jsx: 6.18.0
       lodash: 4.17.21
       picomatch: 2.3.1
-      styled-components: 5.3.5(react-is@18.1.0)(react@18.2.0)
+      styled-components: 5.3.5(react-dom@18.2.0)(react-is@17.0.2)(react@18.2.0)
 
   /babel-plugin-syntax-jsx@6.18.0:
     resolution: {integrity: sha512-qrPaCSo9c8RHNRHIotaufGbuOBN8rtdC4QrrFFc43vyWCCz7Kl7GL1PGaXtMGQZUXrkCjNEgxDfmAuAabr/rlw==}
@@ -36813,7 +36812,7 @@ packages:
       semver: 7.5.4
       tapable: 2.2.1
       typescript: 5.1.3
-      webpack: 5.89.0(@swc/core@1.3.95)(esbuild@0.19.3)
+      webpack: 5.89.0(@swc/core@1.3.95)(metro@0.80.0)
     dev: true
 
   /form-data@2.3.3:
@@ -40294,7 +40293,7 @@ packages:
       pretty-format: 29.7.0
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.9.1(@swc/core@1.3.95)(typescript@5.1.3)
+      ts-node: 10.9.1(typescript@5.2.2)
     transitivePeerDependencies:
       - babel-plugin-macros
       - metro
@@ -40335,7 +40334,7 @@ packages:
       pretty-format: 29.7.0
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.9.1(@swc/core@1.3.95)(typescript@5.1.3)
+      ts-node: 10.9.1(typescript@5.2.2)
     transitivePeerDependencies:
       - babel-plugin-macros
       - metro
@@ -53572,6 +53571,7 @@ packages:
       react-is: 18.1.0
       shallowequal: 1.1.0
       supports-color: 5.5.0
+    dev: false
 
   /styled-components@6.0.7(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-xIwWuiRMYR43mskVsW9MGTRjSo7ol4bcVjT595fGUp3OLBJOlOgaiKaxsHdC4a2HqWKqKnh0CmcRbk5ogyDjTg==}
@@ -53966,7 +53966,7 @@ packages:
       webpack: '>=2'
     dependencies:
       '@swc/core': 1.3.95
-      webpack: 5.89.0(@swc/core@1.3.95)(esbuild@0.19.3)
+      webpack: 5.89.0(@swc/core@1.3.95)(metro@0.80.0)
     dev: true
 
   /swiper@7.4.1:
@@ -58177,7 +58177,7 @@ packages:
       mime-types: 2.1.35
       range-parser: 1.2.1
       schema-utils: 4.2.0
-      webpack: 5.89.0(@swc/core@1.3.95)(esbuild@0.19.3)
+      webpack: 5.89.0(@swc/core@1.3.95)(metro@0.80.0)
     dev: true
 
   /webpack-dev-server@4.12.0(webpack@5.76.1):

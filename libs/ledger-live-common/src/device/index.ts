@@ -4,6 +4,7 @@ export {
   isBootloaderVersionSupported,
   isHardwareVersionSupported,
   isDeviceLocalizationSupported,
+  FirmwareInfoEntity,
   FirmwareUpdateContext,
 } from "@ledgerhq/live-device-core";
 

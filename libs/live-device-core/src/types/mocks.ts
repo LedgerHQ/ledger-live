@@ -1,6 +1,6 @@
 import { DeviceInfo, DeviceVersionEntity, FinalFirmware, OsuFirmware } from ".";
 
-export const aDeviceInfoBuilder = (props?: Partial<DeviceInfo>): DeviceInfo => {
+export function aDeviceInfoBuilder(props?: Partial<DeviceInfo>): DeviceInfo {
   return {
     mcuVersion: "A_MCU_VERSION",
     version: "A_VERSION",
@@ -13,11 +13,9 @@ export const aDeviceInfoBuilder = (props?: Partial<DeviceInfo>): DeviceInfo => {
     pinValidated: true,
     ...props,
   };
-};
+}
 
-export const aDeviceVersionBuilder = (
-  props?: Partial<DeviceVersionEntity>,
-): DeviceVersionEntity => {
+export function aDeviceVersionBuilder(props?: Partial<DeviceVersionEntity>): DeviceVersionEntity {
   return {
     name: "Ledger Nano S",
     device: 3,
@@ -34,9 +32,9 @@ export const aDeviceVersionBuilder = (
     date_last_modified: "2020-04-30T13:50:00.000Z",
     ...props,
   };
-};
+}
 
-export const aFinalFirmwareBuilder = (props?: Partial<FinalFirmware>): FinalFirmware => {
+export function aFinalFirmwareBuilder(props?: Partial<FinalFirmware>): FinalFirmware {
   return {
     id: 1,
     name: "FINAL",
@@ -58,7 +56,7 @@ export const aFinalFirmwareBuilder = (props?: Partial<FinalFirmware>): FinalFirm
     application_versions: [],
     ...props,
   };
-};
+}
 
 export function aOsuFirmwareBuilder(props?: Partial<OsuFirmware>) {
   return {

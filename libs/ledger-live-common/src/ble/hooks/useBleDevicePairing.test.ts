@@ -10,7 +10,7 @@ import { getVersion } from "../../device";
 import { useBleDevicePairing } from "./useBleDevicePairing";
 
 jest.mock("../../hw/deviceAccess");
-jest.mock("../../device/use-cases/getVersionUseCase");
+jest.mock("@ledgerhq/live-device-core");
 jest.mock("@ledgerhq/hw-transport");
 jest.useFakeTimers();
 

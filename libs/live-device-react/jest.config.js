@@ -1,5 +1,4 @@
 module.exports = {
-  globalSetup: "<rootDir>/jest-global-setup.js",
   transform: {
     "^.+\\.(ts|tsx)?$": [
       "ts-jest",
@@ -10,5 +9,6 @@ module.exports = {
       },
     ],
   },
+  testEnvironment: "jsdom",
   testPathIgnorePatterns: ["lib/", "lib-es/"],
 };

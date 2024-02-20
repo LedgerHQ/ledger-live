@@ -15,7 +15,7 @@ import { extractOnboardingState, OnboardingState, OnboardingStep } from "./extra
 import { SeedPhraseType } from "@ledgerhq/types-live";
 
 jest.mock("./deviceAccess");
-jest.mock("../device/use-cases/getVersionUseCase");
+jest.mock("@ledgerhq/live-device-core");
 jest.mock("./extractOnboardingState");
 jest.mock("@ledgerhq/hw-transport");
 jest.useFakeTimers();
