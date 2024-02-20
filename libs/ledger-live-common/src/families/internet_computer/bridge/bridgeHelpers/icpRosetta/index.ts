@@ -68,6 +68,7 @@ export const signICPTransaction = async ({
   signatures: { txnSig: string; readSig: string };
   signedTxn: string;
 }> => {
+  // @ts-expect-error FIXME:
   const icp = new ICP(transport);
   const decodedTxn: any = Cbor.decode(Buffer.from(unsignedTxn, "hex"));
   const txnReqFromCbor = decodedTxn.updates[0][1];

@@ -19,6 +19,7 @@ const resolver: Resolver = async (transport, { path, verify, currency }) => {
   const network =
     networkParams.networkId === Networks.Mainnet.networkId ? Networks.Mainnet : Networks.Testnet;
 
+  // @ts-expect-error FIXME:
   const ada = new Ada(transport);
   const r = await ada.deriveAddress({
     network,

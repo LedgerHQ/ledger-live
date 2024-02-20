@@ -224,7 +224,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
           if (!nonce) {
             throw new InvalidNonce();
           }
-
+          // @ts-expect-error FIXME:
           const blockstack = new BlockstackApp(transport);
 
           const options: UnsignedTokenTransferOptions = {

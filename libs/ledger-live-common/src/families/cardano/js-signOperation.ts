@@ -315,6 +315,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({ account, deviceI
           }
 
           // Sign by device
+          // @ts-expect-error FIXME:
           const appAda = new Ada(transport);
           const r = await appAda.signTransaction(trxOptions);
           const signed = signTx(unsignedTransaction, accountPubKey, r.witnesses);

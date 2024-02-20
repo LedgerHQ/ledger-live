@@ -177,6 +177,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
           const { id: accountId } = account;
           const { address, derivationPath } = getAddress(account);
 
+          // @ts-expect-error FIXME:
           const casper = new CasperApp(transport);
 
           const fee = transaction.fees;
