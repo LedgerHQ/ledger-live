@@ -1,5 +1,5 @@
 import React from "react";
-import { PropsBody, PropsBodyElem } from "../types";
+import { Order, PropsBody, PropsBodyElem } from "../types";
 import { Flex, Text } from "@ledgerhq/react-ui";
 import styled from "@ledgerhq/react-ui/components/styled";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
@@ -11,10 +11,11 @@ import { usePrice } from "~/renderer/hooks/usePrice";
 const LIMIT = 5;
 
 export function WidgetList({ data, order }: PropsBody) {
-  const start = order === "asc" ? 0 : data.length - LIMIT;
-  const end = order === "asc" ? LIMIT : data.length;
+  const start = order === Order.asc ? 0 : data.length - LIMIT;
+  const end = order === Order.asc ? LIMIT : data.length;
+
   return (
-    <Flex flexDirection={"column"} flex={1}>
+    <Flex flexDirection="column" flex={1}>
       {data.slice(start, end).map((elem, i) => (
         <WidgetRow key={i} index={i + 1} data={elem} isFirst={i === 0} />
       ))}
@@ -30,7 +31,7 @@ function WidgetRow({ data, index, isFirst }: PropsBodyElem) {
   const subMagnitude = counterValue && counterValue.lt(1) ? 1 : 0;
 
   return (
-    <Flex alignItems="center" mt={isFirst ? 0 : 2} justifyContent={"space-between"}>
+    <Flex alignItems="center" mt={isFirst ? 0 : 2} justifyContent="space-between">
       <Flex alignItems="center">
         <Text color="neutral.c80" variant="h5Inter" mr={2}>
           {index}
