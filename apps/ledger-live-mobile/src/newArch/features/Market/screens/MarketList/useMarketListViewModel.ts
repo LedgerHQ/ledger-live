@@ -54,6 +54,12 @@ function useMarketListViewModel() {
     }
   }, [initialTop100, refresh]);
 
+  useEffect(() => {
+    if (filterByStarredAccount && starredMarketCoins.length > 0) {
+      refresh({ starred: starredMarketCoins });
+    }
+  }, [refresh, starredMarketCoins, filterByStarredAccount]);
+
   const onEndReached = useCallback(() => {
     if (
       !limit ||
