@@ -1756,7 +1756,7 @@
   "DeviceAction" : {
     "allowAppPermission" : "Ouvrez l’app {{wording}} sur votre appareil",
     "allowAppPermissionSubtitleToken" : "pour gérer vos tokens {{token}}",
-    "allowManagerPermission" : "Autorisez la connexion sécurisée sur votre {{productName}}",
+    "allowManagerPermission" : "Autorisez la connexion sécurisée",
     "allowRenaming" : "Autorisez le changement de nom sur votre appareil",
     "loading" : "Chargement...",
     "connectAndUnlockDevice" : "Connectez et déverrouillez votre appareil.",
@@ -5431,7 +5431,7 @@
       "description" : "Redémarrez votre appareil sans toucher les boutons lorsque le logo apparaît. Si le problème persiste, merci de contacter l’Assistance Ledger."
     },
     "UserRefusedAllowManager" : {
-      "title" : "My Ledger refusé sur l’appareil"
+      "title" : "Connexion sécurisée refusée sur l’appareil"
     },
     "UserRefusedFirmwareUpdate" : {
       "title" : "Installation de la mise à jour\nannulée sur l’appareil",
