@@ -911,9 +911,6 @@
     "FirmwareNotRecognized" : {
       "title" : "유효하지 않은 공급자",
       "description" : "\"My Ledger 공급자\" 설정을 변경해야 합니다. 이를 변경하려면 Ledger Live \"설정\"을 열고 \"실험 기능\"을 선택한 다음 다른 공급자를 선택합니다."
-    },
-    "TezosUnrevealedAccount" : {
-      "title" : "스왑 불가: 테조스 계정이나 변경 쌍을 통해 초기 전송/위임이 필요합니다."
     }
   },
   "crash" : {
@@ -6530,7 +6527,7 @@
     "ethereum" : {
       "title" : "ETH 보유량 늘리기",
       "subTitle" : "Ledger Live에서 일일 보상을 바로 수령하여 ETH를 스테이킹하고 보유량을 늘려보세요.",
-      "tagMinimum" : "Requires {{min}} ETH",
+      "tagMinimum" : "{{min}} ETH 필요",
       "close" : "종료",
       "providers" : {
         "kiln_pooling" : {
