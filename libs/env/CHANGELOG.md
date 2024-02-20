@@ -1,5 +1,15 @@
 # @ledgerhq/live-env
 
+## 1.0.0-new-wc.0
+
+### Major Changes
+
+- [#5682](https://github.com/LedgerHQ/ledger-live/pull/5682) [`4744c31`](https://github.com/LedgerHQ/ledger-live/commit/4744c3136021f1f47ad1617f2c84f47ac0647370) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Removing unused env var related to `Ethereum` transactions crafted with the old `ethereum` family
+
+### Patch Changes
+
+- [`40956b9`](https://github.com/LedgerHQ/ledger-live/commit/40956b984e734606127e6c780186f93f550db98a) Thanks [@Justkant](https://github.com/Justkant)! - feat: wc test
+
 ## 0.9.0
 
 ### Minor Changes
