@@ -8,6 +8,8 @@ import Switch from "~/components/Switch";
 import { View, Container, Titles, Content, Bottom, ScrollableContainer } from "../Common";
 import useAnalyticsOptInPrompt from "~/hooks/useAnalyticsOptInPromptVariantA";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { AnalyticsOptInPromptNavigatorParamList } from "~/components/RootNavigator/types/AnalyticsOptInPromptNavigator";
+import { ScreenName } from "~/const";
 
 const OptionContainer = styled(Flex).attrs({
   width: "100%",
@@ -47,7 +49,10 @@ function Option({ title, description, checked, onToggle }: OptionProps): React.R
   );
 }
 
-type Props = StackNavigatorProps<{ entryPoint: Array<string> }>;
+type Props = StackNavigatorProps<
+  AnalyticsOptInPromptNavigatorParamList,
+  ScreenName.AnalyticsOptInPromptDetails
+>;
 
 function Details({ route }: Props) {
   const { t } = useTranslation();

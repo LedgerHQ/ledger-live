@@ -8,8 +8,13 @@ import headerPersonalized from "./illustrations/header_personalized.png";
 import { Image } from "react-native";
 import useAnalyticsOptInPrompt from "~/hooks/useAnalyticsOptInPromptVariantB";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { AnalyticsOptInPromptNavigatorParamList } from "~/components/RootNavigator/types/AnalyticsOptInPromptNavigator";
+import { ScreenName } from "~/const";
 
-type Props = StackNavigatorProps<{ entryPoint: Array<string> }>;
+type Props = StackNavigatorProps<
+  AnalyticsOptInPromptNavigatorParamList,
+  ScreenName.AnalyticsOptInPromptDetails
+>;
 
 function Details({ route }: Props) {
   const { t } = useTranslation();

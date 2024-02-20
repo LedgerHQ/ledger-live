@@ -22,6 +22,8 @@ const screensByVariant = {
   },
 };
 
+const Stack = createStackNavigator<AnalyticsOptInPromptNavigatorParamList>();
+
 export default function AnalyticsOptInPromptNavigator() {
   const { colors } = useTheme();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, false), [colors]);
@@ -47,5 +49,3 @@ export default function AnalyticsOptInPromptNavigator() {
     </Stack.Navigator>
   );
 }
-
-const Stack = createStackNavigator<AnalyticsOptInPromptNavigatorParamList>();

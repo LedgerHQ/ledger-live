@@ -7,6 +7,8 @@ import Button from "~/components/Button";
 import { View, Container, Titles, Content, Bottom, ScrollableContainer } from "../Common";
 import useAnalyticsOptInPrompt from "~/hooks/useAnalyticsOptInPromptVariantA";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { AnalyticsOptInPromptNavigatorParamList } from "~/components/RootNavigator/types/AnalyticsOptInPromptNavigator";
+import { ScreenName } from "~/const";
 
 interface RenderItemsProps {
   items: string[];
@@ -35,7 +37,10 @@ function renderItems({
   );
 }
 
-type Props = StackNavigatorProps<{ entryPoint: Array<string> }>;
+type Props = StackNavigatorProps<
+  AnalyticsOptInPromptNavigatorParamList,
+  ScreenName.AnalyticsOptInPromptMain
+>;
 
 function Main({ route }: Props) {
   const { t } = useTranslation();
