@@ -20,7 +20,6 @@ import { renderVerifyUnwrapped } from "~/renderer/components/DeviceAction/render
 import TransactionConfirmField from "./TransactionConfirmField";
 import { getLLDCoinFamily } from "~/renderer/families";
 import { FieldComponentProps as FCPGeneric } from "~/renderer/families/types";
-import { Link } from "@ledgerhq/react-ui";
 import { openURL } from "~/renderer/linking";
 import Alert from "~/renderer/components/Alert";
 import { DeviceBlocker } from "../DeviceAction/DeviceBlocker";
@@ -212,13 +211,15 @@ const TransactionConfirm = ({
                 i18nKey="approve.termsAndConditions"
                 values={{ appName: manifestName }}
                 components={[
-                  <Link
-                    key={manifestId}
+                  <Text
                     onClick={() => openURL(termsOfUseUrl)}
-                    to={"https://www.ledger.com"}
+                    style={{
+                      cursor: "pointer",
+                      textDecoration: "underline",
+                    }}
                   >
                     {`${manifestId}'s terms of use.`}
-                  </Link>,
+                  </Text>,
                 ]}
               />
             </Text>
