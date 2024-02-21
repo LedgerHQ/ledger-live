@@ -168,9 +168,11 @@ const Delegation = ({ account }: { account: TronAccount }) => {
             }
           >
             <Button
-              onClick={hasRewards ? () => claimOnClick(tronStakingProvider) : noop}
+              onClick={
+                hasRewards && canClaimRewards ? () => claimOnClick(tronStakingProvider) : noop
+              }
               color="palette.primary.main"
-              disabled={!hasRewards}
+              disabled={!hasRewards || !canClaimRewards}
               small
             >
               <Box horizontal flow={1} alignItems="center">
