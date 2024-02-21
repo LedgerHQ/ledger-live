@@ -1,4 +1,6 @@
-const cosmosConfig = {
+import { ConfigInfo } from "@ledgerhq/live-config/LiveConfig";
+
+const cosmosConfig: Record<string, ConfigInfo> = {
   config_currency_axelar: {
     type: "object",
     default: {
@@ -156,4 +158,4 @@ const cosmosConfig = {
   },
 };
 
-export default cosmosConfig;
+export { cosmosConfig };
