@@ -6,7 +6,7 @@ import Button from "~/components/Button";
 import { View, Container, Titles, Content, Bottom, ScrollableContainer } from "../Common";
 import headerPersonalized from "./illustrations/header_personalized.png";
 import { Image } from "react-native";
-import useAnalyticsOptInPrompt from "~/hooks/useAnalyticsOptInPromptVariantB";
+import useAnalyticsOptInPrompt from "~/hooks/analyticsOptInPrompt/useAnalyticsOptInPromptVariantB";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { AnalyticsOptInPromptNavigatorParamList } from "~/components/RootNavigator/types/AnalyticsOptInPromptNavigator";
 import { ScreenName } from "~/const";

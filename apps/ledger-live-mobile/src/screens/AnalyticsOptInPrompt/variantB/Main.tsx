@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useEffect } from "react";
 import { Flex, Link, Text } from "@ledgerhq/native-ui";
 import { TrackScreen } from "~/analytics";
 import { useTranslation } from "react-i18next";
@@ -6,7 +6,7 @@ import Button from "~/components/Button";
 import { View, Container, Titles, Content, Bottom, ScrollableContainer } from "../Common";
 import headerAnalytics from "./illustrations/header_analytics.png";
 import { Image } from "react-native";
-import useAnalyticsOptInPrompt from "~/hooks/useAnalyticsOptInPromptVariantB";
+import useAnalyticsOptInPrompt from "~/hooks/analyticsOptInPrompt/useAnalyticsOptInPromptVariantB";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { AnalyticsOptInPromptNavigatorParamList } from "~/components/RootNavigator/types/AnalyticsOptInPromptNavigator";
 import { ScreenName } from "~/const";
@@ -16,11 +16,23 @@ type Props = StackNavigatorProps<
   ScreenName.AnalyticsOptInPromptMain
 >;
 
-function Main({ route }: Props) {
+function Main({ route, navigation }: Props) {
   const { t } = useTranslation();
   const { entryPoint } = route.params;
   const { shouldWeTrack, clickOnAllowAnalytics, clickOnRefuseAnalytics, clickOnLearnMore, flow } =
     useAnalyticsOptInPrompt({ entryPoint });
+
+  const shouldPreventBackNavigation = entryPoint === "Portfolio";
+
+  useEffect(() => {
+    if (shouldPreventBackNavigation) {
+      const unsubscribe = navigation.addListener("beforeRemove", e => {
+        e.preventDefault();
+      });
+
+      return unsubscribe;
+    }
+  });
 
   const bulletPoints = [
     t("analyticsOptIn.variantB.main.bulletPoints.1"),

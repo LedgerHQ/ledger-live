@@ -1,10 +1,5 @@
-import { useSelector, useDispatch } from "react-redux";
-import { hasSeenAnalyticsOptInPromptSelector, trackingEnabledSelector } from "~/reducers/settings";
-import {
-  setAnalytics,
-  setHasSeenAnalyticsOptInPrompt,
-  setPersonalizedRecommendations,
-} from "~/actions/settings";
+import { useDispatch, useSelector } from "react-redux";
+import { setHasSeenAnalyticsOptInPrompt } from "~/actions/settings";
 import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
 import {
@@ -16,18 +11,21 @@ import { Linking } from "react-native";
 import { urls } from "~/utils/urls";
 import { useLocale } from "~/context/Locale";
 import { track, updateIdentify } from "~/analytics";
+import { hasSeenAnalyticsOptInPromptSelector, trackingEnabledSelector } from "~/reducers/settings";
 import { EntryPoint } from "~/components/RootNavigator/types/AnalyticsOptInPromptNavigator";
-
-type Props = {
-  entryPoint: EntryPoint;
-};
+import { ABTestingVariants } from "@ledgerhq/types-live";
 
 const trackingKeysByFlow: Record<EntryPoint, string> = {
   Onboarding: "consent onboarding",
   Portfolio: "consent existing users",
 };
 
-const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
+type Props = {
+  entryPoint: EntryPoint;
+  variant: ABTestingVariants;
+};
+
+const useAnalyticsOptInPrompt = ({ entryPoint, variant }: Props) => {
   const { locale } = useLocale();
   const dispatch = useDispatch();
   const navigation =
@@ -69,71 +67,6 @@ const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
     updateIdentify(undefined, shouldWeTrack);
   };
 
-  const goToPersonalizedRecommendationsStep = () => {
-    navigation.navigate(NavigatorName.AnalyticsOptInPrompt, {
-      screen: ScreenName.AnalyticsOptInPromptDetails,
-      params: {
-        entryPoint,
-      },
-    });
-  };
-
-  const clickOnRefuseAnalytics = () => {
-    dispatch(setAnalytics(false));
-    goToPersonalizedRecommendationsStep();
-    track(
-      "button_clicked",
-      {
-        button: "Refuse Analytics",
-        variant: "B",
-        flow,
-        page: "Analytics Opt In Prompt Main",
-      },
-      shouldWeTrack,
-    );
-  };
-  const clickOnAllowAnalytics = () => {
-    dispatch(setAnalytics(true));
-    goToPersonalizedRecommendationsStep();
-    track(
-      "button_clicked",
-      {
-        button: "Accept Analytics",
-        variant: "B",
-        flow,
-        page: "Analytics Opt In Prompt Main",
-      },
-      shouldWeTrack,
-    );
-  };
-  const clickOnAllowPersonalizedExperience = () => {
-    dispatch(setPersonalizedRecommendations(true));
-    continueOnboarding();
-    track(
-      "button_clicked",
-      {
-        button: "Accept Personal Recommendations",
-        variant: "B",
-        flow,
-        page: "Recommendations Opt In Prompt Main",
-      },
-      shouldWeTrack,
-    );
-  };
-  const clickOnRefusePersonalizedExperience = () => {
-    dispatch(setPersonalizedRecommendations(false));
-    continueOnboarding();
-    track(
-      "button_clicked",
-      {
-        button: "Refuse Personal Recommendations",
-        variant: "B",
-        flow,
-        page: "Recommendations Opt In Prompt Main",
-      },
-      shouldWeTrack,
-    );
-  };
   const clickOnLearnMore = () => {
     Linking.openURL(
       (urls.privacyPolicy as Record<string, string>)[locale] || urls.privacyPolicy.en,
@@ -142,7 +75,7 @@ const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
       "button_clicked",
       {
         button: "Learn More",
-        variant: "B",
+        variant,
         flow,
       },
       shouldWeTrack,
@@ -150,11 +83,9 @@ const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
   };
 
   return {
+    navigation,
     shouldWeTrack,
-    clickOnRefuseAnalytics,
-    clickOnAllowAnalytics,
-    clickOnAllowPersonalizedExperience,
-    clickOnRefusePersonalizedExperience,
+    continueOnboarding,
     clickOnLearnMore,
     flow,
   };
