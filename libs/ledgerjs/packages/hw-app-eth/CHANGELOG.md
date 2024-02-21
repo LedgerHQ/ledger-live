@@ -1,5 +1,12 @@
 # @ledgerhq/hw-app-eth
 
+## 6.35.6-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/evm-tools@1.0.16-hotfix.0
+
 ## 6.35.5
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @ledgerhq/live-countervalues-react
 
+## 0.1.2-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@0.11.2-hotfix.0
+  - @ledgerhq/live-countervalues@0.1.2-hotfix.0
+
 ## 0.1.1
 
 ### Patch Changes
