@@ -1451,6 +1451,13 @@
         "primaryCta": "Connect",
         "secondaryCta": "Maybe later"
       }
+    },
+    "marketPerformanceWidget": {
+      "title": "24h trend",
+      "buy": "Buy",
+      "swap": "Swap",
+      "gainers": "Gainers",
+      "losers": "Losers"
     }
   },
   "currentAddress": {
