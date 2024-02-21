@@ -17,7 +17,16 @@ export function MarketPerformanceWidgetContainer({ variant, list, setOrder, orde
   const Body = BodyByMode[variant];
 
   return (
-    <Card px={6} py={5} grow>
+    <Card
+      px={{
+        _: 4,
+        lg: 4,
+        xl: 5,
+        xxl: 6,
+      }}
+      py={5}
+      grow
+    >
       <MarketPerformanceWidgetHeader order={order} onChangeOrder={setOrder} />
 
       <Flex flex={1}>
