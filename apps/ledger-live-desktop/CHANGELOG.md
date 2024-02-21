@@ -1,5 +1,14 @@
 # ledger-live-desktop
 
+## 2.77.0-nightly.13
+
+### Patch Changes
+
+- [#6232](https://github.com/LedgerHQ/ledger-live/pull/6232) [`ae4b96b`](https://github.com/LedgerHQ/ledger-live/commit/ae4b96bbe939207224cf4680843c4f4beeb4c1aa) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Add language param to moonpay url
+
+- Updated dependencies [[`43ad538`](https://github.com/LedgerHQ/ledger-live/commit/43ad5380b5516233eecd5ee32e87373bdc33f32f)]:
+  - @ledgerhq/live-common@34.0.0-nightly.13
+
 ## 2.77.0-nightly.12
 
 ### Patch Changes

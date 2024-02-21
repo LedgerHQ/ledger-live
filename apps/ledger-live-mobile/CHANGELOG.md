@@ -1,5 +1,14 @@
 # live-mobile
 
+## 3.40.0-nightly.14
+
+### Patch Changes
+
+- [#6181](https://github.com/LedgerHQ/ledger-live/pull/6181) [`6d1f3a6`](https://github.com/LedgerHQ/ledger-live/commit/6d1f3a67dc97926bc84d7b5dd84372255617818f) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Update available updates modal
+
+- Updated dependencies [[`43ad538`](https://github.com/LedgerHQ/ledger-live/commit/43ad5380b5516233eecd5ee32e87373bdc33f32f)]:
+  - @ledgerhq/live-common@34.0.0-nightly.13
+
 ## 3.40.0-nightly.13
 
 ### Patch Changes

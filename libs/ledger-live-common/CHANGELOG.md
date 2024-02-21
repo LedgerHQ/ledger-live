@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 34.0.0-nightly.13
+
+### Patch Changes
+
+- [#6133](https://github.com/LedgerHQ/ledger-live/pull/6133) [`43ad538`](https://github.com/LedgerHQ/ledger-live/commit/43ad5380b5516233eecd5ee32e87373bdc33f32f) Thanks [@lawRathod](https://github.com/lawRathod)! - Possible fix for account sync errors on stacks when user imports account from accountId string
+
 ## 34.0.0-nightly.12
 
 ### Patch Changes
