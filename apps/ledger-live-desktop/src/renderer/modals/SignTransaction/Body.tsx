@@ -204,12 +204,15 @@ export default function Body({ onChangeStepId, onClose, setError, stepId, params
     status,
   });
 
-  const typeTransaction: string = (
-    fields.find(
-      (field: { label: string }) =>
-        field.label && (field.label === "Type" || field.label === "Data"),
-    ) as DeviceTransactionField & { value: string }
-  ).value;
+  const typeTransaction: string = useMemo(
+    () =>
+      (
+        fields.find(
+          (field: { label: string }) => field.label && field.label === "Type",
+        ) as DeviceTransactionField & { value: string }
+      )?.value || "",
+    [fields],
+  );
 
   const steps = useSteps(canEditFees, typeTransaction);
 
