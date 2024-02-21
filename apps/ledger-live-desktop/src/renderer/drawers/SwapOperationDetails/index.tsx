@@ -160,7 +160,7 @@ const SwapOperationDetails = ({
         history.push({
           pathname: "/platform/moonpay",
           state: {
-            returnTo: "/swap",
+            returnTo: "/swap/history",
             accountId: mainAccount.id,
             customDappUrl: undefined,
             goToURL: "https://buy.moonpay.com/trade_history?ledgerlive",
