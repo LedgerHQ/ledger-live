@@ -1,18 +1,17 @@
 import React, { useMemo } from "react";
 import { Trans, withTranslation } from "react-i18next";
-
-import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import { Account, AccountLike, TransactionCommon } from "@ledgerhq/types-live";
 import { TFunction } from "i18next";
-import useTheme from "~/renderer/hooks/useTheme";
-import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { Account, AccountLike, TransactionCommon } from "@ledgerhq/types-live";
+import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { DeviceTransactionField } from "@ledgerhq/live-common/transaction/index";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import Animation from "~/renderer/animations";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import Alert from "~/renderer/components/Alert";
+import useTheme from "~/renderer/hooks/useTheme";
 import { DeviceBlocker } from "../DeviceAction/DeviceBlocker";
 import { getDeviceAnimation } from "../DeviceAction/animations";
-import Animation from "~/renderer/animations";
 import ConfirmApprovalFooter from "./ConfirmApprovalFooter";
 import { Container, FieldComponent } from ".";
 

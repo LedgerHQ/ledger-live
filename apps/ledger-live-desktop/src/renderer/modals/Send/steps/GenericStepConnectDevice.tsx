@@ -66,7 +66,6 @@ export default function StepConnectDevice({
       tokenCurrency,
       parentAccount,
       account,
-      // appName: useApp,
       transaction,
       status,
     }),

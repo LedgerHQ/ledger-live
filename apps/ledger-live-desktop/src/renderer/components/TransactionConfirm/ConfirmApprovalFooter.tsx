@@ -1,9 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { Trans, withTranslation } from "react-i18next";
-
 import { TransactionCommon } from "@ledgerhq/types-live";
-
 import Text from "~/renderer/components/Text";
 import { openURL } from "~/renderer/linking";
 
