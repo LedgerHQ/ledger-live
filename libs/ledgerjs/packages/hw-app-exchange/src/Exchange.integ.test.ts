@@ -16,7 +16,7 @@ describe("Check SWAP until payload signature", () => {
     transport.close();
   });
 
-  xit("Legacy SWAP", async () => {
+  it("Legacy SWAP", async () => {
     // Given
     const exchange = new Exchange(transport, ExchangeTypes.Swap);
 
@@ -52,7 +52,7 @@ describe("Check SWAP until payload signature", () => {
     await exchange.checkTransactionSignature(payloadSignature);
   });
 
-  xit("NG SWAP", async () => {
+  it("NG SWAP", async () => {
     // Given
     const exchange = new Exchange(transport, ExchangeTypes.SwapNg);
 
@@ -90,7 +90,7 @@ describe("Check SWAP until payload signature", () => {
     await exchange.checkTransactionSignature(payloadSignature);
   });
 
-  xit("NG SWAP with more than 255 bytes in process transaction", async () => {
+  it("NG SWAP with more than 255 bytes in process transaction", async () => {
     // Given
     const exchange = new Exchange(transport, ExchangeTypes.SwapNg);
 
@@ -132,7 +132,7 @@ describe("Check SWAP until payload signature", () => {
     await exchange.checkTransactionSignature(payloadSignature);
   });
 
-  xit("NG SWAP with prepared data", async () => {
+  it("NG SWAP with prepared data", async () => {
     // Given
     const exchange = new Exchange(transport, ExchangeTypes.SwapNg);
 

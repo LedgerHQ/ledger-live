@@ -36,7 +36,6 @@ const sellProviders: Record<string, ExchangeProviderNameAndSignature> = {
 
 export const getSellProvider = (providerName: string): ExchangeProviderNameAndSignature => {
   if (getEnv("MOCK_EXCHANGE_TEST_CONFIG")) {
-    console.log("DEBUG - getSellProvider with Mock value");
     return testSellProvider;
   }
 

@@ -94,7 +94,6 @@ const completeExchange = (
         if (unsubscribed) return;
 
         const goodSign = convertSignature(signature, exchange.transactionType);
-        currentStep = "CHECK_TRANSACTION_SIGNATURE";
 
         currentStep = "CHECK_TRANSACTION_SIGNATURE";
         await exchange.checkTransactionSignature(goodSign);

@@ -120,23 +120,26 @@ export const handlers = ({
             throw new ServerError(createAccountNotFound(params.fromAccountId));
           }
 
-          const realToAccountId = getAccountIdFromWalletAccountId(params.toAccountId);
-          if (!realToAccountId) {
-            return Promise.reject(createAccounIdNotFound(params.toAccountId));
-          }
+          let toAccount;
 
-          const toAccount = accounts.find(a => a.id === realToAccountId);
-          if (!toAccount) {
-            throw new ServerError(createAccountNotFound(params.toAccountId));
+          if (params.exchangeType === "SWAP" && params.toAccountId) {
+            const realToAccountId = getAccountIdFromWalletAccountId(params.toAccountId);
+            if (!realToAccountId) {
+              return Promise.reject(createAccounIdNotFound(params.toAccountId));
+            }
+
+            const toAccount = accounts.find(a => a.id === realToAccountId);
+
+            if (!toAccount) {
+              throw new ServerError(createAccountNotFound(params.toAccountId));
+            }
           }
 
           const fromParentAccount = getParentAccount(fromAccount, accounts);
           const toParentAccount = getParentAccount(toAccount, accounts);
 
           const currency = params.tokenCurrency ? findTokenById(params.tokenCurrency) : null;
-          const newTokenAccount = currency
-            ? makeEmptyTokenAccount(toParentAccount, currency)
-            : null;
+          const newTokenAccount = currency ? makeEmptyTokenAccount(toAccount, currency) : null;
 
           exchangeParams = {
             exchangeType: params.exchangeType,
@@ -145,7 +148,7 @@ export const handlers = ({
               fromAccount,
               fromParentAccount,
               toAccount: newTokenAccount ? newTokenAccount : toAccount,
-              toParentAccount: toParentAccount,
+              toParentAccount: newTokenAccount ? toAccount : toParentAccount,
             },
           };
 
