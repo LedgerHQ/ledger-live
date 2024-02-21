@@ -1,5 +1,5 @@
 import cryptoFactory from "./chain";
-import cosmosConfig from "../config";
+import { cosmosConfig } from "../config";
 import { LiveConfig, ConfigSchema } from "@ledgerhq/live-config/LiveConfig";
 
 describe("cryptoFactory test", () => {
