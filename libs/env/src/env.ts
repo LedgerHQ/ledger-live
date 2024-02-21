@@ -112,11 +112,6 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Datahub Indexer API for NEAR",
   },
-  API_NEAR_STAKING_POSITIONS_API: {
-    def: "https://validators-near.coin.ledger.com/",
-    parser: stringParser,
-    desc: "NEAR staking positions API",
-  },
   API_STACKS_ENDPOINT: {
     parser: stringParser,
     def: "https://stacks.coin.ledger.com",
