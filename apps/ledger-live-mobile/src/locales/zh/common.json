@@ -144,7 +144,7 @@
       }
     },
     "ConnectManagerTimeout" : {
-      "title" : "抱歉，“我的 Ledger”连接失败",
+      "title" : "抱歉，与 Ledger 设备建立安全连接失败",
       "description" : {
         "ios" : {
           "nanoX" : "请确保您的 {{productName}} 已解锁，同时已启用蓝牙。"
@@ -622,8 +622,8 @@
       "primaryCTA" : "打开“我的 Ledger”"
     },
     "UserRefusedAllowManager" : {
-      "title" : "Manager（管理器）已被在设备上禁用",
-      "description" : "请在您的设备上启用管理器，然后重试。"
+      "title" : "安全连接在设备上被拒绝",
+      "description" : "请在您的设备上允许安全连接并重试。"
     },
     "UserRefusedAddress" : {
       "title" : "接收地址被拒",
@@ -3888,7 +3888,7 @@
     "stayInTheAppPlz" : "停留在 Ledger Live 应用程序中并将 Ledger 设备一直放在附近。",
     "allowAppPermission" : "在您的设备上打开 {{wording}} 应用程序",
     "allowAppPermissionSubtitleToken" : "管理您的 {{token}} 代币",
-    "allowManagerPermission" : "允许 Ledger 管理器在您的 {{productName}} 上运行",
+    "allowManagerPermission" : "允许与 Ledger 设备建立安全连接",
     "allowRenaming" : "允许在您的 {{productName}} 上重命名",
     "allowRemoveCustomLockscreen" : "确认移除 Ledger Stax 上的图片",
     "allowSecureConnection" : "允许与 Ledger 设备建立安全连接",
@@ -6590,85 +6590,85 @@
   "analyticsOptIn" : {
     "variantA" : {
       "main" : {
-        "title" : "请帮助我们改进并提供个性化体验。",
-        "subtitle" : "分享您的 Ledger Live 使用数据有助于我们了解您的偏好。这能让我们定制您的体验并优化内容性能（包括点击量、浏览量和打开次数），最大限度提高相关性。",
+        "title" : "Help us improve and personalize your experience",
+        "subtitle" : "Sharing your Ledger Live data helps us understand your preferences, show content that’s relevant to you, and fix technical issues.",
         "content" : {
           "able" : {
-            "title" : "Ledger Live 将会追踪：",
-            "diagAndUsage" : "使用数据"
+            "title" : "With your consent, Ledger will be able to track:",
+            "diagAndUsage" : "Analytics data, including page visits, clicks.",
+            "personnalizationData" : "Personalization data including clicks, page visits, conversion data."
           },
           "unable" : {
-            "title" : "Ledger Live 决不收集：",
-            "adresses" : "您的地址",
-            "balance" : "您的余额",
-            "nfts" : "您的 NFT",
-            "personnalInfos" : "个人身份信息"
+            "title" : "Ledger will never track information regarding:",
+            "adresses" : "Your assets.",
+            "balance" : "Your portfolio.",
+            "personnalInfos" : "Your personal identifying Information."
           },
-          "moreOptions" : "更多选项",
+          "moreOptions" : "管理您的偏好",
           "ctas" : {
             "refuse" : "全部拒绝",
             "accept" : "全部接受"
           },
           "infoText" : {
-            "info" : "您可以随时在应用程序设置中撤回您的同意。",
-            "link" : "点击此处了解详情。"
+            "info" : "You can revoke your consent any time in the app settings.",
+            "link" : "Learn more about our Tracking Policy"
           }
         }
       },
       "details" : {
         "title" : "管理您的偏好",
         "analytics" : {
-          "title" : "数据分析",
-          "description" : "分享应用程序使用数据，帮助 Ledger 改进应用程序。"
+          "title" : "Analytics data",
+          "description" : "To help improve Ledger Live, share app’s analytics data, including page visits, clicks."
         },
         "personalizedExp" : {
-          "title" : "个性化体验",
-          "description" : "接收符合您偏好的个性化推荐并分享内容性能，以此优化相关性。"
+          "title" : "Personalization data",
+          "description" : "To get personalized recommendations, share app’s personalization data including, conversion data, clicks, page visits."
         },
         "ctas" : {
           "notNow" : "以后再说",
           "accept" : "接受",
           "acceptAll" : "全部接受",
-          "confirm" : "确认"
+          "confirm" : "分享"
         },
         "infoText" : {
-          "info" : "您可以随时在应用程序设置中撤回您的同意。",
-          "link" : "点击此处了解详情。"
+          "info" : "You can revoke your consent any time in the app settings.",
+          "link" : "Learn more about our Tracking Policy"
         }
       }
     },
     "variantB" : {
       "main" : {
         "title" : "帮助我们改进 Ledger Live",
-        "description" : "分享您的 Ledger Live 使用数据有助于我们了解您的 Ledger Live 使用情况。",
+        "description" : "Sharing your Ledger Live analytics data helps us understand how people use Ledger Live, fix bugs, and offer an improved user experience.",
         "bulletPoints" : {
-          "1" : "使用数据包括页面访问量、点击量和转化率。",
-          "2" : "我们不会收集或查看您的地址、账户、余额、NFT 或与您的投资组合相关的其他信息。",
-          "3" : "我们无法识别也不会识别您的身份，我们不会收集个人信息。"
+          "1" : "Analytics data includes page visits, clicks.",
+          "2" : "We won’t collect or see any information regarding your balance, accounts, and portfolio.",
+          "3" : "Analytics are completely anonymous. We can’t see or collect your personal information."
         },
         "ctas" : {
           "refuse" : "拒绝",
           "share" : "分享"
         },
         "infoText" : {
-          "info" : "您可以随时在应用程序设置中撤回您的同意。",
-          "link" : "详细了解关于撤回同意的信息"
+          "info" : "You can revoke your consent any time in the app settings.",
+          "link" : "Learn more about our Tracking Policy"
         }
       },
       "details" : {
         "title" : "享受个性化体验",
-        "description" : "通过分析您的使用数据，我们可以定制您的体验并评估内容性能，追踪点击量、浏览量和打开次数等指标，确保最大限度提高相关性。",
+        "description" : "Sharing your Ledger Live personalization data lets us display content that matches your preferences.",
         "bulletPoints" : {
-          "1" : "个性化推荐和内容",
-          "2" : "个性化通知"
+          "1" : "Personalization data includes conversion data, clicks, page visits.",
+          "2" : "We cannot track or collect any of your personal or portfolio information."
         },
         "ctas" : {
           "refuse" : "拒绝",
           "allow" : "允许"
         },
         "infoText" : {
-          "info" : "您可以随时在应用程序设置中撤回您的同意。",
-          "link" : "详细了解关于撤回同意的信息"
+          "info" : "You can revoke your consent any time in the app settings.",
+          "link" : "Learn more about our Tracking Policy"
         }
       }
     }
