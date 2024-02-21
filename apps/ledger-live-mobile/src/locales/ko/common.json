@@ -144,7 +144,7 @@
       }
     },
     "ConnectManagerTimeout" : {
-      "title" : "죄송하지만, My Ledger 연결에 실패했습니다",
+      "title" : "죄송합니다. Ledger와의 보안 연결에 실패했습니다",
       "description" : {
         "ios" : {
           "nanoX" : "{{productName}}가 잠금 해제되어 있고 블루투스가 활성화되어 있는지 확인하세요."
@@ -492,7 +492,7 @@
       "description" : "내 Ledger에서 앱을 다시 설치해 보세요"
     },
     "NotEnoughGas" : {
-      "title" : "{{cryptoName}} 네트워크에서는 수수료로 {{ticker}} {{fees}}(이)가 필요합니다. <link0>{{ticker}} 구매</link0>",
+      "title" : "{{cryptoName}} 네트워크에서 트랜잭션 수수료를 지불하려면 계정에 {{fees}} {{ticker}}(이)가 필요합니다.  <link0>{{ticker}}(을)를 구매</link0>하거나 계정에 추가 입금하세요.",
       "description" : "토큰 트랜잭션 수수료로 계정에 코인을 전송하세요."
     },
     "NotEnoughGasSwap" : {
@@ -622,8 +622,8 @@
       "primaryCTA" : "My Ledger 열기"
     },
     "UserRefusedAllowManager" : {
-      "title" : "관리자가 장치에서 비활성 상태입니다",
-      "description" : "장치에서 관리자를 허용한 후 다시 시도하세요."
+      "title" : "장치에서 보안 연결이 거부되었습니다",
+      "description" : "장치의 보안 연결을 허용하고 다시 시도하세요."
     },
     "UserRefusedAddress" : {
       "title" : "수신 주소 거부됨",
@@ -911,9 +911,6 @@
     "FirmwareNotRecognized" : {
       "title" : "유효하지 않은 공급자",
       "description" : "\"My Ledger 공급자\" 설정을 변경해야 합니다. 이를 변경하려면 Ledger Live \"설정\"을 열고 \"실험 기능\"을 선택한 다음 다른 공급자를 선택합니다."
-    },
-    "TezosUnrevealedAccount" : {
-      "title" : "스왑 불가: 테조스 계정이나 변경 쌍을 통해 초기 전송/위임이 필요합니다."
     }
   },
   "crash" : {
@@ -3888,7 +3885,7 @@
     "stayInTheAppPlz" : "Ledger Live 앱을 끄지 마시고 Ledger 장치를 가까운 곳에 위치시켜 주세요.",
     "allowAppPermission" : "내 장치에서 {{wording}} 앱 열기",
     "allowAppPermissionSubtitleToken" : "나의 {{token}} 토큰 관리",
-    "allowManagerPermission" : "{{productName}}에서 Ledger 관리자를 허용하세요",
+    "allowManagerPermission" : "Ledger와 보안 연결을 허용",
     "allowRenaming" : "{{productName}}의 이름 변경을 허용하세요",
     "allowRemoveCustomLockscreen" : "Ledger Stax에서 이미지 삭제 확인",
     "allowSecureConnection" : "Ledger와 보안 연결을 허용",
@@ -6530,7 +6527,7 @@
     "ethereum" : {
       "title" : "ETH 보유량 늘리기",
       "subTitle" : "Ledger Live에서 일일 보상을 바로 수령하여 ETH를 스테이킹하고 보유량을 늘려보세요.",
-      "tagMinimum" : "Requires {{min}} ETH",
+      "tagMinimum" : "{{min}} ETH 필요",
       "close" : "종료",
       "providers" : {
         "kiln_pooling" : {
