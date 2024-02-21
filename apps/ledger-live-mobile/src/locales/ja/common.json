@@ -144,7 +144,7 @@
       }
     },
     "ConnectManagerTimeout" : {
-      "title" : "申し訳ありません。My Ledgerの接続に失敗しました",
+      "title" : "申し訳ありませんが、Ledgerとの安全な接続に失敗しました",
       "description" : {
         "ios" : {
           "nanoX" : "{{productName}} のロックが解除済みで、Bluetoothが有効であることを確認してください。"
@@ -622,8 +622,8 @@
       "primaryCTA" : "My Ledgerを開く"
     },
     "UserRefusedAllowManager" : {
-      "title" : "デバイスのManagerが無効です。",
-      "description" : "デバイスで「Manager」のアクセスを許可してから、もう一度お試しください。"
+      "title" : "デバイス上で安全な接続が拒否されました",
+      "description" : "デバイスで安全な接続を許可して、再試行してください。"
     },
     "UserRefusedAddress" : {
       "title" : "受取アドレスが却下されました。",
@@ -3888,7 +3888,7 @@
     "stayInTheAppPlz" : "Ledger Liveアプリを開いた状態で、Ledgerを近くに置いてください。",
     "allowAppPermission" : "デバイスで{{wording}} アプリを開く",
     "allowAppPermissionSubtitleToken" : "{{token}} トークンを管理",
-    "allowManagerPermission" : "{{productName}}でLedger Managerを許可する",
+    "allowManagerPermission" : "Ledgerとの安全な接続を許可する",
     "allowRenaming" : "{{productName}}で名前の変更を許可する",
     "allowRemoveCustomLockscreen" : "Ledger Staxの画像の削除を確定する",
     "allowSecureConnection" : "Ledgerとの安全な接続を許可する",
@@ -6590,85 +6590,85 @@
   "analyticsOptIn" : {
     "variantA" : {
       "main" : {
-        "title" : "より適したコンテンツの提供および機能改善にご協力ください。",
-        "subtitle" : "Ledger Liveの使用状況データを共有いただくと、お客様が必要とするコンテンツを理解することが可能となります。これによりサービスをカスタマイズし、クリック、閲覧、表示を含むコンテンツのパフォーマンスを最適化し、関連性を最大限に高めることができます。",
+        "title" : "Help us improve and personalize your experience",
+        "subtitle" : "Sharing your Ledger Live data helps us understand your preferences, show content that’s relevant to you, and fix technical issues.",
         "content" : {
           "able" : {
-            "title" : "Ledger Liveは以下の情報を追跡します。",
-            "diagAndUsage" : "使用状況データ"
+            "title" : "With your consent, Ledger will be able to track:",
+            "diagAndUsage" : "Analytics data, including page visits, clicks.",
+            "personnalizationData" : "Personalization data including clicks, page visits, conversion data."
           },
           "unable" : {
-            "title" : "Ledger Liveは以下の情報を収集することはありません。",
-            "adresses" : "アドレス",
-            "balance" : "残高",
-            "nfts" : "NFT",
-            "personnalInfos" : "個人識別情報"
+            "title" : "Ledger will never track information regarding:",
+            "adresses" : "Your assets.",
+            "balance" : "Your portfolio.",
+            "personnalInfos" : "Your personal identifying Information."
           },
-          "moreOptions" : "その他のオプション",
+          "moreOptions" : "Manage your preferences",
           "ctas" : {
             "refuse" : "すべて拒否する",
             "accept" : "すべて受け入れる"
           },
           "infoText" : {
-            "info" : "同意はアプリの設定からいつでも取り消すことが可能です。",
-            "link" : "こちらをクリックして、詳細をご覧ください。"
+            "info" : "You can revoke your consent any time in the app settings.",
+            "link" : "Learn more about our Tracking Policy"
           }
         }
       },
       "details" : {
         "title" : "環境設定の管理",
         "analytics" : {
-          "title" : "アナリティクス",
-          "description" : "アプリの使用状況を共有すると、Ledgerがアプリケーションを改善するのに役立ちます。"
+          "title" : "Analytics data",
+          "description" : "To help improve Ledger Live, share app’s analytics data, including page visits, clicks."
         },
         "personalizedExp" : {
-          "title" : "好みに合わせてコンテンツをカスタマイズ",
-          "description" : "お好みに合わせてパーソナライズされたおすすめをお届け。さらにコンテンツのパフォーマンスを共有していただくと関連性を最適化できます。"
+          "title" : "Personalization data",
+          "description" : "To get personalized recommendations, share app’s personalization data including, conversion data, clicks, page visits."
         },
         "ctas" : {
           "notNow" : "後で",
           "accept" : "同意する",
           "acceptAll" : "すべて受け入れる",
-          "confirm" : "確認"
+          "confirm" : "Share"
         },
         "infoText" : {
-          "info" : "同意はアプリの設定からいつでも取り消すことができます。",
-          "link" : "こちらをクリックして、詳細をご覧ください。"
+          "info" : "You can revoke your consent any time in the app settings.",
+          "link" : "Learn more about our Tracking Policy"
         }
       }
     },
     "variantB" : {
       "main" : {
         "title" : "Ledger Liveをさらに使いやすく",
-        "description" : "Ledger Liveの使用状況データを共有すると、Ledger Liveのご使用状況を把握するのに役立ちます。",
+        "description" : "Sharing your Ledger Live analytics data helps us understand how people use Ledger Live, fix bugs, and offer an improved user experience.",
         "bulletPoints" : {
-          "1" : "使用状況データには、ページ訪問、クリック、コンバージョンが含まれます。",
-          "2" : "当社はアドレス、アカウント、残高、NFT、ポートフォリオに関連するその他の情報を収集したり表示したりすることはありません。",
-          "3" : "当社はお客様の識別をすることは不可能で、そのようなことを意図するものではありません。また、当社は個人情報を収集することはありません。"
+          "1" : "Analytics data includes page visits, clicks.",
+          "2" : "We won’t collect or see any information regarding your balance, accounts, and portfolio.",
+          "3" : "Analytics are completely anonymous. We can’t see or collect your personal information."
         },
         "ctas" : {
           "refuse" : "拒否する",
           "share" : "共有する"
         },
         "infoText" : {
-          "info" : "同意はアプリの設定からいつでも取り消すことができます。",
-          "link" : "同意の取り消しについて詳しく見る"
+          "info" : "You can revoke your consent any time in the app settings.",
+          "link" : "Learn more about our Tracking Policy"
         }
       },
       "details" : {
         "title" : "パーソナライズされたコンテンツを使用する",
-        "description" : "お客様の使用状況データを分析することで、利用体験をカスタマイズし、コンテンツのパフォーマンスを評価し、クリック数、閲覧数、開封数などの指標を追跡して、関連性を最大限に高めることができます。",
+        "description" : "Sharing your Ledger Live personalization data lets us display content that matches your preferences.",
         "bulletPoints" : {
-          "1" : "好みに合わせたおすすめ情報とコンテンツを表示",
-          "2" : "通知をパーソナライズ"
+          "1" : "Personalization data includes conversion data, clicks, page visits.",
+          "2" : "We cannot track or collect any of your personal or portfolio information."
         },
         "ctas" : {
           "refuse" : "拒否する",
           "allow" : "許可する"
         },
         "infoText" : {
-          "info" : "同意はアプリの設定からいつでも取り消すことができます。",
-          "link" : "同意の取り消しについて詳しく見る"
+          "info" : "You can revoke your consent any time in the app settings.",
+          "link" : "Learn more about our Tracking Policy"
         }
       }
     }
