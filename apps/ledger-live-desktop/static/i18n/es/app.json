@@ -1756,7 +1756,7 @@
   "DeviceAction" : {
     "allowAppPermission" : "Abre la aplicación {{wording}} en tu dispositivo",
     "allowAppPermissionSubtitleToken" : "para administrar los tokens {{token}}",
-    "allowManagerPermission" : "Permitir Ledger Manager en tu {{productName}}",
+    "allowManagerPermission" : "Permitir conexión segura",
     "allowRenaming" : "Permitir renombrar en tu dispositivo",
     "loading" : "Cargando...",
     "connectAndUnlockDevice" : "Conecta y desbloquea tu dispositivo",
@@ -5431,7 +5431,7 @@
       "description" : "Reinicia el dispositivo sin tocar los botones cuando aparezca el logotipo. Contacta al Soporte de Ledger si persiste el problema."
     },
     "UserRefusedAllowManager" : {
-      "title" : "Mi Ledger denegado en el dispositivo"
+      "title" : "Conexión segura denegada en dispositivo"
     },
     "UserRefusedFirmwareUpdate" : {
       "title" : "Instalación de actualización de SO\ncancelada en el dispositivo",
