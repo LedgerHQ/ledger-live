@@ -144,7 +144,7 @@
       }
     },
     "ConnectManagerTimeout" : {
-      "title" : "죄송하지만, My Ledger 연결에 실패했습니다",
+      "title" : "죄송합니다. Ledger와의 보안 연결에 실패했습니다",
       "description" : {
         "ios" : {
           "nanoX" : "{{productName}}가 잠금 해제되어 있고 블루투스가 활성화되어 있는지 확인하세요."
@@ -622,8 +622,8 @@
       "primaryCTA" : "My Ledger 열기"
     },
     "UserRefusedAllowManager" : {
-      "title" : "관리자가 장치에서 비활성 상태입니다",
-      "description" : "장치에서 관리자를 허용한 후 다시 시도하세요."
+      "title" : "장치에서 보안 연결이 거부되었습니다",
+      "description" : "장치의 보안 연결을 허용하고 다시 시도하세요."
     },
     "UserRefusedAddress" : {
       "title" : "수신 주소 거부됨",
@@ -3888,7 +3888,7 @@
     "stayInTheAppPlz" : "Ledger Live 앱을 끄지 마시고 Ledger 장치를 가까운 곳에 위치시켜 주세요.",
     "allowAppPermission" : "내 장치에서 {{wording}} 앱 열기",
     "allowAppPermissionSubtitleToken" : "나의 {{token}} 토큰 관리",
-    "allowManagerPermission" : "{{productName}}에서 Ledger 관리자를 허용하세요",
+    "allowManagerPermission" : "Ledger와 보안 연결을 허용",
     "allowRenaming" : "{{productName}}의 이름 변경을 허용하세요",
     "allowRemoveCustomLockscreen" : "Ledger Stax에서 이미지 삭제 확인",
     "allowSecureConnection" : "Ledger와 보안 연결을 허용",
@@ -6590,85 +6590,85 @@
   "analyticsOptIn" : {
     "variantA" : {
       "main" : {
-        "title" : "고객의 사용자 경험을 개선하고 개인화된 서비스를 제공할 수 있도록 도와주세요.",
-        "subtitle" : "Ledger Live 사용 데이터를 공유하면 고객의 환경 설정을 이해하는 데 도움이 됩니다. 공유해 주신 데이터를 활용하여 사용자의 경험을 조정하고, 클릭수, 조회수, 열기 등 콘텐츠 성능을 최적화하여 관련성을 극대화할 수 있습니다.",
+        "title" : "Help us improve and personalize your experience",
+        "subtitle" : "Sharing your Ledger Live data helps us understand your preferences, show content that’s relevant to you, and fix technical issues.",
         "content" : {
           "able" : {
-            "title" : "Ledger Live는 다음을 추적합니다.",
-            "diagAndUsage" : "사용 데이터"
+            "title" : "With your consent, Ledger will be able to track:",
+            "diagAndUsage" : "Analytics data, including page visits, clicks.",
+            "personnalizationData" : "Personalization data including clicks, page visits, conversion data."
           },
           "unable" : {
-            "title" : "Ledger Live는 다음을 수집하지 않습니다.",
-            "adresses" : "고객 주소",
-            "balance" : "고객 잔액",
-            "nfts" : "고객의 NFT",
-            "personnalInfos" : "개인의 신원 정보"
+            "title" : "Ledger will never track information regarding:",
+            "adresses" : "Your assets.",
+            "balance" : "Your portfolio.",
+            "personnalInfos" : "Your personal identifying Information."
           },
-          "moreOptions" : "추가 옵션",
+          "moreOptions" : "Manage your preferences",
           "ctas" : {
             "refuse" : "모두 거부",
             "accept" : "모두 수락"
           },
           "infoText" : {
-            "info" : "앱 설정에서 언제든지 동의를 철회하실 수 있습니다.",
-            "link" : "자세한 내용을 보려면 여기를 클릭하세요."
+            "info" : "You can revoke your consent any time in the app settings.",
+            "link" : "Learn more about our Tracking Policy"
           }
         }
       },
       "details" : {
         "title" : "환경 설정 관리",
         "analytics" : {
-          "title" : "애널리틱스",
-          "description" : "앱 사용량을 공유하여 Ledger가 애플리케이션을 개선할 수 있도록 도와주세요."
+          "title" : "Analytics data",
+          "description" : "To help improve Ledger Live, share app’s analytics data, including page visits, clicks."
         },
         "personalizedExp" : {
-          "title" : "맞춤화된 경험",
-          "description" : "내가 설정해 둔 환경 설정에 맞는 맞춤형 추천을 받고 콘텐츠 성능을 공유하여 나에게 최적화된 환경을 누려보세요."
+          "title" : "Personalization data",
+          "description" : "To get personalized recommendations, share app’s personalization data including, conversion data, clicks, page visits."
         },
         "ctas" : {
           "notNow" : "나중에 하기",
           "accept" : "수락",
           "acceptAll" : "모두 수락",
-          "confirm" : "확인"
+          "confirm" : "Share"
         },
         "infoText" : {
-          "info" : "앱 설정에서 언제든지 동의를 철회하실 수 있습니다.",
-          "link" : "자세한 내용을 보려면 여기를 클릭하세요."
+          "info" : "You can revoke your consent any time in the app settings.",
+          "link" : "Learn more about our Tracking Policy"
         }
       }
     },
     "variantB" : {
       "main" : {
         "title" : "저희와 함께 더욱 향상된 Ledger Live를 만들어 보세요",
-        "description" : "Ledger Live 사용 데이터를 공유하면 귀하가 Ledger Live를 어떻게 사용하고 있는지 이해하는 데 도움이 됩니다.",
+        "description" : "Sharing your Ledger Live analytics data helps us understand how people use Ledger Live, fix bugs, and offer an improved user experience.",
         "bulletPoints" : {
-          "1" : "사용 데이터에는 페이지 방문, 클릭 및 전환이 포함됩니다.",
-          "2" : "또한 귀하의 주소, 계정, 잔액, NFT 또는 귀하의 포트폴리오와 관련된 기타 정보를 수집하거나 확인하지도 않습니다.",
-          "3" : "당사는 귀하의 신원을 확인할 수도 없고 확인을 원하지도 않으며, 개인정보를 수집하지도 않습니다."
+          "1" : "Analytics data includes page visits, clicks.",
+          "2" : "We won’t collect or see any information regarding your balance, accounts, and portfolio.",
+          "3" : "Analytics are completely anonymous. We can’t see or collect your personal information."
         },
         "ctas" : {
           "refuse" : "거부",
           "share" : "공유"
         },
         "infoText" : {
-          "info" : "앱 설정에서 언제든지 동의를 철회하실 수 있습니다.",
-          "link" : "동의 철회에 대해 자세히 알아보기"
+          "info" : "You can revoke your consent any time in the app settings.",
+          "link" : "Learn more about our Tracking Policy"
         }
       },
       "details" : {
         "title" : "맞춤화된 고객 경험을 즐겨보세요",
-        "description" : "당사는 사용 데이터를 분석하여 맞춤회된 고객 경험을 제공하고, 콘텐츠 성능을 평가하며 클릭수, 조회수, 열기 등의 지표를 추적하여 관련성을 극대화합니다.",
+        "description" : "Sharing your Ledger Live personalization data lets us display content that matches your preferences.",
         "bulletPoints" : {
-          "1" : "맞춤형 추천 및 콘텐츠",
-          "2" : "맞춤형 알림"
+          "1" : "Personalization data includes conversion data, clicks, page visits.",
+          "2" : "We cannot track or collect any of your personal or portfolio information."
         },
         "ctas" : {
           "refuse" : "거부",
           "allow" : "허용"
         },
         "infoText" : {
-          "info" : "앱 설정에서 언제든지 동의를 철회하실 수 있습니다.",
-          "link" : "동의 철회에 대해 자세히 알아보기"
+          "info" : "You can revoke your consent any time in the app settings.",
+          "link" : "Learn more about our Tracking Policy"
         }
       }
     }
