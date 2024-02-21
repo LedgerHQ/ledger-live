@@ -1756,7 +1756,7 @@
   "DeviceAction" : {
     "allowAppPermission" : "Öffnen Sie die {{wording}} App auf Ihrem Gerät",
     "allowAppPermissionSubtitleToken" : "zum Verwalten Ihrer {{token}}-Tokens",
-    "allowManagerPermission" : "Ledger Manager auf Ihrem {{productName}}-Gerät zulassen",
+    "allowManagerPermission" : "Sichere Verbindung zulassen",
     "allowRenaming" : "Umbenennen auf Ihrem Gerät zulassen",
     "loading" : "Lade Daten...",
     "connectAndUnlockDevice" : "Verbinden und entsperren Sie Ihr Gerät",
@@ -3593,22 +3593,33 @@
     "stake" : {
       "title" : "Vermehren Sie Ihr ETH-Guthaben",
       "subTitle" : "Staken Sie Ihre ETH und erhöhen Sie Ihren Kontostand, indem Sie täglich Belohnungen direkt in Ledger Live erhalten.",
+      "tagMinimum" : "Benötigt {{min}} ETH",
+      "kiln_pooling" : {
+        "title" : "Kiln Staking Pool",
+        "description" : "Staken Sie ohne Mindestbetrag. Verdienen Sie automatisch aufgelaufene Belohnungen ohne Sperrfrist.",
+        "supportLink" : "Mehr über Kiln Pooling erfahren."
+      },
       "lido" : {
-        "title" : "Verdienen mit Lido",
-        "description" : "Staken Sie Ihr Ethereum mit Lido und verdienen Sie täglich Belohnungen. Keine Sperrfrist. Kein Minimum",
+        "title" : "Lido",
+        "description" : "Staken Sie einen beliebigen ETH-Betrag für Sofortliquidität und tägliche Belohnungen.",
         "supportLink" : "Mehr über Lido lernen"
+      },
+      "stader-eth" : {
+        "title" : "Stader Labs",
+        "description" : "Staken Sie ohne Mindestbetrag. Verdienen Sie automatisch aufgelaufene Belohnungen und erhalten Sie direkte Liquidität.",
+        "supportLink" : "Mehr über Pooling bei Stader erfahren"
       },
       "kiln" : {
         "title" : "Staking mit Kiln",
         "tag" : "Benötigt 32 ETH",
-        "description" : "Staken Sie mit speziellen Validatoren. Hierfür wird ein Vielfaches von 32 ETH benötigt. Prämien werden manuell beansprucht. Kann jederzeit beendet werden.",
+        "description" : "Staken Sie mehr als 32 ETH bei speziellen Validatoren und fordern Sie Ihre Belohnungen ganz leicht ein.",
         "supportLink" : "Mehr über Kiln-Validator erfahren"
       },
-      "kiln_pooling" : {
-        "title" : "Kiln Staking Pool",
-        "tag" : "Kein Minimum",
-        "description" : "Treten Sie einem Staking-Pool bei. Kein ETH-Minimum erforderlich. Prämien werden automatisch zusammengeführt. Kann jederzeit beendet werden.",
-        "supportLink" : "Mehr über Kiln Pooling erfahren."
+      "figment" : {
+        "title" : "Figment",
+        "tag" : "Benötigt 32 ETH",
+        "description" : "Staken Sie mehr als 32 ETH bei speziellen Validatoren und lassen Sie Belohnungen automatisch Ihrem Konto gutschreiben.",
+        "supportLink" : "Mehr über Figment als Validator erfahren"
       }
     }
   },
@@ -5339,7 +5350,7 @@
       "title" : "Die Adresse des Empfängers ist inaktiv. Senden Sie mindestens {{minimalAmount}}, um sie zu aktivieren"
     },
     "NotEnoughGas" : {
-      "title" : "Für den Umtausch benötigen Sie {{fees}} {{ticker}} für Netzwerkgebühren, da Sie sich im {{cryptoName}}-Netzwerk befinden. <link0>{{ticker}} kaufen</link0>"
+      "title" : "Sie brauchen {{fees}} {{ticker}} auf Ihrem Konto, um die Transaktionsgebühren für das {{cryptoName}}-Netzwerk zu bezahlen.  <link0>Kaufen Sie {{ticker}}</link0> oder zahlen Sie zusätzliche Mittel auf Ihr Konto ein."
     },
     "NotEnoughGasSwap" : {
       "title" : "Für den Umtausch benötigen Sie {{fees}} {{ticker}} für Netzwerkgebühren, da Sie sich im {{cryptoName}}-Netzwerk befinden. <link0>{{ticker}} kaufen</link0>"
@@ -5420,7 +5431,7 @@
       "description" : "Bitte starten Sie Ihr Gerät neu, ohne die Schaltflächen zu berühren, wenn das Logo erscheint. Kontaktieren Sie den Ledger Support, falls das Problem weiterhin besteht."
     },
     "UserRefusedAllowManager" : {
-      "title" : "My Ledger auf Gerät nicht zulässig"
+      "title" : "Sichere Verbindung abgelehnt auf Gerät"
     },
     "UserRefusedFirmwareUpdate" : {
       "title" : "Installation des Betriebssystem-Updates auf\n dem Gerät wurde abgebrochen",
@@ -5903,9 +5914,6 @@
     "FailedToRetrieveFirmwareUpdateInfo" : {
       "title" : "Prüfung auf Betriebssystem-Update fehlgeschlagen",
       "description" : "Etwas ist schief gelaufen. Bitte versuchen Sie es erneut oder wenden Sie sich im Zweifelsfall an den Ledger-Support."
-    },
-    "TezosUnrevealedAccount" : {
-      "title" : "Umtauschen nicht möglich: Erfordert initiales Senden/Delegieren bei Tezos-Konto oder Austausch des Paares."
     }
   },
   "cryptoOrg" : {
