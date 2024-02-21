@@ -1,10 +1,5 @@
+
 # 2.77.1
-
-### 🐛 Fix
-
-Minor build issue
-
-# 2.77.0
 
 ### 🚀 Features
 
