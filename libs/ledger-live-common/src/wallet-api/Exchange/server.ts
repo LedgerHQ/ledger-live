@@ -30,7 +30,12 @@ import {
 import { getAccountBridge } from "../../bridge";
 import { Exchange } from "../../exchange/swap/types";
 import { Transaction } from "../../generated/types";
-import { createAccounIdNotFound, createWrongSellParams, createWrongSwapParams } from "./error";
+import {
+  ExchangeError,
+  createAccounIdNotFound,
+  createWrongSellParams,
+  createWrongSwapParams,
+} from "./error";
 
 export { ExchangeType };
 
@@ -55,13 +60,13 @@ export type CompleteExchangeUiRequest = {
   amountExpectedTo?: number;
 };
 
-export type ExchangeStartParamsUiRequest = {
+type ExchangeStartParamsUiRequest = {
   exchangeType: "FUND" | "SELL" | "SWAP";
   provider?: string;
   exchange?: Exchange;
 };
 
-export type ExchangeUiHooks = {
+type ExchangeUiHooks = {
   "custom.exchange.start": (params: {
     exchangeParams: ExchangeStartParamsUiRequest;
     onSuccess: (nonce: string) => void;
@@ -100,106 +105,33 @@ export const handlers = ({
         return { transactionId: "" };
       }
 
+      let exchangeParams: ExchangeStartParamsUiRequest = {
+        exchangeType: params.exchangeType,
+      };
+
       switch (params.exchangeType) {
         case "SWAP": {
-          if (!("fromAccountId" in params && "toAccountId" in params)) {
-            return Promise.reject(createWrongSwapParams(params));
-          }
-
-          const realFromAccountId = getAccountIdFromWalletAccountId(params.fromAccountId);
-          if (!realFromAccountId) {
-            return Promise.reject(createAccounIdNotFound(params.fromAccountId));
-          }
-
-          const fromAccount = accounts.find(acc => acc.id === realFromAccountId);
-          if (!fromAccount) {
-            throw new ServerError(createAccountNotFound(params.fromAccountId));
-          }
-
-          let toAccount;
-
-          if (params.exchangeType === "SWAP" && params.toAccountId) {
-            const realToAccountId = getAccountIdFromWalletAccountId(params.toAccountId);
-            if (!realToAccountId) {
-              return Promise.reject(createAccounIdNotFound(params.toAccountId));
-            }
-
-            const toAccount = accounts.find(a => a.id === realToAccountId);
-
-            if (!toAccount) {
-              throw new ServerError(createAccountNotFound(params.toAccountId));
-            }
-          }
-
-          const fromParentAccount = getParentAccount(fromAccount, accounts);
-          const toParentAccount = getParentAccount(toAccount, accounts);
-
-          const currency = params.tokenCurrency ? findTokenById(params.tokenCurrency) : null;
-          const newTokenAccount = currency ? makeEmptyTokenAccount(toAccount, currency) : null;
-
-          return new Promise((resolve, reject) =>
-            uiExchangeStart({
-              exchangeParams: {
-                exchangeType: params.exchangeType,
-                provider: params.provider,
-                exchange: {
-                  fromAccount,
-                  fromParentAccount,
-                  toAccount: newTokenAccount ? newTokenAccount : toAccount,
-                  toParentAccount: newTokenAccount ? toAccount : toParentAccount,
-                },
-              },
-              onSuccess: (nonce: string) => {
-                tracking.startExchangeSuccess(manifest);
-                resolve({ transactionId: nonce });
-              },
-              onCancel: error => {
-                tracking.completeExchangeFail(manifest);
-                reject(error);
-              },
-            }),
-          );
+          exchangeParams = extractSwapStartParam(params as ExchangeStartSwapParams, accounts);
+          break;
         }
         case "SELL": {
-          if (!("provider" in params && "toAccountId" in params)) {
-            return Promise.reject(createWrongSellParams(params));
-          }
-
-          return new Promise((resolve, reject) =>
-            uiExchangeStart({
-              exchangeParams: {
-                exchangeType: params.exchangeType,
-                provider: params.provider,
-              },
-              onSuccess: (nonce: string) => {
-                tracking.startExchangeSuccess(manifest);
-                resolve({ transactionId: nonce });
-              },
-              onCancel: error => {
-                tracking.completeExchangeFail(manifest);
-                reject(error);
-              },
-            }),
-          );
-        }
-        case "FUND": {
-          return new Promise((resolve, reject) =>
-            uiExchangeStart({
-              exchangeParams: {
-                exchangeType: params.exchangeType,
-              },
-              onSuccess: (nonce: string) => {
-                tracking.startExchangeSuccess(manifest);
-                resolve({ transactionId: nonce });
-              },
-              onCancel: error => {
-                tracking.completeExchangeFail(manifest);
-                reject(error);
-              },
-            }),
-          );
+          exchangeParams = extractSellStartParam(params as ExchangeStartSellParams);
         }
       }
+
+      return new Promise((resolve, reject) =>
+        uiExchangeStart({
+          exchangeParams,
+          onSuccess: (nonce: string) => {
+            tracking.startExchangeSuccess(manifest);
+            resolve({ transactionId: nonce });
+          },
+          onCancel: error => {
+            tracking.completeExchangeFail(manifest);
+            reject(error);
+          },
+        }),
+      );
     }),
     "custom.exchange.complete": customWrapper<ExchangeCompleteParams, ExchangeCompleteResult>(
       async params => {
@@ -318,3 +250,65 @@ export const handlers = ({
       },
     ),
   }) as const satisfies Handlers;
+
+function extractSwapStartParam(
+  params: ExchangeStartSwapParams,
+  accounts: AccountLike[],
+): ExchangeStartParamsUiRequest {
+  if (!("fromAccountId" in params && "toAccountId" in params)) {
+    throw new ExchangeError(createWrongSwapParams(params));
+  }
+
+  const realFromAccountId = getAccountIdFromWalletAccountId(params.fromAccountId);
+  if (!realFromAccountId) {
+    throw new ExchangeError(createAccounIdNotFound(params.fromAccountId));
+  }
+
+  const fromAccount = accounts.find(acc => acc.id === realFromAccountId);
+  if (!fromAccount) {
+    throw new ServerError(createAccountNotFound(params.fromAccountId));
+  }
+
+  let toAccount;
+
+  if (params.exchangeType === "SWAP" && params.toAccountId) {
+    const realToAccountId = getAccountIdFromWalletAccountId(params.toAccountId);
+    if (!realToAccountId) {
+      throw new ExchangeError(createAccounIdNotFound(params.toAccountId));
+    }
+
+    const toAccount = accounts.find(a => a.id === realToAccountId);
+
+    if (!toAccount) {
+      throw new ServerError(createAccountNotFound(params.toAccountId));
+    }
+  }
+
+  const fromParentAccount = getParentAccount(fromAccount, accounts);
+  const toParentAccount = getParentAccount(toAccount, accounts);
+
+  const currency = params.tokenCurrency ? findTokenById(params.tokenCurrency) : null;
+  const newTokenAccount = currency ? makeEmptyTokenAccount(toAccount, currency) : null;
+
+  return {
+    exchangeType: params.exchangeType,
+    provider: params.provider,
+    exchange: {
+      fromAccount,
+      fromParentAccount,
+      toAccount: newTokenAccount ? newTokenAccount : toAccount,
+      toParentAccount: newTokenAccount ? toAccount : toParentAccount,
+    },
+  };
+}
+
+function extractSellStartParam(params: ExchangeStartSellParams): ExchangeStartParamsUiRequest {
+  if (!("provider" in params && "toAccountId" in params)) {
+    throw new ExchangeError(createWrongSellParams(params));
+  }
+
+  return {
+    exchangeType: params.exchangeType,
+    provider: params.provider,
+  };
+}
