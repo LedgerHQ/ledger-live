@@ -144,7 +144,7 @@
       }
     },
     "ConnectManagerTimeout" : {
-      "title" : "Сбой подключения «Мой Ledger»",
+      "title" : "Сбой безопасного подключения к Ledger",
       "description" : {
         "ios" : {
           "nanoX" : "Убедитесь, что {{productName}} разблокирован и Bluetooth включён."
@@ -492,7 +492,7 @@
       "description" : "Попробуйте переустановить приложение через «Мой Ledger»."
     },
     "NotEnoughGas" : {
-      "title" : "Для операции нужно оплатить комиссию {{fees}} {{ticker}}, поскольку она проводится в сети {{cryptoName}}. <link0>Купить {{ticker}}</link0>",
+      "title" : "Для оплаты комиссий за проведение транзакций в сети {{cryptoName}} на счету должно быть {{fees}}{{ticker}}.  <link0>Купите {{ticker}}</link0> или отправьте криптоактив на ваш счёт.",
       "description" : "Пополните свой счёт для оплаты транзакций в токенах."
     },
     "NotEnoughGasSwap" : {
@@ -590,8 +590,8 @@
       "title" : "Сумма для заморозки должна быть не меньше 1"
     },
     "TronSendTrc20ToNewAccountForbidden" : {
-      "title" : "Чтобы активировать приём токенов TRC-20, на этот адрес сначала нужно отправить минимум 0,1 TRX.",
-      "description" : "Для активации сначала отправьте TRX или TRC-10 на счёт, после чего вы сможете получать TRC-20."
+      "title" : "Чтобы активировать получение TRC10- и TRC20-токенов, отправьте на новый счёт не менее 0,1 TRX.",
+      "description" : "Чтобы активировать получение TRC10- и TRC20-токенов, отправьте на новый счёт не менее 0,1 TRX."
     },
     "TronUnexpectedFees" : {
       "title" : "Могут взиматься дополнительные комиссии"
@@ -622,8 +622,8 @@
       "primaryCTA" : "Открыть «Мой Ledger»"
     },
     "UserRefusedAllowManager" : {
-      "title" : "Доступ к «Мой Ledger» отклонён на устройстве",
-      "description" : "Пожалуйста, одобрите работу «Мой Ledger» на устройстве, а затем повторите попытку."
+      "title" : "Безопасное подключение отклонено на устройстве",
+      "description" : "Одобрите безопасное подключение на устройстве и повторите попытку."
     },
     "UserRefusedAddress" : {
       "title" : "Адрес получателя отклонён",
@@ -911,9 +911,6 @@
     "FirmwareNotRecognized" : {
       "title" : "Поставщик недействителен",
       "description" : "Необходимо изменить опцию Поставщика приложений для «Мой Ledger». Для этого откройте «Настройки» в Ledger Live и выберите «Экспериментальные функции», после чего укажите другого поставщика."
-    },
-    "TezosUnrevealedAccount" : {
-      "title" : "Обмен недоступен. Необходимо использовать счёт Tezos для первоначальной отправки/делегирования или изменить пару для обмена"
     }
   },
   "crash" : {
@@ -3888,7 +3885,7 @@
     "stayInTheAppPlz" : "Оставайтесь в приложении и держите устройство Ledger при себе.",
     "allowAppPermission" : "Откройте приложение {{wording}} на устройстве",
     "allowAppPermissionSubtitleToken" : "для управления {{token}}",
-    "allowManagerPermission" : "Одобрите работу приложения на {{productName}}",
+    "allowManagerPermission" : "Одобрите безопасное подключение на устройстве",
     "allowRenaming" : "Одобрите переименование на {{productName}}",
     "allowRemoveCustomLockscreen" : "Подтвердите удаление изображения на Ledger Stax",
     "allowSecureConnection" : "Разрешите безопасное подключение на устройстве",
@@ -6590,85 +6587,85 @@
   "analyticsOptIn" : {
     "variantA" : {
       "main" : {
-        "title" : "Помогите улучшить и адаптировать наше взаимодействие.",
-        "subtitle" : "Данные об использовании Ledger Live помогают понять ваши предпочтения. Таким образом мы можем улучшить опыт вашего взаимодействия с приложением и повысить эффективность контента для максимальной актуальности, включая клики, просмотры и открытия.",
+        "title" : "Help us improve and personalize your experience",
+        "subtitle" : "Sharing your Ledger Live data helps us understand your preferences, show content that’s relevant to you, and fix technical issues.",
         "content" : {
           "able" : {
-            "title" : "Ledger Live способно отслеживать:",
-            "diagAndUsage" : "Данные об использовании"
+            "title" : "With your consent, Ledger will be able to track:",
+            "diagAndUsage" : "Analytics data, including page visits, clicks.",
+            "personnalizationData" : "Personalization data including clicks, page visits, conversion data."
           },
           "unable" : {
-            "title" : "Ledger Live никогда не фиксирует:",
-            "adresses" : "Ваши адреса",
-            "balance" : "Ваши балансы",
-            "nfts" : "Ваши NFT",
-            "personnalInfos" : "Личные данные для идентификации"
+            "title" : "Ledger will never track information regarding:",
+            "adresses" : "Your assets.",
+            "balance" : "Your portfolio.",
+            "personnalInfos" : "Your personal identifying Information."
           },
-          "moreOptions" : "Дополнительные варианты",
+          "moreOptions" : "Управление предпочтениями",
           "ctas" : {
             "refuse" : "Отклонить всё",
             "accept" : "Принять всё"
           },
           "infoText" : {
-            "info" : "Отозвать согласие можно в любой момент в настройках приложения.",
-            "link" : "Подробности здесь."
+            "info" : "You can revoke your consent any time in the app settings.",
+            "link" : "Learn more about our Tracking Policy"
           }
         }
       },
       "details" : {
         "title" : "Управление предпочтениями",
         "analytics" : {
-          "title" : "Аналитика",
-          "description" : "Помогите Ledger улучшить приложение, раскрыв данные о его использовании."
+          "title" : "Analytics data",
+          "description" : "To help improve Ledger Live, share app’s analytics data, including page visits, clicks."
         },
         "personalizedExp" : {
-          "title" : "Персонализация",
-          "description" : "Получайте рекомендации в соответствии с вашими предпочтениями и делитесь данными об эффективности контента для его актуальности."
+          "title" : "Personalization data",
+          "description" : "To get personalized recommendations, share app’s personalization data including, conversion data, clicks, page visits."
         },
         "ctas" : {
           "notNow" : "Позже",
           "accept" : "Принять",
           "acceptAll" : "Принять всё",
-          "confirm" : "Подтвердить"
+          "confirm" : "Поделиться"
         },
         "infoText" : {
-          "info" : "Отозвать согласие можно в любой момент в настройках приложения.",
-          "link" : "Подробности здесь."
+          "info" : "You can revoke your consent any time in the app settings.",
+          "link" : "Learn more about our Tracking Policy"
         }
       }
     },
     "variantB" : {
       "main" : {
         "title" : "Улучшим Ledger Live вместе",
-        "description" : "Раскрытие данных об использовании помогает понять особенности вашего взаимодействия с Ledger Live.",
+        "description" : "Sharing your Ledger Live analytics data helps us understand how people use Ledger Live, fix bugs, and offer an improved user experience.",
         "bulletPoints" : {
-          "1" : "Данные об использовании включают посещения, нажатия и переходы.",
-          "2" : "Мы не фиксируем и не видим ваши адреса, счета, балансы, NFT или любую другую информацию, связанную с вашим портфелем.",
-          "3" : "Мы не можем и не собираемся идентифицировать вас, а также собирать личные данные."
+          "1" : "Analytics data includes page visits, clicks.",
+          "2" : "We won’t collect or see any information regarding your balance, accounts, and portfolio.",
+          "3" : "Analytics are completely anonymous. We can’t see or collect your personal information."
         },
         "ctas" : {
           "refuse" : "Отклонить",
           "share" : "Поделиться"
         },
         "infoText" : {
-          "info" : "Отозвать согласие можно в любой момент в настройках приложения.",
-          "link" : "Подробности об отзыве согласия"
+          "info" : "You can revoke your consent any time in the app settings.",
+          "link" : "Learn more about our Tracking Policy"
         }
       },
       "details" : {
         "title" : "Насладитесь персонализацией",
-        "description" : "Анализ данных об использовании помогает улучшить опыт вашего взаимодействия с приложением и оценить эффективность контента. В этом помогают показатели по типу кликов, просмотров и открытий, необходимые для обеспечения их максимальной актуальности.",
+        "description" : "Sharing your Ledger Live personalization data lets us display content that matches your preferences.",
         "bulletPoints" : {
-          "1" : "Актуальные советы и контент",
-          "2" : "Персонализированные уведомления"
+          "1" : "Personalization data includes conversion data, clicks, page visits.",
+          "2" : "We cannot track or collect any of your personal or portfolio information."
         },
         "ctas" : {
           "refuse" : "Отклонить",
           "allow" : "Принять"
         },
         "infoText" : {
-          "info" : "Отозвать согласие можно в любой момент в настройках приложения.",
-          "link" : "Подробности об отзыве согласия"
+          "info" : "You can revoke your consent any time in the app settings.",
+          "link" : "Learn more about our Tracking Policy"
         }
       }
     }
