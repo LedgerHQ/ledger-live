@@ -1,295 +1,295 @@
 import { ConfigInfo } from "@ledgerhq/live-config/LiveConfig";
 
 const evmConfig: Record<string, ConfigInfo> = {
-  currency_akroma: {
+  config_currency_akroma: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_atheios: {
+  config_currency_atheios: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_avalanche_c_chain: {
+  config_currency_avalanche_c_chain: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_bsc: {
+  config_currency_bsc: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_callisto: {
+  config_currency_callisto: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_dexon: {
+  config_currency_dexon: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_ellaism: {
+  config_currency_ellaism: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_ethereum: {
+  config_currency_ethereum: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_ethereum_classic: {
+  config_currency_ethereum_classic: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_ether1: {
+  config_currency_ether1: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_ethergem: {
+  config_currency_ethergem: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_ethersocial: {
+  config_currency_ethersocial: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_expanse: {
+  config_currency_expanse: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_gochain: {
+  config_currency_gochain: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_hpb: {
+  config_currency_hpb: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_mix: {
+  config_currency_mix: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_musicoin: {
+  config_currency_musicoin: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_pirl: {
+  config_currency_pirl: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_poa: {
+  config_currency_poa: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_polygon: {
+  config_currency_polygon: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_reosc: {
+  config_currency_reosc: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_thundercore: {
+  config_currency_thundercore: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_tomo: {
+  config_currency_tomo: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_ubiq: {
+  config_currency_ubiq: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_wanchain: {
+  config_currency_wanchain: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_arbitrum: {
+  config_currency_arbitrum: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_cronos: {
+  config_currency_cronos: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_fantom: {
+  config_currency_fantom: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_flare: {
+  config_currency_flare: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_songbird: {
+  config_currency_songbird: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_moonbeam: {
+  config_currency_moonbeam: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_rsk: {
+  config_currency_rsk: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_bittorrent: {
+  config_currency_bittorrent: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_kava_evm: {
+  config_currency_kava_evm: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_evmos_evm: {
+  config_currency_evmos_evm: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_energy_web: {
+  config_currency_energy_web: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_astar: {
+  config_currency_astar: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_metis: {
+  config_currency_metis: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_boba: {
+  config_currency_boba: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_moonriver: {
+  config_currency_moonriver: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_velas_evm: {
+  config_currency_velas_evm: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_syscoin: {
+  config_currency_syscoin: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_telos_evm: {
+  config_currency_telos_evm: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_polygon_zk_evm: {
+  config_currency_polygon_zk_evm: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_base: {
+  config_currency_base: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_klaytn: {
+  config_currency_klaytn: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_neon_evm: {
+  config_currency_neon_evm: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_lukso: {
+  config_currency_lukso: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_linea: {
+  config_currency_linea: {
     type: "object",
     default: {
       status: "active",

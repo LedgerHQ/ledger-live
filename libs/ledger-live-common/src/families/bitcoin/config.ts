@@ -1,187 +1,187 @@
 import { ConfigInfo } from "@ledgerhq/live-config/LiveConfig";
 
 const bitcoinConfig: Record<string, ConfigInfo> = {
-  currency_bitcoin: {
+  config_currency_bitcoin: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_bitcoin_cash: {
+  config_currency_bitcoin_cash: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_bitcoin_gold: {
+  config_currency_bitcoin_gold: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_bitcoin_private: {
+  config_currency_bitcoin_private: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_clubcoin: {
+  config_currency_clubcoin: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_dash: {
+  config_currency_dash: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_decred: {
+  config_currency_decred: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_digibyte: {
+  config_currency_digibyte: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_dogecoin: {
+  config_currency_dogecoin: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_game_credits: {
+  config_currency_game_credits: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_gochain: {
+  config_currency_gochain: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_hcash: {
+  config_currency_hcash: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_komodo: {
+  config_currency_komodo: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_lbry: {
+  config_currency_lbry: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_litecoin: {
+  config_currency_litecoin: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_nix: {
+  config_currency_nix: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_peercoin: {
+  config_currency_peercoin: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_pivx: {
+  config_currency_pivx: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_poswallet: {
+  config_currency_poswallet: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_qtum: {
+  config_currency_qtum: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_ravencoin: {
+  config_currency_ravencoin: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_resistance: {
+  config_currency_resistance: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_stakenet: {
+  config_currency_stakenet: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_stratis: {
+  config_currency_stratis: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_stealthcoin: {
+  config_currency_stealthcoin: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_vertcoin: {
+  config_currency_vertcoin: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_viacoin: {
+  config_currency_viacoin: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_zcash: {
+  config_currency_zcash: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_zclassic: {
+  config_currency_zclassic: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_zcoin: {
+  config_currency_zcoin: {
     type: "object",
     default: {
       status: "active",
     },
   },
-  currency_zencash: {
+  config_currency_zencash: {
     type: "object",
     default: {
       status: "active",
