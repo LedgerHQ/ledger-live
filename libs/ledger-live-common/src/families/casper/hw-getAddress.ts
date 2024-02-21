@@ -9,7 +9,6 @@ import { CLPublicKeyTag } from "casper-js-sdk";
 const resolver: Resolver = async (transport, { path, verify }) => {
   log("debug", "start getAddress process");
 
-  // @ts-expect-error FIXME:
   const casper = new Casper(transport);
 
   const r = verify

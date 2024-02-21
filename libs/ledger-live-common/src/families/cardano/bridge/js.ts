@@ -19,7 +19,6 @@ const signerContext: SignerContext = (
   deviceId: string,
   fn: (signer) => Promise<ExtendedPublicKey>,
 ): Promise<ExtendedPublicKey> => {
-  // @ts-expect-error FIXME:
   return firstValueFrom(withDevice(deviceId)(transport => from(fn(new Ada(transport)))));
 };
 

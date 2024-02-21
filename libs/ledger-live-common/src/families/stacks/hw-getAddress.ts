@@ -5,7 +5,6 @@ import type { Resolver } from "../../hw/getAddress/types";
 import { getPath, throwIfError } from "./utils";
 
 const resolver: Resolver = async (transport, { path, verify }) => {
-  // @ts-expect-error FIXME:
   const blockstack = new BlockstackApp(transport);
 
   const r = verify

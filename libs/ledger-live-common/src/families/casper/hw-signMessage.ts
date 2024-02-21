@@ -7,7 +7,6 @@ import { getBufferFromString, getPath, isError } from "./msc-utils";
 const signMessage: SignMessage = async (transport, account, { message }): Promise<Result> => {
   log("debug", "start signMessage process");
 
-  // @ts-expect-error FIXME:
   const casper = new Casper(transport);
 
   if (!message) throw new Error(`Message cannot be empty`);

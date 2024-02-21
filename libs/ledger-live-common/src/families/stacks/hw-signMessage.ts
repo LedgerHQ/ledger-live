@@ -4,7 +4,6 @@ import type { SignMessage, Result } from "../../hw/signMessage/types";
 import { getBufferFromString, getPath, throwIfError } from "./utils";
 
 const signMessage: SignMessage = async (transport, account, { message }): Promise<Result> => {
-  // @ts-expect-error FIXME:
   const blockstack = new BlockstackApp(transport);
 
   if (!message) throw new Error(`Message cannot be empty`);
