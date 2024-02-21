@@ -22,7 +22,6 @@ import { postSwapAccepted, postSwapCancelled } from "./postSwapState";
 import getExchangeRates from "./getExchangeRates";
 import getProviders from "./getProviders";
 import { isIntegrationTestEnv } from "./utils/isIntegrationTestEnv";
-import { maybeTezosAccountUnrevealedAccount } from "./maybeTezosAccountUnrevealedAccount";
 
 export const operationStatusList = {
   finishedOK: ["finished"],
@@ -221,7 +220,6 @@ export {
   getSwapAPIVersion,
   getProviderConfig,
   getCompleteSwapHistory,
-  maybeTezosAccountUnrevealedAccount,
   postSwapAccepted,
   getExchangeRates,
   getProviders,
