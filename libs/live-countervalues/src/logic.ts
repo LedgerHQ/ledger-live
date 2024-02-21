@@ -28,6 +28,7 @@ import {
 import type { Account } from "@ledgerhq/types-live";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
 import api from "./api";
+import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 
 // yield raw version of the countervalues state to be saved in a db
 export function exportCountervalues({ data, status }: CounterValuesState): CounterValuesStateRaw {
@@ -78,27 +79,52 @@ export function importCountervalues(
   };
 }
 
+export function trackingPairForTopCoins(
+  marketcapIds: string[],
+  size: number,
+  countervalue: Currency,
+  startDate: Date,
+) {
+  const pairs = [];
+  for (let i = 0; i < marketcapIds.length && pairs.length < size; i++) {
+    const id = marketcapIds[i];
+    const currency = findCryptoCurrencyById(id);
+    if (currency) {
+      pairs.push({
+        from: currency,
+        to: countervalue,
+        startDate,
+      });
+    }
+  }
+  return pairs;
+}
+
 // infer the tracking pair from user accounts to know which pairs are concerned
-export function inferTrackingPairForAccounts(
+export function inferTrackingPairForAccountsUnresolved(
   accounts: Account[],
   countervalue: Currency,
 ): TrackingPair[] {
   const yearAgo = new Date();
   yearAgo.setFullYear(yearAgo.getFullYear() - 1);
   yearAgo.setHours(0, 0, 0, 0);
+  return flattenAccounts(accounts)
+    .filter(a => !isAccountEmpty(a))
+    .map(account => {
+      const currency = getAccountCurrency(account);
+      return {
+        from: currency,
+        to: countervalue,
+        startDate: account.creationDate < yearAgo ? account.creationDate : yearAgo,
+      };
+    });
+}
 
-  return resolveTrackingPairs(
-    flattenAccounts(accounts)
-      .filter(a => !isAccountEmpty(a))
-      .map(account => {
-        const currency = getAccountCurrency(account);
-        return {
-          from: currency,
-          to: countervalue,
-          startDate: account.creationDate < yearAgo ? account.creationDate : yearAgo,
-        };
-      }),
-  );
+export function inferTrackingPairForAccounts(
+  accounts: Account[],
+  countervalue: Currency,
+): TrackingPair[] {
+  return resolveTrackingPairs(inferTrackingPairForAccountsUnresolved(accounts, countervalue));
 }
 
 /**

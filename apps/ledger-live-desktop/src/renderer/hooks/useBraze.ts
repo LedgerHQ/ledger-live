@@ -42,8 +42,8 @@ export const mapAsPortfolioContentCard = (card: ClassicCard): PortfolioContentCa
   image: card.extras?.image,
   link: card.extras?.link,
   created: card.created as Date,
-  cta: card.extras?.cta,
-  dismissCta: card.extras?.dismissCta,
+  mainCta: card.extras?.mainCta,
+  secondaryCta: card.extras?.secondaryCta,
   order: parseInt(card.extras?.order) ? parseInt(card.extras?.order) : undefined,
 });
 

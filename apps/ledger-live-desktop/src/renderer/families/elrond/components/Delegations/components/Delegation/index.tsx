@@ -26,6 +26,7 @@ import {
   ElrondAccount as AccountType,
 } from "@ledgerhq/live-common/families/elrond/types";
 import { ModalsData } from "~/renderer/families/elrond/modals";
+import Discreet from "~/renderer/components/Discreet";
 
 interface RenderDropdownItemType {
   isActive: boolean;
@@ -167,11 +168,11 @@ const Delegation = (props: Props) => {
       </Column>
 
       <Column>
-        {amount} {getAccountUnit(account).code}
+        <Discreet>{amount}</Discreet> {getAccountUnit(account).code}
       </Column>
 
       <Column>
-        {rewards} {getAccountUnit(account).code}
+        <Discreet>{rewards}</Discreet> {getAccountUnit(account).code}
       </Column>
 
       <Column>

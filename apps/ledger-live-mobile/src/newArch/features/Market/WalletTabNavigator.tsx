@@ -3,7 +3,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "styled-components/native";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { ScreenName } from "~/const";
-import MarketList from "LLM/features/Market/screens/MarketList/MarketListCont";
+import MarketList from "LLM/features/Market/screens/MarketList";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import { MarketNavigatorStackParamList } from "./Navigator";
 
