@@ -213,7 +213,6 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     signMessageRequested,
   } = hookState;
 
-
   const dispatch = useDispatch();
   const preferredDeviceModel = useSelector(preferredDeviceModelSelector);
   const swapDefaultTrack = useGetSwapTrackingProperties();

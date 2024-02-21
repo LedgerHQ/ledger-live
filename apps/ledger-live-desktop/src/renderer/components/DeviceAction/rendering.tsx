@@ -288,7 +288,15 @@ const OpenManagerBtn = ({
     closeAllModal();
     closePlatformAppDrawer();
     setDrawer(undefined);
-  }, [updateApp, firmwareUpdate, appName, history, closeAllModal, setDrawer]);
+  }, [
+    updateApp,
+    firmwareUpdate,
+    appName,
+    history,
+    closeAllModal,
+    closePlatformAppDrawer,
+    setDrawer,
+  ]);
 
   return (
     <Button mt={mt} ml={ml} primary onClick={onClick}>
