@@ -277,7 +277,7 @@ function extractSwapStartParam(
       throw new ExchangeError(createAccounIdNotFound(params.toAccountId));
     }
 
-    const toAccount = accounts.find(a => a.id === realToAccountId);
+    toAccount = accounts.find(a => a.id === realToAccountId);
 
     if (!toAccount) {
       throw new ServerError(createAccountNotFound(params.toAccountId));
@@ -285,7 +285,7 @@ function extractSwapStartParam(
   }
 
   const fromParentAccount = getParentAccount(fromAccount, accounts);
-  const toParentAccount = getParentAccount(toAccount, accounts);
+  const toParentAccount = toAccount ? getParentAccount(toAccount, accounts) : undefined;
 
   const currency = params.tokenCurrency ? findTokenById(params.tokenCurrency) : null;
   const newTokenAccount = currency ? makeEmptyTokenAccount(toAccount, currency) : null;
@@ -303,7 +303,7 @@ function extractSwapStartParam(
 }
 
 function extractSellStartParam(params: ExchangeStartSellParams): ExchangeStartParamsUiRequest {
-  if (!("provider" in params && "toAccountId" in params)) {
+  if (!("provider" in params)) {
     throw new ExchangeError(createWrongSellParams(params));
   }
 
