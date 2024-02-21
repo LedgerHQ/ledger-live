@@ -139,16 +139,17 @@ const signOperation: SignOperationFnSignature<Transaction> = ({ account, deviceI
 
           if (tokenAccount) {
             const { token } = decodeTokenAccountId(tokenAccount.id);
-
-            if (token?.name && token.id && token.ledgerSignature) {
-              await elrond.provideESDTInfo(
-                token.name,
-                extractTokenId(token.id),
-                token?.units[0].magnitude,
-                CHAIN_ID,
-                token.ledgerSignature,
-              );
+            if (token == null) {
+              throw new Error("Invalid token");
             }
+
+            await elrond.provideESDTInfo(
+              token.ticker,
+              extractTokenId(token.id),
+              token.units[0].magnitude,
+              CHAIN_ID,
+              token.ledgerSignature,
+            );
           }
 
           const unsignedTx: string = await buildTransactionToSign(account, transaction);
