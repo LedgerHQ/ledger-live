@@ -20,11 +20,7 @@ import { renderVerifyUnwrapped } from "~/renderer/components/DeviceAction/render
 import TransactionConfirmField from "./TransactionConfirmField";
 import { getLLDCoinFamily } from "~/renderer/families";
 import { FieldComponentProps as FCPGeneric } from "~/renderer/families/types";
-import { openURL } from "~/renderer/linking";
-import Alert from "~/renderer/components/Alert";
-import { DeviceBlocker } from "../DeviceAction/DeviceBlocker";
-import { getDeviceAnimation } from "../DeviceAction/animations";
-import Animation from "~/renderer/animations";
+import ConfirmApproval from "./ConfirmApproval";
 
 const FieldText = styled(Text).attrs(() => ({
   ml: 1,
@@ -37,19 +33,8 @@ const FieldText = styled(Text).attrs(() => ({
   max-width: 50%;
 `;
 
-const HorizontalSeparator = styled.div`
-  height: 1px;
-  background: ${p => p.theme.colors.palette.text.shade20};
-  width: 100%;
-`;
-
 export type FieldComponentProps = FCPGeneric<Account, TransactionCommon, TransactionStatus>;
 export type FieldComponent = React.ComponentType<FieldComponentProps>;
-
-const termsOfUse = new Map<string, string>([
-  ["paraswap", "https://paraswap.io/tos"],
-  ["1inch", "https://1inch.io/assets/1inch_network_terms_of_use.pdf"],
-]);
 
 const AmountField = ({ account, status: { amount }, field }: FieldComponentProps) => (
   <TransactionConfirmField label={field.label}>
@@ -113,12 +98,12 @@ const commonFieldComponents: Record<string, FieldComponent> = {
   address: AddressField,
   text: TextField,
 };
-const Container = styled(Box).attrs(() => ({
+export const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   fontSize: 4,
   pb: 4,
 }))``;
-const Info = styled(Box).attrs(() => ({
+export const Info = styled(Box).attrs(() => ({
   ff: "Inter|SemiBold",
   color: "palette.text.shade100",
   mt: 6,
@@ -167,16 +152,6 @@ const TransactionConfirm = ({
     [fields],
   );
 
-  const amountTransaction: string = useMemo(
-    () =>
-      (
-        fields.find(
-          (field: { label: string }) => field.label && field.label === "Amount",
-        ) as DeviceTransactionField & { value: string }
-      )?.value || "",
-    [fields],
-  );
-
   if (!device) return null;
   const specific = getLLDCoinFamily(mainAccount.currency.family);
   const r = specific?.transactionConfirmFields;
@@ -191,163 +166,90 @@ const TransactionConfirm = ({
   const key = ("mode" in transaction && transaction.mode) || "send";
   const recipientWording = t(`TransactionConfirm.recipientWording.${key}`);
 
-  const ApproveFooter = () => {
-    if (Footer) {
-      return (
-        <>
-          <HorizontalSeparator />
-          <Footer transaction={transaction} />
-        </>
-      );
-    }
-    if (manifestId) {
-      const termsOfUseUrl = termsOfUse.get(manifestId);
-      if (termsOfUseUrl !== undefined) {
-        return (
-          <>
-            <HorizontalSeparator />
-            <Text marginTop={30}>
-              <Trans
-                i18nKey="approve.termsAndConditions"
-                values={{ appName: manifestName }}
-                components={[
-                  <Text
-                    onClick={() => openURL(termsOfUseUrl)}
-                    style={{
-                      cursor: "pointer",
-                      textDecoration: "underline",
-                    }}
-                  >
-                    {`${manifestId}'s terms of use.`}
-                  </Text>,
-                ]}
-              />
-            </Text>
-          </>
-        );
-      }
-    }
-  };
-
-  const Approve = () => (
-    <Container style={{ paddingBottom: 0 }}>
-      <Container paddingX={26}>
-        <DeviceBlocker />
-        <Animation animation={getDeviceAnimation(device.modelId, type, "verify")} />
-        <Text ff={"Inter|Medium"} textAlign={"center"} fontSize={22} marginBottom={12}>
-          {t("approve.description")}
-        </Text>
-        <Alert type="primary" mb={26}>
+  if (typeTransaction == "Approve")
+    return (
+      <ConfirmApproval
+        device={device}
+        status={status}
+        account={account}
+        parentAccount={parentAccount}
+        transaction={transaction}
+        fieldComponents={fieldComponents}
+        recipientWording={recipientWording}
+        Footer={Footer}
+        deviceFields={fields}
+        manifestId={manifestId}
+        manifestName={manifestName}
+      />
+    );
+  return (
+    <Container>
+      {Warning ? (
+        <Warning
+          account={account}
+          parentAccount={parentAccount}
+          transaction={transaction}
+          recipientWording={recipientWording}
+          status={status}
+        />
+      ) : (
+        <WarnBox>
           <Trans
-            i18nKey={
-              amountTransaction === "Unlimited MATIC" ? "approve.unlimited" : "approve.limited"
-            }
+            i18nKey="TransactionConfirm.warning"
             values={{
               recipientWording,
             }}
           />
-        </Alert>
-        <Box
-          style={{
-            width: "100%",
-          }}
-          mb={20}
-        >
-          {fields.map((field, i) => {
-            const MaybeComponent = fieldComponents[field.type];
-            if (!MaybeComponent) {
-              console.log(
-                `TransactionConfirm field ${field.type} is not implemented! add a generic implementation in components/TransactionConfirm.js or inside families/*/TransactionConfirmFields.js`,
-              );
-              return null;
-            }
-            return (
-              <MaybeComponent
-                key={i}
-                field={field}
-                account={account}
-                parentAccount={parentAccount}
-                transaction={transaction}
-                status={status}
-              />
+        </WarnBox>
+      )}
+      {Title ? (
+        <Title
+          account={account}
+          parentAccount={parentAccount}
+          transaction={transaction}
+          status={status}
+        />
+      ) : (
+        <Info>
+          <Trans i18nKey="TransactionConfirm.title" />
+        </Info>
+      )}
+
+      <Box
+        style={{
+          width: "100%",
+        }}
+        px={30}
+        mb={20}
+      >
+        {fields.map((field, i) => {
+          const MaybeComponent = fieldComponents[field.type];
+          if (!MaybeComponent) {
+            console.log(
+              `TransactionConfirm field ${field.type} is not implemented! add a generic implementation in components/TransactionConfirm.js or inside families/*/TransactionConfirmFields.js`,
             );
-          })}
-        </Box>
-      </Container>
-      <ApproveFooter />
+            return null;
+          }
+          return (
+            <MaybeComponent
+              key={i}
+              field={field}
+              account={account}
+              parentAccount={parentAccount}
+              transaction={transaction}
+              status={status}
+            />
+          );
+        })}
+      </Box>
+
+      {Footer ? <Footer transaction={transaction} /> : null}
+
+      {renderVerifyUnwrapped({
+        modelId: device.modelId,
+        type,
+      })}
     </Container>
   );
-
-  if (typeTransaction == "Approve") return Approve();
-  else
-    return (
-      <Container>
-        {Warning ? (
-          <Warning
-            account={account}
-            parentAccount={parentAccount}
-            transaction={transaction}
-            recipientWording={recipientWording}
-            status={status}
-          />
-        ) : (
-          <WarnBox>
-            <Trans
-              i18nKey="TransactionConfirm.warning"
-              values={{
-                recipientWording,
-              }}
-            />
-          </WarnBox>
-        )}
-        {Title ? (
-          <Title
-            account={account}
-            parentAccount={parentAccount}
-            transaction={transaction}
-            status={status}
-          />
-        ) : (
-          <Info>
-            <Trans i18nKey="TransactionConfirm.title" />
-          </Info>
-        )}
-
-        <Box
-          style={{
-            width: "100%",
-          }}
-          px={30}
-          mb={20}
-        >
-          {fields.map((field, i) => {
-            const MaybeComponent = fieldComponents[field.type];
-            if (!MaybeComponent) {
-              console.log(
-                `TransactionConfirm field ${field.type} is not implemented! add a generic implementation in components/TransactionConfirm.js or inside families/*/TransactionConfirmFields.js`,
-              );
-              return null;
-            }
-            return (
-              <MaybeComponent
-                key={i}
-                field={field}
-                account={account}
-                parentAccount={parentAccount}
-                transaction={transaction}
-                status={status}
-              />
-            );
-          })}
-        </Box>
-
-        {Footer ? <Footer transaction={transaction} /> : null}
-
-        {renderVerifyUnwrapped({
-          modelId: device.modelId,
-          type,
-        })}
-      </Container>
-    );
 };
 export default withTranslation()(TransactionConfirm);
