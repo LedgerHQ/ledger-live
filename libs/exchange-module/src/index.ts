@@ -4,6 +4,7 @@ import {
   ExchangeCompleteResult,
   ExchangeStartParams,
   ExchangeStartResult,
+  ExchangeStartSellParams,
   ExchangeStartSwapParams,
 } from "./types";
 
@@ -22,6 +23,24 @@ export class ExchangeModule extends CustomModule {
       "custom.exchange.start",
       {
         exchangeType,
+      },
+    );
+
+    return result.transactionId;
+  }
+
+  /**
+   * Start the exchange process by generating a nonce on Ledger device
+   * @param provider - provider's id
+   *
+   * @returns - A transaction ID used to complete the exchange process
+   */
+  async startSell({ provider }: Omit<ExchangeStartSellParams, "exchangeType">) {
+    const result = await this.request<ExchangeStartSellParams, ExchangeStartResult>(
+      "custom.exchange.start",
+      {
+        exchangeType: "SELL",
+        provider,
       },
     );
 

@@ -50,7 +50,12 @@ const completeExchange = (
 
         if (!providerNameAndSignature) throw new Error("Could not get provider infos");
 
-        const exchange = createExchange(transport, exchangeType, rateType);
+        const exchange = createExchange(
+          transport,
+          exchangeType,
+          rateType,
+          providerNameAndSignature.version,
+        );
 
         const mainAccount = getMainAccount(fromAccount, fromParentAccount);
         const accountBridge = getAccountBridge(mainAccount);

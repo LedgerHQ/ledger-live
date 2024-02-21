@@ -1,6 +1,23 @@
+import { getEnv } from "@ledgerhq/live-env";
 import { ExchangeProviderNameAndSignature } from ".";
 
-export const sellProviders: Record<string, ExchangeProviderNameAndSignature> = {
+const testSellProvider: ExchangeProviderNameAndSignature = {
+  name: "SELL_TEST",
+  publicKey: {
+    curve: "secp256k1",
+    data: Buffer.from(
+      "0478d5facdae2305f48795d3ce7d9244f5060d2f800901da5746d1f4177ae8d7bbe63f3870efc0d36af8f91962811e1d8d9df91ce3b3ea2cd9f550c7d465f8b7b3",
+      "hex",
+    ),
+  },
+  signature: Buffer.from(
+    "30440220471b035b40dafa095d615998c82202b2bd00fb45670b828f1dda3b68e5b24cc3022022a1c64d02b8c14e1e4cc2d05b00234642c11db3d4461ff5366f5af337cf0ced",
+    "hex",
+  ),
+  version: 2,
+};
+
+const sellProviders: Record<string, ExchangeProviderNameAndSignature> = {
   coinify: {
     name: "Coinify",
     publicKey: {
@@ -18,6 +35,11 @@ export const sellProviders: Record<string, ExchangeProviderNameAndSignature> = {
 };
 
 export const getSellProvider = (providerName: string): ExchangeProviderNameAndSignature => {
+  if (getEnv("MOCK_EXCHANGE_TEST_CONFIG")) {
+    console.log("DEBUG - getSellProvider with Mock value");
+    return testSellProvider;
+  }
+
   const res = sellProviders[providerName.toLowerCase()];
 
   if (!res) {

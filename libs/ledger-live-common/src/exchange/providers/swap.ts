@@ -8,7 +8,7 @@ export type SwapProviderConfig = {
 
 type CEXProviderConfig = ExchangeProviderNameAndSignature & SwapProviderConfig & { type: "CEX" };
 type DEXProviderConfig = SwapProviderConfig & { type: "DEX" };
-type ProviderConfig = CEXProviderConfig | DEXProviderConfig;
+export type ProviderConfig = CEXProviderConfig | DEXProviderConfig;
 
 const swapProviders: Record<string, ProviderConfig> = {
   changelly: {
