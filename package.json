@@ -163,7 +163,6 @@
       "stellar-base>sodium-native": "^3.2.1",
       "remove-flow-types-loader>flow-remove-types": "^2",
       "remove-flow-types-loader>loader-utils": "*",
-      "@ledgerhq/hw-transport": "workspace:*",
       "@ledgerhq/devices": "workspace:*"
     },
     "patchedDependencies": {
