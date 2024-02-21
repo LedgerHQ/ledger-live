@@ -1756,7 +1756,7 @@
   "DeviceAction" : {
     "allowAppPermission" : "내 장치에서 {{wording}} 앱 열기",
     "allowAppPermissionSubtitleToken" : "나의 {{token}} 토큰 관리",
-    "allowManagerPermission" : "{{productName}}에서 Ledger 관리자를 허용하세요",
+    "allowManagerPermission" : "보안 연결을 허용하세요",
     "allowRenaming" : "장치에서 이름 변경을 허용하세요",
     "loading" : "로딩...",
     "connectAndUnlockDevice" : "장치를 연결하고 잠금 해제하세요",
@@ -5431,7 +5431,7 @@
       "description" : "로고가 나타나면 버튼을 누르지 말고 장치를 재시작하세요. 문제가 지속되면 Ledger 고객 지원에 문의해주세요."
     },
     "UserRefusedAllowManager" : {
-      "title" : "장치에서 내 Ledger가 거부됨"
+      "title" : "장치에서 보안 연결이 거부되었습니다"
     },
     "UserRefusedFirmwareUpdate" : {
       "title" : "장치에서 OS 업데이트 설치가\n취소되었습니다",
