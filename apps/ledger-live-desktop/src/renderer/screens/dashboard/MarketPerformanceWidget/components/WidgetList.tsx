@@ -8,12 +8,13 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import CurrencyUnitValue from "~/renderer/components/CurrencyUnitValue";
 import { usePrice } from "~/renderer/hooks/usePrice";
 import { MissingData } from "./MissingData";
+import { fontSizes } from "@ledgerhq/react-ui/styles/theme";
 
 export function WidgetList({ data, order }: PropsBody) {
   const noData = data.length === 0;
 
   return (
-    <Flex flexDirection="column" flex={1}>
+    <Flex flexDirection="column" flex={1} height={275}>
       {noData ? (
         <MissingData order={order} />
       ) : (
@@ -49,28 +50,46 @@ function WidgetRow({ data, index, isFirst }: PropsBodyElem) {
         </CryptoCurrencyIconWrapper>
 
         <Flex ml={2} overflow="hidden" flexDirection="column" alignItems="left">
-          <EllipsisText variant="paragraph" fontWeight="semiBold" color="neutral.c100">
+          <EllipsisText
+            variant="paragraph"
+            fontWeight="semiBold"
+            color="neutral.c100"
+            fontSize={fontSizes.paragraph}
+          >
             {cryptCurrency.name}
           </EllipsisText>
 
-          <EllipsisText variant="small" color="neutral.c60">
+          <EllipsisText
+            variant="small"
+            color="neutral.c60"
+            fontWeight="medium"
+            fontSize={fontSizes.small}
+          >
             {cryptCurrency.ticker.toUpperCase()}
           </EllipsisText>
         </Flex>
       </Flex>
 
       <Flex flexDirection="column">
-        <EllipsisText variant="h3Inter" textAlign="right">
-          <FormattedVal
-            isPercent
-            isNegative
-            val={parseFloat((Math.round(change * 10000) / 100).toFixed(2))}
-            inline
-            withIcon
-          />
-        </EllipsisText>
+        <FormattedVal
+          isPercent
+          isNegative
+          val={parseFloat((Math.round(change * 10000) / 100).toFixed(2))}
+          inline
+          withIcon
+          style={{
+            fontSize: fontSizes.paragraph,
+            fontWeight: "medium",
+          }}
+        />
 
-        <EllipsisText variant="h5Inter" textAlign="right" color="neutral.c100">
+        <EllipsisText
+          variant="small"
+          textAlign="right"
+          color="neutral.c100"
+          fontWeight="medium"
+          fontSize={fontSizes.small}
+        >
           {!counterValue ? (
             "-"
           ) : (

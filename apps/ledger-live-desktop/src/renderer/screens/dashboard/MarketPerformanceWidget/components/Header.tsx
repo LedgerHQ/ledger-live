@@ -26,8 +26,8 @@ export function MarketPerformanceWidgetHeader({ onChangeOrder, order }: HeaderPr
   const { width } = useResize(ref);
 
   return (
-    <Flex mb={5} justifyContent="space-between" alignItems="center" ref={ref}>
-      <Text variant="large" fontWeight="semiBold">
+    <Flex justifyContent="space-between" alignItems="center" ref={ref} mb={5}>
+      <Text variant="h3Inter" fontWeight="semiBold">
         {t("dashboard.marketPerformanceWidget.title")}
       </Text>
 

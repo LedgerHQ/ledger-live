@@ -24,16 +24,14 @@ export function MarketPerformanceWidgetContainer({ variant, list, setOrder, orde
         xl: 5,
         xxl: 6,
       }}
-      py={5}
+      py={"23px"}
       grow
     >
       <MarketPerformanceWidgetHeader order={order} onChangeOrder={setOrder} />
 
-      <Flex flex={1}>
+      <Flex flex={1} alignItems="center" justifyContent="center">
         {state.isLoading ? (
-          <Flex alignItems="center" justifyContent="center" flex={1}>
-            <InfiniteLoader />
-          </Flex>
+          <InfiniteLoader />
         ) : state.hasError ? (
           <Error
             title={"dashboard.marketPerformanceWidget.error.title"}
