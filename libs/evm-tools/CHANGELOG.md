@@ -1,5 +1,12 @@
 # @ledgerhq/evm-tools
 
+## 1.0.15-nightly.4
+
+### Patch Changes
+
+- Updated dependencies [[`0dd1546`](https://github.com/LedgerHQ/ledger-live/commit/0dd15467070cbf7fcbb9d9055a4535f6a25b2ad0)]:
+  - @ledgerhq/live-env@1.0.0-nightly.1
+
 ## 1.0.15-nightly.3
 
 ### Patch Changes

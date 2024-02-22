@@ -1,5 +1,23 @@
 # live-mobile
 
+## 3.40.0-nightly.15
+
+### Patch Changes
+
+- [#6056](https://github.com/LedgerHQ/ledger-live/pull/6056) [`cbe1d81`](https://github.com/LedgerHQ/ledger-live/commit/cbe1d81e2d58d4eefc3c0a70362356af6c634464) Thanks [@RamyEB](https://github.com/RamyEB)! - Adding lang parameters to manifest-api call
+
+- [#6213](https://github.com/LedgerHQ/ledger-live/pull/6213) [`ac0c71d`](https://github.com/LedgerHQ/ledger-live/commit/ac0c71de8bd75b768f5557480b681a193fcb3349) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Updated copy and style of the Analytics Opt In Prompt
+
+- Updated dependencies [[`212c41c`](https://github.com/LedgerHQ/ledger-live/commit/212c41c03f3fdbc492fcaf0827ec4f4cfe66eaeb), [`0dd1546`](https://github.com/LedgerHQ/ledger-live/commit/0dd15467070cbf7fcbb9d9055a4535f6a25b2ad0), [`cbe1d81`](https://github.com/LedgerHQ/ledger-live/commit/cbe1d81e2d58d4eefc3c0a70362356af6c634464), [`255476b`](https://github.com/LedgerHQ/ledger-live/commit/255476bd65b15971eb523807fe9795c84882f198)]:
+  - @ledgerhq/live-common@34.0.0-nightly.14
+  - @ledgerhq/live-env@1.0.0-nightly.1
+  - @ledgerhq/coin-evm@1.0.0-nightly.8
+  - @ledgerhq/coin-framework@0.11.1-nightly.7
+  - @ledgerhq/live-countervalues@0.1.1-nightly.7
+  - @ledgerhq/live-nft@0.2.0-nightly.7
+  - @ledgerhq/live-countervalues-react@0.1.1-nightly.7
+  - @ledgerhq/live-nft-react@0.2.0-nightly.7
+
 ## 3.40.0-nightly.14
 
 ### Patch Changes

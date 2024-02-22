@@ -1,5 +1,12 @@
 # @ledgerhq/hw-app-eth
 
+## 6.35.5-nightly.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/evm-tools@1.0.15-nightly.4
+
 ## 6.35.5-nightly.5
 
 ### Patch Changes

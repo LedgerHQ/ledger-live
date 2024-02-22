@@ -1,5 +1,11 @@
 # @ledgerhq/live-env
 
+## 1.0.0-nightly.1
+
+### Patch Changes
+
+- [#6262](https://github.com/LedgerHQ/ledger-live/pull/6262) [`0dd1546`](https://github.com/LedgerHQ/ledger-live/commit/0dd15467070cbf7fcbb9d9055a4535f6a25b2ad0) Thanks [@JesseKuntz](https://github.com/JesseKuntz)! - Updating the near-api-js library and fetching the NEAR staking positions from the node rather than the kitwallet API.
+
 ## 1.0.0-nightly.0
 
 ### Major Changes

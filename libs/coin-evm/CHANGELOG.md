@@ -1,5 +1,19 @@
 # @ledgerhq/coin-evm
 
+## 1.0.0-nightly.8
+
+### Minor Changes
+
+- [#6196](https://github.com/LedgerHQ/ledger-live/pull/6196) [`255476b`](https://github.com/LedgerHQ/ledger-live/commit/255476bd65b15971eb523807fe9795c84882f198) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add suppport of `blacklistedTokenIds` to coin-evm synchronization
+
+### Patch Changes
+
+- Updated dependencies [[`0dd1546`](https://github.com/LedgerHQ/ledger-live/commit/0dd15467070cbf7fcbb9d9055a4535f6a25b2ad0)]:
+  - @ledgerhq/live-env@1.0.0-nightly.1
+  - @ledgerhq/coin-framework@0.11.1-nightly.7
+  - @ledgerhq/evm-tools@1.0.15-nightly.4
+  - @ledgerhq/live-network@1.1.12-nightly.1
+
 ## 1.0.0-nightly.7
 
 ### Minor Changes

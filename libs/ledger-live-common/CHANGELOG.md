@@ -1,5 +1,27 @@
 # @ledgerhq/live-common
 
+## 34.0.0-nightly.14
+
+### Patch Changes
+
+- [#6200](https://github.com/LedgerHQ/ledger-live/pull/6200) [`212c41c`](https://github.com/LedgerHQ/ledger-live/commit/212c41c03f3fdbc492fcaf0827ec4f4cfe66eaeb) Thanks [@lawRathod](https://github.com/lawRathod)! - Fix for accounts sync error on ICP for accounts imported using AccountID alone
+
+- [#6056](https://github.com/LedgerHQ/ledger-live/pull/6056) [`cbe1d81`](https://github.com/LedgerHQ/ledger-live/commit/cbe1d81e2d58d4eefc3c0a70362356af6c634464) Thanks [@RamyEB](https://github.com/RamyEB)! - Adding lang parameters to manifest-api call
+
+- Updated dependencies [[`0dd1546`](https://github.com/LedgerHQ/ledger-live/commit/0dd15467070cbf7fcbb9d9055a4535f6a25b2ad0), [`255476b`](https://github.com/LedgerHQ/ledger-live/commit/255476bd65b15971eb523807fe9795c84882f198)]:
+  - @ledgerhq/hw-app-near@6.28.4-nightly.1
+  - @ledgerhq/coin-near@0.3.9-nightly.4
+  - @ledgerhq/live-env@1.0.0-nightly.1
+  - @ledgerhq/coin-evm@1.0.0-nightly.8
+  - @ledgerhq/coin-algorand@0.3.10-nightly.7
+  - @ledgerhq/coin-framework@0.11.1-nightly.7
+  - @ledgerhq/coin-polkadot@0.5.3-nightly.7
+  - @ledgerhq/live-countervalues@0.1.1-nightly.7
+  - @ledgerhq/live-network@1.1.12-nightly.1
+  - @ledgerhq/live-nft@0.2.0-nightly.7
+  - @ledgerhq/live-countervalues-react@0.1.1-nightly.7
+  - @ledgerhq/hw-app-eth@6.35.5-nightly.6
+
 ## 34.0.0-nightly.13
 
 ### Patch Changes
