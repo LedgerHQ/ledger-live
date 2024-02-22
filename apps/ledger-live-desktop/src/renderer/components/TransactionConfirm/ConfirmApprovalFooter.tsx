@@ -4,6 +4,7 @@ import { Trans, withTranslation } from "react-i18next";
 import { TransactionCommon } from "@ledgerhq/types-live";
 import Text from "~/renderer/components/Text";
 import { openURL } from "~/renderer/linking";
+import { getEnv } from "@ledgerhq/live-env";
 
 const HorizontalSeparator = styled.div`
   height: 1px;
@@ -15,6 +16,10 @@ const termsOfUse = new Map<string, string>([
   ["paraswap", "https://paraswap.io/tos"],
   ["1inch", "https://1inch.io/assets/1inch_network_terms_of_use.pdf"],
 ]);
+
+if (getEnv("PLAYWRIGHT_RUN")) {
+  termsOfUse.set("dummy-live-app", "https://localhost.io/testtos");
+}
 
 type Props = {
   Footer:

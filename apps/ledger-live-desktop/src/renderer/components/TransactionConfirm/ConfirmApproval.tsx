@@ -71,7 +71,7 @@ const ConfirmApproval = ({
         <Alert type="primary" mb={26}>
           <Trans
             i18nKey={
-              amountTransaction === "Unlimited MATIC" ? "approve.unlimited" : "approve.limited"
+              amountTransaction.includes("Unlimited") ? "approve.unlimited" : "approve.limited"
             }
             values={{
               recipientWording,
