@@ -4,4 +4,4 @@
 ---
 
 Add new feature flags: supportDeviceStax, supportDeviceStax
-Remove legacy feature flags: syncOnboarding, customImage, llmNewFirmwareUpdateUx
+Remove legacy feature flags: syncOnboarding, customImage

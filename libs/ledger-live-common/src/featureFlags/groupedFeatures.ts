@@ -13,6 +13,7 @@ export const groupedFeatures: Record<
       "deviceInitialApps",
       "llmNewDeviceSelection",
       "staxWelcomeScreen",
+      "llmNewFirmwareUpdateUx",
     ],
   },
   europa: {
