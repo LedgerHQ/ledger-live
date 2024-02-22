@@ -51,7 +51,7 @@ const blockExplorerUrls = {
   "solana": "https://solana.fm/address/[ADDRESS]",
   "songbird": "https://songbird-explorer.flare.network/address/[ADDRESS]",
   "stargaze": "https://www.mintscan.io/stargaze/account/[ADDRESS]",
-  "stellar": "https://stellarscan.io/address/[ADDRESS]",
+  "stellar": "https://blockchair.com/stellar/account/[ADDRESS]",
   "syscoin": "https://explorer.syscoin.org/address/[ADDRESS]",
   "telos_evm": "https://teloscan.io/address/[ADDRESS]",
   "tezos": "https://tzkt.io/[ADDRESS]",
