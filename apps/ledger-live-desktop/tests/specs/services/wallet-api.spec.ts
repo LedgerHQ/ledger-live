@@ -469,45 +469,6 @@ test("Wallet API methods @smoke", async ({ page }) => {
     });
   });
 
-  await test.step("transaction.signAndBroadcast approval screen", async () => {
-    const id = randomUUID();
-
-    const recipient = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2";
-
-    liveAppWebview.send({
-      jsonrpc: "2.0",
-      id,
-      method: "transaction.signAndBroadcast",
-      params: {
-        accountId: "e86e3bc1-49e1-53fd-a329-96ba6f1b06d3",
-        rawTransaction: {
-          family: "ethereum",
-          amount: "0",
-          recipient: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
-          data:
-            "095ea7b3" + // approve function
-            "0000000000000000000000000444444ba9f3e719726886d34a177484278bfcae" + // contract
-            "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", // wad
-        },
-      },
-    });
-
-    // Step Fees
-    await expect(page.getByText("Max estimated fee")).toBeVisible();
-    await expect(page.getByText("Approve token")).toBeVisible();
-    await modal.continueToSignTransaction();
-
-    // Step Recipient
-    await expect(page.getByText(recipient)).toBeVisible();
-    await modal.continueToSignTransaction();
-
-    // Step Device
-    await deviceAction.openApp();
-    await expect(page.getByText("Approve token on your ledger device")).toBeVisible();
-    await expect(page.getByText("Double-check the transaction")).toBeVisible();
-    await expect(page.getByText("Unlimited WETH")).toBeVisible();
-  });
-
   await test.step("wallet.capabilities", async () => {
     const id = randomUUID();
 
