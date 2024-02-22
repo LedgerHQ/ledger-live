@@ -3,6 +3,7 @@ import { cosmosConfig } from "../families/cosmos/config";
 import { bitcoinConfig } from "../families/bitcoin/config";
 import { evmConfig } from "../families/evm/config";
 import { algorandConfig } from "../families/algorand/config";
+import { cardanoConfig } from "../families/cardano/config";
 
 const liveCommonConfig: ConfigSchema = {};
 
@@ -12,4 +13,5 @@ export default {
   ...bitcoinConfig,
   ...evmConfig,
   ...algorandConfig,
+  ...cardanoConfig,
 } as ConfigSchema;
