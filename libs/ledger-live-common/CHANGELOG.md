@@ -1,5 +1,24 @@
 # @ledgerhq/live-common
 
+## 33.6.1-hotfix.1
+
+### Patch Changes
+
+- [#6284](https://github.com/LedgerHQ/ledger-live/pull/6284) [`884cfd6`](https://github.com/LedgerHQ/ledger-live/commit/884cfd64a1440d393fb983dfe361be9c78f3b81c) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Updated CAL support
+
+- Updated dependencies [[`884cfd6`](https://github.com/LedgerHQ/ledger-live/commit/884cfd64a1440d393fb983dfe361be9c78f3b81c)]:
+  - @ledgerhq/cryptoassets@11.4.1-hotfix.0
+  - @ledgerhq/coin-algorand@0.3.11-hotfix.1
+  - @ledgerhq/coin-evm@0.12.3-hotfix.1
+  - @ledgerhq/coin-framework@0.11.2-hotfix.1
+  - @ledgerhq/coin-polkadot@0.5.4-hotfix.1
+  - @ledgerhq/hw-app-eth@6.35.6-hotfix.1
+  - @ledgerhq/hw-app-vet@0.1.5-hotfix.0
+  - @ledgerhq/live-countervalues@0.1.2-hotfix.1
+  - @ledgerhq/live-countervalues-react@0.1.2-hotfix.1
+  - @ledgerhq/live-nft@0.2.1-hotfix.1
+  - @ledgerhq/coin-near@0.3.10-hotfix.1
+
 ## 33.6.1-hotfix.0
 
 ### Patch Changes

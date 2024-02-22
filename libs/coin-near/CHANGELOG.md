@@ -1,5 +1,12 @@
 # @ledgerhq/coin-near
 
+## 0.3.10-hotfix.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@0.11.2-hotfix.1
+
 ## 0.3.10-hotfix.0
 
 ### Patch Changes

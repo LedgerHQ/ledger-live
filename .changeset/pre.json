@@ -101,6 +101,7 @@
     "@ledgerhq/react-devtools": "0.0.0"
   },
   "changesets": [
+    "chilly-ducks-accept",
     "clever-pans-joke"
   ]
 }
