@@ -61,7 +61,7 @@ const AnalyticsRow = () => {
   const toggleAnalytics = useCallback(
     (value: boolean) => {
       dispatch(setAnalytics(value));
-      updateIdentify();
+      updateIdentify(undefined, true);
       if (llmAnalyticsOptInPromptFeature?.enabled) {
         track(
           "toggle_clicked",

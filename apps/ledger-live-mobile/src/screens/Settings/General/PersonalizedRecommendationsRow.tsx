@@ -20,7 +20,7 @@ const PersonalizedRecommendationsRow = () => {
   const togglePersonalizedRecommendations = useCallback(
     (value: boolean) => {
       dispatch(setPersonalizedRecommendations(value));
-      updateIdentify();
+      updateIdentify(undefined, true);
       if (llmAnalyticsOptInPromptFeature?.enabled) {
         track(
           "toggle_clicked",
