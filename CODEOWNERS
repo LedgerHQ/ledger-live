@@ -46,6 +46,7 @@ libs/live-network/                                       @ledgerhq/live-blockcha
 apps/cli/src/commands/ptx                                            @ledgerhq/ptx
 apps/ledger-live-desktop/src/renderer/components/ProviderIcon/       @ledgerhq/ptx
 apps/ledger-live-desktop/src/renderer/components/WebPTXPlayer/       @ledgerhq/ptx
+apps/ledger-live-desktop/src/renderer/hooks/swap-migrations/         @ledgerhq/ptx
 apps/ledger-live-desktop/src/renderer/drawers/SwapOperationDetails/  @ledgerhq/ptx
 apps/ledger-live-desktop/src/renderer/modals/Platform/               @ledgerhq/ptx
 apps/ledger-live-desktop/src/renderer/modals/StartStake/             @ledgerhq/ptx
@@ -117,6 +118,13 @@ libs/ledger-live-common/src/hooks/recoverFeatureFlag.ts                 @ledgerh
 apps/ledger-live-desktop/tests/                          @ledgerhq/live-hub @ledgerhq/live-qa
 apps/ledger-live-mobile/e2e/                             @ledgerhq/live-hub @ledgerhq/live-qa
 
-# i18n files (no code owner)
+# Cross-team generic files can be opted out (no strict ownership when it concerns everyone)
 apps/ledger-live-desktop/static/i18n/
 apps/ledger-live-mobile/src/locales/
+apps/ledger-live-mobile/src/components/RootNavigator/
+apps/ledger-live-mobile/src/const/navigation.ts
+apps/**/package.json
+libs/ledgerjs/packages/errors/src/index.ts
+libs/ledger-live-common/src/config/sharedConfig.ts
+libs/ledger-live-common/package.json
+**/generated/
