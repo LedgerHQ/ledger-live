@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { Check, Close } from "@ledgerhq/native-ui/assets/icons";
 import Button from "~/components/Button";
 import { View, Container, Titles, Content, Bottom, ScrollableContainer } from "../Common";
-import useAnalyticsOptInPrompt from "~/hooks/analyticsOptInPrompt/useAnalyticsOptInPromptVariantA";
+import useAnalyticsOptInPrompt from "~/hooks/analyticsOptInPrompt/useAnalyticsOptInPromptLogicVariantA";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { AnalyticsOptInPromptNavigatorParamList } from "~/components/RootNavigator/types/AnalyticsOptInPromptNavigator";
 import { ScreenName } from "~/const";

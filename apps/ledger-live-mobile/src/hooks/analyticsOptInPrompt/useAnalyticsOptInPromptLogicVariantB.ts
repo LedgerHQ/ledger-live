@@ -3,18 +3,18 @@ import { setAnalytics, setPersonalizedRecommendations } from "~/actions/settings
 import { NavigatorName, ScreenName } from "~/const";
 import { track } from "~/analytics";
 import { EntryPoint } from "~/components/RootNavigator/types/AnalyticsOptInPromptNavigator";
-import useAnalyticsOptInPrompt from "./useAnalyticsOptInPrompt";
+import useAnalyticsOptInPromptLogic from "./useAnalyticsOptInPromptLogic";
 import { ABTestingVariants } from "@ledgerhq/types-live";
 
 type Props = {
   entryPoint: EntryPoint;
 };
 
-const useAnalyticsOptInPromptVariantB = ({ entryPoint }: Props) => {
+const useAnalyticsOptInPromptLogicVariantB = ({ entryPoint }: Props) => {
   const variant = ABTestingVariants.variantB;
   const dispatch = useDispatch();
   const { continueOnboarding, flow, shouldWeTrack, navigation, clickOnLearnMore } =
-    useAnalyticsOptInPrompt({ entryPoint, variant });
+    useAnalyticsOptInPromptLogic({ entryPoint, variant });
 
   const goToPersonalizedRecommendationsStep = () => {
     navigation.navigate(NavigatorName.AnalyticsOptInPrompt, {
@@ -93,4 +93,4 @@ const useAnalyticsOptInPromptVariantB = ({ entryPoint }: Props) => {
   };
 };
 
-export default useAnalyticsOptInPromptVariantB;
+export default useAnalyticsOptInPromptLogicVariantB;

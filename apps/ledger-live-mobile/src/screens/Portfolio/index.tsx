@@ -19,13 +19,12 @@ import {
   // TODO: discreetMode is never used 😱 is it safe to remove
   // discreetModeSelector,
   hasBeenUpsoldProtectSelector,
-  hasSeenAnalyticsOptInPromptSelector,
   lastConnectedDeviceSelector,
   onboardingTypeSelector,
 } from "~/reducers/settings";
 import { setHasBeenUpsoldProtect } from "~/actions/settings";
 import Carousel from "~/components/Carousel";
-import { NavigatorName, ScreenName } from "~/const";
+import { ScreenName } from "~/const";
 import FirmwareUpdateBanner from "~/components/FirmwareUpdateBanner";
 import CheckLanguageAvailability from "~/components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "~/components/CheckTermOfUseUpdate";
@@ -58,6 +57,7 @@ import { UpdateStep } from "../FirmwareUpdate";
 import { OnboardingType } from "~/reducers/types";
 import ContentCardsLocation from "~/dynamicContent/ContentCardsLocation";
 import { ContentCardLocation } from "~/dynamicContent/types";
+import usePortfolioAnalyticsOptInPrompt from "~/hooks/analyticsOptInPrompt/usePorfolioAnalyticsOptInPrompt";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
@@ -121,30 +121,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
     protectFeature?.enabled,
   ]);
 
-  const llmAnalyticsOptInPromptFeature = useFeature("llmAnalyticsOptInPrompt");
-  const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
-
-  useEffect(() => {
-    const entryPoints = llmAnalyticsOptInPromptFeature?.params?.entryPoints || [];
-
-    if (
-      !hasSeenAnalyticsOptInPrompt &&
-      llmAnalyticsOptInPromptFeature?.enabled &&
-      entryPoints.includes("Portfolio")
-    ) {
-      navigation.navigate(NavigatorName.AnalyticsOptInPrompt, {
-        screen: ScreenName.AnalyticsOptInPromptMain,
-        params: {
-          entryPoint: "Portfolio",
-        },
-      });
-    }
-  }, [
-    hasSeenAnalyticsOptInPrompt,
-    llmAnalyticsOptInPromptFeature?.enabled,
-    llmAnalyticsOptInPromptFeature?.params?.entryPoints,
-    navigation,
-  ]);
+  usePortfolioAnalyticsOptInPrompt();
 
   const openAddModal = useCallback(() => {
     track("button_clicked", {

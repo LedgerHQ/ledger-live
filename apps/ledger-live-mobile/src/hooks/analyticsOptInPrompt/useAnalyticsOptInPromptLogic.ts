@@ -25,7 +25,7 @@ type Props = {
   variant: ABTestingVariants;
 };
 
-const useAnalyticsOptInPrompt = ({ entryPoint, variant }: Props) => {
+const useAnalyticsOptInPromptLogic = ({ entryPoint, variant }: Props) => {
   const { locale } = useLocale();
   const dispatch = useDispatch();
   const navigation =
@@ -91,4 +91,4 @@ const useAnalyticsOptInPrompt = ({ entryPoint, variant }: Props) => {
   };
 };
 
-export default useAnalyticsOptInPrompt;
+export default useAnalyticsOptInPromptLogic;
