@@ -87,7 +87,6 @@ export const DEFAULT_FEATURES: Features = {
   walletConnectEntryPoint: DEFAULT_FEATURE,
   counterValue: DEFAULT_FEATURE,
   llmNewDeviceSelection: DEFAULT_FEATURE,
-  llmNewFirmwareUpdateUx: DEFAULT_FEATURE,
   mockFeature: DEFAULT_FEATURE,
   multibuyNavigation: DEFAULT_FEATURE,
   ptxServiceCtaExchangeDrawer: DEFAULT_FEATURE,
