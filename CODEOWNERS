@@ -80,6 +80,7 @@ libs/ledger-live-common/src/wallet-api/                  @ledgerhq/wallet-api
 **/platformAdapter.ts                                    @ledgerhq/wallet-api
 **/walletApiAdapter.ts                                   @ledgerhq/wallet-api
 **/liveapp-sdk.spec.ts                                   @ledgerhq/wallet-api @ledgerhq/live-qa
+**/confirmTransaction.spec.ts                            @ledgerhq/wallet-api @ledgerhq/live-qa
 **/wallet-api.spec.ts                                    @ledgerhq/wallet-api @ledgerhq/live-qa
 libs/test-utils/                                         @ledgerhq/wallet-api @ledgerhq/live-qa
 
