@@ -1,8 +1,14 @@
 import React from "react";
-import Svg, { Path, Rect, G, Defs, Stop, ClipPath, LinearGradient } from "react-native-svg";
+import Svg, { Path, Rect, Text, G, Defs, Stop, ClipPath, LinearGradient } from "react-native-svg";
+
+const EuropaText = ({ color, size }: { color: string; size: number }) => (
+  <Text fill={color} fontSize={size / 9} textAnchor="start" x={size / 12} y={size / 4}>
+    {"EUROPA"}
+  </Text>
+);
 
 // a little bit of hack on the size but that's okay since this illustration is only temporary
-const Stax = ({ size = 90, theme }: { size?: number; theme: "light" | "dark" }) =>
+const Europa = ({ size = 90, theme }: { size?: number; theme: "light" | "dark" }) =>
   theme === "light" ? (
     <Svg width={size * 0.611} height={size} viewBox="0 0 55 90" fill="none">
       <Path
@@ -13,6 +19,7 @@ const Stax = ({ size = 90, theme }: { size?: number; theme: "light" | "dark" }) 
         d="M0.00927734 86.803V3.19678H50.2349C50.9107 3.19727 51.5587 3.46583 52.0368 3.94354C52.5148 4.42124 52.7839 5.06908 52.7849 5.7449V84.2492C52.7849 84.9257 52.5163 85.5745 52.0381 86.053C51.5599 86.5315 50.9113 86.8006 50.2349 86.8011L0.00927734 86.803Z"
         fill="url(#paint1_linear_4868_98503)"
       />
+      <EuropaText color="black" size={size} />
       <G clipPath="url(#clip0_4868_98503)">
         <Path
           d="M18.1775 48.4578V53.001H25.0909V51.9934H19.1848V48.4578H18.1775ZM35.55 48.4578V51.9934H29.6439V53.0007H36.5574V48.4578H35.55ZM25.101 41.5441V48.4576H29.6439V47.549H26.1083V41.5441H25.101ZM18.1775 37.001V41.5441H19.1848V38.0083H25.0909V37.001H18.1775ZM29.6439 37.001V38.0083H35.55V41.5441H36.5574V37.001H29.6439Z"
@@ -62,6 +69,7 @@ const Stax = ({ size = 90, theme }: { size?: number; theme: "light" | "dark" }) 
         d="M0.00952148 86.8028V3.19653H50.2351C50.911 3.19703 51.559 3.46559 52.0371 3.94329C52.5151 4.421 52.7842 5.06883 52.7851 5.74466V84.249C52.7851 84.9255 52.5165 85.5743 52.0384 86.0528C51.5602 86.5313 50.9116 86.8004 50.2351 86.8009L0.00952148 86.8028Z"
         fill="url(#paint1_linear_4869_98513)"
       />
+      <EuropaText color="white" size={size} />
       <G clipPath="url(#clip0_4869_98513)">
         <Path
           d="M18.1777 48.4573V53.0005H25.0912V51.9929H19.185V48.4573H18.1777ZM35.5503 48.4573V51.9929H29.6441V53.0003H36.5576V48.4573H35.5503ZM25.1012 41.5436V48.4571H29.6441V47.5485H26.1085V41.5436H25.1012ZM18.1777 37.0005V41.5436H19.185V38.0078H25.0912V37.0005H18.1777ZM29.6441 37.0005V38.0078H35.5503V41.5436H36.5576V37.0005H29.6441Z"
@@ -103,4 +111,4 @@ const Stax = ({ size = 90, theme }: { size?: number; theme: "light" | "dark" }) 
     </Svg>
   );
 
-export default Stax;
+export default Europa;
