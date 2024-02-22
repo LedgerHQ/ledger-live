@@ -472,6 +472,7 @@ function convertStellarTokens([
 ]: StellarToken): TokenCurrency {
   const parentCurrency = getCryptoCurrencyById("stellar");
 
+  // FIXME: to be discussed with CAL service as values are Uppercase IRL
   return {
     type: "TokenCurrency",
     id: `stellar/asset/${assetCode.toUpperCase()}:${assetIssuer.toUpperCase()}`,
