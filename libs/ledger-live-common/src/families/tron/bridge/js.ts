@@ -470,14 +470,15 @@ const getAccountShape = async (info: AccountShapeInfo, syncConfig) => {
         info.initialAccount &&
         info.initialAccount.subAccounts &&
         info.initialAccount.subAccounts.find(a => a.id === id);
+      const bnBalance = new BigNumber(balance);
       const sub: TokenAccount = {
         type: "TokenAccount",
         id,
         starred: false,
         parentId: accountId,
         token,
-        balance: new BigNumber(balance),
-        spendableBalance: new BigNumber(balance),
+        balance: bnBalance,
+        spendableBalance: bnBalance,
         operationsCount: operations.length,
         operations,
         pendingOperations: maybeExistingSubAccount ? maybeExistingSubAccount.pendingOperations : [],
