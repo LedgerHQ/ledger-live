@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useEffect } from "react";
 import { Flex, Link, Text } from "@ledgerhq/native-ui";
 import { TrackScreen } from "~/analytics";
 import { useTranslation } from "react-i18next";
@@ -6,12 +6,33 @@ import Button from "~/components/Button";
 import { View, Container, Titles, Content, Bottom, ScrollableContainer } from "../Common";
 import headerAnalytics from "./illustrations/header_analytics.png";
 import { Image } from "react-native";
-import useAnalyticsOptInPrompt from "~/hooks/useAnalyticsOptInPromptVariantB";
+import useAnalyticsOptInPromptLogic from "~/hooks/analyticsOptInPrompt/useAnalyticsOptInPromptLogicVariantB";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { AnalyticsOptInPromptNavigatorParamList } from "~/components/RootNavigator/types/AnalyticsOptInPromptNavigator";
+import { ScreenName } from "~/const";
 
-function Main() {
+type Props = StackNavigatorProps<
+  AnalyticsOptInPromptNavigatorParamList,
+  ScreenName.AnalyticsOptInPromptMain
+>;
+
+function Main({ route, navigation }: Props) {
   const { t } = useTranslation();
-  const { shouldWeTrack, clickOnAllowAnalytics, clickOnRefuseAnalytics, clickOnLearnMore } =
-    useAnalyticsOptInPrompt();
+  const { entryPoint } = route.params;
+  const { shouldWeTrack, clickOnAllowAnalytics, clickOnRefuseAnalytics, clickOnLearnMore, flow } =
+    useAnalyticsOptInPromptLogic({ entryPoint });
+
+  const shouldPreventBackNavigation = entryPoint === "Portfolio";
+
+  useEffect(() => {
+    if (shouldPreventBackNavigation) {
+      const unsubscribe = navigation.addListener("beforeRemove", e => {
+        e.preventDefault();
+      });
+
+      return unsubscribe;
+    }
+  });
 
   const bulletPoints = [
     t("analyticsOptIn.variantB.main.bulletPoints.1"),
@@ -77,7 +98,7 @@ function Main() {
           category="Analytics Opt In Prompt"
           name="Main"
           variant="B"
-          flow="consent onboarding"
+          flow={flow}
           mandatory={shouldWeTrack}
         />
       </Container>

@@ -78,6 +78,7 @@ import type {
   SettingsSetClosedWithdrawBannerPayload,
   SettingsSetUserNps,
   SettingsSetSupportedCounterValues,
+  SettingsSetHasSeenAnalyticsOptInPrompt,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -98,8 +99,8 @@ export const INITIAL_STATE: SettingsState = {
   counterValueExchange: null,
   privacy: null,
   reportErrorsEnabled: true,
-  analyticsEnabled: null,
-  personalizedRecommendationsEnabled: null,
+  analyticsEnabled: false,
+  personalizedRecommendationsEnabled: false,
   currenciesSettings: {},
   pairExchanges: {},
   selectedTimeRange: "month",
@@ -179,6 +180,7 @@ export const INITIAL_STATE: SettingsState = {
   },
   userNps: null,
   supportedCounterValues: [],
+  hasSeenAnalyticsOptInPrompt: false,
 };
 
 const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
@@ -645,6 +647,10 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     supportedCounterValues: (action as Action<SettingsSetSupportedCounterValues>).payload,
   }),
+  [SettingsActionTypes.SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT]: (state, action) => ({
+    ...state,
+    hasSeenAnalyticsOptInPrompt: (action as Action<SettingsSetHasSeenAnalyticsOptInPrompt>).payload,
+  }),
 };
 
 export default handleActions<SettingsState, SettingsPayload>(handlers, INITIAL_STATE);
@@ -698,7 +704,7 @@ export const personalizedRecommendationsEnabledSelector = createSelector(
 );
 export const trackingEnabledSelector = createSelector(
   storeSelector,
-  s => !!s.analyticsEnabled || !!s.personalizedRecommendationsEnabled,
+  s => s.analyticsEnabled || s.personalizedRecommendationsEnabled,
 );
 export const lastSeenCustomImageSelector = createSelector(
   storeSelector,
@@ -844,3 +850,5 @@ export const generalTermsVersionAcceptedSelector = (state: State) =>
   state.settings.generalTermsVersionAccepted;
 export const userNpsSelector = (state: State) => state.settings.userNps;
 export const getSupportedCounterValues = (state: State) => state.settings.supportedCounterValues;
+export const hasSeenAnalyticsOptInPromptSelector = (state: State) =>
+  state.settings.hasSeenAnalyticsOptInPrompt;

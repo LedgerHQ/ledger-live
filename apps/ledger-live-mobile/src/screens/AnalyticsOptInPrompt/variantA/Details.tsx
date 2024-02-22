@@ -6,7 +6,10 @@ import { useTranslation } from "react-i18next";
 import Button from "~/components/Button";
 import Switch from "~/components/Switch";
 import { View, Container, Titles, Content, Bottom, ScrollableContainer } from "../Common";
-import useAnalyticsOptInPrompt from "~/hooks/useAnalyticsOptInPromptVariantA";
+import useAnalyticsOptInPrompt from "~/hooks/analyticsOptInPrompt/useAnalyticsOptInPromptLogicVariantA";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { AnalyticsOptInPromptNavigatorParamList } from "~/components/RootNavigator/types/AnalyticsOptInPromptNavigator";
+import { ScreenName } from "~/const";
 
 const OptionContainer = styled(Flex).attrs({
   width: "100%",
@@ -46,11 +49,21 @@ function Option({ title, description, checked, onToggle }: OptionProps): React.R
   );
 }
 
-function Details() {
+type Props = StackNavigatorProps<
+  AnalyticsOptInPromptNavigatorParamList,
+  ScreenName.AnalyticsOptInPromptDetails
+>;
+
+function Details({ route }: Props) {
   const { t } = useTranslation();
+  const { entryPoint } = route.params;
+
   const [isAnalyticsEnabled, setIsAnalyticsEnabled] = useState(false);
   const [isPersonalRecommendationsEnabled, setIsPersonalRecommendationsEnabled] = useState(false);
-  const { shouldWeTrack, clickOnMoreOptionsConfirm, clickOnLearnMore } = useAnalyticsOptInPrompt();
+  const { shouldWeTrack, clickOnMoreOptionsConfirm, clickOnLearnMore, flow } =
+    useAnalyticsOptInPrompt({
+      entryPoint,
+    });
 
   return (
     <ScrollableContainer>
@@ -101,9 +114,9 @@ function Details() {
         </Bottom>
         <TrackScreen
           category="Analytics Opt In Prompt"
-          name="Details"
+          name="Preferences"
           variant="A"
-          flow="consent onboarding"
+          flow={flow}
           mandatory={shouldWeTrack}
         />
       </Container>
