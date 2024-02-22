@@ -7,10 +7,11 @@ import { EvmAddress, EvmSignature, EvmSigner } from "./types/signer";
 const resolver = (
   signerContext: SignerContext<EvmSigner, EvmAddress | EvmSignature>,
 ): GetAddressFn => {
-  return async (deviceId: string, { path, verify }: GetAddressOptions) => {
+  return async (deviceId: string, { path, verify, currency }: GetAddressOptions) => {
     const { address, publicKey, chainCode } = (await signerContext(deviceId, signer =>
-      signer.getAddress(path, verify, false),
+      signer.getAddress(path, verify, false, currency?.ethereumLikeInfo?.chainId.toString()),
     )) as EvmAddress;
+
     return {
       address: eip55.encode(address),
       publicKey,
