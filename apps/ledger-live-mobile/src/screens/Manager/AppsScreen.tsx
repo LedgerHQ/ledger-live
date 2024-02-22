@@ -9,7 +9,6 @@ import {
   predictOptimisticState,
   reducer,
 } from "@ledgerhq/live-common/apps/index";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { App, DeviceInfo } from "@ledgerhq/types-live";
 import { useAppsSections } from "@ledgerhq/live-common/apps/react";
 
@@ -36,7 +35,7 @@ import NoResultsFound from "~/icons/NoResultsFound";
 import AppIcon from "./AppsList/AppIcon";
 import AppUpdateAll from "./AppsList/AppUpdateAll";
 import Search from "~/components/Search";
-import FirmwareUpdateBanner from "~/components/FirmwareUpdateBanner";
+import FirmwareUpdateBanner from "~/newArch/features/FirmwareUpdateBanner/components/FirmwareUpdateBanner";
 import { TAB_BAR_SAFE_HEIGHT } from "~/components/TabBar/shared";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ManagerNavigatorStackParamList } from "~/components/RootNavigator/types/ManagerNavigator";
@@ -235,7 +234,6 @@ const AppsScreen = ({
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
   const latestFirmware = useLatestFirmware(lastSeenDevice?.deviceInfo);
   const showFwUpdateBanner = Boolean(latestFirmware);
-  const newFwUpdateUxFeatureFlag = useFeature("llmNewFirmwareUpdateUx");
 
   const renderList = useCallback(
     (items?: App[]) => (
@@ -257,7 +255,7 @@ const AppsScreen = ({
               appList={deviceApps}
               onLanguageChange={onLanguageChange}
             >
-              {showFwUpdateBanner && newFwUpdateUxFeatureFlag?.enabled ? (
+              {showFwUpdateBanner ? (
                 <Flex p={6} pb={0}>
                   <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
                 </Flex>
@@ -265,16 +263,14 @@ const AppsScreen = ({
             </DeviceCard>
             <ProviderWarning />
             <Benchmarking state={state} />
-            {showFwUpdateBanner && !newFwUpdateUxFeatureFlag?.enabled ? (
-              <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
-            ) : (
+            {
               <AppUpdateAll
                 state={state}
                 appsToUpdate={update}
                 dispatch={dispatch}
                 isModalOpened={updateModalOpened}
               />
-            )}
+            }
             <Flex flexDirection="row" mt={8} mb={6} backgroundColor="background.main">
               <Searchbar searchQuery={query} onQueryUpdate={setQuery} />
               <Flex ml={6}>
@@ -300,7 +296,6 @@ const AppsScreen = ({
 
     [
       showFwUpdateBanner,
-      newFwUpdateUxFeatureFlag?.enabled,
       onBackFromUpdate,
       distribution,
       state,
