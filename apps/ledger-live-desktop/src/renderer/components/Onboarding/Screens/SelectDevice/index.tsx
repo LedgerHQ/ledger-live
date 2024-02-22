@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import styled from "styled-components";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { Flex, Text } from "@ledgerhq/react-ui";
-import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device-core/commands/use-cases/isSyncOnboardingSupported";
+import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-cases/isSyncOnboardingSupported";
 import { DeviceSelector } from "./DeviceSelector";
 import { track } from "~/renderer/analytics/segment";
 import OnboardingNavHeader from "../../OnboardingNavHeader";

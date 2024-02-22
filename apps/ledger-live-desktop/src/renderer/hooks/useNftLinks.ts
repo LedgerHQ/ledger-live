@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { TFunction } from "i18next";
 import { useTranslation } from "react-i18next";
 import { Account, ProtoNFT, NFTMetadata, NFTMedias } from "@ledgerhq/types-live";
-import { isCustomLockScreenSupported } from "@ledgerhq/live-common/device-core/commands/use-cases/isCustomLockScreenSupported";
+import { isCustomLockScreenSupported } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import { IconsLegacy } from "@ledgerhq/react-ui";
 import { openModal } from "~/renderer/actions/modals";
 import IconOpensea from "~/renderer/icons/Opensea";

@@ -17,7 +17,7 @@ import { useSelector } from "react-redux";
 import StorageBar from "./StorageBar";
 import StorageInfo from "./StorageInfo";
 import { DeviceIllustration } from "./DeviceIllustration";
-import { isCustomLockScreenSupported } from "@ledgerhq/live-common/device-core/commands/use-cases/isCustomLockScreenSupported";
+import { isCustomLockScreenSupported } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 
 const Separator = styled.div`
   height: 1px;

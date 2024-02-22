@@ -31,7 +31,7 @@ import InstalledAppsModal from "../Modals/InstalledAppsModal";
 
 import DeviceLanguage from "./DeviceLanguage";
 import CustomLockScreen from "./CustomLockScreen";
-import { isCustomLockScreenSupported } from "@ledgerhq/live-common/device-core/commands/use-cases/isCustomLockScreenSupported";
+import { isCustomLockScreenSupported } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 
 const illustrations = {
   nanoS: NanoS,

@@ -5,7 +5,7 @@ import { NFTMetadata } from "@ledgerhq/types-live";
 import { View, StyleSheet, TouchableOpacity, Linking, Platform } from "react-native";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Box, Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
-import { supportedDeviceModelIds as customLockScreenSupportedDeviceModelIds } from "@ledgerhq/live-common/device-core/commands/use-cases/isCustomLockScreenSupported";
+import { supportedDeviceModelIds as customLockScreenSupportedDeviceModelIds } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import styled, { useTheme } from "styled-components/native";
 import { NavigatorName, ScreenName } from "~/const";
 import ExternalLinkIcon from "~/icons/ExternalLink";

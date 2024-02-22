@@ -5,7 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Platform } from "react-native";
-import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device-core/commands/use-cases/isSyncOnboardingSupported";
+import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-cases/isSyncOnboardingSupported";
 import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import {
   BaseNavigationComposite,
