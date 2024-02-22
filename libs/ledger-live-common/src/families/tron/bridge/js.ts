@@ -455,9 +455,6 @@ const getAccountShape = async (info: AccountShapeInfo, syncConfig) => {
     return accumulator;
   }, []);
 
-  // TRC10 and TRC20 accounts
-  // FIXME: this is bad for perf: we should reconciliate with potential existing data
-  // we need to KEEP REF as much as possible & use minimalOperationsBuilderSync
   const subAccounts: SubAccount[] = compact(
     trc10Tokens.concat(trc20Tokens).map(({ key, tokenId, balance }) => {
       const { blacklistedTokenIds = [] } = syncConfig;
