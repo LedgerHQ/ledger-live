@@ -4,6 +4,7 @@ import { bitcoinConfig } from "../families/bitcoin/config";
 import { evmConfig } from "../families/evm/config";
 import { algorandConfig } from "../families/algorand/config";
 import { cardanoConfig } from "../families/cardano/config";
+import { casperConfig } from "../families/casper/config";
 
 const liveCommonConfig: ConfigSchema = {};
 
@@ -14,4 +15,5 @@ export default {
   ...evmConfig,
   ...algorandConfig,
   ...cardanoConfig,
+  ...casperConfig,
 } as ConfigSchema;
