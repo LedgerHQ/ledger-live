@@ -22,7 +22,8 @@ function getSlicedList(list: PerformanceMarketDatapoint[], order: Order) {
 
   return list
     .slice(start, end)
-    .filter(elem => (order === Order.asc ? elem.change > 0 : elem.change < 0));
+    .filter(elem => (order === Order.asc ? elem.change > 0 : elem.change < 0))
+    .sort((a, b) => (order === Order.asc ? b.change - a.change : a.change - b.change));
 }
 
 function usePerformanceMarketAssetsList() {
