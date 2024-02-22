@@ -130,7 +130,12 @@ export const FabButtonBarProvider = ({
           track(event, { page: router.name, ...globalEventProperties, ...eventProperties });
         }
         if (id) {
-          track("button_clicked", { page: router.name, ...globalEventProperties, button: id });
+          track("button_clicked", {
+            page: router.name,
+            ...globalEventProperties,
+            ...eventProperties,
+            button: id,
+          });
         }
         setInfoModalProps(undefined);
         if (linkUrl) {
