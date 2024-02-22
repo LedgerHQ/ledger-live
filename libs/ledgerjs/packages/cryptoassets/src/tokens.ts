@@ -474,8 +474,8 @@ function convertStellarTokens([
 
   return {
     type: "TokenCurrency",
-    id: `stellar/asset/${assetCode}:${assetIssuer}`,
-    contractAddress: assetIssuer,
+    id: `stellar/asset/${assetCode.toUpperCase()}:${assetIssuer.toUpperCase()}`,
+    contractAddress: assetIssuer.toUpperCase(),
     parentCurrency,
     tokenType: assetType,
     name,

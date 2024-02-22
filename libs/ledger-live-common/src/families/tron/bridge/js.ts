@@ -4,7 +4,11 @@ import flatMap from "lodash/flatMap";
 import compact from "lodash/compact";
 import get from "lodash/get";
 import sumBy from "lodash/sumBy";
-import { findTokenById } from "@ledgerhq/cryptoassets";
+import {
+  findTokenByAddress,
+  findTokenByAddressInCurrency,
+  findTokenById,
+} from "@ledgerhq/cryptoassets";
 import type {
   Account,
   Operation,
@@ -423,26 +427,40 @@ const getAccountShape = async (info: AccountShapeInfo, syncConfig) => {
   const parentOperations: TronOperation[] = compact(
     parentTxs.map(tx => txInfoToOperation(accountId, info.address, tx)),
   );
-  const trc10Tokens = get(acc, "assetV2", []).map(({ key, value }) => ({
-    type: "trc10",
-    key,
-    value,
-  }));
-  const trc20Tokens = get(acc, "trc20", []).map(obj => {
-    const [[key, value]] = Object.entries(obj);
-    return {
-      type: "trc20",
-      key,
-      value,
-    };
-  });
+
+  const trc10Tokens = get(acc, "assetV2", []).reduce((accumulator, { key, value }) => {
+    const tokenInfo = findTokenById(`tron/trc10/${key}`);
+    if (tokenInfo) {
+      accumulator.push({
+        key,
+        type: "trc10",
+        tokenId: tokenInfo.id,
+        balance: value,
+      });
+    }
+    return accumulator;
+  }, []);
+
+  const trc20Tokens = get(acc, "trc20", []).reduce((accumulator, trc20) => {
+    const [[contractAddress, balance]] = Object.entries(trc20);
+    const tokenInfo = findTokenByAddressInCurrency(contractAddress, info.currency.id);
+    if (tokenInfo) {
+      accumulator.push({
+        key: contractAddress,
+        type: "trc20",
+        tokenId: tokenInfo.id,
+        balance,
+      });
+    }
+    return accumulator;
+  }, []);
+
   // TRC10 and TRC20 accounts
   // FIXME: this is bad for perf: we should reconciliate with potential existing data
   // we need to KEEP REF as much as possible & use minimalOperationsBuilderSync
   const subAccounts: SubAccount[] = compact(
-    trc10Tokens.concat(trc20Tokens).map(({ type, key, value }) => {
+    trc10Tokens.concat(trc20Tokens).map(({ key, tokenId, balance }) => {
       const { blacklistedTokenIds = [] } = syncConfig;
-      const tokenId = `tron/${type}/${key}`;
       const token = findTokenById(tokenId);
       if (!token || blacklistedTokenIds.includes(tokenId)) return;
       const id = encodeTokenAccountId(accountId, token);
@@ -452,14 +470,13 @@ const getAccountShape = async (info: AccountShapeInfo, syncConfig) => {
         info.initialAccount &&
         info.initialAccount.subAccounts &&
         info.initialAccount.subAccounts.find(a => a.id === id);
-      const balance = new BigNumber(value);
       const sub: TokenAccount = {
         type: "TokenAccount",
         id,
         starred: false,
         parentId: accountId,
         token,
-        balance,
+        balance: new BigNumber(balance),
         spendableBalance: balance,
         operationsCount: operations.length,
         operations,
