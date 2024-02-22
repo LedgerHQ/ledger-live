@@ -13786,7 +13786,7 @@ exports[`sortCurrenciesByIds snapshot 1`] = `
   "cardano/native/f555c46bad0731d080c9381d7fff6f82839946a66bd070d185e1ea2f42444f4745",
   "cardano/native/f66d78b4a3cb3d37afa0ec36461e51ecbde00f26c8f0a68f94b6988069555344",
   "cardano/native/f7c777fdd4531cf1c477551360e45b9684073c05c2fa61334f8f9add5665726974726565546f6b656e",
-  "stellar/asset/usdc:ga5zsejyb37jrc5avcia5mop4rhtm335x2kgx3ihojapp5re34k4kzvn",
+  "stellar/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
   "casper/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
 ]
 `;

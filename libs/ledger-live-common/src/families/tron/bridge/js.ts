@@ -4,11 +4,7 @@ import flatMap from "lodash/flatMap";
 import compact from "lodash/compact";
 import get from "lodash/get";
 import sumBy from "lodash/sumBy";
-import {
-  findTokenByAddress,
-  findTokenByAddressInCurrency,
-  findTokenById,
-} from "@ledgerhq/cryptoassets";
+import { findTokenByAddressInCurrency, findTokenById } from "@ledgerhq/cryptoassets";
 import type {
   Account,
   Operation,
@@ -383,6 +379,7 @@ const getAccountShape = async (info: AccountShapeInfo, syncConfig) => {
     txs => txs.length < operationsPageSize,
     cacheTransactionInfoById,
   );
+
   const tronResources = await getTronResources(acc, txs, cacheTransactionInfoById);
   const balance = spendableBalance
     .plus(tronResources.frozen.bandwidth ? tronResources.frozen.bandwidth.amount : new BigNumber(0))
