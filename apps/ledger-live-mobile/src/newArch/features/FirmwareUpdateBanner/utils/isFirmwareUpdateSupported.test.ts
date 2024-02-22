@@ -51,13 +51,10 @@ describe("isOldFirmwareUpdateUxSupported", () => {
   });
 
   it("should return { isSupported:false, isSupportedButDeviceNotWired: false } if isFirmwareUpdateVersionSupported returns false", () => {
-    const lastConnectedDevice = {
-      wired: true,
-    } as Parameters<typeof isOldFirmwareUpdateUxSupported>[0]["lastConnectedDevice"];
-    const lastSeenDeviceModelInfo = {
-      deviceInfo: {},
-      modelId: DeviceModelId.stax,
-    } as DeviceModelInfo;
+    const lastConnectedDevice = {} as Parameters<
+      typeof isOldFirmwareUpdateUxSupported
+    >[0]["lastConnectedDevice"];
+    const lastSeenDeviceModelInfo = {} as DeviceModelInfo;
 
     isFirmwareUpdateVersionSupportedSpy.mockReturnValue(false);
 
@@ -74,13 +71,10 @@ describe("isOldFirmwareUpdateUxSupported", () => {
 
   it("should return { isSupported:false, isSupportedButDeviceNotWired: false } if Platform.OS is not android", () => {
     isFirmwareUpdateVersionSupportedSpy.mockReturnValue(true);
-    const lastConnectedDevice = {
-      wired: true,
-    } as Parameters<typeof isOldFirmwareUpdateUxSupported>[0]["lastConnectedDevice"];
-    const lastSeenDeviceModelInfo = {
-      deviceInfo: {},
-      modelId: DeviceModelId.stax,
-    } as DeviceModelInfo;
+    const lastConnectedDevice = {} as Parameters<
+      typeof isOldFirmwareUpdateUxSupported
+    >[0]["lastConnectedDevice"];
+    const lastSeenDeviceModelInfo = {} as DeviceModelInfo;
 
     PlatformSpy.mockReturnValue({
       OS: "ios",
@@ -102,10 +96,7 @@ describe("isOldFirmwareUpdateUxSupported", () => {
     const lastConnectedDevice = {
       wired: false,
     } as Parameters<typeof isOldFirmwareUpdateUxSupported>[0]["lastConnectedDevice"];
-    const lastSeenDeviceModelInfo = {
-      deviceInfo: {},
-      modelId: DeviceModelId.stax,
-    } as DeviceModelInfo;
+    const lastSeenDeviceModelInfo = {} as DeviceModelInfo;
 
     PlatformSpy.mockReturnValue({
       OS: "android",
@@ -127,10 +118,7 @@ describe("isOldFirmwareUpdateUxSupported", () => {
     const lastConnectedDevice = {
       wired: true,
     } as Parameters<typeof isOldFirmwareUpdateUxSupported>[0]["lastConnectedDevice"];
-    const lastSeenDeviceModelInfo = {
-      deviceInfo: {},
-      modelId: DeviceModelId.stax,
-    } as DeviceModelInfo;
+    const lastSeenDeviceModelInfo = {} as DeviceModelInfo;
 
     PlatformSpy.mockReturnValue({
       OS: "android",
