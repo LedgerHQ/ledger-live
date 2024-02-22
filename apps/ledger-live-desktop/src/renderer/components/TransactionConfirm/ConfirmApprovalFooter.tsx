@@ -47,7 +47,7 @@ const ConfirmApprovalFooter = ({ Footer, transaction, manifestId, manifestName }
       return (
         <>
           <HorizontalSeparator />
-          <Text marginTop={30}>
+          <Text marginTop={30} data-test-id="confirm-approval-footer-toc">
             <Trans
               i18nKey="approve.termsAndConditions"
               values={{ appName: manifestName }}
