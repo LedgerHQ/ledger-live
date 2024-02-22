@@ -6,6 +6,7 @@ import { algorandConfig } from "../families/algorand/config";
 import { cardanoConfig } from "../families/cardano/config";
 import { casperConfig } from "../families/casper/config";
 import { celoConfig } from "../families/celo/config";
+import { cryptoOrgConfig } from "../families/crypto_org/config";
 
 const liveCommonConfig: ConfigSchema = {};
 
@@ -18,4 +19,5 @@ export default {
   ...cardanoConfig,
   ...casperConfig,
   ...celoConfig,
+  ...cryptoOrgConfig,
 } as ConfigSchema;
