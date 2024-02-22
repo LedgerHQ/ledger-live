@@ -16,7 +16,7 @@ const TIMEOUT = 7500;
 
 const LIMIT = 5;
 
-function getSlicedList(list: PerformanceMarketDatapoint[], order: Order) {
+export function getSlicedList(list: PerformanceMarketDatapoint[], order: Order) {
   const start = order === Order.asc ? 0 : list.length - LIMIT;
   const end = order === Order.asc ? LIMIT : list.length;
 
