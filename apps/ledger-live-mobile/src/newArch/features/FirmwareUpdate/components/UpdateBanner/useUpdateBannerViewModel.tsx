@@ -18,22 +18,24 @@ import {
   isOldFirmwareUpdateUxSupported,
 } from "../../utils/isFirmwareUpdateSupported";
 
-export function useFirmwareUpdateBannerViewModel({
+export function useUpdateBannerViewModel({
   onBackFromUpdate,
 }: FirmwareUpdateBannerProps): ViewProps {
+  const route = useRoute();
+  const navigation = useNavigation<StackNavigationProp<Record<string, object | undefined>>>();
+
   const lastSeenDeviceModelInfo: DeviceModelInfo | null | undefined =
     useSelector(lastSeenDeviceSelector);
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
   const hasConnectedDevice = useSelector(hasConnectedDeviceSelector);
   const hasCompletedOnboarding: boolean = useSelector(hasCompletedOnboardingSelector);
+  const latestFirmware = useLatestFirmware(lastSeenDeviceModelInfo?.deviceInfo);
 
   const [unsupportedUpdateDrawerOpened, setUnsupportedUpdateDrawerOpened] =
     useState<boolean>(false);
-
-  const route = useRoute();
-  const navigation = useNavigation<StackNavigationProp<Record<string, object | undefined>>>();
-
-  const latestFirmware = useLatestFirmware(lastSeenDeviceModelInfo?.deviceInfo);
+  const closeUnsupportedUpdateDrawer = useCallback(() => {
+    setUnsupportedUpdateDrawerOpened(false);
+  }, []);
 
   const startFirmwareUpdateFlow = useCallback(() => {
     navigateToFirmwareUpdateFlow({
@@ -53,20 +55,14 @@ export function useFirmwareUpdateBannerViewModel({
     route,
   ]);
 
-  const showBanner = Boolean(latestFirmware) && hasCompletedOnboarding && hasConnectedDevice;
+  const bannerVisible = Boolean(latestFirmware) && hasCompletedOnboarding && hasConnectedDevice;
   const version = latestFirmware?.final?.name ?? "";
 
-  const closeUnsupportedUpdateDrawer = useCallback(() => {
-    setUnsupportedUpdateDrawerOpened(false);
-  }, []);
-
-  const {
-    isSupported: isOldUxSupported,
-    isSupportedButDeviceNotWired: isOldUxSupportedButDeviceNotWired,
-  } = isOldFirmwareUpdateUxSupported({
-    lastSeenDeviceModelInfo,
-    lastConnectedDevice,
-  });
+  const { updateSupported: isOldUxSupported, updateSupported: isOldUxSupportedButDeviceNotWired } =
+    isOldFirmwareUpdateUxSupported({
+      lastSeenDeviceModelInfo,
+      lastConnectedDevice,
+    });
   const isNewUxSupported = isNewFirmwareUpdateUxSupported(lastConnectedDevice?.modelId);
 
   const onClickUpdate = useCallback(() => {
@@ -79,7 +75,7 @@ export function useFirmwareUpdateBannerViewModel({
   }, [isNewUxSupported, isOldUxSupported, startFirmwareUpdateFlow]);
 
   return {
-    showBanner,
+    bannerVisible,
     lastConnectedDevice,
     version,
     onClickUpdate,

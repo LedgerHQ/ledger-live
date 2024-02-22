@@ -1,7 +1,7 @@
 import { lastConnectedDeviceSelector } from "~/reducers/settings";
 
 export interface ViewProps {
-  showBanner: boolean;
+  bannerVisible: boolean;
   lastConnectedDevice: ReturnType<typeof lastConnectedDeviceSelector>;
   version: string;
   onClickUpdate: () => void;

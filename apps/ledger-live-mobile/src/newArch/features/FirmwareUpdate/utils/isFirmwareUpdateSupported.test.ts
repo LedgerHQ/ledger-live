@@ -32,7 +32,7 @@ describe("isOldFirmwareUpdateUxSupported", () => {
     PlatformSpy = jest.spyOn(ReactNative, "Platform", "get");
   });
 
-  it("should return { isSupported:false, isSupportedButDeviceNotWired: false } if lastSeenDeviceModelInfo is falsy", () => {
+  it("should return { updateSupported:false, updateSupportedButDeviceNotWired: false } if lastSeenDeviceModelInfo is falsy", () => {
     const lastConnectedDevice = {} as Parameters<
       typeof isOldFirmwareUpdateUxSupported
     >[0]["lastConnectedDevice"];
@@ -45,12 +45,12 @@ describe("isOldFirmwareUpdateUxSupported", () => {
         lastConnectedDevice,
       }),
     ).toEqual({
-      isSupported: false,
-      isSupportedButDeviceNotWired: false,
+      updateSupported: false,
+      updateSupportedButDeviceNotWired: false,
     });
   });
 
-  it("should return { isSupported:false, isSupportedButDeviceNotWired: false } if isFirmwareUpdateVersionSupported returns false", () => {
+  it("should return { updateSupported:false, updateSupportedButDeviceNotWired: false } if isFirmwareUpdateVersionSupported returns false", () => {
     const lastConnectedDevice = {} as Parameters<
       typeof isOldFirmwareUpdateUxSupported
     >[0]["lastConnectedDevice"];
@@ -64,12 +64,12 @@ describe("isOldFirmwareUpdateUxSupported", () => {
         lastConnectedDevice,
       }),
     ).toEqual({
-      isSupported: false,
-      isSupportedButDeviceNotWired: false,
+      updateSupported: false,
+      updateSupportedButDeviceNotWired: false,
     });
   });
 
-  it("should return { isSupported:false, isSupportedButDeviceNotWired: false } if Platform.OS is not android", () => {
+  it("should return { updateSupported:false, updateSupportedButDeviceNotWired: false } if Platform.OS is not android", () => {
     isFirmwareUpdateVersionSupportedSpy.mockReturnValue(true);
     const lastConnectedDevice = {} as Parameters<
       typeof isOldFirmwareUpdateUxSupported
@@ -86,12 +86,12 @@ describe("isOldFirmwareUpdateUxSupported", () => {
         lastConnectedDevice,
       }),
     ).toEqual({
-      isSupported: false,
-      isSupportedButDeviceNotWired: false,
+      updateSupported: false,
+      updateSupportedButDeviceNotWired: false,
     });
   });
 
-  it("should return { isSupported:false, isSupportedButDeviceNotWired: true } if device is not wired", () => {
+  it("should return { updateSupported:false, updateSupportedButDeviceNotWired: true } if device is not wired", () => {
     isFirmwareUpdateVersionSupportedSpy.mockReturnValue(true);
     const lastConnectedDevice = {
       wired: false,
@@ -108,12 +108,12 @@ describe("isOldFirmwareUpdateUxSupported", () => {
         lastConnectedDevice,
       }),
     ).toEqual({
-      isSupported: false,
-      isSupportedButDeviceNotWired: true,
+      updateSupported: false,
+      updateSupportedButDeviceNotWired: true,
     });
   });
 
-  it("should return { isSupported:true, isSupportedButDeviceNotWired: false } if device is wired", () => {
+  it("should return { updateSupported:true, updateSupportedButDeviceNotWired: false } if device is wired", () => {
     isFirmwareUpdateVersionSupportedSpy.mockReturnValue(true);
     const lastConnectedDevice = {
       wired: true,
@@ -130,8 +130,8 @@ describe("isOldFirmwareUpdateUxSupported", () => {
         lastConnectedDevice,
       }),
     ).toEqual({
-      isSupported: true,
-      isSupportedButDeviceNotWired: false,
+      updateSupported: true,
+      updateSupportedButDeviceNotWired: false,
     });
   });
 });

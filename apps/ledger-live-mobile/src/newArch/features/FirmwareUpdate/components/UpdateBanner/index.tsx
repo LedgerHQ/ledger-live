@@ -3,31 +3,34 @@ import { Pressable } from "react-native";
 import { useTranslation } from "react-i18next";
 import { Text, Flex, Icons } from "@ledgerhq/native-ui";
 import { DownloadMedium, UsbMedium } from "@ledgerhq/native-ui/assets/icons";
-import { DeviceModelId } from "@ledgerhq/devices";
+import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 
 import Button from "../../../../../components/Button";
 import QueuedDrawer from "../../../../../components/QueuedDrawer";
 import { UpdateStep } from "~/screens/FirmwareUpdate";
-import { useFirmwareUpdateBannerViewModel } from "./useFirmwareUpdateBannerViewModel";
+import { useUpdateBannerViewModel } from "./useUpdateBannerViewModel";
 import { ViewProps } from "./ViewProps";
 
 export type FirmwareUpdateBannerProps = {
   onBackFromUpdate: (updateState: UpdateStep) => void;
 };
 
-const View = ({
-  showBanner,
+const UpdateBanner = ({
+  bannerVisible,
   lastConnectedDevice,
-  deviceName,
   version,
   onClickUpdate,
   unsupportedUpdateDrawerOpened,
   closeUnsupportedUpdateDrawer,
-  isUpdateSupportedButDeviceNotWired: isUpdateSupportedButDeviceNotWired,
-  productName,
+  isUpdateSupportedButDeviceNotWired,
 }: ViewProps) => {
   const { t } = useTranslation();
-  return showBanner ? (
+  const productName = lastConnectedDevice
+    ? getDeviceModel(lastConnectedDevice.modelId).productName
+    : undefined;
+
+  const deviceName = lastConnectedDevice?.deviceName;
+  return bannerVisible ? (
     <>
       <Pressable onPress={onClickUpdate}>
         <Flex
@@ -91,5 +94,5 @@ const View = ({
 };
 
 export default memo((props: FirmwareUpdateBannerProps) => (
-  <View {...useFirmwareUpdateBannerViewModel(props)} />
+  <UpdateBanner {...useUpdateBannerViewModel(props)} />
 ));

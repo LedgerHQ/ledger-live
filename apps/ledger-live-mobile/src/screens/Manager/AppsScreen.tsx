@@ -35,7 +35,7 @@ import NoResultsFound from "~/icons/NoResultsFound";
 import AppIcon from "./AppsList/AppIcon";
 import AppUpdateAll from "./AppsList/AppUpdateAll";
 import Search from "~/components/Search";
-import FirmwareUpdateBanner from "~/newArch/features/FirmwareUpdateBanner/components/FirmwareUpdateBanner";
+import FirmwareUpdateBanner from "~/newArch/features/FirmwareUpdate/components/UpdateBanner";
 import { TAB_BAR_SAFE_HEIGHT } from "~/components/TabBar/shared";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ManagerNavigatorStackParamList } from "~/components/RootNavigator/types/ManagerNavigator";

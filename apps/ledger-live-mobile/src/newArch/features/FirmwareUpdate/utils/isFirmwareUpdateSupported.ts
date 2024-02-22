@@ -29,12 +29,12 @@ export function isOldFirmwareUpdateUxSupported({
       ) &&
       Platform.OS === "android",
   );
-  const isDeviceWired = lastConnectedDevice?.wired;
-  const isSupported = isUsbFwVersionUpdateSupported && isDeviceWired;
-  const isSupportedButDeviceNotWired = isUsbFwVersionUpdateSupported && !isDeviceWired;
+  const deviceIsWired = Boolean(lastConnectedDevice?.wired);
+  const updateSupported = isUsbFwVersionUpdateSupported && deviceIsWired;
+  const updateSupportedButDeviceNotWired = isUsbFwVersionUpdateSupported && !deviceIsWired;
 
   return {
-    isSupported,
-    isSupportedButDeviceNotWired,
+    updateSupported,
+    updateSupportedButDeviceNotWired,
   };
 }
