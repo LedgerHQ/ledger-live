@@ -5,6 +5,7 @@ import { evmConfig } from "../families/evm/config";
 import { algorandConfig } from "../families/algorand/config";
 import { cardanoConfig } from "../families/cardano/config";
 import { casperConfig } from "../families/casper/config";
+import { celoConfig } from "../families/celo/config";
 
 const liveCommonConfig: ConfigSchema = {};
 
@@ -16,4 +17,5 @@ export default {
   ...algorandConfig,
   ...cardanoConfig,
   ...casperConfig,
+  ...celoConfig,
 } as ConfigSchema;
