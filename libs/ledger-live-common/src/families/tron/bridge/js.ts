@@ -477,7 +477,7 @@ const getAccountShape = async (info: AccountShapeInfo, syncConfig) => {
         parentId: accountId,
         token,
         balance: new BigNumber(balance),
-        spendableBalance: balance,
+        spendableBalance: new BigNumber(balance),
         operationsCount: operations.length,
         operations,
         pendingOperations: maybeExistingSubAccount ? maybeExistingSubAccount.pendingOperations : [],
