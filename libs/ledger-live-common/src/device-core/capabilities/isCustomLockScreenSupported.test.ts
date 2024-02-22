@@ -5,12 +5,12 @@ import {
 } from "./isCustomLockScreenSupported";
 
 describe("isCustomLockScreenSupported", () => {
-  it("should return true if sync onboarding is supported", () => {
+  it("should return true if custom lock screen is supported", () => {
     expect(isCustomLockScreenSupported(DeviceModelId.stax)).toBe(true);
     expect(isCustomLockScreenSupported(DeviceModelId.europa)).toBe(true);
   });
 
-  it("should return false if sync onboarding is not supported", () => {
+  it("should return false if custom lock screen is not supported", () => {
     expect(isCustomLockScreenSupported(DeviceModelId.nanoS)).toBe(false);
     expect(isCustomLockScreenSupported(DeviceModelId.nanoSP)).toBe(false);
     expect(isCustomLockScreenSupported(DeviceModelId.nanoX)).toBe(false);
