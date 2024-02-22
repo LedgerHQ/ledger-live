@@ -5,6 +5,8 @@ import { HeaderProps, Order } from "../types";
 import styled from "@ledgerhq/react-ui/components/styled";
 import { track } from "~/renderer/analytics/segment";
 import { useResize } from "~/renderer/hooks/useResize";
+import { useSelector } from "react-redux";
+import { selectedTimeRangeSelector } from "~/renderer/reducers/settings";
 
 const primary = "primary.c80";
 const neutral = "neutral.c70";
@@ -13,6 +15,7 @@ const RESPONSIVE_WIDTH = 275;
 
 export function MarketPerformanceWidgetHeader({ onChangeOrder, order }: HeaderProps) {
   const { t } = useTranslation();
+  const timeRange = useSelector(selectedTimeRangeSelector);
 
   const onClickButton = (order: Order) => {
     onChangeOrder(order);
@@ -28,7 +31,9 @@ export function MarketPerformanceWidgetHeader({ onChangeOrder, order }: HeaderPr
   return (
     <Flex justifyContent="space-between" alignItems="center" ref={ref} mb={5}>
       <Text variant="h3Inter" fontWeight="semiBold">
-        {t("dashboard.marketPerformanceWidget.title")}
+        {t("dashboard.marketPerformanceWidget.title", {
+          time: t(`time.range.${timeRange}`),
+        })}
       </Text>
 
       <Flex py={2} px={3} backgroundColor="opacityDefault.c05" borderRadius={32}>

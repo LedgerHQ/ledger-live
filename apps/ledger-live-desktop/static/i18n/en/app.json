@@ -1453,7 +1453,7 @@
       }
     },
     "marketPerformanceWidget": {
-      "title": "24h trend",
+      "title": "{{time}} trend",
       "buy": "Buy",
       "swap": "Swap",
       "gainers": "Gainers",
