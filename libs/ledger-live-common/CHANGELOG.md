@@ -1,5 +1,26 @@
 # @ledgerhq/live-common
 
+## 34.0.0-nightly.15
+
+### Patch Changes
+
+- [#6238](https://github.com/LedgerHQ/ledger-live/pull/6238) [`6de15bc`](https://github.com/LedgerHQ/ledger-live/commit/6de15bc96e8b97a2a6815cf3fb1da874f7044b49) Thanks [@mle-gall](https://github.com/mle-gall)! - Adding new analytics opt in prompt for existing users
+
+- [#6091](https://github.com/LedgerHQ/ledger-live/pull/6091) [`8fdc176`](https://github.com/LedgerHQ/ledger-live/commit/8fdc17621d6a5b238ae8517e490844af330a3f41) Thanks [@Philippoes](https://github.com/Philippoes)! - Transaction status check on unfreeze should not enter the energy balance check if the resource is bandwidth
+
+- [#6088](https://github.com/LedgerHQ/ledger-live/pull/6088) [`a25d979`](https://github.com/LedgerHQ/ledger-live/commit/a25d9791d3158913b8415cc74cd18bb75d30fd7b) Thanks [@lvndry](https://github.com/lvndry)! - Tezos forge transaction before brodcast
+
+- Updated dependencies []:
+  - @ledgerhq/coin-algorand@0.3.10-nightly.8
+  - @ledgerhq/coin-evm@1.0.0-nightly.9
+  - @ledgerhq/coin-framework@0.11.1-nightly.8
+  - @ledgerhq/coin-near@0.3.9-nightly.5
+  - @ledgerhq/coin-polkadot@0.5.3-nightly.8
+  - @ledgerhq/hw-app-eth@6.35.5-nightly.7
+  - @ledgerhq/live-countervalues@0.1.1-nightly.8
+  - @ledgerhq/live-countervalues-react@0.1.1-nightly.8
+  - @ledgerhq/live-nft@0.2.0-nightly.8
+
 ## 34.0.0-nightly.14
 
 ### Patch Changes

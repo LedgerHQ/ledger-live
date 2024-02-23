@@ -1,5 +1,24 @@
 # ledger-live-desktop
 
+## 2.77.0-nightly.15
+
+### Patch Changes
+
+- [#6281](https://github.com/LedgerHQ/ledger-live/pull/6281) [`242b6b6`](https://github.com/LedgerHQ/ledger-live/commit/242b6b6a25a654d4f49019d537c4b1e77104a1b9) Thanks [@CremaFR](https://github.com/CremaFR)! - bugfix freeze with disable broadcast
+
+- [#6256](https://github.com/LedgerHQ/ledger-live/pull/6256) [`57c9abf`](https://github.com/LedgerHQ/ledger-live/commit/57c9abfed562daaf814ff552f4b892850080e492) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - redirect moonpay provider link in swap history to moonpay live app trade history
+
+- Updated dependencies [[`6de15bc`](https://github.com/LedgerHQ/ledger-live/commit/6de15bc96e8b97a2a6815cf3fb1da874f7044b49), [`8fdc176`](https://github.com/LedgerHQ/ledger-live/commit/8fdc17621d6a5b238ae8517e490844af330a3f41), [`a25d979`](https://github.com/LedgerHQ/ledger-live/commit/a25d9791d3158913b8415cc74cd18bb75d30fd7b)]:
+  - @ledgerhq/types-live@6.45.0-nightly.3
+  - @ledgerhq/live-common@34.0.0-nightly.15
+  - @ledgerhq/coin-evm@1.0.0-nightly.9
+  - @ledgerhq/coin-framework@0.11.1-nightly.8
+  - @ledgerhq/domain-service@1.1.18-nightly.5
+  - @ledgerhq/live-countervalues@0.1.1-nightly.8
+  - @ledgerhq/live-countervalues-react@0.1.1-nightly.8
+  - @ledgerhq/live-nft@0.2.0-nightly.8
+  - @ledgerhq/live-nft-react@0.2.0-nightly.8
+
 ## 2.77.0-nightly.14
 
 ### Patch Changes

@@ -1,5 +1,24 @@
 # live-mobile
 
+## 3.40.0-nightly.16
+
+### Patch Changes
+
+- [#6238](https://github.com/LedgerHQ/ledger-live/pull/6238) [`6de15bc`](https://github.com/LedgerHQ/ledger-live/commit/6de15bc96e8b97a2a6815cf3fb1da874f7044b49) Thanks [@mle-gall](https://github.com/mle-gall)! - Adding new analytics opt in prompt for existing users
+
+- [#6223](https://github.com/LedgerHQ/ledger-live/pull/6223) [`56138cb`](https://github.com/LedgerHQ/ledger-live/commit/56138cb285a1a95a865c56a8af9dde28eb9b3ee9) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - tracking opt in prompt analytics when the user hasn't made a choice yet
+
+- Updated dependencies [[`6de15bc`](https://github.com/LedgerHQ/ledger-live/commit/6de15bc96e8b97a2a6815cf3fb1da874f7044b49), [`8fdc176`](https://github.com/LedgerHQ/ledger-live/commit/8fdc17621d6a5b238ae8517e490844af330a3f41), [`a25d979`](https://github.com/LedgerHQ/ledger-live/commit/a25d9791d3158913b8415cc74cd18bb75d30fd7b)]:
+  - @ledgerhq/types-live@6.45.0-nightly.3
+  - @ledgerhq/live-common@34.0.0-nightly.15
+  - @ledgerhq/coin-evm@1.0.0-nightly.9
+  - @ledgerhq/coin-framework@0.11.1-nightly.8
+  - @ledgerhq/domain-service@1.1.18-nightly.5
+  - @ledgerhq/live-countervalues@0.1.1-nightly.8
+  - @ledgerhq/live-countervalues-react@0.1.1-nightly.8
+  - @ledgerhq/live-nft@0.2.0-nightly.8
+  - @ledgerhq/live-nft-react@0.2.0-nightly.8
+
 ## 3.40.0-nightly.15
 
 ### Patch Changes
