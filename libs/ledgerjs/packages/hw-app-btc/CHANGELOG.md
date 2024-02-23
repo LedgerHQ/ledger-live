@@ -1,5 +1,23 @@
 # @ledgerhq/hw-app-btc
 
+## 10.2.2
+
+### Patch Changes
+
+- [#6165](https://github.com/LedgerHQ/ledger-live/pull/6165) [`71b7001`](https://github.com/LedgerHQ/ledger-live/commit/71b70016650b5239b35ad2fb75d415ac092358d1) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - update hw-app-btc doc
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.30.4
+
+## 10.2.2-next.0
+
+### Patch Changes
+
+- [#6105](https://github.com/LedgerHQ/ledger-live/pull/6105) [`6d40673`](https://github.com/LedgerHQ/ledger-live/commit/6d4067382b55827b00806a1b71ac0b249563d90f) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - update hw-app-btc doc
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.30.4-next.0
+
 ## 10.2.1
 
 ### Patch Changes

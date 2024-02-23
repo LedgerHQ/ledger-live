@@ -3593,22 +3593,33 @@
     "stake" : {
       "title" : "قم بتنمية ما تملك من ETH",
       "subTitle" : "قم بتكديس ETH خاصتك وتنمية ممتلكاتك من خلال تلقي مكافآت يومية مباشرةً في Ledger Live لديك.",
+      "tagMinimum" : "يتطلب {{min}} ETH",
+      "kiln_pooling" : {
+        "title" : "مُجمِع تكديس Kiln",
+        "description" : "قم بالتكديس دون حد أدنى. اكسب مكافآت مُجمّعة تلقائياً بدون فترة قَفل.",
+        "supportLink" : "تعرف على المزيد عن مُجمِعات Kiln"
+      },
       "lido" : {
-        "title" : "اكسب مع Lido",
-        "description" : "قم بتكديس إيثريوم خاصتك مع Lido واكسب مكافآت يومية. ليس هناك فترة قَفل. ليس هناك حد أدنى.",
+        "title" : "Lido",
+        "description" : "قم بتكديس أي مبلغ من ETH من أجل سيولة فورية ومكافآت يومية.",
         "supportLink" : "تعرف على المزيد عن Lido"
+      },
+      "stader-eth" : {
+        "title" : "Stader Labs",
+        "description" : "قم بالتكديس دون حد أدنى. اكسب مكافآت مُجمّعة تلقائياً مع وصول إلى سيولة فورية.",
+        "supportLink" : "تعرف على المزيد عن مُجمِعات Stader"
       },
       "kiln" : {
         "title" : "تكديس Kiln المُخصص",
         "tag" : "يتطلب 32 ETH",
-        "description" : "التكديس مع مدققين مخصصين. يتطلب مضاعفات 32 ETH. المطالبة بالمكافآت تتم يدوياً. غادِر في أي وقت.",
+        "description" : "قم بتكديس أكثر من 32 ETH على مدققين مخصصين وطالب بالمكافآت بسهولة.",
         "supportLink" : "تعرف على المزيد عن مدقق Kiln"
       },
-      "kiln_pooling" : {
-        "title" : "مُجمِع تكديس Kiln",
-        "tag" : "ليس هناك حد أدنى",
-        "description" : "انضم إلى مُجمِع تكديس. لا يوجد حد أدنى مطلوب من ETH. تراكم المكافآت يتم تلقائياً. غادِر في أي وقت.",
-        "supportLink" : "تعرف على المزيد عن مُجمِعات Kiln"
+      "figment" : {
+        "title" : "Figment",
+        "tag" : "يتطلب 32 ETH",
+        "description" : "قم بتكديس أكثر من 32 ETH على مدققين مخصصين واجعل المكافآت تُرسل تلقائياً إلى حسابك.",
+        "supportLink" : "تعرف على المزيد عن مدقق Figment"
       }
     }
   },
@@ -5339,7 +5350,7 @@
       "title" : "عنوان المستلم غير نشط. أرسل على الأقل {{minimalAmount}} لتنشيطه"
     },
     "NotEnoughGas" : {
-      "title" : "أنت بحاجة إلى {{ticker}} {{fees}} لرسوم الشبكة من أجل المبادلة حيث أنك على شبكة {{cryptoName}}. <link0>شراء {{ticker}}</link0>"
+      "title" : "You need {{fees}} {{ticker}} in your account to pay for transaction fees on the {{cryptoName}} network.  <link0>Buy {{ticker}}</link0> or deposit more into your account."
     },
     "NotEnoughGasSwap" : {
       "title" : "أنت بحاجة إلى {{ticker}} {{fees}} لرسوم الشبكة من أجل المبادلة حيث أنك على شبكة {{cryptoName}}. <link0>شراء {{ticker}}</link0>"
@@ -5905,7 +5916,7 @@
       "description" : "حدث خطأ ما. يرجى المحاولة مرة أخرى أو التواصل مع دعم Ledger إذا كان لديك شك."
     },
     "TezosUnrevealedAccount" : {
-      "title" : "Swap unavailable: Initial send/delegate needed with Tezos account or change pair."
+      "title" : "المبادلة غير متوفرة: الإرسال/التفويض الأولي مطلوب مع حساب Tezos أو زوج الاستبدال."
     }
   },
   "cryptoOrg" : {

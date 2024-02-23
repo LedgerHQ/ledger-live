@@ -1,8 +1,20 @@
+# 2.77.2
+
+### 🐛 Fix
+
+Adding a NEAR (NEAR) account would result in an error. We’ve fixed this.
+
+# 2.77.1
+
+### 🚀 Features
+
+Gone are the days of unwanted NFTs in your gallery. Spam NFTs will now be filtered and removed automatically.
+
 # 2.75.0
 
 ### 🚀 Features
 
-Starting today, you can swap an additional 300 Ethereum and 100 Binance Smart Chain tokens through Ledger Live. 
+Starting today, you can swap an additional 300 Ethereum and 100 Binance Smart Chain tokens through Ledger Live.
 
 ### 🐛 Fix
 
@@ -10,7 +22,7 @@ Internal transactions for Ethereum, Polygon, and Binance Smart Chain are now vis
 
 The bug that prevented the hiding of token accounts has been fixed.
 
-You can now clear nominations for your bonded DOT. 
+You can now clear nominations for your bonded DOT.
 
 # 2.73.1
 
@@ -28,7 +40,7 @@ Ledger Live will now display the fiat value of your TRC20/TRC10 tokens.
 
 Using the Max toggle to swap the entire balance would block the transaction. The issue has been resolved.
 
-We've fixed a few search bar glitches in the Discover section. 
+We've fixed a few search bar glitches in the Discover section.
 
 Some users reported issues when importing legacy Ethereum accounts or accounts with the legacy derivation path from MetaMask to Ledger Live. This has been fixed.
 
@@ -48,11 +60,11 @@ ParaSwap and 1inch, which you can access through the Discover section, are now s
 
 ### 🐛 Fixes
 
-We fixed a bug that led to an infinite loading error when trying to access the My Ledger tab. 
+We fixed a bug that led to an infinite loading error when trying to access the My Ledger tab.
 
-The bug that caused the UTK tokens not to be displayed in the MultiversX account is now fixed. 
+The bug that caused the UTK tokens not to be displayed in the MultiversX account is now fixed.
 
-Some users reported that their undelegated Tezos (XTZ) coins are not visible in the transaction history. This has been fixed. 
+Some users reported that their undelegated Tezos (XTZ) coins are not visible in the transaction history. This has been fixed.
 
 # 2.69.0
 

@@ -3593,22 +3593,33 @@
     "stake" : {
       "title" : "Rentabiliza tus tenencias en ETH",
       "subTitle" : "Pon en participación ETH y rentabiliza tus tenencias al recibir recompensas diarias directamente en Ledger Live.",
+      "tagMinimum" : "Requiere {{min}} ETH",
+      "kiln_pooling" : {
+        "title" : "Pool de puesta en participación de Kiln",
+        "description" : "Pon en participación sin mínimos. Gana recompensas con interés compuesto automático sin periodo de inmovilización.",
+        "supportLink" : "Obtener más información acerca de pooling con Kiln"
+      },
       "lido" : {
-        "title" : "Gana con Lido",
-        "description" : "Pon tus Ethereum en participación con Lido y gana recompensas diarias. Sin periodo de inmovilización. Sin mínimos.",
+        "title" : "Lido",
+        "description" : "Pon en participación cualquier cantidad de ETH para obtener liquidez inmediata y recompensas diarias.",
         "supportLink" : "Obtén más información acerca de Lido"
+      },
+      "stader-eth" : {
+        "title" : "Stader Labs",
+        "description" : "Pon en participación sin mínimos. Gana recompensas con interés compuesto automático y acceso a liquidez inmediata.",
+        "supportLink" : "Más información sobre el pooling con Stader"
       },
       "kiln" : {
         "title" : "Puesta en participación dedicada de Kiln",
         "tag" : "Requiere 32 ETH",
-        "description" : "Pon en participación con validadores dedicados. Requiere múltiplos de 32 ETH. Las recompensas se reclaman manualmente. Cancela la puesta en participación cuando quieras.",
+        "description" : "Pon en participación más de 32 ETH en validadores exclusivos y reclama tus recompensas fácilmente.",
         "supportLink" : "Obtener más información acerca del validador Kiln"
       },
-      "kiln_pooling" : {
-        "title" : "Pool de puesta en participación de Kiln",
-        "tag" : "Sin mínimos",
-        "description" : "Únete a un Pool de puesta en participación. No es necesario un mínimo de ETH. Las recompensas generan interés compuesto automáticamente. Cancela la puesta en participación cuando quieras.",
-        "supportLink" : "Obtener más información acerca de pooling con Kiln"
+      "figment" : {
+        "title" : "Figment",
+        "tag" : "Requiere 32 ETH",
+        "description" : "Pon en participación más de 32 ETH en validadores exclusivos y recibe recompensas automáticamente en tu cuenta.",
+        "supportLink" : "Más información sobre el validador de Figment"
       }
     }
   },
@@ -5339,7 +5350,7 @@
       "title" : "La dirección del destinatario está inactiva. Envía al menos {{minimalAmount}} para activarla."
     },
     "NotEnoughGas" : {
-      "title" : "En la red {{cryptoName}} debes pagar una tarifa de red de {{fees}} {{ticker}} para realizar permutas. <link0>Comprar {{ticker}}</link0>"
+      "title" : "Necesitas {{fees}} {{ticker}} en tu cuenta para pagar tarifas de transacción en la red {{cryptoName}}.  <link0>Compra {{ticker}}</link0> o deposita más en tu cuenta."
     },
     "NotEnoughGasSwap" : {
       "title" : "En la red {{cryptoName}} es necesaria una tarifa de red de {{fees}} {{ticker}} para realizar permutas. <link0>Comprar {{ticker}}</link0>"
