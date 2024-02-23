@@ -70,6 +70,16 @@ const devices: { [key in DeviceModelId]: DeviceModel } = {
       },
     ],
   },
+  [DeviceModelId.nanoSP]: {
+    id: DeviceModelId.nanoSP,
+    productName: "Ledger Nano S Plus",
+    productIdMM: 0x50,
+    legacyUsbProductId: 0x0005,
+    usbOnly: true,
+    memorySize: 1533 * 1024,
+    masks: [0x33100000],
+    getBlockSize: (_firmwareVersion: string): number => 32,
+  },
   [DeviceModelId.stax]: {
     id: DeviceModelId.stax,
     productName: "Ledger Stax",
@@ -88,31 +98,21 @@ const devices: { [key in DeviceModelId]: DeviceModel } = {
       },
     ],
   },
-  [DeviceModelId.nanoSP]: {
-    id: DeviceModelId.nanoSP,
-    productName: "Ledger Nano S Plus",
-    productIdMM: 0x50,
-    legacyUsbProductId: 0x0005,
-    usbOnly: true,
-    memorySize: 1533 * 1024,
-    masks: [0x33100000],
-    getBlockSize: (_firmwareVersion: string): number => 32,
-  },
   [DeviceModelId.europa]: {
     id: DeviceModelId.europa,
     productName: "Ledger Europa",
-    productIdMM: 0x70, // TODO: to be defined
-    legacyUsbProductId: 0x0007, // TODO: to be defined
+    productIdMM: 0x70, // TODO: TBD
+    legacyUsbProductId: 0x0007, // TODO: TBD
     usbOnly: false,
-    memorySize: 1533 * 1024, // TODO: to be defined
-    masks: [0x33300000], // TODO: to be defined
-    getBlockSize: (_firmwareVersion: string): number => 32, // TODO: to be defined
+    memorySize: 1533 * 1024, // TODO: TBD
+    masks: [0x33300000], // TODO: TBD
+    getBlockSize: (_firmwareVersion: string): number => 32, // TODO: TBD
     bluetoothSpec: [
       {
-        serviceUuid: "13d63400-2c97-6004-0000-4c6564676572", // TODO: to be defined
-        notifyUuid: "13d63400-2c97-6004-0001-4c6564676572", // TODO: to be defined
-        writeUuid: "13d63400-2c97-6004-0002-4c6564676572", // TODO: to be defined
-        writeCmdUuid: "13d63400-2c97-6004-0003-4c6564676572", // TODO: to be defined
+        serviceUuid: "13d63400-2c97-6004-0000-4c6564676572", // TODO: TBD
+        notifyUuid: "13d63400-2c97-6004-0001-4c6564676572", // TODO: TBD
+        writeUuid: "13d63400-2c97-6004-0002-4c6564676572", // TODO: TBD
+        writeCmdUuid: "13d63400-2c97-6004-0003-4c6564676572", // TODO: TBD
       },
     ],
   },
