@@ -45,10 +45,10 @@ export const toCBOR = (
   answer.push(version);
 
   // "to" field
-  answer.push(recipientValidation.parsedAddress.toBytes());
+  answer.push(Buffer.from(recipientValidation.parsedAddress.toBytes()));
 
   // "from" field
-  answer.push(fromValidation.parsedAddress.toBytes());
+  answer.push(Buffer.from(fromValidation.parsedAddress.toBytes()));
 
   // "nonce" field
   answer.push(nonce);
