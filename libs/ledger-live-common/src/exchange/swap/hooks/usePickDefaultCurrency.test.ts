@@ -1,4 +1,7 @@
-import { renderHook } from "@testing-library/react-hooks";
+/**
+ * @jest-environment jsdom
+ */
+import { renderHook } from "@testing-library/react";
 import { usePickDefaultCurrency } from "./usePickDefaultCurrency";
 import { getCryptoCurrencyById } from "../../../currencies";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";

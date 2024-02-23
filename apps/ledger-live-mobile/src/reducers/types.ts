@@ -256,6 +256,7 @@ export type SettingsState = {
   };
   userNps: number | null;
   supportedCounterValues: supportedCountervaluesData[];
+  hasSeenAnalyticsOptInPrompt: boolean;
 };
 
 export type NotificationsSettings = {

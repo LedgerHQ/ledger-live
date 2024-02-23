@@ -1,6 +1,7 @@
 import { ethers } from "ethers";
 import { Transaction as EvmTransaction } from "../types";
 import { getGasLimit } from "../logic";
+import { DEFAULT_NONCE } from "../createTransaction";
 
 /**
  * Adapter to convert a Ledger Live transaction to an Ethers transaction
@@ -19,7 +20,10 @@ export const transactionToEthersTransaction = (tx: EvmTransaction): ethers.Trans
     value: ethers.BigNumber.from(tx.amount.toFixed(0)),
     data: tx.data ? `0x${tx.data.toString("hex")}` : undefined,
     gasLimit: ethers.BigNumber.from(gasLimit.toFixed(0)),
-    nonce: tx.nonce,
+    // When using DEFAULT_NONCE (-1) ethers might break on some methods,
+    // therefore we replace this by an unrealisticly high nonce
+    // to prevent any valid signature being crafted here
+    nonce: tx.nonce === DEFAULT_NONCE ? Number.MAX_SAFE_INTEGER - 1 : tx.nonce,
     chainId: tx.chainId,
     type: tx.type,
   } as Partial<ethers.Transaction>;

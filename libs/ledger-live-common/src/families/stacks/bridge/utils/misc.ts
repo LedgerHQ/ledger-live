@@ -5,6 +5,7 @@ import {
   makeUnsignedSTXTokenTransfer,
   UnsignedTokenTransferOptions,
   createMessageSignature,
+  getAddressFromPublicKey,
 } from "@stacks/transactions";
 
 import { GetAccountShape, AccountShapeInfo } from "../../../../bridge/jsHelpers";
@@ -20,6 +21,7 @@ import { StacksNetwork, TransactionResponse } from "./api.types";
 import { getCryptoCurrencyById } from "../../../../currencies";
 import { encodeOperationId } from "../../../../operation";
 import { StacksOperation } from "../../types";
+import invariant from "invariant";
 
 export const getTxToBroadcast = async (
   operation: StacksOperation,
@@ -131,17 +133,21 @@ export const mapTxToOps =
   };
 
 export const getAccountShape: GetAccountShape = async info => {
-  const { initialAccount, address, currency, rest = {}, derivationMode } = info;
-
-  const publicKey = reconciliatePublicKey(rest.publicKey, initialAccount);
+  const { initialAccount, currency, rest = {}, derivationMode } = info;
+  // for bridge tests specifically the `rest` object is empty and therefore the publicKey is undefined
+  // reconciliatePublicKey tries to get pubKey from rest object and then from accountId
+  const pubKey = reconciliatePublicKey(rest.publicKey, initialAccount);
+  invariant(pubKey, "publicKey is required");
 
   const accountId = encodeAccountId({
     type: "js",
     version: "2",
     currencyId: currency.id,
-    xpubOrAddress: publicKey,
+    xpubOrAddress: pubKey,
     derivationMode,
   });
+
+  const address = getAddressFromPublicKey(pubKey);
 
   const blockHeight = await fetchBlockHeight();
   const balanceResp = await fetchBalances(address);
@@ -158,7 +164,7 @@ export const getAccountShape: GetAccountShape = async info => {
 
   const result: Partial<Account> = {
     id: accountId,
-    xpub: publicKey,
+    xpub: pubKey,
     freshAddress: address,
     balance,
     spendableBalance,

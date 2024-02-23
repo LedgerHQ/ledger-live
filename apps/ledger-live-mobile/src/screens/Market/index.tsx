@@ -290,6 +290,12 @@ export default function Market({ navigation }: NavigationProps) {
   }, [isConnected]);
 
   useEffect(() => {
+    if (filterByStarredAccount && starredMarketCoins.length > 0) {
+      refresh({ starred: starredMarketCoins });
+    }
+  }, [refresh, starredMarketCoins, filterByStarredAccount]);
+
+  useEffect(() => {
     if (initialTop100) {
       refresh({
         limit: 100,

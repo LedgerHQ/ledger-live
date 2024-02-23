@@ -5,8 +5,11 @@ import { TrackScreen } from "~/analytics";
 import { useTranslation } from "react-i18next";
 import Button from "~/components/Button";
 import Switch from "~/components/Switch";
-import { View, Container, Titles, Content, Bottom } from "../Common";
-import useAnalyticsOptInPrompt from "~/hooks/useAnalyticsOptInPromptVariantA";
+import { View, Container, Titles, Content, Bottom, ScrollableContainer } from "../Common";
+import useAnalyticsOptInPrompt from "~/hooks/analyticsOptInPrompt/useAnalyticsOptInPromptLogicVariantA";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { AnalyticsOptInPromptNavigatorParamList } from "~/components/RootNavigator/types/AnalyticsOptInPromptNavigator";
+import { ScreenName } from "~/const";
 
 const OptionContainer = styled(Flex).attrs({
   width: "100%",
@@ -46,60 +49,78 @@ function Option({ title, description, checked, onToggle }: OptionProps): React.R
   );
 }
 
-function Details() {
+type Props = StackNavigatorProps<
+  AnalyticsOptInPromptNavigatorParamList,
+  ScreenName.AnalyticsOptInPromptDetails
+>;
+
+function Details({ route }: Props) {
   const { t } = useTranslation();
+  const { entryPoint } = route.params;
+
   const [isAnalyticsEnabled, setIsAnalyticsEnabled] = useState(false);
   const [isPersonalRecommendationsEnabled, setIsPersonalRecommendationsEnabled] = useState(false);
-  const { clickOnMoreOptionsConfirm, clickOnLearnMore } = useAnalyticsOptInPrompt();
+  const { shouldWeTrack, clickOnMoreOptionsConfirm, clickOnLearnMore, flow } =
+    useAnalyticsOptInPrompt({
+      entryPoint,
+    });
 
   return (
-    <Container alignItems="center">
-      <View>
-        <Titles>
-          <Text variant="h3Inter" fontSize={24} fontWeight="semiBold" color="neutral.c100">
-            {t("analyticsOptIn.variantA.details.title")}
-          </Text>
-        </Titles>
-        <Content>
-          <Option
-            title={t("analyticsOptIn.variantA.details.analytics.title")}
-            description={t("analyticsOptIn.variantA.details.analytics.description")}
-            checked={isAnalyticsEnabled}
-            onToggle={setIsAnalyticsEnabled}
-          />
-          <Flex pt={7}>
+    <ScrollableContainer>
+      <Container alignItems="center">
+        <View>
+          <Titles>
+            <Text variant="h3Inter" fontSize={24} fontWeight="semiBold" color="neutral.c100">
+              {t("analyticsOptIn.variantA.details.title")}
+            </Text>
+          </Titles>
+          <Content>
             <Option
-              title={t("analyticsOptIn.variantA.details.personalizedExp.title")}
-              description={t("analyticsOptIn.variantA.details.personalizedExp.description")}
-              checked={isPersonalRecommendationsEnabled}
-              onToggle={setIsPersonalRecommendationsEnabled}
+              title={t("analyticsOptIn.variantA.details.analytics.title")}
+              description={t("analyticsOptIn.variantA.details.analytics.description")}
+              checked={isAnalyticsEnabled}
+              onToggle={setIsAnalyticsEnabled}
+            />
+            <Flex pt={7}>
+              <Option
+                title={t("analyticsOptIn.variantA.details.personalizedExp.title")}
+                description={t("analyticsOptIn.variantA.details.personalizedExp.description")}
+                checked={isPersonalRecommendationsEnabled}
+                onToggle={setIsPersonalRecommendationsEnabled}
+              />
+            </Flex>
+          </Content>
+        </View>
+        <Bottom>
+          <Flex flexDirection="row" py="20px">
+            <Button
+              title={t("analyticsOptIn.variantA.details.ctas.confirm")}
+              onPress={() =>
+                clickOnMoreOptionsConfirm(isAnalyticsEnabled, isPersonalRecommendationsEnabled)
+              }
+              type="main"
+              size="large"
+              outline={false}
+              ml="2"
+              flex={1}
             />
           </Flex>
-        </Content>
-      </View>
-      <Bottom>
-        <Flex flexDirection="row" py="20px">
-          <Button
-            title={t("analyticsOptIn.variantA.details.ctas.confirm")}
-            onPress={() =>
-              clickOnMoreOptionsConfirm(isAnalyticsEnabled, isPersonalRecommendationsEnabled)
-            }
-            type="main"
-            size="large"
-            outline={false}
-            ml="2"
-            flex={1}
-          />
-        </Flex>
-        <Text fontWeight="semiBold" pt={2} color="neutral.c70" textAlign="center" pb="2">
-          {t("analyticsOptIn.variantA.details.infoText.info")}
-        </Text>
-        <Link size="small" type="color" onPress={clickOnLearnMore}>
-          {t("analyticsOptIn.variantA.details.infoText.link")}
-        </Link>
-      </Bottom>
-      <TrackScreen category="Analytics Opt In Prompt" name="Details" variant="A" />
-    </Container>
+          <Text fontWeight="semiBold" pt={2} color="neutral.c70" textAlign="center" pb="2">
+            {t("analyticsOptIn.variantA.details.infoText.info")}
+          </Text>
+          <Link size="small" type="color" onPress={clickOnLearnMore}>
+            {t("analyticsOptIn.variantA.details.infoText.link")}
+          </Link>
+        </Bottom>
+        <TrackScreen
+          category="Analytics Opt In Prompt"
+          name="Preferences"
+          variant="A"
+          flow={flow}
+          mandatory={shouldWeTrack}
+        />
+      </Container>
+    </ScrollableContainer>
   );
 }
 
