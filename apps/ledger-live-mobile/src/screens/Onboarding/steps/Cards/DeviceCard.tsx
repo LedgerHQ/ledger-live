@@ -7,6 +7,7 @@ import { track } from "~/analytics";
 import Touchable from "~/components/Touchable";
 
 type DeviceCardProps = {
+  id: string;
   title: string;
   img: ImageSourcePropType;
 
@@ -26,7 +27,7 @@ export const DeviceCards = ({ cards }: { cards: DeviceCardProps[] }) => {
   return (
     <>
       {cards.map((card, index) => (
-        <Box key={index} mb={cards.length - 1 !== index ? space[6] : 0}>
+        <Box key={card.id} mb={cards.length - 1 !== index ? space[6] : 0}>
           <DeviceCard {...card} />
         </Box>
       ))}

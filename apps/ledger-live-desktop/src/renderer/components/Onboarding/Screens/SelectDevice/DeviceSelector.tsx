@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import styled from "styled-components";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { Flex } from "@ledgerhq/react-ui";
@@ -35,11 +35,14 @@ export function DeviceSelector({ onClick }: DeviceSelectorProps) {
   const deviceStaxSupported = useFeature("supportDeviceStax");
   const deviceEuropaSupported = useFeature("supportDeviceEuropa");
 
-  const devices = [
-    ...(deviceStaxSupported?.enabled ? [{ id: DeviceModelId.stax, enabled: true }] : []),
-    ...(deviceEuropaSupported?.enabled ? [{ id: DeviceModelId.europa, enabled: true }] : []),
-    ...allDevices,
-  ];
+  const devices = useMemo(
+    () => [
+      ...(deviceStaxSupported?.enabled ? [{ id: DeviceModelId.stax, enabled: true }] : []),
+      ...(deviceEuropaSupported?.enabled ? [{ id: DeviceModelId.europa, enabled: true }] : []),
+      ...allDevices,
+    ],
+    [deviceStaxSupported, deviceEuropaSupported],
+  );
 
   return (
     <DeviceSelectContainer>

@@ -108,6 +108,7 @@ function OnboardingStepDeviceSelection() {
     >
       <DeviceCards
         cards={availableDevices.map(device => ({
+          id: device.id,
           title: getProductName(device.id),
           img: device.img,
           compatible: isCompatible(device.id),
