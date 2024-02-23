@@ -32,7 +32,7 @@ type Props = {
   manifestName?: string | null;
 };
 
-const ConfirmApprovalFooter = ({ Footer, transaction, manifestId, manifestName }: Props) => {
+const ConfirmFooter = ({ Footer, transaction, manifestId, manifestName }: Props) => {
   if (Footer) {
     return (
       <>
@@ -47,9 +47,9 @@ const ConfirmApprovalFooter = ({ Footer, transaction, manifestId, manifestName }
       return (
         <>
           <HorizontalSeparator />
-          <Text marginTop={30} data-test-id="confirm-approval-footer-toc">
+          <Text marginTop={30} data-test-id="confirm-footer-toc">
             <Trans
-              i18nKey="approve.termsAndConditions"
+              i18nKey="TransactionConfirm.termsAndConditions"
               values={{ appName: manifestName }}
               components={[
                 <Text
@@ -71,4 +71,4 @@ const ConfirmApprovalFooter = ({ Footer, transaction, manifestId, manifestName }
   }
 };
 
-export default withTranslation()(ConfirmApprovalFooter);
+export default withTranslation()(ConfirmFooter);

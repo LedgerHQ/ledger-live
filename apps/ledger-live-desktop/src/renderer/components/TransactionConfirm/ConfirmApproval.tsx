@@ -12,7 +12,7 @@ import Alert from "~/renderer/components/Alert";
 import useTheme from "~/renderer/hooks/useTheme";
 import { DeviceBlocker } from "../DeviceAction/DeviceBlocker";
 import { getDeviceAnimation } from "../DeviceAction/animations";
-import ConfirmApprovalFooter from "./ConfirmApprovalFooter";
+import ConfirmApprovalFooter from "./ConfirmFooter";
 import { Container, FieldComponent } from ".";
 
 type Props = {

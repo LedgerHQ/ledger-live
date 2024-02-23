@@ -1,6 +1,6 @@
 import invariant from "invariant";
 import React, { useMemo } from "react";
-import { Trans, withTranslation } from "react-i18next";
+import { withTranslation } from "react-i18next";
 import { TFunction } from "i18next";
 import styled from "styled-components";
 import { getAccountUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
@@ -11,16 +11,21 @@ import {
   getDeviceTransactionConfig,
 } from "@ledgerhq/live-common/transaction/index";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
+
+import Animation from "~/renderer/animations";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
-import WarnBox from "~/renderer/components/WarnBox";
 import useTheme from "~/renderer/hooks/useTheme";
 import FormattedVal from "~/renderer/components/FormattedVal";
-import { renderVerifyUnwrapped } from "~/renderer/components/DeviceAction/rendering";
 import TransactionConfirmField from "./TransactionConfirmField";
 import { getLLDCoinFamily } from "~/renderer/families";
 import { FieldComponentProps as FCPGeneric } from "~/renderer/families/types";
 import ConfirmApproval from "./ConfirmApproval";
+import ConfirmFooter from "./ConfirmFooter";
+import { DeviceBlocker } from "../DeviceAction/DeviceBlocker";
+import { getDeviceAnimation } from "../DeviceAction/animations";
+import ConfirmAlert from "./ConfirmAlert";
+import ConfirmTitle from "./ConfirmTitle";
 
 const FieldText = styled(Text).attrs(() => ({
   ml: 1,
@@ -142,14 +147,13 @@ const TransactionConfirm = ({
     status,
   });
 
-  const typeTransaction: string = useMemo(
+  const typeTransaction: string | undefined = useMemo(
     () =>
       (
         fields.find(
-          (field: { label: string }) =>
-            field.label && (field.label === "Type" || field.label === "Data"),
+          (field: { label: string }) => field.label && field.label === "Type",
         ) as DeviceTransactionField & { value: string }
-      )?.value || "",
+      )?.value,
     [fields],
   );
 
@@ -184,72 +188,60 @@ const TransactionConfirm = ({
       />
     );
   return (
-    <Container>
-      {Warning ? (
-        <Warning
+    <Container style={{ paddingBottom: 0 }}>
+      <Container paddingX={26}>
+        <DeviceBlocker />
+        <Animation animation={getDeviceAnimation(device.modelId, type, "verify")} />
+        <ConfirmTitle
+          Title={Title}
           account={account}
           parentAccount={parentAccount}
-          transaction={transaction}
-          recipientWording={recipientWording}
           status={status}
+          transaction={transaction}
+          typeTransaction={typeTransaction}
         />
-      ) : (
-        <WarnBox>
-          <Trans
-            i18nKey="TransactionConfirm.warning"
-            values={{
-              recipientWording,
-            }}
-          />
-        </WarnBox>
-      )}
-      {Title ? (
-        <Title
+        <ConfirmAlert
+          Warning={Warning}
           account={account}
           parentAccount={parentAccount}
           transaction={transaction}
           status={status}
+          typeTransaction={typeTransaction}
+          fields={fields}
         />
-      ) : (
-        <Info>
-          <Trans i18nKey="TransactionConfirm.title" />
-        </Info>
-      )}
-
-      <Box
-        style={{
-          width: "100%",
-        }}
-        px={30}
-        mb={20}
-      >
-        {fields.map((field, i) => {
-          const MaybeComponent = fieldComponents[field.type];
-          if (!MaybeComponent) {
-            console.log(
-              `TransactionConfirm field ${field.type} is not implemented! add a generic implementation in components/TransactionConfirm.js or inside families/*/TransactionConfirmFields.js`,
+        <Box
+          style={{
+            width: "100%",
+          }}
+          mb={20}
+        >
+          {fields.map((field, i) => {
+            const MaybeComponent = fieldComponents[field.type];
+            if (!MaybeComponent) {
+              console.log(
+                `TransactionConfirm field ${field.type} is not implemented! add a generic implementation in components/TransactionConfirm.js or inside families/*/TransactionConfirmFields.js`,
+              );
+              return null;
+            }
+            return (
+              <MaybeComponent
+                key={i}
+                field={field}
+                account={account}
+                parentAccount={parentAccount}
+                transaction={transaction}
+                status={status}
+              />
             );
-            return null;
-          }
-          return (
-            <MaybeComponent
-              key={i}
-              field={field}
-              account={account}
-              parentAccount={parentAccount}
-              transaction={transaction}
-              status={status}
-            />
-          );
-        })}
-      </Box>
-
-      {Footer ? <Footer transaction={transaction} /> : null}
-
-      {renderVerifyUnwrapped({
-        modelId: device.modelId,
-        type,
-      })}
+          })}
+        </Box>
+      </Container>
+      <ConfirmFooter
+        transaction={transaction}
+        Footer={Footer}
+        manifestId={manifestId}
+        manifestName={manifestName}
+      />
     </Container>
   );
 };
