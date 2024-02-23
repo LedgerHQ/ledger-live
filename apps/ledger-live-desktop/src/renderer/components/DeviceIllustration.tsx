@@ -73,7 +73,7 @@ const illustrations: { [key in DeviceModelId]: Illustration } = {
     width: 240,
     height: 240,
   },
-  stax: {
+  europa: {
     Illustration: Europa,
     width: 240,
     height: 240,
