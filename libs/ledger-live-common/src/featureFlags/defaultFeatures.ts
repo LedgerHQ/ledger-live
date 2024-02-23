@@ -464,7 +464,7 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
   marketperformanceWidgetDesktop: {
-    enabled: true,
+    enabled: false,
     params: {
       variant: ABTestingVariants.variantA,
     },
