@@ -1,13 +1,15 @@
-import { Transaction } from "./types";
+import Long from "long";
+
+import { MsgSend as ProtoMsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx";
+import { MsgWithdrawDelegatorReward as ProtoMsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1beta1/tx";
 import {
-  MsgDelegate,
-  MsgUndelegate,
-  MsgBeginRedelegate,
+  MsgDelegate as ProtoMsgDelegate,
+  MsgUndelegate as ProtoMsgUndelegate,
+  MsgBeginRedelegate as ProtoMsgBeginRedelegate,
 } from "cosmjs-types/cosmos/staking/v1beta1/tx";
-import { MsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1beta1/tx";
+import { PubKey } from "cosmjs-types/cosmos/crypto/secp256k1/keys";
 import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing";
-import { TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
-import type { Account } from "@ledgerhq/types-live";
+import { AuthInfo, TxRaw, TxBody, Fee, DeepPartial } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import {
   AminoMsgSend,
   AminoMsgDelegate,
@@ -15,11 +17,9 @@ import {
   AminoMsgBeginRedelegate,
   AminoMsgWithdrawDelegatorReward,
 } from "@cosmjs/stargate";
-import { cosmos } from "@keplr-wallet/cosmos";
-import { PubKey } from "@keplr-wallet/proto-types/cosmos/crypto/secp256k1/keys";
-import { AuthInfo, Fee } from "@keplr-wallet/proto-types/cosmos/tx/v1beta1/tx";
-import { TxBody } from "cosmjs-types/cosmos/tx/v1beta1/tx";
-import Long from "long";
+
+import type { Account } from "@ledgerhq/types-live";
+import { Transaction } from "./types";
 
 type ProtoMsg = {
   typeUrl: string;
@@ -58,7 +58,7 @@ export const txToMessages = (
         // PROTO MESSAGE
         protoMsgs.push({
           typeUrl: "/cosmos.bank.v1beta1.MsgSend",
-          value: cosmos.bank.v1beta1.MsgSend.encode({
+          value: ProtoMsgSend.encode({
             fromAddress: account.freshAddress,
             toAddress: transaction.recipient,
             amount: [
@@ -91,7 +91,7 @@ export const txToMessages = (
           // PROTO MESSAGE
           protoMsgs.push({
             typeUrl: "/cosmos.staking.v1beta1.MsgDelegate",
-            value: MsgDelegate.encode({
+            value: ProtoMsgDelegate.encode({
               delegatorAddress: account.freshAddress,
               validatorAddress: validator.address,
               amount: {
@@ -130,7 +130,7 @@ export const txToMessages = (
         // PROTO MESSAGE
         protoMsgs.push({
           typeUrl: "/cosmos.staking.v1beta1.MsgBeginRedelegate",
-          value: MsgBeginRedelegate.encode({
+          value: ProtoMsgBeginRedelegate.encode({
             delegatorAddress: account.freshAddress,
             validatorSrcAddress: transaction.sourceValidator,
             validatorDstAddress: validator.address,
@@ -163,7 +163,7 @@ export const txToMessages = (
           // PROTO MESSAGE
           protoMsgs.push({
             typeUrl: "/cosmos.staking.v1beta1.MsgUndelegate",
-            value: MsgUndelegate.encode({
+            value: ProtoMsgUndelegate.encode({
               delegatorAddress: account.freshAddress,
               validatorAddress: validator.address,
               amount: {
@@ -194,7 +194,7 @@ export const txToMessages = (
         // PROTO MESSAGE
         protoMsgs.push({
           typeUrl: "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
-          value: MsgWithdrawDelegatorReward.encode({
+          value: ProtoMsgWithdrawDelegatorReward.encode({
             delegatorAddress: account.freshAddress,
             validatorAddress: validator.address,
           }).finish(),
@@ -233,14 +233,14 @@ export const txToMessages = (
         // PROTO MESSAGES
         protoMsgs.push({
           typeUrl: "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
-          value: MsgWithdrawDelegatorReward.encode({
+          value: ProtoMsgWithdrawDelegatorReward.encode({
             delegatorAddress: account.freshAddress,
             validatorAddress: validator.address,
           }).finish(),
         });
         protoMsgs.push({
           typeUrl: "/cosmos.staking.v1beta1.MsgDelegate",
-          value: MsgDelegate.encode({
+          value: ProtoMsgDelegate.encode({
             delegatorAddress: account.freshAddress,
             validatorAddress: validator.address,
             amount: {
@@ -305,7 +305,7 @@ export const buildTransaction = ({
       fee: Fee.fromPartial({
         amount: feeAmount as any,
         gasLimit: gasLimit,
-      }),
+      } as DeepPartial<Fee>),
     }).finish(),
     signatures: [signature],
   }).finish();

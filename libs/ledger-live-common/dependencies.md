@@ -19,7 +19,6 @@ yarn upgrade-interactive -i --latest
 | @cosmjs/proto-signing                       | Cosmos coin integration                                           | monthly                                                              |
 | @cosmjs/stargate                            | Cosmos coin integration                                           | monthly                                                              |
 | @crypto-org-chain/chain-jslib               | Cronos coin integration                                           | monthly                                                              |
-| @keplr-wallet/cosmos                        | Osmosis coin integration                                          | TBD, planning to remove                                              |
 | @ethereumjs/common                          | Ethereum coin integration                                         | monthly                                                              |
 | @ethereumjs/tx                              | Ethereum coin integration                                         | monthly                                                              |
 | @ledgerhq/compressjs                        | used for LiveQR feature                                           | stable                                                               |
