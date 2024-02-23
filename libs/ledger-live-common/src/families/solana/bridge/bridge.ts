@@ -16,7 +16,7 @@ import {
 } from "../../../bridge/jsHelpers";
 import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { ChainAPI, Config } from "../api";
-import { minutes } from "../api/cached";
+import { minutes } from "@ledgerhq/live-network/cache";
 import { broadcastWithAPI } from "../js-broadcast";
 import createTransaction from "../js-createTransaction";
 import estimateMaxSpendableWithAPI from "../js-estimateMaxSpendable";

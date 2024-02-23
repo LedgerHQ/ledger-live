@@ -21,7 +21,7 @@ export {
   isFirstBond,
   MAX_NOMINATIONS,
 } from "./utils";
-export { makeGetAccountShape } from "./synchronisation";
+export { getAccountShape } from "./synchronisation";
 export {
   getCurrentPolkadotPreloadData,
   setPolkadotPreloadData,

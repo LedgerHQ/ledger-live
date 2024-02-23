@@ -13,9 +13,8 @@ import {
 } from "../network/sidecar.types";
 import { AccountLike } from "@ledgerhq/types-live";
 import { PolkadotAccount, PolkadotValidator, Transaction } from "../types";
-import { PolkadotAPI } from "../network";
-import { NetworkRequestCall } from "@ledgerhq/coin-framework/network";
-import { LRUCacheFn } from "@ledgerhq/coin-framework/cache";
+import polkadotAPI from "../network";
+
 type Options =
   | { name: string; type: StringConstructor; desc: string }
   | { name: string; type: StringConstructor; desc: string; multiple: boolean };
@@ -109,7 +108,7 @@ type Validators = {
     validator: string[];
   }>) => Observable<string>;
 };
-function createValidators(polkadotAPI: PolkadotAPI): Validators {
+function createValidators(): Validators {
   return {
     args: [
       {
@@ -196,13 +195,12 @@ export type CliTools = {
   ) => Transaction[];
   commands: { polkadotValidators: Validators };
 };
-export default function makeCliTools(network: NetworkRequestCall, cache: LRUCacheFn): CliTools {
-  const polkadotAPI = new PolkadotAPI(network, cache);
+export default function makeCliTools(): CliTools {
   return {
     options,
     inferTransactions,
     commands: {
-      polkadotValidators: createValidators(polkadotAPI),
+      polkadotValidators: createValidators(),
     },
   };
 }

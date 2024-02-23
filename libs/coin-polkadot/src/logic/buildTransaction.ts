@@ -2,7 +2,7 @@ import { stringCamelCase } from "@polkadot/util";
 import type { PolkadotAccount, Transaction } from "../types";
 import { isFirstBond, getNonce } from "./utils";
 import { loadPolkadotCrypto } from "./polkadot-crypto";
-import { PolkadotAPI } from "../network";
+import polkadotAPI from "../network";
 const EXTRINSIC_VERSION = 4;
 // Default values for tx parameters, if the user doesn't specify any
 const DEFAULTS = {
@@ -138,62 +138,64 @@ const getExtrinsicParams = (a: PolkadotAccount, t: Transaction): ExtrinsicParams
  * @param {Transaction} t
  * @param {boolean} forceLatestParams - forces the use of latest transaction params
  */
-export const buildTransaction =
-  (polkadotAPI: PolkadotAPI) =>
-  async (a: PolkadotAccount, t: Transaction, forceLatestParams = false) => {
-    await loadPolkadotCrypto();
+export const buildTransaction = async (
+  a: PolkadotAccount,
+  t: Transaction,
+  forceLatestParams = false,
+) => {
+  await loadPolkadotCrypto();
 
-    const { extrinsics, registry } = await polkadotAPI.getRegistry();
-    const info = await polkadotAPI.getTransactionParams({
-      force: forceLatestParams,
-    });
-    // Get the correct extrinsics params depending on transaction
-    const extrinsicParams = getExtrinsicParams(a, t);
-    const address = a.freshAddress;
-    const { blockHash, genesisHash } = info;
-    const blockNumber = registry.createType("BlockNumber", info.blockNumber).toHex();
-    const era = registry
-      .createType("ExtrinsicEra", {
-        current: info.blockNumber,
-        period: DEFAULTS.eraPeriod,
-      })
-      .toHex();
-    const nonce = registry.createType("Compact<Index>", getNonce(a)).toHex();
-    const specVersion = registry.createType("u32", info.specVersion).toHex();
-    const tip = registry.createType("Compact<Balance>", info.tip || DEFAULTS.tip).toHex();
-    const transactionVersion = registry.createType("u32", info.transactionVersion).toHex();
-    const methodFunction = extrinsics[extrinsicParams.pallet][extrinsicParams.name];
-    const methodArgs = methodFunction.meta.args;
-    const method = methodFunction(
-      ...methodArgs.map(arg => {
-        const param = extrinsicParams.args[stringCamelCase(arg.name)];
-        if (param === undefined) {
-          throw new Error(
-            `Method ${extrinsicParams.pallet}::${
-              extrinsicParams.name
-            } expects argument ${arg.toString()}, but got undefined`,
-          );
-        }
+  const { extrinsics, registry } = await polkadotAPI.getRegistry();
+  const info = await polkadotAPI.getTransactionParams({
+    force: forceLatestParams,
+  });
+  // Get the correct extrinsics params depending on transaction
+  const extrinsicParams = getExtrinsicParams(a, t);
+  const address = a.freshAddress;
+  const { blockHash, genesisHash } = info;
+  const blockNumber = registry.createType("BlockNumber", info.blockNumber).toHex();
+  const era = registry
+    .createType("ExtrinsicEra", {
+      current: info.blockNumber,
+      period: DEFAULTS.eraPeriod,
+    })
+    .toHex();
+  const nonce = registry.createType("Compact<Index>", getNonce(a)).toHex();
+  const specVersion = registry.createType("u32", info.specVersion).toHex();
+  const tip = registry.createType("Compact<Balance>", info.tip || DEFAULTS.tip).toHex();
+  const transactionVersion = registry.createType("u32", info.transactionVersion).toHex();
+  const methodFunction = extrinsics[extrinsicParams.pallet][extrinsicParams.name];
+  const methodArgs = methodFunction.meta.args;
+  const method = methodFunction(
+    ...methodArgs.map(arg => {
+      const param = extrinsicParams.args[stringCamelCase(arg.name)];
+      if (param === undefined) {
+        throw new Error(
+          `Method ${extrinsicParams.pallet}::${
+            extrinsicParams.name
+          } expects argument ${arg.toString()}, but got undefined`,
+        );
+      }
 
-        return param;
-      }),
-    ).toHex();
-    const unsigned = {
-      address,
-      blockHash,
-      blockNumber,
-      era,
-      genesisHash,
-      method,
-      nonce,
-      signedExtensions: registry.signedExtensions,
-      specVersion,
-      tip,
-      transactionVersion,
-      version: EXTRINSIC_VERSION,
-    };
-    return {
-      registry,
-      unsigned,
-    };
+      return param;
+    }),
+  ).toHex();
+  const unsigned = {
+    address,
+    blockHash,
+    blockNumber,
+    era,
+    genesisHash,
+    method,
+    nonce,
+    signedExtensions: registry.signedExtensions,
+    specVersion,
+    tip,
+    transactionVersion,
+    version: EXTRINSIC_VERSION,
   };
+  return {
+    registry,
+    unsigned,
+  };
+};
