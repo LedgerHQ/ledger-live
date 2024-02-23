@@ -53,7 +53,7 @@
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-promise": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
-    "axios": "0.26.1",
+    "axios": "0.28.0",
     "invariant": "^2.2.2",
     "lru-cache": "^7.14.1"
   },
