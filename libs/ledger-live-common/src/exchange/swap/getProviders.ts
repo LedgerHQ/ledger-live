@@ -13,7 +13,9 @@ const getProviders: GetProviders = async () => {
     method: "GET",
     url: `${getSwapAPIBaseURL()}/providers`,
     params: { whitelist: getAvailableProviders() },
-    paramsSerializer: params => qs.stringify(params, { arrayFormat: "comma" }),
+    paramsSerializer: {
+      serialize: params => qs.stringify(params, { arrayFormat: "comma" }),
+    },
   });
 
   const responseV4 = res.data as ProvidersResponseV4;

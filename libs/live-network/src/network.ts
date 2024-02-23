@@ -2,14 +2,14 @@ import { LedgerAPI4xx, LedgerAPI5xx, NetworkDown } from "@ledgerhq/errors";
 import { changes, getEnv } from "@ledgerhq/live-env";
 import { retry } from "@ledgerhq/live-promise";
 import { log } from "@ledgerhq/logs";
-import type { AxiosError, AxiosRequestConfig, Method } from "axios";
+import type { AxiosError, AxiosRequestConfig, InternalAxiosRequestConfig } from "axios";
 import axios, { AxiosPromise, AxiosResponse } from "axios";
 import invariant from "invariant";
 
-type Metadata = { startTime: number };
-type ExtendedXHRConfig = AxiosRequestConfig & { metadata?: Metadata };
+export type Metadata = { startTime: number };
+export type ExtendedXHRConfig = InternalAxiosRequestConfig & { metadata?: Metadata };
 
-export const requestInterceptor = (request: AxiosRequestConfig): ExtendedXHRConfig => {
+export const requestInterceptor = (request: InternalAxiosRequestConfig): ExtendedXHRConfig => {
   if (!getEnv("ENABLE_NETWORK_LOGS")) {
     return request;
   }
@@ -26,9 +26,9 @@ export const requestInterceptor = (request: AxiosRequestConfig): ExtendedXHRConf
   return req;
 };
 
-type InterceptedResponse = {
+export type InterceptedResponse = {
   config: ExtendedXHRConfig;
-} & AxiosResponse<any>;
+} & AxiosResponse<unknown>;
 
 export const responseInterceptor = (response: InterceptedResponse): InterceptedResponse => {
   if (!getEnv("ENABLE_NETWORK_LOGS")) {
@@ -51,7 +51,7 @@ export const responseInterceptor = (response: InterceptedResponse): InterceptedR
 
 type InterceptedError = {
   response?: InterceptedResponse;
-} & AxiosError<any>;
+} & AxiosError<unknown>;
 
 export const errorInterceptor = (error: InterceptedError): InterceptedError => {
   const config = error?.response?.config;
@@ -71,7 +71,7 @@ export const errorInterceptor = (error: InterceptedError): InterceptedError => {
       if (data && typeof data === "string") {
         msg = extractErrorMessage(data);
       } else if (data && typeof data === "object") {
-        msg = getErrorMessage(data);
+        msg = getErrorMessage(data as Record<string, unknown>);
       }
     } catch (e) {
       log("warn", "can't parse server result " + String(e));
@@ -113,7 +113,7 @@ if (NETWORK_USE_HTTPS_KEEP_ALIVE) {
   axios.defaults.httpsAgent = new https.Agent({ keepAlive: true });
 }
 
-const makeError = (msg: string, status: number, url: string | undefined, method: Method | "") => {
+const makeError = (msg: string, status: number, url: string | undefined, method: string) => {
   const obj = {
     status,
     url,
@@ -124,13 +124,14 @@ const makeError = (msg: string, status: number, url: string | undefined, method:
     : new LedgerAPI5xx(msg, obj);
 };
 
-const getErrorMessage = (data: Record<string, any>): string | null | undefined => {
+const getErrorMessage = (data: Record<string, unknown>): string | null | undefined => {
   if (!data) return "";
   if (typeof data === "string") return data;
   if (data.errors) {
     return getErrorMessage(data.errors[0]);
   }
-  return data.message || data.error_message || data.error || data.msg;
+  const out = data.message || data.error_message || data.error || data.msg;
+  return typeof out === "string" ? String(out) : null;
 };
 
 const extractErrorMessage = (raw: string): string | undefined => {

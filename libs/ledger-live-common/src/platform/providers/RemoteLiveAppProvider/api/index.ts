@@ -20,8 +20,10 @@ const api = {
       const { data }: { data: LiveAppManifest[] } = await network({
         method: "GET",
         params,
-        paramsSerializer: params => {
-          return qs.stringify(params, { arrayFormat: "repeat" });
+        paramsSerializer: {
+          serialize: params => {
+            return qs.stringify(params, { arrayFormat: "repeat" });
+          },
         },
         url,
       });

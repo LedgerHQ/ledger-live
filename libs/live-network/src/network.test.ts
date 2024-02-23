@@ -1,6 +1,7 @@
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { requestInterceptor, responseInterceptor } from "./network";
 import * as logs from "@ledgerhq/logs";
+import { AxiosRequestHeaders } from "axios";
 
 describe("network", () => {
   const DEFAULT_ENABLE_NETWORK_LOGS = getEnv("ENABLE_NETWORK_LOGS");
@@ -19,6 +20,7 @@ describe("network", () => {
         baseURL: "baseURL",
         url: "url",
         data: "data",
+        headers: {} as AxiosRequestHeaders,
       };
       const req = requestInterceptor(request);
       expect(req).toEqual(request);
@@ -31,6 +33,7 @@ describe("network", () => {
         baseURL: "baseURL",
         url: "url",
         data: "data",
+        headers: {} as AxiosRequestHeaders,
       };
       const req = requestInterceptor(request);
       expect(req).toEqual({
@@ -48,6 +51,7 @@ describe("network", () => {
         baseURL: "baseURL",
         url: "url",
         data: "data",
+        headers: {} as AxiosRequestHeaders,
       };
       requestInterceptor(request);
 
@@ -62,6 +66,7 @@ describe("network", () => {
           baseURL: "baseURL",
           url: "url",
           data: "data",
+          headers: {} as AxiosRequestHeaders,
         },
         data: "data",
         status: 200,
@@ -80,6 +85,7 @@ describe("network", () => {
           baseURL: "baseURL",
           url: "url",
           data: "data",
+          headers: {} as AxiosRequestHeaders,
         },
         data: "data",
         status: 200,
@@ -100,6 +106,7 @@ describe("network", () => {
           baseURL: "baseURL",
           url: "url",
           data: "data",
+          headers: {} as AxiosRequestHeaders,
         },
         data: "data",
         status: 200,

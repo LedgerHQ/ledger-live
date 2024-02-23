@@ -23,7 +23,9 @@ describe("getAccount", () => {
       status: 200,
       statusText: "",
       headers: {},
-      config: {},
+      config: {
+        headers: {} as any,
+      },
     });
     const { lockedBalance } = await getAccount("addr");
     expect(lockedBalance).toEqual(new BigNumber("60000000000"));
@@ -54,7 +56,9 @@ describe("getAccount", () => {
       status: 200,
       statusText: "",
       headers: {},
-      config: {},
+      config: {
+        headers: {} as any,
+      },
     });
     const { lockedBalance } = await getAccount("addr");
     expect(lockedBalance).toEqual(new BigNumber("5"));

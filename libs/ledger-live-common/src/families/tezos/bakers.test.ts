@@ -109,7 +109,9 @@ describe("Tezos Baker", () => {
         status: 200,
         headers: {},
         statusText: "",
-        config: {},
+        config: {
+          headers: {} as any,
+        },
       };
 
       mockedNetwork.mockReturnValue(Promise.resolve(response));
