@@ -109,10 +109,10 @@ const devices: { [key in DeviceModelId]: DeviceModel } = {
     getBlockSize: (_firmwareVersion: string): number => 32, // TODO: TBD
     bluetoothSpec: [
       {
-        serviceUuid: "13d63400-2c97-6004-0000-4c6564676572", // TODO: TBD
-        notifyUuid: "13d63400-2c97-6004-0001-4c6564676572", // TODO: TBD
-        writeUuid: "13d63400-2c97-6004-0002-4c6564676572", // TODO: TBD
-        writeCmdUuid: "13d63400-2c97-6004-0003-4c6564676572", // TODO: TBD
+        serviceUuid: "13d63400-2c97-7004-0000-4c6564676572", // TODO: TBD
+        notifyUuid: "13d63400-2c97-7004-0001-4c6564676572", // TODO: TBD
+        writeUuid: "13d63400-2c97-7004-0002-4c6564676572", // TODO: TBD
+        writeCmdUuid: "13d63400-2c97-7004-0003-4c6564676572", // TODO: TBD
       },
     ],
   },
