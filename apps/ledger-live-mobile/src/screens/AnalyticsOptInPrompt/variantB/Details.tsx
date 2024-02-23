@@ -6,15 +6,26 @@ import Button from "~/components/Button";
 import { View, Container, Titles, Content, Bottom, ScrollableContainer } from "../Common";
 import headerPersonalized from "./illustrations/header_personalized.png";
 import { Image } from "react-native";
-import useAnalyticsOptInPrompt from "~/hooks/useAnalyticsOptInPromptVariantB";
+import useAnalyticsOptInPromptLogic from "~/hooks/analyticsOptInPrompt/useAnalyticsOptInPromptLogicVariantB";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { AnalyticsOptInPromptNavigatorParamList } from "~/components/RootNavigator/types/AnalyticsOptInPromptNavigator";
+import { ScreenName } from "~/const";
 
-function Details() {
+type Props = StackNavigatorProps<
+  AnalyticsOptInPromptNavigatorParamList,
+  ScreenName.AnalyticsOptInPromptDetails
+>;
+
+function Details({ route }: Props) {
   const { t } = useTranslation();
+  const { entryPoint } = route.params;
   const {
+    shouldWeTrack,
     clickOnAllowPersonalizedExperience,
     clickOnRefusePersonalizedExperience,
     clickOnLearnMore,
-  } = useAnalyticsOptInPrompt();
+    flow,
+  } = useAnalyticsOptInPromptLogic({ entryPoint });
 
   const bulletPoints = [
     t("analyticsOptIn.variantB.details.bulletPoints.1"),
@@ -75,7 +86,13 @@ function Details() {
             {t("analyticsOptIn.variantB.details.infoText.link")}
           </Link>
         </Bottom>
-        <TrackScreen category="Analytics Opt In Prompt" name="Details" variant="B" />
+        <TrackScreen
+          category="Recommendations Opt In Prompt"
+          name="Main"
+          variant="B"
+          flow={flow}
+          mandatory={shouldWeTrack}
+        />
       </Container>
     </ScrollableContainer>
   );

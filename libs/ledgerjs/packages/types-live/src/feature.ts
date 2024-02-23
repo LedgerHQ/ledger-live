@@ -488,6 +488,7 @@ export type Feature_FetchAdditionalCoins = Feature<{
 
 export type Feature_LlmAnalyticsOptInPrompt = Feature<{
   variant: ABTestingVariants;
+  entryPoints: Array<string>;
 }>;
 
 export type Feature_LldPortfolioCarousel = Feature<{

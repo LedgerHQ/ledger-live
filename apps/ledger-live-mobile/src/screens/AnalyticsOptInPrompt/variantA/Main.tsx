@@ -1,11 +1,14 @@
-import React, { memo } from "react";
+import React, { memo, useEffect } from "react";
 import { Flex, Link, Text } from "@ledgerhq/native-ui";
 import { TrackScreen } from "~/analytics";
 import { useTranslation } from "react-i18next";
 import { Check, Close } from "@ledgerhq/native-ui/assets/icons";
 import Button from "~/components/Button";
 import { View, Container, Titles, Content, Bottom, ScrollableContainer } from "../Common";
-import useAnalyticsOptInPrompt from "~/hooks/useAnalyticsOptInPromptVariantA";
+import useAnalyticsOptInPrompt from "~/hooks/analyticsOptInPrompt/useAnalyticsOptInPromptLogicVariantA";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { AnalyticsOptInPromptNavigatorParamList } from "~/components/RootNavigator/types/AnalyticsOptInPromptNavigator";
+import { ScreenName } from "~/const";
 
 interface RenderItemsProps {
   items: string[];
@@ -34,10 +37,35 @@ function renderItems({
   );
 }
 
-function Main() {
+type Props = StackNavigatorProps<
+  AnalyticsOptInPromptNavigatorParamList,
+  ScreenName.AnalyticsOptInPromptMain
+>;
+
+function Main({ route, navigation }: Props) {
   const { t } = useTranslation();
-  const { navigateToMoreOptions, clickOnRefuseAll, clickOnAcceptAll, clickOnLearnMore } =
-    useAnalyticsOptInPrompt();
+  const { entryPoint } = route.params;
+
+  const {
+    shouldWeTrack,
+    navigateToMoreOptions,
+    clickOnRefuseAll,
+    clickOnAcceptAll,
+    clickOnLearnMore,
+    flow,
+  } = useAnalyticsOptInPrompt({ entryPoint });
+
+  const shouldPreventBackNavigation = entryPoint === "Portfolio";
+
+  useEffect(() => {
+    if (shouldPreventBackNavigation) {
+      const unsubscribe = navigation.addListener("beforeRemove", e => {
+        e.preventDefault();
+      });
+
+      return unsubscribe;
+    }
+  });
 
   const trackable = [
     t("analyticsOptIn.variantA.main.content.able.diagAndUsage"),
@@ -116,7 +144,13 @@ function Main() {
             {t("analyticsOptIn.variantA.main.content.infoText.link")}
           </Link>
         </Bottom>
-        <TrackScreen category="Analytics Opt In Prompt" name="Main" variant="A" />
+        <TrackScreen
+          category="Analytics Opt In Prompt"
+          name="Main"
+          variant="A"
+          flow={flow}
+          mandatory={shouldWeTrack}
+        />
       </Container>
     </ScrollableContainer>
   );

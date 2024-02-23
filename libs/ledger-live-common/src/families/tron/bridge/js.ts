@@ -649,7 +649,7 @@ const getTransactionStatus = async (a: TronAccount, t: Transaction): Promise<Tra
     const { bandwidth, energy } = a.tronResources.frozen;
     if (resource === "BANDWIDTH" && t.amount.gt(bandwidth?.amount || new BigNumber(0))) {
       errors.resource = new TronNoFrozenForBandwidth();
-    } else if (t.amount.gt(energy?.amount || new BigNumber(0))) {
+    } else if (resource === "ENERGY" && t.amount.gt(energy?.amount || new BigNumber(0))) {
       errors.resource = new TronNoFrozenForEnergy();
     }
   }
