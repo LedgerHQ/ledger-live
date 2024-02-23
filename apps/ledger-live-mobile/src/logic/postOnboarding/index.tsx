@@ -1,12 +1,13 @@
 import { DeviceModelId } from "@ledgerhq/devices";
 import { PostOnboardingAction, PostOnboardingActionId } from "@ledgerhq/types-live";
-import { migrateAssetsMock, personalizeMock } from "./mockActions";
+import { claimMock, migrateAssetsMock, personalizeMock } from "./mockActions";
 import { assetsTransferAction, customImageAction, buyCryptoAction } from "./actions";
 
 /**
  * All implemented post onboarding actions.
  */
 const postOnboardingActions: Record<PostOnboardingActionId, PostOnboardingAction> = {
+  claimMock,
   migrateAssetsMock,
   personalizeMock,
   customImage: customImageAction,
@@ -17,7 +18,11 @@ const postOnboardingActions: Record<PostOnboardingActionId, PostOnboardingAction
 /**
  * Mock of post onboarding actions for DeviceModelId.stax
  */
-const staxPostOnboardingActionsMock: PostOnboardingAction[] = [personalizeMock, migrateAssetsMock];
+const staxPostOnboardingActionsMock: PostOnboardingAction[] = [
+  claimMock,
+  personalizeMock,
+  migrateAssetsMock,
+];
 
 const staxPostOnboardingActions: PostOnboardingAction[] = [
   assetsTransferAction,

@@ -5,9 +5,11 @@ import { FeatureId } from ".";
  * Unique identifier of a post onboarding action.
  */
 export enum PostOnboardingActionId {
+  claimMock = "claimMock",
   migrateAssetsMock = "migrateAssetsMock",
   personalizeMock = "personalizeMock",
   customImage = "customImage",
+  claimNft = "claimNft",
   assetsTransfer = "assetsTransfer",
   buyCrypto = "buyCrypto",
 }
