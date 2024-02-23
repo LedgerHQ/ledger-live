@@ -61,6 +61,9 @@ test.use({
         },
       },
     },
+    marketperformanceWidgetDesktop: {
+      enabled: false,
+    },
   },
 });
 
