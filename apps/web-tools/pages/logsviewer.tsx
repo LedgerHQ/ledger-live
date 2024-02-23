@@ -352,7 +352,7 @@ const Header = ({
                 <pre>
                   <code style={{color: 'red'}}>NOTE </code>
                   <code> 
-                    apps could be outdated if firmware is outdated, and might still say "latest version"
+                    apps could be outdated if firmware is outdated, and might still say {`"latest version"`}
                   </code>
                 </pre>
               </li>
