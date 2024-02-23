@@ -26,8 +26,8 @@ export const DeviceCards = ({ cards }: { cards: DeviceCardProps[] }) => {
 
   return (
     <>
-      {cards.map((card, index) => (
-        <Box key={card.id} mb={cards.length - 1 !== index ? space[6] : 0}>
+      {cards.map(card => (
+        <Box key={card.id} mb={space[6]}>
           <DeviceCard {...card} />
         </Box>
       ))}
