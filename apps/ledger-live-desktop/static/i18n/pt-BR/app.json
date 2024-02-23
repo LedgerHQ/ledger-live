@@ -1756,7 +1756,7 @@
   "DeviceAction" : {
     "allowAppPermission" : "Abra o aplicativo {{wording}} no seu dispositivo",
     "allowAppPermissionSubtitleToken" : "para gerenciar seus tokens {{token}}",
-    "allowManagerPermission" : "Permitir uma conexão segura na {{productName}}",
+    "allowManagerPermission" : "Permitir conexão segura",
     "allowRenaming" : "Permitir renomeação do seu dispositivo",
     "loading" : "Carregando...",
     "connectAndUnlockDevice" : "Conecte e desbloqueie seu dispositivo",
@@ -5431,7 +5431,7 @@
       "description" : "Reinicie seu dispositivo sem tocar nos botões quando o logotipo aparecer. Contate o Suporte Ledger se o problema persistir."
     },
     "UserRefusedAllowManager" : {
-      "title" : "My Ledger negado no dispositivo"
+      "title" : "Conexão segura negada no dispositivo"
     },
     "UserRefusedFirmwareUpdate" : {
       "title" : "Instalação da atualização do sistema\noperacional cancelada no dispositivo",
@@ -5914,9 +5914,6 @@
     "FailedToRetrieveFirmwareUpdateInfo" : {
       "title" : "Falha em verificar a atualização do sistema operacional",
       "description" : "Algo deu errado. Tente novamente ou fale com o Suporte Ledger em caso de dúvida."
-    },
-    "TezosUnrevealedAccount" : {
-      "title" : "Troca indisponível: Necessário enviar/delegar primeiro com uma conta Tezos ou um par de troca Tezos."
     }
   },
   "cryptoOrg" : {
