@@ -36,8 +36,8 @@ export function DeviceSelector({ onClick }: DeviceSelectorProps) {
   const deviceEuropaSupported = useFeature("supportDeviceEuropa");
 
   const devices = [
-    ...(deviceStaxSupported ? [{ id: DeviceModelId.stax, enabled: true }] : []),
-    ...(deviceEuropaSupported ? [{ id: DeviceModelId.europa, enabled: true }] : []),
+    ...(deviceStaxSupported?.enabled ? [{ id: DeviceModelId.stax, enabled: true }] : []),
+    ...(deviceEuropaSupported?.enabled ? [{ id: DeviceModelId.europa, enabled: true }] : []),
     ...allDevices,
   ];
 

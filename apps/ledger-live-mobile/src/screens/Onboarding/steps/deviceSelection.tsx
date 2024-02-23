@@ -63,8 +63,8 @@ function OnboardingStepDeviceSelection() {
 
   const availableDevices = useMemo(
     () => [
-      ...(deviceStaxSupported ? [devices.stax] : []),
-      ...(deviceEuropaSupported ? [devices.europa] : []),
+      ...(deviceStaxSupported?.enabled ? [devices.stax] : []),
+      ...(deviceEuropaSupported?.enabled ? [devices.europa] : []),
       devices.nanoX,
       devices.nanoSP,
       devices.nanoS,
