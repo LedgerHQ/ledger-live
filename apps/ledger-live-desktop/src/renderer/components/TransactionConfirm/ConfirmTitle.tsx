@@ -38,7 +38,7 @@ const ConfirmTitle = ({
   typeTransaction,
 }: Props) => {
   const description: string = useMemo(() => {
-    if (typeTransaction === "Approval") return t("approve.description");
+    if (typeTransaction === "Approve") return t("approve.description");
     else return t("sign.description");
   }, [t, typeTransaction]);
 
@@ -53,13 +53,7 @@ const ConfirmTitle = ({
     );
   }
   return (
-    <Text
-      style={{ border: "1px solid blue" }}
-      ff={"Inter|Medium"}
-      textAlign={"center"}
-      fontSize={22}
-      marginBottom={12}
-    >
+    <Text ff={"Inter|Medium"} textAlign={"center"} fontSize={22} marginBottom={12}>
       {description}
     </Text>
   );
