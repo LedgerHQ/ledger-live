@@ -148,26 +148,6 @@ const linkingOptions = (featureFlags: OptionalFeatureMap) => ({
           [ScreenName.BleDevicePairingFlow]: "sync-onboarding",
 
           [ScreenName.RedirectToOnboardingRecoverFlow]: "recover-restore-flow",
-          [NavigatorName.PostOnboarding]: {
-            screens: {
-              /**
-               * @params ?completed: boolean
-               * ie: "ledgerlive://post-onboarding/nft-claimed?completed=true" will open the post onboarding hub and complete the Nft claim action
-               * * @params ?allCompleted: boolean
-               * ie: "ledgerlive://post-onboarding/nft-claimed?allCompleted=true" will open the post onboarding hub with all steps completed
-               */
-              [ScreenName.PostOnboardingHub]: "post-onboarding/nft-claimed",
-            },
-          },
-
-          [NavigatorName.ClaimNft]: {
-            screens: {
-              /**
-               * ie: "ledgerlive://linkdrop-nft-claim/qr-scanning" will redirect to the QR scanning page
-               */
-              [ScreenName.ClaimNftQrScan]: "linkdrop-nft-claim/qr-scanning",
-            },
-          },
 
           /**
            * @params ?platform: string
@@ -562,9 +542,6 @@ export const DeeplinksProvider = ({
             url.pathname = `/${manifest.id}`;
             url.searchParams.set("name", manifest.name);
             return getStateFromPath(url.href?.split("://")[1], config);
-          }
-          if (path === "linkdrop-nft-claim/qr-scanning") {
-            track("deeplink", { action: "Claim NFT scan QR code again" });
           }
 
           return getStateFromPath(path, config);

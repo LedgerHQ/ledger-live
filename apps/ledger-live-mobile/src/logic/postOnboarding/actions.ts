@@ -62,22 +62,3 @@ export const customImageAction: PostOnboardingAction = {
   ],
   buttonLabelForAnalyticsEvent: "Set lock screen picture",
 };
-
-export const claimNftAction: PostOnboardingAction = {
-  id: PostOnboardingActionId.claimNft,
-  disabled: false,
-  Icon: Icons.Gift,
-  featureFlagId: "postOnboardingClaimNft",
-  title: "postOnboarding.actions.claimNft.title",
-  titleCompleted: "postOnboarding.actions.claimNft.titleCompleted",
-  description: "postOnboarding.actions.claimNft.description",
-  tagLabel: "postOnboarding.actions.claimNft.tagLabel",
-  actionCompletedPopupLabel: "postOnboarding.actions.claimNft.popupLabel",
-  navigationParams: [
-    NavigatorName.ClaimNft,
-    {
-      screen: ScreenName.ClaimNftWelcome,
-    },
-  ],
-  buttonLabelForAnalyticsEvent: "Claim Ledger NFT",
-};
