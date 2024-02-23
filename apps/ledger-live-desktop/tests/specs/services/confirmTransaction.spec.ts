@@ -173,7 +173,7 @@ test("Confirm Transaction modals @smoke", async ({ page }) => {
     ).toBeVisible();
 
     // Displays TOC in footer
-    const operationList = page.locator("data-test-id=confirm-approval-footer-toc");
+    const operationList = page.locator("data-test-id=confirm-footer-toc");
     await operationList.scrollIntoViewIfNeeded();
     await expect(page.getByText(`${MANIFEST_NAME}'s terms of use.`)).toBeVisible();
 
