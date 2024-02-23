@@ -1,19 +1,19 @@
 import { ConfigSchema } from "@ledgerhq/live-config/LiveConfig";
-import { cosmosConfig } from "../families/cosmos/config";
-import { bitcoinConfig } from "../families/bitcoin/config";
-import { evmConfig } from "../families/evm/config";
 import { algorandConfig } from "../families/algorand/config";
+import { bitcoinConfig } from "../families/bitcoin/config";
 import { cardanoConfig } from "../families/cardano/config";
 import { casperConfig } from "../families/casper/config";
 import { celoConfig } from "../families/celo/config";
+import { cosmosConfig } from "../families/cosmos/config";
 import { cryptoOrgConfig } from "../families/crypto_org/config";
 import { elrondConfig } from "../families/elrond/config";
+import { evmConfig } from "../families/evm/config";
 import { fileCoinConfig } from "../families/filecoin/config";
 import { hederaConfig } from "../families/hedera/config";
 import { internetComputerConfig } from "../families/internet_computer/config";
+import { nearConfig } from "../families/near/config";
 import { polkadotConfig } from "../families/polkadot/config";
 import { rippleConfig } from "../families/ripple/config";
-import { nearConfig } from "../families/near/config";
 import { solanaConfig } from "../families/solana/config";
 import { stacksConfig } from "../families/stacks/config";
 import { stellarConfig } from "../families/stellar/config";
@@ -27,10 +27,10 @@ export default {
   ...liveCommonConfig,
   ...algorandConfig,
   ...bitcoinConfig,
-  ...cosmosConfig,
   ...cardanoConfig,
   ...casperConfig,
   ...celoConfig,
+  ...cosmosConfig,
   ...cryptoOrgConfig,
   ...elrondConfig,
   ...evmConfig,
