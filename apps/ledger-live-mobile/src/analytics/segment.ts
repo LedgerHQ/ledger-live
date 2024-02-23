@@ -173,11 +173,6 @@ const extraProperties = async (store: AppStore) => {
   const stakingProvidersCount =
     stakingProviders?.enabled && stakingProviders?.params?.listProvider.length;
 
-  const stakingProviders =
-    analyticsFeatureFlagMethod && analyticsFeatureFlagMethod("ethStakingProviders");
-  const stakingProvidersCount =
-    stakingProviders?.enabled && stakingProviders?.params?.listProvider.length;
-
   return {
     ...mandatoryProperties,
     appVersion,
