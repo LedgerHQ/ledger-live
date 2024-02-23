@@ -492,7 +492,7 @@
       "description" : "내 Ledger에서 앱을 다시 설치해 보세요"
     },
     "NotEnoughGas" : {
-      "title" : "{{cryptoName}} 네트워크에서는 수수료로 {{ticker}} {{fees}}(이)가 필요합니다. <link0>{{ticker}} 구매</link0>",
+      "title" : "{{cryptoName}} 네트워크에서 트랜잭션 수수료를 지불하려면 계정에 {{fees}} {{ticker}}(이)가 필요합니다.  <link0>{{ticker}}(을)를 구매</link0>하거나 계정에 추가 입금하세요.",
       "description" : "토큰 트랜잭션 수수료로 계정에 코인을 전송하세요."
     },
     "NotEnoughGasSwap" : {
@@ -6530,7 +6530,7 @@
     "ethereum" : {
       "title" : "ETH 보유량 늘리기",
       "subTitle" : "Ledger Live에서 일일 보상을 바로 수령하여 ETH를 스테이킹하고 보유량을 늘려보세요.",
-      "tagMinimum" : "Requires {{min}} ETH",
+      "tagMinimum" : "{{min}} ETH 필요",
       "close" : "종료",
       "providers" : {
         "kiln_pooling" : {
