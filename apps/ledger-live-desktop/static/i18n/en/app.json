@@ -1453,11 +1453,25 @@
       }
     },
     "marketPerformanceWidget": {
-      "title": "24h trend",
+      "title": "{{time}} trend",
       "buy": "Buy",
       "swap": "Swap",
       "gainers": "Gainers",
-      "losers": "Losers"
+      "losers": "Losers",
+      "error": {
+        "title": "Sorry, we’re unable to load the trend",
+        "description": "Please try again later"
+      },
+      "missingData": {
+        "gainers": {
+          "title": "No assets among the top 50 experienced gains in the last 24 hours",
+          "description": "Consider viewing top losers or come back later"
+        },
+        "losers": {
+          "title": "No assets among the top 50 experienced losses in the last 24 hours",
+          "description": "Consider viewing top gainers or come back later"
+        }
+      }
     }
   },
   "currentAddress": {

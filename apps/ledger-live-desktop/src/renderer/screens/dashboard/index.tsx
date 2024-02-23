@@ -109,7 +109,7 @@ export default function DashboardPage() {
                   range={selectedTimeRange}
                 />
 
-                <Box ml={2}>
+                <Box ml={2} minWidth={275}>
                   <MarketPerformanceWidget variant={marketPerformanceVariant} />
                 </Box>
               </PortfolioGrid>
