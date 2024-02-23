@@ -1,7 +1,7 @@
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import network from "@ledgerhq/live-network/network";
 import { log } from "@ledgerhq/logs";
-import { Account, SubAccount } from "@ledgerhq/types-live";
+import { Account, SubAccount, TokenAccount } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import compact from "lodash/compact";
 import drop from "lodash/drop";
@@ -203,11 +203,12 @@ export const createTronTransaction = async (
 
   // trc20
   if (tokenType === "trc20" && tokenId) {
+    const tokenContractAddress = (subAccount as TokenAccount).token.contractAddress;
     const txData: SmartContractTransactionData = {
       function_selector: "transfer(address,uint256)",
       fee_limit: 50000000,
       call_value: 0,
-      contract_address: decode58Check(tokenId),
+      contract_address: decode58Check(tokenContractAddress),
       parameter: abiEncodeTrc20Transfer(decode58Check(t.recipient), t.amount),
       owner_address: decode58Check(a.freshAddress),
     };

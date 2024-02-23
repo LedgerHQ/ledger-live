@@ -469,7 +469,7 @@ const tron: CurrenciesData<Transaction> = {
             // corresponds to a valid deposit contract address
             subAccountId: getTokenAccountId(
               account,
-              "tron/trc20/TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
+              "tron/trc20/tla2f6vpqdgre67v1736s7bj8ray5wyju7",
             ),
             amount: new BigNumber("1000000"),
           }),
@@ -488,7 +488,7 @@ const tron: CurrenciesData<Transaction> = {
             recipient: unactivatedAddress,
             subAccountId: getTokenAccountId(
               account,
-              "tron/trc20/TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
+              "tron/trc20/tla2f6vpqdgre67v1736s7bj8ray5wyju7",
             ),
             amount: new BigNumber("1000000"),
           }),
@@ -534,7 +534,7 @@ const tron: CurrenciesData<Transaction> = {
             recipient: activatedAddress1,
             subAccountId: getTokenAccountId(
               account,
-              "tron/trc20/TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
+              "tron/trc20/tla2f6vpqdgre67v1736s7bj8ray5wyju7",
             ),
             amount: new BigNumber("1000000"),
           }),

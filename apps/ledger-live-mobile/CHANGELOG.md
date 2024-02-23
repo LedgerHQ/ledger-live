@@ -1,5 +1,46 @@
 # live-mobile
 
+## 3.40.1
+
+### Patch Changes
+
+- Updated dependencies [[`884cfd6`](https://github.com/LedgerHQ/ledger-live/commit/884cfd64a1440d393fb983dfe361be9c78f3b81c), [`3e28615`](https://github.com/LedgerHQ/ledger-live/commit/3e28615a8d5edbec3eff1e93207bf0e9d017666a)]:
+  - @ledgerhq/live-common@33.6.1
+  - @ledgerhq/live-env@1.0.1
+  - @ledgerhq/coin-evm@0.12.3
+  - @ledgerhq/coin-framework@0.11.2
+  - @ledgerhq/live-countervalues@0.1.2
+  - @ledgerhq/live-countervalues-react@0.1.2
+  - @ledgerhq/live-nft@0.2.1
+  - @ledgerhq/live-nft-react@0.2.1
+
+## 3.40.1-hotfix.1
+
+### Patch Changes
+
+- Updated dependencies [[`884cfd6`](https://github.com/LedgerHQ/ledger-live/commit/884cfd64a1440d393fb983dfe361be9c78f3b81c)]:
+  - @ledgerhq/live-common@33.6.1-hotfix.1
+  - @ledgerhq/coin-evm@0.12.3-hotfix.1
+  - @ledgerhq/coin-framework@0.11.2-hotfix.1
+  - @ledgerhq/live-countervalues@0.1.2-hotfix.1
+  - @ledgerhq/live-countervalues-react@0.1.2-hotfix.1
+  - @ledgerhq/live-nft@0.2.1-hotfix.1
+  - @ledgerhq/live-nft-react@0.2.1-hotfix.1
+
+## 3.40.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`3e28615`](https://github.com/LedgerHQ/ledger-live/commit/3e28615a8d5edbec3eff1e93207bf0e9d017666a)]:
+  - @ledgerhq/live-env@1.0.1-hotfix.0
+  - @ledgerhq/live-common@33.6.1-hotfix.0
+  - @ledgerhq/coin-evm@0.12.3-hotfix.0
+  - @ledgerhq/coin-framework@0.11.2-hotfix.0
+  - @ledgerhq/live-countervalues@0.1.2-hotfix.0
+  - @ledgerhq/live-nft@0.2.1-hotfix.0
+  - @ledgerhq/live-countervalues-react@0.1.2-hotfix.0
+  - @ledgerhq/live-nft-react@0.2.1-hotfix.0
+
 ## 3.40.0
 
 ### Minor Changes

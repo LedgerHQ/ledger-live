@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-near",
-  "version": "6.28.4",
+  "version": "6.28.5",
   "description": "Ledger Hardware Wallet Near Application API",
   "keywords": [
     "Ledger",
@@ -28,7 +28,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/hw-transport": "workspace:^",
-    "near-api-js": "^0.44.2"
+    "near-api-js": "^3.0.2"
   },
   "devDependencies": {
     "@ledgerhq/hw-transport-mocker": "workspace:^",

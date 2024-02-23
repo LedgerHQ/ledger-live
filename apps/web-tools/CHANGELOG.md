@@ -1,5 +1,34 @@
 # web-tools
 
+## 0.4.3
+
+### Patch Changes
+
+- Updated dependencies [[`884cfd6`](https://github.com/LedgerHQ/ledger-live/commit/884cfd64a1440d393fb983dfe361be9c78f3b81c), [`3e28615`](https://github.com/LedgerHQ/ledger-live/commit/3e28615a8d5edbec3eff1e93207bf0e9d017666a)]:
+  - @ledgerhq/live-common@33.6.1
+  - @ledgerhq/live-env@1.0.1
+  - @ledgerhq/coin-framework@0.11.2
+  - @ledgerhq/hw-app-eth@6.35.6
+
+## 0.4.3-hotfix.1
+
+### Patch Changes
+
+- Updated dependencies [[`884cfd6`](https://github.com/LedgerHQ/ledger-live/commit/884cfd64a1440d393fb983dfe361be9c78f3b81c)]:
+  - @ledgerhq/live-common@33.6.1-hotfix.1
+  - @ledgerhq/coin-framework@0.11.2-hotfix.1
+  - @ledgerhq/hw-app-eth@6.35.6-hotfix.1
+
+## 0.4.3-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`3e28615`](https://github.com/LedgerHQ/ledger-live/commit/3e28615a8d5edbec3eff1e93207bf0e9d017666a)]:
+  - @ledgerhq/live-env@1.0.1-hotfix.0
+  - @ledgerhq/live-common@33.6.1-hotfix.0
+  - @ledgerhq/coin-framework@0.11.2-hotfix.0
+  - @ledgerhq/hw-app-eth@6.35.6-hotfix.0
+
 ## 0.4.2
 
 ### Patch Changes
