@@ -1756,7 +1756,7 @@
   "DeviceAction" : {
     "allowAppPermission" : "Cihazınızda {{wording}} uygulamasını açın",
     "allowAppPermissionSubtitleToken" : "ve {{token}} token'larınızı yönetin",
-    "allowManagerPermission" : "{{productName}} cihazınızda Ledger Yöneticisine izin verin",
+    "allowManagerPermission" : "Güvenli bağlantıya izin ver",
     "allowRenaming" : "Cihazınızda yeniden adlandırmaya izin verin",
     "loading" : "Yükleniyor...",
     "connectAndUnlockDevice" : "Cihazınızı bağlayın ve kilidini açın",
@@ -5431,7 +5431,7 @@
       "description" : "Lütfen cihazınızı yeniden başlatın ve logo göründüğünde tuşlara dokunmayın. Sorun devam ederse Ledger Destek ile iletişime geçin."
     },
     "UserRefusedAllowManager" : {
-      "title" : "My Ledger cihazda reddedildi"
+      "title" : "Güvenli bağlantı, cihazda reddedildi"
     },
     "UserRefusedFirmwareUpdate" : {
       "title" : "İşletim sistemi güncellemesi\ncihazda iptal edildi",
@@ -5914,9 +5914,6 @@
     "FailedToRetrieveFirmwareUpdateInfo" : {
       "title" : "İşletim sistemi güncellemesi denetlenemedi",
       "description" : "Bir hata oluştu. Lütfen tekrar deneyin veya şüpheniz varsa Ledger Destek ile iletişime geçin."
-    },
-    "TezosUnrevealedAccount" : {
-      "title" : "Takas yapılamıyor: Tezos hesabıyla başlangıç gönderimi/yetki devri gerekiyor veya pariteyi değiştirin."
     }
   },
   "cryptoOrg" : {
