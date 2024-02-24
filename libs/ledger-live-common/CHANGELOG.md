@@ -1,5 +1,33 @@
 # @ledgerhq/live-common
 
+## 33.7.0-nightly.0
+
+### Minor Changes
+
+- [#6172](https://github.com/LedgerHQ/ledger-live/pull/6172) [`7fb3eb2`](https://github.com/LedgerHQ/ledger-live/commit/7fb3eb266acdca143c94d2fce74329809ebfbb79) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Remove API injection in coin-module
+
+- [#6189](https://github.com/LedgerHQ/ledger-live/pull/6189) [`fa4886c`](https://github.com/LedgerHQ/ledger-live/commit/fa4886ce7bf90e1f97fa08075fb2c7e6328c82ee) Thanks [@overcat](https://github.com/overcat)! - Bump stellar-sdk from 10.4.1 to 11.2.2.
+
+### Patch Changes
+
+- [#6252](https://github.com/LedgerHQ/ledger-live/pull/6252) [`c59ef09`](https://github.com/LedgerHQ/ledger-live/commit/c59ef091e6bb915ae7180be7767a9751451275af) Thanks [@mikhd](https://github.com/mikhd)! - Update solana delegate operation values and extra data to fix graph history numbers
+
+- [#6212](https://github.com/LedgerHQ/ledger-live/pull/6212) [`e7bff4e`](https://github.com/LedgerHQ/ledger-live/commit/e7bff4e3e767c2d50c5f57938cd34378359776cd) Thanks [@lvndry](https://github.com/lvndry)! - bitcoin and evm default live config
+
+- [#6148](https://github.com/LedgerHQ/ledger-live/pull/6148) [`a0f74f7`](https://github.com/LedgerHQ/ledger-live/commit/a0f74f786fa91aeebfe018b3d1168f47e197bb1d) Thanks [@carlosala](https://github.com/carlosala)! - Replace `@zondax/izari-filecoin` deprecated library by `iso-filecoin`.
+
+- [#6206](https://github.com/LedgerHQ/ledger-live/pull/6206) [`ccd8e2f`](https://github.com/LedgerHQ/ledger-live/commit/ccd8e2f915be87cf401cfdb318bcaa1b671cb21e) Thanks [@pavanvora](https://github.com/pavanvora)! - Cardano stake button fix
+
+- Updated dependencies [[`7fb3eb2`](https://github.com/LedgerHQ/ledger-live/commit/7fb3eb266acdca143c94d2fce74329809ebfbb79)]:
+  - @ledgerhq/coin-algorand@0.4.0-nightly.0
+  - @ledgerhq/coin-polkadot@0.6.0-nightly.0
+  - @ledgerhq/live-network@1.2.0-nightly.0
+  - @ledgerhq/coin-evm@0.12.4-nightly.0
+  - @ledgerhq/coin-near@0.3.11-nightly.0
+  - @ledgerhq/live-countervalues@0.1.3-nightly.0
+  - @ledgerhq/live-nft@0.2.2-nightly.0
+  - @ledgerhq/live-countervalues-react@0.1.3-nightly.0
+
 ## 33.6.1
 
 ### Patch Changes

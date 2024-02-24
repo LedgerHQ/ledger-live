@@ -1,5 +1,12 @@
 # @ledgerhq/live-countervalues
 
+## 0.1.3-nightly.0
+
+### Patch Changes
+
+- Updated dependencies [[`7fb3eb2`](https://github.com/LedgerHQ/ledger-live/commit/7fb3eb266acdca143c94d2fce74329809ebfbb79)]:
+  - @ledgerhq/live-network@1.2.0-nightly.0
+
 ## 0.1.2
 
 ### Patch Changes
