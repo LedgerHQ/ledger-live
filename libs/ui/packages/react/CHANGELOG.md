@@ -1,41 +1,22 @@
 # @ledgerhq/react-ui
 
-## 0.14.15-nightly.4
+## 0.14.15
 
 ### Patch Changes
 
-- [#6099](https://github.com/LedgerHQ/ledger-live/pull/6099) [`486b0c8`](https://github.com/LedgerHQ/ledger-live/commit/486b0c8993715ce67a90b0a6c4fe177c04905719) Thanks [@mle-gall](https://github.com/mle-gall)! - Storybook Update : select control fix, mdx support on react, update of icons and icons doc.
+- [#6165](https://github.com/LedgerHQ/ledger-live/pull/6165) [`e06087e`](https://github.com/LedgerHQ/ledger-live/commit/e06087eadd39b83873db32dde8a1d919cf3708a9) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Add new Carousel and remove old and unused one
 
-- Updated dependencies [[`486b0c8`](https://github.com/LedgerHQ/ledger-live/commit/486b0c8993715ce67a90b0a6c4fe177c04905719), [`dfac39b`](https://github.com/LedgerHQ/ledger-live/commit/dfac39b2086f0475d1bc8065032bfe27cbf424f6)]:
-  - @ledgerhq/icons-ui@0.6.3-nightly.0
-  - @ledgerhq/crypto-icons-ui@1.1.0-nightly.3
+- Updated dependencies [[`26f343b`](https://github.com/LedgerHQ/ledger-live/commit/26f343b3c08d06ce6e812947d4c63a6e5bae8a9e), [`f882dde`](https://github.com/LedgerHQ/ledger-live/commit/f882dde22ec194c5cd3dd9413b8c103108eba820)]:
+  - @ledgerhq/crypto-icons-ui@1.0.2
 
-## 0.14.15-nightly.3
-
-### Patch Changes
-
-- Updated dependencies [[`4715e4c`](https://github.com/LedgerHQ/ledger-live/commit/4715e4c411fa2396330ebcb810aeb6bfc9892e88)]:
-  - @ledgerhq/crypto-icons-ui@1.0.2-nightly.2
-
-## 0.14.15-nightly.2
-
-### Patch Changes
-
-- Updated dependencies [[`8096795`](https://github.com/LedgerHQ/ledger-live/commit/80967954758a5e1d2960ac593fc6314391737558)]:
-  - @ledgerhq/crypto-icons-ui@1.0.2-nightly.1
-
-## 0.14.15-nightly.1
+## 0.14.15-next.0
 
 ### Patch Changes
 
 - [#6031](https://github.com/LedgerHQ/ledger-live/pull/6031) [`ca5625c`](https://github.com/LedgerHQ/ledger-live/commit/ca5625c9f5a4293e9a78d630e24c884efed00a9f) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Add new Carousel and remove old and unused one
 
-## 0.14.15-nightly.0
-
-### Patch Changes
-
-- Updated dependencies [[`97bafa2`](https://github.com/LedgerHQ/ledger-live/commit/97bafa2573436572fca63469b13214bfcd7eb85c)]:
-  - @ledgerhq/crypto-icons-ui@1.0.2-nightly.0
+- Updated dependencies [[`97bafa2`](https://github.com/LedgerHQ/ledger-live/commit/97bafa2573436572fca63469b13214bfcd7eb85c), [`8096795`](https://github.com/LedgerHQ/ledger-live/commit/80967954758a5e1d2960ac593fc6314391737558)]:
+  - @ledgerhq/crypto-icons-ui@1.0.2-next.0
 
 ## 0.14.14
 

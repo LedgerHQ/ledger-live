@@ -1,17 +1,30 @@
 # @ledgerhq/hw-app-near
 
-## 6.28.4-nightly.1
+## 6.28.5
 
 ### Patch Changes
 
-- [#6262](https://github.com/LedgerHQ/ledger-live/pull/6262) [`0dd1546`](https://github.com/LedgerHQ/ledger-live/commit/0dd15467070cbf7fcbb9d9055a4535f6a25b2ad0) Thanks [@JesseKuntz](https://github.com/JesseKuntz)! - Updating the near-api-js library and fetching the NEAR staking positions from the node rather than the kitwallet API.
+- [#6279](https://github.com/LedgerHQ/ledger-live/pull/6279) [`3e28615`](https://github.com/LedgerHQ/ledger-live/commit/3e28615a8d5edbec3eff1e93207bf0e9d017666a) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Updating the near-api-js library and fetching the NEAR staking positions from the node rather than the kitwallet API.
 
-## 6.28.4-nightly.0
+## 6.28.5-hotfix.0
+
+### Patch Changes
+
+- [#6279](https://github.com/LedgerHQ/ledger-live/pull/6279) [`3e28615`](https://github.com/LedgerHQ/ledger-live/commit/3e28615a8d5edbec3eff1e93207bf0e9d017666a) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Updating the near-api-js library and fetching the NEAR staking positions from the node rather than the kitwallet API.
+
+## 6.28.4
 
 ### Patch Changes
 
 - Updated dependencies []:
-  - @ledgerhq/hw-transport@6.30.4-nightly.0
+  - @ledgerhq/hw-transport@6.30.4
+
+## 6.28.4-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.30.4-next.0
 
 ## 6.28.3
 

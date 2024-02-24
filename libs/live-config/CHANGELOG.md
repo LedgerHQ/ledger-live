@@ -1,25 +1,28 @@
 # @ledgerhq/live-config
 
-## 2.0.0-nightly.2
+## 2.0.0
+
+### Major Changes
+
+- [#6165](https://github.com/LedgerHQ/ledger-live/pull/6165) [`65ce8a1`](https://github.com/LedgerHQ/ledger-live/commit/65ce8a16d8c10e2ffc68cd01ecd86b247506fa91) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - update live config lib
 
 ### Patch Changes
 
-- [#6053](https://github.com/LedgerHQ/ledger-live/pull/6053) [`f95785f`](https://github.com/LedgerHQ/ledger-live/commit/f95785fc6d6be852ce8fcda34c6d498e45010e0f) Thanks [@lvndry](https://github.com/lvndry)! - Make live-config backward-compatible
+- [#6165](https://github.com/LedgerHQ/ledger-live/pull/6165) [`1cb83b5`](https://github.com/LedgerHQ/ledger-live/commit/1cb83b5baa4603e22f391609438e349ca0ce9b0e) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - feat(LIVE-10989): dynamic manifest id for swap live app in feature flag
 
-## 2.0.0-nightly.1
+- [#6165](https://github.com/LedgerHQ/ledger-live/pull/6165) [`66504d5`](https://github.com/LedgerHQ/ledger-live/commit/66504d5874891f4432c5e31efdf7c59a9e5b2cc9) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Make live-config backward-compatible
+
+## 2.0.0-next.0
 
 ### Major Changes
 
 - [#5731](https://github.com/LedgerHQ/ledger-live/pull/5731) [`18f170a`](https://github.com/LedgerHQ/ledger-live/commit/18f170afae57ce1a8f4553f865179b9b0d3a9180) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - update live config lib
 
-## 1.0.2-nightly.0
-
 ### Patch Changes
 
 - [#5974](https://github.com/LedgerHQ/ledger-live/pull/5974) [`b34f5cd`](https://github.com/LedgerHQ/ledger-live/commit/b34f5cdda0b7bf34750d258cc8b1c91304516360) Thanks [@cng-ledger](https://github.com/cng-ledger)! - feat(LIVE-10989): dynamic manifest id for swap live app in feature flag
 
-- Updated dependencies [[`b34f5cd`](https://github.com/LedgerHQ/ledger-live/commit/b34f5cdda0b7bf34750d258cc8b1c91304516360)]:
-  - @ledgerhq/types-live@6.44.1-nightly.0
+- [#6053](https://github.com/LedgerHQ/ledger-live/pull/6053) [`f95785f`](https://github.com/LedgerHQ/ledger-live/commit/f95785fc6d6be852ce8fcda34c6d498e45010e0f) Thanks [@lvndry](https://github.com/lvndry)! - Make live-config backward-compatible
 
 ## 1.0.1
 

@@ -3593,22 +3593,33 @@
     "stake" : {
       "title" : "Multiplique suas posições de ETH",
       "subTitle" : "Aplique seu ETH e multiplique suas posições recebendo recompensas diárias diretamente no Ledger Live.",
+      "tagMinimum" : "Requer {{min}} ETH",
+      "kiln_pooling" : {
+        "title" : "Reserva de staking Kiln",
+        "description" : "Sem mínimo de staking Ganhe rendimentos compostos automaticamente, sem tempo de bloqueio.",
+        "supportLink" : "Saiba mais sobre a reserva da Kiln"
+      },
       "lido" : {
-        "title" : "Ganhar com a Lido",
-        "description" : "Faça staking de Ethereum com a Lido e ganhe recompensas diariamente. Sem período de bloqueio. Sem mínimo.",
+        "title" : "Lido",
+        "description" : "Faça staking de qualquer quantia de ETH para obter liquidez instantânea e recompensas diárias.",
         "supportLink" : "Saiba mais sobre a Lido"
+      },
+      "stader-eth" : {
+        "title" : "Stader Labs",
+        "description" : "Sem mínimo de staking Ganhe rendimentos compostos automaticamente com acesso instantâneo a liquidez.",
+        "supportLink" : "Saiba mais sobre a reserva da Stader"
       },
       "kiln" : {
         "title" : "Staking dedicado Kiln",
         "tag" : "Requer 32 ETH",
-        "description" : "Aplique em staking com validadores dedicados. Requer múltiplos de 32 ETH. Recompensas são resgatadas manualmente. Saia a qualquer momento.",
+        "description" : "Faça staking de mais de 32 ETH em validadores dedicados e resgate recompensas facilmente.",
         "supportLink" : "Saiba mais sobre o validador Kiln"
       },
-      "kiln_pooling" : {
-        "title" : "Reserva de staking Kiln",
-        "tag" : "Sem mínimo",
-        "description" : "Junte-se a uma reserva de staking. Não requer mínimo de ETH. Recompensas são compostas automaticamente Saia a qualquer momento.",
-        "supportLink" : "Saiba mais sobre a reserva da Kiln"
+      "figment" : {
+        "title" : "Figment",
+        "tag" : "Requer 32 ETH",
+        "description" : "Faça staking de mais de 32 ETH em validadores dedicados e receba recompensas enviadas automaticamente para sua conta.",
+        "supportLink" : "Saiba mais sobre o validador Figment"
       }
     }
   },
@@ -5339,7 +5350,7 @@
       "title" : "Endereço do destinatário inativo. Envie pelo menos {{minimalAmount}} para ativá-lo"
     },
     "NotEnoughGas" : {
-      "title" : "Você precisa de {{fees}} {{ticker}} para pagar as taxas de rede desta troca, já que está na rede {{cryptoName}}. <link0>Comprar {{ticker}}</link0>"
+      "title" : "Você precisa de {{fees}} {{ticker}} em sua conta para pagar as taxas de transação na rede {{cryptoName}}.  <link0>Compre {{ticker}}</link0> ou deposite mais em sua conta."
     },
     "NotEnoughGasSwap" : {
       "title" : "Você precisa de {{fees}} {{ticker}} para pagar as taxas de rede desta troca, já que está na rede {{cryptoName}}. <link0>Comprar {{ticker}}</link0>"

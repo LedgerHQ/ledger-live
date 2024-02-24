@@ -1,12 +1,12 @@
 # @ledgerhq/wallet-api-exchange-module
 
-## 0.3.0-nightly.1
+## 0.3.0
 
-### Patch Changes
+### Minor Changes
 
-- [#6218](https://github.com/LedgerHQ/ledger-live/pull/6218) [`3b6b538`](https://github.com/LedgerHQ/ledger-live/commit/3b6b53800e29a47ff5792c17221fbfba31cd8500) Thanks [@Wozacosta](https://github.com/Wozacosta)! - use latest version of wallet api packages to handle parentAccountId being passed when requesting accounts
+- [#6165](https://github.com/LedgerHQ/ledger-live/pull/6165) [`23d9911`](https://github.com/LedgerHQ/ledger-live/commit/23d991193313f49d25d5011c0f9fb1310fd97e69) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - update start exchange to support swap based on provider
 
-## 0.3.0-nightly.0
+## 0.3.0-next.0
 
 ### Minor Changes
 

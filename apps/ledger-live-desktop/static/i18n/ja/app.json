@@ -3593,22 +3593,33 @@
     "stake" : {
       "title" : "所有するETHを運用",
       "subTitle" : "ETHをステーキングして、報酬をLedger Liveで直接受け取り、資産を増やしましょう。",
+      "tagMinimum" : "{{min}}ETHが必要",
+      "kiln_pooling" : {
+        "title" : "Kilnステーキングプール",
+        "description" : "ステーキングの最低数量設定なし。ロック（凍結）期間なしで自動複利報酬を獲得。",
+        "supportLink" : "Kilnプールについての詳細を確認"
+      },
       "lido" : {
-        "title" : "Lidoで報酬を稼ぐ",
-        "description" : "LidoでEthereumをステーキングして、毎日報酬を獲得しましょう。ロックアップ（凍結）期間なし。最小数量なし。",
+        "title" : "Lido",
+        "description" : "流動性と毎日の報酬を目指して、任意の量のETHをステーキング。",
         "supportLink" : "Lidoの詳細について"
+      },
+      "stader-eth" : {
+        "title" : "Stader Labs",
+        "description" : "ステーキングの最低数量設定なし。即時の流動性を利用して、自動複利報酬を獲得。",
+        "supportLink" : "Staderプールの詳細を見る"
       },
       "kiln" : {
         "title" : "Kiln専用ステーキング",
         "tag" : "32ETHが必要",
-        "description" : "専用のバリデーターでステーキングできます。32ETHの倍数が必要です。報酬は手動で請求されます。いつでも終了できます。",
+        "description" : "専用バリデーターに32ETH超をステーキングして、簡単に報酬を獲得。",
         "supportLink" : "Kilnバリデーターの詳細を確認"
       },
-      "kiln_pooling" : {
-        "title" : "Kilnステーキングプール",
-        "tag" : "最小数量なし",
-        "description" : "ステーキングプールに参加できます。ETHの必要最低額はありません。報酬は自動的に複利で計算されます。いつでも終了できます。",
-        "supportLink" : "Kilnプールについての詳細を確認"
+      "figment" : {
+        "title" : "Figment",
+        "tag" : "32ETHが必要",
+        "description" : "専用バリデーターに32ETH以上をステーキングして、アカウントで自動的に報酬を獲得しましょう。",
+        "supportLink" : "Figmentバリデーターの詳細を見る"
       }
     }
   },
@@ -5339,7 +5350,7 @@
       "title" : "送付先アドレスが無効です。少なくとも{{minimalAmount}}以上を送付して有効化してください。"
     },
     "NotEnoughGas" : {
-      "title" : "{{cryptoName}}ネットワークを使用しているため、スワップするにはネットワーク手数料{{fees}}{{ticker}}が必要です。<link0>{{ticker}}を購入する</link0>"
+      "title" : "{{cryptoName}}ネットワークでのトランザクション手数料を支払うには、アカウントに{{fees}}{{ticker}}が必要です。<link0>{{ticker}}を購入する</link0>か、アカウントにさらに入金してください。"
     },
     "NotEnoughGasSwap" : {
       "title" : "{{cryptoName}}ネットワークを使用しているため、スワップするにはネットワーク手数料{{fees}}{{ticker}}が必要です。<link0>{{ticker}}を購入する</link0>"
