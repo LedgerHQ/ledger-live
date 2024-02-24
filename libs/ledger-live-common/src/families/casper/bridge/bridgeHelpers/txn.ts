@@ -10,6 +10,7 @@ import { casperAccountHashFromPublicKey, casperGetCLPublicKey, isAddressValid } 
 import { ITxnHistoryData } from "../../api/types";
 import { getEstimatedFees } from "./fee";
 import { CasperOperation } from "../../types";
+import invariant from "invariant";
 
 export const getUnit = (): Unit => getCryptoCurrencyById("casper").units[0];
 
@@ -22,7 +23,15 @@ export function mapTxToOps(
     const ops: CasperOperation[] = [];
     const { timestamp, caller_public_key, args: txArgs, deploy_hash, error_message } = tx;
     const fromAccount = casperAccountHashFromPublicKey(caller_public_key);
-    const toAccount = txArgs.target.parsed;
+    let toAccount;
+
+    if (txArgs.target.cl_type === "PublicKey") {
+      toAccount = casperAccountHashFromPublicKey(txArgs.target.parsed);
+    } else {
+      toAccount = txArgs.target.parsed;
+    }
+    invariant(toAccount, "toAccount is required");
+    invariant(fromAccount, "fromAccount is required");
 
     const date = new Date(timestamp);
     const value = new BigNumber(txArgs.amount.parsed);
