@@ -15,10 +15,10 @@ describe("Market page for user with no device", () => {
     portfolioPage = new PortfolioPage();
     marketPage = new MarketPage();
     getDevicePage = new GetDevicePage();
+    await portfolioPage.waitForPortfolioPageToLoad();
   });
 
   it("should find the researched crypto", async () => {
-    await portfolioPage.waitForPortfolioPageToLoad();
     await portfolioPage.openWalletTabMarket();
     await marketPage.searchAsset("btc");
     await expect(getElementByText("Bitcoin (BTC)")).toBeVisible();

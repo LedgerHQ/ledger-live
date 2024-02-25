@@ -21,7 +21,11 @@ export async function launchApp() {
   serverBridge.close();
   serverBridge.init(port);
   await device.launchApp({
-    launchArgs: { wsPort: port },
+    launchArgs: {
+      wsPort: port,
+      detoxURLBlacklistRegex:
+        '\\(".*sdk.*.braze.*",".*.googleapis.com/.*",".*app.adjust.*",".*clients3.google.com.*"\\)',
+    },
     languageAndLocale: {
       language: "en-US",
       locale: "en-US",

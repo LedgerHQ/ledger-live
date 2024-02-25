@@ -4,6 +4,7 @@ import {
   tapByElement,
   tapByText,
   scrollToText,
+  typeTextByElement,
 } from "../../helpers";
 
 export default class GeneralSettingsPage {
@@ -19,7 +20,7 @@ export default class GeneralSettingsPage {
   }
 
   async enterNewPassword(passwordText: string) {
-    await this.passwordTextInput().typeText(passwordText);
+    await typeTextByElement(this.passwordTextInput(), passwordText);
   }
 
   async confirm() {
