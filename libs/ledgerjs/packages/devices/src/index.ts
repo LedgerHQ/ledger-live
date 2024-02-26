@@ -99,20 +99,20 @@ const devices: { [key in DeviceModelId]: DeviceModel } = {
     ],
   },
   [DeviceModelId.europa]: {
-    id: DeviceModelId.europa,
-    productName: "Ledger Europa",
-    productIdMM: 0x70, // TODO: TBD
-    legacyUsbProductId: 0x0007, // TODO: TBD
+    id: DeviceModelId.europa, // TODO: change to the real product's name one day
+    productName: "Ledger Europa", // TODO: change to the real product's name one day
+    productIdMM: 0x30,
+    legacyUsbProductId: 0x0003,
     usbOnly: false,
-    memorySize: 1533 * 1024, // TODO: TBD
-    masks: [0x33300000], // TODO: TBD
-    getBlockSize: (_firmwareVersion: string): number => 32, // TODO: TBD
+    memorySize: 1533 * 1024,
+    masks: [0x33300000],
+    getBlockSize: (_firmwareVersion: string): number => 32,
     bluetoothSpec: [
       {
-        serviceUuid: "13d63400-2c97-7004-0000-4c6564676572", // TODO: TBD
-        notifyUuid: "13d63400-2c97-7004-0001-4c6564676572", // TODO: TBD
-        writeUuid: "13d63400-2c97-7004-0002-4c6564676572", // TODO: TBD
-        writeCmdUuid: "13d63400-2c97-7004-0003-4c6564676572", // TODO: TBD
+        serviceUuid: "13d63400-2c97-3004-3000-4c6564676572",
+        notifyUuid: "13d63400-2c97-3004-3001-4c6564676572",
+        writeUuid: "13d63400-2c97-3004-3002-4c6564676572",
+        writeCmdUuid: "13d63400-2c97-3004-3003-4c6564676572",
       },
     ],
   },
