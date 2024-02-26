@@ -26,18 +26,6 @@ const ConfirmAlert = ({ t, transaction, typeTransaction, fields }: Props) => {
     [fields],
   );
 
-  // TODO: if confirmed by PO, remove also apps/ledger-live-desktop/src/renderer/families/evm/TransactionConfirmFields.tsx
-  // if (Warning) {
-  //   return (
-  //     <Warning
-  //       account={account}
-  //       parentAccount={parentAccount}
-  //       transaction={transaction}
-  //       recipientWording={recipientWording}
-  //       status={status}
-  //     />
-  //   );
-  // }
   let alertContentKey = "TransactionConfirm.doubleCheck";
   if (typeTransaction === "Approve") {
     alertContentKey = amountTransaction.includes("Unlimited")

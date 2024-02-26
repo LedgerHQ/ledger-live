@@ -161,7 +161,6 @@ const TransactionConfirm = ({
     ...commonFieldComponents,
     ...r?.fieldComponents,
   };
-  // const Warning = r?.warning;
   const Title = r?.title;
   const Footer = r?.footer;
 
