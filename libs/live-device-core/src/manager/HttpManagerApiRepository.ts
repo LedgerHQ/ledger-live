@@ -5,7 +5,7 @@ import URL from "url";
 
 import { getUserHashes } from "../utils/getUserHash";
 import { ManagerApiRepository } from "./ManagerApiRepository";
-import { getProviderIdUseCase } from "./use-cases/getProviderIdUseCase";
+import { getProviderIdUseCase } from "./getProviderIdUseCase";
 import {
   ApplicationV2Entity,
   CatalogForDeviceOptions,

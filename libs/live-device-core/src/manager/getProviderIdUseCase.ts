@@ -1,4 +1,4 @@
-import { GetProviderIdUseCaseOptions } from "../../types";
+import { GetProviderIdUseCaseOptions } from "../types";
 
 export const PROVIDERS: Record<string, number> = {
   default: 1,

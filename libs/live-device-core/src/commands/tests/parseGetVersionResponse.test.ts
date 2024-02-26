@@ -1,4 +1,4 @@
-import { parseGetVersionResponse } from "./parseGetVersionResponse";
+import { parseGetVersionResponse } from "../parseGetVersionResponse";
 
 describe("parseGetVersionResult", () => {
   it("correctly parses an arbitrary regular result buffer", () => {

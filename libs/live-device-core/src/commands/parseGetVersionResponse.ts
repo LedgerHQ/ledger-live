@@ -2,7 +2,7 @@ import { identifyTargetId } from "@ledgerhq/devices";
 import { isDeviceLocalizationSupported } from "./isDeviceLocalizationSupported";
 import { isHardwareVersionSupported } from "./isHardwareVersionSupported";
 import { isBootloaderVersionSupported } from "./isBootloaderVersionSupported";
-import { FirmwareInfoEntity } from "../../types";
+import { FirmwareInfoEntity } from "../types";
 
 export function parseGetVersionResponse(response: Buffer): FirmwareInfoEntity {
   const data = response.slice(0, response.length - 2);

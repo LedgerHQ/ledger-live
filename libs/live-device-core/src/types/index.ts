@@ -1,3 +1,5 @@
+import { ManagerApiRepository } from "../manager/ManagerApiRepository";
+
 type Language = "french" | "english" | "spanish";
 
 enum AppType {
@@ -248,6 +250,13 @@ export type FirmwareUpdateContext = {
   osu: OsuFirmware;
   final: FinalFirmware;
   shouldFlashMCU: boolean;
+};
+
+export type GetLatestFirmwareForDeviceOptions = {
+  deviceInfo: DeviceInfoEntity;
+  providerId: number;
+  userId: string;
+  managerApiRepository: ManagerApiRepository;
 };
 
 // Commands

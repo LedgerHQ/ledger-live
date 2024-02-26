@@ -10,5 +10,6 @@
     "lib": ["es2020", "dom"],
     "outDir": "lib"
   },
-  "include": ["src/**/*", "src/index.ts"]
+  "include": ["src/**/*", "src/index.ts"],
+  "exclude": ["src/**/tests"]
 }

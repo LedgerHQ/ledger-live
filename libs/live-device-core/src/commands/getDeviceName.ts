@@ -1,6 +1,6 @@
 import Transport, { StatusCodes } from "@ledgerhq/hw-transport";
 import { LocalTracer } from "@ledgerhq/logs";
-import { parseGetDeviceNameResponse } from "./use-cases/parseGetDeviceNameResponse";
+import { parseGetDeviceNameResponse } from "./parseGetDeviceNameResponse";
 import { APDU } from "../types";
 
 /**

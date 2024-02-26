@@ -1,4 +1,4 @@
-import { parseGetDeviceNameResponse } from "./parseGetDeviceNameResponse";
+import { parseGetDeviceNameResponse } from "../parseGetDeviceNameResponse";
 
 describe("getDeviceName", () => {
   it("should return name if available", () => {

@@ -1,5 +1,5 @@
 import { DeviceModelId } from "@ledgerhq/devices";
-import { isDeviceLocalizationSupported } from "./isDeviceLocalizationSupported";
+import { isDeviceLocalizationSupported } from "../isDeviceLocalizationSupported";
 const { nanoS, nanoSP, nanoX, stax } = DeviceModelId;
 
 test("isDeviceLocalizationSupported", () => {

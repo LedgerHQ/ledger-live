@@ -1,14 +1,14 @@
 import { FirmwareNotRecognized, NetworkDown } from "@ledgerhq/errors";
-import { HttpManagerApiRepository } from "./HttpManagerApiRepository";
+import { HttpManagerApiRepository } from "../HttpManagerApiRepository";
 import {
   DeviceVersionEntity,
   DeviceInfoEntity,
   LanguagePackageEntity,
   LanguagePackageResponseEntity,
   FinalFirmware,
-} from "../types";
+} from "../../types";
 
-const getUserHashesModule = jest.requireActual("../utils/getUserHash");
+const getUserHashesModule = jest.requireActual("../../utils/getUserHash");
 const networkModule = jest.requireActual("@ledgerhq/live-network/network");
 
 describe("HttpManagerApiRepository", () => {

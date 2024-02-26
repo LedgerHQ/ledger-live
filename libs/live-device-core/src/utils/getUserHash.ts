@@ -1,6 +1,6 @@
 import sha from "sha.js";
 
-export function sha256(buffer: Buffer | string) {
+function sha256(buffer: Buffer | string) {
   return sha("sha256").update(buffer).digest();
 }
 
@@ -16,6 +16,7 @@ function userHashesPerUserId(userId: string) {
 }
 
 let cache: { userId: string; value: { firmwareSalt: string; endpointOverrides100: number } };
+
 export function getUserHashes(userId: string) {
   if (cache && userId === cache.userId) {
     return cache.value;

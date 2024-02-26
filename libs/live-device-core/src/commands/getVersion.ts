@@ -1,5 +1,5 @@
 import Transport from "@ledgerhq/hw-transport";
-import { parseGetVersionResponse } from "./use-cases/parseGetVersionResponse";
+import { parseGetVersionResponse } from "./parseGetVersionResponse";
 import { APDU, FirmwareInfoEntity, GetVersionOptions } from "../types";
 
 export const GET_VERSION_APDU: APDU = [0xe0, 0x01, 0x00, 0x00, undefined];

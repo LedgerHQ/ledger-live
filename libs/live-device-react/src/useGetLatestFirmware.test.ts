@@ -4,7 +4,7 @@ import {
   type DeviceInfoEntity,
   type FinalFirmware,
   type OsuFirmware,
-} from "@ledgerhq/live-device-core/";
+} from "@ledgerhq/live-device-core";
 
 import type { UseGetLatestFirmwareForDeviceOptions } from "./types";
 import { useGetLatestFirmware } from "./useGetLatestFirmware";

@@ -1,5 +1,6 @@
-module.exports = {
-  globalSetup: "<rootDir>/jest-global-setup.js",
+import type { Config } from "jest";
+
+const config: Config = {
   transform: {
     "^.+\\.(ts|tsx)?$": [
       "ts-jest",
@@ -10,5 +11,8 @@ module.exports = {
       },
     ],
   },
+  testEnvironment: "jsdom",
   testPathIgnorePatterns: ["lib/", "lib-es/"],
 };
+
+export default config;
