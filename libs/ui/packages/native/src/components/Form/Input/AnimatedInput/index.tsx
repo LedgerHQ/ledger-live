@@ -2,7 +2,7 @@ import React from "react";
 import { BaseInput } from "..";
 import { type InputProps as BaseInputType } from "../BaseInput/index";
 import styled, { useTheme } from "styled-components/native";
-import { StyleProp, View, ViewProps, ViewStyle } from "react-native";
+import { StyleProp, View, ViewProps, ViewStyle, TextInput } from "react-native";
 
 import { inputTextColor, inputStatusColors, getInputStatus } from "./inputTextColor";
 import { useAnimatedInputFocus } from "./useAnimatedInputFocus";
@@ -23,7 +23,10 @@ const InputContainer = styled(View)<InputContainerProps>`
   height: fit-content;
 `;
 
-const AnimatedInput = ({ style = { width: "100%" }, ...textInputProps }: AnimatedInputProps) => {
+const AnimatedInput = (
+  { style = { width: "100%" }, ...textInputProps }: AnimatedInputProps,
+  ref?: React.ForwardedRef<TextInput> | null,
+) => {
   const {
     placeholder,
     onFocus: onFocusCallback,
@@ -46,6 +49,7 @@ const AnimatedInput = ({ style = { width: "100%" }, ...textInputProps }: Animate
     <InputContainer status={inputStatus} style={style}>
       {placeholder && <AnimatedNotchedLabel placeholder={placeholder} inputStatus={inputStatus} />}
       <BaseInput
+        ref={ref}
         onFocus={onFocus}
         onBlur={onBlur}
         error={error}
@@ -61,9 +65,6 @@ const AnimatedInput = ({ style = { width: "100%" }, ...textInputProps }: Animate
           height: inputStatus !== "error" ? 56 : 48,
         }}
         baseInputContainerStyle={{
-          paddingTop: 15,
-          paddingBottom: 15,
-          paddingLeft: 14,
           paddingRight: displayClearCross ? 8 : 14,
         }}
         inputErrorContainerStyles={{
@@ -77,4 +78,4 @@ const AnimatedInput = ({ style = { width: "100%" }, ...textInputProps }: Animate
   );
 };
 
-export default AnimatedInput;
+export default React.forwardRef(AnimatedInput);
