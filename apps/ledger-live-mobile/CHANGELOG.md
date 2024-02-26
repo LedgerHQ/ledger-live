@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.41.0-next.1
+
+### Patch Changes
+
+- [#6313](https://github.com/LedgerHQ/ledger-live/pull/6313) [`453eff2`](https://github.com/LedgerHQ/ledger-live/commit/453eff28843f1e71aebe231098562a79abbff209) Thanks [@ldg-smartling-sa](https://github.com/ldg-smartling-sa)! - Translation update
+
 ## 3.41.0-next.0
 
 ### Minor Changes
