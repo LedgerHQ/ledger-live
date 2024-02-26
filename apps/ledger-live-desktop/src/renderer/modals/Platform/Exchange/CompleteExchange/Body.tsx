@@ -87,8 +87,12 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
   useEffect(() => {
     if (error) {
       onCancel(error);
-      if (!(error instanceof WrongDeviceForAccount)) {
-        onClose?.();
+      switch (error.name) {
+        case "WrongDeviceForAccount":
+        case "SwapCompleteExchangeError":
+          break;
+        default:
+          onClose?.();
       }
     }
   }, [onCancel, error, onClose]);
