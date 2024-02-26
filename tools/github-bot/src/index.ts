@@ -6,6 +6,7 @@ import { generateScreenshots } from "./commands/generate-screenshots";
 import { runDesktopTestSuite } from "./commands/full-suite";
 import { regenPods } from "./commands/regen-pods";
 import { regenDoc } from "./commands/regen-doc";
+import { autoClose } from "./features/autoClose";
 
 export default (app: Probot) => {
   /* Commands */
@@ -18,6 +19,11 @@ export default (app: Probot) => {
   regenDoc(app);
   // /full-lld-tests
   runDesktopTestSuite(app);
+
+  /* PR stuff */
+
+  // trigger to autoclose PR when not respecting guidelines
+  autoClose(app);
 
   /* CI stuff */
 

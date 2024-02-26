@@ -3593,22 +3593,33 @@
     "stake" : {
       "title" : "ETH bakiyenizi artırın",
       "subTitle" : "ETH varlıklarınızı stake ederek ve doğrudan Ledger Live hesabınıza günlük ödüller alarak bakiyenizi artırın.",
+      "tagMinimum" : "{{min}} ETH gerektirir",
+      "kiln_pooling" : {
+        "title" : "Kiln staking havuzu",
+        "description" : "Alt limit olmadan stake edin. Kilitleme süresi olmadan, otomatik olarak bileştirilen ödüller kazanın.",
+        "supportLink" : "Kiln havuzu hakkında daha fazla bilgi edinin"
+      },
       "lido" : {
-        "title" : "Lido ile kazanın",
-        "description" : "Ethereum varlıklarınızı Lido ile stake edin ve her gün ödül kazanın. Kilitleme süresi yok. Minimum yatırma miktarı yok.",
+        "title" : "Lido",
+        "description" : "Anında likidite ve günlük ödüller için herhangi bir miktarda ETH stake edin.",
         "supportLink" : "Lideo hakkında daha fazla bilgi alın"
+      },
+      "stader-eth" : {
+        "title" : "Stader Labs",
+        "description" : "Alt limit olmadan stake edin. Anında likiditeye erişerek otomatik olarak bileştirilen ödüller kazanın.",
+        "supportLink" : "Stader havuzu hakkında daha fazla bilgi edinin"
       },
       "kiln" : {
         "title" : "Kiln ile özel staking",
         "tag" : "32 ETH gerektirir",
-        "description" : "Özel doğrulayıcılarla stake edin. 32 ETH ve katlarını gerektirir. Ödüller manuel olarak alınır. İstediğiniz zaman çıkın.",
+        "description" : "Özel doğrulayıcılarda en az 32 ETH stake edin ve ödülleri kolayca alın.",
         "supportLink" : "Kiln doğrulayıcısı hakkında daha fazla bilgi edinin"
       },
-      "kiln_pooling" : {
-        "title" : "Kiln staking havuzu",
-        "tag" : "Alt limit yok",
-        "description" : "Bir staking havuzuna katılın. ETH alt limiti bulunmaz. Ödüller otomatik olarak birleştirilir. İstediğiniz zaman çıkın.",
-        "supportLink" : "Kiln havuzu hakkında daha fazla bilgi edinin"
+      "figment" : {
+        "title" : "Figment",
+        "tag" : "32 ETH gerektirir",
+        "description" : "Özel doğrulayıcılarda en az 32 ETH stake edin ve ödüller otomatik olarak hesabınıza gönderilsin.",
+        "supportLink" : "Figment doğrulayıcısı hakkında daha fazla bilgi edinin"
       }
     }
   },
@@ -5339,7 +5350,7 @@
       "title" : "Alıcı adresi etkin değil. Etkinleştirmek için en az {{minimalAmount}} gönderin"
     },
     "NotEnoughGas" : {
-      "title" : "{{cryptoName}} ağında takas işlemi için {{fees}} {{ticker}} ağ ücreti ödemeniz gerekiyor. <link0>{{ticker}} Satın Al</link0>"
+      "title" : "{{cryptoName}} ağındaki işlem ücretlerini ödemek için hesabınızda {{fees}} {{ticker}} olması gerekiyor.  <link0>{{ticker}} satın alın</link0> veya hesabınıza daha fazlasını yatırın."
     },
     "NotEnoughGasSwap" : {
       "title" : "{{cryptoName}} ağında takas işlemi için {{fees}} {{ticker}} ağ ücreti ödemeniz gerekiyor. <link0>{{ticker}} Satın Alın</link0>"
@@ -5729,7 +5740,7 @@
       "title" : "Ana ağ etkinleşmeden önce bir Taproot adresine fon göndermek güvenli değildir"
     },
     "SolanaAccountNotFunded" : {
-      "title" : "Hesap fonlanmadı"
+      "title" : "Hesap daha önce fonlanmamış"
     },
     "SolanaMemoIsTooLong" : {
       "title" : "Memo çok uzun Uzunluk en fazla {{maxLength}} olmalıdır"
