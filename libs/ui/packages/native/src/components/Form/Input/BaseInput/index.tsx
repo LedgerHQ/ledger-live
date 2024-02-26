@@ -76,21 +76,23 @@ export type InputProps<T = string> = Omit<CommonProps, "value" | "onChange"> & {
   inputErrorContainerStyles?: StyleProp<ViewStyle>;
   inputErrorColor?: string;
   showErrorIcon?: boolean;
+  hasBorder?: boolean;
   /**
    * Optional text color parameter.
    */
   color?: string;
 };
 
-const InputContainer = styled.View<Partial<CommonProps> & { focus?: boolean }>`
+const InputContainer = styled.View<Partial<CommonProps> & { focus?: boolean; hasBorder?: boolean }>`
   display: flex;
   flex-direction: row;
   width: 100%;
   background: ${(p) => p.theme.colors.background.main};
-  height: 56px;
-  border: ${(p) => `1px solid ${p.theme.colors.opacityDefault.c20}`};
+  height: 48px;
+  border: ${(p) => (p.hasBorder ? `1px solid ${p.theme.colors.opacityDefault.c20}` : "none")};
   border-radius: 8px;
   color: ${(p) => p.theme.colors.neutral.c100};
+  align-items: center;
   padding: 14px 16px;
 
   ${(p) =>
@@ -103,6 +105,7 @@ const InputContainer = styled.View<Partial<CommonProps> & { focus?: boolean }>`
   ${(p) =>
     p.focus &&
     !p.error &&
+    p.hasBorder &&
     css`
       border: 1px solid ${p.theme.colors.primary.c80};
     `};
@@ -111,13 +114,22 @@ const InputContainer = styled.View<Partial<CommonProps> & { focus?: boolean }>`
     p.error &&
     !p.disabled &&
     css`
-      border: 1px solid ${p.theme.colors.error.c50};
+      border: 1px solid ${p.theme.colors.error.c60};
     `};
 
   ${(p) =>
     p.disabled &&
+    p.hasBorder &&
     css`
       color: ${p.theme.colors.neutral.c60};
+      background: ${(p) => p.theme.colors.neutral.c30};
+    `};
+
+  ${(p) =>
+    p.disabled &&
+    !p.hasBorder &&
+    css`
+      color: ${p.theme.colors.opacityDefault.c10};
       background: ${(p) => p.theme.colors.neutral.c30};
     `};
 `;
@@ -130,23 +142,24 @@ const BaseInput = styled.TextInput.attrs((p) => ({
   width: 100%;
   border: 0;
   flex-shrink: 1;
-  padding: 14px 20px;
+  display: flex;
+  color: ${(p) => p.theme.colors.neutral.c100};
 `;
 
 const InputErrorText = styled(Text)`
-  color: ${(p) => p.theme.colors.error.c50};
+  color: ${(p) => p.theme.colors.error.c60};
 `;
 
 export const InputRenderLeftContainer = styled(FlexBox).attrs(() => ({
   alignItems: "center",
   flexDirection: "row",
-  pl: 16,
+  paddingRight: "8px",
 }))``;
 
 export const InputRenderRightContainer = styled(FlexBox).attrs(() => ({
   alignItems: "center",
   flexDirection: "row",
-  pr: 16,
+  paddingLeft: "8px",
 }))``;
 
 // Yes, this is dirty. If you can figure out a better way please change the code :).
@@ -166,6 +179,7 @@ function Input<T = string>(props: InputProps<T>, ref?: any): JSX.Element {
     serialize = IDENTITY,
     deserialize = IDENTITY,
     containerStyle,
+    hasBorder = true,
     inputContainerStyle,
     baseInputContainerStyle,
     inputErrorContainerStyles,
@@ -185,8 +199,8 @@ function Input<T = string>(props: InputProps<T>, ref?: any): JSX.Element {
 
   const handleChange = useCallback(
     (value: string) => {
-      onChange && onChange(deserialize(value));
-      onChangeText && onChangeText(value);
+      onChange?.(deserialize(value));
+      onChangeText?.(value);
     },
     [onChange, onChangeText, deserialize],
   );
@@ -200,7 +214,13 @@ function Input<T = string>(props: InputProps<T>, ref?: any): JSX.Element {
 
   return (
     <FlexBox width="100%" style={containerStyle ?? undefined}>
-      <InputContainer disabled={disabled} focus={focus} error={error} style={inputContainerStyle}>
+      <InputContainer
+        disabled={disabled}
+        focus={focus}
+        hasBorder={hasBorder}
+        error={error}
+        style={inputContainerStyle}
+      >
         {typeof renderLeft === "function" ? renderLeft(props, inputRef) : renderLeft}
         <BaseInput
           ref={inputRef}
@@ -213,11 +233,11 @@ function Input<T = string>(props: InputProps<T>, ref?: any): JSX.Element {
           error={error}
           onFocus={(e: any) => {
             setFocus(true);
-            typeof onFocus === "function" && onFocus(e);
+            onFocus?.(e);
           }}
           onBlur={(e: any) => {
             setFocus(false);
-            typeof onBlur === "function" && onBlur(e);
+            onBlur?.(e);
           }}
           style={{ ...(color ? { color: color } : {}), ...baseInputContainerStyle }}
         />
@@ -227,10 +247,10 @@ function Input<T = string>(props: InputProps<T>, ref?: any): JSX.Element {
         <FlexBox
           flexDirection="row"
           alignItems="center"
-          style={(inputErrorContainerStyles as ViewStyle) || { paddingLeft: "12px" }}
+          style={inputErrorContainerStyles as ViewStyle}
         >
           {showErrorIcon && <DeleteCircleFill color={inputErrorColor} size="S" />}
-          <InputErrorText color={inputErrorColor} variant="small" ml={2}>
+          <InputErrorText color={inputErrorColor} variant="small" mt={3}>
             {error}
           </InputErrorText>
         </FlexBox>
