@@ -5,26 +5,13 @@ import { getAccountUnit, getAccountCurrency } from "@ledgerhq/live-common/accoun
 import { Trans } from "react-i18next";
 import BigNumber from "bignumber.js";
 import SummaryRow from "./SummaryRow";
-<<<<<<< HEAD
 import CounterValue from "~/components/CounterValue";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import LText from "~/components/LText";
 import QueuedDrawer from "~/components/QueuedDrawer";
-import ModalBottomAction from "~/components/ModalBottomAction";
-import Button from "~/components/Button";
-import Circle from "~/components/Circle";
 import Touchable from "~/components/Touchable";
 import Info from "~/icons/Info";
-=======
-import CounterValue from "../../components/CounterValue";
-import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import LText from "../../components/LText";
-import QueuedDrawer from "../../components/QueuedDrawer";
-import ModalBottomAction from "../../components/ModalBottomAction";
-import Touchable from "../../components/Touchable";
-import Info from "../../icons/Info";
->>>>>>> 9f7be245f1 (WIP send flow)
-import { withTheme, Theme } from "../../colors";
+import { withTheme, Theme } from "~/colors";
 import { GenericInformationBody } from "~/components/GenericInformationBody";
 import { InformationFill } from "@ledgerhq/native-ui/assets/icons";
 

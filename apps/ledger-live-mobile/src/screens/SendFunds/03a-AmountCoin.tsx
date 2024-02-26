@@ -1,15 +1,9 @@
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import React, { useCallback, useState, useEffect } from "react";
-import {
-  View,
-  StyleSheet,
-  TouchableWithoutFeedback,
-  Switch,
-  Keyboard,
-  Linking,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { View, StyleSheet, TouchableWithoutFeedback, Keyboard, Linking } from "react-native";
+import Switch from "~/components/Switch";
+import SafeAreaView from "~/components/SafeAreaView";
 import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
@@ -136,6 +130,8 @@ export default function SendAmountCoin({ navigation, route }: Props) {
     <>
       <TrackScreen category="SendFunds" name="Amount" currencyName={currency.name} />
       <SafeAreaView
+        isFlex
+        edges={["left", "right", "bottom"]}
         style={[
           styles.root,
           {
@@ -143,7 +139,7 @@ export default function SendAmountCoin({ navigation, route }: Props) {
           },
         ]}
       >
-        <KeyboardView style={styles.container} behavior="padding">
+        <KeyboardView style={styles.container}>
           <TouchableWithoutFeedback onPress={blur}>
             <View style={styles.amountWrapper}>
               <AmountInput
@@ -256,11 +252,10 @@ export default function SendAmountCoin({ navigation, route }: Props) {
 }
 
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-  },
+  root: {},
   container: {
     flex: 1,
+    flexGrow: 1,
     paddingHorizontal: 16,
     alignItems: "stretch",
   },
@@ -291,7 +286,7 @@ const styles = StyleSheet.create({
     alignSelf: "stretch",
     alignItems: "stretch",
     justifyContent: "flex-end",
-    paddingBottom: 16,
+    paddingBottom: 24,
   },
   button: {
     flex: 1,

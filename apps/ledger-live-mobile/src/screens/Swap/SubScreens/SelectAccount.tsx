@@ -192,7 +192,6 @@ export function SelectAccount({ navigation, route: { params } }: SelectAccountPa
       <TrackScreen category="Swap Form" name="Edit Source Account" provider={provider} />
       <FilteredSearchBar
         keys={["name", "unit.code", "token.name", "token.ticker"]}
-        inputWrapperStyle={[styles.searchBarContainer]}
         list={allAccounts}
         renderList={renderList}
         renderEmptySearch={() => (
@@ -209,9 +208,5 @@ const styles = StyleSheet.create({
   card: {
     paddingHorizontal: 16,
     backgroundColor: "transparent",
-  },
-  searchBarContainer: {
-    paddingHorizontal: 16,
-    paddingBottom: 8,
   },
 });

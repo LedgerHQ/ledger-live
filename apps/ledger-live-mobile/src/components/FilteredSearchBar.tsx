@@ -1,6 +1,6 @@
 import React, { ReactNode, useState, memo, useCallback } from "react";
 import { StyleProp, ViewStyle } from "react-native";
-import { SearchInput, SquaredSearchBar, Flex } from "@ledgerhq/native-ui";
+import { SearchInput, Flex } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import Search from "./Search";
@@ -12,7 +12,6 @@ type Props<T> = {
   keys?: string[];
   list: T[];
   inputWrapperStyle?: StyleProp<ViewStyle>;
-  newSearchBar?: boolean;
   onSearchChange?: (newQuery: string) => void;
 };
 
@@ -23,7 +22,6 @@ const FilteredSearchBar = <T,>({
   list,
   renderEmptySearch,
   inputWrapperStyle,
-  newSearchBar,
   onSearchChange,
 }: Props<T>) => {
   const { t } = useTranslation();
@@ -40,24 +38,14 @@ const FilteredSearchBar = <T,>({
 
   return (
     <>
-      <Flex style={inputWrapperStyle}>
-        {newSearchBar ? (
-          <SquaredSearchBar
-            value={query}
-            onChange={onChange}
-            placeholder={t("common.search")}
-            placeholderTextColor={colors.neutral.c70}
-            testID="common-search-field"
-          />
-        ) : (
-          <SearchInput
-            value={query}
-            onChange={onChange}
-            placeholder={t("common.search")}
-            placeholderTextColor={colors.neutral.c70}
-            testID="common-search-field"
-          />
-        )}
+      <Flex style={inputWrapperStyle} mb={2}>
+        <SearchInput
+          value={query}
+          onChange={onChange}
+          placeholder={t("common.search")}
+          placeholderTextColor={colors.neutral.c70}
+          testID="common-search-field"
+        />
       </Flex>
       <Search
         fuseOptions={{
