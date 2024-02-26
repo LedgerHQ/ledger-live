@@ -53,13 +53,13 @@ export const locallySupportedFiats = [
 
 async function initializeUserSupportedFiats() {
   const ids = await fetchSupportedFiatsTokens();
-  let supportedTokens = locallySupportedFiats;
-  if (ids.length) {
-    const idsToUpper = ids?.map(id => id.toUpperCase());
-
-    // This makes sure we only keep the elements supported in our API and that are available for getFiatCurrencyByTicker
-    supportedTokens = idsToUpper.filter(token => locallySupportedFiats.includes(token));
-  }
+  const supportedTokens = locallySupportedFiats;
+  ids.forEach(id => {
+    const token = id.toUpperCase();
+    if (locallySupportedFiats.includes(token)) {
+      supportedTokens.push(token);
+    }
+  });
   userSupportedFiats = supportedTokens.map(id => {
     return getFiatCurrencyByTicker(id);
   });

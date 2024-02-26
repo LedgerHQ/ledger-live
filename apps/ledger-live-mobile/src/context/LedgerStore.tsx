@@ -70,17 +70,20 @@ export default class LedgerStoreProvider extends Component<
     const possibleIntermediaries = [bitcoin, ethereum];
 
     const getsupportedCountervalues = async () => {
-      const supportedCounterValues = await listSupportedFiats().then(res =>
-        [...res, ...possibleIntermediaries]
-          .map(currency => ({
-            value: currency.ticker,
-            ticker: currency.ticker,
-            label: `${currency.name} - ${currency.ticker}`,
-            currency,
-          }))
-          .sort((a, b) => (a.currency.name < b.currency.name ? -1 : 1)),
-      );
-      this.props.store.dispatch(setSupportedCounterValues(supportedCounterValues));
+      const res = await listSupportedFiats();
+      const supportedCounterValues = [...res, ...possibleIntermediaries]
+        .map(currency => ({
+          value: currency.ticker,
+          ticker: currency.ticker,
+          label: `${currency.name} - ${currency.ticker}`,
+          currency,
+        }))
+        .sort((a, b) => (a.currency.name < b.currency.name ? -1 : 1));
+
+      if (this.props.store && this.props.store.dispatch) {
+        this.props.store.dispatch(setSupportedCounterValues(supportedCounterValues));
+      }
+
       return supportedCounterValues || [];
     };
 
