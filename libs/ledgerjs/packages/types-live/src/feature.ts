@@ -85,8 +85,6 @@ export type CurrencyFeatures = {
   currencyArbitrumSepolia: DefaultFeature;
   currencyRsk: DefaultFeature;
   currencyBittorrent: DefaultFeature;
-  currencyKavaEvm: DefaultFeature;
-  currencyEvmosEvm: DefaultFeature;
   currencyEnergyWeb: DefaultFeature;
   currencyAstar: DefaultFeature;
   currencyMetis: DefaultFeature;

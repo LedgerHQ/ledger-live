@@ -3960,60 +3960,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
-  kava_evm: {
-    type: "CryptoCurrency",
-    id: "kava_evm",
-    coinType: CoinType.ETH,
-    name: "Kava EVM",
-    managerAppName: "Ethereum",
-    ticker: "KAVA",
-    scheme: "kava_evm",
-    color: "#FF232F",
-    family: "evm",
-    units: ethereumUnits("KAVA", "KAVA"),
-    ethereumLikeInfo: {
-      chainId: 2222,
-      node: { type: "external", uri: "https://evm2.kava.io" },
-      explorer: {
-        uri: "https://explorer.kava.io",
-        type: "blockscout",
-      },
-    },
-    explorerViews: [
-      {
-        tx: "https://explorer.kava.io/tx/$hash",
-        address: "https://explorer.kava.io/address/$address",
-        token: "https://explorer.kava.io/token/$address",
-      },
-    ],
-  },
-  evmos_evm: {
-    type: "CryptoCurrency",
-    id: "evmos_evm",
-    coinType: CoinType.ETH,
-    name: "Evmos EVM",
-    managerAppName: "Ethereum",
-    ticker: "EVMOS",
-    scheme: "evmos",
-    color: "#ED4E33",
-    family: "evm",
-    units: ethereumUnits("EVMOS", "EVMOS"),
-    ethereumLikeInfo: {
-      chainId: 9001,
-      node: { type: "external", uri: "https://evmos-evm.publicnode.com" },
-      explorer: {
-        uri: "https://blockscout.evmos.org",
-        type: "blockscout",
-      },
-    },
-    explorerViews: [
-      {
-        tx: "https://blockscout.evmos.org/tx/$hash",
-        address: "https://blockscout.evmos.org/address/$address",
-        token: "https://blockscout.evmos.org/token/$address",
-      },
-    ],
-  },
   optimism: {
     type: "CryptoCurrency",
     id: "optimism",
