@@ -1,15 +1,16 @@
 {
-  "name": "@ledgerhq/hw-transport-node-hid-singleton",
-  "version": "6.30.5-next.0",
-  "description": "Ledger Hardware Wallet Node implementation of the communication layer, using node-hid and node-usb",
+  "name": "@ledgerhq/hw-transport-node-ble",
+  "version": "6.28.5-next.0",
+  "description": "Ledger Hardware Wallet Bluetooth BLE transport for Node.js (noble)",
   "keywords": [
     "Ledger",
     "LedgerWallet",
-    "hid",
-    "node-hid",
     "NanoS",
     "Blue",
-    "Hardware Wallet"
+    "Hardware Wallet",
+    "bluetooth",
+    "node",
+    "noble"
   ],
   "repository": {
     "type": "git",
@@ -18,29 +19,27 @@
   "bugs": {
     "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
-  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/hw-transport-node-hid-singleton",
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs/packages/hw-transport-node-ble",
   "publishConfig": {
     "access": "public"
   },
-  "main": "lib/TransportNodeHid.js",
-  "module": "lib-es/TransportNodeHid.js",
-  "types": "lib/TransportNodeHid.d.ts",
+  "main": "lib/TransportNodeBle.js",
+  "module": "lib-es/TransportNodeBle.js",
+  "types": "lib/TransportNodeBle.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
+    "@abandonware/noble": "1.9.2-23",
     "@ledgerhq/devices": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
-    "@ledgerhq/hw-transport-node-hid-noevents": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
-    "node-hid": "^2.1.2",
-    "usb": "2.9.0"
+    "rxjs": "^7.8.1"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
     "build": "tsc && tsc -m ES6 --outDir lib-es",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
-    "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
