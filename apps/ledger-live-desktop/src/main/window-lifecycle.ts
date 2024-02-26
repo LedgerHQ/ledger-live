@@ -1,5 +1,5 @@
 import "./setup";
-import { BrowserWindow, screen, app, WebPreferences } from "electron";
+import { BrowserWindow, screen, app, WebPreferences, Rectangle } from "electron";
 import path from "path";
 import { delay } from "@ledgerhq/live-common/promise";
 import { URL } from "url";
@@ -37,7 +37,11 @@ export const getMainWindowAsync = async (maxTries = 5): Promise<BrowserWindow> =
   return w;
 };
 
-const getWindowPosition = (width: number, height: number, display = screen.getPrimaryDisplay()) => {
+const getWindowPosition = (
+  width: number,
+  height: number,
+  display = screen.getPrimaryDisplay(),
+): { x: number; y: number } => {
   const { bounds } = display;
   return {
     x: Math.ceil(bounds.x + (bounds.width - width) / 2),
@@ -85,43 +89,24 @@ function restorePosition(
   previousPosition?: { x: number; y: number },
   previousDimensions?: { width: number; height: number },
 ) {
-  let width = DEFAULT_WINDOW_WIDTH;
-  let height = DEFAULT_WINDOW_HEIGHT;
-  let x, y;
-  if (previousDimensions) {
-    width = previousDimensions.width;
-    height = previousDimensions.height;
-  }
-  if (previousPosition) {
-    x = previousPosition.x;
-    y = previousPosition.y;
-  } else {
-    const windowPosition = getWindowPosition(width, height);
-    x = windowPosition.x;
-    y = windowPosition.y;
-  }
+  const [width, height] = [DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT];
+  const defaultPosition = getWindowPosition(width, height);
+  const requestedPosition = previousPosition ?? defaultPosition;
+  const requestedDimensions = previousDimensions ?? { width, height };
+  const displays = screen.getAllDisplays();
+  const contains = (screenBounds: Rectangle, windowBounds: Rectangle): boolean =>
+    screenBounds.x <= windowBounds.x &&
+    windowBounds.x <= screenBounds.x + screenBounds.width &&
+    screenBounds.y <= windowBounds.y &&
+    windowBounds.y <= screenBounds.y + screenBounds.height;
+  const isWindowInScreen = displays.find(display =>
+    contains(display.bounds, { ...requestedPosition, ...requestedDimensions }),
+  );
 
-  const bounds = { x, y, width, height };
-
-  const area = screen.getDisplayMatching(bounds).workArea;
-
-  // If the saved position still valid (the window is entirely inside the display area), use it.
-  if (
-    bounds.x >= area.x &&
-    bounds.y >= area.y &&
-    bounds.x + bounds.width <= area.x + area.width &&
-    bounds.y + bounds.height <= area.y + area.height
-  ) {
-    x = bounds.x;
-    y = bounds.y;
+  if (!isWindowInScreen) {
+    return { ...defaultPosition, width, height };
   }
-  // If the saved size is still valid, use it.
-  if (bounds.width <= area.width || bounds.height <= area.height) {
-    width = bounds.width;
-    height = bounds.height;
-  }
-
-  return { x, y, width, height };
+  return { ...requestedPosition, ...requestedDimensions };
 }
 
 export async function createMainWindow(
