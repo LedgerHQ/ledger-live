@@ -144,7 +144,7 @@
       }
     },
     "ConnectManagerTimeout" : {
-      "title" : "Üzgünüz, My Ledger bağlantısı başarısız",
+      "title" : "Ne yazık ki Ledger cihazıyla güvenli bağlantı başarısız oldu",
       "description" : {
         "ios" : {
           "nanoX" : "{{productName}} cihazınızın kilidinin açıldığından ve Bluetooth'un etkin olduğundan emin olun."
@@ -492,7 +492,7 @@
       "description" : "Uygulamayı My Ledger'dan yeniden yüklemeyi deneyin"
     },
     "NotEnoughGas" : {
-      "title" : "{{cryptoName}} ağında olduğunuzdan, {{fees}} {{ticker}} ücret ödemeniz gerekiyor. <link0>{{ticker}} Satın Alın</link0>",
+      "title" : "{{cryptoName}} ağındaki işlem ücretlerini ödemek için hesabınızda {{fees}} {{ticker}} olması gerekiyor.  <link0>{{ticker}} satın alın</link0> veya hesabınıza daha fazlasını yatırın.",
       "description" : "Token işlem ücretlerini ödemek için lütfen hesabınıza biraz coin gönderin."
     },
     "NotEnoughGasSwap" : {
@@ -622,8 +622,8 @@
       "primaryCTA" : "My Ledger'ı Aç"
     },
     "UserRefusedAllowManager" : {
-      "title" : "Cihazda Yönetici özelliği kapalı",
-      "description" : "Lütfen Yöneticiye cihazınızda izin verin, ardından tekrar deneyin."
+      "title" : "Güvenli bağlantı, cihazda reddedildi",
+      "description" : "Lütfen cihazınızda güvenli bağlantıya izin verip tekrar deneyin."
     },
     "UserRefusedAddress" : {
       "title" : "Alıcı adresi reddedildi",
@@ -751,7 +751,7 @@
       "primaryCTA" : "Tekrar dene"
     },
     "SolanaAccountNotFunded" : {
-      "title" : "Hesap fonlanmadı"
+      "title" : "Hesap daha önce fonlanmamış"
     },
     "SolanaAddressOfEd25519" : {
       "title" : "Adres ed25519 eğrisi dışında"
@@ -911,9 +911,6 @@
     "FirmwareNotRecognized" : {
       "title" : "Geçersiz Sağlayıcı",
       "description" : "\"My Ledger sağlayıcım\" ayarını değiştirmeniz gerekmektedir. Bunu değiştirmek için Ledger Live'da \"Ayarlar\"ı açın, \"Deneysel özellikler\"i seçin ve ardından farklı bir sağlayıcı seçin."
-    },
-    "TezosUnrevealedAccount" : {
-      "title" : "Takas yapılamıyor: Tezos hesabıyla başlangıç gönderimi/yetki devri gerekiyor veya pariteyi değiştirin."
     }
   },
   "crash" : {
@@ -1546,7 +1543,7 @@
       "recoveryPhrase" : {
         "title" : "Gizli Kurtarma İfadeniz",
         "desc" : "Gizli Kurtarma İfadeniz, özel anahtarlarınızı yedekleyen 24 kelimeden oluşan bir listedir.",
-        "desc_1" : "Ledger Nano cihazınız benzersiz bir Gizli Kurtarma İfadesi oluşturur. Ledger, bunun ne olduğunu bilmez.",
+        "desc_1" : "Ledger Nano cihazınız benzersiz bir Gizli Kurtarma İfadesi oluşturur. Ledger, ifadeyi oluşturan kelimeleri göremez.",
         "cta" : "Sonraki adım",
         "checkboxDesc" : "Gizli Kurtarma İfademi başka birisi öğrendiği takdirde varlıklarımın güvenliğinin tehlikeye düşeceğini anlıyorum."
       },
@@ -2270,7 +2267,7 @@
     "description" : "Doğrudan Ledger'ınız ile kripto eklemeyi ya da hesaplarınızı Ledger Live Desktop üzerinden içe aktarmayı seçebilirsiniz.",
     "add" : {
       "title" : "Ledger'ınızla ekleyin",
-      "description" : "Ledger'ınız ile varlık yaratabilir ya da içe aktarabilirsiniz"
+      "description" : "Varlık hesabınızı Ledger'ınız ile yaratabilir ya da masaüstünden içe aktarabilirsiniz"
     },
     "import" : {
       "title" : "Masaüstünden içe aktarın",
@@ -3888,7 +3885,7 @@
     "stayInTheAppPlz" : "Ledger Live uygulamasında kalın ve Ledger'ınızı yakınınızda tutun.",
     "allowAppPermission" : "Cihazınızda {{wording}} uygulamasını açın",
     "allowAppPermissionSubtitleToken" : "ve {{token}} token'larınızı yönetin",
-    "allowManagerPermission" : "{{productName}} cihazınızda Ledger Yöneticisine izin verin",
+    "allowManagerPermission" : "Ledger ile güvenli bağlantı kurulmasına izin verin",
     "allowRenaming" : "{{productName}} cihazınızda yeniden adlandırmaya izin verin",
     "allowRemoveCustomLockscreen" : "Ledger Stax'inizde görüntünün kaldırılmasını onaylayın",
     "allowSecureConnection" : "Ledger ile güvenli bir bağlantının kurulmasına izin verin",
@@ -4639,7 +4636,7 @@
         "revoke" : "İptal et"
       },
       "delegationUnavailable" : {
-        "title" : "Yetersiz Kilitli Fon"
+        "title" : "Yetersiz Kilitli Fon Miktarı"
       },
       "manageMultipleVoteWarning" : "Bu oyu yönetmeden önce, aynı doğrulayıcı grubundaki diğer oyları Etkinleştirmeli ya da İptal Etmelisiniz."
     },
@@ -6590,61 +6587,61 @@
   "analyticsOptIn" : {
     "variantA" : {
       "main" : {
-        "title" : "Deneyiminizi geliştirmemize ve kişiselleştirmemize yardım edin.",
-        "subtitle" : "Ledger Live kullanım verilerinizi paylaşmanız, tercihlerinizi anlamamıza yardımcı oluyor. Bu, deneyiminizi size özel hâle getirmemizi ve tıklama, görüntüleme ve açma eylemleri dâhil olmak üzere içerik performansını sizinle olabildiğince alakalı olacak şekilde optimize etmemizi sağlıyor.",
+        "title" : "Deneyiminizi geliştirmemize ve kişiselleştirmemize yardım edin",
+        "subtitle" : "Ledger Live verilerinizi paylaşmanız, tercihlerinizi anlayarak sizin ilginizi çekebilecek içerikleri göstermemize ve teknik sorunları çözmemize yardımcı oluyor.",
         "content" : {
           "able" : {
-            "title" : "Ledger Live şunları takip edebilecek:",
-            "diagAndUsage" : "Kullanım verileri"
+            "title" : "Sizin onayınız ile Ledger şunları takip edebilecek:",
+            "diagAndUsage" : "Sayfa ziyaretleri ve tıklamalar dâhil olmak üzere analiz verileri.",
+            "personnalizationData" : "Tıklamalar, sayfa ziyaretleri ve dönüştürme verileri dâhil olmak üzere kişiselleştirme verileri."
           },
           "unable" : {
-            "title" : "Ledger Live şu bilgileri asla toplamaz:",
-            "adresses" : "Adresleriniz",
-            "balance" : "Bakiyeleriniz",
-            "nfts" : "NFT'leriniz",
-            "personnalInfos" : "Kişiyi tanımlayıcı bilgiler"
+            "title" : "Ledger şunlarla ilgili bilgileri hiçbir zaman takip etmez:",
+            "adresses" : "Varlıklarınız.",
+            "balance" : "Portföyünüz.",
+            "personnalInfos" : "Kişiyi tanımlayıcı bilgileriniz."
           },
-          "moreOptions" : "Daha fazla seçenek",
+          "moreOptions" : "Tercihlerinizi yönetin",
           "ctas" : {
             "refuse" : "Tümünü reddet",
             "accept" : "Tümünü kabul et"
           },
           "infoText" : {
             "info" : "Onayınızı, dilediğiniz zaman uygulama ayarlarından iptal edebilirsiniz.",
-            "link" : "Daha fazla bilgi edinmek için buraya tıklayın."
+            "link" : "Takip Politikamız hakkında daha fazla bilgi edinin"
           }
         }
       },
       "details" : {
         "title" : "Tercihlerinizi yönetin",
         "analytics" : {
-          "title" : "Analiz",
-          "description" : "Uygulama kullanımını paylaşarak Ledger'ın, uygulamayı geliştirmesine yardımcı olun."
+          "title" : "Analiz verileri",
+          "description" : "Ledger Live'ın geliştirilmesine yardımcı olmak için sayfa ziyaretleri ve tıklamalar dâhil olmak üzere uygulamanın analiz verilerini paylaşın."
         },
         "personalizedExp" : {
-          "title" : "Kişiselleştirilmiş deneyim",
-          "description" : "Tercihlerinizle uyumlu kişiselleştirilmiş öneriler alın ve alakalılık düzeyini optimize etmek için içerik performansını paylaşın."
+          "title" : "Kişiselleştirme verileri",
+          "description" : "Kişiselleştirilmiş öneriler almak için dönüştürme verileri, tıklamalar ve sayfa ziyaretleri dâhil olmak üzere uygulamanın kişiselleştirme verilerini paylaşın."
         },
         "ctas" : {
           "notNow" : "Şimdi değil",
           "accept" : "Kabul et",
           "acceptAll" : "Tümünü Kabul Et",
-          "confirm" : "Onayla"
+          "confirm" : "Paylaş"
         },
         "infoText" : {
           "info" : "Onayınızı, dilediğiniz zaman uygulama ayarlarından iptal edebilirsiniz.",
-          "link" : "Daha fazla bilgi edinmek için buraya tıklayın."
+          "link" : "Takip Politikamız hakkında daha fazla bilgi edinin"
         }
       }
     },
     "variantB" : {
       "main" : {
         "title" : "Ledger Live'ı birlikte geliştirelim",
-        "description" : "Ledger Live kullanım verilerinizi paylaşmanız, Ledger Live'ı nasıl kullandığınızı anlamamıza yardımcı oluyor.",
+        "description" : "Ledger Live analiz verilerinizi paylaşmanız, insanların Ledger Live'ı nasıl kullandıklarını anlamamıza, hataları düzeltmemize veya gelişmiş bir kullanıcı deneyimi sunmamıza yardımcı oluyor.",
         "bulletPoints" : {
-          "1" : "Kullanım verileri; sayfa ziyaretlerini, tıklamaları ve dönüşümü içerir.",
-          "2" : "Adresleriniz, hesaplarınız, bakiyeniz, NFT'leriniz veya portföyünüzle ilişkili diğer bilgileri toplamayız veya görmeyiz.",
-          "3" : "Kimliğinizi belirleyemeyiz ve böyle bir isteğimiz de yoktur; kişisel bilgileri toplamayız."
+          "1" : "Analiz verileri arasında sayfa ziyaretleri ve tıklamalar yer alır.",
+          "2" : "Bakiyeniz, hesaplarınız ve portföyünüz ile ilgili hiçbir bilgiyi toplayamayız veya göremeyiz.",
+          "3" : "Analizler tamamen anonimdir. Kişisel bilgilerinizi göremez veya toplayamayız."
         },
         "ctas" : {
           "refuse" : "Reddet",
@@ -6652,15 +6649,15 @@
         },
         "infoText" : {
           "info" : "Onayınızı, dilediğiniz zaman uygulama ayarlarından iptal edebilirsiniz.",
-          "link" : "Onay iptali hakkında daha fazla bilgi edinin"
+          "link" : "Takip Politikamız hakkında daha fazla bilgi edinin"
         }
       },
       "details" : {
         "title" : "Kişiselleştirilmiş bir deneyim elde edin",
-        "description" : "Kullanım verilerinizi analiz ederek deneyiminizi özelleştiririz ve tıklama, görüntüleme ve açma gibi metrikleri izleyerek sizinle olabildiğince alakalı olmasını sağlamak üzere içerik performansını değerlendiririz.",
+        "description" : "Ledger Live kişiselleştirme verilerinizi paylaşmanız, tercihlerinizle uyumlu içerikler göstermemizi sağlar.",
         "bulletPoints" : {
-          "1" : "Kişiselleştirilmiş öneriler ve içerikler",
-          "2" : "Kişiselleştirilmiş bildirimler"
+          "1" : "Kişiselleştirme verileri arasında dönüştürme verileri, tıklamalar ve sayfa ziyaretleri yer alır.",
+          "2" : "Kişisel veya portföy bilgilerinizi takip edemez veya toplayamayız."
         },
         "ctas" : {
           "refuse" : "Reddet",
@@ -6668,7 +6665,7 @@
         },
         "infoText" : {
           "info" : "Onayınızı, dilediğiniz zaman uygulama ayarlarından iptal edebilirsiniz.",
-          "link" : "Onay iptali hakkında daha fazla bilgi edinin"
+          "link" : "Takip Politikamız hakkında daha fazla bilgi edinin"
         }
       }
     }
