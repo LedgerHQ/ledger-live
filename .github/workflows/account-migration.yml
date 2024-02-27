@@ -1,0 +1,44 @@
+name: "Account migration test"
+   
+on:
+    workflow_dispatch:
+      inputs:
+          currency:
+            description: "Currency to run the migration test on. If not specified the test will be run on all supported currencies"
+            required: false
+
+jobs:
+    account_migration:
+        name: "account-migration"
+        runs-on: [ledger-live-medium-linux]
+        steps:
+          - name: generate token
+            id: generate-token
+            uses: tibdex/github-app-token@v1
+            with:
+              app_id: ${{ secrets.GH_BOT_APP_ID }}
+              private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+          - uses: actions/checkout@v4
+            with:
+              ref: develop
+              token: ${{ steps.generate-token.outputs.token }}
+          - name: Setup git user
+            uses: ./tools/actions/composites/setup-git-user
+          - name: Run synchronisation on develop
+            run: |
+                OUTPUT=$(pnpm syncronization ${{ inputs.currency }})
+                touch develop-sync
+                echo $OUTPUT > develop-sync
+          - name: run synchronisation on current commit
+            run: |
+              OUTPUT=$(pnpm synchronisation ${{ inputs.currency}})
+              touch commit-sync
+              echo $OUTPUT > commit-sync
+          - name: Check that the files are the exact same
+            uses: LouisBrunner/diff-action@v2.0.0
+            with:
+              old: develop-sync
+              new: commit-sync
+              mode: strict
+              tolerance: same
+              output: sync-diff.txt
