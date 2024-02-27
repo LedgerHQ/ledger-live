@@ -65,7 +65,7 @@ function StepConfirmation({
       if (mainAccount?.currency?.family === "evm") {
         error = new TransactionHasBeenValidatedError();
       }
-    } 
+    }
     // Cosmos sequence mismatch error because the backend returns a wrong sequence sometimes
     // This is a temporary fix until we have a better backend
     else if (error.message.includes("account sequence mismatch")) {
