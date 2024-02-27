@@ -151,6 +151,30 @@ const SwapOperationDetails = ({
       : fromCurrency.name
     : undefined;
 
+  const handleProviderClick = useCallback(() => {
+    if (url) {
+      if (provider === "moonpay") {
+        const parentAccount =
+          fromAccount.type !== "Account" ? accounts.find(a => a.id === fromAccount.parentId) : null;
+        const mainAccount = getMainAccount(fromAccount, parentAccount);
+        history.push({
+          pathname: "/platform/moonpay",
+          state: {
+            returnTo: "/swap/history",
+            accountId: mainAccount.id,
+            customDappUrl: undefined,
+            goToURL: "https://buy.moonpay.com/trade_history?ledgerlive",
+          },
+        });
+      } else {
+        openURL(urls.swap.providers[provider as keyof typeof urls.swap.providers]?.main);
+      }
+      if (onClose) {
+        onClose();
+      }
+    }
+  }, [url, provider, fromAccount, history, accounts, onClose]);
+
   return (
     <Box flow={3} px={20} mt={20}>
       <Status status={status}>
@@ -212,12 +236,7 @@ const SwapOperationDetails = ({
           <Trans i18nKey="swap.operationDetailsModal.provider" />
         </OpDetailsTitle>
         <OpDetailsData>
-          <LinkWithExternalIcon
-            fontSize={12}
-            onClick={() =>
-              openURL(urls.swap.providers[provider as keyof typeof urls.swap.providers]?.main)
-            }
-          >
+          <LinkWithExternalIcon fontSize={12} onClick={handleProviderClick}>
             {getProviderName(provider)}
           </LinkWithExternalIcon>
         </OpDetailsData>

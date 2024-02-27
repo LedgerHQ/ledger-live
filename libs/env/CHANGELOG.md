@@ -1,5 +1,29 @@
 # @ledgerhq/live-env
 
+## 1.0.1
+
+### Patch Changes
+
+- [#6279](https://github.com/LedgerHQ/ledger-live/pull/6279) [`3e28615`](https://github.com/LedgerHQ/ledger-live/commit/3e28615a8d5edbec3eff1e93207bf0e9d017666a) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Updating the near-api-js library and fetching the NEAR staking positions from the node rather than the kitwallet API.
+
+## 1.0.1-hotfix.0
+
+### Patch Changes
+
+- [#6279](https://github.com/LedgerHQ/ledger-live/pull/6279) [`3e28615`](https://github.com/LedgerHQ/ledger-live/commit/3e28615a8d5edbec3eff1e93207bf0e9d017666a) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Updating the near-api-js library and fetching the NEAR staking positions from the node rather than the kitwallet API.
+
+## 1.0.0
+
+### Major Changes
+
+- [#6165](https://github.com/LedgerHQ/ledger-live/pull/6165) [`c18a0cf`](https://github.com/LedgerHQ/ledger-live/commit/c18a0cfdce5d1e44faf8d8bd5659ebdae38533fa) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Removing unused env var related to `Ethereum` transactions crafted with the old `ethereum` family
+
+## 1.0.0-next.0
+
+### Major Changes
+
+- [#5682](https://github.com/LedgerHQ/ledger-live/pull/5682) [`4744c31`](https://github.com/LedgerHQ/ledger-live/commit/4744c3136021f1f47ad1617f2c84f47ac0647370) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Removing unused env var related to `Ethereum` transactions crafted with the old `ethereum` family
+
 ## 0.9.0
 
 ### Minor Changes

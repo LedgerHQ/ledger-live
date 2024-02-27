@@ -8,6 +8,7 @@ import {
   SubAccount,
 } from "@ledgerhq/types-live";
 import murmurhash from "imurmurhash";
+import { log } from "@ledgerhq/logs";
 import { getEnv } from "@ledgerhq/live-env";
 import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
 import { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
@@ -16,7 +17,6 @@ import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets/tokens";
 import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { getEIP712FieldsDisplayedOnNano } from "@ledgerhq/evm-tools/message/EIP712/index";
-import { log } from "@ledgerhq/logs";
 import { getNodeApi } from "./api/node/index";
 import {
   EvmNftTransaction,
@@ -188,8 +188,13 @@ export const __testOnlyClearSyncHashMemoize = (): void => {
  * if the CAL files where to include an
  * already crafted hash per token
  */
-export const getSyncHash = (currency: CryptoCurrency): string => {
-  const tokens = listTokensForCryptoCurrency(currency);
+export const getSyncHash = (
+  currency: CryptoCurrency,
+  blacklistedTokenIds: string[] = [],
+): string => {
+  const tokens = listTokensForCryptoCurrency(currency).filter(
+    token => !blacklistedTokenIds.includes(token.id),
+  );
   const basicTokensListString = tokens
     .map(token => token.id + token.contractAddress + token.name + token.ticker)
     .join("");
@@ -240,7 +245,10 @@ export const attachOperations = (
   _tokenOperations: Operation[],
   _nftOperations: Operation[],
   _internalOperations: Operation[],
+  filters: { blacklistedTokenIds?: string[] } = { blacklistedTokenIds: [] },
 ): Operation[] => {
+  const { blacklistedTokenIds } = filters;
+
   // Creating deep copies of each Operation[] to prevent mutating the originals
   const coinOperations = _coinOperations.map(op => ({ ...op }));
   const tokenOperations = _tokenOperations.map(op => ({ ...op }));
@@ -293,6 +301,9 @@ export const attachOperations = (
 
   // Looping through token operations to potentially copy them as a child operation of a coin operation
   for (const tokenOperation of tokenOperations) {
+    const { token } = decodeTokenAccountId(tokenOperation.accountId);
+    if (!token || blacklistedTokenIds?.includes(token.id)) continue;
+
     let mainOperations = coinOperationsByHash[tokenOperation.hash];
     if (!mainOperations?.length) {
       const noneOperation = makeCoinOpForOrphanChildOp(tokenOperation);

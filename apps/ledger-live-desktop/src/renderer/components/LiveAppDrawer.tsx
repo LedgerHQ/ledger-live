@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -79,7 +79,7 @@ export const LiveAppDrawer = () => {
       next(manifest, dismissDisclaimerChecked);
     }
   }, [dismissDisclaimerChecked, dispatch, payload]);
-  const drawerContent = useCallback(() => {
+  const drawerContent = useMemo(() => {
     if (!payload) {
       return null;
     }
@@ -186,7 +186,7 @@ export const LiveAppDrawer = () => {
       direction="left"
     >
       <Box flex="1" justifyContent="space-between">
-        {drawerContent()}
+        {drawerContent}
       </Box>
     </SideDrawer>
   );

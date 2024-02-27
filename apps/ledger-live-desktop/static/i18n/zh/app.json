@@ -3593,22 +3593,33 @@
     "stake" : {
       "title" : "增长您的以太币持有量",
       "subTitle" : "质押您的以太币，通过直接在 Ledger Live 中接收每日奖励来增长您的持有量",
+      "tagMinimum" : "需要 {{min}} ETH",
+      "kiln_pooling" : {
+        "title" : "Kiln 质押池",
+        "description" : "权益质押没有最低限制。自动按复利赚取奖励，无锁定期。",
+        "supportLink" : "了解关于 Kiln 池的更多信息"
+      },
       "lido" : {
-        "title" : "使用 Lido 赚取",
-        "description" : "使用 Lido 权益质押您的以太币，每天赚取奖励。无锁定期。无最低限制。",
+        "title" : "Lido",
+        "description" : "权益质押任意数量的以太币，获得即时流动性和每日奖励。",
         "supportLink" : "了解关于 Lido 的更多信息"
+      },
+      "stader-eth" : {
+        "title" : "Stader Labs",
+        "description" : "权益质押没有最低限制。自动按复利赚取奖励，获得即时流动性。",
+        "supportLink" : "详细了解 Stader 池"
       },
       "kiln" : {
         "title" : "Kiln 专属质押",
         "tag" : "需要 32 枚以太币",
-        "description" : "使用专门的验证者进行权益质押。需要是 32 以太币的倍数。奖励需要手动领取。随时退出。",
+        "description" : "通过专门的验证者权益质押至少 32 以太币，即可轻松申领奖励。",
         "supportLink" : "了解关于 Kiln 验证者的更多信息"
       },
-      "kiln_pooling" : {
-        "title" : "Kiln 质押池",
-        "tag" : "无最低限制",
-        "description" : "加入权益质押池。不要求最低以太币金额。奖励自动按复利计算。随时退出。",
-        "supportLink" : "了解关于 Kiln 池的更多信息"
+      "figment" : {
+        "title" : "Figment",
+        "tag" : "需要 32 ETH",
+        "description" : "通过专门的验证者权益质押至少 32 以太币，奖励将自动发送到您的账户。",
+        "supportLink" : "详细了解 Figment 验证者"
       }
     }
   },
@@ -5339,7 +5350,7 @@
       "title" : "接收地址未激活。发送至少 {{minimalAmount}} 来将其激活"
     },
     "NotEnoughGas" : {
-      "title" : "您需要 {{fees}} {{ticker}} 的网络费用才能在 {{cryptoName}} 网络上进行互换。<link0>买入 {{ticker}}</link0>"
+      "title" : "您的账户中需要有 {{fees}} {{ticker}} 以支付 {{cryptoName}} 网络上的交易费用。<link0>购买 {{ticker}}</link0> 或向账户存入更多资产。"
     },
     "NotEnoughGasSwap" : {
       "title" : "您需要 {{fees}} {{ticker}} 的网络费用才能在 {{cryptoName}} 网络上进行互换。<link0>买入 {{ticker}}</link0>"

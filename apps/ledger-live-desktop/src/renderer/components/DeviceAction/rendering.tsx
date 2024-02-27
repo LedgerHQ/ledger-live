@@ -67,6 +67,7 @@ import { openURL } from "~/renderer/linking";
 import Installing from "~/renderer/modals/UpdateFirmwareModal/Installing";
 import { ErrorBody } from "../ErrorBody";
 import LinkWithExternalIcon from "../LinkWithExternalIcon";
+import { closePlatformAppDrawer } from "~/renderer/actions/UI";
 
 export const AnimationWrapper = styled.div`
   width: 600px;
@@ -254,6 +255,7 @@ export const renderVerifyUnwrapped = ({
 
 const OpenManagerBtn = ({
   closeAllModal,
+  closePlatformAppDrawer,
   appName,
   updateApp,
   firmwareUpdate,
@@ -261,6 +263,7 @@ const OpenManagerBtn = ({
   ml = 0,
 }: {
   closeAllModal: () => void;
+  closePlatformAppDrawer: () => void;
   appName?: string;
   updateApp?: boolean;
   firmwareUpdate?: boolean;
@@ -283,8 +286,17 @@ const OpenManagerBtn = ({
       search: search ? `?${search}` : "",
     });
     closeAllModal();
+    closePlatformAppDrawer();
     setDrawer(undefined);
-  }, [updateApp, firmwareUpdate, appName, history, closeAllModal, setDrawer]);
+  }, [
+    updateApp,
+    firmwareUpdate,
+    appName,
+    history,
+    closeAllModal,
+    closePlatformAppDrawer,
+    setDrawer,
+  ]);
 
   return (
     <Button mt={mt} ml={ml} primary onClick={onClick}>
@@ -312,7 +324,10 @@ const OpenOnboardingBtn = () => {
   );
 };
 
-const OpenManagerButton = connect(null, { closeAllModal })(OpenManagerBtn);
+const OpenManagerButton = connect(null, {
+  closeAllModal,
+  closePlatformAppDrawer,
+})(OpenManagerBtn);
 
 export const renderRequiresAppInstallation = ({ appNames }: { appNames: string[] }) => {
   const appNamesCSV = appNames.join(", ");

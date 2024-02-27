@@ -1,4 +1,4 @@
-import { NetworkRequestCall } from "@ledgerhq/coin-framework/network";
+import { makeLRUCache, minutes, hours } from "@ledgerhq/live-network/cache";
 import { getOperations as bisonGetOperations } from "./bisontrails";
 import {
   getAccount as sidecardGetAccount,
@@ -14,34 +14,9 @@ import {
   submitExtrinsic as sidecarSubmitExtrinsic,
   verifyValidatorAddresses as sidecarVerifyValidatorAddresses,
 } from "./sidecar";
-import type { CacheRes, LRUCacheFn } from "@ledgerhq/coin-framework/cache";
-import {
-  SidecarPaymentInfo,
-  SidecarValidatorsParamAddresses,
-  SidecarValidatorsParamStatus,
-} from "./sidecar.types";
 import BigNumber from "bignumber.js";
-import {
-  PolkadotAccount,
-  PolkadotNomination,
-  PolkadotOperation,
-  PolkadotStakingProgress,
-  PolkadotUnlocking,
-  PolkadotValidator,
-  Transaction,
-} from "../types";
-import { TypeRegistry } from "@polkadot/types";
-import { Extrinsics } from "@polkadot/types/metadata/decorate/types";
+import { PolkadotAccount, PolkadotNomination, PolkadotUnlocking, Transaction } from "../types";
 
-type PaymentInfoParams = {
-  a: PolkadotAccount;
-  t: Transaction;
-  signedTx: string;
-};
-type Registry = {
-  registry: TypeRegistry;
-  extrinsics: Extrinsics;
-};
 type PolkadotAPIAccount = {
   blockHeight: number;
   balance: BigNumber;
@@ -63,162 +38,54 @@ type CacheOpts = {
   force: boolean;
 };
 
-export class PolkadotAPI {
-  network: NetworkRequestCall;
-  cache: LRUCacheFn;
+const getMinimumBondBalance = makeLRUCache(
+  sidecarGetMinimumBondBalance,
+  () => "polkadot",
+  hours(1, 1),
+);
+const getRegistry = makeLRUCache(sidecarGetRegistry, () => "polkadot", hours(1));
+const getTransactionParamsFn = makeLRUCache(
+  sidecarGetTransactionParams,
+  () => "polkadot",
+  minutes(5),
+);
+const getPaymentInfo = makeLRUCache(
+  async ({
+    signedTx,
+  }): Promise<{
+    partialFee: string;
+  }> => sidecarPaymentInfo(signedTx),
+  ({ a, t, signedTx }) => hashTransactionParams(a, t, signedTx),
+  minutes(5),
+);
+const isControllerAddress = makeLRUCache(
+  sidecarIsControllerAddress,
+  address => address,
+  minutes(5),
+);
+const isElectionClosed = makeLRUCache(sidecarIsElectionClosed, () => "", minutes(1));
+const isNewAccount = makeLRUCache(sidecarIsNewAccount, address => address, minutes(1));
 
-  private getMinimumBondBalanceFn: CacheRes<Array<void>, BigNumber> | undefined;
-  private getRegistryFn: CacheRes<Array<void>, Registry> | undefined;
-  private getTransactionParamsFn: CacheRes<Array<void>, Record<string, any>> | undefined;
-  private isControllerAddressFn: CacheRes<Array<string>, boolean> | undefined;
-  private isElectionClosedFn: CacheRes<Array<void>, boolean> | undefined;
-  private isNewAccountFn: CacheRes<Array<string>, boolean> | undefined;
-  private paymentInfoFn:
-    | CacheRes<Array<PaymentInfoParams>, Pick<SidecarPaymentInfo, "partialFee">>
-    | undefined;
-
-  constructor(network: NetworkRequestCall, cache: LRUCacheFn) {
-    this.network = network;
-    this.cache = cache;
-  }
-
-  async getAccount(address: string): Promise<PolkadotAPIAccount> {
-    return sidecardGetAccount(this.network, this.cache)(address);
-  }
-
-  async getOperations(accountId: string, addr: string, startA = 0): Promise<PolkadotOperation[]> {
-    return bisonGetOperations(this.network)(accountId, addr, startA);
-  }
-
-  async getMinimumBondBalance(): Promise<BigNumber> {
-    if (this.getMinimumBondBalanceFn !== undefined) return this.getMinimumBondBalanceFn();
-
-    this.getMinimumBondBalanceFn = this.cache(
-      async (): Promise<BigNumber> => sidecarGetMinimumBondBalance(this.network)(),
-      () => "polkadot",
-      {
-        max: 1, // Store only one object since we only have polkadot.
-        ttl: 60 * 60 * 1000, // 1 hour
-      },
-    );
-
-    return this.getMinimumBondBalanceFn();
-  }
-
-  async getRegistry(): Promise<Registry> {
-    if (this.getRegistryFn !== undefined) return this.getRegistryFn();
-
-    this.getRegistryFn = this.cache(
-      async (): Promise<Registry> => {
-        return await sidecarGetRegistry(this.network, this.cache)();
-      },
-      () => "polkadot",
-      {
-        ttl: 60 * 60 * 1000, // 1 hour - could be Infinity
-      },
-    );
-
-    return this.getRegistryFn();
-  }
-
-  async getStakingProgress(): Promise<PolkadotStakingProgress> {
-    return sidecarGetStakingProgress(this.network, this.cache)();
-  }
-
-  async getValidators(
-    stashes: SidecarValidatorsParamStatus | SidecarValidatorsParamAddresses = "elected",
-  ): Promise<PolkadotValidator[]> {
-    return sidecarGetValidators(this.network)(stashes);
-  }
-
-  async getTransactionParams(
+export default {
+  getAccount: async (address: string): Promise<PolkadotAPIAccount> => sidecardGetAccount(address),
+  getOperations: bisonGetOperations,
+  getMinimumBondBalance,
+  getRegistry,
+  getStakingProgress: sidecarGetStakingProgress,
+  getValidators: sidecarGetValidators,
+  getTransactionParams: async (
     { force }: CacheOpts = { force: false },
-  ): Promise<Record<string, any>> {
-    if (this.getTransactionParamsFn !== undefined) {
-      return force ? this.getTransactionParamsFn.force() : this.getTransactionParamsFn();
-    }
-
-    this.getTransactionParamsFn = this.cache(
-      async (): Promise<Record<string, any>> => sidecarGetTransactionParams(this.network)(),
-      () => "polkadot",
-      {
-        ttl: 5 * 60 * 1000, // 5 minutes
-      },
-    );
-
-    return this.getTransactionParamsFn();
-  }
-
-  async getPaymentInfo(data: PaymentInfoParams): Promise<Pick<SidecarPaymentInfo, "partialFee">> {
-    if (this.paymentInfoFn !== undefined) return this.paymentInfoFn(data);
-
-    this.paymentInfoFn = this.cache(
-      async ({
-        signedTx,
-      }): Promise<{
-        partialFee: string;
-      }> => {
-        return sidecarPaymentInfo(this.network)(signedTx);
-      },
-      ({ a, t, signedTx }) => hashTransactionParams(a, t, signedTx),
-      {
-        ttl: 5 * 60 * 1000, // 5 minutes
-      },
-    );
-
-    return this.paymentInfoFn(data);
-  }
-
-  async isControllerAddress(address: string): Promise<boolean> {
-    if (this.isControllerAddressFn !== undefined) return this.isControllerAddressFn(address);
-
-    this.isControllerAddressFn = this.cache(
-      async (address): Promise<boolean> => sidecarIsControllerAddress(this.network)(address),
-      address => address,
-      {
-        ttl: 5 * 60 * 1000, // 5 minutes
-      },
-    );
-
-    return this.isControllerAddressFn(address);
-  }
-
-  async isElectionClosed(): Promise<boolean> {
-    if (this.isElectionClosedFn !== undefined) return this.isElectionClosedFn();
-
-    this.isElectionClosedFn = this.cache(
-      async (): Promise<boolean> => sidecarIsElectionClosed(this.network)(),
-      () => "",
-      {
-        ttl: 60 * 1000, // 1 minute
-      },
-    );
-
-    return this.isElectionClosedFn();
-  }
-
-  async isNewAccount(address: string): Promise<boolean> {
-    if (this.isNewAccountFn !== undefined) return this.isNewAccountFn(address);
-
-    this.isNewAccountFn = this.cache(
-      async (address): Promise<boolean> => sidecarIsNewAccount(this.network)(address),
-      address => address,
-      {
-        ttl: 60 * 1000, // 1 minute
-      },
-    );
-
-    return this.isNewAccountFn(address);
-  }
-
-  async submitExtrinsic(extrinsic: string) {
-    return sidecarSubmitExtrinsic(this.network)(extrinsic);
-  }
-
-  async verifyValidatorAddresses(validators: string[]): Promise<string[]> {
-    return sidecarVerifyValidatorAddresses(this.network)(validators);
-  }
-}
+  ): Promise<Record<string, any>> => {
+    return force ? getTransactionParamsFn.force() : getTransactionParamsFn();
+  },
+  getPaymentInfo,
+  isControllerAddress,
+  isElectionClosed,
+  isNewAccount,
+  submitExtrinsic: async (extrinsic: string) => sidecarSubmitExtrinsic(extrinsic),
+  verifyValidatorAddresses: async (validators: string[]): Promise<string[]> =>
+    sidecarVerifyValidatorAddresses(validators),
+};
 
 /**
  * Create a hash for a transaction that is params-specific and stay unchanged if no influcing fees

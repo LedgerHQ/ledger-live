@@ -23,6 +23,11 @@ libs/live-nft-react/                                     @ledgerhq/live-hub
 libs/live-nft/                                           @ledgerhq/live-hub
 libs/promise/                                            @ledgerhq/live-hub
 libs/ui/                                                 @ledgerhq/live-hub
+libs/live-hooks/										 @ledgerhq/live-hub
+libs/live-countervalues/								 @ledgerhq/live-hub
+libs/live-countervalues-react/ 						     @ledgerhq/live-hub
+libs/live-nft/                                           @ledgerhq/live-hub
+libs/live-nft-react/                                     @ledgerhq/live-hub
 
 # Blockchain team
 .github/**/bot-*.yml                                     @ledgerhq/live-blockchain-support
@@ -43,30 +48,31 @@ libs/live-config/                                        @ledgerhq/live-blockcha
 libs/live-network/                                       @ledgerhq/live-blockchain-support
 
 # PTX team
-apps/cli/src/commands/ptx                                       @ledgerhq/ptx
-apps/ledger-live-desktop/src/renderer/components/ProviderIcon/  @ledgerhq/ptx
-apps/ledger-live-desktop/src/renderer/components/WebPTXPlayer/  @ledgerhq/ptx
-apps/ledger-live-desktop/src/renderer/modals/Platform/          @ledgerhq/ptx
-apps/ledger-live-desktop/src/renderer/modals/StartStake/        @ledgerhq/ptx
-apps/ledger-live-desktop/src/renderer/reducers/swap.ts          @ledgerhq/ptx
-apps/ledger-live-desktop/src/renderer/screens/earn/             @ledgerhq/ptx
-apps/ledger-live-desktop/src/renderer/screens/exchange/         @ledgerhq/ptx
-apps/ledger-live-desktop/src/renderer/screens/stake/            @ledgerhq/ptx
-apps/ledger-live-desktop/src/renderer/screens/swapWeb/          @ledgerhq/ptx
-apps/ledger-live-mobile/src/actions/earn.ts                     @ledgerhq/ptx
-apps/ledger-live-mobile/src/actions/swap.ts                     @ledgerhq/ptx
-apps/ledger-live-mobile/src/components/ProviderIcon/            @ledgerhq/ptx
-apps/ledger-live-mobile/src/components/Stake/                   @ledgerhq/ptx
-apps/ledger-live-mobile/src/components/WebPTXPlayer/            @ledgerhq/ptx
-apps/ledger-live-mobile/src/reducers/earn.ts                    @ledgerhq/ptx
-apps/ledger-live-mobile/src/reducers/swap.ts                    @ledgerhq/ptx
-apps/ledger-live-mobile/src/screens/Exchange/                   @ledgerhq/ptx
-apps/ledger-live-mobile/src/screens/PTX/                        @ledgerhq/ptx
-apps/ledger-live-mobile/src/screens/Swap/                       @ledgerhq/ptx
-libs/ledger-live-common/src/exchange/                           @ledgerhq/ptx
-libs/exchange-module/                                           @ledgerhq/ptx
-libs/ledgerjs/packages/hw-app-exchange/                         @ledgerhq/ptx
-
+apps/cli/src/commands/ptx                                            @ledgerhq/ptx
+apps/ledger-live-desktop/src/renderer/components/ProviderIcon/       @ledgerhq/ptx
+apps/ledger-live-desktop/src/renderer/components/WebPTXPlayer/       @ledgerhq/ptx
+apps/ledger-live-desktop/src/renderer/hooks/swap-migrations/         @ledgerhq/ptx
+apps/ledger-live-desktop/src/renderer/drawers/SwapOperationDetails/  @ledgerhq/ptx
+apps/ledger-live-desktop/src/renderer/modals/Platform/               @ledgerhq/ptx
+apps/ledger-live-desktop/src/renderer/modals/StartStake/             @ledgerhq/ptx
+apps/ledger-live-desktop/src/renderer/reducers/swap.ts               @ledgerhq/ptx
+apps/ledger-live-desktop/src/renderer/screens/earn/                  @ledgerhq/ptx
+apps/ledger-live-desktop/src/renderer/screens/exchange/              @ledgerhq/ptx
+apps/ledger-live-desktop/src/renderer/screens/stake/                 @ledgerhq/ptx
+apps/ledger-live-desktop/src/renderer/screens/swapWeb/               @ledgerhq/ptx
+apps/ledger-live-mobile/src/actions/earn.ts                          @ledgerhq/ptx
+apps/ledger-live-mobile/src/actions/swap.ts                          @ledgerhq/ptx
+apps/ledger-live-mobile/src/components/ProviderIcon/                 @ledgerhq/ptx
+apps/ledger-live-mobile/src/components/Stake/                        @ledgerhq/ptx
+apps/ledger-live-mobile/src/components/WebPTXPlayer/                 @ledgerhq/ptx
+apps/ledger-live-mobile/src/reducers/earn.ts                         @ledgerhq/ptx
+apps/ledger-live-mobile/src/reducers/swap.ts                         @ledgerhq/ptx
+apps/ledger-live-mobile/src/screens/Exchange/                        @ledgerhq/ptx
+apps/ledger-live-mobile/src/screens/PTX/                             @ledgerhq/ptx
+apps/ledger-live-mobile/src/screens/Swap/                            @ledgerhq/ptx
+libs/ledger-live-common/src/exchange/                                @ledgerhq/ptx
+libs/exchange-module/                                                @ledgerhq/ptx
+libs/ledgerjs/packages/hw-app-exchange/                              @ledgerhq/ptx
 # Wallet API team
 **/PlatformAppProviderWrapper.tsx                        @ledgerhq/wallet-api
 **/Web3AppWebview/                                       @ledgerhq/wallet-api
@@ -117,6 +123,13 @@ libs/ledger-live-common/src/hooks/recoverFeatureFlag.ts                 @ledgerh
 apps/ledger-live-desktop/tests/                          @ledgerhq/live-hub @ledgerhq/live-qa
 apps/ledger-live-mobile/e2e/                             @ledgerhq/live-hub @ledgerhq/live-qa
 
-# i18n files (no code owner)
+# Cross-team generic files can be opted out (no strict ownership when it concerns everyone)
 apps/ledger-live-desktop/static/i18n/
 apps/ledger-live-mobile/src/locales/
+apps/ledger-live-mobile/src/components/RootNavigator/
+apps/ledger-live-mobile/src/const/navigation.ts
+apps/**/package.json
+libs/ledgerjs/packages/errors/src/index.ts
+libs/ledger-live-common/src/config/sharedConfig.ts
+libs/ledger-live-common/package.json
+**/generated/

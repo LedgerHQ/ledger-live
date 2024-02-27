@@ -310,7 +310,8 @@
     "src/jest.d.ts",
     "src/postOnboarding/mock.ts",
     "src/reactNativeSvg.d.ts",
-    "src/currencies/mock.ts"
+    "src/currencies/mock.ts",
+    "src/families/tezos/fixtures/*"
   ],
   "ignoreUnused": [
     "@types/bchaddrjs",

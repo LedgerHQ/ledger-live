@@ -1,5 +1,17 @@
 # @ledgerhq/cryptoassets
 
+## 11.4.1
+
+### Patch Changes
+
+- [#6284](https://github.com/LedgerHQ/ledger-live/pull/6284) [`884cfd6`](https://github.com/LedgerHQ/ledger-live/commit/884cfd64a1440d393fb983dfe361be9c78f3b81c) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Updated CAL support
+
+## 11.4.1-hotfix.0
+
+### Patch Changes
+
+- [#6284](https://github.com/LedgerHQ/ledger-live/pull/6284) [`884cfd6`](https://github.com/LedgerHQ/ledger-live/commit/884cfd64a1440d393fb983dfe361be9c78f3b81c) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Updated CAL support
+
 ## 11.4.0
 
 ### Minor Changes

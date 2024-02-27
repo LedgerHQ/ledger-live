@@ -1,51 +1,44 @@
 import BigNumber from "bignumber.js";
-import { canStake } from "./logic";
+import { canStake, isAlreadyStaking } from "./logic";
 import { CardanoAccount } from "./types";
 
 describe("canStake", () => {
-  it("should return false when acc delegation data is incomplete", () => {
+  it("should return false when acc not present", () => {
     const noResourcesAcc = {} as CardanoAccount;
     expect(canStake(noResourcesAcc)).toEqual(false);
-    const noDelegationAcc = {
-      cardanoResources: {},
-      balance: new BigNumber(1),
-    } as CardanoAccount;
-    expect(canStake(noDelegationAcc)).toEqual(false);
-    const noPoolIdAcc = {
-      balance: new BigNumber(1),
-      cardanoResources: {
-        delegation: {},
-      },
-    } as CardanoAccount;
-    expect(canStake(noPoolIdAcc)).toEqual(false);
-  });
-
-  it("should return false when acc already has a delegation but no funds", () => {
-    const poolIdNoFundsAcc = {
-      balance: new BigNumber(0),
-      cardanoResources: {
-        delegation: {
-          poolId: "helloiamapoolid",
-        },
-      },
-    } as CardanoAccount;
-    expect(canStake(poolIdNoFundsAcc)).toEqual(false);
   });
 
   it("should return false when acc has no funds", () => {
-    const noResourcesAcc = { balance: new BigNumber(0) } as CardanoAccount;
-    expect(canStake(noResourcesAcc)).toEqual(false);
+    const accWithNoFunds = {
+      balance: new BigNumber(0),
+    } as CardanoAccount;
+    expect(canStake(accWithNoFunds)).toEqual(false);
   });
 
-  it("should return true when acc already has a delegation and funds", () => {
-    const poolIdAcc = {
+  it("should return true when acc has funds", () => {
+    const accWithFunds = {
       balance: new BigNumber(1),
-      cardanoResources: {
-        delegation: {
-          poolId: "helloiamapoolid",
-        },
-      },
     } as CardanoAccount;
-    expect(canStake(poolIdAcc)).toEqual(true);
+    expect(canStake(accWithFunds)).toEqual(true);
+  });
+});
+
+describe("isAlreadyStaking", () => {
+  it("should return false when acc isn't delegating", () => {
+    const noResourcesAcc = {} as CardanoAccount;
+    expect(isAlreadyStaking(noResourcesAcc)).toEqual(false);
+    const noDelegationAcc = {
+      cardanoResources: {},
+    } as CardanoAccount;
+    expect(isAlreadyStaking(noDelegationAcc)).toEqual(false);
+    const noPoolIdAcc = { cardanoResources: { delegation: {} } } as CardanoAccount;
+    expect(isAlreadyStaking(noPoolIdAcc)).toEqual(false);
+  });
+
+  it("should return true when acc is delegating", () => {
+    const noResourcesAcc = {
+      cardanoResources: { delegation: { poolId: "itspoolid" } },
+    } as CardanoAccount;
+    expect(isAlreadyStaking(noResourcesAcc)).toEqual(true);
   });
 });
