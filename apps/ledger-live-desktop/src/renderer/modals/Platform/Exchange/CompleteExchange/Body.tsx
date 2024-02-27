@@ -78,7 +78,7 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
   const tokenCurrency: TokenCurrency | undefined =
     account.type === "TokenAccount" ? account.token : undefined;
 
-  const getCurrencyFromAccount = useCallback((account: AccountLike) => {
+  const getCurrencyByAccount = useCallback((account: AccountLike) => {
     switch (account.type) {
       case "Account":
       case "ChildAccount":
@@ -92,17 +92,17 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
 
   const sourceCurrency = useMemo(() => {
     if ("fromAccount" in exchange) {
-      return getCurrencyFromAccount(exchange.fromAccount);
+      return getCurrencyByAccount(exchange.fromAccount);
     }
     return null;
-  }, [exchange, getCurrencyFromAccount]);
+  }, [exchange, getCurrencyByAccount]);
 
   const targetCurrency = useMemo(() => {
     if ("toAccount" in exchange) {
-      return getCurrencyFromAccount(exchange.toAccount);
+      return getCurrencyByAccount(exchange.toAccount);
     }
     return null;
-  }, [exchange]);
+  }, [exchange, getCurrencyByAccount]);
 
   const broadcast = useBroadcast({ account, parentAccount });
   const [transaction, setTransaction] = useState<Transaction>();
@@ -143,7 +143,7 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
       const dispatchAction = updateAccountWithUpdater(...params);
       dispatch(dispatchAction);
     },
-    [dispatch, exchange, transactionParams],
+    [dispatch, exchange, transactionParams, provider],
   );
 
   const onBroadcastSuccess = useCallback(
@@ -171,7 +171,18 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
       }
       onResult(operation);
     },
-    [setBroadcastTransaction, setResult, onResult, updateAccount],
+    [
+      setResult,
+      onResult,
+      updateAccount,
+      magnitudeAwareRate,
+      provider,
+      rate,
+      sourceCurrency,
+      targetCurrency,
+      swapId,
+      toAccount,
+    ],
   );
 
   useEffect(() => {
