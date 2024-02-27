@@ -48,9 +48,9 @@ export function checkAccountSupported(account: Account): Error | null | undefine
   }
 
   if (!isCurrencySupported(account.currency)) {
-    const currencyName = account.currency.name;
-    return new CurrencyNotSupported("currency not supported: " + currencyName, {
-      currencyName,
+    const currencyId = account.currency.id;
+    return new CurrencyNotSupported("currency not supported: " + currencyId, {
+      currencyName: currencyId,
     });
   }
 }
