@@ -88,7 +88,7 @@
     "dotenv": "^16.0.3",
     "electron-context-menu": "^3.6.0",
     "electron-store": "^8.1.0",
-    "electron-updater": "^6.0.0",
+    "electron-updater": "^6.1.7",
     "firebase": "^9.6.6",
     "focus-trap": "^6.6.1",
     "fuse.js": "^6.6.2",
@@ -144,7 +144,7 @@
     "xstate": "^4.30.2"
   },
   "devDependencies": {
-    "@electron/notarize": "^2.2.1",
+    "@electron/notarize": "^2.3.0",
     "@jest/globals": "^29.7.0",
     "@ledgerhq/esbuild-utils": "workspace:*",
     "@ledgerhq/hw-transport-mocker": "workspace:^",
@@ -190,8 +190,8 @@
     "chalk": "^4.1.2",
     "cross-env": "^7.0.3",
     "debug": "^4.3.4",
-    "electron": "^28.2.1",
-    "electron-builder": "^24.0.0",
+    "electron": "^28.2.3",
+    "electron-builder": "^24.9.1",
     "electron-devtools-installer": "^3.2.0",
     "eslint-plugin-jest": "^27.4.2",
     "eslint-plugin-react": "^7.33.2",
