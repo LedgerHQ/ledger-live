@@ -9,7 +9,7 @@ import Button from "~/components/Button";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import { UpdateStep } from "~/screens/FirmwareUpdate";
 import { useUpdateBannerViewModel } from "./useUpdateBannerViewModel";
-import { ViewProps } from "./ViewProps";
+import type { ViewProps } from "./ViewProps";
 
 export type FirmwareUpdateBannerProps = {
   onBackFromUpdate: (updateState: UpdateStep) => void;

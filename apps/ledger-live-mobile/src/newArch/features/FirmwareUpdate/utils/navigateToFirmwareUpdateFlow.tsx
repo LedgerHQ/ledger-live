@@ -2,10 +2,10 @@ import { ParamListBase, RouteProp } from "@react-navigation/native";
 import { DeviceModelInfo } from "@ledgerhq/types-live";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { ScreenName, NavigatorName } from "~/const";
-import { lastConnectedDeviceSelector } from "~/reducers/settings";
 import { isNewFirmwareUpdateUxSupported } from "./isFirmwareUpdateSupported";
 import { FirmwareUpdateContextEntity } from "@ledgerhq/live-common/device-core/managerApi/entities/FirmwareUpdateContextEntity";
 import { UpdateStep } from "~/screens/FirmwareUpdate";
+import { Device } from "@ledgerhq/hw-transport";
 
 export function navigateToFirmwareUpdateFlow({
   lastConnectedDevice,
@@ -15,7 +15,7 @@ export function navigateToFirmwareUpdateFlow({
   navigation,
   onBackFromUpdate,
 }: {
-  lastConnectedDevice: ReturnType<typeof lastConnectedDeviceSelector>;
+  lastConnectedDevice: Device | null;
   lastSeenDeviceModelInfo: DeviceModelInfo | null | undefined;
   latestFirmware: FirmwareUpdateContextEntity | null;
   route: RouteProp<ParamListBase>;

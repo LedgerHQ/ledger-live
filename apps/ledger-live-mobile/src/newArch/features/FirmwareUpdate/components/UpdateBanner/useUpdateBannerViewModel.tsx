@@ -11,7 +11,7 @@ import {
 import { hasConnectedDeviceSelector } from "~/reducers/appstate";
 import { FirmwareUpdateBannerProps } from ".";
 import { navigateToFirmwareUpdateFlow } from "../../utils/navigateToFirmwareUpdateFlow";
-import { ViewProps } from "./ViewProps";
+import type { ViewProps } from "./ViewProps";
 import {
   isNewFirmwareUpdateUxSupported,
   isOldFirmwareUpdateUxSupported,

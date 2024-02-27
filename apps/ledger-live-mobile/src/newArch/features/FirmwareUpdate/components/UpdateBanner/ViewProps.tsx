@@ -1,11 +1,11 @@
-import { lastConnectedDeviceSelector } from "~/reducers/settings";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 
 export interface ViewProps {
   bannerVisible: boolean;
-  lastConnectedDevice: ReturnType<typeof lastConnectedDeviceSelector>;
+  lastConnectedDevice: Device | null;
   version: string;
-  onClickUpdate: () => void;
+  onClickUpdate(): void;
   unsupportedUpdateDrawerOpened: boolean;
-  closeUnsupportedUpdateDrawer: () => void;
+  closeUnsupportedUpdateDrawer(): void;
   isUpdateSupportedButDeviceNotWired: boolean;
 }

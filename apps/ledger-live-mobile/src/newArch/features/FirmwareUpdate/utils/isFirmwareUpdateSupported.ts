@@ -2,7 +2,7 @@ import { Platform } from "react-native";
 import { DeviceModelInfo } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/devices";
 import isFirmwareUpdateVersionSupported from "@ledgerhq/live-common/hw/isFirmwareUpdateVersionSupported";
-import { lastConnectedDeviceSelector } from "~/reducers/settings";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 
 const NEW_UX_SUPPORTED_DEVICES = [DeviceModelId.stax, DeviceModelId.europa];
 
@@ -15,7 +15,7 @@ export function isOldFirmwareUpdateUxSupported({
   lastConnectedDevice,
 }: {
   lastSeenDeviceModelInfo: DeviceModelInfo | null;
-  lastConnectedDevice: ReturnType<typeof lastConnectedDeviceSelector>;
+  lastConnectedDevice: Device | null;
 }) {
   const isUsbFwVersionUpdateSupported = Boolean(
     lastSeenDeviceModelInfo &&
