@@ -84,7 +84,7 @@
     "@types/lodash": "^4.14.191",
     "@types/object-hash": "^2.1.0",
     "@types/ripemd160": "^2.0.3",
-    "@types/secp256k1": "^4.0.6",
+    "@types/secp256k1": "^4.0.3",
     "@types/sha.js": "^2.4.4",
     "axios": "0.26.1",
     "bip32": "^2.0.6",

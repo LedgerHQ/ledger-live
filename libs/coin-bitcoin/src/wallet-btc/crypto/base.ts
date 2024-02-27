@@ -29,7 +29,7 @@ export function fallbackValidateAddress(address: string): boolean {
 
 class Base implements ICrypto {
   network: any;
-  protected static bip32Cache: Record<string, Promise<BIP32>> = {}; // xpub + account + index to publicKey
+  private static bip32Cache: Map<string, Promise<BIP32>> = new Map(); // xpub + account + index to publicKey
   public static addressCache: Record<string, Promise<string>> = {}; // derivationMode + xpub + account + index to address
 
   constructor({ network }: { network: any }) {
@@ -45,30 +45,33 @@ class Base implements ICrypto {
 
     // 0: root level
     const keyRoot = `${this.network.name}-${xpub}`;
-    let rootLevel = Base.bip32Cache[keyRoot]; // it's stored "in sync"
+    let rootLevel = Base.bip32Cache.get(keyRoot);
     if (!rootLevel) {
       const buffer: Buffer = bs58.decode(xpub);
       const depth: number = buffer[4];
       const i: number = buffer.readUInt32BE(9);
       const chainCode: Buffer = buffer.slice(13, 45);
       const publicKey: Buffer = buffer.slice(45, 78);
-      Base.bip32Cache[keyRoot] = rootLevel = Promise.resolve(
-        new BIP32(publicKey, chainCode, this.network, depth, i),
-      );
+      rootLevel = Promise.resolve(new BIP32(publicKey, chainCode, this.network, depth, i));
+      Base.bip32Cache.set(keyRoot, rootLevel);
     }
 
     // 1: account level
     const keyAccount = `${keyRoot}-${account}`;
-    let accountLevelP = Base.bip32Cache[keyAccount]; // it's stored as promise
+    let accountLevelP = Base.bip32Cache.get(keyAccount); // it's stored as promise
     if (!accountLevelP) {
-      Base.bip32Cache[keyAccount] = accountLevelP = rootLevel.then(root => root.derive(account));
+      accountLevelP = rootLevel.then(root => root.derive(account));
+      // accountLevelP = await rootLevel.derive(account);
+      Base.bip32Cache.set(keyAccount, accountLevelP);
     }
 
     // 2: index level
     const keyIndex = `${keyAccount}-${index}`;
-    let indexLevelP = Base.bip32Cache[keyIndex]; // it's stored as promise
+    let indexLevelP = Base.bip32Cache.get(keyIndex); // it's stored as promise
     if (!indexLevelP) {
-      Base.bip32Cache[keyIndex] = indexLevelP = accountLevelP.then(a => a.derive(index));
+      indexLevelP = accountLevelP.then(a => a.derive(index));
+      // indexLevelP = await accountLevelP.derive(index);
+      Base.bip32Cache.set(keyIndex, indexLevelP);
     }
 
     // We can finally return the publicKey. in most case, indexLevelP will be "resolved"
@@ -113,15 +116,12 @@ class Base implements ICrypto {
     account: number,
     index: number,
   ): Promise<string> {
-    if (
-      await Base.addressCache[`${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`]
-    ) {
-      return Base.addressCache[
-        `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`
-      ];
+    const addressCacheKey = `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`;
+    if (addressCacheKey in Base.addressCache) {
+      return Base.addressCache[addressCacheKey];
     }
     const res = this.customGetAddress(derivationMode, xpub, account, index);
-    Base.addressCache[`${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`] = res;
+    Base.addressCache[addressCacheKey] = res;
     return res;
   }
 

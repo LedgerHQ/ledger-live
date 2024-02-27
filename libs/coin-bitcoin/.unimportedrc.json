@@ -1,18 +1,10 @@
 {
   "entry": [
     "src/account.ts",
+    "src/api/index.ts",
     "src/bridge/js.ts",
     "src/cli-transaction.ts",
-    "src/deviceTransactionConfig.ts",
-    "src/errors.ts",
-    "src/hw-getAddress.ts",
-    "src/initAccount.ts",
-    "src/mock.ts",
-    "src/serialization.ts",
-    "src/specs.ts",
-    "src/transaction.ts",
-    "src/tokens.ts",
-    "src/api/index.ts",
+    "src/wallet-btc/crypto/secp256k1.ts",
     "src/crypto-util.ts",
     "src/datasets/bitcoin_cash.ts",
     "src/datasets/bitcoin_gold.ts",
@@ -34,9 +26,18 @@
     "src/datasets/zcash.ts",
     "src/datasets/zencash.ts",
     "src/descriptor.ts",
+    "src/deviceTransactionConfig.ts",
+    "src/errors.ts",
     "src/exchange.ts",
+    "src/hw-getAddress.ts",
     "src/hw-signMessage.ts",
-    "src/mockBtcSigner.ts"
+    "src/initAccount.ts",
+    "src/mock.ts",
+    "src/mockBtcSigner.ts",
+    "src/serialization.ts",
+    "src/specs.ts",
+    "src/transaction.ts",
+    "src/tokens.ts"
   ],
   "ignoreUnimported": []
 }
