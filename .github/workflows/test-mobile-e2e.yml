@@ -171,7 +171,7 @@ jobs:
       AVD_TARGET: google_apis
       AVD_NAME: "Pixel_6_Pro_API_32"
       AVD_CORES: 4
-      AVD_RAM_SIZE: 8192M
+      AVD_RAM_SIZE: 4096M
       AVD_OPTIONS: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
     outputs:
       status: ${{ steps.detox.outcome }}
