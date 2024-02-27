@@ -5,8 +5,8 @@ import { Text, Flex, Icons } from "@ledgerhq/native-ui";
 import { DownloadMedium, UsbMedium } from "@ledgerhq/native-ui/assets/icons";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 
-import Button from "../../../../../components/Button";
-import QueuedDrawer from "../../../../../components/QueuedDrawer";
+import Button from "~/components/Button";
+import QueuedDrawer from "~/components/QueuedDrawer";
 import { UpdateStep } from "~/screens/FirmwareUpdate";
 import { useUpdateBannerViewModel } from "./useUpdateBannerViewModel";
 import { ViewProps } from "./ViewProps";
