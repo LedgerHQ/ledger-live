@@ -32,7 +32,7 @@ const UpdateBanner = ({
   const deviceName = lastConnectedDevice?.deviceName;
   return bannerVisible ? (
     <>
-      <Pressable onPress={onClickUpdate}>
+      <Pressable onPress={onClickUpdate} testID="fw-update-banner">
         <Flex
           flexDirection="row"
           alignItems="flex-start"
@@ -87,7 +87,12 @@ const UpdateBanner = ({
         }
         noCloseButton
       >
-        <Button type="primary" title={t("common.close")} onPress={closeUnsupportedUpdateDrawer} />
+        <Button
+          testID="fw-update-drawer-unsupported-close-btn"
+          type="primary"
+          title={t("common.close")}
+          onPress={closeUnsupportedUpdateDrawer}
+        />
       </QueuedDrawer>
     </>
   ) : null;
