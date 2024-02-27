@@ -1,4 +1,4 @@
-import { TransactionHasBeenValidatedError } from "@ledgerhq/errors";
+import { TransactionHasBeenValidatedError, SequenceNumberError } from "@ledgerhq/errors";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import React from "react";
@@ -65,6 +65,11 @@ function StepConfirmation({
       if (mainAccount?.currency?.family === "evm") {
         error = new TransactionHasBeenValidatedError();
       }
+    } 
+    // Cosmos sequence mismatch error because the backend returns a wrong sequence sometimes
+    // This is a temporary fix until we have a better backend
+    else if (error.message.includes("account sequence mismatch")) {
+      error = new SequenceNumberError();
     }
 
     return (
