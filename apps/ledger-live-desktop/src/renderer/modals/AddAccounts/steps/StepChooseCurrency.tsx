@@ -53,8 +53,6 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const arbitrumSepolia = useFeature("currencyArbitrumSepolia");
   const rsk = useFeature("currencyRsk");
   const bittorrent = useFeature("currencyBittorrent");
-  const kavaEvm = useFeature("currencyKavaEvm");
-  const evmosEvm = useFeature("currencyEvmosEvm");
   const energyWeb = useFeature("currencyEnergyWeb");
   const astar = useFeature("currencyAstar");
   const metis = useFeature("currencyMetis");
@@ -98,8 +96,6 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       arbitrum_sepolia: arbitrumSepolia,
       rsk,
       bittorrent,
-      kava_evm: kavaEvm,
-      evmos_evm: evmosEvm,
       energy_web: energyWeb,
       astar,
       metis,
@@ -142,8 +138,6 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       arbitrumSepolia,
       rsk,
       bittorrent,
-      kavaEvm,
-      evmosEvm,
       energyWeb,
       astar,
       metis,
