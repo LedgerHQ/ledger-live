@@ -102,7 +102,6 @@ describe("FirmwareUpdateBanner integration test", () => {
   });
 
   it("should redirect to the NEW firmware update flow if the device is supported", async () => {
-    PlatformSpy.mockReturnValue({ OS: "android" } as typeof ReactNative.Platform);
     useLatestFirmware.mockReturnValue({
       final: {
         name: "mockVersion",
