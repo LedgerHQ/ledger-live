@@ -1,12 +1,13 @@
 import { UnknownMCU } from "@ledgerhq/errors";
 import { FirmwareUpdateContextEntity, GetLatestFirmwareForDeviceOptions } from "../types";
+import { ManagerApiRepository } from "./ManagerApiRepository";
 
 export async function getLatestFirmwareForDevice({
   deviceInfo,
   providerId,
   userId,
   managerApiRepository,
-}: GetLatestFirmwareForDeviceOptions): Promise<FirmwareUpdateContextEntity | null> {
+}: GetLatestFirmwareForDeviceOptions<ManagerApiRepository>): Promise<FirmwareUpdateContextEntity | null> {
   // Gets device infos from targetId
   const deviceVersion = await managerApiRepository.getDeviceVersion({
     targetId: deviceInfo.targetId,

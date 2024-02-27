@@ -1,5 +1,3 @@
-import { ManagerApiRepository } from "../manager/ManagerApiRepository";
-
 type Language = "french" | "english" | "spanish";
 
 enum AppType {
@@ -252,11 +250,11 @@ export type FirmwareUpdateContext = {
   shouldFlashMCU: boolean;
 };
 
-export type GetLatestFirmwareForDeviceOptions = {
+export type GetLatestFirmwareForDeviceOptions<T> = {
   deviceInfo: DeviceInfoEntity;
   providerId: number;
   userId: string;
-  managerApiRepository: ManagerApiRepository;
+  managerApiRepository: T;
 };
 
 // Commands
