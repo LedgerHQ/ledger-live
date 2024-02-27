@@ -14,7 +14,6 @@ import { BodyContent } from "./BodyContent";
 import { getMagnitudeAwareRate } from "@ledgerhq/live-common/exchange/swap/webApp/index";
 import { BigNumber } from "bignumber.js";
 import { AccountLike } from "@ledgerhq/types-live";
-import { WrongDeviceForAccount } from "@ledgerhq/errors";
 
 export type Data = {
   provider: string;
