@@ -4,14 +4,10 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import isFirmwareUpdateVersionSupported from "@ledgerhq/live-common/hw/isFirmwareUpdateVersionSupported";
 import { lastConnectedDeviceSelector } from "~/reducers/settings";
 
+const NEW_UX_SUPPORTED_DEVICES = [DeviceModelId.stax, DeviceModelId.europa];
+
 export function isNewFirmwareUpdateUxSupported(deviceModelId?: DeviceModelId) {
-  switch (deviceModelId) {
-    case DeviceModelId.stax:
-    case DeviceModelId.europa:
-      return true;
-    default:
-      return false;
-  }
+  return deviceModelId ? NEW_UX_SUPPORTED_DEVICES.includes(deviceModelId) : false;
 }
 
 export function isOldFirmwareUpdateUxSupported({
