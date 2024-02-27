@@ -38,7 +38,7 @@ export default function PortfolioBalanceSummary({ range, chartColor, counterValu
     [counterValue, dayFormatter, hourFormatter],
   );
   return (
-    <Card p={0} py={5}>
+    <Card p={0} py={5} grow>
       <Box px={6}>
         <BalanceInfos
           unit={counterValue.units[0]}

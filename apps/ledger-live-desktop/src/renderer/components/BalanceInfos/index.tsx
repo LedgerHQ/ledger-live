@@ -1,5 +1,4 @@
 import React, { useCallback } from "react";
-import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { AccountLike, ValueChange } from "@ledgerhq/types-live";
 import { Unit } from "@ledgerhq/types-cryptoassets";
@@ -13,6 +12,7 @@ import Button from "~/renderer/components/ButtonV3";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { useHistory } from "react-router-dom";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { Text } from "@ledgerhq/react-ui";
 
 type BalanceSinceProps = {
   valueChange: ValueChange;
@@ -133,15 +133,20 @@ export default function BalanceInfos({ totalBalance, valueChange, isAvailable, u
   }, [history]);
   return (
     <Box flow={5}>
+      <Box horizontal alignItems="center" justifyContent="space-between">
+        <Text variant="h3Inter" fontWeight="semiBold">
+          {t("dashboard.header")}
+        </Text>
+        <PillsDaysCount />
+      </Box>
       <Box horizontal>
         <BalanceTotal
           withTransactionsPendingConfirmationWarning
           unit={unit}
           isAvailable={isAvailable}
           totalBalance={totalBalance}
-        >
-          <Sub>{t("dashboard.totalBalance")}</Sub>
-        </BalanceTotal>
+        />
+
         {!portfolioExchangeBanner?.enabled && (
           <>
             <Button data-test-id="portfolio-buy-button" variant="color" mr={1} onClick={onBuy}>
@@ -163,21 +168,13 @@ export default function BalanceInfos({ totalBalance, valueChange, isAvailable, u
           </>
         )}
       </Box>
-      <Box horizontal alignItems="center" justifyContent="space-between">
-        <BalanceDiff
-          totalBalance={totalBalance}
-          valueChange={valueChange}
-          unit={unit}
-          isAvailable={isAvailable}
-        />
-        <PillsDaysCount />
-      </Box>
+
+      <BalanceDiff
+        totalBalance={totalBalance}
+        valueChange={valueChange}
+        unit={unit}
+        isAvailable={isAvailable}
+      />
     </Box>
   );
 }
-const Sub = styled(Box).attrs(() => ({
-  ff: "Inter",
-  fontSize: 4,
-}))`
-  text-transform: lowercase;
-`;

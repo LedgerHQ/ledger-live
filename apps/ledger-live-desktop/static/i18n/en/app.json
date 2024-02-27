@@ -1409,6 +1409,7 @@
   },
   "dashboard": {
     "title": "Portfolio",
+    "header": "Portfolio balance",
     "emptyAccountTile": {
       "desc": "Add accounts to manage other crypto assets",
       "createAccount": "Add account"
@@ -1449,6 +1450,27 @@
         "description": "You're 1 step away from Ledger Recover.",
         "primaryCta": "Connect",
         "secondaryCta": "Maybe later"
+      }
+    },
+    "marketPerformanceWidget": {
+      "title": "{{time}} trend",
+      "buy": "Buy",
+      "swap": "Swap",
+      "gainers": "Gainers",
+      "losers": "Losers",
+      "error": {
+        "title": "Sorry, we’re unable to load the trend",
+        "description": "Please try again later"
+      },
+      "missingData": {
+        "gainers": {
+          "title": "No assets among the top 50 experienced gains in the last 24 hours",
+          "description": "Consider viewing top losers or come back later"
+        },
+        "losers": {
+          "title": "No assets among the top 50 experienced losses in the last 24 hours",
+          "description": "Consider viewing top gainers or come back later"
+        }
       }
     }
   },

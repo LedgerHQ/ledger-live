@@ -464,6 +464,12 @@ export const DEFAULT_FEATURES: Features = {
       threshold: 75,
     },
   },
+  marketperformanceWidgetDesktop: {
+    enabled: false,
+    params: {
+      variant: ABTestingVariants.variantA,
+    },
+  },
 };
 
 // Firebase SDK treat JSON values as strings

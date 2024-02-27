@@ -29,8 +29,9 @@ import PostOnboardingHubBanner from "~/renderer/components/PostOnboardingHub/Pos
 import FeaturedButtons from "~/renderer/screens/dashboard/FeaturedButtons";
 import { ABTestingVariants, AccountLike, Operation } from "@ledgerhq/types-live";
 import PortfolioContentCards from "~/renderer/screens/dashboard/PortfolioContentCards";
-import MarketPerformance from "./MarketPerformance";
+import MarketPerformanceWidget from "~/renderer/screens/dashboard/MarketPerformanceWidget";
 import { useMarketPerformanceFeatureFlag } from "~/renderer/actions/marketperformance";
+import { Grid } from "@ledgerhq/react-ui";
 
 // This forces only one visible top banner at a time
 export const TopBannerContainer = styled.div`
@@ -73,7 +74,8 @@ export default function DashboardPage() {
     [hiddenNftCollections, shouldFilterTokenOpsZeroAmount],
   );
 
-  const marketPerformanceEnabled = useMarketPerformanceFeatureFlag().enabled;
+  const { enabled: marketPerformanceEnabled, variant: marketPerformanceVariant } =
+    useMarketPerformanceFeatureFlag();
 
   return (
     <>
@@ -99,13 +101,25 @@ export default function DashboardPage() {
           <EmptyStateInstalledApps />
         ) : totalAccounts > 0 ? (
           <>
-            <BalanceSummary
-              counterValue={counterValue}
-              chartColor={colors.wallet}
-              range={selectedTimeRange}
-            />
+            {marketPerformanceEnabled ? (
+              <PortfolioGrid>
+                <BalanceSummary
+                  counterValue={counterValue}
+                  chartColor={colors.wallet}
+                  range={selectedTimeRange}
+                />
 
-            {marketPerformanceEnabled ? <MarketPerformance /> : null}
+                <Box ml={2} minWidth={275}>
+                  <MarketPerformanceWidget variant={marketPerformanceVariant} />
+                </Box>
+              </PortfolioGrid>
+            ) : (
+              <BalanceSummary
+                counterValue={counterValue}
+                chartColor={colors.wallet}
+                range={selectedTimeRange}
+              />
+            )}
 
             <AssetDistribution />
             {totalOperations > 0 && (
@@ -126,3 +140,10 @@ export default function DashboardPage() {
     </>
   );
 }
+
+const PortfolioGrid = styled(Grid).attrs(() => ({
+  columnGap: 2,
+  columns: 2,
+}))`
+  grid-template-columns: 2fr 1fr;
+`;
