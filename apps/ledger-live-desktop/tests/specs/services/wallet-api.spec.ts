@@ -458,18 +458,18 @@ test("Wallet API methods @smoke", async ({ page }) => {
     await modal.continueToSignTransaction();
 
     // Step Device
-    await page.waitForTimeout(3000);
     await deviceAction.silentSign();
-    await page.waitForTimeout(3000);
-    // NOTE: toaster not visible in scre
+
+    // Click on notification toaster
+    // NOTE: toaster not visible in output, need to find a better way to handle css animations
     // await page.waitForSelector('[data-test-id="toaster"][style="opacity: 1;"]');
     const toaster = page.locator("data-test-id=toaster");
     await toaster.scrollIntoViewIfNeeded();
     await expect(toaster).toBeVisible();
     await expect(toaster.getByText("Transaction sent !")).toBeVisible();
-    await toaster.click()
-    await page.waitForTimeout(3000);
 
+    // Display transaction drawer
+    await toaster.click();
     const drawer = page.locator("data-test-id=drawer-content");
     await expect(drawer).toBeVisible();
     await expect(drawer.getByText("View in explorer")).toBeVisible();
