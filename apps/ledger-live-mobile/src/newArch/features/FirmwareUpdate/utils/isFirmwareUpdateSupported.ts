@@ -18,8 +18,8 @@ export function isOldFirmwareUpdateUxSupported({
   lastSeenDeviceModelInfo,
   lastConnectedDevice,
 }: {
-  lastSeenDeviceModelInfo: DeviceModelInfo | null | undefined;
-  lastConnectedDevice: ReturnType<typeof lastConnectedDeviceSelector> | null | undefined;
+  lastSeenDeviceModelInfo: DeviceModelInfo | null;
+  lastConnectedDevice: ReturnType<typeof lastConnectedDeviceSelector>;
 }) {
   const isUsbFwVersionUpdateSupported = Boolean(
     lastSeenDeviceModelInfo &&

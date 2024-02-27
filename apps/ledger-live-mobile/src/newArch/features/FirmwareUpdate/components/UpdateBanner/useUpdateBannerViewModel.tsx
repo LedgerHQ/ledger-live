@@ -1,6 +1,5 @@
 import { useState, useCallback } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { DeviceModelInfo } from "@ledgerhq/types-live";
 import { useSelector } from "react-redux";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useLatestFirmware } from "@ledgerhq/live-common/device/hooks/useLatestFirmware";
@@ -24,8 +23,7 @@ export function useUpdateBannerViewModel({
   const route = useRoute();
   const navigation = useNavigation<StackNavigationProp<Record<string, object | undefined>>>();
 
-  const lastSeenDeviceModelInfo: DeviceModelInfo | null | undefined =
-    useSelector(lastSeenDeviceSelector);
+  const lastSeenDeviceModelInfo = useSelector(lastSeenDeviceSelector);
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
   const hasConnectedDevice = useSelector(hasConnectedDeviceSelector);
   const hasCompletedOnboarding: boolean = useSelector(hasCompletedOnboardingSelector);
