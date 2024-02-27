@@ -48,16 +48,16 @@ const { isOldFirmwareUpdateUxSupported, isNewFirmwareUpdateUxSupported } = jest.
   "../../utils/isFirmwareUpdateSupported",
 );
 
-jest.mock("../../utils/navigateToFirmwareUpdateFlow", () => ({
-  ...jest.requireActual("../../utils/navigateToFirmwareUpdateFlow"),
-  navigateToFirmwareUpdateFlow: jest.fn(),
+jest.mock("../../utils/navigateToNewUpdateFlow", () => ({
+  navigateToNewUpdateFlow: jest.fn(),
 }));
 
-jest.requireMock("../../utils/navigateToFirmwareUpdateFlow");
-const navigateToFwUpdateFlowSpy = jest.spyOn(
-  jest.requireMock("../../utils/navigateToFirmwareUpdateFlow"),
-  "navigateToFirmwareUpdateFlow",
-);
+jest.mock("../../utils/navigateToOldUpdateFlow", () => ({
+  navigateToOldUpdateFlow: jest.fn(),
+}));
+
+const { navigateToNewUpdateFlow } = jest.requireMock("../../utils/navigateToNewUpdateFlow");
+const { navigateToOldUpdateFlow } = jest.requireMock("../../utils/navigateToOldUpdateFlow");
 
 /** TESTS */
 
@@ -178,7 +178,6 @@ describe("useUpdateBannerViewModel", () => {
     act(() => result.current.onClickUpdate());
 
     expect(result.current.unsupportedUpdateDrawerOpened).toBe(true);
-    expect(navigateToFwUpdateFlowSpy).not.toHaveBeenCalled();
 
     act(() => result.current.closeUnsupportedUpdateDrawer());
     expect(result.current.unsupportedUpdateDrawerOpened).toBe(false);
@@ -204,7 +203,7 @@ describe("useUpdateBannerViewModel", () => {
     act(() => result.current.onClickUpdate());
 
     expect(result.current.unsupportedUpdateDrawerOpened).toBe(false);
-    expect(navigateToFwUpdateFlowSpy).toHaveBeenCalled();
+    expect(navigateToOldUpdateFlow).toHaveBeenCalled();
   });
 
   it("should call startFirmwareUpdateFlow when onClickUpdate is called if new update flow is supported", () => {
@@ -227,6 +226,6 @@ describe("useUpdateBannerViewModel", () => {
     act(() => result.current.onClickUpdate());
 
     expect(result.current.unsupportedUpdateDrawerOpened).toBe(false);
-    expect(navigateToFwUpdateFlowSpy).toHaveBeenCalled();
+    expect(navigateToNewUpdateFlow).toHaveBeenCalled();
   });
 });

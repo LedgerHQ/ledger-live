@@ -10,12 +10,13 @@ import {
 } from "~/reducers/settings";
 import { hasConnectedDeviceSelector } from "~/reducers/appstate";
 import { FirmwareUpdateBannerProps } from ".";
-import { navigateToFirmwareUpdateFlow } from "../../utils/navigateToFirmwareUpdateFlow";
 import type { ViewProps } from "./ViewProps";
 import {
   isNewFirmwareUpdateUxSupported,
   isOldFirmwareUpdateUxSupported,
 } from "../../utils/isFirmwareUpdateSupported";
+import { navigateToNewUpdateFlow } from "../../utils/navigateToNewUpdateFlow";
+import { navigateToOldUpdateFlow } from "../../utils/navigateToOldUpdateFlow";
 
 export function useUpdateBannerViewModel({
   onBackFromUpdate,
@@ -47,16 +48,23 @@ export function useUpdateBannerViewModel({
     setUnsupportedUpdateDrawerOpened(false);
   }, []);
 
-  const startFirmwareUpdateFlow = useCallback(() => {
-    navigateToFirmwareUpdateFlow({
-      lastConnectedDevice,
-      lastSeenDeviceModelInfo: lastSeenDeviceModelInfo,
-      latestFirmware,
-      route,
-      navigation,
-      onBackFromUpdate,
-    });
+  const onClickUpdate = useCallback(() => {
+    if (isNewUxSupported) {
+      navigateToNewUpdateFlow({
+        navigation,
+        lastConnectedDevice,
+        lastSeenDeviceModelInfo,
+        latestFirmware,
+        onBackFromUpdate,
+      });
+    } else if (isOldUxSupported) {
+      navigateToOldUpdateFlow({ route, navigation });
+    } else {
+      setUnsupportedUpdateDrawerOpened(true);
+    }
   }, [
+    isNewUxSupported,
+    isOldUxSupported,
     lastConnectedDevice,
     lastSeenDeviceModelInfo,
     latestFirmware,
@@ -64,15 +72,6 @@ export function useUpdateBannerViewModel({
     onBackFromUpdate,
     route,
   ]);
-
-  const onClickUpdate = useCallback(() => {
-    if (isNewUxSupported || isOldUxSupported) {
-      startFirmwareUpdateFlow();
-      setUnsupportedUpdateDrawerOpened(false);
-    } else {
-      setUnsupportedUpdateDrawerOpened(true);
-    }
-  }, [isNewUxSupported, isOldUxSupported, startFirmwareUpdateFlow]);
 
   return {
     bannerVisible,
