@@ -187,7 +187,7 @@ const TransactionConfirm = ({
           {fields.map((field, i) => {
             const MaybeComponent = fieldComponents[field.type];
             if (!MaybeComponent) {
-              console.log(
+              console.warn(
                 `TransactionConfirm field ${field.type} is not implemented! add a generic implementation in components/TransactionConfirm.js or inside families/*/TransactionConfirmFields.js`,
               );
               return null;
