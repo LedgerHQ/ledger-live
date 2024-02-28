@@ -83,6 +83,11 @@ export type LiveAppManifestParamsNetwork = {
   nodeURL?: string;
 };
 
+export type LiveAppManifestDapp = {
+  networks: Array<LiveAppManifestParamsNetwork>;
+  nanoApp: string;
+};
+
 export type LiveAppManifest = {
   id: string;
   author?: string;
@@ -90,6 +95,7 @@ export type LiveAppManifest = {
   name: string;
   url: string | URL;
   params?: LiveAppManifestParams;
+  dapp?: LiveAppManifestDapp;
   homepageUrl: string;
   supportUrl?: string;
   icon?: string | null;
