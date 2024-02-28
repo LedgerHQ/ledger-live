@@ -3,4 +3,4 @@
 "@ledgerhq/live-common": patch
 ---
 
-updates sign transaction UI
+Update the modal UI for token approval
