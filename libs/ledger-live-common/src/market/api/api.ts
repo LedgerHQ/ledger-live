@@ -7,10 +7,10 @@ import {
   MarketCoin,
   MarketCurrencyChartDataRequestParams,
   MarketListRequestParams,
-  SparklineSvgData,
   SupportedCoins,
 } from "../types";
 import { rangeDataTable } from "../utils/rangeDataTable";
+import { currencyFormatter, format } from "../utils/currencyFormatter";
 
 const cryptoCurrenciesList = [...listCryptoCurrencies(), ...listTokens()];
 
@@ -46,44 +46,6 @@ const matchSearch =
     const match = `${currency.symbol}|${currency.name}`;
     return match.toLowerCase().includes(search.toLowerCase());
   };
-
-function distributedCopy(items: number[], n: number): number[] {
-  if (!items) return [];
-  if (items.length <= n) return items;
-  const elements = [items[0]];
-  const totalItems = items.length - 2;
-  const interval = Math.floor(totalItems / (n - 2));
-  for (let i = 1; i < n - 1; i++) {
-    elements.push(items[i * interval]);
-  }
-  elements.push(items[items.length - 1]);
-  return elements;
-}
-
-const sparklineXMagnitude = 5;
-const sparklineYHeight = 50;
-
-function sparklineAsSvgData(points: number[]): SparklineSvgData {
-  const totalXSteps = sparklineXMagnitude * points.length;
-  const min = Math.min(...points);
-  const max = Math.max(...points);
-
-  const yOffset = max - min;
-
-  return {
-    path: points
-      .map((d, i) => {
-        const [x, y] = [
-          i * sparklineXMagnitude,
-          sparklineYHeight + 3 - ((d - min) * sparklineYHeight) / yOffset,
-        ];
-        return i === 0 ? `M ${x} ${y}` : `L ${x} ${y}`;
-      })
-      .join(" "),
-    viewBox: `0 0 ${totalXSteps} ${sparklineYHeight + 3}`,
-    isPositive: points[0] <= points[points.length - 1],
-  };
-}
 
 // fetches currencies data for selected currencies ids
 async function listPaginated({
@@ -156,62 +118,11 @@ async function listPaginated({
       );
   }
 
-  return data.map(
-    (currency: {
-      [x: string]: any;
-      id: string;
-      name: any;
-      image: any;
-      ["market_cap"]: any;
-      ["market_cap_rank"]: any;
-      ["total_volume"]: any;
-      ["high_24h"]: any;
-      ["low_24h"]: any;
-      symbol: any;
-      ["current_price"]: any;
-      ["market_cap_change_percentage_24h"]: any;
-      ["circulating_supply"]: any;
-      ["total_supply"]: any;
-      ["max_supply"]: any;
-      ath: any;
-      ["ath_date"]: any;
-      atl: any;
-      ["atl_date"]: any;
-      ["sparkline_in_7d"]: { price: any };
-    }) => ({
-      id: currency.id,
-      name: currency.name,
-      image: currency.image,
-      isLiveSupported: LIVE_COINS_LIST.includes(currency.id),
-      internalCurrency: cryptoCurrenciesList.find(
-        ({ ticker }) => ticker.toLowerCase() === currency.symbol,
-      ),
-      marketcap: currency.market_cap,
-      marketcapRank: currency.market_cap_rank,
-      totalVolume: currency.total_volume,
-      high24h: currency.high_24h,
-      low24h: currency.low_24h,
-      ticker: currency.symbol,
-      price: currency.current_price,
-      priceChangePercentage: currency[`price_change_percentage_${range}_in_currency`],
-      marketCapChangePercentage24h: currency.market_cap_change_percentage_24h,
-      circulatingSupply: currency.circulating_supply,
-      totalSupply: currency.total_supply,
-      maxSupply: currency.max_supply,
-      ath: currency.ath,
-      athDate: currency.ath_date,
-      atl: currency.atl,
-      atlDate: currency.atl_date,
-      sparklineIn7d: currency?.sparkline_in_7d?.price
-        ? sparklineAsSvgData(distributedCopy(currency.sparkline_in_7d.price, 6 * 7)) // keep 6 points per day
-        : null,
-      chartData: [],
-    }),
-  );
+  return currencyFormatter(data, range, cryptoCurrenciesList, LIVE_COINS_LIST);
 }
 
 // Fetches list of supported counterCurrencies
-async function supportedCounterCurrencies(): Promise<string[]> {
+export async function supportedCounterCurrencies(): Promise<string[]> {
   const url = `${ROOT_PATH}/simple/supported_vs_currencies`;
 
   const { data } = await network({
@@ -222,14 +133,11 @@ async function supportedCounterCurrencies(): Promise<string[]> {
   return data;
 }
 
-// Fetches list of supported currencies
-async function currencyChartData({
+export async function fetchCurrencyChartData({
   id,
   counterCurrency,
   range = "24h",
-}: MarketCurrencyChartDataRequestParams): Promise<{
-  [range: string]: number[];
-}> {
+}: MarketCurrencyChartDataRequestParams): Promise<Record<string, [number, number][]>> {
   const { days, interval } = rangeDataTable[range];
   const url = `${ROOT_PATH}/coins/${id}/market_chart?vs_currency=${counterCurrency}&days=${days}&interval=${interval}`;
 
@@ -241,9 +149,40 @@ async function currencyChartData({
   return { [range]: data.prices };
 }
 
+export async function fetchCurrencyData({
+  counterCurrency,
+  range = "24h",
+  id,
+}: MarketCurrencyChartDataRequestParams): Promise<CurrencyData> {
+  const url =
+    `${ROOT_PATH}/coins/markets?vs_currency=${counterCurrency}` +
+    `&sparkline=true&price_change_percentage=${range}` +
+    `&page=1&&ids=${id}`;
+
+  const { data } = await network({
+    method: "GET",
+    url,
+  });
+
+  return currencyFormatter(data, range, cryptoCurrenciesList, LIVE_COINS_LIST)[0];
+}
+
+export async function fetchCurrency({
+  id,
+}: MarketCurrencyChartDataRequestParams): Promise<CurrencyData> {
+  const url = `${ROOT_PATH}/coins/${id}`;
+
+  const { data } = await network({
+    method: "GET",
+    url,
+  });
+
+  return format(data, "24h", cryptoCurrenciesList, LIVE_COINS_LIST);
+}
+
 export default {
   setSupportedCoinsList,
   listPaginated,
   supportedCounterCurrencies,
-  currencyChartData,
+  currencyChartData: fetchCurrencyChartData,
 };
