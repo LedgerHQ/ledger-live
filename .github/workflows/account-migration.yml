@@ -41,10 +41,8 @@ jobs:
           - name: Run synchronisation on develop
             run: |
                 OUTPUT=$(pnpm common test-account-migration  ${{ inputs.currency }})
-                echo $OUTPUT
-                touch develop-sync
-                echo $OUTPUT > develop-sync
-                cat develop-sync
+                echo $OUTPUT > develop-sync.json
+                cat develop-sync.jsion
 
           - uses: actions/checkout@v4
             with:
@@ -58,16 +56,14 @@ jobs:
           - name: run synchronisation on current commit
             run: |
               OUTPUT=$(pnpm common test-account-migration  ${{ inputs.currency }})
-              echo $OUTPUT
-              touch commit-sync
-              echo $OUTPUT > commit-sync
-              cat commit-sync
+              echo $OUTPUT > commit-sync.json
+              cat commit-sync.json
 
           - name: Check that the files are the exact same
             uses: LouisBrunner/diff-action@v2.0.0
             with:
-              old: develop-sync
-              new: commit-sync
+              old: develop-sync.json
+              new: commit-sync.json
               mode: strict
               tolerance: same
-              output: sync-diff.txt
+              output: sync-diff.json
