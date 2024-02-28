@@ -14,7 +14,7 @@ on:
 jobs:
     account_migration:
         name: "account-migration"
-        runs-on: ledger-live-medium-linux
+        runs-on: ubuntu-latest
         steps:
           - name: generate token
             id: generate-token
@@ -22,31 +22,44 @@ jobs:
             with:
               app_id: ${{ secrets.GH_BOT_APP_ID }}
               private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+
+          - name: Setup git user
+            uses: ./tools/actions/composites/setup-git-user
+      
+          - name: Setup the toolchain
+            uses: ./tools/actions/composites/setup-toolchain
+
           - uses: actions/checkout@v4
             with:
               ref: develop
               token: ${{ steps.generate-token.outputs.token }}
+
           - name: install dependencies and build
             run: |
               pnpm i
               pnpm build:llc
+
           - name: Run synchronisation on develop
             run: |
                 OUTPUT=$(npx -y tsx libs/ledger-live-common/src/__tests__/migration/account-migration.ts ${{ inputs.currency }})
                 touch develop-sync
                 echo $OUTPUT > develop-sync
+
           - uses: actions/checkout@v4
             with:
               token: ${{ steps.generate-token.outputs.token }}
+
           - name: install dependencies and build
             run: |
               pnpm i
               pnpm build:llc
+
           - name: run synchronisation on current commit
             run: |
               OUTPUT=$(npx -y tsx libs/ledger-live-common/src/__tests__/migration/account-migration.ts ${{ inputs.currency }})
               touch commit-sync
               echo $OUTPUT > commit-sync
+
           - name: Check that the files are the exact same
             uses: LouisBrunner/diff-action@v2.0.0
             with:
