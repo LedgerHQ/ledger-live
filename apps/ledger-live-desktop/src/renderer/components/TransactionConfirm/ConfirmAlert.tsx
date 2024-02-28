@@ -13,7 +13,7 @@ type Props = {
 };
 
 const ConfirmAlert = ({ t, transaction, typeTransaction, fields }: Props) => {
-  const key = ("mode" in transaction && transaction.mode) || "send";
+  const key = "mode" in transaction ? transaction.mode : "send";
   const recipientWording = t(`TransactionConfirm.recipientWording.${key}`);
 
   const amountTransaction: string = useMemo(
