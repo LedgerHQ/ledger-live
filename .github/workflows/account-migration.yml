@@ -40,7 +40,7 @@ jobs:
 
           - name: Run synchronisation on develop
             run: |
-                OUTPUT=$(npx -y tsx ./libs/ledger-live-common/src/__tests__/migration/account-migration.ts  ${{ inputs.currency }})
+                OUTPUT=$(pnpm common test-account-migration  ${{ inputs.currency }})
                 touch develop-sync
                 echo $OUTPUT > develop-sync
                 cat develop-sync
@@ -56,7 +56,7 @@ jobs:
 
           - name: run synchronisation on current commit
             run: |
-              OUTPUT=$(npx -y tsx ./libs/ledger-live-common/src/__tests__/migration/account-migration.ts  ${{ inputs.currency }})
+              OUTPUT=$(pnpm common test-account-migration  ${{ inputs.currency }})
               touch commit-sync
               echo $OUTPUT > commit-sync
               cat commit-sync
