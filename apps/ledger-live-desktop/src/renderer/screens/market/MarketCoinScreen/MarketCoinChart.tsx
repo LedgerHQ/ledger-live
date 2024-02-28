@@ -84,7 +84,7 @@ type Props = {
   locale: string;
   loading: boolean;
   setCounterCurrency: (currency: string) => void;
-  supportedCounterCurrencies: string[];
+  supportedCounterCurrencies?: string[];
 };
 
 function MarkeCoinChartComponent({
