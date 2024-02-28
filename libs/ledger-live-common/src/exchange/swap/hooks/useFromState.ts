@@ -50,6 +50,11 @@ export const useFromState = ({
         parentAccount,
       });
 
+      let additionalFees;
+
+      if (account?.type === "Account" && account?.unit?.code === "ETH") {
+        additionalFees = new BigNumber(10000000000000000); // 0,01 ETH
+      }
       /* @DEV: That populates fake seed. This is required to use Transaction object */
       const mainAccount = getMainAccount(account as AccountLike, parentAccount);
       const mainCurrency = getAccountCurrency(mainAccount);
@@ -57,6 +62,7 @@ export const useFromState = ({
       bridgeTransaction.updateTransaction(transaction => ({
         ...transaction,
         recipient,
+        additionalFees,
       }));
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps

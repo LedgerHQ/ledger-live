@@ -7,7 +7,7 @@ import { getNodeApi } from "./api/node/index";
 import { DEFAULT_NONCE } from "./createTransaction";
 import { validateRecipient } from "./getTransactionStatus";
 import { getAdditionalLayer2Fees, getEstimatedFees, isNftTransaction } from "./logic";
-import { getTransactionData, getTypedTransaction } from "./transaction";
+import transaction, { getTransactionData, getTypedTransaction } from "./transaction";
 import { EvmNftTransaction, Transaction as EvmTransaction, FeeData, Strategy } from "./types";
 
 /**
@@ -40,7 +40,9 @@ const prepareCoinTransaction = async (
     const estimatedFees = getEstimatedFees(draftTransaction);
     const additionalFees = await getAdditionalLayer2Fees(account.currency, draftTransaction);
     const amount = BigNumber.max(
-      account.balance.minus(estimatedFees).minus(additionalFees || 0),
+      account.balance
+        .minus(estimatedFees)
+        .minus(additionalFees || draftTransaction.additionalFees || 0),
       0,
     );
 

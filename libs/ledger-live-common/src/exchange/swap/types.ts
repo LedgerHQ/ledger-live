@@ -336,7 +336,7 @@ export type SwapTransactionType = UseBridgeTransactionResult & {
   setFromAmount: (amount: BigNumber) => void;
   setToAmount: (amount: BigNumber) => void;
   setToCurrency: (currency: SwapSelectorStateType["currency"]) => void;
-  toggleMax: () => void;
+  toggleMax: (account: SwapSelectorStateType["account"]) => void;
   reverseSwap: () => void;
   fromAmountError?: Error;
   fromAmountWarning?: Error;
