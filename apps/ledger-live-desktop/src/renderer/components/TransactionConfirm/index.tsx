@@ -170,7 +170,16 @@ const TransactionConfirm = ({
         <DeviceBlocker />
         <Animation animation={getDeviceAnimation(device.modelId, type, "verify")} />
         <ConfirmTitle
-          Title={Title}
+          title={
+            Title ? (
+              <Title
+                account={account}
+                parentAccount={parentAccount}
+                transaction={transaction}
+                status={status}
+              />
+            ) : null
+          }
           account={account}
           parentAccount={parentAccount}
           status={status}
@@ -206,8 +215,7 @@ const TransactionConfirm = ({
         </Box>
       </Container>
       <ConfirmFooter
-        transaction={transaction}
-        Footer={Footer}
+        footer={Footer ? <Footer transaction={transaction} /> : null}
         manifestId={manifestId}
         manifestName={manifestName}
       />

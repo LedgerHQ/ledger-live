@@ -1,7 +1,6 @@
 import React from "react";
 import styled from "styled-components";
 import { Trans, withTranslation } from "react-i18next";
-import { TransactionCommon } from "@ledgerhq/types-live";
 import Text from "~/renderer/components/Text";
 import { openURL } from "~/renderer/linking";
 import { getEnv } from "@ledgerhq/live-env";
@@ -22,49 +21,40 @@ if (getEnv("PLAYWRIGHT_RUN")) {
 }
 
 type Props = {
-  Footer:
-    | React.ComponentType<{
-        transaction: TransactionCommon;
-      }>
-    | undefined;
-  transaction: Transaction;
+  footer: React.ReactNode | undefined;
   manifestId?: string | null;
   manifestName?: string | null;
 };
 
-const ConfirmFooter = ({ Footer, transaction, manifestId, manifestName }: Props) => {
-  if (Footer) {
-    return (
-      <>
-        <HorizontalSeparator />
-        <Footer transaction={transaction} />
-      </>
-    );
-  }
+const ConfirmFooter = ({ footer, manifestId, manifestName }: Props) => {
   if (manifestId) {
     const termsOfUseUrl = termsOfUse.get(manifestId);
     if (termsOfUseUrl !== undefined) {
       return (
         <>
           <HorizontalSeparator />
-          <Text marginTop={30} data-test-id="confirm-footer-toc">
-            <Trans
-              i18nKey="TransactionConfirm.termsAndConditions"
-              values={{ appName: manifestName }}
-              components={[
-                <Text
-                  key={manifestId}
-                  onClick={() => openURL(termsOfUseUrl)}
-                  style={{
-                    cursor: "pointer",
-                    textDecoration: "underline",
-                  }}
-                >
-                  {`${manifestId}'s terms of use.`}
-                </Text>,
-              ]}
-            />
-          </Text>
+          {footer ? (
+            footer
+          ) : (
+            <Text marginTop={30} data-test-id="confirm-footer-toc">
+              <Trans
+                i18nKey="TransactionConfirm.termsAndConditions"
+                values={{ appName: manifestName }}
+                components={[
+                  <Text
+                    key={manifestId}
+                    onClick={() => openURL(termsOfUseUrl)}
+                    style={{
+                      cursor: "pointer",
+                      textDecoration: "underline",
+                    }}
+                  >
+                    {`${manifestId}'s terms of use.`}
+                  </Text>,
+                ]}
+              />
+            </Text>
+          )}
         </>
       );
     }
