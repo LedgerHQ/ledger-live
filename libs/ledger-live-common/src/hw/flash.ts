@@ -47,7 +47,7 @@ export default (finalFirmware: FinalFirmware) =>
             } else {
               const mcuFromBootloader = (mcuVersion.from_bootloader_version || "")
                 .split(".")
-                .slice(0, 2)
+                .slice(0, 3)
                 .join(".");
               isMCU = deviceInfo.majMin === mcuFromBootloader;
               version = isMCU ? mcuVersion.name : mcuFromBootloader;
