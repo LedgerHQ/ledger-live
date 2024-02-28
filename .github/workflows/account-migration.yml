@@ -14,7 +14,7 @@ on:
 jobs:
     account_migration:
         name: "account-migration"
-        runs-on: ubuntu-latest
+        runs-on: ledger-live-medium-linux
         steps:
           - name: generate token
             id: generate-token
