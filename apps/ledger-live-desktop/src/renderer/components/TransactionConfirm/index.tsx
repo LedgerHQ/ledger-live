@@ -104,7 +104,6 @@ const Container = styled(Box).attrs(() => ({
 }))``;
 
 type Props = {
-  t: TFunction;
   device: Device;
   account: AccountLike;
   parentAccount: Account | undefined | null;
