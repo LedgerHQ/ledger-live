@@ -22,16 +22,17 @@ jobs:
             with:
               ref: develop
               token: ${{ steps.generate-token.outputs.token }}
-          - name: Setup git user
-            uses: ./tools/actions/composites/setup-git-user
           - name: Run synchronisation on develop
             run: |
-                OUTPUT=$(pnpm syncronization ${{ inputs.currency }})
+                OUTPUT=$(npx tsx libs/ledger-live-common/src/__tests__/migration/account-migration.ts ${{ inputs.currency }})
                 touch develop-sync
                 echo $OUTPUT > develop-sync
+          - uses: actions/checkout@v4
+            with:
+              token: ${{ steps.generate-token.outputs.token }}
           - name: run synchronisation on current commit
             run: |
-              OUTPUT=$(pnpm synchronisation ${{ inputs.currency}})
+              OUTPUT=$(npx tsx libs/ledger-live-common/src/__tests__/migration/account-migration.ts ${{ inputs.currency }})
               touch commit-sync
               echo $OUTPUT > commit-sync
           - name: Check that the files are the exact same

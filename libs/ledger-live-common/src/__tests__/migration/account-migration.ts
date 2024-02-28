@@ -127,7 +127,6 @@ export const testSync = async (currencyId: string, address: string) => {
   const mockAccount = getMockAccount(currencyId, address);
   const accountBrige = getAccountBridgeByFamily(mockAccount.currency.family, mockAccount.id);
 
-  // run on this currency only
   const value = await firstValueFrom(
     accountBrige
       .sync(mockAccount as unknown as Account, { paginationConfig: {} })
