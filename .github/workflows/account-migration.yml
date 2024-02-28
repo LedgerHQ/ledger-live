@@ -7,6 +7,10 @@ on:
             description: "Currency to run the migration test on. If not specified the test will be run on all supported currencies"
             required: false
 
+    push:
+      branches:
+        - "feat/live-11055-migration-account-test"
+
 jobs:
     account_migration:
         name: "account-migration"
