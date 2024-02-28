@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 34.0.0-next.1
+
+### Patch Changes
+
+- [#6312](https://github.com/LedgerHQ/ledger-live/pull/6312) [`e6db239`](https://github.com/LedgerHQ/ledger-live/commit/e6db239edd84e035f60fff239d574111af318e80) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Bump polkadot minAppVersion to latest
+
 ## 34.0.0-next.0
 
 ### Major Changes
