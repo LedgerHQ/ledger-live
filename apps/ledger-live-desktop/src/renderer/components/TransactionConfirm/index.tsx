@@ -1,6 +1,5 @@
 import invariant from "invariant";
 import React, { useMemo } from "react";
-import { TFunction } from "i18next";
 import styled from "styled-components";
 import { Account, AccountLike, TransactionCommon } from "@ledgerhq/types-live";
 import { getAccountUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
