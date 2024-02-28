@@ -14,7 +14,7 @@ import { BodyContent, BodyContentProps } from "./BodyContent";
 import { getMagnitudeAwareRate } from "@ledgerhq/live-common/exchange/swap/webApp/index";
 import { BigNumber } from "bignumber.js";
 import { AccountLike } from "@ledgerhq/types-live";
-import { WrongDeviceForAccount } from "@ledgerhq/errors";
+import { NotEnoughBalance, WrongDeviceForAccount } from "@ledgerhq/errors";
 import { useRedirectToSwapHistory } from "~/renderer/screens/exchange/Swap2/utils";
 
 export type Data = {
@@ -188,16 +188,16 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
   useEffect(() => {
     if (error) {
       onCancel(error);
-      if (!(error instanceof WrongDeviceForAccount)) {
-        console.log("[moonpay] close");
-        // onClose?.();
+      if (
+        ![error instanceof WrongDeviceForAccount, error instanceof NotEnoughBalance].some(Boolean)
+      ) {
+        onClose?.();
       }
     }
   }, [onCancel, error, onClose]);
 
   useEffect(() => {
     if (!signedOperation) return;
-    console.log("[moonpay] about to broadcast");
     broadcast(signedOperation).then(onBroadcastSuccess, setError);
   }, [signedOperation, broadcast, onBroadcastSuccess, setError]);
 
