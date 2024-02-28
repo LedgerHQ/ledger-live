@@ -16,15 +16,14 @@ const ConfirmAlert = ({ t, transaction, typeTransaction, fields }: Props) => {
   const key = "mode" in transaction ? transaction.mode : "send";
   const recipientWording = t(`TransactionConfirm.recipientWording.${key}`);
 
-  const amountTransaction: string = useMemo(
-    () =>
-      (
-        fields.find(
-          (field: { label: string }) => field.label && field.label === "Amount",
-        ) as DeviceTransactionField & { value: string }
-      )?.value || "",
-    [fields],
-  );
+  const amountTransaction: string = useMemo(() => {
+    const amountField = fields.find(field => field.label && field.label === "Amount");
+
+    if (amountField && amountField.type === "text" && amountField.value) {
+      return amountField.value;
+    }
+    return "";
+  }, [fields]);
 
   let alertContentKey = "TransactionConfirm.doubleCheck";
   if (typeTransaction === "Approve") {
