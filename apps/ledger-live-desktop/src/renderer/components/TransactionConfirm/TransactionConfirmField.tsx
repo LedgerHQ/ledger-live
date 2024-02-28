@@ -4,6 +4,7 @@ import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import ToolTip from "~/renderer/components/Tooltip";
 import InfoCircle from "~/renderer/icons/InfoCircle";
+
 const TransactionConfirmField = ({
   children,
   label,

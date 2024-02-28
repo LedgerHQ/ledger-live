@@ -1,9 +1,9 @@
 import React from "react";
 import styled from "styled-components";
 import { Trans, withTranslation } from "react-i18next";
+import { getEnv } from "@ledgerhq/live-env";
 import Text from "~/renderer/components/Text";
 import { openURL } from "~/renderer/linking";
-import { getEnv } from "@ledgerhq/live-env";
 
 const HorizontalSeparator = styled.div`
   height: 1px;

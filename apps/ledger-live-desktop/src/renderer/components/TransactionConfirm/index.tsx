@@ -2,26 +2,22 @@ import invariant from "invariant";
 import React, { useMemo } from "react";
 import { TFunction } from "i18next";
 import styled from "styled-components";
-import { getAccountUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { Account, AccountLike, TransactionCommon } from "@ledgerhq/types-live";
+import { getAccountUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import {
-  DeviceTransactionField,
-  getDeviceTransactionConfig,
-} from "@ledgerhq/live-common/transaction/index";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-
+import { getDeviceTransactionConfig } from "@ledgerhq/live-common/transaction/index";
 import Animation from "~/renderer/animations";
 import Box from "~/renderer/components/Box";
-import Text from "~/renderer/components/Text";
-import useTheme from "~/renderer/hooks/useTheme";
 import FormattedVal from "~/renderer/components/FormattedVal";
-import TransactionConfirmField from "./TransactionConfirmField";
+import Text from "~/renderer/components/Text";
 import { getLLDCoinFamily } from "~/renderer/families";
 import { FieldComponentProps as FCPGeneric } from "~/renderer/families/types";
+import useTheme from "~/renderer/hooks/useTheme";
 import ConfirmFooter from "./ConfirmFooter";
-import { DeviceBlocker } from "../DeviceAction/DeviceBlocker";
+import TransactionConfirmField from "./TransactionConfirmField";
 import { getDeviceAnimation } from "../DeviceAction/animations";
+import { DeviceBlocker } from "../DeviceAction/DeviceBlocker";
 import ConfirmAlert from "./ConfirmAlert";
 import ConfirmTitle from "./ConfirmTitle";
 
@@ -144,15 +140,13 @@ const TransactionConfirm = ({
     status,
   });
 
-  const typeTransaction: string | undefined = useMemo(
-    () =>
-      (
-        fields.find(
-          (field: { label: string }) => field.label && field.label === "Type",
-        ) as DeviceTransactionField & { value: string }
-      )?.value,
-    [fields],
-  );
+  const typeTransaction: string | undefined = useMemo(() => {
+    const typeField = fields.find(field => field.label && field.label === "Type");
+
+    if (typeField && typeField.type === "text" && typeField.value) {
+      return typeField.value;
+    }
+  }, [fields]);
 
   if (!device) return null;
   const specific = getLLDCoinFamily(mainAccount.currency.family);
