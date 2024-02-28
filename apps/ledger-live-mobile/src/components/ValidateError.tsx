@@ -5,7 +5,6 @@ import { useTheme } from "@react-navigation/native";
 import GenericErrorView from "./GenericErrorView";
 import Button from "./Button";
 import NeedHelp from "./NeedHelp";
-import { SequenceNumberError } from "@ledgerhq/errors";
 
 type Props = {
   error: Error;
@@ -15,11 +14,6 @@ type Props = {
 
 function ValidateError({ error, onClose, onRetry }: Props) {
   const { colors } = useTheme();
-  // Cosmos sequence mismatch error because the backend returns a wrong sequence sometimes
-  // This is a temporary fix until we have a better backend
-  if (error.message.includes("account sequence mismatch")) {
-    error = new SequenceNumberError();
-  }
   return (
     <View
       style={[

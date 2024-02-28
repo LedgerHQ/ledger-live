@@ -6,6 +6,7 @@ import BigNumber from "bignumber.js";
 import { patchOperationWithHash } from "../../../operation";
 import cryptoFactory from "../chain/chain";
 import cosmosBase from "../chain/cosmosBase";
+import { SequenceNumberError } from "@ledgerhq/errors";
 import {
   CosmosDelegation,
   CosmosDelegationStatus,
@@ -371,6 +372,11 @@ export class CosmosAPI {
 
     if (data.tx_response.code != 0) {
       // error codes: https://github.com/cosmos/cosmos-sdk/blob/master/types/errors/errors.go
+      // Handle cosmos sequence mismatch error(error code 32) because the backend returns a wrong sequence sometimes
+      // This is a temporary fix until we have a better backend
+      if (data.tx_response.code === 32) {
+        throw new SequenceNumberError();
+      }
       throw new Error(
         "invalid broadcast return (code: " +
           (data.tx_response.code || "?") +
