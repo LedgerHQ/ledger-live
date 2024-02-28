@@ -1,6 +1,10 @@
 import { useSelector, useDispatch } from "react-redux";
 import { useHistory, useParams } from "react-router-dom";
-import { starredMarketCoinsSelector, localeSelector } from "~/renderer/reducers/settings";
+import {
+  starredMarketCoinsSelector,
+  localeSelector,
+  getCounterValueCode,
+} from "~/renderer/reducers/settings";
 import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils/index";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { flattenAccounts } from "@ledgerhq/live-common/account/index";
@@ -25,8 +29,11 @@ import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTabl
 
 const ranges = Object.keys(rangeDataTable);
 export const useMarketCoin = () => {
+  // TO DO IN STORE
   const [range, setRange] = useState<string>("24h");
-  const [counterCurrency, setCounterCurrency] = useState("usd");
+  const counterValueCurrencyLocal = useSelector(getCounterValueCode);
+  const [counterCurrency, setCounterCurrency] = useState(counterValueCurrencyLocal);
+
   const { colors } = useTheme();
   const history = useHistory();
   const dispatch = useDispatch();
@@ -79,7 +86,10 @@ export const useMarketCoin = () => {
 
   const { id, internalCurrency } = currency || {};
 
-  const availableOnBuy = !!currency && isCurrencyAvailable(currency.id, "onRamp");
+  const availableOnBuy =
+    !!internalCurrency &&
+    !!internalCurrency?.id &&
+    isCurrencyAvailable(internalCurrency.id, "onRamp");
 
   const availableOnSwap = internalCurrency && currenciesAll.includes(internalCurrency.id);
 
@@ -87,9 +97,7 @@ export const useMarketCoin = () => {
   const listFlag = stakeProgramsFeatureFlag?.params?.list ?? [];
   const stakeProgramsEnabled = stakeProgramsFeatureFlag?.enabled ?? false;
   const availableOnStake =
-    stakeProgramsEnabled &&
-    dataCurrency?.internalCurrency &&
-    listFlag.includes(dataCurrency?.internalCurrency?.id);
+    stakeProgramsEnabled && internalCurrency && listFlag.includes(internalCurrency.id);
 
   const color = internalCurrency
     ? getCurrencyColor(internalCurrency, colors.background.main)
@@ -103,9 +111,9 @@ export const useMarketCoin = () => {
 
       history.push({
         pathname: "/exchange",
-        state: dataCurrency?.internalCurrency
+        state: internalCurrency
           ? {
-              dataCurrency: dataCurrency.internalCurrency?.id,
+              dataCurrency: internalCurrency.id,
               mode: "buy", // buy or sell
             }
           : {
@@ -115,22 +123,22 @@ export const useMarketCoin = () => {
             },
       });
     },
-    [dataCurrency, history],
+    [history, internalCurrency, dataCurrency],
   );
 
   const openAddAccounts = useCallback(() => {
-    if (dataCurrency)
+    if (internalCurrency)
       dispatch(
         openModal("MODAL_ADD_ACCOUNTS", {
-          currency: dataCurrency.internalCurrency,
+          currency: internalCurrency,
           preventSkippingCurrencySelection: true,
         }),
       );
-  }, [dispatch, dataCurrency]);
+  }, [dispatch, internalCurrency]);
 
   const onSwap = useCallback(
     (e: React.SyntheticEvent<HTMLButtonElement>) => {
-      if (dataCurrency?.internalCurrency?.id) {
+      if (internalCurrency?.id) {
         e.preventDefault();
         e.stopPropagation();
         track("button_clicked2", {
@@ -141,7 +149,7 @@ export const useMarketCoin = () => {
         });
         setTrackingSource("Page Market Coin");
 
-        const currencyId = dataCurrency?.internalCurrency?.id;
+        const currencyId = internalCurrency?.id;
 
         const defaultAccount = getAvailableAccountsById(currencyId, flattenedAccounts).find(
           Boolean,
@@ -152,7 +160,7 @@ export const useMarketCoin = () => {
         history.push({
           pathname: "/swap",
           state: {
-            defaultCurrency: dataCurrency.internalCurrency,
+            defaultCurrency: internalCurrency,
             defaultAccount,
             defaultParentAccount:
               "parentId" in defaultAccount && defaultAccount?.parentId
@@ -163,7 +171,7 @@ export const useMarketCoin = () => {
       }
     },
     [
-      dataCurrency?.internalCurrency,
+      internalCurrency,
       dataCurrency?.ticker,
       flattenedAccounts,
       history,
