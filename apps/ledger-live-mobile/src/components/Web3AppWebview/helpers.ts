@@ -95,6 +95,7 @@ export function useWebView(
         } catch (error) {
           console.warn(
             "wallet-api-server tried to send a message while the webview was not yet initialized.",
+            message,
           );
         }
       },
@@ -129,6 +130,8 @@ export function useWebView(
 
           if (Config.MOCK && msg.type === "e2eTest") {
             bridge.sendWalletAPIResponse(msg.payload);
+          } else if (msg.type === "dapp") {
+            console.log("dapp message to handle: ", msg);
           } else {
             onMessageRaw(e.nativeEvent.data);
           }
