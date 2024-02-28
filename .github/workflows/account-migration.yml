@@ -14,7 +14,7 @@ on:
 jobs:
     account_migration:
         name: "account-migration"
-        runs-on: [ledger-live-medium-linux]
+        runs-on: ubuntu-latest
         steps:
           - name: generate token
             id: generate-token
