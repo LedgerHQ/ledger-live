@@ -1,5 +1,4 @@
-// @flow
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 export type MarketCoin = {
   id: string;
@@ -32,6 +31,12 @@ export type MarketCurrencyChartDataRequestParams = {
   lastRequestTime?: Date;
 };
 
+export type MarketCurrencyRequestParams = {
+  id?: string;
+  counterCurrency?: string;
+  ranges?: string[];
+};
+
 export type SparklineSvgData = {
   path: string;
   viewBox: string;
@@ -43,7 +48,7 @@ export type CurrencyData = {
   name: string;
   image?: string;
   isLiveSupported?: boolean;
-  internalCurrency?: CryptoCurrency;
+  internalCurrency?: CryptoOrTokenCurrency;
   marketcap?: number;
   marketcapRank: number;
   totalVolume: number;
@@ -60,8 +65,31 @@ export type CurrencyData = {
   athDate: Date;
   atl: number;
   atlDate: Date;
-  sparklineIn7d: SparklineSvgData;
+  sparklineIn7d?: SparklineSvgData;
   chartData: Record<string, [number, number][]>;
+};
+
+export type RawCurrencyData = {
+  [x: string]: any;
+  id: string;
+  name: string;
+  image?: string;
+  ["market_cap"]: number;
+  ["market_cap_rank"]: number;
+  ["total_volume"]: number;
+  ["high_24h"]: number;
+  ["low_24h"]: number;
+  symbol: string;
+  ["current_price"]: number;
+  ["market_cap_change_percentage_24h"]: number;
+  ["circulating_supply"]: number;
+  ["total_supply"]: number;
+  ["max_supply"]: number;
+  ath: number;
+  ["ath_date"]: Date;
+  atl: number;
+  ["atl_date"]: Date;
+  ["sparkline_in_7d"]: { price: any };
 };
 
 export type SingleCoinState = {
