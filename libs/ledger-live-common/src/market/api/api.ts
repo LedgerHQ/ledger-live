@@ -13,6 +13,7 @@ import {
 import { rangeDataTable } from "../utils/rangeDataTable";
 import { currencyFormatter } from "../utils/currencyFormatter";
 import URL from "url";
+
 const cryptoCurrenciesList = [...listCryptoCurrencies(), ...listTokens()];
 
 const supportedCurrencies = listSupportedCurrencies();
