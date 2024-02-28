@@ -15,7 +15,7 @@ libs/**/errors/                                          @ledgerhq/live-hub
 libs/**/logs/                                            @ledgerhq/live-hub
 libs/**/types-live/                                      @ledgerhq/live-hub
 libs/env/                                                @ledgerhq/live-hub
-libs/ledger-live-common/                                 @ledgerhq/live-hub
+libs/ledger-live-common/src/                             @ledgerhq/live-hub
 libs/live-countervalues-react/                           @ledgerhq/live-hub
 libs/live-countervalues/                                 @ledgerhq/live-hub
 libs/live-hooks/                                         @ledgerhq/live-hub

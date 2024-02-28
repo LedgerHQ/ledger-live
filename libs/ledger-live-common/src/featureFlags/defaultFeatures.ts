@@ -45,10 +45,8 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyDesmos: DEFAULT_FEATURE,
   currencyDydx: DEFAULT_FEATURE,
   currencyEnergyWeb: DEFAULT_FEATURE,
-  currencyEvmosEvm: DEFAULT_FEATURE,
   currencyInjective: DEFAULT_FEATURE,
   currencyInternetComputer: DEFAULT_FEATURE,
-  currencyKavaEvm: DEFAULT_FEATURE,
   currencyKlaytn: DEFAULT_FEATURE,
   currencyLukso: DEFAULT_FEATURE,
   currencyMetis: DEFAULT_FEATURE,
@@ -462,6 +460,12 @@ export const DEFAULT_FEATURES: Features = {
     ...DEFAULT_FEATURE,
     params: {
       threshold: 75,
+    },
+  },
+  marketperformanceWidgetDesktop: {
+    enabled: false,
+    params: {
+      variant: ABTestingVariants.variantA,
     },
   },
 };
