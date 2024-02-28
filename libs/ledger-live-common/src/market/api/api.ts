@@ -26,7 +26,7 @@ const ROOT_PATH = getEnv("MARKET_API_URL");
 
 let SUPPORTED_COINS_LIST: SupportedCoins = [];
 
-async function setSupportedCoinsList(): Promise<SupportedCoins> {
+export async function setSupportedCoinsList(): Promise<SupportedCoins> {
   const url = `${ROOT_PATH}/coins/list`;
   const { data } = await network({ method: "GET", url });
 
