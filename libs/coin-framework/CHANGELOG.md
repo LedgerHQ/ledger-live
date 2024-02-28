@@ -1,5 +1,18 @@
 # @ledgerhq/coin-framework
 
+## 0.12.0-nightly.0
+
+### Minor Changes
+
+- [#6309](https://github.com/LedgerHQ/ledger-live/pull/6309) [`5848f9e`](https://github.com/LedgerHQ/ledger-live/commit/5848f9e247f169eb7a4aff322253937214b9efdd) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Removes never publicly exposed Evmos & Kava currencies. Also fixes multiple Etherscan based explorers URI (Lukso, RSK, Astar & Boba).
+
+### Patch Changes
+
+- Updated dependencies [[`5848f9e`](https://github.com/LedgerHQ/ledger-live/commit/5848f9e247f169eb7a4aff322253937214b9efdd)]:
+  - @ledgerhq/types-cryptoassets@7.10.0-nightly.1
+  - @ledgerhq/cryptoassets@11.5.0-nightly.0
+  - @ledgerhq/types-live@6.45.0-nightly.0
+
 ## 0.11.2
 
 ### Patch Changes

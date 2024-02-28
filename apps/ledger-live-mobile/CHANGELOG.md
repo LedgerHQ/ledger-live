@@ -1,5 +1,29 @@
 # live-mobile
 
+## 3.41.0-nightly.1
+
+### Minor Changes
+
+- [#6309](https://github.com/LedgerHQ/ledger-live/pull/6309) [`5848f9e`](https://github.com/LedgerHQ/ledger-live/commit/5848f9e247f169eb7a4aff322253937214b9efdd) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Removes never publicly exposed Evmos & Kava currencies. Also fixes multiple Etherscan based explorers URI (Lukso, RSK, Astar & Boba).
+
+### Patch Changes
+
+- [#6251](https://github.com/LedgerHQ/ledger-live/pull/6251) [`d5db9e8`](https://github.com/LedgerHQ/ledger-live/commit/d5db9e88787274db3902a1d21b8df0c4b67430c1) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Prevent error displayed when sending an ERC1155 NFT and bridge is still pending
+
+- [#6285](https://github.com/LedgerHQ/ledger-live/pull/6285) [`31e721a`](https://github.com/LedgerHQ/ledger-live/commit/31e721a3983c443b6ec00e763836d8b80209a1eb) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix BitCoin tag on android when Import accounts or Add new account. It was on 2 lines now on 1 line
+
+- Updated dependencies [[`5848f9e`](https://github.com/LedgerHQ/ledger-live/commit/5848f9e247f169eb7a4aff322253937214b9efdd)]:
+  - @ledgerhq/types-cryptoassets@7.10.0-nightly.1
+  - @ledgerhq/types-live@6.45.0-nightly.0
+  - @ledgerhq/live-common@33.7.0-nightly.1
+  - @ledgerhq/coin-framework@0.12.0-nightly.0
+  - @ledgerhq/coin-evm@0.13.0-nightly.1
+  - @ledgerhq/domain-service@1.1.19-nightly.0
+  - @ledgerhq/live-countervalues@0.1.3-nightly.1
+  - @ledgerhq/live-countervalues-react@0.1.3-nightly.1
+  - @ledgerhq/live-nft@0.2.2-nightly.1
+  - @ledgerhq/live-nft-react@0.2.2-nightly.1
+
 ## 3.40.2-nightly.0
 
 ### Patch Changes

@@ -1,5 +1,29 @@
 # ledger-live-desktop
 
+## 2.78.0-nightly.1
+
+### Minor Changes
+
+- [#6217](https://github.com/LedgerHQ/ledger-live/pull/6217) [`daf0a0b`](https://github.com/LedgerHQ/ledger-live/commit/daf0a0bc8e40bbceb0207dabf4ad0cfed1e85ba5) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - New Market Performance Widget
+
+- [#6309](https://github.com/LedgerHQ/ledger-live/pull/6309) [`5848f9e`](https://github.com/LedgerHQ/ledger-live/commit/5848f9e247f169eb7a4aff322253937214b9efdd) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Removes never publicly exposed Evmos & Kava currencies. Also fixes multiple Etherscan based explorers URI (Lukso, RSK, Astar & Boba).
+
+### Patch Changes
+
+- [#6217](https://github.com/LedgerHQ/ledger-live/pull/6217) [`daf0a0b`](https://github.com/LedgerHQ/ledger-live/commit/daf0a0bc8e40bbceb0207dabf4ad0cfed1e85ba5) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Rework Portfolio Balance UI
+
+- Updated dependencies [[`5848f9e`](https://github.com/LedgerHQ/ledger-live/commit/5848f9e247f169eb7a4aff322253937214b9efdd)]:
+  - @ledgerhq/types-cryptoassets@7.10.0-nightly.1
+  - @ledgerhq/types-live@6.45.0-nightly.0
+  - @ledgerhq/live-common@33.7.0-nightly.1
+  - @ledgerhq/coin-framework@0.12.0-nightly.0
+  - @ledgerhq/coin-evm@0.13.0-nightly.1
+  - @ledgerhq/domain-service@1.1.19-nightly.0
+  - @ledgerhq/live-countervalues@0.1.3-nightly.1
+  - @ledgerhq/live-countervalues-react@0.1.3-nightly.1
+  - @ledgerhq/live-nft@0.2.2-nightly.1
+  - @ledgerhq/live-nft-react@0.2.2-nightly.1
+
 ## 2.77.3-nightly.0
 
 ### Patch Changes

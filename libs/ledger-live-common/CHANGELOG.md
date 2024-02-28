@@ -1,5 +1,26 @@
 # @ledgerhq/live-common
 
+## 33.7.0-nightly.1
+
+### Minor Changes
+
+- [#6309](https://github.com/LedgerHQ/ledger-live/pull/6309) [`5848f9e`](https://github.com/LedgerHQ/ledger-live/commit/5848f9e247f169eb7a4aff322253937214b9efdd) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Removes never publicly exposed Evmos & Kava currencies. Also fixes multiple Etherscan based explorers URI (Lukso, RSK, Astar & Boba).
+
+### Patch Changes
+
+- Updated dependencies [[`5848f9e`](https://github.com/LedgerHQ/ledger-live/commit/5848f9e247f169eb7a4aff322253937214b9efdd)]:
+  - @ledgerhq/cryptoassets@11.5.0-nightly.0
+  - @ledgerhq/coin-framework@0.12.0-nightly.0
+  - @ledgerhq/coin-evm@0.13.0-nightly.1
+  - @ledgerhq/coin-algorand@0.4.0-nightly.1
+  - @ledgerhq/coin-near@0.3.11-nightly.1
+  - @ledgerhq/coin-polkadot@0.6.0-nightly.1
+  - @ledgerhq/live-countervalues@0.1.3-nightly.1
+  - @ledgerhq/live-countervalues-react@0.1.3-nightly.1
+  - @ledgerhq/live-nft@0.2.2-nightly.1
+  - @ledgerhq/hw-app-eth@6.35.7-nightly.0
+  - @ledgerhq/hw-app-vet@0.1.6-nightly.0
+
 ## 33.7.0-nightly.0
 
 ### Minor Changes

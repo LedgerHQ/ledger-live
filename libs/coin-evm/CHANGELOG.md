@@ -1,5 +1,19 @@
 # @ledgerhq/coin-evm
 
+## 0.13.0-nightly.1
+
+### Minor Changes
+
+- [#6309](https://github.com/LedgerHQ/ledger-live/pull/6309) [`5848f9e`](https://github.com/LedgerHQ/ledger-live/commit/5848f9e247f169eb7a4aff322253937214b9efdd) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Removes never publicly exposed Evmos & Kava currencies. Also fixes multiple Etherscan based explorers URI (Lukso, RSK, Astar & Boba).
+
+### Patch Changes
+
+- Updated dependencies [[`5848f9e`](https://github.com/LedgerHQ/ledger-live/commit/5848f9e247f169eb7a4aff322253937214b9efdd)]:
+  - @ledgerhq/cryptoassets@11.5.0-nightly.0
+  - @ledgerhq/coin-framework@0.12.0-nightly.0
+  - @ledgerhq/domain-service@1.1.19-nightly.0
+  - @ledgerhq/evm-tools@1.0.17-nightly.0
+
 ## 0.12.4-nightly.0
 
 ### Patch Changes
