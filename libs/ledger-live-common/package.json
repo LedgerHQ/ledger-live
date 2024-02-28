@@ -180,6 +180,7 @@
     "@stacks/transactions": "6.11.0",
     "@stricahq/bip32ed25519": "^1.0.3",
     "@stricahq/typhonjs": "^1.2.6",
+    "@tanstack/react-query": "^5.17.19",
     "@taquito/ledger-signer": "^13.0.1",
     "@taquito/rpc": "^13.0.1",
     "@taquito/taquito": "^13.0.1",

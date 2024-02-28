@@ -316,6 +316,9 @@ importers:
       '@tanstack/react-query':
         specifier: ^5.17.19
         version: 5.17.19(react@18.2.0)
+      '@tanstack/react-query-devtools':
+        specifier: ^5.24.1
+        version: 5.24.1(@tanstack/react-query@5.17.19)(react@18.2.0)
       '@tippyjs/react':
         specifier: ^4.2.6
         version: 4.2.6(react-dom@18.2.0)(react@18.2.0)
@@ -2400,6 +2403,9 @@ importers:
       '@stricahq/typhonjs':
         specifier: ^1.2.6
         version: 1.2.6
+      '@tanstack/react-query':
+        specifier: ^5.17.19
+        version: 5.17.19(react@18.2.0)
       '@taquito/ledger-signer':
         specifier: ^13.0.1
         version: 13.0.1
@@ -24077,6 +24083,21 @@ packages:
 
   /@tanstack/query-core@5.17.19:
     resolution: {integrity: sha512-Lzw8FUtnLCc9Jwz0sw9xOjZB+/mCCmJev38v2wHMUl/ioXNIhnNWeMxu0NKUjIhAd62IRB3eAtvxAGDJ55UkyA==}
+    dev: false
+
+  /@tanstack/query-devtools@5.24.0:
+    resolution: {integrity: sha512-pThim455t69zrZaQKa7IRkEIK8UBTS+gHVAdNfhO72Xh4rWpMc63ovRje5/n6iw63+d6QiJzVadsJVdPoodSeQ==}
+    dev: false
+
+  /@tanstack/react-query-devtools@5.24.1(@tanstack/react-query@5.17.19)(react@18.2.0):
+    resolution: {integrity: sha512-qa4SEugN+EF8JJXcpsM9Lu05HfUv5cvHvLuB0uw/81eJZyNHFdtHFBi5RLCgpBrOyVMDfH8UQ3VBMqXzFKV68A==}
+    peerDependencies:
+      '@tanstack/react-query': ^5.24.1
+      react: ^18.0.0
+    dependencies:
+      '@tanstack/query-devtools': 5.24.0
+      '@tanstack/react-query': 5.17.19(react@18.2.0)
+      react: 18.2.0
     dev: false
 
   /@tanstack/react-query@5.17.19(react@18.2.0):

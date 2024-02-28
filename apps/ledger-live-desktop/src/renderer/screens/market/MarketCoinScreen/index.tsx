@@ -1,29 +1,16 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { Flex, Text, Icon } from "@ledgerhq/react-ui";
-import { useSelector, useDispatch } from "react-redux";
-import { useHistory, useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import TrackPage, { setTrackingSource } from "~/renderer/analytics/TrackPage";
-import { starredMarketCoinsSelector, localeSelector } from "~/renderer/reducers/settings";
+import TrackPage from "~/renderer/analytics/TrackPage";
+import { localeSelector } from "~/renderer/reducers/settings";
 import { useSingleCoinMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
-import styled, { useTheme } from "styled-components";
+import styled from "styled-components";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
-import { getCurrencyColor } from "~/renderer/getCurrencyColor";
-import { addStarredMarketCoins, removeStarredMarketCoins } from "~/renderer/actions/settings";
-import { track } from "~/renderer/analytics/segment";
-import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils/index";
 import { Button } from "..";
 import MarketCoinChart from "./MarketCoinChart";
 import MarketInfo from "./MarketInfo";
-import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/utils/index";
-import { accountsSelector } from "~/renderer/reducers/accounts";
-import { openModal } from "~/renderer/actions/modals";
-import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
-import { flattenAccounts } from "@ledgerhq/live-common/account/index";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import useStakeFlow from "../../stake";
-import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
-import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
+import { useMarketCoin } from "./useMarketCoin";
 
 const CryptoCurrencyIconWrapper = styled.div`
   height: 56px;
@@ -57,34 +44,32 @@ const Title = styled(Text).attrs({ variant: "h3" })`
 
 export default function MarketCoinScreen() {
   const { t } = useTranslation();
-  const history = useHistory();
-  const { currencyId } = useParams<{ currencyId: string }>();
-  const { colors } = useTheme();
-  const dispatch = useDispatch();
-  const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
-  const isStarred = starredMarketCoins.includes(currencyId);
   const locale = useSelector(localeSelector);
-  const allAccounts = useSelector(accountsSelector);
-  const flattenedAccounts = flattenAccounts(allAccounts);
-  const swapDefaultTrack = useGetSwapTrackingProperties();
-  const { data: currenciesAll } = useFetchCurrencyAll();
+
+  const { supportedCounterCurrencies } = useSingleCoinMarketData();
 
   const {
-    selectedCoinData: currency,
-    chartRequestParams,
-    loading,
-    loadingChart,
-    refreshChart,
+    isStarred,
+    onSwap,
+    onBuy,
+    onStake,
+    toggleStar,
+    availableOnBuy,
+    availableOnStake,
+    availableOnSwap,
+    color,
+    dataChart,
+    dataCurrency,
+    isLoadingData,
+    isLoadingDataChart,
+    changeRange,
+    range,
+    changeCounterCurrency,
     counterCurrency,
-    setCounterCurrency,
-    supportedCounterCurrencies,
-  } = useSingleCoinMarketData();
+    currency,
+  } = useMarketCoin();
 
   const {
-    id,
-    ticker,
-    name,
-    image,
     marketcap,
     marketcapRank,
     totalVolume,
@@ -100,141 +85,16 @@ export default function MarketCoinScreen() {
     atlDate,
     price,
     priceChangePercentage,
-    internalCurrency,
-    chartData,
-  } = currency || {};
+  } = dataCurrency || {};
 
-  const { isCurrencyAvailable } = useRampCatalog();
-
-  const availableOnBuy = !!currency && isCurrencyAvailable(currency.id, "onRamp");
-
-  const availableOnSwap = internalCurrency && currenciesAll.includes(internalCurrency.id);
-
-  const stakeProgramsFeatureFlag = useFeature("stakePrograms");
-  const listFlag = stakeProgramsFeatureFlag?.params?.list ?? [];
-  const stakeProgramsEnabled = stakeProgramsFeatureFlag?.enabled ?? false;
-  const availableOnStake =
-    stakeProgramsEnabled &&
-    currency?.internalCurrency &&
-    listFlag.includes(currency?.internalCurrency?.id);
-  const startStakeFlow = useStakeFlow();
-
-  const color = internalCurrency
-    ? getCurrencyColor(internalCurrency, colors.background.main)
-    : colors.primary.c80;
-
-  const onBuy = useCallback(
-    (e: React.SyntheticEvent<HTMLButtonElement>) => {
-      e.preventDefault();
-      e.stopPropagation();
-      setTrackingSource("Page Market Coin");
-
-      history.push({
-        pathname: "/exchange",
-        state: currency?.internalCurrency
-          ? {
-              currency: currency.internalCurrency?.id,
-              mode: "buy", // buy or sell
-            }
-          : {
-              mode: "onRamp",
-              defaultTicker:
-                currency && currency.ticker ? currency.ticker.toUpperCase() : undefined,
-            },
-      });
-    },
-    [currency, history],
-  );
-
-  const openAddAccounts = useCallback(() => {
-    if (currency)
-      dispatch(
-        openModal("MODAL_ADD_ACCOUNTS", {
-          currency: currency.internalCurrency,
-          preventSkippingCurrencySelection: true,
-        }),
-      );
-  }, [dispatch, currency]);
-
-  const onSwap = useCallback(
-    (e: React.SyntheticEvent<HTMLButtonElement>) => {
-      if (currency?.internalCurrency?.id) {
-        e.preventDefault();
-        e.stopPropagation();
-        track("button_clicked2", {
-          button: "swap",
-          currency: currency?.ticker,
-          page: "Page Market Coin",
-          ...swapDefaultTrack,
-        });
-        setTrackingSource("Page Market Coin");
-
-        const currencyId = currency?.internalCurrency?.id;
-
-        const defaultAccount = getAvailableAccountsById(currencyId, flattenedAccounts).find(
-          Boolean,
-        );
-
-        if (!defaultAccount) return openAddAccounts();
-
-        history.push({
-          pathname: "/swap",
-          state: {
-            defaultCurrency: currency.internalCurrency,
-            defaultAccount,
-            defaultParentAccount:
-              "parentId" in defaultAccount && defaultAccount?.parentId
-                ? flattenedAccounts.find(a => a.id === defaultAccount.parentId)
-                : null,
-          },
-        });
-      }
-    },
-    [
-      currency?.internalCurrency,
-      currency?.ticker,
-      flattenedAccounts,
-      history,
-      openAddAccounts,
-      swapDefaultTrack,
-    ],
-  );
-
-  const onStake = useCallback(
-    (e: React.SyntheticEvent<HTMLButtonElement>) => {
-      e.preventDefault();
-      e.stopPropagation();
-      track("button_clicked2", {
-        button: "stake",
-        currency: currency?.ticker,
-        page: "Page Market Coin",
-        ...stakeDefaultTrack,
-      });
-      setTrackingSource("Page Market Coin");
-
-      startStakeFlow({
-        currencies: internalCurrency ? [internalCurrency.id] : undefined,
-        source: "Page Market Coin",
-      });
-    },
-    [currency?.ticker, internalCurrency, startStakeFlow],
-  );
-
-  const toggleStar = useCallback(() => {
-    if (isStarred) {
-      id && dispatch(removeStarredMarketCoins(id));
-    } else {
-      id && dispatch(addStarredMarketCoins(id));
-    }
-  }, [dispatch, isStarred, id]);
-
-  return currency && counterCurrency ? (
+  const { name, ticker, image, internalCurrency } = currency || {};
+  return (
     <Container data-test-id="market-coin-page-container">
       <TrackPage
         category="Page Market Coin"
         currencyName={name}
         starred={isStarred}
-        timeframe={chartRequestParams.range}
+        timeframe={range}
         countervalue={counterCurrency}
       />
       <Flex flexDirection="row" my={2} alignItems="center" justifyContent="space-between">
@@ -298,14 +158,14 @@ export default function MarketCoinScreen() {
       <MarketCoinChart
         price={price}
         priceChangePercentage={priceChangePercentage}
-        chartData={chartData}
-        chartRequestParams={chartRequestParams}
-        refreshChart={refreshChart}
+        chartData={dataChart}
+        range={range}
+        counterCurrency={counterCurrency}
+        refreshChart={changeRange}
         color={color}
-        t={t}
         locale={locale}
-        loading={loadingChart}
-        setCounterCurrency={setCounterCurrency}
+        loading={isLoadingDataChart}
+        setCounterCurrency={changeCounterCurrency}
         supportedCounterCurrencies={supportedCounterCurrencies}
       />
       <MarketInfo
@@ -326,8 +186,8 @@ export default function MarketCoinScreen() {
         atlDate={atlDate}
         locale={locale}
         counterCurrency={counterCurrency}
-        loading={loading}
+        loading={isLoadingData}
       />
     </Container>
-  ) : null;
+  );
 }
