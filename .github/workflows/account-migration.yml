@@ -3,8 +3,8 @@ name: "Account migration test"
 on:
     workflow_dispatch:
       inputs:
-          currency:
-            description: "Currency to run the migration test on. If not specified the test will be run on all supported currencies"
+        currencies:
+            description: "Currency to run the migration test on. If not specified the test will be run on all supported currencies. If specififed currencies should be comma seperated"
             required: false
 
     push:
@@ -39,10 +39,18 @@ jobs:
               pnpm build:llc
 
           - name: Run synchronisation on develop
+            if: ${{ inputs.currencies }}
             run: |
-                OUTPUT=$(pnpm common test-account-migration  ${{ inputs.currency }})
+                OUTPUT=$(pnpm common test-account-migration --currencies ${{ inputs.currencies }})
                 echo $OUTPUT > develop-sync.json
-                cat develop-sync.jsion
+                cat develop-sync.json
+
+          - name: Run synchronisation on develop
+            if: ${{ !inputs.currencies }}
+            run: |
+              OUTPUT=$(pnpm common test-account-migration)
+              echo $OUTPUT > develop-sync.json
+              cat develop-sync.json
 
           - uses: actions/checkout@v4
             with:

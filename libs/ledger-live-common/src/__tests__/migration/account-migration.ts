@@ -1,13 +1,26 @@
-import { getCryptoCurrencyById, setSupportedCurrencies } from "../../currencies";
+import {
+  findCryptoCurrencyById,
+  getCryptoCurrencyById,
+  setSupportedCurrencies,
+} from "../../currencies";
 import { encodeAccountId, toAccountRaw } from "../../account";
 import { firstValueFrom, reduce } from "rxjs";
 import { Account } from "@ledgerhq/types-live";
 import { getAccountBridgeByFamily } from "../../bridge/impl";
 import { migrationAddresses } from "./addresses";
+import { argv } from "yargs";
+import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 
-const args = process.argv.slice(2);
+const args = argv;
 
-const [currencyId] = args;
+type Args = {
+  // comma seperated currencyId
+  // eg --currencies ethereum,polygon,bitcoin
+  currencies?: CryptoCurrencyId;
+  inputFile?: string;
+};
+
+const { currencies } = args as Args;
 
 setSupportedCurrencies([
   "bitcoin",
@@ -137,11 +150,16 @@ export const testSync = async (currencyId: string, address: string) => {
 };
 
 (async () => {
+  const currencyIds = currencies?.split(",");
+  if (currencyIds && !currencyIds.every(findCryptoCurrencyById)) {
+    throw new Error("Invalid currency id");
+  }
+
   const syncedAccounts = await Promise.allSettled(
     migrationAddresses
       .filter(addresses => {
-        if (currencyId) {
-          return currencyId === addresses.currencyId;
+        if (currencyIds) {
+          return currencyIds.includes(addresses.currencyId);
         }
 
         return true;
@@ -160,5 +178,6 @@ export const testSync = async (currencyId: string, address: string) => {
   });
 
   console.log(response);
+
   return response;
 })();
