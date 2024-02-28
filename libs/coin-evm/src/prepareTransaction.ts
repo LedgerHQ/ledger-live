@@ -7,7 +7,7 @@ import { getNodeApi } from "./api/node/index";
 import { DEFAULT_NONCE } from "./createTransaction";
 import { validateRecipient } from "./getTransactionStatus";
 import { getAdditionalLayer2Fees, getEstimatedFees, isNftTransaction } from "./logic";
-import transaction, { getTransactionData, getTypedTransaction } from "./transaction";
+import { getTransactionData, getTypedTransaction } from "./transaction";
 import { EvmNftTransaction, Transaction as EvmTransaction, FeeData, Strategy } from "./types";
 
 /**
