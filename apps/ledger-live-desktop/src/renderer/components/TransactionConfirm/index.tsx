@@ -97,20 +97,12 @@ const commonFieldComponents: Record<string, FieldComponent> = {
   address: AddressField,
   text: TextField,
 };
-export const Container = styled(Box).attrs(() => ({
+const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   fontSize: 4,
   pb: 4,
 }))``;
-export const Info = styled(Box).attrs(() => ({
-  ff: "Inter|SemiBold",
-  color: "palette.text.shade100",
-  mt: 6,
-  mb: 4,
-  px: 5,
-}))`
-  text-align: center;
-`;
+
 type Props = {
   t: TFunction;
   device: Device;
