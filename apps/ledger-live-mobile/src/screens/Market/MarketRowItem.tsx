@@ -40,11 +40,6 @@ function MarketRowItem({ item, index, counterCurrency, locale, t }: Props) {
     ticker,
   } = item;
 
-  let loc = locale;
-  // TEMPORARY : quick win to transform arabic to english
-  if (locale === "ar") {
-    loc = "en";
-  }
   return (
     <Flex
       height={72}
@@ -92,7 +87,7 @@ function MarketRowItem({ item, index, counterCurrency, locale, t }: Props) {
                   value: marketcap,
                   shorten: true,
                   currency: counterCurrency,
-                  locale: loc,
+                  locale,
                   t,
                 })
               : "-"}
@@ -104,7 +99,7 @@ function MarketRowItem({ item, index, counterCurrency, locale, t }: Props) {
           {counterValueFormatter({
             value: price,
             currency: counterCurrency,
-            locale: loc,
+            locale,
             t,
           })}
         </Text>
