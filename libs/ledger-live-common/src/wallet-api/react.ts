@@ -45,7 +45,7 @@ import { Transaction } from "../generated/types";
 import { DISCOVER_INITIAL_CATEGORY, MAX_RECENTLY_USED_LENGTH } from "./constants";
 import { DiscoverDB } from "./types";
 
-export function safeGetRefValue<T>(ref: RefObject<T>): T {
+export function safeGetRefValue<T>(ref: RefObject<T>): NonNullable<T> {
   if (!ref.current) {
     throw new Error("Ref objects doesn't have a current value");
   }
@@ -106,7 +106,7 @@ export function useGetAccountIds(
 
 export interface UiHook {
   "account.request": (params: {
-    accounts$: Observable<WalletAPIAccount[]>;
+    accounts$?: Observable<WalletAPIAccount[]>;
     currencies: CryptoOrTokenCurrency[];
     onSuccess: (account: AccountLike, parentAccount: Account | undefined) => void;
     onCancel: () => void;
