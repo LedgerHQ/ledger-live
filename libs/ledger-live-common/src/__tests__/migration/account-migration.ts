@@ -147,7 +147,7 @@ export const testSync = async (currencyId: string, address: string) => {
         return true;
       })
       .map(async ({ currencyId, address }) => {
-        testSync(currencyId, address);
+        return testSync(currencyId, address);
       }),
   );
 
