@@ -201,12 +201,6 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
     broadcast(signedOperation).then(onBroadcastSuccess, setError);
   }, [signedOperation, broadcast, onBroadcastSuccess, setError]);
 
-  useEffect(() => {
-    setTimeout(() => {
-      setError(new NotEnoughBalance())
-    }, 2000)
-  }, [])
-
   return (
     <Box alignItems={"center"} justifyContent={"center"} px={32} height={"100%"}>
       <BodyContent
