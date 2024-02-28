@@ -151,11 +151,14 @@ export const testSync = async (currencyId: string, address: string) => {
       }),
   );
 
-  return syncedAccounts.map(account => {
+  const response = syncedAccounts.map(account => {
     if (account.status === "fulfilled") {
       return account.value;
     } else {
       return account.reason;
     }
   });
+
+  console.log(response);
+  return response;
 })();
