@@ -82,7 +82,7 @@ type ExchangeRateErrorCommon = {
   provider: string;
 };
 
-type ExchangeRateErrorDefault = ExchangeRateErrorCommon & {
+export type ExchangeRateErrorDefault = ExchangeRateErrorCommon & {
   errorCode: number;
   errorMessage: string;
 };
