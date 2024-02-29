@@ -602,7 +602,7 @@ function useLocalStorage(
 function appForCurrency<T>(
   deviceId: string,
   currency: CryptoCurrency,
-  scanAccounts: () => Observable<T>,
+  job: () => Observable<T>,
 ): Observable<T> {
   return connectApp({
     deviceId,
@@ -613,7 +613,7 @@ function appForCurrency<T>(
   }).pipe(
     tap(e => console.log("connectApp", e)),
     find(e => e.type === "opened"),
-    mergeMap(scanAccounts),
+    mergeMap(job),
   );
 }
 
