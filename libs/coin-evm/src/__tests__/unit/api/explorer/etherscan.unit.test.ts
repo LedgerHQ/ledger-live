@@ -163,7 +163,7 @@ describe("EVM Family", () => {
         expect(response.length).toBe(4);
         expect(spy).toBeCalledWith({
           method: "GET",
-          url: `mock/api?module=account&action=txlist&address=${account.freshAddress}`,
+          url: `mock?module=account&action=txlist&address=${account.freshAddress}`,
           params: {
             tag: "latest",
             page: 1,
@@ -193,7 +193,7 @@ describe("EVM Family", () => {
         expect(response.length).toBe(4);
         expect(spy).toBeCalledWith({
           method: "GET",
-          url: `mock/api?module=account&action=txlist&address=${account.freshAddress}`,
+          url: `mock?module=account&action=txlist&address=${account.freshAddress}`,
           params: {
             tag: "latest",
             page: 1,
@@ -224,7 +224,7 @@ describe("EVM Family", () => {
         expect(response.length).toBe(4);
         expect(spy).toBeCalledWith({
           method: "GET",
-          url: `mock/api?module=account&action=txlist&address=${account.freshAddress}`,
+          url: `mock?module=account&action=txlist&address=${account.freshAddress}`,
           params: {
             tag: "latest",
             page: 1,
@@ -293,7 +293,7 @@ describe("EVM Family", () => {
         );
         expect(spy).toBeCalledWith({
           method: "GET",
-          url: `mock/api?module=account&action=tokentx&address=${account.freshAddress}`,
+          url: `mock?module=account&action=tokentx&address=${account.freshAddress}`,
           params: {
             tag: "latest",
             page: 1,
@@ -326,7 +326,7 @@ describe("EVM Family", () => {
         );
         expect(spy).toBeCalledWith({
           method: "GET",
-          url: `mock/api?module=account&action=tokentx&address=${account.freshAddress}`,
+          url: `mock?module=account&action=tokentx&address=${account.freshAddress}`,
           params: {
             tag: "latest",
             page: 1,
@@ -360,7 +360,7 @@ describe("EVM Family", () => {
         );
         expect(spy).toBeCalledWith({
           method: "GET",
-          url: `mock/api?module=account&action=tokentx&address=${account.freshAddress}`,
+          url: `mock?module=account&action=tokentx&address=${account.freshAddress}`,
           params: {
             tag: "latest",
             page: 1,
@@ -429,7 +429,7 @@ describe("EVM Family", () => {
         );
         expect(spy).toBeCalledWith({
           method: "GET",
-          url: `mock/api?module=account&action=tokennfttx&address=${account.freshAddress}`,
+          url: `mock?module=account&action=tokennfttx&address=${account.freshAddress}`,
           params: {
             tag: "latest",
             page: 1,
@@ -462,7 +462,7 @@ describe("EVM Family", () => {
         );
         expect(spy).toBeCalledWith({
           method: "GET",
-          url: `mock/api?module=account&action=tokennfttx&address=${account.freshAddress}`,
+          url: `mock?module=account&action=tokennfttx&address=${account.freshAddress}`,
           params: {
             tag: "latest",
             page: 1,
@@ -496,7 +496,7 @@ describe("EVM Family", () => {
         );
         expect(spy).toBeCalledWith({
           method: "GET",
-          url: `mock/api?module=account&action=tokennfttx&address=${account.freshAddress}`,
+          url: `mock?module=account&action=tokennfttx&address=${account.freshAddress}`,
           params: {
             tag: "latest",
             page: 1,
@@ -565,7 +565,7 @@ describe("EVM Family", () => {
         );
         expect(spy).toBeCalledWith({
           method: "GET",
-          url: `mock/api?module=account&action=token1155tx&address=${account.freshAddress}`,
+          url: `mock?module=account&action=token1155tx&address=${account.freshAddress}`,
           params: {
             tag: "latest",
             page: 1,
@@ -598,7 +598,7 @@ describe("EVM Family", () => {
         );
         expect(spy).toBeCalledWith({
           method: "GET",
-          url: `mock/api?module=account&action=token1155tx&address=${account.freshAddress}`,
+          url: `mock?module=account&action=token1155tx&address=${account.freshAddress}`,
           params: {
             tag: "latest",
             page: 1,
@@ -632,7 +632,7 @@ describe("EVM Family", () => {
         );
         expect(spy).toBeCalledWith({
           method: "GET",
-          url: `mock/api?module=account&action=token1155tx&address=${account.freshAddress}`,
+          url: `mock?module=account&action=token1155tx&address=${account.freshAddress}`,
           params: {
             tag: "latest",
             page: 1,
@@ -724,7 +724,7 @@ describe("EVM Family", () => {
         );
         expect(spy).toBeCalledWith({
           method: "GET",
-          url: `mock/api?module=account&action=txlistinternal&address=${account.freshAddress}`,
+          url: `mock?module=account&action=txlistinternal&address=${account.freshAddress}`,
           params: {
             tag: "latest",
             page: 1,
@@ -757,7 +757,7 @@ describe("EVM Family", () => {
         );
         expect(spy).toBeCalledWith({
           method: "GET",
-          url: `mock/api?module=account&action=txlistinternal&address=${account.freshAddress}`,
+          url: `mock?module=account&action=txlistinternal&address=${account.freshAddress}`,
           params: {
             tag: "latest",
             page: 1,
@@ -791,7 +791,7 @@ describe("EVM Family", () => {
         );
         expect(spy).toBeCalledWith({
           method: "GET",
-          url: `mock/api?module=account&action=txlistinternal&address=${account.freshAddress}`,
+          url: `mock?module=account&action=txlistinternal&address=${account.freshAddress}`,
           params: {
             tag: "latest",
             page: 1,

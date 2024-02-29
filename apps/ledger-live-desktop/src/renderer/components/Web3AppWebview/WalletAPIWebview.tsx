@@ -120,6 +120,8 @@ function useUiHook(
             parentAccount,
             onResult: onSuccess,
             onCancel: onError,
+            manifestId: manifest.id,
+            manifestName: manifest.name,
           }),
         );
       },

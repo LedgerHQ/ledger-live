@@ -87,11 +87,8 @@ const getMainActions = (args: {
       navigationParams,
       label: <Trans i18nKey="account.stake" />,
       Icon: IconsLegacy.CoinsMedium,
-      event: "button_clicked",
       eventProperties: {
-        button: "stake",
         currency: "DOT",
-        page: "Account Page",
       },
     },
   ];

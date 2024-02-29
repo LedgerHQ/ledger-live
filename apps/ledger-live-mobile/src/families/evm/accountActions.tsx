@@ -76,11 +76,8 @@ const getMainActions = ({ account, parentAccount, parentRoute }: Props): ActionB
         navigationParams,
         label: <Trans i18nKey="account.stake" />,
         Icon: IconsLegacy.CoinsMedium,
-        event: "button_clicked",
         eventProperties: {
-          button: "stake",
           currency: "ETH",
-          page: "Account Page",
         },
       },
     ];

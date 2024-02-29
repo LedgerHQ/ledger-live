@@ -83,7 +83,9 @@ const AccountCard = ({
 
             {tag && (
               <Flex flexDirection="row">
-                <Tag mt={2}>{tag}</Tag>
+                <Tag mt={2} numberOfLines={1}>
+                  {tag}
+                </Tag>
               </Flex>
             )}
           </Flex>

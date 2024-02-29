@@ -142,8 +142,6 @@ export type CryptoCurrencyId =
   | "near"
   | "rsk"
   | "bittorrent"
-  | "kava_evm"
-  | "evmos_evm"
   | "optimism"
   | "optimism_goerli"
   | "energy_web"

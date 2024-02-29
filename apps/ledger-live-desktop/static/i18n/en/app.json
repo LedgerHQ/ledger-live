@@ -1409,6 +1409,7 @@
   },
   "dashboard": {
     "title": "Portfolio",
+    "header": "Portfolio balance",
     "emptyAccountTile": {
       "desc": "Add accounts to manage other crypto assets",
       "createAccount": "Add account"
@@ -1449,6 +1450,27 @@
         "description": "You're 1 step away from Ledger Recover.",
         "primaryCta": "Connect",
         "secondaryCta": "Maybe later"
+      }
+    },
+    "marketPerformanceWidget": {
+      "title": "{{time}} trend",
+      "buy": "Buy",
+      "swap": "Swap",
+      "gainers": "Gainers",
+      "losers": "Losers",
+      "error": {
+        "title": "Sorry, we’re unable to load the trend",
+        "description": "Please try again later"
+      },
+      "missingData": {
+        "gainers": {
+          "title": "No assets among the top 50 experienced gains in the last 24 hours",
+          "description": "Consider viewing top losers or come back later"
+        },
+        "losers": {
+          "title": "No assets among the top 50 experienced losses in the last 24 hours",
+          "description": "Consider viewing top gainers or come back later"
+        }
       }
     }
   },
@@ -2206,6 +2228,15 @@
       },
       "summary": {
         "title": "Summary"
+      },
+      "networkFee": {
+        "title": "Choose Network fee"
+      },
+      "reviewSummary": {
+        "title": "Review summary"
+      },
+      "connectLedger": {
+        "title": "Connect Ledger"
       },
       "device": {
         "title": "Device"
@@ -4197,6 +4228,13 @@
     "troubleshooting": "Click here for possible solutions",
     "logs": "Save logs",
     "dataFolder": "View user data"
+  },
+  "approve": {
+    "title": "Approve token",
+    "description": "Approve token on your Ledger Device",
+    "unlimited": "You're authorizing this provider to access an unlimited amount of the selected token from your wallet. Double-check the transaction details on your Ledger device before signing.",
+    "limited": "You're authorizing this provider to access the selected token from your wallet. Double-check the transaction details on your Ledger device before signing.",
+    "termsAndConditions": "By signing this transaction, you accept <0>{{appName}}'s terms of use.</0>"
   },
   "exportOperationsModal": {
     "title": "Operation history",

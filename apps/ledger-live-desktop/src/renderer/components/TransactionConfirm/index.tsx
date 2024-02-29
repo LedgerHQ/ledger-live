@@ -1,12 +1,15 @@
 import invariant from "invariant";
-import React from "react";
+import React, { useMemo } from "react";
 import { Trans, withTranslation } from "react-i18next";
 import { TFunction } from "i18next";
 import styled from "styled-components";
 import { getAccountUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { Account, AccountLike, TransactionCommon } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import { getDeviceTransactionConfig } from "@ledgerhq/live-common/transaction/index";
+import {
+  DeviceTransactionField,
+  getDeviceTransactionConfig,
+} from "@ledgerhq/live-common/transaction/index";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
@@ -17,6 +20,7 @@ import { renderVerifyUnwrapped } from "~/renderer/components/DeviceAction/render
 import TransactionConfirmField from "./TransactionConfirmField";
 import { getLLDCoinFamily } from "~/renderer/families";
 import { FieldComponentProps as FCPGeneric } from "~/renderer/families/types";
+import ConfirmApproval from "./ConfirmApproval";
 
 const FieldText = styled(Text).attrs(() => ({
   ml: 1,
@@ -94,12 +98,12 @@ const commonFieldComponents: Record<string, FieldComponent> = {
   address: AddressField,
   text: TextField,
 };
-const Container = styled(Box).attrs(() => ({
+export const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   fontSize: 4,
   pb: 4,
 }))``;
-const Info = styled(Box).attrs(() => ({
+export const Info = styled(Box).attrs(() => ({
   ff: "Inter|SemiBold",
   color: "palette.text.shade100",
   mt: 6,
@@ -114,11 +118,40 @@ type Props = {
   account: AccountLike;
   parentAccount: Account | undefined | null;
   transaction: Transaction;
+  manifestId?: string | null;
+  manifestName?: string | null;
   status: TransactionStatus;
 };
-const TransactionConfirm = ({ t, device, account, parentAccount, transaction, status }: Props) => {
+const TransactionConfirm = ({
+  t,
+  device,
+  account,
+  parentAccount,
+  transaction,
+  manifestId,
+  manifestName,
+  status,
+}: Props) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const type = useTheme().colors.palette.type;
+
+  const fields = getDeviceTransactionConfig({
+    account,
+    parentAccount,
+    transaction,
+    status,
+  });
+
+  const typeTransaction: string = useMemo(
+    () =>
+      (
+        fields.find(
+          (field: { label: string }) => field.label && field.label === "Type",
+        ) as DeviceTransactionField & { value: string }
+      )?.value || "",
+    [fields],
+  );
+
   if (!device) return null;
   const specific = getLLDCoinFamily(mainAccount.currency.family);
   const r = specific?.transactionConfirmFields;
@@ -129,14 +162,26 @@ const TransactionConfirm = ({ t, device, account, parentAccount, transaction, st
   const Warning = r?.warning;
   const Title = r?.title;
   const Footer = r?.footer;
-  const fields = getDeviceTransactionConfig({
-    account,
-    parentAccount,
-    transaction,
-    status,
-  });
+
   const key = ("mode" in transaction && transaction.mode) || "send";
   const recipientWording = t(`TransactionConfirm.recipientWording.${key}`);
+
+  if (typeTransaction == "Approve")
+    return (
+      <ConfirmApproval
+        device={device}
+        status={status}
+        account={account}
+        parentAccount={parentAccount}
+        transaction={transaction}
+        fieldComponents={fieldComponents}
+        recipientWording={recipientWording}
+        Footer={Footer}
+        deviceFields={fields}
+        manifestId={manifestId}
+        manifestName={manifestName}
+      />
+    );
   return (
     <Container>
       {Warning ? (

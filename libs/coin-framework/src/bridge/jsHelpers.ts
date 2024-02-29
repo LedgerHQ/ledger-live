@@ -16,7 +16,6 @@ import {
 } from "../derivation";
 import {
   getAccountPlaceholderName,
-  getNewAccountPlaceholderName,
   shouldRetainPendingOperation,
   isAccountEmpty,
   shouldShowNewAccount,
@@ -413,17 +412,11 @@ export const makeScanAccounts =
 
         if (!account) return;
 
-        account.name = !account.used
-          ? getNewAccountPlaceholderName({
-              currency,
-              index,
-              derivationMode,
-            })
-          : getAccountPlaceholderName({
-              currency,
-              index,
-              derivationMode,
-            });
+        account.name = getAccountPlaceholderName({
+          currency,
+          index,
+          derivationMode,
+        });
 
         const showNewAccount = shouldShowNewAccount(currency, derivationMode);
 
