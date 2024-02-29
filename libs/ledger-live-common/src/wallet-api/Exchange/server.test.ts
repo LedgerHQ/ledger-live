@@ -1,7 +1,7 @@
 import { handlers } from "./server";
 import { AppBranch, AppPlatform, Visibility } from "../types";
 import { of } from "rxjs";
-import { ExchangeStartParams, ExchangeStartSwapParams } from "@ledgerhq/wallet-api-exchange-module";
+import { ExchangeStartParams, ExchangeStartSellParams, ExchangeStartSwapParams } from "@ledgerhq/wallet-api-exchange-module";
 import { RpcRequest } from "@ledgerhq/wallet-api-core";
 import { genAccount } from "../../mock/account";
 import { WalletContext, WalletHandlers } from "@ledgerhq/wallet-api-server";
@@ -110,8 +110,9 @@ describe("handlers", () => {
         uiHooks: mockUiHooks,
       });
 
-      const params: ExchangeStartParams = {
+      const params: ExchangeStartSellParams = {
         exchangeType: "SELL",
+        provider: "TestSellProvider",
       };
       const { request, context, walletHandlers } = prepareSellRequest(params);
 
@@ -127,6 +128,37 @@ describe("handlers", () => {
       expect(mockUiStartExchange).toHaveBeenCalledTimes(1);
       const receivedParams = mockUiStartExchange.mock.calls[0][0].exchangeParams;
       expect(receivedParams.exchangeType).toBe("SELL");
+      expect(receivedParams.provider).toBe("TestSellProvider");
+      expect(mockUiCompleteExchange).not.toHaveBeenCalled();
+    });
+
+    it("calls FUND with correct infos", async () => {
+      // Given
+      const accounts = [genAccount("accountId1"), genAccount("accountId2")];
+      const handler = handlers({
+        accounts,
+        tracking: mockTracking,
+        manifest: testAppManifest,
+        uiHooks: mockUiHooks,
+      });
+
+      const params: ExchangeStartParams = {
+        exchangeType: "FUND",
+      };
+      const { request, context, walletHandlers } = prepareSellRequest(params);
+
+      mockUiStartExchange.mockImplementation(params => {
+        params.onSuccess("NONCE");
+      });
+
+      // When
+      const result = await handler["custom.exchange.start"](request, context, walletHandlers);
+
+      // Then
+      expect(result).toEqual({ transactionId: "NONCE" });
+      expect(mockUiStartExchange).toHaveBeenCalledTimes(1);
+      const receivedParams = mockUiStartExchange.mock.calls[0][0].exchangeParams;
+      expect(receivedParams.exchangeType).toBe("FUND");
       expect(mockUiCompleteExchange).not.toHaveBeenCalled();
     });
   });
