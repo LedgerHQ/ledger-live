@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 34.0.0-next.2
+
+### Patch Changes
+
+- [#6335](https://github.com/LedgerHQ/ledger-live/pull/6335) [`5ab0657`](https://github.com/LedgerHQ/ledger-live/commit/5ab065726aa4064ac98ddabc8d54aec594b869a6) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Safer solana hydrate
+
 ## 34.0.0-next.1
 
 ### Patch Changes
