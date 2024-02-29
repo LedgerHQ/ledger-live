@@ -15,7 +15,7 @@ export function Max({ swapTx }: { swapTx: SwapTransactionType }) {
       button: "max",
       state: event,
     });
-    swapTx.toggleMax(swapTx.account!!);
+    swapTx.toggleMax(swapTx.account || undefined);
   };
 
   return (
