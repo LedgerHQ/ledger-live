@@ -32,7 +32,7 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import { trackPage } from "~/renderer/analytics/segment";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import LockedDeviceDrawer, { Props as LockedDeviceDrawerProps } from "./LockedDeviceDrawer";
+import LockedDeviceDrawer from "./LockedDeviceDrawer";
 import { LockedDeviceError } from "@ledgerhq/errors";
 import { saveSettings } from "~/renderer/actions/settings";
 
@@ -318,13 +318,16 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
 
   useEffect(() => {
     if (lockedDevice) {
-      const props: LockedDeviceDrawerProps = {
-        deviceModelId: device.modelId,
-      };
-      setDrawer(LockedDeviceDrawer, props, {
-        forceDisableFocusTrap: true,
-        preventBackdropClick: true,
-      });
+      setDrawer(
+        LockedDeviceDrawer,
+        {
+          deviceModelId: device.modelId,
+        },
+        {
+          forceDisableFocusTrap: true,
+          preventBackdropClick: true,
+        },
+      );
     }
     return () => setDrawer();
   }, [device.modelId, history, lockedDevice]);

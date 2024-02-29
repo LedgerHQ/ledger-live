@@ -7,9 +7,7 @@ import { getCurrentDevice } from "~/renderer/reducers/devices";
 import Success from "./Success";
 import Searching from "./Searching";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
-import LockedDeviceDrawer, {
-  Props as LockedDeviceDrawerProps,
-} from "~/renderer/components/SyncOnboarding/Manual/LockedDeviceDrawer";
+import LockedDeviceDrawer from "~/renderer/components/SyncOnboarding/Manual/LockedDeviceDrawer";
 import { setDrawer } from "~/renderer/drawers/Provider";
 
 export type SyncOnboardingDeviceConnectionProps = {
@@ -48,13 +46,16 @@ const SyncOnboardingDeviceConnection = ({
 
   useEffect(() => {
     if (lockedDevice && currentDevice) {
-      const props: LockedDeviceDrawerProps = {
-        deviceModelId,
-      };
-      setDrawer(LockedDeviceDrawer, props, {
-        forceDisableFocusTrap: true,
-        preventBackdropClick: true,
-      });
+      setDrawer(
+        LockedDeviceDrawer,
+        {
+          deviceModelId,
+        },
+        {
+          forceDisableFocusTrap: true,
+          preventBackdropClick: true,
+        },
+      );
     } else {
       setDrawer();
     }
