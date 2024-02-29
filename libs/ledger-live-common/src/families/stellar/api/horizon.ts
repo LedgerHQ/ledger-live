@@ -1,13 +1,14 @@
 import { LedgerAPI4xx, LedgerAPI5xx, NetworkDown } from "@ledgerhq/errors";
+import { requestInterceptor, responseInterceptor } from "@ledgerhq/live-network/network";
 import type { Account, Operation } from "@ledgerhq/types-live";
-
 import { BigNumber } from "bignumber.js";
 import {
   // @ts-expect-error stellar-sdk ts definition missing?
   AccountRecord,
   NetworkError,
   NotFoundError,
-  Horizon,
+  Server,
+  HorizonAxiosClient,
   BASE_FEE,
   Asset,
   Operation as StellarSdkOperation,
@@ -15,8 +16,8 @@ import {
   Transaction as StellarSdkTransaction,
   TransactionBuilder,
   Networks,
-} from "@stellar/stellar-sdk";
-import { log } from "@ledgerhq/logs";
+  ServerApi,
+} from "stellar-sdk";
 
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../../currencies";
 import { getEnv } from "@ledgerhq/live-env";
@@ -33,39 +34,24 @@ const FALLBACK_BASE_FEE = 100;
 const TRESHOLD_LOW = 0.5;
 const TRESHOLD_MEDIUM = 0.75;
 const currency = getCryptoCurrencyById("stellar");
-const server = new Horizon.Server(getEnv("API_STELLAR_HORIZON"));
+const server = new Server(getEnv("API_STELLAR_HORIZON"));
 
 // Constants
 export const BASE_RESERVE = 0.5;
 export const BASE_RESERVE_MIN_COUNT = 2;
 export const MIN_BALANCE = 1;
 
-// Due to the inconsistency between the axios version (1.6.5) used by `stellar-sdk`
-// and the version (0.26.1) used by `@ledgerhq/live-network/network`, it is not possible to use the interceptors
-// provided by `@ledgerhq/live-network/network`.
-Horizon.AxiosClient.interceptors.request.use(config => {
-  if (!getEnv("ENABLE_NETWORK_LOGS")) {
-    return config;
-  }
+HorizonAxiosClient.interceptors.request.use(requestInterceptor);
 
-  const { url, method, data } = config;
-  log("network", `${method} ${url}`, { data });
-  return config;
-});
-
-Horizon.AxiosClient.interceptors.response.use(response => {
-  if (getEnv("ENABLE_NETWORK_LOGS")) {
-    const { url, method } = response.config;
-    log("network-success", `${response.status} ${method} ${url}`, { data: response.data });
-  }
-
+HorizonAxiosClient.interceptors.response.use(response => {
+  responseInterceptor(response);
   // FIXME: workaround for the Stellar SDK not using the correct URL: the "next" URL
   // included in server responses points to the node itself instead of our reverse proxy...
   // (https://github.com/stellar/js-stellar-sdk/issues/637)
-  const next_href = response?.data?._links?.next?.href;
+  const url = response?.data?._links?.next?.href;
 
-  if (next_href) {
-    const next = new URL(next_href);
+  if (url) {
+    const next = new URL(url);
     next.host = new URL(getEnv("API_STELLAR_HORIZON")).host;
     response.data._links.next.href = next.toString();
   }
@@ -135,7 +121,7 @@ export const fetchAccount = async (
   spendableBalance: BigNumber;
   assets: BalanceAsset[];
 }> => {
-  let account: Horizon.ServerApi.AccountRecord = {} as Horizon.ServerApi.AccountRecord;
+  let account: ServerApi.AccountRecord = {} as ServerApi.AccountRecord;
   let assets: BalanceAsset[] = [];
   let balance = "0";
 
