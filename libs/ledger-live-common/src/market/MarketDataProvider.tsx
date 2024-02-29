@@ -248,52 +248,52 @@ export const MarketDataProvider = ({
     }
   }, [api, countervalue, handleError]);
 
-  // useEffect(() => {
-  //   if (chartRequestParams?.id && chartRequestParams?.counterCurrency && !loadingChart) {
-  //     const range = chartRequestParams.range;
+  useEffect(() => {
+    if (chartRequestParams?.id && chartRequestParams?.counterCurrency && !loadingChart) {
+      const range = chartRequestParams.range;
 
-  //     if (selectedCoinData && !selectedCoinData?.chartData?.[range]) {
-  //       api.currencyChartData(chartRequestParams).then(
-  //         chartData =>
-  //           dispatch({
-  //             type: ACTIONS.UPDATE_SINGLE_CHART_DATA,
-  //             payload: { id: chartRequestParams.id, chartData },
-  //           }),
-  //         handleError,
-  //       );
-  //     } else
-  //       dispatch({
-  //         type: ACTIONS.SET_LOADING_CHART,
-  //         payload: false,
-  //       });
-  //   }
-  // }, [chartRequestParams, selectedCoinData, api, handleError, loadingChart]);
+      if (selectedCoinData && !selectedCoinData?.chartData?.[range]) {
+        api.currencyChartData(chartRequestParams).then(
+          chartData =>
+            dispatch({
+              type: ACTIONS.UPDATE_SINGLE_CHART_DATA,
+              payload: { id: chartRequestParams.id, chartData },
+            }),
+          handleError,
+        );
+      } else
+        dispatch({
+          type: ACTIONS.SET_LOADING_CHART,
+          payload: false,
+        });
+    }
+  }, [chartRequestParams, selectedCoinData, api, handleError, loadingChart]);
 
-  // useEffect(() => {
-  //   if (chartRequestParams?.id && chartRequestParams?.counterCurrency) {
-  //     dispatch({ type: ACTIONS.SET_LOADING, payload: true });
-  //     api
-  //       .listPaginated({
-  //         ...chartRequestParams,
-  //         search: "",
-  //         starred: [],
-  //         liveCompatible: false,
-  //         ids: [chartRequestParams.id],
-  //         limit: 1,
-  //         page: 1,
-  //       })
-  //       .then(([marketData]) => {
-  //         if (marketData) {
-  //           // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  //           const { chartData, ...rest } = marketData;
-  //           dispatch({
-  //             type: ACTIONS.UPDATE_SINGLE_MARKET_DATA,
-  //             payload: rest,
-  //           });
-  //         }
-  //       }, handleError);
-  //   }
-  // }, [api, chartRequestParams, handleError, loading]);
+  useEffect(() => {
+    if (chartRequestParams?.id && chartRequestParams?.counterCurrency) {
+      dispatch({ type: ACTIONS.SET_LOADING, payload: true });
+      api
+        .listPaginated({
+          ...chartRequestParams,
+          search: "",
+          starred: [],
+          liveCompatible: false,
+          ids: [chartRequestParams.id],
+          limit: 1,
+          page: 1,
+        })
+        .then(([marketData]) => {
+          if (marketData) {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const { chartData, ...rest } = marketData;
+            dispatch({
+              type: ACTIONS.UPDATE_SINGLE_MARKET_DATA,
+              payload: rest,
+            });
+          }
+        }, handleError);
+    }
+  }, [api, chartRequestParams, handleError, loading]);
 
   useEffect(() => {
     if (requestParams?.counterCurrency) {
