@@ -24,6 +24,29 @@ export type MarketListRequestParams = {
   top100?: boolean;
 };
 
+export type MarketState = {
+  counterCurrency?: string;
+  ids?: string[];
+  starred?: string[];
+  page?: number;
+  limit?: number;
+  range?: string;
+  orderBy?: string;
+  order?: string;
+  search?: string;
+  lastRequestTime?: Date;
+  sparkline?: boolean;
+  liveCompatible?: boolean;
+  top100?: boolean;
+};
+
+export type MarketListRequestResult = {
+  data: CurrencyData[];
+  pending: boolean;
+  loading: boolean;
+  hasError: boolean;
+};
+
 export type MarketCurrencyChartDataRequestParams = {
   id?: string;
   counterCurrency?: string;
