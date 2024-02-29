@@ -6,12 +6,16 @@ on:
         currencies:
             description: "Currency to run the migration test on. If not specified the test will be run on all supported currencies. If specififed currencies should be comma seperated"
             required: false
+        ref:
+          description: "The reference branch where the migration is made from. Will be develop by default"
+          required: false
+          default: 'develop'
 
     push:
       branches:
         - "feat/live-11055-migration-account-test"
 env:
-  DEVELOP_SYNC_FILE_NAME: develop-sync.json
+  REF_SYNC_FILE_NAME: ref-sync.json
   CURRENT_BRANCH_SYNC_FILE_NAME: commit-sync.json
   OUTPUT_FILE_NAME: output.json
 
@@ -28,7 +32,7 @@ jobs:
               private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
           - uses: actions/checkout@v4
             with:
-              ref: develop
+              ref: ${{ inputs.ref }}
               token: ${{ steps.generate-token.outputs.token }}
 
           - name: Setup git user
@@ -46,15 +50,15 @@ jobs:
             if: ${{ inputs.currencies }}
             run: |
                 OUTPUT=$(pnpm common test-account-migration --currencies ${{ inputs.currencies }})
-                echo $OUTPUT > $DEVELOP_SYNC_FILE_NAME
-                cat $DEVELOP_SYNC_FILE_NAME
+                echo $OUTPUT > $REF_SYNC_FILE_NAME
+                cat $REF_SYNC_FILE_NAME
 
           - name: Run synchronisation on develop
             if: ${{ !inputs.currencies }}
             run: |
               OUTPUT=$(pnpm common test-account-migration)
-              echo $OUTPUT > $DEVELOP_SYNC_FILE_NAME
-              cat $DEVELOP_SYNC_FILE_NAME
+              echo $OUTPUT > $REF_SYNC_FILE_NAME
+              cat $REF_SYNC_FILE_NAME
 
           - uses: actions/checkout@v4
             with:
@@ -67,14 +71,14 @@ jobs:
 
           - name: run synchronisation on current commit
             run: |
-              OUTPUT=$(pnpm common test-account-migration --inputFile $(pwd)/$DEVELOP_SYNC_FILE_NAME
+              OUTPUT=$(pnpm common test-account-migration --inputFile $(pwd)/$REF_SYNC_FILE_NAME)
               echo $OUTPUT > $CURRENT_BRANCH_SYNC_FILE_NAME
               cat $CURRENT_BRANCH_SYNC_FILE_NAME
 
           - name: Check that the files are the exact same
             uses: LouisBrunner/diff-action@v2.0.0
             with:
-              old: $DEVELOP_SYNC_FILE_NAME
+              old: $REF_SYNC_FILE_NAME
               new: $CURRENT_BRANCH_SYNC_FILE_NAME
               mode: strict
               tolerance: same
