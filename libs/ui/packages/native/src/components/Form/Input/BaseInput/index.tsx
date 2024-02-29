@@ -93,7 +93,7 @@ const InputContainer = styled.View<Partial<CommonProps> & { focus?: boolean; has
   border-radius: 8px;
   color: ${(p) => p.theme.colors.neutral.c100};
   align-items: center;
-  padding: 14px 16px;
+  padding: 0px 16px;
 
   ${(p) =>
     p.disabled &&
@@ -143,6 +143,7 @@ const BaseInput = styled.TextInput.attrs((p) => ({
   border: 0;
   flex-shrink: 1;
   display: flex;
+  min-height: fit-content;
   color: ${(p) => p.theme.colors.neutral.c100};
 `;
 
