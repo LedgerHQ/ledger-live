@@ -25,7 +25,6 @@ import { AnnouncementProviderWrapper } from "~/renderer/components/AnnouncementP
 import { PlatformAppProviderWrapper } from "~/renderer/components/PlatformAppProviderWrapper";
 import { ToastProvider } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { themeSelector } from "./actions/general";
-import MarketDataProvider from "~/renderer/screens/market/MarketDataProviderWrapper";
 import { ConnectEnvsToSentry } from "~/renderer/components/ConnectEnvsToSentry";
 import PostOnboardingProviderWrapped from "~/renderer/components/PostOnboardingHub/logic/PostOnboardingProviderWrapped";
 import { useBraze } from "./hooks/useBraze";
@@ -87,14 +86,12 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
                           <PlatformAppProviderWrapper>
                             <DrawerProvider>
                               <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
-                                <MarketDataProvider>
-                                  <StorylyProvider>
-                                    <QueryClientProvider client={queryClient}>
-                                      <Default />
-                                      <ReactQueryDevtoolsProvider />
-                                    </QueryClientProvider>
-                                  </StorylyProvider>
-                                </MarketDataProvider>
+                                <StorylyProvider>
+                                  <QueryClientProvider client={queryClient}>
+                                    <Default />
+                                    <ReactQueryDevtoolsProvider />
+                                  </QueryClientProvider>
+                                </StorylyProvider>
                               </NftMetadataProvider>
                             </DrawerProvider>
                           </PlatformAppProviderWrapper>
