@@ -11,7 +11,7 @@ import React, {
 } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import { Account, AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
+import { Operation, SignedOperation } from "@ledgerhq/types-live";
 import {
   addPendingOperation,
   getMainAccount,
@@ -71,7 +71,7 @@ function useUiHook(manifest: AppManifest, tracking: Record<string, TrackFunction
           SelectAccountAndCurrencyDrawer,
           {
             currencies,
-            onAccountSelected: (account: AccountLike, parentAccount: Account | undefined) => {
+            onAccountSelected: (account, parentAccount) => {
               setDrawer();
               onSuccess(account, parentAccount);
             },
@@ -312,7 +312,6 @@ function useWebView(
     return {
       reload: () => webviewRef.current?.reloadIgnoringCache(),
       postMessage: (message: string) => {
-        console.log("PostMessage: ", message);
         const webview = webviewRef.current;
         if (webview) {
           const origin = new URL(webview.src).origin;
