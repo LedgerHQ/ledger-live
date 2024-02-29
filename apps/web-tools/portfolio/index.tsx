@@ -23,12 +23,13 @@ import {
   useTrackingPairForAccounts,
 } from "@ledgerhq/live-countervalues-react";
 import { getAccountBridge, getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
-import { reduce } from "rxjs/operators";
+import connectApp from "@ledgerhq/live-common/hw/connectApp";
+import { find, first, mergeMap, reduce } from "rxjs/operators";
 import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
 import { Account } from "@ledgerhq/types-live";
-import { Currency, Unit } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { promiseAllBatched } from "@ledgerhq/live-common/promise";
-import { Observable, lastValueFrom } from "rxjs";
+import { Observable, lastValueFrom, tap } from "rxjs";
 import BigNumber from "bignumber.js";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 
@@ -600,10 +601,20 @@ function useLocalStorage(
 // thin headless wrapper to first do the logic that will drive all the calls to access the app (NB: we may want to hook UI to it in future)
 function appForCurrency<T>(
   deviceId: string,
-  currency: Currency,
+  currency: CryptoCurrency,
   scanAccounts: () => Observable<T>,
 ): Observable<T> {
-  return scanAccounts();
+  return connectApp({
+    deviceId,
+    request: {
+      appName: currency.managerAppName,
+      allowPartialDependencies: false,
+    },
+  }).pipe(
+    tap(e => console.log("connectApp", e)),
+    find(e => e.type === "opened"),
+    mergeMap(scanAccounts),
+  );
 }
 
 export default App;
