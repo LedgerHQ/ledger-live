@@ -292,7 +292,7 @@ const fetchTransactionMaterial = async (
  *
  * @returns {SidecarRuntimeSpec}
  */
-const fetchChainSpec = async () => {
+export const fetchChainSpec = async () => {
   const {
     data,
   }: {
@@ -676,7 +676,7 @@ const getConstants = makeLRUCache(
  *
  * @returns {Promise<Object>} consts
  */
-const getTransactionMaterialWithMetadata = makeLRUCache(
+export const getTransactionMaterialWithMetadata = makeLRUCache(
   async (): Promise<SidecarTransactionMaterial> => fetchTransactionMaterial(true),
   () => "polkadot",
   hours(1),

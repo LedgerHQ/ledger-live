@@ -1,6 +1,7 @@
 import BigNumber from "bignumber.js";
-import { getAccount } from "./sidecar";
 import network from "@ledgerhq/live-network/network";
+import { getAccount, getRegistry } from "./sidecar";
+import { fixtureChainSpec, fixtureTxMaterialWithMetadata } from "./sidecar.fixture";
 
 jest.mock("@ledgerhq/live-network/network");
 const networkApiMock = jest.mocked(network);
@@ -58,5 +59,27 @@ describe("getAccount", () => {
     });
     const { lockedBalance } = await getAccount("addr");
     expect(lockedBalance).toEqual(new BigNumber("5"));
+  });
+});
+
+describe("getRegistry", () => {
+  it("works", async () => {
+    networkApiMock.mockResolvedValueOnce({
+      data: fixtureTxMaterialWithMetadata,
+      status: 200,
+      statusText: "",
+      headers: {},
+      config: {},
+    });
+    networkApiMock.mockResolvedValueOnce({
+      data: fixtureChainSpec,
+      status: 200,
+      statusText: "",
+      headers: {},
+      config: {},
+    });
+    const { registry, extrinsics } = await getRegistry();
+    expect(registry).not.toBeNull();
+    expect(extrinsics).not.toBeNull();
   });
 });
