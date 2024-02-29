@@ -10,7 +10,6 @@ import { track } from "~/renderer/analytics/segment";
 import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils/index";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
-import { TableCell, TableRow } from "./MarketList";
 import { SmallMarketItemChart } from "./MarketItemChart";
 import { CurrencyData } from "@ledgerhq/live-common/market/types";
 import { Button } from ".";
@@ -20,6 +19,7 @@ import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/ut
 import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 import useStakeFlow from "~/renderer/screens/stake/index";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
+import { TableRow, TableCell } from "./components/Table";
 
 const CryptoCurrencyIconWrapper = styled.div`
   height: 32px;
