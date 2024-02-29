@@ -1,5 +1,4 @@
 import React, { useCallback, memo } from "react";
-import { useMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import styled, { DefaultTheme, StyledComponent } from "styled-components";
 import { Flex, Text, Icon } from "@ledgerhq/react-ui";
 import { TFunction } from "i18next";
@@ -19,9 +18,16 @@ import Image from "~/renderer/components/Image";
 import NoResultsFound from "~/renderer/images/no-results-found.png";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { FlexProps } from "styled-system";
-import { CurrencyData, MarketListRequestParams } from "@ledgerhq/live-common/market/types";
+import {
+  CurrencyData,
+  MarketListRequestParams,
+  MarketState,
+} from "@ledgerhq/live-common/market/types";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { useFetchCurrencyFrom } from "@ledgerhq/live-common/exchange/swap/hooks/index";
+import { useMarketData as useMarketDataHook } from "@ledgerhq/live-common/market/v2/useMarketDataProvider";
+import { marketSelector } from "~/renderer/reducers/market";
+import { setMarketOptions } from "~/renderer/actions/market";
 
 export const TableCellBase: StyledComponent<"div", DefaultTheme, FlexProps> = styled(Flex).attrs({
   alignItems: "center",
@@ -220,7 +226,6 @@ const CurrencyRow = memo(function CurrencyRowItem({
   counterCurrency,
   loading,
   toggleStar,
-  selectCurrency,
   starredMarketCoins,
   locale,
   swapAvailableIds,
@@ -231,7 +236,6 @@ const CurrencyRow = memo(function CurrencyRowItem({
   counterCurrency?: string;
   loading: boolean;
   toggleStar: (id: string, isStarred: boolean) => void;
-  selectCurrency: (currencyId: string) => void;
   starredMarketCoins: string[];
   locale: string;
   swapAvailableIds: string[];
@@ -265,7 +269,6 @@ const CurrencyRow = memo(function CurrencyRowItem({
       toggleStar={() => currency?.id && toggleStar(currency.id, !!isStarred)}
       key={index}
       locale={locale}
-      selectCurrency={selectCurrency}
       availableOnBuy={!!availableOnBuy}
       availableOnSwap={!!availableOnSwap}
       availableOnStake={availableOnStake}
@@ -281,23 +284,29 @@ function MarketList({
   starredMarketCoins: string[];
   toggleStarredAccounts: () => void;
 }) {
+  const marketParams = useSelector(marketSelector);
+  const dispatch = useDispatch();
+
   const { t } = useTranslation();
   const locale = useSelector(localeSelector);
 
-  const {
-    marketData = [],
-    loading,
-    endOfList,
-    requestParams,
-    refresh,
-    loadNextPage,
-    counterCurrency,
-    selectCurrency,
-  } = useMarketData();
-  const dispatch = useDispatch();
+  const onLoadNextPage = useCallback(() => {
+    dispatch(setMarketOptions({ page: (marketParams?.page || 1) + 1 }));
+  }, [dispatch, marketParams?.page]);
 
-  const { orderBy, order, starred, search, range } = requestParams;
-  const currenciesLength = marketData.length;
+  const refresh = useCallback(
+    (payload: MarketState) => {
+      dispatch(setMarketOptions(payload));
+    },
+    [dispatch],
+  );
+
+  const { orderBy, order, starred, search, range, counterCurrency } = marketParams;
+
+  const res = useMarketDataHook(marketParams);
+
+  const currenciesLength = res.data.length;
+  const loading = res.loading;
   const freshLoading = loading && !currenciesLength;
 
   const { data: fromCurrencies } = useFetchCurrencyFrom();
@@ -330,13 +339,13 @@ function MarketList({
     [order, orderBy, refresh],
   );
 
-  const isItemLoaded = useCallback((index: number) => !!marketData[index], [marketData]);
-  const itemCount = endOfList ? currenciesLength : currenciesLength + 1;
+  const isItemLoaded = useCallback((index: number) => !!res.data[index], [res.data]);
+  const itemCount = currenciesLength + 1;
 
   return (
     <Flex flex="1" flexDirection="column">
       {!currenciesLength && !loading ? (
-        <NoCryptoPlaceholder requestParams={requestParams} t={t} resetSearch={resetSearch} />
+        <NoCryptoPlaceholder requestParams={marketParams} t={t} resetSearch={resetSearch} />
       ) : (
         <>
           {search && currenciesLength > 0 && <TrackPage category="Market Search" success={true} />}
@@ -383,7 +392,6 @@ function MarketList({
                         counterCurrency={counterCurrency}
                         loading={loading}
                         toggleStar={toggleStar}
-                        selectCurrency={selectCurrency}
                         starredMarketCoins={starredMarketCoins}
                         locale={locale}
                         swapAvailableIds={fromCurrencies ?? []}
@@ -395,7 +403,7 @@ function MarketList({
                   <InfiniteLoader
                     isItemLoaded={isItemLoaded}
                     itemCount={itemCount}
-                    loadMoreItems={loadNextPage}
+                    loadMoreItems={onLoadNextPage}
                   >
                     {/* @ts-expect-error react-window-infinite-loader bindings are too strict here. */}
                     {({
@@ -411,7 +419,7 @@ function MarketList({
                         itemCount={itemCount}
                         onItemsRendered={onItemsRendered}
                         itemSize={listItemHeight}
-                        itemData={marketData}
+                        itemData={res.data}
                         style={{ overflowX: "hidden" }}
                         ref={ref}
                         overscanCount={10}
@@ -422,7 +430,6 @@ function MarketList({
                             counterCurrency={counterCurrency}
                             loading={loading}
                             toggleStar={toggleStar}
-                            selectCurrency={selectCurrency}
                             starredMarketCoins={starredMarketCoins}
                             locale={locale}
                             swapAvailableIds={fromCurrencies ?? []}
@@ -434,7 +441,7 @@ function MarketList({
                   </InfiniteLoader>
                 ) : (
                   <NoCryptoPlaceholder
-                    requestParams={requestParams}
+                    requestParams={marketParams}
                     t={t}
                     resetSearch={resetSearch}
                   />

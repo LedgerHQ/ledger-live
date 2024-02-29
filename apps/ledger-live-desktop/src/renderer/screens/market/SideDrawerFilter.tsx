@@ -1,13 +1,14 @@
 import React, { useCallback } from "react";
 import { TFunction } from "i18next";
 import Dropdown from "./DropDown";
+import { MarketState } from "~/renderer/reducers/market";
 
 export default function SideDrawerFilter({
   refresh,
   filters,
   t,
 }: {
-  refresh: (params?: { starred: []; liveCompatible: boolean }) => void;
+  refresh: (params: MarketState) => void;
   filters: Record<
     "starred" | "liveCompatible",
     { value: boolean; toggle: () => void; disabled?: boolean }
