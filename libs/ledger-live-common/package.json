@@ -224,6 +224,7 @@
     "object-hash": "^2.2.0",
     "pako": "^2.0.4",
     "performance-now": "^2.1.0",
+    "picomatch": "^4.0.1",
     "prando": "^6.0.1",
     "qs": "^6.10.1",
     "reselect": "^4.1.5",

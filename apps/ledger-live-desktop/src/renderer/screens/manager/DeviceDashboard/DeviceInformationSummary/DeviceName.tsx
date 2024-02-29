@@ -57,7 +57,6 @@ const DeviceName: React.FC<Props> = ({
       setDrawer(
         EditDeviceName,
         {
-          key: name,
           device,
           onSetName: onSuccess,
           deviceName: name,

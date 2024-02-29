@@ -1,8 +1,6 @@
 import { setDrawer } from "../Provider";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import SelectAccountAndCurrencyDrawer, {
-  SelectAccountAndCurrencyDrawerProps,
-} from "./SelectAccountAndCurrencyDrawer";
+import SelectAccountAndCurrencyDrawer from "./SelectAccountAndCurrencyDrawer";
 import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
 type SelectAccountAndCurrencyResult = {
   account: AccountLike;
@@ -13,7 +11,7 @@ export function selectAccountAndCurrency(
   includeTokens?: boolean,
 ): Promise<SelectAccountAndCurrencyResult> {
   return new Promise((resolve, reject) => {
-    setDrawer<SelectAccountAndCurrencyDrawerProps>(
+    setDrawer(
       SelectAccountAndCurrencyDrawer,
       {
         currencies: listAndFilterCurrencies({
