@@ -47,7 +47,6 @@ type Props = {
   locale: string;
   isStarred: boolean;
   toggleStar: () => void;
-  selectCurrency: (currencyId: string) => void;
   availableOnBuy: boolean;
   availableOnSwap: boolean;
   availableOnStake: boolean;
@@ -61,7 +60,6 @@ function MarketRowItem({
   loading,
   isStarred,
   toggleStar,
-  selectCurrency,
   availableOnBuy,
   availableOnSwap,
   availableOnStake,
@@ -89,14 +87,13 @@ function MarketRowItem({
 
   const onCurrencyClick = useCallback(() => {
     if (currency) {
-      selectCurrency(currency.id);
       setTrackingSource("Page Market");
       history.push({
         pathname: `/market/${currency.id}`,
         state: currency,
       });
     }
-  }, [currency, history, selectCurrency]);
+  }, [currency, history]);
 
   const onBuy = useCallback(
     (e: React.SyntheticEvent<HTMLButtonElement>) => {

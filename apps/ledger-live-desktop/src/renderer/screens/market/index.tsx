@@ -1,9 +1,8 @@
 import React, { useMemo, useCallback } from "react";
 import { Flex, Button as BaseButton, Text, SearchInput, Dropdown } from "@ledgerhq/react-ui";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { starredMarketCoinsSelector } from "~/renderer/reducers/settings";
 import { useTranslation } from "react-i18next";
-import { useMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import styled from "styled-components";
 import CounterValueSelect from "./CountervalueSelect";
 import MarketList from "./MarketList";
@@ -11,6 +10,9 @@ import SideDrawerFilter from "./SideDrawerFilter";
 import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { useInitSupportedCounterValues } from "~/renderer/hooks/useInitSupportedCounterValues";
+import { MarketState, marketSelector } from "~/renderer/reducers/market";
+import { setMarketOptions } from "~/renderer/actions/market";
+import { useMarketDataProvider } from "@ledgerhq/live-common/market/v2/useMarketDataProvider";
 
 const Container = styled(Flex).attrs({
   flex: "1",
@@ -61,14 +63,31 @@ const SelectBarContainer = styled(Flex)`
 
 export default function Market() {
   const { t } = useTranslation();
-  const {
-    requestParams,
-    refresh,
-    counterCurrency,
-    setCounterCurrency,
-    supportedCounterCurrencies,
-  } = useMarketData();
-  const { search = "", range, starred = [], liveCompatible, order } = requestParams;
+  const dispatch = useDispatch();
+  const marketParams = useSelector(marketSelector);
+  const { supportedCounterCurrencies } = useMarketDataProvider();
+
+  const setCounterCurrency = useCallback(
+    (ticker: string) => {
+      dispatch(
+        setMarketOptions({
+          counterCurrency: supportedCounterCurrencies?.includes(ticker.toLowerCase())
+            ? ticker
+            : "usd",
+        }),
+      );
+    },
+    [dispatch, supportedCounterCurrencies],
+  );
+
+  const refresh = useCallback(
+    (payload: MarketState) => {
+      dispatch(setMarketOptions(payload));
+    },
+    [dispatch],
+  );
+
+  const { search = "", range, starred = [], liveCompatible, order, counterCurrency } = marketParams;
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
   const starFilterOn = starred.length > 0;
 
