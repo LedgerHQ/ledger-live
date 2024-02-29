@@ -81,6 +81,11 @@ export const setAllowDebugApps = (allowDebugApps: boolean) =>
   saveSettings({
     allowDebugApps,
   });
+
+export const setAllowDebugReactQuery = (allowReactQueryDebug: boolean) =>
+  saveSettings({
+    allowReactQueryDebug,
+  });
 export const setAllowExperimentalApps = (allowExperimentalApps: boolean) =>
   saveSettings({
     allowExperimentalApps,

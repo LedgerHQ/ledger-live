@@ -18,6 +18,7 @@ import EnableStagingNftMetadataServiceToggle from "./EnableStagingNftMetadataSer
 import LottieTester from "../Experimental/LottieTester";
 import StorylyTester from "../Experimental/StorylyTester";
 import PostOnboardingHubTester from "../Experimental/PostOnboardingHubTester";
+import AllowDebugReactQueryToggle from "./AllowDebugReactQueryToggle";
 
 const Default = () => {
   const { t } = useTranslation();
@@ -78,6 +79,13 @@ const Default = () => {
       <LottieTester />
       <PostOnboardingHubTester />
       <StorylyTester />
+
+      <Row
+        title={t("settings.developer.debugReactQuery")}
+        desc={t("settings.developer.debugReactQueryDesc")}
+      >
+        <AllowDebugReactQueryToggle />
+      </Row>
     </Body>
   );
 };
