@@ -1,3 +1,8 @@
+import { readFileSync, existsSync } from "fs";
+import BigNumber from "bignumber.js";
+import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+import { Account } from "@ledgerhq/types-live";
+import { argv } from "yargs";
 import {
   findCryptoCurrencyById,
   getCryptoCurrencyById,
@@ -5,13 +10,10 @@ import {
 } from "../../currencies";
 import { encodeAccountId, toAccountRaw } from "../../account";
 import { firstValueFrom, reduce } from "rxjs";
-import { Account } from "@ledgerhq/types-live";
 import { getAccountBridgeByFamily } from "../../bridge/impl";
 import { migrationAddresses as defaultAddresses } from "./addresses";
-import { argv } from "yargs";
-import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
-import { readFileSync, existsSync } from "fs";
 
+// mandatory to run the script
 setSupportedCurrencies([
   "bitcoin",
   "ethereum",
@@ -111,57 +113,60 @@ type Args = {
    */
   currencies?: CryptoCurrencyId;
   /**
-   * absolute path to json file with the raw account input
+   * absolute path to the input json file
+   * must only contain an array of raw accounts
    */
   inputFile?: string;
 };
 
 const { currencies, inputFile } = args as Args;
 
-const getMockAccount = (currencyId: string, address: string) => {
+const getMockAccount = (currencyId: string, address: string): Partial<Account> => {
   const currency = getCryptoCurrencyById(currencyId);
+
   return {
     name: "mockAccount",
     type: "Account",
-    freshAddress: address,
     id: encodeAccountId({
       type: "mock",
       version: "1",
       currencyId: currencyId,
       xpubOrAddress: address,
-      derivationMode: "ethM",
+      derivationMode: "",
     }),
+    freshAddress: address,
     derivationMode: "",
     operations: [],
     currency,
     creationDate: new Date(),
     unit: currency.units[0],
-    balance: 0,
-    spendableBalance: 0,
+    balance: new BigNumber(0),
+    spendableBalance: new BigNumber(0),
   };
 };
 
 export const testSync = async (currencyId: string, address: string) => {
   const mockAccount = getMockAccount(currencyId, address);
-  const accountBrige = getAccountBridgeByFamily(mockAccount.currency.family, mockAccount.id);
+  const accountBrige = getAccountBridgeByFamily(mockAccount.currency!.family, mockAccount.id);
 
-  const value = await firstValueFrom(
+  const syncedAccount = await firstValueFrom(
     accountBrige
       .sync(mockAccount as unknown as Account, { paginationConfig: {} })
       .pipe(reduce((a, f: (arg0: Account) => Account) => f(a), mockAccount as unknown as Account)),
   );
 
-  const accountRaw = toAccountRaw(value);
+  const accountRaw = toAccountRaw(syncedAccount);
 
   return accountRaw;
 };
 
 (async () => {
-  const inputFileAddresses = [];
-
   if (inputFile && !existsSync(inputFile)) {
     throw new Error("File do not exist");
   }
+
+  // list of addresses from input file
+  const inputFileAddresses = [];
 
   // if there's a input file we parse it
   if (inputFile && existsSync(inputFile)) {
@@ -174,11 +179,15 @@ export const testSync = async (currencyId: string, address: string) => {
     );
   }
 
+  // we only read --currencies options if there's no input file
   const currencyIds = !inputFile && currencies?.split(",");
+
+  // throw error if there's invalid currency ids passed in the cli
   if (currencyIds && !currencyIds.every(findCryptoCurrencyById)) {
     throw new Error("Invalid currency id");
   }
 
+  // if --inputFile we use the addresses from the input file otherwise from `addresses.ts`
   const migrationAddresses = inputFileAddresses.length ? inputFileAddresses : defaultAddresses;
 
   const syncedAccounts = await Promise.allSettled(
