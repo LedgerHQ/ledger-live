@@ -12,6 +12,8 @@ import { encodeAccountId, toAccountRaw } from "../../account";
 import { firstValueFrom, reduce } from "rxjs";
 import { getAccountBridgeByFamily } from "../../bridge/impl";
 import { migrationAddresses as defaultAddresses } from "./addresses";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { liveConfig } from "../../config/sharedConfig";
 
 // mandatory to run the script
 setSupportedCurrencies([
@@ -104,6 +106,12 @@ setSupportedCurrencies([
   "linea_goerli",
 ]);
 
+LiveConfig.setConfig(liveConfig);
+LiveConfig.setAppinfo({
+  environment: "ci",
+  platform: "headless-linux",
+});
+
 const args = argv;
 
 type Args = {
@@ -121,38 +129,55 @@ type Args = {
 
 const { currencies, inputFile } = args as Args;
 
-const getMockAccount = (currencyId: string, address: string): Partial<Account> => {
+const getMockAccount = (currencyId: string, address: string): Account => {
   const currency = getCryptoCurrencyById(currencyId);
 
   return {
     name: "mockAccount",
     type: "Account",
     id: encodeAccountId({
-      type: "mock",
-      version: "1",
+      type: "js",
+      version: "",
       currencyId: currencyId,
       xpubOrAddress: address,
       derivationMode: "",
     }),
     freshAddress: address,
+    xpub: address,
     derivationMode: "",
     operations: [],
     currency,
-    creationDate: new Date(),
+    creationDate: new Date(0),
     unit: currency.units[0],
     balance: new BigNumber(0),
     spendableBalance: new BigNumber(0),
+    blockHeight: 0,
+    freshAddressPath: "",
+    freshAddresses: [],
+    seedIdentifier: "",
+    index: 0,
+    starred: false,
+    used: true,
+    operationsCount: 0,
+    pendingOperations: [],
+    lastSyncDate: new Date(0),
+    balanceHistoryCache: {
+      HOUR: { latestDate: 0, balances: [] },
+      DAY: { latestDate: 0, balances: [] },
+      WEEK: { latestDate: 0, balances: [] },
+    },
+    swapHistory: [],
   };
 };
 
-export const testSync = async (currencyId: string, address: string) => {
-  const mockAccount = getMockAccount(currencyId, address);
+export const testSync = async (currencyId: string, xpubOrAddress: string) => {
+  const mockAccount = getMockAccount(currencyId, xpubOrAddress);
   const accountBrige = getAccountBridgeByFamily(mockAccount.currency!.family, mockAccount.id);
 
   const syncedAccount = await firstValueFrom(
     accountBrige
-      .sync(mockAccount as unknown as Account, { paginationConfig: {} })
-      .pipe(reduce((a, f: (arg0: Account) => Account) => f(a), mockAccount as unknown as Account)),
+      .sync(mockAccount, { paginationConfig: {}, blacklistedTokenIds: [] })
+      .pipe(reduce((acc, f: (arg0: Account) => Account) => f(acc), mockAccount)),
   );
 
   const accountRaw = toAccountRaw(syncedAccount);
@@ -162,7 +187,7 @@ export const testSync = async (currencyId: string, address: string) => {
 
 (async () => {
   if (inputFile && !existsSync(inputFile)) {
-    throw new Error("File do not exist");
+    throw new Error("Incorrect file path: file does not exist");
   }
 
   // list of addresses from input file
@@ -199,8 +224,11 @@ export const testSync = async (currencyId: string, address: string) => {
 
         return true;
       })
-      .map(async ({ currencyId, address }) => {
-        return testSync(currencyId, address);
+      .map(async migrationAddress => {
+        return testSync(
+          migrationAddress.currencyId,
+          migrationAddress.address ?? migrationAddress.xpub,
+        );
       }),
   );
 
@@ -213,7 +241,7 @@ export const testSync = async (currencyId: string, address: string) => {
   });
 
   // eslint-disable-next-line no-console
-  console.log(JSON.stringify(response));
+  console.log(JSON.stringify(response, null, 3));
 
   return response;
 })();

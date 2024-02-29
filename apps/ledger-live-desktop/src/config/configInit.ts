@@ -1,5 +1,5 @@
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import liveConfigSchema from "@ledgerhq/live-common/config/sharedConfig";
+import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
 
 LiveConfig.setAppinfo({
   appVersion: __APP_VERSION__,
@@ -7,4 +7,4 @@ LiveConfig.setAppinfo({
   environment: process.env.NODE_ENV || "development",
 });
 
-LiveConfig.setConfig(liveConfigSchema);
+LiveConfig.setConfig(liveConfig);

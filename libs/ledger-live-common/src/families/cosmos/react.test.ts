@@ -11,7 +11,7 @@ import { setEnv } from "@ledgerhq/live-env";
 import { makeBridgeCacheSystem } from "../../bridge/cache";
 import { genAccount, genAddingOperationsInAccount } from "../../mock/account";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import liveConfig from "../../config/sharedConfig";
+import { liveConfig } from "../../config/sharedConfig";
 import cryptoFactory from "./chain/chain";
 import type {
   CosmosAccount,

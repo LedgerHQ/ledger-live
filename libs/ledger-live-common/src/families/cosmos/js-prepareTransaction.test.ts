@@ -5,7 +5,7 @@ import * as jsPrepareTransaction from "./js-prepareTransaction";
 import { calculateFees, getEstimatedFees } from "./js-prepareTransaction";
 import { CosmosAccount, Transaction } from "./types";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import liveConfig from "../../config/sharedConfig";
+import { liveConfig } from "../../config/sharedConfig";
 
 jest.mock("@ledgerhq/live-network/network");
 

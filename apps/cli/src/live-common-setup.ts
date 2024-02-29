@@ -14,7 +14,7 @@ import { retry } from "@ledgerhq/live-common/promise";
 import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
 import { closeAllSpeculosDevices } from "@ledgerhq/live-common/load/speculos";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import liveConfigSchema from "@ledgerhq/live-common/config/sharedConfig";
+import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
 
 checkLibs({
   NotEnoughBalance,
@@ -121,7 +121,7 @@ async function init() {
   });
 }
 
-LiveConfig.setConfig(liveConfigSchema);
+LiveConfig.setConfig(liveConfig);
 
 if (!process.env.CI) {
   init();
