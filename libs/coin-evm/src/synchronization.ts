@@ -13,7 +13,8 @@ import {
   mergeOps,
   mergeNfts,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { Account, Operation, SubAccount } from "@ledgerhq/types-live";
+import { Account, Operation, SubAccount, TokenAccount } from "@ledgerhq/types-live";
+import { SwapOperation } from "@ledgerhq/types-live/lib/swap";
 import { decodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { nftsFromOperations } from "@ledgerhq/coin-framework/nft/helpers";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -153,7 +154,7 @@ export const getSubAccounts = async (
   lastTokenOperations: Operation[],
   blacklistedTokenIds: string[] = [],
 ): Promise<Partial<SubAccount>[]> => {
-  const { currency } = infos;
+  const { currency, initialAccount } = infos;
 
   // Creating a Map of Operations by TokenCurrencies in order to know which TokenAccounts should be synced as well
   const erc20OperationsByToken = lastTokenOperations.reduce<Map<TokenCurrency, Operation[]>>(
@@ -175,7 +176,8 @@ export const getSubAccounts = async (
   // Fetching all TokenAccounts possible and providing already filtered operations
   const subAccountsPromises: Promise<Partial<SubAccount>>[] = [];
   for (const [token, ops] of erc20OperationsByToken.entries()) {
-    subAccountsPromises.push(getSubAccountShape(currency, accountId, token, ops));
+    const { swapHistory = [], pendingOperations = [] } = (initialAccount?.subAccounts as TokenAccount[])?.find(acc  => acc?.token?.id === token.id) || {};
+    subAccountsPromises.push(getSubAccountShape(currency, accountId, token, ops, pendingOperations, swapHistory ));
   }
 
   return Promise.all(subAccountsPromises);
@@ -189,6 +191,8 @@ export const getSubAccountShape = async (
   parentId: string,
   token: TokenCurrency,
   operations: Operation[],
+  pendingOperations: Operation[] = [],
+  swapHistory: SwapOperation[] = []
 ): Promise<Partial<SubAccount>> => {
   const nodeApi = getNodeApi(currency);
   const { xpubOrAddress: address } = decodeAccountId(parentId);
@@ -205,9 +209,9 @@ export const getSubAccountShape = async (
     creationDate: new Date(),
     operations,
     operationsCount: operations.length,
-    pendingOperations: [],
+    pendingOperations,
     balanceHistoryCache: emptyHistoryCache,
-    swapHistory: [],
+    swapHistory,
   };
 };
 

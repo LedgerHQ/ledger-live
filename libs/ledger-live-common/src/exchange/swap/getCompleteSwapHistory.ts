@@ -16,7 +16,7 @@ const getSwapOperationMap =
       status,
       tokenId,
     } = swapOperation;
-    const operation = account.operations.find(o => o.id === operationId);
+    const operation = account.operations.find(o => o.id.startsWith(operationId));
     const optimisticOperation = !operation
       ? account.pendingOperations.find(o => o.id === operationId)
       : null;
@@ -27,6 +27,9 @@ const getSwapOperationMap =
       let toParentAccount;
       let toExists = !optimisticOperation;
 
+      if (toAccount?.type === "Account" && account.type === "TokenAccount") {
+        toExists = true;
+      }
       if (toAccount && tokenId) {
         const token = findTokenById(tokenId);
 
