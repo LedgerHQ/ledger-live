@@ -319,6 +319,8 @@ export class LedgerLiveEthereumProvider extends EventEmitter implements EIP1193P
    * @param event message event that will be processed by the provider
    */
   private handleEventSourceMessage = (event: MessageEvent) => {
+    // We should probably check the origin in the event
+    // To avoid receiving events from other sources
     const data = event.data;
 
     // No data to parse, skip.
