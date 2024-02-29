@@ -179,6 +179,9 @@ export class LedgerLiveEthereumProvider extends EventEmitter implements EIP1193P
     return this;
   }
 
+  isRabby = true;
+  isMetaMask = true;
+
   private enabled: Promise<string[]> | null = null;
   private readonly targetOrigin: string;
   private readonly timeoutMilliseconds: number;
@@ -205,6 +208,10 @@ export class LedgerLiveEthereumProvider extends EventEmitter implements EIP1193P
     // Listen for messages from the event source.
     this.eventSource.addEventListener("message", this.handleEventSourceMessage);
   }
+
+  public isConnected = () => {
+    return true;
+  };
 
   /**
    * Helper method that handles transport and request wrapping
