@@ -1,18 +1,11 @@
-import React, { useMemo, useCallback } from "react";
+import React from "react";
 import { Flex, Button as BaseButton, Text, SearchInput, Dropdown } from "@ledgerhq/react-ui";
-import { useDispatch, useSelector } from "react-redux";
-import { starredMarketCoinsSelector } from "~/renderer/reducers/settings";
-import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import CounterValueSelect from "./CountervalueSelect";
 import MarketList from "./MarketList";
 import SideDrawerFilter from "./SideDrawerFilter";
-import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { useInitSupportedCounterValues } from "~/renderer/hooks/useInitSupportedCounterValues";
-import { MarketState, marketSelector } from "~/renderer/reducers/market";
-import { setMarketOptions } from "~/renderer/actions/market";
-import { useMarketDataProvider } from "@ledgerhq/live-common/market/v2/useMarketDataProvider";
+import { useMarket } from "./useMarket";
 
 const Container = styled(Flex).attrs({
   flex: "1",
@@ -62,73 +55,24 @@ const SelectBarContainer = styled(Flex)`
 `;
 
 export default function Market() {
-  const { t } = useTranslation();
-  const dispatch = useDispatch();
-  const marketParams = useSelector(marketSelector);
-  const { supportedCounterCurrencies } = useMarketDataProvider();
+  const {
+    marketParams,
+    toggleFilterByStarredAccounts,
+    timeRangeValue,
+    toggleLiveCompatible,
+    updateSearch,
+    updateTimeRange,
+    t,
+    setCounterCurrency,
+    supportedCounterCurrencies,
+    refresh,
+    liveCompatible,
+    starFilterOn,
+    starredMarketCoins,
+    timeRanges,
+  } = useMarket();
 
-  const setCounterCurrency = useCallback(
-    (ticker: string) => {
-      dispatch(
-        setMarketOptions({
-          counterCurrency: supportedCounterCurrencies?.includes(ticker.toLowerCase())
-            ? ticker
-            : "usd",
-        }),
-      );
-    },
-    [dispatch, supportedCounterCurrencies],
-  );
-
-  const refresh = useCallback(
-    (payload: MarketState) => {
-      dispatch(setMarketOptions(payload));
-    },
-    [dispatch],
-  );
-
-  const { search = "", range, starred = [], liveCompatible, order, counterCurrency } = marketParams;
-  const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
-  const starFilterOn = starred.length > 0;
-
-  useInitSupportedCounterValues();
-
-  const updateSearch = useCallback(
-    (value: string) => {
-      refresh({ search: value, starred: [], liveCompatible: false });
-    },
-    [refresh],
-  );
-
-  const updateTimeRange = useCallback(
-    (e: { value: string; label: string } | null) => {
-      if (!e) return;
-      const { value } = e;
-      refresh({ range: value });
-    },
-    [refresh],
-  );
-
-  const toggleFilterByStarredAccounts = useCallback(() => {
-    if (starredMarketCoins.length > 0 || starFilterOn) {
-      const starred = starFilterOn ? [] : starredMarketCoins;
-      refresh({ starred, search: "" });
-    }
-  }, [refresh, starFilterOn, starredMarketCoins]);
-
-  const toggleLiveCompatible = useCallback(() => {
-    refresh({ liveCompatible: !liveCompatible });
-  }, [liveCompatible, refresh]);
-
-  const timeRanges = useMemo(
-    () =>
-      Object.keys(rangeDataTable)
-        .filter(k => k !== "1h")
-        .map(value => ({ value, label: t(`market.range.${value}`) })),
-    [t],
-  );
-
-  const timeRangeValue = timeRanges.find(({ value }) => value === range);
+  const { order, range, counterCurrency, search = "" } = marketParams;
 
   return (
     <Container>
