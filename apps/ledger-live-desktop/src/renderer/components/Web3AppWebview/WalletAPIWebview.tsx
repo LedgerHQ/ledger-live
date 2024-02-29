@@ -286,6 +286,10 @@ export const stripHexPrefix = (str: string): string => {
   return isHexPrefixed(str) ? str.slice(2) : str;
 };
 
+export function EVMAddressChanged(addr1: string, addr2: string): boolean {
+  return addr1.toLowerCase() !== addr2.toLowerCase();
+}
+
 function useWebView(
   { manifest, customHandlers }: Pick<WebviewProps, "manifest" | "customHandlers">,
   webviewRef: RefObject<WebviewTag>,
@@ -308,6 +312,7 @@ function useWebView(
     return {
       reload: () => webviewRef.current?.reloadIgnoringCache(),
       postMessage: (message: string) => {
+        console.log("PostMessage: ", message);
         const webview = webviewRef.current;
         if (webview) {
           const origin = new URL(webview.src).origin;
@@ -347,6 +352,47 @@ function useWebView(
       return getParentAccount(account, accounts);
     }
   }, [accounts, currentNetwork?.currency]);
+
+  const previousAddressRef = useRef<string>();
+  const previousChainIdRef = useRef<number>();
+
+  useEffect(() => {
+    if (!currentAccount) {
+      return;
+    }
+    if (
+      previousAddressRef.current &&
+      EVMAddressChanged(previousAddressRef.current, currentAccount.freshAddress)
+    ) {
+      webviewHook.postMessage(
+        JSON.stringify({
+          jsonrpc: "2.0",
+          method: "accountsChanged",
+          result: [[currentAccount.freshAddress]],
+        }),
+      );
+    }
+    previousAddressRef.current = currentAccount.freshAddress;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentAccount]);
+
+  useEffect(() => {
+    if (!currentNetwork) {
+      return;
+    }
+
+    if (previousChainIdRef.current && previousChainIdRef.current !== currentNetwork.chainID) {
+      webviewHook.postMessage(
+        JSON.stringify({
+          jsonrpc: "2.0",
+          method: "chainChanged",
+          params: [`0x${currentNetwork.chainID.toString(16)}`],
+        }),
+      );
+    }
+    previousChainIdRef.current = currentNetwork.chainID;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentNetwork]);
 
   const onDappMessage = useCallback(
     async (data: JsonRpcRequestMessage) => {
@@ -404,6 +450,7 @@ function useWebView(
             webviewHook.postMessage(
               JSON.stringify({
                 id: data.id,
+                jsonrpc: "2.0",
                 error: rejectedError("Invalid chainId"),
               }),
             );
@@ -419,6 +466,7 @@ function useWebView(
             webviewHook.postMessage(
               JSON.stringify({
                 id: data.id,
+                jsonrpc: "2.0",
                 error: rejectedError(`Chain ID ${chainId} is not supported`),
               }),
             );
@@ -448,6 +496,7 @@ function useWebView(
             webviewHook.postMessage(
               JSON.stringify({
                 id: data.id,
+                jsonrpc: "2.0",
                 error: rejectedError(`error switching chain: ${error}`),
               }),
             );
@@ -520,6 +569,7 @@ function useWebView(
               webviewHook.postMessage(
                 JSON.stringify({
                   id: data.id,
+                  jsonrpc: "2.0",
                   error: rejectedError("Transaction declined"),
                 }),
               );
@@ -559,6 +609,7 @@ function useWebView(
             webviewHook.postMessage(
               JSON.stringify({
                 id: data.id,
+                jsonrpc: "2.0",
                 result: signedMessage,
               }),
             );
@@ -567,6 +618,7 @@ function useWebView(
             webviewHook.postMessage(
               JSON.stringify({
                 id: data.id,
+                jsonrpc: "2.0",
                 error: rejectedError("Personal message signed declined"),
               }),
             );
@@ -602,6 +654,7 @@ function useWebView(
             webviewHook.postMessage(
               JSON.stringify({
                 id: data.id,
+                jsonrpc: "2.0",
                 result: signedMessage,
               }),
             );
@@ -610,6 +663,7 @@ function useWebView(
             webviewHook.postMessage(
               JSON.stringify({
                 id: data.id,
+                jsonrpc: "2.0",
                 error: rejectedError("Typed Data message signed declined"),
               }),
             );
