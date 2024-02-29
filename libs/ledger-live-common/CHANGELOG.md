@@ -1,5 +1,13 @@
 # @ledgerhq/live-common
 
+## 33.7.0-nightly.2
+
+### Patch Changes
+
+- [#6174](https://github.com/LedgerHQ/ledger-live/pull/6174) [`e786a27`](https://github.com/LedgerHQ/ledger-live/commit/e786a27e21541c0d38d5563d6de8f0835239fd71) Thanks [@RamyEB](https://github.com/RamyEB)! - Update the modal UI for token approval
+
+- [#6329](https://github.com/LedgerHQ/ledger-live/pull/6329) [`4ff0c21`](https://github.com/LedgerHQ/ledger-live/commit/4ff0c213877aef3f84cf78f44ae635a6fa032838) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Bump polkadot minAppVersion to latest
+
 ## 33.7.0-nightly.1
 
 ### Minor Changes

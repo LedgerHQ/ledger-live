@@ -1,5 +1,18 @@
 # ledger-live-desktop
 
+## 2.78.0-nightly.2
+
+### Patch Changes
+
+- [#6311](https://github.com/LedgerHQ/ledger-live/pull/6311) [`8a3e643`](https://github.com/LedgerHQ/ledger-live/commit/8a3e643cbf077bc6d652ddc060b568c18ce40fcc) Thanks [@cng-ledger](https://github.com/cng-ledger)! - fix(LIVE-11372): show transaction success for platform exchange flow
+
+- [#6174](https://github.com/LedgerHQ/ledger-live/pull/6174) [`e786a27`](https://github.com/LedgerHQ/ledger-live/commit/e786a27e21541c0d38d5563d6de8f0835239fd71) Thanks [@RamyEB](https://github.com/RamyEB)! - Update the modal UI for token approval
+
+- [#6321](https://github.com/LedgerHQ/ledger-live/pull/6321) [`091a959`](https://github.com/LedgerHQ/ledger-live/commit/091a959a0b3476c2e5b646769061f51bbddc520b) Thanks [@Wozacosta](https://github.com/Wozacosta)! - fixes display of operation details drawer
+
+- Updated dependencies [[`e786a27`](https://github.com/LedgerHQ/ledger-live/commit/e786a27e21541c0d38d5563d6de8f0835239fd71), [`4ff0c21`](https://github.com/LedgerHQ/ledger-live/commit/4ff0c213877aef3f84cf78f44ae635a6fa032838)]:
+  - @ledgerhq/live-common@33.7.0-nightly.2
+
 ## 2.78.0-nightly.1
 
 ### Minor Changes

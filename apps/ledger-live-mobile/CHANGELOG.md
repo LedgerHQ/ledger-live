@@ -1,5 +1,16 @@
 # live-mobile
 
+## 3.41.0-nightly.2
+
+### Patch Changes
+
+- [#6292](https://github.com/LedgerHQ/ledger-live/pull/6292) [`82c3396`](https://github.com/LedgerHQ/ledger-live/commit/82c33963fccf793665c11103eda31b77e43f05bd) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix event button_clicked on market, wallet and account page so it sends the correct page name
+
+- [#6332](https://github.com/LedgerHQ/ledger-live/pull/6332) [`24b87ae`](https://github.com/LedgerHQ/ledger-live/commit/24b87aeaaacb410df25461dbf69c9b4eb932bc94) Thanks [@cng-ledger](https://github.com/cng-ledger)! - fix(11546): extra right margin to prevent unreadable warning message in LLM swap form input
+
+- Updated dependencies [[`e786a27`](https://github.com/LedgerHQ/ledger-live/commit/e786a27e21541c0d38d5563d6de8f0835239fd71), [`4ff0c21`](https://github.com/LedgerHQ/ledger-live/commit/4ff0c213877aef3f84cf78f44ae635a6fa032838)]:
+  - @ledgerhq/live-common@33.7.0-nightly.2
+
 ## 3.41.0-nightly.1
 
 ### Minor Changes
