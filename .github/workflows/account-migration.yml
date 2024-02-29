@@ -10,6 +10,10 @@ on:
     push:
       branches:
         - "feat/live-11055-migration-account-test"
+env:
+  DEVELOP_SYNC_FILE_NAME: develop-sync.json
+  CURRENT_BRANCH_SYNC_FILE_NAME: commit-sync.json
+  OUTPUT_FILE_NAME: output.json
 
 jobs:
     account_migration:
@@ -42,15 +46,15 @@ jobs:
             if: ${{ inputs.currencies }}
             run: |
                 OUTPUT=$(pnpm common test-account-migration --currencies ${{ inputs.currencies }})
-                echo $OUTPUT > develop-sync.json
-                cat develop-sync.json
+                echo $OUTPUT > $DEVELOP_SYNC_FILE_NAME
+                cat $DEVELOP_SYNC_FILE_NAME
 
           - name: Run synchronisation on develop
             if: ${{ !inputs.currencies }}
             run: |
               OUTPUT=$(pnpm common test-account-migration)
-              echo $OUTPUT > develop-sync.json
-              cat develop-sync.json
+              echo $OUTPUT > $DEVELOP_SYNC_FILE_NAME
+              cat $DEVELOP_SYNC_FILE_NAME
 
           - uses: actions/checkout@v4
             with:
@@ -63,15 +67,15 @@ jobs:
 
           - name: run synchronisation on current commit
             run: |
-              OUTPUT=$(pnpm common test-account-migration  ${{ inputs.currency }})
-              echo $OUTPUT > commit-sync.json
-              cat commit-sync.json
+              OUTPUT=$(pnpm common test-account-migration --inputFile $(pwd)/$DEVELOP_SYNC_FILE_NAME
+              echo $OUTPUT > $CURRENT_BRANCH_SYNC_FILE_NAME
+              cat $CURRENT_BRANCH_SYNC_FILE_NAME
 
           - name: Check that the files are the exact same
             uses: LouisBrunner/diff-action@v2.0.0
             with:
-              old: develop-sync.json
-              new: commit-sync.json
+              old: $DEVELOP_SYNC_FILE_NAME
+              new: $CURRENT_BRANCH_SYNC_FILE_NAME
               mode: strict
               tolerance: same
-              output: sync-diff.json
+              output: $OUTPUT_FILE_NAME
