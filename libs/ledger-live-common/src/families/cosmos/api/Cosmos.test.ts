@@ -196,4 +196,15 @@ describe("CosmosApi", () => {
       expect(txs.length).toEqual(simulatedTotal * 2);
     });
   });
+
+  describe("broadcastTransaction", () => {
+    it("should throw a SequenceNumberError exception in case of sequence number error", async () => {
+      mockedNetwork.mockResolvedValue({
+        data: { tx_response: { code: 32 } },
+      } as AxiosResponse);
+      await expect(
+        cosmosApi.broadcast({ signedOperation: { operation: null, signature: "signedOperation" } }),
+      ).rejects.toThrow("SequenceNumberError");
+    });
+  });
 });

@@ -172,6 +172,8 @@ export const NoDBPathGiven = createCustomErrorClass("NoDBPathGiven");
 export const DBWrongPassword = createCustomErrorClass("DBWrongPassword");
 export const DBNotReset = createCustomErrorClass("DBNotReset");
 
+export const SequenceNumberError = createCustomErrorClass("SequenceNumberError");
+
 // Represents the type of all the classes created with createCustomErrorClass
 export type CustomErrorClassType = ReturnType<typeof createCustomErrorClass>;
 
