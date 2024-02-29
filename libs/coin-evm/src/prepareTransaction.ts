@@ -38,11 +38,14 @@ const prepareCoinTransaction = async (
       gasLimit,
     };
     const estimatedFees = getEstimatedFees(draftTransaction);
-    const additionalFees = await getAdditionalLayer2Fees(account.currency, draftTransaction);
+    const additionalLayer2Fees = await getAdditionalLayer2Fees(account.currency, draftTransaction);
+    // Original transaction `additionalFees` is kept as a way to make
+    // any off-chain coin amount to be considered untransferable
+    const additionalFees = additionalLayer2Fees
+      ? additionalLayer2Fees.plus(draftTransaction.additionalFees || 0)
+      : draftTransaction.additionalFees;
     const amount = BigNumber.max(
-      account.balance
-        .minus(estimatedFees)
-        .minus(additionalFees || draftTransaction.additionalFees || 0),
+      account.balance.minus(estimatedFees).minus(additionalFees || 0),
       0,
     );
 
@@ -61,10 +64,15 @@ const prepareCoinTransaction = async (
     // and displayed in the UI as `set the gas manually`
     () => new BigNumber(0),
   );
-  const additionalFees = await getAdditionalLayer2Fees(account.currency, {
+  const additionalLayer2Fees = await getAdditionalLayer2Fees(account.currency, {
     ...typedTransaction,
     gasLimit,
   });
+  // Original transaction `additionalFees` is kept as a way to make
+  // any off-chain coin amount to be considered untransferable
+  const additionalFees = additionalLayer2Fees
+    ? additionalLayer2Fees.plus(typedTransaction.additionalFees || 0)
+    : typedTransaction.additionalFees;
 
   return {
     ...typedTransaction,
@@ -101,13 +109,18 @@ const prepareTokenTransaction = async (
         })
         .catch(() => new BigNumber(0)) // this catch returning 0 should be handled by the `getTransactionStatus` method
     : new BigNumber(0);
-  const additionalFees = await getAdditionalLayer2Fees(account.currency, {
+  const additionalLayer2Fees = await getAdditionalLayer2Fees(account.currency, {
     ...typedTransaction,
     amount: new BigNumber(0), // amount set to 0 as we're interacting with a smart contract
     recipient: tokenAccount.token.contractAddress, // recipient is then the token smart contract
     data, // buffer containing the calldata bytecode
     gasLimit,
   });
+  // Original transaction `additionalFees` is kept as a way to make
+  // any off-chain coin amount to be considered untransferable
+  const additionalFees = additionalLayer2Fees
+    ? additionalLayer2Fees.plus(typedTransaction.additionalFees || 0)
+    : typedTransaction.additionalFees;
 
   // Recipient isn't changed here as it would change on the UI end as well
   // The change will be handled by the `prepareForSignOperation` method
@@ -148,13 +161,18 @@ const prepareNftTransaction = async (
         })
         .catch(() => new BigNumber(0)) // this catch returning 0 should be handled by the `getTransactionStatus` method
     : new BigNumber(0);
-  const additionalFees = await getAdditionalLayer2Fees(account.currency, {
+  const additionalLayer2Fees = await getAdditionalLayer2Fees(account.currency, {
     ...typedTransaction,
     amount: new BigNumber(0), // amount set to 0 as we're interacting with a smart contract
     recipient: typedTransaction.nft.contract, // recipient is then the token smart contract
     data, // buffer containing the calldata bytecode
     gasLimit,
   });
+  // Original transaction `additionalFees` is kept as a way to make
+  // any off-chain coin amount to be considered untransferable
+  const additionalFees = additionalLayer2Fees
+    ? additionalLayer2Fees.plus(typedTransaction.additionalFees || 0)
+    : typedTransaction.additionalFees;
 
   // Providing the collection name to the transaction for the
   // deviceTransactionConfig step (so purely UI)
