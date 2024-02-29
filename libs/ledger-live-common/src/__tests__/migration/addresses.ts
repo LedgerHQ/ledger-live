@@ -6,6 +6,10 @@ export const migrationAddresses: { currencyId: CryptoCurrencyId; address: string
     address: "0x0E3F0bb9516F01f2C34c25E0957518b8aC9414c5",
   },
   {
+    currencyId: "polygon",
+    address: "0x0E3F0bb9516F01f2C34c25E0957518b8aC9414c5",
+  },
+  {
     currencyId: "bitcoin",
     address: "17gPmBH8b6UkvSmxMfVjuLNAqzgAroiPSe",
   },
