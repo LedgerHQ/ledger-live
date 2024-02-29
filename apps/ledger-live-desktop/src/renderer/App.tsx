@@ -33,6 +33,7 @@ import { StorylyProvider } from "~/storyly/StorylyProvider";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { allowDebugReactQuerySelector } from "./reducers/settings";
 
 const reloadApp = (event: KeyboardEvent) => {
   if ((event.ctrlKey || event.metaKey) && event.key === "r") {
@@ -90,7 +91,7 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
                                   <StorylyProvider>
                                     <QueryClientProvider client={queryClient}>
                                       <Default />
-                                      {__DEV__ && <ReactQueryDevtools initialIsOpen={false} />}
+                                      <ReactQueryDevtoolsProvider />
                                     </QueryClientProvider>
                                   </StorylyProvider>
                                 </MarketDataProvider>
@@ -120,4 +121,11 @@ const App = ({ store, initialCountervalues }: Props) => {
     </LiveStyleSheetManager>
   );
 };
+
+const ReactQueryDevtoolsProvider = () => {
+  const allowDebugReactQuery = useSelector(allowDebugReactQuerySelector);
+  if (!allowDebugReactQuery) return null;
+  return <ReactQueryDevtools initialIsOpen={false} />;
+};
+
 export default App;
