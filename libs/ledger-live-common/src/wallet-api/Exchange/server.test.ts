@@ -1,7 +1,11 @@
 import { handlers } from "./server";
 import { AppBranch, AppPlatform, Visibility } from "../types";
 import { of } from "rxjs";
-import { ExchangeStartParams, ExchangeStartSellParams, ExchangeStartSwapParams } from "@ledgerhq/wallet-api-exchange-module";
+import {
+  ExchangeStartParams,
+  ExchangeStartSellParams,
+  ExchangeStartSwapParams,
+} from "@ledgerhq/wallet-api-exchange-module";
 import { RpcRequest } from "@ledgerhq/wallet-api-core";
 import { genAccount } from "../../mock/account";
 import { WalletContext, WalletHandlers } from "@ledgerhq/wallet-api-server";
