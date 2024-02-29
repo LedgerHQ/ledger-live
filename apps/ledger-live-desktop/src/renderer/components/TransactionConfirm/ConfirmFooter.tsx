@@ -39,7 +39,7 @@ const ConfirmFooter = ({ footer, manifestId, manifestName }: Props) => {
         <Text marginTop={30} data-test-id="confirm-footer-toc">
           <Trans
             i18nKey="TransactionConfirm.termsAndConditions"
-            values={{ appName: manifestName }}
+            values={{ appName: manifestName || manifestId }}
             components={[
               <Text
                 key={manifestId}
@@ -48,9 +48,7 @@ const ConfirmFooter = ({ footer, manifestId, manifestName }: Props) => {
                   cursor: "pointer",
                   textDecoration: "underline",
                 }}
-              >
-                {`${manifestId}'s terms of use.`}
-              </Text>,
+              />,
             ]}
           />
         </Text>
