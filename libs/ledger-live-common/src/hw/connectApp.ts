@@ -152,10 +152,11 @@ export const openAppFromDashboard = (
             appName,
           }),
           defer(() => from(openApp(transport, appName))).pipe(
-            concatMap(() =>
-              of<ConnectAppEvent>({
-                type: "device-permission-granted",
-              }),
+            concatMap(
+              () =>
+                of<ConnectAppEvent>({
+                  type: "device-permission-granted",
+                }).pipe(delay(1000)), // HACK: we need to give enough time for the device to disconnect!
             ),
             catchError(e => {
               if (e && e instanceof TransportStatusError) {
