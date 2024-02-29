@@ -89,6 +89,7 @@ export type SettingsState = {
   fullNodeEnabled: boolean;
   // developer settings
   allowDebugApps: boolean;
+  allowReactQueryDebug: boolean;
   allowExperimentalApps: boolean;
   enablePlatformDevTools: boolean;
   catalogProvider: string;
@@ -176,6 +177,7 @@ const INITIAL_STATE: SettingsState = {
   fullNodeEnabled: false,
   // developer settings
   allowDebugApps: false,
+  allowReactQueryDebug: false,
   allowExperimentalApps: false,
   enablePlatformDevTools: false,
   catalogProvider: "production",
@@ -642,6 +644,7 @@ export const hasInstalledAppsSelector = (state: State) => state.settings.hasInst
 export const USBTroubleshootingIndexSelector = (state: State) =>
   state.settings.USBTroubleshootingIndex;
 export const allowDebugAppsSelector = (state: State) => state.settings.allowDebugApps;
+export const allowDebugReactQuerySelector = (state: State) => state.settings.allowReactQueryDebug;
 export const allowExperimentalAppsSelector = (state: State) => state.settings.allowExperimentalApps;
 export const enablePlatformDevToolsSelector = (state: State) =>
   state.settings.enablePlatformDevTools;

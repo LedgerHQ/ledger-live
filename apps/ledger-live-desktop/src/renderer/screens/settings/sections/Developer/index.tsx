@@ -19,6 +19,7 @@ import ExchangeDeveloperMode from "./ExchangeDeveloperMode";
 import LottieTester from "../Experimental/LottieTester";
 import StorylyTester from "../Experimental/StorylyTester";
 import PostOnboardingHubTester from "../Experimental/PostOnboardingHubTester";
+import AllowDebugReactQueryToggle from "./AllowDebugReactQueryToggle";
 
 const Default = () => {
   const { t } = useTranslation();
@@ -80,6 +81,13 @@ const Default = () => {
       <PostOnboardingHubTester />
       <StorylyTester />
       <ExchangeDeveloperMode />
+
+      <Row
+        title={t("settings.developer.debugReactQuery")}
+        desc={t("settings.developer.debugReactQueryDesc")}
+      >
+        <AllowDebugReactQueryToggle />
+      </Row>
     </Body>
   );
 };

@@ -3961,6 +3961,8 @@
       "userId": "User ID",
       "debugApps": "Allow debug apps",
       "debugAppsDesc": "Display and allow opening debug tagged platform apps.",
+      "debugReactQuery": "Allow debug ReactQuery",
+      "debugReactQueryDesc": "Display and allow opening debug ReactQuery console.",
       "experimentalApps": "Allow experimental apps",
       "experimentalAppsDesc": "Display and allow opening experimental tagged platform apps.",
       "catalogUrl": "Set the catalog apps provider",
