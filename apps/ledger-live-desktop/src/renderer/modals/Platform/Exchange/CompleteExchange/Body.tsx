@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Operation, SignedOperation } from "@ledgerhq/types-live";
 import { Exchange } from "@ledgerhq/live-common/exchange/platform/types";
@@ -10,11 +10,12 @@ import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import Box from "~/renderer/components/Box";
-import { BodyContent } from "./BodyContent";
+import { BodyContent, BodyContentProps } from "./BodyContent";
 import { getMagnitudeAwareRate } from "@ledgerhq/live-common/exchange/swap/webApp/index";
 import { BigNumber } from "bignumber.js";
 import { AccountLike } from "@ledgerhq/types-live";
 import { WrongDeviceForAccount } from "@ledgerhq/errors";
+import { useRedirectToSwapHistory } from "~/renderer/screens/exchange/Swap2/utils";
 
 export type Data = {
   provider: string;
@@ -44,6 +45,18 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
   const { exchange, provider, transaction: transactionParams } = exchangeParams;
   const { amount } = transactionParams;
   const { fromAccount: account, fromParentAccount: parentAccount } = exchange;
+
+  const redirectToHistory = useRedirectToSwapHistory();
+  const onViewDetails = useCallback(
+    (id: string) => {
+      onClose?.();
+      redirectToHistory({
+        swapId: id,
+      });
+    },
+    [onClose, redirectToHistory],
+  );
+
   let request = { ...exchangeParams };
   let amountExpectedTo: number | undefined = undefined;
   let toAccount: AccountLike | undefined = undefined;
@@ -65,10 +78,37 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
   const tokenCurrency: TokenCurrency | undefined =
     account.type === "TokenAccount" ? account.token : undefined;
 
+  const getCurrencyByAccount = useCallback((account: AccountLike) => {
+    switch (account.type) {
+      case "Account":
+      case "ChildAccount":
+        return account.currency;
+      case "TokenAccount":
+        return account.token;
+      default:
+        return null;
+    }
+  }, []);
+
+  const sourceCurrency = useMemo(() => {
+    if ("fromAccount" in exchange) {
+      return getCurrencyByAccount(exchange.fromAccount);
+    }
+    return null;
+  }, [exchange, getCurrencyByAccount]);
+
+  const targetCurrency = useMemo(() => {
+    if ("toAccount" in exchange) {
+      return getCurrencyByAccount(exchange.toAccount);
+    }
+    return null;
+  }, [exchange, getCurrencyByAccount]);
+
   const broadcast = useBroadcast({ account, parentAccount });
   const [transaction, setTransaction] = useState<Transaction>();
   const [signedOperation, setSignedOperation] = useState<SignedOperation>();
   const [error, setError] = useState<Error>();
+  const [result, setResult] = useState<BodyContentProps["result"]>();
 
   const signRequest = useMemo(
     () =>
@@ -84,59 +124,82 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
     [account, parentAccount, tokenCurrency, transaction],
   );
 
+  const updateAccount = useCallback(
+    (inputs: {
+      magnitudeAwareRate: BigNumber;
+      result: {
+        operation: Operation;
+        swapId: string;
+      };
+    }) => {
+      const params = getUpdateAccountWithUpdaterParams({
+        result: inputs.result,
+        exchange: exchange as SwapExchange,
+        transaction: transactionParams,
+        magnitudeAwareRate: inputs.magnitudeAwareRate,
+        provider,
+      });
+      if (!params.length) return;
+      const dispatchAction = updateAccountWithUpdater(...params);
+      dispatch(dispatchAction);
+    },
+    [dispatch, exchange, transactionParams, provider],
+  );
+
+  const onBroadcastSuccess = useCallback(
+    (operation: Operation) => {
+      // Save swap history
+      if (swapId && rate && toAccount && magnitudeAwareRate && sourceCurrency && targetCurrency) {
+        const newResult = {
+          operation,
+          swapId,
+        };
+        setBroadcastTransaction({
+          result: newResult,
+          provider,
+        });
+        updateAccount({
+          result: newResult,
+          magnitudeAwareRate,
+        });
+        setResult({
+          swapId,
+          provider,
+          sourceCurrency,
+          targetCurrency,
+        });
+      }
+      onResult(operation);
+    },
+    [
+      setResult,
+      onResult,
+      updateAccount,
+      magnitudeAwareRate,
+      provider,
+      rate,
+      sourceCurrency,
+      targetCurrency,
+      swapId,
+      toAccount,
+    ],
+  );
+
   useEffect(() => {
     if (error) {
       onCancel(error);
       if (!(error instanceof WrongDeviceForAccount)) {
-        onClose?.();
+        console.log("[moonpay] close");
+        // onClose?.();
       }
     }
   }, [onCancel, error, onClose]);
 
   useEffect(() => {
-    if (signedOperation) {
-      broadcast(signedOperation).then(operation => {
-        // Save swap history
-        if (swapId && rate && toAccount && magnitudeAwareRate) {
-          const result = {
-            operation,
-            swapId,
-          };
-          setBroadcastTransaction({
-            result,
-            provider,
-          });
-          const params = getUpdateAccountWithUpdaterParams({
-            result,
-            exchange: exchange as SwapExchange,
-            transaction: transactionParams,
-            magnitudeAwareRate,
-            provider,
-          });
-          if (!params.length) return;
-          const dispatchAction = updateAccountWithUpdater(...params);
-          dispatch(dispatchAction);
-        }
-        onResult(operation);
-        onClose?.();
-      }, setError);
-    }
-  }, [
-    account,
-    dispatch,
-    exchange,
-    provider,
-    rate,
-    swapId,
-    transactionParams,
-    broadcast,
-    onClose,
-    onResult,
-    signedOperation,
-    transaction,
-    magnitudeAwareRate,
-    toAccount,
-  ]);
+    if (!signedOperation) return;
+    console.log("[moonpay] about to broadcast");
+    broadcast(signedOperation).then(onBroadcastSuccess, setError);
+  }, [signedOperation, broadcast, onBroadcastSuccess, setError]);
 
   return (
     <Box alignItems={"center"} justifyContent={"center"} px={32} height={"100%"}>
@@ -145,9 +208,11 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
         signRequest={signRequest}
         signedOperation={signedOperation}
         request={request}
+        result={result}
         onError={setError}
         onOperationSigned={setSignedOperation}
         onTransactionComplete={setTransaction}
+        onViewDetails={onViewDetails}
       />
     </Box>
   );

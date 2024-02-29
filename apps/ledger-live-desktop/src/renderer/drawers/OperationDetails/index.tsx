@@ -96,7 +96,9 @@ const mapStateToProps = (
         })
       : undefined;
   let account: AccountLike | undefined | null;
-  if (parentAccount) {
+  if (parentAccount && parentId === accountId) {
+    account = parentAccount;
+  } else if (parentAccount) {
     account = findSubAccountById(parentAccount, accountId);
   } else {
     account = accountSelector(state, {
