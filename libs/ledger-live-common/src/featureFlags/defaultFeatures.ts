@@ -108,7 +108,6 @@ export const DEFAULT_FEATURES: Features = {
   ethStakingProviders: initFeature(),
   referralProgramDiscoverCard: initFeature(),
   newsfeedPage: initFeature(),
-  ptxEarn: initFeature(),
   swapWalletApiPartnerList: initFeature(),
   stakePrograms: initFeature(),
   learn: initFeature(),

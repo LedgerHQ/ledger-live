@@ -36,7 +36,6 @@ const tabBarDisabledOptions = (props: MaterialTopTabBarProps) => (
 
 export default function WalletTabNavigator() {
   const walletNftGalleryFeature = useFeature("walletNftGallery");
-  const ptxEarnFeature = useFeature("ptxEarn");
   const marketNewArch = useFeature("llmMarketNewArch");
 
   const dispatch = useDispatch();
@@ -92,15 +91,13 @@ export default function WalletTabNavigator() {
               }}
             />
           )}
-          {ptxEarnFeature?.enabled && (
-            <WalletTab.Screen
-              name={NavigatorName.Market}
-              component={marketNewArch?.enabled ? MarketWalletTabNavigator : MarketNavigator}
-              options={{
-                title: t("wallet.tabs.market"),
-              }}
-            />
-          )}
+          <WalletTab.Screen
+            name={NavigatorName.Market}
+            component={marketNewArch?.enabled ? MarketWalletTabNavigator : MarketNavigator}
+            options={{
+              title: t("wallet.tabs.market"),
+            }}
+          />
         </WalletTab.Navigator>
         <WalletTabHeader hidePortfolio={false} />
       </Box>

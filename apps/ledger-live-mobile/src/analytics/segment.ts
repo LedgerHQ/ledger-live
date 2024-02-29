@@ -70,7 +70,6 @@ export function setAnalyticsFeatureFlagMethod(method: typeof analyticsFeatureFla
 const getFeatureFlagProperties = () => {
   if (!analyticsFeatureFlagMethod || !segmentClient) return {};
   (async () => {
-    const ptxEarnFeatureFlag = analyticsFeatureFlagMethod("ptxEarn");
     const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
     const stakingProviders = analyticsFeatureFlagMethod("ethStakingProviders");
 
@@ -84,7 +83,6 @@ const getFeatureFlagProperties = () => {
       stakingProviders?.enabled && stakingProviders?.params?.listProvider.length;
 
     updateIdentify({
-      ptxEarnEnabled: !!ptxEarnFeatureFlag?.enabled,
       isBatch1Enabled,
       isBatch2Enabled,
       isBatch3Enabled,
