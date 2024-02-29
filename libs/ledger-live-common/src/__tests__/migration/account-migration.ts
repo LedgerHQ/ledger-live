@@ -106,12 +106,12 @@ const args = argv;
 
 type Args = {
   /**
-   *  comma seperated currencyId
+   * comma seperated currencyId
    * eg --currencies ethereum,polygon,bitcoin
    */
   currencies?: CryptoCurrencyId;
   /**
-   *  absolute path to json file with the raw account input
+   * absolute path to json file with the raw account input
    */
   inputFile?: string;
 };
