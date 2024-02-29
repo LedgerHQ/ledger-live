@@ -27,38 +27,36 @@ type Props = {
 };
 
 const ConfirmFooter = ({ footer, manifestId, manifestName }: Props) => {
-  if (manifestId) {
-    const termsOfUseUrl = termsOfUse.get(manifestId);
-    if (termsOfUseUrl !== undefined) {
-      return (
-        <>
-          <HorizontalSeparator />
-          {footer ? (
-            footer
-          ) : (
-            <Text marginTop={30} data-test-id="confirm-footer-toc">
-              <Trans
-                i18nKey="TransactionConfirm.termsAndConditions"
-                values={{ appName: manifestName }}
-                components={[
-                  <Text
-                    key={manifestId}
-                    onClick={() => openURL(termsOfUseUrl)}
-                    style={{
-                      cursor: "pointer",
-                      textDecoration: "underline",
-                    }}
-                  >
-                    {`${manifestId}'s terms of use.`}
-                  </Text>,
-                ]}
-              />
-            </Text>
-          )}
-        </>
-      );
-    }
-  }
+  if (!manifestId) return;
+  const termsOfUseUrl = termsOfUse.get(manifestId);
+  if (!termsOfUseUrl) return;
+  return (
+    <>
+      <HorizontalSeparator />
+      {footer ? (
+        footer
+      ) : (
+        <Text marginTop={30} data-test-id="confirm-footer-toc">
+          <Trans
+            i18nKey="TransactionConfirm.termsAndConditions"
+            values={{ appName: manifestName }}
+            components={[
+              <Text
+                key={manifestId}
+                onClick={() => openURL(termsOfUseUrl)}
+                style={{
+                  cursor: "pointer",
+                  textDecoration: "underline",
+                }}
+              >
+                {`${manifestId}'s terms of use.`}
+              </Text>,
+            ]}
+          />
+        </Text>
+      )}
+    </>
+  );
 };
 
 export default withTranslation()(ConfirmFooter);
