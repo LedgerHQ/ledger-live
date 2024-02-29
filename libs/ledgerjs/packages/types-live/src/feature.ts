@@ -85,8 +85,6 @@ export type CurrencyFeatures = {
   currencyArbitrumSepolia: DefaultFeature;
   currencyRsk: DefaultFeature;
   currencyBittorrent: DefaultFeature;
-  currencyKavaEvm: DefaultFeature;
-  currencyEvmosEvm: DefaultFeature;
   currencyEnergyWeb: DefaultFeature;
   currencyAstar: DefaultFeature;
   currencyMetis: DefaultFeature;
@@ -190,6 +188,7 @@ export type Features = CurrencyFeatures & {
   nftsFromSimplehash: Feature_NftsFromSimpleHash;
   lldPortfolioCarousel: Feature_LldPortfolioCarousel;
   llmMarketNewArch: Feature_LlmMarketNewArch;
+  marketperformanceWidgetDesktop: Feature_MarketperformanceWidgetDesktop;
 };
 
 /**
@@ -492,6 +491,10 @@ export type Feature_LlmAnalyticsOptInPrompt = Feature<{
 }>;
 
 export type Feature_LldPortfolioCarousel = Feature<{
+  variant: ABTestingVariants;
+}>;
+
+export type Feature_MarketperformanceWidgetDesktop = Feature<{
   variant: ABTestingVariants;
 }>;
 

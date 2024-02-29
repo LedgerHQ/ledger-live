@@ -71,7 +71,7 @@ export const getLastCoinOperations = async (
 
   const ops = await fetchWithRetries<EtherscanOperation[]>({
     method: "GET",
-    url: `${explorer.uri}/api?module=account&action=txlist&address=${address}`,
+    url: `${explorer.uri}?module=account&action=txlist&address=${address}`,
     params: {
       tag: "latest",
       page: 1,
@@ -101,7 +101,7 @@ export const getLastTokenOperations = async (
 
   const ops = await fetchWithRetries<EtherscanERC20Event[]>({
     method: "GET",
-    url: `${explorer.uri}/api?module=account&action=tokentx&address=${address}`,
+    url: `${explorer.uri}?module=account&action=tokentx&address=${address}`,
     params: {
       tag: "latest",
       page: 1,
@@ -152,7 +152,7 @@ export const getLastERC721Operations = async (
 
   const ops = await fetchWithRetries<EtherscanERC721Event[]>({
     method: "GET",
-    url: `${explorer.uri}/api?module=account&action=tokennfttx&address=${address}`,
+    url: `${explorer.uri}?module=account&action=tokennfttx&address=${address}`,
     params: {
       tag: "latest",
       page: 1,
@@ -203,7 +203,7 @@ export const getLastERC1155Operations = async (
 
   const ops = await fetchWithRetries<EtherscanERC1155Event[]>({
     method: "GET",
-    url: `${explorer.uri}/api?module=account&action=token1155tx&address=${address}`,
+    url: `${explorer.uri}?module=account&action=token1155tx&address=${address}`,
     params: {
       tag: "latest",
       page: 1,
@@ -280,7 +280,7 @@ export const getLastInternalOperations = async (
 
   const ops = await fetchWithRetries<EtherscanInternalTransaction[]>({
     method: "GET",
-    url: `${explorer.uri}/api?module=account&action=txlistinternal&address=${address}`,
+    url: `${explorer.uri}?module=account&action=txlistinternal&address=${address}`,
     params: {
       tag: "latest",
       page: 1,

@@ -30,5 +30,7 @@ export type StepProps = {
   maybeAmount?: BigNumber;
   onResetMaybeAmount: () => void;
   updateTransaction: (updater: (_: Transaction) => Transaction) => void;
+  manifestId: string;
+  manifestName: string;
 };
 export type St = Step<StepId, StepProps>;

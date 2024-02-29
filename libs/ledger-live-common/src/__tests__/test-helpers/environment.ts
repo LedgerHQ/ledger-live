@@ -74,8 +74,6 @@ setSupportedCurrencies([
   "arbitrum_sepolia",
   "rsk",
   "bittorrent",
-  "kava_evm",
-  "evmos_evm",
   "energy_web",
   "astar",
   "metis",
