@@ -218,12 +218,11 @@ const OperationD = (props: Props) => {
     [account],
   );
   const openAmountDetails = useCallback(() => {
-    const data = {
+    setDrawer(AmountDetails, {
       operation,
       account,
       onRequestBack: props.onRequestBack,
-    };
-    setDrawer(AmountDetails, data);
+    });
   }, [operation, props, account]);
   const goToMainAccount = useCallback(() => {
     const url = `/account/${mainAccount.id}`;

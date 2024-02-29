@@ -113,6 +113,9 @@ class LedgerLiveEthereumProvider extends EventEmitter {
     return this;
   }
 
+  isRabby = true;
+  isMetaMask = true;
+
   enabled = null;
   targetOrigin;
   timeoutMilliseconds;
@@ -136,6 +139,10 @@ class LedgerLiveEthereumProvider extends EventEmitter {
     // Listen for messages from the event source.
     this.eventSource.addEventListener("message", this.handleEventSourceMessage);
   }
+
+  isConnected = () => {
+    return true;
+  };
 
   /**
    * Helper method that handles transport and request wrapping

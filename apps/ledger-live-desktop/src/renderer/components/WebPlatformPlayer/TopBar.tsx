@@ -1,4 +1,4 @@
-import React, { RefObject, useCallback } from "react";
+import React, { RefObject, useCallback, useMemo } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
@@ -17,6 +17,11 @@ import { WebviewAPI, WebviewState } from "../Web3AppWebview/types";
 import Spinner from "../Spinner";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
+import { setDrawer } from "~/renderer/drawers/Provider";
+import SelectAccountAndCurrencyDrawer from "~/renderer/drawers/DataSelector/SelectAccountAndCurrencyDrawer";
+import Wallet from "~/renderer/icons/Wallet";
+import { listCurrencies } from "@ledgerhq/live-common/currencies/index";
+import { matchCurrencies } from "@ledgerhq/live-common/wallet-api/helpers";
 
 const Container = styled(Box).attrs(() => ({
   horizontal: true,
@@ -114,6 +119,7 @@ export type TopBarConfig = {
   shouldDisplayInfo?: boolean;
   shouldDisplayClose?: boolean;
   shouldDisplayNavigation?: boolean;
+  shouldDisplaySelectAccount?: boolean;
 };
 
 export type Props = {
@@ -125,6 +131,8 @@ export type Props = {
   webviewState: WebviewState;
 };
 
+const allCurrenciesAndTokens = listCurrencies(true);
+
 export const TopBar = ({ manifest, onClose, config = {}, webviewAPIRef, webviewState }: Props) => {
   const { name, icon } = manifest;
 
@@ -133,6 +141,7 @@ export const TopBar = ({ manifest, onClose, config = {}, webviewAPIRef, webviewS
     shouldDisplayInfo = true,
     shouldDisplayClose = !!onClose,
     shouldDisplayNavigation = false,
+    shouldDisplaySelectAccount = true,
   } = config;
 
   const enablePlatformDevTools = useSelector(enablePlatformDevToolsSelector);
@@ -165,6 +174,32 @@ export const TopBar = ({ manifest, onClose, config = {}, webviewAPIRef, webviewS
 
     webview.goForward();
   }, [webviewAPIRef]);
+
+  const currencies = useMemo(() => {
+    return matchCurrencies(
+      allCurrenciesAndTokens,
+      manifest.currencies === "*" ? ["**"] : manifest.currencies,
+    );
+  }, [manifest.currencies]);
+
+  const onSelectAccount = useCallback(() => {
+    setDrawer(
+      SelectAccountAndCurrencyDrawer,
+      {
+        currencies: currencies,
+        onAccountSelected: (account, parentAccount) => {
+          setDrawer();
+          // set account in store somewhere
+          console.log(account, parentAccount);
+        },
+      },
+      {
+        onRequestClose: () => {
+          setDrawer();
+        },
+      },
+    );
+  }, [currencies]);
 
   const isLoading = useDebounce(webviewState.loading, 100);
 
@@ -214,6 +249,17 @@ export const TopBar = ({ manifest, onClose, config = {}, webviewAPIRef, webviewS
             data-test-id="web-platform-player-topbar-activity-indicator"
           />
         </ItemContainer>
+        {shouldDisplaySelectAccount ? (
+          <>
+            <ItemContainer isInteractive onClick={onSelectAccount}>
+              <Wallet size={16} />
+              <ItemContent>
+                <Trans i18nKey="common.selectAccount" />
+              </ItemContent>
+            </ItemContainer>
+            <Separator />
+          </>
+        ) : null}
         {shouldDisplayInfo && (
           <ItemContainer isInteractive onClick={onClick}>
             <IconInfoCircle size={16} />
