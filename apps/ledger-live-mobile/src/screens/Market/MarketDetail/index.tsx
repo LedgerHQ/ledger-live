@@ -54,12 +54,6 @@ function MarketDetail({ navigation, route }: NavigationProps) {
   const { triggerMarketPushNotificationModal } = useNotifications();
   const [hasRetried, setHasRetried] = useState<boolean>(false);
 
-  let loc = locale;
-  // TEMPORARY : quick win to transform arabic to english
-  if (locale === "ar") {
-    loc = "en";
-  }
-
   const {
     selectedCoinData: currency,
     selectCurrency,
@@ -214,7 +208,7 @@ function MarketDetail({ navigation, route }: NavigationProps) {
                 {counterValueFormatter({
                   currency: counterCurrency,
                   value: hoveredItem?.value ? hoveredItem.value : price || 0,
-                  locale: loc,
+                  locale,
                   t,
                 })}
               </Text>
