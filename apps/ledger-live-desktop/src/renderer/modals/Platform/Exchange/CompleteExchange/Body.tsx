@@ -188,11 +188,6 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
   useEffect(() => {
     if (error) {
       onCancel(error);
-      if (
-        ![error instanceof WrongDeviceForAccount, error instanceof NotEnoughBalance].some(Boolean)
-      ) {
-        onClose?.();
-      }
     }
   }, [onCancel, error, onClose]);
 
