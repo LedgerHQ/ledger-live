@@ -7,20 +7,10 @@ import { encodeAccountId, toAccountRaw } from "../../account";
 import { firstValueFrom, reduce } from "rxjs";
 import { Account } from "@ledgerhq/types-live";
 import { getAccountBridgeByFamily } from "../../bridge/impl";
-import { migrationAddresses } from "./addresses";
+import { migrationAddresses as defaultAddresses } from "./addresses";
 import { argv } from "yargs";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
-
-const args = argv;
-
-type Args = {
-  // comma seperated currencyId
-  // eg --currencies ethereum,polygon,bitcoin
-  currencies?: CryptoCurrencyId;
-  inputFile?: string;
-};
-
-const { currencies } = args as Args;
+import { readFileSync, existsSync } from "fs";
 
 setSupportedCurrencies([
   "bitcoin",
@@ -112,11 +102,28 @@ setSupportedCurrencies([
   "linea_goerli",
 ]);
 
+const args = argv;
+
+type Args = {
+  /**
+   *  comma seperated currencyId
+   * eg --currencies ethereum,polygon,bitcoin
+   */
+  currencies?: CryptoCurrencyId;
+  /**
+   *  absolute path to json file with the raw account input
+   */
+  inputFile?: string;
+};
+
+const { currencies, inputFile } = args as Args;
+
 const getMockAccount = (currencyId: string, address: string) => {
   const currency = getCryptoCurrencyById(currencyId);
   return {
     name: "mockAccount",
     type: "Account",
+    freshAddress: address,
     id: encodeAccountId({
       type: "mock",
       version: "1",
@@ -150,10 +157,29 @@ export const testSync = async (currencyId: string, address: string) => {
 };
 
 (async () => {
-  const currencyIds = currencies?.split(",");
+  const inputFileAddresses = [];
+
+  if (inputFile && !existsSync(inputFile)) {
+    throw new Error("File do not exist");
+  }
+
+  // if there's a input file we parse it
+  if (inputFile && existsSync(inputFile)) {
+    const content = JSON.parse(readFileSync(inputFile, "utf8"));
+    inputFileAddresses.concat(
+      content.map(account => ({
+        currencyId: account.currencyId,
+        address: account.freshAddress,
+      })),
+    );
+  }
+
+  const currencyIds = !inputFile && currencies?.split(",");
   if (currencyIds && !currencyIds.every(findCryptoCurrencyById)) {
     throw new Error("Invalid currency id");
   }
+
+  const migrationAddresses = inputFileAddresses.length ? inputFileAddresses : defaultAddresses;
 
   const syncedAccounts = await Promise.allSettled(
     migrationAddresses
@@ -177,7 +203,8 @@ export const testSync = async (currencyId: string, address: string) => {
     }
   });
 
-  console.log(response);
+  // eslint-disable-next-line no-console
+  console.log(JSON.stringify(response));
 
   return response;
 })();
