@@ -28,7 +28,7 @@ import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
 import { Account } from "@ledgerhq/types-live";
 import { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { promiseAllBatched } from "@ledgerhq/live-common/promise";
-import { lastValueFrom } from "rxjs";
+import { Observable, lastValueFrom } from "rxjs";
 import BigNumber from "bignumber.js";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 
@@ -99,29 +99,29 @@ function HeadlessAddAccounts({
       // This is how we scan for accounts with the bridge today
       const currency = getCryptoCurrencyById(String(currencyId));
       const currencyBridge = getCurrencyBridge(currency);
-      const sub = currencyBridge
-        .scanAccounts({
+      const sub = appForCurrency(deviceId, currency, () =>
+        currencyBridge.scanAccounts({
           currency,
           deviceId,
           syncConfig: {
             paginationConfig: {},
             blacklistedTokenIds: [],
           },
-        })
-        .subscribe({
-          next: event => {
-            if (event.type === "discovered") {
-              addAccounts([event.account]);
-            }
-          },
-          complete: () => {
-            setDisabled(false);
-          },
-          error: error => {
-            console.error(error);
-            setDisabled(false);
-          },
-        });
+        }),
+      ).subscribe({
+        next: event => {
+          if (event.type === "discovered") {
+            addAccounts([event.account]);
+          }
+        },
+        complete: () => {
+          setDisabled(false);
+        },
+        error: error => {
+          console.error(error);
+          setDisabled(false);
+        },
+      });
       // TODO we could also offer an interruptability by doing sub.unsubscribe() when the user wants to cancel
       return () => {
         sub.unsubscribe();
@@ -370,18 +370,18 @@ function SendFlowWithAccount({ account }: { account: Account }) {
   );
 
   const onSignAndBroadcast = useCallback(() => {
-    bridge
-      .signOperation({
+    appForCurrency(deviceId, account.currency, () =>
+      bridge.signOperation({
         account,
         transaction,
         deviceId,
-      })
-      .subscribe({
-        next: event => {
-          console.log("event", event);
-          if (event.type === "signed") {
-            // in theory this is what we do to broadcast for real. i just don't know if we want to activate it end 2 end for now =)
-            /*
+      }),
+    ).subscribe({
+      next: event => {
+        console.log("event", event);
+        if (event.type === "signed") {
+          // in theory this is what we do to broadcast for real. i just don't know if we want to activate it end 2 end for now =)
+          /*
             bridge
               .broadcast({
                 account,
@@ -396,15 +396,15 @@ function SendFlowWithAccount({ account }: { account: Account }) {
                 },
               );
               */
-          }
-        },
-        complete: () => {
-          console.log("complete");
-        },
-        error: error => {
-          console.error("error", error);
-        },
-      });
+        }
+      },
+      complete: () => {
+        console.log("complete");
+      },
+      error: error => {
+        console.error("error", error);
+      },
+    });
   }, [bridge, account, transaction]);
 
   if (!transaction) return null;
@@ -595,6 +595,15 @@ function useLocalStorage(
     });
     localStorage.setItem("accounts", JSON.stringify(data));
   }, [accounts]);
+}
+
+// thin headless wrapper to first do the logic that will drive all the calls to access the app (NB: we may want to hook UI to it in future)
+function appForCurrency<T>(
+  deviceId: string,
+  currency: Currency,
+  scanAccounts: () => Observable<T>,
+): Observable<T> {
+  return scanAccounts();
 }
 
 export default App;
