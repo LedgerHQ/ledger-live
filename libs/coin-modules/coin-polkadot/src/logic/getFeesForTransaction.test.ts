@@ -64,6 +64,9 @@ describe("getEstimatedFees", () => {
     });
 
     // Then
+    expect(mockPaymentInfo).toHaveBeenCalledTimes(1);
+    // Receive hex signature computed by Polkadot lib
+    expect(mockPaymentInfo.mock.lastCall).not.toBeNull();
     expect(result).toEqual(new BigNumber(partialFee));
   });
 });
