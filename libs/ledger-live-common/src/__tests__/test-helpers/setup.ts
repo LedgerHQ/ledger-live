@@ -1,9 +1,9 @@
 import "./environment";
 import BigNumber from "bignumber.js";
-import liveConfigSchema from "../../config/sharedConfig";
+import { liveConfig } from "../../config/sharedConfig";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 
-LiveConfig.setConfig(liveConfigSchema);
+LiveConfig.setConfig(liveConfig);
 jest.setTimeout(360000);
 
 expect.extend({

@@ -1,9 +1,12 @@
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 
-export const migrationAddresses: { currencyId: CryptoCurrencyId; address: string }[] = [
+export const migrationAddresses: (
+  | { currencyId: CryptoCurrencyId; address: string; xpub?: never }
+  | { currencyId: CryptoCurrencyId; xpub: string; address?: never }
+)[] = [
   {
     currencyId: "ethereum",
-    address: "0x0E3F0bb9516F01f2C34c25E0957518b8aC9414c5",
+    address: "0x61e52B436e6423e850D29569Eda0C2Fb21567ba9",
   },
   {
     currencyId: "polygon",
@@ -11,19 +14,21 @@ export const migrationAddresses: { currencyId: CryptoCurrencyId; address: string
   },
   {
     currencyId: "bitcoin",
-    address: "17gPmBH8b6UkvSmxMfVjuLNAqzgAroiPSe",
+    xpub: "xpub6BuPWhjLqutPV8SF4RMrrn8c3t7uBZbz4CBbThpbg9GYjqRMncra9mjgSfWSK7uMDz37hhzJ8wvkbDDQQJt6VgwLoszvmPiSBtLA1bPLLSn",
   },
   {
     currencyId: "bitcoin",
-    address: "bc1q8vp7v5wyv8nvhsh5p2dvkgalep4q325kd5xk4e",
+    xpub: "xpub6DEHKg8fgKcb9at2u9Xhjtx4tXGyWqUPQAx2zNCzr41gQRyCqpCn7onSoJU4VS96GXyCtAhhFxErnG2pGVvVexaqF7DEfqGGnGk7Havn7C2",
   },
   {
     currencyId: "digibyte",
-    address: "dgb1qs45s7zq4gn6uygzrthyh067crzphvhwu33a8sl",
+    address:
+      "xpub6CV98T6ompjUmKuMaULsw4UP8yfnVCg6831rWdcPjScn6RaGWrt3b7uvTpt9hcq6tLtS1dGNzeJ9x4NpVGzLq7CFscxCdoPZ6zxkqGymx98",
   },
   {
     currencyId: "litecoin",
-    address: "ltc1qx2wxzwmpg4m8tr9d7rharerxaqj50jkdasvxmx",
+    address:
+      "Ltub2ZDyeYFtDj5kHy4w5WaXBDE9217rNDYfmv7u5NV8dk8vKdmkqAfPdwRma5rkPcj5daMU8JiiLXQYPX9rtqEzrK1YrmkofcpADTV7s5FgzLF",
   },
   {
     currencyId: "algorand",
@@ -35,8 +40,7 @@ export const migrationAddresses: { currencyId: CryptoCurrencyId; address: string
   },
   {
     currencyId: "cardano",
-    address:
-      "addr_test1qpj84xm4jlpcsvmrnldj86zz7g4mwzr7qg90wdjpn64uea44mcsd3mzvmr9qhfscxkyla3aqnzttwepay9mt3fz84smqyjvhh4",
+    xpub: "806499588e0c4a58f4119f7e6e096bf42c3f774a528d2acec9e82ceebf87d1ceb3d4f3622dd2c77c65cc89c123f79337db22cf8a69f122e36dab1bf5083bf82d",
   },
   {
     currencyId: "casper",
