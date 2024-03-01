@@ -49,7 +49,7 @@ EventEmitter.prototype = {
     return this;
   },
 
-  off: function (name, callback) {
+  removeListener: function (name, callback) {
     var e = this.e || (this.e = {});
     var evts = e[name];
     var liveEvents = [];
@@ -259,57 +259,61 @@ class LedgerLiveEthereumProvider extends EventEmitter {
       return;
     }
 
-    const message = data;
+    try {
+      const message = JSON.parse(data)
 
-    // Always expect jsonrpc to be set to '2.0'
-    if (message.jsonrpc !== JSON_RPC_VERSION) {
-      return;
-    }
+      // Always expect jsonrpc to be set to '2.0'
+      if (message.jsonrpc !== JSON_RPC_VERSION) {
+        return;
+      }
 
-    // If the message has an ID, it is possibly a response message
-    if (typeof message.id !== "undefined" && message.id !== null) {
-      const completer = this.completers["" + message.id];
+      // If the message has an ID, it is possibly a response message
+      if (typeof message.id !== "undefined" && message.id !== null) {
+        const completer = this.completers["" + message.id];
 
-      // True if we haven't timed out and this is a response to a message we sent.
-      if (completer) {
-        // Handle pending promise
-        if ("error" in message || "result" in message) {
-          completer.resolve(message);
-        } else {
-          completer.reject(new Error("Response from provider did not have error or result key"));
+        // True if we haven't timed out and this is a response to a message we sent.
+        if (completer) {
+          // Handle pending promise
+          if ("error" in message || "result" in message) {
+            completer.resolve(message);
+          } else {
+            completer.reject(new Error("Response from provider did not have error or result key"));
+          }
+
+          delete this.completers[message.id];
         }
-
-        delete this.completers[message.id];
       }
-    }
 
-    // If the method is a request from the parent window, it is likely a subscription.
-    if ("method" in message) {
-      switch (message.method) {
-        case "notification":
-          this.emitNotification(message.params);
-          break;
+      // If the method is a request from the parent window, it is likely a subscription.
+      if ("method" in message) {
+        switch (message.method) {
+          case "notification":
+            this.emitNotification(message.params);
+            break;
 
-        case "connect":
-          this.emitConnect();
-          break;
+          case "connect":
+            this.emitConnect();
+            break;
 
-        case "close":
-          this.emitClose(message.params[0], message.params[1]);
-          break;
+          case "close":
+            this.emitClose(message.params[0], message.params[1]);
+            break;
 
-        case "chainChanged":
-          this.emitChainChanged(message.params[0]);
-          break;
+          case "chainChanged":
+            this.emitChainChanged(message.params[0]);
+            break;
 
-        case "networkChanged":
-          this.emitNetworkChanged(message.params[0]);
-          break;
+          case "networkChanged":
+            this.emitNetworkChanged(message.params[0]);
+            break;
 
-        case "accountsChanged":
-          this.emitAccountsChanged(message.params[0]);
-          break;
+          case "accountsChanged":
+            this.emitAccountsChanged(message.params[0]);
+            break;
+        }
       }
+    } catch (error) {
+      console.error("Error parsing message from wallet: ", error);
     }
   };
 
