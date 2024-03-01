@@ -15,13 +15,15 @@ import LiveAppIcon from "./LiveAppIcon";
 import { openPlatformAppInfoDrawer } from "~/renderer/actions/UI";
 import { WebviewAPI, WebviewState } from "../Web3AppWebview/types";
 import Spinner from "../Spinner";
+import { getAccountName, getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
-import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
+import { safeGetRefValue, useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/react";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import SelectAccountAndCurrencyDrawer from "~/renderer/drawers/DataSelector/SelectAccountAndCurrencyDrawer";
 import Wallet from "~/renderer/icons/Wallet";
 import { listCurrencies } from "@ledgerhq/live-common/currencies/index";
 import { matchCurrencies } from "@ledgerhq/live-common/wallet-api/helpers";
+import CryptoCurrencyIcon from "../CryptoCurrencyIcon";
 
 const Container = styled(Box).attrs(() => ({
   horizontal: true,
@@ -135,6 +137,7 @@ const allCurrenciesAndTokens = listCurrencies(true);
 
 export const TopBar = ({ manifest, onClose, config = {}, webviewAPIRef, webviewState }: Props) => {
   const { name, icon } = manifest;
+  const { currentAccount, setCurrentAccount } = useDappCurrentAccount();
 
   const {
     shouldDisplayName = true,
@@ -188,7 +191,9 @@ export const TopBar = ({ manifest, onClose, config = {}, webviewAPIRef, webviewS
         currencies: currencies,
         onAccountSelected: (account, parentAccount) => {
           setDrawer();
-          // set account in store somewhere
+          if (setCurrentAccount) {
+            setCurrentAccount(account);
+          }
           console.log(account, parentAccount);
         },
       },
@@ -198,7 +203,7 @@ export const TopBar = ({ manifest, onClose, config = {}, webviewAPIRef, webviewS
         },
       },
     );
-  }, [currencies]);
+  }, [currencies, setCurrentAccount]);
 
   const isLoading = useDebounce(webviewState.loading, 100);
 
@@ -251,10 +256,23 @@ export const TopBar = ({ manifest, onClose, config = {}, webviewAPIRef, webviewS
         {shouldDisplaySelectAccount ? (
           <>
             <ItemContainer isInteractive onClick={onSelectAccount}>
-              <Wallet size={16} />
-              <ItemContent>
-                <Trans i18nKey="common.selectAccount" />
-              </ItemContent>
+              {!currentAccount ? (
+                <>
+                  <Wallet size={16} />
+                  <ItemContent>
+                    <Trans i18nKey="common.selectAccount" />
+                  </ItemContent>
+                </>
+              ) : (
+                <>
+                  <CryptoCurrencyIcon
+                    circle
+                    currency={getAccountCurrency(currentAccount)}
+                    size={16}
+                  />
+                  <ItemContent>{getAccountName(currentAccount)}</ItemContent>
+                </>
+              )}
             </ItemContainer>
             <Separator />
           </>
