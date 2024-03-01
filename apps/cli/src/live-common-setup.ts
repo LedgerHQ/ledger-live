@@ -5,8 +5,8 @@ import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocke
 import Transport from "@ledgerhq/hw-transport";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
-import { firstValueFrom, Observable } from "rxjs";
-import { map, first, switchMap } from "rxjs/operators";
+import { Observable } from "rxjs";
+import { map } from "rxjs/operators";
 import createTransportHttp from "@ledgerhq/hw-transport-http";
 import SpeculosTransport, { SpeculosTransportOpts } from "@ledgerhq/hw-transport-node-speculos";
 import { registerTransportModule, disconnect } from "@ledgerhq/live-common/hw/index";
@@ -22,8 +22,6 @@ checkLibs({
   log,
   Transport,
 });
-
-type BluetoothTransport = any;
 
 let idCounter = 0;
 const mockTransports = {};
@@ -101,79 +99,6 @@ if (SPECULOS_APDU_PORT) {
 const cacheBle = {};
 
 async function init() {
-  let TransportNodeBle;
-
-  const getTransport = async (): Promise<BluetoothTransport> => {
-    if (!TransportNodeBle) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const { default: mod } = await import("@ledgerhq/hw-transport-node-ble");
-      TransportNodeBle = mod;
-    }
-
-    return TransportNodeBle as BluetoothTransport;
-  };
-
-  const openBleByQuery = async query => {
-    const m = query.match(/^ble:?(.*)/);
-    if (!m) throw new Error("ble regexp should match");
-    const [, q] = m;
-    if (cacheBle[query]) return cacheBle[query];
-    const t = await (!q
-      ? ((await getTransport().constructor) as typeof TransportNodeBle).create()
-      : // NOTE: NOT SURE HERE, CHECK IT BACK DEFORE MERGING
-        await firstValueFrom(
-          new Observable(
-            ((await getTransport().constructor) as typeof TransportNodeBle).listen,
-          ).pipe(
-            first(
-              (e: any) =>
-                (e.device.name || "").toLowerCase().includes(q.toLowerCase()) ||
-                e.device.id.toLowerCase() === q.toLowerCase(),
-            ),
-            switchMap(e => TransportNodeBle.open(e.descriptor)),
-          ),
-        ));
-    cacheBle[query] = t;
-    (t as Transport).on("disconnect", () => {
-      delete cacheBle[query];
-    });
-    return t;
-  };
-
-  registerTransportModule({
-    id: "ble",
-    open: query => {
-      if (query.startsWith("ble")) {
-        return openBleByQuery(query);
-      }
-    },
-    discovery: new Observable(o => {
-      let s: any;
-
-      getTransport().then(module => {
-        (module.constructor as typeof TransportNodeBle).listen(o);
-        s = module;
-      });
-
-      return () => s && s.unsubscribe();
-    }).pipe(
-      map((e: any) => ({
-        type: e.type,
-        id: "ble:" + e.device.id,
-        name: e.device.name || "",
-      })),
-    ),
-    disconnect: async query =>
-      query.startsWith("ble")
-        ? cacheBle[query]
-          ? ((await getTransport().constructor) as typeof TransportNodeBle).disconnect(
-              cacheBle[query].id,
-            )
-          : Promise.resolve()
-        : undefined,
-  });
-
   const {
     default: TransportNodeHid,
     // eslint-disable-next-line @typescript-eslint/no-var-requires

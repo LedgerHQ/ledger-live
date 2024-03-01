@@ -22,12 +22,12 @@ Welcome to Ledger's JavaScript libraries.
 
 > The _hw-transport_ libraries implement communication protocol for our [hardware wallet devices](https://www.ledger.com/) (Ledger Nano / Ledger Nano S / Ledger Nano X / Ledger Blue) in many platforms: **Web, Node, Electron, React Native,...** and using many different communication channels: **U2F, HID, WebUSB, Bluetooth,...**
 
-| Channels | U2F/WebAuthn           | HID | WebUSB | Bluetooth |
-| -------- | ---------------------- | --- | ------ | --------- |
-| Blue     | DEPRECATED<sup>1</sup> | YES | NO     | NO        |
-| Nano S   | DEPRECATED<sup>1</sup> | YES | YES    | NO        |
+| Channels    | U2F/WebAuthn           | HID | WebUSB | Bluetooth |
+| ----------- | ---------------------- | --- | ------ | --------- |
+| Blue        | DEPRECATED<sup>1</sup> | YES | NO     | NO        |
+| Nano S      | DEPRECATED<sup>1</sup> | YES | YES    | NO        |
 | Nano S Plus | DEPRECATED<sup>1</sup> | YES | YES    | NO        |
-| Nano X   | DEPRECATED<sup>1</sup> | YES | YES    | YES       |
+| Nano X      | DEPRECATED<sup>1</sup> | YES | YES    | YES       |
 
 1. U2F is deprecated. See https://github.com/LedgerHQ/ledger-live/wiki/LJS:MigrateWebUSB
 
@@ -36,7 +36,7 @@ Summary of implementations available per platform
 | Platforms        | U2F/WebAuthn                             | HID                                           | WebUSB                                      | Bluetooth                                 |
 | ---------------- | ---------------------------------------- | --------------------------------------------- | ------------------------------------------- | ----------------------------------------- |
 | Web              | `@ledgerhq/hw-transport-u2f`             | `@ledgerhq/hw-transport-webhid`               | `@ledgerhq/hw-transport-webusb`             | `@ledgerhq/hw-transport-web-ble`          |
-| Electron/Node.js | NO                                       | `@ledgerhq/hw-transport-node-hid`<sup>1</sup> | NO                                          | `@ledgerhq/hw-transport-node-ble`         |
+| Electron/Node.js | NO                                       | `@ledgerhq/hw-transport-node-hid`<sup>1</sup> | NO                                          | NO                                        |
 | iOS              | NO                                       | NO                                            | NO                                          | `@ledgerhq/react-native-hw-transport-ble` |
 | Android          | `@ledgerhq/hw-transport-u2f`<sup>2</sup> | `@ledgerhq/react-native-hid`                  | `@ledgerhq/hw-transport-webusb`<sup>2</sup> | `@ledgerhq/react-native-hw-transport-ble` |
 
@@ -69,7 +69,6 @@ Summary of implementations available per platform
 - [![npm](https://img.shields.io/npm/v/@ledgerhq/hw-transport-node-hid.svg)](https://www.npmjs.com/package/@ledgerhq/hw-transport-node-hid) [@ledgerhq/hw-transport-node-hid](./packages/hw-transport-node-hid) **[Node]**/Electron **(HID)** – historical implementation – uses `node-hid` and `usb`.
 - [![npm](https://img.shields.io/npm/v/@ledgerhq/hw-transport-node-hid-noevents.svg)](https://www.npmjs.com/package/@ledgerhq/hw-transport-node-hid-noevents) [@ledgerhq/hw-transport-node-hid-noevents](./packages/hw-transport-node-hid-noevents) **[Node]**/Electron **(HID)** – uses **only** `node-hid`. Does not provide USB events.
 - [![npm](https://img.shields.io/npm/v/@ledgerhq/hw-transport-node-hid-singleton.svg)](https://www.npmjs.com/package/@ledgerhq/hw-transport-node-hid-singleton) [@ledgerhq/hw-transport-node-hid-singleton](./packages/hw-transport-node-hid-singleton) **[Node]**/Electron **(HID)** – uses `node-hid` and `node-usb`. Focus on supporting one device at a time (potentially will have more robust events and less blocking cases)
-- [![npm](https://img.shields.io/npm/v/@ledgerhq/hw-transport-node-ble.svg)](https://www.npmjs.com/package/@ledgerhq/hw-transport-node-ble) [@ledgerhq/hw-transport-node-ble](./packages/hw-transport-node-ble) **[Node]**/Electron **(BLE)** (experimental) – uses `@abandonware/noble`.
 - [![npm](https://img.shields.io/npm/v/@ledgerhq/react-native-hw-transport-ble.svg)](https://www.npmjs.com/package/@ledgerhq/react-native-hw-transport-ble) [@ledgerhq/react-native-hw-transport-ble](./packages/react-native-hw-transport-ble) **[React Native]** **(Bluetooth)** – uses `react-native-ble-plx`
 - [![npm](https://img.shields.io/npm/v/@ledgerhq/react-native-hid.svg)](https://www.npmjs.com/package/@ledgerhq/react-native-hid) [@ledgerhq/react-native-hid](./packages/react-native-hid) **[React Native]** **(HID)** _Android_ – Ledger's native implementation
 - [![npm](https://img.shields.io/npm/v/@ledgerhq/hw-transport-http.svg)](https://www.npmjs.com/package/@ledgerhq/hw-transport-http) [@ledgerhq/hw-transport-http](./packages/hw-transport-http) **[DEV only]** universal HTTP channel. **NOT for PROD**.
@@ -135,7 +134,7 @@ const getBtcAddress = async () => {
   const result = await btc.getWalletPublicKey("44'/0'/0'/0/0");
   return result.bitcoinAddress;
 };
-getBtcAddress().then((a) => console.log(a));
+getBtcAddress().then(a => console.log(a));
 ```
 
 ## Contributing
@@ -215,15 +214,15 @@ pnpm clean:ljs && pnpm build:ljs && pnpm doc:ljs && pnpm publish --filter="./lib
 
 then, go to [/releases](https://github.com/LedgerHQ/ledger-live/releases) and create a release with change logs.
 
-
 ---
 
 ## Are you adding the support of a blockchain to Ledger Live?
 
-This part of the repository is where you will add your blockchain to the cryptoasset library. 
+This part of the repository is where you will add your blockchain to the cryptoasset library.
 
 For a smooth and quick integration:
-- See the developers’ documentation on the [Developer Portal](https://developers.ledger.com/docs/coin/general-process/) and 
+
+- See the developers’ documentation on the [Developer Portal](https://developers.ledger.com/docs/coin/general-process/) and
 - Go on [Discord](https://developers.ledger.com/discord-pro/) to chat with developer support and the developer community.
 
 ## Are you adding Ledger device support to your web/mobile/desktop application?
@@ -231,7 +230,8 @@ For a smooth and quick integration:
 This part of the repository contains the transport libraries that will be used to establish the communication between your app and Ledger devices.
 
 For a smooth and quick integration:
-- See the developers’ documentation on the [Developer Portal](https://developers.ledger.com/docs/transport/overview/) and 
+
+- See the developers’ documentation on the [Developer Portal](https://developers.ledger.com/docs/transport/overview/) and
 - Go on [Discord](https://developers.ledger.com/discord-pro/) to chat with developer support and the developer community.
 
 ---
