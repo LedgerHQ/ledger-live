@@ -16,7 +16,6 @@ import { DEFAULT_MULTIBUY_APP_ID } from "@ledgerhq/live-common/wallet-api/consta
 
 import Braze from "@braze/react-native-sdk";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import * as Sentry from "@sentry/react-native";
 
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
@@ -28,7 +27,6 @@ import { Writeable } from "~/types/helpers";
 import { lightTheme, darkTheme, Theme } from "../colors";
 import { track } from "~/analytics";
 import { setEarnInfoModal } from "~/actions/earn";
-import { OptionalFeatureMap } from "@ledgerhq/types-live";
 import { blockPasswordLock } from "../actions/appstate";
 import { useStorylyContext } from "~/components/StorylyStories/StorylyProvider";
 
@@ -81,7 +79,7 @@ function getProxyURL(url: string) {
 }
 
 // DeepLinking
-const linkingOptions = (featureFlags: OptionalFeatureMap) => ({
+const linkingOptions = () => ({
   async getInitialURL() {
     const url = await Linking.getInitialURL();
     if (url) {
@@ -196,31 +194,18 @@ const linkingOptions = (featureFlags: OptionalFeatureMap) => ({
                     screens: {
                       [ScreenName.Portfolio]: "portfolio",
                       [ScreenName.WalletNftGallery]: "nftgallery",
-
-                      ...(featureFlags?.ptxEarn?.enabled && {
-                        [NavigatorName.Market]: {
-                          screens: {
-                            /**
-                             * ie: "ledgerlive://market" will open the market screen
-                             */
-                            [ScreenName.MarketList]: "market",
-                          },
+                      [NavigatorName.Market]: {
+                        screens: {
+                          /**
+                           * ie: "ledgerlive://market" will open the market screen
+                           */
+                          [ScreenName.MarketList]: "market",
                         },
-                      }),
+                      },
                     },
                   },
                 },
               },
-              ...(!featureFlags?.ptxEarn?.enabled && {
-                [NavigatorName.Market]: {
-                  screens: {
-                    /**
-                     * ie: "ledgerlive://market" will open the market screen
-                     */
-                    [ScreenName.MarketList]: "market",
-                  },
-                },
-              }),
               [NavigatorName.Earn]: {
                 screens: {
                   /**
@@ -374,11 +359,8 @@ const linkingOptions = (featureFlags: OptionalFeatureMap) => ({
   },
 });
 
-const getOnboardingLinkingOptions = (
-  acceptedTermsOfUse: boolean,
-  featureFlags: OptionalFeatureMap,
-) => ({
-  ...linkingOptions(featureFlags),
+const getOnboardingLinkingOptions = (acceptedTermsOfUse: boolean) => ({
+  ...linkingOptions(),
   config: {
     initialRouteName: NavigatorName.BaseOnboarding,
     screens: !acceptedTermsOfUse
@@ -439,11 +421,6 @@ export const DeeplinksProvider = ({
 }) => {
   const dispatch = useDispatch();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
-  const ptxEarnFeature = useFeature("ptxEarn");
-  const features = useMemo(
-    () => (ptxEarnFeature ? { ptxEarn: ptxEarnFeature } : {}),
-    [ptxEarnFeature],
-  );
 
   const { state } = useRemoteLiveAppContext();
   const liveAppProviderInitialized = !!state.value || !!state.error;
@@ -456,8 +433,8 @@ export const DeeplinksProvider = ({
     () =>
       ({
         ...(hasCompletedOnboarding
-          ? linkingOptions(features)
-          : getOnboardingLinkingOptions(!!userAcceptedTerms, features)),
+          ? linkingOptions()
+          : getOnboardingLinkingOptions(!!userAcceptedTerms)),
         subscribe(listener) {
           const sub = Linking.addEventListener("url", ({ url }) => {
             // Prevent default deep link if we're already in a wallet connect route.
@@ -572,7 +549,6 @@ export const DeeplinksProvider = ({
       }) as LinkingOptions<ReactNavigation.RootParamList>,
     [
       hasCompletedOnboarding,
-      features,
       userAcceptedTerms,
       dispatch,
       storylyContext,

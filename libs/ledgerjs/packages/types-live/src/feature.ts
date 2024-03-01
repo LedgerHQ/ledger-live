@@ -135,7 +135,6 @@ export type Features = CurrencyFeatures & {
   counterValue: Feature_CounterValue;
   deviceInitialApps: Feature_DeviceInitialApps;
   buyDeviceFromLive: Feature_BuyDeviceFromLive;
-  ptxEarn: Feature_PtxEarn;
   depositNetworkBannerMobile: Feature_DepositNetworkBannerMobile;
   depositWithdrawBannerMobile: Feature_DepositWithdrawBannerMobile;
   mockFeature: Feature_MockFeature;
@@ -287,11 +286,6 @@ export type Feature_ReceiveStakingFlowConfigDesktop = Feature<{
 export type Feature_Learn = Feature<{
   mobile: { url: string };
   desktop: { url: string };
-}>;
-
-export type Feature_PtxEarn = Feature<{
-  liveAppId: string;
-  isNew: boolean;
 }>;
 
 export type Feature_Storyly = Feature<{

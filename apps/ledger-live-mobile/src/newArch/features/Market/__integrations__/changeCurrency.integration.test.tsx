@@ -27,7 +27,7 @@ const SUPPORTED_CURRENCIES = [
 describe("Market integration test", () => {
   it("Should change selected currency", async () => {
     const { user } = render(<MarketPages />, {
-      featureFlags: { ptxEarn: { enabled: true }, llmMarketNewArch: { enabled: true } },
+      featureFlags: { llmMarketNewArch: { enabled: true } },
       initialState: { settings: { supportedCounterValues: SUPPORTED_CURRENCIES } },
     });
 

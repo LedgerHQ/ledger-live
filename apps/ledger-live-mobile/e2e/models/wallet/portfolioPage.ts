@@ -28,7 +28,6 @@ export default class PortfolioPage {
   sendTransferMenuButton = () => getElementById("transfer-send-button");
   receiveTransfertMenuButton = () => getElementById("transfer-receive-button");
   sendMenuButton = () => getElementById("send-button");
-  marketTabButton = () => getElementById("tab-bar-market");
   walletTabMarket = () => getElementById("wallet-tab-Market");
   earnButton = () => getElementById("tab-bar-earn");
   addAccountCta = "add-account-cta";
@@ -78,10 +77,6 @@ export default class PortfolioPage {
 
   openViaDeeplink() {
     return openDeeplink(baseLink);
-  }
-
-  openMarketPage() {
-    return tapByElement(this.marketTabButton());
   }
 
   openWalletTabMarket() {
