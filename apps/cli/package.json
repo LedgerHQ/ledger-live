@@ -26,12 +26,6 @@
     "lint:fix": "pnpm lint --fix",
     "test": "zx ./scripts/test.mjs"
   },
-  "peerDependencies": {
-    "@ledgerhq/hw-transport-node-ble": "workspace:^"
-  },
-  "optionalDependencies": {
-    "@ledgerhq/hw-transport-node-ble": "workspace:^"
-  },
   "dependencies": {
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",

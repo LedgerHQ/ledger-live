@@ -100,7 +100,6 @@
     "ljs:hw-transport": "pnpm --filter hw-transport",
     "ljs:hw-transport-http": "pnpm --filter hw-transport-http",
     "ljs:hw-transport-mocker": "pnpm --filter hw-transport-mocker",
-    "ljs:hw-transport-node-ble": "pnpm --filter hw-transport-node-ble",
     "ljs:hw-transport-node-hid": "pnpm --filter hw-transport-node-hid",
     "ljs:hw-transport-node-hid-noevents": "pnpm --filter hw-transport-node-hid-noevents",
     "ljs:hw-transport-node-hid-singleton": "pnpm --filter hw-transport-node-hid-singleton",
