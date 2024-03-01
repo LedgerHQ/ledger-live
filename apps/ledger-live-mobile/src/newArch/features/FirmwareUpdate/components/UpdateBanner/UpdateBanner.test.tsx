@@ -32,7 +32,7 @@ jest.mock("../../utils/navigateToOldUpdateFlow", () => ({
 const { navigateToNewUpdateFlow } = jest.requireMock("../../utils/navigateToNewUpdateFlow");
 const { navigateToOldUpdateFlow } = jest.requireMock("../../utils/navigateToOldUpdateFlow");
 
-describe("FirmwareUpdateBanner integration test", () => {
+describe("<UpdateBanner />", () => {
   let PlatformSpy: jest.SpyInstance;
   beforeEach(() => {
     jest.restoreAllMocks();
