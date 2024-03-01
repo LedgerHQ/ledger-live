@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.41.0-next.4
+
+### Patch Changes
+
+- [#6337](https://github.com/LedgerHQ/ledger-live/pull/6337) [`3ed2ef3`](https://github.com/LedgerHQ/ledger-live/commit/3ed2ef3ea6891b731908bf9c3559672502574bfa) Thanks [@cng-ledger](https://github.com/cng-ledger)! - fix(11546): extra right margin to prevent unreadable warning message in LLM swap form input
+
 ## 3.41.0-next.3
 
 ### Patch Changes
