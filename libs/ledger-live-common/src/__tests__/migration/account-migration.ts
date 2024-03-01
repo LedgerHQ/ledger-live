@@ -214,11 +214,11 @@ export const testSync = async (currencyId: string, xpubOrAddress: string) => {
       address: account.freshAddress,
       xpub: account.xpub,
     }));
+
     inputFileAddresses.push(...syncInfo);
   }
 
-  // we only read --currencies options if there's no input file
-  const currencyIds = !inputFile && currencies?.split(",");
+  const currencyIds = currencies?.split(",");
 
   // throw error if there's invalid currency ids passed in the cli
   if (currencyIds && !currencyIds.every(findCryptoCurrencyById)) {
