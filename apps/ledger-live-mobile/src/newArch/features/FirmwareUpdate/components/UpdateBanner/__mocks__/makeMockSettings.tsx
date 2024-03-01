@@ -7,11 +7,13 @@ export function makeMockSettings({
   deviceName,
   version,
   hasCompletedOnboarding,
+  wired,
 }: {
   modelId: DeviceModelId;
   deviceName?: string;
   version: string;
   hasCompletedOnboarding: boolean;
+  wired: boolean;
 }): {
   lastConnectedDevice: State["settings"]["lastConnectedDevice"];
   lastSeenDevice: State["settings"]["lastSeenDevice"];
@@ -22,7 +24,7 @@ export function makeMockSettings({
       deviceName,
       deviceId: "mockDeviceId",
       modelId,
-      wired: true,
+      wired,
     },
     lastSeenDevice: {
       modelId,

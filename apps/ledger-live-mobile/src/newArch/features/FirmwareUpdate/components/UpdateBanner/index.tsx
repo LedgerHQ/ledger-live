@@ -81,7 +81,7 @@ const UpdateBanner = ({
         description={
           isUpdateSupportedButDeviceNotWired
             ? t("FirmwareUpdate.drawerUpdate.pleaseConnectUsbDescription", {
-                deviceName,
+                deviceName: productName,
               })
             : t("FirmwareUpdate.drawerUpdate.description")
         }
