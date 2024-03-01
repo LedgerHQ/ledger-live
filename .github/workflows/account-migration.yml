@@ -9,6 +9,7 @@ on:
         ref:
           description: "The reference branch where the migration is made from. Will be develop by default"
           required: false
+          default: 'develop'
 
     pull_request:
 
@@ -26,7 +27,7 @@ jobs:
               private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
           - uses: actions/checkout@v4
             with:
-              ref: ${{ inputs.ref }}
+              ref: ${{ github.base_ref || inputs.ref }}
               token: ${{ steps.generate-token.outputs.token }}
 
           - name: Setup git user
@@ -53,7 +54,6 @@ jobs:
           - uses: actions/checkout@v4
             with:
               token: ${{ steps.generate-token.outputs.token }}
-              ref: ${{ github.base_ref || inputs.ref || 'develop' }}
 
           - name: install dependencies and build
             run: |
