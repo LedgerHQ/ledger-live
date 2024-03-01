@@ -263,8 +263,9 @@ export const testSync = async (currencyId: string, xpubOrAddress: string) => {
   const outputContent = JSON.stringify(response, null, 3);
 
   if (!noEmit) {
+    // be careful, also used in account-migration.yml
     const { stdout } = await exec("git rev-parse --short HEAD");
-    const outputFilePath = `${stdout.trim()}-${new Date().getTime()}.json`;
+    const outputFilePath = `${stdout.trim()}.json`;
     console.log("Writing output....");
     writeFileSync(outputFilePath, outputContent);
     console.log("Done");

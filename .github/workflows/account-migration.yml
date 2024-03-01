@@ -12,10 +12,6 @@ on:
 
     pull_request:
 
-env:
-  REF_SYNC_FILE_NAME: ref-sync.json
-  CURRENT_BRANCH_SYNC_FILE_NAME: commit-sync.json
-  OUTPUT_FILE_NAME: output.json
 
 jobs:
     account_migration:
@@ -47,9 +43,7 @@ jobs:
           - name: Run synchronisation on target branch
             if: ${{ inputs.currencies }}
             run: |
-                OUTPUT=$(pnpm common test-account-migration --currencies ${{ inputs.currencies }})
-                echo $OUTPUT > $REF_SYNC_FILE_NAME
-                cat $REF_SYNC_FILE_NAME
+                pnpm common test-account-migration --currencies ${{ inputs.currencies }}
 
           - name: Run synchronisation on target branch
             if: ${{ !inputs.currencies }}
@@ -68,6 +62,8 @@ jobs:
 
           - name: run synchronisation on current branch
             run: |
-              pnpm common test-account-migration --inputFile $(pwd)/libs/ledger-live-common/$REF_SYNC_FILE_NAME
+              TARGET_SYNC_FILE_BASENAME=$(git rev-parse --short HEAD)
+              pnpm common test-account-migration --inputFile $(pwd)/libs/ledger-live-common/$TARGET_SYNC_FILE_BASENAME
+
           - name: print diff during migratiion
             run: git --no-pager diff --no-index $(git ls-files --others --exclude-standard)
