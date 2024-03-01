@@ -1,6 +1,7 @@
 import { useMemo, useState, useEffect, useRef, useCallback, RefObject } from "react";
 import semver from "semver";
 import { intervalToDuration } from "date-fns";
+import { atom, useAtom } from "jotai";
 
 import { Account, AccountLike, AnyMessage, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -1078,6 +1079,84 @@ export function EVMAddressChanged(addr1: string, addr2: string): boolean {
   return addr1.toLowerCase() !== addr2.toLowerCase();
 }
 
+export const currentAccountAtom = atom<AccountLike | null>(null);
+
+export function useDappCurrentAccount() {
+  const [currentAccount, setCurrentAccount] = useAtom(currentAccountAtom);
+  return { currentAccount, setCurrentAccount };
+}
+
+const manifestToCurrentAccountMap = new Map<string, string>();
+
+function useDappAccountLogic({
+  manifest,
+  accounts,
+}: {
+  manifest: AppManifest;
+  accounts: AccountLike[];
+}) {
+  const { currencyIds } = usePermission(manifest);
+  const { currentAccount: storedCurrentAccount, setCurrentAccount } = useDappCurrentAccount();
+  const currentAccount = useMemo(() => {
+    if (storedCurrentAccount) {
+      return getParentAccount(storedCurrentAccount, accounts);
+    }
+  }, [storedCurrentAccount, accounts]);
+
+  const firstAccountAvailable = useMemo(() => {
+    const account = accounts.find(account => {
+      if (account.type === "Account" && currencyIds.includes(account.currency.id)) {
+        return account;
+      }
+    });
+    // might not even need to set parent here
+    if (account) {
+      return getParentAccount(account, accounts);
+    }
+  }, [accounts, currencyIds]);
+
+  const storedCurrentAccountIsPermitted = useCallback(() => {
+    if (!storedCurrentAccount) return false;
+    return accounts.some(
+      account =>
+        account.type === "Account" &&
+        currencyIds.includes(account.currency.id) &&
+        account.id === storedCurrentAccount.id,
+    );
+  }, [storedCurrentAccount, accounts, currencyIds]);
+
+  useEffect(() => {
+    if (manifest) {
+      const currentAccountIdFromMap = manifestToCurrentAccountMap.get(manifest.id);
+      // stored account in jotai (selected in another dapp is permitted, just update the map)
+      if (storedCurrentAccount && storedCurrentAccountIsPermitted()) {
+        manifestToCurrentAccountMap.set(manifest.id, storedCurrentAccount.id);
+      } // previous account for that app
+      else if (currentAccountIdFromMap) {
+        const currentAccountFromMap = accounts.find(
+          account => account.id === currentAccountIdFromMap,
+        );
+        // should never be null
+        setCurrentAccount(currentAccountFromMap ? currentAccountFromMap : null);
+      } else {
+        // no stored account, or stored account is not permitted AND no previous account in the map
+        setCurrentAccount(firstAccountAvailable ? firstAccountAvailable : null);
+      }
+    }
+  }, [
+    accounts,
+    storedCurrentAccountIsPermitted,
+    firstAccountAvailable,
+    manifest,
+    storedCurrentAccount,
+    setCurrentAccount,
+  ]);
+
+  return {
+    currentAccount,
+  };
+}
+
 export function useDappLogic({
   manifest,
   accounts,
@@ -1093,20 +1172,9 @@ export function useDappLogic({
 }) {
   const currentNetwork = manifest.dapp?.networks[0];
   const nanoApp = manifest.dapp?.nanoApp;
-
-  const currentAccount = useMemo(() => {
-    const account = accounts.find(account => {
-      if (account.type === "Account" && account.currency.id === currentNetwork?.currency) {
-        return account;
-      }
-    });
-    if (account) {
-      return getParentAccount(account, accounts);
-    }
-  }, [accounts, currentNetwork?.currency]);
-
   const previousAddressRef = useRef<string>();
   const previousChainIdRef = useRef<number>();
+  const { currentAccount } = useDappAccountLogic({ manifest, accounts });
 
   useEffect(() => {
     if (!currentAccount) {
