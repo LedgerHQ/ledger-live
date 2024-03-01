@@ -13,7 +13,6 @@ on:
 
     pull_request:
 
-
 jobs:
     account_migration:
         name: "account-migration"
@@ -63,7 +62,7 @@ jobs:
           - name: run synchronisation on current branch
             run: |
               TARGET_SYNC_FILE_BASENAME=$(git rev-parse --short HEAD)
-              pnpm common test-account-migration --inputFile $(pwd)/libs/ledger-live-common/$TARGET_SYNC_FILE_BASENAME.json
+              pnpm common test-account-migration --inputFile ${{ github.workspace }}/libs/ledger-live-common/$TARGET_SYNC_FILE_BASENAME.json
 
           - name: print diff during migratiion
             run: git --no-pager diff --no-index $(git ls-files --others --exclude-standard)
