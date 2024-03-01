@@ -6,6 +6,7 @@ import {
   UiHook,
   useConfig,
   useWalletAPIServer,
+  useDappLogic,
 } from "@ledgerhq/live-common/wallet-api/react";
 import { Operation, SignedOperation } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
@@ -122,6 +123,14 @@ export function useWebView(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [server]);
 
+  const { onDappMessage } = useDappLogic({
+    manifest,
+    accounts,
+    uiHook,
+    postMessage: webviewHook.postMessage,
+    tracking,
+  });
+
   const onMessage = useCallback(
     (e: WebViewMessageEvent) => {
       if (e.nativeEvent?.data) {
@@ -131,7 +140,7 @@ export function useWebView(
           if (Config.MOCK && msg.type === "e2eTest") {
             bridge.sendWalletAPIResponse(msg.payload);
           } else if (msg.type === "dapp") {
-            console.log("dapp message to handle: ", msg);
+            onDappMessage(msg);
           } else {
             onMessageRaw(e.nativeEvent.data);
           }
@@ -140,7 +149,7 @@ export function useWebView(
         }
       }
     },
-    [onMessageRaw],
+    [onDappMessage, onMessageRaw],
   );
 
   return {
@@ -287,7 +296,7 @@ export function useWebviewState(
   };
 }
 
-function useUiHook(): Partial<UiHook> {
+function useUiHook(): UiHook {
   const navigation = useNavigation();
   const [device, setDevice] = useState<Device>();
 
@@ -397,6 +406,7 @@ function useUiHook(): Partial<UiHook> {
           },
         });
       },
+      "transaction.broadcast": () => {},
       "device.transport": ({ appName, onSuccess, onCancel }) => {
         navigation.navigate(ScreenName.DeviceConnect, {
           appName,
