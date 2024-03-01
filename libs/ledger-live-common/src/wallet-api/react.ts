@@ -1140,6 +1140,9 @@ function useDappAccountLogic({
         setCurrentAccount(currentAccountFromMap ? currentAccountFromMap : null);
       } else {
         // no stored account, or stored account is not permitted AND no previous account in the map
+        // FIXME: useful to get a first account picked automatically
+        // BUT: when moving back to a dapp that had a different account selected, this one will be chosen (if the other dapp permits it)
+        // it makes the history stored in manifestToCurrentAccountMap only useful when coming back to the same dapp
         setCurrentAccount(firstAccountAvailable ? firstAccountAvailable : null);
       }
     }
