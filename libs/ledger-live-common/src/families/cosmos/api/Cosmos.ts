@@ -27,7 +27,6 @@ export class CosmosAPI {
     const crypto = cryptoFactory(currencyId);
     this.chainInstance = crypto;
     this.defaultEndpoint = crypto.lcd;
-    console.log({ lcd: crypto.lcd });
     this.version = crypto.version;
   }
 
