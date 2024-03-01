@@ -21,7 +21,7 @@
  * if bitcoin family, supportsSegwit defines if it supports segwit.
  */
 
-import { CryptoCurrency, CoinType, Unit, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+import { CoinType, CryptoCurrency, CryptoCurrencyId, Unit } from "@ledgerhq/types-cryptoassets";
 
 const makeTestnetUnit = u => ({ ...u, code: `𝚝${u.code}` });
 
@@ -2745,7 +2745,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   osmosis: {
     type: "CryptoCurrency",
-    id: "osmo",
+    id: "osmosis", // Does it need to be "osmo"? It's not a ticker. But updating this could cause breaking changes where this package is used.
     coinType: CoinType.ATOM,
     name: "Osmosis",
     managerAppName: "Cosmos",
