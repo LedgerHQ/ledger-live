@@ -9,7 +9,6 @@ on:
         ref:
           description: "The reference branch where the migration is made from. Will be develop by default"
           required: false
-          default: 'develop'
 
     push:
       branches:
@@ -63,13 +62,14 @@ jobs:
           - uses: actions/checkout@v4
             with:
               token: ${{ steps.generate-token.outputs.token }}
+              ref: ${{ github.base_ref || inputs.ref || 'develop' }}
 
           - name: install dependencies and build
             run: |
               pnpm i
               pnpm build:llc
 
-          - name: run synchronisation on current commit
+          - name: run synchronisation on current branch
             run: |
               OUTPUT=$(pnpm common test-account-migration --inputFile $(pwd)/$REF_SYNC_FILE_NAME)
               echo $OUTPUT > $CURRENT_BRANCH_SYNC_FILE_NAME
@@ -80,6 +80,5 @@ jobs:
             with:
               old: $REF_SYNC_FILE_NAME
               new: $CURRENT_BRANCH_SYNC_FILE_NAME
-              mode: strict
               tolerance: same
               output: $OUTPUT_FILE_NAME

@@ -235,13 +235,18 @@ export const testSync = async (currencyId: string, xpubOrAddress: string) => {
       }),
   );
 
+  const errors: Error[] = [];
   const response = syncedAccounts.map(account => {
     if (account.status === "fulfilled") {
       return account.value;
     } else {
-      return account.reason;
+      errors.push(account.reason);
     }
   });
+
+  if (errors.length) {
+    throw new Error(errors.map(err => `${err.message} - ${err.stack}`).join("\n"));
+  }
 
   // eslint-disable-next-line no-console
   console.log(JSON.stringify(response, null, 3));
