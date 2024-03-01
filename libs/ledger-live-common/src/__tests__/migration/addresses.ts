@@ -148,11 +148,11 @@ export const migrationAddresses: MigrationAddress[] = [
   // tezos
   {
     currencyId: "tezos",
-    address: "tz1boBHAVpwcvKkNFAQHYr7mjxAz1PpVgKq7",
+    xpub: "02389ffd73423626894cb151416e51c72ec285376673daf83545eb5edb45b261ce",
   },
   {
     currencyId: "tezos",
-    address: "tz1VSichevvJSNkSSntgwKDKikWNB6iqNJii",
+    xpub: "02a9ae8b0ff5f9a43565793ad78e10db6f12177d904d208ada591b8a5b9999e3fd",
   },
   {
     currencyId: "tron",
