@@ -2600,6 +2600,9 @@ importers:
       isomorphic-ws:
         specifier: ^4.0.1
         version: 4.0.1(ws@7.5.7)
+      jotai:
+        specifier: ^2.7.0
+        version: 2.7.0(@types/react@18.2.28)(react@18.2.0)
       json-rpc-2.0:
         specifier: ^0.2.19
         version: 0.2.19
@@ -42662,6 +42665,22 @@ packages:
     dependencies:
       react: 18.2.0
     dev: true
+
+  /jotai@2.7.0(@types/react@18.2.28)(react@18.2.0):
+    resolution: {integrity: sha512-4qsyFKu4MprI39rj2uoItyhu24NoCHzkOV7z70PQr65SpzV6CSyhQvVIfbNlNqOIOspNMdf5OK+kTXLvqe63Jw==}
+    engines: {node: '>=12.20.0'}
+    peerDependencies:
+      '@types/react': '>=17.0.0'
+      react: '>=17.0.0'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      react:
+        optional: true
+    dependencies:
+      '@types/react': 18.2.28
+      react: 18.2.0
+    dev: false
 
   /joycon@3.1.1:
     resolution: {integrity: sha512-34wB/Y7MW7bzjKRjUKTa46I2Z7eV62Rkhva+KkopW7Qvv/OSWBqvkSY7vusOPrNuZcUG3tApvdVgNB8POj3SPw==}
