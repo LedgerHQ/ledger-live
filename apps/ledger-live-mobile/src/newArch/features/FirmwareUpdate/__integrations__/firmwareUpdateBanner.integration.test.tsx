@@ -92,11 +92,14 @@ describe("FirmwareUpdateBanner integration test", () => {
       }),
     });
 
+    // Check that the banner is displayed with the correct wording
+    expect(await screen.findByTestId("fw-update-banner")).toBeOnTheScreen();
     expect(await screen.findByText("OS update available")).toBeOnTheScreen();
     expect(
       await screen.findByText("Tap to update your Ledger Nano S to OS version mockVersion."),
     ).toBeOnTheScreen();
-    expect(await screen.findByTestId("fw-update-banner")).toBeOnTheScreen();
+
+    // Press the banner and check that the entrypoint to the old update flow is called
     await user.press(screen.getByTestId("fw-update-banner"));
     expect(navigateToOldUpdateFlow).toHaveBeenCalled();
     expect(navigateToNewUpdateFlow).not.toHaveBeenCalled();
@@ -130,11 +133,14 @@ describe("FirmwareUpdateBanner integration test", () => {
       }),
     });
 
+    // Check that the banner is displayed with the correct wording
+    expect(await screen.findByTestId("fw-update-banner")).toBeOnTheScreen();
     expect(await screen.findByText("OS update available")).toBeOnTheScreen();
     expect(
       await screen.findByText("Tap to update “mockDeviceName” to OS version mockVersion."),
     ).toBeOnTheScreen();
-    expect(await screen.findByTestId("fw-update-banner")).toBeOnTheScreen();
+
+    // Press the banner and check that the entrypoint to the new update flow is called
     await user.press(screen.getByTestId("fw-update-banner"));
     expect(navigateToOldUpdateFlow).not.toHaveBeenCalled();
     expect(navigateToNewUpdateFlow).toHaveBeenCalled();
