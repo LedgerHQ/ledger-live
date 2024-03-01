@@ -28,8 +28,8 @@ import {
 import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
 
 const ranges = Object.keys(rangeDataTable);
+
 export const useMarketCoin = () => {
-  // TO DO IN STORE
   const [range, setRange] = useState<string>("24h");
   const counterValueCurrencyLocal = useSelector(getCounterValueCode);
   const [counterCurrency, setCounterCurrency] = useState(counterValueCurrencyLocal);
