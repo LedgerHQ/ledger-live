@@ -183,7 +183,8 @@ export const testSync = async (currencyId: string, xpubOrAddress: string) => {
   const mockAccount = getMockAccount(currencyId, xpubOrAddress);
   const currency = getCryptoCurrencyById(currencyId);
   const currencyBrige = getCurrencyBridge(currency);
-  await currencyBrige.preload(currency);
+  const data = await currencyBrige.preload(currency);
+  currencyBrige.hydrate(data, currency);
   const accountBrige = getAccountBridgeByFamily(mockAccount.currency!.family, mockAccount.id);
 
   const syncedAccount = await firstValueFrom(
@@ -228,34 +229,34 @@ export const testSync = async (currencyId: string, xpubOrAddress: string) => {
   // if --inputFile we use the addresses from the input file otherwise from `addresses.ts`
   const migrationAddresses = inputFileAddresses.length ? inputFileAddresses : defaultAddresses;
 
-  const syncedAccounts = await Promise.allSettled(
-    migrationAddresses
-      .filter(addresses => {
-        if (currencyIds) {
-          return currencyIds.includes(addresses.currencyId);
-        }
+  const filteredAccounts = migrationAddresses.filter(addresses => {
+    if (currencyIds) {
+      return currencyIds.includes(addresses.currencyId);
+    }
 
-        return true;
-      })
-      .map(async migrationAddress => {
-        return testSync(
-          migrationAddress.currencyId,
-          migrationAddress.address ?? migrationAddress.xpub,
-        );
-      }),
+    return true;
+  });
+
+  const syncedAccounts = await Promise.allSettled(
+    filteredAccounts.map(async migrationAddress => {
+      return testSync(
+        migrationAddress.currencyId,
+        migrationAddress.address ?? migrationAddress.xpub,
+      );
+    }),
   );
 
-  const errors: Error[] = [];
-  const response = syncedAccounts.map(account => {
+  const errors: string[] = [];
+  const response = syncedAccounts.map((account, i) => {
     if (account.status === "fulfilled") {
       return account.value;
     } else {
-      errors.push(account.reason);
+      errors.push(`${filteredAccounts[i].currencyId} ${account.reason.stack}`);
     }
   });
 
   if (errors.length) {
-    throw new Error(errors.map(err => `${err.stack}`).join("\n\n"));
+    throw new Error(errors.map(err => `${err}`).join("\n\n"));
   }
 
   const exec = promisify(childProcess.exec);

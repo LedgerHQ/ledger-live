@@ -53,67 +53,66 @@ export const migrationAddresses: MigrationAddress[] = [
     address: "0202ba6dc98cbe677711a45bf028a03646f9e588996eb223fad2485e8bc391b01581",
   },
   // cosmos
-  // TODO: uncommment when coin config fixed
-  // {
-  //   currencyId: "axelar",
-  //   address: "axelar1gyauvl44q2apn3u3aujm36q8zrj74vry3kglyg",
-  // },
-  // {
-  //   currencyId: "coreum",
-  //   address: "core1sel9ys8a7jlsmrxp9692zfjncnmhxkws0qr3g9",
-  // },
-  // {
-  //   currencyId: "cosmos",
-  //   address: "cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl",
-  // },
-  // {
-  //   currencyId: "desmos",
-  //   address: "desmos1gyauvl44q2apn3u3aujm36q8zrj74vrypqn8c3",
-  // },
+  {
+    currencyId: "axelar",
+    address: "axelar1gyauvl44q2apn3u3aujm36q8zrj74vry3kglyg",
+  },
+  {
+    currencyId: "coreum",
+    address: "core1sel9ys8a7jlsmrxp9692zfjncnmhxkws0qr3g9",
+  },
+  {
+    currencyId: "cosmos",
+    address: "cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl",
+  },
+  {
+    currencyId: "desmos",
+    address: "desmos1gyauvl44q2apn3u3aujm36q8zrj74vrypqn8c3",
+  },
   // {
   //   currencyId: "dydx",
   //   address: "dydx1gyauvl44q2apn3u3aujm36q8zrj74vryupsn07",
   // },
-  // {
-  //   currencyId: "injective",
-  //   address: "inj1hn46zvx43mxq47vsecvw84k5chjhuhwp6d62dt",
-  // },
-  // {
-  //   currencyId: "onomy",
-  //   address: "onomy1gyauvl44q2apn3u3aujm36q8zrj74vry0e2p7v",
-  // },
-  // {
-  //   currencyId: "osmosis",
-  //   address: "osmo10h50supk4en682vrjkc6wkgkpcyxyqn4vxjy2c",
-  // },
-  // {
-  //   currencyId: "persistence",
-  //   address: "persistence1gyauvl44q2apn3u3aujm36q8zrj74vrym5cypd",
-  // },
-  // {
-  //   currencyId: "quicksilver",
-  //   address: "quick1gyauvl44q2apn3u3aujm36q8zrj74vry7uw9km",
-  // },
+  {
+    currencyId: "injective",
+    address: "inj1hn46zvx43mxq47vsecvw84k5chjhuhwp6d62dt",
+  },
+  {
+    currencyId: "onomy",
+    address: "onomy1gyauvl44q2apn3u3aujm36q8zrj74vry0e2p7v",
+  },
+  {
+    currencyId: "osmosis",
+    address: "osmo10h50supk4en682vrjkc6wkgkpcyxyqn4vxjy2c",
+  },
+  {
+    currencyId: "persistence",
+    address: "persistence1gyauvl44q2apn3u3aujm36q8zrj74vrym5cypd",
+  },
+  {
+    currencyId: "quicksilver",
+    address: "quick1gyauvl44q2apn3u3aujm36q8zrj74vry7uw9km",
+  },
   // {
   //   currencyId: "secret_network",
   //   address: "secret1gyauvl44q2apn3u3aujm36q8zrj74vryha27j4",
   // },
-  // {
-  //   currencyId: "sei_network",
-  //   address: "sei1gyauvl44q2apn3u3aujm36q8zrj74vryc50pfg",
-  // },
-  // {
-  //   currencyId: "stargaze",
-  //   address: "stars1gyauvl44q2apn3u3aujm36q8zrj74vrypyf2yc",
-  // },
-  // {
-  //   currencyId: "umee",
-  //   address: "umee1gyauvl44q2apn3u3aujm36q8zrj74vry8wrgtm",
-  // },
-  // {
-  //   currencyId: "polkadot",
-  //   address: "12YA86tRQhHgwU3SSj56aesUKB7GKvdnZTTTXRop4vd3YgDV",
-  // },
+  {
+    currencyId: "sei_network",
+    address: "sei1gyauvl44q2apn3u3aujm36q8zrj74vryc50pfg",
+  },
+  {
+    currencyId: "stargaze",
+    address: "stars1gyauvl44q2apn3u3aujm36q8zrj74vrypyf2yc",
+  },
+  {
+    currencyId: "umee",
+    address: "umee1gyauvl44q2apn3u3aujm36q8zrj74vry8wrgtm",
+  },
+  {
+    currencyId: "polkadot",
+    address: "12YA86tRQhHgwU3SSj56aesUKB7GKvdnZTTTXRop4vd3YgDV",
+  },
   // polkadot
   {
     currencyId: "polkadot",
