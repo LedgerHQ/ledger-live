@@ -15,6 +15,7 @@ import { getMagnitudeAwareRate } from "@ledgerhq/live-common/exchange/swap/webAp
 import { BigNumber } from "bignumber.js";
 import { AccountLike } from "@ledgerhq/types-live";
 import { WrongDeviceForAccount } from "@ledgerhq/errors";
+import { SwapCompleteExchangeError } from "@ledgerhq/live-common/exchange/swap/completeExchange";
 import { useRedirectToSwapHistory } from "~/renderer/screens/exchange/Swap2/utils";
 
 export type Data = {
@@ -187,10 +188,13 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
 
   useEffect(() => {
     if (error) {
-      onCancel(error);
-      if (!(error instanceof WrongDeviceForAccount)) {
-        console.log("[moonpay] close");
-        // onClose?.();
+      if (
+        ![
+          error instanceof WrongDeviceForAccount,
+          error instanceof SwapCompleteExchangeError && error.message === "User refused",
+        ].some(Boolean)
+      ) {
+        onClose?.();
       }
     }
   }, [onCancel, error, onClose]);
