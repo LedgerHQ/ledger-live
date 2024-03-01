@@ -129,9 +129,13 @@ type Args = {
    * must only contain an array of raw accounts
    */
   inputFile?: string;
+  /**
+   * if set, no file will be created
+   */
+  noEmit?: boolean;
 };
 
-const { currencies, inputFile } = args as Args;
+const { currencies, inputFile, noEmit } = args as Args;
 
 const getMockAccount = (currencyId: string, address: string): Account => {
   const currency = getCryptoCurrencyById(currencyId);
@@ -255,11 +259,13 @@ export const testSync = async (currencyId: string, xpubOrAddress: string) => {
   }
 
   const exec = promisify(childProcess.exec);
-  const { stdout } = await exec("git rev-parse --short HEAD");
   const outputContent = JSON.stringify(response, null, 3);
-  const outputFilePath = `${stdout.trim()}-${new Date().getTime()}.json`;
 
-  writeFileSync(outputFilePath, outputContent);
+  if (!noEmit) {
+    const { stdout } = await exec("git rev-parse --short HEAD");
+    const outputFilePath = `${stdout.trim()}-${new Date().getTime()}.json`;
+    writeFileSync(outputFilePath, outputContent);
+  }
 
   return response;
 })();
