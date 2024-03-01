@@ -7,9 +7,9 @@ import { getAbandonSeedAddress } from "../../../ledgerjs/packages/cryptoassets/l
 export function createFixtureAccount(account?: Partial<PolkadotAccount>): PolkadotAccount {
   const currency = listCryptoCurrencies(true).find(c => c.id === "polkadot")!;
 
-  const polkadotResources: PolkadotResources = {
+  const polkadotResources: PolkadotResources = account?.polkadotResources || {
     controller: undefined,
-    stash: undefined,
+    stash: account?.polkadotResources?.stash || undefined,
     nonce: faker.number.int(100_000),
     lockedBalance: new BigNumber(faker.string.numeric()),
     unlockedBalance: new BigNumber(faker.string.numeric()),
