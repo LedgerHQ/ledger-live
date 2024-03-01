@@ -24,12 +24,12 @@ import {
 } from "@ledgerhq/live-countervalues-react";
 import { getAccountBridge, getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
-import { find, first, mergeMap, reduce } from "rxjs/operators";
+import { find, first, ignoreElements, mergeMap, reduce } from "rxjs/operators";
 import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
 import { Account } from "@ledgerhq/types-live";
 import { CryptoCurrency, Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { promiseAllBatched } from "@ledgerhq/live-common/promise";
-import { Observable, lastValueFrom, tap } from "rxjs";
+import { Observable, concat, from, lastValueFrom, tap } from "rxjs";
 import BigNumber from "bignumber.js";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 
@@ -101,14 +101,17 @@ function HeadlessAddAccounts({
       const currency = getCryptoCurrencyById(String(currencyId));
       const currencyBridge = getCurrencyBridge(currency);
       const sub = appForCurrency(deviceId, currency, () =>
-        currencyBridge.scanAccounts({
-          currency,
-          deviceId,
-          syncConfig: {
-            paginationConfig: {},
-            blacklistedTokenIds: [],
-          },
-        }),
+        concat(
+          from(bridgeCache.prepareCurrency(currency)).pipe(ignoreElements()),
+          currencyBridge.scanAccounts({
+            currency,
+            deviceId,
+            syncConfig: {
+              paginationConfig: {},
+              blacklistedTokenIds: [],
+            },
+          }),
+        ),
       ).subscribe({
         next: event => {
           if (event.type === "discovered") {
