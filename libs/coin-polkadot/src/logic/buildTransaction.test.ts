@@ -1,8 +1,6 @@
-import BigNumber from "bignumber.js";
-import { cryptocurrenciesById } from "@ledgerhq/cryptoassets";
-import { PolkadotAccount, PolkadotOperationMode, Transaction } from "../types";
-import { buildTransaction } from "./buildTransaction";
 import { TypeRegistry } from "@polkadot/types";
+import { buildTransaction } from "./buildTransaction";
+import { createFixtureAccount, createFixtureTransaction } from "../types/model.fixture";
 
 const registry = new TypeRegistry();
 
@@ -58,8 +56,8 @@ describe("buildTransaction", () => {
 
   it("returns unsigned with account address provided", async () => {
     // GIVEN
-    const account = createAccount();
-    const transaction = createTransaction();
+    const account = createFixtureAccount();
+    const transaction = createFixtureTransaction({ mode: "send" });
 
     // WHEN
     const result = await buildTransaction(account, transaction);
@@ -103,78 +101,3 @@ describe("buildTransaction", () => {
     expect(result).toEqual(expectedResult);
   });
 });
-
-function createAccount(): PolkadotAccount {
-  return {
-    type: "Account",
-    id: "12",
-    seedIdentifier: "seed",
-    derivationMode: "",
-    index: 0,
-    freshAddress: "0xff",
-    freshAddressPath: "/path/to",
-    // freshAddressPath: "44'/60'/0'/0/0",
-    freshAddresses: [],
-    name: "polkadot account",
-    starred: false,
-    used: false,
-    balance: BigNumber("0"),
-    spendableBalance: BigNumber("0"),
-    creationDate: new Date(),
-    blockHeight: 0,
-    currency: cryptocurrenciesById["polkadot"],
-    unit: {
-      name: "dot",
-      code: "DOT",
-      magnitude: 5,
-    },
-    operationsCount: 0,
-    operations: [],
-    pendingOperations: [],
-    lastSyncDate: new Date(),
-    balanceHistoryCache: {
-      HOUR: {
-        balances: [],
-        latestDate: undefined,
-      },
-      DAY: {
-        balances: [],
-        latestDate: undefined,
-      },
-      WEEK: {
-        balances: [],
-        latestDate: undefined,
-      },
-    },
-    swapHistory: [],
-    polkadotResources: {
-      controller: null,
-      stash: null,
-      nonce: 0,
-      lockedBalance: BigNumber("0"),
-      unlockedBalance: BigNumber("0"),
-      unlockingBalance: BigNumber("0"),
-      unlockings: null,
-      nominations: null,
-      numSlashingSpans: 0,
-    },
-  };
-}
-
-function createTransaction(mode: PolkadotOperationMode = "send"): Transaction {
-  return {
-    amount: BigNumber("0"),
-    recipient: "",
-    // useAllAmount?: boolean;
-    // subAccountId?: string | null | undefined;
-    // feesStrategy?: "slow" | "medium" | "fast" | "custom" | null;
-
-    mode: mode,
-    family: "polkadot",
-    fees: null,
-    validators: undefined,
-    era: null,
-    rewardDestination: null,
-    numSlashingSpans: null,
-  };
-}

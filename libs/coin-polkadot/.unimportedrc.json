@@ -3,11 +3,13 @@
     "src/bridge/index.ts",
     "src/bridge/deviceTransactionConfig.ts",
     "src/bridge/formatters.ts",
+    "src/network/sidecar.fixture.ts",
     "src/signer/index.ts",
     "src/test/cli.ts",
     "src/test/index.ts",
     "src/test/specs.ts",
     "src/types/errors.ts",
+    "src/types/model.fixture.ts",
     "src/index.ts"
   ],
   "ignoreUnresolved": []

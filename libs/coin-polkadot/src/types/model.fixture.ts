@@ -1,8 +1,9 @@
 import BigNumber from "bignumber.js";
 import { faker } from "@faker-js/faker";
 import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/currencies";
-import { PolkadotAccount, PolkadotResources, Transaction } from "../types";
+import { PolkadotAccount, PolkadotOperationExtra, PolkadotResources, Transaction } from "../types";
 import { getAbandonSeedAddress } from "../../../ledgerjs/packages/cryptoassets/lib";
+import { Operation } from "@ledgerhq/types-live";
 
 export function createFixtureAccount(account?: Partial<PolkadotAccount>): PolkadotAccount {
   const currency = listCryptoCurrencies(true).find(c => c.id === "polkadot")!;
@@ -81,5 +82,28 @@ export function createFixtureTransaction(tx?: Partial<Transaction>): Transaction
     era: tx?.era || undefined,
     rewardDestination: tx?.rewardDestination || undefined,
     numSlashingSpans: tx?.numSlashingSpans || undefined,
+  };
+}
+
+export function createFixtureOperation(): Operation {
+  const extra: PolkadotOperationExtra = {
+    transferAmount: new BigNumber(0),
+    palletMethod: "",
+  };
+
+  return {
+    id: faker.string.uuid(),
+    hash: faker.string.uuid(),
+    type: "ACTIVATE",
+    value: new BigNumber(0),
+    fee: new BigNumber(0),
+    // senders & recipients addresses
+    senders: [],
+    recipients: [],
+    blockHeight: undefined,
+    blockHash: undefined,
+    accountId: faker.string.uuid(),
+    date: faker.date.past(),
+    extra,
   };
 }
