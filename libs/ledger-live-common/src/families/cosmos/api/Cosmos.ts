@@ -77,7 +77,6 @@ export class CosmosAPI {
     } catch (e) {
       const error: any = e;
       if (error.isAxiosError) {
-        console.error(error.toJSON());
         throw new Error(`"Error during cosmos synchronization: "${error.toJSON()}`);
       } else {
         throw new Error(`"Error during cosmos synchronization: "${(e as Error).message}`);
