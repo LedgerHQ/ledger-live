@@ -1,8 +1,13 @@
-import { readFileSync, existsSync } from "fs";
+/* eslint-disable no-console */
+import { readFileSync, existsSync, writeFileSync } from "fs";
 import BigNumber from "bignumber.js";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
 import { argv } from "yargs";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { promisify } from "util";
+import childProcess from "child_process";
+
 import {
   findCryptoCurrencyById,
   getCryptoCurrencyById,
@@ -12,7 +17,6 @@ import { encodeAccountId, toAccountRaw } from "../../account";
 import { firstValueFrom, reduce } from "rxjs";
 import { getAccountBridgeByFamily, getCurrencyBridge } from "../../bridge/impl";
 import { MigrationAddress, migrationAddresses as defaultAddresses } from "./addresses";
-import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { liveConfig } from "../../config/sharedConfig";
 
 // mandatory to run the script
@@ -251,14 +255,14 @@ export const testSync = async (currencyId: string, xpubOrAddress: string) => {
   }
 
   if (inputFile) {
-    // describe("Account Migration", () => {
-    //   it("should have the same information", () => {
-    //     expect(JSON.stringify(response)).toStrictEqual(JSON.stringify(inputFileAddresses));
-    //   });
-    // });
+    // compare the file with the current output
   } else {
-    // eslint-disable-next-line no-console
-    console.log(JSON.stringify(response, null, 3));
+    const exec = promisify(childProcess.exec);
+    const { stdout } = await exec("git rev-parse --short HEAD");
+    const outputContent = JSON.stringify(response, null, 3);
+    const outputFilePath = `${stdout.trim()}-${new Date().getTime()}.json`;
+    writeFileSync(outputFilePath, outputContent);
+    console.log(outputFilePath);
   }
 
   return response;
