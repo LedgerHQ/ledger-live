@@ -10,9 +10,8 @@ on:
           description: "The reference branch where the migration is made from. Will be develop by default"
           required: false
 
-    push:
-      branches:
-        - "feat/live-11055-migration-account-test"
+    pull_request:
+
 env:
   REF_SYNC_FILE_NAME: ref-sync.json
   CURRENT_BRANCH_SYNC_FILE_NAME: commit-sync.json
@@ -45,14 +44,14 @@ jobs:
               pnpm i
               pnpm build:llc
 
-          - name: Run synchronisation on develop
+          - name: Run synchronisation on target branch
             if: ${{ inputs.currencies }}
             run: |
                 OUTPUT=$(pnpm common test-account-migration --currencies ${{ inputs.currencies }})
                 echo $OUTPUT > $REF_SYNC_FILE_NAME
                 cat $REF_SYNC_FILE_NAME
 
-          - name: Run synchronisation on develop
+          - name: Run synchronisation on target branch
             if: ${{ !inputs.currencies }}
             run: |
               OUTPUT=$(pnpm common test-account-migration)
