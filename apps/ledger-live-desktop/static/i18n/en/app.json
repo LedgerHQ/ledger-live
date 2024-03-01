@@ -5537,6 +5537,14 @@
       "title": "Something went wrong",
       "description": "Please check that your hardware wallet is set up with the recovery phrase or passphrase associated to the selected account."
     },
+    "WrongDeviceForAccountPayout": {
+      "title": "Something went wrong",
+      "description":  "This receiving account does not belong to your device. Please change and retry."
+    },
+    "WrongDeviceForAccountRefund": {
+      "title": "Something went wrong",
+      "description":  "This receiving account does not belong to your device for the refund. Please change and retry."
+    },
     "DeviceAppVerifyNotSupported": {
       "title": "App update required",
       "description": "Uninstall and reinstall the {{managerAppName}} app in My Ledger"
