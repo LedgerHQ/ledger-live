@@ -255,7 +255,6 @@ const styles = StyleSheet.create({
   root: {},
   container: {
     flex: 1,
-    flexGrow: 1,
     paddingHorizontal: 16,
     alignItems: "stretch",
   },
@@ -297,6 +296,7 @@ const styles = StyleSheet.create({
   },
   amountWrapper: {
     flex: 1,
+    flexGrow: 1,
   },
   switch: {
     opacity: 0.99,

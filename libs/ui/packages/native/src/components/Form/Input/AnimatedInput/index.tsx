@@ -20,7 +20,6 @@ type InputContainerProps = {
 const InputContainer = styled(View)<InputContainerProps>`
   position: relative;
   box-sizing: border-box;
-  height: fit-content;
 `;
 
 const AnimatedInput = (
@@ -54,9 +53,6 @@ const AnimatedInput = (
         onBlur={onBlur}
         error={error}
         value={value as string}
-        containerStyle={{
-          height: "100%",
-        }}
         color={theme ? inputTextColor[inputStatus]({ theme }) : "neutral.c100"}
         inputContainerStyle={{
           backgroundColor: "none",

@@ -215,7 +215,6 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
         <KeyboardView
           style={{
             flex: 1,
-            flexGrow: 1,
           }}
         >
           {stuckAccountAndOperation?.operation ? (
@@ -289,8 +288,6 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
                 <Alert type="warning">{t("send.pendingTxWarning")}</Alert>
               </View>
             ) : null}
-          </NavigationScrollView>
-          <View style={styles.container}>
             {(!isDomainResolutionEnabled || !isCurrencySupported) &&
             transaction.recipient &&
             !(error || warning) ? (
@@ -298,6 +295,8 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
                 <Alert type="primary">{t("send.recipient.verifyAddress")}</Alert>
               </View>
             ) : null}
+          </NavigationScrollView>
+          <View style={styles.container}>
             <Button
               testID="recipient-continue-button"
               event="SendRecipientContinue"
@@ -338,11 +337,11 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
   infoBox: {
-    marginBottom: 24,
+    marginTop: 24,
   },
   pendingIncomingTxWarning: {
     marginBottom: 8,
-    marginTop: 8,
+    marginTop: 24,
   },
   separatorContainer: {
     marginTop: 32,
