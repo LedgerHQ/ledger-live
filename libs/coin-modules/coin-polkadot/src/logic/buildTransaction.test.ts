@@ -4,21 +4,15 @@ import { createFixtureAccount, createFixtureTransaction } from "../types/model.f
 
 const registry = new TypeRegistry();
 
-const extrinsicsMethod = jest.fn().mockImplementation(() => ({
+const mockExtrinsicsMethod = jest.fn().mockImplementation(() => ({
   toHex: () => "Hex 4 extrinsicsMethod",
 }));
-(extrinsicsMethod as any).meta = {
+(mockExtrinsicsMethod as any).meta = {
   args: [],
 };
 
-const transactionParams = {
-  blockHash: "0xb10c4a54",
-  genesisHash: "0x83835154a54",
-  blockNumber: 12,
-  specVersion: 42,
-  tip: 8,
-  transactionVersion: 22,
-};
+const mockGetTransactionParams = jest.fn();
+
 jest.mock("../network", () => {
   return {
     getRegistry: () => {
@@ -26,52 +20,55 @@ jest.mock("../network", () => {
         registry: registry,
         extrinsics: {
           balances: {
-            transferKeepAlive: extrinsicsMethod,
+            transferKeepAlive: mockExtrinsicsMethod,
           },
         },
       });
     },
-    getTransactionParams: (): Promise<Record<string, any>> => {
-      return Promise.resolve(transactionParams);
-    },
+    getTransactionParams: () => mockGetTransactionParams(),
   };
 });
 
 describe("buildTransaction", () => {
-  const mockCodec = jest.fn();
-  const mockRegistry = jest.spyOn(registry, "createType");
-
-  beforeEach(() => {
-    mockRegistry.mockImplementation((type: string, ..._params: unknown[]) => {
-      mockCodec.mockReturnValueOnce({
-        toHex: () => `HexCodec 4 ${type}`,
-      });
-      return new mockCodec();
-    });
-  });
+  const spyRegistry = jest.spyOn(registry, "createType");
 
   afterEach(() => {
-    mockRegistry.mockClear();
+    spyRegistry.mockClear();
   });
 
   it("returns unsigned with account address provided", async () => {
     // GIVEN
     const account = createFixtureAccount();
     const transaction = createFixtureTransaction({ mode: "send" });
+    const mockCodec = jest.fn();
+    spyRegistry.mockImplementation((type: string) => {
+      mockCodec.mockReturnValueOnce({
+        toHex: () => `HexCodec 4 ${type}`,
+      });
+      return new mockCodec();
+    });
+    mockGetTransactionParams.mockResolvedValueOnce({
+      blockHash: "0xb10c4a54",
+      genesisHash: "0x83835154a54",
+      blockNumber: 12,
+      specVersion: 42,
+      tip: 8,
+      transactionVersion: 22,
+    });
 
     // WHEN
     const result = await buildTransaction(account, transaction);
 
     // THEN
-    expect(mockRegistry).toHaveBeenCalledTimes(6);
-    expect(mockRegistry).toHaveBeenCalledWith("BlockNumber", 12);
-    expect(mockRegistry).toHaveBeenCalledWith("ExtrinsicEra", {
+    expect(spyRegistry).toHaveBeenCalledTimes(6);
+    expect(spyRegistry).toHaveBeenCalledWith("BlockNumber", 12);
+    expect(spyRegistry).toHaveBeenCalledWith("ExtrinsicEra", {
       current: 12,
       period: 64,
     });
-    expect(mockRegistry).toHaveBeenCalledWith("u32", 42);
-    expect(mockRegistry).toHaveBeenCalledWith("Compact<Balance>", 8);
-    expect(mockRegistry).toHaveBeenCalledWith("u32", 22);
+    expect(spyRegistry).toHaveBeenCalledWith("u32", 42);
+    expect(spyRegistry).toHaveBeenCalledWith("Compact<Balance>", 8);
+    expect(spyRegistry).toHaveBeenCalledWith("u32", 22);
     expect(mockCodec).toHaveBeenCalledTimes(6);
     const expectedResult = {
       registry: registry,
