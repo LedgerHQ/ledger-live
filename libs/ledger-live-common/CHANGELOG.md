@@ -1,5 +1,43 @@
 # @ledgerhq/live-common
 
+## 33.7.0-nightly.3
+
+### Patch Changes
+
+- [#6233](https://github.com/LedgerHQ/ledger-live/pull/6233) [`225ded7`](https://github.com/LedgerHQ/ledger-live/commit/225ded78749c538d3e398f1c80c0edfd9811d3b2) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - Remove errors only inteded for backend
+
+- [#6327](https://github.com/LedgerHQ/ledger-live/pull/6327) [`2ae5ffd`](https://github.com/LedgerHQ/ledger-live/commit/2ae5ffd6e9835bf180cb25cd4ac778f076000da3) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Safer solana hydrate
+
+- Updated dependencies [[`26b3a5d`](https://github.com/LedgerHQ/ledger-live/commit/26b3a5d7d6e11efc226403707d683f3d0098a1c1)]:
+  - @ledgerhq/errors@6.16.3-nightly.0
+  - @ledgerhq/coin-algorand@0.4.0-nightly.2
+  - @ledgerhq/coin-evm@0.13.0-nightly.2
+  - @ledgerhq/coin-framework@0.12.0-nightly.1
+  - @ledgerhq/coin-near@0.3.11-nightly.2
+  - @ledgerhq/coin-polkadot@0.6.0-nightly.2
+  - @ledgerhq/devices@8.2.2-nightly.0
+  - @ledgerhq/hw-app-algorand@6.28.5-nightly.0
+  - @ledgerhq/hw-app-cosmos@6.29.5-nightly.0
+  - @ledgerhq/hw-app-eth@6.35.7-nightly.1
+  - @ledgerhq/hw-app-exchange@0.4.6-nightly.0
+  - @ledgerhq/hw-app-polkadot@6.28.5-nightly.0
+  - @ledgerhq/hw-app-solana@7.1.5-nightly.0
+  - @ledgerhq/hw-app-vet@0.1.6-nightly.1
+  - @ledgerhq/hw-transport@6.30.5-nightly.0
+  - @ledgerhq/hw-transport-node-speculos@6.28.5-nightly.0
+  - @ledgerhq/hw-transport-node-speculos-http@6.28.5-nightly.0
+  - @ledgerhq/live-network@1.2.0-nightly.1
+  - @ledgerhq/live-countervalues@0.1.3-nightly.2
+  - @ledgerhq/live-countervalues-react@0.1.3-nightly.2
+  - @ledgerhq/live-nft@0.2.2-nightly.2
+  - @ledgerhq/hw-app-btc@10.2.3-nightly.0
+  - @ledgerhq/hw-app-near@6.28.6-nightly.0
+  - @ledgerhq/hw-app-str@6.28.5-nightly.0
+  - @ledgerhq/hw-app-tezos@6.28.5-nightly.0
+  - @ledgerhq/hw-app-trx@6.28.5-nightly.0
+  - @ledgerhq/hw-app-xrp@6.28.5-nightly.0
+  - @ledgerhq/hw-transport-mocker@6.28.5-nightly.0
+
 ## 33.7.0-nightly.2
 
 ### Patch Changes

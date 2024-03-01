@@ -1,5 +1,11 @@
 # @ledgerhq/errors
 
+## 6.16.3-nightly.0
+
+### Patch Changes
+
+- [#6317](https://github.com/LedgerHQ/ledger-live/pull/6317) [`26b3a5d`](https://github.com/LedgerHQ/ledger-live/commit/26b3a5d7d6e11efc226403707d683f3d0098a1c1) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix cosmos sequence number error message
+
 ## 6.16.2
 
 ### Patch Changes

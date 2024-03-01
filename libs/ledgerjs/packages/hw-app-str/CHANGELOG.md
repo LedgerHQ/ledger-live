@@ -1,5 +1,12 @@
 # @ledgerhq/hw-app-str
 
+## 6.28.5-nightly.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.30.5-nightly.0
+
 ## 6.28.4
 
 ### Patch Changes

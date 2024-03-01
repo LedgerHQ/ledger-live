@@ -1,5 +1,27 @@
 # live-mobile
 
+## 3.41.0-nightly.3
+
+### Patch Changes
+
+- [#6317](https://github.com/LedgerHQ/ledger-live/pull/6317) [`26b3a5d`](https://github.com/LedgerHQ/ledger-live/commit/26b3a5d7d6e11efc226403707d683f3d0098a1c1) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix cosmos sequence number error message
+
+- Updated dependencies [[`225ded7`](https://github.com/LedgerHQ/ledger-live/commit/225ded78749c538d3e398f1c80c0edfd9811d3b2), [`26b3a5d`](https://github.com/LedgerHQ/ledger-live/commit/26b3a5d7d6e11efc226403707d683f3d0098a1c1), [`2ae5ffd`](https://github.com/LedgerHQ/ledger-live/commit/2ae5ffd6e9835bf180cb25cd4ac778f076000da3)]:
+  - @ledgerhq/live-common@33.7.0-nightly.3
+  - @ledgerhq/errors@6.16.3-nightly.0
+  - @ledgerhq/coin-evm@0.13.0-nightly.2
+  - @ledgerhq/coin-framework@0.12.0-nightly.1
+  - @ledgerhq/domain-service@1.1.19-nightly.1
+  - @ledgerhq/devices@8.2.2-nightly.0
+  - @ledgerhq/hw-transport@6.30.5-nightly.0
+  - @ledgerhq/hw-transport-http@6.29.5-nightly.0
+  - @ledgerhq/react-native-hid@6.31.5-nightly.0
+  - @ledgerhq/react-native-hw-transport-ble@6.32.4-nightly.0
+  - @ledgerhq/live-countervalues@0.1.3-nightly.2
+  - @ledgerhq/live-countervalues-react@0.1.3-nightly.2
+  - @ledgerhq/live-nft@0.2.2-nightly.2
+  - @ledgerhq/live-nft-react@0.2.2-nightly.2
+
 ## 3.41.0-nightly.2
 
 ### Patch Changes

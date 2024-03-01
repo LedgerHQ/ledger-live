@@ -1,5 +1,13 @@
 # @ledgerhq/live-nft
 
+## 0.2.2-nightly.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@0.12.0-nightly.1
+  - @ledgerhq/live-network@1.2.0-nightly.1
+
 ## 0.2.2-nightly.1
 
 ### Patch Changes
