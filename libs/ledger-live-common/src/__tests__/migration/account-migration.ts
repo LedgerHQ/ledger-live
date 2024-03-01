@@ -19,6 +19,8 @@ import { getAccountBridgeByFamily, getCurrencyBridge } from "../../bridge/impl";
 import { MigrationAddress, migrationAddresses as defaultAddresses } from "./addresses";
 import { liveConfig } from "../../config/sharedConfig";
 
+console.log("HELLO FROM DIFF CHECK BRANCH");
+
 // mandatory to run the script
 setSupportedCurrencies([
   "bitcoin",
