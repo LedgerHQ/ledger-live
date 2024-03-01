@@ -1,9 +1,10 @@
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 
-export const migrationAddresses: (
+export type MigrationAddress =
   | { currencyId: CryptoCurrencyId; address: string; xpub?: never }
-  | { currencyId: CryptoCurrencyId; xpub: string; address?: never }
-)[] = [
+  | { currencyId: CryptoCurrencyId; xpub: string; address?: never };
+
+export const migrationAddresses: MigrationAddress[] = [
   {
     currencyId: "ethereum",
     address: "0x61e52B436e6423e850D29569Eda0C2Fb21567ba9",
