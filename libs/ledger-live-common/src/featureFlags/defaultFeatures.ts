@@ -84,7 +84,6 @@ export const DEFAULT_FEATURES: Features = {
   objkt: DEFAULT_FEATURE,
   portfolioExchangeBanner: DEFAULT_FEATURE,
   postOnboardingAssetsTransfer: DEFAULT_FEATURE,
-  postOnboardingClaimNft: DEFAULT_FEATURE,
   syncOnboarding: DEFAULT_FEATURE,
   walletConnectEntryPoint: DEFAULT_FEATURE,
   counterValue: DEFAULT_FEATURE,

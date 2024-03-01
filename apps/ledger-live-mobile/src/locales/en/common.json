@@ -6395,25 +6395,6 @@
       "title": "My NFTs"
     }
   },
-  "claimNft": {
-    "welcomePage": {
-      "title": "Free access to the Earth's most secure NFT marketplace",
-      "description": {
-        "title": "Ledger Infinity Pass gives you access to:",
-        "1": "First dibs on the latest NFT drops",
-        "2": "The most secure NFT marketplace ever",
-        "3": "A free NFT for you to claim"
-      },
-      "claimButton": "Claim Ledger Market Pass",
-      "backButton": "I've already claimed my Market Pass"
-    },
-    "qrScan": {
-      "title": "Scan QR code on your Ledger Market Pass",
-      "description": {
-        "1": "You will find your exclusive Ledger Market Pass in the box of your Ledger Stax.\n\nStart by positioning the QR code on the back of the Pass in the frame. Use a well lit area and a simple light background."
-      }
-    }
-  },
   "postOnboarding": {
     "hub": {
       "title": "Next up, use your {{productName}} to:",
@@ -6432,13 +6413,6 @@
         "titleCompleted": "Lock screen picture set",
         "description": "Choose any digital art or picture to set as the lock screen.",
         "popupLabel": "Lockscreen set"
-      },
-      "claimNft": {
-        "title": "Claim the Infinity NFT",
-        "titleCompleted": "Infinity NFT claimed",
-        "description": "This NFT gets you access to [ Ledger ] Market, our NFT marketplace.",
-        "popupLabel": "NFT claimed",
-        "tagLabel": "Gift"
       },
       "assetsTransfer": {
         "title": "Transfer your assets to Ledger",

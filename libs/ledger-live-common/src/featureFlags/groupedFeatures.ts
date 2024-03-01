@@ -13,7 +13,6 @@ export const groupedFeatures: Record<
       "deviceInitialApps",
       "llmNewDeviceSelection",
       "postOnboardingAssetsTransfer",
-      "postOnboardingClaimNft",
       "staxWelcomeScreen",
       "syncOnboarding",
       "llmNewFirmwareUpdateUx",
