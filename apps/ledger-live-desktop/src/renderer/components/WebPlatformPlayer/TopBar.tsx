@@ -176,10 +176,9 @@ export const TopBar = ({ manifest, onClose, config = {}, webviewAPIRef, webviewS
   }, [webviewAPIRef]);
 
   const currencies = useMemo(() => {
-    return matchCurrencies(
-      allCurrenciesAndTokens,
-      manifest.currencies === "*" ? ["**"] : manifest.currencies,
-    );
+    return manifest.currencies === "*"
+      ? allCurrenciesAndTokens
+      : matchCurrencies(allCurrenciesAndTokens, manifest.currencies);
   }, [manifest.currencies]);
 
   const onSelectAccount = useCallback(() => {
