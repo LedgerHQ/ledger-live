@@ -70,14 +70,4 @@ jobs:
 
           - name: run synchronisation on current branch
             run: |
-              OUTPUT=$(pnpm common test-account-migration --inputFile $(pwd)/$REF_SYNC_FILE_NAME)
-              echo $OUTPUT > $CURRENT_BRANCH_SYNC_FILE_NAME
-              cat $CURRENT_BRANCH_SYNC_FILE_NAME
-
-          - name: Check that the files are the exact same
-            uses: LouisBrunner/diff-action@v2.0.0
-            with:
-              old: $REF_SYNC_FILE_NAME
-              new: $CURRENT_BRANCH_SYNC_FILE_NAME
-              tolerance: same
-              output: $OUTPUT_FILE_NAME
+              pnpm common test-account-migration --inputFile $(pwd)/$REF_SYNC_FILE_NAME

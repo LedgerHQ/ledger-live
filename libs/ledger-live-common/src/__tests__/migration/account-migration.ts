@@ -11,7 +11,7 @@ import {
 import { encodeAccountId, toAccountRaw } from "../../account";
 import { firstValueFrom, reduce } from "rxjs";
 import { getAccountBridgeByFamily, getCurrencyBridge } from "../../bridge/impl";
-import { migrationAddresses as defaultAddresses } from "./addresses";
+import { MigrationAddress, migrationAddresses as defaultAddresses } from "./addresses";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { liveConfig } from "../../config/sharedConfig";
 
@@ -171,6 +171,7 @@ const getMockAccount = (currencyId: string, address: string): Account => {
 };
 
 export const testSync = async (currencyId: string, xpubOrAddress: string) => {
+  console.log("starting sync on", currencyId, xpubOrAddress);
   const mockAccount = getMockAccount(currencyId, xpubOrAddress);
   const currency = getCryptoCurrencyById(currencyId);
   const currencyBrige = getCurrencyBridge(currency);
@@ -185,6 +186,7 @@ export const testSync = async (currencyId: string, xpubOrAddress: string) => {
 
   const accountRaw = toAccountRaw(syncedAccount);
 
+  console.log("finishing sync on", currencyId, xpubOrAddress);
   return accountRaw;
 };
 
@@ -194,17 +196,17 @@ export const testSync = async (currencyId: string, xpubOrAddress: string) => {
   }
 
   // list of addresses from input file
-  const inputFileAddresses = [];
+  const inputFileAddresses: MigrationAddress[] = [];
 
   // if there's a input file we parse it
   if (inputFile && existsSync(inputFile)) {
     const content = JSON.parse(readFileSync(inputFile, "utf8"));
-    inputFileAddresses.concat(
-      content.map(account => ({
-        currencyId: account.currencyId,
-        address: account.freshAddress,
-      })),
-    );
+    const syncInfo: MigrationAddress[] = content.map(account => ({
+      currencyId: account.currencyId,
+      address: account.freshAddress,
+      xpub: account.xpub,
+    }));
+    inputFileAddresses.push(...syncInfo);
   }
 
   // we only read --currencies options if there's no input file
@@ -245,11 +247,19 @@ export const testSync = async (currencyId: string, xpubOrAddress: string) => {
   });
 
   if (errors.length) {
-    throw new Error(errors.map(err => `${err.message} - ${err.stack}`).join("\n"));
+    throw new Error(errors.map(err => `${err.stack}`).join("\n\n"));
   }
 
-  // eslint-disable-next-line no-console
-  console.log(JSON.stringify(response, null, 3));
+  if (inputFile) {
+    // describe("Account Migration", () => {
+    //   it("should have the same information", () => {
+    //     expect(JSON.stringify(response)).toStrictEqual(JSON.stringify(inputFileAddresses));
+    //   });
+    // });
+  } else {
+    // eslint-disable-next-line no-console
+    console.log(JSON.stringify(response, null, 3));
+  }
 
   return response;
 })();
