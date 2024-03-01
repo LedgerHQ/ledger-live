@@ -1269,9 +1269,6 @@ importers:
       '@types/ws':
         specifier: ^8.5.3
         version: 8.5.3
-      allure-commandline:
-        specifier: ^2.26.0
-        version: 2.26.0
       allure-js-commons:
         specifier: 1.3.2
         version: 1.3.2
@@ -27502,11 +27499,6 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: false
-
-  /allure-commandline@2.26.0:
-    resolution: {integrity: sha512-udKAxlKUfhD6iH3YuR8nPF72nxHYGJItqgqSvI1pJCLlO1hJHhctfwkQbtKgXugRB6d0Uf8AYUSIXobojRVPOg==}
-    hasBin: true
-    dev: true
 
   /allure-js-commons@1.3.2:
     resolution: {integrity: sha512-FTmoqP36ZjHFT4iLdYamyCFhyj1jqD6BIdiZ5pBlyafDJrFRV76XIXNxwRqbHpSw40o1vHzYi4vGpmREnhnHVw==}
