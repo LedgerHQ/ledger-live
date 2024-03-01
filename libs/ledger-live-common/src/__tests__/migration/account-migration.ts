@@ -10,7 +10,7 @@ import {
 } from "../../currencies";
 import { encodeAccountId, toAccountRaw } from "../../account";
 import { firstValueFrom, reduce } from "rxjs";
-import { getAccountBridgeByFamily } from "../../bridge/impl";
+import { getAccountBridgeByFamily, getCurrencyBridge } from "../../bridge/impl";
 import { migrationAddresses as defaultAddresses } from "./addresses";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { liveConfig } from "../../config/sharedConfig";
@@ -172,6 +172,9 @@ const getMockAccount = (currencyId: string, address: string): Account => {
 
 export const testSync = async (currencyId: string, xpubOrAddress: string) => {
   const mockAccount = getMockAccount(currencyId, xpubOrAddress);
+  const currency = getCryptoCurrencyById(currencyId);
+  const currencyBrige = getCurrencyBridge(currency);
+  await currencyBrige.preload(currency);
   const accountBrige = getAccountBridgeByFamily(mockAccount.currency!.family, mockAccount.id);
 
   const syncedAccount = await firstValueFrom(

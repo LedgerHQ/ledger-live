@@ -32,6 +32,7 @@ const currencyBridge: CurrencyBridge = {
   getPreloadStrategy,
   preload: async (currency: CryptoCurrency) => {
     const config = getCurrencyConfiguration(currency);
+    console.log({ cosmosConfig: config });
     const cosmosValidatorsManager = new CosmosValidatorsManager(
       getCryptoCurrencyById(currency.id),
       { endPoint: (config as unknown as CosmosCurrencyConfig).lcd },
@@ -40,6 +41,7 @@ const currencyBridge: CurrencyBridge = {
     setCosmosPreloadData(currency.id, {
       validators,
     });
+
     return Promise.resolve({
       validators,
       config,
