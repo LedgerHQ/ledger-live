@@ -81,7 +81,7 @@ const NftLinksPanel = ({ nftContract, nftId, links, isOpen, onClose, nftMetadata
   const knownDeviceModelIds = useSelector(knownDeviceModelIdsSelector);
 
   const showCustomImageButton =
-    customLockScreenSupportedDeviceModelIds.find(
+    customLockScreenSupportedDeviceModelIds.some(
       deviceModelId => knownDeviceModelIds[deviceModelId],
     ) && !!customImageUri;
 

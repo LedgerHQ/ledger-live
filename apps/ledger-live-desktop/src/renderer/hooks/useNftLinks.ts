@@ -171,7 +171,7 @@ export default (
     const metadataLinks = linksPerCurrency[account.currency.id]?.(t, metadata?.links) || [];
     return [
       ...metadataLinks,
-      ...(devicesModelList?.find(deviceModelId => isCustomLockScreenSupported(deviceModelId)) &&
+      ...(devicesModelList?.some(deviceModelId => isCustomLockScreenSupported(deviceModelId)) &&
       customImageUri
         ? [customImage]
         : []),
