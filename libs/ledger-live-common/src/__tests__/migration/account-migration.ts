@@ -254,16 +254,12 @@ export const testSync = async (currencyId: string, xpubOrAddress: string) => {
     throw new Error(errors.map(err => `${err.stack}`).join("\n\n"));
   }
 
-  if (inputFile) {
-    // compare the file with the current output
-  } else {
-    const exec = promisify(childProcess.exec);
-    const { stdout } = await exec("git rev-parse --short HEAD");
-    const outputContent = JSON.stringify(response, null, 3);
-    const outputFilePath = `${stdout.trim()}-${new Date().getTime()}.json`;
-    writeFileSync(outputFilePath, outputContent);
-    console.log(outputFilePath);
-  }
+  const exec = promisify(childProcess.exec);
+  const { stdout } = await exec("git rev-parse --short HEAD");
+  const outputContent = JSON.stringify(response, null, 3);
+  const outputFilePath = `${stdout.trim()}-${new Date().getTime()}.json`;
+
+  writeFileSync(outputFilePath, outputContent);
 
   return response;
 })();

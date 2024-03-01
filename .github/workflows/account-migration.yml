@@ -54,9 +54,7 @@ jobs:
           - name: Run synchronisation on target branch
             if: ${{ !inputs.currencies }}
             run: |
-              OUTPUT=$(pnpm common test-account-migration)
-              echo $OUTPUT > $REF_SYNC_FILE_NAME
-              cat $REF_SYNC_FILE_NAME
+              pnpm common test-account-migration
 
           - uses: actions/checkout@v4
             with:
@@ -70,4 +68,6 @@ jobs:
 
           - name: run synchronisation on current branch
             run: |
-              pnpm common test-account-migration --inputFile $(pwd)/$REF_SYNC_FILE_NAME
+              pnpm common test-account-migration --inputFile $(pwd)/libs/ledger-live-common/$REF_SYNC_FILE_NAME
+          - name: print diff during migratiion
+            run: git --no-pager diff --no-index $(git ls-files --others --exclude-standard)
