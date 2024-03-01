@@ -7,12 +7,14 @@ import UpdateBanner from "../components/UpdateBanner";
 import { State } from "~/reducers/types";
 import { makeMockSettings } from "./shared";
 
+// Mock react-navigation's useRoute and useNavigation
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
   useRoute: jest.fn().mockReturnValue({ params: {} }),
   useNavigation: jest.fn().mockReturnValue({ navigate: jest.fn() }),
 }));
 
+// Mock useLatestFirmware
 jest.mock("@ledgerhq/live-common/device/hooks/useLatestFirmware", () => ({
   useLatestFirmware: jest.fn(),
 }));
@@ -20,14 +22,13 @@ const { useLatestFirmware } = jest.requireMock(
   "@ledgerhq/live-common/device/hooks/useLatestFirmware",
 );
 
+// Mock navigation to new and old update flows
 jest.mock("../utils/navigateToNewUpdateFlow", () => ({
   navigateToNewUpdateFlow: jest.fn(),
 }));
-
 jest.mock("../utils/navigateToOldUpdateFlow", () => ({
   navigateToOldUpdateFlow: jest.fn(),
 }));
-
 const { navigateToNewUpdateFlow } = jest.requireMock("../utils/navigateToNewUpdateFlow");
 const { navigateToOldUpdateFlow } = jest.requireMock("../utils/navigateToOldUpdateFlow");
 

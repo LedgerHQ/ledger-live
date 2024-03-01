@@ -3,16 +3,20 @@ import { useUpdateBannerViewModel } from "./useUpdateBannerViewModel";
 
 /** Brace yourselves for the mocks ... */
 
+// Mock react-navigation
 jest.mock("@react-navigation/native", () => ({
   ...jest.requireActual("@react-navigation/native"),
   useRoute: jest.fn(),
   useNavigation: jest.fn(),
 }));
+
+// Mock react redux's useSelector
 jest.mock("react-redux", () => ({
   ...jest.requireActual("react-redux"),
   useSelector: jest.fn().mockImplementation((selector: () => unknown) => selector()),
 }));
 
+// Mock the selectors
 jest.mock("~/reducers/settings", () => ({
   ...jest.requireActual("~/reducers/settings"),
   lastSeenDeviceSelector: jest.fn(),
@@ -28,6 +32,7 @@ jest.mock("~/reducers/appstate", () => ({
 }));
 const { hasConnectedDeviceSelector } = jest.requireMock("~/reducers/appstate");
 
+// Mock useLatestFirmware
 jest.mock("@ledgerhq/live-common/device/hooks/useLatestFirmware", () => ({
   ...jest.requireActual("@ledgerhq/live-common/device/hooks/useLatestFirmware"),
   useLatestFirmware: jest.fn(),
@@ -36,6 +41,7 @@ const { useLatestFirmware } = jest.requireMock(
   "@ledgerhq/live-common/device/hooks/useLatestFirmware",
 );
 
+// Mock isFirmwareUpdateSupported
 jest.mock("../../utils/isFirmwareUpdateSupported", () => ({
   ...jest.requireActual("../../utils/isFirmwareUpdateSupported"),
   isOldFirmwareUpdateUxSupported: jest.fn().mockImplementation(() => ({
@@ -48,14 +54,13 @@ const { isOldFirmwareUpdateUxSupported, isNewFirmwareUpdateUxSupported } = jest.
   "../../utils/isFirmwareUpdateSupported",
 );
 
+// Mock navigation to new and old update flows
 jest.mock("../../utils/navigateToNewUpdateFlow", () => ({
   navigateToNewUpdateFlow: jest.fn(),
 }));
-
 jest.mock("../../utils/navigateToOldUpdateFlow", () => ({
   navigateToOldUpdateFlow: jest.fn(),
 }));
-
 const { navigateToNewUpdateFlow } = jest.requireMock("../../utils/navigateToNewUpdateFlow");
 const { navigateToOldUpdateFlow } = jest.requireMock("../../utils/navigateToOldUpdateFlow");
 
