@@ -176,8 +176,12 @@ export const getSubAccounts = async (
   // Fetching all TokenAccounts possible and providing already filtered operations
   const subAccountsPromises: Promise<Partial<SubAccount>>[] = [];
   for (const [token, ops] of erc20OperationsByToken.entries()) {
-    const { swapHistory = [], pendingOperations = [] } = (initialAccount?.subAccounts as TokenAccount[])?.find(acc  => acc?.token?.id === token.id) || {};
-    subAccountsPromises.push(getSubAccountShape(currency, accountId, token, ops, pendingOperations, swapHistory ));
+    const { swapHistory = [], pendingOperations = [] } =
+      (initialAccount?.subAccounts as TokenAccount[])?.find(acc => acc?.token?.id === token.id) ||
+      {};
+    subAccountsPromises.push(
+      getSubAccountShape(currency, accountId, token, ops, pendingOperations, swapHistory),
+    );
   }
 
   return Promise.all(subAccountsPromises);
@@ -192,7 +196,7 @@ export const getSubAccountShape = async (
   token: TokenCurrency,
   operations: Operation[],
   pendingOperations: Operation[] = [],
-  swapHistory: SwapOperation[] = []
+  swapHistory: SwapOperation[] = [],
 ): Promise<Partial<SubAccount>> => {
   const nodeApi = getNodeApi(currency);
   const { xpubOrAddress: address } = decodeAccountId(parentId);
