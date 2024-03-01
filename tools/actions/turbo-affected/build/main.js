@@ -19802,6 +19802,7 @@ var package_default = {
     desktop: "pnpm --filter ledger-live-desktop",
     cli: "pnpm --filter live-cli",
     coin: "pnpm --filter coin-framework",
+    "coin:framework": "pnpm --filter coin-framework",
     "coin:algorand": "pnpm --filter coin-algorand",
     "coin:bitcoin": "pnpm --filter coin-bitcoin",
     "coin:evm": "pnpm --filter coin-evm",
@@ -19914,7 +19915,7 @@ var package_default = {
       "react-native-image-crop-tools@1.6.4": "patches/react-native-image-crop-tools@1.6.4.patch",
       "react-native-webview@11.26.1": "patches/react-native-webview@11.26.1.patch",
       "asyncstorage-down@4.2.0": "patches/asyncstorage-down@4.2.0.patch",
-      "detox@20.13.5": "patches/detox@20.13.5.patch",
+      "detox@20.16.0": "patches/detox@20.16.0.patch",
       "usb@2.9.0": "patches/usb@2.9.0.patch",
     },
     packageExtensions: {
