@@ -40,20 +40,22 @@ jobs:
               pnpm i --filter="!./apps/**"
               pnpm build:llc
 
+          - name: output filename
+            id: output-file
+            run: |
+              TARGET_SYNC_FILE_BASENAME=$(git rev-parse --short HEAD)
+              echo "TARGET_SYNC_FILE_BASENAME=$(echo ${TARGET_SYNC_FILE_BASENAME})" >> $GITHUB_OUTPUT
+
           - name: Run synchronisation on target branch
             if: ${{ inputs.currencies }}
             # TARGET_SYNC_FILE_BASENAME is based on https://github.com/LedgerHQ/ledger-live/blob/feat/live-11055-migration-account-test/libs/ledger-live-common/src/__tests__/migration/account-migration.ts#L267
             run: |
                 pnpm common test-account-migration --currencies ${{ inputs.currencies }} --outputFolderPath /home/runner/work/ledger-live
-                TARGET_SYNC_FILE_BASENAME=$(git rev-parse --short HEAD)
-                echo "TARGET_SYNC_FILE_BASENAME=(echo ${TARGET_SYNC_FILE_BASENAME})" > $GITHUB_OUTPUT
 
           - name: Run synchronisation on target branch
             if: ${{ !inputs.currencies }}
             run: |
               pnpm common test-account-migration --outputFolderPath /home/runner/work/ledger-live
-              TARGET_SYNC_FILE_BASENAME=$(git rev-parse --short HEAD)
-              echo "TARGET_SYNC_FILE_BASENAME=(echo ${TARGET_SYNC_FILE_BASENAME})" > $GITHUB_OUTPUT
 
           - uses: actions/checkout@v4
             with:
@@ -66,7 +68,7 @@ jobs:
 
           - name: run synchronisation on current branch
             run: |
-              pnpm common test-account-migration --inputFile /home/runner/work/ledger-live/${{ steps.vars.output.TARGET_SYNC_FILE_BASENAME }}.json
+              pnpm common test-account-migration --inputFile /home/runner/work/ledger-live/${{ steps.output-file.outputs.TARGET_SYNC_FILE_BASENAME }}.json
 
           - name: print diff during migration
             run: git --no-pager diff --no-index $(git ls-files --others --exclude-standard)
