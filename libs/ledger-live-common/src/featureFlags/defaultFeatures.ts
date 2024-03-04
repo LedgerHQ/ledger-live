@@ -392,16 +392,6 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
 
-  cexDepositEntryPointsMobile: {
-    enabled: false,
-    params: {
-      path: "/discover/ledger-cex-deposit",
-      locations: {
-        selectCrypto: true,
-      },
-    },
-  },
-
   fetchAdditionalCoins: {
     enabled: false,
   },
