@@ -65,10 +65,10 @@ export const migrationAddresses: MigrationAddress[] = [
     currencyId: "cosmos",
     address: "cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl",
   },
-  // {
-  //   currencyId: "desmos",
-  //   address: "desmos1gyauvl44q2apn3u3aujm36q8zrj74vrypqn8c3",
-  // },
+  {
+    currencyId: "desmos",
+    address: "desmos1gyauvl44q2apn3u3aujm36q8zrj74vrypqn8c3",
+  },
   // {
   //   currencyId: "dydx",
   //   address: "dydx1gyauvl44q2apn3u3aujm36q8zrj74vryupsn07",
