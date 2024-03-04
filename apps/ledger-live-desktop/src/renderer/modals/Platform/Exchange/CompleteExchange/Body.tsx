@@ -184,11 +184,18 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
     ],
   );
 
-  useEffect(() => {
-    if (error) {
-      onCancel(error);
-    }
-  }, [onCancel, error]);
+  // useEffect(() => {
+  //   /**
+  //    * If we want to close the drawer automatically, we need to ensure onCancel is also called
+  //    * this will gives the "control" back to live app.
+  //    * 
+  //    * On drawer manually closed, we send an error back ("Interrupted by user") 
+  //    */
+  //   if ([error instanceof SOME_ERROR_WE_WANT_LIVE_APP_TO_HANDLE]) {
+  //     onCancel(error);
+  //     onClose(error)
+  //   }
+  // }, [onCancel, error]);
 
   useEffect(() => {
     if (!signedOperation) return;
