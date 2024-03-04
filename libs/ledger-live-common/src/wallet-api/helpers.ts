@@ -101,7 +101,7 @@ export const getInitialURL = (inputs, manifest, currentAccountId?: string) => {
     }
 
     if (currentAccountId) {
-      url.searchParams.set("accountId", currentAccountId)
+      url.searchParams.set("accountId", currentAccountId);
     }
 
     return url.toString();
