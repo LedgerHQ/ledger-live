@@ -226,9 +226,11 @@ export const testSync = async (currencyId: string, xpubOrAddress: string) => {
   const currencyIds = currencies?.split(",");
 
   // throw error if there's invalid currency ids passed in the cli
-  if (currencyIds && !currencyIds.every(findCryptoCurrencyById)) {
-    throw new Error("Invalid currency id");
-  }
+  currencyIds?.forEach(currencyId => {
+    if (!findCryptoCurrencyById(currencyId)) {
+      throw new Error(`Invalid currency id: ${currencyId}`);
+    }
+  });
 
   // if --inputFile we use the addresses from the input file otherwise from `addresses.ts`
   const migrationAddresses = inputFileAddresses.length ? inputFileAddresses : defaultAddresses;
