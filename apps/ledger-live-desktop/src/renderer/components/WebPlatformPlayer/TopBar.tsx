@@ -144,7 +144,7 @@ export const TopBar = ({ manifest, onClose, config = {}, webviewAPIRef, webviewS
     shouldDisplayInfo = true,
     shouldDisplayClose = !!onClose,
     shouldDisplayNavigation = false,
-    shouldDisplaySelectAccount = true,
+    shouldDisplaySelectAccount = manifest.dapp,
   } = config;
 
   const enablePlatformDevTools = useSelector(enablePlatformDevToolsSelector);
