@@ -40,7 +40,7 @@ jobs:
               pnpm i --filter="!./apps/**"
               pnpm build:llc
 
-          - name: output filename
+          - name: Generate output filename
             id: output-file
             run: |
               TARGET_SYNC_FILE_BASENAME=$(git rev-parse --short HEAD)
