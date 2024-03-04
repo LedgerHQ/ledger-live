@@ -14,7 +14,6 @@ import { BodyContent, BodyContentProps } from "./BodyContent";
 import { getMagnitudeAwareRate } from "@ledgerhq/live-common/exchange/swap/webApp/index";
 import { BigNumber } from "bignumber.js";
 import { AccountLike } from "@ledgerhq/types-live";
-import { NotEnoughBalance, WrongDeviceForAccount } from "@ledgerhq/errors";
 import { useRedirectToSwapHistory } from "~/renderer/screens/exchange/Swap2/utils";
 
 export type Data = {
@@ -189,7 +188,7 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
     if (error) {
       onCancel(error);
     }
-  }, [onCancel, error, onClose]);
+  }, [onCancel, error]);
 
   useEffect(() => {
     if (!signedOperation) return;
