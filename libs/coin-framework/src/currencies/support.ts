@@ -52,14 +52,19 @@ export const locallySupportedFiats = [
 ];
 
 async function initializeUserSupportedFiats() {
-  const ids = await fetchSupportedFiatsTokens();
-  const supportedTokens = locallySupportedFiats;
-  ids.forEach(id => {
-    const token = id.toUpperCase();
-    if (locallySupportedFiats.includes(token)) {
-      supportedTokens.push(token);
-    }
-  });
+  const remoteSupportedTokens = await fetchSupportedFiatsTokens();
+  let supportedTokens = [] as string[];
+
+  if (remoteSupportedTokens.length !== 0) {
+    remoteSupportedTokens.forEach(id => {
+      const token = id.toUpperCase();
+      if (locallySupportedFiats.includes(token)) {
+        supportedTokens.push(token);
+      }
+    });
+  } else {
+    supportedTokens = locallySupportedFiats;
+  }
   userSupportedFiats = supportedTokens.map(id => {
     return getFiatCurrencyByTicker(id);
   });
