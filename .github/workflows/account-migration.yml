@@ -57,6 +57,10 @@ jobs:
             run: |
               pnpm common test-account-migration --outputFolderPath /home/runner/work/ledger-live
 
+          - uses: actions/checkout@v4
+            with:
+              token: ${{ steps.generate-token.outputs.token }}
+
           - name: install dependencies and build
             run: |
               pnpm i --filter="!./apps/**"
