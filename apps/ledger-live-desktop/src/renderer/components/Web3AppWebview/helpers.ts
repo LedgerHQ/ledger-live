@@ -7,6 +7,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { getParentAccount, isTokenAccount } from "@ledgerhq/live-common/account/index";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 import { getInitialURL } from "@ledgerhq/live-common/wallet-api/helpers";
@@ -14,6 +15,8 @@ import { safeGetRefValue, useDappCurrentAccount } from "@ledgerhq/live-common/wa
 import { WalletAPIServer } from "@ledgerhq/live-common/wallet-api/types";
 import { track } from "~/renderer/analytics/segment";
 import { WebviewAPI, WebviewState, WebviewTag } from "./types";
+import { useSelector } from "react-redux";
+import { accountsSelector } from "~/renderer/reducers/accounts";
 
 export const initialWebviewState: WebviewState = {
   url: "",
@@ -38,6 +41,18 @@ type UseWebviewStateReturn = {
   handleRefresh: () => void;
 };
 
+function useGetWalletAPIAccount() {
+  const { currentAccount } = useDappCurrentAccount();
+  const accounts = useSelector(accountsSelector);
+
+  if (!currentAccount) return;
+  const parentAccount = isTokenAccount(currentAccount)
+    ? getParentAccount(currentAccount, accounts)
+    : undefined;
+
+  return accountToWalletAPIAccount(currentAccount, parentAccount).id;
+}
+
 export function useWebviewState(
   params: UseWebviewStateParams,
   webviewAPIRef: React.ForwardedRef<WebviewAPI>,
@@ -45,16 +60,12 @@ export function useWebviewState(
 ): UseWebviewStateReturn {
   const webviewRef = useRef<WebviewTag>(null);
   const { manifest, inputs } = params;
-  const { currentAccount } = useDappCurrentAccount();
+  const currentWalletAPIAccount = useGetWalletAPIAccount();
+
   const initialURL = useMemo(
     // TODO: pass parentAccountId there too?
-    () =>
-      getInitialURL(
-        inputs,
-        manifest,
-        currentAccount ? accountToWalletAPIAccount(currentAccount).id : null,
-      ),
-    [manifest, inputs, currentAccount],
+    () => getInitialURL(inputs, manifest, currentWalletAPIAccount),
+    [manifest, inputs, currentWalletAPIAccount],
   );
   const [state, setState] = useState<WebviewState>(initialWebviewState);
 
