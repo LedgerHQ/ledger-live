@@ -73,10 +73,10 @@ export const migrationAddresses: MigrationAddress[] = [
   //   currencyId: "dydx",
   //   address: "dydx1gyauvl44q2apn3u3aujm36q8zrj74vryupsn07",
   // },
-  // {
-  //   currencyId: "injective",
-  //   address: "inj1hn46zvx43mxq47vsecvw84k5chjhuhwp6d62dt",
-  // },
+  {
+    currencyId: "injective",
+    address: "inj1hn46zvx43mxq47vsecvw84k5chjhuhwp6d62dt",
+  },
   {
     currencyId: "onomy",
     address: "onomy1gyauvl44q2apn3u3aujm36q8zrj74vry0e2p7v",
