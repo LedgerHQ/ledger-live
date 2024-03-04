@@ -60,9 +60,10 @@ jobs:
               pnpm build:llc
 
           - name: run synchronisation on current branch
+            # TARGET_SYNC_FILE_BASENAME is based on https://github.com/LedgerHQ/ledger-live/blob/feat/live-11055-migration-account-test/libs/ledger-live-common/src/__tests__/migration/account-migration.ts#L267
             run: |
               TARGET_SYNC_FILE_BASENAME=$(git rev-parse --short HEAD)
-              pnpm common test-account-migration --inputFile ${{ github.workspace }}/libs/ledger-live-common/$TARGET_SYNC_FILE_BASENAME.json
+              pnpm common test-account-migration --inputFile $GITHUB_WORKSPACE/libs/ledger-live-common/$TARGET_SYNC_FILE_BASENAME.json
 
           - name: print diff during migratiion
             run: git --no-pager diff --no-index $(git ls-files --others --exclude-standard)
