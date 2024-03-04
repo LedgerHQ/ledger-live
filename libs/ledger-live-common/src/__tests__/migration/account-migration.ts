@@ -125,6 +125,10 @@ type Args = {
    */
   currencies?: CryptoCurrencyId;
   /**
+   * absolute path to the output folder for the json file
+   */
+  outputFolderPath?: string;
+  /**
    * absolute path to the input json file
    * must only contain an array of raw accounts
    */
@@ -135,7 +139,7 @@ type Args = {
   noEmit?: boolean;
 };
 
-const { currencies, inputFile, noEmit } = args as Args;
+const { currencies, inputFile, noEmit, outputFolderPath } = args as Args;
 
 const getMockAccount = (currencyId: string, address: string): Account => {
   const currency = getCryptoCurrencyById(currencyId);
@@ -201,7 +205,7 @@ export const testSync = async (currencyId: string, xpubOrAddress: string) => {
 
 (async () => {
   if (inputFile && !existsSync(inputFile)) {
-    throw new Error("Incorrect file path: file does not exist");
+    throw new Error(`Incorrect file path: ${inputFile} does not exist`);
   }
 
   // list of addresses from input file
@@ -265,7 +269,9 @@ export const testSync = async (currencyId: string, xpubOrAddress: string) => {
   if (!noEmit) {
     // be careful, also used in account-migration.yml
     const { stdout } = await exec("git rev-parse --short HEAD");
-    const outputFilePath = `${stdout.trim()}.json`;
+    const outputFilePath = outputFolderPath
+      ? `${outputFolderPath}/${stdout.trim()}.json`
+      : `${stdout.trim()}.json`;
     console.log("Writing output....");
     writeFileSync(outputFilePath, outputContent);
     console.log("Done");
