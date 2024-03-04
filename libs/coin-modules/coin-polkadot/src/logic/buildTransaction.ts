@@ -1,5 +1,6 @@
+import BigNumber from "bignumber.js";
 import { stringCamelCase } from "@polkadot/util";
-import type { PolkadotAccount, Transaction } from "../types";
+import type { PolkadotAccount, PolkadotOperationMode, Transaction } from "../types";
 import { isFirstBond, getNonce } from "./utils";
 import { loadPolkadotCrypto } from "./polkadot-crypto";
 import polkadotAPI from "../network";
@@ -10,35 +11,54 @@ const DEFAULTS = {
   eraPeriod: 64,
 };
 
+type CreateExtrinsicArg = {
+  mode: PolkadotOperationMode;
+  amount: BigNumber;
+  recipient: string;
+  isFirstBond: boolean;
+  validators?: string[];
+  useAllAmount?: boolean;
+  rewardDestination?: string | null;
+  numSlashingSpans?: number;
+  era?: string | null;
+};
 type ExtrinsicParams = {
   name: string;
   pallet: "staking" | "balances";
   args: Record<string, any>;
 };
-const getExtrinsicParams = (a: PolkadotAccount, t: Transaction): ExtrinsicParams => {
-  const validator = t.validators ? t.validators[0] : null;
-
-  switch (t.mode) {
+const getExtrinsicParams = ({
+  mode,
+  amount,
+  recipient,
+  isFirstBond,
+  validators,
+  useAllAmount,
+  rewardDestination,
+  numSlashingSpans,
+  era,
+}: CreateExtrinsicArg): ExtrinsicParams => {
+  switch (mode) {
     case "send":
       // Construct a balance transfer transaction offline.
       return {
-        args: {
-          dest: t.recipient,
-          value: t.amount.toString(),
-        },
-        name: t.useAllAmount ? "transferAllowDeath" : "transferKeepAlive",
         pallet: "balances",
+        name: useAllAmount ? "transferAllowDeath" : "transferKeepAlive",
+        args: {
+          dest: recipient,
+          value: amount.toString(),
+        },
       };
 
     case "bond":
-      if (isFirstBond(a)) {
+      if (isFirstBond) {
         return {
           pallet: "staking",
           name: "bond",
           args: {
-            value: t.amount.toString(),
+            value: amount.toString(),
             // The rewards destination. Can be "Stash", "Staked", "Controller" or "{ Account: accountId }"".
-            payee: t.rewardDestination || "Stash",
+            payee: rewardDestination || "Stash",
           },
         };
       } else {
@@ -48,7 +68,7 @@ const getExtrinsicParams = (a: PolkadotAccount, t: Transaction): ExtrinsicParams
           pallet: "staking",
           name: "bondExtra",
           args: {
-            maxAdditional: t.amount.toString(),
+            maxAdditional: amount.toString(),
           },
         };
       }
@@ -60,7 +80,7 @@ const getExtrinsicParams = (a: PolkadotAccount, t: Transaction): ExtrinsicParams
         pallet: "staking",
         name: "unbond",
         args: {
-          value: t.amount.toString(),
+          value: amount.toString(),
         },
       };
 
@@ -71,7 +91,7 @@ const getExtrinsicParams = (a: PolkadotAccount, t: Transaction): ExtrinsicParams
         pallet: "staking",
         name: "rebond",
         args: {
-          value: t.amount.toString(),
+          value: amount.toString(),
         },
       };
 
@@ -82,7 +102,7 @@ const getExtrinsicParams = (a: PolkadotAccount, t: Transaction): ExtrinsicParams
         pallet: "staking",
         name: "withdrawUnbonded",
         args: {
-          numSlashingSpans: a.polkadotResources?.numSlashingSpans || 0,
+          numSlashingSpans: numSlashingSpans || 0,
         },
       };
 
@@ -101,7 +121,7 @@ const getExtrinsicParams = (a: PolkadotAccount, t: Transaction): ExtrinsicParams
         pallet: "staking",
         name: "nominate",
         args: {
-          targets: t.validators,
+          targets: validators,
         },
       };
 
@@ -122,8 +142,8 @@ const getExtrinsicParams = (a: PolkadotAccount, t: Transaction): ExtrinsicParams
         pallet: "staking",
         name: "payoutStakers",
         args: {
-          validatorStash: validator,
-          era: t.era,
+          validatorStash: validators ? validators[0] : null,
+          era: era,
         },
       };
 
@@ -143,6 +163,30 @@ export const buildTransaction = async (
   t: Transaction,
   forceLatestParams = false,
 ) => {
+  return craftTransaction(
+    a.freshAddress,
+    getNonce(a),
+    {
+      mode: t.mode,
+      amount: t.amount,
+      recipient: t.recipient,
+      isFirstBond: isFirstBond(a),
+      validators: t.validators,
+      useAllAmount: t.useAllAmount,
+      rewardDestination: t.rewardDestination,
+      numSlashingSpans: a.polkadotResources?.numSlashingSpans,
+      era: t.era,
+    },
+    forceLatestParams,
+  );
+};
+
+export async function craftTransaction(
+  polkadotAddress: string,
+  nonceToUse: number,
+  extractExtrinsicArg: CreateExtrinsicArg,
+  forceLatestParams: boolean = false,
+) {
   await loadPolkadotCrypto();
 
   const { extrinsics, registry } = await polkadotAPI.getRegistry();
@@ -150,8 +194,8 @@ export const buildTransaction = async (
     force: forceLatestParams,
   });
   // Get the correct extrinsics params depending on transaction
-  const extrinsicParams = getExtrinsicParams(a, t);
-  const address = a.freshAddress;
+  const extrinsicParams = getExtrinsicParams(extractExtrinsicArg);
+  const address = polkadotAddress;
   const { blockHash, genesisHash } = info;
   const blockNumber = registry.createType("BlockNumber", info.blockNumber).toHex();
   const era = registry
@@ -160,7 +204,7 @@ export const buildTransaction = async (
       period: DEFAULTS.eraPeriod,
     })
     .toHex();
-  const nonce = registry.createType("Compact<Index>", getNonce(a)).toHex();
+  const nonce = registry.createType("Compact<Index>", nonceToUse).toHex();
   const specVersion = registry.createType("u32", info.specVersion).toHex();
   const tip = registry.createType("Compact<Balance>", info.tip || DEFAULTS.tip).toHex();
   const transactionVersion = registry.createType("u32", info.transactionVersion).toHex();
@@ -198,4 +242,4 @@ export const buildTransaction = async (
     registry,
     unsigned,
   };
-};
+}

@@ -9,7 +9,7 @@ export function createFixtureAccount(account?: Partial<PolkadotAccount>): Polkad
   const currency = listCryptoCurrencies(true).find(c => c.id === "polkadot")!;
 
   const polkadotResources: PolkadotResources = account?.polkadotResources || {
-    controller: undefined,
+    controller: account?.polkadotResources?.controller || undefined,
     stash: account?.polkadotResources?.stash || undefined,
     nonce: faker.number.int(100_000),
     lockedBalance: new BigNumber(faker.string.numeric()),

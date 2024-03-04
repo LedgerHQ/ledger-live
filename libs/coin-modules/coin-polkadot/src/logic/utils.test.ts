@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
-import { PolkadotAccount } from "../types";
-import { canUnbond, isController, MAX_UNLOCKINGS } from "./utils";
+import { PolkadotAccount, PolkadotResources } from "../types";
+import { canUnbond, isController, isFirstBond, isStash, MAX_UNLOCKINGS } from "./utils";
 import { createFixtureAccount } from "../types/model.fixture";
 
 describe("isController", () => {
@@ -87,5 +87,51 @@ describe("canUnbond", () => {
       },
     };
     expect(canUnbond(account as PolkadotAccount)).toBeFalsy();
+  });
+});
+
+describe("isStash", () => {
+  it("returns false if account has no controller", () => {
+    // When
+    const result = isStash(createFixtureAccount());
+
+    // Then
+    expect(result).toBeFalsy();
+  });
+
+  it("returns true if account has controller", () => {
+    // Given
+    const account = createFixtureAccount({
+      polkadotResources: { controller: "controller" } as PolkadotResources,
+    });
+
+    // When
+    const result = isStash(account);
+
+    // Then
+    expect(result).toBeTruthy();
+  });
+});
+
+describe("isFirstBond", () => {
+  it("returns false if account a controller", () => {
+    // Given
+    const account = createFixtureAccount({
+      polkadotResources: { controller: "controller" } as PolkadotResources,
+    });
+
+    // When
+    const result = isFirstBond(account);
+
+    // Then
+    expect(result).toBeFalsy();
+  });
+
+  it("returns true if account has no controller", () => {
+    // When
+    const result = isFirstBond(createFixtureAccount());
+
+    // Then
+    expect(result).toBeTruthy();
   });
 });

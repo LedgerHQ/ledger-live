@@ -8,8 +8,9 @@ import {
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import signerGetAddress from "../signer";
+import broadcast from "./broadcast";
 import createTransaction from "./createTransaction";
-import { estimateMaxSpendable, getTransactionStatus, getAccountShape, broadcast } from "../logic";
+import { estimateMaxSpendable, getTransactionStatus, getAccountShape } from "../logic";
 import prepareTransaction from "./prepareTransaction";
 import buildSignOperation from "./signOperation";
 import {
