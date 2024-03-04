@@ -4,6 +4,7 @@ import { Trans } from "react-i18next";
 import { connect } from "react-redux";
 import styled from "styled-components";
 import moment from "moment";
+import { createStructuredSelector } from "reselect";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
 import { accountsOpToCSV } from "@ledgerhq/live-common/csvExport";
 import { Account } from "@ledgerhq/types-live";
@@ -22,41 +23,18 @@ import IconDownloadCloud from "~/renderer/icons/DownloadCloud";
 import IconCheckCircle from "~/renderer/icons/CheckCircle";
 import Alert from "~/renderer/components/Alert";
 import { ModalData } from "../types";
-import { State } from "~/renderer/reducers";
-import { confirmationsNbForCurrencySelector } from "~/renderer/reducers/settings";
 
 type OwnProps = {};
 type Props = OwnProps & {
   closeModal: (a: keyof ModalData) => void;
   accounts: Account[];
   countervalueCurrency?: Currency;
-  confirmationsNbCurrencies: Array<{ id: string; value: number }>;
 };
 
-const mapStateToProps = (state: State) => {
-  const accounts = activeAccountsSelector(state);
-  const countervalueCurrency = counterValueCurrencySelector(state);
-  console.log("test", accounts);
-  const currencies = accounts.map(account => account.currency);
-  const confirmationsNbCurrencies = currencies.map(currency => ({
-    id: currency.id,
-    value: confirmationsNbForCurrencySelector(state, {
-      currency: currency,
-    }),
-  }));
-  return {
-    accounts,
-    countervalueCurrency,
-    confirmationsNbCurrencies,
-  };
-};
-
-/*
 const mapStateToProps = createStructuredSelector({
   accounts: activeAccountsSelector,
   countervalueCurrency: counterValueCurrencySelector,
-});*/
-
+});
 const mapDispatchToProps = {
   closeModal,
 };
@@ -74,12 +52,7 @@ const exportOperations = async (
     // ignore
   }
 };
-function ExportOperations({
-  accounts,
-  closeModal,
-  countervalueCurrency,
-  confirmationsNbCurrencies,
-}: Props) {
+function ExportOperations({ accounts, closeModal, countervalueCurrency }: Props) {
   const [checkedIds, setCheckedIds] = useState<string[]>([]);
   const [success, setSuccess] = useState(false);
   const countervalueState = useCountervaluesState();
@@ -101,14 +74,13 @@ function ExportOperations({
           accounts.filter(account => checkedIds.includes(account.id)),
           countervalueCurrency,
           countervalueState,
-          confirmationsNbCurrencies,
         ),
         () => {
           setSuccess(true);
         },
       );
     }
-  }, [accounts, checkedIds, countervalueCurrency, countervalueState, confirmationsNbCurrencies]);
+  }, [accounts, checkedIds, countervalueCurrency, countervalueState]);
   const onClose = useCallback(() => closeModal("MODAL_EXPORT_OPERATIONS"), [closeModal]);
   const handleButtonClick = useCallback(() => {
     let exporting = false;
