@@ -1,8 +1,10 @@
 import sha from "sha.js";
+
 function sha256(buffer: Buffer | string) {
   return sha("sha256").update(buffer).digest();
 }
-const userHashesPerUserId = (userId: string) => {
+
+function userHashesPerUserId(userId: string) {
   const firmwareSalt = sha256(userId + "|firmwareSalt")
     .toString("hex")
     .slice(0, 6);
@@ -11,10 +13,11 @@ const userHashesPerUserId = (userId: string) => {
     firmwareSalt,
     endpointOverrides100,
   };
-};
+}
 
-let cache;
-export const getUserHashes = (userId: string) => {
+let cache: { userId: string; value: { firmwareSalt: string; endpointOverrides100: number } };
+
+export function getUserHashes(userId: string) {
   if (cache && userId === cache.userId) {
     return cache.value;
   }
@@ -24,4 +27,4 @@ export const getUserHashes = (userId: string) => {
     value: userHashesPerUserId(userId),
   };
   return cache.value;
-};
+}

@@ -500,20 +500,18 @@ const installMcu = (
   }).pipe(remapSocketError(context));
 };
 
-function retrieveMcuVersion(finalFirmware: FinalFirmware): Promise<McuVersion | undefined> {
-  return fetchMcusUseCase()
-    .then(mcus =>
-      mcus.filter(deviceInfo => {
-        const provider = getProviderId(deviceInfo);
-        return mcu => mcu.providers.includes(provider);
-      }),
-    )
-    .then(mcus => mcus.filter(mcu => mcu.from_bootloader_version !== "none"))
-    .then(mcus =>
-      findBestMCU(
-        finalFirmware.mcu_versions.map(id => mcus.find(mcu => mcu.id === id)).filter(Boolean),
-      ),
-    );
+async function retrieveMcuVersion({
+  mcu_versions,
+}: FinalFirmware): Promise<McuVersion | undefined> {
+  const mcus = await fetchMcusUseCase();
+  const provider = getProviderId(undefined);
+  const availableMcus = mcus.filter(
+    ({ id, providers, from_bootloader_version }: McuVersion) =>
+      providers.includes(provider) &&
+      from_bootloader_version !== "none" &&
+      mcu_versions.includes(id),
+  );
+  return findBestMCU(availableMcus);
 }
 
 const API = {
