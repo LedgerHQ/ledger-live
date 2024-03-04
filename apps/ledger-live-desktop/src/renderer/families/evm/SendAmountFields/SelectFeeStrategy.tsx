@@ -7,7 +7,7 @@ import {
   Strategy,
 } from "@ledgerhq/coin-evm/types/index";
 import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
-import { Account } from "@ledgerhq/types-live";
+import { Account, FeeStrategy } from "@ledgerhq/types-live";
 import React, { memo, useMemo } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
@@ -20,6 +20,7 @@ import TachometerHigh from "~/renderer/icons/TachometerHigh";
 import TachometerLow from "~/renderer/icons/TachometerLow";
 import TachometerMedium from "~/renderer/icons/TachometerMedium";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import BigNumber from "bignumber.js";
 
 type Props = {
   onClick: (_: { feesStrategy: Strategy }) => void;
@@ -28,6 +29,7 @@ type Props = {
   gasOptions: GasOptions;
   transactionToUpdate?: EvmTransaction;
   status: TransactionStatus;
+  disableSlowStrategy?: boolean;
 };
 
 const FeesWrapper = styled(Tabbable)<{ error?: boolean }>`
@@ -91,6 +93,7 @@ const SelectFeeStrategy = ({
   account,
   onClick,
   gasOptions,
+  disableSlowStrategy,
   transactionToUpdate,
   status,
 }: Props) => {
@@ -106,11 +109,18 @@ const SelectFeeStrategy = ({
         const estimatedFees = getEstimatedFees(getTypedTransaction(transaction, gasOption));
 
         const disabled =
-          !!transactionToUpdate &&
-          isStrategyDisabled({
-            transaction: transactionToUpdate,
-            feeData: gasOption,
-          });
+          (!!transactionToUpdate &&
+            isStrategyDisabled({
+              transaction: transactionToUpdate,
+              feeData: gasOption,
+            })) ||
+          (strategy === "slow" && disableSlowStrategy);
+        console.log(
+          "%capps/ledger-live-desktop/src/renderer/families/evm/SendAmountFields/SelectFeeStrategy.tsx:118 disabled, ",
+          "color: #007acc;",
+          disabled,
+          disableSlowStrategy,
+        );
         const selected = !disabled && transaction.feesStrategy === strategy;
 
         return (
