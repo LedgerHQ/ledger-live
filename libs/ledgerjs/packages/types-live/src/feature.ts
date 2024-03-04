@@ -142,7 +142,6 @@ export type Features = CurrencyFeatures & {
   disableNftSend: Feature_DisableNftSend;
   disableNftLedgerMarket: Feature_DisableNftLedgerMarket;
   disableNftRaribleOpensea: Feature_DisableNftRaribleOpensea;
-  walletNftGallery: Feature_WalletNftGallery;
   receiveStakingFlowConfigDesktop: Feature_ReceiveStakingFlowConfigDesktop;
   ethStakingProviders: Feature_EthStakingProviders;
   storyly: Feature_Storyly;
@@ -200,10 +199,6 @@ export type Feature_EthStakingProviders = Feature<{
     icon?: string;
     queryParams?: Record<string, string>;
   }[];
-}>;
-
-export type Feature_WalletNftGallery = Feature<{
-  lazyLoadScreens: boolean;
 }>;
 
 export type Feature_TransactionsAlerts = Feature<{
