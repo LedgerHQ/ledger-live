@@ -5,7 +5,7 @@ export type MigrationAddress =
   | { currencyId: CryptoCurrencyId; xpub: string; address?: never };
 
 export const migrationAddresses: MigrationAddress[] = [
-  // bitcoim
+  // bitcoin
   {
     currencyId: "bitcoin",
     xpub: "xpub6BuPWhjLqutPV8SF4RMrrn8c3t7uBZbz4CBbThpbg9GYjqRMncra9mjgSfWSK7uMDz37hhzJ8wvkbDDQQJt6VgwLoszvmPiSBtLA1bPLLSn",
