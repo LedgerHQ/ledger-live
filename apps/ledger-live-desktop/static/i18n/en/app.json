@@ -275,7 +275,6 @@
   },
   "sidebar": {
     "card": "Card",
-    "learn": "Learn",
     "menu": "Menu",
     "stars": "Starred accounts",
     "accounts": "Accounts",
@@ -5539,11 +5538,11 @@
     },
     "WrongDeviceForAccountPayout": {
       "title": "Something went wrong",
-      "description":  "This receiving account does not belong to your device. Please change and retry."
+      "description": "This receiving account does not belong to your device. Please change and retry."
     },
     "WrongDeviceForAccountRefund": {
       "title": "Something went wrong",
-      "description":  "This receiving account does not belong to your device for the refund. Please change and retry."
+      "description": "This receiving account does not belong to your device for the refund. Please change and retry."
     },
     "DeviceAppVerifyNotSupported": {
       "title": "App update required",
