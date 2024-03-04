@@ -114,12 +114,6 @@ const SelectFeeStrategy = ({
               feeData: gasOption,
             })) ||
           (strategy === "slow" && disableSlowStrategy);
-        console.log(
-          "%capps/ledger-live-desktop/src/renderer/families/evm/SendAmountFields/SelectFeeStrategy.tsx:118 disabled, ",
-          "color: #007acc;",
-          disabled,
-          disableSlowStrategy,
-        );
         const selected = !disabled && transaction.feesStrategy === strategy;
 
         return (
