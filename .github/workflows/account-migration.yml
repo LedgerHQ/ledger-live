@@ -41,7 +41,7 @@ jobs:
               pnpm build:llc
 
           - name: Generate target output filename
-            id: output-file
+            id: target-output-file
             run: |
               TARGET_SYNC_FILE_BASENAME=$(git rev-parse --short HEAD)
               echo "TARGET_SYNC_FILE_BASENAME=$(echo ${TARGET_SYNC_FILE_BASENAME})" >> $GITHUB_OUTPUT
@@ -68,7 +68,7 @@ jobs:
 
           - name: run synchronisation on current branch
             run: |
-              pnpm common test-account-migration --inputFile /home/runner/work/ledger-live/${{ steps.output-file.outputs.TARGET_SYNC_FILE_BASENAME }}.json --outputFolderPath /home/runner/work/ledger-live
+              pnpm common test-account-migration --inputFile /home/runner/work/ledger-live/${{ steps.target-output-file.outputs.TARGET_SYNC_FILE_BASENAME }}.json --outputFolderPath /home/runner/work/ledger-live
 
           - name: Generate current branch output filename
             id: current-branch-output-filename
@@ -77,4 +77,4 @@ jobs:
               echo "CURRENT_BRANCH_SYNC_FILE_BASENAME=$(echo ${CURRENT_BRANCH_SYNC_FILE_BASENAME})" >> $GITHUB_OUTPUT
 
           - name: print diff during migration
-            run: diff -y --suppress-common-lines /home/runner/work/ledger-live/${{ steps.current-branch-output-filename.outputs.TARGET_SYNC_FILE_BASENAME }}.json /home/runner/work/ledger-live/${{ steps.output-file.outputs.CURRENT_BRANCH_SYNC_FILE_BASENAME }}.json
+            run: diff -y --suppress-common-lines /home/runner/work/ledger-live/${{ steps.target-output-file.outputs.TARGET_SYNC_FILE_BASENAME }}.json /home/runner/work/ledger-live/${{ steps.current-branch-output-filename.outputs.CURRENT_BRANCH_SYNC_FILE_BASENAME }}.json || true
