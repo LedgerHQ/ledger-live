@@ -7,12 +7,13 @@ import {
   useRef,
   useState,
 } from "react";
-import { getInitialURL } from "@ledgerhq/live-common/wallet-api/helpers";
-import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { WebviewAPI, WebviewState, WebviewTag } from "./types";
-import { track } from "~/renderer/analytics/segment";
+import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
+import { getInitialURL } from "@ledgerhq/live-common/wallet-api/helpers";
+import { safeGetRefValue, useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/react";
 import { WalletAPIServer } from "@ledgerhq/live-common/wallet-api/types";
+import { track } from "~/renderer/analytics/segment";
+import { WebviewAPI, WebviewState, WebviewTag } from "./types";
 
 export const initialWebviewState: WebviewState = {
   url: "",
@@ -44,7 +45,17 @@ export function useWebviewState(
 ): UseWebviewStateReturn {
   const webviewRef = useRef<WebviewTag>(null);
   const { manifest, inputs } = params;
-  const initialURL = useMemo(() => getInitialURL(inputs, manifest), [manifest, inputs]);
+  const { currentAccount } = useDappCurrentAccount();
+  const initialURL = useMemo(
+    // TODO: pass parentAccountId there too?
+    () =>
+      getInitialURL(
+        inputs,
+        manifest,
+        currentAccount ? accountToWalletAPIAccount(currentAccount).id : null,
+      ),
+    [manifest, inputs, currentAccount],
+  );
   const [state, setState] = useState<WebviewState>(initialWebviewState);
 
   useImperativeHandle(

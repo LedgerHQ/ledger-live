@@ -82,7 +82,7 @@ const isWhitelistedDomain = (url: string, whitelistedDomains: string[]): boolean
   return isValid;
 };
 
-export const getInitialURL = (inputs, manifest) => {
+export const getInitialURL = (inputs, manifest, currentAccountId?: string) => {
   try {
     if (inputs?.goToURL) {
       const url = decodeURIComponent(inputs.goToURL);
@@ -98,6 +98,10 @@ export const getInitialURL = (inputs, manifest) => {
 
     if (manifest.params) {
       url.searchParams.set("params", JSON.stringify(manifest.params));
+    }
+
+    if (currentAccountId) {
+      url.searchParams.set("accountId", currentAccountId)
     }
 
     return url.toString();
