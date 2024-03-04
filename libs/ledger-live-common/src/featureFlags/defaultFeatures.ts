@@ -107,7 +107,6 @@ export const DEFAULT_FEATURES: Features = {
   newsfeedPage: initFeature(),
   swapWalletApiPartnerList: initFeature(),
   stakePrograms: initFeature(),
-  learn: initFeature(),
   receiveStakingFlowConfigDesktop: initFeature(),
   brazePushNotifications: initFeature(),
   walletNftGallery: initFeature(),

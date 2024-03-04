@@ -62,7 +62,6 @@ const Swap2 = lazy(() => import("~/renderer/screens/exchange/Swap2"));
 
 const Market = lazy(() => import("~/renderer/screens/market"));
 const MarketCoinScreen = lazy(() => import("~/renderer/screens/market/MarketCoinScreen"));
-const Learn = lazy(() => import("~/renderer/screens/learn"));
 const WelcomeScreenSettings = lazy(
   () => import("~/renderer/screens/settings/WelcomeScreenSettings"),
 );
@@ -316,9 +315,6 @@ export default function Default() {
                               render={withSuspense(MarketCoinScreen)}
                             />
                             <Route path="/market" render={withSuspense(Market)} />
-                            <FeatureToggle featureId="learn">
-                              <Route path="/learn" render={withSuspense(Learn)} />
-                            </FeatureToggle>
                           </Switch>
                         </Page>
                         <Drawer />
