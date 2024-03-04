@@ -1,0 +1,7 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path
+    d="M18 7H18.7C18.8105 7 18.9 7.08954 18.9 7.2V9.8C18.9 9.91046 18.8105 10 18.7 10H18M6.5 21H16C17.1046 21 18 20.1046 18 19V5C18 3.89543 17.1046 3 16 3H6.5C6.22386 3 6 3.22386 6 3.5V20.5C6 20.7761 6.22386 21 6.5 21Z"
+    stroke="white" stroke-width="1.8" />
+  <text transform="matrix(0.567696 0 0 0.54061 3.40861 4.46363)" stroke="#000" text-anchor="start" font-size="24"
+    id="svg_2" y="22.18957" x="7.67184" stroke-width="0" fill="#ffffff">E</text>
+</svg>

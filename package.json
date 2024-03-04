@@ -162,7 +162,8 @@
     "overrides": {
       "stellar-base>sodium-native": "^3.2.1",
       "remove-flow-types-loader>flow-remove-types": "^2",
-      "remove-flow-types-loader>loader-utils": "*"
+      "remove-flow-types-loader>loader-utils": "*",
+      "@ledgerhq/devices": "workspace:*"
     },
     "patchedDependencies": {
       "react-native-fast-crypto@2.2.0": "patches/react-native-fast-crypto@2.2.0.patch",

@@ -46,7 +46,6 @@ export const buyCryptoAction: PostOnboardingAction = {
 export const customImageAction: PostOnboardingAction = {
   id: PostOnboardingActionId.customImage,
   Icon: Icons.PictureImage,
-  featureFlagId: "customImage",
   title: "postOnboarding.actions.customImage.title",
   titleCompleted: "postOnboarding.actions.customImage.titleCompleted",
   description: "postOnboarding.actions.customImage.description",
