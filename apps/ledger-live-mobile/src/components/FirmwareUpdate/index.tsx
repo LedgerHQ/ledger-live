@@ -26,6 +26,7 @@ import DeviceLanguageStep from "./DeviceLanguageStep";
 import { track } from "~/analytics";
 import { FwUpdateForegroundEvent } from "./types";
 import { FwUpdateBackgroundEvent } from "~/reducers/types";
+import { setLastConnectedDevice, setLastSeenDevice } from "~/actions/settings";
 
 type Props = {
   device: Device;
@@ -185,6 +186,27 @@ export default function FirmwareUpdate({
   }, [device.deviceId, latestFirmware, t]);
 
   const firmwareVersion = latestFirmware?.final?.name ?? "";
+
+  useEffect(() => {
+    if (updatedDeviceInfo) {
+      dispatch(setLastSeenDevice(updatedDeviceInfo));
+      dispatch(
+        setLastConnectedDevice({
+          deviceId: device.deviceId,
+          deviceName: device.deviceName,
+          wired: device.wired,
+          modelId: device.modelId,
+        }),
+      );
+    }
+  }, [
+    device.deviceId,
+    device.deviceName,
+    device.modelId,
+    device.wired,
+    dispatch,
+    updatedDeviceInfo,
+  ]);
 
   return (
     <QueuedDrawer

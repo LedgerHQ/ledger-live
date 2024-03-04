@@ -58,6 +58,7 @@ import { RestoreStepDenied } from "./RestoreStepDenied";
 import UpdateReleaseNotes from "./UpdateReleaseNotes";
 import { GenericInformationBody } from "~/components/GenericInformationBody";
 import BatteryWarningDrawer from "./BatteryWarningDrawer";
+import { setLastConnectedDevice, setLastSeenDevice } from "~/actions/settings";
 
 const requiredBatteryStatuses = [
   BatteryStatusTypes.BATTERY_PERCENTAGE,
@@ -402,6 +403,27 @@ export const FirmwareUpdate = ({
 
     return closableSteps.includes(updateActionState.step);
   }, [updateActionState.step]);
+
+  useEffect(() => {
+    if (updateActionState.updatedDeviceInfo) {
+      dispatch(setLastSeenDevice(updateActionState.updatedDeviceInfo));
+      dispatch(
+        setLastConnectedDevice({
+          deviceId: device.deviceId,
+          deviceName: device.deviceName,
+          wired: device.wired,
+          modelId: device.modelId,
+        }),
+      );
+    }
+  }, [
+    device.deviceId,
+    device.deviceName,
+    device.modelId,
+    device.wired,
+    dispatch,
+    updateActionState.updatedDeviceInfo,
+  ]);
 
   useEffect(() => {
     navigation.setOptions({
