@@ -135,14 +135,11 @@ export type Features = CurrencyFeatures & {
   counterValue: Feature_CounterValue;
   deviceInitialApps: Feature_DeviceInitialApps;
   buyDeviceFromLive: Feature_BuyDeviceFromLive;
-  ptxEarn: Feature_PtxEarn;
   depositNetworkBannerMobile: Feature_DepositNetworkBannerMobile;
   depositWithdrawBannerMobile: Feature_DepositWithdrawBannerMobile;
   mockFeature: Feature_MockFeature;
   multibuyNavigation: Feature_MultibuyNavigation;
-  syncOnboarding: Feature_SyncOnboarding;
   walletConnectEntryPoint: Feature_WalletConnectEntryPoint;
-  customImage: Feature_CustomImage;
   referralProgramDiscoverCard: Feature_ReferralProgramDiscoverCard;
   referralProgramDesktopBanner: Feature_ReferralProgramDesktopBanner;
   referralProgramDesktopSidebar: Feature_ReferralProgramDesktopSidebar;
@@ -155,7 +152,6 @@ export type Features = CurrencyFeatures & {
   ethStakingProviders: Feature_EthStakingProviders;
   storyly: Feature_Storyly;
   staxWelcomeScreen: Feature_StaxWelcomeScreen;
-  postOnboardingClaimNft: Feature_PostOnboardingClaimNft;
   postOnboardingAssetsTransfer: Feature_PostOnboardingAssetsTransfer;
   firebaseEnvironmentReadOnly: Feature_FirebaseEnvironmentReadOnly;
   protectServicesMobile: Feature_ProtectServicesMobile;
@@ -189,6 +185,8 @@ export type Features = CurrencyFeatures & {
   lldPortfolioCarousel: Feature_LldPortfolioCarousel;
   llmMarketNewArch: Feature_LlmMarketNewArch;
   marketperformanceWidgetDesktop: Feature_MarketperformanceWidgetDesktop;
+  supportDeviceStax: Feature_SupportDeviceStax;
+  supportDeviceEuropa: Feature_SupportDeviceEuropa;
 };
 
 /**
@@ -287,11 +285,6 @@ export type Feature_ReceiveStakingFlowConfigDesktop = Feature<{
 export type Feature_Learn = Feature<{
   mobile: { url: string };
   desktop: { url: string };
-}>;
-
-export type Feature_PtxEarn = Feature<{
-  liveAppId: string;
-  isNew: boolean;
 }>;
 
 export type Feature_Storyly = Feature<{
@@ -506,15 +499,12 @@ export type Feature_LlmNewFirmwareUpdateUx = DefaultFeature;
 export type Feature_CounterValue = DefaultFeature;
 export type Feature_MockFeature = DefaultFeature;
 export type Feature_MultibuyNavigation = DefaultFeature;
-export type Feature_SyncOnboarding = DefaultFeature;
 export type Feature_WalletConnectEntryPoint = DefaultFeature;
-export type Feature_CustomImage = DefaultFeature;
 export type Feature_ReferralProgramDesktopBanner = DefaultFeature;
 export type Feature_DisableNftSend = DefaultFeature;
 export type Feature_DisableNftLedgerMarket = DefaultFeature;
 export type Feature_DisableNftRaribleOpensea = DefaultFeature;
 export type Feature_StaxWelcomeScreen = DefaultFeature;
-export type Feature_PostOnboardingClaimNft = DefaultFeature;
 export type Feature_PostOnboardingAssetsTransfer = DefaultFeature;
 export type Feature_PtxServiceCtaExchangeDrawer = DefaultFeature;
 export type Feature_PtxServiceCtaScreens = DefaultFeature;
@@ -528,6 +518,8 @@ export type Feature_LlmWalletQuickActions = DefaultFeature;
 export type Feature_PtxSwapMoonpayProvider = DefaultFeature;
 export type Feature_FlexibleContentCards = DefaultFeature;
 export type Feature_MyLedgerDisplayAppDeveloperName = DefaultFeature;
+export type Feature_SupportDeviceStax = DefaultFeature;
+export type Feature_SupportDeviceEuropa = DefaultFeature;
 
 export type Feature_LlmMarketNewArch = DefaultFeature;
 /**

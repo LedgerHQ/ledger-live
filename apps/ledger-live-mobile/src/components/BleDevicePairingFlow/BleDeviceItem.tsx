@@ -24,6 +24,8 @@ const BleDeviceItem = ({ deviceMeta, onSelect, areKnownDevicesPairable }: Props)
     switch (deviceMeta.modelId) {
       case DeviceModelId.stax:
         return <IconsLegacy.StaxMedium size={20} />;
+      case DeviceModelId.europa:
+        return <IconsLegacy.EuropaMedium size={20} />;
       case DeviceModelId.nanoX:
       default:
         return <IconsLegacy.NanoXFoldedMedium size={20} />;

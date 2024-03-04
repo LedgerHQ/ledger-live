@@ -144,6 +144,7 @@ export const INITIAL_STATE: SettingsState = {
     nanoSP: false,
     nanoX: false,
     stax: false,
+    europa: false,
   },
   hasSeenStaxEnabledNftsPopup: false,
   starredMarketCoins: [],

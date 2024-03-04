@@ -6,7 +6,7 @@ import { MarketPages } from "./shared";
 describe("Market integration test", () => {
   it("Should set some coins as favorites", async () => {
     const { user } = render(<MarketPages />, {
-      featureFlags: { ptxEarn: { enabled: true }, llmMarketNewArch: { enabled: true } },
+      featureFlags: { llmMarketNewArch: { enabled: true } },
     });
 
     //Set BTC as favorite

@@ -235,7 +235,6 @@ const MainSideBar = () => {
   const displayBlueDot = useManagerBlueDot(lastSeenDevice);
 
   const referralProgramConfig = useFeature("referralProgramDesktopSidebar");
-  const ptxEarnConfig = useFeature("ptxEarn");
   const recoverFeature = useFeature("protectServicesDesktop");
   const recoverHomePath = useAccountPath(recoverFeature);
 
@@ -452,25 +451,21 @@ const MainSideBar = () => {
                   disabled={noAccounts || navigationLocked}
                   collapsed={secondAnim}
                 />
-                <FeatureToggle featureId="ptxEarn">
-                  <SideBarListItem
-                    id={"earn"}
-                    label={t("sidebar.earn")}
-                    icon={IconsLegacy.LendMedium}
-                    iconSize={20}
-                    iconActiveColor="wallet"
-                    onClick={handleClickEarn}
-                    isActive={location.pathname === "/earn"}
-                    collapsed={secondAnim}
-                    NotifComponent={
-                      ptxEarnConfig?.params?.isNew ? (
-                        <CustomTag active type="plain" size="small">
-                          {t("common.new")}
-                        </CustomTag>
-                      ) : null
-                    }
-                  />
-                </FeatureToggle>
+                <SideBarListItem
+                  id={"earn"}
+                  label={t("sidebar.earn")}
+                  icon={IconsLegacy.LendMedium}
+                  iconSize={20}
+                  iconActiveColor="wallet"
+                  onClick={handleClickEarn}
+                  isActive={location.pathname === "/earn"}
+                  collapsed={secondAnim}
+                  NotifComponent={
+                    <CustomTag active type="plain" size="small">
+                      {t("common.new")}
+                    </CustomTag>
+                  }
+                />
                 <SideBarListItem
                   id={"exchange"}
                   label={t("sidebar.exchange")}

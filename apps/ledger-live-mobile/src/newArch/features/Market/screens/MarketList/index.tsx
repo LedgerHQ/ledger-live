@@ -1,14 +1,12 @@
 import React, { useCallback, useContext } from "react";
-import { Flex, Text } from "@ledgerhq/native-ui";
-import { Platform, RefreshControl, FlatList } from "react-native";
-import TabBarSafeAreaView, { TAB_BAR_SAFE_HEIGHT } from "~/components/TabBar/TabBarSafeAreaView";
+import { Flex } from "@ledgerhq/native-ui";
+import { Platform, RefreshControl } from "react-native";
+import { TAB_BAR_SAFE_HEIGHT } from "~/components/TabBar/TabBarSafeAreaView";
 import { CurrencyData, MarketListRequestParams } from "@ledgerhq/live-common/market/types";
 import { useFocusEffect } from "@react-navigation/native";
 import { AnalyticsContext } from "~/analytics/AnalyticsContext";
 import CollapsibleHeaderFlatList from "~/components/WalletTab/CollapsibleHeaderFlatList";
-import { useTranslation } from "react-i18next";
 import WalletTabSafeAreaView from "~/components/WalletTab/WalletTabSafeAreaView";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useTheme } from "styled-components/native";
 import SearchHeader from "./components/SearchHeader";
 import ListFooter from "./components/ListFooter";
@@ -55,8 +53,6 @@ function View({
   onEndReached,
 }: ViewProps) {
   const { colors } = useTheme();
-  const { t } = useTranslation();
-  const ptxEarnFF = useFeature("ptxEarn");
   const { handlePullToRefresh, refreshControlVisible } = usePullToRefresh({ loading, refresh });
 
   const resetSearch = useCallback(
@@ -121,20 +117,6 @@ function View({
       />
     ),
   };
-  if (!ptxEarnFF?.enabled) {
-    return (
-      <TabBarSafeAreaView>
-        <Flex px={6} pt={ptxEarnFF?.enabled ? 6 : 0}>
-          <Text my={3} variant="h4" fontWeight="semiBold">
-            {t("market.title")}
-          </Text>
-          <SearchHeader search={search} refresh={refresh} />
-          <BottomSection />
-        </Flex>
-        <FlatList {...listProps} />
-      </TabBarSafeAreaView>
-    );
-  }
 
   return (
     <RefreshableCollapsibleHeaderFlatList

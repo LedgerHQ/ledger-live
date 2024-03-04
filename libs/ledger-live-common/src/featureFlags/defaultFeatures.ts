@@ -84,8 +84,6 @@ export const DEFAULT_FEATURES: Features = {
   objkt: DEFAULT_FEATURE,
   portfolioExchangeBanner: DEFAULT_FEATURE,
   postOnboardingAssetsTransfer: DEFAULT_FEATURE,
-  postOnboardingClaimNft: DEFAULT_FEATURE,
-  syncOnboarding: DEFAULT_FEATURE,
   walletConnectEntryPoint: DEFAULT_FEATURE,
   counterValue: DEFAULT_FEATURE,
   llmNewDeviceSelection: DEFAULT_FEATURE,
@@ -94,7 +92,6 @@ export const DEFAULT_FEATURES: Features = {
   multibuyNavigation: DEFAULT_FEATURE,
   ptxServiceCtaExchangeDrawer: DEFAULT_FEATURE,
   ptxServiceCtaScreens: DEFAULT_FEATURE,
-  customImage: DEFAULT_FEATURE,
   referralProgramDesktopBanner: DEFAULT_FEATURE,
   disableNftLedgerMarket: DEFAULT_FEATURE,
   disableNftRaribleOpensea: DEFAULT_FEATURE,
@@ -108,7 +105,6 @@ export const DEFAULT_FEATURES: Features = {
   ethStakingProviders: initFeature(),
   referralProgramDiscoverCard: initFeature(),
   newsfeedPage: initFeature(),
-  ptxEarn: initFeature(),
   swapWalletApiPartnerList: initFeature(),
   stakePrograms: initFeature(),
   learn: initFeature(),
@@ -468,6 +464,8 @@ export const DEFAULT_FEATURES: Features = {
       variant: ABTestingVariants.variantA,
     },
   },
+  supportDeviceStax: DEFAULT_FEATURE,
+  supportDeviceEuropa: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings

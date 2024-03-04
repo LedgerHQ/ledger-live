@@ -138,6 +138,8 @@ export const DeviceShouldStayInApp = createCustomErrorClass("DeviceShouldStayInA
 export const WebsocketConnectionError = createCustomErrorClass("WebsocketConnectionError");
 export const WebsocketConnectionFailed = createCustomErrorClass("WebsocketConnectionFailed");
 export const WrongDeviceForAccount = createCustomErrorClass("WrongDeviceForAccount");
+export const WrongDeviceForAccountPayout = createCustomErrorClass("WrongDeviceForAccountPayout");
+export const WrongDeviceForAccountRefund = createCustomErrorClass("WrongDeviceForAccountRefund");
 export const WrongAppForCurrency = createCustomErrorClass("WrongAppForCurrency");
 
 export const ETHAddressNonEIP = createCustomErrorClass("ETHAddressNonEIP");
@@ -171,6 +173,8 @@ export const LanguageNotFound = createCustomErrorClass("LanguageNotFound");
 export const NoDBPathGiven = createCustomErrorClass("NoDBPathGiven");
 export const DBWrongPassword = createCustomErrorClass("DBWrongPassword");
 export const DBNotReset = createCustomErrorClass("DBNotReset");
+
+export const SequenceNumberError = createCustomErrorClass("SequenceNumberError");
 
 // Represents the type of all the classes created with createCustomErrorClass
 export type CustomErrorClassType = ReturnType<typeof createCustomErrorClass>;

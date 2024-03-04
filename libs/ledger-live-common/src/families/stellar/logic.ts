@@ -2,7 +2,7 @@ import type { CacheRes } from "@ledgerhq/live-network/cache";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import type { Account, OperationType, TokenAccount } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import { Horizon, StrKey, MuxedAccount } from "@stellar/stellar-sdk";
+import { ServerApi, StrKey, MuxedAccount } from "stellar-sdk";
 import { findSubAccountById } from "../../account";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import { encodeOperationId } from "../../operation";
@@ -25,13 +25,13 @@ export const STELLAR_BURN_ADDRESS = "GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 
 const currency = getCryptoCurrencyById("stellar");
 
-const getMinimumBalance = (account: Horizon.ServerApi.AccountRecord): BigNumber => {
+const getMinimumBalance = (account: ServerApi.AccountRecord): BigNumber => {
   return parseCurrencyUnit(currency.units[0], getReservedBalance(account).toString());
 };
 
 export const getAccountSpendableBalance = async (
   balance: BigNumber,
-  account: Horizon.ServerApi.AccountRecord,
+  account: ServerApi.AccountRecord,
 ): Promise<BigNumber> => {
   const minimumBalance = getMinimumBalance(account);
   const { recommendedFee } = await fetchBaseFee();
@@ -69,14 +69,14 @@ export const getBalanceId = (balance: BalanceAsset): string | null => {
   }
 };
 
-export const getReservedBalance = (account: Horizon.ServerApi.AccountRecord): BigNumber => {
+export const getReservedBalance = (account: ServerApi.AccountRecord): BigNumber => {
   const numOfSponsoringEntries = Number(account.num_sponsoring);
   const numOfSponsoredEntries = Number(account.num_sponsored);
 
   const nativeAsset = account.balances?.find(b => b.asset_type === "native") as BalanceAsset;
 
   const amountInOffers = new BigNumber(nativeAsset?.selling_liabilities || 0);
-  const numOfEntries = new BigNumber(account.subentry_count || 0);
+  const numOfEntries = new BigNumber(account.subentry_count);
 
   return new BigNumber(BASE_RESERVE_MIN_COUNT)
     .plus(numOfEntries)
@@ -201,7 +201,7 @@ export const formatOperation = async (
 
 const getValue = (
   operation: RawOperation,
-  transaction: Horizon.ServerApi.TransactionRecord,
+  transaction: ServerApi.TransactionRecord,
   type: OperationType,
 ): BigNumber => {
   let value = new BigNumber(0);

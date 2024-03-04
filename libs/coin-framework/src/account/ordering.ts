@@ -55,7 +55,8 @@ export const sortAccountsComparatorFromOrder = (
     return diff;
   };
 };
-export const comparatorSortAccounts = <TA extends AccountLike>(
+
+const comparatorSortAccounts = <TA extends AccountLike>(
   accounts: TA[],
   comparator: AccountComparator,
 ): TA[] => {
