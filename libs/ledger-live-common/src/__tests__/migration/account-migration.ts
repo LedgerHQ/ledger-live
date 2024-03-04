@@ -245,7 +245,7 @@ export const testSync = async (currencyId: string, xpubOrAddress: string) => {
     filteredAccounts.map(async migrationAddress => {
       return testSync(
         migrationAddress.currencyId,
-        migrationAddress.address ?? migrationAddress.xpub,
+        migrationAddress.xpub ?? migrationAddress.address,
       );
     }),
   );
@@ -274,6 +274,7 @@ export const testSync = async (currencyId: string, xpubOrAddress: string) => {
       : `${stdout.trim()}.json`;
     console.log("Writing output....");
     writeFileSync(outputFilePath, outputContent);
+    console.log(`File created: ${outputFilePath}`);
     console.log("Done");
   }
 
