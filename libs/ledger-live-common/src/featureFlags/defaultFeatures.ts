@@ -84,7 +84,7 @@ export const DEFAULT_FEATURES: Features = {
   objkt: DEFAULT_FEATURE,
   portfolioExchangeBanner: DEFAULT_FEATURE,
   postOnboardingAssetsTransfer: DEFAULT_FEATURE,
-  walletConnectEntryPoint: DEFAULT_FEATURE,
+  syncOnboarding: DEFAULT_FEATURE,
   counterValue: DEFAULT_FEATURE,
   llmNewDeviceSelection: DEFAULT_FEATURE,
   llmNewFirmwareUpdateUx: DEFAULT_FEATURE,

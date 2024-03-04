@@ -33,7 +33,6 @@ function useQuickActions() {
   const accountsCount: number = useSelector(accountsCountSelector);
   const areAccountsEmpty = useSelector(areAccountsEmptySelector);
 
-  const walletConnectEntryPoint = useFeature("walletConnectEntryPoint");
   const recoverEntryPoint = useFeature("protectServicesMobile");
   const stakePrograms = useFeature("stakePrograms");
 
@@ -105,18 +104,16 @@ function useQuickActions() {
       };
     }
 
-    if (walletConnectEntryPoint?.enabled) {
-      list.WALLET_CONNECT = {
-        disabled: readOnlyModeEnabled,
-        route: [
-          NavigatorName.WalletConnect,
-          {
-            screen: ScreenName.WalletConnectConnect,
-          },
-        ],
-        icon: IconsLegacy.WalletConnectMedium,
-      };
-    }
+    list.WALLET_CONNECT = {
+      disabled: readOnlyModeEnabled,
+      route: [
+        NavigatorName.WalletConnect,
+        {
+          screen: ScreenName.WalletConnectConnect,
+        },
+      ],
+      icon: IconsLegacy.WalletConnectMedium,
+    };
 
     if (recoverEntryPoint?.enabled) {
       list.RECOVER = {
@@ -139,7 +136,6 @@ function useQuickActions() {
     readOnlyModeEnabled,
     route,
     stakePrograms?.enabled,
-    walletConnectEntryPoint?.enabled,
     recoverEntryPoint?.enabled,
   ]);
 
