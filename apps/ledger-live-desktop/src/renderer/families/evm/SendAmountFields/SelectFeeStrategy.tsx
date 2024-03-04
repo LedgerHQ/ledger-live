@@ -7,7 +7,7 @@ import {
   Strategy,
 } from "@ledgerhq/coin-evm/types/index";
 import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
-import { Account, FeeStrategy } from "@ledgerhq/types-live";
+import { Account } from "@ledgerhq/types-live";
 import React, { memo, useMemo } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
@@ -20,7 +20,6 @@ import TachometerHigh from "~/renderer/icons/TachometerHigh";
 import TachometerLow from "~/renderer/icons/TachometerLow";
 import TachometerMedium from "~/renderer/icons/TachometerMedium";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import BigNumber from "bignumber.js";
 
 type Props = {
   onClick: (_: { feesStrategy: Strategy }) => void;
@@ -215,7 +214,16 @@ const SelectFeeStrategy = ({
           </FeesWrapper>
         );
       }),
-    [accountUnit, feesCurrency, gasOptions, messageGas, onClick, transaction, transactionToUpdate],
+    [
+      accountUnit,
+      feesCurrency,
+      gasOptions,
+      messageGas,
+      onClick,
+      transaction,
+      disableSlowStrategy,
+      transactionToUpdate,
+    ],
   );
 
   return (
