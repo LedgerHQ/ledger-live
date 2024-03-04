@@ -1,4 +1,1 @@
-export {
-  isCustomLockScreenSupported,
-  supportedDeviceModelIds,
-} from "../../device-core/capabilities/isCustomLockScreenSupported";
+export { isCustomLockScreenSupported, supportedDeviceModelIds } from "@ledgerhq/device-core";
