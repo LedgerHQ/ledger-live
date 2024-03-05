@@ -7,16 +7,12 @@ import {
   useRef,
   useState,
 } from "react";
-import { getParentAccount, isTokenAccount } from "@ledgerhq/live-common/account/index";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 import { getInitialURL } from "@ledgerhq/live-common/wallet-api/helpers";
-import { safeGetRefValue, useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/react";
+import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 import { WalletAPIServer } from "@ledgerhq/live-common/wallet-api/types";
 import { track } from "~/renderer/analytics/segment";
 import { WebviewAPI, WebviewState, WebviewTag } from "./types";
-import { useSelector } from "react-redux";
-import { accountsSelector } from "~/renderer/reducers/accounts";
 
 export const initialWebviewState: WebviewState = {
   url: "",
