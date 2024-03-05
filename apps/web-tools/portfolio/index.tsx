@@ -6,6 +6,7 @@ import {
   clearAccount,
   fromAccountRaw,
   getAccountName,
+  shortAddressPreview,
   toAccountRaw,
 } from "@ledgerhq/live-common/account/index";
 import {
@@ -172,6 +173,21 @@ function HeadlessShowAccounts({
     [setAccounts],
   );
 
+  const syncOne = useSyncOneAccount(accounts, setAccounts);
+
+  const syncAllAccounts = useSyncAllAccounts(accounts, setAccounts);
+  const [synchronizing, setSynchronizing] = useState(false);
+  const onSyncAllAccounts = useCallback(() => {
+    setSynchronizing(true);
+    syncAllAccounts()
+      .catch(e => {
+        console.error(e);
+      })
+      .then(() => {
+        setSynchronizing(false);
+      });
+  }, [syncAllAccounts]);
+
   if (accounts.length === 0) {
     return <div>No accounts.</div>;
   }
@@ -188,9 +204,10 @@ function HeadlessShowAccounts({
               marginBottom: 10,
             }}
           >
+            <SyncButton action={() => syncOne(account.id)} />
             <strong>{getAccountName(account)}</strong>
-            <code>{account.freshAddress}</code>
             <span>{formatCurrencyUnit(account.unit, account.balance, { showCode: true })}</span>
+            <code>{shortAddressPreview(account.freshAddress)}</code>
             <span>
               <button type="button" onClick={() => removeAccount(account.id)}>
                 {" "}
@@ -200,7 +217,30 @@ function HeadlessShowAccounts({
           </li>
         ))}
       </ul>
+
+      <button type="button" onClick={onSyncAllAccounts} disabled={synchronizing}>
+        Synchronize all accounts
+      </button>
     </div>
+  );
+}
+
+function SyncButton({ action }: { action: () => Promise<void> }) {
+  const [syncing, setSyncing] = useState(false);
+  const onSync = useCallback(() => {
+    setSyncing(true);
+    action()
+      .catch(e => {
+        console.error(e);
+      })
+      .then(() => {
+        setSyncing(false);
+      });
+  }, [action]);
+  return (
+    <button type="button" onClick={onSync} disabled={syncing}>
+      Sync
+    </button>
   );
 }
 
@@ -256,19 +296,6 @@ function HeadlessStateManagement({
   accounts: Account[];
   setAccounts: (_: (_: Account[]) => Account[]) => void;
 }) {
-  const syncAllAccounts = useSyncAllAccounts(accounts, setAccounts);
-  const [synchronizing, setSynchronizing] = useState(false);
-  const onSyncAllAccounts = useCallback(() => {
-    setSynchronizing(true);
-    syncAllAccounts()
-      .catch(e => {
-        console.error(e);
-      })
-      .then(() => {
-        setSynchronizing(false);
-      });
-  }, [syncAllAccounts]);
-
   const onAppJsonChange = useCallback(
     (e: any) => {
       const file = e.target.files[0];
@@ -310,11 +337,6 @@ function HeadlessStateManagement({
       <label htmlFor="importappjson">
         <span>Import app.json: </span>
         <input id="importappjson" type="file" onChange={onAppJsonChange} />
-      </label>
-      <label>
-        <button type="button" onClick={onSyncAllAccounts} disabled={synchronizing}>
-          Synchronize all accounts
-        </button>
       </label>
     </div>
   );
@@ -558,6 +580,31 @@ function useSyncAllAccounts(
     );
   }, [setAccounts]);
   return syncAllAccounts;
+}
+
+function useSyncOneAccount(
+  accounts: Account[],
+  setAccounts: (_: (_: Account[]) => Account[]) => void,
+): (accountId: string) => Promise<void> {
+  const currentAccountsRef = useRef<Account[]>(accounts);
+  useEffect(() => {
+    currentAccountsRef.current = accounts;
+  }, [accounts]);
+  const syncOne = useCallback(
+    async (accountId: string) => {
+      const accounts = currentAccountsRef.current;
+      const account = accounts.find(a => a.id === accountId);
+      if (!account) return;
+      const updater = await makeSyncAccountUpdater(accounts.find(a => a.id === accountId)!);
+      setAccounts(accounts =>
+        accounts.map(a => {
+          return a.id === accountId ? updater[1](a) : a;
+        }),
+      );
+    },
+    [setAccounts],
+  );
+  return syncOne;
 }
 
 async function makeSyncAccountUpdater(account: Account): Promise<[string, AccountUpdater]> {
