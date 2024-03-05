@@ -42,7 +42,7 @@ type UseWebviewStateReturn = {
 };
 
 function useGetWalletAPIAccount() {
-  const { currentAccount } = useDappCurrentAccount();
+  const [currentAccount] = useDappCurrentAccount();
   const accounts = useSelector(accountsSelector);
 
   if (!currentAccount) return;

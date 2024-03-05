@@ -137,7 +137,7 @@ const allCurrenciesAndTokens = listCurrencies(true);
 
 export const TopBar = ({ manifest, onClose, config = {}, webviewAPIRef, webviewState }: Props) => {
   const { name, icon } = manifest;
-  const { currentAccount, setCurrentAccount } = useDappCurrentAccount();
+  const [currentAccount, setCurrentAccount] = useDappCurrentAccount();
 
   const {
     shouldDisplayName = true,
@@ -189,12 +189,11 @@ export const TopBar = ({ manifest, onClose, config = {}, webviewAPIRef, webviewS
       SelectAccountAndCurrencyDrawer,
       {
         currencies: currencies,
-        onAccountSelected: (account, parentAccount) => {
+        onAccountSelected: account => {
           setDrawer();
-          if (setCurrentAccount) {
-            setCurrentAccount(account);
-          }
-          console.log(account, parentAccount);
+          // We might want to use the parentAccount (2nd param)
+          // If present instead of the tokenAccount for dapp
+          setCurrentAccount(account);
         },
       },
       {
