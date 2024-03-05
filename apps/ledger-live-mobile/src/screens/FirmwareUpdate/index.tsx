@@ -1,5 +1,6 @@
 import { Image } from "react-native";
 import { getDeviceModel } from "@ledgerhq/devices";
+import { isEqual } from "lodash/fp";
 import {
   updateFirmwareActionArgs,
   UpdateFirmwareActionState,
@@ -23,7 +24,7 @@ import { BatteryStatusTypes } from "@ledgerhq/live-common/hw/getBatteryStatus";
 
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Observable } from "rxjs";
 import { updateMainNavigatorVisibility } from "~/actions/appstate";
 import {
@@ -58,7 +59,8 @@ import { RestoreStepDenied } from "./RestoreStepDenied";
 import UpdateReleaseNotes from "./UpdateReleaseNotes";
 import { GenericInformationBody } from "~/components/GenericInformationBody";
 import BatteryWarningDrawer from "./BatteryWarningDrawer";
-import { setLastConnectedDevice, setLastSeenDevice } from "~/actions/settings";
+import { setLastConnectedDevice, setLastSeenDeviceInfo } from "~/actions/settings";
+import { lastSeenDeviceSelector } from "~/reducers/settings";
 
 const requiredBatteryStatuses = [
   BatteryStatusTypes.BATTERY_PERCENTAGE,
@@ -404,9 +406,17 @@ export const FirmwareUpdate = ({
     return closableSteps.includes(updateActionState.step);
   }, [updateActionState.step]);
 
+  const { updatedDeviceInfo } = updateActionState;
+  const { apps, deviceInfo: lastSeenDeviceInfo } = useSelector(lastSeenDeviceSelector) ?? {};
   useEffect(() => {
-    if (updateActionState.updatedDeviceInfo) {
-      dispatch(setLastSeenDevice(updateActionState.updatedDeviceInfo));
+    if (updatedDeviceInfo && !isEqual(lastSeenDeviceInfo, updatedDeviceInfo)) {
+      dispatch(
+        setLastSeenDeviceInfo({
+          deviceInfo: updatedDeviceInfo,
+          apps: apps ?? [],
+          modelId: device.modelId,
+        }),
+      );
       dispatch(
         setLastConnectedDevice({
           deviceId: device.deviceId,
@@ -417,12 +427,14 @@ export const FirmwareUpdate = ({
       );
     }
   }, [
+    apps,
     device.deviceId,
     device.deviceName,
     device.modelId,
     device.wired,
     dispatch,
-    updateActionState.updatedDeviceInfo,
+    lastSeenDeviceInfo,
+    updatedDeviceInfo,
   ]);
 
   useEffect(() => {

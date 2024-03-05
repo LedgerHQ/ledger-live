@@ -2,6 +2,7 @@ import React, { useEffect, useCallback, useReducer } from "react";
 import { useTranslation } from "react-i18next";
 import { NativeModules } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
+import { isEqual } from "lodash/fp";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Button, Icons } from "@ledgerhq/native-ui";
 import { DeviceInfo } from "@ledgerhq/types-live";
@@ -26,7 +27,8 @@ import DeviceLanguageStep from "./DeviceLanguageStep";
 import { track } from "~/analytics";
 import { FwUpdateForegroundEvent } from "./types";
 import { FwUpdateBackgroundEvent } from "~/reducers/types";
-import { setLastConnectedDevice, setLastSeenDevice } from "~/actions/settings";
+import { setLastConnectedDevice, setLastSeenDeviceInfo } from "~/actions/settings";
+import { lastSeenDeviceSelector } from "~/reducers/settings";
 
 type Props = {
   device: Device;
@@ -187,9 +189,16 @@ export default function FirmwareUpdate({
 
   const firmwareVersion = latestFirmware?.final?.name ?? "";
 
+  const { apps, deviceInfo: lastSeenDeviceInfo } = useSelector(lastSeenDeviceSelector) ?? {};
   useEffect(() => {
-    if (updatedDeviceInfo) {
-      dispatch(setLastSeenDevice(updatedDeviceInfo));
+    if (updatedDeviceInfo && !isEqual(lastSeenDeviceInfo, updatedDeviceInfo)) {
+      dispatch(
+        setLastSeenDeviceInfo({
+          deviceInfo: updatedDeviceInfo,
+          apps: apps ?? [],
+          modelId: device.modelId,
+        }),
+      );
       dispatch(
         setLastConnectedDevice({
           deviceId: device.deviceId,
@@ -200,11 +209,13 @@ export default function FirmwareUpdate({
       );
     }
   }, [
+    apps,
     device.deviceId,
     device.deviceName,
     device.modelId,
     device.wired,
     dispatch,
+    lastSeenDeviceInfo,
     updatedDeviceInfo,
   ]);
 
