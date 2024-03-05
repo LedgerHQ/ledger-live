@@ -22,8 +22,6 @@ import { getEnv } from "@ledgerhq/live-env";
 import { findAccountByCurrency } from "~/logic/deposit";
 
 import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/deposit/index";
-import DepositFromCoinbaseButton from "./DepositFromCoinbaseButton";
-import { CexDepositEntryPointsLocationsMobile } from "@ledgerhq/types-live/lib/cexDeposit";
 
 const SEARCH_KEYS = getEnv("CRYPTO_ASSET_SEARCH_KEYS");
 
@@ -120,12 +118,6 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
         keyExtractor={keyExtractor}
         showsVerticalScrollIndicator={false}
         keyboardDismissMode="on-drag"
-        ListHeaderComponent={
-          <DepositFromCoinbaseButton
-            location={CexDepositEntryPointsLocationsMobile.selectCrypto}
-            source="Choose a crypto to secure"
-          />
-        }
       />
     ),
     [onPressItem],
