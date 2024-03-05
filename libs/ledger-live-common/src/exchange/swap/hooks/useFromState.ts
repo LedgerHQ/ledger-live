@@ -50,20 +50,21 @@ export const useFromState = ({
         parentAccount,
       });
 
-      let additionalFees;
-
-      if (account?.type === "Account" && account?.unit?.code === "ETH") {
-        additionalFees = new BigNumber(10000000000000000); // 0,01 ETH
-      }
       /* @DEV: That populates fake seed. This is required to use Transaction object */
       const mainAccount = getMainAccount(account as AccountLike, parentAccount);
       const mainCurrency = getAccountCurrency(mainAccount);
       const recipient = getAbandonSeedAddress(mainCurrency.id);
-      bridgeTransaction.updateTransaction(transaction => ({
-        ...transaction,
-        recipient,
-        additionalFees,
-      }));
+      bridgeTransaction.updateTransaction(transaction => {
+        let additionalFees;
+        if (transaction.family === "evm") {
+          additionalFees = new BigNumber(5000000000000000); // 0,005 ETH/BNB/MATIC
+        }
+        return {
+          ...transaction,
+          recipient,
+          additionalFees,
+        };
+      });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [accounts, bridgeTransaction.updateTransaction],

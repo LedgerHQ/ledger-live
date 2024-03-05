@@ -58,7 +58,7 @@ describe("updateAmountUsingMax", () => {
 
     expect(result.current.isMaxEnabled).toBe(false);
     expect(setFromAmount).toBeCalledTimes(0);
-    await act(async () => result.current.toggleMax(account));
+    await act(async () => result.current.toggleMax());
     expect(result.current.isMaxEnabled).toBe(true);
 
     // Lest resort solution, since waitFor and other helpers will not work here.
@@ -67,7 +67,7 @@ describe("updateAmountUsingMax", () => {
     expect(setFromAmount.mock.calls[0][0]).toBe(amount);
     setFromAmount.mockClear();
 
-    await act(async () => result.current.toggleMax(account));
+    await act(async () => result.current.toggleMax());
     expect(result.current.isMaxEnabled).toBe(false);
 
     expect(setFromAmount).toBeCalledTimes(1);
@@ -109,7 +109,7 @@ describe("updateAmountUsingMax", () => {
     expect(setFromAmount).toBeCalledTimes(0);
 
     mockedEstimateMaxSpendable.mockResolvedValue(new BigNumber(0));
-    await act(async () => result.current.toggleMax(account));
+    await act(async () => result.current.toggleMax());
 
     // Checking that updating dependencies update the max amount when the toggle is on.
     let idx = 1;

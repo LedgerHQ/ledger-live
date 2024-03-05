@@ -399,7 +399,7 @@ const SwapForm = () => {
   };
 
   const toggleMax = () => {
-    swapTransaction.toggleMax(sourceAccount);
+    swapTransaction.toggleMax();
   };
 
   const swapLiveAppManifestID = useSwapLiveAppManifestID();

@@ -167,7 +167,7 @@ function FromRow({
       ...swapDefaultTrack,
       state,
     });
-    toggleMax(fromAccount);
+    toggleMax();
   };
 
   return (

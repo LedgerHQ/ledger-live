@@ -32,22 +32,24 @@ export const useUpdateMaxAmount = ({
   const [isMaxLoading, setIsMaxLoading] = useState(false);
 
   const toggleMax: SwapTransactionType["toggleMax"] = useCallback(
-    account =>
+    () =>
       setIsMaxEnabled(previous => {
         const next = !previous;
         if (previous) {
           setFromAmount(ZERO);
           setIsMaxLoading(false);
         }
-        let additionalFees;
-        if (account?.type === "Account" && account?.unit?.code === "ETH") {
-          additionalFees = new BigNumber(10000000000000000); // 0,01 ETHs
-        }
-        bridge.updateTransaction(tx => ({
-          ...tx,
-          useAllAmount: next,
-          additionalFees,
-        }));
+        bridge.updateTransaction(tx => {
+          let additionalFees;
+          if (tx.family === "evm") {
+            additionalFees = new BigNumber(5000000000000000); // 0,005 ETH/BNB/MATIC
+          }
+          return {
+            ...tx,
+            useAllAmount: next,
+            additionalFees,
+          };
+        });
         return next;
       }),
     [setFromAmount],
