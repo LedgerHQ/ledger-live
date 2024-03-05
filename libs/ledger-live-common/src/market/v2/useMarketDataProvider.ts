@@ -42,11 +42,16 @@ export function useMarketDataProvider() {
   };
 }
 
-export function useCurrencyChartData({ id, counterCurrency, ranges }: MarketCurrencyRequestParams) {
+export function useCurrencyChartData({
+  id,
+  counterCurrency,
+  ranges,
+  liveCoinsList,
+}: MarketCurrencyRequestParams) {
   const results = useQueries({
     queries: (ranges || []).map(range => ({
       queryKey: [QUERY_KEY.CurrencyChartData, id, counterCurrency, range],
-      queryFn: () => fetchCurrencyChartData({ counterCurrency, range, id }),
+      queryFn: () => fetchCurrencyChartData({ counterCurrency, range, id, liveCoinsList }),
       refetchInterval: REFETCH_TIME,
       staleTime: REFETCH_TIME,
     })),
@@ -55,11 +60,16 @@ export function useCurrencyChartData({ id, counterCurrency, ranges }: MarketCurr
   return results;
 }
 
-export function useCurrencyData({ id, counterCurrency, ranges }: MarketCurrencyRequestParams) {
+export function useCurrencyData({
+  id,
+  counterCurrency,
+  ranges,
+  liveCoinsList,
+}: MarketCurrencyRequestParams) {
   const results = useQueries({
     queries: (ranges || []).map(range => ({
       queryKey: [QUERY_KEY.CurrencyData, id, counterCurrency, range],
-      queryFn: () => fetchCurrencyData({ counterCurrency, range, id }),
+      queryFn: () => fetchCurrencyData({ counterCurrency, range, id, liveCoinsList }),
       refetchInterval: REFETCH_TIME,
       staleTime: REFETCH_TIME,
     })),
@@ -106,7 +116,10 @@ export function useSupportedCurrencies() {
 export function useMarketData(props: MarketListRequestParams): MarketListRequestResult {
   const results = useQueries({
     queries: Array.from({ length: props.page ?? 1 }, (_, i) => i + 1).map(page => ({
-      queryKey: [QUERY_KEY.MarketData, { ...props, page }],
+      queryKey: [
+        QUERY_KEY.MarketData,
+        { ...props, page, liveCoinsList: [], supportedCoinsList: [] },
+      ],
       queryFn: () => fetchList({ ...props, page }),
       refetchInterval: REFETCH_TIME,
       staleTime: REFETCH_TIME,
