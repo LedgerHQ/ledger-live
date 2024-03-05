@@ -77,4 +77,4 @@ jobs:
               echo "CURRENT_BRANCH_SYNC_FILE_BASENAME=$(echo ${CURRENT_BRANCH_SYNC_FILE_BASENAME})" >> $GITHUB_OUTPUT
 
           - name: print diff during migration
-            run: diff -y --suppress-common-lines /home/runner/work/ledger-live/${{ steps.target-output-file.outputs.TARGET_SYNC_FILE_BASENAME }}.json /home/runner/work/ledger-live/${{ steps.current-branch-output-filename.outputs.CURRENT_BRANCH_SYNC_FILE_BASENAME }}.json || true
+            run: diff -u /home/runner/work/ledger-live/${{ steps.target-output-file.outputs.TARGET_SYNC_FILE_BASENAME }}.json /home/runner/work/ledger-live/${{ steps.current-branch-output-filename.outputs.CURRENT_BRANCH_SYNC_FILE_BASENAME }}.json || true
