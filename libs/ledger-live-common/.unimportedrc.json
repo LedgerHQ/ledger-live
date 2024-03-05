@@ -311,7 +311,9 @@
     "src/postOnboarding/mock.ts",
     "src/reactNativeSvg.d.ts",
     "src/currencies/mock.ts",
-    "src/families/tezos/fixtures/*"
+    "src/families/tezos/fixtures/*",
+    "tsx",
+    "yargs"
   ],
   "ignoreUnused": [
     "@types/bchaddrjs",
@@ -375,8 +377,6 @@
     "scheduler",
     "stacktrace-parser",
     "use-sync-external-store/shim",
-    "whatwg-fetch",
-    "tsx",
-    "yargs"
+    "whatwg-fetch"
   ]
 }
