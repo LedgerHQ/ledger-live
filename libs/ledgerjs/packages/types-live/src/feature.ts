@@ -139,7 +139,6 @@ export type Features = CurrencyFeatures & {
   depositWithdrawBannerMobile: Feature_DepositWithdrawBannerMobile;
   mockFeature: Feature_MockFeature;
   multibuyNavigation: Feature_MultibuyNavigation;
-  walletConnectEntryPoint: Feature_WalletConnectEntryPoint;
   referralProgramDiscoverCard: Feature_ReferralProgramDiscoverCard;
   referralProgramDesktopBanner: Feature_ReferralProgramDesktopBanner;
   referralProgramDesktopSidebar: Feature_ReferralProgramDesktopSidebar;
@@ -499,7 +498,6 @@ export type Feature_LlmNewFirmwareUpdateUx = DefaultFeature;
 export type Feature_CounterValue = DefaultFeature;
 export type Feature_MockFeature = DefaultFeature;
 export type Feature_MultibuyNavigation = DefaultFeature;
-export type Feature_WalletConnectEntryPoint = DefaultFeature;
 export type Feature_ReferralProgramDesktopBanner = DefaultFeature;
 export type Feature_DisableNftSend = DefaultFeature;
 export type Feature_DisableNftLedgerMarket = DefaultFeature;
