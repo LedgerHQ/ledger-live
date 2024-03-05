@@ -1173,11 +1173,20 @@ export function useDappLogic({
   uiHook: UiHook;
   tracking: TrackingAPI;
 }) {
-  const currentNetwork = manifest.dapp?.networks[0];
   const nanoApp = manifest.dapp?.nanoApp;
   const previousAddressRef = useRef<string>();
   const previousChainIdRef = useRef<number>();
   const { currentAccount } = useDappAccountLogic({ manifest, accounts });
+
+  const currentNetwork = currentAccount
+    ? manifest.dapp?.networks.find(
+        network => network.chainID === currentAccount.currency.ethereumLikeInfo?.chainId,
+      )
+    : null;
+
+  // console.log(
+  //   `acc: ${currentAccount?.currency?.ethereumLikeInfo?.chainId}, net: ${currentNetwork?.chainID}`,
+  // );
 
   useEffect(() => {
     if (!currentAccount) {
