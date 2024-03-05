@@ -41,18 +41,6 @@ type UseWebviewStateReturn = {
   handleRefresh: () => void;
 };
 
-function useGetWalletAPIAccount() {
-  const [currentAccount] = useDappCurrentAccount();
-  const accounts = useSelector(accountsSelector);
-
-  if (!currentAccount) return;
-  const parentAccount = isTokenAccount(currentAccount)
-    ? getParentAccount(currentAccount, accounts)
-    : undefined;
-
-  return accountToWalletAPIAccount(currentAccount, parentAccount).id;
-}
-
 export function useWebviewState(
   params: UseWebviewStateParams,
   webviewAPIRef: React.ForwardedRef<WebviewAPI>,
@@ -60,13 +48,7 @@ export function useWebviewState(
 ): UseWebviewStateReturn {
   const webviewRef = useRef<WebviewTag>(null);
   const { manifest, inputs } = params;
-  const currentWalletAPIAccount = useGetWalletAPIAccount();
-
-  const initialURL = useMemo(
-    // TODO: pass parentAccountId there too?
-    () => getInitialURL(inputs, manifest, currentWalletAPIAccount),
-    [manifest, inputs, currentWalletAPIAccount],
-  );
+  const initialURL = useMemo(() => getInitialURL(inputs, manifest), [manifest, inputs]);
   const [state, setState] = useState<WebviewState>(initialWebviewState);
 
   useImperativeHandle(
