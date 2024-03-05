@@ -46,7 +46,7 @@ const RecipientField = <T extends Transaction, TS extends TransactionStatus>({
       onChangeTransaction(bridge.updateTransaction(transaction, { recipient: value }));
       resetInitValue && resetInitValue();
     }
-  }, [bridge, onChangeTransaction, resetInitValue, transaction, value]);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const onChange = useCallback(
     async (recipient: string, maybeExtra?: OnChangeExtra | null) => {
