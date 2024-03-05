@@ -22,6 +22,8 @@ export type MarketListRequestParams = {
   sparkline?: boolean;
   liveCompatible?: boolean;
   top100?: boolean;
+  supportedCoinsList?: SupportedCoins;
+  liveCoinsList?: string[];
 };
 
 export type MarketState = {
@@ -52,6 +54,7 @@ export type MarketCurrencyChartDataRequestParams = {
   counterCurrency?: string;
   range?: string;
   lastRequestTime?: Date;
+  liveCoinsList?: string[];
 };
 
 export type MarketCurrencyRequestParams = {
