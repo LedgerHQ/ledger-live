@@ -193,7 +193,7 @@ function HeadlessShowAccounts({
   }
   return (
     <div>
-      <ul>
+      <ul style={{ padding: 0, margin: 0 }}>
         {accounts.map(account => (
           <li
             key={account.id}
@@ -207,7 +207,8 @@ function HeadlessShowAccounts({
             <SyncButton action={() => syncOne(account.id)} />
             <strong>{getAccountName(account)}</strong>
             <span>{formatCurrencyUnit(account.unit, account.balance, { showCode: true })}</span>
-            <code>{shortAddressPreview(account.freshAddress)}</code>
+            <code style={{ fontSize: "0.8em" }}>block#{account.blockHeight}</code>
+            <code>{account.freshAddress}</code>
             <span>
               <button type="button" onClick={() => removeAccount(account.id)}>
                 {" "}
@@ -219,7 +220,7 @@ function HeadlessShowAccounts({
       </ul>
 
       <button type="button" onClick={onSyncAllAccounts} disabled={synchronizing}>
-        Synchronize all accounts
+        Sync all accounts
       </button>
     </div>
   );
