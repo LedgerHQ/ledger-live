@@ -1,7 +1,7 @@
 import React from "react";
 import { useTheme } from "styled-components/native";
 import { BigNumber } from "bignumber.js";
-import { CryptoOrTokenCurrency, Currency, Unit } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 import { Flex, Text, Tag } from "@ledgerhq/native-ui";
 import { ValueChange } from "@ledgerhq/types-live";
 import isEqual from "lodash/isEqual";
@@ -40,7 +40,7 @@ const AssetRowLayout = ({
   tag,
 }: Props) => {
   const { colors, space } = useTheme();
-  const { cryptoIcons } = useCryptoIcons();
+  const { getCryptoIcon } = useCryptoIcons();
 
   const currencyId = currency?.id;
 
@@ -56,8 +56,8 @@ const AssetRowLayout = ({
         />
       )}
       <Flex flexDirection="row" pt={topLink ? 0 : 6} pb={bottomLink ? 0 : 6} alignItems="center">
-        {currencyId && cryptoIcons?.[currencyId] ? (
-          <CryptoIconPOC size={40} iconURL={cryptoIcons?.[currencyId] || undefined} circleIcon />
+        {currencyId && getCryptoIcon(currencyId) ? (
+          <CryptoIconPOC size={40} iconURL={getCryptoIcon(currencyId) || ""} circleIcon />
         ) : (
           <ParentCurrencyIcon currency={currency} size={40} />
         )}

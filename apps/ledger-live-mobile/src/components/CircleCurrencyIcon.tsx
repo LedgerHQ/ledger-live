@@ -1,11 +1,7 @@
 import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
-import { getCryptoCurrencyIcon, getTokenCurrencyIcon } from "@ledgerhq/live-common/reactNative";
-import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
-import { useTheme } from "@react-navigation/native";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import LText from "./LText";
-import { ensureContrast, rgba } from "../colors";
+import CryptoIconPOC, { useCryptoIcons } from "@ledgerhq/native-ui/components/Icon/CryptoIconPOC";
 
 type Props = {
   currency: CryptoOrTokenCurrency;
@@ -14,47 +10,22 @@ type Props = {
   sizeRatio?: number;
 };
 
-function CircleCurrencyIcon({ size, currency, color, sizeRatio = 0.5 }: Props) {
-  const { colors } = useTheme();
+function CircleCurrencyIcon({ size, currency }: Props) {
+  const { getCryptoIcon } = useCryptoIcons();
   const isToken = currency.type === "TokenCurrency";
-  const backgroundColorContrast = ensureContrast(
-    color || rgba(getCurrencyColor(currency), isToken ? 1 : 1),
-    colors.background,
-  );
-  const initialBackgroundColor = color || rgba(getCurrencyColor(currency), isToken ? 1 : 1);
-  const backgroundColor =
-    initialBackgroundColor !== backgroundColorContrast
-      ? backgroundColorContrast
-      : initialBackgroundColor;
-  const c = ensureContrast("#FFF", backgroundColor);
-  const ticker = isToken ? currency.ticker[0] : currency.ticker;
-  const MaybeIconComponent = !isToken
-    ? getCryptoCurrencyIcon(currency)
-    : getTokenCurrencyIcon(currency);
+
+  const token = isToken ? { tokenIconURL: getCryptoIcon(currency.parentCurrency.id) || "" } : {};
   return (
     <View
       style={[
         styles.wrapper,
         {
-          backgroundColor,
           width: size,
           height: size,
         },
       ]}
     >
-      {MaybeIconComponent ? (
-        <MaybeIconComponent size={size * sizeRatio} color={c} />
-      ) : (
-        <LText
-          semiBold
-          style={{
-            color: c,
-            fontSize: size / 2,
-          }}
-        >
-          {ticker}
-        </LText>
-      )}
+      <CryptoIconPOC size={40} {...token} iconURL={getCryptoIcon(currency.id) || ""} circleIcon />
     </View>
   );
 }

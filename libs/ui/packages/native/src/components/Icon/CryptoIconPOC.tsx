@@ -9,7 +9,7 @@ type CryptoIcons = Record<string, string | null>;
 
 interface CryptoIconsContextProps {
   cryptoIcons: CryptoIcons;
-  setCryptoIcons: React.Dispatch<React.SetStateAction<CryptoIcons>>;
+  isReady: boolean;
 }
 
 const CryptoIconsContext = createContext<CryptoIconsContextProps | undefined>(undefined);
@@ -28,7 +28,6 @@ interface CryptoIconsProviderProps {
 
 export const CryptoIconsProvider: React.FC<CryptoIconsProviderProps> = ({ children }) => {
   const [cryptoIcons, setCryptoIcons] = useState<CryptoIcons>({});
-  const [mapping, setMapping] = useState(null);
 
   useEffect(() => {
     const url = `https://mapping-service.api.ledger.com/v1/coingecko/mapped-assets`;
@@ -36,63 +35,34 @@ export const CryptoIconsProvider: React.FC<CryptoIconsProviderProps> = ({ childr
       fetch(url)
         .then((response: Response) => response.json())
         .then((data) => {
-          console.log(data);
-          setMapping(data);
+          setCryptoIcons(
+            data.reduce(
+              (acc: any, coin: any) => ({ ...acc, [coin.ledgerId]: coin?.data?.img }),
+              {},
+            ),
+          );
         });
     } catch (error) {
       console.log(error);
     }
   }, []);
-
   return (
-    <CryptoIconsContext.Provider value={{ cryptoIcons, setCryptoIcons }}>
+    <CryptoIconsContext.Provider
+      value={{ cryptoIcons, isReady: Object.keys(cryptoIcons).length > 1 }}
+    >
       {children}
     </CryptoIconsContext.Provider>
   );
 };
 
 interface UseCryptoIcons {
-  cryptoIcons: CryptoIcons;
-  getCryptoIcon: (ids: string | string[]) => Promise<void>;
+  getCryptoIcon: (icon: string) => string | null;
 }
 
 export const useCryptoIcons = (): UseCryptoIcons => {
-  const { cryptoIcons, setCryptoIcons } = useCryptoIconsContext();
-
-  const getCryptoIcon = async (ids: string | string[]) => {
-    try {
-      const idArray = Array.isArray(ids) ? ids : [ids];
-
-      const promises = idArray.map(async (id) => {
-        if (cryptoIcons[id]) {
-          return;
-        }
-
-        try {
-          const response = await fetch(
-            `https://api.coingecko.com/api/v3/coins/${id}?tickers=false&market_data=false&community_data=false&developer_data=true`,
-            // { mode: "no-cors" },
-          );
-
-          if (!response.ok) {
-            throw new Error(`Failed to fetch data for ID: ${id}`);
-          }
-
-          const data = await response.json();
-          const icon = data.image?.large || null;
-          setCryptoIcons((prevIcons) => ({ ...prevIcons, [id]: icon }));
-        } catch (error) {
-          console.error("Error fetching crypto icons:", error);
-        }
-      });
-
-      await Promise.all(promises);
-    } catch (error) {
-      console.error("Error fetching crypto icons:", error);
-    }
-  };
-
-  return { getCryptoIcon, cryptoIcons };
+  const { cryptoIcons, isReady } = useCryptoIconsContext();
+  const getCryptoIcon = (icon: string) => (isReady ? cryptoIcons?.[icon] : null);
+  return { getCryptoIcon };
 };
 
 export type Props = {
@@ -164,7 +134,7 @@ const IconBox = ({ children, backgroundColor, size = 16, tokenIconURL = "" }: Ic
       {children}
       {tokenIconURL && (
         <TokenContainer
-          size={size / 3}
+          size={size / 2}
           borderColor={colors.background.main}
           backgroundColor={backgroundColor || colors.background.main}
         >
@@ -176,8 +146,6 @@ const IconBox = ({ children, backgroundColor, size = 16, tokenIconURL = "" }: Ic
       )}
     </Container>
   );
-
-  return children;
 };
 
 const CryptoIcon = ({
