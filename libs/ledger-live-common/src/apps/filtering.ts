@@ -1,7 +1,9 @@
 import type { InstalledItem } from "./types";
 import { getCryptoCurrencyById, isCurrencySupported } from "../currencies";
 import { useMemo } from "react";
-import type { App } from "@ledgerhq/types-live";
+import type { App, FeatureId } from "@ledgerhq/types-live";
+import { getFeature } from "../featureFlags";
+import camelCase from "lodash/camelCase";
 
 export type SortOptions = {
   type?: "name" | "marketcap" | "default";
@@ -39,34 +41,37 @@ const searchFilter =
     return queries.some(query => terms.toLowerCase().includes(query));
   };
 
-const typeFilter =
-  (
-    filters: AppType[] = ["all"],
-    updateAwareInstalledApps: UpdateAwareInstalledApps,
-    installQueue: string[] = [],
-  ) =>
-  app =>
+function typeFilter(
+  filters: AppType[] = ["all"],
+  updateAwareInstalledApps: UpdateAwareInstalledApps,
+  installQueue: string[] = [],
+) {
+  return ({ currencyId, name }: App) =>
     filters.every(filter => {
+      const key = camelCase(`currency_${currencyId}`) as FeatureId;
+      const { enabled: currencyEnabled = true } = getFeature({ key }) ?? {};
       switch (filter) {
         case "installed":
-          return installQueue.includes(app.name) || app.name in updateAwareInstalledApps;
-
+          return installQueue.includes(name) || name in updateAwareInstalledApps;
         case "not_installed":
-          return !(app.name in updateAwareInstalledApps);
-
+          return !(name in updateAwareInstalledApps);
         case "updatable":
-          return app.name in updateAwareInstalledApps && !updateAwareInstalledApps[app.name];
-
+          return name in updateAwareInstalledApps && !updateAwareInstalledApps[name];
         case "supported":
-          return app.currencyId && isCurrencySupported(getCryptoCurrencyById(app.currencyId));
-
+          return (
+            currencyId && isCurrencySupported(getCryptoCurrencyById(currencyId)) && currencyEnabled
+          );
         case "not_supported":
-          return !(app.currencyId && isCurrencySupported(getCryptoCurrencyById(app.currencyId)));
-
+          return (
+            !currencyId ||
+            !isCurrencySupported(getCryptoCurrencyById(currencyId)) ||
+            !currencyEnabled
+          );
         default:
           return true;
       }
     });
+}
 
 export const sortApps = (apps: App[], _options: SortOptions): App[] => {
   const { type, order } = _options;
