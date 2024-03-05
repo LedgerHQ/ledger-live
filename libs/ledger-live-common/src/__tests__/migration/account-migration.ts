@@ -209,18 +209,21 @@ export const testSync = async (currencyId: string, xpubOrAddress: string) => {
 
   if (inputFile) {
     if (!existsSync(inputFile)) {
-      throw new Error(`Incorrect file path: ${inputFile} does not exist`);
+      console.warn(
+        `Incorrect file path: ${inputFile} does not exist`,
+        "Will use default addresses instead",
+      );
+    } else {
+      // if there's a input file we parse it
+      const content = JSON.parse(readFileSync(inputFile, "utf8"));
+      const syncInfo: MigrationAddress[] = content.map(account => ({
+        currencyId: account.currencyId,
+        address: account.freshAddress,
+        xpub: account.xpub,
+      }));
+
+      inputFileAddresses.push(...syncInfo);
     }
-
-    // if there's a input file we parse it
-    const content = JSON.parse(readFileSync(inputFile, "utf8"));
-    const syncInfo: MigrationAddress[] = content.map(account => ({
-      currencyId: account.currencyId,
-      address: account.freshAddress,
-      xpub: account.xpub,
-    }));
-
-    inputFileAddresses.push(...syncInfo);
   }
 
   const currencyIds = currencies?.split(",");
@@ -232,7 +235,7 @@ export const testSync = async (currencyId: string, xpubOrAddress: string) => {
     }
   });
 
-  // if --inputFile we use the addresses from the input file otherwise from `addresses.ts`
+  // if --inputFile we use the addresses from the input file otherwise from addresses.ts
   const migrationAddresses = inputFileAddresses.length ? inputFileAddresses : defaultAddresses;
 
   const filteredAccounts = migrationAddresses.filter(addresses => {
