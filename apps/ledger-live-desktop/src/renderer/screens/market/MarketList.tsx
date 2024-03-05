@@ -22,7 +22,10 @@ import {
 } from "@ledgerhq/live-common/market/types";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { useFetchCurrencyFrom } from "@ledgerhq/live-common/exchange/swap/hooks/index";
-import { useMarketData as useMarketDataHook } from "@ledgerhq/live-common/market/v2/useMarketDataProvider";
+import {
+  useMarketData as useMarketDataHook,
+  useMarketDataProvider,
+} from "@ledgerhq/live-common/market/v2/useMarketDataProvider";
 import { marketSelector } from "~/renderer/reducers/market";
 import { setMarketOptions } from "~/renderer/actions/market";
 import { SortTableCell } from "./components/SortTableCell";
@@ -140,6 +143,8 @@ function MarketList({
   const { t } = useTranslation();
   const locale = useSelector(localeSelector);
 
+  const { supportedCurrencies, liveCoinsList } = useMarketDataProvider();
+
   const onLoadNextPage = useCallback(() => {
     dispatch(setMarketOptions({ page: (marketParams?.page || 1) + 1 }));
   }, [dispatch, marketParams?.page]);
@@ -153,10 +158,14 @@ function MarketList({
 
   const { orderBy, order, starred, search, range, counterCurrency } = marketParams;
 
-  const res = useMarketDataHook(marketParams);
+  const marketResult = useMarketDataHook({
+    ...marketParams,
+    liveCoinsList,
+    supportedCoinsList: supportedCurrencies,
+  });
 
-  const currenciesLength = res.data.length;
-  const loading = res.loading;
+  const currenciesLength = marketResult.data.length;
+  const loading = marketResult.loading;
   const freshLoading = loading && !currenciesLength;
 
   const { data: fromCurrencies } = useFetchCurrencyFrom();
@@ -189,7 +198,10 @@ function MarketList({
     [order, orderBy, refresh],
   );
 
-  const isItemLoaded = useCallback((index: number) => !!res.data[index], [res.data]);
+  const isItemLoaded = useCallback(
+    (index: number) => !!marketResult.data[index],
+    [marketResult.data],
+  );
   const itemCount = currenciesLength + 1;
 
   return (
@@ -269,7 +281,7 @@ function MarketList({
                         itemCount={itemCount}
                         onItemsRendered={onItemsRendered}
                         itemSize={listItemHeight}
-                        itemData={res.data}
+                        itemData={marketResult.data}
                         style={{ overflowX: "hidden" }}
                         ref={ref}
                         overscanCount={10}
