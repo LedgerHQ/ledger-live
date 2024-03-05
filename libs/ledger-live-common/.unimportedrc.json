@@ -279,7 +279,9 @@
     "src/wallet-api/react.ts",
     "src/wallet-api/tracking.ts",
     "src/wallet-api/types.ts",
-    "src/wallet-api/version.ts"
+    "src/wallet-api/version.ts",
+    "yargs",
+    "tsx"
   ],
   "extensions": [".ts", ".js", ".jsx", ".tsx"],
   "ignorePatterns": ["**/node_modules/**"],
