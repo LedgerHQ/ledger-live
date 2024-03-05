@@ -245,8 +245,8 @@ export async function generateStaxImageFormat(
   padImage: boolean,
   screenSpecs: ScreenSpecs,
 ) {
-  const width = screenSpecs.width - screenSpecs.paddingLeft - screenSpecs.paddingRight;
-  const height = screenSpecs.height - screenSpecs.paddingTop - screenSpecs.paddingBottom;
+  const width = screenSpecs.width;
+  const height = screenSpecs.height;
   const bpp = 2; // value for 4 bits per pixel
   const compression = compressImage ? 1 : 0;
 
