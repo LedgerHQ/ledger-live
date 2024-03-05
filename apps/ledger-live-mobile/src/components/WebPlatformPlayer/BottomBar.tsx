@@ -1,11 +1,19 @@
-import React, { RefObject, useCallback } from "react";
-import { TouchableOpacity } from "react-native";
-import { Flex } from "@ledgerhq/native-ui";
+import React, { RefObject, useCallback, useMemo } from "react";
+import { StyleSheet, TouchableOpacity } from "react-native";
+import { Flex, Text } from "@ledgerhq/native-ui";
 import { ArrowLeftMedium, ArrowRightMedium, ReverseMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useTheme } from "styled-components/native";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
-import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
+import { safeGetRefValue, useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/react";
+import { listCurrencies } from "@ledgerhq/live-common/currencies/index";
+import { matchCurrencies } from "@ledgerhq/live-common/wallet-api/helpers";
 import { WebviewAPI, WebviewState } from "../Web3AppWebview/types";
+import { useNavigation } from "@react-navigation/native";
+import { NavigatorName, ScreenName } from "~/const";
+import Button from "../Button";
+import { Trans } from "react-i18next";
+import { getAccountName } from "@ledgerhq/live-common/account/index";
+import CircleCurrencyIcon from "../CircleCurrencyIcon";
 
 type BottomBarProps = {
   manifest: AppManifest;
@@ -34,8 +42,13 @@ function IconButton({
   );
 }
 
-export function BottomBar({ webviewAPIRef, webviewState }: BottomBarProps) {
+const allCurrenciesAndTokens = listCurrencies(true);
+
+export function BottomBar({ manifest, webviewAPIRef, webviewState }: BottomBarProps) {
+  const navigation = useNavigation();
   const { colors } = useTheme();
+  const [currentAccount, setCurrentAccount] = useDappCurrentAccount();
+  const shouldDisplaySelectAccount = !!manifest.dapp;
 
   const handleForward = useCallback(() => {
     const webview = safeGetRefValue(webviewAPIRef);
@@ -55,8 +68,40 @@ export function BottomBar({ webviewAPIRef, webviewState }: BottomBarProps) {
     webview.reload();
   }, [webviewAPIRef]);
 
+  const currencies = useMemo(() => {
+    return manifest.currencies === "*"
+      ? allCurrenciesAndTokens
+      : matchCurrencies(allCurrenciesAndTokens, manifest.currencies);
+  }, [manifest.currencies]);
+
+  const onSelectAccount = useCallback(() => {
+    if (currencies.length === 1) {
+      navigation.navigate(NavigatorName.RequestAccount, {
+        screen: ScreenName.RequestAccountsSelectAccount,
+        params: {
+          currency: currencies[0],
+          allowAddAccount: true,
+          onSuccess: account => {
+            setCurrentAccount(account);
+          },
+        },
+      });
+    } else {
+      navigation.navigate(NavigatorName.RequestAccount, {
+        screen: ScreenName.RequestAccountsSelectCrypto,
+        params: {
+          currencies,
+          allowAddAccount: true,
+          onSuccess: account => {
+            setCurrentAccount(account);
+          },
+        },
+      });
+    }
+  }, [currencies, navigation, setCurrentAccount]);
+
   return (
-    <Flex flexDirection="row" paddingY={4} paddingX={4}>
+    <Flex flexDirection="row" paddingY={4} paddingX={4} alignItems="center">
       <Flex flexDirection="row" flex={1}>
         <IconButton onPress={handleBack} marginRight={4} disabled={!webviewState.canGoBack}>
           <ArrowLeftMedium
@@ -73,9 +118,41 @@ export function BottomBar({ webviewAPIRef, webviewState }: BottomBarProps) {
         </IconButton>
       </Flex>
 
+      {shouldDisplaySelectAccount ? (
+        <Button
+          type="primary"
+          onPress={onSelectAccount}
+          containerStyle={styles.selectAccountButton}
+        >
+          {!currentAccount ? (
+            <Text>
+              <Trans i18nKey="common.selectAccount" />
+            </Text>
+          ) : (
+            <Flex flexDirection="row" height={50} alignItems="center" justifyContent="center">
+              <CircleCurrencyIcon
+                size={24}
+                currency={
+                  currentAccount.type === "TokenAccount"
+                    ? currentAccount.token
+                    : currentAccount.currency
+                }
+              />
+              <Text ml={4}>{getAccountName(currentAccount)}</Text>
+            </Flex>
+          )}
+        </Button>
+      ) : null}
+
       <IconButton onPress={handleReload} alignSelf="flex-end">
         <ReverseMedium size={24} color="neutral.c100" />
       </IconButton>
     </Flex>
   );
 }
+
+const styles = StyleSheet.create({
+  selectAccountButton: {
+    // flexGrow: 1,
+  },
+});

@@ -1082,8 +1082,7 @@ export function EVMAddressChanged(addr1: string, addr2: string): boolean {
 export const currentAccountAtom = atom<AccountLike | null>(null);
 
 export function useDappCurrentAccount() {
-  const [currentAccount, setCurrentAccount] = useAtom(currentAccountAtom);
-  return { currentAccount, setCurrentAccount };
+  return useAtom(currentAccountAtom);
 }
 
 const manifestToCurrentAccountMap = new Map<string, string>();
@@ -1096,7 +1095,7 @@ function useDappAccountLogic({
   accounts: AccountLike[];
 }) {
   const { currencyIds } = usePermission(manifest);
-  const { currentAccount: storedCurrentAccount, setCurrentAccount } = useDappCurrentAccount();
+  const [storedCurrentAccount, setCurrentAccount] = useDappCurrentAccount();
   const currentAccount = useMemo(() => {
     if (storedCurrentAccount) {
       return getParentAccount(storedCurrentAccount, accounts);
@@ -1177,16 +1176,14 @@ export function useDappLogic({
   const previousAddressRef = useRef<string>();
   const previousChainIdRef = useRef<number>();
   const { currentAccount } = useDappAccountLogic({ manifest, accounts });
-
-  const currentNetwork = currentAccount
-    ? manifest.dapp?.networks.find(
-        network => network.chainID === currentAccount.currency.ethereumLikeInfo?.chainId,
-      )
-    : null;
-
-  // console.log(
-  //   `acc: ${currentAccount?.currency?.ethereumLikeInfo?.chainId}, net: ${currentNetwork?.chainID}`,
-  // );
+  const currentNetwork = useMemo(() => {
+    if (!currentAccount) {
+      return undefined;
+    }
+    return manifest.dapp?.networks.find(network => {
+      return network.currency === currentAccount.currency.id;
+    });
+  }, [currentAccount, manifest.dapp?.networks]);
 
   useEffect(() => {
     if (!currentAccount) {
