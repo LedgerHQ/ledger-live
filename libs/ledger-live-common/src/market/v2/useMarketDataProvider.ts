@@ -42,16 +42,11 @@ export function useMarketDataProvider() {
   };
 }
 
-export function useCurrencyChartData({
-  id,
-  counterCurrency,
-  ranges,
-  liveCoinsList,
-}: MarketCurrencyRequestParams) {
+export function useCurrencyChartData({ id, counterCurrency, ranges }: MarketCurrencyRequestParams) {
   const results = useQueries({
     queries: (ranges || []).map(range => ({
       queryKey: [QUERY_KEY.CurrencyChartData, id, counterCurrency, range],
-      queryFn: () => fetchCurrencyChartData({ counterCurrency, range, id, liveCoinsList }),
+      queryFn: () => fetchCurrencyChartData({ counterCurrency, range, id }),
       refetchInterval: REFETCH_TIME,
       staleTime: REFETCH_TIME,
     })),
@@ -60,16 +55,11 @@ export function useCurrencyChartData({
   return results;
 }
 
-export function useCurrencyData({
-  id,
-  counterCurrency,
-  ranges,
-  liveCoinsList,
-}: MarketCurrencyRequestParams) {
+export function useCurrencyData({ id, counterCurrency, ranges }: MarketCurrencyRequestParams) {
   const results = useQueries({
     queries: (ranges || []).map(range => ({
       queryKey: [QUERY_KEY.CurrencyData, id, counterCurrency, range],
-      queryFn: () => fetchCurrencyData({ counterCurrency, range, id, liveCoinsList }),
+      queryFn: () => fetchCurrencyData({ counterCurrency, range, id }),
       refetchInterval: REFETCH_TIME,
       staleTime: REFETCH_TIME,
     })),

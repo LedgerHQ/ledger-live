@@ -124,7 +124,7 @@ async function listPaginated({
       );
   }
 
-  return currencyFormatter(data, range, cryptoCurrenciesList, LIVE_COINS_LIST);
+  return currencyFormatter(data, range, cryptoCurrenciesList);
 }
 
 // fetches currencies data for selected currencies ids
@@ -200,7 +200,7 @@ export async function fetchList({
       );
   }
 
-  return currencyFormatter(data, range, cryptoCurrenciesList, liveCoinsList);
+  return currencyFormatter(data, range, cryptoCurrenciesList);
 }
 
 // Fetches list of supported counterCurrencies
@@ -235,7 +235,6 @@ export async function fetchCurrencyData({
   counterCurrency,
   range = "24h",
   id,
-  liveCoinsList = [],
 }: MarketCurrencyChartDataRequestParams): Promise<CurrencyData> {
   const url =
     `${ROOT_PATH}/coins/markets?vs_currency=${counterCurrency}` +
@@ -247,12 +246,14 @@ export async function fetchCurrencyData({
     url,
   });
 
-  return currencyFormatter(data, range, cryptoCurrenciesList, liveCoinsList)[0];
+  /**
+   * @data returns array of one element
+   */
+  return currencyFormatter(data, range, cryptoCurrenciesList)[0];
 }
 
 export async function fetchCurrency({
   id,
-  liveCoinsList = [],
 }: MarketCurrencyChartDataRequestParams): Promise<CurrencyData> {
   const url = `${ROOT_PATH}/coins/${id}`;
 
@@ -261,7 +262,7 @@ export async function fetchCurrency({
     url,
   });
 
-  return format(data, "24h", cryptoCurrenciesList, liveCoinsList);
+  return format(data, "24h", cryptoCurrenciesList);
 }
 
 export default {
