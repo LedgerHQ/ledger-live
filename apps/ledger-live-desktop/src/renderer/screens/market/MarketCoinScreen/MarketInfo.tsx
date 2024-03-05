@@ -75,6 +75,27 @@ const Line = styled(Flex).attrs({
   }
 `;
 
+type Props = {
+  marketcap?: number;
+  marketcapRank?: number;
+  totalVolume?: number;
+  high24h?: number;
+  low24h?: number;
+  price?: number;
+  priceChangePercentage?: number;
+  marketCapChangePercentage24h?: number;
+  circulatingSupply?: number;
+  totalSupply?: number;
+  maxSupply?: number;
+  ath?: number;
+  athDate?: string | Date;
+  atl?: number;
+  atlDate?: string | Date;
+  counterCurrency: string;
+  loading: boolean;
+  locale: string;
+};
+
 function MarketInfo({
   marketcap,
   marketcapRank,
@@ -94,26 +115,7 @@ function MarketInfo({
   counterCurrency,
   loading,
   locale,
-}: {
-  marketcap?: number;
-  marketcapRank?: number;
-  totalVolume?: number;
-  high24h?: number;
-  low24h?: number;
-  price?: number;
-  priceChangePercentage?: number;
-  marketCapChangePercentage24h?: number;
-  circulatingSupply?: number;
-  totalSupply?: number;
-  maxSupply?: number;
-  ath?: number;
-  athDate?: string | Date;
-  atl?: number;
-  atlDate?: string | Date;
-  counterCurrency: string;
-  loading: boolean;
-  locale: string;
-}) {
+}: Props) {
   const { t } = useTranslation();
 
   const athDateD = useMemo(() => (athDate ? new Date(athDate) : undefined), [athDate]);

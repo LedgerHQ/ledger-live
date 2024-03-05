@@ -16,21 +16,6 @@ export const TableCellBase: StyledComponent<"div", DefaultTheme, FlexProps> = st
   cursor: ${p => (p.disabled ? "default" : "pointer")};
 `;
 
-export const TableCell = ({
-  loading,
-  children,
-  ...props
-}: {
-  disabled?: boolean;
-  loading?: boolean;
-  onClick?: (e: React.MouseEvent<HTMLDivElement>) => void;
-  children?: React.ReactNode;
-} & React.ComponentProps<typeof TableCellBase>) => (
-  <TableCellBase {...props}>
-    {loading ? <LoadingPlaceholder style={{ borderRadius: 50, overflow: "hidden" }} /> : children}
-  </TableCellBase>
-);
-
 export const TableRow: StyledComponent<
   "div",
   DefaultTheme,
@@ -115,3 +100,16 @@ export const TableRow: StyledComponent<
     }
   }
 `;
+
+type TableCellProps = {
+  disabled?: boolean;
+  loading?: boolean;
+  onClick?: (e: React.MouseEvent<HTMLDivElement>) => void;
+  children?: React.ReactNode;
+} & React.ComponentProps<typeof TableCellBase>;
+
+export const TableCell = ({ loading, children, ...props }: TableCellProps) => (
+  <TableCellBase {...props}>
+    {loading ? <LoadingPlaceholder style={{ borderRadius: 50, overflow: "hidden" }} /> : children}
+  </TableCellBase>
+);

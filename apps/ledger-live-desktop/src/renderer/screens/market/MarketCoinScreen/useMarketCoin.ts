@@ -27,7 +27,7 @@ import {
 } from "@ledgerhq/live-common/market/v2/useMarketDataProvider";
 import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
 
-const ranges = Object.keys(rangeDataTable);
+const ranges = Object.keys(rangeDataTable).filter(k => k !== "1h");
 
 export const useMarketCoin = () => {
   const [range, setRange] = useState<string>("24h");
