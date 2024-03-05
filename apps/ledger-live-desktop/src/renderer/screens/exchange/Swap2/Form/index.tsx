@@ -10,7 +10,6 @@ import {
 } from "@ledgerhq/live-common/exchange/swap/webApp/index";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import React, { useCallback, useEffect, useRef, useState, useMemo } from "react";
-import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import styled from "styled-components";
@@ -55,7 +54,6 @@ const idleTime = 60 * 60000; // 1 hour
 const SwapForm = () => {
   const language = useSelector(languageSelector);
   const [idleState, setIdleState] = useState(false);
-  const { t } = useTranslation();
   const dispatch = useDispatch();
   const { state: locationState } = useLocation();
   const history = useHistory();
