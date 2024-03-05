@@ -143,7 +143,7 @@
     "add" : "Ajouter",
     "or" : "OU",
     "clearAll" : "Tout effacer",
-    "buyLedger" : "Acheter un appareil Ledger"
+    "buyLedger" : "Acheter un wallet Ledger"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -275,7 +275,6 @@
   },
   "sidebar" : {
     "card" : "Carte",
-    "learn" : "Apprendre",
     "menu" : "Menu",
     "stars" : "Comptes favoris",
     "accounts" : "Comptes",
@@ -436,7 +435,7 @@
     },
     "ip" : {
       "title" : "Bienvenue dans le Swap",
-      "subtitle" : "Échangez des crypto-actifs depuis votre appareil Ledger.",
+      "subtitle" : "Échangez des crypto-actifs avec votre wallet Ledger.",
       "disclaimer" : "En continuant, vous acceptez que vos données de localisation soient partagées avec des prestataires tiers dans le cadre de leurs procédures LCB/KYC."
     },
     "form" : {
@@ -557,7 +556,7 @@
     },
     "getFundsModal" : {
       "text" : "Recevez des {{coin}} pour staker",
-      "description" : "Achetez, échangez ou recevez des cryptos directement sur votre appareil Ledger via Ledger Live."
+      "description" : "Achetez, échangez ou recevez des cryptos directement sur votre wallet Ledger via Ledger Live."
     }
   },
   "lottieDebugger" : {
@@ -725,7 +724,7 @@
         "title" : "Intégration : {{family}}",
         "subTitle" : "L’intégration {{family}} a été réalisée par l’équipe {{team}}.",
         "description" : "Ledger Live est une plateforme open source.",
-        "description2" : "Les développeurs du monde entier peuvent intégrer et construire sur Ledger Live.",
+        "description2" : "Les développeurs du monde entier peuvent intégrer et déployer leurs services sur Ledger Live.",
         "description3" : "Cette intégration a été réalisée par {{team}} en collaboration avec Ledger."
       }
     },
@@ -1409,6 +1408,7 @@
   },
   "dashboard" : {
     "title" : "Portefeuille",
+    "header" : "Solde du portefeuille",
     "emptyAccountTile" : {
       "desc" : "Ajouter des comptes pour gérer plus de crypto-actifs",
       "createAccount" : "Ajouter un compte"
@@ -1449,6 +1449,27 @@
         "description" : "Dernière étape pour profiter de Ledger Recover.",
         "primaryCta" : "Connecter",
         "secondaryCta" : "Pas maintenant"
+      }
+    },
+    "marketPerformanceWidget" : {
+      "title" : "Tendance {{time}}",
+      "buy" : "Acheter",
+      "swap" : "Échanger",
+      "gainers" : "Hausses",
+      "losers" : "Baisses",
+      "error" : {
+        "title" : "Échec du chargement de la tendance",
+        "description" : "Veuillez réessayer plus tard."
+      },
+      "missingData" : {
+        "gainers" : {
+          "title" : "Aucun actif du Top 50 n’a enregistré de hausse ces dernières 24h",
+          "description" : "Jetez un œil au Top des baisses ou revenez plus tard"
+        },
+        "losers" : {
+          "title" : "Aucun actif du Top 50 n’a enregistré de baisse ces dernières 24h",
+          "description" : "Jetez un œil au Top des hausses ou revenez plus tard"
+        }
       }
     }
   },
@@ -1756,7 +1777,7 @@
   "DeviceAction" : {
     "allowAppPermission" : "Ouvrez l’app {{wording}} sur votre appareil",
     "allowAppPermissionSubtitleToken" : "pour gérer vos tokens {{token}}",
-    "allowManagerPermission" : "Autorisez la connexion sécurisée sur votre {{productName}}",
+    "allowManagerPermission" : "Autorisez la connexion sécurisée",
     "allowRenaming" : "Autorisez le changement de nom sur votre appareil",
     "loading" : "Chargement...",
     "connectAndUnlockDevice" : "Connectez et déverrouillez votre appareil.",
@@ -2207,6 +2228,15 @@
       "summary" : {
         "title" : "Récapitulatif"
       },
+      "networkFee" : {
+        "title" : "Choix des frais de réseau"
+      },
+      "reviewSummary" : {
+        "title" : "Vérification"
+      },
+      "connectLedger" : {
+        "title" : "Connexion"
+      },
       "device" : {
         "title" : "Appareil"
       },
@@ -2263,9 +2293,6 @@
     "footer" : {
       "estimatedFees" : "Frais de réseau"
     }
-  },
-  "sign" : {
-    "title" : "Signer la transaction"
   },
   "releaseNotes" : {
     "title" : "Notes de publication",
@@ -3974,7 +4001,7 @@
       "analyticsDesc" : "Autoriser les statistiques pour aider Ledger à améliorer l’expérience utilisateur. Ces statistiques comprennent les clics, les visites de pages, les redirections, les actions (envoyer, recevoir, verrouiller, etc.), les défilements en bas de page, les installations, désinstallations et mises à jour des apps, les versions des apps, le nombre de comptes, de crypto-actifs et d’opérations, la durée des sessions, le type d’appareil Ledger et de micrologiciel.",
       "reportErrors" : "Rapports de bugs",
       "reportErrorsDesc" : "Envoyer automatiquement des rapports pour aider Ledger à améliorer ses produits.",
-      "launchOnboarding" : "Configurer un appareil Ledger",
+      "launchOnboarding" : "Configurer un wallet Ledger",
       "launchOnboardingDesc" : "Configurez un nouvel appareil ou restaurez un appareil existant. Vos comptes et paramètres sont conservés."
     },
     "help" : {
@@ -4178,6 +4205,17 @@
     "logs" : "Enregistrer les logs",
     "dataFolder" : "Voir les données utilisateur"
   },
+  "approve" : {
+    "title" : "Approuver le token",
+    "description" : "Approuvez le token sur votre appareil Ledger",
+    "unlimited" : "Vous autorisez ce prestataire à accéder à une quantité illimitée du token sélectionné sur votre wallet. Vérifiez attentivement les détails de la transaction sur votre appareil Ledger avant de signer.",
+    "limited" : "Vous autorisez ce prestataire à accéder au token sélectionné sur votre wallet. Vérifiez attentivement les détails de la transaction sur votre appareil Ledger avant de signer.",
+    "termsAndConditions" : "En signant cette transaction, vous acceptez les <0>Conditions d’utilisation de {{appName}}</0>."
+  },
+  "sign" : {
+    "title" : "Signer la transaction",
+    "description" : "Signez la transaction sur votre appareil Ledger"
+  },
   "exportOperationsModal" : {
     "title" : "Historique des opérations",
     "desc" : "Sélectionnez les comptes pour lesquels vous voulez sauvegarder l’historique des opérations.",
@@ -4329,7 +4367,7 @@
           },
           "1" : {
             "title" : "Détenez votre clé privée",
-            "desc" : "Votre clé privée est stockée dans votre wallet Ledger.\nVous devez être la seule personne à la détenir pour contrôler vos cryptos."
+            "desc" : "Votre clé privée est stockée dans votre appareil Ledger.\nVous devez être la seule personne à la détenir pour contrôler vos cryptos."
           },
           "2" : {
             "title" : "Restez hors ligne",
@@ -4346,7 +4384,7 @@
         }
       },
       "selectDevice" : {
-        "title" : "Choisissez votre appareil Ledger",
+        "title" : "Choisissez votre wallet Ledger",
         "selectLabel" : "Sélectionner"
       },
       "selectUseCase" : {
@@ -4359,7 +4397,7 @@
           },
           "2" : {
             "title" : "Connecter un {{deviceName}}",
-            "description" : "Si votre appareil Ledger est déjà configuré, connectez-le à Ledger Live."
+            "description" : "Si votre wallet Ledger est déjà configuré, connectez-le à Ledger Live."
           },
           "3" : {
             "title" : "Restaurer une phrase de récupération sur un nouvel appareil",
@@ -4683,7 +4721,7 @@
         },
         "ownYourPrivateKey" : {
           "title" : "Détenez votre clé privée",
-          "description" : "Votre clé privée est stockée dans votre wallet Ledger. Vous devez être la seule personne à la détenir pour contrôler vos cryptos."
+          "description" : "Votre clé privée est stockée dans votre appareil Ledger. Vous devez être la seule personne à la détenir pour contrôler vos cryptos."
         },
         "stayOffline" : {
           "title" : "Restez hors ligne",
@@ -4713,7 +4751,7 @@
         "1" : {
           "text" : "Les cryptos sécurisées par mon appareil Ledger sont stockées :",
           "answers" : {
-            "1" : "Sur mon appareil Ledger",
+            "1" : "Dans mon appareil Ledger",
             "2" : "Sur la blockchain"
           },
           "results" : {
@@ -4909,6 +4947,8 @@
     "warning" : "Vérifiez toujours que l’adresse affichée sur votre appareil est identique à celle donnée par le {{recipientWording}}.",
     "secureContract" : "Vérifiez les détails du dépôt sur votre appareil avant de l’envoyer. L’adresse du contrat est fournie de manière sécurisée afin que vous n’ayez pas à la vérifier.",
     "verifyData" : "Vérifiez toujours les détails de l’opération sur votre appareil.",
+    "doubleCheck" : "Vérifiez attentivement les détails de la transaction sur votre appareil Ledger avant de signer.",
+    "termsAndConditions" : "En signant cette transaction, vous acceptez les <0>Conditions d’utilisation de {{appName}}</0>.",
     "warningWording" : {
     },
     "titleWording" : {
@@ -5160,7 +5200,7 @@
     },
     "DeviceAlreadySetup" : {
       "title" : "Votre {{device}} est déjà configuré avec une phrase de récupération secrète",
-      "description" : "Veuillez connecter un wallet Ledger qui n’est pas configuré."
+      "description" : "Veuillez connecter un appareil Ledger qui n’est pas configuré."
     },
     "DeviceNotGenuine" : {
       "title" : "L’appareil peut ne pas être authentique.",
@@ -5431,7 +5471,7 @@
       "description" : "Redémarrez votre appareil sans toucher les boutons lorsque le logo apparaît. Si le problème persiste, merci de contacter l’Assistance Ledger."
     },
     "UserRefusedAllowManager" : {
-      "title" : "My Ledger refusé sur l’appareil"
+      "title" : "Connexion sécurisée refusée sur l’appareil"
     },
     "UserRefusedFirmwareUpdate" : {
       "title" : "Installation de la mise à jour\nannulée sur l’appareil",
@@ -5472,6 +5512,14 @@
     "WrongDeviceForAccount" : {
       "title" : "Une erreur est survenue.",
       "description" : "Vérifiez que votre wallet physique est bien configuré avec la phrase de récupération ou la passphrase associée au compte sélectionné."
+    },
+    "WrongDeviceForAccountPayout" : {
+      "title" : "Une erreur est survenue",
+      "description" : "Ce compte bénéficiaire n’appartient pas à cet appareil Ledger. Veuillez le changer et réessayer."
+    },
+    "WrongDeviceForAccountRefund" : {
+      "title" : "Une erreur est survenue",
+      "description" : "Le compte bénéficiaire de ce remboursement n’appartient pas à cet appareil Ledger. Veuillez le changer et réessayer."
     },
     "DeviceAppVerifyNotSupported" : {
       "title" : "Mise à jour de l’app nécessaire",
@@ -5516,6 +5564,10 @@
     "TransactionHasBeenValidatedError" : {
       "title" : "Impossible de l’accélérer ou de l’annuler",
       "description" : "Cette transaction a déjà été validée."
+    },
+    "SequenceNumberError" : {
+      "title" : "Erreur dans le numéro de séquence",
+      "description" : "Veuillez fermer la fenêtre et réessayer plus tard."
     },
     "CantScanQRCode" : {
       "title" : "Échec du scan de ce code QR. Cette adresse ne prend pas en charge la vérification automatique."
@@ -5698,6 +5750,9 @@
     },
     "SwapExchangeRateAmountTooHigh" : {
       "title" : "Le montant doit être inférieur à {{maxAmountFromFormatted}}"
+    },
+    "SwapExchangeRateAmountTooLowOrTooHigh" : {
+      "title" : "Montant indisponible. Veuillez le modifier."
     },
     "PolkadotElectionClosed" : {
       "title" : "L’élection du validateur doit être fermée."
@@ -5914,9 +5969,6 @@
     "FailedToRetrieveFirmwareUpdateInfo" : {
       "title" : "Échec de la vérification du système d’exploitation",
       "description" : "Une erreur est survenue. Veuillez réessayer ou contacter l’Assistance Ledger."
-    },
-    "TezosUnrevealedAccount" : {
-      "title" : "Swap indisponible : effectuez d’abord un envoi/délégation avec ce compte Tezos, ou changez la paire."
     }
   },
   "cryptoOrg" : {
