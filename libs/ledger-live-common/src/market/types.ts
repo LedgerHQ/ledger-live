@@ -61,6 +61,7 @@ export type MarketCurrencyRequestParams = {
   id?: string;
   counterCurrency?: string;
   ranges?: string[];
+  liveCoinsList?: string[];
 };
 
 export type SparklineSvgData = {

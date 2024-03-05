@@ -24,6 +24,7 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import {
   useCurrencyChartData,
   useCurrencyData,
+  useMarketDataProvider,
 } from "@ledgerhq/live-common/market/v2/useMarketDataProvider";
 import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
 
@@ -40,6 +41,7 @@ export const useMarketCoin = () => {
   const { currencyId } = useParams<{ currencyId: string }>();
 
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
+  const { liveCoinsList, supportedCounterCurrencies } = useMarketDataProvider();
 
   const isStarred = starredMarketCoins.includes(currencyId);
   const locale = useSelector(localeSelector);
@@ -55,12 +57,14 @@ export const useMarketCoin = () => {
     counterCurrency,
     id: currencyId,
     ranges,
+    liveCoinsList,
   });
 
   const { currencyDataByRanges, currencyInfo } = useCurrencyData({
     counterCurrency,
     id: currencyId,
     ranges,
+    liveCoinsList,
   });
 
   const dataChart = useMemo(
@@ -239,5 +243,7 @@ export const useMarketCoin = () => {
     counterCurrency,
     changeCounterCurrency,
     currency,
+    supportedCounterCurrencies,
+    liveCoinsList,
   };
 };
