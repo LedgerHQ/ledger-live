@@ -1,8 +1,5 @@
 import { ABTestingVariants } from "./ABTesting";
-import {
-  CexDepositEntryPointsLocationsDesktop,
-  CexDepositEntryPointsLocationsMobile,
-} from "./cexDeposit";
+import { CexDepositEntryPointsLocationsMobile } from "./cexDeposit";
 import { ChainwatchNetwork } from "./chainwatch";
 import { StorylyInstanceID, StorylyInstanceType } from "./storyly";
 
@@ -170,7 +167,6 @@ export type Features = CurrencyFeatures & {
   transactionsAlerts: Feature_TransactionsAlerts;
   listAppsV2minor1: Feature_ListAppsV2minor1;
   llmWalletQuickActions: Feature_LlmWalletQuickActions;
-  cexDepositEntryPointsDesktop: Feature_CexDepositEntryPointsDesktop;
   cexDepositEntryPointsMobile: Feature_CexDepositEntryPointsMobile;
   fetchAdditionalCoins: Feature_FetchAdditionalCoins;
   ptxSwapLiveApp: Feature_PtxSwapLiveApp;
@@ -447,13 +443,6 @@ export type Feature_RatingsPrompt = Feature<{
   }[];
   support_email: string;
   typeform_url: string;
-}>;
-
-export type Feature_CexDepositEntryPointsDesktop = Feature<{
-  path: string;
-  locations: {
-    [key in CexDepositEntryPointsLocationsDesktop]: boolean;
-  };
 }>;
 
 export type Feature_CexDepositEntryPointsMobile = Feature<{
