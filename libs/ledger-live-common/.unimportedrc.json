@@ -375,6 +375,8 @@
     "scheduler",
     "stacktrace-parser",
     "use-sync-external-store/shim",
-    "whatwg-fetch"
+    "whatwg-fetch",
+    "tsx",
+    "yargs"
   ]
 }
