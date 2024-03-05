@@ -10,7 +10,6 @@ import { Button } from "..";
 import MarketCoinChart from "./MarketCoinChart";
 import MarketInfo from "./MarketInfo";
 import { useMarketCoin } from "./useMarketCoin";
-import { useMarketDataProvider } from "@ledgerhq/live-common/market/v2/useMarketDataProvider";
 
 const CryptoCurrencyIconWrapper = styled.div`
   height: 56px;
@@ -45,7 +44,6 @@ const Title = styled(Text).attrs({ variant: "h3" })`
 export default function MarketCoinScreen() {
   const { t } = useTranslation();
   const locale = useSelector(localeSelector);
-  const { supportedCounterCurrencies } = useMarketDataProvider();
 
   const {
     isStarred,
@@ -66,6 +64,7 @@ export default function MarketCoinScreen() {
     changeCounterCurrency,
     counterCurrency,
     currency,
+    supportedCounterCurrencies,
   } = useMarketCoin();
 
   const { price, priceChangePercentage } = dataCurrency || {};
