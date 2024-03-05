@@ -104,8 +104,6 @@ export const useSwapTransaction = ({
   defaultParentAccount?: SwapSelectorStateType["parentAccount"];
   onNoRates?: OnNoRatesCallback;
   excludeFixedRates?: boolean;
-  timeout?: number;
-  timeoutErrorMessage?: string;
 } = {}): SwapTransactionType => {
   const bridgeTransaction = useBridgeTransaction(() => ({
     account: defaultAccount,

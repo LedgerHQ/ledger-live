@@ -31,7 +31,6 @@ import EmptyState from "./Rates/EmptyState";
 import { AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { SWAP_RATES_TIMEOUT } from "../../config";
 import { OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
 import SwapWebView, { SwapWebProps, useSwapLiveAppManifestID } from "./SwapWebView";
 import { SwapMigrationUI } from "./Migrations/SwapMigrationUI";
@@ -90,8 +89,6 @@ const SwapForm = () => {
     setExchangeRate,
     onNoRates,
     ...(locationState as object),
-    timeout: SWAP_RATES_TIMEOUT,
-    timeoutErrorMessage: t("swap2.form.timeout.message"),
   });
 
   const isSwapLiveAppEnabled = useIsSwapLiveApp({
