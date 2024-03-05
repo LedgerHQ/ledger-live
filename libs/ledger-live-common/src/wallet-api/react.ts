@@ -1095,12 +1095,12 @@ function useDappAccountLogic({
   accounts: AccountLike[];
 }) {
   const { currencyIds } = usePermission(manifest);
-  const [storedCurrentAccount, setCurrentAccount] = useDappCurrentAccount();
-  const currentAccount = useMemo(() => {
-    if (storedCurrentAccount) {
-      return getParentAccount(storedCurrentAccount, accounts);
+  const [currentAccount, setCurrentAccount] = useDappCurrentAccount();
+  const currentParentAccount = useMemo(() => {
+    if (currentAccount) {
+      return getParentAccount(currentAccount, accounts);
     }
-  }, [storedCurrentAccount, accounts]);
+  }, [currentAccount, accounts]);
 
   const firstAccountAvailable = useMemo(() => {
     const account = accounts.find(account => {
@@ -1115,21 +1115,21 @@ function useDappAccountLogic({
   }, [accounts, currencyIds]);
 
   const storedCurrentAccountIsPermitted = useCallback(() => {
-    if (!storedCurrentAccount) return false;
+    if (!currentAccount) return false;
     return accounts.some(
       account =>
         account.type === "Account" &&
         currencyIds.includes(account.currency.id) &&
-        account.id === storedCurrentAccount.id,
+        account.id === currentAccount.id,
     );
-  }, [storedCurrentAccount, accounts, currencyIds]);
+  }, [currentAccount, accounts, currencyIds]);
 
   useEffect(() => {
     if (manifest) {
       const currentAccountIdFromMap = manifestToCurrentAccountMap.get(manifest.id);
       // stored account in jotai (selected in another dapp is permitted, just update the map)
-      if (storedCurrentAccount && storedCurrentAccountIsPermitted()) {
-        manifestToCurrentAccountMap.set(manifest.id, storedCurrentAccount.id);
+      if (currentAccount && storedCurrentAccountIsPermitted()) {
+        manifestToCurrentAccountMap.set(manifest.id, currentAccount.id);
       } // previous account for that app
       else if (currentAccountIdFromMap) {
         const currentAccountFromMap = accounts.find(
@@ -1150,13 +1150,26 @@ function useDappAccountLogic({
     storedCurrentAccountIsPermitted,
     firstAccountAvailable,
     manifest,
-    storedCurrentAccount,
     setCurrentAccount,
+    currentAccount,
   ]);
 
   return {
     currentAccount,
+    currentParentAccount,
   };
+}
+
+// Type guard function to make typescript happy
+function isParentAccountPresent(
+  account: AccountLike,
+  parentAccount?: Account,
+): parentAccount is Account {
+  if (account.type === "TokenAccount") {
+    return !!parentAccount;
+  }
+
+  return true;
 }
 
 export function useDappLogic({
@@ -1175,33 +1188,42 @@ export function useDappLogic({
   const nanoApp = manifest.dapp?.nanoApp;
   const previousAddressRef = useRef<string>();
   const previousChainIdRef = useRef<number>();
-  const { currentAccount } = useDappAccountLogic({ manifest, accounts });
+  const { currentAccount, currentParentAccount } = useDappAccountLogic({ manifest, accounts });
   const currentNetwork = useMemo(() => {
     if (!currentAccount) {
       return undefined;
     }
     return manifest.dapp?.networks.find(network => {
-      return network.currency === currentAccount.currency.id;
+      return (
+        network.currency ===
+        (currentAccount.type === "TokenAccount"
+          ? currentAccount.token.id
+          : currentAccount.currency.id)
+      );
     });
   }, [currentAccount, manifest.dapp?.networks]);
 
   useEffect(() => {
-    if (!currentAccount) {
+    if (!currentAccount || !isParentAccountPresent(currentAccount, currentParentAccount)) {
       return;
     }
-    if (
-      previousAddressRef.current &&
-      EVMAddressChanged(previousAddressRef.current, currentAccount.freshAddress)
-    ) {
+
+    const address =
+      currentAccount.type === "Account"
+        ? currentAccount.freshAddress
+        : currentParentAccount.freshAddress;
+
+    if (previousAddressRef.current && EVMAddressChanged(previousAddressRef.current, address)) {
       postMessage(
         JSON.stringify({
           jsonrpc: "2.0",
           method: "accountsChanged",
-          result: [[currentAccount.freshAddress]],
+          result: [[address]],
         }),
       );
     }
-    previousAddressRef.current = currentAccount.freshAddress;
+
+    previousAddressRef.current = address;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentAccount]);
 
@@ -1254,6 +1276,18 @@ export function useDappLogic({
         return;
       }
 
+      if (!isParentAccountPresent(currentAccount, currentParentAccount)) {
+        console.error("No parent account found for the currentAccount: ", currentAccount, data);
+        postMessage(
+          JSON.stringify({
+            id: data.id,
+            jsonrpc: "2.0",
+            error: rejectedError("No parent account found"),
+          }),
+        );
+        return;
+      }
+
       switch (data.method) {
         // https://eips.ethereum.org/EIPS/eip-695
         case "eth_chainId": {
@@ -1276,11 +1310,16 @@ export function useDappLogic({
         // https://eth.wiki/json-rpc/API#eth_accounts
         // eslint-disbale-next-line eslintno-fallthrough
         case "eth_accounts": {
+          const address =
+            currentAccount.type === "Account"
+              ? currentAccount.freshAddress
+              : currentParentAccount.freshAddress;
+
           postMessage(
             JSON.stringify({
               id: data.id,
               jsonrpc: "2.0",
-              result: [currentAccount.freshAddress],
+              result: [address],
             }),
           );
           break;
@@ -1355,10 +1394,12 @@ export function useDappLogic({
         case "eth_sendTransaction": {
           const ethTX = data.params[0];
           const tx = convertEthToLiveTX(ethTX);
-          if (
-            currentAccount &&
-            currentAccount.freshAddress.toLowerCase() === ethTX.from.toLowerCase()
-          ) {
+          const address =
+            currentAccount.type === "Account"
+              ? currentAccount.freshAddress
+              : currentParentAccount.freshAddress;
+
+          if (address.toLowerCase() === ethTX.from.toLowerCase()) {
             try {
               const options = nanoApp ? { hwAppId: nanoApp } : undefined;
               tracking.dappSendTransactionRequested(manifest);
@@ -1438,7 +1479,10 @@ export function useDappLogic({
             const message = stripHexPrefix(data.params[0]);
             tracking.dappPersonalSignRequested(manifest);
 
-            const formattedMessage = prepareMessageToSign(currentAccount, message);
+            const formattedMessage = prepareMessageToSign(
+              currentAccount.type === "Account" ? currentAccount : currentParentAccount,
+              message,
+            );
 
             const signedMessage = await new Promise<string>((resolve, reject) =>
               uiHook["message.sign"]({
@@ -1481,7 +1525,7 @@ export function useDappLogic({
             tracking.dappSignTypedDataRequested(manifest);
 
             const formattedMessage = prepareMessageToSign(
-              currentAccount,
+              currentAccount.type === "Account" ? currentAccount : currentParentAccount,
               Buffer.from(message).toString("hex"),
             );
 
@@ -1536,7 +1580,16 @@ export function useDappLogic({
         }
       }
     },
-    [currentAccount, currentNetwork, manifest, nanoApp, postMessage, tracking, uiHook],
+    [
+      currentAccount,
+      currentNetwork,
+      currentParentAccount,
+      manifest,
+      nanoApp,
+      postMessage,
+      tracking,
+      uiHook,
+    ],
   );
 
   return { onDappMessage };
