@@ -204,15 +204,15 @@ export const testSync = async (currencyId: string, xpubOrAddress: string) => {
 };
 
 (async () => {
-  if (inputFile && !existsSync(inputFile)) {
-    throw new Error(`Incorrect file path: ${inputFile} does not exist`);
-  }
-
   // list of addresses from input file
   const inputFileAddresses: MigrationAddress[] = [];
 
-  // if there's a input file we parse it
-  if (inputFile && existsSync(inputFile)) {
+  if (inputFile) {
+    if (!existsSync(inputFile)) {
+      throw new Error(`Incorrect file path: ${inputFile} does not exist`);
+    }
+
+    // if there's a input file we parse it
     const content = JSON.parse(readFileSync(inputFile, "utf8"));
     const syncInfo: MigrationAddress[] = content.map(account => ({
       currencyId: account.currencyId,
