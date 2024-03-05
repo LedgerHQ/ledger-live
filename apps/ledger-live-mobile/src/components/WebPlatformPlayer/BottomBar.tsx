@@ -1,5 +1,5 @@
 import React, { RefObject, useCallback, useMemo } from "react";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { TouchableOpacity } from "react-native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { ArrowLeftMedium, ArrowRightMedium, ReverseMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useTheme } from "styled-components/native";
@@ -119,11 +119,7 @@ export function BottomBar({ manifest, webviewAPIRef, webviewState }: BottomBarPr
       </Flex>
 
       {shouldDisplaySelectAccount ? (
-        <Button
-          type="primary"
-          onPress={onSelectAccount}
-          containerStyle={styles.selectAccountButton}
-        >
+        <Button type="primary" onPress={onSelectAccount}>
           {!currentAccount ? (
             <Text>
               <Trans i18nKey="common.selectAccount" />
@@ -150,9 +146,3 @@ export function BottomBar({ manifest, webviewAPIRef, webviewState }: BottomBarPr
     </Flex>
   );
 }
-
-const styles = StyleSheet.create({
-  selectAccountButton: {
-    // flexGrow: 1,
-  },
-});
