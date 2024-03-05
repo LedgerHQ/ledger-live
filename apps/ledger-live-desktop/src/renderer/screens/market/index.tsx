@@ -66,13 +66,12 @@ export default function Market() {
     setCounterCurrency,
     supportedCounterCurrencies,
     refresh,
-    liveCompatible,
     starFilterOn,
     starredMarketCoins,
     timeRanges,
   } = useMarket();
 
-  const { order, range, counterCurrency, search = "" } = marketParams;
+  const { order, range, counterCurrency, search = "", liveCompatible } = marketParams;
 
   return (
     <Container>
