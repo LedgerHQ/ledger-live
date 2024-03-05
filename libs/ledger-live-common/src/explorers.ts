@@ -1,16 +1,8 @@
 import type { CryptoCurrency, ExplorerView } from "@ledgerhq/types-cryptoassets";
 import type { TokenAccount, Account } from "@ledgerhq/types-live";
-import { getCurrencyConfiguration } from "./config";
 
 export const getDefaultExplorerView = (currency: CryptoCurrency): ExplorerView | undefined => {
-  const currencyConfig = getCurrencyConfiguration(currency) as { explorerViews?: ExplorerView[] };
-  // TODO: We are gradually removing `explorerViews` from the currency object
-  // Remove ternary once completed removed
-  return currencyConfig.explorerViews
-    ? currencyConfig.explorerViews[0]
-    : currency.explorerViews
-    ? currency.explorerViews[0]
-    : undefined;
+  return currency.explorerViews ? currency.explorerViews[0] : undefined;
 };
 
 export const getTransactionExplorer = (

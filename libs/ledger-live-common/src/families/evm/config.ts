@@ -63,6 +63,18 @@ const evmConfig: Record<string, ConfigInfo> = {
       status: {
         type: "active",
       },
+      gasTracker: {
+        type: "ledger",
+        explorerId: "eth",
+      },
+      node: {
+        type: "ledger",
+        explorerId: "eth",
+      },
+      explorer: {
+        type: "ledger",
+        explorerId: "eth",
+      },
     },
   },
   config_currency_ethereum_classic: {
