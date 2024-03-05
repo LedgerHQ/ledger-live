@@ -57,7 +57,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         testID="wallet-api-webview"
         allowsUnsecureHttps={__DEV__ && !!Config.IGNORE_CERTIFICATE_ERRORS}
         javaScriptCanOpenWindowsAutomatically={javaScriptCanOpenWindowsAutomatically}
-        injectedJavaScriptBeforeContentLoaded={INJECTED_JAVASCRIPT}
+        injectedJavaScriptBeforeContentLoaded={manifest.dapp ? INJECTED_JAVASCRIPT : undefined}
         {...webviewProps}
       />
     );
