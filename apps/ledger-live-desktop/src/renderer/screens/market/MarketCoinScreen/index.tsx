@@ -68,23 +68,7 @@ export default function MarketCoinScreen() {
     currency,
   } = useMarketCoin();
 
-  const {
-    marketcap,
-    marketcapRank,
-    totalVolume,
-    high24h,
-    low24h,
-    marketCapChangePercentage24h,
-    circulatingSupply,
-    totalSupply,
-    maxSupply,
-    ath,
-    athDate,
-    atl,
-    atlDate,
-    price,
-    priceChangePercentage,
-  } = dataCurrency || {};
+  const { price, priceChangePercentage } = dataCurrency || {};
 
   const { name, ticker, image, internalCurrency } = currency || {};
   return (
@@ -168,24 +152,10 @@ export default function MarketCoinScreen() {
         supportedCounterCurrencies={supportedCounterCurrencies}
       />
       <MarketInfo
-        marketcap={marketcap}
-        marketcapRank={marketcapRank}
-        totalVolume={totalVolume}
-        high24h={high24h}
-        low24h={low24h}
-        price={price}
-        priceChangePercentage={priceChangePercentage}
-        marketCapChangePercentage24h={marketCapChangePercentage24h}
-        circulatingSupply={circulatingSupply}
-        totalSupply={totalSupply}
-        maxSupply={maxSupply}
-        ath={ath}
-        athDate={athDate}
-        atl={atl}
-        atlDate={atlDate}
         locale={locale}
         counterCurrency={counterCurrency}
         loading={isLoadingData}
+        {...dataCurrency}
       />
     </Container>
   );

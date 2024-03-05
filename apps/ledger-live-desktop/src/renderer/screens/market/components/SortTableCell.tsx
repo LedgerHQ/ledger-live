@@ -14,8 +14,8 @@ export const SortTableCell = ({
   loading?: boolean;
   onClick?: (key: string) => void;
   orderByKey: string;
-  orderBy?: string | undefined;
-  order?: string | undefined;
+  orderBy?: string;
+  order?: string;
   children?: React.ReactNode;
 }) => (
   <TableCellBase onClick={() => !!onClick && onClick(orderByKey)} {...props}>

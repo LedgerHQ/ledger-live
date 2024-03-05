@@ -44,19 +44,15 @@ const FadeIn = styled.div.attrs<{ state: string }>(p => ({
 
 const ranges = Object.keys(rangeDataTable);
 
-function Tooltip({
-  data,
-  counterCurrency,
-  locale,
-  formatDay,
-  formatHour,
-}: {
+type TooltipProps = {
   data: { date: Date; value: number };
   counterCurrency: string;
   locale: string;
   formatDay: (date: Date) => string;
   formatHour: (date: Date) => string;
-}) {
+};
+
+function Tooltip({ data, counterCurrency, locale, formatDay, formatHour }: TooltipProps) {
   return (
     <Flex flexDirection="column" p={1}>
       <TooltipText variant="large">
