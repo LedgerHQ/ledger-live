@@ -1,5 +1,5 @@
 import { Device } from "@ledgerhq/types-devices";
-
+import { type CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import { ScreenName } from "~/const";
 import { CropResult } from "../../CustomImage/ImageCropper";
 import { ProcessorPreviewResult, ProcessorRawResult } from "../../CustomImage/ImageProcessor";
@@ -7,6 +7,12 @@ import { GalleryNFT, ImageFileUri, ImageUrl, ImageType } from "../../CustomImage
 
 type BaseParams = {
   device: Device | null;
+  deviceModelId: CLSSupportedDeviceModelId;
+};
+
+type PreviewPreEditAdditionalParams = (ImageUrl | ImageFileUri | GalleryNFT) & {
+  isPictureFromGallery?: boolean;
+  isStaxEnabled?: boolean;
 };
 
 export type CustomImageNavigatorParamList = {
@@ -27,11 +33,9 @@ export type CustomImageNavigatorParamList = {
     previewData: ProcessorPreviewResult;
   };
   [ScreenName.CustomImageErrorScreen]: BaseParams & { error: Error };
-  [ScreenName.CustomImagePreviewPreEdit]: BaseParams &
-    (ImageUrl | ImageFileUri | GalleryNFT) & {
-      isPictureFromGallery?: boolean;
-      isStaxEnabled?: boolean;
-    };
+  [ScreenName.CustomImagePreviewPreEditDevicePicker]: Omit<BaseParams, "deviceModelId"> &
+    PreviewPreEditAdditionalParams;
+  [ScreenName.CustomImagePreviewPreEdit]: BaseParams & PreviewPreEditAdditionalParams;
   [ScreenName.CustomImagePreviewPostEdit]: BaseParams & {
     baseImageFile: ImageFileUri;
     imageType: ImageType;

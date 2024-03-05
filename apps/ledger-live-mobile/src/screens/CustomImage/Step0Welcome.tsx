@@ -34,7 +34,7 @@ const Step0Welcome: React.FC<
 
   const { params } = route;
 
-  const { device } = params || {};
+  const { device, deviceModelId } = params;
 
   const openModal = useCallback(() => {
     setModalOpened(true);
@@ -92,7 +92,12 @@ const Step0Welcome: React.FC<
           </Button>
         </BottomButtonsContainer>
       </Flex>
-      <CustomImageBottomModal device={device} isOpened={modalOpened} onClose={closeModal} />
+      <CustomImageBottomModal
+        device={device}
+        isOpened={modalOpened}
+        onClose={closeModal}
+        deviceModelId={deviceModelId}
+      />
     </SafeAreaView>
   );
 };

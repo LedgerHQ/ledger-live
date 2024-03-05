@@ -44,9 +44,6 @@ import {
   AutoRepair,
   renderAllowLanguageInstallation,
   renderAllowRemoveCustomLockscreen,
-  renderImageLoadRequested,
-  renderLoadingImage,
-  renderImageCommitRequested,
   RequiredFirmwareUpdate,
 } from "./rendering";
 import PreventNativeBack from "../PreventNativeBack";
@@ -210,9 +207,6 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     installingApp,
     progress,
     listingApps,
-    imageLoadRequested,
-    loadingImage,
-    imageCommitRequested,
   } = status;
 
   useEffect(() => {
@@ -426,16 +420,6 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
       colors,
       theme,
     });
-  }
-
-  if (imageLoadRequested && device) {
-    return renderImageLoadRequested({ t, device });
-  }
-  if (loadingImage && device && typeof progress === "number") {
-    return renderLoadingImage({ t, device, progress });
-  }
-  if (imageCommitRequested && device) {
-    return renderImageCommitRequested({ t, device });
   }
 
   if (!isLoading && error) {

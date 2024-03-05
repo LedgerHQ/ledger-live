@@ -3,8 +3,6 @@ import React, { ComponentProps, useContext } from "react";
 import { Image, ImageProps, StyleSheet } from "react-native";
 import styled from "styled-components/native";
 import ForceTheme from "../theme/ForceTheme";
-import transferBackground from "./assets/transferBackground.png";
-import previewBackground from "./assets/previewBackground.png";
 
 /**
  * Set this to true to have visual indicators of how the foreground image (the content)
@@ -34,7 +32,7 @@ const DEBUG = false;
  *               ^
  *  right edge  _|
  */
-type StaxFrameConfig = {
+export type FramedPictureConfig = {
   /**
    * Height of the Ledger Stax picture
    * */
@@ -90,35 +88,8 @@ export type Props = Partial<ComponentProps<typeof Image>> & {
   /** float between 0 and 1 */
   loadingProgress?: number;
   children?: React.ReactNode | undefined;
-  frameConfig: StaxFrameConfig;
+  framedPictureConfig: FramedPictureConfig;
   scale?: number;
-};
-
-export const transferConfig: StaxFrameConfig = {
-  // NB: measures in px taken directly on the .png
-  frameHeight: 888,
-  frameWidth: 564,
-  innerHeight: 840,
-  innerWidth: (840 * 400) / 670,
-  innerRight: 30, // measured 32px on png and it seems to be 30px on lotties ... using 30 to avoid "long white 1px wide line"
-  innerTop: 24,
-  borderRightRadius: 24,
-  resizeMode: "cover",
-  backgroundSource: transferBackground,
-  leftPaddingColor: "#272727",
-};
-
-export const previewConfig: StaxFrameConfig = {
-  // NB: measures in px taken directly on the .png
-  frameHeight: 1283,
-  frameWidth: 810,
-  innerHeight: 1211,
-  innerWidth: 1211 * (400 / 670),
-  innerRight: 35,
-  innerTop: 38,
-  borderRightRadius: 57,
-  backgroundSource: previewBackground,
-  resizeMode: "cover",
 };
 
 const AbsoluteBackgroundContainer = styled(Flex).attrs({
@@ -137,11 +108,11 @@ const AbsoluteInnerImageContainer = styled(Flex).attrs({
  * This is used to display a picture representing Ledger Stax and on top of it
  * a picture that is "framed" (as if it's displayed on the Ledger Stax screen).
  */
-const StaxFramedImage: React.FC<Props> = ({
+const FramedPicture: React.FC<Props> = ({
   source,
   loadingProgress = 1,
   children,
-  frameConfig = transferConfig,
+  framedPictureConfig,
   scale = 1 / 4,
   background,
   ...imageProps
@@ -157,7 +128,7 @@ const StaxFramedImage: React.FC<Props> = ({
     backgroundSource,
     resizeMode,
     leftPaddingColor,
-  } = frameConfig;
+  } = framedPictureConfig;
 
   return (
     <Box
@@ -243,7 +214,7 @@ const StaxFramedImage: React.FC<Props> = ({
   );
 };
 
-export default StaxFramedImage;
+export default FramedPicture;
 
 type SourceContext = {
   source?: React.ComponentProps<typeof Image>["source"];
@@ -255,7 +226,7 @@ const initialState = {
 
 export const ImageSourceContext = React.createContext<SourceContext>(initialState);
 
-export const StaxFramedImageWithContext: React.FC<Omit<Props, "source">> = props => {
+export const FramedImageWithContext: React.FC<Omit<Props, "source">> = props => {
   const { source } = useContext(ImageSourceContext);
-  return <StaxFramedImage {...props} source={source} />;
+  return <FramedPicture {...props} source={source} />;
 };

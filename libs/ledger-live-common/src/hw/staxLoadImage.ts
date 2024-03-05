@@ -17,6 +17,8 @@ import attemptToQuitApp, { AttemptToQuitAppEvent } from "./attemptToQuitApp";
 import staxFetchImageSize from "./staxFetchImageSize";
 import staxFetchImageHash from "./staxFetchImageHash";
 import { gzip } from "pako";
+import { CLSSupportedDeviceModelId } from "../device/use-cases/isCustomLockScreenSupported";
+import { getScreenSpecs } from "../device/use-cases/screenSpecs";
 
 const MAX_APDU_SIZE = 255;
 const COMPRESS_CHUNK_SIZE = 2048;
@@ -44,9 +46,20 @@ export type LoadimageResult = {
   imageSize: number;
 };
 
+type ScreenSpecs = {
+  width: number;
+  height: number;
+  paddingTop: number;
+  paddingBottom: number;
+  paddingLeft: number;
+  paddingRight: number;
+};
+
 export type LoadImageRequest = {
   hexImage: string; // When provided, will skip the backup if it matches the hash.
   padImage?: boolean;
+  deviceModelId: CLSSupportedDeviceModelId;
+  // screenSpecs: ScreenSpecs;
 };
 
 export type Input = {
@@ -55,7 +68,8 @@ export type Input = {
 };
 
 export default function loadImage({ deviceId, request }: Input): Observable<LoadImageEvent> {
-  const { hexImage, padImage = true } = request;
+  const { hexImage, padImage = true, deviceModelId } = request;
+  const screenSpecs = getScreenSpecs(deviceModelId);
 
   const sub = withDevice(deviceId)(
     transport =>
@@ -71,7 +85,12 @@ export default function loadImage({ deviceId, request }: Input): Observable<Load
             mergeMap(async () => {
               timeoutSub.unsubscribe();
 
-              const imageData = await generateStaxImageFormat(hexImage, true, !!padImage);
+              const imageData = await generateStaxImageFormat(
+                hexImage,
+                true,
+                !!padImage,
+                screenSpecs,
+              );
               const imageLength = imageData.length;
 
               const imageSize = Buffer.alloc(4);
@@ -191,13 +210,43 @@ export default function loadImage({ deviceId, request }: Input): Observable<Load
   return sub as Observable<LoadImageEvent>;
 }
 
-export const generateStaxImageFormat: (
+function padHexImage(hexImage: string, screenSpecs: ScreenSpecs): string {
+  // hexImage is a string that is a hex representation of the image data
+  // each character is a pixel (between 0 and 15) and it starts from the top right
+  // corner, goes down the column and then to the next column, until the bottom left
+  // We need to pad the image on the edges to match the screen specs.
+  const sourceWidth = screenSpecs.width - screenSpecs.paddingLeft - screenSpecs.paddingRight;
+  const sourceHeight = screenSpecs.height - screenSpecs.paddingTop - screenSpecs.paddingBottom;
+
+  const destHeight = screenSpecs.height;
+
+  let result = "";
+
+  // add right padding
+  result += "0".repeat(screenSpecs.paddingRight * destHeight);
+
+  // add the image data
+  for (let columnIndex = 0; columnIndex < sourceWidth; columnIndex++) {
+    const column = hexImage.slice(columnIndex * sourceHeight, (columnIndex + 1) * sourceHeight);
+    const topPadding = "0".repeat(screenSpecs.paddingTop);
+    const paddingBottom = "0".repeat(screenSpecs.paddingBottom);
+    result += topPadding + column + paddingBottom;
+  }
+
+  // add left padding
+  result += "0".repeat(screenSpecs.paddingLeft * destHeight);
+
+  return result;
+}
+
+export async function generateStaxImageFormat(
   hexImage: string,
   compressImage: boolean,
   padImage: boolean,
-) => Promise<Buffer> = async (hexImage, compressImage, padImage) => {
-  const width = 400;
-  const height = 672;
+  screenSpecs: ScreenSpecs,
+) {
+  const width = screenSpecs.width - screenSpecs.paddingLeft - screenSpecs.paddingRight;
+  const height = screenSpecs.height - screenSpecs.paddingTop - screenSpecs.paddingBottom;
   const bpp = 2; // value for 4 bits per pixel
   const compression = compressImage ? 1 : 0;
 
@@ -207,9 +256,7 @@ export const generateStaxImageFormat: (
   header.writeUInt16LE(height, 2); // height
   header.writeUInt8((bpp << 4) | compression, 4);
 
-  // Nb Display image data is missing 2 pixels from each column.
-  // padding every 670 characters with two fillers, should do the trick.
-  const paddedHexImage = padImage ? hexImage.replace(/(.{670})/g, "$100") : hexImage;
+  const paddedHexImage = padImage ? padHexImage(hexImage, screenSpecs) : hexImage;
   const imgData = Buffer.from(paddedHexImage, "hex");
 
   if (!compressImage) {
@@ -247,4 +294,4 @@ export const generateStaxImageFormat: (
   header.writeUInt8((dataLength >> 16) & 0xff, 7); // biggest byte
 
   return Buffer.concat([header, Buffer.concat(compressedChunkedImgData)]);
-};
+}

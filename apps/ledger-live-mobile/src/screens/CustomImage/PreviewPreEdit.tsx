@@ -18,6 +18,7 @@ import { useNftMetadata } from "@ledgerhq/live-nft-react";
 import { NFTResource } from "@ledgerhq/live-nft/types";
 import { NFTMetadata } from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/types-devices";
+import { getScreenVisibleAreaDimensions } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CustomImageNavigatorParamList } from "~/components/RootNavigator/types/CustomImageNavigator";
@@ -28,8 +29,7 @@ import {
   importImageFromPhoneGallery,
 } from "~/components/CustomImage/imageUtils";
 import { ImageFileUri } from "~/components/CustomImage/types";
-import { targetDisplayDimensions } from "./shared";
-import StaxFramedImage, { previewConfig } from "~/components/CustomImage/StaxFramedImage";
+import FramedPicture from "~/components/CustomImage/FramedPicture";
 import ImageProcessor, {
   Props as ImageProcessorProps,
   ProcessorPreviewResult,
@@ -42,6 +42,7 @@ import useCenteredImage, {
 import Button from "~/components/wrappedUi/Button";
 import { TrackScreen } from "~/analytics";
 import Link from "~/components/wrappedUi/Link";
+import { getFramedPictureConfig } from "~/components/CustomImage/framedPictureConfigs";
 
 const DEFAULT_CONTRAST = 1;
 
@@ -61,7 +62,9 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
   const { t } = useTranslation();
   const [loadedImage, setLoadedImage] = useState<ImageFileUri | null>(null);
   const { params } = route;
-  const { isPictureFromGallery, device, isStaxEnabled } = params;
+  const { isPictureFromGallery, device, isStaxEnabled, deviceModelId } = params;
+
+  const targetDisplayDimensions = getScreenVisibleAreaDimensions(deviceModelId);
 
   const isNftMetadata = "nftMetadataParams" in params;
   const isImageUrl = "imageUrl" in params;
@@ -73,9 +76,9 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
   const navigateToErrorScreen = useCallback(
     (error: Error, device: Device) => {
       forceDefaultNavigationBehaviour.current = true;
-      navigation.replace(ScreenName.CustomImageErrorScreen, { error, device });
+      navigation.replace(ScreenName.CustomImageErrorScreen, { error, device, deviceModelId });
     },
-    [navigation],
+    [navigation, deviceModelId],
   );
 
   const handleError = useCallback(
@@ -199,10 +202,11 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
         previewData: processorPreviewImage,
         device,
         imageType,
+        deviceModelId,
       });
       setRawResultLoading(false);
     },
-    [navigation, setRawResultLoading, processorPreviewImage, device, imageType],
+    [navigation, setRawResultLoading, processorPreviewImage, device, imageType, deviceModelId],
   );
 
   const handlePreviewImageError = useCallback(
@@ -279,9 +283,10 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
         device,
         baseImageFile: loadedImage,
         imageType,
+        deviceModelId,
       },
     });
-  }, [navigation, device, loadedImage, imageType]);
+  }, [navigation, device, loadedImage, imageType, deviceModelId]);
 
   if (!loadedImage || !loadedImage.imageFileUri) {
     return (
@@ -315,11 +320,11 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
         <Flex flex={1}>
           <Flex flex={1}>
             <Flex flex={1} flexDirection="column" alignItems="center" justifyContent="center">
-              <StaxFramedImage
+              <FramedPicture
                 onError={handlePreviewImageError}
                 fadeDuration={0}
                 source={{ uri: processorPreviewImage?.imageBase64DataUri }}
-                frameConfig={previewConfig}
+                framedPictureConfig={getFramedPictureConfig("preview", deviceModelId)}
               />
             </Flex>
           </Flex>

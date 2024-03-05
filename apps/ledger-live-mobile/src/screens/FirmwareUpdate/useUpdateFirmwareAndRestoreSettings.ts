@@ -138,8 +138,9 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     () => ({
       hexImage: staxFetchImageState.hexImage ?? "",
       padImage: false,
+      deviceModelId: device.modelId,
     }),
-    [staxFetchImageState.hexImage],
+    [staxFetchImageState.hexImage, device.modelId],
   );
   const staxLoadImageState = staxLoadImageAction.useHook(
     updateStep === "imageRestore" && staxFetchImageState.hexImage ? device : null,
