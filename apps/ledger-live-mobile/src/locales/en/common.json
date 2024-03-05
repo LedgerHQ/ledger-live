@@ -94,6 +94,7 @@
     "comingSoon": "Coming soon",
     "restart": "Restart",
     "loadMore": "Load more",
+    "selectAccount": "Select an account",
     "patterns": {
       "id": "ID {{ value }}",
       "times": "x{{ value }}"
