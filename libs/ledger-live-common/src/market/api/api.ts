@@ -39,6 +39,12 @@ export async function setSupportedCoinsList(): Promise<SupportedCoins> {
   return SUPPORTED_COINS_LIST;
 }
 
+export async function getSupportedCoinsList(): Promise<SupportedCoins> {
+  const url = `${ROOT_PATH}/coins/list`;
+  const { data } = await network({ method: "GET", url });
+  return data;
+}
+
 const matchSearch =
   (search: string) =>
   (currency: MarketCoin): boolean => {
@@ -135,6 +141,8 @@ export async function fetchList({
   sparkline = true,
   liveCompatible = false,
   top100 = false,
+  supportedCoinsList = [],
+  liveCoinsList = [],
 }: MarketListRequestParams): Promise<CurrencyData[]> {
   let ids = _ids;
 
@@ -142,7 +150,7 @@ export async function fetchList({
     limit = 100;
   } else {
     if (search) {
-      ids = SUPPORTED_COINS_LIST.filter(matchSearch(search)).map(({ id }) => id);
+      ids = supportedCoinsList.filter(matchSearch(search)).map(({ id }) => id);
       if (!ids.length) {
         return [];
       }
@@ -150,9 +158,9 @@ export async function fetchList({
 
     if (liveCompatible) {
       if (ids.length > 0) {
-        ids = LIVE_COINS_LIST.filter(id => ids.includes(id));
+        ids = liveCoinsList.filter(id => ids.includes(id));
       } else {
-        ids = ids.concat(LIVE_COINS_LIST);
+        ids = ids.concat(liveCoinsList);
       }
     }
 
@@ -192,7 +200,7 @@ export async function fetchList({
       );
   }
 
-  return currencyFormatter(data, range, cryptoCurrenciesList, LIVE_COINS_LIST);
+  return currencyFormatter(data, range, cryptoCurrenciesList, liveCoinsList);
 }
 
 // Fetches list of supported counterCurrencies
@@ -227,6 +235,7 @@ export async function fetchCurrencyData({
   counterCurrency,
   range = "24h",
   id,
+  liveCoinsList = [],
 }: MarketCurrencyChartDataRequestParams): Promise<CurrencyData> {
   const url =
     `${ROOT_PATH}/coins/markets?vs_currency=${counterCurrency}` +
@@ -238,11 +247,12 @@ export async function fetchCurrencyData({
     url,
   });
 
-  return currencyFormatter(data, range, cryptoCurrenciesList, LIVE_COINS_LIST)[0];
+  return currencyFormatter(data, range, cryptoCurrenciesList, liveCoinsList)[0];
 }
 
 export async function fetchCurrency({
   id,
+  liveCoinsList = [],
 }: MarketCurrencyChartDataRequestParams): Promise<CurrencyData> {
   const url = `${ROOT_PATH}/coins/${id}`;
 
@@ -251,7 +261,7 @@ export async function fetchCurrency({
     url,
   });
 
-  return format(data, "24h", cryptoCurrenciesList, LIVE_COINS_LIST);
+  return format(data, "24h", cryptoCurrenciesList, liveCoinsList);
 }
 
 export default {

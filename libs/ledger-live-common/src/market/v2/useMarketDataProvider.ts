@@ -4,7 +4,7 @@ import {
   fetchCurrencyChartData,
   fetchCurrencyData,
   fetchList,
-  setSupportedCoinsList,
+  getSupportedCoinsList,
   supportedCounterCurrencies,
 } from "../api/api";
 import {
@@ -13,17 +13,32 @@ import {
   MarketListRequestResult,
 } from "../types";
 import { QUERY_KEY } from "./queryKeys";
+import { listSupportedCurrencies } from "../../currencies";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { useMemo } from "react";
 
 // 1min
 const REFETCH_TIME = 1 * 60000;
 
 export function useMarketDataProvider() {
+  const supportedCurrenciesInLIve = listSupportedCurrencies();
+
+  const liveCompatibleIds: string[] = supportedCurrenciesInLIve
+    .map(({ id }: CryptoCurrency) => id)
+    .filter(Boolean);
   const { data: supportedCounterCurrencies } = useSupportedCounterCurrencies();
   const { data: supportedCurrencies } = useSupportedCurrencies();
+
+  const liveCoinsList = useMemo(
+    () =>
+      supportedCurrencies?.filter(({ id }) => liveCompatibleIds.includes(id)).map(({ id }) => id),
+    [liveCompatibleIds, supportedCurrencies],
+  );
 
   return {
     supportedCounterCurrencies,
     supportedCurrencies,
+    liveCoinsList,
   };
 }
 
@@ -64,7 +79,6 @@ export function useSupportedCounterCurrencies() {
   const { isPending, error, data, isFetching } = useQuery({
     queryKey: [QUERY_KEY.SupportedCounterCurrencies],
     queryFn: () => supportedCounterCurrencies(),
-    staleTime: Infinity,
   });
 
   return {
@@ -77,9 +91,8 @@ export function useSupportedCounterCurrencies() {
 
 export function useSupportedCurrencies() {
   const { isPending, error, data, isFetching } = useQuery({
-    queryKey: [QUERY_KEY.SupportedCounterCurrencies],
-    queryFn: () => setSupportedCoinsList(),
-    staleTime: Infinity,
+    queryKey: [QUERY_KEY.SupportedCurrencies],
+    queryFn: () => getSupportedCoinsList(),
   });
 
   return {
