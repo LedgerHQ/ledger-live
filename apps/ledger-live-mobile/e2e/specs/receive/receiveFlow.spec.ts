@@ -41,6 +41,8 @@ describe("Receive Flow", () => {
     await receivePage.selectVerifyAddress();
     await deviceAction.openApp();
     await receivePage.expectAddressIsVerified(btcReceiveAddress);
+    await deviceAction.complete();
+    await receivePage.expectAddressIsDisplayed(btcReceiveAddress);
   });
 
   it("Should display the number of account existing per networks", async () => {
