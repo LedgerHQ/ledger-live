@@ -179,6 +179,7 @@ export type Features = CurrencyFeatures & {
   ptxSwapMoonpayProvider: Feature_PtxSwapMoonpayProvider;
   flexibleContentCards: Feature_FlexibleContentCards;
   llmAnalyticsOptInPrompt: Feature_LlmAnalyticsOptInPrompt;
+  lldAnalyticsOptInPrompt: Feature_LldAnalyticsOptInPrompt;
   myLedgerDisplayAppDeveloperName: Feature_MyLedgerDisplayAppDeveloperName;
   nftsFromSimplehash: Feature_NftsFromSimpleHash;
   lldPortfolioCarousel: Feature_LldPortfolioCarousel;
@@ -478,6 +479,11 @@ export type Feature_FetchAdditionalCoins = Feature<{
 }>;
 
 export type Feature_LlmAnalyticsOptInPrompt = Feature<{
+  variant: ABTestingVariants;
+  entryPoints: Array<string>;
+}>;
+
+export type Feature_LldAnalyticsOptInPrompt = Feature<{
   variant: ABTestingVariants;
   entryPoints: Array<string>;
 }>;

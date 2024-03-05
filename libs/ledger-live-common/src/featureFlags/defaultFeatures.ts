@@ -443,6 +443,14 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
 
+  lldAnalyticsOptInPrompt: {
+    enabled: false,
+    params: {
+      variant: ABTestingVariants.variantA,
+      entryPoints: ["Onboarding", "Portfolio"],
+    },
+  },
+
   lldPortfolioCarousel: {
     enabled: false,
     params: {
