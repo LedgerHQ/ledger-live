@@ -191,8 +191,6 @@ export const TopBar = ({ manifest, onClose, config = {}, webviewAPIRef, webviewS
         currencies: currencies,
         onAccountSelected: account => {
           setDrawer();
-          // We might want to use the parentAccount (2nd param)
-          // If present instead of the tokenAccount for dapp
           setCurrentAccount(account);
         },
       },
