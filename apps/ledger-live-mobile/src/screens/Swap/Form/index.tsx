@@ -303,10 +303,14 @@ export function SwapForm({
 
   useEffect(() => {
     const { rate } = params as DetailsSwapParamList;
-    if (rate) {
+    if (
+      exchangeRate &&
+      rate &&
+      (rate.provider !== exchangeRate?.provider || rate.tradeMethod !== exchangeRate.tradeMethod)
+    ) {
       setExchangeRate(rate);
     }
-  }, [params, setExchangeRate, swapTransaction]);
+  }, [params, exchangeRate, setExchangeRate]);
 
   const swapAcceptedProviders = getAvailableProviders();
   const termsAccepted = (swapAcceptedProviders || []).includes(provider ?? "");
