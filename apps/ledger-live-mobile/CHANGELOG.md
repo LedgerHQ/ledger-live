@@ -1,5 +1,14 @@
 # live-mobile
 
+## 3.41.0-next.5
+
+### Patch Changes
+
+- [#6377](https://github.com/LedgerHQ/ledger-live/pull/6377) [`5b0f8f7`](https://github.com/LedgerHQ/ledger-live/commit/5b0f8f7f3855efbf7e17a75240fcb37a51b95e84) Thanks [@cng-ledger](https://github.com/cng-ledger)! - fix(LIVE-11608): longer quote refresh rate for LLM to prevent frequent flow restart
+
+- Updated dependencies [[`5b0f8f7`](https://github.com/LedgerHQ/ledger-live/commit/5b0f8f7f3855efbf7e17a75240fcb37a51b95e84)]:
+  - @ledgerhq/live-common@34.0.0-next.3
+
 ## 3.41.0-next.4
 
 ### Patch Changes

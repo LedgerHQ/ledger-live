@@ -88,6 +88,17 @@ export const useFromAmountStatusMessage = (
   }, [statusEntries, currency, estimatedFees, transaction?.amount, account?.id, parentAccount?.id]);
 };
 
+type UseSwapTransactionProps = {
+  accounts?: Account[];
+  setExchangeRate?: SetExchangeRateCallback;
+  defaultCurrency?: SwapSelectorStateType["currency"];
+  defaultAccount?: SwapSelectorStateType["account"];
+  defaultParentAccount?: SwapSelectorStateType["parentAccount"];
+  onNoRates?: OnNoRatesCallback;
+  excludeFixedRates?: boolean;
+  refreshRate?: number;
+};
+
 export const useSwapTransaction = ({
   accounts,
   setExchangeRate,
@@ -96,15 +107,8 @@ export const useSwapTransaction = ({
   defaultParentAccount = selectorStateDefaultValues.parentAccount,
   onNoRates,
   excludeFixedRates,
-}: {
-  accounts?: Account[];
-  setExchangeRate?: SetExchangeRateCallback;
-  defaultCurrency?: SwapSelectorStateType["currency"];
-  defaultAccount?: SwapSelectorStateType["account"];
-  defaultParentAccount?: SwapSelectorStateType["parentAccount"];
-  onNoRates?: OnNoRatesCallback;
-  excludeFixedRates?: boolean;
-} = {}): SwapTransactionType => {
+  refreshRate,
+}: UseSwapTransactionProps = {}): SwapTransactionType => {
   const bridgeTransaction = useBridgeTransaction(() => ({
     account: defaultAccount,
     parentAccount: defaultParentAccount,
@@ -157,6 +161,7 @@ export const useSwapTransaction = ({
     toState,
     onNoRates,
     setExchangeRate,
+    countdown: refreshRate,
   });
 
   return {
