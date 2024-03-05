@@ -279,9 +279,7 @@
     "src/wallet-api/react.ts",
     "src/wallet-api/tracking.ts",
     "src/wallet-api/types.ts",
-    "src/wallet-api/version.ts",
-    "yargs",
-    "tsx"
+    "src/wallet-api/version.ts"
   ],
   "extensions": [".ts", ".js", ".jsx", ".tsx"],
   "ignorePatterns": ["**/node_modules/**"],
@@ -313,9 +311,7 @@
     "src/postOnboarding/mock.ts",
     "src/reactNativeSvg.d.ts",
     "src/currencies/mock.ts",
-    "src/families/tezos/fixtures/*",
-    "tsx",
-    "yargs"
+    "src/families/tezos/fixtures/*"
   ],
   "ignoreUnused": [
     "@types/bchaddrjs",
@@ -324,7 +320,9 @@
     "@types/qs",
     "@ledgerhq/hw-transport-mocker",
     "bip32",
-    "bip39"
+    "bip39",
+    "yargs",
+    "tsx"
   ],
   "ignoreUnresolved": [
     "../../Image/Image",
