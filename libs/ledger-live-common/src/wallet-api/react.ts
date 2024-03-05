@@ -1218,7 +1218,7 @@ export function useDappLogic({
         JSON.stringify({
           jsonrpc: "2.0",
           method: "accountsChanged",
-          result: [[address]],
+          params: [[address]],
         }),
       );
     }
