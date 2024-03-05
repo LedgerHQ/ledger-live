@@ -43,23 +43,18 @@ export function currencyFormatter(
   data: RawCurrencyData[],
   range: string,
   cryptoCurrenciesList: (CryptoCurrency | TokenCurrency)[],
-  liveCoinList: string[],
 ): CurrencyData[] {
-  return data.map((currency: RawCurrencyData) =>
-    format(currency, range, cryptoCurrenciesList, liveCoinList),
-  );
+  return data.map((currency: RawCurrencyData) => format(currency, range, cryptoCurrenciesList));
 }
 
 export const format = (
   currency: RawCurrencyData,
   range: string,
   cryptoCurrenciesList: (CryptoCurrency | TokenCurrency)[],
-  liveCoinList: string[],
 ) => ({
   id: currency.id,
   name: currency.name,
   image: currency.image,
-  isLiveSupported: liveCoinList.includes(currency.id),
   internalCurrency: cryptoCurrenciesList.find(
     ({ ticker }) => ticker.toLowerCase() === currency.symbol,
   ),

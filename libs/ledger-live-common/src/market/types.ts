@@ -54,14 +54,12 @@ export type MarketCurrencyChartDataRequestParams = {
   counterCurrency?: string;
   range?: string;
   lastRequestTime?: Date;
-  liveCoinsList?: string[];
 };
 
 export type MarketCurrencyRequestParams = {
   id?: string;
   counterCurrency?: string;
   ranges?: string[];
-  liveCoinsList?: string[];
 };
 
 export type SparklineSvgData = {
@@ -74,7 +72,6 @@ export type CurrencyData = {
   id: string;
   name: string;
   image?: string;
-  isLiveSupported?: boolean;
   internalCurrency?: CryptoOrTokenCurrency;
   marketcap?: number;
   marketcapRank: number;
