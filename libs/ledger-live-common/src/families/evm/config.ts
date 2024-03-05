@@ -7,6 +7,11 @@ const evmConfig: Record<string, ConfigInfo> = {
       status: {
         type: "active",
       },
+      explorerViews: [
+        {
+          tx: "https://akroma.io/explorer/transaction/$hash",
+        },
+      ],
     },
   },
   config_currency_atheios: {
@@ -63,6 +68,13 @@ const evmConfig: Record<string, ConfigInfo> = {
       status: {
         type: "active",
       },
+      explorerViews: [
+        {
+          tx: "https://etherscan.io/tx/$hash",
+          address: "https://etherscan.io/address/$address",
+          token: "https://etherscan.io/token/$contractAddress?a=$address",
+        },
+      ],
     },
   },
   config_currency_ethereum_classic: {

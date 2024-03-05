@@ -336,7 +336,7 @@ export type CryptoCurrency = CurrencyCommon & {
   // TODO later we could express union of types with mandatory bitcoinLikeInfo for "bitcoin" family...
   bitcoinLikeInfo?: BitcoinLikeInfo;
   ethereumLikeInfo?: EthereumLikeInfo;
-  explorerViews: ExplorerView[];
+  explorerViews?: ExplorerView[];
   terminated?: {
     link: string;
   };

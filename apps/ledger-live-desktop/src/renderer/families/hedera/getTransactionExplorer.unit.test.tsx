@@ -1,10 +1,16 @@
-import { describe, test, expect } from "@jest/globals";
+import { describe, test, expect, beforeAll } from "@jest/globals";
 import { BigNumber } from "bignumber.js";
 import { Operation } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import getTransactionExplorer from "./getTransactionExplorer";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
 
 describe("hedera/getTransactionExplorer", () => {
+  beforeAll(() => {
+    LiveConfig.setConfig(liveConfig);
+  });
+
   test("Tx explorer URL is converted from hash to consensus timestamp", async () => {
     const explorerView = getCryptoCurrencyById("hedera").explorerViews[0];
     expect(explorerView).toBeDefined();
