@@ -1103,6 +1103,13 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       explorer: { type: "ledger", explorerId: "eth" },
       gasTracker: { type: "ledger", explorerId: "eth" },
     },
+    explorerViews: [
+      {
+        tx: "https://etherscan.io/tx/$hash",
+        address: "https://etherscan.io/address/$address",
+        token: "https://etherscan.io/token/$contractAddress?a=$address",
+      },
+    ],
     keywords: ["eth", "ethereum"],
     explorerId: "eth",
   },
