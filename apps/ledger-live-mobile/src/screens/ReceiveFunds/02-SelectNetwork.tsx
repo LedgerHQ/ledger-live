@@ -17,10 +17,10 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Animatable from "react-native-animatable";
 import { setCloseNetworkBanner } from "~/actions/settings";
 import { hasClosedNetworkBannerSelector } from "~/reducers/settings";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import BigCurrencyRow from "~/components/BigCurrencyRow";
 import { findAccountByCurrency } from "~/logic/deposit";
 import { AccountLike } from "@ledgerhq/types-live";
+import { urls } from "~/utils/urls";
 
 type CryptoWithAccounts = { crypto: CryptoCurrency; accounts: AccountLike[] };
 
@@ -48,8 +48,6 @@ export default function SelectNetwork({ navigation, route }: Props) {
 
   const hasClosedNetworkBanner = useSelector(hasClosedNetworkBannerSelector);
   const [displayBanner, setBanner] = useState(!hasClosedNetworkBanner);
-
-  const depositNetworkBannerMobile = useFeature("depositNetworkBannerMobile");
 
   const { t } = useTranslation();
 
@@ -154,9 +152,8 @@ export default function SelectNetwork({ navigation, route }: Props) {
       type: "card",
       page: "Choose a network",
     });
-    // @ts-expect-error TYPINGS
-    Linking.openURL(depositNetworkBannerMobile?.params?.url);
-  }, [depositNetworkBannerMobile?.params?.url]);
+    Linking.openURL(urls?.depositNetwork);
+  }, []);
 
   const renderItem = useCallback(
     ({ item }: { item: CryptoWithAccounts }) => (
@@ -200,17 +197,15 @@ export default function SelectNetwork({ navigation, route }: Props) {
         keyboardDismissMode="on-drag"
       />
 
-      {depositNetworkBannerMobile?.enabled ? (
-        displayBanner ? (
-          <AnimatedView animation="fadeInUp" delay={50} duration={300}>
-            <NetworkBanner hideBanner={hideBanner} onPress={clickLearn} />
-          </AnimatedView>
-        ) : (
-          <AnimatedView animation="fadeOutDown" delay={50} duration={300}>
-            <NetworkBanner hideBanner={hideBanner} onPress={clickLearn} />
-          </AnimatedView>
-        )
-      ) : null}
+      {displayBanner ? (
+        <AnimatedView animation="fadeInUp" delay={50} duration={300}>
+          <NetworkBanner hideBanner={hideBanner} onPress={clickLearn} />
+        </AnimatedView>
+      ) : (
+        <AnimatedView animation="fadeOutDown" delay={50} duration={300}>
+          <NetworkBanner hideBanner={hideBanner} onPress={clickLearn} />
+        </AnimatedView>
+      )}
     </>
   );
 }

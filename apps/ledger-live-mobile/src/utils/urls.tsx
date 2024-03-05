@@ -227,4 +227,6 @@ export const urls = {
     learnMore:
       "https://support.ledger.com/hc/en-us/articles/4404389367057-Is-my-Ledger-device-genuine-?docs=true",
   },
+  depositWithdraw: "https://support.ledger.com/hc/en-us/articles/13108505155485?docs=true",
+  depositNetwork: "https://support.ledger.com/hc/en-us/articles/7782669175581?support=true",
 };
