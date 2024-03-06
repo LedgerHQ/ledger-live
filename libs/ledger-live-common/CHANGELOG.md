@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 34.0.0-next.6
+
+### Patch Changes
+
+- [#6384](https://github.com/LedgerHQ/ledger-live/pull/6384) [`beb8800`](https://github.com/LedgerHQ/ledger-live/commit/beb88001d4862d181dc870e23967c6f7b34157a2) Thanks [@cng-ledger](https://github.com/cng-ledger)! - fix(LIVE-11382): increase LLM quotes timeout to 60 seconds
+
 ## 34.0.0-next.5
 
 ### Patch Changes
