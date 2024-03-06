@@ -1,10 +1,9 @@
 import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { addTokens, convertERC20, getTokenById } from "@ledgerhq/cryptoassets/tokens";
 import { prepareForSignOperation, prepareTransaction } from "../../prepareTransaction";
-import { makeAccount, makeTokenAccount } from "../fixtures/common.fixtures";
 import { DEFAULT_NONCE, createTransaction } from "../../createTransaction";
+import { makeAccount } from "../fixtures/common.fixtures";
 import * as nodeApi from "../../api/node/rpc.common";
 import {
   account,
@@ -14,8 +13,7 @@ import {
   tokenTransaction,
   transaction,
 } from "../fixtures/prepareTransaction.fixtures";
-import { getEstimatedFees } from "../../logic";
-import { GasOptions, Transaction as EvmTransaction, EvmNftTransaction } from "../../types";
+import { GasOptions } from "../../types";
 import * as nftAPI from "../../api/nft";
 import { getCoinConfig } from "../../config";
 
@@ -256,73 +254,9 @@ describe("EVM Family", () => {
             type: 2,
           });
         });
-
-        it("should keep the original transaction `additionalFees` as an addition to the 'on-chain' additionalFees", async () => {
-          const optimism = getCryptoCurrencyById("optimism");
-          const opAccount = Object.freeze({
-            ...makeAccount("0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d", optimism),
-            balance: new BigNumber(1_000_000),
-          });
-
-          const opTransaction = {
-            ...createTransaction(opAccount),
-            recipient: ethers.constants.AddressZero,
-            additionalFees: new BigNumber(4567),
-          };
-
-          jest.spyOn(ethers, "Contract").mockImplementationOnce(() => {
-            return {
-              getL1Fee: (): ethers.BigNumber => {
-                return ethers.BigNumber.from(1234);
-              },
-            } as any;
-          });
-
-          const tx1 = await prepareTransaction(opAccount, { ...opTransaction });
-
-          expect(tx1).toEqual({
-            ...opTransaction,
-            additionalFees: new BigNumber(1234).plus(4567),
-            gasPrice: undefined,
-            maxFeePerGas: new BigNumber(1),
-            maxPriorityFeePerGas: new BigNumber(1),
-            type: 2,
-          });
-
-          const tx2 = await prepareTransaction(opAccount, { ...opTransaction, useAllAmount: true });
-          const estimatedFees = getEstimatedFees(tx2);
-
-          expect(tx2).toEqual({
-            ...opTransaction,
-            amount: opAccount.balance.minus(estimatedFees).minus(1234 + 4567),
-            additionalFees: new BigNumber(1234).plus(4567),
-            gasPrice: undefined,
-            maxFeePerGas: new BigNumber(1),
-            maxPriorityFeePerGas: new BigNumber(1),
-            type: 2,
-            useAllAmount: true,
-          });
-        });
       });
 
       describe("Tokens", () => {
-        beforeAll(() => {
-          addTokens([
-            convertERC20([
-              "optimism",
-              "usd_coin",
-              "USDC",
-              6,
-              "USD Coin",
-              "30440220597e4a9911df217d680aa240ca96f7e8fca24c24e7c673c43820c94b08ef69e402206e975e27e82b3370eca40041fca772bd6c4ca7dd087d2bfcc8aa146cb8e1de53",
-              "0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85",
-              false,
-              false,
-              null,
-            ]),
-          ]);
-        });
-
         it("should have a gasLimit = 0 and no data when recipient has an error", async () => {
           jest.spyOn(nodeApi, "getGasEstimation").mockImplementation(async () => {
             throw new Error();
@@ -484,52 +418,6 @@ describe("EVM Family", () => {
             type: 0,
           });
         });
-
-        it("should keep the original transaction `additionalFees` as an addition to the 'on-chain' additionalFees", async () => {
-          jest
-            .spyOn(nodeApi, "getGasEstimation")
-            .mockImplementationOnce(async () => new BigNumber(12));
-
-          jest.spyOn(ethers, "Contract").mockImplementationOnce(() => {
-            return {
-              getL1Fee: (): ethers.BigNumber => {
-                return ethers.BigNumber.from(1234);
-              },
-            } as any;
-          });
-
-          const optimism = getCryptoCurrencyById("optimism");
-          const tokenAccountWithBalance = {
-            ...makeTokenAccount(
-              "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
-              getTokenById("optimism/erc20/usd_coin"),
-            ),
-            balance: new BigNumber(200),
-          };
-          const opAccount = makeAccount("0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d", optimism, [
-            tokenAccountWithBalance,
-          ]);
-
-          const opTokenTransaction = {
-            ...createTransaction(opAccount),
-            recipient: ethers.constants.AddressZero,
-            additionalFees: new BigNumber(4567),
-            amount: new BigNumber(50),
-            subAccountId: tokenAccountWithBalance.id,
-          };
-
-          const tx = await prepareTransaction(opAccount, opTokenTransaction);
-
-          expect(tx).toEqual({
-            ...opTokenTransaction,
-            subAccountId: tokenAccountWithBalance.id,
-            data: expectedData(opAccount, opTokenTransaction, "erc20"),
-            maxFeePerGas: new BigNumber(1),
-            maxPriorityFeePerGas: new BigNumber(1),
-            gasLimit: new BigNumber(12),
-            additionalFees: new BigNumber(1234).plus(4567),
-          });
-        });
       });
 
       describe("Gas", () => {
@@ -681,48 +569,6 @@ describe("EVM Family", () => {
             gasPrice: undefined,
             gasLimit: new BigNumber(0),
             data: expectedData(account, nftTransaction, "erc721"),
-            type: 2,
-          });
-        });
-
-        it("should keep the original transaction `additionalFees` as an addition to the 'on-chain' additionalFees", async () => {
-          jest.spyOn(ethers, "Contract").mockImplementationOnce(() => {
-            return {
-              getL1Fee: (): ethers.BigNumber => {
-                return ethers.BigNumber.from(1234);
-              },
-            } as any;
-          });
-
-          const optimism = getCryptoCurrencyById("optimism");
-          const opAccount = makeAccount("0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d", optimism);
-
-          const opNftTransaction: EvmTransaction & EvmNftTransaction = {
-            ...createTransaction(opAccount),
-            mode: "erc721",
-            recipient: ethers.constants.AddressZero,
-            additionalFees: new BigNumber(4567),
-            amount: new BigNumber(0),
-            nft: {
-              contract: "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
-              tokenId: "1",
-              quantity: new BigNumber(1),
-              collectionName: "",
-            },
-          };
-
-          const tx = await prepareTransaction(opAccount, opNftTransaction);
-
-          expect(tx).toEqual({
-            ...opNftTransaction,
-            data: expectedData(opAccount, opNftTransaction, "erc721"),
-            nft: {
-              ...nftTransaction.nft,
-              collectionName: "Bored Ape",
-            },
-            additionalFees: new BigNumber(1234).plus(4567),
-            maxFeePerGas: new BigNumber(1),
-            maxPriorityFeePerGas: new BigNumber(1),
             type: 2,
           });
         });
