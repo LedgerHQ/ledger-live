@@ -13,6 +13,7 @@ export const desktopMetafilesKeys = {
   renderer: "metafile.renderer.json",
   rendererWorker: "metafile.renderer.worker.json",
   webviewPreloader: "metafile.webviewPreloader.json",
+  webviewDappPreloader: "metafile.webviewDappPreloader.json",
 };
 
 export type MobileMetaKeys = ["main.ios.jsbundle", "main.android.jsbundle"];
