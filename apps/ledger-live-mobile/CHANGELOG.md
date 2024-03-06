@@ -1,5 +1,28 @@
 # live-mobile
 
+## 3.41.0-next.6
+
+### Patch Changes
+
+- Updated dependencies [[`09128f3`](https://github.com/LedgerHQ/ledger-live/commit/09128f3fd41285199122115324964d83befe9237)]:
+  - @ledgerhq/live-common@34.0.0-next.4
+  - @ledgerhq/coin-evm@1.0.0-next.1
+
+## 3.41.0-next.5
+
+### Patch Changes
+
+- [#6377](https://github.com/LedgerHQ/ledger-live/pull/6377) [`5b0f8f7`](https://github.com/LedgerHQ/ledger-live/commit/5b0f8f7f3855efbf7e17a75240fcb37a51b95e84) Thanks [@cng-ledger](https://github.com/cng-ledger)! - fix(LIVE-11608): longer quote refresh rate for LLM to prevent frequent flow restart
+
+- Updated dependencies [[`5b0f8f7`](https://github.com/LedgerHQ/ledger-live/commit/5b0f8f7f3855efbf7e17a75240fcb37a51b95e84)]:
+  - @ledgerhq/live-common@34.0.0-next.3
+
+## 3.41.0-next.4
+
+### Patch Changes
+
+- [#6337](https://github.com/LedgerHQ/ledger-live/pull/6337) [`3ed2ef3`](https://github.com/LedgerHQ/ledger-live/commit/3ed2ef3ea6891b731908bf9c3559672502574bfa) Thanks [@cng-ledger](https://github.com/cng-ledger)! - fix(11546): extra right margin to prevent unreadable warning message in LLM swap form input
+
 ## 3.41.0-next.3
 
 ### Patch Changes

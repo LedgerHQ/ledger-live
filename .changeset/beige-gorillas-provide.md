@@ -4,4 +4,4 @@
 "@ledgerhq/live-common": patch
 ---
 
-Adding lang parameters to manifest-api call
+Remove swap edit button to not editable families and fix random crash llm
