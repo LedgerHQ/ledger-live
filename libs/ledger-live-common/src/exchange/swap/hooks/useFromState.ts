@@ -54,10 +54,17 @@ export const useFromState = ({
       const mainAccount = getMainAccount(account as AccountLike, parentAccount);
       const mainCurrency = getAccountCurrency(mainAccount);
       const recipient = getAbandonSeedAddress(mainCurrency.id);
-      bridgeTransaction.updateTransaction(transaction => ({
-        ...transaction,
-        recipient,
-      }));
+      bridgeTransaction.updateTransaction(transaction => {
+        let additionalFees;
+        if (transaction.family === "evm") {
+          additionalFees = new BigNumber(5000000000000000); // 0,005 ETH/BNB/MATIC
+        }
+        return {
+          ...transaction,
+          recipient,
+          additionalFees,
+        };
+      });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [accounts, bridgeTransaction.updateTransaction],

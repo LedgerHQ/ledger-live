@@ -1,5 +1,14 @@
 # @ledgerhq/live-common
 
+## 34.0.0-next.4
+
+### Patch Changes
+
+- [#6375](https://github.com/LedgerHQ/ledger-live/pull/6375) [`09128f3`](https://github.com/LedgerHQ/ledger-live/commit/09128f3fd41285199122115324964d83befe9237) Thanks [@CremaFR](https://github.com/CremaFR)! - Allow additional fees when using maxButton
+
+- Updated dependencies [[`09128f3`](https://github.com/LedgerHQ/ledger-live/commit/09128f3fd41285199122115324964d83befe9237)]:
+  - @ledgerhq/coin-evm@1.0.0-next.1
+
 ## 34.0.0-next.3
 
 ### Patch Changes
