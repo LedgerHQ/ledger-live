@@ -1,5 +1,14 @@
 # live-mobile
 
+## 3.41.0-next.7
+
+### Patch Changes
+
+- [#6347](https://github.com/LedgerHQ/ledger-live/pull/6347) [`2a8d97b`](https://github.com/LedgerHQ/ledger-live/commit/2a8d97bcc2a509b27ffa661a83e84d843f072ded) Thanks [@sarneijim](https://github.com/sarneijim)! - Remove swap edit button to not editable families and fix random crash llm
+
+- Updated dependencies [[`2a8d97b`](https://github.com/LedgerHQ/ledger-live/commit/2a8d97bcc2a509b27ffa661a83e84d843f072ded)]:
+  - @ledgerhq/live-common@34.0.0-next.5
+
 ## 3.41.0-next.6
 
 ### Patch Changes
