@@ -911,9 +911,6 @@
     "FirmwareNotRecognized" : {
       "title" : "مزوّد غير صالح",
       "description" : "يجب عليك تغيير إعداد \"My Ledger Provider (مزوّد جهازي Ledger)\". لتغييره، افتح \"Settings (إعدادات)\" في Ledger Live، واختر \"Experimental features (الميزات التجريبية)\"، ثم اختر مزوّداً آخر."
-    },
-    "TezosUnrevealedAccount" : {
-      "title" : "المبادلة غير متوفرة: الإرسال/التفويض الأولي مطلوب مع حساب Tezos أو زوج الاستبدال."
     }
   },
   "crash" : {

@@ -911,9 +911,6 @@
     "FirmwareNotRecognized" : {
       "title" : "提供商无效",
       "description" : "您必须更改“我的 Ledger 提供商”设置。要更改该设置，请打开 Ledger Live“设置”，选择“实验性功能”，然后选择其他提供商。"
-    },
-    "TezosUnrevealedAccount" : {
-      "title" : "无法互换：需使用 Tezos 账户发起发送/委托或更改交易对。"
     }
   },
   "crash" : {

@@ -911,9 +911,6 @@
     "FirmwareNotRecognized" : {
       "title" : "Ungültiger Anbieter",
       "description" : "Sie müssen die Einstellung „Mein Ledger-Anbieter“ ändern. Öffnen Sie dazu die Einstellungen in Ledger Live, navigieren Sie zu „Experimentelle Features“ und wählen Sie einen anderen Anbieter aus."
-    },
-    "TezosUnrevealedAccount" : {
-      "title" : "Umtauschen nicht möglich: Erfordert initiales Senden/Delegieren bei Tezos-Konto oder Austausch des Paares."
     }
   },
   "crash" : {
