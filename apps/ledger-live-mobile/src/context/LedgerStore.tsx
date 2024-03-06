@@ -79,15 +79,20 @@ export default class LedgerStoreProvider extends Component<
           currency,
         }))
         .sort((a, b) => (a.currency.name < b.currency.name ? -1 : 1));
-      return supportedCounterValues;
+
+      if (this.props?.store?.dispatch) {
+        this.props.store.dispatch(setSupportedCounterValues(supportedCounterValues));
+      }
+
+      return supportedCounterValues || [];
     };
-    const supportedCounterValues = await getsupportedCountervalues();
-    this.props.store.dispatch(setSupportedCounterValues(supportedCounterValues));
+
+    const supportedCV = await getsupportedCountervalues();
 
     if (
       settingsData &&
       settingsData.counterValue &&
-      !supportedCounterValues.find(({ ticker }) => ticker === settingsData.counterValue)
+      !supportedCV.find(({ ticker }) => ticker === settingsData.counterValue)
     ) {
       settingsData.counterValue = settingsState.counterValue;
     }
