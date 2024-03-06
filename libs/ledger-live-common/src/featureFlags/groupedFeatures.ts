@@ -11,12 +11,11 @@ export const groupedFeatures: Record<
     featureIds: [
       "supportDeviceStax",
       "deviceInitialApps",
-      "llmNewDeviceSelection",
       "staxWelcomeScreen",
     ],
   },
   europa: {
-    featureIds: ["supportDeviceEuropa", "deviceInitialApps", "llmNewDeviceSelection"],
+    featureIds: ["supportDeviceEuropa", "deviceInitialApps"],
   },
   disableNft: {
     featureIds: ["disableNftLedgerMarket", "disableNftRaribleOpensea", "disableNftSend"],
