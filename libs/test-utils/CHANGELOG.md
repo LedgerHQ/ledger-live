@@ -1,5 +1,12 @@
 # @ledgerhq/test-utils
 
+## 0.1.5-next.8
+
+### Patch Changes
+
+- Updated dependencies [[`e500e34`](https://github.com/LedgerHQ/ledger-live/commit/e500e34d5d9ef63804e21f738a7a0b45b1f45710), [`e500e34`](https://github.com/LedgerHQ/ledger-live/commit/e500e34d5d9ef63804e21f738a7a0b45b1f45710), [`e500e34`](https://github.com/LedgerHQ/ledger-live/commit/e500e34d5d9ef63804e21f738a7a0b45b1f45710)]:
+  - @ledgerhq/live-common@34.0.0-next.8
+
 ## 0.1.5-next.7
 
 ### Patch Changes
