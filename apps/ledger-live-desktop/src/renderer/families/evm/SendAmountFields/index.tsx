@@ -25,7 +25,7 @@ const Root: NonNullable<EvmFamily["sendAmountFields"]>["component"] = props => {
   const bridge: AccountBridge<EvmTransaction> = getAccountBridge(account);
 
   const { errors } = props.status;
-  const { gasPrice: messageGas } = errors;
+  const { gasPrice: messageGas, gasLimit: gasLimitError } = errors;
 
   const dispatch = useDispatch();
   const history = useHistory();
@@ -57,7 +57,7 @@ const Root: NonNullable<EvmFamily["sendAmountFields"]>["component"] = props => {
     updateTransaction((tx: EvmTransaction) => bridge.updateTransaction(tx, { ...tx, gasOptions }));
   }, [bridge, updateTransaction, gasOptions]);
 
-  const [isAdvanceMode, setAdvanceMode] = useState(false);
+  const [isAdvanceMode, setAdvanceMode] = useState(!!gasLimitError);
 
   const shouldUseEip1559 = transaction.type === 2;
 
@@ -88,12 +88,18 @@ const Root: NonNullable<EvmFamily["sendAmountFields"]>["component"] = props => {
    * gasTracker. Hence, we do not display the fee fields.
    */
   if (!gasOptions) {
-    return null;
+    return gasLimitError ? (
+      <Alert type="error">
+        <TranslatedError error={gasLimitError} noLink />
+      </Alert>
+    ) : null;
   }
 
   return (
     <>
-      <SendFeeMode isAdvanceMode={isAdvanceMode} setAdvanceMode={setAdvanceMode} />
+      {!gasLimitError ? (
+        <SendFeeMode isAdvanceMode={isAdvanceMode} setAdvanceMode={setAdvanceMode} />
+      ) : null}
       {isAdvanceMode ? (
         shouldUseEip1559 ? (
           <>
@@ -119,6 +125,11 @@ const Root: NonNullable<EvmFamily["sendAmountFields"]>["component"] = props => {
           </Alert>
         </Flex>
       )}
+      {gasLimitError ? (
+        <Alert type="error">
+          <TranslatedError error={gasLimitError} noLink />
+        </Alert>
+      ) : null}
     </>
   );
 };

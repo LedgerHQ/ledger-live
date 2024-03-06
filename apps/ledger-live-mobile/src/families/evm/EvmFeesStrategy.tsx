@@ -1,3 +1,4 @@
+import isEqual from "lodash/isEqual";
 import { getEstimatedFees } from "@ledgerhq/coin-evm/lib/logic";
 import type { Transaction } from "@ledgerhq/coin-evm/types/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
@@ -83,37 +84,32 @@ export default function EvmFeesStrategy({
     useState<Partial<Transaction>>();
 
   /**
-   * Commenting out this useEffect because it is causing an infinite
-   * rerender of the summary screen in the swap flow.
-   * This hook has been added originally to have the custom fees strategy
-   * selected by default when the user comes back to the summary screen after having
-   * customized the fees in the custom fees screen.
-   */
-  /**
    * If the customStrategyTransactionPatch is present, this means the custom
    * fee has been edited by the user. In this case, we need to update the
    * transaction with the new fee data.
    * This also selects the new "custom" strategy in the fees strategy list.
    */
-  // useEffect(() => {
-  //   if (!customStrategyTransactionPatch) {
-  //     return;
-  //   }
+  useEffect(() => {
+    if (!customStrategyTransactionPatch) {
+      return;
+    }
 
-  //   const updatedTransaction = bridge.updateTransaction(transaction, {
-  //     ...customStrategyTransactionPatch,
-  //   });
+    const updatedTransaction = bridge.updateTransaction(transaction, {
+      ...customStrategyTransactionPatch,
+    });
 
-  //   setTransaction(updatedTransaction);
-  // }, [
-  //   setTransaction,
-  //   account,
-  //   parentAccount,
-  //   transaction,
-  //   customStrategyTransactionPatch,
-  //   gasOptions,
-  //   bridge,
-  // ]);
+    if (!isEqual(transaction, updatedTransaction)) {
+      setTransaction(updatedTransaction);
+    }
+  }, [
+    setTransaction,
+    account,
+    parentAccount,
+    transaction,
+    customStrategyTransactionPatch,
+    gasOptions,
+    bridge,
+  ]);
 
   /**
    * If the feesStrategy is "custom" but no customStrategyTransactionPatch is
@@ -155,23 +151,15 @@ export default function EvmFeesStrategy({
     ({ feesStrategy }: { feesStrategy: StrategyWithCustom }) => {
       const bridge = getAccountBridge(account, parentAccount);
 
-      const patch: Partial<Transaction> =
-        feesStrategy === "custom" && customStrategyTransactionPatch
-          ? customStrategyTransactionPatch
-          : {
-              feesStrategy,
-            };
-
-      setTransaction(bridge.updateTransaction(transaction, { ...patch, gasOptions }));
+      setCustomStrategyTransactionPatch(undefined);
+      setTransaction(
+        bridge.updateTransaction(transaction, {
+          feesStrategy,
+          gasOptions,
+        }),
+      );
     },
-    [
-      setTransaction,
-      account,
-      parentAccount,
-      transaction,
-      customStrategyTransactionPatch,
-      gasOptions,
-    ],
+    [setTransaction, account, parentAccount, transaction, gasOptions],
   );
 
   const openCustomFees = useCallback(() => {

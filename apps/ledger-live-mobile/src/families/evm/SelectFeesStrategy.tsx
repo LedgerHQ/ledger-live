@@ -36,6 +36,7 @@ import { Alert, Flex, Text } from "@ledgerhq/native-ui";
 import TranslatedError from "~/components/TranslatedError";
 import { useNavigation } from "@react-navigation/core";
 import { NavigatorName, ScreenName } from "~/const";
+import { NotEnoughGas } from "@ledgerhq/errors";
 
 type Props = {
   gasOptions: GasOptions;
@@ -89,8 +90,12 @@ export default function SelectFeesStrategy({
   );
   const navigation = useNavigation();
 
-  const errors = status?.errors;
-  const insufficuentError = Object.values(errors || {})[0] || null;
+  const { errors = {} } = status || {};
+  const { gasPrice: gasPriceError, gasLimit: gasLimitError } = errors;
+  // This error name makes no sense. The problem is not to not have enough gas,
+  // but that the parent account doesn't have enough funds to pay for the gas.
+  // Also it has nothing to do with gasPrice... :sadge:
+  const insufficuentError = gasPriceError instanceof NotEnoughGas ? gasPriceError : null;
 
   const closeNetworkFeeHelpModal = () => setNetworkFeeHelpOpened(false);
 
@@ -241,14 +246,16 @@ export default function SelectFeesStrategy({
             </Alert>
           </TouchableOpacity>
         )}
-        <SafeAreaView style={styles.strategiesContainer}>
-          <FlatList
-            data={customFees ? strategiesWithCustom : strategies}
-            renderItem={renderItem}
-            keyExtractor={s => s}
-            extraData={feesStrategy}
-          />
-        </SafeAreaView>
+        {!gasLimitError ? (
+          <SafeAreaView style={styles.strategiesContainer}>
+            <FlatList
+              data={customFees ? strategiesWithCustom : strategies}
+              renderItem={renderItem}
+              keyExtractor={s => s}
+              extraData={feesStrategy}
+            />
+          </SafeAreaView>
+        ) : null}
         <TouchableOpacity
           style={[
             styles.customizeFeesButton,

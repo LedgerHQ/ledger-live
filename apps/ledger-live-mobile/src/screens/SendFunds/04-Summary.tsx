@@ -129,9 +129,8 @@ function SendSummary({ navigation, route }: Props) {
     setHighFeesOpen(false);
     setContinuing(false);
   }, [setHighFeesOpen]);
-  const { amount, totalSpent, errors } = status;
-  const { transaction: transactionError } = errors;
-  const error = errors[Object.keys(errors)[0]];
+  const { amount, totalSpent, errors = {} } = status;
+  const transactionError: Error | undefined = Object.values(errors as Record<string, Error>)[0];
   const mainAccount = getMainAccount(account, parentAccount);
   const currencyOrToken = getAccountCurrency(account);
   const hasNonEmptySubAccounts =
@@ -222,7 +221,13 @@ function SendSummary({ navigation, route }: Props) {
       </NavigationScrollView>
       <View style={styles.footer}>
         <LText style={styles.error} color="alert">
-          <TranslatedError error={transactionError} />
+          <TranslatedError
+            error={
+              transactionError && !(transactionError instanceof NotEnoughGas)
+                ? transactionError
+                : null
+            }
+          />
         </LText>
         <Button
           event="SummaryContinue"
@@ -231,9 +236,7 @@ function SendSummary({ navigation, route }: Props) {
           title={<Trans i18nKey="common.continue" />}
           containerStyle={styles.continueButton}
           onPress={() => setContinuing(true)}
-          disabled={
-            bridgePending || !!transactionError || (!!error && error instanceof NotEnoughGas)
-          }
+          disabled={bridgePending || !!transactionError}
           pending={bridgePending}
         />
       </View>
