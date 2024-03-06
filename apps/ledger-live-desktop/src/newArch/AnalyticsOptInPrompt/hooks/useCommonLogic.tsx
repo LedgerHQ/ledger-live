@@ -7,10 +7,9 @@ import { EntryPoint } from "../types/AnalyticsOptInromptNavigator";
 
 type Props = {
   entryPoint: EntryPoint;
-  callBack?: () => void;
 };
 
-export const useAnalyticsOptInPrompt = ({ entryPoint, callBack }: Props) => {
+export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
   const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
   const lldAnalyticsOptInPromptFlag = useFeature("lldAnalyticsOptInPrompt");
 
@@ -20,18 +19,29 @@ export const useAnalyticsOptInPrompt = ({ entryPoint, callBack }: Props) => {
   const [isFeatureFlagsAnalyticsPrefDisplayed, setIsFeatureFlagsAnalyticsPrefDisplayed] =
     useState<boolean>(false);
 
-  const openAnalitycsOptInPrompt = useCallback(() => setIsAnalitycsOptInPromptOpened(true), []);
+  const [nextStep, setNextStep] = useState<(() => void) | null>(null);
+
+  const openAnalitycsOptInPrompt = useCallback(
+    (routePath: string, callBack: () => void) => {
+      setIsAnalitycsOptInPromptOpened(true);
+      setNextStep(() => callBack);
+    },
+    [setIsAnalitycsOptInPromptOpened],
+  );
 
   useEffect(() => {
     const isFlagEnabled = lldAnalyticsOptInPromptFlag?.enabled && !hasSeenAnalyticsOptInPrompt;
     setIsFeatureFlagsAnalyticsPrefDisplayed(isFlagEnabled || false);
-  }, [lldAnalyticsOptInPromptFlag, hasSeenAnalyticsOptInPrompt, entryPoint]);
+  }, [lldAnalyticsOptInPromptFlag, hasSeenAnalyticsOptInPrompt, dispatch, entryPoint]);
 
   const onSubmit = useCallback(() => {
     setIsAnalitycsOptInPromptOpened(false);
     dispatch(setHasSeenAnalyticsOptInPrompt(true));
-    if (entryPoint === "Onboarding") callBack?.();
-  }, [dispatch, entryPoint, callBack]);
+    if (entryPoint === "Onboarding") {
+      nextStep?.();
+      setNextStep(null);
+    }
+  }, [dispatch, entryPoint, nextStep]);
 
   const analyticsOptInPromptProps = {
     onClose: () => setIsAnalitycsOptInPromptOpened(false),

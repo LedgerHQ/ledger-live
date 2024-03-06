@@ -149,7 +149,6 @@ export function Welcome() {
     onSubmit,
   } = useAnalyticsOptInPrompt({
     entryPoint: "Onboarding",
-    callBack: handleAcceptTermsAndGetStarted,
   });
 
   const extendedAnalyticsOptInPromptProps = {
@@ -180,11 +179,11 @@ export function Welcome() {
             iconPosition="right"
             Icon={IconsLegacy.ArrowRightMedium}
             variant="main"
-            onClick={
+            onClick={_ => {
               isFeatureFlagsAnalyticsPrefDisplayed
-                ? openAnalitycsOptInPrompt
-                : handleAcceptTermsAndGetStarted
-            }
+                ? openAnalitycsOptInPrompt("Onboarding", handleAcceptTermsAndGetStarted)
+                : handleAcceptTermsAndGetStarted;
+            }}
             mb="5"
           >
             {t("onboarding.screens.welcome.nextButton")}
@@ -192,7 +191,11 @@ export function Welcome() {
           <Button
             iconPosition="right"
             variant="main"
-            onClick={isFeatureFlagsAnalyticsPrefDisplayed ? openAnalitycsOptInPrompt : buyNanoX}
+            onClick={_ => {
+              isFeatureFlagsAnalyticsPrefDisplayed
+                ? openAnalitycsOptInPrompt("Onboarding", buyNanoX)
+                : buyNanoX;
+            }}
             outline={true}
             flexDirection="column"
             whiteSpace="normal"
