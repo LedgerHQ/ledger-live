@@ -39,17 +39,10 @@ export const useUpdateMaxAmount = ({
           setFromAmount(ZERO);
           setIsMaxLoading(false);
         }
-        bridge.updateTransaction(tx => {
-          let additionalFees;
-          if (tx.family === "evm") {
-            additionalFees = new BigNumber(5000000000000000); // 0,005 ETH/BNB/MATIC
-          }
-          return {
-            ...tx,
-            useAllAmount: next,
-            additionalFees,
-          };
-        });
+        bridge.updateTransaction(tx => ({
+          ...tx,
+          useAllAmount: next,
+        }));
         return next;
       }),
     [setFromAmount],
