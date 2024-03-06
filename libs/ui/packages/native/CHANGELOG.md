@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.22.8-next.1
+
+### Patch Changes
+
+- [#6312](https://github.com/LedgerHQ/ledger-live/pull/6312) [`e500e34`](https://github.com/LedgerHQ/ledger-live/commit/e500e34d5d9ef63804e21f738a7a0b45b1f45710) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Created analytics prompt screens for variant A and B (main and secondary screens)
+
 ## 0.22.8-next.0
 
 ### Patch Changes
