@@ -1,7 +1,6 @@
 import { useMemo, useEffect, useRef, useCallback } from "react";
 import { Account, AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
-import { atom, useAtom, useAtomValue } from "jotai";
-import { atomWithStorage } from "jotai/utils";
+import { atom, useAtom } from "jotai";
 import { AppManifest, WalletAPITransaction } from "./types";
 import { getMainAccount, getParentAccount } from "../account";
 import { TrackingAPI } from "./tracking";
@@ -11,7 +10,7 @@ import network from "@ledgerhq/live-network/network";
 import { getWalletAPITransactionSignFlowInfos } from "./converters";
 import { getCryptoCurrencyById } from "@ledgerhq/coin-framework/currencies/index";
 import { prepareMessageToSign } from "../hw/signMessage/index";
-import { UiHook, usePermission } from "./react";
+import { CurrentAccountHistDB, UiHook, usePermission } from "./react";
 import BigNumber from "bignumber.js";
 import { safeEncodeEIP55 } from "@ledgerhq/coin-evm/logic";
 
@@ -79,35 +78,43 @@ export function EVMAddressChanged(addr1: string, addr2: string): boolean {
 
 export const currentAccountAtom = atom<AccountLike | null>(null);
 
-const currentAccountHistAtom = atomWithStorage<Record<string, string>>(
-  "wallet-api-dapp-currentAccountHist",
-  {},
-);
-
-export function useDappCurrentAccount() {
+export function useDappCurrentAccount(currentAccountHistDb?: CurrentAccountHistDB) {
   const [currentAccount, setCurrentAccount] = useAtom(currentAccountAtom);
-  const [currentAccountHist, _setCurrentAccountHist] = useAtom(currentAccountHistAtom);
 
   // prefer using this setter when the user manually sets a current account
-  const setCurrentAccountHist = (manifestId: string, account: AccountLike) => {
-    _setCurrentAccountHist({
-      ...currentAccountHist,
-      [manifestId]: account.id,
-    });
-  };
+  const setCurrentAccountHist = useCallback(
+    (manifestId: string, account: AccountLike) => {
+      if (!currentAccountHistDb) return;
+
+      const [_, _setCurrentAccountHist] = currentAccountHistDb;
+      _setCurrentAccountHist(state => {
+        const newState = {
+          ...state,
+          currentAccountHist: {
+            ...state.currentAccountHist,
+            [manifestId]: account.id,
+          },
+        };
+        return newState;
+      });
+    },
+    [currentAccountHistDb],
+  );
+
   return { currentAccount, setCurrentAccount, setCurrentAccountHist };
 }
 
 function useDappAccountLogic({
   manifest,
   accounts,
+  currentAccountHistDb,
 }: {
   manifest: AppManifest;
   accounts: AccountLike[];
+  currentAccountHistDb?: CurrentAccountHistDB;
 }) {
   const { currencyIds } = usePermission(manifest);
-  const { currentAccount, setCurrentAccount } = useDappCurrentAccount();
-  const currentAccountHist = useAtomValue(currentAccountHistAtom);
+  const { currentAccount, setCurrentAccount } = useDappCurrentAccount(currentAccountHistDb);
   const currentParentAccount = useMemo(() => {
     if (currentAccount) {
       return getParentAccount(currentAccount, accounts);
@@ -137,8 +144,11 @@ function useDappAccountLogic({
   }, [currentAccount, accounts, currencyIds]);
 
   const currentAccountIdFromHist = useMemo(() => {
-    return manifest ? currentAccountHist[manifest.id] : null;
-  }, [manifest, currentAccountHist]);
+    if (manifest && currentAccountHistDb) {
+      return currentAccountHistDb[0][manifest.id];
+    }
+    return null;
+  }, [manifest, currentAccountHistDb]);
 
   useEffect(() => {
     if (manifest) {
@@ -190,17 +200,24 @@ export function useDappLogic({
   postMessage,
   uiHook,
   tracking,
+  currentAccountHistDb,
 }: {
   manifest: AppManifest;
   postMessage: (message: string) => void;
   accounts: AccountLike[];
   uiHook: UiHook;
   tracking: TrackingAPI;
+  currentAccountHistDb?: CurrentAccountHistDB;
 }) {
   const nanoApp = manifest.dapp?.nanoApp;
   const previousAddressRef = useRef<string>();
   const previousChainIdRef = useRef<number>();
-  const { currentAccount, currentParentAccount } = useDappAccountLogic({ manifest, accounts });
+  const { currentAccount, currentParentAccount } = useDappAccountLogic({
+    manifest,
+    accounts,
+    currentAccountHistDb,
+  });
+
   const currentNetwork = useMemo(() => {
     if (!currentAccount) {
       return undefined;

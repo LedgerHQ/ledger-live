@@ -4,8 +4,12 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 import { ArrowLeftMedium, ArrowRightMedium, ReverseMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useTheme } from "styled-components/native";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
-import { safeGetRefValue, useManifestCurrencies } from "@ledgerhq/live-common/wallet-api/react";
 import { useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/useDappLogic";
+import {
+  safeGetRefValue,
+  CurrentAccountHistDB,
+  useManifestCurrencies,
+} from "@ledgerhq/live-common/wallet-api/react";
 import { WebviewAPI, WebviewState } from "../Web3AppWebview/types";
 import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
@@ -18,6 +22,7 @@ type BottomBarProps = {
   manifest: AppManifest;
   webviewAPIRef: RefObject<WebviewAPI>;
   webviewState: WebviewState;
+  currentAccountHistDb: CurrentAccountHistDB;
 };
 
 function IconButton({
@@ -41,10 +46,15 @@ function IconButton({
   );
 }
 
-export function BottomBar({ manifest, webviewAPIRef, webviewState }: BottomBarProps) {
+export function BottomBar({
+  manifest,
+  webviewAPIRef,
+  webviewState,
+  currentAccountHistDb,
+}: BottomBarProps) {
   const navigation = useNavigation();
   const { colors } = useTheme();
-  const { currentAccount, setCurrentAccount } = useDappCurrentAccount();
+  const { currentAccount, setCurrentAccountHist } = useDappCurrentAccount(currentAccountHistDb);
   const shouldDisplaySelectAccount = !!manifest.dapp;
 
   const handleForward = useCallback(() => {
@@ -75,7 +85,7 @@ export function BottomBar({ manifest, webviewAPIRef, webviewState }: BottomBarPr
           currency: currencies[0],
           allowAddAccount: true,
           onSuccess: account => {
-            setCurrentAccount(account);
+            setCurrentAccountHist(manifest.id, account);
           },
         },
       });
@@ -86,12 +96,12 @@ export function BottomBar({ manifest, webviewAPIRef, webviewState }: BottomBarPr
           currencies,
           allowAddAccount: true,
           onSuccess: account => {
-            setCurrentAccount(account);
+            setCurrentAccountHist(manifest.id, account);
           },
         },
       });
     }
-  }, [currencies, navigation, setCurrentAccount]);
+  }, [manifest.id, currencies, navigation, setCurrentAccountHist]);
 
   return (
     <Flex flexDirection="row" paddingY={4} paddingX={4} alignItems="center">
