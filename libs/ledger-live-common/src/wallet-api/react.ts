@@ -2,6 +2,7 @@ import { useMemo, useState, useEffect, useRef, useCallback, RefObject } from "re
 import semver from "semver";
 import { intervalToDuration } from "date-fns";
 import { atom, useAtom, useAtomValue } from "jotai";
+import { atomWithStorage } from 'jotai/utils'
 
 import { Account, AccountLike, AnyMessage, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -1081,7 +1082,7 @@ export function EVMAddressChanged(addr1: string, addr2: string): boolean {
 
 export const currentAccountAtom = atom<AccountLike | null>(null);
 
-const currentAccountHistAtom = atom<Record<string, string>>({});
+const currentAccountHistAtom = atomWithStorage<Record<string, string>>('dappCurrentAccountHist',{});
 
 export function useDappCurrentAccount() {
   const [currentAccount, setCurrentAccount] = useAtom(currentAccountAtom);
