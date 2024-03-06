@@ -3716,11 +3716,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     units: ethereumUnits("ETH", "ETH"),
     ethereumLikeInfo: {
       chainId: 42161,
-      node: { type: "external", uri: "https://arb1.arbitrum.io/rpc" },
-      explorer: {
-        uri: "https://api.arbiscan.io/api",
-        type: "etherscan",
-      },
     },
     explorerViews: [
       {
@@ -3748,8 +3743,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       chainId: 421614,
       node: { type: "external", uri: "https://sepolia-rollup.arbitrum.io/rpc" },
       explorer: {
-        uri: "https://api-sepolia.arbiscan.io/api",
         type: "etherscan",
+        uri: "https://api-sepolia.arbiscan.io/api",
       },
     },
     explorerViews: [

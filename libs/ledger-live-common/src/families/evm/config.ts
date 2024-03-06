@@ -63,10 +63,13 @@ const evmConfig: Record<string, ConfigInfo> = {
       status: {
         type: "active",
       },
+<<<<<<< Updated upstream
       gasTracker: {
         type: "ledger",
         explorerId: "eth",
       },
+=======
+>>>>>>> Stashed changes
       node: {
         type: "ledger",
         explorerId: "eth",
@@ -75,6 +78,13 @@ const evmConfig: Record<string, ConfigInfo> = {
         type: "ledger",
         explorerId: "eth",
       },
+<<<<<<< Updated upstream
+=======
+      gasTracker: {
+        type: "ledger",
+        explorerId: "eth",
+      },
+>>>>>>> Stashed changes
     },
   },
   config_currency_ethereum_classic: {
@@ -218,6 +228,14 @@ const evmConfig: Record<string, ConfigInfo> = {
     default: {
       status: {
         type: "active",
+      },
+      node: {
+        type: "external",
+        uri: "https://arb1.arbitrum.io/rpc",
+      },
+      explorer: {
+        uri: "https://api.arbiscan.io/api",
+        type: "etherscan",
       },
     },
   },

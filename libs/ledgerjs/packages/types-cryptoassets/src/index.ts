@@ -273,7 +273,7 @@ export type ExplorerView = {
 export type EthereumLikeInfo = {
   chainId: number;
   // used by evm coin integration
-  node:
+  node?:
     | {
         type: "external";
         uri: string;
