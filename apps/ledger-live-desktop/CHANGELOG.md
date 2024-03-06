@@ -1,5 +1,13 @@
 # ledger-live-desktop
 
+## 2.78.0-next.4
+
+### Patch Changes
+
+- Updated dependencies [[`09128f3`](https://github.com/LedgerHQ/ledger-live/commit/09128f3fd41285199122115324964d83befe9237)]:
+  - @ledgerhq/live-common@34.0.0-next.4
+  - @ledgerhq/coin-evm@1.0.0-next.1
+
 ## 2.78.0-next.3
 
 ### Patch Changes
