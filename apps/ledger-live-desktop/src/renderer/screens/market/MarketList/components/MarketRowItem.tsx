@@ -8,10 +8,10 @@ import counterValueFormatter from "@ledgerhq/live-common/market/utils/counterval
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { SmallMarketItemChart } from "./MarketItemChart";
 import { CurrencyData } from "@ledgerhq/live-common/market/types";
-import { Button } from "..";
+import { Button } from "../..";
 import { useTranslation } from "react-i18next";
-import { TableRow, TableCell } from "../components/Table";
-import { Page, useMarketActions } from "../hooks/useMarketActions";
+import { TableRow, TableCell } from "../../components/Table";
+import { Page, useMarketActions } from "../../hooks/useMarketActions";
 
 const CryptoCurrencyIconWrapper = styled.div`
   height: 32px;
