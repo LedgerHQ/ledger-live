@@ -20,11 +20,6 @@ export default (app: Probot) => {
   // /full-lld-tests
   runDesktopTestSuite(app);
 
-  /* PR stuff */
-
-  // trigger to autoclose PR when not respecting guidelines
-  autoClose(app);
-
   /* CI stuff */
 
   // Report if PRs are up to date
