@@ -7,7 +7,7 @@ import Track from "~/renderer/analytics/Track";
 import Image from "~/renderer/components/Image";
 
 import NoResultsFound from "~/renderer/images/no-results-found.png";
-import { Button } from "..";
+import { Button } from "../..";
 
 type NoCryptoPlaceholderProps = {
   requestParams: MarketListRequestParams;

@@ -11,8 +11,8 @@ import {
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { SortTableCell } from "../components/SortTableCell";
 import { TableCell, TableRow, listItemHeight } from "../components/Table";
-import { NoCryptoPlaceholder } from "./NoCryptoPlaceholder";
-import { CurrencyRow } from "./MarketRowItem";
+import { NoCryptoPlaceholder } from "./components/NoCryptoPlaceholder";
+import { CurrencyRow } from "./components/MarketRowItem";
 
 type MarketListProps = {
   starredMarketCoins: string[];
