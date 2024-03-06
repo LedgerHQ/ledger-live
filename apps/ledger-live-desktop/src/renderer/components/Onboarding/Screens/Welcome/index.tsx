@@ -182,7 +182,7 @@ export function Welcome() {
             onClick={_ => {
               isFeatureFlagsAnalyticsPrefDisplayed
                 ? openAnalitycsOptInPrompt("Onboarding", handleAcceptTermsAndGetStarted)
-                : handleAcceptTermsAndGetStarted;
+                : handleAcceptTermsAndGetStarted();
             }}
             mb="5"
           >
@@ -194,7 +194,7 @@ export function Welcome() {
             onClick={_ => {
               isFeatureFlagsAnalyticsPrefDisplayed
                 ? openAnalitycsOptInPrompt("Onboarding", buyNanoX)
-                : buyNanoX;
+                : buyNanoX();
             }}
             outline={true}
             flexDirection="column"

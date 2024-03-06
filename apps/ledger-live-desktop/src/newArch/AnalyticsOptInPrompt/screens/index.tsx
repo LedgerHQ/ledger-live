@@ -55,7 +55,7 @@ const AnalyticsOptInPrompt: React.FC<AnalyticsOptInPromptProps> = ({
         withPaddingTop
         isOpen={isOpened}
         direction={"left"}
-        onRequestBack={preventBackNavigation ? undefined : onSubmit}
+        onRequestBack={preventBackNavigation ? undefined : onClose}
         onRequestClose={preventClosable ? undefined : onClose}
         style={{
           background: colors.background.main,
