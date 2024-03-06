@@ -109,7 +109,7 @@ export const useSwapTransaction = ({
   onNoRates,
   excludeFixedRates,
   refreshRate,
-  allowRefresh
+  allowRefresh,
 }: UseSwapTransactionProps = {}): SwapTransactionType => {
   const bridgeTransaction = useBridgeTransaction(() => ({
     account: defaultAccount,
@@ -164,7 +164,7 @@ export const useSwapTransaction = ({
     onNoRates,
     setExchangeRate,
     countdown: refreshRate,
-    allowRefresh
+    allowRefresh,
   });
 
   return {
