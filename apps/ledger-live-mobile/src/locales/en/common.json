@@ -6377,14 +6377,15 @@
     },
     "confirmCrop": "Confirm crop",
     "confirmContrast": "Confirm contrast",
-    "nftEntryPointButtonLabel": "Set as Ledger Stax lockscreen picture",
+    "nftEntryPointButtonLabel": "Set as lockscreen picture",
     "customImage": "Custom picture",
     "doThisLater": "Maybe later",
     "preview": {
       "title": "Preview",
       "loading": "Loading preview",
       "setPicture": "Set as lock screen",
-      "editPicture": "Edit picture"
+      "editPicture": "Edit picture",
+      "pickDeviceModel": "Choose a device"
     },
     "nftGallery": {
       "title": "My NFTs"

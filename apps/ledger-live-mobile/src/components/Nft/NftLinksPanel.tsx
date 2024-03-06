@@ -145,7 +145,7 @@ const NftLinksPanel = ({ nftContract, nftId, links, isOpen, onClose, nftMetadata
             },
           }
         : {
-            screen: ScreenName.CustomImagePreviewPreEditDevicePicker,
+            screen: ScreenName.CustomImagePreviewDevicePicker,
             params: customImageParams,
           },
     );

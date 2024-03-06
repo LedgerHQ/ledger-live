@@ -488,7 +488,7 @@ export enum ScreenName {
   CustomImageStep2Preview = "CustomImageStep2Preview",
   CustomImageStep3Transfer = "CustomImageStep3Transfer",
   CustomImageErrorScreen = "CustomImageErrorScreen",
-  CustomImagePreviewPreEditDevicePicker = "CustomImagePreviewPreEditDevicePicker",
+  CustomImagePreviewDevicePicker = "CustomImagePreviewPreEditDevicePicker",
   CustomImagePreviewPreEdit = "CustomImagePreviewPreEdit",
   CustomImagePreviewPostEdit = "CustomImagePreviewPostEdit",
   CustomImageNFTGallery = "CustomImageNFTGallery",
