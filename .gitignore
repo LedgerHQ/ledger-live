@@ -1,7 +1,7 @@
 .DS_Store
 node_modules
 .turbo
-.vscode
+.vscode/*
 !.vscode/launch.json
 !.vscode/extensions.json
 .pnpm-*
