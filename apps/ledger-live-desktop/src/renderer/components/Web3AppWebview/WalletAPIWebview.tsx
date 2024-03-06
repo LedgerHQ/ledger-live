@@ -375,6 +375,9 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       serverRef,
     );
 
+    const isDapp = !!manifest.dapp;
+    const preloader = isDapp ? "webviewDappPreloader" : "webviewPreloader";
+
     return (
       <>
         {!webviewState.loading && webviewState.isAppUnavailable && (
@@ -390,7 +393,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
            */
           style={webviewStyle}
           // eslint-disable-next-line react/no-unknown-property
-          preload={`file://${window.api.appDirname}/webviewPreloader.bundle.js`}
+          preload={`file://${window.api.appDirname}/${preloader}.bundle.js`}
           /**
            * There seems to be an issue between Electron webview and react
            * Hence, the normal `allowpopups` prop does not work and we need to
@@ -401,7 +404,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
           // eslint-disable-next-line react/no-unknown-property
           allowpopups="true"
           // eslint-disable-next-line react/no-unknown-property
-          webpreferences="contextIsolation=no, nativeWindowOpen=no"
+          webpreferences={`nativeWindowOpen=no${isDapp ? ", contextIsolation=no" : ""}`}
           {...webviewProps}
         />
         {!widgetLoaded ? (
