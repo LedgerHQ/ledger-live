@@ -132,17 +132,13 @@ const validateGas = (
   const errors: ValidationIssues = {};
   const warnings: ValidationIssues = {};
 
+  const usedGasLimit = customGasLimit || gasLimit;
+
   // Gas Limit
-  if (customGasLimit) {
-    if (customGasLimit.isZero()) {
+  if (usedGasLimit) {
+    if (usedGasLimit.isZero()) {
       errors.gasLimit = new FeeNotLoaded(); // "Could not load fee rates. Please set manual fees"
-    } else if (customGasLimit.isLessThan(DEFAULT_GAS_LIMIT)) {
-      errors.gasLimit = new GasLessThanEstimate(); // "This may be too low. Please increase"
-    }
-  } else {
-    if (gasLimit.isZero()) {
-      errors.gasLimit = new FeeNotLoaded(); // "Could not load fee rates. Please set manual fees"
-    } else if (gasLimit.isLessThan(DEFAULT_GAS_LIMIT)) {
+    } else if (usedGasLimit.isLessThan(DEFAULT_GAS_LIMIT)) {
       errors.gasLimit = new GasLessThanEstimate(); // "This may be too low. Please increase"
     }
   }

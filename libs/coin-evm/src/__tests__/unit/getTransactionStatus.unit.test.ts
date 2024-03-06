@@ -1,4 +1,3 @@
-import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
 import {
   AmountRequired,
   ETHAddressNonEIP,
@@ -16,11 +15,17 @@ import {
   RecipientRequired,
   ReplacementTransactionUnderpriced,
 } from "@ledgerhq/errors";
-import { ProtoNFT } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
 import fc from "fast-check";
+import { BigNumber } from "bignumber.js";
+import { ProtoNFT } from "@ledgerhq/types-live";
+import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
 import { NotEnoughNftOwned, NotOwnedNft, QuantityNeedsToBePositive } from "../../errors";
+import { makeAccount, makeTokenAccount } from "../fixtures/common.fixtures";
 import * as getTransactionStatusModule from "../../getTransactionStatus";
+import {
+  getMinEip1559Fees,
+  getMinLegacyFees,
+} from "../../editTransaction/getMinEditTransactionFees";
 import {
   EvmTransactionEIP1559,
   EvmTransactionLegacy,
@@ -28,11 +33,6 @@ import {
   Transaction,
   TransactionStatus,
 } from "../../types";
-import { makeAccount, makeTokenAccount } from "../fixtures/common.fixtures";
-import {
-  getMinEip1559Fees,
-  getMinLegacyFees,
-} from "../../editTransaction/getMinEditTransactionFees";
 
 const {
   default: getTransactionStatus,
@@ -294,6 +294,17 @@ describe("EVM Family", () => {
                   gasLimit: new FeeNotLoaded(),
                 }),
               );
+            });
+
+            it("should use customGasLimit and not have an error for gasLimit being 0", async () => {
+              const tx: Transaction = {
+                ...defaultTx,
+                customGasLimit: new BigNumber(21_000),
+                gasLimit: new BigNumber(0),
+              };
+              const res = await getTransactionStatus(account, tx);
+
+              expect(res.errors.gasLimit).not.toBeDefined();
             });
 
             it("should detect gas being too high for the account balance and have an error", async () => {
