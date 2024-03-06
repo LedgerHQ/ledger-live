@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { EventEmitter } from "events";
-import type { ElectronWebview } from ".";
+import { ElectronWebview } from "./dappPreloader";
 
 declare global {
   interface Window {
@@ -23,7 +23,6 @@ export interface MinimalEventSourceInterface {
 // The interface for the target of our events, typically the injected api.
 export interface MinimalEventTargetInterface {
   postMessage(message: any, targetOrigin?: string): void;
-  postDappMessage(message: any, targetOrigin?: string): void;
 }
 
 /**
@@ -237,7 +236,7 @@ export class LedgerLiveEthereumProvider extends EventEmitter implements EIP1193P
     >((resolve, reject) => (this.completers[id] = { resolve, reject }));
 
     // Send the JSON RPC to the event source.
-    this.eventTarget.postDappMessage(payload, this.targetOrigin);
+    this.eventTarget.postMessage(payload, this.targetOrigin);
 
     // Delete the completer within the timeout and reject the promise.
     setTimeout(() => {
