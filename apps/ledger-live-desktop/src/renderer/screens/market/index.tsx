@@ -1,11 +1,11 @@
 import React from "react";
 import { Flex, Button as BaseButton, Text, SearchInput, Dropdown } from "@ledgerhq/react-ui";
 import styled from "styled-components";
-import CounterValueSelect from "./CountervalueSelect";
-import MarketList from "./MarketList";
-import SideDrawerFilter from "./SideDrawerFilter";
+import CounterValueSelect from "./components/CountervalueSelect";
+import SideDrawerFilter from "./components/SideDrawerFilter";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { useMarket } from "./useMarket";
+import MarketList from "./MarketList";
+import { useMarket } from "./hooks/useMarket";
 
 const Container = styled(Flex).attrs({
   flex: "1",
@@ -56,19 +56,19 @@ const SelectBarContainer = styled(Flex)`
 
 export default function Market() {
   const {
-    marketParams,
-    toggleFilterByStarredAccounts,
-    timeRangeValue,
-    toggleLiveCompatible,
+    refresh,
+    setCounterCurrency,
     updateSearch,
     updateTimeRange,
-    t,
-    setCounterCurrency,
+    toggleFilterByStarredAccounts,
+    toggleLiveCompatible,
+    marketParams,
     supportedCounterCurrencies,
-    refresh,
+    timeRangeValue,
     starFilterOn,
     starredMarketCoins,
     timeRanges,
+    t,
   } = useMarket();
 
   const { order, range, counterCurrency, search = "", liveCompatible } = marketParams;
@@ -134,10 +134,7 @@ export default function Market() {
           </Flex>
         </SelectBarContainer>
       </Flex>
-      <MarketList
-        starredMarketCoins={starredMarketCoins}
-        toggleStarredAccounts={toggleFilterByStarredAccounts}
-      />
+      <MarketList {...useMarket()} />
     </Container>
   );
 }
