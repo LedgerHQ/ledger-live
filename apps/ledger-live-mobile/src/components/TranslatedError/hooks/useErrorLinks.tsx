@@ -3,17 +3,9 @@ import { Linking, Text } from "react-native";
 
 export function useErrorLinks(error?: Error | null) {
   const onErrorLinkPress = useCallback(async (errorLink: string) => {
-    if (errorLink.startsWith("http")) {
-      const canOpenURL = await Linking.canOpenURL(errorLink);
-
-      if (canOpenURL) {
-        Linking.openURL(errorLink);
-        return;
-      }
-    }
-
-    if (errorLink === "/platform/multibuy") {
-      Linking.openURL(`ledgerlive:/${errorLink}`);
+    const canOpenURL = await Linking.canOpenURL(errorLink);
+    if (canOpenURL) {
+      Linking.openURL(errorLink);
       return;
     }
   }, []);
