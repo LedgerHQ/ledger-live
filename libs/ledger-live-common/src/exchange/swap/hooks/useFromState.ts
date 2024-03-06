@@ -55,14 +55,9 @@ export const useFromState = ({
       const mainCurrency = getAccountCurrency(mainAccount);
       const recipient = getAbandonSeedAddress(mainCurrency.id);
       bridgeTransaction.updateTransaction(transaction => {
-        let additionalFees;
-        if (transaction.family === "evm") {
-          additionalFees = new BigNumber(5000000000000000); // 0,005 ETH/BNB/MATIC
-        }
         return {
           ...transaction,
           recipient,
-          additionalFees,
         };
       });
     },

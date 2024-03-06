@@ -360,6 +360,8 @@ const SwapForm = () => {
     } else {
       // Fix LIVE-9064, prevent the transaction from being updated when using useAllAmount
       swapTransaction.transaction ? (swapTransaction.transaction.useAllAmount = false) : null;
+      // Fix LIVE-11660, remove the margin from thec fees
+      swapTransaction.transaction ? (swapTransaction.transaction.additionalFees = undefined) : null;
       setDrawer(
         ExchangeDrawer,
         {
@@ -387,6 +389,7 @@ const SwapForm = () => {
   }, [exchangeRate]);
 
   const setFromAccount = (account: AccountLike | undefined) => {
+    swapTransaction.transaction?.useAllAmount ? swapTransaction.toggleMax() : null;
     swapTransaction.setFromAccount(account);
   };
 
