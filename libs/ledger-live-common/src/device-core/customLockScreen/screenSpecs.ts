@@ -31,8 +31,8 @@ export const SCREEN_SPECS: Record<CLSSupportedDeviceModelId, ScreenSpecs> = {
     paddingBottom: 2,
   },
   [DeviceModelId.europa]: {
-    width: 350, // TODO: TBD
-    height: 550, // TODO: TBD
+    width: 480,
+    height: 600,
     ...NO_PADDING,
   },
 };
