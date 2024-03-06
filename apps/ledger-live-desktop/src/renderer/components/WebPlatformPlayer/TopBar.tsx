@@ -17,8 +17,12 @@ import { WebviewAPI, WebviewState } from "../Web3AppWebview/types";
 import Spinner from "../Spinner";
 import { getAccountName, getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
-import { safeGetRefValue, useManifestCurrencies } from "@ledgerhq/live-common/wallet-api/react";
 import { useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/useDappLogic";
+import {
+  CurrentAccountHistDB,
+  useManifestCurrencies,
+  safeGetRefValue,
+} from "@ledgerhq/live-common/wallet-api/react";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import SelectAccountAndCurrencyDrawer from "~/renderer/drawers/DataSelector/SelectAccountAndCurrencyDrawer";
 import Wallet from "~/renderer/icons/Wallet";
@@ -130,18 +134,26 @@ export type Props = {
   config?: TopBarConfig;
   webviewAPIRef: RefObject<WebviewAPI>;
   webviewState: WebviewState;
+  currentAccountHistDb: CurrentAccountHistDB;
 };
 
-export const TopBar = ({ manifest, onClose, config = {}, webviewAPIRef, webviewState }: Props) => {
+export const TopBar = ({
+  manifest,
+  currentAccountHistDb,
+  onClose,
+  config = {},
+  webviewAPIRef,
+  webviewState,
+}: Props) => {
   const { name, icon } = manifest;
-  const { currentAccount, setCurrentAccountHist } = useDappCurrentAccount();
+  const { currentAccount, setCurrentAccountHist } = useDappCurrentAccount(currentAccountHistDb);
 
   const {
     shouldDisplayName = true,
     shouldDisplayInfo = true,
     shouldDisplayClose = !!onClose,
     shouldDisplayNavigation = false,
-    shouldDisplaySelectAccount = manifest.dapp,
+    shouldDisplaySelectAccount = !!manifest.dapp,
   } = config;
 
   const enablePlatformDevTools = useSelector(enablePlatformDevToolsSelector);

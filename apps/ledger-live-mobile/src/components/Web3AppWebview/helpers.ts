@@ -36,9 +36,10 @@ import { currentRouteNameRef } from "../../analytics/screenRefs";
 export function useWebView(
   {
     manifest,
+    currentAccountHistDb,
     inputs,
     customHandlers,
-  }: Pick<WebviewProps, "manifest" | "inputs" | "customHandlers">,
+  }: Pick<WebviewProps, "manifest" | "inputs" | "customHandlers" | "currentAccountHistDb">,
   ref: React.ForwardedRef<WebviewAPI>,
   onStateChange: WebviewProps["onStateChange"],
 ) {
@@ -125,6 +126,7 @@ export function useWebView(
 
   const { onDappMessage } = useDappLogic({
     manifest,
+    currentAccountHistDb,
     accounts,
     uiHook,
     postMessage: webviewHook.postMessage,
