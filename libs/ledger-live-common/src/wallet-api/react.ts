@@ -839,6 +839,7 @@ export function useCategories(manifests): Categories {
 }
 
 export type RecentlyUsedDB = StateDB<DiscoverDB, DiscoverDB["recentlyUsed"]>;
+export type CurrentAccountHistDB = StateDB<DiscoverDB, DiscoverDB["currentAccountHist"]>;
 
 export interface RecentlyUsed {
   data: RecentlyUsedManifest[];
@@ -876,7 +877,6 @@ function calculateTimeDiff(usedAt: string) {
 
   return timeDiff;
 }
-
 export function useRecentlyUsed(
   manifests: AppManifest[],
   [recentlyUsedManifestsDb, setState]: RecentlyUsedDB,

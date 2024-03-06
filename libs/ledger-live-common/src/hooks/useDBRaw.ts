@@ -39,6 +39,5 @@ export function useDBRaw<State, Selected>({
   );
 
   const result = useMemo(() => selector(state), [state, selector]);
-
   return [result, setter];
 }
