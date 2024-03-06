@@ -3,6 +3,7 @@ node_modules
 .turbo
 .vscode
 !.vscode/launch.json
+!.vscode/extensions.json
 .pnpm-*
 /temp
 .idea
