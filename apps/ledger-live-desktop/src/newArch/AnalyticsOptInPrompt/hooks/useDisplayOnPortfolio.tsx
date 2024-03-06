@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useAnalyticsOptInPrompt } from "~/newArch/AnalyticsOptInPrompt/hooks/useCommonLogic";
+import { useAnalyticsOptInPrompt } from "LLD/AnalyticsOptInPrompt/hooks/useCommonLogic";
 
 export const useDisplayOnPortfolioAnalytics = () => {
   const {

@@ -12,8 +12,8 @@ import { acceptTerms } from "~/renderer/terms";
 import BuyNanoX from "./assets/buyNanoX.webm";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { urls } from "~/config/urls";
-import AnalyticsOptInPrompt from "~/newArch/AnalyticsOptInPrompt/screens";
-import { useAnalyticsOptInPrompt } from "~/newArch/AnalyticsOptInPrompt/hooks/useCommonLogic";
+import AnalyticsOptInPrompt from "LLD/AnalyticsOptInPrompt/screens";
+import { useAnalyticsOptInPrompt } from "LLD/AnalyticsOptInPrompt/hooks/useCommonLogic";
 
 const StyledLink = styled(Text)`
   text-decoration: underline;
@@ -182,7 +182,7 @@ export function Welcome() {
             onClick={_ => {
               isFeatureFlagsAnalyticsPrefDisplayed
                 ? openAnalitycsOptInPrompt("Onboarding", handleAcceptTermsAndGetStarted)
-                : handleAcceptTermsAndGetStarted;
+                : handleAcceptTermsAndGetStarted();
             }}
             mb="5"
           >
@@ -194,7 +194,7 @@ export function Welcome() {
             onClick={_ => {
               isFeatureFlagsAnalyticsPrefDisplayed
                 ? openAnalitycsOptInPrompt("Onboarding", buyNanoX)
-                : buyNanoX;
+                : buyNanoX();
             }}
             outline={true}
             flexDirection="column"

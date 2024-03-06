@@ -83,6 +83,7 @@ const buildViteConfig = argv =>
       conditions: ["node", "import", "module", "browser", "default"],
       alias: {
         "~": path.resolve(lldRoot, "src"),
+        LLD: [path.resolve(lldRoot, "src", "newArch")],
         qrloop: require.resolve("qrloop"),
         "@ledgerhq/react-ui": path.join(
           path.dirname(require.resolve("@ledgerhq/react-ui/package.json")),
