@@ -361,7 +361,9 @@ const SwapForm = () => {
       // Fix LIVE-9064, prevent the transaction from being updated when using useAllAmount
       swapTransaction.transaction ? (swapTransaction.transaction.useAllAmount = false) : null;
       // Fix LIVE-11660, remove the margin from thec fees
-      swapTransaction.transaction ? (swapTransaction.transaction.additionalFees = undefined) : null;
+      swapTransaction.transaction && swapTransaction.transaction.family === "evm"
+        ? (swapTransaction.transaction.additionalFees = undefined)
+        : null;
       setDrawer(
         ExchangeDrawer,
         {
