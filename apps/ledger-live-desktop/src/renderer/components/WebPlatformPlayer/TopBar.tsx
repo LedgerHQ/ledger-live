@@ -137,7 +137,7 @@ const allCurrenciesAndTokens = listCurrencies(true);
 
 export const TopBar = ({ manifest, onClose, config = {}, webviewAPIRef, webviewState }: Props) => {
   const { name, icon } = manifest;
-  const [currentAccount, setCurrentAccount] = useDappCurrentAccount();
+  const { currentAccount, setCurrentAccountHist } = useDappCurrentAccount();
 
   const {
     shouldDisplayName = true,
@@ -191,7 +191,7 @@ export const TopBar = ({ manifest, onClose, config = {}, webviewAPIRef, webviewS
         currencies: currencies,
         onAccountSelected: account => {
           setDrawer();
-          setCurrentAccount(account);
+          setCurrentAccountHist(manifest.id, account);
         },
       },
       {
@@ -200,7 +200,7 @@ export const TopBar = ({ manifest, onClose, config = {}, webviewAPIRef, webviewS
         },
       },
     );
-  }, [currencies, setCurrentAccount]);
+  }, [currencies, manifest.id, setCurrentAccountHist]);
 
   const isLoading = useDebounce(webviewState.loading, 100);
 

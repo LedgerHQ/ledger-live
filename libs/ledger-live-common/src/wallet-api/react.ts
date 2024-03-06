@@ -1,7 +1,7 @@
 import { useMemo, useState, useEffect, useRef, useCallback, RefObject } from "react";
 import semver from "semver";
 import { intervalToDuration } from "date-fns";
-import { atom, useAtom } from "jotai";
+import { atom, useAtom, useAtomValue } from "jotai";
 
 import { Account, AccountLike, AnyMessage, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -1081,11 +1081,21 @@ export function EVMAddressChanged(addr1: string, addr2: string): boolean {
 
 export const currentAccountAtom = atom<AccountLike | null>(null);
 
-export function useDappCurrentAccount() {
-  return useAtom(currentAccountAtom);
-}
+const currentAccountHistAtom = atom<Record<string, string>>({});
 
-const manifestToCurrentAccountMap = new Map<string, string>();
+export function useDappCurrentAccount() {
+  const [currentAccount, setCurrentAccount] = useAtom(currentAccountAtom);
+  const [currentAccountHist, _setCurrentAccountHist] = useAtom(currentAccountHistAtom);
+
+  // prefer using this setter when the user manually sets a current account
+  const setCurrentAccountHist = (manifestId: string, account: AccountLike) => {
+    _setCurrentAccountHist({
+      ...currentAccountHist,
+      [manifestId]: account.id,
+    });
+  };
+  return { currentAccount, setCurrentAccount, setCurrentAccountHist };
+}
 
 function useDappAccountLogic({
   manifest,
@@ -1095,7 +1105,8 @@ function useDappAccountLogic({
   accounts: AccountLike[];
 }) {
   const { currencyIds } = usePermission(manifest);
-  const [currentAccount, setCurrentAccount] = useDappCurrentAccount();
+  const { currentAccount, setCurrentAccount } = useDappCurrentAccount();
+  const currentAccountHist = useAtomValue(currentAccountHistAtom);
   const currentParentAccount = useMemo(() => {
     if (currentAccount) {
       return getParentAccount(currentAccount, accounts);
@@ -1124,38 +1135,38 @@ function useDappAccountLogic({
     );
   }, [currentAccount, accounts, currencyIds]);
 
+  const currentAccountIdFromHist = useMemo(() => {
+    return manifest ? currentAccountHist[manifest.id] : null;
+  }, [manifest, currentAccountHist]);
+
   useEffect(() => {
     if (manifest) {
-      const currentAccountIdFromMap = manifestToCurrentAccountMap.get(manifest.id);
-      // stored account in jotai (selected in another dapp is permitted, just update the map)
-      if (currentAccount && storedCurrentAccountIsPermitted()) {
-        manifestToCurrentAccountMap.set(manifest.id, currentAccount.id);
-      } // previous account for that app
-      else if (currentAccountIdFromMap) {
-        const currentAccountFromMap = accounts.find(
-          account => account.id === currentAccountIdFromMap,
+      if (currentAccountIdFromHist) {
+        const currentAccountFromHist = accounts.find(
+          account => account.id === currentAccountIdFromHist,
         );
         // should never be null
-        setCurrentAccount(currentAccountFromMap ? currentAccountFromMap : null);
-      } else {
-        // no stored account, or stored account is not permitted AND no previous account in the map
-        // FIXME: useful to get a first account picked automatically
-        // BUT: when moving back to a dapp that had a different account selected, this one will be chosen (if the other dapp permits it)
-        // it makes the history stored in manifestToCurrentAccountMap only useful when coming back to the same dapp
+        setCurrentAccount(currentAccountFromHist ? currentAccountFromHist : null);
+      } else if (!currentAccount || !(currentAccount && storedCurrentAccountIsPermitted())) {
+        // if there is no current account
+        // OR if there is a current account but it is not permitted
+        // set it to the first permitted account
         setCurrentAccount(firstAccountAvailable ? firstAccountAvailable : null);
       }
     }
   }, [
     accounts,
-    storedCurrentAccountIsPermitted,
     firstAccountAvailable,
+    currentAccountIdFromHist,
     manifest,
     setCurrentAccount,
+    storedCurrentAccountIsPermitted,
     currentAccount,
   ]);
 
   return {
     currentAccount,
+    setCurrentAccount,
     currentParentAccount,
   };
 }
