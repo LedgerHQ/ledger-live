@@ -32,6 +32,8 @@ import PortfolioContentCards from "~/renderer/screens/dashboard/PortfolioContent
 import MarketPerformanceWidget from "~/renderer/screens/dashboard/MarketPerformanceWidget";
 import { useMarketPerformanceFeatureFlag } from "~/renderer/actions/marketperformance";
 import { Grid } from "@ledgerhq/react-ui";
+import AnalyticsOptInPrompt from "~/newArch/AnalyticsOptInPrompt/screens";
+import { useDisplayOnPortfolioAnalytics } from "~/newArch/AnalyticsOptInPrompt/hooks/useDisplayOnPortfolio";
 
 // This forces only one visible top banner at a time
 export const TopBannerContainer = styled.div`
@@ -76,6 +78,9 @@ export default function DashboardPage() {
 
   const { enabled: marketPerformanceEnabled, variant: marketPerformanceVariant } =
     useMarketPerformanceFeatureFlag();
+
+  const { isFeatureFlagsAnalyticsPrefDisplayed, analyticsOptInPromptProps } =
+    useDisplayOnPortfolioAnalytics();
 
   return (
     <>
@@ -137,6 +142,9 @@ export default function DashboardPage() {
           <EmptyStateAccounts />
         )}
       </Box>
+      {isFeatureFlagsAnalyticsPrefDisplayed && (
+        <AnalyticsOptInPrompt {...analyticsOptInPromptProps} />
+      )}
     </>
   );
 }

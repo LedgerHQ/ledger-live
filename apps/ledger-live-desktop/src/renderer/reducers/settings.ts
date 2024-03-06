@@ -105,6 +105,7 @@ export type SettingsState = {
   featureFlagsButtonVisible: boolean;
   vaultSigner: VaultSigner;
   supportedCounterValues: SupportedCountervaluesData[];
+  hasSeenAnalyticsOptInPrompt: boolean;
 };
 
 export const getInitialLanguageAndLocale = (): { language: Language; locale: Locale } => {
@@ -189,6 +190,7 @@ const INITIAL_STATE: SettingsState = {
   // Vault
   vaultSigner: { enabled: false, host: "", token: "", workspace: "" },
   supportedCounterValues: [],
+  hasSeenAnalyticsOptInPrompt: true,
 };
 
 /* Handlers */
@@ -238,6 +240,7 @@ type HandlersPayloads = {
   };
   SET_VAULT_SIGNER: VaultSigner;
   SET_SUPPORTED_COUNTER_VALUES: SupportedCountervaluesData[];
+  SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT: boolean;
 };
 type SettingsHandlers<PreciseKey = true> = Handlers<SettingsState, HandlersPayloads, PreciseKey>;
 
@@ -405,6 +408,10 @@ const handlers: SettingsHandlers = {
       counterValue: activeCounterValue,
     };
   },
+  SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT: (state: SettingsState, { payload }) => ({
+    ...state,
+    hasSeenAnalyticsOptInPrompt: payload,
+  }),
 };
 export default handleActions<SettingsState, HandlersPayloads[keyof HandlersPayloads]>(
   handlers as unknown as SettingsHandlers<false>,
@@ -702,3 +709,5 @@ export const featureFlagsButtonVisibleSelector = (state: State) =>
 export const vaultSignerSelector = (state: State) => state.settings.vaultSigner;
 export const supportedCounterValuesSelector = (state: State) =>
   state.settings.supportedCounterValues;
+export const hasSeenAnalyticsOptInPromptSelector = (state: State) =>
+  state.settings.hasSeenAnalyticsOptInPrompt;

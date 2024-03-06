@@ -349,3 +349,8 @@ export const setSupportedCounterValues = (payload: SupportedCountervaluesData[])
   type: "SET_SUPPORTED_COUNTER_VALUES",
   payload,
 });
+
+export const setHasSeenAnalyticsOptInPrompt = (hasSeenAnalyticsOptInPrompt: boolean) => ({
+  type: "SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT",
+  payload: hasSeenAnalyticsOptInPrompt,
+});
