@@ -12,6 +12,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
   (
     {
       manifest,
+      currentAccountHistDb,
       inputs = {},
       customHandlers,
       onStateChange,
@@ -24,6 +25,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         manifest,
         inputs,
         customHandlers,
+        currentAccountHistDb,
       },
       ref,
       onStateChange,

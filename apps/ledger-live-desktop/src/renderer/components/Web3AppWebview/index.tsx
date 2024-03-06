@@ -9,13 +9,14 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import { WebviewAPI, WebviewProps } from "./types";
 
 export const Web3AppWebview = forwardRef<WebviewAPI, WebviewProps>(
-  ({ manifest, inputs, customHandlers, onStateChange }, ref) => {
+  ({ manifest, currentAccountHistDb, inputs, customHandlers, onStateChange }, ref) => {
     <TrackPage category="Platform" name="App" appId={manifest.id} params={inputs} />;
 
     if (semver.satisfies(WALLET_API_VERSION, manifest.apiVersion)) {
       return (
         <WalletAPIWebview
           manifest={manifest}
+          currentAccountHistDb={currentAccountHistDb}
           inputs={inputs}
           customHandlers={customHandlers}
           onStateChange={onStateChange}
@@ -27,6 +28,7 @@ export const Web3AppWebview = forwardRef<WebviewAPI, WebviewProps>(
     return (
       <PlatformAPIWebview
         manifest={manifest}
+        currentAccountHistDb={currentAccountHistDb}
         inputs={inputs}
         onStateChange={onStateChange}
         ref={ref}
