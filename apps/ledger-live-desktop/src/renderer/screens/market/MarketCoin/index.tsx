@@ -7,9 +7,9 @@ import { localeSelector } from "~/renderer/reducers/settings";
 import styled from "styled-components";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { Button } from "..";
-import MarketCoinChart from "./MarketCoinChart";
-import MarketInfo from "./MarketInfo";
-import { useMarketCoin } from "./useMarketCoin";
+import MarketCoinChart from "./components/MarketCoinChart";
+import MarketInfo from "./components/MarketInfo";
+import { useMarketCoin } from "~/renderer/screens/market/hooks/useMarketCoin";
 
 const CryptoCurrencyIconWrapper = styled.div`
   height: 56px;
@@ -47,10 +47,6 @@ export default function MarketCoinScreen() {
 
   const {
     isStarred,
-    onSwap,
-    onBuy,
-    onStake,
-    toggleStar,
     availableOnBuy,
     availableOnStake,
     availableOnSwap,
@@ -59,12 +55,16 @@ export default function MarketCoinScreen() {
     dataCurrency,
     isLoadingData,
     isLoadingDataChart,
-    changeRange,
     range,
-    changeCounterCurrency,
     counterCurrency,
     currency,
     supportedCounterCurrencies,
+    changeRange,
+    onSwap,
+    onBuy,
+    onStake,
+    toggleStar,
+    changeCounterCurrency,
   } = useMarketCoin();
 
   const { price, priceChangePercentage } = dataCurrency || {};

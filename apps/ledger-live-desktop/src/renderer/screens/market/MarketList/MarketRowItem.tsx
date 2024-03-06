@@ -1,25 +1,17 @@
 import React, { useCallback, memo } from "react";
 import { useHistory } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { accountsSelector } from "~/renderer/reducers/accounts";
 import styled from "styled-components";
 import { Flex, Text, Icon } from "@ledgerhq/react-ui";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
-import { track } from "~/renderer/analytics/segment";
-import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils/index";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { SmallMarketItemChart } from "./MarketItemChart";
 import { CurrencyData } from "@ledgerhq/live-common/market/types";
-import { Button } from ".";
+import { Button } from "..";
 import { useTranslation } from "react-i18next";
-import { openModal } from "~/renderer/actions/modals";
-import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/utils/index";
-import { flattenAccounts } from "@ledgerhq/live-common/account/index";
-import useStakeFlow from "~/renderer/screens/stake/index";
-import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
-import { TableRow, TableCell } from "./components/Table";
+import { TableRow, TableCell } from "../components/Table";
+import { Page, useMarketActions } from "../hooks/useMarketActions";
 
 const CryptoCurrencyIconWrapper = styled.div`
   height: 32px;
@@ -47,12 +39,9 @@ type Props = {
   locale: string;
   isStarred: boolean;
   toggleStar: () => void;
-  availableOnBuy: boolean;
-  availableOnSwap: boolean;
-  availableOnStake: boolean;
 };
 
-function MarketRowItem({
+export const MarketRow = memo<Props>(function MarketRowItem({
   style,
   currency,
   counterCurrency,
@@ -60,30 +49,12 @@ function MarketRowItem({
   loading,
   isStarred,
   toggleStar,
-  availableOnBuy,
-  availableOnSwap,
-  availableOnStake,
 }: Props) {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
-  const swapDefaultTrack = useGetSwapTrackingProperties();
-
-  const startStakeFlow = useStakeFlow();
-
-  const openAddAccounts = useCallback(() => {
-    if (currency)
-      dispatch(
-        openModal("MODAL_ADD_ACCOUNTS", {
-          currency: currency.internalCurrency,
-          preventSkippingCurrencySelection: true,
-        }),
-      );
-  }, [dispatch, currency]);
+  const { onBuy, onStake, onSwap, availableOnBuy, availableOnSwap, availableOnStake } =
+    useMarketActions({ currency, page: Page.Market });
 
   const history = useHistory();
-
-  const allAccounts = useSelector(accountsSelector);
-  const flattenedAccounts = flattenAccounts(allAccounts);
 
   const onCurrencyClick = useCallback(() => {
     if (currency) {
@@ -94,93 +65,6 @@ function MarketRowItem({
       });
     }
   }, [currency, history]);
-
-  const onBuy = useCallback(
-    (e: React.SyntheticEvent<HTMLButtonElement>) => {
-      e.preventDefault();
-      e.stopPropagation();
-      setTrackingSource("Page Market");
-      // PTX smart routing redirect to live app or to native implementation
-
-      history.push({
-        pathname: "/exchange",
-        state: currency?.internalCurrency
-          ? {
-              currency: currency.internalCurrency?.id,
-              mode: "buy", // buy or sell
-            }
-          : {
-              mode: "onRamp",
-              defaultTicker:
-                currency && currency.ticker ? currency.ticker.toUpperCase() : undefined,
-            },
-      });
-    },
-    [currency, history],
-  );
-
-  const onSwap = useCallback(
-    (e: React.SyntheticEvent<HTMLButtonElement>) => {
-      if (currency?.internalCurrency?.id) {
-        e.preventDefault();
-        e.stopPropagation();
-        track("button_clicked2", {
-          button: "swap",
-          currency: currency?.ticker,
-          page: "Page Market",
-          ...swapDefaultTrack,
-        });
-        setTrackingSource("Page Market");
-
-        const currencyId = currency?.internalCurrency?.id;
-
-        const defaultAccount = getAvailableAccountsById(currencyId, flattenedAccounts).find(
-          Boolean,
-        );
-
-        if (!defaultAccount) return openAddAccounts();
-
-        history.push({
-          pathname: "/swap",
-          state: {
-            defaultCurrency: currency.internalCurrency,
-            defaultAccount,
-            defaultParentAccount:
-              defaultAccount && "parentId" in defaultAccount && defaultAccount.parentId
-                ? flattenedAccounts.find(a => a.id === defaultAccount.parentId)
-                : null,
-          },
-        });
-      }
-    },
-    [
-      currency?.internalCurrency,
-      currency?.ticker,
-      swapDefaultTrack,
-      flattenedAccounts,
-      openAddAccounts,
-      history,
-    ],
-  );
-
-  const onStake = useCallback(
-    (e: React.SyntheticEvent<HTMLButtonElement>) => {
-      e.preventDefault();
-      e.stopPropagation();
-      track("button_clicked2", {
-        button: "stake",
-        currency: currency?.ticker,
-        page: "Page Market",
-        ...stakeDefaultTrack,
-      });
-      startStakeFlow({
-        currencies: currency?.internalCurrency ? [currency.internalCurrency.id] : undefined,
-        source: "Page Market",
-      });
-      setTrackingSource("Page Market");
-    },
-    [currency?.internalCurrency, currency?.ticker, startStakeFlow],
-  );
 
   const onStarClick = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
@@ -312,6 +196,44 @@ function MarketRowItem({
       )}
     </div>
   );
-}
+});
 
-export default memo<Props>(MarketRowItem);
+type CurrencyRowProps = {
+  data: CurrencyData[]; // NB: CurrencyData.id is different to Currency.id
+  index: number;
+  counterCurrency?: string;
+  loading: boolean;
+  toggleStar: (id: string, isStarred: boolean) => void;
+  starredMarketCoins: string[];
+  locale: string;
+  swapAvailableIds: string[];
+  range?: string;
+  style: React.CSSProperties;
+};
+
+export const CurrencyRow = memo(function CurrencyRowItem({
+  data,
+  index,
+  counterCurrency,
+  loading,
+  toggleStar,
+  starredMarketCoins,
+  locale,
+  style,
+}: CurrencyRowProps) {
+  const currency = data ? data[index] : null;
+  const isStarred = currency && starredMarketCoins.includes(currency.id);
+
+  return (
+    <MarketRow
+      loading={!currency || (index === data.length && index > 50 && loading)}
+      currency={currency}
+      counterCurrency={counterCurrency}
+      isStarred={!!isStarred}
+      toggleStar={() => currency?.id && toggleStar(currency.id, !!isStarred)}
+      key={index}
+      locale={locale}
+      style={{ ...style }}
+    />
+  );
+});

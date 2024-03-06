@@ -7,8 +7,8 @@ import FormattedVal from "~/renderer/components/FormattedVal";
 import styled from "styled-components";
 import Chart from "~/renderer/components/Chart";
 import { dayFormat, hourFormat, useDateFormatter } from "~/renderer/hooks/useDateFormatter";
-import ChartPlaceholder from "../assets/ChartPlaceholder";
-import CountervalueSelect from "../CountervalueSelect";
+import ChartPlaceholder from "../../assets/ChartPlaceholder";
+import CountervalueSelect from "../../components/CountervalueSelect";
 import { useTranslation } from "react-i18next";
 
 const Title = styled(Text).attrs({ variant: "h3", color: "neutral.c100", mt: 1, mb: 5 })`
