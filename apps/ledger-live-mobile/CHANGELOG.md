@@ -1,5 +1,14 @@
 # live-mobile
 
+## 3.41.0-next.9
+
+### Patch Changes
+
+- [#6346](https://github.com/LedgerHQ/ledger-live/pull/6346) [`15bc813`](https://github.com/LedgerHQ/ledger-live/commit/15bc813c2aead82b53a9700c8a90f9cca1f3c09c) Thanks [@cng-ledger](https://github.com/cng-ledger)! - fix(LIVE-11547): incorrect deeplink when user doesn't have enough balance in LLM
+
+- Updated dependencies [[`15bc813`](https://github.com/LedgerHQ/ledger-live/commit/15bc813c2aead82b53a9700c8a90f9cca1f3c09c)]:
+  - @ledgerhq/live-common@34.0.0-next.7
+
 ## 3.41.0-next.8
 
 ### Patch Changes
