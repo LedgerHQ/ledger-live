@@ -99,7 +99,6 @@ setSupportedCurrencies([
   "lukso",
   "filecoin",
   "linea",
-  "linea_goerli",
 ]);
 
 LiveConfig.setConfig(liveConfig);
