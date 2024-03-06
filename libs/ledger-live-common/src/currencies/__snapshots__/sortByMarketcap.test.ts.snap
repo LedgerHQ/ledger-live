@@ -620,7 +620,6 @@ exports[`sortCurrenciesByIds snapshot 1`] = `
   "ethereum/erc20/lever_token",
   "ethereum/erc20/datum_token",
   "ethereum/erc20/ai_doctor",
-  "ethereum/erc20/minereum",
   "ethereum/erc20/colulocalnetwork",
   "ethereum/erc20/vice_industry_token",
   "ethereum/erc20/amond",
