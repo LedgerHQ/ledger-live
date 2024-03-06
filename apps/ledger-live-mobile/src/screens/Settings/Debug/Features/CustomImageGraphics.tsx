@@ -36,29 +36,8 @@ const aEuropaDevice: Device = {
   wired: false,
 };
 
-type DeviceActionStep = "confirmLoad" | "loading" | "confirmCommit" | "preview";
-const steps: DeviceActionStep[] = ["confirmLoad", "loading", "confirmCommit", "preview"];
-
-type StepProps = { progress: number; device: Device; deviceModelId: CLSSupportedDeviceModelId };
-
-function getStepComponent(step: DeviceActionStep): React.FC<StepProps> {
-  return {
-    confirmLoad: ({ device, deviceModelId }: StepProps) => (
-      <RenderImageLoadRequested device={device} deviceModelId={deviceModelId} />
-    ),
-    loading: ({ device, deviceModelId, progress }: StepProps) => (
-      <RenderLoadingImage device={device} progress={progress} deviceModelId={deviceModelId} />
-    ),
-    confirmCommit: ({ device, deviceModelId }: StepProps) => (
-      <RenderImageCommitRequested device={device} deviceModelId={deviceModelId} />
-    ),
-    preview: ({ deviceModelId }: StepProps) => (
-      <FramedImageWithContext
-        framedPictureConfig={getFramedPictureConfig("preview", deviceModelId)}
-      />
-    ),
-  }[step];
-}
+const steps = ["confirmLoad", "loading", "confirmCommit", "preview"] as const;
+type DeviceActionStep = (typeof steps)[number];
 
 export default function DebugCustomImageGraphics() {
   const [showAllAssets, setShowAllAssets] = useState(false);
@@ -82,8 +61,6 @@ export default function DebugCustomImageGraphics() {
       onValueChange={val => typeof val === "number" && setProgress(val)}
     />
   );
-
-  const StepComponent = getStepComponent(deviceActionStep);
 
   const framedPreviewConfig = getFramedPictureConfig("preview", deviceModelId);
   const framedTransferConfig = getFramedPictureConfig("transfer", deviceModelId);
@@ -123,7 +100,17 @@ export default function DebugCustomImageGraphics() {
         </NavigationScrollView>
       ) : (
         <Flex flex={1} alignItems="center" justifyContent="center">
-          <StepComponent progress={progress} deviceModelId={deviceModelId} device={device} />
+          {deviceActionStep === "confirmLoad" ? (
+            <RenderImageLoadRequested device={device} deviceModelId={deviceModelId} />
+          ) : deviceActionStep === "loading" ? (
+            <RenderLoadingImage device={device} progress={progress} deviceModelId={deviceModelId} />
+          ) : deviceActionStep === "confirmCommit" ? (
+            <RenderImageCommitRequested device={device} deviceModelId={deviceModelId} />
+          ) : deviceActionStep === "preview" ? (
+            <FramedImageWithContext
+              framedPictureConfig={getFramedPictureConfig("preview", deviceModelId)}
+            />
+          ) : null}
         </Flex>
       )}
       <Flex style={{ paddingBottom: insets.bottom }} borderTopWidth={1} borderColor="neutral.c100">
