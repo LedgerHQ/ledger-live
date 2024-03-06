@@ -1,5 +1,11 @@
 # @ledgerhq/coin-evm
 
+## 1.0.0-next.1
+
+### Patch Changes
+
+- [#6375](https://github.com/LedgerHQ/ledger-live/pull/6375) [`09128f3`](https://github.com/LedgerHQ/ledger-live/commit/09128f3fd41285199122115324964d83befe9237) Thanks [@CremaFR](https://github.com/CremaFR)! - Allow additional fees when using maxButton
+
 ## 1.0.0-next.0
 
 ### Major Changes
