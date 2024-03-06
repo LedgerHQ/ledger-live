@@ -214,7 +214,11 @@ const useGetUserId = () => {
 };
 
 function useWebView(
-  { manifest, customHandlers }: Pick<WebviewProps, "manifest" | "customHandlers">,
+  {
+    manifest,
+    customHandlers,
+    currentAccountHistDb,
+  }: Pick<WebviewProps, "manifest" | "customHandlers" | "currentAccountHistDb">,
   webviewRef: RefObject<WebviewTag>,
   tracking: TrackingAPI,
   serverRef: React.MutableRefObject<WalletAPIServer | undefined>,
@@ -266,6 +270,7 @@ function useWebView(
     accounts,
     uiHook,
     postMessage: webviewHook.postMessage,
+    currentAccountHistDb,
     tracking,
   });
 
@@ -328,7 +333,7 @@ function useWebView(
 }
 
 export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
-  ({ manifest, inputs = {}, customHandlers, onStateChange }, ref) => {
+  ({ manifest, inputs = {}, currentAccountHistDb, customHandlers, onStateChange }, ref) => {
     const tracking = useMemo(
       () =>
         trackingWrapper(
@@ -369,6 +374,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       {
         manifest,
         customHandlers,
+        currentAccountHistDb,
       },
       webviewRef,
       tracking,

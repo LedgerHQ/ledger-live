@@ -64,9 +64,12 @@ export type ConvertToLiveTransaction<T extends WalletAPITransaction, U extends T
 
 export type DiscoverDB = {
   recentlyUsed: RecentlyUsedIdDb[];
+  currentAccountHist: CurrentAccountHistIDb;
 };
 
 export type RecentlyUsedIdDb = {
   id: string;
   usedAt: string;
 };
+
+export type CurrentAccountHistIDb = Record<string, string>;

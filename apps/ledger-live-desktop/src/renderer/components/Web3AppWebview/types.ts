@@ -1,5 +1,6 @@
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
+import { CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react";
 import { WebContents } from "electron";
 
 export interface WebviewTag extends Electron.WebviewTag {
@@ -12,6 +13,7 @@ export type WebviewProps = {
   inputs?: Record<string, string | boolean | undefined>;
   onStateChange?: (webviewState: WebviewState) => void;
   customHandlers?: WalletAPICustomHandlers;
+  currentAccountHistDb?: CurrentAccountHistDB;
 };
 
 export type WebviewState = {
