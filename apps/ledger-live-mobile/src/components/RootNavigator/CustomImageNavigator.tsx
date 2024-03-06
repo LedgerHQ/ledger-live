@@ -13,7 +13,6 @@ import PreviewPreEdit from "~/screens/CustomImage/PreviewPreEdit";
 import PreviewPostEdit from "~/screens/CustomImage/PreviewPostEdit";
 import NFTGallerySelector from "~/screens/CustomImage/NFTGallerySelector";
 import { CustomImageNavigatorParamList } from "./types/CustomImageNavigator";
-import PreviewDevicePicker from "~/screens/CustomImage/PreviewDevicePicker";
 
 export default function CustomImageNavigator() {
   const { colors } = useTheme();
@@ -52,14 +51,6 @@ export default function CustomImageNavigator() {
           title: "",
           headerLeft: undefined,
           gestureEnabled: false,
-        }}
-      />
-      <Stack.Screen
-        name={ScreenName.CustomImagePreviewDevicePicker}
-        component={PreviewDevicePicker}
-        options={{
-          title: t("customImage.preview.pickDeviceModel"),
-          headerRight: undefined,
         }}
       />
       <Stack.Screen

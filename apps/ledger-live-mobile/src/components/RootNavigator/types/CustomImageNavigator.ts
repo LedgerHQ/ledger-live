@@ -33,9 +33,10 @@ export type CustomImageNavigatorParamList = {
     previewData: ProcessorPreviewResult;
   };
   [ScreenName.CustomImageErrorScreen]: BaseParams & { error: Error };
-  [ScreenName.CustomImagePreviewDevicePicker]: Omit<BaseParams, "deviceModelId"> &
-    PreviewPreEditAdditionalParams;
-  [ScreenName.CustomImagePreviewPreEdit]: BaseParams & PreviewPreEditAdditionalParams;
+  [ScreenName.CustomImagePreviewPreEdit]: Omit<BaseParams, "deviceModelId"> &
+    PreviewPreEditAdditionalParams & {
+      deviceModelId: CLSSupportedDeviceModelId | null;
+    };
   [ScreenName.CustomImagePreviewPostEdit]: BaseParams & {
     baseImageFile: ImageFileUri;
     imageType: ImageType;

@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import styled from "styled-components/native";
 import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import {
   NFTMetadataLoadingError,
   ImagePreviewError,
 } from "@ledgerhq/live-common/customImage/errors";
-import { NativeSyntheticEvent, ImageErrorEventData } from "react-native";
+import { NativeSyntheticEvent, ImageErrorEventData, Pressable } from "react-native";
 import { useTranslation } from "react-i18next";
 import {
   EventListenerCallback,
@@ -17,8 +18,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useNftMetadata } from "@ledgerhq/live-nft-react";
 import { NFTResource } from "@ledgerhq/live-nft/types";
 import { NFTMetadata } from "@ledgerhq/types-live";
-import { Device } from "@ledgerhq/types-devices";
+import { Device, DeviceModelId } from "@ledgerhq/types-devices";
+import { getDeviceModel } from "@ledgerhq/devices";
 import { getScreenVisibleAreaDimensions } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
+import {
+  CLSSupportedDeviceModelId,
+  supportedDeviceModelIds,
+} from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CustomImageNavigatorParamList } from "~/components/RootNavigator/types/CustomImageNavigator";
@@ -58,11 +64,51 @@ const analyticsEditEventProps = {
   button: "Edit",
 };
 
+const TabContainer = styled(Flex).attrs({
+  mx: 11,
+  mt: 6,
+  p: 1,
+  columnGap: 1,
+  borderRadius: "9px",
+  backgroundColor: "neutral.c30",
+  flexDirection: "row",
+  flexGrow: 0,
+  alignSelf: "center",
+})``;
+
+function Tab({
+  isActive,
+  onPress,
+  children,
+}: {
+  isActive: boolean;
+  onPress(): void;
+  children: string;
+}): React.JSX.Element {
+  return (
+    <Pressable onPress={onPress} style={{ width: "50%" }}>
+      <Flex backgroundColor={isActive ? "neutral.c50" : "transparent"} borderRadius={"8px"} p={3}>
+        <Text
+          variant={"paragraph"}
+          fontWeight={"semiBold"}
+          color={isActive ? "palette.neutral.c100" : "palette.neutral.c70"}
+          textAlign={"center"}
+        >
+          {children}
+        </Text>
+      </Flex>
+    </Pressable>
+  );
+}
+
 const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
   const { t } = useTranslation();
   const [loadedImage, setLoadedImage] = useState<ImageFileUri | null>(null);
   const { params } = route;
-  const { isPictureFromGallery, device, isStaxEnabled, deviceModelId } = params;
+  const { isPictureFromGallery, device, isStaxEnabled } = params;
+  const [deviceModelId, setSelectedDeviceModelId] = useState<CLSSupportedDeviceModelId>(
+    params.deviceModelId ?? DeviceModelId.stax,
+  );
 
   const targetDisplayDimensions = getScreenVisibleAreaDimensions(deviceModelId);
 
@@ -288,6 +334,20 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
     });
   }, [navigation, device, loadedImage, imageType, deviceModelId]);
 
+  const resetPreview = useCallback(() => {
+    setCroppedImage(null);
+    setPreviewLoading(true);
+    setProcessorPreviewImage(null);
+  }, []);
+
+  const onChangeDeviceModelId = useCallback(
+    (deviceModelId: CLSSupportedDeviceModelId) => {
+      setSelectedDeviceModelId(deviceModelId);
+      resetPreview();
+    },
+    [resetPreview],
+  );
+
   if (!loadedImage || !loadedImage.imageFileUri) {
     return (
       <Flex flex={1} justifyContent="center" alignItems="center">
@@ -299,6 +359,19 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["bottom"]}>
       <TrackScreen category={analyticsScreenName} />
+      {params.deviceModelId === null && (
+        <TabContainer>
+          {supportedDeviceModelIds.map(modelId => (
+            <Tab
+              key={modelId}
+              onPress={() => onChangeDeviceModelId(modelId)}
+              isActive={modelId === deviceModelId}
+            >
+              {getDeviceModel(modelId)?.productName}
+            </Tab>
+          ))}
+        </TabContainer>
+      )}
       {croppedImage?.imageBase64DataUri && (
         <ImageProcessor
           ref={imageProcessorRef}

@@ -134,21 +134,13 @@ const NftLinksPanel = ({ nftContract, nftId, links, isOpen, onClose, nftMetadata
       isStaxEnabled: !!nftMetadata?.staxImage,
       device: null,
     };
-    navigation.navigate(
-      NavigatorName.CustomImage,
-      customImageDeviceModelId
-        ? {
-            screen: ScreenName.CustomImagePreviewPreEdit,
-            params: {
-              ...customImageParams,
-              deviceModelId: customImageDeviceModelId,
-            },
-          }
-        : {
-            screen: ScreenName.CustomImagePreviewDevicePicker,
-            params: customImageParams,
-          },
-    );
+    navigation.navigate(NavigatorName.CustomImage, {
+      screen: ScreenName.CustomImagePreviewPreEdit,
+      params: {
+        ...customImageParams,
+        deviceModelId: customImageDeviceModelId,
+      },
+    });
     onClose && onClose();
   }, [customImageUri, navigation, customImageDeviceModelId, nftMetadata?.staxImage, onClose]);
 
