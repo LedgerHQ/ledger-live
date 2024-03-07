@@ -7,6 +7,7 @@ import {
   hasMinimumFundsToCancel,
   hasMinimumFundsToSpeedUp,
 } from "../../../editTransaction/hasMinimumFunds";
+import { setCoinConfig } from "../../../config";
 
 jest.mock("@ledgerhq/live-env");
 jest.mock("../../../logic");
@@ -14,6 +15,11 @@ const mockedLogic = jest.mocked(logic);
 const mockedLiveEnv = jest.mocked(liveEnv);
 
 describe("hasMinimumFunds", () => {
+  beforeEach(() => {
+    setCoinConfig((): any => {
+      return { info: {} };
+    });
+  });
   describe("hasMinimumFundsToCancel", () => {
     const mainAccount: Account = {
       balance: new BigNumber(0),

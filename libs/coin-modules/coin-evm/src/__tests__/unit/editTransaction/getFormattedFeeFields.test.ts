@@ -3,6 +3,7 @@ import { cryptocurrenciesById } from "@ledgerhq/cryptoassets/currencies";
 import { Account } from "@ledgerhq/types-live";
 import type { Transaction as EvmTransaction } from "../../../types/index";
 import { getFormattedFeeFields } from "../../../editTransaction/getFormattedFeeFields";
+import { setCoinConfig } from "../../../config";
 
 const dummyType2Transaction = {
   type: 2,
@@ -53,6 +54,12 @@ const localeTestCases = [
 ];
 
 describe("getFormattedFeeFields", () => {
+  beforeEach(() => {
+    setCoinConfig((): any => {
+      return { info: {} };
+    });
+  });
+
   describe("with tx type 2", () => {
     describe.each(localeTestCases)("with locale %s", locale => {
       test.each(testCases)(

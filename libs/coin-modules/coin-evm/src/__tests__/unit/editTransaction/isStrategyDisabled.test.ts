@@ -1,7 +1,13 @@
 import BigNumber from "bignumber.js";
 import { isStrategyDisabled } from "../../../editTransaction/isStrategyDisabled";
+import { setCoinConfig } from "../../../config";
 
 describe("isStrategyDisabled", () => {
+  beforeEach(() => {
+    setCoinConfig((): any => {
+      return { info: {} };
+    });
+  });
   describe("EIP1559 transaction (type 2)", () => {
     it("should return true if the strategy's fees are lower than the minimum fees", () => {
       const transaction = {

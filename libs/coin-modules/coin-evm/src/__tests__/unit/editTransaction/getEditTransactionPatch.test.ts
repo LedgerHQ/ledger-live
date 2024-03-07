@@ -15,6 +15,7 @@ import {
   nftLegacyTx,
   tokenTransaction,
 } from "../../fixtures/transaction.fixtures";
+import { setCoinConfig } from "../../../config";
 
 jest.mock("../../../api/gasTracker/index");
 const mockedGetGasTracker = jest.mocked(getGasTracker);
@@ -207,6 +208,12 @@ const gasOptionFastAndMinFeesByTypeAndTest = {
 };
 
 describe.each(["speedup", "cancel"])("with editType %s", editType => {
+  beforeEach(() => {
+    setCoinConfig((): any => {
+      return { info: {} };
+    });
+  });
+
   describe("without gasTracker", () => {
     beforeEach(() => {
       mockedGetGasTracker.mockImplementation(() => null);
