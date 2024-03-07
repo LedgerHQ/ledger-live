@@ -137,7 +137,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
   const staxLoadImageRequest = useMemo(
     () => ({
       hexImage: staxFetchImageState.hexImage ?? "",
-      padImage: false,
+      padImage: false, // this is because the picture we fetch from the device already has the padding
       deviceModelId: device.modelId,
     }),
     [staxFetchImageState.hexImage, device.modelId],
