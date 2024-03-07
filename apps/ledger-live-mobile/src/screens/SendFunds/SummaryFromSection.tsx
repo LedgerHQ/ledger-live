@@ -3,12 +3,12 @@ import { View, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency, getAccountName } from "@ledgerhq/live-common/account/index";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import SummaryRowCustom from "./SummaryRowCustom";
 import Circle from "~/components/Circle";
 import LText from "~/components/LText";
 import CurrencyIcon from "~/components/CurrencyIcon";
-import Wallet from "~/icons/Wallet";
+import Wallet from "@ledgerhq/icons-ui/native/Wallet";
 
 type Props = {
   account: AccountLike;
@@ -23,8 +23,8 @@ function SummaryFromSection({ account }: Props) {
     <SummaryRowCustom
       label={t("send.summary.from")}
       iconLeft={
-        <Circle bg={colors.lightLive} size={34}>
-          <Wallet size={16} />
+        <Circle bg={colors.palette.opacityDefault.c05} size={34}>
+          <Wallet size="S" color={colors.palette.primary.c80} />
         </Circle>
       }
       data={
