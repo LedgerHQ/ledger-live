@@ -231,7 +231,6 @@ export const getFeeData: NodeApi["getFeeData"] = async (currency, transaction) =
       ...currency,
       ethereumLikeInfo: {
         ...currency.ethereumLikeInfo!,
-        gasTracker: { type: "ledger", explorerId: node.explorerId },
       },
     },
     /**

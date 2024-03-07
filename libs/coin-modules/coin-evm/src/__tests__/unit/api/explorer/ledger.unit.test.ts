@@ -21,14 +21,10 @@ jest.mock("@ledgerhq/live-promise");
   () => new Promise(resolve => setTimeout(resolve, 1)), // mocking the delay supposed to happen after each try
 );
 
-const fakeCurrency = Object.freeze({
+const fakeCurrency = Object.freeze<Partial<CryptoCurrency>>({
   id: "ethereum" as CryptoCurrencyId,
   ethereumLikeInfo: {
     chainId: 1,
-    explorer: {
-      type: "ledger",
-      explorerId: "eth",
-    },
   },
 }) as CryptoCurrency;
 
@@ -148,12 +144,9 @@ describe("EVM Family", () => {
           id: "ethereum" as CryptoCurrencyId,
           ethereumLikeInfo: {
             chainId: 1,
-            node: {
-              type: "wrongtype",
-              uri: "anything",
-            } as any,
           },
         } as CryptoCurrency;
+
         try {
           await LEDGER_API.getLastOperations(
             badCurrency,

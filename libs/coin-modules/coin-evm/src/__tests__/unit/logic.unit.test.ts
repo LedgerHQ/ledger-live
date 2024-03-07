@@ -509,19 +509,19 @@ describe("EVM Family", () => {
       it("should provide a new hash if currency is using a new node config", () => {
         const hash1 = getSyncHash({
           ...currency,
-          ethereumLikeInfo: { chainId: 1, node: { type: "ledger", explorerId: "eth" } },
+          ethereumLikeInfo: { chainId: 1 },
         });
         const hash2 = getSyncHash({
           ...currency,
-          ethereumLikeInfo: { chainId: 1, node: { type: "ledger", explorerId: "matic" } },
+          ethereumLikeInfo: { chainId: 1 },
         });
         const hash3 = getSyncHash({
           ...currency,
-          ethereumLikeInfo: { chainId: 1, node: { type: "external", uri: "anything" } },
+          ethereumLikeInfo: { chainId: 1 },
         });
         const hash4 = getSyncHash({
           ...currency,
-          ethereumLikeInfo: { chainId: 1, node: { type: "external", uri: "somethingelse" } },
+          ethereumLikeInfo: { chainId: 1 },
         });
 
         const hashes = [hash1, hash2, hash3, hash4];
@@ -535,28 +535,24 @@ describe("EVM Family", () => {
           ...currency,
           ethereumLikeInfo: {
             ...currency.ethereumLikeInfo!,
-            explorer: { type: "ledger", explorerId: "eth" },
           },
         });
         const hash2 = getSyncHash({
           ...currency,
           ethereumLikeInfo: {
             ...currency.ethereumLikeInfo!,
-            explorer: { type: "ledger", explorerId: "matic" },
           },
         });
         const hash3 = getSyncHash({
           ...currency,
           ethereumLikeInfo: {
             ...currency.ethereumLikeInfo!,
-            explorer: { type: "etherscan", uri: "anything" },
           },
         });
         const hash4 = getSyncHash({
           ...currency,
           ethereumLikeInfo: {
             ...currency.ethereumLikeInfo!,
-            explorer: { type: "blockscout", uri: "somethingelse" },
           },
         });
 

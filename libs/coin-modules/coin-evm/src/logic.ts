@@ -199,6 +199,7 @@ export const getSyncHash = (
     .map(token => token.id + token.contractAddress + token.name + token.ticker)
     .join("");
   const isNftSupported = isNFTActive(currency);
+
   const config = getCoinConfig(currency).info;
   const { node = {}, explorer = {} } = config;
 

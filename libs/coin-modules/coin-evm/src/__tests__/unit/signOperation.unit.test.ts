@@ -15,10 +15,6 @@ const currency: CryptoCurrency = {
   ...getCryptoCurrencyById("ethereum"),
   ethereumLikeInfo: {
     chainId: 1,
-    node: {
-      type: "external" as const,
-      uri: "my-rpc.com",
-    },
   },
 };
 const account: Account = makeAccount(

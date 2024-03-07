@@ -89,9 +89,6 @@ describe("EVM Family", () => {
             ...ethereum,
             ethereumLikeInfo: {
               chainId: 1,
-              node: { type: "ledger", explorerId: "eth" },
-              gasTracker: undefined,
-              explorer: { type: "ledger", explorerId: "eth" },
             },
           };
 

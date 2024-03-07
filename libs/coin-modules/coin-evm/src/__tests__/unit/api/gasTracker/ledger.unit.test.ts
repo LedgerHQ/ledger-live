@@ -14,16 +14,19 @@ const fakeCurrency: Partial<CryptoCurrency> = {
   id: "ethereum" as CryptoCurrencyId,
   ethereumLikeInfo: {
     chainId: 1,
-    node: {
-      type: "ledger",
-      explorerId: "eth",
-    },
-    gasTracker: {
-      type: "ledger",
-      explorerId: "eth",
-    },
   },
   units: [{ code: "ETH", name: "ETH", magnitude: 18 }],
+};
+
+const fakeCurrencyConfig = {
+  node: {
+    type: "ledger",
+    explorerId: "eth",
+  },
+  gasTracker: {
+    type: "ledger",
+    explorerId: "eth",
+  },
 };
 
 const TEST_EIP1559_BASE_FEE_MULTIPLIER = 2;

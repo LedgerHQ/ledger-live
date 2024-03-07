@@ -20,13 +20,15 @@ jest.mock("@ledgerhq/live-promise");
 
 const currency = {
   ...getCryptoCurrencyById("ethereum"),
-  ethereumLikeInfo: {
-    node: {
-      type: "ledger",
-      explorerId: "eth",
-    },
-  },
+  ethereumLikeInfo: {},
 } as CryptoCurrency;
+
+const currencyConfig = {
+  node: {
+    type: "ledger",
+    explorerId: "eth",
+  },
+};
 
 const wrongCurrency = {
   ...getCryptoCurrencyById("ethereum"),

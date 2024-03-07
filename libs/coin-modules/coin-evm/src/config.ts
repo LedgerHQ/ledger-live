@@ -1,31 +1,32 @@
 import { CryptoCurrency, LedgerExplorerId } from "@ledgerhq/types-cryptoassets";
-import { CommonCurrencyConfig } from "@ledgerhq/coin-framework/config";
+import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
 
-export type EvmConfigInfo = CommonCurrencyConfig &
-  Partial<{
-    node:
-      | {
-          type: "external";
-          uri: string;
-        }
-      | {
-          type: "ledger";
-          explorerId: LedgerExplorerId;
-        };
-    explorer:
-      | {
-          type: "etherscan" | "blockscout" | "teloscan" | "klaytnfinder";
-          uri: string;
-        }
-      | {
-          type: "ledger";
-          explorerId: LedgerExplorerId;
-        };
-    gasTracker: {
-      type: "ledger";
-      explorerId: LedgerExplorerId;
-    };
-  }>;
+export type EvmConfig = {
+  node:
+    | {
+        type: "external";
+        uri: string;
+      }
+    | {
+        type: "ledger";
+        explorerId: LedgerExplorerId;
+      };
+  explorer:
+    | {
+        type: "etherscan" | "blockscout" | "teloscan" | "klaytnfinder";
+        uri: string;
+      }
+    | {
+        type: "ledger";
+        explorerId: LedgerExplorerId;
+      };
+  gasTracker: {
+    type: "ledger";
+    explorerId: LedgerExplorerId;
+  };
+};
+
+export type EvmConfigInfo = CurrencyConfig<EvmConfig>;
 
 type EvmCoinConfig = {
   info: EvmConfigInfo;

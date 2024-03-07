@@ -199,18 +199,6 @@ export const CURRENCIES_LIST: CryptoCurrency[] = [
     ],
     ethereumLikeInfo: {
       chainId: 1,
-      node: {
-        type: "ledger",
-        explorerId: "eth",
-      },
-      explorer: {
-        type: "ledger",
-        explorerId: "eth",
-      },
-      gasTracker: {
-        type: "ledger",
-        explorerId: "eth",
-      },
     },
     explorerViews: [
       {

@@ -1,5 +1,6 @@
-import { CryptoCurrency, EthereumLikeInfo } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { GasOptions } from "../../types";
+import { EvmConfigInfo } from "../../config";
 
 export type GasTrackerApi = {
   getGasOptions: ({
@@ -13,7 +14,7 @@ export type GasTrackerApi = {
   }) => Promise<GasOptions>;
 };
 
-type GasTrackerConfig = EthereumLikeInfo["gasTracker"];
+type GasTrackerConfig = EvmConfigInfo["gasTracker"];
 
 /**
  * Type guard
