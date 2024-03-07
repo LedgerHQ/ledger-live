@@ -229,14 +229,7 @@ const eventImplementation: Implementation = <SpecificType, GenericRequestType>(
 
             return concat(
               initialEvent,
-              !device
-                ? EMPTY
-                : task({ deviceId: device.deviceId, request }).pipe(
-                    filter(
-                      // unresponsiveDevice are for polling.
-                      event => (event as ImplementationEvent).type !== "unresponsiveDevice",
-                    ),
-                  ),
+              !device ? EMPTY : task({ deviceId: device.deviceId, request }),
             );
           }),
           catchError((error: Error) =>
