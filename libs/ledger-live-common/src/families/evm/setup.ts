@@ -5,7 +5,6 @@ import makeCliTools from "@ledgerhq/coin-evm/cli-transaction";
 import evmResolver from "@ledgerhq/coin-evm/hw-getAddress";
 import { prepareMessageToSign, signMessage } from "@ledgerhq/coin-evm/hw-signMessage";
 import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
-import { setGetConfig } from "@ledgerhq/coin-evm/config";
 import Eth from "@ledgerhq/hw-app-eth";
 import {
   CreateSigner,
@@ -27,9 +26,10 @@ const getCurrencyConfig = (currency: CryptoCurrency) => {
   return getCurrencyConfiguration(currency);
 };
 
-setGetConfig(getCurrencyConfig);
-
-const bridge: Bridge<EvmTransaction> = createBridges(executeWithSigner(createSigner));
+const bridge: Bridge<EvmTransaction> = createBridges(
+  executeWithSigner(createSigner),
+  getCurrencyConfig,
+);
 
 const messageSigner = {
   prepareMessageToSign,

@@ -11,22 +11,24 @@ import type { EvmAddress, EvmSignature, EvmSigner } from "../types/signer";
 import type { Transaction as EvmTransaction } from "../types/index";
 import { estimateMaxSpendable } from "../estimateMaxSpendable";
 import { getTransactionStatus } from "../getTransactionStatus";
-import { getAccountShape, sync } from "../synchronization";
+import { makeGetAccountShape, sync } from "../synchronization";
 import { prepareTransaction } from "../prepareTransaction";
-import { createTransaction } from "../createTransaction";
+import { makeCreateTransaction } from "../createTransaction";
 import { buildSignOperation } from "../signOperation";
 import { hydrate, preload } from "../preload";
 import nftResolvers from "../nftResolvers";
 import { broadcast } from "../broadcast";
 import resolver from "../hw-getAddress";
+import type { GetCoinConfig } from "../config";
 
 export function buildCurrencyBridge(
   signerContext: SignerContext<EvmSigner, EvmAddress | EvmSignature>,
+  getCoinConfig: GetCoinConfig,
 ): CurrencyBridge {
   const getAddress = resolver(signerContext);
 
   const scanAccounts = makeScanAccounts({
-    getAccountShape,
+    getAccountShape: makeGetAccountShape(getCoinConfig),
     getAddressFn: getAddress,
   });
 
@@ -40,6 +42,7 @@ export function buildCurrencyBridge(
 
 export function buildAccountBridge(
   signerContext: SignerContext<EvmSigner, EvmAddress | EvmSignature>,
+  getCoinConfig: GetCoinConfig,
 ): AccountBridge<EvmTransaction> {
   const getAddress = resolver(signerContext);
 
@@ -47,7 +50,7 @@ export function buildAccountBridge(
   const signOperation = buildSignOperation(signerContext);
 
   return {
-    createTransaction,
+    createTransaction: makeCreateTransaction(getCoinConfig),
     updateTransaction: defaultUpdateTransaction<EvmTransaction>,
     prepareTransaction,
     getTransactionStatus,
@@ -61,9 +64,10 @@ export function buildAccountBridge(
 
 export function createBridges(
   signerContext: SignerContext<EvmSigner, EvmAddress | EvmSignature>,
+  getCoinConfig: GetCoinConfig,
 ): Bridge<EvmTransaction> {
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
-    accountBridge: buildAccountBridge(signerContext),
+    accountBridge: buildAccountBridge(signerContext, getCoinConfig),
   };
 }

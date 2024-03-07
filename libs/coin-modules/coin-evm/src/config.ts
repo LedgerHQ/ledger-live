@@ -1,7 +1,7 @@
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, EthereumLikeInfo } from "@ledgerhq/types-cryptoassets";
 
-export let getConfig: ((currency: CryptoCurrency) => unknown) | undefined;
-
-export const setGetConfig = (getConfigCallback: (currency: CryptoCurrency) => unknown): void => {
-  getConfig = getConfigCallback;
+type EvmCoinConfig = {
+  info: EthereumLikeInfo;
 };
+
+export type GetCoinConfig = (currency: CryptoCurrency) => EvmCoinConfig;
