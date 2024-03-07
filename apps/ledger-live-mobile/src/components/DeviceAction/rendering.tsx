@@ -775,7 +775,7 @@ export function renderDeviceNotOnboarded({
       navigation.navigate(NavigatorName.BaseOnboarding, {
         screen: NavigatorName.Onboarding,
         params: {
-          screen: ScreenName.OnboardingSetNewDevice,
+          screen: ScreenName.OnboardingUseCase,
           params: {
             deviceModelId: device.modelId,
           },
