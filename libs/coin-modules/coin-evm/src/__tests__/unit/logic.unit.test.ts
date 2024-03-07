@@ -1,7 +1,12 @@
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
 import * as cryptoAssetsTokens from "@ledgerhq/cryptoassets/tokens";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
-import { CryptoCurrency, TokenCurrency, Unit } from "@ledgerhq/types-cryptoassets";
+import {
+  CryptoCurrency,
+  CryptoCurrencyId,
+  TokenCurrency,
+  Unit,
+} from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import * as RPC_API from "../../api/node/rpc.common";
 import {
@@ -32,8 +37,69 @@ import {
   EvmTransactionLegacy,
   Transaction as EvmTransaction,
 } from "../../types";
+import { setCoinConfig } from "../../config";
 
 describe("EVM Family", () => {
+  beforeEach(() => {
+    setCoinConfig((currency: { id: string }): any => {
+      switch (currency.id) {
+        case "ethereum": {
+          return {
+            info: {
+              node: { type: "ledger", explorerId: "eth" },
+              explorer: { type: "ledger", explorerId: "eth" },
+            },
+          };
+        }
+        case "matic": {
+          return {
+            info: {
+              node: { type: "ledger", explorerId: "matic" },
+              explorer: { type: "ledger", explorerId: "matic" },
+            },
+          };
+        }
+        case "optimism": {
+          return {
+            info: {
+              node: { type: "external", uri: "optimis_uri" },
+            },
+          };
+        }
+        case "polygon": {
+          return {
+            info: {
+              node: { type: "ledger", explorerId: "polygon" },
+            },
+          };
+        }
+        case "bsc": {
+          return {
+            info: {
+              node: { type: "ledger", explorerId: "bsc" },
+            },
+          };
+        }
+        case "anything": {
+          return {
+            info: {
+              node: { type: "external", explorerId: "anything" },
+              explorer: { type: "etherscan", uri: "anything" },
+            },
+          };
+        }
+        case "somethingelse": {
+          return {
+            info: {
+              node: { type: "ledger", explorerId: "somethingelse" },
+              explorer: { type: "blockscout", uri: "somethingelse" },
+            },
+          };
+        }
+      }
+    });
+  });
+
   describe("logic.ts", () => {
     describe("legacyTransactionHasFees", () => {
       it("should return true for legacy tx with fees", () => {
@@ -509,18 +575,22 @@ describe("EVM Family", () => {
       it("should provide a new hash if currency is using a new node config", () => {
         const hash1 = getSyncHash({
           ...currency,
+          id: "ethereum",
           ethereumLikeInfo: { chainId: 1 },
         });
         const hash2 = getSyncHash({
           ...currency,
+          id: "matic" as CryptoCurrencyId,
           ethereumLikeInfo: { chainId: 1 },
         });
         const hash3 = getSyncHash({
           ...currency,
+          id: "anything" as CryptoCurrencyId,
           ethereumLikeInfo: { chainId: 1 },
         });
         const hash4 = getSyncHash({
           ...currency,
+          id: "somethingelse" as CryptoCurrencyId,
           ethereumLikeInfo: { chainId: 1 },
         });
 
@@ -533,27 +603,19 @@ describe("EVM Family", () => {
       it("should provide a new hash if currency is using a new explorer config", () => {
         const hash1 = getSyncHash({
           ...currency,
-          ethereumLikeInfo: {
-            ...currency.ethereumLikeInfo!,
-          },
+          id: "ethereum",
         });
         const hash2 = getSyncHash({
           ...currency,
-          ethereumLikeInfo: {
-            ...currency.ethereumLikeInfo!,
-          },
+          id: "matic" as CryptoCurrencyId,
         });
         const hash3 = getSyncHash({
           ...currency,
-          ethereumLikeInfo: {
-            ...currency.ethereumLikeInfo!,
-          },
+          id: "anything" as CryptoCurrencyId,
         });
         const hash4 = getSyncHash({
           ...currency,
-          ethereumLikeInfo: {
-            ...currency.ethereumLikeInfo!,
-          },
+          id: "somethingelse" as CryptoCurrencyId,
         });
 
         const hashes = [hash1, hash2, hash3, hash4];
