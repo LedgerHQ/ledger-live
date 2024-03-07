@@ -20,6 +20,7 @@ import {
   etherscanInternalTransactionToOperations,
   etherscanOperationToOperations,
 } from "../../../../adapters";
+import { setCoinConfig } from "../../../../config";
 
 jest.mock("axios");
 jest.mock("@ledgerhq/live-promise");
@@ -34,9 +35,28 @@ const currency: CryptoCurrency = {
   },
 };
 
+const getCurrencyConfig = (): any => {
+  return {
+    info: {
+      explorer: {
+        type: "etherscan",
+        uri: "mock",
+      },
+      node: {
+        type: "external",
+        uri: "mock",
+      },
+    },
+  };
+};
+
 const account = makeAccount("0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d", currency);
 
 describe("EVM Family", () => {
+  beforeEach(() => {
+    setCoinConfig(getCurrencyConfig);
+  });
+
   describe("api/explorer/etherscan.ts", () => {
     afterAll(() => {
       jest.restoreAllMocks();
@@ -108,6 +128,18 @@ describe("EVM Family", () => {
       });
 
       it("should throw an error if the currency is misconfigured", async () => {
+        setCoinConfig((): any => {
+          // no explorer
+          return {
+            info: {
+              node: {
+                type: "external",
+                uri: "mock",
+              },
+            },
+          };
+        });
+
         jest.spyOn(axios, "request").mockImplementation(async () => ({
           data: {
             result: etherscanCoinOperations,
@@ -115,7 +147,7 @@ describe("EVM Family", () => {
         }));
 
         try {
-          await await ETHERSCAN_API.getLastCoinOperations(
+          await ETHERSCAN_API.getLastCoinOperations(
             {
               ...currency,
               ethereumLikeInfo: {
@@ -235,6 +267,18 @@ describe("EVM Family", () => {
       });
 
       it("should throw if the currency is misconfigured", async () => {
+        setCoinConfig((): any => {
+          // no explorer
+          return {
+            info: {
+              node: {
+                type: "external",
+                uri: "mock",
+              },
+            },
+          };
+        });
+
         jest.spyOn(axios, "request").mockImplementation(async () => ({
           data: {
             result: etherscanTokenOperations,
@@ -371,6 +415,18 @@ describe("EVM Family", () => {
       });
 
       it("should return an empty array if the currency is misconfigured", async () => {
+        setCoinConfig((): any => {
+          // no explorer
+          return {
+            info: {
+              node: {
+                type: "external",
+                uri: "mock",
+              },
+            },
+          };
+        });
+
         jest.spyOn(axios, "request").mockImplementation(async () => ({
           data: {
             result: etherscanERC721Operations,
@@ -507,6 +563,18 @@ describe("EVM Family", () => {
       });
 
       it("should return an empty array if the currency is misconfigured", async () => {
+        setCoinConfig((): any => {
+          // no explorer
+          return {
+            info: {
+              node: {
+                type: "external",
+                uri: "mock",
+              },
+            },
+          };
+        });
+
         jest.spyOn(axios, "request").mockImplementation(async () => ({
           data: {
             result: etherscanERC721Operations,
@@ -519,8 +587,7 @@ describe("EVM Family", () => {
               ...currency,
               ethereumLikeInfo: {
                 chainId: 1,
-                // no explorer
-              } as EthereumLikeInfo,
+              },
             },
             account.freshAddress,
             account.id,
@@ -666,6 +733,18 @@ describe("EVM Family", () => {
       });
 
       it("should throw if the currency is misconfigured", async () => {
+        setCoinConfig((): any => {
+          // no explorer
+          return {
+            info: {
+              node: {
+                type: "external",
+                uri: "mock",
+              },
+            },
+          };
+        });
+
         jest.spyOn(axios, "request").mockImplementation(async () => ({
           data: {
             result: etherscanInternalOperations,
@@ -678,8 +757,7 @@ describe("EVM Family", () => {
               ...currency,
               ethereumLikeInfo: {
                 chainId: 1,
-                // no explorer
-              } as EthereumLikeInfo,
+              },
             },
             account.freshAddress,
             account.id,

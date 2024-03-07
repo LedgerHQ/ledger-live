@@ -18,13 +18,6 @@ const fakeCurrency: Partial<CryptoCurrency> = {
   units: [{ code: "ETH", name: "ETH", magnitude: 18 }],
 };
 
-const fakeCurrencyConfig = {
-  node: {
-    type: "external",
-    uri: "my-rpc.com",
-  },
-};
-
 const fakeCurrencyWithoutRPC: Partial<CryptoCurrency> = {
   id: "my_new_chain" as CryptoCurrencyId,
   ethereumLikeInfo: {

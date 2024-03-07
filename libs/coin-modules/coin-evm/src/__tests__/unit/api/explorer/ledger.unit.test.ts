@@ -5,7 +5,7 @@ import BigNumber from "bignumber.js";
 import { delay } from "@ledgerhq/live-promise";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
-import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { LedgerExplorerUsedIncorrectly } from "../../../../errors";
 import * as LEDGER_API from "../../../../api/explorer/ledger";
 import {
@@ -14,6 +14,7 @@ import {
   coinOperation3,
   coinOperation4,
 } from "../../../fixtures/explorer/ledger.fixtures";
+import { setCoinConfig } from "../../../../config";
 
 jest.mock("axios");
 jest.mock("@ledgerhq/live-promise");
@@ -22,7 +23,7 @@ jest.mock("@ledgerhq/live-promise");
 );
 
 const fakeCurrency = Object.freeze<Partial<CryptoCurrency>>({
-  id: "ethereum" as CryptoCurrencyId,
+  id: "ethereum",
   ethereumLikeInfo: {
     chainId: 1,
   },
@@ -37,6 +38,21 @@ const accountId = encodeAccountId({
 });
 
 describe("EVM Family", () => {
+  beforeEach(() => {
+    const getCurrencyConfig = (): any => {
+      return {
+        info: {
+          explorer: {
+            type: "ledger",
+            explorerId: "eth",
+          },
+        },
+      };
+    };
+
+    setCoinConfig(getCurrencyConfig);
+  });
+
   describe("api/explorer/ledger.ts", () => {
     afterEach(() => {
       jest.resetAllMocks();
@@ -140,8 +156,19 @@ describe("EVM Family", () => {
 
     describe("getLastOperations", () => {
       it("should throw if the explorer is misconfigured", async () => {
+        setCoinConfig((): any => {
+          return {
+            info: {
+              node: {
+                type: "wrongtype",
+                uri: "anything",
+              },
+            },
+          };
+        });
+
         const badCurrency = {
-          id: "ethereum" as CryptoCurrencyId,
+          id: "ethereum",
           ethereumLikeInfo: {
             chainId: 1,
           },
