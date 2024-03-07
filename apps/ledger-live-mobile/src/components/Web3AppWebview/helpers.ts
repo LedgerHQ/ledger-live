@@ -6,8 +6,8 @@ import {
   UiHook,
   useConfig,
   useWalletAPIServer,
-  useDappLogic,
 } from "@ledgerhq/live-common/wallet-api/react";
+import { useDappLogic } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import { Operation, SignedOperation } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/tracking";
