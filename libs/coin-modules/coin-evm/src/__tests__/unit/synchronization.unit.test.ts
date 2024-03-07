@@ -36,7 +36,7 @@ const getAccountShapeParameters: AccountShapeInfo = {
 };
 
 describe("EVM Family", () => {
-  beforeEach(() => {
+  beforeAll(() => {
     setCoinConfig((): any => {
       return {
         info: {

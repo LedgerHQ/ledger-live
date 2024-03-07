@@ -50,7 +50,14 @@ describe("EVM Family", () => {
     setCoinConfig((): any => {
       return {
         info: {
-          node: { type: "ledger", explorerId: "eth" },
+          node: {
+            type: "external" as const,
+            uri: "https://my-rpc.com",
+          },
+          explorer: {
+            type: "etherscan" as const,
+            uri: "https://api.com",
+          },
         },
       };
     });
