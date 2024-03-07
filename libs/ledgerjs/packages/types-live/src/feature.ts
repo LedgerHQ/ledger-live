@@ -121,7 +121,6 @@ export type CurrencyFeatures = {
  * @dev Add features here.
  */
 export type Features = CurrencyFeatures & {
-  learn: Feature_Learn;
   brazePushNotifications: Feature_BrazePushNotifications;
   brazeLearn: Feature_BrazeLearn;
   llmNewDeviceSelection: Feature_LlmNewDeviceSelection;
@@ -273,11 +272,6 @@ export type Feature_ReceiveStakingFlowConfigDesktop = Feature<{
     supportLink: string;
     direct: boolean;
   };
-}>;
-
-export type Feature_Learn = Feature<{
-  mobile: { url: string };
-  desktop: { url: string };
 }>;
 
 export type Feature_Storyly = Feature<{

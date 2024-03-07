@@ -2182,15 +2182,7 @@
     "discover": "Discover",
     "nanoX": "Nano X",
     "market": "Market",
-    "earn": "Earn",
-    "learn": "Learn"
-  },
-  "learn": {
-    "pageTitle": "learn",
-    "sectionShows": "Shows",
-    "sectionVideo": "Video",
-    "sectionPodcast": "Podcast",
-    "sectionArticles": "Articles"
+    "earn": "Earn"
   },
   "portfolio": {
     "totalBalance": "Total balance",
