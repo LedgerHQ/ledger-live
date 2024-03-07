@@ -13,7 +13,7 @@ import {
   getCryptoCurrencyById,
   setSupportedCurrencies,
 } from "../../currencies";
-import { encodeAccountId, toAccountRaw } from "../../account";
+import { encodeAccountId, fromAccountRaw, toAccountRaw } from "../../account";
 import { firstValueFrom, reduce } from "rxjs";
 import { getAccountBridgeByFamily, getCurrencyBridge } from "../../bridge/impl";
 import { MigrationAddress, migrationAddresses as defaultAddresses } from "./addresses";
@@ -173,7 +173,7 @@ const getMockAccount = (currencyId: string, address: string): Account => {
   };
 };
 
-export const testSync = async (currencyId: string, xpubOrAddress: string) => {
+const testSync = async (currencyId: string, xpubOrAddress: string) => {
   console.log("starting sync on", currencyId, xpubOrAddress);
   const mockAccount = getMockAccount(currencyId, xpubOrAddress);
   const currency = getCryptoCurrencyById(currencyId);
@@ -194,9 +194,30 @@ export const testSync = async (currencyId: string, xpubOrAddress: string) => {
   return accountRaw;
 };
 
+const testSyncAccount = async (account: Account) => {
+  console.log("starting sync on", account.currency.id, account.xpub ?? account.freshAddress);
+  const currency = getCryptoCurrencyById(account.currency.id);
+  const currencyBrige = getCurrencyBridge(currency);
+  const data = await currencyBrige.preload(currency);
+  currencyBrige.hydrate(data, currency);
+  const accountBrige = getAccountBridgeByFamily(account.currency!.family, account.id);
+
+  const syncedAccount = await firstValueFrom(
+    accountBrige
+      .sync(account, { paginationConfig: {}, blacklistedTokenIds: [] })
+      .pipe(reduce((acc, f: (arg0: Account) => Account) => f(acc), account)),
+  );
+
+  const accountRaw = toAccountRaw(syncedAccount);
+
+  console.log("finishing sync on", account.currency.id, account.xpub ?? account.freshAddress);
+  return accountRaw;
+};
+
 (async () => {
   // list of addresses from input file
   const inputFileAddresses: MigrationAddress[] = [];
+  const inputAccounts: Account[] = [];
 
   if (inputFile) {
     if (!existsSync(inputFile)) {
@@ -213,6 +234,10 @@ export const testSync = async (currencyId: string, xpubOrAddress: string) => {
         xpub: account.xpub,
       }));
 
+      content.forEach(account => {
+        inputAccounts.push(fromAccountRaw(account));
+      });
+
       inputFileAddresses.push(...syncInfo);
     }
   }
@@ -227,7 +252,7 @@ export const testSync = async (currencyId: string, xpubOrAddress: string) => {
   });
 
   // if --inputFile we use the addresses from the input file otherwise from addresses.ts
-  const migrationAddresses = inputFileAddresses.length ? inputFileAddresses : defaultAddresses;
+  const migrationAddresses = defaultAddresses;
 
   const filteredAccounts = migrationAddresses.filter(addresses => {
     if (currencyIds) {
@@ -237,14 +262,20 @@ export const testSync = async (currencyId: string, xpubOrAddress: string) => {
     return true;
   });
 
-  const syncedAccounts = await Promise.allSettled(
-    filteredAccounts.map(async migrationAddress => {
-      return testSync(
-        migrationAddress.currencyId,
-        migrationAddress.xpub ?? migrationAddress.address,
+  const syncedAccounts = inputFile
+    ? await Promise.allSettled(
+        inputAccounts.map(account => {
+          testSyncAccount(account);
+        }),
+      )
+    : await Promise.allSettled(
+        filteredAccounts.map(migrationAddress => {
+          return testSync(
+            migrationAddress.currencyId,
+            migrationAddress.xpub ?? migrationAddress.address,
+          );
+        }),
       );
-    }),
-  );
 
   const errors: string[] = [];
   const response = syncedAccounts.map((account, i) => {
