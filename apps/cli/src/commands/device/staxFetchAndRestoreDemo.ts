@@ -7,6 +7,8 @@ import staxFetchImageHash from "@ledgerhq/live-common/hw/staxFetchImageHash";
 import staxLoadImage, { generateStaxImageFormat } from "@ledgerhq/live-common/hw/staxLoadImage";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import crypto from "crypto";
+import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
+import { getScreenSpecs } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 
 /**
  * This is an implmentation demo of what we will have during a firmware update
@@ -17,12 +19,18 @@ import crypto from "crypto";
 
 type staxFetchAndRestoreJobOpts = ScanCommonOpts & {
   fileInput: string;
+  deviceModelId: CLSSupportedDeviceModelId;
 };
 
 const exec = async (opts: staxFetchAndRestoreJobOpts) => {
-  const { fileInput, device: deviceId = "" } = opts;
+  const { fileInput, device: deviceId = "", deviceModelId } = opts;
   const hexImageWithoutHeader = fs.readFileSync(fileInput, "utf-8");
-  const hexImage = await generateStaxImageFormat(hexImageWithoutHeader, true, true);
+  const hexImage = await generateStaxImageFormat(
+    hexImageWithoutHeader,
+    true,
+    true,
+    getScreenSpecs(deviceModelId),
+  );
 
   // TODO: rework without double resolving promise
   // eslint-disable-next-line
@@ -48,7 +56,10 @@ const exec = async (opts: staxFetchAndRestoreJobOpts) => {
 
     console.log("Restoring the image we backedup");
     await new Promise<void>(resolve =>
-      staxLoadImage({ deviceId, request: { hexImage: hexImageWithoutHeader } }).subscribe(
+      staxLoadImage({
+        deviceId,
+        request: { hexImage: hexImageWithoutHeader, deviceModelId },
+      }).subscribe(
         x => console.log(x),
         e => {
           console.error(e);
@@ -72,6 +83,11 @@ export default {
       alias: "i",
       type: String,
       desc: "Text file containing the hex data of the image to load on Stax",
+    },
+    {
+      name: "deviceModelId",
+      type: String,
+      desc: "The device model id to use",
     },
   ],
   job: (opts: staxFetchAndRestoreJobOpts): any => from(exec(opts)),

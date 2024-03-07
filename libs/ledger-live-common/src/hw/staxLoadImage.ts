@@ -59,7 +59,6 @@ export type LoadImageRequest = {
   hexImage: string; // When provided, will skip the backup if it matches the hash.
   padImage?: boolean;
   deviceModelId: CLSSupportedDeviceModelId;
-  // screenSpecs: ScreenSpecs;
 };
 
 export type Input = {
