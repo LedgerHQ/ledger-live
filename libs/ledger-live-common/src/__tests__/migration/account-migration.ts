@@ -16,7 +16,7 @@ import {
 import { encodeAccountId, fromAccountRaw, toAccountRaw } from "../../account";
 import { firstValueFrom, reduce } from "rxjs";
 import { getAccountBridgeByFamily, getCurrencyBridge } from "../../bridge/impl";
-import { MigrationAddress, migrationAddresses as defaultAddresses } from "./addresses";
+import { migrationAddresses as defaultAddresses } from "./addresses";
 import { liveConfig } from "../../config/sharedConfig";
 
 // mandatory to run the script
@@ -216,7 +216,6 @@ const testSyncAccount = async (account: Account) => {
 
 (async () => {
   // list of addresses from input file
-  const inputFileAddresses: MigrationAddress[] = [];
   const inputAccounts: Account[] = [];
 
   if (inputFile) {
@@ -228,17 +227,10 @@ const testSyncAccount = async (account: Account) => {
     } else {
       // if there's a input file we parse it
       const content = JSON.parse(readFileSync(inputFile, "utf8"));
-      const syncInfo: MigrationAddress[] = content.map(account => ({
-        currencyId: account.currencyId,
-        address: account.freshAddress,
-        xpub: account.xpub,
-      }));
 
       content.forEach(account => {
         inputAccounts.push(fromAccountRaw(account));
       });
-
-      inputFileAddresses.push(...syncInfo);
     }
   }
 
@@ -254,7 +246,7 @@ const testSyncAccount = async (account: Account) => {
   // if --inputFile we use the addresses from the input file otherwise from addresses.ts
   const migrationAddresses = defaultAddresses;
 
-  const filteredAccounts = migrationAddresses.filter(addresses => {
+  const filteredAddresses = migrationAddresses.filter(addresses => {
     if (currencyIds) {
       return currencyIds.includes(addresses.currencyId);
     }
@@ -269,7 +261,7 @@ const testSyncAccount = async (account: Account) => {
         }),
       )
     : await Promise.allSettled(
-        filteredAccounts.map(migrationAddress => {
+        filteredAddresses.map(migrationAddress => {
           return testSync(
             migrationAddress.currencyId,
             migrationAddress.xpub ?? migrationAddress.address,
@@ -282,7 +274,7 @@ const testSyncAccount = async (account: Account) => {
     if (account.status === "fulfilled") {
       return account.value;
     } else {
-      errors.push(`${filteredAccounts[i].currencyId} ${account.reason.stack}`);
+      errors.push(`${filteredAddresses[i].currencyId} ${account.reason.stack}`);
     }
   });
 
