@@ -1,12 +1,7 @@
 import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
-import {
-  starredMarketCoinsSelector,
-  localeSelector,
-  getCounterValueCode,
-} from "~/renderer/reducers/settings";
+import { localeSelector, getCounterValueCode } from "~/renderer/reducers/settings";
 import { useCallback, useMemo, useState } from "react";
-import { addStarredMarketCoins, removeStarredMarketCoins } from "~/renderer/actions/settings";
 import { useTheme } from "styled-components";
 import { getCurrencyColor } from "~/renderer/getCurrencyColor";
 import {
@@ -16,6 +11,8 @@ import {
 } from "@ledgerhq/live-common/market/v2/useMarketDataProvider";
 import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
 import { Page, useMarketActions } from "./useMarketActions";
+import { removeStarredMarketCoins, addStarredMarketCoins } from "~/renderer/actions/market";
+import { starredMarketCoinsSelector } from "~/renderer/reducers/market";
 
 const ranges = Object.keys(rangeDataTable).filter(k => k !== "1h");
 
