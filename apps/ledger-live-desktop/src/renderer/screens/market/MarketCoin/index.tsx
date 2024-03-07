@@ -84,7 +84,9 @@ export default function MarketCoinScreen() {
         <Flex flexDirection="row" alignItems="center" justifyContent="flex-start">
           <CryptoCurrencyIconWrapper>
             {isLoadingCurrency ? (
-              <InfiniteLoader />
+              <Flex alignItems={"center"} justifyContent={"center"}>
+                <InfiniteLoader />
+              </Flex>
             ) : internalCurrency ? (
               <CryptoCurrencyIcon
                 currency={internalCurrency}
