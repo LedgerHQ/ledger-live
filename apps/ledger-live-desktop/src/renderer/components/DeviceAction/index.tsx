@@ -31,6 +31,8 @@ import {
   UserRefusedFirmwareUpdate,
   UserRefusedOnDevice,
   UserRefusedDeviceNameChange,
+  UnresponsiveDeviceError,
+  TransportRaceCondition,
 } from "@ledgerhq/errors";
 import {
   InstallingApp,
@@ -413,6 +415,15 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     });
   }
 
+  if (unresponsive || error instanceof TransportRaceCondition) {
+    return renderError({
+      t,
+      error: new UnresponsiveDeviceError(),
+      onRetry,
+      withExportLogs: false,
+    });
+  }
+
   if (!isLoading && error) {
     const e = error as unknown;
     if (
@@ -499,7 +510,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     return renderLockedDeviceError({ t, device, onRetry, inlineRetry });
   }
 
-  if ((!isLoading && !device) || unresponsive) {
+  if (!isLoading && !device) {
     return renderConnectYourDevice({
       modelId,
       type,

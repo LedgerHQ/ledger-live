@@ -5482,6 +5482,10 @@
       "title": "Something went wrong. Please reconnect your device",
       "description": "An action was already pending on the Ledger device. Please deny or reconnect."
     },
+    "UnresponsiveDeviceError": {
+      "title": "Something went wrong.",
+      "description": "Unable to access your device.\nAn action may be pending, please deny or try to reconnect."
+    },
     "TransportStatusError": {
       "title": "Something went wrong. Please reconnect your device",
       "description": "{{message}}"
