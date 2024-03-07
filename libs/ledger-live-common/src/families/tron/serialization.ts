@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { BigNumber } from "bignumber.js";
 import {
   isTrongridExtraTxInfo,
@@ -145,6 +146,9 @@ export const fromTronResourcesRaw = ({
     }
   }
 
+  throw new Error("Could not serialize tron acccount");
+
+  /*
   return {
     frozen: {
       bandwidth: frozenBandwidth
@@ -212,6 +216,7 @@ export const fromTronResourcesRaw = ({
     lastVotedDate: lastVotedDate ? new Date(lastVotedDate) : undefined,
     cacheTransactionInfoById,
   };
+  */
 };
 
 export function assignToAccountRaw(account: Account, accountRaw: AccountRaw) {
