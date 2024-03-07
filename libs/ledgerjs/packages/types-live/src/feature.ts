@@ -136,7 +136,6 @@ export type Features = CurrencyFeatures & {
   mockFeature: Feature_MockFeature;
   multibuyNavigation: Feature_MultibuyNavigation;
   referralProgramDiscoverCard: Feature_ReferralProgramDiscoverCard;
-  referralProgramDesktopBanner: Feature_ReferralProgramDesktopBanner;
   referralProgramDesktopSidebar: Feature_ReferralProgramDesktopSidebar;
   referralProgramMobile: Feature_ReferralProgramMobile;
   disableNftSend: Feature_DisableNftSend;
@@ -484,7 +483,6 @@ export type Feature_LlmNewFirmwareUpdateUx = DefaultFeature;
 export type Feature_CounterValue = DefaultFeature;
 export type Feature_MockFeature = DefaultFeature;
 export type Feature_MultibuyNavigation = DefaultFeature;
-export type Feature_ReferralProgramDesktopBanner = DefaultFeature;
 export type Feature_DisableNftSend = DefaultFeature;
 export type Feature_DisableNftLedgerMarket = DefaultFeature;
 export type Feature_DisableNftRaribleOpensea = DefaultFeature;
