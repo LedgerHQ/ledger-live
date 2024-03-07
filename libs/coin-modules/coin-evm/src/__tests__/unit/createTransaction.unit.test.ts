@@ -3,7 +3,6 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { createTransaction } from "../../createTransaction";
 import { makeAccount } from "../fixtures/common.fixtures";
-import { setCoinConfig } from "../../config";
 
 const currencyWithChainId = getCryptoCurrencyById("ethereum");
 const currencyWithoutChainId = {
@@ -14,12 +13,6 @@ const account1 = makeAccount("0xkvn", currencyWithoutChainId);
 const account2 = makeAccount("0xkvn", currencyWithChainId);
 
 describe("EVM Family", () => {
-  beforeAll(() => {
-    setCoinConfig((): any => {
-      return { info: {} };
-    });
-  });
-
   describe("createTransaction.ts", () => {
     it("should create a valid transaction", () => {
       const transaction1 = createTransaction(account1);

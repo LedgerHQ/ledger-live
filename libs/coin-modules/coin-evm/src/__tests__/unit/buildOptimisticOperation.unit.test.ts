@@ -15,7 +15,6 @@ import {
   erc20TokenTransactionRaw,
   erc721TokenTransactionRaw,
 } from "../fixtures/transaction.fixtures";
-import { setCoinConfig } from "../../config";
 
 const currency = getCryptoCurrencyById("ethereum");
 const tokenCurrency = getTokenById("ethereum/erc20/usd__coin");
@@ -34,12 +33,6 @@ const account = makeAccount(
 );
 
 describe("EVM Family", () => {
-  beforeAll(() => {
-    setCoinConfig((): any => {
-      return { info: {} };
-    });
-  });
-
   describe("buildOptimisticOperation.ts", () => {
     describe("buildOptimisticOperation", () => {
       it("should create a coin optimistic transaction waiting for the broadcast to be completed", () => {

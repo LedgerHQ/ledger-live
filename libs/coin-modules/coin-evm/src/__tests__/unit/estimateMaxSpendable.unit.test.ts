@@ -37,7 +37,12 @@ jest.spyOn(nodeApi, "getFeeData").mockImplementation(async () => ({
 describe("EVM Family", () => {
   beforeAll(() => {
     setCoinConfig((): any => {
-      return { info: {} };
+      return {
+        info: {
+          node: { type: "ledger", explorerId: "eth" },
+          gasTracker: { type: "ledger", explorerId: "eth" },
+        },
+      };
     });
   });
 

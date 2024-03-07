@@ -48,7 +48,11 @@ const mockedBroadcastResponse = "0xH4sH";
 describe("EVM Family", () => {
   beforeAll(() => {
     setCoinConfig((): any => {
-      return { info: {} };
+      return {
+        info: {
+          node: { type: "ledger", explorerId: "eth" },
+        },
+      };
     });
   });
 

@@ -22,6 +22,7 @@ import {
 } from "../fixtures/synchronization.fixtures";
 import { UnknownNode } from "../../errors";
 import * as logic from "../../logic";
+import { setCoinConfig } from "../../config";
 
 jest.mock("../../api/node/rpc.common");
 jest.useFakeTimers().setSystemTime(new Date("2014-04-21"));
@@ -35,6 +36,23 @@ const getAccountShapeParameters: AccountShapeInfo = {
 };
 
 describe("EVM Family", () => {
+  beforeEach(() => {
+    setCoinConfig((): any => {
+      return {
+        info: {
+          node: {
+            type: "external" as const,
+            uri: "https://my-rpc.com",
+          },
+          explorer: {
+            type: "etherscan" as const,
+            uri: "https://api.com",
+          },
+        },
+      };
+    });
+  });
+
   describe("synchronization.ts", () => {
     describe("getAccountShape", () => {
       beforeEach(() => {

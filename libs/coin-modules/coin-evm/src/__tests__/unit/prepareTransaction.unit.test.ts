@@ -17,8 +17,26 @@ import {
 import { getEstimatedFees } from "../../logic";
 import { GasOptions, Transaction as EvmTransaction, EvmNftTransaction } from "../../types";
 import * as nftAPI from "../../api/nft";
+import { setCoinConfig } from "../../config";
 
 describe("EVM Family", () => {
+  beforeAll(() => {
+    setCoinConfig((): any => {
+      return {
+        info: {
+          node: {
+            type: "external" as const,
+            uri: "https://my-rpc.com",
+          },
+          explorer: {
+            type: "etherscan" as const,
+            uri: "https://api.com",
+          },
+        },
+      };
+    });
+  });
+
   describe("prepareTransaction.ts", () => {
     beforeEach(() => {
       // These mocks will be overriden in some tests

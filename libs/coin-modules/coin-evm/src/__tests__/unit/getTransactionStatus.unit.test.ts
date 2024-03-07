@@ -33,7 +33,6 @@ import {
   getMinEip1559Fees,
   getMinLegacyFees,
 } from "../../editTransaction/getMinEditTransactionFees";
-import { setCoinConfig } from "../../config";
 
 const {
   default: getTransactionStatus,
@@ -123,12 +122,6 @@ const gasOptions: GasOptions = {
 };
 
 describe("EVM Family", () => {
-  beforeAll(() => {
-    setCoinConfig((): any => {
-      return { info: {} };
-    });
-  });
-
   describe("getTransactionStatus.ts", () => {
     describe("getTransactionStatus", () => {
       describe("Recipient", () => {
