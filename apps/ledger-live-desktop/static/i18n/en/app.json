@@ -30,7 +30,8 @@
         "browse": "Browse"
       },
       "filter": {
-        "categories": "Categories"
+        "categories": "Categories",
+        "all": "all"
       },
       "branch": {
         "soon": "Coming soon",
@@ -5539,11 +5540,11 @@
     },
     "WrongDeviceForAccountPayout": {
       "title": "Something went wrong",
-      "description":  "This receiving account does not belong to your device. Please change and retry."
+      "description": "This receiving account does not belong to your device. Please change and retry."
     },
     "WrongDeviceForAccountRefund": {
       "title": "Something went wrong",
-      "description":  "This receiving account does not belong to your device for the refund. Please change and retry."
+      "description": "This receiving account does not belong to your device for the refund. Please change and retry."
     },
     "DeviceAppVerifyNotSupported": {
       "title": "App update required",
