@@ -1,5 +1,5 @@
 import React from "react";
-import { Flex, Text, Icon } from "@ledgerhq/react-ui";
+import { Flex, Text, Icon, InfiniteLoader } from "@ledgerhq/react-ui";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -55,6 +55,7 @@ export default function MarketCoinScreen() {
     dataCurrency,
     isLoadingData,
     isLoadingDataChart,
+    isLoadingCurrency,
     range,
     counterCurrency,
     currency,
@@ -82,7 +83,9 @@ export default function MarketCoinScreen() {
       <Flex flexDirection="row" my={2} alignItems="center" justifyContent="space-between">
         <Flex flexDirection="row" alignItems="center" justifyContent="flex-start">
           <CryptoCurrencyIconWrapper>
-            {internalCurrency ? (
+            {isLoadingCurrency ? (
+              <InfiniteLoader />
+            ) : internalCurrency ? (
               <CryptoCurrencyIcon
                 currency={internalCurrency}
                 size={56}
