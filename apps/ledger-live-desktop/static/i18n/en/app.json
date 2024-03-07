@@ -30,7 +30,8 @@
         "browse": "Browse"
       },
       "filter": {
-        "categories": "Categories"
+        "categories": "Categories",
+        "all": "all"
       },
       "branch": {
         "soon": "Coming soon",

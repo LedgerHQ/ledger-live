@@ -1252,6 +1252,9 @@
       "referralProgram": {
         "title": "Refer a friend",
         "desc": "When your friend buys a Ledger, you both earn $20 of BTC."
+      },
+      "filter": {
+        "all": "all"
       }
     },
     "comingSoon": "Coming soon",
