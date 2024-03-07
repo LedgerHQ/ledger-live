@@ -26,22 +26,6 @@ export type MarketListRequestParams = {
   liveCoinsList?: string[];
 };
 
-export type MarketState = {
-  counterCurrency?: string;
-  ids?: string[];
-  starred?: string[];
-  page?: number;
-  limit?: number;
-  range?: string;
-  orderBy?: string;
-  order?: string;
-  search?: string;
-  lastRequestTime?: Date;
-  sparkline?: boolean;
-  liveCompatible?: boolean;
-  top100?: boolean;
-};
-
 export type MarketListRequestResult = {
   data: CurrencyData[];
   pending: boolean;

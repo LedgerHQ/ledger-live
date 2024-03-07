@@ -1,5 +1,5 @@
 import { useFetchCurrencyFrom } from "@ledgerhq/live-common/exchange/swap/hooks/index";
-import { MarketState } from "@ledgerhq/live-common/market/types";
+import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
 import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
 import {
   useMarketDataProvider,
@@ -8,18 +8,21 @@ import {
 import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import { setMarketOptions } from "~/renderer/actions/market";
-import { addStarredMarketCoins, removeStarredMarketCoins } from "~/renderer/actions/settings";
+import {
+  addStarredMarketCoins,
+  removeStarredMarketCoins,
+  setMarketOptions,
+} from "~/renderer/actions/market";
 import { useInitSupportedCounterValues } from "~/renderer/hooks/useInitSupportedCounterValues";
-import { marketSelector } from "~/renderer/reducers/market";
-import { localeSelector, starredMarketCoinsSelector } from "~/renderer/reducers/settings";
+import { marketParamsSelector, starredMarketCoinsSelector } from "~/renderer/reducers/market";
+import { localeSelector } from "~/renderer/reducers/settings";
 
 export type MarketHookResult = {};
 
 export function useMarket() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const marketParams = useSelector(marketSelector);
+  const marketParams = useSelector(marketParamsSelector);
   const locale = useSelector(localeSelector);
 
   useInitSupportedCounterValues();
@@ -40,7 +43,7 @@ export function useMarket() {
   );
 
   const refresh = useCallback(
-    (payload: MarketState) => {
+    (payload: MarketListRequestParams) => {
       dispatch(setMarketOptions(payload));
     },
     [dispatch],
