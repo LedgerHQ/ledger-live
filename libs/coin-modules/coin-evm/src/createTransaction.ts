@@ -2,7 +2,6 @@ import BigNumber from "bignumber.js";
 import { Account, AccountBridge } from "@ledgerhq/types-live";
 import { Transaction as EvmTransaction } from "./types";
 import { DEFAULT_GAS_LIMIT } from "./transaction";
-import { getCoinConfig } from "./config";
 
 /**
  * arbitrary default value for a new transaction nonce
@@ -16,9 +15,6 @@ export const DEFAULT_NONCE = -1;
  * @see prepareTransaction that will make sure it's compatible or not
  */
 export const createTransaction: AccountBridge<EvmTransaction>["createTransaction"] = account => {
-  const config = getCoinConfig((account as Account).currency);
-  console.log({ config });
-
   return {
     family: "evm",
     mode: "send",

@@ -17,13 +17,14 @@ import Transport from "@ledgerhq/hw-transport";
 import { Bridge } from "@ledgerhq/types-live";
 import { getCurrencyConfiguration } from "../../config";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { EvmConfigInfo } from "@ledgerhq/coin-evm/lib/config";
 
 const createSigner: CreateSigner<Eth> = (transport: Transport) => {
   return new Eth(transport);
 };
 
 const getCurrencyConfig = (currency: CryptoCurrency) => {
-  return getCurrencyConfiguration(currency);
+  return { info: getCurrencyConfiguration<EvmConfigInfo>(currency) };
 };
 
 const bridge: Bridge<EvmTransaction> = createBridges(

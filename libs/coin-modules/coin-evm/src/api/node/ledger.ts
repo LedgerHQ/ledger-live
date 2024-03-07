@@ -11,6 +11,7 @@ import { GasEstimationError, LedgerNodeUsedIncorrectly } from "../../errors";
 import OptimismGasPriceOracleAbi from "../../abis/optimismGasPriceOracle.abi.json";
 import { getSerializedTransaction } from "../../transaction";
 import { LedgerExplorerOperation } from "../../types";
+import { getCoinConfig } from "../../config";
 import { getGasOptions } from "../gasTracker/ledger";
 import { padHexString } from "../../logic";
 import { NodeApi, isLedgerNodeConfig } from "./types";
@@ -60,7 +61,8 @@ const tokenBalancesBatchersMap = new Map<
  * Get a transaction by hash
  */
 export const getTransaction: NodeApi["getTransaction"] = async (currency, hash) => {
-  const { node } = currency.ethereumLikeInfo || /* istanbul ignore next */ {};
+  const config = getCoinConfig(currency).info;
+  const { node } = config || /* istanbul ignore next */ {};
   if (!isLedgerNodeConfig(node)) {
     throw new LedgerNodeUsedIncorrectly();
   }
@@ -82,7 +84,8 @@ export const getTransaction: NodeApi["getTransaction"] = async (currency, hash) 
  * Get the balance of an address
  */
 export const getCoinBalance: NodeApi["getCoinBalance"] = async (currency, address) => {
-  const { node } = currency.ethereumLikeInfo || /* istanbul ignore next */ {};
+  const config = getCoinConfig(currency).info;
+  const { node } = config || /* istanbul ignore next */ {};
   if (!isLedgerNodeConfig(node)) {
     throw new LedgerNodeUsedIncorrectly();
   }
@@ -103,7 +106,8 @@ export const getBatchTokenBalances = async (
   params: { currency: CryptoCurrency },
 ): Promise<BigNumber[]> => {
   const { currency } = params;
-  const { node } = currency.ethereumLikeInfo || /* istanbul ignore next */ {};
+  const config = getCoinConfig(currency).info;
+  const { node } = config || /* istanbul ignore next */ {};
   if (!isLedgerNodeConfig(node)) {
     throw new LedgerNodeUsedIncorrectly();
   }
@@ -131,7 +135,8 @@ export const getTokenBalance: NodeApi["getTokenBalance"] = async (
   address,
   contractAddress,
 ) => {
-  const { node } = currency.ethereumLikeInfo || /* istanbul ignore next */ {};
+  const config = getCoinConfig(currency).info;
+  const { node } = config || /* istanbul ignore next */ {};
   if (!isLedgerNodeConfig(node)) {
     throw new LedgerNodeUsedIncorrectly();
   }
@@ -149,7 +154,8 @@ export const getTokenBalance: NodeApi["getTokenBalance"] = async (
  * Get account nonce
  */
 export const getTransactionCount: NodeApi["getTransactionCount"] = async (currency, address) => {
-  const { node } = currency.ethereumLikeInfo || /* istanbul ignore next */ {};
+  const config = getCoinConfig(currency).info;
+  const { node } = config || /* istanbul ignore next */ {};
   if (!isLedgerNodeConfig(node)) {
     throw new LedgerNodeUsedIncorrectly();
   }
@@ -173,7 +179,8 @@ export const getGasEstimation: NodeApi["getGasEstimation"] = async (
   transaction,
 ): Promise<BigNumber> => {
   const { currency } = account;
-  const { node } = currency.ethereumLikeInfo || /* istanbul ignore next */ {};
+  const config = getCoinConfig(currency).info;
+  const { node } = config || /* istanbul ignore next */ {};
   if (!isLedgerNodeConfig(node)) {
     throw new LedgerNodeUsedIncorrectly();
   }
@@ -213,7 +220,8 @@ export const getGasEstimation: NodeApi["getGasEstimation"] = async (
  * regarding the network status
  */
 export const getFeeData: NodeApi["getFeeData"] = async (currency, transaction) => {
-  const { node } = currency.ethereumLikeInfo || /* istanbul ignore next */ {};
+  const config = getCoinConfig(currency).info;
+  const { node } = config || /* istanbul ignore next */ {};
   if (!isLedgerNodeConfig(node)) {
     throw new LedgerNodeUsedIncorrectly();
   }
@@ -246,7 +254,8 @@ export const broadcastTransaction: NodeApi["broadcastTransaction"] = async (
   currency,
   signedTxHex,
 ) => {
-  const { node } = currency.ethereumLikeInfo || /* istanbul ignore next */ {};
+  const config = getCoinConfig(currency).info;
+  const { node } = config || /* istanbul ignore next */ {};
   if (!isLedgerNodeConfig(node)) {
     throw new LedgerNodeUsedIncorrectly();
   }
@@ -269,7 +278,8 @@ export const getBlockByHeight: NodeApi["getBlockByHeight"] = async (
   currency,
   blockHeight = "latest",
 ) => {
-  const { node } = currency.ethereumLikeInfo || /* istanbul ignore next */ {};
+  const config = getCoinConfig(currency).info;
+  const { node } = config || /* istanbul ignore next */ {};
   if (!isLedgerNodeConfig(node)) {
     throw new LedgerNodeUsedIncorrectly();
   }
@@ -327,7 +337,8 @@ export const getOptimismAdditionalFees: NodeApi["getOptimismAdditionalFees"] = a
   currency,
   transaction,
 ) => {
-  const { node } = currency.ethereumLikeInfo || /* istanbul ignore next */ {};
+  const config = getCoinConfig(currency).info;
+  const { node } = config || /* istanbul ignore next */ {};
   if (!isLedgerNodeConfig(node)) {
     throw new LedgerNodeUsedIncorrectly();
   }
