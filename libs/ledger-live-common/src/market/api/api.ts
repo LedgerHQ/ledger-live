@@ -249,7 +249,7 @@ export async function fetchCurrencyData({
   /**
    * @data returns array of one element
    */
-  return currencyFormatter(data, range, cryptoCurrenciesList)[0];
+  return format(data[0], range, cryptoCurrenciesList);
 }
 
 export async function fetchCurrency({
@@ -262,7 +262,7 @@ export async function fetchCurrency({
     url,
   });
 
-  return format(data, "24h", cryptoCurrenciesList);
+  return format({ ...data, image: data.image.thumb }, "24h", cryptoCurrenciesList);
 }
 
 export default {

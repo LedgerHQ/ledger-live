@@ -1,4 +1,4 @@
-import { useQueries, useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { useQueries, useQuery } from "@tanstack/react-query";
 import {
   fetchCurrency,
   fetchCurrencyChartData,
@@ -65,7 +65,7 @@ export function useCurrencyData({ id, counterCurrency, ranges }: MarketCurrencyR
     })),
   });
 
-  const resultCurrency = useSuspenseQuery({
+  const resultCurrency = useQuery({
     queryKey: [QUERY_KEY.CurrencyDataRaw, id],
     queryFn: () => fetchCurrency({ id }),
     refetchInterval: REFETCH_TIME,

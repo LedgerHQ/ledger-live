@@ -77,6 +77,7 @@ export const MarketRow = memo<Props>(function MarketRowItem({
 
   const hasActions =
     currency?.internalCurrency && (availableOnBuy || availableOnSwap || availableOnStake);
+
   return (
     <div style={{ ...style }}>
       {loading || !currency ? (
