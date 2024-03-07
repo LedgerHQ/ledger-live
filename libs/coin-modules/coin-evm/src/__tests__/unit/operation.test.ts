@@ -5,6 +5,7 @@ import { Operation } from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import Prando from "prando";
 import { getStuckAccountAndOperation, isEditableOperation } from "../../operation";
+import { setCoinConfig } from "../../config";
 
 const ethereum = getCryptoCurrencyById("ethereum");
 const usdc = getTokenById("ethereum/erc20/usd__coin");
@@ -14,6 +15,25 @@ const lobster = getTokenById(
 );
 
 describe("EVM Family", () => {
+  beforeEach(() => {
+    setCoinConfig((currency: { id: string }): any => {
+      switch (currency.id) {
+        case "ethereum": {
+          return {
+            info: {
+              gasTracker: { type: "ledger", explorerId: "eth" },
+            },
+          };
+        }
+        default: {
+          return {
+            info: {},
+          };
+        }
+      }
+    });
+  });
+
   describe("operation.ts", () => {
     describe("isEditableOperation", () => {
       describe("should return false", () => {
@@ -85,6 +105,10 @@ describe("EVM Family", () => {
         });
 
         it("if the gasTracker is not filled", () => {
+          setCoinConfig((): any => {
+            return { info: {} };
+          });
+
           const evmWithoutGasTracker: CryptoCurrency = {
             ...ethereum,
             ethereumLikeInfo: {

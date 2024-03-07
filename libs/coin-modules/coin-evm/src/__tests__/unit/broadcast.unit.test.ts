@@ -19,6 +19,7 @@ import {
   erc20TokenTransactionRaw,
   erc721TokenTransactionRaw,
 } from "../fixtures/transaction.fixtures";
+import { setCoinConfig } from "../../config";
 
 jest.useFakeTimers();
 
@@ -45,6 +46,12 @@ const account: Account = makeAccount(
 const mockedBroadcastResponse = "0xH4sH";
 
 describe("EVM Family", () => {
+  beforeAll(() => {
+    setCoinConfig((): any => {
+      return { info: {} };
+    });
+  });
+
   describe("broadcast.ts", () => {
     beforeAll(() => {
       jest

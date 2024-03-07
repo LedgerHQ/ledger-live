@@ -2,6 +2,7 @@ import { AssertionError, fail } from "assert";
 import axios from "axios";
 import { NFTMetadata } from "@ledgerhq/types-live";
 import { collectionMetadata, nftMetadata } from "../../nftResolvers";
+import { setCoinConfig } from "../../config";
 
 jest.mock("axios");
 const mockedAxios = jest.mocked(axios);
@@ -34,6 +35,9 @@ const metadata: NFTMetadata = {
 
 describe("EVM Family", () => {
   beforeAll(() => {
+    setCoinConfig((): any => {
+      return { info: {} };
+    });
     mockedAxios.mockResolvedValue({ data: [{}] } as any);
   });
 

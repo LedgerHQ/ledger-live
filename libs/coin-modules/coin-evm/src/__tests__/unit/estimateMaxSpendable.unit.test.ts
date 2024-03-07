@@ -5,6 +5,7 @@ import { makeAccount, makeTokenAccount } from "../fixtures/common.fixtures";
 import { EvmTransactionEIP1559, EvmTransactionLegacy } from "../../types";
 import { estimateMaxSpendable } from "../../estimateMaxSpendable";
 import * as nodeApi from "../../api/node/rpc.common";
+import { setCoinConfig } from "../../config";
 
 const currency: CryptoCurrency = {
   ...getCryptoCurrencyById("ethereum"),
@@ -34,6 +35,12 @@ jest.spyOn(nodeApi, "getFeeData").mockImplementation(async () => ({
 }));
 
 describe("EVM Family", () => {
+  beforeAll(() => {
+    setCoinConfig((): any => {
+      return { info: {} };
+    });
+  });
+
   describe("estimateMaxSpendable.ts", () => {
     it("should get a max spendable of the account balance minus the EIP1559 coin tx", async () => {
       const eip1559Tx: EvmTransactionEIP1559 = {

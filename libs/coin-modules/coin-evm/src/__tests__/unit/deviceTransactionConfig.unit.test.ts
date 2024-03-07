@@ -7,6 +7,7 @@ import { makeAccount, makeTokenAccount } from "../fixtures/common.fixtures";
 import getDeviceTransactionConfig from "../../deviceTransactionConfig";
 import getTransactionStatus from "../../getTransactionStatus";
 import { Transaction as EvmTransaction } from "../../types";
+import { setCoinConfig } from "../../config";
 
 enum NFT_CONTRACTS {
   ERC721 = "0x60F80121C31A0d46B5279700f9DF786054aa5eE5",
@@ -40,6 +41,7 @@ const accountWithNfts: Account = Object.freeze({
     } as ProtoNFT,
   ],
 });
+
 const baseTransaction: EvmTransaction = {
   amount: new BigNumber(0),
   useAllAmount: false,
@@ -53,6 +55,7 @@ const baseTransaction: EvmTransaction = {
   nonce: 0,
   chainId: 1,
 };
+
 const status = {
   errors: {},
   warnings: {},
@@ -62,6 +65,12 @@ const status = {
 };
 
 describe("EVM Family", () => {
+  beforeAll(() => {
+    setCoinConfig((): any => {
+      return { info: {} };
+    });
+  });
+
   describe("deviceTransactionConfig.ts", () => {
     describe("getDeviceTransactionConfig", () => {
       describe("From Live", () => {
