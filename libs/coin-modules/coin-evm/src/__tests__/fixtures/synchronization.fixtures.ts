@@ -6,6 +6,7 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { encodeSubOperationId } from "@ledgerhq/coin-framework/operation";
 import * as logic from "../../logic";
+import { setCoinConfig } from "../../config";
 import {
   makeAccount,
   makeNft,
@@ -21,6 +22,21 @@ export const currency: CryptoCurrency = Object.freeze({
   ethereumLikeInfo: {
     chainId: 1,
   },
+});
+
+setCoinConfig((): any => {
+  return {
+    info: {
+      node: {
+        type: "external",
+        uri: "https://my-rpc.com",
+      },
+      explorer: {
+        type: "etherscan",
+        uri: "https://api.com",
+      },
+    },
+  };
 });
 
 export const tokenCurrencies = [

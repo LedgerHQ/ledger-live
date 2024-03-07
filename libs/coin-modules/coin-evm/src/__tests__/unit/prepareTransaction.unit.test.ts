@@ -25,11 +25,11 @@ describe("EVM Family", () => {
       return {
         info: {
           node: {
-            type: "external" as const,
+            type: "external",
             uri: "https://my-rpc.com",
           },
           explorer: {
-            type: "etherscan" as const,
+            type: "etherscan",
             uri: "https://api.com",
           },
         },

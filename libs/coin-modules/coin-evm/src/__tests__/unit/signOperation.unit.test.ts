@@ -65,7 +65,7 @@ describe("EVM Family", () => {
     return {
       info: {
         node: {
-          type: "external" as const,
+          type: "external",
           uri: "my-rpc.com",
         },
       },

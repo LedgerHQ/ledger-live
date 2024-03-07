@@ -36,16 +36,16 @@ const getAccountShapeParameters: AccountShapeInfo = {
 };
 
 describe("EVM Family", () => {
-  beforeAll(() => {
+  beforeEach(() => {
     setCoinConfig((): any => {
       return {
         info: {
           node: {
-            type: "external" as const,
+            type: "external",
             uri: "https://my-rpc.com",
           },
           explorer: {
-            type: "etherscan" as const,
+            type: "etherscan",
             uri: "https://api.com",
           },
         },
@@ -70,6 +70,10 @@ describe("EVM Family", () => {
       });
 
       it("should throw for currency without ethereumLikeInfo", async () => {
+        setCoinConfig((): any => {
+          return { info: {} };
+        });
+
         try {
           await synchronization.getAccountShape(
             {
@@ -91,6 +95,17 @@ describe("EVM Family", () => {
       });
 
       it("should throw for currency with unsupported explorer", async () => {
+        setCoinConfig((): any => {
+          return {
+            info: {
+              explorer: {
+                uri: "http://nope.com",
+                type: "unsupported" as any,
+              },
+            },
+          };
+        });
+
         try {
           await synchronization.getAccountShape(
             {
@@ -99,10 +114,6 @@ describe("EVM Family", () => {
                 ...currency,
                 ethereumLikeInfo: {
                   chainId: 1,
-                  explorer: {
-                    uri: "http://nope.com",
-                    type: "unsupported" as any,
-                  },
                 } as any,
               },
             },
