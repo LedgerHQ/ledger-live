@@ -2,10 +2,9 @@ import * as React from "react";
 import ReactNative from "react-native";
 import { screen } from "@testing-library/react-native";
 import { render } from "@tests/test-renderer";
-import { DeviceModelId } from "@ledgerhq/devices";
-import UpdateBanner from ".";
-import { State } from "~/reducers/types";
-import { makeMockSettings } from "./__mocks__/makeMockSettings";
+import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
+import UpdateBanner from "./index";
+import { makeOverrideInitialState } from "./__mocks__/makeOverrideInitialState";
 
 // Mock react-navigation's useRoute and useNavigation
 jest.mock("@react-navigation/native", () => ({
@@ -32,14 +31,28 @@ jest.mock("../../utils/navigateToOldUpdateFlow", () => ({
 const { navigateToNewUpdateFlow } = jest.requireMock("../../utils/navigateToNewUpdateFlow");
 const { navigateToOldUpdateFlow } = jest.requireMock("../../utils/navigateToOldUpdateFlow");
 
+type DeviceData = {
+  deviceModelId: DeviceModelId;
+  version: string;
+  productName: string;
+};
+
+function makeDeviceTestData(deviceModelId: DeviceModelId, version: string): DeviceData {
+  return {
+    deviceModelId,
+    version,
+    productName: getDeviceModel(deviceModelId).productName,
+  };
+}
+
 const oldUpdateFlowNotSupportedDataSet: Array<{
   deviceModelId: DeviceModelId;
   version: string;
   productName: string;
 }> = [
-  { deviceModelId: DeviceModelId.nanoS, version: "1.6.0", productName: "Nano S" },
-  { deviceModelId: DeviceModelId.nanoX, version: "1.2.9", productName: "Nano X" },
-  { deviceModelId: DeviceModelId.nanoSP, version: "0.9.9", productName: "Nano S Plus" },
+  makeDeviceTestData(DeviceModelId.nanoS, "1.6.0"),
+  makeDeviceTestData(DeviceModelId.nanoX, "1.2.9"),
+  makeDeviceTestData(DeviceModelId.nanoSP, "0.9.9"),
 ];
 
 const oldUpdateFlowSupportedDataSet: Array<{
@@ -47,9 +60,9 @@ const oldUpdateFlowSupportedDataSet: Array<{
   version: string;
   productName: string;
 }> = [
-  { deviceModelId: DeviceModelId.nanoS, version: "1.6.1", productName: "Nano S" },
-  { deviceModelId: DeviceModelId.nanoX, version: "1.3.0", productName: "Nano X" },
-  { deviceModelId: DeviceModelId.nanoSP, version: "1.0.0", productName: "Nano S Plus" },
+  makeDeviceTestData(DeviceModelId.nanoS, "1.6.1"),
+  makeDeviceTestData(DeviceModelId.nanoX, "1.3.0"),
+  makeDeviceTestData(DeviceModelId.nanoSP, "1.0.0"),
 ];
 
 const newUpdateFlowSupportedDataSet: Array<{
@@ -57,8 +70,8 @@ const newUpdateFlowSupportedDataSet: Array<{
   version: string;
   productName: string;
 }> = [
-  { deviceModelId: DeviceModelId.stax, version: "1.0.0", productName: "Stax" },
-  { deviceModelId: DeviceModelId.europa, version: "1.0.0", productName: "Europa" },
+  makeDeviceTestData(DeviceModelId.stax, "1.0.0"),
+  makeDeviceTestData(DeviceModelId.europa, "1.0.0"),
 ];
 
 describe("<UpdateBanner />", () => {
@@ -75,21 +88,12 @@ describe("<UpdateBanner />", () => {
     const mockDeviceModelId = DeviceModelId.nanoS;
     const mockDeviceVersion = "2.0.0";
     render(<UpdateBanner onBackFromUpdate={() => {}} />, {
-      overrideInitialState: (state: State) => ({
-        ...state,
-        settings: {
-          ...state.settings,
-          ...makeMockSettings({
-            modelId: mockDeviceModelId,
-            version: mockDeviceVersion,
-            hasCompletedOnboarding: true,
-            wired: true,
-          }),
-        },
-        appstate: {
-          ...state.appstate,
-          hasConnectedDevice: true,
-        },
+      overrideInitialState: makeOverrideInitialState({
+        deviceModelId: mockDeviceModelId,
+        version: mockDeviceVersion,
+        hasCompletedOnboarding: true,
+        wired: true,
+        hasConnectedDevice: true,
       }),
     });
 
@@ -108,21 +112,12 @@ describe("<UpdateBanner />", () => {
     const mockDeviceModelId = DeviceModelId.nanoS;
     const mockDeviceVersion = "2.0.0";
     render(<UpdateBanner onBackFromUpdate={() => {}} />, {
-      overrideInitialState: (state: State) => ({
-        ...state,
-        settings: {
-          ...state.settings,
-          ...makeMockSettings({
-            modelId: mockDeviceModelId,
-            version: mockDeviceVersion,
-            hasCompletedOnboarding: false, // Onboarding has not been completed
-            wired: true,
-          }),
-        },
-        appstate: {
-          ...state.appstate,
-          hasConnectedDevice: true,
-        },
+      overrideInitialState: makeOverrideInitialState({
+        deviceModelId: mockDeviceModelId,
+        version: mockDeviceVersion,
+        hasCompletedOnboarding: false, // Onboarding has not been completed
+        wired: true,
+        hasConnectedDevice: true,
       }),
     });
 
@@ -141,21 +136,12 @@ describe("<UpdateBanner />", () => {
     const mockDeviceModelId = DeviceModelId.nanoS;
     const mockDeviceVersion = "2.0.0";
     render(<UpdateBanner onBackFromUpdate={() => {}} />, {
-      overrideInitialState: (state: State) => ({
-        ...state,
-        settings: {
-          ...state.settings,
-          ...makeMockSettings({
-            modelId: mockDeviceModelId,
-            version: mockDeviceVersion,
-            hasCompletedOnboarding: true,
-            wired: true,
-          }),
-        },
-        appstate: {
-          ...state.appstate,
-          hasConnectedDevice: false, // No connected device
-        },
+      overrideInitialState: makeOverrideInitialState({
+        deviceModelId: mockDeviceModelId,
+        version: mockDeviceVersion,
+        hasCompletedOnboarding: true,
+        wired: true,
+        hasConnectedDevice: false, // No connected device
       }),
     });
 
@@ -175,21 +161,12 @@ describe("<UpdateBanner />", () => {
     const mockDeviceModelId = DeviceModelId.nanoS;
     const mockDeviceVersion = "2.0.0";
     const { user } = render(<UpdateBanner onBackFromUpdate={() => {}} />, {
-      overrideInitialState: (state: State) => ({
-        ...state,
-        settings: {
-          ...state.settings,
-          ...makeMockSettings({
-            modelId: mockDeviceModelId,
-            version: mockDeviceVersion,
-            hasCompletedOnboarding: true,
-            wired: true,
-          }),
-        },
-        appstate: {
-          ...state.appstate,
-          hasConnectedDevice: true,
-        },
+      overrideInitialState: makeOverrideInitialState({
+        deviceModelId: mockDeviceModelId,
+        version: mockDeviceVersion,
+        hasCompletedOnboarding: true,
+        wired: true,
+        hasConnectedDevice: true,
       }),
     });
 
@@ -199,10 +176,8 @@ describe("<UpdateBanner />", () => {
       await screen.findByText("Tap to update your Ledger Nano S to OS version mockVersion."),
     ).toBeOnTheScreen();
 
-    // Press the banner and check that it doesn't navigate to the update flow
+    // Press the banner
     await user.press(screen.getByTestId("fw-update-banner"));
-    expect(navigateToOldUpdateFlow).not.toHaveBeenCalled();
-    expect(navigateToNewUpdateFlow).not.toHaveBeenCalled();
 
     // Check that the unsupported drawer is displayed
     expect(await screen.findByText("Firmware Update")).toBeOnTheScreen();
@@ -211,6 +186,10 @@ describe("<UpdateBanner />", () => {
         "Update your Ledger Nano firmware by connecting it to the Ledger Live application on desktop",
       ),
     ).toBeOnTheScreen();
+
+    // Check that the entrypoints to the update flows are not called
+    expect(navigateToOldUpdateFlow).not.toHaveBeenCalled();
+    expect(navigateToNewUpdateFlow).not.toHaveBeenCalled();
   });
 
   it("should open the unsupported drawer if there is an update and it's Android but the device has to be wired", async () => {
@@ -224,21 +203,12 @@ describe("<UpdateBanner />", () => {
     const mockDeviceModelId = DeviceModelId.nanoX;
     const mockDeviceVersion = "2.0.0";
     const { user } = render(<UpdateBanner onBackFromUpdate={() => {}} />, {
-      overrideInitialState: (state: State) => ({
-        ...state,
-        settings: {
-          ...state.settings,
-          ...makeMockSettings({
-            modelId: mockDeviceModelId,
-            version: mockDeviceVersion,
-            hasCompletedOnboarding: true,
-            wired: false, // Device is not wired
-          }),
-        },
-        appstate: {
-          ...state.appstate,
-          hasConnectedDevice: true,
-        },
+      overrideInitialState: makeOverrideInitialState({
+        deviceModelId: mockDeviceModelId,
+        version: mockDeviceVersion,
+        hasCompletedOnboarding: true,
+        wired: false, // Device is not wired
+        hasConnectedDevice: true,
       }),
     });
 
@@ -248,16 +218,19 @@ describe("<UpdateBanner />", () => {
       await screen.findByText("Tap to update your Ledger Nano X to OS version mockVersion."),
     ).toBeOnTheScreen();
 
-    // Press the banner and check that the unsupported drawer is displayed
+    // Press the banner
     await user.press(screen.getByTestId("fw-update-banner"));
-    expect(navigateToOldUpdateFlow).not.toHaveBeenCalled();
-    expect(navigateToNewUpdateFlow).not.toHaveBeenCalled();
+
     expect(await screen.findByText("USB cable needed")).toBeOnTheScreen();
     expect(
       await screen.findByText(
         "To start the firmware update, plug your Ledger Nano X to your mobile phone using a USB cable.",
       ),
     ).toBeOnTheScreen();
+
+    // Check that the entrypoints to the update flows are not called
+    expect(navigateToOldUpdateFlow).not.toHaveBeenCalled();
+    expect(navigateToNewUpdateFlow).not.toHaveBeenCalled();
   });
 
   oldUpdateFlowNotSupportedDataSet.forEach(({ deviceModelId, version, productName }) => {
@@ -270,36 +243,23 @@ describe("<UpdateBanner />", () => {
       });
 
       const { user } = render(<UpdateBanner onBackFromUpdate={() => {}} />, {
-        overrideInitialState: (state: State) => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            ...makeMockSettings({
-              modelId: deviceModelId,
-              version,
-              hasCompletedOnboarding: true,
-              wired: true, // Device is wired
-            }),
-          },
-          appstate: {
-            ...state.appstate,
-            hasConnectedDevice: true,
-          },
+        overrideInitialState: makeOverrideInitialState({
+          deviceModelId,
+          version,
+          hasCompletedOnboarding: true,
+          wired: true, // Device is wired
+          hasConnectedDevice: true,
         }),
       });
 
       // Check that the banner is displayed with the correct wording
       expect(await screen.findByText("OS update available")).toBeOnTheScreen();
       expect(
-        await screen.findByText(
-          `Tap to update your Ledger ${productName} to OS version mockVersion.`,
-        ),
+        await screen.findByText(`Tap to update your ${productName} to OS version mockVersion.`),
       ).toBeOnTheScreen();
 
-      // Press the banner and check that it doesn't navigate to the update flow
+      // Press the banner
       await user.press(screen.getByTestId("fw-update-banner"));
-      expect(navigateToOldUpdateFlow).not.toHaveBeenCalled();
-      expect(navigateToNewUpdateFlow).not.toHaveBeenCalled();
 
       // Check that the unsupported drawer is displayed
       expect(await screen.findByText("Firmware Update")).toBeOnTheScreen();
@@ -308,6 +268,10 @@ describe("<UpdateBanner />", () => {
           "Update your Ledger Nano firmware by connecting it to the Ledger Live application on desktop",
         ),
       ).toBeOnTheScreen();
+
+      // Check that the entrypoints to the update flows are not called
+      expect(navigateToOldUpdateFlow).not.toHaveBeenCalled();
+      expect(navigateToNewUpdateFlow).not.toHaveBeenCalled();
     });
   });
 
@@ -321,30 +285,19 @@ describe("<UpdateBanner />", () => {
       });
 
       const { user } = render(<UpdateBanner onBackFromUpdate={() => {}} />, {
-        overrideInitialState: (state: State) => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            ...makeMockSettings({
-              modelId: deviceModelId,
-              version,
-              hasCompletedOnboarding: true,
-              wired: true, // Device is wired
-            }),
-          },
-          appstate: {
-            ...state.appstate,
-            hasConnectedDevice: true,
-          },
+        overrideInitialState: makeOverrideInitialState({
+          deviceModelId,
+          version,
+          hasCompletedOnboarding: true,
+          wired: true, // Device is wired
+          hasConnectedDevice: true,
         }),
       });
 
       // Check that the banner is displayed with the correct wording
       expect(await screen.findByText("OS update available")).toBeOnTheScreen();
       expect(
-        await screen.findByText(
-          `Tap to update your Ledger ${productName} to OS version mockVersion.`,
-        ),
+        await screen.findByText(`Tap to update your ${productName} to OS version mockVersion.`),
       ).toBeOnTheScreen();
 
       // Press the banner and check that the entrypoint to the old update flow is called
@@ -364,30 +317,19 @@ describe("<UpdateBanner />", () => {
       });
 
       const { user } = render(<UpdateBanner onBackFromUpdate={() => {}} />, {
-        overrideInitialState: (state: State) => ({
-          ...state,
-          settings: {
-            ...state.settings,
-            ...makeMockSettings({
-              modelId: deviceModelId,
-              version,
-              hasCompletedOnboarding: true,
-              wired: false,
-            }),
-          },
-          appstate: {
-            ...state.appstate,
-            hasConnectedDevice: true,
-          },
+        overrideInitialState: makeOverrideInitialState({
+          deviceModelId,
+          version,
+          hasCompletedOnboarding: true,
+          wired: false, // Device is not wired
+          hasConnectedDevice: true,
         }),
       });
 
       // Check that the banner is displayed with the correct wording
       expect(await screen.findByText("OS update available")).toBeOnTheScreen();
       expect(
-        await screen.findByText(
-          `Tap to update your Ledger ${productName} to OS version mockVersion.`,
-        ),
+        await screen.findByText(`Tap to update your ${productName} to OS version mockVersion.`),
       ).toBeOnTheScreen();
 
       // Press the banner and check that the entrypoint to the new update flow is called
