@@ -24,7 +24,7 @@ import {
   EvmTransactionEIP1559,
   EvmTransactionLegacy,
 } from "./types";
-import type { GetCoinConfig } from "./config";
+import { getCoinConfig } from "./config";
 
 /**
  * Helper to check if a legacy transaction has the right fee property
@@ -190,7 +190,6 @@ export const __testOnlyClearSyncHashMemoize = (): void => {
  */
 export const getSyncHash = (
   currency: CryptoCurrency,
-  getCoinConfig: GetCoinConfig,
   blacklistedTokenIds: string[] = [],
 ): string => {
   const tokens = listTokensForCryptoCurrency(currency).filter(

@@ -21,7 +21,6 @@ import { attachOperations, getSyncHash, mergeSubAccounts } from "./logic";
 import { ExplorerApi } from "./api/explorer/types";
 import { getExplorerApi } from "./api/explorer";
 import { getNodeApi } from "./api/node/index";
-import { GetCoinConfig } from "./config";
 
 /**
  * Number of blocks that are considered "unsafe" due to a potential reorg.
@@ -33,119 +32,117 @@ export const SAFE_REORG_THRESHOLD = 80;
  * Main synchronization process
  * Get the main Account and the potential TokenAccounts linked to it
  */
-export const makeGetAccountShape =
-  (getCoinConfig: GetCoinConfig): GetAccountShape =>
-  async (infos, { blacklistedTokenIds }) => {
-    const { initialAccount, address, derivationMode, currency } = infos;
-    const nodeApi = getNodeApi(currency);
-    const [latestBlock, balance] = await Promise.all([
-      nodeApi.getBlockByHeight(currency, "latest"),
-      nodeApi.getCoinBalance(currency, address),
-    ]);
-    const blockHeight = latestBlock.height;
-    const accountId = encodeAccountId({
-      type: "js",
-      version: "2",
-      currencyId: currency.id,
-      xpubOrAddress: address,
-      derivationMode,
-    });
-    const syncHash = getSyncHash(currency, getCoinConfig, blacklistedTokenIds);
-    // Due to some changes (as of now: new/updated tokens) we could need to force a sync from 0
-    const shouldSyncFromScratch = syncHash !== initialAccount?.syncHash;
+export const getAccountShape: GetAccountShape = async (infos, { blacklistedTokenIds }) => {
+  const { initialAccount, address, derivationMode, currency } = infos;
+  const nodeApi = getNodeApi(currency);
+  const [latestBlock, balance] = await Promise.all([
+    nodeApi.getBlockByHeight(currency, "latest"),
+    nodeApi.getCoinBalance(currency, address),
+  ]);
+  const blockHeight = latestBlock.height;
+  const accountId = encodeAccountId({
+    type: "js",
+    version: "2",
+    currencyId: currency.id,
+    xpubOrAddress: address,
+    derivationMode,
+  });
+  const syncHash = getSyncHash(currency, blacklistedTokenIds);
+  // Due to some changes (as of now: new/updated tokens) we could need to force a sync from 0
+  const shouldSyncFromScratch = syncHash !== initialAccount?.syncHash;
 
-    // Get the latest stored operation to know where to start the new sync
-    const latestSyncedOperation = shouldSyncFromScratch
-      ? null
-      : initialAccount?.operations?.reduce<Operation | null>((acc, curr) => {
-          if (!acc) {
-            return curr;
-          }
-          return (acc?.blockHeight || 0) > (curr?.blockHeight || 0) ? acc : curr;
-        }, null);
-
-    const { lastCoinOperations, lastTokenOperations, lastNftOperations, lastInternalOperations } =
-      await (async (): ReturnType<ExplorerApi["getLastOperations"]> => {
-        try {
-          const { getLastOperations } = getExplorerApi(currency);
-          return await getLastOperations(
-            currency,
-            address,
-            accountId,
-            latestSyncedOperation?.blockHeight
-              ? Math.max(latestSyncedOperation.blockHeight - SAFE_REORG_THRESHOLD, 0)
-              : 0,
-            blockHeight,
-          );
-        } catch (e) {
-          log("EVM Family", "Failed to get latest transactions", {
-            address,
-            currency,
-            error: e,
-          });
-          throw e;
+  // Get the latest stored operation to know where to start the new sync
+  const latestSyncedOperation = shouldSyncFromScratch
+    ? null
+    : initialAccount?.operations?.reduce<Operation | null>((acc, curr) => {
+        if (!acc) {
+          return curr;
         }
-      })();
+        return (acc?.blockHeight || 0) > (curr?.blockHeight || 0) ? acc : curr;
+      }, null);
 
-    const newSubAccounts = await getSubAccounts(
-      infos,
-      accountId,
-      lastTokenOperations,
-      blacklistedTokenIds,
-    );
-    const subAccounts = shouldSyncFromScratch
-      ? newSubAccounts
-      : mergeSubAccounts(initialAccount, newSubAccounts); // Merging potential new subAccouns while preserving the references
+  const { lastCoinOperations, lastTokenOperations, lastNftOperations, lastInternalOperations } =
+    await (async (): ReturnType<ExplorerApi["getLastOperations"]> => {
+      try {
+        const { getLastOperations } = getExplorerApi(currency);
+        return await getLastOperations(
+          currency,
+          address,
+          accountId,
+          latestSyncedOperation?.blockHeight
+            ? Math.max(latestSyncedOperation.blockHeight - SAFE_REORG_THRESHOLD, 0)
+            : 0,
+          blockHeight,
+        );
+      } catch (e) {
+        log("EVM Family", "Failed to get latest transactions", {
+          address,
+          currency,
+          error: e,
+        });
+        throw e;
+      }
+    })();
 
-    // Trying to confirm pending operations that we are sure of
-    // because they were made in the live
-    // Useful for integrations without explorers
-    const confirmPendingOperations =
-      initialAccount?.pendingOperations?.map(op => getOperationStatus(currency, op)) || [];
-    const confirmedOperations = await Promise.all(confirmPendingOperations).then(ops =>
-      ops.filter((op): op is Operation => !!op),
-    );
+  const newSubAccounts = await getSubAccounts(
+    infos,
+    accountId,
+    lastTokenOperations,
+    blacklistedTokenIds,
+  );
+  const subAccounts = shouldSyncFromScratch
+    ? newSubAccounts
+    : mergeSubAccounts(initialAccount, newSubAccounts); // Merging potential new subAccouns while preserving the references
 
-    // Coin operations with children ops like token & nft ops attached to it
-    const lastCoinOperationsWithAttachements = attachOperations(
-      lastCoinOperations,
-      lastTokenOperations,
-      lastNftOperations,
-      lastInternalOperations,
-      { blacklistedTokenIds },
-    );
-    const newOperations = [...confirmedOperations, ...lastCoinOperationsWithAttachements];
-    const operations =
-      shouldSyncFromScratch || !initialAccount?.operations
-        ? newOperations
-        : mergeOps(initialAccount?.operations, newOperations);
-    const operationsWithPendings = mergeOps(operations, initialAccount?.pendingOperations || []);
+  // Trying to confirm pending operations that we are sure of
+  // because they were made in the live
+  // Useful for integrations without explorers
+  const confirmPendingOperations =
+    initialAccount?.pendingOperations?.map(op => getOperationStatus(currency, op)) || [];
+  const confirmedOperations = await Promise.all(confirmPendingOperations).then(ops =>
+    ops.filter((op): op is Operation => !!op),
+  );
 
-    // Merging potential new nfts while preserving the references.
-    //
-    // ⚠️ NFTs are aggregated manually to get the account "balance" for each of them.
-    // Because of that, we're not creating NFTs in an incremental way,
-    // but always creating them based on *all* operations.
-    const nfts = mergeNfts(
-      initialAccount?.nfts || [],
-      // Adding pendings ops to this to temporarly remove an NFT from an account if actively being transfered
-      nftsFromOperations(operationsWithPendings),
-    ).filter(nft => nft.amount.gt(0));
+  // Coin operations with children ops like token & nft ops attached to it
+  const lastCoinOperationsWithAttachements = attachOperations(
+    lastCoinOperations,
+    lastTokenOperations,
+    lastNftOperations,
+    lastInternalOperations,
+    { blacklistedTokenIds },
+  );
+  const newOperations = [...confirmedOperations, ...lastCoinOperationsWithAttachements];
+  const operations =
+    shouldSyncFromScratch || !initialAccount?.operations
+      ? newOperations
+      : mergeOps(initialAccount?.operations, newOperations);
+  const operationsWithPendings = mergeOps(operations, initialAccount?.pendingOperations || []);
 
-    return {
-      type: "Account",
-      id: accountId,
-      syncHash,
-      balance,
-      spendableBalance: balance,
-      blockHeight,
-      operations,
-      operationsCount: operations.length,
-      subAccounts,
-      nfts,
-      lastSyncDate: new Date(),
-    } as Partial<Account>;
-  };
+  // Merging potential new nfts while preserving the references.
+  //
+  // ⚠️ NFTs are aggregated manually to get the account "balance" for each of them.
+  // Because of that, we're not creating NFTs in an incremental way,
+  // but always creating them based on *all* operations.
+  const nfts = mergeNfts(
+    initialAccount?.nfts || [],
+    // Adding pendings ops to this to temporarly remove an NFT from an account if actively being transfered
+    nftsFromOperations(operationsWithPendings),
+  ).filter(nft => nft.amount.gt(0));
+
+  return {
+    type: "Account",
+    id: accountId,
+    syncHash,
+    balance,
+    spendableBalance: balance,
+    blockHeight,
+    operations,
+    operationsCount: operations.length,
+    subAccounts,
+    nfts,
+    lastSyncDate: new Date(),
+  } as Partial<Account>;
+};
 
 /**
  * Getting all token related operations in order to provide TokenAccounts
