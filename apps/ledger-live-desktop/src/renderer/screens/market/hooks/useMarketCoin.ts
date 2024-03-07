@@ -66,6 +66,7 @@ export const useMarketCoin = () => {
   );
 
   const currency = useMemo(() => currencyInfo?.data, [currencyInfo]);
+  const isLoadingCurrency = useMemo(() => currencyInfo?.isLoading, [currencyInfo]);
 
   const { id, internalCurrency } = currency || {};
 
@@ -107,6 +108,7 @@ export const useMarketCoin = () => {
     dataChart,
     isLoadingDataChart,
     isLoadingData,
+    isLoadingCurrency,
     changeRange,
     range,
     counterCurrency,
