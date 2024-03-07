@@ -7,6 +7,7 @@ import { EvmTransactionLegacy, Transaction as EvmTransaction } from "../../../..
 import { GasEstimationError, InsufficientFunds } from "../../../../errors";
 import { makeAccount } from "../../../fixtures/common.fixtures";
 import * as RPC_API from "../../../../api/node/rpc.common";
+import { setCoinConfig } from "../../../../config";
 
 jest.useFakeTimers();
 
@@ -42,6 +43,17 @@ jest.mock("@ledgerhq/live-promise");
 
 describe("EVM Family", () => {
   beforeEach(() => {
+    setCoinConfig((): any => {
+      return {
+        info: {
+          node: {
+            type: "external",
+            uri: "my-rpc.com",
+          },
+        },
+      };
+    });
+
     jest.resetAllMocks();
     jest
       .spyOn(ethers.providers.StaticJsonRpcProvider.prototype, "_ready")
@@ -125,6 +137,10 @@ describe("EVM Family", () => {
   describe("api/rpc/rpc.common.ts", () => {
     describe("withApi", () => {
       it("should throw if the currency doesn't have an RPC node", async () => {
+        setCoinConfig((): any => {
+          return { info: {} };
+        });
+
         try {
           await RPC_API.withApi(
             fakeCurrencyWithoutRPC as CryptoCurrency,

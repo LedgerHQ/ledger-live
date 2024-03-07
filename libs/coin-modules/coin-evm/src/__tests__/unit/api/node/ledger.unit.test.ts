@@ -2,13 +2,14 @@ import { AssertionError, fail } from "assert";
 import axios from "axios";
 import BigNumber from "bignumber.js";
 import { delay } from "@ledgerhq/live-promise";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { GasEstimationError, LedgerNodeUsedIncorrectly } from "../../../../errors";
 import * as LEDGER_GAS_TRACKER from "../../../../api/gasTracker/ledger";
 import { Transaction as EvmTransaction } from "../../../../types";
 import { makeAccount } from "../../../fixtures/common.fixtures";
 import * as LEDGER_API from "../../../../api/node/ledger";
+import { setCoinConfig } from "../../../../config";
 
 jest.useFakeTimers({ doNotFake: ["setTimeout"] });
 
@@ -23,22 +24,45 @@ const currency = {
   ethereumLikeInfo: {},
 } as CryptoCurrency;
 
-const currencyConfig = {
-  node: {
-    type: "ledger",
-    explorerId: "eth",
-  },
-};
-
 const wrongCurrency = {
   ...getCryptoCurrencyById("ethereum"),
-  ethereumLikeInfo: {
-    node: {
-      type: "wrongtype",
-      uri: "eth",
-    },
-  },
-} as any;
+  id: "wrong-currency" as CryptoCurrencyId,
+  ethereumLikeInfo: {},
+} as CryptoCurrency;
+
+setCoinConfig((currency: { id: string }): any => {
+  switch (currency.id) {
+    case "ethereum": {
+      return {
+        info: {
+          node: {
+            type: "ledger",
+            explorerId: "eth",
+          },
+        },
+      };
+    }
+    case "optimism": {
+      return {
+        info: {
+          node: {
+            type: "ledger",
+            explorerId: "optimism",
+          },
+        },
+      };
+    }
+    case "wrong-currency":
+      return {
+        info: {
+          node: {
+            type: "wrongtype",
+            uri: "eth",
+          },
+        },
+      };
+  }
+});
 
 const account = makeAccount("0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d", currency);
 

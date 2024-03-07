@@ -3,15 +3,19 @@ import ledgerNodeApi from "../../../../api/node/ledger";
 import rpcNodeApi from "../../../../api/node/rpc";
 import { getNodeApi } from "../../../../api/node";
 import { UnknownNode } from "../../../../errors";
+import { setCoinConfig } from "../../../../config";
 
 describe("EVM Family", () => {
   describe("api/node/index.ts", () => {
     describe("getNodeApi", () => {
       it("should throw when requesting a non existing node type", async () => {
+        setCoinConfig((): any => {
+          return { info: { node: { type: "anything", uri: "notworking" } } };
+        });
+
         try {
           await getNodeApi({
             id: "not-existing",
-            ethereumLikeInfo: { node: { type: "anything", uri: "notworking" } },
           } as any);
           fail("Promise should have been rejected");
         } catch (e) {
@@ -23,16 +27,24 @@ describe("EVM Family", () => {
       });
 
       it("should return the rpc api", async () => {
+        setCoinConfig((): any => {
+          return { info: { node: { type: "external", uri: "working" } } };
+        });
+
         const node = await getNodeApi({
-          ethereumLikeInfo: { node: { type: "external", uri: "working" } },
+          id: "external",
         } as any);
 
         expect(node).toBe(rpcNodeApi);
       });
 
       it("should return the ledger api", async () => {
+        setCoinConfig((): any => {
+          return { info: { node: { type: "ledger", explorerId: "eth" } } };
+        });
+
         const node = await getNodeApi({
-          ethereumLikeInfo: { node: { type: "ledger", explorerId: "eth" } },
+          id: "ledger-supported",
         } as any);
 
         expect(node).toBe(ledgerNodeApi);
