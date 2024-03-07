@@ -10,6 +10,7 @@ import { makeAccount } from "../fixtures/common.fixtures";
 import * as nodeApi from "../../api/node/rpc.common";
 import { getEstimatedFees } from "../../logic";
 import { DEFAULT_NONCE } from "../../createTransaction";
+import { setCoinConfig } from "../../config";
 
 const currency: CryptoCurrency = {
   ...getCryptoCurrencyById("ethereum"),
@@ -60,6 +61,17 @@ const mockSignerContext: SignerContext<EvmSigner, EvmAddress | EvmSignature> = (
 };
 
 describe("EVM Family", () => {
+  setCoinConfig((): any => {
+    return {
+      info: {
+        node: {
+          type: "external" as const,
+          uri: "my-rpc.com",
+        },
+      },
+    };
+  });
+
   describe("signOperation.ts", () => {
     describe("signOperation", () => {
       beforeAll(() => {
