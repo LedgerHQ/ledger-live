@@ -40,7 +40,7 @@ import getUser from "~/helpers/user";
 import { openExchangeDrawer } from "~/renderer/actions/UI";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { TrackFunction } from "@ledgerhq/live-common/platform/tracking";
-import { useDappLogic } from "@ledgerhq/live-common/wallet-api/react";
+import { useDappLogic } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 
 const wallet = { name: "ledger-live-desktop", version: __APP_VERSION__ };
 
