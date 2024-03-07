@@ -107,7 +107,6 @@ export const DEFAULT_FEATURES: Features = {
   stakePrograms: initFeature(),
   receiveStakingFlowConfigDesktop: initFeature(),
   brazePushNotifications: initFeature(),
-  walletNftGallery: initFeature(),
   stakeAccountBanner: initFeature(),
 
   buyDeviceFromLive: {
