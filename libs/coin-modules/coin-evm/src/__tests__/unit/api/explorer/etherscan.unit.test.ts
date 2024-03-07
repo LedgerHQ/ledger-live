@@ -1,7 +1,7 @@
 import { AssertionError, fail } from "assert";
 import axios from "axios";
 import { delay } from "@ledgerhq/live-promise";
-import { CryptoCurrency, EthereumLikeInfo } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { EtherscanLikeExplorerUsedIncorrectly } from "../../../../errors";
 import * as ETHERSCAN_API from "../../../../api/explorer/etherscan";
@@ -152,7 +152,6 @@ describe("EVM Family", () => {
               ...currency,
               ethereumLikeInfo: {
                 chainId: 1,
-                // no explorer
               },
             },
             account.freshAddress,
@@ -291,8 +290,7 @@ describe("EVM Family", () => {
               ...currency,
               ethereumLikeInfo: {
                 chainId: 1,
-                // no explorer
-              } as EthereumLikeInfo,
+              },
             },
             account.freshAddress,
             account.id,
@@ -439,8 +437,7 @@ describe("EVM Family", () => {
               ...currency,
               ethereumLikeInfo: {
                 chainId: 1,
-                // no explorer
-              } as EthereumLikeInfo,
+              },
             },
             account.freshAddress,
             account.id,
