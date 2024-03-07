@@ -1,6 +1,7 @@
 import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { getGasTracker } from "../../../../api/gasTracker";
 import { getGasOptions as ledgerGetGasOptions } from "../../../../api/gasTracker/ledger";
+import { setCoinConfig } from "../../../../config";
 
 const fakeCurrency: Partial<CryptoCurrency> = {
   id: "my_new_chain" as CryptoCurrencyId,
@@ -11,12 +12,43 @@ const fakeCurrency: Partial<CryptoCurrency> = {
 };
 
 const fakeCurrencyWithoutGasTracker: Partial<CryptoCurrency> = {
-  id: "my_new_chain" as CryptoCurrencyId,
+  id: "no_gas_tracker" as CryptoCurrencyId,
   ethereumLikeInfo: {
     chainId: 1,
   },
   units: [{ code: "ETH", name: "ETH", magnitude: 18 }],
 };
+
+const getCurrencyConfig = (currency: { id: string }): any => {
+  switch (currency.id) {
+    case "my_new_chain": {
+      return {
+        info: {
+          node: {
+            type: "ledger",
+            explorerId: "eth",
+          },
+          gasTracker: {
+            type: "ledger",
+            explorerId: "eth",
+          },
+        },
+      };
+    }
+    case "no_gas_tracker": {
+      return {
+        info: {
+          node: {
+            type: "ledger",
+            explorerId: "eth",
+          },
+        },
+      };
+    }
+  }
+};
+
+setCoinConfig(getCurrencyConfig);
 
 describe("EVM Family", () => {
   describe("api/gasTracker/index.ts", () => {

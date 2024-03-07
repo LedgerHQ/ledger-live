@@ -1,37 +1,44 @@
 import { AssertionError } from "assert";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
-import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { getGasOptions } from "../../../../api/gasTracker/ledger";
 import { LedgerGasTrackerUsedIncorrectly, NoGasTrackerFound } from "../../../../errors";
 import { GasOptions } from "../../../../types";
+import { setCoinConfig } from "../../../../config";
 
 jest.mock("@ledgerhq/live-network/network");
 const mockedNetwork = jest.mocked(network);
 
 const fakeCurrency: Partial<CryptoCurrency> = {
-  id: "ethereum" as CryptoCurrencyId,
+  id: "ethereum",
   ethereumLikeInfo: {
     chainId: 1,
   },
   units: [{ code: "ETH", name: "ETH", magnitude: 18 }],
 };
 
-const fakeCurrencyConfig = {
-  node: {
-    type: "ledger",
-    explorerId: "eth",
-  },
-  gasTracker: {
-    type: "ledger",
-    explorerId: "eth",
-  },
-};
-
 const TEST_EIP1559_BASE_FEE_MULTIPLIER = 2;
 
 describe("EVM Family", () => {
+  beforeEach(() => {
+    setCoinConfig((): any => {
+      return {
+        info: {
+          node: {
+            type: "ledger",
+            explorerId: "eth",
+          },
+          gasTracker: {
+            type: "ledger",
+            explorerId: "eth",
+          },
+        },
+      };
+    });
+  });
+
   describe("api/gasTracker/index.ts", () => {
     const originalEIP1559_BASE_FEE_MULTIPLIER: number = getEnv("EIP1559_BASE_FEE_MULTIPLIER");
 
@@ -199,9 +206,20 @@ describe("EVM Family", () => {
         });
 
         it("should return legacy gas options when EIP-1559 not supported by currency", async () => {
+          setCoinConfig((): any => {
+            return {
+              info: {
+                gasTracker: {
+                  type: "ledger",
+                  explorerId: "etc",
+                },
+              },
+            };
+          });
+
           const gasOptions: GasOptions = await getGasOptions({
             currency: {
-              ethereumLikeInfo: { gasTracker: { type: "ledger", explorerId: "etc" } },
+              ethereumLikeInfo: {},
             },
             options: { useEIP1559: true },
           } as any);
@@ -262,9 +280,20 @@ describe("EVM Family", () => {
       });
 
       it("should throw if the gas tracker type isn't ledger", async () => {
+        setCoinConfig((): any => {
+          return {
+            info: {
+              gasTracker: {
+                type: "wrong",
+                explorerId: "anything",
+              },
+            },
+          };
+        });
+
         try {
           await getGasOptions({
-            currency: { ethereumLikeInfo: { gasTracker: { type: "wrong", uri: "anything" } } },
+            currency: { ethereumLikeInfo: {} },
           } as any);
           fail("Promise should have been rejected");
         } catch (e) {
@@ -276,10 +305,21 @@ describe("EVM Family", () => {
       });
 
       it("should throw if the gas tracker explorerId doesn't exist", async () => {
+        setCoinConfig((): any => {
+          return {
+            info: {
+              gasTracker: {
+                type: "ledger",
+                explorerId: "anything",
+              },
+            },
+          };
+        });
+
         try {
           await getGasOptions({
             currency: {
-              ethereumLikeInfo: { gasTracker: { type: "ledger", explorerId: "anything" } },
+              ethereumLikeInfo: {},
             },
           } as any);
           fail("Promise should have been rejected");
