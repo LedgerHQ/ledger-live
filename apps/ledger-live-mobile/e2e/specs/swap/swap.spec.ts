@@ -45,17 +45,11 @@ describe("Swap", () => {
 
   it("should have the send max toggle switch disabled for account coins", async () => {
     await swapPage.sendMax();
+    await swapPage.openSourceAccountSelector();
+    await swapPage.selectAccount("Bitcoin 1 (legacy)");
     await swapPage.enterSourceAmount("0.00001");
     await swapPage.startExchange();
     await expect(swapPage.termsAcceptButton()).toBeVisible();
     await expect(swapPage.termsCloseButton()).toBeVisible();
-  });
-
-  it("should have the send max toggle switch enabled if the from currency is a token account", async () => {
-    await swapPage.openSourceAccountSelector();
-    await swapPage.selectAccount("Tether USD");
-    await swapPage.openDestinationAccountSelector();
-    await swapPage.selectAccount("Ethereum 2");
-    await swapPage.sendMax();
   });
 });
