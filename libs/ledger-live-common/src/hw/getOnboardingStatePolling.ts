@@ -8,7 +8,7 @@ import {
   DeviceExtractOnboardingStateError,
   DisconnectedDevice,
   CantOpenDevice,
-  TransportRaceCondition,
+  TransportPendingOperation,
   LockedDeviceError,
   UnexpectedBootloader,
   TransportExchangeTimeoutError,
@@ -139,7 +139,7 @@ export const isAllowedOnboardingStatePollingError = (error: unknown): boolean =>
       error instanceof DisconnectedDevice ||
       error instanceof DisconnectedDeviceDuringOperation ||
       error instanceof CantOpenDevice ||
-      error instanceof TransportRaceCondition ||
+      error instanceof TransportPendingOperation ||
       error instanceof TransportStatusError ||
       // A locked device is handled as an allowed error
       error instanceof LockedDeviceError)

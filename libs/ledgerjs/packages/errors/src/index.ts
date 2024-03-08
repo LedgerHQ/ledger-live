@@ -124,7 +124,7 @@ export const TransportOpenUserCancelled = createCustomErrorClass("TransportOpenU
 export const TransportInterfaceNotAvailable = createCustomErrorClass(
   "TransportInterfaceNotAvailable",
 );
-export const TransportRaceCondition = createCustomErrorClass("TransportRaceCondition");
+export const TransportPendingOperation = createCustomErrorClass("TransportPendingOperation");
 export const TransportWebUSBGestureRequired = createCustomErrorClass(
   "TransportWebUSBGestureRequired",
 );

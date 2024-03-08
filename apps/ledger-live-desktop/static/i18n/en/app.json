@@ -5478,7 +5478,7 @@
       "title": "Something went wrong. Please reconnect your device",
       "description": "{{message}}"
     },
-    "TransportRaceCondition": {
+    "TransportPendingOperation": {
       "title": "Something went wrong. Please reconnect your device",
       "description": "An action was already pending on the Ledger device. Please deny or reconnect."
     },

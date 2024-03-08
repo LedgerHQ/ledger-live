@@ -32,7 +32,7 @@ import {
   UserRefusedOnDevice,
   UserRefusedDeviceNameChange,
   UnresponsiveDeviceError,
-  TransportRaceCondition,
+  TransportPendingOperation,
 } from "@ledgerhq/errors";
 import {
   InstallingApp,
@@ -415,7 +415,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     });
   }
 
-  if (unresponsive || error instanceof TransportRaceCondition) {
+  if (unresponsive || error instanceof TransportPendingOperation) {
     return renderError({
       t,
       error: new UnresponsiveDeviceError(),
