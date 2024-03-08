@@ -33,6 +33,7 @@ import MarketPerformanceWidget from "~/renderer/screens/dashboard/MarketPerforma
 import { useMarketPerformanceFeatureFlag } from "~/renderer/actions/marketperformance";
 import { Grid } from "@ledgerhq/react-ui";
 import Carousel from "~/renderer/components/Carousel";
+import useActionCards from "~/renderer/hooks/useActionCards";
 
 // This forces only one visible top banner at a time
 export const TopBannerContainer = styled.div`
@@ -77,6 +78,7 @@ export default function DashboardPage() {
 
   const { enabled: marketPerformanceEnabled, variant: marketPerformanceVariant } =
     useMarketPerformanceFeatureFlag();
+  const isActionCardsCampainRunning = useActionCards().length > 0;
 
   return (
     <>
@@ -85,8 +87,8 @@ export default function DashboardPage() {
         <CurrencyDownStatusAlert currencies={currencies} hideStatusIncidents />
       </TopBannerContainer>
       <Box gap={"5px"}>
+        {!isActionCardsCampainRunning && <Carousel />}
         <RecoverBanner />
-        <Carousel />
         <ActionContentCards variant={ABTestingVariants.variantA} />
       </Box>
       {isPostOnboardingBannerVisible && <PostOnboardingHubBanner />}
