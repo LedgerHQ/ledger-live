@@ -1,5 +1,5 @@
 import { Button, Flex } from "@ledgerhq/react-ui";
-import React, { useCallback } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { Footer } from "LLD/AnalyticsOptInPrompt/screens/components";
 
@@ -10,9 +10,7 @@ interface ManagePreferencesFooterProps {
 const ManagePreferencesFooter = ({ onShareClick }: ManagePreferencesFooterProps) => {
   const { t } = useTranslation();
 
-  const handleShareClick = useCallback(() => {
-    onShareClick?.(true);
-  }, [onShareClick]);
+  const handleShareClick = () => onShareClick?.(true);
 
   return (
     <Footer>

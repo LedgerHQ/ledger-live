@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { ManagePreferencesBody } from "./components";
 import { Header } from "LLD/AnalyticsOptInPrompt/screens/components";
 import { Flex } from "@ledgerhq/react-ui";
-import { FieldKeySwitch } from "~/newArch/AnalyticsOptInPrompt/types/AnalyticsOptInPromptNavigator";
+import { FieldKeySwitch } from "LLD/AnalyticsOptInPrompt/types/AnalyticsOptInPromptNavigator";
 
 interface ManagePreferencesProps {
   onPreferencesChange: (preferences: Record<FieldKeySwitch, boolean>) => void;

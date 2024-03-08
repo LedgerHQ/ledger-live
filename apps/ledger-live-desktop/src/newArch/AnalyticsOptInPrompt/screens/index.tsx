@@ -4,7 +4,7 @@ import { SideDrawer } from "~/renderer/components/SideDrawer";
 import { useTheme } from "styled-components";
 import { EntryPoint } from "LLD/AnalyticsOptInPrompt/types/AnalyticsOptInPromptNavigator";
 import { getVariant } from "LLD/AnalyticsOptInPrompt/hooks/useCommonLogic";
-import useVariantA from "LLD/AnalyticsOptInPrompt/hooks/useVariantA";
+import VariantA from "LLD/AnalyticsOptInPrompt/screens/VariantA";
 import Box from "~/renderer/components/Box";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 
@@ -20,7 +20,7 @@ const AnalyticsOptInPrompt = memo(
   ({ onClose, onSubmit, isOpened, entryPoint, variant }: AnalyticsOptInPromptProps) => {
     const { colors } = useTheme();
 
-    const isNotOnBoarding = entryPoint?.toLocaleLowerCase() !== EntryPoint.onboarding;
+    const isNotOnBoarding = entryPoint !== EntryPoint.onboarding;
     const [preventClosable, setPreventClosable] = useState(false);
     const [preventBackNavigation, setPreventBackNavigation] = useState(true);
 
@@ -42,12 +42,6 @@ const AnalyticsOptInPrompt = memo(
       }
     }, [preventClosable, onClose]);
 
-    const { screen } = useVariantA({
-      setPreventBackNavigation: () => setPreventBackNavigation(false),
-      goBackToMain: preventBackNavigation,
-      onSubmit,
-    });
-
     return (
       <SideDrawer
         withPaddingTop
@@ -59,7 +53,17 @@ const AnalyticsOptInPrompt = memo(
           background: colors.background.main,
         }}
       >
-        <Box height={"100%"}>{isVariantA ? screen : "variantB"}</Box>
+        <Box height={"100%"}>
+          {isVariantA ? (
+            <VariantA
+              setPreventBackNavigation={() => setPreventBackNavigation(false)}
+              goBackToMain={preventBackNavigation}
+              onSubmit={onSubmit}
+            />
+          ) : (
+            "variantB"
+          )}
+        </Box>
       </SideDrawer>
     );
   },

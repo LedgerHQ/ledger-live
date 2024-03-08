@@ -38,7 +38,7 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
   const onSubmit = useCallback(() => {
     setIsAnalitycsOptInPromptOpened(false);
     dispatch(setHasSeenAnalyticsOptInPrompt(true));
-    if (entryPoint.toLocaleLowerCase() === EntryPoint.onboarding) {
+    if (entryPoint === EntryPoint.onboarding) {
       nextStep?.();
       setNextStep(null);
     }
@@ -61,9 +61,5 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
   };
 };
 
-export const getVariant = (variant: ABTestingVariants | undefined): ABTestingVariants => {
-  if (variant === ABTestingVariants.variantA || variant === ABTestingVariants.variantB) {
-    return variant;
-  }
-  return ABTestingVariants.variantA;
-};
+export const getVariant = (variant?: ABTestingVariants): ABTestingVariants =>
+  variant ?? ABTestingVariants.variantA;

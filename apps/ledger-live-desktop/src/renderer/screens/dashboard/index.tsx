@@ -32,8 +32,8 @@ import PortfolioContentCards from "~/renderer/screens/dashboard/PortfolioContent
 import MarketPerformanceWidget from "~/renderer/screens/dashboard/MarketPerformanceWidget";
 import { useMarketPerformanceFeatureFlag } from "~/renderer/actions/marketperformance";
 import { Grid } from "@ledgerhq/react-ui";
-import AnalyticsOptInPrompt from "~/newArch/AnalyticsOptInPrompt/screens";
-import { useDisplayOnPortfolioAnalytics } from "~/newArch/AnalyticsOptInPrompt/hooks/useDisplayOnPortfolio";
+import AnalyticsOptInPrompt from "LLD/AnalyticsOptInPrompt/screens";
+import { useDisplayOnPortfolioAnalytics } from "LLD/AnalyticsOptInPrompt/hooks/useDisplayOnPortfolio";
 
 // This forces only one visible top banner at a time
 export const TopBannerContainer = styled.div`

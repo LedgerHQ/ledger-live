@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { Footer } from "LLD/AnalyticsOptInPrompt/screens/components";
 import { useTranslation } from "react-i18next";
 import { Flex, Link, Button } from "@ledgerhq/react-ui";
@@ -13,17 +13,9 @@ const MainFooter = ({ setWantToManagePreferences, onShareAnalyticsChange }: Main
   const { t } = useTranslation();
   const { colors } = useTheme();
 
-  const handleManagePreferencesClick = useCallback(() => {
-    setWantToManagePreferences?.(true);
-  }, [setWantToManagePreferences]);
-
-  const handleAcceptClick = useCallback(() => {
-    onShareAnalyticsChange(true);
-  }, [onShareAnalyticsChange]);
-
-  const handleRefuseClick = useCallback(() => {
-    onShareAnalyticsChange(false);
-  }, [onShareAnalyticsChange]);
+  const handleManagePreferencesClick = () => setWantToManagePreferences?.(true);
+  const handleAcceptClick = () => onShareAnalyticsChange(true);
+  const handleRefuseClick = () => onShareAnalyticsChange(false);
 
   return (
     <Footer>

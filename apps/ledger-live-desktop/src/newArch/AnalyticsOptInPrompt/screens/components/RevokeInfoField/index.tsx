@@ -3,12 +3,13 @@ import { useTranslation } from "react-i18next";
 import { Flex, Text, Link } from "@ledgerhq/react-ui";
 import { useTheme } from "styled-components";
 import { urls } from "~/config/urls";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { openURL } from "~/renderer/linking";
 
 const RevokeInfoField = () => {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const privacyPolicyUrl = urls.privacyPolicy;
+  const privacyPolicyUrl = useLocalizedUrl(urls.privacyPolicy);
 
   const handleOpenPrivacyPolicy = useCallback(() => {
     openURL(privacyPolicyUrl);

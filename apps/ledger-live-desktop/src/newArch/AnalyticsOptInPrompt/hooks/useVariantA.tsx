@@ -1,44 +1,10 @@
-import React, { useCallback, useEffect, useState } from "react";
-import Main from "LLD/AnalyticsOptInPrompt/screens/VariantA/Main";
-import ManagePreferences from "LLD/AnalyticsOptInPrompt/screens/VariantA/ManagePreferences";
-import { ManagePreferencesFooter } from "LLD/AnalyticsOptInPrompt/screens/VariantA/ManagePreferences/components";
-import { MainFooter } from "LLD/AnalyticsOptInPrompt/screens/VariantA/Main/components";
+import { useCallback, useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import {
   setShareAnalytics,
   setSharePersonalizedRecommandations,
 } from "~/renderer/actions/settings";
-import { useDispatch } from "react-redux";
-import { FieldKeySwitch } from "~/newArch/AnalyticsOptInPrompt/types/AnalyticsOptInPromptNavigator";
-
-interface ManagePreferencesScreenProps {
-  setShareAnalytics: (value: boolean) => void;
-  onPreferencesChange: (preferences: Record<FieldKeySwitch, boolean>) => void;
-}
-
-const ManagePreferencesScreen = ({
-  setShareAnalytics,
-  onPreferencesChange,
-}: ManagePreferencesScreenProps) => (
-  <>
-    <ManagePreferences onPreferencesChange={onPreferencesChange} />
-    <ManagePreferencesFooter onShareClick={setShareAnalytics} />
-  </>
-);
-
-interface MainScreenProps {
-  onManagePreferencesClick: () => void;
-  onShareAnalyticsChange: (value: boolean) => void;
-}
-
-const MainScreen = ({ onManagePreferencesClick, onShareAnalyticsChange }: MainScreenProps) => (
-  <>
-    <Main />
-    <MainFooter
-      setWantToManagePreferences={onManagePreferencesClick}
-      onShareAnalyticsChange={onShareAnalyticsChange}
-    />
-  </>
-);
+import { FieldKeySwitch } from "LLD/AnalyticsOptInPrompt/types/AnalyticsOptInPromptNavigator";
 
 interface UseVariantAProps {
   setPreventBackNavigation: (value: boolean) => void;
@@ -83,18 +49,14 @@ const useVariantA = ({ setPreventBackNavigation, goBackToMain, onSubmit }: UseVa
     setPreferences(preferences);
   };
 
-  const screen = isManagingPreferences ? (
-    <ManagePreferencesScreen
-      setShareAnalytics={handleShareCustomAnalyticsChange}
-      onPreferencesChange={handlePreferencesChange}
-    />
-  ) : (
-    <MainScreen
-      onManagePreferencesClick={onManagePreferencesClick}
-      onShareAnalyticsChange={handleShareAnalyticsChange}
-    />
-  );
-  return { screen, setIsManagingPreferences };
+  return {
+    isManagingPreferences,
+    setIsManagingPreferences,
+    onManagePreferencesClick,
+    handleShareAnalyticsChange,
+    handleShareCustomAnalyticsChange,
+    handlePreferencesChange,
+  };
 };
 
 export default useVariantA;

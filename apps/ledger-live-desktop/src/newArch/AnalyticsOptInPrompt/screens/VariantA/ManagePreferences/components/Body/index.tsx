@@ -3,14 +3,14 @@ import { Box, Text, Flex, Switch } from "@ledgerhq/react-ui";
 import styled, { useTheme } from "styled-components";
 import { useTranslation } from "react-i18next";
 import RevokeInfoField from "LLD/AnalyticsOptInPrompt/screens/components/RevokeInfoField";
-import { FieldKeySwitch } from "~/newArch/AnalyticsOptInPrompt/types/AnalyticsOptInPromptNavigator";
+import { FieldKeySwitch } from "LLD/AnalyticsOptInPrompt/types/AnalyticsOptInPromptNavigator";
 
 const BodyBox = styled(Box)`
   display: flex;
   flex-direction: column;
   gap: 16px;
   overflow-y: auto;
-  max-height: calc(100vh - 207px);
+  max-height: calc(100vh - 200px);
 `;
 
 interface ManagePreferencesBodyProps {

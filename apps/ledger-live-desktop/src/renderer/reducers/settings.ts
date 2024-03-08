@@ -146,8 +146,9 @@ const INITIAL_STATE: SettingsState = {
   pairExchanges: {},
   developerMode: !!process.env.__DEV__,
   loaded: false,
-  shareAnalytics: true,
-  sharePersonalizedRecommandations: true,
+  shareAnalytics: false,
+  sharePersonalizedRecommandations: false,
+  hasSeenAnalyticsOptInPrompt: false,
   sentryLogs: true,
   lastUsedVersion: __APP_VERSION__,
   dismissedBanners: [],
@@ -192,7 +193,6 @@ const INITIAL_STATE: SettingsState = {
   // Vault
   vaultSigner: { enabled: false, host: "", token: "", workspace: "" },
   supportedCounterValues: [],
-  hasSeenAnalyticsOptInPrompt: false,
 };
 
 /* Handlers */

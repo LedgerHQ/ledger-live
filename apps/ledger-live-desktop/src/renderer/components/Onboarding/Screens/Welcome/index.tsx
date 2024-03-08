@@ -14,6 +14,7 @@ import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { urls } from "~/config/urls";
 import AnalyticsOptInPrompt from "LLD/AnalyticsOptInPrompt/screens";
 import { useAnalyticsOptInPrompt } from "LLD/AnalyticsOptInPrompt/hooks/useCommonLogic";
+import { EntryPoint } from "LLD/AnalyticsOptInPrompt/types/AnalyticsOptInPromptNavigator";
 
 const StyledLink = styled(Text)`
   text-decoration: underline;
@@ -148,7 +149,7 @@ export function Welcome() {
     openAnalitycsOptInPrompt,
     onSubmit,
   } = useAnalyticsOptInPrompt({
-    entryPoint: "onboarding",
+    entryPoint: EntryPoint.onboarding,
   });
 
   const extendedAnalyticsOptInPromptProps = {
