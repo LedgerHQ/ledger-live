@@ -43,11 +43,19 @@ describe("Swap", () => {
     await swapPage.selectAccount("Ethereum");
   });
 
-  // TODO: Re-enable once max related bugs have been resolved.
-  // it("should be able to send the maximum available amount", async () => {
-  //   await swapPage.sendMax();
-  //   await swapPage.startExchange();
-  //   await expect(swapPage.termsAcceptButton()).toBeVisible();
-  //   await expect(swapPage.termsCloseButton()).toBeVisible();
-  // });
+  it("should have the send max toggle switch disabled for account coins", async () => {
+    await expect(swapPage.sendMaxToggle()).toHaveValue("disabled");
+    await swapPage.enterSourceAmount("0.00001");
+    await swapPage.startExchange();
+    await expect(swapPage.termsAcceptButton()).toBeVisible();
+    await expect(swapPage.termsCloseButton()).toBeVisible();
+  });
+
+  it("should have the send max toggle switch enabled if the from currency is a token account", async () => {
+    await swapPage.openSourceAccountSelector();
+    await swapPage.selectAccount("Tether USD");
+    await swapPage.openDestinationAccountSelector();
+    await swapPage.selectAccount("Ethereum 2");
+    await expect(swapPage.sendMaxToggle()).not.toHaveValue("disabled");
+  });
 });

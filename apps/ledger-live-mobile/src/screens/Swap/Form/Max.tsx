@@ -20,7 +20,7 @@ export function Max({ swapTx }: { swapTx: SwapTransactionType }) {
       swapTx.toggleMax();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isMaxButtonDisabled, swapTx.swap.isMaxEnabled]);
+  }, [isMaxButtonDisabled, swapTx.swap.isMaxEnabled, swapTx.swap.from.amount]);
 
   const onToggle = (event: boolean) => {
     track("button_clicked", {

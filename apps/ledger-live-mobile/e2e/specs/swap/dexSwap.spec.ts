@@ -24,9 +24,9 @@ describe("DEX Swap", () => {
 
   it("should be able to generate a quote with DEX providers available", async () => {
     await swapPage.openSourceAccountSelector();
-    await swapPage.selectAccount("Ethereum 2");
-    await swapPage.openDestinationAccountSelector();
     await swapPage.selectAccount("Tether USD");
+    await swapPage.openDestinationAccountSelector();
+    await swapPage.selectAccount("Ethereum 2");
     await swapPage.sendMax();
     await swapPage.goToProviderSelection();
     await swapPage.chooseProvider("1inch");
