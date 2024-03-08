@@ -2,7 +2,7 @@
 import { readFileSync, existsSync, writeFileSync } from "fs";
 import BigNumber from "bignumber.js";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
-import { Account } from "@ledgerhq/types-live";
+import { Account, AccountRaw } from "@ledgerhq/types-live";
 import { argv } from "yargs";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { promisify } from "util";
@@ -16,7 +16,7 @@ import {
 import { encodeAccountId, fromAccountRaw, toAccountRaw } from "../../account";
 import { firstValueFrom, reduce } from "rxjs";
 import { getAccountBridgeByFamily, getCurrencyBridge } from "../../bridge/impl";
-import { migrationAddresses as defaultAddresses } from "./addresses";
+import { MigrationAddress, migrationAddresses as defaultAddresses } from "./addresses";
 import { liveConfig } from "../../config/sharedConfig";
 
 // mandatory to run the script
@@ -111,21 +111,24 @@ const args = argv;
 
 type Args = {
   /**
-   * comma seperated currencyId
-   * eg --currencies ethereum,polygon,bitcoin
+   * comma seperated currencyIds
+   * eg: --currencies ethereum,polygon,bitcoin
    */
   currencies?: CryptoCurrencyId;
   /**
-   * absolute path to the output folder for the json file
+   * absolute path for the output folder for the json file
+   * eg: --outputFolderPath ~/outputs/
    */
   outputFolderPath?: string;
   /**
-   * absolute path to the input json file
+   * absolute path for the input json file
    * must only contain an array of raw accounts
+   * eg: --inputFile ./rawAccounts/2d3fds.json
    */
   inputFile?: string;
   /**
-   * if set, no file will be created
+   * if set, no output file will be created
+   * eg: --noEmit
    */
   noEmit?: boolean;
 };
@@ -215,8 +218,8 @@ const testSyncAccount = async (account: Account) => {
 };
 
 (async () => {
-  // list of addresses from input file
-  const inputAccounts: Account[] = [];
+  // list of accounts from input file
+  const inputAccounts: AccountRaw[] = [];
 
   if (inputFile) {
     if (!existsSync(inputFile)) {
@@ -226,16 +229,11 @@ const testSyncAccount = async (account: Account) => {
       );
     } else {
       // if there's a input file we parse it
-      const content = JSON.parse(readFileSync(inputFile, "utf8"));
-
-      content.forEach(account => {
-        inputAccounts.push(fromAccountRaw(account));
-      });
+      inputAccounts.push(JSON.parse(readFileSync(inputFile, "utf8")));
     }
   }
 
   const currencyIds = currencies?.split(",");
-
   // throw error if there's invalid currency ids passed in the cli
   currencyIds?.forEach(currencyId => {
     if (!findCryptoCurrencyById(currencyId)) {
@@ -243,37 +241,40 @@ const testSyncAccount = async (account: Account) => {
     }
   });
 
-  // if --inputFile we use the addresses from the input file otherwise from addresses.ts
-  const migrationAddresses = defaultAddresses;
-
+  const migrationAddresses = inputFile ? inputAccounts : defaultAddresses;
   const filteredAddresses = migrationAddresses.filter(addresses => {
     if (currencyIds) {
       return currencyIds.includes(addresses.currencyId);
     }
-
-    return true;
   });
 
-  const syncedAccounts = inputFile
-    ? await Promise.allSettled(
-        inputAccounts.map(account => {
-          testSyncAccount(account);
-        }),
-      )
-    : await Promise.allSettled(
-        filteredAddresses.map(migrationAddress => {
-          return testSync(
-            migrationAddress.currencyId,
-            migrationAddress.xpub ?? migrationAddress.address,
-          );
-        }),
-      );
+  let syncedAccounts: PromiseSettledResult<AccountRaw>[] = [];
+
+  // if --inputFile we use the addresses from the input file otherwise from addresses.ts
+  if (inputFile) {
+    syncedAccounts = await Promise.allSettled(
+      (filteredAddresses as AccountRaw[]).map(rawAccount => {
+        const account = fromAccountRaw(rawAccount);
+        return testSyncAccount(account);
+      }),
+    );
+  } else {
+    syncedAccounts = await Promise.allSettled(
+      (filteredAddresses as MigrationAddress[]).map(migrationAddress => {
+        return testSync(
+          migrationAddress.currencyId,
+          migrationAddress.xpub ?? migrationAddress.address,
+        );
+      }),
+    );
+  }
 
   const errors: string[] = [];
   const response = syncedAccounts.map((account, i) => {
     if (account.status === "fulfilled") {
       return account.value;
     } else {
+      // Promise.allSettled preserve order so it's safe to use filteredAddresses[i]
       errors.push(`${filteredAddresses[i].currencyId} ${account.reason.stack}`);
     }
   });
@@ -286,7 +287,7 @@ const testSyncAccount = async (account: Account) => {
   const outputContent = JSON.stringify(response, null, 3);
 
   if (!noEmit) {
-    // be careful, also used in account-migration.yml
+    // also used in account-migration.yml to know which input file to use
     const { stdout } = await exec("git rev-parse --short HEAD");
     const outputFilePath = outputFolderPath
       ? `${outputFolderPath}/${stdout.trim()}.json`
