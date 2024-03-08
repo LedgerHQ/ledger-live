@@ -194,6 +194,8 @@ for (const id in devices) {
   }
 }
 
+console.log(bluetoothServices);
+
 /**
  *
  */
