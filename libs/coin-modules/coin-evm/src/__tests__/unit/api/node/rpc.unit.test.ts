@@ -7,9 +7,12 @@ import { EvmTransactionLegacy, Transaction as EvmTransaction } from "../../../..
 import { GasEstimationError, InsufficientFunds } from "../../../../errors";
 import { makeAccount } from "../../../fixtures/common.fixtures";
 import * as RPC_API from "../../../../api/node/rpc.common";
-import { setCoinConfig } from "../../../../config";
+import { getCoinConfig } from "../../../../config";
 
 jest.useFakeTimers();
+
+jest.mock("../../../../config");
+const mockGetConfig = jest.mocked(getCoinConfig);
 
 const fakeCurrency: Partial<CryptoCurrency> = {
   id: "my_new_chain" as CryptoCurrencyId,
@@ -43,7 +46,9 @@ jest.mock("@ledgerhq/live-promise");
 
 describe("EVM Family", () => {
   beforeEach(() => {
-    setCoinConfig((): any => {
+    jest.resetAllMocks();
+
+    mockGetConfig.mockImplementation((): any => {
       return {
         info: {
           node: {
@@ -54,7 +59,6 @@ describe("EVM Family", () => {
       };
     });
 
-    jest.resetAllMocks();
     jest
       .spyOn(ethers.providers.StaticJsonRpcProvider.prototype, "_ready")
       .mockResolvedValue(mockedNetwork);
@@ -137,7 +141,7 @@ describe("EVM Family", () => {
   describe("api/rpc/rpc.common.ts", () => {
     describe("withApi", () => {
       it("should throw if the currency doesn't have an RPC node", async () => {
-        setCoinConfig((): any => {
+        mockGetConfig.mockImplementationOnce((): any => {
           return { info: {} };
         });
 

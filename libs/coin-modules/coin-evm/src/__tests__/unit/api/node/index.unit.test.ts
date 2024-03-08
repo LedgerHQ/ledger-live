@@ -3,13 +3,16 @@ import ledgerNodeApi from "../../../../api/node/ledger";
 import rpcNodeApi from "../../../../api/node/rpc";
 import { getNodeApi } from "../../../../api/node";
 import { UnknownNode } from "../../../../errors";
-import { setCoinConfig } from "../../../../config";
+import { getCoinConfig } from "../../../../config";
+
+jest.mock("../../../../config");
+const mockGetConfig = jest.mocked(getCoinConfig);
 
 describe("EVM Family", () => {
   describe("api/node/index.ts", () => {
     describe("getNodeApi", () => {
       it("should throw when requesting a non existing node type", async () => {
-        setCoinConfig((): any => {
+        mockGetConfig.mockImplementation((): any => {
           return { info: { node: { type: "anything", uri: "notworking" } } };
         });
 
@@ -27,7 +30,7 @@ describe("EVM Family", () => {
       });
 
       it("should return the rpc api", async () => {
-        setCoinConfig((): any => {
+        mockGetConfig.mockImplementationOnce((): any => {
           return { info: { node: { type: "external", uri: "working" } } };
         });
 
@@ -39,7 +42,7 @@ describe("EVM Family", () => {
       });
 
       it("should return the ledger api", async () => {
-        setCoinConfig((): any => {
+        mockGetConfig.mockImplementationOnce((): any => {
           return { info: { node: { type: "ledger", explorerId: "eth" } } };
         });
 

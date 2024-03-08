@@ -9,7 +9,7 @@ import * as LEDGER_GAS_TRACKER from "../../../../api/gasTracker/ledger";
 import { Transaction as EvmTransaction } from "../../../../types";
 import { makeAccount } from "../../../fixtures/common.fixtures";
 import * as LEDGER_API from "../../../../api/node/ledger";
-import { setCoinConfig } from "../../../../config";
+import { getCoinConfig } from "../../../../config";
 
 jest.useFakeTimers({ doNotFake: ["setTimeout"] });
 
@@ -30,45 +30,48 @@ const wrongCurrency = {
   ethereumLikeInfo: {},
 } as CryptoCurrency;
 
-setCoinConfig((currency: { id: string }): any => {
-  switch (currency.id) {
-    case "ethereum": {
-      return {
-        info: {
-          node: {
-            type: "ledger",
-            explorerId: "eth",
-          },
-        },
-      };
-    }
-    case "optimism": {
-      return {
-        info: {
-          node: {
-            type: "ledger",
-            explorerId: "optimism",
-          },
-        },
-      };
-    }
-    case "wrong-currency":
-      return {
-        info: {
-          node: {
-            type: "wrongtype",
-            uri: "eth",
-          },
-        },
-      };
-  }
-});
+jest.mock("../../../../config");
+const mockGetConfig = jest.mocked(getCoinConfig);
 
 const account = makeAccount("0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d", currency);
 
 describe("EVM Family", () => {
   beforeEach(() => {
     jest.resetAllMocks();
+
+    mockGetConfig.mockImplementation((currency: { id: string }): any => {
+      switch (currency.id) {
+        case "ethereum": {
+          return {
+            info: {
+              node: {
+                type: "ledger",
+                explorerId: "eth",
+              },
+            },
+          };
+        }
+        case "optimism": {
+          return {
+            info: {
+              node: {
+                type: "ledger",
+                explorerId: "optimism",
+              },
+            },
+          };
+        }
+        case "wrong-currency":
+          return {
+            info: {
+              node: {
+                type: "wrongtype",
+                uri: "eth",
+              },
+            },
+          };
+      }
+    });
   });
 
   describe("api/node/index.ts", () => {
