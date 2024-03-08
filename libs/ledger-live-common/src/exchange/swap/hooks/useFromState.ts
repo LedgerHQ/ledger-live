@@ -79,8 +79,26 @@ export const useFromState = ({
   );
 
   const setFromAmount: SwapTransactionType["setFromAmount"] = useCallback(
-    amount => debouncedSetFromAmount(amount),
-    [debouncedSetFromAmount],
+    amount => {
+      const decimalPlacesForCoinOrToken = fromState.currency?.units[0].magnitude;
+
+      if (decimalPlacesForCoinOrToken) {
+        // remove the last {x} amount of decimal places so it goes to a max of 8.
+        // i.e if the value if 0.123456789 it will instead become 0.12345678
+        const tokenValue = new BigNumber(amount).dividedBy(
+          new BigNumber(10).pow(decimalPlacesForCoinOrToken),
+        );
+        const truncatedTokenValue = tokenValue.decimalPlaces(8, BigNumber.ROUND_DOWN);
+        const truncatedWeiValue = truncatedTokenValue.multipliedBy(
+          new BigNumber(10).pow(decimalPlacesForCoinOrToken),
+        );
+
+        return debouncedSetFromAmount(truncatedWeiValue);
+      }
+      // if for whatever reason we cannot get the decimal places then just return the amount
+      return debouncedSetFromAmount(amount);
+    },
+    [debouncedSetFromAmount, fromState.currency?.units],
   );
 
   return {
