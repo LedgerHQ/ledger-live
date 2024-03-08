@@ -6,7 +6,7 @@ import BigNumber from "bignumber.js";
 import { getGasOptions } from "../../../../api/gasTracker/ledger";
 import { LedgerGasTrackerUsedIncorrectly, NoGasTrackerFound } from "../../../../errors";
 import { GasOptions } from "../../../../types";
-import { setCoinConfig } from "../../../../config";
+import { getCoinConfig } from "../../../../config";
 
 jest.mock("@ledgerhq/live-network/network");
 const mockedNetwork = jest.mocked(network);
@@ -21,9 +21,12 @@ const fakeCurrency: Partial<CryptoCurrency> = {
 
 const TEST_EIP1559_BASE_FEE_MULTIPLIER = 2;
 
+jest.mock("../../../../config");
+const mockGetConfig = jest.mocked(getCoinConfig);
+
 describe("EVM Family", () => {
   beforeEach(() => {
-    setCoinConfig((): any => {
+    mockGetConfig.mockImplementation((): any => {
       return {
         info: {
           node: {
@@ -206,7 +209,7 @@ describe("EVM Family", () => {
         });
 
         it("should return legacy gas options when EIP-1559 not supported by currency", async () => {
-          setCoinConfig((): any => {
+          mockGetConfig.mockImplementationOnce((): any => {
             return {
               info: {
                 gasTracker: {
@@ -280,7 +283,7 @@ describe("EVM Family", () => {
       });
 
       it("should throw if the gas tracker type isn't ledger", async () => {
-        setCoinConfig((): any => {
+        mockGetConfig.mockImplementationOnce((): any => {
           return {
             info: {
               gasTracker: {
@@ -305,7 +308,7 @@ describe("EVM Family", () => {
       });
 
       it("should throw if the gas tracker explorerId doesn't exist", async () => {
-        setCoinConfig((): any => {
+        mockGetConfig.mockImplementationOnce((): any => {
           return {
             info: {
               gasTracker: {

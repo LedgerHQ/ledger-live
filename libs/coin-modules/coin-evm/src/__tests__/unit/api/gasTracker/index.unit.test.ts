@@ -1,7 +1,7 @@
 import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { getGasTracker } from "../../../../api/gasTracker";
 import { getGasOptions as ledgerGetGasOptions } from "../../../../api/gasTracker/ledger";
-import { setCoinConfig } from "../../../../config";
+import { getCoinConfig } from "../../../../config";
 
 const fakeCurrency: Partial<CryptoCurrency> = {
   id: "my_new_chain" as CryptoCurrencyId,
@@ -19,7 +19,10 @@ const fakeCurrencyWithoutGasTracker: Partial<CryptoCurrency> = {
   units: [{ code: "ETH", name: "ETH", magnitude: 18 }],
 };
 
-const getCurrencyConfig = (currency: { id: string }): any => {
+jest.mock("../../../../config");
+const mockGetConfig = jest.mocked(getCoinConfig);
+
+mockGetConfig.mockImplementation((currency: { id: string }): any => {
   switch (currency.id) {
     case "my_new_chain": {
       return {
@@ -46,9 +49,7 @@ const getCurrencyConfig = (currency: { id: string }): any => {
       };
     }
   }
-};
-
-setCoinConfig(getCurrencyConfig);
+});
 
 describe("EVM Family", () => {
   describe("api/gasTracker/index.ts", () => {
