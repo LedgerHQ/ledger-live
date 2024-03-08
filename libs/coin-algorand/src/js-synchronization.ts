@@ -1,8 +1,5 @@
-import {
-  emptyHistoryCache,
-  encodeAccountId,
-  inferSubOperations,
-} from "@ledgerhq/coin-framework/account/index";
+import { emptyHistoryCache, encodeAccountId } from "@ledgerhq/coin-framework/account/index";
+import { inferSubOperations } from "@ledgerhq/coin-framework/serialization/index";
 import type { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import {

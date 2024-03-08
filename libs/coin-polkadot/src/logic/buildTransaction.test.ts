@@ -109,7 +109,7 @@ function createAccount(): PolkadotAccount {
     type: "Account",
     id: "12",
     seedIdentifier: "seed",
-    derivationMode: "mode",
+    derivationMode: "",
     index: 0,
     freshAddress: "0xff",
     freshAddressPath: "/path/to",

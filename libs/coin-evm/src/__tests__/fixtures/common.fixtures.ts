@@ -1,11 +1,7 @@
 /* instanbul ignore file: don't test fixtures */
 
 import BigNumber from "bignumber.js";
-import {
-  DerivationMode,
-  getDerivationScheme,
-  runDerivationScheme,
-} from "@ledgerhq/coin-framework/derivation";
+import { getDerivationScheme, runDerivationScheme } from "@ledgerhq/coin-framework/derivation";
 import {
   decodeAccountId,
   decodeTokenAccountId,
@@ -19,7 +15,14 @@ import {
 import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { Account, Operation, ProtoNFT, SubAccount, TokenAccount } from "@ledgerhq/types-live";
+import {
+  Account,
+  DerivationMode,
+  Operation,
+  ProtoNFT,
+  SubAccount,
+  TokenAccount,
+} from "@ledgerhq/types-live";
 
 export const makeAccount = (
   address: string,

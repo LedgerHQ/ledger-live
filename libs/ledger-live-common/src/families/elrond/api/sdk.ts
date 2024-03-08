@@ -14,7 +14,7 @@ import type { TokenAccount, OperationType, SignedOperation } from "@ledgerhq/typ
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
 import { getEnv } from "@ledgerhq/live-env";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { inferSubOperations } from "@ledgerhq/coin-framework/account/index";
+import { inferSubOperations } from "@ledgerhq/coin-framework/serialization/index";
 import {
   Address,
   INetworkConfig,

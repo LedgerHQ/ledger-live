@@ -1,5 +1,5 @@
 import { isAccountDelegating } from "../families/tezos/bakers";
-import { BitcoinAccount, initialBitcoinResourcesValue } from "../families/bitcoin/types";
+import { BitcoinAccount, initialBitcoinResourcesValue } from "@ledgerhq/coin-bitcoin/types";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { TronAccount } from "../families/tron/types";
 import { CosmosAccount } from "../families/cosmos/types";

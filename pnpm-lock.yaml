@@ -105,6 +105,9 @@ importers:
 
   apps/cli:
     dependencies:
+      '@ledgerhq/coin-bitcoin':
+        specifier: workspace:^
+        version: link:../../libs/coin-bitcoin
       '@ledgerhq/coin-framework':
         specifier: workspace:^
         version: link:../../libs/coin-framework
@@ -232,6 +235,9 @@ importers:
       '@braze/web-sdk':
         specifier: ^4.6.3
         version: 4.6.3
+      '@ledgerhq/coin-bitcoin':
+        specifier: workspace:^
+        version: link:../../libs/coin-bitcoin
       '@ledgerhq/coin-evm':
         specifier: workspace:^
         version: link:../../libs/coin-evm
@@ -467,7 +473,7 @@ importers:
         specifier: ^7.8.1
         version: 7.8.1
       secp256k1:
-        specifier: ^4.0.2
+        specifier: ^4.0.3
         version: 4.0.3
       semver:
         specifier: ^7.1.3
@@ -1591,6 +1597,151 @@ importers:
         specifier: ^29.1.1
         version: 29.1.1(jest@29.7.0)(typescript@5.1.3)
 
+  libs/coin-bitcoin:
+    dependencies:
+      '@ledgerhq/coin-framework':
+        specifier: workspace:^
+        version: link:../coin-framework
+      '@ledgerhq/cryptoassets':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/cryptoassets
+      '@ledgerhq/devices':
+        specifier: workspace:*
+        version: link:../ledgerjs/packages/devices
+      '@ledgerhq/errors':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/errors
+      '@ledgerhq/live-env':
+        specifier: workspace:^
+        version: link:../env
+      '@ledgerhq/live-network':
+        specifier: workspace:^
+        version: link:../live-network
+      '@ledgerhq/logs':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/logs
+      '@ledgerhq/types-cryptoassets':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/types-cryptoassets
+      '@ledgerhq/types-live':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/types-live
+      bchaddrjs:
+        specifier: ^0.5.2
+        version: 0.5.2
+      bech32:
+        specifier: ^1.1.3
+        version: 1.1.4
+      bignumber.js:
+        specifier: ^9.1.2
+        version: 9.1.2
+      bitcoinjs-lib:
+        specifier: ^5.2.0
+        version: 5.2.0
+      blake-hash:
+        specifier: ^2.0.0
+        version: 2.0.0
+      bs58:
+        specifier: ^4.0.1
+        version: 4.0.1
+      bs58check:
+        specifier: ^2.1.2
+        version: 2.1.2
+      cashaddrjs:
+        specifier: ^0.4.4
+        version: 0.4.4
+      coininfo:
+        specifier: ^5.1.0
+        version: 5.2.1
+      create-hmac:
+        specifier: ^1.1.7
+        version: 1.1.7
+      expect:
+        specifier: ^27.4.6
+        version: 27.5.1
+      invariant:
+        specifier: ^2.2.2
+        version: 2.2.4
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
+      ripemd160:
+        specifier: ^2.0.2
+        version: 2.0.2
+      rxjs:
+        specifier: ^7.8.1
+        version: 7.8.1
+      secp256k1:
+        specifier: ^4.0.3
+        version: 4.0.3
+      sha.js:
+        specifier: ^2.4.11
+        version: 2.4.11
+      utility-types:
+        specifier: ^3.10.0
+        version: 3.10.0
+      varuint-bitcoin:
+        specifier: 1.1.2
+        version: 1.1.2
+    devDependencies:
+      '@types/bchaddrjs':
+        specifier: ^0.4.3
+        version: 0.4.3
+      '@types/bs58':
+        specifier: ^4.0.1
+        version: 4.0.1
+      '@types/bs58check':
+        specifier: ^2.1.0
+        version: 2.1.0
+      '@types/cashaddrjs':
+        specifier: ^0.3.3
+        version: 0.3.3
+      '@types/create-hmac':
+        specifier: ^1.1.3
+        version: 1.1.3
+      '@types/invariant':
+        specifier: ^2.2.2
+        version: 2.2.36
+      '@types/jest':
+        specifier: ^29.5.10
+        version: 29.5.10
+      '@types/lodash':
+        specifier: ^4.14.191
+        version: 4.14.198
+      '@types/object-hash':
+        specifier: ^2.1.0
+        version: 2.2.1
+      '@types/ripemd160':
+        specifier: ^2.0.3
+        version: 2.0.3
+      '@types/secp256k1':
+        specifier: ^4.0.3
+        version: 4.0.6
+      '@types/sha.js':
+        specifier: ^2.4.4
+        version: 2.4.4
+      axios:
+        specifier: 0.26.1
+        version: 0.26.1
+      bip32:
+        specifier: ^2.0.6
+        version: 2.0.6
+      bip39:
+        specifier: ^3.0.4
+        version: 3.0.4
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0
+      jest-file-snapshot:
+        specifier: ^0.5.0
+        version: 0.5.0
+      object-hash:
+        specifier: ^2.2.0
+        version: 2.2.0
+      ts-jest:
+        specifier: ^29.1.1
+        version: 29.1.1(jest@29.7.0)(typescript@5.1.3)
+
   libs/coin-evm:
     dependencies:
       '@ethersproject/shims':
@@ -2105,6 +2256,9 @@ importers:
       '@ledgerhq/coin-algorand':
         specifier: workspace:^
         version: link:../coin-algorand
+      '@ledgerhq/coin-bitcoin':
+        specifier: workspace:^
+        version: link:../coin-bitcoin
       '@ledgerhq/coin-evm':
         specifier: workspace:^
         version: link:../coin-evm
@@ -2297,9 +2451,6 @@ importers:
       axios:
         specifier: 0.26.1
         version: 0.26.1
-      bchaddrjs:
-        specifier: ^0.5.2
-        version: 0.5.2
       bech32:
         specifier: ^1.1.3
         version: 1.1.4
@@ -2318,12 +2469,6 @@ importers:
       bip39:
         specifier: ^3.0.4
         version: 3.0.4
-      bitcoinjs-lib:
-        specifier: ^5.2.0
-        version: 5.2.0
-      blake-hash:
-        specifier: ^2.0.0
-        version: 2.0.0
       blake2b:
         specifier: ^2.1.4
         version: 2.1.4
@@ -2339,21 +2484,12 @@ importers:
       c32check:
         specifier: 1.1.3
         version: 1.1.3
-      cashaddrjs:
-        specifier: ^0.4.4
-        version: 0.4.4
       casper-js-sdk:
         specifier: ^2.15.2
         version: 2.15.2
-      coininfo:
-        specifier: ^5.1.0
-        version: 5.2.1
       cosmjs-types:
         specifier: 0.2.1
         version: 0.2.1
-      create-hmac:
-        specifier: ^1.1.7
-        version: 1.1.7
       date-fns:
         specifier: ^2.23.0
         version: 2.28.0
@@ -2402,9 +2538,6 @@ importers:
       reselect:
         specifier: ^4.1.5
         version: 4.1.5
-      ripemd160:
-        specifier: ^2.0.2
-        version: 2.0.2
       ripple-binary-codec:
         specifier: ^1.3.0
         version: 1.4.0
@@ -2450,9 +2583,6 @@ importers:
       utility-types:
         specifier: ^3.10.0
         version: 3.10.0
-      varuint-bitcoin:
-        specifier: 1.1.2
-        version: 1.1.2
       winston:
         specifier: ^3.4.0
         version: 3.7.2
@@ -20972,7 +21102,7 @@ packages:
       '@stacks/common': 4.3.5
       '@stacks/network': 4.3.5
       '@types/node': 18.16.19
-      '@types/sha.js': 2.4.0
+      '@types/sha.js': 2.4.4
       c32check: 1.1.3
       lodash.clonedeep: 4.5.0
       ripemd160-min: 0.0.6
@@ -23777,6 +23907,10 @@ packages:
     resolution: {integrity: sha512-Nvv3haWpXNWYfKasVoEp3VBgVsBTLTh45anhHUN8xVUPhn4ErU3FPS5AEcZtACWc5ICGUxbaiLTWOnwDkwYF1Q==}
     dev: false
 
+  /@types/bchaddrjs@0.4.3:
+    resolution: {integrity: sha512-KJT+Tz39T/Y8/WMijiL4DXhaaUODytoXxvLpwIvI+WwLzfKR4kLrnzLyuIId245GjsVSvK3T9qz/fbvK+//b5w==}
+    dev: true
+
   /@types/bn.js@4.11.6:
     resolution: {integrity: sha512-pqr857jrp2kPuO9uRjZ3PwnJTjoQy+fcdxvBTvHm6dkmEL9q+hDD/2j/0ELOBPtPnS8LjCX0gI9nbl8lVkadpg==}
     dependencies:
@@ -23829,6 +23963,10 @@ packages:
       '@types/responselike': 1.0.3
     dev: true
 
+  /@types/cashaddrjs@0.3.3:
+    resolution: {integrity: sha512-eZ4NOd1bR5SCccmb3y76BSTPfFGHNe6G7dcJq4OuGV5mt7NNnLhl/UCWz5WJNdpqochsm09czLJY+I+/OsKv2g==}
+    dev: true
+
   /@types/cbor@6.0.0:
     resolution: {integrity: sha512-mGQ1lbYOwVti5Xlarn1bTeBZqgY0kstsdjnkoEovgohYKdBjGejHyNGXHdMBeqyQazIv32Jjp33+5pBEaSRy2w==}
     deprecated: This is a stub types definition. cbor provides its own type definitions, so you do not need this installed.
@@ -23875,6 +24013,12 @@ packages:
 
   /@types/cookie@0.4.1:
     resolution: {integrity: sha512-XW/Aa8APYr6jSVVA1y/DEIZX0/GMKLEVekNG727R8cs56ahETkRAy/3DR7+fJyh7oUgGwNQaRfXCun0+KbWY7Q==}
+    dev: true
+
+  /@types/create-hmac@1.1.3:
+    resolution: {integrity: sha512-oDDSoBrAfdEPQuBpQp14y/ygUVU1IC6gq8Arm8IPP8TRC11AnLLYmpE3VvNUhPK/Ax3USGDjdE1Sc1LCIpf0NQ==}
+    dependencies:
+      '@types/node': 20.8.10
     dev: true
 
   /@types/cross-spawn@6.0.6:
@@ -24308,7 +24452,6 @@ packages:
 
   /@types/node@10.12.18:
     resolution: {integrity: sha512-fh+pAqt4xRzPfqA6eh3Z2y6fyZavRIumvjhaCL753+TVkGKGhpPeyrJG2JftD0T9q4GF00KjefsQ+PQNDdWQaQ==}
-    dev: false
 
   /@types/node@10.17.60:
     resolution: {integrity: sha512-F0KIgDJfy2nA3zMLmWGKxcH2ZVEtCZXHHdOQs2gSaQ27+lNeEfGxzkIw90aXswATX7AZ33tahPbzy6KAfUreVw==}
@@ -24316,7 +24459,6 @@ packages:
 
   /@types/node@11.11.6:
     resolution: {integrity: sha512-Exw4yUWMBXM3X+8oqzJNRqZSwUAaS4+7NdvHqQuFi/d+synz++xmX3QIf+BFqneW8N31R8Ky+sikfZUXq07ggQ==}
-    dev: false
 
   /@types/node@12.20.55:
     resolution: {integrity: sha512-J8xLz7q2OFulZ2cyGTLE1TbbZcjpno7FaN6zdJNrgAdrJ+DZzh/uFR6YrTb4C+nXakvud8Q4+rbhoIWlYQbUFQ==}
@@ -24787,11 +24929,23 @@ packages:
     resolution: {integrity: sha512-XISRgDJ2Tc5q4TRqvgJtzsRkFYNJzZrhTdtMoGVBttwzzQJkPnS3WWTFc7kuDRoPtPakl+T+OfdEUjYJj7Jbow==}
     dev: false
 
+  /@types/ripemd160@2.0.3:
+    resolution: {integrity: sha512-/GrtUuorXQGl4/qCgo0YhzHaDbWc6i2kIBt5q7gA0np+/5GmLMK6aYb0pUYFfJ4Y2oraKkrDW4falfLip3Hzdw==}
+    dependencies:
+      '@types/node': 20.8.10
+    dev: true
+
   /@types/scheduler@0.16.2:
     resolution: {integrity: sha512-hppQEBDmlwhFAXKJX2KnWLYu5yMfi91yazPb2l+lbJiwW+wdo1gNeRA+3RgNSO39WYX2euey41KEwnqesU2Jew==}
 
   /@types/secp256k1@4.0.3:
     resolution: {integrity: sha512-Da66lEIFeIz9ltsdMZcpQvmrmmoqrfju8pm1BH8WbYjZSwUgCwXLb9C+9XYogwBITnbsSaMdVPb2ekf7TV+03w==}
+    dependencies:
+      '@types/node': 20.8.10
+    dev: true
+
+  /@types/secp256k1@4.0.6:
+    resolution: {integrity: sha512-hHxJU6PAEUn0TP4S/ZOzuTUvJWuZ6eIKeNKb5RBpODvSl6hp1Wrw4s7ATY50rklRCScUDpHzVA/DQdSjJ3UoYQ==}
     dependencies:
       '@types/node': 20.8.10
 
@@ -24832,11 +24986,10 @@ packages:
       '@types/mime': 1.3.2
       '@types/node': 20.8.10
 
-  /@types/sha.js@2.4.0:
-    resolution: {integrity: sha512-amxKgPy6WJTKuw8mpUwjX2BSxuBtBmZfRwIUDIuPJKNwGN8CWDli8JTg5ONTWOtcTkHIstvT7oAhhYXqEjStHQ==}
+  /@types/sha.js@2.4.4:
+    resolution: {integrity: sha512-Qukd+D6S2Hm0wLVt2Vh+/eWBIoUt+wF8jWjBsG4F8EFQRwKtYvtXCPcNl2OEUQ1R+eTr3xuSaBYUyM3WD1x/Qw==}
     dependencies:
       '@types/node': 20.8.10
-    dev: false
 
   /@types/sockjs@0.3.33:
     resolution: {integrity: sha512-f0KEEe05NvUnat+boPTZ0dgaLZ4SfSouXUgv5noUiefG2ajgKjmETo9ZJyuqsl7dfl2aHlLJUiki6B4ZYldiiw==}
@@ -27556,7 +27709,7 @@ packages:
   /axios@0.26.1:
     resolution: {integrity: sha512-fPwcX4EvnSHuInCMItEhAGnaSEXRBjtzh9fOtsE6E1G6p7vl7edEeZe11QHf18+6+9gR5PbKV/sGKNaD8YaMeA==}
     dependencies:
-      follow-redirects: 1.15.0
+      follow-redirects: 1.15.3
 
   /axios@0.27.2:
     resolution: {integrity: sha512-t+yRIyySRTp/wua5xEr+z1q60QmLq8ABsS5O9Me1AsE5dfKqgnCFzwiCZZ/cGNd1lq4/7akDWMxdhVlucjmnOQ==}
@@ -28462,7 +28615,6 @@ packages:
     requiresBuild: true
     dependencies:
       file-uri-to-path: 1.0.0
-    dev: false
 
   /bip174@2.1.0:
     resolution: {integrity: sha512-lkc0XyiX9E9KiVAS1ZiOqK1xfiwvf4FXDDdkDq5crcDzOq+xGytY+14qCsqz7kCiy8rpN1CRNfacRhf9G3JNSA==}
@@ -28484,7 +28636,6 @@ packages:
       tiny-secp256k1: 1.1.6
       typeforce: 1.18.0
       wif: 2.0.6
-    dev: false
 
   /bip39@3.0.2:
     resolution: {integrity: sha512-J4E1r2N0tUylTKt07ibXvhpT2c5pyAFgvuA5q1H9uDy6dEGpjV8jmymh3MTYJDLCNbIVClSB9FbND49I6N24MQ==}
@@ -28502,7 +28653,6 @@ packages:
       create-hash: 1.2.0
       pbkdf2: 3.1.2
       randombytes: 2.1.0
-    dev: false
 
   /bip66@1.1.5:
     resolution: {integrity: sha512-nemMHz95EmS38a26XbbdxIYj5csHd3RMP3H5bwQknX0WYHF01qhpufP42mLOwVICuH2JmhIhXiWs89MfUGL7Xw==}
@@ -28925,7 +29075,6 @@ packages:
     resolution: {integrity: sha512-Ok3Wdf5vOIlBrgCvTq96gBkJw+JUEzdBgyaza5HLtPm7yTHkjRy8+JzNyHF7BHa0bNWOQIp3m5YF0nnFcOIKLw==}
     dependencies:
       base-x: 3.0.9
-    dev: false
 
   /bs58@5.0.0:
     resolution: {integrity: sha512-r+ihvQJvahgYT50JD05dyJNKlmmSlMoOGwn1lCcEzanPglg7TxYjioQUYehQ9mAR/+hOSd2jRc/Z2y5UxBymvQ==}
@@ -28939,7 +29088,6 @@ packages:
       bs58: 4.0.1
       create-hash: 1.2.0
       safe-buffer: 5.2.1
-    dev: false
 
   /bser@2.1.1:
     resolution: {integrity: sha512-gQxTNE/GAfIIrmHLUE3oJyp5FO6HRBfhjnw4/wMmA63ZGDJnWBmgY/lyQBpnDUkGmAhbSe39tx2d/iTOAfglwQ==}
@@ -29707,7 +29855,6 @@ packages:
     dependencies:
       inherits: 2.0.4
       safe-buffer: 5.2.1
-    dev: false
 
   /cjs-module-lexer@1.2.3:
     resolution: {integrity: sha512-0TNiGstbQmCFwt4akjjBg5pLRTSyj/PkWQ1ZoO2zntmg9yLqSRxwEa4iCfQLGjqhiqBfOJa7W/E8wfGrTDmlZQ==}
@@ -30911,7 +31058,6 @@ packages:
       md5.js: 1.3.5
       ripemd160: 2.0.2
       sha.js: 2.4.11
-    dev: false
 
   /create-hmac@1.1.7:
     resolution: {integrity: sha512-MJG9liiZ+ogc4TzUwuvbER1JRdgvUFSB5+VR/g5h82fGaIRWMWddtKBHi7/sVhfjQZ6SehlyhvQYrcYkaUIpLg==}
@@ -30922,7 +31068,6 @@ packages:
       ripemd160: 2.0.2
       safe-buffer: 5.2.1
       sha.js: 2.4.11
-    dev: false
 
   /create-jest@29.7.0:
     resolution: {integrity: sha512-Adz2bdH0Vq3F53KEMJOoftQFutWCukm6J24wbPWRO4k1kMY7gS7ds/uoJkNuV8wDCtWWnuwGcJwpWcih+zEW1Q==}
@@ -34735,7 +34880,7 @@ packages:
     resolution: {integrity: sha512-w8/4x1SGGzc+tO97TASLja6SLd3fRIK2tLVcV2Gx4IB21hE19atll5Cq9o3d0ZmAYC/8aw0ipieTSiekAea4SQ==}
     dependencies:
       '@types/pbkdf2': 3.1.0
-      '@types/secp256k1': 4.0.3
+      '@types/secp256k1': 4.0.6
       blakejs: 1.2.1
       browserify-aes: 1.2.0
       bs58check: 2.1.2
@@ -36072,7 +36217,6 @@ packages:
   /file-uri-to-path@1.0.0:
     resolution: {integrity: sha512-0Zt+s3L7Vf1biwWZ29aARiVYLx7iMGnEUl9x33fbB/j3jR81u/O2LbqK+Bm1CDSNDKVtJ/YjwY7TUd5SkeLQLw==}
     requiresBuild: true
-    dev: false
 
   /filelist@1.0.3:
     resolution: {integrity: sha512-LwjCsruLWQULGYKy7TX0OPtrL9kLpojOFKc5VCTxdFTV7w5zbsgqVKfnkKG7Qgjtq50gKfO56hJv88OfcGb70Q==}
@@ -36379,7 +36523,6 @@ packages:
   /follow-redirects@1.15.3:
     resolution: {integrity: sha512-1VzOtuEM8pC9SFU1E+8KfTjZyMztRsgEfwQl44z8A25uy13jSzTj6dyK2Df52iV0vgHCfBwLhDWevLn95w5v6Q==}
     engines: {node: '>=4.0'}
-    dev: false
 
   /follow-redirects@1.15.5:
     resolution: {integrity: sha512-vSFWUON1B+yAw1VN4xMfxgn5fTUiaOzAJCKBwIIgT/+7CuGy9+r+5gITvP62j3RmaD5Ph65UaERdOSRGUzZtgw==}
@@ -37516,7 +37659,6 @@ packages:
       inherits: 2.0.4
       readable-stream: 3.6.2
       safe-buffer: 5.2.1
-    dev: false
 
   /hash-obj@4.0.0:
     resolution: {integrity: sha512-FwO1BUVWkyHasWDW4S8o0ssQXjvyghLV2rfVhnN36b2bbcj45eGiuzdn9XOvOpjV3TKQD7Gm2BWNXdE9V4KKYg==}
@@ -43338,7 +43480,6 @@ packages:
       hash-base: 3.1.0
       inherits: 2.0.4
       safe-buffer: 5.2.1
-    dev: false
 
   /md5@2.2.1:
     resolution: {integrity: sha512-PlGG4z5mBANDGCKsYQe0CaUYHdZYZt8ZPZLmEt+Urf0W4GlpTX4HescwHU+dc9+Z/G/vZKYZYFrwgm9VxK6QOQ==}
@@ -45298,7 +45439,6 @@ packages:
   /nan@2.15.0:
     resolution: {integrity: sha512-8ZtvEnA2c5aYCZYd1cvgdnU6cqwixRoYg70xPLWUws5ORTa/lnw+u4amixRS/Ac5U5mQVgp9pnlSUnbNWFaWZQ==}
     requiresBuild: true
-    dev: false
 
   /nan@2.18.0:
     resolution: {integrity: sha512-W7tfG7vMOGtD30sHoZSSc/JVYiyDPEyQVso/Zz+/uQd0B0L46gtC+pHha5FFMRpil6fm/AoEcRWyOVi4+E/f8w==}
@@ -46074,7 +46214,6 @@ packages:
   /object-hash@2.2.0:
     resolution: {integrity: sha512-gScRMn0bS5fH+IuwyIFgnh9zBdo4DV+6GhygmWM9HyNJSgS0hScp1f5vjtm7oIIOiT9trXrShAkLFSc2IqKNgw==}
     engines: {node: '>= 6'}
-    dev: false
 
   /object-hash@3.0.0:
     resolution: {integrity: sha512-RSn9F68PjH9HqtltsSnqYC1XXoWe9Bju5+213R98cNGttag9q9yAOTzdbsqvIa7aNm5WffBZFpWYr2aWrklWAw==}
@@ -46822,7 +46961,6 @@ packages:
       ripemd160: 2.0.2
       safe-buffer: 5.2.1
       sha.js: 2.4.11
-    dev: false
 
   /peek-stream@1.1.3:
     resolution: {integrity: sha512-FhJ+YbOSBb9/rIl2ZeE/QHEsWn7PqNYt8ARAY3kIgNGOk13g9FGyIY6JIl/xB/3TFRVoTv5as0l11weORrTekA==}
@@ -51416,7 +51554,6 @@ packages:
     dependencies:
       hash-base: 3.1.0
       inherits: 2.0.4
-    dev: false
 
   /ripple-address-codec@4.2.4:
     resolution: {integrity: sha512-roAOjKz94+FboTItey1XRh5qynwt4xvfBLvbbcx+FiR94Yw2x3LrKLF2GVCMCSAh5I6PkcpADg6AbYsUbGN3nA==}
@@ -52084,7 +52221,6 @@ packages:
     dependencies:
       inherits: 2.0.4
       safe-buffer: 5.2.1
-    dev: false
 
   /sha3@2.1.4:
     resolution: {integrity: sha512-S8cNxbyb0UGUM2VhRD4Poe5N58gJnJsLJ5vC7FYWGUmGhcsj4++WaIOBFVDxlG0W3To6xBuiRh+i0Qp2oNCOtg==}
@@ -54409,7 +54545,6 @@ packages:
       create-hmac: 1.1.7
       elliptic: 6.5.4
       nan: 2.15.0
-    dev: false
 
   /tiny-typed-emitter@2.1.0:
     resolution: {integrity: sha512-qVtvMxeXbVej0cQWKqVSSAHmKZEHAvxdF8HEUBFWts8h+xEo5m/lEiPakuyZ3BnCBjOD8i24kzNOiOLLgsSxhA==}
@@ -55529,7 +55664,6 @@ packages:
 
   /typeforce@1.18.0:
     resolution: {integrity: sha512-7uc1O8h1M1g0rArakJdf0uLRSSgFcYexrVoKo+bzJd32gd4gDy2L/Z+8/FjPnU9ydY3pEnVPtr9FyscYY60K1g==}
-    dev: false
 
   /typescript@4.9.5:
     resolution: {integrity: sha512-1FXk9E2Hm+QzZQ7z+McJiHL4NW1F2EzMu9Nq9i3zAaGqibafqYwCVU6WyWAuyQRRzOlxou8xZSyXLEN8oKj24g==}
@@ -58821,7 +58955,6 @@ packages:
     resolution: {integrity: sha512-HIanZn1zmduSF+BQhkE+YXIbEiH0xPr1012QbFEGB0xsKqJii0/SqJjyn8dFv6y36kOznMgMB+LGcbZTJ1xACQ==}
     dependencies:
       bs58check: 2.1.2
-    dev: false
 
   /wildcard@2.0.1:
     resolution: {integrity: sha512-CC1bOL87PIWSBhDcTrdeLo6eGT7mCFtrg0uIJtqJUFyK+eJnzl8A1niH56uu7KMa5XFrtiV+AQuHO3n7DsHnLQ==}
