@@ -434,7 +434,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
       return renderError({
         t,
         error,
-        managerAppName: error.managerAppName,
+        managerAppName: (error as { managerAppName: string }).managerAppName,
       });
     }
 
@@ -462,7 +462,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     }
 
     // workaround to catch ECONNRESET error and show better message
-    if (error?.message?.includes("ECONNRESET")) {
+    if ((error as Error)?.message?.includes("ECONNRESET")) {
       return renderError({
         t,
         error: new EConnResetError(),
@@ -478,7 +478,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     // All the error rendering needs to be unified, the same way we do for ErrorIcon
     // not handled here.
     if (
-      error instanceof UserRefusedFirmwareUpdate ||
+      (error as unknown) instanceof UserRefusedFirmwareUpdate ||
       (error as unknown) instanceof UserRefusedAllowManager ||
       (error as unknown) instanceof UserRefusedOnDevice ||
       (error as unknown) instanceof UserRefusedAddress ||
