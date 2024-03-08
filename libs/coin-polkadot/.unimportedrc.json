@@ -3,15 +3,13 @@
     "src/bridge/index.ts",
     "src/bridge/deviceTransactionConfig.ts",
     "src/bridge/formatters.ts",
-    "src/network/sidecar.fixture.ts",
-    "src/network/sidecar.mock.ts",
     "src/signer/index.ts",
     "src/test/cli.ts",
     "src/test/index.ts",
     "src/test/specs.ts",
     "src/types/errors.ts",
-    "src/types/model.fixture.ts",
     "src/index.ts"
   ],
+  "ignorePatterns": ["**/node_modules/**", "**/*.fixture.ts", "**/*.mock.ts", "**/*.test.{js,jsx,ts,tsx}"],
   "ignoreUnresolved": []
 }
