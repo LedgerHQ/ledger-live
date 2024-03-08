@@ -37,69 +37,70 @@ import {
   EvmTransactionLegacy,
   Transaction as EvmTransaction,
 } from "../../types";
-import { setCoinConfig } from "../../config";
+import { getCoinConfig } from "../../config";
+
+jest.mock("../../config");
+const mockGetConfig = jest.mocked(getCoinConfig);
+
+mockGetConfig.mockImplementation((currency: { id: string }): any => {
+  switch (currency.id) {
+    case "ethereum": {
+      return {
+        info: {
+          node: { type: "ledger", explorerId: "eth" },
+          explorer: { type: "ledger", explorerId: "eth" },
+        },
+      };
+    }
+    case "matic": {
+      return {
+        info: {
+          node: { type: "ledger", explorerId: "matic" },
+          explorer: { type: "ledger", explorerId: "matic" },
+        },
+      };
+    }
+    case "optimism": {
+      return {
+        info: {
+          node: { type: "external", uri: "optimis_uri" },
+        },
+      };
+    }
+    case "polygon": {
+      return {
+        info: {
+          node: { type: "ledger", explorerId: "polygon" },
+        },
+      };
+    }
+    case "bsc": {
+      return {
+        info: {
+          node: { type: "ledger", explorerId: "bsc" },
+        },
+      };
+    }
+    case "anything": {
+      return {
+        info: {
+          node: { type: "external", explorerId: "anything" },
+          explorer: { type: "etherscan", uri: "anything" },
+        },
+      };
+    }
+    case "somethingelse": {
+      return {
+        info: {
+          node: { type: "ledger", explorerId: "somethingelse" },
+          explorer: { type: "blockscout", uri: "somethingelse" },
+        },
+      };
+    }
+  }
+});
 
 describe("EVM Family", () => {
-  beforeEach(() => {
-    setCoinConfig((currency: { id: string }): any => {
-      switch (currency.id) {
-        case "ethereum": {
-          return {
-            info: {
-              node: { type: "ledger", explorerId: "eth" },
-              explorer: { type: "ledger", explorerId: "eth" },
-            },
-          };
-        }
-        case "matic": {
-          return {
-            info: {
-              node: { type: "ledger", explorerId: "matic" },
-              explorer: { type: "ledger", explorerId: "matic" },
-            },
-          };
-        }
-        case "optimism": {
-          return {
-            info: {
-              node: { type: "external", uri: "optimis_uri" },
-            },
-          };
-        }
-        case "polygon": {
-          return {
-            info: {
-              node: { type: "ledger", explorerId: "polygon" },
-            },
-          };
-        }
-        case "bsc": {
-          return {
-            info: {
-              node: { type: "ledger", explorerId: "bsc" },
-            },
-          };
-        }
-        case "anything": {
-          return {
-            info: {
-              node: { type: "external", explorerId: "anything" },
-              explorer: { type: "etherscan", uri: "anything" },
-            },
-          };
-        }
-        case "somethingelse": {
-          return {
-            info: {
-              node: { type: "ledger", explorerId: "somethingelse" },
-              explorer: { type: "blockscout", uri: "somethingelse" },
-            },
-          };
-        }
-      }
-    });
-  });
-
   describe("logic.ts", () => {
     describe("legacyTransactionHasFees", () => {
       it("should return true for legacy tx with fees", () => {
