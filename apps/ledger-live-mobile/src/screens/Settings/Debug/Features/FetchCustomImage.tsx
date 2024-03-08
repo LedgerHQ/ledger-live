@@ -5,6 +5,7 @@ import { Text, Flex, Button } from "@ledgerhq/native-ui";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useSelector, useDispatch } from "react-redux";
 import { getScreenVisibleAreaDimensions } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import { customImageBackupSelector } from "~/reducers/settings";
 import { setCustomImageBackup } from "~/actions/settings";
 import NavigationScrollView from "~/components/NavigationScrollView";
@@ -44,6 +45,7 @@ export default function DebugFetchCustomImage() {
   const status = deviceAction.useHook(action === "fetch" ? device : undefined, {
     backupHash: currentBackup.current,
     allowedEmpty: false,
+    deviceModelId: device?.modelId ?? DeviceModelId.stax,
   });
 
   const onReset = useCallback(() => {

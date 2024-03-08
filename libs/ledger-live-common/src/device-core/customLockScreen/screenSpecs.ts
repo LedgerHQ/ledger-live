@@ -1,5 +1,8 @@
 import { DeviceModelId } from "@ledgerhq/devices";
-import { CLSSupportedDeviceModelId } from "../capabilities/isCustomLockScreenSupported";
+import {
+  CLSSupportedDeviceModelId,
+  supportedDeviceModelIds,
+} from "../capabilities/isCustomLockScreenSupported";
 
 type ScreenSpecs = {
   /* width of the screen in pixels */
@@ -37,14 +40,42 @@ export const SCREEN_SPECS: Record<CLSSupportedDeviceModelId, ScreenSpecs> = {
   },
 };
 
+type Dimensions = {
+  width: number;
+  height: number;
+};
+
 export function getScreenSpecs(deviceModelId: CLSSupportedDeviceModelId) {
   return SCREEN_SPECS[deviceModelId];
 }
 
+const screenDataDimensions: Record<CLSSupportedDeviceModelId, Dimensions> =
+  supportedDeviceModelIds.reduce(
+    (acc, deviceModelId) => {
+      const { width, height } = SCREEN_SPECS[deviceModelId];
+      acc[deviceModelId] = { width, height };
+      return acc;
+    },
+    {} as Record<CLSSupportedDeviceModelId, Dimensions>,
+  );
+
 export function getScreenDataDimensions(deviceModelId: CLSSupportedDeviceModelId) {
-  const { width, height } = SCREEN_SPECS[deviceModelId];
-  return { width, height };
+  return screenDataDimensions[deviceModelId];
 }
+
+const screenVisibleAreaDimensions: Record<CLSSupportedDeviceModelId, Dimensions> =
+  supportedDeviceModelIds.reduce(
+    (acc, deviceModelId) => {
+      const { width, height, paddingTop, paddingBottom, paddingLeft, paddingRight } =
+        SCREEN_SPECS[deviceModelId];
+      acc[deviceModelId] = {
+        width: width - paddingLeft - paddingRight,
+        height: height - paddingTop - paddingBottom,
+      };
+      return acc;
+    },
+    {} as Record<CLSSupportedDeviceModelId, Dimensions>,
+  );
 
 /**
  *
@@ -52,10 +83,5 @@ export function getScreenDataDimensions(deviceModelId: CLSSupportedDeviceModelId
  * @returns the dimensions of the visible area of the screen (without padding)
  */
 export function getScreenVisibleAreaDimensions(deviceModelId: CLSSupportedDeviceModelId) {
-  const { width, height, paddingTop, paddingBottom, paddingLeft, paddingRight } =
-    SCREEN_SPECS[deviceModelId];
-  return {
-    width: width - paddingLeft - paddingRight,
-    height: height - paddingTop - paddingBottom,
-  };
+  return screenVisibleAreaDimensions[deviceModelId];
 }

@@ -511,7 +511,10 @@ export const renderAllowRemoveCustomLockscreen = ({
     </AnimationWrapper>
     <Footer>
       <Title>
-        <Trans i18nKey="removeCustomLockscreen.confirmation" />
+        <Trans
+          i18nKey="removeCustomLockscreen.confirmation"
+          values={{ productName: getDeviceModel(modelId).productName }}
+        />
       </Title>
     </Footer>
   </Wrapper>

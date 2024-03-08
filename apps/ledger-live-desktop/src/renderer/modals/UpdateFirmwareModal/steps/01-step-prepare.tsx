@@ -26,6 +26,7 @@ import { catchError, map, tap } from "rxjs/operators";
 import { DeviceBlocker } from "~/renderer/components/DeviceAction/DeviceBlocker";
 import { StepProps } from "../types";
 import manager from "@ledgerhq/live-common/manager/index";
+import { isCustomLockScreenSupported } from "@ledgerhq/live-common/device-core/capabilities/isCustomLockScreenSupported";
 
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
@@ -187,8 +188,11 @@ const StepPrepare = ({
     // but only for stax.
     const deviceId = device ? device.deviceId : "";
     const maybeCLSBackup =
-      deviceInfo.onboarded && deviceModelId === DeviceModelId.stax
-        ? staxFetchImage({ deviceId, request: { allowedEmpty: true } })
+      deviceInfo.onboarded && isCustomLockScreenSupported(deviceModelId)
+        ? staxFetchImage({
+            deviceId,
+            request: { allowedEmpty: true, deviceModelId },
+          })
         : EMPTY;
 
     // Allow for multiple preparation flows in this paradigm.

@@ -2,6 +2,8 @@ import React, { useCallback } from "react";
 import { Flex, Icons, Tag, Text } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import { PostOnboardingActionState, PostOnboardingAction } from "@ledgerhq/types-live";
+import { DeviceModelId } from "@ledgerhq/types-devices";
+import { getDeviceModel } from "@ledgerhq/devices";
 import { track } from "~/renderer/analytics/segment";
 import styled from "styled-components";
 import { useDispatch } from "react-redux";
@@ -9,14 +11,26 @@ import { openModal } from "~/renderer/actions/modals";
 import { AllModalNames } from "~/renderer/modals/types";
 import { useHistory } from "react-router";
 
-export type Props = PostOnboardingAction & PostOnboardingActionState;
+export type Props = PostOnboardingAction &
+  PostOnboardingActionState & {
+    deviceModelId: DeviceModelId | null;
+  };
 
 const ActionRowWrapper = styled(Flex)<{ completed: boolean }>`
   cursor: ${p => (p.completed ? "auto" : "pointer")};
 `;
 
 const PostOnboardingActionRow: React.FC<Props> = props => {
-  const { id, Icon, title, description, tagLabel, buttonLabelForAnalyticsEvent, completed } = props;
+  const {
+    id,
+    Icon,
+    title,
+    description,
+    tagLabel,
+    buttonLabelForAnalyticsEvent,
+    completed,
+    deviceModelId,
+  } = props;
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const history = useHistory();
@@ -68,7 +82,9 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
           </Text>
           {!completed ? (
             <Text variant="body" fontWeight="medium" color="neutral.c70">
-              {t(description)}
+              {t(description, {
+                productName: getDeviceModel(deviceModelId ?? DeviceModelId.stax).productName,
+              })}
             </Text>
           ) : null}
         </Flex>

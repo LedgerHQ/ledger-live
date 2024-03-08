@@ -112,8 +112,9 @@ export const useUpdateFirmwareAndRestoreSettings = ({
       // In the LLM fwm update flow, the error thrown because there is no image is caught and part of the normal flow
       // So we want it to throw the error.
       allowedEmpty: false,
+      deviceModelId: device.modelId,
     }),
-    [],
+    [device.modelId],
   );
   const staxFetchImageState = staxFetchImageAction.useHook(
     updateStep === "imageBackup" ? device : null,

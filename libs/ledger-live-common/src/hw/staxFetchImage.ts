@@ -6,6 +6,8 @@ import {
   TransportStatusError,
   StatusCodes,
 } from "@ledgerhq/errors";
+import { getDeviceModel } from "@ledgerhq/devices";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 
 import { ungzip } from "pako";
 
@@ -40,6 +42,7 @@ export type FetchImageEvent =
 export type FetchImageRequest = {
   backupHash?: string; // When provided, will skip the backup if it matches the hash.
   allowedEmpty: boolean; // Complete instead of throwing if empty.
+  deviceModelId: DeviceModelId;
 };
 
 export type Input = {
@@ -48,7 +51,7 @@ export type Input = {
 };
 
 export default function fetchImage({ deviceId, request }: Input): Observable<FetchImageEvent> {
-  const { backupHash, allowedEmpty = false } = request;
+  const { backupHash, allowedEmpty = false, deviceModelId } = request;
 
   const sub = withDevice(deviceId)(
     transport =>
@@ -72,7 +75,11 @@ export default function fetchImage({ deviceId, request }: Input): Observable<Fet
                   subscriber.complete();
                   return;
                 } else {
-                  return subscriber.error(new ImageDoesNotExistOnDevice());
+                  return subscriber.error(
+                    new ImageDoesNotExistOnDevice(undefined, {
+                      productName: getDeviceModel(deviceModelId).productName,
+                    }),
+                  );
                 }
               } else if (backupHash === imgHash) {
                 subscriber.next({ type: "imageAlreadyBackedUp" });
@@ -99,7 +106,11 @@ export default function fetchImage({ deviceId, request }: Input): Observable<Fet
 
               if (imageLength === 0) {
                 // It should never happen since we fetched the hash earlier but hey.
-                return subscriber.error(new ImageDoesNotExistOnDevice());
+                return subscriber.error(
+                  new ImageDoesNotExistOnDevice(undefined, {
+                    productName: getDeviceModel(deviceModelId).productName,
+                  }),
+                );
               }
 
               let imageBuffer = Buffer.from([]);
