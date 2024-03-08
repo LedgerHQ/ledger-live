@@ -26,7 +26,7 @@ type EvmConfig = {
   };
 };
 
-export type EvmConfigInfo = CurrencyConfig<EvmConfig>;
+export type EvmConfigInfo = CurrencyConfig & EvmConfig;
 
 type EvmCoinConfig = {
   info: EvmConfigInfo;

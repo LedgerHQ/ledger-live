@@ -6,9 +6,7 @@ export type CurrencyLiveConfigDefinition = Partial<
   Record<`config_currency_${CryptoCurrencyId}`, ConfigInfo>
 >;
 
-const getCurrencyConfiguration = <T extends Record<string, unknown>>(
-  currency: CryptoCurrency,
-): CurrencyConfig<T> => {
+const getCurrencyConfiguration = <T extends CurrencyConfig>(currency: CryptoCurrency): T => {
   const currencyData = LiveConfig.getValueByKey(`config_currency_${currency.id}`);
   if (!currencyData) {
     throw new Error(`No currency configuration available for ${currency.id}`);
