@@ -1,36 +1,11 @@
 import { BigNumber } from "bignumber.js";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { PolkadotAccount } from "../types";
 import { canUnbond, isController, MAX_UNLOCKINGS } from "./utils";
-
-const polkadotAccount: PolkadotAccount = {
-  type: "Account",
-  id: "",
-  seedIdentifier: "",
-  derivationMode: "",
-  freshAddress: "",
-  freshAddressPath: "",
-  name: "",
-  starred: false,
-  index: 0,
-  freshAddresses: [],
-  spendableBalance: new BigNumber(0),
-  balance: new BigNumber(0),
-  used: true,
-  creationDate: new Date(),
-  blockHeight: 0,
-  currency: getCryptoCurrencyById("polkadot"),
-  unit: { name: "DOT", code: "DOT", magnitude: 16 },
-  operations: [],
-  pendingOperations: [],
-  operationsCount: 0,
-  lastSyncDate: new Date(),
-  balanceHistoryCache: {} as any,
-  swapHistory: [],
-  polkadotResources: {} as any,
-};
+import { createFixtureAccount } from "../types/model.fixture";
 
 describe("isController", () => {
+  const polkadotAccount: PolkadotAccount = createFixtureAccount();
+
   it("returns false when stash is not defined", () => {
     const accountIsController = isController(polkadotAccount);
     expect(accountIsController).toBe(false);
@@ -51,7 +26,7 @@ describe("isController", () => {
 
 describe("canUnbond", () => {
   test("can unbond", () => {
-    const account: Partial<PolkadotAccount> = {
+    const account = createFixtureAccount({
       polkadotResources: {
         controller: "",
         stash: "",
@@ -68,11 +43,11 @@ describe("canUnbond", () => {
           })),
         ],
       },
-    };
-    expect(canUnbond(account as PolkadotAccount)).toBeTruthy();
+    });
+    expect(canUnbond(account)).toBeTruthy();
   });
   test("can't unbond because unlockings is too much", () => {
-    const account: Partial<PolkadotAccount> = {
+    const account = createFixtureAccount({
       polkadotResources: {
         controller: "",
         stash: "",
@@ -89,8 +64,8 @@ describe("canUnbond", () => {
           })),
         ],
       },
-    };
-    expect(canUnbond(account as PolkadotAccount)).toBeFalsy();
+    });
+    expect(canUnbond(account)).toBeFalsy();
   });
   test("can't unbond because not enough lockedBalance", () => {
     const account: Partial<PolkadotAccount> = {
