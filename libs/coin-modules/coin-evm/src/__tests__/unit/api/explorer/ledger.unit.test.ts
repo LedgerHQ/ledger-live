@@ -14,7 +14,7 @@ import {
   coinOperation3,
   coinOperation4,
 } from "../../../fixtures/explorer/ledger.fixtures";
-import { setCoinConfig } from "../../../../config";
+import { getCoinConfig } from "../../../../config";
 
 jest.mock("axios");
 jest.mock("@ledgerhq/live-promise");
@@ -37,23 +37,24 @@ const accountId = encodeAccountId({
   derivationMode: "",
 });
 
+jest.mock("../../../../config");
+const mockGetConfig = jest.mocked(getCoinConfig);
+
 describe("EVM Family", () => {
-  beforeEach(() => {
-    const getCurrencyConfig = (): any => {
-      return {
-        info: {
-          explorer: {
-            type: "ledger",
-            explorerId: "eth",
-          },
-        },
-      };
-    };
-
-    setCoinConfig(getCurrencyConfig);
-  });
-
   describe("api/explorer/ledger.ts", () => {
+    beforeEach(() => {
+      mockGetConfig.mockImplementation((): any => {
+        return {
+          info: {
+            explorer: {
+              type: "ledger",
+              explorerId: "eth",
+            },
+          },
+        };
+      });
+    });
+
     afterEach(() => {
       jest.resetAllMocks();
     });
@@ -156,7 +157,7 @@ describe("EVM Family", () => {
 
     describe("getLastOperations", () => {
       it("should throw if the explorer is misconfigured", async () => {
-        setCoinConfig((): any => {
+        mockGetConfig.mockImplementationOnce((): any => {
           return {
             info: {
               node: {

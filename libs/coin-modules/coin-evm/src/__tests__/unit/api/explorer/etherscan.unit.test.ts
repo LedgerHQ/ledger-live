@@ -20,13 +20,16 @@ import {
   etherscanInternalTransactionToOperations,
   etherscanOperationToOperations,
 } from "../../../../adapters";
-import { setCoinConfig } from "../../../../config";
+import { getCoinConfig } from "../../../../config";
 
 jest.mock("axios");
 jest.mock("@ledgerhq/live-promise");
 (delay as jest.Mock).mockImplementation(
   () => new Promise(resolve => setTimeout(resolve, 1)), // mocking the delay supposed to happen after each try
 );
+
+jest.mock("../../../../config");
+const mockGetConfig = jest.mocked(getCoinConfig);
 
 const currency: CryptoCurrency = {
   ...getCryptoCurrencyById("ethereum"),
@@ -35,7 +38,7 @@ const currency: CryptoCurrency = {
   },
 };
 
-const getCurrencyConfig = (): any => {
+mockGetConfig.mockImplementation((): any => {
   return {
     info: {
       explorer: {
@@ -48,13 +51,26 @@ const getCurrencyConfig = (): any => {
       },
     },
   };
-};
+});
 
 const account = makeAccount("0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d", currency);
 
 describe("EVM Family", () => {
   beforeEach(() => {
-    setCoinConfig(getCurrencyConfig);
+    mockGetConfig.mockImplementation((): any => {
+      return {
+        info: {
+          explorer: {
+            type: "etherscan",
+            uri: "mock",
+          },
+          node: {
+            type: "external",
+            uri: "mock",
+          },
+        },
+      };
+    });
   });
 
   describe("api/explorer/etherscan.ts", () => {
@@ -128,7 +144,7 @@ describe("EVM Family", () => {
       });
 
       it("should throw an error if the currency is misconfigured", async () => {
-        setCoinConfig((): any => {
+        mockGetConfig.mockImplementationOnce((): any => {
           // no explorer
           return {
             info: {
@@ -266,7 +282,7 @@ describe("EVM Family", () => {
       });
 
       it("should throw if the currency is misconfigured", async () => {
-        setCoinConfig((): any => {
+        mockGetConfig.mockImplementationOnce((): any => {
           // no explorer
           return {
             info: {
@@ -413,7 +429,7 @@ describe("EVM Family", () => {
       });
 
       it("should return an empty array if the currency is misconfigured", async () => {
-        setCoinConfig((): any => {
+        mockGetConfig.mockImplementationOnce((): any => {
           // no explorer
           return {
             info: {
@@ -560,7 +576,7 @@ describe("EVM Family", () => {
       });
 
       it("should return an empty array if the currency is misconfigured", async () => {
-        setCoinConfig((): any => {
+        mockGetConfig.mockImplementationOnce((): any => {
           // no explorer
           return {
             info: {
@@ -730,7 +746,7 @@ describe("EVM Family", () => {
       });
 
       it("should throw if the currency is misconfigured", async () => {
-        setCoinConfig((): any => {
+        mockGetConfig.mockImplementationOnce((): any => {
           // no explorer
           return {
             info: {

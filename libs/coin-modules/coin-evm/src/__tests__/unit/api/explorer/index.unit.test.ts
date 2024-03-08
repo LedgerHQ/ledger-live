@@ -3,27 +3,28 @@ import etherscanLikeApi from "../../../../api/explorer/etherscan";
 import ledgerExplorerApi from "../../../../api/explorer/ledger";
 import { getExplorerApi } from "../../../../api/explorer";
 import { UnknownExplorer } from "../../../../errors";
-import { setCoinConfig } from "../../../../config";
+import { getCoinConfig } from "../../../../config";
+
+jest.mock("../../../../config");
+const mockGetConfig = jest.mocked(getCoinConfig);
+
+mockGetConfig.mockImplementation((currency: any): any => {
+  switch (currency.id) {
+    case "anything-coin":
+      return { info: { explorer: { type: "anything", uri: "notworking" } } };
+    case "etherscan-coin": {
+      return { info: { explorer: { type: "etherscan", uri: "working" } } };
+    }
+    case "blockscout-coin": {
+      return { info: { explorer: { type: "blockscout", uri: "working" } } };
+    }
+    case "ledger-coin": {
+      return { info: { explorer: { type: "ledger", explorerId: "eth" } } };
+    }
+  }
+});
 
 describe("EVM Family", () => {
-  beforeAll(() => {
-    setCoinConfig((currency: any): any => {
-      switch (currency.id) {
-        case "anything-coin":
-          return { info: { explorer: { type: "anything", uri: "notworking" } } };
-        case "etherscan-coin": {
-          return { info: { explorer: { type: "etherscan", uri: "working" } } };
-        }
-        case "blockscout-coin": {
-          return { info: { explorer: { type: "blockscout", uri: "working" } } };
-        }
-        case "ledger-coin": {
-          return { info: { explorer: { type: "ledger", explorerId: "eth" } } };
-        }
-      }
-    });
-  });
-
   describe("api/explorer/index.ts", () => {
     describe("getExplorerApi", () => {
       it("should throw when requesting a non existing explorer", () => {
