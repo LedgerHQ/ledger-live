@@ -132,9 +132,10 @@ const evmConfig: Record<string, ConfigInfo> = {
   config_currency_ethergem: {
     type: "object",
     default: {
-      status: {
-        type: "active",
-      },
+      status: { type: "active" },
+      node: {},
+      explorer: {},
+      gasTracker: {},
     },
   },
   config_currency_ethersocial: {
@@ -400,8 +401,8 @@ const evmConfig: Record<string, ConfigInfo> = {
         uri: "https://mainnet.optimism.io",
       },
       explorer: {
-        uri: "https://api-optimistic.etherscan.io/api",
         type: "etherscan",
+        uri: "https://api-optimistic.etherscan.io/api",
       },
     },
   },
