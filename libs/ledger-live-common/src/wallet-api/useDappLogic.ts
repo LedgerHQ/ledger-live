@@ -13,6 +13,7 @@ import { prepareMessageToSign } from "../hw/signMessage/index";
 import { CurrentAccountHistDB, UiHook, usePermission } from "./react";
 import BigNumber from "bignumber.js";
 import { safeEncodeEIP55 } from "@ledgerhq/coin-evm/logic";
+import { SmartWebsocket } from "./SmartWebsocket";
 
 type MessageId = number | string | null;
 
@@ -212,6 +213,7 @@ export function useDappLogic({
   const nanoApp = manifest.dapp?.nanoApp;
   const previousAddressRef = useRef<string>();
   const previousChainIdRef = useRef<number>();
+  const ws = useRef<SmartWebsocket>();
   const { currentAccount, currentParentAccount } = useDappAccountLogic({
     manifest,
     accounts,
@@ -273,6 +275,30 @@ export function useDappLogic({
     previousChainIdRef.current = currentNetwork.chainID;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentNetwork]);
+
+  useEffect(() => {
+    if (currentNetwork?.nodeURL) {
+      const rpcURL = new URL(currentNetwork.nodeURL);
+      if (rpcURL.protocol === "wss:") {
+        const websocket = new SmartWebsocket(rpcURL.toString(), {
+          reconnect: true,
+          reconnectMaxAttempts: Infinity,
+        });
+
+        websocket.on("message", message => {
+          postMessage(JSON.stringify(message));
+        });
+
+        websocket.connect();
+
+        ws.current = websocket;
+        return () => {
+          websocket.close();
+          ws.current = undefined;
+        };
+      }
+    }
+  }, [currentNetwork?.nodeURL, postMessage]);
 
   const onDappMessage = useCallback(
     async (data: JsonRpcRequestMessage) => {
@@ -592,11 +618,9 @@ export function useDappLogic({
         }
 
         default: {
-          // TODO websocket support
-          // if (connector.current) {
-          //   connector.current.send(data);
-          // } else
-          if (currentNetwork.nodeURL?.startsWith("https:")) {
+          if (ws.current) {
+            ws.current.send(data);
+          } else if (currentNetwork.nodeURL?.startsWith("https:")) {
             void network({
               method: "POST",
               url: currentNetwork.nodeURL,
