@@ -101,8 +101,8 @@ const devices: { [key in DeviceModelId]: DeviceModel } = {
   [DeviceModelId.europa]: {
     id: DeviceModelId.europa, // TODO: change to the real product's name one day
     productName: "Ledger Europa", // TODO: change to the real product's name one day
-    productIdMM: 0x30,
-    legacyUsbProductId: 0x0003,
+    productIdMM: 0x70,
+    legacyUsbProductId: 0x0007,
     usbOnly: false,
     memorySize: 1533 * 1024,
     masks: [0x33300000],
