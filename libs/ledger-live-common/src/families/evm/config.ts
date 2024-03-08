@@ -1,12 +1,10 @@
-import { ConfigInfo } from "@ledgerhq/live-config/LiveConfig";
+import { CurrencyLiveConfigDefinition } from "../../config";
 
-const evmConfig: Record<string, ConfigInfo> = {
+const evmConfig: CurrencyLiveConfigDefinition = {
   config_currency_akroma: {
     type: "object",
     default: {
-      status: {
-        type: "active",
-      },
+      status: { type: "active" },
     },
   },
   config_currency_atheios: {
@@ -132,10 +130,9 @@ const evmConfig: Record<string, ConfigInfo> = {
   config_currency_ethergem: {
     type: "object",
     default: {
-      status: { type: "active" },
-      node: {},
-      explorer: {},
-      gasTracker: {},
+      status: {
+        type: "active",
+      },
     },
   },
   config_currency_ethersocial: {
@@ -698,7 +695,7 @@ const evmConfig: Record<string, ConfigInfo> = {
       explorer: { type: "etherscan", uri: "https://api-sepolia.basescan.org/api" },
     },
   },
-  config_currency_linea_sepolia: {
+  config_currency_linea_goerli: {
     type: "object",
     default: {
       status: { type: "active" },
