@@ -192,7 +192,7 @@ const INITIAL_STATE: SettingsState = {
   // Vault
   vaultSigner: { enabled: false, host: "", token: "", workspace: "" },
   supportedCounterValues: [],
-  hasSeenAnalyticsOptInPrompt: true,
+  hasSeenAnalyticsOptInPrompt: false,
 };
 
 /* Handlers */

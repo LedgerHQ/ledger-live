@@ -31,14 +31,13 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
   );
 
   useEffect(() => {
-    dispatch(setHasSeenAnalyticsOptInPrompt(false));
     const isFlagEnabled = lldAnalyticsOptInPromptFlag?.enabled && !hasSeenAnalyticsOptInPrompt;
     setIsFeatureFlagsAnalyticsPrefDisplayed(isFlagEnabled || false);
   }, [lldAnalyticsOptInPromptFlag, hasSeenAnalyticsOptInPrompt, dispatch, entryPoint]);
 
   const onSubmit = useCallback(() => {
     setIsAnalitycsOptInPromptOpened(false);
-    dispatch(setHasSeenAnalyticsOptInPrompt(false));
+    dispatch(setHasSeenAnalyticsOptInPrompt(true));
     if (entryPoint.toLocaleLowerCase() === EntryPoint.onboarding) {
       nextStep?.();
       setNextStep(null);

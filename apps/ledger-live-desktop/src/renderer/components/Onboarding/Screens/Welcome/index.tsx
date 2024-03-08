@@ -169,7 +169,7 @@ export function Welcome() {
           </Description>
         </Presentation>
         <ProductHighlight>
-          {isFeatureFlagsSettingsButtonDisplayed && (
+          {!isFeatureFlagsSettingsButtonDisplayed && (
             <Button variant="main" outline mb="24px" onClick={() => history.push("/settings")}>
               {t("settings.title")}
             </Button>
