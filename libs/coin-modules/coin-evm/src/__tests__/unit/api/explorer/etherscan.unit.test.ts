@@ -38,21 +38,6 @@ const currency: CryptoCurrency = {
   },
 };
 
-mockGetConfig.mockImplementation((): any => {
-  return {
-    info: {
-      explorer: {
-        type: "etherscan",
-        uri: "mock",
-      },
-      node: {
-        type: "external",
-        uri: "mock",
-      },
-    },
-  };
-});
-
 const account = makeAccount("0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d", currency);
 
 describe("EVM Family", () => {
