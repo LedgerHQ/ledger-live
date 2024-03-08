@@ -7,6 +7,7 @@ import {
   TransportError,
   TransportStatusError,
 } from "@ledgerhq/errors";
+import { getDeviceModel } from "@ledgerhq/devices";
 
 import { withDevice } from "./deviceAccess";
 import getDeviceInfo from "./getDeviceInfo";
@@ -109,7 +110,11 @@ export default function loadImage({ deviceId, request }: Input): Observable<Load
               // reads last 2 bytes which correspond to the status
 
               if (createImageStatus === StatusCodes.USER_REFUSED_ON_DEVICE) {
-                return subscriber.error(new ImageLoadRefusedOnDevice(createImageStatusStr));
+                return subscriber.error(
+                  new ImageLoadRefusedOnDevice(createImageStatusStr, {
+                    productName: getDeviceModel(deviceModelId).productName,
+                  }),
+                );
               } else if (createImageStatus === StatusCodes.NOT_ENOUGH_SPACE) {
                 return subscriber.error(new ManagerNotEnoughSpaceError());
               } else if (createImageStatus !== StatusCodes.OK) {
@@ -156,7 +161,11 @@ export default function loadImage({ deviceId, request }: Input): Observable<Load
               // reads last 2 bytes which correspond to the status
 
               if (commitStatus === 0x5501) {
-                return subscriber.error(new ImageCommitRefusedOnDevice(commitStatusStr));
+                return subscriber.error(
+                  new ImageCommitRefusedOnDevice(commitStatusStr, {
+                    productName: getDeviceModel(deviceModelId).productName,
+                  }),
+                );
               } else if (commitStatus !== 0x9000) {
                 return subscriber.error(
                   new TransportError("Unexpected device response", commitStatusStr),

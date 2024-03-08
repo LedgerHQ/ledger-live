@@ -5,7 +5,7 @@ import Video from "react-native-video";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
-
+import { getDeviceModel } from "@ledgerhq/devices";
 import CustomImageBottomModal from "~/components/CustomImage/CustomImageBottomModal";
 import BottomButtonsContainer from "~/components/CustomImage/BottomButtonsContainer";
 import Button from "~/components/wrappedUi/Button";
@@ -73,7 +73,9 @@ const Step0Welcome: React.FC<
               textAlign="center"
               testID="custom-image-welcome-title"
             >
-              {t("customImage.landingPage.title")}
+              {t("customImage.landingPage.title", {
+                productName: getDeviceModel(deviceModelId).productName,
+              })}
             </Text>
           </Flex>
         </Flex>
