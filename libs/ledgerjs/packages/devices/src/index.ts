@@ -109,10 +109,10 @@ const devices: { [key in DeviceModelId]: DeviceModel } = {
     getBlockSize: (_firmwareVersion: string): number => 32,
     bluetoothSpec: [
       {
-        serviceUuid: "13d63400-2c97-3004-3000-4c6564676572",
-        notifyUuid: "13d63400-2c97-3004-3001-4c6564676572",
-        writeUuid: "13d63400-2c97-3004-3002-4c6564676572",
-        writeCmdUuid: "13d63400-2c97-3004-3003-4c6564676572",
+        serviceUuid: "13d63400-2c97-3004-0000-4c6564676572",
+        notifyUuid: "13d63400-2c97-3004-0001-4c6564676572",
+        writeUuid: "13d63400-2c97-3004-0002-4c6564676572",
+        writeCmdUuid: "13d63400-2c97-3004-0003-4c6564676572",
       },
     ],
   },
