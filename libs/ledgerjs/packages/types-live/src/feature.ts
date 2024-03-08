@@ -124,7 +124,6 @@ export type Features = CurrencyFeatures & {
   brazePushNotifications: Feature_BrazePushNotifications;
   brazeLearn: Feature_BrazeLearn;
   llmNewDeviceSelection: Feature_LlmNewDeviceSelection;
-  llmNewFirmwareUpdateUx: Feature_LlmNewFirmwareUpdateUx;
   ratingsPrompt: Feature_RatingsPrompt;
   npsRatingsPrompt: Feature_NpsRatingsPrompt;
   counterValue: Feature_CounterValue;
@@ -468,7 +467,6 @@ export type Feature_NftsFromSimpleHash = Feature<{
   threshold: number;
 }>;
 
-export type Feature_LlmNewFirmwareUpdateUx = DefaultFeature;
 export type Feature_CounterValue = DefaultFeature;
 export type Feature_MockFeature = DefaultFeature;
 export type Feature_MultibuyNavigation = DefaultFeature;

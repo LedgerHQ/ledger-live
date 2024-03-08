@@ -9,7 +9,7 @@
     "**/*.d.ts",
     "src/__test__/*",
     "src/__tests__/*",
-    "src/__mocks__/*",
+    "src/**/__mocks__/*",
     "src/**/*.android.*",
     "src/**/*.ios.*",
     "src/components/RootNavigator/types.ts",
