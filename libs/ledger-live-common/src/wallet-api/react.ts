@@ -20,7 +20,7 @@ import {
   currencyToWalletAPICurrency,
   getAccountIdFromWalletAccountId,
 } from "./converters";
-import { isWalletAPISupportedCurrency } from "./helpers";
+import { isWalletAPISupportedCurrency, matchCurrencies } from "./helpers";
 import { WalletAPICurrency, AppManifest, WalletAPIAccount, WalletAPICustomHandlers } from "./types";
 import { getMainAccount, getParentAccount } from "../account";
 import { listCurrencies, findCryptoCurrencyById, findTokenById } from "../currencies";
@@ -62,15 +62,25 @@ export function useWalletAPIAccounts(accounts: AccountLike[]): WalletAPIAccount[
   }, [accounts]);
 }
 
+const allCurrenciesAndTokens = listCurrencies(true);
+
 export function useWalletAPICurrencies(): WalletAPICurrency[] {
   return useMemo(() => {
-    return listCurrencies(true).reduce<WalletAPICurrency[]>((filtered, currency) => {
+    return allCurrenciesAndTokens.reduce<WalletAPICurrency[]>((filtered, currency) => {
       if (isWalletAPISupportedCurrency(currency)) {
         filtered.push(currencyToWalletAPICurrency(currency));
       }
       return filtered;
     }, []);
   }, []);
+}
+
+export function useManifestCurrencies(manifest: AppManifest) {
+  return useMemo(() => {
+    return manifest.currencies === "*"
+      ? allCurrenciesAndTokens
+      : matchCurrencies(allCurrenciesAndTokens, manifest.currencies);
+  }, [manifest.currencies]);
 }
 
 export function useGetAccountIds(
@@ -258,8 +268,6 @@ function useDeviceTransport({ manifest, tracking }) {
 
   return useMemo(() => ({ ref, subscribe, close, exchange }), [close, exchange, subscribe]);
 }
-
-const allCurrenciesAndTokens = listCurrencies(true);
 
 export type useWalletAPIServerOptions = {
   manifest: AppManifest;

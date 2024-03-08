@@ -1,12 +1,11 @@
-import React, { RefObject, useCallback, useMemo } from "react";
+import React, { RefObject, useCallback } from "react";
 import { TouchableOpacity } from "react-native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { ArrowLeftMedium, ArrowRightMedium, ReverseMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useTheme } from "styled-components/native";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
-import { safeGetRefValue, useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/react";
-import { listCurrencies } from "@ledgerhq/live-common/currencies/index";
-import { matchCurrencies } from "@ledgerhq/live-common/wallet-api/helpers";
+import { safeGetRefValue, useManifestCurrencies } from "@ledgerhq/live-common/wallet-api/react";
+import { useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import { WebviewAPI, WebviewState } from "../Web3AppWebview/types";
 import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
@@ -42,12 +41,10 @@ function IconButton({
   );
 }
 
-const allCurrenciesAndTokens = listCurrencies(true);
-
 export function BottomBar({ manifest, webviewAPIRef, webviewState }: BottomBarProps) {
   const navigation = useNavigation();
   const { colors } = useTheme();
-  const [currentAccount, setCurrentAccount] = useDappCurrentAccount();
+  const { currentAccount, setCurrentAccount } = useDappCurrentAccount();
   const shouldDisplaySelectAccount = !!manifest.dapp;
 
   const handleForward = useCallback(() => {
@@ -68,11 +65,7 @@ export function BottomBar({ manifest, webviewAPIRef, webviewState }: BottomBarPr
     webview.reload();
   }, [webviewAPIRef]);
 
-  const currencies = useMemo(() => {
-    return manifest.currencies === "*"
-      ? allCurrenciesAndTokens
-      : matchCurrencies(allCurrenciesAndTokens, manifest.currencies);
-  }, [manifest.currencies]);
+  const currencies = useManifestCurrencies(manifest);
 
   const onSelectAccount = useCallback(() => {
     if (currencies.length === 1) {

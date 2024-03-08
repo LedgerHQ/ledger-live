@@ -1,4 +1,4 @@
-import React, { RefObject, useCallback, useMemo } from "react";
+import React, { RefObject, useCallback } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
@@ -17,12 +17,11 @@ import { WebviewAPI, WebviewState } from "../Web3AppWebview/types";
 import Spinner from "../Spinner";
 import { getAccountName, getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
-import { safeGetRefValue, useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/react";
+import { safeGetRefValue, useManifestCurrencies } from "@ledgerhq/live-common/wallet-api/react";
+import { useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import SelectAccountAndCurrencyDrawer from "~/renderer/drawers/DataSelector/SelectAccountAndCurrencyDrawer";
 import Wallet from "~/renderer/icons/Wallet";
-import { listCurrencies } from "@ledgerhq/live-common/currencies/index";
-import { matchCurrencies } from "@ledgerhq/live-common/wallet-api/helpers";
 import CryptoCurrencyIcon from "../CryptoCurrencyIcon";
 
 const Container = styled(Box).attrs(() => ({
@@ -133,8 +132,6 @@ export type Props = {
   webviewState: WebviewState;
 };
 
-const allCurrenciesAndTokens = listCurrencies(true);
-
 export const TopBar = ({ manifest, onClose, config = {}, webviewAPIRef, webviewState }: Props) => {
   const { name, icon } = manifest;
   const { currentAccount, setCurrentAccountHist } = useDappCurrentAccount();
@@ -178,11 +175,7 @@ export const TopBar = ({ manifest, onClose, config = {}, webviewAPIRef, webviewS
     webview.goForward();
   }, [webviewAPIRef]);
 
-  const currencies = useMemo(() => {
-    return manifest.currencies === "*"
-      ? allCurrenciesAndTokens
-      : matchCurrencies(allCurrenciesAndTokens, manifest.currencies);
-  }, [manifest.currencies]);
+  const currencies = useManifestCurrencies(manifest);
 
   const onSelectAccount = useCallback(() => {
     setDrawer(
