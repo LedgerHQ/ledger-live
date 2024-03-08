@@ -3,7 +3,8 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { hasSeenAnalyticsOptInPromptSelector } from "~/renderer/reducers/settings";
 import { useDispatch, useSelector } from "react-redux";
 import { setHasSeenAnalyticsOptInPrompt } from "~/renderer/actions/settings";
-import { EntryPoint } from "../types/AnalyticsOptInromptNavigator";
+import { EntryPoint } from "../types/AnalyticsOptInPromptNavigator";
+import { ABTestingVariants } from "@ledgerhq/types-live";
 
 type Props = {
   entryPoint: EntryPoint;
@@ -30,14 +31,15 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
   );
 
   useEffect(() => {
+    dispatch(setHasSeenAnalyticsOptInPrompt(false));
     const isFlagEnabled = lldAnalyticsOptInPromptFlag?.enabled && !hasSeenAnalyticsOptInPrompt;
     setIsFeatureFlagsAnalyticsPrefDisplayed(isFlagEnabled || false);
   }, [lldAnalyticsOptInPromptFlag, hasSeenAnalyticsOptInPrompt, dispatch, entryPoint]);
 
   const onSubmit = useCallback(() => {
     setIsAnalitycsOptInPromptOpened(false);
-    dispatch(setHasSeenAnalyticsOptInPrompt(true));
-    if (entryPoint === "Onboarding") {
+    dispatch(setHasSeenAnalyticsOptInPrompt(false));
+    if (entryPoint.toLocaleLowerCase() === EntryPoint.onboarding) {
       nextStep?.();
       setNextStep(null);
     }
@@ -58,4 +60,11 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
     lldAnalyticsOptInPromptFlag,
     onSubmit,
   };
+};
+
+export const getVariant = (variant: ABTestingVariants | undefined): ABTestingVariants => {
+  if (variant === ABTestingVariants.variantA || variant === ABTestingVariants.variantB) {
+    return variant;
+  }
+  return ABTestingVariants.variantA;
 };

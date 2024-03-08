@@ -65,6 +65,7 @@ export type SettingsState = {
   };
   developerMode: boolean;
   shareAnalytics: boolean;
+  sharePersonalizedRecommandations: boolean;
   sentryLogs: boolean;
   lastUsedVersion: string;
   dismissedBanners: string[];
@@ -146,6 +147,7 @@ const INITIAL_STATE: SettingsState = {
   developerMode: !!process.env.__DEV__,
   loaded: false,
   shareAnalytics: true,
+  sharePersonalizedRecommandations: true,
   sentryLogs: true,
   lastUsedVersion: __APP_VERSION__,
   dismissedBanners: [],
@@ -629,6 +631,8 @@ export const nftsViewModeSelector = (state: State) => state.settings.nftsViewMod
 export const sentryLogsSelector = (state: State) => state.settings.sentryLogs;
 export const autoLockTimeoutSelector = (state: State) => state.settings.autoLockTimeout;
 export const shareAnalyticsSelector = (state: State) => state.settings.shareAnalytics;
+export const sharePersonalizedRecommandationsSelector = (state: State) =>
+  state.settings.sharePersonalizedRecommandations;
 export const selectedTimeRangeSelector = (state: State) => state.settings.selectedTimeRange;
 export const hasInstalledAppsSelector = (state: State) => state.settings.hasInstalledApps;
 export const USBTroubleshootingIndexSelector = (state: State) =>

@@ -12,8 +12,8 @@ import { acceptTerms } from "~/renderer/terms";
 import BuyNanoX from "./assets/buyNanoX.webm";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { urls } from "~/config/urls";
-import AnalyticsOptInPrompt from "~/newArch/AnalyticsOptInPrompt/screens";
-import { useAnalyticsOptInPrompt } from "~/newArch/AnalyticsOptInPrompt/hooks/useCommonLogic";
+import AnalyticsOptInPrompt from "LLD/AnalyticsOptInPrompt/screens";
+import { useAnalyticsOptInPrompt } from "LLD/AnalyticsOptInPrompt/hooks/useCommonLogic";
 
 const StyledLink = styled(Text)`
   text-decoration: underline;
@@ -148,7 +148,7 @@ export function Welcome() {
     openAnalitycsOptInPrompt,
     onSubmit,
   } = useAnalyticsOptInPrompt({
-    entryPoint: "Onboarding",
+    entryPoint: "onboarding",
   });
 
   const extendedAnalyticsOptInPromptProps = {
@@ -169,7 +169,7 @@ export function Welcome() {
           </Description>
         </Presentation>
         <ProductHighlight>
-          {!isFeatureFlagsSettingsButtonDisplayed && (
+          {isFeatureFlagsSettingsButtonDisplayed && (
             <Button variant="main" outline mb="24px" onClick={() => history.push("/settings")}>
               {t("settings.title")}
             </Button>
