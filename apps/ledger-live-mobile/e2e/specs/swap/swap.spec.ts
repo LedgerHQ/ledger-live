@@ -47,7 +47,7 @@ describe("Swap", () => {
     await swapPage.sendMax();
     await swapPage.openSourceAccountSelector();
     await swapPage.selectAccount("Bitcoin 1 (legacy)");
-    await swapPage.enterSourceAmount("0.00001");
+    await swapPage.enterSourceAmount("10");
     await swapPage.startExchange();
     await expect(swapPage.termsAcceptButton()).toBeVisible();
     await expect(swapPage.termsCloseButton()).toBeVisible();
