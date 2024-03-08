@@ -428,7 +428,7 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
 
-  lldPortfolioCarousel: {
+  lldActionCarousel: {
     enabled: false,
     params: {
       variant: ABTestingVariants.variantA,

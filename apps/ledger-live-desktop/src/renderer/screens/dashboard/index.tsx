@@ -32,6 +32,7 @@ import ActionContentCards from "~/renderer/screens/dashboard/ActionContentCards"
 import MarketPerformanceWidget from "~/renderer/screens/dashboard/MarketPerformanceWidget";
 import { useMarketPerformanceFeatureFlag } from "~/renderer/actions/marketperformance";
 import { Grid } from "@ledgerhq/react-ui";
+import Carousel from "~/renderer/components/Carousel";
 
 // This forces only one visible top banner at a time
 export const TopBannerContainer = styled.div`
@@ -85,6 +86,7 @@ export default function DashboardPage() {
       </TopBannerContainer>
       <Box gap={"5px"}>
         <RecoverBanner />
+        <Carousel />
         <ActionContentCards variant={ABTestingVariants.variantA} />
       </Box>
       {isPostOnboardingBannerVisible && <PostOnboardingHubBanner />}
