@@ -5,7 +5,10 @@ import { makeAccount, makeTokenAccount } from "../fixtures/common.fixtures";
 import { EvmTransactionEIP1559, EvmTransactionLegacy } from "../../types";
 import { estimateMaxSpendable } from "../../estimateMaxSpendable";
 import * as nodeApi from "../../api/node/rpc.common";
-import { setCoinConfig } from "../../config";
+import { getCoinConfig } from "../../config";
+
+jest.mock("../../config");
+const mockGetConfig = jest.mocked(getCoinConfig);
 
 const currency: CryptoCurrency = {
   ...getCryptoCurrencyById("ethereum"),
@@ -36,7 +39,7 @@ jest.spyOn(nodeApi, "getFeeData").mockImplementation(async () => ({
 
 describe("EVM Family", () => {
   beforeAll(() => {
-    setCoinConfig((): any => {
+    mockGetConfig.mockImplementation((): any => {
       return {
         info: {
           node: {

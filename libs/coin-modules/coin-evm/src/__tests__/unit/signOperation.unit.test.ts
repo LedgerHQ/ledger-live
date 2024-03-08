@@ -10,7 +10,10 @@ import { makeAccount } from "../fixtures/common.fixtures";
 import * as nodeApi from "../../api/node/rpc.common";
 import { getEstimatedFees } from "../../logic";
 import { DEFAULT_NONCE } from "../../createTransaction";
-import { setCoinConfig } from "../../config";
+import { getCoinConfig } from "../../config";
+
+jest.mock("../../config");
+const mockGetConfig = jest.mocked(getCoinConfig);
 
 const currency: CryptoCurrency = {
   ...getCryptoCurrencyById("ethereum"),
@@ -61,7 +64,7 @@ const mockSignerContext: SignerContext<EvmSigner, EvmAddress | EvmSignature> = (
 };
 
 describe("EVM Family", () => {
-  setCoinConfig((): any => {
+  mockGetConfig.mockImplementation((): any => {
     return {
       info: {
         node: {

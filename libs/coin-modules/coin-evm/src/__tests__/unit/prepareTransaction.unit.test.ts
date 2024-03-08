@@ -17,11 +17,14 @@ import {
 import { getEstimatedFees } from "../../logic";
 import { GasOptions, Transaction as EvmTransaction, EvmNftTransaction } from "../../types";
 import * as nftAPI from "../../api/nft";
-import { setCoinConfig } from "../../config";
+import { getCoinConfig } from "../../config";
+
+jest.mock("../../config");
+const mockGetConfig = jest.mocked(getCoinConfig);
 
 describe("EVM Family", () => {
   beforeAll(() => {
-    setCoinConfig((): any => {
+    mockGetConfig.mockImplementation((): any => {
       return {
         info: {
           node: {

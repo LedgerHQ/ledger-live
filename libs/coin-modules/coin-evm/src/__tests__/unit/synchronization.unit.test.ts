@@ -22,10 +22,13 @@ import {
 } from "../fixtures/synchronization.fixtures";
 import { UnknownNode } from "../../errors";
 import * as logic from "../../logic";
-import { setCoinConfig } from "../../config";
+import { getCoinConfig } from "../../config";
 
 jest.mock("../../api/node/rpc.common");
 jest.useFakeTimers().setSystemTime(new Date("2014-04-21"));
+
+jest.mock("../../config");
+const mockGetConfig = jest.mocked(getCoinConfig);
 
 const getAccountShapeParameters: AccountShapeInfo = {
   address: "0xkvn",
@@ -37,7 +40,7 @@ const getAccountShapeParameters: AccountShapeInfo = {
 
 describe("EVM Family", () => {
   beforeEach(() => {
-    setCoinConfig((): any => {
+    mockGetConfig.mockImplementation((): any => {
       return {
         info: {
           node: {
@@ -70,7 +73,7 @@ describe("EVM Family", () => {
       });
 
       it("should throw for currency without ethereumLikeInfo", async () => {
-        setCoinConfig((): any => {
+        mockGetConfig.mockImplementationOnce((): any => {
           return { info: {} };
         });
 
@@ -95,7 +98,7 @@ describe("EVM Family", () => {
       });
 
       it("should throw for currency with unsupported explorer", async () => {
-        setCoinConfig((): any => {
+        mockGetConfig.mockImplementationOnce((): any => {
           return {
             info: {
               explorer: {

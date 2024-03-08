@@ -5,7 +5,10 @@ import { Operation } from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import Prando from "prando";
 import { getStuckAccountAndOperation, isEditableOperation } from "../../operation";
-import { setCoinConfig } from "../../config";
+import { getCoinConfig } from "../../config";
+
+jest.mock("../../config");
+const mockGetConfig = jest.mocked(getCoinConfig);
 
 const ethereum = getCryptoCurrencyById("ethereum");
 const usdc = getTokenById("ethereum/erc20/usd__coin");
@@ -16,7 +19,7 @@ const lobster = getTokenById(
 
 describe("EVM Family", () => {
   beforeEach(() => {
-    setCoinConfig((currency: { id: string }): any => {
+    mockGetConfig.mockImplementation((currency: { id: string }): any => {
       switch (currency.id) {
         case "ethereum": {
           return {
@@ -105,7 +108,7 @@ describe("EVM Family", () => {
         });
 
         it("if the gasTracker is not filled", () => {
-          setCoinConfig((): any => {
+          mockGetConfig.mockImplementationOnce((): any => {
             return { info: {} };
           });
 

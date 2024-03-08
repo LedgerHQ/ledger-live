@@ -19,9 +19,12 @@ import {
   erc20TokenTransactionRaw,
   erc721TokenTransactionRaw,
 } from "../fixtures/transaction.fixtures";
-import { setCoinConfig } from "../../config";
+import { getCoinConfig } from "../../config";
 
 jest.useFakeTimers();
+
+jest.mock("../../config");
+const mockGetConfig = jest.mocked(getCoinConfig);
 
 const currency: CryptoCurrency = {
   ...getCryptoCurrencyById("ethereum"),
@@ -47,7 +50,7 @@ const mockedBroadcastResponse = "0xH4sH";
 
 describe("EVM Family", () => {
   beforeAll(() => {
-    setCoinConfig((): any => {
+    mockGetConfig.mockImplementation((): any => {
       return {
         info: {
           node: {
