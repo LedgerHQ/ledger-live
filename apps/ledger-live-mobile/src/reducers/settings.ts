@@ -469,7 +469,8 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
 
   [SettingsActionTypes.SET_CUSTOM_IMAGE_TYPE]: (state, action) => ({
     ...state,
-    customLockScreenType: (action as Action<SettingsSetCustomImageTypePayload>).payload.customLockScreenType,
+    customLockScreenType: (action as Action<SettingsSetCustomImageTypePayload>).payload
+      .customLockScreenType,
   }),
 
   [SettingsActionTypes.SET_HAS_SEEN_STAX_ENABLED_NFTS_POPUP]: (state, action) => ({
