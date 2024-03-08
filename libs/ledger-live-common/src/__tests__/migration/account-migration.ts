@@ -296,11 +296,13 @@ const testSyncAccount = async (account: Account) => {
     const outputFilePath = outputFolderPath
       ? `${outputFolderPath}/${stdout.trim()}.json`
       : `${stdout.trim()}.json`;
+
     console.log("Writing output....");
     writeFileSync(outputFilePath, outputContent);
     console.log(`File created: ${outputFilePath}`);
-    console.log("Done");
   }
+
+  console.log("Done");
 
   return response;
 })();
