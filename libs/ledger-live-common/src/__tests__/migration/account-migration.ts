@@ -242,11 +242,15 @@ const testSyncAccount = async (account: Account) => {
   });
 
   const migrationAddresses = inputFile ? inputAccounts : defaultAddresses;
-  const filteredAddresses = migrationAddresses.filter(addresses => {
-    if (currencyIds) {
-      return currencyIds.includes(addresses.currencyId);
-    }
-  });
+  const filteredAddresses = (migrationAddresses as { currencyId: string }[]).filter(
+    ({ currencyId }) => {
+      if (currencyIds) {
+        return currencyIds.includes(currencyId);
+      }
+
+      return true;
+    },
+  );
 
   let syncedAccounts: PromiseSettledResult<AccountRaw>[] = [];
 
