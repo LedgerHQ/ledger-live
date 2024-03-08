@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import styled from "styled-components/native";
 import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import {
@@ -110,7 +110,10 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
     params.deviceModelId ?? DeviceModelId.stax,
   );
 
-  const targetDisplayDimensions = getScreenVisibleAreaDimensions(deviceModelId);
+  const targetDisplayDimensions = useMemo(
+    () => getScreenVisibleAreaDimensions(deviceModelId),
+    [deviceModelId],
+  );
 
   const isNftMetadata = "nftMetadataParams" in params;
   const isImageUrl = "imageUrl" in params;
