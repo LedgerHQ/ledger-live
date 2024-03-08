@@ -1,12 +1,15 @@
 import { isTransactionConfirmed } from "../../../editTransaction/isTransactionConfirmed";
 import * as nodeApi from "../../../api/node/rpc.common";
-import { setCoinConfig } from "../../../config";
+import { getCoinConfig } from "../../../config";
+
+jest.mock("../../../../config");
+const mockGetConfig = jest.mocked(getCoinConfig);
 
 describe("isTransactionConfirmed", () => {
   const mockedNodeApi = jest.mocked(nodeApi);
 
   beforeEach(() => {
-    setCoinConfig((): any => {
+    mockGetConfig.mockImplementation((): any => {
       return {
         info: {
           node: { type: "external" },
