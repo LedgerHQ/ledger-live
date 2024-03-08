@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import styled from "styled-components";
 import { useRefreshAccountsOrderingEffect } from "~/renderer/actions/general";
 import { Card } from "~/renderer/components/Box";
-import usePortfolioCards from "~/renderer/hooks/usePortfolioCards";
+import usePortfolioCards from "~/renderer/hooks/useActionCards";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { hasInstalledAppsSelector } from "~/renderer/reducers/settings";
 

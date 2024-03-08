@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ActionCard from "~/renderer/components/ContentCards/ActionCard";
-import { portfolioContentCardSelector } from "~/renderer/reducers/dynamicContent";
+import { actionContentCardSelector } from "~/renderer/reducers/dynamicContent";
 import * as braze from "@braze/web-sdk";
-import { setPortfolioCards } from "~/renderer/actions/dynamicContent";
+import { setActionCards } from "~/renderer/actions/dynamicContent";
 import { openURL } from "~/renderer/linking";
 
-const usePortfolioCards = () => {
+const useActionCards = () => {
   const dispatch = useDispatch();
   const [cachedContentCards, setCachedContentCards] = useState(braze.getCachedContentCards().cards);
-  const portfolioCards = useSelector(portfolioContentCardSelector);
+  const actionCards = useSelector(actionContentCardSelector);
 
   const findCard = (cardId: string) => cachedContentCards.find(card => card.id === cardId);
 
@@ -24,7 +24,7 @@ const usePortfolioCards = () => {
     if (currentCard) {
       braze.logCardDismissal(currentCard);
       setCachedContentCards(cachedContentCards.filter(n => n.id !== currentCard.id));
-      dispatch(setPortfolioCards(portfolioCards.filter(n => n.id !== currentCard.id)));
+      dispatch(setActionCards(actionCards.filter(n => n.id !== currentCard.id)));
     }
   };
 
@@ -37,7 +37,7 @@ const usePortfolioCards = () => {
     }
   };
 
-  const slides = portfolioCards.map(slide => (
+  const slides = actionCards.map(slide => (
     <ActionCard
       key={slide.id}
       img={slide.image}
@@ -60,4 +60,4 @@ const usePortfolioCards = () => {
   return slides;
 };
 
-export default usePortfolioCards;
+export default useActionCards;

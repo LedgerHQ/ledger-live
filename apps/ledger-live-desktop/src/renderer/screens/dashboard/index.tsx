@@ -28,7 +28,7 @@ import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAle
 import PostOnboardingHubBanner from "~/renderer/components/PostOnboardingHub/PostOnboardingHubBanner";
 import FeaturedButtons from "~/renderer/screens/dashboard/FeaturedButtons";
 import { ABTestingVariants, AccountLike, Operation } from "@ledgerhq/types-live";
-import PortfolioContentCards from "~/renderer/screens/dashboard/PortfolioContentCards";
+import ActionContentCards from "~/renderer/screens/dashboard/ActionContentCards";
 import MarketPerformanceWidget from "~/renderer/screens/dashboard/MarketPerformanceWidget";
 import { useMarketPerformanceFeatureFlag } from "~/renderer/actions/marketperformance";
 import { Grid } from "@ledgerhq/react-ui";
@@ -85,7 +85,7 @@ export default function DashboardPage() {
       </TopBannerContainer>
       <Box gap={"5px"}>
         <RecoverBanner />
-        <PortfolioContentCards variant={ABTestingVariants.variantA} />
+        <ActionContentCards variant={ABTestingVariants.variantA} />
       </Box>
       {isPostOnboardingBannerVisible && <PostOnboardingHubBanner />}
       <FeaturedButtons />
