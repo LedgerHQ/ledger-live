@@ -4,4 +4,4 @@ export type CommonCurrencyConfig = {
   };
 };
 
-export type CurrencyConfig<Config = Record<string, unknown>> = CommonCurrencyConfig & Config;
+export type CurrencyConfig<Config extends Record<string, unknown>> = CommonCurrencyConfig & Config;
