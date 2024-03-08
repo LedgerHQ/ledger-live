@@ -4,6 +4,7 @@
     "src/bridge/deviceTransactionConfig.ts",
     "src/bridge/formatters.ts",
     "src/network/sidecar.fixture.ts",
+    "src/network/sidecar.mock.ts",
     "src/signer/index.ts",
     "src/test/cli.ts",
     "src/test/index.ts",
