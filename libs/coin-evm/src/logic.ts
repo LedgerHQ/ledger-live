@@ -89,7 +89,6 @@ const updatableSubAccountProperties: { name: string; isOps: boolean }[] = [
   { name: "balance", isOps: false },
   { name: "spendableBalance", isOps: false },
   { name: "balanceHistoryCache", isOps: false },
-  { name: "swapHistory", isOps: false },
   { name: "operations", isOps: true },
   { name: "pendingOperations", isOps: true },
 ];
