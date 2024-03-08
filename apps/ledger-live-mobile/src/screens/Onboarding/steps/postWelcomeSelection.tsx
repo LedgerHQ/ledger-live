@@ -29,7 +29,7 @@ function PostWelcomeSelection() {
   const openModal = () => {
     setModalOpen(true);
     track("button_clicked", {
-      button: "I don't have a Ledger yet",
+      button: "I don’t have a Ledger yet",
     });
   };
 
