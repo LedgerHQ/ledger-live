@@ -253,6 +253,9 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/errors
+      '@ledgerhq/ethereum-provider':
+        specifier: workspace:^
+        version: link:../../libs/ethereum-provider
       '@ledgerhq/hw-transport':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/hw-transport
@@ -752,6 +755,9 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/errors
+      '@ledgerhq/ethereum-provider':
+        specifier: workspace:^
+        version: link:../../libs/ethereum-provider
       '@ledgerhq/hw-transport':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/hw-transport
@@ -2227,6 +2233,34 @@ importers:
         specifier: ^29.1.1
         version: 29.1.1(jest@29.7.0)(typescript@5.1.3)
 
+  libs/ethereum-provider:
+    dependencies:
+      events:
+        specifier: ^3.3.0
+        version: 3.3.0
+    devDependencies:
+      '@rollup/plugin-commonjs':
+        specifier: ^25.0.7
+        version: 25.0.7(rollup@4.13.2)
+      '@rollup/plugin-node-resolve':
+        specifier: ^15.2.3
+        version: 15.2.3(rollup@4.13.2)
+      '@types/events':
+        specifier: ^3.0.3
+        version: 3.0.3
+      esbuild:
+        specifier: ^0.19.0
+        version: 0.19.12
+      rollup:
+        specifier: ^4.12.1
+        version: 4.13.2
+      rollup-plugin-dts:
+        specifier: ^6.1.0
+        version: 6.1.0(rollup@4.13.2)(typescript@5.1.3)
+      rollup-plugin-esbuild:
+        specifier: ^6.1.1
+        version: 6.1.1(esbuild@0.19.12)(rollup@4.13.2)
+
   libs/evm-tools:
     dependencies:
       '@ledgerhq/cryptoassets':
@@ -2271,10 +2305,10 @@ importers:
     dependencies:
       '@ledgerhq/wallet-api-client':
         specifier: ^1.5.5
-        version: 1.5.5
+        version: 1.5.6
       '@ledgerhq/wallet-api-core':
         specifier: ^1.7.2
-        version: 1.7.2
+        version: 1.8.0
     devDependencies:
       '@types/node':
         specifier: ^20.2.5
@@ -2455,16 +2489,16 @@ importers:
         version: link:../ledgerjs/packages/logs
       '@ledgerhq/wallet-api-client':
         specifier: ^1.5.5
-        version: 1.5.5
+        version: 1.5.6
       '@ledgerhq/wallet-api-core':
         specifier: ^1.7.2
-        version: 1.7.2
+        version: 1.8.0
       '@ledgerhq/wallet-api-exchange-module':
         specifier: workspace:^
         version: link:../exchange-module
       '@ledgerhq/wallet-api-server':
         specifier: ^1.5.6
-        version: 1.5.6(react@18.2.0)(rxjs@7.8.1)
+        version: 1.5.7(react@18.2.0)(rxjs@7.8.1)
       '@solana/spl-token':
         specifier: ^0.3.7
         version: 0.3.8(@solana/web3.js@1.77.3)
@@ -2602,7 +2636,7 @@ importers:
         version: 4.0.1(ws@7.5.7)
       jotai:
         specifier: ^2.7.0
-        version: 2.7.0(@types/react@18.2.28)(react@18.2.0)
+        version: 2.7.2(@types/react@18.2.28)(react@18.2.0)
       json-rpc-2.0:
         specifier: ^0.2.19
         version: 0.2.19
@@ -5099,7 +5133,7 @@ importers:
         version: 7.5.3(react-dom@18.2.0)(react@18.2.0)(typescript@5.1.3)
       '@storybook/react-native':
         specifier: 6.5.7
-        version: 6.5.7(@react-native-async-storage/async-storage@1.17.12)(react-dom@18.2.0)(react-native-safe-area-context@4.5.0)(react-native@0.72.6)(react@18.2.0)(typescript@5.1.3)(webpack@5.76.1)
+        version: 6.5.7(@react-native-async-storage/async-storage@1.17.12)(@types/react@18.2.28)(react-dom@18.2.0)(react-native-safe-area-context@4.5.0)(react-native@0.72.6)(react@18.2.0)(typescript@5.1.3)(webpack@5.76.1)
       '@storybook/react-webpack5':
         specifier: ^7.5.3
         version: 7.5.3(@babel/core@7.23.2)(metro@0.80.0)(react-dom@18.2.0)(react@18.2.0)(typescript@5.1.3)(webpack-dev-server@4.12.0)
@@ -5532,13 +5566,13 @@ importers:
         version: link:../../libs/ledger-live-common
       '@ledgerhq/wallet-api-client':
         specifier: ^1.5.5
-        version: 1.5.5
+        version: 1.5.6
       '@ledgerhq/wallet-api-client-react':
         specifier: ^1.3.5
-        version: 1.3.5(react@18.2.0)
+        version: 1.3.6(react@18.2.0)
       '@ledgerhq/wallet-api-simulator':
         specifier: ^1.1.10
-        version: 1.1.11(react@18.2.0)
+        version: 1.1.12(react@18.2.0)
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
@@ -13268,7 +13302,6 @@ packages:
     cpu: [ppc64]
     os: [aix]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/android-arm64@0.18.20:
@@ -13286,7 +13319,6 @@ packages:
     cpu: [arm64]
     os: [android]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/android-arm64@0.19.3:
@@ -13313,7 +13345,6 @@ packages:
     cpu: [arm]
     os: [android]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/android-arm@0.19.3:
@@ -13340,7 +13371,6 @@ packages:
     cpu: [x64]
     os: [android]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/android-x64@0.19.3:
@@ -13367,7 +13397,6 @@ packages:
     cpu: [arm64]
     os: [darwin]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/darwin-arm64@0.19.3:
@@ -13394,7 +13423,6 @@ packages:
     cpu: [x64]
     os: [darwin]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/darwin-x64@0.19.3:
@@ -13421,7 +13449,6 @@ packages:
     cpu: [arm64]
     os: [freebsd]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/freebsd-arm64@0.19.3:
@@ -13448,7 +13475,6 @@ packages:
     cpu: [x64]
     os: [freebsd]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/freebsd-x64@0.19.3:
@@ -13475,7 +13501,6 @@ packages:
     cpu: [arm64]
     os: [linux]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/linux-arm64@0.19.3:
@@ -13502,7 +13527,6 @@ packages:
     cpu: [arm]
     os: [linux]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/linux-arm@0.19.3:
@@ -13529,7 +13553,6 @@ packages:
     cpu: [ia32]
     os: [linux]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/linux-ia32@0.19.3:
@@ -13556,7 +13579,6 @@ packages:
     cpu: [loong64]
     os: [linux]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/linux-loong64@0.19.3:
@@ -13583,7 +13605,6 @@ packages:
     cpu: [mips64el]
     os: [linux]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/linux-mips64el@0.19.3:
@@ -13610,7 +13631,6 @@ packages:
     cpu: [ppc64]
     os: [linux]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/linux-ppc64@0.19.3:
@@ -13637,7 +13657,6 @@ packages:
     cpu: [riscv64]
     os: [linux]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/linux-riscv64@0.19.3:
@@ -13664,7 +13683,6 @@ packages:
     cpu: [s390x]
     os: [linux]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/linux-s390x@0.19.3:
@@ -13691,7 +13709,6 @@ packages:
     cpu: [x64]
     os: [linux]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/linux-x64@0.19.3:
@@ -13718,7 +13735,6 @@ packages:
     cpu: [x64]
     os: [netbsd]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/netbsd-x64@0.19.3:
@@ -13745,7 +13761,6 @@ packages:
     cpu: [x64]
     os: [openbsd]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/openbsd-x64@0.19.3:
@@ -13772,7 +13787,6 @@ packages:
     cpu: [x64]
     os: [sunos]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/sunos-x64@0.19.3:
@@ -13799,7 +13813,6 @@ packages:
     cpu: [arm64]
     os: [win32]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/win32-arm64@0.19.3:
@@ -13826,7 +13839,6 @@ packages:
     cpu: [ia32]
     os: [win32]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/win32-ia32@0.19.3:
@@ -13853,7 +13865,6 @@ packages:
     cpu: [x64]
     os: [win32]
     requiresBuild: true
-    dev: false
     optional: true
 
   /@esbuild/win32-x64@0.19.3:
@@ -14653,8 +14664,6 @@ packages:
       metro-core: '*'
       minimatch: '*'
     peerDependenciesMeta:
-      '@expo/metro-config':
-        optional: true
       glob:
         optional: true
       metro:
@@ -14744,8 +14753,6 @@ packages:
       metro-core: '*'
       minimatch: '*'
     peerDependenciesMeta:
-      '@expo/metro-config':
-        optional: true
       glob:
         optional: true
       metro:
@@ -16942,36 +16949,6 @@ packages:
     resolution: {integrity: sha512-GaHYm+c0O9MjZRu0ongGBRbinu8gVAMd2UZjji6jVmqKtZluZnptXGWhz1E8j8D2HJ3f/yMxKAUC0b+57wncIw==}
     dev: true
 
-<<<<<<< HEAD
-=======
-  /@ledgerhq/devices@5.51.1:
-    resolution: {integrity: sha512-4w+P0VkbjzEXC7kv8T1GJ/9AVaP9I6uasMZ/JcdwZBS3qwvKo5A5z9uGhP5c7TvItzcmPb44b5Mw2kT+WjUuAA==}
-    dependencies:
-      '@ledgerhq/errors': 5.50.0
-      '@ledgerhq/logs': 5.50.0
-      rxjs: 6.6.7
-      semver: 7.5.4
-    dev: false
-
-  /@ledgerhq/devices@6.27.1:
-    resolution: {integrity: sha512-jX++oy89jtv7Dp2X6gwt3MMkoajel80JFWcdc0HCouwDsV1mVJ3SQdwl/bQU0zd8HI6KebvUP95QTwbQLLK/RQ==}
-    dependencies:
-      '@ledgerhq/errors': 6.16.0
-      '@ledgerhq/logs': 6.12.0
-      rxjs: 6.6.7
-      semver: 7.5.4
-    dev: false
-
-  /@ledgerhq/devices@8.1.0:
-    resolution: {integrity: sha512-Vsdv84Nwzee0qhObdwVzhkxW1+h2cFoD1AWuU8N1V/2OJKiVS35A1qloSCF0oHapg+KTJvim8tr5rRvlkCYyzQ==}
-    dependencies:
-      '@ledgerhq/errors': 6.16.0
-      '@ledgerhq/logs': 6.12.0
-      rxjs: 7.8.1
-      semver: 7.6.0
-    dev: false
-
->>>>>>> 0a4efa243f (feat: add account selector for dapp on webview)
   /@ledgerhq/errors@5.50.0:
     resolution: {integrity: sha512-gu6aJ/BHuRlpU7kgVpy2vcYk6atjB4iauP2ymF7Gk0ez0Y/6VSMVSJvubeEQN+IV60+OBK0JgeIZG7OiHaw8ow==}
     dev: false
@@ -17057,25 +17034,25 @@ packages:
     resolution: {integrity: sha512-K3SETlNUJAjU/bN6dNJf56gfpxOhGldmClezIU5puw1PcGDvNf4y8vmEouVz5Htc2a/0vetklf0eIQD8Wk3Hww==}
     dev: false
 
-  /@ledgerhq/wallet-api-client-react@1.3.5(react@18.2.0):
-    resolution: {integrity: sha512-I14H4OWlT1RjYTyx2NU++mECrQTOIJR6h4rbpxy7FRpBYyeYYFpylfpmNWfGryIjUDemhiB1K07R/7EhC2lhyA==}
+  /@ledgerhq/wallet-api-client-react@1.3.6(react@18.2.0):
+    resolution: {integrity: sha512-1iQDxofp+l+xb4wqAqFc5/iNZ1k2wHk8SMnzl5MCTL/xZI+Y9YLfTnlBcqaTIc/T7ed2/NbWq9iWtM7bdKaz6A==}
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18
     dependencies:
-      '@ledgerhq/wallet-api-client': 1.5.5
+      '@ledgerhq/wallet-api-client': 1.5.6
       react: 18.2.0
     dev: false
 
-  /@ledgerhq/wallet-api-client@1.5.5:
-    resolution: {integrity: sha512-xZTVotu6lM7LpRiC+Toc4dcsgQe81A6wVd78WlzVrCCWcwhj95Xyz97w3j18ETn2d9Gqacsd+hAsHajJjmH/2w==}
+  /@ledgerhq/wallet-api-client@1.5.6:
+    resolution: {integrity: sha512-tN6/hkAPnzKC2sOl+VlWROkNdTSV5X9ocjO7DxcNoIx3zplD/LNBLuf7/kI524/OK3q/Mec7y30KvsHPoQSVyg==}
     dependencies:
       '@ledgerhq/hw-transport': 6.30.5
-      '@ledgerhq/wallet-api-core': 1.7.2
+      '@ledgerhq/wallet-api-core': 1.8.0
       bignumber.js: 9.1.2
     dev: false
 
-  /@ledgerhq/wallet-api-core@1.7.2:
-    resolution: {integrity: sha512-McleNF0FlL7xIuAIWozfpjDabhjbkNL3pvxRVGc84rVrv0G03RcKVuXqQKY7L+5zxbSQ7m4qxQnPXlaLaekk1w==}
+  /@ledgerhq/wallet-api-core@1.8.0:
+    resolution: {integrity: sha512-G4yLDFLKXsPrPIGOJDDb3pRcfklS2340H6QQNMNeQOYeGR2KuWedSPNCCRkU77BaKK7o4khNTOj8uL+TcpMBog==}
     dependencies:
       '@ledgerhq/errors': 6.16.3
       bignumber.js: 9.1.2
@@ -17083,8 +17060,8 @@ packages:
       zod: 3.22.4
     dev: false
 
-  /@ledgerhq/wallet-api-server@1.5.6(react@18.2.0)(rxjs@7.8.1):
-    resolution: {integrity: sha512-gteU6E7+X1XE+Qi6JYr7kTuwH9FCwcSDDNFjYTA/xBRBuAGa0Q7z1MQTHrdOshdL8H9hwzVwKvBzQD0hgsYHkg==}
+  /@ledgerhq/wallet-api-server@1.5.7(react@18.2.0)(rxjs@7.8.1):
+    resolution: {integrity: sha512-tSYMkthXcLER4JZtR4VSrANYtJ7wCeWlFTekmhoYBygFMVzwjk1ARDw/N0O6ymRG/DRCKsncX+2lMutHHpAFUg==}
     peerDependencies:
       react: ^17.x || ^18.x
       rxjs: ^7.x
@@ -17092,20 +17069,20 @@ packages:
       react:
         optional: true
     dependencies:
-      '@ledgerhq/wallet-api-core': 1.7.2
+      '@ledgerhq/wallet-api-core': 1.8.0
       bignumber.js: 9.1.2
       picomatch: 4.0.1
       react: 18.2.0
       rxjs: 7.8.1
     dev: false
 
-  /@ledgerhq/wallet-api-simulator@1.1.11(react@18.2.0):
-    resolution: {integrity: sha512-/Mq4y0YVW05B7JIjPjm2Olpy+fEv3/qDoYFGOdHVCp4cPjRB0ADGt3hFaJbU3VmoD2dTEDPPrvDcgOEFE5wWDA==}
+  /@ledgerhq/wallet-api-simulator@1.1.12(react@18.2.0):
+    resolution: {integrity: sha512-7MllfwM6iUXhB6cCUS3hgAnxaVdmIU8tPQuYGH4Hyg0T24cDjKbbsoKTvZY+/IKb99KWGs2EstB1Toh2RuFhCQ==}
     dependencies:
       '@ledgerhq/hw-transport': 6.30.5
-      '@ledgerhq/wallet-api-client': 1.5.5
-      '@ledgerhq/wallet-api-core': 1.7.2
-      '@ledgerhq/wallet-api-server': 1.5.6(react@18.2.0)(rxjs@7.8.1)
+      '@ledgerhq/wallet-api-client': 1.5.6
+      '@ledgerhq/wallet-api-core': 1.8.0
+      '@ledgerhq/wallet-api-server': 1.5.7(react@18.2.0)(rxjs@7.8.1)
       rxjs: 7.8.1
       ws: 8.16.0
     transitivePeerDependencies:
@@ -20073,9 +20050,6 @@ packages:
 
   /@react-native-community/cli-tools@11.3.7:
     resolution: {integrity: sha512-peyhP4TV6Ps1hk+MBHTFaIR1eI3u+OfGBvr5r0wPwo3FAJvldRinMgcB/TcCcOBXVORu7ba1XYjkubPeYcqAyA==}
-    peerDependenciesMeta:
-      find-up:
-        optional: true
     dependencies:
       appdirsjs: 1.2.6
       chalk: 4.1.2
@@ -20091,9 +20065,6 @@ packages:
 
   /@react-native-community/cli-tools@11.3.9:
     resolution: {integrity: sha512-qWEUo/HQll/aj5xHYCw6itXGkPgultxTHa4UYSaBIRSfU15aSiwonJ/JP7fe+fHKbaFh6IdhaaRhj4ArfEOxuQ==}
-    peerDependenciesMeta:
-      find-up:
-        optional: true
     dependencies:
       appdirsjs: 1.2.6
       chalk: 4.1.2
@@ -20662,6 +20633,24 @@ packages:
       rollup: 2.79.1
     dev: false
 
+  /@rollup/plugin-commonjs@25.0.7(rollup@4.13.2):
+    resolution: {integrity: sha512-nEvcR+LRjEjsaSsc4x3XZfCCvZIaSMenZu/OiwOKGN2UhQpAYI7ru7czFvyWbErlpoGjnSX3D5Ch5FcMA3kRWQ==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      rollup: ^2.68.0||^3.0.0||^4.0.0
+    peerDependenciesMeta:
+      rollup:
+        optional: true
+    dependencies:
+      '@rollup/pluginutils': 5.1.0(rollup@4.13.2)
+      commondir: 1.0.1
+      estree-walker: 2.0.2
+      glob: 8.0.3
+      is-reference: 1.2.1
+      magic-string: 0.30.8
+      rollup: 4.13.2
+    dev: true
+
   /@rollup/plugin-node-resolve@11.2.1(rollup@2.79.1):
     resolution: {integrity: sha512-yc2n43jcqVyGE2sqV5/YCmocy9ArjVAP/BeXyTtADTBBX6V0e5UMqwO8CdQ0kzjb6zu5P1qMzsScCMRvE9OlVg==}
     engines: {node: '>= 10.0.0'}
@@ -20676,6 +20665,24 @@ packages:
       resolve: 1.22.8
       rollup: 2.79.1
     dev: false
+
+  /@rollup/plugin-node-resolve@15.2.3(rollup@4.13.2):
+    resolution: {integrity: sha512-j/lym8nf5E21LwBT4Df1VD6hRO2L2iwUeUmP7litikRsVp1H6NWx20NEp0Y7su+7XGc476GnXXc4kFeZNGmaSQ==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      rollup: ^2.78.0||^3.0.0||^4.0.0
+    peerDependenciesMeta:
+      rollup:
+        optional: true
+    dependencies:
+      '@rollup/pluginutils': 5.1.0(rollup@4.13.2)
+      '@types/resolve': 1.20.2
+      deepmerge: 4.3.1
+      is-builtin-module: 3.2.1
+      is-module: 1.0.0
+      resolve: 1.22.8
+      rollup: 4.13.2
+    dev: true
 
   /@rollup/plugin-replace@2.4.2(rollup@2.79.1):
     resolution: {integrity: sha512-IGcu+cydlUMZ5En85jxHH4qj2hta/11BHq95iHEyb2sbgiN0eCdzvUcHw5gt9pBL5lTi4JDYJ1acCoMGpTvEZg==}
@@ -20698,6 +20705,141 @@ packages:
       picomatch: 2.3.1
       rollup: 2.79.1
     dev: false
+
+  /@rollup/pluginutils@5.1.0(rollup@4.13.2):
+    resolution: {integrity: sha512-XTIWOPPcpvyKI6L1NHo0lFlCyznUEyPmPY1mc3KpPVDYulHSTvyeLNVW00QTLIAFNhR3kYnJTQHeGqU4M3n09g==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      rollup: ^1.20.0||^2.0.0||^3.0.0||^4.0.0
+    peerDependenciesMeta:
+      rollup:
+        optional: true
+    dependencies:
+      '@types/estree': 1.0.3
+      estree-walker: 2.0.2
+      picomatch: 2.3.1
+      rollup: 4.13.2
+    dev: true
+
+  /@rollup/rollup-android-arm-eabi@4.13.2:
+    resolution: {integrity: sha512-3XFIDKWMFZrMnao1mJhnOT1h2g0169Os848NhhmGweEcfJ4rCi+3yMCOLG4zA61rbJdkcrM/DjVZm9Hg5p5w7g==}
+    cpu: [arm]
+    os: [android]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@rollup/rollup-android-arm64@4.13.2:
+    resolution: {integrity: sha512-GdxxXbAuM7Y/YQM9/TwwP+L0omeE/lJAR1J+olu36c3LqqZEBdsIWeQ91KBe6nxwOnb06Xh7JS2U5ooWU5/LgQ==}
+    cpu: [arm64]
+    os: [android]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@rollup/rollup-darwin-arm64@4.13.2:
+    resolution: {integrity: sha512-mCMlpzlBgOTdaFs83I4XRr8wNPveJiJX1RLfv4hggyIVhfB5mJfN4P8Z6yKh+oE4Luz+qq1P3kVdWrCKcMYrrA==}
+    cpu: [arm64]
+    os: [darwin]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@rollup/rollup-darwin-x64@4.13.2:
+    resolution: {integrity: sha512-yUoEvnH0FBef/NbB1u6d3HNGyruAKnN74LrPAfDQL3O32e3k3OSfLrPgSJmgb3PJrBZWfPyt6m4ZhAFa2nZp2A==}
+    cpu: [x64]
+    os: [darwin]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@rollup/rollup-linux-arm-gnueabihf@4.13.2:
+    resolution: {integrity: sha512-GYbLs5ErswU/Xs7aGXqzc3RrdEjKdmoCrgzhJWyFL0r5fL3qd1NPcDKDowDnmcoSiGJeU68/Vy+OMUluRxPiLQ==}
+    cpu: [arm]
+    os: [linux]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@rollup/rollup-linux-arm64-gnu@4.13.2:
+    resolution: {integrity: sha512-L1+D8/wqGnKQIlh4Zre9i4R4b4noxzH5DDciyahX4oOz62CphY7WDWqJoQ66zNR4oScLNOqQJfNSIAe/6TPUmQ==}
+    cpu: [arm64]
+    os: [linux]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@rollup/rollup-linux-arm64-musl@4.13.2:
+    resolution: {integrity: sha512-tK5eoKFkXdz6vjfkSTCupUzCo40xueTOiOO6PeEIadlNBkadH1wNOH8ILCPIl8by/Gmb5AGAeQOFeLev7iZDOA==}
+    cpu: [arm64]
+    os: [linux]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@rollup/rollup-linux-powerpc64le-gnu@4.13.2:
+    resolution: {integrity: sha512-zvXvAUGGEYi6tYhcDmb9wlOckVbuD+7z3mzInCSTACJ4DQrdSLPNUeDIcAQW39M3q6PDquqLWu7pnO39uSMRzQ==}
+    cpu: [ppc64le]
+    os: [linux]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@rollup/rollup-linux-riscv64-gnu@4.13.2:
+    resolution: {integrity: sha512-C3GSKvMtdudHCN5HdmAMSRYR2kkhgdOfye4w0xzyii7lebVr4riCgmM6lRiSCnJn2w1Xz7ZZzHKuLrjx5620kw==}
+    cpu: [riscv64]
+    os: [linux]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@rollup/rollup-linux-s390x-gnu@4.13.2:
+    resolution: {integrity: sha512-l4U0KDFwzD36j7HdfJ5/TveEQ1fUTjFFQP5qIt9gBqBgu1G8/kCaq5Ok05kd5TG9F8Lltf3MoYsUMw3rNlJ0Yg==}
+    cpu: [s390x]
+    os: [linux]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@rollup/rollup-linux-x64-gnu@4.13.2:
+    resolution: {integrity: sha512-xXMLUAMzrtsvh3cZ448vbXqlUa7ZL8z0MwHp63K2IIID2+DeP5iWIT6g1SN7hg1VxPzqx0xZdiDM9l4n9LRU1A==}
+    cpu: [x64]
+    os: [linux]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@rollup/rollup-linux-x64-musl@4.13.2:
+    resolution: {integrity: sha512-M/JYAWickafUijWPai4ehrjzVPKRCyDb1SLuO+ZyPfoXgeCEAlgPkNXewFZx0zcnoIe3ay4UjXIMdXQXOZXWqA==}
+    cpu: [x64]
+    os: [linux]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@rollup/rollup-win32-arm64-msvc@4.13.2:
+    resolution: {integrity: sha512-2YWwoVg9KRkIKaXSh0mz3NmfurpmYoBBTAXA9qt7VXk0Xy12PoOP40EFuau+ajgALbbhi4uTj3tSG3tVseCjuA==}
+    cpu: [arm64]
+    os: [win32]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@rollup/rollup-win32-ia32-msvc@4.13.2:
+    resolution: {integrity: sha512-2FSsE9aQ6OWD20E498NYKEQLneShWes0NGMPQwxWOdws35qQXH+FplabOSP5zEe1pVjurSDOGEVCE2agFwSEsw==}
+    cpu: [ia32]
+    os: [win32]
+    requiresBuild: true
+    dev: true
+    optional: true
+
+  /@rollup/rollup-win32-x64-msvc@4.13.2:
+    resolution: {integrity: sha512-7h7J2nokcdPePdKykd8wtc8QqqkqxIrUz7MHj6aNr8waBRU//NLDVnNjQnqQO6fqtjrtCdftpbTuOKAyrAQETQ==}
+    cpu: [x64]
+    os: [win32]
+    requiresBuild: true
+    dev: true
+    optional: true
 
   /@rushstack/eslint-patch@1.5.1:
     resolution: {integrity: sha512-6i/8UoL0P5y4leBIGzvkZdS85RDMG9y1ihZzmTZQ5LdHUYmZ7pKFoj8X0236s3lusPs1Fa5HTQUpwI+UfTcmeA==}
@@ -23500,7 +23642,7 @@ packages:
       react-docgen-typescript: 2.2.2(typescript@5.1.3)
       tslib: 2.6.2
       typescript: 5.1.3
-      webpack: 5.89.0(esbuild@0.19.3)
+      webpack: 5.89.0(metro@0.80.0)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -23525,7 +23667,7 @@ packages:
       react-native: 0.72.6(@babel/core@7.23.2)(@babel/preset-env@7.17.10)(metro-resolver@0.80.0)(metro-transform-worker@0.80.0)(react@18.2.0)
     dev: true
 
-  /@storybook/react-native@6.5.7(@react-native-async-storage/async-storage@1.17.12)(react-dom@18.2.0)(react-native-safe-area-context@4.5.0)(react-native@0.72.6)(react@18.2.0)(typescript@5.1.3)(webpack@5.76.1):
+  /@storybook/react-native@6.5.7(@react-native-async-storage/async-storage@1.17.12)(@types/react@18.2.28)(react-dom@18.2.0)(react-native-safe-area-context@4.5.0)(react-native@0.72.6)(react@18.2.0)(typescript@5.1.3)(webpack@5.76.1):
     resolution: {integrity: sha512-6uB/Yc2gkOGz4Amf2hikjy4L7HnWIVfOqoADE4PpIMZzRCnm6+gTaUXsuTOHr3gZ5NFH1bN1YXjpSly2d4I0Kw==}
     engines: {node: '>=8.0.0'}
     hasBin: true
@@ -23550,7 +23692,7 @@ packages:
       commander: 8.3.0
       deepmerge: 4.3.1
       glob: 7.2.3
-      jotai: 2.0.3(react@18.2.0)
+      jotai: 2.7.2(@types/react@18.2.28)(react@18.2.0)
       prettier: 2.8.8
       react: 18.2.0
       react-native: 0.72.6(@babel/core@7.23.2)(@babel/preset-env@7.17.10)(metro-resolver@0.80.0)(metro-transform-worker@0.80.0)(react@18.2.0)
@@ -23558,6 +23700,7 @@ packages:
       react-native-swipe-gestures: 1.0.5
       util: 0.12.5
     transitivePeerDependencies:
+      - '@types/react'
       - react-dom
       - typescript
       - webpack
@@ -24898,12 +25041,20 @@ packages:
   /@types/estree@1.0.3:
     resolution: {integrity: sha512-CS2rOaoQ/eAgAfcTfq6amKG7bsN+EMcgGY4FAFQdvSj2y1ixvOZTUA9mOtCai7E1SYu283XNw7urKK30nP3wkQ==}
 
+  /@types/estree@1.0.5:
+    resolution: {integrity: sha512-/kYRxGDLWzHOB7q+wtSUQlFrtcdUccpfy+X+9iMBpHK8QLLhx2wIPYuS5DYtR9Wa/YlZAbIovy7qVdB1Aq6Lyw==}
+    dev: true
+
   /@types/ethereumjs-util@5.2.0:
     resolution: {integrity: sha512-qwQgQqXXTRv2h2AlJef+tMEszLFkCB9dWnrJYIdAwqjubERXEc/geB+S3apRw0yQyTVnsBf8r6BhlrE8vx+3WQ==}
     dependencies:
       '@types/bn.js': 5.1.1
       '@types/node': 20.11.30
     dev: false
+
+  /@types/events@3.0.3:
+    resolution: {integrity: sha512-trOc4AAUThEz9hapPtSd7wf5tiQKvTtu5b371UxXdTuqzIh0ArcRspRP0i0Viu+LXstIQ1z96t1nsPxT9ol01g==}
+    dev: true
 
   /@types/express-serve-static-core@4.17.28:
     resolution: {integrity: sha512-P1BJAEAW3E2DJUlkgq4tOL3RyMunoWXqbSCygWo5ZIWTjUgN1YnaXWW4VWl/oc8vs/XoYibEGBKP0uZyF4AHig==}
@@ -25659,6 +25810,10 @@ packages:
     dependencies:
       '@types/node': 20.11.30
     dev: false
+
+  /@types/resolve@1.20.2:
+    resolution: {integrity: sha512-60BCwRFOZCQhDncwQdxxeOEEkbc5dIMccYLwbxsS4TUNeVECQ/pBJ0j09mrHOl/JJvpRPGwO9SvE4nR2Nb/a4Q==}
+    dev: true
 
   /@types/responselike@1.0.0:
     resolution: {integrity: sha512-85Y2BjiufFzaMIlvJDvTTB8Fxl2xfLo4HgmHzVBz08w4wDePCTjYw66PdrolO0kzli3yam/YCgRufyo1DdQVTA==}
@@ -27644,9 +27799,6 @@ packages:
 
   /ajv-formats@2.1.1:
     resolution: {integrity: sha512-Wx0Kx52hxE7C18hkMEggYlEifqWZtYaRgouJor+WMdPnQyEK13vgEWyVNup7SoeeoLMsr4kf5h6dOW11I15MUA==}
-    peerDependenciesMeta:
-      ajv:
-        optional: true
     dependencies:
       ajv: 8.12.0
 
@@ -28642,7 +28794,7 @@ packages:
       '@babel/core': 7.23.2
       find-cache-dir: 4.0.0
       schema-utils: 4.2.0
-      webpack: 5.89.0(@swc/core@1.3.95)(esbuild@0.19.3)
+      webpack: 5.89.0(@swc/core@1.3.95)(metro@0.80.0)
     dev: true
 
   /babel-plugin-add-react-displayname@0.0.5:
@@ -30027,7 +30179,6 @@ packages:
   /builtin-modules@3.3.0:
     resolution: {integrity: sha512-zhaCDicdLuWN5UbN5IMnFqNMhNfo919sH85y2/ea+5Yg9TsTkeZxpL+JLbp6cgYFS4sRLp3YV4S6yDuqVWHYOw==}
     engines: {node: '>=6'}
-    dev: false
 
   /builtin-status-codes@3.0.0:
     resolution: {integrity: sha1-hZgoeOIbmOHGZCXgPQF0eI9Wnug=}
@@ -34652,7 +34803,6 @@ packages:
       '@esbuild/win32-arm64': 0.19.12
       '@esbuild/win32-ia32': 0.19.12
       '@esbuild/win32-x64': 0.19.12
-    dev: false
 
   /esbuild@0.19.3:
     resolution: {integrity: sha512-UlJ1qUUA2jL2nNib1JTSkifQTcYTroFqRjwCFW4QYEKEsixXD5Tik9xML7zh2gTxkYTBKGHNH9y7txMwVyPbjw==}
@@ -35763,7 +35913,6 @@ packages:
     resolution: {integrity: sha512-Rfkk/Mp/DL7JVje3u18FxFujQlTNR2q6QfMSMB7AvCBx91NGj/ba3kCfza0f6dVDbw7YlRf/nDrn7pQrCCyQ/w==}
     requiresBuild: true
     dev: true
-    optional: true
 
   /estree-walker@3.0.3:
     resolution: {integrity: sha512-7RUKfXgSMMkzt6ZuXmqapOurLGPPfgj6l9uRZ7lRGolvk0y2yocc35LdcxKC5PQZdn2DMqioAQ2NoWcrTKmm6g==}
@@ -35974,7 +36123,6 @@ packages:
       is-hex-prefixed: 1.0.0
       strip-hex-prefix: 1.0.0
     dev: false
-    bundledDependencies: false
 
   /ev-emitter@1.1.1:
     resolution: {integrity: sha512-ipiDYhdQSCZ4hSbX4rMW+XzNKMD1prg/sTvoVmSLkuQ1MVlwjJQQA+sW8tMYR3BLUr9KjodFV4pvzunvRhd33Q==}
@@ -36212,8 +36360,6 @@ packages:
       react-native: '*'
     peerDependenciesMeta:
       expo-constants:
-        optional: true
-      expo-file-system:
         optional: true
       expo-modules-core:
         optional: true
@@ -37586,7 +37732,7 @@ packages:
       semver: 7.6.0
       tapable: 2.2.1
       typescript: 5.1.3
-      webpack: 5.89.0(@swc/core@1.3.95)(esbuild@0.19.3)
+      webpack: 5.89.0(@swc/core@1.3.95)(metro@0.80.0)
     dev: true
 
   /form-data@2.3.3:
@@ -37981,7 +38127,6 @@ packages:
     resolution: {integrity: sha512-wuMsz4leaj5hbGgg4IvDU0bqJagpftG5l5cXIAvo8uZrqn0NJqwtfupTN00VnkQJPcIRrxYrm1Ue24btpCha2A==}
     dependencies:
       resolve-pkg-maps: 1.0.0
-    dev: false
 
   /get-value@2.0.6:
     resolution: {integrity: sha512-Ln0UQDlxH1BapMu3GPtf7CuYNwRZf2gwCuPqbyG6pB8WfmFpzqcy4xtAaAMUhnNqjMKTiCPZG2oMT3YSx8U2NA==}
@@ -39635,6 +39780,13 @@ packages:
     resolution: {integrity: sha512-i2R6zNFDwgEHJyQUtJEk0XFi1i0dPFn/oqjK3/vPCcDeJvW5NQ83V8QbicfF1SupOaB0h8ntgBC2YiE7dfyctQ==}
     engines: {node: '>=4'}
 
+  /is-builtin-module@3.2.1:
+    resolution: {integrity: sha512-BSLE3HnV2syZ0FK0iMA/yUGplUeMmNz4AW5fnTunbCIqZi4vG3WjJT9FHMy5D69xmAYBHXQhJdALdpwVxV501A==}
+    engines: {node: '>=6'}
+    dependencies:
+      builtin-modules: 3.3.0
+    dev: true
+
   /is-callable@1.2.7:
     resolution: {integrity: sha512-1BC0BVFhS/p0qtw6enp8e+8OD0UrK0oFLztSjNzhcKA3WDuJxxAPXzPuPtKkjEY9UUoEWlX/8fgKeu2S8i9JTA==}
     engines: {node: '>= 0.4'}
@@ -39845,7 +39997,6 @@ packages:
 
   /is-module@1.0.0:
     resolution: {integrity: sha512-51ypPSPCoTEIN9dy5Oy+h4pShgJmPCygKfyRCISBI+JoWT/2oJvK8QPxmwv7b/p239jXrm9M1mlQbyKJ5A152g==}
-    dev: false
 
   /is-nan@1.3.2:
     resolution: {integrity: sha512-E+zBKpQ2t6MEo1VsonYmluk9NxGrbzpeeLC2xIViuO2EjU2xsXsBPwTr3Ykv9l08UYEVEdWeRZNouaZqF6RN0w==}
@@ -39973,6 +40124,12 @@ packages:
 
   /is-promise@2.2.2:
     resolution: {integrity: sha512-+lP4/6lKUBfQjZ2pdxThZvLUAafmZb8OAxFb8XXtiQmS35INgr85hdOGoEs124ez1FCnZJt6jau/T+alh58QFQ==}
+    dev: true
+
+  /is-reference@1.2.1:
+    resolution: {integrity: sha512-U82MsXXiFIrjCK4otLT+o2NA2Cd2g5MLoOVXUZjIOhLurrRxpEXzI8O0KZHr3IjLvlAH1kTPYSuqer5T9ZVBKQ==}
+    dependencies:
+      '@types/estree': 1.0.3
     dev: true
 
   /is-reference@3.0.1:
@@ -42654,20 +42811,8 @@ packages:
   /join-component@1.1.0:
     resolution: {integrity: sha512-bF7vcQxbODoGK1imE2P9GS9aw4zD0Sd+Hni68IMZLj7zRnquH7dXUmMw9hDI5S/Jzt7q+IyTXN0rSg2GI0IKhQ==}
 
-  /jotai@2.0.3(react@18.2.0):
-    resolution: {integrity: sha512-MMjhSPAL3RoeZD9WbObufRT2quThEAEknHHridf2ma8Ml7ZVQmUiHk0ssdbR3F0h3kcwhYqSGJ59OjhPge7RRg==}
-    engines: {node: '>=12.20.0'}
-    peerDependencies:
-      react: '>=17.0.0'
-    peerDependenciesMeta:
-      react:
-        optional: true
-    dependencies:
-      react: 18.2.0
-    dev: true
-
-  /jotai@2.7.0(@types/react@18.2.28)(react@18.2.0):
-    resolution: {integrity: sha512-4qsyFKu4MprI39rj2uoItyhu24NoCHzkOV7z70PQr65SpzV6CSyhQvVIfbNlNqOIOspNMdf5OK+kTXLvqe63Jw==}
+  /jotai@2.7.2(@types/react@18.2.28)(react@18.2.0):
+    resolution: {integrity: sha512-6Ft5kpNu8p93Ssf1Faoza3hYQZRIYp7rioK8MwTTFnbQKwUyZElwquPwl1h6U0uo9hC0jr+ghO3gcSjc6P35/Q==}
     engines: {node: '>=12.20.0'}
     peerDependencies:
       '@types/react': '>=17.0.0'
@@ -42680,7 +42825,6 @@ packages:
     dependencies:
       '@types/react': 18.2.28
       react: 18.2.0
-    dev: false
 
   /joycon@3.1.1:
     resolution: {integrity: sha512-34wB/Y7MW7bzjKRjUKTa46I2Z7eV62Rkhva+KkopW7Qvv/OSWBqvkSY7vusOPrNuZcUG3tApvdVgNB8POj3SPw==}
@@ -44545,7 +44689,6 @@ packages:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.4.15
     dev: true
-    optional: true
 
   /make-dir@2.1.0:
     resolution: {integrity: sha512-LS9X+dc8KLxXCb8dni79fLIIUA5VyZoyjSMCwTluaXA0o27cCK0bhXkpgw+sTXVpPy/lSO57ilRixqk0vDmtRA==}
@@ -52929,6 +53072,37 @@ packages:
     resolution: {integrity: sha512-IXgzBWvWQwE6PrDI05OvmXUIruQTcoMDzRsOd5CDvHCVLcLHMTSYvOK5Cm46kWqlV3yAbuSpBZdJ5oP5OUoStg==}
     dev: false
 
+  /rollup-plugin-dts@6.1.0(rollup@4.13.2)(typescript@5.1.3):
+    resolution: {integrity: sha512-ijSCPICkRMDKDLBK9torss07+8dl9UpY9z1N/zTeA1cIqdzMlpkV3MOOC7zukyvQfDyxa1s3Dl2+DeiP/G6DOw==}
+    engines: {node: '>=16'}
+    peerDependencies:
+      rollup: ^3.29.4 || ^4
+      typescript: ^4.5 || ^5.0
+    dependencies:
+      magic-string: 0.30.8
+      rollup: 4.13.2
+      typescript: 5.1.3
+    optionalDependencies:
+      '@babel/code-frame': 7.23.5
+    dev: true
+
+  /rollup-plugin-esbuild@6.1.1(esbuild@0.19.12)(rollup@4.13.2):
+    resolution: {integrity: sha512-CehMY9FAqJD5OUaE/Mi1r5z0kNeYxItmRO2zG4Qnv2qWKF09J2lTy5GUzjJR354ZPrLkCj4fiBN41lo8PzBUhw==}
+    engines: {node: '>=14.18.0'}
+    peerDependencies:
+      esbuild: '>=0.18.0'
+      rollup: ^1.20.0 || ^2.0.0 || ^3.0.0 || ^4.0.0
+    dependencies:
+      '@rollup/pluginutils': 5.1.0(rollup@4.13.2)
+      debug: 4.3.4
+      es-module-lexer: 1.3.1
+      esbuild: 0.19.12
+      get-tsconfig: 4.7.2
+      rollup: 4.13.2
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
   /rollup-plugin-terser@7.0.2(rollup@2.79.1):
     resolution: {integrity: sha512-w3iIaU4OxcF52UUXiZNsNeuXIMDvFrr+ZXK6bFZ0Q60qyVfq4uLptoS4bbq3paG3x216eQllFZX7zt6TIImguQ==}
     deprecated: This package has been deprecated and is no longer maintained. Please use @rollup/plugin-terser
@@ -52957,6 +53131,31 @@ packages:
     engines: {node: '>=14.18.0', npm: '>=8.0.0'}
     hasBin: true
     optionalDependencies:
+      fsevents: 2.3.3
+    dev: true
+
+  /rollup@4.13.2:
+    resolution: {integrity: sha512-MIlLgsdMprDBXC+4hsPgzWUasLO9CE4zOkj/u6j+Z6j5A4zRY+CtiXAdJyPtgCsc42g658Aeh1DlrdVEJhsL2g==}
+    engines: {node: '>=18.0.0', npm: '>=8.0.0'}
+    hasBin: true
+    dependencies:
+      '@types/estree': 1.0.5
+    optionalDependencies:
+      '@rollup/rollup-android-arm-eabi': 4.13.2
+      '@rollup/rollup-android-arm64': 4.13.2
+      '@rollup/rollup-darwin-arm64': 4.13.2
+      '@rollup/rollup-darwin-x64': 4.13.2
+      '@rollup/rollup-linux-arm-gnueabihf': 4.13.2
+      '@rollup/rollup-linux-arm64-gnu': 4.13.2
+      '@rollup/rollup-linux-arm64-musl': 4.13.2
+      '@rollup/rollup-linux-powerpc64le-gnu': 4.13.2
+      '@rollup/rollup-linux-riscv64-gnu': 4.13.2
+      '@rollup/rollup-linux-s390x-gnu': 4.13.2
+      '@rollup/rollup-linux-x64-gnu': 4.13.2
+      '@rollup/rollup-linux-x64-musl': 4.13.2
+      '@rollup/rollup-win32-arm64-msvc': 4.13.2
+      '@rollup/rollup-win32-ia32-msvc': 4.13.2
+      '@rollup/rollup-win32-x64-msvc': 4.13.2
       fsevents: 2.3.3
     dev: true
 
@@ -55117,7 +55316,7 @@ packages:
       webpack: '>=2'
     dependencies:
       '@swc/core': 1.3.95
-      webpack: 5.89.0(@swc/core@1.3.95)(esbuild@0.19.3)
+      webpack: 5.89.0(@swc/core@1.3.95)(metro@0.80.0)
     dev: true
 
   /swiper@7.4.1:
@@ -59389,7 +59588,7 @@ packages:
       mime-types: 2.1.35
       range-parser: 1.2.1
       schema-utils: 4.2.0
-      webpack: 5.89.0(@swc/core@1.3.95)(esbuild@0.19.3)
+      webpack: 5.89.0(@swc/core@1.3.95)(metro@0.80.0)
     dev: true
 
   /webpack-dev-server@4.12.0(webpack@5.76.1):
