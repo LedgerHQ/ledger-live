@@ -17,7 +17,7 @@ import Transport from "@ledgerhq/hw-transport";
 import { Bridge } from "@ledgerhq/types-live";
 import { getCurrencyConfiguration } from "../../config";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { EvmConfigInfo } from "@ledgerhq/coin-evm/lib/config";
+import { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 
 const createSigner: CreateSigner<Eth> = (transport: Transport) => {
   return new Eth(transport);

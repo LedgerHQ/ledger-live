@@ -1,6 +1,6 @@
 import { Operation } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { EvmConfig } from "../../config";
+import { EvmConfigInfo } from "../../config";
 
 export type ExplorerApi = {
   getLastOperations: (
@@ -17,7 +17,7 @@ export type ExplorerApi = {
   }>;
 };
 
-type ExplorerConfig = EvmConfig["explorer"];
+type ExplorerConfig = EvmConfigInfo["explorer"];
 
 /**
  * Type guard
