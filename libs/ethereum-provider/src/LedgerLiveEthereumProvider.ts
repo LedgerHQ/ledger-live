@@ -1,10 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { EventEmitter } from "events";
-import { ElectronWebview } from "./dappPreloader";
 
 declare global {
   interface Window {
-    ElectronWebview: ElectronWebview;
+    ElectronWebview?: {
+      postMessage(message: JsonRpcRequestMessage, targetOrigin?: string): void;
+    };
+    ReactNativeWebView?: {
+      postMessage(message: string, targetOrigin?: string): void;
+    };
   }
 }
 
@@ -22,7 +26,7 @@ export interface MinimalEventSourceInterface {
 
 // The interface for the target of our events, typically the injected api.
 export interface MinimalEventTargetInterface {
-  postMessage(message: any, targetOrigin?: string): void;
+  postMessage(message: JsonRpcRequestMessage, targetOrigin?: string): void;
 }
 
 /**
@@ -59,6 +63,7 @@ interface PromiseCompleter<TResult, TErrorData> {
 type MessageId = number | string | null;
 
 interface JsonRpcRequestMessage<TParams = any> {
+  type: "dapp";
   jsonrpc: "2.0";
   // Optional in the request.
   id?: MessageId;
@@ -149,7 +154,13 @@ export interface EIP1193Provider {
   /** @deprecated */
   send(...args: unknown[]): unknown;
   /** @deprecated */
-  sendAsync(request: Object, callback: Function): void;
+  sendAsync(
+    request: { method: string; params?: any[]; id?: MessageId },
+    callback: (
+      error: string | null,
+      result: { method: string; params?: any[]; result: any } | any,
+    ) => void,
+  ): void;
 }
 
 /**
@@ -178,14 +189,14 @@ export class LedgerLiveEthereumProvider extends EventEmitter implements EIP1193P
     return this;
   }
 
-  isRabby = true;
+  isLedgerLive = true;
   isMetaMask = true;
 
   private enabled: Promise<string[]> | null = null;
   private readonly targetOrigin: string;
   private readonly timeoutMilliseconds: number;
   private readonly eventSource: MinimalEventSourceInterface;
-  private readonly eventTarget: MinimalEventTargetInterface;
+  private readonly eventTarget?: MinimalEventTargetInterface;
   private readonly completers: {
     [id: string]: PromiseCompleter<any, any>;
   } = {};
@@ -194,7 +205,7 @@ export class LedgerLiveEthereumProvider extends EventEmitter implements EIP1193P
     targetOrigin = DEFAULT_TARGET_ORIGIN,
     timeoutMilliseconds = DEFAULT_TIMEOUT_MILLISECONDS,
     eventSource = window,
-    eventTarget = window.ElectronWebview,
+    eventTarget,
   }: LedgerLiveEthereumProviderOptions = {}) {
     // Call super for `this` to be defined
     super();
@@ -202,7 +213,18 @@ export class LedgerLiveEthereumProvider extends EventEmitter implements EIP1193P
     this.targetOrigin = targetOrigin;
     this.timeoutMilliseconds = timeoutMilliseconds;
     this.eventSource = eventSource;
-    this.eventTarget = eventTarget;
+
+    if (eventTarget) {
+      this.eventTarget = eventTarget;
+    } else if (window.ReactNativeWebView) {
+      this.eventTarget = {
+        postMessage(message, targetOrigin) {
+          return window.ReactNativeWebView?.postMessage(JSON.stringify(message), targetOrigin);
+        },
+      };
+    } else {
+      this.eventTarget = window.ElectronWebview;
+    }
 
     // Listen for messages from the event source.
     this.eventSource.addEventListener("message", this.handleEventSourceMessage);
@@ -225,6 +247,7 @@ export class LedgerLiveEthereumProvider extends EventEmitter implements EIP1193P
   ): Promise<JsonRpcSucessfulResponseMessage<TResult> | JsonRpcErrorResponseMessage<TErrorData>> {
     const id = requestId ? requestId : getUniqueId();
     const payload: JsonRpcRequestMessage = {
+      type: "dapp",
       jsonrpc: JSON_RPC_VERSION,
       id,
       method,
@@ -236,7 +259,7 @@ export class LedgerLiveEthereumProvider extends EventEmitter implements EIP1193P
     >((resolve, reject) => (this.completers[id] = { resolve, reject }));
 
     // Send the JSON RPC to the event source.
-    this.eventTarget.postMessage(payload, this.targetOrigin);
+    this.eventTarget?.postMessage(payload, this.targetOrigin);
 
     // Delete the completer within the timeout and reject the promise.
     setTimeout(() => {
