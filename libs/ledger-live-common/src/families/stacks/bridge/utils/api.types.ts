@@ -32,10 +32,21 @@ export interface TransactionResponse {
     block_height: number;
     tx_index: number;
     burn_block_time: number;
-    token_transfer: {
+    token_transfer?: {
       recipient_address: string;
       amount: string;
       memo: string;
+    };
+    contract_call?: {
+      contract_id: string;
+      function_name: string;
+      function_signature: string;
+      function_args: {
+        hex: string;
+        repr: string;
+        name: string;
+        type: string;
+      }[];
     };
   };
   stx_transfers: {
@@ -43,6 +54,8 @@ export interface TransactionResponse {
     sender: string;
     recipient: string;
   }[];
+  stx_sent: string;
+  stx_received: string;
 }
 
 export interface MempoolTransaction {
