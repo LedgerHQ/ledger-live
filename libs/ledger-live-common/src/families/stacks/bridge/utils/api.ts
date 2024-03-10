@@ -106,7 +106,22 @@ export const fetchFullTxs = async (addr: string): Promise<TransactionResponse[]>
 
   do {
     const { results, total, limit } = await fetchTxs(addr, offset);
-    txs = txs.concat(results.filter(t => t.tx?.tx_type == "token_transfer"));
+    txs = txs.concat(
+      results.filter(t => {
+        if (t.tx?.tx_type === "token_transfer") {
+          return true;
+        }
+
+        if (
+          t.tx?.tx_type === "contract_call" &&
+          t.tx?.contract_call?.function_name === "send-many"
+        ) {
+          return true;
+        }
+
+        return false;
+      }),
+    );
 
     offset += limit;
     qty = total;
