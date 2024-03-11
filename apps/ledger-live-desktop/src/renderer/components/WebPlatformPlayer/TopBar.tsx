@@ -18,15 +18,10 @@ import Spinner from "../Spinner";
 import { getAccountName, getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/useDappLogic";
-import {
-  CurrentAccountHistDB,
-  useManifestCurrencies,
-  safeGetRefValue,
-} from "@ledgerhq/live-common/wallet-api/react";
-import { setDrawer } from "~/renderer/drawers/Provider";
-import SelectAccountAndCurrencyDrawer from "~/renderer/drawers/DataSelector/SelectAccountAndCurrencyDrawer";
+import { CurrentAccountHistDB, safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 import Wallet from "~/renderer/icons/Wallet";
 import CryptoCurrencyIcon from "../CryptoCurrencyIcon";
+import { useSelectAccount } from "../Web3AppWebview/helpers";
 
 const Container = styled(Box).attrs(() => ({
   horizontal: true,
@@ -146,7 +141,7 @@ export const TopBar = ({
   webviewState,
 }: Props) => {
   const { name, icon } = manifest;
-  const { currentAccount, setCurrentAccountHist } = useDappCurrentAccount(currentAccountHistDb);
+  const { currentAccount } = useDappCurrentAccount(currentAccountHistDb);
 
   const {
     shouldDisplayName = true,
@@ -187,25 +182,7 @@ export const TopBar = ({
     webview.goForward();
   }, [webviewAPIRef]);
 
-  const currencies = useManifestCurrencies(manifest);
-
-  const onSelectAccount = useCallback(() => {
-    setDrawer(
-      SelectAccountAndCurrencyDrawer,
-      {
-        currencies: currencies,
-        onAccountSelected: account => {
-          setDrawer();
-          setCurrentAccountHist(manifest.id, account);
-        },
-      },
-      {
-        onRequestClose: () => {
-          setDrawer();
-        },
-      },
-    );
-  }, [currencies, manifest.id, setCurrentAccountHist]);
+  const { onSelectAccount } = useSelectAccount({ manifest, currentAccountHistDb });
 
   const isLoading = useDebounce(webviewState.loading, 100);
 

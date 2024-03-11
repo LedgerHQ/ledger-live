@@ -41,6 +41,7 @@ import { openExchangeDrawer } from "~/renderer/actions/UI";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { TrackFunction } from "@ledgerhq/live-common/platform/tracking";
 import { useDappLogic } from "@ledgerhq/live-common/wallet-api/useDappLogic";
+import { NoAccountOverlay } from "./NoAccountOverlay";
 
 const wallet = { name: "ledger-live-desktop", version: __APP_VERSION__ };
 
@@ -265,7 +266,7 @@ function useWebView(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [server]);
 
-  const { onDappMessage } = useDappLogic({
+  const { onDappMessage, noAccounts } = useDappLogic({
     manifest,
     accounts,
     uiHook,
@@ -329,7 +330,7 @@ function useWebView(
     };
   }, [widgetLoaded]);
 
-  return { webviewRef, widgetLoaded, onReload, webviewStyle };
+  return { webviewRef, widgetLoaded, onReload, webviewStyle, noAccounts };
 }
 
 export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
@@ -370,7 +371,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       }
     }, [webviewState, onStateChange]);
 
-    const { webviewStyle, widgetLoaded } = useWebView(
+    const { webviewStyle, widgetLoaded, noAccounts } = useWebView(
       {
         manifest,
         customHandlers,
@@ -383,6 +384,10 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
 
     const isDapp = !!manifest.dapp;
     const preloader = isDapp ? "webviewDappPreloader" : "webviewPreloader";
+
+    if (isDapp && noAccounts) {
+      return <NoAccountOverlay manifest={manifest} currentAccountHistDb={currentAccountHistDb} />;
+    }
 
     return (
       <>
