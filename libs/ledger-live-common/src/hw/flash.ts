@@ -47,7 +47,7 @@ export default function ({ mcu_versions }: FinalFirmware) {
                 .join(".");
               isMCU = deviceInfo.majMin === mcuFromBootloader;
               version = isMCU ? mcuVersion.name : mcuFromBootloader;
-              log("firmware-update", `flash ${version} isMcu=${String(isMCU)}`, {
+              log("firmware-update", `flash ${version} isMcu=${isMCU}`, {
                 blVersion: deviceInfo.majMin,
                 mcuFromBootloader,
                 version,
