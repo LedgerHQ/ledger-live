@@ -94,15 +94,15 @@ function genCoinFrameworkTarget(targetFile) {
         exprts += `\n  ${family},`;
         break;
       case "hw-signMessage.ts":
-        if (fs.existsSync(path.join(libsDir, `coin-${family}/src`, targetFile))) {
+        if (fs.existsSync(path.join(libsDir, `coin-modules/coin-${family}/src`, targetFile))) {
           imports += `import { messageSigner as ${family} } from "../families/${family}/setup";\n`;
           exprts += `\n  ${family},`;
         }
         break;
       case "specs.ts":
         if (
-          fs.existsSync(path.join(libsDir, `coin-${family}/src`, targetFile)) ||
-          fs.existsSync(path.join(libsDir, `coin-${family}/src/test/bot-specs.ts`))
+          fs.existsSync(path.join(libsDir, `coin-modules/coin-${family}/src`, targetFile)) ||
+          fs.existsSync(path.join(libsDir, `coin-modules/coin-${family}/src/test/bot-specs.ts`))
         ) {
           imports += `import ${family} from "@ledgerhq/coin-${family}/${targetName}";\n`;
           exprts += `\n  ${family},`;
@@ -111,8 +111,8 @@ function genCoinFrameworkTarget(targetFile) {
       // We still use bridge/js file inside "families" directory
       default:
         if (
-          fs.existsSync(path.join(libsDir, `coin-${family}/src`, targetFile)) ||
-          fs.existsSync(path.join(libsDir, `coin-${family}/src/bridge`, targetFile))
+          fs.existsSync(path.join(libsDir, `coin-modules/coin-${family}/src`, targetFile)) ||
+          fs.existsSync(path.join(libsDir, `coin-modules/coin-${family}/src/bridge`, targetFile))
         ) {
           imports += `import ${family} from "${targetImportPath}";\n`;
           exprts += `\n  ${family},`;
@@ -147,7 +147,7 @@ async function getDeviceTransactionConfig(families) {
   const libsDir = path.join(__dirname, "../..");
   const family = "polkadot";
   const target = "deviceTransactionConfig.ts";
-  if (fs.existsSync(path.join(libsDir, `coin-${family}/src/bridge`, target))) {
+  if (fs.existsSync(path.join(libsDir, `coin-modules/coin-${family}/src/bridge`, target))) {
     imports += `import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_${family} } from "@ledgerhq/coin-${family}/bridge/deviceTransactionConfig";\n`;
     exprts += `\n  | ExtraDeviceTransactionField_${family}`;
   }
@@ -174,7 +174,7 @@ async function genTypesFile(families) {
         return "";
       }
 
-      if (fs.existsSync(path.join(libsDir, `coin-${family}/src/types/index.ts`))) return "/index";
+      if (fs.existsSync(path.join(libsDir, `coin-modules/coin-${family}/src/types/index.ts`))) return "/index";
 
       return "";
     })();

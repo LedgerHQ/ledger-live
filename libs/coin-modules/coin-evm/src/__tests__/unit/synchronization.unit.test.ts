@@ -1,5 +1,6 @@
 import { AssertionError, fail } from "assert";
 import BigNumber from "bignumber.js";
+import { getEnv } from "@ledgerhq/live-env";
 import { decodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { makeTokenAccount } from "../fixtures/common.fixtures";
@@ -20,7 +21,6 @@ import {
   internalOperations,
 } from "../fixtures/synchronization.fixtures";
 import { UnknownNode } from "../../errors";
-import { getEnv } from "../../../../env";
 import * as logic from "../../logic";
 
 jest.mock("../../api/node/rpc.common");
