@@ -6111,6 +6111,10 @@
       "subtitle": "Something went wrong. Please try again. If the problem persists, save your log and contact Ledger support.",
       "contactSupport": "Contact Ledger support",
       "saveLog": "Save log"
+    },
+    "noAccounts": {
+      "title": "You need an account to access this app.",
+      "add": "Add Account"
     }
   },
   "recoverRestore": {

@@ -9,10 +9,17 @@ import {
 } from "react";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { getInitialURL } from "@ledgerhq/live-common/wallet-api/helpers";
-import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
+import {
+  CurrentAccountHistDB,
+  safeGetRefValue,
+  useManifestCurrencies,
+} from "@ledgerhq/live-common/wallet-api/react";
 import { WalletAPIServer } from "@ledgerhq/live-common/wallet-api/types";
 import { track } from "~/renderer/analytics/segment";
+import { setDrawer } from "~/renderer/drawers/Provider";
+import SelectAccountAndCurrencyDrawer from "~/renderer/drawers/DataSelector/SelectAccountAndCurrencyDrawer";
 import { WebviewAPI, WebviewState, WebviewTag } from "./types";
+import { useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 
 export const initialWebviewState: WebviewState = {
   url: "",
@@ -260,4 +267,35 @@ export function useWebviewState(
     webviewRef,
     handleRefresh,
   };
+}
+
+export function useSelectAccount({
+  manifest,
+  currentAccountHistDb,
+}: {
+  manifest: LiveAppManifest;
+  currentAccountHistDb?: CurrentAccountHistDB;
+}) {
+  const currencies = useManifestCurrencies(manifest);
+  const { setCurrentAccountHist } = useDappCurrentAccount(currentAccountHistDb);
+
+  const onSelectAccount = useCallback(() => {
+    setDrawer(
+      SelectAccountAndCurrencyDrawer,
+      {
+        currencies: currencies,
+        onAccountSelected: account => {
+          setDrawer();
+          setCurrentAccountHist(manifest.id, account);
+        },
+      },
+      {
+        onRequestClose: () => {
+          setDrawer();
+        },
+      },
+    );
+  }, [currencies, manifest.id, setCurrentAccountHist]);
+
+  return { onSelectAccount };
 }
