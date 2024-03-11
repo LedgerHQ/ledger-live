@@ -3,18 +3,7 @@ import { Handlers } from "./types";
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
 
 export type MarketState = {
-  marketParams: {
-    range?: string;
-    limit?: number;
-    ids?: string[];
-    starred?: string[];
-    orderBy?: string;
-    order?: string;
-    search?: string;
-    liveCompatible?: boolean;
-    page?: number;
-    counterCurrency?: string;
-  };
+  marketParams: MarketListRequestParams;
   starredMarketCoins: string[];
 };
 
