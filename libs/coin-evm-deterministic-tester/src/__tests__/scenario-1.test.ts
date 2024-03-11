@@ -3,7 +3,7 @@ import { BigNumber } from "bignumber.js";
 import { EthereumLikeInfo } from "@ledgerhq/types-cryptoassets";
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import {
-  provider,
+  // provider,
   ethereum,
   polygon,
   ERC20Interface,
@@ -28,6 +28,7 @@ const scenarioEthereum: Scenario = {
   rpc: "https://rpc.ankr.com/eth",
   nanoApp: { firmware: "2.1.0", version: "1.10.3" },
   beforeTransactions: async (address: string) => {
+    const provider = new ethers.providers.StaticJsonRpcProvider("http://127.0.0.1:8545");
     await setBlock();
 
     const addressToImpersonate = "0x47ac0Fb4F2D84898e4D9E7b4DaB3C24507a6D503"; // Binance
@@ -90,6 +91,7 @@ const scenarioPolygon: Scenario = {
   rpc: "https://rpc.ankr.com/polygon",
   nanoApp: { firmware: "2.1.0", version: "1.10.3" },
   beforeTransactions: async (address: string) => {
+    const provider = new ethers.providers.StaticJsonRpcProvider("http://127.0.0.1:8545");
     await setBlock();
 
     const addressToImpersonate = "0x45dDa9cb7c25131DF268515131f647d726f50608"; // Random owner of 8M USDC
