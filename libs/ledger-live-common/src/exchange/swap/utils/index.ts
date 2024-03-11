@@ -1,7 +1,7 @@
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { Account, AccountLike, SubAccount } from "@ledgerhq/types-live";
 import { getProviderConfig } from "../";
 import { getAccountCurrency, makeEmptyTokenAccount } from "../../../account";
-import { Account, SubAccount, AccountLike } from "@ledgerhq/types-live";
 
 export const FILTER = {
   centralised: "centralised",
@@ -13,6 +13,12 @@ export const FILTER = {
 export type AccountTuple = {
   account: Account | null | undefined;
   subAccount: SubAccount | null | undefined;
+};
+
+const providerMap: Record<string, string> = {
+  cic: "CIC",
+  oneinch: "1inch",
+  moonpay: "MoonPay",
 };
 
 export function getAccountTuplesForCurrency(
@@ -60,16 +66,8 @@ export const isRegistrationRequired = (provider: string): boolean => {
   return needsBearerToken || needsKYC;
 };
 
-export const getProviderName = (provider: string): string => {
-  switch (provider) {
-    case "cic":
-      return provider.toUpperCase();
-    case "oneinch":
-      return "1inch";
-    default:
-      return provider.charAt(0).toUpperCase() + provider.slice(1);
-  }
-};
+export const getProviderName = (provider: string): string =>
+  providerMap[provider] ?? provider.charAt(0).toUpperCase() + provider.slice(1);
 
 export const getNoticeType = (provider: string): { message: string; learnMore: boolean } => {
   switch (provider) {
