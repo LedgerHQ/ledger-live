@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.41.0-next.12
+
+### Patch Changes
+
+- [#6392](https://github.com/LedgerHQ/ledger-live/pull/6392) [`2b84824`](https://github.com/LedgerHQ/ledger-live/commit/2b848243e6680c178140d9bb60f134d15b525f9a) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Remove max toggle for from token swaps
+
 ## 3.41.0-next.11
 
 ### Patch Changes
