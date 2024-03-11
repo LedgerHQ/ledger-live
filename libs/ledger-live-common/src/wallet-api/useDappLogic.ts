@@ -146,7 +146,7 @@ function useDappAccountLogic({
 
   const currentAccountIdFromHist = useMemo(() => {
     if (manifest && currentAccountHistDb) {
-      return currentAccountHistDb[0][manifest.id];
+      return currentAccountHistDb[0]?.[manifest.id];
     }
     return null;
   }, [manifest, currentAccountHistDb]);
