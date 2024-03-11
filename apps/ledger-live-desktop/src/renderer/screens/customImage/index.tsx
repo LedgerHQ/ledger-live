@@ -6,13 +6,14 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { BoxedIcon, Flex, FlowStepper, IconsLegacy, Text } from "@ledgerhq/react-ui";
+import { BoxedIcon, Flex, FlowStepper, IconsLegacy, Text, Bar } from "@ledgerhq/react-ui";
 import { useDispatch } from "react-redux";
-import { DeviceModelId } from "@ledgerhq/devices";
+import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { ImageDownloadError } from "@ledgerhq/live-common/customImage/errors";
 import {
   isCustomLockScreenSupported,
   CLSSupportedDeviceModelId,
+  supportedDeviceModelIds,
 } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
 import { setPostOnboardingActionCompleted } from "@ledgerhq/live-common/postOnboarding/actions";
@@ -61,6 +62,8 @@ const CustomImage: React.FC<Props> = props => {
   const track = useTrack();
   const { setAnalyticsDrawerName } = useContext(analyticsDrawerContext);
 
+  const isDeviceModelIdUndefined =
+    !props.deviceModelId || !isCustomLockScreenSupported(props.deviceModelId);
   const [deviceModelId, setDeviceModelId] = useState<CLSSupportedDeviceModelId>(
     props.deviceModelId && isCustomLockScreenSupported(props.deviceModelId)
       ? props.deviceModelId
@@ -224,6 +227,23 @@ const CustomImage: React.FC<Props> = props => {
     [error, previousStep, t, setStepWrapper, handleErrorRetryClicked],
   );
 
+  const deviceModelPicker = isDeviceModelIdUndefined ? (
+    <Flex mb={10} alignSelf="center">
+      <Bar
+        initialActiveIndex={supportedDeviceModelIds.indexOf(deviceModelId)}
+        onTabChange={i => {
+          setDeviceModelId(supportedDeviceModelIds[i]);
+        }}
+      >
+        {supportedDeviceModelIds.map(deviceModelId => (
+          <Text color="inherit" key={deviceModelId}>
+            {getDeviceModel(deviceModelId).productName}
+          </Text>
+        ))}
+      </Bar>
+    </Flex>
+  ) : null;
+
   return (
     <Flex
       flexDirection="column"
@@ -272,6 +292,7 @@ const CustomImage: React.FC<Props> = props => {
               setStep={setStepWrapper}
               initialCropParams={initialCropParams}
               setCropParams={setInitialCropParams}
+              deviceModelPicker={deviceModelPicker}
             />
           </FlowStepper.Indexed.Step>
           <FlowStepper.Indexed.Step

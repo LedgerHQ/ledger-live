@@ -12,10 +12,11 @@ import { getScreenVisibleAreaDimensions } from "@ledgerhq/live-common/device-cor
 
 type Props = StepProps & {
   src?: ImageBase64Data;
-  onResult: (res: ImageBase64Data) => void;
+  onResult(res: ImageBase64Data): void;
   initialCropParams?: CropParams;
-  setCropParams: (_: CropParams) => void;
+  setCropParams(_: CropParams): void;
   deviceModelId: CLSSupportedDeviceModelId;
+  deviceModelPicker: React.ReactNode;
 };
 
 const previousButtonEventProperties = {
@@ -28,8 +29,16 @@ const nextButtonEventProperties = {
 
 const StepAdjustImage: React.FC<Props> = props => {
   const [loading, setLoading] = useState(true);
-  const { src, onResult, onError, initialCropParams, setCropParams, setStep, deviceModelId } =
-    props;
+  const {
+    src,
+    onResult,
+    onError,
+    initialCropParams,
+    setCropParams,
+    setStep,
+    deviceModelId,
+    deviceModelPicker,
+  } = props;
   const { t } = useTranslation();
 
   return (
@@ -56,6 +65,7 @@ const StepAdjustImage: React.FC<Props> = props => {
         flow={analyticsFlowName}
         refreshSource={false}
       />
+      {deviceModelPicker}
       {src ? (
         <ImageCropper
           {...src}
