@@ -20,11 +20,14 @@ import {
 import staxLoadImage from "@ledgerhq/live-common/hw/staxLoadImage";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
+import { isCustomLockScreenSupported } from "@ledgerhq/live-common/device-core/capabilities/isCustomLockScreenSupported";
 
 type Props = {
   device?: Device | null | undefined;
   hexImage: string;
   padImage?: boolean;
+  deviceModelId: CLSSupportedDeviceModelId;
   source: HTMLImageElement["src"];
   inlineRetry?: boolean;
   restore?: boolean;
@@ -46,6 +49,7 @@ function checkIfIsRefusedOnStaxError(e: unknown): boolean {
 const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props => {
   const {
     hexImage,
+    deviceModelId,
     onStart,
     onResult,
     onSkip,
@@ -60,12 +64,18 @@ const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props =>
   } = props;
   const type: Theme["theme"] = useTheme().colors.palette.type;
   const device = getEnv("MOCK") ? mockedDevice : props.device;
-  const commandRequest = useMemo(() => ({ hexImage, padImage }), [hexImage, padImage]);
+  const commandRequest = useMemo(
+    () => ({ hexImage, padImage, deviceModelId }),
+    [hexImage, padImage, deviceModelId],
+  );
+
+  console.log({ commandRequest, device, deviceModelId });
 
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
-  const validDevice = device?.modelId === DeviceModelId.stax ? device : null;
+  const validDevice =
+    isCustomLockScreenSupported(device.modelId) && device.modelId === deviceModelId ? device : null;
   const status = action?.useHook(validDevice, commandRequest);
   const payload = action?.mapResult(status);
 

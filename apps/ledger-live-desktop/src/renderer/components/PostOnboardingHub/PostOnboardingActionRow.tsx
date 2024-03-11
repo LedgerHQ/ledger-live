@@ -45,12 +45,12 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
       });
     };
 
-    if ("startAction" in props) {
-      props.startAction({ openModalCallback, navigationCallback });
+    if ("startAction" in props && deviceModelId !== null) {
+      props.startAction({ openModalCallback, navigationCallback, deviceModelId });
       buttonLabelForAnalyticsEvent &&
         track("button_clicked2", { button: buttonLabelForAnalyticsEvent, flow: "post-onboarding" });
     }
-  }, [props, dispatch, history, buttonLabelForAnalyticsEvent]);
+  }, [props, dispatch, history, buttonLabelForAnalyticsEvent, deviceModelId]);
 
   return (
     <ActionRowWrapper

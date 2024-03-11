@@ -28,7 +28,11 @@ type WithStartActionFunction = {
   /**
    * The function to call when the user presses the button for this action
    */
-  startAction: (openModalCallback?: any, navigationCallback?: any) => void;
+  startAction: (args: {
+    openModalCallback?: any;
+    navigationCallback?: any;
+    deviceModelId: DeviceModelId;
+  }) => void;
   /**
    * Optional Redux dispatch function
    */

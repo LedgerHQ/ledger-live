@@ -12,16 +12,18 @@ import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { ImageCommitRefusedOnDevice, ImageLoadRefusedOnDevice } from "@ledgerhq/live-common/errors";
 import { analyticsDrawerName, analyticsFlowName, analyticsPageNames } from "./shared";
 import TrackPage from "~/renderer/analytics/TrackPage";
+import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 
 type Props = StepProps & {
   result?: ProcessorResult;
+  deviceModelId: CLSSupportedDeviceModelId;
   onResult: () => void;
   onExit: () => void;
 };
 
 const DEBUG = false;
 const StepTransfer: React.FC<Props> = props => {
-  const { result, setStep, onError, onResult, onExit } = props;
+  const { result, setStep, onError, onResult, onExit, deviceModelId } = props;
   const [navigationBlocked, setNavigationBlocked] = useState(false);
   const [error, setError] = useState<Error | null | undefined>(null);
   const [nonce, setNonce] = useState(0);
@@ -97,6 +99,7 @@ const StepTransfer: React.FC<Props> = props => {
           ) : null}
           <CustomImageDeviceAction
             device={device}
+            deviceModelId={deviceModelId}
             hexImage={result?.rawResult.hexData}
             source={result?.previewResult.imageBase64DataUri}
             inlineRetry={false}
@@ -108,7 +111,7 @@ const StepTransfer: React.FC<Props> = props => {
           />
         </Flex>
       ) : null}
-      {DEBUG ? <TestImage result={result} onError={onError} /> : null}
+      {DEBUG ? <TestImage deviceModelId={deviceModelId} result={result} onError={onError} /> : null}
     </StepContainer>
   );
 };

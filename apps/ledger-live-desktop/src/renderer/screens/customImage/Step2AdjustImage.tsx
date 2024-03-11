@@ -2,18 +2,20 @@ import React, { useState } from "react";
 import { ImageBase64Data } from "~/renderer/components/CustomImage/types";
 import { Step, StepProps } from "./types";
 import ImageCropper, { CropParams } from "~/renderer/components/CustomImage/ImageCropper";
-import { targetDisplayDimensions } from "~/renderer/components/CustomImage/shared";
 import StepFooter from "./StepFooter";
 import { useTranslation } from "react-i18next";
 import StepContainer from "./StepContainer";
 import { analyticsPageNames, analyticsFlowName } from "./shared";
 import TrackPage from "~/renderer/analytics/TrackPage";
+import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
+import { getScreenVisibleAreaDimensions } from "@ledgerhq/live-common/device-core/customLockScreen/screenSpecs";
 
 type Props = StepProps & {
   src?: ImageBase64Data;
   onResult: (res: ImageBase64Data) => void;
   initialCropParams?: CropParams;
   setCropParams: (_: CropParams) => void;
+  deviceModelId: CLSSupportedDeviceModelId;
 };
 
 const previousButtonEventProperties = {
@@ -26,7 +28,8 @@ const nextButtonEventProperties = {
 
 const StepAdjustImage: React.FC<Props> = props => {
   const [loading, setLoading] = useState(true);
-  const { src, onResult, onError, initialCropParams, setCropParams, setStep } = props;
+  const { src, onResult, onError, initialCropParams, setCropParams, setStep, deviceModelId } =
+    props;
   const { t } = useTranslation();
 
   return (
@@ -58,7 +61,7 @@ const StepAdjustImage: React.FC<Props> = props => {
           {...src}
           initialCropParams={initialCropParams}
           setCropParams={setCropParams}
-          targetDimensions={targetDisplayDimensions}
+          targetDimensions={getScreenVisibleAreaDimensions(deviceModelId)}
           onResult={onResult}
           onError={onError}
           setLoading={setLoading}
