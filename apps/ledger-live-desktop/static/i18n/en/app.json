@@ -5722,6 +5722,9 @@
     "SwapExchangeRateAmountTooHigh": {
       "title": "Amount must be less than {{maxAmountFromFormatted}}"
     },
+    "SwapExchangeRateAmountTooLowOrTooHigh": {
+      "title": "Amount unavailable. Please adjust value."
+    },
     "PolkadotElectionClosed": {
       "title": "Validators election must be closed"
     },
