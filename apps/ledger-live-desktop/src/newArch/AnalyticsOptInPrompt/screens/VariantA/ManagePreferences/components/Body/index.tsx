@@ -18,12 +18,12 @@ interface ManagePreferencesBodyProps {
 }
 
 const ManagePreferencesBody = ({ onSwitchChange }: ManagePreferencesBodyProps) => {
+  const { t } = useTranslation();
+  const { colors } = useTheme();
   const [checked, setChecked] = useState<Record<FieldKeySwitch, boolean>>({
     AnalyticsData: false,
     PersonalizationData: false,
   });
-  const { t } = useTranslation();
-  const { colors } = useTheme();
 
   const onClick = useCallback(
     (key: FieldKeySwitch) => {

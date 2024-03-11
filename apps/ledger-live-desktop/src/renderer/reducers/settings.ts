@@ -633,6 +633,10 @@ export const autoLockTimeoutSelector = (state: State) => state.settings.autoLock
 export const shareAnalyticsSelector = (state: State) => state.settings.shareAnalytics;
 export const sharePersonalizedRecommandationsSelector = (state: State) =>
   state.settings.sharePersonalizedRecommandations;
+export const trackingEnabledSelector = createSelector(
+  storeSelector,
+  s => s.shareAnalytics || s.sharePersonalizedRecommandations,
+);
 export const selectedTimeRangeSelector = (state: State) => state.settings.selectedTimeRange;
 export const hasInstalledAppsSelector = (state: State) => state.settings.hasInstalledApps;
 export const USBTroubleshootingIndexSelector = (state: State) =>

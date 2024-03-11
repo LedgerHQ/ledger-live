@@ -12,7 +12,7 @@ interface AnalyticsOptInPromptProps {
   onClose?: () => void;
   onSubmit?: () => void;
   isOpened?: boolean;
-  entryPoint?: EntryPoint;
+  entryPoint: EntryPoint;
   variant?: ABTestingVariants;
 }
 
@@ -59,6 +59,7 @@ const AnalyticsOptInPrompt = memo(
               setPreventBackNavigation={() => setPreventBackNavigation(false)}
               goBackToMain={preventBackNavigation}
               onSubmit={onSubmit}
+              entryPoint={entryPoint}
             />
           ) : (
             "variantB"

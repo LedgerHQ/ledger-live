@@ -1,10 +1,18 @@
 import { useState, useEffect, useCallback } from "react";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { hasSeenAnalyticsOptInPromptSelector } from "~/renderer/reducers/settings";
+import {
+  hasSeenAnalyticsOptInPromptSelector,
+  trackingEnabledSelector,
+} from "~/renderer/reducers/settings";
 import { useDispatch, useSelector } from "react-redux";
 import { setHasSeenAnalyticsOptInPrompt } from "~/renderer/actions/settings";
 import { EntryPoint } from "../types/AnalyticsOptInPromptNavigator";
 import { ABTestingVariants } from "@ledgerhq/types-live";
+
+const trackingKeysByFlow: Record<EntryPoint, string> = {
+  onboarding: "consent onboarding",
+  portfolio: "consent existing users",
+};
 
 type Props = {
   entryPoint: EntryPoint;
@@ -12,7 +20,9 @@ type Props = {
 
 export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
   const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
+  const isTrackingEnabled = useSelector(trackingEnabledSelector);
   const lldAnalyticsOptInPromptFlag = useFeature("lldAnalyticsOptInPrompt");
+  const shouldWeTrack = isTrackingEnabled || !hasSeenAnalyticsOptInPrompt;
 
   const dispatch = useDispatch();
 
@@ -21,6 +31,7 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
     useState<boolean>(false);
 
   const [nextStep, setNextStep] = useState<(() => void) | null>(null);
+  const flow = trackingKeysByFlow?.[entryPoint];
 
   const openAnalitycsOptInPrompt = useCallback(
     (routePath: string, callBack: () => void) => {
@@ -31,18 +42,27 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
   );
 
   useEffect(() => {
-    const isFlagEnabled = lldAnalyticsOptInPromptFlag?.enabled && !hasSeenAnalyticsOptInPrompt;
+    const isFlagEnabled =
+      lldAnalyticsOptInPromptFlag?.enabled &&
+      (!hasSeenAnalyticsOptInPrompt || entryPoint === EntryPoint.onboarding);
     setIsFeatureFlagsAnalyticsPrefDisplayed(isFlagEnabled || false);
-  }, [lldAnalyticsOptInPromptFlag, hasSeenAnalyticsOptInPrompt, dispatch, entryPoint]);
+  }, [
+    lldAnalyticsOptInPromptFlag,
+    hasSeenAnalyticsOptInPrompt,
+    dispatch,
+    entryPoint,
+    isTrackingEnabled,
+    shouldWeTrack,
+  ]);
 
-  const onSubmit = useCallback(() => {
+  const onSubmit = () => {
     setIsAnalitycsOptInPromptOpened(false);
     dispatch(setHasSeenAnalyticsOptInPrompt(true));
     if (entryPoint === EntryPoint.onboarding) {
       nextStep?.();
       setNextStep(null);
     }
-  }, [dispatch, entryPoint, nextStep]);
+  };
 
   const analyticsOptInPromptProps = {
     onClose: () => setIsAnalitycsOptInPromptOpened(false),
@@ -54,10 +74,12 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
   return {
     openAnalitycsOptInPrompt,
     setIsAnalitycsOptInPromptOpened,
+    onSubmit,
     analyticsOptInPromptProps,
     isFeatureFlagsAnalyticsPrefDisplayed,
     lldAnalyticsOptInPromptFlag,
-    onSubmit,
+    flow,
+    shouldWeTrack,
   };
 };
 
