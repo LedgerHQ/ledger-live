@@ -21,7 +21,8 @@ const maybeGetUpdatedSwapHistory = async (
     }
 
     if (pendingSwapIds.length) {
-      const newStatusList = await getMultipleStatus(pendingSwapIds);
+      const uniquePendingSwapIds = new Map(pendingSwapIds.map(item => [item.swapId, item]));
+      const newStatusList = await getMultipleStatus(Array.from(uniquePendingSwapIds.values()));
       consolidatedSwapHistory = swapHistory.map<SwapOperation>((swap: SwapOperation) => {
         const newStatus = newStatusList.find(s => s.swapId === swap.swapId);
 
