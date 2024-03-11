@@ -67,6 +67,10 @@ export const setShareAnalytics = (shareAnalytics: boolean) =>
   saveSettings({
     shareAnalytics,
   });
+export const setSharePersonalizedRecommandations = (sharePersonalizedRecommandations: boolean) =>
+  saveSettings({
+    sharePersonalizedRecommandations,
+  });
 export const setAutoLockTimeout = (autoLockTimeout: number) =>
   saveSettings({
     autoLockTimeout,

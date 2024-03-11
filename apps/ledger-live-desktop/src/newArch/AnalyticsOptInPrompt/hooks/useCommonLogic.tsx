@@ -3,7 +3,8 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { hasSeenAnalyticsOptInPromptSelector } from "~/renderer/reducers/settings";
 import { useDispatch, useSelector } from "react-redux";
 import { setHasSeenAnalyticsOptInPrompt } from "~/renderer/actions/settings";
-import { EntryPoint } from "../types/AnalyticsOptInromptNavigator";
+import { EntryPoint } from "../types/AnalyticsOptInPromptNavigator";
+import { ABTestingVariants } from "@ledgerhq/types-live";
 
 type Props = {
   entryPoint: EntryPoint;
@@ -37,7 +38,7 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
   const onSubmit = useCallback(() => {
     setIsAnalitycsOptInPromptOpened(false);
     dispatch(setHasSeenAnalyticsOptInPrompt(true));
-    if (entryPoint === "Onboarding") {
+    if (entryPoint === EntryPoint.onboarding) {
       nextStep?.();
       setNextStep(null);
     }
@@ -59,3 +60,6 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
     onSubmit,
   };
 };
+
+export const getVariant = (variant?: ABTestingVariants): ABTestingVariants =>
+  variant ?? ABTestingVariants.variantA;

@@ -1,20 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import React, { useEffect, useState, useCallback, memo } from "react";
 import { ABTestingVariants } from "@ledgerhq/types-live";
 import { SideDrawer } from "~/renderer/components/SideDrawer";
 import { useTheme } from "styled-components";
-import { Title } from "~/renderer/components/DeviceAction/rendering";
-import { EntryPoint } from "../types/AnalyticsOptInromptNavigator";
+import { EntryPoint } from "LLD/AnalyticsOptInPrompt/types/AnalyticsOptInPromptNavigator";
+import { getVariant } from "LLD/AnalyticsOptInPrompt/hooks/useCommonLogic";
+import VariantA from "LLD/AnalyticsOptInPrompt/screens/VariantA";
 import Box from "~/renderer/components/Box";
-import styled from "styled-components";
-
-const DrawerBox = styled(Box)`
-  margin-left: 40px;
-`;
-
-const DrawerTitle = styled(Title)`
-  text-align: left;
-`;
+import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 
 interface AnalyticsOptInPromptProps {
   onClose?: () => void;
@@ -24,50 +16,58 @@ interface AnalyticsOptInPromptProps {
   variant?: ABTestingVariants;
 }
 
-const AnalyticsOptInPrompt: React.FC<AnalyticsOptInPromptProps> = ({
-  onClose,
-  onSubmit,
-  isOpened,
-  entryPoint,
-  variant,
-}) => {
-  const { colors } = useTheme();
+const AnalyticsOptInPrompt = memo(
+  ({ onClose, onSubmit, isOpened, entryPoint, variant }: AnalyticsOptInPromptProps) => {
+    const { colors } = useTheme();
 
-  const isPortfolio = useLocation().pathname.toLocaleLowerCase() === "/";
-  const [preventClosable, setPreventClosable] = useState(false);
-  const [preventBackNavigation, setPreventBackNavigation] = useState(false);
+    const isNotOnBoarding = entryPoint !== EntryPoint.onboarding;
+    const [preventClosable, setPreventClosable] = useState(false);
+    const [preventBackNavigation, setPreventBackNavigation] = useState(true);
 
-  let isVariantA = true;
-  try {
-    isVariantA = variant !== ABTestingVariants.variantB;
-  } catch (error) {
-    console.error("An error occurred: ", error);
-  }
+    const isVariantA = getVariant(variant) === ABTestingVariants.variantA;
 
-  useEffect(() => {
-    if (isPortfolio) setPreventClosable(true);
-    if (isPortfolio) setPreventBackNavigation(false);
-  }, [isPortfolio, entryPoint, onSubmit]);
+    useEffect(() => {
+      if (isNotOnBoarding) setPreventClosable(true);
+    }, [isNotOnBoarding]);
 
-  return (
-    <div>
+    const handleRequestBack = useCallback(() => {
+      if (!preventBackNavigation) {
+        setPreventBackNavigation(true);
+      }
+    }, [preventBackNavigation]);
+
+    const handleRequestClose = useCallback(() => {
+      if (!preventClosable && onClose) {
+        onClose();
+      }
+    }, [preventClosable, onClose]);
+
+    return (
       <SideDrawer
         withPaddingTop
         isOpen={isOpened}
         direction={"left"}
-        onRequestBack={preventBackNavigation ? undefined : onClose}
-        onRequestClose={preventClosable ? undefined : onClose}
+        onRequestBack={preventBackNavigation ? undefined : handleRequestBack}
+        onRequestClose={preventClosable ? undefined : handleRequestClose}
         style={{
           background: colors.background.main,
-          paddingTop: "40px",
         }}
       >
-        <DrawerBox>
-          <DrawerTitle>Manage your preferences</DrawerTitle>
-          {isVariantA ? "variant A" : "variant B"}
-        </DrawerBox>
+        <Box height={"100%"}>
+          {isVariantA ? (
+            <VariantA
+              setPreventBackNavigation={() => setPreventBackNavigation(false)}
+              goBackToMain={preventBackNavigation}
+              onSubmit={onSubmit}
+            />
+          ) : (
+            "variantB"
+          )}
+        </Box>
       </SideDrawer>
-    </div>
-  );
-};
-export default AnalyticsOptInPrompt;
+    );
+  },
+);
+
+AnalyticsOptInPrompt.displayName = "AnalyticsOptInPrompt";
+export default withV3StyleProvider(AnalyticsOptInPrompt);

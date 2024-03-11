@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useAnalyticsOptInPrompt } from "LLD/AnalyticsOptInPrompt/hooks/useCommonLogic";
+import { EntryPoint } from "../types/AnalyticsOptInPromptNavigator";
 
 export const useDisplayOnPortfolioAnalytics = () => {
   const {
@@ -7,7 +8,7 @@ export const useDisplayOnPortfolioAnalytics = () => {
     setIsAnalitycsOptInPromptOpened,
     isFeatureFlagsAnalyticsPrefDisplayed,
     onSubmit,
-  } = useAnalyticsOptInPrompt({ entryPoint: "Portfolio" });
+  } = useAnalyticsOptInPrompt({ entryPoint: EntryPoint.portfolio });
 
   const extendedAnalyticsOptInPromptProps = {
     ...analyticsOptInPromptProps,
