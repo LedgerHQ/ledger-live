@@ -229,9 +229,7 @@ export type SettingsState = {
   hasSeenStaxEnabledNftsPopup: boolean;
   starredMarketCoins: string[];
   lastConnectedDevice: Device | null;
-  marketRequestParams: MarketListRequestParams;
   marketCounterCurrency: string | null | undefined;
-  marketFilterByStarredAccounts: boolean;
   sensitiveAnalytics: boolean;
   onboardingHasDevice: boolean | null;
   onboardingType: OnboardingType | null;
@@ -332,6 +330,14 @@ export type NftGalleryChainFiltersState = Pick<
   "polygon" | "ethereum"
 >;
 
+// === MARKET STATE ===
+
+export type MarketState = {
+  marketParams: MarketListRequestParams;
+  starredMarketCoins: string[];
+  marketFilterByStarredAccounts: boolean;
+};
+
 // === ROOT STATE ===
 
 export type State = {
@@ -348,4 +354,5 @@ export type State = {
   postOnboarding: PostOnboardingState;
   protect: ProtectState;
   nft: NftState;
+  market: MarketState;
 };

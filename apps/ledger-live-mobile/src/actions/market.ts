@@ -1,0 +1,24 @@
+import { createAction } from "redux-actions";
+import {
+  MarketAddStarredMarketcoinsPayload,
+  MarketRemoveStarredMarketcoinsPayload,
+  MarketSetMarketRequestParamsPayload,
+  MarketSetMarketFilterByStarredAccountsPayload,
+  MarketStateActionTypes,
+} from "./types";
+
+export const setMarketRequestParams = createAction<MarketSetMarketRequestParamsPayload>(
+  MarketStateActionTypes.SET_MARKET_REQUEST_PARAMS,
+);
+
+export const addStarredMarketCoins = createAction<MarketAddStarredMarketcoinsPayload>(
+  MarketStateActionTypes.ADD_STARRED_MARKET_COINS,
+);
+export const removeStarredMarketCoins = createAction<MarketRemoveStarredMarketcoinsPayload>(
+  MarketStateActionTypes.REMOVE_STARRED_MARKET_COINS,
+);
+
+export const setMarketFilterByStarredAccounts =
+  createAction<MarketSetMarketFilterByStarredAccountsPayload>(
+    MarketStateActionTypes.SET_MARKET_FILTER_BY_STARRED_ACCOUNTS,
+  );

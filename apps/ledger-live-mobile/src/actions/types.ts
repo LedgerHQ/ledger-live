@@ -35,6 +35,7 @@ import type {
   DynamicContentState,
   ProtectState,
   NftState,
+  MarketState,
 } from "../reducers/types";
 import type { Unpacked } from "../types/helpers";
 
@@ -262,13 +263,10 @@ export enum SettingsActionTypes {
   SET_KNOWN_DEVICE_MODEL_IDS = "SET_KNOWN_DEVICE_MODEL_IDS",
   SET_HAS_SEEN_STAX_ENABLED_NFTS_POPUP = "SET_HAS_SEEN_STAX_ENABLED_NFTS_POPUP",
   SET_LAST_SEEN_CUSTOM_IMAGE = "SET_LAST_SEEN_CUSTOM_IMAGE",
-  ADD_STARRED_MARKET_COINS = "ADD_STARRED_MARKET_COINS",
-  REMOVE_STARRED_MARKET_COINS = "REMOVE_STARRED_MARKET_COINS",
   SET_LAST_CONNECTED_DEVICE = "SET_LAST_CONNECTED_DEVICE",
   SET_CUSTOM_IMAGE_TYPE = "SET_CUSTOM_IMAGE_TYPE",
   SET_CUSTOM_IMAGE_BACKUP = "SET_CUSTOM_IMAGE_BACKUP",
   SET_HAS_ORDERED_NANO = "SET_HAS_ORDERED_NANO",
-  SET_MARKET_REQUEST_PARAMS = "SET_MARKET_REQUEST_PARAMS",
   SET_MARKET_COUNTER_CURRENCY = "SET_MARKET_COUNTER_CURRENCY",
   SET_MARKET_FILTER_BY_STARRED_ACCOUNTS = "SET_MARKET_FILTER_BY_STARRED_ACCOUNTS",
   SET_SENSITIVE_ANALYTICS = "SET_SENSITIVE_ANALYTICS",
@@ -342,8 +340,6 @@ export type SettingsLastSeenDevicePayload = NonNullable<
 export type SettingsLastSeenDeviceInfoPayload = DeviceModelInfo;
 export type SettingsLastSeenDeviceLanguagePayload = DeviceInfo["languageId"];
 export type SettingsSetKnownDeviceModelIdsPayload = { [key in DeviceModelId]?: boolean };
-export type SettingsAddStarredMarketcoinsPayload = Unpacked<SettingsState["starredMarketCoins"]>;
-export type SettingsRemoveStarredMarketcoinsPayload = Unpacked<SettingsState["starredMarketCoins"]>;
 export type SettingsSetLastConnectedDevicePayload = Device;
 export type SettingsSetHasSeenStaxEnabledNftsPopupPayload = Pick<
   SettingsState,
@@ -356,10 +352,7 @@ export type SettingsSetCustomImageBackupPayload = {
 } | null;
 export type SettingsSetCustomImageTypePayload = Pick<SettingsState, "customLockScreenType">;
 export type SettingsSetHasOrderedNanoPayload = SettingsState["hasOrderedNano"];
-export type SettingsSetMarketRequestParamsPayload = SettingsState["marketRequestParams"];
 export type SettingsSetMarketCounterCurrencyPayload = SettingsState["marketCounterCurrency"];
-export type SettingsSetMarketFilterByStarredAccountsPayload =
-  SettingsState["marketFilterByStarredAccounts"];
 export type SettingsSetSensitiveAnalyticsPayload = SettingsState["sensitiveAnalytics"];
 export type SettingsSetOnboardingHasDevicePayload = SettingsState["onboardingHasDevice"];
 
@@ -427,13 +420,9 @@ export type SettingsPayload =
   | SettingsLastSeenDeviceLanguagePayload
   | SettingsLastSeenDeviceInfoPayload
   | SettingsSetLastSeenCustomImagePayload
-  | SettingsAddStarredMarketcoinsPayload
-  | SettingsRemoveStarredMarketcoinsPayload
   | SettingsSetLastConnectedDevicePayload
   | SettingsSetHasOrderedNanoPayload
-  | SettingsSetMarketRequestParamsPayload
   | SettingsSetMarketCounterCurrencyPayload
-  | SettingsSetMarketFilterByStarredAccountsPayload
   | SettingsSetSensitiveAnalyticsPayload
   | SettingsSetOnboardingHasDevicePayload
   | SettingsSetNotificationsPayload
@@ -521,3 +510,23 @@ export type NftStateGalleryFilterDrawerVisiblePayload = NftState["filterDrawerVi
 export type NftStatePayload =
   | NftStateGalleryChainFiltersPayload
   | NftStateGalleryFilterDrawerVisiblePayload;
+
+// === MARKET ACTIONS ===
+export enum MarketStateActionTypes {
+  SET_MARKET_REQUEST_PARAMS = "SET_MARKET_REQUEST_PARAMS",
+  ADD_STARRED_MARKET_COINS = "ADD_STARRED_MARKET_COINS",
+  REMOVE_STARRED_MARKET_COINS = "REMOVE_STARRED_MARKET_COINS",
+  SET_MARKET_FILTER_BY_STARRED_ACCOUNTS = "SET_MARKET_FILTER_BY_STARRED_ACCOUNTS",
+}
+
+export type MarketSetMarketFilterByStarredAccountsPayload =
+  MarketState["marketFilterByStarredAccounts"];
+export type MarketSetMarketRequestParamsPayload = MarketState["marketParams"];
+export type MarketAddStarredMarketcoinsPayload = Unpacked<MarketState["starredMarketCoins"]>;
+export type MarketRemoveStarredMarketcoinsPayload = Unpacked<MarketState["starredMarketCoins"]>;
+
+export type MarketStatePayload =
+  | MarketSetMarketFilterByStarredAccountsPayload
+  | MarketSetMarketRequestParamsPayload
+  | MarketAddStarredMarketcoinsPayload
+  | MarketRemoveStarredMarketcoinsPayload;

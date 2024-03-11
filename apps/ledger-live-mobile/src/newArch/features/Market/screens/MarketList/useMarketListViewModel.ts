@@ -4,11 +4,11 @@ import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/t
 import { MarketNavigatorStackParamList } from "LLM/features/Market/Navigator";
 import { ScreenName } from "~/const";
 import { useRoute } from "@react-navigation/native";
+import { useMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import {
   marketFilterByStarredAccountsSelector,
   starredMarketCoinsSelector,
-} from "~/reducers/settings";
-import { useMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
+} from "~/reducers/market";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<MarketNavigatorStackParamList, ScreenName.MarketList>

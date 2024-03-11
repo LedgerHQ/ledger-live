@@ -2,13 +2,13 @@ import { useCallback, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
+import { track } from "~/analytics";
+import { getAnalyticsProperties } from "LLM/features/Market/utils";
+import { setMarketFilterByStarredAccounts, setMarketRequestParams } from "~/actions/market";
 import {
   marketFilterByStarredAccountsSelector,
   starredMarketCoinsSelector,
-} from "~/reducers/settings";
-import { track } from "~/analytics";
-import { setMarketFilterByStarredAccounts, setMarketRequestParams } from "~/actions/settings";
-import { getAnalyticsProperties } from "LLM/features/Market/utils";
+} from "~/reducers/market";
 
 function useBottomSectionViewModel() {
   const dispatch = useDispatch();

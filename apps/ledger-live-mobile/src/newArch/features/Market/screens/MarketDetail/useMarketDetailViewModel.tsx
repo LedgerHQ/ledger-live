@@ -1,14 +1,15 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useSingleCoinMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
-import { readOnlyModeEnabledSelector, starredMarketCoinsSelector } from "~/reducers/settings";
-import { addStarredMarketCoins, removeStarredMarketCoins } from "~/actions/settings";
+import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { flattenAccountsByCryptoCurrencyScreenSelector } from "~/reducers/accounts";
 import { screen, track } from "~/analytics";
 import { ScreenName } from "~/const";
 import useNotifications from "~/logic/notifications";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { MarketNavigatorStackParamList } from "LLM/features/Market/Navigator";
+import { removeStarredMarketCoins, addStarredMarketCoins } from "~/actions/market";
+import { starredMarketCoinsSelector } from "~/reducers/market";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<MarketNavigatorStackParamList, ScreenName.MarketDetail>

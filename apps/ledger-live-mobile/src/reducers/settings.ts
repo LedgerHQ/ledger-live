@@ -16,7 +16,6 @@ import { currencySettingsDefaults } from "../helpers/CurrencySettingsDefaults";
 import { getDefaultLanguageLocale, getDefaultLocale } from "../languages";
 import type {
   SettingsAcceptSwapProviderPayload,
-  SettingsAddStarredMarketcoinsPayload,
   SettingsBlacklistTokenPayload,
   SettingsDismissBannerPayload,
   SettingsHideEmptyTokenAccountsPayload,
@@ -27,7 +26,6 @@ import type {
   SettingsSetHasInstalledAnyAppPayload,
   SettingsLastSeenDeviceInfoPayload,
   SettingsPayload,
-  SettingsRemoveStarredMarketcoinsPayload,
   SettingsSetAnalyticsPayload,
   SettingsSetPersonalizedRecommendationsPayload,
   SettingsSetAvailableUpdatePayload,
@@ -40,8 +38,6 @@ import type {
   SettingsSetMarketCounterCurrencyPayload,
   SettingsSetCustomImageBackupPayload,
   SettingsSetLastSeenCustomImagePayload,
-  SettingsSetMarketFilterByStarredAccountsPayload,
-  SettingsSetMarketRequestParamsPayload,
   SettingsSetNotificationsPayload,
   SettingsSetNeverClickedOnAllowNotificationsButton,
   SettingsSetOrderAccountsPayload,
@@ -149,16 +145,7 @@ export const INITIAL_STATE: SettingsState = {
   hasSeenStaxEnabledNftsPopup: false,
   starredMarketCoins: [],
   lastConnectedDevice: null,
-  marketRequestParams: {
-    range: "24h",
-    orderBy: "market_cap",
-    order: "desc",
-    liveCompatible: false,
-    sparkline: false,
-    top100: false,
-  },
   marketCounterCurrency: null,
-  marketFilterByStarredAccounts: false,
   sensitiveAnalytics: false,
   onboardingHasDevice: null,
   notifications: {
@@ -493,21 +480,6 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     };
   },
 
-  [SettingsActionTypes.ADD_STARRED_MARKET_COINS]: (state, action) => ({
-    ...state,
-    starredMarketCoins: [
-      ...state.starredMarketCoins,
-      (action as Action<SettingsAddStarredMarketcoinsPayload>).payload,
-    ],
-  }),
-
-  [SettingsActionTypes.REMOVE_STARRED_MARKET_COINS]: (state, action) => ({
-    ...state,
-    starredMarketCoins: state.starredMarketCoins.filter(
-      id => id !== (action as Action<SettingsRemoveStarredMarketcoinsPayload>).payload,
-    ),
-  }),
-
   [SettingsActionTypes.SET_CUSTOM_IMAGE_BACKUP]: (state, action) => ({
     ...state,
     customLockScreenBackup: (action as Action<SettingsSetCustomImageBackupPayload>).payload,
@@ -527,24 +499,9 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     hasOrderedNano: (action as Action<SettingsSetHasOrderedNanoPayload>).payload,
   }),
 
-  [SettingsActionTypes.SET_MARKET_REQUEST_PARAMS]: (state, action) => ({
-    ...state,
-    marketRequestParams: {
-      ...state.marketRequestParams,
-      ...(action as Action<SettingsSetMarketRequestParamsPayload>).payload,
-    },
-  }),
-
   [SettingsActionTypes.SET_MARKET_COUNTER_CURRENCY]: (state, action) => ({
     ...state,
     marketCounterCurrency: (action as Action<SettingsSetMarketCounterCurrencyPayload>).payload,
-  }),
-
-  [SettingsActionTypes.SET_MARKET_FILTER_BY_STARRED_ACCOUNTS]: (state, action) => ({
-    ...state,
-    marketFilterByStarredAccounts: (
-      action as Action<SettingsSetMarketFilterByStarredAccountsPayload>
-    ).payload,
   }),
 
   [SettingsActionTypes.SET_SENSITIVE_ANALYTICS]: (state, action) => ({
@@ -823,10 +780,7 @@ export const lastConnectedDeviceSelector = (state: State) => {
   return state.settings.lastConnectedDevice;
 };
 export const hasOrderedNanoSelector = (state: State) => state.settings.hasOrderedNano;
-export const marketRequestParamsSelector = (state: State) => state.settings.marketRequestParams;
 export const marketCounterCurrencySelector = (state: State) => state.settings.marketCounterCurrency;
-export const marketFilterByStarredAccountsSelector = (state: State) =>
-  state.settings.marketFilterByStarredAccounts;
 export const customImageBackupSelector = (state: State) => state.settings.customLockScreenBackup;
 export const sensitiveAnalyticsSelector = (state: State) => state.settings.sensitiveAnalytics;
 export const onboardingHasDeviceSelector = (state: State) => state.settings.onboardingHasDevice;

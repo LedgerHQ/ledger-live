@@ -5,13 +5,12 @@ import Config from "react-native-config";
 import { MarketDataProvider } from "@ledgerhq/live-common/market/MarketDataProvider";
 import { useNetInfo } from "@react-native-community/netinfo";
 import { Currency } from "@ledgerhq/types-cryptoassets";
+import { counterValueCurrencySelector, marketCounterCurrencySelector } from "~/reducers/settings";
 import {
-  counterValueCurrencySelector,
-  marketCounterCurrencySelector,
   marketFilterByStarredAccountsSelector,
   marketRequestParamsSelector,
   starredMarketCoinsSelector,
-} from "~/reducers/settings";
+} from "~/reducers/market";
 
 type Props = {
   children: React.ReactNode;
