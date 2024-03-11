@@ -66,8 +66,8 @@ export default async function getDeviceInfo(transport: Transport): Promise<Devic
   } = res;
   const isOSU = rawVersion.includes("-osu");
   const version = rawVersion.replace("-osu", "");
-  const m = rawVersion.match(/([0-9]+.[0-9]+.[0-9]+)?(-(.*))?/);
-  const [, majMin, , postDash] = m || [];
+  const m = rawVersion.match(/([0-9]+.[0-9]+(.[0-9]+){0,1})?(-(.*))?/);
+  const [, majMin, , , postDash] = m || [];
   const providerName = PROVIDERS[postDash] ? postDash : null;
   const flag = flags.length > 0 ? flags[0] : 0;
   const managerAllowed = !!(flag & ManagerAllowedFlag);
