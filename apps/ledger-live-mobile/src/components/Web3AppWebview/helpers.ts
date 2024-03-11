@@ -6,8 +6,10 @@ import {
   UiHook,
   useConfig,
   useWalletAPIServer,
+  CurrentAccountHistDB,
+  useManifestCurrencies,
 } from "@ledgerhq/live-common/wallet-api/react";
-import { useDappLogic } from "@ledgerhq/live-common/wallet-api/useDappLogic";
+import { useDappCurrentAccount, useDappLogic } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import { Operation, SignedOperation } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/tracking";
@@ -124,7 +126,7 @@ export function useWebView(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [server]);
 
-  const { onDappMessage } = useDappLogic({
+  const { onDappMessage, noAccounts, currentAccount } = useDappLogic({
     manifest,
     currentAccountHistDb,
     accounts,
@@ -159,6 +161,8 @@ export function useWebView(
     onMessage,
     webviewProps,
     webviewRef,
+    noAccounts,
+    currentAccount,
   };
 }
 
@@ -506,4 +510,44 @@ function useGetUserId() {
   }, []);
 
   return userId;
+}
+
+export function useSelectAccount({
+  manifest,
+  currentAccountHistDb,
+}: {
+  manifest: AppManifest;
+  currentAccountHistDb?: CurrentAccountHistDB;
+}) {
+  const currencies = useManifestCurrencies(manifest);
+  const { setCurrentAccountHist } = useDappCurrentAccount(currentAccountHistDb);
+  const navigation = useNavigation();
+
+  const onSelectAccount = useCallback(() => {
+    if (currencies.length === 1) {
+      navigation.navigate(NavigatorName.RequestAccount, {
+        screen: ScreenName.RequestAccountsSelectAccount,
+        params: {
+          currency: currencies[0],
+          allowAddAccount: true,
+          onSuccess: account => {
+            setCurrentAccountHist(manifest.id, account);
+          },
+        },
+      });
+    } else {
+      navigation.navigate(NavigatorName.RequestAccount, {
+        screen: ScreenName.RequestAccountsSelectCrypto,
+        params: {
+          currencies,
+          allowAddAccount: true,
+          onSuccess: account => {
+            setCurrentAccountHist(manifest.id, account);
+          },
+        },
+      });
+    }
+  }, [manifest.id, currencies, navigation, setCurrentAccountHist]);
+
+  return { onSelectAccount };
 }
