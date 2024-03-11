@@ -1,6 +1,7 @@
 {
   "version": "0.2.0",
   "configurations": [
+  
     {
       // Start LLD with:
       //ELECTRON_ARGS=--remote-debugging-port=8315 pnpm dev:lld
