@@ -5,7 +5,7 @@ import { ExchangeTypes, createExchange, isExchangeTypeNg } from "@ledgerhq/hw-ap
 import { withDevice } from "../../hw/deviceAccess";
 import type { ExchangeRequestEvent } from "../../hw/actions/startExchange";
 import { StartExchangeInput } from "./types";
-import { getProviderConfig } from "../swap";
+import { getProviderConfig, getSwapProvider } from "../providers";
 
 const withDevicePromise = (deviceId, fn) =>
   firstValueFrom(withDevice(deviceId)(transport => from(fn(transport))));
@@ -20,11 +20,20 @@ const startExchange = (input: StartExchangeInput): Observable<ExchangeRequestEve
         let version;
         if (unsubscribed) return;
         if (provider) {
-          const providerConfig = getProviderConfig(provider);
-          if (providerConfig.type !== "CEX") {
-            throw new Error(`Unsupported provider type ${providerConfig.type}`);
+          switch (exchangeType) {
+            case ExchangeTypes.Swap: {
+              const providerConfig = getSwapProvider(provider);
+              if (providerConfig.type !== "CEX") {
+                throw new Error(`Unsupported provider type ${providerConfig.type}`);
+              }
+              version = providerConfig.version;
+              break;
+            }
+            default: {
+              const providerConfig = getProviderConfig(exchangeType, provider);
+              version = providerConfig.version;
+            }
           }
-          version = providerConfig.version;
         }
 
         if (!checkNgPrerequisite(exchangeType, appVersion)) {
