@@ -6,6 +6,7 @@ import { useInView } from "react-intersection-observer";
 
 type Props = {
   img?: string;
+  leftContent?: React.ReactNode;
 
   title: string;
   description: string;
@@ -24,7 +25,7 @@ type Props = {
   onView?: Function;
 };
 
-const ActionCard = ({ img, title, description, actions, onView }: Props) => {
+const ActionCard = ({ img, leftContent, title, description, actions, onView }: Props) => {
   const { ref, inView } = useInView({ threshold: 0.5, triggerOnce: true });
 
   useEffect(() => {
@@ -33,7 +34,7 @@ const ActionCard = ({ img, title, description, actions, onView }: Props) => {
 
   return (
     <CardContainer ref={ref}>
-      {img && <Header src={img} />}
+      {(img && <Header src={img} />) || leftContent}
       <Body>
         <Title>{title}</Title>
         <Description>{description}</Description>
