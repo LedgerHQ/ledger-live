@@ -173,6 +173,32 @@ describe("EVM Family", () => {
             expect(nextBaseFee?.isInteger(), `${key}:nextBaseFee - got ${nextBaseFee}`).toBe(true);
           });
         });
+
+        it("should use overrideGasTracker", async () => {
+          mockGetConfig.mockImplementationOnce((): any => {
+            return {
+              info: {
+                gasTracker: {
+                  type: "ledger",
+                  explorerId: "anything",
+                },
+              },
+            };
+          });
+
+          await getGasOptions({
+            currency: fakeCurrency as CryptoCurrency,
+            options: {
+              useEIP1559: true,
+              overrideGasTracker: { type: "ledger", explorerId: "eth_goerli" },
+            },
+          });
+
+          expect(mockedNetwork).toHaveBeenCalledWith({
+            method: "GET",
+            url: "https://explorers.api.live.ledger.com/blockchain/v4/eth_goerli/gastracker/barometer?display=eip1559",
+          });
+        });
       });
 
       describe("legacy gas options", () => {
@@ -278,6 +304,32 @@ describe("EVM Family", () => {
             const { gasPrice } = value;
 
             expect(gasPrice?.isInteger(), `${key}:gasPrice - got ${gasPrice}`).toBe(true);
+          });
+        });
+
+        it("should use overrideGasTracker", async () => {
+          mockGetConfig.mockImplementationOnce((): any => {
+            return {
+              info: {
+                gasTracker: {
+                  type: "ledger",
+                  explorerId: "anything",
+                },
+              },
+            };
+          });
+
+          await getGasOptions({
+            currency: fakeCurrency as CryptoCurrency,
+            options: {
+              useEIP1559: false,
+              overrideGasTracker: { type: "ledger", explorerId: "eth_goerli" },
+            },
+          });
+
+          expect(mockedNetwork).toHaveBeenCalledWith({
+            method: "GET",
+            url: "https://explorers.api.live.ledger.com/blockchain/v4/eth_goerli/gastracker/barometer",
           });
         });
       });
