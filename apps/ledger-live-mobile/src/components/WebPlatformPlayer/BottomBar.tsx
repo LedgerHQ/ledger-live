@@ -5,18 +5,13 @@ import { ArrowLeftMedium, ArrowRightMedium, ReverseMedium } from "@ledgerhq/nati
 import { useTheme } from "styled-components/native";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/useDappLogic";
-import {
-  safeGetRefValue,
-  CurrentAccountHistDB,
-  useManifestCurrencies,
-} from "@ledgerhq/live-common/wallet-api/react";
+import { safeGetRefValue, CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react";
 import { WebviewAPI, WebviewState } from "../Web3AppWebview/types";
-import { useNavigation } from "@react-navigation/native";
-import { NavigatorName, ScreenName } from "~/const";
 import Button from "../Button";
 import { Trans } from "react-i18next";
 import { getAccountName } from "@ledgerhq/live-common/account/index";
 import CircleCurrencyIcon from "../CircleCurrencyIcon";
+import { useSelectAccount } from "../Web3AppWebview/helpers";
 
 type BottomBarProps = {
   manifest: AppManifest;
@@ -52,9 +47,8 @@ export function BottomBar({
   webviewState,
   currentAccountHistDb,
 }: BottomBarProps) {
-  const navigation = useNavigation();
   const { colors } = useTheme();
-  const { currentAccount, setCurrentAccountHist } = useDappCurrentAccount(currentAccountHistDb);
+  const { currentAccount } = useDappCurrentAccount(currentAccountHistDb);
   const shouldDisplaySelectAccount = !!manifest.dapp;
 
   const handleForward = useCallback(() => {
@@ -75,33 +69,7 @@ export function BottomBar({
     webview.reload();
   }, [webviewAPIRef]);
 
-  const currencies = useManifestCurrencies(manifest);
-
-  const onSelectAccount = useCallback(() => {
-    if (currencies.length === 1) {
-      navigation.navigate(NavigatorName.RequestAccount, {
-        screen: ScreenName.RequestAccountsSelectAccount,
-        params: {
-          currency: currencies[0],
-          allowAddAccount: true,
-          onSuccess: account => {
-            setCurrentAccountHist(manifest.id, account);
-          },
-        },
-      });
-    } else {
-      navigation.navigate(NavigatorName.RequestAccount, {
-        screen: ScreenName.RequestAccountsSelectCrypto,
-        params: {
-          currencies,
-          allowAddAccount: true,
-          onSuccess: account => {
-            setCurrentAccountHist(manifest.id, account);
-          },
-        },
-      });
-    }
-  }, [manifest.id, currencies, navigation, setCurrentAccountHist]);
+  const { onSelectAccount } = useSelectAccount({ manifest, currentAccountHistDb });
 
   return (
     <Flex flexDirection="row" paddingY={4} paddingX={4} alignItems="center">
