@@ -1409,6 +1409,7 @@
   },
   "dashboard" : {
     "title" : "Portfólio",
+    "header" : "Saldo do portfólio",
     "emptyAccountTile" : {
       "desc" : "Adicione contas para gerenciar outros criptoativos",
       "createAccount" : "Adicionar Conta"
@@ -1449,6 +1450,27 @@
         "description" : "Você está a um passo do Ledger Recover.",
         "primaryCta" : "Conectar",
         "secondaryCta" : "Talvez mais tarde"
+      }
+    },
+    "marketPerformanceWidget" : {
+      "title" : "gráfico de {{time}}",
+      "buy" : "Comprar",
+      "swap" : "Trocar",
+      "gainers" : "Melhores",
+      "losers" : "Piores",
+      "error" : {
+        "title" : "Desculpe, não foi possível carregar o gráfico",
+        "description" : "Tente novamente mais tarde"
+      },
+      "missingData" : {
+        "gainers" : {
+          "title" : "Nenhum ativo dentre os 50 principais apresentou alta nas últimas 24 horas",
+          "description" : "Tente visualizar as principais baixas ou volte mais tarde"
+        },
+        "losers" : {
+          "title" : "Nenhum ativo dentre os 50 principais apresentou baixa nas últimas 24 horas",
+          "description" : "Tente visualizar as principais altas ou volte mais tarde"
+        }
       }
     }
   },
@@ -1756,7 +1778,7 @@
   "DeviceAction" : {
     "allowAppPermission" : "Abra o aplicativo {{wording}} no seu dispositivo",
     "allowAppPermissionSubtitleToken" : "para gerenciar seus tokens {{token}}",
-    "allowManagerPermission" : "Permitir uma conexão segura na {{productName}}",
+    "allowManagerPermission" : "Permitir conexão segura",
     "allowRenaming" : "Permitir renomeação do seu dispositivo",
     "loading" : "Carregando...",
     "connectAndUnlockDevice" : "Conecte e desbloqueie seu dispositivo",
@@ -2207,6 +2229,15 @@
       "summary" : {
         "title" : "Resumo"
       },
+      "networkFee" : {
+        "title" : "Escolha a taxa de rede"
+      },
+      "reviewSummary" : {
+        "title" : "Revise os detalhes"
+      },
+      "connectLedger" : {
+        "title" : "Conecte a Ledger"
+      },
       "device" : {
         "title" : "Dispositivo"
       },
@@ -2263,9 +2294,6 @@
     "footer" : {
       "estimatedFees" : "Taxas de rede"
     }
-  },
-  "sign" : {
-    "title" : "Assinar Transação"
   },
   "releaseNotes" : {
     "title" : "Notas de lançamento",
@@ -4129,7 +4157,7 @@
         "desc" : "Configure seu node completo de Bitcoin para sincronizar e enviar transações sem usar os exploradores da Ledger."
       },
       "filterTokenOperationsZeroAmount" : {
-        "title" : "Esconder transações de tokens quando o valor é 0",
+        "title" : "Esconder transações de tokens quando o valor for 0",
         "desc" : "Esconder transações de tokens sem valor pode prevenir possíveis ataques de envenenamento de endereço na Ethereum, Polygon, BSC, Tron..."
       }
     }
@@ -4177,6 +4205,17 @@
     "troubleshooting" : "Clique aqui para ver possíveis soluções",
     "logs" : "Salvar Registros",
     "dataFolder" : "Ver dados de usuário"
+  },
+  "approve" : {
+    "title" : "Aprove o token",
+    "description" : "Aprove o token em seu dispositivo Ledger",
+    "unlimited" : "Você está autorizando esse provedor a acessar uma quantidade ilimitada do token selecionado dentro da sua carteira. Verifique os detalhes da transação com muita atenção em seu dispositivo Ledger antes de assinar.",
+    "limited" : "Você está autorizando esse provedor a acessar o token selecionado dentro da sua carteira. Verifique os detalhes da transação com muita atenção em seu dispositivo Ledger antes de assinar.",
+    "termsAndConditions" : "Ao validar esta transação, você aceita os <0>termos de uso do aplicativo {{appName}}</0>"
+  },
+  "sign" : {
+    "title" : "Assinar Transação",
+    "description" : "Assine a transação no seu dispositivo Ledger"
   },
   "exportOperationsModal" : {
     "title" : "Histórico de operações",
@@ -4295,7 +4334,7 @@
         "contactSupportCTA" : "Falar com o suporte",
         "continueCTA" : "Continuar",
         "title" : "Marque os conteúdos da caixa",
-        "description" : "Se o seu {{device}} já veio com um código PIN ou frase de recuperação, não é seguro usá-lo e você deve entrar em contato com o Suporte Ledger.",
+        "description" : "Se a sua {{device}} veio junto com um código PIN ou frase de recuperação, não é seguro utilizá-la. Entre em contato com o Suporte Ledger imediatamente.",
         "alert" : "Use apenas frases de recuperação que seu dispositivo exibiu quando foi configurado"
       }
     },
@@ -4307,7 +4346,7 @@
       },
       "useLedgerSeeds" : {
         "title" : "Recomendamos usar apenas frases de recuperação da Ledger",
-        "descr" : "A Ledger não pode garantir a segurança de frases de recuperação externas. Recomendamos configurar sua Nano como um novo dispositivo se sua frase de recuperação não tiver sido gerada por uma Ledger.",
+        "descr" : "A Ledger não pode garantir a segurança de frases de recuperação geradas por carteiras de outros fabricantes. Recomendamos que você configure a sua Nano como um novo dispositivo se sua frase de recuperação não tiver sido gerada por uma Ledger.",
         "gotIt" : "Entendi"
       }
     },
@@ -4909,6 +4948,8 @@
     "warning" : "Sempre verifique se o endereço exibido no seu dispositivo corresponde exatamente ao fornecido por{{recipientWording}}",
     "secureContract" : "Verifique os detalhes do depósito no seu dispositivo antes de enviá-lo. O endereço do contrato é fornecido com segurança para que você não precise verificá-lo.",
     "verifyData" : "Sempre verifique os detalhes da operação no seu dispositivo.",
+    "doubleCheck" : "Verifique os detalhes da transação com muita atenção em seu dispositivo Ledger antes de assinar.",
+    "termsAndConditions" : "Ao validar esta transação, você aceita os <0>termos de uso do aplicativo {{appName}}</0>",
     "warningWording" : {
     },
     "titleWording" : {
@@ -5431,7 +5472,7 @@
       "description" : "Reinicie seu dispositivo sem tocar nos botões quando o logotipo aparecer. Contate o Suporte Ledger se o problema persistir."
     },
     "UserRefusedAllowManager" : {
-      "title" : "My Ledger negado no dispositivo"
+      "title" : "Conexão segura negada no dispositivo"
     },
     "UserRefusedFirmwareUpdate" : {
       "title" : "Instalação da atualização do sistema\noperacional cancelada no dispositivo",
@@ -5472,6 +5513,14 @@
     "WrongDeviceForAccount" : {
       "title" : "Algo deu errado",
       "description" : "Verifique se sua carteira hardware está configurada com a frase de recuperação ou passphrase associada à conta selecionada."
+    },
+    "WrongDeviceForAccountPayout" : {
+      "title" : "Algo deu errado",
+      "description" : "Essa conta de recebimento não pertence ao seu dispositivo. Mude e tente novamente."
+    },
+    "WrongDeviceForAccountRefund" : {
+      "title" : "Algo deu errado",
+      "description" : "Essa conta de recebimento não pertence ao seu dispositivo. Mude e tente novamente."
     },
     "DeviceAppVerifyNotSupported" : {
       "title" : "Atualização de aplicativo necessária",
@@ -5516,6 +5565,10 @@
     "TransactionHasBeenValidatedError" : {
       "title" : "Não pode ser acelerada nem cancelada",
       "description" : "Essa transação já foi validada"
+    },
+    "SequenceNumberError" : {
+      "title" : "Erro do número de sequência",
+      "description" : "Feche a janela e tente novamente mais tarde"
     },
     "CantScanQRCode" : {
       "title" : "Não foi possível escanear o QR Code: verificação automática não compatível com este endereço."
@@ -5698,6 +5751,9 @@
     },
     "SwapExchangeRateAmountTooHigh" : {
       "title" : "A quantia deve ser menor que {{maxAmountFromFormatted}}"
+    },
+    "SwapExchangeRateAmountTooLowOrTooHigh" : {
+      "title" : "Valor indisponível. Ajuste o valor."
     },
     "PolkadotElectionClosed" : {
       "title" : "A eleição dos validadores deve ser encerrada"
@@ -5914,9 +5970,6 @@
     "FailedToRetrieveFirmwareUpdateInfo" : {
       "title" : "Falha em verificar a atualização do sistema operacional",
       "description" : "Algo deu errado. Tente novamente ou fale com o Suporte Ledger em caso de dúvida."
-    },
-    "TezosUnrevealedAccount" : {
-      "title" : "Troca indisponível: Necessário enviar/delegar primeiro com uma conta Tezos ou um par de troca Tezos."
     }
   },
   "cryptoOrg" : {
@@ -6046,5 +6099,41 @@
   },
   "recoverRestore" : {
     "title" : "Conectar e desbloquear sua Ledger"
+  },
+  "analyticsOptInPrompt" : {
+    "variantA" : {
+      "description" : "Sharing your Ledger Live data helps us understand your preferences, show content that’s relevant to you, and fix technical issues.",
+      "whatWeTrack" : "With your consent, Ledger will be able to track:",
+      "whatWeTrackList" : {
+        "1" : "Analytics data, including page visits, clicks.",
+        "2" : "Personalization data including clicks, page visits, conversion data."
+      },
+      "whatWeDoNotTrack" : "Ledger will never track information regarding:",
+      "whatWeDoNotTrackList" : {
+        "1" : "Your assets.",
+        "2" : "Your portfolio.",
+        "3" : "Your personal identifying Information."
+      },
+      "managePreferences" : "Manage your preferences",
+      "refuse" : "Refuse all",
+      "accept" : "Accept all",
+      "analyticsData" : {
+        "title" : "Analytics data",
+        "description" : "To help improve Ledger Live, share app’s analytics data, including page visits, clicks."
+      },
+      "personalizationData" : {
+        "title" : "Personalization data",
+        "description" : "To get personalized recommendations, share app’s personalization data including, conversion data, clicks, page visits."
+      },
+      "share" : "Share"
+    },
+    "variantB" : {
+      "description" : "Sharing your Ledger Live analytics data helps us understand how people use Ledger Live, fix bugs, and offer an improved user experience."
+    },
+    "common" : {
+      "title" : "Help us improve and personalize your experience",
+      "revokeInfo" : "You can revoke your consent any time in the app settings.",
+      "learnMore" : "Learn more about our Tracking Policy"
+    }
   }
 }
