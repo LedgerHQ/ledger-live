@@ -240,7 +240,10 @@ export const getFeeData: NodeApi["getFeeData"] = async (currency, transaction) =
      * It's most probably always 2 since it's the default type value for a new transaction
      * cf. libs/coin-evm/src/createTransaction.ts:23
      */
-    options: { useEIP1559: transaction.type === 2 },
+    options: {
+      useEIP1559: transaction.type === 2,
+      overrideGasTracker: { type: "ledger", explorerId: node.explorerId },
+    },
   });
 
   return medium;

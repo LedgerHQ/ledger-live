@@ -3,7 +3,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
 import { CryptoCurrency, LedgerExplorerId } from "@ledgerhq/types-cryptoassets";
 import { GasOptions } from "../../types";
-import { getCoinConfig } from "../../config";
+import { EvmConfigInfo, getCoinConfig } from "../../config";
 import { LedgerGasTrackerUsedIncorrectly, NoGasTrackerFound } from "../../errors";
 import { GasTrackerApi, isLedgerGasTracker } from "./types";
 
@@ -36,11 +36,14 @@ export const getGasOptions = async ({
   currency: CryptoCurrency;
   options?: {
     useEIP1559: boolean;
+    overrideGasTracker?: EvmConfigInfo["gasTracker"];
   };
 }): Promise<GasOptions> => {
   const config = getCoinConfig(currency).info;
 
-  const { gasTracker } = config || /* istanbul ignore next */ {};
+  const gasTracker =
+    options?.overrideGasTracker || config.gasTracker || /* istanbul ignore next */ {};
+
   if (!isLedgerGasTracker(gasTracker)) {
     throw new LedgerGasTrackerUsedIncorrectly();
   }
