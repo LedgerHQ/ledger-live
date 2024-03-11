@@ -127,14 +127,14 @@ export const migrationAddresses: MigrationAddress[] = [
     address: "12EsPA79dvhtjp1bYvCiEWPsQmmdKGss44GzE3CT9tTo9g4Q",
   },
   // solana
-  // {
-  //   currencyId: "solana",
-  //   address: "AQbkEagmPgmsdAfS4X8V8UyJnXXjVPMvjeD15etqQ3Jh",
-  // },
-  // {
-  //   currencyId: "solana",
-  //   address: "7b6Q3ap8qRzfyvDw1Qce3fUV8C7WgFNzJQwYNTJm3KQo",
-  // },
+  {
+    currencyId: "solana",
+    address: "AQbkEagmPgmsdAfS4X8V8UyJnXXjVPMvjeD15etqQ3Jh",
+  },
+  {
+    currencyId: "solana",
+    address: "7b6Q3ap8qRzfyvDw1Qce3fUV8C7WgFNzJQwYNTJm3KQo",
+  },
   // stellar
   {
     currencyId: "stellar",
