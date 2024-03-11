@@ -2,7 +2,7 @@ import { CustomModule, Transaction, serializeTransaction } from "@ledgerhq/walle
 import {
   ExchangeCompleteParams,
   ExchangeCompleteResult,
-  ExchangeStartParams,
+  ExchangeStartFundParams,
   ExchangeStartResult,
   ExchangeStartSellParams,
   ExchangeStartSwapParams,
@@ -18,11 +18,11 @@ export class ExchangeModule extends CustomModule {
    *
    * @returns - A transaction ID used to complete the exchange process
    */
-  async start(exchangeType: ExchangeStartParams["exchangeType"]) {
-    const result = await this.request<ExchangeStartParams, ExchangeStartResult>(
+  async startFund() {
+    const result = await this.request<ExchangeStartFundParams, ExchangeStartResult>(
       "custom.exchange.start",
       {
-        exchangeType,
+        exchangeType: "FUND",
       },
     );
 

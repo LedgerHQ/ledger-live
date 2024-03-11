@@ -38,10 +38,6 @@ export const getProviderConfig = (
     case ExchangeTypes.SellNg:
       return getSellProvider(providerName.toLowerCase());
 
-    // case ExchangeTypes.Swap:
-    // case ExchangeTypes.SwapNg:
-    //   return getSwapProvider(providerName.toLowerCase());
-
     default:
       throw new Error(`Unknown partner ${providerName} type`);
   }

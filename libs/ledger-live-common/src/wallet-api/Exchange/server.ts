@@ -60,11 +60,19 @@ export type CompleteExchangeUiRequest = {
   amountExpectedTo?: number;
 };
 
-type ExchangeStartParamsUiRequest = {
-  exchangeType: "FUND" | "SELL" | "SWAP";
-  provider?: string;
-  exchange?: Exchange;
-};
+type ExchangeStartParamsUiRequest =
+  | {
+      exchangeType: "FUND";
+    }
+  | {
+      exchangeType: "SELL";
+      provider: string;
+    }
+  | {
+      exchangeType: "SWAP";
+      provider: string;
+      exchange: Exchange;
+    };
 
 type ExchangeUiHooks = {
   "custom.exchange.start": (params: {
@@ -105,18 +113,17 @@ export const handlers = ({
         return { transactionId: "" };
       }
 
-      let exchangeParams: ExchangeStartParamsUiRequest = {
-        exchangeType: params.exchangeType,
-      };
+      let exchangeParams: ExchangeStartParamsUiRequest;
 
-      switch (params.exchangeType) {
-        case "SWAP": {
-          exchangeParams = extractSwapStartParam(params as ExchangeStartSwapParams, accounts);
-          break;
-        }
-        case "SELL": {
-          exchangeParams = extractSellStartParam(params as ExchangeStartSellParams);
-        }
+      // Use `if else` instead of switch to leverage TS type narrowing and avoid `params` force cast.
+      if (params.exchangeType == "SWAP") {
+        exchangeParams = extractSwapStartParam(params, accounts);
+      } else if (params.exchangeType == "SELL") {
+        exchangeParams = extractSellStartParam(params);
+      } else {
+        exchangeParams = {
+          exchangeType: params.exchangeType,
+        };
       }
 
       return new Promise((resolve, reject) =>
