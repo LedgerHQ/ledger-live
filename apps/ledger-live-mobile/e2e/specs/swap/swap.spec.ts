@@ -43,8 +43,11 @@ describe("Swap", () => {
     await swapPage.selectAccount("Ethereum");
   });
 
-  it("should be able to send the maximum available amount", async () => {
+  it("should have the send max toggle switch disabled for account coins", async () => {
     await swapPage.sendMax();
+    await swapPage.openSourceAccountSelector();
+    await swapPage.selectAccount("Bitcoin 1 (legacy)");
+    await swapPage.enterSourceAmount("0.1");
     await swapPage.startExchange();
     await expect(swapPage.termsAcceptButton()).toBeVisible();
     await expect(swapPage.termsCloseButton()).toBeVisible();
