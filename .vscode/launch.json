@@ -1,7 +1,13 @@
 {
   "version": "0.2.0",
   "configurations": [
-  
+    {
+      "command": "npm start",
+      "name": "Run npm start",
+      "request": "launch",
+      "type": "node-terminal"
+    },
+
     {
       // Start LLD with:
       //ELECTRON_ARGS=--remote-debugging-port=8315 pnpm dev:lld
