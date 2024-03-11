@@ -7,6 +7,7 @@ import { useWebView } from "./helpers";
 import { NetworkError } from "./NetworkError";
 import { DEFAULT_MULTIBUY_APP_ID } from "@ledgerhq/live-common/wallet-api/constants";
 import { INJECTED_JAVASCRIPT } from "./dappInject";
+import { NoAccountScreen } from "./NoAccountScreen";
 
 export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
   (
@@ -20,7 +21,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     },
     ref,
   ) => {
-    const { onMessage, onLoadError, webviewProps, webviewRef } = useWebView(
+    const { onMessage, onLoadError, webviewProps, webviewRef, noAccounts } = useWebView(
       {
         manifest,
         inputs,
@@ -36,6 +37,10 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     };
 
     const javaScriptCanOpenWindowsAutomatically = manifest.id === DEFAULT_MULTIBUY_APP_ID;
+
+    if (!!manifest.dapp && noAccounts) {
+      return <NoAccountScreen manifest={manifest} currentAccountHistDb={currentAccountHistDb} />;
+    }
 
     return (
       <RNWebView
