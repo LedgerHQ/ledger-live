@@ -228,7 +228,7 @@ const CustomImage: React.FC<Props> = props => {
   );
 
   const deviceModelPicker = isDeviceModelIdUndefined ? (
-    <Flex mb={10} alignSelf="center">
+    <Flex alignSelf="center" height={40}>
       <Bar
         initialActiveIndex={supportedDeviceModelIds.indexOf(deviceModelId)}
         onTabChange={i => {
@@ -236,7 +236,13 @@ const CustomImage: React.FC<Props> = props => {
         }}
       >
         {supportedDeviceModelIds.map(deviceModelId => (
-          <Text color="inherit" key={deviceModelId}>
+          <Text
+            px={3}
+            color="inherit"
+            variant="paragraph"
+            fontWeight="semiBold"
+            key={deviceModelId}
+          >
             {getDeviceModel(deviceModelId).productName}
           </Text>
         ))}

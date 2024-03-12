@@ -65,7 +65,6 @@ const StepAdjustImage: React.FC<Props> = props => {
         flow={analyticsFlowName}
         refreshSource={false}
       />
-      {deviceModelPicker}
       {src ? (
         <ImageCropper
           {...src}
@@ -75,7 +74,9 @@ const StepAdjustImage: React.FC<Props> = props => {
           onResult={onResult}
           onError={onError}
           setLoading={setLoading}
-        />
+        >
+          {deviceModelPicker}
+        </ImageCropper>
       ) : null}
     </StepContainer>
   );
