@@ -172,6 +172,7 @@ export type Features = CurrencyFeatures & {
   supportDeviceStax: Feature_SupportDeviceStax;
   supportDeviceEuropa: Feature_SupportDeviceEuropa;
   lldRefreshMarketData: Feature_LldRefreshMarketData;
+  llmRefreshMarketData: Feature_LlmRefreshMarketData;
 };
 
 /**
@@ -451,6 +452,9 @@ export type Feature_NftsFromSimpleHash = Feature<{
 }>;
 
 export type Feature_LldRefreshMarketData = Feature<{
+  refreshTime: number;
+}>;
+export type Feature_LlmRefreshMarketData = Feature<{
   refreshTime: number;
 }>;
 
