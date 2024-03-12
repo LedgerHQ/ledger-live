@@ -645,5 +645,5 @@ export function useDappLogic({
     ],
   );
 
-  return { onDappMessage };
+  return { onDappMessage, noAccounts: !currentAccount };
 }
