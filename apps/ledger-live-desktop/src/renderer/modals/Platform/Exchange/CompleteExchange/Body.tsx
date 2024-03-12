@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Operation, SignedOperation } from "@ledgerhq/types-live";
 import { Exchange } from "@ledgerhq/live-common/exchange/platform/types";
@@ -106,6 +106,7 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
   }, [exchange, getCurrencyByAccount]);
 
   const broadcast = useBroadcast({ account, parentAccount });
+  const broadcastRef = useRef(false);
   const [transaction, setTransaction] = useState<Transaction>();
   const [signedOperation, setSignedOperation] = useState<SignedOperation>();
   const [error, setError] = useState<Error>();
@@ -200,9 +201,13 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
   }, [onCancel, error, onClose]);
 
   useEffect(() => {
-    if (!signedOperation) return;
+    if (broadcastRef.current || !signedOperation) return;
     console.log("[moonpay] about to broadcast");
-    broadcast(signedOperation).then(onBroadcastSuccess, setError);
+    broadcast(signedOperation)
+      .then(onBroadcastSuccess, setError)
+      .finally(() => {
+        broadcastRef.current = true;
+      });
   }, [signedOperation, broadcast, onBroadcastSuccess, setError]);
 
   return (
