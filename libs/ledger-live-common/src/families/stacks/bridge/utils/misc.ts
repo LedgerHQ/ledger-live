@@ -84,7 +84,7 @@ export const mapTxToOps =
 
       const memoHex = tx.tx.token_transfer?.memo;
       let memo: string = "";
-      if (memoHex === "0x") {
+      if (memoHex?.substring(0, 2) === "0x") {
         memo = Buffer.from(memoHex.substring(2), "hex").toString().replaceAll("\x00", "");
       }
 
@@ -140,7 +140,7 @@ export const mapTxToOps =
           ...operationCommons,
           id: encodeOperationId(accountID, tx_id, type),
           value: new BigNumber(receivedValue),
-          recipients: recipients.length > 1 ? [recipients[0]] : [],
+          recipients: recipients.length === 1 ? [recipients[0]] : [],
           type,
           internalOperations:
             stx_transfers.length > 1
