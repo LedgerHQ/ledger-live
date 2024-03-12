@@ -5,8 +5,8 @@ import {
   getAccountName,
   getAccountUnit,
 } from "@ledgerhq/live-common/account/index";
-import { TokenAccount, AccountLike, ChildAccount } from "@ledgerhq/types-live";
-import { DerivationMode, getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
+import { TokenAccount, AccountLike, ChildAccount, DerivationMode } from "@ledgerhq/types-live";
+import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { useSelector } from "react-redux";
 import { GestureResponderEvent } from "react-native";
 import { useStartProfiler } from "@shopify/react-native-performance";

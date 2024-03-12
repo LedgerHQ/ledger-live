@@ -61,7 +61,6 @@ import {
 } from "~/screens/BleDevicePairingFlow";
 
 import PostBuyDeviceScreen from "~/screens/PostBuyDeviceScreen";
-import LearnWebView from "~/screens/Learn/index";
 import { useNoNanoBuyNanoWallScreenOptions } from "~/context/NoNanoBuyNanoWall";
 import PostBuyDeviceSetupNanoWallScreen from "~/screens/PostBuyDeviceSetupNanoWallScreen";
 import CurrencySettings from "~/screens/Settings/CryptoAssets/Currencies/CurrencySettings";
@@ -193,11 +192,6 @@ export default function BaseNavigator() {
             headerStyle: styles.headerNoShadow,
           }}
           {...noNanoBuyNanoWallScreenOptions}
-        />
-        <Stack.Screen
-          name={ScreenName.LearnWebView}
-          component={LearnWebView}
-          options={{ headerShown: false }}
         />
         <Stack.Screen
           name={NavigatorName.ExploreTab}

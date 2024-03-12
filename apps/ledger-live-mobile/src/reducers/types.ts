@@ -223,11 +223,11 @@ export type SettingsState = {
     acceptedProviders: string[];
     selectableCurrencies: string[];
   };
-  lastSeenDevice: DeviceModelInfo | null | undefined;
+  lastSeenDevice: DeviceModelInfo | null;
   knownDeviceModelIds: Record<DeviceModelId, boolean>;
   hasSeenStaxEnabledNftsPopup: boolean;
   starredMarketCoins: string[];
-  lastConnectedDevice: Device | null | undefined;
+  lastConnectedDevice: Device | null;
   marketRequestParams: MarketListRequestParams;
   marketCounterCurrency: string | null | undefined;
   marketFilterByStarredAccounts: boolean;

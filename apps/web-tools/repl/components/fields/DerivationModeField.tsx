@@ -1,7 +1,7 @@
 import React from "react";
 import Select from "react-select";
 import { getAllDerivationModes } from "@ledgerhq/coin-framework/derivation";
-import type { DerivationMode } from "@ledgerhq/coin-framework/derivation";
+import type { DerivationMode } from "@ledgerhq/types-live";
 
 export type DataTypeDerivationMode = {
   type: "derivationMode";

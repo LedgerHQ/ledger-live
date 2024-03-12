@@ -20,7 +20,6 @@ import { setWalletTabNavigatorLastVisitedTab } from "~/actions/settings";
 import WalletTabNavigatorTabBar from "../WalletTab/WalletTabNavigatorTabBar";
 import WalletTabNavigatorScrollManager from "../WalletTab/WalletTabNavigatorScrollManager";
 import WalletTabHeader from "../WalletTab/WalletTabHeader";
-import WalletTabNavigatorTabBarDisabled from "../WalletTab/WalletTabNavigatorTabBarDisabled";
 import { WalletTabNavigatorStackParamList } from "./types/WalletTabNavigator";
 import { ScreenName, NavigatorName } from "~/const/navigation";
 import MarketNavigator from "./MarketNavigator";
@@ -30,12 +29,7 @@ const WalletTab = createMaterialTopTabNavigator<WalletTabNavigatorStackParamList
 
 const tabBarOptions = (props: MaterialTopTabBarProps) => <WalletTabNavigatorTabBar {...props} />;
 
-const tabBarDisabledOptions = (props: MaterialTopTabBarProps) => (
-  <WalletTabNavigatorTabBarDisabled {...props} />
-);
-
 export default function WalletTabNavigator() {
-  const walletNftGalleryFeature = useFeature("walletNftGallery");
   const marketNewArch = useFeature("llmMarketNewArch");
 
   const dispatch = useDispatch();
@@ -49,14 +43,12 @@ export default function WalletTabNavigator() {
     <WalletTabNavigatorScrollManager currentRouteName={currentRouteName}>
       <Box flexGrow={1} bg={"background.main"}>
         <WalletTab.Navigator
-          initialRouteName={
-            walletNftGalleryFeature?.enabled ? lastVisitedTab : ScreenName.Portfolio
-          }
-          tabBar={walletNftGalleryFeature?.enabled ? tabBarOptions : tabBarDisabledOptions}
+          initialRouteName={lastVisitedTab}
+          tabBar={tabBarOptions}
           style={{ backgroundColor: "transparent" }}
           sceneContainerStyle={{ backgroundColor: "transparent" }}
           screenOptions={{
-            lazy: walletNftGalleryFeature?.params?.lazyLoadScreens ?? true,
+            lazy: true,
             swipeEnabled: false, // For Contents Cards issue
           }}
           screenListeners={{
@@ -82,15 +74,15 @@ export default function WalletTabNavigator() {
               title: t("wallet.tabs.crypto"),
             }}
           />
-          {walletNftGalleryFeature?.enabled && (
-            <WalletTab.Screen
-              name={ScreenName.WalletNftGallery}
-              component={WalletNftGallery}
-              options={{
-                title: t("wallet.tabs.nft"),
-              }}
-            />
-          )}
+
+          <WalletTab.Screen
+            name={ScreenName.WalletNftGallery}
+            component={WalletNftGallery}
+            options={{
+              title: t("wallet.tabs.nft"),
+            }}
+          />
+
           <WalletTab.Screen
             name={NavigatorName.Market}
             component={marketNewArch?.enabled ? MarketWalletTabNavigator : MarketNavigator}

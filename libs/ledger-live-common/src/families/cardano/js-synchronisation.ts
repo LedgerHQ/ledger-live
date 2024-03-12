@@ -5,7 +5,8 @@ import {
   mergeOps,
 } from "../../bridge/jsHelpers";
 import { makeSync } from "../../bridge/jsHelpers";
-import { encodeAccountId, inferSubOperations } from "@ledgerhq/coin-framework/account/index";
+import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
+import { inferSubOperations } from "@ledgerhq/coin-framework/serialization/index";
 
 import BigNumber from "bignumber.js";
 import Ada, { ExtendedPublicKey } from "@cardano-foundation/ledgerjs-hw-app-cardano";

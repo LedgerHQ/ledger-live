@@ -15,8 +15,8 @@ export default function StepHeader({ title, subtitle, testID }: Props) {
       <Flex flexDirection={"column"} justifyContent={"center"} flex={1} py={3} testID={testID}>
         {subtitle && (
           <Text
-            variant={"paragraph"}
-            fontWeight={"semiBold"}
+            variant={"small"}
+            fontWeight={"medium"}
             numberOfLines={1}
             textAlign={"center"}
             color={"neutral.c80"}
@@ -25,7 +25,7 @@ export default function StepHeader({ title, subtitle, testID }: Props) {
           </Text>
         )}
         <Text
-          variant={"body"}
+          variant={"h5"}
           fontWeight={"semiBold"}
           numberOfLines={1}
           textAlign={"center"}
