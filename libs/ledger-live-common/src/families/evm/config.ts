@@ -265,14 +265,6 @@ const evmConfig: Record<string, ConfigInfo> = {
       },
     },
   },
-  config_currency_kava_evm: {
-    type: "object",
-    default: {
-      status: {
-        type: "active",
-      },
-    },
-  },
   config_currency_evmos_evm: {
     type: "object",
     default: {

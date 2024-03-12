@@ -1,8 +1,4 @@
 import { ABTestingVariants } from "./ABTesting";
-import {
-  CexDepositEntryPointsLocationsDesktop,
-  CexDepositEntryPointsLocationsMobile,
-} from "./cexDeposit";
 import { ChainwatchNetwork } from "./chainwatch";
 import { StorylyInstanceID, StorylyInstanceType } from "./storyly";
 
@@ -125,37 +121,28 @@ export type CurrencyFeatures = {
  * @dev Add features here.
  */
 export type Features = CurrencyFeatures & {
-  learn: Feature_Learn;
   brazePushNotifications: Feature_BrazePushNotifications;
   brazeLearn: Feature_BrazeLearn;
   llmNewDeviceSelection: Feature_LlmNewDeviceSelection;
-  llmNewFirmwareUpdateUx: Feature_LlmNewFirmwareUpdateUx;
   ratingsPrompt: Feature_RatingsPrompt;
   npsRatingsPrompt: Feature_NpsRatingsPrompt;
   counterValue: Feature_CounterValue;
   deviceInitialApps: Feature_DeviceInitialApps;
   buyDeviceFromLive: Feature_BuyDeviceFromLive;
-  ptxEarn: Feature_PtxEarn;
   depositNetworkBannerMobile: Feature_DepositNetworkBannerMobile;
   depositWithdrawBannerMobile: Feature_DepositWithdrawBannerMobile;
   mockFeature: Feature_MockFeature;
   multibuyNavigation: Feature_MultibuyNavigation;
-  syncOnboarding: Feature_SyncOnboarding;
-  walletConnectEntryPoint: Feature_WalletConnectEntryPoint;
-  customImage: Feature_CustomImage;
   referralProgramDiscoverCard: Feature_ReferralProgramDiscoverCard;
-  referralProgramDesktopBanner: Feature_ReferralProgramDesktopBanner;
   referralProgramDesktopSidebar: Feature_ReferralProgramDesktopSidebar;
   referralProgramMobile: Feature_ReferralProgramMobile;
   disableNftSend: Feature_DisableNftSend;
   disableNftLedgerMarket: Feature_DisableNftLedgerMarket;
   disableNftRaribleOpensea: Feature_DisableNftRaribleOpensea;
-  walletNftGallery: Feature_WalletNftGallery;
   receiveStakingFlowConfigDesktop: Feature_ReceiveStakingFlowConfigDesktop;
   ethStakingProviders: Feature_EthStakingProviders;
   storyly: Feature_Storyly;
   staxWelcomeScreen: Feature_StaxWelcomeScreen;
-  postOnboardingClaimNft: Feature_PostOnboardingClaimNft;
   postOnboardingAssetsTransfer: Feature_PostOnboardingAssetsTransfer;
   firebaseEnvironmentReadOnly: Feature_FirebaseEnvironmentReadOnly;
   protectServicesMobile: Feature_ProtectServicesMobile;
@@ -175,8 +162,6 @@ export type Features = CurrencyFeatures & {
   transactionsAlerts: Feature_TransactionsAlerts;
   listAppsV2minor1: Feature_ListAppsV2minor1;
   llmWalletQuickActions: Feature_LlmWalletQuickActions;
-  cexDepositEntryPointsDesktop: Feature_CexDepositEntryPointsDesktop;
-  cexDepositEntryPointsMobile: Feature_CexDepositEntryPointsMobile;
   fetchAdditionalCoins: Feature_FetchAdditionalCoins;
   ptxSwapLiveApp: Feature_PtxSwapLiveApp;
   ptxSwapLiveAppDemoZero: Feature_PtxSwapLiveAppDemoZero;
@@ -184,11 +169,14 @@ export type Features = CurrencyFeatures & {
   ptxSwapMoonpayProvider: Feature_PtxSwapMoonpayProvider;
   flexibleContentCards: Feature_FlexibleContentCards;
   llmAnalyticsOptInPrompt: Feature_LlmAnalyticsOptInPrompt;
+  lldAnalyticsOptInPrompt: Feature_LldAnalyticsOptInPrompt;
   myLedgerDisplayAppDeveloperName: Feature_MyLedgerDisplayAppDeveloperName;
   nftsFromSimplehash: Feature_NftsFromSimpleHash;
   lldPortfolioCarousel: Feature_LldPortfolioCarousel;
   llmMarketNewArch: Feature_LlmMarketNewArch;
   marketperformanceWidgetDesktop: Feature_MarketperformanceWidgetDesktop;
+  supportDeviceStax: Feature_SupportDeviceStax;
+  supportDeviceEuropa: Feature_SupportDeviceEuropa;
 };
 
 /**
@@ -208,10 +196,6 @@ export type Feature_EthStakingProviders = Feature<{
     icon?: string;
     queryParams?: Record<string, string>;
   }[];
-}>;
-
-export type Feature_WalletNftGallery = Feature<{
-  lazyLoadScreens: boolean;
 }>;
 
 export type Feature_TransactionsAlerts = Feature<{
@@ -282,16 +266,6 @@ export type Feature_ReceiveStakingFlowConfigDesktop = Feature<{
     supportLink: string;
     direct: boolean;
   };
-}>;
-
-export type Feature_Learn = Feature<{
-  mobile: { url: string };
-  desktop: { url: string };
-}>;
-
-export type Feature_PtxEarn = Feature<{
-  liveAppId: string;
-  isNew: boolean;
 }>;
 
 export type Feature_Storyly = Feature<{
@@ -456,20 +430,6 @@ export type Feature_RatingsPrompt = Feature<{
   typeform_url: string;
 }>;
 
-export type Feature_CexDepositEntryPointsDesktop = Feature<{
-  path: string;
-  locations: {
-    [key in CexDepositEntryPointsLocationsDesktop]: boolean;
-  };
-}>;
-
-export type Feature_CexDepositEntryPointsMobile = Feature<{
-  path: string;
-  locations: {
-    [key in CexDepositEntryPointsLocationsMobile]: boolean;
-  };
-}>;
-
 export type Feature_PtxSwapLiveApp = Feature<{
   currencies?: Array<string>;
   families?: Array<string>;
@@ -490,6 +450,11 @@ export type Feature_LlmAnalyticsOptInPrompt = Feature<{
   entryPoints: Array<string>;
 }>;
 
+export type Feature_LldAnalyticsOptInPrompt = Feature<{
+  variant: ABTestingVariants;
+  entryPoints: Array<string>;
+}>;
+
 export type Feature_LldPortfolioCarousel = Feature<{
   variant: ABTestingVariants;
 }>;
@@ -502,19 +467,13 @@ export type Feature_NftsFromSimpleHash = Feature<{
   threshold: number;
 }>;
 
-export type Feature_LlmNewFirmwareUpdateUx = DefaultFeature;
 export type Feature_CounterValue = DefaultFeature;
 export type Feature_MockFeature = DefaultFeature;
 export type Feature_MultibuyNavigation = DefaultFeature;
-export type Feature_SyncOnboarding = DefaultFeature;
-export type Feature_WalletConnectEntryPoint = DefaultFeature;
-export type Feature_CustomImage = DefaultFeature;
-export type Feature_ReferralProgramDesktopBanner = DefaultFeature;
 export type Feature_DisableNftSend = DefaultFeature;
 export type Feature_DisableNftLedgerMarket = DefaultFeature;
 export type Feature_DisableNftRaribleOpensea = DefaultFeature;
 export type Feature_StaxWelcomeScreen = DefaultFeature;
-export type Feature_PostOnboardingClaimNft = DefaultFeature;
 export type Feature_PostOnboardingAssetsTransfer = DefaultFeature;
 export type Feature_PtxServiceCtaExchangeDrawer = DefaultFeature;
 export type Feature_PtxServiceCtaScreens = DefaultFeature;
@@ -528,6 +487,8 @@ export type Feature_LlmWalletQuickActions = DefaultFeature;
 export type Feature_PtxSwapMoonpayProvider = DefaultFeature;
 export type Feature_FlexibleContentCards = DefaultFeature;
 export type Feature_MyLedgerDisplayAppDeveloperName = DefaultFeature;
+export type Feature_SupportDeviceStax = DefaultFeature;
+export type Feature_SupportDeviceEuropa = DefaultFeature;
 
 export type Feature_LlmMarketNewArch = DefaultFeature;
 /**

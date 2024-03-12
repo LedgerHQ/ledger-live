@@ -5,11 +5,6 @@ import { LiveAppWebview } from "../../models/LiveAppWebview";
 
 test.use({
   userdata: "1AccountBTC1AccountETH",
-  featureFlags: {
-    ptxEarn: {
-      enabled: true,
-    },
-  },
 });
 
 let testServerIsRunning = false;

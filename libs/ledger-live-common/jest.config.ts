@@ -44,6 +44,7 @@ const defaultConfig = {
   coveragePathIgnorePatterns: ["src/__tests__/test-helpers"],
   modulePathIgnorePatterns: [
     "__tests__/fixtures",
+    "__tests__/migration",
     "<rootDir>/benchmark/.*",
     "<rootDir>/cli/.yalc/.*",
   ],

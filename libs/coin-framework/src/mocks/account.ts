@@ -2,17 +2,13 @@ import Prando from "prando";
 import { BigNumber } from "bignumber.js";
 import { listCryptoCurrencies, listTokensForCryptoCurrency } from "../currencies";
 import { getOperationAmountNumber } from "../operation";
-import {
-  inferSubOperations,
-  isAccountEmpty,
-  emptyHistoryCache,
-  generateHistoryFromOperations,
-} from "../account";
+import { isAccountEmpty, emptyHistoryCache, generateHistoryFromOperations } from "../account";
 import { getDerivationScheme, runDerivationScheme } from "../derivation";
 import { genHex, genAddress } from "./helpers";
 import type { Account, AccountLike, Operation, TokenAccount } from "@ledgerhq/types-live";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { createFixtureNFT, genNFTOperation } from "./fixtures/nfts";
+import { inferSubOperations } from "../serialization";
 
 export function ensureNoNegative(operations: Operation[]) {
   let total = new BigNumber(0);

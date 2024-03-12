@@ -7,7 +7,7 @@ import {
   fromAccountRaw,
   syncNewAccountsToImport,
 } from ".";
-import { Account } from "@ledgerhq/types-live";
+import { Account, DerivationMode } from "@ledgerhq/types-live";
 
 jest.setTimeout(200000);
 
@@ -19,7 +19,7 @@ test("importAccounts with a set of real data", async () => {
       name: "Algorand legacy 32PI2C5H...RXBSVWQI",
       starred: true,
       used: true,
-      derivationMode: "",
+      derivationMode: "" as DerivationMode,
       index: 0,
       freshAddress: "32PI2C5HLHMVUF5KMNURLGCTYVIOVJJ2NLHLZ2PIMK567MKMS4RXBSVWQI",
       freshAddressPath: "44'/283'/0'/0/0",
@@ -45,7 +45,7 @@ test("importAccounts with a set of real data", async () => {
       name: "Tron legacy TRbtdwHo...5sx3fFCK",
       starred: true,
       used: true,
-      derivationMode: "",
+      derivationMode: "" as DerivationMode,
       index: 0,
       freshAddress: "TRbtdwHowocq8ThZbRnTHgK4JG5sx3fFCK",
       freshAddressPath: "44'/195'/0'/0/0",
@@ -88,7 +88,7 @@ test("importAccounts with a set of real data", async () => {
       name: "Polkadot polkadotbip44 15jLBbe9...5KrKM1eP",
       starred: true,
       used: true,
-      derivationMode: "polkadotbip44",
+      derivationMode: "" as DerivationMode, // polkadotbip44
       index: 0,
       freshAddress: "15jLBbe9LD6VSUYFkV5Fmo5LhZU5cns9E6g8qcDv5KrKM1eP",
       freshAddressPath: "44'/354'/0'/0'/0'",
@@ -122,7 +122,7 @@ test("importAccounts with a set of real data", async () => {
       name: "Binance Smart Chain legacy 0xa22CA8...CdD06FAB",
       starred: true,
       used: true,
-      derivationMode: "",
+      derivationMode: "" as DerivationMode,
       index: 0,
       freshAddress: "0xa22CA840265d3C5CB1846e419B14c6a6CdD06FAB",
       freshAddressPath: "44'/60'/0'/0/0",

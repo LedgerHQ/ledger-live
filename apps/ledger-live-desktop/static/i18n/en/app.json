@@ -30,7 +30,8 @@
         "browse": "Browse"
       },
       "filter": {
-        "categories": "Categories"
+        "categories": "Categories",
+        "all": "all"
       },
       "branch": {
         "soon": "Coming soon",
@@ -275,7 +276,6 @@
   },
   "sidebar": {
     "card": "Card",
-    "learn": "Learn",
     "menu": "Menu",
     "stars": "Starred accounts",
     "accounts": "Accounts",
@@ -2295,9 +2295,6 @@
       "estimatedFees": "Network fees"
     }
   },
-  "sign": {
-    "title": "Sign transaction"
-  },
   "releaseNotes": {
     "title": "Release notes",
     "version": "Ledger Live {{versionNb}}"
@@ -4236,6 +4233,10 @@
     "limited": "You're authorizing this provider to access the selected token from your wallet. Double-check the transaction details on your Ledger device before signing.",
     "termsAndConditions": "By signing this transaction, you accept <0>{{appName}}'s terms of use.</0>"
   },
+  "sign": {
+    "title": "Sign transaction",
+    "description": "Sign transaction on your Ledger Device"
+  },
   "exportOperationsModal": {
     "title": "Operation history",
     "desc": "Select the accounts for which to save the operation history",
@@ -4967,6 +4968,8 @@
     "warning": "Always verify the address displayed on your device exactly matches the one given by the {{recipientWording}}",
     "secureContract": "Verify the deposit details on your device before sending it. The contract address is provided securely so you don’t have to verify it.",
     "verifyData": "Always verify the operation details on your device.",
+    "doubleCheck": "Double-check the transaction details on your Ledger device before signing.",
+    "termsAndConditions": "By signing this transaction, you accept <0>{{appName}}'s terms of use.</0>",
     "warningWording": {},
     "titleWording": {
       "send": "Please confirm on your device to finalize the operation",
@@ -5533,6 +5536,14 @@
     "WrongDeviceForAccount": {
       "title": "Something went wrong",
       "description": "Please check that your hardware wallet is set up with the recovery phrase or passphrase associated to the selected account."
+    },
+    "WrongDeviceForAccountPayout": {
+      "title": "Something went wrong",
+      "description": "This receiving account does not belong to your device. Please change and retry."
+    },
+    "WrongDeviceForAccountRefund": {
+      "title": "Something went wrong",
+      "description": "This receiving account does not belong to your device for the refund. Please change and retry."
     },
     "DeviceAppVerifyNotSupported": {
       "title": "App update required",

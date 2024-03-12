@@ -1,8 +1,12 @@
-import { TransportStatusError, WrongDeviceForAccount } from "@ledgerhq/errors";
+import {
+  TransportStatusError,
+  WrongDeviceForAccountRefund,
+  WrongDeviceForAccountPayout,
+} from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { firstValueFrom, from, Observable } from "rxjs";
 import secp256k1 from "secp256k1";
-import { convertToAppExchangePartnerKey, getCurrencyExchangeConfig } from "../";
+import { getCurrencyExchangeConfig } from "../";
 import { getAccountCurrency, getMainAccount } from "../../account";
 import { getAccountBridge } from "../../bridge";
 import { TransactionRefusedOnDevice } from "../../errors";
@@ -16,43 +20,14 @@ import {
   PayloadSignatureComputedFormat,
 } from "@ledgerhq/hw-app-exchange";
 import type { CompleteExchangeInputSwap, CompleteExchangeRequestEvent } from "../platform/types";
-import { getProviderConfig } from "./";
+import { getSwapProvider } from "../providers";
+import { convertToAppExchangePartnerKey } from "../providers";
+import { CompleteExchangeStep, convertTransportError } from "../error";
 
 const withDevicePromise = (deviceId, fn) =>
   firstValueFrom(withDevice(deviceId)(transport => from(fn(transport))));
 
 const COMPLETE_EXCHANGE_LOG = "SWAP-CompleteExchange";
-
-type CompleteExchangeStep =
-  | "INIT"
-  | "SET_PARTNER_KEY"
-  | "CHECK_PARTNER"
-  | "PROCESS_TRANSACTION"
-  | "CHECK_TRANSACTION_SIGNATURE"
-  | "CHECK_PAYOUT_ADDRESS"
-  | "CHECK_REFUND_ADDRESS"
-  | "SIGN_COIN_TRANSACTION";
-
-export class SwapCompleteExchangeError extends Error {
-  step: CompleteExchangeStep;
-
-  constructor(step: CompleteExchangeStep, message?: string) {
-    super(message);
-    this.name = "SwapCompleteExchangeError";
-    this.step = step;
-  }
-}
-
-function convertTransportError(
-  step: CompleteExchangeStep,
-  err: unknown,
-): SwapCompleteExchangeError | unknown {
-  if (err instanceof TransportStatusError) {
-    const errorMessage = getExchangeErrorMessage(err.statusCode, step);
-    return new SwapCompleteExchangeError(step, errorMessage);
-  }
-  return err;
-}
 
 const completeExchange = (
   input: CompleteExchangeInputSwap,
@@ -71,7 +46,7 @@ const completeExchange = (
 
     const confirmExchange = async () => {
       await withDevicePromise(deviceId, async transport => {
-        const providerConfig = getProviderConfig(provider);
+        const providerConfig = getSwapProvider(provider);
         if (providerConfig.type !== "CEX") {
           throw new Error(`Unsupported provider type ${providerConfig.type}`);
         }
@@ -90,14 +65,12 @@ const completeExchange = (
           throw new Error("This should be a cryptocurrency");
 
         transaction = await accountBridge.prepareTransaction(refundAccount, transaction);
-
         if (unsubscribed) return;
 
         const { errors, estimatedFees } = await accountBridge.getTransactionStatus(
           refundAccount,
           transaction,
         );
-
         if (unsubscribed) return;
 
         const errorsKeys = Object.keys(errors);
@@ -121,8 +94,8 @@ const completeExchange = (
         if (unsubscribed) return;
 
         const goodSign = convertSignature(signature, exchange.transactionType);
-        currentStep = "CHECK_TRANSACTION_SIGNATURE";
 
+        currentStep = "CHECK_TRANSACTION_SIGNATURE";
         await exchange.checkTransactionSignature(goodSign);
         if (unsubscribed) return;
 
@@ -147,9 +120,12 @@ const completeExchange = (
           );
         } catch (e) {
           if (e instanceof TransportStatusError && e.statusCode === 0x6a83) {
-            throw new WrongDeviceForAccount(getExchangeErrorMessage(e.statusCode, currentStep), {
-              accountName: payoutAccount.name,
-            });
+            throw new WrongDeviceForAccountPayout(
+              getExchangeErrorMessage(e.statusCode, currentStep),
+              {
+                accountName: payoutAccount.name,
+              },
+            );
           }
 
           throw convertTransportError(currentStep, e);
@@ -186,9 +162,12 @@ const completeExchange = (
         } catch (e) {
           if (e instanceof TransportStatusError && e.statusCode === 0x6a83) {
             log(COMPLETE_EXCHANGE_LOG, "transport error");
-            throw new WrongDeviceForAccount(getExchangeErrorMessage(e.statusCode, currentStep), {
-              accountName: refundAccount.name,
-            });
+            throw new WrongDeviceForAccountRefund(
+              getExchangeErrorMessage(e.statusCode, currentStep),
+              {
+                accountName: refundAccount.name,
+              },
+            );
           }
 
           throw convertTransportError(currentStep, e);

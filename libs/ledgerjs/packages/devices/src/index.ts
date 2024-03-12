@@ -27,6 +27,7 @@ export enum DeviceModelId {
   nanoSP = "nanoSP",
   nanoX = "nanoX",
   stax = "stax",
+  europa = "europa",
 }
 
 const devices: { [key in DeviceModelId]: DeviceModel } = {
@@ -51,16 +52,6 @@ const devices: { [key in DeviceModelId]: DeviceModel } = {
     getBlockSize: (firmwareVersion: string): number =>
       semver.lt(semver.coerce(firmwareVersion) ?? "", "2.0.0") ? 4 * 1024 : 2 * 1024,
   },
-  [DeviceModelId.nanoSP]: {
-    id: DeviceModelId.nanoSP,
-    productName: "Ledger Nano S Plus",
-    productIdMM: 0x50,
-    legacyUsbProductId: 0x0005,
-    usbOnly: true,
-    memorySize: 1533 * 1024,
-    masks: [0x33100000],
-    getBlockSize: (_firmwareVersion: string): number => 32,
-  },
   [DeviceModelId.nanoX]: {
     id: DeviceModelId.nanoX,
     productName: "Ledger Nano X",
@@ -78,6 +69,16 @@ const devices: { [key in DeviceModelId]: DeviceModel } = {
         writeCmdUuid: "13d63400-2c97-0004-0003-4c6564676572",
       },
     ],
+  },
+  [DeviceModelId.nanoSP]: {
+    id: DeviceModelId.nanoSP,
+    productName: "Ledger Nano S Plus",
+    productIdMM: 0x50,
+    legacyUsbProductId: 0x0005,
+    usbOnly: true,
+    memorySize: 1533 * 1024,
+    masks: [0x33100000],
+    getBlockSize: (_firmwareVersion: string): number => 32,
   },
   [DeviceModelId.stax]: {
     id: DeviceModelId.stax,
@@ -97,6 +98,24 @@ const devices: { [key in DeviceModelId]: DeviceModel } = {
       },
     ],
   },
+  [DeviceModelId.europa]: {
+    id: DeviceModelId.europa, // TODO: change to the real product's name one day
+    productName: "Ledger Europa", // TODO: change to the real product's name one day
+    productIdMM: 0x70,
+    legacyUsbProductId: 0x0007,
+    usbOnly: false,
+    memorySize: 1533 * 1024,
+    masks: [0x33300000],
+    getBlockSize: (_firmwareVersion: string): number => 32,
+    bluetoothSpec: [
+      {
+        serviceUuid: "13d63400-2c97-3004-0000-4c6564676572",
+        notifyUuid: "13d63400-2c97-3004-0001-4c6564676572",
+        writeUuid: "13d63400-2c97-3004-0002-4c6564676572",
+        writeCmdUuid: "13d63400-2c97-3004-0003-4c6564676572",
+      },
+    ],
+  },
 };
 
 const productMap = {
@@ -105,6 +124,7 @@ const productMap = {
   "Nano S Plus": DeviceModelId.nanoSP,
   "Nano X": DeviceModelId.nanoX,
   Stax: DeviceModelId.stax,
+  Europa: DeviceModelId.europa,
 };
 
 const devicesList: DeviceModel[] = Object.values(devices);

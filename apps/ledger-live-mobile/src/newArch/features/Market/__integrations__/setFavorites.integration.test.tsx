@@ -2,11 +2,18 @@ import * as React from "react";
 import { screen } from "@testing-library/react-native";
 import { render } from "@tests/test-renderer";
 import { MarketPages } from "./shared";
+import { State } from "~/reducers/types";
 
 describe("Market integration test", () => {
   it("Should set some coins as favorites", async () => {
     const { user } = render(<MarketPages />, {
-      featureFlags: { ptxEarn: { enabled: true }, llmMarketNewArch: { enabled: true } },
+      overrideInitialState: (state: State) => ({
+        ...state,
+        settings: {
+          ...state.settings,
+          featureFlags: { llmMarketNewArch: { enabled: true } },
+        },
+      }),
     });
 
     //Set BTC as favorite

@@ -235,7 +235,6 @@ const MainSideBar = () => {
   const displayBlueDot = useManagerBlueDot(lastSeenDevice);
 
   const referralProgramConfig = useFeature("referralProgramDesktopSidebar");
-  const ptxEarnConfig = useFeature("ptxEarn");
   const recoverFeature = useFeature("protectServicesDesktop");
   const recoverHomePath = useAccountPath(recoverFeature);
 
@@ -266,10 +265,6 @@ const MainSideBar = () => {
   const handleClickCard = useCallback(() => {
     push("/card");
     trackEntry("card");
-  }, [push, trackEntry]);
-  const handleClickLearn = useCallback(() => {
-    push("/learn");
-    trackEntry("learn");
   }, [push, trackEntry]);
   const handleClickDashboard = useCallback(() => {
     push("/");
@@ -399,18 +394,6 @@ const MainSideBar = () => {
                   isActive={location.pathname.startsWith("/market")}
                   collapsed={secondAnim}
                 />
-                <FeatureToggle featureId="learn">
-                  <SideBarListItem
-                    id="learn"
-                    label={t("sidebar.learn")}
-                    icon={IconsLegacy.NewsMedium}
-                    iconSize={20}
-                    iconActiveColor="wallet"
-                    isActive={location.pathname.startsWith("/learn")}
-                    onClick={handleClickLearn}
-                    collapsed={secondAnim}
-                  />
-                </FeatureToggle>
                 <SideBarListItem
                   id={"accounts"}
                   label={t("sidebar.accounts")}
@@ -452,25 +435,21 @@ const MainSideBar = () => {
                   disabled={noAccounts || navigationLocked}
                   collapsed={secondAnim}
                 />
-                <FeatureToggle featureId="ptxEarn">
-                  <SideBarListItem
-                    id={"earn"}
-                    label={t("sidebar.earn")}
-                    icon={IconsLegacy.LendMedium}
-                    iconSize={20}
-                    iconActiveColor="wallet"
-                    onClick={handleClickEarn}
-                    isActive={location.pathname === "/earn"}
-                    collapsed={secondAnim}
-                    NotifComponent={
-                      ptxEarnConfig?.params?.isNew ? (
-                        <CustomTag active type="plain" size="small">
-                          {t("common.new")}
-                        </CustomTag>
-                      ) : null
-                    }
-                  />
-                </FeatureToggle>
+                <SideBarListItem
+                  id={"earn"}
+                  label={t("sidebar.earn")}
+                  icon={IconsLegacy.LendMedium}
+                  iconSize={20}
+                  iconActiveColor="wallet"
+                  onClick={handleClickEarn}
+                  isActive={location.pathname === "/earn"}
+                  collapsed={secondAnim}
+                  NotifComponent={
+                    <CustomTag active type="plain" size="small">
+                      {t("common.new")}
+                    </CustomTag>
+                  }
+                />
                 <SideBarListItem
                   id={"exchange"}
                   label={t("sidebar.exchange")}

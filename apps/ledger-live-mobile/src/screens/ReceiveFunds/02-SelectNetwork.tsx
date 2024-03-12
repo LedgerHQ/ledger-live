@@ -189,17 +189,17 @@ export default function SelectNetwork({ navigation, route }: Props) {
           {t("transfer.receive.selectNetwork.subtitle")}
         </Text>
       </Flex>
-
-      <FlatList
-        testID="receive-header-step2-networks"
-        contentContainerStyle={styles.list}
-        data={sortedCryptoCurrenciesWithAccounts}
-        renderItem={renderItem}
-        keyExtractor={keyExtractor}
-        showsVerticalScrollIndicator={false}
-        keyboardDismissMode="on-drag"
-      />
-
+      <Flex ml={16} mr={16} flex={1}>
+        <FlatList
+          testID="receive-header-step2-networks"
+          contentContainerStyle={styles.list}
+          data={sortedCryptoCurrenciesWithAccounts}
+          renderItem={renderItem}
+          keyExtractor={keyExtractor}
+          showsVerticalScrollIndicator={false}
+          keyboardDismissMode="on-drag"
+        />
+      </Flex>
       {depositNetworkBannerMobile?.enabled ? (
         displayBanner ? (
           <AnimatedView animation="fadeInUp" delay={50} duration={300}>

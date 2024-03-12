@@ -1,7 +1,7 @@
 import { isSwapOperationPending } from "./";
 import { getMultipleStatus } from "./getStatus";
-import type { SubAccount, Account } from "@ledgerhq/types-live";
-import type { SwapOperation, SwapStatusRequest, UpdateAccountSwapStatus } from "./types";
+import type { SubAccount, Account, SwapOperation } from "@ledgerhq/types-live";
+import type { SwapStatusRequest, UpdateAccountSwapStatus } from "./types";
 
 const maybeGetUpdatedSwapHistory = async (
   swapHistory: SwapOperation[] | null | undefined,

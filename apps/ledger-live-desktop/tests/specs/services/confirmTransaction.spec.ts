@@ -115,7 +115,18 @@ test("Confirm Transaction modals @smoke", async ({ page }) => {
     await modal.continueToSignTransaction();
 
     // Step Device
-    await deviceAction.silentSign();
+    await page.waitForTimeout(2500);
+    await deviceAction.openApp();
+    await expect(page.getByText("Sign transaction on your Ledger Device")).toBeVisible();
+    await expect(page.getByText("0.0001 ETH")).toBeVisible();
+    await expect(
+      page.getByText("Double-check the transaction details on your Ledger device before signing."),
+    ).toBeVisible();
+
+    // Displays TOC in footer
+    const operationList = page.locator("data-test-id=confirm-footer-toc");
+    await operationList.scrollIntoViewIfNeeded();
+    await expect(page.getByText(`${MANIFEST_NAME}'s terms of use.`)).toBeVisible();
 
     await expect(response).resolves.toStrictEqual({
       id,
@@ -173,7 +184,7 @@ test("Confirm Transaction modals @smoke", async ({ page }) => {
     ).toBeVisible();
 
     // Displays TOC in footer
-    const operationList = page.locator("data-test-id=confirm-approval-footer-toc");
+    const operationList = page.locator("data-test-id=confirm-footer-toc");
     await operationList.scrollIntoViewIfNeeded();
     await expect(page.getByText(`${MANIFEST_NAME}'s terms of use.`)).toBeVisible();
 

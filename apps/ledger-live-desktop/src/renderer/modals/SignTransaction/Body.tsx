@@ -49,16 +49,13 @@ type Props = {
   params: Params;
   setError: (error?: Error) => void;
 };
-function useSteps(canEditFees = false, typeTransaction = ""): St[] {
+function useSteps(canEditFees = false): St[] {
   const { t } = useTranslation();
   return useMemo(() => {
     const steps: St[] = [
       {
         id: "summary",
-        label:
-          typeTransaction === "Approve"
-            ? t("send.steps.reviewSummary.title")
-            : t("send.steps.summary.title"),
+        label: t("send.steps.reviewSummary.title"),
         component: StepSummary,
         footer: StepSummaryFooter,
         onBack: canEditFees ? ({ transitionTo }) => transitionTo("amount") : null,
@@ -70,10 +67,7 @@ function useSteps(canEditFees = false, typeTransaction = ""): St[] {
       },
       {
         id: "device",
-        label:
-          typeTransaction === "Approve"
-            ? t("send.steps.connectLedger.title")
-            : t("send.steps.device.title"),
+        label: t("send.steps.connectLedger.title"),
         component: StepConnectDevice,
         onBack: ({ transitionTo }) => transitionTo("summary"),
       },
@@ -93,17 +87,14 @@ function useSteps(canEditFees = false, typeTransaction = ""): St[] {
       ? [
           {
             id: "amount",
-            label:
-              typeTransaction === "Approve"
-                ? t("send.steps.networkFee.title")
-                : t("send.steps.amount.title"),
+            label: t("send.steps.networkFee.title"),
             component: StepAmount,
             footer: StepAmountFooter,
           },
           ...steps,
         ]
       : steps;
-  }, [canEditFees, t, typeTransaction]);
+  }, [canEditFees, t]);
 }
 const STATUS_KEYS_IGNORE = ["recipient", "gasLimit"];
 
@@ -214,7 +205,7 @@ export default function Body({ onChangeStepId, onClose, setError, stepId, params
     [fields],
   );
 
-  const steps = useSteps(canEditFees, typeTransaction);
+  const steps = useSteps(canEditFees);
 
   if (transactionError) {
     errorSteps.push(steps.length - 2);

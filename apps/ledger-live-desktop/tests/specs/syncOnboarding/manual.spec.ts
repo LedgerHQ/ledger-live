@@ -3,7 +3,7 @@ import test from "../../fixtures/common";
 import { OnboardingPage } from "../../models/OnboardingPage";
 import { DeviceModelId } from "@ledgerhq/devices";
 test.use({
-  featureFlags: { syncOnboarding: { enabled: true } },
+  featureFlags: { supportDeviceStax: { enabled: true } },
   env: { MOCK_NO_BYPASS: "1" },
 });
 

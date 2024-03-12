@@ -33,7 +33,7 @@ const cosmosConfig: Record<string, ConfigInfo> = {
   config_currency_dydx: {
     type: "object",
     default: {
-      lcd: "https://api.dydx.nodestake.top:443",
+      lcd: "https://dydx-dao-api.polkachu.com",
       minGasPrice: 12500000000,
       ledgerValidator: "dydxvaloper1gffkd68xcnfpzcsplf0fsuetxkysunud6a900w",
       status: {
