@@ -1,3 +1,4 @@
+import { SocksProxyAgent } from 'socks-proxy-agent';
 import { LedgerAPI4xx, LedgerAPI5xx, NetworkDown } from "@ledgerhq/errors";
 import { changes, getEnv } from "@ledgerhq/live-env";
 import { retry } from "@ledgerhq/live-promise";
@@ -8,6 +9,20 @@ import invariant from "invariant";
 
 type Metadata = { startTime: number };
 type ExtendedXHRConfig = AxiosRequestConfig & { metadata?: Metadata };
+
+if (NETWORK_USE_HTTPS_KEEP_ALIVE) {
+  const proxyConfig = getEnv('SOCKS_PROXY_URL');
+
+  if (proxyConfig) {
+    const proxyAgent = new SocksProxyAgent(proxyConfig);
+    axios.defaults.httpsAgent = proxyAgent;
+    axios.defaults.httpAgent = proxyAgent;
+  } else {
+    const https = require('https');
+    axios.defaults.httpsAgent = new https.Agent({ keepAlive: true });
+  }
+}
+
 
 export const requestInterceptor = (request: AxiosRequestConfig): ExtendedXHRConfig => {
   if (!getEnv("ENABLE_NETWORK_LOGS")) {
