@@ -41,7 +41,7 @@ jobs:
       - name: Setup the toolchain
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
         with:
-          install_dotnet: true
+          install-dotnet: true
       - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@develop
         id: setup-test-desktop
         with:
