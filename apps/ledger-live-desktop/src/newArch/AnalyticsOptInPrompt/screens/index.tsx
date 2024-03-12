@@ -5,6 +5,7 @@ import { useTheme } from "styled-components";
 import { EntryPoint } from "LLD/AnalyticsOptInPrompt/types/AnalyticsOptInPromptNavigator";
 import { getVariant } from "LLD/AnalyticsOptInPrompt/hooks/useCommonLogic";
 import VariantA from "LLD/AnalyticsOptInPrompt/screens/VariantA";
+import VariantB from "LLD/AnalyticsOptInPrompt/screens/VariantB";
 import Box from "~/renderer/components/Box";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 
@@ -62,7 +63,12 @@ const AnalyticsOptInPrompt = memo(
               entryPoint={entryPoint}
             />
           ) : (
-            "variantB"
+            <VariantB
+              setPreventBackNavigation={() => setPreventBackNavigation(false)}
+              entryPoint={entryPoint}
+              goBackToMain={preventBackNavigation}
+              onSubmit={onSubmit}
+            />
           )}
         </Box>
       </SideDrawer>

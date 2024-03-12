@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ManagePreferencesBody } from "./components";
-import { Header } from "LLD/AnalyticsOptInPrompt/screens/components";
+import { HeaderTitle } from "LLD/AnalyticsOptInPrompt/screens/components";
 import { Flex } from "@ledgerhq/react-ui";
 import { FieldKeySwitch } from "LLD/AnalyticsOptInPrompt/types/AnalyticsOptInPromptNavigator";
 
@@ -24,7 +24,7 @@ const ManagePreferences = ({ onPreferencesChange }: ManagePreferencesProps) => {
 
   return (
     <Flex flexDirection={"column"} rowGap={"32px"} mx={"40px"} height={"100%"}>
-      <Header title={"analyticsOptInPrompt.variantA.managePreferences"} />
+      <HeaderTitle title={"analyticsOptInPrompt.variantA.managePreferences"} />
       <ManagePreferencesBody onSwitchChange={handleSwitchChange} />
     </Flex>
   );
