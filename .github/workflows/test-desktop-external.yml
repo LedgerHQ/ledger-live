@@ -27,7 +27,7 @@ permissions:
 
 jobs:
   codechecks:
-    name: "Ledger Live code checks"
+    name: "Desktop Code Checks"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
@@ -58,31 +58,12 @@ jobs:
         with:
           name: lint
           path: ${{ github.workspace }}/apps/ledger-live-desktop/lint.json
-
-  deadcodecheck:
-    name: "Desktop deadcode check"
-    env:
-      NODE_OPTIONS: "--max-old-space-size=7168"
-      FORCE_COLOR: 3
-      CI_OS: ubuntu-latest
-    runs-on: ubuntu-latest
-    steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
-        with:
-          ref: ${{ github.ref_name }}
-          base: ${{ inputs.base_ref }}
-      - name: Setup the toolchain
-        uses: ./tools/actions/composites/setup-toolchain
-      - uses: ./tools/actions/composites/setup-test-desktop
-        id: setup-test-desktop
-        with:
-          skip_builds: true
       - name: check for dead code
         run: pnpm desktop unimported
         shell: bash
 
   unit-tests:
-    name: "Ledger Live Desktop Unit Tests"
+    name: "Desktop Unit Tests"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
@@ -103,7 +84,7 @@ jobs:
         run: pnpm desktop test:jest
 
   e2e-tests-linux:
-    name: "Live Desktop Tests (Ubuntu)"
+    name: "Desktop Tests E2E (Ubuntu)"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
@@ -134,7 +115,7 @@ jobs:
       - name: Run playwright tests [Linux => xvfb-run]
         id: tests
         run: |
-          xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright:smoke
+          xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright
       - name: upload diffs to s3
         if: ${{ !cancelled() }}
         uses: ./tools/actions/upload-images
@@ -169,7 +150,7 @@ jobs:
           path: apps/ledger-live-desktop/allure-results
 
   report:
-    needs: [codechecks, deadcodecheck, unit-tests, e2e-tests-linux]
+    needs: [codechecks, unit-tests, e2e-tests-linux]
     runs-on: ubuntu-latest
     if: ${{ !cancelled() && github.event_name == 'workflow_dispatch' }}
     steps:
@@ -246,10 +227,6 @@ jobs:
               status: "${{ needs.unit-tests.result }}",
             };
 
-            const deadcodecheck = {
-              pass: ${{ needs.deadcodecheck.result == 'success' }},
-            };
-
             const report = {
               linux: {
                 pass: ${{ needs.e2e-tests-linux.outputs.status == 'success' }},
@@ -261,10 +238,6 @@ jobs:
 
             ${typecheck.pass ? "Typechecks are fine" : "Unfortunately typechecks did not pass"}
               - ${typecheck.pass ? "✅" : "❌"} **Type checks** ended with status \`${typecheck.status}\`
-
-            ### Dead Code Check
-            ${deadcodecheck.pass ? "Dead code checks are fine" : "Unfortunately, dead code checks did not pass. Try \`pnpm desktop unimported\` in apps/ledger-live-desktop"}
-              - ${deadcodecheck.pass ? "✅" : "❌"}
 
             ### Unit Tests (Jest)
             ${unitTests.pass ? "Unit tests are fine" : "Unit tests did not pass"}
@@ -349,4 +322,3 @@ jobs:
         with:
           name: summary.json
           path: ${{ github.workspace }}/summary.json
-
