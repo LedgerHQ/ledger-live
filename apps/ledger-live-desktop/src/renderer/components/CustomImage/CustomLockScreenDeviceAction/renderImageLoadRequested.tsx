@@ -67,7 +67,11 @@ export const RenderLoadingImage = ({
       data-test-id={`device-action-image-loading-${progress}`}
     >
       <AnimationWrapper>
-        <FramedPicture deviceModelId={deviceModelId} source={source} loadingProgress={progress} />
+        <FramedPicture
+          frameConfig={getFramedPictureConfig("transfer", deviceModelId)}
+          source={source}
+          loadingProgress={progress}
+        />
       </AnimationWrapper>
       <Flex justifyContent="center" mt={2}>
         <Title>

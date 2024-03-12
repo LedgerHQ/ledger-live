@@ -6,14 +6,13 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { BoxedIcon, Flex, FlowStepper, IconsLegacy, Text, Bar } from "@ledgerhq/react-ui";
+import { BoxedIcon, Flex, FlowStepper, IconsLegacy, Text } from "@ledgerhq/react-ui";
 import { useDispatch } from "react-redux";
-import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
+import { DeviceModelId } from "@ledgerhq/devices";
 import { ImageDownloadError } from "@ledgerhq/live-common/customImage/errors";
 import {
   isCustomLockScreenSupported,
   CLSSupportedDeviceModelId,
-  supportedDeviceModelIds,
 } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
 import { setPostOnboardingActionCompleted } from "@ledgerhq/live-common/postOnboarding/actions";

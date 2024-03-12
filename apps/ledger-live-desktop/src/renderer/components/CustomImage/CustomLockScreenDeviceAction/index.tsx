@@ -69,13 +69,13 @@ const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props =>
     [hexImage, padImage, deviceModelId],
   );
 
-  console.log({ commandRequest, device, deviceModelId });
-
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
   const validDevice =
-    isCustomLockScreenSupported(device.modelId) && device.modelId === deviceModelId ? device : null;
+    device?.modelId === deviceModelId && isCustomLockScreenSupported(device.modelId)
+      ? device
+      : null;
   const status = action?.useHook(validDevice, commandRequest);
   const payload = action?.mapResult(status);
 

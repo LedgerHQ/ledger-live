@@ -20,7 +20,7 @@ const previousButtonEventProperties = {
 };
 
 const StepChooseContrast: React.FC<Props> = props => {
-  const { onResult, onError, src, setStep } = props;
+  const { onResult, onError, src, setStep, deviceModelId } = props;
   const { t } = useTranslation();
 
   const [contrast, setContrast] = useState<{ index: number; value: number }>();

@@ -7,6 +7,7 @@ import CustomImage from "~/renderer/screens/customImage";
 import { useSelector } from "react-redux";
 import { lastSeenCustomImageSelector } from "~/renderer/reducers/settings";
 import ToolTip from "~/renderer/components/Tooltip";
+import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 
 type Props = {
   disabled?: boolean;
@@ -55,4 +56,4 @@ const CustomImageManagerButton = (props: Props) => {
   );
 };
 
-export default CustomImageManagerButton;
+export default withV3StyleProvider(CustomImageManagerButton);
