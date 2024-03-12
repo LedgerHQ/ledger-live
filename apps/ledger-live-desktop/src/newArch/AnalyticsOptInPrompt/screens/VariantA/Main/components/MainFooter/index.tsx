@@ -30,7 +30,7 @@ const MainFooter = ({ setWantToManagePreferences, onShareAnalyticsChange }: Main
         </Link>
         <Flex columnGap={"8px"}>
           <Button
-            variant={"main"}
+            variant={"shade"}
             outline
             size={"large"}
             borderRadius={48}

@@ -58,7 +58,6 @@ const useVariantA = ({
     if (value) {
       const { AnalyticsData, PersonalizationData } = preferences;
       dispatch(setShareAnalytics(AnalyticsData));
-      console.log(PersonalizationData);
       dispatch(setSharePersonalizedRecommandations(PersonalizationData));
       onSubmit?.();
       clickOnMoreOptionsConfirm();
@@ -66,7 +65,6 @@ const useVariantA = ({
   };
 
   const handlePreferencesChange = (newPreferences: Record<FieldKeySwitch, boolean>) => {
-    console.log(newPreferences, "new");
     const oldPreferences = preferences;
     setPreferences(newPreferences);
     for (const key in newPreferences) {
