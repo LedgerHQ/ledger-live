@@ -39,7 +39,7 @@ export function useMarket() {
     supportedCoinsList: supportedCurrencies,
   });
 
-  const { range, starred = [], liveCompatible, orderBy, order } = marketParams;
+  const { range, starred = [], liveCompatible, orderBy, order, search = "" } = marketParams;
 
   const starFilterOn = starred.length > 0;
 
@@ -56,7 +56,8 @@ export function useMarket() {
   const currenciesLength = marketResult.data.length;
   const loading = marketResult.loading;
   const freshLoading = loading && !currenciesLength;
-  const itemCount = currenciesLength + 1;
+  const itemCount =
+    starred.length > 0 || search.length > 0 ? currenciesLength : currenciesLength + 1;
 
   const setCounterCurrency = useCallback(
     (ticker: string) => {
