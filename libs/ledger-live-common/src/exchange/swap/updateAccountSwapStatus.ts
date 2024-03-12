@@ -2,6 +2,7 @@ import { isSwapOperationPending } from "./";
 import { getMultipleStatus } from "./getStatus";
 import type { SubAccount, Account, SwapOperation } from "@ledgerhq/types-live";
 import type { SwapStatusRequest, UpdateAccountSwapStatus } from "./types";
+import { log } from "@ledgerhq/logs";
 
 const maybeGetUpdatedSwapHistory = async (
   swapHistory: SwapOperation[] | null | undefined,
@@ -21,8 +22,16 @@ const maybeGetUpdatedSwapHistory = async (
     }
 
     if (pendingSwapIds.length) {
-      const uniquePendingSwapIds = new Map(pendingSwapIds.map(item => [item.swapId, item]));
-      const newStatusList = await getMultipleStatus(Array.from(uniquePendingSwapIds.values()));
+      const uniquePendingSwapIdsMap = new Map(pendingSwapIds.map(item => [item.swapId, item]));
+      const uniquePendingSwapIds = Array.from(uniquePendingSwapIdsMap.values());
+      if (uniquePendingSwapIds.length !== pendingSwapIds.length) {
+        log(
+          "swap",
+          "duplicate ids inside app.json, number:",
+          pendingSwapIds.length - uniquePendingSwapIds.length,
+        );
+      }
+      const newStatusList = await getMultipleStatus(uniquePendingSwapIds);
       consolidatedSwapHistory = swapHistory.map<SwapOperation>((swap: SwapOperation) => {
         const newStatus = newStatusList.find(s => s.swapId === swap.swapId);
 
