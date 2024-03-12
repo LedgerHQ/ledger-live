@@ -9,14 +9,14 @@ import { getEnv } from "@ledgerhq/live-env";
 import { useTranslation } from "react-i18next";
 import { Theme, Flex, IconsLegacy } from "@ledgerhq/react-ui";
 import useTheme from "~/renderer/hooks/useTheme";
-import { DeviceActionDefaultRendering } from "../DeviceAction";
-import Button from "../ButtonV3";
+import { DeviceActionDefaultRendering } from "~/renderer/components/DeviceAction";
+import Button from "~/renderer/components/ButtonV3";
+import { renderError } from "~/renderer/components/DeviceAction/rendering";
 import {
-  renderError,
-  renderImageCommitRequested,
-  renderImageLoadRequested,
-  renderLoadingImage,
-} from "../DeviceAction/rendering";
+  RenderImageCommitRequested,
+  RenderImageLoadRequested,
+  RenderLoadingImage,
+} from "~/renderer/components/CustomImage/CustomLockScreenDeviceAction/renderImageLoadRequested";
 import staxLoadImage from "@ledgerhq/live-common/hw/staxLoadImage";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import { DeviceModelId } from "@ledgerhq/types-devices";
@@ -121,11 +121,22 @@ const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props =>
   return (
     <Flex flexDirection="column" flex={1} justifyContent="center">
       {imageLoadRequested && device ? (
-        renderImageLoadRequested({ t, device, type, restore })
+        <RenderImageLoadRequested device={device} type={type} restore={restore} />
       ) : loadingImage && device ? (
-        renderLoadingImage({ t, device, progress, source })
+        <RenderLoadingImage
+          device={device}
+          deviceModelId={deviceModelId}
+          progress={progress}
+          source={source}
+        />
       ) : imageCommitRequested && device ? (
-        renderImageCommitRequested({ t, device, source, type, restore })
+        <RenderImageCommitRequested
+          device={device}
+          deviceModelId={deviceModelId}
+          source={source}
+          type={type}
+          restore={restore}
+        />
       ) : isError ? (
         <Flex flexDirection="column" alignItems="center">
           {renderError({

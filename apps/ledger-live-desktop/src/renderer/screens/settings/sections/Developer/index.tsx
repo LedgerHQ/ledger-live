@@ -9,7 +9,7 @@ import AllowDebugAppsToggle from "./AllowDebugAppsToggle";
 import EnablePlatformDevToolsToggle from "./EnablePlatformDevToolsToggle";
 import CatalogProviderInput from "./CatalogProviderInput";
 import CustomLockScreenToggle from "./CustomLockScreenToggle";
-import CustomLockScreen from "./CustomLockScreen";
+import CustomLockScreenAssets from "./CustomLockScreenAssets";
 import RunLocalAppButton from "./RunLocalAppButton";
 import FeatureFlagsSettings from "./FeatureFlagsSettings";
 import EnableLearnPageStagingUrlToggle from "./EnableLearnPageStagingUrlToggle";
@@ -85,7 +85,10 @@ const SectionDeveloper = () => (
   <>
     <TrackPage category="Settings" name="Developer" />
     <Switch>
-      <Route path="/settings/developer/custom-locksscreen-assets" component={CustomLockScreen} />
+      <Route
+        path="/settings/developer/custom-locksscreen-assets"
+        component={CustomLockScreenAssets}
+      />
       <Route component={Default} />
     </Switch>
   </>

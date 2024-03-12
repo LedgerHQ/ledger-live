@@ -37,6 +37,7 @@ import { useNavigateToPostOnboardingHubCallback } from "~/renderer/components/Po
 import { analyticsPageNames, analyticsFlowName, analyticsDrawerName } from "./shared";
 import TrackPage, { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { useTrack } from "~/renderer/analytics/segment";
+import DeviceModelPicker from "~/renderer/components/CustomImage/DeviceModelPicker";
 
 type Props = {
   imageUri?: string;
@@ -228,26 +229,7 @@ const CustomImage: React.FC<Props> = props => {
   );
 
   const deviceModelPicker = isDeviceModelIdUndefined ? (
-    <Flex alignSelf="center" height={40}>
-      <Bar
-        initialActiveIndex={supportedDeviceModelIds.indexOf(deviceModelId)}
-        onTabChange={i => {
-          setDeviceModelId(supportedDeviceModelIds[i]);
-        }}
-      >
-        {supportedDeviceModelIds.map(deviceModelId => (
-          <Text
-            px={3}
-            color="inherit"
-            variant="paragraph"
-            fontWeight="semiBold"
-            key={deviceModelId}
-          >
-            {getDeviceModel(deviceModelId).productName}
-          </Text>
-        ))}
-      </Bar>
-    </Flex>
+    <DeviceModelPicker deviceModelId={deviceModelId} onChange={setDeviceModelId} />
   ) : null;
 
   return (
@@ -306,6 +288,7 @@ const CustomImage: React.FC<Props> = props => {
             label={t("customImage.steps.contrast.stepLabel")}
           >
             <StepChooseContrast
+              deviceModelId={deviceModelId}
               src={croppedImage}
               onResult={handleStepChooseContrastResult}
               onError={errorHandlers[Step.chooseContrast]}

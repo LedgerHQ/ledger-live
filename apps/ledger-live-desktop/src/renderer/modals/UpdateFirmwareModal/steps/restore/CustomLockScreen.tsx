@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { getScreenDataDimensions } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import { StepProps } from "../../types";
-import CustomImageDeviceAction from "~/renderer/components/CustomImage/CustomImageDeviceAction";
+import CustomLockScreenDeviceAction from "~/renderer/components/CustomImage/CustomLockScreenDeviceAction";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { useSelector } from "react-redux";
 import { reconstructImage } from "~/renderer/components/CustomImage/TestImage";
@@ -26,7 +26,7 @@ const CLS = ({ onDone, setError, CLSBackup, deviceModelId }: Props) => {
 
   return CLSBackup ? (
     <>
-      <CustomImageDeviceAction
+      <CustomLockScreenDeviceAction
         restore
         deviceModelId={deviceModelId}
         device={device}

@@ -3,16 +3,16 @@ import { ProcessorResult } from "~/renderer/components/CustomImage/ImageGrayscal
 import { Step, StepProps } from "./types";
 import { useTranslation } from "react-i18next";
 import { Flex } from "@ledgerhq/react-ui";
+import { ImageCommitRefusedOnDevice, ImageLoadRefusedOnDevice } from "@ledgerhq/live-common/errors";
+import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import StepFooter from "./StepFooter";
 import StepContainer from "./StepContainer";
 import TestImage from "~/renderer/components/CustomImage/TestImage";
 import { useSelector } from "react-redux";
-import CustomImageDeviceAction from "~/renderer/components/CustomImage/CustomImageDeviceAction";
+import CustomLockScreenDeviceAction from "~/renderer/components/CustomImage/CustomLockScreenDeviceAction";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-import { ImageCommitRefusedOnDevice, ImageLoadRefusedOnDevice } from "@ledgerhq/live-common/errors";
 import { analyticsDrawerName, analyticsFlowName, analyticsPageNames } from "./shared";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 
 type Props = StepProps & {
   result?: ProcessorResult;
@@ -97,7 +97,7 @@ const StepTransfer: React.FC<Props> = props => {
               refreshSource={false}
             />
           ) : null}
-          <CustomImageDeviceAction
+          <CustomLockScreenDeviceAction
             device={device}
             deviceModelId={deviceModelId}
             hexImage={result?.rawResult.hexData}
