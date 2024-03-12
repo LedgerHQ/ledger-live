@@ -179,7 +179,7 @@ describe("EVM Family", () => {
             return {
               info: {
                 gasTracker: {
-                  type: "ledger",
+                  type: "other",
                   explorerId: "anything",
                 },
               },
@@ -312,7 +312,7 @@ describe("EVM Family", () => {
             return {
               info: {
                 gasTracker: {
-                  type: "ledger",
+                  type: "other",
                   explorerId: "anything",
                 },
               },
