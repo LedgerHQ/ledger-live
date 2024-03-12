@@ -270,8 +270,8 @@ const evmConfig: CurrencyLiveConfigDefinition = {
         uri: "https://arb1.arbitrum.io/rpc",
       },
       explorer: {
-        uri: "https://api.arbiscan.io/api",
         type: "etherscan",
+        uri: "https://api.arbiscan.io/api",
       },
     },
   },
@@ -286,8 +286,8 @@ const evmConfig: CurrencyLiveConfigDefinition = {
         uri: "https://evm.cronos.org",
       },
       explorer: {
-        uri: "https://api.cronoscan.com/api",
         type: "etherscan",
+        uri: "https://api.cronoscan.com/api",
       },
     },
   },
@@ -302,8 +302,8 @@ const evmConfig: CurrencyLiveConfigDefinition = {
         uri: "https://rpcapi.fantom.network",
       },
       explorer: {
-        uri: "https://api.ftmscan.com/api",
         type: "etherscan",
+        uri: "https://api.ftmscan.com/api",
       },
     },
   },
@@ -318,8 +318,8 @@ const evmConfig: CurrencyLiveConfigDefinition = {
         uri: "https://flare-api.flare.network/ext/bc/C/rpc",
       },
       explorer: {
-        uri: "https://flare-explorer.flare.network/api",
         type: "blockscout",
+        uri: "https://flare-explorer.flare.network/api",
       },
     },
   },
@@ -334,8 +334,8 @@ const evmConfig: CurrencyLiveConfigDefinition = {
         uri: "https://songbird-api.flare.network/ext/C/rpc",
       },
       explorer: {
-        uri: "https://songbird-explorer.flare.network/api",
         type: "blockscout",
+        uri: "https://songbird-explorer.flare.network/api",
       },
     },
   },
@@ -350,8 +350,8 @@ const evmConfig: CurrencyLiveConfigDefinition = {
         uri: "https://rpc.api.moonbeam.network",
       },
       explorer: {
-        uri: "https://api-moonbeam.moonscan.io/api",
         type: "etherscan",
+        uri: "https://api-moonbeam.moonscan.io/api",
       },
     },
   },
@@ -366,8 +366,8 @@ const evmConfig: CurrencyLiveConfigDefinition = {
         uri: "https://public-node.rsk.co",
       },
       explorer: {
-        uri: "https://rootstock.blockscout.com/api",
         type: "blockscout",
+        uri: "https://rootstock.blockscout.com/api",
       },
     },
   },
@@ -382,8 +382,8 @@ const evmConfig: CurrencyLiveConfigDefinition = {
         uri: "https://rpc.bt.io",
       },
       explorer: {
-        uri: "https://api.bttcscan.com/api",
         type: "etherscan",
+        uri: "https://api.bttcscan.com/api",
       },
     },
   },
@@ -414,8 +414,8 @@ const evmConfig: CurrencyLiveConfigDefinition = {
         uri: "https://rpc.energyweb.org",
       },
       explorer: {
-        uri: "https://explorer.energyweb.org/api",
         type: "blockscout",
+        uri: "https://explorer.energyweb.org/api",
       },
     },
   },
@@ -430,8 +430,8 @@ const evmConfig: CurrencyLiveConfigDefinition = {
         uri: "https://evm.astar.network",
       },
       explorer: {
-        uri: "https://astar.blockscout.com/api",
         type: "blockscout",
+        uri: "https://astar.blockscout.com/api",
       },
     },
   },
@@ -446,8 +446,8 @@ const evmConfig: CurrencyLiveConfigDefinition = {
         uri: "https://andromeda.metis.io/?owner=1088",
       },
       explorer: {
-        uri: "https://andromeda-explorer.metis.io/api",
         type: "blockscout",
+        uri: "https://andromeda-explorer.metis.io/api",
       },
     },
   },
@@ -462,8 +462,8 @@ const evmConfig: CurrencyLiveConfigDefinition = {
         uri: "https://mainnet.boba.network",
       },
       explorer: {
-        uri: "https://api.routescan.io/v2/network/mainnet/evm/288/etherscan",
         type: "etherscan",
+        uri: "https://api.routescan.io/v2/network/mainnet/evm/288/etherscan",
       },
     },
   },
@@ -478,8 +478,8 @@ const evmConfig: CurrencyLiveConfigDefinition = {
         uri: "https://rpc.api.moonriver.moonbeam.network",
       },
       explorer: {
-        uri: "https://api-moonriver.moonscan.io/api",
         type: "etherscan",
+        uri: "https://api-moonriver.moonscan.io/api",
       },
     },
   },
@@ -494,8 +494,8 @@ const evmConfig: CurrencyLiveConfigDefinition = {
         uri: "https://evmexplorer.velas.com/rpc",
       },
       explorer: {
-        uri: "https://evmexplorer.velas.com/api",
         type: "blockscout",
+        uri: "https://evmexplorer.velas.com/api",
       },
     },
   },
@@ -510,8 +510,8 @@ const evmConfig: CurrencyLiveConfigDefinition = {
         uri: "https://rpc.syscoin.org",
       },
       explorer: {
-        uri: "https://explorer.syscoin.org/api",
         type: "blockscout",
+        uri: "https://explorer.syscoin.org/api",
       },
     },
   },
@@ -526,8 +526,8 @@ const evmConfig: CurrencyLiveConfigDefinition = {
         uri: "https://mainnet.telos.net/evm",
       },
       explorer: {
-        uri: "https://api.teloscan.io/api",
         type: "teloscan",
+        uri: "https://api.teloscan.io/api",
       },
     },
   },
@@ -676,7 +676,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: { type: "active" },
       node: { type: "external", uri: "https://goerli.optimism.io" },
-      explorer: { uri: "https://api-goerli-optimistic.etherscan.io/api", type: "etherscan" },
+      explorer: { type: "etherscan", uri: "https://api-goerli-optimistic.etherscan.io/api" },
     },
   },
   config_currency_polygon_zk_evm_testnet: {
