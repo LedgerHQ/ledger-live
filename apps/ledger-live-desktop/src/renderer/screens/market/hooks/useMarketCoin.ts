@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
-import { localeSelector, getCounterValueCode } from "~/renderer/reducers/settings";
-import { useCallback, useMemo, useState } from "react";
+import { localeSelector } from "~/renderer/reducers/settings";
+import { useCallback, useMemo } from "react";
 import { useTheme } from "styled-components";
 import { getCurrencyColor } from "~/renderer/getCurrencyColor";
 import {
@@ -11,16 +11,17 @@ import {
 } from "@ledgerhq/live-common/market/v2/useMarketDataProvider";
 import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
 import { Page, useMarketActions } from "./useMarketActions";
-import { removeStarredMarketCoins, addStarredMarketCoins } from "~/renderer/actions/market";
-import { starredMarketCoinsSelector } from "~/renderer/reducers/market";
+import {
+  removeStarredMarketCoins,
+  addStarredMarketCoins,
+  setMarketOptions,
+} from "~/renderer/actions/market";
+import { marketParamsSelector, starredMarketCoinsSelector } from "~/renderer/reducers/market";
 
 const ranges = Object.keys(rangeDataTable).filter(k => k !== "1h");
 
 export const useMarketCoin = () => {
-  const [range, setRange] = useState<string>("24h");
-  const counterValueCurrencyLocal = useSelector(getCounterValueCode);
-  const [counterCurrency, setCounterCurrency] = useState(counterValueCurrencyLocal);
-
+  const marketParams = useSelector(marketParamsSelector);
   const { colors } = useTheme();
   const dispatch = useDispatch();
   const { currencyId } = useParams<{ currencyId: string }>();
@@ -30,6 +31,8 @@ export const useMarketCoin = () => {
 
   const isStarred = starredMarketCoins.includes(currencyId);
   const locale = useSelector(localeSelector);
+
+  const { counterCurrency = "usd", range = "24h" } = marketParams;
 
   const resCurrencyChartData = useCurrencyChartData({
     counterCurrency,
@@ -85,14 +88,29 @@ export const useMarketCoin = () => {
     }
   }, [dispatch, isStarred, id]);
 
-  const changeRange = useCallback((range: string) => {
-    setRange(range);
-  }, []);
+  const changeRange = useCallback(
+    (range: string) => {
+      dispatch(
+        setMarketOptions({
+          range,
+        }),
+      );
+    },
+    [dispatch],
+  );
 
-  const changeCounterCurrency = useCallback((currency: string) => {
-    setCounterCurrency(currency);
-  }, []);
-
+  const changeCounterCurrency = useCallback(
+    (ticker: string) => {
+      dispatch(
+        setMarketOptions({
+          counterCurrency: supportedCounterCurrencies?.includes(ticker.toLowerCase())
+            ? ticker
+            : "usd",
+        }),
+      );
+    },
+    [dispatch, supportedCounterCurrencies],
+  );
   return {
     isStarred,
     locale,
