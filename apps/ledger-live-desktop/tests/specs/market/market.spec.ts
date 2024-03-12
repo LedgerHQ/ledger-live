@@ -38,7 +38,7 @@ test("Market", async ({ page }) => {
 
   await test.step("go to market", async () => {
     await layout.goToMarket();
-    await marketPage.waitForLoading();
+    await marketPage.waitForLoadingWithSwapbtn();
     await expect.soft(page).toHaveScreenshot("market-page-no-scrollbar.png");
   });
 
@@ -113,13 +113,13 @@ test("Market", async ({ page }) => {
 
   await test.step("change countervalue", async () => {
     await marketPage.switchCountervalue("THB");
-    await marketPage.waitForLoading();
+    await marketPage.waitForLoadingWithSwapbtn();
     await expect.soft(page).toHaveScreenshot("market-page-thb-countervalue.png");
   });
 
   await test.step("change market range", async () => {
     await marketPage.switchMarketRange("7d");
-    await marketPage.waitForLoading();
+    await marketPage.waitForLoadingWithSwapbtn();
     await expect.soft(page).toHaveScreenshot("market-page-7d-range.png");
   });
 
@@ -136,8 +136,8 @@ test("Market", async ({ page }) => {
 
   await test.step("filter starred", async () => {
     await marketPage.toggleStarFilter();
-    await marketPage.waitForLoading();
-    await marketPage.waitForSearchBarToBeEmpty(); // windows was showing the search bar still containing text. This wait prevents that
+    await marketPage.waitForLoadingWithSwapbtn();
+    // await marketPage.waitForSearchBarToBeEmpty(); // windows was showing the search bar still containing text. This wait prevents that
     await expect.soft(page).toHaveScreenshot("market-page-filter-starred.png");
   });
 
