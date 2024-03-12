@@ -23,11 +23,40 @@ export function useMarket() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const marketParams = useSelector(marketParamsSelector);
+  const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
   const locale = useSelector(localeSelector);
 
   useInitSupportedCounterValues();
 
-  const { supportedCounterCurrencies } = useMarketDataProvider();
+  const { data: fromCurrencies } = useFetchCurrencyFrom();
+
+  const { supportedCurrencies, liveCoinsList, supportedCounterCurrencies } =
+    useMarketDataProvider();
+
+  const marketResult = useMarketDataHook({
+    ...marketParams,
+    liveCoinsList,
+    supportedCoinsList: supportedCurrencies,
+  });
+
+  const { range, starred = [], liveCompatible, orderBy, order } = marketParams;
+
+  const starFilterOn = starred.length > 0;
+
+  const timeRanges = useMemo(
+    () =>
+      Object.keys(rangeDataTable)
+        .filter(k => k !== "1h")
+        .map(value => ({ value, label: t(`market.range.${value}`) })),
+    [t],
+  );
+
+  const timeRangeValue = timeRanges.find(({ value }) => value === range);
+
+  const currenciesLength = marketResult.data.length;
+  const loading = marketResult.loading;
+  const freshLoading = loading && !currenciesLength;
+  const itemCount = currenciesLength + 1;
 
   const setCounterCurrency = useCallback(
     (ticker: string) => {
@@ -49,9 +78,11 @@ export function useMarket() {
     [dispatch],
   );
 
-  const { range, starred = [], liveCompatible } = marketParams;
-  const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
-  const starFilterOn = starred.length > 0;
+  const resetSearch = useCallback(() => refresh({ search: "" }), [refresh]);
+
+  const onLoadNextPage = useCallback(() => {
+    dispatch(setMarketOptions({ page: (marketParams?.page || 1) + 1 }));
+  }, [dispatch, marketParams?.page]);
 
   const updateSearch = useCallback(
     (value: string) => {
@@ -79,38 +110,6 @@ export function useMarket() {
   const toggleLiveCompatible = useCallback(() => {
     refresh({ liveCompatible: !liveCompatible });
   }, [liveCompatible, refresh]);
-
-  const timeRanges = useMemo(
-    () =>
-      Object.keys(rangeDataTable)
-        .filter(k => k !== "1h")
-        .map(value => ({ value, label: t(`market.range.${value}`) })),
-    [t],
-  );
-
-  const timeRangeValue = timeRanges.find(({ value }) => value === range);
-
-  const { supportedCurrencies, liveCoinsList } = useMarketDataProvider();
-
-  const onLoadNextPage = useCallback(() => {
-    dispatch(setMarketOptions({ page: (marketParams?.page || 1) + 1 }));
-  }, [dispatch, marketParams?.page]);
-
-  const { orderBy, order } = marketParams;
-
-  const marketResult = useMarketDataHook({
-    ...marketParams,
-    liveCoinsList,
-    supportedCoinsList: supportedCurrencies,
-  });
-
-  const currenciesLength = marketResult.data.length;
-  const loading = marketResult.loading;
-  const freshLoading = loading && !currenciesLength;
-
-  const { data: fromCurrencies } = useFetchCurrencyFrom();
-
-  const resetSearch = useCallback(() => refresh({ search: "" }), [refresh]);
 
   const toggleStar = useCallback(
     (id: string, isStarred: boolean) => {
@@ -142,7 +141,6 @@ export function useMarket() {
     (index: number) => !!marketResult.data[index],
     [marketResult.data],
   );
-  const itemCount = currenciesLength + 1;
 
   return {
     isItemLoaded,
