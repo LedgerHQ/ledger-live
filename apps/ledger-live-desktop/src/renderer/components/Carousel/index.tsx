@@ -179,6 +179,7 @@ const Carousel = ({
     track("contentcard_dismissed", {
       card: slides[index].id,
       page: "Portfolio",
+      type: "portfolio_carousel",
     });
     dismissCard(index);
     changeVisibleSlide(0);
@@ -190,6 +191,7 @@ const Carousel = ({
     track("contentcards_slide", {
       button: "next",
       page: "Portfolio",
+      type: "portfolio_carousel",
     });
   }, [index, slides.length, changeVisibleSlide]);
 
@@ -199,6 +201,7 @@ const Carousel = ({
     track("contentcards_slide", {
       button: "previous",
       page: "Portfolio",
+      type: "portfolio_carousel",
     });
   }, [index, slides.length, changeVisibleSlide]);
 

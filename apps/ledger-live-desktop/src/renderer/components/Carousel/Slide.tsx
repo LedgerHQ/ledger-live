@@ -82,6 +82,7 @@ const Slide = ({ id, url, path, title, description, image, imgs, onClickOnSlide 
       link: path || url,
       campaign: id,
       page: "Portfolio",
+      type: "portfolio_carousel",
     });
   }, [history, id, path, title, url, onClickOnSlide]);
 
