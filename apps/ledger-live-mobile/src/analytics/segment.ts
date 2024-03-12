@@ -52,6 +52,7 @@ import { UserIdPlugin } from "./UserIdPlugin";
 import { Maybe } from "../types/helpers";
 import { appStartupTime } from "../StartupTimeMarker";
 import { aggregateData, getUniqueModelIdList } from "../logic/modelIdList";
+import { BrazePlugin } from "./BrazePlugin";
 
 let sessionId = uuid();
 const appVersion = `${VersionNumber.appVersion || ""} (${VersionNumber.buildVersion || ""})`;
@@ -227,6 +228,8 @@ export const start = async (store: AppStore): Promise<SegmentClient | undefined>
     segmentClient.add({ plugin: new AnonymousIpPlugin() });
     // This allows us to make sure we are adding the userId to the event
     segmentClient.add({ plugin: new UserIdPlugin() });
+    // This allows us to debounce identify events for Braze and save data points
+    segmentClient.add({ plugin: new BrazePlugin() });
 
     if (created) {
       segmentClient.reset();
