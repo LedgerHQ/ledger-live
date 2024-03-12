@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { enablePlatformDevToolsSelector } from "~/renderer/reducers/settings";
 import LiveAppIcon from "./LiveAppIcon";
 import { openPlatformAppInfoDrawer } from "~/renderer/actions/UI";
+import { useSelectAccount } from "../Web3AppWebview/helpers";
 import { WebviewAPI, WebviewState } from "../Web3AppWebview/types";
 import Spinner from "../Spinner";
 import { getAccountName, getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
@@ -21,7 +22,6 @@ import { useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/useDappL
 import { CurrentAccountHistDB, safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 import Wallet from "~/renderer/icons/Wallet";
 import CryptoCurrencyIcon from "../CryptoCurrencyIcon";
-import { useSelectAccount } from "../Web3AppWebview/helpers";
 
 const Container = styled(Box).attrs(() => ({
   horizontal: true,
@@ -129,7 +129,7 @@ export type Props = {
   config?: TopBarConfig;
   webviewAPIRef: RefObject<WebviewAPI>;
   webviewState: WebviewState;
-  currentAccountHistDb: CurrentAccountHistDB;
+  currentAccountHistDb?: CurrentAccountHistDB;
 };
 
 export const TopBar = ({
