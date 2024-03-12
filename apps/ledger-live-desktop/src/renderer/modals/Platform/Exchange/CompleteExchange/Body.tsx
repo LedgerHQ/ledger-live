@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Operation, SignedOperation } from "@ledgerhq/types-live";
 import { Exchange } from "@ledgerhq/live-common/exchange/platform/types";
@@ -45,6 +45,7 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
   const { amount } = transactionParams;
   const { fromAccount: account, fromParentAccount: parentAccount } = exchange;
 
+  const broadcastRef = useRef(false);
   const redirectToHistory = useRedirectToSwapHistory();
   const onViewDetails = useCallback(
     (id: string) => {
@@ -198,9 +199,11 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
   // }, [onCancel, error]);
 
   useEffect(() => {
-    if (!signedOperation) return;
-    broadcast(signedOperation).then(onBroadcastSuccess, setError);
-  }, [signedOperation, broadcast, onBroadcastSuccess, setError]);
+    if (broadcastRef.current || !signedOperation) return;
+    broadcast(signedOperation)
+      .then(onBroadcastSuccess, setError)
+      .finally(() => (broadcastRef.current = true));
+  }, [signedOperation, broadcast, onBroadcastSuccess, setError, broadcastRef]);
 
   return (
     <Box alignItems={"center"} justifyContent={"center"} px={32} height={"100%"}>
