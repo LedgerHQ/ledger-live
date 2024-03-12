@@ -30,10 +30,6 @@ const currency: CryptoCurrency = {
   ...getCryptoCurrencyById("ethereum"),
   ethereumLikeInfo: {
     ...getCryptoCurrencyById("ethereum").ethereumLikeInfo,
-    node: {
-      type: "external",
-      uri: "any-uri",
-    },
   } as any,
 };
 const tokenCurrency = getTokenById("ethereum/erc20/usd__coin");
