@@ -1,4 +1,5 @@
 import { useFetchCurrencyFrom } from "@ledgerhq/live-common/exchange/swap/hooks/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
 import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
 import {
@@ -20,6 +21,7 @@ import { localeSelector } from "~/renderer/reducers/settings";
 export type MarketHookResult = {};
 
 export function useMarket() {
+  const lldRefreshMarketDataFeature = useFeature("lldRefreshMarketData");
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const marketParams = useSelector(marketParamsSelector);
@@ -37,6 +39,9 @@ export function useMarket() {
     ...marketParams,
     liveCoinsList,
     supportedCoinsList: supportedCurrencies,
+    refreshTime: lldRefreshMarketDataFeature?.enabled
+      ? Number(lldRefreshMarketDataFeature?.params?.refreshTime)
+      : undefined,
   });
 
   const { range, starred = [], liveCompatible, orderBy, order, search = "" } = marketParams;
