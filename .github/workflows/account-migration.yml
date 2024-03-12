@@ -11,8 +11,6 @@ on:
           required: false
           default: 'develop'
 
-    pull_request:
-
 jobs:
     account_migration:
         name: "account-migration"

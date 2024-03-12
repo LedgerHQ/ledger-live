@@ -241,7 +241,7 @@ const testSyncAccount = async (account: Account) => {
     }
   });
 
-  const migrationAddresses = inputFile ? inputAccounts : defaultAddresses;
+  const migrationAddresses = inputAccounts.length ? inputAccounts : defaultAddresses;
   const filteredAddresses = (migrationAddresses as { currencyId: string }[]).filter(
     ({ currencyId }) => {
       if (currencyIds) {
@@ -255,7 +255,7 @@ const testSyncAccount = async (account: Account) => {
   let syncedAccounts: PromiseSettledResult<AccountRaw>[] = [];
 
   // if --inputFile we use the addresses from the input file otherwise from addresses.ts
-  if (inputFile) {
+  if (inputAccounts.length) {
     syncedAccounts = await Promise.allSettled(
       (filteredAddresses as AccountRaw[]).map(rawAccount => {
         const account = fromAccountRaw(rawAccount);
