@@ -126,7 +126,7 @@ export function useWebView(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [server]);
 
-  const { onDappMessage, noAccounts, currentAccount } = useDappLogic({
+  const { onDappMessage, noAccounts } = useDappLogic({
     manifest,
     currentAccountHistDb,
     accounts,
@@ -162,7 +162,6 @@ export function useWebView(
     webviewProps,
     webviewRef,
     noAccounts,
-    currentAccount,
   };
 }
 
