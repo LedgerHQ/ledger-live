@@ -17,12 +17,14 @@ import {
 } from "@ledgerhq/live-common/market/v2/useMarketDataProvider";
 import { setMarketRequestParams } from "~/actions/market";
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<MarketNavigatorStackParamList, ScreenName.MarketList>
 >;
 
 function useMarketListViewModel() {
+  const llmRefreshMarketDataFeature = useFeature("llmRefreshMarketData");
   const { params } = useRoute<NavigationProps["route"]>();
   const [isLoading, setIsLoading] = useState(true);
   const dispatch = useDispatch();
@@ -47,6 +49,9 @@ function useMarketListViewModel() {
     ...marketParams,
     liveCoinsList,
     supportedCoinsList: supportedCurrencies,
+    refreshTime: llmRefreshMarketDataFeature?.enabled
+      ? Number(llmRefreshMarketDataFeature?.params?.refreshTime)
+      : undefined,
   });
 
   const marketDataFiltered = filterByStarredAccount
