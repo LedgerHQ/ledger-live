@@ -3,8 +3,8 @@ import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { PenMedium } from "@ledgerhq/native-ui/assets/icons";
-import { DeviceModelId } from "@ledgerhq/types-devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { isEditDeviceNameSupported } from "@ledgerhq/live-common/device/use-cases/isEditDeviceNameSupported";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { TouchableOpacity } from "react-native";
 import { DeviceInfo } from "@ledgerhq/types-live";
@@ -32,6 +32,8 @@ export default function DeviceName({ device, initialDeviceName, disabled, device
     ? getDeviceModel(device.modelId).productName || device.modelId
     : "Ledger Device";
 
+  const isEditSupported = isEditDeviceNameSupported(device.modelId);
+
   const onPress = useCallback(
     () =>
       navigation.navigate(ScreenName.EditDeviceName, {
@@ -43,7 +45,6 @@ export default function DeviceName({ device, initialDeviceName, disabled, device
   );
 
   const displayedName = savedName || initialDeviceName || productName;
-  const id = device.modelId;
 
   return (
     <Flex flexDirection={"row"} flexWrap={"nowrap"} alignItems="center">
@@ -59,7 +60,7 @@ export default function DeviceName({ device, initialDeviceName, disabled, device
       >
         {displayedName}
       </Text>
-      {(id === DeviceModelId.nanoX || id === DeviceModelId.stax) && (
+      {isEditSupported && (
         <TouchableOpacity onPress={onPress} disabled={disabled} hitSlop={hitSlop}>
           <Flex
             ml={3}
