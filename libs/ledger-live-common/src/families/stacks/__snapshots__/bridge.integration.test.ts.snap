@@ -64,7 +64,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
   [
     {
       "accountId": "js:2:stacks:022a460decc9dba8c452927fecb33d7ae25a8d79dc5442b84feaf8f3aa0e2b575d:",
-      "blockHash": null,
+      "blockHash": "0x9586c2caf110f6c6a0ac298eb4d4b058f61805e3908a3388ceccfe265e1da046",
       "blockHeight": 76538,
       "contract": undefined,
       "extra": {
@@ -88,7 +88,7 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
     },
     {
       "accountId": "js:2:stacks:022a460decc9dba8c452927fecb33d7ae25a8d79dc5442b84feaf8f3aa0e2b575d:",
-      "blockHash": null,
+      "blockHash": "0xfa7c15e528492671f5533086672402aa7d269a3ec53ed8a8638c85e1cc967f4c",
       "blockHeight": 76373,
       "contract": undefined,
       "extra": {
