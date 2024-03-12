@@ -2,7 +2,7 @@ import React, { useState, useCallback } from "react";
 import { Flex, IconsLegacy, Text } from "@ledgerhq/react-ui";
 import EditDeviceName from "./EditDeviceName";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { identifyTargetId, DeviceModelId } from "@ledgerhq/devices";
+import { identifyTargetId } from "@ledgerhq/devices";
 import { DeviceInfo } from "@ledgerhq/types-live";
 import { isEditDeviceNameSupported } from "@ledgerhq/live-common/device/use-cases/isEditDeviceNameSupported";
 import { track } from "~/renderer/analytics/segment";
