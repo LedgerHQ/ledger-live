@@ -4,7 +4,7 @@ import Slide from "./Slide";
 import { portfolioContentCardSelector } from "~/renderer/reducers/dynamicContent";
 import { useDispatch, useSelector } from "react-redux";
 import * as braze from "@braze/web-sdk";
-import { ContentCard } from "~/types/dynamicContent";
+import { PortfolioContentCard } from "~/types/dynamicContent";
 import { setPortfolioCards } from "~/renderer/actions/dynamicContent";
 
 export const getTransitions = (transition: "slide" | "flip", reverse = false) => {
@@ -113,7 +113,7 @@ export const useDefaultSlides = (): {
   );
   const slides = useMemo(
     () =>
-      map<ContentCard, SlideRes>(
+      map<PortfolioContentCard, SlideRes>(
         portfolioCards,
         (slide): SlideRes => ({
           id: slide.id,

@@ -86,10 +86,13 @@ export default function DashboardPage() {
         <ClearCacheBanner />
         <CurrencyDownStatusAlert currencies={currencies} hideStatusIncidents />
       </TopBannerContainer>
-      <Box gap={"5px"}>
-        {!isActionCardsCampainRunning && <Carousel />}
+      <Box gap={"20px"}>
         <RecoverBanner />
-        <ActionContentCards variant={ABTestingVariants.variantA} />
+        {isActionCardsCampainRunning ? (
+          <ActionContentCards variant={ABTestingVariants.variantA} />
+        ) : (
+          <Carousel />
+        )}
       </Box>
       {isPostOnboardingBannerVisible && <PostOnboardingHubBanner />}
       <FeaturedButtons />

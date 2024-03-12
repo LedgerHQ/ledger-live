@@ -181,7 +181,7 @@ const Carousel = ({
       page: "Portfolio",
     });
     dismissCard(index);
-    changeVisibleSlide((index + 1) % slides.length);
+    changeVisibleSlide(0);
   }, [index, slides, dismissCard, changeVisibleSlide]);
 
   const onNext = useCallback(() => {

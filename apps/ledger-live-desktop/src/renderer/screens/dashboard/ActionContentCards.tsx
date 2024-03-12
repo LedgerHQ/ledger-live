@@ -48,25 +48,26 @@ const ActionContentCards = ({ variant }: { variant: ABTestingVariants }) => {
   });
 
   if (!showCarousel || slides.length === 0) return null;
-  if (
-    lldActionCarousel?.params?.variant === ABTestingVariants.variantA &&
-    variant === ABTestingVariants.variantA
-  )
-    return (
-      <ActionVariantA>
-        <Carousel variant="content-card">{slides}</Carousel>
-      </ActionVariantA>
-    );
 
   if (
     lldActionCarousel?.params?.variant === ABTestingVariants.variantB &&
     variant === ABTestingVariants.variantB
-  )
+  ) {
     return (
       <ActionVariantB>
         <Carousel variant="content-card">{slides}</Carousel>
       </ActionVariantB>
     );
+  } else if (
+    lldActionCarousel?.params?.variant !== ABTestingVariants.variantB &&
+    variant === ABTestingVariants.variantA
+  ) {
+    return (
+      <ActionVariantA>
+        <Carousel variant="content-card">{slides}</Carousel>
+      </ActionVariantA>
+    );
+  }
 
   return null;
 };
