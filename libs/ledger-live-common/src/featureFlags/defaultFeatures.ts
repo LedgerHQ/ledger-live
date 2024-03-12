@@ -437,6 +437,12 @@ export const DEFAULT_FEATURES: Features = {
   },
   supportDeviceStax: DEFAULT_FEATURE,
   supportDeviceEuropa: DEFAULT_FEATURE,
+  lldRefreshMarketData: {
+    ...DEFAULT_FEATURE,
+    params: {
+      refreshTime: 60000,
+    },
+  },
 };
 
 // Firebase SDK treat JSON values as strings

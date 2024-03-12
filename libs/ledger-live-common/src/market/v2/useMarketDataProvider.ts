@@ -111,8 +111,8 @@ export function useMarketData(props: MarketListRequestParams): MarketListRequest
         { ...props, page, liveCoinsList: [], supportedCoinsList: [] },
       ],
       queryFn: () => fetchList({ ...props, page }),
-      refetchInterval: REFETCH_TIME,
-      staleTime: REFETCH_TIME,
+      refetchInterval: props.refreshTime ?? REFETCH_TIME,
+      staleTime: props.refreshTime ?? REFETCH_TIME,
     })),
     combine: results => {
       return {

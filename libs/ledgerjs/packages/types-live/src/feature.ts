@@ -173,6 +173,7 @@ export type Features = CurrencyFeatures & {
   marketperformanceWidgetDesktop: Feature_MarketperformanceWidgetDesktop;
   supportDeviceStax: Feature_SupportDeviceStax;
   supportDeviceEuropa: Feature_SupportDeviceEuropa;
+  lldRefreshMarketData: Feature_LldRefreshMarketData;
 };
 
 /**
@@ -449,6 +450,10 @@ export type Feature_MarketperformanceWidgetDesktop = Feature<{
 
 export type Feature_NftsFromSimpleHash = Feature<{
   threshold: number;
+}>;
+
+export type Feature_LldRefreshMarketData = Feature<{
+  refreshTime: number;
 }>;
 
 export type Feature_CounterValue = DefaultFeature;
