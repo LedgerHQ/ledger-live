@@ -180,6 +180,8 @@ export async function fetchList({
     `&sparkline=${sparkline ? "true" : "false"}&price_change_percentage=${range}` +
     `${ids.length > 0 ? `&page=1&&ids=${ids.toString()}` : `&page=${page}`}`;
 
+  if ((starred.length > 0 || search.length > 0) && ids.length === 0) return [];
+
   let { data } = await network({
     method: "GET",
     url,
