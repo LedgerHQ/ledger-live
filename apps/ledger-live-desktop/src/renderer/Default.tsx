@@ -48,6 +48,7 @@ import {
 import { Flex, InfiniteLoader } from "@ledgerhq/react-ui";
 import useAccountsWithFundsListener from "@ledgerhq/live-common/hooks/useAccountsWithFundsListener";
 import { accountsSelector } from "./reducers/accounts";
+import AccountAbstraction from "./screens/aa";
 
 const PlatformCatalog = lazy(() => import("~/renderer/screens/platform"));
 const Dashboard = lazy(() => import("~/renderer/screens/dashboard"));
@@ -288,7 +289,8 @@ export default function Default() {
                           <Switch>
                             <Route path="/" exact render={withSuspense(Dashboard)} />
                             <Route path="/settings" render={withSuspense(Settings)} />
-                            <Route path="/accounts" render={withSuspense(Accounts)} />
+                            <Route path="/aa" render={withSuspense(AccountAbstraction)} />
+                            <Route path="/accounts" render={withSuspense(Account)} />
                             <Route path="/card" render={withSuspense(Card)} />
                             <Redirect from="/manager/reload" to="/manager" />
                             <Route path="/manager" render={withSuspense(Manager)} />

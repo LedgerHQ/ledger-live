@@ -86,7 +86,7 @@ export function Toast({
   id: string;
 }) {
   const { t } = useTranslation();
-  const { Icon, defaultIconColor } = icons[icon ?? ""];
+  const { Icon, defaultIconColor } = icons?.[icon ?? ""] || {};
   const transitions = useTransition(1, null, {
     from: {
       height: 0,

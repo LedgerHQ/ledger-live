@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.base",
+  "compilerOptions": {
+    "target": "es2022",
+    "declaration": true,
+    "declarationMap": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "module": "es2022",
+    "downlevelIteration": true,
+    "jsx": "react",
+    "lib": ["es2020", "dom"],
+    "outDir": "lib"
+  },
+  "include": ["src/**/*"]
+}

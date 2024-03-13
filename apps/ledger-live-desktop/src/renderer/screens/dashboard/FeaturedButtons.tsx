@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Grid, IconsLegacy } from "@ledgerhq/react-ui";
+import { Grid, Icons, IconsLegacy } from "@ledgerhq/react-ui";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import EntryButton from "~/renderer/components/EntryButton/EntryButton";
@@ -7,9 +7,11 @@ import { useHistory } from "react-router-dom";
 import useStakeFlow from "~/renderer/screens/stake";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { track } from "~/renderer/analytics/segment";
+import { openModal } from "~/renderer/actions/modals";
+import { useDispatch } from "react-redux";
 
 const ButtonGrid = styled(Grid).attrs(() => ({
-  columns: 3,
+  columns: 4,
   columnGap: 4,
 }))`
   margin-top: ${p => p.theme.space[4]}px;
@@ -45,6 +47,12 @@ const FeaturedButtons = () => {
     startStakeFlow({ source: "Portafolio" });
   }, [startStakeFlow]);
 
+  const dispatch = useDispatch();
+
+  const handleAuthenticateSmartAccount = useCallback(() => {
+    dispatch(openModal("MODAL_AUTHENTICATE_SMART_ACCOUNT", undefined));
+  }, [dispatch]);
+
   if (!bannerEnabled) return null;
 
   return (
@@ -70,6 +78,15 @@ const FeaturedButtons = () => {
         title={t("dashboard.featuredButtons.earn.title")}
         body={t("dashboard.featuredButtons.earn.description")}
         onClick={handleClickStake}
+        entryButtonTestId="stake-entry-button"
+      />
+      <EntryButton
+        Icon={() => <Icons.WalletInput />}
+        disabled={stakeDisabled}
+        title={"Smart account"}
+        body={"Create your smart account"}
+        label={"New"}
+        onClick={handleAuthenticateSmartAccount}
         entryButtonTestId="stake-entry-button"
       />
     </ButtonGrid>

@@ -31,6 +31,7 @@ export type TokenAccount = {
   token: TokenCurrency;
   balance: BigNumber;
   spendableBalance: BigNumber;
+  isSmartAccount?: boolean;
   creationDate: Date;
   operationsCount: number;
   operations: Operation[];

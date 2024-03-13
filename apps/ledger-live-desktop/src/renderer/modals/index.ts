@@ -7,6 +7,7 @@ import MODAL_DISABLE_PASSWORD from "./DisablePasswordModal";
 import MODAL_ADD_ACCOUNTS from "./AddAccounts";
 import MODAL_RECEIVE from "./Receive";
 import MODAL_SEND from "./Send";
+import MODAL_SEND_SMART_ACCOUNT from "./SendSmartAccount";
 import MODAL_SIGN_MESSAGE from "./SignMessage";
 import MODAL_SIGN_TRANSACTION from "./SignTransaction";
 import MODAL_NO_FUNDS_STAKE from "./NoFundsStake";
@@ -28,6 +29,9 @@ import MODAL_HIDE_NFT_COLLECTION from "./HideNftCollection";
 import MODAL_PROTECT_DISCOVER from "./ProtectDiscover";
 import MODAL_CONFIRM from "./ConfirmModal";
 import MODAL_ERROR from "./ErrorModal";
+import MODAL_AUTHENTICATE_SMART_ACCOUNT from "./AuthenticateModal";
+import MODAL_SMART_ACCOUNT_SIGNER from "./SmartAccountSignerModal";
+import MODAL_SMART_ACCOUNT_PLUGINS from "./SmartAccountPluginsModal";
 import MODAL_VAULT_SIGNER from "./VaultSigner";
 
 type GlobalModals = MakeModalsType<GlobalModalData>;
@@ -70,6 +74,10 @@ const globalModals: GlobalModals = {
 
   MODAL_CONFIRM,
   MODAL_ERROR,
+  MODAL_AUTHENTICATE_SMART_ACCOUNT,
+  MODAL_SMART_ACCOUNT_PLUGINS,
+  MODAL_SMART_ACCOUNT_SIGNER,
+  MODAL_SEND_SMART_ACCOUNT,
 };
 
 export type Modals = MakeModalsType<ModalData>;

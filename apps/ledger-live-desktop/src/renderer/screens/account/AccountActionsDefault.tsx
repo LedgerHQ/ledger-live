@@ -7,6 +7,7 @@ import IconSell from "~/renderer/icons/Plus";
 import IconReceive from "~/renderer/icons/Receive";
 import IconSend from "~/renderer/icons/Send";
 import IconSwap from "~/renderer/icons/Swap";
+import IconReward from "~/renderer/icons/ClaimReward";
 
 type Props = {
   onClick: () => void;
@@ -45,6 +46,13 @@ export const SendActionDefault = ({ onClick }: { onClick: () => void }) => (
     onClick={onClick}
     iconComponent={<IconSend size={14} />}
     labelComponent={<Trans i18nKey="send.title" />}
+  />
+);
+export const MintNftActionDefault = ({ onClick }: { onClick: () => void }) => (
+  <ActionDefault
+    onClick={onClick}
+    iconComponent={<IconReward size={14} />}
+    labelComponent={"Mint your NFT"}
   />
 );
 export const ReceiveActionDefault = ({ onClick }: { onClick: () => void }) => (

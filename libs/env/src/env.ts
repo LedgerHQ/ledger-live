@@ -42,6 +42,26 @@ const stringArrayParser = (v: unknown): string[] | undefined => {
 };
 
 const envDefinitions = {
+  AA_ALCHEMY_APIKEY: {
+    def: "",
+    parser: stringParser,
+    desc: "",
+  },
+  AA_ALCHEMY_SMARTACCOUNT_APIKEY: {
+    def: "",
+    parser: stringParser,
+    desc: "",
+  },
+  AA_BICONOMY_PAYMASTER_APIKEY: {
+    def: "",
+    parser: stringParser,
+    desc: "",
+  },
+  AA_BICONOMY_PAYMASTER_URL: {
+    def: "",
+    parser: stringParser,
+    desc: "",
+  },
   ADDRESS_POISONING_FAMILIES: {
     def: "evm,tron",
     parser: stringParser,

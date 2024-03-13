@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import {
   canSend,
   getAccountCurrency,
@@ -30,6 +31,7 @@ import {
   ReceiveActionDefault,
   SellActionDefault,
   SendActionDefault,
+  MintNftActionDefault,
   SwapActionDefault,
 } from "./AccountActionsDefault";
 import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils/index";
@@ -39,6 +41,7 @@ import { ManageAction } from "~/renderer/families/types";
 import { getAvailableProviders } from "@ledgerhq/live-common/exchange/swap/index";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { isWalletConnectSupported } from "@ledgerhq/live-common/walletConnect/index";
+import { mintNft } from "@ledgerhq/account-abstraction";
 
 type RenderActionParams = {
   label: React.ReactNode;
@@ -264,7 +267,9 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
       button: "send",
       ...buttonSharedTrackingFields,
     });
-    openModal("MODAL_SEND", {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //@ts-expect-error
+    openModal(account.isSmartAccount ? "MODAL_SEND_SMART_ACCOUNT" : "MODAL_SEND", {
       parentAccount,
       account,
     });
@@ -293,13 +298,17 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
     })),
   ];
 
+  const onMint = () => {
+    mintNft();
+  };
+
   const buyHeader = <BuyActionDefault onClick={() => onBuySell("buy")} />;
   const sellHeader = <SellActionDefault onClick={() => onBuySell("sell")} />;
   const swapHeader = <SwapActionDefault onClick={onSwap} />;
+  const mintNftHeader = <MintNftActionDefault onClick={onMint} />;
   const manageActionsHeader = manageActions.map(item => (
     <ActionItem {...item} key={item.accountActionsTestId} />
   ));
-
   const NonEmptyAccountHeader = (
     <FadeInButtonsContainer data-test-id="account-buttons-group" show={showButtons}>
       {manageActions.length > 0 ? manageActionsHeader : null}
@@ -310,6 +319,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
         <SendAction account={account} parentAccount={parentAccount} onClick={onSend} />
       ) : null}
       <ReceiveAction account={account} parentAccount={parentAccount} onClick={onReceive} />
+      {account.isSmartAccount ? mintNftHeader : null}
     </FadeInButtonsContainer>
   );
 

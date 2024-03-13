@@ -15,7 +15,7 @@ import debounce from "lodash/debounce";
 import sentry from "~/sentry/main";
 import { SettingsState } from "~/renderer/reducers/settings";
 import { User } from "~/renderer/storage";
-
+import electronAppUniversalProtocolClient from "electron-app-universal-protocol-client";
 Store.initRenderer();
 
 const gotLock = app.requestSingleInstanceLock();
@@ -126,6 +126,18 @@ app.on("ready", async () => {
   ipcMain.handle("reloadRenderer", () => {
     console.log("reloading renderer ...");
     loadWindow();
+  });
+
+  electronAppUniversalProtocolClient.on("request", async requestUrl => {
+    // Handle the request
+
+    const win = getMainWindow();
+    if (win) win.webContents.send("deep-linking", requestUrl);
+  });
+
+  await electronAppUniversalProtocolClient.initialize({
+    protocol: "ledgerlive",
+    mode: "development",
   });
 
   // To handle opening new windows from webview

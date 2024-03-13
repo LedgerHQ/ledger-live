@@ -1,14 +1,16 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { compose } from "redux";
 import { connect, useSelector } from "react-redux";
 import { withTranslation } from "react-i18next";
 import { TFunction } from "i18next";
 import { Redirect } from "react-router";
+import { v4 as uuidv4 } from "uuid";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
 import { isAddressPoisoningOperation } from "@ledgerhq/live-common/operation";
 import { getCurrencyColor } from "~/renderer/getCurrencyColor";
 import { accountSelector } from "~/renderer/reducers/accounts";
+import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import {
   findSubAccountById,
   getAccountCurrency,
@@ -33,10 +35,13 @@ import AccountHeader from "./AccountHeader";
 import AccountHeaderActions, { AccountHeaderSettingsButton } from "./AccountHeaderActions";
 import EmptyStateAccount from "./EmptyStateAccount";
 import TokensList from "./TokensList";
-import { AccountStakeBanner } from "~/renderer/screens/account/AccountStakeBanner";
 import { AccountLike, Account, Operation } from "@ledgerhq/types-live";
 import { State } from "~/renderer/reducers";
 import { getLLDCoinFamily } from "~/renderer/families";
+import Mint_nft from "./MINT_NFT.png";
+import Upgrade from "./UPGRADE.png";
+import { mintNft } from "@ledgerhq/account-abstraction";
+import Image from "~/renderer/components/Image";
 
 type Params = {
   id: string;
@@ -89,6 +94,7 @@ const AccountPage = ({
   setCountervalueFirst,
 }: Props) => {
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
+  const { pushToast, dismissToast } = useToasts();
   const specific = mainAccount ? getLLDCoinFamily(mainAccount.currency.family) : null;
   const AccountBodyHeader = specific?.AccountBodyHeader;
   const AccountSubHeader = specific?.AccountSubHeader;
@@ -115,6 +121,18 @@ const AccountPage = ({
 
   const currency = getAccountCurrency(account);
   const color = getCurrencyColor(currency, bgColor);
+
+  const handleMintClick = async () => {
+    const id = uuidv4();
+    await mintNft();
+    pushToast({
+      id,
+      title: "Collectible claimed!",
+      text: "Check it in your collection.",
+      icon: "info",
+    });
+  };
+
   return (
     <Box key={account.id}>
       <TrackPage
@@ -162,13 +180,14 @@ const AccountPage = ({
               setCountervalueFirst={setCountervalueFirst}
             />
           </Box>
-          <AccountStakeBanner account={account} />
+          <Box mb={"30px"} cursor={"pointer"} onClick={handleMintClick}>
+            <Image resource={Upgrade} alt="yo" />
+            <Image resource={Mint_nft} alt="yo" />
+          </Box>
           {AccountBodyHeader ? (
             <AccountBodyHeader account={account} parentAccount={parentAccount} />
           ) : null}
-          {account.type === "Account" && isNFTActive(account.currency) ? (
-            <Collections account={account} />
-          ) : null}
+          {account.type === "Account" && true ? <Collections account={account} /> : null}
           {account.type === "Account" ? <TokensList account={account} /> : null}
           <OperationsList
             account={account}

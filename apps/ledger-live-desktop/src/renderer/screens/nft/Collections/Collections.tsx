@@ -74,7 +74,7 @@ const Collections = ({ account }: Props) => {
   const { nfts, fetchNextPage, hasNextPage } = useNftGalleryFilter({
     nftsOwned: account.nfts || [],
     addresses: account.freshAddress,
-    chains: [account.currency.id],
+    chains: [account.currency.id === "ethereum_sepolia" ? "ethereum-sepolia" : account.currency.id],
     threshold: isThresholdValid(thresold) ? Number(thresold) : 75,
   });
 
@@ -82,7 +82,7 @@ const Collections = ({ account }: Props) => {
     () => nftsByCollections(nftsFromSimplehashFeature?.enabled ? nfts : account.nfts),
     [account.nfts, nfts, nftsFromSimplehashFeature],
   );
-  const collectionsLength = Object.keys(collections).length;
+  const collectionsLength = Object.keys(collections || []).length;
   const onShowMore = useCallback(() => {
     setNumberOfVisibleCollections(numberOfVisibleCollections =>
       Math.min(numberOfVisibleCollections + INCREMENT, collectionsLength),
@@ -111,7 +111,7 @@ const Collections = ({ account }: Props) => {
             account={account}
             nfts={nfts}
           />
-        )),
+        )) || [],
     [account, filteredCollections, numberOfVisibleCollections, onOpenCollection],
   );
 

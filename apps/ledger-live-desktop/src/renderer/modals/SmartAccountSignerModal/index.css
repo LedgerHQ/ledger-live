@@ -1,0 +1,115 @@
+.App {
+  font-family: sans-serif;
+  text-align: center;
+  background-color: #131214;
+  color: white;
+  padding: 16px;
+}
+.blur {
+  filter: url('data:image/svg+xml,\
+    <svg xmlns="http://www.w3.org/2000/svg">\
+      <filter id="blur" x="-20%" y="-20%" width="140%" height="140%" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="linearRGB">\
+      <feGaussianBlur stdDeviation="12.5" result="effect1_foregroundBlur_349_10561"/>\
+      </filter>\
+    </svg>#blur');
+}
+#svg {
+  clip-path: circle(40%);
+}
+.center {
+  text-align: center;
+}
+
+@keyframes circular {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.moving-back {
+  transform-origin: 62px 62px;
+  animation: circular 2s cubic-bezier(0.72, 0.03, 0.35, 0.93) infinite;
+}
+
+.white {
+  fill: white !important;
+}
+
+.information-animation {
+  .rect {
+    fill: #8262d2;
+  }
+
+  .path1 {
+    opacity: 0.6;
+    fill: #9b47b7;
+  }
+
+  .path2 {
+    opacity: 0.6;
+    fill: #031b38;
+  }
+
+  .path3 {
+    opacity: 0.6;
+    fill: #ffffff;
+  }
+
+  .path4 {
+    fill: #5a386a;
+  }
+}
+
+.heavy-warning-animation {
+  .rect {
+    fill: #690808;
+  }
+
+  .path1 {
+    opacity: 0.6;
+    fill: #b74747;
+  }
+
+  .path2 {
+    opacity: 0.6;
+    fill: #380303;
+  }
+
+  .path3 {
+    opacity: 0.6;
+    fill: #ffffff;
+  }
+
+  .path4 {
+    fill: #801a1a;
+  }
+}
+
+.done-animation {
+  .rect {
+    fill: #186908;
+  }
+
+  .path1 {
+    opacity: 0.6;
+    fill: #0c3803;
+  }
+
+  .path2 {
+    opacity: 0.6;
+    fill: #59b747;
+  }
+
+  .path3 {
+    opacity: 0.6;
+    fill: #ffffff;
+  }
+
+  .path4 {
+    fill: #2B801A;
+  }
+}

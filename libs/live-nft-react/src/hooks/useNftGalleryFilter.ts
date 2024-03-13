@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useMemo } from "react";
 import { InfiniteData, useInfiniteQuery, UseInfiniteQueryResult } from "@tanstack/react-query";
 import { fetchNftsFromSimpleHash } from "@ledgerhq/live-nft/api/simplehash";
@@ -54,11 +55,43 @@ export function useNftGalleryFilter({
     if (queryResult.data) {
       for (const page of queryResult.data.pages) {
         for (const nft of page.nfts) {
-          const hash = hashProtoNFT(nft.contract_address, nft.token_id, nft.chain);
-          const existing = nftsWithProperties.get(hash);
-          if (existing) {
-            nfts.push(existing);
-          }
+          nfts.push({
+            id: nft.nft_id,
+            tokenId: nft.token_id,
+            //@ts-expect-error
+            amount: nft.owner_count,
+            //@ts-expect-error
+            contract: nft.contract,
+            currencyId: "ethereum-sepolia",
+            nftStatus: "loaded",
+            metadata: {
+              tokenName: nft.name,
+              contract: nft.contract,
+              tokenId: nft.token_id,
+              description: nft.description,
+              nftName: nft.name,
+              nftStatus: "loaded",
+              medias: {
+                preview: {
+                  //@ts-expect-error
+                  uri: nft.previews.image_small_url,
+                  mediaType: "image/jpeg",
+                },
+                big: {
+                  //@ts-expect-error
+                  uri: nft.previews.image_large_url,
+                  mediaType: "image/jpeg",
+                },
+                original: {
+                  uri: nft.image_url,
+                  mediaType: "image/jpeg",
+                },
+                //@ts-expect-error
+                description: nft.description,
+              },
+            },
+          });
+          //}
         }
       }
     }

@@ -7,7 +7,7 @@ import styled from "styled-components";
 import { useManagerBlueDot } from "@ledgerhq/live-common/manager/hooks";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { IconsLegacy, Tag as TagComponent } from "@ledgerhq/react-ui";
+import { IconsLegacy, Icons, Tag as TagComponent } from "@ledgerhq/react-ui";
 import { accountsSelector, starredAccountsSelector } from "~/renderer/reducers/accounts";
 import {
   sidebarCollapsedSelector,
@@ -266,6 +266,10 @@ const MainSideBar = () => {
     push("/card");
     trackEntry("card");
   }, [push, trackEntry]);
+  const handleClickAA = useCallback(() => {
+    push("/aa");
+    trackEntry("/aa");
+  }, [push, trackEntry]);
   const handleClickDashboard = useCallback(() => {
     push("/");
     trackEntry("/portfolio");
@@ -373,6 +377,17 @@ const MainSideBar = () => {
               <TopGradient />
               <Space of={70} />
               <SideBarList title={t("sidebar.menu")} collapsed={secondAnim}>
+                <SideBarListItem
+                  id={"account-abstraction"}
+                  label={"Account Abstraction"}
+                  icon={IconsLegacy.WalletMedium}
+                  iconSize={20}
+                  iconActiveColor="wallet"
+                  onClick={handleClickAA}
+                  isActive={location.pathname.startsWith("/aa")}
+                  NotifComponent={<UpdateDot collapsed={collapsed} />}
+                  collapsed={secondAnim}
+                />
                 <SideBarListItem
                   id={"dashboard"}
                   label={t("dashboard.title")}

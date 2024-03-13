@@ -8,11 +8,38 @@ import NoAccounts from "./NoAccountsImage";
 import Text from "~/renderer/components/Text";
 import LinkHelp from "~/renderer/components/LinkHelp";
 import { openURL } from "~/renderer/linking";
-import { DefaultTheme, withTheme } from "styled-components";
+import styled, { DefaultTheme, withTheme } from "styled-components";
 import FakeLink from "~/renderer/components/FakeLink";
 import { openModal } from "~/renderer/actions/modals";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { urls } from "~/config/urls";
+import EntryButton from "~/renderer/components/EntryButton/EntryButton";
+import { Flex, Grid, Icons } from "@ledgerhq/react-ui";
+
+const FlexWrapper = styled(Flex)`
+  position: relative;
+  white-space: normal;
+  flex-direction: row;
+  height: 100%;
+  gap: 20px;
+  max-height: 120px;
+`;
+
+const ButtonGrid = styled(Grid).attrs(() => ({
+  columns: 2,
+  columnGap: 4,
+  rowGap: 4,
+}))`
+  padding-top: ${p => p.theme.space[4]}px;
+  padding-left: ${p => p.theme.space[4]}px;
+  padding-right: ${p => p.theme.space[4]}px;
+  padding-bottom: ${p => p.theme.space[6]}px;
+  background-color: ${p => p.theme.colors.palette.background.default};
+  border-radius: 8px;
+  min-height: 120px;
+  max-height: 120px;
+  overflow-y: hidden;
+`;
 
 const EmptyStateAccounts = ({ theme }: { theme: DefaultTheme }) => {
   const { push } = useHistory();
@@ -26,6 +53,10 @@ const EmptyStateAccounts = ({ theme }: { theme: DefaultTheme }) => {
   const dispatch = useDispatch();
   const openAddAccounts = useCallback(() => {
     dispatch(openModal("MODAL_ADD_ACCOUNTS", undefined));
+  }, [dispatch]);
+
+  const handleAuthenticateSmartAccount = useCallback(() => {
+    dispatch(openModal("MODAL_AUTHENTICATE_SMART_ACCOUNT", undefined));
   }, [dispatch]);
   return (
     <Box
@@ -68,32 +99,23 @@ const EmptyStateAccounts = ({ theme }: { theme: DefaultTheme }) => {
           flow={3}
           justifyContent="center"
         >
-          <Button
-            primary
-            onClick={openAddAccounts}
-            data-test-id="portfolio-empty-state-add-account-button"
-          >
-            {t("emptyState.accounts.buttons.addAccount")}
-          </Button>
-        </Box>
-        <FakeLink
-          underline
-          fontSize={3}
-          color="palette.text.shade80"
-          onClick={handleInstallApp}
-          data-e2e="accounts_empty_InstallApps"
-        >
-          {t("emptyState.accounts.buttons.installApp")}
-        </FakeLink>
-        <Box mt={5} justifyContent="center">
-          <LinkHelp
-            style={{
-              color: theme.colors.palette.text.shade60,
-            }}
-            iconSize={14}
-            label={<Trans i18nKey="emptyState.accounts.buttons.help" />}
-            onClick={() => openURL(urlFaq)}
-          />
+          <ButtonGrid>
+            <EntryButton
+              Icon={() => <Icons.Devices />}
+              title={"Connect your ledger"}
+              body={"Setup or connect your ledger"}
+              onClick={handleAuthenticateSmartAccount}
+              entryButtonTestId="entry-button"
+            />
+            <EntryButton
+              Icon={() => <Icons.WalletInput />}
+              title={"Smart account"}
+              body={"Create your smart account"}
+              label={"New"}
+              onClick={handleAuthenticateSmartAccount}
+              entryButtonTestId="entry-button"
+            />
+          </ButtonGrid>
         </Box>
       </Box>
     </Box>

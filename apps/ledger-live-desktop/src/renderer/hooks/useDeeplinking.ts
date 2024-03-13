@@ -112,6 +112,8 @@ export function useDeepLinkHandler() {
         currency,
         installApp,
         appName,
+        bundle,
+        orgId,
       } = query;
 
       // Track deeplink only when ajsPropSource attribute exists.
@@ -333,6 +335,12 @@ export function useDeepLinkHandler() {
           break;
         case "storyly":
           setUrl(deeplink);
+          break;
+        case "smart-account":
+          dispatch(openModal("MODAL_SMART_ACCOUNT_SIGNER", { signer: { bundle, orgId } }));
+          break;
+        case "aa":
+          navigate("/aa", { signer: { bundle, orgId } });
           break;
         case "portfolio":
         default:
