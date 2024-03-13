@@ -16,9 +16,42 @@ const RareSatsGrid = () => (
   <StyledGrid flex={1}>
     {Array.from({ length: 7 }).map((_, i) => (
       <SatsCard
-        collectionName={i + " Name"}
-        contract={"contract"}
-        tokenId={0}
+        collections={
+          i % 2 === 0
+            ? [
+                {
+                  name: "Nakamoto",
+                  totalStats: 20,
+                },
+                {
+                  name: "Pizza",
+                  totalStats: 2,
+                },
+                {
+                  name: "Hitman",
+                  totalStats: 2,
+                },
+                {
+                  name: "Vintage",
+                  totalStats: 2,
+                },
+                {
+                  name: "Alpha",
+                  totalStats: 2,
+                },
+              ]
+            : [
+                {
+                  name: "Block78",
+                  totalStats: 2,
+                },
+                {
+                  name: "Epic",
+                  totalStats: 34,
+                },
+              ]
+        }
+        year={0}
         totalStats={0}
         key={i}
       />
