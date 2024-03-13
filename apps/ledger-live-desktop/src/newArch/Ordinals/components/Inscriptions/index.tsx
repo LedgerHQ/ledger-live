@@ -12,7 +12,7 @@ export function Inscriptions({ layout }: Props) {
 }
 
 const InscriptionsGrid = () => (
-  <StyledGrid flex={1}>
+  <StyledGrid flex={1} px={3}>
     {Array.from({ length: 7 }).map((_, i) => (
       <Flex key={i} bg="neutral.c30" p={4} borderRadius={6}>
         <Text>Inscription #{i + 1}</Text>
