@@ -4,9 +4,10 @@ import styled from "styled-components";
 import { SatsCard } from "./Sats";
 import { useNftGallery } from "../../hooks/useNftGallery";
 import { Ordinal } from "../../types/Ordinals";
+import { LayoutKey } from "../../types/Layouts";
 
 type Props = {
-  layout: string;
+  layout: LayoutKey;
 };
 
 export function RareSats({ layout }: Props) {

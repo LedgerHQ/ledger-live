@@ -1,17 +1,18 @@
 import React, { useState } from "react";
 import { Inscriptions } from "../components/Inscriptions";
 import { RareSats } from "../components/RareSats";
+import { Category } from "../types/Categories";
 
-const categories = [
+const categories: Category[] = [
   {
     value: "inscriptions",
     title: "account.ordinals.categories.inscriptions",
-    Component: ({ layout }: { layout: string }) => <Inscriptions layout={layout} />,
+    Component: ({ layout }) => <Inscriptions layout={layout} />,
   },
   {
     value: "rareSats",
     title: "account.ordinals.categories.rareSats",
-    Component: ({ layout }: { layout: string }) => <RareSats layout={layout} />,
+    Component: ({ layout }) => <RareSats layout={layout} />,
   },
 ];
 

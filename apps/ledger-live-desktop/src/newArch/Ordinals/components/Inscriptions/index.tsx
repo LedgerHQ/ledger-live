@@ -3,9 +3,10 @@ import { Flex, Grid, Text } from "@ledgerhq/react-ui";
 import styled from "styled-components";
 import { useNftGallery } from "../../hooks/useNftGallery";
 import { Ordinal } from "../../types/Ordinals";
+import { LayoutKey } from "../../types/Layouts";
 
 type Props = {
-  layout: string;
+  layout: LayoutKey;
 };
 
 export function Inscriptions({ layout }: Props) {
@@ -24,8 +25,8 @@ export function Inscriptions({ layout }: Props) {
 const InscriptionsGrid = ({ data }: { data: Ordinal[] }) => (
   <StyledGrid flex={1}>
     {data.map((ordinal, i) => (
-      <Flex bg="neutral.c30" p={4} borderRadius={6}>
-        <Text key={i}>{ordinal.name ?? ordinal.contract.name}</Text>
+      <Flex key={i} bg="neutral.c30" p={4} borderRadius={6}>
+        <Text>{ordinal.name ?? ordinal.contract.name}</Text>
       </Flex>
     ))}
   </StyledGrid>

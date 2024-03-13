@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { t } from "i18next";
+import { Layout, LayoutKey } from "../types/Layouts";
 
 const useMenuLayouts = () => {
-  const layoutOptions = {
+  const layoutOptions: Record<LayoutKey, Layout> = {
     grid: {
       value: "grid",
       label: t("account.ordinals.layouts.grid"),
@@ -13,9 +14,9 @@ const useMenuLayouts = () => {
     },
   };
 
-  const [layout, setLayout] = useState("grid");
+  const [layout, setLayout] = useState<LayoutKey>("grid");
 
-  const changeLayout = (layoutSelected: any) => {
+  const changeLayout = (layoutSelected: Layout) => {
     setLayout(layoutSelected.value);
   };
 
