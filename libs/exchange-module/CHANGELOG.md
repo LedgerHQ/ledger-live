@@ -1,5 +1,15 @@
 # @ledgerhq/wallet-api-exchange-module
 
+## 0.4.0-nightly.0
+
+### Minor Changes
+
+- [#6154](https://github.com/LedgerHQ/ledger-live/pull/6154) [`f0ab3d9`](https://github.com/LedgerHQ/ledger-live/commit/f0ab3d9df5a70368226b1b466fcaadaa21715827) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Add Sell NG support
+
+### Patch Changes
+
+- [#6261](https://github.com/LedgerHQ/ledger-live/pull/6261) [`d3f0681`](https://github.com/LedgerHQ/ledger-live/commit/d3f06813d6e001b9954455247d56ca6833a0d7de) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Bump wallet-api packages to support DeviceModelId.Europa
+
 ## 0.3.0
 
 ### Minor Changes

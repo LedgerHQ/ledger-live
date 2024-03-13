@@ -1,5 +1,11 @@
 # @ledgerhq/errors
 
+## 6.16.3-nightly.1
+
+### Patch Changes
+
+- [#6257](https://github.com/LedgerHQ/ledger-live/pull/6257) [`fc4f83e`](https://github.com/LedgerHQ/ledger-live/commit/fc4f83e26d9f00b7c518f28157e8d9da55ce3685) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add new errors for wrong device
+
 ## 6.16.3-nightly.0
 
 ### Patch Changes

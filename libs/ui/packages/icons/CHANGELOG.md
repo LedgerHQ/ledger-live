@@ -1,5 +1,11 @@
 # @ledgerhq/icons-ui
 
+## 0.6.3-nightly.1
+
+### Patch Changes
+
+- [#6261](https://github.com/LedgerHQ/ledger-live/pull/6261) [`e13940e`](https://github.com/LedgerHQ/ledger-live/commit/e13940ea8b96098690a57c50dc989a5b6e6a6d28) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add placeholder icon Europa
+
 ## 0.6.3-nightly.0
 
 ### Patch Changes

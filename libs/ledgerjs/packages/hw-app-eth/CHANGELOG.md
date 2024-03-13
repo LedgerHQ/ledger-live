@@ -1,5 +1,17 @@
 # @ledgerhq/hw-app-eth
 
+## 6.35.7-nightly.2
+
+### Patch Changes
+
+- Updated dependencies [[`7d5a724`](https://github.com/LedgerHQ/ledger-live/commit/7d5a724f40079a233b159b5231d69f318327e175), [`b3dfed5`](https://github.com/LedgerHQ/ledger-live/commit/b3dfed54bd8d54e62530cb2db92c3c108b43e0d7), [`7887ad9`](https://github.com/LedgerHQ/ledger-live/commit/7887ad9842e59f6fc567f118f06b3e12bdb9073b), [`a780777`](https://github.com/LedgerHQ/ledger-live/commit/a780777c13e08c1c3cd66ef5f6deac0fe928a894), [`1aa8ef4`](https://github.com/LedgerHQ/ledger-live/commit/1aa8ef404411c31f6ac4cf09fba453042db8b955), [`fc4f83e`](https://github.com/LedgerHQ/ledger-live/commit/fc4f83e26d9f00b7c518f28157e8d9da55ce3685), [`5ca7923`](https://github.com/LedgerHQ/ledger-live/commit/5ca79234ccbe66ce22f998fe3ebd2cdec681499a), [`c7f072f`](https://github.com/LedgerHQ/ledger-live/commit/c7f072f833a950e230137499d4908b792f6b615f), [`2331bae`](https://github.com/LedgerHQ/ledger-live/commit/2331bae7393f822aa64e5d0ab8f51622b6363b33), [`b72c52b`](https://github.com/LedgerHQ/ledger-live/commit/b72c52b3e4ebbb7aaf2142afbf6a9b9172e7ee04)]:
+  - @ledgerhq/types-live@6.45.0-nightly.1
+  - @ledgerhq/errors@6.16.3-nightly.1
+  - @ledgerhq/domain-service@1.1.19-nightly.2
+  - @ledgerhq/evm-tools@1.0.17-nightly.0
+  - @ledgerhq/hw-transport@6.30.5-nightly.1
+  - @ledgerhq/hw-transport-mocker@6.28.5-nightly.1
+
 ## 6.35.7-nightly.1
 
 ### Patch Changes

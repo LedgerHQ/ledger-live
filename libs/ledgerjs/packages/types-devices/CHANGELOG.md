@@ -1,5 +1,11 @@
 # @ledgerhq/types-devices
 
+## 6.24.0-nightly.0
+
+### Minor Changes
+
+- [#6261](https://github.com/LedgerHQ/ledger-live/pull/6261) [`53da330`](https://github.com/LedgerHQ/ledger-live/commit/53da3301aaceeb16e6b1f96b1ea44428fbeb4483) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - add device model europa
+
 ## 6.23.0
 
 ### Minor Changes

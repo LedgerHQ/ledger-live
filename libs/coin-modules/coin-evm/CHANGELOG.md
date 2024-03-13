@@ -1,5 +1,21 @@
 # @ledgerhq/coin-evm
 
+## 0.13.0-nightly.3
+
+### Patch Changes
+
+- [#6341](https://github.com/LedgerHQ/ledger-live/pull/6341) [`92e9d19`](https://github.com/LedgerHQ/ledger-live/commit/92e9d194313ffd1542b676c59ae2d34e861f698f) Thanks [@sarneijim](https://github.com/sarneijim)! - Fix swap history
+
+- [#6333](https://github.com/LedgerHQ/ledger-live/pull/6333) [`fde8420`](https://github.com/LedgerHQ/ledger-live/commit/fde8420bbcb4380c26a2d744ce2c07934c134a3e) Thanks [@CremaFR](https://github.com/CremaFR)! - Allow additional fees when using maxButton
+
+- Updated dependencies [[`1aa8ef4`](https://github.com/LedgerHQ/ledger-live/commit/1aa8ef404411c31f6ac4cf09fba453042db8b955), [`fc4f83e`](https://github.com/LedgerHQ/ledger-live/commit/fc4f83e26d9f00b7c518f28157e8d9da55ce3685), [`a8138f9`](https://github.com/LedgerHQ/ledger-live/commit/a8138f9ec0cff714d9745012eb91a09713ffbbd2), [`53da330`](https://github.com/LedgerHQ/ledger-live/commit/53da3301aaceeb16e6b1f96b1ea44428fbeb4483), [`abb1bbb`](https://github.com/LedgerHQ/ledger-live/commit/abb1bbb09c52a3d08577ba622c6cb0f44aab36c1)]:
+  - @ledgerhq/coin-framework@0.12.0-nightly.2
+  - @ledgerhq/errors@6.16.3-nightly.1
+  - @ledgerhq/devices@8.3.0-nightly.1
+  - @ledgerhq/domain-service@1.1.19-nightly.2
+  - @ledgerhq/evm-tools@1.0.17-nightly.0
+  - @ledgerhq/live-network@1.2.0-nightly.2
+
 ## 0.13.0-nightly.2
 
 ### Patch Changes

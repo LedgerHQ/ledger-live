@@ -1,5 +1,30 @@
 # @ledgerhq/types-live
 
+## 6.45.0-nightly.1
+
+### Minor Changes
+
+- [#6261](https://github.com/LedgerHQ/ledger-live/pull/6261) [`a780777`](https://github.com/LedgerHQ/ledger-live/commit/a780777c13e08c1c3cd66ef5f6deac0fe928a894) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add new feature flags: supportDeviceStax, supportDeviceEuropa
+  Remove legacy feature flags: syncOnboarding, customImage
+
+- [#6045](https://github.com/LedgerHQ/ledger-live/pull/6045) [`1aa8ef4`](https://github.com/LedgerHQ/ledger-live/commit/1aa8ef404411c31f6ac4cf09fba453042db8b955) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Extract bitcoin as a separate package
+
+### Patch Changes
+
+- [#6353](https://github.com/LedgerHQ/ledger-live/pull/6353) [`7d5a724`](https://github.com/LedgerHQ/ledger-live/commit/7d5a724f40079a233b159b5231d69f318327e175) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Remove walletConnectEntryPoint feature flag from codebase
+
+- [#6361](https://github.com/LedgerHQ/ledger-live/pull/6361) [`b3dfed5`](https://github.com/LedgerHQ/ledger-live/commit/b3dfed54bd8d54e62530cb2db92c3c108b43e0d7) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Removes the CEX Deposit feature flag on LLM.
+
+- [#6310](https://github.com/LedgerHQ/ledger-live/pull/6310) [`7887ad9`](https://github.com/LedgerHQ/ledger-live/commit/7887ad9842e59f6fc567f118f06b3e12bdb9073b) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Remove feature flag llmNewFirmwareUpdateUx
+
+- [#6301](https://github.com/LedgerHQ/ledger-live/pull/6301) [`5ca7923`](https://github.com/LedgerHQ/ledger-live/commit/5ca79234ccbe66ce22f998fe3ebd2cdec681499a) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Remove feature "Claim NFT" from Ledger Live (cancelled feature)
+
+- [#6354](https://github.com/LedgerHQ/ledger-live/pull/6354) [`c7f072f`](https://github.com/LedgerHQ/ledger-live/commit/c7f072f833a950e230137499d4908b792f6b615f) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Remove "walletNftGallery" feature flag from codebase
+
+- [#6359](https://github.com/LedgerHQ/ledger-live/pull/6359) [`2331bae`](https://github.com/LedgerHQ/ledger-live/commit/2331bae7393f822aa64e5d0ab8f51622b6363b33) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Removes the CEX Deposit feature flag on LLD.
+
+- [#6319](https://github.com/LedgerHQ/ledger-live/pull/6319) [`b72c52b`](https://github.com/LedgerHQ/ledger-live/commit/b72c52b3e4ebbb7aaf2142afbf6a9b9172e7ee04) Thanks [@KVNLS](https://github.com/KVNLS)! - Remove ptxEarn Feature Flag and cleanup the code
+
 ## 6.45.0-nightly.0
 
 ### Minor Changes

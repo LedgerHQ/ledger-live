@@ -1,5 +1,14 @@
 # @ledgerhq/live-nft
 
+## 0.2.2-nightly.3
+
+### Patch Changes
+
+- Updated dependencies [[`7d5a724`](https://github.com/LedgerHQ/ledger-live/commit/7d5a724f40079a233b159b5231d69f318327e175), [`b3dfed5`](https://github.com/LedgerHQ/ledger-live/commit/b3dfed54bd8d54e62530cb2db92c3c108b43e0d7), [`7887ad9`](https://github.com/LedgerHQ/ledger-live/commit/7887ad9842e59f6fc567f118f06b3e12bdb9073b), [`a780777`](https://github.com/LedgerHQ/ledger-live/commit/a780777c13e08c1c3cd66ef5f6deac0fe928a894), [`1aa8ef4`](https://github.com/LedgerHQ/ledger-live/commit/1aa8ef404411c31f6ac4cf09fba453042db8b955), [`5ca7923`](https://github.com/LedgerHQ/ledger-live/commit/5ca79234ccbe66ce22f998fe3ebd2cdec681499a), [`c7f072f`](https://github.com/LedgerHQ/ledger-live/commit/c7f072f833a950e230137499d4908b792f6b615f), [`2331bae`](https://github.com/LedgerHQ/ledger-live/commit/2331bae7393f822aa64e5d0ab8f51622b6363b33), [`b72c52b`](https://github.com/LedgerHQ/ledger-live/commit/b72c52b3e4ebbb7aaf2142afbf6a9b9172e7ee04), [`abb1bbb`](https://github.com/LedgerHQ/ledger-live/commit/abb1bbb09c52a3d08577ba622c6cb0f44aab36c1)]:
+  - @ledgerhq/types-live@6.45.0-nightly.1
+  - @ledgerhq/coin-framework@0.12.0-nightly.2
+  - @ledgerhq/live-network@1.2.0-nightly.2
+
 ## 0.2.2-nightly.2
 
 ### Patch Changes

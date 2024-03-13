@@ -1,5 +1,86 @@
 # @ledgerhq/live-common
 
+## 33.7.0-nightly.4
+
+### Minor Changes
+
+- [#6261](https://github.com/LedgerHQ/ledger-live/pull/6261) [`a780777`](https://github.com/LedgerHQ/ledger-live/commit/a780777c13e08c1c3cd66ef5f6deac0fe928a894) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add new feature flags: supportDeviceStax, supportDeviceEuropa
+  Remove legacy feature flags: syncOnboarding, customImage
+
+- [#6045](https://github.com/LedgerHQ/ledger-live/pull/6045) [`1aa8ef4`](https://github.com/LedgerHQ/ledger-live/commit/1aa8ef404411c31f6ac4cf09fba453042db8b955) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Extract bitcoin as a separate package
+
+- [#6154](https://github.com/LedgerHQ/ledger-live/pull/6154) [`f0ab3d9`](https://github.com/LedgerHQ/ledger-live/commit/f0ab3d9df5a70368226b1b466fcaadaa21715827) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Add Sell NG support
+
+### Patch Changes
+
+- [#6353](https://github.com/LedgerHQ/ledger-live/pull/6353) [`7d5a724`](https://github.com/LedgerHQ/ledger-live/commit/7d5a724f40079a233b159b5231d69f318327e175) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Remove walletConnectEntryPoint feature flag from codebase
+
+- [#6361](https://github.com/LedgerHQ/ledger-live/pull/6361) [`b3dfed5`](https://github.com/LedgerHQ/ledger-live/commit/b3dfed54bd8d54e62530cb2db92c3c108b43e0d7) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Removes the CEX Deposit feature flag on LLM.
+
+- [#6310](https://github.com/LedgerHQ/ledger-live/pull/6310) [`7887ad9`](https://github.com/LedgerHQ/ledger-live/commit/7887ad9842e59f6fc567f118f06b3e12bdb9073b) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Remove feature flag llmNewFirmwareUpdateUx
+
+- [#6341](https://github.com/LedgerHQ/ledger-live/pull/6341) [`92e9d19`](https://github.com/LedgerHQ/ledger-live/commit/92e9d194313ffd1542b676c59ae2d34e861f698f) Thanks [@sarneijim](https://github.com/sarneijim)! - Fix swap history
+
+- [#6343](https://github.com/LedgerHQ/ledger-live/pull/6343) [`e99af59`](https://github.com/LedgerHQ/ledger-live/commit/e99af59455d0ac13892c954cdcb00f5315efd6ca) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Update text Moonpay by MoonPay
+
+- [#6257](https://github.com/LedgerHQ/ledger-live/pull/6257) [`fc4f83e`](https://github.com/LedgerHQ/ledger-live/commit/fc4f83e26d9f00b7c518f28157e8d9da55ce3685) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add new errors for wrong device
+
+- [#6387](https://github.com/LedgerHQ/ledger-live/pull/6387) [`2341f96`](https://github.com/LedgerHQ/ledger-live/commit/2341f96b373f681182634c4a2d836b341c0e98a9) Thanks [@CremaFR](https://github.com/CremaFR)! - bugfix max button
+
+- [#6369](https://github.com/LedgerHQ/ledger-live/pull/6369) [`4a72ebb`](https://github.com/LedgerHQ/ledger-live/commit/4a72ebbf38ada3b2aaf28adf65dbece9bce8dee5) Thanks [@LucasWerey](https://github.com/LucasWerey)! - feature_lld_analytics_opt_in_prompt define for lld
+
+- [#6376](https://github.com/LedgerHQ/ledger-live/pull/6376) [`8008a65`](https://github.com/LedgerHQ/ledger-live/commit/8008a65b7d84cac93ace8a183ecebba0bb934864) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Fix live supported app list bug
+
+- [#6307](https://github.com/LedgerHQ/ledger-live/pull/6307) [`fcb1450`](https://github.com/LedgerHQ/ledger-live/commit/fcb14501bc83c136de0718559abdf304048c3a6c) Thanks [@lawRathod](https://github.com/lawRathod)! - Fix sometimes missing ops for accounts on casper
+
+- [#6301](https://github.com/LedgerHQ/ledger-live/pull/6301) [`5ca7923`](https://github.com/LedgerHQ/ledger-live/commit/5ca79234ccbe66ce22f998fe3ebd2cdec681499a) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Remove feature "Claim NFT" from Ledger Live (cancelled feature)
+
+- [#6367](https://github.com/LedgerHQ/ledger-live/pull/6367) [`7db3315`](https://github.com/LedgerHQ/ledger-live/commit/7db331500bebffe58f3bbe8299c14db1353b434f) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update dydx lcd
+
+- [#6261](https://github.com/LedgerHQ/ledger-live/pull/6261) [`d3f0681`](https://github.com/LedgerHQ/ledger-live/commit/d3f06813d6e001b9954455247d56ca6833a0d7de) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Bump wallet-api packages to support DeviceModelId.Europa
+
+- [#6354](https://github.com/LedgerHQ/ledger-live/pull/6354) [`c7f072f`](https://github.com/LedgerHQ/ledger-live/commit/c7f072f833a950e230137499d4908b792f6b615f) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Remove "walletNftGallery" feature flag from codebase
+
+- [#6359](https://github.com/LedgerHQ/ledger-live/pull/6359) [`2331bae`](https://github.com/LedgerHQ/ledger-live/commit/2331bae7393f822aa64e5d0ab8f51622b6363b33) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Removes the CEX Deposit feature flag on LLD.
+
+- [#6319](https://github.com/LedgerHQ/ledger-live/pull/6319) [`b72c52b`](https://github.com/LedgerHQ/ledger-live/commit/b72c52b3e4ebbb7aaf2142afbf6a9b9172e7ee04) Thanks [@KVNLS](https://github.com/KVNLS)! - Remove ptxEarn Feature Flag and cleanup the code
+
+- [#6333](https://github.com/LedgerHQ/ledger-live/pull/6333) [`fde8420`](https://github.com/LedgerHQ/ledger-live/commit/fde8420bbcb4380c26a2d744ce2c07934c134a3e) Thanks [@CremaFR](https://github.com/CremaFR)! - Allow additional fees when using maxButton
+
+- [#6323](https://github.com/LedgerHQ/ledger-live/pull/6323) [`d97a792`](https://github.com/LedgerHQ/ledger-live/commit/d97a7921f8303955a6c0b6bc1eaa1f2bb8330859) Thanks [@lvndry](https://github.com/lvndry)! - Account migration script
+
+- Updated dependencies [[`1aa8ef4`](https://github.com/LedgerHQ/ledger-live/commit/1aa8ef404411c31f6ac4cf09fba453042db8b955), [`92e9d19`](https://github.com/LedgerHQ/ledger-live/commit/92e9d194313ffd1542b676c59ae2d34e861f698f), [`fc4f83e`](https://github.com/LedgerHQ/ledger-live/commit/fc4f83e26d9f00b7c518f28157e8d9da55ce3685), [`d3f0681`](https://github.com/LedgerHQ/ledger-live/commit/d3f06813d6e001b9954455247d56ca6833a0d7de), [`a8138f9`](https://github.com/LedgerHQ/ledger-live/commit/a8138f9ec0cff714d9745012eb91a09713ffbbd2), [`f0ab3d9`](https://github.com/LedgerHQ/ledger-live/commit/f0ab3d9df5a70368226b1b466fcaadaa21715827), [`fde8420`](https://github.com/LedgerHQ/ledger-live/commit/fde8420bbcb4380c26a2d744ce2c07934c134a3e), [`53da330`](https://github.com/LedgerHQ/ledger-live/commit/53da3301aaceeb16e6b1f96b1ea44428fbeb4483), [`abb1bbb`](https://github.com/LedgerHQ/ledger-live/commit/abb1bbb09c52a3d08577ba622c6cb0f44aab36c1)]:
+  - @ledgerhq/coin-framework@0.12.0-nightly.2
+  - @ledgerhq/coin-bitcoin@0.4.0-nightly.0
+  - @ledgerhq/coin-evm@0.13.0-nightly.3
+  - @ledgerhq/errors@6.16.3-nightly.1
+  - @ledgerhq/wallet-api-exchange-module@0.4.0-nightly.0
+  - @ledgerhq/devices@8.3.0-nightly.1
+  - @ledgerhq/coin-algorand@0.4.0-nightly.3
+  - @ledgerhq/coin-near@0.3.11-nightly.3
+  - @ledgerhq/coin-polkadot@0.6.0-nightly.3
+  - @ledgerhq/hw-app-eth@6.35.7-nightly.2
+  - @ledgerhq/live-countervalues@0.1.3-nightly.3
+  - @ledgerhq/live-countervalues-react@0.1.3-nightly.3
+  - @ledgerhq/live-nft@0.2.2-nightly.3
+  - @ledgerhq/hw-app-algorand@6.28.5-nightly.1
+  - @ledgerhq/hw-app-cosmos@6.29.5-nightly.1
+  - @ledgerhq/hw-app-exchange@0.4.6-nightly.1
+  - @ledgerhq/hw-app-polkadot@6.28.5-nightly.1
+  - @ledgerhq/hw-app-solana@7.1.5-nightly.1
+  - @ledgerhq/hw-app-vet@0.1.6-nightly.2
+  - @ledgerhq/hw-transport@6.30.5-nightly.1
+  - @ledgerhq/hw-transport-node-speculos@6.28.5-nightly.1
+  - @ledgerhq/hw-transport-node-speculos-http@6.28.5-nightly.1
+  - @ledgerhq/live-network@1.2.0-nightly.2
+  - @ledgerhq/hw-app-btc@10.2.3-nightly.1
+  - @ledgerhq/hw-app-near@6.28.6-nightly.1
+  - @ledgerhq/hw-app-str@6.28.5-nightly.1
+  - @ledgerhq/hw-app-tezos@6.28.5-nightly.1
+  - @ledgerhq/hw-app-trx@6.28.5-nightly.1
+  - @ledgerhq/hw-app-xrp@6.28.5-nightly.1
+  - @ledgerhq/hw-transport-mocker@6.28.5-nightly.1
+
 ## 33.7.0-nightly.3
 
 ### Patch Changes

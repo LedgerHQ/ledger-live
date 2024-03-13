@@ -1,5 +1,13 @@
 # @ledgerhq/hw-app-cosmos
 
+## 6.29.5-nightly.1
+
+### Patch Changes
+
+- Updated dependencies [[`fc4f83e`](https://github.com/LedgerHQ/ledger-live/commit/fc4f83e26d9f00b7c518f28157e8d9da55ce3685)]:
+  - @ledgerhq/errors@6.16.3-nightly.1
+  - @ledgerhq/hw-transport@6.30.5-nightly.1
+
 ## 6.29.5-nightly.0
 
 ### Patch Changes
