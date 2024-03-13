@@ -103,6 +103,7 @@
     "back": "Back",
     "adjustFees": "Adjust fees",
     "reset": "Reset",
+    "restart": "Restart",
     "retry": "Retry",
     "range": "Range",
     "stop": "Stop",
@@ -4024,6 +4025,10 @@
       "reportErrorsDesc": "Automatically send reports to help Ledger improve its products.",
       "launchOnboarding": "Device setup",
       "launchOnboardingDesc": "Set up a new device or restore an existing device. Accounts and settings are kept."
+    },
+    "restartLedgerLiveforProxyModal": {
+      "title": "Restart Ledger Live for Proxy setup",
+      "desc": "Restart Ledger Live in order to tunnel yout traffic through a proxy for client-side privacy enforcment."
     },
     "help": {
       "version": "Version",

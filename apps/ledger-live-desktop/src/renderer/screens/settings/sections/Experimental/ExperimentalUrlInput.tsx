@@ -58,13 +58,12 @@ const ExperimentalUrlInput = ({ onChange, value, name }: Props) => {
         onClose={close}
         onReject={close}
         onConfirm={onConfirm}
-        confirmText={t("common.reset")}
-        title={t("settings.hardResetModal.title")}
+        confirmText={t("common.restart")}
+        title={t("settings.restartLedgerLiveforProxyModal.title")}
         desc={
           <Box>
-            {t("settings.hardResetModal.desc")}
-            <Alert type="warning" mt={4}>
-              {t("settings.hardResetModal.warning")}
+            {t("settings.restartLedgerLiveforProxyModal.desc")}
+            <Alert type="info" learnMoreUrl="https://ledger.com/blog"  mt={4}>
             </Alert>
           </Box>
         }
