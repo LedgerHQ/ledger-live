@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { InfiniteData, useInfiniteQuery, UseInfiniteQueryResult } from "@tanstack/react-query";
 import { fetchNftsFromSimpleHash } from "@ledgerhq/live-nft/api/simplehash";
-import { Ordinal, OrdinalMetadata, OrdinalStandard } from "../types/Ordinals";
+import { Ordinal, OrdinalContract, OrdinalMetadata, OrdinalStandard } from "../types/Ordinals";
 import { SimpleHashResponse } from "@ledgerhq/live-nft/api/types";
 
 export type HookProps = {
@@ -52,7 +52,7 @@ export function useNftGallery({ addresses, standard, threshold }: HookProps): Nf
             id: nft.nft_id,
             name: nft.name,
             amount: nft.token_count,
-            contract: nft.contract,
+            contract: nft.contract as OrdinalContract,
             contract_address: nft.contract_address,
             standard: "inscriptions",
             metadata: nft.extra_metadata as unknown as OrdinalMetadata,

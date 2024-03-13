@@ -22,12 +22,16 @@ export type UtxoDetails = {
   block_number: string;
   value: number;
 };
+export type OrdinalContract = {
+  type: string;
+  name: string;
+};
 
 export type Ordinal = {
   id: string;
   name: string;
   amount: number;
-  contract: any;
+  contract: OrdinalContract;
   contract_address: string;
   standard: OrdinalStandard;
   metadata: OrdinalMetadata;
