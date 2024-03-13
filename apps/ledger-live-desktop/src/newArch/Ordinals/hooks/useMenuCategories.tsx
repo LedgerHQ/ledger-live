@@ -1,17 +1,17 @@
-import { Text } from "@ledgerhq/react-ui";
 import React, { useState } from "react";
+import { Inscriptions } from "../components/Inscriptions";
 import { RareSats } from "../components/RareSats";
 
 const categories = [
   {
     value: "inscriptions",
     title: "account.ordinals.categories.inscriptions",
-    Component: () => <Text>Salut Inscriptions</Text>,
+    Component: ({ layout }: { layout: string }) => <Inscriptions layout={layout} />,
   },
   {
     value: "rareSats",
     title: "account.ordinals.categories.rareSats",
-    Component: () => <RareSats layout="grid" />,
+    Component: ({ layout }: { layout: string }) => <RareSats layout={layout} />,
   },
 ];
 
