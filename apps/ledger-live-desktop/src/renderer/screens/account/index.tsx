@@ -26,7 +26,6 @@ import {
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import OperationsList from "~/renderer/components/OperationsList";
-import useTheme from "~/renderer/hooks/useTheme";
 import Collections from "~/renderer/screens/nft/Collections";
 import BalanceSummary from "./BalanceSummary";
 import AccountHeader from "./AccountHeader";
@@ -38,6 +37,7 @@ import { AccountLike, Account, Operation } from "@ledgerhq/types-live";
 import { State } from "~/renderer/reducers";
 import { getLLDCoinFamily } from "~/renderer/families";
 import Ordinals from "~/newArch/Ordinals";
+import { useTheme } from "styled-components";
 
 type Params = {
   id: string;
