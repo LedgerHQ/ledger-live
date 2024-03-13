@@ -17,6 +17,7 @@ const Ordinals = ({ account }: Props) => {
       <Header
         categories={categories}
         changeCategorySelected={changeCategorySelected}
+        activeCategory={category}
         layout={layout}
         layoutOptions={layoutOptions}
         changeLayout={changeLayout}
