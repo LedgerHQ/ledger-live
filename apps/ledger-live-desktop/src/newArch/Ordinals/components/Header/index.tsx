@@ -7,6 +7,7 @@ import Layouts from "./Layouts";
 type Props = {
   changeCategorySelected: (categorySelectedIndex: number) => void;
   categories: any;
+  activeCategory: any;
   layoutOptions: {
     grid: {
       value: string;
@@ -24,6 +25,7 @@ type Props = {
 const Header = ({
   changeCategorySelected,
   categories,
+  activeCategory,
   layoutOptions,
   changeLayout,
   layout,
@@ -35,7 +37,11 @@ const Header = ({
       </Flex>
       <Flex rowGap={6} alignItems="center">
         <Flex rowGap={6} alignItems="center">
-          <Categories changeCategorySelected={changeCategorySelected} categories={categories} />
+          <Categories
+            changeCategorySelected={changeCategorySelected}
+            categories={categories}
+            activeCategory={activeCategory}
+          />
         </Flex>
         <Flex alignItems="center">
           <Layouts layoutOptions={layoutOptions} layout={layout} changeLayout={changeLayout} />
