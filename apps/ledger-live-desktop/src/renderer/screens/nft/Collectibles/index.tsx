@@ -6,7 +6,7 @@ import { SatsCard } from "./Sats";
 export function Collectibles() {
   const NB_CARDS = 7;
   return (
-    <CollectibleGrid bg={"palette.background.paper"} p={5}>
+    <CollectibleGrid bg={"palette.background.paper"} p={5} borderRadius={6}>
       {Array.from({ length: NB_CARDS }).map((_, i) => (
         <SatsCard
           collectionName={i + " Name"}
