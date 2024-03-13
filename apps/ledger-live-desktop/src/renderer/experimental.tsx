@@ -25,6 +25,9 @@ export type FeatureToggle =
       type: "float";
       minValue?: number;
       maxValue?: number;
+    }
+  | {
+      type: "urlInput";
     };
 export type Feature = FeatureCommon & FeatureToggle;
 
@@ -57,6 +60,12 @@ export const experimentalFeatures: Feature[] = [
     name: "SCAN_FOR_INVALID_PATHS",
     title: <Trans i18nKey="settings.experimental.features.scanForInvalidPaths.title" />,
     description: <Trans i18nKey="settings.experimental.features.scanForInvalidPaths.description" />,
+  },
+  {
+    type: "urlInput",
+    name: "PROXY_URL",
+    title: <Trans i18nKey="settings.experimental.features.proxyUrl.title" />,
+    description: <Trans i18nKey="settings.experimental.features.proxyUrl.description" />,
   },
   {
     type: "integer",

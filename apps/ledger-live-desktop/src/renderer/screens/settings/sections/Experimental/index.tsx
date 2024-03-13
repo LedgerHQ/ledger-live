@@ -14,6 +14,7 @@ import { SettingsSectionBody as Body, SettingsSectionRow as Row } from "../../Se
 import ExperimentalSwitch from "./ExperimentalSwitch";
 import ExperimentalInteger from "./ExperimentalInteger";
 import ExperimentalFloat from "./ExperimentalFloat";
+import ExperimentalUrlInput from "./ExperimentalUrlInput";
 import FullNode from "~/renderer/screens/settings/sections/Accounts/FullNode";
 import LottieTester from "./LottieTester";
 import StorylyTester from "./StorylyTester";
@@ -24,6 +25,7 @@ const experimentalTypesMap = {
   toggle: ExperimentalSwitch,
   integer: ExperimentalInteger,
   float: ExperimentalFloat,
+  urlInput: ExperimentalUrlInput,
 };
 const ExperimentalFeatureRow = ({
   feature,
@@ -52,7 +54,7 @@ const ExperimentalFeatureRow = ({
         isDefault={isDefault}
         onChange={onChange}
         {...rest}
-        value={envValue as number}
+        value={envValue as never}
       />
     </Row>
   ) : null;

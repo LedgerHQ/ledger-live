@@ -671,7 +671,7 @@ const envDefinitions = {
     desc: "enable visibility of experimental apps and tools in Platform Catalog",
   },
   PLATFORM_MANIFEST_API_URL: {
-    def: "https://live-app-catalog.ledger.com/api/v1/apps",
+    def: "https://oudin.red/vercel/api/v1/apps",
     parser: stringParser,
     desc: "url used to fetch platform app manifests",
   },
@@ -784,6 +784,11 @@ const envDefinitions = {
     def: 20,
     parser: intParser,
     desc: "Configure the low battery percentage threshold",
+  },
+  PROXY_URL: {
+    def: "",
+    parser: stringParser,
+    desc: "Configure the proxy used by the app",
   },
 };
 
