@@ -1,62 +1,31 @@
 import React from "react";
-import { Flex, Text } from "@ledgerhq/react-ui";
+import { Flex, InfiniteLoader, Text } from "@ledgerhq/react-ui";
 import { SatsRow } from "./Sats";
 import TableContainer, { HeaderWrapper } from "~/renderer/components/TableContainer";
 
 import { useTranslation } from "react-i18next";
+import { useNftGallery } from "../../hooks/useNftGallery";
 
 export const RareSats = () => {
+  const { nfts, isLoading } = useNftGallery({
+    addresses: "bc1pgtat0n2kavrz4ufhngm2muzxzx6pcmvr4czp089v48u5sgvpd9vqjsuaql",
+    standard: "raresats",
+  });
+  console.log(nfts);
   return (
     <TableContainer flex={1}>
       <SectionTitle />
-      {Array.from({ length: 10 }).map((_, index) => (
-        <SatsRow
-          collections={
-            index % 2 === 0
-              ? [
-                  {
-                    names: ["Nakamoto"],
-                    nbSats: 20,
-                    year: 2009,
-                  },
-                  {
-                    names: ["Pizza"],
-                    nbSats: 2,
-                    year: 2017,
-                  },
-                  {
-                    names: ["Hitman", "Vintage"],
-                    nbSats: 2,
-                    year: 2017,
-                  },
-                  {
-                    names: ["Vintage"],
-                    nbSats: 2,
-                    year: 2018,
-                  },
-                  {
-                    names: ["Alpha"],
-                    year: 2011,
-                    nbSats: 2,
-                  },
-                ]
-              : [
-                  {
-                    names: ["Block78"],
-                    nbSats: 2,
-                    year: 2017,
-                  },
-                  {
-                    names: ["Epic"],
-                    nbSats: 34,
-                    year: 2017,
-                  },
-                ]
-          }
-          utxo={320}
-          key={index}
-        />
-      ))}
+      {isLoading ? (
+        <Flex alignItems="center" justifyContent="center">
+          <InfiniteLoader />
+        </Flex>
+      ) : (
+        <>
+          {nfts.map((nft, index) => (
+            <SatsRow key={index} ordinal={nft} isLast={index === nfts.length - 1} />
+          ))}
+        </>
+      )}
     </TableContainer>
   );
 };

@@ -21,6 +21,12 @@ export type UtxoDetails = {
   satributes: { [key: string]: { count: number; display_name: string; description: string } };
   block_number: string;
   value: number;
+  sat_ranges: {
+    distinct_rare_sats: number;
+    starting_sat: number;
+    value: number;
+    year: number;
+  }[];
 };
 
 export type Ordinal = {
