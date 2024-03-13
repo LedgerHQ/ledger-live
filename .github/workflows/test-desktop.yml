@@ -30,7 +30,7 @@ permissions:
 
 jobs:
   codechecks:
-    name: "Desktop code checks"
+    name: "Desktop Code Checks"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
@@ -100,7 +100,7 @@ jobs:
         run: pnpm desktop test:jest:coverage
 
   e2e-tests-linux:
-    name: "Desktop E2E (Linux)"
+    name: "Desktop Tests E2E (Ubuntu)"
     outputs:
       status: ${{ steps.tests.outcome }}
     env:
@@ -412,4 +412,3 @@ jobs:
         with:
           name: summary.json
           path: ${{ github.workspace }}/summary.json
-

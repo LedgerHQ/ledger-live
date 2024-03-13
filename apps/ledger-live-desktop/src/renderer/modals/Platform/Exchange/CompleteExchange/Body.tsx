@@ -14,8 +14,6 @@ import { BodyContent, BodyContentProps } from "./BodyContent";
 import { getMagnitudeAwareRate } from "@ledgerhq/live-common/exchange/swap/webApp/index";
 import { BigNumber } from "bignumber.js";
 import { AccountLike } from "@ledgerhq/types-live";
-import { WrongDeviceForAccount } from "@ledgerhq/errors";
-import { CompleteExchangeError } from "@ledgerhq/live-common/exchange/error";
 import { useRedirectToSwapHistory } from "~/renderer/screens/exchange/Swap2/utils";
 
 export type Data = {
@@ -47,6 +45,7 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
   const { amount } = transactionParams;
   const { fromAccount: account, fromParentAccount: parentAccount } = exchange;
 
+  const broadcastRef = useRef(false);
   const redirectToHistory = useRedirectToSwapHistory();
   const onViewDetails = useCallback(
     (id: string) => {
@@ -106,7 +105,6 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
   }, [exchange, getCurrencyByAccount]);
 
   const broadcast = useBroadcast({ account, parentAccount });
-  const broadcastRef = useRef(false);
   const [transaction, setTransaction] = useState<Transaction>();
   const [signedOperation, setSignedOperation] = useState<SignedOperation>();
   const [error, setError] = useState<Error>();
@@ -187,28 +185,25 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
     ],
   );
 
-  useEffect(() => {
-    if (error) {
-      if (
-        ![
-          error instanceof WrongDeviceForAccount,
-          error instanceof CompleteExchangeError && error.message === "User refused",
-        ].some(Boolean)
-      ) {
-        onClose?.();
-      }
-    }
-  }, [onCancel, error, onClose]);
+  // useEffect(() => {
+  //   /**
+  //    * If we want to close the drawer automatically, we need to ensure onCancel is also called
+  //    * this will gives the "control" back to live app.
+  //    *
+  //    * On drawer manually closed, we send an error back ("Interrupted by user")
+  //    */
+  //   if ([error instanceof SOME_ERROR_WE_WANT_LIVE_APP_TO_HANDLE]) {
+  //     onCancel(error);
+  //     onClose(error)
+  //   }
+  // }, [onCancel, error]);
 
   useEffect(() => {
     if (broadcastRef.current || !signedOperation) return;
-    console.log("[moonpay] about to broadcast");
     broadcast(signedOperation)
       .then(onBroadcastSuccess, setError)
-      .finally(() => {
-        broadcastRef.current = true;
-      });
-  }, [signedOperation, broadcast, onBroadcastSuccess, setError]);
+      .finally(() => (broadcastRef.current = true));
+  }, [signedOperation, broadcast, onBroadcastSuccess, setError, broadcastRef]);
 
   return (
     <Box alignItems={"center"} justifyContent={"center"} px={32} height={"100%"}>
