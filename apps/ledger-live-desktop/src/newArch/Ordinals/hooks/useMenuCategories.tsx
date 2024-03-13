@@ -1,25 +1,25 @@
+import { Text } from "@ledgerhq/react-ui";
 import React, { useState } from "react";
-import { Collectibles } from "~/renderer/screens/nft/Collectibles";
+import { RareSats } from "../components/RareSats";
 
 const categories = [
   {
     value: "inscriptions",
     title: "account.ordinals.categories.inscriptions",
-    Component: () => <Collectibles />,
+    Component: () => <Text>Salut Inscriptions</Text>,
   },
   {
     value: "rareSats",
     title: "account.ordinals.categories.rareSats",
-    Component: () => <Collectibles />,
+    Component: () => <RareSats layout="grid" />,
   },
 ];
 
 const useMenuCategories = () => {
   const [category, setCategory] = useState(categories[0]);
-  console.log("cat", category.title);
 
   const changeCategorySelected = (categorySelectedIndex: number) => {
-    setCategory(categories[categorySelectedIndex]);
+    setCategory({ ...categories[categorySelectedIndex] });
   };
 
   return {

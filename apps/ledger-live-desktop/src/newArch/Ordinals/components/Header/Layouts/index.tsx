@@ -1,12 +1,22 @@
 import React from "react";
 import { Dropdown, Flex } from "@ledgerhq/react-ui";
-import useMenuLayouts from "../../../hooks/useMenuLayouts";
 
-type Props = {};
+type Props = {
+  layoutOptions: {
+    grid: {
+      value: string;
+      label: any;
+    };
+    list: {
+      value: string;
+      label: any;
+    };
+  };
+  changeLayout: (layoutSelected: any) => void;
+  layout: string;
+};
 
-const Layouts = ({}: Props) => {
-  const { layoutOptions, changeLayout, layout } = useMenuLayouts();
-
+const Layouts = ({ layoutOptions, changeLayout, layout }: Props) => {
   return (
     <Flex>
       <Dropdown
