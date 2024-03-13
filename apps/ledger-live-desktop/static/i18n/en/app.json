@@ -822,6 +822,12 @@
       "layouts": {
         "grid": "Grid",
         "list": "List"
+      },
+      "rareSats": {
+        "card": {
+          "total": "{{total}} sats",
+          "others": "+{{others}} others"
+        }
       }
     }
   },
