@@ -1,6 +1,10 @@
 export type OrdinalStandard = "raresats" | "inscriptions";
 
-export type OrdinalMetadata = { ordinal_details: OrdinalDetails; image_original_url: string };
+export type OrdinalMetadata = {
+  ordinal_details?: OrdinalDetails;
+  image_original_url?: string;
+  utxo_details?: UtxoDetails;
+};
 
 export type OrdinalDetails = {
   inscription_id: string;
@@ -10,6 +14,13 @@ export type OrdinalDetails = {
   sat_rarity: string;
   location: string;
   output_value: number;
+};
+
+export type UtxoDetails = {
+  distinct_rare_sats: number;
+  satributes: { [key: string]: { count: number; display_name: string; description: string } };
+  block_number: string;
+  value: number;
 };
 
 export type Ordinal = {

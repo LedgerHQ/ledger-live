@@ -2,10 +2,11 @@ import { useMemo } from "react";
 import { InfiniteData, useInfiniteQuery, UseInfiniteQueryResult } from "@tanstack/react-query";
 import { fetchNftsFromSimpleHash } from "@ledgerhq/live-nft/api/simplehash";
 import { SimpleHashResponse } from "@ledgerhq/live-nft/api/types";
-import { Ordinal, OrdinalMetadata } from "../types/Ordinals";
+import { Ordinal, OrdinalMetadata, OrdinalStandard } from "../types/Ordinals";
 
 export type HookProps = {
   addresses: string;
+  standard: OrdinalStandard;
   threshold: number;
 };
 
@@ -23,8 +24,8 @@ export type NftGalleryResult = UseInfiniteQueryResult<
  * - chains: a list of selected network to search for NFTs
  * NB: for performance, make sure that addresses, nftOwned and chains are memoized
  */
-export function useNftGallery({ addresses, threshold }: HookProps): NftGalleryResult {
-  const chains = ["bitcoin"];
+export function useNftGallery({ addresses, standard, threshold }: HookProps): NftGalleryResult {
+  const chains = standard === "inscriptions" ? ["bitcoin"] : ["utxo"];
   const queryResult = useInfiniteQuery({
     queryKey: [addresses, chains],
     queryFn: ({ pageParam }: { pageParam: string | undefined }) =>
