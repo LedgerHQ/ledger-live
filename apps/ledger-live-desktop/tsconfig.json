@@ -5,18 +5,32 @@
     "composite": true,
     "module": "es2020",
     "jsx": "react",
-    "lib": ["ES2021", "dom"],
+    "lib": [
+      "ES2021",
+      "dom"
+    ],
     "target": "esnext",
     "baseUrl": ".",
     "rootDir": ".",
     "paths": {
-      "~/*": ["src/*"],
-      "tests/*": ["tests/*"]
+      "~/*": [
+        "src/*"
+      ],
+      "LLD/*": [
+        "src/newArch/*"
+      ],
+      "tests/*": [
+        "tests/*"
+      ]
     },
     "outDir": "dist",
-    "typeRoots": ["index-types.d.ts"]
+    "typeRoots": [
+      "index-types.d.ts"
+    ]
   },
-  "exclude": ["**/node_modules/*"],
+  "exclude": [
+    "**/node_modules/*"
+  ],
   "include": [
     "src",
     "static/**/*.json",

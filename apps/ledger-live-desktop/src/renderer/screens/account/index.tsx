@@ -37,6 +37,7 @@ import { AccountStakeBanner } from "~/renderer/screens/account/AccountStakeBanne
 import { AccountLike, Account, Operation } from "@ledgerhq/types-live";
 import { State } from "~/renderer/reducers";
 import { getLLDCoinFamily } from "~/renderer/families";
+import Ordinals from "~/newArch/Ordinals";
 
 type Params = {
   id: string;
@@ -165,6 +166,9 @@ const AccountPage = ({
           <AccountStakeBanner account={account} />
           {AccountBodyHeader ? (
             <AccountBodyHeader account={account} parentAccount={parentAccount} />
+          ) : null}
+          {account.type === "Account" && account.currency.id === "bitcoin" ? (
+            <Ordinals account={account} />
           ) : null}
           {account.type === "Account" && isNFTActive(account.currency) ? (
             <Collections account={account} />

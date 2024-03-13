@@ -812,6 +812,17 @@
           "description": "Stake your ELROND with Ledger by Figment validator. Your coins stay yours, backed by Ledger’s uncompromising security."
         }
       }
+    },
+    "ordinals": {
+      "title": "Collectibles",
+      "categories": {
+        "inscriptions": "Inscriptions",
+        "rareSats": "Rare Sats"
+      },
+      "layouts": {
+        "grid": "Grid",
+        "list": "List"
+      }
     }
   },
   "exchange": {
