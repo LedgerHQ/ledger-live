@@ -26,7 +26,6 @@ import {
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import OperationsList from "~/renderer/components/OperationsList";
-import useTheme from "~/renderer/hooks/useTheme";
 import Collections from "~/renderer/screens/nft/Collections";
 import BalanceSummary from "./BalanceSummary";
 import AccountHeader from "./AccountHeader";
@@ -37,6 +36,8 @@ import { AccountStakeBanner } from "~/renderer/screens/account/AccountStakeBanne
 import { AccountLike, Account, Operation } from "@ledgerhq/types-live";
 import { State } from "~/renderer/reducers";
 import { getLLDCoinFamily } from "~/renderer/families";
+import { useTheme } from "styled-components";
+import { Collectibles } from "../nft/Collectibles";
 
 type Params = {
   id: string;
@@ -168,6 +169,10 @@ const AccountPage = ({
           ) : null}
           {account.type === "Account" && isNFTActive(account.currency) ? (
             <Collections account={account} />
+          ) : null}
+          {/* TODO:  CHANGE */}
+          {account.type === "Account" && account.currency.ticker.toLowerCase() === "btc" ? (
+            <Collectibles />
           ) : null}
           {account.type === "Account" ? <TokensList account={account} /> : null}
           <OperationsList
