@@ -81,9 +81,27 @@ export const loadWindow = async () => {
 
     const proxyUrl = getEnv("PROXY_URL");
 
+    console.log("proxy url: ", proxyUrl);
+
     if (proxyUrl) {
+      try {
+        const url = new URL(proxyUrl);
+        console.log(url, url.hostname);
+        app.commandLine.appendSwitch(
+          "host-resolver-rules",
+          `MAP * ~NOTFOUND , EXCLUDE ${url.hostname}`,
+        );
+      } catch (err) {
+        console.error(`Proxy URL parsing error: ${err}`);
+      }
       await mainWindow.webContents.session.setProxy({ proxyRules: proxyUrl });
+      await mainWindow.webContents.session.forceReloadProxyConfig();
+      await mainWindow.webContents.session.closeAllConnections();
     } else {
+      if (app.commandLine.hasSwitch("host-resolver-rules")) {
+        app.commandLine.removeSwitch("host-resolver-rules");
+      }
+
       await mainWindow.webContents.session.setProxy({ proxyRules: undefined });
     }
 
