@@ -2,9 +2,9 @@ import { Flex, Text } from "@ledgerhq/react-ui";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import styled, { useTheme } from "styled-components";
-import { OrdinalsIcons } from "../Icons";
 import { rgba } from "~/renderer/styles/helpers";
 import { Ordinal } from "../../types/Ordinals";
+import { mappingKeysWithIconAndName } from "../../types/mappingKeys";
 
 type CardProps = {
   ordinal: Ordinal;
@@ -17,13 +17,12 @@ export const SatsRow = ({ ordinal, isLast }: CardProps) => {
   return (
     <Row py={"10px"} px="20px" alignItems={"center"} justifyContent="space-between" isLast={isLast}>
       <Flex flexDirection={"column"} width={"90%"} mr={2}>
-        {Object.entries(ordinal.metadata.utxo_details.satributes).map(([key, element], index) => (
+        {ordinal.metadata.utxo_details.sat_ranges.map((element, index) => (
           <SubComponent
-            keySats={key}
-            nbSats={element.count}
-            name={element.display_name}
-            year={ordinal.metadata.utxo_details?.sat_ranges[index]?.year}
-            key={key}
+            keySats={element.subranges[0]?.sat_types || []}
+            nbSats={element.value}
+            year={ordinal.metadata.utxo_details?.sat_ranges[0]?.year}
+            key={index}
           />
         ))}
       </Flex>
@@ -38,12 +37,11 @@ export const SatsRow = ({ ordinal, isLast }: CardProps) => {
 };
 
 type SubProps = {
-  keySats: string;
-  name: string;
+  keySats: string[];
   nbSats: number;
   year?: number;
 };
-function SubComponent({ keySats, name, nbSats, year }: SubProps) {
+function SubComponent({ keySats, nbSats, year }: SubProps) {
   const { colors } = useTheme();
   const { t } = useTranslation();
 
@@ -52,14 +50,18 @@ function SubComponent({ keySats, name, nbSats, year }: SubProps) {
       <Flex flexDirection="row" alignItems={"center"}>
         <Flex
           height={32}
-          width={32}
+          width={32 * keySats.length}
           border={`1px solid ${colors.opacityDefault.c10}`}
           backgroundColor={colors.opacityDefault.c05}
           alignItems={"center"}
           borderRadius={"8px"}
-          justifyContent={"center"}
+          justifyContent={keySats.length > 1 ? "space-around" : "center"}
         >
-          {OrdinalsIcons[keySats as keyof typeof OrdinalsIcons] || OrdinalsIcons.common}
+          {keySats.map(
+            key =>
+              mappingKeysWithIconAndName[key as keyof typeof mappingKeysWithIconAndName].icon ||
+              mappingKeysWithIconAndName.common.icon,
+          )}
         </Flex>
 
         <Flex flexDirection="column" ml={2}>
@@ -71,7 +73,12 @@ function SubComponent({ keySats, name, nbSats, year }: SubProps) {
               mr={1}
               fontSize={"12px"}
             >
-              {name}
+              {keySats
+                .map(
+                  key =>
+                    mappingKeysWithIconAndName[key as keyof typeof mappingKeysWithIconAndName].name,
+                )
+                .join(" - ")}
             </Text>
             <Text variant="tiny" fontWeight="medium" fontSize={"10px"} color="neutral.c70">
               {t("account.ordinals.rareSats.list.component.total", {

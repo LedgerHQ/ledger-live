@@ -26,6 +26,7 @@ export type UtxoDetails = {
     starting_sat: number;
     value: number;
     year: number;
+    subranges: { sat_types: string[]; value: number }[];
   }[];
 };
 

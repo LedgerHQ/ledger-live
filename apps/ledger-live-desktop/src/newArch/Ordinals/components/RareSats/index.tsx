@@ -8,7 +8,7 @@ import { useNftGallery } from "../../hooks/useNftGallery";
 
 export const RareSats = () => {
   const { nfts, isLoading } = useNftGallery({
-    addresses: "bc1pgtat0n2kavrz4ufhngm2muzxzx6pcmvr4czp089v48u5sgvpd9vqjsuaql",
+    addresses: "bc1p05y0794a0z07ss277uj2jjh6m8p6cfqzad4sv0z7sj6uvucwszgsepclx8",
     standard: "raresats",
   });
   console.log(nfts);
