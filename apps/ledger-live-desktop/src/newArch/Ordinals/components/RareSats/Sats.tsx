@@ -25,17 +25,22 @@ export const SatsCard = ({ collections, year, totalStats }: CardProps) => {
       justifyContent="space-between"
       flexDirection="column"
     >
-      <Flex
-        height={32}
-        width={32}
-        border={`1px solid ${colors.opacityDefault.c10}`}
-        backgroundColor={colors.opacityDefault.c05}
-        alignItems={"center"}
-        borderRadius={"8px"}
-        justifyContent="center"
-      >
-        {(collections.map(c => c.name.toLowerCase()).includes("nakamoto") &&
-          OrdinalsIcons["nakamoto"]) || <Flex bg="red" height={20} width={20} />}
+      <Flex flexDirection="row" justifyContent={"space-between"}>
+        {collections.map(c => (
+          <Flex
+            height={32}
+            width={32}
+            border={`1px solid ${colors.opacityDefault.c10}`}
+            backgroundColor={colors.opacityDefault.c05}
+            alignItems={"center"}
+            borderRadius={"8px"}
+            justifyContent="center"
+            key={c.name}
+          >
+            {OrdinalsIcons[c.name.toLowerCase() as keyof typeof OrdinalsIcons] ||
+              OrdinalsIcons.common}
+          </Flex>
+        ))}
       </Flex>
 
       <Flex flexDirection="column" flex={1}>

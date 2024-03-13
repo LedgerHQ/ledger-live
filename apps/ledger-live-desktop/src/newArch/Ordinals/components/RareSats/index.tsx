@@ -23,29 +23,29 @@ const RareSatsGrid = () => (
                   totalStats: 20,
                 },
                 {
-                  name: "Satocji",
+                  name: "Pizza",
                   totalStats: 2,
                 },
                 {
-                  name: "Satocji",
+                  name: "Hitman",
                   totalStats: 2,
                 },
                 {
-                  name: "Satocji",
+                  name: "Vintage",
                   totalStats: 2,
                 },
                 {
-                  name: "Satocji",
+                  name: "Alpha",
                   totalStats: 2,
                 },
               ]
             : [
                 {
-                  name: "Satocji",
+                  name: "Block78",
                   totalStats: 2,
                 },
                 {
-                  name: "No Nakamoto",
+                  name: "Epic",
                   totalStats: 34,
                 },
               ]
