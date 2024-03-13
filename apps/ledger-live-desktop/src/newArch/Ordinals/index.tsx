@@ -9,11 +9,15 @@ type Props = { account: Account };
 
 const Ordinals = ({ account }: Props) => {
   console.log(account.id);
-  const { category } = useMenuCategories();
+  const { category, changeCategorySelected, categories } = useMenuCategories();
 
   return (
     <Flex p={6} mb={40} bg="palette.background.paper" borderRadius={6} flexDirection="column">
-      <Header {...useMenuLayouts()} {...useMenuCategories()} />
+      <Header
+        {...useMenuLayouts()}
+        categories={categories}
+        changeCategorySelected={changeCategorySelected}
+      />
       <Flex flex={1} mt={6}>
         {category.Component()}
       </Flex>
