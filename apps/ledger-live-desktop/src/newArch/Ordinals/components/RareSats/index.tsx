@@ -2,18 +2,26 @@ import React from "react";
 import { Grid, Text } from "@ledgerhq/react-ui";
 import styled from "styled-components";
 import { SatsCard } from "./Sats";
+import { useNftGallery } from "../../hooks/useNftGallery";
+import { Ordinal } from "../../types/Ordinals";
 
 type Props = {
   layout: string;
 };
 
 export function RareSats({ layout }: Props) {
-  return layout === "grid" ? <RareSatsGrid /> : <Text>List of Rare Sats</Text>;
+  const { nfts } = useNftGallery({
+    addresses: "bc1pgtat0n2kavrz4ufhngm2muzxzx6pcmvr4czp089v48u5sgvpd9vqjsuaql",
+    standard: "raresats",
+    threshold: 10,
+  });
+  return layout === "grid" ? <RareSatsGrid data={nfts} /> : <Text>List of Rare Sats</Text>;
 }
 
-const RareSatsGrid = () => (
+const RareSatsGrid = ({ data }: { data: Ordinal[] }) => (
   <StyledGrid flex={1}>
-    {Array.from({ length: 7 }).map((_, i) => (
+    {/* TODO: replace with datas */}
+    {data.map((ordinal, i) => (
       <SatsCard
         collectionName={i + " Name"}
         contract={"contract"}

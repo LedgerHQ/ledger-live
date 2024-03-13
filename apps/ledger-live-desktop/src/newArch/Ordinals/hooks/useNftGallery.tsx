@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 import { InfiniteData, useInfiniteQuery, UseInfiniteQueryResult } from "@tanstack/react-query";
 import { fetchNftsFromSimpleHash } from "@ledgerhq/live-nft/api/simplehash";
-import { SimpleHashResponse } from "@ledgerhq/live-nft/api/types";
 import { Ordinal, OrdinalMetadata, OrdinalStandard } from "../types/Ordinals";
+import { SimpleHashResponse } from "@ledgerhq/live-nft/api/types";
 
 export type HookProps = {
   addresses: string;
@@ -29,7 +29,12 @@ export function useNftGallery({ addresses, standard, threshold }: HookProps): Nf
   const queryResult = useInfiniteQuery({
     queryKey: [addresses, chains],
     queryFn: ({ pageParam }: { pageParam: string | undefined }) =>
-      fetchNftsFromSimpleHash({ addresses, chains, cursor: pageParam, threshold }),
+      fetchNftsFromSimpleHash({
+        addresses,
+        chains,
+        cursor: pageParam,
+        threshold,
+      }),
     initialPageParam: undefined,
     getNextPageParam: lastPage => lastPage.next_cursor,
     enabled: addresses.length > 0,
@@ -45,8 +50,10 @@ export function useNftGallery({ addresses, standard, threshold }: HookProps): Nf
         for (const nft of page.nfts) {
           const n: Ordinal = {
             id: nft.nft_id,
+            name: nft.name,
             amount: nft.token_count,
-            contract: nft.contract_address,
+            contract: nft.contract,
+            contract_address: nft.contract_address,
             standard: "inscriptions",
             metadata: nft.extra_metadata as unknown as OrdinalMetadata,
           };

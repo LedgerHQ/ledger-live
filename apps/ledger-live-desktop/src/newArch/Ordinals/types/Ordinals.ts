@@ -25,8 +25,10 @@ export type UtxoDetails = {
 
 export type Ordinal = {
   id: string;
+  name: string;
   amount: number;
-  contract: string;
+  contract: any;
+  contract_address: string;
   standard: OrdinalStandard;
   metadata: OrdinalMetadata;
 };
