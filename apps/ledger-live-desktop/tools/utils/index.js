@@ -84,6 +84,7 @@ const buildViteConfig = argv =>
       alias: {
         "~": path.resolve(lldRoot, "src"),
         qrloop: require.resolve("qrloop"),
+        LLD: [path.resolve(lldRoot, "src", "newArch")],
         "@ledgerhq/react-ui": path.join(
           path.dirname(require.resolve("@ledgerhq/react-ui/package.json")),
           "lib",
