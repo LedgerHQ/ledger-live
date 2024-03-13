@@ -3,23 +3,16 @@ import { Flex, Text } from "@ledgerhq/react-ui";
 import { t } from "i18next";
 import Categories from "./Categories";
 import Layouts from "./Layouts";
+import { Category } from "../../types/Categories";
+import { Layout, LayoutKey } from "../../types/Layouts";
 
 type Props = {
   changeCategorySelected: (categorySelectedIndex: number) => void;
-  categories: any;
-  activeCategory: any;
-  layoutOptions: {
-    grid: {
-      value: string;
-      label: any;
-    };
-    list: {
-      value: string;
-      label: any;
-    };
-  };
-  changeLayout: (layoutSelected: any) => void;
-  layout: string;
+  categories: Category[];
+  activeCategory: Category;
+  layoutOptions: Record<LayoutKey, Layout>;
+  changeLayout: (layoutSelected: Layout) => void;
+  layout: LayoutKey;
 };
 
 const Header = ({

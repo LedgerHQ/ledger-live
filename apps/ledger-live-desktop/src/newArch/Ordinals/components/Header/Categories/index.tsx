@@ -2,14 +2,15 @@ import React from "react";
 import { Flex, Text } from "@ledgerhq/react-ui";
 import { t } from "i18next";
 import styled from "styled-components";
+import { Category } from "~/newArch/Ordinals/types/Categories";
 
 const primary = "primary.c80";
 const neutral = "neutral.c70";
 
 type Props = {
   changeCategorySelected: (categorySelectedIndex: number) => void;
-  categories: any;
-  activeCategory: any;
+  categories: Category[];
+  activeCategory: Category;
 };
 
 const Categories = ({ changeCategorySelected, categories, activeCategory }: Props) => {

@@ -2,9 +2,10 @@ import React from "react";
 import { Grid, Text } from "@ledgerhq/react-ui";
 import styled from "styled-components";
 import { SatsCard } from "./Sats";
+import { LayoutKey } from "../../types/Layouts";
 
 type Props = {
-  layout: string;
+  layout: LayoutKey;
 };
 
 export function RareSats({ layout }: Props) {

@@ -1,9 +1,10 @@
 import React from "react";
 import { Flex, Grid, Text } from "@ledgerhq/react-ui";
 import styled from "styled-components";
+import { LayoutKey } from "../../types/Layouts";
 
 type Props = {
-  layout: string;
+  layout: LayoutKey;
 };
 
 export function Inscriptions({ layout }: Props) {
@@ -13,8 +14,8 @@ export function Inscriptions({ layout }: Props) {
 const InscriptionsGrid = () => (
   <StyledGrid flex={1}>
     {Array.from({ length: 7 }).map((_, i) => (
-      <Flex bg="neutral.c30" p={4} borderRadius={6}>
-        <Text key={i}>Inscription #{i + 1}</Text>
+      <Flex key={i} bg="neutral.c30" p={4} borderRadius={6}>
+        <Text>Inscription #{i + 1}</Text>
       </Flex>
     ))}
   </StyledGrid>
