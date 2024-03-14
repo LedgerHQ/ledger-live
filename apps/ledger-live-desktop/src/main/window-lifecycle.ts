@@ -81,8 +81,6 @@ export const loadWindow = async () => {
 
     const proxyUrl = getEnv("PROXY_URL");
 
-    console.log("proxy url: ", proxyUrl);
-
     if (proxyUrl) {
       try {
         const url = new URL(proxyUrl);
