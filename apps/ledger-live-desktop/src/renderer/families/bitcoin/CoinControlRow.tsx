@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { getUTXOStatus } from "@ledgerhq/live-common/families/bitcoin/logic";
@@ -17,6 +17,11 @@ import {
   TransactionStatus,
   UtxoStrategy,
 } from "@ledgerhq/live-common/families/bitcoin/types";
+import { useNftGallery } from "~/newArch/Ordinals/hooks/useNftGallery";
+import { Flex, Icons } from "@ledgerhq/react-ui";
+import { SatritbutesComponent } from "~/newArch/Ordinals/components/RareSats/Sats";
+import { Ordinal } from "~/newArch/Ordinals/types/Ordinals";
+import Image from "~/newArch/Ordinals/components/Nft/Image";
 
 type CoinControlRowProps = {
   utxo: BitcoinOutput;
@@ -29,18 +34,21 @@ type CoinControlRowProps = {
 };
 const Container = styled(Box).attrs<{
   disabled: boolean;
+  withOrdinals: boolean;
   onClick: () => void;
 }>(p => ({
   opacity: p.disabled ? 0.5 : 1,
   horizontal: true,
 }))<{
   disabled: boolean;
+  withOrdinals: boolean;
   onClick: () => void;
 }>`
   padding: 15px;
   border-radius: 4px;
-  align-items: center;
-  border: 1px solid ${p => p.theme.colors.palette.text.shade20};
+  border: 1px solid
+    ${p =>
+      p.withOrdinals ? p.theme.colors.palette.warning.c50 : p.theme.colors.palette.text.shade20};
   ${p =>
     p.disabled
       ? `
@@ -54,6 +62,9 @@ const Container = styled(Box).attrs<{
     border-color: ${p =>
       p.disabled ? p.theme.colors.palette.text.shade20 : p.theme.colors.palette.primary.main};
   }
+
+  display: flex;
+  flex-direction: column;
 `;
 export const CoinControlRow = ({
   utxo,
@@ -72,6 +83,17 @@ export const CoinControlRow = ({
   const unconfirmed = utxoStatus === "pickPendingUtxo";
   const last = !s.excluded && totalExcludedUTXOS + 1 === account.bitcoinResources?.utxos.length; // make sure that at least one utxo is selected
   const disabled = unconfirmed || last;
+  const [isDropdownOpen, setIsDropDownOpen] = useState<boolean>(false);
+  const { nfts: allRareSats } = useNftGallery({
+    addresses: utxo.address || "",
+    standard: "raresats",
+    threshold: 10,
+  });
+  const { nfts: allInscriptions } = useNftGallery({
+    addresses: utxo.address || "",
+    standard: "inscriptions",
+    threshold: 10,
+  });
   const onClick = () => {
     if (disabled) return;
     const patch = {
@@ -89,71 +111,83 @@ export const CoinControlRow = ({
     };
     updateTransaction((t: Transaction) => bridge.updateTransaction(t, patch));
   };
+
+  const rare: Ordinal[] = allRareSats
+    .filter((ordi: Ordinal) => ordi.contract_address.includes(utxo.hash))
+    .filter((ordi: Ordinal) => {
+      const satributes = ordi.metadata.utxo_details?.satributes;
+      const keys = Object.keys(satributes || {});
+      return keys[0] !== "common" || keys.length > 1;
+    });
+
+  console.log(allInscriptions);
+  const inscr = allInscriptions.filter(
+    (ordi: Ordinal) =>
+      ordi.contract_address.includes(utxo.hash) ||
+      ordi.metadata.ordinal_details?.location.includes(utxo.hash),
+  );
+
+  console.log(inscr);
+
+  const withOrdinals = rare.length > 0 || inscr.length > 0;
   return (
-    <Container disabled={unconfirmed} flow={2} horizontal alignItems="center" onClick={onClick}>
-      {unconfirmed ? (
-        <Tooltip content={<Trans i18nKey={"bitcoin.cannotSelect.pending"} />}>
-          <InfoCircle size={16} />
-        </Tooltip>
-      ) : last ? (
-        <Tooltip content={<Trans i18nKey={"bitcoin.cannotSelect.last"} />}>
-          <Checkbox isChecked disabled />
-        </Tooltip>
-      ) : (
-        <Checkbox isChecked={!s.excluded} onChange={onClick} />
-      )}
-      <Box
-        style={{
-          flexBasis: "10%",
-        }}
-      >
-        {input && !disabled ? (
-          <Text
-            ff="Inter|Bold"
-            fontSize={2}
-            color="wallet"
-            style={{
-              lineHeight: "10px",
-            }}
-          >
-            <Trans i18nKey="bitcoin.inputSelected" />
-          </Text>
-        ) : null}
-      </Box>
-      <Box
-        style={{
-          flexBasis: "30%",
-        }}
-      >
-        <FormattedVal
-          disableRounding
-          val={utxo.value}
-          unit={account.unit}
-          showCode
-          fontSize={4}
-          color="palette.text.shade100"
-          ff="Inter|SemiBold"
-        />
-        {utxo.blockHeight ? (
-          <Text ff="Inter|Medium" fontSize={3} color={"palette.text.shade50"}>
-            {account.blockHeight - utxo.blockHeight + " confirmations"}
-          </Text>
+    <Container disabled={unconfirmed} onClick={() => {}} withOrdinals={withOrdinals}>
+      <Flex flex={1} alignItems={"center"}>
+        {unconfirmed ? (
+          <Tooltip content={<Trans i18nKey={"bitcoin.cannotSelect.pending"} />}>
+            <InfoCircle size={16} />
+          </Tooltip>
+        ) : last ? (
+          <Tooltip content={<Trans i18nKey={"bitcoin.cannotSelect.last"} />}>
+            <Checkbox isChecked disabled />
+          </Tooltip>
         ) : (
-          <Text ff="Inter|Medium" fontSize={3} color={"alertRed"}>
-            <Trans i18nKey="bitcoin.pending" />
-          </Text>
+          <Checkbox isChecked={!s.excluded} onChange={onClick} />
         )}
-      </Box>
+        <Box
+          style={{
+            marginLeft: 15,
+            flexBasis: "30%",
+            flex: 1,
+          }}
+        >
+          <FormattedVal
+            disableRounding
+            val={utxo.value}
+            unit={account.unit}
+            showCode
+            fontSize={4}
+            color="palette.text.shade100"
+            ff="Inter|SemiBold"
+          />
+          {utxo.blockHeight ? (
+            <Text ff="Inter|Medium" fontSize={3} color={"palette.text.shade50"}>
+              {account.blockHeight - utxo.blockHeight + " confirmations"}
+            </Text>
+          ) : (
+            <Text ff="Inter|Medium" fontSize={3} color={"alertRed"}>
+              <Trans i18nKey="bitcoin.pending" />
+            </Text>
+          )}
+        </Box>
+
+        <Box onClick={() => setIsDropDownOpen(!isDropdownOpen)}>
+          {isDropdownOpen ? <Icons.ChevronUp size="XS" /> : <Icons.ChevronDown size="XS" />}
+        </Box>
+      </Flex>
+
       <Box
         style={{
           flex: 1,
+          display: isDropdownOpen ? "block" : "none",
+          marginTop: 20,
         }}
       >
-        <Text color="palette.text.shade100" ff="Inter|SemiBold" fontSize={4}>
+        {/* <Text color="palette.text.shade100" ff="Inter|SemiBold" fontSize={4}>
           <SplitAddress value={utxo.address || ""} />
-        </Text>
+        </Text> */}
 
-        <Box horizontal justifyContent="flex-start">
+        {/* <Box horizontal justifyContent="flex-start" marginBottom={3}>
           <Text
             style={{
               whiteSpace: "nowrap",
@@ -184,7 +218,56 @@ export const CoinControlRow = ({
               <SplitAddress value={utxo.hash} />
             </Text>
           </Cell>
-        </Box>
+        </Box> */}
+
+        {withOrdinals ? (
+          <>
+            <Flex marginBottom={2}>
+              <Icons.Warning size="XS" color="palette.warning.c60" />
+              <Text
+                style={{
+                  whiteSpace: "nowrap",
+                }}
+                color="palette.warning.c50"
+                ff="Inter|Medium"
+                fontSize={3}
+                marginLeft={1}
+              >
+                Transferring this UTXO might result in the loss of the following assets:
+              </Text>
+            </Flex>
+
+            {inscr.map((rare: Ordinal, i: number) => (
+              <Flex key={"inscription-" + i}>
+                <Flex width={50} alignItems="center">
+                  <Image uri={rare.metadata.image_original_url} width={50} height={50} />
+                </Flex>
+
+                <Box>
+                  <Text fontWeight={500} fontSize={14}>
+                    {rare.contract.name}
+                  </Text>
+                  <Text fontWeight={400} fontSize={12} color="palette.text.shade50">
+                    {rare.name ?? rare.contract.name}
+                  </Text>
+                </Box>
+              </Flex>
+            ))}
+
+            {rare.map((rare: Ordinal) => {
+              return rare.metadata.utxo_details?.sat_ranges.map((element, index) => (
+                <SatritbutesComponent
+                  keySats={element.subranges[0]?.sat_types || []}
+                  nbSats={element.value}
+                  year={rare.metadata.utxo_details?.sat_ranges[0]?.year}
+                  key={index}
+                />
+              ));
+            })}
+          </>
+        ) : (
+          <></>
+        )}
       </Box>
     </Container>
   );
