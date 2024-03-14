@@ -33,7 +33,7 @@ const Wrapper = styled(Flex)`
 `;
 
 const InscriptionsGrid = ({ data }: { data: Ordinal[] }) => (
-  <StyledGrid flex={1}>
+  <StyledGrid flex={1} px={6} pb={6}>
     {data.map((ordinal, i) => {
       const imageUrl = ordinal.metadata.image_original_url;
       const onItemClick = () => {

@@ -7,7 +7,7 @@ import { SimpleHashResponse } from "@ledgerhq/live-nft/api/types";
 export type HookProps = {
   addresses: string;
   standard: OrdinalStandard;
-  threshold: number;
+  threshold?: number;
 };
 
 export type NftGalleryResult = UseInfiniteQueryResult<

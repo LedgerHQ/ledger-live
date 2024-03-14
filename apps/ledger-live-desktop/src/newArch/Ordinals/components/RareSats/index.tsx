@@ -1,78 +1,64 @@
 import React from "react";
-import { Grid, Text } from "@ledgerhq/react-ui";
-import styled from "styled-components";
-import { SatsCard } from "./Sats";
+import { Flex, InfiniteLoader, Text } from "@ledgerhq/react-ui";
+import { SatsRow } from "./Sats";
+import TableContainer, { HeaderWrapper } from "~/renderer/components/TableContainer";
+
+import { useTranslation } from "react-i18next";
 import { useNftGallery } from "../../hooks/useNftGallery";
-import { Ordinal } from "../../types/Ordinals";
-import { LayoutKey } from "../../types/Layouts";
 import { Account } from "@ledgerhq/types-live";
 
 type Props = {
-  layout: LayoutKey;
   account: Account;
 };
 
-export function RareSats({ layout }: Props) {
-  const { nfts } = useNftGallery({
-    addresses: "bc1pgtat0n2kavrz4ufhngm2muzxzx6pcmvr4czp089v48u5sgvpd9vqjsuaql",
+export const RareSats = ({ account }: Props) => {
+  console.log("account", JSON.stringify(account, null, 2));
+  const { nfts, isLoading } = useNftGallery({
+    addresses: "bc1p05y0794a0z07ss277uj2jjh6m8p6cfqzad4sv0z7sj6uvucwszgsepclx8",
     standard: "raresats",
-    threshold: 10,
   });
-  return layout === "grid" ? <RareSatsGrid data={nfts} /> : <Text>List of Rare Sats</Text>;
-}
+  console.log(nfts);
+  return (
+    <TableContainer flex={1}>
+      <SectionTitle />
+      {isLoading ? (
+        <Flex alignItems="center" justifyContent="center">
+          <InfiniteLoader />
+        </Flex>
+      ) : (
+        <>
+          {nfts.map((nft, index) => (
+            <SatsRow key={index} ordinal={nft} isLast={index === nfts.length - 1} />
+          ))}
+        </>
+      )}
+    </TableContainer>
+  );
+};
 
-const RareSatsGrid = ({ data }: { data: Ordinal[] }) => (
-  <StyledGrid flex={1}>
-    {/* TODO: replace with datas */}
-    {data.map((ordinal, i) => (
-      <SatsCard
-        collections={
-          i % 2 === 0
-            ? [
-                {
-                  name: "Nakamoto",
-                  totalStats: 20,
-                },
-                {
-                  name: "Pizza",
-                  totalStats: 2,
-                },
-                {
-                  name: "Hitman",
-                  totalStats: 2,
-                },
-                {
-                  name: "Vintage",
-                  totalStats: 2,
-                },
-                {
-                  name: "Alpha",
-                  totalStats: 2,
-                },
-              ]
-            : [
-                {
-                  name: "Block78",
-                  totalStats: 2,
-                },
-                {
-                  name: "Epic",
-                  totalStats: 34,
-                },
-              ]
-        }
-        year={0}
-        totalStats={0}
-        key={i}
-      />
-    ))}
-  </StyledGrid>
-);
+const SectionTitle = () => {
+  const { t } = useTranslation();
+  return (
+    <HeaderWrapper
+      style={{
+        justifyContent: "space-between",
+      }}
+    >
+      <Flex width={"90%"} justifyContent={"space-between"} mr={2}>
+        <Text fontWeight="semiBold" fontSize={3} color={"neutral.c70"}>
+          {t("account.ordinals.rareSats.list.header.typeAmount")}
+        </Text>
 
-const StyledGrid = styled(Grid).attrs(() => ({
-  columnGap: 4,
-  columns: 4,
-  rowGap: 4,
-}))`
-  grid-template-columns: repeat(4, 1fr);
-`;
+        <Text fontWeight="semiBold" fontSize={3} color={"neutral.c70"}>
+          {t("account.ordinals.rareSats.list.header.year")}
+        </Text>
+      </Flex>
+
+      <Flex width={"10%"} justifyContent="center">
+        <Text fontWeight="semiBold" fontSize={3} color={"neutral.c70"}>
+          {t("account.ordinals.rareSats.list.header.utxo")}
+        </Text>
+      </Flex>
+    </HeaderWrapper>
+  );
+};

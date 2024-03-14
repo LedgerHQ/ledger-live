@@ -824,9 +824,15 @@
         "list": "List"
       },
       "rareSats": {
-        "card": {
-          "total": "{{total}} sats",
-          "others": "+{{others}} others"
+        "list": {
+          "header": {
+            "typeAmount": "Sat Type / Amout",
+            "year": "Year",
+            "utxo": "UTXO size"
+          },
+          "component": {
+            "total": "{{count}} sats"
+          }
         }
       }
     }

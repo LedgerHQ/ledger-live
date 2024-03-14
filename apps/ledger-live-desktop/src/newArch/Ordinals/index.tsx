@@ -12,15 +12,17 @@ const Ordinals = ({ account }: Props) => {
   const { layout, layoutOptions, changeLayout } = useMenuLayouts();
 
   return (
-    <Flex p={6} mb={40} bg="palette.background.paper" borderRadius={6} flexDirection="column">
-      <Header
-        categories={categories}
-        changeCategorySelected={changeCategorySelected}
-        activeCategory={category}
-        layout={layout}
-        layoutOptions={layoutOptions}
-        changeLayout={changeLayout}
-      />
+    <Flex mb={40} bg="palette.background.paper" borderRadius={6} flexDirection="column">
+      <Flex px={6} pt={6}>
+        <Header
+          categories={categories}
+          changeCategorySelected={changeCategorySelected}
+          activeCategory={category}
+          layout={layout}
+          layoutOptions={layoutOptions}
+          changeLayout={changeLayout}
+        />
+      </Flex>
       <Flex flex={1} mt={6}>
         {category.Component({ layout, account })}
       </Flex>
