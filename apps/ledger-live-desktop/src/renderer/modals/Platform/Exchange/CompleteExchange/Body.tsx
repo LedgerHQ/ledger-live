@@ -3,7 +3,6 @@ import { useDispatch } from "react-redux";
 import { Operation, SignedOperation } from "@ledgerhq/types-live";
 import { Exchange } from "@ledgerhq/live-common/exchange/platform/types";
 import { Exchange as SwapExchange } from "@ledgerhq/live-common/exchange/swap/types";
-import { setBroadcastTransaction } from "@ledgerhq/live-common/exchange/swap/setBroadcastTransaction";
 import { getUpdateAccountWithUpdaterParams } from "@ledgerhq/live-common/exchange/swap/getUpdateAccountWithUpdaterParams";
 import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
@@ -14,7 +13,9 @@ import { BodyContent, BodyContentProps } from "./BodyContent";
 import { getMagnitudeAwareRate } from "@ledgerhq/live-common/exchange/swap/webApp/index";
 import { BigNumber } from "bignumber.js";
 import { AccountLike } from "@ledgerhq/types-live";
+import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { useRedirectToSwapHistory } from "~/renderer/screens/exchange/Swap2/utils";
+import { getEnv } from "@ledgerhq/live-env";
 
 export type Data = {
   provider: string;
@@ -154,10 +155,6 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
           operation,
           swapId,
         };
-        setBroadcastTransaction({
-          result: newResult,
-          provider,
-        });
         updateAccount({
           result: newResult,
           magnitudeAwareRate,
@@ -168,12 +165,17 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
           sourceCurrency,
           targetCurrency,
         });
+
+        if (getEnv("DISABLE_TRANSACTION_BROADCAST")) {
+          return onCancel(new UserRefusedOnDevice());
+        }
       }
       onResult(operation);
     },
     [
       setResult,
       onResult,
+      onCancel,
       updateAccount,
       magnitudeAwareRate,
       provider,
