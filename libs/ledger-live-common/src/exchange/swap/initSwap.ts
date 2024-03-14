@@ -1,5 +1,9 @@
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
-import { TransportStatusError, WrongDeviceForAccount } from "@ledgerhq/errors";
+import {
+  TransportStatusError,
+  WrongDeviceForAccountPayout,
+  WrongDeviceForAccountRefund,
+} from "@ledgerhq/errors";
 import Exchange, { ExchangeTypes, RateTypes } from "@ledgerhq/hw-app-exchange";
 import network from "@ledgerhq/live-network/network";
 import { log } from "@ledgerhq/logs";
@@ -191,7 +195,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
           );
         } catch (e) {
           if (e instanceof TransportStatusError && e.statusCode === 0x6a83) {
-            throw new WrongDeviceForAccount(undefined, {
+            throw new WrongDeviceForAccountPayout(undefined, {
               accountName: payoutAccount.name,
             });
           }
@@ -243,7 +247,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
           );
         } catch (e) {
           if (e instanceof TransportStatusError && e.statusCode === 0x6a83) {
-            throw new WrongDeviceForAccount(undefined, {
+            throw new WrongDeviceForAccountRefund(undefined, {
               accountName: refundAccount.name,
             });
           }
