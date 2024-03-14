@@ -35,7 +35,11 @@ const Wrapper = styled(Flex)`
 const InscriptionsGrid = ({ data }: { data: Ordinal[] }) => (
   <StyledGrid flex={1} px={6} pb={6}>
     {data.map((ordinal, i) => {
-      const imageUrl = ordinal.metadata.image_original_url;
+      const contentType = ordinal.metadata.ordinal_details?.content_type;
+      const imageUrl =
+        contentType && contentType?.includes("html")
+          ? `https://renderer.magiceden.dev/v2/render?id=${ordinal.metadata.ordinal_details?.inscription_id}`
+          : ordinal.metadata.image_original_url;
       const onItemClick = () => {
         console.log("onItemClick", JSON.stringify(ordinal, null, 2));
         setDrawer(

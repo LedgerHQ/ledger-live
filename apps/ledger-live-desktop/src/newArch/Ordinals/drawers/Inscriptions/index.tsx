@@ -132,7 +132,12 @@ type InscriptionsDrawerProps = {
   ordinal: Ordinal;
 };
 const InscriptionsDrawer = ({ ordinal }: InscriptionsDrawerProps) => {
-  const imageUrl = ordinal.metadata.image_original_url;
+  const contentType = ordinal.metadata.ordinal_details?.content_type;
+  const imageUrl =
+    contentType && contentType?.includes("html")
+      ? `https://renderer.magiceden.dev/v2/render?id=${ordinal.metadata.ordinal_details?.inscription_id}`
+      : ordinal.metadata.image_original_url;
+
   const collectionName = ordinal.name;
   const name = ordinal.contract.name;
 
