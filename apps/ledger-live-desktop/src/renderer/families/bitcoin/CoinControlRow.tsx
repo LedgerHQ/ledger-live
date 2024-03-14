@@ -31,6 +31,7 @@ type CoinControlRowProps = {
   totalExcludedUTXOS: number;
   updateTransaction: (updater: (t: Transaction) => Transaction) => void;
   bridge: AccountBridge<Transaction>;
+  disableOrdinals: boolean;
 };
 const Container = styled(Box).attrs<{
   disabled: boolean;
@@ -74,6 +75,7 @@ export const CoinControlRow = ({
   totalExcludedUTXOS,
   updateTransaction,
   bridge,
+  disableOrdinals,
 }: CoinControlRowProps) => {
   const s = getUTXOStatus(utxo, utxoStrategy);
   const utxoStatus = s.excluded ? s.reason || "" : "";
@@ -131,7 +133,11 @@ export const CoinControlRow = ({
 
   const withOrdinals = rare.length > 0 || inscr.length > 0;
   return (
-    <Container disabled={unconfirmed} onClick={() => {}} withOrdinals={withOrdinals}>
+    <Container
+      disabled={unconfirmed || (disableOrdinals && withOrdinals)}
+      onClick={() => {}}
+      withOrdinals={withOrdinals}
+    >
       <Flex flex={1} alignItems={"center"}>
         {unconfirmed ? (
           <Tooltip content={<Trans i18nKey={"bitcoin.cannotSelect.pending"} />}>
@@ -142,7 +148,10 @@ export const CoinControlRow = ({
             <Checkbox isChecked disabled />
           </Tooltip>
         ) : (
-          <Checkbox isChecked={!s.excluded} onChange={onClick} />
+          <Checkbox
+            isChecked={!s.excluded && !(disableOrdinals && withOrdinals)}
+            onChange={onClick}
+          />
         )}
         <Box
           style={{

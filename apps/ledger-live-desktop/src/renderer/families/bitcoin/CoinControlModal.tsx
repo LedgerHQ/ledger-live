@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -19,6 +19,9 @@ import {
   Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/bitcoin/types";
+import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
+import Switch from "~/renderer/components/Switch";
+import { Flex } from "@ledgerhq/react-ui";
 
 type Props = {
   isOpened?: boolean;
@@ -55,6 +58,7 @@ const CoinControlModal = ({
   const errorKeys = Object.keys(status.errors);
   const error = errorKeys.length ? status.errors[errorKeys[0]] : null;
   const returning = (status.txOutputs || []).find(output => !!output.isChange);
+  const [disableOrdinals, setDisableOrdinals] = useState<boolean>(false);
   return (
     <Modal width={700} isOpened={isOpened} centered onClose={onClose}>
       <TrackPage category="Modal" name="BitcoinCoinControl" />
@@ -94,9 +98,26 @@ const CoinControlModal = ({
               </Box>
             </Box>
 
+            <Separator />
+
+            <Flex>
+              <Flex flex={1}>
+                <Text color="palette.text.shade50" ff="Inter|Regular" fontSize={13}>
+                  Exclude Ordinals assets
+                </Text>
+              </Flex>
+
+              <Switch
+                onChange={() => setDisableOrdinals(!disableOrdinals)}
+                isChecked={disableOrdinals}
+              />
+            </Flex>
+            <Separator />
+
             <Box flow={2}>
               {bitcoinResources.utxos.map(utxo => (
                 <CoinControlRow
+                  disableOrdinals={disableOrdinals}
                   key={utxo.hash}
                   utxoStrategy={utxoStrategy}
                   totalExcludedUTXOS={totalExcludedUTXOS}
@@ -178,4 +199,4 @@ const CoinControlModal = ({
     </Modal>
   );
 };
-export default CoinControlModal;
+export default withV3StyleProvider(CoinControlModal);
