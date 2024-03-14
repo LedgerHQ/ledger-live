@@ -31,6 +31,7 @@ import { Exchange } from "../../exchange/swap/types";
 import { Transaction } from "../../generated/types";
 
 export { ExchangeType };
+import { decodePayloadProtobuf } from "@ledgerhq/hw-app-exchange";
 
 type Handlers = {
   "custom.exchange.start": RPCHandler<
@@ -49,8 +50,8 @@ export type CompleteExchangeUiRequest = {
   feesStrategy: string;
   exchangeType: number;
   swapId?: string;
-  rate?: number;
   amountExpectedTo?: number;
+  magnitudeAwareRate?: number;
 };
 
 export type ExchangeStartParamsUiRequest = {
@@ -191,6 +192,7 @@ export const handlers = ({
         }
 
         let toAccount;
+        let amountExpectedTo;
 
         if (params.exchangeType === "SWAP" && params.toAccountId) {
           const realToAccountId = getAccountIdFromWalletAccountId(params.toAccountId);
@@ -203,6 +205,10 @@ export const handlers = ({
           if (!toAccount) {
             throw new ServerError(createAccountNotFound(params.toAccountId));
           }
+
+          // Get amountExpectedTo from binary payload
+          const decodePayload = await decodePayloadProtobuf(params.hexBinaryPayload);
+          amountExpectedTo = decodePayload.amountToWallet;
         }
 
         const fromParentAccount = getParentAccount(fromAccount, accounts);
@@ -256,6 +262,8 @@ export const handlers = ({
           },
         );
 
+        const magnitudeAwareRate = amountExpectedTo && tx.amount && amountExpectedTo / tx.amount;
+
         return new Promise((resolve, reject) =>
           uiExchangeComplete({
             exchangeParams: {
@@ -272,7 +280,8 @@ export const handlers = ({
               },
               feesStrategy: params.feeStrategy,
               swapId: params.exchangeType === "SWAP" ? params.swapId : undefined,
-              rate: params.exchangeType === "SWAP" ? params.rate : undefined,
+              amountExpectedTo,
+              magnitudeAwareRate,
             },
             onSuccess: (transactionHash: string) => {
               tracking.completeExchangeSuccess(manifest);
