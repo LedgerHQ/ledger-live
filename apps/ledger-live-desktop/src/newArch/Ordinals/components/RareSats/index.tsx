@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import { useNftGallery } from "../../hooks/useNftGallery";
 import { Account } from "@ledgerhq/types-live";
 import { t } from "i18next";
+import { Ordinal } from "../../types/Ordinals";
 
 type Props = {
   account: Account;
@@ -15,11 +16,24 @@ type Props = {
 export const RareSats = ({ account }: Props) => {
   console.log("account", JSON.stringify(account, null, 2));
   const addresses = account.operations.filter(op => op.type === "IN").map(op => op.recipients[0]);
-  const { nfts, isLoading } = useNftGallery({
+  const { nfts: allNfts, isLoading } = useNftGallery({
     addresses: addresses[0] || "bc1pgtat0n2kavrz4ufhngm2muzxzx6pcmvr4czp089v48u5sgvpd9vqjsuaql",
     standard: "raresats",
     threshold: 10,
   });
+  const nfts: Ordinal[] = allNfts.filter((ordi: Ordinal) => {
+    const satributes = ordi.metadata.utxo_details?.satributes;
+    if (satributes) {
+      const keys = Object.keys(satributes || {});
+      return keys[0] !== "common" || keys.length > 1;
+    }
+  });
+  if (isLoading)
+    return (
+      <Flex alignItems="center" justifyContent="center">
+        <InfiniteLoader />
+      </Flex>
+    );
   if (!nfts || nfts.length === 0)
     return (
       <Flex flex={1} flexDirection="column" alignItems="center" justifyContent="center" mb={40}>
@@ -31,17 +45,9 @@ export const RareSats = ({ account }: Props) => {
   return (
     <TableContainer flex={1}>
       <SectionTitle />
-      {isLoading ? (
-        <Flex alignItems="center" justifyContent="center">
-          <InfiniteLoader />
-        </Flex>
-      ) : (
-        <>
-          {nfts.map((nft, index) => (
-            <SatsRow key={index} ordinal={nft} isLast={index === nfts.length - 1} />
-          ))}
-        </>
-      )}
+      {nfts.map((nft, index) => (
+        <SatsRow key={index} ordinal={nft} isLast={index === nfts.length - 1} />
+      ))}
     </TableContainer>
   );
 };

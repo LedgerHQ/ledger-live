@@ -19,7 +19,6 @@ import {
   Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/bitcoin/types";
-import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import Switch from "~/renderer/components/Switch";
 import { Flex } from "@ledgerhq/react-ui";
 
@@ -48,6 +47,8 @@ const CoinControlModal = ({
   updateTransaction,
 }: Props) => {
   const onClickLink = useCallback(() => openURL(urls.coinControl), []);
+  const [disableOrdinals, setDisableOrdinals] = useState<boolean>(false);
+
   if (!account.bitcoinResources) return null;
   const { bitcoinResources } = account;
   const { utxoStrategy } = transaction;
@@ -58,7 +59,6 @@ const CoinControlModal = ({
   const errorKeys = Object.keys(status.errors);
   const error = errorKeys.length ? status.errors[errorKeys[0]] : null;
   const returning = (status.txOutputs || []).find(output => !!output.isChange);
-  const [disableOrdinals, setDisableOrdinals] = useState<boolean>(false);
   return (
     <Modal width={700} isOpened={isOpened} centered onClose={onClose}>
       <TrackPage category="Modal" name="BitcoinCoinControl" />
@@ -199,4 +199,4 @@ const CoinControlModal = ({
     </Modal>
   );
 };
-export default withV3StyleProvider(CoinControlModal);
+export default CoinControlModal;

@@ -19,7 +19,7 @@ import {
 } from "@ledgerhq/live-common/families/bitcoin/types";
 import { useNftGallery } from "~/newArch/Ordinals/hooks/useNftGallery";
 import { Flex, Icons } from "@ledgerhq/react-ui";
-import { SatritbutesComponent } from "~/newArch/Ordinals/components/RareSats/Sats";
+import { SatributesComponent } from "~/newArch/Ordinals/components/RareSats/Sats";
 import { Ordinal } from "~/newArch/Ordinals/types/Ordinals";
 import Image from "~/newArch/Ordinals/components/Nft/Image";
 
@@ -265,7 +265,7 @@ export const CoinControlRow = ({
 
             {rare.map((rare: Ordinal) => {
               return rare.metadata.utxo_details?.sat_ranges.map((element, index) => (
-                <SatritbutesComponent
+                <SatributesComponent
                   keySats={element.subranges[0]?.sat_types || []}
                   nbSats={element.value}
                   year={rare.metadata.utxo_details?.sat_ranges[0]?.year}
