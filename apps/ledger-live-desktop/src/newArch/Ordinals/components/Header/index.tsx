@@ -29,15 +29,17 @@ const Header = ({
         <Text>{t("account.ordinals.title")}</Text>
       </Flex>
       <Flex rowGap={6} alignItems="center">
+        {activeCategory.value !== "rareSats" && (
+          <Flex alignItems="center">
+            <Layouts layoutOptions={layoutOptions} layout={layout} changeLayout={changeLayout} />
+          </Flex>
+        )}
         <Flex rowGap={6} alignItems="center">
           <Categories
             changeCategorySelected={changeCategorySelected}
             categories={categories}
             activeCategory={activeCategory}
           />
-        </Flex>
-        <Flex alignItems="center">
-          <Layouts layoutOptions={layoutOptions} layout={layout} changeLayout={changeLayout} />
         </Flex>
       </Flex>
     </Flex>

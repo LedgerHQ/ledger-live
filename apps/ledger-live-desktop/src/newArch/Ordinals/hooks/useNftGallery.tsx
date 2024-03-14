@@ -7,7 +7,7 @@ import { Ordinal, OrdinalMetadata, OrdinalStandard } from "../types/Ordinals";
 export type HookProps = {
   addresses: string;
   standard: OrdinalStandard;
-  threshold: number;
+  threshold?: number;
 };
 
 export type NftGalleryResult = UseInfiniteQueryResult<
