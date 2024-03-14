@@ -18,6 +18,7 @@ import { delay } from "../../promise";
 import { getProviderConfig, getSwapAPIBaseURL } from "./";
 import { mockInitSwap } from "./mock";
 import type { InitSwapInput, SwapRequestEvent } from "./types";
+import { decodePayloadProtobuf } from "@ledgerhq/hw-app-exchange";
 
 const withDevicePromise = (deviceId, fn) =>
   firstValueFrom(withDevice(deviceId)(transport => from(fn(transport))));
@@ -36,6 +37,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
 
     const confirmSwap = async () => {
       let ignoreTransportError;
+      let magnitudeAwareRate;
       log("swap", `attempt to connect to ${deviceId}`);
       await withDevicePromise(deviceId, async transport => {
         const ratesFlag =
@@ -46,12 +48,11 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         const deviceTransactionId = await swap.startNewTransaction();
         if (unsubscribed) return;
 
-        const { provider, rateId, payoutNetworkFees } = exchangeRate;
+        const { provider, rateId } = exchangeRate;
         const { fromParentAccount, fromAccount, toParentAccount, toAccount } = exchange;
         const { amount } = transaction;
         const refundCurrency = getAccountCurrency(fromAccount);
         const unitFrom = getAccountUnit(exchange.fromAccount);
-        const unitTo = getAccountUnit(exchange.toAccount);
         const payoutCurrency = getAccountCurrency(toAccount);
         const refundAccount = getMainAccount(fromAccount, fromParentAccount);
         const payoutAccount = getMainAccount(toAccount, toParentAccount);
@@ -218,15 +219,15 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         // to properly render the amount on the device confirmation steps. Although changelly
         // made the calculation inside the binary payload, we still have to deal with it here
         // to not break their other clients.
-        let amountExpectedTo;
 
-        if (swapResult?.amountExpectedTo) {
-          amountExpectedTo = new BigNumber(swapResult.amountExpectedTo)
-            .times(new BigNumber(10).pow(unitTo.magnitude))
-            .minus(new BigNumber(payoutNetworkFees || 0))
-            .toString();
+        let amountExpectedTo;
+        if (swapResult.binaryPayload) {
+          const decodePayload = await decodePayloadProtobuf(swapResult.binaryPayload);
+          amountExpectedTo = decodePayload.amountToWallet;
         }
 
+        magnitudeAwareRate =
+          amountExpectedTo && transaction.amount && amountExpectedTo / +transaction.amount;
         o.next({
           type: "init-swap-requested",
           amountExpectedTo,
@@ -270,6 +271,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         initSwapResult: {
           transaction,
           swapId,
+          magnitudeAwareRate,
         },
       });
     };

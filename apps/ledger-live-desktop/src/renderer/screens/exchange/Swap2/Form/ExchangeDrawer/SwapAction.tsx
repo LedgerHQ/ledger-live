@@ -55,7 +55,7 @@ const TransactionResult = (
 type Props = {
   swapTransaction: SwapTransactionType;
   exchangeRate: ExchangeRate;
-  onCompletion: (a: { operation: Operation; swapId: string }) => void;
+  onCompletion: (a: { operation: Operation; swapId: string; magnitudeAwareRate: number }) => void;
   onError: (a: { error: Error; swapId?: string }) => void;
 };
 
@@ -92,12 +92,13 @@ export default function SwapAction({
 
   useEffect(() => {
     if (initData && signedOperation) {
-      const { swapId } = initData;
+      const { swapId, magnitudeAwareRate } = initData;
       broadcast(signedOperation).then(
         operation => {
           onCompletion({
             operation,
             swapId,
+            magnitudeAwareRate,
           });
         },
         error => {
