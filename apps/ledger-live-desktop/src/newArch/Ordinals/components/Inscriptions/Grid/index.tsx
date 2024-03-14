@@ -54,7 +54,7 @@ const InscriptionsGrid = ({ data }: { data: Ordinal[] }) => (
 
       return (
         <Flex position="relative" key={i}>
-          <ItemHeader />
+          <ItemHeader ordinal={ordinal} />
           <Wrapper p={2} borderRadius={6} flexDirection="column" onClick={onItemClick}>
             <Flex borderRadius={6} overflow="hidden" width={200} height={200}>
               <Image

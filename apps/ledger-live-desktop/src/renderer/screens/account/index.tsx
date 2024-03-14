@@ -38,6 +38,7 @@ import { State } from "~/renderer/reducers";
 import { getLLDCoinFamily } from "~/renderer/families";
 import Ordinals from "~/newArch/Ordinals";
 import { useTheme } from "styled-components";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 type Params = {
   id: string;
@@ -89,6 +90,8 @@ const AccountPage = ({
   countervalueFirst,
   setCountervalueFirst,
 }: Props) => {
+  const lldOrdinalsFeature = useFeature("lldOrdinals");
+
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   const specific = mainAccount ? getLLDCoinFamily(mainAccount.currency.family) : null;
   const AccountBodyHeader = specific?.AccountBodyHeader;
@@ -167,7 +170,9 @@ const AccountPage = ({
           {AccountBodyHeader ? (
             <AccountBodyHeader account={account} parentAccount={parentAccount} />
           ) : null}
-          {account.type === "Account" && account.currency.id === "bitcoin" ? (
+          {lldOrdinalsFeature?.enabled &&
+          account.type === "Account" &&
+          account.currency.id === "bitcoin" ? (
             <Ordinals account={account} />
           ) : null}
           {account.type === "Account" && isNFTActive(account.currency) ? (

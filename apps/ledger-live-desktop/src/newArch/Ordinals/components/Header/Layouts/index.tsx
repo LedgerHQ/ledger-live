@@ -1,6 +1,7 @@
 import React from "react";
-import { Dropdown, Flex } from "@ledgerhq/react-ui";
+import { Flex, Icons } from "@ledgerhq/react-ui";
 import { Layout, LayoutKey } from "~/newArch/Ordinals/types/Layouts";
+import { neutral, primary, Element } from "../utils";
 
 type Props = {
   layoutOptions: Record<LayoutKey, Layout>;
@@ -8,33 +9,31 @@ type Props = {
   layout: LayoutKey;
 };
 
-const styles = {
-  // TODO: implement this behavior in the @ledger/ui lib, here we are just overriding the style from the design system lib to have the MENU right aligned
-  menu: (styles: unknown) => ({
-    ...(styles as object),
-    backgroundColor: "transparent",
-    width: "fit-content",
-  }),
-
-  // TODO: implement this behavior in the @ledger/ui lib, here we are just overriding the style from the design system lib to have the VALUE right aligned
-  valueContainer: (styles: unknown) => ({ ...(styles as object) }),
-  option: () => ({
-    flex: 1,
-    alignSelf: "center" as const,
-    textAlign: "center" as const,
-  }),
+const IconsMode = {
+  grid: <Icons.Grid size="S" />,
+  list: <Icons.MenuBurger size="S" />,
 };
 
 const Layouts = ({ layoutOptions, changeLayout, layout }: Props) => {
   return (
-    <Flex>
-      <Dropdown
-        label=""
-        value={layoutOptions[layout]}
-        options={Object.values(layoutOptions)}
-        onChange={changeLayout}
-        styles={styles}
-      />
+    <Flex
+      py={2}
+      px={3}
+      backgroundColor="opacityDefault.c05"
+      borderRadius={32}
+      justifyContent="space-between"
+    >
+      {Object.entries(layoutOptions).map(([key, value], index) => (
+        <Element
+          alignItems="center"
+          onClick={() => changeLayout(value)}
+          key={key}
+          color={layout === key ? primary : neutral}
+          ml={index === 0 ? 0 : 2}
+        >
+          {IconsMode[key as LayoutKey]}
+        </Element>
+      ))}
     </Flex>
   );
 };

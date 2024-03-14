@@ -856,6 +856,9 @@
         "location": "Location",
         "locationBlockheight": "Location Blockheight",
         "output": "Output"
+      },
+      "contextMenu": {
+        "viewer": "Open in {{viewer}}"
       }
     }
   },

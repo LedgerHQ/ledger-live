@@ -177,6 +177,7 @@ export type Features = CurrencyFeatures & {
   marketperformanceWidgetDesktop: Feature_MarketperformanceWidgetDesktop;
   supportDeviceStax: Feature_SupportDeviceStax;
   supportDeviceEuropa: Feature_SupportDeviceEuropa;
+  lldOrdinals: Feature_LldOrdinals;
 };
 
 /**
@@ -491,6 +492,7 @@ export type Feature_SupportDeviceStax = DefaultFeature;
 export type Feature_SupportDeviceEuropa = DefaultFeature;
 
 export type Feature_LlmMarketNewArch = DefaultFeature;
+export type Feature_LldOrdinals = DefaultFeature;
 /**
  * Utils types.
  */

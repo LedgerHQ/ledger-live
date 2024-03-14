@@ -13,11 +13,12 @@ type Props = {
 
 export const RareSats = ({ account }: Props) => {
   console.log("account", JSON.stringify(account, null, 2));
+  const addresses = account.operations.filter(op => op.type === "IN").map(op => op.recipients[0]);
   const { nfts, isLoading } = useNftGallery({
-    addresses: "bc1p05y0794a0z07ss277uj2jjh6m8p6cfqzad4sv0z7sj6uvucwszgsepclx8",
+    addresses: addresses[0] || "bc1pgtat0n2kavrz4ufhngm2muzxzx6pcmvr4czp089v48u5sgvpd9vqjsuaql",
     standard: "raresats",
+    threshold: 10,
   });
-  console.log(nfts);
   return (
     <TableContainer flex={1}>
       <SectionTitle />
