@@ -53,7 +53,6 @@ const ExperimentalUrlInput = () => {
 
       <ConfirmModal
         analyticsName="RestartModal"
-        isDanger
         centered
         isLoading={pending}
         isOpened={opened}
