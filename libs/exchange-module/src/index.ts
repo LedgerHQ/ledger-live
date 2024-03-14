@@ -82,7 +82,8 @@ export class ExchangeModule extends CustomModule {
    * @param fromAccountId - Identifier of the account used as a source for the tx or parent account (for "new token")
    * @param toAccountId - Identifier of the account or parent account (for "new token") used as a destination
    * @param swapId - Identifier of the swap used by backend
-   * @param rate - Swap rate in the transaction
+   * @param amountExpectedTo - Amount expected to receive by the user in the transaction
+   * @param magnitudeAwareRate - rate expected to receive by the user in the swap transaction
    * @param tokenCurrency - "new token" used in the transaction, not listed yet in wallet-api list
    * @param transaction - Transaction containing the recipient and amount
    * @param binaryPayload - Blueprint of the data that we'll allow signing
@@ -96,7 +97,8 @@ export class ExchangeModule extends CustomModule {
     fromAccountId,
     toAccountId,
     swapId,
-    rate,
+    amountExpectedTo,
+    magnitudeAwareRate,
     transaction,
     binaryPayload,
     signature,
@@ -107,7 +109,8 @@ export class ExchangeModule extends CustomModule {
     fromAccountId: string;
     toAccountId: string;
     swapId: string;
-    rate: number;
+    amountExpectedTo: number;
+    magnitudeAwareRate: number;
     transaction: Transaction;
     binaryPayload: string;
     signature: string;
@@ -122,7 +125,8 @@ export class ExchangeModule extends CustomModule {
         fromAccountId,
         toAccountId,
         swapId,
-        rate,
+        amountExpectedTo,
+        magnitudeAwareRate,
         rawTransaction: serializeTransaction(transaction),
         hexBinaryPayload: binaryPayload,
         hexSignature: signature,

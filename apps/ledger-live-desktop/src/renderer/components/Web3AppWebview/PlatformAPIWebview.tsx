@@ -217,8 +217,6 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
             binaryPayload,
             signature,
             exchangeType,
-            swapId,
-            rate,
           }: CompleteExchangeUiRequest): Promise<Operation> =>
             new Promise((resolve, reject) => {
               dispatch(
@@ -229,8 +227,6 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
                   binaryPayload,
                   signature,
                   exchangeType,
-                  swapId,
-                  rate,
                   onResult: (operation: Operation) => {
                     tracking.platformCompleteExchangeSuccess(manifest);
                     resolve(operation);
