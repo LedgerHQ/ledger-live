@@ -5,9 +5,11 @@ import { SatsCard } from "./Sats";
 import { useNftGallery } from "../../hooks/useNftGallery";
 import { Ordinal } from "../../types/Ordinals";
 import { LayoutKey } from "../../types/Layouts";
+import { Account } from "@ledgerhq/types-live";
 
 type Props = {
   layout: LayoutKey;
+  account: Account;
 };
 
 export function RareSats({ layout }: Props) {

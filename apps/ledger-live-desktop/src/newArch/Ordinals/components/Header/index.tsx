@@ -26,7 +26,9 @@ const Header = ({
   return (
     <Flex flex={1} flexDirection="row" justifyContent="space-between" alignItems="center">
       <Flex>
-        <Text>{t("account.ordinals.title")}</Text>
+        <Text variant="large" fontWeight="semiBold">
+          {t("account.ordinals.title")}
+        </Text>
       </Flex>
       <Flex rowGap={6} alignItems="center">
         <Flex rowGap={6} alignItems="center">

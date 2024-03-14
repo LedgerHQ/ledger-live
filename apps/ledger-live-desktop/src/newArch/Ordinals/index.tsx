@@ -8,7 +8,6 @@ import useMenuLayouts from "./hooks/useMenuLayouts";
 type Props = { account: Account };
 
 const Ordinals = ({ account }: Props) => {
-  console.log(account.id);
   const { category, changeCategorySelected, categories } = useMenuCategories();
   const { layout, layoutOptions, changeLayout } = useMenuLayouts();
 
@@ -23,7 +22,7 @@ const Ordinals = ({ account }: Props) => {
         changeLayout={changeLayout}
       />
       <Flex flex={1} mt={6}>
-        {category.Component({ layout })}
+        {category.Component({ layout, account })}
       </Flex>
     </Flex>
   );
