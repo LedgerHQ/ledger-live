@@ -859,7 +859,9 @@
       },
       "contextMenu": {
         "viewer": "Open in {{viewer}}"
-      }
+      },
+      "noInscriptions": "No inscriptions found",
+      "noRareSats": "No Rare Sats found"
     }
   },
   "exchange": {

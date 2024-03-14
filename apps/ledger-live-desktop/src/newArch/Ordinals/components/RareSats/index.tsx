@@ -6,6 +6,7 @@ import TableContainer, { HeaderWrapper } from "~/renderer/components/TableContai
 import { useTranslation } from "react-i18next";
 import { useNftGallery } from "../../hooks/useNftGallery";
 import { Account } from "@ledgerhq/types-live";
+import { t } from "i18next";
 
 type Props = {
   account: Account;
@@ -19,6 +20,14 @@ export const RareSats = ({ account }: Props) => {
     standard: "raresats",
     threshold: 10,
   });
+  if (!nfts || nfts.length === 0)
+    return (
+      <Flex flex={1} flexDirection="column" alignItems="center" justifyContent="center" mb={40}>
+        <Text variant="body" color="palette.text.shade60">
+          {t("account.ordinals.noRareSats")}
+        </Text>
+      </Flex>
+    );
   return (
     <TableContainer flex={1}>
       <SectionTitle />

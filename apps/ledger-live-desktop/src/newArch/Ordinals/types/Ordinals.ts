@@ -14,6 +14,8 @@ export type OrdinalDetails = {
   sat_rarity: string;
   location: string;
   output_value: number;
+  content_type: string;
+  content_length: number;
 };
 
 export type UtxoDetails = {
