@@ -19,7 +19,7 @@ export const SatsRow = ({ ordinal, isLast }: CardProps) => {
     <Row py={"10px"} px="20px" alignItems={"center"} justifyContent="space-between" isLast={isLast}>
       <Flex flexDirection={"column"} width={"90%"} mr={2}>
         {ordinal.metadata.utxo_details.sat_ranges.map((element, index) => (
-          <SatritbutesComponent
+          <SatributesComponent
             keySats={element.subranges[0]?.sat_types || []}
             nbSats={element.value}
             year={ordinal.metadata.utxo_details?.sat_ranges[0]?.year}
@@ -41,14 +41,15 @@ type SubProps = {
   keySats: string[];
   nbSats: number;
   year?: number;
+  withMore?: boolean;
 };
-export function SatritbutesComponent({ keySats, nbSats, year }: SubProps) {
+export function SatributesComponent({ keySats, nbSats, year, withMore }: SubProps) {
   const { t } = useTranslation();
 
   return (
     <Flex flexDirection="row" justifyContent="space-between" alignItems="center" my={"8px"}>
       <Flex flexDirection="row" alignItems={"center"}>
-        <SatributesIcons keySats={keySats} />
+        <SatributesIcons keySats={keySats} withMore={withMore} />
 
         <Flex flexDirection="column" ml={2}>
           <Flex flexDirection="column">
