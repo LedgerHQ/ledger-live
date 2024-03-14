@@ -100,6 +100,8 @@ export const loadWindow = async () => {
       }
 
       await mainWindow.webContents.session.setProxy({ proxyRules: undefined });
+      await mainWindow.webContents.session.forceReloadProxyConfig();
+      await mainWindow.webContents.session.closeAllConnections();
     }
 
     await mainWindow.loadURL(fullUrl.href);
