@@ -4028,7 +4028,7 @@
     },
     "restartLedgerLiveforProxyModal": {
       "title": "Restart Ledger Live for Proxy setup",
-      "desc": "Restart Ledger Live in order to tunnel yout traffic through a proxy for client-side privacy enforcment."
+      "desc": "Restart Ledger Live in order to tunnel your traffic through a proxy for client-side privacy enforcment."
     },
     "help": {
       "version": "Version",

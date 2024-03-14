@@ -86,7 +86,6 @@ export const loadWindow = async () => {
     if (proxyUrl) {
       try {
         const url = new URL(proxyUrl);
-        console.log(url, url.hostname);
         app.commandLine.appendSwitch(
           "host-resolver-rules",
           `MAP * ~NOTFOUND , EXCLUDE ${url.hostname}`,
