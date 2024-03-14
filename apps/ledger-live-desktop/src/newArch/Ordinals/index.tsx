@@ -8,13 +8,12 @@ import useMenuLayouts from "./hooks/useMenuLayouts";
 type Props = { account: Account };
 
 const Ordinals = ({ account }: Props) => {
-  console.log(account.id);
   const { category, changeCategorySelected, categories } = useMenuCategories();
   const { layout, layoutOptions, changeLayout } = useMenuLayouts();
 
   return (
     <Flex mb={40} bg="palette.background.paper" borderRadius={6} flexDirection="column">
-      <Flex pt={4} px={3}>
+      <Flex px={6} pt={6}>
         <Header
           categories={categories}
           changeCategorySelected={changeCategorySelected}
@@ -25,7 +24,7 @@ const Ordinals = ({ account }: Props) => {
         />
       </Flex>
       <Flex flex={1} mt={6}>
-        {category.Component({ layout })}
+        {category.Component({ layout, account })}
       </Flex>
     </Flex>
   );

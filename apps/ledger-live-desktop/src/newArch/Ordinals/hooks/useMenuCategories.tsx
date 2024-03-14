@@ -7,12 +7,12 @@ const categories: Category[] = [
   {
     value: "inscriptions",
     title: "account.ordinals.categories.inscriptions",
-    Component: ({ layout }) => <Inscriptions layout={layout} />,
+    Component: ({ layout, account }) => <Inscriptions layout={layout} account={account} />,
   },
   {
     value: "rareSats",
     title: "account.ordinals.categories.rareSats",
-    Component: () => <RareSats />,
+    Component: ({ account }) => <RareSats account={account} />,
   },
 ];
 

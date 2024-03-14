@@ -5,8 +5,14 @@ import TableContainer, { HeaderWrapper } from "~/renderer/components/TableContai
 
 import { useTranslation } from "react-i18next";
 import { useNftGallery } from "../../hooks/useNftGallery";
+import { Account } from "@ledgerhq/types-live";
 
-export const RareSats = () => {
+type Props = {
+  account: Account;
+};
+
+export const RareSats = ({ account }: Props) => {
+  console.log("account", JSON.stringify(account, null, 2));
   const { nfts, isLoading } = useNftGallery({
     addresses: "bc1p05y0794a0z07ss277uj2jjh6m8p6cfqzad4sv0z7sj6uvucwszgsepclx8",
     standard: "raresats",

@@ -1,30 +1,27 @@
 import React from "react";
-import { Flex, Grid, Text } from "@ledgerhq/react-ui";
-import styled from "styled-components";
+import { useNftGallery } from "../../hooks/useNftGallery";
 import { LayoutKey } from "../../types/Layouts";
+import InscriptionsGrid from "./Grid";
+import InscriptionsList from "./List";
+import { Account } from "@ledgerhq/types-live";
 
 type Props = {
   layout: LayoutKey;
+  account: Account;
 };
 
-export function Inscriptions({ layout }: Props) {
-  return layout === "grid" ? <InscriptionsGrid /> : <Text>List of Inscriptions</Text>;
+export function Inscriptions({ layout, account }: Props) {
+  console.log("account", JSON.stringify(account, null, 2));
+  const addresses = account.operations.filter(op => op.type === "IN").map(op => op.recipients[0]);
+  const { nfts } = useNftGallery({
+    addresses: addresses[0] || "bc1pgtat0n2kavrz4ufhngm2muzxzx6pcmvr4czp089v48u5sgvpd9vqjsuaql",
+    standard: "inscriptions",
+    threshold: 10,
+  });
+
+  return layout === "grid" ? (
+    <InscriptionsGrid data={nfts || []} />
+  ) : (
+    <InscriptionsList data={nfts || []} />
+  );
 }
-
-const InscriptionsGrid = () => (
-  <StyledGrid flex={1} px={3}>
-    {Array.from({ length: 7 }).map((_, i) => (
-      <Flex key={i} bg="neutral.c30" p={4} borderRadius={6}>
-        <Text>Inscription #{i + 1}</Text>
-      </Flex>
-    ))}
-  </StyledGrid>
-);
-
-const StyledGrid = styled(Grid).attrs(() => ({
-  columnGap: 4,
-  columns: 4,
-  rowGap: 4,
-}))`
-  grid-template-columns: repeat(4, 1fr);
-`;

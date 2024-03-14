@@ -29,11 +29,17 @@ export type UtxoDetails = {
     subranges: { sat_types: string[]; value: number }[];
   }[];
 };
+export type OrdinalContract = {
+  type: string;
+  name: string;
+};
 
 export type Ordinal = {
   id: string;
+  name: string;
   amount: number;
-  contract: string;
+  contract: OrdinalContract;
+  contract_address: string;
   standard: OrdinalStandard;
   metadata: OrdinalMetadata;
 };
