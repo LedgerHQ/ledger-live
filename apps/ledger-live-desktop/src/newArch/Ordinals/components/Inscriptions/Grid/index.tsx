@@ -41,8 +41,7 @@ const InscriptionsGrid = ({ data }: { data: Ordinal[] }) => (
         setDrawer(
           InscriptionsDrawer,
           {
-            name: ordinal.contract.name,
-            collectionName: ordinal.name,
+            ordinal,
             isOpen: true,
           },
           { forceDisableFocusTrap: true },
@@ -50,10 +49,10 @@ const InscriptionsGrid = ({ data }: { data: Ordinal[] }) => (
       };
 
       return (
-        <Flex position="relative" key={i} maxWidth={220}>
+        <Flex position="relative" key={i}>
           <ItemHeader />
           <Wrapper p={2} borderRadius={6} flexDirection="column" onClick={onItemClick}>
-            <Flex borderRadius={6} overflow="hidden">
+            <Flex borderRadius={6} overflow="hidden" width={200} height={200}>
               <Image
                 resource={imageUrl || ""}
                 alt={ordinal.contract.name}
