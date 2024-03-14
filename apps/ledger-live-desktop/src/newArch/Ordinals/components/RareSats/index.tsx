@@ -30,7 +30,7 @@ export const RareSats = ({ account }: Props) => {
   });
   if (isLoading)
     return (
-      <Flex alignItems="center" justifyContent="center">
+      <Flex flex={1} alignItems="center" justifyContent="center" mb={40}>
         <InfiniteLoader />
       </Flex>
     );

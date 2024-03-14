@@ -9,7 +9,6 @@ import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import Tooltip from "~/renderer/components/Tooltip";
 import InfoCircle from "~/renderer/icons/InfoCircle";
-import { SplitAddress, Cell } from "~/renderer/components/OperationsList/AddressCell";
 import {
   BitcoinAccount,
   BitcoinOutput,
@@ -21,7 +20,7 @@ import { useNftGallery } from "~/newArch/Ordinals/hooks/useNftGallery";
 import { Flex, Icons } from "@ledgerhq/react-ui";
 import { SatributesComponent } from "~/newArch/Ordinals/components/RareSats/Sats";
 import { Ordinal } from "~/newArch/Ordinals/types/Ordinals";
-import Image from "~/newArch/Ordinals/components/Nft/Image";
+import Image from "~/renderer/components/Image";
 
 type CoinControlRowProps = {
   utxo: BitcoinOutput;
@@ -79,9 +78,6 @@ export const CoinControlRow = ({
 }: CoinControlRowProps) => {
   const s = getUTXOStatus(utxo, utxoStrategy);
   const utxoStatus = s.excluded ? s.reason || "" : "";
-  const input = (status.txInputs || []).find(
-    input => input.previousOutputIndex === utxo.outputIndex && input.previousTxHash === utxo.hash,
-  );
   const unconfirmed = utxoStatus === "pickPendingUtxo";
   const last = !s.excluded && totalExcludedUTXOS + 1 === account.bitcoinResources?.utxos.length; // make sure that at least one utxo is selected
   const disabled = unconfirmed || last;
@@ -135,7 +131,7 @@ export const CoinControlRow = ({
   return (
     <Container
       disabled={unconfirmed || (disableOrdinals && withOrdinals)}
-      onClick={() => {}}
+      onClick={() => withOrdinals && setIsDropDownOpen(!isDropdownOpen)}
       withOrdinals={withOrdinals}
     >
       <Flex flex={1} alignItems={"center"}>
@@ -151,6 +147,7 @@ export const CoinControlRow = ({
           <Checkbox
             isChecked={!s.excluded && !(disableOrdinals && withOrdinals)}
             onChange={onClick}
+            disabled={disableOrdinals && withOrdinals}
           />
         )}
         <Box
@@ -180,9 +177,11 @@ export const CoinControlRow = ({
           )}
         </Box>
 
-        <Box onClick={() => setIsDropDownOpen(!isDropdownOpen)}>
-          {isDropdownOpen ? <Icons.ChevronUp size="XS" /> : <Icons.ChevronDown size="XS" />}
-        </Box>
+        {withOrdinals ? (
+          <Box>
+            {isDropdownOpen ? <Icons.ChevronUp size="XS" /> : <Icons.ChevronDown size="XS" />}
+          </Box>
+        ) : null}
       </Flex>
 
       <Box
@@ -246,22 +245,37 @@ export const CoinControlRow = ({
               </Text>
             </Flex>
 
-            {inscr.map((rare: Ordinal, i: number) => (
-              <Flex key={"inscription-" + i}>
-                <Flex width={50} alignItems="center">
-                  <Image uri={rare.metadata.image_original_url} width={50} height={50} />
-                </Flex>
+            {inscr.map((rare: Ordinal, i: number) => {
+              const contentType = rare.metadata.ordinal_details?.content_type;
+              const imageUrl =
+                contentType && contentType?.includes("html")
+                  ? `https://renderer.magiceden.dev/v2/render?id=${rare.metadata.ordinal_details?.inscription_id}`
+                  : rare.metadata.image_original_url;
 
-                <Box>
-                  <Text fontWeight={500} fontSize={14}>
-                    {rare.contract.name}
-                  </Text>
-                  <Text fontWeight={400} fontSize={12} color="palette.text.shade50">
-                    {rare.name ?? rare.contract.name}
-                  </Text>
-                </Box>
-              </Flex>
-            ))}
+              return (
+                <Flex key={"inscription-" + i}>
+                  <Flex
+                    width={50}
+                    height={50}
+                    borderRadius={4}
+                    mr={2}
+                    overflow="hidden"
+                    alignItems="center"
+                  >
+                    <Image resource={imageUrl || ""} width={50} height={50} alt="" />
+                  </Flex>
+
+                  <Box>
+                    <Text fontWeight={500} fontSize={14}>
+                      {rare.contract.name}
+                    </Text>
+                    <Text fontWeight={400} fontSize={12} color="palette.text.shade50">
+                      {rare.name ?? "-"}
+                    </Text>
+                  </Box>
+                </Flex>
+              );
+            })}
 
             {rare.map((rare: Ordinal) => {
               return rare.metadata.utxo_details?.sat_ranges.map((element, index) => (
