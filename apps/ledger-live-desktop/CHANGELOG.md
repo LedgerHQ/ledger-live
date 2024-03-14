@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.78.0-nightly.5
+
+### Patch Changes
+
+- [#6429](https://github.com/LedgerHQ/ledger-live/pull/6429) [`19545dc`](https://github.com/LedgerHQ/ledger-live/commit/19545dc1522b33acb98c5e7b7dbc86deb90664c3) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - Add param to moonpay history link
+
 ## 2.78.0-nightly.4
 
 ### Patch Changes
