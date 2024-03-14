@@ -59,6 +59,9 @@ type DatabaseValues = {
   ptx: {
     lastScreen: string;
   };
+  proxy: {
+    url: string;
+  };
 };
 
 // Infers the type seen from the user side (non-raw).

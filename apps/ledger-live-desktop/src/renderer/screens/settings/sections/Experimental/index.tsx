@@ -25,7 +25,6 @@ const experimentalTypesMap = {
   toggle: ExperimentalSwitch,
   integer: ExperimentalInteger,
   float: ExperimentalFloat,
-  urlInput: ExperimentalUrlInput,
 };
 const ExperimentalFeatureRow = ({
   feature,
@@ -54,7 +53,7 @@ const ExperimentalFeatureRow = ({
         isDefault={isDefault}
         onChange={onChange}
         {...rest}
-        value={envValue as never}
+        value={envValue as number}
       />
     </Row>
   ) : null;
@@ -95,6 +94,12 @@ const SectionExperimental = () => {
         <Alert type="security" m={4}>
           <Trans i18nKey="settings.experimental.disclaimer"></Trans>
         </Alert>
+        <Row
+          title={<Trans i18nKey="settings.experimental.features.proxyUrl.title" />}
+          desc={<Trans i18nKey="settings.experimental.features.proxyUrl.description" />}
+        >
+          <ExperimentalUrlInput />
+        </Row>
         {experimentalFeatures.map(feature =>
           !feature.shadow || (feature.shadow && !isEnvDefault(feature.name)) ? (
             <ExperimentalFeatureRow

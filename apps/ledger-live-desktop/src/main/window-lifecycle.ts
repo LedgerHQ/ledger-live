@@ -2,8 +2,8 @@ import "./setup";
 import { BrowserWindow, screen, app, WebPreferences } from "electron";
 import path from "path";
 import { delay } from "@ledgerhq/live-common/promise";
-import { getEnv } from "@ledgerhq/live-env";
 import { URL } from "url";
+import db from "./db";
 
 const intFromEnv = (key: string, def: number): number => {
   const v = process.env[key];
@@ -79,9 +79,9 @@ export const loadWindow = async () => {
     fullUrl.searchParams.append("theme", theme || "");
     fullUrl.searchParams.append("appLocale", app.getLocale());
 
-    const proxyUrl = getEnv("PROXY_URL");
+    const proxyUrl = (await db.getKey("app", "proxy", { url: "" }))?.url;
 
-    if (proxyUrl) {
+    if (proxyUrl && typeof proxyUrl === "string") {
       try {
         const url = new URL(proxyUrl);
         app.commandLine.appendSwitch(

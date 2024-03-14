@@ -35,6 +35,7 @@ import TopGradient from "./TopGradient";
 import Hide from "./Hide";
 import { track } from "~/renderer/analytics/segment";
 import { useAccountPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
+import { useDB } from "~/renderer/storage";
 
 type Location = Parameters<Exclude<PromptProps["message"], string>>[0];
 
@@ -175,6 +176,28 @@ const SideBarScrollContainer = styled(Box)`
     height: 0;
   }
 `;
+const TagContainerProxy = ({ collapsed }: { collapsed: boolean }) => {
+  const [proxyUrl] = useDB("app", "proxy", { url: "" }, state => {
+    if ("url" in state) {
+      return state.url;
+    }
+    return "";
+  });
+
+  const { t } = useTranslation();
+  return proxyUrl ? (
+    <Tag
+      data-test-id="drawer-proxy-button"
+      to={{
+        pathname: "/settings/experimental",
+      }}
+      onClick={() => setTrackingSource("sidebar")}
+    >
+      <IconExperimental width={16} height={16} />
+      <TagText collapsed={collapsed}>{t("common.proxyEnabled")}</TagText>
+    </Tag>
+  ) : null;
+};
 const TagContainerExperimental = ({ collapsed }: { collapsed: boolean }) => {
   const isExperimental = useExperimental();
   const hasFullNodeConfigured = useEnv("SATSTACK"); // NB remove once full node is not experimental
@@ -555,6 +578,7 @@ const MainSideBar = () => {
                 </SideBarList>
               </Box>
               <Space of={30} grow />
+              <TagContainerProxy collapsed={!secondAnim} />
               <TagContainerExperimental collapsed={!secondAnim} />
               <TagContainerFeatureFlags collapsed={!secondAnim} />
             </SideBarScrollContainer>

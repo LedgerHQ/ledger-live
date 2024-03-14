@@ -118,6 +118,7 @@
     "copied": "Copied",
     "addressCopied": "Address copied",
     "addressCopiedSuspicious": "Mismatch between the copied address and the one in the clipboard.",
+    "proxyEnabled": "Proxy enabled",
     "experimentalFeature": "Experimental",
     "featureFlags": "Feature Flags",
     "information": "Information",
