@@ -834,7 +834,34 @@
             "total": "{{count}} sats"
           }
         }
-      }
+      },
+      "details": {
+        "title": "Details",
+        "contractAddress": "Contract Address",
+        "inscriptionId": "Inscription Id",
+        "inscriptionNumber": "Inscription Number",
+        "mintedTo": "Minted To",
+        "blockNumber": "Block Number",
+        "content": "Content",
+        "contentType": "Content Type",
+        "contentLength": "Content Length",
+        "created": "Created",
+        "genesisTransaction": "Genesis Transaction",
+        "genesisTransactionBlockHeight": "Genesis Transaction Blockheight",
+        "satribute": "Satribute",
+        "satNumber": "Sat Number",
+        "satName": "Sat Name",
+        "satBlocktime": "Sat Blocktime",
+        "satBlockheight": "Sat Blockheight",
+        "location": "Location",
+        "locationBlockheight": "Location Blockheight",
+        "output": "Output"
+      },
+      "contextMenu": {
+        "viewer": "Open in {{viewer}}"
+      },
+      "noInscriptions": "No inscriptions found",
+      "noRareSats": "No Rare Sats found"
     }
   },
   "exchange": {

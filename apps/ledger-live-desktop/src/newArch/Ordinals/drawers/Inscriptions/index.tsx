@@ -1,30 +1,12 @@
-import React, { useMemo, useCallback, useState, useEffect, memo } from "react";
-import { useNftMetadata, useNftCollectionMetadata } from "@ledgerhq/live-nft-react";
-import { getFloorPrice } from "@ledgerhq/live-nft/api/metadataservice";
+import React from "react";
 import styled from "styled-components";
-import { useTranslation } from "react-i18next";
-import { useSelector, useDispatch } from "react-redux";
 import { space, layout, position, PositionProps, LayoutProps, SpaceProps } from "styled-system";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import { Account, FloorPrice, NFTMetadata, ProtoNFT } from "@ledgerhq/types-live";
-import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import Box from "~/renderer/components/Box";
-import Text from "~/renderer/components/Text";
-import Button from "~/renderer/components/Button";
-import IconSend from "~/renderer/icons/Send";
-import ZoomInIcon from "~/renderer/icons/ZoomIn";
-import { getNFTById } from "~/renderer/reducers/accounts";
-import { NFTProperties } from "./NFTProperties";
-import { CopiableField } from "./CopiableField";
-import NftPanAndZoom from "./NftPanAndZoom";
-import ExternalViewerButton from "./ExternalViewerButton";
-import Skeleton from "~/renderer/components/Nft/Skeleton";
-import { getMetadataMediaType } from "~/helpers/nft";
-import Media from "~/renderer/components/Nft/Media";
-import { openModal } from "~/renderer/actions/modals";
-import { setDrawer } from "~/renderer/drawers/Provider";
-import { SplitAddress } from "~/renderer/components/OperationsList/AddressCell";
-import { State } from "~/renderer/reducers";
+import { Ordinal } from "../../types/Ordinals";
+import { Flex, Text } from "@ledgerhq/react-ui";
+import Image from "~/renderer/components/Image";
+import { t } from "i18next";
+import ToolTip from "~/renderer/components/Tooltip";
 const InscriptionsDrawerContainer = styled.div`
   flex: 1;
   overflow-y: hidden;
@@ -70,10 +52,10 @@ const NFTActions = styled.div`
   margin: 12px 0px;
   justify-content: center;
 `;
-const Separator = styled.div`
+const Separator = styled(Flex)`
   width: 100%;
   height: 1px;
-  background-color: ${({ theme }) => theme.colors.palette.text.shade10};
+  background-color: ${({ theme }) => theme.colors.neutral.c60};
   margin: 24px 0px;
 `;
 const NFTAttributes = styled.div`
@@ -108,125 +90,59 @@ const HashContainer = styled.div`
   min-width: 100px;
   user-select: none;
 `;
-const NFTAttribute = memo(
-  ({
-    title,
-    value,
-    skeleton,
-    separatorBottom,
-    separatorTop,
-  }: {
-    title: string;
-    value: React.ReactNode | string;
-    skeleton?: boolean;
-    separatorBottom?: boolean;
-    separatorTop?: boolean;
-  }) => {
-    if (!skeleton && !value) return null;
-    return (
-      <>
-        {separatorTop ? <Separator /> : null}
-        <Text
-          mb={1}
-          lineHeight="15.73px"
-          fontSize={4}
-          color="palette.text.shade60"
-          ff="Inter|SemiBold"
-        >
-          {title}
-        </Text>
-        <Skeleton show={skeleton} width={120} minHeight={24} barHeight={10}>
-          <Text lineHeight="15.73px" fontSize={4} color="palette.text.shade100" ff="Inter|Regular">
-            <Pre>{value}</Pre>
-          </Text>
-        </Skeleton>
-        {separatorBottom ? <Separator /> : null}
-      </>
-    );
-  },
-);
-NFTAttribute.displayName = "NFTAttribute";
-type InscriptionsDrawerProps = {
-  // account: Account;
-  // nftId: string;
-  // isOpen: boolean;
-  // height?: number;
-  // onRequestClose?: () => void;
-  collectionName: string;
-  name: string;
-};
-const InscriptionsDrawer = ({ collectionName, name }: InscriptionsDrawerProps) => {
-  // const { t } = useTranslation();
-  // const dispatch = useDispatch();
 
-  // FIXME Need some memoized selector here
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  // const protoNft =
-  //   useSelector((state: State) =>
-  //     getNFTById(state, {
-  //       nftId,
-  //     }),
-  //   ) || ({} as ProtoNFT); // This seems really wrong to fallback to an empty object here…
-  // const { status: collectionStatus, metadata: collectionMetadata } = useNftCollectionMetadata(
-  //   protoNft.contract,
-  //   protoNft.currencyId,
-  // );
-  // const { status: nftStatus, metadata } = useNftMetadata(
-  //   protoNft.contract,
-  //   protoNft.tokenId,
-  //   protoNft.currencyId,
-  // );
-  // const loading = useMemo(
-  //   () => nftStatus === "loading" || collectionStatus === "loading",
-  //   [collectionStatus, nftStatus],
-  // );
-  // const contentType = useMemo(
-  //   () => getMetadataMediaType(metadata as NFTMetadata, "big"),
-  //   [metadata],
-  // );
-  // const currency = useMemo(() => getCryptoCurrencyById(protoNft.currencyId), [protoNft.currencyId]);
-  // const name = (metadata && "nftName" in metadata && metadata.nftName) || protoNft.tokenId;
-  // const [floorPriceLoading, setFloorPriceLoading] = useState(false);
-  // const [ticker, setTicker] = useState("");
-  // const [floorPrice, setFloorPrice] = useState<number | null>(null);
-  // useEffect(() => {
-  //   setFloorPriceLoading(true);
-  //   getFloorPrice(protoNft, currency)
-  //     .then((result: FloorPrice | null) => {
-  //       if (result) {
-  //         setTicker(result.ticker);
-  //         setFloorPrice(result.value);
-  //       }
-  //     })
-  //     .finally(() => setFloorPriceLoading(false));
-  // }, [protoNft, currency]);
-  // const onNFTSend = useCallback(() => {
-  //   setDrawer();
-  //   dispatch(
-  //     openModal("MODAL_SEND", {
-  //       account,
-  //       isNFTSend: true,
-  //       nftId,
-  //     }),
-  //   );
-  // }, [dispatch, nftId, account]);
-  // const [isPanAndZoomOpen, setPanAndZoomOpen] = useState(false);
-  // const openNftPanAndZoom: React.MouseEventHandler<HTMLDivElement> = useCallback(() => {
-  //   setPanAndZoomOpen(true);
-  // }, [setPanAndZoomOpen]);
-  // const closeNftPanAndZoom = useCallback(() => {
-  //   setPanAndZoomOpen(false);
-  // }, [setPanAndZoomOpen]);
+const truncate = (word?: string, tooLongChars = 25) => {
+  if (!word) return undefined;
+
+  if (word.length < tooLongChars) {
+    return word;
+  }
+
+  const ellipsis = "...";
+  const charsOnEitherSide = Math.floor(tooLongChars / 2) - ellipsis.length;
+
+  return word?.slice(0, charsOnEitherSide) + ellipsis + word?.slice(-charsOnEitherSide);
+};
+
+const Attribute = ({
+  attribute,
+  name,
+  tooLongChars = 25,
+}: {
+  attribute?: string;
+  name: string;
+  tooLongChars?: number;
+}) => {
+  if (!attribute) return undefined;
   return (
-    // <Box height={height}>
+    <Flex justifyContent="space-between" mb={24}>
+      <Text variant="subtitle" color="neutral.c60">
+        {t(`account.ordinals.details.${name}`)}
+      </Text>
+      <ToolTip content={attribute.length > tooLongChars ? attribute : undefined}>
+        <Text variant="subtitle" color="neutral.c100">
+          {truncate(attribute, tooLongChars)}
+        </Text>
+      </ToolTip>
+    </Flex>
+  );
+};
+
+type InscriptionsDrawerProps = {
+  ordinal: Ordinal;
+};
+const InscriptionsDrawer = ({ ordinal }: InscriptionsDrawerProps) => {
+  const contentType = ordinal.metadata.ordinal_details?.content_type;
+  const imageUrl =
+    contentType && contentType?.includes("html")
+      ? `https://renderer.magiceden.dev/v2/render?id=${ordinal.metadata.ordinal_details?.inscription_id}`
+      : ordinal.metadata.image_original_url;
+
+  const collectionName = ordinal.name;
+  const name = ordinal.contract.name;
+
+  return (
     <Box>
-      {/* {isPanAndZoomOpen && metadata && (
-        <NftPanAndZoom
-          metadata={metadata as NFTMetadata}
-          tokenId={protoNft.tokenId}
-          onClose={closeNftPanAndZoom}
-        />
-      )} */}
       <InscriptionsDrawerContainer>
         <InscriptionsDrawerContent>
           <StickyWrapper top={0} pb={3} pt="24px">
@@ -257,122 +173,38 @@ const InscriptionsDrawer = ({ collectionName, name }: InscriptionsDrawerProps) =
               {name}
             </Text>
           </StickyWrapper>
-          {/* <Skeleton show={loading} width={393}>
-            <NFTImageContainer
-              contentType={contentType}
-              onClick={contentType === "image" ? openNftPanAndZoom : undefined}
-            >
-              <Media
-                metadata={metadata as NFTMetadata}
-                tokenId={protoNft.tokenId}
-                mediaFormat="big"
-                full
-                square={false}
-                maxHeight={700}
-              />
-              {contentType === "image" ? (
-                <NFTImageOverlay>
-                  <ZoomInIcon color="white" />
-                </NFTImageOverlay>
-              ) : null}
-            </NFTImageContainer>
-          </Skeleton> */}
-          {/* <NFTActions>
-            <Button
-              style={{
-                flex: 1,
-                justifyContent: "center",
-              }}
-              mr={4}
-              primary
-              onClick={onNFTSend}
-              center
-            >
-              <IconSend size={12} />
-              <Text ml={1} fontSize={3} lineHeight="18px">
-                {t("NFT.viewer.actions.send")}
-              </Text>
-            </Button>
-
-            <ExternalViewerButton
-              nft={protoNft}
-              account={account}
-              metadata={metadata as NFTMetadata}
-            />
-          </NFTActions> */}
-          {/* <NFTAttributes>
-            <NFTProperties metadata={metadata as NFTMetadata} status={status} />
-            <NFTAttribute
-              skeleton={loading}
-              title={t("NFT.viewer.attributes.description")}
-              value={(metadata as NFTMetadata)?.description}
-              separatorBottom
-            />
-            <Text
-              mb="6px"
-              lineHeight="15.73px"
-              fontSize={4}
-              color="palette.text.shade60"
-              fontWeight="600"
-            >
-              {t("NFT.viewer.attributes.tokenAddress")}
-            </Text>
-            <Text lineHeight="15.73px" fontSize={4} color="palette.text.shade100" fontWeight="600">
-              <CopiableField value={protoNft.contract}>
-                <HashContainer>
-                  <SplitAddress value={protoNft.contract} ff="Inter|Regular" />
-                </HashContainer>
-              </CopiableField>
+          <Flex borderRadius={6} overflow="hidden" width={420} height={420}>
+            <Image resource={imageUrl || ""} alt={ordinal.contract.name} height={420} width={420} />
+          </Flex>
+          <Flex mt={40} flex={1} flexDirection="column">
+            <Text variant="subtitle" color="neutral.c60">
+              {t("account.ordinals.details.title")}
             </Text>
             <Separator />
-            <Text
-              mb={1}
-              lineHeight="15.73px"
-              fontSize={4}
-              color="palette.text.shade60"
-              fontWeight="600"
-            >
-              {t("NFT.viewer.attributes.tokenId")}
-            </Text>
-            <Text lineHeight="15.73px" fontSize={4} color="palette.text.shade100">
-              <CopiableField value={protoNft.tokenId}>
-                {
-                  // only needed for very long tokenIds but works with any length > 4
-                  protoNft.tokenId?.length >= 4 ? (
-                    <HashContainer>
-                      <SplitAddress value={protoNft.tokenId} />
-                    </HashContainer>
-                  ) : (
-                    protoNft.tokenId
-                  )
-                }
-              </CopiableField>
-            </Text>
-            {protoNft.standard === "ERC1155" ? (
-              <React.Fragment>
-                <NFTAttribute
-                  separatorTop
-                  skeleton={loading}
-                  title={t("NFT.viewer.attributes.quantity")}
-                  value={protoNft.amount.toString()}
-                />
-              </React.Fragment>
-            ) : null}
-            <FeatureToggle featureId="counterValue">
-              {!floorPriceLoading && floorPrice ? (
-                <NFTAttribute
-                  separatorTop
-                  skeleton={floorPriceLoading}
-                  title={t("NFT.viewer.attributes.floorPrice")}
-                  value={
-                    <Text mb={1} lineHeight="15.73px" fontSize={4} color="palette.text.shade60">
-                      {floorPrice} {ticker}
-                    </Text>
-                  }
-                />
-              ) : null}
-            </FeatureToggle>
-          </NFTAttributes> */}
+            <Attribute
+              attribute={ordinal.metadata.ordinal_details?.inscription_id}
+              name="inscriptionId"
+            />
+            <Attribute
+              attribute={ordinal.metadata.ordinal_details?.inscription_number.toString()}
+              name="inscriptionNumber"
+            />
+            <Attribute
+              attribute={ordinal.metadata.ordinal_details?.content_type}
+              name="contentType"
+            />
+            <Attribute
+              attribute={ordinal.metadata.ordinal_details?.content_length.toString()}
+              name="contentLength"
+            />
+            <Attribute attribute={ordinal.metadata.ordinal_details?.sat_rarity} name="satribute" />
+            <Attribute
+              attribute={ordinal.metadata.ordinal_details?.sat_number.toString()}
+              name="satNumber"
+            />
+            <Attribute attribute={ordinal.metadata.ordinal_details?.sat_name} name="satName" />
+            <Attribute attribute={ordinal.metadata.ordinal_details?.location} name="location" />
+          </Flex>
         </InscriptionsDrawerContent>
       </InscriptionsDrawerContainer>
     </Box>

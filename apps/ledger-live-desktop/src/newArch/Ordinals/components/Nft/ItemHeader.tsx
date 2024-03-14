@@ -1,6 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 import { Flex, Icons } from "@ledgerhq/react-ui";
+import InscriptionContextMenu from "./InscriptionContextMenu";
+import { Ordinal } from "../../types/Ordinals";
 
 const Container = styled(Flex)`
   align-items: center;
@@ -15,20 +17,32 @@ const Container = styled(Flex)`
   }
 `;
 
-type Props = {};
+type Props = {
+  ordinal: Ordinal;
+};
 
-const ItemHeader = ({}: Props) => {
+const ItemHeader = ({ ordinal }: Props) => {
   return (
-    <Flex width={200} top={2} left={2} position="absolute" justifyContent="space-between" alignItems="center" p={3}>
+    <Flex
+      width={200}
+      top={2}
+      left={2}
+      position="absolute"
+      justifyContent="space-between"
+      alignItems="center"
+      p={3}
+    >
       <Flex>
         {/* <Container>
           <Icons.MoreVertical size="M" color="neutral.c100" />
         </Container> */}
       </Flex>
       <Flex>
-        <Container>
-          <Icons.MoreVertical size="M" color="neutral.c100" />
-        </Container>
+        <InscriptionContextMenu leftClick={true} inscription={ordinal}>
+          <Container>
+            <Icons.MoreVertical size="M" color="neutral.c100" />
+          </Container>
+        </InscriptionContextMenu>
       </Flex>
     </Flex>
   );

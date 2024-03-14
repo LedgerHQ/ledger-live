@@ -6,6 +6,7 @@ import TableContainer, { HeaderWrapper } from "~/renderer/components/TableContai
 import { useTranslation } from "react-i18next";
 import { useNftGallery } from "../../hooks/useNftGallery";
 import { Account } from "@ledgerhq/types-live";
+import { t } from "i18next";
 
 type Props = {
   account: Account;
@@ -13,11 +14,20 @@ type Props = {
 
 export const RareSats = ({ account }: Props) => {
   console.log("account", JSON.stringify(account, null, 2));
+  const addresses = account.operations.filter(op => op.type === "IN").map(op => op.recipients[0]);
   const { nfts, isLoading } = useNftGallery({
-    addresses: "bc1p05y0794a0z07ss277uj2jjh6m8p6cfqzad4sv0z7sj6uvucwszgsepclx8",
+    addresses: addresses[0] || "bc1pgtat0n2kavrz4ufhngm2muzxzx6pcmvr4czp089v48u5sgvpd9vqjsuaql",
     standard: "raresats",
+    threshold: 10,
   });
-  console.log(nfts);
+  if (!nfts || nfts.length === 0)
+    return (
+      <Flex flex={1} flexDirection="column" alignItems="center" justifyContent="center" mb={40}>
+        <Text variant="body" color="palette.text.shade60">
+          {t("account.ordinals.noRareSats")}
+        </Text>
+      </Flex>
+    );
   return (
     <TableContainer flex={1}>
       <SectionTitle />

@@ -4,6 +4,8 @@ import { LayoutKey } from "../../types/Layouts";
 import InscriptionsGrid from "./Grid";
 import InscriptionsList from "./List";
 import { Account } from "@ledgerhq/types-live";
+import { Flex, Text } from "@ledgerhq/react-ui";
+import { t } from "i18next";
 
 type Props = {
   layout: LayoutKey;
@@ -18,6 +20,15 @@ export function Inscriptions({ layout, account }: Props) {
     standard: "inscriptions",
     threshold: 10,
   });
+
+  if (!nfts || nfts.length === 0)
+    return (
+      <Flex flex={1} flexDirection="column" alignItems="center" justifyContent="center" mb={40}>
+        <Text variant="body" color="palette.text.shade60">
+          {t("account.ordinals.noInscriptions")}
+        </Text>
+      </Flex>
+    );
 
   return layout === "grid" ? (
     <InscriptionsGrid data={nfts || []} />

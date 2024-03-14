@@ -9,7 +9,7 @@ type Props = { account: Account };
 
 const Ordinals = ({ account }: Props) => {
   const { category, changeCategorySelected, categories } = useMenuCategories();
-  const { layout, layoutOptions, changeLayout } = useMenuLayouts();
+  const { layout } = useMenuLayouts();
 
   return (
     <Flex mb={40} bg="palette.background.paper" borderRadius={6} flexDirection="column">
@@ -18,9 +18,6 @@ const Ordinals = ({ account }: Props) => {
           categories={categories}
           changeCategorySelected={changeCategorySelected}
           activeCategory={category}
-          layout={layout}
-          layoutOptions={layoutOptions}
-          changeLayout={changeLayout}
         />
       </Flex>
       <Flex flex={1} mt={6}>
