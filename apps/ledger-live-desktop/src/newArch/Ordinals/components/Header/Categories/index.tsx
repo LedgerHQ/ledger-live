@@ -1,11 +1,8 @@
 import React from "react";
 import { Flex, Text } from "@ledgerhq/react-ui";
 import { t } from "i18next";
-import styled from "styled-components";
 import { Category } from "~/newArch/Ordinals/types/Categories";
-
-const primary = "primary.c80";
-const neutral = "neutral.c70";
+import { neutral, primary, Element } from "../utils";
 
 type Props = {
   changeCategorySelected: (categorySelectedIndex: number) => void;
@@ -40,12 +37,6 @@ const Categories = ({ changeCategorySelected, categories, activeCategory }: Prop
 };
 
 export default Categories;
-
-const Element = styled(Flex)`
-  &:hover {
-    cursor: pointer;
-  }
-`;
 
 function Label({ color, text }: { color: string; text: string }) {
   return (

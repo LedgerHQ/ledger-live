@@ -30,7 +30,7 @@ const Header = ({
       </Flex>
       <Flex rowGap={6} alignItems="center">
         {activeCategory.value !== "rareSats" && (
-          <Flex alignItems="center">
+          <Flex alignItems="center" mr={2}>
             <Layouts layoutOptions={layoutOptions} layout={layout} changeLayout={changeLayout} />
           </Flex>
         )}
