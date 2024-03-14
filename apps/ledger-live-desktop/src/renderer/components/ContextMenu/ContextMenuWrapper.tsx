@@ -1,3 +1,4 @@
+import { Flex } from "@ledgerhq/react-ui";
 import React, { PureComponent } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
@@ -66,7 +67,7 @@ type ContextMenuItemContainerProps = {
   disabled?: boolean;
 };
 
-const ContextMenuItemContainer = styled(Box).attrs<ContextMenuItemContainerProps>(p => ({
+const ContextMenuItemContainer = styled(Flex).attrs<ContextMenuItemContainerProps>(p => ({
   ff: "Inter",
   color: p.disabled
     ? "palette.text.shade50"
@@ -78,7 +79,7 @@ const ContextMenuItemContainer = styled(Box).attrs<ContextMenuItemContainerProps
   padding: 8px 16px;
   text-align: center;
   flex-direction: row;
-  align-items: flex-start;
+  align-items: center;
   border-radius: 4px;
   font-size: 12px;
   font-weight: 500;
@@ -155,14 +156,14 @@ class ContextMenuWrapper extends PureComponent<Props, State> {
         }}
         data-test-id={`accounts-context-menu-${label.split(".").pop()}`}
       >
-        <Box horizontal>
+        <Flex flexDirection="row" alignItems={"center"}>
           {Icon && (
             <Box pr={2} color="palette.text.shade60">
               <Icon size={16} />
             </Box>
           )}
           {(dontTranslateLabel && label) || <Trans i18nKey={label} />}
-        </Box>
+        </Flex>
         {item.type === "external" ? (
           <Box ml={4}>
             <IconExternal size={16} />

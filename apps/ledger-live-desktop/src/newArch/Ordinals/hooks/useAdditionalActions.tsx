@@ -5,6 +5,7 @@ import { Icons } from "@ledgerhq/react-ui";
 import { Ordinal } from "../types/Ordinals";
 import { openURL } from "~/renderer/linking";
 import { ContextMenuItemType } from "~/renderer/components/ContextMenu/ContextMenuWrapper";
+import MagicEdenIcon from "../components/Icons/MagicEden";
 
 export default (ordinal: Ordinal) => {
   const { t } = useTranslation();
@@ -16,7 +17,7 @@ export default (ordinal: Ordinal) => {
         label: t("account.ordinals.contextMenu.viewer", {
           viewer: "Magic Eden",
         }),
-        Icon: () => <Icons.Globe size={"XS"} />,
+        Icon: () => <MagicEdenIcon />,
         type: "external",
         callback: () =>
           openURL(
