@@ -32,6 +32,7 @@ import { Transaction } from "../../generated/types";
 
 export { ExchangeType };
 import { decodePayloadProtobuf } from "@ledgerhq/hw-app-exchange";
+import { BigNumber } from "bignumber.js";
 
 type Handlers = {
   "custom.exchange.start": RPCHandler<
@@ -51,7 +52,7 @@ export type CompleteExchangeUiRequest = {
   exchangeType: number;
   swapId?: string;
   amountExpectedTo?: number;
-  magnitudeAwareRate?: number;
+  magnitudeAwareRate?: BigNumber;
 };
 
 export type ExchangeStartParamsUiRequest = {
@@ -208,7 +209,7 @@ export const handlers = ({
 
           // Get amountExpectedTo from binary payload
           const decodePayload = await decodePayloadProtobuf(params.hexBinaryPayload);
-          amountExpectedTo = decodePayload.amountToWallet;
+          amountExpectedTo = new BigNumber(decodePayload.amountToWallet.toString());
         }
 
         const fromParentAccount = getParentAccount(fromAccount, accounts);
@@ -262,7 +263,8 @@ export const handlers = ({
           },
         );
 
-        const magnitudeAwareRate = amountExpectedTo && tx.amount && amountExpectedTo / tx.amount;
+        const magnitudeAwareRate =
+          amountExpectedTo && tx.amount && amountExpectedTo.dividedBy(tx.amount);
 
         return new Promise((resolve, reject) =>
           uiExchangeComplete({

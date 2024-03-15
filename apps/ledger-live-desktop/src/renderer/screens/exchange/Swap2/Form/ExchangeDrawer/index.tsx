@@ -98,7 +98,7 @@ export default function ExchangeDrawer({ swapTransaction, exchangeRate, onComple
     }: {
       operation: Operation;
       swapId: string;
-      magnitudeAwareRate: number;
+      magnitudeAwareRate: BigNumber;
     }) => {
       const { provider } = exchangeRate;
 
@@ -110,7 +110,7 @@ export default function ExchangeDrawer({ swapTransaction, exchangeRate, onComple
         result,
         exchange,
         transaction,
-        magnitudeAwareRate: new BigNumber(magnitudeAwareRate),
+        magnitudeAwareRate,
         provider,
       });
       if (!params.length) return;

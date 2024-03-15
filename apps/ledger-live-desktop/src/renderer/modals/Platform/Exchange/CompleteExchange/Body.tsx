@@ -29,7 +29,7 @@ export type Data = {
   rateType?: number;
   swapId?: string;
   amountExpectedTo?: number;
-  magnitudeAwareRate?: number;
+  magnitudeAwareRate?: BigNumber;
 };
 
 export function isCompleteExchangeData(data: unknown): data is Data {
@@ -148,7 +148,7 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
         });
         updateAccount({
           result: newResult,
-          magnitudeAwareRate: new BigNumber(magnitudeAwareRate),
+          magnitudeAwareRate,
         });
         setResult({
           swapId,

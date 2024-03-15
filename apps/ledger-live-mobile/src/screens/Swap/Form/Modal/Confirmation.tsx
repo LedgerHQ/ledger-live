@@ -95,7 +95,7 @@ export function Confirmation({
     }: {
       operation: Operation;
       swapId: string;
-      magnitudeAwareRate: number;
+      magnitudeAwareRate: BigNumber;
     }) => {
       const { operation, swapId } = result;
       /**
@@ -128,7 +128,7 @@ export function Confirmation({
                   exchange,
                   exchangeRate: {
                     ...exchangeRate.current,
-                    magnitudeAwareRate: new BigNumber(magnitudeAwareRate),
+                    magnitudeAwareRate,
                   },
                 },
                 swapId,
