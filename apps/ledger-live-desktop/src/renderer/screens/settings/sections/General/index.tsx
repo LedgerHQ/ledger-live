@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -22,14 +22,6 @@ const SectionGeneral = () => {
   const { t } = useTranslation();
   useInitSupportedCounterValues();
   const lldAnalyticsOptInPromptFlag = useFeature("lldAnalyticsOptInPrompt");
-  const [isFeatureFlagsAnalyticsEnabled, setIsFeatureFlagsAnalyticsEnabled] =
-    useState<boolean>(false);
-
-  useEffect(() => {
-    if (lldAnalyticsOptInPromptFlag?.enabled) {
-      setIsFeatureFlagsAnalyticsEnabled(true);
-    }
-  }, [lldAnalyticsOptInPromptFlag]);
 
   return (
     <>
@@ -80,7 +72,7 @@ const SectionGeneral = () => {
         >
           <SentryLogsButton />
         </Row>
-        {isFeatureFlagsAnalyticsEnabled ? (
+        {lldAnalyticsOptInPromptFlag?.enabled ? (
           <>
             <Row
               title={t("analyticsOptInPrompt.profileSettings.analytics")}
