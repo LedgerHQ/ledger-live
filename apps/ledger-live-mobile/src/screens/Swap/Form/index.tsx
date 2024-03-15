@@ -303,12 +303,30 @@ export function SwapForm({
 
   useEffect(() => {
     const { rate } = params as DetailsSwapParamList;
-    const targetProvider = provider ?? rate?.provider;
-    const targetRate = swapTransaction.swap.rates.value?.find(
+    const targetProvider =
+      rate?.provider ?? provider ?? swapTransaction.swap.rates.value?.at(0)?.provider;
+
+    // Will not be able to determine rates, do a early return
+    if (!targetProvider || !swapTransaction.swap.rates.value) return;
+
+    const targetRate = swapTransaction.swap.rates.value.find(
       item => item.provider === targetProvider,
     );
-    setExchangeRate(targetRate);
-  }, [params, provider, setExchangeRate, swapTransaction]);
+
+    // Compare rates
+    const isDifferentProvider = targetProvider !== exchangeRate?.provider;
+    const isDifferentRate = targetRate?.toAmount !== exchangeRate?.toAmount;
+    const isDifferentTradeMethod = targetRate?.tradeMethod !== exchangeRate?.tradeMethod;
+    const shouldUpdateRate = isDifferentProvider || isDifferentRate || isDifferentTradeMethod;
+
+    /**
+     * Update rate if needed, due to having SwapTransaction in
+     * dep array, this effect hook can be triggered per second
+     */
+    if (shouldUpdateRate) {
+      setExchangeRate(targetRate);
+    }
+  }, [params, provider, setExchangeRate, exchangeRate, swapTransaction.swap.rates]);
 
   const swapAcceptedProviders = getAvailableProviders();
   const termsAccepted = (swapAcceptedProviders || []).includes(provider ?? "");
