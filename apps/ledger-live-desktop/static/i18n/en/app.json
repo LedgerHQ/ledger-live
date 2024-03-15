@@ -3989,6 +3989,15 @@
       "addLocalApp": "Add a local app",
       "addLocalAppDesc": "Browse local files and add a local app using a local manifest",
       "addLocalAppButton": "Browse",
+      "createLocalAppModal": {
+        "title": {
+          "create": "Create a local app",
+          "modify": "Modify a local app"
+        },
+        "export": "Export",
+        "modify": "Modify",
+        "create": "Create"
+      },
       "runLocalAppDeleteButton": "Delete",
       "runLocalAppOpenButton": "Open",
       "enableLearnStagingUrl": "Learn page staging URL",

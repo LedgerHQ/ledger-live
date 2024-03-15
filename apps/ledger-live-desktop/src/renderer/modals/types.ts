@@ -16,6 +16,7 @@ import { UserProps as AddAccountProps } from "./AddAccounts";
 import { ModalStartStakeProps } from "./StartStake";
 import { CoinModalsData } from "../families/generated";
 import { Language } from "~/config/languages";
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
 /**
  * the modals data type are all defined by a key value map,
@@ -53,6 +54,9 @@ export type GlobalModalData = {
   };
   MODAL_STORYLY_DEBUGGER: undefined;
   MODAL_LOTTIE_DEBUGGER: undefined;
+  MODAL_CREATE_LOCAL_APP: {
+    manifest?: LiveAppManifest;
+  };
   MODAL_EXPORT_ACCOUNTS: undefined;
   MODAL_EXPORT_OPERATIONS: undefined;
   MODAL_START_STAKE: ModalStartStakeProps;
