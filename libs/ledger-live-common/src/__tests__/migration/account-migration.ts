@@ -289,6 +289,7 @@ const testSyncAccount = async (account: Account) => {
 
   const exec = promisify(childProcess.exec);
   const outputContent = JSON.stringify(response, null, 3);
+  console.log(outputContent);
 
   if (!noEmit) {
     // also used in account-migration.yml to know which input file to use
