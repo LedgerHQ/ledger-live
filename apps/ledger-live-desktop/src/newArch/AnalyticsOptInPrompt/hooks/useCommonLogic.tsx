@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { hasSeenAnalyticsOptInPromptSelector } from "~/renderer/reducers/settings";
 import { useDispatch, useSelector } from "react-redux";
@@ -17,8 +17,6 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
   const dispatch = useDispatch();
 
   const [isAnalitycsOptInPromptOpened, setIsAnalitycsOptInPromptOpened] = useState<boolean>(false);
-  const [isFeatureFlagsAnalyticsPrefDisplayed, setIsFeatureFlagsAnalyticsPrefDisplayed] =
-    useState<boolean>(false);
 
   const [nextStep, setNextStep] = useState<(() => void) | null>(null);
 
@@ -30,10 +28,22 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
     [setIsAnalitycsOptInPromptOpened],
   );
 
-  useEffect(() => {
-    const isFlagEnabled = lldAnalyticsOptInPromptFlag?.enabled && !hasSeenAnalyticsOptInPrompt;
-    setIsFeatureFlagsAnalyticsPrefDisplayed(isFlagEnabled || false);
-  }, [lldAnalyticsOptInPromptFlag, hasSeenAnalyticsOptInPrompt, dispatch, entryPoint]);
+  const isEntryPointIncludedInFlagParams = lldAnalyticsOptInPromptFlag?.params?.entryPoints
+    .map(s => s.toLowerCase())
+    .includes(entryPoint.toLowerCase());
+
+  const isFlagEnabled = useMemo(
+    () =>
+      isEntryPointIncludedInFlagParams &&
+      lldAnalyticsOptInPromptFlag?.enabled &&
+      (!hasSeenAnalyticsOptInPrompt || entryPoint === EntryPoint.onboarding),
+    [
+      lldAnalyticsOptInPromptFlag,
+      hasSeenAnalyticsOptInPrompt,
+      entryPoint,
+      isEntryPointIncludedInFlagParams,
+    ],
+  );
 
   const onSubmit = useCallback(() => {
     setIsAnalitycsOptInPromptOpened(false);
@@ -55,7 +65,7 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
     openAnalitycsOptInPrompt,
     setIsAnalitycsOptInPromptOpened,
     analyticsOptInPromptProps,
-    isFeatureFlagsAnalyticsPrefDisplayed,
+    isFeatureFlagsAnalyticsPrefDisplayed: isFlagEnabled,
     lldAnalyticsOptInPromptFlag,
     onSubmit,
   };
