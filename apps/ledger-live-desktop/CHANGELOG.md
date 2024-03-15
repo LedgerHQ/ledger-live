@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.78.0-nightly.6
+
+### Patch Changes
+
+- [#6414](https://github.com/LedgerHQ/ledger-live/pull/6414) [`effbd77`](https://github.com/LedgerHQ/ledger-live/commit/effbd77999c5420b0e357465575b1d09a0741e80) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - remove duplicate back-end call from LLD onBroadcastSuccess
+
 ## 2.78.0-nightly.5
 
 ### Patch Changes
