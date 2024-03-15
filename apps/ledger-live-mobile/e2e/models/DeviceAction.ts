@@ -203,7 +203,7 @@ export default class DeviceAction {
         initSwapResult: {
           transaction,
           swapId: "12345",
-          magnitudeAwareRate: 50000,
+          magnitudeAwareRate: new BigNumber(50000),
         },
       },
       {

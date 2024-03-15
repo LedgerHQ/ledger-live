@@ -163,7 +163,7 @@ export type GetExchangeRates = (
 export type InitSwapResult = {
   transaction: Transaction;
   swapId: string;
-  magnitudeAwareRate: number;
+  magnitudeAwareRate: BigNumber;
 };
 
 type ValidSwapStatus = "pending" | "onhold" | "expired" | "finished" | "refunded";

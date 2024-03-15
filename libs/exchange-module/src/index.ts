@@ -109,8 +109,8 @@ export class ExchangeModule extends CustomModule {
     fromAccountId: string;
     toAccountId: string;
     swapId: string;
-    amountExpectedTo: number;
-    magnitudeAwareRate: number;
+    amountExpectedTo: bigint;
+    magnitudeAwareRate: bigint;
     transaction: Transaction;
     binaryPayload: string;
     signature: string;

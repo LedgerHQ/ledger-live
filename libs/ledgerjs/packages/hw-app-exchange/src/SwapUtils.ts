@@ -1,6 +1,6 @@
 import { loadSync } from "protobufjs";
 
-export type SwapProtobufPayload = {
+type SwapProtobufPayload = {
   payinAddress: string;
   payinExtraId?: string;
   refundAddress: string;
@@ -25,8 +25,8 @@ export type SwapPayload = {
   payoutExtraId?: string;
   currencyFrom: string;
   currencyTo: string;
-  amountToProvider: number;
-  amountToWallet: number;
+  amountToProvider: bigint;
+  amountToWallet: bigint;
   message?: string;
   deviceTransactionId?: string;
   deviceTransactionIdNg?: string;
@@ -48,10 +48,10 @@ export async function decodePayloadProtobuf(hexBinaryPayload: string): Promise<S
     deviceTransactionIdNg: deviceTransactionIdNgBuffer,
   } = decodePayload;
   const amountToWalletHexString = amountToWalletBuffer.toString("hex"); // Gets the hexadecimal representation from the Buffer
-  const amountToWallet = parseInt(amountToWalletHexString, 16); // Convert hexadecimal representation to a decimal number
+  const amountToWallet = BigInt("0x" + amountToWalletHexString); // Convert hexadecimal representation to a big integer
 
   const amountToProviderHexString = amountToProviderBuffer.toString("hex"); // Gets the hexadecimal representation from the Buffer
-  const amountToProvider = parseInt(amountToProviderHexString, 16); // Convert hexadecimal representation to a decimal number
+  const amountToProvider = BigInt("0x" + amountToProviderHexString); // Convert hexadecimal representation to a big integer
 
   const deviceTransactionIdNg = deviceTransactionIdNgBuffer?.toString("hex") || undefined;
 

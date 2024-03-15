@@ -22,8 +22,8 @@ describe("decodePayloadProtobuf function", () => {
     expect(decodedPayload).toHaveProperty("currencyTo", "BTC");
     expect(decodedPayload).toHaveProperty("deviceTransactionId", "URUOKQIBOB");
     expect(decodedPayload).toHaveProperty("deviceTransactionIdNg", undefined);
-    expect(decodedPayload).toHaveProperty("amountToProvider", 77000000000000000);
-    expect(decodedPayload).toHaveProperty("amountToWallet", 527925);
+    expect(decodedPayload).toHaveProperty("amountToProvider", BigInt(77000000000000000));
+    expect(decodedPayload).toHaveProperty("amountToWallet", BigInt(527925));
   });
 
   test("should decode NewTransactionResponse correctly with device transaction id ng", async () => {
@@ -50,7 +50,7 @@ describe("decodePayloadProtobuf function", () => {
       "deviceTransactionIdNg",
       "00000000000000010000000000000000",
     );
-    expect(decodedPayload).toHaveProperty("amountToProvider", 2.969925795867238e25);
-    expect(decodedPayload).toHaveProperty("amountToWallet", 2.671088541873143e38);
+    expect(decodedPayload).toHaveProperty("amountToProvider", BigInt(2.969925795867238e25));
+    expect(decodedPayload).toHaveProperty("amountToWallet", BigInt(2.671088541873143e38));
   });
 });
