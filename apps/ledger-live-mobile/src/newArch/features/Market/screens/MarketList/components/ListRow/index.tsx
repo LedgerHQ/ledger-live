@@ -10,14 +10,12 @@ interface ListRowProps {
   index: number;
   counterCurrency?: string;
   range?: string;
-  selectCurrency: (id?: string, data?: CurrencyData, range?: string) => void;
 }
-function ListRow({ item, index, counterCurrency, range, selectCurrency }: ListRowProps) {
+function ListRow({ item, index, counterCurrency }: ListRowProps) {
   const navigation = useNavigation();
   return (
     <TouchableOpacity
       onPress={() => {
-        selectCurrency(item.id, item, range);
         navigation.navigate(ScreenName.MarketDetail, {
           currencyId: item.id,
         });
