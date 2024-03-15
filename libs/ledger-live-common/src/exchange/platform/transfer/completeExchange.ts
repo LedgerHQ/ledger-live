@@ -1,6 +1,6 @@
 import secp256k1 from "secp256k1";
 import { firstValueFrom, from, Observable } from "rxjs";
-import { TransportStatusError, WrongDeviceForAccount } from "@ledgerhq/errors";
+import { TransportStatusError, WrongDeviceForAccountPayout } from "@ledgerhq/errors";
 
 import { delay } from "../../../promise";
 import { createExchange, ExchangeTypes } from "@ledgerhq/hw-app-exchange";
@@ -117,7 +117,7 @@ const completeExchange = (
           );
         } catch (e) {
           if (e instanceof TransportStatusError && e.statusCode === 0x6a83) {
-            throw new WrongDeviceForAccount(undefined, {
+            throw new WrongDeviceForAccountPayout(undefined, {
               accountName: mainAccount.name,
             });
           }
