@@ -7,18 +7,13 @@ import { ScreenName } from "~/const";
 import useNotifications from "~/logic/notifications";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { MarketNavigatorStackParamList } from "LLM/features/Market/Navigator";
-import {
-  removeStarredMarketCoins,
-  addStarredMarketCoins,
-  setMarketRequestParams,
-} from "~/actions/market";
-import { marketRequestParamsSelector, starredMarketCoinsSelector } from "~/reducers/market";
+import { removeStarredMarketCoins, addStarredMarketCoins } from "~/actions/market";
 import { RANGES } from "../../utils";
 import {
   useCurrencyChartData,
   useCurrencyData,
 } from "@ledgerhq/live-common/market/v2/useMarketDataProvider";
-import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
+import { useMarket } from "../../hooks/useMarket";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<MarketNavigatorStackParamList, ScreenName.MarketDetail>
@@ -28,11 +23,12 @@ function useMarketDetailViewModel({ navigation, route }: NavigationProps) {
   const { params } = route;
   const { currencyId, resetSearchOnUmount } = params;
   const dispatch = useDispatch();
-  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
-  const marketParams = useSelector(marketRequestParamsSelector);
-  const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
-  const isStarred = starredMarketCoins.includes(currencyId);
   const { triggerMarketPushNotificationModal } = useNotifications();
+  const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
+
+  const { marketParams, starredMarketCoins, refresh } = useMarket();
+
+  const isStarred = starredMarketCoins.includes(currencyId);
 
   const { counterCurrency = "usd", range = "24h" } = marketParams;
 
@@ -114,17 +110,9 @@ function useMarketDetailViewModel({ navigation, route }: NavigationProps) {
     if (!isStarred) triggerMarketPushNotificationModal();
   }, [dispatch, isStarred, currencyId, triggerMarketPushNotificationModal]);
 
-  const refresh = useCallback(
-    (payload?: MarketListRequestParams) => {
-      dispatch(setMarketRequestParams(payload ?? {}));
-    },
-    [dispatch],
-  );
-
   return {
     loading: isLoadingData,
     loadingChart: isLoadingDataChart,
-    toggleStar,
     defaultAccount,
     isStarred,
     accounts: filteredAccounts,
@@ -132,8 +120,9 @@ function useMarketDetailViewModel({ navigation, route }: NavigationProps) {
     allAccounts,
     currency: dataCurrency,
     dataChart,
-    refresh,
     range,
+    refresh,
+    toggleStar,
   };
 }
 

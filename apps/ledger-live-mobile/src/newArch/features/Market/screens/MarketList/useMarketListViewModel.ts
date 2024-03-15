@@ -1,22 +1,13 @@
 import { useCallback, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { MarketNavigatorStackParamList } from "LLM/features/Market/Navigator";
 import { ScreenName } from "~/const";
 import { useRoute } from "@react-navigation/native";
-import {
-  marketFilterByStarredAccountsSelector,
-  marketRequestParamsSelector,
-  starredMarketCoinsSelector,
-} from "~/reducers/market";
-
-import {
-  useMarketDataProvider,
-  useMarketData as useMarketDataHook,
-} from "@ledgerhq/live-common/market/v2/useMarketDataProvider";
+import { useMarketData as useMarketDataHook } from "@ledgerhq/live-common/market/v2/useMarketDataProvider";
 import { setMarketRequestParams } from "~/actions/market";
-import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useMarket } from "../../hooks/useMarket";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<MarketNavigatorStackParamList, ScreenName.MarketList>
@@ -30,20 +21,16 @@ function useMarketListViewModel() {
 
   const dispatch = useDispatch();
 
-  const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
-  const filterByStarredAccount: boolean = useSelector(marketFilterByStarredAccountsSelector);
-  const marketParams = useSelector(marketRequestParamsSelector);
+  const {
+    marketParams,
+    starredMarketCoins,
+    supportedCurrencies,
+    filterByStarredAccount,
+    liveCoinsList,
+    refresh,
+  } = useMarket();
 
-  const refresh = useCallback(
-    (payload?: MarketListRequestParams) => {
-      dispatch(setMarketRequestParams(payload ?? {}));
-    },
-    [dispatch],
-  );
-
-  const { supportedCurrencies, liveCoinsList } = useMarketDataProvider();
-
-  const { search, range, counterCurrency } = marketParams;
+  const { search, counterCurrency, range } = marketParams;
 
   const marketResult = useMarketDataHook({
     ...marketParams,
