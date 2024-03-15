@@ -53,17 +53,14 @@ export const useVariantB = ({
     );
   };
 
-  const clickOnAcceptAnalytics = () => {
-    dispatch(setShareAnalytics(true));
+  const setupAnalytics = (value: boolean) => {
+    dispatch(setShareAnalytics(value));
     goToPersonalizedRecommandations();
-    trackAnalyticsClick(true);
+    trackAnalyticsClick(value);
   };
 
-  const clickOnRefuseAnalytics = () => {
-    dispatch(setShareAnalytics(false));
-    goToPersonalizedRecommandations();
-    trackAnalyticsClick(false);
-  };
+  const clickOnAcceptAnalytics = () => setupAnalytics(true);
+  const clickOnRefuseAnalytics = () => setupAnalytics(false);
 
   const trackPersonalizedExperienceClick = (value: boolean) => {
     track(
@@ -78,17 +75,14 @@ export const useVariantB = ({
     );
   };
 
-  const clickOnAcceptPersonalizedExperience = () => {
-    dispatch(setSharePersonalizedRecommandations(true));
+  const setupPersonalizedExperience = (value: boolean) => {
+    dispatch(setSharePersonalizedRecommandations(value));
     onSubmit?.();
-    trackPersonalizedExperienceClick(true);
+    trackPersonalizedExperienceClick(value);
   };
 
-  const clickOnRefusePersonalizedExperience = () => {
-    dispatch(setSharePersonalizedRecommandations(false));
-    onSubmit?.();
-    trackPersonalizedExperienceClick(false);
-  };
+  const clickOnAcceptPersonalizedExperience = () => setupPersonalizedExperience(true);
+  const clickOnRefusePersonalizedExperience = () => setupPersonalizedExperience(false);
 
   const clickOptions = {
     acceptAnalytics: clickOnAcceptAnalytics,
