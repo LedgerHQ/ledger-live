@@ -43,15 +43,15 @@ const useVariantA = ({
   const onManagePreferencesClick = () => {
     setIsManagingPreferences(true);
     setPreventBackNavigation(true);
-    clickOnManagePreferences();
+    trackClick("Manage Preferences", shouldWeTrack);
   };
 
   const handleShareAnalyticsChange = (value: boolean) => {
     dispatch(setSharePersonalizedRecommandations(value));
     dispatch(setShareAnalytics(value));
     onSubmit?.();
-    if (value) clickOnAcceptAll();
-    else clickOnRefuseAll();
+    if (value) trackClick("Accept All", true);
+    else trackClick("Refuse All", shouldWeTrack);
   };
 
   const handleShareCustomAnalyticsChange = (value: boolean) => {
@@ -60,7 +60,7 @@ const useVariantA = ({
       dispatch(setShareAnalytics(AnalyticsData));
       dispatch(setSharePersonalizedRecommandations(PersonalizationData));
       onSubmit?.();
-      clickOnMoreOptionsConfirm();
+      trackClick("Share", shouldWeTrack);
     }
   };
 
@@ -75,53 +75,14 @@ const useVariantA = ({
     }
   };
 
-  const clickOnAcceptAll = () => {
+  const trackClick = (button: string, shouldWeTrack: boolean) => {
     track(
       "button_clicked",
       {
-        button: "Accept All",
+        button,
         variant,
         flow,
         page: "Analytics Opt In Prompt Main",
-      },
-      true,
-    );
-  };
-
-  const clickOnRefuseAll = () => {
-    track(
-      "button_clicked",
-      {
-        button: "Refuse All",
-        variant,
-        flow,
-        page: "Analytics Opt In Prompt Main",
-      },
-      shouldWeTrack,
-    );
-  };
-
-  const clickOnManagePreferences = () => {
-    track(
-      "button_clicked",
-      {
-        button: "Manage Preferences",
-        variant,
-        flow,
-        page: "Analytics Opt In Prompt Main",
-      },
-      shouldWeTrack,
-    );
-  };
-
-  const clickOnMoreOptionsConfirm = () => {
-    track(
-      "button_clicked",
-      {
-        button: "Share",
-        variant,
-        flow,
-        page: "Analytics Opt In Prompt Preferences",
       },
       shouldWeTrack,
     );
