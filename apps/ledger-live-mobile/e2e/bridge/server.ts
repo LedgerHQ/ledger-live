@@ -115,11 +115,12 @@ export async function addDevicesBT(
   ],
 ): Promise<string[]> {
   const names = Array.isArray(deviceNames) ? deviceNames : [deviceNames];
-  names.forEach(async (name, i) => {
-    await postMessage({
+  const serviceUUID = "13d63400-2c97-0004-0000-4c6564676572";
+  names.forEach((name, i) => {
+    postMessage({
       type: "add",
       id: uniqueId(),
-      payload: { id: `mock_${i + 1}`, name, serviceUUID: `uuid_${i + 1}` },
+      payload: { id: `mock_${i + 1}`, name, serviceUUID },
     });
   });
   return names;
@@ -162,7 +163,7 @@ function onMessage(messageStr: string) {
     case "walletAPIResponse":
       e2eBridgeServer.next(msg);
       break;
-    case "appLogs":
+    case "appLogs": {
       const [date, time] = new Date().toISOString().split(".")[0].replace(/:/g, "-").split("T");
       const fileName = `${date}_${time}-${msg.fileName}.json`;
       const directoryPath = `artifacts/${date}_ledger_live_mobile`;
@@ -171,6 +172,7 @@ function onMessage(messageStr: string) {
       }
       fs.writeFileSync(`${directoryPath}/${fileName}`, msg.payload, "utf-8");
       break;
+    }
     default:
       break;
   }

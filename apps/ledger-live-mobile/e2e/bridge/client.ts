@@ -20,7 +20,7 @@ const maxRetries = 5; // Maximum number of retry attempts
 const retryDelay = 500; // Initial retry delay in milliseconds
 
 export function init() {
-  let wsPort = LaunchArguments.value()["wsPort"] || "8099";
+  const wsPort = LaunchArguments.value()["wsPort"] || "8099";
 
   if (ws) {
     ws.close();

@@ -4,16 +4,20 @@ import { getElementByText, isAndroid } from "../helpers";
 
 import CustomLockscreenPage from "../models/stax/customLockscreenPage";
 import DiscoverPage from "../models/discover/discoverPage";
+import ManagerPage from "../models/manager/managerPage";
 import PortfolioPage from "../models/wallet/portfolioPage";
 import SendPage from "../models/trade/sendPage";
 import SwapFormPage from "../models/trade/swapFormPage";
 import ReceivePage from "../models/trade/receivePage";
+import OnboardingSteps from "../models/onboarding/onboardingSteps";
 import AccountPage from "../models/accounts/accountPage";
 import Common from "../models/common";
 
 let accountPage: AccountPage;
+let onboardingSteps: OnboardingSteps;
 let customLockscreenPage: CustomLockscreenPage;
 let discoverPage: DiscoverPage;
+let managerPage: ManagerPage;
 let portfolioPage: PortfolioPage;
 let sendPage: SendPage;
 let swapFormPage: SwapFormPage;
@@ -55,8 +59,10 @@ describe("DeepLinks Tests", () => {
     await loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
 
     accountPage = new AccountPage();
+    onboardingSteps = new OnboardingSteps();
     customLockscreenPage = new CustomLockscreenPage();
     discoverPage = new DiscoverPage();
+    managerPage = new ManagerPage();
     portfolioPage = new PortfolioPage();
     sendPage = new SendPage();
     swapFormPage = new SwapFormPage();
@@ -64,6 +70,12 @@ describe("DeepLinks Tests", () => {
     common = new Common();
 
     await portfolioPage.waitForPortfolioPageToLoad();
+  });
+
+  xit("should open My Ledger page and add a device", async () => {
+    await managerPage.openViaDeeplink();
+    await expect(managerPage.managerTitle()).toBeVisible();
+    await onboardingSteps.addDeviceViaBluetooth("David");
   });
 
   it("should open Account page", async () => {
