@@ -147,7 +147,7 @@ export const TopBar = ({
     shouldDisplayName = true,
     shouldDisplayInfo = true,
     shouldDisplayClose = !!onClose,
-    shouldDisplayNavigation = false,
+    shouldDisplayNavigation = !!manifest.dapp,
     shouldDisplaySelectAccount = !!manifest.dapp,
   } = config;
 
