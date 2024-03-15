@@ -32,12 +32,13 @@ interface ViewProps {
   refresh: (param?: MarketCurrencyChartDataRequestParams) => void;
   defaultAccount?: AccountLike;
   toggleStar: () => void;
-  currency?: CurrencyData;
   isStarred: boolean;
   accounts: AccountLike[];
   counterCurrency?: string;
-  chartRequestParams: MarketCurrencyChartDataRequestParams;
   allAccounts: AccountLike[];
+  range: string;
+  dataChart?: Record<string, [number, number][]>;
+  currency?: CurrencyData;
 }
 
 function View({
@@ -47,14 +48,14 @@ function View({
   defaultAccount,
   toggleStar,
   currency,
+  dataChart,
   isStarred,
   accounts,
   counterCurrency,
-  chartRequestParams,
   allAccounts,
+  range,
 }: ViewProps) {
-  const { range } = chartRequestParams;
-  const { name, image, price, priceChangePercentage, internalCurrency, chartData } = currency || {};
+  const { name, image, price, priceChangePercentage, internalCurrency } = currency || {};
   const { handlePullToRefresh, refreshControlVisible } = usePullToRefresh({ loading, refresh });
   const [hoveredItem, setHoverItem] = useState<Item | null | undefined>(null);
   const { t } = useTranslation();
@@ -149,16 +150,13 @@ function View({
           />
         }
       >
-        {chartData ? (
-          <MarketGraph
-            setHoverItem={setHoverItem}
-            chartRequestParams={chartRequestParams}
-            loading={loading}
-            loadingChart={loadingChart}
-            refreshChart={refresh}
-            chartData={chartData}
-          />
-        ) : null}
+        <MarketGraph
+          setHoverItem={setHoverItem}
+          isLoading={loading || loadingChart}
+          refreshChart={refresh}
+          chartData={dataChart}
+          range={range}
+        />
 
         {accounts?.length > 0 ? (
           <Flex mx={6} mt={8}>
