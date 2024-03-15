@@ -35,9 +35,7 @@ interface ViewProps {
   refresh: (param?: MarketListRequestParams) => void;
   counterCurrency?: string;
   range?: string;
-  selectCurrency: (id?: string, data?: CurrencyData, range?: string) => void;
-  isLoading: boolean;
-  onEndReached: () => Promise<void> | undefined;
+  onEndReached?: () => void;
 }
 function View({
   marketData,
@@ -48,8 +46,6 @@ function View({
   refresh,
   counterCurrency,
   range,
-  selectCurrency,
-  isLoading,
   onEndReached,
 }: ViewProps) {
   const { colors } = useTheme();
@@ -86,20 +82,14 @@ function View({
     },
     data: marketData,
     renderItem: ({ item, index }: { item: CurrencyData; index: number }) => (
-      <ListRow
-        item={item}
-        index={index}
-        counterCurrency={counterCurrency}
-        range={range}
-        selectCurrency={selectCurrency}
-      />
+      <ListRow item={item} index={index} counterCurrency={counterCurrency} range={range} />
     ),
     onEndReached,
     onEndReachedThreshold: 0.5,
     scrollEventThrottle: 50,
     initialNumToRender: 50,
     keyExtractor,
-    ListFooterComponent: <ListFooter isLoading={isLoading} />,
+    ListFooterComponent: <ListFooter isLoading={loading} />,
     ListEmptyComponent: (
       <ListEmpty
         hasNoSearchResult={Boolean(marketData?.length === 0 && search && !loading)}

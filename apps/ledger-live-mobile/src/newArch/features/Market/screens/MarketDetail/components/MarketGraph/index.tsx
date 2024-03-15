@@ -1,12 +1,12 @@
 import React, { useMemo, useCallback, memo } from "react";
 import { useTheme } from "styled-components/native";
 import { Flex, GraphTabs, InfiniteLoader, Transitions } from "@ledgerhq/native-ui";
-import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
 import { useTranslation } from "react-i18next";
 import { SingleCoinProviderData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import Graph from "~/components/Graph";
 import getWindowDimensions from "~/logic/getWindowDimensions";
 import { Item } from "~/components/Graph/types";
+import { RANGES } from "~/newArch/features/Market/utils";
 
 const { width } = getWindowDimensions();
 
@@ -28,9 +28,7 @@ function MarketGraph({
   const { t } = useTranslation();
   const { colors } = useTheme();
 
-  const ranges = Object.keys(rangeDataTable)
-    .filter(key => key !== "1h")
-    .map(r => ({ label: t(`market.range.${r}`), value: r }));
+  const ranges = RANGES.map(r => ({ label: t(`market.range.${r}`), value: r }));
 
   const rangesLabels = ranges.map(({ label }) => label);
 

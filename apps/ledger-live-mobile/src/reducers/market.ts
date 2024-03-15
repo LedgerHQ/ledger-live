@@ -31,7 +31,7 @@ const INITIAL_STATE: MarketState = {
 const handlers: ReducerMap<MarketState, MarketStatePayload> = {
   [MarketStateActionTypes.SET_MARKET_REQUEST_PARAMS]: (state, action) => ({
     ...state,
-    marketRequestParams: {
+    marketParams: {
       ...state.marketParams,
       ...(action as Action<MarketSetMarketRequestParamsPayload>).payload,
     },

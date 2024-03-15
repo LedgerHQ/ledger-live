@@ -1,10 +1,9 @@
-import { useCallback, useState, useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { MarketNavigatorStackParamList } from "LLM/features/Market/Navigator";
 import { ScreenName } from "~/const";
 import { useRoute } from "@react-navigation/native";
-import { useMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import {
   marketFilterByStarredAccountsSelector,
   marketRequestParamsSelector,
@@ -26,13 +25,14 @@ type NavigationProps = BaseComposite<
 function useMarketListViewModel() {
   const llmRefreshMarketDataFeature = useFeature("llmRefreshMarketData");
   const { params } = useRoute<NavigationProps["route"]>();
-  const [isLoading, setIsLoading] = useState(true);
-  const dispatch = useDispatch();
+
   const initialTop100 = params?.top100;
+
+  const dispatch = useDispatch();
+
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
   const filterByStarredAccount: boolean = useSelector(marketFilterByStarredAccountsSelector);
   const marketParams = useSelector(marketRequestParamsSelector);
-  const { counterCurrency, loading, selectCurrency } = useMarketData();
 
   const refresh = useCallback(
     (payload?: MarketListRequestParams) => {
@@ -43,7 +43,7 @@ function useMarketListViewModel() {
 
   const { supportedCurrencies, liveCoinsList } = useMarketDataProvider();
 
-  const { limit, search, range, top100, page } = marketParams;
+  const { search, range, counterCurrency } = marketParams;
 
   const marketResult = useMarketDataHook({
     ...marketParams,
@@ -80,33 +80,19 @@ function useMarketListViewModel() {
     }
   }, [refresh, starredMarketCoins, filterByStarredAccount]);
 
-  const onLoadNextPage = useCallback(() => {
+  const onEndReached = useCallback(() => {
     dispatch(setMarketRequestParams({ page: (marketParams?.page || 1) + 1 }));
   }, [dispatch, marketParams?.page]);
-
-  const onEndReached = useCallback(() => {
-    if (
-      (!limit || isNaN(limit) || !marketResult.data || page) ??
-      (0 * limit > marketResult.data.length || loading || top100)
-    ) {
-      setIsLoading(false);
-      return Promise.resolve();
-    }
-    setIsLoading(true);
-    onLoadNextPage();
-  }, [limit, marketResult.data, page, loading, top100, onLoadNextPage]);
 
   return {
     marketData: marketDataFiltered,
     filterByStarredAccount,
     starredMarketCoins,
     search,
-    loading,
+    loading: marketResult.loading,
     refresh,
     counterCurrency,
     range,
-    selectCurrency,
-    isLoading,
     onEndReached,
   };
 }

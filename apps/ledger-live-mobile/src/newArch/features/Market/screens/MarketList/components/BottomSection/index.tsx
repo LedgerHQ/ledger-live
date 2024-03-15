@@ -8,7 +8,6 @@ import {
 } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
-import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
 import { TouchableOpacity } from "react-native";
 import SortBadge from "../SortBadge";
 import { StyledBadge } from "../SortBadge/SortBadge.styled";
@@ -16,6 +15,7 @@ import { ScreenName } from "~/const";
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
 import TrackScreen from "~/analytics/TrackScreen";
 import useBottomSectionViewModel from "./useBottomSectionViewModel";
+import { RANGES } from "~/newArch/features/Market/utils";
 
 const SORT_OPTIONS = {
   top100: {
@@ -58,12 +58,10 @@ const getIcon = (top100?: boolean, order?: string) =>
     ? IconsLegacy.ArrowTopMedium
     : IconsLegacy.ArrowBottomMedium;
 
-const TIME_RANGES = Object.keys(rangeDataTable)
-  .filter(key => key !== "1h")
-  .map(value => ({
-    requestParam: { range: value },
-    value,
-  }));
+const TIME_RANGES = RANGES.map(value => ({
+  requestParam: { range: value },
+  value,
+}));
 
 interface ViewProps {
   top100?: boolean;
