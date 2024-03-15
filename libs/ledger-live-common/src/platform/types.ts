@@ -83,7 +83,10 @@ export type LiveAppManifestParamsNetwork = {
   nodeURL?: string;
 };
 
+export type DappProviders = "evm";
+
 export type LiveAppManifestDapp = {
+  provider: DappProviders;
   networks: Array<LiveAppManifestParamsNetwork>;
   nanoApp: string;
 };
