@@ -7,7 +7,7 @@ declare global {
       postMessage(message: JsonRpcRequestMessage, targetOrigin?: string): void;
     };
     ReactNativeWebView?: {
-      postMessage(message: string, targetOrigin?: string): void;
+      postMessage(message: string): void;
     };
   }
 }
@@ -22,6 +22,7 @@ const JSON_RPC_VERSION = "2.0";
 // The interface for the source of the events, typically the window.
 export interface MinimalEventSourceInterface {
   addEventListener(eventType: "message", handler: (message: MessageEvent) => void): void;
+  document?: MinimalEventSourceInterface;
 }
 
 // The interface for the target of our events, typically the injected api.
@@ -218,8 +219,8 @@ export class LedgerLiveEthereumProvider extends EventEmitter implements EIP1193P
       this.eventTarget = eventTarget;
     } else if (window.ReactNativeWebView) {
       this.eventTarget = {
-        postMessage(message, targetOrigin) {
-          return window.ReactNativeWebView?.postMessage(JSON.stringify(message), targetOrigin);
+        postMessage(message, _targetOrigin) {
+          return window.ReactNativeWebView?.postMessage(JSON.stringify(message));
         },
       };
     } else {
@@ -228,6 +229,7 @@ export class LedgerLiveEthereumProvider extends EventEmitter implements EIP1193P
 
     // Listen for messages from the event source.
     this.eventSource.addEventListener("message", this.handleEventSourceMessage);
+    this.eventSource.document?.addEventListener("message", this.handleEventSourceMessage);
   }
 
   public isConnected = () => {
