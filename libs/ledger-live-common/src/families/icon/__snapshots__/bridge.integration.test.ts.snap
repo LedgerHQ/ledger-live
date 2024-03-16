@@ -7,11 +7,11 @@ Array [
     "currencyId": "icon",
     "derivationMode": "icon",
     "freshAddress": "hxe7d9b90e866f6e724028242018cbd2b2a021867e",
-    "freshAddressPath": "44'/4801368'/0'/0'/0'",
+    "freshAddressPath": "44'/74'/0'/0'/0'",
     "freshAddresses": Array [
       Object {
         "address": "hxe7d9b90e866f6e724028242018cbd2b2a021867e",
-        "derivationPath": "44'/4801368'/0'/0'/0'",
+        "derivationPath": "44'/74'/0'/0'/0'",
       },
     ],
     "iconResources": Object {
@@ -36,11 +36,11 @@ Array [
     "currencyId": "icon",
     "derivationMode": "icon",
     "freshAddress": "hx05b8cf722a3b77513acf32f0e553ce815bb1fa66",
-    "freshAddressPath": "44'/4801368'/0'/0'/1'",
+    "freshAddressPath": "44'/74'/0'/0'/1'",
     "freshAddresses": Array [
       Object {
         "address": "hx05b8cf722a3b77513acf32f0e553ce815bb1fa66",
-        "derivationPath": "44'/4801368'/0'/0'/1'",
+        "derivationPath": "44'/74'/0'/0'/1'",
       },
     ],
     "iconResources": Object {
@@ -65,11 +65,11 @@ Array [
     "currencyId": "icon",
     "derivationMode": "icon",
     "freshAddress": "hx171e314313ab9b7428b5377b4cb607e8438f552c",
-    "freshAddressPath": "44'/4801368'/0'/0'/2'",
+    "freshAddressPath": "44'/74'/0'/0'/2'",
     "freshAddresses": Array [
       Object {
         "address": "hx171e314313ab9b7428b5377b4cb607e8438f552c",
-        "derivationPath": "44'/4801368'/0'/0'/2'",
+        "derivationPath": "44'/74'/0'/0'/2'",
       },
     ],
     "iconResources": Object {

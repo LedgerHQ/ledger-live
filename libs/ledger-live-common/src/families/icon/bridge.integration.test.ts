@@ -36,7 +36,7 @@ const icon: CurrenciesData<Transaction> = {
         derivationMode: "",
         index: 0,
         freshAddress: `${TEST_ADDRESS}`,
-        freshAddressPath: "44'/4801368'/0'/0'/0'",
+        freshAddressPath: "44'/74'/0'/0'/0'",
         freshAddresses: [],
         blockHeight: 0,
         operations: [],
