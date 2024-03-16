@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.41.0-nightly.5
+
+### Patch Changes
+
+- [#6449](https://github.com/LedgerHQ/ledger-live/pull/6449) [`e6c1a71`](https://github.com/LedgerHQ/ledger-live/commit/e6c1a71018741b881ef7d6c16bb2c13eb454ef56) Thanks [@cng-ledger](https://github.com/cng-ledger)! - fix(LIVE-11725): insufficient balance copy update
+
 ## 3.41.0-nightly.4
 
 ### Patch Changes
