@@ -28,12 +28,12 @@ const checkSendableToEmptyAccount = (amount, recipient) => {
     invariant(amount.gt(minBalanceNewAccount), "not enough funds to send to new account");
   }
 };
-const iconSpec: AppSpec<Transaction> = {
+const icon: AppSpec<Transaction> = {
   name: "Icon",
   currency: getCryptoCurrencyById("icon"),
   appQuery: {
-    model: DeviceModelId.nanoSP,
-    appName: "ICON",
+    model: DeviceModelId.nanoS,
+    appName: "Icon",
   },
   genericDeviceAction: acceptTransaction,
   testTimeout: 2 * 60 * 1000,
@@ -114,5 +114,5 @@ const iconSpec: AppSpec<Transaction> = {
 };
 
 export default {
-  iconSpec,
+  icon,
 };
