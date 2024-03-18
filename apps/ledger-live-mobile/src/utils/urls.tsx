@@ -147,6 +147,7 @@ export const urls = {
       "https://developers.ledger.com?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=catalog",
   },
   chooseNetwork: "https://support.ledger.com/hc/en-us/articles/7782669175581?support=true",
+  withdrawCrypto: "https://support.ledger.com/hc/en-us/articles/13108505155485?docs=true",
   approvedOperation:
     "https://support.ledger.com/hc/en-us/articles/360020849134-Track-your-transaction?docs=true&utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=compoundTX",
   recoveryPhraseInfo:
