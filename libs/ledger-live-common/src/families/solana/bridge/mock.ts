@@ -1,7 +1,8 @@
-import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
+import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import { Message } from "@solana/web3.js";
 import { flow, isArray, isEqual, isObject, isUndefined, mapValues, omitBy } from "lodash/fp";
 import { ChainAPI, Config, cached, getChainAPI, logged, queued } from "../api";
+import { minutes } from "../api/cached";
 import { Functions } from "../utils";
 import { makeBridges } from "./bridge";
 import { getMockedMethods } from "./mock-data";

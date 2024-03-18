@@ -253,6 +253,8 @@
     "src/platform/tracking.ts",
     "src/platform/types.ts",
     "src/platform/utils/appendQueryParamsToDappURL.ts",
+    "src/portfolio/v2/index.ts",
+    "src/portfolio/v2/react.ts",
     "src/postOnboarding/actions.ts",
     "src/postOnboarding/hooks/index.ts",
     "src/postOnboarding/hooks/usePostOnboardingEntryPointVisibleOnWallet.ts",
@@ -294,7 +296,6 @@
     "src/deviceSDK/**",
     "src/config/sharedConfig.ts",
     "src/consoleWarnExpectToEqual.native.ts",
-    "src/exchange/swap/const/blockchain.ts",
     "src/consoleWarnExpectToEqual.ts",
     "src/deposit/mock.ts",
     "src/families/bitcoin/mockBtc.ts",
@@ -311,8 +312,7 @@
     "src/jest.d.ts",
     "src/postOnboarding/mock.ts",
     "src/reactNativeSvg.d.ts",
-    "src/currencies/mock.ts",
-    "src/families/tezos/fixtures/*"
+    "src/currencies/mock.ts"
   ],
   "ignoreUnused": [
     "@types/bchaddrjs",

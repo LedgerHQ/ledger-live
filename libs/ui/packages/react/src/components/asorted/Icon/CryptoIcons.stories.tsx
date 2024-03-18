@@ -76,9 +76,11 @@ const Story = {
     name: {
       type: "enum",
       description: "[Only for single icon], Icon name",
-      options: Object.keys(cryptoIcons),
       control: {
-        type: "select",
+        options: Object.keys(cryptoIcons),
+        control: {
+          type: "select",
+        },
       },
     },
     circleIcon: {

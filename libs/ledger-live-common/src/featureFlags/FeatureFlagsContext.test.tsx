@@ -1,7 +1,4 @@
-/**
- * @jest-environment jsdom
- */
-import { renderHook } from "@testing-library/react";
+import { renderHook } from "@testing-library/react-hooks";
 import { makeMockedContextValue, makeMockedFeatureFlagsProviderWrapper } from "./mock";
 import { useFeatureFlags } from "./FeatureFlagsContext";
 

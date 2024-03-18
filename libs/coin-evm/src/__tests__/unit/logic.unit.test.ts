@@ -559,11 +559,6 @@ describe("EVM Family", () => {
 
         expect(hashes).toEqual(Array.from(uniqueSet));
       });
-
-      it("should provide a new hash if a token is added to the blacklistedTokenIds", () => {
-        const token = getTokenById("ethereum/erc20/usd__coin");
-        expect(getSyncHash(currency)).not.toEqual(getSyncHash(currency, [token.id]));
-      });
     });
 
     describe("attachOperations", () => {
@@ -696,93 +691,6 @@ describe("EVM Family", () => {
           // @ts-expect-error purposely ignore readonly ts issue for this
           attachOperations(coinOperations, tokenOperations, nftOperations, internalOperations),
         ).not.toThrow(); // mutation prevented by deepFreeze method
-      });
-
-      it("should filter blacklisted tokens", () => {
-        const token = getTokenById("ethereum/erc20/usd__coin");
-        const coinOperation = makeOperation({
-          hash: "0xCoinOp3Hash",
-        });
-        const tokenAccountId =
-          coinOperation.accountId + "+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin";
-        const tokenOperations = [
-          makeOperation({
-            accountId: tokenAccountId,
-            hash: coinOperation.hash,
-            contract: "0xTokenContract",
-            value: new BigNumber(1),
-            type: "OUT",
-          }),
-          makeOperation({
-            accountId: tokenAccountId,
-            hash: coinOperation.hash,
-            contract: "0xTokenContract",
-            value: new BigNumber(2),
-            type: "IN",
-          }),
-          makeOperation({
-            accountId: tokenAccountId,
-            hash: "0xUnknownHash",
-            contract: "0xOtherTokenContract",
-            value: new BigNumber(2),
-            type: "IN",
-          }),
-        ];
-        const nftOperations = [
-          makeNftOperation({
-            hash: coinOperation.hash,
-            contract: "0xTokenContract",
-            value: new BigNumber(1),
-            type: "NFT_OUT",
-          }),
-          makeNftOperation({
-            hash: coinOperation.hash,
-            contract: "0xTokenContract",
-            value: new BigNumber(2),
-            type: "NFT_IN",
-          }),
-          makeNftOperation({
-            hash: "0xUnknownNftHash",
-            contract: "0xOtherNftTokenContract",
-            value: new BigNumber(2),
-            type: "NFT_IN",
-          }),
-        ];
-        const internalOperations = [
-          makeOperation({
-            accountId: coinOperation.accountId,
-            value: new BigNumber(5),
-            type: "OUT",
-            hash: coinOperation.hash,
-          }),
-        ];
-
-        expect(
-          attachOperations([coinOperation], tokenOperations, nftOperations, internalOperations, {
-            blacklistedTokenIds: [token.id],
-          }),
-        ).toEqual([
-          {
-            ...coinOperation,
-            subOperations: [],
-            nftOperations: [nftOperations[0], nftOperations[1]],
-            internalOperations: [internalOperations[0]],
-          },
-          {
-            ...nftOperations[2],
-            id: `js:2:ethereum:0xkvn:-${nftOperations[2].hash}-NONE`,
-            type: "NONE",
-            value: new BigNumber(0),
-            fee: new BigNumber(0),
-            senders: [],
-            recipients: [],
-            nftOperations: [nftOperations[2]],
-            subOperations: [],
-            internalOperations: [],
-            accountId: "",
-            contract: undefined,
-          },
-        ]);
       });
     });
 

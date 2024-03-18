@@ -1,5 +1,6 @@
 import { GetAccountShape } from "../../../../bridge/jsHelpers";
 import { decodeAccountId, encodeAccountId } from "../../../../account";
+import { log } from "@ledgerhq/logs";
 import { fetchBalances, fetchBlockHeight, fetchTxns } from "./api";
 import flatMap from "lodash/flatMap";
 import { Account } from "@ledgerhq/types-live";
@@ -9,8 +10,6 @@ import { ICP_FEES } from "../../consts";
 import { encodeOperationId } from "../../../../operation";
 import { normalizeEpochTimestamp } from "../../utils";
 import { InternetComputerOperation } from "../../types";
-import invariant from "invariant";
-import { deriveAddressFromPubkey } from "./icpRosetta";
 
 const mapTxToOps = (accountId: string, address: string, fee = ICP_FEES) => {
   return (
@@ -88,13 +87,8 @@ const mapTxToOps = (accountId: string, address: string, fee = ICP_FEES) => {
 };
 
 export const getAccountShape: GetAccountShape = async info => {
-  const { currency, derivationMode, rest = {}, initialAccount } = info;
+  const { address, currency, derivationMode, rest = {}, initialAccount } = info;
   const publicKey = reconciliatePublicKey(rest.publicKey, initialAccount);
-  invariant(publicKey, "publicKey is required");
-
-  // deriving address from public key
-  const address = await deriveAddressFromPubkey(publicKey);
-  invariant(address, "address is required");
 
   const accountId = encodeAccountId({
     type: "js",
@@ -104,7 +98,7 @@ export const getAccountShape: GetAccountShape = async info => {
     derivationMode,
   });
 
-  // log("debug", `Generation account shape for ${address}`);
+  log("debug", `Generation account shape for ${address}`);
 
   const blockHeight = await fetchBlockHeight();
   const balanceResp = await fetchBalances(address);

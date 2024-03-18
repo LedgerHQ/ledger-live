@@ -12,6 +12,7 @@ const useSettings = () => {
   return {
     language,
     locale,
+
     theme,
   };
 };

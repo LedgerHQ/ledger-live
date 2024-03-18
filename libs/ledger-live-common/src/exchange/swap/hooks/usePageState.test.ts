@@ -1,7 +1,4 @@
-/**
- * @jest-environment jsdom
- */
-import { renderHook } from "@testing-library/react";
+import { renderHook } from "@testing-library/react-hooks";
 import { usePageState } from "./usePageState";
 import { SwapTransactionType } from "../types";
 

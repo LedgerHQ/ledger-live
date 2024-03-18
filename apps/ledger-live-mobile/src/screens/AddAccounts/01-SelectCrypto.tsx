@@ -72,7 +72,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const optimism = useFeature("currencyOptimism");
   const optimismGoerli = useFeature("currencyOptimismGoerli");
   const arbitrum = useFeature("currencyArbitrum");
-  const arbitrumSepolia = useFeature("currencyArbitrumSepolia");
+  const arbitrumGoerli = useFeature("currencyArbitrumGoerli");
   const rsk = useFeature("currencyRsk");
   const bittorrent = useFeature("currencyBittorrent");
   const kavaEvm = useFeature("currencyKavaEvm");
@@ -90,7 +90,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const polygonZkEvm = useFeature("currencyPolygonZkEvm");
   const polygonZkEvmTestnet = useFeature("currencyPolygonZkEvmTestnet");
   const base = useFeature("currencyBase");
-  const baseSepolia = useFeature("currencyBaseSepolia");
+  const baseGoerli = useFeature("currencyBaseGoerli");
   const klaytn = useFeature("currencyKlaytn");
   const injective = useFeature("currencyInjective");
   const vechain = useFeature("currencyVechain");
@@ -117,7 +117,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       optimism,
       optimism_goerli: optimismGoerli,
       arbitrum,
-      arbitrum_sepolia: arbitrumSepolia,
+      arbitrum_goerli: arbitrumGoerli,
       rsk,
       bittorrent,
       kava_evm: kavaEvm,
@@ -135,7 +135,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       polygon_zk_evm: polygonZkEvm,
       polygon_zk_evm_testnet: polygonZkEvmTestnet,
       base,
-      base_sepolia: baseSepolia,
+      base_goerli: baseGoerli,
       klaytn,
       injective,
       vechain,
@@ -161,7 +161,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       optimism,
       optimismGoerli,
       arbitrum,
-      arbitrumSepolia,
+      arbitrumGoerli,
       rsk,
       bittorrent,
       kavaEvm,
@@ -179,7 +179,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       polygonZkEvm,
       polygonZkEvmTestnet,
       base,
-      baseSepolia,
+      baseGoerli,
       klaytn,
       injective,
       vechain,

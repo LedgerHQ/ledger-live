@@ -3,7 +3,7 @@
  */
 
 import { afterAll, beforeAll, beforeEach, describe, expect, jest, test } from "@jest/globals";
-import { renderHook } from "@testing-library/react";
+import { renderHook } from "@testing-library/react-hooks";
 import React from "react";
 import * as redux from "react-redux";
 import { Provider } from "react-redux";

@@ -1,9 +1,5 @@
-/**
- * @jest-environment jsdom
- */
-import "../../__tests__/test-helpers/dom-polyfill";
 import invariant from "invariant";
-import { renderHook, act } from "@testing-library/react";
+import { renderHook, act } from "@testing-library/react-hooks";
 import { getAccountUnit } from "../../account";
 import { getAccountBridge, getCurrencyBridge } from "../../bridge";
 import { getCryptoCurrencyById } from "../../currencies";

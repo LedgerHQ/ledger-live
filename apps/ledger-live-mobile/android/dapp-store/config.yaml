@@ -23,7 +23,7 @@ release:
   catalog:
     en-US:
       name: "Ledger Live: Crypto & NFT App"
-      short_description: Ledger Live Mobile 3.41.0
+      short_description: Ledger Live Mobile 3.39.0
       long_description: >-
         From the company that produced the world's most secure crypto hardware
         device comes the world's most accessible and complete Web3 wallet:
@@ -115,17 +115,14 @@ release:
         **Rewards are not guaranteed. Ledger provides no advice or
         recommendations on use of staking services.
       new_in_version: >-
-        Feature
-        Gone are the days of unwanted NFTs in your gallery. Spam NFTs will now be filtered and removed automatically.  
-
-        Note: Transactions related to scam NFTs won't be removed from your transaction history.
-
         Fixes
-        Adding a NEAR (NEAR) account would result in an error. We’ve fixed this.
+        You can now clear nominations for your bonded DOT.
 
-        When sending Casper (CSPR), some addresses were rejected. This has been resolved. 
+        A bug that caused the app to crash when accessing TRC20 accounts has been resolved.
 
-        Hiding tokens wouldn't remove their value from the portfolio balance. We've fixed this.
+        We've fixed the bug that prevented the hiding of token accounts.
+
+        Adding a Solana (SOL) account or sending a transaction would sometimes result in an error. We've patched this up.
       saga_features: ""
   media:
     - purpose: screenshot

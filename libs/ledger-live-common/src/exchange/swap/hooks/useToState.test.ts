@@ -1,8 +1,4 @@
-/**
- * @jest-environment jsdom
- */
-import "../../../__tests__/test-helpers/dom-polyfill";
-import { renderHook, act } from "@testing-library/react";
+import { renderHook, act } from "@testing-library/react-hooks";
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
 import { selectorStateDefaultValues, useToState } from ".";
 import { genTokenAccount } from "@ledgerhq/coin-framework/mocks/account";

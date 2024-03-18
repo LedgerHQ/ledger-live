@@ -75,7 +75,7 @@ export const useFromAmountStatusMessage = (
         fees: formatCurrencyUnit(getFeesUnit(currency), estimatedFees),
         ticker: currency.ticker,
         cryptoName: currency.name,
-        links: [`ledgerlive://buy?${query.toString()}`],
+        links: [`/platform/multibuy?${query.toString()}`],
       });
     }
 
@@ -88,18 +88,6 @@ export const useFromAmountStatusMessage = (
   }, [statusEntries, currency, estimatedFees, transaction?.amount, account?.id, parentAccount?.id]);
 };
 
-type UseSwapTransactionProps = {
-  accounts?: Account[];
-  setExchangeRate?: SetExchangeRateCallback;
-  defaultCurrency?: SwapSelectorStateType["currency"];
-  defaultAccount?: SwapSelectorStateType["account"];
-  defaultParentAccount?: SwapSelectorStateType["parentAccount"];
-  onNoRates?: OnNoRatesCallback;
-  excludeFixedRates?: boolean;
-  refreshRate?: number;
-  allowRefresh?: boolean;
-};
-
 export const useSwapTransaction = ({
   accounts,
   setExchangeRate,
@@ -108,9 +96,17 @@ export const useSwapTransaction = ({
   defaultParentAccount = selectorStateDefaultValues.parentAccount,
   onNoRates,
   excludeFixedRates,
-  refreshRate,
-  allowRefresh,
-}: UseSwapTransactionProps = {}): SwapTransactionType => {
+}: {
+  accounts?: Account[];
+  setExchangeRate?: SetExchangeRateCallback;
+  defaultCurrency?: SwapSelectorStateType["currency"];
+  defaultAccount?: SwapSelectorStateType["account"];
+  defaultParentAccount?: SwapSelectorStateType["parentAccount"];
+  onNoRates?: OnNoRatesCallback;
+  excludeFixedRates?: boolean;
+  timeout?: number;
+  timeoutErrorMessage?: string;
+} = {}): SwapTransactionType => {
   const bridgeTransaction = useBridgeTransaction(() => ({
     account: defaultAccount,
     parentAccount: defaultParentAccount,
@@ -158,13 +154,11 @@ export const useSwapTransaction = ({
     bridge: bridgeTransaction,
   });
 
-  const { rates, refetchRates, updateSelectedRate, countdown } = useProviderRates({
+  const { rates, refetchRates, updateSelectedRate } = useProviderRates({
     fromState,
     toState,
     onNoRates,
     setExchangeRate,
-    countdown: refreshRate,
-    allowRefresh,
   });
 
   return {
@@ -182,7 +176,6 @@ export const useSwapTransaction = ({
               value: rates.value.filter(v => v.tradeMethod !== "fixed"),
             }
           : rates,
-      countdown,
       refetchRates,
       updateSelectedRate,
       targetAccounts,

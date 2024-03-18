@@ -59,6 +59,7 @@ yarn upgrade-interactive -i --latest
 | TBD DEPRECATE?                              |
 | algosdk                                     | Algorand coin integration                                         | monthly                                                              |
 | @zondax/ledger-filecoin                     | Filecoin coin integration                                         | monthly                                                              |
+| @zondax/izari-filecoin                      | Filecoin coin integration                                         | monthly                                                              |
 | @zondax/ledger-stacks                       | Stacks coin integration                                           | monthly                                                              |
 | async                                       | ???                                                               | UNCLEAR IF USED                                                      |
 | axios                                       | network                                                           | monthly                                                              |
@@ -88,7 +89,6 @@ yarn upgrade-interactive -i --latest
 | generic-pool                                | Bitcoin coin integration                                          | monthly                                                              |
 | invariant                                   | generic helper                                                    | monthly                                                              |
 | isomorphic-ws                               | WebSocket helper                                                  | monthly                                                              |
-| iso-filecoin                                | Filecoin coin integration                                         | monthly                                                              |
 | json-rpc-2.0                                | Ethereum coin integration                                         | monthly                                                              |
 | lodash                                      | generic helper                                                    | monthly                                                              |
 | long                                        | Osmosis coin integration                                          | monthly                                                              |

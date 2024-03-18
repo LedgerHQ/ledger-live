@@ -1,10 +1,6 @@
-/**
- * @jest-environment jsdom
- */
-import "../../../__tests__/test-helpers/dom-polyfill";
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
 import { Account } from "@ledgerhq/types-live";
-import { renderHook, act } from "@testing-library/react";
+import { renderHook, act } from "@testing-library/react-hooks";
 import BigNumber from "bignumber.js";
 import { selectorStateDefaultValues } from ".";
 import useBridgeTransaction from "../../../bridge/useBridgeTransaction";

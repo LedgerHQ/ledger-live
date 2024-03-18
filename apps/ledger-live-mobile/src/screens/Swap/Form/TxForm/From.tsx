@@ -130,7 +130,6 @@ export function From({ swapTx, provider, swapError, swapWarning, isSendMaxLoadin
             <WarningSolidMedium size={20} color={swapError ? "error.c50" : "orange"} />
             <Text
               marginY={4}
-              marginRight={8}
               color={swapError ? "error.c50" : "orange"}
               textAlign="left"
               fontWeight="medium"

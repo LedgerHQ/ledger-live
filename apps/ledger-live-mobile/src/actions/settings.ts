@@ -69,7 +69,6 @@ import {
   SettingsSetClosedWithdrawBannerPayload,
   SettingsSetUserNps,
   SettingsSetSupportedCounterValues,
-  SettingsSetHasSeenAnalyticsOptInPrompt,
 } from "./types";
 import { ImageType } from "~/components/CustomImage/types";
 
@@ -288,10 +287,6 @@ export const setUserNps = createAction<SettingsSetUserNps>(SettingsActionTypes.S
 
 export const setSupportedCounterValues = createAction<SettingsSetSupportedCounterValues>(
   SettingsActionTypes.SET_SUPPORTED_COUNTER_VALUES,
-);
-
-export const setHasSeenAnalyticsOptInPrompt = createAction<SettingsSetHasSeenAnalyticsOptInPrompt>(
-  SettingsActionTypes.SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT,
 );
 
 type PortfolioRangeOption = {

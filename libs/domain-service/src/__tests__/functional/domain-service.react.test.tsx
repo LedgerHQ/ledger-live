@@ -1,6 +1,6 @@
 import React from "react";
 import "@testing-library/jest-dom";
-import { renderHook } from "@testing-library/react";
+import { renderHook } from "@testing-library/react-hooks";
 import { render, screen, waitFor } from "@testing-library/react";
 import { DomainEmpty, InvalidDomain, NoResolution } from "../../errors";
 import { resolveAddress, resolveDomain } from "../../resolvers";
@@ -65,6 +65,7 @@ describe("useDomain", () => {
   it("should return an error when no resolution is found", async () => {
     const { result } = renderHook(useDomain, {
       initialProps: "",
+      // @ts-expect-error weird ts error
       wrapper,
     });
 
@@ -74,25 +75,27 @@ describe("useDomain", () => {
   });
 
   it("should return an error when no resolution is found", async () => {
-    const { result } = renderHook(useDomain, {
+    const { result, waitForValueToChange } = renderHook(useDomain, {
       initialProps: "404-Not-Found.eth",
+      // @ts-expect-error weird ts error
       wrapper,
     });
 
-    await waitFor(() => result.current.status === "error");
+    await waitForValueToChange(() => result.current.status === "error");
     // @ts-expect-error no type guard
-    await waitFor(() => expect(result.current.error).toBeInstanceOf(NoResolution));
+    expect(result.current.error).toBeInstanceOf(NoResolution);
   });
 
   it("should return an error when the input has a forward registry but content is invalid", async () => {
-    const { result } = renderHook(useDomain, {
+    const { result, waitForValueToChange } = renderHook(useDomain, {
       initialProps: "not|valid|👋.eth",
+      // @ts-expect-error weird ts error
       wrapper,
     });
 
-    await waitFor(() => result.current.status === "error");
+    await waitForValueToChange(() => result.current.status === "error");
     // @ts-expect-error no type guard
-    await waitFor(() => expect(result.current.error).toBeInstanceOf(InvalidDomain));
+    expect(result.current.error).toBeInstanceOf(InvalidDomain);
   });
 
   it("should return a successful forward resolution", async () => {

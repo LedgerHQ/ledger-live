@@ -2,7 +2,10 @@ import BigNumber from "bignumber.js";
 import { cryptocurrenciesById } from "@ledgerhq/cryptoassets";
 import { PolkadotAccount, PolkadotOperationMode, Transaction } from "../types";
 import { buildTransaction } from "./buildTransaction";
+import { PolkadotAPI } from "../network";
 import { TypeRegistry } from "@polkadot/types";
+import { NetworkRequestCall } from "@ledgerhq/coin-framework/network";
+import { makeNoCache } from "@ledgerhq/coin-framework/cache";
 
 const registry = new TypeRegistry();
 
@@ -21,23 +24,25 @@ const transactionParams = {
   tip: 8,
   transactionVersion: 22,
 };
-jest.mock("../network", () => {
-  return {
-    getRegistry: () => {
-      return Promise.resolve({
-        registry: registry,
-        extrinsics: {
-          balances: {
-            transferKeepAlive: extrinsicsMethod,
+jest.mock("../network", () => ({
+  PolkadotAPI: jest.fn().mockImplementation(() => {
+    return {
+      getRegistry: () => {
+        return Promise.resolve({
+          registry: registry,
+          extrinsics: {
+            balances: {
+              transferKeepAlive: extrinsicsMethod,
+            },
           },
-        },
-      });
-    },
-    getTransactionParams: (): Promise<Record<string, any>> => {
-      return Promise.resolve(transactionParams);
-    },
-  };
-});
+        });
+      },
+      getTransactionParams: (): Promise<Record<string, any>> => {
+        return Promise.resolve(transactionParams);
+      },
+    };
+  }),
+}));
 
 describe("buildTransaction", () => {
   const mockCodec = jest.fn();
@@ -60,9 +65,13 @@ describe("buildTransaction", () => {
     // GIVEN
     const account = createAccount();
     const transaction = createTransaction();
+    const mockNetwork: NetworkRequestCall = (_): Promise<any> => {
+      return Promise.resolve();
+    };
+    const polkadotAPI = new PolkadotAPI(mockNetwork, makeNoCache);
 
     // WHEN
-    const result = await buildTransaction(account, transaction);
+    const result = await buildTransaction(polkadotAPI)(account, transaction);
 
     // THEN
     expect(mockRegistry).toHaveBeenCalledTimes(6);
