@@ -390,8 +390,12 @@ const SwapForm = () => {
     // eslint-disable-next-line
   }, [exchangeRate]);
 
-  const setFromAccount = (account: AccountLike | undefined) => {
+  const untickMax = () => {
     swapTransaction.transaction?.useAllAmount ? swapTransaction.toggleMax() : null;
+  };
+
+  const setFromAccount = (account: AccountLike | undefined) => {
+    untickMax();
     swapTransaction.setFromAccount(account);
   };
 
@@ -405,6 +409,11 @@ const SwapForm = () => {
 
   const toggleMax = () => {
     swapTransaction.toggleMax();
+  };
+
+  const reverseSwap = () => {
+    untickMax();
+    swapTransaction.reverseSwap();
   };
 
   const swapLiveAppManifestID = useSwapLiveAppManifestID();
@@ -439,7 +448,7 @@ const SwapForm = () => {
         fromAmountError={swapError}
         fromAmountWarning={swapWarning}
         isSwapReversable={swapTransaction.swap.isSwapReversable}
-        reverseSwap={swapTransaction.reverseSwap}
+        reverseSwap={reverseSwap}
         provider={provider}
         loadingRates={swapTransaction.swap.rates.status === "loading"}
         isSendMaxLoading={swapTransaction.swap.isMaxLoading}
