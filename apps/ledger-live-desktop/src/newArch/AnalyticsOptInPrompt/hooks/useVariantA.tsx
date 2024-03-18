@@ -41,26 +41,29 @@ const useVariantA = ({
   }, [goBackToMain]);
 
   const onManagePreferencesClick = () => {
+    const page = "Analytics Opt In Prompt Main";
     setIsManagingPreferences(true);
     setPreventBackNavigation(true);
-    trackClick("Manage Preferences", shouldWeTrack);
+    trackClick("Manage Preferences", shouldWeTrack, page);
   };
 
   const handleShareAnalyticsChange = (value: boolean) => {
+    const page = "Analytics Opt In Prompt Main";
     dispatch(setSharePersonalizedRecommandations(value));
     dispatch(setShareAnalytics(value));
     onSubmit?.();
-    if (value) trackClick("Accept All", true);
-    else trackClick("Refuse All", shouldWeTrack);
+    if (value) trackClick("Accept All", true, page);
+    else trackClick("Refuse All", shouldWeTrack, page);
   };
 
   const handleShareCustomAnalyticsChange = (value: boolean) => {
     if (value) {
+      const page = "Analytics Opt In Prompt Preferences";
       const { AnalyticsData, PersonalizationData } = preferences;
       dispatch(setShareAnalytics(AnalyticsData));
       dispatch(setSharePersonalizedRecommandations(PersonalizationData));
       onSubmit?.();
-      trackClick("Share", shouldWeTrack);
+      trackClick("Share", shouldWeTrack, page);
     }
   };
 
@@ -75,14 +78,14 @@ const useVariantA = ({
     }
   };
 
-  const trackClick = (button: string, shouldWeTrack: boolean) => {
+  const trackClick = (button: string, shouldWeTrack: boolean, page: string) => {
     track(
       "button_clicked",
       {
         button,
         variant,
         flow,
-        page: "Analytics Opt In Prompt Main",
+        page,
       },
       shouldWeTrack,
     );
