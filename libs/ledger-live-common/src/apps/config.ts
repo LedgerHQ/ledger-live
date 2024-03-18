@@ -44,7 +44,7 @@ const appConfig: Record<string, ConfigInfo> = {
       minVersion: "1.1.8",
     },
   },
-  "config_nanoapp_cardano ada": {
+  config_nanoapp_cardano_ada: {
     type: "object",
     default: {
       minVersion: "4.1.0",
@@ -62,7 +62,7 @@ const appConfig: Record<string, ConfigInfo> = {
       minVersion: "1.2.1",
     },
   },
-  "config_nanoapp_tezos wallet": {
+  config_nanoapp_tezos_wallet: {
     type: "object",
     default: {
       minVersion: "2.4.5",
