@@ -1,67 +1,68 @@
 import { ConfigInfo } from "@ledgerhq/live-config/LiveConfig";
 
+// Configurations for nano apps, can be set with firebase
 const appConfig: Record<string, ConfigInfo> = {
-  config_app_cosmos: {
+  config_nanoapp_cosmos: {
     type: "object",
     default: {
       minVersion: "2.34.12",
     },
   },
-  config_app_algorand: {
+  config_nanoapp_algorand: {
     type: "object",
     default: {
       minVersion: "1.2.9",
     },
   },
-  config_app_multiversx: {
+  config_nanoapp_multiversx: {
     type: "object",
     default: {
       minVersion: "1.0.18",
     },
   },
-  config_app_polkadot: {
+  config_nanoapp_polkadot: {
     type: "object",
     default: {
       minVersion: "25.10100.0",
     },
   },
-  config_app_ethereum: {
+  config_nanoapp_ethereum: {
     type: "object",
     default: {
       minVersion: "1.10.3-0",
     },
   },
-  config_app_solana: {
+  config_nanoapp_solana: {
     type: "object",
     default: {
       minVersion: "1.2.0",
     },
   },
-  config_app_celo: {
+  config_nanoapp_celo: {
     type: "object",
     default: {
       minVersion: "1.1.8",
     },
   },
-  "config_app_cardano ada": {
+  "config_nanoapp_cardano ada": {
     type: "object",
     default: {
       minVersion: "4.1.0",
     },
   },
-  config_app_zcash: {
+  config_nanoapp_zcash: {
     type: "object",
     default: {
       minVersion: "2.1.0",
     },
   },
-  config_app_near: {
+  config_nanoapp_near: {
     type: "object",
     default: {
       minVersion: "1.2.1",
     },
   },
-  "config_app_tezos wallet": {
+  "config_nanoapp_tezos wallet": {
     type: "object",
     default: {
       minVersion: "2.4.5",
