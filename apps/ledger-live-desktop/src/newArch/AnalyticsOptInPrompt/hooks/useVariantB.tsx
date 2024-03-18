@@ -59,9 +59,6 @@ export const useVariantB = ({
     trackAnalyticsClick(value);
   };
 
-  const clickOnAcceptAnalytics = () => setupAnalytics(true);
-  const clickOnRefuseAnalytics = () => setupAnalytics(false);
-
   const trackPersonalizedExperienceClick = (value: boolean) => {
     track(
       "button_clicked",
@@ -81,20 +78,25 @@ export const useVariantB = ({
     trackPersonalizedExperienceClick(value);
   };
 
-  const clickOnAcceptPersonalizedExperience = () => setupPersonalizedExperience(true);
-  const clickOnRefusePersonalizedExperience = () => setupPersonalizedExperience(false);
+  const handleAcceptClick = () => {
+    if (currentStep === 0) setupAnalytics(true);
+    else setupPersonalizedExperience(true);
+  };
+
+  const handleRefuseClick = () => {
+    if (currentStep === 0) setupAnalytics(false);
+    else setupPersonalizedExperience(false);
+  };
 
   const clickOptions = {
-    acceptAnalytics: clickOnAcceptAnalytics,
-    refuseAnalytics: clickOnRefuseAnalytics,
-    acceptPersonalizedExp: clickOnAcceptPersonalizedExperience,
-    refusePersonalizedExp: clickOnRefusePersonalizedExperience,
+    accept: handleAcceptClick,
+    refuse: handleRefuseClick,
   };
 
   return {
+    clickOptions,
     currentTheme,
     currentStep,
     setCurrentStep,
-    clickOptions,
   };
 };

@@ -34,7 +34,7 @@ const VariantB = ({
           <RecommandationsScreen currentTheme={currentTheme} />
         )}
       </Flex>
-      <Footer currentStep={currentStep} clickOptions={clickOptions} />
+      <Footer clickOptions={clickOptions} />
     </>
   );
 };
