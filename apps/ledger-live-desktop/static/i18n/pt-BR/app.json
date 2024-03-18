@@ -30,7 +30,8 @@
         "browse" : "Navegar"
       },
       "filter" : {
-        "categories" : "Categorias"
+        "categories" : "Categorias",
+        "all" : "todos"
       },
       "branch" : {
         "soon" : "Em breve",
@@ -275,7 +276,6 @@
   },
   "sidebar" : {
     "card" : "Cartão",
-    "learn" : "Aprender",
     "menu" : "Menu",
     "stars" : "Contas Favoritas",
     "accounts" : "Contas",
@@ -1409,6 +1409,7 @@
   },
   "dashboard" : {
     "title" : "Portfólio",
+    "header" : "Saldo do portfólio",
     "emptyAccountTile" : {
       "desc" : "Adicione contas para gerenciar outros criptoativos",
       "createAccount" : "Adicionar Conta"
@@ -1449,6 +1450,27 @@
         "description" : "Você está a um passo do Ledger Recover.",
         "primaryCta" : "Conectar",
         "secondaryCta" : "Talvez mais tarde"
+      }
+    },
+    "marketPerformanceWidget" : {
+      "title" : "gráfico de {{time}}",
+      "buy" : "Comprar",
+      "swap" : "Trocar",
+      "gainers" : "Melhores",
+      "losers" : "Piores",
+      "error" : {
+        "title" : "Desculpe, não foi possível carregar o gráfico",
+        "description" : "Tente novamente mais tarde"
+      },
+      "missingData" : {
+        "gainers" : {
+          "title" : "Nenhum ativo dentre os 50 principais apresentou alta nas últimas 24 horas",
+          "description" : "Tente visualizar as principais baixas ou volte mais tarde"
+        },
+        "losers" : {
+          "title" : "Nenhum ativo dentre os 50 principais apresentou baixa nas últimas 24 horas",
+          "description" : "Tente visualizar as principais altas ou volte mais tarde"
+        }
       }
     }
   },
@@ -1756,7 +1778,7 @@
   "DeviceAction" : {
     "allowAppPermission" : "Abra o aplicativo {{wording}} no seu dispositivo",
     "allowAppPermissionSubtitleToken" : "para gerenciar seus tokens {{token}}",
-    "allowManagerPermission" : "Permitir uma conexão segura na {{productName}}",
+    "allowManagerPermission" : "Permitir conexão segura",
     "allowRenaming" : "Permitir renomeação do seu dispositivo",
     "loading" : "Carregando...",
     "connectAndUnlockDevice" : "Conecte e desbloqueie seu dispositivo",
@@ -2207,6 +2229,15 @@
       "summary" : {
         "title" : "Resumo"
       },
+      "networkFee" : {
+        "title" : "Escolha a taxa de rede"
+      },
+      "reviewSummary" : {
+        "title" : "Revise os detalhes"
+      },
+      "connectLedger" : {
+        "title" : "Conecte a Ledger"
+      },
       "device" : {
         "title" : "Dispositivo"
       },
@@ -2263,9 +2294,6 @@
     "footer" : {
       "estimatedFees" : "Taxas de rede"
     }
-  },
-  "sign" : {
-    "title" : "Assinar Transação"
   },
   "releaseNotes" : {
     "title" : "Notas de lançamento",
@@ -3912,6 +3940,8 @@
       "userId" : "ID de usuário",
       "debugApps" : "Permitir debug de aplicativos",
       "debugAppsDesc" : "Exibe e permite abrir aplicativos da plataforma marcados como 'debug'.",
+      "debugReactQuery" : "Permitir debug do ReactQuery",
+      "debugReactQueryDesc" : "Exibir e permitir a abertura do console de debug do ReactQuery.",
       "experimentalApps" : "Permitir aplicativos experimentais",
       "experimentalAppsDesc" : "Exibe e permite abrir aplicativos da plataforma marcados como 'experimentais'.",
       "catalogUrl" : "Definir o provedor do catálogo de aplicativos",
@@ -4129,7 +4159,7 @@
         "desc" : "Configure seu node completo de Bitcoin para sincronizar e enviar transações sem usar os exploradores da Ledger."
       },
       "filterTokenOperationsZeroAmount" : {
-        "title" : "Esconder transações de tokens quando o valor é 0",
+        "title" : "Esconder transações de tokens quando o valor for 0",
         "desc" : "Esconder transações de tokens sem valor pode prevenir possíveis ataques de envenenamento de endereço na Ethereum, Polygon, BSC, Tron..."
       }
     }
@@ -4177,6 +4207,17 @@
     "troubleshooting" : "Clique aqui para ver possíveis soluções",
     "logs" : "Salvar Registros",
     "dataFolder" : "Ver dados de usuário"
+  },
+  "approve" : {
+    "title" : "Aprove o token",
+    "description" : "Aprove o token em seu dispositivo Ledger",
+    "unlimited" : "Você está autorizando esse provedor a acessar uma quantidade ilimitada do token selecionado dentro da sua carteira. Verifique os detalhes da transação com muita atenção em seu dispositivo Ledger antes de assinar.",
+    "limited" : "Você está autorizando esse provedor a acessar o token selecionado dentro da sua carteira. Verifique os detalhes da transação com muita atenção em seu dispositivo Ledger antes de assinar.",
+    "termsAndConditions" : "Ao validar esta transação, você aceita os <0>termos de uso do aplicativo {{appName}}</0>"
+  },
+  "sign" : {
+    "title" : "Assinar Transação",
+    "description" : "Assine a transação no seu dispositivo Ledger"
   },
   "exportOperationsModal" : {
     "title" : "Histórico de operações",
@@ -4295,7 +4336,7 @@
         "contactSupportCTA" : "Falar com o suporte",
         "continueCTA" : "Continuar",
         "title" : "Marque os conteúdos da caixa",
-        "description" : "Se o seu {{device}} já veio com um código PIN ou frase de recuperação, não é seguro usá-lo e você deve entrar em contato com o Suporte Ledger.",
+        "description" : "Se a sua {{device}} veio junto com um código PIN ou frase de recuperação, não é seguro utilizá-la. Entre em contato com o Suporte Ledger imediatamente.",
         "alert" : "Use apenas frases de recuperação que seu dispositivo exibiu quando foi configurado"
       }
     },
@@ -4307,7 +4348,7 @@
       },
       "useLedgerSeeds" : {
         "title" : "Recomendamos usar apenas frases de recuperação da Ledger",
-        "descr" : "A Ledger não pode garantir a segurança de frases de recuperação externas. Recomendamos configurar sua Nano como um novo dispositivo se sua frase de recuperação não tiver sido gerada por uma Ledger.",
+        "descr" : "A Ledger não pode garantir a segurança de frases de recuperação geradas por carteiras de outros fabricantes. Recomendamos que você configure a sua Nano como um novo dispositivo se sua frase de recuperação não tiver sido gerada por uma Ledger.",
         "gotIt" : "Entendi"
       }
     },
@@ -4909,6 +4950,8 @@
     "warning" : "Sempre verifique se o endereço exibido no seu dispositivo corresponde exatamente ao fornecido por{{recipientWording}}",
     "secureContract" : "Verifique os detalhes do depósito no seu dispositivo antes de enviá-lo. O endereço do contrato é fornecido com segurança para que você não precise verificá-lo.",
     "verifyData" : "Sempre verifique os detalhes da operação no seu dispositivo.",
+    "doubleCheck" : "Verifique os detalhes da transação com muita atenção em seu dispositivo Ledger antes de assinar.",
+    "termsAndConditions" : "Ao validar esta transação, você aceita os <0>termos de uso do aplicativo {{appName}}</0>",
     "warningWording" : {
     },
     "titleWording" : {
@@ -5343,7 +5386,7 @@
       "description" : "Impossível calcular quantia e taxas"
     },
     "NotEnoughBalance" : {
-      "title" : "Fundos Insuficientes",
+      "title" : "Sorry, insufficient balance including network fees. Adjust amount or verify balance",
       "description" : "Certifique-se de que a conta tem fundos suficientes."
     },
     "NotEnoughBalanceBecauseDestinationNotCreated" : {
@@ -5431,7 +5474,7 @@
       "description" : "Reinicie seu dispositivo sem tocar nos botões quando o logotipo aparecer. Contate o Suporte Ledger se o problema persistir."
     },
     "UserRefusedAllowManager" : {
-      "title" : "My Ledger negado no dispositivo"
+      "title" : "Conexão segura negada no dispositivo"
     },
     "UserRefusedFirmwareUpdate" : {
       "title" : "Instalação da atualização do sistema\noperacional cancelada no dispositivo",
@@ -5472,6 +5515,14 @@
     "WrongDeviceForAccount" : {
       "title" : "Algo deu errado",
       "description" : "Verifique se sua carteira hardware está configurada com a frase de recuperação ou passphrase associada à conta selecionada."
+    },
+    "WrongDeviceForAccountPayout" : {
+      "title" : "Algo deu errado",
+      "description" : "Essa conta de recebimento não pertence ao seu dispositivo. Mude e tente novamente."
+    },
+    "WrongDeviceForAccountRefund" : {
+      "title" : "Algo deu errado",
+      "description" : "Essa conta de recebimento não pertence ao seu dispositivo. Mude e tente novamente."
     },
     "DeviceAppVerifyNotSupported" : {
       "title" : "Atualização de aplicativo necessária",
@@ -5516,6 +5567,10 @@
     "TransactionHasBeenValidatedError" : {
       "title" : "Não pode ser acelerada nem cancelada",
       "description" : "Essa transação já foi validada"
+    },
+    "SequenceNumberError" : {
+      "title" : "Erro do número de sequência",
+      "description" : "Feche a janela e tente novamente mais tarde"
     },
     "CantScanQRCode" : {
       "title" : "Não foi possível escanear o QR Code: verificação automática não compatível com este endereço."
@@ -5698,6 +5753,9 @@
     },
     "SwapExchangeRateAmountTooHigh" : {
       "title" : "A quantia deve ser menor que {{maxAmountFromFormatted}}"
+    },
+    "SwapExchangeRateAmountTooLowOrTooHigh" : {
+      "title" : "Valor indisponível. Ajuste o valor."
     },
     "PolkadotElectionClosed" : {
       "title" : "A eleição dos validadores deve ser encerrada"
@@ -5914,9 +5972,6 @@
     "FailedToRetrieveFirmwareUpdateInfo" : {
       "title" : "Falha em verificar a atualização do sistema operacional",
       "description" : "Algo deu errado. Tente novamente ou fale com o Suporte Ledger em caso de dúvida."
-    },
-    "TezosUnrevealedAccount" : {
-      "title" : "Troca indisponível: Necessário enviar/delegar primeiro com uma conta Tezos ou um par de troca Tezos."
     }
   },
   "cryptoOrg" : {
