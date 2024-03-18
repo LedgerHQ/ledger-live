@@ -22,6 +22,8 @@ type SwapMigrationUIProps = {
   pageState: ReturnType<typeof usePageState>;
   swapTransaction: SwapTransactionType;
   provider?: string;
+  refreshTime: number;
+  countdown: boolean;
   // Demo 0 props
   disabled: boolean;
   onClick: () => void;
@@ -35,6 +37,8 @@ export const SwapMigrationUI = (props: SwapMigrationUIProps) => {
     pageState,
     swapTransaction,
     provider,
+    refreshTime,
+    countdown,
     disabled,
     onClick,
   } = props;
@@ -45,7 +49,8 @@ export const SwapMigrationUI = (props: SwapMigrationUIProps) => {
       <SwapFormRates
         swap={swapTransaction.swap}
         provider={provider}
-        countdownSecondsToRefresh={swapTransaction.swap.countdown}
+        refreshTime={refreshTime}
+        countdown={countdown}
       />
     ) : null;
 

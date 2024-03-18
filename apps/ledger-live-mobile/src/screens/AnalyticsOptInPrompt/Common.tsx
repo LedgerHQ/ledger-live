@@ -1,5 +1,3 @@
-import React from "react";
-import { ScrollView } from "react-native";
 import { Flex } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
 
@@ -28,9 +26,3 @@ export const Bottom = styled(Flex).attrs({
   paddingTop: 0,
   width: "100%",
 })``;
-
-export const ScrollableContainer = ({ children }: { children: React.ReactNode }) => (
-  <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
-    {children}
-  </ScrollView>
-);

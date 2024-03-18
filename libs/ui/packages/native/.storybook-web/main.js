@@ -1,7 +1,7 @@
 import { dirname, join } from "path";
 module.exports = {
   stories: [
-    "../storybook/stories/**/*.mdx",
+    "../storybook/stories/**/*.stories.mdx",
     "../storybook/stories/**/*.stories.@(js|jsx|ts|tsx)",
   ],
 
@@ -9,7 +9,6 @@ module.exports = {
     getAbsolutePath("@storybook/addon-links"),
     getAbsolutePath("@storybook/addon-essentials"),
     getAbsolutePath("@storybook/addon-react-native-web"),
-    getAbsolutePath("@storybook/blocks"),
     {
       name: '@storybook/addon-react-native-web',
       options: {

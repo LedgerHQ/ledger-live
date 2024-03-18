@@ -29,8 +29,6 @@ import PostOnboardingHubBanner from "~/renderer/components/PostOnboardingHub/Pos
 import FeaturedButtons from "~/renderer/screens/dashboard/FeaturedButtons";
 import { ABTestingVariants, AccountLike, Operation } from "@ledgerhq/types-live";
 import PortfolioContentCards from "~/renderer/screens/dashboard/PortfolioContentCards";
-import MarketPerformance from "./MarketPerformance";
-import { useMarketPerformanceFeatureFlag } from "~/renderer/actions/marketperformance";
 
 // This forces only one visible top banner at a time
 export const TopBannerContainer = styled.div`
@@ -73,8 +71,6 @@ export default function DashboardPage() {
     [hiddenNftCollections, shouldFilterTokenOpsZeroAmount],
   );
 
-  const marketPerformanceEnabled = useMarketPerformanceFeatureFlag().enabled;
-
   return (
     <>
       <TopBannerContainer>
@@ -104,9 +100,6 @@ export default function DashboardPage() {
               chartColor={colors.wallet}
               range={selectedTimeRange}
             />
-
-            {marketPerformanceEnabled ? <MarketPerformance /> : null}
-
             <AssetDistribution />
             {totalOperations > 0 && (
               <OperationsList

@@ -144,7 +144,7 @@
       }
     },
     "ConnectManagerTimeout" : {
-      "title" : "죄송합니다. Ledger와의 보안 연결에 실패했습니다",
+      "title" : "죄송하지만, My Ledger 연결에 실패했습니다",
       "description" : {
         "ios" : {
           "nanoX" : "{{productName}}가 잠금 해제되어 있고 블루투스가 활성화되어 있는지 확인하세요."
@@ -492,7 +492,7 @@
       "description" : "내 Ledger에서 앱을 다시 설치해 보세요"
     },
     "NotEnoughGas" : {
-      "title" : "{{cryptoName}} 네트워크에서 트랜잭션 수수료를 지불하려면 계정에 {{fees}} {{ticker}}(이)가 필요합니다.  <link0>{{ticker}}(을)를 구매</link0>하거나 계정에 추가 입금하세요.",
+      "title" : "{{cryptoName}} 네트워크에서는 수수료로 {{ticker}} {{fees}}(이)가 필요합니다. <link0>{{ticker}} 구매</link0>",
       "description" : "토큰 트랜잭션 수수료로 계정에 코인을 전송하세요."
     },
     "NotEnoughGasSwap" : {
@@ -622,8 +622,8 @@
       "primaryCTA" : "My Ledger 열기"
     },
     "UserRefusedAllowManager" : {
-      "title" : "장치에서 보안 연결이 거부되었습니다",
-      "description" : "장치의 보안 연결을 허용하고 다시 시도하세요."
+      "title" : "관리자가 장치에서 비활성 상태입니다",
+      "description" : "장치에서 관리자를 허용한 후 다시 시도하세요."
     },
     "UserRefusedAddress" : {
       "title" : "수신 주소 거부됨",
@@ -911,6 +911,9 @@
     "FirmwareNotRecognized" : {
       "title" : "유효하지 않은 공급자",
       "description" : "\"My Ledger 공급자\" 설정을 변경해야 합니다. 이를 변경하려면 Ledger Live \"설정\"을 열고 \"실험 기능\"을 선택한 다음 다른 공급자를 선택합니다."
+    },
+    "TezosUnrevealedAccount" : {
+      "title" : "스왑 불가: 테조스 계정이나 변경 쌍을 통해 초기 전송/위임이 필요합니다."
     }
   },
   "crash" : {
@@ -3885,7 +3888,7 @@
     "stayInTheAppPlz" : "Ledger Live 앱을 끄지 마시고 Ledger 장치를 가까운 곳에 위치시켜 주세요.",
     "allowAppPermission" : "내 장치에서 {{wording}} 앱 열기",
     "allowAppPermissionSubtitleToken" : "나의 {{token}} 토큰 관리",
-    "allowManagerPermission" : "Ledger와 보안 연결을 허용",
+    "allowManagerPermission" : "{{productName}}에서 Ledger 관리자를 허용하세요",
     "allowRenaming" : "{{productName}}의 이름 변경을 허용하세요",
     "allowRemoveCustomLockscreen" : "Ledger Stax에서 이미지 삭제 확인",
     "allowSecureConnection" : "Ledger와 보안 연결을 허용",
@@ -6527,7 +6530,7 @@
     "ethereum" : {
       "title" : "ETH 보유량 늘리기",
       "subTitle" : "Ledger Live에서 일일 보상을 바로 수령하여 ETH를 스테이킹하고 보유량을 늘려보세요.",
-      "tagMinimum" : "{{min}} ETH 필요",
+      "tagMinimum" : "Requires {{min}} ETH",
       "close" : "종료",
       "providers" : {
         "kiln_pooling" : {
@@ -6587,85 +6590,85 @@
   "analyticsOptIn" : {
     "variantA" : {
       "main" : {
-        "title" : "사용자 경험을 개선하고 개인 맞춤형 서비스를 제공할 수 있도록 도와주세요.",
-        "subtitle" : "공유해 주신 Ledger Live 데이터는 고객의 선호를 이해하고 고객과 관련 있는 콘텐츠를 준비하며 다양한 기술적 문제를 해결하는 데 사용됩니다.",
+        "title" : "고객의 사용자 경험을 개선하고 개인화된 서비스를 제공할 수 있도록 도와주세요.",
+        "subtitle" : "Ledger Live 사용 데이터를 공유하면 고객의 환경 설정을 이해하는 데 도움이 됩니다. 공유해 주신 데이터를 활용하여 사용자의 경험을 조정하고, 클릭수, 조회수, 열기 등 콘텐츠 성능을 최적화하여 관련성을 극대화할 수 있습니다.",
         "content" : {
           "able" : {
-            "title" : "동의해 주신다면, Ledger는 다음 정보를 추적합니다.\b",
-            "diagAndUsage" : "페이지 방문, 클릭 수를 포함한 분석 데이터.",
-            "personnalizationData" : "클릭 수, 페이지 방문, 환전 데이터를 포함한 개인화 데이터"
+            "title" : "Ledger Live는 다음을 추적합니다.",
+            "diagAndUsage" : "사용 데이터"
           },
           "unable" : {
-            "title" : "Ledger는 다음과 관련한 정보를 결코 추적하지 않습니다.",
-            "adresses" : "고객 자산.",
-            "balance" : "고객 포트폴리오.",
-            "personnalInfos" : "고객의 개인 식별 정보."
+            "title" : "Ledger Live는 다음을 수집하지 않습니다.",
+            "adresses" : "고객 주소",
+            "balance" : "고객 잔액",
+            "nfts" : "고객의 NFT",
+            "personnalInfos" : "개인의 신원 정보"
           },
-          "moreOptions" : "환경 설정 관리",
+          "moreOptions" : "추가 옵션",
           "ctas" : {
             "refuse" : "모두 거부",
             "accept" : "모두 수락"
           },
           "infoText" : {
-            "info" : "당사 앱 설정에서 언제든지 동의를 철회하실 수 있습니다.",
-            "link" : "당사 추적 정책 자세히 살펴보기"
+            "info" : "앱 설정에서 언제든지 동의를 철회하실 수 있습니다.",
+            "link" : "자세한 내용을 보려면 여기를 클릭하세요."
           }
         }
       },
       "details" : {
         "title" : "환경 설정 관리",
         "analytics" : {
-          "title" : "분석 데이터",
-          "description" : "Ledger Live 개선에 도움을 주시려면, 방문, 클릭 수 등 앱 분석 데이터를 공유해 주세요."
+          "title" : "애널리틱스",
+          "description" : "앱 사용량을 공유하여 Ledger가 애플리케이션을 개선할 수 있도록 도와주세요."
         },
         "personalizedExp" : {
-          "title" : "개인화 데이터",
-          "description" : "개인 맞춤형 추천을 받아보시려면, 환전 데이터, 클릭 수, 페이지 방문 등을 포함한 앱의 개인화 데이터를 공유해 주세요."
+          "title" : "맞춤화된 경험",
+          "description" : "내가 설정해 둔 환경 설정에 맞는 맞춤형 추천을 받고 콘텐츠 성능을 공유하여 나에게 최적화된 환경을 누려보세요."
         },
         "ctas" : {
           "notNow" : "나중에 하기",
           "accept" : "수락",
           "acceptAll" : "모두 수락",
-          "confirm" : "공유"
+          "confirm" : "확인"
         },
         "infoText" : {
-          "info" : "당사 앱 설정에서 언제든지 동의를 철회하실 수 있습니다.",
-          "link" : "당사 추적 정책 자세히 살펴보기"
+          "info" : "앱 설정에서 언제든지 동의를 철회하실 수 있습니다.",
+          "link" : "자세한 내용을 보려면 여기를 클릭하세요."
         }
       }
     },
     "variantB" : {
       "main" : {
         "title" : "저희와 함께 더욱 향상된 Ledger Live를 만들어 보세요",
-        "description" : "공유해 주신 Ledger Live 분석 데이터는 고객이 어떤 방식으로 Ledger Live를 활용하는지 이해하고, 버그를 수정하며 개선된 사용자 경험을 제공하는 데 활용됩니다.",
+        "description" : "Ledger Live 사용 데이터를 공유하면 귀하가 Ledger Live를 어떻게 사용하고 있는지 이해하는 데 도움이 됩니다.",
         "bulletPoints" : {
-          "1" : "페이지 방문, 클릭 수를 포함한 분석 데이터.",
-          "2" : "당사는 고객의 잔액, 계좌, 포트폴리오와 관련한 어떤 정보도 수집 또는 열람할 수 없습니다.",
-          "3" : "분석은 온전히 익명으로 처리됩니다. 당사는 고객의 개인 정보를 열람 또는 수집할 수 없습니다."
+          "1" : "사용 데이터에는 페이지 방문, 클릭 및 전환이 포함됩니다.",
+          "2" : "또한 귀하의 주소, 계정, 잔액, NFT 또는 귀하의 포트폴리오와 관련된 기타 정보를 수집하거나 확인하지도 않습니다.",
+          "3" : "당사는 귀하의 신원을 확인할 수도 없고 확인을 원하지도 않으며, 개인정보를 수집하지도 않습니다."
         },
         "ctas" : {
           "refuse" : "거부",
           "share" : "공유"
         },
         "infoText" : {
-          "info" : "당사 앱 설정에서 언제든지 동의를 철회하실 수 있습니다.",
-          "link" : "당사 추적 정책 자세히 살펴보기"
+          "info" : "앱 설정에서 언제든지 동의를 철회하실 수 있습니다.",
+          "link" : "동의 철회에 대해 자세히 알아보기"
         }
       },
       "details" : {
         "title" : "맞춤화된 고객 경험을 즐겨보세요",
-        "description" : "공유해 주신 Ledger Live 개인화 데이터는 고객 선호에 맞는 콘텐츠를 제시하는 데 사용됩니다.",
+        "description" : "당사는 사용 데이터를 분석하여 맞춤회된 고객 경험을 제공하고, 콘텐츠 성능을 평가하며 클릭수, 조회수, 열기 등의 지표를 추적하여 관련성을 극대화합니다.",
         "bulletPoints" : {
-          "1" : "환전 데이터, 클릭 수, 페이지 방문을 포함한 개인화 데이터.",
-          "2" : "당사는 고객의 개인 정보 또는 포트폴리오 정보를 추적하거나 수집할 수 없습니다."
+          "1" : "맞춤형 추천 및 콘텐츠",
+          "2" : "맞춤형 알림"
         },
         "ctas" : {
           "refuse" : "거부",
           "allow" : "허용"
         },
         "infoText" : {
-          "info" : "당사 앱 설정에서 언제든지 동의를 철회하실 수 있습니다.",
-          "link" : "당사 추적 정책 자세히 살펴보기"
+          "info" : "앱 설정에서 언제든지 동의를 철회하실 수 있습니다.",
+          "link" : "동의 철회에 대해 자세히 알아보기"
         }
       }
     }

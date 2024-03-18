@@ -16,7 +16,7 @@ import {
 } from "../../../bridge/jsHelpers";
 import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { ChainAPI, Config } from "../api";
-import { minutes } from "@ledgerhq/live-network/cache";
+import { minutes } from "../api/cached";
 import { broadcastWithAPI } from "../js-broadcast";
 import createTransaction from "../js-createTransaction";
 import estimateMaxSpendableWithAPI from "../js-estimateMaxSpendable";
@@ -25,12 +25,7 @@ import { PRELOAD_MAX_AGE, hydrate, preloadWithAPI } from "../js-preload";
 import { prepareTransaction as prepareTransactionWithAPI } from "../js-prepareTransaction";
 import { signOperationWithAPI } from "../js-signOperation";
 import { getAccountShapeWithAPI } from "../js-synchronization";
-import {
-  assignFromAccountRaw,
-  assignToAccountRaw,
-  fromOperationExtraRaw,
-  toOperationExtraRaw,
-} from "../serialization";
+import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
 import type { SolanaAccount, SolanaPreloadDataV1, Transaction } from "../types";
 import { endpointByCurrencyId } from "../utils";
 
@@ -169,8 +164,6 @@ export function makeBridges({
     signOperation: makeSign(getAPI),
     assignFromAccountRaw,
     assignToAccountRaw,
-    toOperationExtraRaw,
-    fromOperationExtraRaw,
   };
 
   const currencyBridge: CurrencyBridge = {

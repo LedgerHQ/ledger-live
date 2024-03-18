@@ -10,12 +10,12 @@ import {
   UnexpectedBootloader,
 } from "@ledgerhq/errors";
 import { withDevice } from "./deviceAccess";
-import { getVersion } from "../device/use-cases/getVersionUseCase";
+import getVersion from "./getVersion";
 import { extractOnboardingState, OnboardingState, OnboardingStep } from "./extractOnboardingState";
 import { SeedPhraseType } from "@ledgerhq/types-live";
 
 jest.mock("./deviceAccess");
-jest.mock("../device/use-cases/getVersionUseCase");
+jest.mock("./getVersion");
 jest.mock("./extractOnboardingState");
 jest.mock("@ledgerhq/hw-transport");
 jest.useFakeTimers();

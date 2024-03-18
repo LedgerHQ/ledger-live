@@ -1,9 +1,5 @@
-/**
- * @jest-environment jsdom
- */
-import "../../../__tests__/test-helpers/dom-polyfill";
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
-import { act, renderHook } from "@testing-library/react";
+import { act, renderHook } from "@testing-library/react-hooks";
 import BigNumber from "bignumber.js";
 import { checkAccountSupported } from "../../../account/index";
 import ethBridge from "../../../families/evm/bridge/mock";

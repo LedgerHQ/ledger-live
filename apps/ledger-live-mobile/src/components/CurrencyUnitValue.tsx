@@ -35,13 +35,19 @@ const CurrencyUnitValue = ({
         : new BigNumber(valueProp)
       : null;
 
+  let loc = locale;
+  // TEMPORARY : quick win to transform arabic to english
+  if (locale === "ar") {
+    loc = "en";
+  }
+
   return (
     <>
       {before +
         (value
           ? formatCurrencyUnit(unit, value, {
               showCode,
-              locale,
+              locale: loc,
               discreet: !alwaysShowValue && shouldApplyDiscreetMode && discreet,
               ...otherFormatCurrencyUnitOptions,
             })

@@ -42,7 +42,7 @@ import { broadcastTx } from "./utils/api";
 import { getAddress } from "../../filecoin/bridge/utils/utils";
 import { withDevice } from "../../../hw/deviceAccess";
 import { getPath, throwIfError } from "../utils";
-import { getMainAccount } from "../../../account";
+import { decodeAccountId, getMainAccount } from "../../../account";
 import { encodeOperationId, patchOperationWithHash } from "../../../operation";
 import { validateAddress } from "./utils/addresses";
 
@@ -123,10 +123,8 @@ const estimateMaxSpendable = async ({
   transaction?: Transaction | null | undefined;
 }): Promise<BigNumber> => {
   const a = getMainAccount(account, parentAccount);
-  const { spendableBalance } = a;
-  const mainAccount = getMainAccount(account, parentAccount);
-  const { xpub } = mainAccount;
-  invariant(xpub, "xpub is required");
+  const { id: accountId, spendableBalance } = a;
+  const { xpubOrAddress: xpub } = decodeAccountId(accountId);
 
   const dummyTx = {
     ...createTransaction(),
@@ -156,10 +154,9 @@ const estimateMaxSpendable = async ({
 };
 
 const prepareTransaction = async (a: Account, t: Transaction): Promise<Transaction> => {
-  const { spendableBalance, pendingOperations } = a;
+  const { id: accountID, spendableBalance, pendingOperations } = a;
   const { recipient, useAllAmount } = t;
-  const { xpub } = a;
-  invariant(xpub, "xpub is required");
+  const { xpubOrAddress: xpub } = decodeAccountId(accountID);
 
   const patch: Partial<Transaction> = {};
   if (xpub && recipient && validateAddress(recipient).isValid) {
@@ -205,9 +202,9 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
     transport =>
       new Observable(o => {
         async function main() {
+          const { id: accountId } = account;
           const { address, derivationPath } = getAddress(account);
-          const { xpub, id: accountId } = account;
-          invariant(xpub, "xpub is required");
+          const { xpubOrAddress: xpub } = decodeAccountId(accountId);
 
           const { recipient, fee, anchorMode, network, memo, amount, nonce } = transaction;
 

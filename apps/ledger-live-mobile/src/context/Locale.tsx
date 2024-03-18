@@ -4,12 +4,7 @@ import { initReactI18next } from "react-i18next";
 import type { TFunction } from "react-i18next";
 import { getTimeZone } from "react-native-localize";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { I18nManager } from "react-native";
-import RNRestart from "react-native-restart";
-
 import { DEFAULT_LANGUAGE_LOCALE, getDefaultLanguageLocale, locales } from "../languages";
-import { setLanguage } from "~/actions/settings";
-import { useDispatch } from "react-redux";
 import { useSettings } from "~/hooks";
 
 try {
@@ -42,9 +37,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-const SUPPORTED_LANGUAGES = ["en", "fr", "es", "ru", "zh", "de", "tr", "ja", "ko", "pt"] as const;
-
-export type SupportedLanguages = (typeof SUPPORTED_LANGUAGES)[number];
+export type SupportedLanguages = "fr" | "en" | "es" | "zh" | "ru" | "pt" | "ar";
 
 type LocaleState = {
   i18n: typeof i18next;
@@ -63,35 +56,16 @@ function getLocaleState(i18n: typeof i18next): LocaleState {
 const LocaleContext = React.createContext(getLocaleState(i18next));
 export default function LocaleProvider({ children }: Props) {
   const { language } = useSettings();
-  const dispatch = useDispatch();
-  const currentLanguage = SUPPORTED_LANGUAGES.includes(language as SupportedLanguages)
-    ? language
-    : DEFAULT_LANGUAGE_LOCALE;
-
   useEffect(() => {
-    if (currentLanguage !== language) {
-      dispatch(setLanguage(currentLanguage));
-    }
-  }, [currentLanguage, dispatch, language]);
-
-  useEffect(() => {
-    i18next.changeLanguage(currentLanguage);
-  }, [currentLanguage]);
-
-  // Force LTR if user has previously set Arabic language.
-  // To be removed the day we want to support arabic again.
-  if (I18nManager.isRTL) {
-    I18nManager.forceRTL(false);
-    RNRestart.Restart();
-  }
-
+    i18next.changeLanguage(language);
+  }, [language]);
   const value: LocaleState = useMemo(
     () => ({
       i18n: i18next,
       t: i18next.getFixedT(DEFAULT_LANGUAGE_LOCALE),
-      locale: currentLanguage as SupportedLanguages,
+      locale: language as SupportedLanguages,
     }),
-    [currentLanguage],
+    [language],
   );
   return <LocaleContext.Provider value={value}>{children}</LocaleContext.Provider>;
 }

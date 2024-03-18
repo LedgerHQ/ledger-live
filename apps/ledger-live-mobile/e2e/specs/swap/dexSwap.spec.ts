@@ -27,7 +27,7 @@ describe("DEX Swap", () => {
     await swapPage.selectAccount("Ethereum 2");
     await swapPage.openDestinationAccountSelector();
     await swapPage.selectAccount("Tether USD");
-    await swapPage.enterSourceAmount("1");
+    await swapPage.sendMax();
     await swapPage.goToProviderSelection();
     await swapPage.chooseProvider("1inch");
   });

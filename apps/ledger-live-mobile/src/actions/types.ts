@@ -288,7 +288,6 @@ export enum SettingsActionTypes {
   SET_CLOSED_WITHDRAW_BANNER = "SET_CLOSED_WITHDRAW_BANNER",
   SET_USER_NPS = "SET_USER_NPS",
   SET_SUPPORTED_COUNTER_VALUES = "SET_SUPPORTED_COUNTER_VALUES",
-  SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT = "SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT",
 }
 
 export type SettingsImportPayload = Partial<SettingsState>;
@@ -391,7 +390,6 @@ export type SettingsCompleteOnboardingPayload = void | SettingsState["hasComplet
 export type SettingsSetGeneralTermsVersionAccepted = SettingsState["generalTermsVersionAccepted"];
 export type SettingsSetUserNps = number;
 export type SettingsSetSupportedCounterValues = SettingsState["supportedCounterValues"];
-export type SettingsSetHasSeenAnalyticsOptInPrompt = SettingsState["hasSeenAnalyticsOptInPrompt"];
 
 export type SettingsPayload =
   | SettingsImportPayload
@@ -448,8 +446,7 @@ export type SettingsPayload =
   | SettingsSetOnboardingTypePayload
   | SettingsSetClosedNetworkBannerPayload
   | SettingsSetUserNps
-  | SettingsSetSupportedCounterValues
-  | SettingsSetHasSeenAnalyticsOptInPrompt;
+  | SettingsSetSupportedCounterValues;
 
 // === WALLET CONNECT ACTIONS ===
 export enum WalletConnectActionTypes {

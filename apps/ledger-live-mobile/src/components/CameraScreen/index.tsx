@@ -29,13 +29,7 @@ export default function CameraScreen({ width, height, progress, liveQrCode, inst
         };
   return (
     <View style={wrapperStyle}>
-      <Flex
-        height={height * 0.15}
-        px={6}
-        pt={9}
-        zIndex={1}
-        backgroundColor={rgba(colors.constant.black, 0.8)}
-      />
+      <Flex height={height * 0.15} px={6} pt={9} zIndex={1} />
       <Flex flexDirection={"row"} justifyContent={"space-evenly"} alignItems={"center"}>
         <Box flexGrow={1} backgroundColor={rgba(colors.constant.black, 0.8)} height={"100%"} />
         <ScanTargetSvg />

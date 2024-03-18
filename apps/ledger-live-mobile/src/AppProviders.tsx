@@ -14,7 +14,6 @@ import OldMarketDataProvider from "~/screens/Market/MarketDataProviderWrapper";
 import PostOnboardingProviderWrapped from "~/logic/postOnboarding/PostOnboardingProviderWrapped";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { CountervaluesMarketcap } from "@ledgerhq/live-countervalues-react/index";
 
 type AppProvidersProps = {
   initialCountervalues?: CounterValuesStateRaw;
@@ -29,24 +28,22 @@ function AppProviders({ initialCountervalues, children }: AppProvidersProps) {
   return (
     <QueryClientProvider client={queryClient}>
       <BridgeSyncProvider>
-        <CountervaluesMarketcap>
-          <CounterValuesProvider initialState={initialCountervalues}>
-            <ButtonUseTouchableContext.Provider value={true}>
-              <OnboardingContextProvider>
-                <PostOnboardingProviderWrapped>
-                  <ToastProvider>
-                    <NotificationsProvider>
-                      <SnackbarContainer />
-                      <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
-                        <MarketDataProvider>{children}</MarketDataProvider>
-                      </NftMetadataProvider>
-                    </NotificationsProvider>
-                  </ToastProvider>
-                </PostOnboardingProviderWrapped>
-              </OnboardingContextProvider>
-            </ButtonUseTouchableContext.Provider>
-          </CounterValuesProvider>
-        </CountervaluesMarketcap>
+        <CounterValuesProvider initialState={initialCountervalues}>
+          <ButtonUseTouchableContext.Provider value={true}>
+            <OnboardingContextProvider>
+              <PostOnboardingProviderWrapped>
+                <ToastProvider>
+                  <NotificationsProvider>
+                    <SnackbarContainer />
+                    <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
+                      <MarketDataProvider>{children}</MarketDataProvider>
+                    </NftMetadataProvider>
+                  </NotificationsProvider>
+                </ToastProvider>
+              </PostOnboardingProviderWrapped>
+            </OnboardingContextProvider>
+          </ButtonUseTouchableContext.Provider>
+        </CounterValuesProvider>
       </BridgeSyncProvider>
     </QueryClientProvider>
   );

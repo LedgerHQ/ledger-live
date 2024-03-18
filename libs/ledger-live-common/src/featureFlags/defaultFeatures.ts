@@ -33,12 +33,12 @@ export const initFeature = <T>(opts?: Feature<T>) => {
  */
 export const CURRENCY_DEFAULT_FEATURES = {
   currencyArbitrum: DEFAULT_FEATURE,
-  currencyArbitrumSepolia: DEFAULT_FEATURE,
+  currencyArbitrumGoerli: DEFAULT_FEATURE,
   currencyAstar: DEFAULT_FEATURE,
   currencyAvalancheCChain: DEFAULT_FEATURE,
   currencyAxelar: DEFAULT_FEATURE,
   currencyBase: DEFAULT_FEATURE,
-  currencyBaseSepolia: DEFAULT_FEATURE,
+  currencyBaseGoerli: DEFAULT_FEATURE,
   currencyBittorrent: DEFAULT_FEATURE,
   currencyBoba: DEFAULT_FEATURE,
   currencyCoreum: DEFAULT_FEATURE,
@@ -446,7 +446,6 @@ export const DEFAULT_FEATURES: Features = {
     enabled: false,
     params: {
       variant: ABTestingVariants.variantA,
-      entryPoints: ["Onboarding", "Portfolio"],
     },
   },
 

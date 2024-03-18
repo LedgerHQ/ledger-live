@@ -38,7 +38,6 @@ import {
   customImageTypeSelector,
   userNpsSelector,
   personalizedRecommendationsEnabledSelector,
-  hasSeenAnalyticsOptInPromptSelector,
 } from "../reducers/settings";
 import { knownDevicesSelector } from "../reducers/ble";
 import { DeviceLike, State } from "../reducers/types";
@@ -97,25 +96,8 @@ runOnceWhen(() => !!analyticsFeatureFlagMethod && !!segmentClient, getFeatureFla
 
 export const updateSessionId = () => (sessionId = uuid());
 
-const getMandatoryProperties = async (store: AppStore) => {
-  const state: State = store.getState();
-  const { user } = await getOrCreateUser();
-  const analyticsEnabled = analyticsEnabledSelector(state);
-  const personalizedRecommendationsEnabled = personalizedRecommendationsEnabledSelector(state);
-  const hasSeenAnalyticsOptInPrompt = hasSeenAnalyticsOptInPromptSelector(state);
-
-  return {
-    userId: user?.id,
-    braze_external_id: user?.id, // Needed for braze with this exact name
-    optInAnalytics: analyticsEnabled,
-    optInPersonalRecommendations: personalizedRecommendationsEnabled,
-    hasSeenAnalyticsOptInPrompt,
-  };
-};
-
 const extraProperties = async (store: AppStore) => {
   const state: State = store.getState();
-  const mandatoryProperties = await getMandatoryProperties(store);
   const sensitiveAnalytics = sensitiveAnalyticsSelector(state);
   const systemLanguage = sensitiveAnalytics ? null : RNLocalize.getLocales()[0]?.languageTag;
   const knownDeviceModelIds = knownDeviceModelIdsSelector(state);
@@ -148,6 +130,7 @@ const extraProperties = async (store: AppStore) => {
   const notificationsBlacklisted = Object.entries(notifications)
     .filter(([key, value]) => key !== "areNotificationsAllowed" && value === false)
     .map(([key]) => key);
+  const { user } = await getOrCreateUser();
   const accountsWithFunds = accounts
     ? [
         ...new Set(
@@ -167,6 +150,9 @@ const extraProperties = async (store: AppStore) => {
   const hasGenesisPass = hasNftInAccounts(GENESIS_PASS_COLLECTION_CONTRACT, accounts);
   const hasInfinityPass = hasNftInAccounts(INFINITY_PASS_COLLECTION_CONTRACT, accounts);
   const nps = userNpsSelector(state);
+  const analyticsEnabled: boolean = analyticsEnabledSelector(state);
+  const personalizedRecommendationsEnabled: boolean =
+    personalizedRecommendationsEnabledSelector(state);
 
   const stakingProviders =
     analyticsFeatureFlagMethod && analyticsFeatureFlagMethod("ethStakingProviders");
@@ -174,7 +160,6 @@ const extraProperties = async (store: AppStore) => {
     stakingProviders?.enabled && stakingProviders?.params?.listProvider.length;
 
   return {
-    ...mandatoryProperties,
     appVersion,
     androidVersionCode: getAndroidVersionCode(VersionNumber.buildVersion),
     androidArchitecture: getAndroidArchitecture(VersionNumber.buildVersion),
@@ -198,6 +183,8 @@ const extraProperties = async (store: AppStore) => {
     ...deviceInfo,
     notificationsBlacklisted,
     ...notificationsOptedIn,
+    userId: user?.id,
+    braze_external_id: user?.id, // Needed for braze with this exact name
     accountsWithFunds,
     blockchainsWithNftsOwned,
     hasGenesisPass,
@@ -206,6 +193,8 @@ const extraProperties = async (store: AppStore) => {
     staxDeviceUser: knownDeviceModelIds.stax,
     staxLockscreen: customImageType || "none",
     nps,
+    optInAnalytics: analyticsEnabled,
+    optInPersonalRecommendations: personalizedRecommendationsEnabled,
     stakingProvidersEnabled: stakingProvidersCount || "flag not loaded",
   };
 };
@@ -240,22 +229,19 @@ export const start = async (store: AppStore): Promise<SegmentClient | undefined>
   return segmentClient;
 };
 
-export const updateIdentify = async (additionalProperties?: UserTraits, mandatory?: boolean) => {
+export const updateIdentify = async (additionalProperties?: UserTraits) => {
   Sentry.addBreadcrumb({
     category: "identify",
     level: "debug",
   });
 
-  const state = storeInstance && storeInstance.getState();
-  const isTracking = getIsTracking(state, mandatory);
-  if (!storeInstance || !isTracking.enabled) {
+  if (!storeInstance || !trackingEnabledSelector(storeInstance.getState())) {
     return;
   }
 
   const userExtraProperties = await extraProperties(storeInstance);
-  const mandatoryProperties = await getMandatoryProperties(storeInstance);
   const allProperties = {
-    ...(mandatory ? mandatoryProperties : userExtraProperties),
+    ...userExtraProperties,
     ...(additionalProperties || {}),
   };
   if (ANALYTICS_LOGS) console.log("analytics:identify", allProperties);
@@ -281,12 +267,11 @@ type EventType = string | "button_clicked" | "error_message";
 
 export function getIsTracking(
   state: State | null | undefined,
-  mandatory?: boolean | null | undefined,
 ): { enabled: true } | { enabled: false; reason?: string } {
   if (!state) return { enabled: false, reason: "store not initialised" };
   const trackingEnabled = state && trackingEnabledSelector(state);
 
-  if (!mandatory && !trackingEnabled) {
+  if (!trackingEnabled) {
     return {
       enabled: false,
       reason: "analytics not enabled",
@@ -298,7 +283,6 @@ export function getIsTracking(
 export const track = async (
   event: EventType,
   eventProperties?: Error | Record<string, unknown> | null,
-  mandatory?: boolean | null,
 ) => {
   Sentry.addBreadcrumb({
     message: event,
@@ -309,7 +293,7 @@ export const track = async (
 
   const state = storeInstance && storeInstance.getState();
 
-  const isTracking = getIsTracking(state, mandatory);
+  const isTracking = getIsTracking(state);
   if (!isTracking.enabled) {
     if (ANALYTICS_LOGS) console.log("analytics:track: not tracking because: ", isTracking.reason);
     return;
@@ -318,14 +302,13 @@ export const track = async (
   const page = currentRouteNameRef.current;
 
   const userExtraProperties = await extraProperties(storeInstance as AppStore);
-  const mandatoryProperties = await getMandatoryProperties(storeInstance as AppStore);
   const propertiesWithoutExtra = {
     page,
     ...eventProperties,
   };
   const allProperties = {
     ...propertiesWithoutExtra,
-    ...(mandatory ? mandatoryProperties : userExtraProperties),
+    ...userExtraProperties,
   };
   if (ANALYTICS_LOGS) console.log("analytics:track", event, allProperties);
   trackSubject.next({
@@ -345,20 +328,19 @@ export const trackWithRoute = (
   event: EventType,
   route: RouteProp<ParamListBase>,
   properties?: Record<string, unknown> | null,
-  mandatory?: boolean | null,
 ) => {
   const newProperties = {
     page: getPageNameFromRoute(route),
     // don't override page if it's already set
     ...(properties || {}),
   };
-  track(event, newProperties, mandatory);
+  track(event, newProperties);
 };
 export const useTrack = () => {
   const route = useRoute();
   const track = useCallback(
-    (event: EventType, properties?: Record<string, unknown> | null, mandatory?: boolean | null) =>
-      trackWithRoute(event, route, properties, mandatory),
+    (event: EventType, properties?: Record<string, unknown> | null) =>
+      trackWithRoute(event, route, properties),
     [route],
   );
   return track;
@@ -419,10 +401,6 @@ export const screen = async (
    * This is practical in case a TrackScreen component gets remounted.
    */
   avoidDuplicates?: boolean,
-  /**
-   * When true, we force the tracking for this event.
-   */
-  mandatory?: boolean,
 ) => {
   const fullScreenName = (category || "") + (category && name ? " " : "") + (name || "");
   const eventName = `Page ${fullScreenName}`;
@@ -443,7 +421,7 @@ export const screen = async (
 
   const state = storeInstance && storeInstance.getState();
 
-  const isTracking = getIsTracking(state, mandatory);
+  const isTracking = getIsTracking(state);
   if (!isTracking.enabled) {
     if (ANALYTICS_LOGS) console.log("analytics:screen: not tracking because: ", isTracking.reason);
     return;
@@ -452,14 +430,13 @@ export const screen = async (
   const source = previousRouteNameRef.current;
 
   const userExtraProperties = await extraProperties(storeInstance as AppStore);
-  const mandatoryProperties = await getMandatoryProperties(storeInstance as AppStore);
   const eventPropertiesWithoutExtra = {
     source,
     ...properties,
   };
   const allProperties = {
     ...eventPropertiesWithoutExtra,
-    ...(mandatory ? mandatoryProperties : userExtraProperties),
+    ...userExtraProperties,
   };
   if (ANALYTICS_LOGS) console.log("analytics:screen", category, name, allProperties);
   trackSubject.next({

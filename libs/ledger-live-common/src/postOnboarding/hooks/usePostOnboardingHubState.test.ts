@@ -1,11 +1,8 @@
-/**
- * @jest-environment jsdom
- */
 import { useFeatureFlags } from "../../featureFlags";
 import { hubStateSelector } from "../reducer";
 import { usePostOnboardingContext } from "./usePostOnboardingContext";
 import { getPostOnboardingAction, mockedFeatureIdToTest } from "../mock";
-import { renderHook } from "@testing-library/react";
+import { renderHook } from "@testing-library/react-hooks";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
 import { usePostOnboardingHubState } from "./usePostOnboardingHubState";

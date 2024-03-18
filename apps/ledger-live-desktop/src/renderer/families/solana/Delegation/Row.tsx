@@ -22,7 +22,6 @@ import ExclamationCircleThin from "~/renderer/icons/ExclamationCircleThin";
 import Loader from "~/renderer/icons/Loader";
 import { TableLine } from "./Header";
 import { DelegateModalName } from "../modals";
-import Discreet from "~/renderer/components/Discreet";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -148,13 +147,9 @@ export function Row({ account, stakeWithMeta, onManageAction, onExternalLink }: 
         )}
         <Box ml={1}>{stake.activation.state}</Box>
       </Column>
-      <Column>
-        <Discreet>{formatAmount(stake.delegation?.stake ?? 0)}</Discreet>
-      </Column>
+      <Column>{formatAmount(stake.delegation?.stake ?? 0)}</Column>
       <Column>{stake.delegation === undefined ? 0 : stakeActivePercent(stake).toFixed(2)} %</Column>
-      <Column>
-        <Discreet>{formatAmount(stake.withdrawable)}</Discreet>
-      </Column>
+      <Column>{formatAmount(stake.withdrawable)}</Column>
       <Column>
         <DropDown items={stakeActions} renderItem={ManageDropDownItem} onChange={onSelect}>
           {() => {

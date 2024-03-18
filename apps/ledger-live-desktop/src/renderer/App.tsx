@@ -18,7 +18,6 @@ import LiveStyleSheetManager from "~/renderer/styles/LiveStyleSheetManager";
 import { FirebaseRemoteConfigProvider } from "~/renderer/components/FirebaseRemoteConfig";
 import { FirebaseFeatureFlagsProvider } from "~/renderer/components/FirebaseFeatureFlags";
 import CountervaluesProvider from "~/renderer/components/CountervaluesProvider";
-import { CountervaluesMarketcap } from "@ledgerhq/live-countervalues-react";
 import DrawerProvider from "~/renderer/drawers/Provider";
 import Default from "./Default";
 import { AnnouncementProviderWrapper } from "~/renderer/components/AnnouncementProviderWrapper";
@@ -76,31 +75,29 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
           <FirebaseFeatureFlagsProvider getFeature={getFeature}>
             <ConnectEnvsToSentry />
             <UpdaterProvider>
-              <CountervaluesMarketcap>
-                <CountervaluesProvider initialState={initialCountervalues}>
-                  <ToastProvider>
-                    <AnnouncementProviderWrapper>
-                      <Router>
-                        <PostOnboardingProviderWrapped>
-                          <PlatformAppProviderWrapper>
-                            <DrawerProvider>
-                              <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
-                                <MarketDataProvider>
-                                  <StorylyProvider>
-                                    <QueryClientProvider client={queryClient}>
-                                      <Default />
-                                    </QueryClientProvider>
-                                  </StorylyProvider>
-                                </MarketDataProvider>
-                              </NftMetadataProvider>
-                            </DrawerProvider>
-                          </PlatformAppProviderWrapper>
-                        </PostOnboardingProviderWrapped>
-                      </Router>
-                    </AnnouncementProviderWrapper>
-                  </ToastProvider>
-                </CountervaluesProvider>
-              </CountervaluesMarketcap>
+              <CountervaluesProvider initialState={initialCountervalues}>
+                <ToastProvider>
+                  <AnnouncementProviderWrapper>
+                    <Router>
+                      <PostOnboardingProviderWrapped>
+                        <PlatformAppProviderWrapper>
+                          <DrawerProvider>
+                            <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
+                              <MarketDataProvider>
+                                <StorylyProvider>
+                                  <QueryClientProvider client={queryClient}>
+                                    <Default />
+                                  </QueryClientProvider>
+                                </StorylyProvider>
+                              </MarketDataProvider>
+                            </NftMetadataProvider>
+                          </DrawerProvider>
+                        </PlatformAppProviderWrapper>
+                      </PostOnboardingProviderWrapped>
+                    </Router>
+                  </AnnouncementProviderWrapper>
+                </ToastProvider>
+              </CountervaluesProvider>
             </UpdaterProvider>
           </FirebaseFeatureFlagsProvider>
         </FirebaseRemoteConfigProvider>

@@ -18,7 +18,7 @@ export function EvmStakingDrawer() {
   const { isOpen, onModalHide, openDrawer, onClose, drawer } = useRootDrawerContext();
   const ethStakingProviders = useFeature("ethStakingProviders");
   const isStakingProvidersEnabled = ethStakingProviders?.enabled;
-  const providers: ListProvider[] | undefined = ethStakingProviders?.params?.listProvider;
+  const providers = ethStakingProviders?.params?.listProvider;
 
   const { theme: themeName } = useTheme();
 
@@ -32,7 +32,7 @@ export function EvmStakingDrawer() {
 
   const has32Eth = drawer.props.has32Eth ?? false;
 
-  const listProvidersSorted: ListProvider[] = ethStakingProviders.params!.listProvider.sort(
+  const listProvidersSorted = ethStakingProviders.params!.listProvider.sort(
     has32Eth ? descending : ascending,
   );
 

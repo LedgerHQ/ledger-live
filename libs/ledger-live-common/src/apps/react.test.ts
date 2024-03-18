@@ -1,8 +1,5 @@
-/**
- * @jest-environment jsdom
- */
 import { Subject } from "rxjs";
-import { renderHook, act } from "@testing-library/react";
+import { renderHook, act } from "@testing-library/react-hooks";
 import { initState } from ".";
 import { deviceInfo155, mockListAppsResult } from "./mock";
 import {

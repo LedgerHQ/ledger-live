@@ -1,9 +1,6 @@
-/**
- * @jest-environment jsdom
- */
 import { timer, of } from "rxjs";
 import { map, delayWhen } from "rxjs/operators";
-import { renderHook, act } from "@testing-library/react";
+import { renderHook, act } from "@testing-library/react-hooks";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { DisconnectedDevice, LockedDeviceError, UnexpectedBootloader } from "@ledgerhq/errors";
 import { useOnboardingStatePolling } from "./useOnboardingStatePolling";

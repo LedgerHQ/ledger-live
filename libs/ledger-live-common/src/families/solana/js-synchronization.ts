@@ -51,7 +51,6 @@ import { drainSeq } from "./utils";
 import { estimateTxFee } from "./tx-fees";
 import { SolanaAccount, SolanaOperationExtra, SolanaStake } from "./types";
 import { Account, Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
-import { DelegateInfo, WithdrawInfo } from "./api/chain/instruction/stake/types";
 
 type OnChainTokenAccount = Awaited<ReturnType<typeof getAccount>>["tokenAccounts"][number];
 
@@ -383,7 +382,9 @@ function txToMainAccOperation(
   const txDate = new Date(tx.info.blockTime * 1000);
 
   const opFee = isFeePayer ? txFee : new BigNumber(0);
-  const opValue = getOpValue(balanceDelta, opFee, opType);
+
+  const value = balanceDelta.abs();
+  const opValue = opType === "OPT_OUT" ? value.negated() : value;
 
   return {
     id: encodeOperationId(accountId, txHash, opType),
@@ -392,7 +393,7 @@ function txToMainAccOperation(
     hasFailed: !!tx.info.err,
     blockHeight: tx.info.slot,
     blockHash: message.recentBlockhash,
-    extra: getOpExtra(tx, balanceDelta, opType),
+    extra: getOpExtra(tx),
     type: opType,
     senders,
     recipients,
@@ -403,56 +404,10 @@ function txToMainAccOperation(
   };
 }
 
-function getOpValue(balanceDelta: BigNumber, opFee: BigNumber, opType: OperationType): BigNumber {
-  const value = balanceDelta.abs();
-  switch (opType) {
-    case "DELEGATE":
-    case "WITHDRAW_UNBONDED":
-      return opFee;
-    case "OPT_OUT":
-      return value.negated();
-    default:
-      return value;
-  }
-}
-
-function getOpExtra(
-  tx: TransactionDescriptor,
-  balanceDelta: BigNumber,
-  opType: OperationType,
-): SolanaOperationExtra {
+function getOpExtra(tx: TransactionDescriptor): SolanaOperationExtra {
   const extra: SolanaOperationExtra = {};
-  const { instructions } = tx.parsed.transaction.message;
-  const parsedIxs = instructions
-    .map(ix => parseQuiet(ix))
-    .filter(({ program }) => program !== "spl-memo");
-
   if (tx.info.memo !== null) {
     extra.memo = dropMemoLengthPrefixIfAny(tx.info.memo);
-  }
-
-  if (opType === "DELEGATE") {
-    const delegateInfo = parsedIxs.find(
-      ix => ix.program === "stake" && ix.instruction?.type === "delegate",
-    )?.instruction?.info as DelegateInfo;
-    if (!delegateInfo) return extra;
-
-    extra.stake = {
-      address: delegateInfo.voteAccount.toBase58(),
-      amount: balanceDelta.abs(),
-    };
-  }
-
-  if (opType === "WITHDRAW_UNBONDED") {
-    const withdrawInfo = parsedIxs.find(
-      ix => ix.program === "stake" && ix.instruction?.type === "withdraw",
-    )?.instruction?.info as WithdrawInfo;
-    if (!withdrawInfo) return extra;
-
-    extra.stake = {
-      address: withdrawInfo.stakeAccount.toBase58(),
-      amount: new BigNumber(withdrawInfo.lamports),
-    };
   }
 
   return extra;
@@ -506,7 +461,7 @@ function txToTokenAccOperation(
     senders,
     value: delta.abs(),
     hasFailed: !!tx.info.err,
-    extra: getOpExtra(tx, delta, opType),
+    extra: getOpExtra(tx),
     blockHash: tx.parsed.transaction.message.recentBlockhash,
   };
 }
@@ -583,7 +538,7 @@ function getMainAccOperationTypeFromTx(tx: ParsedTransaction): OperationType | u
           case "deactivate":
             return "UNDELEGATE";
           case "withdraw":
-            return "WITHDRAW_UNBONDED";
+            return "IN";
         }
         break;
       default:

@@ -17,9 +17,7 @@ import {
   exportCountervalues,
   importCountervalues,
   inferTrackingPairForAccounts,
-  trackingPairForTopCoins,
 } from "@ledgerhq/live-countervalues/logic";
-import api from "@ledgerhq/live-countervalues/api/index";
 import type {
   CounterValuesState,
   CounterValuesStateRaw,
@@ -27,7 +25,6 @@ import type {
   TrackingPair,
 } from "@ledgerhq/live-countervalues/types";
 import { useDebounce } from "@ledgerhq/live-hooks/useDebounce";
-import { log } from "@ledgerhq/logs";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 
@@ -69,71 +66,13 @@ const CountervaluesPollingContext = createContext<Polling>({
   error: null,
 });
 
-const CountervaluesUserSettingsContext = createContext<CountervaluesSettings>({
-  trackingPairs: [],
-  autofillGaps: true,
-});
-
 const CountervaluesContext = createContext<CounterValuesState>(initialState);
-
-const CountervaluesMarketcapIdsContext = createContext<string[]>([]);
 
 function trackingPairsHash(a: TrackingPair[]) {
   return a
     .map(p => `${p.from.ticker}:${p.to.ticker}:${p.startDate.toISOString().slice(0, 10) || ""}`)
     .sort()
     .join("|");
-}
-
-const marketcapRefresh = 30 * 60000;
-const marketcapRefreshOnError = 60000;
-const initialIds: string[] = [];
-/**
- * Internal only. fetch the marketcap and keep it in sync.
- * the data is shared through a context, you can useMarketcapIds to get it.
- */
-function useMarketcap() {
-  const [ids, setIds] = useState<string[]>(initialIds);
-  const [fetchNonce, setFetchNonce] = useState(0);
-
-  useEffect(() => {
-    let timeout: NodeJS.Timeout | null = null;
-    api.fetchIdsSortedByMarketcap().then(
-      ids => {
-        setIds(ids);
-        timeout = setTimeout(() => setFetchNonce(n => n + 1), marketcapRefresh);
-      },
-      error => {
-        log("countervalues", "error fetching marketcap ids " + error);
-        timeout = setTimeout(() => setFetchNonce(n => n + 1), marketcapRefreshOnError);
-      },
-    );
-    return () => {
-      if (timeout) {
-        clearTimeout(timeout);
-      }
-    };
-  }, [fetchNonce]);
-
-  return ids;
-}
-
-// infer the tracking pairs for the top coins that the portfolio needs to display itself
-// if startDate is undefined, the feature is disabled
-export function useTrackingPairsForTopCoins(
-  marketcapIds: string[],
-  countervalue: Currency,
-  size: number,
-  startDate: Date | undefined,
-) {
-  const dateTimestamp = startDate?.getTime();
-  return useMemo(
-    () =>
-      dateTimestamp
-        ? trackingPairForTopCoins(marketcapIds, size, countervalue, new Date(dateTimestamp))
-        : [],
-    [marketcapIds, countervalue, dateTimestamp, size],
-  );
 }
 
 export function useTrackingPairForAccounts(
@@ -149,15 +88,6 @@ export function useTrackingPairForAccounts(
   // to not recalculate pairs as fast as accounts resynchronizes
   // eslint-disable-next-line react-hooks/exhaustive-deps
   return useMemo(() => c.pairs, [c.hash]);
-}
-
-export function CountervaluesMarketcap({ children }: { children: React.ReactNode }): ReactElement {
-  const marketcapIds = useMarketcap();
-  return (
-    <CountervaluesMarketcapIdsContext.Provider value={marketcapIds}>
-      {children}
-    </CountervaluesMarketcapIdsContext.Provider>
-  );
 }
 
 export function Countervalues({
@@ -244,9 +174,7 @@ export function Countervalues({
 
   return (
     <CountervaluesPollingContext.Provider value={polling}>
-      <CountervaluesUserSettingsContext.Provider value={userSettings}>
-        <CountervaluesContext.Provider value={state}>{children}</CountervaluesContext.Provider>
-      </CountervaluesUserSettingsContext.Provider>
+      <CountervaluesContext.Provider value={state}>{children}</CountervaluesContext.Provider>
     </CountervaluesPollingContext.Provider>
   );
 }
@@ -311,33 +239,16 @@ function fetchReducer(state: FetchState, action: Action): FetchState {
   }
 }
 
-// allows consumer to access the countervalues polling control object
 export function useCountervaluesPolling(): Polling {
   return useContext(CountervaluesPollingContext);
 }
-
-// allows consumer to access the user settings that was used to fetch the countervalues
-export function useCountervaluesUserSettingsContext(): CountervaluesSettings {
-  return useContext(CountervaluesUserSettingsContext);
-}
-
-// allows consumer to access the countervalues state
 export function useCountervaluesState(): CounterValuesState {
   return useContext(CountervaluesContext);
 }
-
-// allows consumer to access the coins ids sorted by marketcap. It's basically all the coins that the API supports.
-export function useMarketcapIds(): string[] {
-  return useContext(CountervaluesMarketcapIdsContext);
-}
-
-// provides an export of the countervalues state
 export function useCountervaluesExport(): CounterValuesStateRaw {
   const state = useContext(CountervaluesContext);
   return useMemo(() => exportCountervalues(state), [state]);
 }
-
-// provides a way to calculate a countervalue from a value
 export function useCalculate(query: {
   value: number;
   from: Currency;
@@ -350,7 +261,6 @@ export function useCalculate(query: {
   return calculate(state, query);
 }
 
-// provides a way to calculate a countervalue from a value using a callback
 export function useCalculateCountervalueCallback({
   to,
 }: {

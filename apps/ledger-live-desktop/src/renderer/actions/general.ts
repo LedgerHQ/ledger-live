@@ -14,8 +14,8 @@ import {
   useCalculateCountervalueCallback as useCalculateCountervalueCallbackCommon,
   useTrackingPairForAccounts,
 } from "@ledgerhq/live-countervalues-react";
-import { CountervaluesSettings } from "@ledgerhq/live-countervalues/types";
-import { useDistribution as useDistributionRaw } from "@ledgerhq/live-countervalues-react/portfolio";
+import { TrackingPair } from "@ledgerhq/live-countervalues/types";
+import { useDistribution as useDistributionRaw } from "@ledgerhq/live-common/portfolio/v2/react";
 import { accountsSelector, activeAccountsSelector } from "~/renderer/reducers/accounts";
 import { osDarkModeSelector } from "~/renderer/reducers/application";
 import {
@@ -23,9 +23,10 @@ import {
   counterValueCurrencySelector,
   userThemeSelector,
 } from "~/renderer/reducers/settings";
-import { resolveTrackingPairs } from "@ledgerhq/live-countervalues/logic";
-import { useExtraSessionTrackingPair } from "./deprecated/ondemand-countervalues";
-import { useMarketPerformanceTrackingPairs } from "./marketperformance";
+import { BehaviorSubject } from "rxjs";
+const extraSessionTrackingPairsChanges: BehaviorSubject<TrackingPair[]> = new BehaviorSubject(
+  [] as TrackingPair[],
+);
 
 // provide redux states via custom hook wrapper
 
@@ -103,34 +104,36 @@ export const themeSelector = createSelector(
   userThemeSelector,
   (osDark, theme) => theme || (osDark ? "dark" : "light"),
 );
-
-export function useCalculateCountervaluesUserSettings(): CountervaluesSettings {
-  const countervalue = useSelector(counterValueCurrencySelector);
-
-  // countervalues for top coins (market performance feature)
-  const trackingPairsForTopCoins = useMarketPerformanceTrackingPairs(countervalue);
-
-  // countervalues for accounts
-  const accounts = useSelector(accountsSelector);
-  const trPairs = useTrackingPairForAccounts(accounts, countervalue);
-
-  // countervalues for on demand session tracking pairs
-  const extraSessionTrackingPairs = useExtraSessionTrackingPair();
-
-  // we merge all usecases that require tracking pairs
-  const trackingPairs = useMemo(
-    () =>
-      resolveTrackingPairs(
-        extraSessionTrackingPairs.concat(trPairs).concat(trackingPairsForTopCoins),
-      ),
-    [extraSessionTrackingPairs, trackingPairsForTopCoins, trPairs],
-  );
-
+export function useUserSettings() {
+  const trackingPairs = useTrackingPairs();
   return useMemo(
     () => ({
       trackingPairs,
       autofillGaps: true,
     }),
     [trackingPairs],
+  );
+}
+export function addExtraSessionTrackingPair(trackingPair: TrackingPair) {
+  const value = extraSessionTrackingPairsChanges.value;
+  if (!value.some(tp => tp.from === trackingPair.from && tp.to === trackingPair.to))
+    extraSessionTrackingPairsChanges.next(value.concat(trackingPair));
+}
+export function useExtraSessionTrackingPair() {
+  const [extraSessionTrackingPair, setExtraSessionTrackingPair] = useState([] as TrackingPair[]);
+  useEffect(() => {
+    const sub = extraSessionTrackingPairsChanges.subscribe(setExtraSessionTrackingPair);
+    return () => sub && sub.unsubscribe();
+  }, []);
+  return extraSessionTrackingPair;
+}
+export function useTrackingPairs(): TrackingPair[] {
+  const accounts = useSelector(accountsSelector);
+  const countervalue = useSelector(counterValueCurrencySelector);
+  const trPairs = useTrackingPairForAccounts(accounts, countervalue);
+  const extraSessionTrackingPairs = useExtraSessionTrackingPair();
+  return useMemo(
+    () => extraSessionTrackingPairs.concat(trPairs),
+    [extraSessionTrackingPairs, trPairs],
   );
 }

@@ -1,7 +1,4 @@
-/**
- * @jest-environment jsdom
- */
-import { renderHook, act } from "@testing-library/react";
+import { renderHook, act } from "@testing-library/react-hooks";
 import { of, throwError } from "rxjs";
 import { UserRefusedAllowManager, DisconnectedDeviceDuringOperation } from "@ledgerhq/errors";
 import { useGenuineCheck } from "./useGenuineCheck";

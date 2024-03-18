@@ -76,5 +76,19 @@ export default {
   collectCoverage: true,
   collectCoverageFrom: ["src/**/*.{ts,tsx}"],
   coverageReporters: ["json", "lcov", "clover", "json-summary"],
-  projects: [defaultConfig],
+  projects: [
+    {
+      ...defaultConfig,
+      testPathIgnorePatterns: [
+        ...testPathIgnorePatterns,
+        "(/__tests__/.*|(\\.|/)react\\.test|spec)\\.tsx",
+      ],
+    },
+    {
+      ...defaultConfig,
+      displayName: "dom",
+      testEnvironment: "jsdom",
+      testRegex: "(/__tests__/.*|(\\.|/)react\\.test|spec)\\.tsx",
+    },
+  ],
 };

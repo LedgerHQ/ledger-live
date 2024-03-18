@@ -1,16 +1,13 @@
-/**
- * @jest-environment jsdom
- */
-import { renderHook, act } from "@testing-library/react";
+import { renderHook, act } from "@testing-library/react-hooks";
 import { from } from "rxjs";
 import { DeviceModelId } from "@ledgerhq/devices";
 import Transport from "@ledgerhq/hw-transport";
 import { withDevice } from "../../hw/deviceAccess";
-import { getVersion } from "../../device/use-cases/getVersionUseCase";
+import getVersion from "../../hw/getVersion";
 import { useBleDevicePairing } from "./useBleDevicePairing";
 
 jest.mock("../../hw/deviceAccess");
-jest.mock("../../device/use-cases/getVersionUseCase");
+jest.mock("../../hw/getVersion");
 jest.mock("@ledgerhq/hw-transport");
 jest.useFakeTimers();
 
