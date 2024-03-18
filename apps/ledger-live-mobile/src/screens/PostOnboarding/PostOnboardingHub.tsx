@@ -39,12 +39,12 @@ const PostOnboardingHub = () => {
     closePostOnboarding();
   }, [closePostOnboarding]);
 
-  const allDone = useAllPostOnboardingActionsCompleted();
-
-  const productName = getDeviceModel(deviceModelId || DeviceModelId.nanoX)?.productName;
-
   const safeAreaInsets = useSafeAreaInsets();
+  const allDone = useAllPostOnboardingActionsCompleted() || !deviceModelId;
 
+  if (!deviceModelId) return null; // this will never happen in practice
+
+  const productName = getDeviceModel(deviceModelId).productName;
   return (
     <>
       <TrackScreen
@@ -73,7 +73,7 @@ const PostOnboardingHub = () => {
           <ScrollView>
             {actionsState.map((action, index, arr) => (
               <React.Fragment key={index}>
-                <PostOnboardingActionRow {...action} />
+                <PostOnboardingActionRow {...action} deviceModelId={deviceModelId} />
                 {index !== arr.length - 1 && <Divider />}
               </React.Fragment>
             ))}

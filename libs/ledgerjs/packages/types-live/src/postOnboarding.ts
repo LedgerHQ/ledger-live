@@ -17,11 +17,11 @@ export type WithNavigationParams = {
   /**
    * Navigation params when the user presses the button for this action
    * - In LLM, this will be used like this:
-   *  `navigation.navigate(...navigationParams)`
-   * - In LLD, this will be used like this:
-   *  `history.push(...navigationParams)`
+   *  `navigation.navigate(...getNavigationParams)`
    */
-  navigationParams?: any[];
+  getNavigationParams: (options: {
+    deviceModelId: DeviceModelId;
+  }) => [screen: any] | [screen: any, navigationParams: any];
 };
 
 type WithStartActionFunction = {
@@ -29,8 +29,8 @@ type WithStartActionFunction = {
    * The function to call when the user presses the button for this action
    */
   startAction: (args: {
-    openModalCallback?: any;
-    navigationCallback?: any;
+    openModalCallback: (modalName: string) => void;
+    navigationCallback: (route: string) => void;
     deviceModelId: DeviceModelId;
   }) => void;
   /**
