@@ -26,8 +26,8 @@ const maybeGetUpdatedSwapHistory = async (
       const uniquePendingSwapIds = Array.from(uniquePendingSwapIdsMap.values());
       if (uniquePendingSwapIds.length !== pendingSwapIds.length) {
         log(
-          "swap",
-          "duplicate ids inside app.json, number:",
+          "error",
+          "swap: duplicate ids inside app.json, number",
           pendingSwapIds.length - uniquePendingSwapIds.length,
         );
       }
