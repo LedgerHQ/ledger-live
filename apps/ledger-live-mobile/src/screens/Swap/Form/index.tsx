@@ -85,6 +85,7 @@ export function SwapForm({
     accounts,
     setExchangeRate,
     onNoRates,
+    refreshRate: DEFAULT_SWAP_RATES_LLM_INTERVAL_MS / 1000,
     excludeFixedRates: true,
   });
 
