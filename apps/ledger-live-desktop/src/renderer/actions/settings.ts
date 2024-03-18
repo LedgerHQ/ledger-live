@@ -67,7 +67,7 @@ export const setShareAnalytics = (shareAnalytics: boolean) =>
   saveSettings({
     shareAnalytics,
   });
-export const setSharePersonalizedRecommandations = (sharePersonalizedRecommandations: boolean) =>
+export const setSharePersonalizedRecommendations = (sharePersonalizedRecommandations: boolean) =>
   saveSettings({
     sharePersonalizedRecommandations,
   });

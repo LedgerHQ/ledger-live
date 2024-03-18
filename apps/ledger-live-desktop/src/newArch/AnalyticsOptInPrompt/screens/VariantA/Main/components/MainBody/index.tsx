@@ -10,7 +10,7 @@ const BodyBox = styled(Box)`
   flex-direction: column;
   gap: 32px;
   overflow-y: auto;
-  max-height: calc(100vh - 200px);
+  max-height: calc(100vh - 26%);
 `;
 
 const MainBody = () => {
@@ -31,7 +31,7 @@ const MainBody = () => {
 
   return (
     <BodyBox mb={"80px"} pb={"20px"}>
-      <Text variant="body" fontWeight="medium" color={colors.neutral.c80} fontSize={14}>
+      <Text variant="bodyLineHeight" fontWeight="medium" color={colors.neutral.c80} fontSize={14}>
         {t("analyticsOptInPrompt.variantA.description")}
       </Text>
       <TrackingInfoList

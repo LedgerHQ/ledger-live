@@ -10,7 +10,7 @@ const BodyBox = styled(Box)`
   flex-direction: column;
   gap: 16px;
   overflow-y: auto;
-  max-height: calc(100vh - 200px);
+  max-height: calc(100vh - 26%);
 `;
 
 interface ManagePreferencesBodyProps {
@@ -18,12 +18,12 @@ interface ManagePreferencesBodyProps {
 }
 
 const ManagePreferencesBody = ({ onSwitchChange }: ManagePreferencesBodyProps) => {
+  const { t } = useTranslation();
+  const { colors } = useTheme();
   const [checked, setChecked] = useState<Record<FieldKeySwitch, boolean>>({
     AnalyticsData: false,
     PersonalizationData: false,
   });
-  const { t } = useTranslation();
-  const { colors } = useTheme();
 
   const onClick = useCallback(
     (key: FieldKeySwitch) => {
@@ -74,7 +74,12 @@ const ManagePreferencesBody = ({ onSwitchChange }: ManagePreferencesBodyProps) =
                   size={"normal"}
                 />
               </Flex>
-              <Text variant={"body"} fontWeight={"medium"} color={colors.neutral.c70} fontSize={14}>
+              <Text
+                variant={"bodyLineHeight"}
+                fontWeight={"medium"}
+                color={colors.neutral.c70}
+                fontSize={14}
+              >
                 {t(description)}
               </Text>
             </Flex>

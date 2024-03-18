@@ -4,21 +4,28 @@ import ManagePreferences from "LLD/AnalyticsOptInPrompt/screens/VariantA/ManageP
 import { ManagePreferencesFooter } from "LLD/AnalyticsOptInPrompt/screens/VariantA/ManagePreferences/components";
 import { MainFooter } from "LLD/AnalyticsOptInPrompt/screens/VariantA/Main/components";
 import useVariantA from "LLD/AnalyticsOptInPrompt/hooks/useVariantA";
+import { EntryPoint } from "LLD/AnalyticsOptInPrompt/types/AnalyticsOptInPromptNavigator";
 
 interface VariantAProps {
   setPreventBackNavigation: (value: boolean) => void;
   goBackToMain: boolean;
   onSubmit?: () => void;
+  entryPoint: EntryPoint;
 }
 
-const VariantA = ({ setPreventBackNavigation, goBackToMain, onSubmit }: VariantAProps) => {
+const VariantA = ({
+  setPreventBackNavigation,
+  goBackToMain,
+  onSubmit,
+  entryPoint,
+}: VariantAProps) => {
   const {
     isManagingPreferences,
     onManagePreferencesClick,
     handleShareAnalyticsChange,
     handleShareCustomAnalyticsChange,
     handlePreferencesChange,
-  } = useVariantA({ setPreventBackNavigation, goBackToMain, onSubmit });
+  } = useVariantA({ setPreventBackNavigation, goBackToMain, onSubmit, entryPoint });
 
   return isManagingPreferences ? (
     <>

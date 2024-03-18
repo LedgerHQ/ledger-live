@@ -9,7 +9,7 @@ interface HeaderProps {
 const Header = ({ title }: HeaderProps) => {
   const { t } = useTranslation();
   return (
-    <Text variant="large" fontWeight="medium">
+    <Text variant="large" fontWeight="medium" fontSize={20}>
       {t(title)}
     </Text>
   );
