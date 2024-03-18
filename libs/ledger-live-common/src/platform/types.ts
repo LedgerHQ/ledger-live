@@ -6,6 +6,7 @@ import {
   Currency as PlatformCurrency,
   FAMILIES,
 } from "@ledgerhq/live-app-sdk";
+import { z } from "zod";
 
 /**
  * this is a hack to add the "evm" family to the list of supported families of
@@ -119,6 +120,76 @@ export type LiveAppManifest = {
     description: TranslatableString;
   };
 };
+
+export const LiveAppManifestSchema = z
+  .object({
+    id: z.string(),
+    author: z.string().optional(),
+    private: z.boolean().optional(),
+    name: z.string(),
+    url: z.string().or(z.instanceof(URL)),
+    params: z
+      .union([
+        z.object({
+          dappUrl: z.string(),
+          networks: z.array(
+            z.object({
+              currency: z.string(),
+              chainID: z.number(),
+              nodeURL: z.string().optional(),
+            }),
+          ),
+        }),
+        z.object({
+          dappUrl: z.string(),
+          networks: z.array(
+            z.object({
+              currency: z.string(),
+              chainID: z.number(),
+              nodeURL: z.string().optional(),
+            }),
+          ),
+          nanoApp: z.string(),
+          dappName: z.string(),
+        }),
+        z.object({
+          currencies: z.array(z.string()),
+          webAppName: z.string(),
+          webUrl: z.string(),
+        }),
+        z.object({
+          networks: z.array(
+            z.object({
+              currency: z.string(),
+              chainID: z.number(),
+              nodeURL: z.string().optional(),
+            }),
+          ),
+        }),
+        z.array(z.string()),
+      ])
+      .optional(),
+    homepageUrl: z.string(),
+    supportUrl: z.string().optional(),
+    icon: z.string().nullable().optional(),
+    platforms: z.array(z.enum(["ios", "android", "desktop"])),
+    apiVersion: z.string(),
+    manifestVersion: z.string(),
+    branch: z.enum(["stable", "experimental", "soon", "debug"]),
+    permissions: z.array(z.string()),
+    domains: z.array(z.string()),
+    categories: z.array(z.string()),
+    currencies: z.union([z.array(z.string()), z.literal("*")]),
+    visibility: z.enum(["complete", "searchable", "deep"]),
+    highlight: z.boolean().optional(),
+    content: z.object({
+      cta: z.record(z.string()).optional(),
+      subtitle: z.record(z.string()).optional(),
+      shortDescription: z.record(z.string()),
+      description: z.record(z.string()),
+    }),
+  })
+  .strict();
 
 export type PlatformApi = {
   fetchManifest: () => Promise<LiveAppManifest[]>;
