@@ -146,6 +146,7 @@ export const urls = {
     developerPage:
       "https://developers.ledger.com?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=catalog",
   },
+  chooseNetwork: "https://support.ledger.com/hc/en-us/articles/7782669175581?support=true",
   approvedOperation:
     "https://support.ledger.com/hc/en-us/articles/360020849134-Track-your-transaction?docs=true&utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=compoundTX",
   recoveryPhraseInfo:

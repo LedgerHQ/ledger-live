@@ -32,12 +32,12 @@ import {
   hasClosedNetworkBannerSelector,
   hasClosedWithdrawBannerSelector,
 } from "~/reducers/settings";
+import { urls } from "~/utils/urls";
 
 export default function ReceiveFundsNavigator() {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const route = useRoute();
-  const depositNetworkBannerMobile = useFeature("depositNetworkBannerMobile");
   const depositWithdrawBannerMobile = useFeature("depositWithdrawBannerMobile");
   const hasClosedWithdrawBanner = useSelector(hasClosedWithdrawBannerSelector);
   const hasClosedNetworkBanner = useSelector(hasClosedNetworkBannerSelector);
@@ -108,8 +108,8 @@ export default function ReceiveFundsNavigator() {
               {hasClosedNetworkBanner && (
                 <HelpButton
                   eventButton="Choose a network article"
-                  url={depositNetworkBannerMobile?.params?.url || ""}
-                  enabled={depositNetworkBannerMobile?.enabled ?? false}
+                  url={urls.chooseNetwork}
+                  enabled={true}
                 />
               )}
               <NavigationHeaderCloseButtonAdvanced onClose={onClose} />

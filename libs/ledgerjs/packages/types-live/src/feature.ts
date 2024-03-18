@@ -129,7 +129,6 @@ export type Features = CurrencyFeatures & {
   counterValue: Feature_CounterValue;
   deviceInitialApps: Feature_DeviceInitialApps;
   buyDeviceFromLive: Feature_BuyDeviceFromLive;
-  depositNetworkBannerMobile: Feature_DepositNetworkBannerMobile;
   depositWithdrawBannerMobile: Feature_DepositWithdrawBannerMobile;
   mockFeature: Feature_MockFeature;
   multibuyNavigation: Feature_MultibuyNavigation;
@@ -349,10 +348,6 @@ export type Feature_DeviceInitialApps = Feature<{
 export type Feature_BuyDeviceFromLive = Feature<{
   debug: boolean;
   url: string | null;
-}>;
-
-export type Feature_DepositNetworkBannerMobile = Feature<{
-  url: string;
 }>;
 
 export type Feature_DepositWithdrawBannerMobile = Feature<{
