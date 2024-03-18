@@ -39,11 +39,21 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
     [setIsAnalitycsOptInPromptOpened],
   );
 
+  const isEntryPointIncludedInFlagParams = lldAnalyticsOptInPromptFlag?.params?.entryPoints
+    .map(s => s.toLowerCase())
+    .includes(entryPoint.toLowerCase());
+
   const isFlagEnabled = useMemo(
     () =>
+      isEntryPointIncludedInFlagParams &&
       lldAnalyticsOptInPromptFlag?.enabled &&
       (!hasSeenAnalyticsOptInPrompt || entryPoint === EntryPoint.onboarding),
-    [lldAnalyticsOptInPromptFlag, hasSeenAnalyticsOptInPrompt, entryPoint],
+    [
+      lldAnalyticsOptInPromptFlag,
+      hasSeenAnalyticsOptInPrompt,
+      entryPoint,
+      isEntryPointIncludedInFlagParams,
+    ],
   );
 
   const onSubmit = () => {
@@ -67,6 +77,7 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
     setIsAnalitycsOptInPromptOpened,
     onSubmit,
     analyticsOptInPromptProps,
+    isFeatureFlagsAnalyticsPrefDisplayed: isFlagEnabled,
     isFeatureFlagsAnalyticsPrefDisplayed: isFlagEnabled,
     lldAnalyticsOptInPromptFlag,
     flow,
