@@ -257,7 +257,7 @@ const ImageCropper: React.FC<Props> = props => {
           objectFit="vertical-cover"
         />
       </Flex>
-      <Flex my={10} flexDirection={"row"} columnGap={4} alignItems={"center"}>
+      <Flex mt={10} flexDirection={"row"} columnGap={4} alignItems={"center"}>
         {children}
         <Button
           variant="shade"
