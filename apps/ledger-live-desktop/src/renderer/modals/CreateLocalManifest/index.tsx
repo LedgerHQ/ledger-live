@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
-import React, { SyntheticEvent, useCallback, useState } from "react";
+import React, { SyntheticEvent, useCallback, useMemo, useState } from "react";
 import { Trans } from "react-i18next";
 import Button from "~/renderer/components/Button";
 import Modal, { ModalBody } from "~/renderer/components/Modal";
 import { ScrollArea } from "~/renderer/components/Onboarding/ScrollArea";
 import { Flex } from "@ledgerhq/react-ui";
 import Input from "~/renderer/components/Input";
-import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import { LiveAppManifest, LiveAppManifestSchema } from "@ledgerhq/live-common/platform/types";
 import Text from "~/renderer/components/Text";
 import { useLocalLiveAppContext } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 
@@ -34,7 +34,7 @@ function FormLocalManifest({
   } = useLocalLiveAppContext();
 
   const [form, setForm] = useState<LiveAppManifest>(
-    liveAppByIndex.find(manifest => manifest.id === data.manifest?.id) ?? {
+    liveAppByIndex.find((manifest: LiveAppManifest) => manifest.id === data.manifest?.id) ?? {
       id: "ReplaceAppName",
       name: "ReplaceAppName",
       url: "http://localhost:3000",
@@ -59,18 +59,26 @@ function FormLocalManifest({
     },
   );
 
+  const formIsValid = useMemo(
+    () => LiveAppManifestSchema.safeParse(form as LiveAppManifest).success,
+    [form],
+  );
+
   const submitLocalApp = useCallback(
     (e: SyntheticEvent<HTMLFormElement>) => {
       if (e) {
         e.preventDefault();
       }
-      addLocalManifest(form);
+
+      if (formIsValid) {
+        addLocalManifest(form);
+      }
     },
-    [addLocalManifest, form],
+    [addLocalManifest, form, formIsValid],
   );
 
   const handleChange = (field: string, value: string | string[]) => {
-    setForm(prevState => {
+    setForm((prevState: LiveAppManifest) => {
       const isContentField = field === "description" || field === "shortDescription";
       return {
         ...prevState,
@@ -100,12 +108,18 @@ function FormLocalManifest({
         ? form.content[key]?.en
         : form[key as keyof LiveAppManifest];
 
+    const error =
+      key === "description" || key === "shortDescription"
+        ? LiveAppManifestSchema.shape.content.shape[key].safeParse({ en: value })
+        : LiveAppManifestSchema.shape[key].safeParse(value);
+
     return (
       <Flex marginY={"10px"} flexDirection={"column"}>
         <Text marginBottom={1} marginLeft={1} ff="Inter|Medium" fontSize={4}>
           {`${key} (${type}) `}
         </Text>
         <Input
+          error={!error.success}
           disabled={disabled}
           autoFocus={autoFocus}
           onChange={value => handleChange(key, isArray ? value.split(",") : value)}
@@ -154,6 +168,7 @@ function FormLocalManifest({
               <Flex width={"100%"} flexDirection={"row"} columnGap={3} justifyContent={"center"}>
                 <Button
                   small
+                  disabled={!formIsValid}
                   primary
                   onClick={(e: React.SyntheticEvent<HTMLFormElement, Event>) => {
                     submitLocalApp(e);
