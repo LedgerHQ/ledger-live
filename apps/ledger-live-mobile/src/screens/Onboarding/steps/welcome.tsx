@@ -63,10 +63,14 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
 
   const next = useCallback(() => {
     acceptTerms();
+    const entryPoints = llmAnalyticsOptInPromptFeature?.params?.entryPoints || [];
 
-    if (llmAnalyticsOptInPromptFeature?.enabled) {
+    if (llmAnalyticsOptInPromptFeature?.enabled && entryPoints.includes("Onboarding")) {
       navigation.navigate(NavigatorName.AnalyticsOptInPrompt, {
         screen: ScreenName.AnalyticsOptInPromptMain,
+        params: {
+          entryPoint: "Onboarding",
+        },
       });
     } else {
       dispatch(setAnalytics(true));
@@ -77,7 +81,13 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
         },
       });
     }
-  }, [acceptTerms, dispatch, navigation, llmAnalyticsOptInPromptFeature?.enabled]);
+  }, [
+    acceptTerms,
+    llmAnalyticsOptInPromptFeature?.enabled,
+    llmAnalyticsOptInPromptFeature?.params?.entryPoints,
+    navigation,
+    dispatch,
+  ]);
 
   const videoMounted = !useIsAppInBackground();
 

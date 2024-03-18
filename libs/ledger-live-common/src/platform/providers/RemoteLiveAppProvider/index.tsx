@@ -40,6 +40,7 @@ type FetchLiveAppCatalogPrams = {
   allowDebugApps: boolean;
   allowExperimentalApps: boolean;
   llVersion: string;
+  lang?: string;
 };
 
 type LiveAppProviderProps = {
@@ -97,7 +98,8 @@ export function RemoteLiveAppProvider({
   const [state, setState] = useState<Loadable<LiveAppRegistry>>(initialState);
   const [provider, setProvider] = useState<string>(initialProvider);
 
-  const { allowExperimentalApps, allowDebugApps, apiVersions, platform, llVersion } = parameters;
+  const { allowExperimentalApps, allowDebugApps, apiVersions, platform, llVersion, lang } =
+    parameters;
 
   // apiVersion renamed without (s) because param
   const apiVersion = apiVersions ? apiVersions : ["1.0.0", "2.0.0"];
@@ -126,6 +128,7 @@ export function RemoteLiveAppProvider({
         platform,
         private: false,
         llVersion,
+        lang: lang ? lang : "en",
       });
 
       if (!isMounted()) return;
@@ -154,7 +157,7 @@ export function RemoteLiveAppProvider({
       }));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allowDebugApps, allowExperimentalApps, providerURL, isMounted]);
+  }, [allowDebugApps, allowExperimentalApps, providerURL, lang, isMounted]);
 
   const value: LiveAppContextType = useMemo(
     () => ({

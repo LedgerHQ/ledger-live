@@ -8,7 +8,6 @@ import type {
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
-import { AlgorandAPI } from "./api";
 import { buildTransactionPayload, encodeToBroadcast, encodeToSign } from "./buildTransaction";
 import type { AlgorandAddress, AlgorandSignature, AlgorandSigner } from "./signer";
 import type { Transaction, AlgorandOperation } from "./types";
@@ -20,7 +19,6 @@ import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 export const buildSignOperation =
   (
     signerContext: SignerContext<AlgorandSigner, AlgorandAddress | AlgorandSignature>,
-    algorandAPI: AlgorandAPI,
   ): SignOperationFnSignature<Transaction> =>
   ({
     account,
@@ -39,7 +37,7 @@ export const buildSignOperation =
           throw new FeeNotLoaded();
         }
 
-        const algoTx = await buildTransactionPayload(algorandAPI)(account, transaction);
+        const algoTx = await buildTransactionPayload(account, transaction);
 
         const toSign = encodeToSign(algoTx);
 

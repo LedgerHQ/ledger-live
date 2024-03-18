@@ -10,13 +10,13 @@ import { analyticsEnabledSelector } from "~/reducers/settings";
 import Track from "~/analytics/Track";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { updateIdentify } from "~/analytics";
+import { track, updateIdentify } from "~/analytics";
 
 const AnalyticsRow = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const [isOpened, setIsOpened] = useState(false);
-  const analyticsEnabled: boolean = useSelector(analyticsEnabledSelector);
+  const analyticsEnabled = useSelector(analyticsEnabledSelector);
   const llmAnalyticsOptInPromptFeature = useFeature("llmAnalyticsOptInPrompt");
 
   const bulletList = [
@@ -61,9 +61,20 @@ const AnalyticsRow = () => {
   const toggleAnalytics = useCallback(
     (value: boolean) => {
       dispatch(setAnalytics(value));
-      updateIdentify();
+      updateIdentify(undefined, true);
+      if (llmAnalyticsOptInPromptFeature?.enabled) {
+        track(
+          "toggle_clicked",
+          {
+            enabled: value,
+            toggle: "Analytics",
+            page: "Page Settings General",
+          },
+          true,
+        );
+      }
     },
-    [dispatch],
+    [dispatch, llmAnalyticsOptInPromptFeature?.enabled],
   );
 
   return (

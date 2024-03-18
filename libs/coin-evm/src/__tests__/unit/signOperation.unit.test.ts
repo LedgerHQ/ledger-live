@@ -41,6 +41,7 @@ const transactionEIP1559: EvmTransaction = {
   maxPriorityFeePerGas: new BigNumber(100),
   type: 2,
 };
+
 const estimatedFees = getEstimatedFees(transactionEIP1559);
 
 const mockSignerContext: SignerContext<EvmSigner, EvmAddress | EvmSignature> = (

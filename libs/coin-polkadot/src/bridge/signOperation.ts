@@ -19,7 +19,6 @@ import type {
 } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { PolkadotAPI } from "../network";
 import { buildTransaction, calculateAmount, getNonce, isFirstBond, signExtrinsic } from "../logic";
 
 const MODE_TO_TYPE = {
@@ -118,7 +117,6 @@ const buildOptimisticOperation = (
 const buildSignOperation =
   (
     signerContext: SignerContext<PolkadotSigner, PolkadotAddress | PolkadotSignature>,
-    polkadotAPI: PolkadotAPI,
   ): SignOperationFnSignature<Transaction> =>
   ({
     account,
@@ -147,7 +145,7 @@ const buildSignOperation =
             t: transaction,
           }),
         };
-        const { unsigned, registry } = await buildTransaction(polkadotAPI)(
+        const { unsigned, registry } = await buildTransaction(
           account as PolkadotAccount,
           transactionToSign,
           true,

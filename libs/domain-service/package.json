@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/domain-service",
   "description": "Ledger service responsible for domain handling",
-  "version": "1.1.18",
+  "version": "1.1.19-next.0",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -76,7 +76,6 @@
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@testing-library/jest-dom": "^6.1.5",
     "@testing-library/react": "^14.1.2",
-    "@testing-library/react-hooks": "^8.0.1",
     "@types/jest": "^29.5.10",
     "@types/node": "^20.8.10",
     "@types/testing-library__jest-dom": "^5.14.5",

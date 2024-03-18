@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/native-ui",
-  "version": "0.22.7",
+  "version": "0.22.8-next.1",
   "description": "Ledger Live - Mobile UI",
   "repository": {
     "type": "git",
@@ -101,6 +101,8 @@
     "@storybook/addon-ondevice-controls": "6.5.7",
     "@storybook/addon-ondevice-notes": "6.5.7",
     "@storybook/addon-react-native-web": "^0.0.21",
+    "@storybook/blocks": "^7.5.3",
+    "@storybook/manager-api": "7.5.3",
     "@storybook/docs-tools": "^7.5.3",
     "@storybook/react": "^7.5.3",
     "@storybook/react-native": "6.5.7",

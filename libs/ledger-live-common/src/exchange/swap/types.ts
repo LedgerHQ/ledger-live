@@ -82,7 +82,7 @@ type ExchangeRateErrorCommon = {
   provider: string;
 };
 
-type ExchangeRateErrorDefault = ExchangeRateErrorCommon & {
+export type ExchangeRateErrorDefault = ExchangeRateErrorCommon & {
   errorCode: number;
   errorMessage: string;
 };
@@ -322,6 +322,7 @@ export type SwapDataType = {
   refetchRates: () => void;
   updateSelectedRate: (selected?: ExchangeRate) => void;
   targetAccounts?: Account[];
+  countdown: undefined | number;
 };
 
 export type SwapTransactionType = UseBridgeTransactionResult & {

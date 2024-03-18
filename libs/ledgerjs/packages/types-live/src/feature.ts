@@ -82,7 +82,7 @@ export type CurrencyFeatures = {
   currencyOptimism: DefaultFeature;
   currencyOptimismGoerli: DefaultFeature;
   currencyArbitrum: DefaultFeature;
-  currencyArbitrumGoerli: DefaultFeature;
+  currencyArbitrumSepolia: DefaultFeature;
   currencyRsk: DefaultFeature;
   currencyBittorrent: DefaultFeature;
   currencyKavaEvm: DefaultFeature;
@@ -111,7 +111,7 @@ export type CurrencyFeatures = {
   currencyPolygonZkEvm: DefaultFeature;
   currencyPolygonZkEvmTestnet: DefaultFeature;
   currencyBase: DefaultFeature;
-  currencyBaseGoerli: DefaultFeature;
+  currencyBaseSepolia: DefaultFeature;
   currencyKlaytn: DefaultFeature;
   currencyVechain: DefaultFeature;
   currencyCasper: DefaultFeature;
@@ -488,6 +488,7 @@ export type Feature_FetchAdditionalCoins = Feature<{
 
 export type Feature_LlmAnalyticsOptInPrompt = Feature<{
   variant: ABTestingVariants;
+  entryPoints: Array<string>;
 }>;
 
 export type Feature_LldPortfolioCarousel = Feature<{
