@@ -78,7 +78,6 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
     onSubmit,
     analyticsOptInPromptProps,
     isFeatureFlagsAnalyticsPrefDisplayed: isFlagEnabled,
-    isFeatureFlagsAnalyticsPrefDisplayed: isFlagEnabled,
     lldAnalyticsOptInPromptFlag,
     flow,
     shouldWeTrack,
