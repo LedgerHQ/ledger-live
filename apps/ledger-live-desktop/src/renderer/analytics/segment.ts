@@ -13,7 +13,7 @@ import {
   localeSelector,
   languageSelector,
   devicesModelListSelector,
-  sharePersonalizedRecommandationsSelector,
+  sharePersonalizedRecommendationsSelector,
   hasSeenAnalyticsOptInPromptSelector,
   trackingEnabledSelector,
 } from "~/renderer/reducers/settings";
@@ -90,7 +90,7 @@ const getMandatoryProperties = async (store: ReduxStore) => {
   const state: State = store.getState();
   const { id } = await user();
   const analyticsEnabled = shareAnalyticsSelector(state);
-  const personalizedRecommendationsEnabled = sharePersonalizedRecommandationsSelector(state);
+  const personalizedRecommendationsEnabled = sharePersonalizedRecommendationsSelector(state);
   const hasSeenAnalyticsOptInPrompt = hasSeenAnalyticsOptInPromptSelector(state);
 
   return {

@@ -7,7 +7,7 @@ import { useAnalyticsOptInPrompt } from "./useCommonLogic";
 import { ABTestingVariants } from "@ledgerhq/types-live";
 import {
   setShareAnalytics,
-  setSharePersonalizedRecommandations,
+  setSharePersonalizedRecommendations,
 } from "~/renderer/actions/settings";
 
 interface UseVariantBProps {
@@ -73,7 +73,7 @@ export const useVariantB = ({
   };
 
   const setupPersonalizedExperience = (value: boolean) => {
-    dispatch(setSharePersonalizedRecommandations(value));
+    dispatch(setSharePersonalizedRecommendations(value));
     onSubmit?.();
     trackPersonalizedExperienceClick(value);
   };

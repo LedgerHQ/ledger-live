@@ -6174,6 +6174,12 @@
       "title": "Help us improve and personalize your experience",
       "revokeInfo": "You can revoke your consent any time in the app settings.",
       "learnMore": "Learn more about our Tracking Policy"
+    },
+    "profileSettings": {
+      "personalizedExp": "Personalized experience",
+      "analytics": "Analytics",
+      "personalizedExpDesc": "Receive personalised recommendations that match your preferences.",
+      "analyticsDesc": "Enable analytics to help Ledger improve the user experience."
     }
   }
 }
