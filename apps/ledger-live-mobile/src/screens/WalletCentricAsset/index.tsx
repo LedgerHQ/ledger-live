@@ -10,7 +10,7 @@ import { isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
 import { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
-import { isEqual } from "lodash";
+import isEqual from "lodash/isEqual";
 import BigNumber from "bignumber.js";
 import { ReactNavigationPerformanceView } from "@shopify/react-native-performance-navigation";
 import accountSyncRefreshControl from "~/components/accountSyncRefreshControl";

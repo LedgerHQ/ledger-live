@@ -5,8 +5,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { timeout, tap } from "rxjs/operators";
 import { v4 as uuid } from "uuid";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
-import getDeviceName from "@ledgerhq/live-common/hw/getDeviceName";
-import { listApps } from "@ledgerhq/live-common/apps/hw";
+import { getDeviceName } from "@ledgerhq/live-common/device/use-cases/getDeviceNameUseCase";
+import { listAppsUseCase } from "@ledgerhq/live-common/device/use-cases/listAppsUseCase";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { delay } from "@ledgerhq/live-common/promise";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -145,7 +145,7 @@ function PairDevicesInner({ navigation, route }: NavigationProps) {
 
           // Waits until listApps completes or emits and error
           await lastValueFrom(
-            listApps(transport, deviceInfo).pipe(
+            listAppsUseCase(transport, deviceInfo).pipe(
               timeout(GENUINE_CHECK_TIMEOUT),
               tap(e => {
                 tracer.trace("Event from listApps", { eventType: e.type });

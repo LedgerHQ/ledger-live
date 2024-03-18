@@ -20,7 +20,7 @@ import { DescriptorEvent } from "@ledgerhq/hw-transport";
 import VersionNumber from "react-native-version-number";
 import type { DeviceModelId } from "@ledgerhq/types-devices";
 import { Platform } from "react-native";
-import { setSecp256k1Instance } from "@ledgerhq/live-common/families/bitcoin/wallet-btc/crypto/secp256k1";
+import { setSecp256k1Instance } from "@ledgerhq/live-common/families/bitcoin/logic";
 import { setGlobalOnBridgeError } from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { prepareCurrency } from "./bridge/cache";
 import BluetoothTransport from "./react-native-hw-transport-ble";
@@ -98,11 +98,9 @@ setSupportedCurrencies([
   "optimism",
   "optimism_goerli",
   "arbitrum",
-  "arbitrum_goerli",
+  "arbitrum_sepolia",
   "rsk",
   "bittorrent",
-  "kava_evm",
-  "evmos_evm",
   "energy_web",
   "astar",
   "metis",
@@ -116,7 +114,7 @@ setSupportedCurrencies([
   "polygon_zk_evm",
   "polygon_zk_evm_testnet",
   "base",
-  "base_goerli",
+  "base_sepolia",
   "stacks",
   "telos_evm",
   "coreum",

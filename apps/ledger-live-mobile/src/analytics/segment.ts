@@ -14,7 +14,7 @@ import {
   RouteProp,
   useRoute,
 } from "@react-navigation/native";
-import { snakeCase } from "lodash";
+import snakeCase from "lodash/snakeCase";
 import React, { MutableRefObject, useCallback } from "react";
 import { FeatureId, Features, idsToLanguage } from "@ledgerhq/types-live";
 import {
@@ -38,6 +38,7 @@ import {
   customImageTypeSelector,
   userNpsSelector,
   personalizedRecommendationsEnabledSelector,
+  hasSeenAnalyticsOptInPromptSelector,
 } from "../reducers/settings";
 import { knownDevicesSelector } from "../reducers/ble";
 import { DeviceLike, State } from "../reducers/types";
@@ -69,8 +70,8 @@ export function setAnalyticsFeatureFlagMethod(method: typeof analyticsFeatureFla
 const getFeatureFlagProperties = () => {
   if (!analyticsFeatureFlagMethod || !segmentClient) return {};
   (async () => {
-    const ptxEarnFeatureFlag = analyticsFeatureFlagMethod("ptxEarn");
     const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
+    const stakingProviders = analyticsFeatureFlagMethod("ethStakingProviders");
 
     const isBatch1Enabled =
       !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
@@ -78,12 +79,14 @@ const getFeatureFlagProperties = () => {
       !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 2;
     const isBatch3Enabled =
       !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 3;
+    const stakingProvidersEnabled =
+      stakingProviders?.enabled && stakingProviders?.params?.listProvider.length;
 
     updateIdentify({
-      ptxEarnEnabled: !!ptxEarnFeatureFlag?.enabled,
       isBatch1Enabled,
       isBatch2Enabled,
       isBatch3Enabled,
+      stakingProvidersEnabled,
     });
   })();
 };
@@ -92,8 +95,25 @@ runOnceWhen(() => !!analyticsFeatureFlagMethod && !!segmentClient, getFeatureFla
 
 export const updateSessionId = () => (sessionId = uuid());
 
+const getMandatoryProperties = async (store: AppStore) => {
+  const state: State = store.getState();
+  const { user } = await getOrCreateUser();
+  const analyticsEnabled = analyticsEnabledSelector(state);
+  const personalizedRecommendationsEnabled = personalizedRecommendationsEnabledSelector(state);
+  const hasSeenAnalyticsOptInPrompt = hasSeenAnalyticsOptInPromptSelector(state);
+
+  return {
+    userId: user?.id,
+    braze_external_id: user?.id, // Needed for braze with this exact name
+    optInAnalytics: analyticsEnabled,
+    optInPersonalRecommendations: personalizedRecommendationsEnabled,
+    hasSeenAnalyticsOptInPrompt,
+  };
+};
+
 const extraProperties = async (store: AppStore) => {
   const state: State = store.getState();
+  const mandatoryProperties = await getMandatoryProperties(store);
   const sensitiveAnalytics = sensitiveAnalyticsSelector(state);
   const systemLanguage = sensitiveAnalytics ? null : RNLocalize.getLocales()[0]?.languageTag;
   const knownDeviceModelIds = knownDeviceModelIdsSelector(state);
@@ -120,14 +140,12 @@ const extraProperties = async (store: AppStore) => {
   const notificationsOptedIn = {
     notificationsAllowed: notifications.areNotificationsAllowed,
     optInAnnouncements: notifications.announcementsCategory,
-    optInRecommendations: notifications.recommendationsCategory,
     optInLargeMovers: notifications.largeMoverCategory,
     optInTxAlerts: notifications.transactionsAlertsCategory,
   };
   const notificationsBlacklisted = Object.entries(notifications)
     .filter(([key, value]) => key !== "areNotificationsAllowed" && value === false)
     .map(([key]) => key);
-  const { user } = await getOrCreateUser();
   const accountsWithFunds = accounts
     ? [
         ...new Set(
@@ -147,11 +165,14 @@ const extraProperties = async (store: AppStore) => {
   const hasGenesisPass = hasNftInAccounts(GENESIS_PASS_COLLECTION_CONTRACT, accounts);
   const hasInfinityPass = hasNftInAccounts(INFINITY_PASS_COLLECTION_CONTRACT, accounts);
   const nps = userNpsSelector(state);
-  const analyticsEnabled: boolean = analyticsEnabledSelector(state);
-  const personalizedRecommendationsEnabled: boolean =
-    personalizedRecommendationsEnabledSelector(state);
+
+  const stakingProviders =
+    analyticsFeatureFlagMethod && analyticsFeatureFlagMethod("ethStakingProviders");
+  const stakingProvidersCount =
+    stakingProviders?.enabled && stakingProviders?.params?.listProvider.length;
 
   return {
+    ...mandatoryProperties,
     appVersion,
     androidVersionCode: getAndroidVersionCode(VersionNumber.buildVersion),
     androidArchitecture: getAndroidArchitecture(VersionNumber.buildVersion),
@@ -175,8 +196,6 @@ const extraProperties = async (store: AppStore) => {
     ...deviceInfo,
     notificationsBlacklisted,
     ...notificationsOptedIn,
-    userId: user?.id,
-    braze_external_id: user?.id, // Needed for braze with this exact name
     accountsWithFunds,
     blockchainsWithNftsOwned,
     hasGenesisPass,
@@ -185,8 +204,7 @@ const extraProperties = async (store: AppStore) => {
     staxDeviceUser: knownDeviceModelIds.stax,
     staxLockscreen: customImageType || "none",
     nps,
-    optInAnalytics: analyticsEnabled,
-    optInPersonalRecommendations: personalizedRecommendationsEnabled,
+    stakingProvidersEnabled: stakingProvidersCount || "flag not loaded",
   };
 };
 
@@ -220,19 +238,22 @@ export const start = async (store: AppStore): Promise<SegmentClient | undefined>
   return segmentClient;
 };
 
-export const updateIdentify = async (additionalProperties?: UserTraits) => {
+export const updateIdentify = async (additionalProperties?: UserTraits, mandatory?: boolean) => {
   Sentry.addBreadcrumb({
     category: "identify",
     level: "debug",
   });
 
-  if (!storeInstance || !trackingEnabledSelector(storeInstance.getState())) {
+  const state = storeInstance && storeInstance.getState();
+  const isTracking = getIsTracking(state, mandatory);
+  if (!storeInstance || !isTracking.enabled) {
     return;
   }
 
   const userExtraProperties = await extraProperties(storeInstance);
+  const mandatoryProperties = await getMandatoryProperties(storeInstance);
   const allProperties = {
-    ...userExtraProperties,
+    ...(mandatory ? mandatoryProperties : userExtraProperties),
     ...(additionalProperties || {}),
   };
   if (ANALYTICS_LOGS) console.log("analytics:identify", allProperties);
@@ -258,11 +279,12 @@ type EventType = string | "button_clicked" | "error_message";
 
 export function getIsTracking(
   state: State | null | undefined,
+  mandatory?: boolean | null | undefined,
 ): { enabled: true } | { enabled: false; reason?: string } {
   if (!state) return { enabled: false, reason: "store not initialised" };
   const trackingEnabled = state && trackingEnabledSelector(state);
 
-  if (!trackingEnabled) {
+  if (!mandatory && !trackingEnabled) {
     return {
       enabled: false,
       reason: "analytics not enabled",
@@ -274,6 +296,7 @@ export function getIsTracking(
 export const track = async (
   event: EventType,
   eventProperties?: Error | Record<string, unknown> | null,
+  mandatory?: boolean | null,
 ) => {
   Sentry.addBreadcrumb({
     message: event,
@@ -284,7 +307,7 @@ export const track = async (
 
   const state = storeInstance && storeInstance.getState();
 
-  const isTracking = getIsTracking(state);
+  const isTracking = getIsTracking(state, mandatory);
   if (!isTracking.enabled) {
     if (ANALYTICS_LOGS) console.log("analytics:track: not tracking because: ", isTracking.reason);
     return;
@@ -293,13 +316,14 @@ export const track = async (
   const page = currentRouteNameRef.current;
 
   const userExtraProperties = await extraProperties(storeInstance as AppStore);
+  const mandatoryProperties = await getMandatoryProperties(storeInstance as AppStore);
   const propertiesWithoutExtra = {
     page,
     ...eventProperties,
   };
   const allProperties = {
     ...propertiesWithoutExtra,
-    ...userExtraProperties,
+    ...(mandatory ? mandatoryProperties : userExtraProperties),
   };
   if (ANALYTICS_LOGS) console.log("analytics:track", event, allProperties);
   trackSubject.next({
@@ -319,19 +343,20 @@ export const trackWithRoute = (
   event: EventType,
   route: RouteProp<ParamListBase>,
   properties?: Record<string, unknown> | null,
+  mandatory?: boolean | null,
 ) => {
   const newProperties = {
     page: getPageNameFromRoute(route),
     // don't override page if it's already set
     ...(properties || {}),
   };
-  track(event, newProperties);
+  track(event, newProperties, mandatory);
 };
 export const useTrack = () => {
   const route = useRoute();
   const track = useCallback(
-    (event: EventType, properties?: Record<string, unknown> | null) =>
-      trackWithRoute(event, route, properties),
+    (event: EventType, properties?: Record<string, unknown> | null, mandatory?: boolean | null) =>
+      trackWithRoute(event, route, properties, mandatory),
     [route],
   );
   return track;
@@ -392,6 +417,10 @@ export const screen = async (
    * This is practical in case a TrackScreen component gets remounted.
    */
   avoidDuplicates?: boolean,
+  /**
+   * When true, we force the tracking for this event.
+   */
+  mandatory?: boolean,
 ) => {
   const fullScreenName = (category || "") + (category && name ? " " : "") + (name || "");
   const eventName = `Page ${fullScreenName}`;
@@ -412,7 +441,7 @@ export const screen = async (
 
   const state = storeInstance && storeInstance.getState();
 
-  const isTracking = getIsTracking(state);
+  const isTracking = getIsTracking(state, mandatory);
   if (!isTracking.enabled) {
     if (ANALYTICS_LOGS) console.log("analytics:screen: not tracking because: ", isTracking.reason);
     return;
@@ -421,13 +450,14 @@ export const screen = async (
   const source = previousRouteNameRef.current;
 
   const userExtraProperties = await extraProperties(storeInstance as AppStore);
+  const mandatoryProperties = await getMandatoryProperties(storeInstance as AppStore);
   const eventPropertiesWithoutExtra = {
     source,
     ...properties,
   };
   const allProperties = {
     ...eventPropertiesWithoutExtra,
-    ...userExtraProperties,
+    ...(mandatory ? mandatoryProperties : userExtraProperties),
   };
   if (ANALYTICS_LOGS) console.log("analytics:screen", category, name, allProperties);
   trackSubject.next({

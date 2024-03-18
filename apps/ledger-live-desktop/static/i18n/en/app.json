@@ -30,7 +30,8 @@
         "browse": "Browse"
       },
       "filter": {
-        "categories": "Categories"
+        "categories": "Categories",
+        "all": "all"
       },
       "branch": {
         "soon": "Coming soon",
@@ -275,7 +276,6 @@
   },
   "sidebar": {
     "card": "Card",
-    "learn": "Learn",
     "menu": "Menu",
     "stars": "Starred accounts",
     "accounts": "Accounts",
@@ -1409,6 +1409,7 @@
   },
   "dashboard": {
     "title": "Portfolio",
+    "header": "Portfolio balance",
     "emptyAccountTile": {
       "desc": "Add accounts to manage other crypto assets",
       "createAccount": "Add account"
@@ -1449,6 +1450,27 @@
         "description": "You're 1 step away from Ledger Recover.",
         "primaryCta": "Connect",
         "secondaryCta": "Maybe later"
+      }
+    },
+    "marketPerformanceWidget": {
+      "title": "{{time}} trend",
+      "buy": "Buy",
+      "swap": "Swap",
+      "gainers": "Gainers",
+      "losers": "Losers",
+      "error": {
+        "title": "Sorry, we’re unable to load the trend",
+        "description": "Please try again later"
+      },
+      "missingData": {
+        "gainers": {
+          "title": "No assets among the top 50 experienced gains in the last 24 hours",
+          "description": "Consider viewing top losers or come back later"
+        },
+        "losers": {
+          "title": "No assets among the top 50 experienced losses in the last 24 hours",
+          "description": "Consider viewing top gainers or come back later"
+        }
       }
     }
   },
@@ -1756,7 +1778,7 @@
   "DeviceAction": {
     "allowAppPermission": "Open the {{wording}} app on your device",
     "allowAppPermissionSubtitleToken": "to manage your {{token}} tokens",
-    "allowManagerPermission": "Allow Ledger Manager on your {{productName}}",
+    "allowManagerPermission": "Allow secure connection",
     "allowRenaming": "Allow renaming on your device",
     "loading": "Loading...",
     "connectAndUnlockDevice": "Connect and unlock your device",
@@ -2207,6 +2229,15 @@
       "summary": {
         "title": "Summary"
       },
+      "networkFee": {
+        "title": "Choose Network fee"
+      },
+      "reviewSummary": {
+        "title": "Review summary"
+      },
+      "connectLedger": {
+        "title": "Connect Ledger"
+      },
       "device": {
         "title": "Device"
       },
@@ -2263,9 +2294,6 @@
     "footer": {
       "estimatedFees": "Network fees"
     }
-  },
-  "sign": {
-    "title": "Sign transaction"
   },
   "releaseNotes": {
     "title": "Release notes",
@@ -3609,22 +3637,33 @@
     "stake": {
       "title": "Grow your ETH holdings",
       "subTitle": "Stake your ETH and grow your holdings by receiving daily rewards directly into your Ledger Live.",
+      "tagMinimum": "Requires {{min}} ETH",
+      "kiln_pooling": {
+        "title": "Kiln staking pool",
+        "description": "Stake with no minimum. Earn auto-compounded rewards with no lock-up period.",
+        "supportLink": "Learn more about Kiln pooling"
+      },
       "lido": {
-        "title": "Earn with Lido",
-        "description": "Stake your Ethereum with Lido and earn rewards daily. No lock-up period. No minimum.",
+        "title": "Lido",
+        "description": "Stake any amount of ETH for instant liquidity and daily rewards.",
         "supportLink": "Learn more about Lido"
+      },
+      "stader-eth": {
+        "title": "Stader Labs",
+        "description": "Stake with no minimum. Earn auto-compounded rewards with access to instant liquidity.",
+        "supportLink": "Learn more about Stader pooling"
       },
       "kiln": {
         "title": "Kiln dedicated staking",
         "tag": "Requires 32 ETH",
-        "description": "Stake with dedicated validators. Requires multiples of 32 ETH. Rewards are manually claimed. Exit anytime.",
+        "description": "Stake over 32 ETH on dedicated validators and easily claim rewards.",
         "supportLink": "Learn more about Kiln validator"
       },
-      "kiln_pooling": {
-        "title": "Kiln staking pool",
-        "tag": "No minimum",
-        "description": "Join a staking pool. No minimum ETH is required. Rewards are compounded automatically. Exit anytime.",
-        "supportLink": "Learn more about Kiln pooling"
+      "figment": {
+        "title": "Figment",
+        "tag": "Requires 32 ETH",
+        "description": "Stake over 32 ETH on dedicated validators and get rewards automatically sent to your account.",
+        "supportLink": "Learn more about Figment validator"
       }
     }
   },
@@ -4186,6 +4225,17 @@
     "troubleshooting": "Click here for possible solutions",
     "logs": "Save logs",
     "dataFolder": "View user data"
+  },
+  "approve": {
+    "title": "Approve token",
+    "description": "Approve token on your Ledger Device",
+    "unlimited": "You're authorizing this provider to access an unlimited amount of the selected token from your wallet. Double-check the transaction details on your Ledger device before signing.",
+    "limited": "You're authorizing this provider to access the selected token from your wallet. Double-check the transaction details on your Ledger device before signing.",
+    "termsAndConditions": "By signing this transaction, you accept <0>{{appName}}'s terms of use.</0>"
+  },
+  "sign": {
+    "title": "Sign transaction",
+    "description": "Sign transaction on your Ledger Device"
   },
   "exportOperationsModal": {
     "title": "Operation history",
@@ -4918,6 +4968,8 @@
     "warning": "Always verify the address displayed on your device exactly matches the one given by the {{recipientWording}}",
     "secureContract": "Verify the deposit details on your device before sending it. The contract address is provided securely so you don’t have to verify it.",
     "verifyData": "Always verify the operation details on your device.",
+    "doubleCheck": "Double-check the transaction details on your Ledger device before signing.",
+    "termsAndConditions": "By signing this transaction, you accept <0>{{appName}}'s terms of use.</0>",
     "warningWording": {},
     "titleWording": {
       "send": "Please confirm on your device to finalize the operation",
@@ -5355,14 +5407,14 @@
       "description": "Impossible to calculate amount and fees"
     },
     "NotEnoughBalance": {
-      "title": "Sorry, insufficient funds",
+      "title": "Sorry, insufficient balance including network fees. Adjust amount or verify balance",
       "description": "Please make sure the account has enough funds."
     },
     "NotEnoughBalanceBecauseDestinationNotCreated": {
       "title": "Recipient address is inactive. Send at least {{minimalAmount}} to activate it"
     },
     "NotEnoughGas": {
-      "title": "You need {{fees}} {{ticker}} for network fees to swap as you are on {{cryptoName}} network. <link0>Buy {{ticker}}</link0>"
+      "title": "You need {{fees}} {{ticker}} in your account to pay for transaction fees on the {{cryptoName}} network.  <link0>Buy {{ticker}}</link0> or deposit more into your account."
     },
     "NotEnoughGasSwap": {
       "title": "You need {{fees}} {{ticker}} for network fees to swap as you are on {{cryptoName}} network. <link0>Buy {{ticker}}</link0>"
@@ -5443,7 +5495,7 @@
       "description": "Please restart your device without touching the buttons when the logo appears. Contact Ledger Support if the problem persists."
     },
     "UserRefusedAllowManager": {
-      "title": "My Ledger denied on device"
+      "title": "Secure connection denied on device"
     },
     "UserRefusedFirmwareUpdate": {
       "title": "OS update install cancelled\non device",
@@ -5484,6 +5536,14 @@
     "WrongDeviceForAccount": {
       "title": "Something went wrong",
       "description": "Please check that your hardware wallet is set up with the recovery phrase or passphrase associated to the selected account."
+    },
+    "WrongDeviceForAccountPayout": {
+      "title": "Something went wrong",
+      "description": "This receiving account does not belong to your device. Please change and retry."
+    },
+    "WrongDeviceForAccountRefund": {
+      "title": "Something went wrong",
+      "description": "This receiving account does not belong to your device for the refund. Please change and retry."
     },
     "DeviceAppVerifyNotSupported": {
       "title": "App update required",
@@ -5528,6 +5588,10 @@
     "TransactionHasBeenValidatedError": {
       "title": "Can't be sped up or canceled",
       "description": "This transaction has already been validated"
+    },
+    "SequenceNumberError": {
+      "title": "Sequence number error",
+      "description": "Please close the window and try again later"
     },
     "CantScanQRCode": {
       "title": "Couldn't scan this QR code: auto-verification not supported by this address"
@@ -5710,6 +5774,9 @@
     },
     "SwapExchangeRateAmountTooHigh": {
       "title": "Amount must be less than {{maxAmountFromFormatted}}"
+    },
+    "SwapExchangeRateAmountTooLowOrTooHigh": {
+      "title": "Amount unavailable. Please adjust value."
     },
     "PolkadotElectionClosed": {
       "title": "Validators election must be closed"
@@ -5926,9 +5993,6 @@
     "FailedToRetrieveFirmwareUpdateInfo": {
       "title": "OS update check failed",
       "description": "Something went wrong. Please try again or contact Ledger Support if in doubt."
-    },
-    "TezosUnrevealedAccount": {
-      "title": "Swap unavailable: Initial send/delegate needed with Tezos account or change pair."
     }
   },
   "cryptoOrg": {

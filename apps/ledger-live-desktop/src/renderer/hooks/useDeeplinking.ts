@@ -306,6 +306,17 @@ export function useDeepLinkHandler() {
           }
           break;
         case "wc": {
+          // Only prevent requests if already on the wallet connect live-app
+          if (location.pathname === "/platform/ledger-wallet-connect") {
+            try {
+              // Prevent a request from updating the live-app url and reloading it
+              if (!query.uri || new URL(query.uri).searchParams.get("requestId")) {
+                return;
+              }
+            } catch {
+              // Fall back on navigation to the live-app in case of an invalid URL
+            }
+          }
           setTrackingSource("deeplink");
           navigate("/platform/ledger-wallet-connect", query);
 
@@ -329,7 +340,7 @@ export function useDeepLinkHandler() {
           break;
       }
     },
-    [accounts, dispatch, navigate, setUrl],
+    [accounts, dispatch, location.pathname, navigate, setUrl],
   );
   return {
     handler,

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-cli",
-  "version": "23.3.1",
+  "version": "23.3.3",
   "description": "ledger-live CLI version",
   "repository": {
     "type": "git",
@@ -26,13 +26,8 @@
     "lint:fix": "pnpm lint --fix",
     "test": "zx ./scripts/test.mjs"
   },
-  "peerDependencies": {
-    "@ledgerhq/hw-transport-node-ble": "workspace:^"
-  },
-  "optionalDependencies": {
-    "@ledgerhq/hw-transport-node-ble": "workspace:^"
-  },
   "dependencies": {
+    "@ledgerhq/coin-bitcoin": "workspace:^",
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
@@ -58,7 +53,6 @@
     "express": "^4.17.2",
     "invariant": "^2.2.4",
     "lodash": "^4.17.21",
-    "lodash.product": "^18.9.19",
     "pako": "^2.0.4",
     "qrcode-terminal": "^0.12.0",
     "qrloop": "^1.2.0",

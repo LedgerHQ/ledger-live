@@ -125,7 +125,7 @@ jobs:
         timeout-minutes: 60
         run: pnpm mobile e2e:ci -p ios -t
       - name: Delete iOS simulator
-        if: always()
+        if: ${{ steps.simulator.outputs.id }}
         run: |
           xcrun simctl delete ${{ steps.simulator.outputs.id }}
       - name: setup JRE 11 for Allure
@@ -146,32 +146,16 @@ jobs:
           path: allure-report/index.html
       - name: Upload test artifacts
         uses: actions/upload-artifact@v3
-        if: always()
+        if: ${{ !cancelled() }}
         with:
           name: test-ios-artifacts
           path: apps/ledger-live-mobile/artifacts
       - name: Upload Allure report
         uses: actions/upload-artifact@v3
-        if: always()
+        if: ${{ !cancelled() }}
         with:
           name: "allure-ios-reports"
           path: apps/ledger-live-mobile/allure-results
-
-  allure-report-ios:
-    name: "Allure Reports Export on Server"
-    runs-on: [ledger-live-medium-linux]
-    if: ${{ always() && !cancelled() && github.ref_name == 'develop' }}
-    needs: [detox-tests-ios]
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
-      - uses: ./tools/actions/composites/upload-allure-report
-        with:
-          platform: ios
-          login: ${{ secrets.ALLURE_LOGIN }}
-          password: ${{ secrets.ALLURE_PASSWORD }}
-          path: allure-ios-reports
 
   detox-tests-android:
     name: "Ledger Live Mobile - Android Detox Tests"
@@ -285,39 +269,22 @@ jobs:
           name: android-global-report
           path: allure-report/index.html
       - name: Upload test artifacts
-        if: always()
+        if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v3
         with:
           name: test-android-artifacts
           path: apps/ledger-live-mobile/artifacts/
       - name: Upload Allure Report
         uses: actions/upload-artifact@v3
-        if: always()
+        if: ${{ !cancelled() }}
         with:
           name: "allure-android-reports"
           path: apps/ledger-live-mobile/allure-results
 
-  allure-report-android:
-    name: "Allure Reports Export on Server"
-    runs-on: [ledger-live-medium-linux]
-    if: ${{ always() && !cancelled() && github.ref_name == 'develop' }}
-    needs: [detox-tests-android]
-    steps:
-      - name: checkout
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
-      - uses: ./tools/actions/composites/upload-allure-report
-        with:
-          platform: android
-          login: ${{ secrets.ALLURE_LOGIN }}
-          password: ${{ secrets.ALLURE_PASSWORD }}
-          path: allure-android-reports
-
   report:
     needs: [detox-tests-android, detox-tests-ios]
     runs-on: ubuntu-latest
-    if: always() && !cancelled() && github.event_name == 'workflow_dispatch'
+    if: ${{ !cancelled() && github.event_name == 'workflow_dispatch' }}
     steps:
       - uses: actions/checkout@v4
         with:

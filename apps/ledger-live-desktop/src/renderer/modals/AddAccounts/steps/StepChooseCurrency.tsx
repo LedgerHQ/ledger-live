@@ -50,11 +50,9 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const optimism = useFeature("currencyOptimism");
   const optimismGoerli = useFeature("currencyOptimismGoerli");
   const arbitrum = useFeature("currencyArbitrum");
-  const arbitrumGoerli = useFeature("currencyArbitrumGoerli");
+  const arbitrumSepolia = useFeature("currencyArbitrumSepolia");
   const rsk = useFeature("currencyRsk");
   const bittorrent = useFeature("currencyBittorrent");
-  const kavaEvm = useFeature("currencyKavaEvm");
-  const evmosEvm = useFeature("currencyEvmosEvm");
   const energyWeb = useFeature("currencyEnergyWeb");
   const astar = useFeature("currencyAstar");
   const metis = useFeature("currencyMetis");
@@ -68,7 +66,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const polygonZkEvm = useFeature("currencyPolygonZkEvm");
   const polygonZkEvmTestnet = useFeature("currencyPolygonZkEvmTestnet");
   const base = useFeature("currencyBase");
-  const baseGoerli = useFeature("currencyBaseGoerli");
+  const baseSepolia = useFeature("currencyBaseSepolia");
   const klaytn = useFeature("currencyKlaytn");
   const injective = useFeature("currencyInjective");
   const vechain = useFeature("currencyVechain");
@@ -95,11 +93,9 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       optimism,
       optimism_goerli: optimismGoerli,
       arbitrum,
-      arbitrum_goerli: arbitrumGoerli,
+      arbitrum_sepolia: arbitrumSepolia,
       rsk,
       bittorrent,
-      kava_evm: kavaEvm,
-      evmos_evm: evmosEvm,
       energy_web: energyWeb,
       astar,
       metis,
@@ -113,7 +109,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       polygon_zk_evm: polygonZkEvm,
       polygon_zk_evm_testnet: polygonZkEvmTestnet,
       base,
-      base_goerli: baseGoerli,
+      base_sepolia: baseSepolia,
       klaytn,
       injective,
       vechain,
@@ -139,11 +135,9 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       optimism,
       optimismGoerli,
       arbitrum,
-      arbitrumGoerli,
+      arbitrumSepolia,
       rsk,
       bittorrent,
-      kavaEvm,
-      evmosEvm,
       energyWeb,
       astar,
       metis,
@@ -157,7 +151,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       polygonZkEvm,
       polygonZkEvmTestnet,
       base,
-      baseGoerli,
+      baseSepolia,
       klaytn,
       injective,
       vechain,

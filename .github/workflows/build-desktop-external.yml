@@ -76,7 +76,7 @@ jobs:
       - name: Save result
         id: save-result
         shell: bash
-        if: always()
+        if: ${{ !cancelled() }}
         run: |
           echo "${{matrix.os}}=${{steps.build-app.outcome}}" >> $GITHUB_OUTPUT
       - name: Upload linux app
@@ -101,7 +101,7 @@ jobs:
   report:
     needs: build-desktop-app
     runs-on: ubuntu-latest
-    if: always() && !cancelled() && github.event_name == 'workflow_dispatch'
+    if: ${{ !cancelled() && github.event_name == 'workflow_dispatch' }}
     steps:
       - uses: actions/github-script@v6
         name: Get statuses of runs

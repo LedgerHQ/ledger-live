@@ -3,9 +3,9 @@ import {
   Feature,
   Features,
   FeatureMap,
-  LlmAnalyticsOptInPromptVariants,
+  ABTestingVariants,
 } from "@ledgerhq/types-live";
-import { reduce } from "lodash";
+import reduce from "lodash/reduce";
 import { formatToFirebaseFeatureId } from "./firebaseFeatureFlags";
 
 /**
@@ -33,22 +33,20 @@ export const initFeature = <T>(opts?: Feature<T>) => {
  */
 export const CURRENCY_DEFAULT_FEATURES = {
   currencyArbitrum: DEFAULT_FEATURE,
-  currencyArbitrumGoerli: DEFAULT_FEATURE,
+  currencyArbitrumSepolia: DEFAULT_FEATURE,
   currencyAstar: DEFAULT_FEATURE,
   currencyAvalancheCChain: DEFAULT_FEATURE,
   currencyAxelar: DEFAULT_FEATURE,
   currencyBase: DEFAULT_FEATURE,
-  currencyBaseGoerli: DEFAULT_FEATURE,
+  currencyBaseSepolia: DEFAULT_FEATURE,
   currencyBittorrent: DEFAULT_FEATURE,
   currencyBoba: DEFAULT_FEATURE,
   currencyCoreum: DEFAULT_FEATURE,
   currencyDesmos: DEFAULT_FEATURE,
   currencyDydx: DEFAULT_FEATURE,
   currencyEnergyWeb: DEFAULT_FEATURE,
-  currencyEvmosEvm: DEFAULT_FEATURE,
   currencyInjective: DEFAULT_FEATURE,
   currencyInternetComputer: DEFAULT_FEATURE,
-  currencyKavaEvm: DEFAULT_FEATURE,
   currencyKlaytn: DEFAULT_FEATURE,
   currencyLukso: DEFAULT_FEATURE,
   currencyMetis: DEFAULT_FEATURE,
@@ -86,18 +84,12 @@ export const DEFAULT_FEATURES: Features = {
   objkt: DEFAULT_FEATURE,
   portfolioExchangeBanner: DEFAULT_FEATURE,
   postOnboardingAssetsTransfer: DEFAULT_FEATURE,
-  postOnboardingClaimNft: DEFAULT_FEATURE,
-  syncOnboarding: DEFAULT_FEATURE,
-  walletConnectEntryPoint: DEFAULT_FEATURE,
   counterValue: DEFAULT_FEATURE,
   llmNewDeviceSelection: DEFAULT_FEATURE,
-  llmNewFirmwareUpdateUx: DEFAULT_FEATURE,
   mockFeature: DEFAULT_FEATURE,
   multibuyNavigation: DEFAULT_FEATURE,
   ptxServiceCtaExchangeDrawer: DEFAULT_FEATURE,
   ptxServiceCtaScreens: DEFAULT_FEATURE,
-  customImage: DEFAULT_FEATURE,
-  referralProgramDesktopBanner: DEFAULT_FEATURE,
   disableNftLedgerMarket: DEFAULT_FEATURE,
   disableNftRaribleOpensea: DEFAULT_FEATURE,
   disableNftSend: DEFAULT_FEATURE,
@@ -105,17 +97,15 @@ export const DEFAULT_FEATURES: Features = {
   protectServicesDiscoverDesktop: DEFAULT_FEATURE,
   llmWalletQuickActions: DEFAULT_FEATURE,
   listAppsV2minor1: DEFAULT_FEATURE,
+  llmMarketNewArch: DEFAULT_FEATURE,
   flexibleContentCards: DEFAULT_FEATURE,
   ethStakingProviders: initFeature(),
   referralProgramDiscoverCard: initFeature(),
   newsfeedPage: initFeature(),
-  ptxEarn: initFeature(),
   swapWalletApiPartnerList: initFeature(),
   stakePrograms: initFeature(),
-  learn: initFeature(),
   receiveStakingFlowConfigDesktop: initFeature(),
   brazePushNotifications: initFeature(),
-  walletNftGallery: initFeature(),
   stakeAccountBanner: initFeature(),
 
   buyDeviceFromLive: {
@@ -397,26 +387,6 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
 
-  cexDepositEntryPointsDesktop: {
-    enabled: false,
-    params: {
-      path: "/platform/ledger-cex-deposit",
-      locations: {
-        selectCrypto: true,
-      },
-    },
-  },
-
-  cexDepositEntryPointsMobile: {
-    enabled: false,
-    params: {
-      path: "/discover/ledger-cex-deposit",
-      locations: {
-        selectCrypto: true,
-      },
-    },
-  },
-
   fetchAdditionalCoins: {
     enabled: false,
   },
@@ -444,9 +414,41 @@ export const DEFAULT_FEATURES: Features = {
   llmAnalyticsOptInPrompt: {
     enabled: false,
     params: {
-      variant: LlmAnalyticsOptInPromptVariants.variantA,
+      variant: ABTestingVariants.variantA,
+      entryPoints: ["Onboarding", "Portfolio"],
     },
   },
+
+  lldAnalyticsOptInPrompt: {
+    enabled: false,
+    params: {
+      variant: ABTestingVariants.variantA,
+      entryPoints: ["Onboarding", "Portfolio"],
+    },
+  },
+
+  lldPortfolioCarousel: {
+    enabled: false,
+    params: {
+      variant: ABTestingVariants.variantA,
+    },
+  },
+
+  myLedgerDisplayAppDeveloperName: DEFAULT_FEATURE,
+  nftsFromSimplehash: {
+    ...DEFAULT_FEATURE,
+    params: {
+      threshold: 75,
+    },
+  },
+  marketperformanceWidgetDesktop: {
+    enabled: false,
+    params: {
+      variant: ABTestingVariants.variantA,
+    },
+  },
+  supportDeviceStax: DEFAULT_FEATURE,
+  supportDeviceEuropa: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings

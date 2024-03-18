@@ -35,7 +35,7 @@ Ledger Live main types.
     *   [Properties](#properties-8)
 *   [DeviceId](#deviceid)
 *   [PreloadStrategy](#preloadstrategy)
-*   [BroadcastArg0](#broadcastarg0)
+*   [BroadcastArg](#broadcastarg)
     *   [Properties](#properties-9)
 *   [SignOperationArg0](#signoperationarg0)
     *   [Properties](#properties-10)
@@ -428,7 +428,7 @@ Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 
 Type: Partial<{preloadMaxAge: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)}>
 
-### BroadcastArg0
+### BroadcastArg
 
 Type: {account: [Account](#account), signedOperation: [SignedOperation](#signedoperation)}
 
@@ -522,7 +522,7 @@ Type: {implementations: [Array](https://developer.mozilla.org/docs/Web/JavaScrip
 
 DerivationMode is a string identifier of a specific derivation scheme in a list defined in live-common derivation.ts
 
-Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
+Type: (`""` | `"ethM"` | `"ethMM"` | `"bch_on_bitcoin_segwit"` | `"legacy_on_bch"` | `"vertcoin_128"` | `"vertcoin_128_segwit"` | `"etcM"` | `"aeternity"` | `"tezbox"` | `"tezosbip44h"` | `"galleonL"` | `"tezboxL"` | `"taproot"` | `"native_segwit"` | `"segwit"` | `"segwit_on_legacy"` | `"legacy_on_segwit"` | `"legacy_on_native_segwit"` | `"segwit_unsplit"` | `"sep5"` | `"unsplit"` | `"polkadotbip44"` | `"glifLegacy"` | `"glif"` | `"filecoinBIP44"` | `"casper_wallet"` | `"solanaMain"` | `"solanaSub"` | `"hederaBip44"` | `"cardano"` | `"nearbip44h"` | `"vechain"` | `"internet_computer"` | `"stacks_wallet"`)
 
 ### Feature
 
@@ -618,7 +618,7 @@ Type: [Feature](#feature)\<any>
 
 Currency Features type.
 
-Type: {currencyAvalancheCChain: [DefaultFeature](#defaultfeature), currencyStacks: [DefaultFeature](#defaultfeature), currencyOptimism: [DefaultFeature](#defaultfeature), currencyOptimismGoerli: [DefaultFeature](#defaultfeature), currencyArbitrum: [DefaultFeature](#defaultfeature), currencyArbitrumGoerli: [DefaultFeature](#defaultfeature), currencyRsk: [DefaultFeature](#defaultfeature), currencyBittorrent: [DefaultFeature](#defaultfeature), currencyKavaEvm: [DefaultFeature](#defaultfeature), currencyEvmosEvm: [DefaultFeature](#defaultfeature), currencyEnergyWeb: [DefaultFeature](#defaultfeature), currencyAstar: [DefaultFeature](#defaultfeature), currencyMetis: [DefaultFeature](#defaultfeature), currencyBoba: [DefaultFeature](#defaultfeature), currencyMoonriver: [DefaultFeature](#defaultfeature), currencyVelasEvm: [DefaultFeature](#defaultfeature), currencySyscoin: [DefaultFeature](#defaultfeature), currencyAxelar: [DefaultFeature](#defaultfeature), currencySecretNetwork: [DefaultFeature](#defaultfeature), currencySeiNetwork: [DefaultFeature](#defaultfeature), currencyDesmos: [DefaultFeature](#defaultfeature), currencyDydx: [DefaultFeature](#defaultfeature), currencyUmee: [DefaultFeature](#defaultfeature), currencyStargaze: [DefaultFeature](#defaultfeature), currencyOnomy: [DefaultFeature](#defaultfeature), currencyPersistence: [DefaultFeature](#defaultfeature), currencyQuicksilver: [DefaultFeature](#defaultfeature), currencyInternetComputer: [DefaultFeature](#defaultfeature), currencyInjective: [DefaultFeature](#defaultfeature), currencyTelosEvm: [DefaultFeature](#defaultfeature), currencyCoreum: [DefaultFeature](#defaultfeature), currencyPolygonZkEvm: [DefaultFeature](#defaultfeature), currencyPolygonZkEvmTestnet: [DefaultFeature](#defaultfeature), currencyBase: [DefaultFeature](#defaultfeature), currencyBaseGoerli: [DefaultFeature](#defaultfeature), currencyKlaytn: [DefaultFeature](#defaultfeature), currencyVechain: [DefaultFeature](#defaultfeature), currencyCasper: [DefaultFeature](#defaultfeature), currencyNeonEvm: [DefaultFeature](#defaultfeature), currencyLukso: [DefaultFeature](#defaultfeature), currencyLinea: [DefaultFeature](#defaultfeature), currencyLineaGoerli: [DefaultFeature](#defaultfeature)}
+Type: {currencyAvalancheCChain: [DefaultFeature](#defaultfeature), currencyStacks: [DefaultFeature](#defaultfeature), currencyOptimism: [DefaultFeature](#defaultfeature), currencyOptimismGoerli: [DefaultFeature](#defaultfeature), currencyArbitrum: [DefaultFeature](#defaultfeature), currencyArbitrumSepolia: [DefaultFeature](#defaultfeature), currencyRsk: [DefaultFeature](#defaultfeature), currencyBittorrent: [DefaultFeature](#defaultfeature), currencyEnergyWeb: [DefaultFeature](#defaultfeature), currencyAstar: [DefaultFeature](#defaultfeature), currencyMetis: [DefaultFeature](#defaultfeature), currencyBoba: [DefaultFeature](#defaultfeature), currencyMoonriver: [DefaultFeature](#defaultfeature), currencyVelasEvm: [DefaultFeature](#defaultfeature), currencySyscoin: [DefaultFeature](#defaultfeature), currencyAxelar: [DefaultFeature](#defaultfeature), currencySecretNetwork: [DefaultFeature](#defaultfeature), currencySeiNetwork: [DefaultFeature](#defaultfeature), currencyDesmos: [DefaultFeature](#defaultfeature), currencyDydx: [DefaultFeature](#defaultfeature), currencyUmee: [DefaultFeature](#defaultfeature), currencyStargaze: [DefaultFeature](#defaultfeature), currencyOnomy: [DefaultFeature](#defaultfeature), currencyPersistence: [DefaultFeature](#defaultfeature), currencyQuicksilver: [DefaultFeature](#defaultfeature), currencyInternetComputer: [DefaultFeature](#defaultfeature), currencyInjective: [DefaultFeature](#defaultfeature), currencyTelosEvm: [DefaultFeature](#defaultfeature), currencyCoreum: [DefaultFeature](#defaultfeature), currencyPolygonZkEvm: [DefaultFeature](#defaultfeature), currencyPolygonZkEvmTestnet: [DefaultFeature](#defaultfeature), currencyBase: [DefaultFeature](#defaultfeature), currencyBaseSepolia: [DefaultFeature](#defaultfeature), currencyKlaytn: [DefaultFeature](#defaultfeature), currencyVechain: [DefaultFeature](#defaultfeature), currencyCasper: [DefaultFeature](#defaultfeature), currencyNeonEvm: [DefaultFeature](#defaultfeature), currencyLukso: [DefaultFeature](#defaultfeature), currencyLinea: [DefaultFeature](#defaultfeature), currencyLineaGoerli: [DefaultFeature](#defaultfeature)}
 
 #### Properties
 
@@ -627,11 +627,9 @@ Type: {currencyAvalancheCChain: [DefaultFeature](#defaultfeature), currencyStack
 *   `currencyOptimism` **[DefaultFeature](#defaultfeature)**&#x20;
 *   `currencyOptimismGoerli` **[DefaultFeature](#defaultfeature)**&#x20;
 *   `currencyArbitrum` **[DefaultFeature](#defaultfeature)**&#x20;
-*   `currencyArbitrumGoerli` **[DefaultFeature](#defaultfeature)**&#x20;
+*   `currencyArbitrumSepolia` **[DefaultFeature](#defaultfeature)**&#x20;
 *   `currencyRsk` **[DefaultFeature](#defaultfeature)**&#x20;
 *   `currencyBittorrent` **[DefaultFeature](#defaultfeature)**&#x20;
-*   `currencyKavaEvm` **[DefaultFeature](#defaultfeature)**&#x20;
-*   `currencyEvmosEvm` **[DefaultFeature](#defaultfeature)**&#x20;
 *   `currencyEnergyWeb` **[DefaultFeature](#defaultfeature)**&#x20;
 *   `currencyAstar` **[DefaultFeature](#defaultfeature)**&#x20;
 *   `currencyMetis` **[DefaultFeature](#defaultfeature)**&#x20;
@@ -656,7 +654,7 @@ Type: {currencyAvalancheCChain: [DefaultFeature](#defaultfeature), currencyStack
 *   `currencyPolygonZkEvm` **[DefaultFeature](#defaultfeature)**&#x20;
 *   `currencyPolygonZkEvmTestnet` **[DefaultFeature](#defaultfeature)**&#x20;
 *   `currencyBase` **[DefaultFeature](#defaultfeature)**&#x20;
-*   `currencyBaseGoerli` **[DefaultFeature](#defaultfeature)**&#x20;
+*   `currencyBaseSepolia` **[DefaultFeature](#defaultfeature)**&#x20;
 *   `currencyKlaytn` **[DefaultFeature](#defaultfeature)**&#x20;
 *   `currencyVechain` **[DefaultFeature](#defaultfeature)**&#x20;
 *   `currencyCasper` **[DefaultFeature](#defaultfeature)**&#x20;

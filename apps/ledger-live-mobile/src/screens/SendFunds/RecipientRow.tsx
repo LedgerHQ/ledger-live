@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useCallback } from "react";
 import { Platform, StyleSheet, View } from "react-native";
 import Clipboard from "@react-native-clipboard/clipboard";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
@@ -22,14 +22,17 @@ const RecipientRow = ({
   warning,
   error,
 }: Props) => {
+  const onPaste = useCallback(() => {
+    Clipboard.getString().then(text => {
+      onChangeText(text);
+    });
+  }, [onChangeText]);
+
   return (
     <>
       <View style={styles.inputWrapper}>
         <RecipientInput
-          onPaste={async () => {
-            const text = await Clipboard.getString();
-            onChangeText(text);
-          }}
+          onPaste={onPaste}
           onFocus={onRecipientFieldFocus}
           onChangeText={onChangeText}
           value={transaction.recipient}

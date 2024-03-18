@@ -3,8 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
 import { context } from "~/renderer/drawers/Provider";
 import WebviewErrorDrawer, { SwapLiveError } from "./WebviewErrorDrawer/index";
-import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
-import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
+
 import { counterValueCurrencySelector, languageSelector } from "~/renderer/reducers/settings";
 import useTheme from "~/renderer/hooks/useTheme";
 import { Web3AppWebview } from "~/renderer/components/Web3AppWebview";
@@ -21,6 +20,8 @@ import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-ap
 import { useRedirectToSwapHistory } from "../utils/index";
 
 import { captureException } from "~/sentry/internal";
+import { usePTXCustomHandlers } from "~/renderer/components/WebPTXPlayer/CustomHandlers";
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const isDevelopment = process.env.NODE_ENV === "development";
@@ -54,10 +55,11 @@ export type SwapProps = {
   error: boolean;
   providerRedirectURL: string;
   toNewTokenId: string;
+  swapApiBase: string;
 };
 
 export type SwapWebProps = {
-  manifestID: string;
+  manifest: LiveAppManifest;
   swapState?: Partial<SwapProps>;
   liveAppUnavailable(): void;
 };
@@ -85,7 +87,7 @@ const SwapWebAppWrapper = styled.div`
   flex: 1;
 `;
 
-const SwapWebView = ({ manifestID, swapState, liveAppUnavailable }: SwapWebProps) => {
+const SwapWebView = ({ manifest, swapState, liveAppUnavailable }: SwapWebProps) => {
   const {
     colors: {
       palette: { type: themeType },
@@ -97,18 +99,14 @@ const SwapWebView = ({ manifestID, swapState, liveAppUnavailable }: SwapWebProps
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
   const fiatCurrency = useSelector(counterValueCurrencySelector);
   const locale = useSelector(languageSelector);
-  const localManifest = useLocalLiveAppManifest(manifestID);
-  const remoteManifest = useRemoteLiveAppManifest(manifestID);
   const redirectToHistory = useRedirectToSwapHistory();
 
-  const manifest = localManifest || remoteManifest;
-
-  const hasManifest = !!manifest;
   const hasSwapState = !!swapState;
-
+  const customPTXHandlers = usePTXCustomHandlers(manifest);
   const customHandlers = useMemo(() => {
     return {
       ...loggerHandlers,
+      ...customPTXHandlers,
       "custom.swapStateGet": () => {
         return Promise.resolve(swapState);
       },
@@ -187,7 +185,8 @@ const SwapWebView = ({ manifestID, swapState, liveAppUnavailable }: SwapWebProps
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [webviewState.url]);
 
-  if (!hasManifest || !hasSwapState) {
+  // return loader???
+  if (!hasSwapState) {
     return null;
   }
 

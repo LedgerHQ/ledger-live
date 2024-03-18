@@ -85,11 +85,8 @@ const getMainActions = ({
       label: <Trans i18nKey="account.stake" />,
       Icon: IconsLegacy.CoinsMedium,
       navigationParams,
-      event: "button_clicked",
       eventProperties: {
-        button: "stake",
         currency: "ELROND",
-        page: "Account Page",
       },
     },
   ];

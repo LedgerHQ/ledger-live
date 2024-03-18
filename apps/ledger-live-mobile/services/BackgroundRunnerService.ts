@@ -8,9 +8,9 @@ import { hasFinalFirmware } from "@ledgerhq/live-common/hw/hasFinalFirmware";
 import { FirmwareUpdateContext } from "@ledgerhq/types-live";
 import prepareFirmwareUpdate from "@ledgerhq/live-common/hw/firmwareUpdate-prepare";
 import mainFirmwareUpdate from "@ledgerhq/live-common/hw/firmwareUpdate-main";
-import { store } from "../src/context/LedgerStore";
-import type { FwUpdateBackgroundEvent } from "../src/reducers/types";
-import { addBackgroundEvent } from "../src/actions/appstate";
+import { store } from "~/context/store";
+import type { FwUpdateBackgroundEvent } from "~/reducers/types";
+import { addBackgroundEvent } from "~/actions/appstate";
 
 const FIVE_MINUTES_IN_MS = 5 * 60 * 1000;
 
@@ -67,10 +67,7 @@ const BackgroundRunnerService = async ({
     complete: () => {
       // Depending on the update path, we might need to run the firmwareMain or simply wait until
       // the device is online.
-      if (
-        latestFirmware.shouldFlashMCU ||
-        hasFinalFirmware(latestFirmware.final)
-      ) {
+      if (latestFirmware.shouldFlashMCU || hasFinalFirmware(latestFirmware.final)) {
         emitEvent({ type: "flashingMcu" });
         mainFirmwareUpdate(deviceId, latestFirmware).subscribe({
           next: ({ progress, installing }) => {
@@ -88,8 +85,7 @@ const BackgroundRunnerService = async ({
             emitEvent({ type: "confirmPin" });
             waitForOnlineDevice(5 * 60 * 1000).subscribe({
               error: onError,
-              next: updatedDeviceInfo =>
-                emitEvent({ type: "firmwareUpdated", updatedDeviceInfo }),
+              next: updatedDeviceInfo => emitEvent({ type: "firmwareUpdated", updatedDeviceInfo }),
               complete: onFirmwareUpdated,
             });
           },
@@ -99,8 +95,7 @@ const BackgroundRunnerService = async ({
         // We're waiting forever condition that make getDeviceInfo work
         waitForOnlineDevice(FIVE_MINUTES_IN_MS).subscribe({
           error: onError,
-          next: updatedDeviceInfo =>
-            emitEvent({ type: "firmwareUpdated", updatedDeviceInfo }),
+          next: updatedDeviceInfo => emitEvent({ type: "firmwareUpdated", updatedDeviceInfo }),
           complete: onFirmwareUpdated,
         });
       }

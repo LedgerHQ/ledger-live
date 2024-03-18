@@ -78,7 +78,6 @@ export default function RequestAccountsSelectCrypto({ navigation, route }: Props
         <View style={styles.searchContainer}>
           <FilteredSearchBar
             keys={SEARCH_KEYS}
-            inputWrapperStyle={styles.filteredSearchInputWrapperStyle}
             list={sortedCryptoCurrencies}
             renderList={renderList}
             renderEmptySearch={renderEmptyList}
@@ -98,9 +97,6 @@ const styles = StyleSheet.create({
   },
   list: {
     paddingBottom: 32,
-  },
-  filteredSearchInputWrapperStyle: {
-    marginHorizontal: 16,
   },
   emptySearch: {
     paddingHorizontal: 16,

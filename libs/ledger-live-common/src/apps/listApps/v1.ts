@@ -16,8 +16,9 @@ import ManagerAPI from "../../manager/api";
 import { getEnv } from "@ledgerhq/live-env";
 
 import { calculateDependencies, polyfillApp, polyfillApplication } from "../polyfill";
-import getDeviceName from "../../hw/getDeviceName";
+import { getDeviceName } from "../../device/use-cases/getDeviceNameUseCase";
 import { getLatestFirmwareForDeviceUseCase } from "../../device/use-cases/getLatestFirmwareForDeviceUseCase";
+import { ManagerApiRepository } from "../../device-core/managerApi/repositories/ManagerApiRepository";
 
 const appsThatKeepChangingHashes = ["Fido U2F", "Security Key"];
 
@@ -25,7 +26,11 @@ const emptyHashData = "000000000000000000000000000000000000000000000000000000000
 
 //TODO if you are reading this, don't worry, a big rewrite is coming and we'll be able
 //to simplify this a lot. Stay calm.
-const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<ListAppsEvent> => {
+export const listApps = (
+  transport: Transport,
+  deviceInfo: DeviceInfo,
+  managerApiRepository: ManagerApiRepository,
+): Observable<ListAppsEvent> => {
   const tracer = new LocalTracer("list-apps", { transport: transport.getTraceContext() });
   tracer.trace("Using legacy version", { deviceInfo });
 
@@ -87,7 +92,10 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
         }),
       );
 
-      const latestFirmwareForDeviceP = getLatestFirmwareForDeviceUseCase(deviceInfo);
+      const latestFirmwareForDeviceP = getLatestFirmwareForDeviceUseCase(
+        deviceInfo,
+        managerApiRepository,
+      );
 
       const firmwareP = Promise.all([firmwareDataP, latestFirmwareForDeviceP]).then(
         ([firmwareData, updateAvailable]) => ({
@@ -297,5 +305,3 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
     };
   });
 };
-
-export default listApps;

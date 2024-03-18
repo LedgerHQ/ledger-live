@@ -23,7 +23,7 @@ export const ItemContainer = styled(Tabbable).attrs<ItemProps>(p => ({
   height: 40px;
   position: relative;
   pointer-events: ${p => (p.disabled ? "none" : "unset")};
-
+  cursor: ${p => (p.isInteractive ? "pointer" : "initial")};
   &:hover {
     color: ${p => (p.disabled ? "" : p.theme.colors.palette.text.shade100)};
     background: ${p => (p.disabled ? "" : rgba(p.theme.colors.palette.action.active, 0.05))};

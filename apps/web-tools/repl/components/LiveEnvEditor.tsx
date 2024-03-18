@@ -3,7 +3,8 @@ import React, { useCallback, useEffect, useState } from "react";
 import { changes, setEnvUnsafe } from "@ledgerhq/live-env";
 import { setDefaultEnv, updateEnv, getEnv } from "../helpers/env";
 import { Resizable } from "re-resizable";
-import { map, get } from "lodash";
+import map from "lodash/map";
+import get from "lodash/get";
 import ReactTable from "react-table";
 import { SmallButton } from "./Smallbutton";
 

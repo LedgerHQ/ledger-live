@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -22,18 +22,32 @@ import {
 } from "@ledgerhq/live-common/hw/actions/startExchange";
 import startExchange from "@ledgerhq/live-common/exchange/platform/startExchange";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
-import {
-  Data as StartExchangeData,
-  isStartExchangeData,
-} from "~/renderer/modals/Platform/Exchange/StartExchange/index";
+
 import CompleteExchange, {
   Data as CompleteExchangeData,
   isCompleteExchangeData,
 } from "~/renderer/modals/Platform/Exchange/CompleteExchange/Body";
+import { ExchangeType } from "@ledgerhq/live-common/wallet-api/Exchange/server";
+import { Exchange } from "@ledgerhq/live-common/exchange/swap/types";
 
 const Divider = styled(Box)`
   border: 1px solid ${p => p.theme.colors.palette.divider};
 `;
+
+export type StartExchangeData = {
+  onCancel?: (error: Error) => void;
+  exchangeType: ExchangeType;
+  provider?: string;
+  exchange?: Exchange;
+  onResult: (startExchangeResult: string) => void;
+};
+
+export function isStartExchangeData(data: unknown): data is StartExchangeData {
+  if (data === null || typeof data !== "object") {
+    return false;
+  }
+  return "exchangeType" in data;
+}
 
 export const LiveAppDrawer = () => {
   const [dismissDisclaimerChecked, setDismissDisclaimerChecked] = useState<boolean>(false);
@@ -65,7 +79,7 @@ export const LiveAppDrawer = () => {
       next(manifest, dismissDisclaimerChecked);
     }
   }, [dismissDisclaimerChecked, dispatch, payload]);
-  const drawerContent = useCallback(() => {
+  const drawerContent = useMemo(() => {
     if (!payload) {
       return null;
     }
@@ -135,9 +149,7 @@ export const LiveAppDrawer = () => {
           <Box alignItems={"center"} height={"100%"} px={32}>
             <DeviceAction
               action={action}
-              request={{
-                exchangeType: data.exchangeType,
-              }}
+              request={data}
               onResult={(result: StartExchangeResult) => {
                 if ("startExchangeResult" in result) {
                   data.onResult(result.startExchangeResult as unknown as string);
@@ -174,7 +186,7 @@ export const LiveAppDrawer = () => {
       direction="left"
     >
       <Box flex="1" justifyContent="space-between">
-        {drawerContent()}
+        {drawerContent}
       </Box>
     </SideDrawer>
   );

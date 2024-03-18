@@ -9,13 +9,22 @@ const testPathIgnorePatterns = [
   "test-helpers/",
 ];
 
-let testRegex = "(/__tests__/.*|(\\.|/)(test|spec))\\.[jt]sx?$";
+let testRegex: string | string[] = "(/__tests__/.*|(\\.|/)(test|spec))\\.[jt]sx?$";
 if (process.env.IGNORE_INTEGRATION_TESTS) {
   testPathIgnorePatterns.push(".*\\.integration\\.test\\.[tj]s");
 }
 
 if (process.env.ONLY_INTEGRATION_TESTS) {
   testRegex = "(/__tests__/.*|(\\.|/)integration\\.(test|spec))\\.[jt]sx?$";
+}
+
+if (process.env.USE_BACKEND_MOCKS) {
+  testRegex = [
+    "algorand/bridge.integration.test.ts",
+    // $ to not match with test.snap files
+    "osmosis.integration.test.ts$",
+    "stargaze.integration.test.ts$",
+  ];
 }
 
 const reporters = ["default"];
@@ -35,6 +44,7 @@ const defaultConfig = {
   coveragePathIgnorePatterns: ["src/__tests__/test-helpers"],
   modulePathIgnorePatterns: [
     "__tests__/fixtures",
+    "__tests__/migration",
     "<rootDir>/benchmark/.*",
     "<rootDir>/cli/.yalc/.*",
   ],
@@ -54,22 +64,18 @@ const defaultConfig = {
 };
 
 export default {
+  globalSetup: process.env.UPDATE_BACKEND_MOCKS
+    ? "<rootDir>/src/__tests__/test-helpers/bridgeSetupUpdateMocks.ts"
+    : process.env.USE_BACKEND_MOCKS
+    ? "<rootDir>/src/__tests__/test-helpers/bridgeSetupUseMocks.ts"
+    : undefined,
+  globalTeardown: process.env.UPDATE_BACKEND_MOCKS
+    ? "<rootDir>/src/__tests__/test-helpers/bridgeTeardownUpdateMocks.ts"
+    : process.env.USE_BACKEND_MOCKS
+    ? "<rootDir>/src/__tests__/test-helpers/bridgeTeardownUseMocks.ts"
+    : undefined,
   collectCoverage: true,
   collectCoverageFrom: ["src/**/*.{ts,tsx}"],
   coverageReporters: ["json", "lcov", "clover", "json-summary"],
-  projects: [
-    {
-      ...defaultConfig,
-      testPathIgnorePatterns: [
-        ...testPathIgnorePatterns,
-        "(/__tests__/.*|(\\.|/)react\\.test|spec)\\.tsx",
-      ],
-    },
-    {
-      ...defaultConfig,
-      displayName: "dom",
-      testEnvironment: "jsdom",
-      testRegex: "(/__tests__/.*|(\\.|/)react\\.test|spec)\\.tsx",
-    },
-  ],
+  projects: [defaultConfig],
 };

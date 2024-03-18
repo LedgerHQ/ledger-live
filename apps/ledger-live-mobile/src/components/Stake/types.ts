@@ -5,5 +5,6 @@ export type StakingDrawerNavigationProps = {
   props: {
     accountId: string;
     singleProviderRedirectMode?: boolean;
+    has32Eth?: boolean;
   };
 };

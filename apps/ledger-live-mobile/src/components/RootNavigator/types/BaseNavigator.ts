@@ -2,6 +2,7 @@ import type { Operation, AccountLike, Account, DeviceInfo } from "@ledgerhq/type
 import type { NavigatorScreenParams, ParamListBase } from "@react-navigation/native";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+// eslint-disable-next-line no-restricted-imports
 import type { PropertyPath } from "lodash";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { MappedSwapOperation } from "@ledgerhq/live-common/exchange/swap/types";
@@ -35,7 +36,6 @@ import type { MainNavigatorParamList } from "./MainNavigator";
 import type { WalletConnectLiveAppNavigatorParamList } from "./WalletConnectLiveAppNavigator";
 import type { PostOnboardingNavigatorParamList } from "./PostOnboardingNavigator";
 import type { CustomImageNavigatorParamList } from "./CustomImageNavigator";
-import type { ClaimNftNavigatorParamList } from "./ClaimNftNavigator";
 import type { PolkadotSimpleOperationFlowParamList } from "../../../families/polkadot/SimpleOperationFlow/types";
 import type { PolkadotNominateFlowParamList } from "../../../families/polkadot/NominateFlow/types";
 import type { PolkadotUnbondFlowParamList } from "../../../families/polkadot/UnbondFlow/type";
@@ -97,6 +97,7 @@ export type BaseNavigatorStackParamList = {
     defaultCurrencyId?: string;
     defaultTicker?: string;
     customDappURL?: string;
+    uri?: string;
   };
   [ScreenName.Recover]: {
     platform?: string;
@@ -220,7 +221,6 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.Accounts]: NavigatorScreenParams<AccountsNavigatorParamList>;
   [NavigatorName.WalletConnect]: NavigatorScreenParams<WalletConnectLiveAppNavigatorParamList>;
   [NavigatorName.CustomImage]: NavigatorScreenParams<CustomImageNavigatorParamList>;
-  [NavigatorName.ClaimNft]: NavigatorScreenParams<ClaimNftNavigatorParamList>;
   [NavigatorName.PostOnboarding]: NavigatorScreenParams<PostOnboardingNavigatorParamList>;
 
   // Polkadot

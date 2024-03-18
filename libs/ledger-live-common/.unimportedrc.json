@@ -253,8 +253,6 @@
     "src/platform/tracking.ts",
     "src/platform/types.ts",
     "src/platform/utils/appendQueryParamsToDappURL.ts",
-    "src/portfolio/v2/index.ts",
-    "src/portfolio/v2/react.ts",
     "src/postOnboarding/actions.ts",
     "src/postOnboarding/hooks/index.ts",
     "src/postOnboarding/hooks/usePostOnboardingEntryPointVisibleOnWallet.ts",
@@ -312,7 +310,8 @@
     "src/jest.d.ts",
     "src/postOnboarding/mock.ts",
     "src/reactNativeSvg.d.ts",
-    "src/currencies/mock.ts"
+    "src/currencies/mock.ts",
+    "src/families/tezos/fixtures/*"
   ],
   "ignoreUnused": [
     "@types/bchaddrjs",
@@ -321,7 +320,9 @@
     "@types/qs",
     "@ledgerhq/hw-transport-mocker",
     "bip32",
-    "bip39"
+    "bip39",
+    "yargs",
+    "tsx"
   ],
   "ignoreUnresolved": [
     "../../Image/Image",

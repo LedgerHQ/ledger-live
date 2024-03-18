@@ -15,7 +15,6 @@ import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import OperationsList from "~/renderer/components/OperationsList";
-import Carousel from "~/renderer/components/Carousel";
 import AssetDistribution from "./AssetDistribution";
 import ClearCacheBanner from "~/renderer/components/ClearCacheBanner";
 import RecoverBanner from "~/renderer/components/RecoverBanner/RecoverBanner";
@@ -25,11 +24,14 @@ import { useSelector } from "react-redux";
 import uniq from "lodash/uniq";
 import EmptyStateInstalledApps from "~/renderer/screens/dashboard/EmptyStateInstalledApps";
 import EmptyStateAccounts from "~/renderer/screens/dashboard/EmptyStateAccounts";
-import { useRefreshAccountsOrderingEffect } from "~/renderer/actions/general";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
 import PostOnboardingHubBanner from "~/renderer/components/PostOnboardingHub/PostOnboardingHubBanner";
 import FeaturedButtons from "~/renderer/screens/dashboard/FeaturedButtons";
-import { AccountLike, Operation } from "@ledgerhq/types-live";
+import { ABTestingVariants, AccountLike, Operation } from "@ledgerhq/types-live";
+import PortfolioContentCards from "~/renderer/screens/dashboard/PortfolioContentCards";
+import MarketPerformanceWidget from "~/renderer/screens/dashboard/MarketPerformanceWidget";
+import { useMarketPerformanceFeatureFlag } from "~/renderer/actions/marketperformance";
+import { Grid } from "@ledgerhq/react-ui";
 
 // This forces only one visible top banner at a time
 export const TopBannerContainer = styled.div`
@@ -56,10 +58,6 @@ export default function DashboardPage() {
   );
   const isPostOnboardingBannerVisible = usePostOnboardingEntryPointVisibleOnWallet();
 
-  const showCarousel = hasInstalledApps && totalAccounts >= 0;
-  useRefreshAccountsOrderingEffect({
-    onMount: true,
-  });
   const [shouldFilterTokenOpsZeroAmount] = useFilterTokenOperationsZeroAmount();
   const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
   const filterOperations = useCallback(
@@ -75,14 +73,20 @@ export default function DashboardPage() {
     },
     [hiddenNftCollections, shouldFilterTokenOpsZeroAmount],
   );
+
+  const { enabled: marketPerformanceEnabled, variant: marketPerformanceVariant } =
+    useMarketPerformanceFeatureFlag();
+
   return (
     <>
       <TopBannerContainer>
         <ClearCacheBanner />
         <CurrencyDownStatusAlert currencies={currencies} hideStatusIncidents />
       </TopBannerContainer>
-      {showCarousel ? <Carousel /> : null}
-      <RecoverBanner />
+      <Box gap={"5px"}>
+        <RecoverBanner />
+        <PortfolioContentCards variant={ABTestingVariants.variantA} />
+      </Box>
       {isPostOnboardingBannerVisible && <PostOnboardingHubBanner />}
       <FeaturedButtons />
       <TrackPage
@@ -97,11 +101,26 @@ export default function DashboardPage() {
           <EmptyStateInstalledApps />
         ) : totalAccounts > 0 ? (
           <>
-            <BalanceSummary
-              counterValue={counterValue}
-              chartColor={colors.wallet}
-              range={selectedTimeRange}
-            />
+            {marketPerformanceEnabled ? (
+              <PortfolioGrid>
+                <BalanceSummary
+                  counterValue={counterValue}
+                  chartColor={colors.wallet}
+                  range={selectedTimeRange}
+                />
+
+                <Box ml={2} minWidth={275}>
+                  <MarketPerformanceWidget variant={marketPerformanceVariant} />
+                </Box>
+              </PortfolioGrid>
+            ) : (
+              <BalanceSummary
+                counterValue={counterValue}
+                chartColor={colors.wallet}
+                range={selectedTimeRange}
+              />
+            )}
+
             <AssetDistribution />
             {totalOperations > 0 && (
               <OperationsList
@@ -121,3 +140,10 @@ export default function DashboardPage() {
     </>
   );
 }
+
+const PortfolioGrid = styled(Grid).attrs(() => ({
+  columnGap: 2,
+  columns: 2,
+}))`
+  grid-template-columns: 2fr 1fr;
+`;

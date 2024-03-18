@@ -8,8 +8,6 @@ import {
 import { BigNumber } from "bignumber.js";
 import Fil from "@zondax/ledger-filecoin";
 import { Observable } from "rxjs";
-import { Address } from "@zondax/izari-filecoin/address";
-import { Methods } from "@zondax/izari-filecoin/artifacts";
 
 import { makeAccountBridgeReceive, makeSync } from "../../../bridge/jsHelpers";
 import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
@@ -29,9 +27,9 @@ import { BroadcastBlockIncl } from "./utils/types";
 import { getMainAccount } from "../../../account";
 import { close } from "../../../hw";
 import { toCBOR } from "./utils/serializer";
-import { calculateEstimatedFees, getPath, isError } from "../utils";
+import { Methods, calculateEstimatedFees, getPath, isError } from "../utils";
 import { log } from "@ledgerhq/logs";
-import { validateAddress } from "./utils/addresses";
+import { isFilEthAddress, validateAddress } from "./utils/addresses";
 import { encodeOperationId, patchOperationWithHash } from "../../../operation";
 import { withDevice } from "../../../hw/deviceAccess";
 
@@ -133,7 +131,7 @@ const estimateMaxSpendable = async ({
     }
     recipient = recipientValidation.parsedAddress.toString();
 
-    methodNum = Address.isFilEthAddress(recipientValidation.parsedAddress)
+    methodNum = isFilEthAddress(recipientValidation.parsedAddress)
       ? Methods.InvokeEVM
       : Methods.Transfer;
   }
@@ -177,7 +175,7 @@ const prepareTransaction = async (a: Account, t: Transaction): Promise<Transacti
     if (recipientValidation.isValid && senderValidation.isValid) {
       const patch: Partial<Transaction> = {};
 
-      const method = Address.isFilEthAddress(recipientValidation.parsedAddress)
+      const method = isFilEthAddress(recipientValidation.parsedAddress)
         ? Methods.InvokeEVM
         : Methods.Transfer;
 

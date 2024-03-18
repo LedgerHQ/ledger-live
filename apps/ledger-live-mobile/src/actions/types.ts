@@ -256,7 +256,6 @@ export enum SettingsActionTypes {
   SETTINGS_SET_DATE_FORMAT = "SETTINGS_SET_DATE_FORMAT",
   SET_SWAP_SELECTABLE_CURRENCIES = "SET_SWAP_SELECTABLE_CURRENCIES",
   ACCEPT_SWAP_PROVIDER = "ACCEPT_SWAP_PROVIDER",
-  LAST_SEEN_DEVICE = "LAST_SEEN_DEVICE",
   LAST_SEEN_DEVICE_INFO = "LAST_SEEN_DEVICE_INFO",
   LAST_SEEN_DEVICE_LANGUAGE_ID = "LAST_SEEN_DEVICE_LANGUAGE_ID",
   SET_KNOWN_DEVICE_MODEL_IDS = "SET_KNOWN_DEVICE_MODEL_IDS",
@@ -288,6 +287,7 @@ export enum SettingsActionTypes {
   SET_CLOSED_WITHDRAW_BANNER = "SET_CLOSED_WITHDRAW_BANNER",
   SET_USER_NPS = "SET_USER_NPS",
   SET_SUPPORTED_COUNTER_VALUES = "SET_SUPPORTED_COUNTER_VALUES",
+  SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT = "SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT",
 }
 
 export type SettingsImportPayload = Partial<SettingsState>;
@@ -390,6 +390,7 @@ export type SettingsCompleteOnboardingPayload = void | SettingsState["hasComplet
 export type SettingsSetGeneralTermsVersionAccepted = SettingsState["generalTermsVersionAccepted"];
 export type SettingsSetUserNps = number;
 export type SettingsSetSupportedCounterValues = SettingsState["supportedCounterValues"];
+export type SettingsSetHasSeenAnalyticsOptInPrompt = SettingsState["hasSeenAnalyticsOptInPrompt"];
 
 export type SettingsPayload =
   | SettingsImportPayload
@@ -446,7 +447,8 @@ export type SettingsPayload =
   | SettingsSetOnboardingTypePayload
   | SettingsSetClosedNetworkBannerPayload
   | SettingsSetUserNps
-  | SettingsSetSupportedCounterValues;
+  | SettingsSetSupportedCounterValues
+  | SettingsSetHasSeenAnalyticsOptInPrompt;
 
 // === WALLET CONNECT ACTIONS ===
 export enum WalletConnectActionTypes {

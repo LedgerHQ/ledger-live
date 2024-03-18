@@ -16,7 +16,6 @@ import {
   SettingsImportPayload,
   SettingsSetHasInstalledAnyAppPayload,
   SettingsLastSeenDeviceInfoPayload,
-  SettingsLastSeenDevicePayload,
   SettingsRemoveStarredMarketcoinsPayload,
   SettingsSetAnalyticsPayload,
   SettingsSetPersonalizedRecommendationsPayload,
@@ -69,6 +68,7 @@ import {
   SettingsSetClosedWithdrawBannerPayload,
   SettingsSetUserNps,
   SettingsSetSupportedCounterValues,
+  SettingsSetHasSeenAnalyticsOptInPrompt,
 } from "./types";
 import { ImageType } from "~/components/CustomImage/types";
 
@@ -174,9 +174,6 @@ export const setSwapSelectableCurrencies = createAction<SettingsSetSwapSelectabl
 );
 export const swapAcceptProvider = createAction<SettingsAcceptSwapProviderPayload>(
   SettingsActionTypes.ACCEPT_SWAP_PROVIDER,
-);
-export const setLastSeenDevice = createAction<SettingsLastSeenDevicePayload>(
-  SettingsActionTypes.LAST_SEEN_DEVICE,
 );
 export const setLastSeenDeviceInfo = createAction<SettingsLastSeenDeviceInfoPayload>(
   SettingsActionTypes.LAST_SEEN_DEVICE_INFO,
@@ -287,6 +284,10 @@ export const setUserNps = createAction<SettingsSetUserNps>(SettingsActionTypes.S
 
 export const setSupportedCounterValues = createAction<SettingsSetSupportedCounterValues>(
   SettingsActionTypes.SET_SUPPORTED_COUNTER_VALUES,
+);
+
+export const setHasSeenAnalyticsOptInPrompt = createAction<SettingsSetHasSeenAnalyticsOptInPrompt>(
+  SettingsActionTypes.SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT,
 );
 
 type PortfolioRangeOption = {

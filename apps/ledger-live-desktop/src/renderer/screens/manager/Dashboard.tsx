@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useEffect, useRef, useContext } from "react";
 import { useSelector } from "react-redux";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
-import { execWithTransport } from "@ledgerhq/live-common/apps/hw";
+import { execWithTransport } from "@ledgerhq/live-common/device/use-cases/listAppsUseCase";
 import { App, DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import { AppOp, ListAppsResult } from "@ledgerhq/live-common/apps/types";
 import { distribute, initState } from "@ledgerhq/live-common/apps/logic";

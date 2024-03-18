@@ -16,8 +16,10 @@ import {
   ExchangeCompleteParams,
   ExchangeCompleteResult,
   ExchangeStartParams,
+  ExchangeStartSwapParams,
   ExchangeStartResult,
   ExchangeType,
+  ExchangeStartSellParams,
 } from "@ledgerhq/wallet-api-exchange-module";
 import { TrackingAPI } from "./tracking";
 import { AppManifest } from "../types";
@@ -28,11 +30,20 @@ import {
 import { getAccountBridge } from "../../bridge";
 import { Exchange } from "../../exchange/swap/types";
 import { Transaction } from "../../generated/types";
+import {
+  ExchangeError,
+  createAccounIdNotFound,
+  createWrongSellParams,
+  createWrongSwapParams,
+} from "./error";
 
 export { ExchangeType };
 
 type Handlers = {
-  "custom.exchange.start": RPCHandler<ExchangeStartResult, ExchangeStartParams>;
+  "custom.exchange.start": RPCHandler<
+    ExchangeStartResult,
+    ExchangeStartParams | ExchangeStartSwapParams | ExchangeStartSellParams
+  >;
   "custom.exchange.complete": RPCHandler<ExchangeCompleteResult, ExchangeCompleteParams>;
 };
 
@@ -49,9 +60,23 @@ export type CompleteExchangeUiRequest = {
   amountExpectedTo?: number;
 };
 
-export type ExchangeUiHooks = {
+type ExchangeStartParamsUiRequest =
+  | {
+      exchangeType: "FUND";
+    }
+  | {
+      exchangeType: "SELL";
+      provider: string;
+    }
+  | {
+      exchangeType: "SWAP";
+      provider: string;
+      exchange: Exchange;
+    };
+
+type ExchangeUiHooks = {
   "custom.exchange.start": (params: {
-    exchangeType: ExchangeStartParams["exchangeType"];
+    exchangeParams: ExchangeStartParamsUiRequest;
     onSuccess: (nonce: string) => void;
     onCancel: (error: Error) => void;
   }) => void;
@@ -77,30 +102,44 @@ export const handlers = ({
   uiHooks: ExchangeUiHooks;
 }) =>
   ({
-    "custom.exchange.start": customWrapper<ExchangeStartParams, ExchangeStartResult>(
-      async params => {
-        tracking.startExchangeRequested(manifest);
+    "custom.exchange.start": customWrapper<
+      ExchangeStartParams | ExchangeStartSwapParams | ExchangeStartSellParams,
+      ExchangeStartResult
+    >(async params => {
+      tracking.startExchangeRequested(manifest);
 
-        if (!params) {
-          tracking.startExchangeNoParams(manifest);
-          return { transactionId: "" };
-        }
+      if (!params) {
+        tracking.startExchangeNoParams(manifest);
+        return { transactionId: "" };
+      }
 
-        return new Promise((resolve, reject) =>
-          uiExchangeStart({
-            exchangeType: params.exchangeType,
-            onSuccess: (nonce: string) => {
-              tracking.startExchangeSuccess(manifest);
-              resolve({ transactionId: nonce });
-            },
-            onCancel: error => {
-              tracking.completeExchangeFail(manifest);
-              reject(error);
-            },
-          }),
-        );
-      },
-    ),
+      let exchangeParams: ExchangeStartParamsUiRequest;
+
+      // Use `if else` instead of switch to leverage TS type narrowing and avoid `params` force cast.
+      if (params.exchangeType == "SWAP") {
+        exchangeParams = extractSwapStartParam(params, accounts);
+      } else if (params.exchangeType == "SELL") {
+        exchangeParams = extractSellStartParam(params);
+      } else {
+        exchangeParams = {
+          exchangeType: params.exchangeType,
+        };
+      }
+
+      return new Promise((resolve, reject) =>
+        uiExchangeStart({
+          exchangeParams,
+          onSuccess: (nonce: string) => {
+            tracking.startExchangeSuccess(manifest);
+            resolve({ transactionId: nonce });
+          },
+          onCancel: error => {
+            tracking.completeExchangeFail(manifest);
+            reject(error);
+          },
+        }),
+      );
+    }),
     "custom.exchange.complete": customWrapper<ExchangeCompleteParams, ExchangeCompleteResult>(
       async params => {
         tracking.completeExchangeRequested(manifest);
@@ -166,7 +205,8 @@ export const handlers = ({
          * 'subAccountId' is used for ETH and it's ERC-20 tokens.
          * This field is ignored for BTC
          */
-        const subAccountId = fromParentAccount ? fromAccount.id : undefined;
+        const subAccountId =
+          fromParentAccount && fromParentAccount.id !== fromAccount.id ? fromAccount.id : undefined;
 
         const bridgeTx = accountBridge.createTransaction(mainFromAccount);
         /**
@@ -192,8 +232,8 @@ export const handlers = ({
               exchangeType: ExchangeType[params.exchangeType],
               provider: params.provider,
               transaction: tx,
-              signature: Buffer.from(params.hexSignature, "hex").toString(),
-              binaryPayload: Buffer.from(params.hexBinaryPayload, "hex").toString(),
+              signature: params.hexSignature,
+              binaryPayload: params.hexBinaryPayload,
               exchange: {
                 fromAccount,
                 fromParentAccount,
@@ -217,3 +257,65 @@ export const handlers = ({
       },
     ),
   }) as const satisfies Handlers;
+
+function extractSwapStartParam(
+  params: ExchangeStartSwapParams,
+  accounts: AccountLike[],
+): ExchangeStartParamsUiRequest {
+  if (!("fromAccountId" in params && "toAccountId" in params)) {
+    throw new ExchangeError(createWrongSwapParams(params));
+  }
+
+  const realFromAccountId = getAccountIdFromWalletAccountId(params.fromAccountId);
+  if (!realFromAccountId) {
+    throw new ExchangeError(createAccounIdNotFound(params.fromAccountId));
+  }
+
+  const fromAccount = accounts.find(acc => acc.id === realFromAccountId);
+  if (!fromAccount) {
+    throw new ServerError(createAccountNotFound(params.fromAccountId));
+  }
+
+  let toAccount;
+
+  if (params.exchangeType === "SWAP" && params.toAccountId) {
+    const realToAccountId = getAccountIdFromWalletAccountId(params.toAccountId);
+    if (!realToAccountId) {
+      throw new ExchangeError(createAccounIdNotFound(params.toAccountId));
+    }
+
+    toAccount = accounts.find(a => a.id === realToAccountId);
+
+    if (!toAccount) {
+      throw new ServerError(createAccountNotFound(params.toAccountId));
+    }
+  }
+
+  const fromParentAccount = getParentAccount(fromAccount, accounts);
+  const toParentAccount = toAccount ? getParentAccount(toAccount, accounts) : undefined;
+
+  const currency = params.tokenCurrency ? findTokenById(params.tokenCurrency) : null;
+  const newTokenAccount = currency ? makeEmptyTokenAccount(toAccount, currency) : null;
+
+  return {
+    exchangeType: params.exchangeType,
+    provider: params.provider,
+    exchange: {
+      fromAccount,
+      fromParentAccount,
+      toAccount: newTokenAccount ? newTokenAccount : toAccount,
+      toParentAccount: newTokenAccount ? toAccount : toParentAccount,
+    },
+  };
+}
+
+function extractSellStartParam(params: ExchangeStartSellParams): ExchangeStartParamsUiRequest {
+  if (!("provider" in params)) {
+    throw new ExchangeError(createWrongSellParams(params));
+  }
+
+  return {
+    exchangeType: params.exchangeType,
+    provider: params.provider,
+  };
+}

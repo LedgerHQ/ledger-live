@@ -4,6 +4,7 @@ import { Store } from "redux";
 import { HashRouter as Router } from "react-router-dom";
 import { NftMetadataProvider } from "@ledgerhq/live-nft-react";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
+import { getFeature } from "@ledgerhq/live-common/featureFlags/index";
 import "./global.css";
 import "tippy.js/dist/tippy.css";
 import "tippy.js/animations/shift-away.css";
@@ -17,6 +18,7 @@ import LiveStyleSheetManager from "~/renderer/styles/LiveStyleSheetManager";
 import { FirebaseRemoteConfigProvider } from "~/renderer/components/FirebaseRemoteConfig";
 import { FirebaseFeatureFlagsProvider } from "~/renderer/components/FirebaseFeatureFlags";
 import CountervaluesProvider from "~/renderer/components/CountervaluesProvider";
+import { CountervaluesMarketcap } from "@ledgerhq/live-countervalues-react";
 import DrawerProvider from "~/renderer/drawers/Provider";
 import Default from "./Default";
 import { AnnouncementProviderWrapper } from "~/renderer/components/AnnouncementProviderWrapper";
@@ -29,6 +31,8 @@ import PostOnboardingProviderWrapped from "~/renderer/components/PostOnboardingH
 import { useBraze } from "./hooks/useBraze";
 import { StorylyProvider } from "~/storyly/StorylyProvider";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
+import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+
 const reloadApp = (event: KeyboardEvent) => {
   if ((event.ctrlKey || event.metaKey) && event.key === "r") {
     window.api?.reloadRenderer();
@@ -39,6 +43,8 @@ type Props = {
   store: Store<State>;
   initialCountervalues: CounterValuesStateRaw;
 };
+
+const queryClient = new QueryClient();
 
 const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValuesStateRaw }) => {
   const [reloadEnabled, setReloadEnabled] = useState(true);
@@ -67,30 +73,34 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
         }}
       >
         <FirebaseRemoteConfigProvider>
-          <FirebaseFeatureFlagsProvider>
+          <FirebaseFeatureFlagsProvider getFeature={getFeature}>
             <ConnectEnvsToSentry />
             <UpdaterProvider>
-              <CountervaluesProvider initialState={initialCountervalues}>
-                <ToastProvider>
-                  <AnnouncementProviderWrapper>
-                    <Router>
-                      <PostOnboardingProviderWrapped>
-                        <PlatformAppProviderWrapper>
-                          <DrawerProvider>
-                            <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
-                              <MarketDataProvider>
-                                <StorylyProvider>
-                                  <Default />
-                                </StorylyProvider>
-                              </MarketDataProvider>
-                            </NftMetadataProvider>
-                          </DrawerProvider>
-                        </PlatformAppProviderWrapper>
-                      </PostOnboardingProviderWrapped>
-                    </Router>
-                  </AnnouncementProviderWrapper>
-                </ToastProvider>
-              </CountervaluesProvider>
+              <CountervaluesMarketcap>
+                <CountervaluesProvider initialState={initialCountervalues}>
+                  <ToastProvider>
+                    <AnnouncementProviderWrapper>
+                      <Router>
+                        <PostOnboardingProviderWrapped>
+                          <PlatformAppProviderWrapper>
+                            <DrawerProvider>
+                              <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
+                                <MarketDataProvider>
+                                  <StorylyProvider>
+                                    <QueryClientProvider client={queryClient}>
+                                      <Default />
+                                    </QueryClientProvider>
+                                  </StorylyProvider>
+                                </MarketDataProvider>
+                              </NftMetadataProvider>
+                            </DrawerProvider>
+                          </PlatformAppProviderWrapper>
+                        </PostOnboardingProviderWrapped>
+                      </Router>
+                    </AnnouncementProviderWrapper>
+                  </ToastProvider>
+                </CountervaluesProvider>
+              </CountervaluesMarketcap>
             </UpdaterProvider>
           </FirebaseFeatureFlagsProvider>
         </FirebaseRemoteConfigProvider>

@@ -9,12 +9,14 @@ import { EthStakingModalBody } from "./EthStakingModalBody";
 type Props = {
   account: Account;
   singleProviderRedirectMode?: boolean;
+  /** Analytics source */
   source?: string;
   hasCheckbox?: boolean;
 };
 
 const StakingModal = ({ account, hasCheckbox, singleProviderRedirectMode, source }: Props) => {
   const ethStakingProviders = useFeature("ethStakingProviders");
+  const providers = ethStakingProviders?.params?.listProvider;
 
   if (!ethStakingProviders?.enabled) {
     return null;
@@ -38,7 +40,7 @@ const StakingModal = ({ account, hasCheckbox, singleProviderRedirectMode, source
                 hasCheckbox={hasCheckbox}
                 singleProviderRedirectMode={singleProviderRedirectMode}
                 source={source}
-                listProviders={ethStakingProviders.params?.listProvider}
+                listProviders={providers}
               />
             </Flex>
           )}

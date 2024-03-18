@@ -1,11 +1,11 @@
 import { getEnv, setEnv } from "@ledgerhq/live-env";
+import { DerivationMode } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "./currencies";
 import {
   getPreferredNewAccountScheme,
   getDefaultPreferredNewAccountScheme,
   getDerivationModesForCurrency,
   isInvalidDerivationMode,
-  DerivationMode,
 } from "./derivation";
 
 describe("derivation.ts", () => {

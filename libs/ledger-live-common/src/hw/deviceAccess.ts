@@ -277,7 +277,11 @@ export const withDevice =
               },
               error: error => {
                 tracer.trace("Job error", { error });
-                o.error(error);
+                if (error.statusCode) {
+                  o.error(new TransportStatusError(error.statusCode));
+                } else {
+                  o.error(error);
+                }
               },
               complete: () => {
                 o.complete();

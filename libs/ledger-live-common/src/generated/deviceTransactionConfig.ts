@@ -1,4 +1,3 @@
-import bitcoin from "../families/bitcoin/deviceTransactionConfig";
 import cardano from "../families/cardano/deviceTransactionConfig";
 import casper from "../families/casper/deviceTransactionConfig";
 import celo from "../families/celo/deviceTransactionConfig";
@@ -8,7 +7,6 @@ import elrond from "../families/elrond/deviceTransactionConfig";
 import filecoin from "../families/filecoin/deviceTransactionConfig";
 import hedera from "../families/hedera/deviceTransactionConfig";
 import internet_computer from "../families/internet_computer/deviceTransactionConfig";
-import near from "../families/near/deviceTransactionConfig";
 import ripple from "../families/ripple/deviceTransactionConfig";
 import solana from "../families/solana/deviceTransactionConfig";
 import stacks from "../families/stacks/deviceTransactionConfig";
@@ -16,11 +14,12 @@ import stellar from "../families/stellar/deviceTransactionConfig";
 import tezos from "../families/tezos/deviceTransactionConfig";
 import tron from "../families/tron/deviceTransactionConfig";
 import algorand from "@ledgerhq/coin-algorand/deviceTransactionConfig";
+import bitcoin from "@ledgerhq/coin-bitcoin/deviceTransactionConfig";
 import evm from "@ledgerhq/coin-evm/deviceTransactionConfig";
+import near from "@ledgerhq/coin-near/deviceTransactionConfig";
 import polkadot from "@ledgerhq/coin-polkadot/deviceTransactionConfig";
 
 export default {
-  bitcoin,
   cardano,
   casper,
   celo,
@@ -30,7 +29,6 @@ export default {
   filecoin,
   hedera,
   internet_computer,
-  near,
   ripple,
   solana,
   stacks,
@@ -38,7 +36,9 @@ export default {
   tezos,
   tron,
   algorand,
+  bitcoin,
   evm,
+  near,
   polkadot,
 };
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_casper } from "../families/casper/deviceTransactionConfig";

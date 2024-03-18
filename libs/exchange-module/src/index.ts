@@ -2,8 +2,10 @@ import { CustomModule, Transaction, serializeTransaction } from "@ledgerhq/walle
 import {
   ExchangeCompleteParams,
   ExchangeCompleteResult,
-  ExchangeStartParams,
+  ExchangeStartFundParams,
   ExchangeStartResult,
+  ExchangeStartSellParams,
+  ExchangeStartSwapParams,
 } from "./types";
 
 export * from "./types";
@@ -16,11 +18,56 @@ export class ExchangeModule extends CustomModule {
    *
    * @returns - A transaction ID used to complete the exchange process
    */
-  async start(exchangeType: ExchangeStartParams["exchangeType"]) {
-    const result = await this.request<ExchangeStartParams, ExchangeStartResult>(
+  async startFund() {
+    const result = await this.request<ExchangeStartFundParams, ExchangeStartResult>(
+      "custom.exchange.start",
+      {
+        exchangeType: "FUND",
+      },
+    );
+
+    return result.transactionId;
+  }
+
+  /**
+   * Start the exchange process by generating a nonce on Ledger device
+   * @param provider - provider's id
+   *
+   * @returns - A transaction ID used to complete the exchange process
+   */
+  async startSell({ provider }: Omit<ExchangeStartSellParams, "exchangeType">) {
+    const result = await this.request<ExchangeStartSellParams, ExchangeStartResult>(
+      "custom.exchange.start",
+      {
+        exchangeType: "SELL",
+        provider,
+      },
+    );
+
+    return result.transactionId;
+  }
+
+  /**
+   * Start the swap process by generating a nonce on Ledger device
+   * @param exchangeType - used by the exchange transport to discern between swap/sell/fund
+   *
+   * @returns - A transaction ID used to complete the exchange process
+   */
+  async startSwap({
+    exchangeType,
+    provider,
+    fromAccountId,
+    toAccountId,
+    tokenCurrency,
+  }: ExchangeStartSwapParams) {
+    const result = await this.request<ExchangeStartSwapParams, ExchangeStartResult>(
       "custom.exchange.start",
       {
         exchangeType,
+        provider,
+        fromAccountId,
+        toAccountId,
+        tokenCurrency,
       },
     );
 
@@ -62,8 +109,8 @@ export class ExchangeModule extends CustomModule {
     swapId: string;
     rate: number;
     transaction: Transaction;
-    binaryPayload: Buffer;
-    signature: Buffer;
+    binaryPayload: string;
+    signature: string;
     feeStrategy: ExchangeCompleteParams["feeStrategy"];
     tokenCurrency?: string;
   }) {
@@ -77,8 +124,8 @@ export class ExchangeModule extends CustomModule {
         swapId,
         rate,
         rawTransaction: serializeTransaction(transaction),
-        hexBinaryPayload: binaryPayload.toString("hex"),
-        hexSignature: signature.toString("hex"),
+        hexBinaryPayload: binaryPayload,
+        hexSignature: signature,
         feeStrategy,
         tokenCurrency,
       },

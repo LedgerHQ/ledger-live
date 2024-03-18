@@ -1,5 +1,17 @@
 # @ledgerhq/errors
 
+## 6.16.2
+
+### Patch Changes
+
+- [#6165](https://github.com/LedgerHQ/ledger-live/pull/6165) [`ee88785`](https://github.com/LedgerHQ/ledger-live/commit/ee8878515671241ce1037362af5e8f7799b3673a) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Set prototype of locked device error in order to fix 'instanceof' check of an error
+
+## 6.16.2-next.0
+
+### Patch Changes
+
+- [#6107](https://github.com/LedgerHQ/ledger-live/pull/6107) [`f456d69`](https://github.com/LedgerHQ/ledger-live/commit/f456d69a2f64b6a217d3c1d9c6a531f31c2817a8) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Set prototype of locked device error in order to fix 'instanceof' check of an error
+
 ## 6.16.1
 
 ### Patch Changes

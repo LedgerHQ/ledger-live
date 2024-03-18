@@ -6,7 +6,6 @@ export const ConnectManagerTimeout = createCustomErrorClass("ConnectManagerTimeo
 export const GetAppAndVersionUnsupportedFormat = createCustomErrorClass(
   "GetAppAndVersionUnsupportedFormat",
 );
-export const AccountNeedResync = createCustomErrorClass("AccountNeedResync");
 
 export const LatestFirmwareVersionRequired = createCustomErrorClass(
   "LatestFirmwareVersionRequired",
@@ -137,5 +136,6 @@ export * from "@ledgerhq/coin-algorand/errors";
 export * from "./families/stellar/errors";
 export * from "./families/solana/errors";
 export * from "./families/cardano/errors";
-export * from "./families/near/errors";
+export * from "@ledgerhq/coin-near/errors";
 export * from "@ledgerhq/coin-evm/errors";
+export * from "@ledgerhq/coin-bitcoin/errors";

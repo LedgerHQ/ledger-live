@@ -11,14 +11,12 @@ import {
 } from "@ledgerhq/native-ui";
 import { useDispatch, useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
-import TabBarSafeAreaView from "~/components/TabBar/TabBarSafeAreaView";
 import { useMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
-import { Platform, ListRenderItem, RefreshControl, TouchableOpacity, FlatList } from "react-native";
+import { Platform, ListRenderItem, RefreshControl, TouchableOpacity } from "react-native";
 import { CurrencyData, MarketListRequestParams } from "@ledgerhq/live-common/market/types";
 import { useRoute, useFocusEffect } from "@react-navigation/native";
 import { useNetInfo } from "@react-native-community/netinfo";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import {
   marketFilterByStarredAccountsSelector,
   starredMarketCoinsSelector,
@@ -253,7 +251,6 @@ export default function Market({ navigation }: NavigationProps) {
   const { isConnected } = useNetInfo();
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
   const filterByStarredAccount: boolean = useSelector(marketFilterByStarredAccountsSelector);
-  const ptxEarnFeature = useFeature("ptxEarn");
 
   const {
     requestParams,
@@ -288,6 +285,12 @@ export default function Market({ navigation }: NavigationProps) {
   useEffect(() => {
     if (!isConnected) setIsLoading(false);
   }, [isConnected]);
+
+  useEffect(() => {
+    if (filterByStarredAccount && starredMarketCoins.length > 0) {
+      refresh({ starred: starredMarketCoins });
+    }
+  }, [refresh, starredMarketCoins, filterByStarredAccount]);
 
   useEffect(() => {
     if (initialTop100) {
@@ -453,21 +456,6 @@ export default function Market({ navigation }: NavigationProps) {
       />
     ),
   };
-
-  if (!ptxEarnFeature?.enabled) {
-    return (
-      <TabBarSafeAreaView>
-        <Flex px={6} pt={ptxEarnFeature?.enabled ? 6 : 0}>
-          <Text my={3} variant="h4" fontWeight="semiBold">
-            {t("market.title")}
-          </Text>
-          <SearchHeader search={search} refresh={refresh} />
-          <BottomSection navigation={navigation} />
-        </Flex>
-        <FlatList {...listProps} />
-      </TabBarSafeAreaView>
-    );
-  }
 
   return (
     <RefreshableCollapsibleHeaderFlatList

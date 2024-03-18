@@ -25,7 +25,7 @@ import {
 import { setHasBeenUpsoldProtect } from "~/actions/settings";
 import Carousel from "~/components/Carousel";
 import { ScreenName } from "~/const";
-import FirmwareUpdateBanner from "~/components/FirmwareUpdateBanner";
+import FirmwareUpdateBanner from "~/newArch/features/FirmwareUpdate/components/UpdateBanner";
 import CheckLanguageAvailability from "~/components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "~/components/CheckTermOfUseUpdate";
 import RecoverBanner from "~/components/RecoverBanner";
@@ -57,6 +57,7 @@ import { UpdateStep } from "../FirmwareUpdate";
 import { OnboardingType } from "~/reducers/types";
 import ContentCardsLocation from "~/dynamicContent/ContentCardsLocation";
 import { ContentCardLocation } from "~/dynamicContent/types";
+import usePortfolioAnalyticsOptInPrompt from "~/hooks/analyticsOptInPrompt/usePorfolioAnalyticsOptInPrompt";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
@@ -119,6 +120,8 @@ function PortfolioScreen({ navigation }: NavigationProps) {
     dispatch,
     protectFeature?.enabled,
   ]);
+
+  usePortfolioAnalyticsOptInPrompt();
 
   const openAddModal = useCallback(() => {
     track("button_clicked", {

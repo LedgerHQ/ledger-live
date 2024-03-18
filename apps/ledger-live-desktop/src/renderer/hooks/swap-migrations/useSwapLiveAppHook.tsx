@@ -1,11 +1,17 @@
 import { v4 } from "uuid";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+import isEqual from "lodash/isEqual";
 import { useSelector } from "react-redux";
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
-import { SwapProps, SwapWebManifestIDs } from "~/renderer/screens/exchange/Swap2/Form/SwapWebView";
+import {
+  SwapProps,
+  SwapWebManifestIDs,
+  SwapWebProps,
+} from "~/renderer/screens/exchange/Swap2/Form/SwapWebView";
 import { rateSelector } from "~/renderer/actions/swap";
+import { getEnv } from "@ledgerhq/live-env";
 
 export type UseSwapLiveAppHookProps = {
   manifestID: string | null;
@@ -16,6 +22,8 @@ export type UseSwapLiveAppHookProps = {
   getExchangeSDKParams: () => Partial<SwapProps>;
   getProviderRedirectURLSearch: () => URLSearchParams;
 };
+
+const SWAP_API_BASE = getEnv("SWAP_API_BASE");
 
 export const useSwapLiveAppHook = (props: UseSwapLiveAppHookProps) => {
   const {
@@ -30,6 +38,7 @@ export const useSwapLiveAppHook = (props: UseSwapLiveAppHookProps) => {
   const exchangeRate = useSelector(rateSelector);
   const provider = exchangeRate?.provider;
   const exchangeRatesState = swapTransaction.swap?.rates;
+  const swapWebPropsRef = useRef<SwapWebProps["swapState"] | undefined>(undefined);
 
   useEffect(() => {
     if (isSwapLiveAppEnabled) {
@@ -48,15 +57,20 @@ export const useSwapLiveAppHook = (props: UseSwapLiveAppHookProps) => {
         loading = swapTransaction.bridgePending || exchangeRatesState.status === "loading";
       }
 
-      updateSwapWebProps({
+      const newSwapWebProps = {
         provider,
         ...getExchangeSDKParams(),
         fromParentAccountId,
-        cacheKey: v4(),
         error: !!swapError,
         loading,
         providerRedirectURL,
-      });
+        swapApiBase: `${SWAP_API_BASE}/swap`,
+      };
+
+      if (!isEqual(newSwapWebProps, swapWebPropsRef.current)) {
+        swapWebPropsRef.current = newSwapWebProps;
+        updateSwapWebProps({ ...newSwapWebProps, cacheKey: v4() });
+      }
     }
   }, [
     provider,

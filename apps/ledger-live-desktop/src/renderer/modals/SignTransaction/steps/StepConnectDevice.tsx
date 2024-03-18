@@ -12,6 +12,8 @@ export default function StepConnectDevice({
   useApp,
   onTransactionError,
   onTransactionSigned,
+  manifestId,
+  manifestName,
 }: StepProps) {
   // Nb setting the mainAccount as a dependency will ensure latest versions of plugins.
   const dependencies = (account && [getMainAccount(account, parentAccount)]) || [];
@@ -28,6 +30,8 @@ export default function StepConnectDevice({
         onTransactionError={onTransactionError}
         onTransactionSigned={onTransactionSigned}
         dependencies={dependencies}
+        manifestId={manifestId}
+        manifestName={manifestName}
         requireLatestFirmware
       />
     </>

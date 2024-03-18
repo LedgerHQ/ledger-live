@@ -16,15 +16,14 @@ import { App, DeviceInfo, idsToLanguage } from "@ledgerhq/types-live";
 import { Flex, Text, Button, Divider, IconsLegacy } from "@ledgerhq/native-ui";
 import styled, { useTheme } from "styled-components/native";
 import { ListAppsResult } from "@ledgerhq/live-common/apps/types";
-import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/manager/localization";
+import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/device-core/commands/use-cases/isDeviceLocalizationSupported";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { DeviceModelId } from "@ledgerhq/types-devices";
 import { lastSeenCustomImageSelector } from "~/reducers/settings";
 import DeviceAppStorage from "./DeviceAppStorage";
 
 import NanoS from "~/images/devices/NanoS";
 import Stax from "~/images/devices/Stax";
+import Europa from "~/images/devices/Europa";
 import NanoX from "~/images/devices/NanoX";
 
 import DeviceName from "./DeviceName";
@@ -32,6 +31,7 @@ import InstalledAppsModal from "../Modals/InstalledAppsModal";
 
 import DeviceLanguage from "./DeviceLanguage";
 import CustomLockScreen from "./CustomLockScreen";
+import { isCustomLockScreenSupported } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 
 const illustrations = {
   nanoS: NanoS,
@@ -39,6 +39,7 @@ const illustrations = {
   nanoX: NanoX,
   blue: NanoS,
   stax: Stax,
+  europa: Europa,
 };
 
 type Props = PropsWithChildren<{
@@ -110,8 +111,7 @@ const DeviceCard = ({
 
   const showDeviceLanguage = isLocalizationSupported && deviceInfo.languageId !== undefined;
 
-  const hasCustomImage =
-    useFeature("customImage")?.enabled && deviceModel.id === DeviceModelId.stax;
+  const customLockScreenAvailable = isCustomLockScreenSupported(deviceModel.id);
 
   const disableFlows = pendingInstalls;
 
@@ -134,7 +134,12 @@ const DeviceCard = ({
             disabled={disableFlows}
           />
           <Flex backgroundColor={"neutral.c30"} py={1} px={3} borderRadius={4} my={2}>
-            <Text variant={"subtitle"} fontWeight={"semiBold"} color={"neutral.c80"}>
+            <Text
+              variant={"subtitle"}
+              fontWeight={"semiBold"}
+              color={"neutral.c80"}
+              testID="manager-device-version"
+            >
               <Trans
                 i18nKey="FirmwareVersionRow.subtitle"
                 values={{ version: deviceInfo.version }}
@@ -155,12 +160,14 @@ const DeviceCard = ({
           </Flex>
         </Flex>
       </Flex>
-      {hasCustomImage || showDeviceLanguage ? (
+      {customLockScreenAvailable || showDeviceLanguage ? (
         <>
           <Flex px={6}>
-            {hasCustomImage && <CustomLockScreen disabled={disableFlows} device={device} />}
+            {customLockScreenAvailable && (
+              <CustomLockScreen disabled={disableFlows} device={device} />
+            )}
             {showDeviceLanguage && (
-              <Flex mt={hasCustomImage ? 6 : 0}>
+              <Flex mt={customLockScreenAvailable ? 6 : 0}>
                 <DeviceLanguage
                   disabled={disableFlows}
                   currentDeviceLanguage={

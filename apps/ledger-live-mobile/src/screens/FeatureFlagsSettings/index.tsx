@@ -19,7 +19,9 @@ import {
   Button,
   Switch,
 } from "@ledgerhq/native-ui";
-import { includes, lowerCase, trim } from "lodash";
+import includes from "lodash/includes";
+import lowerCase from "lodash/lowerCase";
+import trim from "lodash/trim";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Keyboard } from "react-native";
 import { useDispatch, useSelector } from "react-redux";

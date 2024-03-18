@@ -5,8 +5,8 @@ import {
   getAccountName,
   getAccountUnit,
 } from "@ledgerhq/live-common/account/index";
-import { TokenAccount, AccountLike, ChildAccount } from "@ledgerhq/types-live";
-import { DerivationMode, getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
+import { TokenAccount, AccountLike, ChildAccount, DerivationMode } from "@ledgerhq/types-live";
+import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { useSelector } from "react-redux";
 import { GestureResponderEvent } from "react-native";
 import { useStartProfiler } from "@shopify/react-native-performance";
@@ -15,20 +15,12 @@ import { useBalanceHistoryWithCountervalue } from "~/hooks/portfolio";
 import AccountRowLayout from "~/components/AccountRowLayout";
 import { parentAccountSelector } from "~/reducers/accounts";
 import { track } from "~/analytics";
+import { useNavigation } from "@react-navigation/native";
 import { State } from "~/reducers/types";
-import { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
-import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import { MarketNavigatorStackParamList } from "~/components/RootNavigator/types/MarketNavigator";
-
-type Navigation = BaseComposite<
-  | StackNavigatorProps<AccountsNavigatorParamList, ScreenName.Asset | ScreenName.Accounts>
-  | StackNavigatorProps<MarketNavigatorStackParamList, ScreenName.MarketDetail>
->;
 
 type Props = {
   account: AccountLike;
   accountId: string;
-  navigation: Navigation["navigation"];
   isLast?: boolean;
   onSetAccount?: (arg: TokenAccount) => void;
   navigationParams?: [ScreenName, object];
@@ -39,7 +31,6 @@ type Props = {
 };
 
 const AccountRow = ({
-  navigation,
   account,
   accountId,
   navigationParams,
@@ -49,6 +40,7 @@ const AccountRow = ({
   isLast,
   sourceScreenName,
 }: Props) => {
+  const navigation = useNavigation();
   const startNavigationTTITimer = useStartProfiler();
   // makes it refresh if this changes
   useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");

@@ -6,7 +6,7 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Algorand unit (ALGO) 1`] = `"12.345.678.900,000000- -ALGO"`;
 
-exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Arbitrum Goerli unit (ether) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Arbitrum Sepolia unit (ether) 1`] = `"0,012345678900000000- -𝚝ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Arbitrum unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -22,7 +22,7 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Banano unit (BANANO) 1`] = `"123.456.789,00000000- -BANANO"`;
 
-exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Base Goerli unit (ETH) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Base Sepolia unit (ETH) 1`] = `"0,012345678900000000- -𝚝ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Base unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -106,8 +106,6 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Ethersocial unit (ESN) 1`] = `"0,012345678900000000- -ESN"`;
 
-exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Evmos EVM unit (EVMOS) 1`] = `"0,012345678900000000- -EVMOS"`;
-
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Expanse unit (EXP) 1`] = `"123.456.789,00000000- -EXP"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format FIC unit (FIC) 1`] = `"123.456.789,00000000- -FIC"`;
@@ -151,8 +149,6 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Injective unit (Injective) 1`] = `"0,012345678900000000- -INJ"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Internet Computer unit (ICP) 1`] = `"123.456.789,00000000- -ICP"`;
-
-exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Kava EVM unit (KAVA) 1`] = `"0,012345678900000000- -KAVA"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Kin unit (KIN) 1`] = `"123.456.789.000,00000- -KIN"`;
 
@@ -336,7 +332,7 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Algorand unit (ALGO) 1`] = `"12,345,678,900.000000- -ALGO"`;
 
-exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Arbitrum Goerli unit (ether) 1`] = `"0.012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Arbitrum Sepolia unit (ether) 1`] = `"0.012345678900000000- -𝚝ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Arbitrum unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
@@ -352,7 +348,7 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Banano unit (BANANO) 1`] = `"123,456,789.00000000- -BANANO"`;
 
-exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Base Goerli unit (ETH) 1`] = `"0.012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Base Sepolia unit (ETH) 1`] = `"0.012345678900000000- -𝚝ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Base unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
@@ -436,8 +432,6 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Ethersocial unit (ESN) 1`] = `"0.012345678900000000- -ESN"`;
 
-exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Evmos EVM unit (EVMOS) 1`] = `"0.012345678900000000- -EVMOS"`;
-
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Expanse unit (EXP) 1`] = `"123,456,789.00000000- -EXP"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format FIC unit (FIC) 1`] = `"123,456,789.00000000- -FIC"`;
@@ -481,8 +475,6 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Injective unit (Injective) 1`] = `"0.012345678900000000- -INJ"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Internet Computer unit (ICP) 1`] = `"123,456,789.00000000- -ICP"`;
-
-exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Kava EVM unit (KAVA) 1`] = `"0.012345678900000000- -KAVA"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Kin unit (KIN) 1`] = `"123,456,789,000.00000- -KIN"`;
 
@@ -666,7 +658,7 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Algorand unit (ALGO) 1`] = `"12.345.678.900,000000- -ALGO"`;
 
-exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Arbitrum Goerli unit (ether) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Arbitrum Sepolia unit (ether) 1`] = `"0,012345678900000000- -𝚝ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Arbitrum unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -682,7 +674,7 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Banano unit (BANANO) 1`] = `"123.456.789,00000000- -BANANO"`;
 
-exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Base Goerli unit (ETH) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Base Sepolia unit (ETH) 1`] = `"0,012345678900000000- -𝚝ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Base unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -766,8 +758,6 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Ethersocial unit (ESN) 1`] = `"0,012345678900000000- -ESN"`;
 
-exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Evmos EVM unit (EVMOS) 1`] = `"0,012345678900000000- -EVMOS"`;
-
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Expanse unit (EXP) 1`] = `"123.456.789,00000000- -EXP"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format FIC unit (FIC) 1`] = `"123.456.789,00000000- -FIC"`;
@@ -811,8 +801,6 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Injective unit (Injective) 1`] = `"0,012345678900000000- -INJ"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Internet Computer unit (ICP) 1`] = `"123.456.789,00000000- -ICP"`;
-
-exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Kava EVM unit (KAVA) 1`] = `"0,012345678900000000- -KAVA"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Kin unit (KIN) 1`] = `"123.456.789.000,00000- -KIN"`;
 
@@ -996,7 +984,7 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Algorand unit (ALGO) 1`] = `"12 345 678 900,000000- -ALGO"`;
 
-exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Arbitrum Goerli unit (ether) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Arbitrum Sepolia unit (ether) 1`] = `"0,012345678900000000- -𝚝ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Arbitrum unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -1012,7 +1000,7 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Banano unit (BANANO) 1`] = `"123 456 789,00000000- -BANANO"`;
 
-exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Base Goerli unit (ETH) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Base Sepolia unit (ETH) 1`] = `"0,012345678900000000- -𝚝ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Base unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -1096,8 +1084,6 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Ethersocial unit (ESN) 1`] = `"0,012345678900000000- -ESN"`;
 
-exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Evmos EVM unit (EVMOS) 1`] = `"0,012345678900000000- -EVMOS"`;
-
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Expanse unit (EXP) 1`] = `"123 456 789,00000000- -EXP"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format FIC unit (FIC) 1`] = `"123 456 789,00000000- -FIC"`;
@@ -1141,8 +1127,6 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Injective unit (Injective) 1`] = `"0,012345678900000000- -INJ"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Internet Computer unit (ICP) 1`] = `"123 456 789,00000000- -ICP"`;
-
-exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Kava EVM unit (KAVA) 1`] = `"0,012345678900000000- -KAVA"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Kin unit (KIN) 1`] = `"123 456 789 000,00000- -KIN"`;
 
@@ -1326,7 +1310,7 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Algorand unit (ALGO) 1`] = `"12,345,678,900.000000- -ALGO"`;
 
-exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Arbitrum Goerli unit (ether) 1`] = `"0.012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Arbitrum Sepolia unit (ether) 1`] = `"0.012345678900000000- -𝚝ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Arbitrum unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
@@ -1342,7 +1326,7 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Banano unit (BANANO) 1`] = `"123,456,789.00000000- -BANANO"`;
 
-exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Base Goerli unit (ETH) 1`] = `"0.012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Base Sepolia unit (ETH) 1`] = `"0.012345678900000000- -𝚝ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Base unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
@@ -1426,8 +1410,6 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Ethersocial unit (ESN) 1`] = `"0.012345678900000000- -ESN"`;
 
-exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Evmos EVM unit (EVMOS) 1`] = `"0.012345678900000000- -EVMOS"`;
-
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Expanse unit (EXP) 1`] = `"123,456,789.00000000- -EXP"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format FIC unit (FIC) 1`] = `"123,456,789.00000000- -FIC"`;
@@ -1471,8 +1453,6 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Injective unit (Injective) 1`] = `"0.012345678900000000- -INJ"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Internet Computer unit (ICP) 1`] = `"123,456,789.00000000- -ICP"`;
-
-exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Kava EVM unit (KAVA) 1`] = `"0.012345678900000000- -KAVA"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Kin unit (KIN) 1`] = `"123,456,789,000.00000- -KIN"`;
 
@@ -1656,7 +1636,7 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Algorand unit (ALGO) 1`] = `"12,345,678,900.000000- -ALGO"`;
 
-exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Arbitrum Goerli unit (ether) 1`] = `"0.012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Arbitrum Sepolia unit (ether) 1`] = `"0.012345678900000000- -𝚝ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Arbitrum unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
@@ -1672,7 +1652,7 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Banano unit (BANANO) 1`] = `"123,456,789.00000000- -BANANO"`;
 
-exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Base Goerli unit (ETH) 1`] = `"0.012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Base Sepolia unit (ETH) 1`] = `"0.012345678900000000- -𝚝ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Base unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
@@ -1756,8 +1736,6 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Ethersocial unit (ESN) 1`] = `"0.012345678900000000- -ESN"`;
 
-exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Evmos EVM unit (EVMOS) 1`] = `"0.012345678900000000- -EVMOS"`;
-
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Expanse unit (EXP) 1`] = `"123,456,789.00000000- -EXP"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format FIC unit (FIC) 1`] = `"123,456,789.00000000- -FIC"`;
@@ -1801,8 +1779,6 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Injective unit (Injective) 1`] = `"0.012345678900000000- -INJ"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Internet Computer unit (ICP) 1`] = `"123,456,789.00000000- -ICP"`;
-
-exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Kava EVM unit (KAVA) 1`] = `"0.012345678900000000- -KAVA"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Kin unit (KIN) 1`] = `"123,456,789,000.00000- -KIN"`;
 
@@ -1986,7 +1962,7 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Algorand unit (ALGO) 1`] = `"12.345.678.900,000000- -ALGO"`;
 
-exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Arbitrum Goerli unit (ether) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Arbitrum Sepolia unit (ether) 1`] = `"0,012345678900000000- -𝚝ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Arbitrum unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -2002,7 +1978,7 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Banano unit (BANANO) 1`] = `"123.456.789,00000000- -BANANO"`;
 
-exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Base Goerli unit (ETH) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Base Sepolia unit (ETH) 1`] = `"0,012345678900000000- -𝚝ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Base unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -2086,8 +2062,6 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Ethersocial unit (ESN) 1`] = `"0,012345678900000000- -ESN"`;
 
-exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Evmos EVM unit (EVMOS) 1`] = `"0,012345678900000000- -EVMOS"`;
-
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Expanse unit (EXP) 1`] = `"123.456.789,00000000- -EXP"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format FIC unit (FIC) 1`] = `"123.456.789,00000000- -FIC"`;
@@ -2131,8 +2105,6 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Injective unit (Injective) 1`] = `"0,012345678900000000- -INJ"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Internet Computer unit (ICP) 1`] = `"123.456.789,00000000- -ICP"`;
-
-exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Kava EVM unit (KAVA) 1`] = `"0,012345678900000000- -KAVA"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Kin unit (KIN) 1`] = `"123.456.789.000,00000- -KIN"`;
 
@@ -2316,7 +2288,7 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Algorand unit (ALGO) 1`] = `"12 345 678 900,000000- -ALGO"`;
 
-exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Arbitrum Goerli unit (ether) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Arbitrum Sepolia unit (ether) 1`] = `"0,012345678900000000- -𝚝ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Arbitrum unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -2332,7 +2304,7 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Banano unit (BANANO) 1`] = `"123 456 789,00000000- -BANANO"`;
 
-exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Base Goerli unit (ETH) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Base Sepolia unit (ETH) 1`] = `"0,012345678900000000- -𝚝ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Base unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -2416,8 +2388,6 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Ethersocial unit (ESN) 1`] = `"0,012345678900000000- -ESN"`;
 
-exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Evmos EVM unit (EVMOS) 1`] = `"0,012345678900000000- -EVMOS"`;
-
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Expanse unit (EXP) 1`] = `"123 456 789,00000000- -EXP"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format FIC unit (FIC) 1`] = `"123 456 789,00000000- -FIC"`;
@@ -2461,8 +2431,6 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Injective unit (Injective) 1`] = `"0,012345678900000000- -INJ"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Internet Computer unit (ICP) 1`] = `"123 456 789,00000000- -ICP"`;
-
-exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Kava EVM unit (KAVA) 1`] = `"0,012345678900000000- -KAVA"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Kin unit (KIN) 1`] = `"123 456 789 000,00000- -KIN"`;
 
@@ -2646,7 +2614,7 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Algorand unit (ALGO) 1`] = `"12.345.678.900,000000- -ALGO"`;
 
-exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Arbitrum Goerli unit (ether) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Arbitrum Sepolia unit (ether) 1`] = `"0,012345678900000000- -𝚝ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Arbitrum unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -2662,7 +2630,7 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Banano unit (BANANO) 1`] = `"123.456.789,00000000- -BANANO"`;
 
-exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Base Goerli unit (ETH) 1`] = `"0,012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Base Sepolia unit (ETH) 1`] = `"0,012345678900000000- -𝚝ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Base unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
@@ -2746,8 +2714,6 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Ethersocial unit (ESN) 1`] = `"0,012345678900000000- -ESN"`;
 
-exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Evmos EVM unit (EVMOS) 1`] = `"0,012345678900000000- -EVMOS"`;
-
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Expanse unit (EXP) 1`] = `"123.456.789,00000000- -EXP"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format FIC unit (FIC) 1`] = `"123.456.789,00000000- -FIC"`;
@@ -2791,8 +2757,6 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Injective unit (Injective) 1`] = `"0,012345678900000000- -INJ"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Internet Computer unit (ICP) 1`] = `"123.456.789,00000000- -ICP"`;
-
-exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Kava EVM unit (KAVA) 1`] = `"0,012345678900000000- -KAVA"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Kin unit (KIN) 1`] = `"123.456.789.000,00000- -KIN"`;
 
@@ -2976,7 +2940,7 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Algorand unit (ALGO) 1`] = `"12,345,678,900.000000- -ALGO"`;
 
-exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Arbitrum Goerli unit (ether) 1`] = `"0.012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Arbitrum Sepolia unit (ether) 1`] = `"0.012345678900000000- -𝚝ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Arbitrum unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
@@ -2992,7 +2956,7 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Banano unit (BANANO) 1`] = `"123,456,789.00000000- -BANANO"`;
 
-exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Base Goerli unit (ETH) 1`] = `"0.012345678900000000- -𝚝ETH"`;
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Base Sepolia unit (ETH) 1`] = `"0.012345678900000000- -𝚝ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Base unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
@@ -3076,8 +3040,6 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Ethersocial unit (ESN) 1`] = `"0.012345678900000000- -ESN"`;
 
-exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Evmos EVM unit (EVMOS) 1`] = `"0.012345678900000000- -EVMOS"`;
-
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Expanse unit (EXP) 1`] = `"123,456,789.00000000- -EXP"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format FIC unit (FIC) 1`] = `"123,456,789.00000000- -FIC"`;
@@ -3121,8 +3083,6 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Injective unit (Injective) 1`] = `"0.012345678900000000- -INJ"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Internet Computer unit (ICP) 1`] = `"123,456,789.00000000- -ICP"`;
-
-exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Kava EVM unit (KAVA) 1`] = `"0.012345678900000000- -KAVA"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Kin unit (KIN) 1`] = `"123,456,789,000.00000- -KIN"`;
 
@@ -3306,7 +3266,7 @@ exports[`formatCurrencyUnit with default options should correctly format Akroma 
 
 exports[`formatCurrencyUnit with default options should correctly format Algorand unit (ALGO) 1`] = `"12,345,678,900"`;
 
-exports[`formatCurrencyUnit with default options should correctly format Arbitrum Goerli unit (ether) 1`] = `"0.0123456"`;
+exports[`formatCurrencyUnit with default options should correctly format Arbitrum Sepolia unit (ether) 1`] = `"0.0123456"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Arbitrum unit (ETH) 1`] = `"0.0123456"`;
 
@@ -3322,7 +3282,7 @@ exports[`formatCurrencyUnit with default options should correctly format Axelar 
 
 exports[`formatCurrencyUnit with default options should correctly format Banano unit (BANANO) 1`] = `"123,456,789"`;
 
-exports[`formatCurrencyUnit with default options should correctly format Base Goerli unit (ETH) 1`] = `"0.0123456"`;
+exports[`formatCurrencyUnit with default options should correctly format Base Sepolia unit (ETH) 1`] = `"0.0123456"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Base unit (ETH) 1`] = `"0.0123456"`;
 
@@ -3406,8 +3366,6 @@ exports[`formatCurrencyUnit with default options should correctly format Ethereu
 
 exports[`formatCurrencyUnit with default options should correctly format Ethersocial unit (ESN) 1`] = `"0.0123456"`;
 
-exports[`formatCurrencyUnit with default options should correctly format Evmos EVM unit (EVMOS) 1`] = `"0.0123456"`;
-
 exports[`formatCurrencyUnit with default options should correctly format Expanse unit (EXP) 1`] = `"123,456,789"`;
 
 exports[`formatCurrencyUnit with default options should correctly format FIC unit (FIC) 1`] = `"123,456,789"`;
@@ -3451,8 +3409,6 @@ exports[`formatCurrencyUnit with default options should correctly format IOV uni
 exports[`formatCurrencyUnit with default options should correctly format Injective unit (Injective) 1`] = `"0.0123456"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Internet Computer unit (ICP) 1`] = `"123,456,789"`;
-
-exports[`formatCurrencyUnit with default options should correctly format Kava EVM unit (KAVA) 1`] = `"0.0123456"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Kin unit (KIN) 1`] = `"123,456,789,000"`;
 

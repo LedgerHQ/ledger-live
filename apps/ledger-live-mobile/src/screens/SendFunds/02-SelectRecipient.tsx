@@ -9,15 +9,16 @@ import {
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { isNftTransaction } from "@ledgerhq/live-nft";
+import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { getStuckAccountAndOperation } from "@ledgerhq/live-common/operation";
 import { Operation } from "@ledgerhq/types-live";
+import QrCode from "@ledgerhq/icons-ui/native/QrCode";
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import Icon from "react-native-vector-icons/FontAwesome";
+import SafeAreaView from "~/components/SafeAreaView";
 import { useSelector } from "react-redux";
 import { TrackScreen, track } from "~/analytics";
 import Alert from "~/components/Alert";
@@ -48,7 +49,6 @@ type Props = BaseComposite<
 export default function SendSelectRecipient({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   invariant(account, "account is missing");
 
@@ -69,6 +69,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
     }),
   );
 
+  const debouncedBridgePending = useDebounce(bridgePending, 200);
   invariant(transaction, `couldn't get transaction from ${mainAccount.currency.name} bridge`);
 
   const [value, setValue] = useState<string>("");
@@ -125,7 +126,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
       );
       setValue(recipient);
     },
-    [account, parentAccount, setTransaction, transaction, setValue],
+    [account, parentAccount, setTransaction, transaction],
   );
 
   const [bridgeErr, setBridgeErr] = useState(bridgeError);
@@ -192,10 +193,11 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
   );
 
   const stuckAccountAndOperation = getStuckAccountAndOperation(account, mainAccount);
-
   return (
     <>
       <SafeAreaView
+        isFlex
+        edges={["left", "right", "bottom"]}
         style={[
           styles.root,
           {
@@ -228,6 +230,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
               styles.container,
               {
                 flex: 1,
+                paddingVertical: 32,
               },
             ]}
             keyboardShouldPersistTaps="handled"
@@ -236,8 +239,9 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
               event="SendRecipientQR"
               type="tertiary"
               title={<Trans i18nKey="send.recipient.scan" />}
-              IconLeft={IconQRCode}
+              IconLeft={() => <QrCode />}
               onPress={onPressScan}
+              outline
             />
             <View style={styles.separatorContainer}>
               <View
@@ -284,8 +288,6 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
                 <Alert type="warning">{t("send.pendingTxWarning")}</Alert>
               </View>
             ) : null}
-          </NavigationScrollView>
-          <View style={styles.container}>
             {(!isDomainResolutionEnabled || !isCurrencySupported) &&
             transaction.recipient &&
             !(error || warning) ? (
@@ -293,13 +295,15 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
                 <Alert type="primary">{t("send.recipient.verifyAddress")}</Alert>
               </View>
             ) : null}
+          </NavigationScrollView>
+          <View style={styles.container}>
             <Button
               testID="recipient-continue-button"
               event="SendRecipientContinue"
               type="primary"
               title={<Trans i18nKey="common.continue" />}
-              disabled={bridgePending || !!status.errors.recipient}
-              pending={bridgePending}
+              disabled={debouncedBridgePending || !!status.errors.recipient}
+              pending={debouncedBridgePending}
               onPress={onPressContinue}
             />
           </View>
@@ -323,26 +327,21 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
   );
 }
 
-const IconQRCode = ({ size = 16, color }: { size?: number; color?: string }) => (
-  <Icon name="qrcode" size={size} color={color} />
-);
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,
   },
-  a: {},
   container: {
     paddingHorizontal: 16,
-    paddingVertical: 16,
+    paddingBottom: 24,
     backgroundColor: "transparent",
   },
   infoBox: {
-    marginBottom: 24,
+    marginTop: 24,
   },
   pendingIncomingTxWarning: {
     marginBottom: 8,
-    marginTop: 8,
+    marginTop: 24,
   },
   separatorContainer: {
     marginTop: 32,

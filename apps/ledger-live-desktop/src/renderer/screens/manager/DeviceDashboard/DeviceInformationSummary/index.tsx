@@ -3,8 +3,7 @@ import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { DeviceInfo } from "@ledgerhq/types-live";
 import { AppsDistribution } from "@ledgerhq/live-common/apps/index";
-import { DeviceModel, DeviceModelId } from "@ledgerhq/devices";
-import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
+import { DeviceModel } from "@ledgerhq/devices";
 import { Flex, Text } from "@ledgerhq/react-ui";
 import Card from "~/renderer/components/Box/Card";
 import Box from "~/renderer/components/Box";
@@ -18,6 +17,7 @@ import { useSelector } from "react-redux";
 import StorageBar from "./StorageBar";
 import StorageInfo from "./StorageInfo";
 import { DeviceIllustration } from "./DeviceIllustration";
+import { isCustomLockScreenSupported } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 
 const Separator = styled.div`
   height: 1px;
@@ -158,12 +158,10 @@ const DeviceInformationSummary = ({
               />
             )}
 
-            {deviceModel.id === DeviceModelId.stax ? (
+            {isCustomLockScreenSupported(deviceModel.id) ? (
               <>
                 {deviceInfo.languageId !== undefined && <VerticalSeparator />}
-                <FeatureToggle featureId="customImage">
-                  <CustomImageManagerButton disabled={navigationLocked} />
-                </FeatureToggle>
+                <CustomImageManagerButton disabled={navigationLocked} />
               </>
             ) : null}
           </Flex>

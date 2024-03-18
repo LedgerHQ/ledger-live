@@ -1,5 +1,9 @@
+/**
+ * @jest-environment jsdom
+ */
+import "../../__tests__/test-helpers/dom-polyfill";
 import invariant from "invariant";
-import { renderHook, act } from "@testing-library/react-hooks";
+import { renderHook, act } from "@testing-library/react";
 import { getAccountUnit } from "../../account";
 import { getAccountBridge, getCurrencyBridge } from "../../bridge";
 import { getCryptoCurrencyById } from "../../currencies";
@@ -7,7 +11,7 @@ import { setEnv } from "@ledgerhq/live-env";
 import { makeBridgeCacheSystem } from "../../bridge/cache";
 import { genAccount, genAddingOperationsInAccount } from "../../mock/account";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import liveConfig from "../../config/sharedConfig";
+import { liveConfig } from "../../config/sharedConfig";
 import cryptoFactory from "./chain/chain";
 import type {
   CosmosAccount,

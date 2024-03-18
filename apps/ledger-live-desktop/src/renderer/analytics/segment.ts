@@ -55,37 +55,33 @@ export function setAnalyticsFeatureFlagMethod(method: typeof analyticsFeatureFla
   analyticsFeatureFlagMethod = method;
 }
 
-const getFeatureFlagProperties = () => {
+const getPtxAttributes = () => {
   if (!analyticsFeatureFlagMethod) return {};
-  (async () => {
-    const { id } = await user();
-    const analytics = getAnalytics();
-    const ptxEarnFeatureFlag = analyticsFeatureFlagMethod("ptxEarn");
-    const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
+  const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
+  const stakingProviders = analyticsFeatureFlagMethod("ethStakingProviders");
+  const ptxSwapMoonpayProviderFlag = analyticsFeatureFlagMethod("ptxSwapMoonpayProvider");
 
-    const isBatch1Enabled =
-      !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
-    const isBatch2Enabled =
-      !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 2;
-    const isBatch3Enabled =
-      !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 3;
-
-    analytics.identify(
-      id,
-      {
-        ptxEarnEnabled: !!ptxEarnFeatureFlag?.enabled,
-        isBatch1Enabled,
-        isBatch2Enabled,
-        isBatch3Enabled,
-      },
-      {
-        context: getContext(),
-      },
-    );
-  })();
+  const isBatch1Enabled: boolean =
+    !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
+  const isBatch2Enabled: boolean =
+    !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 2;
+  const isBatch3Enabled: boolean =
+    !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 3;
+  const stakingProvidersEnabled: number | string =
+    !!stakingProviders?.enabled &&
+    stakingProviders?.params &&
+    stakingProviders?.params?.listProvider?.length > 0
+      ? stakingProviders?.params?.listProvider.length
+      : "flag not loaded";
+  const ptxSwapMoonpayProviderEnabled: boolean = !!ptxSwapMoonpayProviderFlag?.enabled;
+  return {
+    isBatch1Enabled,
+    isBatch2Enabled,
+    isBatch3Enabled,
+    stakingProvidersEnabled,
+    ptxSwapMoonpayProviderEnabled,
+  };
 };
-
-runOnceWhen(() => !!analyticsFeatureFlagMethod && !!getAnalytics(), getFeatureFlagProperties);
 
 const extraProperties = (store: ReduxStore) => {
   const state: State = store.getState();
@@ -95,6 +91,13 @@ const extraProperties = (store: ReduxStore) => {
   const device = lastSeenDeviceSelector(state);
   const devices = devicesModelListSelector(state);
   const accounts = accountsSelector(state);
+  const {
+    isBatch1Enabled,
+    isBatch2Enabled,
+    isBatch3Enabled,
+    stakingProvidersEnabled,
+    ptxSwapMoonpayProviderEnabled,
+  } = getPtxAttributes();
 
   const deviceInfo = device
     ? {
@@ -145,6 +148,11 @@ const extraProperties = (store: ReduxStore) => {
     hasGenesisPass,
     hasInfinityPass,
     modelIdList: devices,
+    stakingProvidersEnabled,
+    isBatch1Enabled,
+    isBatch2Enabled,
+    isBatch3Enabled,
+    ptxSwapMoonpayProviderEnabled,
     ...deviceInfo,
   };
 };
@@ -228,6 +236,8 @@ export const updateIdentify = async () => {
     context: getContext(),
   });
 };
+/** Ensure PTX flag attributes are set as soon as feature flags load */
+runOnceWhen(() => !!analyticsFeatureFlagMethod && !!getAnalytics(), updateIdentify);
 
 export const track = (
   eventName: string,

@@ -10,7 +10,6 @@ import { ScreenName, NavigatorName } from "~/const";
 import { PortfolioTabIcon } from "~/screens/Portfolio";
 import Transfer, { TransferTabIcon } from "../TabBar/Transfer";
 import TabIcon from "../TabIcon";
-import MarketNavigator from "./MarketNavigator";
 import PortfolioNavigator from "./PortfolioNavigator";
 import { hasOrderedNanoSelector, readOnlyModeEnabledSelector } from "~/reducers/settings";
 import ManagerNavigator, { ManagerTabIcon } from "./ManagerNavigator";
@@ -19,7 +18,6 @@ import customTabBar from "../TabBar/CustomTabBar";
 import { MainNavigatorParamList } from "./types/MainNavigator";
 import { isMainNavigatorVisibleSelector } from "~/reducers/appstate";
 import EarnLiveAppNavigator from "./EarnLiveAppNavigator";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const Tab = createBottomTabNavigator<MainNavigatorParamList>();
 
@@ -56,8 +54,6 @@ export default function MainNavigator() {
     },
     [managerNavLockCallback],
   );
-
-  const ptxEarnFeature = useFeature("ptxEarn");
 
   return (
     <Tab.Navigator
@@ -100,61 +96,32 @@ export default function MainNavigator() {
           },
         })}
       />
-      {ptxEarnFeature?.enabled ? (
-        <Tab.Screen
-          name={NavigatorName.Earn}
-          component={EarnLiveAppNavigator}
-          options={{
-            headerShown: false,
-            unmountOnBlur: true,
-            tabBarIcon: props => (
-              <TabIcon
-                Icon={IconsLegacy.LendMedium}
-                i18nKey="tabs.earn"
-                testID="tab-bar-earn"
-                {...props}
-              />
-            ),
-          }}
-          listeners={({ navigation }) => ({
-            tabPress: e => {
-              e.preventDefault();
-              managerLockAwareCallback(() => {
-                navigation.navigate(NavigatorName.Earn, {
-                  screen: ScreenName.Earn,
-                });
+      <Tab.Screen
+        name={NavigatorName.Earn}
+        component={EarnLiveAppNavigator}
+        options={{
+          headerShown: false,
+          unmountOnBlur: true,
+          tabBarIcon: props => (
+            <TabIcon
+              Icon={IconsLegacy.LendMedium}
+              i18nKey="tabs.earn"
+              testID="tab-bar-earn"
+              {...props}
+            />
+          ),
+        }}
+        listeners={({ navigation }) => ({
+          tabPress: e => {
+            e.preventDefault();
+            managerLockAwareCallback(() => {
+              navigation.navigate(NavigatorName.Earn, {
+                screen: ScreenName.Earn,
               });
-            },
-          })}
-        />
-      ) : (
-        <Tab.Screen
-          name={NavigatorName.Market}
-          component={MarketNavigator}
-          options={{
-            headerShown: false,
-            unmountOnBlur: true,
-            tabBarIcon: props => (
-              <TabIcon
-                Icon={IconsLegacy.GraphGrowMedium}
-                i18nKey="tabs.market"
-                testID="tab-bar-market"
-                {...props}
-              />
-            ),
-          }}
-          listeners={({ navigation }) => ({
-            tabPress: e => {
-              e.preventDefault();
-              managerLockAwareCallback(() => {
-                navigation.navigate(NavigatorName.Market, {
-                  screen: ScreenName.MarketList,
-                });
-              });
-            },
-          })}
-        />
-      )}
+            });
+          },
+        })}
+      />
 
       <Tab.Screen
         name={ScreenName.Transfer}

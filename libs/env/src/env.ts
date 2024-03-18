@@ -112,11 +112,6 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Datahub Indexer API for NEAR",
   },
-  API_NEAR_STAKING_POSITIONS_API: {
-    def: "https://validators-near.coin.ledger.com/",
-    parser: stringParser,
-    desc: "NEAR staking positions API",
-  },
   API_STACKS_ENDPOINT: {
     parser: stringParser,
     def: "https://stacks.coin.ledger.com",
@@ -309,11 +304,6 @@ const envDefinitions = {
     parser: boolParser,
     desc: "disable the version check for firmware update eligibility",
   },
-  EIP1559_ENABLED_CURRENCIES: {
-    def: "ethereum,ethereum_goerli,ethereum_sepolia,ethereum_holesky,polygon",
-    parser: stringArrayParser,
-    desc: "set the currency ids where EIP1559 is enabled",
-  },
   EIP1559_MINIMUM_FEES_GATE: {
     def: true,
     parser: boolParser,
@@ -328,11 +318,6 @@ const envDefinitions = {
     def: 1.5,
     parser: floatParser,
     desc: "mutiplier for the base fee that is composing the maxFeePerGas property",
-  },
-  ETHEREUM_GAS_LIMIT_AMPLIFIER: {
-    def: 1.2,
-    parser: floatParser,
-    desc: "Ethereum gasLimit multiplier for contracts to prevent out of gas issue",
   },
   EXPERIMENTAL_BLE: {
     def: false,
@@ -572,6 +557,11 @@ const envDefinitions = {
     def: false,
     parser: boolParser,
     desc: "allow the creation of legacy accounts",
+  },
+  SIMPLE_HASH_API_BASE: {
+    def: "https://simplehash.api.live.ledger.com/api/v0",
+    parser: stringParser,
+    desc: "SimpleHash API base url",
   },
   SKIP_ONBOARDING: {
     def: false,

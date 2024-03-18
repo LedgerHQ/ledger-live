@@ -14,8 +14,8 @@ import {
   SatStackStillSyncing,
   SatStackVersionTooOld,
 } from "../../errors";
-import { getCurrencyExplorer } from "../../explorer";
-import type { AccountDescriptor } from "./descriptor";
+import { getCurrencyExplorer } from "@ledgerhq/coin-bitcoin/explorer";
+import type { AccountDescriptor } from "@ledgerhq/coin-bitcoin/descriptor";
 const minVersionMatch = ">=0.11.1";
 
 function isAcceptedVersion(version: string | null | undefined) {

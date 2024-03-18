@@ -2,7 +2,13 @@ import React, { useMemo, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Linking } from "react-native";
 import SplashScreen from "react-native-splash-screen";
-import { getStateFromPath, LinkingOptions, NavigationContainer } from "@react-navigation/native";
+import {
+  getStateFromPath,
+  LinkingOptions,
+  NavigationContainer,
+  NavigationState,
+  PartialState,
+} from "@react-navigation/native";
 import Config from "react-native-config";
 import { useFlipper } from "@react-navigation/devtools";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
@@ -10,7 +16,6 @@ import { DEFAULT_MULTIBUY_APP_ID } from "@ledgerhq/live-common/wallet-api/consta
 
 import Braze from "@braze/react-native-sdk";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import * as Sentry from "@sentry/react-native";
 
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
@@ -22,7 +27,6 @@ import { Writeable } from "~/types/helpers";
 import { lightTheme, darkTheme, Theme } from "../colors";
 import { track } from "~/analytics";
 import { setEarnInfoModal } from "~/actions/earn";
-import { OptionalFeatureMap } from "@ledgerhq/types-live";
 import { blockPasswordLock } from "../actions/appstate";
 import { useStorylyContext } from "~/components/StorylyStories/StorylyProvider";
 
@@ -36,38 +40,19 @@ const themes: {
 };
 
 function isWalletConnectUrl(url: string) {
-  return url.substring(0, 3) === "wc:";
+  return url.startsWith("wc:");
 }
+
 function isWalletConnectLink(url: string) {
   return (
     isWalletConnectUrl(url) ||
-    url.substring(0, 20) === "ledgerlive://wc" ||
-    url.substring(0, 26) === "https://ledger.com/wc"
+    url.startsWith("ledgerlive://wc") ||
+    url.startsWith("https://ledger.com/wc")
   );
 }
 
 function isStorylyLink(url: string) {
   return url.startsWith("ledgerlive://storyly?");
-}
-
-// https://docs.walletconnect.com/mobile-linking#wallet-support
-function isValidWalletConnectUrl(_url: string) {
-  let url = _url;
-  if (!isWalletConnectUrl(url)) {
-    const uri = new URL(url).searchParams.get("uri");
-    if (!uri) {
-      return false;
-    }
-    url = uri;
-  }
-  const { protocol, search } = new URL(url);
-  return protocol === "wc:" && search;
-}
-function isInvalidWalletConnectLink(url: string) {
-  if (!isWalletConnectLink(url) || isValidWalletConnectUrl(url)) {
-    return false;
-  }
-  return true;
 }
 
 function getProxyURL(url: string) {
@@ -94,18 +79,18 @@ function getProxyURL(url: string) {
 }
 
 // DeepLinking
-const linkingOptions = (featureFlags: OptionalFeatureMap) => ({
+const linkingOptions = () => ({
   async getInitialURL() {
     const url = await Linking.getInitialURL();
     if (url) {
-      return url && !isInvalidWalletConnectLink(url) ? getProxyURL(url) : null;
+      return url ? getProxyURL(url) : null;
     }
     const brazeUrl: string = await new Promise(resolve => {
       Braze.getInitialURL(initialUrl => {
         resolve(initialUrl);
       });
     });
-    return brazeUrl && !isInvalidWalletConnectLink(brazeUrl) ? getProxyURL(brazeUrl) : null;
+    return brazeUrl ? getProxyURL(brazeUrl) : null;
   },
 
   prefixes: [
@@ -161,26 +146,6 @@ const linkingOptions = (featureFlags: OptionalFeatureMap) => ({
           [ScreenName.BleDevicePairingFlow]: "sync-onboarding",
 
           [ScreenName.RedirectToOnboardingRecoverFlow]: "recover-restore-flow",
-          [NavigatorName.PostOnboarding]: {
-            screens: {
-              /**
-               * @params ?completed: boolean
-               * ie: "ledgerlive://post-onboarding/nft-claimed?completed=true" will open the post onboarding hub and complete the Nft claim action
-               * * @params ?allCompleted: boolean
-               * ie: "ledgerlive://post-onboarding/nft-claimed?allCompleted=true" will open the post onboarding hub with all steps completed
-               */
-              [ScreenName.PostOnboardingHub]: "post-onboarding/nft-claimed",
-            },
-          },
-
-          [NavigatorName.ClaimNft]: {
-            screens: {
-              /**
-               * ie: "ledgerlive://linkdrop-nft-claim/qr-scanning" will redirect to the QR scanning page
-               */
-              [ScreenName.ClaimNftQrScan]: "linkdrop-nft-claim/qr-scanning",
-            },
-          },
 
           /**
            * @params ?platform: string
@@ -209,31 +174,18 @@ const linkingOptions = (featureFlags: OptionalFeatureMap) => ({
                     screens: {
                       [ScreenName.Portfolio]: "portfolio",
                       [ScreenName.WalletNftGallery]: "nftgallery",
-
-                      ...(featureFlags?.ptxEarn?.enabled && {
-                        [NavigatorName.Market]: {
-                          screens: {
-                            /**
-                             * ie: "ledgerlive://market" will open the market screen
-                             */
-                            [ScreenName.MarketList]: "market",
-                          },
+                      [NavigatorName.Market]: {
+                        screens: {
+                          /**
+                           * ie: "ledgerlive://market" will open the market screen
+                           */
+                          [ScreenName.MarketList]: "market",
                         },
-                      }),
+                      },
                     },
                   },
                 },
               },
-              ...(!featureFlags?.ptxEarn?.enabled && {
-                [NavigatorName.Market]: {
-                  screens: {
-                    /**
-                     * ie: "ledgerlive://market" will open the market screen
-                     */
-                    [ScreenName.MarketList]: "market",
-                  },
-                },
-              }),
               [NavigatorName.Earn]: {
                 screens: {
                   /**
@@ -370,7 +322,6 @@ const linkingOptions = (featureFlags: OptionalFeatureMap) => ({
                * ie: "ledgerlive://learn"
                */
               [ScreenName.Newsfeed]: "newsfeed",
-              [ScreenName.Learn]: "learn",
             },
           },
           [NavigatorName.ImportAccounts]: {
@@ -387,11 +338,8 @@ const linkingOptions = (featureFlags: OptionalFeatureMap) => ({
   },
 });
 
-const getOnboardingLinkingOptions = (
-  acceptedTermsOfUse: boolean,
-  featureFlags: OptionalFeatureMap,
-) => ({
-  ...linkingOptions(featureFlags),
+const getOnboardingLinkingOptions = (acceptedTermsOfUse: boolean) => ({
+  ...linkingOptions(),
   config: {
     initialRouteName: NavigatorName.BaseOnboarding,
     screens: !acceptedTermsOfUse
@@ -425,6 +373,24 @@ const getOnboardingLinkingOptions = (
 
 const emptyObject: LiveAppManifest[] = [];
 
+function isScreenInState(
+  screenName: string,
+  state?: NavigationState | PartialState<NavigationState>,
+) {
+  if (!state) {
+    return false;
+  }
+  for (let i = 0; i < state.routes.length; i++) {
+    if (state.routes[i].name === screenName) {
+      return true;
+    }
+    if (state.routes[i].state && isScreenInState(screenName, state.routes[i].state)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 export const DeeplinksProvider = ({
   children,
   resolvedTheme,
@@ -434,11 +400,6 @@ export const DeeplinksProvider = ({
 }) => {
   const dispatch = useDispatch();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
-  const ptxEarnFeature = useFeature("ptxEarn");
-  const features = useMemo(
-    () => (ptxEarnFeature ? { ptxEarn: ptxEarnFeature } : {}),
-    [ptxEarnFeature],
-  );
 
   const { state } = useRemoteLiveAppContext();
   const liveAppProviderInitialized = !!state.value || !!state.error;
@@ -451,29 +412,25 @@ export const DeeplinksProvider = ({
     () =>
       ({
         ...(hasCompletedOnboarding
-          ? linkingOptions(features)
-          : getOnboardingLinkingOptions(!!userAcceptedTerms, features)),
+          ? linkingOptions()
+          : getOnboardingLinkingOptions(!!userAcceptedTerms)),
         subscribe(listener) {
           const sub = Linking.addEventListener("url", ({ url }) => {
-            // Prevent default deeplink if invalid wallet connect link
-            if (isInvalidWalletConnectLink(url)) {
+            // Prevent default deep link if we're already in a wallet connect route.
+            const navigationState = navigationRef.current?.getState();
+            if (
+              isWalletConnectLink(url) &&
+              isScreenInState(ScreenName.WalletConnectConnect, navigationState)
+            ) {
+              const uri = isWalletConnectUrl(url) ? url : new URL(url).searchParams.get("uri");
+              // Only update for a connection not a request
+              if (uri && !new URL(uri).searchParams.get("requestId")) {
+                // TODO use wallet-api to push event instead of reloading the webview
+                dispatch(setWallectConnectUri(uri));
+              }
               return;
             }
 
-            // Prevent default deeplink if we're already in a wallet connect route.
-            const route = navigationRef.current?.getCurrentRoute();
-            if (
-              isWalletConnectLink(url) &&
-              route &&
-              (route.name as ScreenName) === ScreenName.WalletConnectConnect
-            ) {
-              const uri = isWalletConnectUrl(url)
-                ? url
-                : // we know uri exists in the searchParams because we check it in isValidWalletConnectUrl
-                  new URL(url).searchParams.get("uri")!;
-              dispatch(setWallectConnectUri(uri));
-              return;
-            }
             if (isStorylyLink(url)) {
               storylyContext.setUrl(url);
             }
@@ -562,16 +519,12 @@ export const DeeplinksProvider = ({
             url.searchParams.set("name", manifest.name);
             return getStateFromPath(url.href?.split("://")[1], config);
           }
-          if (path === "linkdrop-nft-claim/qr-scanning") {
-            track("deeplink", { action: "Claim NFT scan QR code again" });
-          }
 
           return getStateFromPath(path, config);
         },
       }) as LinkingOptions<ReactNavigation.RootParamList>,
     [
       hasCompletedOnboarding,
-      features,
       userAcceptedTerms,
       dispatch,
       storylyContext,

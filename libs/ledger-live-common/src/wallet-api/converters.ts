@@ -31,8 +31,12 @@ export function accountToWalletAPIAccount(
       throw new Error("No 'parentAccount' account provided for token account");
     }
 
+    const parentWalletApiId = uuidv5(parentAccount.id, NAMESPACE);
+    uuidToAccountId.set(parentWalletApiId, parentAccount.id);
+
     return {
       id: walletApiId,
+      parentAccountId: parentWalletApiId,
       balance: account.balance,
       address: parentAccount.freshAddress,
       blockHeight: parentAccount.blockHeight,

@@ -13,7 +13,9 @@
     "rootDir": ".",
     "paths": {
       "~/*": ["src/*"],
-      "@tests/*": ["src/__tests__/*"]
+      "LLM/*": ["src/newArch/*"],
+      "@tests/*": ["__tests__/*"],
+      "@mocks/*": ["__mocks__/*"]
     }
   },
   "include": ["src/**/*", "e2e/**/*", "**/*.d.ts", "services/**/*"],
