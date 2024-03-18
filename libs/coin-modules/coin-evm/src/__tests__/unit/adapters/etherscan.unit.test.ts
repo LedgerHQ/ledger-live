@@ -385,6 +385,118 @@ describe("EVM Family", () => {
             expectedOperations,
           );
         });
+
+        it("should return an operation with the expected amount", () => {
+          const accountId = encodeAccountId({
+            type: "js",
+            version: "2",
+            currencyId: "ethereum",
+            xpubOrAddress: "0x9aa99c23f67c81701c772b106b4f83f6e858dd2e",
+            derivationMode: "",
+          });
+
+          const etherscanOpFees: EtherscanOperation = {
+            blockNumber: "14923692",
+            timeStamp: "1654646570",
+            hash: "0xaa45b4858ba44230a5fce5a29570a5dec2bf1f0ba95bacdec4fe8f2c4fa99338",
+            nonce: "7",
+            blockHash: "0x8df71a12a8c06b36c06c26bf6248857dd2a2b75b6edbb4e33e9477078897b282",
+            transactionIndex: "27",
+            from: "0x9aa99c23f67c81701c772b106b4f83f6e858dd2e",
+            to: "",
+            value: "0",
+            gas: "6000000",
+            gasPrice: "125521409858",
+            isError: "0",
+            txreceipt_status: "1",
+            input:
+              "0xa9059cbb000000000000000000000000313143c4088a47c469d06fe3fa5fd4196be6a4d600000000000000000000000000000000000000000003b8e97d229a2d54800000",
+            contractAddress: "0x4969d9fd2542e71e6b3ea87be54ea9a736bcc4e9",
+            cumulativeGasUsed: "1977481",
+            gasUsed: "57168",
+            confirmations: "122471",
+            methodId: "0xa9059cbb",
+            functionName: "transfer(address _to, uint256 _value)",
+          };
+
+          // Successful Op
+          expect(etherscanOperationToOperations(accountId, etherscanOpFees)[0].value).toEqual(
+            new BigNumber(etherscanOpFees.value).plus(
+              new BigNumber(etherscanOpFees.gasPrice).times(etherscanOpFees.gasUsed),
+            ),
+          );
+          // Failing Op
+          expect(
+            etherscanOperationToOperations(accountId, { ...etherscanOpFees, isError: "1" })[0]
+              .value,
+          ).toEqual(new BigNumber(etherscanOpFees.gasPrice).times(etherscanOpFees.gasUsed));
+
+          const etherscanOpOut: EtherscanOperation = {
+            blockNumber: "13807766",
+            timeStamp: "1639544926",
+            hash: "0x8d3e871469ce549c5a80b8c8beaae0d502ecea85bb43eb84703cebeea7d25944",
+            nonce: "11898499",
+            blockHash: "0xad04a8ed598c9c270f7ffd9a113224bc16fc285af814a2dc735c261620bad669",
+            transactionIndex: "394",
+            from: "0x9aa99c23f67c81701c772b106b4f83f6e858dd2e",
+            to: "0x26e3fd2dec89bf645ba7b41c4ddfad8454ee6245",
+            value: "143141441418750645",
+            gas: "210000",
+            gasPrice: "68363841693",
+            isError: "0",
+            txreceipt_status: "1",
+            input: "0x",
+            contractAddress: "",
+            cumulativeGasUsed: "14788393",
+            gasUsed: "21000",
+            confirmations: "2582470",
+            methodId: "0x",
+            functionName: "",
+          };
+
+          // Successful Op
+          expect(etherscanOperationToOperations(accountId, etherscanOpOut)[0].value).toEqual(
+            new BigNumber(etherscanOpOut.value).plus(
+              new BigNumber(etherscanOpOut.gasPrice).times(etherscanOpOut.gasUsed),
+            ),
+          );
+          // Failing Op
+          expect(
+            etherscanOperationToOperations(accountId, { ...etherscanOpOut, isError: "1" })[0].value,
+          ).toEqual(new BigNumber(etherscanOpOut.gasPrice).times(etherscanOpOut.gasUsed));
+
+          const etherscanOpIn: EtherscanOperation = {
+            blockNumber: "13807766",
+            timeStamp: "1639544926",
+            hash: "0x8d3e871469ce549c5a80b8c8beaae0d502ecea85bb43eb84703cebeea7d25944",
+            nonce: "11898499",
+            blockHash: "0xad04a8ed598c9c270f7ffd9a113224bc16fc285af814a2dc735c261620bad669",
+            transactionIndex: "394",
+            from: "0x26e3fd2dec89bf645ba7b41c4ddfad8454ee6245",
+            to: "0x9aa99c23f67c81701c772b106b4f83f6e858dd2e",
+            value: "143141441418750645",
+            gas: "210000",
+            gasPrice: "68363841693",
+            isError: "0",
+            txreceipt_status: "1",
+            input: "0x",
+            contractAddress: "",
+            cumulativeGasUsed: "14788393",
+            gasUsed: "21000",
+            confirmations: "2582470",
+            methodId: "0x",
+            functionName: "",
+          };
+
+          // Successful Op
+          expect(etherscanOperationToOperations(accountId, etherscanOpIn)[0].value).toEqual(
+            new BigNumber(etherscanOpIn.value),
+          );
+          // Failing Op
+          expect(
+            etherscanOperationToOperations(accountId, { ...etherscanOpIn, isError: "1" })[0].value,
+          ).toEqual(new BigNumber(etherscanOpIn.value));
+        });
       });
 
       describe("etherscanERC20EventToOperations", () => {

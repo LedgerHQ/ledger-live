@@ -52,7 +52,7 @@ export const etherscanOperationToOperations = (
         id: encodeOperationId(accountId, etherscanOp.hash, type),
         hash: etherscanOp.hash,
         type,
-        value: type === "OUT" || type === "FEES" ? value.plus(fee) : hasFailed ? fee : value,
+        value: type === "OUT" || type === "FEES" ? (hasFailed ? fee : value.plus(fee)) : value,
         fee,
         senders: [from],
         recipients: [to],
