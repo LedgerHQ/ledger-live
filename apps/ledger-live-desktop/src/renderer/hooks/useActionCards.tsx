@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ActionCard from "~/renderer/components/ContentCards/ActionCard";
 import { actionContentCardSelector } from "~/renderer/reducers/dynamicContent";
@@ -11,6 +11,10 @@ const useActionCards = () => {
   const dispatch = useDispatch();
   const [cachedContentCards, setCachedContentCards] = useState(braze.getCachedContentCards().cards);
   const actionCards = useSelector(actionContentCardSelector);
+
+  useEffect(() => {
+    setCachedContentCards(braze.getCachedContentCards().cards);
+  }, [actionCards]);
 
   const findCard = (cardId: string) => cachedContentCards.find(card => card.id === cardId);
   const findActionCard = (cardId: string) => actionCards.find(card => card.id === cardId);
