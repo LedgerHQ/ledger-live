@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import {
   setShareAnalytics,
-  setSharePersonalizedRecommandations,
+  setSharePersonalizedRecommendations,
 } from "~/renderer/actions/settings";
 import {
   EntryPoint,
@@ -49,7 +49,7 @@ const useVariantA = ({
 
   const handleShareAnalyticsChange = (value: boolean) => {
     const page = "Analytics Opt In Prompt Main";
-    dispatch(setSharePersonalizedRecommandations(value));
+    dispatch(setSharePersonalizedRecommendations(value));
     dispatch(setShareAnalytics(value));
     onSubmit?.();
     if (value) trackClick("Accept All", true, page);
@@ -61,7 +61,7 @@ const useVariantA = ({
       const page = "Analytics Opt In Prompt Preferences";
       const { AnalyticsData, PersonalizationData } = preferences;
       dispatch(setShareAnalytics(AnalyticsData));
-      dispatch(setSharePersonalizedRecommandations(PersonalizationData));
+      dispatch(setSharePersonalizedRecommendations(PersonalizationData));
       onSubmit?.();
       trackClick("Share", shouldWeTrack, page);
     }
