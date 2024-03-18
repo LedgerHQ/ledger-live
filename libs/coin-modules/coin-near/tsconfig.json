@@ -1,5 +1,5 @@
 {
-  "extends": "../../tsconfig.base",
+  "extends": "../../../tsconfig.base",
   "compilerOptions": {
     "declaration": true,
     "declarationMap": true,
@@ -8,6 +8,5 @@
     "lib": ["es2020", "dom"],
     "outDir": "lib"
   },
-  "files": ["node_modules/jest-expect-message/types/index.d.ts"],
   "include": ["src/**/*"]
 }

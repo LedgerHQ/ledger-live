@@ -1,9 +1,8 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Operation, SignedOperation } from "@ledgerhq/types-live";
 import { Exchange } from "@ledgerhq/live-common/exchange/platform/types";
 import { Exchange as SwapExchange } from "@ledgerhq/live-common/exchange/swap/types";
-import { setBroadcastTransaction } from "@ledgerhq/live-common/exchange/swap/setBroadcastTransaction";
 import { getUpdateAccountWithUpdaterParams } from "@ledgerhq/live-common/exchange/swap/getUpdateAccountWithUpdaterParams";
 import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
@@ -14,9 +13,9 @@ import { BodyContent, BodyContentProps } from "./BodyContent";
 import { getMagnitudeAwareRate } from "@ledgerhq/live-common/exchange/swap/webApp/index";
 import { BigNumber } from "bignumber.js";
 import { AccountLike } from "@ledgerhq/types-live";
-import { WrongDeviceForAccount } from "@ledgerhq/errors";
-import { CompleteExchangeError } from "@ledgerhq/live-common/exchange/error";
+import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { useRedirectToSwapHistory } from "~/renderer/screens/exchange/Swap2/utils";
+import { getEnv } from "@ledgerhq/live-env";
 
 export type Data = {
   provider: string;
@@ -47,6 +46,7 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
   const { amount } = transactionParams;
   const { fromAccount: account, fromParentAccount: parentAccount } = exchange;
 
+  const broadcastRef = useRef(false);
   const redirectToHistory = useRedirectToSwapHistory();
   const onViewDetails = useCallback(
     (id: string) => {
@@ -155,10 +155,6 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
           operation,
           swapId,
         };
-        setBroadcastTransaction({
-          result: newResult,
-          provider,
-        });
         updateAccount({
           result: newResult,
           magnitudeAwareRate,
@@ -169,12 +165,17 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
           sourceCurrency,
           targetCurrency,
         });
+
+        if (getEnv("DISABLE_TRANSACTION_BROADCAST")) {
+          return onCancel(new UserRefusedOnDevice());
+        }
       }
       onResult(operation);
     },
     [
       setResult,
       onResult,
+      onCancel,
       updateAccount,
       magnitudeAwareRate,
       provider,
@@ -186,24 +187,25 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
     ],
   );
 
-  useEffect(() => {
-    if (error) {
-      if (
-        ![
-          error instanceof WrongDeviceForAccount,
-          error instanceof CompleteExchangeError && error.message === "User refused",
-        ].some(Boolean)
-      ) {
-        onClose?.();
-      }
-    }
-  }, [onCancel, error, onClose]);
+  // useEffect(() => {
+  //   /**
+  //    * If we want to close the drawer automatically, we need to ensure onCancel is also called
+  //    * this will gives the "control" back to live app.
+  //    *
+  //    * On drawer manually closed, we send an error back ("Interrupted by user")
+  //    */
+  //   if ([error instanceof SOME_ERROR_WE_WANT_LIVE_APP_TO_HANDLE]) {
+  //     onCancel(error);
+  //     onClose(error)
+  //   }
+  // }, [onCancel, error]);
 
   useEffect(() => {
-    if (!signedOperation) return;
-    console.log("[moonpay] about to broadcast");
-    broadcast(signedOperation).then(onBroadcastSuccess, setError);
-  }, [signedOperation, broadcast, onBroadcastSuccess, setError]);
+    if (broadcastRef.current || !signedOperation) return;
+    broadcast(signedOperation)
+      .then(onBroadcastSuccess, setError)
+      .finally(() => (broadcastRef.current = true));
+  }, [signedOperation, broadcast, onBroadcastSuccess, setError, broadcastRef]);
 
   return (
     <Box alignItems={"center"} justifyContent={"center"} px={32} height={"100%"}>
