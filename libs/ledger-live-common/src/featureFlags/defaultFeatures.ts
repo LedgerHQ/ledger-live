@@ -113,11 +113,6 @@ export const DEFAULT_FEATURES: Features = {
     params: { debug: false, url: null },
   },
 
-  depositWithdrawBannerMobile: {
-    enabled: false,
-    params: { url: "https://www.ledger.com/ledger-live" },
-  },
-
   deviceInitialApps: {
     enabled: false,
     params: { apps: ["Bitcoin", "Ethereum"] },

@@ -26,7 +26,6 @@ import { ReceiveFundsStackParamList } from "./types/ReceiveFundsNavigator";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import { Flex } from "@ledgerhq/native-ui";
 import HelpButton from "~/screens/ReceiveFunds/HelpButton";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { useSelector } from "react-redux";
 import {
   hasClosedNetworkBannerSelector,
@@ -38,7 +37,6 @@ export default function ReceiveFundsNavigator() {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const route = useRoute();
-  const depositWithdrawBannerMobile = useFeature("depositWithdrawBannerMobile");
   const hasClosedWithdrawBanner = useSelector(hasClosedWithdrawBannerSelector);
   const hasClosedNetworkBanner = useSelector(hasClosedNetworkBannerSelector);
 
@@ -106,11 +104,7 @@ export default function ReceiveFundsNavigator() {
           headerRight: () => (
             <Flex alignItems="center" justifyContent="center" flexDirection="row">
               {hasClosedNetworkBanner && (
-                <HelpButton
-                  eventButton="Choose a network article"
-                  url={urls.chooseNetwork}
-                  enabled={true}
-                />
+                <HelpButton eventButton="Choose a network article" url={urls.chooseNetwork} />
               )}
               <NavigationHeaderCloseButtonAdvanced onClose={onClose} />
             </Flex>
@@ -192,11 +186,7 @@ export default function ReceiveFundsNavigator() {
           headerRight: () => (
             <Flex alignItems="center" justifyContent="center" flexDirection="row">
               {hasClosedWithdrawBanner && (
-                <HelpButton
-                  url={depositWithdrawBannerMobile?.params?.url || ""}
-                  enabled={depositWithdrawBannerMobile?.enabled ?? false}
-                  eventButton="How to withdraw from exchange"
-                />
+                <HelpButton url={urls.withdrawCrypto} eventButton="How to withdraw from exchange" />
               )}
               <NavigationHeaderCloseButtonAdvanced
                 onClose={
