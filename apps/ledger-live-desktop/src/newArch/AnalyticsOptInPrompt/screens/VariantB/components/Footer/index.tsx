@@ -4,22 +4,11 @@ import { useTranslation } from "react-i18next";
 import { Flex, Button } from "@ledgerhq/react-ui";
 
 interface VariantBFooterProps {
-  currentStep: number;
   clickOptions: { [key: string]: () => void };
 }
 
-const VariantBFooter = ({ currentStep, clickOptions }: VariantBFooterProps) => {
+const VariantBFooter = ({ clickOptions }: VariantBFooterProps) => {
   const { t } = useTranslation();
-
-  const handleAcceptClick = () => {
-    if (currentStep === 0) clickOptions.acceptAnalytics();
-    else clickOptions.acceptPersonalizedExp();
-  };
-
-  const handleRefuseClick = () => {
-    if (currentStep === 0) clickOptions.refuseAnalytics();
-    else clickOptions.refusePersonalizedExp();
-  };
 
   return (
     <Footer>
@@ -36,7 +25,7 @@ const VariantBFooter = ({ currentStep, clickOptions }: VariantBFooterProps) => {
           size={"large"}
           borderRadius={48}
           flex={1}
-          onClick={handleRefuseClick}
+          onClick={clickOptions.refuse}
         >
           {t("analyticsOptInPrompt.variantB.refuse")}
         </Button>
@@ -45,7 +34,7 @@ const VariantBFooter = ({ currentStep, clickOptions }: VariantBFooterProps) => {
           size={"large"}
           borderRadius={48}
           flex={1}
-          onClick={handleAcceptClick}
+          onClick={clickOptions.accept}
         >
           {t("analyticsOptInPrompt.variantB.accept")}
         </Button>

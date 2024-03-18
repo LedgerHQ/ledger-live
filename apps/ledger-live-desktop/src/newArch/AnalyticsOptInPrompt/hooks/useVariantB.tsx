@@ -53,16 +53,10 @@ export const useVariantB = ({
     );
   };
 
-  const clickOnAcceptAnalytics = () => {
-    dispatch(setShareAnalytics(true));
+  const setupAnalytics = (value: boolean) => {
+    dispatch(setShareAnalytics(value));
     goToPersonalizedRecommandations();
-    trackAnalyticsClick(true);
-  };
-
-  const clickOnRefuseAnalytics = () => {
-    dispatch(setShareAnalytics(false));
-    goToPersonalizedRecommandations();
-    trackAnalyticsClick(false);
+    trackAnalyticsClick(value);
   };
 
   const trackPersonalizedExperienceClick = (value: boolean) => {
@@ -78,29 +72,31 @@ export const useVariantB = ({
     );
   };
 
-  const clickOnAcceptPersonalizedExperience = () => {
-    dispatch(setSharePersonalizedRecommendations(true));
+  const setupPersonalizedExperience = (value: boolean) => {
+    dispatch(setSharePersonalizedRecommendations(value));
     onSubmit?.();
-    trackPersonalizedExperienceClick(true);
+    trackPersonalizedExperienceClick(value);
   };
 
-  const clickOnRefusePersonalizedExperience = () => {
-    dispatch(setSharePersonalizedRecommendations(false));
-    onSubmit?.();
-    trackPersonalizedExperienceClick(false);
+  const handleAcceptClick = () => {
+    if (currentStep === 0) setupAnalytics(true);
+    else setupPersonalizedExperience(true);
+  };
+
+  const handleRefuseClick = () => {
+    if (currentStep === 0) setupAnalytics(false);
+    else setupPersonalizedExperience(false);
   };
 
   const clickOptions = {
-    acceptAnalytics: clickOnAcceptAnalytics,
-    refuseAnalytics: clickOnRefuseAnalytics,
-    acceptPersonalizedExp: clickOnAcceptPersonalizedExperience,
-    refusePersonalizedExp: clickOnRefusePersonalizedExperience,
+    accept: handleAcceptClick,
+    refuse: handleRefuseClick,
   };
 
   return {
+    clickOptions,
     currentTheme,
     currentStep,
     setCurrentStep,
-    clickOptions,
   };
 };
