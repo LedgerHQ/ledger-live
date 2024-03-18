@@ -41,26 +41,29 @@ const useVariantA = ({
   }, [goBackToMain]);
 
   const onManagePreferencesClick = () => {
+    const page = "Analytics Opt In Prompt Main";
     setIsManagingPreferences(true);
     setPreventBackNavigation(true);
-    clickOnManagePreferences();
+    trackClick("Manage Preferences", shouldWeTrack, page);
   };
 
   const handleShareAnalyticsChange = (value: boolean) => {
+    const page = "Analytics Opt In Prompt Main";
     dispatch(setSharePersonalizedRecommendations(value));
     dispatch(setShareAnalytics(value));
     onSubmit?.();
-    if (value) clickOnAcceptAll();
-    else clickOnRefuseAll();
+    if (value) trackClick("Accept All", true, page);
+    else trackClick("Refuse All", shouldWeTrack, page);
   };
 
   const handleShareCustomAnalyticsChange = (value: boolean) => {
     if (value) {
+      const page = "Analytics Opt In Prompt Preferences";
       const { AnalyticsData, PersonalizationData } = preferences;
       dispatch(setShareAnalytics(AnalyticsData));
       dispatch(setSharePersonalizedRecommendations(PersonalizationData));
       onSubmit?.();
-      clickOnMoreOptionsConfirm();
+      trackClick("Share", shouldWeTrack, page);
     }
   };
 
@@ -75,53 +78,14 @@ const useVariantA = ({
     }
   };
 
-  const clickOnAcceptAll = () => {
+  const trackClick = (button: string, shouldWeTrack: boolean, page: string) => {
     track(
       "button_clicked",
       {
-        button: "Accept All",
+        button,
         variant,
         flow,
-        page: "Analytics Opt In Prompt Main",
-      },
-      true,
-    );
-  };
-
-  const clickOnRefuseAll = () => {
-    track(
-      "button_clicked",
-      {
-        button: "Refuse All",
-        variant,
-        flow,
-        page: "Analytics Opt In Prompt Main",
-      },
-      shouldWeTrack,
-    );
-  };
-
-  const clickOnManagePreferences = () => {
-    track(
-      "button_clicked",
-      {
-        button: "Manage Preferences",
-        variant,
-        flow,
-        page: "Analytics Opt In Prompt Main",
-      },
-      shouldWeTrack,
-    );
-  };
-
-  const clickOnMoreOptionsConfirm = () => {
-    track(
-      "button_clicked",
-      {
-        button: "Share",
-        variant,
-        flow,
-        page: "Analytics Opt In Prompt Preferences",
+        page,
       },
       shouldWeTrack,
     );

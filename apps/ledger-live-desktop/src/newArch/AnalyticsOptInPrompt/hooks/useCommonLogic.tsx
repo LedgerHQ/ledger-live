@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import {
   hasSeenAnalyticsOptInPromptSelector,
@@ -27,8 +27,6 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
   const dispatch = useDispatch();
 
   const [isAnalitycsOptInPromptOpened, setIsAnalitycsOptInPromptOpened] = useState<boolean>(false);
-  const [isFeatureFlagsAnalyticsPrefDisplayed, setIsFeatureFlagsAnalyticsPrefDisplayed] =
-    useState<boolean>(false);
 
   const [nextStep, setNextStep] = useState<(() => void) | null>(null);
   const flow = trackingKeysByFlow?.[entryPoint];
@@ -41,19 +39,12 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
     [setIsAnalitycsOptInPromptOpened],
   );
 
-  useEffect(() => {
-    const isFlagEnabled =
+  const isFlagEnabled = useMemo(
+    () =>
       lldAnalyticsOptInPromptFlag?.enabled &&
-      (!hasSeenAnalyticsOptInPrompt || entryPoint === EntryPoint.onboarding);
-    setIsFeatureFlagsAnalyticsPrefDisplayed(isFlagEnabled || false);
-  }, [
-    lldAnalyticsOptInPromptFlag,
-    hasSeenAnalyticsOptInPrompt,
-    dispatch,
-    entryPoint,
-    isTrackingEnabled,
-    shouldWeTrack,
-  ]);
+      (!hasSeenAnalyticsOptInPrompt || entryPoint === EntryPoint.onboarding),
+    [lldAnalyticsOptInPromptFlag, hasSeenAnalyticsOptInPrompt, entryPoint],
+  );
 
   const onSubmit = () => {
     setIsAnalitycsOptInPromptOpened(false);
@@ -76,7 +67,7 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
     setIsAnalitycsOptInPromptOpened,
     onSubmit,
     analyticsOptInPromptProps,
-    isFeatureFlagsAnalyticsPrefDisplayed,
+    isFeatureFlagsAnalyticsPrefDisplayed: isFlagEnabled,
     lldAnalyticsOptInPromptFlag,
     flow,
     shouldWeTrack,
