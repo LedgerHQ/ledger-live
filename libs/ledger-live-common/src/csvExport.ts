@@ -28,7 +28,7 @@ const fields: Field[] = [
   {
     title: "Status",
     cell: (_account, _parentAccount, op) => {
-      return op.hasFailed !== undefined ? (op.hasFailed ? "Failed" : "Confirmed") : "Confirmed";
+      return op.hasFailed ? "Failed" : "Confirmed";
     },
   },
   {
