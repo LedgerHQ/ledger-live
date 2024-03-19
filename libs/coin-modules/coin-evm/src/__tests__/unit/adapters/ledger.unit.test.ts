@@ -522,6 +522,209 @@ describe("EVM Family", () => {
             expectedOperation2,
           ]);
         });
+
+        it("should return an operation with the expected amount", () => {
+          const randomAccountId = encodeAccountId({
+            type: "js",
+            version: "2",
+            currencyId: "ethereum",
+            xpubOrAddress: "0x9aa99c23f67c81701c772b106b4f83f6e858dd2e",
+            derivationMode: "",
+          });
+
+          const ledgerExplorerNoneOp: LedgerExplorerOperation = {
+            hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
+            transaction_type: 2,
+            nonce: "0x4b",
+            nonce_value: 75,
+            value: "0",
+            gas: "62350",
+            gas_price: "81876963401",
+            max_fee_per_gas: "125263305914",
+            max_priority_fee_per_gas: "33000000000",
+            from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+            to: "",
+            transfer_events: [
+              {
+                contract: "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
+                from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+                to: "0xc2907efcce4011c491bbeda8a0fa63ba7aab596c",
+                count: "100000000000000",
+              },
+            ],
+            erc721_transfer_events: [],
+            erc1155_transfer_events: [],
+            approval_events: [],
+            actions: [],
+            confirmations: 5968364,
+            input:
+              "0xa9059cbb000000000000000000000000313143c4088a47c469d06fe3fa5fd4196be6a4d600000000000000000000000000000000000000000003b8e97d229a2d54800000",
+            gas_used: "51958",
+            cumulative_gas_used: "16087064",
+            status: 1,
+            received_at: "2023-01-24T17:11:45Z",
+            block: {
+              hash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
+              height: 38476740,
+              time: "2023-01-24T17:11:45Z",
+            },
+          };
+
+          // Successful Op
+          expect(
+            ledgerOperationToOperations(randomAccountId, ledgerExplorerNoneOp)[0].value,
+          ).toEqual(new BigNumber(ledgerExplorerNoneOp.value));
+          // Failing Op
+          expect(
+            ledgerOperationToOperations(randomAccountId, { ...ledgerExplorerNoneOp, status: 0 })[0]
+              .value,
+          ).toEqual(new BigNumber(ledgerExplorerNoneOp.value));
+
+          const ledgerExplorerFeesOp: LedgerExplorerOperation = {
+            hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
+            transaction_type: 2,
+            nonce: "0x4b",
+            nonce_value: 75,
+            value: "0",
+            gas: "62350",
+            gas_price: "81876963401",
+            max_fee_per_gas: "125263305914",
+            max_priority_fee_per_gas: "33000000000",
+            from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+            to: "",
+            transfer_events: [
+              {
+                contract: "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
+                from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+                to: "0xc2907efcce4011c491bbeda8a0fa63ba7aab596c",
+                count: "100000000000000",
+              },
+            ],
+            erc721_transfer_events: [],
+            erc1155_transfer_events: [],
+            approval_events: [],
+            actions: [],
+            confirmations: 5968364,
+            input:
+              "0xa9059cbb000000000000000000000000313143c4088a47c469d06fe3fa5fd4196be6a4d600000000000000000000000000000000000000000003b8e97d229a2d54800000",
+            gas_used: "51958",
+            cumulative_gas_used: "16087064",
+            status: 1,
+            received_at: "2023-01-24T17:11:45Z",
+            block: {
+              hash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
+              height: 38476740,
+              time: "2023-01-24T17:11:45Z",
+            },
+          };
+
+          // Successful Op
+          expect(ledgerOperationToOperations(accountId, ledgerExplorerFeesOp)[0].value).toEqual(
+            new BigNumber(ledgerExplorerFeesOp.value).plus(
+              new BigNumber(ledgerExplorerFeesOp.gas_price).times(ledgerExplorerFeesOp.gas_used),
+            ),
+          );
+          // Failing Op
+          expect(
+            ledgerOperationToOperations(accountId, { ...ledgerExplorerFeesOp, status: 0 })[0].value,
+          ).toEqual(
+            new BigNumber(ledgerExplorerFeesOp.gas_price).times(ledgerExplorerFeesOp.gas_used),
+          );
+
+          const ledgerOperationOut: LedgerExplorerOperation = {
+            hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
+            transaction_type: 2,
+            nonce: "0x4b",
+            nonce_value: 75,
+            value: "1",
+            gas: "62350",
+            gas_price: "81876963401",
+            max_fee_per_gas: "125263305914",
+            max_priority_fee_per_gas: "33000000000",
+            from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+            to: "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
+            transfer_events: [
+              {
+                contract: "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
+                from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+                to: "0xc2907efcce4011c491bbeda8a0fa63ba7aab596c",
+                count: "100000000000000",
+              },
+            ],
+            erc721_transfer_events: [],
+            erc1155_transfer_events: [],
+            approval_events: [],
+            actions: [],
+            confirmations: 5968364,
+            input: null,
+            gas_used: "51958",
+            cumulative_gas_used: "16087064",
+            status: 1,
+            received_at: "2023-01-24T17:11:45Z",
+            block: {
+              hash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
+              height: 38476740,
+              time: "2023-01-24T17:11:45Z",
+            },
+          };
+
+          // Successful Op
+          expect(ledgerOperationToOperations(accountId, ledgerOperationOut)[0].value).toEqual(
+            new BigNumber(ledgerOperationOut.value).plus(
+              new BigNumber(ledgerOperationOut.gas_price).times(ledgerOperationOut.gas_used),
+            ),
+          );
+          // Failing Op
+          expect(
+            ledgerOperationToOperations(accountId, { ...ledgerOperationOut, status: 0 })[0].value,
+          ).toEqual(new BigNumber(ledgerOperationOut.gas_price).times(ledgerOperationOut.gas_used));
+
+          const ledgerOperationIn: LedgerExplorerOperation = {
+            hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
+            transaction_type: 2,
+            nonce: "0x4b",
+            nonce_value: 75,
+            value: "1",
+            gas: "62350",
+            gas_price: "81876963401",
+            max_fee_per_gas: "125263305914",
+            max_priority_fee_per_gas: "33000000000",
+            from: "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
+            to: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+            transfer_events: [
+              {
+                contract: "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
+                from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+                to: "0xc2907efcce4011c491bbeda8a0fa63ba7aab596c",
+                count: "100000000000000",
+              },
+            ],
+            erc721_transfer_events: [],
+            erc1155_transfer_events: [],
+            approval_events: [],
+            actions: [],
+            confirmations: 5968364,
+            input: null,
+            gas_used: "51958",
+            cumulative_gas_used: "16087064",
+            status: 1,
+            received_at: "2023-01-24T17:11:45Z",
+            block: {
+              hash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
+              height: 38476740,
+              time: "2023-01-24T17:11:45Z",
+            },
+          };
+
+          // Successful Op
+          expect(ledgerOperationToOperations(accountId, ledgerOperationIn)[0].value).toEqual(
+            new BigNumber(ledgerOperationOut.value),
+          );
+          // Failing Op
+          expect(
+            ledgerOperationToOperations(accountId, { ...ledgerOperationIn, status: 0 })[0].value,
+          ).toEqual(new BigNumber(ledgerOperationOut.value));
+        });
       });
 
       describe("ledgerERC20EventToOperations", () => {
@@ -1046,6 +1249,25 @@ describe("EVM Family", () => {
       });
 
       describe("ledgerInternalTransactionToOperations", () => {
+        it("should ignore explorer actions for a if the coin operation has failed", () => {
+          const ledgerAction: LedgerExplorerInternalTransaction = {
+            from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+            to: "0x49048044d57e1c92a77f79988d21fa8faf74e97e",
+            input: null,
+            value: "10000000000000000",
+            gas: "57090",
+            gas_used: "27485",
+            error: null,
+          };
+
+          expect(
+            ledgerInternalTransactionToOperations(
+              { ...coinOperation, hasFailed: true },
+              ledgerAction,
+            ),
+          ).toEqual([]);
+        });
+
         it("should convert a ledger explorer out action to a Ledger Live Operation", () => {
           const ledgerAction: LedgerExplorerInternalTransaction = {
             from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",

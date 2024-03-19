@@ -6,21 +6,21 @@ import { useSelector } from "react-redux";
 import styled from "styled-components";
 import { useRefreshAccountsOrderingEffect } from "~/renderer/actions/general";
 import { Card } from "~/renderer/components/Box";
-import usePortfolioCards from "~/renderer/hooks/usePortfolioCards";
+import useActionCards from "~/renderer/hooks/useActionCards";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { hasInstalledAppsSelector } from "~/renderer/reducers/settings";
 
-const PortfolioVariantA = styled(Card)`
+const ActionVariantA = styled(Card)`
   background-color: ${p => p.theme.colors.opacityPurple.c10};
 `;
 
-const PortfolioVariantBContainer = styled.div`
+const ActionVariantBContainer = styled.div`
   position: relative;
   margin-left: 24px;
   margin-right: 24px;
 `;
 
-const PortfolioVariantBWrapper = styled.div`
+const ActionVariantBWrapper = styled.div`
   position: absolute;
   width: 100%;
   bottom: 30px;
@@ -30,45 +30,46 @@ const PortfolioVariantBWrapper = styled.div`
   background-color: ${p => p.theme.colors.opacityPurple.c10};
 `;
 
-const PortfolioVariantB = ({ children }: PropsWithChildren) => (
-  <PortfolioVariantBContainer>
-    <PortfolioVariantBWrapper>{children}</PortfolioVariantBWrapper>
-  </PortfolioVariantBContainer>
+const ActionVariantB = ({ children }: PropsWithChildren) => (
+  <ActionVariantBContainer>
+    <ActionVariantBWrapper>{children}</ActionVariantBWrapper>
+  </ActionVariantBContainer>
 );
 
-const PortfolioContentCards = ({ variant }: { variant: ABTestingVariants }) => {
-  const slides = usePortfolioCards();
-  const lldPortfolioCarousel = useFeature("lldPortfolioCarousel");
+const ActionContentCards = ({ variant }: { variant: ABTestingVariants }) => {
+  const slides = useActionCards();
+  const lldActionCarousel = useFeature("lldActionCarousel");
   const totalAccounts = useSelector(accountsSelector).length;
   const hasInstalledApps = useSelector(hasInstalledAppsSelector);
 
-  const showCarousel = lldPortfolioCarousel?.enabled && hasInstalledApps && totalAccounts >= 0;
+  const showCarousel = lldActionCarousel?.enabled && hasInstalledApps && totalAccounts >= 0;
   useRefreshAccountsOrderingEffect({
     onMount: true,
   });
 
   if (!showCarousel || slides.length === 0) return null;
-  if (
-    lldPortfolioCarousel?.params?.variant === ABTestingVariants.variantA &&
-    variant === ABTestingVariants.variantA
-  )
-    return (
-      <PortfolioVariantA>
-        <Carousel variant="content-card">{slides}</Carousel>
-      </PortfolioVariantA>
-    );
 
   if (
-    lldPortfolioCarousel?.params?.variant === ABTestingVariants.variantB &&
+    lldActionCarousel?.params?.variant === ABTestingVariants.variantB &&
     variant === ABTestingVariants.variantB
-  )
+  ) {
     return (
-      <PortfolioVariantB>
+      <ActionVariantB>
         <Carousel variant="content-card">{slides}</Carousel>
-      </PortfolioVariantB>
+      </ActionVariantB>
     );
+  } else if (
+    lldActionCarousel?.params?.variant !== ABTestingVariants.variantB &&
+    variant === ABTestingVariants.variantA
+  ) {
+    return (
+      <ActionVariantA>
+        <Carousel variant="content-card">{slides}</Carousel>
+      </ActionVariantA>
+    );
+  }
 
   return null;
 };
 
-export default PortfolioContentCards;
+export default ActionContentCards;

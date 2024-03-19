@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 import styled, { DefaultTheme, ThemedStyledProps } from "styled-components";
 import AngleUp from "~/renderer/icons/AngleUp";
 import TopBar from "~/renderer/components/TopBar";
-import PortfolioContentCards from "~/renderer/screens/dashboard/PortfolioContentCards";
+import PortfolioContentCards from "~/renderer/screens/dashboard/ActionContentCards";
 import { ABTestingVariants } from "@ledgerhq/types-live";
 
 type Props = {

@@ -28,12 +28,14 @@ import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAle
 import PostOnboardingHubBanner from "~/renderer/components/PostOnboardingHub/PostOnboardingHubBanner";
 import FeaturedButtons from "~/renderer/screens/dashboard/FeaturedButtons";
 import { ABTestingVariants, AccountLike, Operation } from "@ledgerhq/types-live";
-import PortfolioContentCards from "~/renderer/screens/dashboard/PortfolioContentCards";
+import ActionContentCards from "~/renderer/screens/dashboard/ActionContentCards";
 import MarketPerformanceWidget from "~/renderer/screens/dashboard/MarketPerformanceWidget";
 import { useMarketPerformanceFeatureFlag } from "~/renderer/actions/marketperformance";
 import { Grid } from "@ledgerhq/react-ui";
 import AnalyticsOptInPrompt from "LLD/AnalyticsOptInPrompt/screens";
 import { useDisplayOnPortfolioAnalytics } from "LLD/AnalyticsOptInPrompt/hooks/useDisplayOnPortfolio";
+import Carousel from "~/renderer/components/Carousel";
+import useActionCards from "~/renderer/hooks/useActionCards";
 
 // This forces only one visible top banner at a time
 export const TopBannerContainer = styled.div`
@@ -78,6 +80,7 @@ export default function DashboardPage() {
 
   const { enabled: marketPerformanceEnabled, variant: marketPerformanceVariant } =
     useMarketPerformanceFeatureFlag();
+  const isActionCardsCampainRunning = useActionCards().length > 0;
 
   const { isFeatureFlagsAnalyticsPrefDisplayed, analyticsOptInPromptProps } =
     useDisplayOnPortfolioAnalytics();
@@ -88,9 +91,13 @@ export default function DashboardPage() {
         <ClearCacheBanner />
         <CurrencyDownStatusAlert currencies={currencies} hideStatusIncidents />
       </TopBannerContainer>
-      <Box gap={"5px"}>
+      <Box gap={"20px"}>
         <RecoverBanner />
-        <PortfolioContentCards variant={ABTestingVariants.variantA} />
+        {isActionCardsCampainRunning ? (
+          <ActionContentCards variant={ABTestingVariants.variantA} />
+        ) : (
+          <Carousel />
+        )}
       </Box>
       {isPostOnboardingBannerVisible && <PostOnboardingHubBanner />}
       <FeaturedButtons />

@@ -41,6 +41,7 @@ import { SwapFormNavigatorParamList } from "~/components/RootNavigator/types/Swa
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import type { DetailsSwapParamList } from "../types";
 import { getAvailableProviders } from "@ledgerhq/live-common/exchange/swap/index";
+import { useSelectedSwapRate } from "./useSelectedSwapRate";
 
 type Navigation = StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.Account>;
 
@@ -86,6 +87,11 @@ export function SwapForm({
     excludeFixedRates: true,
   });
 
+  const { provider } = useSelectedSwapRate({
+    defaultRate: (params as DetailsSwapParamList).rate,
+    availableRates: swapTransaction.swap.rates.value,
+  });
+
   // @TODO: Try to check if we can directly have the right state from `useSwapTransaction`
   // Used to set the right state (recipient address, data, etc...) when comming from a token account
   // As of today, we need to call setFromAccount to trigger an updateTransaction in order to set the correct
@@ -124,7 +130,6 @@ export function SwapForm({
   const swapError = swapTransaction.fromAmountError || exchangeRatesState?.error;
   const swapWarning = swapTransaction.fromAmountWarning;
   const pageState = usePageState(swapTransaction, swapError || swapWarning);
-  const provider = exchangeRate?.provider;
 
   const editRatesTrackingProps = JSON.stringify({
     ...sharedSwapTracking,
@@ -300,13 +305,6 @@ export function SwapForm({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params]);
-
-  useEffect(() => {
-    const { rate } = params as DetailsSwapParamList;
-    if (rate) {
-      setExchangeRate(rate);
-    }
-  }, [params, setExchangeRate, swapTransaction]);
 
   const swapAcceptedProviders = getAvailableProviders();
   const termsAccepted = (swapAcceptedProviders || []).includes(provider ?? "");

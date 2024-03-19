@@ -69,7 +69,7 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
     onClose: () => setIsAnalitycsOptInPromptOpened(false),
     isOpened: isAnalitycsOptInPromptOpened,
     entryPoint: entryPoint,
-    variant: lldAnalyticsOptInPromptFlag?.params?.variant,
+    variant: getVariant(lldAnalyticsOptInPromptFlag?.params?.variant),
   };
 
   return {

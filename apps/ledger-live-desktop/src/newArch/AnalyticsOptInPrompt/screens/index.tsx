@@ -42,7 +42,7 @@ const AnalyticsOptInPrompt = memo(
           {isVariantA ? (
             <VariantA step={step} setStep={setStep} onSubmit={onSubmit} entryPoint={entryPoint} />
           ) : (
-            <VariantB step={step} setStep={setStep} entryPoint={entryPoint} onSubmit={onSubmit} />
+            <VariantB step={step} setStep={setStep} onSubmit={onSubmit} entryPoint={entryPoint} />
           )}
         </Box>
       </SideDrawer>
