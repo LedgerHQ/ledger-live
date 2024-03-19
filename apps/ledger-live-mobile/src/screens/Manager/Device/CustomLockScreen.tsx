@@ -6,7 +6,7 @@ import { firstValueFrom, from } from "rxjs";
 import { useNavigation } from "@react-navigation/native";
 import { Icons } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/types-devices";
-import staxFetchImageHash from "@ledgerhq/live-common/hw/staxFetchImageHash";
+import customLockScreenFetchHash from "@ledgerhq/live-common/hw/customLockScreenFetchHash";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 
@@ -38,7 +38,7 @@ const CustomLockScreen: React.FC<{
 
   useEffect(() => {
     firstValueFrom(
-      withDevice(device.deviceId)(transport => from(staxFetchImageHash(transport))),
+      withDevice(device.deviceId)(transport => from(customLockScreenFetchHash(transport))),
     ).then(hash => {
       setDeviceHasImage(hash !== "");
     });

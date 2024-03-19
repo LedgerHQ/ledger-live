@@ -6,7 +6,9 @@ import { Flex, ProgressLoader, IconsLegacy } from "@ledgerhq/react-ui";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { FirmwareUpdateContext, DeviceInfo } from "@ledgerhq/types-live";
 import { hasFinalFirmware } from "@ledgerhq/live-common/hw/hasFinalFirmware";
-import staxFetchImage, { FetchImageEvent } from "@ledgerhq/live-common/hw/staxFetchImage";
+import customLockScreenFetch, {
+  FetchImageEvent,
+} from "@ledgerhq/live-common/hw/customLockScreenFetch";
 import firmwareUpdatePrepare from "@ledgerhq/live-common/hw/firmwareUpdate-prepare";
 import { getEnv } from "@ledgerhq/live-env";
 import { UnexpectedBootloader } from "@ledgerhq/errors";
@@ -189,7 +191,7 @@ const StepPrepare = ({
     const deviceId = device ? device.deviceId : "";
     const maybeCLSBackup =
       deviceInfo.onboarded && isCustomLockScreenSupported(deviceModelId)
-        ? staxFetchImage({
+        ? customLockScreenFetch({
             deviceId,
             request: { allowedEmpty: true, deviceModelId },
           })

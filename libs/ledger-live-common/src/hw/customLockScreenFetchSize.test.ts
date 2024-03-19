@@ -1,12 +1,12 @@
-import staxFetchImageSize from "./staxFetchImageSize";
+import customLockScreenFetchSize from "./customLockScreenFetchSize";
 
 const mockTransportGenerator = out => ({ send: () => out });
-describe("staxFetchImageSize", () => {
+describe("customLockScreenFetchSize", () => {
   test("should return size if available", async () => {
     const mockedTransport = mockTransportGenerator(Buffer.from("000089e99000", "hex"));
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore next-line
-    const response = await staxFetchImageSize(mockedTransport);
+    const response = await customLockScreenFetchSize(mockedTransport);
     expect(response).toBe(35305);
   });
 
@@ -14,14 +14,14 @@ describe("staxFetchImageSize", () => {
     const mockedTransport = mockTransportGenerator(Buffer.from("000000009000", "hex"));
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore next-line
-    await expect(staxFetchImageSize(mockedTransport)).resolves.toBe(0);
+    await expect(customLockScreenFetchSize(mockedTransport)).resolves.toBe(0);
   });
 
   test("unexpected bootloader or any other code, should throw", async () => {
     const mockedTransport = mockTransportGenerator(Buffer.from("662d", "hex"));
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore next-line
-    await expect(staxFetchImageSize(mockedTransport)).rejects.toThrow(Error);
+    await expect(customLockScreenFetchSize(mockedTransport)).rejects.toThrow(Error);
   });
 
   /*
@@ -35,6 +35,6 @@ describe("staxFetchImageSize", () => {
     const mockedTransport = mockTransportGenerator(Buffer.from("662e", "hex"));
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore next-line
-    await expect(staxFetchImageSize(mockedTransport)).resolves.toBe(0);
+    await expect(customLockScreenFetchSize(mockedTransport)).resolves.toBe(0);
   });
 });

@@ -1,19 +1,19 @@
 import { from } from "rxjs";
 import fs from "fs";
 import type { ScanCommonOpts } from "../../scan";
-import staxLoadImage from "@ledgerhq/live-common/hw/staxLoadImage";
+import customLockScreenLoad from "@ledgerhq/live-common/hw/customLockScreenLoad";
 import { deviceOpt } from "../../scan";
 import {
   CLSSupportedDeviceModelId,
   isCustomLockScreenSupported,
 } from "@ledgerhq/live-common/device-core/capabilities/isCustomLockScreenSupported";
 
-type staxLoadImageJobOpts = ScanCommonOpts & {
+type CustomLockScreenLoadJobOpts = ScanCommonOpts & {
   fileInput: string;
   deviceModelId: string;
 };
 
-const exec = async (opts: staxLoadImageJobOpts) => {
+const exec = async (opts: CustomLockScreenLoadJobOpts) => {
   const { fileInput, device: deviceId = "", deviceModelId } = opts;
   const clsSupportedDeviceModelId = deviceModelId as CLSSupportedDeviceModelId;
   if (!isCustomLockScreenSupported(clsSupportedDeviceModelId)) {
@@ -24,7 +24,7 @@ const exec = async (opts: staxLoadImageJobOpts) => {
   const hexImage = fs.readFileSync(fileInput, "utf-8");
 
   await new Promise<void>(resolve =>
-    staxLoadImage({
+    customLockScreenLoad({
       deviceId,
       request: { hexImage, deviceModelId: clsSupportedDeviceModelId },
     }).subscribe(
@@ -42,14 +42,14 @@ const exec = async (opts: staxLoadImageJobOpts) => {
 };
 
 export default {
-  description: "Test functionality lock screen customization on Stax for loading an image",
+  description: "Test lock screen customization by loading an image",
   args: [
     deviceOpt,
     {
       name: "fileInput",
       alias: "i",
       type: String,
-      desc: "Text file containing the hex data of the image to load on Stax",
+      desc: "Text file containing the hex data of the image to load on device as a custom lock screen",
     },
     {
       name: "deviceModelId",
@@ -57,5 +57,5 @@ export default {
       desc: "The device model id to use",
     },
   ],
-  job: (opts: staxLoadImageJobOpts): any => from(exec(opts)),
+  job: (opts: CustomLockScreenLoadJobOpts): any => from(exec(opts)),
 };

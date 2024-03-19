@@ -13,7 +13,7 @@ import { ungzip } from "pako";
 
 import { withDevice } from "./deviceAccess";
 import getDeviceInfo from "./getDeviceInfo";
-import staxFetchImageHash from "./staxFetchImageHash";
+import customLockScreenFetchHash from "./customLockScreenFetchHash";
 import getAppAndVersion from "./getAppAndVersion";
 import { isDashboardName } from "./isDashboardName";
 import attemptToQuitApp, { AttemptToQuitAppEvent } from "./attemptToQuitApp";
@@ -67,7 +67,7 @@ export default function fetchImage({ deviceId, request }: Input): Observable<Fet
             mergeMap(async () => {
               timeoutSub.unsubscribe();
               // Fetch the image hash from the device
-              const imgHash = await staxFetchImageHash(transport);
+              const imgHash = await customLockScreenFetchHash(transport);
               subscriber.next({ type: "currentImageHash", imgHash });
               // We don't have an image to backup
               if (imgHash === "") {
@@ -147,7 +147,7 @@ export default function fetchImage({ deviceId, request }: Input): Observable<Fet
                 currentOffset += chunkSize;
               }
 
-              const hexImage = await parseStaxImageFormat(imageBuffer);
+              const hexImage = await parseCustomLockScreenImageFormat(imageBuffer);
 
               subscriber.next({ type: "imageFetched", hexImage });
 
@@ -185,8 +185,8 @@ export default function fetchImage({ deviceId, request }: Input): Observable<Fet
   return sub as Observable<FetchImageEvent>;
 }
 
-// transforms from a Stax binary image format to an LLM hex string format
-const parseStaxImageFormat: (
+// transforms from a Custom Lock Screen binary image format to an LLM hex string format
+const parseCustomLockScreenImageFormat: (
   staxImageBuffer: Buffer,
 ) => Promise<string> = async staxImageBuffer => {
   // const width = staxImageBuffer.readUint16LE(0); // always 400

@@ -44,11 +44,11 @@ import managerListApps from "./commands/device/managerListApps";
 import proxy from "./commands/device/proxy";
 import repl from "./commands/device/repl";
 import speculosList from "./commands/device/speculosList";
-import staxFetchAndRestoreDemo from "./commands/device/staxFetchAndRestoreDemo";
-import staxFetchImage from "./commands/device/staxFetchImage";
-import staxFetchImageHash from "./commands/device/staxFetchImageHash";
-import staxLoadImage from "./commands/device/staxLoadImage";
-import staxRemoveImage from "./commands/device/staxRemoveImage";
+import staxFetchAndRestoreDemo from "./commands/device/customLockScreenFetchAndRestore";
+import customLockScreenFetch from "./commands/device/customLockScreenFetch";
+import customLockScreenFetchHash from "./commands/device/customLockScreenFetchHash";
+import customLockScreenLoad from "./commands/device/customLockScreenLoad";
+import customLockScreenRemove from "./commands/device/customLockScreenRemove";
 import balanceHistory from "./commands/live/balanceHistory";
 import countervalues from "./commands/live/countervalues";
 import envs from "./commands/live/envs";
@@ -108,10 +108,10 @@ export default {
   repl,
   speculosList,
   staxFetchAndRestoreDemo,
-  staxFetchImage,
-  staxFetchImageHash,
-  staxLoadImage,
-  staxRemoveImage,
+  customLockScreenFetch,
+  customLockScreenFetchHash,
+  customLockScreenLoad,
+  customLockScreenRemove,
   balanceHistory,
   countervalues,
   envs,

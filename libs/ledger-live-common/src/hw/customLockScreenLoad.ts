@@ -15,8 +15,8 @@ import { ImageLoadRefusedOnDevice, ImageCommitRefusedOnDevice } from "../errors"
 import getAppAndVersion from "./getAppAndVersion";
 import { isDashboardName } from "./isDashboardName";
 import attemptToQuitApp, { AttemptToQuitAppEvent } from "./attemptToQuitApp";
-import staxFetchImageSize from "./staxFetchImageSize";
-import staxFetchImageHash from "./staxFetchImageHash";
+import customLockScreenFetchSize from "./customLockScreenFetchSize";
+import customLockScreenFetchHash from "./customLockScreenFetchHash";
 import { gzip } from "pako";
 import { CLSSupportedDeviceModelId } from "../device/use-cases/isCustomLockScreenSupported";
 import { getScreenSpecs } from "../device/use-cases/screenSpecs";
@@ -85,7 +85,7 @@ export default function loadImage({ deviceId, request }: Input): Observable<Load
             mergeMap(async () => {
               timeoutSub.unsubscribe();
 
-              const imageData = await generateStaxImageFormat(
+              const imageData = await generateCustomLockScreenImageFormat(
                 hexImage,
                 true,
                 !!padImage,
@@ -173,10 +173,10 @@ export default function loadImage({ deviceId, request }: Input): Observable<Load
               }
 
               // Fetch image size
-              const imageBytes = await staxFetchImageSize(transport);
+              const imageBytes = await customLockScreenFetchSize(transport);
 
               // Fetch image hash
-              const imageHash = await staxFetchImageHash(transport);
+              const imageHash = await customLockScreenFetchHash(transport);
 
               subscriber.next({
                 type: "imageLoaded",
@@ -247,7 +247,7 @@ function padHexImage(hexImage: string, screenSpecs: ScreenSpecs): string {
   return result;
 }
 
-export async function generateStaxImageFormat(
+export async function generateCustomLockScreenImageFormat(
   hexImage: string,
   compressImage: boolean,
   padImage: boolean,

@@ -9,7 +9,7 @@ import type {
   LoadImageRequest,
   LoadimageResult,
   Input as LoadImageInput,
-} from "../staxLoadImage";
+} from "../customLockScreenLoad";
 import type { Action, Device } from "./types";
 import { currentMode } from "./app";
 import { defaultImplementationConfig, getImplementation } from "./implementations";
@@ -151,7 +151,7 @@ export const createAction = (
 
       const sub = impl
         .pipe(
-          tap((e: any) => log("actions-load-stax-image-event", e.type, e)),
+          tap((e: any) => log("actions-load-custom-lock-screen-event", e.type, e)),
           scan(reducer, getInitialState()),
         )
         .subscribe(setState);

@@ -2,7 +2,7 @@ import React, { useEffect, useCallback, useMemo } from "react";
 import { useDispatch } from "react-redux";
 import { setLastSeenCustomImage, clearLastSeenCustomImage } from "~/renderer/actions/settings";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { createAction } from "@ledgerhq/live-common/hw/actions/staxLoadImage";
+import { createAction } from "@ledgerhq/live-common/hw/actions/customLockScreenLoad";
 import { ImageLoadRefusedOnDevice, ImageCommitRefusedOnDevice } from "@ledgerhq/live-common/errors";
 import withRemountableWrapper from "@ledgerhq/live-common/hoc/withRemountableWrapper";
 import { getEnv } from "@ledgerhq/live-env";
@@ -17,7 +17,7 @@ import {
   RenderImageLoadRequested,
   RenderLoadingImage,
 } from "~/renderer/components/CustomImage/CustomLockScreenDeviceAction/renderImageLoadRequested";
-import staxLoadImage from "@ledgerhq/live-common/hw/staxLoadImage";
+import customLockScreenLoad from "@ledgerhq/live-common/hw/customLockScreenLoad";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
@@ -39,7 +39,7 @@ type Props = {
   blockNavigation?: (blocked: boolean) => void;
 };
 
-const action = createAction(getEnv("MOCK") ? mockedEventEmitter : staxLoadImage);
+const action = createAction(getEnv("MOCK") ? mockedEventEmitter : customLockScreenLoad);
 const mockedDevice = { deviceId: "", modelId: DeviceModelId.stax, wired: true };
 
 function checkIfIsRefusedOnStaxError(e: unknown): boolean {

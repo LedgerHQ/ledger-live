@@ -3,18 +3,18 @@ import { from } from "rxjs";
 import fs from "fs";
 import type { ScanCommonOpts } from "../../scan";
 import { deviceOpt } from "../../scan";
-import staxFetchImage from "@ledgerhq/live-common/hw/staxFetchImage";
+import customLockScreenFetch from "@ledgerhq/live-common/hw/customLockScreenFetch";
 import {
   isCustomLockScreenSupported,
   CLSSupportedDeviceModelId,
 } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 
-type staxFetchImageJobOpts = ScanCommonOpts & {
+type CustomLockScreenFetchJobOpts = ScanCommonOpts & {
   fileOutput: string;
   deviceModelId: string;
 };
 
-const exec = async (opts: staxFetchImageJobOpts) => {
+const exec = async (opts: CustomLockScreenFetchJobOpts) => {
   const { device: deviceId = "", fileOutput, deviceModelId } = opts;
   const clsSupportedDeviceModelId = deviceModelId as CLSSupportedDeviceModelId;
   if (!isCustomLockScreenSupported(clsSupportedDeviceModelId)) {
@@ -22,7 +22,7 @@ const exec = async (opts: staxFetchImageJobOpts) => {
     return;
   }
   await new Promise<void>(p =>
-    staxFetchImage({
+    customLockScreenFetch({
       deviceId,
       request: { allowedEmpty: false, deviceModelId: clsSupportedDeviceModelId },
     }).subscribe(
@@ -52,7 +52,7 @@ const exec = async (opts: staxFetchImageJobOpts) => {
 };
 
 export default {
-  description: "Test functionality lock screen customization on Stax for fetching an image",
+  description: "Test fetching of the custom lock screen picture from a device",
   args: [
     deviceOpt,
     {
@@ -67,5 +67,5 @@ export default {
       desc: "The device model id to use",
     },
   ],
-  job: (opts: staxFetchImageJobOpts): any => from(exec(opts)),
+  job: (opts: CustomLockScreenFetchJobOpts): any => from(exec(opts)),
 };

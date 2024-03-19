@@ -3,8 +3,8 @@ import { firstValueFrom, from } from "rxjs";
 import fs from "fs";
 import type { ScanCommonOpts } from "../../scan";
 import { deviceOpt } from "../../scan";
-import staxFetchImageHash from "@ledgerhq/live-common/hw/staxFetchImageHash";
-import staxLoadImage, { generateStaxImageFormat } from "@ledgerhq/live-common/hw/staxLoadImage";
+import customLockScreenFetchHash from "@ledgerhq/live-common/hw/customLockScreenFetchHash";
+import customLockScreenLoad, { generateCustomLockScreenImageFormat } from "@ledgerhq/live-common/hw/customLockScreenLoad";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import crypto from "crypto";
 import {
@@ -20,12 +20,12 @@ import { getScreenSpecs } from "@ledgerhq/live-common/device/use-cases/screenSpe
  * the flow if the user hasn't changed the image since the last time we backed it.
  */
 
-type staxFetchAndRestoreJobOpts = ScanCommonOpts & {
+type CustomLockScreenFetchAndRestoreJobOpts = ScanCommonOpts & {
   fileInput: string;
   deviceModelId: string;
 };
 
-const exec = async (opts: staxFetchAndRestoreJobOpts) => {
+const exec = async (opts: CustomLockScreenFetchAndRestoreJobOpts) => {
   const { fileInput, device: deviceId = "", deviceModelId } = opts;
   const clsSupportedDeviceModelId = deviceModelId as CLSSupportedDeviceModelId;
   if (!isCustomLockScreenSupported(clsSupportedDeviceModelId)) {
@@ -33,7 +33,7 @@ const exec = async (opts: staxFetchAndRestoreJobOpts) => {
     return;
   }
   const hexImageWithoutHeader = fs.readFileSync(fileInput, "utf-8");
-  const hexImage = await generateStaxImageFormat(
+  const hexImage = await generateCustomLockScreenImageFormat(
     hexImageWithoutHeader,
     true,
     true,
@@ -49,7 +49,7 @@ const exec = async (opts: staxFetchAndRestoreJobOpts) => {
     console.log("Extracting hash from device");
 
     const currentHash = await firstValueFrom(
-      withDevice(deviceId)(t => from(staxFetchImageHash(t))),
+      withDevice(deviceId)(t => from(customLockScreenFetchHash(t))),
     );
     if (currentHash === hash) {
       console.log("Hashes match, skip backup step because we can use the one we have");
@@ -64,7 +64,7 @@ const exec = async (opts: staxFetchAndRestoreJobOpts) => {
 
     console.log("Restoring the image we backedup");
     await new Promise<void>(resolve =>
-      staxLoadImage({
+      customLockScreenLoad({
         deviceId,
         request: { hexImage: hexImageWithoutHeader, deviceModelId: clsSupportedDeviceModelId },
       }).subscribe(
@@ -83,14 +83,14 @@ const exec = async (opts: staxFetchAndRestoreJobOpts) => {
 };
 
 export default {
-  description: "Conditionally backup, delete, and restore a custom image on Stax",
+  description: "Conditionally backup, delete, and restore a custom lock screen picture",
   args: [
     deviceOpt,
     {
       name: "fileInput",
       alias: "i",
       type: String,
-      desc: "Text file containing the hex data of the image to load on Stax",
+      desc: "Text file containing the hex data of the image to load as a custom lock screen on the device",
     },
     {
       name: "deviceModelId",
@@ -98,5 +98,5 @@ export default {
       desc: "The device model id to use",
     },
   ],
-  job: (opts: staxFetchAndRestoreJobOpts): any => from(exec(opts)),
+  job: (opts: CustomLockScreenFetchAndRestoreJobOpts): any => from(exec(opts)),
 };

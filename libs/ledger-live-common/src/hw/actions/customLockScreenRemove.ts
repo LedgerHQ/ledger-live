@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { log } from "@ledgerhq/logs";
 import type { DeviceInfo } from "@ledgerhq/types-live";
 import { useReplaySubject } from "../../observable";
-import type { RemoveImageEvent, Input as RemoveImageInput } from "../staxRemoveImage";
+import type { RemoveImageEvent, Input as RemoveImageInput } from "../customLockScreenRemove";
 import type { Action, Device } from "./types";
 import { currentMode } from "./app";
 import { getImplementation } from "./implementations";
@@ -103,7 +103,7 @@ export const createAction = (
 
       const sub = impl
         .pipe(
-          tap((e: any) => log("actions-remove-stax-image-event", e.type, e)),
+          tap((e: any) => log("actions-remove-custom-lock-screen-event", e.type, e)),
           scan(reducer, getInitialState()),
         )
         .subscribe(setState);
