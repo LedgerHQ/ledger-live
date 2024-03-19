@@ -4,6 +4,8 @@ import styled from "styled-components";
 import { completeAuthenticate, biconomy } from "@ledgerhq/account-abstraction";
 import EmptyStateAccounts from "../dashboard/EmptyStateAccounts";
 import { buildAccount } from "~/renderer/modals/SmartAccountSignerModal/accountStructure";
+import { useDispatch } from "react-redux";
+import { addAccount } from "~/renderer/actions/accounts";
 
 const Container = styled(Flex).attrs({
   flex: "1",
@@ -21,6 +23,7 @@ const Title = styled(Text).attrs({ variant: "h3" })`
 `;
 
 export default function AccountAbstraction({ location: { state } }) {
+  const dispatch = useDispatch();
   console.log({ signerFetched: state?.signer });
   const signerFromQueryParams = state?.signer;
   const [address, setAddress] = useState("");
@@ -31,9 +34,13 @@ export default function AccountAbstraction({ location: { state } }) {
 
   useEffect(() => {
     if (!!signerFromQueryParams && signerFromQueryParams.orgId && signerFromQueryParams.bundle) {
-      completeAuthenticate(signerFromQueryParams.orgId, signerFromQueryParams.bundle).then(
-        setAddress,
-      );
+      console.log(`will complete authentication for ${signerFromQueryParams.orgId}`);
+      completeAuthenticate(signerFromQueryParams.orgId, signerFromQueryParams.bundle)
+        .then(addr => {
+          console.log(`[completeAuthenticate] finsihed, setting address to ${addr}`);
+          setAddress(addr);
+        })
+        .catch(err => console.error(err));
     }
   }, [signerFromQueryParams]);
 
