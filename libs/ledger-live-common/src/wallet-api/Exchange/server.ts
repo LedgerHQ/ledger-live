@@ -2,6 +2,7 @@
 import { RPCHandler, customWrapper } from "@ledgerhq/wallet-api-server";
 import {
   createAccountNotFound,
+  createCurrencyNotFound,
   deserializeTransaction,
   ServerError,
 } from "@ledgerhq/wallet-api-core";
@@ -28,7 +29,7 @@ import {
   getWalletAPITransactionSignFlowInfos,
 } from "../converters";
 import { getAccountBridge } from "../../bridge";
-import { Exchange } from "../../exchange/swap/types";
+import { Exchange } from "../../exchange/types";
 import { Transaction } from "../../generated/types";
 import {
   ExchangeError,
@@ -142,6 +143,8 @@ export const handlers = ({
     }),
     "custom.exchange.complete": customWrapper<ExchangeCompleteParams, ExchangeCompleteResult>(
       async params => {
+        console.log("DEBUG - completeExchange:", params);
+
         tracking.completeExchangeRequested(manifest);
 
         if (!params) {
@@ -160,26 +163,50 @@ export const handlers = ({
           throw new ServerError(createAccountNotFound(params.fromAccountId));
         }
 
-        let toAccount;
+        const fromParentAccount = getParentAccount(fromAccount, accounts);
 
-        if (params.exchangeType === "SWAP" && params.toAccountId) {
+        let exchange: Exchange;
+
+        if (params.exchangeType === "SWAP") {
           const realToAccountId = getAccountIdFromWalletAccountId(params.toAccountId);
           if (!realToAccountId) {
             return Promise.reject(new Error(`accountId ${params.toAccountId} unknown`));
           }
 
-          toAccount = accounts.find(a => a.id === realToAccountId);
+          const toAccount = accounts.find(a => a.id === realToAccountId);
 
           if (!toAccount) {
             throw new ServerError(createAccountNotFound(params.toAccountId));
           }
+
+          // TODO: check logic for EmptyTokenAccount
+          let toParentAccount = getParentAccount(toAccount, accounts);
+          let newTokenAccount;
+          if (params.tokenCurrency) {
+            const currency = findTokenById(params.tokenCurrency);
+            if (!currency) {
+              throw new ServerError(createCurrencyNotFound(params.tokenCurrency));
+            }
+            if (toAccount.type === "Account") {
+              newTokenAccount = makeEmptyTokenAccount(toAccount, currency);
+              toParentAccount = toAccount;
+            } else {
+              newTokenAccount = makeEmptyTokenAccount(toParentAccount, currency);
+            }
+          }
+
+          exchange = {
+            fromAccount,
+            fromParentAccount,
+            toAccount: newTokenAccount ? newTokenAccount : toAccount,
+            toParentAccount,
+          };
+        } else {
+          exchange = {
+            fromAccount,
+            fromParentAccount,
+          };
         }
-
-        const fromParentAccount = getParentAccount(fromAccount, accounts);
-        const toParentAccount = toAccount ? getParentAccount(toAccount, accounts) : undefined;
-
-        const currency = params.tokenCurrency ? findTokenById(params.tokenCurrency) : null;
-        const newTokenAccount = currency ? makeEmptyTokenAccount(toAccount, currency) : null;
 
         const mainFromAccount = getMainAccount(fromAccount, fromParentAccount);
         const mainFromAccountFamily = mainFromAccount.currency.family;
@@ -234,12 +261,7 @@ export const handlers = ({
               transaction: tx,
               signature: params.hexSignature,
               binaryPayload: params.hexBinaryPayload,
-              exchange: {
-                fromAccount,
-                fromParentAccount,
-                toAccount: newTokenAccount ? newTokenAccount : toAccount,
-                toParentAccount: newTokenAccount ? toAccount : toParentAccount,
-              },
+              exchange,
               feesStrategy: params.feeStrategy,
               swapId: params.exchangeType === "SWAP" ? params.swapId : undefined,
               rate: params.exchangeType === "SWAP" ? params.rate : undefined,
