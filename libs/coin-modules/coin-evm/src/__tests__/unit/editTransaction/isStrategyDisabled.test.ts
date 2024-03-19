@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import { isStrategyDisabled } from "../../../editTransaction/isStrategyDisabled";
 import { getCoinConfig } from "../../../config";
 
-jest.mock("../../../../config");
+jest.mock("../../../config");
 const mockGetConfig = jest.mocked(getCoinConfig);
 
 describe("isStrategyDisabled", () => {

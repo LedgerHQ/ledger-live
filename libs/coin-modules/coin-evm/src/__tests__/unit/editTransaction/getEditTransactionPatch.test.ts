@@ -26,7 +26,7 @@ const mockedGetMinEip1559Fees = jest.mocked(getMinEip1559Fees);
 
 const mockedGetGasOptions = jest.fn();
 
-jest.mock("../../../../config");
+jest.mock("../../../config");
 const mockGetConfig = jest.mocked(getCoinConfig);
 
 const currency = getCryptoCurrencyById("ethereum");

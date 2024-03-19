@@ -2,7 +2,7 @@ import { isTransactionConfirmed } from "../../../editTransaction/isTransactionCo
 import * as nodeApi from "../../../api/node/rpc.common";
 import { getCoinConfig } from "../../../config";
 
-jest.mock("../../../../config");
+jest.mock("../../../config");
 const mockGetConfig = jest.mocked(getCoinConfig);
 
 describe("isTransactionConfirmed", () => {

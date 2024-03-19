@@ -5,7 +5,7 @@ import type { Transaction as EvmTransaction } from "../../../types/index";
 import { getFormattedFeeFields } from "../../../editTransaction/getFormattedFeeFields";
 import { getCoinConfig } from "../../../config";
 
-jest.mock("../../../../config");
+jest.mock("../../../config");
 const mockGetConfig = jest.mocked(getCoinConfig);
 
 const dummyType2Transaction = {

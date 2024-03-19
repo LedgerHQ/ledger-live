@@ -14,7 +14,7 @@ jest.mock("../../../logic");
 const mockedLogic = jest.mocked(logic);
 const mockedLiveEnv = jest.mocked(liveEnv);
 
-jest.mock("../../../../config");
+jest.mock("../../../config");
 const mockGetConfig = jest.mocked(getCoinConfig);
 
 describe("hasMinimumFunds", () => {
