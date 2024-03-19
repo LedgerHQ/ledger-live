@@ -12,6 +12,8 @@ type Props = {
   toState: SwapSelectorStateType;
   onNoRates?: OnNoRatesCallback;
   setExchangeRate?: SetExchangeRateCallback | null | undefined;
+  countdown?: number;
+  allowRefresh?: boolean;
 };
 
 export type UseProviderRatesResponse = {
@@ -26,9 +28,11 @@ export function useProviderRates({
   toState,
   onNoRates,
   setExchangeRate,
+  allowRefresh = true,
+  ...props
 }: Props): UseProviderRatesResponse {
   const [countdown, { startCountdown, resetCountdown, stopCountdown }] = useCountdown({
-    countStart: DEFAULT_SWAP_RATES_INTERVAL_MS / 1000,
+    countStart: props.countdown ?? DEFAULT_SWAP_RATES_INTERVAL_MS / 1000,
     countStop: 0,
   });
   const ptxSwapMoonpayProviderFlag = useFeature("ptxSwapMoonpayProvider");
@@ -58,10 +62,10 @@ export function useProviderRates({
   });
 
   useEffect(() => {
-    if (countdown <= 0) {
+    if (countdown <= 0 && allowRefresh) {
       refetch();
     }
-  }, [countdown, refetch]);
+  }, [countdown, refetch, allowRefresh]);
 
   if (!fromState.amount || fromState.amount.lte(0)) {
     setExchangeRate?.(undefined);

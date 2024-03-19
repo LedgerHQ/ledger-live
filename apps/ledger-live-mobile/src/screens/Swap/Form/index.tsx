@@ -41,6 +41,7 @@ import { SwapFormNavigatorParamList } from "~/components/RootNavigator/types/Swa
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import type { DetailsSwapParamList } from "../types";
 import { getAvailableProviders } from "@ledgerhq/live-common/exchange/swap/index";
+import { DEFAULT_SWAP_RATES_LLM_INTERVAL_MS } from "@ledgerhq/live-common/exchange/swap/const/timeout";
 import { useSelectedSwapRate } from "./useSelectedSwapRate";
 
 type Navigation = StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.Account>;
@@ -85,6 +86,9 @@ export function SwapForm({
     setExchangeRate,
     onNoRates,
     excludeFixedRates: true,
+    refreshRate: DEFAULT_SWAP_RATES_LLM_INTERVAL_MS / 1000,
+    // Disable refresh when modal is shown
+    allowRefresh: !confirmed,
   });
 
   const { provider } = useSelectedSwapRate({
@@ -305,6 +309,17 @@ export function SwapForm({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params]);
+
+  useEffect(() => {
+    const { rate } = params as DetailsSwapParamList;
+    if (
+      exchangeRate &&
+      rate &&
+      (rate.provider !== exchangeRate?.provider || rate.tradeMethod !== exchangeRate.tradeMethod)
+    ) {
+      setExchangeRate(rate);
+    }
+  }, [params, exchangeRate, setExchangeRate]);
 
   const swapAcceptedProviders = getAvailableProviders();
   const termsAccepted = (swapAcceptedProviders || []).includes(provider ?? "");

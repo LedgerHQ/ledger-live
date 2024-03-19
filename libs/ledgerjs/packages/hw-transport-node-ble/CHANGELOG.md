@@ -1,4 +1,4 @@
-# @ledgerhq/hw-transport-node-hid
+# @ledgerhq/hw-transport-node-ble
 
 ## 6.28.5
 
@@ -8,7 +8,6 @@
   - @ledgerhq/errors@6.16.3
   - @ledgerhq/devices@8.2.2
   - @ledgerhq/hw-transport@6.30.5
-  - @ledgerhq/hw-transport-node-hid-noevents@6.29.5
 
 ## 6.28.5-next.0
 
@@ -18,7 +17,6 @@
   - @ledgerhq/errors@6.16.3-next.0
   - @ledgerhq/devices@8.2.2-next.0
   - @ledgerhq/hw-transport@6.30.5-next.0
-  - @ledgerhq/hw-transport-node-hid-noevents@6.29.5-next.0
 
 ## 6.28.4
 
@@ -28,7 +26,6 @@
   - @ledgerhq/errors@6.16.2
   - @ledgerhq/devices@8.2.1
   - @ledgerhq/hw-transport@6.30.4
-  - @ledgerhq/hw-transport-node-hid-noevents@6.29.4
 
 ## 6.28.4-next.0
 
@@ -38,14 +35,12 @@
   - @ledgerhq/errors@6.16.2-next.0
   - @ledgerhq/devices@8.2.1-next.0
   - @ledgerhq/hw-transport@6.30.4-next.0
-  - @ledgerhq/hw-transport-node-hid-noevents@6.29.4-next.0
 
 ## 6.28.3
 
 ### Patch Changes
 
 - Updated dependencies [[`eadebff`](https://github.com/LedgerHQ/ledger-live/commit/eadebff3fe58aef6a5befb033d5147afc49663d3)]:
-  - @ledgerhq/hw-transport-node-hid-noevents@6.29.3
   - @ledgerhq/hw-transport@6.30.3
 
 ## 6.28.3-next.0
@@ -53,7 +48,6 @@
 ### Patch Changes
 
 - Updated dependencies [[`eadebff`](https://github.com/LedgerHQ/ledger-live/commit/eadebff3fe58aef6a5befb033d5147afc49663d3)]:
-  - @ledgerhq/hw-transport-node-hid-noevents@6.29.3-next.0
   - @ledgerhq/hw-transport@6.30.3-next.0
 
 ## 6.28.2
@@ -62,7 +56,6 @@
 
 - Updated dependencies [[`16b4d7a`](https://github.com/LedgerHQ/ledger-live/commit/16b4d7ab4702022d4967f3c054d3c62a76716947)]:
   - @ledgerhq/hw-transport@6.30.2
-  - @ledgerhq/hw-transport-node-hid-noevents@6.29.2
 
 ## 6.28.2-next.0
 
@@ -70,7 +63,6 @@
 
 - Updated dependencies [[`16b4d7a`](https://github.com/LedgerHQ/ledger-live/commit/16b4d7ab4702022d4967f3c054d3c62a76716947)]:
   - @ledgerhq/hw-transport@6.30.2-next.0
-  - @ledgerhq/hw-transport-node-hid-noevents@6.29.2-next.0
 
 ## 6.28.1
 
@@ -80,7 +72,6 @@
   - @ledgerhq/hw-transport@6.30.1
   - @ledgerhq/errors@6.16.1
   - @ledgerhq/devices@8.2.0
-  - @ledgerhq/hw-transport-node-hid-noevents@6.29.1
 
 ## 6.28.1-next.0
 
@@ -90,7 +81,6 @@
   - @ledgerhq/hw-transport@6.30.1-next.0
   - @ledgerhq/errors@6.16.1-next.0
   - @ledgerhq/devices@8.2.0-next.0
-  - @ledgerhq/hw-transport-node-hid-noevents@6.29.1-next.0
 
 ## 6.28.0
 
@@ -102,7 +92,6 @@
 
 - Updated dependencies [[`771c9d3c1d`](https://github.com/LedgerHQ/ledger-live/commit/771c9d3c1d138ddd68da2e4f9738e2c41ecaf81b), [`c5981ae341`](https://github.com/LedgerHQ/ledger-live/commit/c5981ae3411abc4c8594adf2efcb52aacddac143), [`e63205b850`](https://github.com/LedgerHQ/ledger-live/commit/e63205b85071538ed2431157a12818d7a8f0ffa9), [`5964e30bed`](https://github.com/LedgerHQ/ledger-live/commit/5964e30bed11d64a3b7401c6ab51ffc1ad4c427c)]:
   - @ledgerhq/errors@6.16.0
-  - @ledgerhq/hw-transport-node-hid-noevents@6.29.0
   - @ledgerhq/hw-transport@6.30.0
   - @ledgerhq/devices@8.1.0
   - @ledgerhq/logs@6.12.0
@@ -117,34 +106,31 @@
 
 - Updated dependencies [[`771c9d3c1d`](https://github.com/LedgerHQ/ledger-live/commit/771c9d3c1d138ddd68da2e4f9738e2c41ecaf81b), [`c5981ae341`](https://github.com/LedgerHQ/ledger-live/commit/c5981ae3411abc4c8594adf2efcb52aacddac143), [`e63205b850`](https://github.com/LedgerHQ/ledger-live/commit/e63205b85071538ed2431157a12818d7a8f0ffa9), [`5964e30bed`](https://github.com/LedgerHQ/ledger-live/commit/5964e30bed11d64a3b7401c6ab51ffc1ad4c427c)]:
   - @ledgerhq/errors@6.16.0-next.0
-  - @ledgerhq/hw-transport-node-hid-noevents@6.29.0-next.0
   - @ledgerhq/hw-transport@6.30.0-next.0
   - @ledgerhq/devices@8.1.0-next.0
   - @ledgerhq/logs@6.12.0-next.0
 
-## 6.27.22
+## 6.27.20
 
 ### Patch Changes
 
 - Updated dependencies [[`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac), [`7968dfc551`](https://github.com/LedgerHQ/ledger-live/commit/7968dfc551acca00b7fabf00a726758d74be33de), [`6b7fc5d071`](https://github.com/LedgerHQ/ledger-live/commit/6b7fc5d0711a83ed2fcacacd02795862a4a3bf1d), [`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac), [`4d6fa0772e`](https://github.com/LedgerHQ/ledger-live/commit/4d6fa0772e19cdbd4b432fafa43621c42e2a5fdd)]:
   - @ledgerhq/logs@6.11.0
   - @ledgerhq/hw-transport@6.29.0
-  - @ledgerhq/hw-transport-node-hid-noevents@6.28.0
   - @ledgerhq/errors@6.15.0
   - @ledgerhq/devices@8.0.8
 
-## 6.27.22-next.0
+## 6.27.20-next.0
 
 ### Patch Changes
 
 - Updated dependencies [[`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac), [`7968dfc551`](https://github.com/LedgerHQ/ledger-live/commit/7968dfc551acca00b7fabf00a726758d74be33de), [`6b7fc5d071`](https://github.com/LedgerHQ/ledger-live/commit/6b7fc5d0711a83ed2fcacacd02795862a4a3bf1d), [`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac), [`4d6fa0772e`](https://github.com/LedgerHQ/ledger-live/commit/4d6fa0772e19cdbd4b432fafa43621c42e2a5fdd)]:
   - @ledgerhq/logs@6.11.0-next.0
   - @ledgerhq/hw-transport@6.29.0-next.0
-  - @ledgerhq/hw-transport-node-hid-noevents@6.28.0-next.0
   - @ledgerhq/errors@6.15.0-next.0
   - @ledgerhq/devices@8.0.8-next.0
 
-## 6.27.21
+## 6.27.19
 
 ### Patch Changes
 
@@ -152,9 +138,8 @@
   - @ledgerhq/errors@6.14.0
   - @ledgerhq/devices@8.0.7
   - @ledgerhq/hw-transport@6.28.8
-  - @ledgerhq/hw-transport-node-hid-noevents@6.27.19
 
-## 6.27.21-next.0
+## 6.27.19-next.0
 
 ### Patch Changes
 
@@ -162,9 +147,8 @@
   - @ledgerhq/errors@6.14.0-next.0
   - @ledgerhq/devices@8.0.7-next.0
   - @ledgerhq/hw-transport@6.28.8-next.0
-  - @ledgerhq/hw-transport-node-hid-noevents@6.27.19-next.0
 
-## 6.27.20
+## 6.27.18
 
 ### Patch Changes
 
@@ -172,9 +156,8 @@
   - @ledgerhq/errors@6.13.1
   - @ledgerhq/devices@8.0.6
   - @ledgerhq/hw-transport@6.28.7
-  - @ledgerhq/hw-transport-node-hid-noevents@6.27.18
 
-## 6.27.20-next.0
+## 6.27.18-next.0
 
 ### Patch Changes
 
@@ -182,25 +165,8 @@
   - @ledgerhq/errors@6.13.1-next.0
   - @ledgerhq/devices@8.0.6-next.0
   - @ledgerhq/hw-transport@6.28.7-next.0
-  - @ledgerhq/hw-transport-node-hid-noevents@6.27.18-next.0
 
-## 6.27.19
-
-### Patch Changes
-
-- [#4105](https://github.com/LedgerHQ/ledger-live/pull/4105) [`b5a63bb0bc`](https://github.com/LedgerHQ/ledger-live/commit/b5a63bb0bc8cc067961a3b912b0817ee54498a49) Thanks [@alexandremgo](https://github.com/alexandremgo)! - fix: patch delay on USB hotplug for Windows
-
-  Patches the node-usb package
-
-## 6.27.19-hotfix.0
-
-### Patch Changes
-
-- [#4105](https://github.com/LedgerHQ/ledger-live/pull/4105) [`b5a63bb0bc`](https://github.com/LedgerHQ/ledger-live/commit/b5a63bb0bc8cc067961a3b912b0817ee54498a49) Thanks [@alexandremgo](https://github.com/alexandremgo)! - fix: patch delay on USB hotplug for Windows
-
-  Patches the node-usb package
-
-## 6.27.18
+## 6.27.17
 
 ### Patch Changes
 
@@ -208,9 +174,8 @@
   - @ledgerhq/errors@6.13.0
   - @ledgerhq/devices@8.0.5
   - @ledgerhq/hw-transport@6.28.6
-  - @ledgerhq/hw-transport-node-hid-noevents@6.27.17
 
-## 6.27.18-next.0
+## 6.27.17-next.0
 
 ### Patch Changes
 
@@ -218,23 +183,6 @@
   - @ledgerhq/errors@6.13.0-next.0
   - @ledgerhq/devices@8.0.5-next.0
   - @ledgerhq/hw-transport@6.28.6-next.0
-  - @ledgerhq/hw-transport-node-hid-noevents@6.27.17-next.0
-
-## 6.27.17
-
-### Patch Changes
-
-- [#3625](https://github.com/LedgerHQ/ledger-live/pull/3625) [`f37494ae0c`](https://github.com/LedgerHQ/ledger-live/commit/f37494ae0cb5a14a83969615d58466126704cb6d) Thanks [@alexandremgo](https://github.com/alexandremgo)! - chore: bumping `usb` to 2.9.0
-
-  For both `hw-transport-node-hid` and `hw-transport-node-hid-singleton`
-
-## 6.27.17-next.0
-
-### Patch Changes
-
-- [#3625](https://github.com/LedgerHQ/ledger-live/pull/3625) [`f37494ae0c`](https://github.com/LedgerHQ/ledger-live/commit/f37494ae0cb5a14a83969615d58466126704cb6d) Thanks [@alexandremgo](https://github.com/alexandremgo)! - chore: bumping `usb` to 2.9.0
-
-  For both `hw-transport-node-hid` and `hw-transport-node-hid-singleton`
 
 ## 6.27.16
 
@@ -244,7 +192,6 @@
   - @ledgerhq/errors@6.12.7
   - @ledgerhq/devices@8.0.4
   - @ledgerhq/hw-transport@6.28.5
-  - @ledgerhq/hw-transport-node-hid-noevents@6.27.16
 
 ## 6.27.16-next.0
 
@@ -254,7 +201,6 @@
   - @ledgerhq/errors@6.12.7-next.0
   - @ledgerhq/devices@8.0.4-next.0
   - @ledgerhq/hw-transport@6.28.5-next.0
-  - @ledgerhq/hw-transport-node-hid-noevents@6.27.16-next.0
 
 ## 6.27.15
 
@@ -264,7 +210,6 @@
   - @ledgerhq/errors@6.12.6
   - @ledgerhq/devices@8.0.3
   - @ledgerhq/hw-transport@6.28.4
-  - @ledgerhq/hw-transport-node-hid-noevents@6.27.15
 
 ## 6.27.15-next.0
 
@@ -274,7 +219,6 @@
   - @ledgerhq/errors@6.12.6-next.0
   - @ledgerhq/devices@8.0.3-next.0
   - @ledgerhq/hw-transport@6.28.4-next.0
-  - @ledgerhq/hw-transport-node-hid-noevents@6.27.15-next.0
 
 ## 6.27.14
 
@@ -284,7 +228,6 @@
   - @ledgerhq/errors@6.12.5
   - @ledgerhq/devices@8.0.2
   - @ledgerhq/hw-transport@6.28.3
-  - @ledgerhq/hw-transport-node-hid-noevents@6.27.14
 
 ## 6.27.14-next.0
 
@@ -294,7 +237,6 @@
   - @ledgerhq/errors@6.12.5-next.0
   - @ledgerhq/devices@8.0.2-next.0
   - @ledgerhq/hw-transport@6.28.3-next.0
-  - @ledgerhq/hw-transport-node-hid-noevents@6.27.14-next.0
 
 ## 6.27.13
 
@@ -304,7 +246,6 @@
   - @ledgerhq/errors@6.12.4
   - @ledgerhq/devices@8.0.1
   - @ledgerhq/hw-transport@6.28.2
-  - @ledgerhq/hw-transport-node-hid-noevents@6.27.13
 
 ## 6.27.13-next.0
 
@@ -314,7 +255,6 @@
   - @ledgerhq/errors@6.12.4-next.0
   - @ledgerhq/devices@8.0.1-next.0
   - @ledgerhq/hw-transport@6.28.2-next.0
-  - @ledgerhq/hw-transport-node-hid-noevents@6.27.13-next.0
 
 ## 6.27.12
 
@@ -323,7 +263,6 @@
 - Updated dependencies [[`62af25493e`](https://github.com/LedgerHQ/ledger-live/commit/62af25493e2becf897d517af42542db208b971c7)]:
   - @ledgerhq/devices@8.0.0
   - @ledgerhq/hw-transport@6.28.1
-  - @ledgerhq/hw-transport-node-hid-noevents@6.27.12
 
 ## 6.27.12-next.0
 
@@ -332,7 +271,6 @@
 - Updated dependencies [[`62af25493e`](https://github.com/LedgerHQ/ledger-live/commit/62af25493e2becf897d517af42542db208b971c7)]:
   - @ledgerhq/devices@8.0.0-next.0
   - @ledgerhq/hw-transport@6.28.1-next.0
-  - @ledgerhq/hw-transport-node-hid-noevents@6.27.12-next.0
 
 ## 6.27.11
 
@@ -340,7 +278,6 @@
 
 - Updated dependencies [[`c2779b1cab`](https://github.com/LedgerHQ/ledger-live/commit/c2779b1cab18a1d5747ca955f5ceee86db920f57)]:
   - @ledgerhq/hw-transport@6.28.0
-  - @ledgerhq/hw-transport-node-hid-noevents@6.27.11
 
 ## 6.27.11-next.0
 
@@ -348,7 +285,6 @@
 
 - Updated dependencies [[`c2779b1cab`](https://github.com/LedgerHQ/ledger-live/commit/c2779b1cab18a1d5747ca955f5ceee86db920f57)]:
   - @ledgerhq/hw-transport@6.28.0-next.0
-  - @ledgerhq/hw-transport-node-hid-noevents@6.27.11-next.0
 
 ## 6.27.10
 
@@ -358,7 +294,6 @@
   - @ledgerhq/devices@7.0.7
   - @ledgerhq/errors@6.12.3
   - @ledgerhq/hw-transport@6.27.10
-  - @ledgerhq/hw-transport-node-hid-noevents@6.27.10
 
 ## 6.27.10-next.0
 
@@ -368,7 +303,6 @@
   - @ledgerhq/devices@7.0.7-next.0
   - @ledgerhq/errors@6.12.3-next.0
   - @ledgerhq/hw-transport@6.27.10-next.0
-  - @ledgerhq/hw-transport-node-hid-noevents@6.27.10-next.0
 
 ## 6.27.9
 
@@ -378,7 +312,6 @@
   - @ledgerhq/errors@6.12.2
   - @ledgerhq/hw-transport@6.27.9
   - @ledgerhq/devices@7.0.6
-  - @ledgerhq/hw-transport-node-hid-noevents@6.27.9
 
 ## 6.27.9-next.0
 
@@ -388,7 +321,6 @@
   - @ledgerhq/errors@6.12.2-next.0
   - @ledgerhq/hw-transport@6.27.9-next.0
   - @ledgerhq/devices@7.0.6-next.0
-  - @ledgerhq/hw-transport-node-hid-noevents@6.27.9-next.0
 
 ## 6.27.8
 
@@ -398,7 +330,6 @@
   - @ledgerhq/errors@6.12.1
   - @ledgerhq/devices@7.0.5
   - @ledgerhq/hw-transport@6.27.8
-  - @ledgerhq/hw-transport-node-hid-noevents@6.27.8
 
 ## 6.27.8-next.0
 
@@ -408,31 +339,24 @@
   - @ledgerhq/errors@6.12.1-next.0
   - @ledgerhq/devices@7.0.5-next.0
   - @ledgerhq/hw-transport@6.27.8-next.0
-  - @ledgerhq/hw-transport-node-hid-noevents@6.27.8-next.0
 
 ## 6.27.7
 
 ### Patch Changes
 
-- [#1729](https://github.com/LedgerHQ/ledger-live/pull/1729) [`d3c91a53e0`](https://github.com/LedgerHQ/ledger-live/commit/d3c91a53e06f9f47817e96c452f69e2d9f71d80f) Thanks [@gre](https://github.com/gre)! - update node-hid to 2.1.2
-
 - Updated dependencies [[`0308e8c6ae`](https://github.com/LedgerHQ/ledger-live/commit/0308e8c6ae721a99bc50f5dc60db0d11ea8ea1ff), [`d3c91a53e0`](https://github.com/LedgerHQ/ledger-live/commit/d3c91a53e06f9f47817e96c452f69e2d9f71d80f), [`df8cbb8dd1`](https://github.com/LedgerHQ/ledger-live/commit/df8cbb8dd166a66325eb96d8192f3f985b71df60), [`4ad6155953`](https://github.com/LedgerHQ/ledger-live/commit/4ad615595392f5ef806cbd21f0be1b30d3ae73c6), [`24ea9cd15f`](https://github.com/LedgerHQ/ledger-live/commit/24ea9cd15f92d5a2c74c4b936bacb89d5d4d36fd)]:
   - @ledgerhq/errors@6.12.0
   - @ledgerhq/hw-transport@6.27.7
   - @ledgerhq/devices@7.0.4
-  - @ledgerhq/hw-transport-node-hid-noevents@6.27.7
 
 ## 6.27.7-next.0
 
 ### Patch Changes
 
-- [#1729](https://github.com/LedgerHQ/ledger-live/pull/1729) [`d3c91a53e0`](https://github.com/LedgerHQ/ledger-live/commit/d3c91a53e06f9f47817e96c452f69e2d9f71d80f) Thanks [@gre](https://github.com/gre)! - update node-hid to 2.1.2
-
 - Updated dependencies [[`0308e8c6ae`](https://github.com/LedgerHQ/ledger-live/commit/0308e8c6ae721a99bc50f5dc60db0d11ea8ea1ff), [`d3c91a53e0`](https://github.com/LedgerHQ/ledger-live/commit/d3c91a53e06f9f47817e96c452f69e2d9f71d80f), [`df8cbb8dd1`](https://github.com/LedgerHQ/ledger-live/commit/df8cbb8dd166a66325eb96d8192f3f985b71df60), [`4ad6155953`](https://github.com/LedgerHQ/ledger-live/commit/4ad615595392f5ef806cbd21f0be1b30d3ae73c6), [`24ea9cd15f`](https://github.com/LedgerHQ/ledger-live/commit/24ea9cd15f92d5a2c74c4b936bacb89d5d4d36fd)]:
   - @ledgerhq/errors@6.12.0-next.0
   - @ledgerhq/hw-transport@6.27.7-next.0
   - @ledgerhq/devices@7.0.4-next.0
-  - @ledgerhq/hw-transport-node-hid-noevents@6.27.7-next.0
 
 ## 6.27.6
 
@@ -443,7 +367,6 @@
 - Updated dependencies [[`ecac411d7a`](https://github.com/LedgerHQ/ledger-live/commit/ecac411d7aad6f4003503ba6259d7c25017ca7aa)]:
   - @ledgerhq/devices@7.0.3
   - @ledgerhq/errors@6.11.1
-  - @ledgerhq/hw-transport-node-hid-noevents@6.27.6
   - @ledgerhq/hw-transport@6.27.6
   - @ledgerhq/logs@6.10.1
 
@@ -456,7 +379,6 @@
 - Updated dependencies [[`ecac411d7a`](https://github.com/LedgerHQ/ledger-live/commit/ecac411d7aad6f4003503ba6259d7c25017ca7aa)]:
   - @ledgerhq/devices@7.0.3-next.0
   - @ledgerhq/errors@6.11.1-next.0
-  - @ledgerhq/hw-transport-node-hid-noevents@6.27.6-next.0
   - @ledgerhq/hw-transport@6.27.6-next.0
   - @ledgerhq/logs@6.10.1-next.0
 
@@ -468,7 +390,6 @@
   - @ledgerhq/errors@6.11.0
   - @ledgerhq/devices@7.0.2
   - @ledgerhq/hw-transport@6.27.5
-  - @ledgerhq/hw-transport-node-hid-noevents@6.27.5
 
 ## 6.27.5-next.0
 
@@ -478,7 +399,6 @@
   - @ledgerhq/errors@6.11.0-next.0
   - @ledgerhq/devices@7.0.2-next.0
   - @ledgerhq/hw-transport@6.27.5-next.0
-  - @ledgerhq/hw-transport-node-hid-noevents@6.27.5-next.0
 
 ## 6.27.4
 
@@ -488,7 +408,6 @@
   - @ledgerhq/errors@6.10.2
   - @ledgerhq/devices@7.0.1
   - @ledgerhq/hw-transport@6.27.4
-  - @ledgerhq/hw-transport-node-hid-noevents@6.27.4
 
 ## 6.27.4-next.0
 
@@ -498,7 +417,6 @@
   - @ledgerhq/errors@6.10.2-next.0
   - @ledgerhq/devices@7.0.1-next.0
   - @ledgerhq/hw-transport@6.27.4-next.0
-  - @ledgerhq/hw-transport-node-hid-noevents@6.27.4-next.0
 
 ## 6.27.3
 
@@ -506,7 +424,6 @@
 
 - Updated dependencies [[`ecfdd1ebd8`](https://github.com/LedgerHQ/ledger-live/commit/ecfdd1ebd8cc7c4b5bc6315316ce662bb6241311)]:
   - @ledgerhq/hw-transport@6.27.3
-  - @ledgerhq/hw-transport-node-hid-noevents@6.27.3
 
 ## 6.27.3-next.0
 
@@ -514,24 +431,77 @@
 
 - Updated dependencies [[`ecfdd1ebd`](https://github.com/LedgerHQ/ledger-live/commit/ecfdd1ebd8cc7c4b5bc6315316ce662bb6241311)]:
   - @ledgerhq/hw-transport@6.27.3-next.0
-  - @ledgerhq/hw-transport-node-hid-noevents@6.27.3-next.0
 
 ## 6.27.2
 
 ### Patch Changes
 
+- [#364](https://github.com/LedgerHQ/ledger-live/pull/364) [`f538d2974`](https://github.com/LedgerHQ/ledger-live/commit/f538d29745669b2aada6ac34f37cd404c23cf1b8) Thanks [@elbywan](https://github.com/elbywan)! - #### Replace [webpack](https://webpack.js.org/) with [vite.js](https://vitejs.dev/) to speed up the ledger live desktop development process.
+
+  To fully embrace the "bundleless" vite.js approach, it is necessary to transpile our packages contained in the monorepository to the ESM format, and [subpath exports](https://nodejs.org/api/packages.html#subpath-exports) have been added to silently map to commonjs or esm depending on the need.
+
+  #### 🔥 BREAKING CHANGES for `@ledgerhq/live-common`, `@ledgerhq/devices` and `@ledgerhq/hw-app-btc` consumers.
+
+  As highlighted [here](https://github.com/nodejs/node#39994), it is not possible to target folders directly when using subpath exports.
+
+  The workaround is to suffix the call with `/index` (or `/`).
+
+  For instance…
+
+  ```ts
+  import * as currencies from "@ledgerhq/live-common/currencies";
+  ```
+
+  …must be rewritten to…
+
+  ```ts
+  import * as currencies from "@ledgerhq/live-common/currencies/index;";
+  ```
+
+  …or:
+
+  ```ts
+  import * as currencies from "@ledgerhq/live-common/currencies/;";
+  ```
+
 - Updated dependencies [[`203b927b4`](https://github.com/LedgerHQ/ledger-live/commit/203b927b4e5bca3402c85a88c536d519adb18c5f), [`f538d2974`](https://github.com/LedgerHQ/ledger-live/commit/f538d29745669b2aada6ac34f37cd404c23cf1b8)]:
   - @ledgerhq/errors@6.10.1
   - @ledgerhq/devices@7.0.0
-  - @ledgerhq/hw-transport-node-hid-noevents@6.27.2
   - @ledgerhq/hw-transport@6.27.2
 
 ## 6.27.2-next.0
 
 ### Patch Changes
 
+- [#364](https://github.com/LedgerHQ/ledger-live/pull/364) [`f538d2974`](https://github.com/LedgerHQ/ledger-live/commit/f538d29745669b2aada6ac34f37cd404c23cf1b8) Thanks [@elbywan](https://github.com/elbywan)! - #### Replace [webpack](https://webpack.js.org/) with [vite.js](https://vitejs.dev/) to speed up the ledger live desktop development process.
+
+  To fully embrace the "bundleless" vite.js approach, it is necessary to transpile our packages contained in the monorepository to the ESM format, and [subpath exports](https://nodejs.org/api/packages.html#subpath-exports) have been added to silently map to commonjs or esm depending on the need.
+
+  #### 🔥 BREAKING CHANGES for `@ledgerhq/live-common`, `@ledgerhq/devices` and `@ledgerhq/hw-app-btc` consumers.
+
+  As highlighted [here](https://github.com/nodejs/node#39994), it is not possible to target folders directly when using subpath exports.
+
+  The workaround is to suffix the call with `/index` (or `/`).
+
+  For instance…
+
+  ```ts
+  import * as currencies from "@ledgerhq/live-common/currencies";
+  ```
+
+  …must be rewritten to…
+
+  ```ts
+  import * as currencies from "@ledgerhq/live-common/currencies/index;";
+  ```
+
+  …or:
+
+  ```ts
+  import * as currencies from "@ledgerhq/live-common/currencies/;";
+  ```
+
 - Updated dependencies [[`203b927b4`](https://github.com/LedgerHQ/ledger-live/commit/203b927b4e5bca3402c85a88c536d519adb18c5f), [`f538d2974`](https://github.com/LedgerHQ/ledger-live/commit/f538d29745669b2aada6ac34f37cd404c23cf1b8)]:
   - @ledgerhq/errors@6.10.1-next.0
   - @ledgerhq/devices@7.0.0-next.0
-  - @ledgerhq/hw-transport-node-hid-noevents@6.27.2-next.0
   - @ledgerhq/hw-transport@6.27.2-next.0
