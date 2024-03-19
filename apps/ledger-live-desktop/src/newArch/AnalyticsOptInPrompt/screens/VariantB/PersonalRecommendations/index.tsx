@@ -7,9 +7,14 @@ import Track from "~/renderer/analytics/Track";
 interface RecommandationsScreenProps {
   currentTheme: "dark" | "light";
   shouldWeTrack: boolean;
+  handleOpenPrivacyPolicy: () => void;
 }
 
-const RecommandationsScreen = ({ currentTheme, shouldWeTrack }: RecommandationsScreenProps) => {
+const RecommandationsScreen = ({
+  currentTheme,
+  shouldWeTrack,
+  handleOpenPrivacyPolicy,
+}: RecommandationsScreenProps) => {
   const listItems = [
     "analyticsOptInPrompt.variantB.personalRecommendations.details.1",
     "analyticsOptInPrompt.variantB.personalRecommendations.details.2",
@@ -21,6 +26,7 @@ const RecommandationsScreen = ({ currentTheme, shouldWeTrack }: RecommandationsS
     listItems,
     title,
     description,
+    handleOpenPrivacyPolicy,
   };
 
   return (

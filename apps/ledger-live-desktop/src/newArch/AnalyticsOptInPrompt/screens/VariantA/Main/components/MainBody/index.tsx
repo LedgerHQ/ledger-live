@@ -13,7 +13,11 @@ const BodyBox = styled(Box)`
   max-height: calc(100vh - 26%);
 `;
 
-const MainBody = () => {
+interface MainBodyProps {
+  handleOpenPrivacyPolicy: () => void;
+}
+
+const MainBody = ({ handleOpenPrivacyPolicy }: MainBodyProps) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
 
@@ -44,7 +48,7 @@ const MainBody = () => {
         items={fields.whatWeDoNotTrack}
         variant="error"
       />
-      <RevokeInfoField />
+      <RevokeInfoField handleOpenPrivacyPolicy={handleOpenPrivacyPolicy} />
     </BodyBox>
   );
 };

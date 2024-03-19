@@ -7,9 +7,10 @@ import Track from "~/renderer/analytics/Track";
 
 interface MainProps {
   shouldWeTrack: boolean;
+  handleOpenPrivacyPolicy: () => void;
 }
 
-const Main = ({ shouldWeTrack }: MainProps) => {
+const Main = ({ shouldWeTrack, handleOpenPrivacyPolicy }: MainProps) => {
   const { pathname } = useLocation();
   const paddingTop = pathname === "/" ? "40px" : undefined;
 
@@ -23,7 +24,7 @@ const Main = ({ shouldWeTrack }: MainProps) => {
       />
       <Flex flexDirection={"column"} rowGap={"32px"} mx={"40px"} height={"100%"} pt={paddingTop}>
         <HeaderTitle title={"analyticsOptInPrompt.common.title"} />
-        <MainBody />
+        <MainBody handleOpenPrivacyPolicy={handleOpenPrivacyPolicy} />
       </Flex>
     </>
   );

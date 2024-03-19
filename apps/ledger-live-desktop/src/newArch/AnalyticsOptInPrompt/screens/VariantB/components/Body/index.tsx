@@ -16,9 +16,10 @@ interface BodyProps {
   title: string;
   description: string;
   listItems: string[];
+  handleOpenPrivacyPolicy: () => void;
 }
 
-const Body = ({ title, description, listItems }: BodyProps) => {
+const Body = ({ title, description, listItems, handleOpenPrivacyPolicy }: BodyProps) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
 
@@ -48,7 +49,7 @@ const Body = ({ title, description, listItems }: BodyProps) => {
             </li>
           ))}
         </ul>
-        <RevokeInfoField />
+        <RevokeInfoField handleOpenPrivacyPolicy={handleOpenPrivacyPolicy} />
       </BodyBox>
     </>
   );

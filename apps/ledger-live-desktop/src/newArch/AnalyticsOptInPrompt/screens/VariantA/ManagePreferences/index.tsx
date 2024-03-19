@@ -8,9 +8,14 @@ import Track from "~/renderer/analytics/Track";
 interface ManagePreferencesProps {
   onPreferencesChange: (preferences: Record<FieldKeySwitch, boolean>) => void;
   shouldWeTrack: boolean;
+  handleOpenPrivacyPolicy: () => void;
 }
 
-const ManagePreferences = ({ onPreferencesChange, shouldWeTrack }: ManagePreferencesProps) => {
+const ManagePreferences = ({
+  onPreferencesChange,
+  shouldWeTrack,
+  handleOpenPrivacyPolicy,
+}: ManagePreferencesProps) => {
   const [preferencesChecked, setPreferencesChecked] = useState<Record<FieldKeySwitch, boolean>>({
     AnalyticsData: false,
     PersonalizationData: false,
@@ -34,7 +39,10 @@ const ManagePreferences = ({ onPreferencesChange, shouldWeTrack }: ManagePrefere
       />
       <Flex flexDirection={"column"} rowGap={"32px"} mx={"40px"} height={"100%"}>
         <HeaderTitle title={"analyticsOptInPrompt.variantA.managePreferences"} />
-        <ManagePreferencesBody onSwitchChange={handleSwitchChange} />
+        <ManagePreferencesBody
+          onSwitchChange={handleSwitchChange}
+          handleOpenPrivacyPolicy={handleOpenPrivacyPolicy}
+        />
       </Flex>
     </>
   );

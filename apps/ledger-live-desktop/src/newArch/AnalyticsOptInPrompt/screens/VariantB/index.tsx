@@ -14,7 +14,7 @@ interface VariantBProps {
 }
 
 const VariantB = ({ entryPoint, onSubmit, step, setStep }: VariantBProps) => {
-  const { currentTheme, clickOptions, shouldWeTrack } = useVariantB({
+  const { currentTheme, clickOptions, shouldWeTrack, handleOpenPrivacyPolicy } = useVariantB({
     entryPoint,
     onSubmit,
     step,
@@ -26,7 +26,11 @@ const VariantB = ({ entryPoint, onSubmit, step, setStep }: VariantBProps) => {
         {step === 0 ? (
           <AnalyticsScreen currentTheme={currentTheme} shouldWeTrack={shouldWeTrack} />
         ) : (
-          <RecommandationsScreen currentTheme={currentTheme} shouldWeTrack={shouldWeTrack} />
+          <RecommandationsScreen
+            handleOpenPrivacyPolicy={handleOpenPrivacyPolicy}
+            currentTheme={currentTheme}
+            shouldWeTrack={shouldWeTrack}
+          />
         )}
       </Flex>
       <Footer clickOptions={clickOptions} />

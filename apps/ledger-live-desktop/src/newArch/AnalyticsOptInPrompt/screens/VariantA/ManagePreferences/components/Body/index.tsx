@@ -15,9 +15,13 @@ const BodyBox = styled(Box)`
 
 interface ManagePreferencesBodyProps {
   onSwitchChange: (key: FieldKeySwitch) => void;
+  handleOpenPrivacyPolicy: () => void;
 }
 
-const ManagePreferencesBody = ({ onSwitchChange }: ManagePreferencesBodyProps) => {
+const ManagePreferencesBody = ({
+  onSwitchChange,
+  handleOpenPrivacyPolicy,
+}: ManagePreferencesBodyProps) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const [checked, setChecked] = useState<Record<FieldKeySwitch, boolean>>({
@@ -86,7 +90,7 @@ const ManagePreferencesBody = ({ onSwitchChange }: ManagePreferencesBodyProps) =
           );
         })}
       </Flex>
-      <RevokeInfoField />
+      <RevokeInfoField handleOpenPrivacyPolicy={handleOpenPrivacyPolicy} />
     </BodyBox>
   );
 };

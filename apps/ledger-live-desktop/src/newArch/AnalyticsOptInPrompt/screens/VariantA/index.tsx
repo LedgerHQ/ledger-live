@@ -20,6 +20,7 @@ const VariantA = ({ onSubmit, entryPoint, step, setStep }: VariantAProps) => {
     handleShareCustomAnalyticsChange,
     handlePreferencesChange,
     shouldWeTrack,
+    handleOpenPrivacyPolicy,
   } = useVariantA({
     onSubmit,
     entryPoint,
@@ -28,7 +29,7 @@ const VariantA = ({ onSubmit, entryPoint, step, setStep }: VariantAProps) => {
 
   return step === 0 ? (
     <>
-      <Main shouldWeTrack={shouldWeTrack} />
+      <Main shouldWeTrack={shouldWeTrack} handleOpenPrivacyPolicy={handleOpenPrivacyPolicy} />
       <MainFooter
         setWantToManagePreferences={onManagePreferencesClick}
         onShareAnalyticsChange={handleShareAnalyticsChange}
@@ -39,6 +40,7 @@ const VariantA = ({ onSubmit, entryPoint, step, setStep }: VariantAProps) => {
       <ManagePreferences
         onPreferencesChange={handlePreferencesChange}
         shouldWeTrack={shouldWeTrack}
+        handleOpenPrivacyPolicy={handleOpenPrivacyPolicy}
       />
       <ManagePreferencesFooter onShareClick={handleShareCustomAnalyticsChange} />
     </>

@@ -28,7 +28,7 @@ const useVariantA = ({ onSubmit, entryPoint, setStep }: UseVariantAProps) => {
     PersonalizationData: false,
   });
 
-  const { flow, shouldWeTrack } = useAnalyticsOptInPrompt({ entryPoint });
+  const { flow, shouldWeTrack, handleOpenPrivacyPolicy } = useAnalyticsOptInPrompt({ entryPoint });
 
   const onManagePreferencesClick = () => {
     setStep(1);
@@ -98,6 +98,7 @@ const useVariantA = ({ onSubmit, entryPoint, setStep }: UseVariantAProps) => {
     handleShareCustomAnalyticsChange,
     handlePreferencesChange,
     shouldWeTrack,
+    handleOpenPrivacyPolicy,
   };
 };
 

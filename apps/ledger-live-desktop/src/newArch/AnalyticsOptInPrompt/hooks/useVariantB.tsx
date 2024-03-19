@@ -21,7 +21,7 @@ export const useVariantB = ({ entryPoint, onSubmit, step, setStep }: UseVariantB
   const variant = ABTestingVariants.variantB;
   const dispatch = useDispatch();
   const currentTheme = useSelector(themeSelector);
-  const { flow, shouldWeTrack } = useAnalyticsOptInPrompt({ entryPoint });
+  const { flow, shouldWeTrack, handleOpenPrivacyPolicy } = useAnalyticsOptInPrompt({ entryPoint });
 
   const goToPersonalizedRecommandations = () => {
     setStep(1);
@@ -86,5 +86,6 @@ export const useVariantB = ({ entryPoint, onSubmit, step, setStep }: UseVariantB
     step,
     setStep,
     shouldWeTrack,
+    handleOpenPrivacyPolicy,
   };
 };

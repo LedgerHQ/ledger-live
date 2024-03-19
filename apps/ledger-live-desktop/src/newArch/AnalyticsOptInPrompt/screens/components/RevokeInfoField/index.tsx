@@ -1,19 +1,15 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { Flex, Text, Link } from "@ledgerhq/react-ui";
 import { useTheme } from "styled-components";
-import { urls } from "~/config/urls";
-import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
-import { openURL } from "~/renderer/linking";
 
-const RevokeInfoField = () => {
+interface RevokeInfoFieldProps {
+  handleOpenPrivacyPolicy: () => void;
+}
+
+const RevokeInfoField = ({ handleOpenPrivacyPolicy }: RevokeInfoFieldProps) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const privacyPolicyUrl = useLocalizedUrl(urls.privacyPolicy);
-
-  const handleOpenPrivacyPolicy = useCallback(() => {
-    openURL(privacyPolicyUrl);
-  }, [privacyPolicyUrl]);
 
   return (
     <Flex flexDirection={"column"} alignItems={"start"}>
