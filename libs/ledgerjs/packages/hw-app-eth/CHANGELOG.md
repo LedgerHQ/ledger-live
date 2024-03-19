@@ -1,5 +1,18 @@
 # @ledgerhq/hw-app-eth
 
+## 6.36.0-nightly.3
+
+### Minor Changes
+
+- [#6290](https://github.com/LedgerHQ/ledger-live/pull/6290) [`08c9779`](https://github.com/LedgerHQ/ledger-live/commit/08c9779659628e4e22ac99a152049ac3fa2745fa) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add option to specificy the `chainId` during a `getAddress` which will display the network name and logo on a Stax device
+
+### Patch Changes
+
+- Updated dependencies [[`52d5703`](https://github.com/LedgerHQ/ledger-live/commit/52d57039bb015af2616670db480364a2e5fc9966)]:
+  - @ledgerhq/types-live@6.45.0-nightly.2
+  - @ledgerhq/domain-service@1.1.19-nightly.3
+  - @ledgerhq/evm-tools@1.0.17-nightly.0
+
 ## 6.35.7-nightly.2
 
 ### Patch Changes

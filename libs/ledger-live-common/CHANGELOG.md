@@ -1,5 +1,23 @@
 # @ledgerhq/live-common
 
+## 33.7.0-nightly.5
+
+### Patch Changes
+
+- [#6459](https://github.com/LedgerHQ/ledger-live/pull/6459) [`52d5703`](https://github.com/LedgerHQ/ledger-live/commit/52d57039bb015af2616670db480364a2e5fc9966) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Remove depositNetworkBannerMobile feature flag
+
+- Updated dependencies [[`08c9779`](https://github.com/LedgerHQ/ledger-live/commit/08c9779659628e4e22ac99a152049ac3fa2745fa), [`08c9779`](https://github.com/LedgerHQ/ledger-live/commit/08c9779659628e4e22ac99a152049ac3fa2745fa), [`381023d`](https://github.com/LedgerHQ/ledger-live/commit/381023de2617aa09829a8b5dad7b0ba2c846328e)]:
+  - @ledgerhq/coin-evm@0.13.0-nightly.4
+  - @ledgerhq/hw-app-eth@6.36.0-nightly.3
+  - @ledgerhq/coin-framework@0.12.0-nightly.3
+  - @ledgerhq/coin-algorand@0.4.0-nightly.4
+  - @ledgerhq/coin-bitcoin@0.4.0-nightly.1
+  - @ledgerhq/coin-near@0.3.11-nightly.4
+  - @ledgerhq/coin-polkadot@0.6.0-nightly.4
+  - @ledgerhq/live-countervalues@0.1.3-nightly.4
+  - @ledgerhq/live-countervalues-react@0.1.3-nightly.4
+  - @ledgerhq/live-nft@0.2.2-nightly.4
+
 ## 33.7.0-nightly.4
 
 ### Minor Changes

@@ -1,5 +1,24 @@
 # live-mobile
 
+## 3.41.0-nightly.6
+
+### Patch Changes
+
+- [#6282](https://github.com/LedgerHQ/ledger-live/pull/6282) [`dfd65bd`](https://github.com/LedgerHQ/ledger-live/commit/dfd65bdcc8398776fbf53435595613c05e39413b) Thanks [@LucasWerey](https://github.com/LucasWerey)! - LLM ANDROID fix flag secure when app is background
+
+- [#6459](https://github.com/LedgerHQ/ledger-live/pull/6459) [`52d5703`](https://github.com/LedgerHQ/ledger-live/commit/52d57039bb015af2616670db480364a2e5fc9966) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Remove depositNetworkBannerMobile feature flag
+
+- Updated dependencies [[`08c9779`](https://github.com/LedgerHQ/ledger-live/commit/08c9779659628e4e22ac99a152049ac3fa2745fa), [`52d5703`](https://github.com/LedgerHQ/ledger-live/commit/52d57039bb015af2616670db480364a2e5fc9966), [`381023d`](https://github.com/LedgerHQ/ledger-live/commit/381023de2617aa09829a8b5dad7b0ba2c846328e)]:
+  - @ledgerhq/coin-evm@0.13.0-nightly.4
+  - @ledgerhq/types-live@6.45.0-nightly.2
+  - @ledgerhq/live-common@33.7.0-nightly.5
+  - @ledgerhq/coin-framework@0.12.0-nightly.3
+  - @ledgerhq/domain-service@1.1.19-nightly.3
+  - @ledgerhq/live-countervalues@0.1.3-nightly.4
+  - @ledgerhq/live-countervalues-react@0.1.3-nightly.4
+  - @ledgerhq/live-nft@0.2.2-nightly.4
+  - @ledgerhq/live-nft-react@0.2.2-nightly.4
+
 ## 3.41.0-nightly.5
 
 ### Patch Changes

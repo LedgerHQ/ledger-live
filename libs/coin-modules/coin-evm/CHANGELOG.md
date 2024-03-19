@@ -1,5 +1,20 @@
 # @ledgerhq/coin-evm
 
+## 0.13.0-nightly.4
+
+### Minor Changes
+
+- [#6290](https://github.com/LedgerHQ/ledger-live/pull/6290) [`08c9779`](https://github.com/LedgerHQ/ledger-live/commit/08c9779659628e4e22ac99a152049ac3fa2745fa) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add `chainId` while using the `hw-getAddress` method to display the network name and logo on a Stax device
+
+- [#6422](https://github.com/LedgerHQ/ledger-live/pull/6422) [`381023d`](https://github.com/LedgerHQ/ledger-live/commit/381023de2617aa09829a8b5dad7b0ba2c846328e) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fix Operations' amount depending if failure and remove internal operations from a failed coin operation
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@0.12.0-nightly.3
+  - @ledgerhq/domain-service@1.1.19-nightly.3
+  - @ledgerhq/evm-tools@1.0.17-nightly.0
+
 ## 0.13.0-nightly.3
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.45.0-nightly.2
+
+### Patch Changes
+
+- [#6459](https://github.com/LedgerHQ/ledger-live/pull/6459) [`52d5703`](https://github.com/LedgerHQ/ledger-live/commit/52d57039bb015af2616670db480364a2e5fc9966) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Remove depositNetworkBannerMobile feature flag
+
 ## 6.45.0-nightly.1
 
 ### Minor Changes
