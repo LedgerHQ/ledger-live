@@ -320,7 +320,9 @@
     "@types/qs",
     "@ledgerhq/hw-transport-mocker",
     "bip32",
-    "bip39"
+    "bip39",
+    "yargs",
+    "tsx"
   ],
   "ignoreUnresolved": [
     "../../Image/Image",

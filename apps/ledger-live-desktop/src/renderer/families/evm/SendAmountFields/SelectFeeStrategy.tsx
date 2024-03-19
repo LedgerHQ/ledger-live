@@ -28,6 +28,7 @@ type Props = {
   gasOptions: GasOptions;
   transactionToUpdate?: EvmTransaction;
   status: TransactionStatus;
+  disableSlowStrategy?: boolean;
 };
 
 const FeesWrapper = styled(Tabbable)<{ error?: boolean }>`
@@ -91,6 +92,7 @@ const SelectFeeStrategy = ({
   account,
   onClick,
   gasOptions,
+  disableSlowStrategy,
   transactionToUpdate,
   status,
 }: Props) => {
@@ -106,11 +108,12 @@ const SelectFeeStrategy = ({
         const estimatedFees = getEstimatedFees(getTypedTransaction(transaction, gasOption));
 
         const disabled =
-          !!transactionToUpdate &&
-          isStrategyDisabled({
-            transaction: transactionToUpdate,
-            feeData: gasOption,
-          });
+          (!!transactionToUpdate &&
+            isStrategyDisabled({
+              transaction: transactionToUpdate,
+              feeData: gasOption,
+            })) ||
+          (strategy === "slow" && disableSlowStrategy);
         const selected = !disabled && transaction.feesStrategy === strategy;
 
         return (
@@ -205,7 +208,16 @@ const SelectFeeStrategy = ({
           </FeesWrapper>
         );
       }),
-    [accountUnit, feesCurrency, gasOptions, messageGas, onClick, transaction, transactionToUpdate],
+    [
+      accountUnit,
+      feesCurrency,
+      gasOptions,
+      messageGas,
+      onClick,
+      transaction,
+      disableSlowStrategy,
+      transactionToUpdate,
+    ],
   );
 
   return (

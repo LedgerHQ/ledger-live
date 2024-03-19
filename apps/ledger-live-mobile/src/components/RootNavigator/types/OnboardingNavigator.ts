@@ -55,6 +55,8 @@ export type OnboardingNavigatorParamList = {
     success: boolean;
     deviceModelId: DeviceModelId;
   };
-  [ScreenName.OnboardingBleDevicePairingFlow]: undefined;
+  [ScreenName.OnboardingBleDevicePairingFlow]: {
+    filterByDeviceModelId: DeviceModelId;
+  };
   [NavigatorName.AnalyticsOptInPrompt]: NavigatorScreenParams<AnalyticsOptInPromptNavigatorParamList>;
 };

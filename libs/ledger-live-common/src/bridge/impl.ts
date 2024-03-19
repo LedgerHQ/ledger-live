@@ -12,7 +12,7 @@ export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
     const mockBridge = mockBridges[currency.family];
     if (mockBridge) return mockBridge.currencyBridge;
     throw new CurrencyNotSupported("no mock implementation available for currency " + currency.id, {
-      currencyName: currency.name,
+      currencyName: currency.id,
     });
   }
 
@@ -22,7 +22,7 @@ export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge => {
   }
 
   throw new CurrencyNotSupported("no implementation available for currency " + currency.id, {
-    currencyName: currency.name,
+    currencyName: currency.id,
   });
 };
 
@@ -42,7 +42,7 @@ export const getAccountBridge = (
     return getAccountBridgeByFamily(currency.family, mainAccount.id);
   } catch {
     throw new CurrencyNotSupported("currency not supported " + currency.id, {
-      currencyName: currency.name,
+      currencyName: currency.id,
     });
   }
 };

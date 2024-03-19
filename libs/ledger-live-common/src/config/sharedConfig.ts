@@ -23,7 +23,7 @@ import { vechainConfig } from "../families/vechain/config";
 
 const liveCommonConfig: ConfigSchema = {};
 
-export default {
+export const liveConfig: ConfigSchema = {
   ...liveCommonConfig,
   ...algorandConfig,
   ...bitcoinConfig,
@@ -46,4 +46,4 @@ export default {
   ...tezosConfig,
   ...tronConfig,
   ...vechainConfig,
-} as ConfigSchema;
+};

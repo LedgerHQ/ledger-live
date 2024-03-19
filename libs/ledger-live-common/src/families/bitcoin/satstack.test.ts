@@ -13,8 +13,8 @@ import {
   SatStackConfig,
   SatStackStatus,
 } from "./satstack";
-import dataset from "./datasets/bitcoin";
-import { inferDescriptorFromAccount, AccountDescriptor } from "./descriptor";
+import dataset from "@ledgerhq/coin-bitcoin/datasets/bitcoin";
+import { inferDescriptorFromAccount, AccountDescriptor } from "@ledgerhq/coin-bitcoin/descriptor";
 import { setEnv } from "@ledgerhq/live-env";
 import { fromAccountRaw } from "../../account";
 import { setSupportedCurrencies } from "../../currencies";

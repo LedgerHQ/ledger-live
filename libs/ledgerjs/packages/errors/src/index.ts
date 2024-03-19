@@ -138,6 +138,8 @@ export const DeviceShouldStayInApp = createCustomErrorClass("DeviceShouldStayInA
 export const WebsocketConnectionError = createCustomErrorClass("WebsocketConnectionError");
 export const WebsocketConnectionFailed = createCustomErrorClass("WebsocketConnectionFailed");
 export const WrongDeviceForAccount = createCustomErrorClass("WrongDeviceForAccount");
+export const WrongDeviceForAccountPayout = createCustomErrorClass("WrongDeviceForAccountPayout");
+export const WrongDeviceForAccountRefund = createCustomErrorClass("WrongDeviceForAccountRefund");
 export const WrongAppForCurrency = createCustomErrorClass("WrongAppForCurrency");
 
 export const ETHAddressNonEIP = createCustomErrorClass("ETHAddressNonEIP");

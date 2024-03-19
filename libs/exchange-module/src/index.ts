@@ -2,8 +2,9 @@ import { CustomModule, Transaction, serializeTransaction } from "@ledgerhq/walle
 import {
   ExchangeCompleteParams,
   ExchangeCompleteResult,
-  ExchangeStartParams,
+  ExchangeStartFundParams,
   ExchangeStartResult,
+  ExchangeStartSellParams,
   ExchangeStartSwapParams,
 } from "./types";
 
@@ -17,11 +18,29 @@ export class ExchangeModule extends CustomModule {
    *
    * @returns - A transaction ID used to complete the exchange process
    */
-  async start(exchangeType: ExchangeStartParams["exchangeType"]) {
-    const result = await this.request<ExchangeStartParams, ExchangeStartResult>(
+  async startFund() {
+    const result = await this.request<ExchangeStartFundParams, ExchangeStartResult>(
       "custom.exchange.start",
       {
-        exchangeType,
+        exchangeType: "FUND",
+      },
+    );
+
+    return result.transactionId;
+  }
+
+  /**
+   * Start the exchange process by generating a nonce on Ledger device
+   * @param provider - provider's id
+   *
+   * @returns - A transaction ID used to complete the exchange process
+   */
+  async startSell({ provider }: Omit<ExchangeStartSellParams, "exchangeType">) {
+    const result = await this.request<ExchangeStartSellParams, ExchangeStartResult>(
+      "custom.exchange.start",
+      {
+        exchangeType: "SELL",
+        provider,
       },
     );
 

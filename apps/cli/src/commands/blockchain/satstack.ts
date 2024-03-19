@@ -1,13 +1,13 @@
 import fs from "fs";
 import invariant from "invariant";
-import { from, of, forkJoin } from "rxjs";
+import { from, of, forkJoin, firstValueFrom } from "rxjs";
 import { map, reduce, first, catchError } from "rxjs/operators";
 import { setEnv } from "@ledgerhq/live-env";
+import Btc from "@ledgerhq/hw-app-btc";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import {
-  AccountDescriptor,
-  scanDescriptors,
-} from "@ledgerhq/live-common/families/bitcoin/descriptor";
+import { AccountDescriptor, scanDescriptors } from "@ledgerhq/coin-bitcoin/descriptor";
+import type { SignerContext } from "@ledgerhq/coin-bitcoin/signer";
+import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import {
   parseSatStackConfig,
   stringifySatStackConfig,
@@ -17,6 +17,7 @@ import {
 } from "@ledgerhq/live-common/families/bitcoin/satstack";
 import { deviceOpt } from "../../scan";
 import { jsonFromFile } from "../../stream";
+
 const bitcoin = getCryptoCurrencyById("bitcoin");
 
 function requiredNodeConfig(nodeConfig) {
@@ -98,9 +99,17 @@ export default {
           first(),
           catchError(() => of(null)),
         );
+    const signerContext: SignerContext = <T>(
+      deviceId,
+      currency,
+      fn: (signer: Btc) => Promise<T>,
+    ): Promise<T> =>
+      firstValueFrom(
+        withDevice(deviceId)(transport => from(fn(new Btc({ transport, currency: currency.id })))),
+      );
     const maybeDescriptorsO = noDevice
       ? of([])
-      : scanDescriptors(device || "", bitcoin).pipe(
+      : scanDescriptors(device || "", bitcoin, signerContext).pipe(
           reduce((acc, item) => acc.concat(item), [] as AccountDescriptor[]),
         );
     const maybeNodeConfigOverride = rpcHOST

@@ -266,10 +266,6 @@ const MainSideBar = () => {
     push("/card");
     trackEntry("card");
   }, [push, trackEntry]);
-  const handleClickLearn = useCallback(() => {
-    push("/learn");
-    trackEntry("learn");
-  }, [push, trackEntry]);
   const handleClickDashboard = useCallback(() => {
     push("/");
     trackEntry("/portfolio");
@@ -398,18 +394,6 @@ const MainSideBar = () => {
                   isActive={location.pathname.startsWith("/market")}
                   collapsed={secondAnim}
                 />
-                <FeatureToggle featureId="learn">
-                  <SideBarListItem
-                    id="learn"
-                    label={t("sidebar.learn")}
-                    icon={IconsLegacy.NewsMedium}
-                    iconSize={20}
-                    iconActiveColor="wallet"
-                    isActive={location.pathname.startsWith("/learn")}
-                    onClick={handleClickLearn}
-                    collapsed={secondAnim}
-                  />
-                </FeatureToggle>
                 <SideBarListItem
                   id={"accounts"}
                   label={t("sidebar.accounts")}
