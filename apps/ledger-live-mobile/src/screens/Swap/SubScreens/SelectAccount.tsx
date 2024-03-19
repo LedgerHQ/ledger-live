@@ -6,10 +6,7 @@ import { Flex, IconsLegacy, Text, BoxedIcon } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency, flattenAccounts } from "@ledgerhq/live-common/account/index";
-import {
-  accountWithMandatoryTokens,
-  getAccountSpendableBalance,
-} from "@ledgerhq/live-common/account/helpers";
+import { accountWithMandatoryTokens } from "@ledgerhq/live-common/account/helpers";
 import { TrackScreen, useAnalytics } from "~/analytics";
 import AccountCard from "~/components/AccountCard";
 import FilteredSearchBar from "~/components/FilteredSearchBar";
@@ -91,18 +88,6 @@ export function SelectAccount({ navigation, route: { params } }: SelectAccountPa
     [navigation, target, selectedCurrency],
   );
 
-  /**
-   * Show spendable account balance
-   */
-  const getSpendableAccount = useCallback((item: AccountLike) => {
-    const balance = getAccountSpendableBalance(item);
-    const account: AccountLike = {
-      ...item,
-      balance,
-    };
-    return account;
-  }, []);
-
   const renderItem = useCallback(
     ({ item }: { item: SearchResult }) => {
       const styleProps =
@@ -118,14 +103,14 @@ export function SelectAccount({ navigation, route: { params } }: SelectAccountPa
         <Flex {...styleProps}>
           <AccountCard
             disabled={item.account.disabled}
-            account={getSpendableAccount(item.account)}
+            account={item.account}
             style={styles.card}
             onPress={() => onSelect(item.account)}
           />
         </Flex>
       );
     },
-    [onSelect, getSpendableAccount],
+    [onSelect],
   );
 
   const onAddAccount = useCallback(() => {

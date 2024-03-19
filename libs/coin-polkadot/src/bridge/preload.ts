@@ -2,7 +2,7 @@
 import { BigNumber } from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import type { PolkadotPreloadData, PolkadotStakingProgress, PolkadotValidator } from "../types";
-import polkadotAPI from "../network";
+import { PolkadotAPI } from "../network";
 import { loadPolkadotCrypto } from "../logic/polkadot-crypto"; //FIXME: Polkadot SDK should not be used in bridge
 import { getCurrentPolkadotPreloadData, setPolkadotPreloadData } from "../logic";
 
@@ -77,7 +77,7 @@ const shouldRefreshValidators = (
   return !previousState || currentState.activeEra !== previousState.activeEra;
 };
 
-export const preload = async (): Promise<PolkadotPreloadData> => {
+export const preload = (polkadotAPI: PolkadotAPI) => async (): Promise<PolkadotPreloadData> => {
   await loadPolkadotCrypto();
   await polkadotAPI.getRegistry(); // ensure registry is already in cache.
   const minimumBondBalance = await polkadotAPI.getMinimumBondBalance().toString();

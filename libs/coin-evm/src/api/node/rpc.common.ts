@@ -245,7 +245,7 @@ export const getBlockByHeight: NodeApi["getBlockByHeight"] = (currency, blockHei
 export const getOptimismAdditionalFees: NodeApi["getOptimismAdditionalFees"] = makeLRUCache(
   async (currency, transaction) =>
     withApi(currency, async api => {
-      if (!["optimism", "optimism_goerli", "base", "base_sepolia"].includes(currency.id)) {
+      if (!["optimism", "optimism_goerli", "base", "base_goerli"].includes(currency.id)) {
         return new BigNumber(0);
       }
 
@@ -257,12 +257,10 @@ export const getOptimismAdditionalFees: NodeApi["getOptimismAdditionalFees"] = m
             s: "0xffffffffffffffffffffffffffffffffffffffff",
             v: 0,
           });
-        } catch (error) {
-          log("coin-evm", "getOptimismAdditionalFees: Transaction serializing failed", { error });
+        } catch (e) {
           return null;
         }
       })();
-
       if (!serializedTransaction) {
         return new BigNumber(0);
       }

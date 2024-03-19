@@ -1,4 +1,4 @@
 {
-  "entry": ["src/logic.ts", "src/api/index.ts", "src/types.ts", "src/portfolio.ts"],
+  "entry": ["src/logic.ts", "src/api/index.ts", "src/types.ts"],
   "ignoreUnused": ["@ledgerhq/cryptoassets"]
 }

@@ -1,9 +1,5 @@
 import { BigNumber } from "bignumber.js";
-
-export enum Methods {
-  Transfer = 0,
-  InvokeEVM = 3844450837,
-}
+import { Methods } from "@zondax/izari-filecoin/artifacts";
 
 export enum BotScenario {
   DEFAULT = "default",

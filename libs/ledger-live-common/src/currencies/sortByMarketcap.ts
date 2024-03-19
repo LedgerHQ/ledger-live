@@ -23,16 +23,16 @@ export const sortCurrenciesByIds = <C extends Currency>(currencies: C[], ids: st
   return [...all];
 };
 
-/**
- * @deprecated live-countervalues-react context unify a single fetch of this API data, so you may want to just use `useCurrenciesByMarketcap` instead OR get the marketcapIds from that context and directly use sortByCurrenciesById function
- */
+let marketcapIdsCache;
+export const getMarketcapIdsSync = () => marketcapIdsCache;
+
 export const fetchMarketcapIds: () => Promise<string[]> = makeLRUCache(() =>
-  api.fetchIdsSortedByMarketcap(),
+  api.fetchIdsSortedByMarketcap().then(ids => {
+    marketcapIdsCache = ids;
+    return ids;
+  }),
 );
 
-/**
- * @deprecated live-countervalues-react context unify a single fetch of this API data, so you may want to just use `useCurrenciesByMarketcap` instead OR get the marketcapIds from that context and directly use sortByCurrenciesById function
- */
 export const currenciesByMarketcap = <C extends Currency>(currencies: C[]): Promise<C[]> =>
   fetchMarketcapIds().then(
     ids => sortCurrenciesByIds(currencies, ids),

@@ -1,26 +1,13 @@
-import React, { useEffect, useMemo } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { Flex, Text, Switch } from "@ledgerhq/native-ui";
 import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
-import { isAccount } from "@ledgerhq/live-common/account/index";
 import { useAnalytics } from "~/analytics";
 import { sharedSwapTracking } from "../utils";
 
 export function Max({ swapTx }: { swapTx: SwapTransactionType }) {
   const { t } = useTranslation();
   const { track } = useAnalytics();
-
-  const isMaxButtonDisabled = useMemo(
-    () => isAccount(swapTx.swap.from.account),
-    [swapTx.swap.from.account],
-  );
-
-  useEffect(() => {
-    if (isMaxButtonDisabled && swapTx.swap.isMaxEnabled) {
-      swapTx.toggleMax();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isMaxButtonDisabled, swapTx.swap.isMaxEnabled]);
 
   const onToggle = (event: boolean) => {
     track("button_clicked", {
@@ -39,7 +26,6 @@ export function Max({ swapTx }: { swapTx: SwapTransactionType }) {
         </Text>
 
         <Switch
-          disabled={isMaxButtonDisabled}
           testID="exchange-send-max-toggle"
           checked={swapTx.swap.isMaxEnabled}
           onChange={onToggle}

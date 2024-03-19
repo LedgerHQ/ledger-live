@@ -32,7 +32,7 @@ export const SAFE_REORG_THRESHOLD = 80;
  * Main synchronization process
  * Get the main Account and the potential TokenAccounts linked to it
  */
-export const getAccountShape: GetAccountShape = async (infos, { blacklistedTokenIds }) => {
+export const getAccountShape: GetAccountShape = async infos => {
   const { initialAccount, address, derivationMode, currency } = infos;
   const nodeApi = getNodeApi(currency);
   const [latestBlock, balance] = await Promise.all([
@@ -47,7 +47,7 @@ export const getAccountShape: GetAccountShape = async (infos, { blacklistedToken
     xpubOrAddress: address,
     derivationMode,
   });
-  const syncHash = getSyncHash(currency, blacklistedTokenIds);
+  const syncHash = getSyncHash(currency);
   // Due to some changes (as of now: new/updated tokens) we could need to force a sync from 0
   const shouldSyncFromScratch = syncHash !== initialAccount?.syncHash;
 
@@ -84,12 +84,7 @@ export const getAccountShape: GetAccountShape = async (infos, { blacklistedToken
       }
     })();
 
-  const newSubAccounts = await getSubAccounts(
-    infos,
-    accountId,
-    lastTokenOperations,
-    blacklistedTokenIds,
-  );
+  const newSubAccounts = await getSubAccounts(infos, accountId, lastTokenOperations);
   const subAccounts = shouldSyncFromScratch
     ? newSubAccounts
     : mergeSubAccounts(initialAccount, newSubAccounts); // Merging potential new subAccouns while preserving the references
@@ -109,7 +104,6 @@ export const getAccountShape: GetAccountShape = async (infos, { blacklistedToken
     lastTokenOperations,
     lastNftOperations,
     lastInternalOperations,
-    { blacklistedTokenIds },
   );
   const newOperations = [...confirmedOperations, ...lastCoinOperationsWithAttachements];
   const operations =
@@ -151,7 +145,6 @@ export const getSubAccounts = async (
   infos: AccountShapeInfo,
   accountId: string,
   lastTokenOperations: Operation[],
-  blacklistedTokenIds: string[] = [],
 ): Promise<Partial<SubAccount>[]> => {
   const { currency } = infos;
 
@@ -160,7 +153,7 @@ export const getSubAccounts = async (
     (acc, operation) => {
       const { accountId } = decodeOperationId(operation.id);
       const { token } = decodeTokenAccountId(accountId);
-      if (!token || blacklistedTokenIds.includes(token.id)) return acc;
+      if (!token) return acc;
 
       if (!acc.has(token)) {
         acc.set(token, []);

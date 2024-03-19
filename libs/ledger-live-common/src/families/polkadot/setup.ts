@@ -7,6 +7,8 @@ import type { CliTools } from "@ledgerhq/coin-polkadot/test/cli";
 import polkadotResolver from "@ledgerhq/coin-polkadot/signer/index";
 import Polkadot from "@ledgerhq/hw-app-polkadot";
 import Transport from "@ledgerhq/hw-transport";
+import { makeLRUCache } from "@ledgerhq/live-network/cache";
+import network from "@ledgerhq/live-network/network";
 import type { Bridge } from "@ledgerhq/types-live";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
 import { Resolver } from "../../hw/getAddress/types";
@@ -15,10 +17,14 @@ const createSigner: CreateSigner<Polkadot> = (transport: Transport) => {
   return new Polkadot(transport);
 };
 
-const bridge: Bridge<Transaction> = createBridges(executeWithSigner(createSigner));
+const bridge: Bridge<Transaction> = createBridges(
+  executeWithSigner(createSigner),
+  network,
+  makeLRUCache,
+);
 
 const resolver: Resolver = createResolver(createSigner, polkadotResolver);
 
-const cliTools: CliTools = makeCliTools();
+const cliTools: CliTools = makeCliTools(network, makeLRUCache);
 
 export { bridge, cliTools, resolver };

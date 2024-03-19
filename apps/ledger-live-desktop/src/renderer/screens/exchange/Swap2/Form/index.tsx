@@ -10,6 +10,7 @@ import {
 } from "@ledgerhq/live-common/exchange/swap/webApp/index";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import React, { useCallback, useEffect, useRef, useState, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import styled from "styled-components";
@@ -25,19 +26,21 @@ import ExchangeDrawer from "./ExchangeDrawer/index";
 import SwapFormSelectors from "./FormSelectors";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
+import useRefreshRates from "./hooks/useRefreshRates";
 import LoadingState from "./Rates/LoadingState";
 import EmptyState from "./Rates/EmptyState";
 import { AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { SWAP_RATES_TIMEOUT } from "../../config";
 import { OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
 import SwapWebView, { SwapWebProps, useSwapLiveAppManifestID } from "./SwapWebView";
 import { SwapMigrationUI } from "./Migrations/SwapMigrationUI";
 import { useSwapLiveAppHook } from "~/renderer/hooks/swap-migrations/useSwapLiveAppHook";
+import { maybeTezosAccountUnrevealedAccount } from "@ledgerhq/live-common/exchange/swap/index";
 import SwapFormSummary from "./FormSummary";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import { languageSelector } from "~/renderer/reducers/settings";
 
 const DAPP_PROVIDERS = ["paraswap", "oneinch", "moonpay"];
 
@@ -52,8 +55,8 @@ const Wrapper = styled(Box).attrs({
 const idleTime = 60 * 60000; // 1 hour
 
 const SwapForm = () => {
-  const language = useSelector(languageSelector);
   const [idleState, setIdleState] = useState(false);
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const { state: locationState } = useLocation();
   const history = useHistory();
@@ -87,6 +90,8 @@ const SwapForm = () => {
     setExchangeRate,
     onNoRates,
     ...(locationState as object),
+    timeout: SWAP_RATES_TIMEOUT,
+    timeoutErrorMessage: t("swap2.form.timeout.message"),
   });
 
   const isSwapLiveAppEnabled = useIsSwapLiveApp({
@@ -106,7 +111,10 @@ const SwapForm = () => {
   }, []);
 
   const exchangeRatesState = swapTransaction.swap?.rates;
-  const swapError = swapTransaction.fromAmountError || exchangeRatesState?.error;
+  const swapError =
+    swapTransaction.fromAmountError ||
+    exchangeRatesState?.error ||
+    maybeTezosAccountUnrevealedAccount(swapTransaction);
   const swapWarning = swapTransaction.fromAmountWarning;
   const pageState = usePageState(swapTransaction, swapError);
   const provider = useMemo(() => exchangeRate?.provider, [exchangeRate?.provider]);
@@ -115,6 +123,11 @@ const SwapForm = () => {
     undefined,
   );
   const { setDrawer } = React.useContext(context);
+
+  const pauseRefreshing = !!swapError || idleState;
+  const refreshTime = useRefreshRates(swapTransaction.swap, {
+    pause: pauseRefreshing,
+  });
 
   const getExchangeSDKParams = useCallback(() => {
     const { swap, transaction } = swapTransaction;
@@ -180,14 +193,9 @@ const SwapForm = () => {
             ...[key, typeof value === "object" ? JSON.stringify(value) : value],
           ),
       );
-      moonpayURL.searchParams.set("language", language);
-
-      // Theme ID is defined by moonpay to tweak styling to more more closely match
-      // the existing theming within ledger live.
-      moonpayURL.searchParams.set("themeId", "92be4cb6-a57f-407b-8b1f-bc8055b60c9b");
       return moonpayURL;
     },
-    [language],
+    [],
   );
 
   const getProviderRedirectURLSearch = useCallback(() => {
@@ -460,6 +468,8 @@ const SwapForm = () => {
         pageState={pageState}
         swapTransaction={swapTransaction}
         provider={provider}
+        refreshTime={refreshTime}
+        countdown={!pauseRefreshing}
         // Demo 0 props
         disabled={!isSwapReady}
         onClick={onSubmit}

@@ -261,24 +261,7 @@ export type TransactionStatus = TransactionStatusCommon;
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
 
 export type SolanaOperation = Operation<SolanaOperationExtra>;
-export type SolanaOperationRaw = Operation<SolanaOperationExtraRaw>;
-
-export type ExtraStakeInfo = {
-  address: string;
-  amount: BigNumber;
-};
-
-export type ExtraStakeInfoRaw = {
-  address: string;
-  amount: string;
-};
 
 export type SolanaOperationExtra = {
   memo?: string;
-  stake?: ExtraStakeInfo;
-};
-
-export type SolanaOperationExtraRaw = {
-  memo?: string;
-  stake?: ExtraStakeInfoRaw;
 };

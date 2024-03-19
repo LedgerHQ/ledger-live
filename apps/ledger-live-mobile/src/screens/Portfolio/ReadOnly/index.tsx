@@ -34,7 +34,6 @@ import FirmwareUpdateBanner from "~/components/FirmwareUpdateBanner";
 import CollapsibleHeaderFlatList from "~/components/WalletTab/CollapsibleHeaderFlatList";
 import { WalletTabNavigatorStackParamList } from "~/components/RootNavigator/types/WalletTabNavigator";
 import { UpdateStep } from "../../FirmwareUpdate";
-import usePortfolioAnalyticsOptInPrompt from "~/hooks/analyticsOptInPrompt/usePorfolioAnalyticsOptInPrompt";
 
 const maxAssetsToDisplay = 5;
 
@@ -48,8 +47,6 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
   const portfolio = usePortfolioAllAccounts();
   const { colors } = useTheme();
   const hasOrderedNano = useSelector(hasOrderedNanoSelector);
-
-  usePortfolioAnalyticsOptInPrompt();
 
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
   useFocusEffect(refreshAccountsOrdering);

@@ -220,7 +220,6 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   const type = useTheme().colors.palette.type;
 
   const modelId = device ? device.modelId : overridesPreferredDeviceModel || preferredDeviceModel;
-
   useEffect(() => {
     if (modelId !== preferredDeviceModel) {
       dispatch(setPreferredDeviceModel(modelId));

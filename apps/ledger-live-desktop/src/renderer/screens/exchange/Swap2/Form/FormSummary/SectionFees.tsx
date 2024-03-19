@@ -21,7 +21,7 @@ import TachometerLow from "~/renderer/icons/TachometerLow";
 import TachometerMedium from "~/renderer/icons/TachometerMedium";
 import styled from "styled-components";
 import { useGetSwapTrackingProperties } from "../../utils/index";
-import { EDITABLE_FEE_FAMILIES } from "@ledgerhq/live-common/exchange/swap/const/blockchain";
+import { getLLDCoinFamily } from "~/renderer/families";
 
 type Strategies = "slow" | "medium" | "fast" | "advanced";
 
@@ -78,8 +78,9 @@ const SectionFees = ({
   const estimatedFees = status?.estimatedFees;
   const showSummaryValue = mainFromAccount && estimatedFees && estimatedFees.gt(0);
   const family = mainFromAccount?.currency.family;
+  const sendAmountSpecific = account && family && getLLDCoinFamily(family)?.sendAmountFields;
   const canEdit =
-    hasRates && showSummaryValue && transaction && family && EDITABLE_FEE_FAMILIES.includes(family);
+    hasRates && showSummaryValue && transaction && account && family && sendAmountSpecific;
   const swapDefaultTrack = useGetSwapTrackingProperties();
 
   const StrategyIcon = useMemo(

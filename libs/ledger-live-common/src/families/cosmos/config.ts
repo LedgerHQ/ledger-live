@@ -1,26 +1,18 @@
-import { ConfigInfo } from "@ledgerhq/live-config/LiveConfig";
-
-const cosmosConfig: Record<string, ConfigInfo> = {
+export default {
   config_currency_axelar: {
     type: "object",
     default: {
       lcd: "https://axelar-api.polkachu.com",
       minGasPrice: 0.07,
       ledgerValidator: "axelarvaloper1fgklp9hemczlwtqp9jqzq3xahh38hznx7vd805",
-      status: {
-        type: "active",
-      },
     },
   },
   config_currency_cosmos: {
     type: "object",
     default: {
       lcd: "https://cosmoshub4.coin.ledger.com",
-      minGasPrice: 0.025,
       ledgerValidator: "cosmosvaloper10wljxpl03053h9690apmyeakly3ylhejrucvtm",
-      status: {
-        type: "active",
-      },
+      minGasPrice: 0.025,
     },
   },
   config_currency_desmos: {
@@ -36,9 +28,6 @@ const cosmosConfig: Record<string, ConfigInfo> = {
       lcd: "https://api.dydx.nodestake.top:443",
       minGasPrice: 12500000000,
       ledgerValidator: "dydxvaloper1gffkd68xcnfpzcsplf0fsuetxkysunud6a900w",
-      status: {
-        type: "active",
-      },
     },
   },
   config_currency_nyx: {
@@ -46,9 +35,6 @@ const cosmosConfig: Record<string, ConfigInfo> = {
     default: {
       lcd: "https://api.nyx.nodes.guru",
       minGasPrice: 0,
-      status: {
-        type: "active",
-      },
     },
   },
   config_currency_onomy: {
@@ -57,20 +43,14 @@ const cosmosConfig: Record<string, ConfigInfo> = {
       lcd: "https://rest-mainnet.onomy.io",
       minGasPrice: 0.003,
       ledgerValidator: "onomyvaloper1fgklp9hemczlwtqp9jqzq3xahh38hznxu9mtmf",
-      status: {
-        type: "active",
-      },
     },
   },
   config_currency_osmo: {
     type: "object",
     default: {
       lcd: "https://osmosis-api.polkachu.com",
-      minGasPrice: 0.025,
       ledgerValidator: "osmovaloper17cp6fxccqxrpj4zc00w2c7u6y0umc2jajsyc5t",
-      status: {
-        type: "active",
-      },
+      minGasPrice: 0.025,
     },
   },
   config_currency_persistence: {
@@ -79,9 +59,6 @@ const cosmosConfig: Record<string, ConfigInfo> = {
       lcd: "https://rest.core.persistence.one",
       minGasPrice: 0.025,
       ledgerValidator: "persistencevaloper1fgklp9hemczlwtqp9jqzq3xahh38hznxatty38",
-      status: {
-        type: "active",
-      },
     },
   },
   config_currency_quicksilver: {
@@ -90,9 +67,6 @@ const cosmosConfig: Record<string, ConfigInfo> = {
       lcd: "https://lcd.quicksilver.zone",
       minGasPrice: 0.0025,
       ledgerValidator: "quickvaloper1fgklp9hemczlwtqp9jqzq3xahh38hznx02n4pp",
-      status: {
-        type: "active",
-      },
     },
   },
   config_currency_secret_network: {
@@ -100,9 +74,6 @@ const cosmosConfig: Record<string, ConfigInfo> = {
     default: {
       lcd: "https://lcd.secret.express",
       minGasPrice: 0.25,
-      status: {
-        type: "active",
-      },
     },
   },
   config_currency_sei_network: {
@@ -110,9 +81,6 @@ const cosmosConfig: Record<string, ConfigInfo> = {
     default: {
       lcd: "https://sei-api.polkachu.com",
       minGasPrice: 0.1,
-      status: {
-        type: "active",
-      },
     },
   },
   config_currency_stargaze: {
@@ -120,9 +88,6 @@ const cosmosConfig: Record<string, ConfigInfo> = {
     default: {
       lcd: "https://stargaze-api.polkachu.com",
       minGasPrice: 1,
-      status: {
-        type: "active",
-      },
     },
   },
   config_currency_umee: {
@@ -130,9 +95,6 @@ const cosmosConfig: Record<string, ConfigInfo> = {
     default: {
       lcd: "https://umee-api.polkachu.com",
       minGasPrice: 0.1,
-      status: {
-        type: "active",
-      },
     },
   },
   config_currency_coreum: {
@@ -140,9 +102,6 @@ const cosmosConfig: Record<string, ConfigInfo> = {
     default: {
       lcd: "https://full-node.mainnet-1.coreum.dev:1317",
       minGasPrice: 0.1,
-      status: {
-        type: "active",
-      },
     },
   },
   config_currency_injective: {
@@ -151,11 +110,6 @@ const cosmosConfig: Record<string, ConfigInfo> = {
       lcd: "https://injective-api.polkachu.com",
       minGasPrice: 900000000,
       ledgerValidator: "injvaloper1ntn4j2lsu3k60g8xj9pqshqvdj2q5tygyvczpy",
-      status: {
-        type: "active",
-      },
     },
   },
 };
-
-export { cosmosConfig };

@@ -1,9 +1,5 @@
-import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { prepareForSignOperation, prepareTransaction } from "../../prepareTransaction";
-import { DEFAULT_NONCE, createTransaction } from "../../createTransaction";
-import { makeAccount } from "../fixtures/common.fixtures";
 import * as nodeApi from "../../api/node/rpc.common";
 import {
   account,
@@ -15,6 +11,7 @@ import {
 } from "../fixtures/prepareTransaction.fixtures";
 import { GasOptions } from "../../types";
 import * as nftAPI from "../../api/nft";
+import { DEFAULT_NONCE } from "../../createTransaction";
 
 describe("EVM Family", () => {
   describe("prepareTransaction.ts", () => {
@@ -202,34 +199,6 @@ describe("EVM Family", () => {
             maxFeePerGas: new BigNumber(1),
             maxPriorityFeePerGas: new BigNumber(1),
             gasLimit: new BigNumber(12),
-            type: 2,
-          });
-        });
-
-        it("should prepare an optimism transaction and return proper additionalFees", async () => {
-          const optimism = getCryptoCurrencyById("optimism");
-          const opAccount = makeAccount("0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d", optimism);
-          const opTransaction = {
-            ...createTransaction(opAccount),
-            recipient: ethers.constants.AddressZero,
-          };
-
-          jest.spyOn(ethers, "Contract").mockImplementationOnce(() => {
-            return {
-              getL1Fee: (): ethers.BigNumber => {
-                return ethers.BigNumber.from(1234);
-              },
-            } as any;
-          });
-
-          const tx = await prepareTransaction(opAccount, { ...opTransaction });
-
-          expect(tx).toEqual({
-            ...opTransaction,
-            additionalFees: new BigNumber(1234),
-            gasPrice: undefined,
-            maxFeePerGas: new BigNumber(1),
-            maxPriorityFeePerGas: new BigNumber(1),
             type: 2,
           });
         });

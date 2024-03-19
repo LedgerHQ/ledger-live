@@ -1,8 +1,4 @@
-/**
- * @jest-environment jsdom
- */
-import "../../../__tests__/test-helpers/dom-polyfill";
-import { renderHook } from "@testing-library/react";
+import { renderHook } from "@testing-library/react-hooks";
 import BigNumber from "bignumber.js";
 
 import { usePickDefaultAccount } from "./usePickDefaultAccount";

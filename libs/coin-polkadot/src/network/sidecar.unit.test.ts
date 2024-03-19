@@ -1,12 +1,11 @@
 import BigNumber from "bignumber.js";
 import { getAccount } from "./sidecar";
-import network from "@ledgerhq/live-network/network";
 
-jest.mock("@ledgerhq/live-network/network");
-const networkApiMock = jest.mocked(network);
+const networkApiMock = jest.fn();
 
 describe("getAccount", () => {
   it("should estimate lockedBalance correctly with 1 locked balance type", async () => {
+    const lockedBalanceFn = getAccount(networkApiMock, jest.fn());
     networkApiMock.mockResolvedValue({
       data: {
         at: {
@@ -20,16 +19,13 @@ describe("getAccount", () => {
         ],
         targets: [],
       },
-      status: 200,
-      statusText: "",
-      headers: {},
-      config: {},
     });
-    const { lockedBalance } = await getAccount("addr");
+    const { lockedBalance } = await lockedBalanceFn("addr");
     expect(lockedBalance).toEqual(new BigNumber("60000000000"));
   });
 
   it("should estimate lockedBalance when one locked balance is higher than others", async () => {
+    const lockedBalanceFn = getAccount(networkApiMock, jest.fn());
     networkApiMock.mockResolvedValue({
       data: {
         at: {
@@ -51,12 +47,8 @@ describe("getAccount", () => {
         ],
         targets: [],
       },
-      status: 200,
-      statusText: "",
-      headers: {},
-      config: {},
     });
-    const { lockedBalance } = await getAccount("addr");
+    const { lockedBalance } = await lockedBalanceFn("addr");
     expect(lockedBalance).toEqual(new BigNumber("5"));
   });
 });

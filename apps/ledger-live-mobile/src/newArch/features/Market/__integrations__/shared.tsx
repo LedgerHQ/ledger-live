@@ -5,7 +5,7 @@ import MarketDataProviderWrapper from "../components/MarketDataProviderWrapper";
 import WalletTabNavigatorScrollManager from "~/components/WalletTab/WalletTabNavigatorScrollManager";
 import { createStackNavigator } from "@react-navigation/stack";
 import { ScreenName } from "~/const";
-import MarketList from "../screens/MarketList";
+import MarketList from "../screens/MarketList/MarketListCont";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();

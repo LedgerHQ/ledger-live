@@ -40,8 +40,10 @@ import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/Ba
 import { SwapFormNavigatorParamList } from "~/components/RootNavigator/types/SwapFormNavigator";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import type { DetailsSwapParamList } from "../types";
-import { getAvailableProviders } from "@ledgerhq/live-common/exchange/swap/index";
-import { DEFAULT_SWAP_RATES_LLM_INTERVAL_MS } from "@ledgerhq/live-common/exchange/swap/const/timeout";
+import {
+  getAvailableProviders,
+  maybeTezosAccountUnrevealedAccount,
+} from "@ledgerhq/live-common/exchange/swap/index";
 
 type Navigation = StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.Account>;
 
@@ -85,9 +87,6 @@ export function SwapForm({
     setExchangeRate,
     onNoRates,
     excludeFixedRates: true,
-    refreshRate: DEFAULT_SWAP_RATES_LLM_INTERVAL_MS / 1000,
-    // Disable refresh when modal is shown
-    allowRefresh: !confirmed,
   });
 
   // @TODO: Try to check if we can directly have the right state from `useSwapTransaction`
@@ -125,7 +124,10 @@ export function SwapForm({
     );
   }, [exchangeRatesState.value, swapTransaction.swap.to.currency]);
 
-  const swapError = swapTransaction.fromAmountError || exchangeRatesState?.error;
+  const swapError =
+    swapTransaction.fromAmountError ||
+    exchangeRatesState?.error ||
+    maybeTezosAccountUnrevealedAccount(swapTransaction);
   const swapWarning = swapTransaction.fromAmountWarning;
   const pageState = usePageState(swapTransaction, swapError || swapWarning);
   const provider = exchangeRate?.provider;
@@ -307,14 +309,10 @@ export function SwapForm({
 
   useEffect(() => {
     const { rate } = params as DetailsSwapParamList;
-    if (
-      exchangeRate &&
-      rate &&
-      (rate.provider !== exchangeRate?.provider || rate.tradeMethod !== exchangeRate.tradeMethod)
-    ) {
+    if (rate) {
       setExchangeRate(rate);
     }
-  }, [params, exchangeRate, setExchangeRate]);
+  }, [params, setExchangeRate, swapTransaction]);
 
   const swapAcceptedProviders = getAvailableProviders();
   const termsAccepted = (swapAcceptedProviders || []).includes(provider ?? "");

@@ -1,6 +1,18 @@
-import { makeLRUCache, minutes, seconds } from "@ledgerhq/live-network/cache";
+import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import hash from "object-hash";
 import { ChainAPI } from "./chain";
+
+type CacheOptions = { max: number; ttl: number };
+export function seconds(num: number, max = 100): CacheOptions {
+  return {
+    max,
+    ttl: num * 1000,
+  };
+}
+
+export function minutes(num: number, max = 100): CacheOptions {
+  return seconds(num * 60, max);
+}
 
 const cacheKeyAddress = (address: string) => address;
 const cacheKeyEmpty = () => "" as const;

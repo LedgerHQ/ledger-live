@@ -344,14 +344,12 @@ describe("EVM Family", () => {
         });
 
         it("should return a partial account based on blockHeight", async () => {
-          jest
-            .spyOn(etherscanAPI?.default, "getLastOperations")
-            .mockImplementationOnce(async () => ({
-              lastTokenOperations: [],
-              lastNftOperations: [],
-              lastCoinOperations: [coinOperations[2]],
-              lastInternalOperations: [],
-            }));
+          jest.spyOn(etherscanAPI?.default, "getLastOperations").mockImplementation(async () => ({
+            lastTokenOperations: [],
+            lastNftOperations: [],
+            lastCoinOperations: [coinOperations[2]],
+            lastInternalOperations: [],
+          }));
           const operations = [
             {
               ...coinOperations[1],
@@ -384,60 +382,6 @@ describe("EVM Family", () => {
             operations: [coinOperations[2], ...operations],
             operationsCount: 3,
             subAccounts: account.subAccounts,
-            lastSyncDate: new Date("2014-04-21"),
-          });
-        });
-
-        it("should return a partial account with filtered token accounts and token operations", async () => {
-          const accountShape = await synchronization.getAccountShape(
-            {
-              ...getAccountShapeParameters,
-              initialAccount: account,
-            },
-            { blacklistedTokenIds: [tokenCurrencies[0].id] } as any,
-          );
-
-          expect(accountShape).toEqual({
-            type: "Account",
-            id: account.id,
-            syncHash: logic.getSyncHash(account.currency, [tokenCurrencies[0].id]),
-            balance: new BigNumber(100),
-            spendableBalance: new BigNumber(100),
-            nfts: [nfts[0], nfts[1]],
-            blockHeight: 6969,
-            operations: [
-              {
-                ...coinOperations[0],
-                subOperations: [],
-                nftOperations: [erc721Operations[0], erc1155Operations[0]],
-                internalOperations: [internalOperations[0]],
-              },
-              {
-                ...coinOperations[1],
-                nftOperations: [erc721Operations[1], erc721Operations[2], erc1155Operations[1]],
-                internalOperations: [internalOperations[1]],
-              },
-              {
-                id: `js:2:ethereum:0xkvn:-${internalOperations[2].hash}-NONE`,
-                type: "NONE",
-                hash: internalOperations[2].hash,
-                value: new BigNumber(0),
-                fee: new BigNumber(0),
-                recipients: [],
-                senders: [],
-                accountId: "",
-                blockHash: null,
-                blockHeight: internalOperations[2].blockHeight,
-                subOperations: [],
-                nftOperations: [],
-                internalOperations: [internalOperations[2]],
-                date: internalOperations[2].date,
-                transactionSequenceNumber: 0,
-                extra: {},
-              },
-            ],
-            operationsCount: 3,
-            subAccounts: [],
             lastSyncDate: new Date("2014-04-21"),
           });
         });
@@ -536,30 +480,6 @@ describe("EVM Family", () => {
         };
 
         expect(tokenAccounts).toEqual([expectedUsdcAccount, expectedUsdtAccount]);
-      });
-
-      it("should return filtered subAccounts from blacklistedTokenIds", async () => {
-        const tokenAccounts = await synchronization.getSubAccounts(
-          {
-            ...getAccountShapeParameters,
-            initialAccount: account,
-          },
-          account.id,
-          [tokenOperations[0], tokenOperations[1], tokenOperations[3]],
-          [tokenCurrencies[0].id],
-        );
-
-        const expectedUsdtAccount = {
-          ...makeTokenAccount(account.freshAddress, tokenCurrencies[1]),
-          balance: new BigNumber(2),
-          spendableBalance: new BigNumber(2),
-          operations: [tokenOperations[3]],
-          operationsCount: 1,
-          starred: undefined,
-          swapHistory: [],
-        };
-
-        expect(tokenAccounts).toEqual([expectedUsdtAccount]);
       });
     });
 

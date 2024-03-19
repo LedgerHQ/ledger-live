@@ -4,8 +4,10 @@ import { Trans } from "react-i18next";
 import { InstalledItem, State } from "@ledgerhq/live-common/apps/index";
 import { App } from "@ledgerhq/types-live";
 import styled from "styled-components/native";
-import { Flex, IconsLegacy, Text, Button, Icons } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy, Text, Button } from "@ledgerhq/native-ui";
+
 import QueuedDrawer from "~/components/QueuedDrawer";
+
 import AppIcon from "../AppsList/AppIcon";
 import ByteSize from "~/components/ByteSize";
 
@@ -33,18 +35,21 @@ const AppName = styled(Text).attrs({
 })``;
 
 const AppVersion = styled(Text).attrs({
-  width: 36,
-  height: 18,
+  marginRight: 6,
   paddingLeft: 2,
   paddingRight: 1,
   paddingTop: 1,
-  textAlign: "center",
+  borderWidth: 1,
   borderRadius: 4,
+  alignItems: "center",
+  justifyContent: "center",
 })``;
 
 const IconContainer = styled(Flex).attrs({
-  padding: 16,
-  borderRadius: 100,
+  marginVertical: 20,
+  padding: 22,
+  borderWidth: 1,
+  borderRadius: 8,
 })``;
 
 const TextContainer = styled(Flex).attrs({
@@ -58,10 +63,6 @@ const TextContainer = styled(Flex).attrs({
 const ModalText = styled(Text).attrs({
   textAlign: "center",
   marginTop: 16,
-  textTransform: "none",
-  fontFamily: "Inter",
-  fontSize: 24,
-  lineHeight: "32",
 })``;
 
 const ButtonsContainer = styled(Flex).attrs({
@@ -75,7 +76,14 @@ const FlatListContainer = styled(FlatList).attrs({
   marginBottom: 20,
 })`` as unknown as typeof FlatList;
 
-export default memo(function ({ isOpened, onClose, onConfirm, apps, installed, state }: Props) {
+export default memo(function UpdateAllModal({
+  isOpened,
+  onClose,
+  onConfirm,
+  apps,
+  installed,
+  state,
+}: Props) {
   const { deviceInfo } = state;
 
   const data = apps.map(app => ({
@@ -84,14 +92,13 @@ export default memo(function ({ isOpened, onClose, onConfirm, apps, installed, s
   }));
 
   const renderAppLine = useCallback(
-    function ({
+    ({
       item: { name, bytes, version: appVersion, installed },
       item,
     }: {
       item: App & { installed: InstalledItem | null | undefined };
-    }) {
-      const { availableVersion: newVersion = appVersion, version: curVersion = appVersion } =
-        installed ?? {};
+    }) => {
+      const version = installed?.availableVersion || appVersion;
 
       return (
         <AppLine>
@@ -101,30 +108,15 @@ export default memo(function ({ isOpened, onClose, onConfirm, apps, installed, s
               {name}
             </AppName>
           </Flex>
-          <Flex
-            flexDirection="row"
-            justifyContent="space-between"
-            style={{ width: "40%" }}
-            alignItems="center"
-          >
+          <Flex flexDirection="row" justifyContent="space-between" style={{ width: "35%" }}>
             <AppVersion
               color="neutral.c80"
               fontWeight="semiBold"
               variant="tiny"
               numberOfLines={1}
-              backgroundColor="neutral.c30"
+              borderColor="neutral.c40"
             >
-              {curVersion}
-            </AppVersion>
-            <IconsLegacy.ArrowRightMedium color="neutral.c80" />
-            <AppVersion
-              color="neutral.c80"
-              fontWeight="semiBold"
-              variant="tiny"
-              numberOfLines={1}
-              backgroundColor="neutral.c30"
-            >
-              {newVersion}
+              {version}
             </AppVersion>
             <Text
               textAlign="right"
@@ -149,11 +141,11 @@ export default memo(function ({ isOpened, onClose, onConfirm, apps, installed, s
   return (
     <QueuedDrawer isRequestingToBeOpened={!!isOpened} onClose={onClose}>
       <Flex alignItems="center">
-        <IconContainer backgroundColor="neutral.c30">
-          <Icons.InformationFill size={"L"} color="primary.c80" />
+        <IconContainer borderColor="neutral.c40">
+          <IconsLegacy.RefreshMedium size={24} color="neutral.c100" />
         </IconContainer>
         <TextContainer>
-          <ModalText color="neutral.c100" fontWeight="semiBold" variant="h4">
+          <ModalText color="neutral.c100" fontWeight="medium" variant="h2">
             <Trans i18nKey="manager.update.subtitle" />
           </ModalText>
         </TextContainer>
