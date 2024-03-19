@@ -131,7 +131,6 @@ export type Features = CurrencyFeatures & {
   buyDeviceFromLive: Feature_BuyDeviceFromLive;
   mockFeature: Feature_MockFeature;
   multibuyNavigation: Feature_MultibuyNavigation;
-  referralProgramDiscoverCard: Feature_ReferralProgramDiscoverCard;
   referralProgramDesktopSidebar: Feature_ReferralProgramDesktopSidebar;
   referralProgramMobile: Feature_ReferralProgramMobile;
   disableNftSend: Feature_DisableNftSend;
@@ -213,10 +212,6 @@ export type Feature_StakeAccountBanner = Feature<{ [blockchainName: string]: any
 
 export type Feature_ReferralProgramMobile = Feature<{
   path: string;
-}>;
-
-export type Feature_ReferralProgramDiscoverCard = Feature<{
-  url: string;
 }>;
 
 export type Feature_ReferralProgramDesktopSidebar = Feature<{

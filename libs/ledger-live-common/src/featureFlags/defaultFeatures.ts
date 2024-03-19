@@ -100,7 +100,6 @@ export const DEFAULT_FEATURES: Features = {
   llmMarketNewArch: DEFAULT_FEATURE,
   flexibleContentCards: DEFAULT_FEATURE,
   ethStakingProviders: initFeature(),
-  referralProgramDiscoverCard: initFeature(),
   newsfeedPage: initFeature(),
   swapWalletApiPartnerList: initFeature(),
   stakePrograms: initFeature(),
