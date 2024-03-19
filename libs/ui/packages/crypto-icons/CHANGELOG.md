@@ -1,5 +1,19 @@
 # @ledgerhq/icons-ui
 
+## 1.1.0
+
+### Minor Changes
+
+- [#6195](https://github.com/LedgerHQ/ledger-live/pull/6195) [`dfac39b`](https://github.com/LedgerHQ/ledger-live/commit/dfac39b2086f0475d1bc8065032bfe27cbf424f6) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for Base Sepolia & Arbitrum Sepolia
+
+### Patch Changes
+
+- [#5987](https://github.com/LedgerHQ/ledger-live/pull/5987) [`97bafa2`](https://github.com/LedgerHQ/ledger-live/commit/97bafa2573436572fca63469b13214bfcd7eb85c) Thanks [@gre](https://github.com/gre)! - fix icon of PYUSD
+
+- [#6159](https://github.com/LedgerHQ/ledger-live/pull/6159) [`4715e4c`](https://github.com/LedgerHQ/ledger-live/commit/4715e4c411fa2396330ebcb810aeb6bfc9892e88) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update Linea icons
+
+- [#6068](https://github.com/LedgerHQ/ledger-live/pull/6068) [`8096795`](https://github.com/LedgerHQ/ledger-live/commit/80967954758a5e1d2960ac593fc6314391737558) Thanks [@mle-gall](https://github.com/mle-gall)! - Fixed source SVG causing storybook build error
+
 ## 1.1.0-next.0
 
 ### Minor Changes
