@@ -6,7 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 import { getEnv } from "@ledgerhq/live-env";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import {
-  Exchange,
+  ExchangeSwap,
   ExchangeRate,
   InitSwapResult,
   SwapTransaction,
@@ -66,7 +66,7 @@ export function Confirmation({
     to: { account: toAccount, parentAccount: toParentAccount },
   } = swapTx.current.swap;
 
-  const exchange = useMemo<Exchange>(
+  const exchange = useMemo<ExchangeSwap>(
     () => ({
       fromAccount: fromAccount as AccountLike,
       fromParentAccount,
