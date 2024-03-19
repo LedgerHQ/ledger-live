@@ -85,6 +85,8 @@ export function useSelectedSwapRate(props: UseSelectedSwapRateProps) {
           rates: availableRates,
         });
         break;
+      default:
+        break;
     }
   }, [provider, defaultRate, availableRates, updateExchangeRate, onSelectRateFromProvider]);
 
