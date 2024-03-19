@@ -4,9 +4,15 @@ import {
   UserInfoState,
   SegmentEvent,
   EventType,
+  UserTraits,
+  GroupTraits,
+  JsonValue,
 } from "@segment/analytics-react-native";
 
-const deepCompare = (obj1: any, obj2: any) => {
+const deepCompare = (
+  obj1: UserTraits | GroupTraits | JsonValue | undefined | null,
+  obj2: UserTraits | GroupTraits | JsonValue | undefined | null,
+) => {
   if (typeof obj1 !== "object" || obj1 === null || typeof obj2 !== "object" || obj2 === null) {
     return obj1 === obj2;
   }
