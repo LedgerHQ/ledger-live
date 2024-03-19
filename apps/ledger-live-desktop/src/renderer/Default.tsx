@@ -289,8 +289,9 @@ export default function Default() {
                           <Switch>
                             <Route path="/" exact render={withSuspense(Dashboard)} />
                             <Route path="/settings" render={withSuspense(Settings)} />
+                            {/* <Route path="/accounts" render={withSuspense(Account)} /> */}
+                            <Route path="/accounts" render={withSuspense(Accounts)} />
                             <Route path="/aa" render={withSuspense(AccountAbstraction)} />
-                            <Route path="/accounts" render={withSuspense(Account)} />
                             <Route path="/card" render={withSuspense(Card)} />
                             <Redirect from="/manager/reload" to="/manager" />
                             <Route path="/manager" render={withSuspense(Manager)} />
