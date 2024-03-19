@@ -199,6 +199,7 @@ export const urls = {
       "https://www.ledger.com/supported-services?utm_source=ledger_live&utm_medium=self_referral&utm_content=discover",
     mint: "ledgerlive://discover/lmarket",
   },
+  referralProgram: "ledgerlive://discover/refer-a-friend",
   hedera: {
     supportArticleLink:
       "https://launchbadge.com/blog/using-a-ledger-nano-to-create-your-hedera-account",
