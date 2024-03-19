@@ -61,7 +61,11 @@ import {
   DeviceInfo,
   DeviceModelInfo,
 } from "@ledgerhq/types-live";
-import { Exchange, ExchangeRate, InitSwapResult } from "@ledgerhq/live-common/exchange/swap/types";
+import {
+  ExchangeSwap,
+  ExchangeRate,
+  InitSwapResult,
+} from "@ledgerhq/live-common/exchange/swap/types";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { AppAndVersion } from "@ledgerhq/live-common/hw/connectApp";
 import { Device } from "@ledgerhq/types-devices";
@@ -337,7 +341,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
           amountExpectedTo = 0,
         } = request as {
           transaction: Transaction;
-          exchange: Exchange;
+          exchange: ExchangeSwap;
           provider: string;
           rate: number;
           amountExpectedTo: number;
@@ -375,7 +379,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   if (initSwapRequested && !initSwapResult && !initSwapError) {
     const { transaction, exchange, exchangeRate } = request as {
       transaction: Transaction;
-      exchange: Exchange;
+      exchange: ExchangeSwap;
       exchangeRate: ExchangeRate;
     };
     const { amountExpectedTo, estimatedFees } = hookState;
