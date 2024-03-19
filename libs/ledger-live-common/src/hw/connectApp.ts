@@ -13,8 +13,7 @@ import {
   LockedDeviceError,
 } from "@ledgerhq/errors";
 import type Transport from "@ledgerhq/hw-transport";
-import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
-import type { DerivationMode } from "@ledgerhq/coin-framework/derivation";
+import { type DerivationMode, DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import type { AppOp, SkippedAppOp } from "../apps/types";
 import { getCryptoCurrencyById } from "../currencies";
 import appSupportsQuitApp from "../appSupportsQuitApp";

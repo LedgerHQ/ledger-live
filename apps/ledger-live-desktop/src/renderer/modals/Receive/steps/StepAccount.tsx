@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { Trans } from "react-i18next";
-import { Account, AccountLike, CexDepositEntryPointsLocationsDesktop } from "@ledgerhq/types-live";
+import { Account, AccountLike } from "@ledgerhq/types-live";
 import { TokenCurrency, CryptoCurrency, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   getAccountCurrency,
@@ -22,7 +22,6 @@ import ErrorBanner from "~/renderer/components/ErrorBanner";
 import Alert from "~/renderer/components/Alert";
 import { StepProps } from "../Body";
 import { supportLinkByTokenType } from "~/config/urls";
-import { DepositFromCoinbaseButton } from "~/renderer/modals/Receive/steps/DepositFromCoinbaseButton";
 
 type OnChangeAccount = (account?: AccountLike | null, tokenAccount?: Account | null) => void;
 const AccountSelection = ({
@@ -123,11 +122,6 @@ export default function StepAccount({
           onChangeToken={onChangeToken}
         />
       ) : null}
-
-      <DepositFromCoinbaseButton
-        location={CexDepositEntryPointsLocationsDesktop.selectCrypto}
-        source="Choose a crypto to secure"
-      />
 
       {account && !receiveTokenMode && tokenTypes.length ? (
         <div>

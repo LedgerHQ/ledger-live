@@ -12,7 +12,6 @@ import {
   derivationModeSupportsIndex,
   getMandatoryEmptyAccountSkip,
   getDerivationModeStartsAt,
-  DerivationMode,
 } from "../derivation";
 import {
   getAccountPlaceholderName,
@@ -34,6 +33,7 @@ import type {
   AccountBridge,
   Address,
   CurrencyBridge,
+  DerivationMode,
   Operation,
   ProtoNFT,
   ScanAccountEvent,

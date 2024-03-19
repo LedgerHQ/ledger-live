@@ -64,7 +64,7 @@ export const useSwapLiveAppHook = (props: UseSwapLiveAppHookProps) => {
         error: !!swapError,
         loading,
         providerRedirectURL,
-        swapApiBase: SWAP_API_BASE,
+        swapApiBase: `${SWAP_API_BASE}/swap`,
       };
 
       if (!isEqual(newSwapWebProps, swapWebPropsRef.current)) {

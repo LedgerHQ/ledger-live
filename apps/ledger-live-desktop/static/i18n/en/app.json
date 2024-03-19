@@ -30,7 +30,8 @@
         "browse": "Browse"
       },
       "filter": {
-        "categories": "Categories"
+        "categories": "Categories",
+        "all": "all"
       },
       "branch": {
         "soon": "Coming soon",
@@ -275,7 +276,6 @@
   },
   "sidebar": {
     "card": "Card",
-    "learn": "Learn",
     "menu": "Menu",
     "stars": "Starred accounts",
     "accounts": "Accounts",
@@ -5407,7 +5407,7 @@
       "description": "Impossible to calculate amount and fees"
     },
     "NotEnoughBalance": {
-      "title": "Sorry, insufficient funds",
+      "title": "Sorry, insufficient balance including network fees. Adjust amount or verify balance",
       "description": "Please make sure the account has enough funds."
     },
     "NotEnoughBalanceBecauseDestinationNotCreated": {
