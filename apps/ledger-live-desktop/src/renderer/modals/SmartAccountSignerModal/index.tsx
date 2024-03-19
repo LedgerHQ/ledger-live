@@ -7,21 +7,13 @@ import { useDispatch } from "react-redux";
 import { addAccount } from "~/renderer/actions/accounts";
 import { completeAuthenticate } from "@ledgerhq/account-abstraction";
 import { buildAccount } from "./accountStructure";
-<<<<<<< HEAD
-
-import Spinner from "~/renderer/components/Spinner";
-=======
->>>>>>> 500fb07573 (create loading modal)
 import GreenSvg from "./greenSvg";
 import { Icons } from "@ledgerhq/react-ui";
 import { useTheme } from "styled-components";
 import TopGradient from "./topGradient";
 import FakeLink from "~/renderer/components/FakeLink";
-<<<<<<< HEAD
-
-=======
 import ModalSpinner from "./modalSpinner";
->>>>>>> 500fb07573 (create loading modal)
+
 export type Props = {
   isOpened: boolean;
   onClose: () => void;
