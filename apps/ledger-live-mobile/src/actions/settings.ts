@@ -16,7 +16,6 @@ import {
   SettingsImportPayload,
   SettingsSetHasInstalledAnyAppPayload,
   SettingsLastSeenDeviceInfoPayload,
-  SettingsLastSeenDevicePayload,
   SettingsRemoveStarredMarketcoinsPayload,
   SettingsSetAnalyticsPayload,
   SettingsSetPersonalizedRecommendationsPayload,
@@ -175,9 +174,6 @@ export const setSwapSelectableCurrencies = createAction<SettingsSetSwapSelectabl
 );
 export const swapAcceptProvider = createAction<SettingsAcceptSwapProviderPayload>(
   SettingsActionTypes.ACCEPT_SWAP_PROVIDER,
-);
-export const setLastSeenDevice = createAction<SettingsLastSeenDevicePayload>(
-  SettingsActionTypes.LAST_SEEN_DEVICE,
 );
 export const setLastSeenDeviceInfo = createAction<SettingsLastSeenDeviceInfoPayload>(
   SettingsActionTypes.LAST_SEEN_DEVICE_INFO,

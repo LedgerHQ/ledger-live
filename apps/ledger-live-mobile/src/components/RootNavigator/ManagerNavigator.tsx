@@ -85,6 +85,9 @@ const DeviceIcon = ({ color, size = 16 }: { color?: string; size?: number }) => 
     case DeviceModelId.stax:
       icon = <IconsLegacy.StaxMedium size={size} color={color} />;
       break;
+    case DeviceModelId.europa:
+      icon = <IconsLegacy.EuropaMedium size={size} color={color} />;
+      break;
     case DeviceModelId.nanoX:
     default:
       icon = <IconsLegacy.NanoXFoldedMedium size={size} color={color} />;

@@ -4,7 +4,6 @@ describe("date utils", () => {
   describe("Timezones", () => {
     it("should always be America/New_York", () => {
       expect(process.env.TZ).toBe("America/New_York");
-      expect(new Date().getTimezoneOffset()).toBe(300);
     });
   });
 

@@ -355,6 +355,10 @@ const SwapForm = () => {
     } else {
       // Fix LIVE-9064, prevent the transaction from being updated when using useAllAmount
       swapTransaction.transaction ? (swapTransaction.transaction.useAllAmount = false) : null;
+      // Fix LIVE-11660, remove the margin from thec fees
+      swapTransaction.transaction && swapTransaction.transaction.family === "evm"
+        ? (swapTransaction.transaction.additionalFees = undefined)
+        : null;
       setDrawer(
         ExchangeDrawer,
         {
@@ -381,7 +385,12 @@ const SwapForm = () => {
     // eslint-disable-next-line
   }, [exchangeRate]);
 
+  const untickMax = () => {
+    swapTransaction.transaction?.useAllAmount ? swapTransaction.toggleMax() : null;
+  };
+
   const setFromAccount = (account: AccountLike | undefined) => {
+    untickMax();
     swapTransaction.setFromAccount(account);
   };
 
@@ -395,6 +404,11 @@ const SwapForm = () => {
 
   const toggleMax = () => {
     swapTransaction.toggleMax();
+  };
+
+  const reverseSwap = () => {
+    untickMax();
+    swapTransaction.reverseSwap();
   };
 
   const swapLiveAppManifestID = useSwapLiveAppManifestID();
@@ -429,7 +443,7 @@ const SwapForm = () => {
         fromAmountError={swapError}
         fromAmountWarning={swapWarning}
         isSwapReversable={swapTransaction.swap.isSwapReversable}
-        reverseSwap={swapTransaction.reverseSwap}
+        reverseSwap={reverseSwap}
         provider={provider}
         loadingRates={swapTransaction.swap.rates.status === "loading"}
         isSendMaxLoading={swapTransaction.swap.isMaxLoading}

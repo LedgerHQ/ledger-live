@@ -57,12 +57,10 @@ export function setAnalyticsFeatureFlagMethod(method: typeof analyticsFeatureFla
 
 const getPtxAttributes = () => {
   if (!analyticsFeatureFlagMethod) return {};
-  const ptxEarnFeatureFlag = analyticsFeatureFlagMethod("ptxEarn");
   const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
   const stakingProviders = analyticsFeatureFlagMethod("ethStakingProviders");
   const ptxSwapMoonpayProviderFlag = analyticsFeatureFlagMethod("ptxSwapMoonpayProvider");
 
-  const ptxEarnEnabled: boolean = !!ptxEarnFeatureFlag?.enabled;
   const isBatch1Enabled: boolean =
     !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
   const isBatch2Enabled: boolean =
@@ -77,7 +75,6 @@ const getPtxAttributes = () => {
       : "flag not loaded";
   const ptxSwapMoonpayProviderEnabled: boolean = !!ptxSwapMoonpayProviderFlag?.enabled;
   return {
-    ptxEarnEnabled,
     isBatch1Enabled,
     isBatch2Enabled,
     isBatch3Enabled,
@@ -95,7 +92,6 @@ const extraProperties = (store: ReduxStore) => {
   const devices = devicesModelListSelector(state);
   const accounts = accountsSelector(state);
   const {
-    ptxEarnEnabled,
     isBatch1Enabled,
     isBatch2Enabled,
     isBatch3Enabled,
@@ -156,7 +152,6 @@ const extraProperties = (store: ReduxStore) => {
     isBatch1Enabled,
     isBatch2Enabled,
     isBatch3Enabled,
-    ptxEarnEnabled,
     ptxSwapMoonpayProviderEnabled,
     ...deviceInfo,
   };

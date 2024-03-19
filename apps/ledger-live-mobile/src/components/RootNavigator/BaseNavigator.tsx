@@ -61,13 +61,11 @@ import {
 } from "~/screens/BleDevicePairingFlow";
 
 import PostBuyDeviceScreen from "~/screens/PostBuyDeviceScreen";
-import LearnWebView from "~/screens/Learn/index";
 import { useNoNanoBuyNanoWallScreenOptions } from "~/context/NoNanoBuyNanoWall";
 import PostBuyDeviceSetupNanoWallScreen from "~/screens/PostBuyDeviceSetupNanoWallScreen";
 import CurrencySettings from "~/screens/Settings/CryptoAssets/Currencies/CurrencySettings";
 import WalletConnectLiveAppNavigator from "./WalletConnectLiveAppNavigator";
 import CustomImageNavigator from "./CustomImageNavigator";
-import ClaimNftNavigator from "./ClaimNftNavigator";
 import PostOnboardingNavigator from "./PostOnboardingNavigator";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { hasNoAccountsSelector } from "~/reducers/accounts";
@@ -194,11 +192,6 @@ export default function BaseNavigator() {
             headerStyle: styles.headerNoShadow,
           }}
           {...noNanoBuyNanoWallScreenOptions}
-        />
-        <Stack.Screen
-          name={ScreenName.LearnWebView}
-          component={LearnWebView}
-          options={{ headerShown: false }}
         />
         <Stack.Screen
           name={NavigatorName.ExploreTab}
@@ -474,11 +467,6 @@ export default function BaseNavigator() {
         <Stack.Screen
           name={NavigatorName.CustomImage}
           component={CustomImageNavigator}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name={NavigatorName.ClaimNft}
-          component={ClaimNftNavigator}
           options={{ headerShown: false }}
         />
         {/* This is a freaking hack… */}

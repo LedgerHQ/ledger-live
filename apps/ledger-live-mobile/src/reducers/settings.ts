@@ -144,6 +144,7 @@ export const INITIAL_STATE: SettingsState = {
     nanoSP: false,
     nanoX: false,
     stax: false,
+    europa: false,
   },
   hasSeenStaxEnabledNftsPopup: false,
   starredMarketCoins: [],
@@ -849,6 +850,7 @@ export const hasBeenUpsoldProtectSelector = (state: State) => state.settings.has
 export const generalTermsVersionAcceptedSelector = (state: State) =>
   state.settings.generalTermsVersionAccepted;
 export const userNpsSelector = (state: State) => state.settings.userNps;
-export const getSupportedCounterValues = (state: State) => state.settings.supportedCounterValues;
+export const supportedCounterValuesSelector = (state: State) =>
+  state.settings.supportedCounterValues;
 export const hasSeenAnalyticsOptInPromptSelector = (state: State) =>
   state.settings.hasSeenAnalyticsOptInPrompt;

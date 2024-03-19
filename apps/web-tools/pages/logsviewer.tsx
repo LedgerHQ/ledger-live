@@ -1,10 +1,10 @@
 import React, { Fragment, Component, useMemo } from "react";
-import invariant from "invariant";
 import { ObjectInspector } from "react-inspector";
 import ReactTable from "react-table";
 import styled from "styled-components";
 import "react-table/react-table.css";
 import { AccountRaw } from "@ledgerhq/types-live";
+import { decodeAccountId } from "@ledgerhq/coin-framework/lib/account/index";
 
 export const getStaticProps = async () => ({ props: {} });
 
@@ -22,20 +22,6 @@ type LogMeta = {
   userAgent: string;
   accountsIds: string[];
 };
-
-function decodeAccountId(accountId: string) {
-  invariant(typeof accountId === "string", "accountId is not a string");
-  const splitted = accountId.split(":");
-  invariant(splitted.length === 5, "invalid size for accountId");
-  const [type, version, currencyId, xpubOrAddress, derivationMode] = splitted;
-  return {
-    type,
-    version,
-    currencyId,
-    xpubOrAddress,
-    derivationMode,
-  };
-}
 
 const shortAddressPreview = (addr: string, target = 20) => {
   const slice = Math.floor((target - 3) / 2);

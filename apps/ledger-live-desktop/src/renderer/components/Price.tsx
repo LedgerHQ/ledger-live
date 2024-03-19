@@ -1,17 +1,15 @@
 import React, { useMemo } from "react";
 import styled from "styled-components";
-import { useSelector } from "react-redux";
 import { BigNumber } from "bignumber.js";
 import { Currency, Unit } from "@ledgerhq/types-cryptoassets";
-import { useCalculate } from "@ledgerhq/live-countervalues-react";
 import { getCurrencyColor } from "~/renderer/getCurrencyColor";
-import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import { colors } from "~/renderer/styles/theme";
 import useTheme from "~/renderer/hooks/useTheme";
 import Box from "~/renderer/components/Box";
 import CurrencyUnitValue from "~/renderer/components/CurrencyUnitValue";
 import IconActivity from "~/renderer/icons/Activity";
 import { NoCountervaluePlaceholder } from "./CounterValue";
+import { usePrice } from "~/renderer/hooks/usePrice";
 
 type ColorKeys = keyof typeof colors;
 
@@ -51,21 +49,12 @@ export default function Price({
   dynamicSignificantDigits,
   staticSignificantDigits,
 }: Props) {
-  const effectiveUnit = unit || from.units[0];
-  const valueNum = 10 ** effectiveUnit.magnitude;
-  const rawCounterValueCurrency = useSelector(counterValueCurrencySelector);
-  const counterValueCurrency = to || rawCounterValueCurrency;
-  const rawCounterValue = useCalculate({
+  const { counterValue, valueNum, effectiveUnit, counterValueCurrency } = usePrice(
     from,
-    to: counterValueCurrency,
-    value: valueNum,
-    disableRounding: true,
-  });
-  const counterValue = rate
-    ? rate.times(valueNum) // NB Allow to override the rate for swap
-    : typeof rawCounterValue === "number"
-    ? BigNumber(rawCounterValue)
-    : rawCounterValue;
+    to,
+    unit,
+    rate,
+  );
   const theme = useTheme();
   const textColor = useMemo(
     () => (color ? colors[color] : theme.colors.palette.text.shade100),

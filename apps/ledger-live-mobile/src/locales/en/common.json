@@ -484,7 +484,7 @@
       "description": "Please send some EGLD to your account to pay for transactions."
     },
     "NotEnoughBalance": {
-      "title": "Sorry, insufficient funds",
+      "title": "Sorry, insufficient balance including network fees. Adjust amount or verify balance",
       "description": "Please make sure the account has enough funds."
     },
     "NoSuchAppOnProvider": {
@@ -911,6 +911,10 @@
     "FirmwareNotRecognized": {
       "title": "Invalid Provider",
       "description": "You have to change \"My Ledger provider\" setting. To change it, open Ledger Live \"Settings\", select \"Experimental features\", and then select a different provider."
+    },
+    "SequenceNumberError": {
+      "title": "Sequence number error",
+      "description": "Please close the window and try again later"
     }
   },
   "crash": {
@@ -1248,6 +1252,9 @@
       "referralProgram": {
         "title": "Refer a friend",
         "desc": "When your friend buys a Ledger, you both earn $20 of BTC."
+      },
+      "filter": {
+        "all": "all"
       }
     },
     "comingSoon": "Coming soon",
@@ -2178,15 +2185,7 @@
     "discover": "Discover",
     "nanoX": "Nano X",
     "market": "Market",
-    "earn": "Earn",
-    "learn": "Learn"
-  },
-  "learn": {
-    "pageTitle": "learn",
-    "sectionShows": "Shows",
-    "sectionVideo": "Video",
-    "sectionPodcast": "Podcast",
-    "sectionArticles": "Articles"
+    "earn": "Earn"
   },
   "portfolio": {
     "totalBalance": "Total balance",
@@ -6391,25 +6390,6 @@
       "title": "My NFTs"
     }
   },
-  "claimNft": {
-    "welcomePage": {
-      "title": "Free access to the Earth's most secure NFT marketplace",
-      "description": {
-        "title": "Ledger Infinity Pass gives you access to:",
-        "1": "First dibs on the latest NFT drops",
-        "2": "The most secure NFT marketplace ever",
-        "3": "A free NFT for you to claim"
-      },
-      "claimButton": "Claim Ledger Market Pass",
-      "backButton": "I've already claimed my Market Pass"
-    },
-    "qrScan": {
-      "title": "Scan QR code on your Ledger Market Pass",
-      "description": {
-        "1": "You will find your exclusive Ledger Market Pass in the box of your Ledger Stax.\n\nStart by positioning the QR code on the back of the Pass in the frame. Use a well lit area and a simple light background."
-      }
-    }
-  },
   "postOnboarding": {
     "hub": {
       "title": "Next up, use your {{productName}} to:",
@@ -6428,13 +6408,6 @@
         "titleCompleted": "Lock screen picture set",
         "description": "Choose any digital art or picture to set as the lock screen.",
         "popupLabel": "Lockscreen set"
-      },
-      "claimNft": {
-        "title": "Claim the Infinity NFT",
-        "titleCompleted": "Infinity NFT claimed",
-        "description": "This NFT gets you access to [ Ledger ] Market, our NFT marketplace.",
-        "popupLabel": "NFT claimed",
-        "tagLabel": "Gift"
       },
       "assetsTransfer": {
         "title": "Transfer your assets to Ledger",

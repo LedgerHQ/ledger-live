@@ -7,6 +7,7 @@ export enum DeviceModelId {
   nanoSP = "nanoSP",
   nanoX = "nanoX",
   stax = "stax",
+  europa = "europa",
 }
 /**
  * a DeviceModel contains all the information of a specific Ledger hardware wallet model.

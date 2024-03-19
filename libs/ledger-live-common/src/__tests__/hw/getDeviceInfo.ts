@@ -36,7 +36,7 @@ test("1.3.1", async () => {
   expect(res).toMatchObject({
     version: "1.3.1",
     mcuVersion: "1.1",
-    majMin: "1.3",
+    majMin: "1.3.1",
     providerName: null,
     targetId: 823132162,
     isOSU: false,
@@ -63,7 +63,7 @@ test("1.3.1 BL", async () => {
     mcuVersion: "",
     pinValidated: false,
     providerName: null,
-    majMin: "0.0",
+    majMin: "0.0.0",
     targetId: 16777217,
   });
 });
@@ -85,7 +85,7 @@ test("1.5.5", async () => {
     mcuVersion: "1.7",
     pinValidated: false,
     providerName: null,
-    majMin: "1.5",
+    majMin: "1.5.5",
     targetId: 823132164,
   });
 });
@@ -107,7 +107,7 @@ test("1.5.5 manager allowed", async () => {
     mcuVersion: "1.7",
     pinValidated: false,
     providerName: null,
-    majMin: "1.5",
+    majMin: "1.5.5",
     targetId: 823132164,
   });
 });
@@ -129,7 +129,7 @@ test("1.4.2", async () => {
     mcuVersion: "1.6",
     pinValidated: true,
     providerName: null,
-    majMin: "1.4",
+    majMin: "1.4.2",
     targetId: 823132163,
   });
 });
@@ -151,7 +151,7 @@ test("1.4.2 manager allowed", async () => {
     mcuVersion: "1.6",
     pinValidated: true,
     providerName: null,
-    majMin: "1.4",
+    majMin: "1.4.2",
     targetId: 823132163,
   });
 });
@@ -262,7 +262,7 @@ test("0.0 bootloader", async () => {
   expect(res).toMatchObject({
     isBootloader: true,
     isOSU: false,
-    majMin: "0.0",
+    majMin: "0.0.0",
     version: "0.0.0",
     mcuVersion: "",
   });
@@ -281,7 +281,7 @@ test("OSU 1.4.2", async () => {
     version: "1.4.2",
     isOSU: true,
     isBootloader: false,
-    majMin: "1.4",
+    majMin: "1.4.2",
     mcuVersion: "1.7",
   });
 });
@@ -299,7 +299,7 @@ test("0SU 1.5.2", async () => {
     version: "1.5.2",
     isOSU: true,
     isBootloader: false,
-    majMin: "1.5",
+    majMin: "1.5.2",
     mcuVersion: "1.5",
   });
 });
@@ -330,7 +330,7 @@ test("1.6.0-dev", async () => {
   const res = await getDeviceInfo(t);
   expect(res).toMatchObject({
     version: "1.6.0-dev",
-    majMin: "1.6",
+    majMin: "1.6.0",
     mcuVersion: "1.6",
     isOSU: false,
     isBootloader: false,
@@ -348,7 +348,7 @@ test("1.6.0-dev-osu", async () => {
   const res = await getDeviceInfo(t);
   expect(res).toMatchObject({
     version: "1.6.0-dev",
-    majMin: "1.6",
+    majMin: "1.6.0",
     mcuVersion: "1.6",
     isOSU: true,
     isBootloader: false,
@@ -366,7 +366,7 @@ test("1.6.0-rc1 osu", async () => {
   const res = await getDeviceInfo(t);
   expect(res).toMatchObject({
     version: "1.6.0-rc1",
-    majMin: "1.6",
+    majMin: "1.6.0",
     mcuVersion: "1.7",
     isOSU: true,
     isBootloader: false,
@@ -385,7 +385,7 @@ test("nano x 1.1.6", async () => {
   expect(res).toMatchObject({
     version: "1.1.6",
     mcuVersion: "2.3",
-    majMin: "1.1",
+    majMin: "1.1.6",
     isBootloader: false,
     isOSU: false,
     managerAllowed: false,
@@ -407,7 +407,7 @@ test("nano x 1.2.4-1", async () => {
   expect(res).toMatchObject({
     version: "1.2.4-1",
     mcuVersion: "2.8",
-    majMin: "1.2",
+    majMin: "1.2.4",
     providerName: null,
     targetId: 855638020,
     isOSU: false,
@@ -451,7 +451,7 @@ test("nanoS das", async () => {
   expect(res).toMatchObject({
     isBootloader: false,
     isOSU: false,
-    majMin: "1.4",
+    majMin: "1.4.2",
     managerAllowed: false,
     mcuVersion: "1.5",
     pinValidated: true,
@@ -526,7 +526,7 @@ test("Nano X 1.2.4-6", async () => {
     version: "1.2.4-6",
     mcuVersion: "2.12",
     seVersion: "1.2.4-6",
-    majMin: "1.2",
+    majMin: "1.2.4",
     providerName: null,
     targetId: 855638020,
     seTargetId: 855638020,
@@ -552,7 +552,7 @@ test("Nano X 2.0.0", async () => {
     version: "2.0.0",
     mcuVersion: "2.28",
     seVersion: "2.0.0",
-    majMin: "2.0",
+    majMin: "2.0.0",
     providerName: null,
     targetId: 855638020,
     seTargetId: 855638020,
@@ -580,7 +580,7 @@ test("Nano X 2.1.0-lo2", async () => {
     version: "2.1.0-lo2",
     mcuVersion: "2.30",
     seVersion: "2.1.0-lo2",
-    majMin: "2.1",
+    majMin: "2.1.0",
     providerName: null,
     targetId: 855638020,
     seTargetId: 855638020,
@@ -609,7 +609,7 @@ test("Nano S 2.1.0", async () => {
     version: "2.1.0",
     mcuVersion: "1.12",
     seVersion: "2.1.0",
-    majMin: "2.1",
+    majMin: "2.1.0",
     providerName: null,
     targetId: 823132164,
     seTargetId: 823132164,
@@ -636,7 +636,7 @@ test("Nano S+ 1.0.2", async () => {
     version: "1.0.2",
     mcuVersion: "4.02",
     seVersion: "1.0.2",
-    majMin: "1.0",
+    majMin: "1.0.2",
     providerName: null,
     targetId: 856686596,
     seTargetId: 856686596,

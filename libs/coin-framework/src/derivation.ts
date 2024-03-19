@@ -6,6 +6,7 @@ import { TransportStatusError, UserRefusedAddress } from "@ledgerhq/errors";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "./currencies";
 import { getEnv } from "@ledgerhq/live-env";
+import { DerivationMode } from "@ledgerhq/types-live";
 
 export type ModeSpec = {
   mandatoryEmptyAccountSkip?: number;
@@ -28,10 +29,6 @@ export type ModeSpec = {
   addressFormat?: string;
 };
 
-// FIXME: DerivationMode SHOULD BE IN LIVE-TYPES ?
-// IN LIVE-TYPES DerivationMode = string which does not work
-export type DerivationMode = keyof typeof modes;
-
 export type Result = {
   address: string;
   path: string;
@@ -49,7 +46,7 @@ export type GetAddressOptions = {
   segwit?: boolean;
 };
 
-const modes = Object.freeze({
+const modes: Readonly<Partial<Record<DerivationMode, unknown>>> = Object.freeze({
   // this is "default" by convention
   "": {},
   // MEW legacy derivation

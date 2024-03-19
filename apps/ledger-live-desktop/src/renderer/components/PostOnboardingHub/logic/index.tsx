@@ -19,7 +19,6 @@ const claimMock: PostOnboardingAction = {
 const personalizeMock: PostOnboardingAction = {
   id: PostOnboardingActionId.personalizeMock,
   Icon: Icons.PictureImage,
-  featureFlagId: "customImage",
   title: `Personalize my ${getDeviceModel(DeviceModelId.stax).productName}`,
   titleCompleted: `Personalize my ${getDeviceModel(DeviceModelId.stax).productName}`,
   description: "By customizing the screen.",
@@ -42,7 +41,6 @@ const migrateAssetsMock: PostOnboardingAction = {
 const customImage: PostOnboardingAction = {
   id: PostOnboardingActionId.customImage,
   Icon: Icons.PictureImage,
-  featureFlagId: "customImage",
   title: "customImage.postOnboarding.title",
   titleCompleted: "customImage.postOnboarding.title",
   description: "customImage.postOnboarding.description",

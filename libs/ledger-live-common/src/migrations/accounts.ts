@@ -1,5 +1,4 @@
-import type { Account, AccountLike, SubAccount } from "@ledgerhq/types-live";
-import type { SwapOperation } from "../exchange/swap/types";
+import type { Account, AccountLike, SubAccount, SwapOperation } from "@ledgerhq/types-live";
 import { encodeTokenAccountId, decodeTokenAccountId, decodeAccountId } from "../account";
 import { encodeOperationId, decodeOperationId } from "../operation";
 

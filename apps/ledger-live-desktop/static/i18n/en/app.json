@@ -30,7 +30,8 @@
         "browse": "Browse"
       },
       "filter": {
-        "categories": "Categories"
+        "categories": "Categories",
+        "all": "all"
       },
       "branch": {
         "soon": "Coming soon",
@@ -275,7 +276,6 @@
   },
   "sidebar": {
     "card": "Card",
-    "learn": "Learn",
     "menu": "Menu",
     "stars": "Starred accounts",
     "accounts": "Accounts",
@@ -1409,6 +1409,7 @@
   },
   "dashboard": {
     "title": "Portfolio",
+    "header": "Portfolio balance",
     "emptyAccountTile": {
       "desc": "Add accounts to manage other crypto assets",
       "createAccount": "Add account"
@@ -1449,6 +1450,27 @@
         "description": "You're 1 step away from Ledger Recover.",
         "primaryCta": "Connect",
         "secondaryCta": "Maybe later"
+      }
+    },
+    "marketPerformanceWidget": {
+      "title": "{{time}} trend",
+      "buy": "Buy",
+      "swap": "Swap",
+      "gainers": "Gainers",
+      "losers": "Losers",
+      "error": {
+        "title": "Sorry, we’re unable to load the trend",
+        "description": "Please try again later"
+      },
+      "missingData": {
+        "gainers": {
+          "title": "No assets among the top 50 experienced gains in the last 24 hours",
+          "description": "Consider viewing top losers or come back later"
+        },
+        "losers": {
+          "title": "No assets among the top 50 experienced losses in the last 24 hours",
+          "description": "Consider viewing top gainers or come back later"
+        }
       }
     }
   },
@@ -2207,6 +2229,15 @@
       "summary": {
         "title": "Summary"
       },
+      "networkFee": {
+        "title": "Choose Network fee"
+      },
+      "reviewSummary": {
+        "title": "Review summary"
+      },
+      "connectLedger": {
+        "title": "Connect Ledger"
+      },
       "device": {
         "title": "Device"
       },
@@ -2263,9 +2294,6 @@
     "footer": {
       "estimatedFees": "Network fees"
     }
-  },
-  "sign": {
-    "title": "Sign transaction"
   },
   "releaseNotes": {
     "title": "Release notes",
@@ -4198,6 +4226,17 @@
     "logs": "Save logs",
     "dataFolder": "View user data"
   },
+  "approve": {
+    "title": "Approve token",
+    "description": "Approve token on your Ledger Device",
+    "unlimited": "You're authorizing this provider to access an unlimited amount of the selected token from your wallet. Double-check the transaction details on your Ledger device before signing.",
+    "limited": "You're authorizing this provider to access the selected token from your wallet. Double-check the transaction details on your Ledger device before signing.",
+    "termsAndConditions": "By signing this transaction, you accept <0>{{appName}}'s terms of use.</0>"
+  },
+  "sign": {
+    "title": "Sign transaction",
+    "description": "Sign transaction on your Ledger Device"
+  },
   "exportOperationsModal": {
     "title": "Operation history",
     "desc": "Select the accounts for which to save the operation history",
@@ -4929,6 +4968,8 @@
     "warning": "Always verify the address displayed on your device exactly matches the one given by the {{recipientWording}}",
     "secureContract": "Verify the deposit details on your device before sending it. The contract address is provided securely so you don’t have to verify it.",
     "verifyData": "Always verify the operation details on your device.",
+    "doubleCheck": "Double-check the transaction details on your Ledger device before signing.",
+    "termsAndConditions": "By signing this transaction, you accept <0>{{appName}}'s terms of use.</0>",
     "warningWording": {},
     "titleWording": {
       "send": "Please confirm on your device to finalize the operation",
@@ -5366,7 +5407,7 @@
       "description": "Impossible to calculate amount and fees"
     },
     "NotEnoughBalance": {
-      "title": "Sorry, insufficient funds",
+      "title": "Sorry, insufficient balance including network fees. Adjust amount or verify balance",
       "description": "Please make sure the account has enough funds."
     },
     "NotEnoughBalanceBecauseDestinationNotCreated": {
@@ -5496,6 +5537,14 @@
       "title": "Something went wrong",
       "description": "Please check that your hardware wallet is set up with the recovery phrase or passphrase associated to the selected account."
     },
+    "WrongDeviceForAccountPayout": {
+      "title": "Something went wrong",
+      "description": "This receiving account does not belong to your device. Please change and retry."
+    },
+    "WrongDeviceForAccountRefund": {
+      "title": "Something went wrong",
+      "description": "This receiving account does not belong to your device for the refund. Please change and retry."
+    },
     "DeviceAppVerifyNotSupported": {
       "title": "App update required",
       "description": "Uninstall and reinstall the {{managerAppName}} app in My Ledger"
@@ -5539,6 +5588,10 @@
     "TransactionHasBeenValidatedError": {
       "title": "Can't be sped up or canceled",
       "description": "This transaction has already been validated"
+    },
+    "SequenceNumberError": {
+      "title": "Sequence number error",
+      "description": "Please close the window and try again later"
     },
     "CantScanQRCode": {
       "title": "Couldn't scan this QR code: auto-verification not supported by this address"

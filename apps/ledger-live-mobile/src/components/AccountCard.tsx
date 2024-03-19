@@ -1,8 +1,8 @@
 import React, { ReactNode } from "react";
 import { getAccountSpendableBalance } from "@ledgerhq/live-common/account/index";
 import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/helpers";
-import { DerivationMode, getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
-import { AccountLike, Account } from "@ledgerhq/types-live";
+import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
+import { AccountLike, Account, DerivationMode } from "@ledgerhq/types-live";
 import { Flex, Tag, Text } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -83,7 +83,9 @@ const AccountCard = ({
 
             {tag && (
               <Flex flexDirection="row">
-                <Tag mt={2}>{tag}</Tag>
+                <Tag mt={2} numberOfLines={1}>
+                  {tag}
+                </Tag>
               </Flex>
             )}
           </Flex>

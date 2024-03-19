@@ -65,6 +65,7 @@ export default function FeesDrawer({
             onChange={setTransaction}
             updateTransaction={updateTransaction}
             mapStrategies={mapStrategies}
+            disableSlowStrategy={disableSlowStrategy}
             trackProperties={{
               page: "Swap quotes",
               ...swapDefaultTrack,

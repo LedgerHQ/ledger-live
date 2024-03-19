@@ -1,5 +1,4 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import invariant from "invariant";
 import { getEnv } from "@ledgerhq/live-env";
 
 type LedgerExplorer = {
@@ -28,15 +27,4 @@ export const findCurrencyExplorer = (
     id: currency.explorerId ?? currency.id,
     version: "v4",
   };
-};
-
-export const getCurrencyExplorer = (currency: CryptoCurrency): LedgerExplorer => {
-  const res = findCurrencyExplorer(currency);
-  invariant(res, `no Ledger explorer for ${currency.id}`);
-  return <LedgerExplorer>res;
-};
-
-export const blockchainBaseURL = (currency: CryptoCurrency): string => {
-  const { id, version, endpoint } = getCurrencyExplorer(currency);
-  return `${endpoint}/blockchain/${version}/${id}`;
 };

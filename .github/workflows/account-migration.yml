@@ -1,0 +1,78 @@
+name: "Account migration test"
+
+on:
+    workflow_dispatch:
+      inputs:
+        currencies:
+            description: "Currency to run the migration test on. If not specified the test will be run on all supported currencies. If specififed currencies should be comma seperated"
+            required: false
+        ref:
+          description: "The reference branch where the migration is made from. Will be develop by default"
+          required: false
+          default: 'develop'
+
+jobs:
+    account_migration:
+        name: "account-migration"
+        runs-on: ubuntu-latest
+        steps:
+          - name: generate token
+            id: generate-token
+            uses: tibdex/github-app-token@v1
+            with:
+              app_id: ${{ secrets.GH_BOT_APP_ID }}
+              private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+          - uses: actions/checkout@v4
+            with:
+              ref: ${{ github.base_ref || inputs.ref }}
+              token: ${{ steps.generate-token.outputs.token }}
+
+          - name: Setup git user
+            uses: ./tools/actions/composites/setup-git-user
+      
+          - name: Setup the toolchain
+            uses: ./tools/actions/composites/setup-toolchain
+
+          - name: install dependencies and build
+            run: |
+              pnpm i --filter="!./apps/**"
+              pnpm build:llc
+
+          - name: Generate target output filename
+            id: target-output-file
+            run: |
+              TARGET_SYNC_FILE_BASENAME=$(git rev-parse --short HEAD)
+              echo "TARGET_SYNC_FILE_BASENAME=$(echo ${TARGET_SYNC_FILE_BASENAME})" >> $GITHUB_OUTPUT
+
+          - name: Run synchronisation on target branch
+            if: ${{ inputs.currencies }}
+            # TARGET_SYNC_FILE_BASENAME is based on https://github.com/LedgerHQ/ledger-live/blob/feat/live-11055-migration-account-test/libs/ledger-live-common/src/__tests__/migration/account-migration.ts#L267
+            run: |
+                pnpm common test-account-migration --currencies ${{ inputs.currencies }} --outputFolderPath /home/runner/work/ledger-live
+
+          - name: Run synchronisation on target branch
+            if: ${{ !inputs.currencies }}
+            run: |
+              pnpm common test-account-migration --outputFolderPath /home/runner/work/ledger-live
+
+          - uses: actions/checkout@v4
+            with:
+              token: ${{ steps.generate-token.outputs.token }}
+
+          - name: install dependencies and build
+            run: |
+              pnpm i --filter="!./apps/**"
+              pnpm build:llc
+
+          - name: run synchronisation on current branch
+            run: |
+              pnpm common test-account-migration --inputFile /home/runner/work/ledger-live/${{ steps.target-output-file.outputs.TARGET_SYNC_FILE_BASENAME }}.json --outputFolderPath /home/runner/work/ledger-live
+
+          - name: Generate current branch output filename
+            id: current-branch-output-filename
+            run: |
+              CURRENT_BRANCH_SYNC_FILE_BASENAME=$(git rev-parse --short HEAD)
+              echo "CURRENT_BRANCH_SYNC_FILE_BASENAME=$(echo ${CURRENT_BRANCH_SYNC_FILE_BASENAME})" >> $GITHUB_OUTPUT
+
+          - name: print diff during migration
+            run: diff -u /home/runner/work/ledger-live/${{ steps.target-output-file.outputs.TARGET_SYNC_FILE_BASENAME }}.json /home/runner/work/ledger-live/${{ steps.current-branch-output-filename.outputs.CURRENT_BRANCH_SYNC_FILE_BASENAME }}.json || true

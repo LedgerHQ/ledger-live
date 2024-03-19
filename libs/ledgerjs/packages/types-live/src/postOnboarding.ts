@@ -9,7 +9,6 @@ export enum PostOnboardingActionId {
   migrateAssetsMock = "migrateAssetsMock",
   personalizeMock = "personalizeMock",
   customImage = "customImage",
-  claimNft = "claimNft",
   assetsTransfer = "assetsTransfer",
   buyCrypto = "buyCrypto",
 }

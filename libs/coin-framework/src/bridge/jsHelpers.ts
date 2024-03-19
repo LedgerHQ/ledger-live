@@ -12,11 +12,9 @@ import {
   derivationModeSupportsIndex,
   getMandatoryEmptyAccountSkip,
   getDerivationModeStartsAt,
-  DerivationMode,
 } from "../derivation";
 import {
   getAccountPlaceholderName,
-  getNewAccountPlaceholderName,
   shouldRetainPendingOperation,
   isAccountEmpty,
   shouldShowNewAccount,
@@ -35,6 +33,7 @@ import type {
   AccountBridge,
   Address,
   CurrencyBridge,
+  DerivationMode,
   Operation,
   ProtoNFT,
   ScanAccountEvent,
@@ -413,17 +412,11 @@ export const makeScanAccounts =
 
         if (!account) return;
 
-        account.name = !account.used
-          ? getNewAccountPlaceholderName({
-              currency,
-              index,
-              derivationMode,
-            })
-          : getAccountPlaceholderName({
-              currency,
-              index,
-              derivationMode,
-            });
+        account.name = getAccountPlaceholderName({
+          currency,
+          index,
+          derivationMode,
+        });
 
         const showNewAccount = shouldShowNewAccount(currency, derivationMode);
 
