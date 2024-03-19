@@ -1,5 +1,17 @@
 # @ledgerhq/hw-app-exchange
 
+## 0.4.6
+
+### Patch Changes
+
+- [#5833](https://github.com/LedgerHQ/ledger-live/pull/5833) [`d39ca26`](https://github.com/LedgerHQ/ledger-live/commit/d39ca26cf5ffc6e058af22946a4adc6778a7e748) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - clarify error message for invalid address selected
+
+- [#6120](https://github.com/LedgerHQ/ledger-live/pull/6120) [`eb79c71`](https://github.com/LedgerHQ/ledger-live/commit/eb79c7141543991f6e8fa99e5b592fc7a7f43022) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Support base64 encodng for swap_ng type swaps
+
+- Updated dependencies [[`f456d69`](https://github.com/LedgerHQ/ledger-live/commit/f456d69a2f64b6a217d3c1d9c6a531f31c2817a8)]:
+  - @ledgerhq/errors@6.16.3
+  - @ledgerhq/hw-transport@6.30.5
+
 ## 0.4.6-next.0
 
 ### Patch Changes
