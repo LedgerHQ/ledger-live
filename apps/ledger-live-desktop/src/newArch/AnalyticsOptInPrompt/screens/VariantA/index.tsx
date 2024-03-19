@@ -7,38 +7,40 @@ import useVariantA from "LLD/AnalyticsOptInPrompt/hooks/useVariantA";
 import { EntryPoint } from "LLD/AnalyticsOptInPrompt/types/AnalyticsOptInPromptNavigator";
 
 interface VariantAProps {
-  setPreventBackNavigation: (value: boolean) => void;
-  goBackToMain: boolean;
   onSubmit?: () => void;
   entryPoint: EntryPoint;
+  step: number;
+  setStep: (value: number) => void;
 }
 
-const VariantA = ({
-  setPreventBackNavigation,
-  goBackToMain,
-  onSubmit,
-  entryPoint,
-}: VariantAProps) => {
+const VariantA = ({ onSubmit, entryPoint, step, setStep }: VariantAProps) => {
   const {
-    isManagingPreferences,
     onManagePreferencesClick,
     handleShareAnalyticsChange,
     handleShareCustomAnalyticsChange,
     handlePreferencesChange,
-  } = useVariantA({ setPreventBackNavigation, goBackToMain, onSubmit, entryPoint });
+    shouldWeTrack,
+  } = useVariantA({
+    onSubmit,
+    entryPoint,
+    setStep,
+  });
 
-  return isManagingPreferences ? (
+  return step === 0 ? (
     <>
-      <ManagePreferences onPreferencesChange={handlePreferencesChange} />
-      <ManagePreferencesFooter onShareClick={handleShareCustomAnalyticsChange} />
-    </>
-  ) : (
-    <>
-      <Main />
+      <Main shouldWeTrack={shouldWeTrack} />
       <MainFooter
         setWantToManagePreferences={onManagePreferencesClick}
         onShareAnalyticsChange={handleShareAnalyticsChange}
       />
+    </>
+  ) : (
+    <>
+      <ManagePreferences
+        onPreferencesChange={handlePreferencesChange}
+        shouldWeTrack={shouldWeTrack}
+      />
+      <ManagePreferencesFooter onShareClick={handleShareCustomAnalyticsChange} />
     </>
   );
 };

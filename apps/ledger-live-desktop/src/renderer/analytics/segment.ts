@@ -86,25 +86,22 @@ const getPtxAttributes = () => {
   };
 };
 
-const getMandatoryProperties = async (store: ReduxStore) => {
+const getMandatoryProperties = (store: ReduxStore) => {
   const state: State = store.getState();
-  const { id } = await user();
   const analyticsEnabled = shareAnalyticsSelector(state);
   const personalizedRecommendationsEnabled = sharePersonalizedRecommendationsSelector(state);
   const hasSeenAnalyticsOptInPrompt = hasSeenAnalyticsOptInPromptSelector(state);
 
   return {
-    userId: id,
-    braze_external_id: id, // Needed for braze with this exact name
     optInAnalytics: analyticsEnabled,
     optInPersonalRecommendations: personalizedRecommendationsEnabled,
     hasSeenAnalyticsOptInPrompt,
   };
 };
 
-const extraProperties = async (store: ReduxStore) => {
+const extraProperties = (store: ReduxStore) => {
   const state: State = store.getState();
-  const mandatoryProperties = await getMandatoryProperties(store);
+  const mandatoryProperties = getMandatoryProperties(store);
   const language = languageSelector(state);
   const region = (localeSelector(state).split("-")[1] || "").toUpperCase() || null;
   const systemLocale = getParsedSystemLocale();
@@ -193,6 +190,8 @@ export const start = async (store: ReduxStore) => {
   if (!analytics) return;
   const allProperties = {
     ...extraProperties(store),
+    userId: id,
+    braze_external_id: id, // Needed for braze with this exact name
   };
   logger.analyticsStart(id, allProperties);
   analytics.identify(id, allProperties, {
@@ -249,6 +248,8 @@ export const updateIdentify = async () => {
 
   const allProperties = {
     ...extraProperties(storeInstance),
+    userId: id,
+    braze_external_id: id, // Needed for braze with this exact name
   };
   analytics.identify(id, allProperties, {
     context: getContext(),
@@ -270,9 +271,15 @@ export const track = (
     ...properties,
     page: currentRouteNameRef.current,
   };
+
+  console.log(
+    "getMandatoryProperties(storeInstance)",
+    mandatory,
+    getMandatoryProperties(storeInstance),
+  );
   const allProperties = {
     ...eventPropertiesWithoutExtra,
-    ...extraProperties(storeInstance),
+    ...(mandatory ? getMandatoryProperties(storeInstance) : extraProperties(storeInstance)),
     ...confidentialityFilter(properties),
   };
 

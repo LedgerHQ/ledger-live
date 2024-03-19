@@ -14,9 +14,9 @@ const trackingKeysByFlow: Record<EntryPoint, string> = {
   portfolio: "consent existing users",
 };
 
-type Props = {
+interface Props {
   entryPoint: EntryPoint;
-};
+}
 
 export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
   const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);

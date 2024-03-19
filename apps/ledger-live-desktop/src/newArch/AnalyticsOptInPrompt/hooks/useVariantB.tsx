@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { themeSelector } from "~/renderer/actions/general";
 import { EntryPoint } from "../types/AnalyticsOptInPromptNavigator";
@@ -9,35 +8,23 @@ import {
   setShareAnalytics,
   setSharePersonalizedRecommendations,
 } from "~/renderer/actions/settings";
+import { steps } from "LLD/AnalyticsOptInPrompt/const/steps";
 
 interface UseVariantBProps {
-  goBackToMain: boolean;
   entryPoint: EntryPoint;
   onSubmit?: () => void;
-  setPreventBackNavigation: (value: boolean) => void;
+  step: number;
+  setStep: (value: number) => void;
 }
 
-export const useVariantB = ({
-  goBackToMain,
-  entryPoint,
-  onSubmit,
-  setPreventBackNavigation,
-}: UseVariantBProps) => {
+export const useVariantB = ({ entryPoint, onSubmit, step, setStep }: UseVariantBProps) => {
   const variant = ABTestingVariants.variantB;
   const dispatch = useDispatch();
   const currentTheme = useSelector(themeSelector);
-  const [currentStep, setCurrentStep] = useState(0);
   const { flow, shouldWeTrack } = useAnalyticsOptInPrompt({ entryPoint });
 
-  useEffect(() => {
-    if (goBackToMain) {
-      setCurrentStep(0);
-    }
-  }, [goBackToMain]);
-
   const goToPersonalizedRecommandations = () => {
-    setCurrentStep(1);
-    setPreventBackNavigation(true);
+    setStep(1);
   };
 
   const trackAnalyticsClick = (value: boolean) => {
@@ -47,7 +34,7 @@ export const useVariantB = ({
         button: value ? "Accept Analytics" : "Refuse Analytics",
         variant,
         flow,
-        page: "Analytics Opt In Prompt Main",
+        page: steps.variantB.analytics,
       },
       shouldWeTrack,
     );
@@ -66,7 +53,7 @@ export const useVariantB = ({
         button: value ? "Accept Personal Recommendations" : "Refuse Personal Recommendations",
         variant,
         flow,
-        page: "Recommendations Opt In Prompt Main",
+        page: steps.variantB.recommendation,
       },
       shouldWeTrack,
     );
@@ -79,12 +66,12 @@ export const useVariantB = ({
   };
 
   const handleAcceptClick = () => {
-    if (currentStep === 0) setupAnalytics(true);
+    if (step === 0) setupAnalytics(true);
     else setupPersonalizedExperience(true);
   };
 
   const handleRefuseClick = () => {
-    if (currentStep === 0) setupAnalytics(false);
+    if (step === 0) setupAnalytics(false);
     else setupPersonalizedExperience(false);
   };
 
@@ -96,7 +83,8 @@ export const useVariantB = ({
   return {
     clickOptions,
     currentTheme,
-    currentStep,
-    setCurrentStep,
+    step,
+    setStep,
+    shouldWeTrack,
   };
 };

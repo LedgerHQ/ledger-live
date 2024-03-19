@@ -3,16 +3,29 @@ import { MainBody } from "./components";
 import { HeaderTitle } from "LLD/AnalyticsOptInPrompt/screens/components";
 import { Flex } from "@ledgerhq/react-ui";
 import { useLocation } from "react-router";
+import Track from "~/renderer/analytics/Track";
 
-const Main = () => {
+interface MainProps {
+  shouldWeTrack: boolean;
+}
+
+const Main = ({ shouldWeTrack }: MainProps) => {
   const { pathname } = useLocation();
   const paddingTop = pathname === "/" ? "40px" : undefined;
 
   return (
-    <Flex flexDirection={"column"} rowGap={"32px"} mx={"40px"} height={"100%"} pt={paddingTop}>
-      <HeaderTitle title={"analyticsOptInPrompt.common.title"} />
-      <MainBody />
-    </Flex>
+    <>
+      <Track
+        onMount
+        mandatory={shouldWeTrack}
+        event={"Analytics opt-in prompt main"}
+        page={"Analytics opt-in prompt main"}
+      />
+      <Flex flexDirection={"column"} rowGap={"32px"} mx={"40px"} height={"100%"} pt={paddingTop}>
+        <HeaderTitle title={"analyticsOptInPrompt.common.title"} />
+        <MainBody />
+      </Flex>
+    </>
   );
 };
 

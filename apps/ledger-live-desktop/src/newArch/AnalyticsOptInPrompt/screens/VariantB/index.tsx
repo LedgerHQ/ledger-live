@@ -7,31 +7,26 @@ import { Flex } from "@ledgerhq/react-ui";
 import { EntryPoint } from "../../types/AnalyticsOptInPromptNavigator";
 
 interface VariantBProps {
-  setPreventBackNavigation: (value: boolean) => void;
   entryPoint: EntryPoint;
-  goBackToMain: boolean;
   onSubmit?: () => void;
+  step: number;
+  setStep: (value: number) => void;
 }
 
-const VariantB = ({
-  entryPoint,
-  goBackToMain,
-  onSubmit,
-  setPreventBackNavigation,
-}: VariantBProps) => {
-  const { currentStep, currentTheme, clickOptions } = useVariantB({
-    setPreventBackNavigation,
-    goBackToMain,
+const VariantB = ({ entryPoint, onSubmit, step, setStep }: VariantBProps) => {
+  const { currentTheme, clickOptions, shouldWeTrack } = useVariantB({
     entryPoint,
     onSubmit,
+    step,
+    setStep,
   });
   return (
     <>
       <Flex flexDirection={"column"} mx={"40px"} height={"100%"} pt={"40"}>
-        {currentStep === 0 ? (
-          <AnalyticsScreen currentTheme={currentTheme} />
+        {step === 0 ? (
+          <AnalyticsScreen currentTheme={currentTheme} shouldWeTrack={shouldWeTrack} />
         ) : (
-          <RecommandationsScreen currentTheme={currentTheme} />
+          <RecommandationsScreen currentTheme={currentTheme} shouldWeTrack={shouldWeTrack} />
         )}
       </Flex>
       <Footer clickOptions={clickOptions} />

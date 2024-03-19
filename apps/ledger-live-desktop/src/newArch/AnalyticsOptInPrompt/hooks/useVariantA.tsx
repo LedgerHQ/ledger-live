@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useDispatch } from "react-redux";
 import {
   setShareAnalytics,
@@ -11,24 +11,18 @@ import {
 import { track } from "~/renderer/analytics/segment";
 import { useAnalyticsOptInPrompt } from "./useCommonLogic";
 import { ABTestingVariants } from "@ledgerhq/types-live";
+import { steps } from "LLD/AnalyticsOptInPrompt/const/steps";
 
 interface UseVariantAProps {
-  setPreventBackNavigation: (value: boolean) => void;
-  goBackToMain: boolean;
   onSubmit?: () => void;
   entryPoint: EntryPoint;
+  setStep: (value: number) => void;
 }
 
-const useVariantA = ({
-  setPreventBackNavigation,
-  goBackToMain,
-  onSubmit,
-  entryPoint,
-}: UseVariantAProps) => {
+const useVariantA = ({ onSubmit, entryPoint, setStep }: UseVariantAProps) => {
   const variant = ABTestingVariants.variantA;
   const dispatch = useDispatch();
 
-  const [isManagingPreferences, setIsManagingPreferences] = useState(false);
   const [preferences, setPreferences] = useState<Record<FieldKeySwitch, boolean>>({
     AnalyticsData: false,
     PersonalizationData: false,
@@ -36,34 +30,26 @@ const useVariantA = ({
 
   const { flow, shouldWeTrack } = useAnalyticsOptInPrompt({ entryPoint });
 
-  useEffect(() => {
-    if (goBackToMain) setIsManagingPreferences(false);
-  }, [goBackToMain]);
-
   const onManagePreferencesClick = () => {
-    const page = "Analytics Opt In Prompt Main";
-    setIsManagingPreferences(true);
-    setPreventBackNavigation(true);
-    trackClick("Manage Preferences", shouldWeTrack, page);
+    setStep(1);
+    trackClick("Manage Preferences", shouldWeTrack, steps.variantA.main);
   };
 
   const handleShareAnalyticsChange = (value: boolean) => {
-    const page = "Analytics Opt In Prompt Main";
     dispatch(setSharePersonalizedRecommendations(value));
     dispatch(setShareAnalytics(value));
     onSubmit?.();
-    if (value) trackClick("Accept All", true, page);
-    else trackClick("Refuse All", shouldWeTrack, page);
+    if (value) trackClick("Accept All", true, steps.variantA.main);
+    else trackClick("Refuse All", shouldWeTrack, steps.variantA.main);
   };
 
   const handleShareCustomAnalyticsChange = (value: boolean) => {
     if (value) {
-      const page = "Analytics Opt In Prompt Preferences";
       const { AnalyticsData, PersonalizationData } = preferences;
       dispatch(setShareAnalytics(AnalyticsData));
       dispatch(setSharePersonalizedRecommendations(PersonalizationData));
       onSubmit?.();
-      trackClick("Share", shouldWeTrack, page);
+      trackClick("Share", shouldWeTrack, steps.variantA.preferences);
     }
   };
 
@@ -100,19 +86,18 @@ const useVariantA = ({
         value,
         variant,
         flow,
-        page: "Analytics Opt In Prompt Preferences",
+        page: steps.variantA.preferences,
       },
       shouldWeTrack,
     );
   };
 
   return {
-    isManagingPreferences,
-    setIsManagingPreferences,
     onManagePreferencesClick,
     handleShareAnalyticsChange,
     handleShareCustomAnalyticsChange,
     handlePreferencesChange,
+    shouldWeTrack,
   };
 };
 

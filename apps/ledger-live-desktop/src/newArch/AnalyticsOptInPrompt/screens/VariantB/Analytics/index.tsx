@@ -3,9 +3,11 @@ import { Header } from "./components";
 import { Body } from "LLD/AnalyticsOptInPrompt/screens/VariantB/components";
 import React from "react";
 import { useLocation } from "react-router";
+import Track from "~/renderer/analytics/Track";
 
 interface AnalyticsScreenProps {
   currentTheme: "dark" | "light";
+  shouldWeTrack: boolean;
 }
 
 const listItems = [
@@ -24,14 +26,22 @@ const bodyProps = {
   description,
 };
 
-const AnalyticsScreen = ({ currentTheme }: AnalyticsScreenProps) => {
+const AnalyticsScreen = ({ currentTheme, shouldWeTrack }: AnalyticsScreenProps) => {
   const { pathname } = useLocation();
   const paddingTop = pathname === "/" ? "40px" : undefined;
   return (
-    <Flex flexDirection={"column"} height={"100%"} rowGap={32} pt={paddingTop}>
-      <Header currentTheme={currentTheme} />
-      <Body {...bodyProps} />
-    </Flex>
+    <>
+      <Track
+        onMount
+        mandatory={shouldWeTrack}
+        event={"Analytics Prompt Page 1 option B"}
+        page={"Analytics Prompt Page 1 option B"}
+      />
+      <Flex flexDirection={"column"} height={"100%"} rowGap={32} pt={paddingTop}>
+        <Header currentTheme={currentTheme} />
+        <Body {...bodyProps} />
+      </Flex>
+    </>
   );
 };
 
