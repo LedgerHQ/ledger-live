@@ -10,7 +10,6 @@ describe("cryptoFactory test", () => {
     const currencies = [
       "cosmos",
       "osmosis",
-      "osmo",
       "axelar",
       "binance_beacon_chain",
       "coreum",

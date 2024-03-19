@@ -19,11 +19,10 @@ import Dydx from "./Dydx";
 
 const cosmosChainParams: { [key: string]: CosmosBase } = {};
 export default function cryptoFactory(currencyId: string): CosmosBase {
-  currencyId = currencyId === "osmosis" ? "osmo" : currencyId;
   const initialized = cosmosChainParams[currencyId] != null;
   if (!initialized) {
     switch (currencyId) {
-      case "osmo":
+      case "osmosis":
         cosmosChainParams[currencyId] = new Osmosis();
         break;
       case "cosmos":

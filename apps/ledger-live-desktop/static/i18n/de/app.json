@@ -2159,7 +2159,7 @@
           "title" : "Vermehren Sie Ihre ATOM. Staken mit Ledger Validator.",
           "description" : "ATOM mit dem bewährten Ledger-Validator staken: Ihre Coins gehören stets Ihnen, dank der kompromisslosen Sicherheit von Ledger."
         },
-        "osmo" : {
+        "osmosis" : {
           "title" : "Vermehren Sie Ihre OSMO. Staken mit Ledger by Figment.",
           "description" : "Staken Sie Ihre OSMO mit dem Ledger by Figment Validator. Er bietet die niedrigste Provisionsgebühr und eine Garantie gegen Slashing!"
         },

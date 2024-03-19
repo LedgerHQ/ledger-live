@@ -2745,7 +2745,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   osmosis: {
     type: "CryptoCurrency",
-    id: "osmo",
+    id: "osmosis",
     coinType: CoinType.ATOM,
     name: "Osmosis",
     managerAppName: "Cosmos",

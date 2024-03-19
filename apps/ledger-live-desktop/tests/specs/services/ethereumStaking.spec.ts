@@ -21,7 +21,17 @@ test.use({
     stakePrograms: {
       enabled: true,
       params: {
-        list: ["ethereum", "solana", "tezos", "polkadot", "tron", "cosmos", "osmo", "celo", "near"],
+        list: [
+          "ethereum",
+          "solana",
+          "tezos",
+          "polkadot",
+          "tron",
+          "cosmos",
+          "osmosis",
+          "celo",
+          "near",
+        ],
       },
     },
     portfolioExchangeBanner: {

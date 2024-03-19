@@ -51,7 +51,7 @@
 | Neon EVM | NEON | YES | neon_evm |
 | OP Mainnet | ETH | YES | optimism |
 | Onomy | NOM | YES | onomy |
-| Osmosis | OSMO | YES | osmo |
+| Osmosis | OSMO | YES | osmosis |
 | Peercoin | PPC | YES | peercoin |
 | Persistence | XPRT | YES | persistence |
 | PivX | PIVX | YES | pivx |

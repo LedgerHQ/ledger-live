@@ -30,7 +30,7 @@ async function injectMockAccountsInDB(currencies: CryptoCurrency[], tokens: stri
   });
 }
 
-type ID = CryptoCurrencyId | "LBRY" | "groestcoin" | "osmo";
+type ID = CryptoCurrencyId | "LBRY" | "groestcoin";
 
 const currencies = listSupportedCurrencies().sort((a, b) => a.name.localeCompare(b.name));
 

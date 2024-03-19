@@ -313,9 +313,9 @@ export type BitcoinLikeInfo = {
 export type CryptoCurrency = CurrencyCommon & {
   type: "CryptoCurrency";
   // unique internal id of a crypto currency
-  // LBRY | groestcoin | osmo are expectional ids
+  // LBRY | groestcoin are expectional ids
   // because in `cryptocurrenciesById` the key of the object is different from the id
-  id: CryptoCurrencyId | "LBRY" | "groestcoin" | "osmo";
+  id: CryptoCurrencyId | "LBRY" | "groestcoin";
   // define if a crypto is a fork from another coin. helps dealing with split/unsplit
   forkedFrom?: string;
   // name of the app as shown in the Manager

@@ -15,6 +15,19 @@ export const opRetentionStategy =
 
 const opRetentionFilter = opRetentionStategy(366, 500);
 
+function makeCurrencyIdMigration(from: string, to: string) {
+  return (raw: AccountRaw): AccountRaw => {
+    if (raw.currencyId === from) {
+      return {
+        ...raw,
+        currencyId: to,
+        id: raw.id.replace(from, to),
+      };
+    }
+    return raw;
+  };
+}
+
 const accountModel: DataModel<AccountRaw, Account> = createDataModel({
   migrations: [
     // 2018-10-10: change of the account id format to include the derivationMode and seedIdentifier in Account
@@ -75,6 +88,8 @@ const accountModel: DataModel<AccountRaw, Account> = createDataModel({
         seedIdentifier,
       };
     },
+    // 2024-03-19: rename osmo to osmosis currency id
+    makeCurrencyIdMigration("osmo", "osmosis"),
     // ^- Each time a modification is brought to the model, add here a migration function here
   ],
 

@@ -1550,7 +1550,7 @@ exports[`sortCurrenciesByIds snapshot 1`] = `
   "secret_network",
   "sei_network",
   "stargaze",
-  "osmo",
+  "osmosis",
   "shyft",
   "stride",
   "umee",

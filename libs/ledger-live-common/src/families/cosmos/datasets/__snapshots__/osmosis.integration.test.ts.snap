@@ -4,7 +4,7 @@ exports[`osmo currency bridge scanAccounts osmo seed 1 1`] = `
 [
   {
     "balance": "124344",
-    "currencyId": "osmo",
+    "currencyId": "osmosis",
     "derivationMode": "",
     "freshAddress": "osmo17gmcxyc5ccd5kwqqatpgfdgh380w2hc77zm0zw",
     "freshAddressPath": "44'/118'/0'/0/0",
@@ -14,7 +14,7 @@ exports[`osmo currency bridge scanAccounts osmo seed 1 1`] = `
         "derivationPath": "44'/118'/0'/0/0",
       },
     ],
-    "id": "js:2:osmo:osmo17gmcxyc5ccd5kwqqatpgfdgh380w2hc77zm0zw:",
+    "id": "js:2:osmosis:osmo17gmcxyc5ccd5kwqqatpgfdgh380w2hc77zm0zw:",
     "index": 0,
     "name": "Osmosis 1",
     "nfts": undefined,
@@ -30,7 +30,7 @@ exports[`osmo currency bridge scanAccounts osmo seed 1 1`] = `
   },
   {
     "balance": "0",
-    "currencyId": "osmo",
+    "currencyId": "osmosis",
     "derivationMode": "",
     "freshAddress": "osmo19h8cennrkf09sjxqt36lmk93fzyrcwrfxw784y",
     "freshAddressPath": "44'/118'/1'/0/0",
@@ -40,7 +40,7 @@ exports[`osmo currency bridge scanAccounts osmo seed 1 1`] = `
         "derivationPath": "44'/118'/1'/0/0",
       },
     ],
-    "id": "js:2:osmo:osmo19h8cennrkf09sjxqt36lmk93fzyrcwrfxw784y:",
+    "id": "js:2:osmosis:osmo19h8cennrkf09sjxqt36lmk93fzyrcwrfxw784y:",
     "index": 1,
     "name": "Osmosis 2",
     "nfts": undefined,

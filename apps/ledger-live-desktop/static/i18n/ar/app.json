@@ -2159,7 +2159,7 @@
           "title" : "قم بتنمية ATOM خاصتك. قم بالتكديس مع مُدقِّق Ledger.",
           "description" : "قم بتكديس ATOM خاصتك مع مُدقِّق Ledger الموثوق. عملاتك تظل ملكك، ومدعومة من أمان Ledger الذي لا هوادة فيه."
         },
-        "osmo" : {
+        "osmosis" : {
           "title" : "قم بتنمية OSMO خاصتك. قم بالتكديس مع Ledger by Figment.",
           "description" : "قم بتكديس OSMO خاصتك مع مُدقِّق Ledger by Figment. إنه يوفر أقل رسوم عمولة وضماناً ضد التغريم!"
         },
