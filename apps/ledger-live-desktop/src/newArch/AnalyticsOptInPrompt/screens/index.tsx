@@ -20,7 +20,7 @@ interface AnalyticsOptInPromptProps {
 const AnalyticsOptInPrompt = memo(
   ({ onClose, onSubmit, isOpened, entryPoint, variant }: AnalyticsOptInPromptProps) => {
     const { colors } = useTheme();
-    const { step, setStep, handleRequestBack, handleRequestClose, preventClosable, isVariantA } =
+    const { step, setStep, handleRequestBack, handleRequestClose, preventClosable, isVariantB } =
       useDrawerLogic({
         entryPoint,
         variant,
@@ -39,10 +39,10 @@ const AnalyticsOptInPrompt = memo(
         }}
       >
         <Box height={"100%"}>
-          {isVariantA ? (
-            <VariantA step={step} setStep={setStep} onSubmit={onSubmit} entryPoint={entryPoint} />
-          ) : (
+          {isVariantB ? (
             <VariantB step={step} setStep={setStep} onSubmit={onSubmit} entryPoint={entryPoint} />
+          ) : (
+            <VariantA step={step} setStep={setStep} onSubmit={onSubmit} entryPoint={entryPoint} />
           )}
         </Box>
       </SideDrawer>

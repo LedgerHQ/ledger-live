@@ -15,24 +15,23 @@ export const useDrawerLogic = ({ entryPoint, variant, onClose }: UseDrawerLogicP
   const [preventClosable, setPreventClosable] = useState(false);
 
   const isNotOnBoarding = entryPoint !== EntryPoint.onboarding;
+  const isVariantB = getVariant(variant) === ABTestingVariants.variantB;
 
   const { shouldWeTrack } = useAnalyticsOptInPrompt({ entryPoint });
 
   const handleRequestBack = () => {
     setStep(prevState => prevState - 1);
-    track("button_clicked", { button: "back", entryPoint, variant, page: step }, shouldWeTrack);
+    track("button_clicked", { button: "back", entryPoint, variant }, shouldWeTrack);
   };
 
   const handleRequestClose = () => {
     onClose();
-    track("button_clicked", { button: "close", entryPoint, variant, page: step }, shouldWeTrack);
+    track("button_clicked", { button: "close", entryPoint, variant }, shouldWeTrack);
   };
 
   useEffect(() => {
     if (isNotOnBoarding) setPreventClosable(true);
   }, [isNotOnBoarding]);
-
-  const isVariantA = getVariant(variant) === ABTestingVariants.variantA;
 
   return {
     step,
@@ -40,6 +39,6 @@ export const useDrawerLogic = ({ entryPoint, variant, onClose }: UseDrawerLogicP
     handleRequestBack,
     handleRequestClose,
     preventClosable,
-    isVariantA,
+    isVariantB,
   };
 };
