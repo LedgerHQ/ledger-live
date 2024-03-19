@@ -64,9 +64,9 @@ const main = (
   );
   const bootloaderLoop = withDeviceInfo.pipe(
     concatMap(deviceInfo =>
-      !deviceInfo.isBootloader
-        ? EMPTY
-        : concat(withDeviceInstall(flash(final)), wait2s, bootloaderLoop),
+      deviceInfo.isBootloader
+        ? concat(withDeviceInstall(flash(final)), wait2s, bootloaderLoop)
+        : EMPTY,
     ),
   );
   const finalStep = !withFinal
