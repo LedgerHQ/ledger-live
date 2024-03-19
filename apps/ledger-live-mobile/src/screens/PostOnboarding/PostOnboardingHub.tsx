@@ -10,7 +10,6 @@ import {
 import { clearPostOnboardingLastActionCompleted } from "@ledgerhq/live-common/postOnboarding/actions";
 import { useDispatch } from "react-redux";
 import { getDeviceModel } from "@ledgerhq/devices";
-import { DeviceModelId } from "@ledgerhq/types-devices";
 import PostOnboardingActionRow from "~/components/PostOnboarding/PostOnboardingActionRow";
 import { TrackScreen } from "~/analytics";
 import Link from "~/components/wrappedUi/Link";

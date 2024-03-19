@@ -29,7 +29,7 @@ type WithStartActionFunction = {
    * The function to call when the user presses the button for this action
    */
   startAction: (args: {
-    openModalCallback: (modalName: string) => void;
+    openModalCallback: (modalName: any) => void;
     navigationCallback: (route: string) => void;
     deviceModelId: DeviceModelId;
   }) => void;
