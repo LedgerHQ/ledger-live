@@ -170,7 +170,7 @@ export type Features = CurrencyFeatures & {
   lldAnalyticsOptInPrompt: Feature_LldAnalyticsOptInPrompt;
   myLedgerDisplayAppDeveloperName: Feature_MyLedgerDisplayAppDeveloperName;
   nftsFromSimplehash: Feature_NftsFromSimpleHash;
-  lldPortfolioCarousel: Feature_LldPortfolioCarousel;
+  lldActionCarousel: Feature_lldActionCarousel;
   llmMarketNewArch: Feature_LlmMarketNewArch;
   marketperformanceWidgetDesktop: Feature_MarketperformanceWidgetDesktop;
   supportDeviceStax: Feature_SupportDeviceStax;
@@ -445,7 +445,7 @@ export type Feature_LldAnalyticsOptInPrompt = Feature<{
   entryPoints: Array<string>;
 }>;
 
-export type Feature_LldPortfolioCarousel = Feature<{
+export type Feature_lldActionCarousel = Feature<{
   variant: ABTestingVariants;
 }>;
 

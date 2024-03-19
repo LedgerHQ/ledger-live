@@ -1,5 +1,6 @@
 export enum LocationContentCard {
   Portfolio = "portfolio",
+  Action = "action",
   NotificationCenter = "notification_center",
 }
 
@@ -17,7 +18,7 @@ export type ContentCard = {
   created: Date;
 };
 
-export type PortfolioContentCard = ContentCard & {
+export type ActionContentCard = ContentCard & {
   image?: string;
   mainCta?: string;
   link?: string;
@@ -29,4 +30,22 @@ export type NotificationContentCard = ContentCard & {
   viewed: boolean;
   url?: string;
   path?: string;
+};
+
+export type PortfolioContentCard = ContentCard & {
+  id: string;
+  location?: LocationContentCard;
+  imgs?: {
+    source: string;
+    transform: [number, number, number, number];
+    size: { width: number; height: number };
+  }[];
+  title: React.ReactNode;
+  description: React.ReactNode;
+  url?: string;
+  path?: string;
+  image?: string;
+  onClickOnSlide?: (cardId: string) => void;
+  order?: number;
+  created: Date;
 };
