@@ -3,20 +3,31 @@ import fs from "fs";
 import type { ScanCommonOpts } from "../../scan";
 import staxLoadImage from "@ledgerhq/live-common/hw/staxLoadImage";
 import { deviceOpt } from "../../scan";
-import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device-core/capabilities/isCustomLockScreenSupported";
+import {
+  CLSSupportedDeviceModelId,
+  isCustomLockScreenSupported,
+} from "@ledgerhq/live-common/device-core/capabilities/isCustomLockScreenSupported";
 
 type staxLoadImageJobOpts = ScanCommonOpts & {
   fileInput: string;
-  deviceModelId: CLSSupportedDeviceModelId;
+  deviceModelId: string;
 };
 
 const exec = async (opts: staxLoadImageJobOpts) => {
   const { fileInput, device: deviceId = "", deviceModelId } = opts;
+  const clsSupportedDeviceModelId = deviceModelId as CLSSupportedDeviceModelId;
+  if (!isCustomLockScreenSupported(clsSupportedDeviceModelId)) {
+    console.error("This device model does not support custom lock screen");
+    return;
+  }
 
   const hexImage = fs.readFileSync(fileInput, "utf-8");
 
   await new Promise<void>(resolve =>
-    staxLoadImage({ deviceId, request: { hexImage, deviceModelId } }).subscribe(
+    staxLoadImage({
+      deviceId,
+      request: { hexImage, deviceModelId: clsSupportedDeviceModelId },
+    }).subscribe(
       x => console.log(x),
       e => {
         console.error(e);

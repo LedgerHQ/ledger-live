@@ -4,20 +4,27 @@ import fs from "fs";
 import type { ScanCommonOpts } from "../../scan";
 import { deviceOpt } from "../../scan";
 import staxFetchImage from "@ledgerhq/live-common/hw/staxFetchImage";
-import { type CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
+import {
+  isCustomLockScreenSupported,
+  CLSSupportedDeviceModelId,
+} from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 
 type staxFetchImageJobOpts = ScanCommonOpts & {
   fileOutput: string;
-  deviceModelId: CLSSupportedDeviceModelId;
+  deviceModelId: string;
 };
 
 const exec = async (opts: staxFetchImageJobOpts) => {
   const { device: deviceId = "", fileOutput, deviceModelId } = opts;
-
+  const clsSupportedDeviceModelId = deviceModelId as CLSSupportedDeviceModelId;
+  if (!isCustomLockScreenSupported(clsSupportedDeviceModelId)) {
+    console.error("This device model does not support custom lock screen");
+    return;
+  }
   await new Promise<void>(p =>
     staxFetchImage({
       deviceId,
-      request: { allowedEmpty: false, deviceModelId },
+      request: { allowedEmpty: false, deviceModelId: clsSupportedDeviceModelId },
     }).subscribe(
       event => {
         if (event.type === "imageFetched") {

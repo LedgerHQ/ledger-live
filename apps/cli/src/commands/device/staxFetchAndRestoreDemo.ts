@@ -7,7 +7,10 @@ import staxFetchImageHash from "@ledgerhq/live-common/hw/staxFetchImageHash";
 import staxLoadImage, { generateStaxImageFormat } from "@ledgerhq/live-common/hw/staxLoadImage";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import crypto from "crypto";
-import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
+import {
+  CLSSupportedDeviceModelId,
+  isCustomLockScreenSupported,
+} from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import { getScreenSpecs } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 
 /**
@@ -19,17 +22,22 @@ import { getScreenSpecs } from "@ledgerhq/live-common/device/use-cases/screenSpe
 
 type staxFetchAndRestoreJobOpts = ScanCommonOpts & {
   fileInput: string;
-  deviceModelId: CLSSupportedDeviceModelId;
+  deviceModelId: string;
 };
 
 const exec = async (opts: staxFetchAndRestoreJobOpts) => {
   const { fileInput, device: deviceId = "", deviceModelId } = opts;
+  const clsSupportedDeviceModelId = deviceModelId as CLSSupportedDeviceModelId;
+  if (!isCustomLockScreenSupported(clsSupportedDeviceModelId)) {
+    console.error("This device model does not support custom lock screen");
+    return;
+  }
   const hexImageWithoutHeader = fs.readFileSync(fileInput, "utf-8");
   const hexImage = await generateStaxImageFormat(
     hexImageWithoutHeader,
     true,
     true,
-    getScreenSpecs(deviceModelId),
+    getScreenSpecs(clsSupportedDeviceModelId),
   );
 
   // TODO: rework without double resolving promise
@@ -58,7 +66,7 @@ const exec = async (opts: staxFetchAndRestoreJobOpts) => {
     await new Promise<void>(resolve =>
       staxLoadImage({
         deviceId,
-        request: { hexImage: hexImageWithoutHeader, deviceModelId },
+        request: { hexImage: hexImageWithoutHeader, deviceModelId: clsSupportedDeviceModelId },
       }).subscribe(
         x => console.log(x),
         e => {
