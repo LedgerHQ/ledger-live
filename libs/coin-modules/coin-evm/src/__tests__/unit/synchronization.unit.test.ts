@@ -220,7 +220,7 @@ describe("EVM Family", () => {
             getAccountShapeParameters.currency,
             getAccountShapeParameters.address,
             account.id,
-            coinOperations[2].blockHeight! - synchronization.SAFE_REORG_THRESHOLD,
+            Math.max(account.blockHeight - synchronization.SAFE_REORG_THRESHOLD, 0),
             6969,
           );
         });
