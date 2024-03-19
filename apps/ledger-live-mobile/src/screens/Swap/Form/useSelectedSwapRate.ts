@@ -72,7 +72,7 @@ export function useSelectedSwapRate(props: UseSelectedSwapRateProps) {
       //
       case defaultRate && defaultRate.provider !== provider:
         onSelectRateFromProvider({
-          provider: defaultRate.provider,
+          provider: defaultRate!.provider,
           rates: availableRates,
         });
         break;
