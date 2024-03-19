@@ -1193,7 +1193,7 @@
         "restoreChoiceContinueOnDevice" : "{{productName}}で関連するオプションを選択",
         "restoreChoiceSRPTitle" : "秘密のリカバリーフレーズを使用して復元する",
         "restoreChoiceSRPDescription" : "セキュリティを最大限に高めるには、Ledgerデバイスによって生成されたシークレットリカバリーフレーズを使用してください。",
-        "restoreChoiceRecoverTitle" : "Ledger Recoverを使用して復元",
+        "restoreChoiceRecoverTitle" : "Ledger Recoverを使用して復元する",
         "restoreChoiceRecoverDescription" : "Ledger Recoverのサブスクリプション契約をしている場合は、サブスクリプションにログインし、シークレットリカバリーフレーズのバックアップを復元します。",
         "followInstructions" : "{{productName}}に表示される指示に従ってください。"
       },
@@ -1756,7 +1756,7 @@
   "DeviceAction" : {
     "allowAppPermission" : "デバイスで{{wording}} アプリを開く",
     "allowAppPermissionSubtitleToken" : "{{token}} トークンを管理",
-    "allowManagerPermission" : "{{productName}}でLedger Managerを許可する",
+    "allowManagerPermission" : "安全な接続を許可する",
     "allowRenaming" : "デバイスで名前の変更を許可する",
     "loading" : "読み込み中...",
     "connectAndUnlockDevice" : "デバイスを接続してロックを解除する",
@@ -4366,7 +4366,7 @@
             "description" : "既存のリカバリーフレーズを使って、新しいNanoに秘密鍵を復元できます。"
           },
           "4" : {
-            "title" : "Ledger Recoverを使用して復元",
+            "title" : "Ledger Recoverを使用して復元する",
             "description" : "Ledger Recoverの登録が必要です。"
           }
         }
@@ -5431,7 +5431,7 @@
       "description" : "ロゴが表示されたら、ボタンを押さずにデバイスを再起動してください。Ledgerサポートにお問い合わせください。"
     },
     "UserRefusedAllowManager" : {
-      "title" : "My Ledgerがデバイスで拒否されました"
+      "title" : "デバイス上で安全な接続が拒否されました"
     },
     "UserRefusedFirmwareUpdate" : {
       "title" : "デバイスでOSアップデートのインストールが\nキャンセルされました",
@@ -5699,6 +5699,9 @@
     "SwapExchangeRateAmountTooHigh" : {
       "title" : "{{maxAmountFromFormatted}}以下の値でなければなりません。"
     },
+    "SwapExchangeRateAmountTooLowOrTooHigh" : {
+      "title" : "この数量は利用できません。価格を調整してください。"
+    },
     "PolkadotElectionClosed" : {
       "title" : "バリデータの選出を終了しなければなりません。"
     },
@@ -5914,9 +5917,6 @@
     "FailedToRetrieveFirmwareUpdateInfo" : {
       "title" : "OSアップデートチェックに失敗しました",
       "description" : "問題が発生しました。再試行するか、疑わしい場合はLedgerサポートにお問い合わせください。"
-    },
-    "TezosUnrevealedAccount" : {
-      "title" : "スワップ利用不可：Tezosアカウントで最初の送付/デリゲートを行うか、ペアを変更する必要があります。"
     }
   },
   "cryptoOrg" : {
