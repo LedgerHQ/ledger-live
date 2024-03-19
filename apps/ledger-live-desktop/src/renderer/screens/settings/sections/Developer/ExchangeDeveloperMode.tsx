@@ -39,7 +39,7 @@ const ExchangeDeveloperMode = () => {
   };
 
   return (
-    <SettingsSectionRow title="TODO_ExchangeDevMode" desc="TODO_ExchangeDevMode">
+    <SettingsSectionRow title="Exchange Dev Mode" desc="Add exchange provider's info">
       <Box grow horizontal flow={2} alignItems="center">
         {enableExchangeDevMode ? (
           <>
@@ -49,7 +49,7 @@ const ExchangeDeveloperMode = () => {
               isSearchable={false}
               onChange={handleProviderInfo}
               value={providerInfo}
-              placeholder="TODO_ProviderInfoCalFormat"
+              placeholder="Exchange provider's info in CAL format"
             ></Input>
             <Button
               disabled={buttonIsDisabled}

@@ -143,8 +143,6 @@ export const handlers = ({
     }),
     "custom.exchange.complete": customWrapper<ExchangeCompleteParams, ExchangeCompleteResult>(
       async params => {
-        console.log("DEBUG - completeExchange:", params);
-
         tracking.completeExchangeRequested(manifest);
 
         if (!params) {
