@@ -4,7 +4,9 @@ import fs from "fs";
 import type { ScanCommonOpts } from "../../scan";
 import { deviceOpt } from "../../scan";
 import customLockScreenFetchHash from "@ledgerhq/live-common/hw/customLockScreenFetchHash";
-import customLockScreenLoad, { generateCustomLockScreenImageFormat } from "@ledgerhq/live-common/hw/customLockScreenLoad";
+import customLockScreenLoad, {
+  generateCustomLockScreenImageFormat,
+} from "@ledgerhq/live-common/hw/customLockScreenLoad";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import crypto from "crypto";
 import {

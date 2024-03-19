@@ -7,5 +7,6 @@ import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 export default {
   description: "Remove custom lock screen",
   args: [deviceOpt],
-  job: (arg: ScanCommonOpts): any => withDevice(arg?.device || "")(t => from(customLockScreenRemove(t))),
+  job: (arg: ScanCommonOpts): any =>
+    withDevice(arg?.device || "")(t => from(customLockScreenRemove(t))),
 };

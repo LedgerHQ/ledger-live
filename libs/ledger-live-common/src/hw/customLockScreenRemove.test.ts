@@ -33,7 +33,9 @@ describe("customLockScreenRemove", () => {
     const mockedTransport = mockTransportGenerator(
       Buffer.from(StatusCodes.CUSTOM_IMAGE_EMPTY.toString(16), "hex"),
     );
-    await expect(customLockScreenRemove(mockedTransport)).rejects.toThrow(ImageDoesNotExistOnDevice);
+    await expect(customLockScreenRemove(mockedTransport)).rejects.toThrow(
+      ImageDoesNotExistOnDevice,
+    );
   });
 
   test("unexpected bootloader or any other code, should throw", async () => {
