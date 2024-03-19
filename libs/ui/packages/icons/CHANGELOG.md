@@ -1,5 +1,11 @@
 # @ledgerhq/icons-ui
 
+## 0.6.3
+
+### Patch Changes
+
+- [#6099](https://github.com/LedgerHQ/ledger-live/pull/6099) [`486b0c8`](https://github.com/LedgerHQ/ledger-live/commit/486b0c8993715ce67a90b0a6c4fe177c04905719) Thanks [@mle-gall](https://github.com/mle-gall)! - Storybook Update : select control fix, mdx support on react, update of icons and icons doc.
+
 ## 0.6.3-next.0
 
 ### Patch Changes
