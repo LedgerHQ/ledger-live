@@ -24,7 +24,11 @@ const VariantB = ({ entryPoint, onSubmit, step, setStep }: VariantBProps) => {
     <>
       <Flex flexDirection={"column"} mx={"40px"} height={"100%"} pt={"40"}>
         {step === 0 ? (
-          <AnalyticsScreen currentTheme={currentTheme} shouldWeTrack={shouldWeTrack} />
+          <AnalyticsScreen
+            handleOpenPrivacyPolicy={handleOpenPrivacyPolicy}
+            currentTheme={currentTheme}
+            shouldWeTrack={shouldWeTrack}
+          />
         ) : (
           <RecommandationsScreen
             handleOpenPrivacyPolicy={handleOpenPrivacyPolicy}

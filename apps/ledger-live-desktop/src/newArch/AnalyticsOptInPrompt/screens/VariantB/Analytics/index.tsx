@@ -8,6 +8,7 @@ import Track from "~/renderer/analytics/Track";
 interface AnalyticsScreenProps {
   currentTheme: "dark" | "light";
   shouldWeTrack: boolean;
+  handleOpenPrivacyPolicy: () => void;
 }
 
 const listItems = [
@@ -26,7 +27,11 @@ const bodyProps = {
   description,
 };
 
-const AnalyticsScreen = ({ currentTheme, shouldWeTrack }: AnalyticsScreenProps) => {
+const AnalyticsScreen = ({
+  currentTheme,
+  shouldWeTrack,
+  handleOpenPrivacyPolicy,
+}: AnalyticsScreenProps) => {
   const { pathname } = useLocation();
   const paddingTop = pathname === "/" ? "40px" : undefined;
   return (
@@ -39,7 +44,7 @@ const AnalyticsScreen = ({ currentTheme, shouldWeTrack }: AnalyticsScreenProps) 
       />
       <Flex flexDirection={"column"} height={"100%"} rowGap={32} pt={paddingTop}>
         <Header currentTheme={currentTheme} />
-        <Body {...bodyProps} />
+        <Body {...bodyProps} handleOpenPrivacyPolicy={handleOpenPrivacyPolicy} />
       </Flex>
     </>
   );
