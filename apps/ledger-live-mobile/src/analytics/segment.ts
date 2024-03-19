@@ -261,7 +261,7 @@ export const updateIdentify = async (additionalProperties?: UserTraits, mandator
   };
   if (ANALYTICS_LOGS) console.log("analytics:identify", allProperties);
   if (!token) return;
-  await segmentClient?.identify(userExtraProperties.userId, allProperties);
+  await segmentClient?.identify(userExtraProperties.userId, mandatoryProperties);
 };
 
 export const stop = () => {
