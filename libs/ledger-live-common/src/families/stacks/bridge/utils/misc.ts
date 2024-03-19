@@ -80,7 +80,8 @@ export const mapTxToOps =
       } = tx.tx;
       const { stx_received: receivedValue, stx_sent: sentValue, stx_transfers } = tx;
 
-      const recipients = stx_transfers.map(t => t.recipient);
+      const allRecipients = stx_transfers.map(t => t.recipient);
+      const recipients = allRecipients.length === 1 ? [allRecipients[0]] : [];
 
       const memoHex = tx.tx.token_transfer?.memo;
       let memo: string = "";
@@ -116,7 +117,7 @@ export const mapTxToOps =
           ...operationCommons,
           id: encodeOperationId(accountID, tx_id, type),
           value: new BigNumber(sentValue),
-          recipients: recipients.length === 1 ? [recipients[0]] : [],
+          recipients,
           type,
           internalOperations:
             stx_transfers.length > 1
@@ -124,6 +125,7 @@ export const mapTxToOps =
                   return {
                     ...operationCommons,
                     id: encodeSubOperationId(accountID, tx_id, type, idx),
+                    contract: "send-many",
                     type,
                     value: new BigNumber(t.amount),
                     senders: [t.sender],
@@ -140,7 +142,7 @@ export const mapTxToOps =
           ...operationCommons,
           id: encodeOperationId(accountID, tx_id, type),
           value: new BigNumber(receivedValue),
-          recipients: recipients.length === 1 ? [recipients[0]] : [],
+          recipients,
           type,
           internalOperations:
             stx_transfers.length > 1
