@@ -5292,11 +5292,11 @@
       "description": "Please try again or contact Ledger Support if the problem persists."
     },
     "LanguageInstallRefusedOnDevice": {
-      "title": "Language restore\ncancelled on device",
+      "title": "Language restore\ncancelled on {{productName}}",
       "description": "If this was a mistake, retry now."
     },
     "RestoreLanguageInstallRefusedOnDevice": {
-      "title": "Restoration of Language was cancelled on Ledger Stax",
+      "title": "Restoration of Language was cancelled on {{productName}}",
       "description": "If this was a mistake you can retry the restoration, or you may skip this step."
     },
     "LanguageNotFound": {
@@ -5498,7 +5498,7 @@
       "title": "Secure connection denied on device"
     },
     "UserRefusedFirmwareUpdate": {
-      "title": "OS update install cancelled\non device",
+      "title": "OS update install cancelled on {{productName}}",
       "description": "If this was a mistake, restart the update."
     },
     "UserRefusedOnDevice": {

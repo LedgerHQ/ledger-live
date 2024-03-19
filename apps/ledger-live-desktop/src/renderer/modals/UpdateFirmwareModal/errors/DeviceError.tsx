@@ -11,6 +11,7 @@ import {
   ImageLoadRefusedOnDevice,
   LanguageInstallRefusedOnDevice,
 } from "@ledgerhq/live-common/errors";
+import { DeviceModel } from "@ledgerhq/types-devices";
 
 type Props = {
   error: Error;
@@ -18,6 +19,7 @@ type Props = {
   onDrawerClose: () => void;
   onRetry: (isRetry?: boolean) => void;
   onSkip: () => void;
+  deviceModel: DeviceModel;
 };
 
 const DeviceCancel = ({
@@ -26,6 +28,7 @@ const DeviceCancel = ({
   onDrawerClose,
   onRetry,
   onSkip,
+  deviceModel,
 }: Props) => {
   const { t } = useTranslation();
   const history = useHistory();
@@ -56,6 +59,10 @@ const DeviceCancel = ({
   const continueLabel = isRestoreStepRefusedOnDevice
     ? t("common.retry")
     : t("manager.firmware.restartUpdate");
+
+  if (typeof error === "object" && error) {
+    (error as Error & { deviceName?: string }).deviceName = deviceModel.productName;
+  }
 
   return (
     <UpdateFirmwareError

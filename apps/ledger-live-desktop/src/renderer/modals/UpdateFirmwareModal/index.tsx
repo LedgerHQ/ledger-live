@@ -142,6 +142,8 @@ const UpdateModal = ({
     deviceHasPin: !(deviceModelId === DeviceModelId.stax && !props.deviceInfo?.onboarded),
   };
 
+  const deviceModel = getDeviceModel(deviceModelId);
+
   const getMainContent = () => {
     if (err && !isDeviceDisconnected) {
       return (
@@ -153,6 +155,7 @@ const UpdateModal = ({
           onDrawerClose={onDrawerClose}
           onRetry={handleReset}
           onSkip={onSkip}
+          deviceModel={deviceModel}
         />
       );
     } else if (cancel || isDeviceDisconnected) {
@@ -219,8 +222,6 @@ const UpdateModal = ({
       );
     }
   };
-
-  const deviceModel = getDeviceModel(deviceModelId);
 
   return (
     <Flex
