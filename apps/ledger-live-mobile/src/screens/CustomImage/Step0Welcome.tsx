@@ -14,6 +14,7 @@ import { CustomImageNavigatorParamList } from "~/components/RootNavigator/types/
 import { TrackScreen } from "~/analytics";
 import videoSources from "../../../assets/videos";
 import { useSystem } from "~/hooks";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 
 const videoDimensions = {
   height: 550,
@@ -74,7 +75,7 @@ const Step0Welcome: React.FC<
               testID="custom-image-welcome-title"
             >
               {t("customImage.landingPage.title", {
-                productName: getDeviceModel(deviceModelId).productName,
+                productName: getDeviceModel(deviceModelId ?? DeviceModelId.stax).productName,
               })}
             </Text>
           </Flex>

@@ -60,7 +60,7 @@ const previewDimensions = {
 const analyticsScreenName = "Choose contrast";
 
 type NavigationProps = BaseComposite<
-  StackNavigatorProps<CustomImageNavigatorParamList, ScreenName.CustomImageStep2Preview>
+  StackNavigatorProps<CustomImageNavigatorParamList, ScreenName.CustomImageStep2ChooseContrast>
 >;
 
 /**

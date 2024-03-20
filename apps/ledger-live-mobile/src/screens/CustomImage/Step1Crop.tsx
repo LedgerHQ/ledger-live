@@ -59,7 +59,7 @@ const Step1Cropping = ({ navigation, route }: NavigationProps) => {
   /** CROP IMAGE HANDLING */
   const handleCropResult: ImageCropperProps["onResult"] = useCallback(
     (cropResult: CropResult) => {
-      navigation.navigate(ScreenName.CustomImageStep2Preview, {
+      navigation.navigate(ScreenName.CustomImageStep2ChooseContrast, {
         ...params,
         cropResult,
       });

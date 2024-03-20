@@ -7,7 +7,15 @@ import { GalleryNFT, ImageFileUri, ImageUrl, ImageType } from "../../CustomImage
 
 type BaseParams = {
   device: Device | null;
+};
+
+type WithMandatoryDeviceModelId = {
   deviceModelId: CLSSupportedDeviceModelId;
+};
+
+type WithOptionalDeviceModelId = {
+  // in some cases (deeplink, navigation from an NFT, etc), the deviceModelId is undetermined
+  deviceModelId: CLSSupportedDeviceModelId | null;
 };
 
 type PreviewPreEditAdditionalParams = (ImageUrl | ImageFileUri | GalleryNFT) & {
@@ -16,32 +24,35 @@ type PreviewPreEditAdditionalParams = (ImageUrl | ImageFileUri | GalleryNFT) & {
 };
 
 export type CustomImageNavigatorParamList = {
-  [ScreenName.CustomImageStep0Welcome]: BaseParams;
-  [ScreenName.CustomImageStep1Crop]: BaseParams & {
-    baseImageFile: ImageFileUri;
-    imageType: ImageType;
-    isPictureFromGallery?: boolean;
-  };
-  [ScreenName.CustomImageStep2Preview]: BaseParams & {
-    baseImageFile: ImageFileUri;
-    imageType: ImageType;
-    cropResult: CropResult;
-  };
-  [ScreenName.CustomImageStep3Transfer]: BaseParams & {
-    imageType: ImageType;
-    rawData: ProcessorRawResult;
-    previewData: ProcessorPreviewResult;
-  };
-  [ScreenName.CustomImageErrorScreen]: BaseParams & { error: Error };
-  [ScreenName.CustomImagePreviewPreEdit]: Omit<BaseParams, "deviceModelId"> &
-    PreviewPreEditAdditionalParams & {
-      deviceModelId: CLSSupportedDeviceModelId | null;
+  [ScreenName.CustomImageNFTGallery]: BaseParams & WithOptionalDeviceModelId;
+  [ScreenName.CustomImageErrorScreen]: BaseParams & WithOptionalDeviceModelId & { error: Error };
+  [ScreenName.CustomImageStep0Welcome]: BaseParams & WithOptionalDeviceModelId;
+  [ScreenName.CustomImagePreviewPreEdit]: BaseParams &
+    WithOptionalDeviceModelId &
+    PreviewPreEditAdditionalParams;
+  [ScreenName.CustomImageStep1Crop]: BaseParams &
+    WithMandatoryDeviceModelId & {
+      baseImageFile: ImageFileUri;
+      imageType: ImageType;
+      isPictureFromGallery?: boolean;
     };
-  [ScreenName.CustomImagePreviewPostEdit]: BaseParams & {
-    baseImageFile: ImageFileUri;
-    imageType: ImageType;
-    imageData: ProcessorRawResult;
-    imagePreview: ProcessorPreviewResult;
-  };
-  [ScreenName.CustomImageNFTGallery]: BaseParams;
+  [ScreenName.CustomImageStep2ChooseContrast]: BaseParams &
+    WithMandatoryDeviceModelId & {
+      baseImageFile: ImageFileUri;
+      imageType: ImageType;
+      cropResult: CropResult;
+    };
+  [ScreenName.CustomImagePreviewPostEdit]: BaseParams &
+    WithMandatoryDeviceModelId & {
+      baseImageFile: ImageFileUri;
+      imageType: ImageType;
+      imageData: ProcessorRawResult;
+      imagePreview: ProcessorPreviewResult;
+    };
+  [ScreenName.CustomImageStep3Transfer]: BaseParams &
+    WithMandatoryDeviceModelId & {
+      imageType: ImageType;
+      rawData: ProcessorRawResult;
+      previewData: ProcessorPreviewResult;
+    };
 };

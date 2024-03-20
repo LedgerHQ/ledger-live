@@ -34,7 +34,7 @@ type Props = {
   setDeviceHasImage?: (arg0: boolean) => void;
   deviceHasImage?: boolean;
   device: Device | null;
-  deviceModelId: CLSSupportedDeviceModelId;
+  deviceModelId: CLSSupportedDeviceModelId | null;
 };
 
 const CustomImageBottomModal: React.FC<Props> = props => {
