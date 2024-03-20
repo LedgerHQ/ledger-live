@@ -11,7 +11,8 @@
     "rootDir": ".",
     "paths": {
       "~/*": ["src/*"],
-      "tests/*": ["tests/*"]
+      "tests/*": ["tests/*"],
+      "LLD/*": ["src/newArch/*"]
     },
     "outDir": "dist",
     "typeRoots": ["index-types.d.ts"]

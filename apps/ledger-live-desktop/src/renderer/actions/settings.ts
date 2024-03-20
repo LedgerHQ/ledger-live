@@ -67,6 +67,10 @@ export const setShareAnalytics = (shareAnalytics: boolean) =>
   saveSettings({
     shareAnalytics,
   });
+export const setSharePersonalizedRecommendations = (sharePersonalizedRecommandations: boolean) =>
+  saveSettings({
+    sharePersonalizedRecommandations,
+  });
 export const setAutoLockTimeout = (autoLockTimeout: number) =>
   saveSettings({
     autoLockTimeout,
@@ -348,4 +352,9 @@ export const setVaultSigner = (payload: VaultSigner) => ({
 export const setSupportedCounterValues = (payload: SupportedCountervaluesData[]) => ({
   type: "SET_SUPPORTED_COUNTER_VALUES",
   payload,
+});
+
+export const setHasSeenAnalyticsOptInPrompt = (hasSeenAnalyticsOptInPrompt: boolean) => ({
+  type: "SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT",
+  payload: hasSeenAnalyticsOptInPrompt,
 });

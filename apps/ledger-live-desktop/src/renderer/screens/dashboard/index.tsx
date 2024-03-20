@@ -32,6 +32,8 @@ import ActionContentCards from "~/renderer/screens/dashboard/ActionContentCards"
 import MarketPerformanceWidget from "~/renderer/screens/dashboard/MarketPerformanceWidget";
 import { useMarketPerformanceFeatureFlag } from "~/renderer/actions/marketperformance";
 import { Grid } from "@ledgerhq/react-ui";
+import AnalyticsOptInPrompt from "LLD/AnalyticsOptInPrompt/screens";
+import { useDisplayOnPortfolioAnalytics } from "LLD/AnalyticsOptInPrompt/hooks/useDisplayOnPortfolio";
 import Carousel from "~/renderer/components/Carousel";
 import useActionCards from "~/renderer/hooks/useActionCards";
 
@@ -79,6 +81,9 @@ export default function DashboardPage() {
   const { enabled: marketPerformanceEnabled, variant: marketPerformanceVariant } =
     useMarketPerformanceFeatureFlag();
   const isActionCardsCampainRunning = useActionCards().length > 0;
+
+  const { isFeatureFlagsAnalyticsPrefDisplayed, analyticsOptInPromptProps } =
+    useDisplayOnPortfolioAnalytics();
 
   return (
     <>
@@ -144,6 +149,9 @@ export default function DashboardPage() {
           <EmptyStateAccounts />
         )}
       </Box>
+      {isFeatureFlagsAnalyticsPrefDisplayed && (
+        <AnalyticsOptInPrompt {...analyticsOptInPromptProps} />
+      )}
     </>
   );
 }
