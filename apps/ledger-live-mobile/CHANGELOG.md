@@ -1,5 +1,24 @@
 # live-mobile
 
+## 3.41.0-nightly.7
+
+### Patch Changes
+
+- [#6451](https://github.com/LedgerHQ/ledger-live/pull/6451) [`0c9c70e`](https://github.com/LedgerHQ/ledger-live/commit/0c9c70e556809de981918f2342578ee2777bad93) Thanks [@cng-ledger](https://github.com/cng-ledger)! - fix(LIVE-11791): use exchange rates from nav params to update redux state
+
+- [#6474](https://github.com/LedgerHQ/ledger-live/pull/6474) [`13bea7c`](https://github.com/LedgerHQ/ledger-live/commit/13bea7ced4b8a7ad40fbc5205e3b58ed8a217982) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Remove referralProgramDiscoverCard feature flag
+
+- Updated dependencies [[`d403658`](https://github.com/LedgerHQ/ledger-live/commit/d403658adc7a917f437d472433427ac688b1d73a), [`6dcda08`](https://github.com/LedgerHQ/ledger-live/commit/6dcda08bb996fee99b535745c8e225383cfe0d61), [`13bea7c`](https://github.com/LedgerHQ/ledger-live/commit/13bea7ced4b8a7ad40fbc5205e3b58ed8a217982), [`77c8fd5`](https://github.com/LedgerHQ/ledger-live/commit/77c8fd5c73916ba0aec8c6e7f8684ce95b88bc0d)]:
+  - @ledgerhq/live-common@33.7.0-nightly.6
+  - @ledgerhq/types-live@6.45.0-nightly.3
+  - @ledgerhq/coin-framework@0.12.0-nightly.4
+  - @ledgerhq/coin-evm@0.13.0-nightly.5
+  - @ledgerhq/domain-service@1.1.19-nightly.4
+  - @ledgerhq/live-countervalues@0.1.3-nightly.5
+  - @ledgerhq/live-countervalues-react@0.1.3-nightly.5
+  - @ledgerhq/live-nft@0.2.2-nightly.5
+  - @ledgerhq/live-nft-react@0.2.2-nightly.5
+
 ## 3.41.0-nightly.6
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @ledgerhq/coin-bitcoin
 
+## 0.4.0-nightly.2
+
+### Patch Changes
+
+- Updated dependencies [[`13bea7c`](https://github.com/LedgerHQ/ledger-live/commit/13bea7ced4b8a7ad40fbc5205e3b58ed8a217982)]:
+  - @ledgerhq/types-live@6.45.0-nightly.3
+  - @ledgerhq/coin-framework@0.12.0-nightly.4
+
 ## 0.4.0-nightly.1
 
 ### Patch Changes
