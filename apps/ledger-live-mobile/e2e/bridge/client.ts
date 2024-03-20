@@ -92,13 +92,15 @@ function onMessage(event: WebSocketMessageEvent) {
       case "addUSB":
         DeviceEventEmitter.emit("onDeviceConnect", msg.payload);
         break;
-      case "getLogs":
+      case "getLogs": {
         const payload = JSON.stringify(logReport.getLogs());
         postMessage({
           type: "appLogs",
           fileName: msg.fileName,
           payload,
         });
+        break;
+      }
       default:
         break;
     }
@@ -123,7 +125,7 @@ async function postMessage(message: ServerData) {
     } else {
       log("WebSocket connection is not open. Message not sent.");
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     log(`Error occurred while waiting for WebSocket connection: ${JSON.stringify(error)}`);
   }
 }

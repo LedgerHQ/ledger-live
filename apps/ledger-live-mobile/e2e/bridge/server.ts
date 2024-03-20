@@ -13,7 +13,7 @@ export const e2eBridgeServer = new Subject<ServerData>();
 
 let wss: Server;
 let webSocket: WebSocket;
-let lastMessages: { [id: string]: MessageData } = {}; // Store the last messages not sent
+const lastMessages: { [id: string]: MessageData } = {}; // Store the last messages not sent
 
 function uniqueId(): string {
   const timestamp = Date.now().toString(36); // Convert timestamp to base36 string
@@ -160,6 +160,7 @@ function onMessage(messageStr: string) {
     case "ACK":
       log(`${msg.id}`);
       delete lastMessages[msg.id];
+      break;
     case "walletAPIResponse":
       e2eBridgeServer.next(msg);
       break;
@@ -196,7 +197,7 @@ async function postMessage(message: MessageData) {
     } else {
       log("WebSocket connection is not open. Message not sent.");
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     log(`Error occurred while waiting for WebSocket connection: ${JSON.stringify(error)}`);
   }
 }
