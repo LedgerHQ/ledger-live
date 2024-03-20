@@ -30,7 +30,8 @@
         "browse" : "チェックする"
       },
       "filter" : {
-        "categories" : "カテゴリー"
+        "categories" : "カテゴリー",
+        "all" : "全て"
       },
       "branch" : {
         "soon" : "近日公開",
@@ -275,7 +276,6 @@
   },
   "sidebar" : {
     "card" : "カード",
-    "learn" : "ラーニング",
     "menu" : "メニュー",
     "stars" : "お気に入りアカウント",
     "accounts" : "アカウント",
@@ -1193,7 +1193,7 @@
         "restoreChoiceContinueOnDevice" : "{{productName}}で関連するオプションを選択",
         "restoreChoiceSRPTitle" : "秘密のリカバリーフレーズを使用して復元する",
         "restoreChoiceSRPDescription" : "セキュリティを最大限に高めるには、Ledgerデバイスによって生成されたシークレットリカバリーフレーズを使用してください。",
-        "restoreChoiceRecoverTitle" : "Ledger Recoverを使用して復元",
+        "restoreChoiceRecoverTitle" : "Ledger Recoverを使用して復元する",
         "restoreChoiceRecoverDescription" : "Ledger Recoverのサブスクリプション契約をしている場合は、サブスクリプションにログインし、シークレットリカバリーフレーズのバックアップを復元します。",
         "followInstructions" : "{{productName}}に表示される指示に従ってください。"
       },
@@ -1409,6 +1409,7 @@
   },
   "dashboard" : {
     "title" : "ポートフォリオ",
+    "header" : "ポートフォリオ残高",
     "emptyAccountTile" : {
       "desc" : "アカウントを追加して、他の暗号資産を管理",
       "createAccount" : "アカウントを追加"
@@ -1449,6 +1450,27 @@
         "description" : "Ledger Recoverまであと1歩です。",
         "primaryCta" : "接続",
         "secondaryCta" : "後で"
+      }
+    },
+    "marketPerformanceWidget" : {
+      "title" : "{{time}}トレンド",
+      "buy" : "購入",
+      "swap" : "スワップ",
+      "gainers" : "上昇",
+      "losers" : "下降",
+      "error" : {
+        "title" : "申し訳ありませんが、トレンドを読み込むことができません",
+        "description" : "再度お試しください。"
+      },
+      "missingData" : {
+        "gainers" : {
+          "title" : "上位50資産で過去24時間に上昇したものはありません",
+          "description" : "上位敗者を表示するか、後でまたご確認ください"
+        },
+        "losers" : {
+          "title" : "上位50資産で過去24時間に下落したものはありません",
+          "description" : "上位勝者を表示するか、後でまたご確認ください"
+        }
       }
     }
   },
@@ -1756,7 +1778,7 @@
   "DeviceAction" : {
     "allowAppPermission" : "デバイスで{{wording}} アプリを開く",
     "allowAppPermissionSubtitleToken" : "{{token}} トークンを管理",
-    "allowManagerPermission" : "{{productName}}でLedger Managerを許可する",
+    "allowManagerPermission" : "安全な接続を許可する",
     "allowRenaming" : "デバイスで名前の変更を許可する",
     "loading" : "読み込み中...",
     "connectAndUnlockDevice" : "デバイスを接続してロックを解除する",
@@ -2207,6 +2229,15 @@
       "summary" : {
         "title" : "概要"
       },
+      "networkFee" : {
+        "title" : "ネットワーク手数料を選択"
+      },
+      "reviewSummary" : {
+        "title" : "概要を確認"
+      },
+      "connectLedger" : {
+        "title" : "Ledgerを接続する"
+      },
       "device" : {
         "title" : "デバイス"
       },
@@ -2263,9 +2294,6 @@
     "footer" : {
       "estimatedFees" : "ネットワーク手数料"
     }
-  },
-  "sign" : {
-    "title" : "トランザクションに署名する"
   },
   "releaseNotes" : {
     "title" : "リリースノート",
@@ -3912,6 +3940,8 @@
       "userId" : "ユーザーID",
       "debugApps" : "デバッグアプリを許可する",
       "debugAppsDesc" : "デバッグとしてタグ付けされたプラットフォームアプリの表示と実行を許可します。",
+      "debugReactQuery" : "ReactQueryのデバッグを許可する",
+      "debugReactQueryDesc" : "ReactQueryデバッグコンソールを表示し、開くことを許可します。",
       "experimentalApps" : "試験的なアプリを許可する",
       "experimentalAppsDesc" : "試験的とタグ付けされたプラットフォームアプリの表示と実行を許可する",
       "catalogUrl" : "カタログアプリプロバイダーを設定",
@@ -4178,6 +4208,17 @@
     "logs" : "ログを保存",
     "dataFolder" : "ユーザーデータを表示"
   },
+  "approve" : {
+    "title" : "トークンを承認",
+    "description" : "Ledgerデバイスでトークンを承認する",
+    "unlimited" : "このプロバイダーに、ウォレットから選択されたトークンに無制限にアクセスすることを許可しようとしています。署名する前に、Ledgerデバイス上のトランザクションの詳細を再確認してください。",
+    "limited" : "このプロバイダーに、ウォレットから選択したトークンへのアクセスを許可しようとしています。署名する前に、Ledgerデバイス上のトランザクションの詳細を再確認してください。",
+    "termsAndConditions" : "このトランザクションに署名により、<0>{{appName}}の利用規約</0>に同意したことになります。"
+  },
+  "sign" : {
+    "title" : "トランザクションに署名する",
+    "description" : "Ledgerデバイスでトランザクションに署名する"
+  },
   "exportOperationsModal" : {
     "title" : "取引履歴",
     "desc" : "取引履歴を保存するアカウントを選択する。",
@@ -4366,7 +4407,7 @@
             "description" : "既存のリカバリーフレーズを使って、新しいNanoに秘密鍵を復元できます。"
           },
           "4" : {
-            "title" : "Ledger Recoverを使用して復元",
+            "title" : "Ledger Recoverを使用して復元する",
             "description" : "Ledger Recoverの登録が必要です。"
           }
         }
@@ -4909,6 +4950,8 @@
     "warning" : "デバイス上に表示されているアドレスが、{{recipientWording}}から受け取ったものと完全に一致しているか、毎回必ず確認してください。",
     "secureContract" : "送付する前に、預け入れの詳細をデバイス上で確認してください。アドレスは安全に提供されるため、確認の必要はありません。",
     "verifyData" : "必ず、操作の詳細をデバイス上で確認してください。",
+    "doubleCheck" : "署名する前に、Ledgerデバイス上のトランザクションの詳細を再確認してください。",
+    "termsAndConditions" : "このトランザクションへの署名により、<0>{{appName}}の利用規約</0>に同意したことになります。",
     "warningWording" : {
     },
     "titleWording" : {
@@ -5343,7 +5386,7 @@
       "description" : "金額と手数料を算出できません"
     },
     "NotEnoughBalance" : {
-      "title" : "資金が不足しています。",
+      "title" : "申し訳ありませんが、ネットワーク手数料を含む残高が不足しています。数量を調整するか、残高を確認してください。",
       "description" : "アカウントに十分な資金があることを確認してください。"
     },
     "NotEnoughBalanceBecauseDestinationNotCreated" : {
@@ -5431,7 +5474,7 @@
       "description" : "ロゴが表示されたら、ボタンを押さずにデバイスを再起動してください。Ledgerサポートにお問い合わせください。"
     },
     "UserRefusedAllowManager" : {
-      "title" : "My Ledgerがデバイスで拒否されました"
+      "title" : "デバイス上で安全な接続が拒否されました"
     },
     "UserRefusedFirmwareUpdate" : {
       "title" : "デバイスでOSアップデートのインストールが\nキャンセルされました",
@@ -5472,6 +5515,14 @@
     "WrongDeviceForAccount" : {
       "title" : "問題が発生しました。",
       "description" : "ハードウェアウォレットに、選択したアカウントのリカバリーフレーズ、またはパスフレーズが設定されていることを確認してください。"
+    },
+    "WrongDeviceForAccountPayout" : {
+      "title" : "問題が発生しました。",
+      "description" : "この受取アカウントはお客様のデバイスに属していません。変更して再試行してください。"
+    },
+    "WrongDeviceForAccountRefund" : {
+      "title" : "問題が発生しました。",
+      "description" : "この受取アカウントは、お客様の払い戻し対象のデバイスに属していません。変更して再試行してください。"
     },
     "DeviceAppVerifyNotSupported" : {
       "title" : "アプリのアップデートが必要です。",
@@ -5516,6 +5567,10 @@
     "TransactionHasBeenValidatedError" : {
       "title" : "速度を上げたり、キャンセルすることはできません",
       "description" : "このトランザクションはすでに検証済みです"
+    },
+    "SequenceNumberError" : {
+      "title" : "シーケンス番号エラー",
+      "description" : "ウィンドウを閉じて、後でもう一度お試しください"
     },
     "CantScanQRCode" : {
       "title" : "このQRコードをスキャンできませんでした：このアドレスでは自動認証がサポートされていません。"
@@ -5698,6 +5753,9 @@
     },
     "SwapExchangeRateAmountTooHigh" : {
       "title" : "{{maxAmountFromFormatted}}以下の値でなければなりません。"
+    },
+    "SwapExchangeRateAmountTooLowOrTooHigh" : {
+      "title" : "この数量は利用できません。価格を調整してください。"
     },
     "PolkadotElectionClosed" : {
       "title" : "バリデータの選出を終了しなければなりません。"
@@ -5914,9 +5972,6 @@
     "FailedToRetrieveFirmwareUpdateInfo" : {
       "title" : "OSアップデートチェックに失敗しました",
       "description" : "問題が発生しました。再試行するか、疑わしい場合はLedgerサポートにお問い合わせください。"
-    },
-    "TezosUnrevealedAccount" : {
-      "title" : "スワップ利用不可：Tezosアカウントで最初の送付/デリゲートを行うか、ペアを変更する必要があります。"
     }
   },
   "cryptoOrg" : {
