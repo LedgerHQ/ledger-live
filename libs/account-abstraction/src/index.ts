@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { createModularAccountAlchemyClient } from "@alchemy/aa-alchemy";
+import { User, createModularAccountAlchemyClient } from "@alchemy/aa-alchemy";
 import {  sepolia } from "@alchemy/aa-core";
 import { AlchemySigner } from "@alchemy/aa-alchemy";
 import { getEnv } from "@ledgerhq/live-env";
@@ -31,11 +31,14 @@ function authenticate(email: string) {
   signer.authenticate({ type: "email", email });
 }
 
-async function completeAuthenticate(orgId: string, bundle: string) {
-  await signer.authenticate({ type: "email", bundle, orgId });
-  const initializeClient = async () => {
+  // second step when user clicked on mail and was redirected through deep link
+async function completeAuthenticate(orgId: string, bundle: string): Promise<{email: string | undefined, address: string}> {
+  const res: User = await signer.authenticate({ type: "email", bundle, orgId });
+  return {email: res.email, address: res.address}
+}
+
+async function initializeClient ()  {
     // Create a smart account client to send user operations from your smart account
-    console.log({apikey: AA_ALCHEMY_SMARTACCOUNT_APIKEY})
     client = await createModularAccountAlchemyClient({
       // get your Alchemy API key at https://dashboard.alchemy.com
       apiKey: AA_ALCHEMY_SMARTACCOUNT_APIKEY,
@@ -51,8 +54,6 @@ async function completeAuthenticate(orgId: string, bundle: string) {
     console.log("Smart Account Address: ", client.getAddress()); // Log the smart account address
     return client.getAddress();
   };
-  return await initializeClient();
-}
 
 //@ts-expect-error
 async function sendTx({ to, value }) {
@@ -114,4 +115,4 @@ async function mintNft() {
   return { txHash };
 }
 
-export { authenticate, completeAuthenticate, sendTx, mintNft, biconomy  };
+export { authenticate, completeAuthenticate, initializeClient, sendTx, mintNft, biconomy  };
