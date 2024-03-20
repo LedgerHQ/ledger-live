@@ -43,7 +43,11 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
   const { onResult, onCancel, swapId, magnitudeAwareRate, ...exchangeParams } = data;
   const { exchange, provider, transaction: transactionParams } = exchangeParams;
 
-  const { fromAccount: account, fromParentAccount: parentAccount } = exchange;
+  const {
+    fromAccount: account,
+    fromParentAccount: parentAccount,
+    toAccount,
+  } = exchange as SwapExchange;
 
   const broadcastRef = useRef(false);
   const redirectToHistory = useRedirectToSwapHistory();
@@ -56,12 +60,6 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
     },
     [onClose, redirectToHistory],
   );
-
-  let toAccount: AccountLike | undefined = undefined;
-
-  if ("toAccount" in exchange) {
-    toAccount = exchange.toAccount;
-  }
 
   const tokenCurrency: TokenCurrency | undefined =
     account.type === "TokenAccount" ? account.token : undefined;

@@ -226,10 +226,8 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         if (swapResult.binaryPayload) {
           const decodePayload = await decodePayloadProtobuf(swapResult.binaryPayload);
           amountExpectedTo = new BigNumber(decodePayload.amountToWallet.toString());
+          magnitudeAwareRate = transaction.amount && amountExpectedTo.dividedBy(transaction.amount);
         }
-
-        magnitudeAwareRate =
-          amountExpectedTo && transaction.amount && amountExpectedTo.dividedBy(transaction.amount);
 
         o.next({
           type: "init-swap-requested",

@@ -21,6 +21,7 @@ import {
   ExchangeType,
   ExchangeStartSellParams,
 } from "@ledgerhq/wallet-api-exchange-module";
+import { decodePayloadProtobuf } from "@ledgerhq/hw-app-exchange";
 import { TrackingAPI } from "./tracking";
 import { AppManifest } from "../types";
 import {
@@ -38,7 +39,6 @@ import {
 } from "./error";
 
 export { ExchangeType };
-import { decodePayloadProtobuf } from "@ledgerhq/hw-app-exchange";
 import { BigNumber } from "bignumber.js";
 
 type Handlers = {
@@ -163,7 +163,6 @@ export const handlers = ({
         }
 
         let toAccount;
-        let amountExpectedTo;
 
         if (params.exchangeType === "SWAP" && params.toAccountId) {
           const realToAccountId = getAccountIdFromWalletAccountId(params.toAccountId);
@@ -176,10 +175,6 @@ export const handlers = ({
           if (!toAccount) {
             throw new ServerError(createAccountNotFound(params.toAccountId));
           }
-
-          // Get amountExpectedTo from binary payload
-          const decodePayload = await decodePayloadProtobuf(params.hexBinaryPayload);
-          amountExpectedTo = new BigNumber(decodePayload.amountToWallet.toString());
         }
 
         const fromParentAccount = getParentAccount(fromAccount, accounts);
@@ -233,8 +228,14 @@ export const handlers = ({
           },
         );
 
-        const magnitudeAwareRate =
-          amountExpectedTo && tx.amount && amountExpectedTo.dividedBy(tx.amount);
+        let amountExpectedTo;
+        let magnitudeAwareRate;
+        if (params.exchangeType === "SWAP") {
+          // Get amountExpectedTo and magnitudeAwareRate from binary payload
+          const decodePayload = await decodePayloadProtobuf(params.hexBinaryPayload);
+          amountExpectedTo = new BigNumber(decodePayload.amountToWallet.toString());
+          magnitudeAwareRate = tx.amount && amountExpectedTo.dividedBy(tx.amount);
+        }
 
         return new Promise((resolve, reject) =>
           uiExchangeComplete({
