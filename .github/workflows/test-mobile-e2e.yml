@@ -122,37 +122,37 @@ jobs:
         run: pnpm mobile e2e:ci -p ios --bundle
       - name: Test iOS app
         id: detox
-        timeout-minutes: 60
+        timeout-minutes: 75
         run: pnpm mobile e2e:ci -p ios -t
       - name: Delete iOS simulator
-        if: ${{ steps.simulator.outputs.id }}
+        if: ${{ always() && steps.simulator.outputs.id }}
         run: |
           xcrun simctl delete ${{ steps.simulator.outputs.id }}
       - name: setup JRE 11 for Allure
         uses: actions/setup-java@v3
-        if: always()
+        if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
         with:
           distribution: "zulu"
           java-version: "11"
           java-package: "jre"
       - name: Generate single file Allure report
-        if: always()
-        run: pnpx allure-commandline generate apps/ledger-live-mobile/allure-results --single-file
+        if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
+        run: pnpm dlx allure-commandline generate apps/ledger-live-mobile/allure-results --single-file
       - name: Upload Allure single file report
         uses: actions/upload-artifact@v3
-        if: always()
+        if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
         with:
-          name: ios-global-report
+          name: 1-global-ios-report
           path: allure-report/index.html
       - name: Upload test artifacts
         uses: actions/upload-artifact@v3
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
         with:
-          name: test-ios-artifacts
+          name: 2-test-ios-artifacts
           path: apps/ledger-live-mobile/artifacts
       - name: Upload Allure report
         uses: actions/upload-artifact@v3
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
         with:
           name: "allure-ios-reports"
           path: apps/ledger-live-mobile/allure-results
@@ -171,7 +171,7 @@ jobs:
       AVD_TARGET: google_apis
       AVD_NAME: "Pixel_6_Pro_API_32"
       AVD_CORES: 4
-      AVD_RAM_SIZE: 8192M
+      AVD_RAM_SIZE: 4096M
       AVD_OPTIONS: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
     outputs:
       status: ${{ steps.detox.outcome }}
@@ -223,8 +223,10 @@ jobs:
         run: |
           pnpm mobile e2e:ci -p android -b
       - name: cache android emulator
+        timeout-minutes: 5
         uses: tespkg/actions-cache@v1
         id: detox-avd
+        continue-on-error: true
         with:
           path: |
             ~/.android/avd/*
@@ -261,22 +263,23 @@ jobs:
         env:
           DETOX_INSTALL_TIMEOUT: 120000
       - name: Generate single file Allure report
-        run: pnpx allure-commandline generate apps/ledger-live-mobile/allure-results --single-file
+        if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
+        run: pnpm dlx allure-commandline generate apps/ledger-live-mobile/allure-results --single-file
       - name: Upload Allure single file report
         uses: actions/upload-artifact@v3
-        if: always()
+        if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
         with:
-          name: android-global-report
+          name: 1-global-android-report
           path: allure-report/index.html
       - name: Upload test artifacts
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
         uses: actions/upload-artifact@v3
         with:
-          name: test-android-artifacts
+          name: 2-test-android-artifacts
           path: apps/ledger-live-mobile/artifacts/
       - name: Upload Allure Report
         uses: actions/upload-artifact@v3
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
         with:
           name: "allure-android-reports"
           path: apps/ledger-live-mobile/allure-results

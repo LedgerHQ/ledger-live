@@ -44,9 +44,9 @@ setSupportedCurrencies(testedCurrencies);
 
 describe("Send flow", () => {
   beforeAll(async () => {
-    loadConfig("onboardingcompleted", true);
-    loadBleState({ knownDevices: [knownDevice] });
-    loadAccounts(testAccounts);
+    await loadConfig("onboardingcompleted", true);
+    await loadBleState({ knownDevices: [knownDevice] });
+    await loadAccounts(testAccounts);
 
     portfolioPage = new PortfolioPage();
     deviceAction = new DeviceAction(knownDevice);

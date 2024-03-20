@@ -31,8 +31,8 @@ badAccount2.derivationMode += "DO_NOT_EXIST";
 
 describe("Portfolio to load with unknown currency data in accounts", () => {
   beforeAll(async () => {
-    loadConfig("onboardingcompleted", true);
-    loadAccountsRaw([
+    await loadConfig("onboardingcompleted", true);
+    await loadAccountsRaw([
       { data: badAccount1, version: 0 },
       { data: badAccount2, version: 0 },
     ]);

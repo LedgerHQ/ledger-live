@@ -33,7 +33,7 @@ import {
   staxLoadImageExecMock,
   staxRemoveImageExecMock,
   renameDeviceExecMock,
-} from "../../e2e/bridge/client";
+} from "../../e2e/bridge/types";
 
 export function useAppDeviceAction() {
   const mock = useEnv("MOCK");
