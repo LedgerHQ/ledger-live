@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.42.0
+
+### Minor Changes
+
+- [#6491](https://github.com/LedgerHQ/ledger-live/pull/6491) [`92672ae`](https://github.com/LedgerHQ/ledger-live/commit/92672ae7f6e0c66e30ddf8488da8ffaea7b93394) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Hotfix 3.41.1
+
 ## 3.42.0-hotfix.0
 
 ### Minor Changes
