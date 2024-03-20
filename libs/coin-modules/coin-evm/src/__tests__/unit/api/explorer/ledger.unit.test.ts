@@ -5,7 +5,7 @@ import BigNumber from "bignumber.js";
 import { delay } from "@ledgerhq/live-promise";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
-import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { LedgerExplorerUsedIncorrectly } from "../../../../errors";
 import * as LEDGER_API from "../../../../api/explorer/ledger";
 import {
@@ -14,6 +14,7 @@ import {
   coinOperation3,
   coinOperation4,
 } from "../../../fixtures/explorer/ledger.fixtures";
+import { getCoinConfig } from "../../../../config";
 
 jest.mock("axios");
 jest.mock("@ledgerhq/live-promise");
@@ -21,14 +22,10 @@ jest.mock("@ledgerhq/live-promise");
   () => new Promise(resolve => setTimeout(resolve, 1)), // mocking the delay supposed to happen after each try
 );
 
-const fakeCurrency = Object.freeze({
-  id: "ethereum" as CryptoCurrencyId,
+const fakeCurrency = Object.freeze<Partial<CryptoCurrency>>({
+  id: "ethereum",
   ethereumLikeInfo: {
     chainId: 1,
-    explorer: {
-      type: "ledger",
-      explorerId: "eth",
-    },
   },
 }) as CryptoCurrency;
 
@@ -40,8 +37,24 @@ const accountId = encodeAccountId({
   derivationMode: "",
 });
 
+jest.mock("../../../../config");
+const mockGetConfig = jest.mocked(getCoinConfig);
+
 describe("EVM Family", () => {
   describe("api/explorer/ledger.ts", () => {
+    beforeEach(() => {
+      mockGetConfig.mockImplementation((): any => {
+        return {
+          info: {
+            explorer: {
+              type: "ledger",
+              explorerId: "eth",
+            },
+          },
+        };
+      });
+    });
+
     afterEach(() => {
       jest.resetAllMocks();
     });
@@ -144,16 +157,24 @@ describe("EVM Family", () => {
 
     describe("getLastOperations", () => {
       it("should throw if the explorer is misconfigured", async () => {
+        mockGetConfig.mockImplementationOnce((): any => {
+          return {
+            info: {
+              node: {
+                type: "wrongtype",
+                uri: "anything",
+              },
+            },
+          };
+        });
+
         const badCurrency = {
-          id: "ethereum" as CryptoCurrencyId,
+          id: "ethereum",
           ethereumLikeInfo: {
             chainId: 1,
-            node: {
-              type: "wrongtype",
-              uri: "anything",
-            } as any,
           },
         } as CryptoCurrency;
+
         try {
           await LEDGER_API.getLastOperations(
             badCurrency,

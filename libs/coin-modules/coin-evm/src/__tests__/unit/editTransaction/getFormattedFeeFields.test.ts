@@ -3,6 +3,10 @@ import { cryptocurrenciesById } from "@ledgerhq/cryptoassets/currencies";
 import { Account } from "@ledgerhq/types-live";
 import type { Transaction as EvmTransaction } from "../../../types/index";
 import { getFormattedFeeFields } from "../../../editTransaction/getFormattedFeeFields";
+import { getCoinConfig } from "../../../config";
+
+jest.mock("../../../config");
+const mockGetConfig = jest.mocked(getCoinConfig);
 
 const dummyType2Transaction = {
   type: 2,
@@ -53,6 +57,12 @@ const localeTestCases = [
 ];
 
 describe("getFormattedFeeFields", () => {
+  beforeEach(() => {
+    mockGetConfig.mockImplementation((): any => {
+      return { info: {} };
+    });
+  });
+
   describe("with tx type 2", () => {
     describe.each(localeTestCases)("with locale %s", locale => {
       test.each(testCases)(

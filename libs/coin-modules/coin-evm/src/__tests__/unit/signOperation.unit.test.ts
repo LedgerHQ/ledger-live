@@ -10,15 +10,15 @@ import { makeAccount } from "../fixtures/common.fixtures";
 import * as nodeApi from "../../api/node/rpc.common";
 import { getEstimatedFees } from "../../logic";
 import { DEFAULT_NONCE } from "../../createTransaction";
+import { getCoinConfig } from "../../config";
+
+jest.mock("../../config");
+const mockGetConfig = jest.mocked(getCoinConfig);
 
 const currency: CryptoCurrency = {
   ...getCryptoCurrencyById("ethereum"),
   ethereumLikeInfo: {
     chainId: 1,
-    node: {
-      type: "external" as const,
-      uri: "my-rpc.com",
-    },
   },
 };
 const account: Account = makeAccount(
@@ -64,6 +64,17 @@ const mockSignerContext: SignerContext<EvmSigner, EvmAddress | EvmSignature> = (
 };
 
 describe("EVM Family", () => {
+  mockGetConfig.mockImplementation((): any => {
+    return {
+      info: {
+        node: {
+          type: "external",
+          uri: "my-rpc.com",
+        },
+      },
+    };
+  });
+
   describe("signOperation.ts", () => {
     describe("signOperation", () => {
       beforeAll(() => {

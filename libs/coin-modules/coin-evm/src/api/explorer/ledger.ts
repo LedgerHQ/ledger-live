@@ -5,6 +5,7 @@ import { Operation } from "@ledgerhq/types-live";
 import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
 import { LedgerExplorerUsedIncorrectly } from "../../errors";
 import { LedgerExplorerOperation } from "../../types";
+import { getCoinConfig } from "../../config";
 import {
   ledgerERC1155EventToOperations,
   ledgerERC20EventToOperations,
@@ -81,7 +82,8 @@ export const getLastOperations: ExplorerApi["getLastOperations"] = async (
   accountId,
   fromBlock,
 ) => {
-  const { explorer } = currency.ethereumLikeInfo || /* istanbul ignore next */ {};
+  const config = getCoinConfig(currency).info;
+  const { explorer } = config || /* istanbul ignore next */ {};
   if (!isLedgerExplorerConfig(explorer)) {
     throw new LedgerExplorerUsedIncorrectly(
       `Ledger explorer used incorrectly with currency: ${currency.id}`,
