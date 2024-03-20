@@ -154,7 +154,7 @@ export type CompleteExchangeUiRequest = {
   feesStrategy: string;
   exchangeType: number;
   swapId?: string;
-  rate?: number;
+  amountExpectedTo?: number;
 };
 export function completeExchangeLogic(
   { manifest, accounts, tracking }: WebPlatformContext,

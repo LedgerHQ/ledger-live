@@ -27,6 +27,7 @@ import { Separator } from "../Separator";
 import SwapAction from "./SwapAction";
 import SwapCompleted from "./SwapCompleted";
 import { Operation } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
 
 const ContentBox = styled(Box)`
   ${DeviceActionHeader} {
@@ -91,8 +92,16 @@ export default function ExchangeDrawer({ swapTransaction, exchangeRate, onComple
   );
 
   const onCompletion = useCallback(
-    (result: { operation: Operation; swapId: string }) => {
-      const { magnitudeAwareRate, provider } = exchangeRate;
+    ({
+      magnitudeAwareRate,
+      ...result
+    }: {
+      operation: Operation;
+      swapId: string;
+      magnitudeAwareRate: BigNumber;
+    }) => {
+      const { provider } = exchangeRate;
+
       setBroadcastTransaction({
         result,
         provider,
