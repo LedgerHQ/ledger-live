@@ -2665,6 +2665,7 @@
     "moreAssets": "Add more"
   },
   "help": {
+    "chatbot": "Ledger Chatbot",
     "gettingStarted": {
       "title": "Getting started",
       "desc": "Start here"
