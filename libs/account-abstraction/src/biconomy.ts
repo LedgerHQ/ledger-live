@@ -61,11 +61,13 @@ type sendTxArgs = {
 };
 export async function sendTx({ from, chainId, to, value }: sendTxArgs) {
   const smartAccount = smartAccounts[`${chainId}`][from];
-  debugger;
+  // debugger;
   const tx: Transaction = {
+    // @ts-ignore
     value,
     to,
   };
+    // @ts-ignore
   const userOpResponse = await smartAccount.sendTransaction(tx);
   const { transactionHash } = await userOpResponse.waitForTxHash();
   console.log("transactionHash", transactionHash);

@@ -7,6 +7,7 @@ import {
   completeAuthenticate,
   initializeClient,
   biconomy,
+  zerodev,
   signer,
 } from "@ledgerhq/account-abstraction";
 import EmptyStateAccounts from "../dashboard/EmptyStateAccounts";
@@ -60,7 +61,7 @@ export default function AccountAbstraction({ location: { state } }) {
         console.log({ RESHERE: res });
         setAddress(res.address);
         setLoggedEmail(res.email || "");
-        await initializeClient();
+        // await initializeClient();
         await handleConnect(res.email || "");
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         //@ts-expect-error
@@ -72,7 +73,7 @@ export default function AccountAbstraction({ location: { state } }) {
           console.log({ user });
           setAddress(user.address);
           setLoggedEmail(user.email || "");
-          await initializeClient();
+          // await initializeClient();
           await handleConnect(user.email || "");
         }
       }
@@ -81,7 +82,9 @@ export default function AccountAbstraction({ location: { state } }) {
   }, [signerFromQueryParams]);
 
   const handleConnect = async (email: string) => {
-    const res = await biconomy.connect();
+    // const res = await biconomy.connect();
+    const res = await zerodev.connect();
+    console.log({ email, res });
     if (res && !!res.saAddress) {
       console.log({ res });
       setSaAddress(res.saAddress);
@@ -95,7 +98,8 @@ export default function AccountAbstraction({ location: { state } }) {
   };
 
   const handleMint = async () => {
-    const res = await biconomy.safeMint({ saAddress });
+    const res = await zerodev.safeMint({ chainId: "11155111", saAddress });
+    console.log({resmint: res})
     if (res && !!res.transactionHash) {
       setMintTransactionHash(res.transactionHash);
       setUserOpReceipt(res.userOpReceipt);

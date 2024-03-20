@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { User, createModularAccountAlchemyClient } from "@alchemy/aa-alchemy";
-import {  sepolia } from "@alchemy/aa-core";
+import { sepolia } from "@alchemy/aa-core";
 import { AlchemySigner } from "@alchemy/aa-alchemy";
 import { getEnv } from "@ledgerhq/live-env";
 import { encodeFunctionData } from "viem";
-import * as biconomy from "./biconomy"
+import * as biconomy from "./biconomy";
+import * as zerodev from "./zerodev";
 
 const chain = sepolia;
 //@ts-expect-error
@@ -27,34 +28,36 @@ export const signer = new AlchemySigner({
 });
 
 function authenticate(email: string) {
-  console.log(`alchemy signer.authenticate ${email}`)
+  console.log(`alchemy signer.authenticate ${email}`);
   signer.authenticate({ type: "email", email });
 }
 
-  // second step when user clicked on mail and was redirected through deep link
-async function completeAuthenticate(orgId: string, bundle: string): Promise<{email: string | undefined, address: string}> {
+// second step when user clicked on mail and was redirected through deep link
+async function completeAuthenticate(
+  orgId: string,
+  bundle: string,
+): Promise<{ email: string | undefined; address: string }> {
   const res: User = await signer.authenticate({ type: "email", bundle, orgId });
-  return {email: res.email, address: res.address}
+  return { email: res.email, address: res.address };
 }
 
-async function initializeClient ()  {
-    // Create a smart account client to send user operations from your smart account
-    client = await createModularAccountAlchemyClient({
-      // get your Alchemy API key at https://dashboard.alchemy.com
-      apiKey: AA_ALCHEMY_SMARTACCOUNT_APIKEY,
-      chain,
-      signer,
-      gasManagerConfig: {
-        policyId: "af93d626-bf51-46e1-8963-db712ab8cc0c",
-      },
-    });
+async function initializeClient() {
+  // // Create a smart account client to send user operations from your smart account
+  // client = await createModularAccountAlchemyClient({
+  //   // get your Alchemy API key at https://dashboard.alchemy.com
+  //   apiKey: AA_ALCHEMY_SMARTACCOUNT_APIKEY,
+  //   chain,
+  //   signer,
+  //   gasManagerConfig: {
+  //     policyId: "af93d626-bf51-46e1-8963-db712ab8cc0c",
+  //   },
+  // });
 
-    // Fund your account address with ETH to send for the user operations
-    // (e.g. Get Sepolia ETH at https://sepoliafaucet.com)
-    console.log("Smart Account Address: ", client.getAddress()); // Log the smart account address
-    return client.getAddress();
-  };
-
+  // // Fund your account address with ETH to send for the user operations
+  // // (e.g. Get Sepolia ETH at https://sepoliafaucet.com)
+  // console.log("Smart Account Address: ", client.getAddress()); // Log the smart account address
+  // return client.getAddress();
+}
 
 const MintNFTABI = [
   {
@@ -102,4 +105,4 @@ async function mintNft() {
   return { txHash };
 }
 
-export { authenticate, completeAuthenticate, initializeClient, mintNft, biconomy  };
+export { authenticate, completeAuthenticate, initializeClient, mintNft, biconomy, zerodev };

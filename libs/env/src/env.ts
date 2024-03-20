@@ -42,6 +42,11 @@ const stringArrayParser = (v: unknown): string[] | undefined => {
 };
 
 const envDefinitions = {
+  AA_ZERODEV_PROJECTID: {
+    def: "",
+    parser: stringParser,
+    desc: "",
+  },
   AA_ALCHEMY_APIKEY: {
     def: "",
     parser: stringParser,
