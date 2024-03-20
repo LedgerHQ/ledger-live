@@ -372,7 +372,7 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["bottom"]}>
       <TrackScreen category={analyticsScreenName} />
-      {params.deviceModelId === null && supportDeviceEuropa && supportDeviceStax && (
+      {!params.deviceModelId && supportDeviceEuropa && supportDeviceStax && (
         <TabContainer>
           {supportedAndEnabledDeviceModelIds.map(modelId => (
             <Tab

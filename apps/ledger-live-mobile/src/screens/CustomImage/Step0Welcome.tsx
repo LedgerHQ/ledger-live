@@ -33,9 +33,10 @@ const Step0Welcome: React.FC<
   const [modalOpened, setModalOpened] = useState(false);
   const { t } = useTranslation();
 
-  const { params } = route;
-
-  const { device, deviceModelId } = params;
+  /**
+   * the default values are for the case navigation to this screen is done through a deeplink without parameters
+   */
+  const { params: { device, deviceModelId } = { deviceModelId: null } } = route;
 
   const openModal = useCallback(() => {
     setModalOpened(true);

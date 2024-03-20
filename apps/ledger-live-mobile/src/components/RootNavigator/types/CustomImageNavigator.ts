@@ -26,7 +26,7 @@ type PreviewPreEditAdditionalParams = (ImageUrl | ImageFileUri | GalleryNFT) & {
 export type CustomImageNavigatorParamList = {
   [ScreenName.CustomImageNFTGallery]: BaseParams & WithOptionalDeviceModelId;
   [ScreenName.CustomImageErrorScreen]: BaseParams & WithOptionalDeviceModelId & { error: Error };
-  [ScreenName.CustomImageStep0Welcome]: BaseParams & WithOptionalDeviceModelId;
+  [ScreenName.CustomImageStep0Welcome]: undefined | (BaseParams & WithOptionalDeviceModelId); // undefined is because it can be called without params (deeplink)
   [ScreenName.CustomImagePreviewPreEdit]: BaseParams &
     WithOptionalDeviceModelId &
     PreviewPreEditAdditionalParams;
