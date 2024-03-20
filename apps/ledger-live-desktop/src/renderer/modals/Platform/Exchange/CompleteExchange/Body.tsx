@@ -43,11 +43,10 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
   const { onResult, onCancel, swapId, magnitudeAwareRate, ...exchangeParams } = data;
   const { exchange, provider, transaction: transactionParams } = exchangeParams;
 
-  const {
-    fromAccount: account,
-    fromParentAccount: parentAccount,
-    toAccount,
-  } = exchange as SwapExchange;
+  const { fromAccount: account, fromParentAccount: parentAccount } = exchange;
+
+  // toAccount exists only in swap mode
+  const toAccount = "toAccount" in exchange ? exchange.toAccount : undefined;
 
   const broadcastRef = useRef(false);
   const redirectToHistory = useRedirectToSwapHistory();
@@ -84,11 +83,11 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
   }, [exchange, getCurrencyByAccount]);
 
   const targetCurrency = useMemo(() => {
-    if ("toAccount" in exchange) {
-      return getCurrencyByAccount(exchange.toAccount);
+    if (toAccount) {
+      return getCurrencyByAccount(toAccount);
     }
     return null;
-  }, [exchange, getCurrencyByAccount]);
+  }, [toAccount, getCurrencyByAccount]);
 
   const broadcast = useBroadcast({ account, parentAccount });
   const [transaction, setTransaction] = useState<Transaction>();
