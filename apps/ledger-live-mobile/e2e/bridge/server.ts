@@ -8,6 +8,7 @@ import { BleState } from "../../src/reducers/types";
 import { Account, AccountRaw } from "@ledgerhq/types-live";
 import { DeviceUSB, nanoSP_USB, nanoS_USB, nanoX_USB } from "../models/devices";
 import { MessageData, MockDeviceEvent, ServerData } from "./types";
+import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 
 export const e2eBridgeServer = new Subject<ServerData>();
 
@@ -115,7 +116,7 @@ export async function addDevicesBT(
   ],
 ): Promise<string[]> {
   const names = Array.isArray(deviceNames) ? deviceNames : [deviceNames];
-  const serviceUUID = "13d63400-2c97-0004-0000-4c6564676572";
+  const serviceUUID = getDeviceModel(DeviceModelId.nanoX).bluetoothSpec![0].serviceUuid;
   names.forEach((name, i) => {
     postMessage({
       type: "add",
