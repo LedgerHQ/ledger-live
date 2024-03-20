@@ -131,7 +131,6 @@ export type Features = CurrencyFeatures & {
   buyDeviceFromLive: Feature_BuyDeviceFromLive;
   mockFeature: Feature_MockFeature;
   multibuyNavigation: Feature_MultibuyNavigation;
-  referralProgramDiscoverCard: Feature_ReferralProgramDiscoverCard;
   referralProgramDesktopSidebar: Feature_ReferralProgramDesktopSidebar;
   referralProgramMobile: Feature_ReferralProgramMobile;
   disableNftSend: Feature_DisableNftSend;
@@ -170,7 +169,7 @@ export type Features = CurrencyFeatures & {
   lldAnalyticsOptInPrompt: Feature_LldAnalyticsOptInPrompt;
   myLedgerDisplayAppDeveloperName: Feature_MyLedgerDisplayAppDeveloperName;
   nftsFromSimplehash: Feature_NftsFromSimpleHash;
-  lldPortfolioCarousel: Feature_LldPortfolioCarousel;
+  lldActionCarousel: Feature_lldActionCarousel;
   llmMarketNewArch: Feature_LlmMarketNewArch;
   marketperformanceWidgetDesktop: Feature_MarketperformanceWidgetDesktop;
   supportDeviceStax: Feature_SupportDeviceStax;
@@ -213,10 +212,6 @@ export type Feature_StakeAccountBanner = Feature<{ [blockchainName: string]: any
 
 export type Feature_ReferralProgramMobile = Feature<{
   path: string;
-}>;
-
-export type Feature_ReferralProgramDiscoverCard = Feature<{
-  url: string;
 }>;
 
 export type Feature_ReferralProgramDesktopSidebar = Feature<{
@@ -445,7 +440,7 @@ export type Feature_LldAnalyticsOptInPrompt = Feature<{
   entryPoints: Array<string>;
 }>;
 
-export type Feature_LldPortfolioCarousel = Feature<{
+export type Feature_lldActionCarousel = Feature<{
   variant: ABTestingVariants;
 }>;
 

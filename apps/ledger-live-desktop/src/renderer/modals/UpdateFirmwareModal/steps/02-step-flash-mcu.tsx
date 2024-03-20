@@ -30,7 +30,6 @@ type BodyProps = {
   deviceModelId: DeviceModelId;
   firmware?: FirmwareUpdateContext;
   initialDelayPhase: boolean;
-
   current: number;
   total: number;
 };
