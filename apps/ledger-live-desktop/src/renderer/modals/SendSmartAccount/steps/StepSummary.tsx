@@ -24,7 +24,7 @@ import Alert from "~/renderer/components/Alert";
 import NFTSummary from "~/renderer/screens/nft/Send/Summary";
 import { StepProps } from "../types";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
-import { sendTx } from "@ledgerhq/account-abstraction";
+import { biconomy } from "@ledgerhq/account-abstraction";
 
 const TextContent = styled.div`
   font-weight: bold;
@@ -243,13 +243,14 @@ export const StepSummaryFooter = (props: StepProps) => {
   const { account, status, bridgePending, transitionTo, transaction } = props;
   const onNext = async () => {
     // @ts-expect-error
-    transaction.broadcastingTx = sendTx({
+    transaction.broadcastingTx = biconomy.sendTx({
       // @ts-expect-error
-      to: transaction.recipient,
+      from: account.freshAddress,
       // @ts-expect-error
-      gas: transaction.gasLimit,
-      // @ts-expect-error
-      value: transaction.amount,
+      chainId: account?.currency.ethereumLikeInfo.chainId,
+      to: transaction?.recipient,
+      // gas: transaction?.gasLimit,
+      value: transaction?.amount,
     });
     transitionTo("confirmation");
   };

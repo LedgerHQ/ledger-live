@@ -47,7 +47,7 @@ export default function AccountAbstraction({ location: { state } }) {
   const signerFromQueryParams = state?.signer;
   const [address, setAddress] = useState("");
   const [saAddress, setSaAddress] = useState("");
-  const [smartAccount, setSmartAccount] = useState({});
+  // const [smartAccount, setSmartAccount] = useState({});
   const [mintTransactionHash, setMintTransactionHash] = useState("");
   const [userOpReceipt, setUserOpReceipt] = useState({});
   const [loggedEmail, setLoggedEmail] = useState("");
@@ -61,9 +61,7 @@ export default function AccountAbstraction({ location: { state } }) {
         setAddress(res.address);
         setLoggedEmail(res.email || "");
         await initializeClient();
-        await handleConnect();
-        const account = await buildAccount(address, loggedEmail);
-        console.log({ accountbuilt: account });
+        await handleConnect(res.email || "");
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         //@ts-expect-error
         dispatch(addAccount(account));
@@ -75,29 +73,29 @@ export default function AccountAbstraction({ location: { state } }) {
           setAddress(user.address);
           setLoggedEmail(user.email || "");
           await initializeClient();
-          await handleConnect();
-          const account = await buildAccount(user.address, user.email);
-          console.log({ accountbuilt: account });
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          //@ts-expect-error
-          dispatch(addAccount(account));
+          await handleConnect(user.email || "");
         }
       }
     };
     check();
   }, [signerFromQueryParams]);
 
-  const handleConnect = async () => {
+  const handleConnect = async (email: string) => {
     const res = await biconomy.connect();
     if (res && !!res.saAddress) {
       console.log({ res });
       setSaAddress(res.saAddress);
-      setSmartAccount(res.smartAccount);
+      // setSmartAccount(res.smartAccount);
+      const account = await buildAccount(res.saAddress, email);
+      console.log({ accountbuilt: account });
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      //@ts-expect-error
+      dispatch(addAccount(account));
     }
   };
 
   const handleMint = async () => {
-    const res = await biconomy.safeMint({ saAddress, smartAccount });
+    const res = await biconomy.safeMint({ saAddress });
     if (res && !!res.transactionHash) {
       setMintTransactionHash(res.transactionHash);
       setUserOpReceipt(res.userOpReceipt);
@@ -110,7 +108,7 @@ export default function AccountAbstraction({ location: { state } }) {
     <Container>
       {address ? (
         <Container>
-          <Title>Account Abstraction</Title>
+          <Title>Smart Account</Title>
           <Box marginY={30} flow={5}>
             <Box horizontal alignItems="center" justifyContent="space-between">
               <Text variant="h3Inter" fontWeight="semiBold">

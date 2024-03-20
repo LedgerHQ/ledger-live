@@ -37,7 +37,8 @@ export const buildAccount = async (address: string, email: string) => {
     freshAddress: address,
     balanceHistoryCache: emptyHistoryCache,
     isSmartAccount: true,
-    name: `${email} - ${chainName} Smart Account`,
+    name: `${email} - ${chainName}`,
     unit: currency.units[0],
+    smartAccount: true,
   };
 };

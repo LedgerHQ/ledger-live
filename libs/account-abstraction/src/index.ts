@@ -55,19 +55,6 @@ async function initializeClient ()  {
     return client.getAddress();
   };
 
-//@ts-expect-error
-async function sendTx({ to, value }) {
-  const tx = {
-    value,
-    to,
-  };
-  //@ts-expect-error
-  const txHash = await client.sendTransaction(tx, {
-    txMaxRetries: 20,
-  });
-  console.log(txHash);
-  return txHash;
-}
 
 const MintNFTABI = [
   {
@@ -115,4 +102,4 @@ async function mintNft() {
   return { txHash };
 }
 
-export { authenticate, completeAuthenticate, initializeClient, sendTx, mintNft, biconomy  };
+export { authenticate, completeAuthenticate, initializeClient, mintNft, biconomy  };

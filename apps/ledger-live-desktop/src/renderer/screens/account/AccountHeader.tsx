@@ -1,4 +1,5 @@
 import React, { useCallback, useState, useEffect } from "react";
+import IconInfo from "~/renderer/icons/InfoCircleFull";
 import styled from "styled-components";
 import {
   fontSize,
@@ -34,6 +35,7 @@ import IconCross from "~/renderer/icons/Cross";
 import IconCheck from "~/renderer/icons/Check";
 import { updateAccount } from "~/renderer/actions/accounts";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
+import ToolTip from "~/renderer/components/Tooltip";
 
 type BaseComponentProps = BaseProps & { ff?: string };
 
@@ -162,6 +164,7 @@ const AccountHeader: React.ComponentType<Props> = React.memo(function AccountHea
   parentAccount,
 }: Props) {
   const dispatch = useDispatch();
+  console.log({ account });
   const [name, setName] = useState(getAccountName(account));
   const [editingName, setEditingName] = useState(false);
   const currency = getAccountCurrency(account);
@@ -275,6 +278,11 @@ const AccountHeader: React.ComponentType<Props> = React.memo(function AccountHea
           )}
         </AccountNameBox>
       </Box>
+      <ToolTip content={"This is a smart account"}>
+        <Box justifyContent="center">
+          <IconInfo size={20} />
+        </Box>
+      </ToolTip>
     </Box>
   );
 });
