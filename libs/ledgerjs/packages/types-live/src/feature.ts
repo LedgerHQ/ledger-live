@@ -170,7 +170,6 @@ export type Features = CurrencyFeatures & {
   myLedgerDisplayAppDeveloperName: Feature_MyLedgerDisplayAppDeveloperName;
   nftsFromSimplehash: Feature_NftsFromSimpleHash;
   lldActionCarousel: Feature_lldActionCarousel;
-  llmMarketNewArch: Feature_LlmMarketNewArch;
   marketperformanceWidgetDesktop: Feature_MarketperformanceWidgetDesktop;
   supportDeviceStax: Feature_SupportDeviceStax;
   supportDeviceEuropa: Feature_SupportDeviceEuropa;
@@ -474,8 +473,6 @@ export type Feature_FlexibleContentCards = DefaultFeature;
 export type Feature_MyLedgerDisplayAppDeveloperName = DefaultFeature;
 export type Feature_SupportDeviceStax = DefaultFeature;
 export type Feature_SupportDeviceEuropa = DefaultFeature;
-
-export type Feature_LlmMarketNewArch = DefaultFeature;
 /**
  * Utils types.
  */

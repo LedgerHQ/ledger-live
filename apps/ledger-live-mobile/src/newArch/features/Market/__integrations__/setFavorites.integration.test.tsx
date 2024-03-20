@@ -2,19 +2,10 @@ import * as React from "react";
 import { screen } from "@testing-library/react-native";
 import { render } from "@tests/test-renderer";
 import { MarketPages } from "./shared";
-import { State } from "~/reducers/types";
 
 describe("Market integration test", () => {
   it("Should set some coins as favorites", async () => {
-    const { user } = render(<MarketPages />, {
-      overrideInitialState: (state: State) => ({
-        ...state,
-        settings: {
-          ...state.settings,
-          featureFlags: { llmMarketNewArch: { enabled: true } },
-        },
-      }),
-    });
+    const { user } = render(<MarketPages />);
 
     //Set BTC as favorite
     expect(await screen.findByText("Bitcoin (BTC)")).toBeOnTheScreen();
