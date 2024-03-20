@@ -434,6 +434,7 @@ export const DEFAULT_FEATURES: Features = {
   },
 
   lldChatbotSupport: DEFAULT_FEATURE,
+  llmChatbotSupport: DEFAULT_FEATURE,
   supportDeviceStax: DEFAULT_FEATURE,
   supportDeviceEuropa: DEFAULT_FEATURE,
 };
