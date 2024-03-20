@@ -78,7 +78,7 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
     variant: getVariant(lldAnalyticsOptInPromptFlag?.params?.variant),
   };
 
-  const handleOpenPrivacyPolicy = () => {
+  const handleOpenPrivacyPolicy = (page?: string) => {
     openURL(privacyPolicyUrl);
     track(
       "button_clicked",
@@ -86,6 +86,7 @@ export const useAnalyticsOptInPrompt = ({ entryPoint }: Props) => {
         button: "Learn more link",
         flow,
         variant: getVariant(lldAnalyticsOptInPromptFlag?.params?.variant),
+        page,
       },
       shouldWeTrack,
     );

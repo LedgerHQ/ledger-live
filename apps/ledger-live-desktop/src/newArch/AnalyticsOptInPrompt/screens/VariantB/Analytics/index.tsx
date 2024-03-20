@@ -8,7 +8,7 @@ import Track from "~/renderer/analytics/Track";
 interface AnalyticsScreenProps {
   currentTheme: "dark" | "light";
   shouldWeTrack: boolean;
-  handleOpenPrivacyPolicy: () => void;
+  handleOpenPrivacyPolicy: (page: string) => void;
 }
 
 const listItems = [
@@ -27,6 +27,8 @@ const bodyProps = {
   description,
 };
 
+const page = "Analytics Prompt Page 1 option B";
+
 const AnalyticsScreen = ({
   currentTheme,
   shouldWeTrack,
@@ -36,15 +38,10 @@ const AnalyticsScreen = ({
   const paddingTop = pathname === "/" ? "40px" : undefined;
   return (
     <>
-      <Track
-        onMount
-        mandatory={shouldWeTrack}
-        event={"Analytics Prompt Page 1 option B"}
-        page={"Analytics Prompt Page 1 option B"}
-      />
+      <Track onMount mandatory={shouldWeTrack} event={page} page={page} />
       <Flex flexDirection={"column"} height={"100%"} rowGap={32} pt={paddingTop}>
         <Header currentTheme={currentTheme} />
-        <Body {...bodyProps} handleOpenPrivacyPolicy={handleOpenPrivacyPolicy} />
+        <Body {...bodyProps} handleOpenPrivacyPolicy={() => handleOpenPrivacyPolicy(page)} />
       </Flex>
     </>
   );

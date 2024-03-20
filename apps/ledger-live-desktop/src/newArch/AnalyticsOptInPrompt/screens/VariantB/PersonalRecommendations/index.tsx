@@ -7,8 +7,10 @@ import Track from "~/renderer/analytics/Track";
 interface RecommandationsScreenProps {
   currentTheme: "dark" | "light";
   shouldWeTrack: boolean;
-  handleOpenPrivacyPolicy: () => void;
+  handleOpenPrivacyPolicy: (page: string) => void;
 }
+
+const page = "Analytics Prompt Page 2 option B";
 
 const RecommandationsScreen = ({
   currentTheme,
@@ -26,20 +28,14 @@ const RecommandationsScreen = ({
     listItems,
     title,
     description,
-    handleOpenPrivacyPolicy,
   };
 
   return (
     <>
-      <Track
-        onMount
-        mandatory={shouldWeTrack}
-        event={"Analytics Prompt Page 2 option B"}
-        page={"Analytics Prompt Page 2 option B"}
-      />
+      <Track onMount mandatory={shouldWeTrack} event={page} page={page} />
       <Flex flexDirection={"column"} height={"100%"} rowGap={32}>
         <Header currentTheme={currentTheme} />
-        <Body {...bodyProps} />
+        <Body {...bodyProps} handleOpenPrivacyPolicy={() => handleOpenPrivacyPolicy(page)} />
       </Flex>
     </>
   );

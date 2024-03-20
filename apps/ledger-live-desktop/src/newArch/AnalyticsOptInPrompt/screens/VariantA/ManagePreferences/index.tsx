@@ -8,8 +8,10 @@ import Track from "~/renderer/analytics/Track";
 interface ManagePreferencesProps {
   onPreferencesChange: (preferences: Record<FieldKeySwitch, boolean>) => void;
   shouldWeTrack: boolean;
-  handleOpenPrivacyPolicy: () => void;
+  handleOpenPrivacyPolicy: (page: string) => void;
 }
+
+const page = "Analytics opt-in prompt details";
 
 const ManagePreferences = ({
   onPreferencesChange,
@@ -31,17 +33,12 @@ const ManagePreferences = ({
 
   return (
     <>
-      <Track
-        onMount
-        mandatory={shouldWeTrack}
-        event={"Analytics opt-in prompt details"}
-        page={"Analytics opt-in prompt details"}
-      />
+      <Track onMount mandatory={shouldWeTrack} event={page} page={page} />
       <Flex flexDirection={"column"} rowGap={"32px"} mx={"40px"} height={"100%"}>
         <HeaderTitle title={"analyticsOptInPrompt.variantA.managePreferences"} />
         <ManagePreferencesBody
           onSwitchChange={handleSwitchChange}
-          handleOpenPrivacyPolicy={handleOpenPrivacyPolicy}
+          handleOpenPrivacyPolicy={() => handleOpenPrivacyPolicy(page)}
         />
       </Flex>
     </>

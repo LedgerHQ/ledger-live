@@ -7,8 +7,10 @@ import Track from "~/renderer/analytics/Track";
 
 interface MainProps {
   shouldWeTrack: boolean;
-  handleOpenPrivacyPolicy: () => void;
+  handleOpenPrivacyPolicy: (page: string) => void;
 }
+
+const page = "Analytics opt-in prompt main";
 
 const Main = ({ shouldWeTrack, handleOpenPrivacyPolicy }: MainProps) => {
   const { pathname } = useLocation();
@@ -16,15 +18,10 @@ const Main = ({ shouldWeTrack, handleOpenPrivacyPolicy }: MainProps) => {
 
   return (
     <>
-      <Track
-        onMount
-        mandatory={shouldWeTrack}
-        event={"Analytics opt-in prompt main"}
-        page={"Analytics opt-in prompt main"}
-      />
+      <Track onMount mandatory={shouldWeTrack} event={page} page={page} />
       <Flex flexDirection={"column"} rowGap={"32px"} mx={"40px"} height={"100%"} pt={paddingTop}>
         <HeaderTitle title={"analyticsOptInPrompt.common.title"} />
-        <MainBody handleOpenPrivacyPolicy={handleOpenPrivacyPolicy} />
+        <MainBody handleOpenPrivacyPolicy={() => handleOpenPrivacyPolicy(page)} />
       </Flex>
     </>
   );
