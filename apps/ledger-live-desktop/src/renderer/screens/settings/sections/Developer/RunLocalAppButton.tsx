@@ -43,11 +43,8 @@ const RunLocalAppButton = () => {
             console.log("id", id);
 
             const exportedManifest = liveAppByIndex.find(manifest => manifest.id === id);
-            console.log("liveAppByIndex", liveAppByIndex);
 
-            console.log("exportedManifest", exportedManifest);
-
-            const manifestData = JSON.stringify(exportedManifest);
+            const manifestData = JSON.stringify(exportedManifest, null, 2);
             try {
               writeFile(response.filePath, manifestData, "utf-8", () =>
                 console.log("File exported successfully!"),
@@ -73,9 +70,13 @@ const RunLocalAppButton = () => {
             if (!readError) {
               try {
                 const manifest = JSON.parse(data.toString());
-                Array.isArray(manifest)
-                  ? manifest.forEach(m => addLocalManifest(m))
-                  : addLocalManifest(manifest);
+                if (Array.isArray(manifest)) {
+                  manifest.forEach(m => {
+                    addLocalManifest(m);
+                  });
+                } else {
+                  addLocalManifest(manifest);
+                }
               } catch (parseError) {
                 console.log(parseError);
               }
@@ -131,14 +132,6 @@ const RunLocalAppButton = () => {
           <ButtonContainer style={{ display: "flex", gap: 16 }}>
             <Button small primary onClick={() => history.push(`/platform/${manifest.id}`)}>
               {t("settings.developer.runLocalAppOpenButton")}
-            </Button>
-            <Button
-              small
-              outline
-              onClick={() => onOpenModal(manifest)}
-              data-test-id="settings-enable-platform-dev-tools-apps"
-            >
-              {t("settings.developer.createLocalAppModal.modify")}
             </Button>
             <Button
               small
