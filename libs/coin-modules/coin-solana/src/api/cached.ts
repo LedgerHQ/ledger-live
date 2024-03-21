@@ -74,6 +74,12 @@ export function cached(api: ChainAPI): ChainAPI {
 
     getEpochInfo: makeLRUCache(api.getEpochInfo, cacheKeyEmpty, minutes(1)),
 
+    getRecentPrioritizationFees: makeLRUCache(
+      api.getRecentPrioritizationFees,
+      cacheKeyByArgs,
+      seconds(30),
+    ),
+
     config: api.config,
   };
 }

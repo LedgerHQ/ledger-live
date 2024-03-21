@@ -11,6 +11,7 @@ import {
   sendAndConfirmRawTransaction,
   SignaturesForAddressOptions,
   StakeProgram,
+  GetRecentPrioritizationFeesConfig,
 } from "@solana/web3.js";
 import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import { getEnv } from "@ledgerhq/live-env";
@@ -72,6 +73,10 @@ export type ChainAPI = Readonly<{
 
   getEpochInfo: () => ReturnType<Connection["getEpochInfo"]>;
 
+  getRecentPrioritizationFees: (
+    config?: GetRecentPrioritizationFeesConfig,
+  ) => ReturnType<Connection["getRecentPrioritizationFees"]>;
+
   config: Config;
 }>;
 
@@ -88,7 +93,7 @@ export function getChainAPI(
     logger === undefined
       ? undefined
       : (url, options, fetch) => {
-          logger(url, options);
+          logger(url.toString(), options);
           fetch(url, options);
         };
 
@@ -207,6 +212,10 @@ export function getChainAPI(
       connection().getMinimumBalanceForRentExemption(dataLength).catch(remapErrors),
 
     getEpochInfo: () => connection().getEpochInfo().catch(remapErrors),
+
+    getRecentPrioritizationFees: (config?: GetRecentPrioritizationFeesConfig) => {
+      return connection().getRecentPrioritizationFees(config).catch(remapErrors);
+    },
 
     config,
   };
