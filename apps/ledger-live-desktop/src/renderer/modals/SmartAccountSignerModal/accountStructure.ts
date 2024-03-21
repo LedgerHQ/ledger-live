@@ -6,6 +6,7 @@ export const buildAccount = async (
   address: string,
   email: string,
   chain: "ethereum_sepolia" | "polygon",
+  securedWithLedger = false,
 ) => {
   // TODO: infer
   console.log(`building account for ${address} - ${email} - ${chain}`);
@@ -41,7 +42,7 @@ export const buildAccount = async (
     freshAddress: address,
     balanceHistoryCache: emptyHistoryCache,
     isSmartAccount: true,
-    name: `${email} - ${chain}`,
+    name: `${email} ${securedWithLedger && "secured with ledger "} - ${chain}`,
     unit: currency.units[0],
   };
 };

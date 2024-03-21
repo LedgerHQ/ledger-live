@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Flex, IconsLegacy, Text } from "@ledgerhq/react-ui";
+import { Flex, Grid, Icons, IconsLegacy, Text } from "@ledgerhq/react-ui";
 import Button from "~/renderer/components/Button";
 import Box, { Card } from "~/renderer/components/Box";
 import styled from "styled-components";
@@ -17,12 +17,14 @@ import { toAccount } from "viem/accounts";
 import { openModal } from "~/renderer/actions/modals";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { prepareMessageToSign } from "@ledgerhq/live-common/hw/signMessage/index";
+import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { ItemContainer } from "~/renderer/components/TopBar/shared";
 import { useSelector } from "react-redux";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { getAccountCurrency, getAccountName } from "@ledgerhq/live-common/account/index";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import { MintNftActionDefault } from "../account/AccountActionsDefault";
+import OptionBox from "~/renderer/modals/SmartAccountPluginsModal/OptionBox";
 
 const Container = styled(Flex).attrs({
   flex: "1",
@@ -58,6 +60,7 @@ async function completeAuth(orgId: string, bundle: string) {
 
 export default function AccountAbstraction({ location: { state } }) {
   const dispatch = useDispatch();
+  const { pushToast, dismissToast } = useToasts();
   console.log({ signerFetched: state?.signer });
   const signerFromQueryParams = state?.signer;
   console.log({ signerFromQueryParams });
@@ -69,7 +72,8 @@ export default function AccountAbstraction({ location: { state } }) {
   const [account, setAccount] = useState<AccountLike | null>(null);
   const chain = account?.currency?.id === "ethereum" ? "ethereum_sepolia" : "polygon";
   const explorer = chain === "ethereum_sepolia" ? "sepolia.etherscan.io" : "polygonscan.com";
-  const explorerBis = chain === "ethereum_sepolia" ? "eth-sepolia.blockscout.com" : "polygon.blockscout.com"
+  const explorerBis =
+    chain === "ethereum_sepolia" ? "eth-sepolia.blockscout.com" : "polygon.blockscout.com";
   const chainId = chain === "ethereum_sepolia" ? "11155111" : "137";
 
   const flattenedAccounts = useSelector(flattenAccountsSelector);
@@ -292,11 +296,18 @@ export default function AccountAbstraction({ location: { state } }) {
     if (res && res.newSaAddress) {
       setMultisigSaAddress(res.newSaAddress);
       // setSmartAccount(res.smartAccount);
-      const account = await buildAccount(res.newSaAddress, loggedEmail, chain);
+      const account = await buildAccount(res.newSaAddress, loggedEmail, chain, true);
       console.log({ accountbuilt: account });
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       //@ts-expect-error
       dispatch(addAccount(account));
+      dismissToast(`AA-${loggedEmail}`);
+      pushToast({
+        id: `${chainId}-${res.newSaAddress}`,
+        title: "Account now secured by your ledger device",
+        text: "You're now a self custody superstar 🎉",
+        icon: "info",
+      });
     }
   };
 
@@ -312,7 +323,7 @@ export default function AccountAbstraction({ location: { state } }) {
               <IconsLegacy.EyeNoneMedium size={18} />
             </ItemContainer> */}
           </Box>
-          <Card p={0} py={5} grow>
+          <Card marginBottom={20} p={0} py={5}>
             <Flex px={6} horizontal grow>
               <Text variant="h4Inter" marginTop={2} flexGrow={1} fontWeight="semiBold">
                 {loggedEmail}
@@ -326,7 +337,6 @@ export default function AccountAbstraction({ location: { state } }) {
                 </ItemContainer>
               )}
             </Flex>
-            chain = {chain} explorer = {explorer} chainId = {chainId}
             <Box px={2} marginTop={5}>
               <Text color="palette.text.shade80" ff="Inter|SemiBold" fontSize={4}>
                 Email signer:
@@ -372,18 +382,6 @@ export default function AccountAbstraction({ location: { state } }) {
                   label={mintTransactionHash}
                 />
               </Text>
-
-              <Text color="palette.text.shade80" ff="Inter|SemiBold" fontSize={4}>
-                Minted NFT tx hash:
-                <LabelWithExternalIcon
-                  color="wallet"
-                  ff="Inter|SemiBold"
-                  onClick={() => {
-                    openURL(`https://${explorer}/tx/${mintTransactionHash}`);
-                  }}
-                  label={mintTransactionHash}
-                />
-              </Text>
               <Text color="palette.text.shade80" ff="Inter|SemiBold" fontSize={4}>
                 All user ops here:
                 <LabelWithExternalIcon
@@ -404,13 +402,25 @@ export default function AccountAbstraction({ location: { state } }) {
               </Flex>
             </Box>
           </Card>
-          <Box width={500}>
-            <Button primary mr={2} onClick={handleAddLedgerSigner}>
-              <Box horizontal flow={1} alignItems="center">
-                <Box>Increase security, add a ledger as a signer</Box>
-              </Box>
-            </Button>
-          </Box>
+          {!multisigSaAddress ? (
+            <OptionBox
+              title={"Secure your account with a ledger"}
+              description={"Requires signature with a ledger device to authorize a transaction"}
+              label={"new"}
+              icon={Icons.LedgerDevices}
+              onClick={handleAddLedgerSigner}
+              setSelected={() => {}}
+              isSelected={false}
+            />
+          ) : (
+            <OptionBox
+              title={"Account secured with your ledger device"}
+              description={"Good job on securing your smart account"}
+              icon={Icons.CheckmarkCircle}
+              setSelected={() => {}}
+              isSelected={false}
+            />
+          )}
         </Container>
       ) : (
         <EmptyStateAccounts />

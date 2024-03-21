@@ -31,30 +31,15 @@ interface OptionBoxProps {
   label?: string;
   icon?: React.ComponentType;
   onContinue?: () => void;
-  isSelected: boolean;
-  setSelected: (selected: boolean) => void;
+  onClick?: () => void;
+  isSelected?: boolean;
+  setSelected?: (selected: boolean) => void;
 }
 
-const OptionBox = ({
-  title,
-  description,
-  label,
-  icon,
-  isSelected,
-  setSelected,
-}: OptionBoxProps) => {
-  const handleSelect = () => setSelected(!isSelected);
-
+const OptionBox = ({ title, description, label, icon, onClick }: OptionBoxProps) => {
   return (
     <FlexWrapper>
-      <EntryButton
-        label={label}
-        title={title}
-        body={description}
-        onClick={handleSelect}
-        Icon={icon}
-      />
-      <Select isSelected={isSelected} />
+      <EntryButton label={label} title={title} body={description} onClick={onClick} Icon={icon} />
     </FlexWrapper>
   );
 };

@@ -262,6 +262,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
     });
   }, [currency, swapDefaultTrack, history, account, parentAccount, buttonSharedTrackingFields]);
 
+  const smartAccount = account.isSmartAccount || (account.name && account.name.includes("@"));
   const onSend = useCallback(() => {
     track("button_clicked2", {
       button: "send",
@@ -269,11 +270,11 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
     });
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-expect-error
-    openModal(account.isSmartAccount ? "MODAL_SEND_SMART_ACCOUNT" : "MODAL_SEND", {
+    openModal(smartAccount ? "MODAL_SEND_SMART_ACCOUNT" : "MODAL_SEND", {
       parentAccount,
       account,
     });
-  }, [openModal, parentAccount, account, buttonSharedTrackingFields]);
+  }, [smartAccount, openModal, parentAccount, account, buttonSharedTrackingFields]);
 
   const onReceive = useCallback(() => {
     track("button_clicked2", {
@@ -320,7 +321,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
         <SendAction account={account} parentAccount={parentAccount} onClick={onSend} />
       ) : null}
       <ReceiveAction account={account} parentAccount={parentAccount} onClick={onReceive} />
-      {account.isSmartAccount ? mintNftHeader : mintNftHeader}
+      { smartAccount ? mintNftHeader : null}
     </FadeInButtonsContainer>
   );
 
