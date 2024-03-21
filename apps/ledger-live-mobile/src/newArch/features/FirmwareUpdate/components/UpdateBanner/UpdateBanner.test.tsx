@@ -31,28 +31,35 @@ jest.mock("../../utils/navigateToOldUpdateFlow", () => ({
 const { navigateToNewUpdateFlow } = jest.requireMock("../../utils/navigateToNewUpdateFlow");
 const { navigateToOldUpdateFlow } = jest.requireMock("../../utils/navigateToOldUpdateFlow");
 
-type DeviceData = {
-  deviceModelId: DeviceModelId;
-  version: string;
-  productName: string;
+const NANO_S_DATA = {
+  deviceModelId: DeviceModelId.nanoS,
+  productName: getDeviceModel(DeviceModelId.nanoS).productName,
 };
-
-function makeDeviceTestData(deviceModelId: DeviceModelId, version: string): DeviceData {
-  return {
-    deviceModelId,
-    version,
-    productName: getDeviceModel(deviceModelId).productName,
-  };
-}
+const NANO_X_DATA = {
+  deviceModelId: DeviceModelId.nanoX,
+  productName: getDeviceModel(DeviceModelId.nanoX).productName,
+};
+const NANO_SP_DATA = {
+  deviceModelId: DeviceModelId.nanoSP,
+  productName: getDeviceModel(DeviceModelId.nanoSP).productName,
+};
+const STAX_DATA = {
+  deviceModelId: DeviceModelId.stax,
+  productName: getDeviceModel(DeviceModelId.stax).productName,
+};
+const EUROPA_DATA = {
+  deviceModelId: DeviceModelId.europa,
+  productName: getDeviceModel(DeviceModelId.europa).productName,
+};
 
 const oldUpdateFlowNotSupportedDataSet: Array<{
   deviceModelId: DeviceModelId;
   version: string;
   productName: string;
 }> = [
-  makeDeviceTestData(DeviceModelId.nanoS, "1.6.0"),
-  makeDeviceTestData(DeviceModelId.nanoX, "1.2.9"),
-  makeDeviceTestData(DeviceModelId.nanoSP, "0.9.9"),
+  { ...NANO_S_DATA, version: "1.6.0" },
+  { ...NANO_X_DATA, version: "1.2.9" },
+  { ...NANO_SP_DATA, version: "0.9.9" },
 ];
 
 const oldUpdateFlowSupportedDataSet: Array<{
@@ -60,9 +67,9 @@ const oldUpdateFlowSupportedDataSet: Array<{
   version: string;
   productName: string;
 }> = [
-  makeDeviceTestData(DeviceModelId.nanoS, "1.6.1"),
-  makeDeviceTestData(DeviceModelId.nanoX, "1.3.0"),
-  makeDeviceTestData(DeviceModelId.nanoSP, "1.0.0"),
+  { ...NANO_S_DATA, version: "1.6.1" },
+  { ...NANO_X_DATA, version: "1.3.0" },
+  { ...NANO_SP_DATA, version: "1.0.0" },
 ];
 
 const newUpdateFlowSupportedDataSet: Array<{
@@ -70,8 +77,8 @@ const newUpdateFlowSupportedDataSet: Array<{
   version: string;
   productName: string;
 }> = [
-  makeDeviceTestData(DeviceModelId.stax, "1.0.0"),
-  makeDeviceTestData(DeviceModelId.europa, "1.0.0"),
+  { ...STAX_DATA, version: "1.0.0" },
+  { ...EUROPA_DATA, version: "1.0.0" },
 ];
 
 describe("<UpdateBanner />", () => {
