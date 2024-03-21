@@ -20,7 +20,7 @@ concurrency:
 
 jobs:
   run-bot:
-    runs-on: [ledger-live-medium-linux]
+    runs-on: [ledger-live-4xlarge-linux]
     steps:
       - name: Generate token
         id: generate-token
