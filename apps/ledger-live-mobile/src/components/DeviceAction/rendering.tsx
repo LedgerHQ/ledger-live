@@ -125,7 +125,7 @@ const ConnectDeviceExtraContentWrapper = styled(Flex).attrs({
 })``;
 
 const animationStyles = (modelId: DeviceModelId) =>
-  modelId === DeviceModelId.stax ? { height: 210 } : {};
+  [DeviceModelId.stax, DeviceModelId.europa].includes(modelId) ? { height: 210 } : {};
 
 export type RawProps = {
   t: (key: string, options?: { [key: string]: string | number }) => string;
