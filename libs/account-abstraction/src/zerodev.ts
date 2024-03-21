@@ -14,7 +14,6 @@ import {
   createPublicClient,
   webSocket,
 } from "viem";
-import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { sepolia } from "viem/chains";
 import { signer } from ".";
 import { getEnv } from "@ledgerhq/live-env";
@@ -116,6 +115,7 @@ export async function safeMint({
       "function balanceOf(address owner) external view returns (uint256 balance)",
     ]);
     const kernelClient = smartAccounts[chainId][saAddress];
+    console.log({kernelClient})
     const accountAddress = kernelClient.account.address;
 
     // Send a UserOp
@@ -133,6 +133,7 @@ export async function safeMint({
         args: [accountAddress],
       }),
     });
+    console.log({resMinting: res})
 
     console.log(
       `See NFT here: https://mumbai.polygonscan.com/address/${accountAddress}#nfttransfers`,
@@ -186,13 +187,12 @@ export async function addLedgerSigner({ chainId, saAddress, ledgerSigner }: addL
   let chain = sepolia;
   // TODO: logic to pick another chain
 
-  // const signerLedger =
   const weightedECDSAValidator = await createWeightedECDSAValidator(publicClient, {
     config: {
       threshold: 100,
       signers: [
         { address: signerViem.address, weight: 100 },
-        { address: ledgerSigner.address, weight: 100 },
+        { address: ledgerSigner.address, weight: 100 }, // effectively making him the only signer now
       ],
     },
     signers: [signerViem, ledgerSigner],

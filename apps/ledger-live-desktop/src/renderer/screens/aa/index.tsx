@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Flex, Text } from "@ledgerhq/react-ui";
+import { Flex, IconsLegacy, Text } from "@ledgerhq/react-ui";
 import Button from "~/renderer/components/Button";
 import Box from "~/renderer/components/Box";
 import styled from "styled-components";
 import {
   completeAuthenticate,
+  disconnect,
   initializeClient,
-  biconomy,
   zerodev,
   signer,
 } from "@ledgerhq/account-abstraction";
-import EmptyStateAccounts from "../dashboard/EmptyStateAccounts";
+import EmptyStateAccounts from "../dashboard/EmptyStateAccountsAA";
 import { buildAccount } from "~/renderer/modals/SmartAccountSignerModal/accountStructure";
 import { useDispatch } from "react-redux";
 import { addAccount } from "~/renderer/actions/accounts";
@@ -20,18 +20,16 @@ import { openURL } from "~/renderer/linking";
 import SelectAccountAndCurrencyDrawer from "~/renderer/drawers/DataSelector/SelectAccountAndCurrencyDrawer";
 // import { cryptocurrenciesById } from "@ledgerhq/cryptoassets";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { createWalletClient, http } from "viem";
-import {
-  signMessage,
-  signTransaction,
-  signTypedData,
-  privateKeyToAddress,
-  toAccount,
-} from "viem/accounts";
+import { toAccount } from "viem/accounts";
 import { sepolia } from "viem/chains";
 import { openModal } from "~/renderer/actions/modals";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { prepareMessageToSign } from "@ledgerhq/live-common/hw/signMessage/index";
+import { ItemContainer } from "~/renderer/components/TopBar/shared";
+import { useSelector } from "react-redux";
+import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
+import { getAccountCurrency, getAccountName } from "@ledgerhq/live-common/account/index";
+import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 
 const Container = styled(Flex).attrs({
   flex: "1",
@@ -48,6 +46,13 @@ const Title = styled(Text).attrs({ variant: "h3" })`
   line-height: 33px;
 `;
 
+const ItemContent = styled(Box).attrs(() => ({
+  ff: "Inter|SemiBold",
+}))`
+  font-size: 14px;
+  line-height: 20px;
+`;
+
 async function completeAuth(orgId: string, bundle: string) {
   try {
     const { email, address } = await completeAuthenticate(orgId, bundle);
@@ -62,6 +67,7 @@ export default function AccountAbstraction({ location: { state } }) {
   const dispatch = useDispatch();
   console.log({ signerFetched: state?.signer });
   const signerFromQueryParams = state?.signer;
+  console.log({ signerFromQueryParams });
   const [address, setAddress] = useState("");
   const [saAddress, setSaAddress] = useState("");
   const [multisigSaAddress, setMultisigSaAddress] = useState("");
@@ -69,10 +75,20 @@ export default function AccountAbstraction({ location: { state } }) {
   const [mintTransactionHash, setMintTransactionHash] = useState("");
   const [userOpReceipt, setUserOpReceipt] = useState({});
   const [loggedEmail, setLoggedEmail] = useState("");
-  const [account, setAccount] = useState(null);
+  const [account, setAccount] = useState<AccountLike | null>(null);
+
+  const flattenedAccounts = useSelector(flattenAccountsSelector);
+  console.log({ flattenedAccounts });
+
+  useEffect(() => {
+    if (!account) {
+      setAccount(flattenedAccounts[0]);
+    }
+  }, [flattenedAccounts]);
 
   useEffect(() => {
     const check = async () => {
+      console.log("CHECK");
       if (!!signerFromQueryParams && signerFromQueryParams.orgId && signerFromQueryParams.bundle) {
         console.log(`will complete authentication for ${signerFromQueryParams.orgId}`);
         const res = await completeAuth(signerFromQueryParams.orgId, signerFromQueryParams.bundle);
@@ -97,7 +113,7 @@ export default function AccountAbstraction({ location: { state } }) {
       }
     };
     check();
-  }, [signerFromQueryParams]);
+  }, [signerFromQueryParams, signerFromQueryParams?.orgId, signerFromQueryParams?.bundle]);
 
   const handleConnect = async (email: string) => {
     // const res = await biconomy.connect();
@@ -120,7 +136,6 @@ export default function AccountAbstraction({ location: { state } }) {
     console.log({ resmint: res });
     if (res && !!res.transactionHash) {
       setMintTransactionHash(res.transactionHash);
-      // setUserOpReceipt(res.userOpReceipt);
     }
   };
 
@@ -129,7 +144,6 @@ export default function AccountAbstraction({ location: { state } }) {
     console.log({ resmintmultisig: res });
     if (res && !!res.transactionHash) {
       setMintTransactionHash(res.transactionHash);
-      // setUserOpReceipt(res.userOpReceipt);
     }
   };
 
@@ -137,13 +151,12 @@ export default function AccountAbstraction({ location: { state } }) {
     // const defaultEthCryptoFamily = cryptocurrenciesById["ethereum"];
     // console.log({ defaultEthCryptoFamily });
     const eth = getCryptoCurrencyById("ethereum");
-    const sepolia = getCryptoCurrencyById("ethereum_sepolia");
-    console.log({ eth, sepolia });
+    const polygon = getCryptoCurrencyById("polygon");
 
     setDrawer(
       SelectAccountAndCurrencyDrawer,
       {
-        currencies: [eth, sepolia],
+        currencies: [eth, polygon],
         onAccountSelected: (account: AccountLike, parentAccount: Account | undefined) => {
           setDrawer();
           console.log({ account, parentAccount });
@@ -278,10 +291,16 @@ export default function AccountAbstraction({ location: { state } }) {
     console.log({ resAddLedgerSigner: res });
     if (res && res.newSaAddress) {
       setMultisigSaAddress(res.newSaAddress);
+      // setSmartAccount(res.smartAccount);
+      const account = await buildAccount(res.newSaAddress, loggedEmail);
+      console.log({ accountbuilt: account });
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      //@ts-expect-error
+      dispatch(addAccount(account));
     }
   };
 
-  //   const { requestParams } = useMarketData();
+  const onSelectAccount = async () => {};
   return (
     <Container>
       {address ? (
@@ -293,7 +312,18 @@ export default function AccountAbstraction({ location: { state } }) {
                 Connected with {loggedEmail}
               </Text>
             </Box>
+            {/* <ItemContainer isInteractive onClick={handleDisconnect}>
+              <IconsLegacy.EyeNoneMedium size={18} />
+            </ItemContainer> */}
           </Box>
+          {account && (
+            <ItemContainer isInteractive onClick={pickAccount}>
+              <>
+                <CryptoCurrencyIcon circle currency={getAccountCurrency(account)} size={16} />
+                <ItemContent marginLeft={2}>{getAccountName(account)}</ItemContent>
+              </>
+            </ItemContainer>
+          )}
           <Text color="palette.text.shade80" ff="Inter|SemiBold" fontSize={4}>
             Address of signer:
             <LabelWithExternalIcon

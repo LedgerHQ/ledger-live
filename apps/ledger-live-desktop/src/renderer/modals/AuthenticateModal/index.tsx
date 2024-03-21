@@ -21,6 +21,19 @@ const ErrorModal = ({ isOpened, onClose, error, onRetry, withExportLogs, ...prop
   const colors = useTheme().colors;
   const dispatch = useDispatch();
   const [email, setEmail] = useState("");
+  const handleClick = (email: string) => {
+    const AAEmails = localStorage.getItem("AA-emails");
+    let emailsFromLocalStorage: string[] = [];
+    if (AAEmails) {
+      emailsFromLocalStorage = JSON.parse(AAEmails) as string[];
+    }
+    if (!emailsFromLocalStorage.includes(email)) {
+      emailsFromLocalStorage.push(email);
+    }
+    localStorage.setItem("AA-emails", JSON.stringify(emailsFromLocalStorage));
+    authenticate(email);
+  };
+
   const handleClose = () => dispatch(closeModal("MODAL_AUTHENTICATE_SMART_ACCOUNT"));
   return (
     <Modal
@@ -56,7 +69,7 @@ const ErrorModal = ({ isOpened, onClose, error, onRetry, withExportLogs, ...prop
                 <Button
                   primary
                   onClick={() => {
-                    authenticate(email);
+                    handleClick(email);
                     handleClose();
                   }}
                 >
