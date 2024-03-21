@@ -29,6 +29,14 @@ export function WidgetList({ data, order, range }: PropsBody) {
 function WidgetRow({ data, index, isFirst, range }: PropsBodyElem) {
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const locale = useSelector(localeSelector);
+
+  console.log(
+    counterValueFormatter({
+      value: data.price,
+      currency: counterValueCurrency.ticker,
+      locale,
+    }),
+  );
   return (
     <Flex alignItems="center" mt={isFirst ? 0 : 2} justifyContent="space-between">
       <Flex alignItems="center">
@@ -62,18 +70,19 @@ function WidgetRow({ data, index, isFirst, range }: PropsBodyElem) {
       </Flex>
 
       <Flex flexDirection="column">
-        <FormattedVal
-          isPercent
-          isNegative
-          val={Number(parseFloat(String(getChangePercentage(data, range))).toFixed(2))}
-          inline
-          withIcon
-          style={{
-            fontSize: fontSizes.paragraph,
-            fontWeight: "medium",
-          }}
-        />
-
+        <Text textAlign="right">
+          <FormattedVal
+            isPercent
+            isNegative
+            val={Number(parseFloat(String(getChangePercentage(data, range))).toFixed(2))}
+            inline
+            withIcon
+            style={{
+              fontSize: fontSizes.paragraph,
+              fontWeight: "medium",
+            }}
+          />
+        </Text>
         <EllipsisText
           variant="small"
           textAlign="right"
@@ -84,7 +93,7 @@ function WidgetRow({ data, index, isFirst, range }: PropsBodyElem) {
           {!data.price
             ? "-"
             : counterValueFormatter({
-                value: data.price,
+                value: Number(parseFloat(String(data.price)).toFixed(data.price > 1 ? 2 : 8)),
                 currency: counterValueCurrency.ticker,
                 locale,
               })}

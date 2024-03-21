@@ -146,6 +146,37 @@ export type MarketPerformersParams = {
   supported: boolean;
 };
 
+export type MarketResponse = {
+  id: string;
+  ledgerIds: string[];
+  ticker: string;
+  name: string;
+  image: string;
+  marketCap: number;
+  marketCapRank: number;
+  fullyDilutedValuation: number;
+  totalVolume: number;
+  high24h: number;
+  low24h: number;
+  price: number;
+  priceChange24h: number;
+  priceChangePercentage1h: number;
+  priceChangePercentage24h: number;
+  priceChangePercentage7d: number;
+  priceChangePercentage30d: number;
+  priceChangePercentage1y: number;
+  marketCapChange24h: number;
+  marketCapChangePercentage24h: number;
+  circulatingSupply: number;
+  totalSupply: number;
+  maxSupply: number;
+  allTimeHigh: number;
+  allTimeLow: number;
+  allTimeHighDate: Date;
+  allTimeLowDate: Date;
+  sparkline: number[];
+  updatedAt: Date;
+};
 export type MarketPerformersResult = {
   name: string;
   ticker: string;

@@ -1,5 +1,11 @@
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { CurrencyData, MarketPerformersResult, RawCurrencyData, SparklineSvgData } from "../types";
+import {
+  CurrencyData,
+  MarketPerformersResult,
+  MarketResponse,
+  RawCurrencyData,
+  SparklineSvgData,
+} from "../types";
 
 function distributedCopy(items: number[], n: number): number[] {
   if (!items) return [];
@@ -80,7 +86,7 @@ export const format = (
   chartData: {},
 });
 
-export const formatPerformer = (currency: any): MarketPerformersResult => ({
+export const formatPerformer = (currency: MarketResponse): MarketPerformersResult => ({
   ledgerIds: currency.ledgerIds,
   name: currency.name,
   image: currency.image,

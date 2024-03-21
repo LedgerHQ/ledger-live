@@ -8,10 +8,12 @@ import {
   MarketCurrencyChartDataRequestParams,
   MarketListRequestParams,
   RawCurrencyData,
+  MarketPerformersParams,
+  MarketPerformersResult,
+  MarketResponse,
   SupportedCoins,
 } from "../types";
 import { rangeDataTable } from "../utils/rangeDataTable";
-import { MarketPerformersParams, MarketPerformersResult } from "../types";
 import { currencyFormatter, formatPerformer } from "../utils/currencyFormatter";
 import URL from "url";
 import { getRange } from "../utils/rangeFormatter";
@@ -298,7 +300,7 @@ export async function fetchMarketPerformers({
 
   const { data } = await network({ method: "GET", url });
 
-  return data.map((currency: any) => formatPerformer(currency));
+  return data.map((currency: MarketResponse) => formatPerformer(currency));
 }
 
 export default {
