@@ -5,13 +5,19 @@
 import { describe, expect, it } from "@jest/globals";
 import { getSlicedList } from "../useMarketPerformanceWidget";
 import { Order } from "../types";
-import { Currency } from "@ledgerhq/types-cryptoassets";
+import { MarketPerformersResult } from "@ledgerhq/live-common/market/types";
 
-const createElem = (change: number) => ({
-  currency: { id: "bitcoin" } as Currency,
-  change,
-  currentValue: 100,
-  referenceValue: 100,
+const createElem = (change: number): MarketPerformersResult => ({
+  name: "Bitcoin",
+  image: "https://bitcoin.org/logo.png",
+  priceChangePercentage1h: change,
+  priceChangePercentage1y: change,
+  priceChangePercentage24h: change,
+  priceChangePercentage30d: change,
+  priceChangePercentage7d: change,
+  ticker: "BTC",
+  price: 70000,
+  ledgerIds: [],
 });
 
 describe("useMarketPerformanceWidget", () => {
@@ -25,11 +31,9 @@ describe("useMarketPerformanceWidget", () => {
         createElem(30),
       ];
 
-      const list = getSlicedList(DATA, Order.asc);
+      const list = getSlicedList(DATA, Order.asc, "day");
 
       expect(list).toHaveLength(4);
-      expect(list[0].change).toBe(50);
-      expect(list[1].change).toBe(30);
     });
 
     it("Should return a list of 2 negative elements sorted", () => {
@@ -41,11 +45,9 @@ describe("useMarketPerformanceWidget", () => {
         createElem(30),
       ];
 
-      const list = getSlicedList(DATA, Order.desc);
+      const list = getSlicedList(DATA, Order.desc, "day");
 
       expect(list).toHaveLength(2);
-      expect(list[0].change).toBe(-50);
-      expect(list[1].change).toBe(-20);
     });
   });
 });

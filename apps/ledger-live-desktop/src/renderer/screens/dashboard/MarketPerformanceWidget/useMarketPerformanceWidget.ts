@@ -61,7 +61,8 @@ export function getChangePercentage(data: MarketPerformersResult, range: Portfol
     case "month":
       return data.priceChangePercentage30d;
     case "year":
-    default:
       return data.priceChangePercentage1y;
+    default:
+      return data.priceChangePercentage1h;
   }
 }
