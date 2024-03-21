@@ -3,13 +3,7 @@ import { Flex, IconsLegacy, Text } from "@ledgerhq/react-ui";
 import Button from "~/renderer/components/Button";
 import Box, { Card } from "~/renderer/components/Box";
 import styled from "styled-components";
-import {
-  completeAuthenticate,
-  disconnect,
-  initializeClient,
-  zerodev,
-  signer,
-} from "@ledgerhq/account-abstraction";
+import { completeAuthenticate, zerodev, signer } from "@ledgerhq/account-abstraction";
 import EmptyStateAccounts from "../dashboard/EmptyStateAccountsAA";
 import { buildAccount } from "~/renderer/modals/SmartAccountSignerModal/accountStructure";
 import { useDispatch } from "react-redux";
@@ -18,10 +12,8 @@ import LabelWithExternalIcon from "~/renderer/components/LabelWithExternalIcon";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { openURL } from "~/renderer/linking";
 import SelectAccountAndCurrencyDrawer from "~/renderer/drawers/DataSelector/SelectAccountAndCurrencyDrawer";
-// import { cryptocurrenciesById } from "@ledgerhq/cryptoassets";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { toAccount } from "viem/accounts";
-import { sepolia } from "viem/chains";
 import { openModal } from "~/renderer/actions/modals";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { prepareMessageToSign } from "@ledgerhq/live-common/hw/signMessage/index";
@@ -30,6 +22,7 @@ import { useSelector } from "react-redux";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { getAccountCurrency, getAccountName } from "@ledgerhq/live-common/account/index";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
+import { MintNftActionDefault } from "../account/AccountActionsDefault";
 
 const Container = styled(Flex).attrs({
   flex: "1",
@@ -71,13 +64,13 @@ export default function AccountAbstraction({ location: { state } }) {
   const [address, setAddress] = useState("");
   const [saAddress, setSaAddress] = useState("");
   const [multisigSaAddress, setMultisigSaAddress] = useState("");
-  // const [smartAccount, setSmartAccount] = useState({});
   const [mintTransactionHash, setMintTransactionHash] = useState("");
-  const [userOpReceipt, setUserOpReceipt] = useState({});
   const [loggedEmail, setLoggedEmail] = useState("");
   const [account, setAccount] = useState<AccountLike | null>(null);
-  const chain = (account?.currency?.id === "ethereum") ? "ethereum_sepolia" : "polygon" ;
-  const explorer = chain === "ethereum_sepolia" ? "sepolia.etherscan.io" : "polygonscan.com"
+  const chain = account?.currency?.id === "ethereum" ? "ethereum_sepolia" : "polygon";
+  const explorer = chain === "ethereum_sepolia" ? "sepolia.etherscan.io" : "polygonscan.com";
+  const explorerBis = chain === "ethereum_sepolia" ? "eth-sepolia.blockscout.com" : "polygon.blockscout.com"
+  const chainId = chain === "ethereum_sepolia" ? "11155111" : "137";
 
   const flattenedAccounts = useSelector(flattenAccountsSelector);
   console.log({ flattenedAccounts });
@@ -142,20 +135,17 @@ export default function AccountAbstraction({ location: { state } }) {
   }, [account, signerFromQueryParams, signerFromQueryParams?.orgId, signerFromQueryParams?.bundle]);
 
   const handleMint = async () => {
-    const res = await zerodev.safeMint({ chainId: "11155111", saAddress });
+    const res = await zerodev.safeMint({
+      chainId,
+      saAddress: multisigSaAddress ? multisigSaAddress : saAddress,
+    });
     console.log({ resmint: res });
     if (res && !!res.transactionHash) {
       setMintTransactionHash(res.transactionHash);
     }
   };
 
-  const handleMintMultisig = async () => {
-    const res = await zerodev.safeMint({ chainId: "11155111", saAddress: multisigSaAddress });
-    console.log({ resmintmultisig: res });
-    if (res && !!res.transactionHash) {
-      setMintTransactionHash(res.transactionHash);
-    }
-  };
+  const mintNft = <MintNftActionDefault onClick={handleMint} />;
 
   const pickAccount = async () => {
     // const defaultEthCryptoFamily = cryptocurrenciesById["ethereum"];
@@ -294,7 +284,7 @@ export default function AccountAbstraction({ location: { state } }) {
     const ledgerSigner = setupCustomSigner();
     console.log({ ledgerSigner });
     const res = await zerodev.addLedgerSigner({
-      chainId: "11155111",
+      chainId,
       saAddress,
       ledgerSigner,
     });
@@ -302,7 +292,7 @@ export default function AccountAbstraction({ location: { state } }) {
     if (res && res.newSaAddress) {
       setMultisigSaAddress(res.newSaAddress);
       // setSmartAccount(res.smartAccount);
-      const account = await buildAccount(res.newSaAddress, loggedEmail);
+      const account = await buildAccount(res.newSaAddress, loggedEmail, chain);
       console.log({ accountbuilt: account });
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       //@ts-expect-error
@@ -336,7 +326,7 @@ export default function AccountAbstraction({ location: { state } }) {
                 </ItemContainer>
               )}
             </Flex>
-            chain = {chain} explorer = {explorer}
+            chain = {chain} explorer = {explorer} chainId = {chainId}
             <Box px={2} marginTop={5}>
               <Text color="palette.text.shade80" ff="Inter|SemiBold" fontSize={4}>
                 Email signer:
@@ -372,32 +362,48 @@ export default function AccountAbstraction({ location: { state } }) {
                 />
               </Text>
               <Text color="palette.text.shade80" ff="Inter|SemiBold" fontSize={4}>
-                Minted NFT:
+                Minted NFT tx hash:
                 <LabelWithExternalIcon
                   color="wallet"
                   ff="Inter|SemiBold"
                   onClick={() => {
-                    openURL(`https://${explorer}/address/${mintTransactionHash}`);
+                    openURL(`https://${explorer}/tx/${mintTransactionHash}`);
                   }}
                   label={mintTransactionHash}
                 />
               </Text>
+
+              <Text color="palette.text.shade80" ff="Inter|SemiBold" fontSize={4}>
+                Minted NFT tx hash:
+                <LabelWithExternalIcon
+                  color="wallet"
+                  ff="Inter|SemiBold"
+                  onClick={() => {
+                    openURL(`https://${explorer}/tx/${mintTransactionHash}`);
+                  }}
+                  label={mintTransactionHash}
+                />
+              </Text>
+              <Text color="palette.text.shade80" ff="Inter|SemiBold" fontSize={4}>
+                All user ops here:
+                <LabelWithExternalIcon
+                  color="wallet"
+                  ff="Inter|SemiBold"
+                  onClick={() => {
+                    openURL(
+                      `https://${explorerBis}/address/${
+                        multisigSaAddress ? multisigSaAddress : saAddress
+                      }?tab=user_ops`,
+                    );
+                  }}
+                  label={`Blockscout`}
+                />
+              </Text>
+              <Flex marginTop={30} width={180}>
+                {mintNft}
+              </Flex>
             </Box>
           </Card>
-          <Box width={100}>
-            <Button primary mr={2} onClick={handleMint}>
-              <Box horizontal flow={1} alignItems="center">
-                <Box>Mint</Box>
-              </Box>
-            </Button>
-          </Box>
-          <Box width={200}>
-            <Button primary mr={2} onClick={handleMintMultisig}>
-              <Box horizontal flow={1} alignItems="center">
-                <Box>Mint with multisig</Box>
-              </Box>
-            </Button>
-          </Box>
           <Box width={500}>
             <Button primary mr={2} onClick={handleAddLedgerSigner}>
               <Box horizontal flow={1} alignItems="center">

@@ -53,6 +53,7 @@ export type TokenAccount = {
 export type ChildAccount = {
   type: "ChildAccount";
   id: string;
+  isSmartAccount?: boolean;
   name: string;
   starred: boolean;
   // id of the parent account this token account belongs to
@@ -95,6 +96,7 @@ export type Account = {
   type: "Account";
   // unique account identifier
   id: string;
+  isSmartAccount?: boolean;
   // a unique way to identify a seed the account was associated with
   // it MUST be different between 2 seeds
   // but it is not necessarily the same between 2 accounts (if possible – not always possible)

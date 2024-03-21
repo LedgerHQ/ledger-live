@@ -41,7 +41,7 @@ import { ManageAction } from "~/renderer/families/types";
 import { getAvailableProviders } from "@ledgerhq/live-common/exchange/swap/index";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { isWalletConnectSupported } from "@ledgerhq/live-common/walletConnect/index";
-import { mintNft } from "@ledgerhq/account-abstraction";
+// import { mintNft } from "@ledgerhq/account-abstraction";
 
 type RenderActionParams = {
   label: React.ReactNode;
@@ -299,7 +299,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   ];
 
   const onMint = () => {
-    mintNft();
+    // mintNft();
   };
 
   const buyHeader = <BuyActionDefault onClick={() => onBuySell("buy")} />;
@@ -309,6 +309,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   const manageActionsHeader = manageActions.map(item => (
     <ActionItem {...item} key={item.accountActionsTestId} />
   ));
+  console.log({ accountHere: account });
   const NonEmptyAccountHeader = (
     <FadeInButtonsContainer data-test-id="account-buttons-group" show={showButtons}>
       {manageActions.length > 0 ? manageActionsHeader : null}
@@ -319,7 +320,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
         <SendAction account={account} parentAccount={parentAccount} onClick={onSend} />
       ) : null}
       <ReceiveAction account={account} parentAccount={parentAccount} onClick={onReceive} />
-      {account.isSmartAccount ? mintNftHeader : null}
+      {account.isSmartAccount ? mintNftHeader : mintNftHeader}
     </FadeInButtonsContainer>
   );
 

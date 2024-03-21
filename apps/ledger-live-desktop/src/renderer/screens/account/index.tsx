@@ -40,7 +40,6 @@ import { State } from "~/renderer/reducers";
 import { getLLDCoinFamily } from "~/renderer/families";
 import Mint_nft from "./MINT_NFT.png";
 import Upgrade from "./UPGRADE.png";
-import { mintNft } from "@ledgerhq/account-abstraction";
 import Image from "~/renderer/components/Image";
 
 type Params = {
@@ -124,7 +123,7 @@ const AccountPage = ({
 
   const handleMintClick = async () => {
     const id = uuidv4();
-    await mintNft();
+    // await mintNft();
     pushToast({
       id,
       title: "Collectible claimed!",

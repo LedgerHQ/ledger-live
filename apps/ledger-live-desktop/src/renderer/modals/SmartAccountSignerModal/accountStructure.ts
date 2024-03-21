@@ -43,6 +43,5 @@ export const buildAccount = async (
     isSmartAccount: true,
     name: `${email} - ${chain}`,
     unit: currency.units[0],
-    smartAccount: true,
   };
 };
