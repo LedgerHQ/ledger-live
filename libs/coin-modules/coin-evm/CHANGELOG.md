@@ -1,5 +1,17 @@
 # @ledgerhq/coin-evm
 
+## 0.13.0-nightly.6
+
+### Patch Changes
+
+- [#6370](https://github.com/LedgerHQ/ledger-live/pull/6370) [`3c15515`](https://github.com/LedgerHQ/ledger-live/commit/3c155155f2d45fb85f8900e7e77c1b5ab1c7ad67) Thanks [@lvndry](https://github.com/lvndry)! - Get evm node, explorer and gasTracker information from liveconfig
+
+- Updated dependencies [[`3c15515`](https://github.com/LedgerHQ/ledger-live/commit/3c155155f2d45fb85f8900e7e77c1b5ab1c7ad67)]:
+  - @ledgerhq/cryptoassets@11.5.0-nightly.1
+  - @ledgerhq/coin-framework@0.12.0-nightly.5
+  - @ledgerhq/domain-service@1.1.19-nightly.5
+  - @ledgerhq/evm-tools@1.0.17-nightly.1
+
 ## 0.13.0-nightly.5
 
 ### Patch Changes

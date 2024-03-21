@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/types-cryptoassets",
-  "version": "7.10.0-nightly.1",
+  "version": "7.10.0-nightly.2",
   "description": "Ledger types for crypto assets and tokens",
   "keywords": [
     "Ledger"

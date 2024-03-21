@@ -1,5 +1,33 @@
 # @ledgerhq/live-common
 
+## 33.7.0-nightly.7
+
+### Minor Changes
+
+- [#6471](https://github.com/LedgerHQ/ledger-live/pull/6471) [`d2f8b26`](https://github.com/LedgerHQ/ledger-live/commit/d2f8b26c99551cba902c07e9c544f3c84d74686c) Thanks [@KVNLS](https://github.com/KVNLS)! - Remove llmNewArchMarket feature flag and cleanup the code
+
+### Patch Changes
+
+- [#6420](https://github.com/LedgerHQ/ledger-live/pull/6420) [`2b5c3bb`](https://github.com/LedgerHQ/ledger-live/commit/2b5c3bb7c31445f840b66f7e0f51e9e2b07b0c49) Thanks [@sarneijim](https://github.com/sarneijim)! - Use bk payload as source of true for swap
+
+- [#6370](https://github.com/LedgerHQ/ledger-live/pull/6370) [`3c15515`](https://github.com/LedgerHQ/ledger-live/commit/3c155155f2d45fb85f8900e7e77c1b5ab1c7ad67) Thanks [@lvndry](https://github.com/lvndry)! - Get evm node, explorer and gasTracker information from liveconfig
+
+- Updated dependencies [[`2b5c3bb`](https://github.com/LedgerHQ/ledger-live/commit/2b5c3bb7c31445f840b66f7e0f51e9e2b07b0c49), [`3c15515`](https://github.com/LedgerHQ/ledger-live/commit/3c155155f2d45fb85f8900e7e77c1b5ab1c7ad67), [`3c15515`](https://github.com/LedgerHQ/ledger-live/commit/3c155155f2d45fb85f8900e7e77c1b5ab1c7ad67)]:
+  - @ledgerhq/hw-app-exchange@0.4.6-nightly.2
+  - @ledgerhq/wallet-api-exchange-module@0.4.0-nightly.1
+  - @ledgerhq/cryptoassets@11.5.0-nightly.1
+  - @ledgerhq/coin-evm@0.13.0-nightly.6
+  - @ledgerhq/coin-framework@0.12.0-nightly.5
+  - @ledgerhq/coin-algorand@0.4.0-nightly.6
+  - @ledgerhq/coin-bitcoin@0.4.0-nightly.3
+  - @ledgerhq/coin-near@0.3.11-nightly.6
+  - @ledgerhq/coin-polkadot@0.6.0-nightly.6
+  - @ledgerhq/live-countervalues@0.1.3-nightly.6
+  - @ledgerhq/live-countervalues-react@0.1.3-nightly.6
+  - @ledgerhq/live-nft@0.2.2-nightly.6
+  - @ledgerhq/hw-app-eth@6.36.0-nightly.5
+  - @ledgerhq/hw-app-vet@0.1.6-nightly.3
+
 ## 33.7.0-nightly.6
 
 ### Patch Changes

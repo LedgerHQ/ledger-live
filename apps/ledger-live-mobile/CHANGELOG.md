@@ -1,5 +1,27 @@
 # live-mobile
 
+## 3.41.0-nightly.8
+
+### Minor Changes
+
+- [#6471](https://github.com/LedgerHQ/ledger-live/pull/6471) [`d2f8b26`](https://github.com/LedgerHQ/ledger-live/commit/d2f8b26c99551cba902c07e9c544f3c84d74686c) Thanks [@KVNLS](https://github.com/KVNLS)! - Remove llmNewArchMarket feature flag and cleanup the code
+
+### Patch Changes
+
+- [#6420](https://github.com/LedgerHQ/ledger-live/pull/6420) [`2b5c3bb`](https://github.com/LedgerHQ/ledger-live/commit/2b5c3bb7c31445f840b66f7e0f51e9e2b07b0c49) Thanks [@sarneijim](https://github.com/sarneijim)! - Use bk payload as source of true for swap
+
+- Updated dependencies [[`2b5c3bb`](https://github.com/LedgerHQ/ledger-live/commit/2b5c3bb7c31445f840b66f7e0f51e9e2b07b0c49), [`3c15515`](https://github.com/LedgerHQ/ledger-live/commit/3c155155f2d45fb85f8900e7e77c1b5ab1c7ad67), [`d2f8b26`](https://github.com/LedgerHQ/ledger-live/commit/d2f8b26c99551cba902c07e9c544f3c84d74686c), [`3c15515`](https://github.com/LedgerHQ/ledger-live/commit/3c155155f2d45fb85f8900e7e77c1b5ab1c7ad67)]:
+  - @ledgerhq/live-common@33.7.0-nightly.7
+  - @ledgerhq/types-cryptoassets@7.10.0-nightly.2
+  - @ledgerhq/types-live@6.45.0-nightly.4
+  - @ledgerhq/coin-evm@0.13.0-nightly.6
+  - @ledgerhq/coin-framework@0.12.0-nightly.5
+  - @ledgerhq/domain-service@1.1.19-nightly.5
+  - @ledgerhq/live-countervalues@0.1.3-nightly.6
+  - @ledgerhq/live-countervalues-react@0.1.3-nightly.6
+  - @ledgerhq/live-nft@0.2.2-nightly.6
+  - @ledgerhq/live-nft-react@0.2.2-nightly.6
+
 ## 3.41.0-nightly.7
 
 ### Patch Changes

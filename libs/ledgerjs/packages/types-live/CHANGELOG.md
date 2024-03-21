@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.45.0-nightly.4
+
+### Minor Changes
+
+- [#6471](https://github.com/LedgerHQ/ledger-live/pull/6471) [`d2f8b26`](https://github.com/LedgerHQ/ledger-live/commit/d2f8b26c99551cba902c07e9c544f3c84d74686c) Thanks [@KVNLS](https://github.com/KVNLS)! - Remove llmNewArchMarket feature flag and cleanup the code
+
 ## 6.45.0-nightly.3
 
 ### Patch Changes

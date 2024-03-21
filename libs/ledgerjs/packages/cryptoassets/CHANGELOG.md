@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 11.5.0-nightly.1
+
+### Patch Changes
+
+- [#6370](https://github.com/LedgerHQ/ledger-live/pull/6370) [`3c15515`](https://github.com/LedgerHQ/ledger-live/commit/3c155155f2d45fb85f8900e7e77c1b5ab1c7ad67) Thanks [@lvndry](https://github.com/lvndry)! - Remove node, gasTracker and explorer from ethereumLikeInfo
+
 ## 11.5.0-nightly.0
 
 ### Minor Changes

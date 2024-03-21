@@ -1,5 +1,11 @@
 # @ledgerhq/hw-app-exchange
 
+## 0.4.6-nightly.2
+
+### Patch Changes
+
+- [#6420](https://github.com/LedgerHQ/ledger-live/pull/6420) [`2b5c3bb`](https://github.com/LedgerHQ/ledger-live/commit/2b5c3bb7c31445f840b66f7e0f51e9e2b07b0c49) Thanks [@sarneijim](https://github.com/sarneijim)! - Use bk payload as source of true for swap
+
 ## 0.4.6-nightly.1
 
 ### Patch Changes
