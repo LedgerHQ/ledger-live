@@ -47,6 +47,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "",
   },
+  AA_ZERODEV_PROJECTID_POLYGON: {
+    def: "",
+    parser: stringParser,
+    desc: "",
+  },
   AA_ALCHEMY_APIKEY: {
     def: "",
     parser: stringParser,

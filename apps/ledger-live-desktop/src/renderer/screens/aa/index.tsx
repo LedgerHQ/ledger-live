@@ -90,7 +90,10 @@ export default function AccountAbstraction({ location: { state } }) {
     async (email: string) => {
       console.log({ accountInConnect: account });
       // const res = await biconomy.connect();
-      const res = await zerodev.connect();
+      const chainName = chain === "ethereum_sepolia" ? "sepolia" : "polygon";
+      const res = await zerodev.connect({
+        chainName,
+      });
       console.log({ email, res });
       if (res && !!res.saAddress) {
         console.log({ res });
@@ -103,7 +106,7 @@ export default function AccountAbstraction({ location: { state } }) {
         dispatch(addAccount(account));
       }
     },
-    [account],
+    [account, chain],
   );
 
   useEffect(() => {
@@ -157,6 +160,10 @@ export default function AccountAbstraction({ location: { state } }) {
     const eth = getCryptoCurrencyById("ethereum");
     const polygon = getCryptoCurrencyById("polygon");
 
+    setSaAddress("");
+    setMultisigSaAddress("");
+    setMintTransactionHash("");
+
     setDrawer(
       SelectAccountAndCurrencyDrawer,
       {
@@ -165,6 +172,7 @@ export default function AccountAbstraction({ location: { state } }) {
           setDrawer();
           console.log({ account, parentAccount });
           setAccount(account);
+          handleConnect(loggedEmail)
         },
         // accounts$,
       },
@@ -179,6 +187,7 @@ export default function AccountAbstraction({ location: { state } }) {
   const setupCustomSigner = () => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
+    console.log({account, address: account.freshAddress})
     const viemAccount = toAccount({
       address: account.freshAddress, //"0xc92540682568eA75C6Ff9308BA30194e8aB6330e", // getAddress(privateKey),
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -287,8 +296,9 @@ export default function AccountAbstraction({ location: { state } }) {
   const handleAddLedgerSigner = async () => {
     const ledgerSigner = setupCustomSigner();
     console.log({ ledgerSigner });
+    const chainName = chain === "ethereum_sepolia" ? "sepolia" : "polygon";
     const res = await zerodev.addLedgerSigner({
-      chainId,
+      chainName,
       saAddress,
       ledgerSigner,
     });
@@ -311,7 +321,6 @@ export default function AccountAbstraction({ location: { state } }) {
     }
   };
 
-  const onSelectAccount = async () => {};
   return (
     <Container>
       {address ? (

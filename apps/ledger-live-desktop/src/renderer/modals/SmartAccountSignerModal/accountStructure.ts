@@ -42,7 +42,7 @@ export const buildAccount = async (
     freshAddress: address,
     balanceHistoryCache: emptyHistoryCache,
     isSmartAccount: true,
-    name: `${email} ${securedWithLedger && "secured with ledger "} - ${chain}`,
+    name: `${email} ${securedWithLedger ? "[secured]" : ""} ${chain}`,
     unit: currency.units[0],
   };
 };

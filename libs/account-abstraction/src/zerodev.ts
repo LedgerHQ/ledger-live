@@ -13,8 +13,9 @@ import {
   createWalletClient,
   createPublicClient,
   webSocket,
+  Chain,
 } from "viem";
-import { sepolia } from "viem/chains";
+import { polygon, sepolia } from "viem/chains";
 import { signer } from ".";
 import { getEnv } from "@ledgerhq/live-env";
 import { createWeightedECDSAValidator } from "@zerodev/weighted-ecdsa-validator";
@@ -34,23 +35,41 @@ function setSmartAccounts(chainId: string, address: string, smartAccount: Kernel
 }
 
 const PROJECT_ID = getEnv("AA_ZERODEV_PROJECTID");
-console.log({ PROJECT_ID });
-const BUNDLER_RPC = `https://rpc.zerodev.app/api/v2/bundler/${PROJECT_ID}`;
-const PAYMASTER_RPC = `https://rpc.zerodev.app/api/v2/paymaster/${PROJECT_ID}`;
+const BUNDLER_RPC_SEPOLIA = `https://rpc.zerodev.app/api/v2/bundler/${PROJECT_ID}`;
+const PAYMASTER_RPC_SEPOLIA = `https://rpc.zerodev.app/api/v2/paymaster/${PROJECT_ID}`;
 
-const publicClient = createPublicClient({
-  transport: http(BUNDLER_RPC),
+const PROJECT_ID_POLYGON = getEnv("AA_ZERODEV_PROJECTID_POLYGON");
+const BUNDLER_RPC_POLYGON = `https://rpc.zerodev.app/api/v2/bundler/${PROJECT_ID_POLYGON}`;
+const PAYMASTER_RPC_POLYGON = `https://rpc.zerodev.app/api/v2/paymaster/${PROJECT_ID_POLYGON}`;
+
+const publicClientSepolia = createPublicClient({
+  transport: http(BUNDLER_RPC_SEPOLIA),
 });
 
-export async function connect(): Promise<{
+const publicClientPolygon = createPublicClient({
+  transport: http(BUNDLER_RPC_POLYGON),
+});
+
+export async function connect({ chainName }: { chainName: "sepolia" | "polygon" }): Promise<{
   saAddress: `0x${string}`;
-  // smartAccount: BiconomySmartAccountV2;
 } | void> {
-  const chain = sepolia;
+  let publicClient = publicClientSepolia;
+  let chain: Chain = sepolia;
+  let BUNDLER_RPC = BUNDLER_RPC_SEPOLIA;
+  let PAYMASTER_RPC = PAYMASTER_RPC_SEPOLIA;
+  // transport: http("https://eth-sepolia.g.alchemy.com/v2/demo"),
+  let transport = webSocket("wss://ethereum-sepolia-rpc.publicnode.com"); // TODO: test another one
+  if (chainName === "polygon") {
+    publicClient = publicClientPolygon;
+    chain = polygon;
+    transport = webSocket("wss://polygon.gateway.tenderly.co");
+    BUNDLER_RPC = BUNDLER_RPC_POLYGON;
+    PAYMASTER_RPC = PAYMASTER_RPC_POLYGON;
+  }
+  console.log({ chain, BUNDLER_RPC, PAYMASTER_RPC, chainName });
   const signerViem = signer.toViemAccount();
   const walletClient = createWalletClient({
-    // transport: http("https://eth-sepolia.g.alchemy.com/v2/demo"),
-    transport: webSocket("wss://ethereum-sepolia-rpc.publicnode.com	"),
+    transport,
     chain,
     account: signerViem,
   });
@@ -68,17 +87,18 @@ export async function connect(): Promise<{
     plugins: {
       sudo: ecdsaValidator,
     },
+    // index: 2n,
   });
   console.log({ ACCOUNTFROMSIGNERVIEM: account });
 
   // Construct a Kernel account client
   const kernelClient = createKernelAccountClient({
     account,
-    chain: sepolia,
+    chain,
     transport: http(BUNDLER_RPC),
     sponsorUserOperation: async ({ userOperation }) => {
       const zerodevPaymaster = createZeroDevPaymasterClient({
-        chain: sepolia,
+        chain,
         transport: http(PAYMASTER_RPC),
       });
       return zerodevPaymaster.sponsorUserOperation({
@@ -115,7 +135,7 @@ export async function safeMint({
       "function balanceOf(address owner) external view returns (uint256 balance)",
     ]);
     const kernelClient = smartAccounts[chainId][saAddress];
-    console.log({kernelClient})
+    console.log({ kernelClient });
     const accountAddress = kernelClient.account.address;
 
     // Send a UserOp
@@ -133,11 +153,9 @@ export async function safeMint({
         args: [accountAddress],
       }),
     });
-    console.log({resMinting: res})
+    console.log({ resMinting: res });
 
-    console.log(
-      `See NFT here: https://mumbai.polygonscan.com/address/${accountAddress}#nfttransfers`,
-    );
+    console.log(`See NFT here: https://polygonscan.com/address/${accountAddress}#nfttransfers`);
     console.log({ res });
     // TODO: https://docs.zerodev.app/sdk/getting-started/tutorial#waiting-for-the-userop
 
@@ -176,16 +194,25 @@ export async function sendTx({ from, chainId, to, value }: sendTxArgs) {
 }
 
 type addLedgerSignerArgs = {
-  chainId: string;
+  chainName: "sepolia" | "polygon";
   saAddress: string;
   ledgerSigner: any;
 };
-export async function addLedgerSigner({ chainId, saAddress, ledgerSigner }: addLedgerSignerArgs) {
-  console.log("adding ledger signer for ", chainId, saAddress);
-  console.log({ledgerSigner})
+export async function addLedgerSigner({ chainName, saAddress, ledgerSigner }: addLedgerSignerArgs) {
+  let publicClient = publicClientSepolia;
+  let chain: Chain = sepolia;
+  let BUNDLER_RPC = BUNDLER_RPC_SEPOLIA;
+  let PAYMASTER_RPC = PAYMASTER_RPC_SEPOLIA;
+  if (chainName === "polygon") {
+    publicClient = publicClientPolygon;
+    chain = polygon;
+    BUNDLER_RPC = BUNDLER_RPC_POLYGON;
+    PAYMASTER_RPC = PAYMASTER_RPC_POLYGON;
+  }
+  console.log("adding ledger signer for ", chainName, saAddress);
+  console.log({ chain, BUNDLER_RPC, PAYMASTER_RPC, chainName, publicClient });
+  console.log({ ledgerSigner });
   const signerViem = signer.toViemAccount();
-  let chain = sepolia;
-  // TODO: logic to pick another chain
 
   const weightedECDSAValidator = await createWeightedECDSAValidator(publicClient, {
     config: {
@@ -195,25 +222,26 @@ export async function addLedgerSigner({ chainId, saAddress, ledgerSigner }: addL
         { address: ledgerSigner.address, weight: 100 }, // effectively making him the only signer now
       ],
     },
-    signers: [signerViem, ledgerSigner],
+    signers: [ledgerSigner, signerViem], // TODO: swapping changes things (check source code of createWeighted)
   });
-  console.log({weightedECDSAValidator})
+  console.log({ weightedECDSAValidator, addA: signerViem.address, addB: ledgerSigner.address });
+
   // TODO: update instead of creating a whole new account
   const newAccount = await createKernelAccount(publicClient, {
     plugins: {
       sudo: weightedECDSAValidator,
-    }
-  })
-  console.log({newAccount})
+    },
+  });
+  console.log({ newAccount });
 
   // Construct a Kernel account client
   const kernelClient = createKernelAccountClient({
     account: newAccount,
-    chain: sepolia,
+    chain,
     transport: http(BUNDLER_RPC),
     sponsorUserOperation: async ({ userOperation }) => {
       const zerodevPaymaster = createZeroDevPaymasterClient({
-        chain: sepolia,
+        chain,
         transport: http(PAYMASTER_RPC),
       });
       return zerodevPaymaster.sponsorUserOperation({
@@ -225,10 +253,8 @@ export async function addLedgerSigner({ chainId, saAddress, ledgerSigner }: addL
   console.log({ kernelClient });
   const accountAddress = kernelClient.account.address;
   console.log("My account:", accountAddress);
-  const toto = kernelClient.account;
-
-  setSmartAccounts(chainId, accountAddress, kernelClient);
-  console.log({NEWSMARTACCOUNTS: smartAccounts})
-  return {newSaAddress: accountAddress}
+  setSmartAccounts(`${chain.id}`, accountAddress, kernelClient);
+  console.log({ NEWSMARTACCOUNTS: smartAccounts });
+  return { newSaAddress: accountAddress };
   // console.log({ smartAccounts });
 }

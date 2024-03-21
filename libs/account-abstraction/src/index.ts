@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { User, createModularAccountAlchemyClient } from "@alchemy/aa-alchemy";
-import { sepolia } from "@alchemy/aa-core";
+import { User } from "@alchemy/aa-alchemy";
 import { AlchemySigner } from "@alchemy/aa-alchemy";
 import { getEnv } from "@ledgerhq/live-env";
 import * as zerodev from "./zerodev";
@@ -25,26 +24,15 @@ function authenticate(email: string) {
   signer.authenticate({ type: "email", email });
 }
 
-async function disconnect() {
-  console.log(`[disconnect] before`)
-  // await signer.();
-  console.log(`[disconnect] end`)
-}
-
 // second step when user clicked on mail and was redirected through deep link
 async function completeAuthenticate(
   orgId: string,
   bundle: string,
 ): Promise<{ email: string | undefined; address: string }> {
-  console.log(`[completeAuthenticate] completing for bundle = ${bundle} orgId = ${orgId}`)
+  console.log(`[completeAuthenticate] completing for bundle = ${bundle} orgId = ${orgId}`);
   const res: User = await signer.authenticate({ type: "email", bundle, orgId });
-  console.log({completeAuthenticateRes: res})
+  console.log({ completeAuthenticateRes: res });
   return { email: res.email, address: res.address };
 }
 
-export {
-  authenticate,
-  disconnect,
-  completeAuthenticate,
-  zerodev,
-};
+export { authenticate, completeAuthenticate, zerodev };
