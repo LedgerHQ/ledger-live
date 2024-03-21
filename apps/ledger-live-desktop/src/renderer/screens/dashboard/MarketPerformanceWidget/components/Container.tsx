@@ -13,7 +13,15 @@ const BodyByMode: Record<ABTestingVariants, React.ComponentType<PropsBody>> = {
   [ABTestingVariants.variantB]: WidgetList,
 };
 
-export function MarketPerformanceWidgetContainer({ variant, list, setOrder, order, state }: Props) {
+export function MarketPerformanceWidgetContainer({
+  variant,
+  list,
+  setOrder,
+  order,
+  range,
+  isLoading,
+  hasError,
+}: Props) {
   const Body = BodyByMode[variant];
 
   return (
@@ -30,15 +38,15 @@ export function MarketPerformanceWidgetContainer({ variant, list, setOrder, orde
       <MarketPerformanceWidgetHeader order={order} onChangeOrder={setOrder} />
 
       <Flex flex={1} alignItems="center" justifyContent="center">
-        {state.isLoading ? (
+        {isLoading ? (
           <InfiniteLoader />
-        ) : state.hasError ? (
+        ) : hasError ? (
           <Error
             title={"dashboard.marketPerformanceWidget.error.title"}
             description={"dashboard.marketPerformanceWidget.error.description"}
           />
         ) : (
-          <Body data={list} order={order} />
+          <Body data={list} order={order} range={range} />
         )}
       </Flex>
 

@@ -1,5 +1,6 @@
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { RefetchOptions, QueryObserverResult } from "@tanstack/react-query";
+import { PortfolioRange } from "@ledgerhq/types-live";
 
 export type MarketCoin = {
   id: string;
@@ -134,6 +135,28 @@ export type State = SingleCoinState & {
   page: number;
   endOfList: boolean;
   totalCoinsAvailable: number;
+};
+
+export type MarketPerformersParams = {
+  limit: number;
+  top: number;
+  sort: "asc" | "desc";
+  range: PortfolioRange;
+  counterCurrency: string;
+  supported: boolean;
+};
+
+export type MarketPerformersResult = {
+  name: string;
+  ticker: string;
+  priceChangePercentage1h: number;
+  priceChangePercentage24h: number;
+  priceChangePercentage7d: number;
+  priceChangePercentage30d: number;
+  priceChangePercentage1y: number;
+  image: string;
+  price: number;
+  ledgerIds: string[];
 };
 
 export type MarketDataApi = {

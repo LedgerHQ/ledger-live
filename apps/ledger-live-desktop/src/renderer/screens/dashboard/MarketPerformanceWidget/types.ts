@@ -1,22 +1,19 @@
-import { PerformanceMarketDatapoint } from "@ledgerhq/live-countervalues/portfolio";
-import { ABTestingVariants } from "@ledgerhq/types-live";
+import { MarketPerformersResult } from "@ledgerhq/live-common/market/types";
+import { ABTestingVariants, PortfolioRange } from "@ledgerhq/types-live";
 import { Dispatch, SetStateAction } from "react";
 
 /**
  * MarketPerformanceWidget Hook
  */
-export type State = {
-  isLoading: boolean;
-  hasError: boolean;
-};
 
 export type Props = {
   variant: ABTestingVariants;
-  list: PerformanceMarketDatapoint[];
+  list: MarketPerformersResult[];
   order: Order;
+  range: PortfolioRange;
   setOrder: Dispatch<SetStateAction<Order>>;
-  state: State;
-  setState: Dispatch<SetStateAction<State>>;
+  isLoading: boolean;
+  hasError: boolean;
 };
 
 /**
@@ -31,14 +28,16 @@ export type HeaderProps = {
  * MarketPerformanceWidgetBody
  */
 export type PropsBody = {
-  data: PerformanceMarketDatapoint[];
+  data: MarketPerformersResult[];
   order: Order;
+  range: PortfolioRange;
 };
 
 export type PropsBodyElem = {
-  data: PerformanceMarketDatapoint;
+  data: MarketPerformersResult;
   index: number;
   isFirst: boolean;
+  range: PortfolioRange;
 };
 
 /**
