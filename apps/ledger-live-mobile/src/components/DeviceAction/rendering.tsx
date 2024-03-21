@@ -27,7 +27,7 @@ import {
 } from "@ledgerhq/native-ui";
 import { DownloadMedium } from "@ledgerhq/native-ui/assets/icons";
 import BigNumber from "bignumber.js";
-import { ExchangeRate, Exchange } from "@ledgerhq/live-common/exchange/swap/types";
+import { ExchangeRate, ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 import {
   getAccountUnit,
   getMainAccount,
@@ -252,7 +252,7 @@ export function renderConfirmSwap({
   device: Device;
   transaction: Transaction;
   exchangeRate: ExchangeRate;
-  exchange: Exchange;
+  exchange: ExchangeSwap;
   amountExpectedTo?: string | null;
   estimatedFees?: string | null;
 }) {

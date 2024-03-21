@@ -4,7 +4,7 @@ import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 import { SwapExchangeRateAmountTooHigh, SwapExchangeRateAmountTooLow } from "../../errors";
 import type {
-  Exchange,
+  ExchangeSwap,
   ExchangeRate,
   GetMultipleStatus,
   GetProviders,
@@ -16,7 +16,7 @@ import type { Transaction } from "../../generated/types";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 export const mockGetExchangeRates = async (
-  exchange: Exchange,
+  exchange: ExchangeSwap,
   transaction: Transaction,
   currencyTo?: TokenCurrency | CryptoCurrency | undefined | null,
 ): Promise<(ExchangeRate & { expirationDate?: Date })[]> => {
@@ -109,7 +109,7 @@ export const mockGetExchangeRates = async (
 };
 
 export const mockInitSwap = (
-  exchange: Exchange,
+  exchange: ExchangeSwap,
   exchangeRate: ExchangeRate,
   transaction: Transaction,
 ): Observable<SwapRequestEvent> => {
