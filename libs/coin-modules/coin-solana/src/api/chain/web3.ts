@@ -11,8 +11,10 @@ import {
   StakeProgram,
   SystemProgram,
   TransactionInstruction,
+  ComputeBudgetProgram,
 } from "@solana/web3.js";
 import chunk from "lodash/chunk";
+import uniqBy from "lodash/uniqBy";
 import { ChainAPI } from ".";
 import { Awaited } from "../../logic";
 import {
@@ -25,7 +27,7 @@ import {
   TokenTransferCommand,
   TransferCommand,
 } from "../../types";
-import { drainSeqAsyncGen } from "../../utils";
+import { drainSeqAsyncGen, median } from "../../utils";
 import { parseTokenAccountInfo, tryParseAsTokenAccount, tryParseAsVoteAccount } from "./account";
 import { parseStakeAccountInfo } from "./account/parser";
 import { StakeAccountInfo } from "./account/stake";
@@ -127,12 +129,10 @@ export function getTransactions(
   return drainSeqAsyncGen(getTransactionsGen(address, untilTxSignature, api));
 }
 
-export const buildTransferInstructions = ({
-  sender,
-  recipient,
-  amount,
-  memo,
-}: TransferCommand): TransactionInstruction[] => {
+export const buildTransferInstructions = async (
+  api: ChainAPI,
+  { sender, recipient, amount, memo }: TransferCommand,
+): Promise<TransactionInstruction[]> => {
   const fromPublicKey = new PublicKey(sender);
   const toPublicKey = new PublicKey(recipient);
 
@@ -153,12 +153,13 @@ export const buildTransferInstructions = ({
     instructions.push(memoIx);
   }
 
-  return instructions;
+  return appendMaybePriorityFeeInstruction(api, [fromPublicKey, toPublicKey], instructions);
 };
 
-export const buildTokenTransferInstructions = (
+export const buildTokenTransferInstructions = async (
+  api: ChainAPI,
   command: TokenTransferCommand,
-): TransactionInstruction[] => {
+): Promise<TransactionInstruction[]> => {
   const {
     ownerAddress,
     ownerAssociatedTokenAccountAddress,
@@ -271,6 +272,36 @@ export async function getStakeAccountAddressWithSeed({
   return pubkey.toBase58();
 }
 
+export async function getPriorityFee(api: ChainAPI, accounts: PublicKey[]): Promise<number> {
+  const uniqAccs = uniqBy(accounts, acc => acc.toBase58());
+  const recentFees = await api.getRecentPrioritizationFees({
+    lockedWritableAccounts: uniqAccs,
+  });
+
+  return median(recentFees.map(item => item.prioritizationFee));
+}
+
+export async function buildMaybePriorityFeeInstruction(
+  api: ChainAPI,
+  accounts: PublicKey[],
+): Promise<TransactionInstruction | null> {
+  const priorityFee = await getPriorityFee(api, accounts);
+  if (priorityFee === 0) return null;
+
+  return ComputeBudgetProgram.setComputeUnitPrice({
+    microLamports: priorityFee,
+  });
+}
+
+export async function appendMaybePriorityFeeInstruction(
+  api: ChainAPI,
+  accounts: PublicKey[],
+  ixs: TransactionInstruction[],
+): Promise<TransactionInstruction[]> {
+  const priorityFeeIx = await buildMaybePriorityFeeInstruction(api, accounts);
+  return priorityFeeIx ? [priorityFeeIx, ...ixs] : ixs;
+}
+
 export function buildCreateAssociatedTokenAccountInstruction({
   mint,
   owner,
@@ -292,86 +323,82 @@ export function buildCreateAssociatedTokenAccountInstruction({
   return instructions;
 }
 
-export function buildStakeDelegateInstructions({
-  authorizedAccAddr,
-  stakeAccAddr,
-  voteAccAddr,
-}: StakeDelegateCommand): TransactionInstruction[] {
+export async function buildStakeDelegateInstructions(
+  api: ChainAPI,
+  { authorizedAccAddr, stakeAccAddr, voteAccAddr }: StakeDelegateCommand,
+): Promise<TransactionInstruction[]> {
+  const withdrawAuthority = new PublicKey(authorizedAccAddr);
+  const stakeAcc = new PublicKey(stakeAccAddr);
+  const voteAcc = new PublicKey(voteAccAddr);
   const tx = StakeProgram.delegate({
-    authorizedPubkey: new PublicKey(authorizedAccAddr),
-    stakePubkey: new PublicKey(stakeAccAddr),
-    votePubkey: new PublicKey(voteAccAddr),
+    authorizedPubkey: withdrawAuthority,
+    stakePubkey: stakeAcc,
+    votePubkey: voteAcc,
   });
 
-  return tx.instructions;
+  return appendMaybePriorityFeeInstruction(api, [withdrawAuthority, stakeAcc], tx.instructions);
 }
 
-export function buildStakeUndelegateInstructions({
-  authorizedAccAddr,
-  stakeAccAddr,
-}: StakeUndelegateCommand): TransactionInstruction[] {
+export async function buildStakeUndelegateInstructions(
+  api: ChainAPI,
+  { authorizedAccAddr, stakeAccAddr }: StakeUndelegateCommand,
+): Promise<TransactionInstruction[]> {
+  const withdrawAuthority = new PublicKey(authorizedAccAddr);
+  const stakeAcc = new PublicKey(stakeAccAddr);
   const tx = StakeProgram.deactivate({
-    authorizedPubkey: new PublicKey(authorizedAccAddr),
-    stakePubkey: new PublicKey(stakeAccAddr),
+    authorizedPubkey: withdrawAuthority,
+    stakePubkey: stakeAcc,
   });
 
-  return tx.instructions;
+  return appendMaybePriorityFeeInstruction(api, [withdrawAuthority, stakeAcc], tx.instructions);
 }
 
-export function buildStakeWithdrawInstructions({
-  authorizedAccAddr,
-  stakeAccAddr,
-  amount,
-  toAccAddr,
-}: StakeWithdrawCommand): TransactionInstruction[] {
+export async function buildStakeWithdrawInstructions(
+  api: ChainAPI,
+  { authorizedAccAddr, stakeAccAddr, amount, toAccAddr }: StakeWithdrawCommand,
+): Promise<TransactionInstruction[]> {
+  const withdrawAuthority = new PublicKey(authorizedAccAddr);
+  const stakeAcc = new PublicKey(stakeAccAddr);
+  const recipient = new PublicKey(toAccAddr);
   const tx = StakeProgram.withdraw({
-    authorizedPubkey: new PublicKey(authorizedAccAddr),
-    stakePubkey: new PublicKey(stakeAccAddr),
+    authorizedPubkey: withdrawAuthority,
+    stakePubkey: stakeAcc,
     lamports: amount,
-    toPubkey: new PublicKey(toAccAddr),
+    toPubkey: recipient,
   });
 
-  return tx.instructions;
+  return appendMaybePriorityFeeInstruction(api, [withdrawAuthority, stakeAcc], tx.instructions);
 }
 
-export function buildStakeSplitInstructions({
-  authorizedAccAddr,
-  stakeAccAddr,
-  seed,
-  amount,
-  splitStakeAccAddr,
-}: StakeSplitCommand): TransactionInstruction[] {
-  // HACK: switch to split_with_seed when supported by @solana/web3.js
-  const splitIx = StakeProgram.split({
-    authorizedPubkey: new PublicKey(authorizedAccAddr),
+export async function buildStakeSplitInstructions(
+  api: ChainAPI,
+  { authorizedAccAddr, stakeAccAddr, seed, amount, splitStakeAccAddr }: StakeSplitCommand,
+): Promise<TransactionInstruction[]> {
+  const basePk = new PublicKey(authorizedAccAddr);
+  const stakePk = new PublicKey(stakeAccAddr);
+  const splitStakePk = new PublicKey(splitStakeAccAddr);
+  const splitIx = StakeProgram.splitWithSeed({
+    authorizedPubkey: basePk,
     lamports: amount,
-    stakePubkey: new PublicKey(stakeAccAddr),
-    splitStakePubkey: new PublicKey(splitStakeAccAddr),
-  }).instructions[1];
-
-  if (splitIx === undefined) {
-    throw new Error("expected split instruction");
-  }
-
-  const allocateIx = SystemProgram.allocate({
-    accountPubkey: new PublicKey(splitStakeAccAddr),
-    basePubkey: new PublicKey(authorizedAccAddr),
-    programId: StakeProgram.programId,
+    stakePubkey: stakePk,
+    splitStakePubkey: splitStakePk,
+    basePubkey: basePk,
     seed,
-    space: StakeProgram.space,
   });
-
-  return [allocateIx, splitIx];
+  return appendMaybePriorityFeeInstruction(api, [basePk, stakePk], splitIx.instructions);
 }
 
-export function buildStakeCreateAccountInstructions({
-  fromAccAddress,
-  stakeAccAddress,
-  seed,
-  amount,
-  stakeAccRentExemptAmount,
-  delegate,
-}: StakeCreateAccountCommand): TransactionInstruction[] {
+export async function buildStakeCreateAccountInstructions(
+  api: ChainAPI,
+  {
+    fromAccAddress,
+    stakeAccAddress,
+    seed,
+    amount,
+    stakeAccRentExemptAmount,
+    delegate,
+  }: StakeCreateAccountCommand,
+): Promise<TransactionInstruction[]> {
   const fromPubkey = new PublicKey(fromAccAddress);
   const stakePubkey = new PublicKey(stakeAccAddress);
 
@@ -394,6 +421,5 @@ export function buildStakeCreateAccountInstructions({
       votePubkey: new PublicKey(delegate.voteAccAddress),
     }),
   );
-
-  return tx.instructions;
+  return appendMaybePriorityFeeInstruction(api, [fromPubkey, stakePubkey], tx.instructions);
 }
