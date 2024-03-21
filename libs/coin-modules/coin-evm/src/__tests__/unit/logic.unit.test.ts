@@ -488,10 +488,10 @@ describe("EVM Family", () => {
       //
       // EDIT: Since the CAL went from ~9k to 14k+ tokens
       // this test now takes longer to execute.
-      // Now changing to 550ms to hash
+      // Now changing to 1s to hash
       // when CI generally run it
-      // in under 450ms.
-      it("should have decent performances (10 syncHashes of each major EVM in less than 550ms on a computer)", () => {
+      // in under 650ms.
+      it("should have decent performances (10 syncHashes of each major EVM in less than 1s on a computer)", () => {
         const start = performance.now();
         for (let i = 0; i < 10; i++) {
           getSyncHash(getCryptoCurrencyById("ethereum"));
@@ -499,7 +499,7 @@ describe("EVM Family", () => {
           getSyncHash(getCryptoCurrencyById("bsc"));
         }
         const now = performance.now();
-        expect(now - start).toBeLessThan(550);
+        expect(now - start).toBeLessThan(1000);
       });
 
       it("should provide a hash not dependent on reference", () => {
