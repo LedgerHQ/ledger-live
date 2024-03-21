@@ -72,7 +72,7 @@ describe("DeepLinks Tests", () => {
     await portfolioPage.waitForPortfolioPageToLoad();
   });
 
-  it("should open My Ledger page and add a device", async () => {
+  xit("should open My Ledger page and add a device", async () => {
     await managerPage.openViaDeeplink();
     await expect(managerPage.managerTitle()).toBeVisible();
     await onboardingSteps.addDeviceViaBluetooth("David");

@@ -367,6 +367,7 @@ export default function SelectDevice({
                 <DeviceList deviceList={deviceList} handleOnSelect={handleOnSelect} />
               ) : (
                 <Touchable
+                  touchableTestID="connect-with-bluetooth"
                   onPress={isChoiceDrawerDisplayedOnAddDevice ? onAddNewPress : openBlePairingFlow}
                   {...addNewButtonEventProps}
                 >

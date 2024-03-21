@@ -123,7 +123,6 @@ export type CurrencyFeatures = {
 export type Features = CurrencyFeatures & {
   brazePushNotifications: Feature_BrazePushNotifications;
   brazeLearn: Feature_BrazeLearn;
-  llmNewDeviceSelection: Feature_LlmNewDeviceSelection;
   ratingsPrompt: Feature_RatingsPrompt;
   npsRatingsPrompt: Feature_NpsRatingsPrompt;
   counterValue: Feature_CounterValue;
@@ -466,7 +465,6 @@ export type Feature_Objkt = DefaultFeature;
 export type Feature_ProtectServicesDiscoverDesktop = DefaultFeature;
 export type Feature_ListAppsV2minor1 = DefaultFeature;
 export type Feature_BrazeLearn = DefaultFeature;
-export type Feature_LlmNewDeviceSelection = DefaultFeature;
 export type Feature_LlmWalletQuickActions = DefaultFeature;
 export type Feature_PtxSwapMoonpayProvider = DefaultFeature;
 export type Feature_FlexibleContentCards = DefaultFeature;

@@ -85,7 +85,6 @@ export const DEFAULT_FEATURES: Features = {
   portfolioExchangeBanner: DEFAULT_FEATURE,
   postOnboardingAssetsTransfer: DEFAULT_FEATURE,
   counterValue: DEFAULT_FEATURE,
-  llmNewDeviceSelection: DEFAULT_FEATURE,
   mockFeature: DEFAULT_FEATURE,
   multibuyNavigation: DEFAULT_FEATURE,
   ptxServiceCtaExchangeDrawer: DEFAULT_FEATURE,
