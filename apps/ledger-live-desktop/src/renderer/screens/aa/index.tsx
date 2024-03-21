@@ -31,6 +31,7 @@ import {
 import { sepolia } from "viem/chains";
 import { openModal } from "~/renderer/actions/modals";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { prepareMessageToSign } from "@ledgerhq/live-common/hw/signMessage/index";
 
 const Container = styled(Flex).attrs({
   flex: "1",
@@ -63,6 +64,7 @@ export default function AccountAbstraction({ location: { state } }) {
   const signerFromQueryParams = state?.signer;
   const [address, setAddress] = useState("");
   const [saAddress, setSaAddress] = useState("");
+  const [multisigSaAddress, setMultisigSaAddress] = useState("");
   // const [smartAccount, setSmartAccount] = useState({});
   const [mintTransactionHash, setMintTransactionHash] = useState("");
   const [userOpReceipt, setUserOpReceipt] = useState({});
@@ -118,21 +120,30 @@ export default function AccountAbstraction({ location: { state } }) {
     console.log({ resmint: res });
     if (res && !!res.transactionHash) {
       setMintTransactionHash(res.transactionHash);
-      setUserOpReceipt(res.userOpReceipt);
+      // setUserOpReceipt(res.userOpReceipt);
     }
-    console.log({ mintres: res });
+  };
+
+  const handleMintMultisig = async () => {
+    const res = await zerodev.safeMint({ chainId: "11155111", saAddress: multisigSaAddress });
+    console.log({ resmintmultisig: res });
+    if (res && !!res.transactionHash) {
+      setMintTransactionHash(res.transactionHash);
+      // setUserOpReceipt(res.userOpReceipt);
+    }
   };
 
   const pickAccount = async () => {
     // const defaultEthCryptoFamily = cryptocurrenciesById["ethereum"];
     // console.log({ defaultEthCryptoFamily });
     const eth = getCryptoCurrencyById("ethereum");
-    console.log({eth})
+    const sepolia = getCryptoCurrencyById("ethereum_sepolia");
+    console.log({ eth, sepolia });
 
     setDrawer(
       SelectAccountAndCurrencyDrawer,
       {
-        currencies: [eth],
+        currencies: [eth, sepolia],
         onAccountSelected: (account: AccountLike, parentAccount: Account | undefined) => {
           setDrawer();
           console.log({ account, parentAccount });
@@ -158,6 +169,8 @@ export default function AccountAbstraction({ location: { state } }) {
       async signMessage({ message }) {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
+        console.log("SIGNING");
+        debugger;
         const res = openModal("MODAL_SIGN_MESSAGE", {
           account,
           message,
@@ -174,6 +187,8 @@ export default function AccountAbstraction({ location: { state } }) {
       // @ts-ignore
       async signTransaction(transaction, { serializer }) {
         // return signTransaction({ privateKey, transaction, serializer });
+        console.log("IN SIGNTRANSACTION");
+        debugger;
         console.log({ serializer });
         const canEditFees = false;
         const res = openModal("MODAL_SIGN_TRANSACTION", {
@@ -196,23 +211,60 @@ export default function AccountAbstraction({ location: { state } }) {
       async signTypedData(typedData) {
         // return signTransaction({ privateKey, transaction, serializer });
         // console.log({ serializer });
-        const canEditFees = false;
-        const res = openModal("MODAL_SIGN_TRANSACTION", {
-          canEditFees,
-          // stepId: canEditFees && !hasFeesProvided ? "amount" : "summary",
-          stepId: "summary",
-          transactionData: typedData, // NOTE: check this one also
-          // useApp: options?.hwAppId,
+        console.log("IN SIGNTYPEDDATA");
+        debugger;
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        console.log({ accounttype: account?.type }); // NOTE: needs to be "Account", otherwise get parent
+        const message = typedData.message;
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        const message2 = typedData.message.callDataAndNonceHash;
+        const bufferedMessage = Buffer.from(message2).toString("hex");
+        const formattedMessage = prepareMessageToSign(
           account,
-          parentAccount: account, // NOTE: check this one
-          onResult: () => {},
-          onCancel: () => {},
+          // account.type === "Account" ? currentAccount : currentParentAccount,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          bufferedMessage,
+          // Buffer.from(message2).toString("hex"),
+        );
+        console.log({ formattedMessage });
+        // const canEditFees = false;
+        const res = await new Promise<string>((resolve, reject) => {
+          dispatch(
+            openModal("MODAL_SIGN_MESSAGE", {
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore
+              account,
+              message: formattedMessage,
+              // onSuccess: resolve,
+              onConfirmationHandler: resolve,
+              onFailHandler: (fail: string) => {
+                console.log(`failed with ${fail}`);
+                reject(fail);
+              },
+              onClose: () => {},
+            }),
+            // openModal("MODAL_SIGN_TRANSACTION", {
+            //   canEditFees,
+            //   // stepId: canEditFees && !hasFeesProvided ? "amount" : "summary",
+            //   stepId: "summary",
+            //   transactionData: typedData, // NOTE: check this one also
+            //   // useApp: options?.hwAppId,
+            //   account,
+            //   parentAccount: account, // NOTE: check this one
+            //   onResult: () => {},
+            //   onCancel: () => {},
+            // }),
+          );
         });
-        // console.log({resigntransaction: res})
+        // const res = ;
+        console.log({ resSignTypedData: res });
         return res;
       },
     });
-    return viemAccount
+    return viemAccount;
   };
 
   const handleAddLedgerSigner = async () => {
@@ -224,6 +276,9 @@ export default function AccountAbstraction({ location: { state } }) {
       ledgerSigner,
     });
     console.log({ resAddLedgerSigner: res });
+    if (res && res.newSaAddress) {
+      setMultisigSaAddress(res.newSaAddress);
+    }
   };
 
   //   const { requestParams } = useMarketData();
@@ -261,6 +316,17 @@ export default function AccountAbstraction({ location: { state } }) {
               label={saAddress}
             />
           </Text>
+          <Text color="palette.text.shade80" ff="Inter|SemiBold" fontSize={4}>
+            Multisig Smart Account address:
+            <LabelWithExternalIcon
+              color="wallet"
+              ff="Inter|SemiBold"
+              onClick={() => {
+                openURL(`https://sepolia.etherscan.io/address/${multisigSaAddress}`);
+              }}
+              label={multisigSaAddress}
+            />
+          </Text>
           [biconomy] mint transactionHash = {mintTransactionHash}
           <hr />
           [biconomy] mint userOpReceipt = {JSON.stringify(userOpReceipt)}
@@ -269,6 +335,13 @@ export default function AccountAbstraction({ location: { state } }) {
             <Button primary mr={2} onClick={handleMint}>
               <Box horizontal flow={1} alignItems="center">
                 <Box>Mint</Box>
+              </Box>
+            </Button>
+          </Box>
+          <Box width={200}>
+            <Button primary mr={2} onClick={handleMintMultisig}>
+              <Box horizontal flow={1} alignItems="center">
+                <Box>Mint with multisig</Box>
               </Box>
             </Button>
           </Box>

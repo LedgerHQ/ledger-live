@@ -183,16 +183,52 @@ export async function addLedgerSigner({ chainId, saAddress, ledgerSigner }: addL
   console.log("adding ledger signer for ", chainId, saAddress);
   console.log({ledgerSigner})
   const signerViem = signer.toViemAccount();
+  let chain = sepolia;
+  // TODO: logic to pick another chain
 
   // const signerLedger =
-  // const weightedECDSAValidator = await createWeightedECDSAValidator(publicClient, {
-  //   config: {
-  //     threshold: 100,
-  //     signers: [
-  //       { address: signerViem.address, weight: 100 },
-  //       { address: signerLedger.address, weight: 100 },
-  //     ],
-  //   },
-  //   signers: [signerViem, signerLedger],
-  // });
+  const weightedECDSAValidator = await createWeightedECDSAValidator(publicClient, {
+    config: {
+      threshold: 100,
+      signers: [
+        { address: signerViem.address, weight: 100 },
+        { address: ledgerSigner.address, weight: 100 },
+      ],
+    },
+    signers: [signerViem, ledgerSigner],
+  });
+  console.log({weightedECDSAValidator})
+  // TODO: update instead of creating a whole new account
+  const newAccount = await createKernelAccount(publicClient, {
+    plugins: {
+      sudo: weightedECDSAValidator,
+    }
+  })
+  console.log({newAccount})
+
+  // Construct a Kernel account client
+  const kernelClient = createKernelAccountClient({
+    account: newAccount,
+    chain: sepolia,
+    transport: http(BUNDLER_RPC),
+    sponsorUserOperation: async ({ userOperation }) => {
+      const zerodevPaymaster = createZeroDevPaymasterClient({
+        chain: sepolia,
+        transport: http(PAYMASTER_RPC),
+      });
+      return zerodevPaymaster.sponsorUserOperation({
+        userOperation,
+      });
+    },
+  });
+
+  console.log({ kernelClient });
+  const accountAddress = kernelClient.account.address;
+  console.log("My account:", accountAddress);
+  const toto = kernelClient.account;
+
+  setSmartAccounts(chainId, accountAddress, kernelClient);
+  console.log({NEWSMARTACCOUNTS: smartAccounts})
+  return {newSaAddress: accountAddress}
+  // console.log({ smartAccounts });
 }
