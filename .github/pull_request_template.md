@@ -5,7 +5,7 @@ Please make sure to read CONTRIBUTING.md if you have not already. Pull Requests 
 
 ### ✅ Checklist
 
-Pull Requests must pass the CI and be code reviewed. Set as Draft if the PR is not ready.
+<!-- Pull Requests must pass the CI and be code reviewed. Set as Draft if the PR is not ready. -->
 
 - [ ] `npx changeset` was attached.
 - [ ] **Covered by automatic tests.** <!-- if not, please explain. (Feature must be tested / Bugfix must bring non-regression) -->
