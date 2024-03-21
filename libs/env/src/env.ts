@@ -57,16 +57,6 @@ const envDefinitions = {
     parser: stringParser,
     desc: "",
   },
-  AA_BICONOMY_PAYMASTER_APIKEY: {
-    def: "",
-    parser: stringParser,
-    desc: "",
-  },
-  AA_BICONOMY_PAYMASTER_URL: {
-    def: "",
-    parser: stringParser,
-    desc: "",
-  },
   ADDRESS_POISONING_FAMILIES: {
     def: "evm,tron",
     parser: stringParser,

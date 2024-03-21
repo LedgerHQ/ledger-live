@@ -24,7 +24,7 @@ import Alert from "~/renderer/components/Alert";
 import NFTSummary from "~/renderer/screens/nft/Send/Summary";
 import { StepProps } from "../types";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
-import { biconomy, zerodev } from "@ledgerhq/account-abstraction";
+import { zerodev } from "@ledgerhq/account-abstraction";
 
 const TextContent = styled.div`
   font-weight: bold;
