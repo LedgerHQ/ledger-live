@@ -1,5 +1,5 @@
 import { Size } from "~/contentCards/cards/vertical/types";
-import { WidthFactor } from "~/contentCards/layouts/carousel";
+import { WidthFactor } from "~/contentCards/layouts/types";
 import {
   BrazeContentCard,
   AssetContentCard,
@@ -144,6 +144,7 @@ export const mapAsHorizontalContentCard = (card: BrazeContentCard): HorizontalCo
   createdAt: card.created,
   viewed: card.viewed,
   order: parseInt(card.extras.order) ? parseInt(card.extras.order) : undefined,
+  gridWidthFactor: WidthFactor.Full,
 });
 
 const mapAsSquareContentCard = (
