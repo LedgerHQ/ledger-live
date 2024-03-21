@@ -91,22 +91,23 @@ libs/ledger-live-common/src/wallet-api/                  @ledgerhq/wallet-api
 libs/test-utils/                                         @ledgerhq/wallet-api @ledgerhq/live-qa
 
 # Devices team
-apps/cli/src/commands/devices                            @ledgerhq/live-devices
-**/src/renderer/screens/manager/                         @ledgerhq/live-devices
-apps/**/components/DeviceAction/                         @ledgerhq/live-devices
-apps/ledger-live-mobile/src/screens/Manager/             @ledgerhq/live-devices
-apps/web-tools/repl/                                     @ledgerhq/live-devices
-libs/**/devices/                                         @ledgerhq/live-devices
-libs/**/hw-transport-*/                                  @ledgerhq/live-devices
-libs/**/react-native-*/                                  @ledgerhq/live-devices
-libs/**/swift-*/                                         @ledgerhq/live-devices
-libs/**/types-devices/                                   @ledgerhq/live-devices
-libs/ledger-live-common/src/apps/                        @ledgerhq/live-devices
-libs/ledger-live-common/src/hw/                          @ledgerhq/live-devices
-libs/ledger-live-common/src/manager/                     @ledgerhq/live-devices
-libs/ledger-live-common/src/device/                      @ledgerhq/live-devices
-libs/ledger-live-common/src/device-react/                @ledgerhq/live-devices
-libs/ledger-live-common/src/device-core/                 @ledgerhq/live-devices
+apps/cli/src/commands/devices                            			@ledgerhq/live-devices
+**/src/renderer/screens/manager/                         			@ledgerhq/live-devices
+apps/**/components/DeviceAction/                         			@ledgerhq/live-devices
+apps/ledger-live-mobile/src/screens/Manager/             			@ledgerhq/live-devices
+apps/ledger-live-mobile/src/newArch/features/FirmwareUpdate/	@ledgerhq/live-devices
+apps/web-tools/repl/                                     			@ledgerhq/live-devices
+libs/**/devices/                                         			@ledgerhq/live-devices
+libs/**/hw-transport-*/                                  			@ledgerhq/live-devices
+libs/**/react-native-*/                                  			@ledgerhq/live-devices
+libs/**/swift-*/                                         			@ledgerhq/live-devices
+libs/**/types-devices/                                   			@ledgerhq/live-devices
+libs/ledger-live-common/src/apps/                        			@ledgerhq/live-devices
+libs/ledger-live-common/src/hw/                          			@ledgerhq/live-devices
+libs/ledger-live-common/src/manager/                     			@ledgerhq/live-devices
+libs/ledger-live-common/src/device/                      			@ledgerhq/live-devices
+libs/ledger-live-common/src/device-react/                			@ledgerhq/live-devices
+libs/ledger-live-common/src/device-core/                 			@ledgerhq/live-devices
 
 # Recover team
 apps/ledger-live-desktop/src/renderer/components/RecoverBanner/         @ledgerhq/recover-software
