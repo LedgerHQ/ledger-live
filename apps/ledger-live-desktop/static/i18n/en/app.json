@@ -4040,6 +4040,8 @@
           "create": "Create a local app",
           "modify": "Modify a local app"
         },
+        "addNetwork": "Add a new network",
+        "removeNetwork": "Remove last network",
         "export": "Export",
         "modify": "Modify",
         "create": "Create"
