@@ -2,11 +2,15 @@ import { getAccountShape } from "@ledgerhq/coin-evm/synchronization";
 import { emptyHistoryCache } from "@ledgerhq/live-common/account/index";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 
-export const buildAccount = async (address: string, email: string) => {
+export const buildAccount = async (
+  address: string,
+  email: string,
+  chain: "ethereum_sepolia" | "polygon",
+) => {
   // TODO: infer
-  console.log(`building account for ${address} - ${email}`)
-  const chainName = "Ethereum Sepolia";
-  const currency = getCryptoCurrencyById("ethereum_sepolia");
+  console.log(`building account for ${address} - ${email} - ${chain}`);
+  // const chainName = "Ethereum Sepolia";
+  const currency = getCryptoCurrencyById(chain);
   const infos = {
     currency,
     index: 0,
@@ -37,7 +41,7 @@ export const buildAccount = async (address: string, email: string) => {
     freshAddress: address,
     balanceHistoryCache: emptyHistoryCache,
     isSmartAccount: true,
-    name: `${email} - ${chainName}`,
+    name: `${email} - ${chain}`,
     unit: currency.units[0],
     smartAccount: true,
   };

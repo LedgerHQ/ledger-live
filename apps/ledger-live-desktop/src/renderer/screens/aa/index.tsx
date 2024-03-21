@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Flex, IconsLegacy, Text } from "@ledgerhq/react-ui";
 import Button from "~/renderer/components/Button";
-import Box from "~/renderer/components/Box";
+import Box, { Card } from "~/renderer/components/Box";
 import styled from "styled-components";
 import {
   completeAuthenticate,
@@ -76,19 +76,45 @@ export default function AccountAbstraction({ location: { state } }) {
   const [userOpReceipt, setUserOpReceipt] = useState({});
   const [loggedEmail, setLoggedEmail] = useState("");
   const [account, setAccount] = useState<AccountLike | null>(null);
+  const chain = (account?.currency?.id === "ethereum") ? "ethereum_sepolia" : "polygon" ;
+  const explorer = chain === "ethereum_sepolia" ? "sepolia.etherscan.io" : "polygonscan.com"
 
   const flattenedAccounts = useSelector(flattenAccountsSelector);
   console.log({ flattenedAccounts });
 
   useEffect(() => {
     if (!account) {
+      console.log(`setting default account`);
       setAccount(flattenedAccounts[0]);
     }
   }, [flattenedAccounts]);
 
+  const handleConnect = useCallback(
+    async (email: string) => {
+      console.log({ accountInConnect: account });
+      // const res = await biconomy.connect();
+      const res = await zerodev.connect();
+      console.log({ email, res });
+      if (res && !!res.saAddress) {
+        console.log({ res });
+        setSaAddress(res.saAddress);
+        // setSmartAccount(res.smartAccount);
+        const account = await buildAccount(res.saAddress, email, chain);
+        console.log({ accountbuilt: account });
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //@ts-expect-error
+        dispatch(addAccount(account));
+      }
+    },
+    [account],
+  );
+
   useEffect(() => {
     const check = async () => {
       console.log("CHECK");
+      if (!account) {
+        return;
+      }
       if (!!signerFromQueryParams && signerFromQueryParams.orgId && signerFromQueryParams.bundle) {
         console.log(`will complete authentication for ${signerFromQueryParams.orgId}`);
         const res = await completeAuth(signerFromQueryParams.orgId, signerFromQueryParams.bundle);
@@ -113,23 +139,7 @@ export default function AccountAbstraction({ location: { state } }) {
       }
     };
     check();
-  }, [signerFromQueryParams, signerFromQueryParams?.orgId, signerFromQueryParams?.bundle]);
-
-  const handleConnect = async (email: string) => {
-    // const res = await biconomy.connect();
-    const res = await zerodev.connect();
-    console.log({ email, res });
-    if (res && !!res.saAddress) {
-      console.log({ res });
-      setSaAddress(res.saAddress);
-      // setSmartAccount(res.smartAccount);
-      const account = await buildAccount(res.saAddress, email);
-      console.log({ accountbuilt: account });
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      //@ts-expect-error
-      dispatch(addAccount(account));
-    }
-  };
+  }, [account, signerFromQueryParams, signerFromQueryParams?.orgId, signerFromQueryParams?.bundle]);
 
   const handleMint = async () => {
     const res = await zerodev.safeMint({ chainId: "11155111", saAddress });
@@ -307,60 +317,73 @@ export default function AccountAbstraction({ location: { state } }) {
         <Container>
           <Title>Smart Account</Title>
           <Box marginY={30} flow={5}>
-            <Box horizontal alignItems="center" justifyContent="space-between">
-              <Text variant="h3Inter" fontWeight="semiBold">
-                Connected with {loggedEmail}
-              </Text>
-            </Box>
+            <Box horizontal alignItems="center" justifyContent="space-between"></Box>
             {/* <ItemContainer isInteractive onClick={handleDisconnect}>
               <IconsLegacy.EyeNoneMedium size={18} />
             </ItemContainer> */}
           </Box>
-          {account && (
-            <ItemContainer isInteractive onClick={pickAccount}>
-              <>
-                <CryptoCurrencyIcon circle currency={getAccountCurrency(account)} size={16} />
-                <ItemContent marginLeft={2}>{getAccountName(account)}</ItemContent>
-              </>
-            </ItemContainer>
-          )}
-          <Text color="palette.text.shade80" ff="Inter|SemiBold" fontSize={4}>
-            Address of signer:
-            <LabelWithExternalIcon
-              color="wallet"
-              ff="Inter|SemiBold"
-              onClick={() => {
-                openURL(`https://sepolia.etherscan.io/address/${address}`);
-              }}
-              label={address}
-            />
-          </Text>
-          <Text color="palette.text.shade80" ff="Inter|SemiBold" fontSize={4}>
-            Smart Account address:
-            <LabelWithExternalIcon
-              color="wallet"
-              ff="Inter|SemiBold"
-              onClick={() => {
-                openURL(`https://sepolia.etherscan.io/address/${saAddress}`);
-              }}
-              label={saAddress}
-            />
-          </Text>
-          <Text color="palette.text.shade80" ff="Inter|SemiBold" fontSize={4}>
-            Multisig Smart Account address:
-            <LabelWithExternalIcon
-              color="wallet"
-              ff="Inter|SemiBold"
-              onClick={() => {
-                openURL(`https://sepolia.etherscan.io/address/${multisigSaAddress}`);
-              }}
-              label={multisigSaAddress}
-            />
-          </Text>
-          [biconomy] mint transactionHash = {mintTransactionHash}
-          <hr />
-          [biconomy] mint userOpReceipt = {JSON.stringify(userOpReceipt)}
-          <hr />
+          <Card p={0} py={5} grow>
+            <Flex px={6} horizontal grow>
+              <Text variant="h4Inter" marginTop={2} flexGrow={1} fontWeight="semiBold">
+                {loggedEmail}
+              </Text>
+              {account && (
+                <ItemContainer marginBottom={2} isInteractive onClick={pickAccount}>
+                  <>
+                    <CryptoCurrencyIcon circle currency={getAccountCurrency(account)} size={16} />
+                    <ItemContent marginLeft={2}>{getAccountName(account)}</ItemContent>
+                  </>
+                </ItemContainer>
+              )}
+            </Flex>
+            chain = {chain} explorer = {explorer}
+            <Box px={2} marginTop={5}>
+              <Text color="palette.text.shade80" ff="Inter|SemiBold" fontSize={4}>
+                Email signer:
+                <LabelWithExternalIcon
+                  color="wallet"
+                  ff="Inter|SemiBold"
+                  onClick={() => {
+                    openURL(`https://${explorer}/address/${address}`);
+                  }}
+                  label={address}
+                />
+              </Text>
+              <Text color="palette.text.shade80" ff="Inter|SemiBold" fontSize={4}>
+                Smart Account address:
+                <LabelWithExternalIcon
+                  color="wallet"
+                  ff="Inter|SemiBold"
+                  onClick={() => {
+                    openURL(`https://${explorer}/address/${saAddress}`);
+                  }}
+                  label={saAddress}
+                />
+              </Text>
+              <Text color="palette.text.shade80" ff="Inter|SemiBold" fontSize={4}>
+                Multisig Smart Account address:
+                <LabelWithExternalIcon
+                  color="wallet"
+                  ff="Inter|SemiBold"
+                  onClick={() => {
+                    openURL(`https://${explorer}/address/${multisigSaAddress}`);
+                  }}
+                  label={multisigSaAddress}
+                />
+              </Text>
+              <Text color="palette.text.shade80" ff="Inter|SemiBold" fontSize={4}>
+                Minted NFT:
+                <LabelWithExternalIcon
+                  color="wallet"
+                  ff="Inter|SemiBold"
+                  onClick={() => {
+                    openURL(`https://${explorer}/address/${mintTransactionHash}`);
+                  }}
+                  label={mintTransactionHash}
+                />
+              </Text>
+            </Box>
+          </Card>
           <Box width={100}>
             <Button primary mr={2} onClick={handleMint}>
               <Box horizontal flow={1} alignItems="center">
@@ -376,14 +399,12 @@ export default function AccountAbstraction({ location: { state } }) {
             </Button>
           </Box>
           <Box width={500}>
-            <Button onClick={pickAccount}>Pick an account to add as a signer</Button>
             <Button primary mr={2} onClick={handleAddLedgerSigner}>
               <Box horizontal flow={1} alignItems="center">
                 <Box>Increase security, add a ledger as a signer</Box>
               </Box>
             </Button>
           </Box>
-          <hr />
         </Container>
       ) : (
         <EmptyStateAccounts />
