@@ -1,78 +1,67 @@
-import {
-  PerformanceMarketDatapoint,
-  makePerformanceMarketAssetsList,
-} from "@ledgerhq/live-countervalues/portfolio";
-import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
 import { useSelector } from "react-redux";
-import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import {
-  useMarketPerformanceReferenceDate,
-  useMarketPerformanceTrackingPairs,
-} from "~/renderer/actions/marketperformance";
-import { useEffect, useMemo, useState } from "react";
-import { Order, State } from "./types";
+  counterValueCurrencySelector,
+  selectedTimeRangeSelector,
+} from "~/renderer/reducers/settings";
+import { useMemo, useState } from "react";
+import { Order } from "./types";
 
-const TIMEOUT = 7500;
+import { useMarketPerformers } from "@ledgerhq/live-common/market/v2/useMarketPerformers";
+import { MarketPerformersResult } from "@ledgerhq/live-common/market/types";
+import { PortfolioRange } from "@ledgerhq/types-live";
 
 const LIMIT = 5;
 
-export function getSlicedList(list: PerformanceMarketDatapoint[], order: Order) {
-  const start = order === Order.asc ? 0 : list.length - LIMIT;
-  const end = order === Order.asc ? LIMIT : list.length;
-
-  return list
-    .slice(start, end)
-    .filter(elem => (order === Order.asc ? elem.change > 0 : elem.change < 0))
-    .sort((a, b) => (order === Order.asc ? b.change - a.change : a.change - b.change));
-}
-
-function usePerformanceMarketAssetsList() {
-  const cvsState = useCountervaluesState();
-  const countervalue = useSelector(counterValueCurrencySelector);
-  const assets = useMarketPerformanceTrackingPairs(countervalue);
-  const referenceDate = useMarketPerformanceReferenceDate();
-  return useMemo(
-    () =>
-      makePerformanceMarketAssetsList(
-        cvsState,
-        countervalue,
-        assets.map(a => a.from),
-        referenceDate,
-      ),
-    [cvsState, countervalue, assets, referenceDate],
+export function getSlicedList(list: MarketPerformersResult[], order: Order, range: PortfolioRange) {
+  return list.filter(elem =>
+    order === Order.asc
+      ? getChangePercentage(elem, range) > 0
+      : getChangePercentage(elem, range) < 0,
   );
 }
 
 export function useMarketPerformanceWidget() {
   const [order, setOrder] = useState<Order>(Order.asc);
-  const [state, setState] = useState<State>({
-    isLoading: false,
-    hasError: false,
+
+  const timeRange = useSelector(selectedTimeRangeSelector);
+  const countervalue = useSelector(counterValueCurrencySelector);
+
+  const result = useMarketPerformers({
+    sort: order,
+    counterCurrency: countervalue.ticker,
+    range: timeRange,
+    limit: LIMIT,
+    top: 50,
+    supported: true,
   });
-  const list = usePerformanceMarketAssetsList();
 
-  useEffect(() => {
-    let timeout: NodeJS.Timeout;
-    if (list.length === 0) {
-      setState({ isLoading: true, hasError: false });
+  const data = result.data;
 
-      timeout = setTimeout(() => {
-        setState({ isLoading: false, hasError: true });
-      }, TIMEOUT);
-    } else {
-      setState({ isLoading: false, hasError: false });
-    }
-
-    return () => clearTimeout(timeout);
-  }, [list.length]);
-
-  const sliced = useMemo(() => getSlicedList(list, order), [list, order]);
+  const sliced = useMemo(
+    () => getSlicedList(data ?? [], order, timeRange),
+    [data, order, timeRange],
+  );
 
   return {
     list: sliced,
     order,
     setOrder,
-    state,
-    setState,
+    isLoading: result.isLoading,
+    hasError: result.isError,
+    range: timeRange,
   };
+}
+
+export function getChangePercentage(data: MarketPerformersResult, range: PortfolioRange) {
+  switch (range) {
+    case "day":
+      return data.priceChangePercentage24h;
+    case "week":
+      return data.priceChangePercentage7d;
+    case "month":
+      return data.priceChangePercentage30d;
+    case "year":
+    default:
+      return data.priceChangePercentage1y;
+  }
 }

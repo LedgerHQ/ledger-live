@@ -11,8 +11,11 @@ import {
   SupportedCoins,
 } from "../types";
 import { rangeDataTable } from "../utils/rangeDataTable";
-import { currencyFormatter } from "../utils/currencyFormatter";
+import { MarketPerformersParams, MarketPerformersResult } from "../types";
+import { currencyFormatter, formatPerformer } from "../utils/currencyFormatter";
 import URL from "url";
+import { getRange } from "../utils/rangeFormatter";
+
 const cryptoCurrenciesList = [...listCryptoCurrencies(), ...listTokens()];
 
 const supportedCurrencies = listSupportedCurrencies();
@@ -23,6 +26,7 @@ const liveCompatibleIds: string[] = supportedCurrencies
 
 let LIVE_COINS_LIST: string[] = [];
 
+const baseURL = () => getEnv("LEDGER_COUNTERVALUES_API");
 const ROOT_PATH = getEnv("MARKET_API_URL");
 
 let SUPPORTED_COINS_LIST: SupportedCoins = [];
@@ -269,6 +273,32 @@ export async function fetchCurrency({
   });
 
   return data;
+}
+
+export async function fetchMarketPerformers({
+  counterCurrency,
+  range,
+  limit = 5,
+  top = 50,
+  sort,
+  supported,
+}: MarketPerformersParams): Promise<MarketPerformersResult[]> {
+  const sortParam = `${sort === "asc" ? "positive" : "negative"}-price-change-${getRange(range)}`;
+
+  const url = URL.format({
+    pathname: `${baseURL()}/v3/markets`,
+    query: {
+      to: counterCurrency,
+      limit,
+      top,
+      sort: sortParam,
+      supported,
+    },
+  });
+
+  const { data } = await network({ method: "GET", url });
+
+  return data.map((currency: any) => formatPerformer(currency));
 }
 
 export default {
