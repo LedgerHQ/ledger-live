@@ -39,7 +39,7 @@ const Carousel = ContentLayoutBuilder<Props>(({ items, styles: _styles = default
 
   const separatorWidth = useTheme().space[styles.gap];
 
-  const isPaginationEnabled = styles.pagination && styles.widthFactor >= WidthFactor.ThreeQuarters;
+  const isPaginationEnabled = styles.pagination;
 
   const carouselRef = useRef<FlatList>(null);
   const [carouselIndex, setCarouselIndex] = useState(0);

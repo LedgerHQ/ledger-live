@@ -51,6 +51,7 @@ type CategoryContentCard = ContentCardCommonProperties & {
   cta?: string;
   link?: string;
   isDismissable?: boolean;
+  hasPaggination?: boolean;
 };
 
 type WalletContentCard = ContentCardCommonProperties & {

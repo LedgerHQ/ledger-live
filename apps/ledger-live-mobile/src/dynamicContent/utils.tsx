@@ -79,6 +79,7 @@ export const mapAsCategoryContentCard = (card: BrazeContentCard): CategoryConten
   link: card.extras.link,
   cta: card.extras.cta,
   isDismissable: Boolean(card.extras.isDismissable && card.extras.isDismissable === "true"),
+  hasPaggination: Boolean(card.extras.hasPaggination && card.extras.hasPaggination === "true"),
 });
 
 export const mapAsWalletContentCard = (card: BrazeContentCard): WalletContentCard => ({
