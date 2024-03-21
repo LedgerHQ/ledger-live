@@ -14,8 +14,8 @@ const installedDesc = ["Bitcoin", "Litecoin", "Ethereum (outdated)"];
 
 describe("Bitcoin Account", () => {
   beforeAll(async () => {
-    loadConfig("onboardingcompleted", true);
-    loadBleState({ knownDevices: [knownDevice] });
+    await loadConfig("onboardingcompleted", true);
+    await loadBleState({ knownDevices: [knownDevice] });
 
     portfolioPage = new PortfolioPage();
     deviceAction = new DeviceAction(knownDevice);

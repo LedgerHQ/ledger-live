@@ -24,6 +24,7 @@ import {
   EvmTransactionEIP1559,
   EvmTransactionLegacy,
 } from "./types";
+import { getCoinConfig } from "./config";
 
 /**
  * Helper to check if a legacy transaction has the right fee property
@@ -198,7 +199,9 @@ export const getSyncHash = (
     .map(token => token.id + token.contractAddress + token.name + token.ticker)
     .join("");
   const isNftSupported = isNFTActive(currency);
-  const { node = {}, explorer = {} } = currency.ethereumLikeInfo || {};
+
+  const config = getCoinConfig(currency).info;
+  const { node = {}, explorer = {} } = config;
 
   const stringToHash =
     basicTokensListString + isNftSupported + JSON.stringify(node) + JSON.stringify(explorer);

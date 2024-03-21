@@ -76,6 +76,7 @@ describe("Onboarding", () => {
   });
 
   it("does the Onboarding and choose to synchronize with Ledger Live Desktop", async () => {
+    await device.launchApp({ permissions: { camera: "YES" } }); // Make sure permission is given
     await onboardingSteps.startOnboarding();
     await onboardingSteps.chooseToAccessYourWallet();
     await onboardingSteps.chooseToSyncWithLedgerLiveDesktop();

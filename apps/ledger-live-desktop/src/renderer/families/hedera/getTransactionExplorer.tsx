@@ -6,12 +6,11 @@ import { HederaOperationExtra } from "@ledgerhq/live-common/families/hedera/type
 const getTransactionExplorer = (
   explorerView: ExplorerView | null | undefined,
   operation: Operation,
-): string | null | undefined =>
-  explorerView &&
-  explorerView.tx &&
-  explorerView.tx.replace(
+): string | undefined => {
+  return explorerView?.tx?.replace(
     "$hash",
     (operation.extra as HederaOperationExtra).consensusTimestamp ?? "0",
   );
+};
 
 export default getTransactionExplorer;

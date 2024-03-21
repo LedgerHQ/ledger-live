@@ -13,6 +13,9 @@ import {
   localeSelector,
   languageSelector,
   devicesModelListSelector,
+  sharePersonalizedRecommendationsSelector,
+  hasSeenAnalyticsOptInPromptSelector,
+  trackingEnabledSelector,
 } from "~/renderer/reducers/settings";
 import { State } from "~/renderer/reducers";
 import { AccountLike, Feature, FeatureId, Features, idsToLanguage } from "@ledgerhq/types-live";
@@ -83,8 +86,22 @@ const getPtxAttributes = () => {
   };
 };
 
+const getMandatoryProperties = (store: ReduxStore) => {
+  const state: State = store.getState();
+  const analyticsEnabled = shareAnalyticsSelector(state);
+  const personalizedRecommendationsEnabled = sharePersonalizedRecommendationsSelector(state);
+  const hasSeenAnalyticsOptInPrompt = hasSeenAnalyticsOptInPromptSelector(state);
+
+  return {
+    optInAnalytics: analyticsEnabled,
+    optInPersonalRecommendations: personalizedRecommendationsEnabled,
+    hasSeenAnalyticsOptInPrompt,
+  };
+};
+
 const extraProperties = (store: ReduxStore) => {
   const state: State = store.getState();
+  const mandatoryProperties = getMandatoryProperties(store);
   const language = languageSelector(state);
   const region = (localeSelector(state).split("-")[1] || "").toUpperCase() || null;
   const systemLocale = getParsedSystemLocale();
@@ -132,6 +149,7 @@ const extraProperties = (store: ReduxStore) => {
   const hasInfinityPass = hasNftInAccounts(INFINITY_PASS_COLLECTION_CONTRACT, accounts);
 
   return {
+    ...mandatoryProperties,
     appVersion: __APP_VERSION__,
     language,
     appLanguage: language, // Needed for braze
@@ -172,6 +190,7 @@ export const start = async (store: ReduxStore) => {
   if (!analytics) return;
   const allProperties = {
     ...extraProperties(store),
+    userId: id,
     braze_external_id: id, // Needed for braze with this exact name
   };
   logger.analyticsStart(id, allProperties);
@@ -223,13 +242,13 @@ const confidentialityFilter = (properties?: Record<string, unknown> | null) => {
 };
 
 export const updateIdentify = async () => {
-  if (!storeInstance || !shareAnalyticsSelector(storeInstance.getState())) return;
-
+  if (!storeInstance || !trackingEnabledSelector(storeInstance.getState())) return;
   const analytics = getAnalytics();
   const { id } = await user();
 
   const allProperties = {
     ...extraProperties(storeInstance),
+    userId: id,
     braze_external_id: id, // Needed for braze with this exact name
   };
   analytics.identify(id, allProperties, {
@@ -244,7 +263,7 @@ export const track = (
   properties?: Record<string, unknown> | null,
   mandatory?: boolean | null,
 ) => {
-  if (!storeInstance || (!mandatory && !shareAnalyticsSelector(storeInstance.getState()))) {
+  if (!storeInstance || (!mandatory && !trackingEnabledSelector(storeInstance.getState()))) {
     return;
   }
 
@@ -252,9 +271,15 @@ export const track = (
     ...properties,
     page: currentRouteNameRef.current,
   };
+
+  console.log(
+    "getMandatoryProperties(storeInstance)",
+    mandatory,
+    getMandatoryProperties(storeInstance),
+  );
   const allProperties = {
     ...eventPropertiesWithoutExtra,
-    ...extraProperties(storeInstance),
+    ...(mandatory ? getMandatoryProperties(storeInstance) : extraProperties(storeInstance)),
     ...confidentialityFilter(properties),
   };
 
@@ -331,7 +356,7 @@ export const trackPage = (
    */
   refreshSource?: boolean,
 ) => {
-  if (!storeInstance || !shareAnalyticsSelector(storeInstance.getState())) {
+  if (!storeInstance || !trackingEnabledSelector(storeInstance.getState())) {
     return;
   }
 

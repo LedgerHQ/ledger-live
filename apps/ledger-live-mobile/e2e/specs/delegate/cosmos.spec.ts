@@ -28,10 +28,10 @@ const COSMOS_MIN_FEES = new BigNumber(6000);
 
 describe("Cosmos delegate flow", () => {
   beforeAll(async () => {
-    loadConfig("onboardingcompleted", true);
+    await loadConfig("onboardingcompleted", true);
 
-    loadBleState({ knownDevices: [knownDevice] });
-    loadAccounts([testedAccount]);
+    await loadBleState({ knownDevices: [knownDevice] });
+    await loadAccounts([testedAccount]);
 
     portfolioPage = new PortfolioPage();
     deviceAction = new DeviceAction(knownDevice);

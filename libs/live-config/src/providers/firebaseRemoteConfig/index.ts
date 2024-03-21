@@ -21,6 +21,6 @@ export class FirebaseRemoteConfigProvider implements Provider {
   getValueByKey(key: string, info: ConfigInfo) {
     const value = this.getValue(key);
     const parsedValue = parser(value, info?.type);
-    return parsedValue ?? info?.default;
+    return parsedValue;
   }
 }

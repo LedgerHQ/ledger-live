@@ -10,6 +10,7 @@ import { GasEstimationError, InsufficientFunds } from "../../errors";
 import { transactionToEthersTransaction } from "../../adapters";
 import { getSerializedTransaction } from "../../transaction";
 import ERC20Abi from "../../abis/erc20.abi.json";
+import { getCoinConfig } from "../../config";
 import { FeeHistory } from "../../types";
 import { NodeApi, isExternalNodeConfig } from "./types";
 
@@ -37,7 +38,9 @@ export async function withApi<T>(
   execute: (api: ethers.providers.StaticJsonRpcProvider) => Promise<T>,
   retries = DEFAULT_RETRIES_RPC_METHODS,
 ): Promise<T> {
-  const { node } = currency.ethereumLikeInfo || {};
+  const config = getCoinConfig(currency).info;
+
+  const { node } = config || {};
   if (!isExternalNodeConfig(node)) {
     throw new Error("Currency doesn't have an RPC node provided");
   }

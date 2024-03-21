@@ -10,7 +10,6 @@ import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import Box from "~/renderer/components/Box";
 import { BodyContent, BodyContentProps } from "./BodyContent";
-import { getMagnitudeAwareRate } from "@ledgerhq/live-common/exchange/swap/webApp/index";
 import { BigNumber } from "bignumber.js";
 import { AccountLike } from "@ledgerhq/types-live";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
@@ -28,8 +27,8 @@ export type Data = {
   exchangeType: number;
   rateType?: number;
   swapId?: string;
-  rate?: number;
   amountExpectedTo?: number;
+  magnitudeAwareRate?: BigNumber;
 };
 
 export function isCompleteExchangeData(data: unknown): data is Data {
@@ -41,10 +40,13 @@ export function isCompleteExchangeData(data: unknown): data is Data {
 
 const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined }) => {
   const dispatch = useDispatch();
-  const { onResult, onCancel, swapId, rate, ...exchangeParams } = data;
+  const { onResult, onCancel, swapId, magnitudeAwareRate, ...exchangeParams } = data;
   const { exchange, provider, transaction: transactionParams } = exchangeParams;
-  const { amount } = transactionParams;
+
   const { fromAccount: account, fromParentAccount: parentAccount } = exchange;
+
+  // toAccount exists only in swap mode
+  const toAccount = "toAccount" in exchange ? exchange.toAccount : undefined;
 
   const broadcastRef = useRef(false);
   const redirectToHistory = useRedirectToSwapHistory();
@@ -57,24 +59,6 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
     },
     [onClose, redirectToHistory],
   );
-
-  let request = { ...exchangeParams };
-  let amountExpectedTo: number | undefined = undefined;
-  let toAccount: AccountLike | undefined = undefined;
-  let magnitudeAwareRate: BigNumber | undefined = undefined;
-  if ("toAccount" in exchange) {
-    toAccount = exchange.toAccount;
-    if (account && toAccount && rate) {
-      magnitudeAwareRate = getMagnitudeAwareRate({
-        fromAccount: account,
-        toAccount,
-        rate,
-      });
-      amountExpectedTo = +amount * +magnitudeAwareRate;
-
-      request = { ...request, amountExpectedTo };
-    }
-  }
 
   const tokenCurrency: TokenCurrency | undefined =
     account.type === "TokenAccount" ? account.token : undefined;
@@ -99,11 +83,11 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
   }, [exchange, getCurrencyByAccount]);
 
   const targetCurrency = useMemo(() => {
-    if ("toAccount" in exchange) {
-      return getCurrencyByAccount(exchange.toAccount);
+    if (toAccount) {
+      return getCurrencyByAccount(toAccount);
     }
     return null;
-  }, [exchange, getCurrencyByAccount]);
+  }, [toAccount, getCurrencyByAccount]);
 
   const broadcast = useBroadcast({ account, parentAccount });
   const [transaction, setTransaction] = useState<Transaction>();
@@ -150,7 +134,7 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
   const onBroadcastSuccess = useCallback(
     (operation: Operation) => {
       // Save swap history
-      if (swapId && rate && toAccount && magnitudeAwareRate && sourceCurrency && targetCurrency) {
+      if (swapId && toAccount && magnitudeAwareRate && sourceCurrency && targetCurrency) {
         const newResult = {
           operation,
           swapId,
@@ -179,7 +163,6 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
       updateAccount,
       magnitudeAwareRate,
       provider,
-      rate,
       sourceCurrency,
       targetCurrency,
       swapId,
@@ -213,7 +196,7 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
         error={error}
         signRequest={signRequest}
         signedOperation={signedOperation}
-        request={request}
+        request={{ ...exchangeParams }}
         result={result}
         onError={setError}
         onOperationSigned={setSignedOperation}

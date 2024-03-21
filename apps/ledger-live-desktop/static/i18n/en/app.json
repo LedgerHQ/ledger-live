@@ -6122,5 +6122,64 @@
   },
   "recoverRestore": {
     "title": "Connect and unlock your Ledger"
+  },
+  "analyticsOptInPrompt": {
+    "variantA": {
+      "description": "Sharing your Ledger Live data helps us understand your preferences, show content that’s relevant to you, and fix technical issues.",
+      "whatWeTrack": "With your consent, Ledger will be able to track:",
+      "whatWeTrackList": {
+        "1": "Analytics data, including page visits, clicks.",
+        "2": "Personalization data including clicks, page visits, conversion data."
+      },
+      "whatWeDoNotTrack": "Ledger will never track information regarding:",
+      "whatWeDoNotTrackList": {
+        "1": "Your assets.",
+        "2": "Your portfolio.",
+        "3": "Your personal identifying Information."
+      },
+      "managePreferences": "Manage your preferences",
+      "refuse": "Refuse all",
+      "accept": "Accept all",
+      "analyticsData": {
+        "title": "Analytics data",
+        "description": "To help improve Ledger Live, share app’s analytics data, including page visits, clicks."
+      },
+      "personalizationData": {
+        "title": "Personalization data",
+        "description": "To get personalized recommendations, share app’s personalization data including, conversion data, clicks, page visits."
+      },
+      "share": "Share"
+    },
+    "variantB": {
+      "accept": "Accept",
+      "refuse": "Refuse",
+      "analytics": {
+        "description": "Sharing your Ledger Live analytics data helps us understand how people use Ledger Live, fix bugs, and offer an improved user experience.",
+        "details": {
+          "1": "Analytics data includes page visits, clicks.",
+          "2": "We won’t collect or see any information regarding your balance, accounts, and portfolio.",
+          "3": "Analytics are completely anonymous. We can’t see or collect your personal information."
+        }
+      },
+      "personalRecommendations": {
+        "title": "Get a personalized experience",
+        "description": "Sharing your Ledger Live personalization data lets us display content that matches your preferences",
+        "details": {
+          "1": "Personalization data includes conversion data, clicks, page visits.",
+          "2": "We cannot track or collect any of your personal or portfolio information."
+        }
+      }
+    },
+    "common": {
+      "title": "Help us improve and personalize your experience",
+      "revokeInfo": "You can revoke your consent any time in the app settings.",
+      "learnMore": "Learn more about our Tracking Policy"
+    },
+    "profileSettings": {
+      "personalizedExp": "Personalized experience",
+      "analytics": "Analytics",
+      "personalizedExpDesc": "Receive personalised recommendations that match your preferences.",
+      "analyticsDesc": "Enable analytics to help Ledger improve the user experience."
+    }
   }
 }

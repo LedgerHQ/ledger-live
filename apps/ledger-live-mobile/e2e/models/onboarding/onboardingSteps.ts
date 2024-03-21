@@ -178,17 +178,17 @@ export default class OnboardingSteps {
 
   async addDeviceViaBluetooth(name = this.defaultName) {
     await tapByElement(this.pairDeviceButton());
-    bridge.addDevicesBT(name);
+    await bridge.addDevicesBT(name);
     await waitForElementByText(name);
     await tapByText(name);
-    bridge.setInstalledApps(); // tell LLM what apps the mock device has
-    bridge.open(); // Mocked action open ledger manager on the Nano
+    await bridge.setInstalledApps(); // tell LLM what apps the mock device has
+    await bridge.open(); // Mocked action open ledger manager on the Nano
     await waitForElementById(this.devicePairedContinue);
   }
 
   async addDeviceViaUSB(device: ModelId) {
     const nano = getUSBDevice(device);
-    bridge.addDevicesUSB(nano);
+    await bridge.addDevicesUSB(nano);
     await waitForElementByText(nano.deviceName);
     await tapByText(nano.deviceName);
     await new DeviceAction(nano).accessManager();

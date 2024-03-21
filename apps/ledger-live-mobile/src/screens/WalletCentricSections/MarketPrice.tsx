@@ -7,11 +7,9 @@ import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { SingleCoinProviderData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import { ScreenName } from "~/const";
-import OldDeltaVariation from "../Market/DeltaVariation";
-import NewDeltaVariation from "LLM/features/Market/components/DeltaVariation";
+import DeltaVariation from "LLM/features/Market/components/DeltaVariation";
 import Touchable from "~/components/Touchable";
 import { useSettings } from "~/hooks";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 type Props = {
   currency: CryptoOrTokenCurrency;
@@ -23,8 +21,6 @@ const MarketPrice = ({ currency, selectedCoinData, counterCurrency }: Props) => 
   const { t } = useTranslation();
   const { locale } = useSettings();
   const navigation = useNavigation();
-  const marketNewArch = useFeature("llmMarketNewArch");
-  const DeltaVariation = marketNewArch ? NewDeltaVariation : OldDeltaVariation;
 
   const goToMarketPage = useCallback(() => {
     navigation.navigate(ScreenName.MarketDetail, {

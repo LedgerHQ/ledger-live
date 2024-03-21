@@ -118,6 +118,7 @@ export const mockInitSwap = (
     initSwapResult: {
       transaction,
       swapId: "mockedSwapId",
+      magnitudeAwareRate: new BigNumber(50000),
     },
   });
 };

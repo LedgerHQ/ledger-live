@@ -21,6 +21,7 @@ import {
   ExchangeType,
   ExchangeStartSellParams,
 } from "@ledgerhq/wallet-api-exchange-module";
+import { decodePayloadProtobuf } from "@ledgerhq/hw-app-exchange";
 import { TrackingAPI } from "./tracking";
 import { AppManifest } from "../types";
 import {
@@ -38,6 +39,7 @@ import {
 } from "./error";
 
 export { ExchangeType };
+import { BigNumber } from "bignumber.js";
 
 type Handlers = {
   "custom.exchange.start": RPCHandler<
@@ -56,8 +58,8 @@ export type CompleteExchangeUiRequest = {
   feesStrategy: string;
   exchangeType: number;
   swapId?: string;
-  rate?: number;
   amountExpectedTo?: number;
+  magnitudeAwareRate?: BigNumber;
 };
 
 type ExchangeStartParamsUiRequest =
@@ -226,6 +228,15 @@ export const handlers = ({
           },
         );
 
+        let amountExpectedTo;
+        let magnitudeAwareRate;
+        if (params.exchangeType === "SWAP") {
+          // Get amountExpectedTo and magnitudeAwareRate from binary payload
+          const decodePayload = await decodePayloadProtobuf(params.hexBinaryPayload);
+          amountExpectedTo = new BigNumber(decodePayload.amountToWallet.toString());
+          magnitudeAwareRate = tx.amount && amountExpectedTo.dividedBy(tx.amount);
+        }
+
         return new Promise((resolve, reject) =>
           uiExchangeComplete({
             exchangeParams: {
@@ -242,7 +253,8 @@ export const handlers = ({
               },
               feesStrategy: params.feeStrategy,
               swapId: params.exchangeType === "SWAP" ? params.swapId : undefined,
-              rate: params.exchangeType === "SWAP" ? params.rate : undefined,
+              amountExpectedTo,
+              magnitudeAwareRate,
             },
             onSuccess: (transactionHash: string) => {
               tracking.completeExchangeSuccess(manifest);

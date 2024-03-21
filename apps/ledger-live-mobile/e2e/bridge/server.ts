@@ -4,83 +4,86 @@ import fs from "fs";
 import { toAccountRaw } from "@ledgerhq/live-common/account/index";
 import { NavigatorName } from "../../src/const";
 import { Subject } from "rxjs";
-import { MessageData, MockDeviceEvent } from "./client";
 import { BleState } from "../../src/reducers/types";
 import { Account, AccountRaw } from "@ledgerhq/types-live";
 import { DeviceUSB, nanoSP_USB, nanoS_USB, nanoX_USB } from "../models/devices";
+import { MessageData, MockDeviceEvent, ServerData } from "./types";
 
-type ServerData =
-  | {
-      type: "walletAPIResponse";
-      payload: string;
-    }
-  | {
-      type: "appLogs";
-      fileName: string;
-      payload: string;
-    };
 export const e2eBridgeServer = new Subject<ServerData>();
 
 let wss: Server;
-let onConnectionPromise: Promise<WebSocket> | null = null;
+let webSocket: WebSocket;
+let lastMessages: { [id: string]: MessageData } = {}; // Store the last messages not sent
+
+function uniqueId(): string {
+  const timestamp = Date.now().toString(36); // Convert timestamp to base36 string
+  const randomString = Math.random().toString(36).slice(2, 7); // Generate random string
+  return timestamp + randomString; // Concatenate timestamp and random string
+}
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
-export function init(port = 8099, onConnection = () => {}): Promise<WebSocket> {
-  onConnectionPromise = new Promise(resolve => {
-    wss = new Server({ port });
-    log(`Start listening on localhost:${port}`);
+export function init(port = 8099, onConnection = () => {}) {
+  wss = new Server({ port });
+  log(`Start listening on localhost:${port}`);
 
-    wss.on("connection", ws => {
-      log(`Client connected`);
-      onConnection();
-      resolve(ws); // Resolve the promise when a client connects
-      ws.on("message", onMessage);
-    });
+  wss.on("connection", ws => {
+    log(`Client connected`);
+    onConnection();
+    webSocket = ws;
+    ws.on("message", onMessage);
+    if (Object.keys(lastMessages).length !== 0) {
+      log(`Sending unsent messages`);
+      Object.values(lastMessages).forEach(message => {
+        postMessage(message);
+      });
+    }
   });
-  return onConnectionPromise;
 }
 
 export function close() {
+  webSocket?.close();
   wss?.close();
 }
 
-export function loadConfig(fileName: string, agreed: true = true): void {
+export async function loadConfig(fileName: string, agreed: true = true): Promise<void> {
   if (agreed) {
-    acceptTerms();
+    await acceptTerms();
   }
 
   const f = fs.readFileSync(path.resolve("e2e", "setups", `${fileName}.json`), "utf8");
 
   const { data } = JSON.parse(f.toString());
 
-  postMessage({ type: "importSettings", payload: data.settings });
+  await postMessage({ type: "importSettings", id: uniqueId(), payload: data.settings });
 
   navigate(NavigatorName.Base);
 
   if (data.accounts.length) {
-    postMessage({ type: "importAccounts", payload: data.accounts });
+    await postMessage({ type: "importAccounts", id: uniqueId(), payload: data.accounts });
   }
 }
 
-export function loadBleState(bleState: BleState) {
-  postMessage({ type: "importBle", payload: bleState });
+export async function loadBleState(bleState: BleState) {
+  await postMessage({ type: "importBle", id: uniqueId(), payload: bleState });
 }
 
-export function loadAccountsRaw(
+export async function loadAccountsRaw(
   payload: {
     data: AccountRaw;
     version: number;
   }[],
 ) {
-  postMessage({
+  await postMessage({
     type: "importAccounts",
+    id: uniqueId(),
     payload,
   });
 }
 
-export function loadAccounts(accounts: Account[]) {
-  postMessage({
+export async function loadAccounts(accounts: Account[]) {
+  await postMessage({
     type: "importAccounts",
+    id: uniqueId(),
     payload: accounts.map(account => ({
       version: 1,
       data: toAccountRaw(account),
@@ -88,67 +91,74 @@ export function loadAccounts(accounts: Account[]) {
   });
 }
 
-function navigate(name: string) {
-  postMessage({
+async function navigate(name: string) {
+  await postMessage({
     type: "navigate",
+    id: uniqueId(),
     payload: name,
   });
 }
 
-export function mockDeviceEvent(...args: MockDeviceEvent[]) {
-  postMessage({
+export async function mockDeviceEvent(...args: MockDeviceEvent[]) {
+  await postMessage({
     type: "mockDeviceEvent",
+    id: uniqueId(),
     payload: args,
   });
 }
 
-export function addDevicesBT(
+export async function addDevicesBT(
   deviceNames: string | string[] = [
     "Nano X de David",
     "Nano X de Arnaud",
     "Nano X de Didier Duchmol",
   ],
-): string[] {
+): Promise<string[]> {
   const names = Array.isArray(deviceNames) ? deviceNames : [deviceNames];
-  names.forEach((name, i) => {
-    postMessage({
+  names.forEach(async (name, i) => {
+    await postMessage({
       type: "add",
+      id: uniqueId(),
       payload: { id: `mock_${i + 1}`, name, serviceUUID: `uuid_${i + 1}` },
     });
   });
   return names;
 }
 
-export function addDevicesUSB(
+export async function addDevicesUSB(
   devices: DeviceUSB | DeviceUSB[] = [nanoX_USB, nanoSP_USB, nanoS_USB],
-): DeviceUSB[] {
+): Promise<DeviceUSB[]> {
   const devicesArray = Array.isArray(devices) ? devices : [devices];
-  devicesArray.forEach(device => {
-    postMessage({ type: "addUSB", payload: device });
+  devicesArray.forEach(async device => {
+    await postMessage({ type: "addUSB", id: uniqueId(), payload: device });
   });
   return devicesArray;
 }
 
-export function setInstalledApps(apps: string[] = []) {
-  postMessage({
+export async function setInstalledApps(apps: string[] = []) {
+  await postMessage({
     type: "setGlobals",
+    id: uniqueId(),
     payload: { _listInstalledApps_mock_result: apps },
   });
 }
 
-export function open() {
-  postMessage({ type: "open" });
+export async function open() {
+  await postMessage({ type: "open", id: uniqueId() });
 }
 
-export function getLogs(fileName: string) {
-  postMessage({ type: "getLogs", fileName: fileName });
+export async function getLogs(fileName: string) {
+  await postMessage({ type: "getLogs", id: uniqueId(), fileName: fileName });
 }
 
 function onMessage(messageStr: string) {
   const msg: ServerData = JSON.parse(messageStr);
-  log(`Message\n${JSON.stringify(msg, null, 2)}`);
+  log(`Message received ${msg.type}`);
 
   switch (msg.type) {
+    case "ACK":
+      log(`${msg.id}`);
+      delete lastMessages[msg.id];
     case "walletAPIResponse":
       e2eBridgeServer.next(msg);
       break;
@@ -171,15 +181,20 @@ function log(message: string) {
   console.log(`[E2E Bridge Server]: ${message}`);
 }
 
-function acceptTerms() {
-  postMessage({ type: "acceptTerms" });
+async function acceptTerms() {
+  await postMessage({ type: "acceptTerms", id: uniqueId() });
 }
 
 async function postMessage(message: MessageData) {
-  const ws = await onConnectionPromise; // Wait until a client is connected and get the WebSocket instance
-  if (ws) {
-    ws.send(JSON.stringify(message));
-  } else {
-    log("WebSocket connection is not open. Message not sent.");
+  log(`Message sending ${message.type}: ${message.id}`);
+  try {
+    lastMessages[message.id] = message;
+    if (webSocket) {
+      webSocket.send(JSON.stringify(message));
+    } else {
+      log("WebSocket connection is not open. Message not sent.");
+    }
+  } catch (error: any) {
+    log(`Error occurred while waiting for WebSocket connection: ${JSON.stringify(error)}`);
   }
 }
