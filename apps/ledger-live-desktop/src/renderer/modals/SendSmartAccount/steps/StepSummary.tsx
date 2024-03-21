@@ -24,7 +24,7 @@ import Alert from "~/renderer/components/Alert";
 import NFTSummary from "~/renderer/screens/nft/Send/Summary";
 import { StepProps } from "../types";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
-import { biconomy } from "@ledgerhq/account-abstraction";
+import { biconomy, zerodev } from "@ledgerhq/account-abstraction";
 
 const TextContent = styled.div`
   font-weight: bold;
@@ -243,7 +243,7 @@ export const StepSummaryFooter = (props: StepProps) => {
   const { account, status, bridgePending, transitionTo, transaction } = props;
   const onNext = async () => {
     // @ts-expect-error
-    transaction.broadcastingTx = biconomy.sendTx({
+    transaction.broadcastingTx = zerodev.sendTx({
       // @ts-expect-error
       from: account.freshAddress,
       // @ts-expect-error

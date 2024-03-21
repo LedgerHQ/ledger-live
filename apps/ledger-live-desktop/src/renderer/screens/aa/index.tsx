@@ -15,7 +15,22 @@ import { buildAccount } from "~/renderer/modals/SmartAccountSignerModal/accountS
 import { useDispatch } from "react-redux";
 import { addAccount } from "~/renderer/actions/accounts";
 import LabelWithExternalIcon from "~/renderer/components/LabelWithExternalIcon";
+import { setDrawer } from "~/renderer/drawers/Provider";
 import { openURL } from "~/renderer/linking";
+import SelectAccountAndCurrencyDrawer from "~/renderer/drawers/DataSelector/SelectAccountAndCurrencyDrawer";
+// import { cryptocurrenciesById } from "@ledgerhq/cryptoassets";
+import { Account, AccountLike } from "@ledgerhq/types-live";
+import { createWalletClient, http } from "viem";
+import {
+  signMessage,
+  signTransaction,
+  signTypedData,
+  privateKeyToAddress,
+  toAccount,
+} from "viem/accounts";
+import { sepolia } from "viem/chains";
+import { openModal } from "~/renderer/actions/modals";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 
 const Container = styled(Flex).attrs({
   flex: "1",
@@ -52,6 +67,7 @@ export default function AccountAbstraction({ location: { state } }) {
   const [mintTransactionHash, setMintTransactionHash] = useState("");
   const [userOpReceipt, setUserOpReceipt] = useState({});
   const [loggedEmail, setLoggedEmail] = useState("");
+  const [account, setAccount] = useState(null);
 
   useEffect(() => {
     const check = async () => {
@@ -99,14 +115,117 @@ export default function AccountAbstraction({ location: { state } }) {
 
   const handleMint = async () => {
     const res = await zerodev.safeMint({ chainId: "11155111", saAddress });
-    console.log({resmint: res})
+    console.log({ resmint: res });
     if (res && !!res.transactionHash) {
       setMintTransactionHash(res.transactionHash);
       setUserOpReceipt(res.userOpReceipt);
     }
     console.log({ mintres: res });
   };
-  //
+
+  const pickAccount = async () => {
+    // const defaultEthCryptoFamily = cryptocurrenciesById["ethereum"];
+    // console.log({ defaultEthCryptoFamily });
+    const eth = getCryptoCurrencyById("ethereum");
+    console.log({eth})
+
+    setDrawer(
+      SelectAccountAndCurrencyDrawer,
+      {
+        currencies: [eth],
+        onAccountSelected: (account: AccountLike, parentAccount: Account | undefined) => {
+          setDrawer();
+          console.log({ account, parentAccount });
+          setAccount(account);
+        },
+        // accounts$,
+      },
+      {
+        onRequestClose: () => {
+          setDrawer();
+        },
+      },
+    );
+  };
+
+  const setupCustomSigner = () => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const viemAccount = toAccount({
+      address: account.freshAddress, //"0xc92540682568eA75C6Ff9308BA30194e8aB6330e", // getAddress(privateKey),
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      async signMessage({ message }) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        const res = openModal("MODAL_SIGN_MESSAGE", {
+          account,
+          message,
+          onConfirmationHandler: () => {},
+          onFailHandler: () => {},
+          onClose: () => {},
+        });
+        console.log({ res });
+        return res;
+        // return signMessage({ message, privateKey });
+      },
+
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      async signTransaction(transaction, { serializer }) {
+        // return signTransaction({ privateKey, transaction, serializer });
+        console.log({ serializer });
+        const canEditFees = false;
+        const res = openModal("MODAL_SIGN_TRANSACTION", {
+          canEditFees,
+          // stepId: canEditFees && !hasFeesProvided ? "amount" : "summary",
+          stepId: "summary",
+          transactionData: transaction, // NOTE: check this one also
+          // useApp: options?.hwAppId,
+          account,
+          parentAccount: account, // NOTE: check this one
+          onResult: () => {},
+          onCancel: () => {},
+        });
+        console.log({ resigntransaction: res });
+        return res;
+      },
+
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      async signTypedData(typedData) {
+        // return signTransaction({ privateKey, transaction, serializer });
+        // console.log({ serializer });
+        const canEditFees = false;
+        const res = openModal("MODAL_SIGN_TRANSACTION", {
+          canEditFees,
+          // stepId: canEditFees && !hasFeesProvided ? "amount" : "summary",
+          stepId: "summary",
+          transactionData: typedData, // NOTE: check this one also
+          // useApp: options?.hwAppId,
+          account,
+          parentAccount: account, // NOTE: check this one
+          onResult: () => {},
+          onCancel: () => {},
+        });
+        // console.log({resigntransaction: res})
+        return res;
+      },
+    });
+    return viemAccount
+  };
+
+  const handleAddLedgerSigner = async () => {
+    const ledgerSigner = setupCustomSigner();
+    console.log({ ledgerSigner });
+    const res = await zerodev.addLedgerSigner({
+      chainId: "11155111",
+      saAddress,
+      ledgerSigner,
+    });
+    console.log({ resAddLedgerSigner: res });
+  };
+
   //   const { requestParams } = useMarketData();
   return (
     <Container>
@@ -153,6 +272,15 @@ export default function AccountAbstraction({ location: { state } }) {
               </Box>
             </Button>
           </Box>
+          <Box width={500}>
+            <Button onClick={pickAccount}>Pick an account to add as a signer</Button>
+            <Button primary mr={2} onClick={handleAddLedgerSigner}>
+              <Box horizontal flow={1} alignItems="center">
+                <Box>Increase security, add a ledger as a signer</Box>
+              </Box>
+            </Button>
+          </Box>
+          <hr />
         </Container>
       ) : (
         <EmptyStateAccounts />
