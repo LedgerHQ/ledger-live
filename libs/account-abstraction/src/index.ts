@@ -6,7 +6,6 @@ import { getEnv } from "@ledgerhq/live-env";
 import * as zerodev from "./zerodev";
 
 const AA_ALCHEMY_APIKEY = getEnv("AA_ALCHEMY_APIKEY");
-const AA_ALCHEMY_SMARTACCOUNT_APIKEY = getEnv("AA_ALCHEMY_SMARTACCOUNT_APIKEY");
 
 export const signer = new AlchemySigner({
   client: {

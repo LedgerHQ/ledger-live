@@ -52,11 +52,6 @@ const envDefinitions = {
     parser: stringParser,
     desc: "",
   },
-  AA_ALCHEMY_SMARTACCOUNT_APIKEY: {
-    def: "",
-    parser: stringParser,
-    desc: "",
-  },
   ADDRESS_POISONING_FAMILIES: {
     def: "evm,tron",
     parser: stringParser,
