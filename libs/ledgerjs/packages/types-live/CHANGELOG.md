@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.45.0-nightly.5
+
+### Minor Changes
+
+- [#6476](https://github.com/LedgerHQ/ledger-live/pull/6476) [`21f5c44`](https://github.com/LedgerHQ/ledger-live/commit/21f5c4438bb542a3891f692f4274ee4c28aa76cd) Thanks [@KVNLS](https://github.com/KVNLS)! - Remove llmWalletQuickActions feature flag
+
 ## 6.45.0-nightly.4
 
 ### Minor Changes

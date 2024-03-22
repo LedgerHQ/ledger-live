@@ -1,5 +1,13 @@
 # @ledgerhq/coin-near
 
+## 0.3.11-nightly.7
+
+### Patch Changes
+
+- Updated dependencies [[`21f5c44`](https://github.com/LedgerHQ/ledger-live/commit/21f5c4438bb542a3891f692f4274ee4c28aa76cd)]:
+  - @ledgerhq/types-live@6.45.0-nightly.5
+  - @ledgerhq/coin-framework@0.12.0-nightly.6
+
 ## 0.3.11-nightly.6
 
 ### Patch Changes

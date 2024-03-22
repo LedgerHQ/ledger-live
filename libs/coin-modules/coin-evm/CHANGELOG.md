@@ -1,5 +1,18 @@
 # @ledgerhq/coin-evm
 
+## 0.13.0-nightly.7
+
+### Minor Changes
+
+- [#6482](https://github.com/LedgerHQ/ledger-live/pull/6482) [`83d0bc6`](https://github.com/LedgerHQ/ledger-live/commit/83d0bc67979159044a7785b5cb4cbda8ed78ebf4) Thanks [@vbergeron-ledger](https://github.com/vbergeron-ledger)! - EVM coin synchronozation is now optimized to start from the latest sync rather than from the latest operation
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@0.12.0-nightly.6
+  - @ledgerhq/domain-service@1.1.19-nightly.6
+  - @ledgerhq/evm-tools@1.0.17-nightly.1
+
 ## 0.13.0-nightly.6
 
 ### Patch Changes

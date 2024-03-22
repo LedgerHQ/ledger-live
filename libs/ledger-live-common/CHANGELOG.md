@@ -1,5 +1,27 @@
 # @ledgerhq/live-common
 
+## 33.7.0-nightly.8
+
+### Minor Changes
+
+- [#6475](https://github.com/LedgerHQ/ledger-live/pull/6475) [`da7ba83`](https://github.com/LedgerHQ/ledger-live/commit/da7ba837b98c1118135b6949ac3efcd403a790ab) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Add debug options to set exchange provider's info
+
+- [#6476](https://github.com/LedgerHQ/ledger-live/pull/6476) [`21f5c44`](https://github.com/LedgerHQ/ledger-live/commit/21f5c4438bb542a3891f692f4274ee4c28aa76cd) Thanks [@KVNLS](https://github.com/KVNLS)! - Remove llmWalletQuickActions feature flag
+
+### Patch Changes
+
+- Updated dependencies [[`83d0bc6`](https://github.com/LedgerHQ/ledger-live/commit/83d0bc67979159044a7785b5cb4cbda8ed78ebf4)]:
+  - @ledgerhq/coin-evm@0.13.0-nightly.7
+  - @ledgerhq/coin-framework@0.12.0-nightly.6
+  - @ledgerhq/coin-algorand@0.4.0-nightly.7
+  - @ledgerhq/coin-bitcoin@0.4.0-nightly.4
+  - @ledgerhq/coin-near@0.3.11-nightly.7
+  - @ledgerhq/coin-polkadot@0.6.0-nightly.7
+  - @ledgerhq/hw-app-eth@6.36.0-nightly.6
+  - @ledgerhq/live-countervalues@0.1.3-nightly.7
+  - @ledgerhq/live-countervalues-react@0.1.3-nightly.7
+  - @ledgerhq/live-nft@0.2.2-nightly.7
+
 ## 33.7.0-nightly.7
 
 ### Minor Changes

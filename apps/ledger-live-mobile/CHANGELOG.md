@@ -1,5 +1,28 @@
 # live-mobile
 
+## 3.41.0-nightly.9
+
+### Minor Changes
+
+- [#6476](https://github.com/LedgerHQ/ledger-live/pull/6476) [`21f5c44`](https://github.com/LedgerHQ/ledger-live/commit/21f5c4438bb542a3891f692f4274ee4c28aa76cd) Thanks [@KVNLS](https://github.com/KVNLS)! - Remove llmWalletQuickActions feature flag
+
+### Patch Changes
+
+- [#6390](https://github.com/LedgerHQ/ledger-live/pull/6390) [`c825235`](https://github.com/LedgerHQ/ledger-live/commit/c825235b6023783fb1b87f62b2308d42e06cbe66) Thanks [@Philippoes](https://github.com/Philippoes)! - Feat: Enable Tron 2.0 staking via StakeKit in Ledger Live Mobile
+
+- [#6454](https://github.com/LedgerHQ/ledger-live/pull/6454) [`cd0dbe8`](https://github.com/LedgerHQ/ledger-live/commit/cd0dbe8d6240ec4c362a4b2a3eaea432df1403ee) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update support url tezos
+
+- Updated dependencies [[`da7ba83`](https://github.com/LedgerHQ/ledger-live/commit/da7ba837b98c1118135b6949ac3efcd403a790ab), [`21f5c44`](https://github.com/LedgerHQ/ledger-live/commit/21f5c4438bb542a3891f692f4274ee4c28aa76cd), [`83d0bc6`](https://github.com/LedgerHQ/ledger-live/commit/83d0bc67979159044a7785b5cb4cbda8ed78ebf4)]:
+  - @ledgerhq/live-common@33.7.0-nightly.8
+  - @ledgerhq/types-live@6.45.0-nightly.5
+  - @ledgerhq/coin-evm@0.13.0-nightly.7
+  - @ledgerhq/coin-framework@0.12.0-nightly.6
+  - @ledgerhq/domain-service@1.1.19-nightly.6
+  - @ledgerhq/live-countervalues@0.1.3-nightly.7
+  - @ledgerhq/live-countervalues-react@0.1.3-nightly.7
+  - @ledgerhq/live-nft@0.2.2-nightly.7
+  - @ledgerhq/live-nft-react@0.2.2-nightly.7
+
 ## 3.41.0-nightly.8
 
 ### Minor Changes
