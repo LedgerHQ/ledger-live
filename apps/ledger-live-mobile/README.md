@@ -140,6 +140,10 @@ List of Flipper's plugins that will help you to debug efficiently the applicatio
 - React DevTools
 - Redux Debugger
 
+### End to end testing
+
+Refer to the e2e specific [wiki](https://github.com/LedgerHQ/ledger-live/wiki/LLM:End-to-end-testing).
+
 ### Native code
 
 #### XCode / Android studio
