@@ -1,6 +1,5 @@
 import { Flex } from "@ledgerhq/react-ui";
 import React from "react";
-import CheckBox from "~/renderer/components/CheckBox";
 import Input from "~/renderer/components/Input";
 import Switch from "~/renderer/components/Switch";
 import Text from "~/renderer/components/Text";
@@ -8,14 +7,14 @@ import Text from "~/renderer/components/Text";
 type Props = {
   type: string;
   fieldName: string;
-  value: string;
+  value: unknown;
   optional: boolean;
   parseCheck: boolean;
   path: string;
   isArray?: boolean;
   autoFocus?: boolean;
   disabled?: boolean;
-  handleChange: (path: string, value: any) => void;
+  handleChange: (path: string, value: unknown) => void;
 };
 
 function FormLiveAppInput({
@@ -36,7 +35,7 @@ function FormLiveAppInput({
         {`${fieldName} (${type}) `}
         {!optional && <span style={{ color: "red" }}>*</span>}
       </Text>
-      {type === "boolean" ? (
+      {typeof value === "boolean" ? (
         <Flex width={"max-content"} marginLeft={1}>
           <Switch
             isChecked={value}
@@ -51,14 +50,15 @@ function FormLiveAppInput({
           placeholder={optional ? "optional" : "required"}
           disabled={disabled}
           autoFocus={autoFocus}
-          onChange={(value: any) => {
+          onChange={(value: number | string) => {
             if (type === "number") {
               !isNaN(Number(value)) && handleChange(path, Number(value));
               return;
             }
-            handleChange(path, isArray ? (value ? value.split(",") : []) : value);
+            typeof value !== "number" &&
+              handleChange(path, isArray ? (value ? value.split(",") : []) : value);
           }}
-          value={value}
+          value={String(value)}
         />
       )}
     </Flex>
