@@ -1,42 +1,33 @@
 import React, { useMemo, useCallback, memo } from "react";
 import { useTheme } from "styled-components/native";
 import { Flex, GraphTabs, InfiniteLoader, Transitions } from "@ledgerhq/native-ui";
-import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
 import { useTranslation } from "react-i18next";
-import { SingleCoinProviderData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import Graph from "~/components/Graph";
 import getWindowDimensions from "~/logic/getWindowDimensions";
 import { Item } from "~/components/Graph/types";
+import { RANGES } from "~/newArch/features/Market/utils";
 
 const { width } = getWindowDimensions();
 
 function MarketGraph({
   setHoverItem,
-  chartRequestParams,
-  loading,
-  loadingChart,
+  isLoading,
   refreshChart,
   chartData,
+  range,
 }: {
   setHoverItem: (_: Item | null | undefined) => void;
-  chartRequestParams: SingleCoinProviderData["chartRequestParams"];
-  loading?: boolean;
-  loadingChart?: boolean;
+  isLoading?: boolean;
   refreshChart: (_: { range: string }) => void;
-  chartData: Record<string, [number, number][]>;
+  chartData?: Record<string, [number, number][]>;
+  range: string;
 }) {
   const { t } = useTranslation();
   const { colors } = useTheme();
 
-  const ranges = Object.keys(rangeDataTable)
-    .filter(key => key !== "1h")
-    .map(r => ({ label: t(`market.range.${r}`), value: r }));
+  const ranges = RANGES.map(r => ({ label: t(`market.range.${r}`), value: r }));
 
   const rangesLabels = ranges.map(({ label }) => label);
-
-  const isLoading = loading || loadingChart;
-
-  const { range } = chartRequestParams;
 
   const activeRangeIndex = ranges.findIndex(r => r.value === range);
   const data = useMemo(
@@ -81,14 +72,16 @@ function MarketGraph({
           <InfiniteLoader size={32} />
         )}
       </Flex>
-      <Flex mt={25} mx={6}>
-        <GraphTabs
-          activeIndex={activeRangeIndex}
-          activeBg="neutral.c30"
-          onChange={setRange}
-          labels={rangesLabels}
-        />
-      </Flex>
+      {!isLoading && (
+        <Flex mt={25} mx={6}>
+          <GraphTabs
+            activeIndex={activeRangeIndex}
+            activeBg="neutral.c30"
+            onChange={setRange}
+            labels={rangesLabels}
+          />
+        </Flex>
+      )}
     </Flex>
   );
 }

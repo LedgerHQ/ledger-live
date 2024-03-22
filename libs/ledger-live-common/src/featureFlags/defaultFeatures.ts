@@ -441,6 +441,12 @@ export const DEFAULT_FEATURES: Features = {
       refreshTime: 60000,
     },
   },
+  llmRefreshMarketData: {
+    ...DEFAULT_FEATURE,
+    params: {
+      refreshTime: 60000,
+    },
+  },
 };
 
 // Firebase SDK treat JSON values as strings
