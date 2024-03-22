@@ -10,13 +10,13 @@ import { useSelector } from "react-redux";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
 import { getChangePercentage } from "~/renderer/screens/dashboard/MarketPerformanceWidget/utils";
 
-export function WidgetList({ data, order, range }: PropsBody) {
+export function WidgetList({ data, order, range, top }: PropsBody) {
   const noData = data.length === 0;
 
   return (
     <Flex flexDirection="column" flex={1} height={275}>
       {noData ? (
-        <MissingData order={order} />
+        <MissingData order={order} range={range} top={top} />
       ) : (
         data.map((elem, i) => (
           <WidgetRow key={i} index={i + 1} data={elem} isFirst={i === 0} range={range} />
