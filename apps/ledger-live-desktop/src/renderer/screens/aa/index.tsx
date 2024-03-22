@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { Flex, Grid, Icons, IconsLegacy, Text } from "@ledgerhq/react-ui";
 import Button from "~/renderer/components/Button";
 import Box, { Card } from "~/renderer/components/Box";
@@ -68,7 +68,19 @@ export default function AccountAbstraction({ location: { state } }) {
   const [mintTransactionHash, setMintTransactionHash] = useState("");
   const [loggedEmail, setLoggedEmail] = useState("");
   const [account, setAccount] = useState<AccountLike | null>(null);
-  const chain = account?.currency?.id === "ethereum" ? "ethereum_sepolia" : "polygon";
+  const chain = useMemo(() => {
+    if (!account || !account.currency) {
+      return "ethereum_sepolia";
+    }
+    if (account.currency.id === "ethereum") {
+      return "ethereum_sepolia";
+    }
+    if (account.currency.id === "optimism") {
+      return "optimism_sepolia";
+    }
+    return account.currency.id;
+  }, [account]);
+  console.log({ chain });
   const chainData = chains[chain];
   const explorer = chainData.explorer; //chain === "ethereum_sepolia" ? "sepolia.etherscan.io" : "polygonscan.com";
   const explorerBis = `${chainData.blockScoutName}.blockscout.com`;
@@ -155,16 +167,15 @@ export default function AccountAbstraction({ location: { state } }) {
       getCryptoCurrencyById(chain.cryptoCurrencyId),
     );
 
-    setSaAddress("");
-    setMultisigSaAddress("");
-    setMintTransactionHash("");
-
     setDrawer(
       SelectAccountAndCurrencyDrawer,
       {
         currencies: chainsToDisplay,
         onAccountSelected: (account: AccountLike, parentAccount: Account | undefined) => {
           setDrawer();
+          setSaAddress("");
+          setMultisigSaAddress("");
+          setMintTransactionHash("");
           console.log({ account, parentAccount });
           setAccount(account);
           handleConnect(loggedEmail);
@@ -291,7 +302,7 @@ export default function AccountAbstraction({ location: { state } }) {
                       }?tab=user_ops`,
                     );
                   }}
-                  label={`Blockscout`}
+                  label={` Blockscout ${!chainData.blockScoutName ? "not available" : " "}`}
                 />
               </Text>
               <Flex marginTop={30} width={180}>
@@ -301,7 +312,7 @@ export default function AccountAbstraction({ location: { state } }) {
           </Card>
           {!multisigSaAddress ? (
             <OptionBox
-              title={"Secure your account with a ledger"}
+              title={"Secure your smart account with a ledger account"}
               description={
                 chainData.hasWeightedEcdsaValidator
                   ? "Requires signature with a ledger device to authorize a transaction"

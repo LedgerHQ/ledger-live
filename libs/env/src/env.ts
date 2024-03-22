@@ -52,6 +52,21 @@ const envDefinitions = {
     parser: stringParser,
     desc: "",
   },
+  AA_ZERODEV_PROJECTID_ARBITRUM_SEPOLIA: {
+    def: "",
+    parser: stringParser,
+    desc: "",
+  },
+  AA_ZERODEV_PROJECTID_OPTIMISM_SEPOLIA: {
+    def: "",
+    parser: stringParser,
+    desc: "",
+  },
+  AA_ZERODEV_PROJECTID_BASE_SEPOLIA: {
+    def: "",
+    parser: stringParser,
+    desc: "",
+  },
   AA_ALCHEMY_APIKEY: {
     def: "",
     parser: stringParser,
