@@ -2512,10 +2512,6 @@
       "currency": {
         "title": "Currency"
       },
-      "endpointConfig": {
-        "title": "Node",
-        "desc": "The API node to use"
-      },
       "delete": {
         "title": "Remove account from the Portfolio",
         "desc": "Stored data will be removed.",
