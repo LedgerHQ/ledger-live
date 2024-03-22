@@ -90,8 +90,6 @@ const SwapForm = () => {
     setExchangeRate,
     onNoRates,
     ...(locationState as object),
-    timeout: SWAP_RATES_TIMEOUT,
-    timeoutErrorMessage: t("swap2.form.timeout.message"),
   });
 
   const isSwapLiveAppEnabled = useIsSwapLiveApp({
