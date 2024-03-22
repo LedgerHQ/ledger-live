@@ -15,10 +15,9 @@ import {
   webSocket,
   Chain,
 } from "viem";
-import { polygon, sepolia } from "viem/chains";
 import { signer } from ".";
-import { getEnv } from "@ledgerhq/live-env";
 import { createWeightedECDSAValidator } from "@zerodev/weighted-ecdsa-validator";
+import { chains, ChainsSupported } from "./chains";
 
 // type KernelClient = ReturnType<typeof createKernelAccountClient>;
 type KernelClient = any;
@@ -34,47 +33,19 @@ function setSmartAccounts(chainId: string, address: string, smartAccount: Kernel
   }
 }
 
-const PROJECT_ID = getEnv("AA_ZERODEV_PROJECTID");
-const BUNDLER_RPC_SEPOLIA = `https://rpc.zerodev.app/api/v2/bundler/${PROJECT_ID}`;
-const PAYMASTER_RPC_SEPOLIA = `https://rpc.zerodev.app/api/v2/paymaster/${PROJECT_ID}`;
-
-const PROJECT_ID_POLYGON = getEnv("AA_ZERODEV_PROJECTID_POLYGON");
-const BUNDLER_RPC_POLYGON = `https://rpc.zerodev.app/api/v2/bundler/${PROJECT_ID_POLYGON}`;
-const PAYMASTER_RPC_POLYGON = `https://rpc.zerodev.app/api/v2/paymaster/${PROJECT_ID_POLYGON}`;
-
-const publicClientSepolia = createPublicClient({
-  transport: http(BUNDLER_RPC_SEPOLIA),
-});
-
-const publicClientPolygon = createPublicClient({
-  transport: http(BUNDLER_RPC_POLYGON),
-});
-
-export async function connect({ chainName }: { chainName: "sepolia" | "polygon" }): Promise<{
+export async function connect({ chainName }: { chainName: ChainsSupported }): Promise<{
   saAddress: `0x${string}`;
 } | void> {
-  let publicClient = publicClientSepolia;
-  let chain: Chain = sepolia;
-  let BUNDLER_RPC = BUNDLER_RPC_SEPOLIA;
-  let PAYMASTER_RPC = PAYMASTER_RPC_SEPOLIA;
-  // transport: http("https://eth-sepolia.g.alchemy.com/v2/demo"),
-  let transport = webSocket("wss://ethereum-sepolia-rpc.publicnode.com"); // TODO: test another one
-  if (chainName === "polygon") {
-    publicClient = publicClientPolygon;
-    chain = polygon;
-    transport = webSocket("wss://polygon.gateway.tenderly.co");
-    BUNDLER_RPC = BUNDLER_RPC_POLYGON;
-    PAYMASTER_RPC = PAYMASTER_RPC_POLYGON;
-  }
-  console.log({ chain, BUNDLER_RPC, PAYMASTER_RPC, chainName });
+  const chainData = chains[chainName];
+  const publicClient = chainData.client;
   const signerViem = signer.toViemAccount();
   const walletClient = createWalletClient({
-    transport,
-    chain,
+    transport: chainData.rpc,
+    chain: chainData.chain,
     account: signerViem,
   });
   const eoa = walletClient.account.address;
-  console.log(`EOA address: ${eoa}`);
+  console.log(`[connect] EOA address: ${eoa}`);
 
   if (!walletClient) return;
 
@@ -94,12 +65,12 @@ export async function connect({ chainName }: { chainName: "sepolia" | "polygon" 
   // Construct a Kernel account client
   const kernelClient = createKernelAccountClient({
     account,
-    chain,
-    transport: http(BUNDLER_RPC),
+    chain: chainData.chain,
+    transport: http(chainData.zerodev.bundler),
     sponsorUserOperation: async ({ userOperation }) => {
       const zerodevPaymaster = createZeroDevPaymasterClient({
-        chain,
-        transport: http(PAYMASTER_RPC),
+        chain: chainData.chain,
+        transport: http(chainData.zerodev.paymaster),
       });
       return zerodevPaymaster.sponsorUserOperation({
         userOperation,
@@ -107,39 +78,38 @@ export async function connect({ chainName }: { chainName: "sepolia" | "polygon" 
     },
   });
 
-  console.log({ kernelClient });
   const accountAddress = kernelClient.account.address;
-  console.log("My account:", accountAddress);
-  const toto = kernelClient.account;
+  console.log("[connect] My account:", accountAddress);
 
-  setSmartAccounts(`${chain.id}`, accountAddress, kernelClient);
+  setSmartAccounts(`${chainData.id}`, accountAddress, kernelClient);
   console.log({ smartAccounts });
-  // Send a UserOp
   return { saAddress: accountAddress };
 }
 
+// The NFT contract we will be interacting with
+const contractAddress = "0x34bE7f35132E97915633BC1fc020364EA5134863";
+const contractABI = parseAbi([
+  "function mint(address _to) public",
+  "function balanceOf(address owner) external view returns (uint256 balance)",
+]);
+
 type mintArgs = {
-  chainId: string;
+  chainName: ChainsSupported;
   saAddress: string;
 };
 
 export async function safeMint({
-  chainId,
+  chainName,
   saAddress,
 }: mintArgs): Promise<{ transactionHash: string } | undefined> {
   try {
-    // The NFT contract we will be interacting with
-    const contractAddress = "0x34bE7f35132E97915633BC1fc020364EA5134863";
-    const contractABI = parseAbi([
-      "function mint(address _to) public",
-      "function balanceOf(address owner) external view returns (uint256 balance)",
-    ]);
-    const kernelClient = smartAccounts[chainId][saAddress];
+    const chainData = chains[chainName];
+    const kernelClient = smartAccounts[chainData.id][saAddress];
     console.log({ kernelClient });
     const accountAddress = kernelClient.account.address;
 
     // Send a UserOp
-    console.log("Minting NFT...");
+    console.log("[safeMint] Minting NFT...");
     // This function returns the transaction hash of the ERC-4337 bundle that contains the UserOp.
     // Due to the way that ERC-4337 works, by the time we get the transaction hash,
     // the ERC-4337 bundle (and therefore the UserOps includeded within) will have already been mined,
@@ -154,9 +124,7 @@ export async function safeMint({
       }),
     });
     console.log({ resMinting: res });
-
-    console.log(`See NFT here: https://polygonscan.com/address/${accountAddress}#nfttransfers`);
-    console.log({ res });
+    console.log(`See NFT here: ${chainData.explorer}/address/${accountAddress}#nfttransfers`);
     // TODO: https://docs.zerodev.app/sdk/getting-started/tutorial#waiting-for-the-userop
 
     return {
@@ -164,7 +132,7 @@ export async function safeMint({
     };
   } catch (error: unknown) {
     if (error instanceof Error) {
-      console.error("Transaction Error:", error.message);
+      console.error("[safeMint] Transaction Error:", error.message);
     }
   }
 }
@@ -177,13 +145,10 @@ type sendTxArgs = {
 };
 export async function sendTx({ from, chainId, to, value }: sendTxArgs) {
   const kernelClient = smartAccounts[`${chainId}`][from];
-  // debugger;
   const tx = {
-    // @ts-ignore
     value,
     to,
   };
-  // @ts-ignore
   //  returns the transaction hash of the ERC-4337 bundle that contains the UserOp
   const transactionHash = await kernelClient.sendTransaction(tx);
   //   const { transactionHash } = await userOpResponse.waitForTxHash();
@@ -194,24 +159,15 @@ export async function sendTx({ from, chainId, to, value }: sendTxArgs) {
 }
 
 type addLedgerSignerArgs = {
-  chainName: "sepolia" | "polygon";
+  chainName: ChainsSupported;
   saAddress: string;
   ledgerSigner: any;
 };
 export async function addLedgerSigner({ chainName, saAddress, ledgerSigner }: addLedgerSignerArgs) {
-  let publicClient = publicClientSepolia;
-  let chain: Chain = sepolia;
-  let BUNDLER_RPC = BUNDLER_RPC_SEPOLIA;
-  let PAYMASTER_RPC = PAYMASTER_RPC_SEPOLIA;
-  if (chainName === "polygon") {
-    publicClient = publicClientPolygon;
-    chain = polygon;
-    BUNDLER_RPC = BUNDLER_RPC_POLYGON;
-    PAYMASTER_RPC = PAYMASTER_RPC_POLYGON;
-  }
-  console.log("adding ledger signer for ", chainName, saAddress);
-  console.log({ chain, BUNDLER_RPC, PAYMASTER_RPC, chainName, publicClient });
-  console.log({ ledgerSigner });
+  const chainData = chains[chainName];
+  const publicClient = chainData.client;
+  console.log("[addLedgerSigner] adding ledger signer for ", chainName, saAddress);
+  console.log({ chainData, ledgerSigner });
   const signerViem = signer.toViemAccount();
 
   const weightedECDSAValidator = await createWeightedECDSAValidator(publicClient, {
@@ -222,11 +178,11 @@ export async function addLedgerSigner({ chainName, saAddress, ledgerSigner }: ad
         { address: ledgerSigner.address, weight: 100 }, // effectively making him the only signer now
       ],
     },
-    signers: [ledgerSigner, signerViem], // TODO: swapping changes things (check source code of createWeighted)
+    signers: [signerViem, ledgerSigner], // TODO: swapping changes things (check source code of createWeighted)
   });
   console.log({ weightedECDSAValidator, addA: signerViem.address, addB: ledgerSigner.address });
 
-  // TODO: update instead of creating a whole new account
+  // TODO: check if possible of updating instead of creating a whole new account
   const newAccount = await createKernelAccount(publicClient, {
     plugins: {
       sudo: weightedECDSAValidator,
@@ -237,12 +193,12 @@ export async function addLedgerSigner({ chainName, saAddress, ledgerSigner }: ad
   // Construct a Kernel account client
   const kernelClient = createKernelAccountClient({
     account: newAccount,
-    chain,
-    transport: http(BUNDLER_RPC),
+    chain: chainData.chain,
+    transport: http(chainData.zerodev.bundler),
     sponsorUserOperation: async ({ userOperation }) => {
       const zerodevPaymaster = createZeroDevPaymasterClient({
-        chain,
-        transport: http(PAYMASTER_RPC),
+        chain: chainData.chain,
+        transport: http(chainData.zerodev.paymaster),
       });
       return zerodevPaymaster.sponsorUserOperation({
         userOperation,
@@ -250,11 +206,9 @@ export async function addLedgerSigner({ chainName, saAddress, ledgerSigner }: ad
     },
   });
 
-  console.log({ kernelClient });
   const accountAddress = kernelClient.account.address;
-  console.log("My account:", accountAddress);
-  setSmartAccounts(`${chain.id}`, accountAddress, kernelClient);
-  console.log({ NEWSMARTACCOUNTS: smartAccounts });
+  console.log("[addLedgerSigner] My account:", accountAddress);
+  setSmartAccounts(`${chainData.id}`, accountAddress, kernelClient);
+  console.log({ kernelClient, NEWSMARTACCOUNTS: smartAccounts });
   return { newSaAddress: accountAddress };
-  // console.log({ smartAccounts });
 }

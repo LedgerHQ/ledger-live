@@ -29,6 +29,7 @@ interface OptionBoxProps {
   title: string;
   description: string;
   label?: string;
+  disabled?: boolean;
   icon?: React.ComponentType;
   onContinue?: () => void;
   onClick?: () => void;
@@ -36,10 +37,17 @@ interface OptionBoxProps {
   setSelected?: (selected: boolean) => void;
 }
 
-const OptionBox = ({ title, description, label, icon, onClick }: OptionBoxProps) => {
+const OptionBox = ({ title, disabled, description, label, icon, onClick }: OptionBoxProps) => {
   return (
     <FlexWrapper>
-      <EntryButton label={label} title={title} body={description} onClick={onClick} Icon={icon} />
+      <EntryButton
+        disabled={disabled}
+        label={label}
+        title={title}
+        body={description}
+        onClick={onClick}
+        Icon={icon}
+      />
     </FlexWrapper>
   );
 };

@@ -3,7 +3,7 @@ import { Flex, Grid, Icons, IconsLegacy, Text } from "@ledgerhq/react-ui";
 import Button from "~/renderer/components/Button";
 import Box, { Card } from "~/renderer/components/Box";
 import styled from "styled-components";
-import { completeAuthenticate, zerodev, signer } from "@ledgerhq/account-abstraction";
+import { completeAuthenticate, zerodev, signer, chains } from "@ledgerhq/account-abstraction";
 import EmptyStateAccounts from "../dashboard/EmptyStateAccountsAA";
 import { buildAccount } from "~/renderer/modals/SmartAccountSignerModal/accountStructure";
 import { useDispatch } from "react-redux";
@@ -13,10 +13,7 @@ import { setDrawer } from "~/renderer/drawers/Provider";
 import { openURL } from "~/renderer/linking";
 import SelectAccountAndCurrencyDrawer from "~/renderer/drawers/DataSelector/SelectAccountAndCurrencyDrawer";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { toAccount } from "viem/accounts";
-import { openModal } from "~/renderer/actions/modals";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import { prepareMessageToSign } from "@ledgerhq/live-common/hw/signMessage/index";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { ItemContainer } from "~/renderer/components/TopBar/shared";
 import { useSelector } from "react-redux";
@@ -25,6 +22,7 @@ import { getAccountCurrency, getAccountName } from "@ledgerhq/live-common/accoun
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import { MintNftActionDefault } from "../account/AccountActionsDefault";
 import OptionBox from "~/renderer/modals/SmartAccountPluginsModal/OptionBox";
+import { setupCustomSigner } from "./setupCustomSigner";
 
 const Container = styled(Flex).attrs({
   flex: "1",
@@ -71,10 +69,12 @@ export default function AccountAbstraction({ location: { state } }) {
   const [loggedEmail, setLoggedEmail] = useState("");
   const [account, setAccount] = useState<AccountLike | null>(null);
   const chain = account?.currency?.id === "ethereum" ? "ethereum_sepolia" : "polygon";
-  const explorer = chain === "ethereum_sepolia" ? "sepolia.etherscan.io" : "polygonscan.com";
-  const explorerBis =
-    chain === "ethereum_sepolia" ? "eth-sepolia.blockscout.com" : "polygon.blockscout.com";
-  const chainId = chain === "ethereum_sepolia" ? "11155111" : "137";
+  const chainData = chains[chain];
+  const explorer = chainData.explorer; //chain === "ethereum_sepolia" ? "sepolia.etherscan.io" : "polygonscan.com";
+  const explorerBis = `${chainData.blockScoutName}.blockscout.com`;
+  // chain === "ethereum_sepolia" ? "eth-sepolia.blockscout.com" : "polygon.blockscout.com";
+  const chainId = `${chainData.id}`;
+  // const chainId = chain === "ethereum_sepolia" ? "11155111" : "137";
 
   const flattenedAccounts = useSelector(flattenAccountsSelector);
   console.log({ flattenedAccounts });
@@ -89,16 +89,13 @@ export default function AccountAbstraction({ location: { state } }) {
   const handleConnect = useCallback(
     async (email: string) => {
       console.log({ accountInConnect: account });
-      // const res = await biconomy.connect();
-      const chainName = chain === "ethereum_sepolia" ? "sepolia" : "polygon";
       const res = await zerodev.connect({
-        chainName,
+        chainName: chain,
       });
       console.log({ email, res });
       if (res && !!res.saAddress) {
         console.log({ res });
         setSaAddress(res.saAddress);
-        // setSmartAccount(res.smartAccount);
         const account = await buildAccount(res.saAddress, email, chain);
         console.log({ accountbuilt: account });
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -121,7 +118,6 @@ export default function AccountAbstraction({ location: { state } }) {
         console.log({ RESHERE: res });
         setAddress(res.address);
         setLoggedEmail(res.email || "");
-        // await initializeClient();
         await handleConnect(res.email || "");
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         //@ts-expect-error
@@ -130,10 +126,8 @@ export default function AccountAbstraction({ location: { state } }) {
         const user = await signer.getAuthDetails().catch(() => null);
         if (user) {
           console.log("found a user in local storage, initializing client!");
-          console.log({ user });
           setAddress(user.address);
           setLoggedEmail(user.email || "");
-          // await initializeClient();
           await handleConnect(user.email || "");
         }
       }
@@ -143,7 +137,7 @@ export default function AccountAbstraction({ location: { state } }) {
 
   const handleMint = async () => {
     const res = await zerodev.safeMint({
-      chainId,
+      chainName: chain,
       saAddress: multisigSaAddress ? multisigSaAddress : saAddress,
     });
     console.log({ resmint: res });
@@ -155,10 +149,11 @@ export default function AccountAbstraction({ location: { state } }) {
   const mintNft = <MintNftActionDefault onClick={handleMint} />;
 
   const pickAccount = async () => {
-    // const defaultEthCryptoFamily = cryptocurrenciesById["ethereum"];
-    // console.log({ defaultEthCryptoFamily });
-    const eth = getCryptoCurrencyById("ethereum");
-    const polygon = getCryptoCurrencyById("polygon");
+    // const eth = getCryptoCurrencyById("ethereum");
+    // const polygon = getCryptoCurrencyById("polygon");
+    const chainsToDisplay = Object.values(chains).map(chain =>
+      getCryptoCurrencyById(chain.cryptoCurrencyId),
+    );
 
     setSaAddress("");
     setMultisigSaAddress("");
@@ -167,14 +162,13 @@ export default function AccountAbstraction({ location: { state } }) {
     setDrawer(
       SelectAccountAndCurrencyDrawer,
       {
-        currencies: [eth, polygon],
+        currencies: chainsToDisplay,
         onAccountSelected: (account: AccountLike, parentAccount: Account | undefined) => {
           setDrawer();
           console.log({ account, parentAccount });
           setAccount(account);
-          handleConnect(loggedEmail)
+          handleConnect(loggedEmail);
         },
-        // accounts$,
       },
       {
         onRequestClose: () => {
@@ -184,121 +178,15 @@ export default function AccountAbstraction({ location: { state } }) {
     );
   };
 
-  const setupCustomSigner = () => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    console.log({account, address: account.freshAddress})
-    const viemAccount = toAccount({
-      address: account.freshAddress, //"0xc92540682568eA75C6Ff9308BA30194e8aB6330e", // getAddress(privateKey),
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      async signMessage({ message }) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        console.log("SIGNING");
-        debugger;
-        const res = openModal("MODAL_SIGN_MESSAGE", {
-          account,
-          message,
-          onConfirmationHandler: () => {},
-          onFailHandler: () => {},
-          onClose: () => {},
-        });
-        console.log({ res });
-        return res;
-        // return signMessage({ message, privateKey });
-      },
-
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      async signTransaction(transaction, { serializer }) {
-        // return signTransaction({ privateKey, transaction, serializer });
-        console.log("IN SIGNTRANSACTION");
-        debugger;
-        console.log({ serializer });
-        const canEditFees = false;
-        const res = openModal("MODAL_SIGN_TRANSACTION", {
-          canEditFees,
-          // stepId: canEditFees && !hasFeesProvided ? "amount" : "summary",
-          stepId: "summary",
-          transactionData: transaction, // NOTE: check this one also
-          // useApp: options?.hwAppId,
-          account,
-          parentAccount: account, // NOTE: check this one
-          onResult: () => {},
-          onCancel: () => {},
-        });
-        console.log({ resigntransaction: res });
-        return res;
-      },
-
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      async signTypedData(typedData) {
-        // return signTransaction({ privateKey, transaction, serializer });
-        // console.log({ serializer });
-        console.log("IN SIGNTYPEDDATA");
-        debugger;
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        console.log({ accounttype: account?.type }); // NOTE: needs to be "Account", otherwise get parent
-        const message = typedData.message;
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        const message2 = typedData.message.callDataAndNonceHash;
-        const bufferedMessage = Buffer.from(message2).toString("hex");
-        const formattedMessage = prepareMessageToSign(
-          account,
-          // account.type === "Account" ? currentAccount : currentParentAccount,
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          bufferedMessage,
-          // Buffer.from(message2).toString("hex"),
-        );
-        console.log({ formattedMessage });
-        // const canEditFees = false;
-        const res = await new Promise<string>((resolve, reject) => {
-          dispatch(
-            openModal("MODAL_SIGN_MESSAGE", {
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore
-              account,
-              message: formattedMessage,
-              // onSuccess: resolve,
-              onConfirmationHandler: resolve,
-              onFailHandler: (fail: string) => {
-                console.log(`failed with ${fail}`);
-                reject(fail);
-              },
-              onClose: () => {},
-            }),
-            // openModal("MODAL_SIGN_TRANSACTION", {
-            //   canEditFees,
-            //   // stepId: canEditFees && !hasFeesProvided ? "amount" : "summary",
-            //   stepId: "summary",
-            //   transactionData: typedData, // NOTE: check this one also
-            //   // useApp: options?.hwAppId,
-            //   account,
-            //   parentAccount: account, // NOTE: check this one
-            //   onResult: () => {},
-            //   onCancel: () => {},
-            // }),
-          );
-        });
-        // const res = ;
-        console.log({ resSignTypedData: res });
-        return res;
-      },
-    });
-    return viemAccount;
-  };
-
   const handleAddLedgerSigner = async () => {
-    const ledgerSigner = setupCustomSigner();
+    if (!account) {
+      console.warn("[handleAddLedgerSigner] returning early because no accounts");
+      return;
+    }
+    const ledgerSigner = setupCustomSigner({ account, dispatch });
     console.log({ ledgerSigner });
-    const chainName = chain === "ethereum_sepolia" ? "sepolia" : "polygon";
     const res = await zerodev.addLedgerSigner({
-      chainName,
+      chainName: chain,
       saAddress,
       ledgerSigner,
     });
@@ -353,7 +241,7 @@ export default function AccountAbstraction({ location: { state } }) {
                   color="wallet"
                   ff="Inter|SemiBold"
                   onClick={() => {
-                    openURL(`https://${explorer}/address/${address}`);
+                    openURL(`${explorer}/address/${address}`);
                   }}
                   label={address}
                 />
@@ -364,7 +252,7 @@ export default function AccountAbstraction({ location: { state } }) {
                   color="wallet"
                   ff="Inter|SemiBold"
                   onClick={() => {
-                    openURL(`https://${explorer}/address/${saAddress}`);
+                    openURL(`${explorer}/address/${saAddress}`);
                   }}
                   label={saAddress}
                 />
@@ -375,7 +263,7 @@ export default function AccountAbstraction({ location: { state } }) {
                   color="wallet"
                   ff="Inter|SemiBold"
                   onClick={() => {
-                    openURL(`https://${explorer}/address/${multisigSaAddress}`);
+                    openURL(`${explorer}/address/${multisigSaAddress}`);
                   }}
                   label={multisigSaAddress}
                 />
@@ -386,7 +274,7 @@ export default function AccountAbstraction({ location: { state } }) {
                   color="wallet"
                   ff="Inter|SemiBold"
                   onClick={() => {
-                    openURL(`https://${explorer}/tx/${mintTransactionHash}`);
+                    openURL(`${explorer}/tx/${mintTransactionHash}`);
                   }}
                   label={mintTransactionHash}
                 />
@@ -414,18 +302,24 @@ export default function AccountAbstraction({ location: { state } }) {
           {!multisigSaAddress ? (
             <OptionBox
               title={"Secure your account with a ledger"}
-              description={"Requires signature with a ledger device to authorize a transaction"}
-              label={"new"}
+              description={
+                chainData.hasWeightedEcdsaValidator
+                  ? "Requires signature with a ledger device to authorize a transaction"
+                  : `${chainData.readableName} doesn't support this feature for now`
+              }
+              label={chainData.hasWeightedEcdsaValidator ? "new" : null}
               icon={Icons.LedgerDevices}
               onClick={handleAddLedgerSigner}
               setSelected={() => {}}
+              disabled={!chainData.hasWeightedEcdsaValidator}
               isSelected={false}
             />
           ) : (
             <OptionBox
               title={"Account secured with your ledger device"}
               description={"Good job on securing your smart account"}
-              icon={Icons.CheckmarkCircle}
+              icon={() => Icons.CheckmarkCircle({ color: "green" })}
+              disabled={true}
               setSelected={() => {}}
               isSelected={false}
             />

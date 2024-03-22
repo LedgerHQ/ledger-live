@@ -3,6 +3,7 @@ import { User } from "@alchemy/aa-alchemy";
 import { AlchemySigner } from "@alchemy/aa-alchemy";
 import { getEnv } from "@ledgerhq/live-env";
 import * as zerodev from "./zerodev";
+import { chains } from "./chains";
 
 const AA_ALCHEMY_APIKEY = getEnv("AA_ALCHEMY_APIKEY");
 
@@ -35,4 +36,4 @@ async function completeAuthenticate(
   return { email: res.email, address: res.address };
 }
 
-export { authenticate, completeAuthenticate, zerodev };
+export { authenticate, completeAuthenticate, zerodev, chains };
