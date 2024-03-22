@@ -124,7 +124,10 @@ const Layout = ({ category, cards }: LayoutProps) => {
       return (
         <Carousel
           items={items}
-          styles={{ widthFactor: cardsSorted[0].carouselWidthFactor || WidthFactor.Full }}
+          styles={{
+            widthFactor: cardsSorted[0].carouselWidthFactor || WidthFactor.Full,
+            pagination: category.pagination,
+          }}
         />
       );
     case ContentCardsLayout.grid:

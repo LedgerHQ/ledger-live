@@ -24,7 +24,7 @@ type Props = {
 
 const defaultStyles = {
   gap: 6,
-  pagination: true,
+  pagination: false,
   widthFactor: WidthFactor.Full,
 };
 

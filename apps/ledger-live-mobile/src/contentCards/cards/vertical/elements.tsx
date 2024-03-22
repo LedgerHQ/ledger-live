@@ -5,11 +5,53 @@ import { useTheme } from "styled-components/native";
 import { ButtonAction } from "~/contentCards/cards/types";
 import { Size } from "~/contentCards/cards/vertical/types";
 
-export const Image = (props: { uri: string }) => (
-  <NativeImage source={props} style={{ resizeMode: "contain", flex: 1, aspectRatio: 1 }} />
-);
+export const ImageStyles: {
+  [key in Size]: object;
+} = {
+  L: {
+    flex: 1,
+    aspectRatio: 1.5,
+    maxWidth: "100%",
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
+  },
+  M: {
+    flex: 1,
+    aspectRatio: 1.5,
+    maxWidth: "100%",
+  },
+  S: {
+    flex: 1,
+    aspectRatio: 1.5,
+    maxWidth: "100%",
+    marginTop: 10,
+  },
+};
 
-const absoluteTopStyle: StyleProp<ViewStyle> = { position: "absolute", padding: 12, zIndex: 1 };
+type ImageProps = {
+  uri: string;
+  size: Size;
+  filledImage?: boolean;
+};
+
+export const Image = ({ uri, size, filledImage }: ImageProps) => {
+  const isBigCardAndFilled = (size === "L" && filledImage) || false;
+  const stylesBigCard =
+    size === "L" ? (isBigCardAndFilled ? { marginBottom: 24 } : { paddingBottom: 24 }) : {};
+  return (
+    <NativeImage
+      source={{ uri }}
+      style={{ ...ImageStyles[size], ...stylesBigCard }}
+      resizeMode={isBigCardAndFilled ? "cover" : "contain"}
+    />
+  );
+};
+
+const absoluteTopStyle: StyleProp<ViewStyle> = {
+  position: "absolute",
+  padding: 12,
+  zIndex: 1,
+};
 
 export const Close = ({ onPress }: { onPress: ButtonAction }) => {
   return (
@@ -47,19 +89,18 @@ export const TitleStyles: {
     variant: "large",
     fontWeight: "medium",
     numberOfLine: 1,
-    paddingTop: 8,
+    paddingBottom: 2,
   },
   M: {
     variant: "body",
     fontWeight: "medium",
     numberOfLine: 1,
-    paddingTop: 6,
+    paddingBottom: 2,
   },
   S: {
     variant: "body",
     fontWeight: "medium",
     numberOfLine: 1,
-    paddingTop: 3,
   },
 };
 
@@ -74,13 +115,11 @@ export const SubtitleStyles: {
     variant: "body",
     fontWeight: "medium",
     numberOfLine: 1,
-    paddingTop: 2,
   },
   M: {
     variant: "paragraph",
     fontWeight: "medium",
     numberOfLine: 1,
-    paddingTop: 2,
   },
   S: {
     variant: "paragraph",
@@ -137,15 +176,16 @@ export const ButtonStyles: {
   [key in Size]: object;
 } = {
   L: {
-    paddingX: 12,
+    paddingX: 10,
     paddingY: 20,
+    marginTop: 24,
   },
   M: {
-    paddingX: 12,
+    paddingX: 10,
     paddingY: 20,
   },
   S: {
-    paddingX: 12,
+    paddingX: 10,
     paddingY: 20,
   },
 };
@@ -184,20 +224,17 @@ export const ContainerStyles: {
   [key in Size]: object;
 } = {
   L: {
-    height: 306,
-    paddingTop: 24,
+    height: 406,
     paddingBottom: 24,
     borderRadius: 12,
   },
   M: {
-    height: 206,
-    paddingTop: 16,
-    paddingBottom: 8,
+    height: 300,
+    paddingBottom: 24,
     borderRadius: 16,
   },
   S: {
     height: 156,
-    paddingTop: 16,
     paddingBottom: 8,
     borderRadius: 16,
   },
@@ -213,8 +250,6 @@ export const Container = ({ size, children }: { size: Size } & PropsWithChildren
         justifyContent: "space-between",
         alignItems: "center",
         backgroundColor: colors.opacityDefault.c05,
-        paddingHorizontal: 10,
-
         ...ContainerStyles[size],
       }}
     >
