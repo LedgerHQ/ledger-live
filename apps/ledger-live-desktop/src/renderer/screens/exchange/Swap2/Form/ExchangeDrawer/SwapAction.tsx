@@ -1,6 +1,6 @@
 import { getEnv } from "@ledgerhq/live-env";
 import {
-  Exchange,
+  ExchangeSwap,
   ExchangeRate,
   InitSwapResult,
   SwapTransaction,
@@ -118,7 +118,7 @@ export default function SwapAction({
 
   const request = useMemo(
     () => ({
-      exchange: exchange as Exchange,
+      exchange: exchange as ExchangeSwap,
       exchangeRate,
       transaction: transaction as SwapTransaction,
       status,

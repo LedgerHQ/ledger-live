@@ -1,20 +1,15 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { StyleSheet } from "react-native";
 import { useIsFocused, useNavigation, useRoute } from "@react-navigation/native";
 import { Trans } from "react-i18next";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { BluetoothRequired } from "@ledgerhq/errors";
 import { Result } from "@ledgerhq/live-common/hw/actions/manager";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import TabBarSafeAreaView from "~/components/TabBar/TabBarSafeAreaView";
 import { ScreenName } from "~/const";
 import SelectDevice2, { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
-import SelectDevice from "~/components/SelectDevice";
-import RemoveDeviceMenu from "~/components/SelectDevice2/RemoveDeviceMenu";
 import TrackScreen from "~/analytics/TrackScreen";
 import { track } from "~/analytics";
-import NavigationScrollView from "~/components/NavigationScrollView";
 import DeviceActionModal from "~/components/DeviceActionModal";
 import {
   BaseComposite,
@@ -22,11 +17,8 @@ import {
   StackNavigatorProps,
 } from "~/components/RootNavigator/types/helpers";
 import { ManagerNavigatorStackParamList } from "~/components/RootNavigator/types/ManagerNavigator";
-import ServicesWidget from "~/components/ServicesWidget";
 
 import { useManagerDeviceAction } from "~/hooks/deviceActions";
-import ContentCardsLocation from "~/dynamicContent/ContentCardsLocation";
-import { ContentCardLocation } from "~/dynamicContent/types";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<ManagerNavigatorStackParamList, ScreenName.Manager>
@@ -46,15 +38,10 @@ type ChooseDeviceProps = Props & {
 const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
   const action = useManagerDeviceAction();
   const [device, setDevice] = useState<Device | null>();
-
-  const [chosenDevice, setChosenDevice] = useState<Device | null>();
-  const [showMenu, setShowMenu] = useState<boolean>(false);
   const [isHeaderOverridden, setIsHeaderOverridden] = useState<boolean>(false);
 
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const { params } = useRoute<NavigationProps["route"]>();
-
-  const newDeviceSelectionFeatureFlag = useFeature("llmNewDeviceSelection");
 
   const onSelectDevice = (device?: Device) => {
     if (device)
@@ -63,13 +50,6 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
       });
     setDevice(device);
   };
-
-  const onShowMenu = (device: Device) => {
-    setChosenDevice(device);
-    setShowMenu(true);
-  };
-
-  const onHideMenu = () => setShowMenu(false);
 
   const onSelect = (result: Result) => {
     setDevice(undefined);
@@ -139,39 +119,16 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
           </Text>
         </Flex>
       ) : null}
-
-      {newDeviceSelectionFeatureFlag?.enabled ? (
-        <Flex flex={1} px={16}>
-          <SelectDevice2
-            onSelect={onSelectDevice}
-            stopBleScanning={!!device}
-            displayServicesWidget
-            requestToSetHeaderOptions={requestToSetHeaderOptions}
-            withMyLedgerTracking
-            hasPostOnboardingEntryPointCard
-          />
-        </Flex>
-      ) : (
-        <NavigationScrollView contentContainerStyle={styles.scrollContainer}>
-          <Flex px={16}>
-            <SelectDevice
-              usbOnly={params?.firmwareUpdate}
-              autoSelectOnAdd
-              onSelect={onSelectDevice}
-              onBluetoothDeviceAction={onShowMenu}
-            />
-            {chosenDevice ? (
-              <RemoveDeviceMenu
-                open={showMenu}
-                device={chosenDevice as Device}
-                onHideMenu={onHideMenu}
-              />
-            ) : null}
-            <ServicesWidget />
-          </Flex>
-          <ContentCardsLocation locationId={ContentCardLocation.MyLedger} mb={32} />
-        </NavigationScrollView>
-      )}
+      <Flex flex={1} px={16}>
+        <SelectDevice2
+          onSelect={onSelectDevice}
+          stopBleScanning={!!device}
+          displayServicesWidget
+          requestToSetHeaderOptions={requestToSetHeaderOptions}
+          withMyLedgerTracking
+          hasPostOnboardingEntryPointCard
+        />
+      </Flex>
       <DeviceActionModal
         onClose={() => onSelectDevice()}
         device={device}
@@ -185,15 +142,7 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  scrollContainer: {
-    flexGrow: 1,
-    justifyContent: "space-between",
-  },
-});
-
 export default function Screen(props: Props) {
   const isFocused = useIsFocused();
-
   return <ChooseDevice {...props} isFocused={isFocused} />;
 }

@@ -4,13 +4,13 @@ import { Account, AccountLike, AccountRaw, AccountRawLike, Operation } from "@le
 import { Transaction, TransactionRaw } from "../../generated/types";
 import { Result as UseBridgeTransactionResult } from "../../bridge/useBridgeTransaction";
 
-export type Exchange = {
+export type ExchangeSwap = {
   fromParentAccount: Account | null | undefined;
   fromAccount: AccountLike;
   toParentAccount: Account | null | undefined;
   toAccount: AccountLike;
 };
-export type ExchangeRaw = {
+export type ExchangeSwapRaw = {
   fromParentAccount: AccountRaw | null | undefined;
   fromAccount: AccountRawLike;
   toParentAccount: AccountRaw | null | undefined;
@@ -148,7 +148,7 @@ export type ProvidersResponseV4 = {
 export type AvailableProvider = AvailableProviderV3;
 
 export type ExchangeObject = {
-  exchange: Exchange;
+  exchange: ExchangeSwap;
   transaction: Transaction;
   currencyTo?: TokenCurrency | CryptoCurrency | undefined | null;
   providers?: AvailableProviderV3[];
@@ -256,14 +256,14 @@ export type SwapTransaction = Transaction & {
 };
 
 export type InitSwapInput = {
-  exchange: Exchange;
+  exchange: ExchangeSwap;
   exchangeRate: ExchangeRate;
   transaction: SwapTransaction;
   deviceId: string;
 };
 
 export type InitSwapInputRaw = {
-  exchange: ExchangeRaw;
+  exchange: ExchangeSwapRaw;
   exchangeRate: ExchangeRateRaw;
   transaction: TransactionRaw;
   deviceId: string;

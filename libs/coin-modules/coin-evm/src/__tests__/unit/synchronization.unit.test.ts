@@ -241,6 +241,7 @@ describe("EVM Family", () => {
               ...getAccountShapeParameters,
               initialAccount: {
                 ...account,
+                blockHeight: 123,
                 operations: [coinOperations[2]],
                 subAccounts: [{ ...tokenAccount, operations: [tokenOperations[0]] }],
               },
@@ -252,7 +253,7 @@ describe("EVM Family", () => {
             getAccountShapeParameters.currency,
             getAccountShapeParameters.address,
             account.id,
-            coinOperations[2].blockHeight! - synchronization.SAFE_REORG_THRESHOLD,
+            123 - synchronization.SAFE_REORG_THRESHOLD,
             6969,
           );
         });
