@@ -7,35 +7,28 @@ import { useMemo, useState } from "react";
 import { Order } from "./types";
 
 import { useMarketPerformers } from "@ledgerhq/live-common/market/v2/useMarketPerformers";
-import { MarketPerformersResult } from "@ledgerhq/live-common/market/types";
-import { PortfolioRange } from "@ledgerhq/types-live";
+import { getSlicedList } from "./utils";
+import { useMarketPerformanceFeatureFlag } from "~/renderer/actions/marketperformance";
 
 const LIMIT = 5;
 
-export function getSlicedList(list: MarketPerformersResult[], order: Order, range: PortfolioRange) {
-  return list.filter(elem =>
-    order === Order.asc
-      ? getChangePercentage(elem, range) > 0
-      : getChangePercentage(elem, range) < 0,
-  );
-}
-
 export function useMarketPerformanceWidget() {
+  const { refreshRate, top, supported } = useMarketPerformanceFeatureFlag();
+
   const [order, setOrder] = useState<Order>(Order.asc);
 
   const timeRange = useSelector(selectedTimeRangeSelector);
   const countervalue = useSelector(counterValueCurrencySelector);
 
-  const result = useMarketPerformers({
+  const { data, isError, isLoading } = useMarketPerformers({
     sort: order,
     counterCurrency: countervalue.ticker,
     range: timeRange,
     limit: LIMIT,
-    top: 50,
-    supported: true,
+    top,
+    supported,
+    refreshRate,
   });
-
-  const data = result.data;
 
   const sliced = useMemo(
     () => getSlicedList(data ?? [], order, timeRange),
@@ -46,23 +39,8 @@ export function useMarketPerformanceWidget() {
     list: sliced,
     order,
     setOrder,
-    isLoading: result.isLoading,
-    hasError: result.isError,
+    isLoading,
+    hasError: isError,
     range: timeRange,
   };
-}
-
-export function getChangePercentage(data: MarketPerformersResult, range: PortfolioRange) {
-  switch (range) {
-    case "day":
-      return data.priceChangePercentage24h;
-    case "week":
-      return data.priceChangePercentage7d;
-    case "month":
-      return data.priceChangePercentage30d;
-    case "year":
-      return data.priceChangePercentage1y;
-    default:
-      return data.priceChangePercentage1h;
-  }
 }

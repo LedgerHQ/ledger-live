@@ -3,8 +3,6 @@ import { MarketPerformersParams } from "../types";
 import { QUERY_KEY } from "./queryKeys";
 import { useQuery } from "@tanstack/react-query";
 
-const NB_MINUTES = 2;
-
 export function useMarketPerformers({
   counterCurrency,
   range,
@@ -12,11 +10,12 @@ export function useMarketPerformers({
   top = 50,
   sort,
   supported,
+  refreshRate,
 }: MarketPerformersParams) {
   const { isPending, isError, data, isFetching, isLoading } = useQuery({
     queryKey: [QUERY_KEY.MarketPerformers, counterCurrency, range, sort],
     queryFn: () => fetchMarketPerformers({ counterCurrency, range, limit, top, sort, supported }),
-    refetchInterval: 60 * 1000 * NB_MINUTES,
+    refetchInterval: 60 * 1000 * Number(refreshRate),
   });
 
   return {

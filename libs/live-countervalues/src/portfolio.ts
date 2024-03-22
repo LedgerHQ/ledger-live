@@ -19,7 +19,6 @@ import type {
   AssetsDistribution,
 } from "@ledgerhq/types-live";
 import type { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { listSupportedCurrencies } from "@ledgerhq/coin-framework/currencies/support";
 
 export const defaultAssetsDistribution = {
   minShowFirst: 1,
@@ -471,69 +470,3 @@ const assetsDistributionNotAvailable: AssetsDistribution = {
   showFirst: 0,
   sum: 0,
 };
-
-/**
- * data structure to represent a market datapoint
- * NB: the UI don't actual need the "current value" in this data, because it can directly calculate it with the countervalue context. but it's set in order to internally sort the data and possibly debug it
- */
-export type PerformanceMarketDatapoint = {
-  currency: Currency;
-  change: number;
-  currentValue: number;
-  referenceValue: number;
-};
-
-/**
- * retrieve the list of market datapoints to use for the Market Performance feature
- * the data is sorted from best performer to worst performer.
- * it possibly filters out any invalid data, therefore the list can be empty.
- */
-export function makePerformanceMarketAssetsList(
-  /**
-   * the countervalue state to use to calculate the performance.
-   */
-  cvState: CounterValuesState,
-  /**
-   * countervalue is the currency to use as reference to calculate the performance.
-   */
-  countervalue: Currency,
-  /**
-   * assets is the list of assets to consider. it is expected for them to have data loaded in cvState.
-   */
-  assets: Currency[],
-  /**
-   * referenceDate is the date to use as reference to calculate the performance.
-   */
-  referenceDate: Date,
-): PerformanceMarketDatapoint[] {
-  const list: PerformanceMarketDatapoint[] = [];
-
-  const supported = new Set(listSupportedCurrencies());
-  for (const asset of assets) {
-    if (asset.type === "CryptoCurrency") {
-      if (!supported.has(asset)) continue;
-    } else if (asset.type === "TokenCurrency") {
-      if (!supported.has(asset.parentCurrency)) continue;
-    }
-    const from = asset;
-    const to = countervalue;
-    const value = 10 ** from.units[0].magnitude;
-    const referenceValue = calculate(cvState, { from, to, value, date: referenceDate });
-    const currentValue = calculate(cvState, { from, to, value });
-    if (referenceValue && currentValue) {
-      const change = meaningfulPercentage(currentValue - referenceValue, referenceValue);
-      if (change) {
-        list.push({
-          currency: asset,
-          change,
-          currentValue,
-          referenceValue,
-        });
-      }
-    }
-  }
-
-  list.sort((a, b) => b.change - a.change);
-
-  return list;
-}

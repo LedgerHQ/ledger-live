@@ -7,8 +7,8 @@ import { MissingData } from "./MissingData";
 import { fontSizes } from "@ledgerhq/react-ui/styles/theme";
 import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
 import { useSelector } from "react-redux";
-import { getChangePercentage } from "../useMarketPerformanceWidget";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
+import { getChangePercentage } from "~/renderer/screens/dashboard/MarketPerformanceWidget/utils";
 
 export function WidgetList({ data, order, range }: PropsBody) {
   const noData = data.length === 0;
@@ -30,13 +30,6 @@ function WidgetRow({ data, index, isFirst, range }: PropsBodyElem) {
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const locale = useSelector(localeSelector);
 
-  console.log(
-    counterValueFormatter({
-      value: data.price,
-      currency: counterValueCurrency.ticker,
-      locale,
-    }),
-  );
   return (
     <Flex alignItems="center" mt={isFirst ? 0 : 2} justifyContent="space-between">
       <Flex alignItems="center">

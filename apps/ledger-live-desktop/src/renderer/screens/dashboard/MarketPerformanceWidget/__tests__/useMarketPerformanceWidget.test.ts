@@ -3,11 +3,11 @@
  */
 
 import { describe, expect, it } from "@jest/globals";
-import { getSlicedList } from "../useMarketPerformanceWidget";
 import { Order } from "../types";
-import { MarketPerformersResult } from "@ledgerhq/live-common/market/types";
+import { MarketItemPerformer } from "@ledgerhq/live-common/market/types";
+import { getSlicedList } from "../utils";
 
-const createElem = (change: number): MarketPerformersResult => ({
+const createElem = (change: number): MarketItemPerformer => ({
   name: "Bitcoin",
   image: "https://bitcoin.org/logo.png",
   priceChangePercentage1h: change,
