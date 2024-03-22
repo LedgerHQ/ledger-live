@@ -23,16 +23,19 @@ const Grid = ContentLayoutBuilder<Props>(({ items, styles: _styles = defaultStyl
   };
 
   const width = useWindowDimensions().width * styles.widthFactor - 20;
+  const marginStack = (useWindowDimensions().width - width) / 2;
+  const marginSquare = (useWindowDimensions().width - 2 * width - styles.gap) / 2;
+  const isStack = styles.widthFactor === WidthFactor.Full;
 
   return (
     <Flex
       style={{
-        marginHorizontal: "auto",
-        justifyContent: "center",
+        marginLeft: isStack ? marginStack : marginSquare,
+        justifyContent: "flex-start",
         width: "100%",
         flexDirection: "row",
         flexWrap: "wrap",
-        gap: styles.gap,
+        gap: isStack ? styles.gap : 16,
       }}
     >
       {items.map(item => {

@@ -165,6 +165,7 @@ const mapAsSquareContentCard = (
   viewed: card.viewed,
   order: parseInt(card.extras.order) ? parseInt(card.extras.order) : undefined,
   carouselWidthFactor: widthFactor,
+  filledImage: Boolean(card.extras.filledImage),
 });
 
 export const mapAsHeroContentCard = (card: BrazeContentCard): HeroContentCard => ({
@@ -186,4 +187,4 @@ export const mapAsMediumSquareContentCard = (card: BrazeContentCard): VerticalCo
   mapAsSquareContentCard(card, "M", WidthFactor.ThreeQuarters);
 
 export const mapAsBigSquareContentCard = (card: BrazeContentCard): VerticalContentCard =>
-  mapAsSquareContentCard(card, "L", WidthFactor.ThreeQuarters);
+  mapAsSquareContentCard(card, "L", WidthFactor.Full);
