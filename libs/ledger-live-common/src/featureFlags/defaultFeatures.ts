@@ -93,7 +93,6 @@ export const DEFAULT_FEATURES: Features = {
   disableNftRaribleOpensea: DEFAULT_FEATURE,
   disableNftSend: DEFAULT_FEATURE,
   staxWelcomeScreen: DEFAULT_FEATURE,
-  protectServicesDiscoverDesktop: DEFAULT_FEATURE,
   listAppsV2minor1: DEFAULT_FEATURE,
   flexibleContentCards: DEFAULT_FEATURE,
   ethStakingProviders: initFeature(),

@@ -700,7 +700,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     default: {
       status: { type: "active" },
       node: { type: "external", uri: "https://rpc.goerli.linea.build" },
-      explorer: { type: "etherscan", uri: "https://explorer.goerli.linea.build/api" },
+      explorer: { type: "etherscan", uri: "https://api-testnet.lineascan.build/api" },
     },
   },
 };
