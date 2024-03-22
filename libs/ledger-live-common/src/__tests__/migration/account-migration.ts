@@ -159,7 +159,6 @@ const getMockAccount = (currencyId: string, address: string): Account => {
     spendableBalance: new BigNumber(0),
     blockHeight: 0,
     freshAddressPath: "",
-    freshAddresses: [],
     seedIdentifier: "",
     index: 0,
     starred: false,

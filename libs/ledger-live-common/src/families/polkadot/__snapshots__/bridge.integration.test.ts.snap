@@ -8,12 +8,6 @@ exports[`polkadot currency bridge scanAccounts polkadot seed 1 1`] = `
     "derivationMode": "polkadotbip44",
     "freshAddress": "13zVX83ztWY9DmiutFRW87Bbgkbv1Qp1fcfpoJidbdHwk35d",
     "freshAddressPath": "44'/354'/0'/0'/0'",
-    "freshAddresses": [
-      {
-        "address": "13zVX83ztWY9DmiutFRW87Bbgkbv1Qp1fcfpoJidbdHwk35d",
-        "derivationPath": "44'/354'/0'/0'/0'",
-      },
-    ],
     "id": "js:2:polkadot:13zVX83ztWY9DmiutFRW87Bbgkbv1Qp1fcfpoJidbdHwk35d:polkadotbip44",
     "index": 0,
     "name": "Polkadot 1",
@@ -42,12 +36,6 @@ exports[`polkadot currency bridge scanAccounts polkadot seed 1 1`] = `
     "derivationMode": "polkadotbip44",
     "freshAddress": "12KUB3Rr4ac4di5JGpzTY5GNQkDVNkPUkcj2MGFTmzazMSds",
     "freshAddressPath": "44'/354'/1'/0'/0'",
-    "freshAddresses": [
-      {
-        "address": "12KUB3Rr4ac4di5JGpzTY5GNQkDVNkPUkcj2MGFTmzazMSds",
-        "derivationPath": "44'/354'/1'/0'/0'",
-      },
-    ],
     "id": "js:2:polkadot:12KUB3Rr4ac4di5JGpzTY5GNQkDVNkPUkcj2MGFTmzazMSds:polkadotbip44",
     "index": 1,
     "name": "Polkadot 2",
@@ -76,12 +64,6 @@ exports[`polkadot currency bridge scanAccounts polkadot seed 1 1`] = `
     "derivationMode": "polkadotbip44",
     "freshAddress": "13rdR5srvWF53VkNeJuz5WkGkG6FSXQQA7ZB5QBGig4ATCs9",
     "freshAddressPath": "44'/354'/2'/0'/0'",
-    "freshAddresses": [
-      {
-        "address": "13rdR5srvWF53VkNeJuz5WkGkG6FSXQQA7ZB5QBGig4ATCs9",
-        "derivationPath": "44'/354'/2'/0'/0'",
-      },
-    ],
     "id": "js:2:polkadot:13rdR5srvWF53VkNeJuz5WkGkG6FSXQQA7ZB5QBGig4ATCs9:polkadotbip44",
     "index": 2,
     "name": "Polkadot 3",
@@ -110,12 +92,6 @@ exports[`polkadot currency bridge scanAccounts polkadot seed 1 1`] = `
     "derivationMode": "polkadotbip44",
     "freshAddress": "164VgK6ooZ4fUuU4iFVwpSuXwFXGLU5nTTWzG64vrDqgipwh",
     "freshAddressPath": "44'/354'/3'/0'/0'",
-    "freshAddresses": [
-      {
-        "address": "164VgK6ooZ4fUuU4iFVwpSuXwFXGLU5nTTWzG64vrDqgipwh",
-        "derivationPath": "44'/354'/3'/0'/0'",
-      },
-    ],
     "id": "js:2:polkadot:164VgK6ooZ4fUuU4iFVwpSuXwFXGLU5nTTWzG64vrDqgipwh:polkadotbip44",
     "index": 3,
     "name": "Polkadot 4",

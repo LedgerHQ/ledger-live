@@ -13,12 +13,6 @@ exports[`elrond currency bridge scanAccounts elrond seed 1 1`] = `
     },
     "freshAddress": "erd1vgfp3g7azqjx4wsmtt7067m0l62v3psmqzr24j6xvywj2tlz0gesvyzsq2",
     "freshAddressPath": "44'/508'/0'/0/0",
-    "freshAddresses": [
-      {
-        "address": "erd1vgfp3g7azqjx4wsmtt7067m0l62v3psmqzr24j6xvywj2tlz0gesvyzsq2",
-        "derivationPath": "44'/508'/0'/0/0",
-      },
-    ],
     "id": "js:2:elrond:erd1vgfp3g7azqjx4wsmtt7067m0l62v3psmqzr24j6xvywj2tlz0gesvyzsq2:",
     "index": 0,
     "name": "MultiversX 1",
@@ -45,12 +39,6 @@ exports[`elrond currency bridge scanAccounts elrond seed 1 1`] = `
     },
     "freshAddress": "erd1pm3gje2lmd5vyldcvuy6jpxgde4rapjpujvujkee6a7jw2zmh4tqre796z",
     "freshAddressPath": "44'/508'/1'/0/0",
-    "freshAddresses": [
-      {
-        "address": "erd1pm3gje2lmd5vyldcvuy6jpxgde4rapjpujvujkee6a7jw2zmh4tqre796z",
-        "derivationPath": "44'/508'/1'/0/0",
-      },
-    ],
     "id": "js:2:elrond:erd1pm3gje2lmd5vyldcvuy6jpxgde4rapjpujvujkee6a7jw2zmh4tqre796z:",
     "index": 1,
     "name": "MultiversX 2",

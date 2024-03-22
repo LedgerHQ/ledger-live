@@ -8,12 +8,6 @@ exports[`injective currency bridge scanAccounts injective seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "inj1hn46zvx43mxq47vsecvw84k5chjhuhwp6d62dt",
     "freshAddressPath": "44'/60'/0'/0/0",
-    "freshAddresses": [
-      {
-        "address": "inj1hn46zvx43mxq47vsecvw84k5chjhuhwp6d62dt",
-        "derivationPath": "44'/60'/0'/0/0",
-      },
-    ],
     "id": "js:2:injective:inj1hn46zvx43mxq47vsecvw84k5chjhuhwp6d62dt:",
     "index": 0,
     "name": "Injective 1",
@@ -34,12 +28,6 @@ exports[`injective currency bridge scanAccounts injective seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "inj1604wce9t0u8vne0zrj4t2rspjsg28dymyljzrm",
     "freshAddressPath": "44'/60'/1'/0/0",
-    "freshAddresses": [
-      {
-        "address": "inj1604wce9t0u8vne0zrj4t2rspjsg28dymyljzrm",
-        "derivationPath": "44'/60'/1'/0/0",
-      },
-    ],
     "id": "js:2:injective:inj1604wce9t0u8vne0zrj4t2rspjsg28dymyljzrm:",
     "index": 1,
     "name": "Injective 2",

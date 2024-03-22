@@ -164,12 +164,6 @@ exports[`Portfolio getAssetsDistribution snapshot 1`] = `
           "derivationMode": "",
           "freshAddress": "1qcyBXCGSuaW9AY5c1Eb61XBfShFmg",
           "freshAddressPath": "44'/0'/0'/0/0",
-          "freshAddresses": [
-            {
-              "address": "1qcyBXCGSuaW9AY5c1Eb61XBfShFmg",
-              "derivationPath": "44'/0'/0'/0/0",
-            },
-          ],
           "id": "mock:1:bitcoin:bitcoin_1:",
           "index": 1,
           "lastSyncDate": 2018-03-14T17:34:42.000Z,
@@ -2477,12 +2471,6 @@ exports[`Portfolio getCurrencyPortfolio snapshot 1`] = `
       "derivationMode": "",
       "freshAddress": "1qcyBXCGSuaW9AY5c1Eb61XBfShFmg",
       "freshAddressPath": "44'/0'/0'/0/0",
-      "freshAddresses": [
-        {
-          "address": "1qcyBXCGSuaW9AY5c1Eb61XBfShFmg",
-          "derivationPath": "44'/0'/0'/0/0",
-        },
-      ],
       "id": "mock:1:bitcoin:bitcoin_1:",
       "index": 1,
       "lastSyncDate": 2018-03-14T17:34:42.000Z,
@@ -4815,12 +4803,6 @@ exports[`Portfolio getPortfolio snapshot 1`] = `
       "derivationMode": "",
       "freshAddress": "1qcyBXCGSuaW9AY5c1Eb61XBfShFmg",
       "freshAddressPath": "44'/0'/0'/0/0",
-      "freshAddresses": [
-        {
-          "address": "1qcyBXCGSuaW9AY5c1Eb61XBfShFmg",
-          "derivationPath": "44'/0'/0'/0/0",
-        },
-      ],
       "id": "mock:1:bitcoin:bitcoin_1:",
       "index": 1,
       "lastSyncDate": 2018-03-14T17:34:42.000Z,
@@ -5452,12 +5434,6 @@ exports[`Portfolio getPortfolio snapshot 1`] = `
       "derivationMode": "",
       "freshAddress": "1qcyBXCGSuaW9AY5c1Eb61XBfShFmg",
       "freshAddressPath": "44'/0'/0'/0/0",
-      "freshAddresses": [
-        {
-          "address": "1qcyBXCGSuaW9AY5c1Eb61XBfShFmg",
-          "derivationPath": "44'/0'/0'/0/0",
-        },
-      ],
       "id": "mock:1:bitcoin:bitcoin_1:",
       "index": 1,
       "lastSyncDate": 2018-03-14T17:34:42.000Z,

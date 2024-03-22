@@ -49,7 +49,6 @@ const account: SolanaAccount = {
   index: 0,
   freshAddress: "8Qs1nzggCjEYhFcj4yHwiS5s3QzNeCPWpQnntFdwUYhN",
   freshAddressPath: "44'/501'/0'",
-  freshAddresses: [],
   name: "Solana 1",
   blockHeight: 177035578,
   creationDate: new Date("2023-02-08T12:57:45.000Z"),

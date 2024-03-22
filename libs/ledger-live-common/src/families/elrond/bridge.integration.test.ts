@@ -37,7 +37,6 @@ const elrond: CurrenciesData<Transaction> = {
         index: 0,
         freshAddress: `${TEST_ADDRESS}`,
         freshAddressPath: "44'/508'/0'/0'/0'",
-        freshAddresses: [],
         blockHeight: 0,
         operations: [],
         pendingOperations: [],
