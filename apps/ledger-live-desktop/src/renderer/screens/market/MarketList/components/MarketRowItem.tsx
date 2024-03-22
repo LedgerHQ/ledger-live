@@ -184,7 +184,7 @@ export const MarketRow = memo<Props>(function MarketRowItem({
               })}
             </Text>
           </TableCell>
-          <TableCell>
+          <TableCell data-test-id={`market-small-graph`}>
             {currency.sparklineIn7d && (
               <SmallMarketItemChart sparklineIn7d={currency.sparklineIn7d} />
             )}

@@ -203,7 +203,7 @@ export async function fetchList({
       );
   }
 
-  return currencyFormatter(data, range, cryptoCurrenciesList);
+  return data;
 }
 
 // Fetches list of supported counterCurrencies
