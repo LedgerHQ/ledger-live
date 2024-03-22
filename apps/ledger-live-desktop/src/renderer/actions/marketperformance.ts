@@ -13,6 +13,9 @@ export function useMarketPerformanceFeatureFlag() {
   return {
     enabled: marketperformanceWidgetDesktop?.enabled || false,
     variant: marketperformanceWidgetDesktop?.params?.variant || ABTestingVariants.variantA,
+    refreshRate: marketperformanceWidgetDesktop?.params?.refreshRate || 2,
+    top: marketperformanceWidgetDesktop?.params?.top || 50,
+    supported: marketperformanceWidgetDesktop?.params?.supported || false,
   };
 }
 

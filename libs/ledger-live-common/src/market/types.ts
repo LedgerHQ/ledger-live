@@ -144,9 +144,10 @@ export type MarketPerformersParams = {
   range: PortfolioRange;
   counterCurrency: string;
   supported: boolean;
+  refreshRate?: number;
 };
 
-export type MarketResponse = {
+export type MarketItemResponse = {
   id: string;
   ledgerIds: string[];
   ticker: string;
@@ -177,7 +178,7 @@ export type MarketResponse = {
   sparkline: number[];
   updatedAt: Date;
 };
-export type MarketPerformersResult = {
+export type MarketItemPerformer = {
   name: string;
   ticker: string;
   priceChangePercentage1h: number;

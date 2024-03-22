@@ -1,4 +1,4 @@
-import { MarketPerformersResult } from "@ledgerhq/live-common/market/types";
+import { MarketItemPerformer } from "@ledgerhq/live-common/market/types";
 import { ABTestingVariants, PortfolioRange } from "@ledgerhq/types-live";
 import { Dispatch, SetStateAction } from "react";
 
@@ -8,7 +8,7 @@ import { Dispatch, SetStateAction } from "react";
 
 export type Props = {
   variant: ABTestingVariants;
-  list: MarketPerformersResult[];
+  list: MarketItemPerformer[];
   order: Order;
   range: PortfolioRange;
   setOrder: Dispatch<SetStateAction<Order>>;
@@ -28,13 +28,13 @@ export type HeaderProps = {
  * MarketPerformanceWidgetBody
  */
 export type PropsBody = {
-  data: MarketPerformersResult[];
+  data: MarketItemPerformer[];
   order: Order;
   range: PortfolioRange;
 };
 
 export type PropsBodyElem = {
-  data: MarketPerformersResult;
+  data: MarketItemPerformer;
   index: number;
   isFirst: boolean;
   range: PortfolioRange;

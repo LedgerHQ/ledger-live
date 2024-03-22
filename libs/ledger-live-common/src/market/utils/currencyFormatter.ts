@@ -1,8 +1,8 @@
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   CurrencyData,
-  MarketPerformersResult,
-  MarketResponse,
+  MarketItemPerformer,
+  MarketItemResponse,
   RawCurrencyData,
   SparklineSvgData,
 } from "../types";
@@ -86,7 +86,7 @@ export const format = (
   chartData: {},
 });
 
-export const formatPerformer = (currency: MarketResponse): MarketPerformersResult => ({
+export const formatPerformer = (currency: MarketItemResponse): MarketItemPerformer => ({
   ledgerIds: currency.ledgerIds,
   name: currency.name,
   image: currency.image,
