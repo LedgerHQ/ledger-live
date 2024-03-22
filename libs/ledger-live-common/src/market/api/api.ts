@@ -10,11 +10,10 @@ import {
   RawCurrencyData,
   MarketPerformersParams,
   MarketItemResponse,
-  MarketItemPerformer,
   SupportedCoins,
 } from "../types";
 import { rangeDataTable } from "../utils/rangeDataTable";
-import { currencyFormatter, formatPerformer } from "../utils/currencyFormatter";
+import { currencyFormatter } from "../utils/currencyFormatter";
 import URL from "url";
 import { getRange } from "../utils/rangeFormatter";
 
@@ -285,7 +284,7 @@ export async function fetchMarketPerformers({
   top = 50,
   sort,
   supported,
-}: MarketPerformersParams): Promise<MarketItemPerformer[]> {
+}: MarketPerformersParams): Promise<MarketItemResponse[]> {
   const sortParam = `${sort === "asc" ? "positive" : "negative"}-price-change-${getRange(range)}`;
 
   const url = URL.format({
@@ -301,7 +300,7 @@ export async function fetchMarketPerformers({
 
   const { data } = await network({ method: "GET", url });
 
-  return data.map((currency: MarketItemResponse) => formatPerformer(currency));
+  return data;
 }
 
 export default {

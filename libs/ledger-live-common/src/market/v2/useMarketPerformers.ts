@@ -1,7 +1,8 @@
 import { fetchMarketPerformers } from "../api/api";
-import { MarketPerformersParams } from "../types";
+import { MarketItemResponse, MarketPerformersParams } from "../types";
 import { QUERY_KEY } from "./queryKeys";
 import { useQuery } from "@tanstack/react-query";
+import { formatPerformer } from "../utils/currencyFormatter";
 
 export function useMarketPerformers({
   counterCurrency,
@@ -16,6 +17,7 @@ export function useMarketPerformers({
     queryKey: [QUERY_KEY.MarketPerformers, counterCurrency, range, sort],
     queryFn: () => fetchMarketPerformers({ counterCurrency, range, limit, top, sort, supported }),
     refetchInterval: 60 * 1000 * Number(refreshRate),
+    select: data => data.map((currency: MarketItemResponse) => formatPerformer(currency)),
   });
 
   return {
