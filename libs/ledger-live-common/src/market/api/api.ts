@@ -7,11 +7,12 @@ import {
   MarketCoin,
   MarketCurrencyChartDataRequestParams,
   MarketListRequestParams,
+  RawCurrencyData,
   SupportedCoins,
 } from "../types";
 import { rangeDataTable } from "../utils/rangeDataTable";
-import { currencyFormatter, format } from "../utils/currencyFormatter";
-
+import { currencyFormatter } from "../utils/currencyFormatter";
+import URL from "url";
 const cryptoCurrenciesList = [...listCryptoCurrencies(), ...listTokens()];
 
 const supportedCurrencies = listSupportedCurrencies();
@@ -237,26 +238,29 @@ export async function fetchCurrencyData({
   counterCurrency,
   range = "24h",
   id,
-}: MarketCurrencyChartDataRequestParams): Promise<CurrencyData> {
-  const url =
-    `${ROOT_PATH}/coins/markets?vs_currency=${counterCurrency}` +
-    `&sparkline=true&price_change_percentage=${range}` +
-    `&page=1&&ids=${id}`;
+}: MarketCurrencyChartDataRequestParams): Promise<RawCurrencyData> {
+  const url = URL.format({
+    pathname: `${ROOT_PATH}/coins/markets`,
+    query: {
+      vs_currency: counterCurrency,
+      sparkline: true,
+      price_change_percentage: range,
+      page: 1,
+      ids: id,
+    },
+  });
 
   const { data } = await network({
     method: "GET",
     url,
   });
 
-  /**
-   * @data returns array of one element
-   */
-  return format(data[0], range, cryptoCurrenciesList);
+  return data[0];
 }
 
 export async function fetchCurrency({
   id,
-}: MarketCurrencyChartDataRequestParams): Promise<CurrencyData> {
+}: MarketCurrencyChartDataRequestParams): Promise<RawCurrencyData> {
   const url = `${ROOT_PATH}/coins/${id}`;
 
   const { data } = await network({
@@ -264,7 +268,7 @@ export async function fetchCurrency({
     url,
   });
 
-  return format({ ...data, image: data.image.thumb }, "24h", cryptoCurrenciesList);
+  return data;
 }
 
 export default {
