@@ -126,7 +126,7 @@ const Layout = ({ category, cards }: LayoutProps) => {
           items={items}
           styles={{
             widthFactor: cardsSorted[0].carouselWidthFactor || WidthFactor.Full,
-            pagination: category.pagination,
+            pagination: category.hasPaggination,
           }}
         />
       );
