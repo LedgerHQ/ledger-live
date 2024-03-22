@@ -29,9 +29,9 @@ export type MarketListRequestParams = {
 
 export type MarketListRequestResult = {
   data: CurrencyData[];
-  pending: boolean;
-  loading: boolean;
-  hasError: boolean;
+  isPending: boolean;
+  isLoading: boolean;
+  isError: boolean;
 };
 
 export type MarketCurrencyChartDataRequestParams = {
@@ -82,7 +82,7 @@ export type RawCurrencyData = {
   [x: string]: any;
   id: string;
   name: string;
-  image?: string;
+  image?: string | { thumb: string; small: string; large: string };
   ["market_cap"]: number;
   ["market_cap_rank"]: number;
   ["total_volume"]: number;

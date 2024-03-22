@@ -59,7 +59,7 @@ export function useMarket() {
   const timeRangeValue = timeRanges.find(({ value }) => value === range);
 
   const currenciesLength = marketResult.data.length;
-  const loading = marketResult.loading;
+  const loading = marketResult.isLoading;
   const freshLoading = loading && !currenciesLength;
   const itemCount =
     starred.length > 0 || search.length > 0 ? currenciesLength : currenciesLength + 1;
