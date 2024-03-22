@@ -1,5 +1,28 @@
 # @ledgerhq/live-common
 
+## 33.7.0-nightly.9
+
+### Minor Changes
+
+- [#6502](https://github.com/LedgerHQ/ledger-live/pull/6502) [`f9555f8`](https://github.com/LedgerHQ/ledger-live/commit/f9555f8dfc154c2eb517c098a192927bc9590851) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update Linea Testnet explorer URI
+
+- [#6509](https://github.com/LedgerHQ/ledger-live/pull/6509) [`ba5c49b`](https://github.com/LedgerHQ/ledger-live/commit/ba5c49b82af70a2e459720b9cb124546c406b88b) Thanks [@KVNLS](https://github.com/KVNLS)! - Cleanup references to protectServicesDiscoverDesktop Feature Flag
+
+### Patch Changes
+
+- Updated dependencies [[`5e939e0`](https://github.com/LedgerHQ/ledger-live/commit/5e939e0540cabb8d9931794b79909fe0a353a179), [`6a46420`](https://github.com/LedgerHQ/ledger-live/commit/6a46420b2157b30b7fecaedb7faa6f7b98cfce28)]:
+  - @ledgerhq/coin-evm@0.13.0-nightly.8
+  - @ledgerhq/hw-app-exchange@0.4.6-nightly.3
+  - @ledgerhq/coin-framework@0.12.0-nightly.7
+  - @ledgerhq/coin-algorand@0.4.0-nightly.8
+  - @ledgerhq/coin-bitcoin@0.4.0-nightly.5
+  - @ledgerhq/coin-near@0.3.11-nightly.8
+  - @ledgerhq/coin-polkadot@0.6.0-nightly.8
+  - @ledgerhq/hw-app-eth@6.36.0-nightly.7
+  - @ledgerhq/live-countervalues@0.1.3-nightly.8
+  - @ledgerhq/live-countervalues-react@0.1.3-nightly.8
+  - @ledgerhq/live-nft@0.2.2-nightly.8
+
 ## 33.7.0-nightly.8
 
 ### Minor Changes

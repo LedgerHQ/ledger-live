@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.45.0-nightly.6
+
+### Minor Changes
+
+- [#6509](https://github.com/LedgerHQ/ledger-live/pull/6509) [`ba5c49b`](https://github.com/LedgerHQ/ledger-live/commit/ba5c49b82af70a2e459720b9cb124546c406b88b) Thanks [@KVNLS](https://github.com/KVNLS)! - Cleanup references to protectServicesDiscoverDesktop Feature Flag
+
 ## 6.45.0-nightly.5
 
 ### Minor Changes

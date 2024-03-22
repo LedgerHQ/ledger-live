@@ -1,5 +1,23 @@
 # ledger-live-desktop
 
+## 2.78.0-nightly.12
+
+### Patch Changes
+
+- [#6514](https://github.com/LedgerHQ/ledger-live/pull/6514) [`6a46420`](https://github.com/LedgerHQ/ledger-live/commit/6a46420b2157b30b7fecaedb7faa6f7b98cfce28) Thanks [@sarneijim](https://github.com/sarneijim)! - Fix swap in prod to support decodePayloadProtobuf
+
+- Updated dependencies [[`5e939e0`](https://github.com/LedgerHQ/ledger-live/commit/5e939e0540cabb8d9931794b79909fe0a353a179), [`f9555f8`](https://github.com/LedgerHQ/ledger-live/commit/f9555f8dfc154c2eb517c098a192927bc9590851), [`ba5c49b`](https://github.com/LedgerHQ/ledger-live/commit/ba5c49b82af70a2e459720b9cb124546c406b88b)]:
+  - @ledgerhq/coin-evm@0.13.0-nightly.8
+  - @ledgerhq/live-common@33.7.0-nightly.9
+  - @ledgerhq/types-live@6.45.0-nightly.6
+  - @ledgerhq/coin-framework@0.12.0-nightly.7
+  - @ledgerhq/coin-bitcoin@0.4.0-nightly.5
+  - @ledgerhq/domain-service@1.1.19-nightly.7
+  - @ledgerhq/live-countervalues@0.1.3-nightly.8
+  - @ledgerhq/live-countervalues-react@0.1.3-nightly.8
+  - @ledgerhq/live-nft@0.2.2-nightly.8
+  - @ledgerhq/live-nft-react@0.2.2-nightly.8
+
 ## 2.78.0-nightly.11
 
 ### Minor Changes

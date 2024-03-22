@@ -1,5 +1,11 @@
 # @ledgerhq/hw-app-exchange
 
+## 0.4.6-nightly.3
+
+### Patch Changes
+
+- [#6514](https://github.com/LedgerHQ/ledger-live/pull/6514) [`6a46420`](https://github.com/LedgerHQ/ledger-live/commit/6a46420b2157b30b7fecaedb7faa6f7b98cfce28) Thanks [@sarneijim](https://github.com/sarneijim)! - Fix swap in prod to support decodePayloadProtobuf
+
 ## 0.4.6-nightly.2
 
 ### Patch Changes

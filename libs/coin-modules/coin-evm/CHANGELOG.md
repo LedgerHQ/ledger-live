@@ -1,5 +1,16 @@
 # @ledgerhq/coin-evm
 
+## 0.13.0-nightly.8
+
+### Patch Changes
+
+- [#6501](https://github.com/LedgerHQ/ledger-live/pull/6501) [`5e939e0`](https://github.com/LedgerHQ/ledger-live/commit/5e939e0540cabb8d9931794b79909fe0a353a179) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add missing index to Ledger ERC20 operations' ids, leading to missing token ops in history
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@0.12.0-nightly.7
+  - @ledgerhq/domain-service@1.1.19-nightly.7
+  - @ledgerhq/evm-tools@1.0.17-nightly.1
+
 ## 0.13.0-nightly.7
 
 ### Minor Changes
