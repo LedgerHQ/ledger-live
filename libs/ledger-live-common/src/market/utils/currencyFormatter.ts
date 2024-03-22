@@ -54,7 +54,7 @@ export const format = (
 ) => ({
   id: currency.id,
   name: currency.name,
-  image: currency.image,
+  image: typeof currency.image === "string" ? currency.image : currency.image?.thumb,
   internalCurrency: cryptoCurrenciesList.find(
     ({ ticker }) => ticker.toLowerCase() === currency.symbol,
   ),

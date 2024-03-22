@@ -13,12 +13,15 @@ import {
   MarketListRequestResult,
 } from "../types";
 import { QUERY_KEY } from "./queryKeys";
-import { listSupportedCurrencies } from "../../currencies";
+import { listCryptoCurrencies, listSupportedCurrencies, listTokens } from "../../currencies";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { useMemo } from "react";
 
-// 1min
-const REFETCH_TIME = 1 * 60000;
+import { format } from "../utils/currencyFormatter";
+
+const cryptoCurrenciesList = [...listCryptoCurrencies(), ...listTokens()];
+
+const REFETCH_TIME = 2 * 60000;
 
 export function useMarketDataProvider() {
   const supportedCurrenciesInLIve = listSupportedCurrencies();
@@ -42,8 +45,12 @@ export function useMarketDataProvider() {
   };
 }
 
-export function useCurrencyChartData({ id, counterCurrency, ranges }: MarketCurrencyRequestParams) {
-  const results = useQueries({
+export const useCurrencyChartData = ({
+  id,
+  counterCurrency,
+  ranges,
+}: MarketCurrencyRequestParams) =>
+  useQueries({
     queries: (ranges || []).map(range => ({
       queryKey: [QUERY_KEY.CurrencyChartData, id, counterCurrency, range],
       queryFn: () => fetchCurrencyChartData({ counterCurrency, range, id }),
@@ -52,16 +59,14 @@ export function useCurrencyChartData({ id, counterCurrency, ranges }: MarketCurr
     })),
   });
 
-  return results;
-}
-
 export function useCurrencyData({ id, counterCurrency, ranges }: MarketCurrencyRequestParams) {
   const results = useQueries({
     queries: (ranges || []).map(range => ({
       queryKey: [QUERY_KEY.CurrencyData, id, counterCurrency, range],
-      queryFn: () => fetchCurrencyData({ counterCurrency, range, id }),
+      queryFn: async () => fetchCurrencyData({ counterCurrency, range, id }),
       refetchInterval: REFETCH_TIME,
       staleTime: REFETCH_TIME,
+      select: data => format(data, range, cryptoCurrenciesList),
     })),
   });
 
@@ -70,41 +75,26 @@ export function useCurrencyData({ id, counterCurrency, ranges }: MarketCurrencyR
     queryFn: () => fetchCurrency({ id }),
     refetchInterval: REFETCH_TIME,
     staleTime: REFETCH_TIME,
+    select: data => format(data, "24h", cryptoCurrenciesList),
   });
 
   return { currencyDataByRanges: results, currencyInfo: resultCurrency };
 }
 
-export function useSupportedCounterCurrencies() {
-  const { isPending, error, data, isFetching } = useQuery({
+export const useSupportedCounterCurrencies = () =>
+  useQuery({
     queryKey: [QUERY_KEY.SupportedCounterCurrencies],
     queryFn: () => supportedCounterCurrencies(),
   });
 
-  return {
-    isPending,
-    error,
-    data,
-    isFetching,
-  };
-}
-
-export function useSupportedCurrencies() {
-  const { isPending, error, data, isFetching } = useQuery({
+export const useSupportedCurrencies = () =>
+  useQuery({
     queryKey: [QUERY_KEY.SupportedCurrencies],
     queryFn: () => getSupportedCoinsList(),
   });
 
-  return {
-    isPending,
-    error,
-    data,
-    isFetching,
-  };
-}
-
 export function useMarketData(props: MarketListRequestParams): MarketListRequestResult {
-  const results = useQueries({
+  return useQueries({
     queries: Array.from({ length: props.page ?? 1 }, (_, i) => i + 1).map(page => ({
       queryKey: [
         QUERY_KEY.MarketData,
@@ -117,12 +107,10 @@ export function useMarketData(props: MarketListRequestParams): MarketListRequest
     combine: results => {
       return {
         data: results.flatMap(result => result.data ?? []),
-        pending: results.some(result => result.isPending),
-        loading: results.some(result => result.isLoading),
-        hasError: results.some(result => result.isError),
+        isPending: results.some(result => result.isPending),
+        isLoading: results.some(result => result.isLoading),
+        isError: results.some(result => result.isError),
       };
     },
   });
-
-  return results;
 }
