@@ -28,7 +28,7 @@ import CompleteExchange, {
   isCompleteExchangeData,
 } from "~/renderer/modals/Platform/Exchange/CompleteExchange/Body";
 import { ExchangeType } from "@ledgerhq/live-common/wallet-api/Exchange/server";
-import { Exchange } from "@ledgerhq/live-common/exchange/swap/types";
+import { Exchange } from "@ledgerhq/live-common/exchange/types";
 
 const Divider = styled(Box)`
   border: 1px solid ${p => p.theme.colors.palette.divider};

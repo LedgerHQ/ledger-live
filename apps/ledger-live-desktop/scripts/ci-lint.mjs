@@ -39,7 +39,6 @@ const lint = async () => {
       -- --format="json" \\
       -o="lint.json"`;
   } else {
-    console.log("here in the else");
     await $`pnpm lint \\
       --filter="ledger-live-desktop" \\
       -- --format="json" \\

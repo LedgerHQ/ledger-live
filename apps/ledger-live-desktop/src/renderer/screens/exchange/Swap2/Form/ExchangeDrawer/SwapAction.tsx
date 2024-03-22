@@ -1,6 +1,6 @@
 import { getEnv } from "@ledgerhq/live-env";
 import {
-  Exchange,
+  ExchangeSwap,
   ExchangeRate,
   InitSwapResult,
   SwapTransaction,
@@ -22,6 +22,7 @@ import { getCurrentDevice } from "~/renderer/reducers/devices";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import initSwap from "@ledgerhq/live-common/exchange/swap/initSwap";
 import { Device } from "@ledgerhq/types-devices";
+import { BigNumber } from "bignumber.js";
 
 const transactionAction = transactionCreateAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
 const initAction = initSwapCreateAction(
@@ -55,7 +56,11 @@ const TransactionResult = (
 type Props = {
   swapTransaction: SwapTransactionType;
   exchangeRate: ExchangeRate;
-  onCompletion: (a: { operation: Operation; swapId: string }) => void;
+  onCompletion: (a: {
+    operation: Operation;
+    swapId: string;
+    magnitudeAwareRate: BigNumber;
+  }) => void;
   onError: (a: { error: Error; swapId?: string }) => void;
 };
 
@@ -92,12 +97,13 @@ export default function SwapAction({
 
   useEffect(() => {
     if (initData && signedOperation) {
-      const { swapId } = initData;
+      const { swapId, magnitudeAwareRate } = initData;
       broadcast(signedOperation).then(
         operation => {
           onCompletion({
             operation,
             swapId,
+            magnitudeAwareRate,
           });
         },
         error => {
@@ -112,7 +118,7 @@ export default function SwapAction({
 
   const request = useMemo(
     () => ({
-      exchange: exchange as Exchange,
+      exchange: exchange as ExchangeSwap,
       exchangeRate,
       transaction: transaction as SwapTransaction,
       status,

@@ -8,8 +8,6 @@ import styled from "styled-components/native";
 const RowContainer = styled(TouchableOpacity)`
   flex-direction: row;
   justify-content: center;
-  padding-left: 16px;
-  padding-right: 16px;
   padding-top: 12px;
   padding-bottom: 12px;
 `;

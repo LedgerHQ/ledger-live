@@ -209,7 +209,7 @@ test.beforeAll(async () => {
   liveAppWebview = new LiveAppWebview();
   cryptoDrawer = new CryptoDrawer();
 
-  loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
+  await loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
 
   await portfolioPage.waitForPortfolioPageToLoad();
   await discoverPage.openViaDeeplink("dummy-live-app");

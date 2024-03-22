@@ -484,7 +484,7 @@
       "description": "Please send some EGLD to your account to pay for transactions."
     },
     "NotEnoughBalance": {
-      "title": "Sorry, insufficient funds",
+      "title": "Sorry, insufficient balance including network fees. Adjust amount or verify balance",
       "description": "Please make sure the account has enough funds."
     },
     "NoSuchAppOnProvider": {
@@ -1252,6 +1252,9 @@
       "referralProgram": {
         "title": "Refer a friend",
         "desc": "When your friend buys a Ledger, you both earn $20 of BTC."
+      },
+      "filter": {
+        "all": "all"
       }
     },
     "comingSoon": "Coming soon",
@@ -2182,15 +2185,7 @@
     "discover": "Discover",
     "nanoX": "Nano X",
     "market": "Market",
-    "earn": "Earn",
-    "learn": "Learn"
-  },
-  "learn": {
-    "pageTitle": "learn",
-    "sectionShows": "Shows",
-    "sectionVideo": "Video",
-    "sectionPodcast": "Podcast",
-    "sectionArticles": "Articles"
+    "earn": "Earn"
   },
   "portfolio": {
     "totalBalance": "Total balance",

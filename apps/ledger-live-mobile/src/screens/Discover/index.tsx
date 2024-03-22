@@ -41,7 +41,6 @@ function Discover() {
 
   const learn = useFeature("brazeLearn");
   const isNewsfeedAvailable = useIsNewsfeedAvailable();
-  const referralProgramConfig = useFeature("referralProgramDiscoverCard");
   const isNFTDisabled = useFeature("disableNftLedgerMarket")?.enabled && Platform.OS === "ios";
 
   const readOnlyTrack = useCallback((bannerName: string) => {
@@ -196,38 +195,31 @@ function Discover() {
                 ),
               },
             ]),
-        ...(referralProgramConfig?.enabled && referralProgramConfig?.params?.url
-          ? [
-              {
-                title: t("discover.sections.referralProgram.title"),
-                subTitle: t("discover.sections.referralProgram.desc"),
-                onPress: () => {
-                  readOnlyTrack("referralProgram");
-                  track("Discover - Refer Program - OpenUrl", {
-                    url: referralProgramConfig?.params?.url,
-                  });
-                  // @ts-expect-error TYPINGS
-                  Linking.openURL(referralProgramConfig?.params?.url);
-                },
-                disabled: false,
-                Image: (
-                  <Illustration
-                    size={110}
-                    darkSource={images.dark.referralImg}
-                    lightSource={images.light.referralImg}
-                  />
-                ),
-              },
-            ]
-          : []),
+        {
+          title: t("discover.sections.referralProgram.title"),
+          subTitle: t("discover.sections.referralProgram.desc"),
+          onPress: () => {
+            readOnlyTrack("referralProgram");
+            track("Discover - Refer Program - OpenUrl", {
+              url: urls.referralProgram,
+            });
+            Linking.openURL(urls.referralProgram);
+          },
+          disabled: false,
+          Image: (
+            <Illustration
+              size={110}
+              darkSource={images.dark.referralImg}
+              lightSource={images.light.referralImg}
+            />
+          ),
+        },
       ].sort((a, b) => (b.disabled ? -1 : 0)),
     [
       t,
       learn?.enabled,
       learnCards,
       isNFTDisabled,
-      referralProgramConfig?.enabled,
-      referralProgramConfig?.params?.url,
       navigation,
       readOnlyTrack,
       isNewsfeedAvailable,

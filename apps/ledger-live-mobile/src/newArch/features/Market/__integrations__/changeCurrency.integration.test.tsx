@@ -2,6 +2,7 @@ import * as React from "react";
 import { screen } from "@testing-library/react-native";
 import { render } from "@tests/test-renderer";
 import { MarketPages } from "./shared";
+import { State, supportedCountervaluesData } from "~/reducers/types";
 
 const SUPPORTED_CURRENCIES = [
   {
@@ -22,13 +23,18 @@ const SUPPORTED_CURRENCIES = [
     ticker: "USD",
     value: "USD",
   },
-];
+] as supportedCountervaluesData[];
 
 describe("Market integration test", () => {
   it("Should change selected currency", async () => {
     const { user } = render(<MarketPages />, {
-      featureFlags: { llmMarketNewArch: { enabled: true } },
-      initialState: { settings: { supportedCounterValues: SUPPORTED_CURRENCIES } },
+      overrideInitialState: (state: State) => ({
+        ...state,
+        settings: {
+          ...state.settings,
+          supportedCounterValues: SUPPORTED_CURRENCIES,
+        },
+      }),
     });
 
     expect(await screen.findByText("Bitcoin (BTC)")).toBeOnTheScreen();

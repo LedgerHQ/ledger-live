@@ -322,7 +322,6 @@ const linkingOptions = () => ({
                * ie: "ledgerlive://learn"
                */
               [ScreenName.Newsfeed]: "newsfeed",
-              [ScreenName.Learn]: "learn",
             },
           },
           [NavigatorName.ImportAccounts]: {

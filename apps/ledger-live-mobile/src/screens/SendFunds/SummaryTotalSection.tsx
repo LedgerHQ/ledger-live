@@ -9,12 +9,11 @@ import CounterValue from "~/components/CounterValue";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import LText from "~/components/LText";
 import QueuedDrawer from "~/components/QueuedDrawer";
-import ModalBottomAction from "~/components/ModalBottomAction";
-import Button from "~/components/Button";
-import Circle from "~/components/Circle";
 import Touchable from "~/components/Touchable";
 import Info from "~/icons/Info";
-import { withTheme, Theme } from "../../colors";
+import { withTheme, Theme } from "~/colors";
+import { GenericInformationBody } from "~/components/GenericInformationBody";
+import { InformationFill } from "@ledgerhq/native-ui/assets/icons";
 
 type Props = {
   account: AccountLike;
@@ -70,24 +69,11 @@ class SummaryTotalSection extends PureComponent<Props, State> {
           </View>
         </SummaryRow>
         <QueuedDrawer isRequestingToBeOpened={isModalOpened} onClose={this.onRequestClose}>
-          <ModalBottomAction
+          <GenericInformationBody
+            Icon={InformationFill}
+            iconColor={"primary.c80"}
             title={<Trans i18nKey="send.summary.infoTotalTitle" />}
-            icon={
-              <Circle bg={colors.lightLive} size={56}>
-                <Info size={16} color={colors.live} />
-              </Circle>
-            }
             description={<Trans i18nKey="send.summary.infoTotalDesc" />}
-            footer={
-              <View>
-                <Button
-                  event="SummaryTotalInfoClose"
-                  type="primary"
-                  title={<Trans i18nKey="common.close" />}
-                  onPress={this.onRequestClose}
-                />
-              </View>
-            }
           />
         </QueuedDrawer>
       </>

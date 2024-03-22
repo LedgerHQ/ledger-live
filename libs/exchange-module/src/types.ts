@@ -4,16 +4,24 @@ export enum ExchangeType {
   SWAP = 0x00,
   SELL = 0x01,
   FUND = 0x02,
-  SWAP_NG = 0x03,
-  SELL_NG = 0x04,
-  FUND_NG = 0x05,
 }
 
-export type ExchangeStartParams = {
-  exchangeType: "FUND" | "SELL" | "SWAP" | "FUND_NG" | "SELL_NG" | "SWAP_NG";
+export type ExchangeStartParams =
+  | ExchangeStartFundParams
+  | ExchangeStartSellParams
+  | ExchangeStartSwapParams;
+
+export type ExchangeStartFundParams = {
+  exchangeType: "FUND";
 };
 
-export type ExchangeStartSwapParams = ExchangeStartParams & {
+export type ExchangeStartSellParams = {
+  exchangeType: "SELL";
+  provider: string;
+};
+
+export type ExchangeStartSwapParams = {
+  exchangeType: "SWAP";
   provider: string;
   fromAccountId: string;
   toAccountId: string;
@@ -46,7 +54,8 @@ export type ExchangeCompleteSwapParams = ExchangeCompleteBaseParams & {
   exchangeType: "SWAP";
   toAccountId: string;
   swapId: string;
-  rate: number;
+  amountExpectedTo: bigint;
+  magnitudeAwareRate: bigint;
 };
 
 export type ExchangeCompleteParams =

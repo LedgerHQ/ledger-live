@@ -84,48 +84,28 @@ export const DEFAULT_FEATURES: Features = {
   objkt: DEFAULT_FEATURE,
   portfolioExchangeBanner: DEFAULT_FEATURE,
   postOnboardingAssetsTransfer: DEFAULT_FEATURE,
-  walletConnectEntryPoint: DEFAULT_FEATURE,
   counterValue: DEFAULT_FEATURE,
-  llmNewDeviceSelection: DEFAULT_FEATURE,
-  llmNewFirmwareUpdateUx: DEFAULT_FEATURE,
   mockFeature: DEFAULT_FEATURE,
   multibuyNavigation: DEFAULT_FEATURE,
   ptxServiceCtaExchangeDrawer: DEFAULT_FEATURE,
   ptxServiceCtaScreens: DEFAULT_FEATURE,
-  referralProgramDesktopBanner: DEFAULT_FEATURE,
   disableNftLedgerMarket: DEFAULT_FEATURE,
   disableNftRaribleOpensea: DEFAULT_FEATURE,
   disableNftSend: DEFAULT_FEATURE,
   staxWelcomeScreen: DEFAULT_FEATURE,
-  protectServicesDiscoverDesktop: DEFAULT_FEATURE,
-  llmWalletQuickActions: DEFAULT_FEATURE,
   listAppsV2minor1: DEFAULT_FEATURE,
-  llmMarketNewArch: DEFAULT_FEATURE,
   flexibleContentCards: DEFAULT_FEATURE,
   ethStakingProviders: initFeature(),
-  referralProgramDiscoverCard: initFeature(),
   newsfeedPage: initFeature(),
   swapWalletApiPartnerList: initFeature(),
   stakePrograms: initFeature(),
-  learn: initFeature(),
   receiveStakingFlowConfigDesktop: initFeature(),
   brazePushNotifications: initFeature(),
-  walletNftGallery: initFeature(),
   stakeAccountBanner: initFeature(),
 
   buyDeviceFromLive: {
     enabled: false,
     params: { debug: false, url: null },
-  },
-
-  depositNetworkBannerMobile: {
-    enabled: false,
-    params: { url: "https://www.ledger.com/ledger-live" },
-  },
-
-  depositWithdrawBannerMobile: {
-    enabled: false,
-    params: { url: "https://www.ledger.com/ledger-live" },
   },
 
   deviceInitialApps: {
@@ -392,26 +372,6 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
 
-  cexDepositEntryPointsDesktop: {
-    enabled: false,
-    params: {
-      path: "/platform/ledger-cex-deposit",
-      locations: {
-        selectCrypto: true,
-      },
-    },
-  },
-
-  cexDepositEntryPointsMobile: {
-    enabled: false,
-    params: {
-      path: "/discover/ledger-cex-deposit",
-      locations: {
-        selectCrypto: true,
-      },
-    },
-  },
-
   fetchAdditionalCoins: {
     enabled: false,
   },
@@ -444,7 +404,15 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
 
-  lldPortfolioCarousel: {
+  lldAnalyticsOptInPrompt: {
+    enabled: false,
+    params: {
+      variant: ABTestingVariants.variantA,
+      entryPoints: ["Onboarding", "Portfolio"],
+    },
+  },
+
+  lldActionCarousel: {
     enabled: false,
     params: {
       variant: ABTestingVariants.variantA,

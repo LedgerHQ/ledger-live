@@ -29,8 +29,6 @@ const completeExchange = (
       return completeExchangeSwap(input);
 
     case ExchangeTypes.Sell:
-      return completeExchangeTransfer(input);
-
     case ExchangeTypes.Fund:
       return completeExchangeTransfer(input);
 

@@ -5,9 +5,9 @@ import DeviceAction from "~/renderer/components/DeviceAction";
 import Button from "~/renderer/components/Button";
 import Box from "~/renderer/components/Box";
 import {
-  AccountDescriptor,
+  type AccountDescriptor,
   scanDescriptors,
-} from "@ledgerhq/live-common/families/bitcoin/descriptor";
+} from "@ledgerhq/live-common/families/bitcoin/logic";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import BigSpinner from "~/renderer/components/BigSpinner";
 import Text from "~/renderer/components/Text";

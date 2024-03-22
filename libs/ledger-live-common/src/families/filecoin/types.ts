@@ -1,5 +1,5 @@
 import {
-  BroadcastArg0,
+  BroadcastArg,
   Operation,
   TransactionCommon,
   TransactionCommonRaw,
@@ -39,7 +39,7 @@ export type TransactionRaw = TransactionCommonRaw & {
   gasPremium: string;
 };
 
-export type BroadcastFnSignature = (arg0: BroadcastArg0) => Promise<Operation>;
+export type BroadcastFnSignature = (arg0: BroadcastArg) => Promise<Operation>;
 
 export type TransactionStatus = TransactionStatusCommon;
 

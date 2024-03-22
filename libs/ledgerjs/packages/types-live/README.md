@@ -35,7 +35,7 @@ Ledger Live main types.
     *   [Properties](#properties-8)
 *   [DeviceId](#deviceid)
 *   [PreloadStrategy](#preloadstrategy)
-*   [BroadcastArg0](#broadcastarg0)
+*   [BroadcastArg](#broadcastarg)
     *   [Properties](#properties-9)
 *   [SignOperationArg0](#signoperationarg0)
     *   [Properties](#properties-10)
@@ -428,7 +428,7 @@ Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 
 Type: Partial<{preloadMaxAge: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)}>
 
-### BroadcastArg0
+### BroadcastArg
 
 Type: {account: [Account](#account), signedOperation: [SignedOperation](#signedoperation)}
 
@@ -522,7 +522,7 @@ Type: {implementations: [Array](https://developer.mozilla.org/docs/Web/JavaScrip
 
 DerivationMode is a string identifier of a specific derivation scheme in a list defined in live-common derivation.ts
 
-Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
+Type: (`""` | `"ethM"` | `"ethMM"` | `"bch_on_bitcoin_segwit"` | `"legacy_on_bch"` | `"vertcoin_128"` | `"vertcoin_128_segwit"` | `"etcM"` | `"aeternity"` | `"tezbox"` | `"tezosbip44h"` | `"galleonL"` | `"tezboxL"` | `"taproot"` | `"native_segwit"` | `"segwit"` | `"segwit_on_legacy"` | `"legacy_on_segwit"` | `"legacy_on_native_segwit"` | `"segwit_unsplit"` | `"sep5"` | `"unsplit"` | `"polkadotbip44"` | `"glifLegacy"` | `"glif"` | `"filecoinBIP44"` | `"casper_wallet"` | `"solanaMain"` | `"solanaSub"` | `"hederaBip44"` | `"cardano"` | `"nearbip44h"` | `"vechain"` | `"internet_computer"` | `"stacks_wallet"`)
 
 ### Feature
 

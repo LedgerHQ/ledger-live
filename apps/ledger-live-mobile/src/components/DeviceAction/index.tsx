@@ -19,7 +19,11 @@ import type { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { AccountLike, AnyMessage, DeviceInfo } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
-import { Exchange, ExchangeRate, InitSwapResult } from "@ledgerhq/live-common/exchange/swap/types";
+import {
+  ExchangeSwap,
+  ExchangeRate,
+  InitSwapResult,
+} from "@ledgerhq/live-common/exchange/swap/types";
 import { AppAndVersion } from "@ledgerhq/live-common/hw/connectApp";
 import { LedgerErrorConstructor } from "@ledgerhq/errors/lib/helpers";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -387,7 +391,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
       device: Device;
       transaction: Transaction;
       exchangeRate: ExchangeRate;
-      exchange: Exchange;
+      exchange: ExchangeSwap;
       amountExpectedTo?: string;
       estimatedFees?: string;
     };

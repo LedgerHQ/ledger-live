@@ -1,106 +1,26 @@
 import { Platform } from "react-native";
-import { DescriptorEventType } from "@ledgerhq/hw-transport";
 import invariant from "invariant";
-import { Subject, Observable } from "rxjs";
-import { AccountRaw } from "@ledgerhq/types-live";
-import { ConnectAppEvent } from "@ledgerhq/live-common/hw/connectApp";
-import { Event as AppEvent } from "@ledgerhq/live-common/hw/actions/app";
-import { ConnectManagerEvent } from "@ledgerhq/live-common/hw/connectManager";
+import { Subject } from "rxjs";
 import { store } from "~/context/store";
 import { importSettings } from "~/actions/settings";
 import { importStore as importAccounts } from "~/actions/accounts";
 import { acceptGeneralTerms } from "~/logic/terms";
 import { navigate } from "~/rootnavigation";
-import { BleState, SettingsState } from "~/reducers/types";
 import { importBle } from "~/actions/ble";
-import { InstallLanguageEvent } from "@ledgerhq/live-common/hw/installLanguage";
-import { LoadImageEvent } from "@ledgerhq/live-common/hw/staxLoadImage";
-import { SwapRequestEvent } from "@ledgerhq/live-common/exchange/swap/types";
-import { FetchImageEvent } from "@ledgerhq/live-common/hw/staxFetchImage";
-import { ExchangeRequestEvent } from "@ledgerhq/live-common/hw/actions/startExchange";
-import { CompleteExchangeRequestEvent } from "@ledgerhq/live-common/exchange/platform/types";
-import { RemoveImageEvent } from "@ledgerhq/live-common/hw/staxRemoveImage";
-import { RenameDeviceEvent } from "@ledgerhq/live-common/hw/renameDevice";
 import { LaunchArguments } from "react-native-launch-arguments";
 import { DeviceEventEmitter } from "react-native";
-import { DeviceUSB } from "../models/devices";
 import logReport from "../../src/log-report";
-
-export type MockDeviceEvent =
-  | ConnectAppEvent
-  | AppEvent
-  | ConnectManagerEvent
-  | InstallLanguageEvent
-  | LoadImageEvent
-  | FetchImageEvent
-  | ExchangeRequestEvent
-  | SwapRequestEvent
-  | RemoveImageEvent
-  | RenameDeviceEvent
-  | CompleteExchangeRequestEvent
-  | { type: "complete" };
-
-const mockDeviceEventSubject = new Subject<MockDeviceEvent>();
-
-// these adaptor will filter the event type to satisfy typescript (workaround), it works because underlying exec usage will ignore unknown event type
-export const connectAppExecMock = (): Observable<ConnectAppEvent> =>
-  mockDeviceEventSubject as Observable<ConnectAppEvent>;
-export const initSwapExecMock = (): Observable<SwapRequestEvent> =>
-  mockDeviceEventSubject as Observable<SwapRequestEvent>;
-export const startExchangeExecMock = (): Observable<ExchangeRequestEvent> =>
-  mockDeviceEventSubject as Observable<ExchangeRequestEvent>;
-export const connectManagerExecMock = (): Observable<ConnectManagerEvent> =>
-  mockDeviceEventSubject as Observable<ConnectManagerEvent>;
-export const staxFetchImageExecMock = (): Observable<FetchImageEvent> =>
-  mockDeviceEventSubject as Observable<FetchImageEvent>;
-export const staxLoadImageExecMock = (): Observable<LoadImageEvent> =>
-  mockDeviceEventSubject as Observable<LoadImageEvent>;
-export const staxRemoveImageExecMock = (): Observable<RemoveImageEvent> =>
-  mockDeviceEventSubject as Observable<RemoveImageEvent>;
-export const installLanguageExecMock = (): Observable<InstallLanguageEvent> =>
-  mockDeviceEventSubject as Observable<InstallLanguageEvent>;
-export const completeExchangeExecMock = (): Observable<CompleteExchangeRequestEvent> =>
-  mockDeviceEventSubject as Observable<CompleteExchangeRequestEvent>;
-export const renameDeviceExecMock = (): Observable<RenameDeviceEvent> =>
-  mockDeviceEventSubject as Observable<RenameDeviceEvent>;
-
-export type MessageData =
-  | {
-      type: DescriptorEventType;
-      payload: { id: string; name: string; serviceUUID: string };
-    }
-  | { type: "open" }
-  | {
-      type: "mockDeviceEvent";
-      payload: MockDeviceEvent[];
-    }
-  | { type: "acceptTerms" }
-  | { type: "addUSB"; payload: DeviceUSB }
-  | { type: "getLogs"; fileName: string }
-  | { type: "navigate"; payload: string }
-  | { type: "importSettings"; payload: Partial<SettingsState> }
-  | {
-      type: "importAccounts";
-      payload: {
-        data: AccountRaw;
-        version: number;
-      }[];
-    }
-  | {
-      type: "importBle";
-      payload: BleState;
-    }
-  | {
-      type: "setGlobals";
-      payload: { [key: string]: unknown };
-    };
+import { MessageData, ServerData, mockDeviceEventSubject } from "./types";
 
 export const e2eBridgeClient = new Subject<MessageData>();
 
 let ws: WebSocket;
+let retryCount = 0;
+const maxRetries = 5; // Maximum number of retry attempts
+const retryDelay = 500; // Initial retry delay in milliseconds
 
 export function init() {
-  let wsPort = LaunchArguments.value()["wsPort"] || "8099";
+  const wsPort = LaunchArguments.value()["wsPort"] || "8099";
 
   if (ws) {
     ws.close();
@@ -109,76 +29,105 @@ export function init() {
   const ipAddress = Platform.OS === "ios" ? "localhost" : "10.0.2.2";
   const path = `${ipAddress}:${wsPort}`;
   ws = new WebSocket(`ws://${path}`);
+
   ws.onopen = () => {
     log(`Connection opened on ${path}`);
+    retryCount = 0; // Reset retry count on successful connection
+  };
+
+  ws.onerror = error => {
+    log(`WebSocket error: ${JSON.stringify(error)}`);
+    if (retryCount < maxRetries) {
+      retryCount++;
+      const retryTimeout = retryDelay * Math.pow(2, retryCount);
+      log(`Retrying connection in ${retryTimeout}ms (attempt ${retryCount} of ${maxRetries})`);
+      setTimeout(init, retryTimeout);
+    } else {
+      log(`Max retries (${maxRetries}) reached. Cannot establish WebSocket connection.`);
+    }
   };
 
   ws.onmessage = onMessage;
 }
 
 function onMessage(event: WebSocketMessageEvent) {
-  invariant(typeof event.data === "string", "[E2E Bridge Client]: Message data must be string");
-  const msg: MessageData = JSON.parse(event.data);
-  invariant(msg.type, "[E2E Bridge Client]: type is missing");
+  try {
+    invariant(typeof event.data === "string", "[E2E Bridge Client]: Message data must be string");
+    const msg: MessageData = JSON.parse(event.data);
+    invariant(msg.type, "[E2E Bridge Client]: type is missing");
 
-  log(`Message\n${JSON.stringify(msg, null, 2)}`);
+    log(`Message recieved\n${JSON.stringify(msg, null, 2)}`);
 
-  e2eBridgeClient.next(msg);
+    e2eBridgeClient.next(msg);
 
-  switch (msg.type) {
-    case "setGlobals":
-      Object.entries(msg.payload).forEach(([k, v]) => {
-        //  @ts-expect-error global bullshit
-        global[k] = v;
-      });
-      break;
-    case "acceptTerms":
-      acceptGeneralTerms(store);
-      break;
-    case "importAccounts": {
-      store.dispatch(importAccounts({ active: msg.payload }));
-      break;
-    }
-    case "mockDeviceEvent": {
-      msg.payload.forEach(e => mockDeviceEventSubject.next(e));
-      break;
-    }
-    case "importSettings": {
-      store.dispatch(importSettings(msg.payload));
-      break;
-    }
-    case "importBle": {
-      store.dispatch(importBle(msg.payload));
-      break;
-    }
-    case "navigate":
-      navigate(msg.payload, {});
-      break;
-    case "addUSB":
-      DeviceEventEmitter.emit("onDeviceConnect", msg.payload);
-      break;
-    case "getLogs":
-      const payload = JSON.stringify(logReport.getLogs());
-
-      ws.send(
-        JSON.stringify({
+    switch (msg.type) {
+      case "setGlobals":
+        Object.entries(msg.payload).forEach(([k, v]) => {
+          //  @ts-expect-error global bullshit
+          global[k] = v;
+        });
+        break;
+      case "acceptTerms":
+        acceptGeneralTerms(store);
+        break;
+      case "importAccounts": {
+        store.dispatch(importAccounts({ active: msg.payload }));
+        break;
+      }
+      case "mockDeviceEvent": {
+        msg.payload.forEach(e => mockDeviceEventSubject.next(e));
+        break;
+      }
+      case "importSettings": {
+        store.dispatch(importSettings(msg.payload));
+        break;
+      }
+      case "importBle": {
+        store.dispatch(importBle(msg.payload));
+        break;
+      }
+      case "navigate":
+        navigate(msg.payload, {});
+        break;
+      case "addUSB":
+        DeviceEventEmitter.emit("onDeviceConnect", msg.payload);
+        break;
+      case "getLogs": {
+        const payload = JSON.stringify(logReport.getLogs());
+        postMessage({
           type: "appLogs",
           fileName: msg.fileName,
           payload,
-        }),
-      );
-    default:
-      break;
+        });
+        break;
+      }
+      default:
+        break;
+    }
+    postMessage({ type: "ACK", id: msg.id });
+  } catch (error) {
+    log(`Error processing message: ${error}`);
   }
 }
 
 export function sendWalletAPIResponse(payload: Record<string, unknown>) {
-  ws.send(
-    JSON.stringify({
-      type: "walletAPIResponse",
-      payload,
-    }),
-  );
+  postMessage({
+    type: "walletAPIResponse",
+    payload,
+  });
+}
+
+async function postMessage(message: ServerData) {
+  log(`Message sending\n${JSON.stringify(message, null, 2)}`);
+  try {
+    if (ws) {
+      ws.send(JSON.stringify(message));
+    } else {
+      log("WebSocket connection is not open. Message not sent.");
+    }
+  } catch (error: unknown) {
+    log(`Error occurred while waiting for WebSocket connection: ${JSON.stringify(error)}`);
+  }
 }
 
 function log(message: string) {

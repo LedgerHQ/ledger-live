@@ -2,10 +2,10 @@ import { Transaction as algorandTransaction } from "@ledgerhq/coin-algorand/type
 import { TransactionRaw as algorandTransactionRaw } from "@ledgerhq/coin-algorand/types";
 import { TransactionStatus as algorandTransactionStatus } from "@ledgerhq/coin-algorand/types";
 import { TransactionStatusRaw as algorandTransactionStatusRaw } from "@ledgerhq/coin-algorand/types";
-import { Transaction as bitcoinTransaction } from "../families/bitcoin/types";
-import { TransactionRaw as bitcoinTransactionRaw } from "../families/bitcoin/types";
-import { TransactionStatus as bitcoinTransactionStatus } from "../families/bitcoin/types";
-import { TransactionStatusRaw as bitcoinTransactionStatusRaw } from "../families/bitcoin/types";
+import { Transaction as bitcoinTransaction } from "@ledgerhq/coin-bitcoin/types";
+import { TransactionRaw as bitcoinTransactionRaw } from "@ledgerhq/coin-bitcoin/types";
+import { TransactionStatus as bitcoinTransactionStatus } from "@ledgerhq/coin-bitcoin/types";
+import { TransactionStatusRaw as bitcoinTransactionStatusRaw } from "@ledgerhq/coin-bitcoin/types";
 import { Transaction as cardanoTransaction } from "../families/cardano/types";
 import { TransactionRaw as cardanoTransactionRaw } from "../families/cardano/types";
 import { TransactionStatus as cardanoTransactionStatus } from "../families/cardano/types";

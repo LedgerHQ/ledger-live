@@ -1,0 +1,30 @@
+{
+  "entry": [
+    "src/cli-transaction.ts",
+    "src/deviceTransactionConfig.ts",
+    "src/errors.ts",
+    "src/hw-getAddress.ts",
+    "src/hw-signMessage.ts",
+    "src/logic.ts",
+    "src/specs.ts",
+    "src/transaction.ts",
+    "src/api/gasTracker/index.ts",
+    "src/api/node/rpc.native.ts",
+    "src/bridge/js.ts",
+    "src/editTransaction/index.ts",
+    "src/operation.ts",
+    "src/config.ts"
+  ],
+  "ignoreUnimported": ["src/__tests__/*", "**/*.test.*", "**/*.spec.*", "src/datasets/ethereum1.ts"],
+  "ignoreUnresolved": [
+    "@ethersproject/bytes",
+    "@ethersproject/logger",
+    "@ethersproject/bignumber",
+    "@ethersproject/properties",
+    "@ethersproject/address",
+    "@ethersproject/constants",
+    "@ethersproject/strings",
+    "@ethersproject/hash",
+    "@ethersproject/keccak256"
+  ]
+}
