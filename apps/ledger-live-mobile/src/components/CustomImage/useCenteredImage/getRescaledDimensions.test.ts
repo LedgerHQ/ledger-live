@@ -98,7 +98,6 @@ describe("getRescaledDimensions", () => {
       ]);
     }
     const testCases = generateNRandomDimensionsPairs(100, 1000);
-    console.log(testCases);
     testCases.forEach(([imageDimensions, containerDimensions]) => {
       const result = getRescaledDimensions(imageDimensions, containerDimensions);
       expect(result.width).toBeGreaterThanOrEqual(containerDimensions.width);

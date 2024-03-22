@@ -3,18 +3,24 @@ import { ImageDimensions } from "../types";
 /**
  * Returns the parameters to crop an image in the center.
  * @param imageDimensions The dimensions of the image to crop
- * @param containerDimensions The dimensions of the container to crop in
+ * @param cropDimensions The dimensions of the container to crop in
  * @returns The parameters to crop the image in the center
  */
 
 export function getCenteredCropParams(
   imageDimensions: ImageDimensions,
-  containerDimensions: ImageDimensions,
+  cropDimensions: ImageDimensions,
 ): { originX: number; originY: number; width: number; height: number } {
+  if (
+    cropDimensions.width > imageDimensions.width ||
+    cropDimensions.height > imageDimensions.height
+  ) {
+    throw new Error("The cropping dimensions must be smaller than the image dimensions");
+  }
   return {
-    width: containerDimensions.width,
-    height: containerDimensions.height,
-    originX: Math.abs(Math.floor((containerDimensions.width - imageDimensions.width) / 2)),
-    originY: Math.abs(Math.floor((containerDimensions.height - imageDimensions.height) / 2)),
+    width: cropDimensions.width,
+    height: cropDimensions.height,
+    originX: Math.abs(Math.floor((cropDimensions.width - imageDimensions.width) / 2)),
+    originY: Math.abs(Math.floor((cropDimensions.height - imageDimensions.height) / 2)),
   };
 }
