@@ -5,8 +5,10 @@ import {
   ImageSizeLoadingError,
   ImageResizeError,
 } from "@ledgerhq/live-common/customImage/errors";
-import { ImageBase64Data, ImageDimensions } from "./types";
-import { loadImageSizeAsync } from "./imageUtils";
+import { ImageBase64Data, ImageDimensions } from "../types";
+import { loadImageSizeAsync } from "../imageUtils";
+import { getRescaledDimensions } from "./getRescaledDimensions";
+import { getCenteredCropParams } from "./getCenteredCropParams";
 
 export type CenteredResult = ImageBase64Data & ImageDimensions;
 
@@ -30,7 +32,6 @@ export type Params = {
  *  - outputs the resulting image as a base64 data URI.
  *
  * */
-
 function useCenteredImage(params: Params) {
   const { imageUri, targetDimensions, onError, onResult } = params;
   useEffect(() => {
@@ -54,30 +55,11 @@ function useCenteredImage(params: Params) {
         height: realImageDimensions.height / 2,
       };
 
-      const getImageRatio = (dimensions: ImageDimensions) => dimensions.height / dimensions.width;
+      const resizedImageDimensions = getRescaledDimensions(imageDimensions, targetDimensions);
 
-      const targetRatio = getImageRatio(targetDimensions);
-      const imageRatio = getImageRatio(imageDimensions);
+      const cropParams = getCenteredCropParams(resizedImageDimensions, targetDimensions);
 
-      const limitingDimensions = targetRatio < imageRatio ? "width" : "height";
-
-      const resizeRatio =
-        limitingDimensions === "width"
-          ? targetDimensions.width / imageDimensions.width
-          : targetDimensions.height / imageDimensions.height;
-
-      const resizedImageDimensions = {
-        width: Math.floor(imageDimensions.width * resizeRatio),
-        height: Math.floor(imageDimensions.height * resizeRatio),
-      };
-
-      const cropParams = {
-        ...targetDimensions,
-        originX: Math.abs(Math.floor((targetDimensions.width - resizedImageDimensions.width) / 2)),
-        originY: Math.abs(
-          Math.floor((targetDimensions.height - resizedImageDimensions.height) / 2),
-        ),
-      };
+      // return;
 
       if (dead) return;
       return manipulateAsync(imageUri, [{ resize: resizedImageDimensions }], {
