@@ -14,6 +14,7 @@ export type Props = {
   setOrder: Dispatch<SetStateAction<Order>>;
   isLoading: boolean;
   hasError: boolean;
+  top: number;
 };
 
 /**
@@ -31,6 +32,7 @@ export type PropsBody = {
   data: MarketItemPerformer[];
   order: Order;
   range: PortfolioRange;
+  top: number;
 };
 
 export type PropsBodyElem = {

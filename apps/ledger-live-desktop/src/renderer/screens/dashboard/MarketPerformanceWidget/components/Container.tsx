@@ -21,6 +21,7 @@ export function MarketPerformanceWidgetContainer({
   range,
   isLoading,
   hasError,
+  top,
 }: Props) {
   const Body = BodyByMode[variant];
 
@@ -44,9 +45,11 @@ export function MarketPerformanceWidgetContainer({
           <Error
             title={"dashboard.marketPerformanceWidget.error.title"}
             description={"dashboard.marketPerformanceWidget.error.description"}
+            top={top}
+            range={range}
           />
         ) : (
-          <Body data={list} order={order} range={range} />
+          <Body data={list} order={order} range={range} top={top} />
         )}
       </Flex>
 

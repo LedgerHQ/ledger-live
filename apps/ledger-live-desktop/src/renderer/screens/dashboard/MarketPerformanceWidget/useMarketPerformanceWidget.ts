@@ -42,5 +42,6 @@ export function useMarketPerformanceWidget() {
     isLoading,
     hasError: isError,
     range: timeRange,
+    top,
   };
 }
