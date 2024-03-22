@@ -48,29 +48,6 @@ export type TokenAccount = {
   }>;
 };
 
-/** A child account belongs to an Account but has its own address */
-export type ChildAccount = {
-  type: "ChildAccount";
-  id: string;
-  name: string;
-  starred: boolean;
-  // id of the parent account this token account belongs to
-  parentId: string;
-  currency: CryptoCurrency;
-  address: string;
-  balance: BigNumber;
-  creationDate: Date;
-  operationsCount: number;
-  operations: Operation[];
-  pendingOperations: Operation[];
-  // Cache of balance history that allows a performant portfolio calculation.
-  // currently there are no "raw" version of it because no need to at this stage.
-  // could be in future when pagination is needed.
-  balanceHistoryCache: BalanceHistoryCache;
-  // Swap operations linked to this account
-  swapHistory: SwapOperation[];
-};
-
 /** */
 export type Address = {
   address: string;
@@ -166,7 +143,7 @@ export type Account = {
   // I'm just inside the Ethereum 1: { account: Ethereum 1, parentAccount: undefined }
   // "account" is the primary account that you use/select/view. It is a `AccountLike`.
   // "parentAccount", if available, is the contextual account. It is a `?Account`.
-  subAccounts?: SubAccount[];
+  subAccounts?: TokenAccount[];
   // Cache of balance history that allows a performant portfolio calculation.
   // currently there are no "raw" version of it because no need to at this stage.
   // could be in future when pagination is needed.
@@ -180,16 +157,18 @@ export type Account = {
   nfts?: ProtoNFT[];
 };
 
-/** super type that is either a token or a child account */
-export type SubAccount = TokenAccount | ChildAccount;
+/**
+ * deprecated use TokenAccount instead
+ */
+export type SubAccount = TokenAccount;
 
 /** One of the Account type */
-export type AccountLike = Account | SubAccount;
+export type AccountLike = Account | TokenAccount;
 
 /**
  * An array of AccountLikes
  */
-export type AccountLikeArray = AccountLike[] | TokenAccount[] | ChildAccount[] | Account[];
+export type AccountLikeArray = AccountLike[] | TokenAccount[] | Account[];
 
 /** */
 export type TokenAccountRaw = {
@@ -210,24 +189,6 @@ export type TokenAccountRaw = {
     sender: string;
     value: string;
   }>;
-};
-
-/** */
-export type ChildAccountRaw = {
-  type: "ChildAccountRaw";
-  id: string;
-  name: string;
-  starred?: boolean;
-  parentId: string;
-  currencyId: string;
-  address: string;
-  creationDate?: string;
-  operationsCount?: number;
-  operations: OperationRaw[];
-  pendingOperations: OperationRaw[];
-  balance: string;
-  balanceHistoryCache?: BalanceHistoryCache;
-  swapHistory?: SwapOperationRaw[];
 };
 
 /** */
@@ -256,7 +217,7 @@ export type AccountRaw = {
   pendingOperations: OperationRaw[];
   unitMagnitude: number;
   lastSyncDate: string;
-  subAccounts?: SubAccountRaw[];
+  subAccounts?: TokenAccountRaw[];
   balanceHistoryCache?: BalanceHistoryCache;
   swapHistory?: SwapOperationRaw[];
   syncHash?: string;
@@ -264,10 +225,7 @@ export type AccountRaw = {
 };
 
 /** */
-export type SubAccountRaw = TokenAccountRaw | ChildAccountRaw;
-
-/** */
-export type AccountRawLike = AccountRaw | SubAccountRaw;
+export type AccountRawLike = AccountRaw | TokenAccountRaw;
 
 /** */
 export type AccountIdParams = {

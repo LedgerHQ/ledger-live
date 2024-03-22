@@ -95,13 +95,7 @@ const exec = async (opts: SwapJobOpts) => {
     showCode: true,
   });
 
-  if (fromAccount.type !== "ChildAccount") {
-    console.log(
-      "\t:balance:\t",
-      fromAccount.spendableBalance.toString(),
-      ` [ ${formattedAmount} ]`,
-    );
-  }
+  console.log("\t:balance:\t", fromAccount.spendableBalance.toString(), ` [ ${formattedAmount} ]`);
 
   invariant(fromAccount.balance.gte(new BigNumber(amount)), `✖ Not enough balance`);
   console.log("• Open the destination currency app");

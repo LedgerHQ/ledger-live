@@ -240,7 +240,8 @@ export const accountSelector = createSelector(
 );
 export const parentAccountSelector = createSelector(
   accountsSelector,
-  (_: State, { account }: { account?: SubAccount }) => (account ? account.parentId : null),
+  (_: State, { account }: { account?: AccountLike }) =>
+    account && account.type !== "Account" ? account.parentId : null,
   (accounts, accountId) => accounts.find(a => a.id === accountId),
 );
 export const accountScreenSelector =

@@ -28,7 +28,6 @@ import {
   findTokenAccountByCurrency,
   isAccount,
   isTokenAccount,
-  isChildAccount,
   isSubAccount,
   getParentAccount,
 } from "@ledgerhq/coin-framework/account/helpers";
@@ -57,7 +56,6 @@ export {
   findTokenAccountByCurrency,
   isAccount,
   isTokenAccount,
-  isChildAccount,
   isSubAccount,
   getParentAccount,
 };
