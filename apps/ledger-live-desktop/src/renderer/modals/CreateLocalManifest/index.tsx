@@ -18,6 +18,7 @@ import { useLocalLiveAppContext } from "@ledgerhq/live-common/platform/providers
 import Switch from "~/renderer/components/Switch";
 import FormLiveAppInput from "./FormLiveAppInput";
 import NestedFormCategory from "./NestedFormCategory";
+import updateObjectAtPath from "lodash/set";
 
 const DEFAULT_FORM: LiveAppManifest = {
   id: "ReplaceAppName",
@@ -87,44 +88,6 @@ function createLocalManifest() {
   );
 }
 
-function updateObjectAtPath<T extends Record<string, unknown>>(
-  obj: T,
-  path: string,
-  newValue: unknown,
-): T {
-  const pathArray = path.split(".");
-  let current: T = obj;
-
-  for (let i = 0; i < pathArray.length - 1; i++) {
-    if (current[pathArray[i]] === undefined) {
-      console.error(`Path "${path}" does not exist in the object.`);
-      return obj; // Return the original object and log an error
-    }
-    current[pathArray[i] as keyof T] = Array.isArray(current[pathArray[i]])
-      ? [...current[pathArray[i]]]
-      : { ...current[pathArray[i]] }; // Create a shallow copy of the nested object or array
-    current = current[pathArray[i]];
-  }
-
-  const lastKey = pathArray[pathArray.length - 1];
-  const lastIndex = lastKey.match(/\[(\d+)\]$/); // Check if the last key ends with '[index]'
-  if (lastIndex && Array.isArray(current)) {
-    // If the last key is an array index and the property is an array
-    const index = parseInt(lastIndex[1]);
-    if (index >= current.length) {
-      console.error(`Index "${index}" out of bounds for path "${path}".`);
-      return obj; // Return the original object and log an error
-    }
-    current = [...current] as unknown as T; // Create a shallow copy of the array
-    current[index as keyof T] = { ...current[index] }; // Create a shallow copy of the object at the specified index
-    current[index][lastKey.substring(0, lastKey.indexOf("["))] = newValue; // Update the value at the specified index
-  } else {
-    current[lastKey] = newValue; // Update the value
-  }
-
-  return { ...obj }; // Return a shallow copy of the modified object
-}
-
 function FormLocalManifest({
   data,
   onClose,
@@ -150,7 +113,7 @@ function FormLocalManifest({
 
   const handleChange = (path: string, value: unknown) => {
     setForm((prevState: LiveAppManifest) => {
-      return updateObjectAtPath(prevState, path, value);
+      return updateObjectAtPath({ ...prevState }, path, value);
     });
   };
 
@@ -230,8 +193,7 @@ function FormLocalManifest({
                                   return form.dapp?.networks.map(
                                     (networks: LiveAppManifestParamsNetwork, index: number) => {
                                       return (
-                                        // eslint-disable-next-line react/jsx-key
-                                        <NestedFormCategory>
+                                        <NestedFormCategory key={dappKey + index}>
                                           <Text ff="Inter|Bold" fontSize={4}>
                                             {`${dappKey} ${index + 1}`}
                                           </Text>
@@ -254,17 +216,16 @@ function FormLocalManifest({
                                               const path = `${key}.${dappKey}.${index}.${networkKey}`;
 
                                               return (
-                                                <>
-                                                  <FormLiveAppInput
-                                                    type={typeof value}
-                                                    fieldName={networkKey}
-                                                    value={value}
-                                                    optional={optional}
-                                                    parseCheck={parseCheck}
-                                                    path={path}
-                                                    handleChange={handleChange}
-                                                  />
-                                                </>
+                                                <FormLiveAppInput
+                                                  key={networkKey}
+                                                  type={typeof value}
+                                                  fieldName={networkKey}
+                                                  value={value}
+                                                  optional={optional}
+                                                  parseCheck={parseCheck}
+                                                  path={path}
+                                                  handleChange={handleChange}
+                                                />
                                               );
                                             })}
                                         </NestedFormCategory>
@@ -349,10 +310,11 @@ function FormLocalManifest({
                     const value = form[key];
                     const isArray = Array.isArray(value);
                     const valueType = isArray ? "array separated by comma" : typeof value;
-
-                    const parseCheck = LiveAppManifestSchema.shape[key].safeParse(value).success;
-                    const optional = LiveAppManifestSchema.shape[key].isOptional();
+                    const formKeySchema = LiveAppManifestSchema.pick({ [key]: true });
+                    const parseCheck = formKeySchema.safeParse({ [key]: value }).success;
+                    const optional = formKeySchema.isOptional();
                     const path = `${key}`;
+
                     return (
                       <>
                         <FormLiveAppInput
@@ -381,7 +343,6 @@ function FormLocalManifest({
                     formIsValid && addLocalManifest(form);
                     onClose();
                   }}
-                  data-test-id="settings-enable-platform-dev-tools-apps"
                 >
                   {
                     <Trans
