@@ -1,0 +1,132 @@
+{
+  "nested": {
+    "ledger_swap": {
+      "nested": {
+        "NewTransactionResponse": {
+          "fields": {
+            "payinAddress": {
+              "type": "string",
+              "id": 1
+            },
+            "payinExtraId": {
+              "type": "string",
+              "id": 2
+            },
+            "refundAddress": {
+              "type": "string",
+              "id": 3
+            },
+            "refundExtraId": {
+              "type": "string",
+              "id": 4
+            },
+            "payoutAddress": {
+              "type": "string",
+              "id": 5
+            },
+            "payoutExtraId": {
+              "type": "string",
+              "id": 6
+            },
+            "currencyFrom": {
+              "type": "string",
+              "id": 7
+            },
+            "currencyTo": {
+              "type": "string",
+              "id": 8
+            },
+            "amountToProvider": {
+              "type": "bytes",
+              "id": 9
+            },
+            "amountToWallet": {
+              "type": "bytes",
+              "id": 10
+            },
+            "deviceTransactionId": {
+              "type": "string",
+              "id": 11
+            },
+            "deviceTransactionIdNg": {
+              "type": "bytes",
+              "id": 12
+            }
+          }
+        },
+        "UDecimal": {
+          "fields": {
+            "coefficient": {
+              "type": "bytes",
+              "id": 1
+            },
+            "exponent": {
+              "type": "uint32",
+              "id": 2
+            }
+          }
+        },
+        "NewSellResponse": {
+          "fields": {
+            "traderEmail": {
+              "type": "string",
+              "id": 1
+            },
+            "inCurrency": {
+              "type": "string",
+              "id": 2
+            },
+            "inAmount": {
+              "type": "bytes",
+              "id": 3
+            },
+            "inAddress": {
+              "type": "string",
+              "id": 4
+            },
+            "outCurrency": {
+              "type": "string",
+              "id": 5
+            },
+            "outAmount": {
+              "type": "UDecimal",
+              "id": 6
+            },
+            "deviceTransactionId": {
+              "type": "bytes",
+              "id": 7
+            }
+          }
+        },
+        "NewFundResponse": {
+          "fields": {
+            "userId": {
+              "type": "string",
+              "id": 1
+            },
+            "accountName": {
+              "type": "string",
+              "id": 2
+            },
+            "inCurrency": {
+              "type": "string",
+              "id": 3
+            },
+            "inAmount": {
+              "type": "bytes",
+              "id": 4
+            },
+            "inAddress": {
+              "type": "string",
+              "id": 5
+            },
+            "deviceTransactionId": {
+              "type": "bytes",
+              "id": 6
+            }
+          }
+        }
+      }
+    }
+  }
+}
