@@ -1,4 +1,5 @@
-import { loadSync } from "protobufjs";
+import protobuf from "protobufjs";
+import * as protoJson from "./generate-protocol.json";
 
 type SwapProtobufPayload = {
   payinAddress: string;
@@ -34,9 +35,8 @@ export type SwapPayload = {
 
 export async function decodePayloadProtobuf(hexBinaryPayload: string): Promise<SwapPayload> {
   const buffer = Buffer.from(hexBinaryPayload, "hex");
-  const protoFilePath = "protocol.proto";
-  const root = loadSync(protoFilePath);
-  const TransactionResponse = root.lookupType("ledger_swap.NewTransactionResponse");
+  const root: { [key: string]: any } = protobuf.Root.fromJSON(protoJson) || {};
+  const TransactionResponse = root?.nested.ledger_swap?.NewTransactionResponse;
   const err = TransactionResponse.verify(buffer);
   if (err) {
     throw Error(err);

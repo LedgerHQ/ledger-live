@@ -1,7 +1,7 @@
 import { decodePayloadProtobuf } from "./SwapUtils"; // Asegúrate de proporcionar la ruta correcta
 
 describe("decodePayloadProtobuf function", () => {
-  test("should decode NewTransactionResponse correctly with device transaction id", async () => {
+  test("should decode NewTransactionResponse correctly without device transaction id", async () => {
     const binaryPayload =
       "0a2a3078393736633339353463356462626633396135393135313064623332643266386363323235323830371a2a3078636361454263423338373661373561623945393639373530353861413735343633373733303239632a2a626331717164796b647738753336796864736c657477737976347865393573333735716a6a7934676b303a0345544842034254434a10000000000000000001118f178fb48000521000000000000000000000000000080e355a0a5552554f4b5149424f42";
     const decodedPayload = await decodePayloadProtobuf(binaryPayload);
