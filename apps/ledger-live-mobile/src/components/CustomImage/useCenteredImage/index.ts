@@ -59,8 +59,6 @@ function useCenteredImage(params: Params) {
 
       const cropParams = getCenteredCropParams(resizedImageDimensions, targetDimensions);
 
-      // return;
-
       if (dead) return;
       return manipulateAsync(imageUri, [{ resize: resizedImageDimensions }], {
         compress: 1,
