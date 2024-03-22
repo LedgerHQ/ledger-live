@@ -52,6 +52,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "",
   },
+  AA_ZERODEV_PROJECTID_POLYGON_MUMBAI: {
+    def: "",
+    parser: stringParser,
+    desc: "",
+  },
   AA_ZERODEV_PROJECTID_ARBITRUM_SEPOLIA: {
     def: "",
     parser: stringParser,

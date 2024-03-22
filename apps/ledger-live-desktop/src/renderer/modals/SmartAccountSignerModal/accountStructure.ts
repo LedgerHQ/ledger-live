@@ -5,13 +5,20 @@ import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 export const buildAccount = async (
   address: string,
   email: string,
-  chain: "ethereum_sepolia" | "polygon",
+  chain: string,
   securedWithLedger = false,
 ) => {
   // TODO: infer
   console.log(`building account for ${address} - ${email} - ${chain}`);
   // const chainName = "Ethereum Sepolia";
-  const currency = getCryptoCurrencyById(chain);
+  let currency;
+  if (chain === "polygon_mumbai") {
+    currency = getCryptoCurrencyById("polygon");
+  } else if (chain === "optimism_sepolia") {
+    currency = getCryptoCurrencyById("optimism");
+  } else {
+    currency = getCryptoCurrencyById(chain);
+  }
   const infos = {
     currency,
     index: 0,

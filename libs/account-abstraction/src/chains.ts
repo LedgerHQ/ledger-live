@@ -1,6 +1,13 @@
 import { getEnv } from "@ledgerhq/live-env";
 import { Chain, Transport, createPublicClient, http, webSocket } from "viem";
-import { arbitrumSepolia, baseSepolia, optimismSepolia, polygon, sepolia } from "viem/chains";
+import {
+  arbitrumSepolia,
+  baseSepolia,
+  optimismSepolia,
+  polygon,
+  polygonMumbai,
+  sepolia,
+} from "viem/chains";
 
 const PROJECT_ID = getEnv("AA_ZERODEV_PROJECTID");
 const BUNDLER_RPC_SEPOLIA = `https://rpc.zerodev.app/api/v2/bundler/${PROJECT_ID}`;
@@ -9,6 +16,10 @@ const PAYMASTER_RPC_SEPOLIA = `https://rpc.zerodev.app/api/v2/paymaster/${PROJEC
 const PROJECT_ID_POLYGON = getEnv("AA_ZERODEV_PROJECTID_POLYGON");
 const BUNDLER_RPC_POLYGON = `https://rpc.zerodev.app/api/v2/bundler/${PROJECT_ID_POLYGON}`;
 const PAYMASTER_RPC_POLYGON = `https://rpc.zerodev.app/api/v2/paymaster/${PROJECT_ID_POLYGON}`;
+
+const PROJECT_ID_POLYGON_MUMBAI = getEnv("AA_ZERODEV_PROJECTID_POLYGON_MUMBAI");
+const BUNDLER_RPC_POLYGON_MUMBAI = `https://rpc.zerodev.app/api/v2/bundler/${PROJECT_ID_POLYGON_MUMBAI}`;
+const PAYMASTER_RPC_POLYGON_MUMBAI = `https://rpc.zerodev.app/api/v2/paymaster/${PROJECT_ID_POLYGON_MUMBAI}`;
 
 const PROJECT_ID_ARBITRUM_SEPOLIA = getEnv("AA_ZERODEV_PROJECTID_ARBITRUM_SEPOLIA");
 const BUNDLER_RPC_ARBITRUM_SEPOLIA = `https://rpc.zerodev.app/api/v2/bundler/${PROJECT_ID_ARBITRUM_SEPOLIA}`;
@@ -30,6 +41,10 @@ const publicClientPolygon = createPublicClient({
   transport: http(BUNDLER_RPC_POLYGON),
 });
 
+const publicClientPolygonMumbai = createPublicClient({
+  transport: http(BUNDLER_RPC_POLYGON_MUMBAI),
+});
+
 const publicClientArbitrumSepolia = createPublicClient({
   transport: http(BUNDLER_RPC_ARBITRUM_SEPOLIA),
 });
@@ -45,6 +60,7 @@ const publicClientBaseSepolia = createPublicClient({
 export type ChainsSupported =
   | "ethereum_sepolia"
   | "polygon"
+  | "polygon_mumbai"
   | "arbitrum_sepolia"
   | "optimism_sepolia"
   | "base_sepolia";
@@ -106,6 +122,25 @@ export const chains: ChainsData = {
     blockScoutName: "polygon",
     client: publicClientPolygon,
   },
+
+  polygon_mumbai: {
+    chain: polygonMumbai,
+    name: "polygon_mumbai",
+    cryptoCurrencyId: "polygon",
+    readableName: "Polygon",
+    id: polygonMumbai.id,
+    // rpc: http(polygonMumbai.rpcUrls.default.http[0]),
+    rpc: webSocket("wss://polygon-bor-rpc.publicnode.com"),
+    zerodev: {
+      projectId: PROJECT_ID_POLYGON_MUMBAI,
+      bundler: BUNDLER_RPC_POLYGON_MUMBAI,
+      paymaster: PAYMASTER_RPC_POLYGON_MUMBAI,
+    },
+    hasWeightedEcdsaValidator: true,
+    explorer: polygonMumbai.blockExplorers.default.url,
+    blockScoutName: "",
+    client: publicClientPolygonMumbai,
+  },
   arbitrum_sepolia: {
     chain: arbitrumSepolia,
     name: "arbitrum_sepolia",
@@ -139,7 +174,7 @@ export const chains: ChainsData = {
     explorer: optimismSepolia.blockExplorers.default.url,
     blockScoutName: "optimism-sepolia",
     client: publicClientOptimismSepolia,
-  },  
+  },
   base_sepolia: {
     chain: baseSepolia,
     name: "base_sepolia",
@@ -156,5 +191,5 @@ export const chains: ChainsData = {
     explorer: baseSepolia.blockExplorers.default.url,
     blockScoutName: "base-sepolia",
     client: publicClientBaseSepolia,
-  },  
+  },
 };

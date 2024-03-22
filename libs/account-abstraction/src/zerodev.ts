@@ -105,6 +105,7 @@ export async function safeMint({
   try {
     const chainData = chains[chainName];
     const kernelClient = smartAccounts[chainData.id][saAddress];
+    console.log({ chainName, saAddress, chainData });
     console.log({ kernelClient });
     const accountAddress = kernelClient.account.address;
 
@@ -144,7 +145,12 @@ type sendTxArgs = {
   value: string;
 };
 export async function sendTx({ from, chainId, to, value }: sendTxArgs) {
-  const kernelClient = smartAccounts[`${chainId}`][from];
+  console.log({ from, chainId, to, value });
+  let properChainId = chainId;
+  if (`${chainId}` === "137") {
+    properChainId = "80001";
+  }
+  const kernelClient = smartAccounts[`${properChainId}`][from];
   const tx = {
     value,
     to,

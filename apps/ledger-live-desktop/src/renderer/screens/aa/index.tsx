@@ -79,6 +79,9 @@ export default function AccountAbstraction({ location: { state } }) {
     if (account.currency.id === "ethereum") {
       return "ethereum_sepolia";
     }
+    if (account.currency.id === "polygon") {
+      return "polygon_mumbai";
+    }
     if (account.currency.id === "optimism") {
       return "optimism_sepolia";
     }
@@ -161,7 +164,7 @@ export default function AccountAbstraction({ location: { state } }) {
           setAddress(user.address);
           setLoggedEmail(user.email || "");
           await handleConnect(user.email || "");
-          fetchValidUntil()
+          fetchValidUntil();
         }
       }
     };
@@ -182,8 +185,6 @@ export default function AccountAbstraction({ location: { state } }) {
   const mintNft = <MintNftActionDefault onClick={handleMint} />;
 
   const pickAccount = async () => {
-    // const eth = getCryptoCurrencyById("ethereum");
-    // const polygon = getCryptoCurrencyById("polygon");
     const chainsToDisplay = Object.values(chains).map(chain =>
       getCryptoCurrencyById(chain.cryptoCurrencyId),
     );
@@ -349,6 +350,29 @@ export default function AccountAbstraction({ location: { state } }) {
                       ff="Inter|SemiBold"
                       onClick={() => {
                         openURL(`${explorer}/tx/${mintTransactionHash}`);
+                      }}
+                      label={mintTransactionHash}
+                    />
+                  )}
+                </Text>
+              </Flex>
+
+              <Flex>
+                <Box width={20}>
+                  {mintTransactionHash && <IconCheck color={colors.positiveGreen} size={16} />}
+                </Box>
+                <Text color="palette.text.shade80" ff="Inter|SemiBold" fontSize={4}>
+                  All your nfts (works bests on polygon):{" "}
+                  {mintTransactionHash && (
+                    <LabelWithExternalIcon
+                      color="wallet"
+                      ff="Inter|SemiBold"
+                      onClick={() => {
+                        openURL(
+                          `${explorer}/address/${
+                            multisigSaAddress ? multisigSaAddress : saAddress
+                          }#nfttransfers`,
+                        );
                       }}
                       label={mintTransactionHash}
                     />
