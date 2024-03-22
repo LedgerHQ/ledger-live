@@ -10,7 +10,7 @@ export { HttpManagerApiRepository } from "./managerApi/repositories/HttpManagerA
 export { StubManagerApiRepository } from "./managerApi/repositories/StubManagerApiRepository";
 export { getLatestFirmwareForDevice } from "./managerApi/use-cases/getLatestFirmwareForDevice";
 export { isDeviceLocalizationSupported } from "./commands/use-cases/isDeviceLocalizationSupported";
-export { getProviderIdUseCase } from "./managerApi/use-cases/getProviderIdUseCase";
+export { PROVIDERS, getProviderIdUseCase } from "./managerApi/use-cases/getProviderIdUseCase";
 export { fetchMcus } from "./managerApi/use-cases/fetchMcus";
 // src/commands/
 export { GET_VERSION_APDU } from "./commands/use-cases/getVersion";

@@ -3,8 +3,9 @@ import { DeviceInfo } from "@ledgerhq/types-live";
 import { getProviderId } from "../../manager/index";
 import { getEnv } from "@ledgerhq/live-env";
 import { HttpManagerApiRepositoryFactory } from "../factories/HttpManagerApiRepositoryFactory";
-import { ManagerApiRepository, getLatestFirmwareForDevice } from "@ledgerhq/device-core";
+import { type ManagerApiRepository, getLatestFirmwareForDevice } from "@ledgerhq/device-core";
 
+export type { FirmwareUpdateContextEntity } from "@ledgerhq/device-core";
 export function getLatestFirmwareForDeviceUseCase(
   deviceInfo: DeviceInfo,
   managerApiRepository: ManagerApiRepository = HttpManagerApiRepositoryFactory.getInstance(),

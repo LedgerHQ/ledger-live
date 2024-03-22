@@ -1,1 +1,1 @@
-export { getProviderIdUseCase } from "@ledgerhq/device-core";
+export { PROVIDERS, getProviderIdUseCase } from "@ledgerhq/device-core";
