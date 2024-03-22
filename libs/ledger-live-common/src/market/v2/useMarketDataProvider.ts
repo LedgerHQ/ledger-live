@@ -17,7 +17,7 @@ import { listCryptoCurrencies, listSupportedCurrencies, listTokens } from "../..
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { useMemo } from "react";
 
-import { format } from "../utils/currencyFormatter";
+import { currencyFormatter, format } from "../utils/currencyFormatter";
 
 const cryptoCurrenciesList = [...listCryptoCurrencies(), ...listTokens()];
 
@@ -103,6 +103,7 @@ export function useMarketData(props: MarketListRequestParams): MarketListRequest
       queryFn: () => fetchList({ ...props, page }),
       refetchInterval: props.refreshTime ?? REFETCH_TIME,
       staleTime: props.refreshTime ?? REFETCH_TIME,
+      select: data => currencyFormatter(data, props.range ?? "24h", cryptoCurrenciesList),
     })),
     combine: results => {
       return {

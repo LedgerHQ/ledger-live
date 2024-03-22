@@ -36,10 +36,14 @@ test("Market", async ({ page }) => {
   const layout = new Layout(page);
   const liveAppWebview = new LiveAppWebview(page);
 
+  const maskSmallGraph = {
+    mask: [page.locator("data-test-id=market-small-graph")],
+  };
+
   await test.step("go to market", async () => {
     await layout.goToMarket();
     await marketPage.waitForLoadingWithSwapbtn();
-    await expect.soft(page).toHaveScreenshot("market-page-no-scrollbar.png");
+    await expect.soft(page).toHaveScreenshot("market-page-no-scrollbar.png", maskSmallGraph);
   });
 
   await page.route(`${getEnv("LEDGER_COUNTERVALUES_API")}/v2/supported-to`, async route => {
@@ -114,31 +118,31 @@ test("Market", async ({ page }) => {
   await test.step("change countervalue", async () => {
     await marketPage.switchCountervalue("THB");
     await marketPage.waitForLoadingWithSwapbtn();
-    await expect.soft(page).toHaveScreenshot("market-page-thb-countervalue.png");
+    await expect.soft(page).toHaveScreenshot("market-page-thb-countervalue.png", maskSmallGraph);
   });
 
   await test.step("change market range", async () => {
     await marketPage.switchMarketRange("7d");
     await marketPage.waitForLoadingWithSwapbtn();
-    await expect.soft(page).toHaveScreenshot("market-page-7d-range.png");
+    await expect.soft(page).toHaveScreenshot("market-page-7d-range.png", maskSmallGraph);
   });
 
   await test.step("star bitcoin", async () => {
     await marketPage.starCoin("btc");
-    await expect.soft(page).toHaveScreenshot("market-page-btc-star.png");
+    await expect.soft(page).toHaveScreenshot("market-page-btc-star.png", maskSmallGraph);
   });
 
   await test.step("search bi", async () => {
     await marketPage.search("bi");
     await marketPage.waitForLoading();
-    await expect.soft(page).toHaveScreenshot("market-page-search-bi.png");
+    await expect.soft(page).toHaveScreenshot("market-page-search-bi.png", maskSmallGraph);
   });
 
   await test.step("filter starred", async () => {
     await marketPage.toggleStarFilter();
     await marketPage.waitForLoadingWithSwapbtn();
     // await marketPage.waitForSearchBarToBeEmpty(); // windows was showing the search bar still containing text. This wait prevents that
-    await expect.soft(page).toHaveScreenshot("market-page-filter-starred.png");
+    await expect.soft(page).toHaveScreenshot("market-page-filter-starred.png", maskSmallGraph);
   });
 
   await test.step("swap available to bitcoin", async () => {
