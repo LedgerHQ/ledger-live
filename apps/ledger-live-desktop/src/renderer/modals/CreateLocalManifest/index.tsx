@@ -11,6 +11,7 @@ import {
   LiveAppManifestSchema,
   LiveAppManifestDappSchema,
   LiveAppManifestDapp,
+  LiveAppManifestParamsNetwork,
 } from "@ledgerhq/live-common/platform/types";
 import Text from "~/renderer/components/Text";
 import { useLocalLiveAppContext } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
@@ -86,16 +87,20 @@ function createLocalManifest() {
   );
 }
 
-function updateObjectAtPath(obj: LiveAppManifest, path: string, newValue: any): LiveAppManifest {
+function updateObjectAtPath<T extends Record<string, unknown>>(
+  obj: T,
+  path: string,
+  newValue: unknown,
+): T {
   const pathArray = path.split(".");
-  let current = obj;
+  let current: T = obj;
 
   for (let i = 0; i < pathArray.length - 1; i++) {
     if (current[pathArray[i]] === undefined) {
       console.error(`Path "${path}" does not exist in the object.`);
       return obj; // Return the original object and log an error
     }
-    current[pathArray[i]] = Array.isArray(current[pathArray[i]])
+    current[pathArray[i] as keyof T] = Array.isArray(current[pathArray[i]])
       ? [...current[pathArray[i]]]
       : { ...current[pathArray[i]] }; // Create a shallow copy of the nested object or array
     current = current[pathArray[i]];
@@ -110,8 +115,8 @@ function updateObjectAtPath(obj: LiveAppManifest, path: string, newValue: any): 
       console.error(`Index "${index}" out of bounds for path "${path}".`);
       return obj; // Return the original object and log an error
     }
-    current = [...current]; // Create a shallow copy of the array
-    current[index] = { ...current[index] }; // Create a shallow copy of the object at the specified index
+    current = [...current] as unknown as T; // Create a shallow copy of the array
+    current[index as keyof T] = { ...current[index] }; // Create a shallow copy of the object at the specified index
     current[index][lastKey.substring(0, lastKey.indexOf("["))] = newValue; // Update the value at the specified index
   } else {
     current[lastKey] = newValue; // Update the value
@@ -134,14 +139,16 @@ function FormLocalManifest({
   const handleSwitchEthDapp = () => {
     setIsDapp(prevState => !prevState);
     setForm(prevState => {
-      !isDapp ? (prevState.dapp = { ...DEFAULT_FORM.dapp }) : delete prevState.dapp;
+      !isDapp
+        ? (prevState.dapp = { ...DEFAULT_FORM.dapp } as LiveAppManifestDapp)
+        : delete prevState.dapp;
       return prevState;
     });
   };
 
   const formIsValid = useMemo(() => LiveAppManifestSchema.safeParse(form).success, [form]);
 
-  const handleChange = (path: string, value: any) => {
+  const handleChange = (path: string, value: unknown) => {
     setForm((prevState: LiveAppManifest) => {
       return updateObjectAtPath(prevState, path, value);
     });
@@ -176,175 +183,192 @@ function FormLocalManifest({
                   )}
                 </Flex>
 
-                {Object.keys(form).map((key, index) => {
-                  if (key === "content") {
-                    return Object.keys(form[key]).map(contentKey => {
-                      const value = form[key][contentKey]?.en;
-                      const parseCheck = LiveAppManifestSchema.shape.content.shape[
-                        contentKey
-                      ].safeParse({ en: value }).success;
-                      const optional =
-                        LiveAppManifestSchema.shape.content.shape[contentKey].isOptional();
+                {Object.keys(form)
+                  .map(key => key as keyof LiveAppManifest)
+                  .map((key, index) => {
+                    if (key === "content") {
+                      return Object.keys(form[key])
+                        .map(contentKey => contentKey as keyof LiveAppManifest["content"])
+                        .map(contentKey => {
+                          const value = form.content[contentKey]?.en;
+                          if (value === undefined) return <></>;
 
-                      const path = `${key}.${contentKey}.en`;
+                          const parseCheck = LiveAppManifestSchema.shape.content.shape[
+                            contentKey
+                          ].safeParse({ en: value }).success;
+                          const optional =
+                            LiveAppManifestSchema.shape.content.shape[contentKey].isOptional();
+                          const path = `${key}.${contentKey}.en`;
 
+                          return (
+                            <>
+                              <FormLiveAppInput
+                                type={typeof value}
+                                fieldName={contentKey}
+                                value={value}
+                                optional={optional}
+                                parseCheck={parseCheck}
+                                path={path}
+                                handleChange={handleChange}
+                              />
+                            </>
+                          );
+                        });
+                    }
+
+                    if (key === "dapp") {
                       return (
                         <>
-                          <FormLiveAppInput
-                            type={typeof form.content[contentKey].en}
-                            fieldName={contentKey}
-                            value={value}
-                            optional={optional}
-                            parseCheck={parseCheck}
-                            path={path}
-                            handleChange={handleChange}
-                          />
+                          <NestedFormCategory>
+                            <Text ff="Inter|Bold" fontSize={4}>
+                              {`${key} `}
+                            </Text>
+                            {Object.keys(form.dapp!)
+                              .map(dappKey => dappKey as keyof LiveAppManifestDapp)
+                              .map(dappKey => {
+                                if (dappKey === "networks") {
+                                  return form.dapp?.networks.map(
+                                    (networks: LiveAppManifestParamsNetwork, index: number) => {
+                                      return (
+                                        // eslint-disable-next-line react/jsx-key
+                                        <NestedFormCategory>
+                                          <Text ff="Inter|Bold" fontSize={4}>
+                                            {`${dappKey} ${index + 1}`}
+                                          </Text>
+                                          {Object.keys(networks)
+                                            .map(
+                                              networkKey =>
+                                                networkKey as keyof LiveAppManifestParamsNetwork,
+                                            )
+                                            .map(networkKey => {
+                                              const value = form.dapp?.networks[index][networkKey];
+                                              if (value === undefined) return <></>;
+
+                                              const networkKeySchema =
+                                                LiveAppManifestDappSchema.shape[dappKey].element
+                                                  .shape[networkKey];
+
+                                              const optional = networkKeySchema.isOptional();
+                                              const parseCheck =
+                                                networkKeySchema.safeParse(value).success;
+                                              const path = `${key}.${dappKey}.${index}.${networkKey}`;
+
+                                              return (
+                                                <>
+                                                  <FormLiveAppInput
+                                                    type={typeof value}
+                                                    fieldName={networkKey}
+                                                    value={value}
+                                                    optional={optional}
+                                                    parseCheck={parseCheck}
+                                                    path={path}
+                                                    handleChange={handleChange}
+                                                  />
+                                                </>
+                                              );
+                                            })}
+                                        </NestedFormCategory>
+                                      );
+                                    },
+                                  );
+                                }
+
+                                const value = form.dapp![dappKey];
+                                const path = `${key}.${dappKey}`;
+
+                                const parseCheck =
+                                  LiveAppManifestDappSchema.shape[dappKey].safeParse(value).success;
+                                const optional =
+                                  LiveAppManifestDappSchema.shape[dappKey].isOptional();
+
+                                return (
+                                  <>
+                                    <FormLiveAppInput
+                                      type={typeof value}
+                                      fieldName={dappKey}
+                                      value={value}
+                                      optional={optional}
+                                      parseCheck={parseCheck}
+                                      path={path}
+                                      handleChange={handleChange}
+                                      autoFocus={index === 0}
+                                    />
+                                  </>
+                                );
+                              })}
+
+                            <Flex columnGap={2} justifyContent={"center"}>
+                              <Button
+                                small
+                                primary
+                                onClick={() => {
+                                  setForm((prevState: LiveAppManifest) => {
+                                    const newNetwork = [...prevState.dapp!.networks];
+                                    console.log(newNetwork);
+                                    newNetwork.push({ ...DEFAULT_FORM.dapp!.networks[0] });
+                                    return {
+                                      ...prevState,
+                                      dapp: { ...prevState.dapp, networks: newNetwork },
+                                    } as LiveAppManifest;
+                                  });
+                                }}
+                              >
+                                {
+                                  <Trans
+                                    i18nKey={`settings.developer.createLocalAppModal.addNetwork`}
+                                  />
+                                }
+                              </Button>
+                              <Button
+                                small
+                                danger
+                                disabled={form.dapp?.networks.length === 1}
+                                onClick={() => {
+                                  setForm((prevState: LiveAppManifest) => {
+                                    const newNetwork = [...prevState.dapp!.networks];
+                                    newNetwork.pop();
+                                    return {
+                                      ...prevState,
+                                      dapp: { ...prevState.dapp, networks: newNetwork },
+                                    } as LiveAppManifest;
+                                  });
+                                }}
+                              >
+                                {
+                                  <Trans
+                                    i18nKey={`settings.developer.createLocalAppModal.removeNetwork`}
+                                  />
+                                }
+                              </Button>
+                            </Flex>
+                          </NestedFormCategory>
                         </>
                       );
-                    });
-                  }
+                    }
 
-                  if (key === "dapp") {
+                    const value = form[key];
+                    const isArray = Array.isArray(value);
+                    const valueType = isArray ? "array separated by comma" : typeof value;
+
+                    const parseCheck = LiveAppManifestSchema.shape[key].safeParse(value).success;
+                    const optional = LiveAppManifestSchema.shape[key].isOptional();
+                    const path = `${key}`;
                     return (
                       <>
-                        <NestedFormCategory>
-                          <Text ff="Inter|Bold" fontSize={4}>
-                            {`${key} `}
-                          </Text>
-                          {Object.keys(form.dapp as object).map(dappKey => {
-                            if (dappKey === "networks") {
-                              return form[key][dappKey].map(
-                                (networks: LiveAppManifestDapp["networks"], index: number) => {
-                                  return (
-                                    // eslint-disable-next-line react/jsx-key
-                                    <NestedFormCategory>
-                                      <Text ff="Inter|Bold" fontSize={4}>
-                                        {`${dappKey} ${index + 1}`}
-                                      </Text>
-                                      {Object.keys(networks).map(networkKey => {
-                                        const networkKeySchema =
-                                          LiveAppManifestDappSchema.shape[dappKey].element.shape[
-                                            networkKey
-                                          ];
-
-                                        const optional = networkKeySchema.isOptional();
-                                        const value = form[key][dappKey][index][networkKey];
-                                        const parseCheck =
-                                          networkKeySchema.safeParse(value).success;
-                                        const path = `${key}.${dappKey}.${index}.${networkKey}`;
-
-                                        return (
-                                          <>
-                                            <FormLiveAppInput
-                                              type={typeof value}
-                                              fieldName={networkKey}
-                                              value={value}
-                                              optional={optional}
-                                              parseCheck={parseCheck}
-                                              path={path}
-                                              handleChange={handleChange}
-                                            />
-                                          </>
-                                        );
-                                      })}
-                                    </NestedFormCategory>
-                                  );
-                                },
-                              );
-                            }
-
-                            const path = `${key}.${dappKey}`;
-                            const value = form[key][dappKey];
-
-                            const parseCheck =
-                              LiveAppManifestDappSchema.shape[dappKey].safeParse(value).success;
-                            const optional = LiveAppManifestDappSchema.shape[dappKey].isOptional();
-
-                            return (
-                              <>
-                                <FormLiveAppInput
-                                  type={typeof value}
-                                  fieldName={dappKey}
-                                  value={value}
-                                  optional={optional}
-                                  parseCheck={parseCheck}
-                                  path={path}
-                                  handleChange={handleChange}
-                                  autoFocus={index === 0}
-                                />
-                              </>
-                            );
-                          })}
-                          <Flex columnGap={2} justifyContent={"center"}>
-                            <Button
-                              small
-                              primary
-                              onClick={() => {
-                                setForm(prevState => {
-                                  const newNetwork = prevState.dapp.networks;
-                                  newNetwork.push(DEFAULT_FORM.dapp.networks[0]);
-                                  return {
-                                    ...prevState,
-                                    dapp: { ...prevState.dapp, networks: newNetwork },
-                                  };
-                                });
-                              }}
-                            >
-                              {
-                                <Trans
-                                  i18nKey={`settings.developer.createLocalAppModal.addNetwork`}
-                                />
-                              }
-                            </Button>
-                            <Button
-                              small
-                              danger
-                              disabled={form[key].networks.length === 1}
-                              onClick={() => {
-                                setForm(prevState => {
-                                  const newNetwork = prevState.dapp.networks;
-                                  newNetwork.pop();
-                                  return {
-                                    ...prevState,
-                                    dapp: { ...prevState.dapp, networks: newNetwork },
-                                  };
-                                });
-                              }}
-                            >
-                              {
-                                <Trans
-                                  i18nKey={`settings.developer.createLocalAppModal.removeNetwork`}
-                                />
-                              }
-                            </Button>
-                          </Flex>
-                        </NestedFormCategory>{" "}
+                        <FormLiveAppInput
+                          type={valueType}
+                          fieldName={key}
+                          value={value}
+                          optional={optional}
+                          parseCheck={parseCheck}
+                          path={path}
+                          handleChange={handleChange}
+                          isArray={isArray}
+                          autoFocus={index === 0}
+                        />
                       </>
                     );
-                  }
-
-                  const value = form[key as keyof LiveAppManifest];
-                  const isArray = Array.isArray(value);
-                  const valueType = isArray ? "array separated by comma" : typeof value;
-                  const parseCheck = LiveAppManifestSchema.shape[key].safeParse(value).success;
-                  const optional = LiveAppManifestSchema.shape[key].isOptional();
-                  const path = `${key}`;
-                  return (
-                    <>
-                      <FormLiveAppInput
-                        type={valueType}
-                        fieldName={key}
-                        value={value}
-                        optional={optional}
-                        parseCheck={parseCheck}
-                        path={path}
-                        handleChange={handleChange}
-                        isArray={isArray}
-                        autoFocus={index === 0}
-                      />
-                    </>
-                  );
-                })}
+                  })}
               </Flex>
             </ScrollArea>
             <Flex marginTop={4} width={"100%"} justifyContent={"center"}>
