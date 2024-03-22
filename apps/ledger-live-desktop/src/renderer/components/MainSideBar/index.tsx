@@ -379,7 +379,7 @@ const MainSideBar = () => {
               <SideBarList title={t("sidebar.menu")} collapsed={secondAnim}>
                 <SideBarListItem
                   id={"account-abstraction"}
-                  label={"Smart Account"}
+                  label={"Smart Accounts"}
                   icon={IconsLegacy.WalletMedium}
                   iconSize={20}
                   iconActiveColor="wallet"
