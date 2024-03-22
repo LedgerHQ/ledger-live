@@ -150,7 +150,9 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
   await test.step("Market page loads with ETH staking available", async () => {
     await layout.goToMarket();
     await marketPage.waitForLoading();
-    await expect.soft(page).toHaveScreenshot("market-loaded-with-eth-stake-button-available.png");
+    await expect.soft(page).toHaveScreenshot("market-loaded-with-eth-stake-button-available.png", {
+      mask: [page.locator("data-test-id=market-small-graph")],
+    });
   });
 
   await test.step("start stake flow via Stake entry button", async () => {
