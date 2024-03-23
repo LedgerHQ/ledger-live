@@ -18,6 +18,7 @@ import DelegationDrawer from "~/components/DelegationDrawer";
 import type { IconProps } from "~/components/DelegationDrawer";
 import Circle from "~/components/Circle";
 import LText from "~/components/LText";
+import { Text } from "@ledgerhq/native-ui";
 import Touchable from "~/components/Touchable";
 import { rgba } from "../../../colors";
 import IlluRewards from "~/icons/images/Rewards";
@@ -27,6 +28,7 @@ import RedelegateIcon from "~/icons/Redelegate";
 import UndelegateIcon from "~/icons/Undelegate";
 import DelegationRow from "./Row";
 import PoolImage from "../shared/PoolImage";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 
 type Props = {
   account: CardanoAccount;
@@ -177,9 +179,9 @@ function Delegations({ account }: Props) {
                 {
                   label: t("cardano.delegation.drawer.rewards"),
                   Component: (
-                    <LText numberOfLines={1} semiBold style={[styles.valueText]}>
-                      {delegation.rewards.toString() ?? ""}
-                    </LText>
+                    <Text variant={"body"} fontWeight={"semiBold"}>
+                      <CurrencyUnitValue value={delegation.rewards} unit={unit} />
+                    </Text>
                   ),
                 },
               ]
