@@ -84,8 +84,7 @@ export function getNid(currency: CryptoCurrency): number {
 }
 
 export const roundedLoopAmount = (a: Account, amount: BigNumber | string | number): BigNumber => {
-  const number = formatCurrencyUnit(a.unit, new BigNumber(amount));
-  return convertICXtoLoop(number);
+  return convertICXtoLoop(formatCurrencyUnit(a.unit, new BigNumber(amount)));
 };
 
 /**
@@ -96,7 +95,7 @@ export const roundedLoopAmount = (a: Account, amount: BigNumber | string | numbe
  */
 const calculateMaxSend = (a: Account, t: Transaction): BigNumber => {
   const amount = a.spendableBalance.minus(t.fees || 0);
-  return amount.lt(0) ? new BigNumber(0) : roundedLoopAmount(a, amount);
+  return amount.lt(0) ? new BigNumber(0) : amount;
 };
 
 /**

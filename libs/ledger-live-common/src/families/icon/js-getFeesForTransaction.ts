@@ -3,7 +3,7 @@ import type { IconAccount, Transaction } from "./types";
 import { getFees } from "./api/node";
 import { buildTransaction } from "./js-buildTransaction";
 import { getStepPrice } from "./api/node";
-import { calculateAmount } from "./logic";
+import { FEES_SAFETY_BUFFER, calculateAmount } from "./logic";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
 
 /**
@@ -27,7 +27,7 @@ const getEstimatedFees = async ({
       a,
       t: {
         ...t,
-        // fees: new BigNumber(0),
+        fees: new BigNumber(0),
       },
     }), // Remove fees if present since we are fetching fees
   };
@@ -38,7 +38,7 @@ const getEstimatedFees = async ({
     const stepPrice = await getStepPrice(a);
     return stepLimit.multipliedBy(stepPrice);
   } catch (_error) {
-    return null;
+    return FEES_SAFETY_BUFFER;
   }
 };
 

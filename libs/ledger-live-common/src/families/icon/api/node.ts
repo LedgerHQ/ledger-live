@@ -3,7 +3,7 @@ import IconService from "icon-sdk-js";
 import type { IcxTransaction, SignedTransaction } from "icon-sdk-js";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getEnv } from "@ledgerhq/live-env";
-import { isTestnet, roundedLoopAmount } from "../logic";
+import { isTestnet } from "../logic";
 import { GOVERNANCE_SCORE_ADDRESS, IISS_SCORE_ADDRESS } from "../constants";
 import { IconAccount } from "../types";
 import { SignedOperation } from "@ledgerhq/types-live";
@@ -72,7 +72,6 @@ export const getFees = async (
   const debugRpcUrl = getDebugRpcUrl(account.currency);
   const httpProvider = new HttpProvider(debugRpcUrl);
   const iconService = new IconService(httpProvider);
-  unsigned.value = roundedLoopAmount(account, unsigned.value);
   const res = await iconService.estimateStep(unsigned).execute();
   return new BigNumber(res);
 };
