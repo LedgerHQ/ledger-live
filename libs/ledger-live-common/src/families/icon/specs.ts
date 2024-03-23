@@ -30,7 +30,7 @@ const checkSendableToEmptyAccount = (amount, recipient) => {
 };
 const icon: AppSpec<Transaction> = {
   name: "Icon",
-  currency: getCryptoCurrencyById("icon_berlin_testnet"),
+  currency: getCryptoCurrencyById("icon"),
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Icon",
@@ -55,7 +55,6 @@ const icon: AppSpec<Transaction> = {
       expect(toOperationRaw(operation)).toMatchObject(opExpected),
     );
   },
-  allowEmptyAccounts: true,
   mutations: [
     {
       name: "send 50%~",
