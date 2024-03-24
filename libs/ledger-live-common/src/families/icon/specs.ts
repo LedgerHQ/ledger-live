@@ -37,6 +37,7 @@ const icon: AppSpec<Transaction> = {
   },
   genericDeviceAction: acceptTransaction,
   testTimeout: 2 * 60 * 1000,
+  skipOperationHistory: true,
   transactionCheck: ({ maxSpendable }) => {
     invariant(maxSpendable.gt(ICON_MIN_SAFE), "balance is too low");
   },
