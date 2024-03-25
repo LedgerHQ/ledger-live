@@ -2,9 +2,9 @@ import { useCallback } from "react";
 import Braze from "@braze/react-native-sdk";
 
 export const useBrazeContentCard = () => {
-  const logDismissCard = useCallback((cardId: string) => Braze.logContentCardDismissed(cardId), []);
+  const logDismissCard = useCallback(() => console.log("dismiss card"), []);
 
-  const logClickCard = useCallback((cardId: string) => Braze.logContentCardClicked(cardId), []);
+  const logClickCard = useCallback(() => console.log("dismiss card"), []);
 
   const logImpressionCard = useCallback(
     (cardId: string) => Braze.logContentCardImpression(cardId),

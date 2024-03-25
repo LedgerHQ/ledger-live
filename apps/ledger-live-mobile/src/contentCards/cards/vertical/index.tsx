@@ -23,6 +23,7 @@ type Props = {
   tag?: string;
   cta?: string;
   filledImage?: boolean;
+  index?: number;
 };
 
 const VerticalCard = ContentCardBuilder<Props>(
