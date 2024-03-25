@@ -3,7 +3,7 @@ import { TouchableOpacity } from "react-native";
 import styled, { useTheme } from "styled-components/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useSelector } from "react-redux";
-import { Box, IconsLegacy, Flex, Button } from "@ledgerhq/native-ui";
+import { Box, IconsLegacy, Flex } from "@ledgerhq/native-ui";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { ScreenName } from "~/const";
 import { hasAvailableUpdateSelector, lastSeenDeviceSelector } from "~/reducers/settings";
@@ -13,7 +13,6 @@ import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import TabIcon from "../TabIcon";
 import { useIsNavLocked } from "./CustomBlockRouterNavigator";
 import { MyLedgerNavigatorStackParamList } from "./types/MyLedgerNavigator";
-import FirmwareUpdateScreen from "~/screens/FirmwareUpdate";
 
 const BadgeContainer = styled(Flex).attrs({
   position: "absolute",
@@ -47,16 +46,6 @@ export default function MyLedgerNavigator() {
         ...stackNavConfig,
       }}
     >
-      <Stack.Screen
-        name={ScreenName.FirmwareUpdate}
-        component={FirmwareUpdateScreen}
-        options={{
-          gestureEnabled: false,
-          headerTitle: () => null,
-          headerLeft: () => null,
-          headerRight: () => <Button Icon={IconsLegacy.CloseMedium} />,
-        }}
-      />
       <Stack.Screen
         name={ScreenName.MyLedgerChooseDevice}
         component={MyLedgerChooseDeviceScreen}

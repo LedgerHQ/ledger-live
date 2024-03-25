@@ -13,7 +13,7 @@ export function navigateToOldUpdateFlow({
     // if we're already in the manager page, only update the params
     navigation.setParams({ firmwareUpdate: true });
   } else {
-    navigation.navigate(NavigatorName.Manager, {
+    navigation.navigate(NavigatorName.MyLedger, {
       screen: ScreenName.MyLedgerChooseDevice,
       params: { firmwareUpdate: true },
     });

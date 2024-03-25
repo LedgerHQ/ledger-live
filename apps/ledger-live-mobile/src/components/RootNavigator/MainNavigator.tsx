@@ -152,7 +152,7 @@ export default function MainNavigator() {
         })}
       />
       <Tab.Screen
-        name={NavigatorName.Manager}
+        name={NavigatorName.MyLedger}
         component={MyLedgerNavigator}
         options={{
           tabBarIcon: props => <ManagerTabIcon {...props} />,
@@ -167,7 +167,7 @@ export default function MainNavigator() {
               } else if (readOnlyModeEnabled) {
                 navigation.navigate(NavigatorName.BuyDevice);
               } else {
-                navigation.navigate(NavigatorName.Manager, {
+                navigation.navigate(NavigatorName.MyLedger, {
                   screen: ScreenName.MyLedgerChooseDevice,
                   params: {
                     tab: undefined,

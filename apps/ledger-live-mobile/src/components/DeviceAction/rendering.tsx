@@ -184,7 +184,7 @@ export function renderRequiresAppInstallation({
           type="primary"
           title={t("DeviceAction.button.openManager")}
           onPress={() =>
-            navigation.navigate(NavigatorName.Manager, {
+            navigation.navigate(NavigatorName.MyLedger, {
               screen: ScreenName.MyLedgerChooseDevice,
               params: { searchQuery: appNamesCSV },
             })
@@ -625,7 +625,7 @@ export function renderError({
 }) {
   const onPress = () => {
     if (managerAppName && navigation) {
-      navigation.navigate(NavigatorName.Manager, {
+      navigation.navigate(NavigatorName.MyLedger, {
         screen: ScreenName.MyLedgerChooseDevice,
         params: {
           tab: MANAGER_TABS.INSTALLED_APPS,
@@ -702,7 +702,7 @@ export function RequiredFirmwareUpdate({
   // Goes to the manager if a firmware update is available, but only automatically
   // displays the firmware update drawer if the device is already connected via USB
   const onPress = () => {
-    navigation.navigate(NavigatorName.Manager, {
+    navigation.navigate(NavigatorName.MyLedger, {
       screen: ScreenName.MyLedgerChooseDevice,
       params: { device, firmwareUpdate: isDeviceConnectedViaUSB },
     });
@@ -965,7 +965,7 @@ export function renderWarningOutdated({
   colors,
 }: WarningOutdatedProps) {
   function onOpenManager() {
-    navigation.navigate(NavigatorName.Manager);
+    navigation.navigate(NavigatorName.MyLedger);
   }
 
   return (

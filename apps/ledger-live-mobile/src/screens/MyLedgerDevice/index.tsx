@@ -18,7 +18,7 @@ import InstallAppDependenciesModal from "./Modals/InstallAppDependenciesModal";
 import UninstallAppDependenciesModal from "./Modals/UninstallAppDependenciesModal";
 import { useLockNavigation } from "~/components/RootNavigator/CustomBlockRouterNavigator";
 import { setHasInstalledAnyApp, setLastSeenDeviceInfo } from "~/actions/settings";
-import { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import FirmwareUpdateScreen from "~/components/FirmwareUpdate";
 import { MyLedgerNavigatorStackParamList } from "~/components/RootNavigator/types/MyLedgerNavigator";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
@@ -174,18 +174,21 @@ const Manager = ({ navigation, route }: NavigationProps) => {
 
   const onBackFromNewUpdateUx = useCallback(
     (updateState: UpdateStep) => {
-      // If the fw update was completed or not yet started, we know the device in a correct state
-      if (["start", "completed"].includes(updateState)) {
-        navigation.replace(ScreenName.MyLedgerChooseDevice, {
-          device,
-        });
-        return;
-      }
-
-      // Otherwise navigating back to the main manager screen without settings a device
-      // so it does not try to automatically connect to the device while it
-      // might still be on an unknown state because the fw update was just stopped
-      navigation.replace(ScreenName.MyLedgerChooseDevice);
+      navigation.navigate(NavigatorName.Base, {
+        screen: NavigatorName.Main,
+        params: {
+          screen: NavigatorName.MyLedger,
+          params: {
+            screen: ScreenName.MyLedgerChooseDevice,
+            // If the fw update was completed or not yet started, we know the device in a correct state,
+            // we can automatically connect to it.
+            // Otherwise navigating back to the chooseDeviceScreen without settings a device
+            // so it does not try to automatically connect to the device while it
+            // might still be on an unknown state because the fw update was just stopped
+            params: ["start", "completed"].includes(updateState) ? { device } : {},
+          },
+        },
+      });
     },
     [device, navigation],
   );
