@@ -12,7 +12,6 @@ import {
 import {
   getMainAccount,
   getAccountCurrency,
-  getAccountName,
   getAccountUnit,
 } from "@ledgerhq/live-common/account/index";
 import { Account, Operation, AccountLike } from "@ledgerhq/types-live";
@@ -33,6 +32,7 @@ import { UnionToIntersection } from "~/types/helpers";
 import { BaseNavigation } from "../RootNavigator/types/helpers";
 import { currencySettingsForAccountSelector } from "~/reducers/settings";
 import type { State } from "~/reducers/types";
+import { useAccountName } from "~/reducers/wallet";
 
 type FamilyOperationDetailsIntersection = UnionToIntersection<
   (typeof perFamilyOperationDetails)[keyof typeof perFamilyOperationDetails]
@@ -148,6 +148,7 @@ function OperationRow({
   const amount = getOperationAmountNumber(operation);
   const currency = getAccountCurrency(account);
   const mainAccount = getMainAccount(account, parentAccount);
+  const accountName = useAccountName(account);
   const currencySettings = useSelector((s: State) =>
     currencySettingsForAccountSelector(s, {
       account: mainAccount,
@@ -192,7 +193,7 @@ function OperationRow({
       <Wrapper opacity={isOptimistic ? 0.5 : 1}>
         <BodyLeftContainer>
           <Text variant="body" fontWeight="semiBold" color={colors.neutral.c100} numberOfLines={1}>
-            {multipleAccounts ? getAccountName(account) : text}
+            {multipleAccounts ? accountName : text}
           </Text>
 
           {isOptimistic ? (

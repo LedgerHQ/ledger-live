@@ -7,18 +7,12 @@ import groupBy from "lodash/groupBy";
 import { connect } from "react-redux";
 import { createStructuredSelector } from "reselect";
 import { Account } from "@ledgerhq/types-live";
-import {
-  ImportItem,
-  importAccountsMakeItems,
-  syncNewAccountsToImport,
-  ImportAccountsReduceInput,
-} from "@ledgerhq/live-common/account/index";
 import { Trans } from "react-i18next";
 
 import { compose } from "redux";
 import { Flex } from "@ledgerhq/native-ui";
 import { importDesktopSettings } from "~/actions/settings";
-import { importAccounts } from "~/actions/accounts";
+import { importAccountsLiveQR } from "~/actions/accounts";
 import { accountsSelector } from "~/reducers/accounts";
 import { TrackScreen } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
@@ -39,6 +33,14 @@ import type {
 } from "~/components/RootNavigator/types/helpers";
 import { SettingsImportDesktopPayload } from "~/actions/types";
 import { NavigationHeaderBackImage } from "~/components/NavigationHeaderBackButton";
+import {
+  ImportAccountsReduceInput,
+  ImportItem,
+  importAccountsMakeItems,
+  syncNewAccountsToImport,
+} from "@ledgerhq/live-wallet/liveqr/importAccounts";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { setAccountNames } from "@ledgerhq/live-wallet/store";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<ImportAccountsNavigatorParamList, ScreenName.DisplayResult>
@@ -47,13 +49,15 @@ type NavigationProps = BaseComposite<
 type ConnectProps = {
   backlistedTokenIds: string[];
   accounts: Account[];
-  importAccounts: (_: ImportAccountsReduceInput) => void;
+  importAccountsLiveQR: (_: ImportAccountsReduceInput) => void;
+  setAccountNames: typeof setAccountNames;
   importDesktopSettings: typeof importDesktopSettings;
 };
 
 type Props = ConnectProps & NavigationProps;
 
 type State = {
+  accountNames: Map<string, string>;
   selectedAccounts: string[];
   items: ImportItem[];
   importing: boolean;
@@ -81,6 +85,7 @@ export function BackButton() {
 
 class DisplayResult extends Component<Props, State> {
   state = {
+    accountNames: new Map<string, string>(),
     selectedAccounts: [],
     items: [] as ImportItem[],
     importSettings: true,
@@ -99,7 +104,7 @@ class DisplayResult extends Component<Props, State> {
   };
 
   static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-    const items = importAccountsMakeItems({
+    const result = importAccountsMakeItems({
       result: nextProps.route.params?.result,
       accounts: nextProps.accounts,
       items: prevState.items,
@@ -107,7 +112,7 @@ class DisplayResult extends Component<Props, State> {
     let selectedAccounts = prevState.selectedAccounts;
     if (prevState.items.length === 0) {
       // select all by default
-      selectedAccounts = items.reduce<string[]>((acc, cur) => {
+      selectedAccounts = result.items.reduce<string[]>((acc, cur) => {
         if (cur.mode !== "id" && cur.mode !== "unsupported") {
           const combined = acc.concat(cur.account.id);
           return combined;
@@ -116,12 +121,18 @@ class DisplayResult extends Component<Props, State> {
         return acc;
       }, []);
     }
-    return { items, selectedAccounts };
+    return { items: result.items, accountNames: result.accountNames, selectedAccounts };
   }
 
   onImport = async () => {
-    const { importAccounts, importDesktopSettings, navigation, backlistedTokenIds } = this.props;
-    const { selectedAccounts, items, importSettings, importing } = this.state;
+    const {
+      importAccountsLiveQR,
+      setAccountNames,
+      importDesktopSettings,
+      navigation,
+      backlistedTokenIds,
+    } = this.props;
+    const { selectedAccounts, items, importSettings, importing, accountNames } = this.state;
     if (importing) return;
     const onFinish = this.props.route.params?.onFinish;
     this.setState({ importing: true });
@@ -130,10 +141,16 @@ class DisplayResult extends Component<Props, State> {
         items,
         selectedAccounts,
       },
+      getAccountBridge,
       bridgeCache,
       backlistedTokenIds,
     );
-    importAccounts({ items, selectedAccounts, syncResult });
+    importAccountsLiveQR({
+      items,
+      selectedAccounts,
+      syncResult,
+    });
+    setAccountNames(accountNames);
     if (importSettings) {
       importDesktopSettings(
         this.props.route.params?.result.settings as SettingsImportDesktopPayload,
@@ -167,6 +184,7 @@ class DisplayResult extends Component<Props, State> {
       checked={this.state.selectedAccounts.some(s => s === account.id)}
       onSwitch={this.onSwitchResultItem}
       importing={this.state.importing}
+      accountNames={this.state.accountNames}
     />
   );
 
@@ -258,8 +276,9 @@ export default compose(
       backlistedTokenIds: blacklistedTokenIdsSelector,
     }),
     {
-      importAccounts,
+      importAccountsLiveQR,
       importDesktopSettings,
+      setAccountNames,
     },
   ),
 )(DisplayResult);

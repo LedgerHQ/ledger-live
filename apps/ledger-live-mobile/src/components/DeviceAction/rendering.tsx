@@ -31,7 +31,6 @@ import { ExchangeRate, ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/
 import {
   getAccountUnit,
   getMainAccount,
-  getAccountName,
   getAccountCurrency,
   getFeesCurrency,
   getFeesUnit,
@@ -62,6 +61,7 @@ import TermsFooter, { TermsProviders } from "../TermsFooter";
 import CurrencyIcon from "../CurrencyIcon";
 import ModalLock from "../ModalLock";
 import Config from "react-native-config";
+import { WalletState, accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 
 export const Wrapper = styled(Flex).attrs({
   flex: 1,
@@ -241,6 +241,7 @@ export function renderConfirmSwap({
   exchange,
   amountExpectedTo,
   estimatedFees,
+  walletState,
 }: RawProps & {
   device: Device;
   transaction: Transaction;
@@ -248,10 +249,13 @@ export function renderConfirmSwap({
   exchange: ExchangeSwap;
   amountExpectedTo?: string | null;
   estimatedFees?: string | null;
+  walletState: WalletState;
 }) {
   const providerName = getProviderName(exchangeRate.provider);
   const noticeType = getNoticeType(exchangeRate.provider);
   const alertProperties = noticeType.learnMore ? { learnMoreUrl: urls.swap.learnMore } : {};
+  const fromAccountName = accountNameWithDefaultSelector(walletState, exchange.fromAccount);
+  const toAccountName = accountNameWithDefaultSelector(walletState, exchange.toAccount);
   return (
     <ScrollView>
       <Wrapper width="100%">
@@ -317,14 +321,14 @@ export function renderConfirmSwap({
           <FieldItem title={t("DeviceAction.swap2.sourceAccount")}>
             <Flex flexDirection="row" alignItems="center">
               <CurrencyIcon size={20} currency={getAccountCurrency(exchange.fromAccount)} />
-              <Text marginLeft={2}>{getAccountName(exchange.fromAccount)}</Text>
+              <Text marginLeft={2}>{fromAccountName}</Text>
             </Flex>
           </FieldItem>
 
           <FieldItem title={t("DeviceAction.swap2.targetAccount")}>
             <Flex flexDirection="row" alignItems="center">
               <CurrencyIcon size={20} currency={getAccountCurrency(exchange.toAccount)} />
-              <Text marginLeft={2}>{getAccountName(exchange.toAccount)}</Text>
+              <Text marginLeft={2}>{toAccountName}</Text>
             </Flex>
           </FieldItem>
         </Flex>

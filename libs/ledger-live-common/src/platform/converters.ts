@@ -11,8 +11,10 @@ import {
   PlatformTokenStandard,
   PlatformTransaction,
 } from "./types";
+import { WalletState, accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 
 export function accountToPlatformAccount(
+  walletState: WalletState,
   account: AccountLike,
   parentAccount?: Account,
 ): PlatformAccount {
@@ -21,21 +23,25 @@ export function accountToPlatformAccount(
       throw new Error("No 'parentAccount' account provided for token account");
     }
 
+    const parentName = accountNameWithDefaultSelector(walletState, parentAccount);
+
     return {
       id: account.id,
       balance: account.balance,
       address: parentAccount.freshAddress,
       blockHeight: parentAccount.blockHeight,
       lastSyncDate: parentAccount.lastSyncDate,
-      name: `${parentAccount.name} (${account.token.ticker})`,
+      name: `${parentName} (${account.token.ticker})`,
       currency: account.token.id,
       spendableBalance: account.spendableBalance,
     };
   }
 
+  const name = accountNameWithDefaultSelector(walletState, account);
+
   return {
     id: account.id,
-    name: account.name,
+    name,
     address: account.freshAddress,
     currency: account.currency.id,
     balance: account.balance,

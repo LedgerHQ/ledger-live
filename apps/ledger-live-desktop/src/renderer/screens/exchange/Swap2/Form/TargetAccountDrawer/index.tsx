@@ -7,7 +7,7 @@ import Text from "~/renderer/components/Text";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { AccountLike } from "@ledgerhq/types-live";
-import { getAccountCurrency, getAccountName } from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import Check from "~/renderer/icons/Check";
 import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
 import Tabbable from "~/renderer/components/Box/Tabbable";
@@ -20,6 +20,8 @@ import { context } from "~/renderer/drawers/Provider";
 import { track } from "~/renderer/analytics/segment";
 import { useGetSwapTrackingProperties } from "../../utils/index";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import { useAccountName, useMaybeAccountName } from "~/renderer/reducers/wallet";
 
 const AccountWrapper = styled(Tabbable)<{ selected?: boolean }>`
   cursor: pointer;
@@ -64,10 +66,10 @@ const TargetAccount = memo(function TargetAccount({
   const theme = useTheme();
   const currency = getAccountCurrency(account);
   const unit = useAccountUnit(account);
-  const name = getAccountName(account);
+  const name = useAccountName(account);
   const parentAccount =
-    account?.type !== "Account" ? allAccounts?.find(a => a.id === account?.parentId) : null;
-  const parentName = parentAccount ? getAccountName(parentAccount) : undefined;
+    account?.type !== "Account" ? allAccounts?.find(a => a.id === account?.parentId) : undefined;
+  const parentName = useMaybeAccountName(parentAccount);
   const balance = account.spendableBalance || account.balance;
 
   const onClick = useCallback(() => {
@@ -93,7 +95,7 @@ const TargetAccount = memo(function TargetAccount({
       justifyContent="space-between"
       selected={selected}
       onClick={onClick}
-      data-test-id={`target-account-container-${("name" in account && account.name) || ""}`}
+      data-test-id={`target-account-container-${getDefaultAccountName(account) || ""}`}
     >
       <Box horizontal alignItems="center" pl={isChild ? "8px" : 0}>
         {isChild && (

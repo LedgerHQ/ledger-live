@@ -24,7 +24,6 @@ const dataset: CurrenciesData<Transaction> = {
         id: "js:2:injective:inj1hn46zvx43mxq47vsecvw84k5chjhuhwp6d62dt:",
         seedIdentifier: "03f8e9b05b4de510b0b7d970060eac6a0f76d3c4eb07e11418c0747bc593c91c7d",
         name: "Injective 1",
-        starred: false,
         used: true,
         derivationMode: "",
         index: 0,

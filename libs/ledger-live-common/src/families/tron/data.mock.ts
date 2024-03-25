@@ -7,7 +7,6 @@ export const __LAST_VOTING_DATE__ = new Date(Date.now() - 6 * 60 * 60 * 1000);
 
 export const mockAccount = fromAccountRaw({
   id: "js:2:tron:TRON_ID:",
-  starred: true,
   seedIdentifier: "TRON_ID",
   derivationMode: "",
   index: 0,
@@ -276,7 +275,6 @@ export const mockAccount = fromAccountRaw({
 }) as TronAccount;
 export const mockAccountNoReward = fromAccountRaw({
   id: "js:2:tron:TRON_ID:",
-  starred: true,
   seedIdentifier: "TRON_ID",
   derivationMode: "",
   index: 0,
@@ -501,7 +499,6 @@ export const mockAccountNoReward = fromAccountRaw({
 }) as TronAccount;
 export const mockAccountNoVote = fromAccountRaw({
   id: "js:2:tron:TRON_ID:",
-  starred: true,
   seedIdentifier: "TRON_ID",
   derivationMode: "",
   index: 0,

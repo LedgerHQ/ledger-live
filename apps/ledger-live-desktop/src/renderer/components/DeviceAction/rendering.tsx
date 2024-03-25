@@ -24,11 +24,7 @@ import {
 } from "@ledgerhq/live-common/errors";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import {
-  getMainAccount,
-  getAccountName,
-  getAccountCurrency,
-} from "@ledgerhq/live-common/account/index";
+import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { closeAllModal } from "~/renderer/actions/modals";
 import Animation from "~/renderer/animations";
 import Button from "~/renderer/components/Button";
@@ -72,6 +68,7 @@ import LinkWithExternalIcon from "../LinkWithExternalIcon";
 import { closePlatformAppDrawer } from "~/renderer/actions/UI";
 import { CompleteExchangeError } from "@ledgerhq/live-common/exchange/error";
 import { SettingsState, currencySettingsLocaleSelector } from "~/renderer/reducers/settings";
+import { WalletState, accountNameSelector } from "@ledgerhq/live-wallet/store";
 
 export const AnimationWrapper = styled.div`
   width: 600px;
@@ -828,15 +825,13 @@ export const renderError = ({
 export const renderInWrongAppForAccount = ({
   t,
   onRetry,
-  accountName,
 }: {
   t: TFunction;
   onRetry?: (() => void) | null | undefined;
-  accountName: string;
 }) =>
   renderError({
     t,
-    error: new WrongDeviceForAccount("", { accountName }),
+    error: new WrongDeviceForAccount(""),
     withExportLogs: true,
     onRetry,
   });
@@ -951,6 +946,7 @@ export const renderSwapDeviceConfirmation = ({
   estimatedFees,
   swapDefaultTrack,
   stateSettings,
+  walletState,
 }: {
   modelId: DeviceModelId;
   type: Theme["theme"];
@@ -961,25 +957,26 @@ export const renderSwapDeviceConfirmation = ({
   estimatedFees?: string;
   swapDefaultTrack: Record<string, string | boolean>;
   stateSettings: SettingsState;
+  walletState: WalletState;
 }) => {
-  const fromAccountCurrency = getAccountCurrency(exchange.fromAccount);
-  const toAccountCurrency = getAccountCurrency(exchange.toAccount);
-
-  const [sourceAccountName, sourceAccountCurrency] = [
-    getAccountName(exchange.fromAccount),
-    fromAccountCurrency,
-  ];
-  const [targetAccountName, targetAccountCurrency] = [
-    getAccountName(exchange.toAccount),
-    toAccountCurrency,
-  ];
+  const sourceAccountCurrency = getAccountCurrency(exchange.fromAccount);
+  const targetAccountCurrency = getAccountCurrency(exchange.toAccount);
+  const sourceAccountName = accountNameSelector(walletState, {
+    accountId: exchange.fromAccount.id,
+  });
+  const targetAccountName = accountNameSelector(walletState, {
+    accountId: exchange.toAccount.id,
+  });
 
   const providerName = getProviderName(exchangeRate.provider);
   const noticeType = getNoticeType(exchangeRate.provider);
   const alertProperties = noticeType.learnMore ? { learnMoreUrl: urls.swap.learnMore } : {};
 
-  const unitFromExchange = currencySettingsLocaleSelector(stateSettings, fromAccountCurrency).unit;
-  const unitToExchange = currencySettingsLocaleSelector(stateSettings, toAccountCurrency).unit;
+  const unitFromExchange = currencySettingsLocaleSelector(
+    stateSettings,
+    sourceAccountCurrency,
+  ).unit;
+  const unitToExchange = currencySettingsLocaleSelector(stateSettings, targetAccountCurrency).unit;
   const unitMainAccount = currencySettingsLocaleSelector(
     stateSettings,
     getMainAccount(exchange.fromAccount, exchange.fromParentAccount).currency,

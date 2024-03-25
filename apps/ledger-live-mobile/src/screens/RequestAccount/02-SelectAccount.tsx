@@ -25,7 +25,7 @@ import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/Ba
 import { Flex } from "@ledgerhq/native-ui";
 
 const SEARCH_KEYS = [
-  "account.name",
+  "name",
   "account.unit.code",
   "account.token.name",
   "account.token.ticker",
@@ -101,6 +101,7 @@ function SelectAccount({ navigation, route }: Props) {
   const accounts = useSelector(accountsByCryptoCurrencyScreenSelector(currency, accountIds)) as {
     account: AccountLike;
     subAccount: SubAccount | null;
+    name: string;
   }[];
   const onSelect = useCallback(
     (account: AccountLike, parentAccount?: Account) => {

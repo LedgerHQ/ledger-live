@@ -2,7 +2,6 @@ import React from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import {
-  getAccountName,
   getAccountCurrency,
   getFeesCurrency,
   getFeesUnit,
@@ -27,6 +26,7 @@ import { StepProps } from "../types";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
 import { getLLDCoinFamily } from "~/renderer/families";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 
 const FromToWrapper = styled.div``;
 const Circle = styled.div`
@@ -58,8 +58,9 @@ const StepSummary = (props: StepProps) => {
   const { account, parentAccount, transaction, status, currencyName, isNFTSend } = props;
   const mainAccount = account && getMainAccount(account, parentAccount);
   const unit = useMaybeAccountUnit(mainAccount);
+  const accountName = useMaybeAccountName(account);
 
-  if (!mainAccount || !transaction) {
+  if (!account || !mainAccount || !transaction) {
     return null;
   }
 
@@ -128,7 +129,7 @@ const StepSummary = (props: StepProps) => {
                     flex: 1,
                   }}
                 >
-                  {getAccountName(account)}
+                  {accountName}
                 </Text>
                 <AccountTagDerivationMode account={account} />
               </Box>

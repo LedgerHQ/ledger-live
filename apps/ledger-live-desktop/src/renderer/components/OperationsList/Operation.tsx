@@ -5,11 +5,7 @@ import { rgba } from "~/renderer/styles/helpers";
 import Box from "~/renderer/components/Box";
 import { TFunction } from "i18next";
 import { AccountLike, Account, Operation } from "@ledgerhq/types-live";
-import {
-  getAccountCurrency,
-  getAccountName,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import ConfirmationCell from "./ConfirmationCell";
 import DateCell from "./DateCell";
 import AccountCell from "./AccountCell";
@@ -19,6 +15,7 @@ import { confirmationsNbForCurrencySelector } from "~/renderer/reducers/settings
 import { isConfirmedOperation } from "@ledgerhq/live-common/operation";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { State } from "~/renderer/reducers";
+import { useAccountName } from "../../reducers/wallet";
 
 const OperationRow = styled(Box).attrs(() => ({
   horizontal: true,
@@ -62,6 +59,7 @@ function OperationComponent({
     confirmationsNbForCurrencySelector(state, mainAccount),
   );
   const unit = useAccountUnit(mainAccount);
+  const accountName = useAccountName(account);
 
   const onClickOnOperation = () => {
     onOperationClick(operation, account, parentAccount);
@@ -91,7 +89,7 @@ function OperationComponent({
         editable={editable}
         t={t}
       />
-      {withAccount && <AccountCell accountName={getAccountName(account)} currency={currency} />}
+      {withAccount && <AccountCell accountName={accountName} currency={currency} />}
       {withAddress ? <AddressCell operation={operation} /> : <Box flex="1" />}
       <AmountCell operation={operation} currency={currency} unit={unit} isConfirmed={isConfirmed} />
     </OperationRow>

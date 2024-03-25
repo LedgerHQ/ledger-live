@@ -1,21 +1,17 @@
 import React from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
-import {
-  getAccountCurrency,
-  getAccountUnit,
-  getAccountName,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { AccountLike, Account, BalanceHistoryWithCountervalue } from "@ledgerhq/types-live";
 import Animated from "react-native-reanimated";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
-
 import AccountHeaderRight from "./AccountHeaderRight";
 import CurrencyHeaderLayout from "~/components/CurrencyHeaderLayout";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import Placeholder from "~/components/Placeholder";
 import AccountHeaderLeft from "./AccountHeaderLeft";
+import { useAccountName, useMaybeAccountName } from "~/reducers/wallet";
 
 function AccountHeader({
   currentPositionY,
@@ -57,7 +53,10 @@ function AccountHeader({
 
   const currency = getAccountCurrency(account);
 
-  const isToken = parentAccount && parentAccount.name !== undefined;
+  const isToken = parentAccount && parentAccount.type === "Account";
+
+  const accountName = useAccountName(account);
+  const parentAccountName = useMaybeAccountName(parentAccount);
 
   return (
     <CurrencyHeaderLayout
@@ -69,7 +68,7 @@ function AccountHeader({
           {typeof items[1]?.value === "number" ? (
             <Flex flexDirection={"column"} alignItems={"center"}>
               <Text fontWeight={"semiBold"} color={"neutral.c70"} fontSize="11px" numberOfLines={1}>
-                {getAccountName(account) + (isToken ? ` - ${getAccountName(parentAccount)}` : "")}
+                {accountName + (isToken ? ` - ${parentAccountName}` : "")}
               </Text>
               <Text
                 variant={"small"}

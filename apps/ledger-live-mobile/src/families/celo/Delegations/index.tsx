@@ -37,6 +37,7 @@ import ValidatorImage from "../../cosmos/shared/ValidatorImage";
 import { formatAmount } from "./utils";
 import CheckCircle from "~/icons/CheckCircle";
 import Loader from "~/icons/Loader";
+import { useAccountName } from "~/reducers/wallet";
 
 type Props = {
   account: Account;
@@ -130,6 +131,8 @@ function Delegations({ account }: Props) {
     [account.currency],
   );
 
+  const accountName = useAccountName(account);
+
   const data = useMemo<DelegationDrawerProps["data"]>(() => {
     const v = vote;
     let status = null;
@@ -182,7 +185,7 @@ function Delegations({ account }: Props) {
                 style={[styles.valueText]}
                 color="live"
               >
-                {account.name}{" "}
+                {accountName}{" "}
               </LText>
             ),
           },
@@ -240,6 +243,7 @@ function Delegations({ account }: Props) {
     vote,
     t,
     getValidatorName,
+    accountName,
     account,
     colors.green,
     colors.warning,

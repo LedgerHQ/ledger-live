@@ -26,7 +26,6 @@ const dataset: CurrenciesData<Transaction> = {
         id: "js:2:coreum:core1sel9ys8a7jlsmrxp9692zfjncnmhxkws0qr3g9:",
         seedIdentifier: "03633639c689420031c73c1157975ea734e22eae588045a96fc9495d28aba3f0d1",
         name: "Coreum 2",
-        starred: false,
         used: true,
         derivationMode: "",
         index: 1,

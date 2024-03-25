@@ -139,7 +139,6 @@ const getMockAccount = (currencyId: string, address: string): Account => {
   const currency = getCryptoCurrencyById(currencyId);
 
   return {
-    name: "mockAccount",
     type: "Account",
     id: encodeAccountId({
       type: "js",
@@ -161,7 +160,6 @@ const getMockAccount = (currencyId: string, address: string): Account => {
     freshAddressPath: "",
     seedIdentifier: "",
     index: 0,
-    starred: false,
     used: true,
     operationsCount: 0,
     pendingOperations: [],

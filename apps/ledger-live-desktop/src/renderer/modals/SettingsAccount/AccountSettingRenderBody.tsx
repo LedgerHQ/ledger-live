@@ -3,7 +3,8 @@ import styled from "styled-components";
 import { useDispatch } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
 import type { Account, DerivationMode } from "@ledgerhq/types-live";
-import { validateNameEdition } from "@ledgerhq/live-common/account/index";
+import { validateNameEdition } from "@ledgerhq/live-wallet/accountName";
+import { setAccountName as actionSetAccountName } from "@ledgerhq/live-wallet/store";
 import { AccountNameRequiredError } from "@ledgerhq/errors";
 import { getEnv } from "@ledgerhq/live-env";
 import { urls } from "~/config/urls";
@@ -19,6 +20,7 @@ import ConfirmModal from "~/renderer/modals/ConfirmModal";
 import Space from "~/renderer/components/Space";
 import Button from "~/renderer/components/Button";
 import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
+import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 
 type Props = {
   onClose?: () => void;
@@ -52,15 +54,12 @@ function AccountSettingRenderBody(props: Props) {
     (e: React.SyntheticEvent<HTMLFormElement | HTMLInputElement>) => {
       e.preventDefault();
 
-      if (!account.name.length) {
+      if (!accountName || !accountName.length) {
         setAccountNameError(new AccountNameRequiredError());
       } else {
         const name = validateNameEdition(account, accountName);
-        account = {
-          ...account,
-          name,
-        };
         dispatch(updateAccount(account));
+        dispatch(actionSetAccountName(account.id, name));
         dispatch(
           setDataModal("MODAL_SETTINGS_ACCOUNT", {
             account,
@@ -91,7 +90,11 @@ function AccountSettingRenderBody(props: Props) {
     onClose?.();
   };
 
+  const storeAccountName = useMaybeAccountName(dataAccount);
+
   if (!dataAccount) return null;
+
+  const displayAccountName = accountName === null ? storeAccountName : accountName;
   const account = getAccount();
   const usefulData = {
     xpub: account.xpub || undefined,
@@ -125,7 +128,7 @@ function AccountSettingRenderBody(props: Props) {
                     width: 230,
                   },
                 }}
-                value={account.name}
+                value={displayAccountName}
                 maxLength={getEnv("MAX_ACCOUNT_NAME_SIZE")}
                 onChange={handleChangeName}
                 onEnter={onSubmit}
@@ -204,7 +207,6 @@ const AdvancedLogsContainer = styled.div`
   ${p => p.theme.overflow.xy};
   user-select: text;
 `;
-
 export const Container = styled(Box).attrs(() => ({
   flow: 2,
   horizontal: true,

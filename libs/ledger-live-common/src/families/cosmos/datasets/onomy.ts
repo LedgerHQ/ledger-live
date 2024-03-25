@@ -25,7 +25,6 @@ const dataset: CurrenciesData<Transaction> = {
         id: "js:2:onomy:onomy1gyauvl44q2apn3u3aujm36q8zrj74vry0e2p7v:",
         seedIdentifier: "03d5e0ebb3f1ae2afe87e5d5a24b5029a59cc12f8fd1056840091b2f0b97e54e83",
         name: "Onomy 1",
-        starred: false,
         used: true,
         derivationMode: "",
         index: 0,

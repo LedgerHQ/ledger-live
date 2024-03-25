@@ -48,6 +48,7 @@ import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigato
 import { WebviewAPI, WebviewProps } from "./types";
 import { useWebviewState } from "./helpers";
 import { currentRouteNameRef } from "~/analytics/screenRefs";
+import { walletSelector } from "~/reducers/wallet";
 
 function renderLoading() {
   return (
@@ -81,13 +82,15 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       onStateChange,
     );
 
+    const walletState = useSelector(walletSelector);
+
     const accounts = useSelector(flattenAccountsSelector);
     const navigation =
       useNavigation<
         RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>
       >();
     const [device, setDevice] = useState<Device>();
-    const listAccounts = useListPlatformAccounts(accounts);
+    const listAccounts = useListPlatformAccounts(walletState, accounts);
     const listPlatformCurrencies = useListPlatformCurrencies();
 
     const requestAccount = useCallback(
@@ -145,7 +148,11 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
 
           const onSuccess = (account: AccountLike, parentAccount?: Account) => {
             tracking.platformRequestAccountSuccess(manifest);
-            resolve(serializePlatformAccount(accountToPlatformAccount(account, parentAccount)));
+            resolve(
+              serializePlatformAccount(
+                accountToPlatformAccount(walletState, account, parentAccount),
+              ),
+            );
           };
 
           const onClose = () => {
@@ -186,12 +193,13 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
             });
           }
         }),
-      [manifest, accounts, navigation, tracking],
+      [manifest, accounts, walletState, navigation, tracking],
     );
 
     const receiveOnAccount = useCallback(
       ({ accountId }: { accountId: string }) =>
         receiveOnAccountLogic(
+          walletState,
           { manifest, accounts, tracking },
           accountId,
           (account, parentAccount, accountAddress) =>
@@ -215,7 +223,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
               });
             }),
         ),
-      [manifest, accounts, navigation, tracking],
+      [walletState, manifest, accounts, navigation, tracking],
     );
 
     const signTransaction = useCallback(

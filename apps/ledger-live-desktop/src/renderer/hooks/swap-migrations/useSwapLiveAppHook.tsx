@@ -19,6 +19,7 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import BigNumber from "bignumber.js";
+import { walletSelector } from "~/renderer/reducers/wallet";
 
 export type UseSwapLiveAppHookProps = {
   manifestID: string | null;
@@ -55,12 +56,14 @@ export const useSwapLiveAppHook = (props: UseSwapLiveAppHookProps) => {
     return unit && BigNumber(formatCurrencyUnit(unit, swapTransaction.status.estimatedFees));
   }, [mainFromAccount, swapTransaction.status.estimatedFees]);
 
+  const walletState = useSelector(walletSelector);
+
   useEffect(() => {
     if (isSwapLiveAppEnabled) {
       const providerRedirectURLSearch = getProviderRedirectURLSearch();
       const { parentAccount: fromParentAccount } = swapTransaction.swap.from;
       const fromParentAccountId = fromParentAccount
-        ? accountToWalletAPIAccount(fromParentAccount)?.id
+        ? accountToWalletAPIAccount(walletState, fromParentAccount)?.id
         : undefined;
       const providerRedirectURL = `ledgerlive://discover/${getProviderName(
         provider ?? "",
@@ -90,6 +93,7 @@ export const useSwapLiveAppHook = (props: UseSwapLiveAppHookProps) => {
       }
     }
   }, [
+    walletState,
     provider,
     manifestID,
     isSwapLiveAppEnabled,

@@ -8,7 +8,6 @@ import Icon from "react-native-vector-icons/Feather";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import {
   getAccountCurrency,
-  getAccountName,
   getAccountUnit,
   shortAddressPreview,
 } from "@ledgerhq/live-common/account/index";
@@ -35,6 +34,7 @@ import DelegatingContainer from "../DelegatingContainer";
 import BakerImage from "../BakerImage";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { TezosDelegationFlowParamList } from "./types";
+import { useAccountName } from "~/reducers/wallet";
 
 type Props = StackNavigatorProps<TezosDelegationFlowParamList, ScreenName.DelegationSummary>;
 
@@ -192,7 +192,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
   const bakerName = baker ? baker.name : shortAddressPreview(addr);
   const currency = getAccountCurrency(account);
   const color = getCurrencyColor(currency);
-  const accountName = getAccountName(account);
+  const accountName = useAccountName(account);
 
   // handle any edit screen changes
   useTransactionChangeFromNavigation(setTransaction);
