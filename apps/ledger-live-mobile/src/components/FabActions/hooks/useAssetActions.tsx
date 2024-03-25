@@ -156,7 +156,6 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
                     Icon: iconStake,
                     event: "button_clicked",
                     eventProperties: {
-                      source: "asset screen",
                       button: "stake",
                       currency: currency?.id?.toUpperCase(),
                       flow: "stake",

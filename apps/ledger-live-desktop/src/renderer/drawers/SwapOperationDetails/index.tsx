@@ -42,6 +42,7 @@ import IconExclamationCircle from "~/renderer/icons/ExclamationCircle";
 import IconSwap from "~/renderer/icons/Swap";
 import { openURL } from "~/renderer/linking";
 import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
+import { languageSelector } from "~/renderer/reducers/settings";
 import { getStatusColor } from "~/renderer/screens/exchange/Swap2/History/OperationRow";
 import { rgba } from "~/renderer/styles/helpers";
 
@@ -113,6 +114,7 @@ const SwapOperationDetails = ({
   const { fromAccount, toAccount, operation, provider, swapId, status, fromAmount, toAmount } =
     mappedSwapOperation;
   const dateFormatted = useDateFormatted(operation.date, dayFormat);
+  const language = useSelector(languageSelector);
   const history = useHistory();
   const fromUnit = getAccountUnit(fromAccount);
   const fromCurrency = getAccountCurrency(fromAccount);
@@ -163,7 +165,7 @@ const SwapOperationDetails = ({
             returnTo: "/swap/history",
             accountId: mainAccount.id,
             customDappUrl: undefined,
-            goToURL: "https://buy.moonpay.com/trade_history?ledgerlive",
+            goToURL: `https://buy.moonpay.com/trade_history?ledgerlive&apiKey=pk_live_j5CLt1qxbqGtYhkxUxyk6VQnSd5CBXI&language=${language}&themeId=92be4cb6-a57f-407b-8b1f-bc8055b60c9b`,
           },
         });
       } else {
@@ -173,7 +175,7 @@ const SwapOperationDetails = ({
         onClose();
       }
     }
-  }, [url, provider, fromAccount, history, accounts, onClose]);
+  }, [url, provider, fromAccount, history, accounts, onClose, language]);
 
   return (
     <Box flow={3} px={20} mt={20}>

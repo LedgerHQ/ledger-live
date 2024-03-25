@@ -5,7 +5,7 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 import { TFunction } from "i18next";
 import { Trans, withTranslation } from "react-i18next";
-import { Account } from "@ledgerhq/types-live";
+import type { Account, DerivationMode } from "@ledgerhq/types-live";
 import { Unit } from "@ledgerhq/types-cryptoassets";
 import { validateNameEdition } from "@ledgerhq/live-common/account/index";
 import { AccountNameRequiredError } from "@ledgerhq/errors";
@@ -23,7 +23,7 @@ import Spoiler from "~/renderer/components/Spoiler";
 import ConfirmModal from "~/renderer/modals/ConfirmModal";
 import Space from "~/renderer/components/Space";
 import Button from "~/renderer/components/Button";
-import { DerivationMode, getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
+import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
 type State = {
   accountName: string | undefined | null;
   accountUnit: Unit | undefined | null;

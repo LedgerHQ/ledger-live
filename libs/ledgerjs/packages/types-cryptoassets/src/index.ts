@@ -142,8 +142,6 @@ export type CryptoCurrencyId =
   | "near"
   | "rsk"
   | "bittorrent"
-  | "kava_evm"
-  | "evmos_evm"
   | "optimism"
   | "optimism_goerli"
   | "energy_web"
@@ -274,31 +272,6 @@ export type ExplorerView = {
 
 export type EthereumLikeInfo = {
   chainId: number;
-  // used by evm coin integration
-  node:
-    | {
-        type: "external";
-        uri: string;
-      }
-    | {
-        type: "ledger";
-        explorerId: LedgerExplorerId;
-      };
-  // used by evm coin integration
-  explorer?:
-    | {
-        type: "etherscan" | "blockscout" | "teloscan" | "klaytnfinder";
-        uri: string;
-      }
-    | {
-        type: "ledger";
-        explorerId: LedgerExplorerId;
-      };
-  // used by evm coin integration
-  gasTracker?: {
-    type: "ledger";
-    explorerId: LedgerExplorerId;
-  };
 };
 
 export type BitcoinLikeInfo = {

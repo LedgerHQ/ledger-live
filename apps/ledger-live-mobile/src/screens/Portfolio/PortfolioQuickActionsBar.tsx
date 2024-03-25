@@ -5,7 +5,8 @@ import { useTranslation } from "react-i18next";
 import useQuickActions from "~/hooks/useQuickActions";
 import { QuickActionList, type QuickActionButtonProps } from "@ledgerhq/native-ui";
 import { TextVariants } from "@ledgerhq/native-ui/styles/theme";
-import { track, useAnalytics } from "~/analytics";
+import { track } from "~/analytics";
+import { useRoute } from "@react-navigation/native";
 
 const SHARED_CONFIG = {
   variant: "small" as const,
@@ -13,7 +14,7 @@ const SHARED_CONFIG = {
 };
 function PortfolioQuickActionsBar() {
   const navigation = useNavigation();
-  const { page } = useAnalytics();
+  const router = useRoute();
   const { t } = useTranslation();
   const {
     quickActionsList: { SEND, RECEIVE, BUY, SWAP, STAKE },
@@ -21,13 +22,13 @@ function PortfolioQuickActionsBar() {
 
   const onNavigate = useCallback(
     (name: string, options: object, eventButton: string) => {
-      track("button_clicked", { button: eventButton, page });
+      track("button_clicked", { button: eventButton, page: router.name });
       (navigation as StackNavigationProp<{ [key: string]: object | undefined }>).navigate(
         name,
         options,
       );
     },
-    [navigation, page],
+    [navigation, router.name],
   );
 
   const quickActionsData: QuickActionButtonProps[] = [

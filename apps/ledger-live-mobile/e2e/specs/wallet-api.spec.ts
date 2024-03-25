@@ -25,7 +25,7 @@ describeifAndroid("Wallet API methods", () => {
     continueTest = await liveAppWebview.startLiveApp("dummy-wallet-app", 52619);
     expect(continueTest).toBeTruthy();
 
-    loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
+    await loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
 
     // start navigation
     await portfolioPage.waitForPortfolioPageToLoad();

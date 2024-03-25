@@ -6,9 +6,7 @@ import { MarketPages } from "./shared";
 
 describe("Market integration test", () => {
   it("Should search for a coin and navigate to detail page", async () => {
-    const { user } = render(<MarketPages />, {
-      featureFlags: { ptxEarn: { enabled: true }, llmMarketNewArch: { enabled: true } },
-    });
+    const { user } = render(<MarketPages />);
 
     expect(await screen.findByText("Bitcoin (BTC)")).toBeOnTheScreen();
     expect(await screen.findByText("Ethereum (ETH)")).toBeOnTheScreen();

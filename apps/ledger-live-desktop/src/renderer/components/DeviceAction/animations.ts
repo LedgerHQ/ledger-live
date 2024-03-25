@@ -404,7 +404,7 @@ const blue: DeviceAnimations = {
 type Animations = {
   [modelId in DeviceModelId]: DeviceAnimations;
 };
-const animations: Animations = { nanoX, nanoS, nanoSP, stax, blue };
+const animations: Animations = { nanoX, nanoS, nanoSP, stax, europa: stax, blue };
 
 export const getDeviceAnimation = (
   modelId: DeviceModelId,

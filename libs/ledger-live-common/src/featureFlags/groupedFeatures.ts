@@ -8,16 +8,10 @@ export const groupedFeatures: Record<
   }
 > = {
   stax: {
-    featureIds: [
-      "customImage",
-      "deviceInitialApps",
-      "llmNewDeviceSelection",
-      "postOnboardingAssetsTransfer",
-      "postOnboardingClaimNft",
-      "staxWelcomeScreen",
-      "syncOnboarding",
-      "llmNewFirmwareUpdateUx",
-    ],
+    featureIds: ["supportDeviceStax", "deviceInitialApps", "staxWelcomeScreen"],
+  },
+  europa: {
+    featureIds: ["supportDeviceEuropa", "deviceInitialApps"],
   },
   disableNft: {
     featureIds: ["disableNftLedgerMarket", "disableNftRaribleOpensea", "disableNftSend"],

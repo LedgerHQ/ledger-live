@@ -1,7 +1,7 @@
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import React, { useState, useCallback, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "~/components/SafeAreaView";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
@@ -146,6 +146,8 @@ function SendSummary({ navigation, route }: Props) {
 
   return (
     <SafeAreaView
+      isFlex
+      edges={["bottom"]}
       style={[
         styles.root,
         {
@@ -273,14 +275,14 @@ const styles = StyleSheet.create({
   body: {
     flex: 1,
     paddingHorizontal: 16,
+    paddingVertical: 16,
     backgroundColor: "transparent",
   },
   footer: {
     flexDirection: "column",
     alignItems: "center",
     paddingHorizontal: 16,
-    paddingTop: 24,
-    paddingBottom: 16,
+    paddingBottom: 24,
   },
   continueButton: {
     alignSelf: "stretch",
@@ -298,7 +300,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     borderLeftWidth: 2,
     height: 20,
-    top: 60,
+    top: -12,
     left: 16,
   },
   gasPriceErrorContainer: {

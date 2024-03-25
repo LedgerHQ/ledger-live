@@ -6,6 +6,7 @@ import BigNumber from "bignumber.js";
 import { patchOperationWithHash } from "../../../operation";
 import cryptoFactory from "../chain/chain";
 import cosmosBase from "../chain/cosmosBase";
+import { SequenceNumberError } from "@ledgerhq/errors";
 import {
   CosmosDelegation,
   CosmosDelegationStatus,
@@ -13,6 +14,7 @@ import {
   CosmosTx,
   CosmosUnbonding,
 } from "../types";
+import { AxiosError } from "axios";
 
 type Rewards = { denom: string; amount: string };
 const USDC_DENOM = "ibc/8E27BA2D5493AF5636760E354E46004562C46AB7EC0CC4C1CA14E9E20E2545B5";
@@ -74,7 +76,12 @@ export class CosmosAPI {
         withdrawAddress,
       };
     } catch (e) {
-      throw new Error(`"Error during cosmos synchronization: "${(e as Error).message}`);
+      const error = e as AxiosError;
+      if (error.isAxiosError) {
+        throw new Error(`"Error during ${currency.id} synchronization: "${error.toJSON()}`);
+      } else {
+        throw new Error(`"Error during ${currency.id} synchronization: "${error.message}`);
+      }
     }
   };
 
@@ -371,6 +378,11 @@ export class CosmosAPI {
 
     if (data.tx_response.code != 0) {
       // error codes: https://github.com/cosmos/cosmos-sdk/blob/master/types/errors/errors.go
+      // Handle cosmos sequence mismatch error(error code 32) because the backend returns a wrong sequence sometimes
+      // This is a temporary fix until we have a better backend
+      if (data.tx_response.code === 32) {
+        throw new SequenceNumberError();
+      }
       throw new Error(
         "invalid broadcast return (code: " +
           (data.tx_response.code || "?") +

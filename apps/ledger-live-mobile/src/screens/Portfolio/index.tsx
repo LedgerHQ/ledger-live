@@ -25,7 +25,7 @@ import {
 import { setHasBeenUpsoldProtect } from "~/actions/settings";
 import Carousel from "~/components/Carousel";
 import { ScreenName } from "~/const";
-import FirmwareUpdateBanner from "~/components/FirmwareUpdateBanner";
+import FirmwareUpdateBanner from "~/newArch/features/FirmwareUpdate/components/UpdateBanner";
 import CheckLanguageAvailability from "~/components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "~/components/CheckTermOfUseUpdate";
 import RecoverBanner from "~/components/RecoverBanner";

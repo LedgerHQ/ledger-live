@@ -51,7 +51,7 @@ export type PreloadStrategy = Partial<{
 /**
  *
  */
-export type BroadcastArg0 = {
+export type BroadcastArg = {
   account: Account;
   signedOperation: SignedOperation;
 };
@@ -72,7 +72,7 @@ export type SignOperationFnSignature<T> = (
   arg0: SignOperationArg0<T>,
 ) => Observable<SignOperationEvent>;
 
-export type BroadcastFnSignature = (arg0: BroadcastArg0) => Promise<Operation>;
+export type BroadcastFnSignature = (arg0: BroadcastArg) => Promise<Operation>;
 
 export type Bridge<T extends TransactionCommon> = {
   currencyBridge: CurrencyBridge;

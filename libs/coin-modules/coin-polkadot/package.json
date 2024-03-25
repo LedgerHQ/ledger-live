@@ -1,0 +1,130 @@
+{
+  "name": "@ledgerhq/coin-polkadot",
+  "version": "0.5.4",
+  "description": "Ledger Polkadot Coin integration",
+  "keywords": [
+    "Ledger",
+    "LedgerWallet",
+    "dot",
+    "Polkadot",
+    "Hardware Wallet"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-modules/coin-polkadot",
+  "publishConfig": {
+    "access": "public"
+  },
+  "typesVersions": {
+    "*": {
+      "lib/*": [
+        "lib/*"
+      ],
+      "lib-es/*": [
+        "lib-es/*"
+      ],
+      "logic": [
+        "lib/logic/index"
+      ],
+      "specs": [
+        "lib/test/bot-specs"
+      ],
+      "*": [
+        "lib/*",
+        "lib/bridge/*",
+        "lib/logic/*",
+        "lib/signer/*",
+        "lib/test/*",
+        "lib/types/*"
+      ]
+    }
+  },
+  "exports": {
+    "./lib/*": "./lib/*.js",
+    "./lib-es/*": "./lib-es/*.js",
+    "./deviceTransactionConfig": {
+      "require": "./lib/bridge/deviceTransactionConfig.js",
+      "default": "./lib-es/bridge/deviceTransactionConfig.js"
+    },
+    "./errors": {
+      "require": "./lib/types/errors.js",
+      "default": "./lib-es/types/errors.js"
+    },
+    "./formatters": {
+      "require": "./lib/bridge/formatters.js",
+      "default": "./lib-es/bridge/formatters.js"
+    },
+    "./logic": {
+      "require": "./lib/logic/index.js",
+      "default": "./lib-es/logic/index.js"
+    },
+    "./preload": {
+      "require": "./lib/bridge/preload.js",
+      "default": "./lib-es/bridge/preload.js"
+    },
+    "./serialization": {
+      "require": "./lib/bridge/serialization.js",
+      "default": "./lib-es/bridge/serialization.js"
+    },
+    "./specs": {
+      "require": "./lib/test/bot-specs.js",
+      "default": "./lib-es/test/bot-specs.js"
+    },
+    "./transaction": {
+      "require": "./lib/bridge/transaction.js",
+      "default": "./lib-es/bridge/transaction.js"
+    },
+    "./*": {
+      "require": "./lib/*.js",
+      "default": "./lib-es/*.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@ledgerhq/coin-framework": "workspace:^",
+    "@ledgerhq/cryptoassets": "workspace:^",
+    "@ledgerhq/devices": "workspace:^",
+    "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/live-env": "workspace:^",
+    "@ledgerhq/live-network": "workspace:^",
+    "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/types-cryptoassets": "workspace:^",
+    "@ledgerhq/types-live": "workspace:^",
+    "@polkadot/types": "10.9.1",
+    "@polkadot/types-known": "10.9.1",
+    "@polkadot/util": "12.5.1",
+    "@polkadot/util-crypto": "12.5.1",
+    "bignumber.js": "^9.1.2",
+    "expect": "^27.4.6",
+    "invariant": "^2.2.2",
+    "lodash": "^4.17.21",
+    "rxjs": "^7.8.1"
+  },
+  "devDependencies": {
+    "@types/invariant": "^2.2.2",
+    "@types/jest": "^29.5.10",
+    "@types/lodash": "^4.14.191",
+    "@faker-js/faker": "^8.4.1",
+    "jest": "^29.7.0",
+    "msw": "^2.0.11",
+    "ts-jest": "^29.1.1"
+  },
+  "scripts": {
+    "clean": "rimraf lib lib-es",
+    "build": "tsc && tsc -m ES6 --outDir lib-es",
+    "prewatch": "pnpm build",
+    "watch": "tsc --watch",
+    "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
+    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
+    "lint:fix": "pnpm lint --fix",
+    "test": "jest",
+    "typecheck": "tsc --noEmit",
+    "unimported": "unimported"
+  }
+}

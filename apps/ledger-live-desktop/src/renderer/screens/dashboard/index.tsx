@@ -28,9 +28,14 @@ import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAle
 import PostOnboardingHubBanner from "~/renderer/components/PostOnboardingHub/PostOnboardingHubBanner";
 import FeaturedButtons from "~/renderer/screens/dashboard/FeaturedButtons";
 import { ABTestingVariants, AccountLike, Operation } from "@ledgerhq/types-live";
-import PortfolioContentCards from "~/renderer/screens/dashboard/PortfolioContentCards";
-import MarketPerformance from "./MarketPerformance";
+import ActionContentCards from "~/renderer/screens/dashboard/ActionContentCards";
+import MarketPerformanceWidget from "~/renderer/screens/dashboard/MarketPerformanceWidget";
 import { useMarketPerformanceFeatureFlag } from "~/renderer/actions/marketperformance";
+import { Grid } from "@ledgerhq/react-ui";
+import AnalyticsOptInPrompt from "LLD/AnalyticsOptInPrompt/screens";
+import { useDisplayOnPortfolioAnalytics } from "LLD/AnalyticsOptInPrompt/hooks/useDisplayOnPortfolio";
+import Carousel from "~/renderer/components/Carousel";
+import useActionCards from "~/renderer/hooks/useActionCards";
 
 // This forces only one visible top banner at a time
 export const TopBannerContainer = styled.div`
@@ -73,7 +78,12 @@ export default function DashboardPage() {
     [hiddenNftCollections, shouldFilterTokenOpsZeroAmount],
   );
 
-  const marketPerformanceEnabled = useMarketPerformanceFeatureFlag().enabled;
+  const { enabled: marketPerformanceEnabled, variant: marketPerformanceVariant } =
+    useMarketPerformanceFeatureFlag();
+  const isActionCardsCampainRunning = useActionCards().length > 0;
+
+  const { isFeatureFlagsAnalyticsPrefDisplayed, analyticsOptInPromptProps } =
+    useDisplayOnPortfolioAnalytics();
 
   return (
     <>
@@ -81,9 +91,13 @@ export default function DashboardPage() {
         <ClearCacheBanner />
         <CurrencyDownStatusAlert currencies={currencies} hideStatusIncidents />
       </TopBannerContainer>
-      <Box gap={"5px"}>
+      <Box gap={"20px"}>
         <RecoverBanner />
-        <PortfolioContentCards variant={ABTestingVariants.variantA} />
+        {isActionCardsCampainRunning ? (
+          <ActionContentCards variant={ABTestingVariants.variantA} />
+        ) : (
+          <Carousel />
+        )}
       </Box>
       {isPostOnboardingBannerVisible && <PostOnboardingHubBanner />}
       <FeaturedButtons />
@@ -99,13 +113,25 @@ export default function DashboardPage() {
           <EmptyStateInstalledApps />
         ) : totalAccounts > 0 ? (
           <>
-            <BalanceSummary
-              counterValue={counterValue}
-              chartColor={colors.wallet}
-              range={selectedTimeRange}
-            />
+            {marketPerformanceEnabled ? (
+              <PortfolioGrid>
+                <BalanceSummary
+                  counterValue={counterValue}
+                  chartColor={colors.wallet}
+                  range={selectedTimeRange}
+                />
 
-            {marketPerformanceEnabled ? <MarketPerformance /> : null}
+                <Box ml={2} minWidth={275}>
+                  <MarketPerformanceWidget variant={marketPerformanceVariant} />
+                </Box>
+              </PortfolioGrid>
+            ) : (
+              <BalanceSummary
+                counterValue={counterValue}
+                chartColor={colors.wallet}
+                range={selectedTimeRange}
+              />
+            )}
 
             <AssetDistribution />
             {totalOperations > 0 && (
@@ -123,6 +149,16 @@ export default function DashboardPage() {
           <EmptyStateAccounts />
         )}
       </Box>
+      {isFeatureFlagsAnalyticsPrefDisplayed && (
+        <AnalyticsOptInPrompt {...analyticsOptInPromptProps} />
+      )}
     </>
   );
 }
+
+const PortfolioGrid = styled(Grid).attrs(() => ({
+  columnGap: 2,
+  columns: 2,
+}))`
+  grid-template-columns: 2fr 1fr;
+`;

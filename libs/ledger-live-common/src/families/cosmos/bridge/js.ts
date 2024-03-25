@@ -40,6 +40,7 @@ const currencyBridge: CurrencyBridge = {
     setCosmosPreloadData(currency.id, {
       validators,
     });
+
     return Promise.resolve({
       validators,
       config,

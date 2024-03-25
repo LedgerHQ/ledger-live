@@ -58,9 +58,10 @@
     "desktop": "pnpm --filter ledger-live-desktop",
     "cli": "pnpm --filter live-cli",
     "coin": "pnpm --filter coin-framework",
-    "coin:framework": "pnpm --filter coin-framework",
     "coin:algorand": "pnpm --filter coin-algorand",
+    "coin:bitcoin": "pnpm --filter coin-bitcoin",
     "coin:evm": "pnpm --filter coin-evm",
+    "coin:framework": "pnpm --filter coin-framework",
     "coin:near": "pnpm --filter coin-near",
     "coin:polkadot": "pnpm --filter coin-polkadot",
     "evm-tools": "pnpm --filter evm-tools",
@@ -100,7 +101,6 @@
     "ljs:hw-transport": "pnpm --filter hw-transport",
     "ljs:hw-transport-http": "pnpm --filter hw-transport-http",
     "ljs:hw-transport-mocker": "pnpm --filter hw-transport-mocker",
-    "ljs:hw-transport-node-ble": "pnpm --filter hw-transport-node-ble",
     "ljs:hw-transport-node-hid": "pnpm --filter hw-transport-node-hid",
     "ljs:hw-transport-node-hid-noevents": "pnpm --filter hw-transport-node-hid-noevents",
     "ljs:hw-transport-node-hid-singleton": "pnpm --filter hw-transport-node-hid-singleton",
@@ -163,7 +163,8 @@
     "overrides": {
       "stellar-base>sodium-native": "^3.2.1",
       "remove-flow-types-loader>flow-remove-types": "^2",
-      "remove-flow-types-loader>loader-utils": "*"
+      "remove-flow-types-loader>loader-utils": "*",
+      "@ledgerhq/devices": "workspace:*"
     },
     "patchedDependencies": {
       "react-native-fast-crypto@2.2.0": "patches/react-native-fast-crypto@2.2.0.patch",
@@ -172,7 +173,7 @@
       "react-native-image-crop-tools@1.6.4": "patches/react-native-image-crop-tools@1.6.4.patch",
       "react-native-webview@11.26.1": "patches/react-native-webview@11.26.1.patch",
       "asyncstorage-down@4.2.0": "patches/asyncstorage-down@4.2.0.patch",
-      "detox@20.16.0": "patches/detox@20.16.0.patch",
+      "detox@20.18.4": "patches/detox@20.18.4.patch",
       "usb@2.9.0": "patches/usb@2.9.0.patch"
     },
     "packageExtensions": {

@@ -2,15 +2,13 @@ import "@testing-library/jest-native/extend-expect";
 import "@testing-library/react-native/extend-expect";
 import "react-native-gesture-handler/jestSetup";
 import "@mocks/console";
-import handlers, { ALLOWED_UNHANDLED_REQUESTS } from "./handlers";
+import { ALLOWED_UNHANDLED_REQUESTS } from "./handlers";
+import { server } from "./server";
 import { NativeModules } from "react-native";
-import { setupServer } from "msw/node";
 
 // Needed for react-reanimated https://docs.swmansion.com/react-native-reanimated/docs/next/guide/testing/
 jest.useFakeTimers();
 jest.runAllTimers();
-
-const server = setupServer(...handlers);
 
 beforeAll(() =>
   server.listen({
@@ -91,3 +89,26 @@ jest.mock("@react-native-firebase/messaging", () => ({
 }));
 
 jest.mock("@braze/react-native-sdk", () => ({}));
+
+const originalError = console.error;
+const originalWarn = console.warn;
+
+const EXCLUDED_ERRORS = [];
+
+const EXCLUDED_WARNINGS = [];
+
+console.error = (...args) => {
+  const error = args.join();
+  if (EXCLUDED_ERRORS.some(excluded => error.includes(excluded))) {
+    return;
+  }
+  originalError.call(console, ...args);
+};
+
+console.warn = (...args) => {
+  const warning = args.join();
+  if (EXCLUDED_WARNINGS.some(excluded => warning.includes(excluded))) {
+    return;
+  }
+  originalWarn.call(console, ...args);
+};

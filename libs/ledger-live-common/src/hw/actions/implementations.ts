@@ -17,6 +17,7 @@ import { getDeviceModel } from "@ledgerhq/devices";
 import { ConnectManagerTimeout } from "../../errors";
 import { LocalTracer } from "@ledgerhq/logs";
 import { LOG_TYPE } from "..";
+import { getEnv } from "@ledgerhq/live-env";
 
 export enum ImplementationType {
   event = "enum",
@@ -62,7 +63,7 @@ export const defaultImplementationConfig: PollingImplementationConfig = {
   pollingFrequency: 2000,
   initialWaitTime: 5000,
   reconnectWaitTime: 5000,
-  connectionTimeout: 20000,
+  connectionTimeout: getEnv("MOCK") ? 60000 : 20000,
 };
 type Implementation = <EmittedEvent, GenericRequestType>(
   params: PollingImplementationParams<GenericRequestType, EmittedEvent>,
@@ -229,14 +230,7 @@ const eventImplementation: Implementation = <SpecificType, GenericRequestType>(
 
             return concat(
               initialEvent,
-              !device
-                ? EMPTY
-                : task({ deviceId: device.deviceId, request }).pipe(
-                    filter(
-                      // unresponsiveDevice are for polling.
-                      event => (event as ImplementationEvent).type !== "unresponsiveDevice",
-                    ),
-                  ),
+              !device ? EMPTY : task({ deviceId: device.deviceId, request }),
             );
           }),
           catchError((error: Error) =>

@@ -4,19 +4,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { Flex } from "@ledgerhq/native-ui";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
-import {
-  completeCustomImageFlow,
-  setCustomImageType,
-  setLastConnectedDevice,
-  setReadOnlyMode,
-} from "~/actions/settings";
+import { completeCustomImageFlow, setCustomImageType } from "~/actions/settings";
 import { ScreenName } from "~/const";
 import CustomImageDeviceAction from "~/components/CustomImageDeviceAction";
 import TestImage from "~/components/CustomImage/TestImage";
-import SelectDevice from "~/components/SelectDevice";
 import SelectDevice2, { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
 import { useCompleteActionCallback } from "~/logic/postOnboarding/useCompleteAction";
 import {
@@ -25,11 +18,8 @@ import {
   StackNavigatorProps,
 } from "~/components/RootNavigator/types/helpers";
 import { CustomImageNavigatorParamList } from "~/components/RootNavigator/types/CustomImageNavigator";
-import { addKnownDevice } from "~/actions/ble";
 import { lastConnectedDeviceSelector } from "~/reducers/settings";
 import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
-
-const deviceModelIds = [DeviceModelId.stax];
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<CustomImageNavigatorParamList, ScreenName.CustomImageStep3Transfer>
@@ -75,24 +65,6 @@ const Step3Transfer = ({ route, navigation }: NavigationProps) => {
     },
     [navigation, device],
   );
-
-  const handleDeviceSelected = useCallback(
-    (device: Device) => {
-      dispatch(setReadOnlyMode(false));
-      dispatch(
-        addKnownDevice({
-          ...device,
-          id: device.deviceId,
-          name: device.deviceName || "",
-        }),
-      );
-      dispatch(setLastConnectedDevice(device));
-      setDevice(device);
-    },
-    [dispatch],
-  );
-
-  const newDeviceSelectionFeatureFlag = useFeature("llmNewDeviceSelection");
 
   const completeAction = useCompleteActionCallback();
 
@@ -146,21 +118,13 @@ const Step3Transfer = ({ route, navigation }: NavigationProps) => {
             onResult={handleResult}
             onSkip={handleExit}
           />
-        ) : newDeviceSelectionFeatureFlag?.enabled ? (
+        ) : (
           <Flex flex={1} alignSelf="stretch">
             <SelectDevice2
               onSelect={setDevice}
               filterByDeviceModelId={DeviceModelId.stax}
               stopBleScanning={!!device}
               requestToSetHeaderOptions={requestToSetHeaderOptions}
-            />
-          </Flex>
-        ) : (
-          <Flex flex={1} alignSelf="stretch">
-            <SelectDevice
-              onSelect={handleDeviceSelected}
-              deviceModelIds={deviceModelIds}
-              autoSelectOnAdd
             />
           </Flex>
         )}

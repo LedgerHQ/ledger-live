@@ -5,9 +5,7 @@ import { MarketPages } from "./shared";
 
 describe("Market integration test", () => {
   it("Should set some coins as favorites", async () => {
-    const { user } = render(<MarketPages />, {
-      featureFlags: { ptxEarn: { enabled: true }, llmMarketNewArch: { enabled: true } },
-    });
+    const { user } = render(<MarketPages />);
 
     //Set BTC as favorite
     expect(await screen.findByText("Bitcoin (BTC)")).toBeOnTheScreen();

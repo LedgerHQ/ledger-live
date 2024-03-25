@@ -52,22 +52,17 @@ import VerifyAccount from "~/screens/VerifyAccount";
 import { LiveApp } from "~/screens/Platform";
 import AccountsNavigator from "./AccountsNavigator";
 import MarketNavigator from "LLM/features/Market/Navigator";
-import MarketCurrencySelect from "~/screens/Market/MarketCurrencySelect";
-import MarketDetail from "~/screens/Market/MarketDetail";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import {
   BleDevicePairingFlow,
   bleDevicePairingFlowHeaderOptions,
 } from "~/screens/BleDevicePairingFlow";
 
 import PostBuyDeviceScreen from "~/screens/PostBuyDeviceScreen";
-import LearnWebView from "~/screens/Learn/index";
 import { useNoNanoBuyNanoWallScreenOptions } from "~/context/NoNanoBuyNanoWall";
 import PostBuyDeviceSetupNanoWallScreen from "~/screens/PostBuyDeviceSetupNanoWallScreen";
 import CurrencySettings from "~/screens/Settings/CryptoAssets/Currencies/CurrencySettings";
 import WalletConnectLiveAppNavigator from "./WalletConnectLiveAppNavigator";
 import CustomImageNavigator from "./CustomImageNavigator";
-import ClaimNftNavigator from "./ClaimNftNavigator";
 import PostOnboardingNavigator from "./PostOnboardingNavigator";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { hasNoAccountsSelector } from "~/reducers/accounts";
@@ -100,7 +95,6 @@ export default function BaseNavigator() {
     }>
   >();
   const { colors } = useTheme();
-  const marketNewArch = useFeature("llmMarketNewArch");
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
   const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
   const isAccountsEmpty = useSelector(hasNoAccountsSelector);
@@ -194,11 +188,6 @@ export default function BaseNavigator() {
             headerStyle: styles.headerNoShadow,
           }}
           {...noNanoBuyNanoWallScreenOptions}
-        />
-        <Stack.Screen
-          name={ScreenName.LearnWebView}
-          component={LearnWebView}
-          options={{ headerShown: false }}
         />
         <Stack.Screen
           name={NavigatorName.ExploreTab}
@@ -394,20 +383,7 @@ export default function BaseNavigator() {
             cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
           }}
         />
-        {marketNewArch?.enabled ? (
-          MarketNavigator({ Stack })
-        ) : (
-          <Stack.Screen
-            name={ScreenName.MarketCurrencySelect}
-            component={MarketCurrencySelect}
-            options={{
-              title: t("market.filters.currency"),
-              headerLeft: () => null,
-              // FIXME: ONLY ON BOTTOM TABS AND DRAWER NAVIGATION
-              // unmountOnBlur: true,
-            }}
-          />
-        )}
+        {MarketNavigator({ Stack })}
         <Stack.Screen
           name={ScreenName.PortfolioOperationHistory}
           component={PortfolioHistory}
@@ -462,23 +438,9 @@ export default function BaseNavigator() {
           component={AccountsNavigator}
           options={{ headerShown: false }}
         />
-        {!marketNewArch?.enabled ? (
-          <Stack.Screen
-            name={ScreenName.MarketDetail}
-            component={MarketDetail}
-            options={{
-              headerShown: false,
-            }}
-          />
-        ) : null}
         <Stack.Screen
           name={NavigatorName.CustomImage}
           component={CustomImageNavigator}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name={NavigatorName.ClaimNft}
-          component={ClaimNftNavigator}
           options={{ headerShown: false }}
         />
         {/* This is a freaking hack… */}
