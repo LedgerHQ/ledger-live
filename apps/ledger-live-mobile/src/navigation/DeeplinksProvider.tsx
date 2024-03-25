@@ -225,7 +225,7 @@ const linkingOptions = () => ({
                    * * @params ?searchQuery: string
                    * ie: "ledgerlive://myledger?searchQuery=bitcoin" will open myledger with "bitcoin" prefilled in the search input
                    */
-                  [ScreenName.Manager]: "myledger",
+                  [ScreenName.MyLedgerChooseDevice]: "myledger",
                 },
               },
             },

@@ -12,7 +12,7 @@ import Transfer, { TransferTabIcon } from "../TabBar/Transfer";
 import TabIcon from "../TabIcon";
 import PortfolioNavigator from "./PortfolioNavigator";
 import { hasOrderedNanoSelector, readOnlyModeEnabledSelector } from "~/reducers/settings";
-import ManagerNavigator, { ManagerTabIcon } from "./ManagerNavigator";
+import MyLedgerNavigator, { ManagerTabIcon } from "./MyLedgerNavigator";
 import DiscoverNavigator from "./DiscoverNavigator";
 import customTabBar from "../TabBar/CustomTabBar";
 import { MainNavigatorParamList } from "./types/MainNavigator";
@@ -153,7 +153,7 @@ export default function MainNavigator() {
       />
       <Tab.Screen
         name={NavigatorName.Manager}
-        component={ManagerNavigator}
+        component={MyLedgerNavigator}
         options={{
           tabBarIcon: props => <ManagerTabIcon {...props} />,
           tabBarTestID: "TabBarManager",
@@ -168,7 +168,7 @@ export default function MainNavigator() {
                 navigation.navigate(NavigatorName.BuyDevice);
               } else {
                 navigation.navigate(NavigatorName.Manager, {
-                  screen: ScreenName.Manager,
+                  screen: ScreenName.MyLedgerChooseDevice,
                   params: {
                     tab: undefined,
                     searchQuery: undefined,

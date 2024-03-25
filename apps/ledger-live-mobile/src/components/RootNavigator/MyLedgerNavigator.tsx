@@ -7,12 +7,14 @@ import { Box, IconsLegacy, Flex, Button } from "@ledgerhq/native-ui";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { ScreenName } from "~/const";
 import { hasAvailableUpdateSelector, lastSeenDeviceSelector } from "~/reducers/settings";
-import Manager, { managerHeaderOptions } from "~/screens/Manager";
-import ManagerMain from "~/screens/Manager/Manager";
+import MyLedgerChooseDeviceScreen, {
+  headerOptions,
+} from "~/screens/Manager/MyLedgerChooseDeviceScreen";
+import MyLedgerDeviceScreen from "~/screens/Manager/MyLedgerDeviceScreen";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import TabIcon from "../TabIcon";
 import { useIsNavLocked } from "./CustomBlockRouterNavigator";
-import { ManagerNavigatorStackParamList } from "./types/ManagerNavigator";
+import { MyLedgerNavigatorStackParamList } from "./types/MyLedgerNavigator";
 import FirmwareUpdateScreen from "~/screens/FirmwareUpdate";
 
 const BadgeContainer = styled(Flex).attrs({
@@ -37,7 +39,7 @@ const Badge = () => {
   );
 };
 
-export default function ManagerNavigator() {
+export default function MyLedgerNavigator() {
   const { colors } = useTheme();
   const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [colors]);
 
@@ -58,19 +60,23 @@ export default function ManagerNavigator() {
         }}
       />
       <Stack.Screen
-        name={ScreenName.Manager}
-        component={Manager}
+        name={ScreenName.MyLedgerChooseDevice}
+        component={MyLedgerChooseDeviceScreen}
         options={{
-          ...managerHeaderOptions,
+          ...headerOptions,
           gestureEnabled: false,
         }}
       />
-      <Stack.Screen name={ScreenName.ManagerMain} component={ManagerMain} options={{ title: "" }} />
+      <Stack.Screen
+        name={ScreenName.MyLedgerDevice}
+        component={MyLedgerDeviceScreen}
+        options={{ title: "" }}
+      />
     </Stack.Navigator>
   );
 }
 
-const Stack = createStackNavigator<ManagerNavigatorStackParamList>();
+const Stack = createStackNavigator<MyLedgerNavigatorStackParamList>();
 
 const DeviceIcon = ({ color, size = 16 }: { color?: string; size?: number }) => {
   const hasAvailableUpdate = useSelector(hasAvailableUpdateSelector);
