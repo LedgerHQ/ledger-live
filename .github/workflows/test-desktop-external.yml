@@ -34,10 +34,10 @@ jobs:
       CI_OS: ubuntu-latest
     runs-on: ubuntu-latest
     steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+      - uses: actions/checkout@v4
         with:
           ref: ${{ github.ref_name }}
-          base: ${{ inputs.base_ref }}
+          persist-credentials: false
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
         with:
@@ -70,10 +70,10 @@ jobs:
       CI_OS: ubuntu-latest
     runs-on: ubuntu-latest
     steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+      - uses: actions/checkout@v4
         with:
           ref: ${{ github.ref_name }}
-          base: ${{ inputs.base_ref }}
+          persist-credentials: false
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
       - uses: ./tools/actions/composites/setup-test-desktop
@@ -96,10 +96,10 @@ jobs:
     outputs:
       status: ${{ steps.tests.outcome }}
     steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+      - uses: actions/checkout@v4
         with:
           ref: ${{ github.ref_name }}
-          base: ${{ inputs.base_ref }}
+          persist-credentials: false
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
         with:
@@ -154,10 +154,10 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ !cancelled() && github.event_name == 'workflow_dispatch' }}
     steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+      - uses: actions/checkout@v4
         with:
           ref: ${{ github.ref_name }}
-          base: ${{ inputs.base_ref }}
+          persist-credentials: false
       - name: "download linter results"
         uses: actions/download-artifact@v3
         with:

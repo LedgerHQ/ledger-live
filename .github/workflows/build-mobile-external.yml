@@ -27,10 +27,10 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+      - uses: actions/checkout@v4
         with:
           ref: ${{ github.ref_name }}
-          base: ${{ inputs.base_ref }}
+          persist-credentials: false
       - name: Setup git user
         uses: ./tools/actions/composites/setup-git-user
       - name: Setup the toolchain
@@ -87,10 +87,10 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+      - uses: actions/checkout@v4
         with:
           ref: ${{ github.ref_name }}
-          base: ${{ inputs.base_ref }}
+          persist-credentials: false
       - name: Setup git user
         uses: ./tools/actions/composites/setup-git-user
       - name: Setup the toolchain

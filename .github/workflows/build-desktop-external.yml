@@ -48,10 +48,10 @@ jobs:
             } else if ("${{ matrix.os }}" === "windows-latest") {
               return "win"
             }
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+      - uses: actions/checkout@v4
         with:
           ref: ${{ github.ref_name }}
-          base: ${{ inputs.base_ref }}
+          persist-credentials: false
       - name: Setup git user
         uses: ./tools/actions/composites/setup-git-user
       - uses: actions/setup-python@v4
