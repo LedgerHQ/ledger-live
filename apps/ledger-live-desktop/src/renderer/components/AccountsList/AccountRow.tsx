@@ -10,6 +10,7 @@ import FormattedVal from "~/renderer/components/FormattedVal";
 import Input from "~/renderer/components/Input";
 import AccountTagDerivationMode from "../AccountTagDerivationMode";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 const InputWrapper = styled.div`
   margin-left: 4px;
   width: 100%;
@@ -67,7 +68,7 @@ export default function AccountRow(props: Props) {
     const { value } = e.target;
     if (!value && onEditName) {
       // don't leave an empty input on blur
-      onEditName(account, account.name);
+      onEditName(account, getDefaultAccountName(account));
     }
   };
 

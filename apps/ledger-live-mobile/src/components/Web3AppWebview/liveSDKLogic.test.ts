@@ -101,8 +101,6 @@ const createAccount = (id: string, crypto: CryptoCurrency = defaultEthCryptoFami
   index: 0,
   freshAddress: "0x01",
   freshAddressPath: "44'/60'/0'/0/0",
-  name: "Ethereum 1",
-  starred: false,
   used: false,
   balance: new BigNumber("51281813126095913"),
   spendableBalance: new BigNumber("51281813126095913"),
@@ -147,7 +145,6 @@ function createTokenAccount(id = "32", parentId = "whatever"): TokenAccount {
     operationsCount: 0,
     operations: [],
     pendingOperations: [],
-    starred: false,
     balanceHistoryCache: {
       WEEK: { latestDate: null, balances: [] },
       HOUR: { latestDate: null, balances: [] },

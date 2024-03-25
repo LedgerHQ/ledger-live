@@ -32,6 +32,7 @@ import { Account } from "@ledgerhq/types-live";
 import { getContext } from "@ledgerhq/coin-framework/bot/bot-test-context";
 import { Transaction } from "../generated/types";
 import { sha256 } from "../crypto";
+import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 
 type Arg = Partial<{
   filter: Partial<{ currencies: string[]; families: string[]; mutation: string }>;
@@ -734,7 +735,7 @@ export async function bot({ disabled, filter }: Arg = {}): Promise<void> {
     });
     errorCases.forEach((c: MutationReport<any>) => {
       txt += `in ${c.spec.name}`;
-      if (c.account) txt += `/${c.account.name}`;
+      if (c.account) txt += `/${getDefaultAccountName(c.account)}`;
       if (c.mutation) txt += `/${c.mutation.name}`;
       txt += ` got ${String(c.error)}\n`;
     });

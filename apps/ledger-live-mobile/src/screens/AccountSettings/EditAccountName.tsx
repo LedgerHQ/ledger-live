@@ -8,7 +8,6 @@ import { compose } from "redux";
 import { Box } from "@ledgerhq/native-ui";
 import { Account } from "@ledgerhq/types-live";
 import { accountScreenSelector } from "~/reducers/accounts";
-import { updateAccount } from "~/actions/accounts";
 import TextInput from "~/components/TextInput";
 import { getFontStyle } from "~/components/LText";
 import { Theme, withTheme } from "../../colors";
@@ -18,6 +17,7 @@ import { ScreenName } from "~/const";
 import { AddAccountsNavigatorParamList } from "~/components/RootNavigator/types/AddAccountsNavigator";
 import { State } from "~/reducers/types";
 import { AccountSettingsNavigatorParamList } from "~/components/RootNavigator/types/AccountSettingsNavigator";
+import { accountNameWithDefaultSelector, setAccountName } from "@ledgerhq/live-wallet/store";
 
 export const MAX_ACCOUNT_NAME_LENGHT = 50;
 
@@ -26,16 +26,20 @@ type NavigationProps =
   | StackNavigatorProps<AccountSettingsNavigatorParamList, ScreenName.EditAccountName>;
 
 type Props = {
-  updateAccount: typeof updateAccount;
+  setAccountName: typeof setAccountName;
   colors: Theme["colors"];
   account: Account;
+  accountName: string;
 } & NavigationProps;
 
-const mapStateToProps = (state: State, { route }: NavigationProps) =>
-  accountScreenSelector(route)(state);
+const mapStateToProps = (state: State, { route }: NavigationProps) => {
+  const props = accountScreenSelector(route)(state);
+  const accountName = props.account && accountNameWithDefaultSelector(state.wallet, props.account);
+  return { ...props, accountName };
+};
 
 const mapDispatchToProps = {
-  updateAccount,
+  setAccountName,
 };
 
 class EditAccountName extends PureComponent<
@@ -53,7 +57,7 @@ class EditAccountName extends PureComponent<
   };
 
   onNameEndEditing = () => {
-    const { updateAccount, account, navigation } = this.props;
+    const { setAccountName, account, navigation } = this.props;
     const { accountName } = this.state;
     const { onAccountNameChange, account: accountFromAdd } = this.props.route.params || {};
 
@@ -64,21 +68,15 @@ class EditAccountName extends PureComponent<
       if (isImportingAccounts) {
         onAccountNameChange && onAccountNameChange(cleanAccountName, accountFromAdd);
       } else {
-        updateAccount({
-          ...account,
-          name: cleanAccountName,
-        });
+        setAccountName(account.id, cleanAccountName);
       }
       navigation.goBack();
     }
   };
 
   render() {
-    const { account, colors } = this.props;
+    const { colors, accountName: storeAccountName } = this.props;
     const { accountName } = this.state;
-    const { account: accountFromAdd } = this.props.route.params || {};
-
-    const initialAccountName = account ? account.name : accountFromAdd?.name;
 
     return (
       <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
@@ -86,7 +84,7 @@ class EditAccountName extends PureComponent<
           <TextInput
             autoFocus
             value={accountName}
-            defaultValue={initialAccountName}
+            defaultValue={storeAccountName}
             returnKeyType="done"
             maxLength={MAX_ACCOUNT_NAME_LENGHT}
             onChangeText={accountName => this.setState({ accountName })}

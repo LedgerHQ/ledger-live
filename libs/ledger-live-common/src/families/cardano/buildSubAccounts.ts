@@ -156,7 +156,6 @@ export function buildSubAccounts({
         operationsCount: operations.length,
         operations,
         pendingOperations: [],
-        starred: false,
         balanceHistoryCache: emptyHistoryCache,
         swapHistory: [],
       };

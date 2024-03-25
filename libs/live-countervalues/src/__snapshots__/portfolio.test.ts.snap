@@ -167,7 +167,6 @@ exports[`Portfolio getAssetsDistribution snapshot 1`] = `
           "id": "mock:1:bitcoin:bitcoin_1:",
           "index": 1,
           "lastSyncDate": 2018-03-14T17:34:42.000Z,
-          "name": "iisPu4qdvHcH21Q9xOykvRW9fWwiZk",
           "operations": [
             {
               "accountId": "mock:1:bitcoin:bitcoin_1:",
@@ -624,7 +623,6 @@ exports[`Portfolio getAssetsDistribution snapshot 1`] = `
           "pendingOperations": [],
           "seedIdentifier": "mock",
           "spendableBalance": "6196770",
-          "starred": false,
           "swapHistory": [],
           "type": "Account",
           "unit": {
@@ -2474,7 +2472,6 @@ exports[`Portfolio getCurrencyPortfolio snapshot 1`] = `
       "id": "mock:1:bitcoin:bitcoin_1:",
       "index": 1,
       "lastSyncDate": 2018-03-14T17:34:42.000Z,
-      "name": "iisPu4qdvHcH21Q9xOykvRW9fWwiZk",
       "operations": [
         {
           "accountId": "mock:1:bitcoin:bitcoin_1:",
@@ -2931,7 +2928,6 @@ exports[`Portfolio getCurrencyPortfolio snapshot 1`] = `
       "pendingOperations": [],
       "seedIdentifier": "mock",
       "spendableBalance": "6196770",
-      "starred": false,
       "swapHistory": [],
       "type": "Account",
       "unit": {
@@ -4806,7 +4802,6 @@ exports[`Portfolio getPortfolio snapshot 1`] = `
       "id": "mock:1:bitcoin:bitcoin_1:",
       "index": 1,
       "lastSyncDate": 2018-03-14T17:34:42.000Z,
-      "name": "iisPu4qdvHcH21Q9xOykvRW9fWwiZk",
       "operations": [
         {
           "accountId": "mock:1:bitcoin:bitcoin_1:",
@@ -5263,7 +5258,6 @@ exports[`Portfolio getPortfolio snapshot 1`] = `
       "pendingOperations": [],
       "seedIdentifier": "mock",
       "spendableBalance": "6196770",
-      "starred": false,
       "swapHistory": [],
       "type": "Account",
       "unit": {
@@ -5437,7 +5431,6 @@ exports[`Portfolio getPortfolio snapshot 1`] = `
       "id": "mock:1:bitcoin:bitcoin_1:",
       "index": 1,
       "lastSyncDate": 2018-03-14T17:34:42.000Z,
-      "name": "iisPu4qdvHcH21Q9xOykvRW9fWwiZk",
       "operations": [
         {
           "accountId": "mock:1:bitcoin:bitcoin_1:",
@@ -5894,7 +5887,6 @@ exports[`Portfolio getPortfolio snapshot 1`] = `
       "pendingOperations": [],
       "seedIdentifier": "mock",
       "spendableBalance": "6196770",
-      "starred": false,
       "swapHistory": [],
       "type": "Account",
       "unit": {

@@ -29,6 +29,7 @@ import type { InitSwapInput, SwapRequestEvent } from "./types";
 import { decodePayloadProtobuf } from "@ledgerhq/hw-app-exchange";
 import { getSwapProvider } from "../providers";
 import { convertToAppExchangePartnerKey } from "../providers";
+import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 
 const withDevicePromise = (deviceId, fn) =>
   firstValueFrom(withDevice(deviceId)(transport => from(fn(transport))));
@@ -207,7 +208,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         } catch (e) {
           if (e instanceof TransportStatusError && e.statusCode === 0x6a83) {
             throw new WrongDeviceForAccountPayout(undefined, {
-              accountName: payoutAccount.name,
+              accountName: getDefaultAccountName(payoutAccount),
             });
           }
 
@@ -259,7 +260,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         } catch (e) {
           if (e instanceof TransportStatusError && e.statusCode === 0x6a83) {
             throw new WrongDeviceForAccountRefund(undefined, {
-              accountName: refundAccount.name,
+              accountName: getDefaultAccountName(refundAccount),
             });
           }
 

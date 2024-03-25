@@ -89,8 +89,6 @@ function createAccount(id: string): Account {
     index: 0,
     freshAddress: "",
     freshAddressPath: "",
-    name: "",
-    starred: false,
     used: true,
     balance: new BigNumber(0),
     spendableBalance: new BigNumber(0),
@@ -120,7 +118,6 @@ function createTokenAccount(id: string): TokenAccount {
     operationsCount: 0,
     operations: [],
     pendingOperations: [],
-    starred: false,
     balanceHistoryCache: emptyHistoryCache,
     swapHistory: [],
   };

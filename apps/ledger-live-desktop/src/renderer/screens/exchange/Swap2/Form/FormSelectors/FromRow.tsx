@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { getAccountCurrency, getAccountName } from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import Box from "~/renderer/components/Box";
 import InputCurrency from "~/renderer/components/InputCurrency";
 import { ErrorContainer } from "~/renderer/components/Input";
@@ -27,6 +27,7 @@ import { useSwapableAccounts } from "@ledgerhq/live-common/exchange/swap/hooks/i
 import { useSelector } from "react-redux";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 
 const SwapStatusContainer = styled.div<{ isError: boolean }>(
   ({ theme: { space, colors }, isError }) => `
@@ -138,7 +139,7 @@ function FromRow({
 
   const setAccountAndTrack = (account: AccountLike) => {
     updateSelectedRate();
-    const name = account ? getAccountName(account) : undefined;
+    const name = account ? getDefaultAccountName(account) : undefined;
     track("button_clicked2", {
       button: "New source account",
       page: "Page Swap Form",

@@ -28,7 +28,6 @@ async function buildElrondESDTTokenAccount({
     type: "TokenAccount",
     id: tokenAccountId,
     parentId: parentAccountId,
-    starred: false,
     token,
     operationsCount: operations.length,
     operations,

@@ -14,6 +14,7 @@ import LText from "~/components/LText";
 import Touchable from "~/components/Touchable";
 
 import styles from "../styles";
+import { useAccountName } from "~/reducers/wallet";
 
 /*
  * Handle the hook declaration.
@@ -82,6 +83,8 @@ const useDrawerItems = (data: DrawerPropsType["data"], account: ElrondAccount) =
     [isDelegation, claimableRewards],
   );
 
+  const accountName = useAccountName(account);
+
   /*
    * Compose the array of common items between the two types of drawers (validator name, validator address, account name and item status).
    */
@@ -128,7 +131,7 @@ const useDrawerItems = (data: DrawerPropsType["data"], account: ElrondAccount) =
             style={styles.valueText}
             color="live"
           >
-            {account.name}
+            {accountName}
           </LText>
         ),
       },
@@ -147,7 +150,7 @@ const useDrawerItems = (data: DrawerPropsType["data"], account: ElrondAccount) =
         ),
       },
     ],
-    [validator, name, t, account.name, type, status, onExplorer],
+    [validator, name, t, accountName, type, status, onExplorer],
   );
 
   /*

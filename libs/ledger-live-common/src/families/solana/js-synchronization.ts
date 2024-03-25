@@ -292,7 +292,6 @@ function newSubAcc({
     operationsCount: txs.length,
     pendingOperations: [],
     spendableBalance: balance,
-    starred: false,
     swapHistory: [],
     token: tokenCurrency,
     type: "TokenAccount",

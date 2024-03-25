@@ -5,7 +5,6 @@ import {
   areAllOperationsLoaded,
   emptyHistoryCache,
   getAccountCurrency,
-  getAccountName,
   getAccountSpendableBalance,
   getAccountUnit,
   getFeesCurrency,
@@ -126,46 +125,6 @@ describe(getFeesCurrency.name, () => {
       expect.assertions(1);
       try {
         getFeesCurrency(mockAccount);
-      } catch (e: unknown) {
-        expect((e as Error).message.includes(mockAccount.type)).toEqual(true);
-      }
-    });
-  });
-});
-
-describe(getAccountName.name, () => {
-  describe("given an Account", () => {
-    beforeEach(() => {
-      mockAccount.type = "Account";
-    });
-    it("should return the account name", () => {
-      const sampleAccountName = "SampleAccountName";
-      mockAccount.name = sampleAccountName;
-      expect(getAccountName(mockAccount)).toEqual(sampleAccountName);
-    });
-  });
-
-  describe("given a TokenAccount", () => {
-    it("should return the token account name", () => {
-      const sampleAccountName = "SampleAccountName";
-      tokenAccount.token = { name: sampleAccountName } as TokenCurrency;
-      expect(getAccountName(tokenAccount)).toEqual(sampleAccountName);
-    });
-  });
-
-  describe("given an unknown type Account", () => {
-    beforeEach(() => {
-      (mockAccount as any).type = "DefinitelyNotAStandardAccount";
-    });
-
-    it("should throw an error", () => {
-      expect(() => getAccountName(mockAccount)).toThrow(Error);
-    });
-
-    it("should display the account type in the error message", () => {
-      expect.assertions(1);
-      try {
-        getAccountName(mockAccount);
       } catch (e: unknown) {
         expect((e as Error).message.includes(mockAccount.type)).toEqual(true);
       }

@@ -78,6 +78,7 @@ import { LedgerErrorConstructor } from "@ledgerhq/errors/lib/helpers";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { isDeviceNotOnboardedError } from "./utils";
 import { useKeepScreenAwake } from "~/renderer/hooks/useKeepScreenAwake";
+import { walletSelector } from "~/renderer/reducers/wallet";
 
 type LedgerError = InstanceType<LedgerErrorConstructor<{ [key: string]: unknown }>>;
 
@@ -231,6 +232,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   const preferredDeviceModel = useSelector(preferredDeviceModelSelector);
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const stateSettings = useSelector(settingsSelector);
+  const walletState = useSelector(walletSelector);
 
   const type = useTheme().colors.palette.type;
 
@@ -368,6 +370,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
           amountExpectedTo: amountExpectedTo.toString() ?? undefined,
           estimatedFees: estimatedFees?.toString() ?? undefined,
           stateSettings,
+          walletState,
         });
       }
 
@@ -401,6 +404,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
       estimatedFees: estimatedFees ?? undefined,
       swapDefaultTrack,
       stateSettings,
+      walletState,
     });
   }
 
@@ -419,11 +423,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   }
 
   if (inWrongDeviceForAccount) {
-    return renderInWrongAppForAccount({
-      t,
-      onRetry,
-      accountName: inWrongDeviceForAccount.accountName,
-    });
+    return renderInWrongAppForAccount({ t, onRetry });
   }
 
   if (unresponsive || error instanceof TransportPendingOperation) {

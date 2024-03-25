@@ -1,6 +1,6 @@
 import React from "react";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { getAccountCurrency, getAccountName } from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import Box from "~/renderer/components/Box";
 import Ellipsis from "~/renderer/components/Ellipsis";
 import Bar from "~/renderer/components/Bar";
@@ -12,6 +12,8 @@ import Tooltip from "~/renderer/components/Tooltip";
 import AccountSyncStatusIndicator from "../AccountSyncStatusIndicator";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { useAccountName } from "~/renderer/reducers/wallet";
+
 function HeadText(props: { account: AccountLike; title: string; name: string }) {
   const { title, name, account } = props;
   return (
@@ -43,11 +45,17 @@ function HeadText(props: { account: AccountLike; title: string; name: string }) 
     </Box>
   );
 }
-function Header(props: { account: AccountLike; parentAccount?: Account | null }) {
-  const { account, parentAccount } = props;
+
+const Header = ({
+  account,
+  parentAccount,
+}: {
+  account: AccountLike;
+  parentAccount: Account | undefined | null;
+}) => {
   const currency = getAccountCurrency(account);
   const unit = useAccountUnit(account);
-  const name = getAccountName(account);
+  const name = useAccountName(account);
   let title;
   switch (account.type) {
     case "Account":
@@ -68,10 +76,7 @@ function Header(props: { account: AccountLike; parentAccount?: Account | null })
           accountId={(parentAccount && parentAccount.id) || account.id}
           account={account}
         />
-        <Star
-          accountId={account.id}
-          parentId={account.type !== "Account" ? account.parentId : undefined}
-        />
+        <Star accountId={account.id} />
       </Box>
       <Bar size={1} color="palette.divider" />
       <Box justifyContent="center">
@@ -87,5 +92,6 @@ function Header(props: { account: AccountLike; parentAccount?: Account | null })
       </Box>
     </Box>
   );
-}
-export default Header;
+};
+
+export default React.memo(Header);

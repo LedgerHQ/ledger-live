@@ -35,7 +35,6 @@ export type TokenAccount = {
   operationsCount: number;
   operations: Operation[];
   pendingOperations: Operation[];
-  starred: boolean;
   // Cache of balance history that allows a performant portfolio calculation.
   // currently there are no "raw" version of it because no need to at this stage.
   // could be in future when pagination is needed.
@@ -91,10 +90,6 @@ export type Account = {
   // The path linked to freshAddress. to be used to validate with the device if it corresponds to freshAddress.
   // example: 44'/0'/0'/0/0
   freshAddressPath: string;
-  // account name
-  name: string;
-  // starred
-  starred: boolean;
   // says if the account essentially "exists". an account has been used in the past, but for some reason the blockchain finds it empty (no ops, no balance,..)
   used: boolean;
   // account balance in satoshi
@@ -228,4 +223,17 @@ export type AccountIdParams = {
   currencyId: string;
   xpubOrAddress: string;
   derivationMode: DerivationMode;
+};
+
+/**
+ * This represent the user's data part of an account which contains all user's custom information that aren't part of on-chain data
+ * The object is serializable.
+ */
+export type AccountUserData = {
+  // the Account#id
+  id: string;
+  // user's name for this account
+  name: string;
+  // user's starred account ids: it can be more than the account.id because token accounts can also be starred
+  starredIds: string[];
 };

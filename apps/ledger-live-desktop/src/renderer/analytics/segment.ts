@@ -19,7 +19,6 @@ import {
 } from "~/renderer/reducers/settings";
 import { State } from "~/renderer/reducers";
 import { AccountLike, Feature, FeatureId, Features, idsToLanguage } from "@ledgerhq/types-live";
-import { getAccountName } from "@ledgerhq/live-common/account/index";
 import { accountsSelector } from "../reducers/accounts";
 import {
   GENESIS_PASS_COLLECTION_CONTRACT,
@@ -30,6 +29,7 @@ import createStore from "../createStore";
 import { currentRouteNameRef, previousRouteNameRef } from "./screenRefs";
 import { useCallback, useContext } from "react";
 import { analyticsDrawerContext } from "../drawers/Provider";
+import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 invariant(typeof window !== "undefined", "analytics/segment must be called on renderer thread");
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const os = require("os");
@@ -224,13 +224,16 @@ function sendTrack(event: string, properties: object | undefined | null) {
 const confidentialityFilter = (properties?: Record<string, unknown> | null) => {
   const { account, parentAccount } = properties || {};
   const filterAccount = account
-    ? { account: typeof account === "object" ? getAccountName(account as AccountLike) : account }
+    ? {
+        account:
+          typeof account === "object" ? getDefaultAccountName(account as AccountLike) : account,
+      }
     : {};
   const filterParentAccount = parentAccount
     ? {
         parentAccount:
           typeof parentAccount === "object"
-            ? getAccountName(parentAccount as AccountLike)
+            ? getDefaultAccountName(parentAccount as AccountLike)
             : parentAccount,
       }
     : {};

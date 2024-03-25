@@ -23,6 +23,7 @@ import type { CompleteExchangeInputSwap, CompleteExchangeRequestEvent } from "..
 import { getSwapProvider } from "../providers";
 import { convertToAppExchangePartnerKey } from "../providers";
 import { CompleteExchangeStep, convertTransportError } from "../error";
+import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 
 const withDevicePromise = (deviceId, fn) =>
   firstValueFrom(withDevice(deviceId)(transport => from(fn(transport))));
@@ -123,7 +124,7 @@ const completeExchange = (
             throw new WrongDeviceForAccountPayout(
               getExchangeErrorMessage(e.statusCode, currentStep),
               {
-                accountName: payoutAccount.name,
+                accountName: getDefaultAccountName(payoutAccount),
               },
             );
           }
@@ -165,7 +166,7 @@ const completeExchange = (
             throw new WrongDeviceForAccountRefund(
               getExchangeErrorMessage(e.statusCode, currentStep),
               {
-                accountName: refundAccount.name,
+                accountName: getDefaultAccountName(refundAccount),
               },
             );
           }

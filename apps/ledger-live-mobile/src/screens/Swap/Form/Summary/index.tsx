@@ -4,11 +4,7 @@ import { BigNumber } from "bignumber.js";
 import { Flex, Icon, Text } from "@ledgerhq/native-ui";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
-import {
-  getAccountName,
-  getAccountUnit,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { CompositeScreenProps, useNavigation, useRoute } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import { useCalculate } from "@ledgerhq/live-countervalues-react";
@@ -31,6 +27,7 @@ import type { SwapFormNavigatorParamList } from "~/components/RootNavigator/type
 import { useAnalytics } from "~/analytics";
 import { sharedSwapTracking } from "../../utils";
 import { EDITABLE_FEE_FAMILIES } from "@ledgerhq/live-common/exchange/swap/const/blockchain";
+import { useMaybeAccountName } from "~/reducers/wallet";
 
 interface Props {
   provider?: string;
@@ -159,6 +156,8 @@ export function Summary({ provider, swapTx: { swap, status, transaction } }: Pro
   const editableFee =
     mainFromAccount && EDITABLE_FEE_FAMILIES.includes(mainFromAccount.currency.family);
 
+  const toAccountName = useMaybeAccountName(to.account);
+
   if (
     !provider ||
     !fromUnit ||
@@ -219,7 +218,7 @@ export function Summary({ provider, swapTx: { swap, status, transaction } }: Pro
         <Item title={t("transfer.swap2.form.details.label.target")} onEdit={onEditTargetAccount}>
           <Flex flexDirection="row" alignItems="center">
             {<CurrencyIcon size={20} currency={to.currency} />}
-            <Text marginLeft={2}>{getAccountName(to.account)}</Text>
+            <Text marginLeft={2}>{toAccountName}</Text>
           </Flex>
         </Item>
       ) : (

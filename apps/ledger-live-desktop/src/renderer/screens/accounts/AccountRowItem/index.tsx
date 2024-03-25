@@ -16,14 +16,14 @@ import Countervalue from "./Countervalue";
 import Delta from "./Delta";
 import Header from "./Header";
 import Star from "~/renderer/components/Stars/Star";
-import {
-  blacklistedTokenIdsSelector,
-  hideEmptyTokenAccountsSelector,
-} from "~/renderer/reducers/settings";
+import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
 import Button from "~/renderer/components/Button";
 import { getLLDCoinFamily } from "~/renderer/families";
 import { useSelector } from "react-redux";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import { walletSelector } from "~/renderer/reducers/wallet";
+import { accountNameSelector } from "@ledgerhq/live-wallet/store";
 
 const Row = styled(Box)`
   background: ${p => p.theme.colors.palette.background.paper};
@@ -122,20 +122,19 @@ type Props = {
   account: TokenAccount | Account;
   parentAccount?: Account | null;
   disableRounding?: boolean;
-  hideEmptyTokens?: boolean;
-  blacklistedTokenIds: string[];
   onClick: (b: AccountLike, a?: Account | null) => void;
   hidden?: boolean;
   range: PortfolioRange;
   search?: string;
 };
+
 const expandedStates: {
   [key: string]: boolean;
 } = {};
 const AccountRowItem = (props: Props) => {
   const { account, parentAccount, range, hidden, onClick, disableRounding, search } = props;
 
-  const hideEmptyTokens = useSelector(hideEmptyTokenAccountsSelector);
+  const walletState = useSelector(walletSelector);
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
 
   const [expanded, setExpanded] = useState<boolean>(
@@ -185,9 +184,9 @@ const AccountRowItem = (props: Props) => {
     tokens = listSubAccounts(account).filter(
       subAccount => !blacklistedTokenIds.includes(getAccountCurrency(subAccount).id),
     );
-    disabled = !matchesSearch(search, account);
+    disabled = !matchesSearch(walletState, search, account);
     isToken = listTokenTypesForCryptoCurrency(currency).length > 0;
-    if (tokens) tokens = tokens.filter(t => matchesSearch(search, t));
+    if (tokens) tokens = tokens.filter(t => matchesSearch(walletState, search, t));
   }
   const showTokensIndicator = Boolean(tokens && tokens.length > 0 && !hidden);
   const specific = mainAccount ? getLLDCoinFamily(mainAccount.currency.family).tokenList : null;
@@ -205,7 +204,10 @@ const AccountRowItem = (props: Props) => {
         see: "subAccounts.seeSubAccounts",
         hide: "subAccounts.hideSubAccounts",
       };
-  const key = `${account.id}_${hideEmptyTokens ? "hide_empty_tokens" : ""}`;
+  const key = `${account.id}`;
+  const accountName =
+    accountNameSelector(walletState, { accountId: account.id }) || getDefaultAccountName(account);
+
   return (
     <div
       className={`accounts-account-row-item ${tokens && tokens.length > 0 ? "has-tokens" : ""}`}
@@ -229,7 +231,7 @@ const AccountRowItem = (props: Props) => {
             className="accounts-account-row-item-content"
             isSubAccountsExpanded={showTokensIndicator && expanded}
             onClick={onClickHandler}
-            data-test-id={account.type === "Account" && `account-component-${account.name}`}
+            data-test-id={account.type === "Account" && `account-component-${accountName}`}
           >
             <Header account={account} />
             <Box flex="12%">
@@ -240,10 +242,7 @@ const AccountRowItem = (props: Props) => {
             <Balance unit={unit} balance={account.balance} disableRounding={disableRounding} />
             <Countervalue account={account} currency={currency} range={range} />
             <Delta account={account} range={range} />
-            <Star
-              accountId={account.id}
-              parentId={account.type !== "Account" ? account.parentId : undefined}
-            />
+            <Star accountId={account.id} />
           </RowContent>
           {showTokensIndicator && expanded ? (
             <TokenContentWrapper>

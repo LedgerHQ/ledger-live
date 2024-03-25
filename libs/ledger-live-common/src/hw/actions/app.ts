@@ -15,7 +15,6 @@ import type {
   Input as ConnectAppInput,
 } from "../connectApp";
 import { useReplaySubject } from "../../observable";
-import { getAccountName } from "../../account";
 import type { Device, Action } from "./types";
 import { shouldUpgrade } from "../../apps";
 import { AppOp, SkippedAppOp } from "../../apps/types";
@@ -23,6 +22,7 @@ import perFamilyAccount from "../../generated/account";
 import type { Account, DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getImplementation, ImplementationType } from "./implementations";
+import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 
 export type State = {
   isLoading: boolean;
@@ -542,7 +542,7 @@ export const createAction = (
           ? state.derivation.address !== appRequest.account.freshAddress &&
             state.derivation.address !== appRequest.account.seedIdentifier // Use-case added for Hedera
             ? {
-                accountName: getAccountName(appRequest.account),
+                accountName: getDefaultAccountName(appRequest.account),
               }
             : null
           : null,
