@@ -4,4 +4,4 @@
 "@ledgerhq/live-common": patch
 ---
 
-fix(LIVE-11781): generate explorer url for all currency
+fix(LIVE-11781): exclude explorer url check for provider click
