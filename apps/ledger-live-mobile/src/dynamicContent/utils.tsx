@@ -78,7 +78,7 @@ export const mapAsCategoryContentCard = (card: BrazeContentCard): CategoryConten
   description: card.extras.description,
   link: card.extras.link,
   cta: card.extras.cta,
-  isDismissable: Boolean(card.extras?.isDismissable === "true"),
+  isDismissable: Boolean(card.extras.isDismissable === "true"),
   hasPagination: Boolean(card.extras?.hasPagination === "true"),
 });
 
@@ -137,10 +137,11 @@ export const mapAsNotificationContentCard = (card: BrazeContentCard): Notificati
 
 export const mapAsHorizontalContentCard = (card: BrazeContentCard): HorizontalContentCard => ({
   id: card.id,
-  tag: card.extras.tag,
-  title: card.extras.title,
-  description: card.extras.description,
-  image: card.extras.image,
+  tag: "rezae",
+  title: "Ledger Recover",
+  description: "Wallet recovery made easy",
+  image:
+    "https://s3-alpha-sig.figma.com/img/fc0f/d719/94af17d847ffbc4c43e4bc8b7a7e716a?Expires=1712534400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=kS3h1eVswgs9zzDXFVcfHmdn2cRbyVBiXGoB-JavkDMGuo8htls3jWzyFIYbUscW~aVYdM9JMUygkfDrtRavxqkAGYbTPfyWFBBrsHrhE0IM69~vFUQRROJ44FbHgTeNW30ZgK9Kzvu4FG-zZOjPg-6C8~Kl40ZG9JxUbxLxbWzyLjjaXImzTVUzS3oj7VnuNcb0dnHOrWnWRjq6T9uiux2AMxgKQcTciRTdohEfleXggOHHj5qELJ~2wjjFMpFMe29DdmWocvDgWtS5lwVH5DKXt93~7XCoRI3OqXuUkXSuAKAzZn4ohHCB1KAi119U6HbuHxVrK15euyjg9owRhg__",
   link: card.extras.link,
   createdAt: card.created,
   viewed: card.viewed,
