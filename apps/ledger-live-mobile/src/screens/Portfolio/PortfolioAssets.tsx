@@ -9,7 +9,6 @@ import { useDistribution } from "~/actions/general";
 import { TrackScreen } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import { Box } from "@ledgerhq/native-ui";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { blacklistedTokenIdsSelector, discreetModeSelector } from "~/reducers/settings";
 import Assets from "./Assets";
 import PortfolioQuickActionsBar from "./PortfolioQuickActionsBar";
@@ -23,7 +22,6 @@ const maxAssetsToDisplay = 5;
 
 const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
   const { t } = useTranslation();
-  const llmWalletQuickActions = useFeature("llmWalletQuickActions");
   const navigation = useNavigation();
   const startNavigationTTITimer = useStartProfiler();
   const distribution = useDistribution({
@@ -65,11 +63,9 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
         accountsLength={distribution.list && distribution.list.length}
         discreet={discreetMode}
       />
-      {llmWalletQuickActions?.enabled ? (
-        <Box mb={24} mt={18}>
-          <PortfolioQuickActionsBar />
-        </Box>
-      ) : null}
+      <Box mb={24} mt={18}>
+        <PortfolioQuickActionsBar />
+      </Box>
       <Assets assets={assetsToDisplay} />
       {distribution.list.length < maxAssetsToDisplay ? (
         <Button

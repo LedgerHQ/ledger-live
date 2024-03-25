@@ -31,6 +31,8 @@ import {
   UserRefusedFirmwareUpdate,
   UserRefusedOnDevice,
   UserRefusedDeviceNameChange,
+  UnresponsiveDeviceError,
+  TransportPendingOperation,
 } from "@ledgerhq/errors";
 import {
   InstallingApp,
@@ -61,7 +63,11 @@ import {
   DeviceInfo,
   DeviceModelInfo,
 } from "@ledgerhq/types-live";
-import { Exchange, ExchangeRate, InitSwapResult } from "@ledgerhq/live-common/exchange/swap/types";
+import {
+  ExchangeSwap,
+  ExchangeRate,
+  InitSwapResult,
+} from "@ledgerhq/live-common/exchange/swap/types";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { AppAndVersion } from "@ledgerhq/live-common/hw/connectApp";
 import { Device } from "@ledgerhq/types-devices";
@@ -337,7 +343,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
           amountExpectedTo = 0,
         } = request as {
           transaction: Transaction;
-          exchange: Exchange;
+          exchange: ExchangeSwap;
           provider: string;
           rate: number;
           amountExpectedTo: number;
@@ -375,7 +381,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   if (initSwapRequested && !initSwapResult && !initSwapError) {
     const { transaction, exchange, exchangeRate } = request as {
       transaction: Transaction;
-      exchange: Exchange;
+      exchange: ExchangeSwap;
       exchangeRate: ExchangeRate;
     };
     const { amountExpectedTo, estimatedFees } = hookState;
@@ -413,6 +419,15 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     });
   }
 
+  if (unresponsive || error instanceof TransportPendingOperation) {
+    return renderError({
+      t,
+      error: new UnresponsiveDeviceError(),
+      onRetry,
+      withExportLogs: false,
+    });
+  }
+
   if (!isLoading && error) {
     const e = error as unknown;
     if (
@@ -423,7 +438,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
       return renderError({
         t,
         error,
-        managerAppName: error.managerAppName,
+        managerAppName: (error as { managerAppName: string }).managerAppName,
       });
     }
 
@@ -451,7 +466,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     }
 
     // workaround to catch ECONNRESET error and show better message
-    if (error?.message?.includes("ECONNRESET")) {
+    if ((error as Error)?.message?.includes("ECONNRESET")) {
       return renderError({
         t,
         error: new EConnResetError(),
@@ -467,7 +482,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     // All the error rendering needs to be unified, the same way we do for ErrorIcon
     // not handled here.
     if (
-      error instanceof UserRefusedFirmwareUpdate ||
+      (error as unknown) instanceof UserRefusedFirmwareUpdate ||
       (error as unknown) instanceof UserRefusedAllowManager ||
       (error as unknown) instanceof UserRefusedOnDevice ||
       (error as unknown) instanceof UserRefusedAddress ||
@@ -499,7 +514,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     return renderLockedDeviceError({ t, device, onRetry, inlineRetry });
   }
 
-  if ((!isLoading && !device) || unresponsive) {
+  if (!isLoading && !device) {
     return renderConnectYourDevice({
       modelId,
       type,

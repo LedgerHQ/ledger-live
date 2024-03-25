@@ -8,12 +8,13 @@ import { BleState } from "../../src/reducers/types";
 import { Account, AccountRaw } from "@ledgerhq/types-live";
 import { DeviceUSB, nanoSP_USB, nanoS_USB, nanoX_USB } from "../models/devices";
 import { MessageData, MockDeviceEvent, ServerData } from "./types";
+import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 
 export const e2eBridgeServer = new Subject<ServerData>();
 
 let wss: Server;
 let webSocket: WebSocket;
-let lastMessages: { [id: string]: MessageData } = {}; // Store the last messages not sent
+const lastMessages: { [id: string]: MessageData } = {}; // Store the last messages not sent
 
 function uniqueId(): string {
   const timestamp = Date.now().toString(36); // Convert timestamp to base36 string
@@ -115,11 +116,12 @@ export async function addDevicesBT(
   ],
 ): Promise<string[]> {
   const names = Array.isArray(deviceNames) ? deviceNames : [deviceNames];
-  names.forEach(async (name, i) => {
-    await postMessage({
+  const serviceUUID = getDeviceModel(DeviceModelId.nanoX).bluetoothSpec![0].serviceUuid;
+  names.forEach((name, i) => {
+    postMessage({
       type: "add",
       id: uniqueId(),
-      payload: { id: `mock_${i + 1}`, name, serviceUUID: `uuid_${i + 1}` },
+      payload: { id: `mock_${i + 1}`, name, serviceUUID },
     });
   });
   return names;
@@ -159,10 +161,11 @@ function onMessage(messageStr: string) {
     case "ACK":
       log(`${msg.id}`);
       delete lastMessages[msg.id];
+      break;
     case "walletAPIResponse":
       e2eBridgeServer.next(msg);
       break;
-    case "appLogs":
+    case "appLogs": {
       const [date, time] = new Date().toISOString().split(".")[0].replace(/:/g, "-").split("T");
       const fileName = `${date}_${time}-${msg.fileName}.json`;
       const directoryPath = `artifacts/${date}_ledger_live_mobile`;
@@ -171,6 +174,7 @@ function onMessage(messageStr: string) {
       }
       fs.writeFileSync(`${directoryPath}/${fileName}`, msg.payload, "utf-8");
       break;
+    }
     default:
       break;
   }
@@ -194,7 +198,7 @@ async function postMessage(message: MessageData) {
     } else {
       log("WebSocket connection is not open. Message not sent.");
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     log(`Error occurred while waiting for WebSocket connection: ${JSON.stringify(error)}`);
   }
 }

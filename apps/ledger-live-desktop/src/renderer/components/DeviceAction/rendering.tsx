@@ -9,7 +9,7 @@ import styled from "styled-components";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import ProviderIcon from "~/renderer/components/ProviderIcon";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
-import { ExchangeRate, Exchange } from "@ledgerhq/live-common/exchange/swap/types";
+import { ExchangeRate, ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 import { getProviderName, getNoticeType } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import {
   WrongDeviceForAccount,
@@ -943,7 +943,7 @@ export const renderSwapDeviceConfirmation = ({
   type: Theme["theme"];
   transaction: Transaction;
   exchangeRate: ExchangeRate;
-  exchange: Exchange;
+  exchange: ExchangeSwap;
   amountExpectedTo?: string;
   estimatedFees?: string;
   swapDefaultTrack: Record<string, string | boolean>;

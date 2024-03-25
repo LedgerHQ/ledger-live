@@ -177,9 +177,9 @@ export default class OnboardingSteps {
   }
 
   async addDeviceViaBluetooth(name = this.defaultName) {
-    await tapByElement(this.pairDeviceButton());
+    await tapByElement(getElementById("connect-with-bluetooth"));
     await bridge.addDevicesBT(name);
-    await waitForElementByText(name);
+    await waitForElementByText(name); // Error here
     await tapByText(name);
     await bridge.setInstalledApps(); // tell LLM what apps the mock device has
     await bridge.open(); // Mocked action open ledger manager on the Nano

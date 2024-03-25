@@ -85,7 +85,6 @@ export const DEFAULT_FEATURES: Features = {
   portfolioExchangeBanner: DEFAULT_FEATURE,
   postOnboardingAssetsTransfer: DEFAULT_FEATURE,
   counterValue: DEFAULT_FEATURE,
-  llmNewDeviceSelection: DEFAULT_FEATURE,
   mockFeature: DEFAULT_FEATURE,
   multibuyNavigation: DEFAULT_FEATURE,
   ptxServiceCtaExchangeDrawer: DEFAULT_FEATURE,
@@ -94,8 +93,6 @@ export const DEFAULT_FEATURES: Features = {
   disableNftRaribleOpensea: DEFAULT_FEATURE,
   disableNftSend: DEFAULT_FEATURE,
   staxWelcomeScreen: DEFAULT_FEATURE,
-  protectServicesDiscoverDesktop: DEFAULT_FEATURE,
-  llmWalletQuickActions: DEFAULT_FEATURE,
   listAppsV2minor1: DEFAULT_FEATURE,
   flexibleContentCards: DEFAULT_FEATURE,
   ethStakingProviders: initFeature(),
@@ -435,6 +432,8 @@ export const DEFAULT_FEATURES: Features = {
       variant: ABTestingVariants.variantA,
     },
   },
+
+  lldChatbotSupport: DEFAULT_FEATURE,
   supportDeviceStax: DEFAULT_FEATURE,
   supportDeviceEuropa: DEFAULT_FEATURE,
 };

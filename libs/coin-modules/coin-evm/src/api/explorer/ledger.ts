@@ -103,8 +103,8 @@ export const getLastOperations: ExplorerApi["getLastOperations"] = async (
 
   ledgerExplorerOps.forEach(ledgerOp => {
     const coinOps = ledgerOperationToOperations(accountId, ledgerOp);
-    const erc20Ops = ledgerOp.transfer_events.flatMap(event =>
-      ledgerERC20EventToOperations(coinOps[0], event),
+    const erc20Ops = ledgerOp.transfer_events.flatMap((event, index) =>
+      ledgerERC20EventToOperations(coinOps[0], event, index),
     );
     const erc721Ops = isNFTActive(currency)
       ? ledgerOp.erc721_transfer_events.flatMap((event, index) =>

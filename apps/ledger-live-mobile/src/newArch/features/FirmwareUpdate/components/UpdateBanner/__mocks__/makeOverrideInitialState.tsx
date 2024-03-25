@@ -2,7 +2,7 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import { State } from "~/reducers/types";
 import { aDeviceInfoBuilder } from "@ledgerhq/live-common/mock/fixtures/aDeviceInfo";
 
-export function makeMockSettings({
+function makeMockSettings({
   modelId,
   deviceName,
   version,
@@ -33,4 +33,29 @@ export function makeMockSettings({
     },
     hasCompletedOnboarding,
   };
+}
+
+export function makeOverrideInitialState(args: {
+  deviceModelId: DeviceModelId;
+  version: string;
+  hasCompletedOnboarding: boolean;
+  wired: boolean;
+  hasConnectedDevice: boolean;
+}) {
+  return (state: State): State => ({
+    ...state,
+    settings: {
+      ...state.settings,
+      ...makeMockSettings({
+        modelId: args.deviceModelId,
+        version: args.version,
+        hasCompletedOnboarding: args.hasCompletedOnboarding,
+        wired: args.wired,
+      }),
+    },
+    appstate: {
+      ...state.appstate,
+      hasConnectedDevice: args.hasConnectedDevice,
+    },
+  });
 }
