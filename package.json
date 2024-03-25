@@ -71,6 +71,7 @@
     "common": "pnpm --filter live-common",
     "web-tools": "pnpm --filter web-tools",
     "live-env": "pnpm --filter live-env",
+    "wallet": "pnpm --filter live-wallet",
     "portfolio": "pnpm --filter live-portfolio",
     "promise": "pnpm --filter live-promise",
     "network": "pnpm --filter live-network",

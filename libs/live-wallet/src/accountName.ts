@@ -1,19 +1,17 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { Account, DerivationMode } from "@ledgerhq/types-live";
-
-/**
- * FIXME: this code will move to live-wallet
- * since the concept of name is a UI concept
- */
+import { Account } from "@ledgerhq/types-live";
 
 const MAX_ACCOUNT_NAME_SIZE = 50;
-export const getAccountPlaceholderName = ({
+
+/**
+ * Get the default name for an account.
+ */
+export const getDefaultAccountName = ({
   currency,
   index,
 }: {
   currency: CryptoCurrency;
   index: number;
-  derivationMode: DerivationMode;
 }): string => {
   return `${currency.name} ${index + 1}`;
 };
@@ -22,5 +20,5 @@ export const validateNameEdition = (account: Account, name?: string | null | und
   (
     (name || account.name || "").replace(/\s+/g, " ").trim() ||
     account.name ||
-    getAccountPlaceholderName(account)
+    getDefaultAccountName(account)
   ).slice(0, MAX_ACCOUNT_NAME_SIZE);

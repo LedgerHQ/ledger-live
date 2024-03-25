@@ -1,6 +1,6 @@
 import { createSelector, createSelectorCreator, defaultMemoize } from "reselect";
 import { handleActions } from "redux-actions";
-import { Account, AccountLike } from "@ledgerhq/types-live";
+import { Account, AccountUserData, AccountLike } from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   flattenAccounts,
@@ -14,17 +14,25 @@ import { decodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
 import { orderByLastReceived } from "@ledgerhq/live-nft";
 import { getEnv } from "@ledgerhq/live-env";
 import isEqual from "lodash/isEqual";
-import logger from "../logger";
 import { State } from ".";
 import { hiddenNftCollectionsSelector } from "./settings";
 import { Handlers } from "./types";
+import { walletSelector } from "./wallet";
+import { isStarredAccountSelector } from "@ledgerhq/live-wallet/store";
+
+/*
+FIXME
+where is the accounts ordering source of truth?
+we could go => Map<string, Account> accounts
+but we can't because nestedSortAccounts
+*/
+
 export type AccountsState = Account[];
 const state: AccountsState = [];
 
 type HandlersPayloads = {
   REORDER_ACCOUNTS: { comparator: AccountComparator };
-  SET_ACCOUNTS: Account[];
-  ADD_ACCOUNT: Account;
+  INIT_ACCOUNTS: { accounts: Account[]; accountsUserData: AccountUserData[] };
   REPLACE_ACCOUNTS: Account[];
   UPDATE_ACCOUNT: { accountId: string; updater: (a: Account) => Account };
   REMOVE_ACCOUNT: Account;
@@ -32,18 +40,12 @@ type HandlersPayloads = {
   CLEAN_ACCOUNTS_CACHE: never;
   DEBUG_TICK: never;
 };
+
 type AccountsHandlers<PreciseKey = true> = Handlers<AccountsState, HandlersPayloads, PreciseKey>;
 
 const handlers: AccountsHandlers = {
   REORDER_ACCOUNTS: (state, { payload: { comparator } }) => nestedSortAccounts(state, comparator),
-  SET_ACCOUNTS: (_, { payload: accounts }) => accounts,
-  ADD_ACCOUNT: (state, { payload: account }) => {
-    if (state.some(a => a.id === account.id)) {
-      logger.warn("ADD_ACCOUNT attempt for an account that already exists!", account.id);
-      return state;
-    }
-    return [...state, account];
-  },
+  INIT_ACCOUNTS: (state, { payload: { accounts } }) => accounts,
   REPLACE_ACCOUNTS: (_, { payload }) => payload,
   UPDATE_ACCOUNT: (state, { payload: { accountId, updater } }) =>
     state.map(existingAccount => {
@@ -71,9 +73,9 @@ export const accountsSelector = (state: { accounts: AccountsState }): Account[] 
 // NB some components don't need to refresh every time an account is updated, usually it's only
 // when the balance/name/length/starred/swapHistory of accounts changes.
 const accountHash = (a: AccountLike) =>
-  `${a.type === "Account" ? a.name : ""}-${a.id}${
-    a.starred ? "-*" : ""
-  }-${a.balance.toString()}-swapHistory(${a.swapHistory?.length || "0"})`;
+  `${a.type === "Account" ? a.name : ""}-${a.id}-${a.balance.toString()}-swapHistory(${
+    a.swapHistory?.length || "0"
+  })`;
 const shallowAccountsSelectorCreator = createSelectorCreator(defaultMemoize, (a, b) =>
   isEqual(flattenAccounts(a).map(accountHash), flattenAccounts(b).map(accountHash)),
 );
@@ -128,6 +130,7 @@ export const isUpToDateSelector = createSelector(activeAccountsSelector, account
     return !outdated;
   }),
 );
+
 export const hasAccountsSelector = createSelector(
   shallowAccountsSelector,
   accounts => accounts.length > 0,
@@ -164,17 +167,12 @@ export const getAccountById = createSelector(
   accounts => (accountId: string) => accounts.find(a => a.id === accountId),
 );
 
-export const starredAccountsSelector = createSelector(shallowAccountsSelector, accounts =>
-  flattenAccounts(accounts).filter(a => a.starred),
+export const starredAccountsSelector = createSelector(
+  shallowAccountsSelector,
+  walletSelector,
+  (accounts, wallet) =>
+    flattenAccounts(accounts).filter(a => isStarredAccountSelector(wallet, { accountId: a.id })),
 );
-export const isStarredAccountSelector = (
-  s: State,
-  {
-    accountId,
-  }: {
-    accountId: string;
-  },
-): boolean => flattenAccounts(s.accounts).some(a => a.id === accountId && a.starred);
 
 export const isUpToDateAccountSelector = createSelector(accountSelector, isUpToDateAccount);
 export const getAllNFTs = createSelector(accountsSelector, accounts =>

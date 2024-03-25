@@ -81,10 +81,7 @@ class Header extends PureComponent<{
             accountId={(parentAccount && parentAccount.id) || account.id}
             account={account}
           />
-          <Star
-            accountId={account.id}
-            parentId={account.type !== "Account" ? account.parentId : undefined}
-          />
+          <Star accountId={account.id} />
         </Box>
         <Bar size={1} color="palette.divider" />
         <Box justifyContent="center">

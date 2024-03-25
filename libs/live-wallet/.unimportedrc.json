@@ -1,0 +1,4 @@
+{
+  "entry": ["src/addAccounts.ts", "src/store.ts", "src/accountName.ts"],
+  "ignoreUnused": []
+}

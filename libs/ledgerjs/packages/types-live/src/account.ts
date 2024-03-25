@@ -281,3 +281,16 @@ export type AccountIdParams = {
   xpubOrAddress: string;
   derivationMode: DerivationMode;
 };
+
+/**
+ * This represent the user's data part of an account which contains all user's custom information that aren't part of on-chain data
+ * The object is serializable.
+ */
+export type AccountUserData = {
+  // the Account#id
+  id: string;
+  // user's name for this account
+  name: string;
+  // user's starred account ids: it can be more than the account.id because token accounts can also be starred
+  starredIds: string[];
+};

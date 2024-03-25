@@ -1,5 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import type {
+  AccountUserData,
   Account,
   AccountBridge,
   AccountRaw,
@@ -160,13 +161,15 @@ export type ToFamiliyRaw = {
   toOperationExtraRaw?: AccountBridge<TransactionCommon>["toOperationExtraRaw"];
 };
 
-export function toAccountRaw(account: Account, toFamilyRaw?: ToFamiliyRaw): AccountRaw {
+export function toAccountRaw(
+  account: Account,
+  toFamilyRaw?: ToFamiliyRaw,
+  userData?: AccountUserData,
+): AccountRaw {
   const {
     id,
     seedIdentifier,
     xpub,
-    name,
-    starred,
     used,
     derivationMode,
     index,
@@ -191,6 +194,12 @@ export function toAccountRaw(account: Account, toFamilyRaw?: ToFamiliyRaw): Acco
     syncHash,
     nfts,
   } = account;
+
+  let { name, starred } = account;
+  if (userData) {
+    name = userData.name;
+    starred = userData.starredIds.includes(id);
+  }
 
   const convertOperation = (op: Operation) =>
     toOperationRaw(op, undefined, toFamilyRaw?.toOperationExtraRaw);
@@ -237,7 +246,9 @@ export function toAccountRaw(account: Account, toFamilyRaw?: ToFamiliyRaw): Acco
   }
 
   if (subAccounts) {
-    res.subAccounts = subAccounts.map(a => toSubAccountRaw(a, toFamilyRaw?.toOperationExtraRaw));
+    res.subAccounts = subAccounts.map(a =>
+      toSubAccountRaw(a, toFamilyRaw?.toOperationExtraRaw, userData),
+    );
   }
 
   if (toFamilyRaw?.assignToAccountRaw) {
@@ -298,12 +309,12 @@ function fromTokenAccountRaw(
 function toTokenAccountRaw(
   ta: TokenAccount,
   toOperationExtraRaw?: AccountBridge<TransactionCommon>["toOperationExtraRaw"],
+  userData?: AccountUserData,
 ): TokenAccountRaw {
   const {
     id,
     parentId,
     token,
-    starred,
     operations,
     operationsCount,
     pendingOperations,
@@ -313,6 +324,11 @@ function toTokenAccountRaw(
     swapHistory,
     approvals,
   } = ta;
+
+  let { starred } = ta;
+  if (userData) {
+    starred = userData.starredIds.includes(id);
+  }
 
   const convertOperation = (op: Operation) => toOperationRaw(op, undefined, toOperationExtraRaw);
 
@@ -382,12 +398,12 @@ function fromChildAccountRaw(
 function toChildAccountRaw(
   ca: ChildAccount,
   toOperationExtraRaw?: AccountBridge<TransactionCommon>["toOperationExtraRaw"],
+  userData?: AccountUserData,
 ): ChildAccountRaw {
   const {
     id,
     name,
     parentId,
-    starred,
     currency,
     operations,
     operationsCount,
@@ -398,6 +414,10 @@ function toChildAccountRaw(
     creationDate,
     swapHistory,
   } = ca;
+  let { starred } = ca;
+  if (userData) {
+    starred = userData.starredIds.includes(id);
+  }
 
   const convertOperation = (op: Operation) => toOperationRaw(op, undefined, toOperationExtraRaw);
 
@@ -439,13 +459,14 @@ function fromSubAccountRaw(
 function toSubAccountRaw(
   subAccount: SubAccount,
   toOperationExtraRaw?: AccountBridge<TransactionCommon>["toOperationExtraRaw"],
+  userData?: AccountUserData,
 ): SubAccountRaw {
   switch (subAccount.type) {
     case "ChildAccount":
-      return toChildAccountRaw(subAccount, toOperationExtraRaw);
+      return toChildAccountRaw(subAccount, toOperationExtraRaw, userData);
 
     case "TokenAccount":
-      return toTokenAccountRaw(subAccount, toOperationExtraRaw);
+      return toTokenAccountRaw(subAccount, toOperationExtraRaw, userData);
 
     default:
       throw new Error("invalid subAccount.type=" + (subAccount as SubAccount).type);
