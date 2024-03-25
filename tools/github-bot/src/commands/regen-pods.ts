@@ -69,6 +69,13 @@ export function regenPods(app: Probot) {
     const number = payload.check_run.pull_requests[0]?.number;
     const login = payload.sender.login;
 
+    const res = await context.octokit.orgs.checkMembershipForUser({
+      org: "LedgerHQ",
+      username: login,
+    });
+
+    if (res.status > 300) return;
+
     if (!number) return;
 
     await triggerWorkflow({
