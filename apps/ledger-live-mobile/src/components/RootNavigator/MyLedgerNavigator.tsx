@@ -7,10 +7,8 @@ import { Box, IconsLegacy, Flex, Button } from "@ledgerhq/native-ui";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { ScreenName } from "~/const";
 import { hasAvailableUpdateSelector, lastSeenDeviceSelector } from "~/reducers/settings";
-import MyLedgerChooseDeviceScreen, {
-  headerOptions,
-} from "~/screens/Manager/MyLedgerChooseDeviceScreen";
-import MyLedgerDeviceScreen from "~/screens/Manager/MyLedgerDeviceScreen";
+import MyLedgerChooseDeviceScreen, { headerOptions } from "~/screens/MyLedgerChooseDevice";
+import MyLedgerDeviceScreen from "~/screens/MyLedgerDevice";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import TabIcon from "../TabIcon";
 import { useIsNavLocked } from "./CustomBlockRouterNavigator";
