@@ -41,6 +41,7 @@
     "@ledgerhq/live-config": "workspace:^",
     "@ledgerhq/live-countervalues": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
+    "@ledgerhq/live-wallet": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",

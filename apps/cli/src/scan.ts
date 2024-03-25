@@ -19,8 +19,8 @@ import getAppAndVersion from "@ledgerhq/live-common/hw/getAppAndVersion";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { delay } from "@ledgerhq/live-common/promise";
 import { jsonFromFile } from "./stream";
-import { shortAddressPreview } from "@ledgerhq/live-common/account/helpers";
 import fs from "fs";
+
 export const deviceOpt = {
   name: "device",
   alias: "d",
@@ -317,15 +317,8 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
             });
             const account: Account = {
               type: "Account",
-              name:
-                currency.name +
-                " " +
-                (derivationMode || "legacy") +
-                " " +
-                shortAddressPreview(xpubOrAddress),
               xpub: xpubOrAddress,
               seedIdentifier: xpubOrAddress,
-              starred: true,
               used: true,
               swapHistory: [],
               id,

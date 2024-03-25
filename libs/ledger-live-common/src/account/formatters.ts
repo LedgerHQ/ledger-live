@@ -1,11 +1,7 @@
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
 import { toAccountRaw } from "./serialization";
-import {
-  getAccountCurrency,
-  getAccountName,
-  getAccountUnit,
-} from "@ledgerhq/coin-framework/account/index";
+import { getAccountCurrency, getAccountUnit } from "@ledgerhq/coin-framework/account/index";
 import { getOperationAmountNumberWithInternals } from "../operation";
 import { formatCurrencyUnit } from "../currencies";
 import { getOperationAmountNumber } from "../operation";
@@ -14,6 +10,7 @@ import byFamily from "../generated/formatters";
 import { nftsByCollections } from "@ledgerhq/live-nft";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 import type { Account, Operation, ProtoNFT } from "@ledgerhq/types-live";
+import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 
 const styling = {
   bold: (str: string) => `\x1b[1m${str}\x1b[22m`,
@@ -105,7 +102,7 @@ const cliFormat = (account, level?: string) => {
         "  " +
         ta.type +
         " " +
-        getAccountName(ta) +
+        getDefaultAccountName(ta) +
         ": " +
         formatCurrencyUnit(getAccountUnit(ta), ta.balance, {
           showCode: true,

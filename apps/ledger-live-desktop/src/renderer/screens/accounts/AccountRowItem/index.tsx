@@ -18,12 +18,12 @@ import Countervalue from "./Countervalue";
 import Delta from "./Delta";
 import Header from "./Header";
 import Star from "~/renderer/components/Stars/Star";
-import {
-  blacklistedTokenIdsSelector,
-  hideEmptyTokenAccountsSelector,
-} from "~/renderer/reducers/settings";
+import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
 import Button from "~/renderer/components/Button";
 import { getLLDCoinFamily } from "~/renderer/families";
+import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import { walletSelector } from "~/renderer/reducers/wallet";
+import { WalletState, accountNameSelector } from "@ledgerhq/live-wallet/store";
 
 const Row = styled(Box)`
   background: ${p => p.theme.colors.palette.background.paper};
@@ -118,16 +118,18 @@ const IconAngleDown = styled.div<{
   justify-content: center;
   transform: ${p => (p.expanded ? "rotate(180deg)" : "rotate(0deg)")};
 `;
-type Props = {
+type OwnProps = {
   account: TokenAccount | Account;
   parentAccount?: Account | null;
   disableRounding?: boolean;
-  hideEmptyTokens?: boolean;
-  blacklistedTokenIds: string[];
   onClick: (b: AccountLike, a?: Account | null) => void;
   hidden?: boolean;
   range: PortfolioRange;
   search?: string;
+};
+type Props = OwnProps & {
+  blacklistedTokenIds: string[];
+  walletState: WalletState;
 };
 type State = {
   expanded: boolean;
@@ -191,8 +193,8 @@ class AccountRowItem extends PureComponent<Props, State> {
       onClick,
       disableRounding,
       search,
-      hideEmptyTokens,
       blacklistedTokenIds,
+      walletState,
     } = this.props;
     const { expanded } = this.state;
     let currency;
@@ -214,9 +216,9 @@ class AccountRowItem extends PureComponent<Props, State> {
       tokens = listSubAccounts(account).filter(
         subAccount => !blacklistedTokenIds.includes(getAccountCurrency(subAccount).id),
       );
-      disabled = !matchesSearch(search, account);
+      disabled = !matchesSearch(walletState, search, account);
       isToken = listTokenTypesForCryptoCurrency(currency).length > 0;
-      if (tokens) tokens = tokens.filter(t => matchesSearch(search, t));
+      if (tokens) tokens = tokens.filter(t => matchesSearch(walletState, search, t));
     }
     const showTokensIndicator = Boolean(tokens && tokens.length > 0 && !hidden);
     const specific = mainAccount ? getLLDCoinFamily(mainAccount.currency.family).tokenList : null;
@@ -234,7 +236,9 @@ class AccountRowItem extends PureComponent<Props, State> {
           see: "subAccounts.seeSubAccounts",
           hide: "subAccounts.hideSubAccounts",
         };
-    const key = `${account.id}_${hideEmptyTokens ? "hide_empty_tokens" : ""}`;
+    const key = `${account.id}`;
+    const accountName =
+      accountNameSelector(walletState, { accountId: account.id }) || getDefaultAccountName(account);
     return (
       <div
         className={`accounts-account-row-item ${tokens && tokens.length > 0 ? "has-tokens" : ""}`}
@@ -258,7 +262,7 @@ class AccountRowItem extends PureComponent<Props, State> {
               className="accounts-account-row-item-content"
               isSubAccountsExpanded={showTokensIndicator && expanded}
               onClick={this.onClick}
-              data-test-id={account.type === "Account" && `account-component-${account.name}`}
+              data-test-id={`account-component-${accountName}`}
             >
               <Header account={account} />
               <Box flex="12%">
@@ -269,10 +273,7 @@ class AccountRowItem extends PureComponent<Props, State> {
               <Balance unit={unit} balance={account.balance} disableRounding={disableRounding} />
               <Countervalue account={account} currency={currency} range={range} />
               <Delta account={account} range={range} />
-              <Star
-                accountId={account.id}
-                parentId={account.type !== "Account" ? account.parentId : undefined}
-              />
+              <Star accountId={account.id} />
             </RowContent>
             {showTokensIndicator && expanded ? (
               <TokenContentWrapper>
@@ -330,9 +331,9 @@ class AccountRowItem extends PureComponent<Props, State> {
   }
 }
 const mapStateToProps = createStructuredSelector({
-  hideEmptyTokenAccounts: hideEmptyTokenAccountsSelector,
   blacklistedTokenIds: blacklistedTokenIdsSelector,
+  walletState: walletSelector,
 });
-const ConnectedAccountRowItem: React.ComponentType<Props> =
+const ConnectedAccountRowItem: React.ComponentType<OwnProps> =
   connect(mapStateToProps)(AccountRowItem);
 export default ConnectedAccountRowItem;

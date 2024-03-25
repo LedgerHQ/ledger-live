@@ -8,7 +8,6 @@ import { TFunction } from "i18next";
 import { AccountLike, Account, Operation } from "@ledgerhq/types-live";
 import {
   getAccountCurrency,
-  getAccountName,
   getAccountUnit,
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
@@ -19,7 +18,14 @@ import AddressCell from "./AddressCell";
 import AmountCell from "./AmountCell";
 import { confirmationsNbForCurrencySelector } from "~/renderer/reducers/settings";
 import { isConfirmedOperation } from "@ledgerhq/live-common/operation";
+import { accountNameSelector } from "@ledgerhq/live-wallet/store";
+import { walletSelector } from "~/renderer/reducers/wallet";
+import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+
 const mapStateToProps = createStructuredSelector({
+  accountName: (state, { account }) =>
+    accountNameSelector(walletSelector(state), { accountId: account.id }) ||
+    getDefaultAccountName(account),
   confirmationsNb: (state, { account, parentAccount }) =>
     confirmationsNbForCurrencySelector(state, {
       currency: getMainAccount(account, parentAccount).currency,
@@ -51,6 +57,7 @@ type OwnProps = {
 };
 type Props = {
   confirmationsNb: number;
+  accountName: string;
 } & OwnProps;
 class OperationComponent extends PureComponent<Props> {
   static defaultProps = {
@@ -73,6 +80,7 @@ class OperationComponent extends PureComponent<Props> {
       text,
       withAddress,
       confirmationsNb,
+      accountName,
       editable,
     } = this.props;
     const isOptimistic = operation.blockHeight === null;
@@ -100,7 +108,7 @@ class OperationComponent extends PureComponent<Props> {
           editable={editable}
           t={t}
         />
-        {withAccount && <AccountCell accountName={getAccountName(account)} currency={currency} />}
+        {withAccount && <AccountCell accountName={accountName} currency={currency} />}
         {withAddress ? <AddressCell operation={operation} /> : <Box flex="1" />}
         <AmountCell
           operation={operation}
@@ -112,6 +120,7 @@ class OperationComponent extends PureComponent<Props> {
     );
   }
 }
+
 const ConnectedOperationComponent: React.ComponentType<OwnProps> =
   connect(mapStateToProps)(OperationComponent);
 export default ConnectedOperationComponent;

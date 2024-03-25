@@ -25,7 +25,6 @@ const dataset: CurrenciesData<Transaction> = {
         id: "js:2:quicksilver:quick1gyauvl44q2apn3u3aujm36q8zrj74vry7uw9km:",
         seedIdentifier: "03d5e0ebb3f1ae2afe87e5d5a24b5029a59cc12f8fd1056840091b2f0b97e54e83",
         name: "Quicksilver 1",
-        starred: false,
         used: true,
         derivationMode: "",
         index: 0,

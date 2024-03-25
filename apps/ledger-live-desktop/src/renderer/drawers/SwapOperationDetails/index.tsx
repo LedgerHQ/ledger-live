@@ -1,6 +1,5 @@
 import {
   getAccountCurrency,
-  getAccountName,
   getAccountUnit,
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
@@ -43,6 +42,7 @@ import IconSwap from "~/renderer/icons/Swap";
 import { openURL } from "~/renderer/linking";
 import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
 import { languageSelector } from "~/renderer/reducers/settings";
+import { useAccountName } from "~/renderer/reducers/wallet";
 import { getStatusColor } from "~/renderer/screens/exchange/Swap2/History/OperationRow";
 import { rgba } from "~/renderer/styles/helpers";
 
@@ -113,6 +113,8 @@ const SwapOperationDetails = ({
 }) => {
   const { fromAccount, toAccount, operation, provider, swapId, status, fromAmount, toAmount } =
     mappedSwapOperation;
+  const fromAccountName = useAccountName(fromAccount);
+  const toAccountName = useAccountName(toAccount);
   const dateFormatted = useDateFormatted(operation.date, dayFormat);
   const language = useSelector(languageSelector);
   const history = useHistory();
@@ -307,7 +309,7 @@ const SwapOperationDetails = ({
             </Box>
             <Box flex={1} color={"palette.text.shade100"} data-test-id="swap-account-from">
               <Ellipsis>
-                <Link onClick={() => openAccount(fromAccount)}>{getAccountName(fromAccount)}</Link>
+                <Link onClick={() => openAccount(fromAccount)}>{fromAccountName}</Link>
               </Ellipsis>
             </Box>
           </Box>
@@ -349,7 +351,7 @@ const SwapOperationDetails = ({
             </Box>
             <Box flex={1} color={"palette.text.shade100"} data-test-id="swap-account-to">
               <Ellipsis>
-                <Link onClick={() => openAccount(toAccount)}>{getAccountName(toAccount)}</Link>
+                <Link onClick={() => openAccount(toAccount)}>{toAccountName}</Link>
               </Ellipsis>
             </Box>
           </Box>

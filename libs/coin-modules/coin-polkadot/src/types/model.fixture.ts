@@ -26,17 +26,20 @@ export function createFixtureAccount(account?: Partial<PolkadotAccount>): Polkad
     derivationPath: "derivation_path",
   };
 
+  const id = faker.string.uuid();
+  const seedIdentifier = faker.string.uuid();
+  const index = faker.number.int();
+  faker.string.alpha(); // there used to be a name and to not break the test, we need to consume it
+
   return {
     type: "Account",
-    id: faker.string.uuid(),
-    seedIdentifier: faker.string.uuid(),
+    id,
+    seedIdentifier,
     derivationMode: "",
-    index: faker.number.int(),
+    index,
     freshAddress: freshAddress.address,
     freshAddressPath: freshAddress.derivationPath,
     freshAddresses: [freshAddress],
-    name: faker.string.alpha(),
-    starred: false,
     used: true,
     balance: account?.balance || new BigNumber(0),
     spendableBalance: account?.spendableBalance || new BigNumber(0),

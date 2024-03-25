@@ -1,5 +1,6 @@
 // cross helps dealing with cross-project feature like export/import & cross project conversions
 import { BigNumber } from "bignumber.js";
+// @ts-expect-error no types for compressjs
 import compressjs from "@ledgerhq/compressjs";
 import type { DeviceModelId } from "@ledgerhq/devices";
 import {
@@ -8,8 +9,9 @@ import {
   asDerivationMode,
 } from "@ledgerhq/coin-framework/derivation";
 import { decodeAccountId, emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
-import { getCryptoCurrencyById } from "./currencies";
-import type { Account, CryptoCurrencyIds } from "@ledgerhq/types-live";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import type { Account, AccountUserData, CryptoCurrencyIds } from "@ledgerhq/types-live";
+import { WalletState, accountUserDataExportSelector } from "../store";
 
 export type AccountData = {
   id: string;
@@ -36,6 +38,8 @@ export type Settings = {
 };
 
 export type DataIn = {
+  // wallet state
+  walletState: WalletState;
   // accounts to export (filter them to only be the visible ones)
   accounts: Account[];
   // settings
@@ -62,6 +66,7 @@ export type Result = {
 };
 
 export function encode({
+  walletState,
   accounts,
   settings,
   exporterName,
@@ -79,7 +84,9 @@ export function encode({
             modelId,
             modelIdList,
           },
-          accounts: accounts.map(accountToAccountData),
+          accounts: accounts.map(a =>
+            accountToAccountData(a, accountUserDataExportSelector(walletState, { account: a })),
+          ),
           settings,
         }),
       ),
@@ -87,7 +94,7 @@ export function encode({
   ).toString("binary");
 }
 
-const asResultMeta = (unsafe: Record<string, any>): Meta => {
+const asResultMeta = (unsafe: Record<string, unknown>): Meta => {
   if (typeof unsafe !== "object" || !unsafe) {
     throw new Error("invalid meta data");
   }
@@ -102,23 +109,38 @@ const asResultMeta = (unsafe: Record<string, any>): Meta => {
     throw new Error("invalid meta.exporterVersion");
   }
 
-  if (modelId && typeof modelId !== "string") {
-    throw new Error("invalid meta.modelId");
+  let resultModelId: DeviceModelId | undefined = undefined;
+  if (modelId) {
+    if (typeof modelId === "string") {
+      resultModelId = modelId as DeviceModelId;
+    } else {
+      throw new Error("invalid meta.modelId");
+    }
   }
 
-  if (modelIdList && modelIdList.some(id => typeof id !== "string")) {
-    throw new Error("invalid meta.modelIdList");
+  let resultModelIdList: DeviceModelId[] | undefined = undefined;
+
+  if (modelIdList) {
+    if (
+      typeof modelIdList === "object" &&
+      Array.isArray(modelIdList) &&
+      modelIdList.every(id => typeof id === "string")
+    ) {
+      resultModelIdList = modelIdList;
+    } else {
+      throw new Error("invalid meta.modelIdList");
+    }
   }
 
   return {
     exporterName,
     exporterVersion,
-    modelId,
-    modelIdList,
+    modelId: resultModelId,
+    modelIdList: resultModelIdList,
   };
 };
 
-const asResultAccount = (unsafe: Record<string, any>): AccountData => {
+const asResultAccount = (unsafe: Record<string, unknown>): AccountData => {
   if (typeof unsafe !== "object" || !unsafe) {
     throw new Error("invalid account data");
   }
@@ -179,7 +201,7 @@ const asResultAccounts = (unsafe: unknown): AccountData[] => {
   return unsafe.map(asResultAccount);
 };
 
-const asCryptoSettings = (unsafe: Record<string, any>): CryptoSettings => {
+const asCryptoSettings = (unsafe: Record<string, unknown>): CryptoSettings => {
   if (typeof unsafe !== "object" || !unsafe) {
     throw new Error("invalid currency settings data");
   }
@@ -270,16 +292,10 @@ export function decode(bytes: string): Result {
     settings: asResultSettings(unsafe.settings),
   };
 }
-export function accountToAccountData({
-  id,
-  name,
-  seedIdentifier,
-  derivationMode,
-  freshAddress,
-  currency,
-  index,
-  balance,
-}: Account): AccountData {
+export function accountToAccountData(
+  { id, seedIdentifier, derivationMode, freshAddress, currency, index, balance }: Account,
+  { name }: AccountUserData,
+): AccountData {
   const res: AccountData = {
     id,
     name,
@@ -305,7 +321,7 @@ export const accountDataToAccount = ({
   balance,
   derivationMode: derivationModeStr,
   seedIdentifier,
-}: AccountData): Account => {
+}: AccountData): [Account, AccountUserData] => {
   const { xpubOrAddress } = decodeAccountId(id); // TODO rename in AccountId xpubOrAddress
 
   const derivationMode = asDerivationMode(derivationModeStr);
@@ -349,8 +365,6 @@ export const accountDataToAccount = ({
     derivationMode,
     seedIdentifier,
     xpub,
-    name,
-    starred: false,
     used: false,
     currency,
     index,
@@ -371,5 +385,11 @@ export const accountDataToAccount = ({
     balanceHistoryCache: emptyHistoryCache,
   };
 
-  return account;
+  const accountUserData: AccountUserData = {
+    id,
+    name,
+    starredIds: [],
+  };
+
+  return [account, accountUserData];
 };

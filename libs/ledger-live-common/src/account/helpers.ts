@@ -5,7 +5,6 @@ import { TronAccount } from "../families/tron/types";
 import { CosmosAccount } from "../families/cosmos/types";
 import {
   getMainAccount,
-  getAccountName,
   getAccountCurrency,
   getAccountUnit,
   getFeesCurrency,
@@ -35,7 +34,6 @@ import {
 // FIXME Remove this redundant export and import all from coin-framework
 export {
   getMainAccount,
-  getAccountName,
   getAccountCurrency,
   getAccountUnit,
   getFeesCurrency,

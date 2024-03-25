@@ -258,7 +258,6 @@ export function genTokenAccount(
   const rng = new Prando(account.id + "|" + index);
   const tokenAccount: TokenAccount = {
     type: "TokenAccount",
-    starred: false,
     id: account.id + "|" + index,
     parentId: account.id,
     token,
@@ -320,24 +319,26 @@ export function genAccount(
   // nb Make the third (ethereum_classic, dogecoin) account originally migratable
   const outdated = ["ethereum_classic", "dogecoin"].includes(currency.id) && `${id}`.endsWith("_2");
   const accountId = `mock:${outdated ? 0 : 1}:${currency.id}:${id}:`;
+  const xpub = genHex(64, rng);
+  rng.nextString(rng.nextInt(4, 34)); // to not break the determinism, we will still run this code that used to generate fake account names
+  const blockHeight = rng.nextInt(100000, 200000);
+  const unit = rng.nextArrayItem(currency.units);
   const account: Account = {
     type: "Account",
     id: accountId,
     seedIdentifier: "mock",
     derivationMode: "",
-    xpub: genHex(64, rng),
+    xpub,
     index: 1,
     freshAddress: address,
     freshAddressPath: derivationPath,
     freshAddresses: [freshAddress],
-    name: rng.nextString(rng.nextInt(4, 34)),
-    starred: false,
     used: false,
     balance: new BigNumber(0),
     spendableBalance: new BigNumber(0),
-    blockHeight: rng.nextInt(100000, 200000),
+    blockHeight,
     currency,
-    unit: rng.nextArrayItem(currency.units),
+    unit,
     operationsCount: 0,
     operations: [],
     pendingOperations: [],

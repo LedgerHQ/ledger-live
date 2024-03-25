@@ -361,7 +361,6 @@ const dataset: CurrenciesData<Transaction> = {
         id: "js:2:osmo:osmo1xx72kqjlf2qqj88h0wakwv6rp0v8fwh74z9q89:",
         seedIdentifier: "0283de657d9e283a5c31d64a4c4afbcc48ee79fdd7648bcdde6a1d0d7ae9f9bea1",
         name: "Osmosis 2 - Nano X Static Account",
-        starred: true,
         derivationMode: "",
         index: 1,
         freshAddress: "osmo1xx72kqjlf2qqj88h0wakwv6rp0v8fwh74z9q89",

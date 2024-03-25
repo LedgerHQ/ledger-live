@@ -468,7 +468,6 @@ const getAccountShape = async (info: AccountShapeInfo, syncConfig) => {
       const sub: TokenAccount = {
         type: "TokenAccount",
         id,
-        starred: false,
         parentId: accountId,
         token,
         balance: bnBalance,

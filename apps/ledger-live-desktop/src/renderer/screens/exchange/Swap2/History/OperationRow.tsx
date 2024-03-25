@@ -1,8 +1,4 @@
-import {
-  getAccountCurrency,
-  getAccountName,
-  getAccountUnit,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
 import {
   isSwapOperationPending,
   operationStatusList,
@@ -23,6 +19,7 @@ import IconClock from "~/renderer/icons/Clock";
 import IconSwap from "~/renderer/icons/Swap";
 import { rgba } from "~/renderer/styles/helpers";
 import { hourFormat, useDateFormatted } from "~/renderer/hooks/useDateFormatter";
+import { useAccountName } from "~/renderer/reducers/wallet";
 
 export const getStatusColor = (status: string, theme: DefaultTheme) => {
   if (isSwapOperationPending(status)) {
@@ -105,6 +102,9 @@ const OperationRow = ({
   const dateFormatted = useDateFormatted(operation.date, hourFormat);
   const { t } = useTranslation();
 
+  const fromAccountName = useAccountName(fromAccount);
+  const toAccountName = useAccountName(toAccount);
+
   return (
     <Row
       className={"swap-history-row"}
@@ -136,9 +136,9 @@ const OperationRow = ({
         <Box alignItems="center" justifyContent="center">
           <CryptoCurrencyIcon size={16} currency={fromCurrency} />
         </Box>
-        <Tooltip delay={1200} content={getAccountName(fromAccount)}>
+        <Tooltip delay={1200} content={fromAccountName}>
           <Ellipsis ff="Inter|SemiBold" ml={1} color="palette.text.shade100" fontSize={3}>
-            {getAccountName(fromAccount)}
+            {fromAccountName}
           </Ellipsis>
         </Tooltip>
       </Box>
@@ -149,9 +149,9 @@ const OperationRow = ({
         <Box alignItems="center" justifyContent="center">
           <CryptoCurrencyIcon size={16} currency={toCurrency} />
         </Box>
-        <Tooltip delay={1200} content={getAccountName(toAccount)}>
+        <Tooltip delay={1200} content={toAccountName}>
           <Ellipsis ff="Inter|SemiBold" ml={1} color="palette.text.shade100" fontSize={3}>
-            {getAccountName(toAccount)}
+            {toAccountName}
           </Ellipsis>
         </Tooltip>
       </Box>

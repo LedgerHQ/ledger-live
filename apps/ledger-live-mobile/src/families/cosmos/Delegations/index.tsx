@@ -59,6 +59,7 @@ import AccountBanner from "~/components/AccountBanner";
 import { getAccountBannerProps as getCosmosBannerProps } from "../utils";
 import ValidatorImage from "../shared/ValidatorImage";
 import { useCanShowStake } from "~/screens/Account/hooks/useCanShowStake";
+import { useAccountName } from "~/reducers/wallet";
 
 type Props = {
   account: CosmosAccount;
@@ -236,6 +237,8 @@ function Delegations({ account }: Props) {
     [account.currency],
   );
 
+  const accountName = useAccountName(account);
+
   const data = useMemo<DelegationDrawerProps["data"]>(() => {
     const d = delegation || undelegation;
 
@@ -286,7 +289,7 @@ function Delegations({ account }: Props) {
                 style={[styles.valueText]}
                 color="live"
               >
-                {account.name}{" "}
+                {accountName}{" "}
               </LText>
             ),
           },
@@ -363,7 +366,7 @@ function Delegations({ account }: Props) {
             : []),
         ]
       : [];
-  }, [delegation, t, account, onOpenExplorer, undelegation]);
+  }, [delegation, t, account, accountName, onOpenExplorer, undelegation]);
 
   const actions = useMemo<DelegationDrawerActions>(() => {
     const rewardsDisabled =

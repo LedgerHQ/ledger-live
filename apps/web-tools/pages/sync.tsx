@@ -5,7 +5,6 @@ import { BigNumber } from "bignumber.js";
 import {
   encodeAccountId,
   decodeAccountId,
-  shortAddressPreview,
   emptyHistoryCache,
 } from "@ledgerhq/live-common/account/index";
 import {
@@ -51,11 +50,8 @@ function inferAccount(id: string): Account {
   });
   const account: Account = {
     type: "Account",
-    name:
-      currency.name + " " + (derivationMode || "legacy") + " " + shortAddressPreview(xpubOrAddress),
     xpub: xpubOrAddress,
     seedIdentifier: xpubOrAddress,
-    starred: true,
     used: true,
     swapHistory: [],
     id,

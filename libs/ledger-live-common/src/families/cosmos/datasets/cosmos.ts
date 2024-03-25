@@ -370,7 +370,6 @@ const dataset: CurrenciesData<Transaction> = {
         seedIdentifier:
           "cosmospub1addwnpepqd3nvwwx39pqqvw88sg409675u6wyt4wtzqyt2t0e9y4629t50cdzftxnvz",
         name: "Cosmos Static Account",
-        starred: true,
         derivationMode: "",
         index: 0,
         freshAddress: "cosmos10l6h3qw05u7qduqgafj8wlrx3fjhr8523sm0c3",

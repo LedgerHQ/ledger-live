@@ -1,10 +1,6 @@
 import React, { PureComponent } from "react";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import {
-  getAccountCurrency,
-  getAccountUnit,
-  getAccountName,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
 import Box from "~/renderer/components/Box";
 import Ellipsis from "~/renderer/components/Ellipsis";
 import Bar from "~/renderer/components/Bar";
@@ -15,6 +11,8 @@ import Star from "~/renderer/components/Stars/Star";
 import Tooltip from "~/renderer/components/Tooltip";
 import AccountSyncStatusIndicator from "../AccountSyncStatusIndicator";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
+import { useAccountName } from "~/renderer/reducers/wallet";
+
 class HeadText extends PureComponent<{
   account: AccountLike;
   title: string;
@@ -52,54 +50,53 @@ class HeadText extends PureComponent<{
     );
   }
 }
-class Header extends PureComponent<{
+
+const Header = ({
+  account,
+  parentAccount,
+}: {
   account: AccountLike;
   parentAccount: Account | undefined | null;
-}> {
-  render() {
-    const { account, parentAccount } = this.props;
-    const currency = getAccountCurrency(account);
-    const unit = getAccountUnit(account);
-    const name = getAccountName(account);
-    let title;
-    switch (account.type) {
-      case "Account":
-        title = currency.name;
-        break;
-      case "TokenAccount":
-        title = "token";
-        break;
-      default:
-        title = "";
-    }
-    return (
-      <Box flow={4}>
-        <Box horizontal ff="Inter|SemiBold" flow={3} alignItems="center">
-          <ParentCryptoCurrencyIcon currency={currency} withTooltip />
-          <HeadText account={account} name={name} title={title} />
-          <AccountSyncStatusIndicator
-            accountId={(parentAccount && parentAccount.id) || account.id}
-            account={account}
-          />
-          <Star
-            accountId={account.id}
-            parentId={account.type !== "Account" ? account.parentId : undefined}
-          />
-        </Box>
-        <Bar size={1} color="palette.divider" />
-        <Box justifyContent="center">
-          <FormattedVal
-            alwaysShowSign={false}
-            animateTicker={false}
-            ellipsis
-            color="palette.text.shade100"
-            unit={unit}
-            showCode
-            val={account.balance}
-          />
-        </Box>
-      </Box>
-    );
+}) => {
+  const currency = getAccountCurrency(account);
+  const unit = getAccountUnit(account);
+  const name = useAccountName(account);
+  let title;
+  switch (account.type) {
+    case "Account":
+      title = currency.name;
+      break;
+    case "TokenAccount":
+      title = "token";
+      break;
+    default:
+      title = "";
   }
-}
-export default Header;
+  return (
+    <Box flow={4}>
+      <Box horizontal ff="Inter|SemiBold" flow={3} alignItems="center">
+        <ParentCryptoCurrencyIcon currency={currency} withTooltip />
+        <HeadText account={account} name={name} title={title} />
+        <AccountSyncStatusIndicator
+          accountId={(parentAccount && parentAccount.id) || account.id}
+          account={account}
+        />
+        <Star accountId={account.id} />
+      </Box>
+      <Bar size={1} color="palette.divider" />
+      <Box justifyContent="center">
+        <FormattedVal
+          alwaysShowSign={false}
+          animateTicker={false}
+          ellipsis
+          color="palette.text.shade100"
+          unit={unit}
+          showCode
+          val={account.balance}
+        />
+      </Box>
+    </Box>
+  );
+};
+
+export default React.memo(Header);

@@ -7,7 +7,7 @@ import { TFunction } from "i18next";
 import { Trans, withTranslation } from "react-i18next";
 import type { Account, DerivationMode } from "@ledgerhq/types-live";
 import { Unit } from "@ledgerhq/types-cryptoassets";
-import { validateNameEdition } from "@ledgerhq/live-common/account/index";
+import { validateNameEdition } from "@ledgerhq/live-wallet/accountName";
 import { AccountNameRequiredError } from "@ledgerhq/errors";
 import { getEnv } from "@ledgerhq/live-env";
 import { urls } from "~/config/urls";
@@ -24,6 +24,14 @@ import ConfirmModal from "~/renderer/modals/ConfirmModal";
 import Space from "~/renderer/components/Space";
 import Button from "~/renderer/components/Button";
 import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
+import {
+  WalletState,
+  accountNameWithDefaultSelector,
+  setAccountName,
+} from "@ledgerhq/live-wallet/store";
+import { walletSelector } from "~/renderer/reducers/wallet";
+import { State as ReduxState } from "~/renderer/reducers";
+
 type State = {
   accountName: string | undefined | null;
   accountUnit: Unit | undefined | null;
@@ -35,19 +43,25 @@ type OwnProps = {
   data: unknown;
 };
 type Props = {
+  walletState: WalletState;
   setDataModal: Function;
+  setAccountName: (accountId: string, name: string) => void;
   updateAccount: Function;
   removeAccount: Function;
   t: TFunction;
 } & OwnProps;
 const unitGetOptionValue = (unit: Unit) => unit.magnitude + "";
 const renderUnitItemCode = (item: { data: Unit }) => item.data.code;
+const mapStateToProps = (state: ReduxState) => ({
+  walletState: walletSelector(state),
+});
 const mapDispatchToProps = {
   setDataModal,
   updateAccount,
+  setAccountName,
   removeAccount,
 };
-const defaultState = {
+const defaultState: State = {
   accountName: null,
   accountUnit: null,
   accountNameError: null,
@@ -80,9 +94,9 @@ class AccountSettingRenderBody extends PureComponent<Props, State> {
     (account: Account, onClose: () => void) =>
     (e: React.SyntheticEvent<HTMLFormElement | HTMLInputElement>) => {
       e.preventDefault();
-      const { updateAccount, setDataModal } = this.props;
+      const { updateAccount, setDataModal, setAccountName } = this.props;
       const { accountName, accountUnit } = this.state;
-      if (!account.name.length) {
+      if (!accountName || !accountName.length) {
         this.setState({
           accountNameError: new AccountNameRequiredError(),
         });
@@ -91,12 +105,10 @@ class AccountSettingRenderBody extends PureComponent<Props, State> {
         account = {
           ...account,
           unit: accountUnit || account.unit,
-          name,
         };
         updateAccount(account);
-        setDataModal("MODAL_SETTINGS_ACCOUNT", {
-          account,
-        });
+        setAccountName(account.id, name);
+        setDataModal("MODAL_SETTINGS_ACCOUNT", { account });
         onClose();
       }
     };
@@ -141,9 +153,13 @@ class AccountSettingRenderBody extends PureComponent<Props, State> {
 
   render() {
     const { accountUnit, accountNameError, isRemoveAccountModalOpen } = this.state;
-    const { t, onClose, data } = this.props;
+    const { t, onClose, data, walletState } = this.props;
     if (!data) return null;
     const account = this.getAccount(data);
+    const accountName =
+      this.state.accountName === null
+        ? accountNameWithDefaultSelector(walletState, account)
+        : this.state.accountName;
     const usefulData = {
       xpub: account.xpub || undefined,
       index: account.index,
@@ -176,7 +192,7 @@ class AccountSettingRenderBody extends PureComponent<Props, State> {
                       width: 230,
                     },
                   }}
-                  value={account.name}
+                  value={accountName}
                   maxLength={getEnv("MAX_ACCOUNT_NAME_SIZE")}
                   onChange={this.handleChangeName}
                   onEnter={onSubmit}
@@ -277,7 +293,7 @@ const AdvancedLogsContainer = styled.div`
   user-select: text;
 `;
 const ConnectedAccountSettingRenderBody = compose(
-  connect(null, mapDispatchToProps),
+  connect(mapStateToProps, mapDispatchToProps),
   withTranslation(),
 )(AccountSettingRenderBody) as React.ComponentType<OwnProps>;
 export default ConnectedAccountSettingRenderBody;

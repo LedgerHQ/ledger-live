@@ -3,7 +3,7 @@ import { TezosAccount } from "../types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 
 export function makeAccount(
-  name: string,
+  _name: string,
   pubkey: string,
   address: string,
   isRevelead: boolean,
@@ -11,7 +11,6 @@ export function makeAccount(
   return {
     id: `js:2:tezos:${pubkey}:${"standard"}`,
     seedIdentifier: address,
-    name: "Tezos " + name,
     derivationMode: "",
     index: 0,
     freshAddress: address,
@@ -25,7 +24,6 @@ export function makeAccount(
     xpub: pubkey,
     subAccounts: [],
     type: "Account",
-    starred: false,
     used: true,
     spendableBalance: new BigNumber(100),
     creationDate: new Date(),

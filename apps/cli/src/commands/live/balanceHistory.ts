@@ -12,6 +12,8 @@ import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { scan, scanCommonOpts } from "../../scan";
 import type { ScanCommonOpts } from "../../scan";
 import type { PortfolioRange } from "@ledgerhq/types-live";
+import { getDefaultAccountNameForCurrencyIndex } from "@ledgerhq/live-wallet/accountName";
+
 const histoFormatters = {
   default: (histo, account) =>
     histo
@@ -29,7 +31,7 @@ const histoFormatters = {
   asciichart: (history, account) =>
     "\n" +
     "".padStart(22) +
-    account.name +
+    getDefaultAccountNameForCurrencyIndex(account) +
     ": " +
     formatCurrencyUnit(account.unit, account.balance, {
       showCode: true,

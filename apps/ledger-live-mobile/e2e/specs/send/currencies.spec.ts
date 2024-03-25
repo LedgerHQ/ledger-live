@@ -15,6 +15,7 @@ import { tapByElement } from "../../helpers";
 import { Account } from "@ledgerhq/types-live";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import Common, { formattedAmount } from "../../models/common";
+import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 
 let portfolioPage: PortfolioPage;
 let sendPage: SendPage;
@@ -69,7 +70,7 @@ describe("Send flow", () => {
 
       await portfolioPage.openViaDeeplink();
       await sendPage.openViaDeeplink();
-      await common.performSearch(account.name);
+      await common.performSearch(getDefaultAccountName(account));
       await sendPage.selectAccount(account.id);
       await sendPage.setRecipient(account.freshAddress);
       await sendPage.recipientContinue();
@@ -91,7 +92,7 @@ describe("Send flow", () => {
       await expect(lastTransaction).toHaveText(`-${amountWithCode}`);
       await tapByElement(lastTransaction);
       await operationDetailsPage.isOpened();
-      await operationDetailsPage.checkAccount(account.name);
+      await operationDetailsPage.checkAccount(getDefaultAccountName(account));
       await operationDetailsPage.checkAmount(`-${amountWithCode}`);
     },
   );

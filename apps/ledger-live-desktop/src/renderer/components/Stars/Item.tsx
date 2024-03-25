@@ -1,11 +1,7 @@
 import React, { useCallback } from "react";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
-import {
-  getAccountCurrency,
-  getAccountUnit,
-  getAccountName,
-} from "@ledgerhq/live-common/account/helpers";
+import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import { AccountLike } from "@ledgerhq/types-live";
 import Hide from "~/renderer/components/MainSideBar/Hide";
 import FormattedVal from "~/renderer/components/FormattedVal";
@@ -13,6 +9,7 @@ import Box from "~/renderer/components/Box";
 import Ellipsis from "~/renderer/components/Ellipsis";
 import ParentCryptoCurrencyIcon from "~/renderer/components/ParentCryptoCurrencyIcon";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import { useAccountName } from "~/renderer/reducers/wallet";
 const ParentCryptoCurrencyIconWrapper = styled.div`
   width: 20px;
 `;
@@ -50,6 +47,7 @@ type Props = {
   collapsed?: boolean;
 };
 const Item = ({ account, pathname, collapsed }: Props) => {
+  const accountName = useAccountName(account);
   const history = useHistory();
   const active = pathname.endsWith(account.id);
   const onAccountClick = useCallback(() => {
@@ -70,7 +68,7 @@ const Item = ({ account, pathname, collapsed }: Props) => {
         </ParentCryptoCurrencyIconWrapper>
         <Box flex={1}>
           <Hide visible={!collapsed}>
-            <Ellipsis>{getAccountName(account)}</Ellipsis>
+            <Ellipsis>{accountName}</Ellipsis>
             <FormattedVal
               alwaysShowSign={false}
               animateTicker={false}

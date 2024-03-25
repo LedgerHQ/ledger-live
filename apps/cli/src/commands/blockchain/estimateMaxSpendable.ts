@@ -1,14 +1,15 @@
 import { concat, from } from "rxjs";
 import { concatMap } from "rxjs/operators";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { getAccountUnit, getAccountName } from "@ledgerhq/live-common/account/index";
+import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { scan, scanCommonOpts } from "../../scan";
 import type { ScanCommonOpts } from "../../scan";
+import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 
 const format = (account, value) => {
   const unit = getAccountUnit(account);
-  const name = getAccountName(account);
+  const name = getDefaultAccountName(account);
   const amount = formatCurrencyUnit(unit, value, {
     showCode: true,
     disableRounding: true,

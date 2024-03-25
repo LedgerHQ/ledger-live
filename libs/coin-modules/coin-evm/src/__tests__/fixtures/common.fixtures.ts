@@ -6,7 +6,6 @@ import {
   decodeAccountId,
   decodeTokenAccountId,
   encodeTokenAccountId,
-  shortAddressPreview,
 } from "@ledgerhq/coin-framework/account/index";
 import {
   encodeERC1155OperationId,
@@ -44,12 +43,9 @@ export const makeAccount = (
 
   const account: Account = {
     type: "Account",
-    name:
-      currency.name + " " + (derivationMode || "legacy") + " " + shortAddressPreview(xpubOrAddress),
     xpub: xpubOrAddress,
     subAccounts,
     seedIdentifier: xpubOrAddress,
-    starred: true,
     used: true,
     swapHistory: [],
     id,
@@ -105,7 +101,6 @@ export const makeTokenAccount = (address: string, tokenCurrency: TokenCurrency):
     operationsCount: 0,
     operations: [],
     pendingOperations: [],
-    starred: false,
     balanceHistoryCache: {
       HOUR: {
         latestDate: null,

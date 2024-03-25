@@ -42,7 +42,6 @@ const cheapValidator: ValidatorsAppValidator = {
 const account: SolanaAccount = {
   type: "Account",
   id: "js:2:solana:8Qs1nzggCjEYhFcj4yHwiS5s3QzNeCPWpQnntFdwUYhN:solanaSub",
-  starred: false,
   used: false,
   seedIdentifier: "5gaQapKG9MpAWMLtZFoDqzmKfxMN2FXDVNAKiGFaMXGg",
   derivationMode: "solanaSub",
@@ -50,7 +49,6 @@ const account: SolanaAccount = {
   freshAddress: "8Qs1nzggCjEYhFcj4yHwiS5s3QzNeCPWpQnntFdwUYhN",
   freshAddressPath: "44'/501'/0'",
   freshAddresses: [],
-  name: "Solana 1",
   blockHeight: 177035578,
   creationDate: new Date("2023-02-08T12:57:45.000Z"),
   balance: new BigNumber("606150870"),

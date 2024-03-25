@@ -5,12 +5,7 @@ import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import type { Account, Operation, AccountLike, NFTMetadataResponse } from "@ledgerhq/types-live";
-import {
-  getAccountUnit,
-  getAccountName,
-  getFeesCurrency,
-  getFeesUnit,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountUnit, getFeesCurrency, getFeesUnit } from "@ledgerhq/live-common/account/index";
 import {
   getOperationAmountNumber,
   isConfirmedOperation,
@@ -47,6 +42,7 @@ import type {
   StackNavigatorNavigation,
 } from "~/components/RootNavigator/types/helpers";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { useAccountName } from "~/reducers/wallet";
 
 type HelpLinkProps = {
   event: string;
@@ -114,6 +110,7 @@ export default function Content({
   );
 
   const isToken = currency.type === "TokenCurrency";
+  const accountName = useAccountName(account);
   const unit = getAccountUnit(account);
   const feeCurrency = getFeesCurrency(mainAccount);
   const feeUnit = getFeesUnit(feeCurrency);
@@ -338,7 +335,7 @@ export default function Content({
       {!disableAllLinks ? (
         <Section
           title={t("operationDetails.account")}
-          value={getAccountName(account)}
+          value={accountName}
           onPress={onPress}
           testID="operationDetails-account"
         />

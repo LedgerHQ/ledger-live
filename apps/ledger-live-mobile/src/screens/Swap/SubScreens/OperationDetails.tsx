@@ -6,11 +6,7 @@ import { useTheme } from "@react-navigation/native";
 import Config from "react-native-config";
 import { ScrollView, StyleSheet, View, Linking, TouchableOpacity } from "react-native";
 import { getDefaultExplorerView, getTransactionExplorer } from "@ledgerhq/live-common/explorers";
-import {
-  getAccountName,
-  getAccountUnit,
-  getAccountCurrency,
-} from "@ledgerhq/live-common/account/helpers";
+import { getAccountUnit, getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { flattenAccountsSelector } from "~/reducers/accounts";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
@@ -24,6 +20,7 @@ import FormatDate from "~/components/DateFormat/FormatDate";
 import { SwapStatusIndicator, getStatusColor } from "../SwapStatusIndicator";
 import Footer from "../../OperationDetails/Footer";
 import { OperationDetailsParamList } from "../types";
+import { useMaybeAccountName } from "~/reducers/wallet";
 
 export function OperationDetails({ route }: OperationDetailsParamList) {
   const { swapOperation } = route.params;
@@ -60,6 +57,9 @@ export function OperationDetails({ route }: OperationDetailsParamList) {
   const openProvider = useCallback(() => {
     Linking.openURL(urls.swap.providers[provider as keyof typeof urls.swap.providers].main);
   }, [provider]);
+
+  const fromAccountName = useMaybeAccountName(fromAccount);
+  const toAccountName = useMaybeAccountName(toAccount);
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
@@ -129,7 +129,7 @@ export function OperationDetails({ route }: OperationDetailsParamList) {
             {fromCurrency && <CurrencyIcon size={16} currency={fromCurrency} />}
             {fromAccount && (
               <LText numberOfLines={1} ellipsizeMode="middle" semiBold style={styles.accountName}>
-                {getAccountName(fromAccount)}
+                {fromAccountName}
               </LText>
             )}
           </View>
@@ -151,7 +151,7 @@ export function OperationDetails({ route }: OperationDetailsParamList) {
             {toCurrency ? <CurrencyIcon size={16} currency={toCurrency} /> : null}
             {toAccount ? (
               <LText numberOfLines={1} ellipsizeMode="middle" semiBold style={styles.accountName}>
-                {getAccountName(toAccount)}
+                {toAccountName}
               </LText>
             ) : null}
           </View>

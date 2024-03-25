@@ -13,8 +13,6 @@ const account: Account = {
   freshAddress: "",
   freshAddressPath: "",
   freshAddresses: [],
-  name: "",
-  starred: false,
   used: false,
   balance: new BigNumber(200000),
   spendableBalance: new BigNumber(0),

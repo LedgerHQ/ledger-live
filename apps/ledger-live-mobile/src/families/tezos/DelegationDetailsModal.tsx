@@ -14,7 +14,6 @@ import {
   getMainAccount,
   getAccountCurrency,
   getAccountUnit,
-  getAccountName,
 } from "@ledgerhq/live-common/account/index";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import Icon from "react-native-vector-icons/Feather";
@@ -32,6 +31,7 @@ import { rgba } from "../../colors";
 import { NavigatorName, ScreenName } from "~/const";
 import BakerImage from "./BakerImage";
 import DelegatingContainer from "./DelegatingContainer";
+import { useAccountName } from "~/reducers/wallet";
 
 type Props = {
   isOpened: boolean;
@@ -204,6 +204,7 @@ export default function DelegationDetailsModal({
     });
     onClose();
   }, [navigation, accountId, parentId, onClose]);
+  const accountName = useAccountName(account);
   const height = Math.min(getWindowDimensions().height - 400, 280);
   return (
     // TODO use DelegationDrawer component
@@ -260,7 +261,7 @@ export default function DelegationDetailsModal({
               numberOfLines={1}
               ellipsizeMode="middle"
             >
-              {getAccountName(account)}
+              {accountName}
             </LText>
           </Property>
           <Property label={<Trans i18nKey="delegation.duration" />}>

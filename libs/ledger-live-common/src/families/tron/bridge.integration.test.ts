@@ -1190,7 +1190,6 @@ const tron: CurrenciesData<Transaction> = {
         seedIdentifier:
           "0416c02ea5e939eed995f75c44667a66b9c8dfddede8c6d54211f64b1dace9e1c40bcbbd5341480f43a5f37c7ab3a0c53f9cccff57d59bb0368d1e744135d7f68a",
         name: "Tron 1",
-        starred: false,
         used: true,
         derivationMode: "",
         index: 0,
@@ -1240,7 +1239,6 @@ const tron: CurrenciesData<Transaction> = {
         seedIdentifier:
           "0416c02ea5e939eed995f75c44667a66b9c8dfddede8c6d54211f64b1dace9e1c40bcbbd5341480f43a5f37c7ab3a0c53f9cccff57d59bb0368d1e744135d7f68a",
         name: "Tron 3",
-        starred: false,
         used: true,
         derivationMode: "",
         index: 2,

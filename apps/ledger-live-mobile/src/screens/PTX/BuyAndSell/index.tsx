@@ -19,9 +19,9 @@ import { ExchangeNavigatorParamList } from "~/components/RootNavigator/types/Exc
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
 import { accountsSelector } from "~/reducers/accounts";
-import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds";
-import { INTERNAL_APP_IDS } from "@ledgerhq/live-common/wallet-api/constants";
+import { INTERNAL_APP_IDS, WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
+import { walletSelector } from "~/reducers/wallet";
 
 export type Props = StackNavigatorProps<
   ExchangeNavigatorParamList,
@@ -43,6 +43,7 @@ export function BuyAndSellScreen({ route }: Props) {
   const { locale } = useLocale();
   const manifest = localManifest || remoteManifest;
   const internalAppIds = useInternalAppIds() || INTERNAL_APP_IDS;
+  const walletState = useSelector(walletSelector);
 
   /**
    * Pass correct account ID
@@ -60,11 +61,11 @@ export function BuyAndSellScreen({ route }: Props) {
         const parentAccount = isTokenAccount(account)
           ? getParentAccount(account, accounts)
           : undefined;
-        params.account = accountToWalletAPIAccount(account, parentAccount).id;
+        params.account = accountToWalletAPIAccount(walletState, account, parentAccount).id;
       }
     }
     return params;
-  }, [accounts, manifest?.apiVersion, params]);
+  }, [walletState, accounts, manifest?.apiVersion, params]);
 
   /**
    * Given the user is on an internal app (webview url is owned by LL) we must reset the session
