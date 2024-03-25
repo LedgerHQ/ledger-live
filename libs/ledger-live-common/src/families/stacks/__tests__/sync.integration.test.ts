@@ -2,7 +2,6 @@ import "../../../__tests__/test-helpers/setup";
 import { fetchFullTxs } from "../bridge/utils/api";
 import flatMap from "lodash/flatMap";
 import { mapTxToOps } from "../bridge/utils/misc";
-import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeAccountId } from "../../../account";
 
 describe("sync for token transfers", () => {
