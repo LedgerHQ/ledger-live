@@ -102,6 +102,7 @@ export const executeScenario = async (scenario: Scenario) => {
         }`,
       ),
     );
+
     account.subAccounts?.forEach(tokenAccount => {
       if (tokenAccount.type !== "TokenAccount") return;
       console.log(
