@@ -1,21 +1,8 @@
-import type { CryptoCurrency, ExplorerView, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, ExplorerView } from "@ledgerhq/types-cryptoassets";
 import type { TokenAccount, Account } from "@ledgerhq/types-live";
 
 export const getDefaultExplorerView = (currency: CryptoCurrency): ExplorerView | undefined => {
   return currency.explorerViews ? currency.explorerViews[0] : undefined;
-};
-
-export const getCurrencyExplorerView = (
-  currency: TokenCurrency | CryptoCurrency,
-): ExplorerView | undefined => {
-  switch (currency.type) {
-    case "TokenCurrency":
-      return getDefaultExplorerView(currency.parentCurrency);
-    case "CryptoCurrency":
-      return getDefaultExplorerView(currency);
-    default:
-      return undefined;
-  }
 };
 
 export const getTransactionExplorer = (

@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import { useTheme } from "@react-navigation/native";
 import Config from "react-native-config";
 import { ScrollView, StyleSheet, View, Linking, TouchableOpacity } from "react-native";
-import { getCurrencyExplorerView, getTransactionExplorer } from "@ledgerhq/live-common/explorers";
+import { getDefaultExplorerView, getTransactionExplorer } from "@ledgerhq/live-common/explorers";
 import {
   getAccountName,
   getAccountUnit,
@@ -53,9 +53,9 @@ export function OperationDetails({ route }: OperationDetailsParamList) {
     color: colors[statusColorKey as keyof typeof colors],
   };
 
-  const url = fromCurrency
-    ? getTransactionExplorer(getCurrencyExplorerView(fromCurrency), operation.hash)
-    : undefined;
+  const url =
+    fromCurrency?.type === "CryptoCurrency" &&
+    getTransactionExplorer(getDefaultExplorerView(fromCurrency), operation.hash);
 
   const openProvider = useCallback(() => {
     Linking.openURL(urls.swap.providers[provider as keyof typeof urls.swap.providers].main);

@@ -7,7 +7,7 @@ import {
 import { isSwapOperationPending } from "@ledgerhq/live-common/exchange/swap/index";
 import { MappedSwapOperation } from "@ledgerhq/live-common/exchange/swap/types";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
-import { getTransactionExplorer, getCurrencyExplorerView } from "@ledgerhq/live-common/explorers";
+import { getDefaultExplorerView, getTransactionExplorer } from "@ledgerhq/live-common/explorers";
 import { Account, SubAccount } from "@ledgerhq/types-live";
 import uniq from "lodash/uniq";
 import React, { useCallback } from "react";
@@ -125,7 +125,9 @@ const SwapOperationDetails = ({
   const theme = useTheme();
   const statusColor = getStatusColor(status, theme);
   const { t } = useTranslation();
-  const url = getTransactionExplorer(getCurrencyExplorerView(fromCurrency), operation.hash);
+  const url =
+    fromCurrency.type === "CryptoCurrency" &&
+    getTransactionExplorer(getDefaultExplorerView(fromCurrency), operation.hash);
 
   const openAccount = useCallback(
     (account: Account | SubAccount) => {
