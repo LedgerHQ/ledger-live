@@ -1,3 +1,4 @@
+import { ImageCropError } from "@ledgerhq/live-common/customImage/errors";
 import { ImageDimensions } from "../types";
 
 /**
@@ -15,7 +16,7 @@ export function getCenteredCropParams(
     cropDimensions.width > imageDimensions.width ||
     cropDimensions.height > imageDimensions.height
   ) {
-    throw new Error("The cropping dimensions must be smaller than the image dimensions");
+    throw new ImageCropError("The cropping dimensions must be smaller than the image dimensions");
   }
   return {
     width: cropDimensions.width,
