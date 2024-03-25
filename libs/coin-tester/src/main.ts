@@ -3,6 +3,7 @@ import {
   Account,
   TransactionCommon,
   SignOperationEvent,
+  CurrencyBridge,
 } from "@ledgerhq/types-live";
 import { AssertionError } from "assert";
 import { first, firstValueFrom, map, reduce } from "rxjs";
@@ -10,18 +11,22 @@ import { first, firstValueFrom, map, reduce } from "rxjs";
 type Scenario<T extends TransactionCommon> = {
   setup: () => Promise<{
     accountBridge: AccountBridge<T>;
+    currencyBridge: CurrencyBridge;
     account: Account;
     onSignerConfirmation?: () => Promise<void>;
   }>;
+  transactions: (T & { after?: (account: Account) => void })[];
   beforeAll?: () => Promise<void>;
   afterAll?: () => Promise<void>;
-  transactions: (T & { after?: (account: Account) => void })[];
   teardown?: () => void;
 };
 
 export async function executeScenario<T extends TransactionCommon>(scenario: Scenario<T>) {
-  const { accountBridge, account, onSignerConfirmation } = await scenario.setup();
+  const { accountBridge, currencyBridge, account, onSignerConfirmation } = await scenario.setup();
   await scenario.beforeAll?.();
+
+  const data = await currencyBridge.preload(account.currency);
+  currencyBridge.hydrate(data, account.currency);
 
   let scenarioAccount = await firstValueFrom(
     accountBridge
