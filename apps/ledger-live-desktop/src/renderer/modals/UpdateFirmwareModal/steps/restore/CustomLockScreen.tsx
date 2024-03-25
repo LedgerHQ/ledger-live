@@ -13,7 +13,7 @@ type Props = Partial<StepProps> & {
   setError: (arg0: Error) => void;
   deviceModelId: CLSSupportedDeviceModelId;
 };
-const CLS = ({ onDone, setError, CLSBackup, deviceModelId }: Props) => {
+const CustomLockScreen = ({ onDone, setError, CLSBackup, deviceModelId }: Props) => {
   const device = useSelector(getCurrentDevice);
 
   const onVoid = () => {
@@ -48,4 +48,4 @@ const CLS = ({ onDone, setError, CLSBackup, deviceModelId }: Props) => {
   ) : null;
 };
 
-export default CLS;
+export default CustomLockScreen;

@@ -2,7 +2,7 @@ import React, { useCallback, useEffect } from "react";
 import { StepProps } from "../types";
 
 import Language from "./restore/Language";
-import CLS from "./restore/CustomLockScreen";
+import CustomLockScreen from "./restore/CustomLockScreen";
 import { Flex } from "@ledgerhq/react-ui";
 import { isCustomLockScreenSupported } from "@ledgerhq/live-common/device-core/capabilities/isCustomLockScreenSupported";
 
@@ -70,7 +70,7 @@ const StepRestore = ({
           confirmedPrompt={confirmedPrompt}
         />
       ) : pendingRestoreCLS && isCustomLockScreenSupported(deviceModelId) ? (
-        <CLS
+        <CustomLockScreen
           deviceModelId={deviceModelId}
           CLSBackup={CLSBackup}
           onDone={onCompleteCLSRestore}
