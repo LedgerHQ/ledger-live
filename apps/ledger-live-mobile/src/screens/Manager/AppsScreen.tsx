@@ -38,7 +38,7 @@ import Search from "~/components/Search";
 import FirmwareUpdateBanner from "~/newArch/features/FirmwareUpdate/components/UpdateBanner";
 import { TAB_BAR_SAFE_HEIGHT } from "~/components/TabBar/shared";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import { ManagerNavigatorStackParamList } from "~/components/RootNavigator/types/ManagerNavigator";
+import { MyLedgerNavigatorStackParamList } from "~/components/RootNavigator/types/MyLedgerNavigator";
 import { ScreenName } from "~/const";
 import { lastSeenDeviceSelector } from "~/reducers/settings";
 import ProviderWarning from "./ProviderWarning";
@@ -47,7 +47,7 @@ import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
 import camelCase from "lodash/camelCase";
 
 type NavigationProps = BaseComposite<
-  StackNavigatorProps<ManagerNavigatorStackParamList, ScreenName.ManagerMain>
+  StackNavigatorProps<MyLedgerNavigatorStackParamList, ScreenName.MyLedgerDevice>
 >;
 
 type Props = {

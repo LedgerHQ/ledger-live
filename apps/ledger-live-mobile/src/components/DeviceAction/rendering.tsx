@@ -178,7 +178,7 @@ export function renderRequiresAppInstallation({
           title={t("DeviceAction.button.openManager")}
           onPress={() =>
             navigation.navigate(NavigatorName.Manager, {
-              screen: ScreenName.Manager,
+              screen: ScreenName.MyLedgerChooseDevice,
               params: { searchQuery: appNamesCSV },
             })
           }
@@ -619,7 +619,7 @@ export function renderError({
   const onPress = () => {
     if (managerAppName && navigation) {
       navigation.navigate(NavigatorName.Manager, {
-        screen: ScreenName.Manager,
+        screen: ScreenName.MyLedgerChooseDevice,
         params: {
           tab: MANAGER_TABS.INSTALLED_APPS,
           updateModalOpened: true,
@@ -696,7 +696,7 @@ export function RequiredFirmwareUpdate({
   // displays the firmware update drawer if the device is already connected via USB
   const onPress = () => {
     navigation.navigate(NavigatorName.Manager, {
-      screen: ScreenName.Manager,
+      screen: ScreenName.MyLedgerChooseDevice,
       params: { device, firmwareUpdate: isDeviceConnectedViaUSB },
     });
   };
@@ -1033,7 +1033,7 @@ export const AutoRepair = ({
       },
       complete: () => {
         onDone();
-        navigation.replace(ScreenName.Manager, {});
+        navigation.replace(ScreenName.MyLedgerChooseDevice, {});
         // we re-navigate to the manager to reset the selected device for the action
         // if we don't do that, we get an "Invalid Channel" error once the device is back online
         // since the manager still thinks it's connected to a bootloader device and not a normal one

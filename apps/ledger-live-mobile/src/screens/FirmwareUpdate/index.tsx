@@ -40,7 +40,7 @@ import {
 } from "~/components/DeviceAction/common";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import { ManagerNavigatorStackParamList } from "~/components/RootNavigator/types/ManagerNavigator";
+import { MyLedgerNavigatorStackParamList } from "~/components/RootNavigator/types/MyLedgerNavigator";
 import { ScreenName } from "~/const";
 import {
   renderAllowLanguageInstallation,
@@ -103,7 +103,7 @@ export type FirmwareUpdateProps = {
 };
 
 type NavigationProps = BaseComposite<
-  StackNavigatorProps<ManagerNavigatorStackParamList, ScreenName.FirmwareUpdate>
+  StackNavigatorProps<MyLedgerNavigatorStackParamList, ScreenName.FirmwareUpdate>
 >;
 
 type UpdateSteps = {

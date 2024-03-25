@@ -5,8 +5,8 @@ import { ScreenName } from "~/const";
 import { ManagerTab } from "~/const/manager";
 import type { FirmwareUpdateProps } from "../../../screens/FirmwareUpdate";
 
-export type ManagerNavigatorStackParamList = {
-  [ScreenName.Manager]:
+export type MyLedgerNavigatorStackParamList = {
+  [ScreenName.MyLedgerChooseDevice]:
     | {
         searchQuery?: string;
         tab?: ManagerTab;
@@ -16,7 +16,7 @@ export type ManagerNavigatorStackParamList = {
         appsToRestore?: string[];
       }
     | undefined;
-  [ScreenName.ManagerMain]: {
+  [ScreenName.MyLedgerDevice]: {
     device: Device;
     deviceInfo: DeviceInfo;
     result: ListAppsResult;
