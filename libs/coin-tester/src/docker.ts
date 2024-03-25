@@ -11,13 +11,11 @@ const { API_PORT } = process.env as ENV;
 const cwd = path.join(__dirname);
 const delay = (timing: number) => new Promise(resolve => setTimeout(resolve, timing));
 
-export const spawnDocker = async ({
-  nanoApp,
-}: {
-  nanoApp: NanoApp;
-}): Promise<SpeculosTransportHttp> => {
+const defaultNanoAppVersion: NanoApp = { firmware: "2.1.0", version: "1.10.3" };
+
+export const spawnDocker = async (): Promise<SpeculosTransportHttp> => {
   const { data: blob } = await axios({
-    url: `https://raw.githubusercontent.com/LedgerHQ/coin-apps/master/nanos/${nanoApp.firmware}/Ethereum/app_${nanoApp.version}.elf`,
+    url: `https://raw.githubusercontent.com/LedgerHQ/coin-apps/master/nanos/${defaultNanoAppVersion.firmware}/Ethereum/app_${defaultNanoAppVersion.version}.elf`,
     method: "GET",
     responseType: "stream",
     headers: {

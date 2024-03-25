@@ -7,6 +7,7 @@ import {
 } from "@ledgerhq/types-live";
 import { AssertionError } from "assert";
 import { first, firstValueFrom, map, reduce } from "rxjs";
+import { spawnDocker } from "./docker";
 
 type Scenario<T extends TransactionCommon> = {
   setup: () => Promise<{
@@ -22,6 +23,11 @@ type Scenario<T extends TransactionCommon> = {
 };
 
 export async function executeScenario<T extends TransactionCommon>(scenario: Scenario<T>) {
+  await spawnDocker().catch(e => {
+    console.error(e);
+    throw e;
+  });
+
   const { accountBridge, currencyBridge, account, onSignerConfirmation } = await scenario.setup();
   await scenario.beforeAll?.();
 
@@ -106,6 +112,10 @@ export async function executeScenario<T extends TransactionCommon>(scenario: Sce
       }
     };
 
+    await spawnDocker().catch(e => {
+      console.error(e);
+      throw e;
+    });
     afterHandler();
   }
 
