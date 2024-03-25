@@ -40,6 +40,7 @@ type ContentCardCommonProperties = {
   order?: number;
   carouselWidthFactor?: WidthFactor;
   gridWidthFactor?: WidthFactor;
+  type?: ContentCardsType;
 };
 
 type CategoryContentCard = ContentCardCommonProperties & {

@@ -28,11 +28,11 @@ const HorizontalCard = ContentCardBuilder<Props>(
         <Flex
           bg={colors.opacityDefault.c05}
           p="13px"
-          {...(itemStyle ?? { borderRadius: 12 })}
           flexDirection="row"
           justifyContent="space-between"
           alignItems="center"
           columnGap={13}
+          {...(itemStyle ?? { borderRadius: 12 })}
         >
           {image ? <Image uri={image} /> : null}
 
