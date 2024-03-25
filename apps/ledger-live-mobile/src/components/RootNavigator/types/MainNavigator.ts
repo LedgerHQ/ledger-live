@@ -10,5 +10,5 @@ export type MainNavigatorParamList = {
   [NavigatorName.Earn]: NavigatorScreenParams<EarnLiveAppNavigatorParamList> | undefined;
   [ScreenName.Transfer]: undefined;
   [NavigatorName.Discover]: NavigatorScreenParams<DiscoverNavigatorStackParamList> | undefined;
-  [NavigatorName.Manager]: NavigatorScreenParams<MyLedgerNavigatorStackParamList> | undefined;
+  [NavigatorName.MyLedger]: NavigatorScreenParams<MyLedgerNavigatorStackParamList> | undefined;
 };

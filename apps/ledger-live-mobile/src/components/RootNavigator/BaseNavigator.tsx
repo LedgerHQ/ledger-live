@@ -9,6 +9,7 @@ import { useTranslation } from "react-i18next";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
 import { useSelector } from "react-redux";
+import { Button, IconsLegacy } from "@ledgerhq/native-ui";
 
 import { ScreenName, NavigatorName } from "~/const";
 import * as families from "~/families";
@@ -82,6 +83,7 @@ import { RootDrawer } from "../RootDrawer/RootDrawer";
 import EditTransactionNavigator from "~/families/evm/EditTransactionFlow/EditTransactionNavigator";
 import { DrawerProps } from "../RootDrawer/types";
 import AnalyticsOptInPromptNavigator from "./AnalyticsOptInPromptNavigator";
+import FirmwareUpdateScreen from "~/screens/FirmwareUpdate";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
@@ -516,6 +518,16 @@ export default function BaseNavigator() {
           name={NavigatorName.AnalyticsOptInPrompt}
           options={{ headerShown: false }}
           component={AnalyticsOptInPromptNavigator}
+        />
+        <Stack.Screen
+          name={ScreenName.FirmwareUpdate}
+          component={FirmwareUpdateScreen}
+          options={{
+            gestureEnabled: false,
+            headerTitle: () => null,
+            headerLeft: () => null,
+            headerRight: () => <Button Icon={IconsLegacy.CloseMedium} />,
+          }}
         />
       </Stack.Navigator>
     </>

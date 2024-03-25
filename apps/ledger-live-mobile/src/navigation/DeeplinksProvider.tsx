@@ -214,7 +214,7 @@ const linkingOptions = () => ({
                   [ScreenName.PlatformCatalog]: "discover",
                 },
               },
-              [NavigatorName.Manager]: {
+              [NavigatorName.MyLedger]: {
                 screens: {
                   /**
                    * ie: "ledgerlive://myledger" will open MyLedger page
