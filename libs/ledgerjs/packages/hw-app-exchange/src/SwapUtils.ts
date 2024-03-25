@@ -53,10 +53,10 @@ export async function decodePayloadProtobuf(payload: string): Promise<SwapPayloa
     amountToProvider: amountToProviderBuffer,
     deviceTransactionIdNg: deviceTransactionIdNgBuffer,
   } = decodePayload;
-  const amountToWalletHexString = amountToWalletBuffer.toString("hex"); // Gets the hexadecimal representation from the Buffer
+  const amountToWalletHexString = Buffer.from(amountToWalletBuffer).toString("hex"); // Gets the hexadecimal representation from the Buffer
   const amountToWallet = BigInt("0x" + amountToWalletHexString); // Convert hexadecimal representation to a big integer
 
-  const amountToProviderHexString = amountToProviderBuffer.toString("hex"); // Gets the hexadecimal representation from the Buffer
+  const amountToProviderHexString = Buffer.from(amountToProviderBuffer).toString("hex"); // Gets the hexadecimal representation from the Buffer
   const amountToProvider = BigInt("0x" + amountToProviderHexString); // Convert hexadecimal representation to a big integer
 
   const deviceTransactionIdNg = deviceTransactionIdNgBuffer?.toString("hex") || undefined;
