@@ -65,22 +65,22 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
       - name: Setup git user
-        uses: ./tools/actions/composites/setup-git-user
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
       - name: Setup the toolchain
         id: toolchain
-        uses: ./tools/actions/composites/setup-toolchain
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
         with:
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-      - uses: ./tools/actions/composites/setup-test-desktop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@develop
         id: setup-test-desktop
         with:
           skip_ruby: true
           install_playwright: true
           turborepo-server-port: ${{ steps.toolchain.outputs.port }}
-      - uses: ./tools/actions/composites/update-snapshots-desktop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/update-snapshots-desktop@develop
         id: update-snapshots
         with:
           os: ubuntu-latest
@@ -118,11 +118,7 @@ jobs:
             });
 
   report-end:
-    needs:
-      [
-        "generate-screenshots-linux",
-        "report-start",
-      ]
+    needs: ["generate-screenshots-linux", "report-start"]
     if: ${{ !cancelled() }}
     name: Report end
     runs-on: "ubuntu-latest"

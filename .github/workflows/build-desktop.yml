@@ -62,11 +62,11 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
 
       - name: Setup git user
-        uses: ./tools/actions/composites/setup-git-user
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
 
       - name: Setup the toolchain
         id: toolchain
-        uses: ./tools/actions/composites/setup-toolchain
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
         with:
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
@@ -77,7 +77,7 @@ jobs:
 
       - name: Build desktop
         id: build-desktop
-        uses: ./tools/actions/composites/setup-build-desktop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-build-desktop@develop
         with:
           os: ${{ matrix.config.name }}
 
@@ -148,14 +148,14 @@ jobs:
             }
             return JSON.stringify(obj);
 
-      - uses: ./tools/actions/desktop-report-build
+      - uses: LedgerHQ/ledger-live/tools/actions/desktop-report-build@develop
         name: Report summary
         with:
           token: ${{ steps.generate-token.outputs.token }}
           statuses: ${{ steps.statuses.outputs.result }}
           attempt: ${{ github.run_attempt }}
 
-      - uses: ./tools/actions/build-checks
+      - uses: LedgerHQ/ledger-live/tools/actions/build-checks@develop
         if: ${{ !cancelled() && inputs.prNumber != '' }}
         with:
           token: ${{ steps.generate-token.outputs.token }}

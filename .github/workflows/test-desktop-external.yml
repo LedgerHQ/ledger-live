@@ -39,10 +39,10 @@ jobs:
           ref: ${{ github.ref_name }}
           persist-credentials: false
       - name: Setup the toolchain
-        uses: ./tools/actions/composites/setup-toolchain
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
         with:
           install_dotnet: true
-      - uses: ./tools/actions/composites/setup-test-desktop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@develop
         id: setup-test-desktop
         with:
           skip_builds: true
@@ -75,8 +75,8 @@ jobs:
           ref: ${{ github.ref_name }}
           persist-credentials: false
       - name: Setup the toolchain
-        uses: ./tools/actions/composites/setup-toolchain
-      - uses: ./tools/actions/composites/setup-test-desktop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@develop
         id: setup-test-desktop
         with:
           skip_builds: true
@@ -101,13 +101,13 @@ jobs:
           ref: ${{ github.ref_name }}
           persist-credentials: false
       - name: Setup the toolchain
-        uses: ./tools/actions/composites/setup-toolchain
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
         with:
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-      - uses: ./tools/actions/composites/setup-test-desktop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@develop
         id: setup-test-desktop
         with:
           skip_ruby: true
@@ -118,7 +118,7 @@ jobs:
           xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright
       - name: upload diffs to s3
         if: ${{ !cancelled() }}
-        uses: ./tools/actions/upload-images
+        uses: LedgerHQ/ledger-live/tools/actions/upload-images@develop
         id: s3
         with:
           path: apps/ledger-live-desktop/tests/artifacts/test-results
@@ -185,7 +185,7 @@ jobs:
             fs.writeFileSync("./images.json", JSON.stringify(result, null, 2));
       - name: prepare comment with screenshots
         id: comment
-        uses: ./tools/actions/prepare-comment-screenshots
+        uses: LedgerHQ/ledger-live/tools/actions/prepare-comment-screenshots@develop
         with:
           images: images.json
           no-actor: true
