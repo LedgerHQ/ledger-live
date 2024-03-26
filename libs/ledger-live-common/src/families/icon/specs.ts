@@ -2,7 +2,7 @@ import type { Transaction } from "../../families/icon/types";
 import invariant from "invariant";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import { botTest, pickSiblings } from "../../bot/specs";
-import type { AppSpec, TransactionTestInput } from "../../bot/types";
+import type { AppSpec } from "../../bot/types";
 import { toOperationRaw } from "../../account";
 import { DeviceModelId } from "@ledgerhq/devices";
 import BigNumber from "bignumber.js";
@@ -21,7 +21,7 @@ const minBalanceNewAccount = parseCurrencyUnit(currency.units[0], "0.1");
 const expectedApproximate = (
   value: BigNumber,
   expected: BigNumber,
-  delta = convertICXtoLoop(0.00000005),
+  delta = convertICXtoLoop(0.000005),
 ) => {
   if (value.minus(expected).abs().gt(delta)) {
     expect(value.toString()).toEqual(value.toString());

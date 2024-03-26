@@ -251,7 +251,7 @@ const envDefinitions = {
   },
   ICON_INDEXER_ENDPOINT: {
     parser: stringParser,
-    def: "https://tracker.icon.community/api/v1",
+    def: "https://icon.coin.ledger.com/api/v1",
     desc: "ICON API url",
   },
   ICON_TESTNET_NODE_ENDPOINT: {
