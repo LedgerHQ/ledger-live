@@ -1982,7 +1982,7 @@
       "mcuBlueSecond" : "Halten Sie die Taste für mindestens 5 Sekunden gedrückt, bis die Boot-Optionen angezeigt werden. Tippen Sie auf Bootloader-Modus",
       "successTitle" : "Das Betriebssystem Ihres {{deviceName}}-Geräts ist auf dem neuesten Stand.",
       "successTitleApps" : "Das Betriebssystem Ihres {{deviceName}}-Geräts ist\nauf dem neuesten Stand. Noch eine letzte Sache ...",
-      "successSubtitleApps" : "Um die App-Wiederherstellung auf Ihrem Ledger Stax zu starten, wählen Sie\nunten den Button „Restore apps“ (Apps wiederherstellen).",
+      "successSubtitleApps" : "Um die App-Wiederherstellung auf Ihrem {{deviceName}} zu starten, wählen Sie\nunten den Button „Restore apps“ (Apps wiederherstellen).",
       "sucessCTAApps" : "Apps wiederherstellen",
       "SuccessCTANoApps" : "Beenden",
       "resetSteps" : {

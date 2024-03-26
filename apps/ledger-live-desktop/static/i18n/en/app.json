@@ -2004,7 +2004,7 @@
       "mcuBlueSecond": "Press and hold the button for at least 5 seconds until the Boot Options are displayed. Tap Bootloader Mode",
       "successTitle": "Your {{deviceName}} OS is\nup to date.",
       "successTitleApps": "Your {{deviceName}} OS is\nup to date. One last thing...",
-      "successSubtitleApps": "To initiate app restore on your Ledger Stax, select\nthe “Restore apps“ button below.",
+      "successSubtitleApps": "To initiate app restore on your {{deviceName}}, select\nthe “Restore apps“ button below.",
       "sucessCTAApps": "Restore apps",
       "SuccessCTANoApps": "Finish",
       "resetSteps": {

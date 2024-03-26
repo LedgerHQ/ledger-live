@@ -1982,7 +1982,7 @@
       "mcuBlueSecond" : "اضغط مع الاستمرار على الزر على الأقل لمدة 5 ثوانٍ حتى يتم عرض خيارات التمهيد. انقر على وضع Bootloader",
       "successTitle" : "نظام تشغيل جهازك {{deviceName}}\nمُحدَّث إلى آخر إصدار.",
       "successTitleApps" : "نظام تشغيل جهازك {{deviceName}}\nمُحدَّث إلى آخر إصدار. شيء أخير...",
-      "successSubtitleApps" : "لبدء استعادة التطبيق على جهازك Ledger Stax، اختر\nزر ”Restore apps (استعادة التطبيقات)“ أدناه.",
+      "successSubtitleApps" : "لبدء استعادة التطبيق على جهازك {{deviceName}}، اختر\nزر ”Restore apps (استعادة التطبيقات)“ أدناه.",
       "sucessCTAApps" : "استعادة التطبيقات",
       "SuccessCTANoApps" : "إتمام",
       "resetSteps" : {

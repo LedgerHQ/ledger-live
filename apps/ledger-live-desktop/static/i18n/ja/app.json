@@ -1982,7 +1982,7 @@
       "mcuBlueSecond" : "ブートオプションが表示されるまで、少なくとも5秒間ボタンを押し続けます。Bootloaderモードをタップしてください。",
       "successTitle" : "{{deviceName}} のOSは\n最新の状態です",
       "successTitleApps" : "{{deviceName}}のOSは\n最新の状態です。最後に...",
-      "successSubtitleApps" : "Ledger Staxでアプリの復元を開始するには、\n下の「Restore apps（アプリを復元）」ボタンを選択します。",
+      "successSubtitleApps" : "{{deviceName}}でアプリの復元を開始するには、\n下の「Restore apps（アプリを復元）」ボタンを選択します。",
       "sucessCTAApps" : "アプリを復元",
       "SuccessCTANoApps" : "終了する",
       "resetSteps" : {

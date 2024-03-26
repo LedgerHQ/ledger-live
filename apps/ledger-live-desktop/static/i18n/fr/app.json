@@ -1982,7 +1982,7 @@
       "mcuBlueSecond" : "Faites un appui long sur le bouton pendant au moins 5 secondes jusqu’à ce que les options de Boot apparaissent. Sélectionnez le mode Bootloader.",
       "successTitle" : "Votre {{deviceName}}\nest à jour.",
       "successTitleApps" : "Le système d’exploitation de votre {{deviceName}} est à jour. Dernière étape...",
-      "successSubtitleApps" : "Pour lancer la restauration des apps sur votre Ledger Stax, cliquez sur Restaurer les apps.",
+      "successSubtitleApps" : "Pour lancer la restauration des apps sur votre {{deviceName}}, cliquez sur Restaurer les apps.",
       "sucessCTAApps" : "Restaurer les apps",
       "SuccessCTANoApps" : "Terminer",
       "resetSteps" : {

@@ -1982,7 +1982,7 @@
       "mcuBlueSecond" : "Pressione e segure o botão por pelo menos 5 segundos até que as opções de inicialização sejam exibidas. Selecione o modo bootloader",
       "successTitle" : "O sistema operacional da sua {{deviceName}} está atualizado.",
       "successTitleApps" : "O sistema operacional da sua {{deviceName}} está\natualizado. Só mais uma coisa…",
-      "successSubtitleApps" : "Para iniciar a restauração de aplicativos em sua Ledger Stax, selecione\no botão \"Restaurar aplicativos\" abaixo.",
+      "successSubtitleApps" : "Para iniciar a restauração de aplicativos em sua {{deviceName}}, selecione\no botão \"Restaurar aplicativos\" abaixo.",
       "sucessCTAApps" : "Restaurar aplicativos",
       "SuccessCTANoApps" : "Finalizar",
       "resetSteps" : {
