@@ -38,7 +38,7 @@ export const commands = (
       username: login,
     });
 
-    if (res.status > 300) {
+    if (res.status >= 300) {
       await octokit.issues.createComment({
         ...context.repo(),
         issue_number: issue.number,

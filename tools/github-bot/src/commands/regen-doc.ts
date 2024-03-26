@@ -74,7 +74,7 @@ export function regenDoc(app: Probot) {
       username: login,
     });
 
-    if (res.status > 300) return;
+    if (res.status >= 300) return;
 
     if (!number) return;
 
