@@ -174,19 +174,16 @@ const Manager = ({ navigation, route }: NavigationProps) => {
 
   const onBackFromNewUpdateUx = useCallback(
     (updateState: UpdateStep) => {
-      navigation.navigate(NavigatorName.Base, {
-        screen: NavigatorName.Main,
+      navigation.navigate(NavigatorName.Main, {
+        screen: NavigatorName.MyLedger,
         params: {
-          screen: NavigatorName.MyLedger,
-          params: {
-            screen: ScreenName.MyLedgerChooseDevice,
-            // If the fw update was completed or not yet started, we know the device in a correct state,
-            // we can automatically connect to it.
-            // Otherwise navigating back to the chooseDeviceScreen without settings a device
-            // so it does not try to automatically connect to the device while it
-            // might still be on an unknown state because the fw update was just stopped
-            params: ["start", "completed"].includes(updateState) ? { device } : {},
-          },
+          screen: ScreenName.MyLedgerChooseDevice,
+          // If the fw update was completed or not yet started, we know the device in a correct state,
+          // we can automatically connect to it.
+          // Otherwise navigating back to the chooseDeviceScreen without settings a device
+          // so it does not try to automatically connect to the device while it
+          // might still be on an unknown state because the fw update was just stopped
+          params: ["start", "completed"].includes(updateState) ? { device } : {},
         },
       });
     },
