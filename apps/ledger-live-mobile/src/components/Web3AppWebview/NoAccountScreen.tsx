@@ -1,3 +1,4 @@
+import React from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import Button from "../Button";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
@@ -21,7 +22,7 @@ export function NoAccountScreen({ manifest, currentAccountHistDb }: Props) {
           <Trans i18nKey="webview.noAccounts.title" />
         </Text>
         <Button marginTop={10} onPress={onSelectAccount} type="primary">
-            <Trans i18nKey="webview.noAccounts.add" />
+          <Trans i18nKey="webview.noAccounts.add" />
         </Button>
       </Flex>
     </View>

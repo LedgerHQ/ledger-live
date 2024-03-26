@@ -105,7 +105,9 @@ export function BottomBar({
                     : currentAccount.currency
                 }
               />
-              <Text color={"neutral.c20"} ml={4}>{getAccountName(currentAccount)}</Text>
+              <Text color={"neutral.c20"} ml={4}>
+                {getAccountName(currentAccount)}
+              </Text>
             </Flex>
           )}
         </Button>
