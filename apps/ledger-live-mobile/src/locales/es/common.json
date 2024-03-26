@@ -144,7 +144,7 @@
       }
     },
     "ConnectManagerTimeout" : {
-      "title" : "Lo sentimos, la conexión con Mi Ledger ha fallado",
+      "title" : "Lo sentimos, falló la conexión segura con Ledger",
       "description" : {
         "ios" : {
           "nanoX" : "Asegúrate de que tu {{productName}} esté desbloqueado y el Bluetooth habilitado."
@@ -484,7 +484,7 @@
       "description" : "Envía EGLD a tu cuenta para pagar las transacciones."
     },
     "NotEnoughBalance" : {
-      "title" : "Fondos insuficientes",
+      "title" : "Lo sentimos, el saldo es insuficiente con las tarifas de red incluidas. Ajusta el importe o verifica el saldo",
       "description" : "Asegúrate de que la cuenta tenga fondos suficientes."
     },
     "NoSuchAppOnProvider" : {
@@ -492,7 +492,7 @@
       "description" : "Prueba a reinstalar la aplicación desde Mi Ledger"
     },
     "NotEnoughGas" : {
-      "title" : "Necesitas {{fees}} {{ticker}} para tarifas porque estás en la red de {{cryptoName}}. <link0>Comprar {{ticker}}</link0>",
+      "title" : "Necesitas {{fees}} {{ticker}} en tu cuenta para pagar tarifas de transacción en la red {{cryptoName}}.  <link0>Compra {{ticker}}</link0> o deposita más en tu cuenta.",
       "description" : "Envía monedas a tu cuenta para pagar por transacciones de tokens."
     },
     "NotEnoughGasSwap" : {
@@ -622,8 +622,8 @@
       "primaryCTA" : "Abrir Mi Ledger"
     },
     "UserRefusedAllowManager" : {
-      "title" : "Manager deshabilitado en el dispositivo",
-      "description" : "Habilita Manager en tu dispositivo e inténtalo de nuevo."
+      "title" : "Conexión segura denegada en el dispositivo",
+      "description" : "Permite la conexión segura en tu dispositivo e inténtalo de nuevo."
     },
     "UserRefusedAddress" : {
       "title" : "Dirección de recepción rechazada.",
@@ -912,8 +912,9 @@
       "title" : "Proveedor no válido",
       "description" : "Tienes que cambiar el ajuste \"Proveedor de Mi Ledger\". Para cambiarlo, abre los \"Ajustes\" de Ledger Live, selecciona \"Funciones experimentales\" y, a continuación, elige un proveedor distinto."
     },
-    "TezosUnrevealedAccount" : {
-      "title" : "Permuta no disponible: es necesario un envío o delegación inicial con la cuenta de Tezos o el cambio de par."
+    "SequenceNumberError" : {
+      "title" : "Error de número de secuencia",
+      "description" : "Cierra la ventana e inténtalo de nuevo más tarde"
     }
   },
   "crash" : {
@@ -1251,6 +1252,9 @@
       "referralProgram" : {
         "title" : "Recomiéndanos a un amigo",
         "desc" : "Si tu amigo compra un Ledger, ambos recibirán $20 USD en BTC"
+      },
+      "filter" : {
+        "all" : "Todas"
       }
     },
     "comingSoon" : "próximamente",
@@ -2181,15 +2185,7 @@
     "discover" : "Discover",
     "nanoX" : "Nano X",
     "market" : "Mercado",
-    "earn" : "Earn",
-    "learn" : "Información"
-  },
-  "learn" : {
-    "pageTitle" : "Información",
-    "sectionShows" : "Muestra",
-    "sectionVideo" : "Vídeo",
-    "sectionPodcast" : "Podcast",
-    "sectionArticles" : "Artículos"
+    "earn" : "Earn"
   },
   "portfolio" : {
     "totalBalance" : "Saldo total",
@@ -2669,6 +2665,7 @@
     "moreAssets" : "Agregar más"
   },
   "help" : {
+    "chatbot" : "Bot de chat de Ledger",
     "gettingStarted" : {
       "title" : "Primeros pasos",
       "desc" : "Comenzar aquí"
@@ -2845,7 +2842,7 @@
       },
       "largeMover" : {
         "title" : "Grandes movimientos",
-        "desc" : "Te notificaremos si ocurren variaciones importantes en los precios de BTC o ETH"
+        "desc" : "Te notificaremos si ocurren variaciones importantes en los precios de BTC, ETH, SOL, ADA o XRP."
       },
       "transactionsAlerts" : {
         "title" : "Avisos sobre transacciones (Beta)",
@@ -3888,7 +3885,7 @@
     "stayInTheAppPlz" : "Mantente dentro de la aplicación Ledger Live y con tu Ledger disponible.",
     "allowAppPermission" : "Abre la aplicación {{wording}} en tu dispositivo",
     "allowAppPermissionSubtitleToken" : "para administrar los tokens {{token}}",
-    "allowManagerPermission" : "Permitir Ledger Manager en tu {{productName}}",
+    "allowManagerPermission" : "Permitir una conexión segura con Ledger",
     "allowRenaming" : "Permite el cambio de nombre en tu {{productName}}",
     "allowRemoveCustomLockscreen" : "Confirmar eliminación de imagen en tu Ledger Stax",
     "allowSecureConnection" : "Permitir una conexión segura con Ledger",
@@ -6388,25 +6385,6 @@
       "title" : "Mis NFTs"
     }
   },
-  "claimNft" : {
-    "welcomePage" : {
-      "title" : "Acceso gratuito al mercado de NFTs más seguro del mundo",
-      "description" : {
-        "title" : "Ledger Infinity Pass te da acceso a:",
-        "1" : "Los drops de NFTs más recientes en primicia",
-        "2" : "El mercado de NFTs más seguro hasta la fecha",
-        "3" : "Un NFT gratis para que lo pidas"
-      },
-      "claimButton" : "Solicitar Ledger Market Pass",
-      "backButton" : "Ya he solicitado mi Market Pass"
-    },
-    "qrScan" : {
-      "title" : "Escanea el código QR de tu Ledger Market Pass",
-      "description" : {
-        "1" : "Encontrarás tu Ledger Market Pass exclusivo en la caja de tu Ledger Stax.\n\nPara comenzar, haz coincidir el código QR que aparece en la parte trasera del Pass con el recuadro. Usa un área bien iluminada y un fondo claro y sencillo."
-      }
-    }
-  },
   "postOnboarding" : {
     "hub" : {
       "title" : "A continuación, usa tu {{productName}} para:",
@@ -6425,13 +6403,6 @@
         "titleCompleted" : "Imagen de pantalla de bloqueo seleccionada",
         "description" : "Elige cualquier ejemplo de arte digital o imagen como pantalla de bloqueo.",
         "popupLabel" : "Pantalla de bloqueo establecida"
-      },
-      "claimNft" : {
-        "title" : "Reclamar el NFT Infinity",
-        "titleCompleted" : "NFT Infinity reclamado",
-        "description" : "Este NFT te concede acceso a [ Ledger ] Market, nuestro mercado de NFTs.",
-        "popupLabel" : "NFT reclamado",
-        "tagLabel" : "Regalo"
       },
       "assetsTransfer" : {
         "title" : "Transferir tus activos al Ledger",
@@ -6530,7 +6501,7 @@
     "ethereum" : {
       "title" : "Rentabiliza tus tenencias en ETH",
       "subTitle" : "Pon en participación ETH y genera ganancias con recompensas diarias directamente desde Ledger Live.",
-      "tagMinimum" : "Requires {{min}} ETH",
+      "tagMinimum" : "Requiere {{min}} ETH",
       "close" : "Cerrar",
       "providers" : {
         "kiln_pooling" : {
@@ -6590,61 +6561,61 @@
   "analyticsOptIn" : {
     "variantA" : {
       "main" : {
-        "title" : "Ayúdanos a mejorar y personalizar tu experiencia.",
-        "subtitle" : "Al compartir tus datos de uso de Ledger Live, nos ayudas a comprender tus preferencias. Esto nos permite personalizar tu experiencia y optimizar el rendimiento del contenido, incluidos clics, vistas y visitas, para garantizar la máxima relevancia.",
+        "title" : "Ayúdanos a mejorar y personalizar tu experiencia",
+        "subtitle" : "Al compartir tus datos de Ledger Live, nos ayudas a conocer tus preferencias, mostrarte contenido relevante para ti y solucionar problemas técnicos.",
         "content" : {
           "able" : {
-            "title" : "Ledger Live podrá realizar un seguimiento de:",
-            "diagAndUsage" : "Datos de uso"
+            "title" : "Con tu consentimiento, Ledger podrá realizar un seguimiento de lo siguiente:",
+            "diagAndUsage" : "Datos analíticos, como visitas a páginas y clics.",
+            "personnalizationData" : "Datos de personalización, como clics, visitas a páginas y datos de conversión."
           },
           "unable" : {
-            "title" : "Ledger Live nunca recopilará:",
-            "adresses" : "Tus direcciones",
-            "balance" : "Tus saldos",
-            "nfts" : "Tus NFTs",
-            "personnalInfos" : "Información de identificación personal"
+            "title" : "Ledger nunca rastreará información relativa a lo siguiente:",
+            "adresses" : "Tus activos.",
+            "balance" : "Tu portfolio.",
+            "personnalInfos" : "Tu información de identificación personal."
           },
-          "moreOptions" : "Más opciones",
+          "moreOptions" : "Gestiona tus preferencias",
           "ctas" : {
             "refuse" : "Rechazar todo",
             "accept" : "Aceptar todo"
           },
           "infoText" : {
             "info" : "Puedes retirar tu consentimiento en cualquier momento desde los ajustes de la aplicación.",
-            "link" : "Haz clic aquí para obtener más información."
+            "link" : "Más información sobre nuestra Política de seguimiento"
           }
         }
       },
       "details" : {
         "title" : "Gestiona tus preferencias",
         "analytics" : {
-          "title" : "Análisis",
-          "description" : "Comparte datos de uso para ayudar a Ledger a mejorar la aplicación."
+          "title" : "Datos analíticos",
+          "description" : "Para ayudar a mejorar Ledger Live, comparte los datos analíticos de la aplicación, como las visitas a páginas y los clics."
         },
         "personalizedExp" : {
-          "title" : "Experiencia personalizada",
-          "description" : "Recibe recomendaciones personalizadas adaptadas a tus preferencias y comparte el rendimiento del contenido para que sea lo más pertinente posible."
+          "title" : "Datos de personalización",
+          "description" : "Para obtener recomendaciones personalizadas, comparte los datos de personalización de la aplicación, como los datos de conversión, los clics y las visitas a páginas."
         },
         "ctas" : {
           "notNow" : "Ahora no",
           "accept" : "Aceptar",
           "acceptAll" : "Aceptar todo",
-          "confirm" : "Confirmar"
+          "confirm" : "Compartir"
         },
         "infoText" : {
           "info" : "Puedes retirar tu consentimiento en cualquier momento desde los ajustes de la aplicación.",
-          "link" : "Haz clic aquí para obtener más información."
+          "link" : "Más información sobre nuestra Política de seguimiento"
         }
       }
     },
     "variantB" : {
       "main" : {
         "title" : "Mejoremos Ledger Live entre todos",
-        "description" : "Al compartir tus datos de uso de Ledger Live, nos ayudas a comprender cómo usas Ledger Live.",
+        "description" : "Al compartir tus datos analíticos de Ledger Live, nos ayudas a entender cómo se utiliza Ledger Live, corregir errores y mejorar la experiencia de usuario.",
         "bulletPoints" : {
-          "1" : "Los datos de uso incluyen las visitas a páginas, los clics y las conversiones.",
-          "2" : "No recopilaremos ni veremos tus direcciones, cuentas, saldos, NFTs ni ninguna otra información relacionada con tu portfolio.",
-          "3" : "No podemos ni pretendemos identificar tu identidad y no recopilamos información personal."
+          "1" : "Los datos analíticos incluyen visitas a páginas y clics.",
+          "2" : "No recopilaremos ni veremos ninguna información relativa a tu saldo, cuentas ni portfolio.",
+          "3" : "Los análisis son completamente anónimos. No podemos ver ni recopilar tu información personal."
         },
         "ctas" : {
           "refuse" : "Rechazar",
@@ -6652,15 +6623,15 @@
         },
         "infoText" : {
           "info" : "Puedes retirar tu consentimiento en cualquier momento desde los ajustes de la aplicación.",
-          "link" : "Obtén más información sobre la revocación del consentimiento"
+          "link" : "Más información sobre nuestra Política de seguimiento"
         }
       },
       "details" : {
         "title" : "Disfruta de una experiencia personalizada",
-        "description" : "Mediante el análisis de tus datos de uso, personalizamos tu experiencia y evaluamos el rendimiento del contenido haciendo un seguimiento de distintas métricas, como clics, visualizaciones y visitas, para garantizar la máxima relevancia.",
+        "description" : "Al compartir tus datos de personalización de Ledger Live, nos permites mostrarte contenido adaptado a tus preferencias.",
         "bulletPoints" : {
-          "1" : "Recomendaciones y contenido personalizados",
-          "2" : "Notificaciones personalizadas"
+          "1" : "Los datos de personalización incluyen datos de conversión, clics y visitas a páginas.",
+          "2" : "No podemos rastrear ni recopilar tu información personal ni información relativa a tu portfolio."
         },
         "ctas" : {
           "refuse" : "Rechazar",
@@ -6668,7 +6639,7 @@
         },
         "infoText" : {
           "info" : "Puedes retirar tu consentimiento en cualquier momento desde los ajustes de la aplicación.",
-          "link" : "Obtén más información sobre la revocación del consentimiento"
+          "link" : "Más información sobre nuestra Política de seguimiento"
         }
       }
     }
