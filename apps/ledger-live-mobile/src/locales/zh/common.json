@@ -94,6 +94,7 @@
     "comingSoon" : "敬请期待",
     "restart" : "重新启动",
     "loadMore" : "加载更多",
+    "selectAccount" : "选择账户",
     "patterns" : {
       "id" : "ID {{ value }}",
       "times" : "x{{ value }}"
@@ -144,7 +145,7 @@
       }
     },
     "ConnectManagerTimeout" : {
-      "title" : "抱歉，“我的 Ledger”连接失败",
+      "title" : "抱歉，与 Ledger 设备建立安全连接失败",
       "description" : {
         "ios" : {
           "nanoX" : "请确保您的 {{productName}} 已解锁，同时已启用蓝牙。"
@@ -484,7 +485,7 @@
       "description" : "请向您的账户发送一些 EGLD 以支付交易费用。"
     },
     "NotEnoughBalance" : {
-      "title" : "抱歉，资金不足",
+      "title" : "抱歉，余额不足（包括网络费用）。请调整数额或核对余额",
       "description" : "请确保该账户资金充足。"
     },
     "NoSuchAppOnProvider" : {
@@ -492,7 +493,7 @@
       "description" : "尝试在 My Ledger（我的 Ledger）中重新安装应用程序"
     },
     "NotEnoughGas" : {
-      "title" : "您需要 {{fees}} {{ticker}} 的费用才能在 {{cryptoName}} 网络上进行操作。<link0>买入 {{ticker}}</link0>",
+      "title" : "您的账户中需要有 {{fees}} {{ticker}} 以支付 {{cryptoName}} 网络上的交易费用。<link0>购买 {{ticker}}</link0> 或向账户存入更多资产。",
       "description" : "请向您的账户发送一些币以支付代币交易费用。"
     },
     "NotEnoughGasSwap" : {
@@ -622,8 +623,8 @@
       "primaryCTA" : "打开“我的 Ledger”"
     },
     "UserRefusedAllowManager" : {
-      "title" : "Manager（管理器）已被在设备上禁用",
-      "description" : "请在您的设备上启用管理器，然后重试。"
+      "title" : "安全连接在设备上被拒绝",
+      "description" : "请在您的设备上允许安全连接并重试。"
     },
     "UserRefusedAddress" : {
       "title" : "接收地址被拒",
@@ -912,8 +913,9 @@
       "title" : "提供商无效",
       "description" : "您必须更改“我的 Ledger 提供商”设置。要更改该设置，请打开 Ledger Live“设置”，选择“实验性功能”，然后选择其他提供商。"
     },
-    "TezosUnrevealedAccount" : {
-      "title" : "无法互换：需使用 Tezos 账户发起发送/委托或更改交易对。"
+    "SequenceNumberError" : {
+      "title" : "序列号错误",
+      "description" : "请关闭窗口，稍后再重试"
     }
   },
   "crash" : {
@@ -931,6 +933,10 @@
     "noConnectionError" : {
       "title" : "无连接",
       "description" : "您似乎无法访问互联网。请检查您的连接并重试。"
+    },
+    "noAccounts" : {
+      "title" : "您需要使用账户才能访问此应用程序。",
+      "add" : "添加账户"
     }
   },
   "location" : {
@@ -1251,6 +1257,9 @@
       "referralProgram" : {
         "title" : "推荐好友",
         "desc" : "若您的好友购买一个 Ledger 设备，则双方均可赚取价值 20 美元的比特币。"
+      },
+      "filter" : {
+        "all" : "全部"
       }
     },
     "comingSoon" : "敬请期待",
@@ -2181,15 +2190,7 @@
     "discover" : "探索",
     "nanoX" : "Nano X",
     "market" : "市场",
-    "earn" : "赚取",
-    "learn" : "学习"
-  },
-  "learn" : {
-    "pageTitle" : "学习",
-    "sectionShows" : "显示",
-    "sectionVideo" : "视频",
-    "sectionPodcast" : "播客",
-    "sectionArticles" : "文章"
+    "earn" : "赚取"
   },
   "portfolio" : {
     "totalBalance" : "总余额",
@@ -3888,7 +3889,7 @@
     "stayInTheAppPlz" : "停留在 Ledger Live 应用程序中并将 Ledger 设备一直放在附近。",
     "allowAppPermission" : "在您的设备上打开 {{wording}} 应用程序",
     "allowAppPermissionSubtitleToken" : "管理您的 {{token}} 代币",
-    "allowManagerPermission" : "允许 Ledger 管理器在您的 {{productName}} 上运行",
+    "allowManagerPermission" : "允许与 Ledger 设备建立安全连接",
     "allowRenaming" : "允许在您的 {{productName}} 上重命名",
     "allowRemoveCustomLockscreen" : "确认移除 Ledger Stax 上的图片",
     "allowSecureConnection" : "允许与 Ledger 设备建立安全连接",
@@ -6388,25 +6389,6 @@
       "title" : "我的 NFT"
     }
   },
-  "claimNft" : {
-    "welcomePage" : {
-      "title" : "免费访问全球最安全的 NFT 市场",
-      "description" : {
-        "title" : "利用 Ledger Infinity Pass（无限通行证），您可以：",
-        "1" : "抢先体验最新 NFT 发布活动",
-        "2" : "访问史上最安全的 NFT 市场",
-        "3" : "免费领取一个 NFT"
-      },
-      "claimButton" : "领取 Ledger Market Pass（市场通行证）",
-      "backButton" : "我已经领取了 Market Pass（市场通行证）"
-    },
-    "qrScan" : {
-      "title" : "扫描 Ledger Market Pass（市场通行证）上的二维码",
-      "description" : {
-        "1" : "您将在 Ledger Stax 的包装盒中找到您的专属 Ledger Market Pass（市场通行证）。\n\n首先将通行证背面的二维码放在框中。请在光线充足且带有简洁浅色背景的区域操作。"
-      }
-    }
-  },
   "postOnboarding" : {
     "hub" : {
       "title" : "接下来，使用您的 {{productName}}：",
@@ -6425,13 +6407,6 @@
         "titleCompleted" : "锁屏图片已设置",
         "description" : "选择要设置为锁屏界面的任意数字艺术或图片。",
         "popupLabel" : "锁屏已设置"
-      },
-      "claimNft" : {
-        "title" : "领取 Infinity NFT",
-        "titleCompleted" : "已领取 Infinity NFT",
-        "description" : "您可以凭此 NFT 访问 [ Ledger ] Market，这是我们的 NFT 市场。",
-        "popupLabel" : "已领取 NFT",
-        "tagLabel" : "赠品"
       },
       "assetsTransfer" : {
         "title" : "将您的资产转移至 Ledger",
@@ -6530,7 +6505,7 @@
     "ethereum" : {
       "title" : "增长您的以太币持有量",
       "subTitle" : "将每日收益直接存入您的 Ledger Live，质押您的以太币并增加您的持仓。",
-      "tagMinimum" : "Requires {{min}} ETH",
+      "tagMinimum" : "需要 {{min}} ETH",
       "close" : "关闭",
       "providers" : {
         "kiln_pooling" : {
@@ -6590,61 +6565,61 @@
   "analyticsOptIn" : {
     "variantA" : {
       "main" : {
-        "title" : "请帮助我们改进并提供个性化体验。",
-        "subtitle" : "分享您的 Ledger Live 使用数据有助于我们了解您的偏好。这能让我们定制您的体验并优化内容性能（包括点击量、浏览量和打开次数），最大限度提高相关性。",
+        "title" : "请帮助我们改进并提供个性化体验",
+        "subtitle" : "分享您的 Ledger Live 数据有助于我们了解您的偏好，为您展示更相关的内容，以及解决技术问题。",
         "content" : {
           "able" : {
-            "title" : "Ledger Live 将会追踪：",
-            "diagAndUsage" : "使用数据"
+            "title" : "获得您的同意后，Ledger 将能够跟踪：",
+            "diagAndUsage" : "分析数据，包括页面访问量、点击量。",
+            "personnalizationData" : "个性化数据，包括点击量、页面访问量、转化数据。"
           },
           "unable" : {
-            "title" : "Ledger Live 决不收集：",
-            "adresses" : "您的地址",
-            "balance" : "您的余额",
-            "nfts" : "您的 NFT",
-            "personnalInfos" : "个人身份信息"
+            "title" : "Ledger 绝不会跟踪以下相关信息：",
+            "adresses" : "您的资产。",
+            "balance" : "您的资产组合。",
+            "personnalInfos" : "您的个人身份信息。"
           },
-          "moreOptions" : "更多选项",
+          "moreOptions" : "管理您的偏好",
           "ctas" : {
             "refuse" : "全部拒绝",
             "accept" : "全部接受"
           },
           "infoText" : {
             "info" : "您可以随时在应用程序设置中撤回您的同意。",
-            "link" : "点击此处了解详情。"
+            "link" : "详细了解我们的《跟踪政策》"
           }
         }
       },
       "details" : {
         "title" : "管理您的偏好",
         "analytics" : {
-          "title" : "数据分析",
-          "description" : "分享应用程序使用数据，帮助 Ledger 改进应用程序。"
+          "title" : "分析数据",
+          "description" : "分享应用程序的分析数据，包括页面访问量、点击量，帮助改进 Ledger Live。"
         },
         "personalizedExp" : {
-          "title" : "个性化体验",
-          "description" : "接收符合您偏好的个性化推荐并分享内容性能，以此优化相关性。"
+          "title" : "个性化数据",
+          "description" : "分享应用程序的个性化数据，包括转化数据、点击量、页面访问量，获得个性化推荐。"
         },
         "ctas" : {
           "notNow" : "以后再说",
           "accept" : "接受",
           "acceptAll" : "全部接受",
-          "confirm" : "确认"
+          "confirm" : "分享"
         },
         "infoText" : {
           "info" : "您可以随时在应用程序设置中撤回您的同意。",
-          "link" : "点击此处了解详情。"
+          "link" : "详细了解我们的《跟踪政策》"
         }
       }
     },
     "variantB" : {
       "main" : {
         "title" : "帮助我们改进 Ledger Live",
-        "description" : "分享您的 Ledger Live 使用数据有助于我们了解您的 Ledger Live 使用情况。",
+        "description" : "分享您的 Ledger Live 分析数据可帮助我们了解用户如何使用 Ledger Live，修复错误，改进用户体验。",
         "bulletPoints" : {
-          "1" : "使用数据包括页面访问量、点击量和转化率。",
-          "2" : "我们不会收集或查看您的地址、账户、余额、NFT 或与您的投资组合相关的其他信息。",
-          "3" : "我们无法识别也不会识别您的身份，我们不会收集个人信息。"
+          "1" : "分析数据包括页面访问量、点击量。",
+          "2" : "我们不会收集或查看有关您的余额、账户和资产组合的任何信息。",
+          "3" : "分析是完全匿名的。我们无法查看或收集您的个人信息。"
         },
         "ctas" : {
           "refuse" : "拒绝",
@@ -6652,15 +6627,15 @@
         },
         "infoText" : {
           "info" : "您可以随时在应用程序设置中撤回您的同意。",
-          "link" : "详细了解关于撤回同意的信息"
+          "link" : "详细了解我们的《跟踪政策》"
         }
       },
       "details" : {
         "title" : "享受个性化体验",
-        "description" : "通过分析您的使用数据，我们可以定制您的体验并评估内容性能，追踪点击量、浏览量和打开次数等指标，确保最大限度提高相关性。",
+        "description" : "分享您的 Ledger Live 个性化数据，让我们可以为您展示符合您个人偏好的内容。",
         "bulletPoints" : {
-          "1" : "个性化推荐和内容",
-          "2" : "个性化通知"
+          "1" : "个性化数据包括转化数据、点击量、页面访问量。",
+          "2" : "我们无法跟踪或收集您的任何个人信息或资产组合信息。"
         },
         "ctas" : {
           "refuse" : "拒绝",
@@ -6668,7 +6643,7 @@
         },
         "infoText" : {
           "info" : "您可以随时在应用程序设置中撤回您的同意。",
-          "link" : "详细了解关于撤回同意的信息"
+          "link" : "详细了解我们的《跟踪政策》"
         }
       }
     }
