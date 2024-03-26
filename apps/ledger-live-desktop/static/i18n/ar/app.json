@@ -30,7 +30,8 @@
         "browse" : "تصفح"
       },
       "filter" : {
-        "categories" : "الفئات"
+        "categories" : "الفئات",
+        "all" : "الكل"
       },
       "branch" : {
         "soon" : "سيأتي قريباً",
@@ -275,7 +276,6 @@
   },
   "sidebar" : {
     "card" : "بطاقة",
-    "learn" : "تعلّم",
     "menu" : "القائمة",
     "stars" : "الحسابات المفضلة",
     "accounts" : "الحسابات",
@@ -1409,6 +1409,7 @@
   },
   "dashboard" : {
     "title" : "المحفظة الاستثمارية",
+    "header" : "رصيد المحفظة الاستثمارية",
     "emptyAccountTile" : {
       "desc" : "قم بإضافة حسابات لإدارة الأصول المشفرة الأخرى",
       "createAccount" : "إضافة حساب"
@@ -1449,6 +1450,27 @@
         "description" : "أنت على بعد خطوة واحدة من Ledger Recover.",
         "primaryCta" : "اتصال",
         "secondaryCta" : "ربّما في وقت لاحق"
+      }
+    },
+    "marketPerformanceWidget" : {
+      "title" : "اتجاه {{time}}",
+      "buy" : "شراء",
+      "swap" : "مبادلة",
+      "gainers" : "الرابحون",
+      "losers" : "الخاسرون",
+      "error" : {
+        "title" : "عذراً، لم نتمكن من تحميل الاتجاه",
+        "description" : "يُرجى إعادة المحاولة لاحقاً"
+      },
+      "missingData" : {
+        "gainers" : {
+          "title" : "ليس هناك أصول بين أعلى 50 حققت مكاسب خلال آخر 24 ساعة",
+          "description" : "فكِّر في عرض أعلى الخاسرين أو عُد مرةً أخرى لاحقاً"
+        },
+        "losers" : {
+          "title" : "ليس هناك أصول بين أعلى 50 حققت خسائر خلال آخر 24 ساعة",
+          "description" : "فكِّر في عرض أعلى الرابحين أو عُد مرةً أخرى لاحقاً"
+        }
       }
     }
   },
@@ -1756,7 +1778,7 @@
   "DeviceAction" : {
     "allowAppPermission" : "افتح تطبيق {{wording}} على جهازك",
     "allowAppPermissionSubtitleToken" : "لإدارة رموزك {{token}}",
-    "allowManagerPermission" : "اسمح بمدير Ledger على جهازك {{productName}}",
+    "allowManagerPermission" : "السماح بالاتصال الآمن",
     "allowRenaming" : "اسمح بإعادة التسمية على جهازك",
     "loading" : "جاري التحميل...",
     "connectAndUnlockDevice" : "قم بتوصيل جهازك وإلغاء قفله",
@@ -1982,7 +2004,7 @@
       "mcuBlueSecond" : "اضغط مع الاستمرار على الزر على الأقل لمدة 5 ثوانٍ حتى يتم عرض خيارات التمهيد. انقر على وضع Bootloader",
       "successTitle" : "نظام تشغيل جهازك {{deviceName}}\nمُحدَّث إلى آخر إصدار.",
       "successTitleApps" : "نظام تشغيل جهازك {{deviceName}}\nمُحدَّث إلى آخر إصدار. شيء أخير...",
-      "successSubtitleApps" : "لبدء استعادة التطبيق على جهازك {{deviceName}}، اختر\nزر ”Restore apps (استعادة التطبيقات)“ أدناه.",
+      "successSubtitleApps" : "To initiate app restore on your {{deviceName}}, select\nthe “Restore apps“ button below.",
       "sucessCTAApps" : "استعادة التطبيقات",
       "SuccessCTANoApps" : "إتمام",
       "resetSteps" : {
@@ -2207,6 +2229,15 @@
       "summary" : {
         "title" : "الملخص"
       },
+      "networkFee" : {
+        "title" : "اختر رسوم الشبكة"
+      },
+      "reviewSummary" : {
+        "title" : "مراجعة الملخص"
+      },
+      "connectLedger" : {
+        "title" : "توصيل جهاز Ledger"
+      },
       "device" : {
         "title" : "جهاز"
       },
@@ -2263,9 +2294,6 @@
     "footer" : {
       "estimatedFees" : "رسوم الشبكة"
     }
-  },
-  "sign" : {
-    "title" : "توقيع المعاملة"
   },
   "releaseNotes" : {
     "title" : "ملاحظات الإصدار",
@@ -4178,6 +4206,17 @@
     "logs" : "حفظ السجلات",
     "dataFolder" : "عرض بيانات المستخدم"
   },
+  "approve" : {
+    "title" : "الموافقة على رمز التوكن",
+    "description" : "قم بالموافقة على رمز التوكن على جهازك Ledger",
+    "unlimited" : "أنت تُصرّح لهذا المزود بالوصول إلى مبلغ غير محدود من رمز التوكن المختار من محفظتك. تحقق مرة أخرى من تفاصيل المعاملة على جهازك Ledger قبل التوقيع.",
+    "limited" : "أنت تُصرّح لهذا المزود بالوصول إلى رمز التوكن المختار من محفظتك. تحقق مرة أخرى من تفاصيل المعاملة على جهازك Ledger قبل التوقيع.",
+    "termsAndConditions" : "بتوقيع هذه المعاملة، أنت تقبل <0>شروط استخدام {{appName}}.</0>"
+  },
+  "sign" : {
+    "title" : "توقيع المعاملة",
+    "description" : "وقِّع المعاملة على جهازك Ledger"
+  },
   "exportOperationsModal" : {
     "title" : "سجل العمليات",
     "desc" : "اختر الحسابات التي تريد حفظ سجل المعاملات لها",
@@ -4909,6 +4948,8 @@
     "warning" : "دائماً تحقق أن العنوان المعروض على جهازك يطابق تماماً العنوان الذي قدمه {{recipientWording}}",
     "secureContract" : "تحقق من تفاصيل الإيداع على جهازك قبل إرساله. يتم توفير عنوان العقد بشكل آمن حتى لا تضطر إلى التحقق منه.",
     "verifyData" : "تحقق دائماً من تفاصيل العملية على جهازك.",
+    "doubleCheck" : "تحقق مرة أخرى من تفاصيل المعاملة على جهازك Ledger قبل التوقيع.",
+    "termsAndConditions" : "بتوقيع هذه المعاملة، أنت تقبل <0>شروط استخدام {{appName}}.</0>",
     "warningWording" : {
     },
     "titleWording" : {
@@ -5343,14 +5384,14 @@
       "description" : "من المستحيل حساب المبلغ والرسوم"
     },
     "NotEnoughBalance" : {
-      "title" : "عفواً، الأموال المتوفرة غير كافية",
+      "title" : "عذراً، الرصيد غير كافٍ شاملاً رسوم الشبكة. عدّل المبلغ أو تحقق من الرصيد",
       "description" : "يرجى التأكد من أن الحساب به أموال كافية."
     },
     "NotEnoughBalanceBecauseDestinationNotCreated" : {
       "title" : "عنوان المستلم غير نشط. أرسل على الأقل {{minimalAmount}} لتنشيطه"
     },
     "NotEnoughGas" : {
-      "title" : "You need {{fees}} {{ticker}} in your account to pay for transaction fees on the {{cryptoName}} network.  <link0>Buy {{ticker}}</link0> or deposit more into your account."
+      "title" : "تحتاج إلى {{fees}} {{ticker}} في حسابك لدفع رسوم المعاملة على شبكة {{cryptoName}}.  <link0>اشتر {{ticker}}</link0> أو قم بإيداع المزيد في حسابك."
     },
     "NotEnoughGasSwap" : {
       "title" : "أنت بحاجة إلى {{ticker}} {{fees}} لرسوم الشبكة من أجل المبادلة حيث أنك على شبكة {{cryptoName}}. <link0>شراء {{ticker}}</link0>"
@@ -5431,7 +5472,7 @@
       "description" : "يرجى إعادة تشغيل جهازك دون لمس الأزرار عندما يظهر الشعار. تواصل مع دعم Ledger إذا استمرت المشكلة."
     },
     "UserRefusedAllowManager" : {
-      "title" : "تم رفض My Ledger على الجهاز"
+      "title" : "تم رفض الاتصال الآمن على الجهاز"
     },
     "UserRefusedFirmwareUpdate" : {
       "title" : "تم إلغاء تثبيت تحديث نظام التشغيل\nعلى الجهاز",
@@ -5472,6 +5513,14 @@
     "WrongDeviceForAccount" : {
       "title" : "حدث خطأ ما",
       "description" : "يرجى التحقق من أن محفظة الأجهزة الخاصة بك قد تم إعدادها بعبارة الاسترداد أو عبارة المرور المرتبطة بالحساب المحدد."
+    },
+    "WrongDeviceForAccountPayout" : {
+      "title" : "حدث خطأ ما",
+      "description" : "عنوان التلقي هذا لا يتطابق مع جهازك المتصل. يُرجى تغييره وإعادة المحاولة."
+    },
+    "WrongDeviceForAccountRefund" : {
+      "title" : "حدث خطأ ما",
+      "description" : "عنوان التلقي هذا لا يتطابق مع جهازك المتصل ولا يمكن استخدامه لاسترجاع الأموال. يُرجى تغييره وإعادة المحاولة."
     },
     "DeviceAppVerifyNotSupported" : {
       "title" : "مطلوب تحديث التطبيق",
@@ -5516,6 +5565,10 @@
     "TransactionHasBeenValidatedError" : {
       "title" : "لا يمكن تسريعها أو إلغائها",
       "description" : "هذه المعاملة تم تأكيدها بالفعل"
+    },
+    "SequenceNumberError" : {
+      "title" : "خطأ في رقم التسلسل",
+      "description" : "يُرجى إغلاق النافذة وإعادة المحاولة لاحقاً"
     },
     "CantScanQRCode" : {
       "title" : "تعذر فحص كود الاستجابة السريعة (QR) هذا: التحقق التلقائي غير مدعوم من قِبل هذا العنوان"
@@ -5698,6 +5751,9 @@
     },
     "SwapExchangeRateAmountTooHigh" : {
       "title" : "يجب أن يكون المبلغ أقل من {{maxAmountFromFormatted}}"
+    },
+    "SwapExchangeRateAmountTooLowOrTooHigh" : {
+      "title" : "المبلغ غير متاح. يُرجى تعديل القيمة."
     },
     "PolkadotElectionClosed" : {
       "title" : "يجب إغلاق باب انتخاب المدققين"
@@ -5914,9 +5970,6 @@
     "FailedToRetrieveFirmwareUpdateInfo" : {
       "title" : "فشل التحقق من تحديث نظام التشغيل",
       "description" : "حدث خطأ ما. يرجى المحاولة مرة أخرى أو التواصل مع دعم Ledger إذا كان لديك شك."
-    },
-    "TezosUnrevealedAccount" : {
-      "title" : "المبادلة غير متوفرة: الإرسال/التفويض الأولي مطلوب مع حساب Tezos أو زوج الاستبدال."
     }
   },
   "cryptoOrg" : {
@@ -6046,5 +6099,64 @@
   },
   "recoverRestore" : {
     "title" : "قم بتوصيل وإلغاء قفل جهازك Ledger"
+  },
+  "analyticsOptInPrompt" : {
+    "variantA" : {
+      "description" : "مشاركة بيانات Ledger Live الخاصة بك تساعدنا على فهم تفضيلاتك، وعرض محتوى مناسب لك، وإصلاح المشكلات التقنية.",
+      "whatWeTrack" : "بموافقتك، Ledger ستكون قادرةً على تتبع:",
+      "whatWeTrackList" : {
+        "1" : "بيانات التحليلات، بما فيها زيارات الصفحات والنقرات.",
+        "2" : "بيانات التخصيص، بما فيها النقرات وزيارات الصفحات وبيانات التحويل."
+      },
+      "whatWeDoNotTrack" : "Ledger لن تتبع أبداً معلومات متعلقة بما يلي:",
+      "whatWeDoNotTrackList" : {
+        "1" : "أصولك.",
+        "2" : "محفظتك الاستثمارية.",
+        "3" : "معلومات التعريف الشخصية الخاصة بك."
+      },
+      "managePreferences" : "إدارة تفضيلاتك",
+      "refuse" : "رفض الكل",
+      "accept" : "قبول الكل",
+      "analyticsData" : {
+        "title" : "بيانات التحليلات",
+        "description" : "للمساعدة في تحسين Ledger Live، شارك بيانات تحليلات التطبيق، بما فيها زيارات الصفحات والنقرات."
+      },
+      "personalizationData" : {
+        "title" : "بيانات التخصيص",
+        "description" : "للحصول على توصيات مخصصة، شارك بيانات تخصيص التطبيق، بما فيها بيانات التحويل والنقرات وزيارات الصفحات."
+      },
+      "share" : "مشاركة"
+    },
+    "variantB" : {
+      "accept" : "قبول",
+      "refuse" : "رفض",
+      "analytics" : {
+        "description" : "مشاركة بيانات تحليلات Ledger Live الخاصة بك تساعدنا على فهم كيف يستخدم الأشخاص Ledger Live وإصلاح الأخطاء وتقديم تجربة مستخدم مُحسّنة.",
+        "details" : {
+          "1" : "بيانات التحليلات تشمل زيارات الصفحات والنقرات.",
+          "2" : "نحن لن نجمع أو نرى أي معلومات متعلقة برصيدك وحساباتك ومحفظتك الاستثمارية.",
+          "3" : "التحليلات مجهولة تماماً. لا يمكننا رؤية أو جمع بياناتك الشخصية."
+        }
+      },
+      "personalRecommendations" : {
+        "title" : "احصل على تجربة مخصصة",
+        "description" : "مشاركة بيانات تخصيص Ledger Live الخاصة بك تسمح لنا بعرض محتوى يطابق تفضيلاتك",
+        "details" : {
+          "1" : "بيانات التخصيص تشمل بيانات التحويل والنقرات وزيارات الصفحات.",
+          "2" : "لا يمكننا تتبع أو جمع أياً من معلوماتك الشخصية أو معلومات محفظتك الاستثمارية."
+        }
+      }
+    },
+    "common" : {
+      "title" : "ساعدنا على التحسن وتخصيص تجربتك",
+      "revokeInfo" : "يمكنك إلغاء موافقتك في أي وقت من إعدادات التطبيق.",
+      "learnMore" : "تعرّف على المزيد حول سياسة التتبع لدينا"
+    },
+    "profileSettings" : {
+      "personalizedExp" : "تجربة مخصصة",
+      "analytics" : "التحليلات",
+      "personalizedExpDesc" : "تلقى توصيات مخصصة تطابق تفضيلاتك.",
+      "analyticsDesc" : "قم بتمكين التحليلات لمساعدة Ledger على تحسين تجربة المستخدم."
+    }
   }
 }
