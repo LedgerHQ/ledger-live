@@ -11,6 +11,7 @@ import { IconsLegacy, Box } from "@ledgerhq/native-ui";
 import { hasInstalledAnyAppSelector } from "~/reducers/settings";
 import { setHasInstalledAnyApp } from "~/actions/settings";
 import { useSetAppsWithDependenciesToInstallUninstall } from "../AppsInstallUninstallWithDependenciesContext";
+import { track } from "~/analytics";
 
 type Props = {
   app: App;
@@ -58,6 +59,7 @@ export default function AppInstallButton({
       storageWarning(name);
       return;
     }
+    track("ManagerAppInstall", { appName: name });
     if (needsDependencies) {
       setAppWithDependenciesToInstall(needsDependencies);
     } else {
