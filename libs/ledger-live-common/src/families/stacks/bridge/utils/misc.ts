@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import flatMap from "lodash/flatMap";
-import { Account, Address, Operation } from "@ledgerhq/types-live";
+import { Account, Operation } from "@ledgerhq/types-live";
 import {
   makeUnsignedSTXTokenTransfer,
   UnsignedTokenTransferOptions,
@@ -59,10 +59,12 @@ export const getTxToBroadcast = async (
 
 export const getUnit = () => getCryptoCurrencyById("stacks").units[0];
 
-export const getAddress = (a: Account): Address =>
-  a.freshAddresses.length > 0
-    ? a.freshAddresses[0]
-    : { address: a.freshAddress, derivationPath: a.freshAddressPath };
+export const getAddress = (
+  a: Account,
+): {
+  address: string;
+  derivationPath: string;
+} => ({ address: a.freshAddress, derivationPath: a.freshAddressPath });
 
 export const mapTxToOps =
   (accountID, { address }: AccountShapeInfo) =>

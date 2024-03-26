@@ -8,12 +8,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
     "derivationMode": "hederaBip44",
     "freshAddress": "0.0.1040977",
     "freshAddressPath": "44/3030",
-    "freshAddresses": [
-      {
-        "address": "0.0.1040977",
-        "derivationPath": "44/3030",
-      },
-    ],
     "id": "js:2:hedera:0.0.1040977:hederaBip44",
     "index": 0,
     "name": "Hedera 1",

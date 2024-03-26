@@ -8,12 +8,6 @@ exports[`filecoin currency bridge scanAccounts filecoin seed 1 1`] = `
     "derivationMode": "glifLegacy",
     "freshAddress": "t15lauyzdivqj7m3yob3rxmzdsy7uyhfflwyheuri",
     "freshAddressPath": "44'/1'/0'/0/0",
-    "freshAddresses": [
-      {
-        "address": "t15lauyzdivqj7m3yob3rxmzdsy7uyhfflwyheuri",
-        "derivationPath": "44'/1'/0'/0/0",
-      },
-    ],
     "id": "js:2:filecoin:t15lauyzdivqj7m3yob3rxmzdsy7uyhfflwyheuri:glifLegacy",
     "index": 0,
     "name": "Filecoin 1",
@@ -34,12 +28,6 @@ exports[`filecoin currency bridge scanAccounts filecoin seed 1 1`] = `
     "derivationMode": "glif",
     "freshAddress": "f1p74d4mlmeyc4agflhjqsnvoyzyfdai7fmkyso2a",
     "freshAddressPath": "44'/461'/0'/0/0",
-    "freshAddresses": [
-      {
-        "address": "f1p74d4mlmeyc4agflhjqsnvoyzyfdai7fmkyso2a",
-        "derivationPath": "44'/461'/0'/0/0",
-      },
-    ],
     "id": "js:2:filecoin:f1p74d4mlmeyc4agflhjqsnvoyzyfdai7fmkyso2a:glif",
     "index": 0,
     "name": "Filecoin 1",
@@ -60,12 +48,6 @@ exports[`filecoin currency bridge scanAccounts filecoin seed 1 1`] = `
     "derivationMode": "glif",
     "freshAddress": "f1plmg3kklvmnodfboimcq5w27mnfs2hwjtas6gia",
     "freshAddressPath": "44'/461'/0'/0/1",
-    "freshAddresses": [
-      {
-        "address": "f1plmg3kklvmnodfboimcq5w27mnfs2hwjtas6gia",
-        "derivationPath": "44'/461'/0'/0/1",
-      },
-    ],
     "id": "js:2:filecoin:f1plmg3kklvmnodfboimcq5w27mnfs2hwjtas6gia:glif",
     "index": 1,
     "name": "Filecoin 2",
@@ -86,12 +68,6 @@ exports[`filecoin currency bridge scanAccounts filecoin seed 1 1`] = `
     "derivationMode": "glif",
     "freshAddress": "f15nh4cywefp6pavzjifbe2ormma74malwdyy5rfq",
     "freshAddressPath": "44'/461'/0'/0/2",
-    "freshAddresses": [
-      {
-        "address": "f15nh4cywefp6pavzjifbe2ormma74malwdyy5rfq",
-        "derivationPath": "44'/461'/0'/0/2",
-      },
-    ],
     "id": "js:2:filecoin:f15nh4cywefp6pavzjifbe2ormma74malwdyy5rfq:glif",
     "index": 2,
     "name": "Filecoin 3",
@@ -112,12 +88,6 @@ exports[`filecoin currency bridge scanAccounts filecoin seed 1 1`] = `
     "derivationMode": "glif",
     "freshAddress": "f1lg3347otxjblwqx6pnqnqoz4cqwasq57yo2bxcy",
     "freshAddressPath": "44'/461'/0'/0/3",
-    "freshAddresses": [
-      {
-        "address": "f1lg3347otxjblwqx6pnqnqoz4cqwasq57yo2bxcy",
-        "derivationPath": "44'/461'/0'/0/3",
-      },
-    ],
     "id": "js:2:filecoin:f1lg3347otxjblwqx6pnqnqoz4cqwasq57yo2bxcy:glif",
     "index": 3,
     "name": "Filecoin 4",
@@ -138,12 +108,6 @@ exports[`filecoin currency bridge scanAccounts filecoin seed 1 1`] = `
     "derivationMode": "glif",
     "freshAddress": "f1j2uoeuoiusmh2godly4fivd6gomi6asmzkd47li",
     "freshAddressPath": "44'/461'/0'/0/4",
-    "freshAddresses": [
-      {
-        "address": "f1j2uoeuoiusmh2godly4fivd6gomi6asmzkd47li",
-        "derivationPath": "44'/461'/0'/0/4",
-      },
-    ],
     "id": "js:2:filecoin:f1j2uoeuoiusmh2godly4fivd6gomi6asmzkd47li:glif",
     "index": 4,
     "name": "Filecoin 5",
@@ -164,12 +128,6 @@ exports[`filecoin currency bridge scanAccounts filecoin seed 1 1`] = `
     "derivationMode": "glif",
     "freshAddress": "f1l7h6nvobmqc7adq7plta5kn7xaltx6k6l7paqsq",
     "freshAddressPath": "44'/461'/0'/0/5",
-    "freshAddresses": [
-      {
-        "address": "f1l7h6nvobmqc7adq7plta5kn7xaltx6k6l7paqsq",
-        "derivationPath": "44'/461'/0'/0/5",
-      },
-    ],
     "id": "js:2:filecoin:f1l7h6nvobmqc7adq7plta5kn7xaltx6k6l7paqsq:glif",
     "index": 5,
     "name": "Filecoin 6",
@@ -190,12 +148,6 @@ exports[`filecoin currency bridge scanAccounts filecoin seed 1 1`] = `
     "derivationMode": "glif",
     "freshAddress": "f1i2drwsilv35pp75dvd52enl3ohqakua2mshf5fy",
     "freshAddressPath": "44'/461'/0'/0/6",
-    "freshAddresses": [
-      {
-        "address": "f1i2drwsilv35pp75dvd52enl3ohqakua2mshf5fy",
-        "derivationPath": "44'/461'/0'/0/6",
-      },
-    ],
     "id": "js:2:filecoin:f1i2drwsilv35pp75dvd52enl3ohqakua2mshf5fy:glif",
     "index": 6,
     "name": "Filecoin 7",

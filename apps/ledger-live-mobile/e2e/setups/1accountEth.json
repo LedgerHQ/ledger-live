@@ -120,12 +120,6 @@
           "index": 0,
           "freshAddress": "0xFF3180Dc9091FAb7De56c440f86eCdE1a76bfCfd",
           "freshAddressPath": "44'/60'/0'/0/0",
-          "freshAddresses": [
-            {
-              "address": "0xFF3180Dc9091FAb7De56c440f86eCdE1a76bfCfd",
-              "derivationPath": "44'/60'/0'/0/0"
-            }
-          ],
           "blockHeight": 17294009,
           "syncHash": "[]_6810",
           "creationDate": "2022-05-18T08:54:58.001Z",

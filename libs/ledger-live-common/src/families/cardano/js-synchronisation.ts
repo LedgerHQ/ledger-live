@@ -354,7 +354,6 @@ export const makeGetAccountShape =
       operations: operations,
       syncHash,
       subAccounts,
-      freshAddresses,
       freshAddress: freshAddresses[0].address,
       freshAddressPath: freshAddresses[0].derivationPath,
       blockHeight,

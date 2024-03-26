@@ -39,12 +39,6 @@ export const bitcoin1: BitcoinAccountRaw = {
   index: 0,
   freshAddress: "17gPmBH8b6UkvSmxMfVjuLNAqzgAroiPSe",
   freshAddressPath: "44'/0'/0'/0/59",
-  freshAddresses: [
-    {
-      address: "17gPmBH8b6UkvSmxMfVjuLNAqzgAroiPSe",
-      derivationPath: "44'/0'/0'/0/59",
-    },
-  ],
   pendingOperations: [],
   operations: [],
   currencyId: "bitcoin",
@@ -67,12 +61,6 @@ export const bitcoin2: BitcoinAccountRaw = {
   index: 1,
   freshAddress: "bc1q8vp7v5wyv8nvhsh5p2dvkgalep4q325kd5xk4e",
   freshAddressPath: "84'/0'/1'/0/53",
-  freshAddresses: [
-    {
-      address: "bc1q8vp7v5wyv8nvhsh5p2dvkgalep4q325kd5xk4e",
-      derivationPath: "84'/0'/1'/0/53",
-    },
-  ],
   blockHeight: 0,
   operations: [],
   pendingOperations: [],

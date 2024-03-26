@@ -34,12 +34,6 @@ const dataset: CurrenciesData<Transaction> = {
         index: 0,
         freshAddress: "sei1gyauvl44q2apn3u3aujm36q8zrj74vryc50pfg",
         freshAddressPath: "44'/118'/0'/0/0",
-        freshAddresses: [
-          {
-            address: "sei1gyauvl44q2apn3u3aujm36q8zrj74vryc50pfg",
-            derivationPath: "44'/118'/0'/0/0",
-          },
-        ],
         blockHeight: 30141265,
         creationDate: "2023-10-05T07:51:50.000Z",
         currencyId: "sei_network",

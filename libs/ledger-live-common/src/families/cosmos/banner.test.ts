@@ -37,7 +37,6 @@ const account: CosmosAccount = {
   freshAddress: "cosmos1f9y7wdychcdhwvyrhff3zvs3gy3qxcu2th4g8u",
   freshAddressPath: "44'/118'/1'/0/0",
   name: "Cosmos 2 - Nano X Static Account",
-  freshAddresses: [],
   blockHeight: 5417472,
   creationDate: new Date("2022-08-02T16:09:08.906Z"),
   balance: new BigNumber("200250"),

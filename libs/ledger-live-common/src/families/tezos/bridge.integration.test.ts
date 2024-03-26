@@ -19,7 +19,6 @@ function makeAccountRaw(name, pubkey, address, derivationMode): TezosAccountRaw 
     index: 0,
     freshAddress: address,
     freshAddressPath: "",
-    freshAddresses: [],
     blockHeight: 0,
     operations: [],
     pendingOperations: [],

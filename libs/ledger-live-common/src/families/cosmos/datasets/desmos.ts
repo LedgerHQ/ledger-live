@@ -31,7 +31,6 @@ const dataset: CurrenciesData<Transaction> = {
         index: 0,
         freshAddress: "desmos1gyauvl44q2apn3u3aujm36q8zrj74vrypqn8c3",
         freshAddressPath: "44'/118'/0'/0/0",
-        freshAddresses: [],
         blockHeight: 8171679,
         creationDate: "2023-04-18T13:43:32.000Z",
         operationsCount: 4,

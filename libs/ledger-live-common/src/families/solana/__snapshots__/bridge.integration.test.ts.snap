@@ -8,12 +8,6 @@ exports[`solana currency bridge scanAccounts solana seed 1 1`] = `
     "derivationMode": "solanaMain",
     "freshAddress": "AQbkEagmPgmsdAfS4X8V8UyJnXXjVPMvjeD15etqQ3Jh",
     "freshAddressPath": "44'/501'",
-    "freshAddresses": [
-      {
-        "address": "AQbkEagmPgmsdAfS4X8V8UyJnXXjVPMvjeD15etqQ3Jh",
-        "derivationPath": "44'/501'",
-      },
-    ],
     "id": "js:2:solana:AQbkEagmPgmsdAfS4X8V8UyJnXXjVPMvjeD15etqQ3Jh:solanaMain",
     "index": 0,
     "name": "Solana 1",
@@ -38,12 +32,6 @@ exports[`solana currency bridge scanAccounts solana seed 1 1`] = `
     "derivationMode": "solanaSub",
     "freshAddress": "6rEgdtB3sgjKJnRE172YEr9z6qUyr4nFW28vJokuD36A",
     "freshAddressPath": "44'/501'/0'",
-    "freshAddresses": [
-      {
-        "address": "6rEgdtB3sgjKJnRE172YEr9z6qUyr4nFW28vJokuD36A",
-        "derivationPath": "44'/501'/0'",
-      },
-    ],
     "id": "js:2:solana:6rEgdtB3sgjKJnRE172YEr9z6qUyr4nFW28vJokuD36A:solanaSub",
     "index": 0,
     "name": "Solana 1",

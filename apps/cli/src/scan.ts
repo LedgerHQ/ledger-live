@@ -335,7 +335,6 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
               index,
               freshAddress: xpubOrAddress,
               freshAddressPath,
-              freshAddresses: [],
               creationDate: new Date(),
               lastSyncDate: new Date(0),
               blockHeight: 0,

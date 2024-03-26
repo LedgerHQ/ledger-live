@@ -28,7 +28,6 @@ const dummyAccount: Account = {
   freshAddress: "",
   freshAddressPath: "",
   swapHistory: [],
-  freshAddresses: [],
   blockHeight: 0,
   balance: new BigNumber(0),
   spendableBalance: new BigNumber(0),

@@ -12,7 +12,6 @@ const account: Account = {
   index: 0,
   freshAddress: "",
   freshAddressPath: "",
-  freshAddresses: [],
   name: "",
   starred: false,
   used: false,

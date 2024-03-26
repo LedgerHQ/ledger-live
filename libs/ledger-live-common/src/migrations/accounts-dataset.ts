@@ -15,7 +15,6 @@ const accounts: Account[] = [
     index: 0,
     freshAddress: "bc1qdcfdfp2k7zwhsxldurartqg69jj5ukzfytksfc",
     freshAddressPath: "84'/0'/0'/0/30",
-    freshAddresses: [],
     blockHeight: 651631,
     creationDate: "2020-06-02T10:26:53.000Z",
     operationsCount: 64,
@@ -78,7 +77,6 @@ const accounts: Account[] = [
     index: 0,
     freshAddress: "MK1uHHBy3Y88kXnVwSiKZyy3JPhPzmVXwA",
     freshAddressPath: "49'/2'/0'/0/12",
-    freshAddresses: [],
     blockHeight: 1925624,
     creationDate: "2020-06-03T13:53:03.000Z",
     operationsCount: 29,
@@ -118,12 +116,6 @@ const accounts: Account[] = [
     index: 0,
     freshAddress: "0x6Fb18BF2400b94C813FeDe3D2e816d5C811353D9",
     freshAddressPath: "44'/60'/0'/0/0",
-    freshAddresses: [
-      {
-        address: "0x6Fb18BF2400b94C813FeDe3D2e816d5C811353D9",
-        derivationPath: "44'/60'/0'/0/0",
-      },
-    ],
     blockHeight: 11007899,
     creationDate: "2020-07-03T15:02:43.000Z",
     operationsCount: 0,

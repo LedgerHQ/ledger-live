@@ -60,7 +60,6 @@ export const makeAccount = (
     nfts: [],
     freshAddress: xpubOrAddress,
     freshAddressPath,
-    freshAddresses: [],
     creationDate: new Date(),
     lastSyncDate: new Date(0),
     blockHeight: 0,

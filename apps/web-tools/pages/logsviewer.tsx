@@ -134,7 +134,6 @@ const Header = ({
           index,
           freshAddress: xpubOrAddress,
           freshAddressPath,
-          freshAddresses: [],
           name: currencyId + " " + shortAddressPreview(xpubOrAddress),
           starred: true,
           balance: "0",

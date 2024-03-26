@@ -149,7 +149,6 @@ const dataset: DatasetTest<Transaction> = {
             index: 0,
             freshAddress: "rageXHB6Q4VbvvWdTzKANwjeCT4HXFCKX7",
             freshAddressPath: "44'/144'/0'/0/0",
-            freshAddresses: [],
             blockHeight: 0,
             operations: [],
             pendingOperations: [],

@@ -9,12 +9,6 @@ exports[`bitcoin currency bridge scanAccounts bitcoin seed 1 1`] = `
     "derivationMode": "native_segwit",
     "freshAddress": "bc1qhh568mfmwu7ymvwhu5e4mttpfg4ehxfpvhjs64",
     "freshAddressPath": "84'/0'/0'/0/27",
-    "freshAddresses": [
-      {
-        "address": "bc1q9m02yv9c53enxk247lxkgj5dgn6hm27f0rc34p",
-        "derivationPath": "84'/0'/0'/0/0",
-      },
-    ],
     "id": "js:2:bitcoin:xpub6DEHKg8fgKcb5iYGPLtpBYD9gm7nvym3wwhHVnH3TtogvJGTcApj71K8iTpL7CzdZWAxwyjkZEFUrnLK24zKqgj3EVH7Vg1CD1ujibwiHuy:native_segwit",
     "index": 0,
     "name": "Bitcoin 1",
@@ -37,12 +31,6 @@ exports[`bitcoin currency bridge scanAccounts bitcoin seed 1 1`] = `
     "derivationMode": "native_segwit",
     "freshAddress": "bc1q8vp7v5wyv8nvhsh5p2dvkgalep4q325kd5xk4e",
     "freshAddressPath": "84'/0'/1'/0/53",
-    "freshAddresses": [
-      {
-        "address": "bc1qdl60l5zx5nhp4ywqvcgk7nvj777epxml5g795r",
-        "derivationPath": "84'/0'/1'/0/0",
-      },
-    ],
     "id": "js:2:bitcoin:xpub6DEHKg8fgKcb9at2u9Xhjtx4tXGyWqUPQAx2zNCzr41gQRyCqpCn7onSoJU4VS96GXyCtAhhFxErnG2pGVvVexaqF7DEfqGGnGk7Havn7C2:native_segwit",
     "index": 1,
     "name": "Bitcoin 2",
@@ -65,12 +53,6 @@ exports[`bitcoin currency bridge scanAccounts bitcoin seed 1 1`] = `
     "derivationMode": "native_segwit",
     "freshAddress": "bc1qnqy7vyp0df7tl90mwz9jwca66t6hef4yj9hl6n",
     "freshAddressPath": "84'/0'/2'/0/0",
-    "freshAddresses": [
-      {
-        "address": "bc1qnqy7vyp0df7tl90mwz9jwca66t6hef4yj9hl6n",
-        "derivationPath": "84'/0'/2'/0/0",
-      },
-    ],
     "id": "js:2:bitcoin:xpub6DEHKg8fgKcbC7ZzoayZKxpDs8PYag9aBvXLhpvZhag3DT2nU5PwLE6xaineM5jciavwNYGUZrdSTcktK6Xu9odBYXN6K2zeou479HUcbsc:native_segwit",
     "index": 2,
     "name": "Bitcoin 3",
@@ -93,12 +75,6 @@ exports[`bitcoin currency bridge scanAccounts bitcoin seed 1 1`] = `
     "derivationMode": "taproot",
     "freshAddress": "bc1p3ldd4dsgv7phm4z3ah5zqaap5eferesr9n5ymufhwe0medvlaqfq25rfvz",
     "freshAddressPath": "86'/0'/0'/0/0",
-    "freshAddresses": [
-      {
-        "address": "bc1p3ldd4dsgv7phm4z3ah5zqaap5eferesr9n5ymufhwe0medvlaqfq25rfvz",
-        "derivationPath": "86'/0'/0'/0/0",
-      },
-    ],
     "id": "js:2:bitcoin:xpub6BvkrmBTnBQMW1tBLgY2H6itSqFh9xGAYLGtR8PsKi762NghTQVUkv5gJ3osjMzaqqcfpKgHm2ov7N67A6njxLG8RSU8WwLVN4F596cDmp6:taproot",
     "index": 0,
     "name": "Bitcoin 1",
@@ -121,12 +97,6 @@ exports[`bitcoin currency bridge scanAccounts bitcoin seed 1 1`] = `
     "derivationMode": "segwit",
     "freshAddress": "34WDB297Z1crydk6CMa1UvUpZ8G4cPXiYE",
     "freshAddressPath": "49'/0'/0'/0/34",
-    "freshAddresses": [
-      {
-        "address": "35xbFLZ3RnzYEmaT41V4D5sYedNXZbNPP3",
-        "derivationPath": "49'/0'/0'/0/0",
-      },
-    ],
     "id": "js:2:bitcoin:xpub6CKb86o7RHSCxuwP5dnxyDySLbnVWypQUxhWpycFZWFTzXuXy3UgGtG3o51oGER6X2UY6zRqd5AXgzNghb9va1FkfzXz6k1RT6EwTwCKejE:segwit",
     "index": 0,
     "name": "Bitcoin 1",
@@ -149,12 +119,6 @@ exports[`bitcoin currency bridge scanAccounts bitcoin seed 1 1`] = `
     "derivationMode": "segwit",
     "freshAddress": "3EyuXJk735CE5oBummZqzzFGN5qSMYLQ9w",
     "freshAddressPath": "49'/0'/1'/0/44",
-    "freshAddresses": [
-      {
-        "address": "386uh6ac6EFTx25mFrTvsN7ZB6t4AVbawf",
-        "derivationPath": "49'/0'/1'/0/0",
-      },
-    ],
     "id": "js:2:bitcoin:xpub6CKb86o7RHSD1tDBFKwPgEZ5Q83gnRPG7Bs5HzBRUxcm4dvLEPnSTWP8C7c4P71GgMCk1Fw6xS6Ki4XC6bGAQcxE8gc9KJHXzQnErDtwTa6:segwit",
     "index": 1,
     "name": "Bitcoin 2",
@@ -177,12 +141,6 @@ exports[`bitcoin currency bridge scanAccounts bitcoin seed 1 1`] = `
     "derivationMode": "segwit",
     "freshAddress": "3DUk27bxJm3y7txoPTK4GGBWcyoW6ibGuh",
     "freshAddressPath": "49'/0'/2'/0/0",
-    "freshAddresses": [
-      {
-        "address": "3DUk27bxJm3y7txoPTK4GGBWcyoW6ibGuh",
-        "derivationPath": "49'/0'/2'/0/0",
-      },
-    ],
     "id": "js:2:bitcoin:xpub6CKb86o7RHSD4ZhRxHBtCWgL2J5MJYrVdurKFkdChDPjLpUt7EpvrsoCaBRCD78Qo7ith2DeCqonWinReuXMfs2bqJiLkcoE4VcwvkvUzEJ:segwit",
     "index": 2,
     "name": "Bitcoin 3",
@@ -205,12 +163,6 @@ exports[`bitcoin currency bridge scanAccounts bitcoin seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "1Ktck8TvjnCUj2jNXexzBXJ2ihNikfCDii",
     "freshAddressPath": "44'/0'/0'/0/60",
-    "freshAddresses": [
-      {
-        "address": "14kPMjMR7zbi9s8bTMPuFUD4zA7AFivXrn",
-        "derivationPath": "44'/0'/0'/0/0",
-      },
-    ],
     "id": "js:2:bitcoin:xpub6BuPWhjLqutPV8SF4RMrrn8c3t7uBZbz4CBbThpbg9GYjqRMncra9mjgSfWSK7uMDz37hhzJ8wvkbDDQQJt6VgwLoszvmPiSBtLA1bPLLSn:",
     "index": 0,
     "name": "Bitcoin 1",
@@ -233,12 +185,6 @@ exports[`bitcoin currency bridge scanAccounts bitcoin seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "1JepjRPgzuV4hyBTZxftBYqbAaXMygCMRV",
     "freshAddressPath": "44'/0'/1'/0/0",
-    "freshAddresses": [
-      {
-        "address": "1JepjRPgzuV4hyBTZxftBYqbAaXMygCMRV",
-        "derivationPath": "44'/0'/1'/0/0",
-      },
-    ],
     "id": "js:2:bitcoin:xpub6BuPWhjLqutPY3pENUxwkG3NAQfjLxoHMTAkwzH13rZSzkymZrbKui1MN3KgwiNFsH4AyLM3GkodNo4bTxQXE1kvZiruVUtJLe1bMW1MBBJ:",
     "index": 1,
     "name": "Bitcoin 2",
@@ -11428,12 +11374,6 @@ exports[`bitcoin_cash currency bridge scanAccounts bitcoin_cash seed 1 1`] = `
     "derivationMode": "unsplit",
     "freshAddress": "bitcoincash:qzam62zsdr43xdc58xs7effux924f0wvj5hpzy230a",
     "freshAddressPath": "44'/0'/0'/0/19",
-    "freshAddresses": [
-      {
-        "address": "14kPMjMR7zbi9s8bTMPuFUD4zA7AFivXrn",
-        "derivationPath": "44'/0'/0'/0/0",
-      },
-    ],
     "id": "js:2:bitcoin_cash:xpub6BuPWhjLqutPV8SF4RMrrn8c3t7uBZbz4CBbThpbg9GYjqRMncra9mjgSfWSK7uMDz37hhzJ8wvkbDDQQJt6VgwLoszvmPiSBtLA1bPLLSn:unsplit",
     "index": 0,
     "name": "Bitcoin Cash 1",
@@ -11456,12 +11396,6 @@ exports[`bitcoin_cash currency bridge scanAccounts bitcoin_cash seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "bitcoincash:qrpv5gkjr7t734nc9j5dmaln02rhzntl2cv0u822y5",
     "freshAddressPath": "44'/145'/0'/0/23",
-    "freshAddresses": [
-      {
-        "address": "1LZru3UChDXkw4aYzn5dFdjvNDrKp3MtiA",
-        "derivationPath": "44'/145'/0'/0/0",
-      },
-    ],
     "id": "js:2:bitcoin_cash:xpub6D7pqJa4V3SFSigcsRaFL2mpfG7469osrMkk4ieR2uk8y1v3nuQUD8W8v36PLWQtVRSggSQM7jLpGNKH7sqCaoPSJEp9wZCVkRnMWoiUUXa:",
     "index": 0,
     "name": "Bitcoin Cash 1",
@@ -11484,12 +11418,6 @@ exports[`bitcoin_cash currency bridge scanAccounts bitcoin_cash seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "bitcoincash:qqgaflq75ze7k9k40uf5f6k7dvsafu8zdckqw2styt",
     "freshAddressPath": "44'/145'/1'/0/0",
-    "freshAddresses": [
-      {
-        "address": "12dHdi2ghMJjddDCr3i36ZxXXEY5zwa7da",
-        "derivationPath": "44'/145'/1'/0/0",
-      },
-    ],
     "id": "js:2:bitcoin_cash:xpub6D7pqJa4V3SFVc2TjqQaz1N6gCs5vTjznBSAyEE9es1j5nTb2uKXbihXQuaUURKJ59hEVQZctuCSC8t1MURbeiSmZFDTBsJ9QJCS5crNrBG:",
     "index": 1,
     "name": "Bitcoin Cash 2",
@@ -14018,12 +13946,6 @@ exports[`bitcoin_gold currency bridge scanAccounts bitcoin_gold seed 1 1`] = `
     "derivationMode": "unsplit",
     "freshAddress": "GL8PMhsyKkUV7ZBrJrEPc9cFVzVVR2y6Hw",
     "freshAddressPath": "44'/0'/0'/0/3",
-    "freshAddresses": [
-      {
-        "address": "GMbJmrgN6rD1ELRtPJ41gEYxuKu1FcJWx3",
-        "derivationPath": "44'/0'/0'/0/0",
-      },
-    ],
     "id": "js:2:bitcoin_gold:xpub6BuPWhjLqutPV8SF4RMrrn8c3t7uBZbz4CBbThpbg9GYjqRMncra9mjgSfWSK7uMDz37hhzJ8wvkbDDQQJt6VgwLoszvmPiSBtLA1bPLLSn:unsplit",
     "index": 0,
     "name": "Bitcoin Gold 1",
@@ -14046,12 +13968,6 @@ exports[`bitcoin_gold currency bridge scanAccounts bitcoin_gold seed 1 1`] = `
     "derivationMode": "segwit_unsplit",
     "freshAddress": "APbUEw3HsVLXVcTk8JE3URdYH1YEGffm5P",
     "freshAddressPath": "49'/0'/0'/0/3",
-    "freshAddresses": [
-      {
-        "address": "AL3SyHvED3LJxa61VZUnwLmhyi1WLVRzD2",
-        "derivationPath": "49'/0'/0'/0/0",
-      },
-    ],
     "id": "js:2:bitcoin_gold:xpub6CKb86o7RHSCxuwP5dnxyDySLbnVWypQUxhWpycFZWFTzXuXy3UgGtG3o51oGER6X2UY6zRqd5AXgzNghb9va1FkfzXz6k1RT6EwTwCKejE:segwit_unsplit",
     "index": 0,
     "name": "Bitcoin Gold 1",
@@ -14074,12 +13990,6 @@ exports[`bitcoin_gold currency bridge scanAccounts bitcoin_gold seed 1 1`] = `
     "derivationMode": "segwit",
     "freshAddress": "AcZizfpXmETHFJGaDdkeJxYngngf3ttGhc",
     "freshAddressPath": "49'/156'/0'/0/5",
-    "freshAddresses": [
-      {
-        "address": "AeYje2FzXiAABiDXoY89ghj7YpupqwG5Dj",
-        "derivationPath": "49'/156'/0'/0/0",
-      },
-    ],
     "id": "js:2:bitcoin_gold:xpub6CtTgvCAvB8VFH5iab8qc8GcXAQ3qfBGEJkedBrEH414ND1mpFzp6PhQP5m74Uzqb4o51KnXYK6KEiL51XbrwYa6WE1jxzwuCQa7GV88MHa:segwit",
     "index": 0,
     "name": "Bitcoin Gold 1",
@@ -14102,12 +14012,6 @@ exports[`bitcoin_gold currency bridge scanAccounts bitcoin_gold seed 1 1`] = `
     "derivationMode": "segwit",
     "freshAddress": "AKebKHcMrb9nvoPCy1qmjD67QFLt8Unr1q",
     "freshAddressPath": "49'/156'/1'/0/0",
-    "freshAddresses": [
-      {
-        "address": "AKebKHcMrb9nvoPCy1qmjD67QFLt8Unr1q",
-        "derivationPath": "49'/156'/1'/0/0",
-      },
-    ],
     "id": "js:2:bitcoin_gold:xpub6CtTgvCAvB8VJZVpJsSueoPyDoWwXtQf1P49q3kTaSoCe6ELeGtyJVtQ9qikkuPyTUrm5MpN2yw2Muhyd2tWnazehh6616Gajsp4FqwsisA:segwit",
     "index": 1,
     "name": "Bitcoin Gold 2",
@@ -14130,12 +14034,6 @@ exports[`bitcoin_gold currency bridge scanAccounts bitcoin_gold seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "GZ1PLSCQxD9aUkb5CmMeXC6ZAaHnRtBwbb",
     "freshAddressPath": "44'/156'/0'/0/2",
-    "freshAddresses": [
-      {
-        "address": "GQKMSSXGHiaHoF1Z2T6hEj9e3jQQZcaGGh",
-        "derivationPath": "44'/156'/0'/0/0",
-      },
-    ],
     "id": "js:2:bitcoin_gold:xpub6C5kqm418Wut5RFaiKvcBznC1MC6oHi6G8RZ1xRVbQbNDSkpUTzkgZ9Z43RtC5ptHBV3AMqycVS2tHhmmxmqWorswc3796CMHTSCg5AJXnx:",
     "index": 0,
     "name": "Bitcoin Gold 1",
@@ -14158,12 +14056,6 @@ exports[`bitcoin_gold currency bridge scanAccounts bitcoin_gold seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "GQRj65ZHznRTCV4MNbSstxPsfaLmwaysmD",
     "freshAddressPath": "44'/156'/1'/0/0",
-    "freshAddresses": [
-      {
-        "address": "GQRj65ZHznRTCV4MNbSstxPsfaLmwaysmD",
-        "derivationPath": "44'/156'/1'/0/0",
-      },
-    ],
     "id": "js:2:bitcoin_gold:xpub6C5kqm418Wut6kFDfmmLTnHvyBCLjJJYyvDmDJW8dzLVZ93Y9rWrjuUp4iecWCFUqLNiLF28awmMngyCQ7c4WywHsWKZ1VEbd66UP5uFTx6:",
     "index": 1,
     "name": "Bitcoin Gold 2",
@@ -14894,12 +14786,6 @@ exports[`dash currency bridge scanAccounts dash seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "Xq6jQDPGVMcCoTmEHFbQGGWf53EFNF8SDg",
     "freshAddressPath": "44'/5'/0'/0/8",
-    "freshAddresses": [
-      {
-        "address": "XiEvPwG7j1qWHXeHSSMyMQ5hJpMDevAN3T",
-        "derivationPath": "44'/5'/0'/0/0",
-      },
-    ],
     "id": "js:2:dash:drkvjRicQKXd21b4fiTjSfm4SMoVE5q6DhCopUQ4pBYU9WT1dTVSUHoF91sfFkfgR9MdXqiPGgpNV45VrGFrVfVGn8vH7jroquD34qyYuHbj6Dk:",
     "index": 0,
     "name": "Dash 1",
@@ -14922,12 +14808,6 @@ exports[`dash currency bridge scanAccounts dash seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "Xkp9AXxGDqeZM38V8ko3Eg2TaY9oQVT9oo",
     "freshAddressPath": "44'/5'/1'/0/12",
-    "freshAddresses": [
-      {
-        "address": "XsuP3gZVSaDW9LiCCLjXV25MwAXuBbc2jD",
-        "derivationPath": "44'/5'/1'/0/0",
-      },
-    ],
     "id": "js:2:dash:drkvjRicQKXd21b4iYXbeKjiBPLHQyqeriXcjUL6HxiLnMbLkC6w2teZTgxpjSv4tZ4gq5KrNan9c9aPtrkUhRF3aBQa4vr3WGy6z1WwQh5GB7W:",
     "index": 1,
     "name": "Dash 2",
@@ -14950,12 +14830,6 @@ exports[`dash currency bridge scanAccounts dash seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "XtNhJXfydhg5bWrhBgDon7rAMqtK2XJ3Jr",
     "freshAddressPath": "44'/5'/2'/0/0",
-    "freshAddresses": [
-      {
-        "address": "XtNhJXfydhg5bWrhBgDon7rAMqtK2XJ3Jr",
-        "derivationPath": "44'/5'/2'/0/0",
-      },
-    ],
     "id": "js:2:dash:drkvjRicQKXd21b4iybA3Ujpe4BxxrvMPEBs5W1vrHeGK4tFU6uZixaCzJ8Jq4C3yXdKmMnW45JvZ6nnuzSBevrtvh9GdRU6soFJhgGHBKtwboC:",
     "index": 2,
     "name": "Dash 3",
@@ -15956,12 +15830,6 @@ exports[`decred currency bridge scanAccounts decred seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "DsmXRt8K4SYfs6wFsyNmvYW1Q7B2cvFA628",
     "freshAddressPath": "44'/42'/0'/0/50",
-    "freshAddresses": [
-      {
-        "address": "DsfTvYBcZ38unToZ6MZPhgRYYkZo2W2RPrg",
-        "derivationPath": "44'/42'/0'/0/0",
-      },
-    ],
     "id": "js:2:decred:dpubZFDVCCdFkBeuZXSf8dL49fG3zb6vqnE7wLixKRiHpiCAirvNh53N28DAHmqybRLgCZMgVDgrFBrTqNZZJppZ8QgDqxY6vtD4aJ1nNjUYnhT:",
     "index": 0,
     "name": "Decred 1",
@@ -15984,12 +15852,6 @@ exports[`decred currency bridge scanAccounts decred seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "DsbknWZPoJeTfW9AyDYYv4guZUqAqkCo2uo",
     "freshAddressPath": "44'/42'/1'/0/46",
-    "freshAddresses": [
-      {
-        "address": "DsX9Faua9kpewM3kv2FSkwA5KmGShPA32pL",
-        "derivationPath": "44'/42'/1'/0/0",
-      },
-    ],
     "id": "js:2:decred:dpubZFDVCCdFkBeubksrzFQXDzcn7nVB3uFKUAj17LfCijBm4SyCTPb2mbAbYqtrotmWjiZPigWTEePwzgXLUx1fT2UN6n5NfC2WtBPx7e3pAhN:",
     "index": 1,
     "name": "Decred 2",
@@ -16012,12 +15874,6 @@ exports[`decred currency bridge scanAccounts decred seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "DsR3hULYzWkMmkXDQzf3D26jmjLjaefvrVS",
     "freshAddressPath": "44'/42'/2'/0/4",
-    "freshAddresses": [
-      {
-        "address": "DseT7A6vNvYxNvrn3whqJSznCxRVJ1FJAa2",
-        "derivationPath": "44'/42'/2'/0/0",
-      },
-    ],
     "id": "js:2:decred:dpubZFDVCCdFkBeufRYVfDcs6YcRsGkepqD2uyJk8DDxhsjSo1TETDoxjqY9fdoYjBU2W93Sdxyy1vVj4vzJTiKuLBEAUSpPTDU1jVGoq1oX8f1:",
     "index": 2,
     "name": "Decred 3",
@@ -16040,12 +15896,6 @@ exports[`decred currency bridge scanAccounts decred seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "DsVPKFbctGLqezRon4kzgmS16XqYS6Z3rxa",
     "freshAddressPath": "44'/42'/3'/0/0",
-    "freshAddresses": [
-      {
-        "address": "DsVPKFbctGLqezRon4kzgmS16XqYS6Z3rxa",
-        "derivationPath": "44'/42'/3'/0/0",
-      },
-    ],
     "id": "js:2:decred:dpubZFDVCCdFkBeufxc7PWg8o1L6oBJKRk7wUhNMLDDm1Pxg9D9eyCR3EB6kas2Uuqwx6236oauPDLQ5r5AwPS43Byt7UPbgeiZ2oxZ97sGmA6S:",
     "index": 3,
     "name": "Decred 4",
@@ -20910,12 +20760,6 @@ exports[`digibyte currency bridge scanAccounts digibyte seed 1 1`] = `
     "derivationMode": "native_segwit",
     "freshAddress": "dgb1qs45s7zq4gn6uygzrthyh067crzphvhwu33a8sl",
     "freshAddressPath": "84'/20'/0'/0/3",
-    "freshAddresses": [
-      {
-        "address": "dgb1qdh5nvn6yqdctjz8f7fxpkskntdfyagppvck68v",
-        "derivationPath": "84'/20'/0'/0/0",
-      },
-    ],
     "id": "js:2:digibyte:xpub6CV98T6ompjUmKuMaULsw4UP8yfnVCg6831rWdcPjScn6RaGWrt3b7uvTpt9hcq6tLtS1dGNzeJ9x4NpVGzLq7CFscxCdoPZ6zxkqGymx98:native_segwit",
     "index": 0,
     "name": "DigiByte 1",
@@ -20938,12 +20782,6 @@ exports[`digibyte currency bridge scanAccounts digibyte seed 1 1`] = `
     "derivationMode": "native_segwit",
     "freshAddress": "dgb1q6c5jzgduyje29w9lsdwkd52dn3qxpcch87urdm",
     "freshAddressPath": "84'/20'/1'/0/0",
-    "freshAddresses": [
-      {
-        "address": "dgb1q6c5jzgduyje29w9lsdwkd52dn3qxpcch87urdm",
-        "derivationPath": "84'/20'/1'/0/0",
-      },
-    ],
     "id": "js:2:digibyte:xpub6CV98T6ompjUo2YMbNNwkK6t2xQ9ZMihM54xFopW9896ztmAA6haNfNFuFQY3JLrCmKUAdRbYn1sqUUN7aVSVBPRqCdYX9uoroNUWTLFUU1:native_segwit",
     "index": 1,
     "name": "DigiByte 2",
@@ -20966,12 +20804,6 @@ exports[`digibyte currency bridge scanAccounts digibyte seed 1 1`] = `
     "derivationMode": "segwit",
     "freshAddress": "Sb4r6mx1WEZGzJvXZVqr17vYQ9yLhmjuSz",
     "freshAddressPath": "49'/20'/0'/0/20",
-    "freshAddresses": [
-      {
-        "address": "SMbxEduhxATi5Vo2DEMwC8WuE8aoubtCfk",
-        "derivationPath": "49'/20'/0'/0/0",
-      },
-    ],
     "id": "js:2:digibyte:xpub6CU9cUEYPkHVCSCuHWM9g7TxhmXByzPJGU3k9W588wNearJ1xjPjS5PW3fkYUaYRHgkaFx352YQTyWwZD7qbR8yMaac6K8UeV9XjydgBnkv:segwit",
     "index": 0,
     "name": "DigiByte 1",
@@ -20994,12 +20826,6 @@ exports[`digibyte currency bridge scanAccounts digibyte seed 1 1`] = `
     "derivationMode": "segwit",
     "freshAddress": "STTqUnTuhXEuVjVsa1rGNrVqweStbcx39e",
     "freshAddressPath": "49'/20'/1'/0/1",
-    "freshAddresses": [
-      {
-        "address": "SN2EZBbhDXimGbvE6Q8bWDXJe4FqEYPYd9",
-        "derivationPath": "49'/20'/1'/0/0",
-      },
-    ],
     "id": "js:2:digibyte:xpub6CU9cUEYPkHVFw3jvQ3epUkHpqpN7NS9eFFbS57WynDvmzqcBtdAY5uvaLCS7QakFN7uJiQLWLZz56tPAwqQq8LFXqorVMgK9r4Ev2Sg2Eu:segwit",
     "index": 1,
     "name": "DigiByte 2",
@@ -21022,12 +20848,6 @@ exports[`digibyte currency bridge scanAccounts digibyte seed 1 1`] = `
     "derivationMode": "segwit",
     "freshAddress": "SR7rLXSrTYjDA7kqP3CmScvkYhWNBE9AH1",
     "freshAddressPath": "49'/20'/2'/0/0",
-    "freshAddresses": [
-      {
-        "address": "SR7rLXSrTYjDA7kqP3CmScvkYhWNBE9AH1",
-        "derivationPath": "49'/20'/2'/0/0",
-      },
-    ],
     "id": "js:2:digibyte:xpub6CU9cUEYPkHVHnMTPxCWhA59f6GbHCrop6j1RXbZKFZg8ES9eCamW26rWEji2zmXhRBLc2xxTVcD7qxKHKe99XyWwn4udqDBeTzRysURXRR:segwit",
     "index": 2,
     "name": "DigiByte 3",
@@ -21050,12 +20870,6 @@ exports[`digibyte currency bridge scanAccounts digibyte seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "DMtVdcKhnbntP1dSYYmSFNg8GK1T8aCwCb",
     "freshAddressPath": "44'/20'/0'/0/12",
-    "freshAddresses": [
-      {
-        "address": "DR7G2x3RjKopgrR6s8piGrZj9JwfZppJfS",
-        "derivationPath": "44'/20'/0'/0/0",
-      },
-    ],
     "id": "js:2:digibyte:xpub6DUeEdRmKaQSJnJBJURNcg4ss2fsjQvPFLkgQdmDsJ6aH9FJjurpgt3jxMbs2n3ctHsDYztMWiZ7H27wLRevnkFggwK8HVyKZf5Kij3PjuG:",
     "index": 0,
     "name": "DigiByte 1",
@@ -21078,12 +20892,6 @@ exports[`digibyte currency bridge scanAccounts digibyte seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "DDqL91AjNtppYSybRcABYjrUtpuwQMVSZR",
     "freshAddressPath": "44'/20'/1'/0/0",
-    "freshAddresses": [
-      {
-        "address": "DDqL91AjNtppYSybRcABYjrUtpuwQMVSZR",
-        "derivationPath": "44'/20'/1'/0/0",
-      },
-    ],
     "id": "js:2:digibyte:xpub6DUeEdRmKaQSNaZhYGoVZBaP42H4hCNdJTpQzFztxBiqfD1GMCds4v8LENpHYCTU1Am9NDVmswJkNrahKpQ24GTBugvqzCgk9aUNUEYMtFj:",
     "index": 1,
     "name": "DigiByte 2",
@@ -22825,26 +22633,20 @@ exports[`digibyte currency bridge scanAccounts digibyte seed 1 2`] = `
 exports[`dogecoin currency bridge scanAccounts dogecoin seed 1 1`] = `
 [
   {
-    "balance": "4988700000",
+    "balance": "0",
     "bitcoinResources": {},
     "currencyId": "dogecoin",
     "derivationMode": "",
     "freshAddress": "DPWV3zLpMWMNyvGzWLzCJsUGNqAqCLd7nk",
     "freshAddressPath": "44'/3'/0'/0/7",
-    "freshAddresses": [
-      {
-        "address": "DAfbcDmVuEjqiFwv6itJTESCUzk8P4H2wE",
-        "derivationPath": "44'/3'/0'/0/0",
-      },
-    ],
     "id": "js:2:dogecoin:dgub8rBqrhN2grbuDNuFBCu9u9KQKgQmkKaa15Yvnf4YznmvqFZByDPJypigogDKanefhrjj129Ek1W13zvtyQSD6HDpzxyskJvU6xmhD29S9eF:",
     "index": 0,
     "name": "Dogecoin 1",
     "nfts": undefined,
-    "operationsCount": 13,
+    "operationsCount": 14,
     "pendingOperations": [],
     "seedIdentifier": "0416cc9a6e8e778fb11883b788f886766aecf972f34e10350e394d3dddf90b2d2297487eed3c0d53289c95d61616f258e76a8bb9f17cfef6512d390b90424ab8ab",
-    "spendableBalance": "4988700000",
+    "spendableBalance": "0",
     "starred": false,
     "swapHistory": [],
     "syncHash": undefined,
@@ -22859,12 +22661,6 @@ exports[`dogecoin currency bridge scanAccounts dogecoin seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "DJcmPdxWR9LmVgY4udNS8TnLyeJg5kArpG",
     "freshAddressPath": "44'/3'/1'/0/5",
-    "freshAddresses": [
-      {
-        "address": "D6F1qq32tGbNVsMSJoA5z6o49fPUEMCt3K",
-        "derivationPath": "44'/3'/1'/0/0",
-      },
-    ],
     "id": "js:2:dogecoin:dgub8rBqrhN2grbuFeMR47KiFwZWqV6A6kmKQ5F73eKwpLqT8Wmj7P4gmuAUbEHJxVr5qkfaUN2kmYsD4pPTQbkUtTqk7dtpGcWWTLC7F1ACS1u:",
     "index": 1,
     "name": "Dogecoin 2",
@@ -22887,12 +22683,6 @@ exports[`dogecoin currency bridge scanAccounts dogecoin seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "DFL8gp5WQviz3hkqNppKaTAmosmAdLpDUh",
     "freshAddressPath": "44'/3'/2'/0/0",
-    "freshAddresses": [
-      {
-        "address": "DFL8gp5WQviz3hkqNppKaTAmosmAdLpDUh",
-        "derivationPath": "44'/3'/2'/0/0",
-      },
-    ],
     "id": "js:2:dogecoin:dgub8rBqrhN2grbuGtVSoWKrKi97gHrA1eV6XQtR9AKFgG2BP3pQ12ncpkTBPmKGSU7xTd28RpYZFkUryG9PBFStcdCuHVCtAfLmi8NhTF8PRGY:",
     "index": 2,
     "name": "Dogecoin 3",
@@ -23168,6 +22958,28 @@ exports[`dogecoin currency bridge scanAccounts dogecoin seed 1 2`] = `
       "tokenId": undefined,
       "type": "IN",
       "value": "424268085106",
+    },
+    {
+      "accountId": "js:2:dogecoin:dgub8rBqrhN2grbuDNuFBCu9u9KQKgQmkKaa15Yvnf4YznmvqFZByDPJypigogDKanefhrjj129Ek1W13zvtyQSD6HDpzxyskJvU6xmhD29S9eF:",
+      "blockHash": "e2ee5d0ad50319b10b96702273641db96a169141750c379c5d7376ec6439d236",
+      "blockHeight": 5051005,
+      "contract": undefined,
+      "extra": {},
+      "fee": "52275456",
+      "hasFailed": false,
+      "hash": "ed1da5e9c4dd2ca8b9a49e9dcf152486f23068dcffcb9ef2398d85fc6e7d8225",
+      "id": "js:2:dogecoin:dgub8rBqrhN2grbuDNuFBCu9u9KQKgQmkKaa15Yvnf4YznmvqFZByDPJypigogDKanefhrjj129Ek1W13zvtyQSD6HDpzxyskJvU6xmhD29S9eF:-ed1da5e9c4dd2ca8b9a49e9dcf152486f23068dcffcb9ef2398d85fc6e7d8225-OUT",
+      "operator": undefined,
+      "recipients": [
+        "DR8adUoERxRbQc4rKBdsMk1HaEA6om1Xrs",
+      ],
+      "senders": [
+        "DCTZJgCwmkTko41GXvWF4BrutEY5NSr1hC",
+      ],
+      "standard": undefined,
+      "tokenId": undefined,
+      "type": "OUT",
+      "value": "4988700000",
     },
     {
       "accountId": "js:2:dogecoin:dgub8rBqrhN2grbuDNuFBCu9u9KQKgQmkKaa15Yvnf4YznmvqFZByDPJypigogDKanefhrjj129Ek1W13zvtyQSD6HDpzxyskJvU6xmhD29S9eF:",
@@ -23507,26 +23319,20 @@ exports[`dogecoin currency bridge scanAccounts dogecoin seed 1 2`] = `
 exports[`komodo currency bridge scanAccounts komodo seed 1 1`] = `
 [
   {
-    "balance": "0",
+    "balance": "837026811",
     "bitcoinResources": {},
     "currencyId": "komodo",
     "derivationMode": "",
     "freshAddress": "RPyriQuwaVtfxjG8qhdTCCsV27LDkgvAX9",
     "freshAddressPath": "44'/141'/0'/0/29",
-    "freshAddresses": [
-      {
-        "address": "REAHAn1xwQxYdS95MATKhvVRB9PsFZL46K",
-        "derivationPath": "44'/141'/0'/0/0",
-      },
-    ],
     "id": "js:2:komodo:v4PKUB9JUMaUJ1t6VcHUgyrpq5sR8sbvt6XrJtN4jRunCTG9PsXJn7FdSN3NPTXPvZTj8qCf7NNK1YerYXzkMcXaoYMBV3KfMbPayDgs1mtJZ9Zp:",
     "index": 0,
     "name": "Komodo 1",
     "nfts": undefined,
-    "operationsCount": 61,
+    "operationsCount": 56,
     "pendingOperations": [],
     "seedIdentifier": "04f02ac8add1eb928d983bdbe3837b03978813d8512e50a75240583b6fc5559d235142e50727d68e101a41baf94481a863bf1b2658bcce2b8b1e82b03f4646e1ad",
-    "spendableBalance": "0",
+    "spendableBalance": "837026811",
     "starred": false,
     "swapHistory": [],
     "syncHash": undefined,
@@ -23535,26 +23341,20 @@ exports[`komodo currency bridge scanAccounts komodo seed 1 1`] = `
     "xpub": "v4PKUB9JUMaUJ1t6VcHUgyrpq5sR8sbvt6XrJtN4jRunCTG9PsXJn7FdSN3NPTXPvZTj8qCf7NNK1YerYXzkMcXaoYMBV3KfMbPayDgs1mtJZ9Zp",
   },
   {
-    "balance": "0",
+    "balance": "1388795338",
     "bitcoinResources": {},
     "currencyId": "komodo",
     "derivationMode": "",
-    "freshAddress": "RJ4o1mozTbMYxH1MMyJD1DMhbBHNhTosXX",
-    "freshAddressPath": "44'/141'/1'/0/25",
-    "freshAddresses": [
-      {
-        "address": "RUohAyCGt1wWPkpnrUbKem87nWjFTakvmb",
-        "derivationPath": "44'/141'/1'/0/0",
-      },
-    ],
+    "freshAddress": "RK7qVmRQdEtZFsnm6Py7BdZuGYpZu8q4zK",
+    "freshAddressPath": "44'/141'/1'/0/24",
     "id": "js:2:komodo:v4PKUB9JUMaUJ1t6Vd4uagV7znkoUA1NKvNUXm2YMJN7JZBwu5Rxqv5YWRd3YZMKbwofaXdNgfmXVe8gVsju4VECJHXmY2Syx8cyua1YjNawJDn1:",
     "index": 1,
     "name": "Komodo 2",
     "nfts": undefined,
-    "operationsCount": 73,
+    "operationsCount": 67,
     "pendingOperations": [],
     "seedIdentifier": "04f02ac8add1eb928d983bdbe3837b03978813d8512e50a75240583b6fc5559d235142e50727d68e101a41baf94481a863bf1b2658bcce2b8b1e82b03f4646e1ad",
-    "spendableBalance": "0",
+    "spendableBalance": "1388795338",
     "starred": false,
     "swapHistory": [],
     "syncHash": undefined,
@@ -23569,17 +23369,11 @@ exports[`komodo currency bridge scanAccounts komodo seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "RBLBuovvYmojwhPoLo7GML2KpkqZqu1WEe",
     "freshAddressPath": "44'/141'/2'/0/35",
-    "freshAddresses": [
-      {
-        "address": "RJefAEr1mDREUPcw4uAR8m9pQHHthvVF5V",
-        "derivationPath": "44'/141'/2'/0/0",
-      },
-    ],
     "id": "js:2:komodo:v4PKUB9JUMaUJ1t6VgiYDS7MekMgAnanqcdKGekHYXFRLxvJB17WY3F6U9L6SRhH2ZQy15LdCA9yK6i69byE3uSsxTUGbQKeQEVzKMRwx49mKXL8:",
     "index": 2,
     "name": "Komodo 3",
     "nfts": undefined,
-    "operationsCount": 49,
+    "operationsCount": 45,
     "pendingOperations": [],
     "seedIdentifier": "04f02ac8add1eb928d983bdbe3837b03978813d8512e50a75240583b6fc5559d235142e50727d68e101a41baf94481a863bf1b2658bcce2b8b1e82b03f4646e1ad",
     "spendableBalance": "2745254",
@@ -23597,12 +23391,6 @@ exports[`komodo currency bridge scanAccounts komodo seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "RBC5h3JZPQXRY2RXhtDkCEMZ89mRKS7Ah6",
     "freshAddressPath": "44'/141'/3'/0/0",
-    "freshAddresses": [
-      {
-        "address": "RBC5h3JZPQXRY2RXhtDkCEMZ89mRKS7Ah6",
-        "derivationPath": "44'/141'/3'/0/0",
-      },
-    ],
     "id": "js:2:komodo:v4PKUB9JUMaUJ1t6VjrgjSUejxmgBN91qtbUydSaCQ8XN6nf1Hg7QcickMoN6Fn3pYnZUu6XgCWooxuiLCLiQaEb4gaZjDocHBZysviWupegVYRm:",
     "index": 3,
     "name": "Komodo 4",
@@ -23755,7 +23543,7 @@ exports[`komodo currency bridge scanAccounts komodo seed 1 2`] = `
       "tokenId": undefined,
       "transactionSequenceNumber": 16777215,
       "type": "OUT",
-      "value": "958602010",
+      "value": "658602010",
     },
     {
       "accountId": "js:2:komodo:v4PKUB9JUMaUJ1t6VcHUgyrpq5sR8sbvt6XrJtN4jRunCTG9PsXJn7FdSN3NPTXPvZTj8qCf7NNK1YerYXzkMcXaoYMBV3KfMbPayDgs1mtJZ9Zp:",
@@ -24129,7 +23917,7 @@ exports[`komodo currency bridge scanAccounts komodo seed 1 2`] = `
       "tokenId": undefined,
       "transactionSequenceNumber": 16777215,
       "type": "OUT",
-      "value": "658000374",
+      "value": "-770696223",
     },
     {
       "accountId": "js:2:komodo:v4PKUB9JUMaUJ1t6VcHUgyrpq5sR8sbvt6XrJtN4jRunCTG9PsXJn7FdSN3NPTXPvZTj8qCf7NNK1YerYXzkMcXaoYMBV3KfMbPayDgs1mtJZ9Zp:",
@@ -24259,50 +24047,6 @@ exports[`komodo currency bridge scanAccounts komodo seed 1 2`] = `
       "transactionSequenceNumber": 16777215,
       "type": "OUT",
       "value": "200000374",
-    },
-    {
-      "accountId": "js:2:komodo:v4PKUB9JUMaUJ1t6VcHUgyrpq5sR8sbvt6XrJtN4jRunCTG9PsXJn7FdSN3NPTXPvZTj8qCf7NNK1YerYXzkMcXaoYMBV3KfMbPayDgs1mtJZ9Zp:",
-      "blockHash": "0f0cd16f02e07fd241bdc9ac588b80b2437dbd187cd775e4a1a2e6ea2ef3a258",
-      "blockHeight": 1409663,
-      "contract": undefined,
-      "extra": {},
-      "fee": "452",
-      "hasFailed": false,
-      "hash": "61c95345bad71261d562e50d91ff53893ec46d0a7902002db10cdcaa10583aeb",
-      "id": "js:2:komodo:v4PKUB9JUMaUJ1t6VcHUgyrpq5sR8sbvt6XrJtN4jRunCTG9PsXJn7FdSN3NPTXPvZTj8qCf7NNK1YerYXzkMcXaoYMBV3KfMbPayDgs1mtJZ9Zp:-61c95345bad71261d562e50d91ff53893ec46d0a7902002db10cdcaa10583aeb-IN",
-      "operator": undefined,
-      "recipients": [
-        "RGEFfDaCWwwnLbs8LBwQHmd5gsrGzpgLoL",
-      ],
-      "senders": [
-        "RLwt3WByFtb3ys6QmPc8i78krC4us4toR2",
-      ],
-      "standard": undefined,
-      "tokenId": undefined,
-      "type": "IN",
-      "value": "69855000",
-    },
-    {
-      "accountId": "js:2:komodo:v4PKUB9JUMaUJ1t6VcHUgyrpq5sR8sbvt6XrJtN4jRunCTG9PsXJn7FdSN3NPTXPvZTj8qCf7NNK1YerYXzkMcXaoYMBV3KfMbPayDgs1mtJZ9Zp:",
-      "blockHash": "085ac48817f121e1f89c9e492cc51e589bc4aabdec1e226be61e2dbffe80509d",
-      "blockHeight": 1315993,
-      "contract": undefined,
-      "extra": {},
-      "fee": "452",
-      "hasFailed": false,
-      "hash": "685fff294d6c4c02cb78743ccb83ff14c4bf900b150d6c1869ac0a15a1dc8a45",
-      "id": "js:2:komodo:v4PKUB9JUMaUJ1t6VcHUgyrpq5sR8sbvt6XrJtN4jRunCTG9PsXJn7FdSN3NPTXPvZTj8qCf7NNK1YerYXzkMcXaoYMBV3KfMbPayDgs1mtJZ9Zp:-685fff294d6c4c02cb78743ccb83ff14c4bf900b150d6c1869ac0a15a1dc8a45-IN",
-      "operator": undefined,
-      "recipients": [
-        "RRUYWQYzTbMA5i87hf3CBikMyFH5xv1p3x",
-      ],
-      "senders": [
-        "RSbxnimNVLAtPvCd9U6AKEC1Pxp9XKsF7J",
-      ],
-      "standard": undefined,
-      "tokenId": undefined,
-      "type": "IN",
-      "value": "300000000",
     },
     {
       "accountId": "js:2:komodo:v4PKUB9JUMaUJ1t6VcHUgyrpq5sR8sbvt6XrJtN4jRunCTG9PsXJn7FdSN3NPTXPvZTj8qCf7NNK1YerYXzkMcXaoYMBV3KfMbPayDgs1mtJZ9Zp:",
@@ -24447,30 +24191,6 @@ exports[`komodo currency bridge scanAccounts komodo seed 1 2`] = `
     },
     {
       "accountId": "js:2:komodo:v4PKUB9JUMaUJ1t6VcHUgyrpq5sR8sbvt6XrJtN4jRunCTG9PsXJn7FdSN3NPTXPvZTj8qCf7NNK1YerYXzkMcXaoYMBV3KfMbPayDgs1mtJZ9Zp:",
-      "blockHash": "00000000a251e96ffc4ff293c284343c73cbf51efa2f9e27bb03d0ece27585fc",
-      "blockHeight": 1615473,
-      "contract": undefined,
-      "extra": {},
-      "fee": "340",
-      "hasFailed": false,
-      "hash": "7cdcec165575b6f235e8cc4af93b80fe01f33785140f0d2ffabf7731214d405d",
-      "id": "js:2:komodo:v4PKUB9JUMaUJ1t6VcHUgyrpq5sR8sbvt6XrJtN4jRunCTG9PsXJn7FdSN3NPTXPvZTj8qCf7NNK1YerYXzkMcXaoYMBV3KfMbPayDgs1mtJZ9Zp:-7cdcec165575b6f235e8cc4af93b80fe01f33785140f0d2ffabf7731214d405d-OUT",
-      "operator": undefined,
-      "recipients": [
-        "RK7qVmRQdEtZFsnm6Py7BdZuGYpZu8q4zK",
-      ],
-      "senders": [
-        "RF7Yz13e4v8yRTXpi5TfupirWZvc5Ju2UF",
-        "REEfzVrbdNqnmtKyanG4KpqvUWcYXL17yX",
-      ],
-      "standard": undefined,
-      "tokenId": undefined,
-      "transactionSequenceNumber": 16777215,
-      "type": "OUT",
-      "value": "550000000",
-    },
-    {
-      "accountId": "js:2:komodo:v4PKUB9JUMaUJ1t6VcHUgyrpq5sR8sbvt6XrJtN4jRunCTG9PsXJn7FdSN3NPTXPvZTj8qCf7NNK1YerYXzkMcXaoYMBV3KfMbPayDgs1mtJZ9Zp:",
       "blockHash": "098004873d88eeab757934cdc042ac7d3d9c2859f5a95b753e24c57de3b4c8cf",
       "blockHeight": 1327114,
       "contract": undefined,
@@ -24585,30 +24305,7 @@ exports[`komodo currency bridge scanAccounts komodo seed 1 2`] = `
       "tokenId": undefined,
       "transactionSequenceNumber": 16777215,
       "type": "OUT",
-      "value": "300001122",
-    },
-    {
-      "accountId": "js:2:komodo:v4PKUB9JUMaUJ1t6VcHUgyrpq5sR8sbvt6XrJtN4jRunCTG9PsXJn7FdSN3NPTXPvZTj8qCf7NNK1YerYXzkMcXaoYMBV3KfMbPayDgs1mtJZ9Zp:",
-      "blockHash": "010c42783e4ed122046a5fa4154854a74f371fdd99d8b9d1eb334f6e3ed7f65c",
-      "blockHeight": 1368647,
-      "contract": undefined,
-      "extra": {},
-      "fee": "452",
-      "hasFailed": false,
-      "hash": "9f57eb73a194c0c719c318a498f84c941770164594e3a229dce39b1121216a00",
-      "id": "js:2:komodo:v4PKUB9JUMaUJ1t6VcHUgyrpq5sR8sbvt6XrJtN4jRunCTG9PsXJn7FdSN3NPTXPvZTj8qCf7NNK1YerYXzkMcXaoYMBV3KfMbPayDgs1mtJZ9Zp:-9f57eb73a194c0c719c318a498f84c941770164594e3a229dce39b1121216a00-IN",
-      "operator": undefined,
-      "recipients": [
-        "RCtv8ZRjsW53cn6RS8b5iry7XBqiQWuQVD",
-      ],
-      "senders": [
-        "RPUb5G4iGWhJy6TEzwhntA4qoyJSmXjSak",
-      ],
-      "standard": undefined,
-      "tokenId": undefined,
-      "transactionSequenceNumber": 16777215,
-      "type": "IN",
-      "value": "100000000",
+      "value": "1728697719",
     },
     {
       "accountId": "js:2:komodo:v4PKUB9JUMaUJ1t6VcHUgyrpq5sR8sbvt6XrJtN4jRunCTG9PsXJn7FdSN3NPTXPvZTj8qCf7NNK1YerYXzkMcXaoYMBV3KfMbPayDgs1mtJZ9Zp:",
@@ -24681,29 +24378,7 @@ exports[`komodo currency bridge scanAccounts komodo seed 1 2`] = `
       "tokenId": undefined,
       "transactionSequenceNumber": 16777215,
       "type": "OUT",
-      "value": "444757902",
-    },
-    {
-      "accountId": "js:2:komodo:v4PKUB9JUMaUJ1t6VcHUgyrpq5sR8sbvt6XrJtN4jRunCTG9PsXJn7FdSN3NPTXPvZTj8qCf7NNK1YerYXzkMcXaoYMBV3KfMbPayDgs1mtJZ9Zp:",
-      "blockHash": "0007a78b8430eda5efec2a7da4892e12de56ce98156ddef18331b74feb9386ef",
-      "blockHeight": 1397323,
-      "contract": undefined,
-      "extra": {},
-      "fee": "452",
-      "hasFailed": false,
-      "hash": "a36f60f029a0d4d783574c2f18c4cea4075085a61ede60507a1678e426792aca",
-      "id": "js:2:komodo:v4PKUB9JUMaUJ1t6VcHUgyrpq5sR8sbvt6XrJtN4jRunCTG9PsXJn7FdSN3NPTXPvZTj8qCf7NNK1YerYXzkMcXaoYMBV3KfMbPayDgs1mtJZ9Zp:-a36f60f029a0d4d783574c2f18c4cea4075085a61ede60507a1678e426792aca-IN",
-      "operator": undefined,
-      "recipients": [
-        "RKb2xHTs9m5Z7mfV9B6CBCXd5rMautbHff",
-      ],
-      "senders": [
-        "RJxfSjS8iGYnDs4c95tjcCorWq7wrSLBgh",
-      ],
-      "standard": undefined,
-      "tokenId": undefined,
-      "type": "IN",
-      "value": "100000000",
+      "value": "274902902",
     },
     {
       "accountId": "js:2:komodo:v4PKUB9JUMaUJ1t6VcHUgyrpq5sR8sbvt6XrJtN4jRunCTG9PsXJn7FdSN3NPTXPvZTj8qCf7NNK1YerYXzkMcXaoYMBV3KfMbPayDgs1mtJZ9Zp:",
@@ -24846,7 +24521,7 @@ exports[`komodo currency bridge scanAccounts komodo seed 1 2`] = `
       "tokenId": undefined,
       "transactionSequenceNumber": 16777215,
       "type": "OUT",
-      "value": "300001044",
+      "value": "200001044",
     },
     {
       "accountId": "js:2:komodo:v4PKUB9JUMaUJ1t6VcHUgyrpq5sR8sbvt6XrJtN4jRunCTG9PsXJn7FdSN3NPTXPvZTj8qCf7NNK1YerYXzkMcXaoYMBV3KfMbPayDgs1mtJZ9Zp:",
@@ -25102,7 +24777,7 @@ exports[`komodo currency bridge scanAccounts komodo seed 1 2`] = `
       "tokenId": undefined,
       "transactionSequenceNumber": 16777215,
       "type": "OUT",
-      "value": "221489726",
+      "value": "325584304",
     },
     {
       "accountId": "js:2:komodo:v4PKUB9JUMaUJ1t6Vd4uagV7znkoUA1NKvNUXm2YMJN7JZBwu5Rxqv5YWRd3YZMKbwofaXdNgfmXVe8gVsju4VECJHXmY2Syx8cyua1YjNawJDn1:",
@@ -25335,7 +25010,7 @@ exports[`komodo currency bridge scanAccounts komodo seed 1 2`] = `
       "tokenId": undefined,
       "transactionSequenceNumber": 16777215,
       "type": "OUT",
-      "value": "100000748",
+      "value": "100000000",
     },
     {
       "accountId": "js:2:komodo:v4PKUB9JUMaUJ1t6Vd4uagV7znkoUA1NKvNUXm2YMJN7JZBwu5Rxqv5YWRd3YZMKbwofaXdNgfmXVe8gVsju4VECJHXmY2Syx8cyua1YjNawJDn1:",
@@ -25358,7 +25033,7 @@ exports[`komodo currency bridge scanAccounts komodo seed 1 2`] = `
       "tokenId": undefined,
       "transactionSequenceNumber": 16777215,
       "type": "OUT",
-      "value": "700000678",
+      "value": "2265140048",
     },
     {
       "accountId": "js:2:komodo:v4PKUB9JUMaUJ1t6Vd4uagV7znkoUA1NKvNUXm2YMJN7JZBwu5Rxqv5YWRd3YZMKbwofaXdNgfmXVe8gVsju4VECJHXmY2Syx8cyua1YjNawJDn1:",
@@ -25383,28 +25058,6 @@ exports[`komodo currency bridge scanAccounts komodo seed 1 2`] = `
       "transactionSequenceNumber": 16777215,
       "type": "OUT",
       "value": "200892860",
-    },
-    {
-      "accountId": "js:2:komodo:v4PKUB9JUMaUJ1t6Vd4uagV7znkoUA1NKvNUXm2YMJN7JZBwu5Rxqv5YWRd3YZMKbwofaXdNgfmXVe8gVsju4VECJHXmY2Syx8cyua1YjNawJDn1:",
-      "blockHash": "00000000f3085b26fce3c877963dad3a49cb03bd53ad4cd08aeef03e92a88701",
-      "blockHeight": 1328543,
-      "contract": undefined,
-      "extra": {},
-      "fee": "678",
-      "hasFailed": false,
-      "hash": "283e4ab4539819687a658570ace323d3f4a864e6055bcbf63b6231ef09cda401",
-      "id": "js:2:komodo:v4PKUB9JUMaUJ1t6Vd4uagV7znkoUA1NKvNUXm2YMJN7JZBwu5Rxqv5YWRd3YZMKbwofaXdNgfmXVe8gVsju4VECJHXmY2Syx8cyua1YjNawJDn1:-283e4ab4539819687a658570ace323d3f4a864e6055bcbf63b6231ef09cda401-IN",
-      "operator": undefined,
-      "recipients": [
-        "RTFp9Q7x1DMSNtixz9J5QF2tJzSG4LNPp8",
-      ],
-      "senders": [
-        "RNJeAThex6s9utX5XdQiEBkzho71PMeeut",
-      ],
-      "standard": undefined,
-      "tokenId": undefined,
-      "type": "IN",
-      "value": "900000000",
     },
     {
       "accountId": "js:2:komodo:v4PKUB9JUMaUJ1t6Vd4uagV7znkoUA1NKvNUXm2YMJN7JZBwu5Rxqv5YWRd3YZMKbwofaXdNgfmXVe8gVsju4VECJHXmY2Syx8cyua1YjNawJDn1:",
@@ -25476,28 +25129,6 @@ exports[`komodo currency bridge scanAccounts komodo seed 1 2`] = `
     },
     {
       "accountId": "js:2:komodo:v4PKUB9JUMaUJ1t6Vd4uagV7znkoUA1NKvNUXm2YMJN7JZBwu5Rxqv5YWRd3YZMKbwofaXdNgfmXVe8gVsju4VECJHXmY2Syx8cyua1YjNawJDn1:",
-      "blockHash": "000000007e2dc22c96426acc358b10cb6ffa7ba67c31790ca75c75dc674e272c",
-      "blockHeight": 1478363,
-      "contract": undefined,
-      "extra": {},
-      "fee": "2260",
-      "hasFailed": false,
-      "hash": "2dd42809ed4233943249b4c7978e2797623698254013b4dcbca494b56eb232b5",
-      "id": "js:2:komodo:v4PKUB9JUMaUJ1t6Vd4uagV7znkoUA1NKvNUXm2YMJN7JZBwu5Rxqv5YWRd3YZMKbwofaXdNgfmXVe8gVsju4VECJHXmY2Syx8cyua1YjNawJDn1:-2dd42809ed4233943249b4c7978e2797623698254013b4dcbca494b56eb232b5-IN",
-      "operator": undefined,
-      "recipients": [
-        "RT7eJiaCQCg7uixQJWYaefYqJR31QPzN46",
-      ],
-      "senders": [
-        "RSQMxNeyFPrvb4uuBgVYLcF2nTjc4LrV1c",
-      ],
-      "standard": undefined,
-      "tokenId": undefined,
-      "type": "IN",
-      "value": "100000000",
-    },
-    {
-      "accountId": "js:2:komodo:v4PKUB9JUMaUJ1t6Vd4uagV7znkoUA1NKvNUXm2YMJN7JZBwu5Rxqv5YWRd3YZMKbwofaXdNgfmXVe8gVsju4VECJHXmY2Syx8cyua1YjNawJDn1:",
       "blockHash": "02ffdf880a536846bb6a0b974b05f7589cb7ba0a7ef711690e9e0810ed24446a",
       "blockHeight": 1389886,
       "contract": undefined,
@@ -25564,7 +25195,7 @@ exports[`komodo currency bridge scanAccounts komodo seed 1 2`] = `
       "tokenId": undefined,
       "transactionSequenceNumber": 16777215,
       "type": "OUT",
-      "value": "200000748",
+      "value": "-244754838",
     },
     {
       "accountId": "js:2:komodo:v4PKUB9JUMaUJ1t6Vd4uagV7znkoUA1NKvNUXm2YMJN7JZBwu5Rxqv5YWRd3YZMKbwofaXdNgfmXVe8gVsju4VECJHXmY2Syx8cyua1YjNawJDn1:",
@@ -25611,7 +25242,7 @@ exports[`komodo currency bridge scanAccounts komodo seed 1 2`] = `
       "tokenId": undefined,
       "transactionSequenceNumber": 16777215,
       "type": "OUT",
-      "value": "400257248",
+      "value": "296162670",
     },
     {
       "accountId": "js:2:komodo:v4PKUB9JUMaUJ1t6Vd4uagV7znkoUA1NKvNUXm2YMJN7JZBwu5Rxqv5YWRd3YZMKbwofaXdNgfmXVe8gVsju4VECJHXmY2Syx8cyua1YjNawJDn1:",
@@ -25868,29 +25499,6 @@ exports[`komodo currency bridge scanAccounts komodo seed 1 2`] = `
     },
     {
       "accountId": "js:2:komodo:v4PKUB9JUMaUJ1t6Vd4uagV7znkoUA1NKvNUXm2YMJN7JZBwu5Rxqv5YWRd3YZMKbwofaXdNgfmXVe8gVsju4VECJHXmY2Syx8cyua1YjNawJDn1:",
-      "blockHash": "00000000a251e96ffc4ff293c284343c73cbf51efa2f9e27bb03d0ece27585fc",
-      "blockHeight": 1615473,
-      "contract": undefined,
-      "extra": {},
-      "fee": "340",
-      "hasFailed": false,
-      "hash": "7cdcec165575b6f235e8cc4af93b80fe01f33785140f0d2ffabf7731214d405d",
-      "id": "js:2:komodo:v4PKUB9JUMaUJ1t6Vd4uagV7znkoUA1NKvNUXm2YMJN7JZBwu5Rxqv5YWRd3YZMKbwofaXdNgfmXVe8gVsju4VECJHXmY2Syx8cyua1YjNawJDn1:-7cdcec165575b6f235e8cc4af93b80fe01f33785140f0d2ffabf7731214d405d-IN",
-      "operator": undefined,
-      "recipients": [
-        "RK7qVmRQdEtZFsnm6Py7BdZuGYpZu8q4zK",
-      ],
-      "senders": [
-        "RF7Yz13e4v8yRTXpi5TfupirWZvc5Ju2UF",
-        "REEfzVrbdNqnmtKyanG4KpqvUWcYXL17yX",
-      ],
-      "standard": undefined,
-      "tokenId": undefined,
-      "type": "IN",
-      "value": "549999660",
-    },
-    {
-      "accountId": "js:2:komodo:v4PKUB9JUMaUJ1t6Vd4uagV7znkoUA1NKvNUXm2YMJN7JZBwu5Rxqv5YWRd3YZMKbwofaXdNgfmXVe8gVsju4VECJHXmY2Syx8cyua1YjNawJDn1:",
       "blockHash": "086206ff373e3131299a41c57fdd4b164db2f9db3846110f250be7943fe3174c",
       "blockHeight": 1569665,
       "contract": undefined,
@@ -25957,7 +25565,7 @@ exports[`komodo currency bridge scanAccounts komodo seed 1 2`] = `
       "tokenId": undefined,
       "transactionSequenceNumber": 16777215,
       "type": "OUT",
-      "value": "11498203",
+      "value": "233210076",
     },
     {
       "accountId": "js:2:komodo:v4PKUB9JUMaUJ1t6Vd4uagV7znkoUA1NKvNUXm2YMJN7JZBwu5Rxqv5YWRd3YZMKbwofaXdNgfmXVe8gVsju4VECJHXmY2Syx8cyua1YjNawJDn1:",
@@ -26052,29 +25660,6 @@ exports[`komodo currency bridge scanAccounts komodo seed 1 2`] = `
     },
     {
       "accountId": "js:2:komodo:v4PKUB9JUMaUJ1t6Vd4uagV7znkoUA1NKvNUXm2YMJN7JZBwu5Rxqv5YWRd3YZMKbwofaXdNgfmXVe8gVsju4VECJHXmY2Syx8cyua1YjNawJDn1:",
-      "blockHash": "064bc910d9663c98a7e921e9d4d06f2654d46d440a26a4a86fc4fe6414deb756",
-      "blockHeight": 1315889,
-      "contract": undefined,
-      "extra": {},
-      "fee": "1122",
-      "hasFailed": false,
-      "hash": "9d34189d0506ed84a7d07eb8c754a356e94c978dc6ed88f2e3ab419103f3ba7c",
-      "id": "js:2:komodo:v4PKUB9JUMaUJ1t6Vd4uagV7znkoUA1NKvNUXm2YMJN7JZBwu5Rxqv5YWRd3YZMKbwofaXdNgfmXVe8gVsju4VECJHXmY2Syx8cyua1YjNawJDn1:-9d34189d0506ed84a7d07eb8c754a356e94c978dc6ed88f2e3ab419103f3ba7c-IN",
-      "operator": undefined,
-      "recipients": [
-        "RG3NVhdczLipGZvCnqfQhgMPwV6T3RwRX8",
-      ],
-      "senders": [
-        "RFgaa7eWegjEYg9gJkgvxcQ5FJyCceLMut",
-        "RPGKRR3iPKHU95NtwvnQSnmQQWBSea1E9V",
-      ],
-      "standard": undefined,
-      "tokenId": undefined,
-      "type": "IN",
-      "value": "300000000",
-    },
-    {
-      "accountId": "js:2:komodo:v4PKUB9JUMaUJ1t6Vd4uagV7znkoUA1NKvNUXm2YMJN7JZBwu5Rxqv5YWRd3YZMKbwofaXdNgfmXVe8gVsju4VECJHXmY2Syx8cyua1YjNawJDn1:",
       "blockHash": "06e152f964e07338d69924dc6c3fad1fbf43484184834bc82a558f24bf5be2ab",
       "blockHeight": 1305982,
       "contract": undefined,
@@ -26097,32 +25682,6 @@ exports[`komodo currency bridge scanAccounts komodo seed 1 2`] = `
     },
     {
       "accountId": "js:2:komodo:v4PKUB9JUMaUJ1t6Vd4uagV7znkoUA1NKvNUXm2YMJN7JZBwu5Rxqv5YWRd3YZMKbwofaXdNgfmXVe8gVsju4VECJHXmY2Syx8cyua1YjNawJDn1:",
-      "blockHash": "00000000faf8a049eb7e2b82e25282cccebea37c5b9dcfa2db0bb2f4a748cd5c",
-      "blockHeight": 1446579,
-      "contract": undefined,
-      "extra": {},
-      "fee": "1568",
-      "hasFailed": false,
-      "hash": "a28aea0c3e942debaff6ff0eb9b9ad8c4979605ccadf6da615df177e580633a6",
-      "id": "js:2:komodo:v4PKUB9JUMaUJ1t6Vd4uagV7znkoUA1NKvNUXm2YMJN7JZBwu5Rxqv5YWRd3YZMKbwofaXdNgfmXVe8gVsju4VECJHXmY2Syx8cyua1YjNawJDn1:-a28aea0c3e942debaff6ff0eb9b9ad8c4979605ccadf6da615df177e580633a6-IN",
-      "operator": undefined,
-      "recipients": [
-        "RGzpra2ocm9hhk4MZwXDPgfkpQfkywzdWm",
-      ],
-      "senders": [
-        "RKb2xHTs9m5Z7mfV9B6CBCXd5rMautbHff",
-        "R9x3jfPUWGVyasxwpbhG5wQJUo2oAJSTiy",
-        "RGEFfDaCWwwnLbs8LBwQHmd5gsrGzpgLoL",
-        "RQF74tgS3fgMge211AGcaHveLAG8PZJPTj",
-        "RRnNF15Zwg9HXAqV2bcKn3ekjkXj5G4B4w",
-      ],
-      "standard": undefined,
-      "tokenId": undefined,
-      "type": "IN",
-      "value": "444756334",
-    },
-    {
-      "accountId": "js:2:komodo:v4PKUB9JUMaUJ1t6Vd4uagV7znkoUA1NKvNUXm2YMJN7JZBwu5Rxqv5YWRd3YZMKbwofaXdNgfmXVe8gVsju4VECJHXmY2Syx8cyua1YjNawJDn1:",
       "blockHash": "0bfd7acf156f86c05e51dc76d37485c4241fddfd12d1d36d720b87881dac7e97",
       "blockHeight": 1335784,
       "contract": undefined,
@@ -26142,7 +25701,7 @@ exports[`komodo currency bridge scanAccounts komodo seed 1 2`] = `
       "tokenId": undefined,
       "transactionSequenceNumber": 16777215,
       "type": "OUT",
-      "value": "16699653",
+      "value": "207080357",
     },
     {
       "accountId": "js:2:komodo:v4PKUB9JUMaUJ1t6Vd4uagV7znkoUA1NKvNUXm2YMJN7JZBwu5Rxqv5YWRd3YZMKbwofaXdNgfmXVe8gVsju4VECJHXmY2Syx8cyua1YjNawJDn1:",
@@ -26245,19 +25804,18 @@ exports[`komodo currency bridge scanAccounts komodo seed 1 2`] = `
       "fee": "226",
       "hasFailed": false,
       "hash": "be07c493e4e2a0c694512df50369ed01111628ec840ffd7411a14343ac602624",
-      "id": "js:2:komodo:v4PKUB9JUMaUJ1t6Vd4uagV7znkoUA1NKvNUXm2YMJN7JZBwu5Rxqv5YWRd3YZMKbwofaXdNgfmXVe8gVsju4VECJHXmY2Syx8cyua1YjNawJDn1:-be07c493e4e2a0c694512df50369ed01111628ec840ffd7411a14343ac602624-OUT",
+      "id": "js:2:komodo:v4PKUB9JUMaUJ1t6Vd4uagV7znkoUA1NKvNUXm2YMJN7JZBwu5Rxqv5YWRd3YZMKbwofaXdNgfmXVe8gVsju4VECJHXmY2Syx8cyua1YjNawJDn1:-be07c493e4e2a0c694512df50369ed01111628ec840ffd7411a14343ac602624-IN",
       "operator": undefined,
       "recipients": [
-        "RU6LhQVXErq5vxdbm5ubnJnr236C1b9wFn",
+        "RKyqvKABNrGnGGCwiK43kKsxxCEGPYnABv",
       ],
       "senders": [
         "RTFp9Q7x1DMSNtixz9J5QF2tJzSG4LNPp8",
       ],
       "standard": undefined,
       "tokenId": undefined,
-      "transactionSequenceNumber": 16777215,
-      "type": "OUT",
-      "value": "15729173",
+      "type": "IN",
+      "value": "884270827",
     },
     {
       "accountId": "js:2:komodo:v4PKUB9JUMaUJ1t6Vd4uagV7znkoUA1NKvNUXm2YMJN7JZBwu5Rxqv5YWRd3YZMKbwofaXdNgfmXVe8gVsju4VECJHXmY2Syx8cyua1YjNawJDn1:",
@@ -26268,19 +25826,18 @@ exports[`komodo currency bridge scanAccounts komodo seed 1 2`] = `
       "fee": "226",
       "hasFailed": false,
       "hash": "be5e1db18f688651ba1b73903bf673654a3329a19aff4206778d3e633e968bd2",
-      "id": "js:2:komodo:v4PKUB9JUMaUJ1t6Vd4uagV7znkoUA1NKvNUXm2YMJN7JZBwu5Rxqv5YWRd3YZMKbwofaXdNgfmXVe8gVsju4VECJHXmY2Syx8cyua1YjNawJDn1:-be5e1db18f688651ba1b73903bf673654a3329a19aff4206778d3e633e968bd2-OUT",
+      "id": "js:2:komodo:v4PKUB9JUMaUJ1t6Vd4uagV7znkoUA1NKvNUXm2YMJN7JZBwu5Rxqv5YWRd3YZMKbwofaXdNgfmXVe8gVsju4VECJHXmY2Syx8cyua1YjNawJDn1:-be5e1db18f688651ba1b73903bf673654a3329a19aff4206778d3e633e968bd2-IN",
       "operator": undefined,
       "recipients": [
-        "RHQeF3BUrN1ub5PqdQhWTAbJB2pv7xukML",
+        "RQYWpzwhcKZjWCegLMdrSznnZpztrQ98oj",
       ],
       "senders": [
         "RE3Qw6eNvMhMnUGP4T5Ggk5saHyjpC2sBa",
       ],
       "standard": undefined,
       "tokenId": undefined,
-      "transactionSequenceNumber": 16777215,
-      "type": "OUT",
-      "value": "14631516",
+      "type": "IN",
+      "value": "207080357",
     },
     {
       "accountId": "js:2:komodo:v4PKUB9JUMaUJ1t6Vd4uagV7znkoUA1NKvNUXm2YMJN7JZBwu5Rxqv5YWRd3YZMKbwofaXdNgfmXVe8gVsju4VECJHXmY2Syx8cyua1YjNawJDn1:",
@@ -26327,28 +25884,6 @@ exports[`komodo currency bridge scanAccounts komodo seed 1 2`] = `
       "transactionSequenceNumber": 16777215,
       "type": "OUT",
       "value": "13588744",
-    },
-    {
-      "accountId": "js:2:komodo:v4PKUB9JUMaUJ1t6Vd4uagV7znkoUA1NKvNUXm2YMJN7JZBwu5Rxqv5YWRd3YZMKbwofaXdNgfmXVe8gVsju4VECJHXmY2Syx8cyua1YjNawJDn1:",
-      "blockHash": "03fc63387ba33b498aea71d06c4669cd9b1f995e97ee40b4fb6f83ad6afdb438",
-      "blockHeight": 1367199,
-      "contract": undefined,
-      "extra": {},
-      "fee": "226",
-      "hasFailed": false,
-      "hash": "c3682b764525f08f0367abcb9b74233251e39602f47f0d7fa8c79c1f012a8625",
-      "id": "js:2:komodo:v4PKUB9JUMaUJ1t6Vd4uagV7znkoUA1NKvNUXm2YMJN7JZBwu5Rxqv5YWRd3YZMKbwofaXdNgfmXVe8gVsju4VECJHXmY2Syx8cyua1YjNawJDn1:-c3682b764525f08f0367abcb9b74233251e39602f47f0d7fa8c79c1f012a8625-IN",
-      "operator": undefined,
-      "recipients": [
-        "RNjtQQGgn3SZ4D5QBLVC8fYauox4bmFN6o",
-      ],
-      "senders": [
-        "RE3EgVbkg17HB77JviEYWJBxdDZhciYjAR",
-      ],
-      "standard": undefined,
-      "tokenId": undefined,
-      "type": "IN",
-      "value": "4000000",
     },
     {
       "accountId": "js:2:komodo:v4PKUB9JUMaUJ1t6Vd4uagV7znkoUA1NKvNUXm2YMJN7JZBwu5Rxqv5YWRd3YZMKbwofaXdNgfmXVe8gVsju4VECJHXmY2Syx8cyua1YjNawJDn1:",
@@ -26432,7 +25967,7 @@ exports[`komodo currency bridge scanAccounts komodo seed 1 2`] = `
       "tokenId": undefined,
       "transactionSequenceNumber": 16777215,
       "type": "OUT",
-      "value": "2450588294",
+      "value": "2260207590",
     },
     {
       "accountId": "js:2:komodo:v4PKUB9JUMaUJ1t6Vd4uagV7znkoUA1NKvNUXm2YMJN7JZBwu5Rxqv5YWRd3YZMKbwofaXdNgfmXVe8gVsju4VECJHXmY2Syx8cyua1YjNawJDn1:",
@@ -26649,7 +26184,7 @@ exports[`komodo currency bridge scanAccounts komodo seed 1 2`] = `
       "tokenId": undefined,
       "transactionSequenceNumber": 16777215,
       "type": "OUT",
-      "value": "2117128318",
+      "value": "1567128658",
     },
     {
       "accountId": "js:2:komodo:v4PKUB9JUMaUJ1t6Vd4uagV7znkoUA1NKvNUXm2YMJN7JZBwu5Rxqv5YWRd3YZMKbwofaXdNgfmXVe8gVsju4VECJHXmY2Syx8cyua1YjNawJDn1:",
@@ -26775,19 +26310,18 @@ exports[`komodo currency bridge scanAccounts komodo seed 1 2`] = `
       "fee": "452",
       "hasFailed": false,
       "hash": "fae09af4bbd3f0493b859b0a2424d959ba987c75ed047eaf89e657591af69f16",
-      "id": "js:2:komodo:v4PKUB9JUMaUJ1t6Vd4uagV7znkoUA1NKvNUXm2YMJN7JZBwu5Rxqv5YWRd3YZMKbwofaXdNgfmXVe8gVsju4VECJHXmY2Syx8cyua1YjNawJDn1:-fae09af4bbd3f0493b859b0a2424d959ba987c75ed047eaf89e657591af69f16-OUT",
+      "id": "js:2:komodo:v4PKUB9JUMaUJ1t6Vd4uagV7znkoUA1NKvNUXm2YMJN7JZBwu5Rxqv5YWRd3YZMKbwofaXdNgfmXVe8gVsju4VECJHXmY2Syx8cyua1YjNawJDn1:-fae09af4bbd3f0493b859b0a2424d959ba987c75ed047eaf89e657591af69f16-IN",
       "operator": undefined,
       "recipients": [
-        "RDHwGk18PNVaAmzmKswPzAUvtRvrNvjgcY",
+        "RBy3wAsyUmCK42Tc7dEaPGZEJZtpC1QMub",
       ],
       "senders": [
         "RCSQFPwpkKsZwJtLtkRXcg7md4TRYpUZ1k",
       ],
       "standard": undefined,
       "tokenId": undefined,
-      "transactionSequenceNumber": 16777215,
-      "type": "OUT",
-      "value": "206732452",
+      "type": "IN",
+      "value": "1358406918",
     },
   ],
   [
@@ -26827,7 +26361,7 @@ exports[`komodo currency bridge scanAccounts komodo seed 1 2`] = `
       "tokenId": undefined,
       "transactionSequenceNumber": 16777215,
       "type": "OUT",
-      "value": "200105188",
+      "value": "172936205",
     },
     {
       "accountId": "js:2:komodo:v4PKUB9JUMaUJ1t6VgiYDS7MekMgAnanqcdKGekHYXFRLxvJB17WY3F6U9L6SRhH2ZQy15LdCA9yK6i69byE3uSsxTUGbQKeQEVzKMRwx49mKXL8:",
@@ -26850,28 +26384,6 @@ exports[`komodo currency bridge scanAccounts komodo seed 1 2`] = `
       "tokenId": undefined,
       "type": "IN",
       "value": "77589762",
-    },
-    {
-      "accountId": "js:2:komodo:v4PKUB9JUMaUJ1t6VgiYDS7MekMgAnanqcdKGekHYXFRLxvJB17WY3F6U9L6SRhH2ZQy15LdCA9yK6i69byE3uSsxTUGbQKeQEVzKMRwx49mKXL8:",
-      "blockHash": "00000000ba636042570d257b1baa1afec98328960a46d42b4d0ddd6cdf0d4984",
-      "blockHeight": 1576758,
-      "contract": undefined,
-      "extra": {},
-      "fee": "226",
-      "hasFailed": false,
-      "hash": "10ef034e2f887f28609f031257ea24a5c949912ecdba19c276d7eb0c674dd31c",
-      "id": "js:2:komodo:v4PKUB9JUMaUJ1t6VgiYDS7MekMgAnanqcdKGekHYXFRLxvJB17WY3F6U9L6SRhH2ZQy15LdCA9yK6i69byE3uSsxTUGbQKeQEVzKMRwx49mKXL8:-10ef034e2f887f28609f031257ea24a5c949912ecdba19c276d7eb0c674dd31c-IN",
-      "operator": undefined,
-      "recipients": [
-        "RBCc1ZPzP9PWARyR9cdUkaNbhwt2wutvNu",
-      ],
-      "senders": [
-        "RQd6fwYv75fp8do6vJkTUDpYJATPL5oKea",
-      ],
-      "standard": undefined,
-      "tokenId": undefined,
-      "type": "IN",
-      "value": "300000000",
     },
     {
       "accountId": "js:2:komodo:v4PKUB9JUMaUJ1t6VgiYDS7MekMgAnanqcdKGekHYXFRLxvJB17WY3F6U9L6SRhH2ZQy15LdCA9yK6i69byE3uSsxTUGbQKeQEVzKMRwx49mKXL8:",
@@ -26940,7 +26452,7 @@ exports[`komodo currency bridge scanAccounts komodo seed 1 2`] = `
       "tokenId": undefined,
       "transactionSequenceNumber": 16777215,
       "type": "OUT",
-      "value": "700000000",
+      "value": "400000000",
     },
     {
       "accountId": "js:2:komodo:v4PKUB9JUMaUJ1t6VgiYDS7MekMgAnanqcdKGekHYXFRLxvJB17WY3F6U9L6SRhH2ZQy15LdCA9yK6i69byE3uSsxTUGbQKeQEVzKMRwx49mKXL8:",
@@ -26986,29 +26498,6 @@ exports[`komodo currency bridge scanAccounts komodo seed 1 2`] = `
       "tokenId": undefined,
       "type": "IN",
       "value": "200891738",
-    },
-    {
-      "accountId": "js:2:komodo:v4PKUB9JUMaUJ1t6VgiYDS7MekMgAnanqcdKGekHYXFRLxvJB17WY3F6U9L6SRhH2ZQy15LdCA9yK6i69byE3uSsxTUGbQKeQEVzKMRwx49mKXL8:",
-      "blockHash": "06c3332571ea3aca7f975394d90c38ce0be090f68c6030a3edb34e4841d811e5",
-      "blockHeight": 1399823,
-      "contract": undefined,
-      "extra": {},
-      "fee": "748",
-      "hasFailed": false,
-      "hash": "2a7bdfcf12d3d977c5232f7591bef51f222ab6f6637fb122e4a4f51faf35ce82",
-      "id": "js:2:komodo:v4PKUB9JUMaUJ1t6VgiYDS7MekMgAnanqcdKGekHYXFRLxvJB17WY3F6U9L6SRhH2ZQy15LdCA9yK6i69byE3uSsxTUGbQKeQEVzKMRwx49mKXL8:-2a7bdfcf12d3d977c5232f7591bef51f222ab6f6637fb122e4a4f51faf35ce82-IN",
-      "operator": undefined,
-      "recipients": [
-        "RRpseVSMwRjyCutiL3gsSW7M8PhxqfHTcW",
-      ],
-      "senders": [
-        "RFMDWRJiAyGEKfi98VBTgEA6XkjYtTF9P1",
-        "RE2UVNhEZeriQreK9hemcCUvwMyqZJ2w4z",
-      ],
-      "standard": undefined,
-      "tokenId": undefined,
-      "type": "IN",
-      "value": "70000000",
     },
     {
       "accountId": "js:2:komodo:v4PKUB9JUMaUJ1t6VgiYDS7MekMgAnanqcdKGekHYXFRLxvJB17WY3F6U9L6SRhH2ZQy15LdCA9yK6i69byE3uSsxTUGbQKeQEVzKMRwx49mKXL8:",
@@ -27058,7 +26547,7 @@ exports[`komodo currency bridge scanAccounts komodo seed 1 2`] = `
       "tokenId": undefined,
       "transactionSequenceNumber": 16777215,
       "type": "OUT",
-      "value": "152827411",
+      "value": "151554787",
     },
     {
       "accountId": "js:2:komodo:v4PKUB9JUMaUJ1t6VgiYDS7MekMgAnanqcdKGekHYXFRLxvJB17WY3F6U9L6SRhH2ZQy15LdCA9yK6i69byE3uSsxTUGbQKeQEVzKMRwx49mKXL8:",
@@ -27717,7 +27206,7 @@ exports[`komodo currency bridge scanAccounts komodo seed 1 2`] = `
       "tokenId": undefined,
       "transactionSequenceNumber": 16777215,
       "type": "OUT",
-      "value": "201995382",
+      "value": "131995382",
     },
     {
       "accountId": "js:2:komodo:v4PKUB9JUMaUJ1t6VgiYDS7MekMgAnanqcdKGekHYXFRLxvJB17WY3F6U9L6SRhH2ZQy15LdCA9yK6i69byE3uSsxTUGbQKeQEVzKMRwx49mKXL8:",
@@ -27741,28 +27230,6 @@ exports[`komodo currency bridge scanAccounts komodo seed 1 2`] = `
       "transactionSequenceNumber": 16777215,
       "type": "OUT",
       "value": "49085436",
-    },
-    {
-      "accountId": "js:2:komodo:v4PKUB9JUMaUJ1t6VgiYDS7MekMgAnanqcdKGekHYXFRLxvJB17WY3F6U9L6SRhH2ZQy15LdCA9yK6i69byE3uSsxTUGbQKeQEVzKMRwx49mKXL8:",
-      "blockHash": "00000000bb2b523db0cc9be8f90113f6f5787bc0c03c31349ec7c78b93c75f2b",
-      "blockHeight": 1335774,
-      "contract": undefined,
-      "extra": {},
-      "fee": "226",
-      "hasFailed": false,
-      "hash": "cd62cde5a107c9884cbd3f0cf577505ddcb26f2fc32f764e13f439dc55cf471b",
-      "id": "js:2:komodo:v4PKUB9JUMaUJ1t6VgiYDS7MekMgAnanqcdKGekHYXFRLxvJB17WY3F6U9L6SRhH2ZQy15LdCA9yK6i69byE3uSsxTUGbQKeQEVzKMRwx49mKXL8:-cd62cde5a107c9884cbd3f0cf577505ddcb26f2fc32f764e13f439dc55cf471b-IN",
-      "operator": undefined,
-      "recipients": [
-        "RQeZqrkJuGpv3nCF3QriSUt7b7zRaE2WDj",
-      ],
-      "senders": [
-        "RXzRyNR4XxgVQxA87Z6H9mUbi5Pjd6yG8i",
-      ],
-      "standard": undefined,
-      "tokenId": undefined,
-      "type": "IN",
-      "value": "8351564",
     },
     {
       "accountId": "js:2:komodo:v4PKUB9JUMaUJ1t6VgiYDS7MekMgAnanqcdKGekHYXFRLxvJB17WY3F6U9L6SRhH2ZQy15LdCA9yK6i69byE3uSsxTUGbQKeQEVzKMRwx49mKXL8:",
@@ -27829,29 +27296,7 @@ exports[`komodo currency bridge scanAccounts komodo seed 1 2`] = `
       "tokenId": undefined,
       "transactionSequenceNumber": 16777215,
       "type": "OUT",
-      "value": "9174310",
-    },
-    {
-      "accountId": "js:2:komodo:v4PKUB9JUMaUJ1t6VgiYDS7MekMgAnanqcdKGekHYXFRLxvJB17WY3F6U9L6SRhH2ZQy15LdCA9yK6i69byE3uSsxTUGbQKeQEVzKMRwx49mKXL8:",
-      "blockHash": "05f2f0820e917d1ac27ad76e2e98b126c66ed0a4cd4f19882b5d59243e4e6dc1",
-      "blockHeight": 1335772,
-      "contract": undefined,
-      "extra": {},
-      "fee": "226",
-      "hasFailed": false,
-      "hash": "f16f72a05c94dd205031d072fdc5903b775a30985f4a5373df08dd3bc1a74dd3",
-      "id": "js:2:komodo:v4PKUB9JUMaUJ1t6VgiYDS7MekMgAnanqcdKGekHYXFRLxvJB17WY3F6U9L6SRhH2ZQy15LdCA9yK6i69byE3uSsxTUGbQKeQEVzKMRwx49mKXL8:-f16f72a05c94dd205031d072fdc5903b775a30985f4a5373df08dd3bc1a74dd3-IN",
-      "operator": undefined,
-      "recipients": [
-        "RQeZqrkJuGpv3nCF3QriSUt7b7zRaE2WDj",
-      ],
-      "senders": [
-        "RSGJodhmaySckNrLMDsLp1pE8TVFguNgVV",
-      ],
-      "standard": undefined,
-      "tokenId": undefined,
-      "type": "IN",
-      "value": "18817419",
+      "value": "10446934",
     },
     {
       "accountId": "js:2:komodo:v4PKUB9JUMaUJ1t6VgiYDS7MekMgAnanqcdKGekHYXFRLxvJB17WY3F6U9L6SRhH2ZQy15LdCA9yK6i69byE3uSsxTUGbQKeQEVzKMRwx49mKXL8:",
@@ -27933,12 +27378,6 @@ exports[`litecoin currency bridge scanAccounts litecoin seed 1 1`] = `
     "derivationMode": "native_segwit",
     "freshAddress": "ltc1qx2wxzwmpg4m8tr9d7rharerxaqj50jkdasvxmx",
     "freshAddressPath": "84'/2'/0'/0/3",
-    "freshAddresses": [
-      {
-        "address": "ltc1qpx9fcj5qht64vymj469cfyun73tllcch7qeuwq",
-        "derivationPath": "84'/2'/0'/0/0",
-      },
-    ],
     "id": "js:2:litecoin:Ltub2ZDyeYFtDj5kHy4w5WaXBDE9217rNDYfmv7u5NV8dk8vKdmkqAfPdwRma5rkPcj5daMU8JiiLXQYPX9rtqEzrK1YrmkofcpADTV7s5FgzLF:native_segwit",
     "index": 0,
     "name": "Litecoin 1",
@@ -27961,12 +27400,6 @@ exports[`litecoin currency bridge scanAccounts litecoin seed 1 1`] = `
     "derivationMode": "native_segwit",
     "freshAddress": "ltc1qd2x2x0wf3wgkka87qlm8772tuw6yx6fl9j07ag",
     "freshAddressPath": "84'/2'/1'/0/0",
-    "freshAddresses": [
-      {
-        "address": "ltc1qd2x2x0wf3wgkka87qlm8772tuw6yx6fl9j07ag",
-        "derivationPath": "84'/2'/1'/0/0",
-      },
-    ],
     "id": "js:2:litecoin:Ltub2ZDyeYFtDj5kL5kYEcBGiDwhXQtZNefG3k4XvAtoMfD5cHxa93WMr6zLGnLb11LCgUXpxWTZRVPv2Roh2vdxesTpgFYayeNNVJb7wmCfD3x:native_segwit",
     "index": 1,
     "name": "Litecoin 2",
@@ -27989,12 +27422,6 @@ exports[`litecoin currency bridge scanAccounts litecoin seed 1 1`] = `
     "derivationMode": "segwit",
     "freshAddress": "MGWgRF4qLAHtYhEe6VcQNeQRxVhPd3evHc",
     "freshAddressPath": "49'/2'/0'/0/24",
-    "freshAddresses": [
-      {
-        "address": "MQ1AaPQHsEVxxxQ93MGfqh8XQDEH1QGBwy",
-        "derivationPath": "49'/2'/0'/0/0",
-      },
-    ],
     "id": "js:2:litecoin:Ltub2ZoEDG8AmPfD8oGoFEvfsKWjeyiXh6TiKYjgLnoVxfeECfQteY6sDF1AuH1iW6ekue2PSwdbbvG2NpFPzLqcgNgteHZPNo6zGthjcAmwxT3:segwit",
     "index": 0,
     "name": "Litecoin 1",
@@ -28017,12 +27444,6 @@ exports[`litecoin currency bridge scanAccounts litecoin seed 1 1`] = `
     "derivationMode": "segwit",
     "freshAddress": "MMqwmFyJixCSt2iKbARzNMPkSbhec8qJ2d",
     "freshAddressPath": "49'/2'/1'/0/1",
-    "freshAddresses": [
-      {
-        "address": "M8WH2dffBGfCyNp6Kmyx4fDPJbRAL6WHLj",
-        "derivationPath": "49'/2'/1'/0/0",
-      },
-    ],
     "id": "js:2:litecoin:Ltub2ZoEDG8AmPfDAyu3yK2WfA9zE8VgL3E3nNjnS5VRYAo7LfrrEmaCUYqWP8tgo6vNWc7dsr3kDykaX7yDpkAN93RWorZG6tekiyNpBNtFJhc:segwit",
     "index": 1,
     "name": "Litecoin 2",
@@ -28045,12 +27466,6 @@ exports[`litecoin currency bridge scanAccounts litecoin seed 1 1`] = `
     "derivationMode": "segwit",
     "freshAddress": "M88iGfkJikQaKy7MafsyXfrRSSvuneFW7K",
     "freshAddressPath": "49'/2'/2'/0/0",
-    "freshAddresses": [
-      {
-        "address": "M88iGfkJikQaKy7MafsyXfrRSSvuneFW7K",
-        "derivationPath": "49'/2'/2'/0/0",
-      },
-    ],
     "id": "js:2:litecoin:Ltub2ZoEDG8AmPfDCKLYi3GHWexWa26tL5G4QvPkYgdRNKFKLsDe1i3rzjSZiBYDpYnkgQn9T8GRRJTXF8rdG6NXyWR9wTzATChRQbixYxnjKBg:segwit",
     "index": 2,
     "name": "Litecoin 3",
@@ -28073,12 +27488,6 @@ exports[`litecoin currency bridge scanAccounts litecoin seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "LLVLXPBzLTHYjF5Q4r6iCEEztCmWecazwP",
     "freshAddressPath": "44'/2'/0'/0/15",
-    "freshAddresses": [
-      {
-        "address": "LNE2XB6RhTLWGwCax8ct6swZtjpHkfKX84",
-        "derivationPath": "44'/2'/0'/0/0",
-      },
-    ],
     "id": "js:2:litecoin:Ltub2YRPRjnvZVoBBbfDrEV3jJdGQCTMHgKg1V1mnAZuQbbSY6XPhufcRTpoGB4595dUuW1GSDy6CApUYmCfwA4YjG5JWrAFd4GBR1WRJ8Jm6cM:",
     "index": 0,
     "name": "Litecoin 1",
@@ -28101,12 +27510,6 @@ exports[`litecoin currency bridge scanAccounts litecoin seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "LSqQsgC8oa3PzzPZZigq7EYrFe6tqA6L6p",
     "freshAddressPath": "44'/2'/1'/0/0",
-    "freshAddresses": [
-      {
-        "address": "LSqQsgC8oa3PzzPZZigq7EYrFe6tqA6L6p",
-        "derivationPath": "44'/2'/1'/0/0",
-      },
-    ],
     "id": "js:2:litecoin:Ltub2YRPRjnvZVoBD5RZpkoyuuiSPJdHS8jeDksZHPtt5RraJFHLDSRdobd1gfBrPKZHx1Nag5nUBuuA95LkNMXbZ6fnFHCotsewEdqccigYadD:",
     "index": 1,
     "name": "Litecoin 2",
@@ -30275,12 +29678,6 @@ exports[`peercoin currency bridge scanAccounts peercoin seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "PHRKwqt8ZWWNdEiqMRpiU1xhUDYjmV7XiX",
     "freshAddressPath": "44'/6'/0'/0/1",
-    "freshAddresses": [
-      {
-        "address": "PD3w1eqRUJGd8K678WSDVqU9qcfijmU7JS",
-        "derivationPath": "44'/6'/0'/0/0",
-      },
-    ],
     "id": "js:2:peercoin:r29uBq4dqT4ZLPtkuN51ASxXHAuSmY4QEqvYKPjj8kBNvdpcc4wRvhTPDoLmUj1qx1UbwS32DgsKkRPdgjrwNdWrHiSDjH7hBeqiEmGi79xEZNBt:",
     "index": 0,
     "name": "Peercoin 1",
@@ -30303,12 +29700,6 @@ exports[`peercoin currency bridge scanAccounts peercoin seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "PCrC3djBR5XMoob4dxp7TtZcaNwahTnBcd",
     "freshAddressPath": "44'/6'/1'/0/3",
-    "freshAddresses": [
-      {
-        "address": "PAnoNsM6qhjaKdvM82eoFnzGKSGVFrhvzH",
-        "derivationPath": "44'/6'/1'/0/0",
-      },
-    ],
     "id": "js:2:peercoin:r29uBq4dqT4ZLPtkuP4N8ms3jx8ts6zcfHMNNZUJhMqo1DgJpWSfFiwYwZb3uQYaHya6LSWNfALUxQwdFw3ZZEoB2DCKYK2QqBp5VbaZbo9FHbbv:",
     "index": 1,
     "name": "Peercoin 2",
@@ -30331,12 +29722,6 @@ exports[`peercoin currency bridge scanAccounts peercoin seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "PNWyBf25cbMx9CEjvyxJRtDtg42GAX2wx8",
     "freshAddressPath": "44'/6'/2'/0/0",
-    "freshAddresses": [
-      {
-        "address": "PNWyBf25cbMx9CEjvyxJRtDtg42GAX2wx8",
-        "derivationPath": "44'/6'/2'/0/0",
-      },
-    ],
     "id": "js:2:peercoin:r29uBq4dqT4ZLPtkuRYpvqYJ7Uri474wVJSGfCBycWK88JbhoE31jzYQrxa4re5gRRjdK52fYte1wR6Gjo3KsnMGk1JNqELQoema8GaWRcX4Tp3c:",
     "index": 2,
     "name": "Peercoin 3",
@@ -30559,12 +29944,6 @@ exports[`pivx currency bridge scanAccounts pivx seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "DBUbDxkrqF7W4XeTqjt32z2kwc7kCnWWcZ",
     "freshAddressPath": "44'/77'/0'/0/2",
-    "freshAddresses": [
-      {
-        "address": "DCr8iLpjZdwNQfcbcSg3uZWTsGdTJVJ8PB",
-        "derivationPath": "44'/77'/0'/0/0",
-      },
-    ],
     "id": "js:2:pivx:ToEA6kbZp37Q14yj3MBi989NwAtYpRezRAveGjoQtrBNenh5w5D8AAU3pQFHk3bd7YRXgQ86JoXBZHm8voQeCNJX4ETH7WdGGcfD35CsCEgQjih:",
     "index": 0,
     "name": "PivX 1",
@@ -30587,12 +29966,6 @@ exports[`pivx currency bridge scanAccounts pivx seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "DG4Zmw1PyrxZrBFhjtHDyfCxWY4PrP5WZq",
     "freshAddressPath": "44'/77'/1'/0/5",
-    "freshAddresses": [
-      {
-        "address": "DCtvHdQUvae9DQGvsF1AoaWvtwYJ46iPdj",
-        "derivationPath": "44'/77'/1'/0/0",
-      },
-    ],
     "id": "js:2:pivx:ToEA6kbZp37Q14yj58Etmammo9PZzJApeRsUnjSqri7fugNHm29Z8XHyhs1qePUKDUkrBD51sAwqD6HjFx3Z81S4djrYPrxKJssLrekhh2j2rpT:",
     "index": 1,
     "name": "PivX 2",
@@ -30615,12 +29988,6 @@ exports[`pivx currency bridge scanAccounts pivx seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "DEoUabmgN4eJ3XMThHT1ZAPekpVfr1m17F",
     "freshAddressPath": "44'/77'/2'/0/0",
-    "freshAddresses": [
-      {
-        "address": "DEoUabmgN4eJ3XMThHT1ZAPekpVfr1m17F",
-        "derivationPath": "44'/77'/2'/0/0",
-      },
-    ],
     "id": "js:2:pivx:ToEA6kbZp37Q14yj8uQJcgxNYNLfh77mCkRc5WYNKnFXz9F7ioREkssDvZtYm6haAQc3xEgMhTLT6TMHKzEVX4HLudaACbipsLTvnthw2KUUhTf:",
     "index": 2,
     "name": "PivX 3",
@@ -31026,12 +30393,6 @@ exports[`qtum currency bridge scanAccounts qtum seed 1 1`] = `
     "derivationMode": "segwit",
     "freshAddress": "MQnGUQsKBDpoFG5uvtai3Z4UWXu9s9P3s3",
     "freshAddressPath": "49'/88'/0'/0/23",
-    "freshAddresses": [
-      {
-        "address": "MUhJ66WPXhvfUFdBHaRhyzhSVh2oUJ2t4i",
-        "derivationPath": "49'/88'/0'/0/0",
-      },
-    ],
     "id": "js:2:qtum:xpub6D97ABLAcapXNWjS2pNwYpmUjYYt5f2Tyj4PDSp7pvY2gySb2iAvejKNPm18raeU8WxtXVCpQfZjMN7eEdgtor8T5141ZLH7o2WkL1nyNQb:segwit",
     "index": 0,
     "name": "Qtum 1",
@@ -31054,12 +30415,6 @@ exports[`qtum currency bridge scanAccounts qtum seed 1 1`] = `
     "derivationMode": "segwit",
     "freshAddress": "MFdP4rJefFPFXaZBSxsCGVt2KHNPwHYU8M",
     "freshAddressPath": "49'/88'/1'/0/3",
-    "freshAddresses": [
-      {
-        "address": "MLyTbguvNJv7a9w9UCJoMpnfz5MsvaxfxN",
-        "derivationPath": "49'/88'/1'/0/0",
-      },
-    ],
     "id": "js:2:qtum:xpub6D97ABLAcapXR82f6ny6pUTy58YXDY4xVSoxoK8jSYcuG1eQZDrZjGrnhotEU8YtZWn5s4cA1zRBuYSt8CG9YoG3fQJKUhQYmm8NewWQEUY:segwit",
     "index": 1,
     "name": "Qtum 2",
@@ -31082,12 +30437,6 @@ exports[`qtum currency bridge scanAccounts qtum seed 1 1`] = `
     "derivationMode": "segwit",
     "freshAddress": "MMQq1ibHKKingHDdvjosq2eWz2W8n2bgNH",
     "freshAddressPath": "49'/88'/2'/0/0",
-    "freshAddresses": [
-      {
-        "address": "MMQq1ibHKKingHDdvjosq2eWz2W8n2bgNH",
-        "derivationPath": "49'/88'/2'/0/0",
-      },
-    ],
     "id": "js:2:qtum:xpub6D97ABLAcapXTtgbMfjJQr1j4t84bkSuteUcPTrHeANhTd3QkJLgJktJ7YUxPg2pGt4hoPFHgoKivdiXhVP3TJbJqxtyrkscb6FYuGqUT1D:segwit",
     "index": 2,
     "name": "Qtum 3",
@@ -31110,12 +30459,6 @@ exports[`qtum currency bridge scanAccounts qtum seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "Qht4N9PNgSTYnXgSNoqfFtotBcXj6qapSQ",
     "freshAddressPath": "44'/88'/0'/0/16",
-    "freshAddresses": [
-      {
-        "address": "QhpbXpX5xXavAtKEG97fcbQjNqcGjpMFo4",
-        "derivationPath": "44'/88'/0'/0/0",
-      },
-    ],
     "id": "js:2:qtum:xpub6DJLR2MpQNBsVL8Pn3HuqwGAtQWZM7v4o1W4dnYCLJrLsB5MsQbfZJQjGyHS892pUcHPS2R3AXyY1VE1RPka2Tazu5jNTnpKJLuv2xqtrt4:",
     "index": 0,
     "name": "Qtum 1",
@@ -31138,12 +30481,6 @@ exports[`qtum currency bridge scanAccounts qtum seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "QVprz8QrPULXVFvREZo2tpHBdFC7uN6wKm",
     "freshAddressPath": "44'/88'/1'/0/13",
-    "freshAddresses": [
-      {
-        "address": "Qe6zQqbtSPX9qZJNQrCmdTknLWo6EKxG6N",
-        "derivationPath": "44'/88'/1'/0/0",
-      },
-    ],
     "id": "js:2:qtum:xpub6DJLR2MpQNBsY3iKkoWXY3THJ5Ychw6qgCtmBSoYE3nssqGMcMuaL2JZXsQHzZYTsT4gdfyZTYhScYbuhJ3H17foa7TqD2gQANTyu8KCuGc:",
     "index": 1,
     "name": "Qtum 2",
@@ -31166,12 +30503,6 @@ exports[`qtum currency bridge scanAccounts qtum seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "QY61GahhtwSsDg22SJa9q24qiFwNiRhvrt",
     "freshAddressPath": "44'/88'/2'/0/0",
-    "freshAddresses": [
-      {
-        "address": "QY61GahhtwSsDg22SJa9q24qiFwNiRhvrt",
-        "derivationPath": "44'/88'/2'/0/0",
-      },
-    ],
     "id": "js:2:qtum:xpub6DJLR2MpQNBsbefbkm6WCxbircLJtDR5vtK6pvrZXxNReGSR7th4Q2LQFWGoK79AmBwv6pgAck1U6XwMp3XdWqWcmVRAmrKedXzoKMLTmLc:",
     "index": 2,
     "name": "Qtum 3",
@@ -33925,12 +33256,6 @@ exports[`vertcoin currency bridge scanAccounts vertcoin seed 1 1`] = `
     "derivationMode": "vertcoin_128",
     "freshAddress": "Vx36mGuxsW1cmvx3fMN55Z5UytHKpnE31U",
     "freshAddressPath": "44'/128'/0'/0/1",
-    "freshAddresses": [
-      {
-        "address": "VdF23UsLun92GKGW4MqH8nxbmBFD1UNBbs",
-        "derivationPath": "44'/128'/0'/0/0",
-      },
-    ],
     "id": "js:2:vertcoin:xpub6CcxPiPTCZz31AAqNayf5M4yJWGwe3LCsLASDyDVvVaorfjibtEDaRGA2vRDCr9XwD7zF2KyDuru2MxsbzzqoEHdvQpqGAKQhRY9jCGLu3a:vertcoin_128",
     "index": 0,
     "name": "Vertcoin 1",
@@ -33953,12 +33278,6 @@ exports[`vertcoin currency bridge scanAccounts vertcoin seed 1 1`] = `
     "derivationMode": "vertcoin_128_segwit",
     "freshAddress": "33BEXEpmL4ZGBZasUrCFEhdZpxKBe5uTYy",
     "freshAddressPath": "49'/128'/0'/0/4",
-    "freshAddresses": [
-      {
-        "address": "3Bz6epTTaXUwfgZy7Y73Sj2EeSfqeTNTwh",
-        "derivationPath": "49'/128'/0'/0/0",
-      },
-    ],
     "id": "js:2:vertcoin:xpub6C1k89xbMPhSU8SLMTtcf8nbyZ3aEer86VnXNVZLkczoRKvfvLcA2Hp8gBJWZSM8UaDYaEpyxN1hqseTJ99tXt4QPxKPNNpVucgrjWPhMbj:vertcoin_128_segwit",
     "index": 0,
     "name": "Vertcoin 1",
@@ -33981,12 +33300,6 @@ exports[`vertcoin currency bridge scanAccounts vertcoin seed 1 1`] = `
     "derivationMode": "segwit",
     "freshAddress": "3FiUuTYW5jMbJSwVdgCJTYKNFwai6JX5FD",
     "freshAddressPath": "49'/28'/0'/0/2",
-    "freshAddresses": [
-      {
-        "address": "33a4rSPar7SpjfWAq2mG7AMJmxkxW4K9ka",
-        "derivationPath": "49'/28'/0'/0/0",
-      },
-    ],
     "id": "js:2:vertcoin:xpub6Cvus6TFyZpqAXyw3PZchE4e6aotv5DpG2JzSUgrAaWq568T6E68CitHvAoGS7P2ey5n6D92brXCdeMFU6YZyhypZYiMddGFgWe7ovwxNAK:segwit",
     "index": 0,
     "name": "Vertcoin 1",
@@ -34009,12 +33322,6 @@ exports[`vertcoin currency bridge scanAccounts vertcoin seed 1 1`] = `
     "derivationMode": "segwit",
     "freshAddress": "34TxZRuFCgyMKtFYmwKoRoWVCt1puAH9Xz",
     "freshAddressPath": "49'/28'/1'/0/0",
-    "freshAddresses": [
-      {
-        "address": "34TxZRuFCgyMKtFYmwKoRoWVCt1puAH9Xz",
-        "derivationPath": "49'/28'/1'/0/0",
-      },
-    ],
     "id": "js:2:vertcoin:xpub6Cvus6TFyZpqBdZMUVoDaX8aVh3jok6tNKLmyf9sYg1TByCEHNwWPzRwLmssQ6reLV1aZaKQv9XL3KQ9ery6SBcppNdAvqGh72dF1AdYQso:segwit",
     "index": 1,
     "name": "Vertcoin 2",
@@ -34037,12 +33344,6 @@ exports[`vertcoin currency bridge scanAccounts vertcoin seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "VsgCiKyCTMhiTravK6ESeKpg2qETx35wx8",
     "freshAddressPath": "44'/28'/0'/0/4",
-    "freshAddresses": [
-      {
-        "address": "Vhbc9ZzzH89S8fkEbqRWuatEzwPCRf3Uyp",
-        "derivationPath": "44'/28'/0'/0/0",
-      },
-    ],
     "id": "js:2:vertcoin:xpub6BgVHiD3Go6yH6fBUXQfHHdBsb6Xkm5XswQid7ZF5xhh3udDP7MKUKBpREoLJt7dkwcvpPGo3h5DkCqsjVCZvPTkeRgxJRmab3bpv9k15pc:",
     "index": 0,
     "name": "Vertcoin 1",
@@ -34065,12 +33366,6 @@ exports[`vertcoin currency bridge scanAccounts vertcoin seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "Vg18CTCzdTXpRQR66voFahDH8LkS6exoxZ",
     "freshAddressPath": "44'/28'/1'/0/0",
-    "freshAddresses": [
-      {
-        "address": "Vg18CTCzdTXpRQR66voFahDH8LkS6exoxZ",
-        "derivationPath": "44'/28'/1'/0/0",
-      },
-    ],
     "id": "js:2:vertcoin:xpub6BgVHiD3Go6yLzjPsBg2M1VwwK6CTvgGQV1DCWVZ9sCiK63bkaio7EYnEEqyfqEH2uq8V99TWbrc7zXNgy3ju5N6XDN2GHrbHnDhBGpD9hJ:",
     "index": 1,
     "name": "Vertcoin 2",
@@ -34642,12 +33937,6 @@ exports[`viacoin currency bridge scanAccounts viacoin seed 1 1`] = `
     "derivationMode": "segwit",
     "freshAddress": "ETvLmkNFbgbsdVMez1YaYjTCbB7aNco8Zp",
     "freshAddressPath": "49'/14'/0'/0/4",
-    "freshAddresses": [
-      {
-        "address": "EL8C9VLawHzjaCMgpcLemqPeEXunH5jNuo",
-        "derivationPath": "49'/14'/0'/0/0",
-      },
-    ],
     "id": "js:2:viacoin:xpub6DXFhSSckkAXA8y3fxCxv6TW7PhTubEk5r9UoXiJJEbzzhDjWaH8qxEDED9nA751pz3iAPc1HVXe8LpiotsqUfDRvf8JiQdEewFtyNyR6Vz:segwit",
     "index": 0,
     "name": "Viacoin 1",
@@ -34670,12 +33959,6 @@ exports[`viacoin currency bridge scanAccounts viacoin seed 1 1`] = `
     "derivationMode": "segwit",
     "freshAddress": "EHAAgFSDMfY4UHsRn6gEJxVhnVLPNNupw4",
     "freshAddressPath": "49'/14'/1'/0/0",
-    "freshAddresses": [
-      {
-        "address": "EHAAgFSDMfY4UHsRn6gEJxVhnVLPNNupw4",
-        "derivationPath": "49'/14'/1'/0/0",
-      },
-    ],
     "id": "js:2:viacoin:xpub6DXFhSSckkAXEDj2tdsRZ9hffq6BkcyJM8zCeZ6zA4S71pqnUZCKWFNnzWMuQ7iYNFkDB3aSJnh5CQCRD26iFZfDs8zo1bnU6MVtYxNxSdd:segwit",
     "index": 1,
     "name": "Viacoin 2",
@@ -34698,12 +33981,6 @@ exports[`viacoin currency bridge scanAccounts viacoin seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "VfsNF82yMv738budvbxue1ZPLrzyW19z3x",
     "freshAddressPath": "44'/14'/0'/0/5",
-    "freshAddresses": [
-      {
-        "address": "VpJNwrKCNRabDmgz6gMSaHkmVNDVvGSktN",
-        "derivationPath": "44'/14'/0'/0/0",
-      },
-    ],
     "id": "js:2:viacoin:xpub6BvPb5yXV4aMKokGgameLTA36UzHykjCZo5Vcrmr2PFxutPhvfbzkr6LpD6vXkm5A611mYA2m4TnZYHHSZjxRZsadDCXfwDqxc3d7BZTqwW:",
     "index": 0,
     "name": "Viacoin 1",
@@ -34726,12 +34003,6 @@ exports[`viacoin currency bridge scanAccounts viacoin seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "VkC4KsRTFazUtM2G55NMSTYYqrHpz2dBgd",
     "freshAddressPath": "44'/14'/1'/0/0",
-    "freshAddresses": [
-      {
-        "address": "VkC4KsRTFazUtM2G55NMSTYYqrHpz2dBgd",
-        "derivationPath": "44'/14'/1'/0/0",
-      },
-    ],
     "id": "js:2:viacoin:xpub6BvPb5yXV4aMNvoWDVF2SNqbhYN3puWm9PCwbEF4XxgnkSnHxfiHTEfy76u8atjEvcGwMxqpTE5rjYw3c3nxF44Nvok8XskpBEJyTfVXxip:",
     "index": 1,
     "name": "Viacoin 2",
@@ -35210,12 +34481,6 @@ exports[`zcash currency bridge scanAccounts zcash seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "t1fsRqkKtcsbptNVf4d27K6LdxEa8BhDQaR",
     "freshAddressPath": "44'/133'/0'/0/53",
-    "freshAddresses": [
-      {
-        "address": "t1apvALxQnwYooiqDMY264c2T7cbZHtnoNS",
-        "derivationPath": "44'/133'/0'/0/0",
-      },
-    ],
     "id": "js:2:zcash:xpub6DXuLL97nvCs14Ashf3u8N2X9BLBpxN3HKCQWnLzn61o6CqME3Jm1hZ6oBeXcMhkqGDaziTGmw19w5iRstuXJrKLX6khbDt1rEatozTkf97:",
     "index": 0,
     "name": "Zcash 1",
@@ -35238,12 +34503,6 @@ exports[`zcash currency bridge scanAccounts zcash seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "t1coCk73b8n112xnR2XAaAfx1WuqyHtCac2",
     "freshAddressPath": "44'/133'/1'/0/15",
-    "freshAddresses": [
-      {
-        "address": "t1coUMho9Ppqzprbs2SrBo6qepeCV4PsvCt",
-        "derivationPath": "44'/133'/1'/0/0",
-      },
-    ],
     "id": "js:2:zcash:xpub6DXuLL97nvCs4QQNEeUwxH6Y5tSVhSEPcdnQ3K2pa8CfnbZuHcpeZovTSMu6jdj6JV9piQyVsHoNSYuP8MijXdYKHGFYvPoLLy3Ddrv5MPi:",
     "index": 1,
     "name": "Zcash 2",
@@ -35266,12 +34525,6 @@ exports[`zcash currency bridge scanAccounts zcash seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "t1W7cEdkaa5jYoY91cpBmSLuaHQqS5DXDfX",
     "freshAddressPath": "44'/133'/2'/0/13",
-    "freshAddresses": [
-      {
-        "address": "t1e3WPKSyWneLgdsYLoTDacG8zTXwbvmKeu",
-        "derivationPath": "44'/133'/2'/0/0",
-      },
-    ],
     "id": "js:2:zcash:xpub6DXuLL97nvCs4gn5uhL5hngT77sZRgrPKE1wDzxtN73mcmTQKFnHb2yAahvnoT3QCeSzxakpFMGxxY9d4ozgAKWzGtK31VP3v2vciXyVtEP:",
     "index": 2,
     "name": "Zcash 3",
@@ -35294,12 +34547,6 @@ exports[`zcash currency bridge scanAccounts zcash seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "t1KS5gL64ZbWNSj8B4c1P7hL8zQDDpE1QRR",
     "freshAddressPath": "44'/133'/3'/0/0",
-    "freshAddresses": [
-      {
-        "address": "t1KS5gL64ZbWNSj8B4c1P7hL8zQDDpE1QRR",
-        "derivationPath": "44'/133'/3'/0/0",
-      },
-    ],
     "id": "js:2:zcash:xpub6DXuLL97nvCs84Bu7dzut6oWXsSADKfHtoBvHQqpejzzfEy8TMu5WNuzz6bdhcjY3u8B4noZTkDho8wue49P6HogYitm64dyQpLJti8aEDb:",
     "index": 3,
     "name": "Zcash 4",
@@ -39154,12 +38401,6 @@ exports[`zencash currency bridge scanAccounts zencash seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "znjQLDUvNXDwYNKPumEkkTWvshCFtT1xNNc",
     "freshAddressPath": "44'/121'/0'/0/71",
-    "freshAddresses": [
-      {
-        "address": "zngqsiJy3a3BufQvUGuvjSupeWmo9fvaANd",
-        "derivationPath": "44'/121'/0'/0/0",
-      },
-    ],
     "id": "js:2:zencash:xpub6D5t3ggLE75WLn8cMhJ6V5tdZsT5ixJDjoYrERnYgkjXe5f2qqBBsjCLJ4ktGeorZBrSwQZ6tRqmmu9CM5fpi6S7n1T6VMxitE4LnXBStue:",
     "index": 0,
     "name": "Horizen 1",
@@ -39182,12 +38423,6 @@ exports[`zencash currency bridge scanAccounts zencash seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "zniChoxBVZTCZvD8cBjuncojhz4LUfrq179",
     "freshAddressPath": "44'/121'/1'/0/57",
-    "freshAddresses": [
-      {
-        "address": "znbBuSwtx2Q2gXJU7Jy7M1pCxyeKceDJeT2",
-        "derivationPath": "44'/121'/1'/0/0",
-      },
-    ],
     "id": "js:2:zencash:xpub6D5t3ggLE75WMZywf9sHZtBZcgdQTvVorb4U6YiYBSZrWiPZsB7JjjyMfyM7KiSQMwc87BLZSi8wXgoRvMZHVACMF7CBE3B77NN314ZKWuA:",
     "index": 1,
     "name": "Horizen 2",
@@ -39210,12 +38445,6 @@ exports[`zencash currency bridge scanAccounts zencash seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "znpMUEmboPrPE8GynEDZ1UcSSNK9ua4S6ag",
     "freshAddressPath": "44'/121'/2'/0/0",
-    "freshAddresses": [
-      {
-        "address": "znpMUEmboPrPE8GynEDZ1UcSSNK9ua4S6ag",
-        "derivationPath": "44'/121'/2'/0/0",
-      },
-    ],
     "id": "js:2:zencash:xpub6D5t3ggLE75WQGWU8XaFEiYXbgQFJD3u6eyN1Yb7gcRu4Gan7uKEwqaCBoRhFs73nN1Kf51D5W7kx6TRLpDmwWgeDEk6mghh4gPA3BZbNvg:",
     "index": 2,
     "name": "Horizen 3",

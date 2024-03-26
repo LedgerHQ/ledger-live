@@ -8,12 +8,6 @@ exports[`near currency bridge scanAccounts near seed 1 1`] = `
     "derivationMode": "nearbip44h",
     "freshAddress": "18d68decb70d4d4fd267d19a0d25edc06ad079e69ded41233a10976cf36391ec",
     "freshAddressPath": "44'/397'/0'/0'/0'",
-    "freshAddresses": [
-      {
-        "address": "18d68decb70d4d4fd267d19a0d25edc06ad079e69ded41233a10976cf36391ec",
-        "derivationPath": "44'/397'/0'/0'/0'",
-      },
-    ],
     "id": "js:2:near:18d68decb70d4d4fd267d19a0d25edc06ad079e69ded41233a10976cf36391ec:nearbip44h",
     "index": 0,
     "name": "NEAR 1",
@@ -25,7 +19,7 @@ exports[`near currency bridge scanAccounts near seed 1 1`] = `
         {
           "available": "10000000000000000001",
           "pending": "0",
-          "rewards": "1",
+          "rewards": "10000000000000000001",
           "staked": "0",
           "validatorId": "figment.poolv1.near",
         },
@@ -49,12 +43,6 @@ exports[`near currency bridge scanAccounts near seed 1 1`] = `
     "derivationMode": "nearbip44h",
     "freshAddress": "6cbf3b0f8d8b4667bf64bf44b4fefa830e4cef0e5da1e5cfb4015b5a755c4ac0",
     "freshAddressPath": "44'/397'/0'/0'/1'",
-    "freshAddresses": [
-      {
-        "address": "6cbf3b0f8d8b4667bf64bf44b4fefa830e4cef0e5da1e5cfb4015b5a755c4ac0",
-        "derivationPath": "44'/397'/0'/0'/1'",
-      },
-    ],
     "id": "js:2:near:6cbf3b0f8d8b4667bf64bf44b4fefa830e4cef0e5da1e5cfb4015b5a755c4ac0:nearbip44h",
     "index": 1,
     "name": "NEAR 2",
@@ -82,12 +70,6 @@ exports[`near currency bridge scanAccounts near seed 1 1`] = `
     "derivationMode": "nearbip44h",
     "freshAddress": "59dff1cf9185758c0c2f878c37a175280f3967dca8fee6e4ad0c4aa26daf8e5c",
     "freshAddressPath": "44'/397'/0'/0'/2'",
-    "freshAddresses": [
-      {
-        "address": "59dff1cf9185758c0c2f878c37a175280f3967dca8fee6e4ad0c4aa26daf8e5c",
-        "derivationPath": "44'/397'/0'/0'/2'",
-      },
-    ],
     "id": "js:2:near:59dff1cf9185758c0c2f878c37a175280f3967dca8fee6e4ad0c4aa26daf8e5c:nearbip44h",
     "index": 2,
     "name": "NEAR 3",

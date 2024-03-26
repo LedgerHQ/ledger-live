@@ -45,12 +45,6 @@ const dataset: CurrenciesData<Transaction> = {
         index: 0,
         freshAddress: "cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl",
         freshAddressPath: "44'/118'/0'/0/0",
-        freshAddresses: [
-          {
-            address: "cosmos1g84934jpu3v5de5yqukkkhxmcvsw3u2ajxvpdl",
-            derivationPath: "44'/118'/0'/0/0",
-          },
-        ],
         name: "Cosmos 1",
         balance: "2180673",
         spendableBalance: "2180673",
@@ -375,7 +369,6 @@ const dataset: CurrenciesData<Transaction> = {
         index: 0,
         freshAddress: "cosmos10l6h3qw05u7qduqgafj8wlrx3fjhr8523sm0c3",
         freshAddressPath: "44'/118'/0'/0/0",
-        freshAddresses: [],
         blockHeight: 2220318,
         creationDate: "2020-04-01T13:51:08.000Z",
         operationsCount: 0,

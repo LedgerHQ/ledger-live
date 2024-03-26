@@ -71,12 +71,6 @@ export type ChildAccount = {
   swapHistory: SwapOperation[];
 };
 
-/** */
-export type Address = {
-  address: string;
-  derivationPath: string;
-};
-
 /**
  * Account type is the main level account of a blockchain currency.
  * Each family maybe need an extra field, to solve this, you can have some subtyping like this:
@@ -110,15 +104,10 @@ export type Account = {
   // in context of bip44, it would be the account field of bip44 ( m/purpose'/cointype'/account' )
   index: number;
   // next receive address. to be used to display to user.
-  // (deprecated - corresponds to freshAddresses[0].address)
   freshAddress: string;
   // The path linked to freshAddress. to be used to validate with the device if it corresponds to freshAddress.
   // example: 44'/0'/0'/0/0
-  // (deprecated - corresponds to freshAddresses[0].derivationPath)
   freshAddressPath: string;
-  // an array containing all fresh addresses and paths
-  // may be empty if no sync has occurred
-  freshAddresses: Address[];
   // account name
   name: string;
   // starred
@@ -242,7 +231,6 @@ export type AccountRaw = {
   index: number;
   freshAddress: string;
   freshAddressPath: string;
-  freshAddresses: Address[];
   name: string;
   starred?: boolean;
   used?: boolean;

@@ -31,7 +31,6 @@ const hedera: CurrenciesData<Transaction> = {
         index: 0,
         freshAddress: "0.0.751515",
         freshAddressPath: "44/3030/0/0/0",
-        freshAddresses: [],
         blockHeight: 0,
         operations: [],
         pendingOperations: [],

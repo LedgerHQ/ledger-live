@@ -48,7 +48,6 @@ const near: CurrenciesData<Transaction> = {
         index: 0,
         freshAddress: `${ACCOUNT_ADDRESS}`,
         freshAddressPath: "44'/397'/0'/0'/0'",
-        freshAddresses: [],
         blockHeight: 0,
         operations: [],
         pendingOperations: [],

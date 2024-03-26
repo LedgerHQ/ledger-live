@@ -37,12 +37,6 @@ const dataset: CurrenciesData<Transaction> = {
         index: 0,
         freshAddress: "osmo10h50supk4en682vrjkc6wkgkpcyxyqn4vxjy2c",
         freshAddressPath: "44'/118'/0'/0/0",
-        freshAddresses: [
-          {
-            address: "osmo10h50supk4en682vrjkc6wkgkpcyxyqn4vxjy2c",
-            derivationPath: "44'/118'/0'/0/0",
-          },
-        ],
         name: "Osmosis 1 - Nano X",
         balance: "500250",
         spendableBalance: "500250",
@@ -366,7 +360,6 @@ const dataset: CurrenciesData<Transaction> = {
         index: 1,
         freshAddress: "osmo1xx72kqjlf2qqj88h0wakwv6rp0v8fwh74z9q89",
         freshAddressPath: "44'/118'/1'/0/0",
-        freshAddresses: [],
         blockHeight: 5417472,
         creationDate: "2022-08-02T16:09:08.906Z",
         operationsCount: 1,

@@ -39,7 +39,6 @@ const casper: CurrenciesData<Transaction> = {
         index: 0,
         freshAddress: SEED_IDENTIFIER,
         freshAddressPath: "44'/506'/0'/0/1",
-        freshAddresses: [],
         blockHeight: 0,
         operations: [],
         pendingOperations: [],

@@ -8,12 +8,6 @@ exports[`vechain currency bridge scanAccounts vechain seed 1 1`] = `
     "feesCurrencyId": "vechain/vip180/vtho",
     "freshAddress": "0x0fe6688548f0C303932bB197B0A96034f1d74dba",
     "freshAddressPath": "44'/818'/0'/0/0",
-    "freshAddresses": [
-      {
-        "address": "0x0fe6688548f0C303932bB197B0A96034f1d74dba",
-        "derivationPath": "44'/818'/0'/0/0",
-      },
-    ],
     "id": "js:2:vechain:0x0fe6688548f0C303932bB197B0A96034f1d74dba:vechain",
     "index": 0,
     "name": "Vechain 1",
@@ -45,12 +39,6 @@ exports[`vechain currency bridge scanAccounts vechain seed 1 1`] = `
     "feesCurrencyId": "vechain/vip180/vtho",
     "freshAddress": "0x02961B92B8D20A4ea12f1f1CeFA74Dd7B4355A86",
     "freshAddressPath": "44'/818'/0'/0/1",
-    "freshAddresses": [
-      {
-        "address": "0x02961B92B8D20A4ea12f1f1CeFA74Dd7B4355A86",
-        "derivationPath": "44'/818'/0'/0/1",
-      },
-    ],
     "id": "js:2:vechain:0x02961B92B8D20A4ea12f1f1CeFA74Dd7B4355A86:vechain",
     "index": 1,
     "name": "Vechain 2",
@@ -82,12 +70,6 @@ exports[`vechain currency bridge scanAccounts vechain seed 1 1`] = `
     "feesCurrencyId": "vechain/vip180/vtho",
     "freshAddress": "0xFbC8653C0b842dd33361CE8938B24e407dd4838C",
     "freshAddressPath": "44'/818'/0'/0/2",
-    "freshAddresses": [
-      {
-        "address": "0xFbC8653C0b842dd33361CE8938B24e407dd4838C",
-        "derivationPath": "44'/818'/0'/0/2",
-      },
-    ],
     "id": "js:2:vechain:0xFbC8653C0b842dd33361CE8938B24e407dd4838C:vechain",
     "index": 2,
     "name": "Vechain 3",

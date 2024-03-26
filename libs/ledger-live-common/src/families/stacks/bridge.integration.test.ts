@@ -43,7 +43,6 @@ const stacks: CurrenciesData<Transaction> = {
         index: 0,
         freshAddress: SEED_IDENTIFIER,
         freshAddressPath: "",
-        freshAddresses: [],
         blockHeight: 0,
         operations: [],
         xpub: SEED_IDENTIFIER_PUBKEY,

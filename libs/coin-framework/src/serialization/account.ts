@@ -45,7 +45,6 @@ export function fromAccountRaw(rawAccount: AccountRaw, fromRaw?: FromFamiliyRaw)
     used,
     freshAddress,
     freshAddressPath,
-    freshAddresses,
     name,
     blockHeight,
     endpointConfig,
@@ -99,13 +98,6 @@ export function fromAccountRaw(rawAccount: AccountRaw, fromRaw?: FromFamiliyRaw)
     index,
     freshAddress,
     freshAddressPath,
-    freshAddresses: freshAddresses || [
-      // in case user come from an old data that didn't support freshAddresses
-      {
-        derivationPath: freshAddressPath,
-        address: freshAddress,
-      },
-    ],
     name,
     blockHeight,
     creationDate: new Date(creationDate || Date.now()),
@@ -172,7 +164,6 @@ export function toAccountRaw(account: Account, toFamilyRaw?: ToFamiliyRaw): Acco
     index,
     freshAddress,
     freshAddressPath,
-    freshAddresses,
     blockHeight,
     currency,
     feesCurrency,
@@ -205,7 +196,6 @@ export function toAccountRaw(account: Account, toFamilyRaw?: ToFamiliyRaw): Acco
     index,
     freshAddress,
     freshAddressPath,
-    freshAddresses,
     blockHeight,
     syncHash,
     creationDate: creationDate.toISOString(),

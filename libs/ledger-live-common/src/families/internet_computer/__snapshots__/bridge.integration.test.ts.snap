@@ -8,12 +8,6 @@ exports[`internet_computer currency bridge scanAccounts internet_computer seed 1
     "derivationMode": "internet_computer",
     "freshAddress": "e8a1474afbed438be8b019c4293b9e01b33075d72757ac715183ae7c7ba77e37",
     "freshAddressPath": "44'/223'/0'/0/0",
-    "freshAddresses": [
-      {
-        "address": "e8a1474afbed438be8b019c4293b9e01b33075d72757ac715183ae7c7ba77e37",
-        "derivationPath": "44'/223'/0'/0/0",
-      },
-    ],
     "id": "js:2:internet_computer:046f08828871028b6e3cb5c13b2e2a8fa6e93f0b3ca7379171f6b7b45877955a2430925f76ec69ccb3cd8738859a8e29dcd0f9a357f1d009d2b497c6c8f63aa7cf:internet_computer",
     "index": 0,
     "name": "Internet Computer 1",
@@ -35,12 +29,6 @@ exports[`internet_computer currency bridge scanAccounts internet_computer seed 1
     "derivationMode": "internet_computer",
     "freshAddress": "1723b9a25b7cb1865caa6e633fc727c95cee6a84c52e5ca0f8752ecf66cdea4b",
     "freshAddressPath": "44'/223'/0'/0/1",
-    "freshAddresses": [
-      {
-        "address": "1723b9a25b7cb1865caa6e633fc727c95cee6a84c52e5ca0f8752ecf66cdea4b",
-        "derivationPath": "44'/223'/0'/0/1",
-      },
-    ],
     "id": "js:2:internet_computer:043ad9dda46b25cbcf98b2d91f8aa289d08078fa960d13e7d77a571c625eedcb62b6c26a86408d30a6bbdea5ecad6f7603bc1ba11fbb62caa315789f333ece2c8c:internet_computer",
     "index": 1,
     "name": "Internet Computer 2",

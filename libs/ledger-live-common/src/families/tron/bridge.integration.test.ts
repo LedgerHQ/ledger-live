@@ -756,12 +756,6 @@ const tron: CurrenciesData<Transaction> = {
         spendableBalance: "1606000",
         subAccounts: [],
         operations: [],
-        freshAddresses: [
-          {
-            address: "THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi",
-            derivationPath: "44'/195'/0'/0/0",
-          },
-        ],
         lastSyncDate: "",
         blockHeight: 0,
       },
@@ -841,12 +835,6 @@ const tron: CurrenciesData<Transaction> = {
         spendableBalance: "197",
         subAccounts: [],
         operations: [],
-        freshAddresses: [
-          {
-            address: activatedAddress1,
-            derivationPath: "44'/195'/0'/0/0",
-          },
-        ],
         lastSyncDate: "",
         blockHeight: 0,
       },
@@ -1196,7 +1184,6 @@ const tron: CurrenciesData<Transaction> = {
         index: 0,
         freshAddress: "TUxd6v64YTWkfpFpNDdtgc5Ps4SfGxwizT",
         freshAddressPath: "44'/195'/0'/0/0",
-        freshAddresses: [],
         blockHeight: 57509444,
         creationDate: "2023-10-31T14:27:27.000Z",
         operationsCount: 96,
@@ -1246,7 +1233,6 @@ const tron: CurrenciesData<Transaction> = {
         index: 2,
         freshAddress: "TY2ksFgpvb82TgGPwUSa7iseqPW5weYQyh",
         freshAddressPath: "44'/195'/2'/0/0",
-        freshAddresses: [],
         blockHeight: 59127355,
         creationDate: "2024-02-15T16:36:06.000Z",
         operationsCount: 3,

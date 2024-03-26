@@ -14,12 +14,6 @@ exports[`crypto_org_croeseid currency bridge scanAccounts crypto_org_croeseid se
     "derivationMode": "",
     "freshAddress": "tcro1k5u8tzh8nsfm6uqwlc48xz4g5j3mm8xx9zy5y9",
     "freshAddressPath": "44'/394'/0'/0/0",
-    "freshAddresses": [
-      {
-        "address": "tcro1k5u8tzh8nsfm6uqwlc48xz4g5j3mm8xx9zy5y9",
-        "derivationPath": "44'/394'/0'/0/0",
-      },
-    ],
     "id": "js:2:crypto_org_croeseid:tcro1k5u8tzh8nsfm6uqwlc48xz4g5j3mm8xx9zy5y9:",
     "index": 0,
     "name": "Cronos POS Chain Croeseid 1",
@@ -46,12 +40,6 @@ exports[`crypto_org_croeseid currency bridge scanAccounts crypto_org_croeseid se
     "derivationMode": "",
     "freshAddress": "tcro1ehq3qxxsyjwvau6v9qn2twv06ut78g4v4g3jmp",
     "freshAddressPath": "44'/394'/1'/0/0",
-    "freshAddresses": [
-      {
-        "address": "tcro1ehq3qxxsyjwvau6v9qn2twv06ut78g4v4g3jmp",
-        "derivationPath": "44'/394'/1'/0/0",
-      },
-    ],
     "id": "js:2:crypto_org_croeseid:tcro1ehq3qxxsyjwvau6v9qn2twv06ut78g4v4g3jmp:",
     "index": 1,
     "name": "Cronos POS Chain Croeseid 2",
@@ -78,12 +66,6 @@ exports[`crypto_org_croeseid currency bridge scanAccounts crypto_org_croeseid se
     "derivationMode": "",
     "freshAddress": "tcro1kqfwshusg4v7gfac5j6qmcp4ggxc74fwgk48h9",
     "freshAddressPath": "44'/394'/2'/0/0",
-    "freshAddresses": [
-      {
-        "address": "tcro1kqfwshusg4v7gfac5j6qmcp4ggxc74fwgk48h9",
-        "derivationPath": "44'/394'/2'/0/0",
-      },
-    ],
     "id": "js:2:crypto_org_croeseid:tcro1kqfwshusg4v7gfac5j6qmcp4ggxc74fwgk48h9:",
     "index": 2,
     "name": "Cronos POS Chain Croeseid 3",

@@ -113,7 +113,6 @@ const filecoin: CurrenciesData<Transaction> = {
         index: 0,
         freshAddress: SEED_IDENTIFIER,
         freshAddressPath: "44'/461'/0'/0/0",
-        freshAddresses: [],
         blockHeight: 0,
         operations: [],
         pendingOperations: [],

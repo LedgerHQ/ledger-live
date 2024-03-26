@@ -34,7 +34,6 @@ const account: NearAccount = {
   index: 1,
   freshAddress: "d812a582d0b30c1a13041fd564e5f0c4325804b1dd2447d63ab6b9a424747363",
   freshAddressPath: "44'/397'/0'/0'/1'",
-  freshAddresses: [],
   name: "NEAR 2",
   blockHeight: 85373729,
   creationDate: new Date("2022-12-08T09:42:54.396Z"),
