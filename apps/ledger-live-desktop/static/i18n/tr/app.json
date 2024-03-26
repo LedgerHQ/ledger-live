@@ -30,7 +30,8 @@
         "browse" : "Göz atın"
       },
       "filter" : {
-        "categories" : "Kategoriler"
+        "categories" : "Kategoriler",
+        "all" : "Tümü"
       },
       "branch" : {
         "soon" : "Çok yakında",
@@ -162,12 +163,12 @@
       "REVEAL" : "Adres gösterildi",
       "DELEGATE" : "Yetki devredildi",
       "REDELEGATE" : "Yetki yeniden devredildi",
-      "UNDELEGATE" : "Yetki iptal edildi",
+      "UNDELEGATE" : "Yetki devri iptal edildi",
       "APPROVE" : "Onaylandı",
       "VOTE" : "Oylandı",
       "FREEZE" : "Donduruldu",
       "UNFREEZE" : "Çözüldü",
-      "UNDELEGATE_RESOURCE" : "Yetki iptal edildi",
+      "UNDELEGATE_RESOURCE" : "Yetki devri iptal edildi",
       "WITHDRAW_EXPIRE_UNFREEZE" : "Çekim",
       "LEGACYUNFREEZE" : "Çözüldü",
       "REWARD" : "Ödül alındı",
@@ -275,7 +276,6 @@
   },
   "sidebar" : {
     "card" : "Kart",
-    "learn" : "Öğren",
     "menu" : "Menü",
     "stars" : "Favori hesaplar",
     "accounts" : "Hesaplar",
@@ -766,7 +766,7 @@
     "bandwidthTooltip" : "Bant genişliği elde etmek için varlık dondurun",
     "energyTooltip" : "Enerji kazanmak için varlık dondurun",
     "delegatedTooltip" : "Yetkisi devredilen varlıklar oylama sürecinde kullanılır. Bu tutar toplam oy sayınızı temsil eder.",
-    "undelegatingTooltip" : "Yetkisi iptal edilen varlıklar, kullanıma açılmadan önce {{timelockInDays}} gün boyunca zaman kilidinde tutulurlar.",
+    "undelegatingTooltip" : "Yetki devirleri iptal edilen varlıklar, kullanıma açılmadan önce {{timelockInDays}} gün boyunca zaman kilidinde tutulurlar.",
     "claimableRewards" : "Alınabilir Ödüller",
     "claimableRewardsTooltip" : "Şu anda USDC ödüllerini alma seçeneği mevcut değil. Bu amaç için lütfen bir üçüncü taraf cüzdanı kullanın.",
     "banner" : {
@@ -1409,6 +1409,7 @@
   },
   "dashboard" : {
     "title" : "Portföy",
+    "header" : "Portföy bakiyesi",
     "emptyAccountTile" : {
       "desc" : "Diğer kripto varlıklarını yönetmek için hesap ekleyin",
       "createAccount" : "Hesap ekle"
@@ -1449,6 +1450,27 @@
         "description" : "Ledger Recover'a erişiminizin 1 adım uzağındasınız.",
         "primaryCta" : "Bağlan",
         "secondaryCta" : "Belki sonra"
+      }
+    },
+    "marketPerformanceWidget" : {
+      "title" : "{{time}} trendi",
+      "buy" : "Satın Al",
+      "swap" : "Takas et",
+      "gainers" : "Yükselenler",
+      "losers" : "Düşenler",
+      "error" : {
+        "title" : "Ne yazık ki trendi yükleyemiyoruz",
+        "description" : "Lütfen daha sonra tekrar deneyin"
+      },
+      "missingData" : {
+        "gainers" : {
+          "title" : "İlk 50 arasındaki hiçbir varlık, son 24 saatte değer artışı yaşamadı",
+          "description" : "En çok düşenleri görüntüleyebilir veya daha sonra tekrar gelebilirsiniz"
+        },
+        "losers" : {
+          "title" : "İlk 50 arasındaki hiçbir varlık, son 24 saatte değer kaybı yaşamadı",
+          "description" : "En çok yükselenleri görüntüleyebilir veya daha sonra tekrar gelebilirsiniz"
+        }
       }
     }
   },
@@ -1732,7 +1754,7 @@
       "redelegatedFrom" : "Yetkiyi bırakan taraf",
       "redelegatedTo" : "Yetkiyi devralan taraf",
       "redelegatedAmount" : "Yetkisi devredilen tutar",
-      "undelegated" : "Yetki iptal edildi",
+      "undelegated" : "Yetki devri iptal edildi",
       "undelegatedFrom" : "Yetkisi iptal edilen taraf",
       "undelegatedAmount" : "Yetkisi iptal edilen tutar",
       "withdrawnFrom" : "Şuradan çekildi:",
@@ -1756,7 +1778,7 @@
   "DeviceAction" : {
     "allowAppPermission" : "Cihazınızda {{wording}} uygulamasını açın",
     "allowAppPermissionSubtitleToken" : "ve {{token}} token'larınızı yönetin",
-    "allowManagerPermission" : "{{productName}} cihazınızda Ledger Yöneticisine izin verin",
+    "allowManagerPermission" : "Güvenli bağlantıya izin ver",
     "allowRenaming" : "Cihazınızda yeniden adlandırmaya izin verin",
     "loading" : "Yükleniyor...",
     "connectAndUnlockDevice" : "Cihazınızı bağlayın ve kilidini açın",
@@ -2207,6 +2229,15 @@
       "summary" : {
         "title" : "Özet"
       },
+      "networkFee" : {
+        "title" : "Ağ ücreti seçin"
+      },
+      "reviewSummary" : {
+        "title" : "Özeti inceleyin"
+      },
+      "connectLedger" : {
+        "title" : "Ledger cihazını bağlayın"
+      },
       "device" : {
         "title" : "Cihaz"
       },
@@ -2263,9 +2294,6 @@
     "footer" : {
       "estimatedFees" : "Ağ ücretleri"
     }
-  },
-  "sign" : {
-    "title" : "İşlemi imzala"
   },
   "releaseNotes" : {
     "title" : "Sürüm notları",
@@ -2403,7 +2431,7 @@
           },
           "starter" : {
             "description" : "EGLD varlıklarınızın yetkisini bir Staking Sağlayıcısına devrederek ödüller kazanabilirsiniz.",
-            "bullet" : ["Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.", "Ledger cihazınızı kullanarak yetki devredin.", "Yetkisi İptal Edilen varlıklar 10 gün sonra yeniden kullanılabilir"],
+            "bullet" : ["Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.", "Ledger cihazınızı kullanarak yetki devredin.", "Yetki Devirleri İptal Edilen varlıklar 10 gün sonra yeniden kullanılabilir"],
             "warning" : {
               "description" : "Staking Sağlayıcınızı akıllıca seçin! Şu anda tek risk, çeşitli nedenlerden ötürü ödül alamamaktır. Dolayısıyla bir sağlayıcıyı Güvenilirlik, İletişim ve Ekonomi kriterlerine göre seçmelisiniz."
             }
@@ -2465,7 +2493,7 @@
     "undelegation" : {
       "header" : "Yetki İptalleri",
       "headerTooltip" : "10 günlük çözülme sürecinden sonra kullanılabilir.",
-      "inactiveTooltip" : "Yetkisi iptal edilen tutarlar üzerinden ödül kazanamazsınız.",
+      "inactiveTooltip" : "Yetki devri iptal edilen tutarlar üzerinden ödül kazanamazsınız.",
       "withdraw" : {
         "cta" : "Çekimi Tamamla"
       },
@@ -2474,8 +2502,8 @@
         "steps" : {
           "amount" : {
             "title" : "Tutar",
-            "subtitle" : "Yetki iptal etme işleminin sonuçlanması <0>10 gün</0> sürer.",
-            "warning" : "Ödüller otomatik olarak alınacak. Yetki iptali 2 adımlı bir süreçtir: Yetki iptali talebinin ardından <0>10 günlük bir çözülme süreci</0> başlar. Bu sürenin ardından çekim işlemini sonlandırabilirsiniz ve yetkisi iptal edilen tutar mevcut bakiyenize aktarılır.",
+            "subtitle" : "Yetki devrinin iptalinin sonuçlanması <0>10 gün</0> sürer.",
+            "warning" : "Ödüller otomatik olarak alınacak. Yetki devrinin iptali 2 adımlı bir süreçtir: Yetki devrini iptal etme talebinin ardından <0>10 günlük bir çözülme süreci</0> başlar. Bu sürenin ardından çekim işlemini sonlandırabilirsiniz ve yetki devri iptal edilen tutar mevcut bakiyenize aktarılır.",
             "fields" : {
               "validator" : "Staking Sağlayıcısı",
               "amount" : "Yetkisi iptal edilecek tutar"
@@ -2502,7 +2530,7 @@
         "steps" : {
           "withdraw" : {
             "title" : "Çekimi Tamamla",
-            "description" : "<0>{{validator}}</0> hesabına devredilen <0>{{amount}}</0> EGLD tutarındaki yetkiyi iptal ettiniz. Devam butonuna tıklayarak tutarı hemen çekin ve otomatik olarak mevcut bakiyenize geri ekleyin.",
+            "description" : "<0>{{validator}}</0> hesabına devredilen <0>{{amount}}</0> EGLD tutarındaki yetkilendirmeyi iptal ettiniz. Devam butonuna tıklayarak tutarı hemen çekin ve otomatik olarak mevcut bakiyenize geri ekleyin.",
             "selectLabel" : "Bir yetki iptali seçin"
           },
           "connectDevice" : {
@@ -2749,7 +2777,7 @@
         "bullet" : {
           "0" : "Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.",
           "1" : "Ledger cihazınızı kullanarak yetki devredin.",
-          "2" : "Varlıklar yetki iptalinden sonra mevcut olacak"
+          "2" : "Varlıklar, yetki devri iptal edildikten sonra mevcut olacak"
         },
         "warning" : "Doğrulayıcınızı dikkatle seçin: Doğrulayıcının yanlış kararlar vermesi halinde yetki devrinde kullandığınız varlıkların bir kısmını geri dönülemez bir şekilde kaybedebilirsiniz."
       }
@@ -3004,7 +3032,7 @@
         "steps" : {
           "starter" : {
             "description" : "{{currencyTicker}} varlıklarınızın yetkisini bir doğrulayıcıya devrederek ödüller kazanabilirsiniz.",
-            "bullet" : ["Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.", "Ledger cihazınızı kullanarak yetki devredin.", "Varlıklar, yetkisi iptal edildikten {{numberOfDays}} gün sonra tekrar kullanılabilir"],
+            "bullet" : ["Yetki devrinde kullanılan varlıklar size ait olmaya devam eder.", "Ledger cihazınızı kullanarak yetki devredin.", "Varlıklar, yetki devirleri iptal edildikten {{numberOfDays}} gün sonra tekrar kullanılabilir"],
             "warning" : {
               "description" : "Doğrulayıcınızı dikkatle seçin: Doğrulayıcının yanlış kararlar vermesi halinde yetki devrinde kullandığınız varlıkların bir kısmını geri dönülemez bir şekilde kaybedebilirsiniz."
             }
@@ -3102,14 +3130,14 @@
     "undelegation" : {
       "header" : "Yetki İptalleri",
       "headerTooltip" : "{{numberOfDays}} günlük zaman kilidinden sonra kullanılabilir",
-      "inactiveTooltip" : "Yetkisi iptal edilen tutarlar üzerinden ödül kazanamazsınız.",
+      "inactiveTooltip" : "Yetki devri iptal edilen tutarlar üzerinden ödül kazanamazsınız.",
       "flow" : {
         "title" : "Varlıkların Yetkisini İptal Edin",
         "steps" : {
           "amount" : {
             "title" : "Tutar",
-            "subtitle" : "Yetki iptal etme işleminin sonuçlanması <0>{{numberOfDays}} gün</0> sürer.",
-            "warning" : "Ödüller anında hesaba alınır. Yetkisi iptal edilen tutar <0>{{numberOfDays}} günlük zaman kilidinden sonra kullanılabilir bakiyeye geri döner.",
+            "subtitle" : "Yetki devrini iptal etme işleminin sonuçlanması <0>{{numberOfDays}} gün</0> sürer.",
+            "warning" : "Ödüller anında hesaba alınır. Yetki devri iptal edilen tutar <0>{{numberOfDays}} günlük zaman kilidinden sonra kullanılabilir bakiyeye geri döner.",
             "fields" : {
               "validator" : "Doğrulayıcı",
               "amount" : "Yetkisi iptal edilecek tutar"
@@ -3122,7 +3150,7 @@
             "title" : "Onaylayın",
             "success" : {
               "title" : "Varlıklarınızdaki yetki devrini başarıyla iptal ettiniz.",
-              "description" : "<0>{{validator}}</0> hesabına devredilen <0>{{amount}}</0> tutarındaki yetki iptal edildi",
+              "description" : "<0>{{validator}}</0> hesabına devredilen <0>{{amount}}</0> tutarındaki yetkilendirme iptal edildi",
               "cta" : "Ayrıntıları gör"
             },
             "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin."
@@ -3982,6 +4010,7 @@
       "releaseNotesBtn" : "Ayrıntılar",
       "termsBtn" : "Oku",
       "faq" : "Ledger Destek",
+      "chatbot" : "Ledger Sohbet Botu",
       "faqDesc" : "Bir sorununuz varsa, Ledger Live'ı donanım cüzdanınızla kullanma konusunda yardım alın.",
       "terms" : "Kullanım Koşulları",
       "termsDesc" : "Ledger Live'ı kullanarak Kullanım Koşullarımızı kabul etmiş sayılırsınız.",
@@ -4178,6 +4207,17 @@
     "logs" : "Logları kaydedin",
     "dataFolder" : "Kullanıcı verilerini görün"
   },
+  "approve" : {
+    "title" : "Token'ı onaylayın",
+    "description" : "Token'ı Ledger Cihazınızda onaylayın",
+    "unlimited" : "Bu sağlayıcıya, cüzdanınızdaki sınırsız miktarda seçili token'a erişme yetkisi veriyorsunuz. İmzalamadan önce Ledger cihazınızdaki işlem ayrıntılarını iki kez kontrol edin.",
+    "limited" : "Bu sağlayıcıya, cüzdanınızdaki seçili token'a erişme yetkisi veriyorsunuz. İmzalamadan önce Ledger cihazınızdaki işlem ayrıntılarını iki kez kontrol edin.",
+    "termsAndConditions" : "Bu işlemi imzaladığınızda <0>{{appName}} kullanım koşullarını kabul etmiş olursunuz.</0>"
+  },
+  "sign" : {
+    "title" : "İşlemi imzala",
+    "description" : "İşlemi Ledger Cihazınızda imzalayın"
+  },
   "exportOperationsModal" : {
     "title" : "İşlem geçmişi",
     "desc" : "İşlem geçmişini kaydedeceğiniz hesapları seçin",
@@ -4355,7 +4395,7 @@
         "options" : {
           "1" : {
             "title" : "Yeni bir {{deviceName}} kurun",
-            "description" : "Haydi cihazınızı kurmaya başlayalım"
+            "description" : "Haydi cihazınızı kurmaya başlayalım!"
           },
           "2" : {
             "title" : "{{deviceName}} cihazınızı bağlayın",
@@ -4572,7 +4612,7 @@
           "newRecoveryPhrase" : {
             "title" : "Gizli Kurtarma İfadeniz",
             "paragraph1" : "Gizli Kurtarma İfadeniz, özel anahtarlarınızı yedekleyen 24 kelimeden oluşan bir listedir.",
-            "paragraph2" : "Ledger Nano cihazınız benzersiz bir Gizli Kurtarma İfadesi oluşturur. Ledger, bunun ne olduğunu bilmez.",
+            "paragraph2" : "Ledger Nano cihazınız benzersiz bir Gizli Kurtarma İfadesi oluşturur. Ledger, ifadeyi oluşturan kelimeleri göremez.",
             "disclaimer" : "Gizli Kurtarma İfademi başka birisi öğrendiği takdirde varlıklarımın güvenliğinin tehlikeye düşeceğini anlıyorum.",
             "buttons" : {
               "next" : "Kurtarma ifadesi",
@@ -4909,6 +4949,8 @@
     "warning" : "Cihazınızda görüntülenen adresin, {{recipientWording}} tarafından size verilen adresle tam olarak eşleştiğini her zaman doğrulayın",
     "secureContract" : "Göndermeden önce cihazınızdaki fon bilgilerini doğrulayın. Sözleşme adresi güvenli bir şekilde sağlanır, böylece onu doğrulamak zorunda kalmazsınız.",
     "verifyData" : "Cihazınızdaki işlem ayrıntılarını her zaman doğrulayın.",
+    "doubleCheck" : "İmzalamadan önce Ledger cihazınızdaki işlem bilgilerini iki kez kontrol edin.",
+    "termsAndConditions" : "Bu işlemi imzaladığınızda <0>{{appName}} kullanım koşullarını kabul etmiş olursunuz.</0>",
     "warningWording" : {
     },
     "titleWording" : {
@@ -5343,7 +5385,7 @@
       "description" : "Miktarı ve ücretleri hesaplamak mümkün değil"
     },
     "NotEnoughBalance" : {
-      "title" : "Üzgünüz, fon miktarı yetersiz",
+      "title" : "Ne yazık ki bakiye, ağ ücretlerini karşılamaya yetmiyor. Tutarı değiştirin veya bakiyeyi doğrulayın",
       "description" : "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
     },
     "NotEnoughBalanceBecauseDestinationNotCreated" : {
@@ -5414,9 +5456,13 @@
       "title" : "Bir hata oluştu. Lütfen cihazınızı yeniden bağlayın",
       "description" : "{{message}}"
     },
-    "TransportRaceCondition" : {
+    "TransportPendingOperation" : {
       "title" : "Bir hata oluştu. Lütfen cihazınızı yeniden bağlayın",
       "description" : "Ledger cihazında zaten bekleyen bir eylem var. Lütfen reddedin veya yeniden bağlanın."
+    },
+    "UnresponsiveDeviceError" : {
+      "title" : "Bir hata oluştu.",
+      "description" : "Cihazınıza erişilemiyor.\nBekleyen bir eylem olabilir, lütfen reddedin veya yeniden bağlanın."
     },
     "TransportStatusError" : {
       "title" : "Bir hata oluştu. Lütfen cihazınızı yeniden bağlayın",
@@ -5431,7 +5477,7 @@
       "description" : "Lütfen cihazınızı yeniden başlatın ve logo göründüğünde tuşlara dokunmayın. Sorun devam ederse Ledger Destek ile iletişime geçin."
     },
     "UserRefusedAllowManager" : {
-      "title" : "My Ledger cihazda reddedildi"
+      "title" : "Güvenli bağlantı, cihazda reddedildi"
     },
     "UserRefusedFirmwareUpdate" : {
       "title" : "İşletim sistemi güncellemesi\ncihazda iptal edildi",
@@ -5472,6 +5518,14 @@
     "WrongDeviceForAccount" : {
       "title" : "Bir hata oluştu",
       "description" : "Lütfen donanım cüzdanınızın, seçilen hesapla ilişkili kurtarma ifadesi veya passphrase ile kurulmuş olduğunu doğrulayın."
+    },
+    "WrongDeviceForAccountPayout" : {
+      "title" : "Bir hata oluştu",
+      "description" : "Bu adres, bağlı cihazla uyuşmuyor. Lütfen değiştirin ve tekrar deneyin."
+    },
+    "WrongDeviceForAccountRefund" : {
+      "title" : "Bir hata oluştu",
+      "description" : "Bu adres, bağlı cihazla uyuşmuyor ve iade almak için kullanılamaz. Lütfen cihazı değiştirin ve tekrar deneyin."
     },
     "DeviceAppVerifyNotSupported" : {
       "title" : "Uygulama güncellemesi gerekli",
@@ -5516,6 +5570,10 @@
     "TransactionHasBeenValidatedError" : {
       "title" : "Hızlandırılamaz ve iptal edilemez",
       "description" : "Bu işlem zaten doğrulanmış"
+    },
+    "SequenceNumberError" : {
+      "title" : "Sıra numarası hatası",
+      "description" : "Lütfen pencereyi kapatıp daha sonra tekrar deneyin"
     },
     "CantScanQRCode" : {
       "title" : "Bu karekod okunamadı; otomatik doğrulama bu adres tarafından desteklenmiyor"
@@ -5566,7 +5624,7 @@
       "description" : "Babylon güncellemesinde yapılan değişikliklerden dolayı bu özellik ileriki bir zamanda eklenecek."
     },
     "RecommendUndelegation" : {
-      "title" : "Hesabı boşaltmadan önce lütfen yetkileri iptal edin"
+      "title" : "Hesabı boşaltmadan önce lütfen yetki devrini iptal edin"
     },
     "RecommendSubAccountsToEmpty" : {
       "title" : "Lütfen önce tüm alt hesapları boşaltın"
@@ -5698,6 +5756,9 @@
     },
     "SwapExchangeRateAmountTooHigh" : {
       "title" : "Tutar {{maxAmountFromFormatted}} değerinden az olmalıdır"
+    },
+    "SwapExchangeRateAmountTooLowOrTooHigh" : {
+      "title" : "Tutar kullanılamıyor. Lütfen değeri değiştirin."
     },
     "PolkadotElectionClosed" : {
       "title" : "Doğrulayıcı seçimleri kapatılmalı"
@@ -5914,9 +5975,6 @@
     "FailedToRetrieveFirmwareUpdateInfo" : {
       "title" : "İşletim sistemi güncellemesi denetlenemedi",
       "description" : "Bir hata oluştu. Lütfen tekrar deneyin veya şüpheniz varsa Ledger Destek ile iletişime geçin."
-    },
-    "TezosUnrevealedAccount" : {
-      "title" : "Takas yapılamıyor: Tezos hesabıyla başlangıç gönderimi/yetki devri gerekiyor veya pariteyi değiştirin."
     }
   },
   "cryptoOrg" : {
@@ -6046,5 +6104,64 @@
   },
   "recoverRestore" : {
     "title" : "Ledger'ınızı bağlayın ve kilidini açın"
+  },
+  "analyticsOptInPrompt" : {
+    "variantA" : {
+      "description" : "Ledger Live verilerinizi paylaşmanız, tercihlerinizi anlayarak sizin ilginizi çekebilecek içerikleri göstermemize ve teknik sorunları çözmemize yardımcı oluyor.",
+      "whatWeTrack" : "Sizin onayınız ile Ledger şunları takip edebilecek:",
+      "whatWeTrackList" : {
+        "1" : "Sayfa ziyaretleri ve tıklamalar dâhil olmak üzere analiz verileri.",
+        "2" : "Tıklamalar, sayfa ziyaretleri ve dönüştürme verileri dâhil olmak üzere kişiselleştirme verileri."
+      },
+      "whatWeDoNotTrack" : "Ledger şunlarla ilgili bilgileri hiçbir zaman takip etmez:",
+      "whatWeDoNotTrackList" : {
+        "1" : "Varlıklarınız.",
+        "2" : "Portföyünüz.",
+        "3" : "Kişiyi tanımlayıcı bilgileriniz."
+      },
+      "managePreferences" : "Tercihlerinizi yönetin",
+      "refuse" : "Tümünü reddet",
+      "accept" : "Tümünü kabul et",
+      "analyticsData" : {
+        "title" : "Analiz verileri",
+        "description" : "Ledger Live'ın geliştirilmesine yardımcı olmak için sayfa ziyaretleri ve tıklamalar dâhil olmak üzere uygulamanın analiz verilerini paylaşın."
+      },
+      "personalizationData" : {
+        "title" : "Kişiselleştirme verileri",
+        "description" : "Kişiselleştirilmiş öneriler almak için dönüştürme verileri, tıklamalar ve sayfa ziyaretleri dâhil olmak üzere uygulamanın kişiselleştirme verilerini paylaşın."
+      },
+      "share" : "Paylaş"
+    },
+    "variantB" : {
+      "accept" : "Kabul et",
+      "refuse" : "Reddet",
+      "analytics" : {
+        "description" : "Ledger Live analiz verilerinizi paylaşmanız, insanların Ledger Live'ı nasıl kullandıklarını anlamamıza, hataları düzeltmemize veya gelişmiş bir kullanıcı deneyimi sunmamıza yardımcı oluyor.",
+        "details" : {
+          "1" : "Analiz verileri arasında sayfa ziyaretleri ve tıklamalar yer alır.",
+          "2" : "Bakiyeniz, hesaplarınız ve portföyünüz ile ilgili hiçbir bilgiyi toplayamayız veya göremeyiz.",
+          "3" : "Analizler tamamen anonimdir. Kişisel bilgilerinizi göremez veya toplayamayız."
+        }
+      },
+      "personalRecommendations" : {
+        "title" : "Kişiselleştirilmiş bir deneyim elde edin",
+        "description" : "Ledger Live kişiselleştirme verilerinizi paylaşmanız, tercihlerinizle uyumlu içerikler göstermemizi sağlar",
+        "details" : {
+          "1" : "Kişiselleştirme verileri arasında dönüştürme verileri, tıklamalar ve sayfa ziyaretleri yer alır.",
+          "2" : "Kişisel veya portföy bilgilerinizi takip edemez veya toplayamayız."
+        }
+      }
+    },
+    "common" : {
+      "title" : "Deneyiminizi geliştirmemize ve kişiselleştirmemize yardım edin",
+      "revokeInfo" : "Onayınızı, dilediğiniz zaman uygulama ayarlarından iptal edebilirsiniz.",
+      "learnMore" : "Takip Politikamız hakkında daha fazla bilgi edinin"
+    },
+    "profileSettings" : {
+      "personalizedExp" : "Kişiselleştirilmiş deneyim",
+      "analytics" : "Analiz",
+      "personalizedExpDesc" : "Tercihlerinizle uyumlu kişiselleştirilmiş öneriler alın.",
+      "analyticsDesc" : "Ledger'ın kullanıcı deneyimini geliştirmesine yardımcı olmak için analitik verileri etkinleştirin."
+    }
   }
 }
