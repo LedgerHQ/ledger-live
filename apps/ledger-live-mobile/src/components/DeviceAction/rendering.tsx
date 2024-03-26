@@ -937,15 +937,15 @@ export function LoadingAppInstall({
   ...props
 }: RawProps & {
   analyticsPropertyFlow: string;
+  appName: string | null | undefined;
   description?: string;
   request?: AppRequest;
 }) {
   const currency = request?.currency || request?.account?.currency;
-  const appName = request?.appName || currency?.managerAppName;
+  const appNameToTrack = props.appName || request?.appName || currency?.managerAppName;
   useEffect(() => {
-    const trackingArgs = ["In-line app install", { appName, flow: analyticsPropertyFlow }] as const;
-    track(...trackingArgs);
-  }, [appName, analyticsPropertyFlow]);
+    track("In-line app install", { appName: appNameToTrack, flow: analyticsPropertyFlow });
+  }, [appNameToTrack, analyticsPropertyFlow]);
 
   return renderLoading({ ...props, lockModal: true });
 }
