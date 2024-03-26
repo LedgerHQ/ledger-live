@@ -202,15 +202,12 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
 
       // `push` to make sure the screen is added to the navigation stack, if ever the user was on the manager before doing an update, and we can return
       // to this screen with a `goBack`.
-      navigation.push(NavigatorName.Base, {
-        screen: ScreenName.FirmwareUpdate,
-        params: {
-          device,
-          deviceInfo,
-          firmwareUpdateContext: latestFirmware,
-          onBackFromUpdate,
-          isBeforeOnboarding: true,
-        },
+      navigation.push(ScreenName.FirmwareUpdate, {
+        device,
+        deviceInfo,
+        firmwareUpdateContext: latestFirmware,
+        onBackFromUpdate,
+        isBeforeOnboarding: true,
       });
     }
     // It should never happen
