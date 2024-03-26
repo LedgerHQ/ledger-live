@@ -58,19 +58,12 @@ async function fetch(url: string) {
   return data;
 }
 
-export const getAccount = async (
-  addr: string,
-  currency: CryptoCurrency,
-): Promise<AccountType | null> => {
-  try {
-    const query = querystring.stringify({
-      address: addr,
-    });
-    const data = await fetch(`${getApiUrl(currency)}/addresses/details/${addr}?${query}`);
-    return data;
-  } catch (error) {
-    return null;
-  }
+export const getAccount = async (addr: string, currency: CryptoCurrency): Promise<AccountType> => {
+  const query = querystring.stringify({
+    address: addr,
+  });
+  const data = await fetch(`${getApiUrl(currency)}/addresses/details/${addr}?${query}`);
+  return data;
 };
 
 export const getCurrentBlockHeight = async (currency: CryptoCurrency): Promise<number> => {
@@ -140,8 +133,9 @@ export const getOperations = async (
   addr: string,
   skip: number,
   currency: CryptoCurrency,
+  maxLength: number,
 ): Promise<Operation[]> => {
-  return await fetchOperationList(accountId, addr, skip, currency);
+  return await fetchOperationList(accountId, addr, skip, currency, maxLength);
 };
 
 export const fetchOperationList = async (
@@ -149,6 +143,7 @@ export const fetchOperationList = async (
   addr: string,
   skip: number,
   currency: CryptoCurrency,
+  maxLength: number,
   prevOperations: IconOperation[] = [],
 ): Promise<IconOperation[]> => {
   const data = await getTxHistory(addr, skip, currency);
@@ -157,10 +152,10 @@ export const fetchOperationList = async (
   );
 
   const mergedOp = [...prevOperations, ...operations];
-  if (operations.length < LIMIT) {
+  if (operations.length < LIMIT || operations.length >= maxLength) {
     return mergedOp;
   }
-  return await fetchOperationList(accountId, addr, skip + LIMIT, currency, mergedOp);
+  return await fetchOperationList(accountId, addr, skip + LIMIT, currency, maxLength, mergedOp);
 };
 
 export const getTxHistory = async (

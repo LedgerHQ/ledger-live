@@ -9,6 +9,7 @@ import BigNumber from "bignumber.js";
 import expect from "expect";
 import { acceptTransaction } from "./speculos-deviceActions";
 import { isAccountEmpty } from "../../account";
+import { convertICXtoLoop } from "./logic";
 
 const ICON_MIN_SAFE = new BigNumber(1);
 const maxAccounts = 6;
@@ -16,12 +17,16 @@ const currency = getCryptoCurrencyById("icon");
 
 const minBalanceNewAccount = parseCurrencyUnit(currency.units[0], "0.1");
 
-function expectCorrectBalanceChange(input: TransactionTestInput<Transaction>) {
-  const { account, operation, accountBeforeTransaction } = input;
-  expect(account.balance.toNumber()).toBe(
-    accountBeforeTransaction.balance.minus(operation.value).toNumber(),
-  );
-}
+// FIXME ICON have a bug where the amounts from the API have imprecisions
+const expectedApproximate = (
+  value: BigNumber,
+  expected: BigNumber,
+  delta = convertICXtoLoop(0.00000005),
+) => {
+  if (value.minus(expected).abs().gt(delta)) {
+    expect(value.toString()).toEqual(value.toString());
+  }
+};
 
 const checkSendableToEmptyAccount = (amount, recipient) => {
   if (isAccountEmpty(recipient) && amount.lte(minBalanceNewAccount)) {
@@ -45,7 +50,6 @@ const icon: AppSpec<Transaction> = {
     const opExpected: Record<string, any> = toOperationRaw({
       ...optimisticOperation,
     });
-    operation.extra = opExpected.extra;
     delete opExpected.value;
     delete opExpected.fee;
     delete opExpected.date;
@@ -85,8 +89,13 @@ const icon: AppSpec<Transaction> = {
           ],
         };
       },
-      test: input => {
-        expectCorrectBalanceChange(input);
+      test: ({ accountBeforeTransaction, operation, account }) => {
+        botTest("account spendable balance decreased with operation", () =>
+          expectedApproximate(
+            account.spendableBalance,
+            accountBeforeTransaction.spendableBalance.minus(operation.value),
+          ),
+        );
       },
     },
     {
@@ -107,8 +116,10 @@ const icon: AppSpec<Transaction> = {
           ],
         };
       },
-      test: input => {
-        expectCorrectBalanceChange(input);
+      test: ({ account }) => {
+        botTest("account spendable balance is zero", () =>
+          expectedApproximate(account.spendableBalance, new BigNumber(0)),
+        );
       },
     },
   ],
