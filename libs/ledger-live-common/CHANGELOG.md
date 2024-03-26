@@ -1,5 +1,27 @@
 # @ledgerhq/live-common
 
+## 33.7.0-nightly.10
+
+### Minor Changes
+
+- [#6495](https://github.com/LedgerHQ/ledger-live/pull/6495) [`5ae6d8f`](https://github.com/LedgerHQ/ledger-live/commit/5ae6d8fb9b868dc01724e84ede2708e7a717c3f2) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Help buttons redirect to the chatbot instead of the faq
+
+### Patch Changes
+
+- [#6394](https://github.com/LedgerHQ/ledger-live/pull/6394) [`fb9dc79`](https://github.com/LedgerHQ/ledger-live/commit/fb9dc7969357dcbb378cc8eab93f237db00a97c3) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Handle unresponsive event correctly in LLD
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@0.12.0-nightly.8
+  - @ledgerhq/coin-algorand@0.4.0-nightly.9
+  - @ledgerhq/coin-bitcoin@0.4.0-nightly.6
+  - @ledgerhq/coin-evm@0.13.0-nightly.9
+  - @ledgerhq/coin-near@0.3.11-nightly.9
+  - @ledgerhq/coin-polkadot@0.6.0-nightly.9
+  - @ledgerhq/hw-app-eth@6.36.0-nightly.8
+  - @ledgerhq/live-countervalues@0.1.3-nightly.9
+  - @ledgerhq/live-countervalues-react@0.1.3-nightly.9
+  - @ledgerhq/live-nft@0.2.2-nightly.9
+
 ## 33.7.0-nightly.9
 
 ### Minor Changes

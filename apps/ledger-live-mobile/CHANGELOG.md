@@ -1,5 +1,24 @@
 # live-mobile
 
+## 3.41.0-nightly.11
+
+### Patch Changes
+
+- [#6401](https://github.com/LedgerHQ/ledger-live/pull/6401) [`d87cd4b`](https://github.com/LedgerHQ/ledger-live/commit/d87cd4b798e472494daad566617e992367249d2b) Thanks [@lvndry](https://github.com/lvndry)! - Promise.allSettled polyfill
+
+- [#6498](https://github.com/LedgerHQ/ledger-live/pull/6498) [`5a9cca1`](https://github.com/LedgerHQ/ledger-live/commit/5a9cca1c5239dbf3ef48e3afcf343cc73115969c) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Updated Large Movers description
+
+- Updated dependencies [[`5ae6d8f`](https://github.com/LedgerHQ/ledger-live/commit/5ae6d8fb9b868dc01724e84ede2708e7a717c3f2), [`fb9dc79`](https://github.com/LedgerHQ/ledger-live/commit/fb9dc7969357dcbb378cc8eab93f237db00a97c3)]:
+  - @ledgerhq/types-live@6.45.0-nightly.7
+  - @ledgerhq/live-common@33.7.0-nightly.10
+  - @ledgerhq/coin-framework@0.12.0-nightly.8
+  - @ledgerhq/coin-evm@0.13.0-nightly.9
+  - @ledgerhq/domain-service@1.1.19-nightly.8
+  - @ledgerhq/live-countervalues@0.1.3-nightly.9
+  - @ledgerhq/live-countervalues-react@0.1.3-nightly.9
+  - @ledgerhq/live-nft@0.2.2-nightly.9
+  - @ledgerhq/live-nft-react@0.2.2-nightly.9
+
 ## 3.41.0-nightly.10
 
 ### Patch Changes

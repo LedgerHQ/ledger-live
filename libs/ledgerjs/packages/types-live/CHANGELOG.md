@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.45.0-nightly.7
+
+### Minor Changes
+
+- [#6495](https://github.com/LedgerHQ/ledger-live/pull/6495) [`5ae6d8f`](https://github.com/LedgerHQ/ledger-live/commit/5ae6d8fb9b868dc01724e84ede2708e7a717c3f2) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Help buttons redirect to the chatbot instead of the faq
+
 ## 6.45.0-nightly.6
 
 ### Minor Changes
