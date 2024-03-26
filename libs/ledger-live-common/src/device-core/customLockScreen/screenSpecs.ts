@@ -5,17 +5,17 @@ import {
 } from "../capabilities/isCustomLockScreenSupported";
 
 type ScreenSpecs = {
-  /* width of the screen in pixels */
+  /** width of the screen in pixels */
   width: number;
-  /* height of the screen in pixels */
+  /** height of the screen in pixels */
   height: number;
-  /* number of pixels at the top of the screen which are not visible */
+  /** number of pixels at the top of the screen which are not visible */
   paddingTop: number;
-  /* number of pixels at the bottom of the screen which are not visible */
+  /** number of pixels at the bottom of the screen which are not visible */
   paddingBottom: number;
-  /* number of pixels at the left of the screen which are not visible */
+  /** number of pixels at the left of the screen which are not visible */
   paddingLeft: number;
-  /* number of pixels at the right of the screen which are not visible */
+  /** number of pixels at the right of the screen which are not visible */
   paddingRight: number;
 };
 
