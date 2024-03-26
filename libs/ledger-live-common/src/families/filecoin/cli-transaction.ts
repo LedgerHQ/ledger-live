@@ -1,30 +1,71 @@
 import type { Account, AccountLike, AccountLikeArray } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import flatMap from "lodash/flatMap";
-import type { Transaction } from "../../generated/types";
+import type { Transaction } from "./types";
+import { getAccountCurrency } from "../../account";
 
-const options = [];
+const options = [
+  {
+    name: "token",
+    alias: "t",
+    type: String,
+    desc: "use an token account children of the account",
+  },
+];
 
-function inferAccounts(account: Account): AccountLikeArray {
+function inferAccounts(account: Account, opts: Record<string, any>): AccountLikeArray {
   invariant(account.currency.family === "filecoin", "filecoin family");
 
-  const accounts: Account[] = [account];
-  return accounts;
+  if (!opts.token) {
+    const accounts: Account[] = [account];
+    return accounts;
+  }
+
+  const token = opts.token;
+
+  const subAccounts = account.subAccounts || [];
+
+  if (token) {
+    const subAccount = subAccounts.find(t => {
+      const currency = getAccountCurrency(t);
+      return (
+        token.toLowerCase() === currency.ticker.toLowerCase() || token.toLowerCase() === currency.id
+      );
+    });
+
+    if (!subAccount) {
+      throw new Error(
+        "token account '" +
+          token +
+          "' not found. Available: " +
+          subAccounts.map(t => getAccountCurrency(t).ticker).join(", "),
+      );
+    }
+
+    return [subAccount];
+  }
+
+  return [];
 }
 
 function inferTransactions(
   transactions: Array<{
     account: AccountLike;
     transaction: Transaction;
-    mainAccount: Account;
   }>,
 ): Transaction[] {
-  return flatMap(transactions, ({ transaction }) => {
+  return flatMap(transactions, ({ transaction, account }) => {
     invariant(transaction.family === "filecoin", "filecoin family");
+
+    if (account.type === "TokenAccount") {
+      const isDelisted = account.token.delisted === true;
+      invariant(!isDelisted, "token is delisted");
+    }
 
     return {
       ...transaction,
       family: "filecoin",
+      subAccountId: account.type === "TokenAccount" ? account.id : null,
     } as Transaction;
   });
 }

@@ -26,6 +26,8 @@ const fieldComponents = {
   "filecoin.gasPremium": FilecoinField,
   "filecoin.gasLimit": FilecoinField,
   "filecoin.method": FilecoinField,
+  "filecoin.amount": FilecoinField,
+  "filecoin.recipient": FilecoinField,
 };
 export default {
   fieldComponents,

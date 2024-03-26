@@ -9,6 +9,7 @@ export enum BotScenario {
   DEFAULT = "default",
   ETH_RECIPIENT = "eth-recipient",
   F4_RECIPIENT = "f4-recipient",
+  TOKEN_TRANSFER = "token-transfer",
 }
 
 const validHexRegExp = new RegExp(/^(0x)?[a-fA-F0-9]+$/);

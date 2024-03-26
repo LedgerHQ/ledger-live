@@ -4,10 +4,11 @@ import BigNumber from "bignumber.js";
 
 import type { Transaction } from "../../families/filecoin/types";
 import { getCryptoCurrencyById } from "../../currencies";
-import { genericTestDestination, pickSiblings } from "../../bot/specs";
+import { pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
 import { generateDeviceActionFlow } from "./speculos-deviceActions";
 import { BotScenario } from "./utils";
+import { botTest, genericTestDestination } from "@ledgerhq/coin-framework/bot/specs";
 
 const F4_RECIPIENT = "f410fncojwmrseefktoco6rcnb3zv2eiqfli7muhvqma";
 const ETH_RECIPIENT = "0x689c9b3232210aa9b84ef444d0ef35d11102ad1f";
@@ -20,6 +21,7 @@ const filecoinSpecs: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoSP,
     appName: "Filecoin",
+    appVersion: "0.23.8",
   },
   genericDeviceAction: generateDeviceActionFlow(BotScenario.DEFAULT),
   testTimeout: 6 * 60 * 1000,
@@ -111,6 +113,46 @@ const filecoinSpecs: AppSpec<Transaction> = {
             },
           ],
         };
+      },
+    },
+
+    {
+      name: "Send ~50% WFIL",
+      maxRun: 1,
+      deviceAction: generateDeviceActionFlow(BotScenario.TOKEN_TRANSFER),
+      transaction: ({ account, bridge, maxSpendable }) => {
+        invariant(maxSpendable.gt(0), "Spendable balance is too low");
+        const subAccount = account.subAccounts?.find(
+          a => a.type === "TokenAccount" && a.spendableBalance.gt(0),
+        );
+        invariant(subAccount && subAccount.type === "TokenAccount", "no subAccount with WFIL");
+        const amount = subAccount.balance.div(1.9 + 0.2 * Math.random()).integerValue();
+        return {
+          transaction: bridge.createTransaction(account),
+          updates: [
+            {
+              subAccountId: subAccount.id,
+            },
+            {
+              recipient: F4_RECIPIENT,
+            },
+            {
+              amount,
+            },
+          ],
+        };
+      },
+      test: ({ account, accountBeforeTransaction, transaction, status }) => {
+        const subAccountId = transaction.subAccountId;
+        const subAccount = account.subAccounts?.find(sa => sa.id === subAccountId);
+        const subAccountBeforeTransaction = accountBeforeTransaction.subAccounts?.find(
+          sa => sa.id === subAccountId,
+        );
+        botTest("subAccount balance moved with the tx status amount", () =>
+          expect(subAccount?.balance.toString()).toBe(
+            subAccountBeforeTransaction?.balance.minus(status.amount).toString(),
+          ),
+        );
       },
     },
   ],

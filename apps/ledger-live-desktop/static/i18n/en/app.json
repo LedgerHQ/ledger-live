@@ -5495,6 +5495,9 @@
       "title": "Impossible to calculate amount and fees",
       "description": "Impossible to calculate amount and fees"
     },
+    "InvalidRecipientForTokenTransfer": {
+      "title": "Invalid recipient for token transfer, supported account types for token transfer: [f0, f4, 0x]"
+    },
     "NotEnoughBalance": {
       "title": "Sorry, insufficient balance including network fees. Adjust amount or verify balance.",
       "description": "Please make sure the account has enough funds."

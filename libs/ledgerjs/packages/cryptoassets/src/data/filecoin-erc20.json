@@ -1,0 +1,122 @@
+[
+  [
+    "filecoin",
+    "staked_fil",
+    "stFIL",
+    18,
+    "Staked FIL",
+    "",
+    "0x3C3501E6C353DbaEDDFA90376975Ce7aCe4Ac7a8",
+    false,
+    false,
+    null
+  ],
+  [
+    "filecoin",
+    "wrapped_fil",
+    "WFIL",
+    18,
+    "Wrapped FIL",
+    "",
+    "0x60E1773636CF5E4A227d9AC24F20fEca034ee25A",
+    false,
+    false,
+    null
+  ],
+  [
+    "filecoin",
+    "infinity_pool_staked_fil",
+    "iFIL",
+    18,
+    "Infinity Pool Staked FIL",
+    "",
+    "0x690908f7fa93afC040CFbD9fE1dDd2C2668Aa0e0",
+    false,
+    false,
+    null
+  ],
+  [
+    "filecoin",
+    "wrapped_staked_fil",
+    "wstFIL",
+    18,
+    "Wrapped Staked FIL",
+    "",
+    "0x6A3F21d2A92a15752912974BbBD5b1469A72B261",
+    false,
+    false,
+    null
+  ],
+  [
+    "filecoin",
+    "collectif_fil",
+    "clFIL",
+    18,
+    "Collectif FIL",
+    "",
+    "0xd0437765d1dc0e2fa14e97d290f135efdf1a8a9a",
+    false,
+    false,
+    null
+  ],
+  [
+    "filecoin",
+    "axelar_wrapped_usdc",
+    "axlUSDC",
+    6,
+    "Axelar Wrapped USDC",
+    "",
+    "0xEB466342C4d449BC9f53A865D5Cb90586f405215",
+    false,
+    false,
+    null
+  ],
+  [
+    "filecoin",
+    "pfil_token",
+    "pFIL",
+    18,
+    "PFIL Token",
+    "",
+    "0xAaa93ac72bECfbBc9149f293466bbdAa4b5Ef68C",
+    false,
+    false,
+    null
+  ],
+  [
+    "filecoin",
+    "wrapped_pfil_token",
+    "wpFIL",
+    18,
+    "Wrapped PFIL Token",
+    "",
+    "0x57E3BB9F790185Cfe70Cc2C15Ed5d6B84dCf4aDb",
+    false,
+    false,
+    null
+  ],
+  [
+    "filecoin",
+    "securitized_filecoin_token",
+    "SFT",
+    18,
+    "Securitized Filecoin Token",
+    "",
+    "0xC5eA96Dd365983cfEc90E72b6A2daC9562f458Ba",
+    false,
+    false,
+    null
+  ],
+  [
+    "filecoin",
+    "node_fil",
+    "NFIL",
+    18,
+    "Node FIL",
+    "",
+    "0x84B038DB0fCde4fae528108603C7376695dc217F",
+    false,
+    false,
+    null
+  ]
+]

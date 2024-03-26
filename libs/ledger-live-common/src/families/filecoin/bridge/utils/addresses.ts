@@ -1,5 +1,13 @@
-import { IAddress, PROTOCOL_INDICATOR, fromEthAddress, fromString } from "iso-filecoin/address";
+import {
+  IAddress,
+  PROTOCOL_INDICATOR,
+  fromEthAddress,
+  fromString,
+  toEthAddress,
+} from "iso-filecoin/address";
 import { log } from "@ledgerhq/logs";
+import BigNumber from "bignumber.js";
+import { fetchEthAddrForF1Fil } from "./api";
 
 export type ValidateAddressResult =
   | {
@@ -9,6 +17,23 @@ export type ValidateAddressResult =
   | {
       isValid: false;
     };
+
+export const convertF4ToEthAddress = (addr: string) => {
+  const parsed = fromString(addr);
+
+  return toEthAddress(parsed);
+};
+
+export const convertF0toEthAddress = (addr: string): string => {
+  if (addr.slice(0, 2) != "f0") {
+    throw new Error("Address does not start with f0");
+  }
+
+  const id = new BigNumber(addr.slice(2));
+  const idHex = id.toString(16).padStart(16, "0");
+
+  return `0xff${"".padStart(22, "0")}${idHex}`;
+};
 
 export const isFilEthAddress = (addr: IAddress) =>
   addr.protocol === PROTOCOL_INDICATOR.DELEGATED && addr.namespace === 10;
@@ -31,4 +56,51 @@ export const validateAddress = (input: string): ValidateAddressResult => {
   }
 
   return { isValid: false };
+};
+
+export const isRecipientValidForTokenTransfer = (addr: string): boolean => {
+  if (addr.length < 2) {
+    return false;
+  }
+
+  const valid = validateAddress(addr);
+  if (!valid.isValid) {
+    return false;
+  }
+
+  const accountType = addr.substring(0, 2);
+  if (["f0", "0x", "f4"].includes(accountType)) {
+    return true;
+  }
+
+  return false;
+};
+
+export const convertAddressFilToEth = async (addr: string): Promise<string> => {
+  if (addr.length > 0 && addr.slice(0, 2) === "t1") {
+    addr = `f${addr.slice(1)}`;
+  }
+  const recipientAddressProtocol = addr.slice(0, 2);
+
+  switch (recipientAddressProtocol) {
+    case "f1": {
+      const res = await fetchEthAddrForF1Fil(addr);
+      if (!res) {
+        throw new Error("recipient account id not available on the network");
+      }
+      return res;
+    }
+    case "f0": {
+      return convertF0toEthAddress(addr);
+    }
+    case "f4": {
+      return convertF4ToEthAddress(addr);
+    }
+    case "0x": {
+      return addr;
+    }
+    default: {
+      throw new Error("supported address protocols are f0, f1, f4");
+    }
+  }
 };
