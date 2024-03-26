@@ -20,7 +20,7 @@
     "_test": "jest"
   },
   "dependencies": {
-    "@octokit/plugin-retry": "^4.1.1",
+    "@octokit/plugin-retry": "^4.1.6",
     "probot": "^12.3.3"
   },
   "devDependencies": {
