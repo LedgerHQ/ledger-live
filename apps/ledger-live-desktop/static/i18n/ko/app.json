@@ -1982,7 +1982,7 @@
       "mcuBlueSecond" : "부팅 옵션이 표시될 때까지 버튼을 5초 이상 누르세요. Bootloader 모드 탭",
       "successTitle" : "사용 중인 {{deviceName}} OS가 최신 상태입니다.",
       "successTitleApps" : "사용 중인 {{deviceName}} OS가\n최신 상태입니다. 마지막으로...",
-      "successSubtitleApps" : "Ledger Stax에서 앱 복구를 시작하려면, 아래\n\"앱 복구\" 버튼을 선택하세요.",
+      "successSubtitleApps" : "{{deviceName}}에서 앱 복구를 시작하려면, 아래\n\"앱 복구\" 버튼을 선택하세요.",
       "sucessCTAApps" : "앱 복원",
       "SuccessCTANoApps" : "완료",
       "resetSteps" : {

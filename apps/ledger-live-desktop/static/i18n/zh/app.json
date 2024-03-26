@@ -1982,7 +1982,7 @@
       "mcuBlueSecond" : "持续按住设备侧面按钮至少5秒直至设备显示 Boot Options（启动选项）。轻击 Bootloader Mode（启动装载模式）。",
       "successTitle" : "您的 {{deviceName}} 操作系统\n是最新的。",
       "successTitleApps" : "您的 {{deviceName}} 操作系统\n是最新的。最后一点……",
-      "successSubtitleApps" : "要在您的 Ledger Stax 上开始恢复应用程序，请选择\n下方的“Restore apps”（恢复应用程序）按钮。",
+      "successSubtitleApps" : "要在您的 {{deviceName}} 上开始恢复应用程序，请选择\n下方的“Restore apps”（恢复应用程序）按钮。",
       "sucessCTAApps" : "恢复应用程序",
       "SuccessCTANoApps" : "完成",
       "resetSteps" : {

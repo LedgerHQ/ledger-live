@@ -1982,7 +1982,7 @@
       "mcuBlueSecond" : "Нажмите и удерживайте кнопку в течение нескольких секунд, пока не увидите опции загрузки. Выберите режим Bootloader",
       "successTitle" : "ОС {{deviceName}}\nактуальна.",
       "successTitleApps" : "ОС {{deviceName}}\nактуальна Осталось совсем немного.",
-      "successSubtitleApps" : "Нажмите «Переустановить приложения», чтобы\nвосстановить приложения на Ledger Stax",
+      "successSubtitleApps" : "Нажмите «Переустановить приложения», чтобы\nвосстановить приложения на {{deviceName}}",
       "sucessCTAApps" : "Переустановка приложений",
       "SuccessCTANoApps" : "Завершить",
       "resetSteps" : {

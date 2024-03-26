@@ -1982,7 +1982,7 @@
       "mcuBlueSecond" : "Başlatma Seçenekleri görüntülenene kadar tuşu en az 5 saniye basılı tutun. Bootlader Moduna dokunun",
       "successTitle" : "{{deviceName}} işletim sisteminiz\ngüncel.",
       "successTitleApps" : "{{deviceName}} cihazınızdaki işletim sisteminiz\ngüncel. Son bir şey daha var...",
-      "successSubtitleApps" : "Ledger Stax cihazınızda uygulamayı geri yüklemeyi başlatmak için\naşağıdaki \"Uygulamaları geri yükle\" düğmesini seçin.",
+      "successSubtitleApps" : "{{deviceName}} cihazınızda uygulamayı geri yüklemeyi başlatmak için\naşağıdaki \"Uygulamaları geri yükle\" düğmesini seçin.",
       "sucessCTAApps" : "Uygulamaları geri yükleyin",
       "SuccessCTANoApps" : "Tamamla",
       "resetSteps" : {
