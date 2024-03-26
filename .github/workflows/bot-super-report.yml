@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Setup the toolchain
-        uses: ./tools/actions/composites/setup-toolchain
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
         with:
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
@@ -23,7 +23,7 @@ jobs:
         run: pnpm i --filter='!./apps/**'
 
       - name: generate super report
-        uses: ./tools/actions/generate-bot-super-report
+        uses: LedgerHQ/ledger-live/tools/actions/generate-bot-super-report@develop
         with:
           branch: develop
           environment: production
