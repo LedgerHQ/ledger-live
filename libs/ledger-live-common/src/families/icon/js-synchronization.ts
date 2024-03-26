@@ -20,13 +20,18 @@ const getAccountShape: GetAccountShape = async info => {
   let blockHeight = 0;
   try {
     const oldOperations = initialAccount?.operations || [];
-    const skip = oldOperations.length > 0 ? oldOperations.length + 1 : 0;
 
     const blockHeight = await getCurrentBlockHeight(currency);
     const iconAccount = await getAccount(info.address, currency);
 
     // Merge new operations with the previously synced ones
-    const newOperations = await getOperations(accountId, address, skip, currency);
+    const newOperations = await getOperations(
+      accountId,
+      address,
+      0,
+      currency,
+      iconAccount?.contract_updated_block - oldOperations.length,
+    );
     const operations = mergeOps(oldOperations, newOperations);
     const delegationData = await getDelegation(address, currency);
     const iconResources: IconResources = {
