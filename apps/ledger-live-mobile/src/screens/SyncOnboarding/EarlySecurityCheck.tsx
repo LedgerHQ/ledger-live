@@ -11,7 +11,7 @@ import { TrackScreen, track } from "~/analytics";
 import FirmwareUpdateAvailableDrawer from "./FirmwareUpdateAvailableDrawer";
 import { Linking } from "react-native";
 import { LanguagePrompt } from "./LanguagePrompt";
-import { NavigatorName, ScreenName } from "~/const";
+import { ScreenName } from "~/const";
 import type { UpdateStep } from "../FirmwareUpdate";
 import { urls } from "~/utils/urls";
 import EarlySecurityCheckBody from "./EarlySecurityCheckBody";
