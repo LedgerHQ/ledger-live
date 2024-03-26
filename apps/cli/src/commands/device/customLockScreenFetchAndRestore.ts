@@ -14,6 +14,7 @@ import {
   isCustomLockScreenSupported,
 } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import { getScreenSpecs } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 
 /**
  * This is an implmentation demo of what we will have during a firmware update
@@ -29,11 +30,11 @@ type CustomLockScreenFetchAndRestoreJobOpts = ScanCommonOpts & {
 
 const exec = async (opts: CustomLockScreenFetchAndRestoreJobOpts) => {
   const { fileInput, device: deviceId = "", deviceModelId } = opts;
-  const clsSupportedDeviceModelId = deviceModelId as CLSSupportedDeviceModelId;
-  if (!isCustomLockScreenSupported(clsSupportedDeviceModelId)) {
+  if (!isCustomLockScreenSupported(deviceModelId as DeviceModelId)) {
     console.error("This device model does not support custom lock screen");
     return;
   }
+  const clsSupportedDeviceModelId = deviceModelId as CLSSupportedDeviceModelId;
   const hexImageWithoutHeader = fs.readFileSync(fileInput, "utf-8");
   const hexImage = await generateCustomLockScreenImageFormat(
     hexImageWithoutHeader,

@@ -16,7 +16,7 @@ import {
   RenderImageCommitRequested,
   RenderImageLoadRequested,
   RenderLoadingImage,
-} from "~/renderer/components/CustomImage/CustomLockScreenDeviceAction/renderImageLoadRequested";
+} from "~/renderer/components/CustomImage/CustomLockScreenDeviceAction/stepsRendering";
 import customLockScreenLoad from "@ledgerhq/live-common/hw/customLockScreenLoad";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import { DeviceModelId } from "@ledgerhq/types-devices";

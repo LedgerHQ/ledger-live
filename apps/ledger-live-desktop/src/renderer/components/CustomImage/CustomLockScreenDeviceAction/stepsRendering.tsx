@@ -53,9 +53,9 @@ export const RenderLoadingImage = ({
   deviceModelId,
 }: {
   deviceModelId: CLSSupportedDeviceModelId;
-  progress?: number;
   device: Device;
-  source?: string | undefined;
+  progress: number | undefined;
+  source?: string;
 }) => {
   const { t } = useTranslation();
   return (
@@ -98,9 +98,9 @@ export const RenderImageCommitRequested = ({
 }: {
   deviceModelId: CLSSupportedDeviceModelId;
   device: Device;
-  source?: string | undefined;
   restore: boolean;
   type: Theme["theme"];
+  source?: string;
 }) => {
   const { t } = useTranslation();
   return (

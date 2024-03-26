@@ -7,6 +7,7 @@ import {
   CLSSupportedDeviceModelId,
   isCustomLockScreenSupported,
 } from "@ledgerhq/live-common/device-core/capabilities/isCustomLockScreenSupported";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 
 type CustomLockScreenLoadJobOpts = ScanCommonOpts & {
   fileInput: string;
@@ -15,12 +16,11 @@ type CustomLockScreenLoadJobOpts = ScanCommonOpts & {
 
 const exec = async (opts: CustomLockScreenLoadJobOpts) => {
   const { fileInput, device: deviceId = "", deviceModelId } = opts;
-  const clsSupportedDeviceModelId = deviceModelId as CLSSupportedDeviceModelId;
-  if (!isCustomLockScreenSupported(clsSupportedDeviceModelId)) {
+  if (!isCustomLockScreenSupported(deviceModelId as DeviceModelId)) {
     console.error("This device model does not support custom lock screen");
     return;
   }
-
+  const clsSupportedDeviceModelId = deviceModelId as CLSSupportedDeviceModelId;
   const hexImage = fs.readFileSync(fileInput, "utf-8");
 
   await new Promise<void>(resolve =>
