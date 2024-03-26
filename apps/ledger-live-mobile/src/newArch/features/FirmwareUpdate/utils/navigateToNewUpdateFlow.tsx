@@ -18,13 +18,10 @@ export function navigateToNewUpdateFlow({
   latestFirmware: FirmwareUpdateContextEntity | null;
   onBackFromUpdate: (updateState: UpdateStep) => void;
 }) {
-  navigation.navigate(NavigatorName.Base, {
-    screen: ScreenName.FirmwareUpdate,
-    params: {
-      device: lastConnectedDevice,
-      deviceInfo: lastSeenDeviceModelInfo?.deviceInfo,
-      firmwareUpdateContext: latestFirmware,
-      onBackFromUpdate,
-    },
+  navigation.navigate(ScreenName.FirmwareUpdate, {
+    device: lastConnectedDevice,
+    deviceInfo: lastSeenDeviceModelInfo?.deviceInfo,
+    firmwareUpdateContext: latestFirmware,
+    onBackFromUpdate,
   });
 }
