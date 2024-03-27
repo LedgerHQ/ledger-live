@@ -30,7 +30,8 @@
         "browse" : "둘러보기"
       },
       "filter" : {
-        "categories" : "카테고리"
+        "categories" : "카테고리",
+        "all" : "전체"
       },
       "branch" : {
         "soon" : "곧 출시 예정",
@@ -275,7 +276,6 @@
   },
   "sidebar" : {
     "card" : "카드",
-    "learn" : "알아보기",
     "menu" : "메뉴",
     "stars" : "즐겨찾는 계정",
     "accounts" : "계정",
@@ -1409,6 +1409,7 @@
   },
   "dashboard" : {
     "title" : "포트폴리오",
+    "header" : "포트폴리오 잔액",
     "emptyAccountTile" : {
       "desc" : "계정을 추가하여 다른 암호화폐를 관리하세요",
       "createAccount" : "계정 추가"
@@ -1449,6 +1450,27 @@
         "description" : "한 단계만 더 완료하면 Ledger Recover를 사용하실 수 있습니다.",
         "primaryCta" : "연결",
         "secondaryCta" : "다음에 결정하기"
+      }
+    },
+    "marketPerformanceWidget" : {
+      "title" : "{{time}} 트렌드",
+      "buy" : "구매",
+      "swap" : "스왑",
+      "gainers" : "상승 코인",
+      "losers" : "하락 코인",
+      "error" : {
+        "title" : "죄송합니다. 트렌드를 로드할 수 없습니다.",
+        "description" : "나중에 다시 시도해 주세요"
+      },
+      "missingData" : {
+        "gainers" : {
+          "title" : "지난 24시간 동안 상위 50개 자산 중 수익을 낸 자산이 없습니다.",
+          "description" : "최하위 수익 창출 자산을 확인하거나 나중에 다시 방문하세요."
+        },
+        "losers" : {
+          "title" : "지난 24시간 동안 상위 50개 자산 중 손실을 낸 자산이 없습니다.",
+          "description" : "최상위 수익 창출 자산을 확인하거나 나중에 다시 방문해 보세요."
+        }
       }
     }
   },
@@ -1756,7 +1778,7 @@
   "DeviceAction" : {
     "allowAppPermission" : "내 장치에서 {{wording}} 앱 열기",
     "allowAppPermissionSubtitleToken" : "나의 {{token}} 토큰 관리",
-    "allowManagerPermission" : "{{productName}}에서 Ledger 관리자를 허용하세요",
+    "allowManagerPermission" : "보안 연결을 허용하세요",
     "allowRenaming" : "장치에서 이름 변경을 허용하세요",
     "loading" : "로딩...",
     "connectAndUnlockDevice" : "장치를 연결하고 잠금 해제하세요",
@@ -2207,6 +2229,15 @@
       "summary" : {
         "title" : "요약"
       },
+      "networkFee" : {
+        "title" : "네트워크 수수료를 선택하세요"
+      },
+      "reviewSummary" : {
+        "title" : "요약 내용을 검토하세요"
+      },
+      "connectLedger" : {
+        "title" : "Ledger 장치 연결"
+      },
       "device" : {
         "title" : "장치"
       },
@@ -2263,9 +2294,6 @@
     "footer" : {
       "estimatedFees" : "네트워크 수수료"
     }
-  },
-  "sign" : {
-    "title" : "트랜잭션 서명"
   },
   "releaseNotes" : {
     "title" : "릴리즈 노트",
@@ -3912,6 +3940,8 @@
       "userId" : "사용자 ID",
       "debugApps" : "디버그 앱 허용",
       "debugAppsDesc" : "디버그 태그된 플랫폼 앱 열기를 표시하고 허용하세요.",
+      "debugReactQuery" : "디버그 ReactQuery 허용",
+      "debugReactQueryDesc" : "디버그 ReactQuery 콘솔을 표시하고 열 수 있도록 허용합니다.",
       "experimentalApps" : "실험적 앱 허용",
       "experimentalAppsDesc" : "실험적이라 태그 된 플랫폼 앱을 표시하고 허용하세요.",
       "catalogUrl" : "카탈로그 앱 공급자 설정",
@@ -3982,6 +4012,7 @@
       "releaseNotesBtn" : "세부 사항",
       "termsBtn" : "읽기",
       "faq" : "Ledger 지원",
+      "chatbot" : "Ledger 챗봇",
       "faqDesc" : "문제가 있다면, 하드웨어 지갑으로 Ledger Live 이용 방법에 관한 도움을 받으세요.",
       "terms" : "이용 약관",
       "termsDesc" : "Ledger Live를 사용함으로써 귀하는 당사 이용 약관에 동의하는 것으로 간주됩니다.",
@@ -4177,6 +4208,17 @@
     "troubleshooting" : "여기를 클릭하여 해결책을 찾아보세요",
     "logs" : "로그 저장",
     "dataFolder" : "사용자 데이터 보기"
+  },
+  "approve" : {
+    "title" : "토큰을 승인하세요",
+    "description" : "Ledger 장치에서 토큰을 승인하세요",
+    "unlimited" : "귀하는 이 공급자가 귀하의 지갑에서 선택한 토큰에 무제한으로 액세스할 수 있도록 승인합니다. 서명하기 전에 Ledger 장치에서 트랜잭션 세부 정보를 다시 확인하세요.",
+    "limited" : "귀하는 이 공급자가 귀하의 지갑에서 선택한 토큰에 액세스할 수 있도록 승인합니다. 서명하기 전에 Ledger 장치에서 트랜잭션 세부 정보를 다시 확인하세요.",
+    "termsAndConditions" : "본 트랜잭션에 서명함으로써 본인은 <0>{{appName}}의 이용약관</0>을 수락합니다."
+  },
+  "sign" : {
+    "title" : "트랜잭션 서명",
+    "description" : "Ledger 장치에서 트랜잭션에 서명합니다."
   },
   "exportOperationsModal" : {
     "title" : "거래 내역",
@@ -4909,6 +4951,8 @@
     "warning" : "장치에 표시된 주소가 {{recipientWording}}의 주소와 정확히 일치하는지 항상 확인하세요.",
     "secureContract" : "장치의 예치금 세부사항을 확인한 후 전송하세요. 연락처 주소는 안전하게 제공되어 따로 인증할 필요 없습니다.",
     "verifyData" : "언제나 거래 세부사항을 장치에서 확인하세요.",
+    "doubleCheck" : "서명하기 전에 Ledger 장치에서 트랜잭션 세부 정보를 다시 확인하세요.",
+    "termsAndConditions" : "본 트랜잭션에 서명함으로써 본인은 <0>{{appName}}의 이용약관</0>을 수락합니다.",
     "warningWording" : {
     },
     "titleWording" : {
@@ -5343,7 +5387,7 @@
       "description" : "금액 및 수수료 계산이 불가능합니다"
     },
     "NotEnoughBalance" : {
-      "title" : "죄송하지만 자금이 부족합니다",
+      "title" : "죄송합니다. 네트워크 수수료를 포함한 잔액이 부족합니다. 금액을 조정하거나 잔액을 확인하세요",
       "description" : "계정에 자금이 충분한지 확인해 주세요."
     },
     "NotEnoughBalanceBecauseDestinationNotCreated" : {
@@ -5414,9 +5458,13 @@
       "title" : "문제가 발생했습니다. 장치를 다시 연결하세요",
       "description" : "{{message}}"
     },
-    "TransportRaceCondition" : {
+    "TransportPendingOperation" : {
       "title" : "문제가 발생했습니다. 장치를 다시 연결하세요",
       "description" : "Ledger 장치에 이미 보류 중인 작업이 있습니다. 거부하거나 다시 연결하세요."
+    },
+    "UnresponsiveDeviceError" : {
+      "title" : "문제가 발생했습니다.",
+      "description" : "장치에 액세스할 수 없음.\n작업이 보류 중일 수 있습니다. 거부하거나 다시 연결하세요."
     },
     "TransportStatusError" : {
       "title" : "문제가 발생했습니다. 장치를 다시 연결하세요",
@@ -5431,7 +5479,7 @@
       "description" : "로고가 나타나면 버튼을 누르지 말고 장치를 재시작하세요. 문제가 지속되면 Ledger 고객 지원에 문의해주세요."
     },
     "UserRefusedAllowManager" : {
-      "title" : "장치에서 내 Ledger가 거부됨"
+      "title" : "장치에서 보안 연결이 거부되었습니다"
     },
     "UserRefusedFirmwareUpdate" : {
       "title" : "장치에서 OS 업데이트 설치가\n취소되었습니다",
@@ -5472,6 +5520,14 @@
     "WrongDeviceForAccount" : {
       "title" : "문제가 발생했습니다",
       "description" : "선택한 계정에 연결된 복구 문구 또는 패스프레이즈로 하드웨어 지갑을 설정했는지 확인해 주세요."
+    },
+    "WrongDeviceForAccountPayout" : {
+      "title" : "문제가 발생했습니다",
+      "description" : "귀하의 장치와 연결된 수령 계정이 아닙니다. 변경 후 다시 시도하세요."
+    },
+    "WrongDeviceForAccountRefund" : {
+      "title" : "문제가 발생했습니다",
+      "description" : "귀하의 장치와 연결되어 환불에 사용할 수 있는 수령 계정이 아닙니다. 변경 후 다시 시도하세요."
     },
     "DeviceAppVerifyNotSupported" : {
       "title" : "앱 업데이트가 필요합니다",
@@ -5516,6 +5572,10 @@
     "TransactionHasBeenValidatedError" : {
       "title" : "속도를 높이거나 취소할 수 없음",
       "description" : "이 트랜잭션은 이미 검증되었습니다"
+    },
+    "SequenceNumberError" : {
+      "title" : "시퀀스 번호 오류",
+      "description" : "창을 닫고 나중에 다시 시도하세요"
     },
     "CantScanQRCode" : {
       "title" : "이 QR 코드를 스캔할 수 없습니다: 이 주소는 자동 확인을 지원하지 않습니다"
@@ -5698,6 +5758,9 @@
     },
     "SwapExchangeRateAmountTooHigh" : {
       "title" : "금액은 {{maxAmountFromFormatted}}보다 적어야 합니다"
+    },
+    "SwapExchangeRateAmountTooLowOrTooHigh" : {
+      "title" : "이용 불가 금액. 값을 수정하세요."
     },
     "PolkadotElectionClosed" : {
       "title" : "검증인 선출을 종료해야 합니다"
@@ -5914,9 +5977,6 @@
     "FailedToRetrieveFirmwareUpdateInfo" : {
       "title" : "OS 업데이트 확인 실패",
       "description" : "문제가 발생했습니다. 확실하지 않을 경우 다시 시도하거나 Ledger 지원 부서에 연락하세요."
-    },
-    "TezosUnrevealedAccount" : {
-      "title" : "스왑 불가: 테조스 계정이나 변경 쌍을 통해 초기 전송/위임이 필요합니다."
     }
   },
   "cryptoOrg" : {
@@ -6046,5 +6106,64 @@
   },
   "recoverRestore" : {
     "title" : "Ledger를 연결하고 잠금을 해제하세요"
+  },
+  "analyticsOptInPrompt" : {
+    "variantA" : {
+      "description" : "공유해 주신 Ledger Live 데이터는 고객의 선호를 이해하고 고객과 관련 있는 콘텐츠를 준비하며 다양한 기술적 문제를 해결하는 데 사용됩니다.",
+      "whatWeTrack" : "동의해 주신다면, Ledger는 다음 정보를 추적합니다.\b",
+      "whatWeTrackList" : {
+        "1" : "페이지 방문, 클릭 수를 포함한 분석 데이터.",
+        "2" : "클릭 수, 페이지 방문, 환전 데이터를 포함한 개인화 데이터"
+      },
+      "whatWeDoNotTrack" : "Ledger는 다음과 관련한 정보를 결코 추적하지 않습니다.",
+      "whatWeDoNotTrackList" : {
+        "1" : "고객 자산.",
+        "2" : "고객 포트폴리오.",
+        "3" : "고객의 개인 식별 정보."
+      },
+      "managePreferences" : "환경 설정 관리",
+      "refuse" : "모두 거부",
+      "accept" : "모두 수락",
+      "analyticsData" : {
+        "title" : "분석 데이터",
+        "description" : "Ledger Live 개선에 도움을 주시려면, 방문, 클릭 수 등 앱 분석 데이터를 공유해 주세요."
+      },
+      "personalizationData" : {
+        "title" : "개인화 데이터",
+        "description" : "개인 맞춤형 추천을 받아보시려면, 환전 데이터, 클릭 수, 페이지 방문 등을 포함한 앱의 개인화 데이터를 공유해 주세요."
+      },
+      "share" : "공유"
+    },
+    "variantB" : {
+      "accept" : "수락",
+      "refuse" : "거부",
+      "analytics" : {
+        "description" : "공유해 주신 Ledger Live 분석 데이터는 고객이 어떤 방식으로 Ledger Live를 활용하는지 이해하고, 버그를 수정하며 개선된 사용자 경험을 제공하는 데 활용됩니다.",
+        "details" : {
+          "1" : "페이지 방문, 클릭 수를 포함한 분석 데이터.",
+          "2" : "당사는 고객의 잔액, 계좌, 포트폴리오와 관련한 어떤 정보도 수집 또는 열람할 수 없습니다.",
+          "3" : "분석은 온전히 익명으로 처리됩니다. 당사는 고객의 개인 정보를 열람 또는 수집할 수 없습니다."
+        }
+      },
+      "personalRecommendations" : {
+        "title" : "맞춤화된 고객 경험을 즐겨보세요",
+        "description" : "공유해 주신 Ledger Live 개인화 데이터는 고객 선호에 맞는 콘텐츠를 제시하는 데 사용됩니다.",
+        "details" : {
+          "1" : "환전 데이터, 클릭 수, 페이지 방문을 포함한 개인화 데이터.",
+          "2" : "당사는 고객의 개인 정보 또는 포트폴리오 정보를 추적하거나 수집할 수 없습니다."
+        }
+      }
+    },
+    "common" : {
+      "title" : "사용자 경험을 개선하고 개인 맞춤형 서비스를 제공할 수 있도록 도와주세요.",
+      "revokeInfo" : "당사 앱 설정에서 언제든지 동의를 철회하실 수 있습니다.",
+      "learnMore" : "당사 추적 정책 자세히 살펴보기"
+    },
+    "profileSettings" : {
+      "personalizedExp" : "맞춤화된 경험",
+      "analytics" : "애널리틱스",
+      "personalizedExpDesc" : "내가 설정해 둔 환경 설정에 맞는 맞춤형 추천을 받아보세요.",
+      "analyticsDesc" : "Ledger가 사용자 경험을 개선할 수 있도록 애널리틱스 기능을 활성화하세요."
+    }
   }
 }
