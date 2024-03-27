@@ -39,14 +39,14 @@ jobs:
           token: ${{ steps.generate-token.outputs.token }}
 
       - name: Setup git user
-        uses: ./tools/actions/composites/setup-git-user
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
       - name: Setup the toolchain
-        uses: ./tools/actions/composites/setup-toolchain
-      - uses: ./tools/actions/get-package-infos
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
         id: desktop-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop
-      - uses: ./tools/actions/get-package-infos
+      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
         id: mobile-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
@@ -58,11 +58,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pnpm changeset version
-      - uses: ./tools/actions/get-package-infos
+      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
         id: post-desktop-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-desktop
-      - uses: ./tools/actions/get-package-infos
+      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
         id: post-mobile-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile

@@ -48,7 +48,6 @@ export function fromAccountRaw(rawAccount: AccountRaw, fromRaw?: FromFamiliyRaw)
     freshAddresses,
     name,
     blockHeight,
-    endpointConfig,
     currencyId,
     feesCurrencyId,
     unitMagnitude,
@@ -136,10 +135,6 @@ export function fromAccountRaw(rawAccount: AccountRaw, fromRaw?: FromFamiliyRaw)
     res.xpub = xpub;
   }
 
-  if (endpointConfig) {
-    res.endpointConfig = endpointConfig;
-  }
-
   if (subAccounts) {
     res.subAccounts = subAccounts as SubAccount[];
   }
@@ -186,7 +181,6 @@ export function toAccountRaw(account: Account, toFamilyRaw?: ToFamiliyRaw): Acco
     balanceHistoryCache,
     spendableBalance,
     subAccounts,
-    endpointConfig,
     swapHistory,
     syncHash,
     nfts,
@@ -226,10 +220,6 @@ export function toAccountRaw(account: Account, toFamilyRaw?: ToFamiliyRaw): Acco
 
   if (balanceHistoryCache) {
     res.balanceHistoryCache = balanceHistoryCache;
-  }
-
-  if (endpointConfig) {
-    res.endpointConfig = endpointConfig;
   }
 
   if (xpub) {
