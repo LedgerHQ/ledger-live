@@ -1,5 +1,11 @@
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { CurrencyData, RawCurrencyData, SparklineSvgData } from "../types";
+import {
+  CurrencyData,
+  MarketItemPerformer,
+  MarketItemResponse,
+  RawCurrencyData,
+  SparklineSvgData,
+} from "../types";
 
 function distributedCopy(items: number[], n: number): number[] {
   if (!items) return [];
@@ -78,4 +84,17 @@ export const format = (
     ? sparklineAsSvgData(distributedCopy(currency.sparkline_in_7d.price, 6 * 7)) // keep 6 points per day
     : undefined,
   chartData: {},
+});
+
+export const formatPerformer = (currency: MarketItemResponse): MarketItemPerformer => ({
+  ledgerIds: currency.ledgerIds,
+  name: currency.name,
+  image: currency.image,
+  ticker: currency.ticker,
+  priceChangePercentage1h: currency.priceChangePercentage1h,
+  priceChangePercentage24h: currency.priceChangePercentage24h,
+  priceChangePercentage7d: currency.priceChangePercentage7d,
+  priceChangePercentage30d: currency.priceChangePercentage30d,
+  priceChangePercentage1y: currency.priceChangePercentage1y,
+  price: currency.price,
 });

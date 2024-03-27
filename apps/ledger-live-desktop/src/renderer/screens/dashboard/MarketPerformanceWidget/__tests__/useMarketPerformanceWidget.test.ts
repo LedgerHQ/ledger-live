@@ -3,20 +3,26 @@
  */
 
 import { describe, expect, it } from "@jest/globals";
-import { getSlicedList } from "../useMarketPerformanceWidget";
 import { Order } from "../types";
-import { Currency } from "@ledgerhq/types-cryptoassets";
+import { MarketItemPerformer } from "@ledgerhq/live-common/market/types";
+import { getSlicedList } from "../utils";
 
-const createElem = (change: number) => ({
-  currency: { id: "bitcoin" } as Currency,
-  change,
-  currentValue: 100,
-  referenceValue: 100,
+const createElem = (change: number): MarketItemPerformer => ({
+  name: "Bitcoin",
+  image: "https://bitcoin.org/logo.png",
+  priceChangePercentage1h: change,
+  priceChangePercentage1y: change,
+  priceChangePercentage24h: change,
+  priceChangePercentage30d: change,
+  priceChangePercentage7d: change,
+  ticker: "BTC",
+  price: 70000,
+  ledgerIds: [],
 });
 
 describe("useMarketPerformanceWidget", () => {
   describe("getSlicedList", () => {
-    it("Should return a list of 4 positive elements sorted", () => {
+    it("Should return a list of 4 positive elements on day", () => {
       const DATA = [
         createElem(-50),
         createElem(10),
@@ -25,11 +31,37 @@ describe("useMarketPerformanceWidget", () => {
         createElem(30),
       ];
 
-      const list = getSlicedList(DATA, Order.asc);
+      const list = getSlicedList(DATA, Order.asc, "day");
 
       expect(list).toHaveLength(4);
-      expect(list[0].change).toBe(50);
-      expect(list[1].change).toBe(30);
+    });
+
+    it("Should return a list of 1 positive elements on month", () => {
+      const DATA = [
+        createElem(-50),
+        createElem(-10),
+        createElem(-50),
+        createElem(20),
+        createElem(-30),
+      ];
+
+      const list = getSlicedList(DATA, Order.asc, "month");
+
+      expect(list).toHaveLength(1);
+    });
+
+    it("Should return a list of 2 positive elements on week", () => {
+      const DATA = [
+        createElem(-50),
+        createElem(-10),
+        createElem(50),
+        createElem(20),
+        createElem(-30),
+      ];
+
+      const list = getSlicedList(DATA, Order.asc, "week");
+
+      expect(list).toHaveLength(2);
     });
 
     it("Should return a list of 2 negative elements sorted", () => {
@@ -41,11 +73,37 @@ describe("useMarketPerformanceWidget", () => {
         createElem(30),
       ];
 
-      const list = getSlicedList(DATA, Order.desc);
+      const list = getSlicedList(DATA, Order.desc, "day");
 
       expect(list).toHaveLength(2);
-      expect(list[0].change).toBe(-50);
-      expect(list[1].change).toBe(-20);
+    });
+
+    it("Should return a list of 4 negative elements on month", () => {
+      const DATA = [
+        createElem(-50),
+        createElem(-10),
+        createElem(50),
+        createElem(-20),
+        createElem(-30),
+      ];
+
+      const list = getSlicedList(DATA, Order.desc, "month");
+
+      expect(list).toHaveLength(4);
+    });
+
+    it("Should return a list of32 negative elements on week", () => {
+      const DATA = [
+        createElem(-50),
+        createElem(-10),
+        createElem(50),
+        createElem(20),
+        createElem(-30),
+      ];
+
+      const list = getSlicedList(DATA, Order.desc, "week");
+
+      expect(list).toHaveLength(3);
     });
   });
 });
