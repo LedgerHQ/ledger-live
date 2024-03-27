@@ -9,12 +9,13 @@ import { ENV } from "./types";
 
 const { API_PORT } = process.env as ENV;
 const cwd = path.join(__dirname);
+
 const delay = (timing: number) => new Promise(resolve => setTimeout(resolve, timing));
 
 type SemanticVersion = `${number}.${number}.${number}`;
 type NanoAppEndpoint = `/${SemanticVersion}/${string}/app_${SemanticVersion}.elf`;
 
-export const spawnSpeculos = async (
+export const spawnSigner = async (
   service: "speculos",
   nanoAppEndpoint: NanoAppEndpoint,
 ): Promise<SpeculosTransportHttp> => {
@@ -30,7 +31,7 @@ export const spawnSpeculos = async (
   await fs.mkdir(path.resolve(process.cwd(), "tmp"), { recursive: true });
   await fs.writeFile(path.resolve(process.cwd(), "tmp/app.elf"), blob, "binary");
 
-  await compose.upOne(service, {
+  await compose.upOne("speculos", {
     cwd,
     log: true,
     env: {
@@ -39,7 +40,7 @@ export const spawnSpeculos = async (
   });
 
   const checkSpeculosLogs = async (): Promise<SpeculosTransportHttp> => {
-    const { out } = await compose.logs("speculos");
+    const { out } = await compose.logs("speculos", { cwd });
 
     if (out.includes("Running on all addresses (0.0.0.0)")) {
       console.log(chalk.bgYellowBright(" -  SPECULOS READY ✅  - "));
@@ -51,12 +52,11 @@ export const spawnSpeculos = async (
     return checkSpeculosLogs();
   };
 
-  console.log("\n");
   return checkSpeculosLogs().then(transport => transport);
 };
 
 export const killDocker = async () => {
-  await compose.stopMany({ cwd, log: true }, "speculos", "anvil");
+  await compose.stopMany({ cwd, log: true }, "speculos");
   await compose.rm({ cwd, log: true });
 };
 

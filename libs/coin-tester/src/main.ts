@@ -15,7 +15,6 @@ export type Scenario<T extends TransactionCommon> = {
     accountBridge: AccountBridge<T>;
     currencyBridge: CurrencyBridge;
     account: Account;
-    transport: Transport;
     testTimeout?: number;
     retryInterval?: number;
     onSignerConfirmation?: () => Promise<void>;

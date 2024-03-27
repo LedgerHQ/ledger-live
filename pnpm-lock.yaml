@@ -1862,6 +1862,9 @@ importers:
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
+      docker-compose:
+        specifier: ^0.24.2
+        version: 0.24.3
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5

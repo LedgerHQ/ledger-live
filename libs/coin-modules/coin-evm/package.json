@@ -57,6 +57,7 @@
     "@ledgerhq/logs": "workspace:^",
     "axios": "0.26.1",
     "bignumber.js": "^9.1.2",
+    "docker-compose": "^0.24.2",
     "dotenv": "^16.4.5",
     "eip55": "^2.1.1",
     "ethers": "5.7.2",

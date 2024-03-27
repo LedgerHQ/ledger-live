@@ -2,10 +2,10 @@ version: '2.4'
 
 services:
   speculos:
-    image: ghcr.io/ledgerhq/speculos:latest
+    image: ghcr.io/ledgerhq/speculos:sha-69bf753
     platform: linux/amd64
     volumes:
-      - ./tmp:/speculos/apps
+      - /Users/landry.monga/Github/ledger/ledger-live/libs/coin-modules/coin-evm/tmp:/speculos/apps
     env_file:
       - .env
     ports:
