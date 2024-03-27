@@ -1,47 +1,68 @@
+import axios from "axios";
 import { log } from "@ledgerhq/logs";
+import {
+  addTokens,
+  convertERC20,
+  convertBEP20,
+  listTokensForCryptoCurrency,
+} from "@ledgerhq/cryptoassets/tokens";
 import { getEnv } from "@ledgerhq/live-env";
-import network from "@ledgerhq/live-network/network";
-import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { BEP20Token, ERC20Token } from "@ledgerhq/cryptoassets/types";
-import { tokens as tokensByChainId } from "@ledgerhq/cryptoassets/data/evm/index";
-import { addTokens, convertERC20, convertBEP20 } from "@ledgerhq/cryptoassets/tokens";
+import {
+  tokens as tokensByChainId,
+  hashes as embeddedHashesByChainId,
+} from "@ledgerhq/cryptoassets/data/evm/index";
+import { getCALHash, setCALHash } from "./logic";
 
-export const fetchERC20Tokens: (currency: CryptoCurrency) => Promise<ERC20Token[] | BEP20Token[]> =
-  makeLRUCache(
-    async currency => {
-      const { ethereumLikeInfo } = currency;
+export const fetchERC20Tokens: (
+  currency: CryptoCurrency,
+) => Promise<ERC20Token[] | BEP20Token[] | null> = async currency => {
+  const { ethereumLikeInfo } = currency;
 
-      const url = `${getEnv("DYNAMIC_CAL_BASE_URL")}/evm/${
-        ethereumLikeInfo?.chainId || 0
-      }/erc20.json`;
-      const dynamicTokens: ERC20Token[] | null = await network({
-        method: "GET",
-        url,
-      })
-        .then(({ data }: { data: ERC20Token[] }) => (data.length ? data : null))
-        .catch(e => {
-          log("error", "EVM Family: Couldn't fetch dynamic CAL tokens from " + url, e);
-          return null;
-        });
-      if (dynamicTokens) return dynamicTokens;
+  const latestCALHash = getCALHash(currency);
+  const embeddedHash =
+    embeddedHashesByChainId[ethereumLikeInfo?.chainId as keyof typeof embeddedHashesByChainId];
+  const embeddedTokens = tokensByChainId[
+    ethereumLikeInfo?.chainId as keyof typeof tokensByChainId
+  ] as ERC20Token[];
 
-      const tokens = tokensByChainId[
-        ethereumLikeInfo?.chainId as keyof typeof tokensByChainId
-      ] as ERC20Token[];
-      if (tokens) return tokens;
+  const url = `${getEnv("DYNAMIC_CAL_BASE_URL")}/evm/${ethereumLikeInfo?.chainId || 0}/erc20.json`;
+  const tokens = await axios
+    .get<ERC20Token[]>(url, {
+      headers: {
+        "If-None-Match": latestCALHash,
+      },
+    })
+    .then(({ data, headers }) => {
+      if (data?.length) {
+        setCALHash(currency, headers.etag);
+        return data;
+      }
+      return null;
+    })
+    .catch(e => {
+      // Hitting cache and tokens are already set at least once
+      // Don't do anything
+      if (e.code === "304" && listTokensForCryptoCurrency(currency).length) {
+        return null;
+      }
 
-      log("warning", `EVM Family: No tokens found in CAL for currency: ${currency.id}`, currency);
-      return [];
-    },
-    currency => `erc20-tokens-${currency.id}`,
-    {
-      ttl: 6 * 60 * 60 * 1000, // 6 hours cache
-    },
-  );
+      log("error", "EVM Family: Couldn't fetch dynamic CAL tokens from " + url, e);
+      setCALHash(currency, embeddedHash);
+      return embeddedTokens;
+    });
 
-export async function preload(currency: CryptoCurrency): Promise<ERC20Token[] | BEP20Token[]> {
+  return tokens;
+};
+
+export async function preload(
+  currency: CryptoCurrency,
+): Promise<ERC20Token[] | BEP20Token[] | undefined> {
   const erc20 = await fetchERC20Tokens(currency);
+  if (!erc20) return;
+
+  log("evm/preload", "preload " + erc20.length + " tokens");
   if (currency.id === "bsc") {
     addTokens((erc20 as BEP20Token[]).map(convertBEP20));
     return erc20;
