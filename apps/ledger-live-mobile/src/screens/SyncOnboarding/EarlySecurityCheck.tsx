@@ -11,7 +11,7 @@ import { TrackScreen, track } from "~/analytics";
 import FirmwareUpdateAvailableDrawer from "./FirmwareUpdateAvailableDrawer";
 import { Linking } from "react-native";
 import { LanguagePrompt } from "./LanguagePrompt";
-import { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import type { UpdateStep } from "../FirmwareUpdate";
 import { urls } from "~/utils/urls";
 import EarlySecurityCheckBody from "./EarlySecurityCheckBody";
@@ -202,12 +202,18 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
 
       // `push` to make sure the screen is added to the navigation stack, if ever the user was on the manager before doing an update, and we can return
       // to this screen with a `goBack`.
-      navigation.push(ScreenName.FirmwareUpdate, {
-        device,
-        deviceInfo,
-        firmwareUpdateContext: latestFirmware,
-        onBackFromUpdate,
-        isBeforeOnboarding: true,
+      navigation.push(NavigatorName.BaseOnboarding, {
+        screen: NavigatorName.SyncOnboarding,
+        params: {
+          screen: ScreenName.FirmwareUpdate,
+          params: {
+            device,
+            deviceInfo,
+            firmwareUpdateContext: latestFirmware,
+            onBackFromUpdate,
+            isBeforeOnboarding: true,
+          },
+        },
       });
     }
     // It should never happen
