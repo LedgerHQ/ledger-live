@@ -13,11 +13,18 @@ type EIP712 = {
 export const importEIP712 = async (outputDir: string) => {
   console.log("importing ERC712 tokens....");
   try {
-    const eip712 = await fetchTokens<EIP712>("eip712.json");
+    const [eip712, hash] = await fetchTokens<EIP712>("eip712.json");
     if (eip712) {
       const filePath = path.join(outputDir, "eip712");
-      const tsContent = `export default ${JSON.stringify(eip712, null, 2)};`;
       fs.writeFileSync(`${filePath}.json`, JSON.stringify(eip712));
+      if (hash) {
+        fs.writeFileSync(`${filePath}-hash.json`, JSON.stringify(hash));
+      }
+
+      const tsContent = `import EIP712 from "./eip712.json";
+${hash ? `export { default as hash } from "./eip712-hash.json";` : null}
+export default EIP712;
+`;
       fs.writeFileSync(`${filePath}.ts`, tsContent);
       console.log("importing ERC712 tokens sucess");
     }

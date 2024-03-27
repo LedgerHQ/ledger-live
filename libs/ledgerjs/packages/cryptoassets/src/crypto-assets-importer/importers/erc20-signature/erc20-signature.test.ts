@@ -7,7 +7,9 @@ const erc20Signatures = "erc20Signature";
 describe("import Cardano Native tokens", () => {
   beforeEach(() => {
     const mockedAxios = jest.spyOn(axios, "get");
-    mockedAxios.mockImplementation(() => Promise.resolve({ data: erc20Signatures }));
+    mockedAxios.mockImplementation(() =>
+      Promise.resolve({ data: erc20Signatures, headers: { etag: "etagHash" } }),
+    );
   });
 
   afterEach(() => {
@@ -15,7 +17,12 @@ describe("import Cardano Native tokens", () => {
   });
 
   it("should output the file in the correct format", async () => {
-    const expectedFile = `export default ${JSON.stringify(erc20Signatures, null, 2)};`;
+    const expectedFile = `import ERC20Signatures from "./erc20-signatures.json";
+
+export { default as hash } from "./erc20-signatures-hash.json";
+
+export default ERC20Signatures;
+`;
 
     const mockedFs = (fs.writeFileSync = jest.fn());
 
@@ -26,6 +33,11 @@ describe("import Cardano Native tokens", () => {
       "erc20-signatures.json",
       JSON.stringify(erc20Signatures),
     );
-    expect(mockedFs).toHaveBeenNthCalledWith(2, "erc20-signatures.ts", expectedFile);
+    expect(mockedFs).toHaveBeenNthCalledWith(
+      2,
+      "erc20-signatures-hash.json",
+      JSON.stringify("etagHash"),
+    );
+    expect(mockedFs).toHaveBeenNthCalledWith(3, "erc20-signatures.ts", expectedFile);
   });
 });

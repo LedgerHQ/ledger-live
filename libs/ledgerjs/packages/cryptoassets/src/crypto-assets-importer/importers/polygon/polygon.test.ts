@@ -21,7 +21,9 @@ const mockedAxios = jest.spyOn(axios, "get");
 
 describe("import poylgon erc20", () => {
   beforeEach(() => {
-    mockedAxios.mockImplementation(() => Promise.resolve({ data: poylgonErc20 }));
+    mockedAxios.mockImplementation(() =>
+      Promise.resolve({ data: poylgonErc20, headers: { etag: "etagHash" } }),
+    );
   });
 
   afterEach(() => {
@@ -45,6 +47,8 @@ describe("import poylgon erc20", () => {
 
 import tokens from "./polygon-erc20.json";
 
+export { default as hash } from "./polygon-erc20-hash.json";
+
 export default tokens as PolygonERC20Token[];
 `;
 
@@ -54,6 +58,11 @@ export default tokens as PolygonERC20Token[];
 
     expect(mockedAxios).toHaveBeenCalledWith(expect.stringMatching(/.*\/polygon-erc20.json/));
     expect(mockedFs).toHaveBeenNthCalledWith(1, "polygon-erc20.json", JSON.stringify(poylgonErc20));
-    expect(mockedFs).toHaveBeenNthCalledWith(2, "polygon-erc20.ts", expectedFile);
+    expect(mockedFs).toHaveBeenNthCalledWith(
+      2,
+      "polygon-erc20-hash.json",
+      JSON.stringify("etagHash"),
+    );
+    expect(mockedFs).toHaveBeenNthCalledWith(3, "polygon-erc20.ts", expectedFile);
   });
 });

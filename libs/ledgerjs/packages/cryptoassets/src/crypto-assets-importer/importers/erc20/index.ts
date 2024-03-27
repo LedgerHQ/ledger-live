@@ -19,11 +19,14 @@ type ERC20Token = [
 export const importERC20 = async (outputDir: string) => {
   try {
     console.log("importing ERC20 tokens....");
-    const erc20 = await fetchTokens<ERC20Token>("erc20.json");
+    const [erc20, hash] = await fetchTokens<ERC20Token>("erc20.json");
 
     if (erc20) {
       const filePath = path.join(outputDir, "erc20");
       fs.writeFileSync(`${filePath}.json`, JSON.stringify(erc20));
+      if (hash) {
+        fs.writeFileSync(`${filePath}-hash.json`, JSON.stringify(hash));
+      }
 
       const erc20TokenTypeStringified = `export type ERC20Token = [
   string, // parent currency id
@@ -42,6 +45,8 @@ export const importERC20 = async (outputDir: string) => {
       const erc20TsFile = `${erc20TokenTypeStringified}
 
 import tokens from "./erc20.json";
+
+${hash ? `export { default as hash } from "./erc20-hash.json";` : null}
 
 export default tokens as ERC20Token[];
 `;

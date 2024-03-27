@@ -14,7 +14,7 @@ type ElrondESDTToken = [
 export const importESDTTokens = async (outputDir: string) => {
   try {
     console.log("importing esdt tokens...");
-    const esdtTokens = await fetchTokens<ElrondESDTToken[]>("esdt.json");
+    const [esdtTokens, hash] = await fetchTokens<ElrondESDTToken[]>("esdt.json");
     const filePath = path.join(outputDir, "esdt");
 
     const estTypeStringified = `export type ElrondESDTToken = [
@@ -27,11 +27,17 @@ export const importESDTTokens = async (outputDir: string) => {
 ];`;
 
     fs.writeFileSync(`${filePath}.json`, JSON.stringify(esdtTokens));
+    if (hash) {
+      fs.writeFileSync(`${filePath}-hash.json`, JSON.stringify(hash));
+    }
+
     fs.writeFileSync(
       `${filePath}.ts`,
       `${estTypeStringified}
 
 import tokens from "./esdt.json";
+
+${hash ? `export { default as hash } from "./esdt-hash.json";` : null}
 
 export default tokens as ElrondESDTToken[];
 `,

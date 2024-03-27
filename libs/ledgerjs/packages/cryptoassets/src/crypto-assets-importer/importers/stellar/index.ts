@@ -14,7 +14,7 @@ type StellarToken = [
 export const importStellarTokens = async (outputDir: string) => {
   try {
     console.log("importing stellar tokens...");
-    const stellarTokens = await fetchTokens<StellarToken[]>("stellar.json");
+    const [stellarTokens, hash] = await fetchTokens<StellarToken[]>("stellar.json");
     const filePath = path.join(outputDir, "stellar");
 
     const stellarTypeStringified = `export type StellarToken = [
@@ -27,11 +27,17 @@ export const importStellarTokens = async (outputDir: string) => {
 ];`;
 
     fs.writeFileSync(`${filePath}.json`, JSON.stringify(stellarTokens));
+    if (hash) {
+      fs.writeFileSync(`${filePath}-hash.json`, JSON.stringify(hash));
+    }
+
     fs.writeFileSync(
       `${filePath}.ts`,
       `${stellarTypeStringified}
 
 import tokens from "./stellar.json";
+
+${hash ? `export { default as hash } from "./stellar-hash.json";` : null}
 
 export default tokens as StellarToken[];
 `,

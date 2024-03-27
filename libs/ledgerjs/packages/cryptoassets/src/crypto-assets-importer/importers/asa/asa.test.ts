@@ -8,7 +8,9 @@ const mockedAxios = jest.spyOn(axios, "get");
 
 describe("import ASA tokens", () => {
   beforeEach(() => {
-    mockedAxios.mockImplementation(() => Promise.resolve({ data: asa }));
+    mockedAxios.mockImplementation(() =>
+      Promise.resolve({ data: asa, headers: { etag: "etagHash" } }),
+    );
   });
 
   afterEach(() => {
@@ -27,6 +29,8 @@ describe("import ASA tokens", () => {
 
 import tokens from "./asa.json";
 
+export { default as hash } from "./asa-hash.json";
+
 export default tokens as AlgorandASAToken[];
 `;
 
@@ -36,6 +40,7 @@ export default tokens as AlgorandASAToken[];
 
     expect(mockedAxios).toHaveBeenCalledWith(expect.stringMatching(/.*\/asa.json/));
     expect(mockedFs).toHaveBeenNthCalledWith(1, "asa.json", JSON.stringify(asa));
-    expect(mockedFs).toHaveBeenNthCalledWith(2, "asa.ts", expectedFile);
+    expect(mockedFs).toHaveBeenNthCalledWith(2, "asa-hash.json", JSON.stringify("etagHash"));
+    expect(mockedFs).toHaveBeenNthCalledWith(3, "asa.ts", expectedFile);
   });
 });

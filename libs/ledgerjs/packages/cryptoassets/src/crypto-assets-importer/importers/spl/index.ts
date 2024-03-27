@@ -14,7 +14,7 @@ type SPLToken = [
 export const importSPLTokens = async (outputDir: string) => {
   try {
     console.log("importing spl tokens...");
-    const splTokens = await fetchTokens<SPLToken[]>("spl.json");
+    const [splTokens, hash] = await fetchTokens<SPLToken[]>("spl.json");
     const filePath = path.join(outputDir, "spl");
 
     const splTypeStringified = `export type SPLToken = [
@@ -27,11 +27,16 @@ export const importSPLTokens = async (outputDir: string) => {
 ];`;
 
     fs.writeFileSync(`${filePath}.json`, JSON.stringify(splTokens));
+    if (hash) {
+      fs.writeFileSync(`${filePath}-hash.json`, JSON.stringify(hash));
+    }
     fs.writeFileSync(
       `${filePath}.ts`,
       `${splTypeStringified}
 
 import tokens from "./spl.json";
+
+${hash ? `export { default as hash } from "./spl-hash.json";` : null}
 
 export default tokens as SPLToken[];
 `,

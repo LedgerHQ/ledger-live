@@ -23,12 +23,14 @@ const chainNames = new Map<number, string>();
 export const importTokenByChainId = async (outputDir: string, chainId: number) => {
   try {
     console.log(`importing chain with chainId: ${chainId}...`);
-    const erc20 = await fetchTokens<EVMToken[]>(`evm/${chainId}/erc20.json`);
-    const erc20Signatures = await fetchTokens<string>(`evm/${chainId}/erc20-signatures.json`);
-    const indexTsStringified = `import tokens from "./erc20.json";
-import signatures from "./erc20-signatures.json";
-
-export default { tokens, signatures };
+    const [erc20, hash] = await fetchTokens<EVMToken[]>(`evm/${chainId}/erc20.json`);
+    const [erc20Signatures, signatureHash] = await fetchTokens<string>(
+      `evm/${chainId}/erc20-signatures.json`,
+    );
+    const indexTsStringified = `export { default as tokens } from "./erc20.json";
+export { default as signatures } from "./erc20-signatures.json";
+${hash ? `export { default as hash } from "./erc20-hash.json";` : ""}
+${signatureHash ? `export { default as signaturesHash } from "./erc20-signatures-hash.json";` : ""}
 `;
 
     if (erc20 && erc20Signatures) {
@@ -40,6 +42,16 @@ export default { tokens, signatures };
       const [coinName] = erc20[0];
       chainNames.set(chainId, coinName);
       await fs.writeFile(path.join(dirPath, "erc20.json"), JSON.stringify(erc20));
+      if (hash) {
+        await fs.writeFile(path.join(dirPath, "erc20-hash.json"), JSON.stringify(hash));
+      }
+      if (signatureHash) {
+        await fs.writeFile(
+          path.join(dirPath, "erc20-signatures-hash.json"),
+          JSON.stringify(signatureHash),
+        );
+      }
+
       await fs.writeFile(
         path.join(dirPath, "erc20-signatures.json"),
         JSON.stringify(erc20Signatures),
@@ -76,8 +88,30 @@ export const importEVMTokens = async (outputDir: string) => {
 
 ${supportedChainIds
   .map(chainId =>
+    chainNames.has(chainId) &&
+    existsSync(path.join(outputDir, "evm", chainId.toString(), "erc20-hash.json"))
+      ? `import ${chainNames.get(chainId)}_tokens_hash from "./${chainId}/erc20-hash.json"`
+      : null,
+  )
+  .filter(Boolean)
+  .join(";" + String.fromCharCode(10))};
+
+${supportedChainIds
+  .map(chainId =>
     chainNames.has(chainId)
       ? `import ${chainNames.get(chainId)}_signatures from "./${chainId}/erc20-signatures.json"`
+      : null,
+  )
+  .filter(Boolean)
+  .join(";" + String.fromCharCode(10))};
+
+${supportedChainIds
+  .map(chainId =>
+    chainNames.has(chainId) &&
+    existsSync(path.join(outputDir, "evm", chainId.toString(), "erc20-signatures-hash.json"))
+      ? `import ${chainNames.get(
+          chainId,
+        )}_signatures_hash from "./${chainId}/erc20-signatures-hash.json"`
       : null,
   )
   .filter(Boolean)
@@ -101,9 +135,35 @@ ${supportedChainIds
   .join("," + String.fromCharCode(10))},
 };
 
+export const hashes = {
+${supportedChainIds
+  .map(chainId =>
+    chainNames.has(chainId) &&
+    existsSync(path.join(outputDir, "evm", chainId.toString(), "erc20-hash.json"))
+      ? `  ${chainId}: ${chainNames.get(chainId)}_tokens_hash`
+      : null,
+  )
+  .filter(Boolean)
+  .join("," + String.fromCharCode(10))},
+};
+
+export const signatureHashes = {
+${supportedChainIds
+  .map(chainId =>
+    chainNames.has(chainId) &&
+    existsSync(path.join(outputDir, "evm", chainId.toString(), "erc20-signatures-hash.json"))
+      ? `  ${chainId}: ${chainNames.get(chainId)}_signatures_hash`
+      : null,
+  )
+  .filter(Boolean)
+  .join("," + String.fromCharCode(10))},
+};
+
 export default {
   tokens,
   signatures,
+  hashes,
+  signatureHashes,
 };
 `;
 

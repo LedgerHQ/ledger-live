@@ -8,7 +8,9 @@ const mockedAxios = jest.spyOn(axios, "get");
 
 describe("import bep20", () => {
   beforeEach(() => {
-    mockedAxios.mockImplementation(() => Promise.resolve({ data: bep20 }));
+    mockedAxios.mockImplementation(() =>
+      Promise.resolve({ data: bep20, headers: { etag: "etagHash" } }),
+    );
   });
 
   afterEach(() => {
@@ -31,6 +33,8 @@ describe("import bep20", () => {
 
 import tokens from "./bep20.json";
 
+export { default as hash } from "./bep20-hash.json";
+
 export default tokens as BEP20Token[];
 `;
 
@@ -40,6 +44,7 @@ export default tokens as BEP20Token[];
 
     expect(mockedAxios).toHaveBeenCalledWith(expect.stringMatching(/.*\/bep20.json/));
     expect(mockedFs).toHaveBeenNthCalledWith(1, "bep20.json", JSON.stringify(bep20));
-    expect(mockedFs).toHaveBeenNthCalledWith(2, "bep20.ts", expectedFile);
+    expect(mockedFs).toHaveBeenNthCalledWith(2, "bep20-hash.json", JSON.stringify("etagHash"));
+    expect(mockedFs).toHaveBeenNthCalledWith(3, "bep20.ts", expectedFile);
   });
 });
