@@ -27,8 +27,8 @@ export const spawnSpeculos = async (
     },
   });
 
-  await fs.mkdir(path.resolve("./tmp"), { recursive: true });
-  await fs.writeFile(path.resolve("./tmp/app.elf"), blob, "binary");
+  await fs.mkdir(path.resolve(process.cwd(), "tmp"), { recursive: true });
+  await fs.writeFile(path.resolve(process.cwd(), "tmp/app.elf"), blob, "binary");
 
   await compose.upOne(service, {
     cwd,
