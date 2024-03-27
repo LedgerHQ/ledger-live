@@ -1,5 +1,11 @@
 # @ledgerhq/coin-framework
 
+## 0.12.0-nightly.10
+
+### Patch Changes
+
+- [#6508](https://github.com/LedgerHQ/ledger-live/pull/6508) [`ebb45be`](https://github.com/LedgerHQ/ledger-live/commit/ebb45be56c6b1fdb3c36a8c20a16b41600baa264) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix groupAccountsOperationsByDay edge case
+
 ## 0.12.0-nightly.9
 
 ### Patch Changes

@@ -1,5 +1,24 @@
 # @ledgerhq/live-common
 
+## 33.7.0-nightly.14
+
+### Patch Changes
+
+- [#6430](https://github.com/LedgerHQ/ledger-live/pull/6430) [`5031828`](https://github.com/LedgerHQ/ledger-live/commit/5031828903f5601259d53619aa9ba5487ffa7a68) Thanks [@lawRathod](https://github.com/lawRathod)! - Add support for send many ops to be available in history
+
+- [#6545](https://github.com/LedgerHQ/ledger-live/pull/6545) [`ee2d968`](https://github.com/LedgerHQ/ledger-live/commit/ee2d968a12f961e6d6e231bad9970f6b72aaa12b) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - fix complete exchange drawer before error
+
+- Updated dependencies [[`ebb45be`](https://github.com/LedgerHQ/ledger-live/commit/ebb45be56c6b1fdb3c36a8c20a16b41600baa264)]:
+  - @ledgerhq/coin-framework@0.12.0-nightly.10
+  - @ledgerhq/coin-algorand@0.4.0-nightly.11
+  - @ledgerhq/coin-bitcoin@0.4.0-nightly.8
+  - @ledgerhq/coin-evm@0.13.0-nightly.11
+  - @ledgerhq/coin-near@0.3.11-nightly.11
+  - @ledgerhq/coin-polkadot@0.6.0-nightly.11
+  - @ledgerhq/live-countervalues@0.1.3-nightly.11
+  - @ledgerhq/live-countervalues-react@0.1.3-nightly.11
+  - @ledgerhq/live-nft@0.2.2-nightly.11
+
 ## 33.7.0-nightly.13
 
 ### Minor Changes
