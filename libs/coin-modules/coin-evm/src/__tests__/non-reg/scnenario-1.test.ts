@@ -12,11 +12,11 @@ import {
 import { clearExplorerAppendix, getLogs, setBlock } from "./indexer";
 import { executeScenario, Scenario } from "@ledgerhq/coin-tester/main";
 import { killDocker, spawnDocker } from "@ledgerhq/coin-tester/docker";
-import { getAccountBridge, getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { makeAccount } from "../fixtures/common.fixtures";
 import { Transaction as EvmTransaction } from "../../types";
 import Eth from "@ledgerhq/hw-app-eth";
 import resolver from "../../hw-getAddress";
+import { buildAccountBridge, buildCurrencyBridge } from "../../bridge/js";
 
 const scnerioAccount = makeAccount("0xlol", ethereum);
 const scenarioTransction: EvmTransaction = Object.freeze({
@@ -35,10 +35,10 @@ const scenarioTransction: EvmTransaction = Object.freeze({
 
 const scenarioEthereum: Scenario<EvmTransaction> = {
   setup: async () => {
-    const currencyBridge = getCurrencyBridge(ethereum.id);
-    const accountBridge = getAccountBridge(scnerioAccount);
-    const transport = await spawnDocker("speculos");
     const signerContext = (deviceId: string, fn: any): any => fn(new Eth(transport));
+    const currencyBridge = buildCurrencyBridge(signerContext);
+    const accountBridge = buildAccountBridge(signerContext);
+    const transport = await spawnDocker("speculos");
     const getAddress = resolver(signerContext);
 
     return { currencyBridge, accountBridge, account: scnerioAccount, transport, getAddress };
