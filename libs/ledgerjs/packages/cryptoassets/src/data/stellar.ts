@@ -9,4 +9,6 @@ export type StellarToken = [
 
 import tokens from "./stellar.json";
 
+export { default as hash } from "./stellar-hash.json";
+
 export default tokens as StellarToken[];
