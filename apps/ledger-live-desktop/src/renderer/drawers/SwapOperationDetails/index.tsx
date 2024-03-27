@@ -154,28 +154,26 @@ const SwapOperationDetails = ({
     : undefined;
 
   const handleProviderClick = useCallback(() => {
-    if (url) {
-      if (provider === "moonpay") {
-        const parentAccount =
-          fromAccount.type !== "Account" ? accounts.find(a => a.id === fromAccount.parentId) : null;
-        const mainAccount = getMainAccount(fromAccount, parentAccount);
-        history.push({
-          pathname: "/platform/moonpay",
-          state: {
-            returnTo: "/swap/history",
-            accountId: mainAccount.id,
-            customDappUrl: undefined,
-            goToURL: `https://buy.moonpay.com/trade_history?ledgerlive&apiKey=pk_live_j5CLt1qxbqGtYhkxUxyk6VQnSd5CBXI&language=${language}&themeId=92be4cb6-a57f-407b-8b1f-bc8055b60c9b`,
-          },
-        });
-      } else {
-        openURL(urls.swap.providers[provider as keyof typeof urls.swap.providers]?.main);
-      }
-      if (onClose) {
-        onClose();
-      }
+    if (provider === "moonpay") {
+      const parentAccount =
+        fromAccount.type !== "Account" ? accounts.find(a => a.id === fromAccount.parentId) : null;
+      const mainAccount = getMainAccount(fromAccount, parentAccount);
+      history.push({
+        pathname: "/platform/moonpay",
+        state: {
+          returnTo: "/swap/history",
+          accountId: mainAccount.id,
+          customDappUrl: undefined,
+          goToURL: `https://buy.moonpay.com/trade_history?ledgerlive&apiKey=pk_live_j5CLt1qxbqGtYhkxUxyk6VQnSd5CBXI&language=${language}&themeId=92be4cb6-a57f-407b-8b1f-bc8055b60c9b`,
+        },
+      });
+    } else {
+      openURL(urls.swap.providers[provider as keyof typeof urls.swap.providers]?.main);
     }
-  }, [url, provider, fromAccount, history, accounts, onClose, language]);
+    if (onClose) {
+      onClose();
+    }
+  }, [provider, fromAccount, history, accounts, onClose, language]);
 
   return (
     <Box flow={3} px={20} mt={20}>
