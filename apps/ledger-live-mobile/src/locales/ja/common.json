@@ -144,7 +144,7 @@
       }
     },
     "ConnectManagerTimeout" : {
-      "title" : "申し訳ありません。My Ledgerの接続に失敗しました",
+      "title" : "申し訳ありませんが、Ledgerとの安全な接続に失敗しました",
       "description" : {
         "ios" : {
           "nanoX" : "{{productName}} のロックが解除済みで、Bluetoothが有効であることを確認してください。"
@@ -484,7 +484,7 @@
       "description" : "EGLDをアカウントに送付し、トランザクションの支払いを行ってください。"
     },
     "NotEnoughBalance" : {
-      "title" : "資金が不足しています。",
+      "title" : "申し訳ありませんが、ネットワーク手数料を含む残高が不足しています。数量を調整するか、残高を確認してください。",
       "description" : "アカウントに十分な資金があることを確認してください。"
     },
     "NoSuchAppOnProvider" : {
@@ -492,7 +492,7 @@
       "description" : "My Ledgerからアプリの再インストールを試す"
     },
     "NotEnoughGas" : {
-      "title" : "{{cryptoName}}ネットワークを使用しているため、手数料{{fees}}{{ticker}}が必要です。<link0>{{ticker}}を購入する</link0>",
+      "title" : "{{cryptoName}}ネットワークでのトランザクション手数料を支払うには、アカウントに{{fees}}{{ticker}}が必要です。<link0>{{ticker}}を購入する</link0>か、アカウントにさらに入金してください。",
       "description" : "トークンのトランザクションの支払いに必要なコインをアカウントに送ってください。"
     },
     "NotEnoughGasSwap" : {
@@ -622,8 +622,8 @@
       "primaryCTA" : "My Ledgerを開く"
     },
     "UserRefusedAllowManager" : {
-      "title" : "デバイスのManagerが無効です。",
-      "description" : "デバイスで「Manager」のアクセスを許可してから、もう一度お試しください。"
+      "title" : "デバイス上で安全な接続が拒否されました",
+      "description" : "デバイスで安全な接続を許可して、再試行してください。"
     },
     "UserRefusedAddress" : {
       "title" : "受取アドレスが却下されました。",
@@ -912,8 +912,9 @@
       "title" : "プロバイダーが無効です",
       "description" : "「My Ledgerプロバイダー」の設定を変更する必要があります。変更するには、Ledger Liveの「設定」を開き、「試験的機能」を選択して、別のプロバイダーを選択します。"
     },
-    "TezosUnrevealedAccount" : {
-      "title" : "スワップ利用不可：Tezosアカウントで最初の送付/デリゲートを行うか、ペアを変更する必要があります。"
+    "SequenceNumberError" : {
+      "title" : "シーケンス番号エラー",
+      "description" : "ウィンドウを閉じて、後でもう一度お試しください"
     }
   },
   "crash" : {
@@ -924,7 +925,7 @@
     "locationRequiredTitle" : "Bluetooth LEには位置情報が必要です。",
     "locationRequiredMessage" : "AndroidでBluetooth LEデバイスを一覧表示するには、位置情報サービスへのアクセスが必要です。",
     "checkEnabled" : "スマートフォンの設定でBluetoothを有効にしてください。",
-    "tryEnablingAgain" : "Bluetoothを再度有効にしてみてください",
+    "tryEnablingAgain" : "Bluetoothを再度有効にしてください",
     "openSettings" : "Bluetooth設定を開く"
   },
   "webview" : {
@@ -1251,6 +1252,9 @@
       "referralProgram" : {
         "title" : "ご友人紹介",
         "desc" : "ご友人がLedgerを購入すると、お客様とご友人の両方が20ドル分のBTCを獲得可能です。"
+      },
+      "filter" : {
+        "all" : "全て"
       }
     },
     "comingSoon" : "近日公開",
@@ -1400,7 +1404,7 @@
       },
       "recovery" : "リカバリーフレーズをすでにお持ちですか？",
       "protect" : {
-        "title" : "Ledger Recoverを使用して復元",
+        "title" : "Ledger Recoverを使用して復元する",
         "subTitle" : "Ledger Recoverのサブスクリプションが必要です。",
         "drawer" : {
           "title" : "Ledger Nano Xを使用する",
@@ -1934,7 +1938,7 @@
         "title" : "{{productName}}を探しています..."
       },
       "withoutProductName" : {
-        "title" : "デバイスを探しています"
+        "title" : "デバイスを検索中"
       },
       "description" : "Ledgerのロックが解除され、ペアリングするスマートフォンの近くにあることを確認してください。",
       "alreadyPaired" : "ペアリング済み"
@@ -2142,7 +2146,7 @@
       "restoreChoiceContinueOnDevice" : "{{productName}}で関連するオプションを選択します。",
       "restoreChoiceSRPTitle" : "秘密のリカバリーフレーズを使用して復元する",
       "restoreChoiceSRPDescription" : "セキュリティを最大限に高めるには、Ledgerデバイスによって生成されたシークレットリカバリーフレーズを使用してください。 ",
-      "restoreChoiceRecoverTitle" : "Ledger Recoverを使用して復元",
+      "restoreChoiceRecoverTitle" : "Ledger Recoverを使用して復元する",
       "restoreChoiceRecoverDescription" : "Ledger Recoverのサブスクリプション契約をされている場合は、サブスクリプションにログインし、シークレットリカバリーフレーズのバックアップ復元プロセスを開始します。"
     },
     "softwareChecksSteps" : {
@@ -2181,15 +2185,7 @@
     "discover" : "アプリ一覧",
     "nanoX" : "Nano X",
     "market" : "Market",
-    "earn" : "報酬獲得",
-    "learn" : "ラーニング"
-  },
-  "learn" : {
-    "pageTitle" : "ラーニング",
-    "sectionShows" : "表示",
-    "sectionVideo" : "動画",
-    "sectionPodcast" : "ポッドキャスト",
-    "sectionArticles" : "記事"
+    "earn" : "報酬獲得"
   },
   "portfolio" : {
     "totalBalance" : "総資産",
@@ -2516,10 +2512,6 @@
       "currency" : {
         "title" : "通貨"
       },
-      "endpointConfig" : {
-        "title" : "ノード",
-        "desc" : "使用するAPIノード"
-      },
       "delete" : {
         "title" : "ポートフォリオからアカウントを削除する",
         "desc" : "保存されているデータは削除されます。",
@@ -2669,6 +2661,7 @@
     "moreAssets" : "さらに追加"
   },
   "help" : {
+    "chatbot" : "Ledgerチャットボット",
     "gettingStarted" : {
       "title" : "ご利用ガイド",
       "desc" : "はじめる"
@@ -2813,7 +2806,7 @@
       "privacyPolicyDesc" : "どのような個人情報が収集され、どのような理由で、どのように使用されるのかをご確認いただけます。",
       "liveReview" : {
         "title" : "フィードバック",
-        "desc" : "当アプリに関するご意見やご感想をお聞かせください",
+        "desc" : "当アプリに関するご意見をお聞かせください。",
         "ios" : "App Storeでレビュー",
         "android" : "Google Playストアでレビュー"
       }
@@ -2845,7 +2838,7 @@
       },
       "largeMover" : {
         "title" : "変動",
-        "desc" : "BTCとETHで重要な値動きがあった場合に通知されます"
+        "desc" : "BTC、ETH、SOL、ADA、またはXRPをお持ちの場合、重要な価格変動について通知されます"
       },
       "transactionsAlerts" : {
         "title" : "トランザクション警告（ベータ）",
@@ -2999,7 +2992,7 @@
     },
     "send" : {
       "title" : "送付",
-      "description" : "暗号資産を別のウォレットに送付。"
+      "description" : "暗号資産を別のウォレットに送付する。"
     },
     "fees" : {
       "title" : "手数料を編集"
@@ -3504,7 +3497,7 @@
     },
     "recover" : {
       "title" : "Ledger Recover",
-      "description" : "手軽にウォレットを復元",
+      "description" : "より手軽にウォレットを復元する。",
       "tag" : "1ヶ月間無料"
     }
   },
@@ -3888,7 +3881,7 @@
     "stayInTheAppPlz" : "Ledger Liveアプリを開いた状態で、Ledgerを近くに置いてください。",
     "allowAppPermission" : "デバイスで{{wording}} アプリを開く",
     "allowAppPermissionSubtitleToken" : "{{token}} トークンを管理",
-    "allowManagerPermission" : "{{productName}}でLedger Managerを許可する",
+    "allowManagerPermission" : "Ledgerとの安全な接続を許可する",
     "allowRenaming" : "{{productName}}で名前の変更を許可する",
     "allowRemoveCustomLockscreen" : "Ledger Staxの画像の削除を確定する",
     "allowSecureConnection" : "Ledgerとの安全な接続を許可する",
@@ -4033,7 +4026,7 @@
       "info" : "これは、Nanoが正規品であることを確認するためのステップです。"
     },
     "ScanningHeader" : {
-      "title" : "デバイスを探しています",
+      "title" : "デバイスを検索中",
       "desc" : "{{productName}}のロックが解除済みで、Bluetoothが有効であることを確認してください。"
     },
     "ScanningTimeout" : {
@@ -6388,25 +6381,6 @@
       "title" : "私のNFT"
     }
   },
-  "claimNft" : {
-    "welcomePage" : {
-      "title" : "地球上で最も安全なNFTマーケットプレイスへフリーアクセス",
-      "description" : {
-        "title" : "Ledger Infinity Passでは、以下にアクセスできます。",
-        "1" : "最新のNFTドロップを最初に獲得",
-        "2" : "これまでで最も安全なNFTマーケットプレイス",
-        "3" : "無料のNFTを獲得"
-      },
-      "claimButton" : "Ledger Market Passを獲得",
-      "backButton" : "私はすでにMarket Passを獲得済みです"
-    },
-    "qrScan" : {
-      "title" : "Ledger Market PassのQRコードをスキャン",
-      "description" : {
-        "1" : "Ledger Staxのボックスにお客様専用のLedger Market Passがあります。\n\nまず、パスの裏面にあるQRコードをフレーム内に配置します。明るい場所でシンプルかつ明るい背景を使用してください。"
-      }
-    }
-  },
   "postOnboarding" : {
     "hub" : {
       "title" : "次に、{{productName}}を使用して...",
@@ -6425,13 +6399,6 @@
         "titleCompleted" : "ロック画面の画像を設定",
         "description" : "ロック画面として設定するデジタルアートまたは写真を選択。",
         "popupLabel" : "ロック画面が設定されました"
-      },
-      "claimNft" : {
-        "title" : "Infinity NFTを獲得",
-        "titleCompleted" : "Infinity NFTを獲得しました",
-        "description" : "このNFTを使用すると、当社のNFTマーケットプレイスである [ Ledger ] Marketにアクセスできます。",
-        "popupLabel" : "NFTを申請済み",
-        "tagLabel" : "ギフト"
       },
       "assetsTransfer" : {
         "title" : "資産をLedgerに転送する",
@@ -6590,61 +6557,61 @@
   "analyticsOptIn" : {
     "variantA" : {
       "main" : {
-        "title" : "より適したコンテンツの提供および機能改善にご協力ください。",
-        "subtitle" : "Ledger Liveの使用状況データを共有いただくと、お客様が必要とするコンテンツを理解することが可能となります。これによりサービスをカスタマイズし、クリック、閲覧、表示を含むコンテンツのパフォーマンスを最適化し、関連性を最大限に高めることができます。",
+        "title" : "コンテンツの改善およびパーソナライズへご協力ください",
+        "subtitle" : "お客様のLedger Liveデータを共有いただくことで、お客様の設定を理解し、関連するコンテンツを表示するとともに、技術的な問題解決するのに役立ちます。",
         "content" : {
           "able" : {
-            "title" : "Ledger Liveは以下の情報を追跡します。",
-            "diagAndUsage" : "使用状況データ"
+            "title" : "お客様が同意する場合、Ledgerは以下を追跡可能となります。",
+            "diagAndUsage" : "ページ訪問数、クリック数などの分析データ。",
+            "personnalizationData" : "クリック数、ページ訪問数、コンバージョンデータなどのパーソナライゼーションデータ。"
           },
           "unable" : {
-            "title" : "Ledger Liveは以下の情報を収集することはありません。",
-            "adresses" : "アドレス",
-            "balance" : "残高",
-            "nfts" : "NFT",
-            "personnalInfos" : "個人識別情報"
+            "title" : "Ledgerは、以下に関する情報を決して追跡しません。",
+            "adresses" : "お客様の資産。",
+            "balance" : "お客様のポートフォリオ。",
+            "personnalInfos" : "お客様の個人識別情報。"
           },
-          "moreOptions" : "その他のオプション",
+          "moreOptions" : "環境設定の管理",
           "ctas" : {
             "refuse" : "すべて拒否する",
             "accept" : "すべて受け入れる"
           },
           "infoText" : {
-            "info" : "同意はアプリの設定からいつでも取り消すことが可能です。",
-            "link" : "こちらをクリックして、詳細をご覧ください。"
+            "info" : "同意はアプリの設定からいつでも取り消すことができます。",
+            "link" : "当社の追跡ポリシーの詳細についてご覧ください"
           }
         }
       },
       "details" : {
         "title" : "環境設定の管理",
         "analytics" : {
-          "title" : "アナリティクス",
-          "description" : "アプリの使用状況を共有すると、Ledgerがアプリケーションを改善するのに役立ちます。"
+          "title" : "分析データ",
+          "description" : "Ledger Liveの改善に役立てるため、ページ訪問数やクリック数などのアプリの分析データを共有します。"
         },
         "personalizedExp" : {
-          "title" : "好みに合わせてコンテンツをカスタマイズ",
-          "description" : "お好みに合わせてパーソナライズされたおすすめをお届け。さらにコンテンツのパフォーマンスを共有していただくと関連性を最適化できます。"
+          "title" : "パーソナライゼーションデータ",
+          "description" : "パーソナライズされたおすすめ情報を取得するために、コンバージョンデータ（資料のご請求、ご購入などのアクション）、クリック数、ページ訪問数などのアプリのパーソナライゼーションデータを共有します。"
         },
         "ctas" : {
           "notNow" : "後で",
           "accept" : "同意する",
           "acceptAll" : "すべて受け入れる",
-          "confirm" : "確認"
+          "confirm" : "共有する"
         },
         "infoText" : {
           "info" : "同意はアプリの設定からいつでも取り消すことができます。",
-          "link" : "こちらをクリックして、詳細をご覧ください。"
+          "link" : "当社の追跡ポリシーの詳細についてご覧ください"
         }
       }
     },
     "variantB" : {
       "main" : {
         "title" : "Ledger Liveをさらに使いやすく",
-        "description" : "Ledger Liveの使用状況データを共有すると、Ledger Liveのご使用状況を把握するのに役立ちます。",
+        "description" : "Ledger Live分析データをご共有いただくことで、お客様がLedger Liveをどのように使用されているのかを理解し、バグを修正し、お客様のご体験を向上させることができます。",
         "bulletPoints" : {
-          "1" : "使用状況データには、ページ訪問、クリック、コンバージョンが含まれます。",
-          "2" : "当社はアドレス、アカウント、残高、NFT、ポートフォリオに関連するその他の情報を収集したり表示したりすることはありません。",
-          "3" : "当社はお客様の識別をすることは不可能で、そのようなことを意図するものではありません。また、当社は個人情報を収集することはありません。"
+          "1" : "分析データには、ページ訪問数、クリック数が含まれます。",
+          "2" : "当社は、お客様の残高、アカウント、ポートフォリオに関する情報を収集や閲覧することはありません。",
+          "3" : "分析は完全に匿名です。当社は、お客様の個人情報を閲覧したり収集したりすることはできません。"
         },
         "ctas" : {
           "refuse" : "拒否する",
@@ -6652,15 +6619,15 @@
         },
         "infoText" : {
           "info" : "同意はアプリの設定からいつでも取り消すことができます。",
-          "link" : "同意の取り消しについて詳しく見る"
+          "link" : "当社の追跡ポリシーの詳細についてご覧ください"
         }
       },
       "details" : {
         "title" : "パーソナライズされたコンテンツを使用する",
-        "description" : "お客様の使用状況データを分析することで、利用体験をカスタマイズし、コンテンツのパフォーマンスを評価し、クリック数、閲覧数、開封数などの指標を追跡して、関連性を最大限に高めることができます。",
+        "description" : "Ledger Liveのパーソナライゼーションデータをご共有いただくと、お客様のお好みに合ったコンテンツを表示できるようになります。",
         "bulletPoints" : {
-          "1" : "好みに合わせたおすすめ情報とコンテンツを表示",
-          "2" : "通知をパーソナライズ"
+          "1" : "パーソナライゼーションデータには、コンバージョンデータ（資料のご請求、ご購入などのアクション）、クリック数、ページ訪問数が含まれます。",
+          "2" : "当社は、お客様の個人情報やポートフォリオ情報を追跡したり収集したりすることはできません。"
         },
         "ctas" : {
           "refuse" : "拒否する",
@@ -6668,7 +6635,7 @@
         },
         "infoText" : {
           "info" : "同意はアプリの設定からいつでも取り消すことができます。",
-          "link" : "同意の取り消しについて詳しく見る"
+          "link" : "当社の追跡ポリシーの詳細についてご覧ください"
         }
       }
     }
