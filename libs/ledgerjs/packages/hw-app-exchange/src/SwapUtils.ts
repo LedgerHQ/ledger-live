@@ -1,4 +1,5 @@
-import { loadSync } from "protobufjs";
+import protobuf from "protobufjs";
+import * as protoJson from "./generate-protocol.json";
 
 type SwapProtobufPayload = {
   payinAddress: string;
@@ -32,11 +33,16 @@ export type SwapPayload = {
   deviceTransactionIdNg?: string;
 };
 
-export async function decodePayloadProtobuf(hexBinaryPayload: string): Promise<SwapPayload> {
-  const buffer = Buffer.from(hexBinaryPayload, "hex");
-  const protoFilePath = "protocol.proto";
-  const root = loadSync(protoFilePath);
-  const TransactionResponse = root.lookupType("ledger_swap.NewTransactionResponse");
+function isHexadecimal(str: string): boolean {
+  return /^[A-F0-9]+$/i.test(str);
+}
+
+export async function decodePayloadProtobuf(payload: string): Promise<SwapPayload> {
+  const buffer = isHexadecimal(payload)
+    ? Buffer.from(payload, "hex")
+    : Buffer.from(payload, "base64");
+  const root: { [key: string]: any } = protobuf.Root.fromJSON(protoJson) || {};
+  const TransactionResponse = root?.nested.ledger_swap?.NewTransactionResponse;
   const err = TransactionResponse.verify(buffer);
   if (err) {
     throw Error(err);
@@ -47,10 +53,10 @@ export async function decodePayloadProtobuf(hexBinaryPayload: string): Promise<S
     amountToProvider: amountToProviderBuffer,
     deviceTransactionIdNg: deviceTransactionIdNgBuffer,
   } = decodePayload;
-  const amountToWalletHexString = amountToWalletBuffer.toString("hex"); // Gets the hexadecimal representation from the Buffer
+  const amountToWalletHexString = Buffer.from(amountToWalletBuffer).toString("hex"); // Gets the hexadecimal representation from the Buffer
   const amountToWallet = BigInt("0x" + amountToWalletHexString); // Convert hexadecimal representation to a big integer
 
-  const amountToProviderHexString = amountToProviderBuffer.toString("hex"); // Gets the hexadecimal representation from the Buffer
+  const amountToProviderHexString = Buffer.from(amountToProviderBuffer).toString("hex"); // Gets the hexadecimal representation from the Buffer
   const amountToProvider = BigInt("0x" + amountToProviderHexString); // Convert hexadecimal representation to a big integer
 
   const deviceTransactionIdNg = deviceTransactionIdNgBuffer?.toString("hex") || undefined;

@@ -432,6 +432,8 @@ export const DEFAULT_FEATURES: Features = {
       variant: ABTestingVariants.variantA,
     },
   },
+
+  lldChatbotSupport: DEFAULT_FEATURE,
   supportDeviceStax: DEFAULT_FEATURE,
   supportDeviceEuropa: DEFAULT_FEATURE,
 };

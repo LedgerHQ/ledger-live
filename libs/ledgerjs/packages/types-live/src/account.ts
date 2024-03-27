@@ -154,9 +154,6 @@ export type Account = {
   pendingOperations: Operation[];
   // used to know when the last sync happened
   lastSyncDate: Date;
-  // A configuration for the endpoint to use. (usecase: Ripple node)
-  // FIXME drop and introduce a config{} object
-  endpointConfig?: string | null | undefined;
   // An account can have sub accounts.
   // A sub account can be either a token account or a child account in some blockchain.
   // They are attached to the parent account in the related blockchain.
@@ -259,7 +256,6 @@ export type AccountRaw = {
   pendingOperations: OperationRaw[];
   unitMagnitude: number;
   lastSyncDate: string;
-  endpointConfig?: string | null | undefined;
   subAccounts?: SubAccountRaw[];
   balanceHistoryCache?: BalanceHistoryCache;
   swapHistory?: SwapOperationRaw[];

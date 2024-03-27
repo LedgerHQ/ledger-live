@@ -1,7 +1,7 @@
 import { decodePayloadProtobuf } from "./SwapUtils"; // Asegúrate de proporcionar la ruta correcta
 
 describe("decodePayloadProtobuf function", () => {
-  test("should decode NewTransactionResponse correctly with device transaction id", async () => {
+  test("should decode NewTransactionResponse correctly with hex payload", async () => {
     const binaryPayload =
       "0a2a3078393736633339353463356462626633396135393135313064623332643266386363323235323830371a2a3078636361454263423338373661373561623945393639373530353861413735343633373733303239632a2a626331717164796b647738753336796864736c657477737976347865393573333735716a6a7934676b303a0345544842034254434a10000000000000000001118f178fb48000521000000000000000000000000000080e355a0a5552554f4b5149424f42";
     const decodedPayload = await decodePayloadProtobuf(binaryPayload);
@@ -26,31 +26,31 @@ describe("decodePayloadProtobuf function", () => {
     expect(decodedPayload).toHaveProperty("amountToWallet", BigInt(527925));
   });
 
-  test("should decode NewTransactionResponse correctly with device transaction id ng", async () => {
+  test("should decode NewTransactionResponse correctly with base64 payload", async () => {
     const binaryPayload =
-      "0a2a3078433945463730363132373141633234633533323933393134633842353932453844363130336642651a2a3078393437453537363639663843386332623136334234323035423844394542333138336130373841622a2a3078393437453537363639663843386332623136334234323035423844394542333138336130373841623a0362746342036274634a10000000000018911000000000000000005210c8f34b481ba8000000000000000000005a0131621000000000000000010000000000000000";
+      "CioweEZBRDhjMTA4MGNiQTUwRkRlQzY1RTk0ODUzNEE5YjM4ZGQyNTM2NmYaKjB4RkI0MjRBYUJjMmU0Q2EyZjQ0NzUwMDMwMkREOUVjNjRDRjBlMjZDZSoqYmMxcXo0a3EyOGt2cDM3cHU3cGNxZGQ0dGo1ZnNxODdwcGdlMngzcnE5OgNFVEhCA0JUQ0oQAAAAAAAAAAAA0fcjCjnAAFIQAAAAAAAAAAAAAAAAAARNkFoAYiAIHOswy_grHVflNJ6xgxHiVltXXWqEGSRbKgM1hpV3VQ";
     const decodedPayload = await decodePayloadProtobuf(binaryPayload);
     expect(decodedPayload).toBeDefined();
     expect(decodedPayload).toHaveProperty(
       "payinAddress",
-      "0xC9EF7061271Ac24c53293914c8B592E8D6103fBe",
+      "0xFAD8c1080cbA50FDeC65E948534A9b38dd25366f",
     );
     expect(decodedPayload).toHaveProperty(
       "payoutAddress",
-      "0x947E57669f8C8c2b163B4205B8D9EB3183a078Ab",
+      "bc1qz4kq28kvp37pu7pcqdd4tj5fsq87ppge2x3rq9",
     );
     expect(decodedPayload).toHaveProperty(
       "refundAddress",
-      "0x947E57669f8C8c2b163B4205B8D9EB3183a078Ab",
+      "0xFB424AaBc2e4Ca2f447500302DD9Ec64CF0e26Ce",
     );
-    expect(decodedPayload).toHaveProperty("currencyFrom", "btc");
-    expect(decodedPayload).toHaveProperty("currencyTo", "btc");
-    expect(decodedPayload).toHaveProperty("deviceTransactionId", "1");
+    expect(decodedPayload).toHaveProperty("currencyFrom", "ETH");
+    expect(decodedPayload).toHaveProperty("currencyTo", "BTC");
+    expect(decodedPayload).toHaveProperty("deviceTransactionId", "");
     expect(decodedPayload).toHaveProperty(
       "deviceTransactionIdNg",
-      "00000000000000010000000000000000",
+      "081ceb30cbf82b1d57e5349eb18311e2565b575d6a8419245b2a033586957755",
     );
-    expect(decodedPayload).toHaveProperty("amountToProvider", BigInt(2.969925795867238e25));
-    expect(decodedPayload).toHaveProperty("amountToWallet", BigInt(2.671088541873143e38));
+    expect(decodedPayload).toHaveProperty("amountToProvider", BigInt(5.91e16));
+    expect(decodedPayload).toHaveProperty("amountToWallet", BigInt(2.82e5));
   });
 });

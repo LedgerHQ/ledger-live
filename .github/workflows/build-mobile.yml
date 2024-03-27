@@ -45,9 +45,9 @@ jobs:
         with:
           ref: ${{ inputs.ref || github.sha }}
       - name: Setup git user
-        uses: ./tools/actions/composites/setup-git-user
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
       - name: Setup the toolchain
-        uses: ./tools/actions/composites/setup-toolchain
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
         id: toolchain
         with:
           skip_turbo_cache: "false"
@@ -68,12 +68,12 @@ jobs:
         uses: android-actions/setup-android@v2.0.10
       - name: install dependencies
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
-      - uses: ./tools/actions/get-package-infos
+      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
         id: version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
       - name: set beta name
-        uses: ./tools/actions/change-product-name
+        uses: LedgerHQ/ledger-live/tools/actions/change-product-name@develop
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
       - name: Get short SHA
@@ -91,7 +91,7 @@ jobs:
           NODE_OPTIONS: "--max-old-space-size=7168"
           ANDROID_KEYSTORE_FILE: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/staging.kstr
         run: pnpm build-ci:llm:android --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
-      - uses: ./tools/actions/get-package-infos
+      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
         id: post-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
@@ -111,9 +111,9 @@ jobs:
         with:
           ref: ${{ inputs.ref || github.sha }}
       - name: Setup git user
-        uses: ./tools/actions/composites/setup-git-user
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
       - name: Setup the toolchain
-        uses: ./tools/actions/composites/setup-toolchain
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
         id: toolchain
         with:
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
@@ -157,7 +157,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: mobile.metafile.json
-      - uses: ./tools/actions/build-checks
+      - uses: LedgerHQ/ledger-live/tools/actions/build-checks@develop
         if: inputs.prNumber != ''
         with:
           token: ${{ steps.generate-token.outputs.token }}
