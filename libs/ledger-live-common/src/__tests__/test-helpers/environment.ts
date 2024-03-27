@@ -4,6 +4,8 @@ import { setSupportedCurrencies } from "../../currencies";
 import { EnvName, setEnvUnsafe, setEnv } from "@ledgerhq/live-env";
 import { setWalletAPIVersion } from "../../wallet-api/version";
 import { WALLET_API_VERSION } from "../../wallet-api/constants";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { liveConfig } from "../../config/sharedConfig";
 
 setWalletAPIVersion(WALLET_API_VERSION);
 setSupportedCurrencies([
@@ -98,6 +100,7 @@ setSupportedCurrencies([
   "linea",
   "linea_goerli",
 ]);
+LiveConfig.setConfig(liveConfig);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);
 
