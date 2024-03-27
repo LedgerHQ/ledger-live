@@ -152,6 +152,18 @@ const getExtrinsicParams = ({
   }
 };
 
+export const extractExtrinsicArg = (a: PolkadotAccount, t: Transaction): CreateExtrinsicArg => ({
+  mode: t.mode,
+  amount: t.amount,
+  recipient: t.recipient,
+  isFirstBond: isFirstBond(a),
+  validators: t.validators,
+  useAllAmount: t.useAllAmount,
+  rewardDestination: t.rewardDestination,
+  numSlashingSpans: a.polkadotResources?.numSlashingSpans,
+  era: t.era,
+});
+
 /**
  *
  * @param {Account} a
@@ -166,23 +178,20 @@ export const buildTransaction = async (
   return craftTransaction(
     a.freshAddress,
     getNonce(a),
-    {
-      mode: t.mode,
-      amount: t.amount,
-      recipient: t.recipient,
-      isFirstBond: isFirstBond(a),
-      validators: t.validators,
-      useAllAmount: t.useAllAmount,
-      rewardDestination: t.rewardDestination,
-      numSlashingSpans: a.polkadotResources?.numSlashingSpans,
-      era: t.era,
-    },
+    extractExtrinsicArg(a, t),
     forceLatestParams,
   );
 };
 
+export const defaultExtrinsicArg = (amount: bigint, recipient: string): CreateExtrinsicArg => ({
+  mode: "send",
+  amount: new BigNumber(amount.toString()),
+  recipient,
+  isFirstBond: false,
+});
+
 export async function craftTransaction(
-  polkadotAddress: string,
+  address: string,
   nonceToUse: number,
   extractExtrinsicArg: CreateExtrinsicArg,
   forceLatestParams: boolean = false,
@@ -195,8 +204,7 @@ export async function craftTransaction(
   });
   // Get the correct extrinsics params depending on transaction
   const extrinsicParams = getExtrinsicParams(extractExtrinsicArg);
-  const address = polkadotAddress;
-  const { blockHash, genesisHash } = info;
+
   const blockNumber = registry.createType("BlockNumber", info.blockNumber).toHex();
   const era = registry
     .createType("ExtrinsicEra", {
@@ -224,6 +232,8 @@ export async function craftTransaction(
       return param;
     }),
   ).toHex();
+
+  const { blockHash, genesisHash } = info;
   const unsigned = {
     address,
     blockHash,
@@ -238,6 +248,7 @@ export async function craftTransaction(
     transactionVersion,
     version: EXTRINSIC_VERSION,
   };
+
   return {
     registry,
     unsigned,

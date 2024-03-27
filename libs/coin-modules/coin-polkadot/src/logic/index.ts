@@ -32,7 +32,7 @@ export { signExtrinsic } from "./signTransaction";
 
 import broadcast from "./broadcast";
 import estimateMaxSpendable from "./estimateMaxSpendable";
-import getEstimatedFees from "./getFeesForTransaction";
+import { getEstimatedFees, estimatedFees } from "./getFeesForTransaction";
 import getTransactionStatus from "./getTransactionStatus";
 
-export { broadcast, estimateMaxSpendable, getEstimatedFees, getTransactionStatus };
+export { broadcast, estimateMaxSpendable, getEstimatedFees, getTransactionStatus, estimatedFees };

@@ -3,7 +3,7 @@ import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
 import { loadPolkadotCrypto } from "./polkadot-crypto";
 import type { PolkadotAccount, Transaction } from "../types";
 import { calculateAmount } from "./utils";
-import { buildTransaction } from "./buildTransaction";
+import { buildTransaction, craftTransaction, defaultExtrinsicArg } from "./buildTransaction";
 import { fakeSignExtrinsic } from "./signTransaction";
 import polkadotAPI from "../network";
 
@@ -13,7 +13,7 @@ import polkadotAPI from "../network";
  * @param {Account} a
  * @param {Transaction} t
  */
-const getEstimatedFees = async ({
+export const getEstimatedFees = async ({
   a,
   t,
 }: {
@@ -41,4 +41,21 @@ const getEstimatedFees = async ({
   return new BigNumber(payment.partialFee);
 };
 
-export default getEstimatedFees;
+export const estimatedFees = async ({
+  accountAddress,
+  amount,
+}: {
+  accountAddress: string;
+  amount: bigint;
+}): Promise<bigint> => {
+  await loadPolkadotCrypto();
+
+  const { unsigned, registry } = await craftTransaction(
+    accountAddress,
+    0,
+    defaultExtrinsicArg(amount, getAbandonSeedAddress("polkadot")),
+  );
+  const fakeSignedTx = await fakeSignExtrinsic(unsigned, registry);
+  const payment = await polkadotAPI.paymentInfo(fakeSignedTx);
+  return BigInt(payment.partialFee);
+};

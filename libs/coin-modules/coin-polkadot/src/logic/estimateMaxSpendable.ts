@@ -3,7 +3,7 @@ import type { AccountLike, Account } from "@ledgerhq/types-live";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
 import type { PolkadotAccount, Transaction } from "../types";
 import { calculateAmount } from "./utils";
-import getEstimatedFees from "./getFeesForTransaction";
+import { getEstimatedFees } from "./getFeesForTransaction";
 import { createTransaction } from "./transaction";
 
 /**

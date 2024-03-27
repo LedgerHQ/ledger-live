@@ -9,5 +9,5 @@
     "outDir": "lib"
   },
   "include": ["src/**/*"],
-  "exclude": ["src/api/subscan.ts", "src/api/websocket.ts"]
+  "exclude": ["src/**/*.test.ts", "src/**/*.fixture.ts"]
 }

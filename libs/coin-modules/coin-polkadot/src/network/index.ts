@@ -58,6 +58,7 @@ const getPaymentInfo = makeLRUCache(
   ({ a, t, signedTx }) => hashTransactionParams(a, t, signedTx),
   minutes(5),
 );
+const paymentInfo = makeLRUCache(sidecarPaymentInfo, signedTx => signedTx, minutes(5));
 const isControllerAddress = makeLRUCache(
   sidecarIsControllerAddress,
   address => address,
@@ -79,6 +80,7 @@ export default {
     return force ? getTransactionParamsFn.force() : getTransactionParamsFn();
   },
   getPaymentInfo,
+  paymentInfo,
   isControllerAddress,
   isElectionClosed,
   isNewAccount,
@@ -95,20 +97,24 @@ export default {
  *
  * @returns {string} hash
  */
-const hashTransactionParams = (a: PolkadotAccount, t: Transaction, signedTx: string) => {
+const hashTransactionParams = (
+  { id, polkadotResources }: PolkadotAccount,
+  { mode, rewardDestination, validators, numSlashingSpans, era }: Transaction,
+  signedTx: string,
+) => {
   // Nonce is added to discard previous estimation when account is synced.
-  const prefix = `${a.id}_${a.polkadotResources?.nonce || 0}_${t.mode}`;
+  const prefix = `${id}_${polkadotResources?.nonce || 0}_${mode}`;
   // Fees depends on extrinsic bytesize
   const byteSize = signedTx.length;
 
   // And on extrinsic weight (which varies with the method called)
-  switch (t.mode) {
+  switch (mode) {
     case "send":
       return `${prefix}_${byteSize}`;
 
     case "bond":
-      return t.rewardDestination
-        ? `${prefix}_${byteSize}_${t.rewardDestination}`
+      return rewardDestination
+        ? `${prefix}_${byteSize}_${rewardDestination}`
         : `${prefix}_${byteSize}`;
 
     case "unbond":
@@ -116,17 +122,17 @@ const hashTransactionParams = (a: PolkadotAccount, t: Transaction, signedTx: str
       return `${prefix}_${byteSize}`;
 
     case "nominate":
-      return `${prefix}_${t.validators?.length ?? "0"}`;
+      return `${prefix}_${validators?.length ?? "0"}`;
 
     case "withdrawUnbonded":
-      return `${prefix}_${t.numSlashingSpans ?? "0"}`;
+      return `${prefix}_${numSlashingSpans ?? "0"}`;
 
     case "chill":
       return `${prefix}`;
     case "setController":
       return `${prefix}`;
     case "claimReward":
-      return `${prefix}_${t.era || "0"}`;
+      return `${prefix}_${era || "0"}`;
 
     default:
       throw new Error("Unknown mode in transaction");

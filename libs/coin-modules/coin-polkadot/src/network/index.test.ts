@@ -44,3 +44,7 @@ describe("isNewAccount", () => {
     expect(mockedSidecar.getMinimumBondBalance).toHaveBeenCalledTimes(0);
   });
 });
+
+// describe("getPaymentInfo", () => {
+
+// });

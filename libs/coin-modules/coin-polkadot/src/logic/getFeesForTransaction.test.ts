@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { loadPolkadotCrypto } from "./polkadot-crypto";
-import getEstimatedFees from "./getFeesForTransaction";
+import { getEstimatedFees } from "./getFeesForTransaction";
 import {
   fixtureChainSpec,
   fixtureTxMaterialWithMetadata,
@@ -29,6 +29,10 @@ jest.mock("../network/sidecar", () => ({
 
 describe("getEstimatedFees", () => {
   const transaction = createFixtureTransaction();
+
+  beforeEach(() => {
+    mockPaymentInfo.mockClear();
+  });
 
   it("calls loadPolkadotCrypto (WASM check)", async () => {
     // Given
