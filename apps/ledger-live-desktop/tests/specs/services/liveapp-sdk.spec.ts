@@ -82,7 +82,8 @@ test("Live App SDK methods @smoke", async ({ page }) => {
   await test.step("Verify Address - modal", async () => {
     await liveAppWebview.verifyAddress();
     await deviceAction.openApp();
-    await expect.soft(page).toHaveScreenshot("live-app-verify-address.png");
+    // Dummy test app behaves differently between runners (external e2e vs usual), we only want to test the modal here
+    await expect.soft(modal.container).toHaveScreenshot("live-app-verify-address.png");
   });
 
   await test.step("Verify Address - address output", async () => {

@@ -30,7 +30,7 @@ jobs:
         if: ${{ github.event_name != 'pull_request' }}
         run: |
           git checkout $GITHUB_SHA
-      - uses: ./tools/actions/live-common-affected
+      - uses: LedgerHQ/ledger-live/tools/actions/live-common-affected@develop
         id: affected
         with:
           ref: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.event.pull_request.base.ref) || 'HEAD^' }}
@@ -56,7 +56,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Setup the toolchain
-        uses: ./tools/actions/composites/setup-toolchain
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
         id: toolchain
         with:
           skip_turbo_cache: "false"
