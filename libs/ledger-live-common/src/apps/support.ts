@@ -31,7 +31,7 @@ export function mustUpgrade(appName: string, appVersion: string): boolean {
   // we should convert the app name to camel case and replace spaces with underscores to match the config convention in firebase
   const minVersion = LiveConfig.getValueByKey(
     `config_nanoapp_${appName.toLowerCase().replace(/ /g, "_")}`,
-  ).minVersion;
+  )?.minVersion;
   if (minVersion) {
     return !semver.gte(appVersion || "", minVersion, {
       includePrerelease: true, // this will allow pre-release tags for higher versions than the minimum one
