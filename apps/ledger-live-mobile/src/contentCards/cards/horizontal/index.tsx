@@ -10,7 +10,7 @@ type Props = {
   description: string;
   image: string;
   tag?: string;
-  medata: Array<string>;
+  metadata: Array<string>;
   itemStyle?: Array<string>;
 };
 
