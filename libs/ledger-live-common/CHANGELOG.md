@@ -1,5 +1,16 @@
 # @ledgerhq/live-common
 
+## 33.7.0-nightly.11
+
+### Patch Changes
+
+- [#6510](https://github.com/LedgerHQ/ledger-live/pull/6510) [`13293e8`](https://github.com/LedgerHQ/ledger-live/commit/13293e89523d1fdc7c632480c5aebceb9be893c1) Thanks [@cng-ledger](https://github.com/cng-ledger)! - fix(LIVE-11608): longer quote refresh rate for LLM to prevent frequent flow restart
+
+- [#6510](https://github.com/LedgerHQ/ledger-live/pull/6510) [`13293e8`](https://github.com/LedgerHQ/ledger-live/commit/13293e89523d1fdc7c632480c5aebceb9be893c1) Thanks [@cng-ledger](https://github.com/cng-ledger)! - fix(LIVE-11382): disable quote refresh during confirmation for LLM
+
+- Updated dependencies [[`671dfcf`](https://github.com/LedgerHQ/ledger-live/commit/671dfcfb5ea7bd002ece07b9ee451417de1d306d)]:
+  - @ledgerhq/hw-app-exchange@0.4.6-nightly.4
+
 ## 33.7.0-nightly.10
 
 ### Minor Changes

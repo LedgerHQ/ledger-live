@@ -1,5 +1,11 @@
 # @ledgerhq/hw-app-exchange
 
+## 0.4.6-nightly.4
+
+### Patch Changes
+
+- [#6532](https://github.com/LedgerHQ/ledger-live/pull/6532) [`671dfcf`](https://github.com/LedgerHQ/ledger-live/commit/671dfcfb5ea7bd002ece07b9ee451417de1d306d) Thanks [@sarneijim](https://github.com/sarneijim)! - Support base64 in decodePayloadProtobuf
+
 ## 0.4.6-nightly.3
 
 ### Patch Changes
