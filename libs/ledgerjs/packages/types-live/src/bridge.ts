@@ -95,7 +95,7 @@ export interface CurrencyBridge {
   // Assume to call it at every load time but as lazy as possible (if user have such account already AND/OR if user is about to scanAccounts)
   // returned value is a serializable object
   // fail if data was not able to load.
-  preload(currency: CryptoCurrency): Promise<Record<string, any>>;
+  preload(currency: CryptoCurrency): Promise<Record<string, any> | Array<unknown> | void>;
   // reinject the preloaded data (typically if it was cached)
   // method need to treat the data object as unsafe and validate all fields / be backward compatible.
   hydrate(data: unknown, currency: CryptoCurrency): void;
