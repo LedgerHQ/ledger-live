@@ -13,7 +13,7 @@ export function retry<A>(f: () => Promise<A>, options?: Partial<typeof defaults>
     ...options,
   };
 
-  async function rec(remainingTry: number, i: number): Promise<A> {
+  function rec(remainingTry: number, i: number): Promise<A> {
     const result = f();
 
     if (remainingTry <= 0) {
@@ -22,9 +22,11 @@ export function retry<A>(f: () => Promise<A>, options?: Partial<typeof defaults>
 
     // In case of failure, wait the interval, retry the action
     return result.catch(e => {
+      if (!retryCondition(e)) {
+        return e;
+      }
       log("promise-retry", context + " failed. " + remainingTry + " retry remain. " + String(e));
-      const newRemainingTry = !retryCondition(e) ? 0 : remainingTry - 1;
-      return delay(i).then(() => rec(newRemainingTry, i * intervalMultiplicator));
+      return delay(i).then(() => rec(remainingTry - 1, i * intervalMultiplicator));
     });
   }
 
