@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { ethers } from "ethers";
 import { BigNumber } from "bignumber.js";
 // import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
@@ -77,6 +78,7 @@ const scenarioEthereum: Scenario<EvmTransaction> = {
   },
   transactions: [scenarioTransction],
   afterAll: async () => {
+    console.log("Done testing this scenario");
     await killDocker();
   },
 };
