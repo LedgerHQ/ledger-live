@@ -13,7 +13,7 @@ const delay = (timing: number) => new Promise(resolve => setTimeout(resolve, tim
 
 const defaultNanoAppVersion: NanoApp = { firmware: "2.1.0", version: "1.10.3" };
 
-export const spawnDocker = async (): Promise<SpeculosTransportHttp> => {
+export const spawnDocker = async (service: "speculos"): Promise<SpeculosTransportHttp> => {
   const { data: blob } = await axios({
     url: `https://raw.githubusercontent.com/LedgerHQ/coin-apps/master/nanos/${defaultNanoAppVersion.firmware}/Ethereum/app_${defaultNanoAppVersion.version}.elf`,
     method: "GET",
@@ -26,7 +26,7 @@ export const spawnDocker = async (): Promise<SpeculosTransportHttp> => {
   await fs.mkdir(path.resolve("./tmp"), { recursive: true });
   await fs.writeFile(path.resolve("./tmp/app.elf"), blob, "binary");
 
-  await compose.upAll({
+  await compose.upOne(service, {
     cwd,
     log: true,
     env: {
@@ -48,7 +48,7 @@ export const spawnDocker = async (): Promise<SpeculosTransportHttp> => {
   };
 
   console.log("\n");
-  return Promise.all([checkSpeculosLogs()]).then(([transport]) => transport);
+  return checkSpeculosLogs().then(transport => transport);
 };
 
 export const killDocker = async () => {

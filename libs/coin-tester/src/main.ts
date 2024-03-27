@@ -8,12 +8,16 @@ import {
 import { AssertionError } from "assert";
 import { first, firstValueFrom, map, reduce } from "rxjs";
 import { spawnDocker } from "./docker";
+import Transport from "@ledgerhq/hw-transport";
 
-type Scenario<T extends TransactionCommon> = {
+export type Scenario<T extends TransactionCommon> = {
   setup: () => Promise<{
     accountBridge: AccountBridge<T>;
     currencyBridge: CurrencyBridge;
     account: Account;
+    transport: Transport;
+    testTimeout?: number;
+    retryInterval?: number;
     onSignerConfirmation?: () => Promise<void>;
   }>;
   transactions: (T & { after?: (account: Account) => void })[];
@@ -22,13 +26,17 @@ type Scenario<T extends TransactionCommon> = {
   teardown?: () => void;
 };
 
-export async function executeScenario<T extends TransactionCommon>(scenario: Scenario<T>) {
-  await spawnDocker().catch(e => {
+export const getTransport = async (supportedSigner: "speculos") => {
+  return await spawnDocker(supportedSigner).catch(e => {
     console.error(e);
     throw e;
   });
+};
 
-  const { accountBridge, currencyBridge, account, onSignerConfirmation } = await scenario.setup();
+export async function executeScenario<T extends TransactionCommon>(scenario: Scenario<T>) {
+  const { accountBridge, currencyBridge, account, retryInterval, onSignerConfirmation } =
+    await scenario.setup();
+
   await scenario.beforeAll?.();
 
   const data = await currencyBridge.preload(account.currency);
@@ -55,8 +63,11 @@ export async function executeScenario<T extends TransactionCommon>(scenario: Sce
       ...testTransaction,
     } as T);
 
-    // TODO: throw error if error in status ?
     const status = await accountBridge.getTransactionStatus(scenarioAccount, transaction);
+
+    if (Object.entries(status.errors)) {
+      throw new Error(`Error in transaction status: ${JSON.stringify(status.errors, null, 3)}`);
+    }
 
     console.log({ status });
     const { signedOperation } = await firstValueFrom(
@@ -104,7 +115,7 @@ export async function executeScenario<T extends TransactionCommon>(scenario: Sce
             throw e;
           }
 
-          await new Promise(resolve => setTimeout(resolve, 5000));
+          await new Promise(resolve => setTimeout(resolve, retryInterval || 5000));
           afterHandler(retry - 1);
         }
 
@@ -112,10 +123,6 @@ export async function executeScenario<T extends TransactionCommon>(scenario: Sce
       }
     };
 
-    await spawnDocker().catch(e => {
-      console.error(e);
-      throw e;
-    });
     afterHandler();
   }
 

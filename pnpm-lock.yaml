@@ -1887,6 +1887,9 @@ importers:
         specifier: ^7.8.1
         version: 7.8.1
     devDependencies:
+      '@ledgerhq/coin-tester':
+        specifier: workspace:^
+        version: link:../../coin-tester
       '@ledgerhq/hw-app-eth':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/hw-app-eth
@@ -1920,6 +1923,9 @@ importers:
       jest-expect-message:
         specifier: ^1.1.3
         version: 1.1.3
+      msw:
+        specifier: ^2.2.12
+        version: 2.2.12(typescript@5.1.3)
       prando:
         specifier: ^6.0.1
         version: 6.0.1
@@ -2069,9 +2075,6 @@ importers:
 
   libs/coin-tester:
     dependencies:
-      '@ledgerhq/coin-evm':
-        specifier: workspace:^
-        version: link:../coin-modules/coin-evm
       '@ledgerhq/coin-framework':
         specifier: workspace:^
         version: link:../coin-framework
@@ -2081,12 +2084,12 @@ importers:
       '@ledgerhq/hw-app-eth':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-eth
+      '@ledgerhq/hw-transport':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/hw-transport
       '@ledgerhq/hw-transport-node-speculos-http':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-transport-node-speculos-http
-      '@ledgerhq/live-common':
-        specifier: workspace:^
-        version: link:../ledger-live-common
       axios:
         specifier: ^1.5.0
         version: 1.6.5
@@ -17358,6 +17361,18 @@ packages:
       strict-event-emitter: 0.5.1
     dev: true
 
+  /@mswjs/interceptors@0.26.13:
+    resolution: {integrity: sha512-1vsdtQfcd2ot01rGsxnbQn5fi3rY/Ien4zwacIrGi421UvYNBeoaVUg2qWYXt4S1t92K+vf46XjhUxC0+B9GtA==}
+    engines: {node: '>=18'}
+    dependencies:
+      '@open-draft/deferred-promise': 2.2.0
+      '@open-draft/logger': 0.3.0
+      '@open-draft/until': 2.1.0
+      is-node-process: 1.2.0
+      outvariant: 1.4.2
+      strict-event-emitter: 0.5.1
+    dev: true
+
   /@napi-rs/simple-git-android-arm-eabi@0.1.8:
     resolution: {integrity: sha512-JJCejHBB1G6O8nxjQLT4quWCcvLpC3oRdJJ9G3MFYSCoYS8i1bWCWeU+K7Br+xT+D6s1t9q8kNJAwJv9Ygpi0g==}
     engines: {node: '>= 10'}
@@ -25250,7 +25265,7 @@ packages:
   /@types/mute-stream@0.0.4:
     resolution: {integrity: sha512-CPM9nzrCPPJHQNA9keH9CVkVI+WR5kMa+7XEs5jcGQ0VoAGnLv242w8lIVgwAEfmE4oufJRaTc9PNLQl0ioAow==}
     dependencies:
-      '@types/node': 20.8.10
+      '@types/node': 20.11.30
     dev: true
 
   /@types/node-fetch@2.6.9:
@@ -46402,6 +46417,37 @@ packages:
       '@inquirer/confirm': 3.1.0
       '@mswjs/cookies': 1.1.0
       '@mswjs/interceptors': 0.25.16
+      '@open-draft/until': 2.1.0
+      '@types/cookie': 0.6.0
+      '@types/statuses': 2.0.4
+      chalk: 4.1.2
+      graphql: 16.8.1
+      headers-polyfill: 4.0.2
+      is-node-process: 1.2.0
+      outvariant: 1.4.2
+      path-to-regexp: 6.2.1
+      strict-event-emitter: 0.5.1
+      type-fest: 4.13.1
+      typescript: 5.1.3
+      yargs: 17.7.2
+    dev: true
+
+  /msw@2.2.12(typescript@5.1.3):
+    resolution: {integrity: sha512-thmjEipUvr+XGawcNOh4T8+T2TN3qKWPfF0Ewx6ub1HIATXBsjOhnjV6Wx2BmmFThKEtYYC+RygrvkpG4DzoZw==}
+    engines: {node: '>=18'}
+    hasBin: true
+    requiresBuild: true
+    peerDependencies:
+      typescript: '>= 4.7.x'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+    dependencies:
+      '@bundled-es-modules/cookie': 2.0.0
+      '@bundled-es-modules/statuses': 1.0.1
+      '@inquirer/confirm': 3.1.0
+      '@mswjs/cookies': 1.1.0
+      '@mswjs/interceptors': 0.26.13
       '@open-draft/until': 2.1.0
       '@types/cookie': 0.6.0
       '@types/statuses': 2.0.4

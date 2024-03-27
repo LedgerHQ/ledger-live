@@ -1,5 +1,5 @@
 {
-  "name": "@ledgerhq/coin-tester",
+  "name": "@ledgerhq/coin-tester-evm",
   "version": "0.1.0",
   "description": "Deterministic testing of Ledger coin-modules",
   "license": "Apache-2.0",
@@ -54,5 +54,5 @@
   "bugs": {
     "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
-  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-tester"
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/coin-tester-evm"
 }
