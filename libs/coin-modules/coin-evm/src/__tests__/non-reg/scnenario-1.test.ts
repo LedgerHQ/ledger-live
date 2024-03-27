@@ -11,7 +11,7 @@ import {
 } from "./helpers";
 import { clearExplorerAppendix, getLogs, setBlock } from "./indexer";
 import { executeScenario, Scenario } from "@ledgerhq/coin-tester/main";
-import { killDocker, spawnDocker } from "@ledgerhq/coin-tester/docker";
+import { killDocker, spawnSpeculos } from "@ledgerhq/coin-tester/docker";
 import { makeAccount } from "../fixtures/common.fixtures";
 import { Transaction as EvmTransaction } from "../../types";
 import Eth from "@ledgerhq/hw-app-eth";
@@ -33,12 +33,17 @@ const scenarioTransction: EvmTransaction = Object.freeze({
   chainId: 1,
 });
 
+const defaultNanoAppVersion = { firmware: "2.1.0" as const, version: "1.10.3" as const };
+
 const scenarioEthereum: Scenario<EvmTransaction> = {
   setup: async () => {
     const signerContext = (deviceId: string, fn: any): any => fn(new Eth(transport));
     const currencyBridge = buildCurrencyBridge(signerContext);
     const accountBridge = buildAccountBridge(signerContext);
-    const transport = await spawnDocker("speculos");
+    const transport = await spawnSpeculos(
+      "speculos",
+      `/${defaultNanoAppVersion.firmware}/Ethereum/app_${defaultNanoAppVersion.version}.elf`,
+    );
     const getAddress = resolver(signerContext);
 
     return { currencyBridge, accountBridge, account: scnerioAccount, transport, getAddress };

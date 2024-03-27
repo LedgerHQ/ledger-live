@@ -7,7 +7,6 @@ import {
 } from "@ledgerhq/types-live";
 import { AssertionError } from "assert";
 import { first, firstValueFrom, map, reduce } from "rxjs";
-import { spawnDocker } from "./docker";
 import Transport from "@ledgerhq/hw-transport";
 
 export type Scenario<T extends TransactionCommon> = {
@@ -24,13 +23,6 @@ export type Scenario<T extends TransactionCommon> = {
   beforeAll?: () => Promise<void>;
   afterAll?: () => Promise<void>;
   teardown?: () => void;
-};
-
-export const getTransport = async (supportedSigner: "speculos") => {
-  return await spawnDocker(supportedSigner).catch(e => {
-    console.error(e);
-    throw e;
-  });
 };
 
 export async function executeScenario<T extends TransactionCommon>(scenario: Scenario<T>) {

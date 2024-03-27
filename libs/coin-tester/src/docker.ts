@@ -5,17 +5,21 @@ import chalk from "chalk";
 import fs from "fs/promises";
 import { v2 as compose } from "docker-compose";
 import SpeculosTransportHttp from "@ledgerhq/hw-transport-node-speculos-http";
-import { ENV, NanoApp } from "./types";
+import { ENV } from "./types";
 
 const { API_PORT } = process.env as ENV;
 const cwd = path.join(__dirname);
 const delay = (timing: number) => new Promise(resolve => setTimeout(resolve, timing));
 
-const defaultNanoAppVersion: NanoApp = { firmware: "2.1.0", version: "1.10.3" };
+type SemanticVersion = `${number}.${number}.${number}`;
+type NanoAppEndpoint = `/${SemanticVersion}/${string}/app_${SemanticVersion}.elf`;
 
-export const spawnDocker = async (service: "speculos"): Promise<SpeculosTransportHttp> => {
+export const spawnSpeculos = async (
+  service: "speculos",
+  nanoAppEndpoint: NanoAppEndpoint,
+): Promise<SpeculosTransportHttp> => {
   const { data: blob } = await axios({
-    url: `https://raw.githubusercontent.com/LedgerHQ/coin-apps/master/nanos/${defaultNanoAppVersion.firmware}/Ethereum/app_${defaultNanoAppVersion.version}.elf`,
+    url: `https://raw.githubusercontent.com/LedgerHQ/coin-apps/master/nanos${nanoAppEndpoint}`,
     method: "GET",
     responseType: "stream",
     headers: {
