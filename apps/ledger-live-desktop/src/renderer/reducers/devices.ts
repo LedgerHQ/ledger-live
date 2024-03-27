@@ -74,7 +74,11 @@ export function getCurrentDevice(state: { devices: DevicesState; settings: Setti
     };
   }
 
-  if (getEnv("DEVICE_PROXY_URL") || (getEnv("MOCK") && !getEnv("MOCK_NO_BYPASS"))) {
+  if (
+    getEnv("DEVICE_PROXY_URL") ||
+    getEnv("SPECULOS_API_PORT") ||
+    (getEnv("MOCK") && !getEnv("MOCK_NO_BYPASS"))
+  ) {
     // bypass the listen devices (we should remove modelId here by instead get it at open time if needed)
     return {
       deviceId: "",
@@ -85,7 +89,7 @@ export function getCurrentDevice(state: { devices: DevicesState; settings: Setti
   return state.devices.currentDevice;
 }
 export function getDevices(state: { devices: DevicesState }) {
-  if (getEnv("DEVICE_PROXY_URL")) {
+  if (getEnv("DEVICE_PROXY_URL") || getEnv("SPECULOS_API_PORT")) {
     // bypass the listen devices
     return [
       {

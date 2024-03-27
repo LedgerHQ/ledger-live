@@ -84,7 +84,7 @@ pnpm desktop test:playwright:setup
 Run a single test
 
 ```
-pnpm desktop test:playwright playwright/specs/<testname>.spec.ts
+pnpm desktop test:playwright specs/<testFolder>/<testName>
 ```
 
 Run all tests in a directory

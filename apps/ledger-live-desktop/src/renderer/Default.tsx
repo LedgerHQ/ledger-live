@@ -48,6 +48,7 @@ import {
 import { Flex, InfiniteLoader } from "@ledgerhq/react-ui";
 import useAccountsWithFundsListener from "@ledgerhq/live-common/hooks/useAccountsWithFundsListener";
 import { accountsSelector } from "./reducers/accounts";
+import DebugSpeculos from "~/renderer/components/debug/DebugSpeculos";
 
 const PlatformCatalog = lazy(() => import("~/renderer/screens/platform"));
 const Dashboard = lazy(() => import("~/renderer/screens/dashboard"));
@@ -217,6 +218,7 @@ export default function Default() {
               {process.env.DEBUG_UPDATE ? <DebugUpdater /> : null}
               {process.env.DEBUG_SKELETONS ? <DebugSkeletons /> : null}
               {process.env.DEBUG_FIRMWARE_UPDATE ? <DebugFirmwareUpdater /> : null}
+              {process.env.DEBUG_SPECULOS ? <DebugSpeculos /> : null}
             </DebugWrapper>
             {process.env.DISABLE_TRANSACTION_BROADCAST ? (
               <DisableTransactionBroadcastWarning />

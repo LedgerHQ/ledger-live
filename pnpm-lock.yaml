@@ -262,6 +262,9 @@ importers:
       '@ledgerhq/hw-transport-node-hid-singleton':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/hw-transport-node-hid-singleton
+      '@ledgerhq/hw-transport-node-speculos-http':
+        specifier: workspace:^
+        version: link:../../libs/ledgerjs/packages/hw-transport-node-speculos-http
       '@ledgerhq/hw-transport-vault':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/hw-transport-vault

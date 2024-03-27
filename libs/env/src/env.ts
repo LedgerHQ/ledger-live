@@ -568,6 +568,11 @@ const envDefinitions = {
     parser: boolParser,
     desc: "dev flag to skip onboarding flow",
   },
+  SPECULOS_API_PORT: {
+    def: 0,
+    parser: intParser,
+    desc: "API port for speculos",
+  },
   SPECULOS_PID_OFFSET: {
     def: 0,
     parser: intParser,
