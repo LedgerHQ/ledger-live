@@ -7,6 +7,8 @@ import CompletionScreen from "~/screens/SyncOnboarding/CompletionScreen";
 import { SyncOnboardingStackParamList } from "./types/SyncOnboardingNavigator";
 import { SyncOnboarding } from "~/screens/SyncOnboarding";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
+import FirmwareUpdateScreen from "~/screens/FirmwareUpdate";
+import { Button, IconsLegacy } from "@ledgerhq/native-ui";
 
 const Stack = createStackNavigator<SyncOnboardingStackParamList>();
 
@@ -23,6 +25,17 @@ export const SyncOnboardingNavigator = () => {
     >
       <Stack.Screen name={ScreenName.SyncOnboardingCompanion} component={SyncOnboarding} />
       <Stack.Screen name={ScreenName.SyncOnboardingCompletion} component={CompletionScreen} />
+      <Stack.Screen
+        name={ScreenName.FirmwareUpdate}
+        component={FirmwareUpdateScreen}
+        options={{
+          gestureEnabled: false,
+          headerShown: true,
+          headerTitle: () => null,
+          headerLeft: () => null,
+          headerRight: () => <Button Icon={IconsLegacy.CloseMedium} />,
+        }}
+      />
     </Stack.Navigator>
   );
 };
