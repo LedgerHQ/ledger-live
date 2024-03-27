@@ -1,5 +1,5 @@
 import { useReducer, useCallback, Dispatch } from "react";
-export function useActionModal() {
+export function useActionModal(): [ActionModalState, ActionModalReducer] {
   const [state, dispatch] = useReducer(actionModalReducer, actionModalInitState);
   const open = useCallback(() => {
     dispatch({

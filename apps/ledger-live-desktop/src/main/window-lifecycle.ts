@@ -3,6 +3,7 @@ import { BrowserWindow, screen, app, WebPreferences } from "electron";
 import path from "path";
 import { delay } from "@ledgerhq/live-common/promise";
 import { URL } from "url";
+import db from "./db";
 
 const intFromEnv = (key: string, def: number): number => {
   const v = process.env[key];
@@ -77,6 +78,32 @@ export const loadWindow = async () => {
     fullUrl.searchParams.append("appDirname", app.dirname || "");
     fullUrl.searchParams.append("theme", theme || "");
     fullUrl.searchParams.append("appLocale", app.getLocale());
+
+    const proxyUrl = (await db.getKey("app", "proxy", { url: "" }))?.url;
+
+    if (proxyUrl && typeof proxyUrl === "string") {
+      try {
+        const url = new URL(proxyUrl);
+        app.commandLine.appendSwitch(
+          "host-resolver-rules",
+          `MAP * ~NOTFOUND , EXCLUDE ${url.hostname}`,
+        );
+      } catch (err) {
+        console.error(`Proxy URL parsing error: ${err}`);
+      }
+      await mainWindow.webContents.session.setProxy({ proxyRules: proxyUrl });
+      await mainWindow.webContents.session.forceReloadProxyConfig();
+      await mainWindow.webContents.session.closeAllConnections();
+    } else {
+      if (app.commandLine.hasSwitch("host-resolver-rules")) {
+        app.commandLine.removeSwitch("host-resolver-rules");
+      }
+
+      await mainWindow.webContents.session.setProxy({ proxyRules: undefined });
+      await mainWindow.webContents.session.forceReloadProxyConfig();
+      await mainWindow.webContents.session.closeAllConnections();
+    }
+
     await mainWindow.loadURL(fullUrl.href);
   }
 };

@@ -14,6 +14,7 @@ import { SettingsSectionBody as Body, SettingsSectionRow as Row } from "../../Se
 import ExperimentalSwitch from "./ExperimentalSwitch";
 import ExperimentalInteger from "./ExperimentalInteger";
 import ExperimentalFloat from "./ExperimentalFloat";
+import ExperimentalUrlInput from "./ExperimentalUrlInput";
 import FullNode from "~/renderer/screens/settings/sections/Accounts/FullNode";
 import LottieTester from "./LottieTester";
 import StorylyTester from "./StorylyTester";
@@ -93,6 +94,12 @@ const SectionExperimental = () => {
         <Alert type="security" m={4}>
           <Trans i18nKey="settings.experimental.disclaimer"></Trans>
         </Alert>
+        <Row
+          title={<Trans i18nKey="settings.experimental.features.proxyUrl.title" />}
+          desc={<Trans i18nKey="settings.experimental.features.proxyUrl.description" />}
+        >
+          <ExperimentalUrlInput />
+        </Row>
         {experimentalFeatures.map(feature =>
           !feature.shadow || (feature.shadow && !isEnvDefault(feature.name)) ? (
             <ExperimentalFeatureRow
