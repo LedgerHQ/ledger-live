@@ -4,6 +4,7 @@ import { Image as NativeImage, Pressable, StyleProp, View, ViewStyle } from "rea
 import { useTheme } from "styled-components/native";
 import { ButtonAction } from "~/contentCards/cards/types";
 import { Size } from "~/contentCards/cards/vertical/types";
+import { WidthFactor } from "~/contentCards/layouts/types";
 
 export const ImageStyles: {
   [key in Size]: object;
@@ -220,29 +221,35 @@ export const Button = ({ label, size, action }: LabelProps & { action?: () => vo
   );
 };
 
-export const ContainerStyles: {
-  [key in Size]: object;
-} = {
-  L: {
-    height: 406,
-    paddingBottom: 24,
-    borderRadius: 12,
-  },
-  M: {
-    height: 300,
-    paddingBottom: 24,
-    borderRadius: 16,
-  },
-  S: {
-    height: 156,
-    paddingBottom: 8,
-    borderRadius: 16,
-  },
+export const ContainerStyles = (size: Size, widthFactor: WidthFactor): object => {
+  const styles = {
+    L: {
+      height: 406,
+      paddingBottom: 24,
+      borderRadius: 12,
+    },
+    M: {
+      height: widthFactor === WidthFactor.ThreeQuarters ? 300 : 220,
+      paddingBottom: 24,
+      borderRadius: 16,
+    },
+    S: {
+      height: 156,
+      paddingBottom: 8,
+      borderRadius: 16,
+    },
+  };
+
+  return styles[size];
 };
 
-export const Container = ({ size, children }: { size: Size } & PropsWithChildren) => {
+export const Container = ({
+  size,
+  children,
+  widthFactor,
+}: { size: Size } & PropsWithChildren & { widthFactor: WidthFactor }) => {
   const { colors } = useTheme();
-
+  const styles = ContainerStyles(size, widthFactor);
   return (
     <View
       style={{
@@ -250,7 +257,7 @@ export const Container = ({ size, children }: { size: Size } & PropsWithChildren
         justifyContent: "space-between",
         alignItems: "center",
         backgroundColor: colors.opacityDefault.c05,
-        ...ContainerStyles[size],
+        ...styles,
       }}
     >
       {children}

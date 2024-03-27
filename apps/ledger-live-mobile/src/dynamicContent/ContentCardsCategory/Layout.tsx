@@ -107,6 +107,10 @@ const Layout = ({ category, cards }: LayoutProps) => {
   const items = cardsSorted.map(card =>
     contentCardItem(contentCardsType.contentCardComponent, {
       ...card,
+      widthFactor:
+        category.cardsLayout === ContentCardsLayout.carousel
+          ? card.carouselWidthFactor
+          : card.gridWidthFactor,
 
       metadata: {
         id: card.id,
