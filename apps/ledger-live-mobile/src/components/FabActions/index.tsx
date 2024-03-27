@@ -106,17 +106,26 @@ export const FabButtonBarProvider = ({
           ? parent.setParams({ drawer: options.drawer })
           : navigation.navigate(NavigatorName.Base, options);
       }
+
+      const typedOpts = options as { screen?: string; params?: object } | undefined;
+
       (
         navigation as StackNavigationProp<{
           [key: string]: object | undefined;
         }>
-      ).navigate(name, {
-        ...options,
-        params: {
-          ...(options ? (options as { params: object }).params : {}),
-          ...navigationProps,
-        },
-      });
+      ).navigate(
+        name,
+        // one level deep navigation
+        typedOpts && !typedOpts?.screen
+          ? { ...typedOpts?.params }
+          : {
+              ...typedOpts,
+              params: {
+                ...(typedOpts ? typedOpts.params : {}),
+                ...navigationProps,
+              },
+            },
+      );
     },
     [navigation, navigationProps],
   );

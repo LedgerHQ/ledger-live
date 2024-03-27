@@ -2512,10 +2512,6 @@
       "currency": {
         "title": "Currency"
       },
-      "endpointConfig": {
-        "title": "Node",
-        "desc": "The API node to use"
-      },
       "delete": {
         "title": "Remove account from the Portfolio",
         "desc": "Stored data will be removed.",
@@ -2841,7 +2837,7 @@
       },
       "largeMover": {
         "title": "Large Mover",
-        "desc": "You'll be notified of important price movements for BTC and ETH"
+        "desc": "You’ll be notified of important price movements if you own BTC, ETH, SOL, ADA or XRP"
       },
       "transactionsAlerts": {
         "title": "Transaction Alerts (Beta)",

@@ -6,19 +6,26 @@ import { getState } from "expect";
 
 let port: number;
 
-beforeAll(async () => {
-  port = await findFreePort();
-  await device.reverseTcpPort(8081);
-  await device.reverseTcpPort(port);
-  await device.reverseTcpPort(52619); // To allow the android emulator to access the dummy app
-  await launchApp();
-}, 2000000);
+beforeAll(
+  async () => {
+    port = await findFreePort();
+    await device.reverseTcpPort(8081);
+    await device.reverseTcpPort(port);
+    await device.reverseTcpPort(52619); // To allow the android emulator to access the dummy app
+    await launchApp();
+  },
+  process.env.CI ? 150000 : 300000,
+);
 
 export async function launchApp() {
   serverBridge.close();
   serverBridge.init(port);
   await device.launchApp({
-    launchArgs: { wsPort: port },
+    launchArgs: {
+      wsPort: port,
+      detoxURLBlacklistRegex:
+        '\\(".*sdk.*.braze.*",".*.googleapis.com/.*",".*app.adjust.*",".*clients3.google.com.*"\\)',
+    },
     languageAndLocale: {
       language: "en-US",
       locale: "en-US",
@@ -33,7 +40,7 @@ afterEach(async () => {
   if (process.env.CI) {
     const testFile = (getState().testPath?.split("/").pop() || "logs").split(".")[0];
     const testName = (getState().currentTestName || "").replace(/[^a-z0-9]/gi, "_").toLowerCase();
-    getLogs(`${testFile}_${testName}`);
+    await getLogs(`${testFile}_${testName}`);
   }
 });
 

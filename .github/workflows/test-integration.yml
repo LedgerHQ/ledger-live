@@ -42,7 +42,7 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
           fetch-depth: 0
       - name: Setup the toolchain
-        uses: ./tools/actions/composites/setup-toolchain
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
         id: toolchain
         with:
           skip_turbo_cache: "false"

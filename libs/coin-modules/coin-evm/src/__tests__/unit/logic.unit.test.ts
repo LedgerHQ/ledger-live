@@ -1,7 +1,12 @@
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
 import * as cryptoAssetsTokens from "@ledgerhq/cryptoassets/tokens";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
-import { CryptoCurrency, TokenCurrency, Unit } from "@ledgerhq/types-cryptoassets";
+import {
+  CryptoCurrency,
+  CryptoCurrencyId,
+  TokenCurrency,
+  Unit,
+} from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import * as RPC_API from "../../api/node/rpc.common";
 import {
@@ -32,6 +37,68 @@ import {
   EvmTransactionLegacy,
   Transaction as EvmTransaction,
 } from "../../types";
+import { getCoinConfig } from "../../config";
+
+jest.mock("../../config");
+const mockGetConfig = jest.mocked(getCoinConfig);
+
+mockGetConfig.mockImplementation((currency: { id: string }): any => {
+  switch (currency.id) {
+    case "ethereum": {
+      return {
+        info: {
+          node: { type: "ledger", explorerId: "eth" },
+          explorer: { type: "ledger", explorerId: "eth" },
+        },
+      };
+    }
+    case "matic": {
+      return {
+        info: {
+          node: { type: "ledger", explorerId: "matic" },
+          explorer: { type: "ledger", explorerId: "matic" },
+        },
+      };
+    }
+    case "optimism": {
+      return {
+        info: {
+          node: { type: "external", uri: "optimis_uri" },
+        },
+      };
+    }
+    case "polygon": {
+      return {
+        info: {
+          node: { type: "ledger", explorerId: "polygon" },
+        },
+      };
+    }
+    case "bsc": {
+      return {
+        info: {
+          node: { type: "ledger", explorerId: "bsc" },
+        },
+      };
+    }
+    case "anything": {
+      return {
+        info: {
+          node: { type: "external", explorerId: "anything" },
+          explorer: { type: "etherscan", uri: "anything" },
+        },
+      };
+    }
+    case "somethingelse": {
+      return {
+        info: {
+          node: { type: "ledger", explorerId: "somethingelse" },
+          explorer: { type: "blockscout", uri: "somethingelse" },
+        },
+      };
+    }
+  }
+});
 
 describe("EVM Family", () => {
   describe("logic.ts", () => {
@@ -418,7 +485,13 @@ describe("EVM Family", () => {
       // you consider it an acceptable behaviour
       // especially while considering mobile
       // performances for this action
-      it("should have decent performances (10 syncHashes of each major EVM in less than 350ms on a computer)", () => {
+      //
+      // EDIT: Since the CAL went from ~9k to 14k+ tokens
+      // this test now takes longer to execute.
+      // Now changing to 1s to hash
+      // when CI generally run it
+      // in under 650ms.
+      it("should have decent performances (10 syncHashes of each major EVM in less than 1s on a computer)", () => {
         const start = performance.now();
         for (let i = 0; i < 10; i++) {
           getSyncHash(getCryptoCurrencyById("ethereum"));
@@ -426,7 +499,7 @@ describe("EVM Family", () => {
           getSyncHash(getCryptoCurrencyById("bsc"));
         }
         const now = performance.now();
-        expect(now - start).toBeLessThan(350);
+        expect(now - start).toBeLessThan(1000);
       });
 
       it("should provide a hash not dependent on reference", () => {
@@ -503,19 +576,23 @@ describe("EVM Family", () => {
       it("should provide a new hash if currency is using a new node config", () => {
         const hash1 = getSyncHash({
           ...currency,
-          ethereumLikeInfo: { chainId: 1, node: { type: "ledger", explorerId: "eth" } },
+          id: "ethereum",
+          ethereumLikeInfo: { chainId: 1 },
         });
         const hash2 = getSyncHash({
           ...currency,
-          ethereumLikeInfo: { chainId: 1, node: { type: "ledger", explorerId: "matic" } },
+          id: "matic" as CryptoCurrencyId,
+          ethereumLikeInfo: { chainId: 1 },
         });
         const hash3 = getSyncHash({
           ...currency,
-          ethereumLikeInfo: { chainId: 1, node: { type: "external", uri: "anything" } },
+          id: "anything" as CryptoCurrencyId,
+          ethereumLikeInfo: { chainId: 1 },
         });
         const hash4 = getSyncHash({
           ...currency,
-          ethereumLikeInfo: { chainId: 1, node: { type: "external", uri: "somethingelse" } },
+          id: "somethingelse" as CryptoCurrencyId,
+          ethereumLikeInfo: { chainId: 1 },
         });
 
         const hashes = [hash1, hash2, hash3, hash4];
@@ -527,31 +604,19 @@ describe("EVM Family", () => {
       it("should provide a new hash if currency is using a new explorer config", () => {
         const hash1 = getSyncHash({
           ...currency,
-          ethereumLikeInfo: {
-            ...currency.ethereumLikeInfo!,
-            explorer: { type: "ledger", explorerId: "eth" },
-          },
+          id: "ethereum",
         });
         const hash2 = getSyncHash({
           ...currency,
-          ethereumLikeInfo: {
-            ...currency.ethereumLikeInfo!,
-            explorer: { type: "ledger", explorerId: "matic" },
-          },
+          id: "matic" as CryptoCurrencyId,
         });
         const hash3 = getSyncHash({
           ...currency,
-          ethereumLikeInfo: {
-            ...currency.ethereumLikeInfo!,
-            explorer: { type: "etherscan", uri: "anything" },
-          },
+          id: "anything" as CryptoCurrencyId,
         });
         const hash4 = getSyncHash({
           ...currency,
-          ethereumLikeInfo: {
-            ...currency.ethereumLikeInfo!,
-            explorer: { type: "blockscout", uri: "somethingelse" },
-          },
+          id: "somethingelse" as CryptoCurrencyId,
         });
 
         const hashes = [hash1, hash2, hash3, hash4];

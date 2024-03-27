@@ -8,7 +8,7 @@ let swapPage: SwapFormPage;
 
 describe("Swap", () => {
   beforeAll(async () => {
-    loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
+    await loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
 
     portfolioPage = new PortfolioPage();
     swapPage = new SwapFormPage();

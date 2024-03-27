@@ -6,6 +6,7 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { encodeSubOperationId } from "@ledgerhq/coin-framework/operation";
 import * as logic from "../../logic";
+import { getCoinConfig } from "../../config";
 import {
   makeAccount,
   makeNft,
@@ -20,15 +21,25 @@ export const currency: CryptoCurrency = Object.freeze({
   ...getCryptoCurrencyById("ethereum"),
   ethereumLikeInfo: {
     chainId: 1,
-    node: {
-      type: "external" as const,
-      uri: "https://my-rpc.com",
-    },
-    explorer: {
-      type: "etherscan" as const,
-      uri: "https://api.com",
-    },
   },
+});
+
+jest.mock("../../config");
+const mockGetConfig = jest.mocked(getCoinConfig);
+
+mockGetConfig.mockImplementation((): any => {
+  return {
+    info: {
+      node: {
+        type: "external",
+        uri: "https://my-rpc.com",
+      },
+      explorer: {
+        type: "etherscan",
+        uri: "https://api.com",
+      },
+    },
+  };
 });
 
 export const tokenCurrencies = [

@@ -2,7 +2,7 @@ import {
   CantOpenDevice,
   DisconnectedDevice,
   LockedDeviceError,
-  TransportRaceCondition,
+  TransportPendingOperation,
   UnresponsiveDeviceError,
   TransportStatusErrorClassType,
   CustomErrorClassType,
@@ -49,7 +49,7 @@ export function sharedLogicTaskWrapper<TaskArgsType, TaskEventsType>(
                 error instanceof UnresponsiveDeviceError ||
                 error instanceof CantOpenDevice ||
                 error instanceof DisconnectedDevice ||
-                error instanceof TransportRaceCondition
+                error instanceof TransportPendingOperation
               ) {
                 // Emits to the action an error event so it is aware of it (for ex locked device) before retrying
                 const event: SharedTaskEvent = {

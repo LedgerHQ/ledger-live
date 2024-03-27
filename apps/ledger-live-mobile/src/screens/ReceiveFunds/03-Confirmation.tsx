@@ -32,7 +32,6 @@ import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/t
 import styled, { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
 import Clipboard from "@react-native-clipboard/clipboard";
 import ConfirmationHeaderTitle from "./ConfirmationHeaderTitle";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { BankMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { hasClosedWithdrawBannerSelector } from "~/reducers/settings";
@@ -77,7 +76,6 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
   const [hasAddedTokenAccount, setHasAddedTokenAccount] = useState(false);
   const [hasCopied, setCopied] = useState(false);
   const dispatch = useDispatch();
-  const depositWithdrawBannerMobile = useFeature("depositWithdrawBannerMobile");
   const insets = useSafeAreaInsets();
 
   const hasClosedWithdrawBanner = useSelector(hasClosedWithdrawBannerSelector);
@@ -115,16 +113,15 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
     setBanner(false);
   }, [dispatch]);
 
-  const clickLearn = useCallback(() => {
+  const clickLearn = () => {
     track("button_clicked", {
       button: "How to withdraw from exchange",
       type: "card",
       page: "Receive Account Qr Code",
     });
     // @ts-expect-error TYPINGS
-    Linking.openURL(depositWithdrawBannerMobile?.params?.url);
-  }, [depositWithdrawBannerMobile?.params?.url]);
-
+    Linking.openURL(urls.withdrawCrypto);
+  };
   useEffect(() => {
     if (route.params?.createTokenAccount && !hasAddedTokenAccount) {
       const newMainAccount = { ...mainAccount };
@@ -387,17 +384,15 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
             {t("transfer.receive.receiveConfirmation.verifyAddress")}
           </Button>
 
-          {depositWithdrawBannerMobile?.enabled ? (
-            displayBanner ? (
-              <AnimatedView animation="fadeInUp" delay={50} duration={300}>
-                <WithdrawBanner hideBanner={hideBanner} onPress={clickLearn} />
-              </AnimatedView>
-            ) : (
-              <AnimatedView animation="fadeOutDown" delay={50} duration={300}>
-                <WithdrawBanner hideBanner={hideBanner} onPress={clickLearn} />
-              </AnimatedView>
-            )
-          ) : null}
+          {displayBanner ? (
+            <AnimatedView animation="fadeInUp" delay={50} duration={300}>
+              <WithdrawBanner hideBanner={hideBanner} onPress={clickLearn} />
+            </AnimatedView>
+          ) : (
+            <AnimatedView animation="fadeOutDown" delay={50} duration={300}>
+              <WithdrawBanner hideBanner={hideBanner} onPress={clickLearn} />
+            </AnimatedView>
+          )}
         </Flex>
       </Flex>
       {verified ? null : isModalOpened ? (

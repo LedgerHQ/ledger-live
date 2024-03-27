@@ -5,6 +5,7 @@ export default class PasswordEntryPage {
   getLogin = () => getElementByText("Log in");
 
   async enterPassword(password: string) {
+    await tapByElement(this.getPasswordTextInput()); //prevent flakiness with Log in button not appearing
     await typeTextByElement(this.getPasswordTextInput(), password, false);
   }
 

@@ -7,9 +7,11 @@ import Exchange, {
   isExchangeTypeNg,
   PayloadSignatureComputedFormat,
 } from "./Exchange";
+import { decodePayloadProtobuf } from "./SwapUtils";
 
 export {
   createExchange,
+  decodePayloadProtobuf,
   getExchangeErrorMessage,
   ExchangeTypes,
   RateTypes,

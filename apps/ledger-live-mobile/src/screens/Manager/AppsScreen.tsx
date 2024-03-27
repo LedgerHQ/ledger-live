@@ -9,7 +9,7 @@ import {
   predictOptimisticState,
   reducer,
 } from "@ledgerhq/live-common/apps/index";
-import { App, DeviceInfo } from "@ledgerhq/types-live";
+import { App, DeviceInfo, FeatureId } from "@ledgerhq/types-live";
 import { useAppsSections } from "@ledgerhq/live-common/apps/react";
 
 import { Text, Flex } from "@ledgerhq/native-ui";
@@ -43,6 +43,8 @@ import { ScreenName } from "~/const";
 import { lastSeenDeviceSelector } from "~/reducers/settings";
 import ProviderWarning from "./ProviderWarning";
 import { UpdateStep } from "../FirmwareUpdate";
+import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
+import camelCase from "lodash/camelCase";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<ManagerNavigatorStackParamList, ScreenName.ManagerMain>
@@ -319,6 +321,17 @@ const AppsScreen = ({
     ],
   );
 
+  const { getFeature } = useFeatureFlags();
+  const enabledApps = useMemo(
+    () =>
+      catalog.filter(({ currencyId }: App) => {
+        if (!currencyId) return true;
+        const currencyFeatureKey = camelCase(`currency_${currencyId}`) as FeatureId;
+        return getFeature(currencyFeatureKey)?.enabled ?? true;
+      }),
+    [catalog, getFeature],
+  );
+
   return (
     <Flex flex={1} bg="background.main" px={6}>
       <Search
@@ -328,7 +341,7 @@ const AppsScreen = ({
           shouldSort: false,
         }}
         value={query}
-        items={catalog}
+        items={enabledApps}
         render={renderList}
         renderEmptySearch={renderList}
       />

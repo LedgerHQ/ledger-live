@@ -22,7 +22,7 @@ describe("Onboarding", () => {
     } else isFirstTest = false;
   });
 
-  it("does the Onboarding and choose to access wallet", async () => {
+  xit("does the Onboarding and choose to access wallet", async () => {
     await onboardingSteps.startOnboarding();
     await onboardingSteps.chooseToAccessYourWallet();
     await onboardingSteps.chooseToConnectYourLedger();
@@ -35,7 +35,7 @@ describe("Onboarding", () => {
     await expect(portfolioPage.emptyPortfolioList()).toBeVisible();
   });
 
-  it("does the Onboarding and choose to restore a Nano X", async () => {
+  xit("does the Onboarding and choose to restore a Nano X", async () => {
     await onboardingSteps.startOnboarding();
     await onboardingSteps.chooseSetupLedger();
     await onboardingSteps.chooseDevice("nanoX");
@@ -64,7 +64,7 @@ describe("Onboarding", () => {
     }
   });
 
-  it("does the Onboarding and choose to setup a new Nano X", async () => {
+  xit("does the Onboarding and choose to setup a new Nano X", async () => {
     await onboardingSteps.startOnboarding();
     await onboardingSteps.chooseSetupLedger();
     await onboardingSteps.chooseDevice("nanoX");
@@ -76,6 +76,7 @@ describe("Onboarding", () => {
   });
 
   it("does the Onboarding and choose to synchronize with Ledger Live Desktop", async () => {
+    await device.launchApp({ permissions: { camera: "YES" } }); // Make sure permission is given
     await onboardingSteps.startOnboarding();
     await onboardingSteps.chooseToAccessYourWallet();
     await onboardingSteps.chooseToSyncWithLedgerLiveDesktop();

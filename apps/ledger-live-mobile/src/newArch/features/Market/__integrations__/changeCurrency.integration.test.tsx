@@ -33,7 +33,6 @@ describe("Market integration test", () => {
         settings: {
           ...state.settings,
           supportedCounterValues: SUPPORTED_CURRENCIES,
-          featureFlags: { llmMarketNewArch: { enabled: true } },
         },
       }),
     });

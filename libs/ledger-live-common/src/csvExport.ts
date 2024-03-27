@@ -26,6 +26,12 @@ const fields: Field[] = [
     cell: (_account, _parentAccount, op) => op.date.toISOString(),
   },
   {
+    title: "Status",
+    cell: (_account, _parentAccount, op) => {
+      return op.hasFailed ? "Failed" : "Confirmed";
+    },
+  },
+  {
     title: "Currency Ticker",
     cell: account => getAccountCurrency(account).ticker,
   },

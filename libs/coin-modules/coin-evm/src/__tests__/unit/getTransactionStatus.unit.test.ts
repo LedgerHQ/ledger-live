@@ -59,6 +59,7 @@ const legacyTx: EvmTransactionLegacy = {
   gasPrice: new BigNumber(100),
   type: 0,
 };
+
 const eip1559Tx: EvmTransactionEIP1559 = {
   amount: new BigNumber(100),
   useAllAmount: false,
@@ -75,6 +76,7 @@ const eip1559Tx: EvmTransactionEIP1559 = {
   maxPriorityFeePerGas: new BigNumber(100),
   type: 2,
 };
+
 const erc721Nft: ProtoNFT = {
   contract: "0xNftContract",
   tokenId: "1",

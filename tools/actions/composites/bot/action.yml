@@ -52,7 +52,7 @@ runs:
         cache: pnpm
         cache-dependency-path: "**/pnpm-lock.yaml"
     - name: pull docker image
-      run: docker pull ghcr.io/ledgerhq/speculos
+      run: docker pull ghcr.io/ledgerhq/speculos:sha-e262a0c
       shell: bash
     - name: install and build
       run: |
@@ -91,7 +91,7 @@ runs:
         node --prof lib/bot/cli.js
       shell: bash
     - name: submit bot report
-      uses: ./tools/actions/submit-bot-report
+      uses: LedgerHQ/ledger-live/tools/actions/submit-bot-report@develop
       with:
         path: libs/ledger-live-common/botreport
         githubSha: ${{github.sha}}

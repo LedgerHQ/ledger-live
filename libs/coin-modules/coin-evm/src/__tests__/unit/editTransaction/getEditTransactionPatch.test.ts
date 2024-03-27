@@ -15,6 +15,7 @@ import {
   nftLegacyTx,
   tokenTransaction,
 } from "../../fixtures/transaction.fixtures";
+import { getCoinConfig } from "../../../config";
 
 jest.mock("../../../api/gasTracker/index");
 const mockedGetGasTracker = jest.mocked(getGasTracker);
@@ -24,6 +25,9 @@ const mockedGetMinLegacyFees = jest.mocked(getMinLegacyFees);
 const mockedGetMinEip1559Fees = jest.mocked(getMinEip1559Fees);
 
 const mockedGetGasOptions = jest.fn();
+
+jest.mock("../../../config");
+const mockGetConfig = jest.mocked(getCoinConfig);
 
 const currency = getCryptoCurrencyById("ethereum");
 const account = makeAccount(
@@ -207,6 +211,12 @@ const gasOptionFastAndMinFeesByTypeAndTest = {
 };
 
 describe.each(["speedup", "cancel"])("with editType %s", editType => {
+  beforeEach(() => {
+    mockGetConfig.mockImplementation((): any => {
+      return { info: {} };
+    });
+  });
+
   describe("without gasTracker", () => {
     beforeEach(() => {
       mockedGetGasTracker.mockImplementation(() => null);

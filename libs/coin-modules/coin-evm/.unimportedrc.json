@@ -12,7 +12,8 @@
     "src/api/node/rpc.native.ts",
     "src/bridge/js.ts",
     "src/editTransaction/index.ts",
-    "src/operation.ts"
+    "src/operation.ts",
+    "src/config.ts"
   ],
   "ignoreUnimported": ["src/__tests__/*", "**/*.test.*", "**/*.spec.*", "src/datasets/ethereum1.ts"],
   "ignoreUnresolved": [

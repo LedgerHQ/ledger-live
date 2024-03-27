@@ -214,16 +214,9 @@ export const currency: CryptoCurrency = Object.freeze({
   ...getCryptoCurrencyById("ethereum"),
   ethereumLikeInfo: {
     chainId: 1,
-    node: {
-      type: "external" as const,
-      uri: "https://my-rpc.com",
-    },
-    explorer: {
-      type: "etherscan" as const,
-      uri: "https://api.com",
-    },
   },
 });
+
 export const tokenCurrency = Object.freeze(getTokenById("ethereum/erc20/usd__coin"));
 export const tokenAccount = makeTokenAccount(
   "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",

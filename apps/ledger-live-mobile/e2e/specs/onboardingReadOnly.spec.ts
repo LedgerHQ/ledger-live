@@ -20,13 +20,16 @@ describe("Onboarding - Read Only", () => {
 
   // WebView check only available on Android
   itifAndroid("is able to buy a nano from the onboarding flow", async () => {
-    await onboardingSteps.startOnboarding();
-    await onboardingSteps.chooseNoLedgerYet();
-    await onboardingSteps.chooseToBuyLedger();
-    await getDevicePage.buyNano();
-    await getDevicePage.expectBuyNanoWebPage();
-    await device.pressBack();
-    await device.reloadReactNative();
+    try {
+      await onboardingSteps.startOnboarding();
+      await onboardingSteps.chooseNoLedgerYet();
+      await onboardingSteps.chooseToBuyLedger();
+      await getDevicePage.buyNano();
+      await getDevicePage.expectBuyNanoWebPage();
+    } finally {
+      await device.pressBack();
+      await device.reloadReactNative();
+    }
   });
 
   it("goes through discover app and should see an empty portfolio page", async () => {

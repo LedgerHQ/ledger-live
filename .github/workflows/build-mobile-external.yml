@@ -20,6 +20,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   build-mobile-app-android:
     name: "Build Ledger Live Mobile (Android)"
@@ -27,14 +30,14 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+      - uses: actions/checkout@v4
         with:
           ref: ${{ github.ref_name }}
-          base: ${{ inputs.base_ref }}
+          persist-credentials: false
       - name: Setup git user
-        uses: ./tools/actions/composites/setup-git-user
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
       - name: Setup the toolchain
-        uses: ./tools/actions/composites/setup-toolchain
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.2.2
@@ -48,12 +51,12 @@ jobs:
         uses: android-actions/setup-android@v2.0.10
       - name: install dependencies
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
-      - uses: ./tools/actions/get-package-infos
+      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
         id: version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
       - name: set beta name
-        uses: ./tools/actions/change-product-name
+        uses: LedgerHQ/ledger-live/tools/actions/change-product-name@develop
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
       - name: Get short SHA
@@ -71,7 +74,7 @@ jobs:
           NODE_OPTIONS: "--max-old-space-size=7168"
           ANDROID_KEYSTORE_FILE: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/staging.kstr
         run: pnpm build:llm:android
-      - uses: ./tools/actions/get-package-infos
+      - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
         id: post-version
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
@@ -87,14 +90,14 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+      - uses: actions/checkout@v4
         with:
           ref: ${{ github.ref_name }}
-          base: ${{ inputs.base_ref }}
+          persist-credentials: false
       - name: Setup git user
-        uses: ./tools/actions/composites/setup-git-user
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
       - name: Setup the toolchain
-        uses: ./tools/actions/composites/setup-toolchain
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.2.2

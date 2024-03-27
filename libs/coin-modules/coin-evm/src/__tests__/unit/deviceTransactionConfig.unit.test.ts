@@ -40,6 +40,7 @@ const accountWithNfts: Account = Object.freeze({
     } as ProtoNFT,
   ],
 });
+
 const baseTransaction: EvmTransaction = {
   amount: new BigNumber(0),
   useAllAmount: false,
@@ -53,6 +54,7 @@ const baseTransaction: EvmTransaction = {
   nonce: 0,
   chainId: 1,
 };
+
 const status = {
   errors: {},
   warnings: {},

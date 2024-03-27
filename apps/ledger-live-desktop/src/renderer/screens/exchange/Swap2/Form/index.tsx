@@ -10,7 +10,6 @@ import {
 } from "@ledgerhq/live-common/exchange/swap/webApp/index";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import React, { useCallback, useEffect, useRef, useState, useMemo } from "react";
-import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import styled from "styled-components";
@@ -31,7 +30,6 @@ import EmptyState from "./Rates/EmptyState";
 import { AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { SWAP_RATES_TIMEOUT } from "../../config";
 import { OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
 import SwapWebView, { SwapWebProps, useSwapLiveAppManifestID } from "./SwapWebView";
 import { SwapMigrationUI } from "./Migrations/SwapMigrationUI";
@@ -56,7 +54,6 @@ const idleTime = 60 * 60000; // 1 hour
 const SwapForm = () => {
   const language = useSelector(languageSelector);
   const [idleState, setIdleState] = useState(false);
-  const { t } = useTranslation();
   const dispatch = useDispatch();
   const { state: locationState } = useLocation();
   const history = useHistory();
@@ -90,8 +87,6 @@ const SwapForm = () => {
     setExchangeRate,
     onNoRates,
     ...(locationState as object),
-    timeout: SWAP_RATES_TIMEOUT,
-    timeoutErrorMessage: t("swap2.form.timeout.message"),
   });
 
   const isSwapLiveAppEnabled = useIsSwapLiveApp({
@@ -390,8 +385,12 @@ const SwapForm = () => {
     // eslint-disable-next-line
   }, [exchangeRate]);
 
-  const setFromAccount = (account: AccountLike | undefined) => {
+  const untickMax = () => {
     swapTransaction.transaction?.useAllAmount ? swapTransaction.toggleMax() : null;
+  };
+
+  const setFromAccount = (account: AccountLike | undefined) => {
+    untickMax();
     swapTransaction.setFromAccount(account);
   };
 
@@ -405,6 +404,11 @@ const SwapForm = () => {
 
   const toggleMax = () => {
     swapTransaction.toggleMax();
+  };
+
+  const reverseSwap = () => {
+    untickMax();
+    swapTransaction.reverseSwap();
   };
 
   const swapLiveAppManifestID = useSwapLiveAppManifestID();
@@ -439,7 +443,7 @@ const SwapForm = () => {
         fromAmountError={swapError}
         fromAmountWarning={swapWarning}
         isSwapReversable={swapTransaction.swap.isSwapReversable}
-        reverseSwap={swapTransaction.reverseSwap}
+        reverseSwap={reverseSwap}
         provider={provider}
         loadingRates={swapTransaction.swap.rates.status === "loading"}
         isSendMaxLoading={swapTransaction.swap.isMaxLoading}

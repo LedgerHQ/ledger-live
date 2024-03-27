@@ -4,12 +4,10 @@ import { Image, StyleSheet, View } from "react-native";
 import { Text, Flex, Button } from "@ledgerhq/native-ui";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useSelector, useDispatch } from "react-redux";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { targetDisplayDimensions } from "../../../CustomImage/shared";
 import { customImageBackupSelector } from "~/reducers/settings";
 import { setCustomImageBackup } from "~/actions/settings";
 import NavigationScrollView from "~/components/NavigationScrollView";
-import SelectDevice from "~/components/SelectDevice";
 import SelectDevice2, { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
 import CustomImageDeviceAction from "~/components/CustomImageDeviceAction";
 import ImageHexProcessor from "~/components/CustomImage/ImageHexProcessor";
@@ -39,8 +37,6 @@ export default function DebugFetchCustomImage() {
   const { hash, hex } = useSelector(customImageBackupSelector) || {};
   const currentBackup = useRef<string>(hash || "");
   const dispatch = useDispatch();
-
-  const newDeviceSelectionFeatureFlag = useFeature("llmNewDeviceSelection");
 
   // TODO move all the logic here onto its own thing
   // when we implement the screens of the flow.
@@ -110,14 +106,10 @@ export default function DebugFetchCustomImage() {
     <NavigationScrollView>
       <View style={[styles.root, { backgroundColor: colors.background }]}>
         {!device ? (
-          newDeviceSelectionFeatureFlag?.enabled ? (
-            <SelectDevice2
-              onSelect={setDevice}
-              requestToSetHeaderOptions={requestToSetHeaderOptions}
-            />
-          ) : (
-            <SelectDevice onSelect={setDevice} />
-          )
+          <SelectDevice2
+            onSelect={setDevice}
+            requestToSetHeaderOptions={requestToSetHeaderOptions}
+          />
         ) : null}
         <Flex>
           {hash ? (

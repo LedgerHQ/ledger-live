@@ -25,6 +25,7 @@ import { getCurrentCosmosPreloadData } from "./preloadedData";
 import preloadedMockData from "./preloadedData.mock";
 import * as hooks from "./react";
 import { CurrencyBridge } from "@ledgerhq/types-live";
+
 const localCache = {};
 const cache = makeBridgeCacheSystem({
   saveData(c, d) {
@@ -36,6 +37,7 @@ const cache = makeBridgeCacheSystem({
     return Promise.resolve(localCache[c.id]);
   },
 });
+
 describe("cosmos/react", () => {
   beforeAll(() => {
     LiveConfig.setConfig(liveConfig);
@@ -55,6 +57,7 @@ describe("cosmos/react", () => {
       expect(result.current).toStrictEqual(preloadedMockData);
     });
   });
+
   describe("useCosmosFormattedDelegations", () => {
     it("should return formatted delegations", async () => {
       const { account, prepare } = setup();
@@ -73,6 +76,7 @@ describe("cosmos/react", () => {
         (delegations as CosmosDelegation[])[0].validatorAddress,
       );
     });
+
     describe("mode: claimReward", () => {
       it("should only return delegations which have some pending rewards", async () => {
         const { account, prepare } = setup();
@@ -84,6 +88,7 @@ describe("cosmos/react", () => {
       });
     });
   });
+
   describe("useCosmosFamilyDelegationsQuerySelector", () => {
     it("should return delegations filtered by query as options", async () => {
       const { account, transaction, prepare } = setup();
@@ -155,6 +160,7 @@ describe("cosmos/react", () => {
       ).toBe(sourceValidator);
     });
   });
+
   describe("useSortedValidators", () => {
     it("should reutrn sorted validators", async () => {
       const { account, prepare } = setup();

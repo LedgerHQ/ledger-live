@@ -8,7 +8,7 @@ import { log } from "@ledgerhq/logs";
 import { createAction as createAppAction } from "./app";
 import { ExchangeType } from "@ledgerhq/live-app-sdk";
 import { getMainAccount } from "../../account";
-import type { Exchange } from "../../exchange/swap/types";
+import { isExchangeSwap, type Exchange } from "../../exchange/types";
 
 type State = {
   startExchangeResult: string | null | undefined;
@@ -104,12 +104,13 @@ export const createAction = (
     const mainFromAccount = exchange
       ? getMainAccount(exchange.fromAccount, exchange.fromParentAccount)
       : null;
-    const maintoAccount = exchange
-      ? getMainAccount(exchange.toAccount, exchange.toParentAccount)
-      : null;
+    const mainToAccount =
+      exchange && isExchangeSwap(exchange)
+        ? getMainAccount(exchange.toAccount, exchange.toParentAccount)
+        : null;
 
     const request: AppRequest = useMemo(() => {
-      if (!exchange || !mainFromAccount || !maintoAccount) {
+      if (!exchange || !mainFromAccount || !mainToAccount) {
         return {
           appName: "Exchange",
         };
@@ -121,13 +122,13 @@ export const createAction = (
               account: mainFromAccount,
             },
             {
-              account: maintoAccount,
+              account: mainToAccount,
             },
           ],
           requireLatestFirmware,
         };
       }
-    }, [exchange, mainFromAccount, maintoAccount, requireLatestFirmware]);
+    }, [exchange, mainFromAccount, mainToAccount, requireLatestFirmware]);
 
     const appState = createAppAction(connectAppExec).useHook(reduxDeviceFrozen, request);
 
@@ -162,7 +163,7 @@ export const createAction = (
       return () => {
         sub.unsubscribe();
       };
-    }, [exchange, device, opened, exchangeType, hasError, appAndVersion]);
+    }, [exchange, device, opened, exchangeType, hasError, appAndVersion, provider]);
 
     return {
       ...appState,
