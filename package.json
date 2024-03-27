@@ -66,7 +66,6 @@
     "coin:near": "pnpm --filter coin-near",
     "coin:polkadot": "pnpm --filter coin-polkadot",
     "evm-tools": "pnpm --filter evm-tools",
-    "coin:evm:tester": "pnpm --filter coin-evm-deterministic-tester",
     "domain": "pnpm --filter domain-service",
     "doc": "pnpm --filter docs",
     "mobile": "pnpm --filter live-mobile",
