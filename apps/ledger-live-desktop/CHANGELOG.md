@@ -1,5 +1,21 @@
 # ledger-live-desktop
 
+## 2.78.0-nightly.16
+
+### Patch Changes
+
+- Updated dependencies [[`dc5cd2c`](https://github.com/LedgerHQ/ledger-live/commit/dc5cd2c421adfb475efffb16954ed8c6c38b9a06), [`e1df8bc`](https://github.com/LedgerHQ/ledger-live/commit/e1df8bca348287e94970de90c51e98fa277c5364)]:
+  - @ledgerhq/live-common@33.7.0-nightly.13
+  - @ledgerhq/types-live@6.45.0-nightly.8
+  - @ledgerhq/coin-framework@0.12.0-nightly.9
+  - @ledgerhq/coin-bitcoin@0.4.0-nightly.7
+  - @ledgerhq/coin-evm@0.13.0-nightly.10
+  - @ledgerhq/domain-service@1.1.19-nightly.9
+  - @ledgerhq/live-countervalues@0.1.3-nightly.10
+  - @ledgerhq/live-countervalues-react@0.1.3-nightly.10
+  - @ledgerhq/live-nft@0.2.2-nightly.10
+  - @ledgerhq/live-nft-react@0.2.2-nightly.10
+
 ## 2.78.0-nightly.15
 
 ### Patch Changes
