@@ -4,8 +4,6 @@ import { v2 as compose } from "docker-compose";
 
 const cwd = path.join(__dirname);
 
-const delay = (timing: number) => new Promise(resolve => setTimeout(resolve, timing));
-
 export const spawnAnvil = async (rpc = "https://rpc.ankr.com/eth"): Promise<void> => {
   await compose.upOne("anvil", {
     cwd,

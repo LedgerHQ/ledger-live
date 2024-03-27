@@ -54,6 +54,7 @@ const scenarioEthereum: Scenario<EvmTransaction> = {
       currency: getCryptoCurrencyById("ethereum"),
       derivationMode: "",
     });
+
     const provider = new providers.StaticJsonRpcProvider("http://127.0.0.1:8545");
     await setBlock();
 

@@ -8,7 +8,6 @@ import {
 } from "@ledgerhq/types-live";
 import { AssertionError } from "assert";
 import { first, firstValueFrom, map, reduce } from "rxjs";
-import Transport from "@ledgerhq/hw-transport";
 
 export type Scenario<T extends TransactionCommon> = {
   setup: () => Promise<{
@@ -61,7 +60,6 @@ export async function executeScenario<T extends TransactionCommon>(scenario: Sce
       throw new Error(`Error in transaction status: ${JSON.stringify(status.errors, null, 3)}`);
     }
 
-    console.log({ status });
     const { signedOperation } = await firstValueFrom(
       accountBridge
         .signOperation({
