@@ -40,6 +40,7 @@ type ContentCardCommonProperties = {
   order?: number;
   carouselWidthFactor?: WidthFactor;
   gridWidthFactor?: WidthFactor;
+  type?: ContentCardsType;
 };
 
 type CategoryContentCard = ContentCardCommonProperties & {
@@ -51,7 +52,7 @@ type CategoryContentCard = ContentCardCommonProperties & {
   cta?: string;
   link?: string;
   isDismissable?: boolean;
-  pagination?: boolean;
+  hasPagination?: boolean;
 };
 
 type WalletContentCard = ContentCardCommonProperties & {
