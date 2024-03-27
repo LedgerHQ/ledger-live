@@ -38,6 +38,8 @@ export const commands = (
       username: login,
     });
 
+    context.log.info(`[⚙️ Commands](issue_comment.created) res: ${JSON.stringify(res)}`);
+
     if (res.status >= 300) {
       await octokit.issues.createComment({
         ...context.repo(),
