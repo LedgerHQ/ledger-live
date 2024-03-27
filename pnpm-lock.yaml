@@ -314,11 +314,11 @@ importers:
         specifier: 7.84.0
         version: 7.84.0
       '@tanstack/react-query':
-        specifier: ^5.17.19
-        version: 5.17.19(react@18.2.0)
+        specifier: ^5.28.9
+        version: 5.28.9(react@18.2.0)
       '@tanstack/react-query-devtools':
-        specifier: ^5.24.1
-        version: 5.24.1(@tanstack/react-query@5.17.19)(react@18.2.0)
+        specifier: ^5.28.9
+        version: 5.28.9(@tanstack/react-query@5.28.9)(react@18.2.0)
       '@tippyjs/react':
         specifier: ^4.2.6
         version: 4.2.6(react-dom@18.2.0)(react@18.2.0)
@@ -882,8 +882,8 @@ importers:
         specifier: ^3.0.0
         version: 3.0.0(@babel/runtime@7.22.10)(@react-navigation/core@6.4.6)(@react-navigation/native@6.0.13)(@react-navigation/stack@6.3.1)(@shopify/react-native-performance@4.1.2)(react-native@0.72.6)(react@18.2.0)
       '@tanstack/react-query':
-        specifier: ^5.17.19
-        version: 5.17.19(react@18.2.0)
+        specifier: ^5.28.9
+        version: 5.28.9(react@18.2.0)
       asyncstorage-down:
         specifier: ^4.2.0
         version: 4.2.0(patch_hash=2npkndps6fxdasqj3xzcrnnfbe)(@react-native-async-storage/async-storage@1.19.2)
@@ -2403,9 +2403,6 @@ importers:
       '@stricahq/typhonjs':
         specifier: ^1.2.6
         version: 1.2.6
-      '@tanstack/react-query':
-        specifier: ^5.17.19
-        version: 5.17.19(react@18.2.0)
       '@taquito/ledger-signer':
         specifier: ^13.0.1
         version: 13.0.1
@@ -2617,6 +2614,9 @@ importers:
       '@svgr/core':
         specifier: ^5.5.0
         version: 5.5.0
+      '@tanstack/react-query':
+        specifier: ^5.28.9
+        version: 5.28.9(react@18.2.0)
       '@testing-library/react':
         specifier: ^14.1.2
         version: 14.1.2(@types/react@18.2.28)(react-dom@18.2.0)(react@18.2.0)
@@ -24114,18 +24114,21 @@ packages:
     resolution: {integrity: sha512-Lzw8FUtnLCc9Jwz0sw9xOjZB+/mCCmJev38v2wHMUl/ioXNIhnNWeMxu0NKUjIhAd62IRB3eAtvxAGDJ55UkyA==}
     dev: false
 
-  /@tanstack/query-devtools@5.24.0:
-    resolution: {integrity: sha512-pThim455t69zrZaQKa7IRkEIK8UBTS+gHVAdNfhO72Xh4rWpMc63ovRje5/n6iw63+d6QiJzVadsJVdPoodSeQ==}
+  /@tanstack/query-core@5.28.9:
+    resolution: {integrity: sha512-hNlfCiqZevr3GRVPXS3MhaGW5hjcxvCsIQ4q6ff7EPlvFwYZaS+0d9EIIgofnegDaU2BbCDlyURoYfRl5rmzow==}
+
+  /@tanstack/query-devtools@5.28.6:
+    resolution: {integrity: sha512-DXJGqbrsteWU9XehDf6s3k3QxwQqGUlNXpitsF1xbwkYBcDaAakiC6hjJSMfPBHOrbZCnWfAGCVf4vh2D75/xw==}
     dev: false
 
-  /@tanstack/react-query-devtools@5.24.1(@tanstack/react-query@5.17.19)(react@18.2.0):
-    resolution: {integrity: sha512-qa4SEugN+EF8JJXcpsM9Lu05HfUv5cvHvLuB0uw/81eJZyNHFdtHFBi5RLCgpBrOyVMDfH8UQ3VBMqXzFKV68A==}
+  /@tanstack/react-query-devtools@5.28.9(@tanstack/react-query@5.28.9)(react@18.2.0):
+    resolution: {integrity: sha512-GHbJDJIhAak2B+7NJvSfT+jfajxMf/CEwbVn4Z+JSVLUZ21/TITwQWaihN1WKKj/nMbizUu6U2O9MTNHW4YPqg==}
     peerDependencies:
-      '@tanstack/react-query': ^5.24.1
+      '@tanstack/react-query': ^5.28.9
       react: ^18.0.0
     dependencies:
-      '@tanstack/query-devtools': 5.24.0
-      '@tanstack/react-query': 5.17.19(react@18.2.0)
+      '@tanstack/query-devtools': 5.28.6
+      '@tanstack/react-query': 5.28.9(react@18.2.0)
       react: 18.2.0
     dev: false
 
@@ -24137,6 +24140,14 @@ packages:
       '@tanstack/query-core': 5.17.19
       react: 18.2.0
     dev: false
+
+  /@tanstack/react-query@5.28.9(react@18.2.0):
+    resolution: {integrity: sha512-vwifBkGXsydsLxFOBMe3+f8kvtDoqDRDwUNjPHVDDt+FoBetCbOWAUHgZn4k+CVeZgLmy7bx6aKeDbe3e8koOQ==}
+    peerDependencies:
+      react: ^18.0.0
+    dependencies:
+      '@tanstack/query-core': 5.28.9
+      react: 18.2.0
 
   /@taquito/http-utils@13.0.1:
     resolution: {integrity: sha512-eHzd0HSL3qX6bOOSaQClm+0XmpbSNcJP69uzaBJwfXo7ntQR1bUfGLn6+1Hgsk/lJ0JxakD2PDA4aaeajHvyPw==}

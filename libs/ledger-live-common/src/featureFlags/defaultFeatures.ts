@@ -440,7 +440,7 @@ export const DEFAULT_FEATURES: Features = {
   lldRefreshMarketData: {
     ...DEFAULT_FEATURE,
     params: {
-      refreshTime: 60000,
+      refreshTime: 3, //nb minutes
     },
   },
 };

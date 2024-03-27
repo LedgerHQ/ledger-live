@@ -118,7 +118,7 @@
     "@sentry/react-native": "^5.12.0",
     "@shopify/react-native-performance": "^4.1.2",
     "@shopify/react-native-performance-navigation": "^3.0.0",
-    "@tanstack/react-query": "^5.17.19",
+    "@tanstack/react-query": "^5.28.9",
     "asyncstorage-down": "^4.2.0",
     "bignumber.js": "^9.1.2",
     "buffer": "6.0.3",

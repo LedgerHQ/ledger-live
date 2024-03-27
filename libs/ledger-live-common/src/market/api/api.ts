@@ -144,7 +144,7 @@ export async function fetchList({
   top100 = false,
   supportedCoinsList = [],
   liveCoinsList = [],
-}: MarketListRequestParams): Promise<CurrencyData[]> {
+}: MarketListRequestParams): Promise<RawCurrencyData[]> {
   let ids = _ids;
 
   if (top100) {
