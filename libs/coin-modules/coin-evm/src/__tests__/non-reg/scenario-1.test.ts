@@ -35,7 +35,6 @@ const scenarioTransction: EvmTransaction = Object.freeze({
 });
 
 const defaultNanoAppVersion = { firmware: "2.1.0" as const, version: "1.10.3" as const };
-
 const scenarioEthereum: Scenario<EvmTransaction> = {
   setup: async () => {
     const signerContext = (deviceId: string, fn: any): any => fn(new Eth(transport));
