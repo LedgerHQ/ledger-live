@@ -1,5 +1,5 @@
 import { Dispatch } from "redux";
-import { Account, SubAccount } from "@ledgerhq/types-live";
+import { Account, AccountUserData } from "@ledgerhq/types-live";
 import { AccountComparator } from "@ledgerhq/live-common/account/index";
 import { implicitMigration } from "@ledgerhq/live-common/migrations/accounts";
 import { getKey } from "~/renderer/storage";
@@ -9,20 +9,24 @@ export const replaceAccounts = (payload: Account[]) => ({
   payload,
 });
 
-export const addAccount = (payload: Account) => ({
-  type: "DB:ADD_ACCOUNT",
-  payload,
-});
-
 export const removeAccount = (payload: Account) => ({
   type: "DB:REMOVE_ACCOUNT",
   payload,
 });
 
-export const setAccounts = (payload: Account[]) => ({
-  type: "SET_ACCOUNTS",
-  payload,
-});
+export const initAccounts = (data: [Account, AccountUserData][]) => {
+  // FIXME we want to get rid of implicitMigration because consider it outdated now
+  const accounts = implicitMigration(data.map(data => data[0]));
+  const accountsUserData = data.map(data => ({ ...data[1], id: data[0].id }));
+  //////////////////////////////////////////
+  return {
+    type: "INIT_ACCOUNTS",
+    payload: {
+      accounts,
+      accountsUserData,
+    },
+  };
+};
 
 export const reorderAccounts = (comparator: AccountComparator) => (dispatch: Dispatch) =>
   dispatch({
@@ -31,11 +35,8 @@ export const reorderAccounts = (comparator: AccountComparator) => (dispatch: Dis
   });
 
 export const fetchAccounts = () => async (dispatch: Dispatch) => {
-  const accounts = implicitMigration(await getKey("app", "accounts", []));
-  return dispatch({
-    type: "SET_ACCOUNTS",
-    payload: accounts,
-  });
+  const data: [Account, AccountUserData][] = await getKey("app", "accounts", []);
+  return dispatch(initAccounts(data));
 };
 
 type UpdateAccountAction = {
@@ -61,24 +62,6 @@ export const updateAccount: UpdateAccount = payload => ({
     accountId: payload.id,
   },
 });
-
-export const toggleStarAction = (id: string, parentId?: string): UpdateAccountAction => {
-  return {
-    type: "DB:UPDATE_ACCOUNT",
-    payload: {
-      updater: (account: Account) => {
-        if (parentId && account.subAccounts) {
-          const subAccounts: SubAccount[] = account.subAccounts.map(sa =>
-            sa.id === id ? { ...sa, starred: !sa.starred } : sa,
-          );
-          return { ...account, subAccounts };
-        }
-        return { ...account, starred: !account.starred };
-      },
-      accountId: parentId || id,
-    },
-  };
-};
 
 export const cleanAccountsCache = () => ({ type: "DB:CLEAN_ACCOUNTS_CACHE" });
 export const cleanFullNodeDisconnect = () => ({

@@ -269,10 +269,7 @@ class AccountRowItem extends PureComponent<Props, State> {
               <Balance unit={unit} balance={account.balance} disableRounding={disableRounding} />
               <Countervalue account={account} currency={currency} range={range} />
               <Delta account={account} range={range} />
-              <Star
-                accountId={account.id}
-                parentId={account.type !== "Account" ? account.parentId : undefined}
-              />
+              <Star accountId={account.id} />
             </RowContent>
             {showTokensIndicator && expanded ? (
               <TokenContentWrapper>
