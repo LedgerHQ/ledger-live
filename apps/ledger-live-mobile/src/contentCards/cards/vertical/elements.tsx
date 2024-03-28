@@ -10,8 +10,7 @@ export const ImageStyles: {
 } = {
   L: {
     flex: 1,
-    aspectRatio: 1.5,
-    maxWidth: "100%",
+    width: "100%",
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
     paddingBottom: 24,
