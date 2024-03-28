@@ -6,7 +6,10 @@ import {
   UiHook,
   useConfig,
   useWalletAPIServer,
+  CurrentAccountHistDB,
+  useManifestCurrencies,
 } from "@ledgerhq/live-common/wallet-api/react";
+import { useDappCurrentAccount, useDappLogic } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import { Operation, SignedOperation } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/tracking";
@@ -35,9 +38,10 @@ import { currentRouteNameRef } from "../../analytics/screenRefs";
 export function useWebView(
   {
     manifest,
+    currentAccountHistDb,
     inputs,
     customHandlers,
-  }: Pick<WebviewProps, "manifest" | "inputs" | "customHandlers">,
+  }: Pick<WebviewProps, "manifest" | "inputs" | "customHandlers" | "currentAccountHistDb">,
   ref: React.ForwardedRef<WebviewAPI>,
   onStateChange: WebviewProps["onStateChange"],
 ) {
@@ -95,6 +99,7 @@ export function useWebView(
         } catch (error) {
           console.warn(
             "wallet-api-server tried to send a message while the webview was not yet initialized.",
+            message,
           );
         }
       },
@@ -121,6 +126,15 @@ export function useWebView(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [server]);
 
+  const { onDappMessage, noAccounts } = useDappLogic({
+    manifest,
+    currentAccountHistDb,
+    accounts,
+    uiHook,
+    postMessage: webviewHook.postMessage,
+    tracking,
+  });
+
   const onMessage = useCallback(
     (e: WebViewMessageEvent) => {
       if (e.nativeEvent?.data) {
@@ -129,6 +143,8 @@ export function useWebView(
 
           if (Config.MOCK && msg.type === "e2eTest") {
             bridge.sendWalletAPIResponse(msg.payload);
+          } else if (msg.type === "dapp") {
+            onDappMessage(msg);
           } else {
             onMessageRaw(e.nativeEvent.data);
           }
@@ -137,7 +153,7 @@ export function useWebView(
         }
       }
     },
-    [onMessageRaw],
+    [onDappMessage, onMessageRaw],
   );
 
   return {
@@ -145,6 +161,7 @@ export function useWebView(
     onMessage,
     webviewProps,
     webviewRef,
+    noAccounts,
   };
 }
 
@@ -284,7 +301,7 @@ export function useWebviewState(
   };
 }
 
-function useUiHook(): Partial<UiHook> {
+function useUiHook(): UiHook {
   const navigation = useNavigation();
   const [device, setDevice] = useState<Device>();
 
@@ -394,6 +411,7 @@ function useUiHook(): Partial<UiHook> {
           },
         });
       },
+      "transaction.broadcast": () => {},
       "device.transport": ({ appName, onSuccess, onCancel }) => {
         navigation.navigate(ScreenName.DeviceConnect, {
           appName,
@@ -491,4 +509,44 @@ function useGetUserId() {
   }, []);
 
   return userId;
+}
+
+export function useSelectAccount({
+  manifest,
+  currentAccountHistDb,
+}: {
+  manifest: AppManifest;
+  currentAccountHistDb?: CurrentAccountHistDB;
+}) {
+  const currencies = useManifestCurrencies(manifest);
+  const { setCurrentAccountHist } = useDappCurrentAccount(currentAccountHistDb);
+  const navigation = useNavigation();
+
+  const onSelectAccount = useCallback(() => {
+    if (currencies.length === 1) {
+      navigation.navigate(NavigatorName.RequestAccount, {
+        screen: ScreenName.RequestAccountsSelectAccount,
+        params: {
+          currency: currencies[0],
+          allowAddAccount: true,
+          onSuccess: account => {
+            setCurrentAccountHist(manifest.id, account);
+          },
+        },
+      });
+    } else {
+      navigation.navigate(NavigatorName.RequestAccount, {
+        screen: ScreenName.RequestAccountsSelectCrypto,
+        params: {
+          currencies,
+          allowAddAccount: true,
+          onSuccess: account => {
+            setCurrentAccountHist(manifest.id, account);
+          },
+        },
+      });
+    }
+  }, [manifest.id, currencies, navigation, setCurrentAccountHist]);
+
+  return { onSelectAccount };
 }

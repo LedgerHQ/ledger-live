@@ -53,8 +53,18 @@ export function useCatalog(db: RecentlyUsedDB) {
   };
 }
 
+// TODO: rename to useRecentlyUsedDB
 export function useDiscoverDB() {
   return useDB("app", DISCOVER_STORE_KEY, INITIAL_PLATFORM_STATE, state => state.recentlyUsed);
+}
+
+export function useCurrentAccountHistDB() {
+  return useDB(
+    "app",
+    DISCOVER_STORE_KEY,
+    INITIAL_PLATFORM_STATE,
+    state => state.currentAccountHist,
+  );
 }
 
 export type Disclaimer = DisclaimerRaw;
