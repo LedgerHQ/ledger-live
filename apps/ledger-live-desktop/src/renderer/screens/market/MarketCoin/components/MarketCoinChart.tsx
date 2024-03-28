@@ -146,14 +146,14 @@ function MarkeCoinChartComponent({
       <Flex mb={2} flexDirection="row" justifyContent="space-between" alignItems="flex-end">
         <Flex flexDirection="column">
           <SubTitle>{t("market.marketList.price")}</SubTitle>
-          <Title>
+          <Title data-test-id={"market-price"}>
             {counterValueFormatter({
               currency: counterCurrency,
               value: price,
               locale,
             })}
           </Title>
-          <Flex>
+          <Flex data-test-id={"market-price-delta"}>
             {priceChangePercentage && (
               <FormattedVal
                 isPercent
