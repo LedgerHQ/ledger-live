@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { createFixtureAccount, createFixtureTransaction } from "../types/model.fixture";
+import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 import prepareTransaction from "./prepareTransaction";
 import { faker } from "@faker-js/faker";
 

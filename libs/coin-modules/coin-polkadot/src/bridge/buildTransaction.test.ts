@@ -1,6 +1,6 @@
 import { TypeRegistry } from "@polkadot/types";
 import { buildTransaction } from "./buildTransaction";
-import { createFixtureAccount, createFixtureTransaction } from "../types/model.fixture";
+import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 import { faker } from "@faker-js/faker";
 
 const registry = new TypeRegistry();

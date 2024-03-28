@@ -9,5 +9,6 @@
     "rootDir": "./src",
     "outDir": "lib"
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
+  "exclude": ["src/**/*.test.ts", "src/**/*.fixture.ts"]
 }

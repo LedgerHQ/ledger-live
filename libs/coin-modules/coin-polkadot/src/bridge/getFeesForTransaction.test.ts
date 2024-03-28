@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import getEstimatedFees from "./getFeesForTransaction";
 import { fixtureChainSpec, fixtureTxMaterialWithMetadata } from "../network/sidecar.fixture";
-import { createFixtureAccount, createFixtureTransaction } from "../types/model.fixture";
+import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 
 const mockPaymentInfo = jest.fn();
 jest.mock("../network/sidecar", () => ({

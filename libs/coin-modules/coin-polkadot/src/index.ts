@@ -1,3 +1,6 @@
+import resolver from "./signer";
+export { resolver };
+
 export * from "./test";
 export * from "./types";
 

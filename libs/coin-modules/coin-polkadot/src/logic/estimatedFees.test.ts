@@ -1,18 +1,12 @@
-import BigNumber from "bignumber.js";
 import { loadPolkadotCrypto } from "./polkadot-crypto";
-<<<<<<< HEAD:libs/coin-modules/coin-polkadot/src/logic/getFeesForTransaction.test.ts
-import { getEstimatedFees } from "./getFeesForTransaction";
+import estimatedFees from "./estimatedFees";
 import {
   fixtureChainSpec,
   fixtureTxMaterialWithMetadata,
   fixtureTransactionParams,
 } from "../network/sidecar.fixture";
-=======
-import estimatedFees from "./estimatedFees";
-import { fixtureChainSpec, fixtureTxMaterialWithMetadata } from "../network/sidecar.fixture";
->>>>>>> 0aed805bd6 (chore: separate more bridge dedicated logic from coin logic):libs/coin-modules/coin-polkadot/src/logic/estimatedFees.test.ts
-import { createFixtureAccount, createFixtureTransaction } from "../types/model.fixture";
 import { createRegistryAndExtrinsics } from "../network/common";
+import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 
 jest.mock("./polkadot-crypto");
 
