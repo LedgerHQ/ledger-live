@@ -5,7 +5,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { HttpManagerApiRepositoryFactory } from "../factories/HttpManagerApiRepositoryFactory";
 import { type ManagerApiRepository, getLatestFirmwareForDevice } from "@ledgerhq/device-core";
 
-export type { FirmwareUpdateContextEntity } from "@ledgerhq/device-core";
+export type { FirmwareInfoEntity, FirmwareUpdateContextEntity } from "@ledgerhq/device-core";
 export function getLatestFirmwareForDeviceUseCase(
   deviceInfo: DeviceInfo,
   managerApiRepository: ManagerApiRepository = HttpManagerApiRepositoryFactory.getInstance(),

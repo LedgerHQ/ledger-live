@@ -13,6 +13,7 @@ export { isDeviceLocalizationSupported } from "./commands/use-cases/isDeviceLoca
 export { PROVIDERS, getProviderIdUseCase } from "./managerApi/use-cases/getProviderIdUseCase";
 export { fetchMcus } from "./managerApi/use-cases/fetchMcus";
 // src/commands/
+export type { FirmwareInfoEntity } from "./commands/entities/FirmwareInfoEntity";
 export { GET_VERSION_APDU } from "./commands/use-cases/getVersion";
 export { parseGetVersionResponse } from "./commands/use-cases/parseGetVersionResponse";
 export { getDeviceName } from "./commands/use-cases/getDeviceName";
