@@ -22,6 +22,7 @@ import MODAL_PLATFORM_EXCHANGE_START from "./Platform/Exchange/StartExchange";
 import MODAL_PLATFORM_EXCHANGE_COMPLETE from "./Platform/Exchange/CompleteExchange";
 import MODAL_CONNECT_DEVICE from "./ConnectDevice";
 import MODAL_LOTTIE_DEBUGGER from "./LottieDebugger";
+import MODAL_CREATE_LOCAL_APP from "./CreateLocalManifest";
 import MODAL_STORYLY_DEBUGGER from "./StorylyDebugger";
 import MODAL_BLACKLIST_TOKEN from "./BlacklistToken";
 import MODAL_HIDE_NFT_COLLECTION from "./HideNftCollection";
@@ -56,6 +57,8 @@ const globalModals: GlobalModals = {
   MODAL_STORYLY_DEBUGGER,
   MODAL_START_STAKE,
   MODAL_PROTECT_DISCOVER,
+  MODAL_CREATE_LOCAL_APP,
+
   // Platform
   MODAL_PLATFORM_EXCHANGE_START,
   MODAL_PLATFORM_EXCHANGE_COMPLETE,
