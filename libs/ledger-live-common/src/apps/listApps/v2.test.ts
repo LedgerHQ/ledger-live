@@ -4,7 +4,10 @@ import { aTransportBuilder } from "@ledgerhq/hw-transport-mocker";
 import { listApps } from "./v2";
 import ManagerAPI from "../../manager/api";
 import { aDeviceInfoBuilder } from "../../mock/fixtures/aDeviceInfo";
-import { ManagerApiRepository, StubManagerApiRepository } from "@ledgerhq/device-core";
+import {
+  ManagerApiRepository,
+  StubManagerApiRepository,
+} from "../../device/factories/HttpManagerApiRepositoryFactory";
 
 jest.useFakeTimers();
 

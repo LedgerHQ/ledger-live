@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "33.6.1",
+  "version": "34.0.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -143,7 +143,6 @@
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:^",
     "@ledgerhq/device-core": "workspace:^",
-    "@ledgerhq/device-react": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-algorand": "workspace:^",
     "@ledgerhq/hw-app-btc": "workspace:^",
@@ -253,6 +252,7 @@
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
+    "@ledgerhq/device-react": "workspace:^",
     "@svgr/core": "^5.5.0",
     "@testing-library/react": "^14.1.2",
     "@types/bn.js": "^5.1.1",

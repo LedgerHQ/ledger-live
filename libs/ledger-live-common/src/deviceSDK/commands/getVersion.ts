@@ -3,7 +3,10 @@ import { switchMap, finalize } from "rxjs/operators";
 import Transport from "@ledgerhq/hw-transport";
 import type { FirmwareInfo } from "@ledgerhq/types-live";
 import { UnresponsiveCmdEvent } from "./core";
-import { GET_VERSION_APDU, parseGetVersionResponse } from "@ledgerhq/device-core";
+import {
+  GET_VERSION_APDU,
+  parseGetVersionResponse,
+} from "../../device/use-cases/parseGetVersionResponse";
 
 export type GetVersionCmdEvent =
   | { type: "data"; firmwareInfo: FirmwareInfo }

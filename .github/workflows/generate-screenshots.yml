@@ -40,6 +40,7 @@ jobs:
         with:
           app_id: ${{ secrets.GH_BOT_APP_ID }}
           private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+
       - uses: actions/checkout@v4
         if: ${{ inputs.ref != null }}
         with:
@@ -51,6 +52,7 @@ jobs:
         with:
           fetch-depth: 0
           token: ${{ steps.generate-token.outputs.token }}
+
       - name: Install gh
         run: |
           type -p curl >/dev/null || sudo apt install curl -y
@@ -59,11 +61,13 @@ jobs:
           && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
           && sudo apt update \
           && sudo apt install gh -y
+
       - name: Checkout PR
-        if: ${{ inputs.number != null && inputs.ref == null }}
+        if: ${{ inputs.number != null }}
         run: gh pr checkout ${{ inputs.number }}
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+
       - name: Setup git user
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
       - name: Setup the toolchain

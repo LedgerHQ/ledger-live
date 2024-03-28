@@ -2,6 +2,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { version } from "../../../package.json";
 import { HttpManagerApiRepository } from "@ledgerhq/device-core";
 
+export { type ManagerApiRepository, StubManagerApiRepository } from "@ledgerhq/device-core";
 export class HttpManagerApiRepositoryFactory {
   static instance: HttpManagerApiRepository;
 

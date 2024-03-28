@@ -12,6 +12,7 @@ export { getLatestFirmwareForDevice } from "./managerApi/use-cases/getLatestFirm
 export { isDeviceLocalizationSupported } from "./commands/use-cases/isDeviceLocalizationSupported";
 export { PROVIDERS, getProviderIdUseCase } from "./managerApi/use-cases/getProviderIdUseCase";
 export { fetchMcus } from "./managerApi/use-cases/fetchMcus";
+export { aDeviceInfoBuilder } from "./managerApi/entities/mocks/aDeviceInfo";
 // src/commands/
 export type { FirmwareInfoEntity } from "./commands/entities/FirmwareInfoEntity";
 export { GET_VERSION_APDU } from "./commands/use-cases/getVersion";

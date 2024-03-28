@@ -1,5 +1,29 @@
 # @ledgerhq/live-network
 
+## 1.2.0
+
+### Minor Changes
+
+- [#6172](https://github.com/LedgerHQ/ledger-live/pull/6172) [`7fb3eb2`](https://github.com/LedgerHQ/ledger-live/commit/7fb3eb266acdca143c94d2fce74329809ebfbb79) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Remove API injection in coin-module
+
+### Patch Changes
+
+- Updated dependencies [[`4744c31`](https://github.com/LedgerHQ/ledger-live/commit/4744c3136021f1f47ad1617f2c84f47ac0647370), [`0dd1546`](https://github.com/LedgerHQ/ledger-live/commit/0dd15467070cbf7fcbb9d9055a4535f6a25b2ad0), [`f456d69`](https://github.com/LedgerHQ/ledger-live/commit/f456d69a2f64b6a217d3c1d9c6a531f31c2817a8)]:
+  - @ledgerhq/live-env@2.0.0
+  - @ledgerhq/errors@6.16.3
+
+## 1.2.0-next.0
+
+### Minor Changes
+
+- [#6172](https://github.com/LedgerHQ/ledger-live/pull/6172) [`7fb3eb2`](https://github.com/LedgerHQ/ledger-live/commit/7fb3eb266acdca143c94d2fce74329809ebfbb79) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Remove API injection in coin-module
+
+### Patch Changes
+
+- Updated dependencies [[`4744c31`](https://github.com/LedgerHQ/ledger-live/commit/4744c3136021f1f47ad1617f2c84f47ac0647370), [`0dd1546`](https://github.com/LedgerHQ/ledger-live/commit/0dd15467070cbf7fcbb9d9055a4535f6a25b2ad0), [`f456d69`](https://github.com/LedgerHQ/ledger-live/commit/f456d69a2f64b6a217d3c1d9c6a531f31c2817a8)]:
+  - @ledgerhq/live-env@2.0.0-next.0
+  - @ledgerhq/errors@6.16.3-next.0
+
 ## 1.1.13
 
 ### Patch Changes
