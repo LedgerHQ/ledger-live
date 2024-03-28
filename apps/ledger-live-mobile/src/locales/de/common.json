@@ -94,6 +94,7 @@
     "comingSoon" : "Bald verfügbar",
     "restart" : "Neustarten",
     "loadMore" : "Mehr laden",
+    "selectAccount" : "Wählen Sie ein Konto",
     "patterns" : {
       "id" : "ID {{ value }}",
       "times" : "x{{ value }}"
@@ -144,7 +145,7 @@
       }
     },
     "ConnectManagerTimeout" : {
-      "title" : "Die Verbindung zu My Ledger ist fehlgeschlagen",
+      "title" : "Leider ist die sichere Verbindung mit Ledger fehlgeschlagen",
       "description" : {
         "ios" : {
           "nanoX" : "Bitte stellen Sie sicher, dass Ihr {{productName}} entsperrt ist, wenn Bluetooth aktiviert ist."
@@ -340,12 +341,12 @@
       "description" : "Bitte versuchen Sie es erneut. Wenn das Problem weiterhin besteht, speichern Sie bitte Ihre Protokolle über die Schaltfläche unten und stellen Sie sie dem Ledger-Support zur Verfügung."
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "Sperrbildschirm-Bild auf Ledger Stax verworfen",
+      "title" : "Lock screen picture discarded on {{productName}}",
       "description" : "Sollte dieses Bild nicht passen, können Sie es mit einem anderen Bild erneut versuchen.",
       "primaryCTA" : "Ein weiteres Bild hochladen"
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "Das Laden des Sperrbildschirm-Bildes auf dem Ledger Stax wurde abgebrochen",
+      "title" : "Loading of lock screen picture cancelled on {{productName}}",
       "description" : "Sollte dieses Bild nicht passen, können Sie es mit einem anderen Bild erneut versuchen.",
       "primaryCTA" : "Ein weiteres Bild hochladen"
     },
@@ -484,7 +485,7 @@
       "description" : "Bitte überweisen Sie einige EGLD auf Ihr Konto, um die Transaktionen zu bezahlen."
     },
     "NotEnoughBalance" : {
-      "title" : "Entschuldigung, Guthaben reicht nicht aus",
+      "title" : "Leider ist für den Betrag einschließlich der Netzwerkgebühren nicht genügend Guthaben vorhanden. Bitte Betrag ändern oder Guthaben verifizieren.",
       "description" : "Bitte stellen Sie sicher, dass das Konto ausreichend gedeckt ist."
     },
     "NoSuchAppOnProvider" : {
@@ -492,7 +493,7 @@
       "description" : "Versuchen Sie, die App über My Ledger neu zu installieren."
     },
     "NotEnoughGas" : {
-      "title" : "Sie benötigen {{fees}} {{ticker}} für Gebühren, da Sie sich im {{cryptoName}}-Netzwerk befinden. <link0>{{ticker}} kaufen</link0>",
+      "title" : "Sie brauchen {{fees}} {{ticker}} auf Ihrem Konto, um die Transaktionsgebühren für das {{cryptoName}}-Netzwerk zu bezahlen.  <link0>Kaufen Sie {{ticker}}</link0> oder zahlen Sie zusätzliche Mittel auf Ihr Konto ein.",
       "description" : "Bitte senden Sie einige Coins an Ihr Konto, um Token-Transaktionen bezahlen zu können."
     },
     "NotEnoughGasSwap" : {
@@ -622,8 +623,8 @@
       "primaryCTA" : "My Ledger öffnen"
     },
     "UserRefusedAllowManager" : {
-      "title" : "Manager auf dem Gerät deaktiviert",
-      "description" : "Bitte erlauben Sie den Manager auf Ihrem Gerät und versuchen Sie es dann erneut."
+      "title" : "Sichere Verbindung auf dem Gerät abgelehnt",
+      "description" : "Bitte lassen Sie die sichere Verbindung auf Ihrem Gerät zu und versuchen Sie es noch einmal."
     },
     "UserRefusedAddress" : {
       "title" : "Empfangsadresse abgelehnt",
@@ -912,8 +913,9 @@
       "title" : "Ungültiger Anbieter",
       "description" : "Sie müssen die Einstellung „Mein Ledger-Anbieter“ ändern. Öffnen Sie dazu die Einstellungen in Ledger Live, navigieren Sie zu „Experimentelle Features“ und wählen Sie einen anderen Anbieter aus."
     },
-    "TezosUnrevealedAccount" : {
-      "title" : "Umtauschen nicht möglich: Erfordert initiales Senden/Delegieren bei Tezos-Konto oder Austausch des Paares."
+    "SequenceNumberError" : {
+      "title" : "Fehler in der Sequenznummer",
+      "description" : "Bitte schließen Sie das Fenster und versuchen Sie es später noch einmal"
     }
   },
   "crash" : {
@@ -931,6 +933,10 @@
     "noConnectionError" : {
       "title" : "Keine Verbindung",
       "description" : "Ihre Verbindung mit dem Internet ist offenbar unterbrochen. Bitte prüfen Sie Ihre Verbindung und versuchen Sie es noch einmal."
+    },
+    "noAccounts" : {
+      "title" : "Für den Zugriff auf diese App brauchst du ein Konto.",
+      "add" : "Konto hinzufügen"
     }
   },
   "location" : {
@@ -1251,6 +1257,9 @@
       "referralProgram" : {
         "title" : "Freunde werben",
         "desc" : "Kaufen Ihre Freunde einen Ledger, bekommen Sie alle Bitcoin im Wert von jeweils 20$ geschenkt."
+      },
+      "filter" : {
+        "all" : "Alle"
       }
     },
     "comingSoon" : "Bald verfügbar",
@@ -1495,7 +1504,7 @@
       },
       "pinCode" : {
         "title" : "PIN-Code",
-        "desc" : "Ihr PIN-Code ist die erste Ebene der Sicherheit. Er sichert physisch den Zugang zu Ihrem Nano und Ihren privaten Schlüsseln. Ihr PIN-Code muss 4 bis 8 Ziffern lang sein. Ihr PIN-Code muss 4 bis 8 Ziffern lang sein.",
+        "desc" : "Ihr PIN-Code ist die erste Ebene der Sicherheit. Er sichert physisch den Zugang zu Ihrer Nano und Ihren privaten Schlüsseln. Ihr PIN-Code muss 4 bis 8 Ziffern lang sein. Ihr PIN-Code muss 4 bis 8 Ziffern lang sein.",
         "checkboxDesc" : "Ich verstehe, dass ich meinen PIN-Code selbst wählen und ihn geheim halten muss.",
         "cta" : "PIN-Code einrichten"
       },
@@ -1655,7 +1664,7 @@
     "stepRecoveryPhrase" : {
       "importRecoveryPhrase" : {
         "title" : "Wiederherstellen mit der Wiederherstellungsphrase",
-        "desc" : "Stellen Sie Ihren Nano aus der Wiederherstellungsphrase wieder her, um Ihren Ledger-Hardware-Wallet wiederherzustellen, zu ersetzen oder zu sichern.",
+        "desc" : "Stellen Sie Ihre Nano aus der Wiederherstellungsphrase wieder her, um Ihre Ledger-Hardware-Wallet wiederherzustellen, zu ersetzen oder zu sichern.",
         "desc_1" : "Ihr Nano wird Ihre privaten Schlüssel wiederherstellen und Sie werden in der Lage sein, auf Ihre Krypto zuzugreifen und diese zu verwalten.",
         "cta" : "OK, ich bin bereit!",
         "warning" : {
@@ -1724,23 +1733,23 @@
     },
     "stepPairNew" : {
       "generic" : {
-        "title" : "Koppeln Sie Ihren Nano",
-        "desc" : "Dies ist das erste Mal, dass Sie Ihren Nano mit diesem Telefon einrichten. Lassen Sie uns Ihr Gerät schnell koppeln.",
-        "cta" : "Koppeln wir meinen Nano"
+        "title" : "Koppeln Sie Ihre Nano",
+        "desc" : "Dies ist das erste Mal, dass Sie Ihre Nano mit diesem Telefon einrichten. Lassen Sie uns Ihr Gerät schnell koppeln.",
+        "cta" : "Meine Nano koppeln"
       },
       "nanoX" : {
-        "title" : "Koppeln Sie Ihren Nano",
-        "desc" : "Dies ist das erste Mal, dass Sie Ihren Nano mit diesem Telefon einrichten. Lassen Sie uns Ihr Gerät schnell koppeln.",
-        "cta" : "Koppeln wir meinen Nano"
+        "title" : "Koppeln Sie Ihre Nano",
+        "desc" : "Dies ist das erste Mal, dass Sie Ihre Nano mit diesem Telefon einrichten. Lassen Sie uns Ihr Gerät schnell koppeln.",
+        "cta" : "Meine Nano koppeln"
       },
       "nanoS" : {
         "title" : "Verbinden Sie Ihren Nano",
-        "desc" : "Dies ist das erste Mal, dass Sie Ihren Nano mit diesem Telefon einrichten. Lassen Sie uns Ihr Gerät schnell anschließen.",
+        "desc" : "Dies ist das erste Mal, dass Sie Ihre Nano mit diesem Telefon einrichten. Lassen Sie uns Ihr Gerät schnell anschließen.",
         "cta" : "Schließen wir meinen Nano an"
       },
       "nanoSP" : {
         "title" : "Verbinden Sie Ihren Nano",
-        "desc" : "Dies ist das erste Mal, dass Sie Ihren Nano mit diesem Telefon einrichten. Lassen Sie uns Ihr Gerät schnell anschließen.",
+        "desc" : "Dies ist das erste Mal, dass Sie Ihre Nano mit diesem Telefon einrichten. Lassen Sie uns Ihr Gerät schnell anschließen.",
         "cta" : "Schließen wir meinen Nano an"
       },
       "blue" : {
@@ -1920,7 +1929,7 @@
       },
       "seed" : {
         "title" : "Bitte überprüfen Sie den Inhalt der Box",
-        "desc" : "Wenn Ihr {{deviceName}} mit einem PIN-Code oder einer Wiederherstellungsphrase geliefert wurde, ist die Verwendung des Geräts nicht sicher und Sie sollten sich an den Ledger Support wenden.",
+        "desc" : "Wenn Ihre {{deviceName}} mit einem PIN-Code oder einer Wiederherstellungsphrase geliefert wurde, ist die Verwendung des Geräts nicht sicher und Sie sollten sich an den Ledger Support wenden.",
         "warning" : "Verwenden Sie nur eine Wiederherstellungsphrase, die Ihr Gerät angezeigt hat, wenn es eingerichtet wurde",
         "continueCTA" : "Weiter",
         "contactSupportCTA" : "Support kontaktieren"
@@ -1965,9 +1974,8 @@
   "earlySecurityCheck" : {
     "title" : "Echtheitsprüfung und \nPrüfung auf Betriebssystem-Update",
     "idle" : {
-      "description" : "Dadurch wird sichergestellt, dass Ihr Ledger Stax ein offizielles Ledger-Gerät ist.",
       "learnMore" : "Weitere Informationen zur Echtheitsprüfung",
-      "checkCta" : "Ledger Stax prüfen"
+      "checkCta" : "Check {{ productName }}"
     },
     "completed" : {
       "continueCta" : "Weiter zur Einrichtung"
@@ -1990,7 +1998,7 @@
       }
     },
     "genuineCheckNonGenuineDrawer" : {
-      "title" : "Die Echtheitsprüfung für diesen Ledger Stax ist fehlgeschlagen",
+      "title" : "This {{ productName }} failed the Genuine Check",
       "description" : "Die Nutzung dieses Geräts {{productName}} ist nicht sicher.\nBitte kontaktieren Sie den Ledger-Kundenservice.",
       "supportCta" : "Ledger-Kundenservice kontaktieren"
     },
@@ -2038,12 +2046,12 @@
       "refused" : {
         "title" : "Die Betriebssystemversion {{firmwareVersion}} ist verfügbar",
         "description" : "Wir empfehlen, dieses Update durchzuführen, um von den neuesten Sicherheits- und Funktionsmerkmalen profitieren zu können.",
-        "updateCta" : "Ledger Stax aktualisieren",
+        "updateCta" : "Update {{ productName }}",
         "skipCta" : "Update überspringen"
       },
       "inactive" : {
         "title" : "Prüfung auf Betriebssystem-Update",
-        "description" : "Damit wird geprüft, ob Ihr Ledger Stax-Betriebssystem auf dem neuesten Stand ist oder nicht. "
+        "description" : "This checks if your {{productName}} Operating System is up to date or not. "
       }
     },
     "firmwareUpdateAvailableDrawer" : {
@@ -2145,21 +2153,6 @@
       "restoreChoiceRecoverTitle" : "Wiederherstellen mit Ledger Recover",
       "restoreChoiceRecoverDescription" : "Wenn Sie Ledger Recover abonniert haben, melden Sie sich bei Ihrem Abonnement an, um den Wiederherstellungsprozess für die Sicherheitskopie Ihrer geheimen Wiederherstellungsphrase zu beginnen."
     },
-    "softwareChecksSteps" : {
-      "title" : "Hardware- und Software-Überprüfungen",
-      "description" : "Vergewissern Sie sich, dass Ihr Gerät sicher ist und über die neuesten Sicherheitsfunktionen verfügt.",
-      "doneTitle" : "{{productName}} ist echt und auf dem neuesten Stand",
-      "genuineCheckRequestDrawer" : {
-        "iconText" : "Echtheitsprüfung",
-        "title" : "Diese Prüfung stellt sicher, dass Ihr Ledger Stax ein offizielles Ledger-Gerät ist.",
-        "checkCta" : "Echtheitsprüfung starten"
-      },
-      "updateAvailableDrawer" : {
-        "title" : "Neue Software gefunden",
-        "description" : "Damit Sie auf die neuesten Sicherheitsfunktionen zugreifen können, empfehlen wir dringend, ein Update Ihrer {{productName}} durchzuführen.",
-        "updateCta" : "Aktualisieren"
-      }
-    },
     "appsStep" : {
       "title" : "Apps auf {{productName}}-Gerät installieren"
     },
@@ -2181,15 +2174,7 @@
     "discover" : "Neues entdecken",
     "nanoX" : "Nano X",
     "market" : "Market",
-    "earn" : "Verdienen",
-    "learn" : "Lernen"
-  },
-  "learn" : {
-    "pageTitle" : "Lernen",
-    "sectionShows" : "Shows",
-    "sectionVideo" : "Video",
-    "sectionPodcast" : "Podcast",
-    "sectionArticles" : "Artikel"
+    "earn" : "Verdienen"
   },
   "portfolio" : {
     "totalBalance" : "Gesamtsaldo",
@@ -2516,10 +2501,6 @@
       "currency" : {
         "title" : "Währung"
       },
-      "endpointConfig" : {
-        "title" : "Node",
-        "desc" : "Der zu verwendende API Knoten"
-      },
       "delete" : {
         "title" : "Konto aus dem Portfolio entfernen",
         "desc" : "Die gespeicherten Daten werden entfernt.",
@@ -2669,6 +2650,7 @@
     "moreAssets" : "Mehr hinzufügen"
   },
   "help" : {
+    "chatbot" : "Ledger-Chatbot",
     "gettingStarted" : {
       "title" : "Erste Schritte",
       "desc" : "Beginnen Sie hier"
@@ -2845,7 +2827,7 @@
       },
       "largeMover" : {
         "title" : "Große Mover",
-        "desc" : "Sie bekommen eine Benachrichtigung über wichtige Preisbewegungen für BTC und ETH"
+        "desc" : "Du wirst über wichtige Preisbewegungen informiert, sofern du BTC, ETH, SOL, ADA oder XRP besitzt."
       },
       "transactionsAlerts" : {
         "title" : "Transaktionsbenachrichtigungen (Beta)",
@@ -3885,12 +3867,12 @@
     }
   },
   "DeviceAction" : {
-    "stayInTheAppPlz" : "Bleiben Sie in der Ledger Live-App und halten Sie Ihren Ledger bereit.",
+    "stayInTheAppPlz" : "Bleiben Sie in der Ledger Live-App und halten Sie Ihr Ledger-Gerät bereit.",
     "allowAppPermission" : "Öffnen Sie die {{wording}} App auf Ihrem Gerät",
     "allowAppPermissionSubtitleToken" : "zum Verwalten Ihrer {{token}}-Tokens",
-    "allowManagerPermission" : "Ledger Manager auf Ihrem {{productName}}-Gerät zulassen",
+    "allowManagerPermission" : "Lassen Sie eine sichere Verbindung mit Ledger zu",
     "allowRenaming" : "Umbenennen auf Ihrem {{productName}}-Gerät zulassen",
-    "allowRemoveCustomLockscreen" : "Bestätigen Sie die Entfernung des Bildes auf Ihrem Ledger Stax",
+    "allowRemoveCustomLockscreen" : "Confirm removal of image on your {{productName}}",
     "allowSecureConnection" : "Lassen eine sichere Verbindung mit Ledger zu",
     "loading" : "Lade Daten...",
     "turnOnAndUnlockDevice" : "Schalten Sie Ihr Gerät ein und entsperren Sie es",
@@ -4271,8 +4253,8 @@
     "viewUpdateChangelog" : "Update-Änderungsprotokoll anzeigen",
     "waitForFirmwareUpdate" : "Warten Sie, bis das Firmware-Update auf Ihrem Gerät abgeschlossen ist",
     "waitForInstallationToFinish" : "Warten Sie, bis die Installation auf Ihrem {{deviceName}} abgeschlossen ist",
-    "staxBatteryLow" : "Ledger Stax Batterie zu schwach für Update",
-    "staxBatteryLowDescription" : "Um das Betriebssystem-Update zu starten, muss Ihr Ledger Stax entweder einen Akkuladestand von mindestens {{lowBatteryPercentage}} % aufweisen oder an das Ladegerät angeschlossen sein.",
+    "batteryLow" : "{{productName}} battery too low to update",
+    "batteryLowDescription" : "To start the OS update, a minimum of {{lowBatteryPercentage}}% charge is needed, or your {{productName}} must be charging.",
     "updateCancelled" : "Installation des Betriebssystem-Updates auf {{deviceName}} abgebrochen",
     "updateCancelledDescription" : "Wenn dies irrtümlich geschehen ist, starten Sie das Update erneut.",
     "updateNotYetComplete" : "Betriebssystem-Update in Bearbeitung",
@@ -6370,41 +6352,23 @@
     "commitRequested" : "Gefällt Ihnen, was Sie sehen?\nBehalten Sie es!",
     "confirmPicture" : "Bestätigen auf {{productName}}",
     "landingPage" : {
-      "title" : "Wählen Sie eine beliebige digitale Grafik oder ein Foto aus.\nPersonalisieren Sie Ihren Ledger Stax.\nDenn er gehört Ihnen.",
+      "title" : "Choose any digital art or photo.\nCustomize your {{productName}}.\nMake it yours.",
       "choosePicture" : "Wählen Sie ein Bild aus"
     },
     "confirmCrop" : "Ausschnitt bestätigen",
     "confirmContrast" : "Kontrast bestätigen",
-    "nftEntryPointButtonLabel" : "Als Bild für den Ledger Stax Sperrbildschirm festlegen",
+    "nftEntryPointButtonLabel" : "Set as lockscreen picture",
     "customImage" : "Benutzerdefiniertes Bild",
     "doThisLater" : "Vielleicht später",
     "preview" : {
       "title" : "Vorschau",
       "loading" : "Vorschau wird geladen",
       "setPicture" : "Als Sperrbildschirm festlegen",
-      "editPicture" : "Bild bearbeiten"
+      "editPicture" : "Bild bearbeiten",
+      "pickDeviceModel" : "Choose a device"
     },
     "nftGallery" : {
       "title" : "Meine NFTs"
-    }
-  },
-  "claimNft" : {
-    "welcomePage" : {
-      "title" : "Kostenloser Zugang zum sichersten NFT-Marktplatz der Welt",
-      "description" : {
-        "title" : "Mit dem Ledger Infinity Pass erhalten Sie Zugang zu:",
-        "1" : "Erste Reservierung für die neuesten NFT-Drops",
-        "2" : "Der sicherste NFT-Marktplatz aller Zeiten",
-        "3" : "Ein kostenloses NFT, das Sie anfordern können"
-      },
-      "claimButton" : "Ledger Market Pass anfordern",
-      "backButton" : "Ich habe bereits meinen Market Pass angefordert"
-    },
-    "qrScan" : {
-      "title" : "Scannen Sie den QR-Code auf Ihrem Ledger Market Pass",
-      "description" : {
-        "1" : "Sie finden Ihren exklusiven Ledger Market Pass in der Box Ihres Ledger Stax.\n\nBeginnen Sie, indem Sie den QR-Code auf der Rückseite des Passes im Rahmen positionieren. Verwenden Sie einen gut beleuchteten Bereich und einen einfachen hellen Hintergrund."
-      }
     }
   },
   "postOnboarding" : {
@@ -6425,13 +6389,6 @@
         "titleCompleted" : "Sperrbildschirm-Bild festgelegt",
         "description" : "Wählen Sie eine beliebige digitale Grafik oder ein Bild für den Sperrbildschirm aus.",
         "popupLabel" : "Sperrbildschirm festgelegt"
-      },
-      "claimNft" : {
-        "title" : "Fordern Sie das Infinity NFT an",
-        "titleCompleted" : "Infinity NFT angefordert",
-        "description" : "Mit diesem NFT erhalten Sie Zugang zu [ Ledger ] Market, unserem NFT-Marktplatz.",
-        "popupLabel" : "NFT beansprucht",
-        "tagLabel" : "Geschenk"
       },
       "assetsTransfer" : {
         "title" : "Übertragen Sie Ihre Vermögenswerte in Ihr Ledger",
@@ -6590,61 +6547,61 @@
   "analyticsOptIn" : {
     "variantA" : {
       "main" : {
-        "title" : "Helfen Sie uns, Ihr Nutzungserlebnis zu verbessern und zu personalisieren.",
-        "subtitle" : "Die Weitergabe Ihrer Ledger Live-Nutzungsdaten hilft dabei, Ihre persönlichen Vorlieben zu verstehen. Dadurch können wir Ihr Nutzungserlebnis individuell gestalten und die angezeigten Inhalte – wie Klicks oder Seiten- und Funktionsaufrufe – optimieren, um maximale Relevanz zu gewährleisten.",
+        "title" : "Helfen Sie mit, Ihr Nutzungserlebnis zu verbessern und zu personalisieren",
+        "subtitle" : "Die Freigabe Ihrer Ledger Live-Daten hilft uns, Ihre Vorlieben zu verstehen, Ihnen Inhalte zu zeigen, die für Sie relevant sind, und technische Probleme zu beheben.",
         "content" : {
           "able" : {
-            "title" : "Ledger Live erfasst dabei Folgendes:",
-            "diagAndUsage" : "Nutzungsdaten"
+            "title" : "Mit Ihrer Zustimmung kann Ledger folgende Daten verfolgen:",
+            "diagAndUsage" : "Analysedaten, einschließlich Seitenaufrufe, Klicks",
+            "personnalizationData" : "Personalisierungsdaten, einschließlich Klicks, Seitenaufrufe, Konversionsdaten"
           },
           "unable" : {
-            "title" : "Folgende Daten werden von Ledger Live niemals erfasst:",
-            "adresses" : "Ihre Adressen",
-            "balance" : "Ihr Kontostand",
-            "nfts" : "Ihre NFTs",
-            "personnalInfos" : "Personenbezogene Daten"
+            "title" : "Ledger wird niemals die folgenden Informationen erfassen:",
+            "adresses" : "Ihre Vermögenswerte",
+            "balance" : "Ihr Portfolio",
+            "personnalInfos" : "Ihre personenbezogenen Daten"
           },
-          "moreOptions" : "Weitere Optionen",
+          "moreOptions" : "Voreinstellungen verwalten",
           "ctas" : {
             "refuse" : "Alle ablehnen",
             "accept" : "Alle annehmen"
           },
           "infoText" : {
             "info" : "Sie können Ihre Einwilligung in den App-Einstellungen jederzeit widerrufen.",
-            "link" : "Klicken Sie hier, um mehr zu erfahren."
+            "link" : "Weitere Informationen über unsere Tracking-Richtlinie"
           }
         }
       },
       "details" : {
         "title" : "Voreinstellungen verwalten",
         "analytics" : {
-          "title" : "Analysen",
-          "description" : "Geben Sie Daten zu Ihrer App-Nutzung frei und helfen Sie Ledger so, die Anwendung besser zu machen."
+          "title" : "Analysedaten",
+          "description" : "Damit Ledger Live noch besser wird, geben Sie bitte die Analysedaten der App frei, einschließlich Seitenaufrufe und Klicks."
         },
         "personalizedExp" : {
-          "title" : "Personalisierte Nutzung",
-          "description" : "Erhalten Sie personalisierte Empfehlungen, die zu Ihren Vorlieben passen, und geben Sie Daten zur Inhaltsqualität frei, um die Relevanz zu steigern."
+          "title" : "Personalisierungsdaten",
+          "description" : "Wenn Sie personalisierte Empfehlungen erhalten möchten, geben Sie die Personalisierungsdaten der App frei, einschließlich Konversionsdaten, Klicks und Seitenaufrufe."
         },
         "ctas" : {
           "notNow" : "Nicht jetzt",
           "accept" : "Akzeptieren",
           "acceptAll" : "Alle akzeptieren",
-          "confirm" : "Bestätigen"
+          "confirm" : "Freigeben"
         },
         "infoText" : {
           "info" : "Sie können Ihre Einwilligung in den App-Einstellungen jederzeit widerrufen.",
-          "link" : "Klicken Sie hier, um mehr zu erfahren."
+          "link" : "Weitere Informationen über unsere Tracking-Richtlinie"
         }
       }
     },
     "variantB" : {
       "main" : {
         "title" : "Machen wir Ledger Live gemeinsam noch besser",
-        "description" : "Die Weitergabe Ihrer Ledger Live-Nutzungsdaten hilft uns dabei, zu verstehen, wie Sie Ledger Live nutzen.",
+        "description" : "Die Freigabe Ihrer Ledger Live-Analysedaten hilft uns nachzuvollziehen, wie die Nutzer Ledger Live verwenden, Fehler zu beheben und die Nutzungserfahrung zu optimieren.",
         "bulletPoints" : {
-          "1" : "Zu den Nutzungsdaten gehören Seitenbesuche, Klicks und Conversions.",
-          "2" : "Weder erkennen noch erfassen wir Ihre Adressen, Konten, Kontostände, NFTs oder sonstige Informationen zu Ihrem Portfolio.",
-          "3" : "Wir können und wollen Sie nicht identifizieren, und wir sammeln auch keine personenbezogenen Daten."
+          "1" : "Zu den Analysedaten gehören Seitenaufrufe und Klicks.",
+          "2" : "Wir werden Informationen über Ihren Kontostand, Ihre Konten und Ihr Portfolio weder erheben noch einsehen.",
+          "3" : "Die Analysen erfolgen völlig anonym. Wir können Ihre persönlichen Daten weder einsehen noch erheben."
         },
         "ctas" : {
           "refuse" : "Ablehnen",
@@ -6652,15 +6609,15 @@
         },
         "infoText" : {
           "info" : "Sie können Ihre Einwilligung in den App-Einstellungen jederzeit widerrufen.",
-          "link" : "Weitere Informationen zum Widerrufen der Einwilligung"
+          "link" : "Weitere Informationen über unsere Tracking-Richtlinie"
         }
       },
       "details" : {
         "title" : "Nutzungserlebnis personalisieren",
-        "description" : "Durch die Analyse Ihrer Nutzungsdaten passen wir Ihr Nutzungserlebnis an und können die Leistung der Inhalte bewerten, indem wir Kennzahlen wie Klicks oder Seiten- und Funktionsaufrufe erfassen, um so maximale Relevanz zu gewährleisten.",
+        "description" : "Durch die Freigabe Ihrer Ledger Live-Personalisierungsdaten können wir Inhalte anzeigen, die Ihren Vorlieben entsprechen.",
         "bulletPoints" : {
-          "1" : "Personalisierte Empfehlungen und Inhalte",
-          "2" : "Personalisierte Benachrichtigungen"
+          "1" : "Zu den Personalisierungsdaten gehören Konversionsdaten, Klicks und Seitenaufrufe.",
+          "2" : "Wir können weder Ihre personenbezogenen Daten noch Daten zu Ihrem Portfolio verfolgen oder erfassen."
         },
         "ctas" : {
           "refuse" : "Ablehnen",
@@ -6668,7 +6625,7 @@
         },
         "infoText" : {
           "info" : "Sie können Ihre Einwilligung in den App-Einstellungen jederzeit widerrufen.",
-          "link" : "Weitere Informationen zum Widerrufen der Einwilligung"
+          "link" : "Weitere Informationen über unsere Tracking-Richtlinie"
         }
       }
     }
