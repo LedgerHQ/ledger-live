@@ -82,12 +82,14 @@ const Default = () => {
       <StorylyTester />
       <ExchangeDeveloperMode />
 
-      <Row
-        title={t("settings.developer.debugReactQuery")}
-        desc={t("settings.developer.debugReactQueryDesc")}
-      >
-        <AllowDebugReactQueryToggle />
-      </Row>
+      {__DEV__ && (
+        <Row
+          title={t("settings.developer.debugReactQuery")}
+          desc={t("settings.developer.debugReactQueryDesc")}
+        >
+          <AllowDebugReactQueryToggle />
+        </Row>
+      )}
     </Body>
   );
 };

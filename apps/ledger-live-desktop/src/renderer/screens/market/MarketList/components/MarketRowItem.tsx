@@ -155,12 +155,12 @@ export const MarketRow = memo<Props>(function MarketRowItem({
               </Flex>
             ) : null}
           </TableCell>
-          <TableCell>
+          <TableCell data-test-id={"market-coin-price"}>
             <Text variant="body">
               {counterValueFormatter({ value: currency.price, currency: counterCurrency, locale })}
             </Text>
           </TableCell>
-          <TableCell>
+          <TableCell data-test-id={"market-price-change"}>
             {currency.priceChangePercentage ? (
               <FormattedVal
                 isPercent
@@ -174,7 +174,7 @@ export const MarketRow = memo<Props>(function MarketRowItem({
             )}
           </TableCell>
 
-          <TableCell>
+          <TableCell data-test-id={"market-cap"}>
             <Text>
               {counterValueFormatter({
                 shorten: true,

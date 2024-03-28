@@ -4739,13 +4739,13 @@ importers:
       '@ledgerhq/types-live':
         specifier: workspace:*
         version: link:../ledgerjs/packages/types-live
-      '@tanstack/react-query':
-        specifier: ^5.17.19
-        version: 5.17.19(react@18.2.0)
     devDependencies:
       '@ledgerhq/coin-framework':
         specifier: workspace:*
         version: link:../coin-framework
+      '@tanstack/react-query':
+        specifier: ^5.28.9
+        version: 5.28.9(react@18.2.0)
       '@testing-library/react':
         specifier: '14'
         version: 14.1.2(react-dom@18.2.0)(react@18.2.0)
@@ -24430,10 +24430,6 @@ packages:
       defer-to-connect: 2.0.1
     dev: true
 
-  /@tanstack/query-core@5.17.19:
-    resolution: {integrity: sha512-Lzw8FUtnLCc9Jwz0sw9xOjZB+/mCCmJev38v2wHMUl/ioXNIhnNWeMxu0NKUjIhAd62IRB3eAtvxAGDJ55UkyA==}
-    dev: false
-
   /@tanstack/query-core@5.28.9:
     resolution: {integrity: sha512-hNlfCiqZevr3GRVPXS3MhaGW5hjcxvCsIQ4q6ff7EPlvFwYZaS+0d9EIIgofnegDaU2BbCDlyURoYfRl5rmzow==}
 
@@ -24449,15 +24445,6 @@ packages:
     dependencies:
       '@tanstack/query-devtools': 5.28.6
       '@tanstack/react-query': 5.28.9(react@18.2.0)
-      react: 18.2.0
-    dev: false
-
-  /@tanstack/react-query@5.17.19(react@18.2.0):
-    resolution: {integrity: sha512-qaQENB6/03Gj3dFZGvdmUoqeUGlGm7P1p0RmaR04Bf1Ib1T9lLGimcC9T3oCFbrx0b2ZF21ngjFZNjj9uPJMcg==}
-    peerDependencies:
-      react: ^18.0.0
-    dependencies:
-      '@tanstack/query-core': 5.17.19
       react: 18.2.0
     dev: false
 
