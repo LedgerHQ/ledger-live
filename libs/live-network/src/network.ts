@@ -168,6 +168,12 @@ const implementation = <T = any>(arg: AxiosRequestConfig): AxiosPromise<T> => {
 
     promise = retry(() => axios(arg), {
       maxRetry: getEnv("GET_CALLS_RETRY"),
+      retryCondition: error => {
+        if (error && error.status) {
+          return error.status !== 422;
+        }
+        return true;
+      },
     });
   } else {
     promise = axios(arg);
