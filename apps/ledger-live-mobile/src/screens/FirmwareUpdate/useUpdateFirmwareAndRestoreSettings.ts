@@ -112,8 +112,9 @@ export const useUpdateFirmwareAndRestoreSettings = ({
       // In the LLM fwm update flow, the error thrown because there is no image is caught and part of the normal flow
       // So we want it to throw the error.
       allowedEmpty: false,
+      deviceModelId: device.modelId,
     }),
-    [],
+    [device.modelId],
   );
   const staxFetchImageState = staxFetchImageAction.useHook(
     updateStep === "imageBackup" ? device : null,
@@ -137,9 +138,10 @@ export const useUpdateFirmwareAndRestoreSettings = ({
   const staxLoadImageRequest = useMemo(
     () => ({
       hexImage: staxFetchImageState.hexImage ?? "",
-      padImage: false,
+      padImage: false, // this is because the picture we fetch from the device already has the padding
+      deviceModelId: device.modelId,
     }),
-    [staxFetchImageState.hexImage],
+    [staxFetchImageState.hexImage, device.modelId],
   );
   const staxLoadImageState = staxLoadImageAction.useHook(
     updateStep === "imageRestore" && staxFetchImageState.hexImage ? device : null,

@@ -6,7 +6,7 @@ import { App, DeviceInfo, idsToLanguage, languageIds } from "@ledgerhq/types-liv
 import { LocalTracer } from "@ledgerhq/logs";
 import type { ListAppsEvent, ListAppsResult, ListAppResponse } from "../types";
 import hwListApps from "../../hw/listApps";
-import staxFetchImageSize from "../../hw/staxFetchImageSize";
+import customLockScreenFetchSize from "../../hw/customLockScreenFetchSize";
 import {
   listCryptoCurrencies,
   currenciesByMarketcap,
@@ -279,7 +279,7 @@ export const listApps = ({
       // Stax specific, account for the size of the CLS for the storage bar.
       let customImageBlocks = 0;
       if (deviceModelId === DeviceModelId.stax && !deviceInfo.isRecoveryMode) {
-        const customImageSize = await staxFetchImageSize(transport);
+        const customImageSize = await customLockScreenFetchSize(transport);
         if (customImageSize) {
           customImageBlocks = Math.ceil(customImageSize / bytesPerBlock);
         }

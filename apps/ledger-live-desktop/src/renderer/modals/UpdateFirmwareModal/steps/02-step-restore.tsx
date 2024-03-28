@@ -2,8 +2,9 @@ import React, { useCallback, useEffect } from "react";
 import { StepProps } from "../types";
 
 import Language from "./restore/Language";
-import CLS from "./restore/CLS";
+import CustomLockScreen from "./restore/CustomLockScreen";
 import { Flex } from "@ledgerhq/react-ui";
+import { isCustomLockScreenSupported } from "@ledgerhq/live-common/device-core/capabilities/isCustomLockScreenSupported";
 
 /**
  * Different device models or versions may restore more or less settings.
@@ -68,8 +69,13 @@ const StepRestore = ({
           isLanguagePromptOpen={isLanguagePromptOpen}
           confirmedPrompt={confirmedPrompt}
         />
-      ) : pendingRestoreCLS ? (
-        <CLS CLSBackup={CLSBackup} onDone={onCompleteCLSRestore} setError={setError} />
+      ) : pendingRestoreCLS && isCustomLockScreenSupported(deviceModelId) ? (
+        <CustomLockScreen
+          deviceModelId={deviceModelId}
+          CLSBackup={CLSBackup}
+          onDone={onCompleteCLSRestore}
+          setError={setError}
+        />
       ) : null}
     </Flex>
   );

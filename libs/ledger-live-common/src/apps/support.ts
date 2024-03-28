@@ -2,6 +2,7 @@ import semver from "semver";
 import { shouldUseTrustedInputForSegwit } from "@ledgerhq/hw-app-btc/shouldUseTrustedInputForSegwit";
 import { getDependencies } from "./polyfill";
 import { getEnv } from "@ledgerhq/live-env";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 
 export function shouldUpgrade(appName: string, appVersion: string): boolean {
   if (getEnv("DISABLE_APP_VERSION_REQUIREMENTS")) return false;
@@ -25,29 +26,16 @@ export function shouldUpgrade(appName: string, appVersion: string): boolean {
   return false;
 }
 
-const appVersionsRequired = {
-  Cosmos: ">= 2.34.12",
-  Algorand: ">= 1.2.9",
-  MultiversX: ">= 1.0.18",
-  Polkadot: ">= 25.10100.0",
-  Ethereum: ">= 1.10.3-0", // the `-0` is here to allow for pre-release tags of the same version (1.10.3)
-  Solana: ">= 1.2.0",
-  Celo: ">= 1.1.8",
-  "Cardano ADA": ">= 4.1.0",
-  Zcash: "> 2.0.6",
-  NEAR: ">= 1.2.1",
-  "Tezos Wallet": ">= 2.4.5",
-};
-
 export function mustUpgrade(appName: string, appVersion: string): boolean {
   if (getEnv("DISABLE_APP_VERSION_REQUIREMENTS")) return false;
-  const range = appVersionsRequired[appName];
-
-  if (range) {
-    return !semver.satisfies(appVersion || "", range, {
+  // we should convert the app name to camel case and replace spaces with underscores to match the config convention in firebase
+  const minVersion = LiveConfig.getValueByKey(
+    `config_nanoapp_${appName.toLowerCase().replace(/ /g, "_")}`,
+  )?.minVersion;
+  if (minVersion) {
+    return !semver.gte(appVersion || "", minVersion, {
       includePrerelease: true, // this will allow pre-release tags for higher versions than the minimum one
     });
   }
-
   return false;
 }

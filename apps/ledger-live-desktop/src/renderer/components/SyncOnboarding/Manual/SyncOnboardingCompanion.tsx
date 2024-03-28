@@ -142,11 +142,9 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
             />
             {/* @ts-expect-error weird props issue with React 18 */}
             <StepText>
-              {
-                t("syncOnboarding.manual.pairedContent.description", {
-                  deviceName: productName,
-                }) as string
-              }
+              {t("syncOnboarding.manual.pairedContent.description", {
+                productName,
+              })}
             </StepText>
             <ContinueOnDeviceWithAnim
               deviceModelId={device.modelId}

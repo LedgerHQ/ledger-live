@@ -6,7 +6,9 @@ import { Flex, ProgressLoader, IconsLegacy } from "@ledgerhq/react-ui";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { FirmwareUpdateContext, DeviceInfo } from "@ledgerhq/types-live";
 import { hasFinalFirmware } from "@ledgerhq/live-common/hw/hasFinalFirmware";
-import staxFetchImage, { FetchImageEvent } from "@ledgerhq/live-common/hw/staxFetchImage";
+import customLockScreenFetch, {
+  FetchImageEvent,
+} from "@ledgerhq/live-common/hw/customLockScreenFetch";
 import firmwareUpdatePrepare from "@ledgerhq/live-common/hw/firmwareUpdate-prepare";
 import { getEnv } from "@ledgerhq/live-env";
 import { UnexpectedBootloader } from "@ledgerhq/errors";
@@ -26,6 +28,7 @@ import { catchError, map, tap } from "rxjs/operators";
 import { DeviceBlocker } from "~/renderer/components/DeviceAction/DeviceBlocker";
 import { StepProps } from "../types";
 import manager from "@ledgerhq/live-common/manager/index";
+import { isCustomLockScreenSupported } from "@ledgerhq/live-common/device-core/capabilities/isCustomLockScreenSupported";
 
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
@@ -187,8 +190,11 @@ const StepPrepare = ({
     // but only for stax.
     const deviceId = device ? device.deviceId : "";
     const maybeCLSBackup =
-      deviceInfo.onboarded && deviceModelId === DeviceModelId.stax
-        ? staxFetchImage({ deviceId, request: { allowedEmpty: true } })
+      deviceInfo.onboarded && isCustomLockScreenSupported(deviceModelId)
+        ? customLockScreenFetch({
+            deviceId,
+            request: { allowedEmpty: true, deviceModelId },
+          })
         : EMPTY;
 
     // Allow for multiple preparation flows in this paradigm.

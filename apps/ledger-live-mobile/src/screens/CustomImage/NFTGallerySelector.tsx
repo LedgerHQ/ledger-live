@@ -24,7 +24,7 @@ const keyExtractor = (item: ProtoNFT) => item.id;
 
 const NFTGallerySelector = ({ navigation, route }: NavigationProps) => {
   const { params } = route;
-  const { device } = params;
+  const { device, deviceModelId } = params;
 
   const nftsOrdered = useSelector(orderedVisibleNftsSelector, isEqual);
 
@@ -37,10 +37,11 @@ const NFTGallerySelector = ({ navigation, route }: NavigationProps) => {
         params: {
           nftMetadataParams: [nft.contract, nft.tokenId, nft.currencyId],
           device,
+          deviceModelId,
         },
       });
     },
-    [navigation, device],
+    [navigation, device, deviceModelId],
   );
 
   const renderItem = useCallback(

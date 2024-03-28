@@ -93,6 +93,8 @@ libs/test-utils/                                         @ledgerhq/wallet-api @l
 # Devices team
 apps/cli/src/commands/devices                            			@ledgerhq/live-devices
 **/src/renderer/screens/manager/                         			@ledgerhq/live-devices
+**/screens/CustomImage																				@ledgerhq/live-devices
+**/components/CustomImage																	  	@ledgerhq/live-devices								
 apps/**/components/DeviceAction/                         			@ledgerhq/live-devices
 apps/ledger-live-mobile/src/screens/Manager/             			@ledgerhq/live-devices
 apps/ledger-live-mobile/src/newArch/features/FirmwareUpdate/	@ledgerhq/live-devices

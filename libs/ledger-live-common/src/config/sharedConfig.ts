@@ -20,8 +20,11 @@ import { stellarConfig } from "../families/stellar/config";
 import { tezosConfig } from "../families/tezos/config";
 import { tronConfig } from "../families/tron/config";
 import { vechainConfig } from "../families/vechain/config";
+import { appConfig } from "../apps/config";
 
-const liveCommonConfig: ConfigSchema = {};
+const liveCommonConfig: ConfigSchema = {
+  ...appConfig,
+};
 
 export const liveConfig: ConfigSchema = {
   ...liveCommonConfig,

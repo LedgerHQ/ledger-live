@@ -14,6 +14,7 @@ import { StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { TrackScreen } from "~/analytics";
 import DeviceAction from "../DeviceAction";
 import { useStaxRemoveImageDeviceAction } from "~/hooks/deviceActions";
+import { type CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 
 const analyticsDrawerName = "Choose an image to set as your device lockscreen";
 
@@ -33,12 +34,13 @@ type Props = {
   setDeviceHasImage?: (arg0: boolean) => void;
   deviceHasImage?: boolean;
   device: Device | null;
+  deviceModelId: CLSSupportedDeviceModelId | null;
 };
 
 const CustomImageBottomModal: React.FC<Props> = props => {
   const [isLoading, setIsLoading] = useState(false);
   const [isRemovingCustomImage, setIsRemovingCustomImage] = useState(false);
-  const { isOpened, onClose, device, deviceHasImage, setDeviceHasImage } = props;
+  const { isOpened, onClose, device, deviceHasImage, setDeviceHasImage, deviceModelId } = props;
   const { t } = useTranslation();
   const { pushToast } = useToasts();
 
@@ -55,6 +57,7 @@ const CustomImageBottomModal: React.FC<Props> = props => {
             ...importResult,
             isPictureFromGallery: true,
             device,
+            deviceModelId,
           },
         });
       }
@@ -62,20 +65,20 @@ const CustomImageBottomModal: React.FC<Props> = props => {
       console.error(error);
       navigation.navigate(NavigatorName.CustomImage, {
         screen: ScreenName.CustomImageErrorScreen,
-        params: { error: error as Error, device },
+        params: { error: error as Error, device, deviceModelId },
       });
     }
     setIsLoading(false);
     onClose && onClose();
-  }, [navigation, onClose, setIsLoading, device]);
+  }, [navigation, onClose, device, deviceModelId]);
 
   const handleSelectFromNFTGallery = useCallback(() => {
     navigation.navigate(NavigatorName.CustomImage, {
       screen: ScreenName.CustomImageNFTGallery,
-      params: { device },
+      params: { device, deviceModelId },
     });
     onClose && onClose();
-  }, [navigation, device, onClose]);
+  }, [navigation, device, onClose, deviceModelId]);
 
   const request = useMemo(() => ({ deviceId: device?.deviceId || "", request: {} }), [device]);
 

@@ -2,7 +2,7 @@
 
 import { FeatureId, PostOnboardingAction, PostOnboardingActionId } from "@ledgerhq/types-live";
 
-const MockIcon = (): null => null;
+const MockIcon = () => null;
 
 export const mockedFeatureIdToTest: FeatureId = "mockFeature";
 
@@ -14,7 +14,7 @@ export const claimTestMock: PostOnboardingAction = {
   description: "A special NFT for you.",
   tagLabel: "Free",
   actionCompletedPopupLabel: "NFT claimed",
-  navigationParams: [],
+  getNavigationParams: () => ["mockRoute"],
 };
 
 export const personalizeTestMock: PostOnboardingAction = {
@@ -25,7 +25,7 @@ export const personalizeTestMock: PostOnboardingAction = {
   titleCompleted: `Personalize my device`,
   description: "By customizing the screen.",
   actionCompletedPopupLabel: "Device personalized",
-  navigationParams: [],
+  getNavigationParams: () => ["mockRoute"],
 };
 
 export const migrateAssetsTestMock: PostOnboardingAction = {
@@ -35,7 +35,7 @@ export const migrateAssetsTestMock: PostOnboardingAction = {
   titleCompleted: "Transfer assets to my Ledger",
   description: "Easily secure assets from coinbase or another exchange.",
   actionCompletedPopupLabel: "Assets transfered",
-  navigationParams: [],
+  getNavigationParams: () => ["mockRoute"],
 };
 
 export function getPostOnboardingAction(id: PostOnboardingActionId): PostOnboardingAction {

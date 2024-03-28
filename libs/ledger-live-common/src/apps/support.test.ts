@@ -1,5 +1,8 @@
 import { mustUpgrade, shouldUpgrade } from "./support";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { appConfig } from "./config";
 
+LiveConfig.setConfig(appConfig);
 describe("Support.ts", () => {
   describe("shouldUpgrade", () => {
     it("should ask for an ugprade for an outdated Bitcoin nano app", () => {
@@ -18,6 +21,8 @@ describe("Support.ts", () => {
   describe("mustUpgrade", () => {
     it("should ask an upgrade for an outdated nano app", () => {
       expect(mustUpgrade("Ethereum", "0.1.0")).toBe(true);
+      expect(mustUpgrade("Ethereum", "1.10.2")).toBe(true);
+      expect(mustUpgrade("Ethereum", "1.10.2-rc")).toBe(true);
     });
 
     it("should not ask any upgrade for the latest Ethereum nano app", () => {
@@ -26,6 +31,8 @@ describe("Support.ts", () => {
 
     it("should not ask any upgrade for the latest Ethereum nano app with a pre-release tag for a version equal to the minimum version", () => {
       expect(mustUpgrade("Ethereum", "1.10.3-dev")).toBe(false);
+      expect(mustUpgrade("Ethereum", "1.10.3-rc")).toBe(false);
+      expect(mustUpgrade("Ethereum", "1.10.3-0")).toBe(false);
     });
 
     it("should not ask any upgrade for the latest Ethereum nano app with a pre-release tag for a version superior to the minimum version", () => {

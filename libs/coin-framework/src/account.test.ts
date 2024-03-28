@@ -37,6 +37,14 @@ describe("groupAccountOperationsByDay", () => {
       // $FlowFixMe
       flatMap(res1.sections, s => s.data),
     );
+    const res3 = groupAccountOperationsByDay(account, {
+      count: 20,
+    });
+    expect(res3.completed).toBe(true);
+    const res4 = groupAccountOperationsByDay(account, {
+      count: 16,
+    });
+    expect(res4.completed).toBe(false);
   });
   test("basic 2", () => {
     const accounts = Array(10)

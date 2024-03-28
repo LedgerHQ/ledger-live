@@ -23,7 +23,7 @@ type NavigationProp = RootNavigationComposite<
   >
 >;
 
-const devices = {
+export const devices = {
   nanoX: {
     id: DeviceModelId.nanoX,
     img: require("../../../../assets/images/devices/NanoX.png"),
