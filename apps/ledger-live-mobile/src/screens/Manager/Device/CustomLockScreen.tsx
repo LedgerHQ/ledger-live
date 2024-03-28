@@ -1,14 +1,14 @@
 import React, { useCallback, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
+import { firstValueFrom, from } from "rxjs";
 
 import { useNavigation } from "@react-navigation/native";
 import { Icons } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/types-devices";
-import staxFetchImageHash from "@ledgerhq/live-common/hw/staxFetchImageHash";
+import customLockScreenFetchHash from "@ledgerhq/live-common/hw/customLockScreenFetchHash";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
-
-import { firstValueFrom, from } from "rxjs";
-import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
+import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 
 import {
   hasCompletedCustomImageFlowSelector,
@@ -18,10 +18,11 @@ import { NavigatorName, ScreenName } from "~/const";
 import CustomImageBottomModal from "~/components/CustomImage/CustomImageBottomModal";
 import DeviceOptionRow from "./DeviceOptionRow";
 
-const CustomLockScreen: React.FC<{ device: Device; disabled: boolean }> = ({
-  device,
-  disabled,
-}) => {
+const CustomLockScreen: React.FC<{
+  device: Device;
+  deviceModelId: CLSSupportedDeviceModelId;
+  disabled: boolean;
+}> = ({ device, deviceModelId, disabled }) => {
   const navigation = useNavigation();
   const [isCustomImageOpen, setIsCustomImageOpen] = useState(false);
   const [deviceHasImage, setDeviceHasImage] = useState(false);
@@ -37,7 +38,7 @@ const CustomLockScreen: React.FC<{ device: Device; disabled: boolean }> = ({
 
   useEffect(() => {
     firstValueFrom(
-      withDevice(device.deviceId)(transport => from(staxFetchImageHash(transport))),
+      withDevice(device.deviceId)(transport => from(customLockScreenFetchHash(transport))),
     ).then(hash => {
       setDeviceHasImage(hash !== "");
     });
@@ -51,9 +52,10 @@ const CustomLockScreen: React.FC<{ device: Device; disabled: boolean }> = ({
             screen: ScreenName.CustomImageStep0Welcome,
             params: {
               device,
+              deviceModelId,
             },
           }),
-    [device, hasCompletedCustomImageFlow, navigation],
+    [device, hasCompletedCustomImageFlow, navigation, deviceModelId],
   );
 
   return (
@@ -66,6 +68,7 @@ const CustomLockScreen: React.FC<{ device: Device; disabled: boolean }> = ({
       />
       <CustomImageBottomModal
         device={device}
+        deviceModelId={deviceModelId}
         deviceHasImage={deviceHasImage}
         isOpened={isCustomImageOpen}
         setDeviceHasImage={setDeviceHasImage}

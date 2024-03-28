@@ -15,6 +15,8 @@ import type {
 import type { Payload as PostOnboardingPayload } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
+import { DeviceModelId } from "@ledgerhq/types-devices";
+import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import type {
   AppState,
   FwUpdateBackgroundEvent,
@@ -35,7 +37,6 @@ import type {
   NftState,
 } from "../reducers/types";
 import type { Unpacked } from "../types/helpers";
-import { DeviceModelId } from "@ledgerhq/types-devices";
 
 //  === ACCOUNTS ACTIONS ===
 
@@ -351,8 +352,9 @@ export type SettingsSetHasSeenStaxEnabledNftsPopupPayload = Pick<
 export type SettingsSetCustomImageBackupPayload = {
   hex: string;
   hash: string;
-};
-export type SettingsSetCustomImageTypePayload = Pick<SettingsState, "customImageType">;
+  deviceModelId: CLSSupportedDeviceModelId;
+} | null;
+export type SettingsSetCustomImageTypePayload = Pick<SettingsState, "customLockScreenType">;
 export type SettingsSetHasOrderedNanoPayload = SettingsState["hasOrderedNano"];
 export type SettingsSetMarketRequestParamsPayload = SettingsState["marketRequestParams"];
 export type SettingsSetMarketCounterCurrencyPayload = SettingsState["marketCounterCurrency"];

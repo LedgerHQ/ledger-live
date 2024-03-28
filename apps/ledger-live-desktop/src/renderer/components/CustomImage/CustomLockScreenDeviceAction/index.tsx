@@ -2,29 +2,32 @@ import React, { useEffect, useCallback, useMemo } from "react";
 import { useDispatch } from "react-redux";
 import { setLastSeenCustomImage, clearLastSeenCustomImage } from "~/renderer/actions/settings";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { createAction } from "@ledgerhq/live-common/hw/actions/staxLoadImage";
+import { createAction } from "@ledgerhq/live-common/hw/actions/customLockScreenLoad";
 import { ImageLoadRefusedOnDevice, ImageCommitRefusedOnDevice } from "@ledgerhq/live-common/errors";
 import withRemountableWrapper from "@ledgerhq/live-common/hoc/withRemountableWrapper";
 import { getEnv } from "@ledgerhq/live-env";
 import { useTranslation } from "react-i18next";
 import { Theme, Flex, IconsLegacy } from "@ledgerhq/react-ui";
 import useTheme from "~/renderer/hooks/useTheme";
-import { DeviceActionDefaultRendering } from "../DeviceAction";
-import Button from "../ButtonV3";
+import { DeviceActionDefaultRendering } from "~/renderer/components/DeviceAction";
+import Button from "~/renderer/components/ButtonV3";
+import { renderError } from "~/renderer/components/DeviceAction/rendering";
 import {
-  renderError,
-  renderImageCommitRequested,
-  renderImageLoadRequested,
-  renderLoadingImage,
-} from "../DeviceAction/rendering";
-import staxLoadImage from "@ledgerhq/live-common/hw/staxLoadImage";
+  RenderImageCommitRequested,
+  RenderImageLoadRequested,
+  RenderLoadingImage,
+} from "~/renderer/components/CustomImage/CustomLockScreenDeviceAction/stepsRendering";
+import customLockScreenLoad from "@ledgerhq/live-common/hw/customLockScreenLoad";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
+import { isCustomLockScreenSupported } from "@ledgerhq/live-common/device-core/capabilities/isCustomLockScreenSupported";
 
 type Props = {
   device?: Device | null | undefined;
   hexImage: string;
   padImage?: boolean;
+  deviceModelId: CLSSupportedDeviceModelId;
   source: HTMLImageElement["src"];
   inlineRetry?: boolean;
   restore?: boolean;
@@ -36,7 +39,7 @@ type Props = {
   blockNavigation?: (blocked: boolean) => void;
 };
 
-const action = createAction(getEnv("MOCK") ? mockedEventEmitter : staxLoadImage);
+const action = createAction(getEnv("MOCK") ? mockedEventEmitter : customLockScreenLoad);
 const mockedDevice = { deviceId: "", modelId: DeviceModelId.stax, wired: true };
 
 function checkIfIsRefusedOnStaxError(e: unknown): boolean {
@@ -46,6 +49,7 @@ function checkIfIsRefusedOnStaxError(e: unknown): boolean {
 const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props => {
   const {
     hexImage,
+    deviceModelId,
     onStart,
     onResult,
     onSkip,
@@ -60,12 +64,18 @@ const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props =>
   } = props;
   const type: Theme["theme"] = useTheme().colors.palette.type;
   const device = getEnv("MOCK") ? mockedDevice : props.device;
-  const commandRequest = useMemo(() => ({ hexImage, padImage }), [hexImage, padImage]);
+  const commandRequest = useMemo(
+    () => ({ hexImage, padImage, deviceModelId }),
+    [hexImage, padImage, deviceModelId],
+  );
 
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
-  const validDevice = device?.modelId === DeviceModelId.stax ? device : null;
+  const validDevice =
+    device?.modelId === deviceModelId && isCustomLockScreenSupported(device.modelId)
+      ? device
+      : null;
   const status = action?.useHook(validDevice, commandRequest);
   const payload = action?.mapResult(status);
 
@@ -111,11 +121,22 @@ const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props =>
   return (
     <Flex flexDirection="column" flex={1} justifyContent="center">
       {imageLoadRequested && device ? (
-        renderImageLoadRequested({ t, device, type, restore })
+        <RenderImageLoadRequested device={device} type={type} restore={restore} />
       ) : loadingImage && device ? (
-        renderLoadingImage({ t, device, progress, source })
+        <RenderLoadingImage
+          device={device}
+          deviceModelId={deviceModelId}
+          progress={progress}
+          source={source}
+        />
       ) : imageCommitRequested && device ? (
-        renderImageCommitRequested({ t, device, source, type, restore })
+        <RenderImageCommitRequested
+          device={device}
+          deviceModelId={deviceModelId}
+          source={source}
+          type={type}
+          restore={restore}
+        />
       ) : isError ? (
         <Flex flexDirection="column" alignItems="center">
           {renderError({

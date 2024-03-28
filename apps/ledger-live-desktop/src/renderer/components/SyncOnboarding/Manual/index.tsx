@@ -251,12 +251,13 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
           exit();
           setDrawer();
         },
+        deviceModelId,
       };
       setDrawer(ExitChecksDrawer, props, { forceDisableFocusTrap: true });
     } else {
       exit();
     }
-  }, [history, isEarlySecurityChecks]);
+  }, [deviceModelId, history, isEarlySecurityChecks]);
 
   const [contentScroll, setContentScroll] = useState(0);
 

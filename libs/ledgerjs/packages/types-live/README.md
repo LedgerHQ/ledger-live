@@ -143,7 +143,7 @@ Ledger Live main types.
 *   [AssetsDistribution](#assetsdistribution)
     *   [Properties](#properties-41)
 *   [PostOnboardingActionId](#postonboardingactionid)
-*   [navigationParams](#navigationparams)
+*   [getNavigationParams](#getnavigationparams)
 *   [startAction](#startaction)
 *   [](#)
 *   [PostOnboardingAction](#postonboardingaction)
@@ -1168,22 +1168,20 @@ Type: {isAvailable: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/
 
 Unique identifier of a post onboarding action.
 
-### navigationParams
+### getNavigationParams
 
 Navigation params when the user presses the button for this action
 
 *   In LLM, this will be used like this:
-    `navigation.navigate(...navigationParams)`
-*   In LLD, this will be used like this:
-    `history.push(...navigationParams)`
+    `navigation.navigate(...getNavigationParams)`
 
-Type: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<any>
+Type: function (options: {deviceModelId: DeviceModelId}): (\[any] | \[any, any])
 
 ### startAction
 
 The function to call when the user presses the button for this action
 
-Type: function (openModalCallback: any, navigationCallback: any): void
+Type: function (args: {openModalCallback: function (modalName: any): void, navigationCallback: function (route: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)): void, deviceModelId: DeviceModelId}): void
 
 ###
 

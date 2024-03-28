@@ -2,7 +2,6 @@ import React from "react";
 import { Flex, Box } from "@ledgerhq/react-ui";
 import styled from "styled-components";
 import StyleProviderV3 from "~/renderer/styles/StyleProviderV3";
-import transferBackground from "./assets/transferBackground.png";
 
 type Props = Partial<React.ComponentProps<"img">> & {
   /** source of the image inside */
@@ -12,7 +11,7 @@ type Props = Partial<React.ComponentProps<"img">> & {
   /** float between 0 and 1 */
   loadingProgress?: number;
   children?: React.ReactNode | undefined;
-  frameConfig?: FrameConfig;
+  frameConfig: FramedPictureConfig;
   scale?: number;
 };
 
@@ -39,7 +38,7 @@ const AbsoluteInnerImageContainer = styled(Flex).attrs({
   justifyContent: "flex-start",
 })``;
 
-type FrameConfig = {
+export type FramedPictureConfig = {
   frameHeight: number;
   frameWidth: number;
   innerWidth: number;
@@ -54,24 +53,8 @@ type FrameConfig = {
 };
 
 const DEBUG = false;
-export const transferConfigBase: FrameConfig = {
-  frameHeight: 236,
-  frameWidth: 150,
-  innerHeight: 223,
-  innerWidth: 140.5,
-  innerRight: 8,
-  innerTop: 7,
-  innerLeft: 1.5,
-  innerBottomHeight: 27,
-  borderRightRadius: 6.5,
-};
 
-export const transferConfig: FrameConfig = {
-  ...transferConfigBase,
-  backgroundSource: transferBackground,
-};
-
-function scaleFrameConfig(frameConfig: FrameConfig, scale: number): FrameConfig {
+function scaleFrameConfig(frameConfig: FramedPictureConfig, scale: number): FramedPictureConfig {
   const { backgroundSource, ...rest } = frameConfig;
   return {
     backgroundSource,
@@ -80,14 +63,14 @@ function scaleFrameConfig(frameConfig: FrameConfig, scale: number): FrameConfig 
         return [key, value * scale];
       }),
     ),
-  } as FrameConfig;
+  } as FramedPictureConfig;
 }
 
-const FramedImage: React.FC<Props> = ({
+const FramedPicture: React.FC<Props> = ({
   source,
   loadingProgress = 1,
   children,
-  frameConfig = transferConfig,
+  frameConfig,
   scale = 0.8,
   background,
   ...imageProps
@@ -157,4 +140,4 @@ const FramedImage: React.FC<Props> = ({
   );
 };
 
-export default FramedImage;
+export default FramedPicture;

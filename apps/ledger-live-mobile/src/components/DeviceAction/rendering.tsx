@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Platform, ScrollView, StyleSheet } from "react-native";
+import { Platform, ScrollView } from "react-native";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
 import {
@@ -60,14 +60,7 @@ import { TrackScreen, track } from "~/analytics";
 import CurrencyUnitValue from "../CurrencyUnitValue";
 import TermsFooter, { TermsProviders } from "../TermsFooter";
 import CurrencyIcon from "../CurrencyIcon";
-import { StaxFramedImageWithContext, transferConfig } from "../CustomImage/StaxFramedImage";
-import {
-  Props as FramedImageWithLottieProps,
-  StaxFramedLottieWithContext,
-} from "../CustomImage/StaxFramedLottie";
 import ModalLock from "../ModalLock";
-import confirmLockscreen from "~/animations/stax/customimage/confirmLockscreen.json";
-import allowConnection from "~/animations/stax/customimage/allowConnection.json";
 import Config from "react-native-config";
 
 export const Wrapper = styled(Flex).attrs({
@@ -132,9 +125,9 @@ const ConnectDeviceExtraContentWrapper = styled(Flex).attrs({
 })``;
 
 const animationStyles = (modelId: DeviceModelId) =>
-  modelId === DeviceModelId.stax ? { height: 210 } : {};
+  [DeviceModelId.stax, DeviceModelId.europa].includes(modelId) ? { height: 210 } : {};
 
-type RawProps = {
+export type RawProps = {
   t: (key: string, options?: { [key: string]: string | number }) => string;
   colors?: Theme["colors"];
   theme?: "light" | "dark";
@@ -1065,100 +1058,5 @@ export const AutoRepair = ({
       <DeviceActionProgress progress={progress} />
       <DescriptionText>{t("FirmwareUpdate.pleaseWaitUpdate")}</DescriptionText>
     </Wrapper>
-  );
-};
-
-const ImageLoadingGeneric: React.FC<{
-  title: string;
-  fullScreen?: boolean;
-  children?: React.ReactNode | undefined;
-  progress?: number;
-  lottieSource?: FramedImageWithLottieProps["lottieSource"];
-}> = ({ title, fullScreen = true, children, progress, lottieSource }) => {
-  return (
-    <Flex
-      flexDirection="column"
-      justifyContent="center"
-      alignItems="center"
-      alignSelf="stretch"
-      flex={fullScreen ? 1 : undefined}
-    >
-      <Flex {...(fullScreen ? StyleSheet.absoluteFillObject : {})}>
-        <Text textAlign="center" variant="h4" fontWeight="semiBold" mb={8} alignSelf="stretch">
-          {title}
-        </Text>
-      </Flex>
-      <Flex flexDirection={"column"} alignItems="center" alignSelf="stretch">
-        {lottieSource ? (
-          <StaxFramedLottieWithContext loadingProgress={progress} lottieSource={lottieSource}>
-            {children}
-          </StaxFramedLottieWithContext>
-        ) : (
-          <StaxFramedImageWithContext loadingProgress={progress} frameConfig={transferConfig}>
-            {children}
-          </StaxFramedImageWithContext>
-        )}
-      </Flex>
-    </Flex>
-  );
-};
-
-export const renderImageLoadRequested = ({
-  t,
-  device,
-  fullScreen = true,
-  wording,
-}: RawProps & { device: Device; fullScreen?: boolean; wording?: string }) => {
-  return (
-    <ImageLoadingGeneric
-      fullScreen={fullScreen}
-      title={
-        wording ??
-        t("customImage.allowPreview", {
-          productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
-        })
-      }
-      lottieSource={allowConnection}
-      progress={0}
-    />
-  );
-};
-
-export const renderLoadingImage = ({
-  t,
-  device,
-  progress,
-}: RawProps & { progress: number; device: Device }) => {
-  return (
-    <ImageLoadingGeneric
-      title={t(
-        progress > 0.9 ? "customImage.loadingPictureAlmostOver" : "customImage.loadingPicture",
-        {
-          productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
-        },
-      )}
-      progress={progress}
-    />
-  );
-};
-
-export const renderImageCommitRequested = ({
-  t,
-  device,
-  fullScreen = true,
-  wording,
-}: RawProps & { device: Device; fullScreen?: boolean; wording?: string }) => {
-  return (
-    <ImageLoadingGeneric
-      fullScreen={fullScreen}
-      title={
-        wording ??
-        t("customImage.commitRequested", {
-          productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
-        })
-      }
-      lottieSource={confirmLockscreen}
-      progress={0.89} // hardcoded value to not have the image overflowing the "confirm button" in the lottie
-    />
   );
 };

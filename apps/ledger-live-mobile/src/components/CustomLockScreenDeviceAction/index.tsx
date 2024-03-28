@@ -7,18 +7,25 @@ import withRemountableWrapper from "@ledgerhq/live-common/hoc/withRemountableWra
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { ImageLoadRefusedOnDevice, ImageCommitRefusedOnDevice } from "@ledgerhq/live-common/errors";
 import { setLastSeenCustomImage, clearLastSeenCustomImage } from "~/actions/settings";
-import { DeviceActionDefaultRendering } from "./DeviceAction";
-import { ImageSourceContext } from "./CustomImage/StaxFramedImage";
-import { renderError } from "./DeviceAction/rendering";
-import CustomImageBottomModal from "./CustomImage/CustomImageBottomModal";
-import Button from "./wrappedUi/Button";
-import Link from "./wrappedUi/Link";
+import { DeviceActionDefaultRendering } from "../DeviceAction";
+import { ImageSourceContext } from "../CustomImage/FramedPicture";
+import { renderError } from "../DeviceAction/rendering";
+import CustomImageBottomModal from "../CustomImage/CustomImageBottomModal";
+import Button from "../wrappedUi/Button";
+import Link from "../wrappedUi/Link";
 import { screen, TrackScreen } from "~/analytics";
 import { useStaxLoadImageDeviceAction } from "~/hooks/deviceActions";
 import { SettingsSetLastSeenCustomImagePayload } from "~/actions/types";
+import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device-core/capabilities/isCustomLockScreenSupported";
+import {
+  RenderImageCommitRequested,
+  RenderImageLoadRequested,
+  RenderLoadingImage,
+} from "./stepsRendering";
 
 type Props = {
   device: Device;
+  deviceModelId: CLSSupportedDeviceModelId;
   hexImage: string;
   source?: ComponentProps<typeof Image>["source"];
   onStart?: () => void;
@@ -39,6 +46,7 @@ const analyticsErrorTryAgainEventProps = {
 
 const CustomImageDeviceAction: React.FC<Props & { remountMe: () => void }> = ({
   device,
+  deviceModelId,
   hexImage,
   onStart,
   onResult,
@@ -47,7 +55,7 @@ const CustomImageDeviceAction: React.FC<Props & { remountMe: () => void }> = ({
   remountMe,
 }) => {
   const action = useStaxLoadImageDeviceAction();
-  const commandRequest = useMemo(() => ({ hexImage }), [hexImage]);
+  const commandRequest = useMemo(() => ({ hexImage, deviceModelId }), [hexImage, deviceModelId]);
 
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -80,7 +88,7 @@ const CustomImageDeviceAction: React.FC<Props & { remountMe: () => void }> = ({
     [dispatch, onResult],
   );
 
-  const { error } = status;
+  const { error, imageCommitRequested, imageLoadRequested, loadingImage, progress } = status;
   const isError = !!error;
   const isRefusedOnStaxError =
     (error as unknown) instanceof ImageLoadRefusedOnDevice ||
@@ -146,6 +154,12 @@ const CustomImageDeviceAction: React.FC<Props & { remountMe: () => void }> = ({
               </Flex>
             ) : null}
           </Flex>
+        ) : imageLoadRequested && device ? (
+          <RenderImageLoadRequested device={device} deviceModelId={deviceModelId} />
+        ) : loadingImage && device && typeof progress === "number" ? (
+          <RenderLoadingImage device={device} progress={progress} deviceModelId={deviceModelId} />
+        ) : imageCommitRequested && device ? (
+          <RenderImageCommitRequested device={device} deviceModelId={deviceModelId} />
         ) : (
           <DeviceActionDefaultRendering
             status={status}
@@ -156,7 +170,12 @@ const CustomImageDeviceAction: React.FC<Props & { remountMe: () => void }> = ({
           />
         )}
       </Flex>
-      <CustomImageBottomModal isOpened={isModalOpened} onClose={closeModal} device={device} />
+      <CustomImageBottomModal
+        isOpened={isModalOpened}
+        onClose={closeModal}
+        device={device}
+        deviceModelId={deviceModelId}
+      />
     </ImageSourceContext.Provider>
   );
 };

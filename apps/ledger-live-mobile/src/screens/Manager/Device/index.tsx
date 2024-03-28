@@ -111,8 +111,6 @@ const DeviceCard = ({
 
   const showDeviceLanguage = isLocalizationSupported && deviceInfo.languageId !== undefined;
 
-  const customLockScreenAvailable = isCustomLockScreenSupported(deviceModel.id);
-
   const disableFlows = pendingInstalls;
 
   return (
@@ -160,14 +158,18 @@ const DeviceCard = ({
           </Flex>
         </Flex>
       </Flex>
-      {customLockScreenAvailable || showDeviceLanguage ? (
+      {isCustomLockScreenSupported(deviceModel.id) || showDeviceLanguage ? (
         <>
           <Flex px={6}>
-            {customLockScreenAvailable && (
-              <CustomLockScreen disabled={disableFlows} device={device} />
+            {isCustomLockScreenSupported(deviceModel.id) && (
+              <CustomLockScreen
+                disabled={disableFlows}
+                device={device}
+                deviceModelId={deviceModel.id}
+              />
             )}
             {showDeviceLanguage && (
-              <Flex mt={customLockScreenAvailable ? 6 : 0}>
+              <Flex mt={isCustomLockScreenSupported(deviceModel.id) ? 6 : 0}>
                 <DeviceLanguage
                   disabled={disableFlows}
                   currentDeviceLanguage={

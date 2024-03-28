@@ -8,7 +8,7 @@ import type {
   FetchImageEvent,
   FetchImageRequest,
   Input as FetchImageInput,
-} from "../staxFetchImage";
+} from "../customLockScreenFetch";
 import type { Action, Device } from "./types";
 import { currentMode } from "./app";
 import { getImplementation } from "./implementations";
@@ -143,7 +143,7 @@ export const createAction = (
 
       const sub = impl
         .pipe(
-          tap((e: any) => log("actions-fetch-stax-image-event", e.type, e)),
+          tap((e: any) => log("actions-fetch-custom-lock-screen-event", e.type, e)),
           scan(reducer, getInitialState()),
         )
         .subscribe(setState);

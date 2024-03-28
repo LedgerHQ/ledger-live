@@ -6,12 +6,14 @@ import {
   TransportStatusError,
   StatusCodes,
 } from "@ledgerhq/errors";
+import { getDeviceModel } from "@ledgerhq/devices";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 
 import { ungzip } from "pako";
 
 import { withDevice } from "./deviceAccess";
 import getDeviceInfo from "./getDeviceInfo";
-import staxFetchImageHash from "./staxFetchImageHash";
+import customLockScreenFetchHash from "./customLockScreenFetchHash";
 import getAppAndVersion from "./getAppAndVersion";
 import { isDashboardName } from "./isDashboardName";
 import attemptToQuitApp, { AttemptToQuitAppEvent } from "./attemptToQuitApp";
@@ -40,6 +42,7 @@ export type FetchImageEvent =
 export type FetchImageRequest = {
   backupHash?: string; // When provided, will skip the backup if it matches the hash.
   allowedEmpty: boolean; // Complete instead of throwing if empty.
+  deviceModelId: DeviceModelId;
 };
 
 export type Input = {
@@ -48,7 +51,7 @@ export type Input = {
 };
 
 export default function fetchImage({ deviceId, request }: Input): Observable<FetchImageEvent> {
-  const { backupHash, allowedEmpty = false } = request;
+  const { backupHash, allowedEmpty = false, deviceModelId } = request;
 
   const sub = withDevice(deviceId)(
     transport =>
@@ -64,7 +67,7 @@ export default function fetchImage({ deviceId, request }: Input): Observable<Fet
             mergeMap(async () => {
               timeoutSub.unsubscribe();
               // Fetch the image hash from the device
-              const imgHash = await staxFetchImageHash(transport);
+              const imgHash = await customLockScreenFetchHash(transport);
               subscriber.next({ type: "currentImageHash", imgHash });
               // We don't have an image to backup
               if (imgHash === "") {
@@ -72,7 +75,11 @@ export default function fetchImage({ deviceId, request }: Input): Observable<Fet
                   subscriber.complete();
                   return;
                 } else {
-                  return subscriber.error(new ImageDoesNotExistOnDevice());
+                  return subscriber.error(
+                    new ImageDoesNotExistOnDevice(undefined, {
+                      productName: getDeviceModel(deviceModelId).productName,
+                    }),
+                  );
                 }
               } else if (backupHash === imgHash) {
                 subscriber.next({ type: "imageAlreadyBackedUp" });
@@ -99,7 +106,11 @@ export default function fetchImage({ deviceId, request }: Input): Observable<Fet
 
               if (imageLength === 0) {
                 // It should never happen since we fetched the hash earlier but hey.
-                return subscriber.error(new ImageDoesNotExistOnDevice());
+                return subscriber.error(
+                  new ImageDoesNotExistOnDevice(undefined, {
+                    productName: getDeviceModel(deviceModelId).productName,
+                  }),
+                );
               }
 
               let imageBuffer = Buffer.from([]);
@@ -136,7 +147,7 @@ export default function fetchImage({ deviceId, request }: Input): Observable<Fet
                 currentOffset += chunkSize;
               }
 
-              const hexImage = await parseStaxImageFormat(imageBuffer);
+              const hexImage = await parseCustomLockScreenImageFormat(imageBuffer);
 
               subscriber.next({ type: "imageFetched", hexImage });
 
@@ -174,8 +185,8 @@ export default function fetchImage({ deviceId, request }: Input): Observable<Fet
   return sub as Observable<FetchImageEvent>;
 }
 
-// transforms from a Stax binary image format to an LLM hex string format
-const parseStaxImageFormat: (
+// transforms from a Custom Lock Screen binary image format to an LLM hex string format
+const parseCustomLockScreenImageFormat: (
   staxImageBuffer: Buffer,
 ) => Promise<string> = async staxImageBuffer => {
   // const width = staxImageBuffer.readUint16LE(0); // always 400
