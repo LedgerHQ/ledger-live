@@ -8,6 +8,7 @@ import FormattedVal from "~/renderer/components/FormattedVal";
 import Text from "~/renderer/components/Text";
 import CounterValue from "~/renderer/components/CounterValue";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
+import TranslatedError from "~/renderer/components/TranslatedError";
 import { StepProps } from "../types";
 import BigNumber from "bignumber.js";
 
@@ -96,18 +97,28 @@ export default class StepSummary extends PureComponent<StepProps> {
 }
 export function StepSummaryFooter({ transitionTo, status, bridgePending, transaction }: StepProps) {
   const { errors } = status;
-  const canNext = !bridgePending && !errors.validators && transaction;
+  const canNext = !errors.amount && !bridgePending && !errors.validators && transaction;
+  const displayError = errors.amount?.message ? errors.amount : "";
   return (
     <>
-      <Box horizontal>
-        <Button
-          id="undelegate-continue-button"
-          disabled={!canNext}
-          primary
-          onClick={() => transitionTo("connectDevice")}
-        >
-          <Trans i18nKey="common.continue" />
-        </Button>
+      <Box horizontal alignItems="center" flow={2} grow>
+        {displayError ? (
+          <Box grow>
+            <Text fontSize={13} color="alertRed">
+              <TranslatedError error={displayError} field="title" />
+            </Text>
+          </Box>
+        ) : null}
+        <Box horizontal>
+          <Button
+            id="undelegate-continue-button"
+            disabled={!canNext}
+            primary
+            onClick={() => transitionTo("connectDevice")}
+          >
+            <Trans i18nKey="common.continue" />
+          </Button>
+        </Box>
       </Box>
     </>
   );

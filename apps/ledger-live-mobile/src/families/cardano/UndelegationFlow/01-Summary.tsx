@@ -1,7 +1,7 @@
 import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
-import React, { ReactNode, useCallback } from "react";
+import React, { ReactNode, useCallback, useMemo } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { SafeAreaView, StyleSheet, View } from "react-native";
 import { useSelector } from "react-redux";
@@ -17,7 +17,7 @@ import type {
   CardanoAccount,
   CardanoDelegation,
 } from "@ledgerhq/live-common/families/cardano/types";
-import { Text } from "@ledgerhq/native-ui";
+import { Text, Box } from "@ledgerhq/native-ui";
 import { AccountLike } from "@ledgerhq/types-live";
 import Button from "~/components/Button";
 import Circle from "~/components/Circle";
@@ -30,6 +30,7 @@ import { TrackScreen } from "~/analytics";
 import { rgba } from "../../../colors";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CardanoUndelegationFlowParamList } from "./types";
+import TranslatedError from "~/components/TranslatedError";
 
 type Props = StackNavigatorProps<
   CardanoUndelegationFlowParamList,
@@ -63,6 +64,10 @@ export default function UndelegationSummary({ navigation, route }: Props) {
     return { account, transaction: tx };
   });
 
+  const displayError = useMemo(() => {
+    return status.errors.amount ? status.errors.amount : "";
+  }, [status]);
+
   const currency = getAccountCurrency(account);
   const color = getCurrencyColor(currency);
 
@@ -92,13 +97,24 @@ export default function UndelegationSummary({ navigation, route }: Props) {
         </View>
       </View>
       <View style={styles.footer}>
+
+        {displayError ? (
+          <Box>
+            <Text fontSize={13} color="red">
+              <TranslatedError error={displayError} field="title" />
+            </Text>
+          </Box>
+        ) : (
+          <></>
+        )}
+        
         <Button
           event="SummaryContinue"
           type="primary"
           title={<Trans i18nKey="common.continue" />}
           containerStyle={styles.continueButton}
           onPress={onContinue}
-          disabled={bridgePending || !!bridgeError}
+          disabled={bridgePending || !!bridgeError || !!displayError}
           pending={bridgePending}
         />
       </View>
