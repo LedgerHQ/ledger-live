@@ -9,7 +9,6 @@ import {
   useCurrencyData,
   useMarketDataProvider,
 } from "@ledgerhq/live-common/market/v2/useMarketDataProvider";
-import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
 import { Page, useMarketActions } from "./useMarketActions";
 import {
   removeStarredMarketCoins,
@@ -17,8 +16,6 @@ import {
   setMarketOptions,
 } from "~/renderer/actions/market";
 import { marketParamsSelector, starredMarketCoinsSelector } from "~/renderer/reducers/market";
-
-const ranges = Object.keys(rangeDataTable).filter(k => k !== "1h");
 
 export const useMarketCoin = () => {
   const marketParams = useSelector(marketParamsSelector);
@@ -37,33 +34,14 @@ export const useMarketCoin = () => {
   const resCurrencyChartData = useCurrencyChartData({
     counterCurrency,
     id: currencyId,
-    ranges,
+    range,
   });
 
-  const { currencyDataByRanges, currencyInfo } = useCurrencyData({
+  const { currencyData, currencyInfo } = useCurrencyData({
     counterCurrency,
     id: currencyId,
-    ranges,
+    range,
   });
-
-  const dataChart = useMemo(
-    () => resCurrencyChartData?.[ranges.indexOf(range)].data,
-    [range, resCurrencyChartData],
-  );
-  const isLoadingDataChart = useMemo(
-    () => resCurrencyChartData?.[ranges.indexOf(range)].isLoading,
-    [range, resCurrencyChartData],
-  );
-
-  const dataCurrency = useMemo(
-    () => currencyDataByRanges?.[ranges.indexOf(range)].data,
-    [range, currencyDataByRanges],
-  );
-
-  const isLoadingData = useMemo(
-    () => currencyDataByRanges?.[ranges.indexOf(range)].isLoading,
-    [range, currencyDataByRanges],
-  );
 
   const currency = useMemo(() => currencyInfo?.data, [currencyInfo]);
   const isLoadingCurrency = useMemo(() => currencyInfo?.isLoading, [currencyInfo]);
@@ -119,10 +97,10 @@ export const useMarketCoin = () => {
     onSwap,
     toggleStar,
     color,
-    dataCurrency,
-    dataChart,
-    isLoadingDataChart,
-    isLoadingData,
+    dataCurrency: currencyData.data,
+    dataChart: resCurrencyChartData.data,
+    isLoadingDataChart: resCurrencyChartData.isLoading,
+    isLoadingData: currencyData.isLoading,
     isLoadingCurrency,
     changeRange,
     range,
