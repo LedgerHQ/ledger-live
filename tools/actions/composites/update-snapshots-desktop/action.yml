@@ -4,6 +4,9 @@ inputs:
   os:
     description: "name of the os (same as runs-on)"
     required: true
+  prNumber:
+    description: "PR number"
+    required: true
 
 runs:
   using: "composite"
@@ -38,13 +41,25 @@ runs:
     - name: Commit snapshots
       if: steps.status.outputs.status != 0 || steps.status-windows.outputs.status != 0
       run: |
+        git config branch.autoSetupMerge simple
         git add ./apps/ledger-live-desktop/tests/specs &&
         git commit -m "test(lld): update screenshots (${{ inputs.os }}) ${{ steps.changes.outputs.changes }} lld, test, screenshot" &&
         git restore . &&
-        git pull --rebase &&
-        git push ||
-        echo ""
+        git pull --rebase
       shell: bash
+    - name: Push to PR
+      continue-on-error: true
+      shell: bash
+      id: push
+      run: |
+        git push
+    - name: Push to remote ref
+      shell: bash
+      id: push-remote
+      if: steps.push.outcome == 'failure'
+      run: |
+        git push origin HEAD:refs/pull/${{ inputs.prNumber }}/merge ||
+        echo ""
     - name: Upload playwright results [On Failure]
       uses: actions/upload-artifact@v3
       if: failure() && !cancelled()

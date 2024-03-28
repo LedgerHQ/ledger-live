@@ -84,10 +84,11 @@ jobs:
           skip_ruby: true
           install_playwright: true
           turborepo-server-port: ${{ steps.toolchain.outputs.port }}
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/update-snapshots-desktop@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/update-snapshots-desktop@chore/update-push-on-forks
         id: update-snapshots
         with:
           os: ubuntu-latest
+          prNumber: ${{ inputs.number }}
 
   report-start:
     name: Report start
