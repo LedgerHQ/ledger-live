@@ -544,10 +544,7 @@ const OperationD = (props: Props) => {
             {subOperations.map((op, i) => {
               const opAccount = findSubAccountById(account, op.accountId);
               if (!opAccount) return null;
-              const subAccountName =
-                opAccount.type === "ChildAccount"
-                  ? opAccount.name
-                  : getAccountCurrency(opAccount).name;
+              const subAccountName = getAccountCurrency(opAccount).name;
               return (
                 <div key={`${op.id}`}>
                   <OperationComponent

@@ -36,7 +36,7 @@ const Delegation = ({ account, parentAccount }: Props) => {
 
   const stakingUrl = useLocalizedUrl(urls.stakingTezos);
 
-  return account.type === "ChildAccount" && !delegation ? null : (
+  return (
     <TableContainer mb={6}>
       <TableHeader
         title={t("delegation.header")}

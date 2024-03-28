@@ -71,10 +71,7 @@ const TargetAccount = memo(function TargetAccount({
   const parentAccount =
     account?.type !== "Account" ? allAccounts?.find(a => a.id === account?.parentId) : null;
   const parentName = parentAccount ? getAccountName(parentAccount) : undefined;
-  const balance =
-    account.type !== "ChildAccount" && account.spendableBalance
-      ? account.spendableBalance
-      : account.balance;
+  const balance = account.spendableBalance || account.balance;
 
   const onClick = useCallback(() => {
     track("button_clicked2", {

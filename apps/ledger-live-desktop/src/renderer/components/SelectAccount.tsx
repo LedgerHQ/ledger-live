@@ -106,11 +106,8 @@ export const AccountOption = React.memo<AccountOptionProps>(function AccountOpti
   const currency = getAccountCurrency(account);
   const unit = getAccountUnit(account);
   const name = getAccountName(account);
-  const nested = ["TokenAccount", "ChildAccount"].includes(account.type);
-  const balance =
-    account.type !== "ChildAccount" && account.spendableBalance
-      ? account.spendableBalance
-      : account.balance;
+  const nested = "TokenAccount" === account.type;
+  const balance = account.spendableBalance || account.balance;
   const textContents = singleLineLayout ? (
     <>
       <Box flex="1" horizontal alignItems="center">

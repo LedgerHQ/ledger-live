@@ -5,7 +5,7 @@ import {
   getAccountName,
   getAccountUnit,
 } from "@ledgerhq/live-common/account/index";
-import { TokenAccount, AccountLike, ChildAccount, DerivationMode } from "@ledgerhq/types-live";
+import { TokenAccount, AccountLike, DerivationMode } from "@ledgerhq/types-live";
 import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { useSelector } from "react-redux";
 import { GestureResponderEvent } from "react-native";
@@ -45,9 +45,7 @@ const AccountRow = ({
   // makes it refresh if this changes
   useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
   const currency = getAccountCurrency(account);
-  const parentAccount = useSelector((state: State) =>
-    parentAccountSelector(state, { account: account as ChildAccount }),
-  );
+  const parentAccount = useSelector((state: State) => parentAccountSelector(state, { account }));
 
   const name = getAccountName(account);
   const unit = getAccountUnit(account);

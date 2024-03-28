@@ -9,7 +9,6 @@ import type {
   AccountLikeArray,
   SubAccount,
   TokenAccount,
-  ChildAccount,
 } from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 
@@ -31,9 +30,6 @@ export const getFeesCurrency = (account?: AccountLike): TokenCurrency | CryptoCu
     case "Account":
       return account.feesCurrency || account.currency;
 
-    case "ChildAccount":
-      return account.currency;
-
     case "TokenAccount":
       return account.token;
 
@@ -50,7 +46,6 @@ export const getFeesUnit = (currency: TokenCurrency | CryptoCurrency): Unit => {
 export const getAccountCurrency = (account?: AccountLike): TokenCurrency | CryptoCurrency => {
   switch (account?.type) {
     case "Account":
-    case "ChildAccount":
       return account.currency;
 
     case "TokenAccount":
@@ -69,9 +64,6 @@ export const getAccountUnit = (account: AccountLike): Unit => {
     case "TokenAccount":
       return account.token.units[0];
 
-    case "ChildAccount":
-      return account.currency.units[0];
-
     default:
       throw new Error("invalid account.type=" + (account as AccountLike).type);
   }
@@ -80,7 +72,6 @@ export const getAccountUnit = (account: AccountLike): Unit => {
 export const getAccountName = (account: AccountLike): string => {
   switch (account.type) {
     case "Account":
-    case "ChildAccount":
       return account.name;
 
     case "TokenAccount":
@@ -91,19 +82,8 @@ export const getAccountName = (account: AccountLike): string => {
   }
 };
 
-export const getAccountSpendableBalance = (account: AccountLike): BigNumber => {
-  switch (account.type) {
-    case "Account":
-    case "TokenAccount":
-      return account.spendableBalance;
-
-    case "ChildAccount":
-      return account.balance;
-
-    default:
-      throw new Error("invalid account.type=" + (account as AccountLike).type);
-  }
-};
+export const getAccountSpendableBalance = (account: AccountLike): BigNumber =>
+  account.spendableBalance;
 
 export const isAccountEmpty = (a: AccountLike): boolean => {
   // FIXME LIVE-5966 why do we need this? also this shouldn't be implemented here / this part must be removed back to the coin specifics
@@ -147,15 +127,6 @@ export function clearAccount<T extends AccountLike>(
   familyClean?: (account: Account) => void,
 ): T {
   if (account.type === "TokenAccount") {
-    return {
-      ...account,
-      balanceHistoryCache: emptyHistoryCache,
-      operations: [],
-      pendingOperations: [],
-    };
-  }
-
-  if (account.type === "ChildAccount") {
     return {
       ...account,
       balanceHistoryCache: emptyHistoryCache,
@@ -363,20 +334,18 @@ export function isTokenAccount(account?: AccountLike): account is TokenAccount {
   return account?.type === "TokenAccount";
 }
 
-export function isChildAccount(account?: AccountLike): account is ChildAccount {
-  return account?.type === "ChildAccount";
-}
-
+/**
+ * @deprecated use isTokenAccount instead
+ */
 export function isSubAccount(account?: AccountLike): account is SubAccount {
-  return isTokenAccount(account) || isChildAccount(account);
+  return isTokenAccount(account);
 }
 
 export function getParentAccount(account: AccountLike, accounts: AccountLike[]): Account {
   switch (account.type) {
     case "Account":
       return account;
-    case "TokenAccount":
-    case "ChildAccount": {
+    case "TokenAccount": {
       const parentAccount = accounts.find(a => a.id == account.parentId);
       if (!parentAccount) {
         throw new Error("No 'parentAccount' account provided for token account");

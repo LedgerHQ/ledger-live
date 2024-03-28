@@ -2,7 +2,7 @@ import { Account, AccountLike } from "@ledgerhq/types-live";
 import { v5 as uuidv5 } from "uuid";
 import byFamily from "../generated/walletApiAdapter";
 import type { Transaction } from "../generated/types";
-import { isTokenAccount, isSubAccount } from "../account";
+import { isTokenAccount } from "../account";
 import {
   WalletAPIAccount,
   WalletAPICurrency,
@@ -26,7 +26,7 @@ export function accountToWalletAPIAccount(
   const walletApiId = uuidv5(account.id, NAMESPACE);
   uuidToAccountId.set(walletApiId, account.id);
 
-  if (isSubAccount(account)) {
+  if (isTokenAccount(account)) {
     if (!parentAccount) {
       throw new Error("No 'parentAccount' account provided for token account");
     }
@@ -41,17 +41,9 @@ export function accountToWalletAPIAccount(
       address: parentAccount.freshAddress,
       blockHeight: parentAccount.blockHeight,
       lastSyncDate: parentAccount.lastSyncDate,
-      ...(isTokenAccount(account)
-        ? {
-            name: `${parentAccount.name} (${account.token.ticker})`,
-            currency: account.token.id,
-            spendableBalance: account.spendableBalance,
-          }
-        : {
-            name: account.name,
-            currency: account.currency.id,
-            spendableBalance: parentAccount.spendableBalance,
-          }),
+      name: `${parentAccount.name} (${account.token.ticker})`,
+      currency: account.token.id,
+      spendableBalance: account.spendableBalance,
     };
   }
 

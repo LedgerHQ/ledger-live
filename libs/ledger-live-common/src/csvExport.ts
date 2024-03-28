@@ -50,7 +50,7 @@ const fields: Field[] = [
   {
     title: "Operation Fees",
     cell: (account, parentAccount, op) =>
-      ["TokenAccount", "ChildAccount"].includes(account.type)
+      "TokenAccount" === account.type
         ? ""
         : formatCurrencyUnit(getAccountCurrency(account).units[0], op.fee, {
             disableRounding: true,

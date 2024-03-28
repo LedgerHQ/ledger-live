@@ -3,12 +3,9 @@ import type {
   Account,
   AccountBridge,
   AccountRaw,
-  ChildAccount,
-  ChildAccountRaw,
   Operation,
   OperationRaw,
   SubAccount,
-  SubAccountRaw,
   TokenAccount,
   TokenAccountRaw,
   TransactionCommon,
@@ -76,8 +73,6 @@ export function fromAccountRaw(rawAccount: AccountRaw, fromRaw?: FromFamiliyRaw)
           if (findTokenById(ta.tokenId)) {
             return fromTokenAccountRaw(ta);
           }
-        } else {
-          return fromSubAccountRaw(ta);
         }
       })
       .filter(Boolean);
@@ -227,7 +222,7 @@ export function toAccountRaw(account: Account, toFamilyRaw?: ToFamiliyRaw): Acco
   }
 
   if (subAccounts) {
-    res.subAccounts = subAccounts.map(a => toSubAccountRaw(a, toFamilyRaw?.toOperationExtraRaw));
+    res.subAccounts = subAccounts.map(a => toTokenAccountRaw(a, toFamilyRaw?.toOperationExtraRaw));
   }
 
   if (toFamilyRaw?.assignToAccountRaw) {
@@ -322,122 +317,4 @@ function toTokenAccountRaw(
     swapHistory: (swapHistory || []).map(toSwapOperationRaw),
     approvals,
   };
-}
-
-//-- ChildAccount
-
-function fromChildAccountRaw(
-  raw: ChildAccountRaw,
-  fromOperationExtraRaw?: AccountBridge<TransactionCommon>["fromOperationExtraRaw"],
-): ChildAccount {
-  const {
-    id,
-    name,
-    parentId,
-    currencyId,
-    starred,
-    creationDate,
-    operations,
-    operationsCount,
-    pendingOperations,
-    balance,
-    address,
-    balanceHistoryCache,
-    swapHistory,
-  } = raw;
-  const currency = getCryptoCurrencyById(currencyId);
-
-  const convertOperation = (op: OperationRaw) =>
-    fromOperationRaw(op, id, null, fromOperationExtraRaw);
-
-  const res: ChildAccount = {
-    type: "ChildAccount",
-    id,
-    name,
-    starred: starred || false,
-    parentId,
-    currency,
-    address,
-    balance: new BigNumber(balance),
-    creationDate: new Date(creationDate || Date.now()),
-    operationsCount: operationsCount || (operations && operations.length) || 0,
-    operations: (operations || []).map(convertOperation),
-    pendingOperations: (pendingOperations || []).map(convertOperation),
-    swapHistory: (swapHistory || []).map(fromSwapOperationRaw),
-    balanceHistoryCache: balanceHistoryCache || emptyHistoryCache,
-  };
-  res.balanceHistoryCache = generateHistoryFromOperations(res);
-  return res;
-}
-function toChildAccountRaw(
-  ca: ChildAccount,
-  toOperationExtraRaw?: AccountBridge<TransactionCommon>["toOperationExtraRaw"],
-): ChildAccountRaw {
-  const {
-    id,
-    name,
-    parentId,
-    starred,
-    currency,
-    operations,
-    operationsCount,
-    pendingOperations,
-    balance,
-    balanceHistoryCache,
-    address,
-    creationDate,
-    swapHistory,
-  } = ca;
-
-  const convertOperation = (op: Operation) => toOperationRaw(op, undefined, toOperationExtraRaw);
-
-  return {
-    type: "ChildAccountRaw",
-    id,
-    name,
-    starred,
-    parentId,
-    address,
-    operationsCount,
-    currencyId: currency.id,
-    balance: balance.toString(),
-    balanceHistoryCache,
-    creationDate: creationDate.toISOString(),
-    operations: operations.map(convertOperation),
-    pendingOperations: pendingOperations.map(convertOperation),
-    swapHistory: (swapHistory || []).map(toSwapOperationRaw),
-  };
-}
-
-//-- SubAccount
-
-function fromSubAccountRaw(
-  raw: SubAccountRaw,
-  fromOperationExtraRaw?: AccountBridge<TransactionCommon>["fromOperationExtraRaw"],
-): SubAccount {
-  switch (raw.type) {
-    case "ChildAccountRaw":
-      return fromChildAccountRaw(raw, fromOperationExtraRaw);
-
-    case "TokenAccountRaw":
-      return fromTokenAccountRaw(raw, fromOperationExtraRaw);
-
-    default:
-      throw new Error("invalid raw.type=" + (raw as SubAccountRaw).type);
-  }
-}
-function toSubAccountRaw(
-  subAccount: SubAccount,
-  toOperationExtraRaw?: AccountBridge<TransactionCommon>["toOperationExtraRaw"],
-): SubAccountRaw {
-  switch (subAccount.type) {
-    case "ChildAccount":
-      return toChildAccountRaw(subAccount, toOperationExtraRaw);
-
-    case "TokenAccount":
-      return toTokenAccountRaw(subAccount, toOperationExtraRaw);
-
-    default:
-      throw new Error("invalid subAccount.type=" + (subAccount as SubAccount).type);
-  }
 }

@@ -66,7 +66,6 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
   const getCurrencyByAccount = useCallback((account: AccountLike) => {
     switch (account.type) {
       case "Account":
-      case "ChildAccount":
         return account.currency;
       case "TokenAccount":
         return account.token;

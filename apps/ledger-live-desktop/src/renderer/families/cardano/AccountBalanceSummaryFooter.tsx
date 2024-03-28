@@ -50,7 +50,6 @@ const AmountValue = styled(Text).attrs(() => ({
 const AccountBalanceSummaryFooter: CardanoFamily["AccountBalanceSummaryFooter"] = ({ account }) => {
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
-  if (account.type === "ChildAccount") return null;
   const _spendableBalance = account.spendableBalance;
   const unit = getAccountUnit(account);
   const formatConfig = {

@@ -1,5 +1,5 @@
 import { CryptoCurrency, TokenCurrency, Unit } from "@ledgerhq/types-cryptoassets";
-import { Account, ChildAccount, Operation, SubAccount, TokenAccount } from "@ledgerhq/types-live";
+import { Account, Operation, SubAccount, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import {
   areAllOperationsLoaded,
@@ -11,14 +11,9 @@ import {
   getFeesCurrency,
 } from ".";
 import { isAccountEmpty, isAccountBalanceSignificant, clearAccount } from "./helpers";
+import { getTokenById } from "../currencies";
 
 const mockAccount = {} as Account;
-const childAccount = {
-  ...mockAccount,
-  type: "ChildAccount",
-  parentId: "sampleId",
-  address: "sampleAddress",
-} as ChildAccount;
 const tokenAccount = {
   ...mockAccount,
   type: "TokenAccount",
@@ -38,38 +33,11 @@ describe(getAccountCurrency.name, () => {
     });
   });
 
-  describe("given a ChildAccount", () => {
-    it("should return the currency", () => {
-      const sampleCurrency = { family: "bitcoin" } as CryptoCurrency;
-      childAccount.currency = sampleCurrency;
-      expect(getAccountCurrency(childAccount)).toEqual(sampleCurrency);
-    });
-  });
-
   describe("given a TokenAccount", () => {
     it("should return the token currency", () => {
       const sampleToken = { id: "tokenId" } as TokenCurrency;
       tokenAccount.token = sampleToken;
       expect(getAccountCurrency(tokenAccount)).toEqual(sampleToken);
-    });
-  });
-
-  describe("given an unknown type Account", () => {
-    beforeEach(() => {
-      (mockAccount as any).type = "DefinitelyNotAStandardAccount";
-    });
-
-    it("should throw an error", () => {
-      expect(() => getAccountCurrency(mockAccount)).toThrow(Error);
-    });
-
-    it("should display the account type in the error message", () => {
-      expect.assertions(1);
-      try {
-        getAccountCurrency(mockAccount);
-      } catch (e: unknown) {
-        expect((e as Error).message.includes(mockAccount.type)).toEqual(true);
-      }
     });
   });
 });
@@ -83,14 +51,6 @@ describe(getAccountUnit.name, () => {
       const sampleUnit = { name: "unit" } as Unit;
       mockAccount.unit = sampleUnit;
       expect(getAccountUnit(mockAccount)).toEqual(sampleUnit);
-    });
-  });
-
-  describe("given a ChildAccount", () => {
-    it("should return the currency unit", () => {
-      const sampleUnit = { name: "unit" } as Unit;
-      childAccount.currency = { units: [sampleUnit] } as CryptoCurrency;
-      expect(getAccountUnit(childAccount)).toEqual(sampleUnit);
     });
   });
 
@@ -145,14 +105,6 @@ describe(getFeesCurrency.name, () => {
     });
   });
 
-  describe("given a ChildAccount", () => {
-    it("should return the currency", () => {
-      const sampleCurrency = { family: "bitcoin" } as CryptoCurrency;
-      childAccount.currency = sampleCurrency;
-      expect(getFeesCurrency(childAccount)).toEqual(sampleCurrency);
-    });
-  });
-
   describe("given a TokenAccount", () => {
     it("should return the token currency", () => {
       const sampleToken = { id: "tokenId" } as TokenCurrency;
@@ -190,14 +142,6 @@ describe(getAccountName.name, () => {
       const sampleAccountName = "SampleAccountName";
       mockAccount.name = sampleAccountName;
       expect(getAccountName(mockAccount)).toEqual(sampleAccountName);
-    });
-  });
-
-  describe("given a ChildAccount", () => {
-    it("should return the account name", () => {
-      const sampleAccountName = "SampleAccountName";
-      childAccount.name = sampleAccountName;
-      expect(getAccountName(childAccount)).toEqual(sampleAccountName);
     });
   });
 
@@ -241,38 +185,11 @@ describe(getAccountSpendableBalance.name, () => {
     });
   });
 
-  describe("given a ChildAccount", () => {
-    it("should return the account balance", () => {
-      const sampleAccountBalance = new BigNumber(10);
-      childAccount.balance = sampleAccountBalance;
-      expect(getAccountSpendableBalance(childAccount)).toEqual(sampleAccountBalance);
-    });
-  });
-
   describe("given a TokenAccount", () => {
     it("should return the token account spendable balance", () => {
       const sampleAccountBalance = new BigNumber(10);
       tokenAccount.spendableBalance = sampleAccountBalance;
       expect(getAccountSpendableBalance(tokenAccount)).toEqual(sampleAccountBalance);
-    });
-  });
-
-  describe("given an unknown type Account", () => {
-    beforeEach(() => {
-      (mockAccount as any).type = "DefinitelyNotAStandardAccount";
-    });
-
-    it("should throw an error", () => {
-      expect(() => getAccountSpendableBalance(mockAccount)).toThrow(Error);
-    });
-
-    it("should display the account type in the error message", () => {
-      expect.assertions(1);
-      try {
-        getAccountSpendableBalance(mockAccount);
-      } catch (e: unknown) {
-        expect((e as Error).message.includes(mockAccount.type)).toEqual(true);
-      }
     });
   });
 });
@@ -360,27 +277,6 @@ describe(areAllOperationsLoaded.name, () => {
       });
     });
   });
-  describe("given an account without subAccounts", () => {
-    describe("when operations count is different from operations length", () => {
-      beforeEach(() => {
-        childAccount.operationsCount = 2;
-        childAccount.operations = [{} as Operation];
-      });
-      it("should return false", () => {
-        expect(areAllOperationsLoaded(childAccount)).toEqual(false);
-      });
-    });
-
-    describe("when operations count is same as operations length", () => {
-      beforeEach(() => {
-        childAccount.operationsCount = 1;
-        childAccount.operations = [{} as Operation];
-      });
-      it("should return true", () => {
-        expect(areAllOperationsLoaded(childAccount)).toEqual(true);
-      });
-    });
-  });
 });
 
 describe(isAccountBalanceSignificant.name, () => {
@@ -423,26 +319,6 @@ describe(clearAccount.name, () => {
     });
   });
 
-  describe("given a ChildAccount", () => {
-    const childAccount = {
-      ...mockAccount,
-      type: "ChildAccount",
-      parentId: "sampleId",
-      address: "sampleAddress",
-    } as ChildAccount;
-
-    it("should clear operations", () => {
-      const clearedAccount = clearAccount(childAccount);
-      expect(clearedAccount.operations.length).toEqual(0);
-      expect(clearedAccount.pendingOperations.length).toEqual(0);
-    });
-
-    it("should clear balanceHistory", () => {
-      const clearedAccount = clearAccount(childAccount);
-      expect(clearedAccount.balanceHistoryCache).toEqual(emptyHistoryCache);
-    });
-  });
-
   describe("given an Account", () => {
     const ethereumCurrency = {
       family: "evm",
@@ -451,7 +327,7 @@ describe(clearAccount.name, () => {
       ...mockAccount,
       subAccounts: [
         {
-          currency: ethereumCurrency,
+          token: getTokenById("ethereum/erc20/dao_maker"),
         } as SubAccount,
       ],
       currency: ethereumCurrency,
