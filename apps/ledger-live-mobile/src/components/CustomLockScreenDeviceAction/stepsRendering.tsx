@@ -12,7 +12,7 @@ import {
   FramedLottieWithContext,
 } from "../CustomImage/FramedLottie";
 import { useTranslation } from "react-i18next";
-import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device-core/capabilities/isCustomLockScreenSupported";
+import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 
 const ImageLoadingGeneric: React.FC<{

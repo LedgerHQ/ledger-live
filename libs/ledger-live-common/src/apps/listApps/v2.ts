@@ -18,7 +18,7 @@ import { getDeviceName } from "../../device/use-cases/getDeviceNameUseCase";
 import { getLatestFirmwareForDeviceUseCase } from "../../device/use-cases/getLatestFirmwareForDeviceUseCase";
 import { getProviderIdUseCase } from "../../device/use-cases/getProviderIdUseCase";
 import { mapApplicationV2ToApp } from "../polyfill";
-import { ManagerApiRepository } from "@ledgerhq/device-core/index";
+import { ManagerApiRepository } from "@ledgerhq/device-core";
 
 // Hash discrepancies for these apps do NOT indicate a potential update,
 // these apps have a mechanism that makes their hash change every time.

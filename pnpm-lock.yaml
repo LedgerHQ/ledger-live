@@ -2084,6 +2084,9 @@ importers:
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../ledgerjs/packages/logs
+      '@ledgerhq/types-devices':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/types-devices
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../ledgerjs/packages/types-live
@@ -41093,7 +41096,7 @@ packages:
       pretty-format: 29.7.0
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.7.0(@types/node@20.8.10)(typescript@5.1.3)
+      ts-node: 10.7.0(@types/node@20.8.10)(source-map-support@0.5.21)(typescript@5.1.3)
     transitivePeerDependencies:
       - babel-plugin-macros
       - metro
@@ -41218,7 +41221,7 @@ packages:
       pretty-format: 29.7.0
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.7.0(@types/node@20.8.10)(typescript@5.1.3)
+      ts-node: 10.7.0(@types/node@20.8.10)(source-map-support@0.5.21)(typescript@5.1.3)
     transitivePeerDependencies:
       - babel-plugin-macros
       - metro

@@ -8,7 +8,7 @@ import StepContainer from "./StepContainer";
 import { analyticsPageNames, analyticsFlowName } from "./shared";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
-import { getScreenVisibleAreaDimensions } from "@ledgerhq/live-common/device-core/customLockScreen/screenSpecs";
+import { getScreenVisibleAreaDimensions } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 
 type Props = StepProps & {
   src?: ImageBase64Data;

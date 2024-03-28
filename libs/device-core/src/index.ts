@@ -21,6 +21,12 @@ export { isHardwareVersionSupported } from "./commands/use-cases/isHardwareVersi
 export { isBootloaderVersionSupported } from "./commands/use-cases/isBootloaderVersionSupported";
 export { getVersion } from "./commands/use-cases/getVersion";
 // src/capabilities/
-export { isCustomLockScreenSupported } from "./capabilities/isCustomLockScreenSupported";
-export { supportedDeviceModelIds } from "./capabilities/isCustomLockScreenSupported";
+export {
+  type CLSSupportedDeviceModelId,
+  isCustomLockScreenSupported,
+} from "./capabilities/isCustomLockScreenSupported";
+export { isEditDeviceNameSupported } from "./capabilities/isEditDeviceNameSupported";
 export { isSyncOnboardingSupported } from "./capabilities/isSyncOnboardingSupported";
+export { supportedDeviceModelIds } from "./capabilities/isCustomLockScreenSupported";
+// src/customLockScreen/
+export * from "./customLockScreen/screenSpecs";
