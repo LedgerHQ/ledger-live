@@ -12,6 +12,7 @@ function isAbsoluteUrl(url: string): boolean {
   }
 }
 
+// What is this ??
 export function useErrorLinks(error?: Error | null) {
   const errorLinks = error && "links" in error && Array.isArray(error.links) && error?.links;
   const history = useHistory();
