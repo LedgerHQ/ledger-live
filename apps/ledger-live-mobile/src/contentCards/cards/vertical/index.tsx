@@ -22,11 +22,14 @@ type Props = {
   size: Size;
   tag?: string;
   cta?: string;
+  filledImage?: boolean;
 };
 
 const VerticalCard = ContentCardBuilder<Props>(
-  ({ title, description: subtitle, price, image, tag, size, metadata, cta }) => {
+  ({ title, description: subtitle, price, image, tag, size, metadata, cta, filledImage }) => {
     useEffect(() => metadata.actions?.onView?.());
+    const hasCta = cta && size === "L";
+    const hasPrice = !hasCta && price;
 
     return (
       <TouchableOpacity onPress={metadata.actions?.onClick}>
@@ -34,13 +37,12 @@ const VerticalCard = ContentCardBuilder<Props>(
         {metadata.actions?.onDismiss && <Close onPress={metadata.actions?.onDismiss} />}
 
         <Container size={size}>
-          <Image uri={image} />
-
-          <Flex alignItems="center">
+          <Flex alignItems="center" width={"100%"} height={"100%"}>
+            <Image uri={image} size={size} filledImage={filledImage} />
             <Title size={size} label={title} />
             <Subtitle size={size} label={subtitle} />
-            <Price size={size} label={price} />
-            {cta && <Button size={size} label={cta} action={metadata.actions?.onClick} />}
+            {hasPrice && <Price size={size} label={price} />}
+            {hasCta && <Button size={size} label={cta} action={metadata.actions?.onClick} />}
           </Flex>
         </Container>
       </TouchableOpacity>

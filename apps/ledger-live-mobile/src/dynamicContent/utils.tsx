@@ -1,5 +1,5 @@
 import { Size } from "~/contentCards/cards/vertical/types";
-import { WidthFactor } from "~/contentCards/layouts/carousel";
+import { WidthFactor } from "~/contentCards/layouts/types";
 import {
   BrazeContentCard,
   AssetContentCard,
@@ -78,7 +78,8 @@ export const mapAsCategoryContentCard = (card: BrazeContentCard): CategoryConten
   description: card.extras.description,
   link: card.extras.link,
   cta: card.extras.cta,
-  isDismissable: Boolean(card.extras.isDismissable && card.extras.isDismissable === "true"),
+  isDismissable: Boolean(card.extras?.isDismissable === "true"),
+  hasPagination: Boolean(card.extras?.hasPagination === "true"),
 });
 
 export const mapAsWalletContentCard = (card: BrazeContentCard): WalletContentCard => ({
@@ -135,6 +136,7 @@ export const mapAsNotificationContentCard = (card: BrazeContentCard): Notificati
 });
 
 export const mapAsHorizontalContentCard = (card: BrazeContentCard): HorizontalContentCard => ({
+  type: ContentCardsType.action,
   id: card.id,
   tag: card.extras.tag,
   title: card.extras.title,
@@ -144,13 +146,17 @@ export const mapAsHorizontalContentCard = (card: BrazeContentCard): HorizontalCo
   createdAt: card.created,
   viewed: card.viewed,
   order: parseInt(card.extras.order) ? parseInt(card.extras.order) : undefined,
+  gridWidthFactor: WidthFactor.Full,
 });
 
 const mapAsSquareContentCard = (
   card: BrazeContentCard,
   size: Size,
-  widthFactor: WidthFactor,
+  type: ContentCardsType,
+  carouselWidthFactor: WidthFactor,
+  gridWidthFactor: WidthFactor,
 ): VerticalContentCard => ({
+  type,
   id: card.id,
   tag: card.extras.tag,
   title: card.extras.title,
@@ -163,10 +169,13 @@ const mapAsSquareContentCard = (
   createdAt: card.created,
   viewed: card.viewed,
   order: parseInt(card.extras.order) ? parseInt(card.extras.order) : undefined,
-  carouselWidthFactor: widthFactor,
+  carouselWidthFactor,
+  gridWidthFactor,
+  filledImage: Boolean(card.extras.filledImage),
 });
 
 export const mapAsHeroContentCard = (card: BrazeContentCard): HeroContentCard => ({
+  type: ContentCardsType.hero,
   id: card.id,
   tag: card.extras.tag,
   title: card.extras.title,
@@ -179,10 +188,22 @@ export const mapAsHeroContentCard = (card: BrazeContentCard): HeroContentCard =>
 });
 
 export const mapAsSmallSquareContentCard = (card: BrazeContentCard): VerticalContentCard =>
-  mapAsSquareContentCard(card, "S", WidthFactor.Half);
+  mapAsSquareContentCard(
+    card,
+    "S",
+    ContentCardsType.smallSquare,
+    WidthFactor.Half,
+    WidthFactor.Half,
+  );
 
 export const mapAsMediumSquareContentCard = (card: BrazeContentCard): VerticalContentCard =>
-  mapAsSquareContentCard(card, "M", WidthFactor.ThreeQuarters);
+  mapAsSquareContentCard(
+    card,
+    "M",
+    ContentCardsType.mediumSquare,
+    WidthFactor.ThreeQuarters,
+    WidthFactor.Half,
+  );
 
 export const mapAsBigSquareContentCard = (card: BrazeContentCard): VerticalContentCard =>
-  mapAsSquareContentCard(card, "L", WidthFactor.ThreeQuarters);
+  mapAsSquareContentCard(card, "L", ContentCardsType.bigSquare, WidthFactor.Full, WidthFactor.Full);

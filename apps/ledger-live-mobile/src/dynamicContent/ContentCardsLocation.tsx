@@ -36,7 +36,7 @@ const ContentCardsLocation = ({ locationId, ...containerProps }: Props) => {
         data={categoriesFormatted}
         renderItem={Category}
         keyExtractor={(item: CategoriesWithCards) => item.category.id}
-        ItemSeparatorComponent={() => <Flex height={8} />}
+        ItemSeparatorComponent={() => <Flex height={32} />}
       />
     </Flex>
   );

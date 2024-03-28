@@ -1,6 +1,6 @@
 import { ContentCard as BrazeContentCard } from "@braze/react-native-sdk";
 import { Size } from "~/contentCards/cards/vertical/types";
-import { WidthFactor } from "~/contentCards/layouts/carousel";
+import { WidthFactor } from "~/contentCards/layouts/types";
 
 enum ContentCardsType {
   smallSquare = "small_square",
@@ -39,6 +39,8 @@ type ContentCardCommonProperties = {
   viewed: boolean;
   order?: number;
   carouselWidthFactor?: WidthFactor;
+  gridWidthFactor?: WidthFactor;
+  type?: ContentCardsType;
 };
 
 type CategoryContentCard = ContentCardCommonProperties & {
@@ -50,6 +52,7 @@ type CategoryContentCard = ContentCardCommonProperties & {
   cta?: string;
   link?: string;
   isDismissable?: boolean;
+  hasPagination?: boolean;
 };
 
 type WalletContentCard = ContentCardCommonProperties & {
@@ -91,6 +94,7 @@ type HorizontalContentCard = ContentCardCommonProperties & {
   link?: string;
   description?: string;
   image?: string;
+  gridWidthFactor?: WidthFactor;
 };
 
 type HeroContentCard = ContentCardCommonProperties & {
@@ -110,6 +114,7 @@ type VerticalContentCard = ContentCardCommonProperties & {
   price?: string;
   cta?: string;
   size: Size;
+  filledImage?: boolean;
 };
 
 type AnyContentCard =

@@ -12,12 +12,7 @@ import { useTheme } from "styled-components/native";
 import { ContentLayoutBuilder } from "~/contentCards/layouts/utils";
 import Pagination from "./pagination";
 import { ContentCardItem } from "~/contentCards/cards/types";
-
-export enum WidthFactor {
-  Full = 1,
-  Half = 0.5,
-  ThreeQuarters = 0.72,
-}
+import { WidthFactor } from "~/contentCards/layouts/types";
 
 type Props = {
   styles?: {
@@ -29,8 +24,8 @@ type Props = {
 
 const defaultStyles = {
   gap: 6,
-  pagination: true,
-  widthFactor: 1,
+  pagination: false,
+  widthFactor: WidthFactor.Full,
 };
 
 const Carousel = ContentLayoutBuilder<Props>(({ items, styles: _styles = defaultStyles }) => {
@@ -44,7 +39,7 @@ const Carousel = ContentLayoutBuilder<Props>(({ items, styles: _styles = default
 
   const separatorWidth = useTheme().space[styles.gap];
 
-  const isPaginationEnabled = styles.pagination && styles.widthFactor >= WidthFactor.ThreeQuarters;
+  const isPaginationEnabled = styles.pagination;
 
   const carouselRef = useRef<FlatList>(null);
   const [carouselIndex, setCarouselIndex] = useState(0);
