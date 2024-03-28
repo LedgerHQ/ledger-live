@@ -23,7 +23,6 @@ import Header from "./Header";
 import Row from "./Row";
 import Footer from "./Footer";
 import { BigNumber } from "bignumber.js";
-import moment from "moment";
 import ToolTip from "~/renderer/components/Tooltip";
 import ClaimRewards from "~/renderer/icons/ClaimReward";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
@@ -32,6 +31,7 @@ import TableContainer, { TableHeader } from "~/renderer/components/TableContaine
 import { TronAccount } from "@ledgerhq/live-common/families/tron/types";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { urls } from "~/config/urls";
+import { useDateFromNow } from "~/renderer/hooks/useDateFormatter";
 
 const Wrapper = styled(Box).attrs(() => ({
   p: 3,
@@ -45,10 +45,11 @@ const Delegation = ({ account }: { account: TronAccount }) => {
   const superRepresentatives = useTronSuperRepresentatives();
   const stakingUrl = useLocalizedUrl(urls.stakingTron);
   const lastVoteDate = getLastVotedDate(account);
-  const duration = useMemo(
-    () => (lastVoteDate ? moment().diff(lastVoteDate, "days") : 0),
-    [lastVoteDate],
-  );
+  const duration = useMemo(() => {
+    if (!lastVoteDate) return 0;
+    const diff = new Date().getTime() - lastVoteDate.getTime();
+    return Math.floor(diff / (1000 * 60 * 60 * 24));
+  }, [lastVoteDate]);
   const unit = getAccountUnit(account);
   const explorerView = getDefaultExplorerView(account.currency);
   const { tronResources } = account;
@@ -66,10 +67,12 @@ const Delegation = ({ account }: { account: TronAccount }) => {
   const hasVotes = formattedVotes.length > 0;
   const hasRewards = unwithdrawnReward.gt(0);
   const nextRewardDate = getNextRewardDate(account);
-  const formattedNextRewardDate = useMemo(
-    () => nextRewardDate && moment(nextRewardDate).fromNow(),
+  const nextRewardD = useMemo(
+    () => (nextRewardDate ? new Date(nextRewardDate) : undefined),
     [nextRewardDate],
   );
+  const formattedNextRewardDate = useDateFromNow(nextRewardD);
+
   const canClaimRewards = hasRewards && !formattedNextRewardDate;
   return (
     <TableContainer mb={6}>

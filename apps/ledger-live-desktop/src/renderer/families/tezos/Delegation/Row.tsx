@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo } from "react";
 import styled from "styled-components";
-import moment from "moment";
 import { Trans } from "react-i18next";
 import {
   getMainAccount,
@@ -82,10 +81,10 @@ const Row = ({ account, parentAccount, delegation }: Props) => {
   const currency = getAccountCurrency(account);
   const mainAccount = getMainAccount(account, parentAccount);
   const name = delegation.baker ? delegation.baker.name : shortAddressPreview(delegation.address);
-  const diffInDays = useMemo(
-    () => moment().diff(delegation.operation.date, "days"),
-    [delegation.operation.date],
-  );
+  const diffInDays = useMemo(() => {
+    const diff = new Date().getTime() - delegation.operation.date.getTime();
+    return Math.floor(diff / (1000 * 60 * 60 * 24));
+  }, [delegation.operation.date]);
   const explorerView = getDefaultExplorerView(mainAccount.currency);
   const bakerURL = getAddressExplorer(explorerView, delegation.address);
   const txURL = getTransactionExplorer(explorerView, delegation.operation.hash);

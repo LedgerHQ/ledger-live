@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import moment from "moment";
 import upperFirst from "lodash/upperFirst";
 import { setLocale } from "~/renderer/actions/settings";
 import { languageSelector, localeSelector } from "~/renderer/reducers/settings";
@@ -52,7 +51,6 @@ const RegionSelect = () => {
 
   const handleChangeRegion = useCallback(
     (region?: RegionSelectOption) => {
-      moment.locale(region?.locale);
       dispatch(setLocale(region?.locale ?? DEFAULT_LANGUAGE.locales.default));
     },
     [dispatch],

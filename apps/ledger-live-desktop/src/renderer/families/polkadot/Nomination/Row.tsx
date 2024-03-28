@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-import moment from "moment";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import {
@@ -19,6 +18,7 @@ import ExclamationCircle from "~/renderer/icons/ExclamationCircle";
 import ToolTip from "~/renderer/components/Tooltip";
 import ExternalLink from "~/renderer/icons/ExternalLink";
 import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
+import { useDateFromNow } from "~/renderer/hooks/useDateFormatter";
 
 const Wrapper = styled.div`
   display: flex;
@@ -195,11 +195,12 @@ export function UnlockingRow({
   account,
   unlocking: { amount, completionDate },
 }: UnlockingRowProps) {
-  const date = useMemo(
-    () => (completionDate ? moment(completionDate).fromNow() : "N/A"),
+  const date = useDateFromNow(completionDate) || "N/A";
+  const isUnbonded = useMemo(
+    () => new Date(completionDate).getTime() < Date.now(),
     [completionDate],
   );
-  const isUnbonded = useMemo(() => moment(completionDate).isBefore(moment()), [completionDate]);
+
   const unit = getAccountUnit(account);
   const formattedAmount = useMemo(
     () =>

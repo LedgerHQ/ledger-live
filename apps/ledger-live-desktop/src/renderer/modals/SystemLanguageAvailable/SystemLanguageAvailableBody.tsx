@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import { TFunction } from "i18next";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
-import moment from "moment";
 import { ModalBody } from "~/renderer/components/Modal";
 import Box from "~/renderer/components/Box";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -66,7 +65,6 @@ const SystemLanguageAvailableBody = (props: Props) => {
   };
   const switchLanguage = () => {
     dispatch(setLanguage(osLanguage));
-    moment.locale(osLanguage);
     i18n.changeLanguage(osLanguage);
     answerLanguageAvailable();
     onClose?.();
