@@ -48,29 +48,21 @@ export function useMarketDataProvider() {
   };
 }
 
-export const useCurrencyChartData = ({
-  id,
-  counterCurrency,
-  ranges,
-}: MarketCurrencyRequestParams) =>
-  useQueries({
-    queries: (ranges || []).map(range => ({
-      queryKey: [QUERY_KEY.CurrencyChartData, id, counterCurrency, range],
-      queryFn: () => fetchCurrencyChartData({ counterCurrency, range, id }),
-      refetchInterval: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
-      staleTime: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
-    })),
+export const useCurrencyChartData = ({ id, counterCurrency, range }: MarketCurrencyRequestParams) =>
+  useQuery({
+    queryKey: [QUERY_KEY.CurrencyChartData, id, counterCurrency, range],
+    queryFn: () => fetchCurrencyChartData({ counterCurrency, range, id }),
+    refetchInterval: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
+    staleTime: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
   });
 
-export function useCurrencyData({ id, counterCurrency, ranges }: MarketCurrencyRequestParams) {
-  const results = useQueries({
-    queries: (ranges || []).map(range => ({
-      queryKey: [QUERY_KEY.CurrencyData, id, counterCurrency, range],
-      queryFn: () => fetchCurrencyData({ counterCurrency, range, id }),
-      refetchInterval: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
-      staleTime: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
-      select: (data: RawCurrencyData) => format(data, range, cryptoCurrenciesList),
-    })),
+export function useCurrencyData({ id, counterCurrency, range }: MarketCurrencyRequestParams) {
+  const resultCurrencyData = useQuery({
+    queryKey: [QUERY_KEY.CurrencyData, id, counterCurrency, range],
+    queryFn: () => fetchCurrencyData({ counterCurrency, range, id }),
+    refetchInterval: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
+    staleTime: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
+    select: (data: RawCurrencyData) => format(data, range ?? "24h", cryptoCurrenciesList),
   });
 
   const resultCurrency = useQuery({
@@ -81,7 +73,7 @@ export function useCurrencyData({ id, counterCurrency, ranges }: MarketCurrencyR
     select: data => format(data, "24h", cryptoCurrenciesList),
   });
 
-  return { currencyDataByRanges: results, currencyInfo: resultCurrency };
+  return { currencyData: resultCurrencyData, currencyInfo: resultCurrency };
 }
 
 export const useSupportedCounterCurrencies = () =>

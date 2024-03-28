@@ -44,7 +44,7 @@ export type MarketCurrencyChartDataRequestParams = {
 export type MarketCurrencyRequestParams = {
   id?: string;
   counterCurrency?: string;
-  ranges?: string[];
+  range?: string;
 };
 
 export type SparklineSvgData = {
