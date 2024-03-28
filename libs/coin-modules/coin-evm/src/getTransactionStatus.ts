@@ -172,6 +172,14 @@ const validateGas = (
       links: [`ledgerlive://buy?${query.toString()}`],
     });
   }
+  // Force error for testing
+  errors.gasPrice = new NotEnoughGas(undefined, {
+    // "You need {{fees}} {{ticker}} for network fees to swap as you are on {{cryptoName}} network. <link0>Buy {{ticker}}</link0>"
+    fees: formatCurrencyUnit(getFeesUnit(account.currency), estimatedFees),
+    ticker: account.currency.ticker,
+    cryptoName: account.currency.name,
+    links: [`ledgerlive://buy?`],
+  });
 
   // Gas Price for EIP-1559
   if (tx.type === 2) {

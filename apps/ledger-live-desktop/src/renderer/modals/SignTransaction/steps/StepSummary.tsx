@@ -107,7 +107,7 @@ const StepSummary = (props: StepProps) => {
       (if fees provided by live-app), we need to display transaction status errors here */}
       {errors && Object.keys(errors).length ? (
         <Alert type="error">
-          <TranslatedError error={Object.values<Error>(errors)[0]} />
+          <TranslatedError error={Object.values<Error>(errors)[0]} noLink />
         </Alert>
       ) : null}
       <FromToWrapper>
