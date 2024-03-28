@@ -4,18 +4,18 @@ inputs:
   upgrade_npm:
     description: "should update npm (windows support)"
     required: false
-  install_dotnet:
+  install-dotnet:
     description: "dotnet setup for Windows"
     required: false
-  skip_pnpm_cache:
+  skip-pnpm-cache:
     description: "true to skip pnpm caching, false by default"
     required: false
     default: "false"
-  skip_pod_cache:
+  skip-pod-cache:
     description: "false to get cache, true by default"
     required: false
     default: "true"
-  skip_turbo_cache:
+  skip-turbo-cache:
     description: "false to get cache, true by default"
     required: false
     default: "true"
@@ -44,7 +44,7 @@ runs:
     # ⚠️ We have issues with the runners and proto,
     # so for the moment we're not using it at all in the CI.
     - uses: actions/setup-dotnet@v3.2.0
-      if: inputs.install_dotnet != ''
+      if: inputs.install-dotnet != ''
       with:
         dotnet-version: 2.1.816
 
@@ -66,7 +66,7 @@ runs:
 
     - name: Cache pnpm store
       uses: tespkg/actions-cache@v1
-      if: steps.aws.conclusion == 'success' && inputs.skip_pnpm_cache != 'true'
+      if: steps.aws.conclusion == 'success' && inputs.skip-pnpm-cache != 'true'
       with:
         path: ${{ env.STORE_PATH }}
         key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
@@ -104,7 +104,7 @@ runs:
 
     - name: Cache LLM pods
       uses: actions/cache@v3
-      if: inputs.skip_pod_cache != 'true'
+      if: inputs.skip-pod-cache != 'true'
       with:
         path: |
           apps/ledger-live-mobile/ios/Pods

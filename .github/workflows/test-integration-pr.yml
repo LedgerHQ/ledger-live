@@ -59,7 +59,7 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
         id: toolchain
         with:
-          skip_turbo_cache: "false"
+          skip-turbo-cache: "false"
           upgrade_npm: ${{ matrix.os == 'windows-latest' }}
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
