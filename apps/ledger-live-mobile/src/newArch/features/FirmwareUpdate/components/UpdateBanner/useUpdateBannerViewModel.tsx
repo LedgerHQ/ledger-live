@@ -1,7 +1,6 @@
 import { useState, useCallback } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useSelector } from "react-redux";
-import { StackNavigationProp } from "@react-navigation/stack";
 import { useLatestFirmware } from "@ledgerhq/live-common/device/hooks/useLatestFirmware";
 import {
   lastSeenDeviceSelector,
@@ -17,12 +16,13 @@ import {
 } from "../../utils/isFirmwareUpdateSupported";
 import { navigateToNewUpdateFlow } from "../../utils/navigateToNewUpdateFlow";
 import { navigateToOldUpdateFlow } from "../../utils/navigateToOldUpdateFlow";
+import { BaseNavigation } from "~/components/RootNavigator/types/helpers";
 
 export function useUpdateBannerViewModel({
   onBackFromUpdate,
 }: FirmwareUpdateBannerProps): ViewProps {
   const route = useRoute();
-  const navigation = useNavigation<StackNavigationProp<Record<string, object | undefined>>>();
+  const navigation = useNavigation<BaseNavigation>();
 
   const lastSeenDeviceModelInfo = useSelector(lastSeenDeviceSelector);
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);

@@ -18,9 +18,9 @@ import InstallAppDependenciesModal from "./Modals/InstallAppDependenciesModal";
 import UninstallAppDependenciesModal from "./Modals/UninstallAppDependenciesModal";
 import { useLockNavigation } from "~/components/RootNavigator/CustomBlockRouterNavigator";
 import { setHasInstalledAnyApp, setLastSeenDeviceInfo } from "~/actions/settings";
-import { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import FirmwareUpdateScreen from "~/components/FirmwareUpdate";
-import { ManagerNavigatorStackParamList } from "~/components/RootNavigator/types/ManagerNavigator";
+import { MyLedgerNavigatorStackParamList } from "~/components/RootNavigator/types/MyLedgerNavigator";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { lastConnectedDeviceSelector } from "~/reducers/settings";
 import { UpdateStep } from "../FirmwareUpdate";
@@ -31,7 +31,7 @@ import {
 } from "./AppsInstallUninstallWithDependenciesContext";
 
 type NavigationProps = BaseComposite<
-  StackNavigatorProps<ManagerNavigatorStackParamList, ScreenName.ManagerMain>
+  StackNavigatorProps<MyLedgerNavigatorStackParamList, ScreenName.MyLedgerDevice>
 >;
 
 const Manager = ({ navigation, route }: NavigationProps) => {
@@ -54,7 +54,7 @@ const Manager = ({ navigation, route }: NavigationProps) => {
   useEffect(() => {
     // refresh the manager if an USB device gets plugged while we're on a bluetooth connection
     if (lastConnectedDevice?.deviceId.startsWith("usb|") && !device.deviceId.startsWith("usb|")) {
-      navigation.replace(ScreenName.Manager, {
+      navigation.replace(ScreenName.MyLedgerChooseDevice, {
         device: lastConnectedDevice,
       });
     }
@@ -162,7 +162,7 @@ const Manager = ({ navigation, route }: NavigationProps) => {
       });
       if (restoreApps) {
         // we renavigate to the manager to force redetection of the apps and restore apps if needed
-        navigation.replace(ScreenName.Manager, {
+        navigation.replace(ScreenName.MyLedgerChooseDevice, {
           device,
           appsToRestore: installedApps,
           firmwareUpdate: false,
@@ -174,18 +174,18 @@ const Manager = ({ navigation, route }: NavigationProps) => {
 
   const onBackFromNewUpdateUx = useCallback(
     (updateState: UpdateStep) => {
-      // If the fw update was completed or not yet started, we know the device in a correct state
-      if (["start", "completed"].includes(updateState)) {
-        navigation.replace(ScreenName.Manager, {
-          device,
-        });
-        return;
-      }
-
-      // Otherwise navigating back to the main manager screen without settings a device
-      // so it does not try to automatically connect to the device while it
-      // might still be on an unknown state because the fw update was just stopped
-      navigation.replace(ScreenName.Manager);
+      navigation.navigate(NavigatorName.Main, {
+        screen: NavigatorName.MyLedger,
+        params: {
+          screen: ScreenName.MyLedgerChooseDevice,
+          // If the fw update was completed or not yet started, we know the device in a correct state,
+          // we can automatically connect to it.
+          // Otherwise navigating back to the chooseDeviceScreen without settings a device
+          // so it does not try to automatically connect to the device while it
+          // might still be on an unknown state because the fw update was just stopped
+          params: ["start", "completed"].includes(updateState) ? { device } : {},
+        },
+      });
     },
     [device, navigation],
   );

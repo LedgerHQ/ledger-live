@@ -34,7 +34,7 @@ function EmptyStatePortfolio({ showHelp = true }: Props) {
   const closeAddModal = useCallback(() => setAddModalOpened(false), [setAddModalOpened]);
 
   const navigateToManager = useCallback(() => {
-    navigation.navigate(NavigatorName.Manager);
+    navigation.navigate(NavigatorName.MyLedger);
   }, [navigation]);
 
   const [darkSource, lightSource] = hasInstalledAnyApp

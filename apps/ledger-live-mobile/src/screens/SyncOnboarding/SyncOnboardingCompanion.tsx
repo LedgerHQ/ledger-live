@@ -36,7 +36,7 @@ import InstallSetOfApps from "~/components/DeviceAction/InstallSetOfApps";
 import Stories from "~/components/StorylyStories";
 import { TrackScreen, screen } from "~/analytics";
 import ContinueOnStax from "./assets/ContinueOnStax";
-import type { SyncOnboardingScreenProps } from ".";
+import type { SyncOnboardingScreenProps } from "./SyncOnboardingScreenProps";
 
 const { BodyText, SubtitleText } = VerticalTimeline;
 

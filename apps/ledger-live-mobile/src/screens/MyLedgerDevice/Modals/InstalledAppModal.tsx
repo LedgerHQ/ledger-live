@@ -16,10 +16,10 @@ import AppIcon from "../AppsList/AppIcon";
 
 import QueuedDrawer from "~/components/QueuedDrawer";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import { ManagerNavigatorStackParamList } from "~/components/RootNavigator/types/ManagerNavigator";
+import { MyLedgerNavigatorStackParamList } from "~/components/RootNavigator/types/MyLedgerNavigator";
 
 type NavigationProps = BaseComposite<
-  StackNavigatorProps<ManagerNavigatorStackParamList, ScreenName.ManagerMain>
+  StackNavigatorProps<MyLedgerNavigatorStackParamList, ScreenName.MyLedgerDevice>
 >;
 
 type Props = {
