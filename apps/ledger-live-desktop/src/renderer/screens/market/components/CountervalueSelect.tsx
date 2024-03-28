@@ -12,13 +12,13 @@ import { useSelector } from "react-redux";
 type Props = {
   counterCurrency?: string;
   setCounterCurrency: (counterCurrency: string) => void;
-  supportedCounterCurrencies: string[];
+  supportedCounterCurrencies?: string[];
 };
 
 function CounterValueSelect({
   counterCurrency,
   setCounterCurrency,
-  supportedCounterCurrencies,
+  supportedCounterCurrencies = [],
 }: Props) {
   const { t } = useTranslation();
   const supportedCountervalues = useSelector(supportedCounterValuesSelector);

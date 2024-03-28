@@ -216,7 +216,7 @@ export default function Chart({
     }
   }, [generateOptions, generatedData, valueKey]);
   return (
-    <ChartContainer height={height}>
+    <ChartContainer height={height} data-test-id="chart-container">
       <canvas ref={canvasRef} />
       {tooltip && renderTooltip ? (
         <Tooltip tooltip={tooltip} renderTooltip={renderTooltip} color={color} data={data} />
