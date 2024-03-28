@@ -9,4 +9,6 @@ export type ElrondESDTToken = [
 
 import tokens from "./esdt.json";
 
+export { default as hash } from "./esdt-hash.json";
+
 export default tokens as ElrondESDTToken[];

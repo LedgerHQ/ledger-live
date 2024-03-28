@@ -10,7 +10,9 @@ const mockedAxios = jest.spyOn(axios, "get");
 
 describe("import Cardano Native tokens", () => {
   beforeEach(() => {
-    mockedAxios.mockImplementation(() => Promise.resolve({ data: cardanoNativeTokens }));
+    mockedAxios.mockImplementation(() =>
+      Promise.resolve({ data: cardanoNativeTokens, headers: { etag: "etagHash" } }),
+    );
   });
 
   afterEach(() => {
@@ -31,6 +33,8 @@ describe("import Cardano Native tokens", () => {
 
 import tokens from "./cardanoNative.json";
 
+export { default as hash } from "./cardanoNative-hash.json";
+
 export default tokens as CardanoNativeToken[];
 `;
 
@@ -44,6 +48,11 @@ export default tokens as CardanoNativeToken[];
       "cardanoNative.json",
       JSON.stringify(cardanoNativeTokens),
     );
-    expect(mockedFs).toHaveBeenNthCalledWith(2, "cardanoNative.ts", expectedFile);
+    expect(mockedFs).toHaveBeenNthCalledWith(
+      2,
+      "cardanoNative-hash.json",
+      JSON.stringify("etagHash"),
+    );
+    expect(mockedFs).toHaveBeenNthCalledWith(3, "cardanoNative.ts", expectedFile);
   });
 });

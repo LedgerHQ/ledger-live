@@ -14,4 +14,6 @@ export type ERC20Token = [
 
 import tokens from "./erc20.json";
 
+export { default as hash } from "./erc20-hash.json";
+
 export default tokens as ERC20Token[];

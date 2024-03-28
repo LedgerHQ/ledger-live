@@ -16,8 +16,14 @@ type CardanoNativeToken = [
 export const importCardanoNativeTokens = async (outputDir: string) => {
   try {
     console.log("importing cardanoNative tokens...");
-    const cardanoNativeTokens = await fetchTokens<CardanoNativeToken[]>("cardanoNative.json");
+    const [cardanoNativeTokens, hash] =
+      await fetchTokens<CardanoNativeToken[]>("cardanoNative.json");
     const filePath = path.join(outputDir, "cardanoNative");
+
+    fs.writeFileSync(`${filePath}.json`, JSON.stringify(cardanoNativeTokens));
+    if (hash) {
+      fs.writeFileSync(`${filePath}-hash.json`, JSON.stringify(hash));
+    }
 
     const cardanoNativeTypeStringified = `export type CardanoNativeToken = [
   string, // parentCurrencyId
@@ -30,12 +36,13 @@ export const importCardanoNativeTokens = async (outputDir: string) => {
   boolean // disableCountervalue
 ];`;
 
-    fs.writeFileSync(`${filePath}.json`, JSON.stringify(cardanoNativeTokens));
     fs.writeFileSync(
       `${filePath}.ts`,
       `${cardanoNativeTypeStringified}
 
 import tokens from "./cardanoNative.json";
+
+${hash ? `export { default as hash } from "./cardanoNative-hash.json";` : null}
 
 export default tokens as CardanoNativeToken[];
 `,

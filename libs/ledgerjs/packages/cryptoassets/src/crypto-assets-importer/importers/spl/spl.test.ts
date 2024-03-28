@@ -8,7 +8,9 @@ const mockedAxios = jest.spyOn(axios, "get");
 
 describe("import Spl tokens", () => {
   beforeEach(() => {
-    mockedAxios.mockImplementation(() => Promise.resolve({ data: splTokens }));
+    mockedAxios.mockImplementation(() =>
+      Promise.resolve({ data: splTokens, headers: { etag: "etagHash" } }),
+    );
   });
 
   afterEach(() => {
@@ -27,6 +29,8 @@ describe("import Spl tokens", () => {
 
 import tokens from "./spl.json";
 
+export { default as hash } from "./spl-hash.json";
+
 export default tokens as SPLToken[];
 `;
 
@@ -36,6 +40,7 @@ export default tokens as SPLToken[];
 
     expect(mockedAxios).toHaveBeenCalledWith(expect.stringMatching(/.*\/spl.json/));
     expect(mockedFs).toHaveBeenNthCalledWith(1, "spl.json", JSON.stringify(splTokens));
-    expect(mockedFs).toHaveBeenNthCalledWith(2, "spl.ts", expectedFile);
+    expect(mockedFs).toHaveBeenNthCalledWith(2, "spl-hash.json", JSON.stringify("etagHash"));
+    expect(mockedFs).toHaveBeenNthCalledWith(3, "spl.ts", expectedFile);
   });
 });

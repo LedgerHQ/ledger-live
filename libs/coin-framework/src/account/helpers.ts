@@ -167,6 +167,7 @@ export function clearAccount<T extends AccountLike>(
   const copy: Account = {
     ...account,
     balanceHistoryCache: emptyHistoryCache,
+    blockHeight: 0,
     lastSyncDate: new Date(0),
     operations: [],
     pendingOperations: [],

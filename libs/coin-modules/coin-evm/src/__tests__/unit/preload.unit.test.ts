@@ -1,12 +1,12 @@
 // do not move lower otherwise time based LRU tests won't work anymore
 jest.useFakeTimers();
 
-import network from "@ledgerhq/live-network/network";
-import evms from "@ledgerhq/cryptoassets/data/evm/index";
+import axios from "axios";
 import { BEP20Token, ERC20Token } from "@ledgerhq/cryptoassets/types";
 import * as CALTokensAPI from "@ledgerhq/cryptoassets/tokens";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { fetchERC20Tokens, hydrate, preload } from "../../preload";
+import { getCALHash, setCALHash } from "../../logic";
 
 const usdcDefinition: ERC20Token = [
   "ethereum",
@@ -45,18 +45,45 @@ const binanceDaiDefinition: BEP20Token = [
   true,
   false,
 ];
+const wethDefinition: BEP20Token = [
+  "bsc",
+  "wrapped_ether_wormhole",
+  "WETH",
+  18,
+  "Wrapped Ether (Wormhole)",
+  "3045022100b83ee696d6d934c7b1b30f62ca9736a5d36a0020e8c03757ffb51f81aa7f599802201e89feebccb518251fe6151b82ddcdc8c552b012429326ea7ea1fb0e308af60d",
+  "0x4DB5a66E937A9F4473fA95b1cAF1d1E1D62E29EA",
+  false,
+  false,
+  null,
+];
+
 const currency1 = getCryptoCurrencyById("ethereum"); // chain id 1
 const currency2 = getCryptoCurrencyById("bsc"); // chain id 56
+const currency3 = getCryptoCurrencyById("base"); // chain id 8453 + this has no preloaded tokens from @ledgerhq/cryptoassets/tokens.ts
 
-jest.mock("@ledgerhq/live-network/network");
+jest.mock("axios");
 jest.mock("@ledgerhq/cryptoassets/data/evm/index", () => ({
   get tokens(): {
     1: ERC20Token[];
     56: BEP20Token[];
+    8453: ERC20Token[];
   } {
     return {
       1: [usdcDefinition],
       56: [binanceDaiDefinition],
+      8453: [usdcDefinition],
+    };
+  },
+  get hashes(): {
+    1: string;
+    56: string;
+    8453: string;
+  } {
+    return {
+      1: "initialState1",
+      56: "initialState2",
+      8453: "initialState3",
     };
   },
 }));
@@ -64,105 +91,123 @@ jest.mock("@ledgerhq/cryptoassets/data/evm/index", () => ({
 describe("EVM Family", () => {
   beforeEach(() => {
     // @ts-expect-error not casted as jest mock
-    network.mockResolvedValue({});
+    axios.get.mockImplementation(async (url, { headers }) => {
+      const [, chainId] = url.match(new RegExp("/evm/(.*)/erc20.json"));
+      if (!headers["If-None-Match"].includes("initialState")) {
+        switch (chainId) {
+          case "1":
+            return { data: [usdtDefinition], headers: { etag: "newState1" } };
+          case "56":
+            return { data: [wethDefinition], headers: { etag: "newState2" } };
+          case "8453":
+            return { data: [usdtDefinition], headers: { etag: "newState3" } };
+          default:
+            throw new Error("UNEXPECTED");
+        }
+      } else {
+        const error = new Error() as Error & { code: string };
+        error.code = "304";
+        return Promise.reject(error);
+      }
+    });
+    setCALHash(currency1, "initialState1");
+    setCALHash(currency2, "initialState2");
+    setCALHash(currency3, "initialState3");
   });
 
   afterEach(() => {
     jest.restoreAllMocks();
-    // @ts-expect-error exposed reset method from `makeLRUCache`
-    fetchERC20Tokens.reset();
+
+    setCALHash(currency1, "");
+    setCALHash(currency2, "");
+    setCALHash(currency3, "");
   });
 
   describe("preload.ts", () => {
     describe("fetchERC20Tokens", () => {
-      it("should respect the cache", async () => {
-        jest.advanceTimersByTime(1); // necessary for LRU to not consider the TTL as infinity
-        await fetchERC20Tokens(currency1);
-        await fetchERC20Tokens(currency1);
-        expect(network).toHaveBeenCalledTimes(1);
+      it("shouldn't do anything if no changes & tokens are set", async () => {
+        const tokens = await fetchERC20Tokens(currency1);
+        expect(tokens).toEqual(null);
+        expect(getCALHash(currency1)).toBe("initialState1");
+      });
 
-        jest.advanceTimersByTime(6 * 60 * 60 * 1000 + 1); // Wait 6 hours and 1 millisecond
-        await fetchERC20Tokens(currency1);
-        expect(network).toHaveBeenCalledTimes(2);
+      it("should load embedded tokens if no changes & tokens are not set", async () => {
+        const tokens = await fetchERC20Tokens(currency3);
+        expect(tokens).toEqual([usdcDefinition]);
+        expect(getCALHash(currency3)).toBe("initialState3");
+      });
+
+      it("should return null on unexpected CAL response", async () => {
+        // @ts-expect-error not casted as jest mock
+        axios.get.mockImplementationOnce(async () => ({
+          data: {},
+        }));
+        setCALHash(currency1, "anotherHash1");
+
+        const tokens = await fetchERC20Tokens(currency1);
+        expect(tokens).toEqual(null);
+        expect(getCALHash(currency1)).toBe("anotherHash1");
       });
 
       it("should load dynamically the ERC20 tokens", async () => {
-        // @ts-expect-error not casted as jest mock
-        network.mockResolvedValue({ data: [usdtDefinition] });
-
+        setCALHash(currency1, "anotherHash1");
         const tokens = await fetchERC20Tokens(currency1);
         expect(tokens).toEqual([usdtDefinition]);
+        expect(getCALHash(currency1)).toBe("newState1");
       });
 
       it("should load dynamically the BEP20 tokens", async () => {
-        // @ts-expect-error not casted as jest mock
-        network.mockResolvedValue({ data: [binanceDaiDefinition] });
+        setCALHash(currency2, "anotherHash2");
 
         const tokens = await fetchERC20Tokens(currency2);
-        expect(tokens).toEqual([binanceDaiDefinition]);
+        expect(tokens).toEqual([wethDefinition]);
+        expect(getCALHash(currency2)).toBe("newState2");
       });
 
-      it("should fallback on local CAL on dynamic CAL error", async () => {
+      it("should fallback on embedded CAL on dynamic CAL error", async () => {
         // @ts-expect-error not casted as jest mock
-        network.mockImplementationOnce(async () => {
+        axios.get.mockImplementationOnce(async () => {
           throw new Error();
         });
+        setCALHash(currency1, "anotherHash1");
 
         const tokens = await fetchERC20Tokens(currency1);
         expect(tokens).toEqual([usdcDefinition]);
-        const bep20tokens = await fetchERC20Tokens(currency2);
-        expect(bep20tokens).toEqual([binanceDaiDefinition]);
-      });
-
-      it("should load erc20 tokens from local CAL when dynamic CAL undefined", async () => {
-        const tokens = await fetchERC20Tokens(currency1);
-        expect(tokens).toEqual([usdcDefinition]);
-        const bep20tokens = await fetchERC20Tokens(currency2);
-        expect(bep20tokens).toEqual([binanceDaiDefinition]);
-      });
-
-      it("should load erc20 tokens from local CAL when dynamic CAL is empty []", async () => {
-        // @ts-expect-error not casted as jest mock
-        network.mockResolvedValue({
-          data: {
-            tokens: { 1: [], 56: [] },
-          },
-        });
-
-        const erc20tokens = await fetchERC20Tokens(currency1);
-        expect(erc20tokens).toEqual([usdcDefinition]);
-        const bep20tokens = await fetchERC20Tokens(currency2);
-        expect(bep20tokens).toEqual([binanceDaiDefinition]);
-      });
-
-      it("should return empty [] if dynamic CAL fails and local CAL fails", async () => {
-        jest.spyOn(evms, "tokens", "get").mockImplementationOnce(() => ({}) as any);
-
-        const tokens = await fetchERC20Tokens(currency1);
-        expect(tokens).toEqual([]);
+        expect(getCALHash(currency1)).toBe("initialState1");
       });
     });
 
     describe("preload", () => {
-      it("should register tokens", async () => {
+      beforeEach(() => {
         jest.spyOn(CALTokensAPI, "addTokens").mockImplementationOnce(() => null);
+      });
 
+      afterEach(() => {
+        jest.restoreAllMocks();
+      });
+
+      it("should return void when fetch is hitting cache", async () => {
+        const tokens = await preload(currency1);
+        expect(tokens).toEqual(undefined);
+      });
+
+      it("should register ERC20 tokens", async () => {
+        setCALHash(currency1, "unknownHash1");
         const tokens = await preload(currency1);
 
-        expect(tokens).toEqual([usdcDefinition]);
+        expect(tokens).toEqual([usdtDefinition]);
         expect(CALTokensAPI.addTokens).toHaveBeenCalledWith([
-          CALTokensAPI.convertERC20(usdcDefinition),
+          CALTokensAPI.convertERC20(usdtDefinition),
         ]);
       });
 
       it("should register BEP20 tokens", async () => {
-        jest.spyOn(CALTokensAPI, "addTokens").mockImplementationOnce(() => null);
-
+        setCALHash(currency2, "unknownHash2");
         const tokens = await preload(currency2);
 
-        expect(tokens).toEqual([binanceDaiDefinition]);
+        expect(tokens).toEqual([wethDefinition]);
         expect(CALTokensAPI.addTokens).toHaveBeenCalledWith([
-          CALTokensAPI.convertBEP20(binanceDaiDefinition),
+          CALTokensAPI.convertBEP20(wethDefinition),
         ]);
       });
     });

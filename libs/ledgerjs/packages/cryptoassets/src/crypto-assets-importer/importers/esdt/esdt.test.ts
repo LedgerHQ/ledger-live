@@ -8,7 +8,9 @@ const mockedAxios = jest.spyOn(axios, "get");
 
 describe("import ESDT tokens", () => {
   beforeEach(() => {
-    mockedAxios.mockImplementation(() => Promise.resolve({ data: esdtTokens }));
+    mockedAxios.mockImplementation(() =>
+      Promise.resolve({ data: esdtTokens, headers: { etag: "etagHash" } }),
+    );
   });
 
   afterEach(() => {
@@ -27,6 +29,8 @@ describe("import ESDT tokens", () => {
 
 import tokens from "./esdt.json";
 
+export { default as hash } from "./esdt-hash.json";
+
 export default tokens as ElrondESDTToken[];
 `;
 
@@ -36,6 +40,7 @@ export default tokens as ElrondESDTToken[];
 
     expect(mockedAxios).toHaveBeenCalledWith(expect.stringMatching(/.*\/esdt.json/));
     expect(mockedFs).toHaveBeenNthCalledWith(1, "esdt.json", JSON.stringify(esdtTokens));
-    expect(mockedFs).toHaveBeenNthCalledWith(2, "esdt.ts", expectedFile);
+    expect(mockedFs).toHaveBeenNthCalledWith(2, "esdt-hash.json", JSON.stringify("etagHash"));
+    expect(mockedFs).toHaveBeenNthCalledWith(3, "esdt.ts", expectedFile);
   });
 });

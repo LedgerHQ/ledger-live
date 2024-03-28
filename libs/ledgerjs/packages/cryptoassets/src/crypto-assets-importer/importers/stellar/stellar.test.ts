@@ -8,7 +8,9 @@ const mockedAxios = jest.spyOn(axios, "get");
 
 describe("import ESDT tokens", () => {
   beforeEach(() => {
-    mockedAxios.mockImplementation(() => Promise.resolve({ data: stellarTokens }));
+    mockedAxios.mockImplementation(() =>
+      Promise.resolve({ data: stellarTokens, headers: { etag: "etagHash" } }),
+    );
   });
 
   afterEach(() => {
@@ -27,6 +29,8 @@ describe("import ESDT tokens", () => {
 
 import tokens from "./stellar.json";
 
+export { default as hash } from "./stellar-hash.json";
+
 export default tokens as StellarToken[];
 `;
 
@@ -36,6 +40,7 @@ export default tokens as StellarToken[];
 
     expect(mockedAxios).toHaveBeenCalledWith(expect.stringMatching(/.*\/stellar.json/));
     expect(mockedFs).toHaveBeenNthCalledWith(1, "stellar.json", JSON.stringify(stellarTokens));
-    expect(mockedFs).toHaveBeenNthCalledWith(2, "stellar.ts", expectedFile);
+    expect(mockedFs).toHaveBeenNthCalledWith(2, "stellar-hash.json", JSON.stringify("etagHash"));
+    expect(mockedFs).toHaveBeenNthCalledWith(3, "stellar.ts", expectedFile);
   });
 });

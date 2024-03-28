@@ -11,9 +11,12 @@ describe("fetcher", () => {
 
   it("should return data when fetched", async () => {
     const response = [{ myToken: { name: "myToken" } }];
-    mockedAxios.get.mockImplementation(() => Promise.resolve({ data: response }));
-    const tokens = await fetchTokens("tokens.json");
+    mockedAxios.get.mockImplementation(() =>
+      Promise.resolve({ data: response, headers: { etag: "hash" } }),
+    );
+    const [tokens, hash] = await fetchTokens("tokens.json");
     expect(tokens).toBe(response);
+    expect(hash).toBe("hash");
   });
 
   it("should throw error if fetch failed", async () => {

@@ -155,7 +155,7 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
         expect(typeof bridge.hydrate).toBe("function");
       });
       test("preload and rehydrate", async () => {
-        const data1 = await bridge.preload(currency);
+        const data1 = (await bridge.preload(currency)) || {};
         const data1filtered = omit(data1, FIXME_ignorePreloadFields || []);
 
         bridge.hydrate(data1filtered, currency);
@@ -164,7 +164,7 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
           const serialized1 = JSON.parse(JSON.stringify(data1filtered));
           bridge.hydrate(serialized1, currency);
           expect(serialized1).toBeDefined();
-          const data2 = await bridge.preload(currency);
+          const data2 = (await bridge.preload(currency)) || {};
           const data2filtered = omit(data2, FIXME_ignorePreloadFields || []);
 
           if (data2filtered) {
