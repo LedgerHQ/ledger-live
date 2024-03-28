@@ -3,7 +3,6 @@ import { upToDate } from "./features/upToDate";
 import { orchestrator } from "./features/orchestrator";
 import { lintCommits } from "./features/lintCommits";
 import { generateScreenshots } from "./commands/generate-screenshots";
-import { runDesktopTestSuite } from "./commands/full-suite";
 import { regenPods } from "./commands/regen-pods";
 import { regenDoc } from "./commands/regen-doc";
 import { autoClose } from "./features/autoClose";
@@ -17,8 +16,6 @@ export default (app: Probot) => {
   regenPods(app);
   // /regen-doc command
   regenDoc(app);
-  // /full-lld-tests
-  runDesktopTestSuite(app);
 
   /* PR stuff */
 
