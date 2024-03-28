@@ -30,7 +30,7 @@ const dataset: CurrenciesData<Transaction> = {
     {
       FIXME_tests: ["balance is sum of ops"],
       raw: {
-        id: "js:2:osmo:osmo10h50supk4en682vrjkc6wkgkpcyxyqn4vxjy2c:",
+        id: "js:2:osmosis:osmo10h50supk4en682vrjkc6wkgkpcyxyqn4vxjy2c:",
         seedIdentifier: "0283de657d9e283a5c31d64a4c4afbcc48ee79fdd7648bcdde6a1d0d7ae9f9bea1",
         xpub: "osmo10h50supk4en682vrjkc6wkgkpcyxyqn4vxjy2c",
         derivationMode: "",
@@ -47,7 +47,7 @@ const dataset: CurrenciesData<Transaction> = {
         balance: "500250",
         spendableBalance: "500250",
         blockHeight: 5417468,
-        currencyId: "osmo",
+        currencyId: "osmosis",
         unitMagnitude: 6,
         operationsCount: 2,
         operations: [],
@@ -358,7 +358,7 @@ const dataset: CurrenciesData<Transaction> = {
     {
       FIXME_tests: ["balance is sum of ops"],
       raw: {
-        id: "js:2:osmo:osmo1xx72kqjlf2qqj88h0wakwv6rp0v8fwh74z9q89:",
+        id: "js:2:osmosis:osmo1xx72kqjlf2qqj88h0wakwv6rp0v8fwh74z9q89:",
         seedIdentifier: "0283de657d9e283a5c31d64a4c4afbcc48ee79fdd7648bcdde6a1d0d7ae9f9bea1",
         name: "Osmosis 2 - Nano X Static Account",
         starred: true,
@@ -372,7 +372,7 @@ const dataset: CurrenciesData<Transaction> = {
         operationsCount: 1,
         operations: [],
         pendingOperations: [],
-        currencyId: "osmo",
+        currencyId: "osmosis",
         unitMagnitude: 6,
         lastSyncDate: "2022-08-02T16:11:47.343Z",
         balance: "200250",

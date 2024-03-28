@@ -12,7 +12,7 @@ test.use({
     stakePrograms: {
       enabled: true,
       params: {
-        list: ["ethereum", "cosmos", "osmo"],
+        list: ["ethereum", "cosmos", "osmosis"],
       },
     },
     portfolioExchangeBanner: {

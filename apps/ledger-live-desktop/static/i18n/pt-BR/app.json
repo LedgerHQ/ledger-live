@@ -2159,7 +2159,7 @@
           "title" : "Multiplique seus ATOM. Faça staking com o validador da Ledger.",
           "description" : "Faça staking de ATOM com o validador confiável da Ledger. Suas moedas continuam sendo suas, protegidas pela segurança impenetrável da Ledger."
         },
-        "osmo" : {
+        "osmosis" : {
           "title" : "Multiplique seu OSMO. Faça staking pela Ledger by Figment.",
           "description" : "Faça staking dos seus OSMO com o validador Ledger by Figment. Ela oferece a menor taxa de comissão e uma garantia contra cortes!"
         },

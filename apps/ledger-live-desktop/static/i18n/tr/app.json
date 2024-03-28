@@ -2159,7 +2159,7 @@
           "title" : "ATOM varlıklarınızı artırın. Ledger doğrulayıcı ile stake edin.",
           "description" : "ATOM varlıklarınızı güvenilir Ledger doğrulayıcı ile stake edin. Coin'leriniz, Ledger'ın taviz vermeyen güvenliği sayesinde size ait olmaya devam eder."
         },
-        "osmo" : {
+        "osmosis" : {
           "title" : "OSMO varlıklarınızı artırın. Ledger by Figment ile stake edin.",
           "description" : "OSMO varlıklarınızı, Ledger by Figment doğrulayıcı ile stake edin. En düşük komisyon ücretini ve slashing'e karşı koruma garantisini sunmaktadır!"
         },

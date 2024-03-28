@@ -2181,7 +2181,7 @@
           "title": "Grow your ATOM. Stake with Ledger validator.",
           "description": "Stake your ATOM with the trusted Ledger validator. Your coins stay yours, backed by Ledger’s uncompromising security."
         },
-        "osmo": {
+        "osmosis": {
           "title": "Grow your OSMO. Stake with Ledger by Figment.",
           "description": "Stake your OSMO with Ledger by Figment validator. It offers the lowest commission fee and a guarantee against slashing!"
         },

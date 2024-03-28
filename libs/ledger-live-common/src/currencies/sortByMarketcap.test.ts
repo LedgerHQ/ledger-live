@@ -27,7 +27,7 @@ test("sortCurrenciesByIds simulate staking from portfolio", () => {
     "elrond",
     "tezos",
     "celo",
-    "osmo",
+    "osmosis",
     "axelar",
     "persistence",
     "onomy",

@@ -62,7 +62,7 @@ const cosmosConfig: Record<string, ConfigInfo> = {
       },
     },
   },
-  config_currency_osmo: {
+  config_currency_osmosis: {
     type: "object",
     default: {
       lcd: "https://osmosis-api.polkachu.com",

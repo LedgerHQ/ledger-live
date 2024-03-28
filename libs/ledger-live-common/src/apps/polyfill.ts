@@ -121,7 +121,7 @@ export const polyfillApplication = (app: Application): Application => {
 
 export const getCurrencyIdFromAppName = (
   appName: string,
-): CryptoCurrencyId | "LBRY" | "groestcoin" | "osmo" | undefined => {
+): CryptoCurrencyId | "LBRY" | "groestcoin" | undefined => {
   const crypto =
     // try to find the "official" currency when possible (2 currencies can have the same manager app and ticker)
     listCryptoCurrencies(true, true).find(

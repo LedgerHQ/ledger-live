@@ -35,7 +35,7 @@ export const IDS = [
   "elrond",
   "tezos",
   "celo",
-  "osmo",
+  "osmosis",
   "axelar",
   "persistence",
   "onomy",
@@ -419,7 +419,7 @@ export const CURRENCIES_LIST: CryptoCurrency[] = [
   },
   {
     type: "CryptoCurrency",
-    id: "osmo",
+    id: "osmosis",
     coinType: 118,
     name: "Osmosis",
     managerAppName: "Cosmos",

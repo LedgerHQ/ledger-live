@@ -2159,7 +2159,7 @@
           "title" : "ATOM을 성장시켜보세요. Ledger 검증인을 통한 스테이킹.",
           "description" : "신뢰할 수 있는 Ledger 검증인을 통해 ATOM을 스테이킹하세요. Ledger의 타협 없는 확실한 보안이 여러분의 자산을 안전하게 보호합니다."
         },
-        "osmo" : {
+        "osmosis" : {
           "title" : "OSMO를 성장시켜보세요. Ledger by Figment로 스테이킹.",
           "description" : "Ledger by Figment로 검증인을 통해 OSMO를 스테이킹하세요. 최저 수수료와 슬래싱에 대한 보장이 제공됩니다!"
         },

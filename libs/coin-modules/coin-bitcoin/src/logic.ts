@@ -16,7 +16,7 @@ import type { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoass
 import type { Account, Operation, OperationType } from "@ledgerhq/types-live";
 
 // correspond ~ to min relay fees but determined empirically for a tx to be accepted by network
-const minFees: Partial<Record<CryptoCurrencyId | "LBRY" | "groestcoin" | "osmo", number>> = {
+const minFees: Partial<Record<CryptoCurrencyId | "LBRY" | "groestcoin", number>> = {
   bitcoin: 1000,
   bitcoin_gold: 1000,
   pivx: 2000,
@@ -123,9 +123,7 @@ type CoinLogic = {
 export const bchToCashaddrAddressWithoutPrefix = (recipient: string): string =>
   recipient ? recipient.substring(recipient.indexOf(":") + 1) : recipient;
 
-export const perCoinLogic: Partial<
-  Record<CryptoCurrencyId | "LBRY" | "groestcoin" | "osmo", CoinLogic>
-> = {
+export const perCoinLogic: Partial<Record<CryptoCurrencyId | "LBRY" | "groestcoin", CoinLogic>> = {
   zencash: {
     hasExtraData: true, // FIXME (legacy) investigate why we need this here and drop
   },
@@ -171,7 +169,7 @@ export const perCoinLogic: Partial<
 
 export const mapTxToOperations = (
   tx: TX,
-  currencyId: CryptoCurrencyId | "LBRY" | "groestcoin" | "osmo",
+  currencyId: CryptoCurrencyId | "LBRY" | "groestcoin",
   accountId: string,
   accountAddresses: Set<string>,
   changeAddresses: Set<string>,
