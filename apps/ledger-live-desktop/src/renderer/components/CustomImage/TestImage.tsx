@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Alert, Flex, Text } from "@ledgerhq/react-ui";
 import { ImageProcessingError } from "@ledgerhq/live-common/customImage/errors";
-import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device-core/capabilities/isCustomLockScreenSupported";
+import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import { getScreenVisibleAreaDimensions } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 import { ProcessorResult } from "~/renderer/components/CustomImage/ImageGrayscalePreview";
 import { ImageBase64Data } from "~/renderer/components/CustomImage/types";

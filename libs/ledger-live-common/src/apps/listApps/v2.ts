@@ -16,9 +16,9 @@ import ManagerAPI from "../../manager/api";
 
 import { getDeviceName } from "../../device/use-cases/getDeviceNameUseCase";
 import { getLatestFirmwareForDeviceUseCase } from "../../device/use-cases/getLatestFirmwareForDeviceUseCase";
-import { getProviderIdUseCase } from "../../device-core/managerApi/use-cases/getProviderIdUseCase";
-import { ManagerApiRepository } from "../../device-core/managerApi/repositories/ManagerApiRepository";
+import { getProviderIdUseCase } from "../../device/use-cases/getProviderIdUseCase";
 import { mapApplicationV2ToApp } from "../polyfill";
+import { ManagerApiRepository } from "../../device/factories/HttpManagerApiRepositoryFactory";
 
 // Hash discrepancies for these apps do NOT indicate a potential update,
 // these apps have a mechanism that makes their hash change every time.

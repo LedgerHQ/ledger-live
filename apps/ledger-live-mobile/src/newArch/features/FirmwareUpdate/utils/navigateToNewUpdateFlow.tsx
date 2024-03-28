@@ -1,7 +1,7 @@
 import { DeviceModelInfo } from "@ledgerhq/types-live";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { ScreenName, NavigatorName } from "~/const";
-import { FirmwareUpdateContextEntity } from "@ledgerhq/live-common/device-core/managerApi/entities/FirmwareUpdateContextEntity";
+import { FirmwareUpdateContextEntity } from "@ledgerhq/live-common/device/use-cases/getLatestFirmwareForDeviceUseCase";
 import { UpdateStep } from "~/screens/FirmwareUpdate";
 import { Device } from "@ledgerhq/hw-transport";
 

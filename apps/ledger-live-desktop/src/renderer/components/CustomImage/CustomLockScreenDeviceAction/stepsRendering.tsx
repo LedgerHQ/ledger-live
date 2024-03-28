@@ -8,7 +8,7 @@ import { Theme, Flex } from "@ledgerhq/react-ui";
 import FramedPicture from "../FramedPicture";
 import { AnimationWrapper, Title } from "../../DeviceAction/rendering";
 import { useTranslation } from "react-i18next";
-import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device-core/capabilities/isCustomLockScreenSupported";
+import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import { getFramedPictureConfig } from "../framedPictureConfigs";
 
 export const RenderImageLoadRequested = ({

@@ -1,3 +1,4 @@
+import { McuVersion } from "@ledgerhq/types-live";
 import { ApplicationV2Entity } from "../entities/AppEntity";
 import { DeviceInfoEntity } from "../entities/DeviceInfoEntity";
 import { DeviceVersionEntity } from "../entities/DeviceVersionEntity";
@@ -13,7 +14,7 @@ export interface ManagerApiRepository {
     userId: string;
   }): Promise<OsuFirmware | null | undefined>;
 
-  fetchMcus(): Promise<any>; // TODO: type properly
+  fetchMcus(): Promise<McuVersion[]>;
 
   getDeviceVersion({
     targetId,

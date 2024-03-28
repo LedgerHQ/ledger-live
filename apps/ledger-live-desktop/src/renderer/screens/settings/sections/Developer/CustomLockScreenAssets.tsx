@@ -10,7 +10,7 @@ import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animation
 import source from "./sampleimage";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { getFramedPictureConfig } from "~/renderer/components/CustomImage/framedPictureConfigs";
-import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device-core/capabilities/isCustomLockScreenSupported";
+import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import DeviceModelPicker from "~/renderer/components/CustomImage/DeviceModelPicker";
 
 const CustomLockScreenAssets = () => {

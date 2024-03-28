@@ -1,1 +1,1 @@
-export * from "../../device-core/customLockScreen/screenSpecs";
+export * from "@ledgerhq/device-core";

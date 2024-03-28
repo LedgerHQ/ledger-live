@@ -8,7 +8,7 @@ import {
 } from "../entities/LanguagePackageEntity";
 import { HttpManagerApiRepository } from "./HttpManagerApiRepository";
 
-const getUserHashesModule = jest.requireActual("../../../user");
+const getUserHashesModule = jest.requireActual("../use-cases/getUserHashes");
 const networkModule = jest.requireActual("@ledgerhq/live-network/network");
 
 describe("HttpManagerApiRepository", () => {

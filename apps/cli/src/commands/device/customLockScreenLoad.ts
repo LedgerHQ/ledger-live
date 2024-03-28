@@ -6,7 +6,7 @@ import { deviceOpt } from "../../scan";
 import {
   CLSSupportedDeviceModelId,
   isCustomLockScreenSupported,
-} from "@ledgerhq/live-common/device-core/capabilities/isCustomLockScreenSupported";
+} from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 
 type CustomLockScreenLoadJobOpts = ScanCommonOpts & {

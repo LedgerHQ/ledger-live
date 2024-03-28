@@ -1,4 +1,4 @@
-import { DeviceModelId } from "@ledgerhq/types-devices";
+import { DeviceModelId } from "@ledgerhq/devices";
 import { isEditDeviceNameSupported } from "./isEditDeviceNameSupported";
 
 const supportedDevices = [DeviceModelId.stax, DeviceModelId.nanoX, DeviceModelId.europa];

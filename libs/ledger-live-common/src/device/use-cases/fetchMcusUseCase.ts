@@ -1,5 +1,4 @@
-import { ManagerApiRepository } from "../../device-core/managerApi/repositories/ManagerApiRepository";
-import { fetchMcus } from "../../device-core/managerApi/use-cases/fetchMcus";
+import { ManagerApiRepository, fetchMcus } from "@ledgerhq/device-core";
 import { HttpManagerApiRepositoryFactory } from "../factories/HttpManagerApiRepositoryFactory";
 
 export function fetchMcusUseCase(
