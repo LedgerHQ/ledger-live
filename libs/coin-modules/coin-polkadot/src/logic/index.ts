@@ -4,35 +4,12 @@
  * and therefore can be used with "any Ledger product"
  */
 
-export { createTransaction } from "./transaction";
-export {
-  calculateAmount,
-  canBond,
-  canUnbond,
-  canNominate,
-  getMinimumBalance,
-  getNonce,
-  hasExternalController,
-  hasExternalStash,
-  hasMinimumBondBalance,
-  hasPendingOperationType,
-  isElectionOpen,
-  isStash,
-  isFirstBond,
-  MAX_NOMINATIONS,
-} from "./utils";
 export { getAccountShape } from "./synchronisation";
-export {
-  getCurrentPolkadotPreloadData,
-  setPolkadotPreloadData,
-  getPolkadotPreloadDataUpdates,
-} from "./state";
-export { buildTransaction } from "./buildTransaction";
+export { craftTransaction } from "./buildTransaction";
+export type { CreateExtrinsicArg } from "./buildTransaction";
 export { signExtrinsic } from "./signTransaction";
 
 import broadcast from "./broadcast";
-import estimateMaxSpendable from "./estimateMaxSpendable";
-import { getEstimatedFees, estimatedFees } from "./getFeesForTransaction";
-import getTransactionStatus from "./getTransactionStatus";
+import estimatedFees from "./estimatedFees";
 
-export { broadcast, estimateMaxSpendable, getEstimatedFees, getTransactionStatus, estimatedFees };
+export { broadcast, estimatedFees };

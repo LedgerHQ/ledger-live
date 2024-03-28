@@ -1,7 +1,6 @@
 import BigNumber from "bignumber.js";
 import { stringCamelCase } from "@polkadot/util";
-import type { PolkadotAccount, PolkadotOperationMode, Transaction } from "../types";
-import { isFirstBond, getNonce } from "./utils";
+import type { PolkadotOperationMode } from "../types";
 import { loadPolkadotCrypto } from "./polkadot-crypto";
 import polkadotAPI from "../network";
 const EXTRINSIC_VERSION = 4;
@@ -11,7 +10,7 @@ const DEFAULTS = {
   eraPeriod: 64,
 };
 
-type CreateExtrinsicArg = {
+export type CreateExtrinsicArg = {
   mode: PolkadotOperationMode;
   amount: BigNumber;
   recipient: string;
@@ -150,37 +149,6 @@ const getExtrinsicParams = ({
     default:
       throw new Error("Unknown mode in transaction");
   }
-};
-
-export const extractExtrinsicArg = (a: PolkadotAccount, t: Transaction): CreateExtrinsicArg => ({
-  mode: t.mode,
-  amount: t.amount,
-  recipient: t.recipient,
-  isFirstBond: isFirstBond(a),
-  validators: t.validators,
-  useAllAmount: t.useAllAmount,
-  rewardDestination: t.rewardDestination,
-  numSlashingSpans: a.polkadotResources?.numSlashingSpans,
-  era: t.era,
-});
-
-/**
- *
- * @param {Account} a
- * @param {Transaction} t
- * @param {boolean} forceLatestParams - forces the use of latest transaction params
- */
-export const buildTransaction = async (
-  a: PolkadotAccount,
-  t: Transaction,
-  forceLatestParams = false,
-) => {
-  return craftTransaction(
-    a.freshAddress,
-    getNonce(a),
-    extractExtrinsicArg(a, t),
-    forceLatestParams,
-  );
 };
 
 export const defaultExtrinsicArg = (amount: bigint, recipient: string): CreateExtrinsicArg => ({

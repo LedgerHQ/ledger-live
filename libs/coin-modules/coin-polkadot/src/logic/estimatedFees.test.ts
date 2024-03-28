@@ -1,11 +1,16 @@
 import BigNumber from "bignumber.js";
 import { loadPolkadotCrypto } from "./polkadot-crypto";
+<<<<<<< HEAD:libs/coin-modules/coin-polkadot/src/logic/getFeesForTransaction.test.ts
 import { getEstimatedFees } from "./getFeesForTransaction";
 import {
   fixtureChainSpec,
   fixtureTxMaterialWithMetadata,
   fixtureTransactionParams,
 } from "../network/sidecar.fixture";
+=======
+import estimatedFees from "./estimatedFees";
+import { fixtureChainSpec, fixtureTxMaterialWithMetadata } from "../network/sidecar.fixture";
+>>>>>>> 0aed805bd6 (chore: separate more bridge dedicated logic from coin logic):libs/coin-modules/coin-polkadot/src/logic/estimatedFees.test.ts
 import { createFixtureAccount, createFixtureTransaction } from "../types/model.fixture";
 import { createRegistryAndExtrinsics } from "../network/common";
 
@@ -27,7 +32,7 @@ jest.mock("../network/sidecar", () => ({
   getTransactionParams: () => mockTransactionParams(),
 }));
 
-describe("getEstimatedFees", () => {
+describe("estimatedFees", () => {
   const transaction = createFixtureTransaction();
 
   beforeEach(() => {
@@ -40,7 +45,10 @@ describe("getEstimatedFees", () => {
     const mockLoadPolkadotCrypto = jest.mocked(loadPolkadotCrypto);
 
     // When
-    await getEstimatedFees({ a: account, t: transaction });
+    await estimatedFees({
+      accountAddress: account.freshAddress,
+      amount: BigInt(transaction.amount.toString()),
+    });
 
     // Then
     // Test to comply with existing code. Should be 1 time only.
@@ -58,15 +66,15 @@ describe("getEstimatedFees", () => {
     });
 
     // When
-    const result = await getEstimatedFees({
-      a: account,
-      t: transaction,
+    const result = await estimatedFees({
+      accountAddress: account.freshAddress,
+      amount: BigInt(transaction.amount.toString()),
     });
 
     // Then
     expect(mockPaymentInfo).toHaveBeenCalledTimes(1);
     // Receive hex signature computed by Polkadot lib
     expect(mockPaymentInfo.mock.lastCall).not.toBeNull();
-    expect(result).toEqual(new BigNumber(partialFee));
+    expect(result).toEqual(BigInt(partialFee));
   });
 });

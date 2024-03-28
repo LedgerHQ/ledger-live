@@ -38,7 +38,7 @@ import {
 } from "./utils";
 import { isValidAddress } from "../common";
 import { getCurrentPolkadotPreloadData } from "./state";
-import { loadPolkadotCrypto } from "./polkadot-crypto";
+import { loadPolkadotCrypto } from "../logic/polkadot-crypto";
 import polkadotAPI from "../network";
 
 // Should try to refacto

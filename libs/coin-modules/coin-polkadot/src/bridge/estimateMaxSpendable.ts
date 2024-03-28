@@ -3,15 +3,15 @@ import type { AccountLike, Account } from "@ledgerhq/types-live";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
 import type { PolkadotAccount, Transaction } from "../types";
 import { calculateAmount } from "./utils";
-import { getEstimatedFees } from "./getFeesForTransaction";
-import { createTransaction } from "./transaction";
+import getEstimatedFees from "./getFeesForTransaction";
+import createTransaction from "./createTransaction";
 
 /**
  * Returns the maximum possible amount for transaction
  *
  * @param {Object} param - the account, parentAccount and transaction
  */
-const estimateMaxSpendable = async ({
+export default async function estimateMaxSpendable({
   account,
   parentAccount,
   transaction,
@@ -19,7 +19,7 @@ const estimateMaxSpendable = async ({
   account: AccountLike;
   parentAccount: Account | null | undefined;
   transaction: Transaction | null | undefined;
-}): Promise<BigNumber> => {
+}): Promise<BigNumber> {
   const a = getMainAccount(account, parentAccount) as PolkadotAccount;
   const t = { ...createTransaction(), ...transaction, useAllAmount: true };
   const fees = await getEstimatedFees({
@@ -30,6 +30,4 @@ const estimateMaxSpendable = async ({
     a,
     t: { ...t, fees },
   });
-};
-
-export default estimateMaxSpendable;
+}
