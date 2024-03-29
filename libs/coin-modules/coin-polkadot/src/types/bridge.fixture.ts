@@ -1,9 +1,14 @@
 import BigNumber from "bignumber.js";
 import { faker } from "@faker-js/faker";
 import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/currencies";
-import { PolkadotAccount, PolkadotOperation, PolkadotOperationExtra, PolkadotResources, Transaction } from "../types";
+import {
+  PolkadotAccount,
+  PolkadotOperation,
+  PolkadotOperationExtra,
+  PolkadotResources,
+  Transaction,
+} from "../types";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/abandonseed";
-import { Operation } from "@ledgerhq/types-live";
 
 export function createFixtureAccount(account?: Partial<PolkadotAccount>): PolkadotAccount {
   const currency = listCryptoCurrencies(true).find(c => c.id === "polkadot")!;

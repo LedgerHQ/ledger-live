@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
-import network from ".";
 import * as sidecar from "./sidecar";
+import network from ".";
 
 jest.mock("./sidecar");
 const mockedSidecar = jest.mocked(sidecar);
@@ -44,7 +44,3 @@ describe("isNewAccount", () => {
     expect(mockedSidecar.getMinimumBondBalance).toHaveBeenCalledTimes(0);
   });
 });
-
-// describe("getPaymentInfo", () => {
-
-// });

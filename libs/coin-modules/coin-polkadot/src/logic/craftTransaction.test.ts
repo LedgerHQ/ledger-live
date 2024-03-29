@@ -139,7 +139,7 @@ describe("craftTransaction", () => {
 
   it.each([
     { txNumSlashingSpans: 12, extrinsicNumSlashingSpans: 12 },
-    { txNumSlashingSpans: undefined, extrinsicNumSlashingSpans: 0 }
+    { txNumSlashingSpans: undefined, extrinsicNumSlashingSpans: 0 },
   ])(
     'returns an unsigned with first validator when transaction has mode "withdrawUnbonded" and numSplashingSpans $txNumSlashingSpans',
     async ({ txNumSlashingSpans, extrinsicNumSlashingSpans }) => {
@@ -152,7 +152,7 @@ describe("craftTransaction", () => {
         toHex: () => expectExtrinsicMethodHex,
       });
       (mockWithdrawUnbonded as any).meta = {
-        args: [{name: "numSlashingSpans"}],
+        args: [{ name: "numSlashingSpans" }],
       };
       mockExtrinsics.mockReturnValue({
         staking: {
