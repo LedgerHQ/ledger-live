@@ -188,7 +188,7 @@ function Delegations({ account }: Props) {
             : []),
         ]
       : [];
-  }, [delegation, t, account, onOpenExplorer]);
+  }, [delegation, t, account, onOpenExplorer, unit]);
 
   const actions = useMemo<DelegationDrawerActions>(() => {
     return [
