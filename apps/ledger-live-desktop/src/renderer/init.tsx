@@ -13,7 +13,6 @@ import { webFrame, ipcRenderer } from "electron";
 // https://github.com/reduxjs/react-redux/issues/1977
 // eslint-disable-next-line react/no-deprecated
 import { render } from "react-dom";
-import moment from "moment";
 import each from "lodash/each";
 import { reload, getKey, loadLSS } from "~/renderer/storage";
 import { hardReset } from "~/renderer/reset";
@@ -40,7 +39,6 @@ import {
   languageSelector,
   sentryLogsSelector,
   hideEmptyTokenAccountsSelector,
-  localeSelector,
   filterTokenOperationsZeroAmountSelector,
 } from "~/renderer/reducers/settings";
 import ReactRoot from "~/renderer/ReactRoot";
@@ -139,15 +137,7 @@ async function init() {
   )(store.dispatch);
   const state = store.getState();
   const language = languageSelector(state);
-  const locale = localeSelector(state);
 
-  // Moment.JS config
-  moment.locale(locale);
-  moment.relativeTimeThreshold("s", 45);
-  moment.relativeTimeThreshold("m", 55);
-  moment.relativeTimeThreshold("h", 24);
-  moment.relativeTimeThreshold("d", 31);
-  moment.relativeTimeThreshold("M", 12);
   i18n.changeLanguage(language);
   await loadLSS(); // Set env handled inside
 

@@ -424,6 +424,7 @@ export default function SelectDevice({
               ) : null}
               <Touchable
                 onPress={onSetUpNewDevice}
+                testID="manager_setup_new_device"
                 {...(withMyLedgerTracking
                   ? {
                       event: "button_clicked",
@@ -454,6 +455,7 @@ export default function SelectDevice({
               </Touchable>
               <Touchable
                 onPress={openBlePairingFlow}
+                testID="manager_connect_device"
                 {...(withMyLedgerTracking
                   ? {
                       event: "button_clicked",
