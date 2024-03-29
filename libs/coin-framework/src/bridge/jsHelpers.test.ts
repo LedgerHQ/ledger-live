@@ -1,7 +1,6 @@
 import BigNumber from "bignumber.js";
 import { AccountShapeInfo, defaultUpdateTransaction, makeSync } from "./jsHelpers";
 import type { Account, SyncConfig, TransactionCommon } from "@ledgerhq/types-live";
-import { TestScheduler } from "rxjs/testing";
 import { listCryptoCurrencies } from "../currencies";
 
 describe("jsHelpers", () => {

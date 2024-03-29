@@ -8,3 +8,17 @@ export type PolkadotOperationMode =
   | "nominate"
   | "chill"
   | "claimReward";
+
+export type PalletMethod =
+  | "transfer"
+  | "transferAllowDeath"
+  | "transferKeepAlive"
+  | "bond"
+  | "bondExtra"
+  | "rebond"
+  | "unbond"
+  | "nominate"
+  | "chill"
+  | "withdrawUnbonded"
+  | "setController"
+  | "payoutStakers";

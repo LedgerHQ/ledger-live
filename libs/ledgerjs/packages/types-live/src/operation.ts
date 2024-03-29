@@ -2,6 +2,18 @@ import type { BigNumber } from "bignumber.js";
 import { TransactionCommonRaw } from "./transaction";
 import { NFTStandard } from "./nft";
 
+export type PolkadotOperationType =
+  | "VOTE"
+  | "REWARD_PAYOUT"
+  | "BOND"
+  | "UNBOND"
+  | "WITHDRAW_UNBONDED"
+  | "SET_CONTROLLER"
+  | "SLASH"
+  | "NOMINATE"
+  | "CHILL"
+  | "FEES";
+
 /**
  *
  */
@@ -24,15 +36,7 @@ export type OperationType =
   | "UNDELEGATE_RESOURCE"
   | "LEGACY_UNFREEZE"
   // POLKADOT
-  | "VOTE"
-  | "REWARD_PAYOUT"
-  | "BOND"
-  | "UNBOND"
-  | "WITHDRAW_UNBONDED"
-  | "SET_CONTROLLER"
-  | "SLASH"
-  | "NOMINATE"
-  | "CHILL"
+  | PolkadotOperationType
   // ETHEREUM
   | "APPROVE"
   // ALGORAND

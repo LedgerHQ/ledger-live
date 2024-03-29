@@ -17,7 +17,7 @@ export function createFixtureAccount(account?: Partial<PolkadotAccount>): Polkad
     unlockingBalance: new BigNumber(faker.string.numeric()),
     unlockings: undefined,
     nominations: undefined,
-    numSlashingSpans: faker.number.int(),
+    numSlashingSpans: faker.number.int(10),
   };
 
   const freshAddress = {

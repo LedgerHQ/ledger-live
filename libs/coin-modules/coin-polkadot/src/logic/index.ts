@@ -4,10 +4,9 @@
  * and therefore can be used with "any Ledger product"
  */
 
-export { getAccountShape } from "./synchronisation";
-export { craftTransaction } from "./buildTransaction";
-export type { CreateExtrinsicArg } from "./buildTransaction";
+export { craftTransaction, type CreateExtrinsicArg } from "./buildTransaction";
 export { signExtrinsic } from "./signTransaction";
+export { getAccountShape } from "./synchronisation";
 
 import broadcast from "./broadcast";
 import estimatedFees from "./estimatedFees";

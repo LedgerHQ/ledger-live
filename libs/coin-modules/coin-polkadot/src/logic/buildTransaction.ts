@@ -1,8 +1,9 @@
 import BigNumber from "bignumber.js";
 import { stringCamelCase } from "@polkadot/util";
-import type { PolkadotOperationMode } from "../types";
+import type { PalletMethod, PolkadotOperationMode } from "../types";
 import { loadPolkadotCrypto } from "./polkadot-crypto";
 import polkadotAPI from "../network";
+
 const EXTRINSIC_VERSION = 4;
 // Default values for tx parameters, if the user doesn't specify any
 const DEFAULTS = {
@@ -22,9 +23,9 @@ export type CreateExtrinsicArg = {
   era?: string | null;
 };
 type ExtrinsicParams = {
-  name: string;
+  name: PalletMethod;
   pallet: "staking" | "balances";
-  args: Record<string, any>;
+  args: Record<string, string | string[] | number | null | undefined>;
 };
 const getExtrinsicParams = ({
   mode,

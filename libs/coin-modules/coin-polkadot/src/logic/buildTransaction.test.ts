@@ -140,35 +140,38 @@ describe("craftTransaction", () => {
   it.each([
     { txNumSlashingSpans: 12, extrinsicNumSlashingSpans: 12 },
     { txNumSlashingSpans: undefined, extrinsicNumSlashingSpans: 0 }
-  ])('returns an unsigned with first validator when transaction has mode "withdrawUnbonded" and numSplashingSpans $txNumSlashingSpans', async ({txNumSlashingSpans, extrinsicNumSlashingSpans}) => {
-    // GIVEN
-    const { freshAddress: address } = createFixtureAccount();
-    const recipient = "WHATEVER";
-    const amount = BigInt(0);
-    const expectExtrinsicMethodHex = faker.string.hexadecimal({ length: 16 });
-    const mockWithdrawUnbonded = jest.fn().mockReturnValue({
-      toHex: () => expectExtrinsicMethodHex,
-    });
-    (mockWithdrawUnbonded as any).meta = {
-      args: [{name: "numSlashingSpans"}],
-    };
-    mockExtrinsics.mockReturnValue({
-      staking: {
-        withdrawUnbonded: mockWithdrawUnbonded,
-      },
-    });
+  ])(
+    'returns an unsigned with first validator when transaction has mode "withdrawUnbonded" and numSplashingSpans $txNumSlashingSpans',
+    async ({ txNumSlashingSpans, extrinsicNumSlashingSpans }) => {
+      // GIVEN
+      const { freshAddress: address } = createFixtureAccount();
+      const recipient = "WHATEVER";
+      const amount = BigInt(0);
+      const expectExtrinsicMethodHex = faker.string.hexadecimal({ length: 16 });
+      const mockWithdrawUnbonded = jest.fn().mockReturnValue({
+        toHex: () => expectExtrinsicMethodHex,
+      });
+      (mockWithdrawUnbonded as any).meta = {
+        args: [{name: "numSlashingSpans"}],
+      };
+      mockExtrinsics.mockReturnValue({
+        staking: {
+          withdrawUnbonded: mockWithdrawUnbonded,
+        },
+      });
 
-    // WHEN
-    const extrinsicArg = defaultExtrinsicArg(amount, recipient);
-    extrinsicArg.mode = "withdrawUnbonded";
-    extrinsicArg.numSlashingSpans = txNumSlashingSpans;
-    const result = await craftTransaction(address, 0, extrinsicArg);
+      // WHEN
+      const extrinsicArg = defaultExtrinsicArg(amount, recipient);
+      extrinsicArg.mode = "withdrawUnbonded";
+      extrinsicArg.numSlashingSpans = txNumSlashingSpans;
+      const result = await craftTransaction(address, 0, extrinsicArg);
 
-    // THEN
-    expect(mockWithdrawUnbonded).toHaveBeenCalledTimes(1);
-    expect(mockWithdrawUnbonded.mock.lastCall[0]).toEqual(extrinsicNumSlashingSpans);
-    expect(result.unsigned.method).toEqual(expectExtrinsicMethodHex);
-  });
+      // THEN
+      expect(mockWithdrawUnbonded).toHaveBeenCalledTimes(1);
+      expect(mockWithdrawUnbonded.mock.lastCall[0]).toEqual(extrinsicNumSlashingSpans);
+      expect(result.unsigned.method).toEqual(expectExtrinsicMethodHex);
+    },
+  );
 
   it('returns an unsigned with first validator when transaction has mode "setController"', async () => {
     // GIVEN
