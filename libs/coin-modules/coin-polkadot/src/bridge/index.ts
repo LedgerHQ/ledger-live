@@ -18,7 +18,7 @@ import broadcast from "./broadcast";
 import createTransaction from "./createTransaction";
 import estimateMaxSpendable from "./estimateMaxSpendable";
 import getTransactionStatus from "./getTransactionStatus";
-import { getAccountShape } from "../logic";
+import getAccountShape from "./getAccountShape";
 import prepareTransaction from "./prepareTransaction";
 import buildSignOperation from "./signOperation";
 import {
