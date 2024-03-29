@@ -79,9 +79,17 @@
       "require": "./lib/bridge/transaction.js",
       "default": "./lib-es/bridge/transaction.js"
     },
+    "./utils": {
+      "require": "./lib/bridge/utils.js",
+      "default": "./lib-es/bridge/utils.js"
+    },
     "./*": {
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"
+    },
+    ".": {
+      "require": "./lib/index.js",
+      "default": "./lib-es/index.js"
     },
     "./package.json": "./package.json"
   },

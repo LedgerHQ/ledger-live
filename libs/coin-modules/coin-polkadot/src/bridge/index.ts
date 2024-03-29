@@ -29,7 +29,7 @@ import {
 } from "./serialization";
 import { getPreloadStrategy, hydrate, preload } from "./preload";
 
-export function buildCurrencyBridge(
+function buildCurrencyBridge(
   signerContext: SignerContext<PolkadotSigner, PolkadotAddress | PolkadotSignature>,
 ): CurrencyBridge {
   const getAddress = signerGetAddress(signerContext);
@@ -47,7 +47,7 @@ export function buildCurrencyBridge(
   };
 }
 
-export function buildAccountBridge(
+function buildAccountBridge(
   signerContext: SignerContext<PolkadotSigner, PolkadotAddress | PolkadotSignature>,
 ): AccountBridge<Transaction> {
   const getAddress = signerGetAddress(signerContext);
