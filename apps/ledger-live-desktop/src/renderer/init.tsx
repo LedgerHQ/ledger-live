@@ -2,7 +2,6 @@ import React from "react";
 import Transport from "@ledgerhq/hw-transport";
 import { getEnv } from "@ledgerhq/live-env";
 import { NotEnoughBalance } from "@ledgerhq/errors";
-import { implicitMigration } from "@ledgerhq/live-common/migrations/accounts";
 import { log } from "@ledgerhq/logs";
 import "../config/configInit";
 import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
@@ -153,9 +152,8 @@ async function init() {
       return currency ? hydrateCurrency(currency) : null;
     }),
   );
-  let accounts = await getKey("app", "accounts", []);
+  const accounts = await getKey("app", "accounts", []);
   if (accounts) {
-    accounts = implicitMigration(accounts);
     store.dispatch(setAccounts(accounts));
 
     // preload currency that's not in accounts list
