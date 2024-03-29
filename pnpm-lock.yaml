@@ -379,9 +379,6 @@ importers:
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
-      moment:
-        specifier: ^2.29.4
-        version: 2.29.4
       prando:
         specifier: ^5.1.2
         version: 5.1.2

@@ -36,10 +36,10 @@ import React, { useRef, useLayoutEffect, useState, useMemo } from "react";
 import ChartJs, { ChartColor, ChartData, ChartOptions, ChartTooltipModel } from "chart.js";
 import styled from "styled-components";
 import Color from "color";
-import moment from "moment";
 import useTheme from "~/renderer/hooks/useTheme";
 import Tooltip from "./Tooltip";
 import { Data, Item } from "./types";
+import { startOfHour, startOfDay } from "@ledgerhq/live-countervalues/portfolio";
 
 export type Props = {
   data: Data;
@@ -108,12 +108,10 @@ export default function Chart({
               tickXScale === "week"
                 ? new Date(d.date)
                 : tickXScale === "day"
-                ? moment(new Date(d.date)).startOf("hour").toDate()
+                ? startOfHour(new Date(d.date))
                 : tickXScale === "minute"
-                ? moment()
-                    .subtract(i * 5, "minutes")
-                    .toDate()
-                : moment(new Date(d.date)).startOf("day").toDate(),
+                ? new Date(new Date(d.date).getTime() - i * 5 * 60 * 1000)
+                : startOfDay(new Date(d.date)),
             y: d[valueKey],
           })),
         },
