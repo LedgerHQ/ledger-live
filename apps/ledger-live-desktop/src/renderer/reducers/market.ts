@@ -5,6 +5,7 @@ import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
 export type MarketState = {
   marketParams: MarketListRequestParams;
   starredMarketCoins: string[];
+  currentPage: number;
 };
 
 const initialState: MarketState = {
@@ -20,6 +21,7 @@ const initialState: MarketState = {
     page: 1,
     counterCurrency: "usd",
   },
+  currentPage: 1,
   starredMarketCoins: [],
 };
 
@@ -27,6 +29,7 @@ type HandlersPayloads = {
   MARKET_SET_VALUES: MarketListRequestParams;
   ADD_STARRED_MARKET_COINS: string;
   REMOVE_STARRED_MARKET_COINS: string;
+  MARKET_SET_CURRENT_PAGE: number;
 };
 
 type MarketHandlers<PreciseKey = true> = Handlers<MarketState, HandlersPayloads, PreciseKey>;
@@ -47,6 +50,10 @@ const handlers: MarketHandlers = {
     ...state,
     starredMarketCoins: state.starredMarketCoins.filter(id => id !== payload),
   }),
+  MARKET_SET_CURRENT_PAGE: (state: MarketState, { payload }: { payload: number }) => ({
+    ...state,
+    currentPage: payload,
+  }),
 };
 
 // Selectors
@@ -54,6 +61,8 @@ const handlers: MarketHandlers = {
 export const marketParamsSelector = (state: { market: MarketState }) => state.market.marketParams;
 export const starredMarketCoinsSelector = (state: { market: MarketState }) =>
   state.market.starredMarketCoins;
+export const marketCurrentPageSelector = (state: { market: MarketState }) =>
+  state.market.currentPage;
 // Exporting reducer
 
 export default handleActions<MarketState, HandlersPayloads[keyof HandlersPayloads]>(

@@ -5,6 +5,7 @@ import { FixedSizeList as List } from "react-window";
 import InfiniteLoader from "react-window-infinite-loader";
 import AutoSizer from "react-virtualized-auto-sizer";
 import {
+  HashMapBody,
   MarketListRequestParams,
   MarketListRequestResult,
 } from "@ledgerhq/live-common/market/types";
@@ -31,6 +32,8 @@ type MarketListProps = {
   t: TFunction;
   isItemLoaded: (index: number) => boolean;
   onLoadNextPage: (startIndex: number, stopIndex: number) => void;
+  checkIfDataIsStaleAndRefetch: (scrollOffset: number) => void;
+  hashMap: Map<string, HashMapBody>;
 };
 
 function MarketList({
@@ -49,9 +52,11 @@ function MarketList({
   toggleSortBy,
   toggleStar,
   onLoadNextPage,
+  checkIfDataIsStaleAndRefetch,
   t,
 }: MarketListProps) {
   const { order, orderBy, search, starred, range, counterCurrency } = marketParams;
+
   return (
     <Flex flex="1" flexDirection="column">
       {!currenciesLength && !loading ? (
@@ -133,6 +138,9 @@ function MarketList({
                         style={{ overflowX: "hidden" }}
                         ref={ref}
                         overscanCount={10}
+                        onScroll={({ scrollOffset }) => {
+                          checkIfDataIsStaleAndRefetch(scrollOffset);
+                        }}
                       >
                         {props => (
                           <CurrencyRow

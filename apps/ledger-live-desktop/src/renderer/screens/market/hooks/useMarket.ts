@@ -6,25 +6,39 @@ import {
   useMarketDataProvider,
   useMarketData as useMarketDataHook,
 } from "@ledgerhq/live-common/market/v2/useMarketDataProvider";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addStarredMarketCoins,
   removeStarredMarketCoins,
+  setMarketCurrentPage,
   setMarketOptions,
 } from "~/renderer/actions/market";
 import { useInitSupportedCounterValues } from "~/renderer/hooks/useInitSupportedCounterValues";
-import { marketParamsSelector, starredMarketCoinsSelector } from "~/renderer/reducers/market";
+import {
+  marketCurrentPageSelector,
+  marketParamsSelector,
+  starredMarketCoinsSelector,
+} from "~/renderer/reducers/market";
 import { localeSelector } from "~/renderer/reducers/settings";
+import { listItemHeight } from "../components/Table";
 
-export type MarketHookResult = {};
+const REFETCH_TIME_ONE_MINUTE = 60 * 1000;
+
+const BASIC_REFETCH = 3; // nb minutes
+
+function getCurrentPage(scrollPosition: number, pageSize: number): number {
+  const size = listItemHeight * pageSize;
+  return Math.floor(scrollPosition / size) + 1;
+}
 
 export function useMarket() {
   const lldRefreshMarketDataFeature = useFeature("lldRefreshMarketData");
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const marketParams = useSelector(marketParamsSelector);
+  const marketCurrentPage = useSelector(marketCurrentPageSelector);
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
   const locale = useSelector(localeSelector);
 
@@ -39,10 +53,12 @@ export function useMarket() {
     ...marketParams,
     liveCoinsList,
     supportedCoinsList: supportedCurrencies,
-    refreshTime: lldRefreshMarketDataFeature?.enabled
-      ? Number(lldRefreshMarketDataFeature?.params?.refreshTime)
-      : undefined,
   });
+
+  const REFRESH_RATE =
+    Number(lldRefreshMarketDataFeature?.params?.refreshTime) > 0
+      ? REFETCH_TIME_ONE_MINUTE * Number(lldRefreshMarketDataFeature?.params?.refreshTime)
+      : REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH;
 
   const { range, starred = [], liveCompatible, orderBy, order, search = "" } = marketParams;
 
@@ -148,6 +164,57 @@ export function useMarket() {
     [marketResult.data],
   );
 
+  /**
+   *
+   * Refresh mechanism ----------------------------------------------
+   */
+
+  const isDataStale = useCallback(
+    (lastUpdate: number) => {
+      const currentTime = new Date();
+      const updatedAt = new Date(lastUpdate);
+      const elapsedTime = currentTime.getTime() - updatedAt.getTime();
+
+      return elapsedTime > REFRESH_RATE;
+    },
+    [REFRESH_RATE],
+  );
+
+  const refetchData = useCallback(
+    (pageToRefetch: number) => {
+      const elem = marketResult.cachedMetadataMap.get(String(pageToRefetch ?? 1));
+
+      if (elem && isDataStale(elem.updatedAt)) {
+        elem.refetch();
+      }
+    },
+    [marketResult.cachedMetadataMap, isDataStale],
+  );
+
+  const checkIfDataIsStaleAndRefetch = useCallback(
+    (scrollPosition: number) => {
+      const newCurrentPage = getCurrentPage(scrollPosition, marketParams.limit || 50);
+
+      if (marketCurrentPage !== newCurrentPage) {
+        dispatch(setMarketCurrentPage(newCurrentPage));
+      }
+
+      refetchData(newCurrentPage);
+    },
+    [marketParams.limit, marketCurrentPage, refetchData, dispatch],
+  );
+
+  useEffect(() => {
+    const intervalId = setInterval(() => refetchData(marketCurrentPage ?? 1), REFRESH_RATE);
+
+    return () => clearInterval(intervalId);
+  }, [REFRESH_RATE, marketCurrentPage, refetchData]);
+
+  /**
+   *
+   * ----------------------------------------------
+   */
+
   return {
     isItemLoaded,
     onLoadNextPage,
@@ -160,6 +227,7 @@ export function useMarket() {
     refresh,
     resetSearch,
     setCounterCurrency,
+    checkIfDataIsStaleAndRefetch,
     freshLoading,
     supportedCounterCurrencies,
     t,
@@ -175,5 +243,6 @@ export function useMarket() {
     fromCurrencies,
     loading,
     currenciesLength,
+    cachedMetadataMap: marketResult.cachedMetadataMap,
   };
 }

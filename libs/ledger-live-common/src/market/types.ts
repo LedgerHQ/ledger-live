@@ -1,4 +1,5 @@
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { RefetchOptions, QueryObserverResult } from "@tanstack/react-query";
 
 export type MarketCoin = {
   id: string;
@@ -32,6 +33,20 @@ export type MarketListRequestResult = {
   isPending: boolean;
   isLoading: boolean;
   isError: boolean;
+  cachedMetadataMap: Map<string, HashMapBody>;
+};
+
+export type HashMapBody = {
+  updatedAt: number;
+  refetch: (options?: RefetchOptions | undefined) => Promise<
+    QueryObserverResult<
+      {
+        formattedData: CurrencyData[];
+        page: number;
+      },
+      Error
+    >
+  >;
 };
 
 export type MarketCurrencyChartDataRequestParams = {

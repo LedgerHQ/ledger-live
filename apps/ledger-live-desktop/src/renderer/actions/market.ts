@@ -13,3 +13,8 @@ export const removeStarredMarketCoins = (payload: string) => ({
   type: "REMOVE_STARRED_MARKET_COINS",
   payload,
 });
+
+export const setMarketCurrentPage = (payload: number) => ({
+  type: "MARKET_SET_CURRENT_PAGE",
+  payload,
+});

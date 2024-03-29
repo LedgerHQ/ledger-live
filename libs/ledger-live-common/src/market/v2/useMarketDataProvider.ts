@@ -1,4 +1,4 @@
-import { useQueries, useQuery } from "@tanstack/react-query";
+import { UseQueryResult, useQueries, useQuery } from "@tanstack/react-query";
 import {
   fetchCurrency,
   fetchCurrencyChartData,
@@ -8,6 +8,8 @@ import {
   supportedCounterCurrencies,
 } from "../api/api";
 import {
+  CurrencyData,
+  HashMapBody,
   MarketCurrencyRequestParams,
   MarketListRequestParams,
   MarketListRequestResult,
@@ -89,10 +91,6 @@ export const useSupportedCurrencies = () =>
   });
 
 export function useMarketData(props: MarketListRequestParams): MarketListRequestResult {
-  const REFRESH_RATE =
-    Number(props.refreshTime) > 0
-      ? REFETCH_TIME_ONE_MINUTE * Number(props.refreshTime)
-      : REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH;
   return useQueries({
     queries: Array.from({ length: props.page ?? 1 }, (_, i) => i + 1).map(page => ({
       queryKey: [
@@ -100,18 +98,40 @@ export function useMarketData(props: MarketListRequestParams): MarketListRequest
         { ...props, page, liveCoinsList: [], supportedCoinsList: [] },
       ],
       queryFn: () => fetchList({ ...props, page }),
-      refetchInterval: REFRESH_RATE,
-      staleTime: REFRESH_RATE,
-      select: (data: RawCurrencyData[]) =>
-        currencyFormatter(data, props.range ?? "24h", cryptoCurrenciesList),
+      select: (data: RawCurrencyData[]) => ({
+        formattedData: currencyFormatter(data, props.range ?? "24h", cryptoCurrenciesList),
+        page,
+      }),
     })),
-    combine: results => {
-      return {
-        data: results.flatMap(result => result.data ?? []),
-        isPending: results.some(result => result.isPending),
-        isLoading: results.some(result => result.isLoading),
-        isError: results.some(result => result.isError),
-      };
-    },
+    combine: combineMarketData,
   });
+}
+
+function combineMarketData(
+  results: UseQueryResult<
+    {
+      formattedData: CurrencyData[];
+      page: number;
+    },
+    Error
+  >[],
+) {
+  const hashMap = new Map<string, HashMapBody>();
+
+  results.forEach(result => {
+    if (result.data) {
+      hashMap.set(String(result.data.page), {
+        updatedAt: result.dataUpdatedAt,
+        refetch: result.refetch,
+      });
+    }
+  });
+
+  return {
+    data: results.flatMap(result => result.data?.formattedData ?? []),
+    isPending: results.some(result => result.isPending),
+    isLoading: results.some(result => result.isLoading),
+    isError: results.some(result => result.isError),
+    cachedMetadataMap: hashMap,
+  };
 }
