@@ -5,7 +5,6 @@ import { FixedSizeList as List } from "react-window";
 import InfiniteLoader from "react-window-infinite-loader";
 import AutoSizer from "react-virtualized-auto-sizer";
 import {
-  HashMapBody,
   MarketListRequestParams,
   MarketListRequestResult,
 } from "@ledgerhq/live-common/market/types";
@@ -33,7 +32,6 @@ type MarketListProps = {
   isItemLoaded: (index: number) => boolean;
   onLoadNextPage: (startIndex: number, stopIndex: number) => void;
   checkIfDataIsStaleAndRefetch: (scrollOffset: number) => void;
-  hashMap: Map<string, HashMapBody>;
 };
 
 function MarketList({

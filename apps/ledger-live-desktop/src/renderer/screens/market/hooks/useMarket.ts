@@ -22,16 +22,7 @@ import {
   starredMarketCoinsSelector,
 } from "~/renderer/reducers/market";
 import { localeSelector } from "~/renderer/reducers/settings";
-import { listItemHeight } from "../components/Table";
-
-const REFETCH_TIME_ONE_MINUTE = 60 * 1000;
-
-const BASIC_REFETCH = 3; // nb minutes
-
-function getCurrentPage(scrollPosition: number, pageSize: number): number {
-  const size = listItemHeight * pageSize;
-  return Math.floor(scrollPosition / size) + 1;
-}
+import { BASIC_REFETCH, REFETCH_TIME_ONE_MINUTE, getCurrentPage, isDataStale } from "../utils";
 
 export function useMarket() {
   const lldRefreshMarketDataFeature = useFeature("lldRefreshMarketData");
@@ -169,26 +160,15 @@ export function useMarket() {
    * Refresh mechanism ----------------------------------------------
    */
 
-  const isDataStale = useCallback(
-    (lastUpdate: number) => {
-      const currentTime = new Date();
-      const updatedAt = new Date(lastUpdate);
-      const elapsedTime = currentTime.getTime() - updatedAt.getTime();
-
-      return elapsedTime > REFRESH_RATE;
-    },
-    [REFRESH_RATE],
-  );
-
   const refetchData = useCallback(
     (pageToRefetch: number) => {
       const elem = marketResult.cachedMetadataMap.get(String(pageToRefetch ?? 1));
 
-      if (elem && isDataStale(elem.updatedAt)) {
+      if (elem && isDataStale(elem.updatedAt, REFRESH_RATE)) {
         elem.refetch();
       }
     },
-    [marketResult.cachedMetadataMap, isDataStale],
+    [marketResult.cachedMetadataMap, REFRESH_RATE],
   );
 
   const checkIfDataIsStaleAndRefetch = useCallback(
@@ -243,6 +223,5 @@ export function useMarket() {
     fromCurrencies,
     loading,
     currenciesLength,
-    cachedMetadataMap: marketResult.cachedMetadataMap,
   };
 }
