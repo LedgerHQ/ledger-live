@@ -1,6 +1,10 @@
 import React, { useCallback, useMemo, useRef } from "react";
 import { v4 as uuid } from "uuid";
-import { SetDrawerOpenedCallback, QueuedDrawersContext } from "./QueuedDrawersContext";
+import {
+  SetDrawerOpenedCallback,
+  QueuedDrawersContext,
+  DrawerInQueue,
+} from "./QueuedDrawersContext";
 
 type QueueItem = {
   id: string;
@@ -17,7 +21,7 @@ const QueuedDrawersContextProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const addDrawerToQueue = useCallback(
-    (setDrawerOpenedCallback: SetDrawerOpenedCallback, force: boolean) => {
+    (setDrawerOpenedCallback: SetDrawerOpenedCallback, force: boolean): DrawerInQueue => {
       console.log("addDrawerToQueue", queueRef.current.length, force);
       const id = uuid();
       const newQueueItem: QueueItem = { id, setDrawerOpenedCallback };
@@ -49,7 +53,10 @@ const QueuedDrawersContextProvider: React.FC<{ children: React.ReactNode }> = ({
         }
         logQueueLength();
       }
-      return removeDrawerFromQueue;
+      return {
+        removeDrawerFromQueue,
+        getPositionInQueue: () => queueRef.current.findIndex(queueItem => queueItem.id === id),
+      };
     },
     [logQueueLength],
   );

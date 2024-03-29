@@ -72,13 +72,13 @@ export default function DebugQueuedDrawers() {
     if (isDrawer5Started) {
       timeoutId = setTimeout(() => {
         setDrawer5IsForcingToBeOpened(true);
+        setIsDrawer5Started(false);
       }, 3000);
     }
 
     // Not cleaning on navigation-lost-focus to test what happens when navigating
     return () => {
       if (timeoutId) clearTimeout(timeoutId);
-      setDrawer5IsForcingToBeOpened(false);
     };
   }, [isDrawer5Started]);
 
@@ -136,8 +136,7 @@ export default function DebugQueuedDrawers() {
   }, []);
 
   const handleDrawer5Close = useCallback(() => {
-    // Updating isDrawer5ForcingToBeOpened is handled in the useEffect
-    setIsDrawer5Started(false);
+    setDrawer5IsForcingToBeOpened(false);
   }, []);
 
   const handleDrawer6AClose = useCallback(() => {
@@ -159,6 +158,25 @@ export default function DebugQueuedDrawers() {
     [dispatch],
   );
 
+  const navigationButtons = (
+    <>
+      <Button
+        type="main"
+        outline
+        onPress={() => navigation.navigate(ScreenName.DebugQueuedDrawerScreen1)}
+      >
+        Navigate to debug screen 1
+      </Button>
+      <Button
+        type="main"
+        outline
+        onPress={() => navigation.navigate(ScreenName.DebugQueuedDrawerScreen2)}
+      >
+        Navigate to debug screen 2
+      </Button>
+    </>
+  );
+
   return (
     <>
       <NavigationScrollView>
@@ -166,19 +184,44 @@ export default function DebugQueuedDrawers() {
           <Button type="main" outline onPress={_clearQueue}>
             {"Clear queue (for debugging, if you have to, it means there's an issue)"}
           </Button>
+          {navigationButtons}
           <Button
             type="main"
             outline
-            onPress={() => navigation.navigate(ScreenName.DebugQueuedDrawerScreen1)}
+            onPress={() => {
+              setIsDrawer1Open(true);
+              setTimeout(() => {
+                setIsDrawer1Open(false);
+              }, 2000);
+            }}
           >
-            Navigate to debug screen 1
+            Open the first drawer and close it after 2sec
           </Button>
           <Button
             type="main"
             outline
-            onPress={() => navigation.navigate(ScreenName.DebugQueuedDrawerScreen2)}
+            onPress={() => {
+              setIsDrawer1Open(true);
+              setIsDrawer2Open(true);
+              setTimeout(() => {
+                setIsDrawer1Open(false);
+              }, 2000);
+            }}
           >
-            Navigate to debug screen 2
+            Open the two first drawers and close the first after 2sec
+          </Button>
+          <Button
+            type="main"
+            outline
+            onPress={() => {
+              setIsDrawer1Open(true);
+              setIsDrawer2Open(true);
+              setTimeout(() => {
+                setIsDrawer2Open(false);
+              }, 2000);
+            }}
+          >
+            Open the two first drawers and close the second after 2sec
           </Button>
           <Flex>
             <Switch
@@ -295,6 +338,7 @@ export default function DebugQueuedDrawers() {
       >
         <Flex p="4">
           <Alert type="info" title="1st drawer" />
+          {navigationButtons}
         </Flex>
       </QueuedDrawer>
 
@@ -305,6 +349,7 @@ export default function DebugQueuedDrawers() {
       >
         <Flex p="4">
           <Alert type="info" title="2nd drawer" />
+          {navigationButtons}
         </Flex>
       </QueuedDrawer>
 
@@ -315,6 +360,7 @@ export default function DebugQueuedDrawers() {
       >
         <Flex p="4">
           <Alert type="info" title="3rd drawer" />
+          {navigationButtons}
         </Flex>
       </QueuedDrawer>
 

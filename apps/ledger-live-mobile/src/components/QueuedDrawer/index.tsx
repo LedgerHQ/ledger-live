@@ -7,7 +7,7 @@ import { useSelector } from "react-redux";
 import { isModalLockedSelector } from "~/reducers/appstate";
 import { Merge } from "~/types/helpers";
 import { IsInDrawerProvider } from "~/context/IsInDrawerContext";
-import { QueuedDrawersContext } from "./QueuedDrawersContext";
+import { DrawerInQueue, QueuedDrawersContext } from "./QueuedDrawersContext";
 
 // Purposefully removes isOpen prop so consumers can't use it directly
 export type Props = Merge<
@@ -72,7 +72,7 @@ const QueuedDrawer = ({
 }: Props) => {
   const [isDisplayed, setIsDisplayed] = useState(false);
   const { addDrawerToQueue } = useContext(QueuedDrawersContext);
-  const removeDrawerFromQueueRef = useRef<() => void | undefined>();
+  const drawerInQueueRef = useRef<DrawerInQueue>();
 
   const isFocused = useIsFocused();
 
@@ -82,6 +82,10 @@ const QueuedDrawer = ({
 
   const triggerClose = useCallback(() => {
     setIsDisplayed(false);
+    if (drawerInQueueRef.current && drawerInQueueRef.current.getPositionInQueue() !== 0) {
+      drawerInQueueRef.current.removeDrawerFromQueue();
+      drawerInQueueRef.current = undefined;
+    }
     onClose && onClose();
   }, [onClose]);
 
@@ -90,6 +94,7 @@ const QueuedDrawer = ({
       if (isOpen) {
         triggerOpen();
       } else {
+        console.log("setDrawerOpenedCallback triggerClose");
         triggerClose();
       }
     },
@@ -98,13 +103,20 @@ const QueuedDrawer = ({
 
   useEffect(() => {
     if (!isFocused && (isRequestingToBeOpened || isForcingToBeOpened)) {
+      console.log("trigger close because not focused");
       triggerClose();
-    } else if (isRequestingToBeOpened) {
-      removeDrawerFromQueueRef.current = addDrawerToQueue(setDrawerOpenedCallback, false);
-      return triggerClose;
-    } else if (isForcingToBeOpened) {
-      removeDrawerFromQueueRef.current = addDrawerToQueue(setDrawerOpenedCallback, true);
-      return triggerClose;
+    } else if (isRequestingToBeOpened && !drawerInQueueRef.current) {
+      drawerInQueueRef.current = addDrawerToQueue(setDrawerOpenedCallback, false);
+      return () => {
+        console.log("trigger close in cleanup");
+        triggerClose();
+      };
+    } else if (isForcingToBeOpened && !drawerInQueueRef.current) {
+      drawerInQueueRef.current = addDrawerToQueue(setDrawerOpenedCallback, true);
+      return () => {
+        console.log("trigger close in cleanup");
+        triggerClose();
+      };
     }
   }, [
     addDrawerToQueue,
@@ -115,30 +127,36 @@ const QueuedDrawer = ({
     triggerClose,
   ]);
 
-  // If the drawer system is locked to the currently opened drawer
-  const areDrawersLocked = useSelector(isModalLockedSelector);
-
-  const handleClose = useCallback(() => {
+  const handleCloseUserEvent = useCallback(() => {
+    console.log("handleClose");
     triggerClose();
-  }, [triggerClose]);
+    onClose && onClose();
+  }, [onClose]);
 
   const handleModalHide = useCallback(() => {
     console.log("handleModalHide");
     onModalHide && onModalHide();
+    onClose && onClose();
     setIsDisplayed(false);
-    removeDrawerFromQueueRef.current && removeDrawerFromQueueRef.current();
-  }, [onModalHide]);
+    drawerInQueueRef.current && drawerInQueueRef.current.removeDrawerFromQueue();
+    drawerInQueueRef.current = undefined;
+  }, [onClose, onModalHide]);
 
   useEffect(() => {
     return () => {
-      removeDrawerFromQueueRef.current && removeDrawerFromQueueRef.current();
+      console.log("UNMOUNT drawer...");
+      drawerInQueueRef.current && drawerInQueueRef.current.removeDrawerFromQueue();
+      drawerInQueueRef.current = undefined;
     };
   }, []);
+
+  // If the drawer system is locked to the currently opened drawer
+  const areDrawersLocked = useSelector(isModalLockedSelector);
 
   return (
     <BottomDrawer
       preventBackdropClick={areDrawersLocked || preventBackdropClick}
-      onClose={handleClose}
+      onClose={handleCloseUserEvent}
       onModalHide={handleModalHide}
       noCloseButton={areDrawersLocked || noCloseButton}
       modalStyle={style}

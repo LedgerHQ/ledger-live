@@ -1,15 +1,23 @@
 import React from "react";
 
 export type SetDrawerOpenedCallback = (opened: boolean) => void;
-type RemoveDrawerFromQueueCallback = () => void;
+
+export type DrawerInQueue = {
+  removeDrawerFromQueue: () => void;
+  getPositionInQueue: () => number;
+};
+
 type QueuedDrawersContextType = {
   addDrawerToQueue: (
     setDrawerOpenedCallback: SetDrawerOpenedCallback,
     force: boolean,
-  ) => RemoveDrawerFromQueueCallback;
+  ) => DrawerInQueue;
   _clearQueue(): void;
 };
 export const QueuedDrawersContext = React.createContext<QueuedDrawersContextType>({
-  addDrawerToQueue: () => () => {},
+  addDrawerToQueue: () => ({
+    removeDrawerFromQueue: () => {},
+    getPositionInQueue: () => -1,
+  }),
   _clearQueue: () => {},
 });
