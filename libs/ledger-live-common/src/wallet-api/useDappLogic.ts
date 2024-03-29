@@ -14,6 +14,7 @@ import { CurrentAccountHistDB, UiHook, usePermission } from "./react";
 import BigNumber from "bignumber.js";
 import { safeEncodeEIP55 } from "@ledgerhq/coin-evm/logic";
 import { SmartWebsocket } from "./SmartWebsocket";
+import { stripHexPrefix } from "./helpers";
 
 type MessageId = number | string | null;
 
@@ -55,23 +56,6 @@ export function convertEthToLiveTX(ethTX: any): WalletAPITransaction {
     data: ethTX.data ? Buffer.from(ethTX.data.replace("0x", ""), "hex") : undefined,
   };
 }
-
-// Copied from https://www.npmjs.com/package/ethereumjs-util
-const isHexPrefixed = (str: string): boolean => {
-  if (typeof str !== "string") {
-    throw new Error(`[isHexPrefixed] input must be type 'string', received type ${typeof str}`);
-  }
-
-  return str[0] === "0" && str[1] === "x";
-};
-
-// Copied from https://www.npmjs.com/package/ethereumjs-util
-export const stripHexPrefix = (str: string): string => {
-  if (typeof str !== "string")
-    throw new Error(`[stripHexPrefix] input must be type 'string', received ${typeof str}`);
-
-  return isHexPrefixed(str) ? str.slice(2) : str;
-};
 
 export function EVMAddressChanged(addr1: string, addr2: string): boolean {
   return addr1.toLowerCase() !== addr2.toLowerCase();
