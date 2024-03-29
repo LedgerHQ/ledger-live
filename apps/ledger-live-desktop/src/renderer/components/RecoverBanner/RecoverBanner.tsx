@@ -12,6 +12,7 @@ import styled from "styled-components";
 
 const Wrapper = styled(Card)`
   background-color: ${p => p.theme.colors.opacityPurple.c10};
+  margin: 20px 0px;
 `;
 
 /**
