@@ -2677,11 +2677,6 @@
       }
     }
   },
-  "icon": {
-    "account": {
-      "availableBalance": "Available balance"
-    }
-  },
   "tezos": {
     "objkt": {
       "card": {
