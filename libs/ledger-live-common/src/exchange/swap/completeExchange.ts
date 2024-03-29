@@ -131,6 +131,11 @@ const completeExchange = (
           throw convertTransportError(currentStep, e);
         }
 
+        o.next({
+          type: "complete-exchange-requested",
+          estimatedFees: estimatedFees.toString(),
+        });
+
         // Swap specific checks to confirm the refund address is correct.
         if (unsubscribed) return;
         const refundAddressParameters = await perFamily[
@@ -167,11 +172,6 @@ const completeExchange = (
 
           throw convertTransportError(currentStep, e);
         }
-
-        o.next({
-          type: "complete-exchange-requested",
-          estimatedFees: estimatedFees.toString(),
-        });
 
         if (unsubscribed) return;
         ignoreTransportError = true;
