@@ -155,15 +155,29 @@ export default function DebugQueuedDrawers() {
   return (
     <>
       <NavigationScrollView>
-        <Flex p="4">
-          <Flex mb="2">
+        <Flex p="4" rowGap={4}>
+          <Button
+            type="main"
+            outline
+            onPress={() => navigation.navigate(ScreenName.DebugQueuedDrawerScreen1)}
+          >
+            Navigate to debug screen 1
+          </Button>
+          <Button
+            type="main"
+            outline
+            onPress={() => navigation.navigate(ScreenName.DebugQueuedDrawerScreen2)}
+          >
+            Navigate to debug screen 2
+          </Button>
+          <Flex>
             <Switch
               checked={isDrawer1Open}
               onChange={val => setIsDrawer1Open(val)}
               label={"Open the 1st drawer"}
             />
           </Flex>
-          <Flex mb="2">
+          <Flex>
             <Switch
               checked={isDrawer2Open}
               onChange={val => {
@@ -173,7 +187,7 @@ export default function DebugQueuedDrawers() {
               label={"Open the 1st then 2nd drawers"}
             />
           </Flex>
-          <Flex mb="2">
+          <Flex>
             <Switch
               checked={isDrawer3Open}
               onChange={val => {
@@ -184,7 +198,7 @@ export default function DebugQueuedDrawers() {
               label={"Open the 1st then 2nd then 3rd drawers"}
             />
           </Flex>
-          <Flex mt="6" mb="6">
+          <Flex>
             <Switch
               checked={isDrawer4Started}
               onChange={val => {
@@ -195,7 +209,7 @@ export default function DebugQueuedDrawers() {
               }
             />
           </Flex>
-          <Flex mb="6">
+          <Flex>
             <Switch
               checked={isDrawer5Started}
               onChange={val => {
@@ -206,14 +220,14 @@ export default function DebugQueuedDrawers() {
               }
             />
           </Flex>
-          <Flex mb="6">
+          <Flex>
             <Switch
               checked={isDebugAppLevelDrawerOpened}
               onChange={handleDebugAppLevelDrawerOpenedChange}
               label={"Open a drawer equivalent to the notification or ratings drawer 📲"}
             />
           </Flex>
-          <Flex mb="6">
+          <Flex>
             <Switch
               checked={isDrawer6AOpen || isDrawer6BOpen}
               onChange={val => {
@@ -225,7 +239,7 @@ export default function DebugQueuedDrawers() {
               }
             />
           </Flex>
-          <Flex mb="6">
+          <Flex>
             <Switch
               checked={areDrawersLockedStarted}
               onChange={val => {
