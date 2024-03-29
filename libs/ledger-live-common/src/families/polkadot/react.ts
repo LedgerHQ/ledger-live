@@ -1,12 +1,14 @@
 import { useState, useEffect, useMemo, useRef } from "react";
+import type {
+  PolkadotValidator,
+  PolkadotNomination,
+  PolkadotSearchFilter,
+  PolkadotAccount,
+} from "@ledgerhq/coin-polkadot";
 import {
   getCurrentPolkadotPreloadData,
   getPolkadotPreloadDataUpdates,
-  type PolkadotValidator,
-  type PolkadotNomination,
-  type PolkadotSearchFilter,
-  type PolkadotAccount,
-} from "@ledgerhq/coin-polkadot";
+} from "@ledgerhq/coin-polkadot/bridge/state";
 import useMemoOnce from "../../hooks/useMemoOnce";
 import { useBridgeSync } from "../../bridge/react";
 
