@@ -74,7 +74,7 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
         <ToolTip content={<Trans i18nKey="account.availableBalanceTooltip" />}>
           <TitleWrapper>
             <Title>
-              <Trans i18nKey="icon.account.availableBalance" />
+              <Trans i18nKey="account.availableBalance" />
             </Title>
             <InfoCircle size={13} />
           </TitleWrapper>
