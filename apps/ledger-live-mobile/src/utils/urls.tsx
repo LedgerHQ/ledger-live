@@ -203,9 +203,6 @@ export const urls = {
     supportArticleLink:
       "https://launchbadge.com/blog/using-a-ledger-nano-to-create-your-hedera-account",
   },
-  icon: {
-    staking: "https://docs.icon.community/"
-  },
   nft: {
     supportDisableIos: "https://support.ledger.com/hc/en-us/articles/7572912170653?docs=true",
     howToSecure: "https://www.ledger.com/academy/how-to-secure-your-nfts",

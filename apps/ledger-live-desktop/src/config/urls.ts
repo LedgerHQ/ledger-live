@@ -285,9 +285,6 @@ export const urls = {
     learnMore:
       "https://support.ledger.com/hc/en-us/articles/360020499920-Celo-CELO-?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=celo",
   },
-  icon: {
-    staking: "https://docs.icon.community/",
-  },
   editEvmTx: {
     learnMore: "https://support.ledger.com/hc/articles/9756122596765?support=true",
   },
