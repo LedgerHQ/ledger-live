@@ -1,5 +1,5 @@
 import { TypeRegistry } from "@polkadot/types";
-import { craftTransaction, defaultExtrinsicArg } from "./buildTransaction";
+import { craftTransaction, defaultExtrinsicArg } from "./craftTransaction";
 import { createFixtureAccount } from "../types/bridge.fixture";
 import { faker } from "@faker-js/faker";
 

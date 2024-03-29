@@ -1,6 +1,6 @@
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
 import { loadPolkadotCrypto } from "./polkadot-crypto";
-import { craftTransaction, defaultExtrinsicArg } from "./buildTransaction";
+import { craftTransaction, defaultExtrinsicArg } from "./craftTransaction";
 import { fakeSignExtrinsic } from "./signTransaction";
 import polkadotAPI from "../network";
 
