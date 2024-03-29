@@ -12,7 +12,7 @@ import Box from "~/renderer/components/Box";
 import { BodyContent, BodyContentProps } from "./BodyContent";
 import { BigNumber } from "bignumber.js";
 import { AccountLike } from "@ledgerhq/types-live";
-import { UserRefusedOnDevice } from "@ledgerhq/errors";
+import { DisabledTransactionBroadcastError } from "@ledgerhq/errors";
 import { useRedirectToSwapHistory } from "~/renderer/screens/exchange/Swap2/utils";
 import { getEnv } from "@ledgerhq/live-env";
 
@@ -150,7 +150,7 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
         });
 
         if (getEnv("DISABLE_TRANSACTION_BROADCAST")) {
-          return onCancel(new UserRefusedOnDevice());
+          return onCancel(new DisabledTransactionBroadcastError());
         }
       }
       onResult(operation);
