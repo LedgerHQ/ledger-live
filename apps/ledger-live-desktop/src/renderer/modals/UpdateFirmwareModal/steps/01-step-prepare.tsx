@@ -28,7 +28,7 @@ import { catchError, map, tap } from "rxjs/operators";
 import { DeviceBlocker } from "~/renderer/components/DeviceAction/DeviceBlocker";
 import { StepProps } from "../types";
 import manager from "@ledgerhq/live-common/manager/index";
-import { isCustomLockScreenSupported } from "@ledgerhq/live-common/device-core/capabilities/isCustomLockScreenSupported";
+import { isCustomLockScreenSupported } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",

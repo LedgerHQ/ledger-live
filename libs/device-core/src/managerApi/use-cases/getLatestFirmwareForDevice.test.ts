@@ -1,9 +1,10 @@
 import { getLatestFirmwareForDevice } from "./getLatestFirmwareForDevice";
 import { ManagerApiRepository } from "../repositories/ManagerApiRepository";
-import { aDeviceInfoBuilder } from "../../../mock/fixtures/aDeviceInfo";
-import { DeviceVersion, FinalFirmware, OsuFirmware } from "@ledgerhq/types-live";
+import { DeviceVersion, FinalFirmware, McuVersion, OsuFirmware } from "@ledgerhq/types-live";
 import { UnknownMCU } from "@ledgerhq/errors";
 import { StubManagerApiRepository } from "../repositories/StubManagerApiRepository";
+import { aDeviceInfoBuilder } from "../entities/mocks/aDeviceInfo";
+
 jest.mock("../repositories/ManagerApiRepository");
 
 describe("getLatestFirmwareForDevice", () => {
@@ -48,7 +49,7 @@ describe("getLatestFirmwareForDevice", () => {
       .mockResolvedValue({ id: 42 } as DeviceVersion);
     jest
       .spyOn(mockedManagerApiRepository, "fetchMcus")
-      .mockResolvedValue(Promise.resolve([{ name: "42", id: 42 }]));
+      .mockResolvedValue(Promise.resolve([{ name: "42", id: 42 } as McuVersion]));
     jest
       .spyOn(mockedManagerApiRepository, "getCurrentFirmware")
       .mockResolvedValue({ se_firmware: 21 } as FinalFirmware);
@@ -82,7 +83,7 @@ describe("getLatestFirmwareForDevice", () => {
       .mockResolvedValue({ id: 42 } as DeviceVersion);
     jest
       .spyOn(mockedManagerApiRepository, "fetchMcus")
-      .mockResolvedValue(Promise.resolve([{ name: "42", id: "MCU_TEST" }]));
+      .mockResolvedValue(Promise.resolve([{ name: "42", id: 42 } as McuVersion]));
     jest
       .spyOn(mockedManagerApiRepository, "getCurrentFirmware")
       .mockResolvedValue({ id: 21 } as FinalFirmware);
@@ -111,7 +112,7 @@ describe("getLatestFirmwareForDevice", () => {
       .mockResolvedValue({ id: 42 } as DeviceVersion);
     jest
       .spyOn(mockedManagerApiRepository, "fetchMcus")
-      .mockResolvedValue(Promise.resolve([{ name: "42", id: 42 }]));
+      .mockResolvedValue(Promise.resolve([{ name: "42", id: 42 } as McuVersion]));
     jest
       .spyOn(mockedManagerApiRepository, "getCurrentFirmware")
       .mockResolvedValue({ se_firmware: 21 } as FinalFirmware);
@@ -143,7 +144,7 @@ describe("getLatestFirmwareForDevice", () => {
     const deviceInfo = aDeviceInfoBuilder({ mcuVersion: "42" });
     jest
       .spyOn(mockedManagerApiRepository, "fetchMcus")
-      .mockResolvedValue(Promise.resolve([{ name: "42", id: 42 }]));
+      .mockResolvedValue(Promise.resolve([{ name: "42", id: 42 } as McuVersion]));
     jest
       .spyOn(mockedManagerApiRepository, "getDeviceVersion")
       .mockResolvedValue({ id: 42 } as DeviceVersion);
@@ -172,7 +173,7 @@ describe("getLatestFirmwareForDevice", () => {
     const deviceInfo = aDeviceInfoBuilder({ mcuVersion: "42" });
     jest
       .spyOn(mockedManagerApiRepository, "fetchMcus")
-      .mockResolvedValue(Promise.resolve([{ name: "42", id: 42 }]));
+      .mockResolvedValue(Promise.resolve([{ name: "42", id: 42 } as McuVersion]));
     jest
       .spyOn(mockedManagerApiRepository, "getDeviceVersion")
       .mockResolvedValue({ id: 42 } as DeviceVersion);

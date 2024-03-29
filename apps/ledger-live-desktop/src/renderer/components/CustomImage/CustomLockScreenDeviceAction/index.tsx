@@ -21,7 +21,7 @@ import customLockScreenLoad from "@ledgerhq/live-common/hw/customLockScreenLoad"
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
-import { isCustomLockScreenSupported } from "@ledgerhq/live-common/device-core/capabilities/isCustomLockScreenSupported";
+import { isCustomLockScreenSupported } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 
 type Props = {
   device?: Device | null | undefined;

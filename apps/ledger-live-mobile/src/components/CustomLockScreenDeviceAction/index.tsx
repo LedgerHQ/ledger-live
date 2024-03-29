@@ -16,7 +16,7 @@ import Link from "../wrappedUi/Link";
 import { screen, TrackScreen } from "~/analytics";
 import { useStaxLoadImageDeviceAction } from "~/hooks/deviceActions";
 import { SettingsSetLastSeenCustomImagePayload } from "~/actions/types";
-import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device-core/capabilities/isCustomLockScreenSupported";
+import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import {
   RenderImageCommitRequested,
   RenderImageLoadRequested,

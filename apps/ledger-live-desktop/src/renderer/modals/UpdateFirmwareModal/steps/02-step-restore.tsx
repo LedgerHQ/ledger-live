@@ -4,7 +4,7 @@ import { StepProps } from "../types";
 import Language from "./restore/Language";
 import CustomLockScreen from "./restore/CustomLockScreen";
 import { Flex } from "@ledgerhq/react-ui";
-import { isCustomLockScreenSupported } from "@ledgerhq/live-common/device-core/capabilities/isCustomLockScreenSupported";
+import { isCustomLockScreenSupported } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 
 /**
  * Different device models or versions may restore more or less settings.

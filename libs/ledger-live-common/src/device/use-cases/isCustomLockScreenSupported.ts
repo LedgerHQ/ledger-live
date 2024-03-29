@@ -2,4 +2,4 @@ export {
   isCustomLockScreenSupported,
   supportedDeviceModelIds,
   type CLSSupportedDeviceModelId,
-} from "../../device-core/capabilities/isCustomLockScreenSupported";
+} from "@ledgerhq/device-core";
