@@ -82,6 +82,7 @@ import { StorylyProvider } from "./components/StorylyStories/StorylyProvider";
 import { useSettings } from "~/hooks";
 import AppProviders from "./AppProviders";
 import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/postOnboarding/hooks/index";
+import QueuedDrawersContextProvider from "./components/QueuedDrawer/QueuedDrawersContextProvider";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -289,31 +290,33 @@ export default class Root extends Component {
                 <HookNotifications />
                 <HookDynamicContentCards />
                 <TermsAndConditionMigrateLegacyData />
-                <I18nextProvider i18n={i18n}>
-                  <LocaleProvider>
-                    <PlatformAppProviderWrapper>
-                      <FirebaseRemoteConfigProvider>
-                        <FirebaseFeatureFlagsProvider getFeature={getFeature}>
-                          <SafeAreaProvider>
-                            <PerformanceProvider>
-                              <StorylyProvider>
-                                <StylesProvider>
-                                  <StyledStatusBar />
-                                  <NavBarColorHandler />
-                                  <AuthPass>
-                                    <AppProviders initialCountervalues={initialCountervalues}>
-                                      <App />
-                                    </AppProviders>
-                                  </AuthPass>
-                                </StylesProvider>
-                              </StorylyProvider>
-                            </PerformanceProvider>
-                          </SafeAreaProvider>
-                        </FirebaseFeatureFlagsProvider>
-                      </FirebaseRemoteConfigProvider>
-                    </PlatformAppProviderWrapper>
-                  </LocaleProvider>
-                </I18nextProvider>
+                <QueuedDrawersContextProvider>
+                  <I18nextProvider i18n={i18n}>
+                    <LocaleProvider>
+                      <PlatformAppProviderWrapper>
+                        <FirebaseRemoteConfigProvider>
+                          <FirebaseFeatureFlagsProvider getFeature={getFeature}>
+                            <SafeAreaProvider>
+                              <PerformanceProvider>
+                                <StorylyProvider>
+                                  <StylesProvider>
+                                    <StyledStatusBar />
+                                    <NavBarColorHandler />
+                                    <AuthPass>
+                                      <AppProviders initialCountervalues={initialCountervalues}>
+                                        <App />
+                                      </AppProviders>
+                                    </AuthPass>
+                                  </StylesProvider>
+                                </StorylyProvider>
+                              </PerformanceProvider>
+                            </SafeAreaProvider>
+                          </FirebaseFeatureFlagsProvider>
+                        </FirebaseRemoteConfigProvider>
+                      </PlatformAppProviderWrapper>
+                    </LocaleProvider>
+                  </I18nextProvider>
+                </QueuedDrawersContextProvider>
               </>
             ) : (
               <LoadingApp />

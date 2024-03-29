@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Flex, Alert, Switch, Button, Text } from "@ledgerhq/native-ui";
 import { useDispatch, useSelector } from "react-redux";
@@ -10,6 +10,7 @@ import { setDebugAppLevelDrawerOpened } from "~/actions/settings";
 import { debugAppLevelDrawerOpenedSelector } from "~/reducers/settings";
 import LockModal from "~/components/ModalLock";
 import NavigationScrollView from "~/components/NavigationScrollView";
+import { QueuedDrawersContext } from "~/components/QueuedDrawer/QueuedDrawersContext";
 
 /**
  * Debugging screen to test:
@@ -25,12 +26,14 @@ import NavigationScrollView from "~/components/NavigationScrollView";
 export default function DebugQueuedDrawers() {
   const navigation = useNavigation<StackNavigatorNavigation<SettingsNavigatorStackParamList>>();
 
+  const { _clearQueue } = useContext(QueuedDrawersContext);
+
   const [isDrawer1Open, setIsDrawer1Open] = useState(false);
   const [isDrawer2Open, setIsDrawer2Open] = useState(false);
   const [isDrawer3Open, setIsDrawer3Open] = useState(false);
 
   const [isDrawer4Started, setIsDrawer4Started] = useState(false);
-  const [isDrawer4RequestingToBeOpened, setDrawer4IsRequestingToBeOpened] = useState(false);
+  const [isDrawer4Open, setIsDrawer4Open] = useState(false);
 
   const [isDrawer5Started, setIsDrawer5Started] = useState(false);
   const [isDrawer5ForcingToBeOpened, setDrawer5IsForcingToBeOpened] = useState(false);
@@ -50,14 +53,14 @@ export default function DebugQueuedDrawers() {
     // Adds the 4th drawer to the queue after 3 seconds
     if (isDrawer4Started) {
       timeoutId = setTimeout(() => {
-        setDrawer4IsRequestingToBeOpened(true);
+        setIsDrawer4Open(true);
+        setIsDrawer4Started(false);
       }, 3000);
     }
 
     // Not cleaning on navigation-lost-focus to test what happens when navigating
     return () => {
       if (timeoutId) clearTimeout(timeoutId);
-      setDrawer4IsRequestingToBeOpened(false);
     };
   }, [isDrawer4Started]);
 
@@ -128,6 +131,10 @@ export default function DebugQueuedDrawers() {
     setIsDrawer3Open(false);
   }, []);
 
+  const handleDrawer4Close = useCallback(() => {
+    setIsDrawer4Open(false);
+  }, []);
+
   const handleDrawer5Close = useCallback(() => {
     // Updating isDrawer5ForcingToBeOpened is handled in the useEffect
     setIsDrawer5Started(false);
@@ -156,6 +163,9 @@ export default function DebugQueuedDrawers() {
     <>
       <NavigationScrollView>
         <Flex p="4" rowGap={4}>
+          <Button type="main" outline onPress={_clearQueue}>
+            {"Clear queue (for debugging, if you have to, it means there's an issue)"}
+          </Button>
           <Button
             type="main"
             outline
@@ -309,11 +319,8 @@ export default function DebugQueuedDrawers() {
       </QueuedDrawer>
 
       <QueuedDrawer
-        isRequestingToBeOpened={isDrawer4RequestingToBeOpened}
-        onClose={() => {
-          // Updating setDrawer4IsRequestingToBeOpened is handled in the useEffect
-          setIsDrawer4Started(false);
-        }}
+        isRequestingToBeOpened={isDrawer4Open}
+        onClose={handleDrawer4Close}
         preventBackdropClick
       >
         <Flex p="4">

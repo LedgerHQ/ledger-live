@@ -34,11 +34,7 @@ export function DebugQueuedScreen1() {
     <Flex>
       <Text>DebugQueuedScreen1</Text>
       {navigationButtons}
-      <QueuedDrawer
-        debugTag="DRAWER_1"
-        isRequestingToBeOpened={isDrawerOpen}
-        onClose={() => setIsDrawerOpen(false)}
-      >
+      <QueuedDrawer isRequestingToBeOpened={isDrawerOpen} onClose={() => setIsDrawerOpen(false)}>
         {navigationButtons}
       </QueuedDrawer>
     </Flex>
@@ -53,17 +49,10 @@ export function DebugQueuedScreen2() {
     navigation.navigate(ScreenName.DebugQueuedDrawers);
   };
 
-  const navigateToScreen1 = () => {
-    navigation.navigate(ScreenName.DebugQueuedDrawerScreen1);
-  };
-
   const navigationButtons = (
     <Flex>
       <Button type="main" outline onPress={navigateToMainScreen}>
         {"navigate to main debug screen"}
-      </Button>
-      <Button type="main" outline onPress={navigateToScreen1}>
-        {"navigate to screen 1 that has an open drawer"}
       </Button>
       <Button type="main" outline onPress={() => setIsDrawerOpen(true)}>
         {"open drawer"}
@@ -75,11 +64,7 @@ export function DebugQueuedScreen2() {
     <Flex>
       <Text>DebugQueuedScreen2</Text>
       {navigationButtons}
-      <QueuedDrawer
-        debugTag="                    DRAWER_2"
-        isRequestingToBeOpened={isDrawerOpen}
-        onClose={() => setIsDrawerOpen(false)}
-      >
+      <QueuedDrawer isRequestingToBeOpened={isDrawerOpen} onClose={() => setIsDrawerOpen(false)}>
         {navigationButtons}
       </QueuedDrawer>
     </Flex>
