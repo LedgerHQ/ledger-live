@@ -2,7 +2,7 @@
 import React, { useReducer, useEffect, useCallback, useState, useContext } from "react";
 import { DrawerProps as SideDrawerProps } from "~/renderer/components/SideDrawer";
 
-type ExtractProps<TComponentOrTProps> = TComponentOrTProps extends React.ComponentType<infer TProps>
+type ExtractProps<TComponent> = TComponent extends React.ComponentType<infer TProps>
   ? TProps
   : undefined;
 
