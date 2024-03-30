@@ -34,7 +34,7 @@ const blockExplorerUrls: any = {
   "internet_computer": "https://dashboard.internetcomputer.org/account/[ADDRESS]",
   "kava_evm": "https://explorer.kava.io/address/[ADDRESS]",
   "klaytn": "https://scope.klaytn.com/account/[ADDRESS]",
-  "lukso": "https://explorer.lukso.network/address/[ADDRESS]",
+  "lukso": "https://explorer.execution.mainnet.lukso.network/address/[ADDRESS]",
   "metis": "https://andromeda-explorer.metis.io/address/[ADDRESS]",
   "moonbeam": "https://moonscan.io/address/[ADDRESS]",
   "moonriver": "https://moonriver.moonscan.io/address/[ADDRESS]",
@@ -82,11 +82,18 @@ type Log = {
   timestamp: string;
   index: number;
   error?: Error;
+  data?: Data;
+};
+
+type Data = {
   deviceModelId?: string;
   deviceVersion?: string;
-  modelIdList?: string;
-  installed?: App[];
+  modelIdList?: string[];
+  result?: {
+    installed?: App[];
+  };
 };
+
 type LogMeta = {
   env: { [key: string]: string };
   userAgent: string;
@@ -164,9 +171,8 @@ const Header = ({
   onFiles: (files: FileList) => void;
 }) => {
 
-  const deviceLog = logs.find(log => log.deviceModelId && log.deviceVersion && log.modelIdList);
-  const installedApps = logs.find(log => log.installed);
-  const apps = installedApps?.installed;
+  const deviceLog: any = logs.find(log => log.data?.deviceModelId && log.data?.deviceVersion && log.data?.modelIdList);
+  const installedApps: any = logs.find(log => log.data?.result?.installed);
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const [lastClickedButton, setLastClickedButton] = useState<string | null>(null);
 
@@ -341,7 +347,7 @@ const Header = ({
         <HeaderRow>
           <details>
             <summary>
-              <strong>user has {apps?.length} apps installed</strong>
+              <strong>user has {installedApps.data?.result?.installed?.length} apps installed</strong>
             </summary>
             <ul>
               <li>
@@ -352,8 +358,8 @@ const Header = ({
                   </code>
                 </pre>
               </li>
-              {apps?.map((apps, i) => {
-                const isLatestVersion = apps.updated
+              {installedApps.data?.result?.installed?.map((app: App, i: number) => {
+                const isLatestVersion = app.updated
                 const versionStatusStyle = {
                   color: isLatestVersion ? 'green' : 'red'
                 };
@@ -361,9 +367,9 @@ const Header = ({
                   <li key={i}>
                     <pre>
                       <code>
-                        {apps.name} | {apps.version}
+                        {app.name} | {app.version}
                         <span style={versionStatusStyle}>
-                          {isLatestVersion ? ' - latest version' : ` - ${apps.availableVersion} update available`}
+                          {isLatestVersion ? ' - latest version' : ` - ${app.availableVersion} update available`}
                         </span>
                       </code>
                     </pre>
@@ -393,7 +399,7 @@ const Header = ({
                 <li>
                   <code>all devices:</code>
                   <ul>
-                    {deviceLog.modelIdList.map((id, i) => (
+                    {deviceLog.modelIdList.map((id: string, i: number) => (
                       <li key={i}>
                         <pre>
                           <code>{id}</code>
@@ -496,7 +502,7 @@ const Header = ({
 
 const ContentCell = (props: { original: Log }) => {
   const log = props.original;
-  const { type, level, pname, message: _msg, timestamp, index: _index, deviceModelId, deviceVersion, modelIdList, installed, ...rest } = log; // eslint-disable-line no-unused-vars
+  const { type, level, pname, message: _msg, timestamp, index: _index,  ...rest } = log; // eslint-disable-line no-unused-vars
   const messageLense = messageLenses[type];
   const message = messageLense ? messageLense(log) : log.message;
   return (
