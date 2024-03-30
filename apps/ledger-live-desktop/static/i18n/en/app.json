@@ -1166,7 +1166,7 @@
       "continueOnDevice": "Perform this action on your {{productName}}",
       "pairedContent": {
         "title": "This {{deviceName}} is genuine",
-        "description": "It is safe to use this Ledger Stax. You can proceed to set it up.",
+        "description": "It is safe to use this {{productName}}. You can proceed to set it up.",
         "continueOnDevice": "Tap on your {{productName}} to start setup"
       },
       "pinContent": {
@@ -1204,7 +1204,7 @@
         },
         "exitWarningDrawer": {
           "title": "Cancel Genuine Check and OS update check?",
-          "description": "Genuine Check is mandatory to continue setting up your Ledger Stax using the Ledger Live app.",
+          "description": "Genuine Check is mandatory to continue setting up your {{productName}} using the Ledger Live app.",
           "cancelCheckCTA": "Cancel checks",
           "resumeCheckCTA": "Resume checks"
         },
@@ -1295,7 +1295,7 @@
   },
   "postOnboarding": {
     "postOnboardingScreen": {
-      "title": "Next up, use your\nLedger Stax to... ",
+      "title": "Next up, use your\n{{productName}} to... ",
       "titleCompleted": "You're all set !\nKeep going and explore your wallet.",
       "exploreCTA": "Explore wallet"
     },
@@ -1303,7 +1303,7 @@
       "skipLink": "I'll do this later"
     },
     "postOnboardingBanner": {
-      "title": "What's next for your Ledger Stax?",
+      "title": "What's next for your {{productName}}?",
       "description": "Claim the Infinity NFT, customize it's lock screen, or\ntransfer your assets from other exchanges.",
       "link": "See what's next"
     },
@@ -2004,7 +2004,7 @@
       "mcuBlueSecond": "Press and hold the button for at least 5 seconds until the Boot Options are displayed. Tap Bootloader Mode",
       "successTitle": "Your {{deviceName}} OS is\nup to date.",
       "successTitleApps": "Your {{deviceName}} OS is\nup to date. One last thing...",
-      "successSubtitleApps": "To initiate app restore on your Ledger Stax, select\nthe “Restore apps“ button below.",
+      "successSubtitleApps": "To initiate app restore on your {{deviceName}}, select\nthe “Restore apps“ button below.",
       "sucessCTAApps": "Restore apps",
       "SuccessCTANoApps": "Finish",
       "resetSteps": {
@@ -2321,7 +2321,7 @@
   "removeCustomLockscreen": {
     "title": "Remove lock screen picture",
     "cta": "Remove",
-    "confirmation": "Confirm removal of image on your Ledger Stax",
+    "confirmation": "Confirm removal of image on your {{productName}}",
     "success": "Lock screen picture removed"
   },
   "changeCustomLockscreen": {
@@ -5296,10 +5296,6 @@
       "title": "Language restore\ncancelled on device",
       "description": "If this was a mistake, retry now."
     },
-    "RestoreLanguageInstallRefusedOnDevice": {
-      "title": "Restoration of Language was cancelled on Ledger Stax",
-      "description": "If this was a mistake you can retry the restoration, or you may skip this step."
-    },
     "LanguageNotFound": {
       "title": "Language not found",
       "description": "The language you are trying to install was not found. Please try installing another language."
@@ -5934,24 +5930,16 @@
       "description": "Please try again with another image"
     },
     "ImageCommitRefusedOnDevice": {
-      "title": "Installation of lock screen picture\ncancelled on Ledger Stax",
+      "title": "Installation of lock screen picture\ncancelled on {{productName}}",
       "description": "If this this was a mistake, retry now."
     },
     "ImageLoadRefusedOnDevice": {
-      "title": "Installation of lock screen picture\ncancelled on Ledger Stax",
+      "title": "Installation of lock screen picture\ncancelled on {{productName}}",
       "description": "If this this was a mistake, retry now."
     },
     "ImageDoesNotExistOnDevice": {
-      "title": "Your Ledger Stax doesn’t have a lock screen picture to remove",
+      "title": "Your device doesn’t have a lock screen picture to remove",
       "description": "The customized lock screen picture was previously removed."
-    },
-    "RestoreImageCommitRefusedOnDevice": {
-      "title": "Restoration of Lock screen picture was cancelled on Ledger Stax",
-      "description": "If this was a mistake you can retry the restoration, or you may skip this step."
-    },
-    "RestoreImageLoadRefusedOnDevice": {
-      "title": "Restoration of Lock screen picture was cancelled on Ledger Stax",
-      "description": "If this was a mistake you can retry the restoration, or you may skip this step."
     },
     "NearNewAccountWarning": {
       "title": "The recipient account is not created yet. The protocol requires a {{formattedNewAccountStorageCost}} transfer to create it."

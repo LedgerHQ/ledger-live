@@ -1,16 +1,16 @@
 # @ledgerhq/errors
 
-## 6.16.3-nightly.1
+## 6.16.3
 
 ### Patch Changes
 
-- [#6257](https://github.com/LedgerHQ/ledger-live/pull/6257) [`fc4f83e`](https://github.com/LedgerHQ/ledger-live/commit/fc4f83e26d9f00b7c518f28157e8d9da55ce3685) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add new errors for wrong device
+- [#6107](https://github.com/LedgerHQ/ledger-live/pull/6107) [`f456d69`](https://github.com/LedgerHQ/ledger-live/commit/f456d69a2f64b6a217d3c1d9c6a531f31c2817a8) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Set prototype of locked device error in order to fix 'instanceof' check of an error
 
-## 6.16.3-nightly.0
+## 6.16.3-next.0
 
 ### Patch Changes
 
-- [#6317](https://github.com/LedgerHQ/ledger-live/pull/6317) [`26b3a5d`](https://github.com/LedgerHQ/ledger-live/commit/26b3a5d7d6e11efc226403707d683f3d0098a1c1) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix cosmos sequence number error message
+- [#6107](https://github.com/LedgerHQ/ledger-live/pull/6107) [`f456d69`](https://github.com/LedgerHQ/ledger-live/commit/f456d69a2f64b6a217d3c1d9c6a531f31c2817a8) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Set prototype of locked device error in order to fix 'instanceof' check of an error
 
 ## 6.16.2
 

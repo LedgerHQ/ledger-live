@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import { Memo, Operation as StellarSdkOperation, xdr } from "stellar-sdk";
+import { Memo, Operation as StellarSdkOperation, xdr } from "@stellar/stellar-sdk";
 import { AmountRequired, FeeNotLoaded, NetworkDown } from "@ledgerhq/errors";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "./types";

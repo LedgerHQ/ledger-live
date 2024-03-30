@@ -33,12 +33,26 @@ export const commands = (
     const command = comment.body.match(matcher);
     const login = payload.sender.login;
 
-    const res = await octokit.orgs.checkMembershipForUser({
-      org: "LedgerHQ",
-      username: login,
-    });
+    try {
+      const res = await octokit.orgs.checkMembershipForUser({
+        org: "LedgerHQ",
+        username: login,
+      });
 
-    if (res.status >= 300) {
+      if (res.status >= 300) {
+        await octokit.issues.createComment({
+          ...context.repo(),
+          issue_number: issue.number,
+          body: `@${login} you are not part of the organization, please contact a maintainer if you need to run this command.`,
+        });
+        await octokit.rest.reactions.createForIssueComment({
+          ...context.repo(),
+          comment_id: comment.id,
+          content: "-1",
+        });
+        return;
+      }
+    } catch (error) {
       await octokit.issues.createComment({
         ...context.repo(),
         issue_number: issue.number,
@@ -47,7 +61,7 @@ export const commands = (
       await octokit.rest.reactions.createForIssueComment({
         ...context.repo(),
         comment_id: comment.id,
-        content: "eyes",
+        content: "-1",
       });
       return;
     }

@@ -1,24 +1,18 @@
 # @ledgerhq/devices
 
-## 8.3.0-nightly.1
-
-### Minor Changes
-
-- [#6261](https://github.com/LedgerHQ/ledger-live/pull/6261) [`53da330`](https://github.com/LedgerHQ/ledger-live/commit/53da3301aaceeb16e6b1f96b1ea44428fbeb4483) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - add device model europa
+## 8.2.2
 
 ### Patch Changes
 
-- [#6399](https://github.com/LedgerHQ/ledger-live/pull/6399) [`a8138f9`](https://github.com/LedgerHQ/ledger-live/commit/a8138f9ec0cff714d9745012eb91a09713ffbbd2) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix Europa USB and Bluetooth UUIDs
+- Updated dependencies [[`f456d69`](https://github.com/LedgerHQ/ledger-live/commit/f456d69a2f64b6a217d3c1d9c6a531f31c2817a8)]:
+  - @ledgerhq/errors@6.16.3
 
-- Updated dependencies [[`fc4f83e`](https://github.com/LedgerHQ/ledger-live/commit/fc4f83e26d9f00b7c518f28157e8d9da55ce3685)]:
-  - @ledgerhq/errors@6.16.3-nightly.1
-
-## 8.2.2-nightly.0
+## 8.2.2-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`26b3a5d`](https://github.com/LedgerHQ/ledger-live/commit/26b3a5d7d6e11efc226403707d683f3d0098a1c1)]:
-  - @ledgerhq/errors@6.16.3-nightly.0
+- Updated dependencies [[`f456d69`](https://github.com/LedgerHQ/ledger-live/commit/f456d69a2f64b6a217d3c1d9c6a531f31c2817a8)]:
+  - @ledgerhq/errors@6.16.3-next.0
 
 ## 8.2.1
 

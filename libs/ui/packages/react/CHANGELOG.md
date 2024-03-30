@@ -1,11 +1,28 @@
 # @ledgerhq/react-ui
 
-## 0.14.16-nightly.0
+## 0.14.16
 
 ### Patch Changes
 
-- Updated dependencies [[`e13940e`](https://github.com/LedgerHQ/ledger-live/commit/e13940ea8b96098690a57c50dc989a5b6e6a6d28)]:
-  - @ledgerhq/icons-ui@0.6.3-nightly.1
+- [#6099](https://github.com/LedgerHQ/ledger-live/pull/6099) [`486b0c8`](https://github.com/LedgerHQ/ledger-live/commit/486b0c8993715ce67a90b0a6c4fe177c04905719) Thanks [@mle-gall](https://github.com/mle-gall)! - Storybook Update : select control fix, mdx support on react, update of icons and icons doc.
+
+- [#6031](https://github.com/LedgerHQ/ledger-live/pull/6031) [`ca5625c`](https://github.com/LedgerHQ/ledger-live/commit/ca5625c9f5a4293e9a78d630e24c884efed00a9f) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Add new Carousel and remove old and unused one
+
+- Updated dependencies [[`97bafa2`](https://github.com/LedgerHQ/ledger-live/commit/97bafa2573436572fca63469b13214bfcd7eb85c), [`4715e4c`](https://github.com/LedgerHQ/ledger-live/commit/4715e4c411fa2396330ebcb810aeb6bfc9892e88), [`486b0c8`](https://github.com/LedgerHQ/ledger-live/commit/486b0c8993715ce67a90b0a6c4fe177c04905719), [`dfac39b`](https://github.com/LedgerHQ/ledger-live/commit/dfac39b2086f0475d1bc8065032bfe27cbf424f6), [`8096795`](https://github.com/LedgerHQ/ledger-live/commit/80967954758a5e1d2960ac593fc6314391737558)]:
+  - @ledgerhq/crypto-icons-ui@1.1.0
+  - @ledgerhq/icons-ui@0.6.3
+
+## 0.14.16-next.0
+
+### Patch Changes
+
+- [#6099](https://github.com/LedgerHQ/ledger-live/pull/6099) [`486b0c8`](https://github.com/LedgerHQ/ledger-live/commit/486b0c8993715ce67a90b0a6c4fe177c04905719) Thanks [@mle-gall](https://github.com/mle-gall)! - Storybook Update : select control fix, mdx support on react, update of icons and icons doc.
+
+- [#6031](https://github.com/LedgerHQ/ledger-live/pull/6031) [`ca5625c`](https://github.com/LedgerHQ/ledger-live/commit/ca5625c9f5a4293e9a78d630e24c884efed00a9f) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Add new Carousel and remove old and unused one
+
+- Updated dependencies [[`97bafa2`](https://github.com/LedgerHQ/ledger-live/commit/97bafa2573436572fca63469b13214bfcd7eb85c), [`4715e4c`](https://github.com/LedgerHQ/ledger-live/commit/4715e4c411fa2396330ebcb810aeb6bfc9892e88), [`486b0c8`](https://github.com/LedgerHQ/ledger-live/commit/486b0c8993715ce67a90b0a6c4fe177c04905719), [`dfac39b`](https://github.com/LedgerHQ/ledger-live/commit/dfac39b2086f0475d1bc8065032bfe27cbf424f6), [`8096795`](https://github.com/LedgerHQ/ledger-live/commit/80967954758a5e1d2960ac593fc6314391737558)]:
+  - @ledgerhq/crypto-icons-ui@1.1.0-next.0
+  - @ledgerhq/icons-ui@0.6.3-next.0
 
 ## 0.14.15
 

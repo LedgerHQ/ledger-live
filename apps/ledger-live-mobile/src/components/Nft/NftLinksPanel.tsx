@@ -80,10 +80,13 @@ const NftLinksPanel = ({ nftContract, nftId, links, isOpen, onClose, nftMetadata
   const customImageUri = extractImageUrlFromNftMetadata(nftMetadata);
   const knownDeviceModelIds = useSelector(knownDeviceModelIdsSelector);
 
-  const showCustomImageButton =
-    customLockScreenSupportedDeviceModelIds.some(
-      deviceModelId => knownDeviceModelIds[deviceModelId],
-    ) && !!customImageUri;
+  const customImageDeviceModelIds = customLockScreenSupportedDeviceModelIds.filter(
+    deviceModelId => knownDeviceModelIds[deviceModelId],
+  );
+  // if user previously connected e.g. a Stax and a Europa we don't pre-select a device model
+  const customImageDeviceModelId =
+    customImageDeviceModelIds.length === 1 ? customImageDeviceModelIds[0] : null;
+  const showCustomImageButton = Boolean(customImageUri) && customImageDeviceModelIds.length > 0;
 
   const handleOpenOpenSea = useCallback(() => {
     track("button_clicked", {
@@ -126,16 +129,20 @@ const NftLinksPanel = ({ nftContract, nftId, links, isOpen, onClose, nftMetadata
       button: "Set as device lockscreen picture",
       drawer: "NFT settings",
     });
+    const customImageParams = {
+      imageUrl: customImageUri,
+      isStaxEnabled: !!nftMetadata?.staxImage,
+      device: null,
+    };
     navigation.navigate(NavigatorName.CustomImage, {
       screen: ScreenName.CustomImagePreviewPreEdit,
       params: {
-        imageUrl: customImageUri,
-        isStaxEnabled: !!nftMetadata?.staxImage,
-        device: null,
+        ...customImageParams,
+        deviceModelId: customImageDeviceModelId,
       },
     });
     onClose && onClose();
-  }, [navigation, onClose, customImageUri, nftMetadata?.staxImage]);
+  }, [customImageUri, navigation, customImageDeviceModelId, nftMetadata?.staxImage, onClose]);
 
   const content = useMemo(() => {
     const topSection = [

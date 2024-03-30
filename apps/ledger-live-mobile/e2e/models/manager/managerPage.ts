@@ -1,11 +1,13 @@
 import { waitFor } from "detox";
-import { getElementById, openDeeplink, scrollToId } from "../../helpers";
+import { getElementById, openDeeplink, scrollToId, tapByElement } from "../../helpers";
 import { expect, element, by } from "detox";
 
 const baseLink = "myledger";
 
 export default class ManagerPage {
   managerTitle = () => getElementById("manager-title");
+  setupNewDevice = () => getElementById("manager_setup_new_device");
+  connectDevice = () => getElementById("manager_connect_device");
   deviceName = () => getElementById("manager-device-name");
   deviceVersion = () => getElementById("manager-device-version");
   storageLeftField = () => getElementById("manager-storage-available");
@@ -26,6 +28,14 @@ export default class ManagerPage {
 
   async waitForManagerPageToLoad() {
     await waitFor(this.managerTitle()).toBeVisible();
+  }
+
+  async selectSetupNewDevice() {
+    await tapByElement(this.setupNewDevice());
+  }
+
+  async selectConnectDevice() {
+    await tapByElement(this.connectDevice());
   }
 
   async checkDeviceName(name: string) {

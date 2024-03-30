@@ -66,10 +66,6 @@ function inferTransactions(
     invariant(transaction.family === "tezos", "tezos family");
     let subAccountId;
 
-    if (account.type === "ChildAccount") {
-      subAccountId = account.id;
-    }
-
     return {
       ...transaction,
       mode: opts.mode || "send",

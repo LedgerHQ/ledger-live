@@ -1,38 +1,28 @@
 # @ledgerhq/hw-app-exchange
 
-## 0.4.6-nightly.4
+## 0.4.6
 
 ### Patch Changes
 
-- [#6532](https://github.com/LedgerHQ/ledger-live/pull/6532) [`671dfcf`](https://github.com/LedgerHQ/ledger-live/commit/671dfcfb5ea7bd002ece07b9ee451417de1d306d) Thanks [@sarneijim](https://github.com/sarneijim)! - Support base64 in decodePayloadProtobuf
+- [#5833](https://github.com/LedgerHQ/ledger-live/pull/5833) [`d39ca26`](https://github.com/LedgerHQ/ledger-live/commit/d39ca26cf5ffc6e058af22946a4adc6778a7e748) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - clarify error message for invalid address selected
 
-## 0.4.6-nightly.3
+- [#6120](https://github.com/LedgerHQ/ledger-live/pull/6120) [`eb79c71`](https://github.com/LedgerHQ/ledger-live/commit/eb79c7141543991f6e8fa99e5b592fc7a7f43022) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Support base64 encodng for swap_ng type swaps
 
-### Patch Changes
+- Updated dependencies [[`f456d69`](https://github.com/LedgerHQ/ledger-live/commit/f456d69a2f64b6a217d3c1d9c6a531f31c2817a8)]:
+  - @ledgerhq/errors@6.16.3
+  - @ledgerhq/hw-transport@6.30.5
 
-- [#6514](https://github.com/LedgerHQ/ledger-live/pull/6514) [`6a46420`](https://github.com/LedgerHQ/ledger-live/commit/6a46420b2157b30b7fecaedb7faa6f7b98cfce28) Thanks [@sarneijim](https://github.com/sarneijim)! - Fix swap in prod to support decodePayloadProtobuf
-
-## 0.4.6-nightly.2
-
-### Patch Changes
-
-- [#6420](https://github.com/LedgerHQ/ledger-live/pull/6420) [`2b5c3bb`](https://github.com/LedgerHQ/ledger-live/commit/2b5c3bb7c31445f840b66f7e0f51e9e2b07b0c49) Thanks [@sarneijim](https://github.com/sarneijim)! - Use bk payload as source of true for swap
-
-## 0.4.6-nightly.1
+## 0.4.6-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`fc4f83e`](https://github.com/LedgerHQ/ledger-live/commit/fc4f83e26d9f00b7c518f28157e8d9da55ce3685)]:
-  - @ledgerhq/errors@6.16.3-nightly.1
-  - @ledgerhq/hw-transport@6.30.5-nightly.1
+- [#5833](https://github.com/LedgerHQ/ledger-live/pull/5833) [`d39ca26`](https://github.com/LedgerHQ/ledger-live/commit/d39ca26cf5ffc6e058af22946a4adc6778a7e748) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - clarify error message for invalid address selected
 
-## 0.4.6-nightly.0
+- [#6120](https://github.com/LedgerHQ/ledger-live/pull/6120) [`eb79c71`](https://github.com/LedgerHQ/ledger-live/commit/eb79c7141543991f6e8fa99e5b592fc7a7f43022) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Support base64 encodng for swap_ng type swaps
 
-### Patch Changes
-
-- Updated dependencies [[`26b3a5d`](https://github.com/LedgerHQ/ledger-live/commit/26b3a5d7d6e11efc226403707d683f3d0098a1c1)]:
-  - @ledgerhq/errors@6.16.3-nightly.0
-  - @ledgerhq/hw-transport@6.30.5-nightly.0
+- Updated dependencies [[`f456d69`](https://github.com/LedgerHQ/ledger-live/commit/f456d69a2f64b6a217d3c1d9c6a531f31c2817a8)]:
+  - @ledgerhq/errors@6.16.3-next.0
+  - @ledgerhq/hw-transport@6.30.5-next.0
 
 ## 0.4.5
 

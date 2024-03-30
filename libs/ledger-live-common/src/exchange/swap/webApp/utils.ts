@@ -1,25 +1,15 @@
 import { BigNumber } from "bignumber.js";
-import { getGasLimit } from "@ledgerhq/coin-evm/logic";
 import { AccountLike } from "@ledgerhq/types-live";
 
 export const getCustomFeesPerFamily = transaction => {
-  const {
-    family,
-    maxFeePerGas,
-    maxPriorityFeePerGas,
-    customGasLimit,
-    feePerByte,
-    fees,
-    utxoStrategy,
-  } = transaction;
+  const { family, maxFeePerGas, maxPriorityFeePerGas, feePerByte, fees, utxoStrategy } =
+    transaction;
 
   switch (family) {
     case "evm": {
       return {
         maxFeePerGas,
         maxPriorityFeePerGas,
-        gasLimit: getGasLimit(transaction),
-        customGasLimit,
       };
     }
     case "bitcoin": {

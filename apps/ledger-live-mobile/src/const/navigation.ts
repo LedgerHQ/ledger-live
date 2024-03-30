@@ -485,7 +485,7 @@ export enum ScreenName {
 
   CustomImageStep0Welcome = "CustomImageStep0Welcome",
   CustomImageStep1Crop = "CustomImageStep1Crop",
-  CustomImageStep2Preview = "CustomImageStep2Preview",
+  CustomImageStep2ChooseContrast = "CustomImageStep2ChooseContrast",
   CustomImageStep3Transfer = "CustomImageStep3Transfer",
   CustomImageErrorScreen = "CustomImageErrorScreen",
   CustomImagePreviewPreEdit = "CustomImagePreviewPreEdit",

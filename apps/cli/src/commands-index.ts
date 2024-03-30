@@ -24,6 +24,11 @@ import appsCheckAllAppVersions from "./commands/device/appsCheckAllAppVersions";
 import appsInstallAll from "./commands/device/appsInstallAll";
 import appsUpdateTestAll from "./commands/device/appsUpdateTestAll";
 import cleanSpeculos from "./commands/device/cleanSpeculos";
+import customLockScreenFetch from "./commands/device/customLockScreenFetch";
+import customLockScreenFetchAndRestore from "./commands/device/customLockScreenFetchAndRestore";
+import customLockScreenFetchHash from "./commands/device/customLockScreenFetchHash";
+import customLockScreenLoad from "./commands/device/customLockScreenLoad";
+import customLockScreenRemove from "./commands/device/customLockScreenRemove";
 import devDeviceAppsScenario from "./commands/device/devDeviceAppsScenario";
 import deviceAppVersion from "./commands/device/deviceAppVersion";
 import deviceInfo from "./commands/device/deviceInfo";
@@ -44,11 +49,6 @@ import managerListApps from "./commands/device/managerListApps";
 import proxy from "./commands/device/proxy";
 import repl from "./commands/device/repl";
 import speculosList from "./commands/device/speculosList";
-import staxFetchAndRestoreDemo from "./commands/device/staxFetchAndRestoreDemo";
-import staxFetchImage from "./commands/device/staxFetchImage";
-import staxFetchImageHash from "./commands/device/staxFetchImageHash";
-import staxLoadImage from "./commands/device/staxLoadImage";
-import staxRemoveImage from "./commands/device/staxRemoveImage";
 import balanceHistory from "./commands/live/balanceHistory";
 import countervalues from "./commands/live/countervalues";
 import envs from "./commands/live/envs";
@@ -87,6 +87,11 @@ export default {
   appsInstallAll,
   appsUpdateTestAll,
   cleanSpeculos,
+  customLockScreenFetch,
+  customLockScreenFetchAndRestore,
+  customLockScreenFetchHash,
+  customLockScreenLoad,
+  customLockScreenRemove,
   devDeviceAppsScenario,
   deviceAppVersion,
   deviceInfo,
@@ -107,11 +112,6 @@ export default {
   proxy,
   repl,
   speculosList,
-  staxFetchAndRestoreDemo,
-  staxFetchImage,
-  staxFetchImageHash,
-  staxLoadImage,
-  staxRemoveImage,
   balanceHistory,
   countervalues,
   envs,
