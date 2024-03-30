@@ -1,5 +1,53 @@
 # @ledgerhq/live-common
 
+## 34.1.0-nightly.0
+
+### Minor Changes
+
+- [#6497](https://github.com/LedgerHQ/ledger-live/pull/6497) [`32c6cac`](https://github.com/LedgerHQ/ledger-live/commit/32c6cac6993cef7ff05e2d8410b0bc1baa2bc924) Thanks [@overcat](https://github.com/overcat)! - Bump stellar-sdk from 10.4.1 to 11.3.0.
+
+### Patch Changes
+
+- [#6584](https://github.com/LedgerHQ/ledger-live/pull/6584) [`c85a616`](https://github.com/LedgerHQ/ledger-live/commit/c85a6167c56f144d3f0b40adff3946bf9e741e5d) Thanks [@CremaFR](https://github.com/CremaFR)! - Stop sending incorrect gasLimit to live apps
+
+- [#6378](https://github.com/LedgerHQ/ledger-live/pull/6378) [`9ada63a`](https://github.com/LedgerHQ/ledger-live/commit/9ada63a05b2d2518af09a9c07937cf94b5b2ea67) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Edit device name flow adapted for Europa
+
+- [#6553](https://github.com/LedgerHQ/ledger-live/pull/6553) [`3e5d894`](https://github.com/LedgerHQ/ledger-live/commit/3e5d89457601ad4c30881af41acc6b498fa611bb) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix bot test due to liveConfig
+
+- [#6378](https://github.com/LedgerHQ/ledger-live/pull/6378) [`9ada63a`](https://github.com/LedgerHQ/ledger-live/commit/9ada63a05b2d2518af09a9c07937cf94b5b2ea67) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Custom lock screen flow adapted to Europa device
+
+- Updated dependencies [[`dd1d17f`](https://github.com/LedgerHQ/ledger-live/commit/dd1d17fd3ce7ed42558204b2f93707fb9b1599de)]:
+  - @ledgerhq/errors@6.16.4-nightly.0
+  - @ledgerhq/coin-framework@0.11.4-nightly.0
+  - @ledgerhq/coin-algorand@0.4.1-nightly.0
+  - @ledgerhq/coin-bitcoin@0.4.0-nightly.9
+  - @ledgerhq/coin-evm@1.0.1-nightly.0
+  - @ledgerhq/coin-near@0.3.12-nightly.0
+  - @ledgerhq/coin-polkadot@0.6.1-nightly.0
+  - @ledgerhq/device-core@0.1.1-nightly.0
+  - @ledgerhq/devices@8.2.3-nightly.0
+  - @ledgerhq/hw-app-algorand@6.28.6-nightly.0
+  - @ledgerhq/hw-app-cosmos@6.29.6-nightly.0
+  - @ledgerhq/hw-app-eth@6.35.8-nightly.0
+  - @ledgerhq/hw-app-exchange@0.4.7-nightly.0
+  - @ledgerhq/hw-app-polkadot@6.28.6-nightly.0
+  - @ledgerhq/hw-app-solana@7.1.6-nightly.0
+  - @ledgerhq/hw-app-vet@0.1.7-nightly.0
+  - @ledgerhq/hw-transport@6.30.6-nightly.0
+  - @ledgerhq/hw-transport-node-speculos@6.28.6-nightly.0
+  - @ledgerhq/hw-transport-node-speculos-http@6.28.6-nightly.0
+  - @ledgerhq/live-network@1.2.1-nightly.0
+  - @ledgerhq/live-countervalues@0.1.4-nightly.0
+  - @ledgerhq/live-countervalues-react@0.1.4-nightly.0
+  - @ledgerhq/live-nft@0.3.1-nightly.0
+  - @ledgerhq/hw-app-btc@10.2.4-nightly.0
+  - @ledgerhq/hw-app-near@6.28.7-nightly.0
+  - @ledgerhq/hw-app-str@6.28.6-nightly.0
+  - @ledgerhq/hw-app-tezos@6.28.6-nightly.0
+  - @ledgerhq/hw-app-trx@6.28.6-nightly.0
+  - @ledgerhq/hw-app-xrp@6.28.6-nightly.0
+  - @ledgerhq/hw-transport-mocker@6.28.6-nightly.0
+
 ## 34.0.0
 
 ### Major Changes

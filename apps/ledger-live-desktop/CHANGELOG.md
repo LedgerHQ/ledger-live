@@ -1,5 +1,42 @@
 # ledger-live-desktop
 
+## 2.78.1-nightly.0
+
+### Patch Changes
+
+- [#6378](https://github.com/LedgerHQ/ledger-live/pull/6378) [`9ada63a`](https://github.com/LedgerHQ/ledger-live/commit/9ada63a05b2d2518af09a9c07937cf94b5b2ea67) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Edit device name flow adapted for Europa
+
+- [#6554](https://github.com/LedgerHQ/ledger-live/pull/6554) [`dd1d17f`](https://github.com/LedgerHQ/ledger-live/commit/dd1d17fd3ce7ed42558204b2f93707fb9b1599de) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Implement DisabledTransactionBroadcastError to handle a specific development scenario where transaction broadcasts are disabled
+
+- [#6378](https://github.com/LedgerHQ/ledger-live/pull/6378) [`9ada63a`](https://github.com/LedgerHQ/ledger-live/commit/9ada63a05b2d2518af09a9c07937cf94b5b2ea67) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Custom lock screen flow adapted to Europa device
+
+- [#6559](https://github.com/LedgerHQ/ledger-live/pull/6559) [`4f59679`](https://github.com/LedgerHQ/ledger-live/commit/4f59679ca64d551d136d4026599b377ee67a85bf) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Update firmware update display
+
+- [#6485](https://github.com/LedgerHQ/ledger-live/pull/6485) [`065dda3`](https://github.com/LedgerHQ/ledger-live/commit/065dda32a4fe12f3ea737cecdb946281d4bbc7e6) Thanks [@gre](https://github.com/gre)! - replace moment() usage by native Intl date formatting.
+
+- [#6378](https://github.com/LedgerHQ/ledger-live/pull/6378) [`9ada63a`](https://github.com/LedgerHQ/ledger-live/commit/9ada63a05b2d2518af09a9c07937cf94b5b2ea67) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Remove "Ledger Stax" specific wording everywhere
+
+- [#6574](https://github.com/LedgerHQ/ledger-live/pull/6574) [`3922175`](https://github.com/LedgerHQ/ledger-live/commit/392217585306855d5a88d3c09bfdb7165aaa369b) Thanks [@CremaFR](https://github.com/CremaFR)! - send errors to live app
+
+- Updated dependencies [[`c85a616`](https://github.com/LedgerHQ/ledger-live/commit/c85a6167c56f144d3f0b40adff3946bf9e741e5d), [`9ada63a`](https://github.com/LedgerHQ/ledger-live/commit/9ada63a05b2d2518af09a9c07937cf94b5b2ea67), [`3e5d894`](https://github.com/LedgerHQ/ledger-live/commit/3e5d89457601ad4c30881af41acc6b498fa611bb), [`dd1d17f`](https://github.com/LedgerHQ/ledger-live/commit/dd1d17fd3ce7ed42558204b2f93707fb9b1599de), [`9ada63a`](https://github.com/LedgerHQ/ledger-live/commit/9ada63a05b2d2518af09a9c07937cf94b5b2ea67), [`9ada63a`](https://github.com/LedgerHQ/ledger-live/commit/9ada63a05b2d2518af09a9c07937cf94b5b2ea67), [`32c6cac`](https://github.com/LedgerHQ/ledger-live/commit/32c6cac6993cef7ff05e2d8410b0bc1baa2bc924)]:
+  - @ledgerhq/live-common@34.1.0-nightly.0
+  - @ledgerhq/errors@6.16.4-nightly.0
+  - @ledgerhq/types-live@6.46.0-nightly.0
+  - @ledgerhq/coin-framework@0.11.4-nightly.0
+  - @ledgerhq/coin-bitcoin@0.4.0-nightly.9
+  - @ledgerhq/coin-evm@1.0.1-nightly.0
+  - @ledgerhq/domain-service@1.1.20-nightly.0
+  - @ledgerhq/devices@8.2.3-nightly.0
+  - @ledgerhq/hw-transport@6.30.6-nightly.0
+  - @ledgerhq/hw-transport-http@6.29.6-nightly.0
+  - @ledgerhq/hw-transport-node-hid-singleton@6.30.6-nightly.0
+  - @ledgerhq/hw-transport-vault@1.2.6-nightly.0
+  - @ledgerhq/live-network@1.2.1-nightly.0
+  - @ledgerhq/live-countervalues@0.1.4-nightly.0
+  - @ledgerhq/live-countervalues-react@0.1.4-nightly.0
+  - @ledgerhq/live-nft@0.3.1-nightly.0
+  - @ledgerhq/live-nft-react@0.3.1-nightly.0
+
 ## 2.78.0
 
 ### Minor Changes

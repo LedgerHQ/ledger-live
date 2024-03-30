@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.46.0-nightly.0
+
+### Minor Changes
+
+- [#6378](https://github.com/LedgerHQ/ledger-live/pull/6378) [`9ada63a`](https://github.com/LedgerHQ/ledger-live/commit/9ada63a05b2d2518af09a9c07937cf94b5b2ea67) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Post-onboarding: add "deviceModelId" to startAction()
+
 ## 6.45.0
 
 ### Minor Changes

@@ -1,5 +1,22 @@
 # web-tools
 
+## 0.4.5-nightly.0
+
+### Patch Changes
+
+- Updated dependencies [[`c85a616`](https://github.com/LedgerHQ/ledger-live/commit/c85a6167c56f144d3f0b40adff3946bf9e741e5d), [`9ada63a`](https://github.com/LedgerHQ/ledger-live/commit/9ada63a05b2d2518af09a9c07937cf94b5b2ea67), [`3e5d894`](https://github.com/LedgerHQ/ledger-live/commit/3e5d89457601ad4c30881af41acc6b498fa611bb), [`dd1d17f`](https://github.com/LedgerHQ/ledger-live/commit/dd1d17fd3ce7ed42558204b2f93707fb9b1599de), [`9ada63a`](https://github.com/LedgerHQ/ledger-live/commit/9ada63a05b2d2518af09a9c07937cf94b5b2ea67), [`9ada63a`](https://github.com/LedgerHQ/ledger-live/commit/9ada63a05b2d2518af09a9c07937cf94b5b2ea67), [`32c6cac`](https://github.com/LedgerHQ/ledger-live/commit/32c6cac6993cef7ff05e2d8410b0bc1baa2bc924)]:
+  - @ledgerhq/live-common@34.1.0-nightly.0
+  - @ledgerhq/errors@6.16.4-nightly.0
+  - @ledgerhq/types-live@6.46.0-nightly.0
+  - @ledgerhq/coin-framework@0.11.4-nightly.0
+  - @ledgerhq/domain-service@1.1.20-nightly.0
+  - @ledgerhq/hw-app-eth@6.35.8-nightly.0
+  - @ledgerhq/hw-transport@6.30.6-nightly.0
+  - @ledgerhq/hw-transport-http@6.29.6-nightly.0
+  - @ledgerhq/hw-transport-web-ble@6.28.6-nightly.0
+  - @ledgerhq/hw-transport-webhid@6.28.6-nightly.0
+  - @ledgerhq/hw-transport-webusb@6.28.6-nightly.0
+
 ## 0.4.4
 
 ### Patch Changes

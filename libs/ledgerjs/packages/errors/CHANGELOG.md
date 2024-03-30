@@ -1,5 +1,11 @@
 # @ledgerhq/errors
 
+## 6.16.4-nightly.0
+
+### Patch Changes
+
+- [#6554](https://github.com/LedgerHQ/ledger-live/pull/6554) [`dd1d17f`](https://github.com/LedgerHQ/ledger-live/commit/dd1d17fd3ce7ed42558204b2f93707fb9b1599de) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - Implement DisabledTransactionBroadcastError to handle a specific development scenario where transaction broadcasts are disabled
+
 ## 6.16.3
 
 ### Patch Changes
