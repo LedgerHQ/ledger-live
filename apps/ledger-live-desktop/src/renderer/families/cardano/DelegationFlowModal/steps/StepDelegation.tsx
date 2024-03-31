@@ -62,7 +62,6 @@ export default function StepDelegation({
 export function StepDelegationFooter({
   transitionTo,
   account,
-  onClose,
   status,
   bridgePending,
   transaction,
@@ -85,9 +84,6 @@ export function StepDelegationFooter({
       )}
 
       <Box horizontal>
-        <Button mr={1} secondary onClick={onClose}>
-          <Trans i18nKey="common.cancel" />
-        </Button>
         <Button
           id="delegate-continue-button"
           disabled={!canNext}
