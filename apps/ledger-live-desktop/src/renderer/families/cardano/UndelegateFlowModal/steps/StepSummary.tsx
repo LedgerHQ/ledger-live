@@ -11,6 +11,7 @@ import ErrorBanner from "~/renderer/components/ErrorBanner";
 import TranslatedError from "~/renderer/components/TranslatedError";
 import { StepProps } from "../types";
 import BigNumber from "bignumber.js";
+import Alert from "~/renderer/components/Alert";
 
 const FromToWrapper = styled.div``;
 const Separator = styled.div`
@@ -104,9 +105,9 @@ export function StepSummaryFooter({ transitionTo, status, bridgePending, transac
       <Box horizontal alignItems="center" flow={2} grow>
         {displayError ? (
           <Box grow>
-            <Text fontSize={13} color="alertRed">
+            <Alert type="error">
               <TranslatedError error={displayError} field="title" />
-            </Text>
+            </Alert>
           </Box>
         ) : null}
         <Box horizontal>
