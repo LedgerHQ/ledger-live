@@ -13,7 +13,7 @@ import ValidatorField from "../fields/ValidatorField";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import TranslatedError from "~/renderer/components/TranslatedError";
-import Text from "~/renderer/components/Text";
+import Alert from "~/renderer/components/Alert";
 
 export default function StepDelegation({
   account,
@@ -76,9 +76,9 @@ export function StepDelegationFooter({
     <Box horizontal alignItems="center" flow={2} grow>
       {displayError ? (
         <Box grow>
-          <Text fontSize={13} color="alertRed">
+          <Alert type="error">
             <TranslatedError error={displayError} field="title" />
-          </Text>
+          </Alert>
         </Box>
       ) : (
         <AccountFooter account={account} status={status} />
