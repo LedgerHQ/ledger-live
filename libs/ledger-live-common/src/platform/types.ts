@@ -165,6 +165,8 @@ export const LiveAppManifestSchema = z
   })
   .strict();
 
+export type LiveAppManifestSchemaType = z.infer<typeof LiveAppManifestSchema>;
+
 export type PlatformApi = {
   fetchManifest: () => Promise<LiveAppManifest[]>;
 };
