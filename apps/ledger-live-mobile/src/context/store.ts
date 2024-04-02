@@ -6,8 +6,8 @@ const middlewares: Middleware[] = [];
 
 if (Config.DEBUG_RNDEBUGGER) {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const createDebugger = require("redux-flipper").default;
-  middlewares.push(createDebugger());
+  // const createDebugger = require("redux-flipper").default;
+  // middlewares.push(createDebugger());
 }
 
 export const store = configureStore({

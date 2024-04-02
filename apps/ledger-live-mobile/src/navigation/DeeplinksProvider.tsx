@@ -546,7 +546,7 @@ export const DeeplinksProvider = ({
     [],
   );
 
-  useFlipper(navigationRef);
+  // useFlipper(navigationRef);
 
   if (!isReady) {
     return null;
