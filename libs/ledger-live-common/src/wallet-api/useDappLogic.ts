@@ -131,29 +131,25 @@ function useDappAccountLogic({
     return null;
   }, [manifest, currentAccountHistDb]);
 
+  const currentAccountFromHist = useMemo(() => {
+    return accounts.find(account => account.id === currentAccountIdFromHist);
+  }, [accounts, currentAccountIdFromHist]);
+
   useEffect(() => {
-    if (manifest) {
-      if (currentAccountIdFromHist) {
-        const currentAccountFromHist = accounts.find(
-          account => account.id === currentAccountIdFromHist,
-        );
-        // should never be null
-        setCurrentAccount(currentAccountFromHist ? currentAccountFromHist : null);
-      } else if (!currentAccount || !(currentAccount && storedCurrentAccountIsPermitted())) {
-        // if there is no current account
-        // OR if there is a current account but it is not permitted
-        // set it to the first permitted account
-        setCurrentAccount(firstAccountAvailable ? firstAccountAvailable : null);
-      }
+    if (currentAccountFromHist) {
+      setCurrentAccount(currentAccountFromHist);
+    } else if (!currentAccount || !(currentAccount && storedCurrentAccountIsPermitted())) {
+      // if there is no current account
+      // OR if there is a current account but it is not permitted
+      // set it to the first permitted account
+      setCurrentAccount(firstAccountAvailable ? firstAccountAvailable : null);
     }
   }, [
-    accounts,
+    currentAccount,
+    currentAccountFromHist,
     firstAccountAvailable,
-    currentAccountIdFromHist,
-    manifest,
     setCurrentAccount,
     storedCurrentAccountIsPermitted,
-    currentAccount,
   ]);
 
   return {
