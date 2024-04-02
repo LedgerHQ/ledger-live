@@ -82,8 +82,8 @@ const QueuedDrawer = ({
 
   const triggerClose = useCallback(() => {
     setIsDisplayed(false);
-    if (drawerInQueueRef.current && drawerInQueueRef.current.getPositionInQueue() !== 0) {
-      drawerInQueueRef.current.removeDrawerFromQueue();
+    if (drawerInQueueRef.current?.getPositionInQueue() !== 0) {
+      drawerInQueueRef.current?.removeDrawerFromQueue();
       drawerInQueueRef.current = undefined;
     }
     onClose && onClose();
@@ -138,14 +138,14 @@ const QueuedDrawer = ({
     onModalHide && onModalHide();
     onClose && onClose();
     setIsDisplayed(false);
-    drawerInQueueRef.current && drawerInQueueRef.current.removeDrawerFromQueue();
+    drawerInQueueRef.current?.removeDrawerFromQueue();
     drawerInQueueRef.current = undefined;
   }, [onClose, onModalHide]);
 
   useEffect(() => {
     return () => {
       console.log("UNMOUNT drawer...");
-      drawerInQueueRef.current && drawerInQueueRef.current.removeDrawerFromQueue();
+      drawerInQueueRef.current?.removeDrawerFromQueue();
       drawerInQueueRef.current = undefined;
     };
   }, []);
