@@ -5459,6 +5459,10 @@
       "title": "Account not scanned by full node",
       "description": "Please configure your full node to scan for the accounts associated with this device. Your full node must first scan the blockchain for this account before you can add it to your portfolio."
     },
+    "SwapRateExpieredError": {
+      "title": "Rate Expired",
+      "description": "The exchange transaction could not be completed as the rate has expired. Please refresh the rates and try your swap again."
+    },
     "SwapGenericAPIError": {
       "title": "Something went wrong",
       "description": "The exchange transaction did not go through. Please try again or contact support."

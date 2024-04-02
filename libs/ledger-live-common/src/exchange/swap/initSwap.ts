@@ -15,7 +15,11 @@ import { getCurrencyExchangeConfig } from "../";
 import { getAccountCurrency, getAccountUnit, getMainAccount } from "../../account";
 import { getAccountBridge } from "../../bridge";
 import { getEnv } from "@ledgerhq/live-env";
-import { SwapGenericAPIError, TransactionRefusedOnDevice } from "../../errors";
+import {
+  SwapGenericAPIError,
+  SwapRateExpieredError,
+  TransactionRefusedOnDevice,
+} from "../../errors";
 import perFamily from "../../generated/exchange";
 import { withDevice } from "../../hw/deviceAccess";
 import { delay } from "../../promise";
@@ -98,7 +102,14 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
           });
 
           if (unsubscribed || !res || !res.data) return;
-        } catch (e) {
+        } catch (e: any) {
+          if (e.status == 422) {
+            o.next({
+              type: "init-swap-error",
+              error: new SwapRateExpieredError(),
+              swapId,
+            });
+          }
           o.next({
             type: "init-swap-error",
             error: new SwapGenericAPIError(),
