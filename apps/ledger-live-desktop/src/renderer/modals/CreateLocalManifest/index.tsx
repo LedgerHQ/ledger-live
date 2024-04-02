@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { Trans } from "react-i18next";
 import Button from "~/renderer/components/Button";
 import Modal, { ModalBody } from "~/renderer/components/Modal";
@@ -12,6 +12,7 @@ import {
   LiveAppManifestDappSchema,
   LiveAppManifestDapp,
   LiveAppManifestParamsNetwork,
+  LiveAppManifestSchemaType,
 } from "@ledgerhq/live-common/platform/types";
 import Text from "~/renderer/components/Text";
 import { useLocalLiveAppContext } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
@@ -19,6 +20,7 @@ import Switch from "~/renderer/components/Switch";
 import FormLiveAppInput from "./FormLiveAppInput";
 import NestedFormCategory from "./NestedFormCategory";
 import updateObjectAtPath from "lodash/set";
+import Selector from "./Selector";
 
 const DEFAULT_FORM: LiveAppManifest = {
   id: "ReplaceAppName",
@@ -67,7 +69,7 @@ const DEFAULT_FORM: LiveAppManifest = {
   ],
   dapp: {
     provider: "evm",
-    nanoApp: "nanoApp",
+    nanoApp: "Ethereum",
     networks: [
       {
         currency: "ethereum",
@@ -101,7 +103,7 @@ function FormLocalManifest({
 
   const handleSwitchEthDapp = () => {
     setIsDapp(prevState => !prevState);
-    setForm(prevState => {
+    setForm((prevState: LiveAppManifest) => {
       !isDapp
         ? (prevState.dapp = { ...DEFAULT_FORM.dapp } as LiveAppManifestDapp)
         : delete prevState.dapp;
@@ -111,43 +113,23 @@ function FormLocalManifest({
 
   const formIsValid = useMemo(() => LiveAppManifestSchema.safeParse(form).success, [form]);
 
-  const handleChange = (path: string, value: unknown) => {
+  const handleChange = useCallback((path: string, value: unknown) => {
     setForm((prevState: LiveAppManifest) => {
       return updateObjectAtPath({ ...prevState }, path, value);
     });
-  };
+  }, []);
 
   return (
     <form onSubmit={() => formIsValid && addLocalManifest(form)}>
       <ModalBody
         onClose={onClose}
-        onBack={undefined}
-        title={
-          <Trans
-            i18nKey={`settings.developer.createLocalAppModal.title.${
-              data.manifest ? "modify" : "create"
-            }`}
-          />
-        }
-        noScroll
+        title={<Trans i18nKey={`settings.developer.createLocalAppModal.title.create`} />}
         render={() => (
           <>
             <ScrollArea>
-              <Flex height={"900px"} rowGap={10} flexDirection={"column"}>
-                <Flex marginY={"10px"} columnGap={2}>
-                  <Text marginBottom={1} marginLeft={1} ff="Inter|Medium" fontSize={4}>
-                    {`ETH Dapp`}
-                  </Text>
-                  <Switch isChecked={isDapp} onChange={handleSwitchEthDapp} />
-                  {isDapp && (
-                    <Text paddingTop={1} ff="Inter|Medium" fontSize={2}>
-                      {`dapp field added`}
-                    </Text>
-                  )}
-                </Flex>
-
+              <Flex height={"65vh"} rowGap={10} flexDirection={"column"}>
                 {Object.keys(form)
-                  .map(key => key as keyof LiveAppManifest)
+                  .map(key => key as keyof LiveAppManifestSchemaType)
                   .map((key, index) => {
                     if (key === "content") {
                       return Object.keys(form[key])
@@ -236,11 +218,27 @@ function FormLocalManifest({
 
                                 const value = form.dapp![dappKey];
                                 const path = `${key}.${dappKey}`;
+                                const shape = LiveAppManifestDappSchema.shape[dappKey];
+                                const parseCheck = shape.safeParse(value).success;
+                                const optional = shape.isOptional();
 
-                                const parseCheck =
-                                  LiveAppManifestDappSchema.shape[dappKey].safeParse(value).success;
-                                const optional =
-                                  LiveAppManifestDappSchema.shape[dappKey].isOptional();
+                                if (dappKey === "provider") {
+                                  const enums = (shape._def as { values: string[] }).values;
+
+                                  console.log(form.dapp);
+                                  return (
+                                    <Selector
+                                      optional={optional}
+                                      fieldName={dappKey}
+                                      key={dappKey}
+                                      choices={enums}
+                                      path={path}
+                                      handleChange={handleChange}
+                                      multipleChoices={false}
+                                      initalValue={value}
+                                    ></Selector>
+                                  );
+                                }
 
                                 return (
                                   <>
@@ -265,7 +263,6 @@ function FormLocalManifest({
                                 onClick={() => {
                                   setForm((prevState: LiveAppManifest) => {
                                     const newNetwork = [...prevState.dapp!.networks];
-                                    console.log(newNetwork);
                                     newNetwork.push({ ...DEFAULT_FORM.dapp!.networks[0] });
                                     return {
                                       ...prevState,
@@ -309,11 +306,28 @@ function FormLocalManifest({
 
                     const value = form[key];
                     const isArray = Array.isArray(value);
-                    const valueType = isArray ? "array separated by comma" : typeof value;
-                    const formKeySchema = LiveAppManifestSchema.pick({ [key]: true });
-                    const parseCheck = formKeySchema.safeParse({ [key]: value }).success;
+                    const valueType = isArray ? "comma-separated list" : typeof value;
+                    const formKeySchema =
+                      LiveAppManifestSchema.shape[key as keyof LiveAppManifestSchemaType];
+                    const parseCheck = formKeySchema.safeParse(value).success;
                     const optional = formKeySchema.isOptional();
                     const path = `${key}`;
+
+                    if (key === "platforms") {
+                      const enums = formKeySchema._def.type._def.values;
+                      return (
+                        <Selector
+                          key={key}
+                          optional={optional}
+                          fieldName={key}
+                          choices={enums}
+                          path={path}
+                          handleChange={handleChange}
+                          multipleChoices={true}
+                          initalValue={form[key]}
+                        ></Selector>
+                      );
+                    }
 
                     return (
                       <>
@@ -328,6 +342,14 @@ function FormLocalManifest({
                           isArray={isArray}
                           autoFocus={index === 0}
                         />
+                        {key === "permissions" && (
+                          <Flex marginY={"10px"} columnGap={2}>
+                            <Text marginBottom={1} marginLeft={1} ff="Inter|Medium" fontSize={4}>
+                              {`ETH Dapp`}
+                            </Text>
+                            <Switch isChecked={isDapp} onChange={handleSwitchEthDapp} />
+                          </Flex>
+                        )}
                       </>
                     );
                   })}
@@ -344,13 +366,7 @@ function FormLocalManifest({
                     onClose();
                   }}
                 >
-                  {
-                    <Trans
-                      i18nKey={`settings.developer.createLocalAppModal.${
-                        data.manifest ? "modify" : "create"
-                      }`}
-                    />
-                  }
+                  {<Trans i18nKey={`settings.developer.createLocalAppModal.create`} />}
                 </Button>
               </Flex>
             </Flex>
