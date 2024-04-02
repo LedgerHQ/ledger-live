@@ -72,7 +72,7 @@ export type ChainAPI = Readonly<{
 }>;
 
 // Naive mode, allow us to filter in sentry all this error comming from Sol RPC node
-const remapErrors = e => {
+const remapErrors = (e: Error) => {
   throw new NetworkError(e?.message);
 };
 

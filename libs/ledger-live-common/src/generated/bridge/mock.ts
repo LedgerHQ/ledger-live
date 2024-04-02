@@ -6,11 +6,11 @@ import cosmos from "../../families/cosmos/bridge/mock";
 import evm from "../../families/evm/bridge/mock";
 import polkadot from "../../families/polkadot/bridge/mock";
 import ripple from "../../families/ripple/bridge/mock";
-import solana from "../../families/solana/bridge/mock";
 import stellar from "../../families/stellar/bridge/mock";
 import tezos from "../../families/tezos/bridge/mock";
 import tron from "../../families/tron/bridge/mock";
 import vechain from "../../families/vechain/bridge/mock";
+import solana from "@ledgerhq/coin-solana/bridge/mock";
 
 export default {
   algorand,
@@ -21,9 +21,9 @@ export default {
   evm,
   polkadot,
   ripple,
-  solana,
   stellar,
   tezos,
   tron,
   vechain,
+  solana,
 };

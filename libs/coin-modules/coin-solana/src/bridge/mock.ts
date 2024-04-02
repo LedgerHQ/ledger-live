@@ -8,7 +8,7 @@ import { getMockedMethods } from "./mock-data";
 
 function mockChainAPI(config: Config): ChainAPI {
   const mockedMethods = getMockedMethods();
-  const api = new Proxy(
+  const api: any = new Proxy(
     { config },
     {
       get(_, propKey) {
@@ -38,7 +38,7 @@ function mockChainAPI(config: Config): ChainAPI {
   return api as ChainAPI;
 }
 
-function removeUndefineds(input: any) {
+function removeUndefineds(input: unknown): unknown {
   return isObject(input)
     ? isArray(input)
       ? input.map(removeUndefineds)
@@ -77,11 +77,13 @@ function createMockDataForAPI() {
 }
 
 function getMockedAPIs() {
+  const signerContext: SignerContext<SolanaSigner, SolanaAddress | SolanaSignature>
   const mockedAPI = mockChainAPI({ cluster: "mock" } as any);
   return {
     getAPI: (_: Config) => Promise.resolve(mockedAPI),
     getQueuedAPI: (_: Config) => Promise.resolve(mockedAPI),
     getQueuedAndCachedAPI: (_: Config) => Promise.resolve(mockedAPI),
+    signerContext,
   };
 }
 

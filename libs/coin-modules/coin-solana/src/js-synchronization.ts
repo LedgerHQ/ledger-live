@@ -1,7 +1,7 @@
-import { AccountShapeInfo, mergeOps } from "../../bridge/jsHelpers";
+import { AccountShapeInfo, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import BigNumber from "bignumber.js";
 
-import { emptyHistoryCache, encodeAccountId } from "../../account";
+import { emptyHistoryCache, encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import {
   getAccountMinimumBalanceForRentExemption,
   getTransactions,
@@ -10,7 +10,7 @@ import {
   TransactionDescriptor,
 } from "./api/chain/web3";
 import { getTokenById } from "@ledgerhq/cryptoassets";
-import { encodeOperationId } from "../../operation";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import {
   Awaited,
   encodeAccountIdWithTokenAccountAddress,
