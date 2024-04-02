@@ -2270,11 +2270,11 @@ importers:
   libs/exchange-module:
     dependencies:
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.5.5
-        version: 1.5.5
+        specifier: ^1.5.6
+        version: 1.5.6
       '@ledgerhq/wallet-api-core':
-        specifier: ^1.7.2
-        version: 1.7.2
+        specifier: ^1.8.0
+        version: 1.8.0
     devDependencies:
       '@types/node':
         specifier: ^20.2.5
@@ -2454,17 +2454,17 @@ importers:
         specifier: workspace:^
         version: link:../ledgerjs/packages/logs
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.5.5
-        version: 1.5.5
+        specifier: ^1.5.6
+        version: 1.5.6
       '@ledgerhq/wallet-api-core':
-        specifier: ^1.7.2
-        version: 1.7.2
+        specifier: ^1.8.0
+        version: 1.8.0
       '@ledgerhq/wallet-api-exchange-module':
         specifier: workspace:^
         version: link:../exchange-module
       '@ledgerhq/wallet-api-server':
-        specifier: ^1.5.6
-        version: 1.5.6(react@18.2.0)(rxjs@7.8.1)
+        specifier: ^1.5.7
+        version: 1.5.7(react@18.2.0)(rxjs@7.8.1)
       '@solana/spl-token':
         specifier: ^0.3.7
         version: 0.3.8(@solana/web3.js@1.77.3)
@@ -5525,14 +5525,14 @@ importers:
         specifier: workspace:*
         version: link:../../libs/ledger-live-common
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.5.5
-        version: 1.5.5
+        specifier: ^1.5.6
+        version: 1.5.6
       '@ledgerhq/wallet-api-client-react':
-        specifier: ^1.3.5
-        version: 1.3.5(react@18.2.0)
+        specifier: ^1.3.6
+        version: 1.3.6(react@18.2.0)
       '@ledgerhq/wallet-api-simulator':
-        specifier: ^1.1.10
-        version: 1.1.11(react@18.2.0)
+        specifier: ^1.1.12
+        version: 1.1.12(react@18.2.0)
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
@@ -14647,8 +14647,6 @@ packages:
       metro-core: '*'
       minimatch: '*'
     peerDependenciesMeta:
-      '@expo/metro-config':
-        optional: true
       glob:
         optional: true
       metro:
@@ -14738,8 +14736,6 @@ packages:
       metro-core: '*'
       minimatch: '*'
     peerDependenciesMeta:
-      '@expo/metro-config':
-        optional: true
       glob:
         optional: true
       metro:
@@ -17021,25 +17017,25 @@ packages:
     resolution: {integrity: sha512-K3SETlNUJAjU/bN6dNJf56gfpxOhGldmClezIU5puw1PcGDvNf4y8vmEouVz5Htc2a/0vetklf0eIQD8Wk3Hww==}
     dev: false
 
-  /@ledgerhq/wallet-api-client-react@1.3.5(react@18.2.0):
-    resolution: {integrity: sha512-I14H4OWlT1RjYTyx2NU++mECrQTOIJR6h4rbpxy7FRpBYyeYYFpylfpmNWfGryIjUDemhiB1K07R/7EhC2lhyA==}
+  /@ledgerhq/wallet-api-client-react@1.3.6(react@18.2.0):
+    resolution: {integrity: sha512-1iQDxofp+l+xb4wqAqFc5/iNZ1k2wHk8SMnzl5MCTL/xZI+Y9YLfTnlBcqaTIc/T7ed2/NbWq9iWtM7bdKaz6A==}
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18
     dependencies:
-      '@ledgerhq/wallet-api-client': 1.5.5
+      '@ledgerhq/wallet-api-client': 1.5.6
       react: 18.2.0
     dev: false
 
-  /@ledgerhq/wallet-api-client@1.5.5:
-    resolution: {integrity: sha512-xZTVotu6lM7LpRiC+Toc4dcsgQe81A6wVd78WlzVrCCWcwhj95Xyz97w3j18ETn2d9Gqacsd+hAsHajJjmH/2w==}
+  /@ledgerhq/wallet-api-client@1.5.6:
+    resolution: {integrity: sha512-tN6/hkAPnzKC2sOl+VlWROkNdTSV5X9ocjO7DxcNoIx3zplD/LNBLuf7/kI524/OK3q/Mec7y30KvsHPoQSVyg==}
     dependencies:
       '@ledgerhq/hw-transport': 6.30.5
-      '@ledgerhq/wallet-api-core': 1.7.2
+      '@ledgerhq/wallet-api-core': 1.8.0
       bignumber.js: 9.1.2
     dev: false
 
-  /@ledgerhq/wallet-api-core@1.7.2:
-    resolution: {integrity: sha512-McleNF0FlL7xIuAIWozfpjDabhjbkNL3pvxRVGc84rVrv0G03RcKVuXqQKY7L+5zxbSQ7m4qxQnPXlaLaekk1w==}
+  /@ledgerhq/wallet-api-core@1.8.0:
+    resolution: {integrity: sha512-G4yLDFLKXsPrPIGOJDDb3pRcfklS2340H6QQNMNeQOYeGR2KuWedSPNCCRkU77BaKK7o4khNTOj8uL+TcpMBog==}
     dependencies:
       '@ledgerhq/errors': 6.16.3
       bignumber.js: 9.1.2
@@ -17047,8 +17043,8 @@ packages:
       zod: 3.22.4
     dev: false
 
-  /@ledgerhq/wallet-api-server@1.5.6(react@18.2.0)(rxjs@7.8.1):
-    resolution: {integrity: sha512-gteU6E7+X1XE+Qi6JYr7kTuwH9FCwcSDDNFjYTA/xBRBuAGa0Q7z1MQTHrdOshdL8H9hwzVwKvBzQD0hgsYHkg==}
+  /@ledgerhq/wallet-api-server@1.5.7(react@18.2.0)(rxjs@7.8.1):
+    resolution: {integrity: sha512-tSYMkthXcLER4JZtR4VSrANYtJ7wCeWlFTekmhoYBygFMVzwjk1ARDw/N0O6ymRG/DRCKsncX+2lMutHHpAFUg==}
     peerDependencies:
       react: ^17.x || ^18.x
       rxjs: ^7.x
@@ -17056,20 +17052,20 @@ packages:
       react:
         optional: true
     dependencies:
-      '@ledgerhq/wallet-api-core': 1.7.2
+      '@ledgerhq/wallet-api-core': 1.8.0
       bignumber.js: 9.1.2
       picomatch: 4.0.1
       react: 18.2.0
       rxjs: 7.8.1
     dev: false
 
-  /@ledgerhq/wallet-api-simulator@1.1.11(react@18.2.0):
-    resolution: {integrity: sha512-/Mq4y0YVW05B7JIjPjm2Olpy+fEv3/qDoYFGOdHVCp4cPjRB0ADGt3hFaJbU3VmoD2dTEDPPrvDcgOEFE5wWDA==}
+  /@ledgerhq/wallet-api-simulator@1.1.12(react@18.2.0):
+    resolution: {integrity: sha512-7MllfwM6iUXhB6cCUS3hgAnxaVdmIU8tPQuYGH4Hyg0T24cDjKbbsoKTvZY+/IKb99KWGs2EstB1Toh2RuFhCQ==}
     dependencies:
       '@ledgerhq/hw-transport': 6.30.5
-      '@ledgerhq/wallet-api-client': 1.5.5
-      '@ledgerhq/wallet-api-core': 1.7.2
-      '@ledgerhq/wallet-api-server': 1.5.6(react@18.2.0)(rxjs@7.8.1)
+      '@ledgerhq/wallet-api-client': 1.5.6
+      '@ledgerhq/wallet-api-core': 1.8.0
+      '@ledgerhq/wallet-api-server': 1.5.7(react@18.2.0)(rxjs@7.8.1)
       rxjs: 7.8.1
       ws: 8.16.0
     transitivePeerDependencies:
@@ -20037,9 +20033,6 @@ packages:
 
   /@react-native-community/cli-tools@11.3.7:
     resolution: {integrity: sha512-peyhP4TV6Ps1hk+MBHTFaIR1eI3u+OfGBvr5r0wPwo3FAJvldRinMgcB/TcCcOBXVORu7ba1XYjkubPeYcqAyA==}
-    peerDependenciesMeta:
-      find-up:
-        optional: true
     dependencies:
       appdirsjs: 1.2.6
       chalk: 4.1.2
@@ -20055,9 +20048,6 @@ packages:
 
   /@react-native-community/cli-tools@11.3.9:
     resolution: {integrity: sha512-qWEUo/HQll/aj5xHYCw6itXGkPgultxTHa4UYSaBIRSfU15aSiwonJ/JP7fe+fHKbaFh6IdhaaRhj4ArfEOxuQ==}
-    peerDependenciesMeta:
-      find-up:
-        optional: true
     dependencies:
       appdirsjs: 1.2.6
       chalk: 4.1.2
@@ -23464,7 +23454,7 @@ packages:
       react-docgen-typescript: 2.2.2(typescript@5.1.3)
       tslib: 2.6.2
       typescript: 5.1.3
-      webpack: 5.89.0(esbuild@0.19.3)
+      webpack: 5.89.0(metro@0.80.0)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -27608,9 +27598,6 @@ packages:
 
   /ajv-formats@2.1.1:
     resolution: {integrity: sha512-Wx0Kx52hxE7C18hkMEggYlEifqWZtYaRgouJor+WMdPnQyEK13vgEWyVNup7SoeeoLMsr4kf5h6dOW11I15MUA==}
-    peerDependenciesMeta:
-      ajv:
-        optional: true
     dependencies:
       ajv: 8.12.0
 
@@ -28606,7 +28593,7 @@ packages:
       '@babel/core': 7.23.2
       find-cache-dir: 4.0.0
       schema-utils: 4.2.0
-      webpack: 5.89.0(@swc/core@1.3.95)(esbuild@0.19.3)
+      webpack: 5.89.0(@swc/core@1.3.95)(metro@0.80.0)
     dev: true
 
   /babel-plugin-add-react-displayname@0.0.5:
@@ -35938,7 +35925,6 @@ packages:
       is-hex-prefixed: 1.0.0
       strip-hex-prefix: 1.0.0
     dev: false
-    bundledDependencies: false
 
   /ev-emitter@1.1.1:
     resolution: {integrity: sha512-ipiDYhdQSCZ4hSbX4rMW+XzNKMD1prg/sTvoVmSLkuQ1MVlwjJQQA+sW8tMYR3BLUr9KjodFV4pvzunvRhd33Q==}
@@ -36176,8 +36162,6 @@ packages:
       react-native: '*'
     peerDependenciesMeta:
       expo-constants:
-        optional: true
-      expo-file-system:
         optional: true
       expo-modules-core:
         optional: true
@@ -37550,7 +37534,7 @@ packages:
       semver: 7.6.0
       tapable: 2.2.1
       typescript: 5.1.3
-      webpack: 5.89.0(@swc/core@1.3.95)(esbuild@0.19.3)
+      webpack: 5.89.0(@swc/core@1.3.95)(metro@0.80.0)
     dev: true
 
   /form-data@2.3.3:
@@ -55065,7 +55049,7 @@ packages:
       webpack: '>=2'
     dependencies:
       '@swc/core': 1.3.95
-      webpack: 5.89.0(@swc/core@1.3.95)(esbuild@0.19.3)
+      webpack: 5.89.0(@swc/core@1.3.95)(metro@0.80.0)
     dev: true
 
   /swiper@7.4.1:
@@ -59337,7 +59321,7 @@ packages:
       mime-types: 2.1.35
       range-parser: 1.2.1
       schema-utils: 4.2.0
-      webpack: 5.89.0(@swc/core@1.3.95)(esbuild@0.19.3)
+      webpack: 5.89.0(@swc/core@1.3.95)(metro@0.80.0)
     dev: true
 
   /webpack-dev-server@4.12.0(webpack@5.76.1):
