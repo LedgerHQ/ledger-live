@@ -91,7 +91,6 @@ function createLocalManifest() {
 }
 
 function FormLocalManifest({
-  data,
   onClose,
 }: {
   data: { manifest?: LiveAppManifest };
@@ -128,6 +127,15 @@ function FormLocalManifest({
           <>
             <ScrollArea>
               <Flex height={"65vh"} rowGap={10} flexDirection={"column"}>
+                <Flex margin={"auto"} width={"max-content"} columnGap={2}>
+                  <Text marginBottom={1} marginLeft={1} ff="Inter|Medium" fontSize={4}>
+                    {`Wallet-API`}
+                  </Text>
+                  <Switch isChecked={isDapp} onChange={handleSwitchEthDapp} />
+                  <Text marginBottom={1} marginLeft={1} ff="Inter|Medium" fontSize={4}>
+                    {`ETH Dapp`}
+                  </Text>
+                </Flex>
                 {Object.keys(form)
                   .map(key => key as keyof LiveAppManifestSchemaType)
                   .map((key, index) => {
@@ -342,14 +350,6 @@ function FormLocalManifest({
                           isArray={isArray}
                           autoFocus={index === 0}
                         />
-                        {key === "permissions" && (
-                          <Flex marginY={"10px"} columnGap={2}>
-                            <Text marginBottom={1} marginLeft={1} ff="Inter|Medium" fontSize={4}>
-                              {`ETH Dapp`}
-                            </Text>
-                            <Switch isChecked={isDapp} onChange={handleSwitchEthDapp} />
-                          </Flex>
-                        )}
                       </>
                     );
                   })}
