@@ -390,16 +390,9 @@ export const makeScanAccounts =
           account.balanceHistoryCache = generateHistoryFromOperations(account);
         }
 
-        console.log("DEBUG - stepAccount is used?", account.used);
         if (!account.used) {
           account.used = !isAccountEmpty(account);
         }
-        console.log(
-          "DEBUG - stepAccount account info:",
-          account.operationsCount,
-          account.balance.toString(),
-        );
-        console.log("DEBUG - stepAccount used updated?", account.used);
 
         // Bitcoin needs to compute the freshAddressPath itself,
         // so we update it afterwards
@@ -438,7 +431,6 @@ export const makeScanAccounts =
           });
         }
 
-        console.log("DEBUG - stepAccount final used value", account.used);
         return account;
       }
 
@@ -512,25 +504,13 @@ export const makeScanAccounts =
                 currency,
                 deviceId,
               });
-              console.log(
-                "DEBUG iterateResult called with res:",
-                res,
-                " (count ",
-                index,
-                " - ",
-                stopAt,
-                ")",
-              );
 
               if (!res) break;
 
               const account = await stepAccount(index, res, derivationMode, seedIdentifier);
 
-              console.log("DEBUG stepAccount called (count ", index, " - ", stopAt, ")");
               if (account && !account.used) {
-                console.log("DEBUG account is not used (count ", index, " - ", stopAt, ")");
                 if (emptyCount >= mandatoryEmptyAccountSkip) break;
-                console.log("DEBUG increase emptyCount truc (count ", index, " - ", stopAt, ")");
                 emptyCount++;
               }
             }

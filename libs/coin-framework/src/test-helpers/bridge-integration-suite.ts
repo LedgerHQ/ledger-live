@@ -138,7 +138,6 @@ export function testBridge<T extends TransactionCommon, U extends TransactionCom
     const bridge = currencyBridge;
 
     const scanAccountsCurrency = async () => {
-      console.log("DEBUG - before firstValueFrom");
       const accounts = await firstValueFrom(
         bridge
           .scanAccounts({
@@ -151,12 +150,10 @@ export function testBridge<T extends TransactionCommon, U extends TransactionCom
             map(e => e.account),
             reduce((all, a) => all.concat(a), [] as Account[]),
             catchError(e => {
-              console.log("DEBUG - Error", e);
               return [];
             }),
           ),
       );
-      console.log("DEBUG - scanAccountsCurrency finished");
       return accounts;
     };
 
@@ -283,7 +280,6 @@ export function testBridge<T extends TransactionCommon, U extends TransactionCom
 
           test("creationDate is correct", async () => {
             const accounts = scanAccountsCached;
-            console.log("DEBUG - test creationDate: accounts : ", accounts);
 
             for (const account of flattenAccounts(accounts)) {
               if (account.operations.length) {
@@ -527,7 +523,7 @@ export function testBridge<T extends TransactionCommon, U extends TransactionCom
             expectStability(tx, {
               amount: new BigNumber(1000),
               recipient: account.freshAddress,
-            } as Partial<T>); // FIXME: this cast should be removed, but depends on the final type of T (Family Transaction)
+            } as unknown as Partial<T>); // FIXME: this cast should be removed, but depends on the final type of T (Family Transaction)
           });
         });
 
