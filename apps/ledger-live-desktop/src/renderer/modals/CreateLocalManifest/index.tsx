@@ -223,6 +223,7 @@ function FormLocalManifest({
                                     },
                                   );
                                 }
+                                console.log(form);
 
                                 const value = form.dapp![dappKey];
                                 const path = `${key}.${dappKey}`;
@@ -233,7 +234,6 @@ function FormLocalManifest({
                                 if (dappKey === "provider") {
                                   const enums = (shape._def as { values: string[] }).values;
 
-                                  console.log(form.dapp);
                                   return (
                                     <Selector
                                       optional={optional}
@@ -333,6 +333,22 @@ function FormLocalManifest({
                           handleChange={handleChange}
                           multipleChoices={true}
                           initalValue={form[key]}
+                        ></Selector>
+                      );
+                    }
+
+                    if (key === "visibility" || key === "branch") {
+                      const enums = formKeySchema._def.values;
+                      return (
+                        <Selector
+                          key={key}
+                          optional={optional}
+                          fieldName={key}
+                          choices={enums}
+                          path={path}
+                          handleChange={handleChange}
+                          multipleChoices={false}
+                          initalValue={"deep"}
                         ></Selector>
                       );
                     }

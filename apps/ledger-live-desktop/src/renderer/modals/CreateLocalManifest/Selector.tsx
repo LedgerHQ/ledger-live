@@ -41,7 +41,9 @@ function Selector({
   multipleChoices,
   initalValue,
 }: Props) {
-  const [selectedValues, setValues] = useState<string[] | string>(initalValue ? initalValue : []);
+  const [selectedValues, setValues] = useState<string[] | string>(
+    initalValue ? (multipleChoices ? [...initalValue] : initalValue) : [],
+  );
 
   useEffect(() => {
     handleChange(path, selectedValues);
