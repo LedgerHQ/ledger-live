@@ -41,7 +41,6 @@ const elrond: CurrenciesData<Transaction> = {
         operations: [],
         pendingOperations: [],
         currencyId: "elrond",
-        unitMagnitude: 18,
         lastSyncDate: "",
         balance: "299569965",
         subAccounts: [

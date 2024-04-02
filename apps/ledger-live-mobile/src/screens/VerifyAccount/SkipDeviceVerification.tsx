@@ -8,6 +8,7 @@ import LText from "~/components/LText";
 import CurrencyIcon from "~/components/CurrencyIcon";
 import Button from "~/components/Button";
 import Alert from "~/components/Alert";
+import { useAccountName } from "~/reducers/wallet";
 
 type Props = {
   onCancel: () => void;
@@ -22,6 +23,7 @@ type Props = {
 const SkipDeviceVerification = ({ onCancel, onConfirm, account }: Props) => {
   const currency = getAccountCurrency(account);
   const { colors } = useTheme();
+  const accountName = useAccountName(account);
   return (
     <View style={styles.root}>
       <LText
@@ -42,7 +44,7 @@ const SkipDeviceVerification = ({ onCancel, onConfirm, account }: Props) => {
       <View style={styles.account}>
         <CurrencyIcon color={colors.live} size={16} currency={currency} />
         <LText style={styles.accountName} semiBold>
-          {(account as Account).name}
+          {accountName}
         </LText>
       </View>
       <View

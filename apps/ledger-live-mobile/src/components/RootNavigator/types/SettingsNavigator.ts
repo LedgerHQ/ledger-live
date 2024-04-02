@@ -1,6 +1,7 @@
 import type { Device } from "@ledgerhq/types-devices";
 import { ScreenName } from "~/const";
 import { FilterByDeviceModelId } from "../../BleDevicePairingFlow/BleDevicesScanning";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 export type SettingsNavigatorStackParamList = {
   [ScreenName.SettingsScreen]: undefined;
@@ -16,6 +17,9 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.CurrencySettings]: {
     currencyId: string;
     headerTitle?: string;
+  };
+  [ScreenName.EditCurrencyUnits]: {
+    currency: CryptoCurrency;
   };
   [ScreenName.ExperimentalSettings]: undefined;
   [ScreenName.DeveloperSettings]: undefined;

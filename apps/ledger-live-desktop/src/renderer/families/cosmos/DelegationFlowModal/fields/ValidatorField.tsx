@@ -1,4 +1,3 @@
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-common/families/cosmos/react";
 import {
   CosmosDelegation,
@@ -16,6 +15,7 @@ import ScrollLoadingList from "~/renderer/components/ScrollLoadingList";
 import Text from "~/renderer/components/Text";
 import ValidatorRow from "~/renderer/families/cosmos/shared/components/CosmosFamilyValidatorRow";
 import IconAngleDown from "~/renderer/icons/AngleDown";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 type Props = {
   t: TFunction;
   account: Account;
@@ -27,7 +27,7 @@ type Props = {
 const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props) => {
   const [showAll, setShowAll] = useState(false);
   const [search, setSearch] = useState("");
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const currencyId = account.currency.id;
   const validators = useLedgerFirstShuffledValidatorsCosmosFamily(currencyId, search);
   const onSearch = useCallback(

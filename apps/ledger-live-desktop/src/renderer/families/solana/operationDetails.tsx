@@ -4,7 +4,6 @@ import { useSelector } from "react-redux";
 import BigNumber from "bignumber.js";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 import { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { SolanaAccount, SolanaOperation } from "@ledgerhq/live-common/families/solana/types";
 import { useSolanaPreloadData } from "@ledgerhq/live-common/families/solana/react";
@@ -22,6 +21,7 @@ import {
 import { localeSelector } from "~/renderer/reducers/settings";
 import { openURL } from "~/renderer/linking";
 import { OperationDetailsExtraProps } from "../types";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 export const redirectAddress = (currency: CryptoCurrency, address: string) => () => {
   const url = getAddressExplorer(getDefaultExplorerView(currency), address);
@@ -52,7 +52,7 @@ type DelegateExtraFieldsProps = {
 };
 
 const DelegateExtraFields = ({ account, voteAddress, amount }: DelegateExtraFieldsProps) => {
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const formatAmount = useFormatAmount();
   const preloadData = useSolanaPreloadData(account.currency);
   const validator = preloadData?.validators.find(v => v.voteAccount === voteAddress);
@@ -97,7 +97,7 @@ type WithdrawExtraFieldsProps = {
   amount: BigNumber;
 };
 const WithdrawExtraFields = ({ account, fromAddress, amount }: WithdrawExtraFieldsProps) => {
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const formatAmount = useFormatAmount();
 
   return (

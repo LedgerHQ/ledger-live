@@ -10,12 +10,7 @@ import {
 } from "@ledgerhq/live-common/explorers";
 import type { AccountLike, Account } from "@ledgerhq/types-live";
 import type { Delegation } from "@ledgerhq/live-common/families/tezos/types";
-import {
-  getMainAccount,
-  getAccountCurrency,
-  getAccountUnit,
-  getAccountName,
-} from "@ledgerhq/live-common/account/index";
+import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import Icon from "react-native-vector-icons/Feather";
 import getWindowDimensions from "~/logic/getWindowDimensions";
@@ -32,6 +27,8 @@ import { rgba } from "../../colors";
 import { NavigatorName, ScreenName } from "~/const";
 import BakerImage from "./BakerImage";
 import DelegatingContainer from "./DelegatingContainer";
+import { useAccountName } from "~/reducers/wallet";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props = {
   isOpened: boolean;
@@ -153,7 +150,7 @@ export default function DelegationDetailsModal({
   const { colors } = useTheme();
   const navigation = useNavigation();
   const currency = getAccountCurrency(account);
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const mainAccount = getMainAccount(account, parentAccount);
   const { baker } = delegation;
   const amount = account.balance;
@@ -204,6 +201,7 @@ export default function DelegationDetailsModal({
     });
     onClose();
   }, [navigation, accountId, parentId, onClose]);
+  const accountName = useAccountName(account);
   const height = Math.min(getWindowDimensions().height - 400, 280);
   return (
     // TODO use DelegationDrawer component
@@ -260,7 +258,7 @@ export default function DelegationDetailsModal({
               numberOfLines={1}
               ellipsizeMode="middle"
             >
-              {getAccountName(account)}
+              {accountName}
             </LText>
           </Property>
           <Property label={<Trans i18nKey="delegation.duration" />}>

@@ -1,9 +1,8 @@
-import React, { useMemo, useCallback } from "react";
+import React, { useCallback } from "react";
 import { TouchableOpacity } from "react-native";
 import { BigNumber } from "bignumber.js";
 import { Flex, Text, Icon } from "@ledgerhq/native-ui";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { useTranslation } from "react-i18next";
 import { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
@@ -13,6 +12,7 @@ import CounterValue from "~/components/CounterValue";
 import { TrackScreen, useAnalytics } from "~/analytics";
 import { ScreenName } from "~/const";
 import { sharedSwapTracking, SWAP_VERSION } from "../utils";
+import { useMaybeAccountUnit } from "~/hooks/useAccountUnit";
 
 export function SelectProvider({ navigation, route }: SelectProviderParamList) {
   const {
@@ -24,7 +24,7 @@ export function SelectProvider({ navigation, route }: SelectProviderParamList) {
   } = route;
   const { track } = useAnalytics();
   const { t } = useTranslation();
-  const fromUnit = useMemo(() => from.account && getAccountUnit(from.account), [from.account]);
+  const fromUnit = useMaybeAccountUnit(from.account);
 
   const onSelect = useCallback(
     (rate: ExchangeRate) => {

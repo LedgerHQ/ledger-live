@@ -14,7 +14,7 @@ export default class SettingsAccount extends PureComponent<Props> {
         name="MODAL_SETTINGS_ACCOUNT"
         centered
         render={({ data, onClose }) => (
-          <AccountSettingRenderBody {...this.props} data={data} onClose={onClose} />
+          <AccountSettingRenderBody {...this.props} account={data.account} onClose={onClose} />
         )}
       />
     );

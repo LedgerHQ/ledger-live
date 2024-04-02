@@ -172,7 +172,6 @@ const account = fromAccountRaw({
     },
   ],
   currencyId: "tezos",
-  unitMagnitude: 6,
   lastSyncDate: "2019-11-27T15:29:51.673Z",
   balance: "278000",
   spendableBalance: "278000",

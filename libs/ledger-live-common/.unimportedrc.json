@@ -1,7 +1,6 @@
 {
   "entry": [
     "src/account/helpers.ts",
-    "src/account/importAccounts.ts",
     "src/account/index.ts",
     "src/account/serialization.ts",
     "src/apps/filtering.ts",

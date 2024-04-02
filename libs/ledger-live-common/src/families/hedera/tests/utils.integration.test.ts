@@ -12,8 +12,6 @@ const account: Account = {
   index: 0,
   freshAddress: "",
   freshAddressPath: "",
-  name: "",
-  starred: false,
   used: false,
   balance: new BigNumber(100000000),
   spendableBalance: new BigNumber(0),
@@ -42,13 +40,6 @@ const account: Account = {
     WEEK: { latestDate: null, balances: [] },
   },
   swapHistory: [],
-  unit: {
-    name: "",
-    code: "",
-    magnitude: 0,
-    showAllDigits: undefined,
-    prefixCode: undefined,
-  },
 };
 
 const transaction: Transaction = {
