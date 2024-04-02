@@ -40,7 +40,7 @@ const rejectedError = (message: string) => ({
 
 // TODO remove any usage
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function convertEthToLiveTX(ethTX: any): WalletAPITransaction {
+function convertEthToLiveTX(ethTX: any): WalletAPITransaction {
   return {
     family: "ethereum",
     amount:
@@ -55,10 +55,6 @@ export function convertEthToLiveTX(ethTX: any): WalletAPITransaction {
     gasLimit: ethTX.gas !== undefined ? new BigNumber(ethTX.gas.replace("0x", ""), 16) : undefined,
     data: ethTX.data ? Buffer.from(ethTX.data.replace("0x", ""), "hex") : undefined,
   };
-}
-
-export function EVMAddressChanged(addr1: string, addr2: string): boolean {
-  return addr1.toLowerCase() !== addr2.toLowerCase();
 }
 
 export const currentAccountAtom = atom<AccountLike | null>(null);
@@ -195,8 +191,6 @@ export function useDappLogic({
   currentAccountHistDb?: CurrentAccountHistDB;
 }) {
   const nanoApp = manifest.dapp?.nanoApp;
-  const previousAddressRef = useRef<string>();
-  const previousChainIdRef = useRef<number>();
   const ws = useRef<SmartWebsocket>();
   const { currentAccount, currentParentAccount } = useDappAccountLogic({
     manifest,
@@ -218,47 +212,41 @@ export function useDappLogic({
     });
   }, [currentAccount, manifest.dapp?.networks]);
 
+  const currentAddress = useMemo(() => {
+    return currentAccount?.type === "Account"
+      ? currentAccount.freshAddress
+      : currentParentAccount?.freshAddress;
+  }, [currentAccount, currentParentAccount?.freshAddress]);
+
   useEffect(() => {
-    if (!currentAccount || !isParentAccountPresent(currentAccount, currentParentAccount)) {
+    if (!currentAddress) {
       return;
     }
 
-    const address =
-      currentAccount.type === "Account"
-        ? currentAccount.freshAddress
-        : currentParentAccount.freshAddress;
-
-    if (previousAddressRef.current && EVMAddressChanged(previousAddressRef.current, address)) {
-      postMessage(
-        JSON.stringify({
-          jsonrpc: "2.0",
-          method: "accountsChanged",
-          params: [[address]],
-        }),
-      );
-    }
-
-    previousAddressRef.current = address;
+    postMessage(
+      JSON.stringify({
+        jsonrpc: "2.0",
+        method: "accountsChanged",
+        params: [[currentAddress]],
+      }),
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentAccount]);
+  }, [currentAddress]);
 
   useEffect(() => {
     if (!currentNetwork) {
       return;
     }
 
-    if (previousChainIdRef.current && previousChainIdRef.current !== currentNetwork.chainID) {
-      postMessage(
-        JSON.stringify({
-          jsonrpc: "2.0",
-          method: "chainChanged",
-          params: [`0x${currentNetwork.chainID.toString(16)}`],
-        }),
-      );
-    }
-    previousChainIdRef.current = currentNetwork.chainID;
+    postMessage(
+      JSON.stringify({
+        jsonrpc: "2.0",
+        method: "chainChanged",
+        params: [`0x${currentNetwork.chainID.toString(16)}`],
+      }),
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentNetwork]);
+  }, [currentNetwork?.chainID]);
 
   useEffect(() => {
     if (currentNetwork?.nodeURL) {
