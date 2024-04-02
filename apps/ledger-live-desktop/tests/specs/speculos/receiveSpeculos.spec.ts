@@ -9,7 +9,7 @@ import { ReceiveModal } from "../../models/ReceiveModal";
 
 test.use({ userdata: "skip-onboarding" });
 
-const currencies = ["btc"];
+const currencies = ["BTC"];
 
 for (const currency of currencies) {
   let firstAccountName = "NO ACCOUNT NAME YET";
@@ -73,12 +73,6 @@ for (const currency of currencies) {
 
     await test.step(`[${currency}] Receive`, async () => {
       //Ajouter methode pour verifier que API repond bien 200 ou 201 (a verifier la valeur)
-      await request.post("http://127.0.0.1:5000/button/right", {
-        data: '{"action":"press-and-release"}',
-      });
-      await request.post("http://127.0.0.1:5000/button/right", {
-        data: '{"action":"press-and-release"}',
-      });
       await request.post("http://127.0.0.1:5000/button/right", {
         data: '{"action":"press-and-release"}',
       });
