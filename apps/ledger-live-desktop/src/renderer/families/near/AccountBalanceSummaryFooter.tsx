@@ -11,6 +11,7 @@ import Text from "~/renderer/components/Text";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
 import { NearFamily } from "./types";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const Wrapper = styled(Box).attrs(() => ({
   horizontal: true,
@@ -60,7 +61,7 @@ const AccountBalanceSummaryFooter: NearFamily["AccountBalanceSummaryFooter"] = (
       pendingBalance: _pendingBalance,
     },
   } = account;
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const formatConfig = {
     alwaysShowSign: false,
     showCode: true,

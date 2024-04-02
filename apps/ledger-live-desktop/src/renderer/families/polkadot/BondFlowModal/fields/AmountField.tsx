@@ -13,6 +13,7 @@ import Box from "~/renderer/components/Box";
 import InputCurrency from "~/renderer/components/InputCurrency";
 import Switch from "~/renderer/components/Switch";
 import Text from "~/renderer/components/Text";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 const InputRight = styled(Box).attrs(() => ({
   ff: "Inter|Medium",
   color: "palette.text.shade60",
@@ -43,7 +44,7 @@ const AmountField = ({
 }: Props) => {
   invariant(account && transaction && account.spendableBalance, "account and transaction required");
   const bridge = getAccountBridge(account, parentAccount);
-  const defaultUnit = getAccountUnit(account);
+  const defaultUnit = useAccountUnit(account);
   const onChange = useCallback(
     (value: BigNumber) => {
       onChangeTransaction(

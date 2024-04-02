@@ -13,6 +13,7 @@ import { localeSelector } from "~/renderer/reducers/settings";
 import { BigNumber } from "bignumber.js";
 import { SolanaAccount } from "@ledgerhq/live-common/families/solana/types";
 import { SubAccount } from "@ledgerhq/types-live";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const Wrapper = styled(Box).attrs(() => ({
   horizontal: true,
@@ -64,7 +65,7 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
   const _delegatedWithdrawableBalance = new BigNumber(
     stakes.reduce((sum, s) => sum + s.withdrawable, 0),
   );
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const formatConfig = {
     disableRounding: true,
     alwaysShowSign: false,

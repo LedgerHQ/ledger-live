@@ -5,7 +5,7 @@ import { Account, AccountLike } from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useGetAccountIds } from "@ledgerhq/live-common/wallet-api/react";
 import { useSelector, useDispatch } from "react-redux";
-import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { getAccountTuplesForCurrency } from "~/renderer/components/PerCurrencySelectAccount/state";
 import { openModal } from "~/renderer/actions/modals";
@@ -19,6 +19,7 @@ import { darken } from "~/renderer/styles/helpers";
 import { Observable } from "rxjs";
 import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import { useTranslation } from "react-i18next";
+import { currenciesSettingsSelector } from "~/renderer/reducers/settings";
 
 const AddIconContainer = styled.div`
   border-radius: 50%;
@@ -42,6 +43,9 @@ export function AccountList({ currency, onAccountSelect, accounts$ }: Props) {
   const { t } = useTranslation();
   const accountIds = useGetAccountIds(accounts$);
   const nestedAccounts = useSelector(accountsSelector);
+
+  const currenciesSettings = useSelector(currenciesSettingsSelector);
+
   const accountTuples = useMemo(() => {
     return getAccountTuplesForCurrency(currency, nestedAccounts, false, accountIds);
   }, [nestedAccounts, currency, accountIds]);
@@ -78,6 +82,8 @@ export function AccountList({ currency, onAccountSelect, accounts$ }: Props) {
       {accountTuples.map((accountTuple, index) => {
         const { account, subAccount } = accountTuple;
         const accountCurrency = getAccountCurrency(subAccount || account);
+        const unit = currenciesSettings[accountCurrency.id].unit;
+
         return (
           <RowContainer
             key={account.id}
@@ -120,7 +126,7 @@ export function AccountList({ currency, onAccountSelect, accounts$ }: Props) {
                 <FormattedVal
                   color="palette.text.shade50"
                   val={subAccount ? subAccount.balance : account.balance}
-                  unit={getAccountUnit(subAccount || account)}
+                  unit={unit}
                   showCode
                 />
               </Box>

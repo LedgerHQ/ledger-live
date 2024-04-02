@@ -6,7 +6,6 @@ import { connect } from "react-redux";
 import { TFunction } from "i18next";
 import { Trans, withTranslation } from "react-i18next";
 import type { Account, DerivationMode } from "@ledgerhq/types-live";
-import { Unit } from "@ledgerhq/types-cryptoassets";
 import { validateNameEdition } from "@ledgerhq/live-common/account/index";
 import { AccountNameRequiredError } from "@ledgerhq/errors";
 import { getEnv } from "@ledgerhq/live-env";
@@ -18,7 +17,6 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Alert from "~/renderer/components/Alert";
 import Input from "~/renderer/components/Input";
-import Select from "~/renderer/components/Select";
 import Spoiler from "~/renderer/components/Spoiler";
 import ConfirmModal from "~/renderer/modals/ConfirmModal";
 import Space from "~/renderer/components/Space";
@@ -26,7 +24,6 @@ import Button from "~/renderer/components/Button";
 import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
 type State = {
   accountName: string | undefined | null;
-  accountUnit: Unit | undefined | null;
   accountNameError: Error | undefined | null;
   isRemoveAccountModalOpen: boolean;
 };
@@ -40,8 +37,7 @@ type Props = {
   removeAccount: Function;
   t: TFunction;
 } & OwnProps;
-const unitGetOptionValue = (unit: Unit) => unit.magnitude + "";
-const renderUnitItemCode = (item: { data: Unit }) => item.data.code;
+
 const mapDispatchToProps = {
   setDataModal,
   updateAccount,
@@ -114,12 +110,6 @@ class AccountSettingRenderBody extends PureComponent<Props, State> {
     }
   };
 
-  handleChangeUnit = (value?: Unit | null) => {
-    this.setState({
-      accountUnit: value,
-    });
-  };
-
   handleOpenRemoveAccountModal = () =>
     this.setState({
       isRemoveAccountModalOpen: true,
@@ -140,7 +130,7 @@ class AccountSettingRenderBody extends PureComponent<Props, State> {
   };
 
   render() {
-    const { accountUnit, accountNameError, isRemoveAccountModalOpen } = this.state;
+    const { accountNameError, isRemoveAccountModalOpen } = this.state;
     const { t, onClose, data } = this.props;
     if (!data) return null;
     const account = this.getAccount(data);
@@ -185,27 +175,6 @@ class AccountSettingRenderBody extends PureComponent<Props, State> {
                   }
                   error={accountNameError}
                   id="input-edit-name"
-                />
-              </Box>
-            </Container>
-            <Container>
-              <Box>
-                <OptionRowTitle>{t("account.settings.unit.title")}</OptionRowTitle>
-                <OptionRowDesc>{t("account.settings.unit.desc")}</OptionRowDesc>
-              </Box>
-              <Box
-                style={{
-                  width: 230,
-                }}
-              >
-                <Select
-                  isSearchable={false}
-                  onChange={this.handleChangeUnit}
-                  getOptionValue={unitGetOptionValue}
-                  renderValue={renderUnitItemCode}
-                  renderOption={renderUnitItemCode}
-                  value={accountUnit || account.unit}
-                  options={account.currency.units}
                 />
               </Box>
             </Container>

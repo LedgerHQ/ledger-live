@@ -17,6 +17,7 @@ import {
   TransactionStatus,
   CeloAccount,
 } from "@ledgerhq/live-common/families/celo/types";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 type Props = {
   t: TFunction;
@@ -36,7 +37,7 @@ const AmountField = ({
 }: Props) => {
   invariant(account && transaction && account.spendableBalance, "account and transaction required");
   const bridge = getAccountBridge(account, parentAccount);
-  const defaultUnit = getAccountUnit(account);
+  const defaultUnit = useAccountUnit(account);
   const onChange = useCallback(
     (value: BigNumber) => {
       onChangeTransaction(

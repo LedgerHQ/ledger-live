@@ -16,6 +16,7 @@ import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 export default function StepConfirmation({
   account,
   optimisticOperation,
@@ -25,8 +26,8 @@ export default function StepConfirmation({
 }: StepProps) {
   const { t } = useTranslation();
   const locale = useSelector(localeSelector);
+  const unit = useAccountUnit(account);
   if (optimisticOperation) {
-    const unit = account && getAccountUnit(account);
     const amount =
       unit &&
       transaction &&

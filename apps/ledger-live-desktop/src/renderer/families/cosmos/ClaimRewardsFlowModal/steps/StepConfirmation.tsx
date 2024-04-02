@@ -17,6 +17,7 @@ import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { StepProps } from "../types";
 import { localeSelector } from "~/renderer/reducers/settings";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   grow: true,
@@ -31,8 +32,8 @@ function StepConfirmation({ account, optimisticOperation, error, signed, transac
   const currencyId = account.currency.id;
   const { validators } = useCosmosFamilyPreloadData(currencyId);
   const locale = useSelector(localeSelector);
+  const unit = useAccountUnit(account);
   if (optimisticOperation) {
-    const unit = account && getAccountUnit(account);
     const validator = transaction && transaction.validators ? transaction.validators[0] : null;
     const v =
       validator &&

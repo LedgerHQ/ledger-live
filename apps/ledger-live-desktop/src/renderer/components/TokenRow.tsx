@@ -1,4 +1,4 @@
-import React, { PureComponent } from "react";
+import React from "react";
 import Box from "~/renderer/components/Box";
 import { Account, AccountLike, PortfolioRange } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
@@ -38,29 +38,26 @@ const NestedRow = styled(Box)`
   }
 `;
 
-class TokenRow extends PureComponent<Props> {
-  onClick = () => {
-    const { account, parentAccount, onClick } = this.props;
+function TokenRow(props: Props) {
+  const { account, parentAccount, onClick, range, nested, disableRounding } = props;
+  const onClickRow = () => {
     onClick(account, parentAccount);
   };
 
-  render() {
-    const { account, range, nested, disableRounding } = this.props;
-    const currency = getAccountCurrency(account);
-    const unit = currency.units[0];
-    const Row = nested ? NestedRow : TableRow;
-    return (
-      <Row className="token-row" onClick={this.onClick} tabIndex={-1}>
-        <Header nested={nested} account={account} />
-        <Balance unit={unit} balance={account.balance} disableRounding={disableRounding} />
-        <Countervalue account={account} currency={currency} range={range} />
-        <Delta account={account} range={range} />
-        <Star
-          accountId={account.id}
-          parentId={account.type !== "Account" ? account.parentId : undefined}
-        />
-      </Row>
-    );
-  }
+  const currency = getAccountCurrency(account);
+  const unit = currency.units[0];
+  const Row = nested ? NestedRow : TableRow;
+  return (
+    <Row className="token-row" onClick={onClickRow} tabIndex={-1}>
+      <Header nested={nested} account={account} />
+      <Balance unit={unit} balance={account.balance} disableRounding={disableRounding} />
+      <Countervalue account={account} currency={currency} range={range} />
+      <Delta account={account} range={range} />
+      <Star
+        accountId={account.id}
+        parentId={account.type !== "Account" ? account.parentId : undefined}
+      />
+    </Row>
+  );
 }
 export default TokenRow;

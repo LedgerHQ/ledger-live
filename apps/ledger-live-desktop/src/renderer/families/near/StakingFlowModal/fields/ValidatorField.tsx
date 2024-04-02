@@ -14,6 +14,7 @@ import ValidatorRow from "~/renderer/families/near/shared/components/ValidatorRo
 import { Account } from "@ledgerhq/types-live";
 import { NearValidatorItem } from "@ledgerhq/live-common/families/near/types";
 import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/near/constants";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 type Props = {
   account: Account;
   onChangeValidator: (a: { address: string }) => void;
@@ -23,7 +24,7 @@ type Props = {
 const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props) => {
   const [search, setSearch] = useState("");
   const [showAll, setShowAll] = useState(false);
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const validators = useLedgerFirstShuffledValidatorsNear(search);
   const renderItem = (validator: NearValidatorItem) => {
     return (

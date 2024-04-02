@@ -14,6 +14,7 @@ import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/families/elrond/types";
 import { StepProps } from "../types";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const StepWithdraw = (props: StepProps) => {
   const {
@@ -28,6 +29,7 @@ const StepWithdraw = (props: StepProps) => {
     amount,
     name,
   } = props;
+  const unit = useAccountUnit(account);
   const bridge: AccountBridge<Transaction> = getAccountBridge(account);
   const onDelegationChange = useCallback(
     // @ts-expect-error another TS puzzle for another day
@@ -63,7 +65,7 @@ const StepWithdraw = (props: StepProps) => {
               amount: `${denominate({
                 input: String(transaction.amount),
                 decimals: 4,
-              })} ${getAccountUnit(account).code}`,
+              })} ${unit.code}`,
             }}
           >
             <b></b>

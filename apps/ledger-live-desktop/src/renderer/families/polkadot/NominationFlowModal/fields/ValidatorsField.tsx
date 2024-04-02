@@ -38,6 +38,7 @@ import Alert from "~/renderer/components/Alert";
 
 // Specific Validator Row
 import ValidatorRow from "./ValidatorRow";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 const DrawerWrapper = styled(Box).attrs(() => ({
   horizontal: true,
   alignItems: "center",
@@ -114,7 +115,7 @@ const ValidatorField = ({
   const [search, setSearch] = useState("");
   const { polkadotResources } = account;
   invariant(polkadotResources && nominations, "polkadot transaction required");
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const formatConfig = {
     disableRounding: true,
     alwaysShowSign: false,

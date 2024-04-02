@@ -14,6 +14,7 @@ import {
   CosmosValidatorItem,
   Transaction,
 } from "@ledgerhq/live-common/families/cosmos/types";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 const ValidatorsSection = styled(Box)`
   width: 100%;
   height: 100%;
@@ -37,7 +38,7 @@ export default function ValidatorField({
     [setSearch],
   );
   invariant(cosmosResources, "cosmosResources required");
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const fromValidatorAddress = transaction.sourceValidator;
   const sortedFilteredValidators = validators.filter(
     v => v.validatorAddress !== fromValidatorAddress,

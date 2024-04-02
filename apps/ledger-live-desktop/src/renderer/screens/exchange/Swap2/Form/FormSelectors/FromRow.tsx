@@ -1,11 +1,7 @@
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import {
-  getAccountUnit,
-  getAccountCurrency,
-  getAccountName,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, getAccountName } from "@ledgerhq/live-common/account/index";
 import Box from "~/renderer/components/Box";
 import InputCurrency from "~/renderer/components/InputCurrency";
 import { ErrorContainer } from "~/renderer/components/Input";
@@ -30,6 +26,7 @@ import { WarningSolidMedium } from "@ledgerhq/react-ui/assets/icons";
 import { useSwapableAccounts } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { useSelector } from "react-redux";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
+import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const SwapStatusContainer = styled.div<{ isError: boolean }>(
   ({ theme: { space, colors }, isError }) => `
@@ -125,9 +122,11 @@ function FromRow({
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const flattenedAccounts = useSelector(flattenAccountsSelector);
   const accounts = useSwapableAccounts({ accounts: flattenedAccounts });
-  const unit = fromAccount && getAccountUnit(fromAccount);
+  const unit = useMaybeAccountUnit(fromAccount);
   const { t } = useTranslation();
   usePickDefaultAccount(accounts, fromAccount, setFromAccount);
+
+  if (!fromAccount) return null;
 
   const trackEditAccount = () => {
     track("button_clicked2", {

@@ -14,6 +14,7 @@ import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { StepProps } from "../types";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
@@ -27,13 +28,14 @@ const Container = styled(Box).attrs(() => ({
 const StepConfirmation = (props: StepProps) => {
   const { optimisticOperation, error, signed, account, transaction, validators } = props;
   const { t } = useTranslation();
+  const unit = useAccountUnit(account);
   if (optimisticOperation && transaction) {
     const provider: string | undefined = transaction && transaction.recipient;
     const v = provider ? validators.find(validator => validator.contract === provider) : undefined;
     const amount = `${denominate({
       input: String(transaction.amount),
       decimals: 4,
-    })} ${getAccountUnit(account).code || "EGLD"}`;
+    })} ${unit.code || "EGLD"}`;
     return (
       <Container>
         <TrackPage

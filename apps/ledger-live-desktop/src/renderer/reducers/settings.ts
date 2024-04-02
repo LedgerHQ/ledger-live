@@ -13,8 +13,9 @@ import {
   Feature,
   PortfolioRange,
   FirmwareUpdateContext,
+  AccountLike,
 } from "@ledgerhq/types-live";
-import { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { getEnv } from "@ledgerhq/live-env";
 import {
   LanguageIds,
@@ -461,6 +462,7 @@ const pairHash = (from: Currency, to: Currency) => `${from.ticker}_${to.ticker}`
 
 export type CurrencySettings = {
   confirmationsNb: number;
+  unit: Unit;
 };
 
 type ConfirmationDefaults = {
@@ -474,7 +476,11 @@ type ConfirmationDefaults = {
     | null;
 };
 
-export const currencySettingsDefaults = (c: Currency): ConfirmationDefaults => {
+type UnitDefaults = {
+  unit: Unit;
+};
+
+export const currencySettingsDefaults = (c: Currency): ConfirmationDefaults & UnitDefaults => {
   let confirmationsNb;
   if (c.type === "CryptoCurrency") {
     const { blockAvgTime } = c;
@@ -489,6 +495,7 @@ export const currencySettingsDefaults = (c: Currency): ConfirmationDefaults => {
   }
   return {
     confirmationsNb,
+    unit: c.units[0],
   };
 };
 const bitcoin = getCryptoCurrencyById("bitcoin");
@@ -510,6 +517,7 @@ const defaultsForCurrency: (a: Currency) => CurrencySettings = crypto => {
   const defaults = currencySettingsDefaults(crypto);
   return {
     confirmationsNb: defaults.confirmationsNb ? defaults.confirmationsNb.def : 0,
+    unit: defaults.unit,
   };
 };
 
@@ -659,6 +667,29 @@ export const confirmationsNbForCurrencySelector = (
   const defs = currencySettingsDefaults(currency);
   return defs.confirmationsNb ? defs.confirmationsNb.def : 0;
 };
+
+export const unitForCurrencySelector = (
+  state: State,
+  {
+    currency,
+  }: {
+    currency: CryptoCurrency;
+  },
+): Unit => {
+  const obj = state.settings.currenciesSettings[currency.ticker];
+  if (obj) return obj.unit;
+  const defs = currencySettingsDefaults(currency);
+  return defs.unit;
+};
+
+export const accountUnitSelector = (state: State, account: AccountLike): Unit => {
+  if (account.type === "Account") {
+    return unitForCurrencySelector(state, account);
+  } else {
+    return account.token.units[0];
+  }
+};
+
 export const preferredDeviceModelSelector = (state: State) => state.settings.preferredDeviceModel;
 export const sidebarCollapsedSelector = (state: State) => state.settings.sidebarCollapsed;
 export const accountsViewModeSelector = (state: State) => state.settings.accountsViewMode;
@@ -757,6 +788,7 @@ export const hasSeenAnalyticsOptInPromptSelector = (state: State) =>
 export const dismissedContentCardsSelector = (state: State) => state.settings.dismissedContentCards;
 export const anonymousBrazeIdSelector = (state: State) => state.settings.anonymousBrazeId;
 
-//MARKET
+export const currenciesSettingsSelector = (state: State) => state.settings.currenciesSettings;
 
+//MARKET
 export const starredMarketCoinsSelector = (state: State) => state.settings.starredMarketCoins;

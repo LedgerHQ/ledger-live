@@ -27,6 +27,7 @@ import {
   ConfirmationCellProps,
   OperationDetailsExtraProps,
 } from "../types";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const CellIcon = styled(Box)<{ index: number }>`
   flex: 1 0 50%;
@@ -57,7 +58,7 @@ const OperationDetailsExtra = ({
   account,
   operation,
 }: OperationDetailsExtraProps<AlgorandAccount, AlgorandOperation>) => {
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const currency = getAccountCurrency(account);
   const { rewards, memo, assetId } = operation.extra;
   return (

@@ -5,6 +5,7 @@ import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import { openModal } from "~/renderer/actions/modals";
 import IconCoins from "~/renderer/icons/Coins";
 import { AlgorandFamily } from "./types";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const AccountHeaderActions: AlgorandFamily["accountHeaderManageActions"] = ({
   account,
@@ -13,7 +14,7 @@ const AccountHeaderActions: AlgorandFamily["accountHeaderManageActions"] = ({
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const balance = account.balance;
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const minRewardsBalance = 10 ** unit.magnitude;
 
   const onClick = useCallback(() => {

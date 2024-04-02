@@ -1,7 +1,6 @@
 import {
   flattenAccounts,
   getAccountCurrency,
-  getAccountUnit,
   getAccountName,
   listSubAccounts,
 } from "@ledgerhq/live-common/account/index";
@@ -25,6 +24,7 @@ import Button from "~/renderer/components/Button";
 import Plus from "~/renderer/icons/Plus";
 import Text from "./Text";
 import { openModal } from "../actions/modals";
+import { useAccountUnit } from "../hooks/useAccountUnit";
 
 const mapStateToProps = createStructuredSelector({
   accounts: shallowAccountsSelector,
@@ -104,7 +104,7 @@ export const AccountOption = React.memo<AccountOptionProps>(function AccountOpti
   singleLineLayout = true,
 }: AccountOptionProps) {
   const currency = getAccountCurrency(account);
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const name = getAccountName(account);
   const nested = "TokenAccount" === account.type;
   const balance = account.spendableBalance || account.balance;

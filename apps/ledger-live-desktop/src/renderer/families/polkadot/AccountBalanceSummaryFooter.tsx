@@ -16,6 +16,7 @@ import TriangleWarning from "~/renderer/icons/TriangleWarning";
 import ToolTip from "~/renderer/components/Tooltip";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 import { SubAccount } from "@ledgerhq/types-live";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const Wrapper = styled(Box).attrs(() => ({
   horizontal: true,
@@ -66,6 +67,7 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
   const preloaded = usePolkadotPreloadData();
+  const unit = useAccountUnit(account);
   if (account.type !== "Account") return null;
   const { spendableBalance: _spendableBalance, polkadotResources } = account;
   const {
@@ -75,7 +77,7 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
   } = polkadotResources;
   const minimumBondBalance = BigNumber(preloaded.minimumBondBalance);
   const hasMinBondBalance = hasMinimumBondBalance(account);
-  const unit = getAccountUnit(account);
+
   const formatConfig = {
     disableRounding: true,
     alwaysShowSign: false,

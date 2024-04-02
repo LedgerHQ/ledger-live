@@ -14,6 +14,7 @@ import ScrollLoadingList from "~/renderer/components/ScrollLoadingList";
 import Text from "~/renderer/components/Text";
 import IconAngleDown from "~/renderer/icons/AngleDown";
 import ValidatorRow from "../components/ValidatorRow";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 type Props = {
   account: SolanaAccount;
@@ -23,7 +24,7 @@ type Props = {
 const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props) => {
   const [search, setSearch] = useState("");
   const [showAll, setShowAll] = useState(false);
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const validators = useValidators(account.currency, search);
   const chosenValidator = useMemo(() => {
     if (chosenVoteAccAddr !== null) {

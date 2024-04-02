@@ -20,6 +20,7 @@ import TachometerHigh from "~/renderer/icons/TachometerHigh";
 import TachometerLow from "~/renderer/icons/TachometerLow";
 import TachometerMedium from "~/renderer/icons/TachometerMedium";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 type Props = {
   onClick: (_: { feesStrategy: Strategy }) => void;
@@ -96,7 +97,7 @@ const SelectFeeStrategy = ({
   transactionToUpdate,
   status,
 }: Props) => {
-  const accountUnit = getAccountUnit(account);
+  const accountUnit = useAccountUnit(account);
   const feesCurrency = getAccountCurrency(account);
   const { errors } = status;
   const { gasPrice: messageGas } = errors;

@@ -15,9 +15,10 @@ import Text from "~/renderer/components/Text";
 import ClaimRewardsIllu from "~/renderer/images/rewards.svg";
 import Image from "~/renderer/components/Image";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 export default function StepInfo({ account, warning, error }: StepProps) {
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const locale = useSelector(localeSelector);
   const { algorandResources } = account;
   const { rewards } = algorandResources || {};

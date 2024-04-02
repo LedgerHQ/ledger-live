@@ -14,6 +14,7 @@ import Alert from "~/renderer/components/Alert";
 import { urls } from "~/config/urls";
 import * as S from "./StepVote.styles";
 import { StepProps } from "../types";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 export const StepVoteFooter = ({
   transitionTo,
   account,
@@ -53,6 +54,7 @@ const StepVote = ({
     account && account.celoResources && transaction,
     "celo account, resources and transaction required",
   );
+  const unit = useAccountUnit(account);
   const bridge = getAccountBridge(account, parentAccount);
   const onChange = useCallback(
     (recipient: string, index: number) => {
@@ -78,7 +80,7 @@ const StepVote = ({
       })) || [],
     [votes, validatorGroups],
   );
-  const unit = getAccountUnit(account);
+
   return (
     <Box flow={1}>
       <TrackPage

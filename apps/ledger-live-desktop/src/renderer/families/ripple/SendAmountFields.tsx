@@ -10,6 +10,7 @@ import Box from "~/renderer/components/Box";
 import GenericContainer from "~/renderer/components/FeesContainer";
 import { track } from "~/renderer/analytics/segment";
 import BigNumber from "bignumber.js";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 type Props = {
   account: Account;
@@ -46,7 +47,7 @@ function FeesField({ account, transaction, onChange, status, trackProperties = {
   const { errors } = status;
   const { fee: feeError } = errors;
   const { fee } = transaction;
-  const defaultUnit = getAccountUnit(account);
+  const defaultUnit = useAccountUnit(account);
   return (
     <GenericContainer>
       <InputCurrency

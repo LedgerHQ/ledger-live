@@ -7,6 +7,7 @@ import Box from "~/renderer/components/Box";
 import InputCurrency from "~/renderer/components/InputCurrency";
 import Label from "~/renderer/components/Label";
 import { TransactionStatus } from "@ledgerhq/live-common/families/near/types";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 type Props = {
   amount: BigNumber;
@@ -27,7 +28,7 @@ export default function AmountField({
   status: { errors, warnings },
   label,
 }: Props) {
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const [currentValidator, setCurrentValidator] = useState(validator);
   const [focused, setFocused] = useState(false);
   const [initialAmount, setInitialAmount] = useState(validator ? validator.amount : BigNumber(0));

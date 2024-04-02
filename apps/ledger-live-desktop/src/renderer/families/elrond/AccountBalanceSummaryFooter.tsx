@@ -18,6 +18,7 @@ import {
 import { DelegationType } from "./types";
 import { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
 import { SubAccount } from "@ledgerhq/types-live";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 interface BalanceType {
   tooltip: string;
@@ -34,7 +35,7 @@ const Summary = (props: { account: ElrondAccount }) => {
   );
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const fetchDelegations = useCallback(() => {
     setBalance(account.spendableBalance);
     setDelegationResources(account.elrondResources ? account.elrondResources.delegations : []);

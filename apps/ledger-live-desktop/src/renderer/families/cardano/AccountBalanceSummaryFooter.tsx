@@ -11,6 +11,7 @@ import Text from "~/renderer/components/Text";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
 import { CardanoFamily } from "./types";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const Wrapper = styled(Box).attrs(() => ({
   horizontal: true,
@@ -51,7 +52,7 @@ const AccountBalanceSummaryFooter: CardanoFamily["AccountBalanceSummaryFooter"] 
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
   const _spendableBalance = account.spendableBalance;
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const formatConfig = {
     disableRounding: true,
     alwaysShowSign: false,

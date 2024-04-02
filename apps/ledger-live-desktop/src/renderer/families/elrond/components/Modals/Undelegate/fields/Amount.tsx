@@ -8,6 +8,7 @@ import TranslatedError from "~/renderer/components/TranslatedError";
 import { Unit } from "@ledgerhq/types-cryptoassets";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { ElrondAccount, TransactionStatus } from "@ledgerhq/live-common/families/elrond/types";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const InputLeft = styled(Box).attrs(() => ({
   ff: "Inter|Medium",
@@ -96,7 +97,7 @@ const AmountField = (props: Props) => {
     status: { errors, warnings },
     label,
   } = props;
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const [focused, setFocused] = useState(false);
   const onAmountChange = (amount: BigNumber, unit?: Unit) => {
     onChange(amount, unit);
@@ -142,7 +143,7 @@ const AmountField = (props: Props) => {
         value={amount}
         onChange={onAmountChange}
         onChangeFocus={() => setFocused(true)}
-        renderLeft={<InputLeft>{getAccountUnit(account).code}</InputLeft>}
+        renderLeft={<InputLeft>{unit.code}</InputLeft>}
         renderRight={
           <InputRight>
             {options.map(({ label, value }) => (

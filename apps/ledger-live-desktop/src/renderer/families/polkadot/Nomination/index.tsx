@@ -44,6 +44,7 @@ import {
   PolkadotValidator,
 } from "@ledgerhq/live-common/families/polkadot/types";
 import { SubAccount } from "@ledgerhq/types-live";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 type Props = {
   account: PolkadotAccount | SubAccount;
@@ -66,7 +67,7 @@ export type NominationValidator =
 const Nomination = ({ account }: { account: PolkadotAccount }) => {
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const dispatch = useDispatch();
   const { staking, validators } = usePolkadotPreloadData();
   const { polkadotResources } = account;
