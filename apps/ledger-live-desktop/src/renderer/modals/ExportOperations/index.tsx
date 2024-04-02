@@ -188,7 +188,6 @@ const LabelWrapper = styled(Box)`
   text-align: center;
   font-size: 13px;
   font-family: "Inter";
-  font-weight:;
 `;
 const IconWrapperCircle = styled(Box)<{ green?: boolean }>`
   width: 50px;

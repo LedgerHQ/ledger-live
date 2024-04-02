@@ -25,7 +25,6 @@ import {
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import {
-  getAccountUnit,
   getMainAccount,
   getAccountName,
   getAccountCurrency,
@@ -72,6 +71,7 @@ import { ErrorBody } from "../ErrorBody";
 import LinkWithExternalIcon from "../LinkWithExternalIcon";
 import { closePlatformAppDrawer } from "~/renderer/actions/UI";
 import { CompleteExchangeError } from "@ledgerhq/live-common/exchange/error";
+import { SettingsState, currencySettingsLocaleSelector } from "~/renderer/reducers/settings";
 
 export const AnimationWrapper = styled.div`
   width: 600px;
@@ -950,6 +950,7 @@ export const renderSwapDeviceConfirmation = ({
   amountExpectedTo,
   estimatedFees,
   swapDefaultTrack,
+  stateSettings,
 }: {
   modelId: DeviceModelId;
   type: Theme["theme"];
@@ -959,18 +960,31 @@ export const renderSwapDeviceConfirmation = ({
   amountExpectedTo?: string;
   estimatedFees?: string;
   swapDefaultTrack: Record<string, string | boolean>;
+  stateSettings: SettingsState;
 }) => {
+  const fromAccountCurrency = getAccountCurrency(exchange.fromAccount);
+  const toAccountCurrency = getAccountCurrency(exchange.toAccount);
+
   const [sourceAccountName, sourceAccountCurrency] = [
     getAccountName(exchange.fromAccount),
-    getAccountCurrency(exchange.fromAccount),
+    fromAccountCurrency,
   ];
   const [targetAccountName, targetAccountCurrency] = [
     getAccountName(exchange.toAccount),
-    getAccountCurrency(exchange.toAccount),
+    toAccountCurrency,
   ];
+
   const providerName = getProviderName(exchangeRate.provider);
   const noticeType = getNoticeType(exchangeRate.provider);
   const alertProperties = noticeType.learnMore ? { learnMoreUrl: urls.swap.learnMore } : {};
+
+  const unitFromExchange = currencySettingsLocaleSelector(stateSettings, fromAccountCurrency).unit;
+  const unitToExchange = currencySettingsLocaleSelector(stateSettings, toAccountCurrency).unit;
+  const unitMainAccount = currencySettingsLocaleSelector(
+    stateSettings,
+    getMainAccount(exchange.fromAccount, exchange.fromParentAccount).currency,
+  ).unit;
+
   return (
     <>
       <ConfirmWrapper>
@@ -995,7 +1009,7 @@ export const renderSwapDeviceConfirmation = ({
             {
               amountSent: (
                 <CurrencyUnitValue
-                  unit={getAccountUnit(exchange.fromAccount)}
+                  unit={unitFromExchange}
                   value={transaction.amount}
                   disableRounding
                   showCode
@@ -1003,7 +1017,7 @@ export const renderSwapDeviceConfirmation = ({
               ),
               amountReceived: (
                 <CurrencyUnitValue
-                  unit={getAccountUnit(exchange.toAccount)}
+                  unit={unitToExchange}
                   value={amountExpectedTo ? BigNumber(amountExpectedTo) : exchangeRate.toAmount}
                   disableRounding
                   showCode
@@ -1017,9 +1031,7 @@ export const renderSwapDeviceConfirmation = ({
               ),
               fees: (
                 <CurrencyUnitValue
-                  unit={getAccountUnit(
-                    getMainAccount(exchange.fromAccount, exchange.fromParentAccount),
-                  )}
+                  unit={unitMainAccount}
                   value={BigNumber(estimatedFees || 0)}
                   disableRounding
                   showCode

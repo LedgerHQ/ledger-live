@@ -20,6 +20,7 @@ import ToolTip from "~/renderer/components/Tooltip";
 import useTheme from "~/renderer/hooks/useTheme";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { IconsLegacy } from "@ledgerhq/react-ui";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 export type AccountDistributionItem = {
   account: AccountLike;
   distribution: number;
@@ -35,6 +36,7 @@ export default function Row({
   item: { currency, amount, distribution, account },
   isVisible,
 }: Props) {
+  const unit = useAccountUnit(account);
   const accounts = useSelector(accountsSelector);
   const theme = useTheme();
   const history = useHistory();
@@ -88,7 +90,7 @@ export default function Row({
           <Ellipsis>
             <FormattedVal
               color={"palette.text.shade80"}
-              unit={currency.units[0]}
+              unit={unit}
               val={amount}
               fontSize={3}
               showCode

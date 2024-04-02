@@ -1,7 +1,6 @@
 import {
   findSubAccountById,
   getAccountCurrency,
-  getAccountUnit,
   getFeesCurrency,
   getFeesUnit,
   getMainAccount,
@@ -79,6 +78,7 @@ import {
   TextEllipsis,
 } from "./styledComponents";
 import { dayAndHourFormat, useDateFormatted } from "~/renderer/hooks/useDateFormatter";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const mapStateToProps = (
   state: State,
@@ -156,7 +156,7 @@ const OperationD = (props: Props) => {
   const mainCurrency = getAccountCurrency(mainAccount);
   const { status, metadata } = useNftMetadata(contract, tokenId, currency.id);
   const show = useMemo(() => status === "loading", [status]);
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const amount = getOperationAmountNumber(operation);
   const isNegative = amount.isNegative();
   const marketColor = getMarketColor({

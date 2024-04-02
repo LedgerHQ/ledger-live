@@ -7,11 +7,7 @@ import Text from "~/renderer/components/Text";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { AccountLike } from "@ledgerhq/types-live";
-import {
-  getAccountCurrency,
-  getAccountUnit,
-  getAccountName,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, getAccountName } from "@ledgerhq/live-common/account/index";
 import Check from "~/renderer/icons/Check";
 import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
 import Tabbable from "~/renderer/components/Box/Tabbable";
@@ -23,6 +19,7 @@ import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
 import { context } from "~/renderer/drawers/Provider";
 import { track } from "~/renderer/analytics/segment";
 import { useGetSwapTrackingProperties } from "../../utils/index";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const AccountWrapper = styled(Tabbable)<{ selected?: boolean }>`
   cursor: pointer;
@@ -66,7 +63,7 @@ const TargetAccount = memo(function TargetAccount({
   const allAccounts = useSelector(shallowAccountsSelector);
   const theme = useTheme();
   const currency = getAccountCurrency(account);
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const name = getAccountName(account);
   const parentAccount =
     account?.type !== "Account" ? allAccounts?.find(a => a.id === account?.parentId) : null;

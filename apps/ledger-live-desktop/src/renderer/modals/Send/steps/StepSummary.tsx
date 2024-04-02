@@ -4,7 +4,6 @@ import styled from "styled-components";
 import {
   getAccountName,
   getAccountCurrency,
-  getAccountUnit,
   getFeesCurrency,
   getFeesUnit,
   getMainAccount,
@@ -27,6 +26,7 @@ import NFTSummary from "~/renderer/screens/nft/Send/Summary";
 import { StepProps } from "../types";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
 import { getLLDCoinFamily } from "~/renderer/families";
+import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const FromToWrapper = styled.div``;
 const Circle = styled.div`
@@ -56,12 +56,8 @@ const WARN_FROM_UTXO_COUNT = 50;
 
 const StepSummary = (props: StepProps) => {
   const { account, parentAccount, transaction, status, currencyName, isNFTSend } = props;
-
-  if (!account) {
-    return null;
-  }
-
-  const mainAccount = getMainAccount(account, parentAccount);
+  const mainAccount = account && getMainAccount(account, parentAccount);
+  const unit = useMaybeAccountUnit(mainAccount);
 
   if (!mainAccount || !transaction) {
     return null;
@@ -73,7 +69,6 @@ const StepSummary = (props: StepProps) => {
   const currency = getAccountCurrency(account);
   const feesCurrency = getFeesCurrency(mainAccount);
   const feesUnit = getFeesUnit(feesCurrency);
-  const unit = getAccountUnit(account);
   const utxoLag = txInputs ? txInputs.length >= WARN_FROM_UTXO_COUNT : null;
   const hasNonEmptySubAccounts =
     account.type === "Account" &&

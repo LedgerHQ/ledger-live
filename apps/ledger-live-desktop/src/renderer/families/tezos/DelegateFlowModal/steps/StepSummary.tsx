@@ -1,11 +1,7 @@
 import invariant from "invariant";
 import React from "react";
 import styled from "styled-components";
-import {
-  getAccountCurrency,
-  getAccountName,
-  getAccountUnit,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, getAccountName } from "@ledgerhq/live-common/account/index";
 import { useBaker, useDelegation } from "@ledgerhq/live-common/families/tezos/bakers";
 import { Baker } from "@ledgerhq/live-common/families/tezos/types";
 import { Trans } from "react-i18next";
@@ -24,6 +20,7 @@ import InfoCircle from "~/renderer/icons/InfoCircle";
 import BakerImage from "../../BakerImage";
 import DelegationContainer from "../DelegationContainer";
 import { StepProps } from "../types";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const urlDelegationHelp = "https://support.ledger.com/hc/en-us/articles/360010653260";
 
@@ -57,7 +54,7 @@ const StepSummary = ({ account, transaction, eventType, transitionTo }: StepProp
   const delegation = useDelegation(account);
   const baker = useBaker(transaction.recipient);
   const currency = getAccountCurrency(account);
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const getBakerName = (baker: Baker | undefined | null, fallback: string) =>
     baker ? baker.name : fallback;
 

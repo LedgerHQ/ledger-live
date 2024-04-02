@@ -1,8 +1,4 @@
-import {
-  getAccountCurrency,
-  getAccountName,
-  getAccountUnit,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, getAccountName } from "@ledgerhq/live-common/account/index";
 import {
   isSwapOperationPending,
   operationStatusList,
@@ -23,6 +19,7 @@ import IconClock from "~/renderer/icons/Clock";
 import IconSwap from "~/renderer/icons/Swap";
 import { rgba } from "~/renderer/styles/helpers";
 import { hourFormat, useDateFormatted } from "~/renderer/hooks/useDateFormatter";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 export const getStatusColor = (status: string, theme: DefaultTheme) => {
   if (isSwapOperationPending(status)) {
@@ -105,6 +102,8 @@ const OperationRow = ({
   const dateFormatted = useDateFormatted(operation.date, hourFormat);
   const { t } = useTranslation();
 
+  const unitFrom = useAccountUnit(fromAccount);
+  const unitTo = useAccountUnit(toAccount);
   return (
     <Row
       className={"swap-history-row"}
@@ -157,14 +156,14 @@ const OperationRow = ({
       </Box>
       <Box alignItems={"flex-end"} ml={20}>
         <Text ff={"Inter|SemiBold"} fontSize={4}>
-          <FormattedVal alwaysShowSign val={toAmount} unit={getAccountUnit(toAccount)} showCode />
+          <FormattedVal alwaysShowSign val={toAmount} unit={unitTo} showCode />
         </Text>
         <Text ff={"Inter|SemiBold"} fontSize={3}>
           <FormattedVal
             color="palette.text.shade60"
             alwaysShowSign
             val={fromAmount.times(-1)}
-            unit={getAccountUnit(fromAccount)}
+            unit={unitFrom}
             showCode
           />
         </Text>
