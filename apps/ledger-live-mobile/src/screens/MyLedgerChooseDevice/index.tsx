@@ -84,16 +84,7 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
   };
 
   useEffect(() => {
-    /**
-     * FIXME: fix QueuedDrawer to not require this setTimeout hack.
-     * Yes this is horrible but if we don't add this timeout, navigating
-     * to this screen from a screen that has a drawer open will
-     * prevent the DeviceActionModal in this screen from opening.
-     */
-    const timeout = setTimeout(() => {
-      setDevice(params?.device);
-    }, 500);
-    return () => clearTimeout(timeout);
+    setDevice(params?.device);
   }, [params?.device]);
 
   const requestToSetHeaderOptions = useCallback(
