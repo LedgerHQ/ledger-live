@@ -17,7 +17,7 @@ import { getAccountBridge } from "../../bridge";
 import { getEnv } from "@ledgerhq/live-env";
 import {
   SwapGenericAPIError,
-  SwapRateExpieredError,
+  SwapRateExpiredError,
   TransactionRefusedOnDevice,
 } from "../../errors";
 import perFamily from "../../generated/exchange";
@@ -106,7 +106,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
           if (e.status == 422) {
             o.next({
               type: "init-swap-error",
-              error: new SwapRateExpieredError(),
+              error: new SwapRateExpiredError(),
               swapId,
             });
           }
