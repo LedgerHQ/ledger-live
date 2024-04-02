@@ -2250,7 +2250,7 @@
     "description": "You can choose to add crypto directly with your Ledger, or import them from Ledger Live Desktop.",
     "add": {
       "title": "With your Ledger",
-      "description": "Create or import asset with your Ledger"
+      "description": "Create or import an account for your asset with your Ledger"
     },
     "import": {
       "title": "Import from desktop",
