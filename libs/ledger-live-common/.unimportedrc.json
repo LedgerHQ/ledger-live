@@ -277,6 +277,7 @@
     "src/wallet-api/helpers.ts",
     "src/wallet-api/react.ts",
     "src/wallet-api/tracking.ts",
+    "src/wallet-api/useDappLogic.ts",
     "src/wallet-api/types.ts",
     "src/wallet-api/version.ts"
   ],

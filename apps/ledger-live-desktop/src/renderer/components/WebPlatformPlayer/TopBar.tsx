@@ -13,10 +13,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { enablePlatformDevToolsSelector } from "~/renderer/reducers/settings";
 import LiveAppIcon from "./LiveAppIcon";
 import { openPlatformAppInfoDrawer } from "~/renderer/actions/UI";
+import { useSelectAccount } from "../Web3AppWebview/helpers";
 import { WebviewAPI, WebviewState } from "../Web3AppWebview/types";
 import Spinner from "../Spinner";
+import { getAccountName, getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
-import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
+import { useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/useDappLogic";
+import { CurrentAccountHistDB, safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
+import Wallet from "~/renderer/icons/Wallet";
+import CryptoCurrencyIcon from "../CryptoCurrencyIcon";
 
 const Container = styled(Box).attrs(() => ({
   horizontal: true,
@@ -114,6 +119,7 @@ export type TopBarConfig = {
   shouldDisplayInfo?: boolean;
   shouldDisplayClose?: boolean;
   shouldDisplayNavigation?: boolean;
+  shouldDisplaySelectAccount?: boolean;
 };
 
 export type Props = {
@@ -123,16 +129,26 @@ export type Props = {
   config?: TopBarConfig;
   webviewAPIRef: RefObject<WebviewAPI>;
   webviewState: WebviewState;
+  currentAccountHistDb?: CurrentAccountHistDB;
 };
 
-export const TopBar = ({ manifest, onClose, config = {}, webviewAPIRef, webviewState }: Props) => {
+export const TopBar = ({
+  manifest,
+  currentAccountHistDb,
+  onClose,
+  config = {},
+  webviewAPIRef,
+  webviewState,
+}: Props) => {
   const { name, icon } = manifest;
+  const { currentAccount } = useDappCurrentAccount(currentAccountHistDb);
 
   const {
     shouldDisplayName = true,
     shouldDisplayInfo = true,
     shouldDisplayClose = !!onClose,
-    shouldDisplayNavigation = false,
+    shouldDisplayNavigation = !!manifest.dapp,
+    shouldDisplaySelectAccount = !!manifest.dapp,
   } = config;
 
   const enablePlatformDevTools = useSelector(enablePlatformDevToolsSelector);
@@ -165,6 +181,8 @@ export const TopBar = ({ manifest, onClose, config = {}, webviewAPIRef, webviewS
 
     webview.goForward();
   }, [webviewAPIRef]);
+
+  const { onSelectAccount } = useSelectAccount({ manifest, currentAccountHistDb });
 
   const isLoading = useDebounce(webviewState.loading, 100);
 
@@ -214,6 +232,30 @@ export const TopBar = ({ manifest, onClose, config = {}, webviewAPIRef, webviewS
             data-test-id="web-platform-player-topbar-activity-indicator"
           />
         </ItemContainer>
+        {shouldDisplaySelectAccount ? (
+          <>
+            <ItemContainer isInteractive onClick={onSelectAccount}>
+              {!currentAccount ? (
+                <>
+                  <Wallet size={16} />
+                  <ItemContent>
+                    <Trans i18nKey="common.selectAccount" />
+                  </ItemContent>
+                </>
+              ) : (
+                <>
+                  <CryptoCurrencyIcon
+                    circle
+                    currency={getAccountCurrency(currentAccount)}
+                    size={16}
+                  />
+                  <ItemContent>{getAccountName(currentAccount)}</ItemContent>
+                </>
+              )}
+            </ItemContainer>
+            <Separator />
+          </>
+        ) : null}
         {shouldDisplayInfo && (
           <ItemContainer isInteractive onClick={onClick}>
             <IconInfoCircle size={16} />
