@@ -12,7 +12,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
 import invariant from "invariant";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import { GraphTabs, Text, IconsLegacy } from "@ledgerhq/native-ui";
@@ -35,6 +34,7 @@ import Button from "~/components/wrappedUi/Button";
 import { FreezeNavigatorParamList } from "~/components/RootNavigator/types/FreezeNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { useAccountUnit, useMaybeAccountUnit } from "~/hooks/useAccountUnit";
 
 const infoModalData = [
   {
@@ -66,7 +66,7 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
 
   const bridge = getAccountBridge(account, undefined);
 
-  const defaultUnit = getAccountUnit(account);
+  const defaultUnit = useAccountUnit(account);
   const { spendableBalance } = account;
 
   const [selectedRatio, selectRatio] = useState<BigNumber>();
@@ -205,10 +205,10 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
     [showAmountRatio, spendableBalance],
   );
 
-  if (!account || !transaction) return null;
+  const unit = useMaybeAccountUnit(account);
+  if (!account || !transaction || !unit) return null;
 
   const { amount } = status;
-  const unit = getAccountUnit(account);
 
   const error = amount.eq(0) || bridgePending ? null : status.errors.amount;
   const warning = status.warnings.amount;

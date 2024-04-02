@@ -1,4 +1,3 @@
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import {
   CeloAccount,
@@ -17,6 +16,7 @@ import SpendableAmount from "~/renderer/components/SpendableAmount";
 import Switch from "~/renderer/components/Switch";
 import Text from "~/renderer/components/Text";
 import * as S from "./AmountField.styles";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 type Props = {
   t: TFunction;
@@ -36,7 +36,7 @@ const AmountField = ({
 }: Props) => {
   invariant(account && transaction && account.spendableBalance, "account and transaction required");
   const bridge = getAccountBridge(account, parentAccount);
-  const defaultUnit = getAccountUnit(account);
+  const defaultUnit = useAccountUnit(account);
   const onChange = useCallback(
     (value: BigNumber) => {
       onChangeTransaction(

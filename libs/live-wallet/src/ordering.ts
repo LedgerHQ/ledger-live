@@ -1,26 +1,15 @@
 import { BigNumber } from "bignumber.js";
-import { flattenAccounts, getAccountCurrency } from "./helpers";
-import type { FlattenAccountsOptions } from "./helpers";
+import { flattenAccounts, getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
+import type { FlattenAccountsOptions } from "@ledgerhq/coin-framework/account/helpers";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { WalletState, accountNameWithDefaultSelector } from "./store";
 
 export type AccountComparator = (a: AccountLike, b: AccountLike) => number;
 
-const sortNameLense = (a: AccountLike): string => {
-  switch (a.type) {
-    case "Account":
-      return a.name;
-
-    case "TokenAccount":
-      return a.token.name;
-
-    default:
-      return "";
-  }
-};
-
 export const sortAccountsComparatorFromOrder = (
   orderAccounts: string,
+  walletState: WalletState,
   calculateCountervalue: (
     currency: TokenCurrency | CryptoCurrency,
     value: BigNumber,
@@ -32,9 +21,11 @@ export const sortAccountsComparatorFromOrder = (
   if (order === "name") {
     return (a, b) =>
       ascValue *
-      sortNameLense(a).localeCompare(sortNameLense(b), undefined, {
-        numeric: true,
-      });
+      accountNameWithDefaultSelector(walletState, a).localeCompare(
+        accountNameWithDefaultSelector(walletState, b),
+        undefined,
+        { numeric: true },
+      );
   }
 
   const cvCaches: Record<string, BigNumber> = {};
@@ -48,7 +39,10 @@ export const sortAccountsComparatorFromOrder = (
 
   return (a, b) => {
     const diff = ascValue * lazyCalcCV(a).minus(lazyCalcCV(b)).toNumber();
-    if (diff === 0) return sortNameLense(a).localeCompare(sortNameLense(b));
+    if (diff === 0)
+      return accountNameWithDefaultSelector(walletState, a).localeCompare(
+        accountNameWithDefaultSelector(walletState, b),
+      );
     return diff;
   };
 };

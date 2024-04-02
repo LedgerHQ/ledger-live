@@ -1,7 +1,7 @@
-import React, { PureComponent } from "react";
+import React from "react";
 import Box from "~/renderer/components/Box";
 import { Account, AccountLike, PortfolioRange } from "@ledgerhq/types-live";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import styled from "styled-components";
 import Header from "~/renderer/screens/accounts/AccountRowItem/Header";
 import Balance from "~/renderer/screens/accounts/AccountRowItem/Balance";
@@ -9,6 +9,7 @@ import Delta from "~/renderer/screens/accounts/AccountRowItem/Delta";
 import Countervalue from "~/renderer/screens/accounts/AccountRowItem/Countervalue";
 import Star from "~/renderer/components/Stars/Star";
 import { TableRow } from "./TableContainer";
+import { useAccountUnit } from "../hooks/useAccountUnit";
 
 type Props = {
   account: AccountLike;
@@ -38,29 +39,25 @@ const NestedRow = styled(Box)`
   }
 `;
 
-class TokenRow extends PureComponent<Props> {
-  onClick = () => {
-    const { account, parentAccount, onClick } = this.props;
-    onClick(account, parentAccount);
-  };
+function TokenRow(props: Props) {
+  const { account, parentAccount, onClick, range, nested, disableRounding } = props;
 
-  render() {
-    const { account, range, nested, disableRounding } = this.props;
-    const currency = getAccountCurrency(account);
-    const unit = currency.units[0];
-    const Row = nested ? NestedRow : TableRow;
-    return (
-      <Row className="token-row" onClick={this.onClick} tabIndex={-1}>
-        <Header nested={nested} account={account} />
-        <Balance unit={unit} balance={account.balance} disableRounding={disableRounding} />
-        <Countervalue account={account} currency={currency} range={range} />
-        <Delta account={account} range={range} />
-        <Star
-          accountId={account.id}
-          parentId={account.type !== "Account" ? account.parentId : undefined}
-        />
-      </Row>
-    );
-  }
+  const onClickRow = () => onClick(account, parentAccount);
+
+  const mainAccount = getMainAccount(account, parentAccount);
+  const unit = useAccountUnit(account);
+  const currency = mainAccount.currency;
+  const Row = nested ? NestedRow : TableRow;
+
+  return (
+    <Row className="token-row" onClick={onClickRow} tabIndex={-1}>
+      <Header nested={nested} account={account} />
+      <Balance unit={unit} balance={account.balance} disableRounding={disableRounding} />
+      <Countervalue account={account} currency={currency} range={range} />
+      <Delta account={account} range={range} />
+      <Star accountId={account.id} />
+    </Row>
+  );
 }
-export default TokenRow;
+
+export default React.memo(TokenRow);

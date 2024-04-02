@@ -4,11 +4,7 @@ import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import { handleTransactionStatus } from "@ledgerhq/live-common/families/elrond/helpers/handleTransactionStatus";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import {
-  getAccountUnit,
-  getMainAccount,
-  getAccountCurrency,
-} from "@ledgerhq/live-common/account/index";
+import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 
 import Button from "~/components/Button";
@@ -22,6 +18,7 @@ import { ScreenName } from "~/const";
 import type { WithdrawFundsPropsType } from "./types";
 
 import styles from "./styles";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 /*
  * Handle the component declaration.
@@ -35,7 +32,7 @@ const WithdrawFunds = (props: WithdrawFundsPropsType) => {
   const mainAccount = getMainAccount(account, undefined);
   const currency = getAccountCurrency(mainAccount);
   const bridge = getAccountBridge(account);
-  const unit = getAccountUnit(mainAccount);
+  const unit = useAccountUnit(mainAccount);
   const name = validator.identity.name || validator.contract;
 
   /*

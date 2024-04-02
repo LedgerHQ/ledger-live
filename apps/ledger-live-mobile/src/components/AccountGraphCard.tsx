@@ -8,11 +8,7 @@ import {
   BalanceHistoryWithCountervalue,
 } from "@ledgerhq/types-live";
 import { Unit, Currency } from "@ledgerhq/types-cryptoassets";
-import {
-  getAccountCurrency,
-  getAccountUnit,
-  getAccountName,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { Box, Flex, Text, Transitions, InfiniteLoader, GraphTabs, Tag } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
@@ -34,6 +30,8 @@ import { StackNavigatorNavigation } from "./RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "./RootNavigator/types/BaseNavigator";
 import { GraphPlaceholder } from "./Graph/Placeholder";
 import { tokensWithUnsupportedGraph } from "./Graph/tokensWithUnsupportedGraph";
+import { useAccountName, useMaybeAccountName } from "~/reducers/wallet";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 const { width } = getWindowDimensions();
 
@@ -83,7 +81,7 @@ function AccountGraphCard({
   parentAccount,
 }: Props) {
   const currency = getAccountCurrency(account);
-
+  const unit = useAccountUnit(account);
   const { colors } = useTheme();
   const { t } = useTranslation();
 
@@ -146,7 +144,7 @@ function AccountGraphCard({
         onSwitchAccountCurrency={onSwitchAccountCurrency}
         counterValueUnit={counterValueCurrency.units[0]}
         useCounterValue={useCounterValue}
-        cryptoCurrencyUnit={getAccountUnit(account)}
+        cryptoCurrencyUnit={unit}
         item={hoveredItem || history[history.length - 1]}
         valueChange={valueChange}
         parentAccount={parentAccount}
@@ -236,7 +234,7 @@ const GraphCardHeader = ({
   if (shouldUseCounterValue) {
     items.reverse();
   }
-  const isToken = parentAccount && parentAccount.name !== undefined;
+  const isToken = parentAccount && parentAccount.type === "Account";
 
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
 
@@ -251,6 +249,9 @@ const GraphCardHeader = ({
     });
   }, [account.id, currency, navigation, parentAccount?.id]);
 
+  const accountName = useAccountName(account);
+  const parentAccountName = useMaybeAccountName(parentAccount);
+
   return (
     <Flex mx={6}>
       <Touchable
@@ -261,12 +262,12 @@ const GraphCardHeader = ({
         <Flex flexDirection="row" alignItems="center" width="100%">
           <Box maxWidth={"50%"}>
             <Text variant={"large"} fontWeight={"medium"} numberOfLines={1}>
-              {getAccountName(account)}
+              {accountName}
             </Text>
           </Box>
           {isToken && (
             <Tag marginLeft={3} numberOfLines={1} maxWidth={"50%"}>
-              {getAccountName(parentAccount)}
+              {parentAccountName}
             </Tag>
           )}
         </Flex>

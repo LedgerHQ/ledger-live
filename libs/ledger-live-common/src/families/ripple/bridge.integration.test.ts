@@ -153,7 +153,6 @@ const dataset: DatasetTest<Transaction> = {
             operations: [],
             pendingOperations: [],
             currencyId: "ripple",
-            unitMagnitude: 6,
             lastSyncDate: "",
             balance: "21000310",
           },

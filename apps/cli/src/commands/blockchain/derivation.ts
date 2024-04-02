@@ -6,7 +6,8 @@ import {
   getDerivationScheme,
 } from "@ledgerhq/coin-framework/derivation";
 import { setEnv, getEnv } from "@ledgerhq/live-env";
-import { getAccountPlaceholderName } from "@ledgerhq/live-common/account/index";
+import { getDefaultAccountNameForCurrencyIndex } from "@ledgerhq/live-wallet/accountName";
+
 export default {
   args: [],
   job: () =>
@@ -32,11 +33,7 @@ export default {
                 "  " +
                 (derivationMode || "default") +
                 ": " +
-                getAccountPlaceholderName({
-                  currency,
-                  index: 0,
-                  derivationMode,
-                }) +
+                getDefaultAccountNameForCurrencyIndex({ currency, index: 0 }) +
                 ": " +
                 path
               );

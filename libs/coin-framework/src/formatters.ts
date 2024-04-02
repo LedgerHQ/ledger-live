@@ -1,5 +1,5 @@
 import type { Account, TransactionCommon, TransactionStatusCommon } from "@ledgerhq/types-live";
-import { getAccountUnit } from "./account";
+import { getAccountCurrency } from "./account";
 import { formatCurrencyUnit } from "./currencies";
 
 const formatErrorSmall = (e: Error): string => (e.name === "Error" ? e.message : e.name);
@@ -16,19 +16,19 @@ export const formatTransactionStatus = (
 
   str +=
     "\n  amount: " +
-    formatCurrencyUnit(getAccountUnit(account), amount, {
+    formatCurrencyUnit(getAccountCurrency(account).units[0], amount, {
       showCode: true,
       disableRounding: true,
     });
   str +=
     "\n  estimated fees: " +
-    formatCurrencyUnit(getAccountUnit(mainAccount), estimatedFees, {
+    formatCurrencyUnit(getAccountCurrency(mainAccount).units[0], estimatedFees, {
       showCode: true,
       disableRounding: true,
     });
   str +=
     "\n  total spent: " +
-    formatCurrencyUnit(getAccountUnit(account), totalSpent, {
+    formatCurrencyUnit(getAccountCurrency(account).units[0], totalSpent, {
       showCode: true,
       disableRounding: true,
     });

@@ -11,6 +11,9 @@ import emptyBookmarksDark from "~/renderer/images/dark-empty-bookmarks.png";
 import emptyBookmarksLight from "~/renderer/images/light-empty-bookmarks.png";
 import Item from "./Item";
 import { starredAccountsSelector } from "~/renderer/reducers/accounts";
+import { walletSelector } from "~/renderer/reducers/wallet";
+import { accountNameSelector } from "@ledgerhq/live-wallet/store";
+import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 
 const Container = styled.div`
   display: flex;
@@ -34,12 +37,18 @@ type Props = {
   collapsed: boolean;
 };
 const Stars = ({ pathname, collapsed }: Props) => {
+  const walletState = useSelector(walletSelector);
   const starredAccounts = useSelector(starredAccountsSelector);
   return starredAccounts && starredAccounts.length ? (
     <Container key={pathname} data-test-id="drawer-bookmarked-accounts">
       {starredAccounts.map((account, i) => (
         <Tooltip
-          content={account.type === "Account" ? account.name : getAccountCurrency(account).name}
+          content={
+            account.type === "Account"
+              ? accountNameSelector(walletState, { accountId: account.id }) ||
+                getDefaultAccountName(account)
+              : getAccountCurrency(account).name
+          }
           delay={collapsed ? 0 : 1200}
           key={account.id}
           placement={collapsed ? "right" : "top"}

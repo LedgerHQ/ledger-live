@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { Redirect } from "react-router";
 import { Account } from "@ledgerhq/types-live";
-import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import Box from "~/renderer/components/Box";
 import OperationsList from "~/renderer/components/OperationsList";
@@ -19,6 +19,7 @@ import {
 import { useFlattenSortAccounts } from "~/renderer/actions/general";
 import AssetHeader from "./AssetHeader";
 import TrackPage from "~/renderer/analytics/TrackPage";
+import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
 type Props = {
   match: {
     params: {
@@ -44,12 +45,12 @@ export default function AssetPage({ match }: Props) {
     (id: string): Account | undefined | null => allAccounts.find(a => a.id === id) || null,
     [allAccounts],
   );
-
-  if (!accounts.length) return <Redirect to="/" />;
+  const unit = useMaybeAccountUnit(accounts[0]);
+  if (!accounts.length || !unit) return <Redirect to="/" />;
   const parentAccount =
     accounts[0].type !== "Account" ? lookupParentAccount(accounts[0].parentId) : null;
   const currency = getAccountCurrency(accounts[0]);
-  const unit = getAccountUnit(accounts[0]);
+
   const color = getCurrencyColor(currency, paperColor);
   return (
     <Box>

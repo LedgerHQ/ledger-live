@@ -258,3 +258,11 @@ export type DatasetTest<T extends TransactionCommon> = {
   implementations: string[];
   currencies: Record<CryptoCurrencyIds, CurrenciesData<T>> | Record<string, never>;
 };
+
+/**
+ *
+ */
+export type BridgeCacheSystem = {
+  hydrateCurrency: (currency: CryptoCurrency) => Promise<unknown | null | undefined>;
+  prepareCurrency: (currency: CryptoCurrency) => Promise<unknown | null | undefined>;
+};

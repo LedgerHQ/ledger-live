@@ -34,6 +34,7 @@ import getOrCreateUser from "../../user";
 import * as bridge from "../../../e2e/bridge/client";
 import Config from "react-native-config";
 import { currentRouteNameRef } from "../../analytics/screenRefs";
+import { walletSelector } from "~/reducers/wallet";
 
 export function useWebView(
   {
@@ -106,11 +107,14 @@ export function useWebView(
     };
   }, [webviewRef]);
 
+  const walletState = useSelector(walletSelector);
+
   const {
     onMessage: onMessageRaw,
     onLoadError,
     server,
   } = useWalletAPIServer({
+    walletState,
     manifest: manifest as AppManifest,
     accounts,
     tracking,

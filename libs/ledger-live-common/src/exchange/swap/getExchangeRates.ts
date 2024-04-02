@@ -1,7 +1,7 @@
 import network from "@ledgerhq/live-network/network";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 import { BigNumber } from "bignumber.js";
-import { getAccountCurrency, getAccountUnit } from "../../account";
+import { getAccountCurrency } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 import {
   SwapExchangeRateAmountTooHigh,
@@ -25,9 +25,10 @@ const getExchangeRates: GetExchangeRates = async ({
   if (isIntegrationTestEnv()) return mockGetExchangeRates(exchange, transaction, currencyTo);
 
   const from = getAccountCurrency(exchange.fromAccount).id;
-  const unitFrom = getAccountUnit(exchange.fromAccount);
+  const unitFrom = getAccountCurrency(exchange.fromAccount).units[0];
   const to = (currencyTo ?? getAccountCurrency(exchange.toAccount)).id;
-  const unitTo = (currencyTo && currencyTo.units[0]) ?? getAccountUnit(exchange.toAccount);
+  const unitTo =
+    (currencyTo && currencyTo.units[0]) ?? getAccountCurrency(exchange.toAccount).units[0];
   const amountFrom = transaction.amount;
   const tenPowMagnitude = new BigNumber(10).pow(unitFrom.magnitude);
   const apiAmount = new BigNumber(amountFrom).div(tenPowMagnitude);

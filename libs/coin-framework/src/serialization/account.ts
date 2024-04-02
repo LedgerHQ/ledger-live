@@ -1,5 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import type {
+  AccountUserData,
   Account,
   AccountBridge,
   AccountRaw,
@@ -38,15 +39,12 @@ export function fromAccountRaw(rawAccount: AccountRaw, fromRaw?: FromFamiliyRaw)
     derivationMode,
     index,
     xpub,
-    starred,
     used,
     freshAddress,
     freshAddressPath,
-    name,
     blockHeight,
     currencyId,
     feesCurrencyId,
-    unitMagnitude,
     operations,
     operationsCount,
     pendingOperations,
@@ -79,12 +77,10 @@ export function fromAccountRaw(rawAccount: AccountRaw, fromRaw?: FromFamiliyRaw)
   const feesCurrency =
     (feesCurrencyId && (findCryptoCurrencyById(feesCurrencyId) || findTokenById(feesCurrencyId))) ||
     undefined;
-  const unit = currency.units.find(u => u.magnitude === unitMagnitude) || currency.units[0];
 
   const res: Account = {
     type: "Account",
     id,
-    starred: starred || false,
     used: false,
     // filled again below
     seedIdentifier,
@@ -92,7 +88,6 @@ export function fromAccountRaw(rawAccount: AccountRaw, fromRaw?: FromFamiliyRaw)
     index,
     freshAddress,
     freshAddressPath,
-    name,
     blockHeight,
     creationDate: new Date(creationDate || Date.now()),
     balance: new BigNumber(balance),
@@ -100,7 +95,6 @@ export function fromAccountRaw(rawAccount: AccountRaw, fromRaw?: FromFamiliyRaw)
     operations: (operations || []).map(convertOperation),
     operationsCount: operationsCount || (operations && operations.length) || 0,
     pendingOperations: (pendingOperations || []).map(convertOperation),
-    unit,
     currency,
     feesCurrency,
     lastSyncDate: new Date(lastSyncDate || 0),
@@ -142,13 +136,15 @@ export type ToFamiliyRaw = {
   toOperationExtraRaw?: AccountBridge<TransactionCommon>["toOperationExtraRaw"];
 };
 
-export function toAccountRaw(account: Account, toFamilyRaw?: ToFamiliyRaw): AccountRaw {
+export function toAccountRaw(
+  account: Account,
+  toFamilyRaw?: ToFamiliyRaw,
+  userData?: AccountUserData,
+): AccountRaw {
   const {
     id,
     seedIdentifier,
     xpub,
-    name,
-    starred,
     used,
     derivationMode,
     index,
@@ -161,7 +157,6 @@ export function toAccountRaw(account: Account, toFamilyRaw?: ToFamiliyRaw): Acco
     operationsCount,
     operations,
     pendingOperations,
-    unit,
     lastSyncDate,
     balance,
     balanceHistoryCache,
@@ -171,6 +166,13 @@ export function toAccountRaw(account: Account, toFamilyRaw?: ToFamiliyRaw): Acco
     syncHash,
     nfts,
   } = account;
+
+  let name = "";
+  let starred;
+  if (userData) {
+    name = userData.name;
+    starred = userData.starredIds.includes(id);
+  }
 
   const convertOperation = (op: Operation) =>
     toOperationRaw(op, undefined, toFamilyRaw?.toOperationExtraRaw);
@@ -192,7 +194,6 @@ export function toAccountRaw(account: Account, toFamilyRaw?: ToFamiliyRaw): Acco
     operations: (operations || []).map(convertOperation),
     pendingOperations: (pendingOperations || []).map(convertOperation),
     currencyId: currency.id,
-    unitMagnitude: unit.magnitude,
     lastSyncDate: lastSyncDate.toISOString(),
     balance: balance.toFixed(),
     spendableBalance: spendableBalance.toFixed(),
@@ -212,7 +213,9 @@ export function toAccountRaw(account: Account, toFamilyRaw?: ToFamiliyRaw): Acco
   }
 
   if (subAccounts) {
-    res.subAccounts = subAccounts.map(a => toTokenAccountRaw(a, toFamilyRaw?.toOperationExtraRaw));
+    res.subAccounts = subAccounts.map(a =>
+      toTokenAccountRaw(a, toFamilyRaw?.toOperationExtraRaw, userData),
+    );
   }
 
   if (toFamilyRaw?.assignToAccountRaw) {
@@ -273,12 +276,12 @@ function fromTokenAccountRaw(
 function toTokenAccountRaw(
   ta: TokenAccount,
   toOperationExtraRaw?: AccountBridge<TransactionCommon>["toOperationExtraRaw"],
+  userData?: AccountUserData,
 ): TokenAccountRaw {
   const {
     id,
     parentId,
     token,
-    starred,
     operations,
     operationsCount,
     pendingOperations,
@@ -288,6 +291,11 @@ function toTokenAccountRaw(
     swapHistory,
     approvals,
   } = ta;
+
+  let starred;
+  if (userData) {
+    starred = userData.starredIds.includes(id);
+  }
 
   const convertOperation = (op: Operation) => toOperationRaw(op, undefined, toOperationExtraRaw);
 

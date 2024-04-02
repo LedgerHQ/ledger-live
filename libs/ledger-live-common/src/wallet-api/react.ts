@@ -44,6 +44,7 @@ import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { Transaction } from "../generated/types";
 import { DISCOVER_INITIAL_CATEGORY, MAX_RECENTLY_USED_LENGTH } from "./constants";
 import { DiscoverDB } from "./types";
+import { WalletState } from "@ledgerhq/live-wallet/store";
 
 export function safeGetRefValue<T>(ref: RefObject<T>): NonNullable<T> {
   if (!ref.current) {
@@ -52,14 +53,17 @@ export function safeGetRefValue<T>(ref: RefObject<T>): NonNullable<T> {
   return ref.current;
 }
 
-export function useWalletAPIAccounts(accounts: AccountLike[]): WalletAPIAccount[] {
+export function useWalletAPIAccounts(
+  walletState: WalletState,
+  accounts: AccountLike[],
+): WalletAPIAccount[] {
   return useMemo(() => {
     return accounts.map(account => {
       const parentAccount = getParentAccount(account, accounts);
 
-      return accountToWalletAPIAccount(account, parentAccount);
+      return accountToWalletAPIAccount(walletState, account, parentAccount);
     });
-  }, [accounts]);
+  }, [walletState, accounts]);
 }
 
 const allCurrenciesAndTokens = listCurrencies(true);
@@ -270,6 +274,7 @@ function useDeviceTransport({ manifest, tracking }) {
 }
 
 export type useWalletAPIServerOptions = {
+  walletState: WalletState;
   manifest: AppManifest;
   accounts: AccountLike[];
   tracking: TrackingAPI;
@@ -283,6 +288,7 @@ export type useWalletAPIServerOptions = {
 };
 
 export function useWalletAPIServer({
+  walletState,
   manifest,
   accounts,
   tracking,
@@ -314,7 +320,7 @@ export function useWalletAPIServer({
   const transport = useTransport(webviewHook.postMessage);
   const [widgetLoaded, setWidgetLoaded] = useState(false);
 
-  const walletAPIAccounts = useWalletAPIAccounts(accounts);
+  const walletAPIAccounts = useWalletAPIAccounts(walletState, accounts);
   const walletAPICurrencies = useWalletAPICurrencies();
 
   const { server, onMessage } = useWalletAPIServerRaw({
@@ -363,7 +369,7 @@ export function useWalletAPIServer({
           currencies: currencyList,
           onSuccess: (account: AccountLike, parentAccount: Account | undefined) => {
             tracking.requestAccountSuccess(manifest);
-            resolve(accountToWalletAPIAccount(account, parentAccount));
+            resolve(accountToWalletAPIAccount(walletState, account, parentAccount));
           },
           onCancel: () => {
             tracking.requestAccountFail(manifest);
@@ -372,13 +378,14 @@ export function useWalletAPIServer({
         });
       });
     });
-  }, [manifest, server, tracking, uiAccountRequest]);
+  }, [walletState, manifest, server, tracking, uiAccountRequest]);
 
   useEffect(() => {
     if (!uiAccountReceive) return;
 
     server.setHandler("account.receive", ({ account, tokenCurrency }) =>
       receiveOnAccountLogic(
+        walletState,
         { manifest, accounts, tracking },
         account.id,
         (account, parentAccount, accountAddress) =>
@@ -404,7 +411,7 @@ export function useWalletAPIServer({
         tokenCurrency,
       ),
     );
-  }, [accounts, manifest, server, tracking, uiAccountReceive]);
+  }, [walletState, accounts, manifest, server, tracking, uiAccountReceive]);
 
   useEffect(() => {
     if (!uiMessageSign) return;

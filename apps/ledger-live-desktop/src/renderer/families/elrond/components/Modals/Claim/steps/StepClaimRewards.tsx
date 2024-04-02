@@ -4,7 +4,6 @@ import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
 import invariant from "invariant";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -15,6 +14,7 @@ import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import { ElrondTransactionMode, Transaction } from "@ledgerhq/live-common/families/elrond/types";
 import { StepProps } from "../types";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const StepClaimRewards = (props: StepProps) => {
   const {
@@ -57,6 +57,7 @@ const StepClaimRewards = (props: StepProps) => {
     },
     [updateClaimRewards, transaction],
   );
+  const unit = useAccountUnit(account);
   if (!transaction) return null;
   const key = transaction.mode === "claimRewards" ? "claimInfo" : "compoundInfo";
   return (
@@ -80,7 +81,7 @@ const StepClaimRewards = (props: StepProps) => {
               amount: `${denominate({
                 input: String(transaction.amount),
                 decimals: 4,
-              })} ${getAccountUnit(account).code}`,
+              })} ${unit.code}`,
             }}
           >
             <b></b>

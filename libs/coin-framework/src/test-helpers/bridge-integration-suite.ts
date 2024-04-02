@@ -358,14 +358,14 @@ export function testBridge<T extends TransactionCommon, U extends TransactionCom
 
       const testOrSkip = (name: string, fn: jest.ProvidesCallback) => {
         if (accountData.FIXME_tests && accountData.FIXME_tests.some(r => name.match(r))) {
-          warnDev("FIXME test was skipped. " + name + " for " + initialAccount.name);
+          warnDev("FIXME test was skipped. " + name + " for " + initialAccount.id);
           return;
         }
 
         test(name, fn);
       };
 
-      describe(impl + " bridge on account " + initialAccount.name, () => {
+      describe(impl + " bridge on account " + initialAccount.id, () => {
         describe("sync", () => {
           // FIXME: What is the point of this test?
           // testOrSkip("succeed", async () => {

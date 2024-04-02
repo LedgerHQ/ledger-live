@@ -64,7 +64,6 @@ const dataset: DatasetTest<Transaction> = {
             operations: [],
             pendingOperations: [],
             currencyId: "stellar",
-            unitMagnitude: 7,
             lastSyncDate: "",
             balance: "371210662",
             spendableBalance: "371210662",
@@ -274,7 +273,6 @@ const dataset: DatasetTest<Transaction> = {
             operations: [],
             pendingOperations: [],
             currencyId: "stellar",
-            unitMagnitude: 7,
             lastSyncDate: "",
             balance: "59999500",
             spendableBalance: "59999500",
@@ -315,7 +313,6 @@ const dataset: DatasetTest<Transaction> = {
             lastSyncDate: "",
             operations: [],
             pendingOperations: [],
-            unitMagnitude: 7,
           },
         },
         {
@@ -335,7 +332,6 @@ const dataset: DatasetTest<Transaction> = {
             lastSyncDate: "",
             operations: [],
             pendingOperations: [],
-            unitMagnitude: 7,
           },
         },
         {
@@ -355,7 +351,6 @@ const dataset: DatasetTest<Transaction> = {
             lastSyncDate: "",
             operations: [],
             pendingOperations: [],
-            unitMagnitude: 7,
           },
           transactions: [
             {
