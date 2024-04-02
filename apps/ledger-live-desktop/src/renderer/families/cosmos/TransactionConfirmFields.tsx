@@ -2,7 +2,7 @@ import invariant from "invariant";
 import React, { useMemo } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-import { getAccountUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import TransactionConfirmField from "~/renderer/components/TransactionConfirm/TransactionConfirmField";
 import Text from "~/renderer/components/Text";
 import WarnBox from "~/renderer/components/WarnBox";
@@ -18,6 +18,7 @@ import {
 import FormattedVal from "~/renderer/components/FormattedVal";
 import { CosmosFieldComponentProps } from "./types";
 import { CosmosAccount, Transaction } from "@ledgerhq/live-common/families/cosmos/types";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 const Info = styled(Box).attrs(() => ({
   ff: "Inter|SemiBold",
   color: "palette.text.shade100",
@@ -68,7 +69,7 @@ export const CosmosDelegateValidatorsField = ({
   field,
 }: CosmosFieldComponentProps) => {
   const mainAccount = getMainAccount(account, parentAccount);
-  const unit = getAccountUnit(mainAccount);
+  const unit = useAccountUnit(mainAccount);
   const { validators } = transaction;
   const currencyId = mainAccount.currency.id;
   const { validators: cosmosValidators } = useCosmosFamilyPreloadData(currencyId);
@@ -145,7 +146,7 @@ export const CosmosValidatorAmountField = ({
 }: CosmosFieldComponentProps) => {
   const mainAccount = getMainAccount(account, parentAccount);
   invariant(transaction.family === "cosmos", "not a cosmos family transaction");
-  const unit = getAccountUnit(mainAccount);
+  const unit = useAccountUnit(mainAccount);
   const { validators } = transaction;
   return validators && validators.length > 0 ? (
     <TransactionConfirmField label={field.label}>

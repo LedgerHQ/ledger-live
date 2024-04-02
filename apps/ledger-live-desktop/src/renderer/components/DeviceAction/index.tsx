@@ -17,7 +17,10 @@ import {
   setLastSeenDeviceInfo,
   addNewDeviceModel,
 } from "~/renderer/actions/settings";
-import { preferredDeviceModelSelector } from "~/renderer/reducers/settings";
+import {
+  storeSelector as settingsSelector,
+  preferredDeviceModelSelector,
+} from "~/renderer/reducers/settings";
 import { DeviceModelId } from "@ledgerhq/devices";
 import AutoRepair from "~/renderer/components/AutoRepair";
 import TransactionConfirm from "~/renderer/components/TransactionConfirm";
@@ -227,6 +230,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   const dispatch = useDispatch();
   const preferredDeviceModel = useSelector(preferredDeviceModelSelector);
   const swapDefaultTrack = useGetSwapTrackingProperties();
+  const stateSettings = useSelector(settingsSelector);
 
   const type = useTheme().colors.palette.type;
 
@@ -363,6 +367,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
           swapDefaultTrack,
           amountExpectedTo: amountExpectedTo.toString() ?? undefined,
           estimatedFees: estimatedFees?.toString() ?? undefined,
+          stateSettings,
         });
       }
 
@@ -395,6 +400,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
       amountExpectedTo: amountExpectedTo ?? undefined,
       estimatedFees: estimatedFees ?? undefined,
       swapDefaultTrack,
+      stateSettings,
     });
   }
 

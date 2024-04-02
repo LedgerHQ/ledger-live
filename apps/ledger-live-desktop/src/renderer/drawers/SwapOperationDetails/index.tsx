@@ -1,7 +1,6 @@
 import {
   getAccountCurrency,
   getAccountName,
-  getAccountUnit,
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
 import { isSwapOperationPending } from "@ledgerhq/live-common/exchange/swap/index";
@@ -34,6 +33,7 @@ import {
   OpDetailsSection,
   OpDetailsTitle,
 } from "~/renderer/drawers/OperationDetails/styledComponents";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { dayFormat, useDateFormatted } from "~/renderer/hooks/useDateFormatter";
 import useTheme from "~/renderer/hooks/useTheme";
 import IconArrowDown from "~/renderer/icons/ArrowDown";
@@ -116,9 +116,9 @@ const SwapOperationDetails = ({
   const dateFormatted = useDateFormatted(operation.date, dayFormat);
   const language = useSelector(languageSelector);
   const history = useHistory();
-  const fromUnit = getAccountUnit(fromAccount);
+  const fromUnit = useAccountUnit(fromAccount);
   const fromCurrency = getAccountCurrency(fromAccount);
-  const toUnit = getAccountUnit(toAccount);
+  const toUnit = useAccountUnit(toAccount);
   const toCurrency = getAccountCurrency(toAccount);
   const accounts = useSelector(shallowAccountsSelector);
   const normalisedFromAmount = fromAmount.times(-1);

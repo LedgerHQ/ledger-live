@@ -1,11 +1,7 @@
 import React, { useCallback } from "react";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
-import {
-  getAccountCurrency,
-  getAccountUnit,
-  getAccountName,
-} from "@ledgerhq/live-common/account/helpers";
+import { getAccountCurrency, getAccountName } from "@ledgerhq/live-common/account/helpers";
 import { AccountLike } from "@ledgerhq/types-live";
 import Hide from "~/renderer/components/MainSideBar/Hide";
 import FormattedVal from "~/renderer/components/FormattedVal";
@@ -13,6 +9,7 @@ import Box from "~/renderer/components/Box";
 import Ellipsis from "~/renderer/components/Ellipsis";
 import ParentCryptoCurrencyIcon from "~/renderer/components/ParentCryptoCurrencyIcon";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 const ParentCryptoCurrencyIconWrapper = styled.div`
   width: 20px;
 `;
@@ -61,7 +58,7 @@ const Item = ({ account, pathname, collapsed }: Props) => {
         : `/account/${account.id}`,
     });
   }, [account, history]);
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   return (
     <ItemWrapper className="bookmarked-account-item" active={active} onClick={onAccountClick}>
       <Box horizontal ff="Inter|SemiBold" flex={1} flow={3} alignItems="center">
