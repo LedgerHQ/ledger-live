@@ -144,7 +144,7 @@
 | lisk | LSK | NO | lisk |
 | æternity | AE | NO | aeternity |
 
-## Tokens (17527)
+## Tokens (17526)
 | parent currency | ticker | contract | name | status | ledger id |
 |--|--|--|--|--|--|
 | Algorand | GEMS | 5XU7ASL2PLB2C43N6JNFPMSXGATO2VIVNF7X6NTJ4BRCCKRGETEYS3LOAQ | AlgoGems |  | algorand/asa/230946361 |
@@ -9148,7 +9148,6 @@
 | Ethereum | MBASE2.0 | 0x291aa47C58558aDfc2bCD6f060578FDAE1F6570C | Minebase 2.0 |  | ethereum/erc20/minebase_2_0 |
 | Ethereum | MBASE | 0xbA3E5F8b4200a5eb856FF2C3E001aB29444491AA | Minebase Token |  | ethereum/erc20/minebase_token |
 | Ethereum | ORE | 0x35aC488B773DAc506EE857895eE9DC34B250F313 | Mineral | delisted | ethereum/erc20/mineral |
-| Ethereum | MNE | 0x426CA1eA2406c07d75Db9585F22781c096e3d0E0 | Minereum |  | ethereum/erc20/minereum |
 | Ethereum | MBTC | 0x7e8C149f70437eba6785f9059190A5b08aBf03dE | Minibitcoin |  | ethereum/erc20/minibitcoin |
 | Ethereum | MINTME | 0x772722B55cdC2A086aBd064267a17855Eb15e8b3 | MintMe.com Coin |  | ethereum/erc20/mintme_com_coin |
 | Ethereum | BIPX | 0xcafE34BAE6F1b23A6B575303EdCc0578d2188131 | Minter BIP |  | ethereum/erc20/minter_bip |
