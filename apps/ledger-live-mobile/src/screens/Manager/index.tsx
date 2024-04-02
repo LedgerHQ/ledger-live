@@ -17,8 +17,9 @@ import {
   StackNavigatorProps,
 } from "~/components/RootNavigator/types/helpers";
 import { ManagerNavigatorStackParamList } from "~/components/RootNavigator/types/ManagerNavigator";
-
 import { useManagerDeviceAction } from "~/hooks/deviceActions";
+import ContentCardsLocation from "~/dynamicContent/ContentCardsLocation";
+import { ContentCardLocation } from "~/dynamicContent/types";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<ManagerNavigatorStackParamList, ScreenName.Manager>
@@ -119,7 +120,7 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
           </Text>
         </Flex>
       ) : null}
-      <Flex flex={1} px={16}>
+      <Flex flex={1}>
         <SelectDevice2
           onSelect={onSelectDevice}
           stopBleScanning={!!device}
@@ -127,7 +128,9 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
           requestToSetHeaderOptions={requestToSetHeaderOptions}
           withMyLedgerTracking
           hasPostOnboardingEntryPointCard
-        />
+        >
+          <ContentCardsLocation locationId={ContentCardLocation.MyLedger} />
+        </SelectDevice2>
       </Flex>
       <DeviceActionModal
         onClose={() => onSelectDevice()}
