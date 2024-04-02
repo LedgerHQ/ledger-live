@@ -94,6 +94,7 @@
     "comingSoon" : "Скоро",
     "restart" : "Перезагрузка",
     "loadMore" : "Показать больше",
+    "selectAccount" : "Выберите счёт",
     "patterns" : {
       "id" : "ID {{ value }}",
       "times" : "x{{ value }}"
@@ -340,12 +341,12 @@
       "description" : "Пожалуйста, попробуйте ещё раз. Если проблема не уходит, сохраните логи и отправьте их в Поддержку Ledger."
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "Картинка экрана блокировки удалена на Ledger Stax",
+      "title" : "Lock screen picture discarded on {{productName}}",
       "description" : "Если это изображение не подошло, вы можете попробовать другое.",
       "primaryCTA" : "Загрузить другое изображение"
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "Загрузка картинки экрана блокировки отменена на Ledger Stax",
+      "title" : "Loading of lock screen picture cancelled on {{productName}}",
       "description" : "Если это изображение не подошло, вы можете попробовать другое.",
       "primaryCTA" : "Загрузить другое изображение"
     },
@@ -484,7 +485,7 @@
       "description" : "Пожалуйста, пополните счёт EGLD для оплаты транзакций."
     },
     "NotEnoughBalance" : {
-      "title" : "Кажется, у вас недостаточно средств",
+      "title" : "Недостаточный баланс с учётом комиссий сети. Измените сумму или пополните счёт.",
       "description" : "Пожалуйста, убедитесь, что на счёте достаточно средств."
     },
     "NoSuchAppOnProvider" : {
@@ -722,7 +723,7 @@
       "title" : "У вас нет голосов"
     },
     "PolkadotAllFundsWarning" : {
-      "title" : "Убедитесь, что баланса хватит на потенциальные комиссии"
+      "title" : "Не забудьте оставить немного средств на потенциальные комиссии."
     },
     "PolkadotDoMaxSendInstead" : {
       "title" : "Баланс не может быть ниже {{minimumBalance}}. Отправьте всю сумму, чтобы аннулировать счёт."
@@ -911,6 +912,10 @@
     "FirmwareNotRecognized" : {
       "title" : "Поставщик недействителен",
       "description" : "Необходимо изменить опцию Поставщика приложений для «Мой Ledger». Для этого откройте «Настройки» в Ledger Live и выберите «Экспериментальные функции», после чего укажите другого поставщика."
+    },
+    "SequenceNumberError" : {
+      "title" : "Ошибка порядкового номера",
+      "description" : "Закройте окно и повторите попытку позже"
     }
   },
   "crash" : {
@@ -928,6 +933,10 @@
     "noConnectionError" : {
       "title" : "Нет соединения",
       "description" : "Похоже, что у вас нет доступа к интернету. Пожалуйста, проверьте соединение и попробуйте снова."
+    },
+    "noAccounts" : {
+      "title" : "Для доступа к приложению нужен счёт.",
+      "add" : "Добавить счёт"
     }
   },
   "location" : {
@@ -1248,6 +1257,9 @@
       "referralProgram" : {
         "title" : "Пригласи друга",
         "desc" : "Когда ваш друг купит Ledger, вы оба получите 20$ в BTC."
+      },
+      "filter" : {
+        "all" : "Все"
       }
     },
     "comingSoon" : "Уже скоро",
@@ -1962,9 +1974,8 @@
   "earlySecurityCheck" : {
     "title" : "Проверка подлинности и актуальности прошивки",
     "idle" : {
-      "description" : "Она позволяет убедиться в оригинальности вашего Ledger Stax.",
       "learnMore" : "Подробнее о проверке подлинности",
-      "checkCta" : "Проверить Ledger Stax"
+      "checkCta" : "Check {{ productName }}"
     },
     "completed" : {
       "continueCta" : "Продолжить настройку"
@@ -1987,7 +1998,7 @@
       }
     },
     "genuineCheckNonGenuineDrawer" : {
-      "title" : "Сбой проверки подлинности Ledger Stax",
+      "title" : "This {{ productName }} failed the Genuine Check",
       "description" : "Этот {{productName}} небезопасен для использования. Обратитесь в Поддержку Ledger",
       "supportCta" : "Связаться с Поддержкой Ledger"
     },
@@ -2035,12 +2046,12 @@
       "refused" : {
         "title" : "Доступна новая версия ОС ({{firmwareVersion}})",
         "description" : "Рекомендуем обновиться, чтобы поддерживать актуальный уровень безопасности и функциональности.",
-        "updateCta" : "Обновить Ledger Stax",
+        "updateCta" : "Обновление {{ productName }}",
         "skipCta" : "Пропустить обновление"
       },
       "inactive" : {
         "title" : "Проверка обновления прошивки",
-        "description" : "Проверка нужна для гарантии, что ОС на Ledger Stax актуальна. "
+        "description" : "Проверка нужна для гарантии, что устройство {{productName}} актуальное. "
       }
     },
     "firmwareUpdateAvailableDrawer" : {
@@ -2142,21 +2153,6 @@
       "restoreChoiceRecoverTitle" : "Восстановить с Ledger Recover",
       "restoreChoiceRecoverDescription" : "Пользователям Ledger Recover для запуска восстановления резервной копии секретной фразы необходимо авторизоваться на платформе."
     },
-    "softwareChecksSteps" : {
-      "title" : "Проверка устройства и ПО",
-      "description" : "Убедитесь, что устройство готово к использованию и поддерживает новейшие функции безопасности.",
-      "doneTitle" : "У вас подлинный и актуальный {{productName}}",
-      "genuineCheckRequestDrawer" : {
-        "iconText" : "Проверка подлинности",
-        "title" : "Эта проверка позволяет убедиться в подлинности вашего Ledger Stax",
-        "checkCta" : "Проверить подлинность"
-      },
-      "updateAvailableDrawer" : {
-        "title" : "Доступна новая версия ПО",
-        "description" : "Для доступа к актуальным функциям безопасности рекомендуем регулярно обновлять устройство {{productName}}",
-        "updateCta" : "Обновить"
-      }
-    },
     "appsStep" : {
       "title" : "Установка приложений на {{productName}}"
     },
@@ -2178,15 +2174,7 @@
     "discover" : "Исследуйте",
     "nanoX" : "Nano X",
     "market" : "Рынок",
-    "earn" : "Приумножить",
-    "learn" : "Образование"
-  },
-  "learn" : {
-    "pageTitle" : "Образование",
-    "sectionShows" : "Шоу",
-    "sectionVideo" : "Видео",
-    "sectionPodcast" : "Подкаст",
-    "sectionArticles" : "Статьи"
+    "earn" : "Приумножить"
   },
   "portfolio" : {
     "totalBalance" : "Общий баланс",
@@ -2513,10 +2501,6 @@
       "currency" : {
         "title" : "Валюта"
       },
-      "endpointConfig" : {
-        "title" : "Нода (узел)",
-        "desc" : "Используемый узел API"
-      },
       "delete" : {
         "title" : "Удалить из Портфеля",
         "desc" : "Сохранённые данные будут удалены.",
@@ -2666,6 +2650,7 @@
     "moreAssets" : "Добавить ещё"
   },
   "help" : {
+    "chatbot" : "Чат-бот Ledger",
     "gettingStarted" : {
       "title" : "Знакомство",
       "desc" : "Познакомьтесь с криптовалютой и продуктами Ledger"
@@ -2842,7 +2827,7 @@
       },
       "largeMover" : {
         "title" : "Значительное изменение цены",
-        "desc" : "Регулярные уведомления о значительных перепадах котировок BTC и ETH."
+        "desc" : "Регулярные уведомления о значительных перепадах курсов BTC, ETH, SOL, ADA и XRP."
       },
       "transactionsAlerts" : {
         "title" : "Уведомления о транзакциях (бета)",
@@ -2900,7 +2885,7 @@
           "description" : "Попробуйте предстоящую версию обозревателей блокчейна Ledger. Изменение этой настройки может повлиять на баланс и синхронизацию счета, а также на функцию отправки."
         },
         "1559DeactivateGate" : {
-          "title" : "Деактивировать минимальную комиссию за приоритет EIP-1559",
+          "title" : "Деактивация минимальной комиссии за приоритет EIP-1559",
           "description" : "Это позволит провести транзакцию без ожидаемой минимальной комиссии за приоритет. Однако в таком случае транзакция может навечно застрять в мемпуле, то есть очереди."
         },
         "1559CustomPriorityLowerGate" : {
@@ -2909,7 +2894,7 @@
         },
         "1559CustomBaseFeeMultiplier" : {
           "title" : "Пользовательский множитель для базовой комиссии",
-          "description" : "Укажите множитель для базовой комиссии, который будет определять показатель maxFeePerGas для EIP1559-транзакций"
+          "description" : "Укажите множитель для базовой комиссии, который будет определять показатель maxFeePerGas для EIP1559-транзакций."
         },
         "experimentalListAppsV2" : {
           "title" : "Экспериментальный список приложений для вкладки «Мой Ledger»",
@@ -2921,7 +2906,7 @@
         },
         "experimentalEnableNetworkLogs" : {
           "title" : "Активация логов сети",
-          "description" : "Включить сетевые логи в консоли. Логи ошибок активированы всегда"
+          "description" : "Включить сетевые логи в консоли. Логи ошибок активированы всегда."
         }
       },
       "developerFeatures" : {
@@ -3575,7 +3560,7 @@
     },
     "summary" : {
       "subaccountsWarning" : "Чтобы отправлять токены с этого счёта, вам нужно перевести на него {{ currency }}",
-      "tag" : "Тег (опционально)",
+      "tag" : "Memo (при необходимости)",
       "validateTag" : "Подтвердить тег",
       "total" : "Итого",
       "amount" : "Сумма",
@@ -3887,7 +3872,7 @@
     "allowAppPermissionSubtitleToken" : "для управления {{token}}",
     "allowManagerPermission" : "Одобрите безопасное подключение на устройстве",
     "allowRenaming" : "Одобрите переименование на {{productName}}",
-    "allowRemoveCustomLockscreen" : "Подтвердите удаление изображения на Ledger Stax",
+    "allowRemoveCustomLockscreen" : "Confirm removal of image on your {{productName}}",
     "allowSecureConnection" : "Разрешите безопасное подключение на устройстве",
     "loading" : "Загружаем...",
     "turnOnAndUnlockDevice" : "Включите и разблокируйте устройство",
@@ -3969,7 +3954,7 @@
       },
       "genuineCheck" : {
         "title" : "Одобрите включение «Мой Ledger» на {{productName}}",
-        "accept" : "Не выключайте Ledger Nano X и предоставьте приложению доступ к устройству."
+        "accept" : "Не выключайте Ledger Nano X и предоставьте приложению доступ к устройству"
       },
       "genuineCheckPending" : {
         "title" : "Проверяем подлинность устройства..."
@@ -4026,7 +4011,7 @@
     },
     "GenuineCheck" : {
       "title" : "Проверка подлинности",
-      "accept" : "Не выключайте Ledger Nano X и предоставьте приложению доступ к устройству.",
+      "accept" : "Не выключайте Ledger Nano X и предоставьте приложению доступ к устройству",
       "info" : "Это необходимо для подтверждения подлинности Ledger Nano."
     },
     "ScanningHeader" : {
@@ -4268,8 +4253,8 @@
     "viewUpdateChangelog" : "Открыть список изменений обновления",
     "waitForFirmwareUpdate" : "Дождитесь обновления ОС на устройстве",
     "waitForInstallationToFinish" : "Дождитесь завершения установки на {{deviceName}}",
-    "staxBatteryLow" : "Слишком низкий заряд батареи Ledger Stax",
-    "staxBatteryLowDescription" : "Для обновления ОС ваш Ledger Stax должен быть заряжен минимум до {{lowBatteryPercentage}}% или подключён к сети.",
+    "batteryLow" : "{{productName}} battery too low to update",
+    "batteryLowDescription" : "To start the OS update, a minimum of {{lowBatteryPercentage}}% charge is needed, or your {{productName}} must be charging.",
     "updateCancelled" : "Обновление ОС отменено на {{deviceName}}",
     "updateCancelledDescription" : "Если это произошло по ошибке, перезапустите его.",
     "updateNotYetComplete" : "Идёт обновление ОС",
@@ -4439,7 +4424,7 @@
   },
   "FirmwareUpdateConfirmation" : {
     "title" : "ОС обновлена",
-    "description" : "Перейдите в «Мой Ledger», чтобы переустановить приложения на устройство."
+    "description" : "Перейдите в «Мой Ledger», чтобы переустановить приложения на устройстве."
   },
   "RepairDevice" : {
     "title" : "Ремонт устройства",
@@ -6367,41 +6352,23 @@
     "commitRequested" : "Ну как, нравится?\nТогда так и оставьте!",
     "confirmPicture" : "Подтвердите на {{productName}}",
     "landingPage" : {
-      "title" : "Выберите любую цифровую картинку или фото.\nПриукрасьте Ledger Stax.\nНастройте устройство под себя.",
+      "title" : "Choose any digital art or photo.\nCustomize your {{productName}}.\nMake it yours.",
       "choosePicture" : "Выбрать изображение"
     },
     "confirmCrop" : "Подтвердить обрезку",
     "confirmContrast" : "Подтвердить контраст",
-    "nftEntryPointButtonLabel" : "Установить на экран блокировки Ledger Stax",
+    "nftEntryPointButtonLabel" : "Set as lockscreen picture",
     "customImage" : "Пользовательское изображение",
     "doThisLater" : "Не сейчас",
     "preview" : {
       "title" : "Предпросмотр",
       "loading" : "Загрузка предпросмотра",
       "setPicture" : "Установить на экран блокировки",
-      "editPicture" : "Изменить изображение"
+      "editPicture" : "Изменить изображение",
+      "pickDeviceModel" : "Choose a device"
     },
     "nftGallery" : {
       "title" : "Мои NFT"
-    }
-  },
-  "claimNft" : {
-    "welcomePage" : {
-      "title" : "Бесплатный доступ к самому безопасному NFT-маркетплейсу в мире",
-      "description" : {
-        "title" : "Ledger Infinity Pass предоставляет доступ к:",
-        "1" : "Самым свежим NFT-дропам.",
-        "2" : "Самому безопасному NFT-маркетплейсу в истории.",
-        "3" : "Бесплатному NFT, который вы сможете получить."
-      },
-      "claimButton" : "Запросить Ledger Market Pass",
-      "backButton" : "Я уже запросил Market Pass"
-    },
-    "qrScan" : {
-      "title" : "Сканируйте QR-код на вашем Ledger Market Pass",
-      "description" : {
-        "1" : "Эксклюзивный Ledger Market Pass находится в упаковке с вашим Ledger Stax.\n\nДля начала поместите QR-код на задней части Pass в рамку, используя хорошо освещённое место и однотонный светлый фон."
-      }
     }
   },
   "postOnboarding" : {
@@ -6422,13 +6389,6 @@
         "titleCompleted" : "Картинка экрана блокировки установлена",
         "description" : "Выберите любую цифровую картинку или фото и используйте его как экран блокировки.",
         "popupLabel" : "Изображение установлено"
-      },
-      "claimNft" : {
-        "title" : "Запросить Infinity NFT",
-        "titleCompleted" : "Infinity NFT запрошен",
-        "description" : "Этот NFT откроет доступ к [ Ledger ] Market – нашему маркетплейсу для NFT.",
-        "popupLabel" : "NFT запрошен",
-        "tagLabel" : "Подарок"
       },
       "assetsTransfer" : {
         "title" : "Перевода криптоактивов на Ledger",
