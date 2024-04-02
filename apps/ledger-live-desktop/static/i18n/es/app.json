@@ -30,7 +30,8 @@
         "browse" : "Explorar"
       },
       "filter" : {
-        "categories" : "Categorías"
+        "categories" : "Categorías",
+        "all" : "Todas"
       },
       "branch" : {
         "soon" : "Próximamente",
@@ -275,7 +276,6 @@
   },
   "sidebar" : {
     "card" : "Tarjeta",
-    "learn" : "Información",
     "menu" : "Menú",
     "stars" : "Cuentas destacadas",
     "accounts" : "Cuentas",
@@ -1166,7 +1166,7 @@
       "continueOnDevice" : "Realiza esta acción en tu {{productName}}",
       "pairedContent" : {
         "title" : "Este {{deviceName}} es auténtico",
-        "description" : "Es seguro utilizar este Ledger Stax. Puedes proceder a configurarlo.",
+        "description" : "Es seguro usar este {{productName}}.  Puedes proceder a configurarlo.",
         "continueOnDevice" : "Toca tu {{productName}} para comenzar la configuración"
       },
       "pinContent" : {
@@ -1204,7 +1204,7 @@
         },
         "exitWarningDrawer" : {
           "title" : "¿Cancelar la Verificación de Autenticidad y la verificación de actualización del SO?",
-          "description" : "La Verificación de Autenticidad es obligatoria para seguir configurando tu Ledger Stax con la aplicación Ledger Live.",
+          "description" : "La Verificación de Autenticidad es obligatoria para poder seguir configurando tu {{productName}} con la aplicación Ledger Live.",
           "cancelCheckCTA" : "Cancelar verificaciones",
           "resumeCheckCTA" : "Reanudar las verificaciones"
         },
@@ -1295,7 +1295,7 @@
   },
   "postOnboarding" : {
     "postOnboardingScreen" : {
-      "title" : "A continuación, usa tu\nLedger Stax para... ",
+      "title" : "A continuación, usa tu {{productName}} para... ",
       "titleCompleted" : "¡Ya está todo!\nYa puedes explorar tu billetera.",
       "exploreCTA" : "Explorar billetera"
     },
@@ -1303,7 +1303,7 @@
       "skipLink" : "Lo haré más adelante"
     },
     "postOnboardingBanner" : {
-      "title" : "¿Qué es lo siguiente con tu Ledger Stax?",
+      "title" : "¿Qué es lo próximo que puedes hacer con tu {{productName}}?",
       "description" : "Reclama el NFT Infinity, personaliza su pantalla de bloqueo o\ntransfiere tus activos desde otros exchanges.",
       "link" : "Mira lo que puedes hacer ahora"
     },
@@ -1409,6 +1409,7 @@
   },
   "dashboard" : {
     "title" : "Portfolio",
+    "header" : "Saldo del portfolio",
     "emptyAccountTile" : {
       "desc" : "Agrega cuentas para gestionar otros activos cripto",
       "createAccount" : "Agregar cuenta"
@@ -1449,6 +1450,27 @@
         "description" : "Solo te queda un paso para disfrutar de Ledger Recover.",
         "primaryCta" : "Conectar",
         "secondaryCta" : "Quizás más tarde"
+      }
+    },
+    "marketPerformanceWidget" : {
+      "title" : "Tendencia de {{time}}",
+      "buy" : "Comprar",
+      "swap" : "Permutar",
+      "gainers" : "Ganadores",
+      "losers" : "Perdedores",
+      "error" : {
+        "title" : "Lo sentimos pero no hemos podido cargar la tendencia",
+        "description" : "Inténtalo de nuevo más tarde"
+      },
+      "missingData" : {
+        "gainers" : {
+          "title" : "No hay ningún activo entre los 50 principales ganadores de las últimas 24 horas",
+          "description" : "Considera consultar los principales perdedores o vuelve más tarde"
+        },
+        "losers" : {
+          "title" : "No hay ningún activo entre los 50 principales perdedores de las últimas 24 horas",
+          "description" : "Considera consultar los principales ganadores o vuelve más tarde"
+        }
       }
     }
   },
@@ -1756,7 +1778,7 @@
   "DeviceAction" : {
     "allowAppPermission" : "Abre la aplicación {{wording}} en tu dispositivo",
     "allowAppPermissionSubtitleToken" : "para administrar los tokens {{token}}",
-    "allowManagerPermission" : "Permitir Ledger Manager en tu {{productName}}",
+    "allowManagerPermission" : "Permitir conexión segura",
     "allowRenaming" : "Permitir renombrar en tu dispositivo",
     "loading" : "Cargando...",
     "connectAndUnlockDevice" : "Conecta y desbloquea tu dispositivo",
@@ -1874,7 +1896,7 @@
         "updateAllOutOfMemory" : "No hay espacio suficiente. Desinstala algunas aplicaciones",
         "install" : "Instalar",
         "installed" : "Instaladas",
-        "updated" : "Actualizadas",
+        "updated" : "Actualizado",
         "uninstall" : "Desinstalar",
         "notEnoughSpace" : "No hay suficiente espacio",
         "supported" : "Compatible con Ledger Live",
@@ -1982,7 +2004,7 @@
       "mcuBlueSecond" : "Mantén presionado el botón durante al menos 5 segundos hasta que se muestren las “Boot Options” (\"Opciones de arranque\"). Toca en Bootloader Mode",
       "successTitle" : "El SO de tu {{deviceName}} está actualizado.",
       "successTitleApps" : "El SO de tu {{deviceName}}\nestá actualizado. Una última cosa...",
-      "successSubtitleApps" : "Para iniciar la restauración de la aplicación en tu Ledger Stax, selecciona\nel botón “Restaurar aplicaciones” a continuación.",
+      "successSubtitleApps" : "To initiate app restore on your {{deviceName}}, select\nthe “Restore apps“ button below.",
       "sucessCTAApps" : "Restaurando aplicaciones",
       "SuccessCTANoApps" : "Finalizar",
       "resetSteps" : {
@@ -2207,6 +2229,15 @@
       "summary" : {
         "title" : "Resumen"
       },
+      "networkFee" : {
+        "title" : "Elegir tarifa de red"
+      },
+      "reviewSummary" : {
+        "title" : "Revisar resumen"
+      },
+      "connectLedger" : {
+        "title" : "Conectar tu Ledger"
+      },
       "device" : {
         "title" : "Dispositivo"
       },
@@ -2264,9 +2295,6 @@
       "estimatedFees" : "Tarifas de red"
     }
   },
-  "sign" : {
-    "title" : "Firmar transacción"
-  },
   "releaseNotes" : {
     "title" : "Notas de versión",
     "version" : "Ledger Live {{versionNb}}"
@@ -2293,7 +2321,7 @@
   "removeCustomLockscreen" : {
     "title" : "Quitar imagen de pantalla de bloqueo",
     "cta" : "Eliminar",
-    "confirmation" : "Confirmar eliminación de imagen en tu Ledger Stax",
+    "confirmation" : "Confirm removal of image on your {{productName}}",
     "success" : "Imagen de pantalla de bloqueo eliminada"
   },
   "changeCustomLockscreen" : {
@@ -3982,6 +4010,7 @@
       "releaseNotesBtn" : "Detalles",
       "termsBtn" : "Leer",
       "faq" : "Soporte de Ledger",
+      "chatbot" : "Bot de chat de Ledger",
       "faqDesc" : "Si tienes un problema, obtén ayuda mediante Ledger Live usando tu billetera de hardware.",
       "terms" : "Términos de uso",
       "termsDesc" : "Al utilizar Ledger Live consideramos que aceptas nuestros Términos y Condiciones.",
@@ -4177,6 +4206,17 @@
     "troubleshooting" : "Haz clic aquí para leer posibles soluciones",
     "logs" : "Guardar registros",
     "dataFolder" : "Ver datos de usuario"
+  },
+  "approve" : {
+    "title" : "Aprobar token",
+    "description" : "Aprobar token con tu dispositivo Ledger",
+    "unlimited" : "Estás autorizando a este proveedor a que acceda a una cantidad ilimitada del token seleccionado de tu billetera. Comprueba los detalles de la transacción en tu dispositivo Ledger antes de firmarla.",
+    "limited" : "Estás autorizando a este proveedor a que acceda al token seleccionado de tu billetera. Comprueba los detalles de la transacción en tu dispositivo Ledger antes de firmarla.",
+    "termsAndConditions" : "Al firmar esta transacción, aceptas los términos de uso de <0>{{appName}}.</0>"
+  },
+  "sign" : {
+    "title" : "Firmar transacción",
+    "description" : "Firma la transacción con tu dispositivo Ledger"
   },
   "exportOperationsModal" : {
     "title" : "Historial de operaciones",
@@ -4909,6 +4949,8 @@
     "warning" : "Comprueba siempre que la dirección mostrada en tu dispositivo coincida exactamente con la indicada por el {{recipientWording}}",
     "secureContract" : "Verifica los detalles del depósito en tu dispositivo antes de enviarlo. La dirección del contrato se ofrece de forma segura, por lo que no es necesario verificarla.",
     "verifyData" : "Siempre verifica los detalles de la operación en tu dispositivo.",
+    "doubleCheck" : "Comprueba los detalles de la transacción en tu dispositivo Ledger antes de firmarla.",
+    "termsAndConditions" : "Al firmar esta transacción, aceptas los términos de uso de <0>{{appName}}.</0>",
     "warningWording" : {
     },
     "titleWording" : {
@@ -5231,10 +5273,6 @@
       "title" : "Restauración de idioma\ncancelada en el dispositivo",
       "description" : "Si hubo un error, inténtalo de nuevo."
     },
-    "RestoreLanguageInstallRefusedOnDevice" : {
-      "title" : "La restauración del idioma se canceló en Ledger Stax",
-      "description" : "Si ha sido un error, puedes intentar la restauración de nuevo u omitir este paso."
-    },
     "LanguageNotFound" : {
       "title" : "No se ha encontrado el idioma",
       "description" : "No se ha encontrado el idioma que estás intentando instalar. Prueba a instalar otro idioma."
@@ -5343,7 +5381,7 @@
       "description" : "No es posible calcular la cantidad y las tarifas"
     },
     "NotEnoughBalance" : {
-      "title" : "Fondos insuficientes",
+      "title" : "Lo sentimos, el saldo es insuficiente con las tarifas de red incluidas. Ajusta el importe o verifica el saldo",
       "description" : "Asegúrate de que la cuenta tenga fondos suficientes."
     },
     "NotEnoughBalanceBecauseDestinationNotCreated" : {
@@ -5414,9 +5452,13 @@
       "title" : "Se ha producido un error. Vuelve a conectar tu dispositivo",
       "description" : "{{message}}"
     },
-    "TransportRaceCondition" : {
-      "title" : "Se ha producido un error. Vuelve a conectar tu dispositivo",
-      "description" : "Ya había una acción pendiente en el dispositivo Ledger. Deniégala o conecta de nuevo."
+    "TransportPendingOperation" : {
+      "title" : "Se ha producido un error. Vuelve a conectar tu dispositivo.",
+      "description" : "Ya había una acción pendiente en el dispositivo Ledger. Recházala o conecta de nuevo."
+    },
+    "UnresponsiveDeviceError" : {
+      "title" : "Se ha producido un error.",
+      "description" : "No fue posible acceder a tu dispositivo.\nPuede que haya una acción pendiente; recházala o conecta de nuevo."
     },
     "TransportStatusError" : {
       "title" : "Se ha producido un error. Vuelve a conectar tu dispositivo",
@@ -5431,7 +5473,7 @@
       "description" : "Reinicia el dispositivo sin tocar los botones cuando aparezca el logotipo. Contacta al Soporte de Ledger si persiste el problema."
     },
     "UserRefusedAllowManager" : {
-      "title" : "Mi Ledger denegado en el dispositivo"
+      "title" : "Conexión segura denegada en dispositivo"
     },
     "UserRefusedFirmwareUpdate" : {
       "title" : "Instalación de actualización de SO\ncancelada en el dispositivo",
@@ -5472,6 +5514,14 @@
     "WrongDeviceForAccount" : {
       "title" : "Algo ha salido mal",
       "description" : "Comprueba que tu billetera de hardware esté configurada con la Frase de recuperación o Passphrase asociada a la cuenta seleccionada."
+    },
+    "WrongDeviceForAccountPayout" : {
+      "title" : "Algo ha salido mal",
+      "description" : "La cuenta receptora no coincide con tu dispositivo. Cámbiala e inténtalo de nuevo."
+    },
+    "WrongDeviceForAccountRefund" : {
+      "title" : "Algo ha salido mal",
+      "description" : "La cuenta receptora no coincide con tu dispositivo para el reembolso. Cámbiala e inténtalo de nuevo."
     },
     "DeviceAppVerifyNotSupported" : {
       "title" : "Es necesario actualizar la aplicación.",
@@ -5516,6 +5566,10 @@
     "TransactionHasBeenValidatedError" : {
       "title" : "No se puede acelerar ni cancelar",
       "description" : "Esta transacción ya se ha validado"
+    },
+    "SequenceNumberError" : {
+      "title" : "Error de número de secuencia",
+      "description" : "Cierra la ventana e inténtalo de nuevo más tarde"
     },
     "CantScanQRCode" : {
       "title" : "No fue posible escanear este código QR: esta dirección no es compatible con la verificación automática"
@@ -5699,6 +5753,9 @@
     "SwapExchangeRateAmountTooHigh" : {
       "title" : "El importe debe ser inferior a {{maxAmountFromFormatted}}"
     },
+    "SwapExchangeRateAmountTooLowOrTooHigh" : {
+      "title" : "Importe no disponible. Modifica el valor."
+    },
     "PolkadotElectionClosed" : {
       "title" : "La elección de los validadores debe estar cerrada"
     },
@@ -5850,24 +5907,16 @@
       "description" : "Vuelve a intentarlo con otra imagen"
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "Instalación de la imagen de pantalla de bloqueo\ncancelada en Ledger Stax",
+      "title" : "Installation of lock screen picture\ncancelled on {{productName}}",
       "description" : "Si ha sido un error, inténtalo de nuevo."
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "Instalación de la imagen de pantalla de bloqueo\ncancelada en Ledger Stax",
+      "title" : "Installation of lock screen picture\ncancelled on {{productName}}",
       "description" : "Si ha sido un error, inténtalo de nuevo."
     },
     "ImageDoesNotExistOnDevice" : {
-      "title" : "Tu Ledger Stax no tiene una imagen de pantalla de bloqueo que quitar",
+      "title" : "Your device doesn’t have a lock screen picture to remove",
       "description" : "La imagen de pantalla de bloqueo personalizada ya se ha quitado."
-    },
-    "RestoreImageCommitRefusedOnDevice" : {
-      "title" : "La restauración de la imagen de pantalla de bloqueo se canceló en Ledger Stax",
-      "description" : "Si ha sido un error, puedes intentar la restauración de nuevo u omitir este paso."
-    },
-    "RestoreImageLoadRefusedOnDevice" : {
-      "title" : "La restauración de la imagen de pantalla de bloqueo se canceló en Ledger Stax",
-      "description" : "Si ha sido un error, puedes intentar la restauración de nuevo u omitir este paso."
     },
     "NearNewAccountWarning" : {
       "title" : "La cuenta del destinatario todavía no está creada. El protocolo requiere una transferencia de {{formattedNewAccountStorageCost}} para crearla."
@@ -5914,9 +5963,6 @@
     "FailedToRetrieveFirmwareUpdateInfo" : {
       "title" : "Error al verificar la actualización del SO",
       "description" : "Algo ha salido mal. Inténtalo de nuevo o contacta al Soporte de Ledger en caso de duda."
-    },
-    "TezosUnrevealedAccount" : {
-      "title" : "Permuta no disponible: es necesario un envío o delegación inicial con la cuenta de Tezos o el cambio de par."
     }
   },
   "cryptoOrg" : {
@@ -6042,9 +6088,72 @@
       "subtitle" : "Algo ha salido mal. Inténtalo de nuevo. Si el problema persiste, guarda el registro y ponte en contacto con el Soporte de Ledger.",
       "contactSupport" : "Ponte en contacto con el Soporte de Ledger",
       "saveLog" : "Guardar registro"
+    },
+    "noAccounts" : {
+      "title" : "Necesitas una cuenta para poder acceder a esta aplicación.",
+      "add" : "Agregar cuenta"
     }
   },
   "recoverRestore" : {
     "title" : "Conecta y desbloquea tu Ledger"
+  },
+  "analyticsOptInPrompt" : {
+    "variantA" : {
+      "description" : "Al compartir tus datos de Ledger Live, nos ayudas a conocer tus preferencias, mostrarte contenido relevante para ti y solucionar problemas técnicos.",
+      "whatWeTrack" : "Con tu consentimiento, Ledger podrá realizar un seguimiento de lo siguiente:",
+      "whatWeTrackList" : {
+        "1" : "Datos analíticos, como visitas a páginas y clics.",
+        "2" : "Datos de personalización, como clics, visitas a páginas y datos de conversión."
+      },
+      "whatWeDoNotTrack" : "Ledger nunca rastreará información relativa a lo siguiente:",
+      "whatWeDoNotTrackList" : {
+        "1" : "Tus activos.",
+        "2" : "Tu portfolio.",
+        "3" : "Tu información de identificación personal."
+      },
+      "managePreferences" : "Gestiona tus preferencias",
+      "refuse" : "Rechazar todo",
+      "accept" : "Aceptar todo",
+      "analyticsData" : {
+        "title" : "Datos analíticos",
+        "description" : "Para ayudar a mejorar Ledger Live, comparte los datos analíticos de la aplicación, como las visitas a páginas y los clics."
+      },
+      "personalizationData" : {
+        "title" : "Datos de personalización",
+        "description" : "Para obtener recomendaciones personalizadas, comparte los datos de personalización de la aplicación, como los datos de conversión, los clics y las visitas a páginas."
+      },
+      "share" : "Compartir"
+    },
+    "variantB" : {
+      "accept" : "Aceptar",
+      "refuse" : "Rechazar",
+      "analytics" : {
+        "description" : "Al compartir tus datos analíticos de Ledger Live, nos ayudas a entender cómo se utiliza Ledger Live, corregir errores y mejorar la experiencia de usuario.",
+        "details" : {
+          "1" : "Los datos analíticos incluyen visitas a páginas y clics.",
+          "2" : "No recopilaremos ni veremos ninguna información relativa a tu saldo, cuentas ni portfolio.",
+          "3" : "Los análisis son completamente anónimos. No podemos ver ni recopilar tu información personal."
+        }
+      },
+      "personalRecommendations" : {
+        "title" : "Disfruta de una experiencia personalizada",
+        "description" : "Al compartir tus datos de personalización de Ledger Live, nos permites mostrarte contenido adaptado a tus preferencias.",
+        "details" : {
+          "1" : "Los datos de personalización incluyen datos de conversión, clics y visitas a páginas.",
+          "2" : "No podemos rastrear ni recopilar tu información personal ni información relativa a tu portfolio."
+        }
+      }
+    },
+    "common" : {
+      "title" : "Ayúdanos a mejorar y personalizar tu experiencia",
+      "revokeInfo" : "Puedes retirar tu consentimiento en cualquier momento desde los ajustes de la aplicación.",
+      "learnMore" : "Más información sobre nuestra Política de seguimiento"
+    },
+    "profileSettings" : {
+      "personalizedExp" : "Experiencia personalizada",
+      "analytics" : "Análisis",
+      "personalizedExpDesc" : "Recibe recomendaciones personalizadas adaptadas a tus preferencias.",
+      "analyticsDesc" : "Habilita los análisis para ayudar a Ledger a mejorar la experiencia de usuario."
+    }
   }
 }
