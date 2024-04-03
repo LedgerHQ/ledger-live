@@ -1,7 +1,7 @@
 import { Flex } from "@ledgerhq/react-ui";
 import React, { useEffect, useState } from "react";
-import styled from "styled-components";
 import Text from "~/renderer/components/Text";
+import { Chip, ChipContainer } from "./Chip";
 
 type Props = {
   fieldName: string;
@@ -13,26 +13,7 @@ type Props = {
   handleChange: (path: string, value: unknown) => void;
 };
 
-const SelectorContainer = styled.div`
-  display: inline-flex;
-  cursor: pointer;
-  width: max-content;
-  overflow: hidden;
-  border-radius: 10px;
-  margin: 0px;
-`;
-
-const Item = styled.div<{
-  active: boolean;
-}>`
-  color: ${p =>
-    p.active ? p.theme.colors.palette.primary.contrastText : p.theme.colors.palette.text.shade20};
-  background: ${p =>
-    p.active ? p.theme.colors.palette.primary.main : p.theme.colors.palette.action.disabled};
-  padding: 0px 8px 2px 8px;
-`;
-
-function Selector({
+function FormLiveAppSelector({
   choices,
   path,
   handleChange,
@@ -63,13 +44,21 @@ function Selector({
 
   return (
     <Flex flexDirection={"column"}>
-      <Text marginBottom={1} marginLeft={1} ff="Inter|Medium" fontSize={4}>
+      <Text marginLeft={1} ff="Inter|Medium" fontSize={4}>
         {`${fieldName} `}
         {!optional && <span style={{ color: "red" }}>*</span>}
       </Text>
-      <SelectorContainer>
+      <Text marginBottom={1} color={"grey"} marginLeft={1} ff="Inter|Medium" fontSize={2}>
+        {`Here is my description`}
+      </Text>
+      <ChipContainer
+        style={{
+          outline: (!optional && !selectedValues.length && "solid 1px red") || "",
+          outlineOffset: "-1px",
+        }}
+      >
         {choices.map((enumItem, index) => (
-          <Item
+          <Chip
             active={selectedValues.includes(enumItem) || selectedValues == enumItem}
             onClick={() => {
               handleClick(enumItem);
@@ -79,11 +68,11 @@ function Selector({
             <Text ff="Inter|Medium" fontSize={4}>
               {enumItem}
             </Text>
-          </Item>
+          </Chip>
         ))}
-      </SelectorContainer>
+      </ChipContainer>
     </Flex>
   );
 }
 
-export default Selector;
+export default FormLiveAppSelector;
