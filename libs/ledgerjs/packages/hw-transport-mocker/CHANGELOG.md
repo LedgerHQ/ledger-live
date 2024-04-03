@@ -1,5 +1,12 @@
 # @ledgerhq/hw-transport-mocker
 
+## 6.28.6-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.30.6-next.0
+
 ## 6.28.5
 
 ### Patch Changes

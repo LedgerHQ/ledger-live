@@ -1,5 +1,14 @@
 # @ledgerhq/native-ui
 
+## 0.22.9-next.0
+
+### Patch Changes
+
+- [#6304](https://github.com/LedgerHQ/ledger-live/pull/6304) [`f333b2f`](https://github.com/LedgerHQ/ledger-live/commit/f333b2f35b09265c3efae7907fb05cd03c4730b8) Thanks [@KVNLS](https://github.com/KVNLS)! - Update LLM send flow
+
+- Updated dependencies [[`e13940e`](https://github.com/LedgerHQ/ledger-live/commit/e13940ea8b96098690a57c50dc989a5b6e6a6d28)]:
+  - @ledgerhq/icons-ui@0.6.4-next.0
+
 ## 0.22.8
 
 ### Patch Changes
