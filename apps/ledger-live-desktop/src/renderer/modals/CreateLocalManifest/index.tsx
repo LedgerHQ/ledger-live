@@ -27,7 +27,7 @@ import { useManifests } from "@ledgerhq/live-common/platform/providers/RemoteLiv
 import FormLiveAppArraySelect from "./FormLiveAppArraySelect";
 import { Separator } from "~/renderer/components/Onboarding/Screens/SelectUseCase/Separator";
 
-const DEFAULT_VALUES: LiveAppManifest = {
+const DEFAULT_VALUES = {
   permissions: [
     "account.list",
     "account.receive",
@@ -45,6 +45,10 @@ const DEFAULT_VALUES: LiveAppManifest = {
     "storage.get",
     "storage.set",
   ],
+  visibility: ["complete", "searchable", "deep"],
+  branch: ["stable", "experimental", "soon", "debug"],
+  platforms: ["ios", "android", "desktop"],
+  categories: [""],
 };
 
 const DEFAULT_FORM: LiveAppManifest = {
@@ -112,7 +116,7 @@ function FormLocalManifest({
   const completeManifests = useManifests({ visibility: ["complete"] });
   const { categories } = useCategories(completeManifests);
 
-  DEFAULT_VALUES.categories = categories.filter(category => category !== "all");
+  DEFAULT_VALUES.categories = categories.filter((category: string) => category !== "all");
 
   const handleSwitchEthDapp = () => {
     setIsDapp(prevState => !prevState);
@@ -336,13 +340,12 @@ function FormLocalManifest({
                     const path = `${key as string}`;
 
                     if (key === "platforms") {
-                      const enums = formKeySchema._def.type._def.values;
                       return (
                         <FormLiveAppSelector
                           key={key}
                           optional={optional}
                           fieldName={key}
-                          choices={[...enums]}
+                          choices={[...DEFAULT_VALUES.platforms]}
                           path={path}
                           handleChange={handleChange}
                           multipleChoices={true}
@@ -352,13 +355,12 @@ function FormLocalManifest({
                     }
 
                     if (key === "visibility" || key === "branch") {
-                      const enums = formKeySchema._def.values;
                       return (
                         <FormLiveAppSelector
                           key={key}
                           optional={optional}
                           fieldName={key}
-                          choices={enums}
+                          choices={[...DEFAULT_VALUES[key]]}
                           path={path}
                           handleChange={handleChange}
                           multipleChoices={false}
