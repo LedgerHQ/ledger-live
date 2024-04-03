@@ -3,6 +3,7 @@ import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
 import type { PolkadotAccount, Transaction } from "../types";
 import { calculateAmount } from "./utils";
 import { estimatedFees } from "../logic";
+import { loadPolkadotCrypto } from "../logic/polkadot-crypto";
 
 /**
  * Fetch the transaction fees for a transaction
@@ -17,6 +18,8 @@ export default async function getEstimatedFees({
   a: PolkadotAccount;
   t: Transaction;
 }): Promise<BigNumber> {
+  await loadPolkadotCrypto();
+
   const transaction = {
     ...t,
     recipient: getAbandonSeedAddress(a.currency.id),
