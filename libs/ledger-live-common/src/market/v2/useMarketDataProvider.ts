@@ -102,6 +102,9 @@ export function useMarketData(props: MarketListRequestParams): MarketListRequest
         formattedData: currencyFormatter(data, props.range ?? "24h", cryptoCurrenciesList),
         page,
       }),
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
     })),
     combine: combineMarketData,
   });

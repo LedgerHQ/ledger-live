@@ -199,6 +199,7 @@ export function useMarket() {
     // reset page when coming back to MarketPage or first time
     if ((marketParams?.page ?? 1) > 1) {
       dispatch(setMarketOptions({ page: 1 }));
+      dispatch(setMarketCurrentPage(1));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
