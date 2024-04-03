@@ -1,5 +1,19 @@
 # live-mobile
 
+## 3.43.0-nightly.1
+
+### Minor Changes
+
+- [#6328](https://github.com/LedgerHQ/ledger-live/pull/6328) [`9b54d0d`](https://github.com/LedgerHQ/ledger-live/commit/9b54d0d55bead3a4074b9245bd8c4cb23d96c77f) Thanks [@Justkant](https://github.com/Justkant)! - feat: native dapp support [LIVE-9527]
+
+  Migration from [ETH dApp Browser Live App](https://github.com/LedgerHQ/eth-dapp-browser) and [iframe-provider](https://github.com/LedgerHQ/iframe-provider) to support inside LL directly injecting an EIP 6963 compatible provider in the WebView, using params from the manifest.
+
+### Patch Changes
+
+- Updated dependencies [[`370b3b1`](https://github.com/LedgerHQ/ledger-live/commit/370b3b13c1c0d9e3f985ea3d546d5f9cad03ae31), [`9b54d0d`](https://github.com/LedgerHQ/ledger-live/commit/9b54d0d55bead3a4074b9245bd8c4cb23d96c77f)]:
+  - @ledgerhq/live-common@34.1.0-nightly.1
+  - @ledgerhq/ethereum-provider@0.2.0-nightly.0
+
 ## 3.43.0-nightly.0
 
 ### Minor Changes

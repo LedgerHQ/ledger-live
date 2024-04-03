@@ -132,7 +132,8 @@
     "@ledgerhq/coin-near": "0.3.8",
     "@ledgerhq/coin-bitcoin": "0.3.9",
     "@ledgerhq/device-core": "0.1.0",
-    "@ledgerhq/device-react": "0.1.0"
+    "@ledgerhq/device-react": "0.1.0",
+    "@ledgerhq/ethereum-provider": "0.1.0"
   },
   "changesets": [
     "angry-lies-kick",
@@ -171,8 +172,10 @@
     "healthy-tigers-pull",
     "heavy-snails-taste",
     "hip-peaches-retire",
+    "honest-coats-help",
     "honest-seals-tap",
     "hot-fans-deliver",
+    "itchy-beds-push",
     "itchy-moles-fold",
     "itchy-rivers-flow",
     "large-needles-watch",
@@ -225,6 +228,7 @@
     "stupid-dingos-end",
     "stupid-steaks-sip",
     "sweet-eagles-greet",
+    "swift-apricots-obey",
     "thick-items-count",
     "thin-ants-leave",
     "three-bananas-yawn",

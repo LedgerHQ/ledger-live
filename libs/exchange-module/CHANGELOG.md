@@ -1,5 +1,11 @@
 # @ledgerhq/wallet-api-exchange-module
 
+## 0.4.1-nightly.0
+
+### Patch Changes
+
+- [#6588](https://github.com/LedgerHQ/ledger-live/pull/6588) [`370b3b1`](https://github.com/LedgerHQ/ledger-live/commit/370b3b13c1c0d9e3f985ea3d546d5f9cad03ae31) Thanks [@Justkant](https://github.com/Justkant)! - chore: bump wallet-api packages
+
 ## 0.4.0
 
 ### Minor Changes
