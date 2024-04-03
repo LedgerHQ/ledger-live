@@ -11,10 +11,10 @@ export const ImageStyles: {
 } = {
   L: {
     flex: 1,
-    aspectRatio: 1.5,
-    maxWidth: "100%",
+    width: "100%",
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
+    paddingBottom: 24,
   },
   M: {
     flex: 1,
@@ -37,8 +37,7 @@ type ImageProps = {
 
 export const Image = ({ uri, size, filledImage }: ImageProps) => {
   const isBigCardAndFilled = (size === "L" && filledImage) || false;
-  const stylesBigCard =
-    size === "L" ? (isBigCardAndFilled ? { marginBottom: 24 } : { paddingBottom: 24 }) : {};
+  const stylesBigCard = isBigCardAndFilled ? { marginBottom: 24 } : {};
   return (
     <NativeImage
       source={{ uri }}

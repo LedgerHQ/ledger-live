@@ -36,7 +36,6 @@ const Grid = ContentLayoutBuilder<Props>(({ items, styles: _styles = defaultStyl
       style={{
         marginHorizontal: styles.gap,
         justifyContent: "flex-start",
-        width: "100%",
         flexDirection: "row",
         flexWrap: "wrap",
         gap: isStack ? 0 : styles.gap,
