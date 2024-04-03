@@ -65,8 +65,9 @@ function FormLiveAppArraySelect({
 
   const handleOnEnter = (value: string) => {
     if (selectedValues.includes(value)) return;
+
     setSelectedValues((prev: string[]) => {
-      const newSelectedvalues = prev;
+      const newSelectedvalues = [...prev];
       newSelectedvalues.push(value);
       return newSelectedvalues;
     });
@@ -83,10 +84,13 @@ function FormLiveAppArraySelect({
           {`Here is my description`}
         </Text>
         <Select
-          onKeyDown={key => {
-            const target = key.target as HTMLTextAreaElement;
-            if (key.keyCode === 13 && target.value !== "") {
+          blurInputOnSelect={true}
+          onKeyDown={e => {
+            const target = e.target as HTMLTextAreaElement;
+            if (e.keyCode === 13 && target.value !== "") {
+              e.preventDefault();
               handleOnEnter(target.value);
+              target.blur();
             }
           }}
           error={parseCheck ? null : new Error()}

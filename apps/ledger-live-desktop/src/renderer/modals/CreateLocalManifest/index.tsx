@@ -49,6 +49,7 @@ const DEFAULT_VALUES = {
   branch: ["stable", "experimental", "soon", "debug"],
   platforms: ["ios", "android", "desktop"],
   categories: [""],
+  provider: ["evm"],
 };
 
 const DEFAULT_FORM: LiveAppManifest = {
@@ -112,6 +113,8 @@ function FormLocalManifest({
   const { addLocalManifest } = useLocalLiveAppContext();
   const [form, setForm] = useState<LiveAppManifest>({ ...DEFAULT_FORM });
   const [isDapp, setIsDapp] = useState("dapp" in form);
+
+  console.log(form);
 
   const completeManifests = useManifests({ visibility: ["complete"] });
   const { categories } = useCategories(completeManifests);
@@ -252,14 +255,12 @@ function FormLocalManifest({
                               const optional = shape.isOptional();
 
                               if (dappKey === "provider") {
-                                const enums = (shape._def as { values: string[] }).values;
-
                                 return (
                                   <FormLiveAppSelector
                                     optional={optional}
                                     fieldName={dappKey}
                                     key={dappKey}
-                                    choices={enums}
+                                    choices={DEFAULT_VALUES[dappKey]}
                                     path={path}
                                     handleChange={handleChange}
                                     multipleChoices={false}
@@ -383,6 +384,8 @@ function FormLocalManifest({
                         ></FormLiveAppArraySelect>
                       );
                     }
+
+                    //FROM HERE, key IS NOT MATCHING ANY SPECIFIC FIELD ANYMORE
 
                     if (isArray) {
                       return (
