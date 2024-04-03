@@ -90,30 +90,20 @@ const QueuedDrawer = ({
     onClose && onClose();
   }, [onClose]);
 
-  const setDrawerOpenedCallback = useCallback(
-    (isOpen: boolean) => {
-      if (isOpen) {
-        triggerOpen();
-      } else {
-        logDrawer("setDrawerOpenedCallback triggerClose");
-        triggerClose();
-      }
-    },
-    [triggerClose, triggerOpen],
-  );
-
   useEffect(() => {
     if (!isFocused && (isRequestingToBeOpened || isForcingToBeOpened)) {
       logDrawer("trigger close because not focused");
       triggerClose();
-    } else if (isRequestingToBeOpened && !drawerInQueueRef.current) {
-      drawerInQueueRef.current = addDrawerToQueue(setDrawerOpenedCallback, false);
-      return () => {
-        logDrawer("trigger close in cleanup");
-        triggerClose();
+    } else if ((isRequestingToBeOpened || isForcingToBeOpened) && !drawerInQueueRef.current) {
+      const setDrawerOpenedCallback = (isOpen: boolean) => {
+        if (isOpen) {
+          triggerOpen();
+        } else {
+          logDrawer("setDrawerOpenedCallback triggerClose");
+          triggerClose();
+        }
       };
-    } else if (isForcingToBeOpened && !drawerInQueueRef.current) {
-      drawerInQueueRef.current = addDrawerToQueue(setDrawerOpenedCallback, true);
+      drawerInQueueRef.current = addDrawerToQueue(setDrawerOpenedCallback, isForcingToBeOpened);
       return () => {
         logDrawer("trigger close in cleanup");
         triggerClose();
@@ -124,24 +114,22 @@ const QueuedDrawer = ({
     isFocused,
     isForcingToBeOpened,
     isRequestingToBeOpened,
-    setDrawerOpenedCallback,
     triggerClose,
+    triggerOpen,
   ]);
 
   const handleCloseUserEvent = useCallback(() => {
     logDrawer("handleClose");
     triggerClose();
-    onClose && onClose();
-  }, [onClose, triggerClose]);
+  }, [triggerClose]);
 
   const handleModalHide = useCallback(() => {
     logDrawer("handleModalHide");
     onModalHide && onModalHide();
-    onClose && onClose();
     setIsDisplayed(false);
     drawerInQueueRef.current?.removeDrawerFromQueue();
     drawerInQueueRef.current = undefined;
-  }, [onClose, onModalHide]);
+  }, [onModalHide]);
 
   useEffect(() => {
     return () => {

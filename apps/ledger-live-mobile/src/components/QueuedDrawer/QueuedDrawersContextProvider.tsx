@@ -41,7 +41,7 @@ const QueuedDrawersContextProvider: React.FC<{ children: React.ReactNode }> = ({
         queueRef.current = [newQueueItem];
         setDrawerOpenedCallback(true);
       } else if (force) {
-        logDrawer("addDrawerToQueue -> force close opened & queued drawers & clear queue", id);
+        logDrawer("addDrawerToQueue -> force close opened & queued drawers, and clear queue", id);
         queueRef.current.forEach(queueItem => queueItem.setDrawerOpenedCallback(false));
         queueRef.current = [{ ...queueRef.current[0], markedForClose: true }, newQueueItem];
         // not opening the drawer here, it will be opened when the first item of the queue clears
