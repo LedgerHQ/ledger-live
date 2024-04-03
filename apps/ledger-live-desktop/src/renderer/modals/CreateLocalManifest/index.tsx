@@ -362,7 +362,7 @@ function FormLocalManifest({
                           path={path}
                           handleChange={handleChange}
                           multipleChoices={false}
-                          initalValue={value}
+                          initalValue={value as string}
                         ></FormLiveAppSelector>
                       );
                     }
@@ -373,7 +373,7 @@ function FormLocalManifest({
                           key={key as string}
                           options={DEFAULT_VALUES[key]}
                           fieldName={key as string}
-                          initialValue={value}
+                          initialValue={value as string[]}
                           optional={optional}
                           parseCheck={parseCheck}
                           path={path}
