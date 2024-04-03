@@ -55,24 +55,28 @@ export const getEstimatedFees = async (
 
   const cosmosAPI = new CosmosAPI(account.currency.id);
   const { protoMsgs } = txToMessages(account, transaction);
-  const { sequence, pubKeyType, pubKey } = await cosmosAPI.getAccount(account.freshAddress);
-  const signature = new Uint8Array(Buffer.from(account.seedIdentifier, "hex"));
+  const { sequence, pubKey, pubKeyType } = await cosmosAPI.getAccount(account.freshAddress);
 
-  const txBytes = buildTransaction({
+  const unsignedTx = buildTransaction({
     protoMsgs,
-    memo: transaction.memo || "",
-    pubKeyType,
-    pubKey,
-    feeAmount: undefined,
     gasLimit: undefined,
-    sequence: sequence ? sequence + "" : "0",
-    signature,
+    feeAmount: [
+      {
+        denom: account.currency.units[1].code,
+        amount: "1", // Amount should just not be 0 as it would impact the simulation by requiring less gas
+      },
+    ],
+    memo: transaction.memo || "",
+    pubKey,
+    pubKeyType,
+    sequence,
+    // Signature isn't verified during simulation, but size matters (:wink::wink:)
+    // and content not being 0 as well as it would require less gas
+    signature: Uint8Array.from(Buffer.alloc(65).fill(1)),
   });
 
-  const txToSimulate = Array.from(Uint8Array.from(txBytes));
-
   try {
-    gasUsed = await cosmosAPI.simulate(txToSimulate);
+    gasUsed = await cosmosAPI.simulate(Array.from(unsignedTx));
   } catch (e) {
     log("debug", "failed to estimate gas usage during tx simulation", {
       e,
