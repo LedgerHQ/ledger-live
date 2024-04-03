@@ -980,6 +980,7 @@ export const renderSwapDeviceConfirmation = ({
 
   const unitMainAccount =
     currenciesSettings[getMainAccount(exchange.fromAccount, exchange.fromParentAccount).id].unit;
+
   return (
     <>
       <ConfirmWrapper>

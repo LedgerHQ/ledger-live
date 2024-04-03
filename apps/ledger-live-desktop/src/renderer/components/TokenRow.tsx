@@ -1,7 +1,7 @@
 import React from "react";
 import Box from "~/renderer/components/Box";
 import { Account, AccountLike, PortfolioRange } from "@ledgerhq/types-live";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import styled from "styled-components";
 import Header from "~/renderer/screens/accounts/AccountRowItem/Header";
 import Balance from "~/renderer/screens/accounts/AccountRowItem/Balance";
@@ -9,6 +9,7 @@ import Delta from "~/renderer/screens/accounts/AccountRowItem/Delta";
 import Countervalue from "~/renderer/screens/accounts/AccountRowItem/Countervalue";
 import Star from "~/renderer/components/Stars/Star";
 import { TableRow } from "./TableContainer";
+import { useAccountUnit } from "../hooks/useAccountUnit";
 
 type Props = {
   account: AccountLike;
@@ -43,9 +44,9 @@ function TokenRow(props: Props) {
   const onClickRow = () => {
     onClick(account, parentAccount);
   };
-
-  const currency = getAccountCurrency(account);
-  const unit = currency.units[0];
+  const mainAccount = getMainAccount(account, parentAccount);
+  const unit = useAccountUnit(mainAccount);
+  const currency = mainAccount.currency;
   const Row = nested ? NestedRow : TableRow;
   return (
     <Row className="token-row" onClick={onClickRow} tabIndex={-1}>

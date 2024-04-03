@@ -1,10 +1,7 @@
-import React, { PureComponent, memo } from "react";
+import React, { memo, useState } from "react";
 import styled from "styled-components";
-import get from "lodash/get";
-import { compose } from "redux";
-import { connect } from "react-redux";
-import { TFunction } from "i18next";
-import { Trans, withTranslation } from "react-i18next";
+import { useDispatch } from "react-redux";
+import { Trans, useTranslation } from "react-i18next";
 import type { Account, DerivationMode } from "@ledgerhq/types-live";
 import { validateNameEdition } from "@ledgerhq/live-common/account/index";
 import { AccountNameRequiredError } from "@ledgerhq/errors";
@@ -22,43 +19,24 @@ import ConfirmModal from "~/renderer/modals/ConfirmModal";
 import Space from "~/renderer/components/Space";
 import Button from "~/renderer/components/Button";
 import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
-type State = {
-  accountName: string | undefined | null;
-  accountNameError: Error | undefined | null;
-  isRemoveAccountModalOpen: boolean;
-};
-type OwnProps = {
-  onClose?: () => void;
-  data: unknown;
-};
+
 type Props = {
-  setDataModal: Function;
-  updateAccount: Function;
-  removeAccount: Function;
-  t: TFunction;
-} & OwnProps;
-
-const mapDispatchToProps = {
-  setDataModal,
-  updateAccount,
-  removeAccount,
+  onClose?: () => void;
+  account: Account;
 };
-const defaultState = {
-  accountName: null,
-  accountUnit: null,
-  accountNameError: null,
-  isRemoveAccountModalOpen: false,
-};
-class AccountSettingRenderBody extends PureComponent<Props, State> {
-  state = {
-    ...defaultState,
-  };
 
-  getAccount(data: unknown): Account {
-    const { accountName } = this.state;
-    const account = get(data, "account", {});
+function AccountSettingRenderBody(props: Props) {
+  const { onClose, account: dataAccount } = props;
+
+  const { t } = useTranslation();
+  const dispatch = useDispatch();
+  const [accountName, setAccountName] = useState<string | null>(null);
+  const [accountNameError, setAccountNameError] = useState<Error | null>(null);
+  const [isRemoveAccountModalOpen, setIsRemoveAccountModalOpen] = useState<boolean>(false);
+
+  function getAccount(): Account {
     return {
-      ...account,
+      ...dataAccount,
       ...(accountName !== null
         ? {
             name: accountName,
@@ -67,169 +45,150 @@ class AccountSettingRenderBody extends PureComponent<Props, State> {
     };
   }
 
-  handleChangeName = (value: string) =>
-    this.setState({
-      accountName: value,
-    });
+  const handleChangeName = (value: string) => setAccountName(value);
 
-  handleSubmit =
+  const handleSubmit =
     (account: Account, onClose: () => void) =>
     (e: React.SyntheticEvent<HTMLFormElement | HTMLInputElement>) => {
       e.preventDefault();
-      const { updateAccount, setDataModal } = this.props;
-      const { accountName, accountUnit } = this.state;
+
       if (!account.name.length) {
-        this.setState({
-          accountNameError: new AccountNameRequiredError(),
-        });
+        setAccountNameError(new AccountNameRequiredError());
       } else {
         const name = validateNameEdition(account, accountName);
         account = {
           ...account,
-          unit: accountUnit || account.unit,
           name,
         };
-        updateAccount(account);
-        setDataModal("MODAL_SETTINGS_ACCOUNT", {
-          account,
-        });
+        dispatch(updateAccount(account));
+        dispatch(
+          setDataModal("MODAL_SETTINGS_ACCOUNT", {
+            account,
+          }),
+        );
         onClose();
       }
     };
 
-  handleFocus = (e: React.FocusEvent<HTMLInputElement>, name: string) => {
+  const handleFocus = (e: React.FocusEvent<HTMLInputElement>, name: string) => {
     e.target.select();
     switch (name) {
       case "accountName":
-        this.setState({
-          accountNameError: null,
-        });
+        setAccountNameError(null);
         break;
       default:
         break;
     }
   };
 
-  handleOpenRemoveAccountModal = () =>
-    this.setState({
-      isRemoveAccountModalOpen: true,
-    });
+  const handleOpenRemoveAccountModal = () => setIsRemoveAccountModalOpen(true);
 
-  handleCloseRemoveAccountModal = () =>
-    this.setState({
-      isRemoveAccountModalOpen: false,
-    });
+  const handleCloseRemoveAccountModal = () => setIsRemoveAccountModalOpen(false);
 
-  handleRemoveAccount = (account: Account) => {
-    const { removeAccount, onClose } = this.props;
-    removeAccount(account);
-    this.setState({
-      isRemoveAccountModalOpen: false,
-    });
+  const handleRemoveAccount = (account: Account) => {
+    dispatch(removeAccount(account));
+    setIsRemoveAccountModalOpen(false);
     onClose?.();
   };
 
-  render() {
-    const { accountNameError, isRemoveAccountModalOpen } = this.state;
-    const { t, onClose, data } = this.props;
-    if (!data) return null;
-    const account = this.getAccount(data);
-    const usefulData = {
-      xpub: account.xpub || undefined,
-      index: account.index,
-      freshAddressPath: account.freshAddressPath,
-      id: account.id,
-      blockHeight: account.blockHeight,
-    };
-    const onSubmit = onClose && this.handleSubmit(account, onClose);
-    const tag =
-      account.derivationMode !== undefined &&
-      account.derivationMode !== null &&
-      getTagDerivationMode(account.currency, account.derivationMode as DerivationMode);
-    return (
-      <ModalBody
-        onClose={onClose}
-        title={t("account.settings.title")}
-        render={() => (
-          <>
-            <TrackPage category="Modal" name="AccountSettings" />
-            <Container>
+  if (!dataAccount) return null;
+  const account = getAccount();
+  const usefulData = {
+    xpub: account.xpub || undefined,
+    index: account.index,
+    freshAddressPath: account.freshAddressPath,
+    id: account.id,
+    blockHeight: account.blockHeight,
+  };
+  const onSubmit = onClose && handleSubmit(account, onClose);
+  const tag =
+    account.derivationMode !== undefined &&
+    account.derivationMode !== null &&
+    getTagDerivationMode(account.currency, account.derivationMode as DerivationMode);
+  return (
+    <ModalBody
+      onClose={onClose}
+      title={t("account.settings.title")}
+      render={() => (
+        <>
+          <TrackPage category="Modal" name="AccountSettings" />
+          <Container>
+            <Box>
+              <OptionRowTitle>{t("account.settings.accountName.title")}</OptionRowTitle>
+              <OptionRowDesc>{t("account.settings.accountName.desc")}</OptionRowDesc>
+            </Box>
+            <Box>
+              <Input
+                autoFocus
+                containerProps={{
+                  style: {
+                    width: 230,
+                  },
+                }}
+                value={account.name}
+                maxLength={getEnv("MAX_ACCOUNT_NAME_SIZE")}
+                onChange={handleChangeName}
+                onEnter={onSubmit}
+                onFocus={(e: React.FocusEvent<HTMLInputElement>) => handleFocus(e, "accountName")}
+                error={accountNameError}
+                id="input-edit-name"
+              />
+            </Box>
+          </Container>
+          <Spoiler textTransform title={t("account.settings.advancedLogs")}>
+            {tag ? <Tips tag={tag} /> : null}
+            <AdvancedLogsContainer>{JSON.stringify(usefulData, null, 2)}</AdvancedLogsContainer>
+          </Spoiler>
+          <ConfirmModal
+            analyticsName="RemoveAccount"
+            isDanger
+            centered
+            isOpened={isRemoveAccountModalOpen}
+            onClose={handleCloseRemoveAccountModal}
+            onReject={handleCloseRemoveAccountModal}
+            onConfirm={() => handleRemoveAccount(account)}
+            title={t("settings.removeAccountModal.title")}
+            subTitle={t("common.areYouSure")}
+            desc={
               <Box>
-                <OptionRowTitle>{t("account.settings.accountName.title")}</OptionRowTitle>
-                <OptionRowDesc>{t("account.settings.accountName.desc")}</OptionRowDesc>
+                {t("settings.removeAccountModal.desc")}
+                <Alert type="warning" mt={4}>
+                  {t("settings.removeAccountModal.warning")}
+                </Alert>
               </Box>
-              <Box>
-                <Input
-                  autoFocus
-                  containerProps={{
-                    style: {
-                      width: 230,
-                    },
-                  }}
-                  value={account.name}
-                  maxLength={getEnv("MAX_ACCOUNT_NAME_SIZE")}
-                  onChange={this.handleChangeName}
-                  onEnter={onSubmit}
-                  onFocus={(e: React.FocusEvent<HTMLInputElement>) =>
-                    this.handleFocus(e, "accountName")
-                  }
-                  error={accountNameError}
-                  id="input-edit-name"
-                />
-              </Box>
-            </Container>
-            <Spoiler textTransform title={t("account.settings.advancedLogs")}>
-              {tag ? <Tips tag={tag} /> : null}
-              <AdvancedLogsContainer>{JSON.stringify(usefulData, null, 2)}</AdvancedLogsContainer>
-            </Spoiler>
-            <ConfirmModal
-              analyticsName="RemoveAccount"
-              isDanger
-              centered
-              isOpened={isRemoveAccountModalOpen}
-              onClose={this.handleCloseRemoveAccountModal}
-              onReject={this.handleCloseRemoveAccountModal}
-              onConfirm={() => this.handleRemoveAccount(account)}
-              title={t("settings.removeAccountModal.title")}
-              subTitle={t("common.areYouSure")}
-              desc={
-                <Box>
-                  {t("settings.removeAccountModal.desc")}
-                  <Alert type="warning" mt={4}>
-                    {t("settings.removeAccountModal.warning")}
-                  </Alert>
-                </Box>
-              }
-            />
-            <Space of={20} />
-          </>
-        )}
-        renderFooter={() => (
-          <>
-            <Button
-              event="OpenAccountDelete"
-              danger
-              type="button"
-              onClick={this.handleOpenRemoveAccountModal}
-              data-test-id="account-settings-delete-button"
-            >
-              {t("settings.removeAccountModal.delete")}
-            </Button>
-            <Button
-              data-test-id="account-settings-apply-button"
-              event="DoneEditingAccount"
-              ml="auto"
-              onClick={onSubmit}
-              primary
-            >
-              {t("common.apply")}
-            </Button>
-          </>
-        )}
-      />
-    );
-  }
+            }
+          />
+          <Space of={20} />
+        </>
+      )}
+      renderFooter={() => (
+        <>
+          <Button
+            event="OpenAccountDelete"
+            danger
+            type="button"
+            onClick={handleOpenRemoveAccountModal}
+            data-test-id="account-settings-delete-button"
+          >
+            {t("settings.removeAccountModal.delete")}
+          </Button>
+          <Button
+            data-test-id="account-settings-apply-button"
+            event="DoneEditingAccount"
+            ml="auto"
+            onClick={onSubmit}
+            primary
+          >
+            {t("common.apply")}
+          </Button>
+        </>
+      )}
+    />
+  );
 }
+
+export default AccountSettingRenderBody;
+
 const AdvancedLogsContainer = styled.div`
   border: 1px dashed ${p => p.theme.colors.palette.background.default};
   background-color: ${p => p.theme.colors.palette.background.default};
@@ -245,11 +204,7 @@ const AdvancedLogsContainer = styled.div`
   ${p => p.theme.overflow.xy};
   user-select: text;
 `;
-const ConnectedAccountSettingRenderBody = compose(
-  connect(null, mapDispatchToProps),
-  withTranslation(),
-)(AccountSettingRenderBody) as React.ComponentType<OwnProps>;
-export default ConnectedAccountSettingRenderBody;
+
 export const Container = styled(Box).attrs(() => ({
   flow: 2,
   horizontal: true,
