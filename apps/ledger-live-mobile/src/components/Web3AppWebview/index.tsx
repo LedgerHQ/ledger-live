@@ -7,7 +7,14 @@ import { WebviewAPI, WebviewProps } from "./types";
 
 export const Web3AppWebview = forwardRef<WebviewAPI, WebviewProps>(
   (
-    { manifest, inputs, customHandlers, onStateChange, allowsBackForwardNavigationGestures },
+    {
+      manifest,
+      currentAccountHistDb,
+      inputs,
+      customHandlers,
+      onStateChange,
+      allowsBackForwardNavigationGestures,
+    },
     ref,
   ) => {
     if (semver.satisfies(WALLET_API_VERSION, manifest.apiVersion)) {
@@ -15,6 +22,7 @@ export const Web3AppWebview = forwardRef<WebviewAPI, WebviewProps>(
         <WalletAPIWebview
           ref={ref}
           manifest={manifest}
+          currentAccountHistDb={currentAccountHistDb}
           inputs={inputs}
           customHandlers={customHandlers}
           onStateChange={onStateChange}
@@ -25,6 +33,7 @@ export const Web3AppWebview = forwardRef<WebviewAPI, WebviewProps>(
     return (
       <PlatformAPIWebview
         ref={ref}
+        currentAccountHistDb={currentAccountHistDb}
         manifest={manifest}
         inputs={inputs}
         onStateChange={onStateChange}

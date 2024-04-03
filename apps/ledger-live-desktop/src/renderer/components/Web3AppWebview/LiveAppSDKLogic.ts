@@ -99,11 +99,7 @@ export const broadcastTransactionLogic = (
         icon: "info",
         callback: () => {
           tracking.platformBroadcastOperationDetailsClick(manifest);
-          setDrawer<{
-            operationId: string;
-            accountId: string;
-            parentId: string | undefined | null;
-          }>(OperationDetails, {
+          setDrawer(OperationDetails, {
             operationId: optimisticOperation.id,
             accountId: account.id,
             parentId: parentAccount?.id,

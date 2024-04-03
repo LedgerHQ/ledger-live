@@ -522,7 +522,8 @@
         "refunded": "Please contact the swap provider with your swap ID for more information.",
         "pending": "Please wait while the swap provider is processing the transaction.",
         "onhold": "Please contact the swap provider with your swap ID to solve the situation.",
-        "finished": "Your swap was completed successfully."
+        "finished": "Your swap was completed successfully.",
+        "unknown": "Please contact the swap provider with your swap ID for more information."
       },
       "date": "Date",
       "from": "From",
@@ -6111,6 +6112,10 @@
       "subtitle": "Something went wrong. Please try again. If the problem persists, save your log and contact Ledger support.",
       "contactSupport": "Contact Ledger support",
       "saveLog": "Save log"
+    },
+    "noAccounts": {
+      "title": "You need an account to access this app.",
+      "add": "Add Account"
     }
   },
   "recoverRestore": {
