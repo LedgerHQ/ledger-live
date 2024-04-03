@@ -257,6 +257,7 @@ type HandlersPayloads = {
   SET_ANONYMOUS_BRAZE_ID: string;
   ADD_STARRED_MARKET_COINS: string;
   REMOVE_STARRED_MARKET_COINS: string;
+  SET_CURRENCY_SETTINGS: { key: string; value: CurrencySettings };
 };
 type SettingsHandlers<PreciseKey = true> = Handlers<SettingsState, HandlersPayloads, PreciseKey>;
 
@@ -381,6 +382,13 @@ const handlers: SettingsHandlers = {
     lastSeenCustomImage: {
       size: payload.imageSize,
       hash: payload.imageHash,
+    },
+  }),
+  SET_CURRENCY_SETTINGS: (state: SettingsState, { payload }) => ({
+    ...state,
+    currenciesSettings: {
+      ...state.currenciesSettings,
+      [payload.key]: payload.value,
     },
   }),
   SET_OVERRIDDEN_FEATURE_FLAG: (state: SettingsState, { payload }) => ({
