@@ -156,8 +156,8 @@ export const LiveAppDrawer = () => {
                 }
                 if ("startExchangeError" in result) {
                   data.onCancel?.(result.startExchangeError as unknown as Error);
+                  dispatch(closePlatformAppDrawer());
                 }
-                dispatch(closePlatformAppDrawer());
               }}
             />
           </Box>
