@@ -22,7 +22,7 @@ const RunLocalAppButton = () => {
   const { t } = useTranslation();
   const {
     addLocalManifest,
-    state: { liveAppByIndex },
+    state: { liveAppByIndex, created },
     removeLocalManifestById,
   } = useLocalLiveAppContext();
 
@@ -42,7 +42,9 @@ const RunLocalAppButton = () => {
           if (!response.canceled && response.filePath) {
             console.log("id", id);
 
-            const exportedManifest = liveAppByIndex.find(manifest => manifest.id === id);
+            const exportedManifest = liveAppByIndex.find(
+              (manifest: LiveAppManifest) => manifest.id === id,
+            );
 
             const manifestData = JSON.stringify(exportedManifest, null, 2);
             try {
@@ -127,22 +129,24 @@ const RunLocalAppButton = () => {
           </Button>
         </Flex>
       </Row>
-      {liveAppByIndex.map(manifest => (
+      {liveAppByIndex.map((manifest: LiveAppManifest) => (
         <Row key={manifest.id} title={manifest.name} desc={manifest.url as string}>
           <ButtonContainer style={{ display: "flex", gap: 16 }}>
             <Button small primary onClick={() => history.push(`/platform/${manifest.id}`)}>
               {t("settings.developer.runLocalAppOpenButton")}
             </Button>
-            <Button
-              small
-              outline
-              onClick={() => {
-                onExportLocalManifest(manifest);
-              }}
-              data-test-id="settings-enable-platform-dev-tools-apps"
-            >
-              {t("settings.developer.createLocalAppModal.export")}
-            </Button>
+            {created.includes(manifest.id) && (
+              <Button
+                small
+                outline
+                onClick={() => {
+                  onExportLocalManifest(manifest);
+                }}
+                data-test-id="settings-enable-platform-dev-tools-apps"
+              >
+                {t("settings.developer.createLocalAppModal.export")}
+              </Button>
+            )}
             <Button small danger onClick={() => removeLocalManifestById(manifest.id)}>
               {t("settings.developer.runLocalAppDeleteButton")}
             </Button>
