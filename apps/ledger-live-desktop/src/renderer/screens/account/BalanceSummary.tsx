@@ -146,8 +146,8 @@ export default function AccountBalanceSummary({
               discreetMode
                 ? () => ""
                 : displayCountervalue
-                ? renderTickYCounterValue
-                : renderTickYCryptoValue
+                  ? renderTickYCounterValue
+                  : renderTickYCryptoValue
             }
             renderTooltip={renderTooltip}
           />

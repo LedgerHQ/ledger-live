@@ -47,8 +47,8 @@ export const createFirmwareUpdateSteps = ({
     label: firmware?.osu?.hash
       ? "manager.modal.identifier"
       : stateStepId === STEPS.RESET_DEVICE || stateStepId === STEPS.ID_CHECK
-      ? "manager.modal.steps.prepare"
-      : "manager.modal.steps.prepareDone",
+        ? "manager.modal.steps.prepare"
+        : "manager.modal.steps.prepareDone",
     component: StepPrepare,
   };
 

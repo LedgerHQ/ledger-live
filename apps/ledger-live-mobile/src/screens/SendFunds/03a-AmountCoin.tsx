@@ -152,8 +152,8 @@ export default function SendAmountCoin({ navigation, route }: Props) {
                   status.errors.dustLimit
                     ? status.errors.dustLimit
                     : amount.eq(0) && (bridgePending || !transaction.useAllAmount)
-                    ? null
-                    : status.errors.amount
+                      ? null
+                      : status.errors.amount
                 }
                 warning={status.warnings.amount}
               />

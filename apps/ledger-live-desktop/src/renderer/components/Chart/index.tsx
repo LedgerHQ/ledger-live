@@ -108,10 +108,10 @@ export default function Chart({
               tickXScale === "week"
                 ? new Date(d.date)
                 : tickXScale === "day"
-                ? startOfHour(new Date(d.date))
-                : tickXScale === "minute"
-                ? new Date(new Date(d.date).getTime() - i * 5 * 60 * 1000)
-                : startOfDay(new Date(d.date)),
+                  ? startOfHour(new Date(d.date))
+                  : tickXScale === "minute"
+                    ? new Date(new Date(d.date).getTime() - i * 5 * 60 * 1000)
+                    : startOfDay(new Date(d.date)),
             y: d[valueKey],
           })),
         },

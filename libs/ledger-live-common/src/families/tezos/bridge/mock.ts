@@ -106,8 +106,8 @@ const getTransactionStatus = (a: Account, t: Transaction) => {
   let totalSpent = useAllAmount
     ? account.balance
     : subAcc
-    ? new BigNumber(t.amount)
-    : new BigNumber(t.amount).plus(estimatedFees);
+      ? new BigNumber(t.amount)
+      : new BigNumber(t.amount).plus(estimatedFees);
   amount = useAllAmount
     ? subAcc
       ? new BigNumber(t.amount)

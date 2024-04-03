@@ -49,8 +49,8 @@ const AccountCrumb = () => {
       tokenAccount
         ? getAccountCurrency(tokenAccount)
         : account
-        ? getAccountCurrency(account)
-        : null,
+          ? getAccountCurrency(account)
+          : null,
     [tokenAccount, account],
   );
 

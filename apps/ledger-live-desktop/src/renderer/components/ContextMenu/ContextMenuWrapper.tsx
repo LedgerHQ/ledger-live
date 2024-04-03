@@ -71,8 +71,8 @@ const ContextMenuItemContainer = styled(Box).attrs<ContextMenuItemContainerProps
   color: p.disabled
     ? "palette.text.shade50"
     : p.isActive
-    ? "palette.text.shade100"
-    : "palette.text.shade60",
+      ? "palette.text.shade100"
+      : "palette.text.shade60",
   bg: p.isActive && !p.disabled ? "palette.background.default" : "",
 }))<ContextMenuItemContainerProps>`
   padding: 8px 16px;

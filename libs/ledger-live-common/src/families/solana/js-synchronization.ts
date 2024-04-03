@@ -531,10 +531,10 @@ function getMainAccOperationType({
   return isFeePayer && balanceDelta.negated().eq(fee)
     ? "FEES"
     : balanceDelta.lt(0)
-    ? "OUT"
-    : balanceDelta.gt(0)
-    ? "IN"
-    : "NONE";
+      ? "OUT"
+      : balanceDelta.gt(0)
+        ? "IN"
+        : "NONE";
 }
 
 function getMainAccOperationTypeFromTx(tx: ParsedTransaction): OperationType | undefined {

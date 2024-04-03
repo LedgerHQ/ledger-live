@@ -120,8 +120,8 @@ export function Summary({ provider, swapTx: { swap, status, transaction } }: Pro
     return rate
       ? rate.times(valueNum) // NB Allow to override the rate for swap
       : typeof rawCounterValue === "number"
-      ? new BigNumber(rawCounterValue)
-      : rawCounterValue;
+        ? new BigNumber(rawCounterValue)
+        : rawCounterValue;
   }, [effectiveUnit, exchangeRate?.magnitudeAwareRate, rawCounterValue]);
 
   const onEditNetworkFees = useCallback(() => {

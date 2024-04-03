@@ -21,16 +21,16 @@ function formatOperationSpecifics(op: Operation, unit: Unit | null | undefined):
           unit ? formatCurrencyUnit(unit, bondedAmount, formatConfig) : bondedAmount
         }`
       : unbondedAmount && !unbondedAmount.isNaN()
-      ? `\n    unbondedAmount: ${
-          unit ? formatCurrencyUnit(unit, unbondedAmount, formatConfig) : unbondedAmount
-        }`
-      : withdrawUnbondedAmount && !withdrawUnbondedAmount.isNaN()
-      ? `\n    withdrawUnbondedAmount: ${
-          unit
-            ? formatCurrencyUnit(unit, withdrawUnbondedAmount, formatConfig)
-            : withdrawUnbondedAmount
-        }`
-      : "";
+        ? `\n    unbondedAmount: ${
+            unit ? formatCurrencyUnit(unit, unbondedAmount, formatConfig) : unbondedAmount
+          }`
+        : withdrawUnbondedAmount && !withdrawUnbondedAmount.isNaN()
+          ? `\n    withdrawUnbondedAmount: ${
+              unit
+                ? formatCurrencyUnit(unit, withdrawUnbondedAmount, formatConfig)
+                : withdrawUnbondedAmount
+            }`
+          : "";
   str += validatorStash ? `\n    validatorStash: ${validatorStash}` : "";
   return str;
 }

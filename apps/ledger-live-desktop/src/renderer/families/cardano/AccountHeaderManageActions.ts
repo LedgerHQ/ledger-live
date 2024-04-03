@@ -28,8 +28,8 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
     cardanoResources.delegation && cardanoResources.delegation.poolId
       ? t("cardano.delegation.assetsAlreadyStaked")
       : mainAccount.balance.isZero()
-      ? t("cardano.delegation.addFundsToStake")
-      : "";
+        ? t("cardano.delegation.addFundsToStake")
+        : "";
 
   const onClick = useCallback(() => {
     dispatch(

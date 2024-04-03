@@ -118,8 +118,8 @@ export default function TimelineItem({
                 item.status === "completed" && isLastItem
                   ? "success.c70"
                   : item.status === "active"
-                  ? "primary.c80"
-                  : "neutral.c70"
+                    ? "primary.c80"
+                    : "neutral.c70"
               }
             >
               {item.status === "completed" ? item.doneTitle ?? item.title : item.title}

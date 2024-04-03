@@ -19,12 +19,12 @@ ${mode.toUpperCase()} ${
   useAllAmount
     ? "MAX"
     : amount.isZero()
-    ? ""
-    : " " +
-      formatCurrencyUnit(getAccountUnit(account), amount, {
-        showCode: true,
-        disableRounding: true,
-      })
+      ? ""
+      : " " +
+        formatCurrencyUnit(getAccountUnit(account), amount, {
+          showCode: true,
+          disableRounding: true,
+        })
 }${recipient ? `\nTO ${recipient}` : ""}${!validators ? "" : validators.join("\n")}`;
 
 export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {

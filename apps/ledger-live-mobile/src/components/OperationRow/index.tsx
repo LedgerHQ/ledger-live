@@ -161,8 +161,8 @@ function OperationRow({
   const valueColor = amount.isNegative()
     ? colors.neutral.c100
     : isConfirmed
-    ? colors.success.c50
-    : colors.warning.c50;
+      ? colors.success.c50
+      : colors.warning.c50;
 
   const unit = getAccountUnit(account);
   const text = <Trans i18nKey={`operations.types.${operation.type}`} />;

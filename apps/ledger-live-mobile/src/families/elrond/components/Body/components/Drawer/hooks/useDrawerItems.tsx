@@ -205,8 +205,8 @@ const useDrawerItems = (data: DrawerPropsType["data"], account: ElrondAccount) =
       delegationItems.length
         ? commonItems.concat(delegationItems)
         : undelegationItems.length
-        ? commonItems.concat(undelegationItems)
-        : [],
+          ? commonItems.concat(undelegationItems)
+          : [],
     [commonItems, delegationItems, undelegationItems],
   );
 

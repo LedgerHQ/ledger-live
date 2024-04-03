@@ -166,8 +166,8 @@ const useDrawerActions = (
       delegationActions.length
         ? delegationActions
         : undelegationActions.length
-        ? undelegationActions
-        : [],
+          ? undelegationActions
+          : [],
     [delegationActions, undelegationActions],
   );
 

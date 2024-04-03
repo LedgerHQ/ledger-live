@@ -36,8 +36,8 @@ const Modals = () => {
   const activeRatings = npsRatingsFeature?.enabled
     ? "nps"
     : ratingsFeature?.enabled
-    ? "no-nps"
-    : "none";
+      ? "no-nps"
+      : "none";
 
   const onRouteChange = useCallback(
     // @ts-expect-error cannot find the correct event there

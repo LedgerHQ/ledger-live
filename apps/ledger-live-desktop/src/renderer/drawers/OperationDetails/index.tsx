@@ -108,8 +108,8 @@ const mapStateToProps = (
   const mainCurrency = parentAccount
     ? parentAccount.currency
     : account && account.type !== "TokenAccount"
-    ? account.currency
-    : null;
+      ? account.currency
+      : null;
   const confirmationsNb = mainCurrency
     ? confirmationsNbForCurrencySelector(state, {
         currency: mainCurrency,
@@ -349,8 +349,8 @@ const OperationD = (props: Props) => {
                       !isConfirmed && operation.type === "IN"
                         ? colors.warning
                         : amount.isNegative()
-                        ? "palette.text.shade80"
-                        : undefined
+                          ? "palette.text.shade80"
+                          : undefined
                     }
                     unit={unit}
                     alwaysShowSign
@@ -506,13 +506,13 @@ const OperationD = (props: Props) => {
             {hasFailed
               ? t("operationDetails.failed")
               : isConfirmed
-              ? t("operationDetails.confirmed")
-              : t("operationDetails.notConfirmed")}
+                ? t("operationDetails.confirmed")
+                : t("operationDetails.notConfirmed")}
             {getEnv("PLAYWRIGHT_RUN")
               ? ""
               : hasFailed
-              ? null
-              : `${confirmationsString ? ` (${confirmationsString})` : ``}`}
+                ? null
+                : `${confirmationsString ? ` (${confirmationsString})` : ``}`}
           </Box>
         </OpDetailsData>
       </OpDetailsSection>

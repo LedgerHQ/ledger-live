@@ -66,8 +66,8 @@ export function useLedgerFirstShuffledValidatorsNear(search: string) {
 
     const lowercaseSearch = search.toLowerCase();
 
-    const filtered = validators.filter(
-      validator => validator.validatorAddress?.toLowerCase().includes(lowercaseSearch),
+    const filtered = validators.filter(validator =>
+      validator.validatorAddress?.toLowerCase().includes(lowercaseSearch),
     );
 
     return filtered;

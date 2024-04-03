@@ -41,10 +41,10 @@ const Progress = ({ state, name, updating, installing, uninstalling, isCurrent }
                 updating
                   ? "manager.applist.item.updating"
                   : uninstalling
-                  ? "manager.applist.item.uninstalling"
-                  : installing && isCurrent && progress !== 1
-                  ? "manager.applist.item.installing"
-                  : "manager.applist.item.scheduled"
+                    ? "manager.applist.item.uninstalling"
+                    : installing && isCurrent && progress !== 1
+                      ? "manager.applist.item.installing"
+                      : "manager.applist.item.scheduled"
               }
             />
           </Text>

@@ -33,8 +33,8 @@ export const buildTransactionPayload = async (
       subAccount && subAccount.type === "TokenAccount"
         ? extractTokenId(subAccount.token.id)
         : assetId
-        ? extractTokenId(assetId)
-        : "";
+          ? extractTokenId(assetId)
+          : "";
 
     if (!targetAssetId) {
       throw new Error("Token Asset Id not found");

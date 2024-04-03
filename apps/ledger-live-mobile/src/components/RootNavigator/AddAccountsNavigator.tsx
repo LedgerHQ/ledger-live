@@ -37,8 +37,8 @@ export default function AddAccountsNavigator({ route }: NavigationProps) {
         token
           ? ScreenName.AddAccountsTokenCurrencyDisclaimer
           : currency
-          ? ScreenName.AddAccountsSelectDevice
-          : ScreenName.AddAccountsSelectCrypto
+            ? ScreenName.AddAccountsSelectDevice
+            : ScreenName.AddAccountsSelectCrypto
       }
       screenOptions={{
         ...stackNavConfig,

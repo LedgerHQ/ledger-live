@@ -114,8 +114,8 @@ const Logo = styled.div<{ warning?: boolean; info?: boolean }>`
     p.info
       ? p.theme.colors.palette.primary.main
       : p.warning
-      ? p.theme.colors.warning
-      : p.theme.colors.alertRed};
+        ? p.theme.colors.warning
+        : p.theme.colors.alertRed};
 `;
 
 export const Header = styled.div`

@@ -23,12 +23,12 @@ export const formatTransaction = (
     useAllAmount
       ? "MAX"
       : amount.isZero()
-      ? ""
-      : " " +
-        formatCurrencyUnit(getAccountUnit(account), amount, {
-          showCode: true,
-          disableRounding: true,
-        })
+        ? ""
+        : " " +
+          formatCurrencyUnit(getAccountUnit(account), amount, {
+            showCode: true,
+            disableRounding: true,
+          })
   }${recipient ? `\nTO ${recipient}` : ""}`;
 };
 

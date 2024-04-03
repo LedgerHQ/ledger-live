@@ -130,11 +130,11 @@ function mapTxToAccountOperation(
   const mainOperationType: OperationType = tx.certificate.stakeDelegations.length
     ? "DELEGATE"
     : tx.certificate.stakeDeRegistrations.length
-    ? "UNDELEGATE"
-    : getOperationType({
-        valueChange: operationValue,
-        fees: new BigNumber(tx.fees),
-      });
+      ? "UNDELEGATE"
+      : getOperationType({
+          valueChange: operationValue,
+          fees: new BigNumber(tx.fees),
+        });
 
   return {
     accountId,
@@ -260,8 +260,8 @@ export const makeGetAccountShape =
     const syncFromBlockHeight = outdatedSyncHash
       ? 0
       : lastBlockHeight > requiredConfirmations
-      ? lastBlockHeight - requiredConfirmations
-      : 0;
+        ? lastBlockHeight - requiredConfirmations
+        : 0;
 
     const {
       transactions: newTransactions,

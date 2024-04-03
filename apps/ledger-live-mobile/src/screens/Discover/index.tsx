@@ -88,26 +88,26 @@ function Discover() {
               },
             ]
           : Platform.OS !== "ios"
-          ? [
-              {
-                title: t("discover.sections.ledgerApps.title"),
-                subTitle: t("discover.sections.ledgerApps.desc"),
-                onPress: () => {
-                  navigation.navigate(NavigatorName.Discover, {
-                    screen: ScreenName.PlatformCatalog,
-                  });
+            ? [
+                {
+                  title: t("discover.sections.ledgerApps.title"),
+                  subTitle: t("discover.sections.ledgerApps.desc"),
+                  onPress: () => {
+                    navigation.navigate(NavigatorName.Discover, {
+                      screen: ScreenName.PlatformCatalog,
+                    });
+                  },
+                  disabled: false,
+                  Image: (
+                    <Illustration
+                      size={110}
+                      darkSource={images.dark.appsImg}
+                      lightSource={images.light.appsImg}
+                    />
+                  ),
                 },
-                disabled: false,
-                Image: (
-                  <Illustration
-                    size={110}
-                    darkSource={images.dark.appsImg}
-                    lightSource={images.light.appsImg}
-                  />
-                ),
-              },
-            ]
-          : []),
+              ]
+            : []),
         ...(!learn?.enabled && !isNewsfeedAvailable
           ? [
               {
@@ -131,30 +131,30 @@ function Discover() {
               },
             ]
           : learnCards.length > 0 || isNewsfeedAvailable
-          ? [
-              {
-                title: t("discover.sections.news.title"),
-                subTitle: t("discover.sections.news.desc"),
-                onPress: () => {
-                  // Fixme: Can't find a way to make TS happy ...
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore
-                  navigation.navigate(NavigatorName.ExploreTab);
-                  track("banner_clicked", {
-                    banner: "News",
-                  });
+            ? [
+                {
+                  title: t("discover.sections.news.title"),
+                  subTitle: t("discover.sections.news.desc"),
+                  onPress: () => {
+                    // Fixme: Can't find a way to make TS happy ...
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
+                    navigation.navigate(NavigatorName.ExploreTab);
+                    track("banner_clicked", {
+                      banner: "News",
+                    });
+                  },
+                  disabled: false,
+                  Image: (
+                    <Illustration
+                      size={110}
+                      darkSource={images.dark.learnImg}
+                      lightSource={images.light.learnImg}
+                    />
+                  ),
                 },
-                disabled: false,
-                Image: (
-                  <Illustration
-                    size={110}
-                    darkSource={images.dark.learnImg}
-                    lightSource={images.light.learnImg}
-                  />
-                ),
-              },
-            ]
-          : []),
+              ]
+            : []),
         {
           title: t("discover.sections.earn.title"),
           subTitle: t("discover.sections.earn.desc"),

@@ -108,8 +108,8 @@ export const subAccountByCurrencyOrderedSelector = createSelector(
             a.account.balance.gt(b.account.balance)
               ? -1
               : a.account.balance.eq(b.account.balance)
-              ? 0
-              : 1,
+                ? 0
+                : 1,
           )
       : [];
   },

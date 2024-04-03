@@ -210,8 +210,8 @@ const PickAmount = (props: PickAmountPropsType) => {
                         amountAboveMaximum
                           ? "elrond.undelegation.flow.steps.amount.incorrectAmount"
                           : amountBelowMinimum
-                          ? "elrond.undelegation.flow.steps.amount.minAmount"
-                          : "elrond.undelegation.flow.steps.amount.minRemaining"
+                            ? "elrond.undelegation.flow.steps.amount.minAmount"
+                            : "elrond.undelegation.flow.steps.amount.minRemaining"
                       }
                       values={{
                         min: `${denominatedMinimum} ${unit.code}`,

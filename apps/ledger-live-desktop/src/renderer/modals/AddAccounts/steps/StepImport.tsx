@@ -157,8 +157,8 @@ class StepImport extends PureComponent<
                     ? checkedAccountsIds
                     : [account.id]
                   : !hasAlreadyBeenImported && !isNewAccount
-                  ? uniq([...checkedAccountsIds, account.id])
-                  : checkedAccountsIds,
+                    ? uniq([...checkedAccountsIds, account.id])
+                    : checkedAccountsIds,
               });
             }
           },
@@ -396,10 +396,10 @@ export const StepImportFooter = ({
     scanStatus === "scanning"
       ? t("common.sync.syncing")
       : willClose
-      ? t("common.close")
-      : t("addAccounts.cta.add", {
-          count,
-        });
+        ? t("common.close")
+        : t("addAccounts.cta.add", {
+            count,
+          });
   const onClick = willClose
     ? onCloseModal
     : async () => {
