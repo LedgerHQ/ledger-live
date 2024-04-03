@@ -1,4 +1,3 @@
-import { Transaction } from "./types";
 import {
   MsgDelegate,
   MsgUndelegate,
@@ -19,7 +18,7 @@ import { cosmos } from "@keplr-wallet/cosmos";
 import { PubKey } from "@keplr-wallet/proto-types/cosmos/crypto/secp256k1/keys";
 import { AuthInfo, Fee } from "@keplr-wallet/proto-types/cosmos/tx/v1beta1/tx";
 import { TxBody } from "cosmjs-types/cosmos/tx/v1beta1/tx";
-import Long from "long";
+import { Transaction } from "./types";
 
 type ProtoMsg = {
   typeUrl: string;
@@ -269,9 +268,9 @@ export const buildTransaction = ({
   memo: string;
   pubKeyType: string;
   pubKey: string;
-  feeAmount: { amount: string; denom: string } | undefined;
+  feeAmount: { amount: string; denom: string }[] | undefined;
   gasLimit: string | undefined;
-  sequence: string;
+  sequence: string | number;
   signature: Uint8Array;
 }): Uint8Array => {
   const signedTx = TxRaw.encode({
@@ -299,11 +298,11 @@ export const buildTransaction = ({
             },
             multi: undefined,
           },
-          sequence: Long.fromString(sequence),
+          sequence: sequence.toString(),
         },
       ],
       fee: Fee.fromPartial({
-        amount: feeAmount as any,
+        amount: feeAmount,
         gasLimit: gasLimit,
       }),
     }).finish(),
