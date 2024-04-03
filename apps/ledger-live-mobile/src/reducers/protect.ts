@@ -7,7 +7,7 @@ import {
   ProtectDataPayload,
   ProtectStatusPayload,
 } from "../actions/types";
-import type { ProtectState, State } from "./types";
+import type { ProtectState } from "./types";
 import { ProtectStateNumberEnum } from "../components/ServicesWidget/types";
 
 export const INITIAL_STATE: ProtectState = {
@@ -40,12 +40,6 @@ const handlers: ReducerMap<ProtectState, ProtectPayload> = {
     data: (action as Action<ProtectDataPayload>).payload,
   }),
   [ProtectActionTypes.RESET_STATE]: () => INITIAL_STATE,
-};
-
-// Selectors
-
-export const protectSelector = (s: State): ProtectState => {
-  return s.protect;
 };
 
 export default handleActions<ProtectState, ProtectPayload>(handlers, INITIAL_STATE);
