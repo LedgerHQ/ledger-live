@@ -10,8 +10,8 @@ buildscript {
         androidXCore = "1.8.0"
         androidXAnnotation = "1.2.0"
         androidXBrowser = "1.3.0"
-       // We use NDK 23 which has both M1 support and is the side-by-side NDK version from AGP.
-        ndkVersion = "23.1.7779620"
+        ndkVersion = "25.1.8937393"
+        kotlinVersion = "1.8.0"
     }
     repositories {
         google()
@@ -34,6 +34,7 @@ buildscript {
         }
     }
 }
+apply plugin: "com.facebook.react.rootproject"
 
 allprojects {
     repositories {
@@ -70,27 +71,6 @@ allprojects {
             }
             force "androidx.core:core:$rootProject.ext.androidXCore"
             force "androidx.core:core-ktx:$rootProject.ext.androidXCore"
-        }
-    }
-}
-
-subprojects {
-    // Force all subprojects to use one and only one set of versions
-    afterEvaluate {project ->
-        if (project.hasProperty("android")) {
-            android {
-                compileSdkVersion rootProject.ext.compileSdkVersion
-                buildToolsVersion rootProject.ext.buildToolsVersion
-                defaultConfig {
-                    minSdkVersion rootProject.ext.minSdkVersion
-                    targetSdkVersion rootProject.ext.targetSdkVersion
-                }
-                compileOptions {
-                    sourceCompatibility JavaVersion.VERSION_17
-                    targetCompatibility JavaVersion.VERSION_17
-                    kotlinVersion = rootProject.ext.kotlinVersion
-                }
-            }
         }
     }
 }

@@ -99,6 +99,8 @@ describe.skip("testing xpub legacy litecoin transactions", () => {
       const tx = bitcoin.Transaction.fromHex(input.txHex);
 
       psbt.addInput({
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //@ts-expect-error
         hash: tx.getId(),
         index: input.output_index,
         nonWitnessUtxo,

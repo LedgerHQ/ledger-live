@@ -62,7 +62,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({ account, deviceI
           // HRP is only needed when signing for ethermint chains
           const signResponseApp =
             path[1] === 60
-              ? await app.sign(path, tx, chainInstance.prefix)
+              ? await app.sign(path, tx, parseInt(chainInstance.prefix))
               : await app.sign(path, tx);
 
           switch (signResponseApp.return_code) {
@@ -104,12 +104,12 @@ const signOperation: SignOperationFnSignature<Transaction> = ({ account, deviceI
             transaction.mode === "undelegate"
               ? "UNDELEGATE"
               : transaction.mode === "delegate"
-              ? "DELEGATE"
-              : transaction.mode === "redelegate"
-              ? "REDELEGATE"
-              : ["claimReward", "claimRewardCompound"].includes(transaction.mode)
-              ? "REWARD"
-              : "OUT";
+                ? "DELEGATE"
+                : transaction.mode === "redelegate"
+                  ? "REDELEGATE"
+                  : ["claimReward", "claimRewardCompound"].includes(transaction.mode)
+                    ? "REWARD"
+                    : "OUT";
 
           const senders: string[] = [];
           const recipients: string[] = [];
@@ -140,8 +140,8 @@ const signOperation: SignOperationFnSignature<Transaction> = ({ account, deviceI
               type === "REWARD"
                 ? new BigNumber(0)
                 : transaction.useAllAmount
-                ? account.spendableBalance
-                : transaction.amount.plus(fee),
+                  ? account.spendableBalance
+                  : transaction.amount.plus(fee),
             fee,
             extra,
             blockHash: null,

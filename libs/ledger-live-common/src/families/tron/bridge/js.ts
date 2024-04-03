@@ -677,6 +677,8 @@ const getTransactionStatus = async (a: TronAccount, t: Transaction): Promise<Tra
       } else {
         errors.resource = new TronNoFrozenForEnergy();
       }
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      //@ts-expect-error
     } else if (now.getTime() < expirationDate.getTime()) {
       errors.resource = new TronLegacyUnfreezeNotExpired();
     }

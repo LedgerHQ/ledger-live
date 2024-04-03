@@ -105,6 +105,8 @@ describe.skip("testing xpub native segwit transactions", () => {
         .toString("hex");
 
       psbt.addInput({
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //@ts-expect-error
         hash: tx.getId(),
         index: input.output_index,
         witnessUtxo: {

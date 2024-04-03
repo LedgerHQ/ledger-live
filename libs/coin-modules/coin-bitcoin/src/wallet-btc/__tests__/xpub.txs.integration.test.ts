@@ -105,6 +105,8 @@ describe.skip("testing xpub legacy transactions", () => {
       const tx = bitcoin.Transaction.fromHex(i.txHex);
 
       psbt.addInput({
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //@ts-expect-error
         hash: tx.getId(),
         index: i.output_index,
         nonWitnessUtxo,
@@ -208,6 +210,8 @@ describe.skip("testing xpub legacy transactions", () => {
       const nonWitnessUtxo = Buffer.from(i.txHex, "hex");
       const tx = bitcoin.Transaction.fromHex(i.txHex);
       psbt.addInput({
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //@ts-expect-error
         hash: tx.getId(),
         index: i.output_index,
         nonWitnessUtxo,
@@ -326,6 +330,8 @@ describe.skip("Build transactions", () => {
       const nonWitnessUtxo = Buffer.from(i.txHex, "hex");
       const tx = bitcoin.Transaction.fromHex(i.txHex);
       psbt.addInput({
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //@ts-expect-error
         hash: tx.getId(),
         index: i.output_index,
         nonWitnessUtxo,

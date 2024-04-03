@@ -230,7 +230,7 @@ export function TransferTabIcon() {
       >
         <ButtonAnimation
           source={themeType === "light" ? lightAnimSource : darkAnimSource}
-          animatedProps={Config.MOCK ? {} : { lottieProps }}
+          animatedProps={Config.MOCK ? {} : lottieProps}
           loop={false}
         />
       </MainButton>
