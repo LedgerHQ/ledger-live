@@ -13,6 +13,7 @@ import {
   Button,
 } from "~/contentCards/cards/vertical/elements";
 import { Size } from "~/contentCards/cards/vertical/types";
+import { WidthFactor } from "~/contentCards/layouts/types";
 
 type Props = {
   title: string;
@@ -23,10 +24,22 @@ type Props = {
   tag?: string;
   cta?: string;
   filledImage?: boolean;
+  widthFactor: WidthFactor;
 };
 
 const VerticalCard = ContentCardBuilder<Props>(
-  ({ title, description: subtitle, price, image, tag, size, metadata, cta, filledImage }) => {
+  ({
+    title,
+    description: subtitle,
+    price,
+    image,
+    tag,
+    size,
+    metadata,
+    cta,
+    filledImage,
+    widthFactor,
+  }) => {
     useEffect(() => metadata.actions?.onView?.());
     const hasCta = cta && size === "L";
     const hasPrice = !hasCta && price;
@@ -36,7 +49,7 @@ const VerticalCard = ContentCardBuilder<Props>(
         {tag && <Tag size={size} label={tag} />}
         {metadata.actions?.onDismiss && <Close onPress={metadata.actions?.onDismiss} />}
 
-        <Container size={size}>
+        <Container size={size} widthFactor={widthFactor}>
           <Flex alignItems="center" width={"100%"} height={"100%"}>
             <Image uri={image} size={size} filledImage={filledImage} />
             <Title size={size} label={title} />
