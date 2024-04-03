@@ -138,7 +138,7 @@ function FormLocalManifest({
   }, []);
 
   return (
-    <form onSubmit={() => formIsValid && addLocalManifest(form)}>
+    <form>
       <ModalBody
         onClose={onClose}
         title={<Trans i18nKey={`settings.developer.createLocalAppModal.title.create`} />}
@@ -422,7 +422,7 @@ function FormLocalManifest({
                   disabled={!formIsValid}
                   primary
                   onClick={() => {
-                    formIsValid && addLocalManifest(form);
+                    formIsValid && addLocalManifest(form, true);
                     onClose();
                   }}
                 >
