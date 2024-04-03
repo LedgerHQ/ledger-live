@@ -114,8 +114,6 @@ function FormLocalManifest({
   const [form, setForm] = useState<LiveAppManifest>({ ...DEFAULT_FORM });
   const [isDapp, setIsDapp] = useState("dapp" in form);
 
-  console.log(form);
-
   const completeManifests = useManifests({ visibility: ["complete"] });
   const { categories } = useCategories(completeManifests);
 

@@ -50,7 +50,7 @@ const RunLocalAppButton = () => {
                 console.log("File exported successfully!"),
               );
             } catch (parseError) {
-              console.log(parseError);
+              console.warn(parseError);
             }
           }
         });
