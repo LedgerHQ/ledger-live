@@ -1,18 +1,19 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 import Track from "~/renderer/analytics/Track";
 import { setCurrencySettings } from "~/renderer/actions/settings";
 import {
-  currenciesSettingsSelector,
   currencySettingsDefaults,
   CurrencySettings,
+  currencySettingsLocaleSelector,
 } from "~/renderer/reducers/settings";
 import StepperNumber from "~/renderer/components/StepperNumber";
 import { SettingsSectionRow as Row, SettingsSectionRowContainer } from "../../SettingsSection";
 import Box from "~/renderer/components/Box";
 import Select from "~/renderer/components/Select";
+import { State } from "~/renderer/reducers";
 
 type Props = {
   currency: CryptoCurrency;
@@ -23,11 +24,9 @@ type Key = keyof CurrencySettings;
 export default function CurrencyRows({ currency }: Props) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const currenciesSettings = useSelector(currenciesSettingsSelector);
 
-  const currencySettings = useMemo(
-    () => currenciesSettings[currency.ticker],
-    [currenciesSettings, currency.ticker],
+  const currencySettings = useSelector((state: State) =>
+    currencySettingsLocaleSelector(state.settings, currency),
   );
 
   const handleChangeConfirmationsNb = (nb: number) => updateCurrencySettings("confirmationsNb", nb);

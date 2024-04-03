@@ -30,7 +30,9 @@ export default function Currencies() {
   const currencyId = currency?.id;
   const currencyName = currency?.name;
   const isCurrencyDisabled = useCallback(
-    (currency: Currency) => !currencySettingsDefaults(currency).confirmationsNb,
+    (currency: Currency) =>
+      !currencySettingsDefaults(currency).confirmationsNb &&
+      !currencySettingsDefaults(currency).unit,
     [],
   );
   return (

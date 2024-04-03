@@ -501,6 +501,7 @@ export const currencySettingsDefaults = (c: Currency): ConfirmationDefaults & Un
       };
     }
   }
+
   return {
     confirmationsNb,
     unit: c.units[0],
@@ -635,12 +636,14 @@ export const currencySettingsLocaleSelector = (
   settings: SettingsState,
   currency: Currency,
 ): CurrencySettings => {
-  const currencySettings = settings.currenciesSettings[currency.ticker];
-  const val = {
+  const currencySettings = Object.keys(settings.currenciesSettings)?.includes(currency.ticker)
+    ? settings.currenciesSettings[currency.ticker]
+    : {};
+
+  return {
     ...defaultsForCurrency(currency),
     ...currencySettings,
   };
-  return val;
 };
 
 export const currencyPropExtractor = (_: State, { currency }: { currency: CryptoCurrency }) =>
