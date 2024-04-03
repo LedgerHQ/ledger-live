@@ -8,6 +8,7 @@ import { isModalLockedSelector } from "~/reducers/appstate";
 import { Merge } from "~/types/helpers";
 import { IsInDrawerProvider } from "~/context/IsInDrawerContext";
 import { DrawerInQueue, QueuedDrawersContext } from "./QueuedDrawersContext";
+import { logDrawer } from "./QueuedDrawersContextProvider";
 
 // Purposefully removes isOpen prop so consumers can't use it directly
 export type Props = Merge<
@@ -94,7 +95,7 @@ const QueuedDrawer = ({
       if (isOpen) {
         triggerOpen();
       } else {
-        console.log("setDrawerOpenedCallback triggerClose");
+        logDrawer("setDrawerOpenedCallback triggerClose");
         triggerClose();
       }
     },
@@ -103,18 +104,18 @@ const QueuedDrawer = ({
 
   useEffect(() => {
     if (!isFocused && (isRequestingToBeOpened || isForcingToBeOpened)) {
-      console.log("trigger close because not focused");
+      logDrawer("trigger close because not focused");
       triggerClose();
     } else if (isRequestingToBeOpened && !drawerInQueueRef.current) {
       drawerInQueueRef.current = addDrawerToQueue(setDrawerOpenedCallback, false);
       return () => {
-        console.log("trigger close in cleanup");
+        logDrawer("trigger close in cleanup");
         triggerClose();
       };
     } else if (isForcingToBeOpened && !drawerInQueueRef.current) {
       drawerInQueueRef.current = addDrawerToQueue(setDrawerOpenedCallback, true);
       return () => {
-        console.log("trigger close in cleanup");
+        logDrawer("trigger close in cleanup");
         triggerClose();
       };
     }
@@ -128,13 +129,13 @@ const QueuedDrawer = ({
   ]);
 
   const handleCloseUserEvent = useCallback(() => {
-    console.log("handleClose");
+    logDrawer("handleClose");
     triggerClose();
     onClose && onClose();
-  }, [onClose]);
+  }, [onClose, triggerClose]);
 
   const handleModalHide = useCallback(() => {
-    console.log("handleModalHide");
+    logDrawer("handleModalHide");
     onModalHide && onModalHide();
     onClose && onClose();
     setIsDisplayed(false);
@@ -144,7 +145,7 @@ const QueuedDrawer = ({
 
   useEffect(() => {
     return () => {
-      console.log("UNMOUNT drawer...");
+      logDrawer("UNMOUNT drawer...");
       drawerInQueueRef.current?.removeDrawerFromQueue();
       drawerInQueueRef.current = undefined;
     };
