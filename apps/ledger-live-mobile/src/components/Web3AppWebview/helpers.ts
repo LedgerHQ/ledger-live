@@ -34,6 +34,7 @@ import getOrCreateUser from "../../user";
 import * as bridge from "../../../e2e/bridge/client";
 import Config from "react-native-config";
 import { currentRouteNameRef } from "../../analytics/screenRefs";
+import { WebViewNavigationEvent } from "react-native-webview/src/WebViewTypes";
 
 export function useWebView(
   {
@@ -235,38 +236,47 @@ export function useWebviewState(
     [],
   );
 
-  const onLoad: Required<WebViewProps>["onLoad"] = useCallback(({ nativeEvent }) => {
-    setState({
-      title: nativeEvent.title,
-      url: nativeEvent.url,
-      canGoBack: nativeEvent.canGoBack,
-      canGoForward: nativeEvent.canGoForward,
-      loading: nativeEvent.loading,
-    });
-  }, []);
+  const onLoad: Required<WebViewProps>["onLoad"] = useCallback(
+    ({ nativeEvent }: WebViewNavigationEvent) => {
+      setState({
+        title: nativeEvent.title,
+        url: nativeEvent.url,
+        canGoBack: nativeEvent.canGoBack,
+        canGoForward: nativeEvent.canGoForward,
+        loading: nativeEvent.loading,
+      });
+    },
+    [],
+  );
 
-  const onLoadStart: Required<WebViewProps>["onLoadStart"] = useCallback(({ nativeEvent }) => {
-    setState({
-      title: nativeEvent.title,
-      url: nativeEvent.url,
-      canGoBack: nativeEvent.canGoBack,
-      canGoForward: nativeEvent.canGoForward,
-      loading: nativeEvent.loading,
-    });
-  }, []);
+  const onLoadStart: Required<WebViewProps>["onLoadStart"] = useCallback(
+    ({ nativeEvent }: WebViewNavigationEvent) => {
+      setState({
+        title: nativeEvent.title,
+        url: nativeEvent.url,
+        canGoBack: nativeEvent.canGoBack,
+        canGoForward: nativeEvent.canGoForward,
+        loading: nativeEvent.loading,
+      });
+    },
+    [],
+  );
 
-  const onLoadEnd: Required<WebViewProps>["onLoadEnd"] = useCallback(({ nativeEvent }) => {
-    setState({
-      title: nativeEvent.title,
-      url: nativeEvent.url,
-      canGoBack: nativeEvent.canGoBack,
-      canGoForward: nativeEvent.canGoForward,
-      loading: nativeEvent.loading,
-    });
-  }, []);
+  const onLoadEnd: Required<WebViewProps>["onLoadEnd"] = useCallback(
+    ({ nativeEvent }: WebViewNavigationEvent) => {
+      setState({
+        title: nativeEvent.title,
+        url: nativeEvent.url,
+        canGoBack: nativeEvent.canGoBack,
+        canGoForward: nativeEvent.canGoForward,
+        loading: nativeEvent.loading,
+      });
+    },
+    [],
+  );
 
   const onNavigationStateChange: Required<WebViewProps>["onNavigationStateChange"] = useCallback(
-    event => {
+    (event: WebViewNavigationEvent["nativeEvent"]) => {
       setState({
         title: event.title,
         url: event.url,

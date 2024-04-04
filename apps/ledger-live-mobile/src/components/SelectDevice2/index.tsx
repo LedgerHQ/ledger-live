@@ -91,7 +91,7 @@ export default function SelectDevice({
   });
 
   // Each time the user navigates back to the screen the BLE requirements are not enforced
-  const [isBleRequired, setIsBleRequired] = useResetOnNavigationFocusState(navigation, false);
+  const [isBleRequired, setIsBleRequired] = useResetOnNavigationFocusState(false);
 
   // To be able to triggers the device selection once all the bluetooth requirements are respected
   const [

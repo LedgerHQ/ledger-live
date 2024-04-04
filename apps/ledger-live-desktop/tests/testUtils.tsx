@@ -36,7 +36,7 @@ function render(
     ...renderOptions
   }: ExtraOptions = {},
 ): RenderReturn {
-  function Wrapper({ children }: ChildrenProps) {
+  function Wrapper({ children }: ChildrenProps): JSX.Element {
     return (
       <Provider store={store}>
         <StyleProvider selectedPalette="dark">
@@ -45,10 +45,11 @@ function render(
       </Provider>
     );
   }
+
   return {
     store,
     user: userEvent.setup(userEventOptions),
-    ...rtlRender(ui, { wrapper: Wrapper, ...renderOptions }),
+    ...rtlRender(ui, { wrapper: Wrapper as React.ComponentType, ...renderOptions }),
   };
 }
 export * from "@testing-library/react";

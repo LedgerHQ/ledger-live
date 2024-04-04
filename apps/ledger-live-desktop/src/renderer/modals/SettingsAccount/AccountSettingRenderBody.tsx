@@ -34,6 +34,7 @@ type OwnProps = {
   onClose?: () => void;
   data: unknown;
 };
+
 type Props = {
   setDataModal: Function;
   updateAccount: Function;
@@ -53,6 +54,23 @@ const defaultState = {
   accountNameError: null,
   isRemoveAccountModalOpen: false,
 };
+
+export const OptionRowDesc = styled(Box).attrs(() => ({
+  ff: "Inter|Regular",
+  fontSize: 3,
+  textAlign: "left",
+  lineHeight: 1.69,
+  color: "palette.text.shade60",
+}))``;
+
+export const OptionRowTitle = styled(Box).attrs(() => ({
+  ff: "Inter|SemiBold",
+  color: "palette.text.shade100",
+  fontSize: 4,
+  textAlign: "left",
+  lineHeight: 1.69,
+}))``;
+
 class AccountSettingRenderBody extends PureComponent<Props, State> {
   state = {
     ...defaultState,
@@ -61,6 +79,8 @@ class AccountSettingRenderBody extends PureComponent<Props, State> {
   getAccount(data: unknown): Account {
     const { accountName } = this.state;
     const account = get(data, "account", {});
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
     return {
       ...account,
       ...(accountName !== null
@@ -290,21 +310,7 @@ export const Container = styled(Box).attrs(() => ({
   border-bottom: 1px solid ${p => p.theme.colors.palette.divider};
   justify-content: space-between;
 `;
-export const OptionRowDesc = styled(Box).attrs(() => ({
-  ff: "Inter|Regular",
-  fontSize: 3,
-  textAlign: "left",
-  lineHeight: 1.69,
-  color: "palette.text.shade60",
-  shrink: 1,
-}))``;
-export const OptionRowTitle = styled(Box).attrs(() => ({
-  ff: "Inter|SemiBold",
-  color: "palette.text.shade100",
-  fontSize: 4,
-  textAlign: "left",
-  lineHeight: 1.69,
-}))``;
+
 const Tips = memo(function Tips({ tag }: { tag: string }) {
   return (
     <Alert type="primary" learnMoreUrl={urls.xpubLearnMore}>

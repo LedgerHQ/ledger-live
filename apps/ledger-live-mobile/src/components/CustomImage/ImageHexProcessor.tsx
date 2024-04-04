@@ -1,7 +1,7 @@
 import { Flex } from "@ledgerhq/native-ui";
 import React from "react";
 import { WebView } from "react-native-webview";
-import { WebViewErrorEvent, WebViewMessageEvent } from "react-native-webview/lib/WebViewTypes";
+import { WebViewErrorEvent, WebViewMessageEvent } from "react-native-webview/src/WebViewTypes";
 import { ImageProcessingError } from "@ledgerhq/live-common/customImage/errors";
 import { ProcessorPreviewResult, ProcessorRawResult } from "./ImageProcessor";
 import { injectedCode } from "./injectedCode/imageHexToBase64Processing";

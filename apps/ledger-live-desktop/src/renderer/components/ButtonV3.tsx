@@ -55,6 +55,7 @@ function Button({
       disabled={disabled}
       onClick={isClickDisabled ? undefined : onClickHandler}
       data-test-id={buttonTestId}
+      ref={null}
     >
       {children}
     </Base>
