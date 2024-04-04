@@ -1,5 +1,28 @@
 # @ledgerhq/live-common
 
+## 34.1.0-next.1
+
+### Minor Changes
+
+- [#6614](https://github.com/LedgerHQ/ledger-live/pull/6614) [`762dea1`](https://github.com/LedgerHQ/ledger-live/commit/762dea1c52ef0537961d058f7ba81fa399663ac1) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for failed operations in Cosmos chains. Fix breaking change in the `GetTxsEvent` Cosmos SDK endpoint after v0.47. Fix incorrect transaction simulation in Cosmos chains. Add types to all Cosmos SDK endpoint for better analysis of SDK breaking changes and depreciations.
+
+### Patch Changes
+
+- Updated dependencies [[`762dea1`](https://github.com/LedgerHQ/ledger-live/commit/762dea1c52ef0537961d058f7ba81fa399663ac1)]:
+  - @ledgerhq/live-env@2.0.1-next.0
+  - @ledgerhq/coin-framework@0.12.0-next.1
+  - @ledgerhq/coin-algorand@0.4.1-next.1
+  - @ledgerhq/coin-bitcoin@0.4.0-next.1
+  - @ledgerhq/coin-evm@1.1.0-next.1
+  - @ledgerhq/coin-near@0.3.12-next.1
+  - @ledgerhq/coin-polkadot@0.6.1-next.1
+  - @ledgerhq/live-countervalues@0.1.4-next.1
+  - @ledgerhq/live-network@1.2.1-next.1
+  - @ledgerhq/live-nft@0.3.1-next.1
+  - @ledgerhq/live-countervalues-react@0.1.4-next.1
+  - @ledgerhq/hw-app-eth@6.36.0-next.1
+  - @ledgerhq/device-core@0.1.1-next.1
+
 ## 34.1.0-next.0
 
 ### Minor Changes

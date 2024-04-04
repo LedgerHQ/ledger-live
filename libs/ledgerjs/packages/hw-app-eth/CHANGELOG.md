@@ -1,5 +1,12 @@
 # @ledgerhq/hw-app-eth
 
+## 6.36.0-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/evm-tools@1.0.18-next.1
+
 ## 6.36.0-next.0
 
 ### Minor Changes
