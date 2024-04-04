@@ -2,10 +2,9 @@ import React, { useContext, createContext, useMemo, useState, useCallback } from
 import { LiveAppRegistry } from "./types";
 import { LiveAppManifest } from "../../types";
 
-const initialState: LiveAppRegistry & { created: string[] } = {
+const initialState: LiveAppRegistry = {
   liveAppById: {},
   liveAppByIndex: [],
-  created: [],
 };
 
 type LiveAppContextType = {
@@ -35,36 +34,28 @@ export function useLocalLiveAppContext(): LiveAppContextType {
 }
 
 export function LocalLiveAppProvider({ children }: LiveAppProviderProps): JSX.Element {
-  const [state, setState] = useState<typeof initialState>(initialState);
+  const [state, setState] = useState<LiveAppRegistry>(initialState);
 
-  const addLocalManifest = useCallback(
-    (newManifest: LiveAppManifest, createdInLedgerlive: boolean = false) => {
-      setState(oldState => {
-        const liveAppByIndex = oldState.liveAppByIndex.filter(
-          manifest => manifest.id !== newManifest.id,
-        );
+  const addLocalManifest = useCallback((newManifest: LiveAppManifest) => {
+    setState(oldState => {
+      const liveAppByIndex = oldState.liveAppByIndex.filter(
+        manifest => manifest.id !== newManifest.id,
+      );
 
-        const created = oldState.created;
-        createdInLedgerlive && created.push(newManifest.id);
-
-        liveAppByIndex.push(newManifest);
-        return {
-          liveAppById: {
-            ...oldState.liveAppById,
-            [newManifest.id]: newManifest,
-          },
-          liveAppByIndex,
-          created,
-        };
-      });
-    },
-    [],
-  );
+      liveAppByIndex.push(newManifest);
+      return {
+        liveAppById: {
+          ...oldState.liveAppById,
+          [newManifest.id]: newManifest,
+        },
+        liveAppByIndex,
+      };
+    });
+  }, []);
 
   const removeLocalManifestById = useCallback((manifestId: string) => {
     setState(oldState => {
       const liveAppByIndex = oldState.liveAppByIndex.filter(manifest => manifest.id !== manifestId);
-      const created = oldState.created.filter(id => id !== manifestId);
 
       const liveAppById = {
         ...oldState.liveAppById,
@@ -75,7 +66,6 @@ export function LocalLiveAppProvider({ children }: LiveAppProviderProps): JSX.El
       return {
         liveAppById,
         liveAppByIndex,
-        created,
       };
     });
   }, []);
