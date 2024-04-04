@@ -64,13 +64,13 @@ import PostOnboardingDebugScreen from "~/screens/PostOnboarding/PostOnboardingDe
 import { SettingsNavigatorStackParamList } from "./types/SettingsNavigator";
 import DebugTermsOfUse from "~/screens/Settings/Debug/Features/TermsOfUse";
 import CameraPermissions from "~/screens/Settings/Debug/Debugging/CameraPermissions";
-import DebugQueuedDrawers from "~/screens/Settings/Debug/Features/QueuedDrawers";
 import BleEDevicePairingScreen from "~/screens/Settings/Debug/Features/BleDevicePairingScreen";
 import EditCurrencyUnits from "~/screens/Settings/CryptoAssets/Currencies/EditCurrencyUnits";
 import {
-  DebugQueuedScreen1,
-  DebugQueuedScreen2,
-} from "~/screens/Settings/Debug/Features/QueuedDrawersScreens";
+  MainTestScreen,
+  TestScreenWithDrawerForcingToBeOpened,
+  TestScreenWithDrawerRequestingToBeOpened,
+} from "~/newArch/components/QueuedDrawer/TestScreens";
 
 const Stack = createStackNavigator<SettingsNavigatorStackParamList>();
 
@@ -462,23 +462,23 @@ export default function SettingsNavigator() {
       />
       <Stack.Screen
         name={ScreenName.DebugQueuedDrawers}
-        component={DebugQueuedDrawers}
+        component={MainTestScreen}
         options={{
-          title: "Debug bottom drawers",
+          title: "QueuedDrawers",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugQueuedDrawerScreen1}
-        component={DebugQueuedScreen1}
+        component={TestScreenWithDrawerRequestingToBeOpened}
         options={{
-          title: "Debug Queued Screen 1",
+          title: "QueuedDrawers (Auto open)",
         }}
       />
       <Stack.Screen
         name={ScreenName.DebugQueuedDrawerScreen2}
-        component={DebugQueuedScreen2}
+        component={TestScreenWithDrawerForcingToBeOpened}
         options={{
-          title: "Debug Queued Screen 2",
+          title: "QueuedDrawers (Auto force open)",
         }}
       />
     </Stack.Navigator>
