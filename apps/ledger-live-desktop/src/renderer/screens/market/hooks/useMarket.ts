@@ -6,7 +6,7 @@ import {
   useMarketDataProvider,
   useMarketData as useMarketDataHook,
 } from "@ledgerhq/live-common/market/v2/useMarketDataProvider";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -92,6 +92,13 @@ export function useMarket() {
   );
 
   const resetSearch = useCallback(() => refresh({ search: "" }), [refresh]);
+
+  const resetMarketPageToInital = (page: number) => {
+    if (page > 1) {
+      dispatch(setMarketOptions({ page: 1 }));
+      dispatch(setMarketCurrentPage(1));
+    }
+  };
 
   const onLoadNextPage = useCallback(() => {
     dispatch(setMarketOptions({ page: (marketParams?.page || 1) + 1 }));
@@ -184,25 +191,10 @@ export function useMarket() {
     [marketParams.limit, marketCurrentPage, refetchData, dispatch],
   );
 
-  useEffect(() => {
-    const intervalId = setInterval(() => refetchData(marketCurrentPage ?? 1), REFRESH_RATE);
-
-    return () => clearInterval(intervalId);
-  }, [REFRESH_RATE, marketCurrentPage, refetchData]);
-
   /**
    *
    * ----------------------------------------------
    */
-
-  useEffect(() => {
-    // reset page when coming back to MarketPage or first time
-    if ((marketParams?.page ?? 1) > 1) {
-      dispatch(setMarketOptions({ page: 1 }));
-      dispatch(setMarketCurrentPage(1));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return {
     isItemLoaded,
@@ -217,6 +209,8 @@ export function useMarket() {
     resetSearch,
     setCounterCurrency,
     checkIfDataIsStaleAndRefetch,
+    resetMarketPage: resetMarketPageToInital,
+    refetchData,
     freshLoading,
     supportedCounterCurrencies,
     t,
@@ -226,11 +220,13 @@ export function useMarket() {
     starredMarketCoins,
     timeRanges,
     marketParams,
+    marketCurrentPage,
     timeRangeValue,
     itemCount,
     locale,
     fromCurrencies,
     loading,
     currenciesLength,
+    refreshRate: REFRESH_RATE,
   };
 }
