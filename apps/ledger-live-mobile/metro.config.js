@@ -51,14 +51,6 @@ const nodeModulesPaths = [
   path.resolve(projectRootDir, "node_modules", ".pnpm"),
 ];
 
-const extraNodeModules = {
-  ...require("node-libs-react-native"),
-  fs: require.resolve("react-native-level-fs"),
-  net: require.resolve("react-native-tcp-socket"),
-  tls: require.resolve("tls"),
-  ...buildTsAlias(tsconfig.compilerOptions.paths),
-};
-
 const metroConfig = {
   projectRoot: path.resolve(__dirname),
   watchFolders: [projectRootDir],
@@ -76,12 +68,16 @@ const metroConfig = {
     unstable_conditionNames: ["require", "react-native", "browser"],
     nodeModulesPaths,
     resolverMainFields: ["react-native", "browser", "main"],
+    extraNodeModules: {
+      ...require("node-libs-react-native"),
+      fs: require.resolve("react-native-level-fs"),
+      net: require.resolve("react-native-tcp-socket"),
+      tls: require.resolve("tls"),
+      ...buildTsAlias(tsconfig.compilerOptions.paths),
+    },
     resolveRequest: (context, moduleName, platform) => {
       if (["tls", "http2", "dns"].includes(moduleName)) {
         return { type: "empty" };
-      }
-      if (Object.keys(extraNodeModules).includes(moduleName) && extraNodeModules[moduleName]) {
-        return { type: "sourceFile", filePath: extraNodeModules[moduleName] };
       }
 
       try {
@@ -93,7 +89,6 @@ const metroConfig = {
 
       return context.resolveRequest(context, moduleName, platform);
     },
-    extraNodeModules,
   },
 };
 

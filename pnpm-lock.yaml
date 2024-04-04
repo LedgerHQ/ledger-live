@@ -101,7 +101,7 @@ importers:
         specifier: ^5.4.3
         version: 5.4.3
       unimported:
-        specifier: ^1.30.0
+        specifier: 1.30.0
         version: 1.30.0(eslint@8.57.0)
       zx:
         specifier: ^7.2.2
@@ -5354,9 +5354,6 @@ importers:
       embla-carousel-react:
         specifier: 8.0.0-rc17
         version: 8.0.0-rc17(react@18.2.0)
-      moment:
-        specifier: ^2.29.1
-        version: 2.30.1
       react-is:
         specifier: ^17.0.2
         version: 17.0.2

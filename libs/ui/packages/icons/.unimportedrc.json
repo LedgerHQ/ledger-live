@@ -5,8 +5,10 @@
     "src/reactLegacy/index.ts",
     "src/nativeLegacy/index.ts"
   ],
+  "ignorePatterns": ["**/node_modules/**"],
   "ignoreUnimported": [],
   "ignoreUnresolved": [
+    "react-native/Libraries/Utilities/codegenNativeComponent",
     "@styled-system/border",
     "@styled-system/background",
     "@styled-system/core",
