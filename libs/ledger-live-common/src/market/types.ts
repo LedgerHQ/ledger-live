@@ -26,7 +26,6 @@ export type MarketListRequestParams = {
   top100?: boolean;
   supportedCoinsList?: SupportedCoins;
   liveCoinsList?: string[];
-  refreshTime?: number;
 };
 
 export type MarketListRequestResult = {

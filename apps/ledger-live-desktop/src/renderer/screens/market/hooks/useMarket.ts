@@ -44,9 +44,6 @@ export function useMarket() {
     ...marketParams,
     liveCoinsList,
     supportedCoinsList: supportedCurrencies,
-    refreshTime: lldRefreshMarketDataFeature?.enabled
-      ? Number(lldRefreshMarketDataFeature?.params?.refreshTime)
-      : undefined,
   });
 
   const REFRESH_RATE =
