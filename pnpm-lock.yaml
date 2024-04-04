@@ -8,9 +8,6 @@ neverBuiltDependencies:
   - blake2
 
 overrides:
-  '@hashgraph/sdk>@grpc/grpc-js': 1.6.7
-  tronweb>axios: 0.26.1
-  '@hashgraph/sdk>@hashgraph/cryptography': 1.1.2
   stellar-base>sodium-native: ^3.2.1
   remove-flow-types-loader>flow-remove-types: ^2
   remove-flow-types-loader>loader-utils: '*'
@@ -312,14 +309,14 @@ importers:
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/types-live
       '@sentry/electron':
-        specifier: ^4.15.1
+        specifier: 4.21.0
         version: 4.21.0
       '@sentry/node':
-        specifier: 7.84.0
-        version: 7.84.0
+        specifier: 7.109.0
+        version: 7.109.0
       '@sentry/tracing':
-        specifier: 7.84.0
-        version: 7.84.0
+        specifier: 7.109.0
+        version: 7.109.0
       '@tanstack/react-query':
         specifier: ^5.28.9
         version: 5.28.9(react@18.2.0)
@@ -553,10 +550,10 @@ importers:
         specifier: ^1.41.2
         version: 1.42.1
       '@sentry/cli':
-        specifier: ^2.27.0
+        specifier: 2.31.0
         version: 2.31.0
       '@sentry/types':
-        specifier: ^7.99.0
+        specifier: 7.109.0
         version: 7.109.0
       '@testing-library/dom':
         specifier: ^9.3.3
@@ -883,7 +880,7 @@ importers:
         specifier: ^0.4.5
         version: 0.4.5(react-native@0.73.6)(react@18.2.0)
       '@sentry/react-native':
-        specifier: ^5.19.0
+        specifier: 5.20.0
         version: 5.20.0(expo@50.0.14)(react-native@0.73.6)(react@18.2.0)
       '@shopify/react-native-performance':
         specifier: ^4.1.2
@@ -1211,7 +1208,7 @@ importers:
         specifier: 0.73.7
         version: 0.73.7
       '@sentry/cli':
-        specifier: ^2.5.2
+        specifier: 2.31.0
         version: 2.31.0
       '@swc/core':
         specifier: ^1.3.95
@@ -2181,8 +2178,8 @@ importers:
         specifier: workspace:^
         version: link:../ledgerjs/packages/types-live
       axios:
-        specifier: 1.3.1
-        version: 1.3.1
+        specifier: ^1.3.4
+        version: 1.6.8
       eip55:
         specifier: ^2.1.1
         version: 2.1.1
@@ -12708,14 +12705,6 @@ packages:
     dependencies:
       graphql: 15.8.0
 
-  /@grpc/grpc-js@1.6.7:
-    resolution: {integrity: sha512-eBM03pu9hd3VqDQG+kHahiG1x80RGkkqqRb1Pchcwqej/KkAH95gAvKs6laqaHCycYaPK+TKuNQnOz9UXYA8qw==}
-    engines: {node: ^8.13.0 || >=10.10.0}
-    dependencies:
-      '@grpc/proto-loader': 0.6.13
-      '@types/node': 20.11.30
-    dev: false
-
   /@grpc/grpc-js@1.7.3:
     resolution: {integrity: sha512-H9l79u4kJ2PVSxUNA08HMYAnUBLj9v6KjYQ7SQ71hOZcEXhShE/y5iQCesP8+6/Ik/7i2O0a10bPquIcYfufog==}
     engines: {node: ^8.13.0 || >=10.10.0}
@@ -12794,7 +12783,7 @@ packages:
     peerDependencies:
       expo: ^45.0.3
     dependencies:
-      '@grpc/grpc-js': 1.6.7
+      '@grpc/grpc-js': 1.7.3
       '@hashgraph/cryptography': 1.1.2(react-native@0.73.6)(react@18.2.0)
       '@hashgraph/proto': 2.4.1
       bignumber.js: 9.1.2
@@ -17899,15 +17888,6 @@ packages:
       '@sentry/utils': 7.109.0
     dev: false
 
-  /@sentry-internal/tracing@7.84.0:
-    resolution: {integrity: sha512-y9bGYA0OM6PEREfd+nk4UURZy29tpIw+7vQwpxWfEVs2fqq0/5TBFX/tKFb8AKUI9lVM8v0bcF0bNSCnuPQZHQ==}
-    engines: {node: '>=8'}
-    dependencies:
-      '@sentry/core': 7.84.0
-      '@sentry/types': 7.84.0
-      '@sentry/utils': 7.84.0
-    dev: false
-
   /@sentry/browser@7.100.1:
     resolution: {integrity: sha512-IxHQ08ixf0bmaWpe4yt1J4UUsOpg02fxax9z3tOQYXw5MSzz5pDXn8M8DFUVJB3wWuyXhHXTub9yD3VIP9fnoA==}
     engines: {node: '>=8'}
@@ -18154,14 +18134,6 @@ packages:
       '@sentry/utils': 7.109.0
     dev: false
 
-  /@sentry/core@7.84.0:
-    resolution: {integrity: sha512-tbuwunbBx2kSex15IHCqHDnrMfIlqPc6w/76fwkGqokz3oh9GSEGlLICwmBWL8AypWimUg13IDtFpD0TJTriWA==}
-    engines: {node: '>=8'}
-    dependencies:
-      '@sentry/types': 7.84.0
-      '@sentry/utils': 7.84.0
-    dev: false
-
   /@sentry/electron@4.21.0:
     resolution: {integrity: sha512-YBKcPIAIhLbLRlFPt9ZHMOwlhspYz/LvzPjWKsQAzzTMZor0x/t+ed32Y0mKKhbdjpOf907405RSoad9Ls3Tew==}
     dependencies:
@@ -18237,17 +18209,14 @@ packages:
       '@sentry/utils': 7.107.0
     dev: false
 
-  /@sentry/node@7.84.0:
-    resolution: {integrity: sha512-Xm3fIXT3TZOQi+6uQBavI8iOehD3PkY7v0y3hog0d4lQTH88vQK9BBsI+jZEq81Em+RG/u7vZNiFo6YMTnWF7Q==}
+  /@sentry/node@7.109.0:
+    resolution: {integrity: sha512-tqMNAES4X/iBl1eZRCmc29p//0id01FBLEiesNo5nk6ECl6/SaGMFAEwu1gsn90h/Bjgr04slwFOS4cR45V2PQ==}
     engines: {node: '>=8'}
     dependencies:
-      '@sentry-internal/tracing': 7.84.0
-      '@sentry/core': 7.84.0
-      '@sentry/types': 7.84.0
-      '@sentry/utils': 7.84.0
-      https-proxy-agent: 5.0.1
-    transitivePeerDependencies:
-      - supports-color
+      '@sentry-internal/tracing': 7.109.0
+      '@sentry/core': 7.109.0
+      '@sentry/types': 7.109.0
+      '@sentry/utils': 7.109.0
     dev: false
 
   /@sentry/react-native@5.20.0(expo@50.0.14)(react-native@0.73.6)(react@18.2.0):
@@ -18323,11 +18292,11 @@ packages:
       '@sentry/utils': 7.109.0
     dev: false
 
-  /@sentry/tracing@7.84.0:
-    resolution: {integrity: sha512-NhBX28vUmCu/5avyGKX6B4UTm4MTOfbdg9ZzCnS7hPuWDfEAUIVHZVryi2q8bqp2DNGJvS9qIq/TSf39JIpdJg==}
+  /@sentry/tracing@7.109.0:
+    resolution: {integrity: sha512-lgveekdd/XLgQ6oZLvcRGUWBIOAZ7QwbjLHEd8zzeKubHbIwFzMkhIejskqLi2z2OwzrYl5q+Zo1jS1z9f62YQ==}
     engines: {node: '>=8'}
     dependencies:
-      '@sentry-internal/tracing': 7.84.0
+      '@sentry-internal/tracing': 7.109.0
     dev: false
 
   /@sentry/types@6.19.7:
@@ -18348,11 +18317,6 @@ packages:
   /@sentry/types@7.109.0:
     resolution: {integrity: sha512-egCBnDv3YpVFoNzRLdP0soVrxVLCQ+rovREKJ1sw3rA2/MFH9WJ+DZZexsX89yeAFzy1IFsCp7/dEqudusml6g==}
     engines: {node: '>=8'}
-
-  /@sentry/types@7.84.0:
-    resolution: {integrity: sha512-VqGLIF3JOUrk7yIXjLXJvAORkZL1e3dDX0Q1okRehwyt/5CRE+mdUTeJZkBo9P9mBwgMyvtwklzOGGrzjb4eMA==}
-    engines: {node: '>=8'}
-    dev: false
 
   /@sentry/utils@6.19.7:
     resolution: {integrity: sha512-z95ECmE3i9pbWoXQrD/7PgkBAzJYR+iXtPuTkpBjDKs86O3mT+PXOT3BAn79w2wkn7/i3vOGD2xVr1uiMl26dA==}
@@ -18381,13 +18345,6 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       '@sentry/types': 7.109.0
-    dev: false
-
-  /@sentry/utils@7.84.0:
-    resolution: {integrity: sha512-qdUVuxnRBvaf05AU+28R+xYtZmi/Ymf8os3Njq9g4XuA+QEkZLbzmIpRK5W9Ja7vUtjOeg29Xgg43A8znde9LQ==}
-    engines: {node: '>=8'}
-    dependencies:
-      '@sentry/types': 7.84.0
     dev: false
 
   /@shopify/react-native-performance-navigation@3.0.0(@babel/runtime@7.24.1)(@react-navigation/core@6.4.16)(@react-navigation/native@6.1.17)(@react-navigation/stack@6.3.29)(@shopify/react-native-performance@4.1.2)(react-native@0.73.6)(react@18.2.0):
@@ -25383,14 +25340,6 @@ packages:
     dependencies:
       follow-redirects: 1.15.6
       form-data: 4.0.0
-    dev: false
-
-  /axios@1.3.1:
-    resolution: {integrity: sha512-78pWJsQTceInlyaeBQeYZ/QgZeWS8hGeKiIJiDKQe3hEyBb7sEMq0K4gjx+Va6WHTYO4zI/RRl8qGRzn0YMadA==}
-    dependencies:
-      follow-redirects: 1.15.6
-      form-data: 4.0.0
-      proxy-from-env: 1.1.0
     dev: false
 
   /axios@1.3.4:

@@ -165,9 +165,6 @@
       "blake2"
     ],
     "overrides": {
-      "@hashgraph/sdk>@grpc/grpc-js": "1.6.7",
-      "tronweb>axios": "0.26.1",
-      "@hashgraph/sdk>@hashgraph/cryptography": "1.1.2",
       "stellar-base>sodium-native": "^3.2.1",
       "remove-flow-types-loader>flow-remove-types": "^2",
       "remove-flow-types-loader>loader-utils": "*",
