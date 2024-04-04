@@ -4,6 +4,8 @@ import Text from "~/renderer/components/Text";
 import { Chip, ChipContainer } from "./Chip";
 import Cross from "~/renderer/icons/Cross";
 import Input from "~/renderer/components/Input";
+import FormLiveAppHeader from "./FormLiveAppHeader";
+import { DESCRIPTIONS } from "./defaultValues";
 
 type Props = {
   fieldName: string;
@@ -48,13 +50,11 @@ function FormLiveAppArray({
   return (
     <>
       <Flex flexDirection={"column"}>
-        <Text marginLeft={1} ff="Inter|Medium" fontSize={4}>
-          {`${fieldName}`}
-          {!optional && <span style={{ color: "red" }}>*</span>}
-        </Text>
-        <Text marginBottom={1} color={"grey"} marginLeft={1} ff="Inter|Medium" fontSize={2}>
-          {`Here is my description`}
-        </Text>
+        <FormLiveAppHeader
+          fieldName={fieldName}
+          description={DESCRIPTIONS[fieldName]}
+          optional={optional}
+        />
         <Input
           error={!parseCheck}
           onEnter={handleOnEnter}
