@@ -22,7 +22,7 @@ const RunLocalAppButton = () => {
   const { t } = useTranslation();
   const {
     addLocalManifest,
-    state: { liveAppByIndex, created },
+    state: { liveAppByIndex },
     removeLocalManifestById,
   } = useLocalLiveAppContext();
 
@@ -135,18 +135,17 @@ const RunLocalAppButton = () => {
             <Button small primary onClick={() => history.push(`/platform/${manifest.id}`)}>
               {t("settings.developer.runLocalAppOpenButton")}
             </Button>
-            {created.includes(manifest.id) && (
-              <Button
-                small
-                outline
-                onClick={() => {
-                  onExportLocalManifest(manifest);
-                }}
-                data-test-id="settings-enable-platform-dev-tools-apps"
-              >
-                {t("settings.developer.createLocalAppModal.export")}
-              </Button>
-            )}
+            <Button
+              small
+              outline
+              onClick={() => {
+                onExportLocalManifest(manifest);
+              }}
+              data-test-id="settings-enable-platform-dev-tools-apps"
+            >
+              {t("settings.developer.createLocalAppModal.export")}
+            </Button>
+
             <Button small danger onClick={() => removeLocalManifestById(manifest.id)}>
               {t("settings.developer.runLocalAppDeleteButton")}
             </Button>
