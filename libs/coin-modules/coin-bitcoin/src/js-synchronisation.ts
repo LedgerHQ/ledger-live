@@ -138,9 +138,7 @@ export function makeGetAccountShape(
     await wallet.syncAccount(walletAccount, blockHeight);
 
     const balance = await wallet.getAccountBalance(walletAccount);
-    console.log("DEBUG - GetAccountShape walletAccount", balance.toString());
     span = startSpan("sync", "getAccountTransactions");
-    console.log("DEBUG - GetAccountShape walletAccount", walletAccount);
     const { txs: transactions } = await wallet.getAccountTransactions(walletAccount);
     span.finish();
 
@@ -166,7 +164,6 @@ export function makeGetAccountShape(
 
     span = startSpan("sync", "unify operations");
     const newUniqueOperations = deduplicateOperations(newOperations);
-    console.log("DEBUG - GetAccountShape operations", oldOperations.length, newUniqueOperations.length);
     const operations = mergeOps(oldOperations, newUniqueOperations);
     span.finish();
 
@@ -175,11 +172,6 @@ export function makeGetAccountShape(
     const utxos = rawUtxos.map(utxo => fromWalletUtxo(utxo, changeAddresses));
     span.finish();
 
-    console.log(
-      "DEBUG - returns Bitcoin GetAccountShape",
-      walletAccount.xpub.freshAddress,
-      `${accountPath}/0/${walletAccount.xpub.freshAddressIndex}`,
-    );
     return {
       id: accountId,
       xpub,

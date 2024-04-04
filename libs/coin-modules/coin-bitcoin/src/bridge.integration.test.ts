@@ -53,12 +53,6 @@ export const dataset: DatasetTest<Transaction> = {
   },
 };
 
-describe("Bitcoin bridge", () => {
-  test.todo(
-    "This is an empty test to make jest command pass. Remove it once there is a real test.",
-  );
-});
-
 const mockStartSpan = (
   _op: string,
   _description?: string,
@@ -71,9 +65,7 @@ const mockStartSpan = (
     finish: () => {},
   };
 };
-function extractAddressFromPath(path: string): string {
-  return path.split("/")[2].slice(0, -1);
-}
+
 const xpub = [
   "xpub6DEHKg8fgKcb5iYGPLtpBYD9gm7nvym3wwhHVnH3TtogvJGTcApj71K8iTpL7CzdZWAxwyjkZEFUrnLK24zKqgj3EVH7Vg1CD1ujibwiHuy",
   "xpub6DEHKg8fgKcb9at2u9Xhjtx4tXGyWqUPQAx2zNCzr41gQRyCqpCn7onSoJU4VS96GXyCtAhhFxErnG2pGVvVexaqF7DEfqGGnGk7Havn7C2",

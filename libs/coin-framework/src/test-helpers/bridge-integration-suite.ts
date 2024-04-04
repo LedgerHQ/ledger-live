@@ -196,7 +196,7 @@ export function testBridge<T extends TransactionCommon, U extends TransactionCom
         );
       }
 
-      describe.only("scanAccounts", () => {
+      describe("scanAccounts", () => {
         let scanAccountsCached: Account[];
         beforeAll(async () => {
           scanAccountsCached = await scanAccountsCurrency();
@@ -204,100 +204,99 @@ export function testBridge<T extends TransactionCommon, U extends TransactionCom
 
         const add = signerValues[0];
         // signerValues.forEach(add => {
-          // we start running the scan accounts in parallel!
-          test(`scanAccounts expected ${add}`, async () => {
-            const accounts = scanAccountsCached;
-            accounts.forEach(a => {
-              accountsFoundInScanAccountsMap[a.id] = a;
-            });
-
-            const raws: AccountRawLike[] = flatMap(accounts, a => {
-              const main = toAccountRaw(a);
-              if (!main.subAccounts) return [main];
-              return [{ ...main, subAccounts: [] }, ...main.subAccounts] as AccountRawLike[];
-            });
-            const heads = raws.map(a => {
-              const copy = omit(
-                a,
-                [
-                  "operations",
-                  "lastSyncDate",
-                  "creationDate",
-                  "blockHeight",
-                  "balanceHistory",
-                  "balanceHistoryCache",
-                ].concat(FIXME_ignoreAccountFields || []),
-              );
-              return copy;
-            });
-            const ops = raws.map(({ operations }) =>
-              operations
-                .slice(0)
-                .sort((a, b) => a.id.localeCompare(b.id))
-                .map(op => {
-                  const copy = omit(op, ["date"].concat(FIXME_ignoreOperationFields || []));
-                  return copy;
-                }),
-            );
-            expect(heads).toMatchSnapshot();
-            expect(ops).toMatchSnapshot();
+        // we start running the scan accounts in parallel!
+        test(`expected ${add}`, async () => {
+          const accounts = scanAccountsCached;
+          accounts.forEach(a => {
+            accountsFoundInScanAccountsMap[a.id] = a;
           });
 
-          test("estimateMaxSpendable is between 0 and account balance", async () => {
-            const accounts = scanAccountsCached;
+          const raws: AccountRawLike[] = flatMap(accounts, a => {
+            const main = toAccountRaw(a);
+            if (!main.subAccounts) return [main];
+            return [{ ...main, subAccounts: [] }, ...main.subAccounts] as AccountRawLike[];
+          });
+          const heads = raws.map(a => {
+            const copy = omit(
+              a,
+              [
+                "operations",
+                "lastSyncDate",
+                "creationDate",
+                "blockHeight",
+                "balanceHistory",
+                "balanceHistoryCache",
+              ].concat(FIXME_ignoreAccountFields || []),
+            );
+            return copy;
+          });
+          const ops = raws.map(({ operations }) =>
+            operations
+              .slice(0)
+              .sort((a, b) => a.id.localeCompare(b.id))
+              .map(op => {
+                const copy = omit(op, ["date"].concat(FIXME_ignoreOperationFields || []));
+                return copy;
+              }),
+          );
+          expect(heads).toMatchSnapshot();
+          expect(ops).toMatchSnapshot();
+        });
 
-            for (const account of accounts) {
+        test("estimateMaxSpendable is between 0 and account balance", async () => {
+          const accounts = scanAccountsCached;
+
+          for (const account of accounts) {
+            const estimation = await accountBridge.estimateMaxSpendable({
+              account,
+            });
+            expect(estimation.gte(0)).toBe(true);
+            expect(estimation.lte(account.spendableBalance)).toBe(true);
+
+            for (const sub of account.subAccounts || []) {
               const estimation = await accountBridge.estimateMaxSpendable({
-                account,
+                parentAccount: account,
+                account: sub,
               });
               expect(estimation.gte(0)).toBe(true);
-              expect(estimation.lte(account.spendableBalance)).toBe(true);
+              expect(estimation.lte(sub.balance)).toBe(true);
+            }
+          }
+        });
 
-              for (const sub of account.subAccounts || []) {
-                const estimation = await accountBridge.estimateMaxSpendable({
-                  parentAccount: account,
-                  account: sub,
-                });
-                expect(estimation.gte(0)).toBe(true);
-                expect(estimation.lte(sub.balance)).toBe(true);
+        test("no unconfirmed account", async () => {
+          const accounts = scanAccountsCached;
+
+          for (const account of flattenAccounts(accounts)) {
+            expect({
+              id: account.id,
+              unconfirmed: isAccountBalanceUnconfirmed(account),
+            }).toEqual({
+              id: account.id,
+              unconfirmed: false,
+            });
+          }
+        });
+
+        test("creationDate is correct", async () => {
+          const accounts = scanAccountsCached;
+
+          for (const account of flattenAccounts(accounts)) {
+            if (account.operations.length) {
+              const op = account.operations[account.operations.length - 1];
+
+              if (account.creationDate.getTime() > op.date.getTime()) {
+                warnDev(
+                  `OP ${
+                    op.id
+                  } have date=${op.date.toISOString()} older than account.creationDate=${account.creationDate.toISOString()}`,
+                );
               }
+
+              expect(account.creationDate.getTime()).not.toBeGreaterThan(op.date.getTime());
             }
-          });
-
-          test("no unconfirmed account", async () => {
-            const accounts = scanAccountsCached;
-
-            for (const account of flattenAccounts(accounts)) {
-              expect({
-                id: account.id,
-                unconfirmed: isAccountBalanceUnconfirmed(account),
-              }).toEqual({
-                id: account.id,
-                unconfirmed: false,
-              });
-            }
-          });
-
-          test("creationDate is correct", async () => {
-            const accounts = scanAccountsCached;
-
-            for (const account of flattenAccounts(accounts)) {
-              if (account.operations.length) {
-                const op = account.operations[account.operations.length - 1];
-
-                if (account.creationDate.getTime() > op.date.getTime()) {
-                  warnDev(
-                    `OP ${
-                      op.id
-                    } have date=${op.date.toISOString()} older than account.creationDate=${account.creationDate.toISOString()}`,
-                  );
-                }
-
-                expect(account.creationDate.getTime()).not.toBeGreaterThan(op.date.getTime());
-              }
-            }
-          });
-        // });
+          }
+        });
       });
 
       const currencyDataTest = currencyData.test;
@@ -766,6 +765,15 @@ export function testBridge<T extends TransactionCommon, U extends TransactionCom
             expect(typeof bridge.signOperation).toBe("function");
             expect(typeof bridge.broadcast).toBe("function");
           }); // NB for now we are not going farther because most is covered by bash tests
+        });
+
+        describe("assignToAccountRaw", () => {
+          test("assign account is consistent", () => {
+            const account = fromAccountRaw(accountData.raw);
+            accountBridge.assignFromAccountRaw?.(accountData.raw, account);
+            expect(initialAccount).toBe(account);
+            expect(true).toBeFalsy();
+          });
         });
       });
     });
