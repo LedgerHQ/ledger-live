@@ -109,6 +109,9 @@ export function Confirmation({
           provider,
           swapId,
           transactionId: operation.hash,
+          sourceCurrencyId: swapTx.current.swap.from.account?.id,
+          targetCurrencyId: swapTx.current.swap.to.account?.id,
+          hardwareWalletType: deviceMeta.device.modelId,
         });
       }
 
@@ -156,6 +159,7 @@ export function Confirmation({
         });
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       toAccount,
       fromAccount,
