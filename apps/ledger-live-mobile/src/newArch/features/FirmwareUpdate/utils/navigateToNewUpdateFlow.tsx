@@ -1,5 +1,5 @@
 import { DeviceModelInfo } from "@ledgerhq/types-live";
-import { ScreenName, NavigatorName } from "~/const";
+import { ScreenName } from "~/const";
 import { FirmwareUpdateContextEntity } from "@ledgerhq/live-common/device/use-cases/getLatestFirmwareForDeviceUseCase";
 import { UpdateStep } from "~/screens/FirmwareUpdate";
 import { Device } from "@ledgerhq/hw-transport";
