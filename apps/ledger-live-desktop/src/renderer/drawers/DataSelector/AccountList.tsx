@@ -19,7 +19,8 @@ import { darken } from "~/renderer/styles/helpers";
 import { Observable } from "rxjs";
 import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import { useTranslation } from "react-i18next";
-import { currenciesSettingsSelector } from "~/renderer/reducers/settings";
+import { currencySettingsLocaleSelector } from "~/renderer/reducers/settings";
+import { State } from "~/renderer/reducers";
 
 const AddIconContainer = styled.div`
   border-radius: 50%;
@@ -44,7 +45,9 @@ export function AccountList({ currency, onAccountSelect, accounts$ }: Props) {
   const accountIds = useGetAccountIds(accounts$);
   const nestedAccounts = useSelector(accountsSelector);
 
-  const currenciesSettings = useSelector(currenciesSettingsSelector);
+  const currencySettings = useSelector((state: State) =>
+    currencySettingsLocaleSelector(state.settings, currency),
+  );
 
   const accountTuples = useMemo(() => {
     return getAccountTuplesForCurrency(currency, nestedAccounts, false, accountIds);
@@ -82,7 +85,7 @@ export function AccountList({ currency, onAccountSelect, accounts$ }: Props) {
       {accountTuples.map((accountTuple, index) => {
         const { account, subAccount } = accountTuple;
         const accountCurrency = getAccountCurrency(subAccount || account);
-        const unit = currenciesSettings[accountCurrency.id].unit;
+        const unit = currencySettings.unit;
 
         return (
           <RowContainer

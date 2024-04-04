@@ -1,5 +1,4 @@
 import React, { useState, useCallback } from "react";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { useLedgerFirstShuffledValidatorsNear } from "@ledgerhq/live-common/families/near/react";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";

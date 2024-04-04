@@ -6,7 +6,7 @@ import { Trans, useTranslation } from "react-i18next";
 import { connect, useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import ProviderIcon from "~/renderer/components/ProviderIcon";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { ExchangeRate, ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
@@ -950,7 +950,7 @@ export const renderSwapDeviceConfirmation = ({
   amountExpectedTo,
   estimatedFees,
   swapDefaultTrack,
-  currenciesSettings,
+  getCurrencySettings,
 }: {
   modelId: DeviceModelId;
   type: Theme["theme"];
@@ -960,26 +960,29 @@ export const renderSwapDeviceConfirmation = ({
   amountExpectedTo?: string;
   estimatedFees?: string;
   swapDefaultTrack: Record<string, string | boolean>;
-  currenciesSettings: Record<string, CurrencySettings>;
+  getCurrencySettings: (currency: Currency) => CurrencySettings;
 }) => {
+  const fromAccountCurrency = getAccountCurrency(exchange.fromAccount);
+  const toAccountCurrency = getAccountCurrency(exchange.toAccount);
+
   const [sourceAccountName, sourceAccountCurrency] = [
     getAccountName(exchange.fromAccount),
-    getAccountCurrency(exchange.fromAccount),
+    fromAccountCurrency,
   ];
   const [targetAccountName, targetAccountCurrency] = [
     getAccountName(exchange.toAccount),
-    getAccountCurrency(exchange.toAccount),
+    toAccountCurrency,
   ];
+
   const providerName = getProviderName(exchangeRate.provider);
   const noticeType = getNoticeType(exchangeRate.provider);
   const alertProperties = noticeType.learnMore ? { learnMoreUrl: urls.swap.learnMore } : {};
 
-  const unitFromExchange = currenciesSettings[exchange.fromAccount.id].unit;
-
-  const unitToExchange = currenciesSettings[exchange.toAccount.id].unit;
-
-  const unitMainAccount =
-    currenciesSettings[getMainAccount(exchange.fromAccount, exchange.fromParentAccount).id].unit;
+  const unitFromExchange = getCurrencySettings(fromAccountCurrency).unit;
+  const unitToExchange = getCurrencySettings(toAccountCurrency).unit;
+  const unitMainAccount = getCurrencySettings(
+    getMainAccount(exchange.fromAccount, exchange.fromParentAccount).currency,
+  ).unit;
 
   return (
     <>

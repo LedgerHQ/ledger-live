@@ -1,7 +1,6 @@
 import React, { Fragment, useCallback } from "react";
 import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { Trans } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import TrackPage from "~/renderer/analytics/TrackPage";

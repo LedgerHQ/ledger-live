@@ -27,7 +27,7 @@ import Alert from "~/renderer/components/Alert";
 import { StepProps } from "../types";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
 import { getLLDCoinFamily } from "~/renderer/families";
-import { useAccountUnit, useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const FromToWrapper = styled.div``;
 const Circle = styled.div`

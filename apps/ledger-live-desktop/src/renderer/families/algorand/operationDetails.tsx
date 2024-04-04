@@ -1,4 +1,4 @@
-import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { AlgorandAccount, AlgorandOperation } from "@ledgerhq/live-common/families/algorand/types";
 import { BigNumber } from "bignumber.js";

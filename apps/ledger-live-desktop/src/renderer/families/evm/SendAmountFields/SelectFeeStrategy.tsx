@@ -6,7 +6,7 @@ import {
   GasOptions,
   Strategy,
 } from "@ledgerhq/coin-evm/types/index";
-import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { Account } from "@ledgerhq/types-live";
 import React, { memo, useMemo } from "react";
 import { Trans } from "react-i18next";

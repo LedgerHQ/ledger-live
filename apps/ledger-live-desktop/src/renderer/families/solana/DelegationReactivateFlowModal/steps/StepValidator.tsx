@@ -1,4 +1,3 @@
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import {
   useSolanaStakesWithMeta,
   useValidators,

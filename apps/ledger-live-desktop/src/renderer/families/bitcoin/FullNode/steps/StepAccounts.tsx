@@ -15,6 +15,7 @@ import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
 import { FullNodeSteps } from "..";
 import styled from "styled-components";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 const Row = styled(Box).attrs(() => ({
   horizontal: true,
   alignItems: "center",
@@ -36,7 +37,11 @@ const Accounts = ({
   // FIXME Not using the AccountList component because styles differ quite a bit, we should unify.
   const accounts = useSelector(accountsSelector);
   const currency = getCryptoCurrencyById("bitcoin");
+
   const bitcoinAccounts = accounts.filter(a => getAccountCurrency(a) === currency);
+
+  const unit = useAccountUnit(bitcoinAccounts[0]);
+
   const onUpdateNumberOfAccountsToScan = useCallback(
     (value: string) => {
       if (value) {
@@ -122,7 +127,7 @@ const Accounts = ({
                 <FormattedVal
                   ff="Inter|Regular"
                   val={account.balance}
-                  unit={account.unit}
+                  unit={unit}
                   style={{
                     textAlign: "right",
                     width: "auto",

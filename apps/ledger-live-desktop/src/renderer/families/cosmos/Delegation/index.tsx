@@ -3,7 +3,6 @@ import { useDispatch } from "react-redux";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { SubAccount } from "@ledgerhq/types-live";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import {
   useCosmosFamilyPreloadData,
   useCosmosFamilyMappedDelegations,

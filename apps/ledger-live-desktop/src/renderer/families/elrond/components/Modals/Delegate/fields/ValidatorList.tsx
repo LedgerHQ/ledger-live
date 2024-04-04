@@ -1,5 +1,4 @@
 import React, { useState, useMemo, Fragment, useCallback } from "react";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";

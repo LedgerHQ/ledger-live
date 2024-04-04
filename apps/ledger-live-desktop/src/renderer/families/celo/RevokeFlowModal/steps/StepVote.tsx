@@ -8,7 +8,6 @@ import Button from "~/renderer/components/Button";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import RevokeVoteRow from "../components/RevokeVoteRow";
 import { useCeloPreloadData } from "@ledgerhq/live-common/families/celo/react";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { revokableVotes, fallbackValidatorGroup } from "@ledgerhq/live-common/families/celo/logic";
 import Alert from "~/renderer/components/Alert";
 import { urls } from "~/config/urls";

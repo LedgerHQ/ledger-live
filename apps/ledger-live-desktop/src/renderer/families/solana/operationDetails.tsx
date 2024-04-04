@@ -4,7 +4,6 @@ import { useSelector } from "react-redux";
 import BigNumber from "bignumber.js";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 import { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { SolanaAccount, SolanaOperation } from "@ledgerhq/live-common/families/solana/types";
 import { useSolanaPreloadData } from "@ledgerhq/live-common/families/solana/react";

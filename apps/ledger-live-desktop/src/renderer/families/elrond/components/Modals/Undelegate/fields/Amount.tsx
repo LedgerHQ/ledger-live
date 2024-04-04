@@ -6,7 +6,6 @@ import InputCurrency from "~/renderer/components/InputCurrency";
 import Label from "~/renderer/components/Label";
 import TranslatedError from "~/renderer/components/TranslatedError";
 import { Unit } from "@ledgerhq/types-cryptoassets";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { ElrondAccount, TransactionStatus } from "@ledgerhq/live-common/families/elrond/types";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 

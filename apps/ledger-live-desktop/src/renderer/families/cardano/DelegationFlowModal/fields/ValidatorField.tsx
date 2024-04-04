@@ -1,5 +1,4 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";

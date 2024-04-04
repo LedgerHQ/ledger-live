@@ -1,7 +1,6 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { BigNumber } from "bignumber.js";
 import styled from "styled-components";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { Account } from "@ledgerhq/types-live";
 import {
   CosmosDelegationInfo,
