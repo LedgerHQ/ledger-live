@@ -1,13 +1,20 @@
 import { getEnv } from "@ledgerhq/live-env";
 import { Operation } from "@ledgerhq/types-live";
 import { postSwapAccepted, postSwapCancelled } from "./index";
+import { DeviceModelId } from "@ledgerhq/devices";
 
 export const setBroadcastTransaction = ({
   result,
   provider,
+  sourceCurrencyId,
+  targetCurrencyId,
+  hardwareWalletType,
 }: {
   result: { operation: Operation; swapId: string };
   provider: string;
+  sourceCurrencyId?: string;
+  targetCurrencyId?: string;
+  hardwareWalletType?: DeviceModelId;
 }) => {
   const { operation, swapId } = result;
 
@@ -25,6 +32,9 @@ export const setBroadcastTransaction = ({
       provider,
       swapId,
       transactionId: operation.hash,
+      sourceCurrencyId,
+      targetCurrencyId,
+      hardwareWalletType,
     });
   }
 };

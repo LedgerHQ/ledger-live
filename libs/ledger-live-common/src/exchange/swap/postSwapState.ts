@@ -8,8 +8,10 @@ export const postSwapAccepted: PostSwapAccepted = async ({
   provider,
   swapId = "",
   transactionId,
+  ...rest
 }) => {
-  if (isIntegrationTestEnv()) return mockPostSwapAccepted({ provider, swapId, transactionId });
+  if (isIntegrationTestEnv())
+    return mockPostSwapAccepted({ provider, swapId, transactionId, ...rest });
 
   /**
    * Since swapId is requiered by the endpoit, don't call it if we don't have
@@ -18,12 +20,11 @@ export const postSwapAccepted: PostSwapAccepted = async ({
   if (!swapId) {
     return null;
   }
-
   try {
     await network({
       method: "POST",
       url: `${getSwapAPIBaseURL()}/swap/accepted`,
-      data: { provider, swapId, transactionId },
+      data: { provider, swapId, transactionId, ...rest },
     });
   } catch (error) {
     console.error(error);
@@ -32,8 +33,8 @@ export const postSwapAccepted: PostSwapAccepted = async ({
   return null;
 };
 
-export const postSwapCancelled: PostSwapCancelled = async ({ provider, swapId = "" }) => {
-  if (isIntegrationTestEnv()) return mockPostSwapCancelled({ provider, swapId });
+export const postSwapCancelled: PostSwapCancelled = async ({ provider, swapId = "", ...rest }) => {
+  if (isIntegrationTestEnv()) return mockPostSwapCancelled({ provider, swapId, ...rest });
 
   /**
    * Since swapId is requiered by the endpoit, don't call it if we don't have
@@ -47,7 +48,7 @@ export const postSwapCancelled: PostSwapCancelled = async ({ provider, swapId = 
     await network({
       method: "POST",
       url: `${getSwapAPIBaseURL()}/swap/cancelled`,
-      data: { provider, swapId },
+      data: { provider, swapId, ...rest },
     });
   } catch (error) {
     console.error(error);

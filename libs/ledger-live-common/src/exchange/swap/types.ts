@@ -3,6 +3,7 @@ import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike, AccountRaw, AccountRawLike, Operation } from "@ledgerhq/types-live";
 import { Transaction, TransactionRaw } from "../../generated/types";
 import { Result as UseBridgeTransactionResult } from "../../bridge/useBridgeTransaction";
+import { DeviceModelId } from "@ledgerhq/devices";
 
 export type ExchangeSwap = {
   fromParentAccount: Account | null | undefined;
@@ -184,7 +185,15 @@ export type SwapStatus = {
 type SwapStateRequest = {
   provider: string;
   swapId: string;
-};
+} & Partial<{
+  swapStep: string;
+  statusCode: string;
+  errorMessage: string;
+  sourceCurrencyId: string;
+  targetCurrencyId: string;
+  hardwareWalletType: DeviceModelId;
+  swapType: TradeMethod;
+}>;
 
 export type SwapStateAcceptedRequest = SwapStateRequest & {
   transactionId: string;

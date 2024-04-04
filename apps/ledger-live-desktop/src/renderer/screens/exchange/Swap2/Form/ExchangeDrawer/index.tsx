@@ -1,6 +1,7 @@
 import { postSwapCancelled } from "@ledgerhq/live-common/exchange/swap/index";
 import { setBroadcastTransaction } from "@ledgerhq/live-common/exchange/swap/setBroadcastTransaction";
 import { getUpdateAccountWithUpdaterParams } from "@ledgerhq/live-common/exchange/swap/getUpdateAccountWithUpdaterParams";
+import { CompleteExchangeError } from "@ledgerhq/live-common/exchange/error";
 import {
   ExchangeSwap,
   SwapTransactionType,
@@ -8,7 +9,7 @@ import {
 } from "@ledgerhq/live-common/exchange/swap/types";
 import React, { useCallback, useMemo, useState } from "react";
 import { Trans } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
@@ -28,6 +29,8 @@ import SwapAction from "./SwapAction";
 import SwapCompleted from "./SwapCompleted";
 import { Operation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
+import { getCurrentDevice } from "~/renderer/reducers/devices";
+import { rateSelector } from "~/renderer/actions/swap";
 
 const ContentBox = styled(Box)`
   ${DeviceActionHeader} {
@@ -52,6 +55,8 @@ export default function ExchangeDrawer({ swapTransaction, exchangeRate, onComple
     swapId: string;
   } | null>(null);
   const swapDefaultTrack = useGetSwapTrackingProperties();
+  const device = useSelector(getCurrentDevice);
+  const selectedExchangeRate = useSelector(rateSelector);
   const redirectToHistory = useRedirectToSwapHistory();
   const {
     transaction,
@@ -79,6 +84,13 @@ export default function ExchangeDrawer({ swapTransaction, exchangeRate, onComple
       postSwapCancelled({
         provider: exchangeRate.provider,
         swapId: swapId ?? "",
+        ...(error instanceof CompleteExchangeError ? { swapStep: error.step } : {}),
+        statusCode: error.name,
+        errorMessage: error.message,
+        sourceCurrencyId: swapTransaction.swap.from.currency?.id,
+        targetCurrencyId: swapTransaction.swap.to.currency?.id,
+        hardwareWalletType: device?.modelId,
+        swapType: selectedExchangeRate?.tradeMethod,
       });
       track("error_message", {
         message: "drawer_error",
@@ -88,6 +100,7 @@ export default function ExchangeDrawer({ swapTransaction, exchangeRate, onComple
       });
       setError(error);
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [exchangeRate.provider, swapDefaultTrack],
   );
 
@@ -105,6 +118,9 @@ export default function ExchangeDrawer({ swapTransaction, exchangeRate, onComple
       setBroadcastTransaction({
         result,
         provider,
+        sourceCurrencyId: swapTransaction.swap.from.currency?.id,
+        targetCurrencyId: swapTransaction.swap.to.currency?.id,
+        hardwareWalletType: device?.modelId,
       });
       const params = getUpdateAccountWithUpdaterParams({
         result,
@@ -119,6 +135,7 @@ export default function ExchangeDrawer({ swapTransaction, exchangeRate, onComple
       setResult(result);
       onCompleteSwap && onCompleteSwap();
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [dispatch, exchange, exchangeRate, transaction, onCompleteSwap],
   );
 
