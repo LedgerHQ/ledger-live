@@ -10,7 +10,7 @@ import { setDebugAppLevelDrawerOpened } from "~/actions/settings";
 import { debugAppLevelDrawerOpenedSelector } from "~/reducers/settings";
 import LockModal from "~/components/ModalLock";
 import NavigationScrollView from "~/components/NavigationScrollView";
-import { QueuedDrawersContext } from "~/components/QueuedDrawer/QueuedDrawersContext";
+import { QueuedDrawersContext } from "~/newArch/components/QueuedDrawer/QueuedDrawersContext";
 
 /**
  * Debugging screen to test:
