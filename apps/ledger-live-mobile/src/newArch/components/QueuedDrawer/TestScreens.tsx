@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useContext, useState } from "react";
 import Button from "~/components/Button";
 import QueuedDrawer from ".";
 import { Flex, Tag, Text } from "@ledgerhq/native-ui";
@@ -10,8 +10,10 @@ import { useNavigation } from "@react-navigation/core";
 import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
 import { ScreenName } from "~/const";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
+import { QueuedDrawersContext } from "./QueuedDrawersContext";
 
 export const MainTestScreen = () => {
+  const { _clearQueueDIRTYDONOTUSE, closeAllDrawers } = useContext(QueuedDrawersContext);
   const [drawer1RequestingToBeOpened, setDrawer1RequestingToBeOpened] = useState(false);
   const [drawer2RequestingToBeOpened, setDrawer2RequestingToBeOpened] = useState(false);
   const [drawer3RequestingToBeOpened, setDrawer3RequestingToBeOpened] = useState(false);
@@ -43,6 +45,8 @@ export const MainTestScreen = () => {
 
   const buttons = (
     <Flex flexDirection={"column"} rowGap={4}>
+      <Button type="main" title={"_clearQueueDIRTYDONOTUSE"} onPress={_clearQueueDIRTYDONOTUSE} />
+      <Button type="main" title={"closeAllDrawers"} onPress={closeAllDrawers} />
       <Button
         testID="drawer1-button"
         type="main"

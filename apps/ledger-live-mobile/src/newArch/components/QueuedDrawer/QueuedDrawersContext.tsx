@@ -28,16 +28,33 @@ type QueuedDrawersContextType = {
   ) => DrawerInQueue;
 
   /**
+   * Close all drawers in the queue.
+   */
+  closeAllDrawers: () => void;
+
+  /**
    * Clear the drawer queue.
    * This should not be used except for debugging purposes.
    */
-  _clearQueue(): void;
+  _clearQueueDIRTYDONOTUSE(): void;
 };
 
-export const QueuedDrawersContext = React.createContext<QueuedDrawersContextType>({
+const defaultContextValue: QueuedDrawersContextType = {
   addDrawerToQueue: () => ({
-    removeDrawerFromQueue: () => {},
-    getPositionInQueue: () => -1,
+    removeDrawerFromQueue: () => {
+      throw new Error("removeDrawerFromQueue not implemented");
+    },
+    getPositionInQueue: () => {
+      throw new Error("getPositionInQueue not implemented");
+    },
   }),
-  _clearQueue: () => {},
-});
+  closeAllDrawers: () => {
+    throw new Error("closeAllDrawers not implemented");
+  },
+  _clearQueueDIRTYDONOTUSE: () => {
+    throw new Error("_clearQueueDIRTYDONOTUSE not implemented");
+  },
+};
+
+export const QueuedDrawersContext =
+  React.createContext<QueuedDrawersContextType>(defaultContextValue);

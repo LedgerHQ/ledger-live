@@ -78,15 +78,26 @@ const QueuedDrawersContextProvider: React.FC<{ children: React.ReactNode }> = ({
     [logQueueLength],
   );
 
+  const closeAllDrawers = useCallback(() => {
+    logDrawer("closeAllDrawers");
+    if (queueRef.current.length === 0) return;
+    queueRef.current.forEach(queueItem => queueItem.setDrawerOpenedCallback(false));
+    queueRef.current = [{ ...queueRef.current[0], markedForClose: true }];
+    logQueueLength();
+  }, [logQueueLength]);
+
+  const _clearQueueDIRTYDONOTUSE = useCallback(() => {
+    queueRef.current = [];
+    logDrawer("queue cleared");
+  }, []);
+
   const contextValue = useMemo(
     () => ({
       addDrawerToQueue,
-      _clearQueue: () => {
-        queueRef.current = [];
-        logDrawer("queue cleared");
-      },
+      closeAllDrawers,
+      _clearQueueDIRTYDONOTUSE,
     }),
-    [addDrawerToQueue],
+    [addDrawerToQueue, closeAllDrawers, _clearQueueDIRTYDONOTUSE],
   );
 
   return (
