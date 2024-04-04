@@ -158,4 +158,4 @@ const QueuedDrawer = ({
   );
 };
 
-export default QueuedDrawer;
+export default React.memo(QueuedDrawer);
