@@ -8,8 +8,8 @@ import { Terms } from "./Terms";
 import { swapAcceptProvider } from "~/actions/settings";
 import { useAnalytics } from "~/analytics";
 import { sharedSwapTracking } from "../../utils";
-import { getDeviceModel } from "@ledgerhq/devices";
 import { CompleteExchangeError } from "@ledgerhq/live-common/exchange/error";
+import { knownDevicesSelector } from "~/reducers/ble";
 
 export function Modal({
   confirmed,
@@ -27,7 +27,7 @@ export function Modal({
   exchangeRate?: ExchangeRate;
 }) {
   const { track } = useAnalytics();
-  const deviceModel = useSelector(getDeviceModel);
+  const [device] = useSelector(knownDevicesSelector);
   const dispatch = useDispatch();
   const [error, setError] = useState<Error>();
   const provider = exchangeRate?.provider;
@@ -74,7 +74,7 @@ export function Modal({
         errorMessage: error?.message,
         sourceCurrencyId: swapTx.swap.from.currency?.id,
         targetCurrencyId: swapTx.swap.to.currency?.id,
-        hardwareWalletType: deviceModel.id,
+        ...(device ? { hardwareWalletType: device.modelId } : {}),
         swapType: exchangeRate?.tradeMethod,
       });
 
