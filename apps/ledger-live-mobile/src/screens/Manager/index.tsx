@@ -129,7 +129,11 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
           withMyLedgerTracking
           hasPostOnboardingEntryPointCard
         >
-          <ContentCardsLocation locationId={ContentCardLocation.MyLedger} />
+          <ContentCardsLocation
+            key="contentCardsLocationMyLedger"
+            locationId={ContentCardLocation.MyLedger}
+            mt={3}
+          />
         </SelectDevice2>
       </Flex>
       <DeviceActionModal

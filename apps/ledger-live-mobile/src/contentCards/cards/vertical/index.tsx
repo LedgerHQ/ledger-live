@@ -52,10 +52,12 @@ const VerticalCard = ContentCardBuilder<Props>(
         <Container size={size} widthFactor={widthFactor}>
           <Flex alignItems="center" width={"100%"} height={"100%"}>
             <Image uri={image} size={size} filledImage={filledImage} />
-            <Title size={size} label={title} />
-            <Subtitle size={size} label={subtitle} />
-            {hasPrice && <Price size={size} label={price} />}
-            {hasCta && <Button size={size} label={cta} action={metadata.actions?.onClick} />}
+            <Flex px={5} alignItems="center">
+              <Title size={size} label={title} />
+              <Subtitle size={size} label={subtitle} />
+              {hasPrice && <Price size={size} label={price} />}
+              {hasCta && <Button size={size} label={cta} action={metadata.actions?.onClick} />}
+            </Flex>
           </Flex>
         </Container>
       </TouchableOpacity>

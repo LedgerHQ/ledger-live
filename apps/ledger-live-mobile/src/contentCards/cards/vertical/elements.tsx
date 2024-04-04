@@ -11,20 +11,21 @@ export const ImageStyles: {
 } = {
   L: {
     flex: 1,
-    width: "100%",
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
-    paddingBottom: 24,
+    width: "100%",
+    marginBottom: 32,
+    marginTop: 24,
   },
   M: {
     flex: 1,
-    aspectRatio: 1.5,
-    maxWidth: "100%",
+    aspectRatio: 1,
+    marginBottom: 32,
+    marginTop: 24,
   },
   S: {
     flex: 1,
-    aspectRatio: 1.5,
-    maxWidth: "100%",
+    aspectRatio: 1,
     marginTop: 10,
   },
 };
@@ -37,7 +38,9 @@ type ImageProps = {
 
 export const Image = ({ uri, size, filledImage }: ImageProps) => {
   const isBigCardAndFilled = (size === "L" && filledImage) || false;
-  const stylesBigCard = isBigCardAndFilled ? { marginBottom: 24 } : {};
+  const stylesBigCard = isBigCardAndFilled
+    ? { marginBottom: 24, marginTop: 0 }
+    : { aspectRatio: 1 };
   return (
     <NativeImage
       source={{ uri }}
@@ -90,17 +93,20 @@ export const TitleStyles: {
     fontWeight: "medium",
     numberOfLine: 1,
     paddingBottom: 2,
+    textAlign: "center",
   },
   M: {
     variant: "body",
     fontWeight: "medium",
     numberOfLine: 1,
     paddingBottom: 2,
+    textAlign: "center",
   },
   S: {
     variant: "body",
     fontWeight: "medium",
     numberOfLine: 1,
+    textAlign: "center",
   },
 };
 
@@ -115,16 +121,15 @@ export const SubtitleStyles: {
     variant: "body",
     fontWeight: "medium",
     numberOfLine: 1,
+    textAlign: "center",
   },
   M: {
     variant: "paragraph",
     fontWeight: "medium",
     numberOfLine: 1,
+    textAlign: "center",
   },
   S: {
-    variant: "paragraph",
-    fontWeight: "medium",
-    numberOfLine: 1,
     display: "none",
   },
 };
@@ -147,18 +152,21 @@ export const PriceStyles: {
     fontWeight: "medium",
     numberOfLine: 1,
     paddingTop: 12,
+    textAlign: "center",
   },
   M: {
     variant: "paragraph",
     fontWeight: "medium",
     numberOfLine: 1,
     paddingTop: 12,
+    textAlign: "center",
   },
   S: {
     variant: "paragraph",
     fontWeight: "medium",
     numberOfLine: 1,
     paddingTop: 4,
+    textAlign: "center",
   },
 };
 
