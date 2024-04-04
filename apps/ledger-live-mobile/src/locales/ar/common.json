@@ -94,6 +94,7 @@
     "comingSoon" : "قريباً",
     "restart" : "إعادة التشغيل",
     "loadMore" : "تحميل المزيد",
+    "selectAccount" : "اختار حساباً",
     "patterns" : {
       "id" : "مُعرّف {{ value }}",
       "times" : "x{{ value }}"
@@ -340,12 +341,12 @@
       "description" : "يرجى إعادة المحاولة مرة أخرى. إذا استمرت المشكلة، يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم Ledger."
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "تم تجاهل صورة شاشة القَفل على Ledger Stax",
+      "title" : "Lock screen picture discarded on {{productName}}",
       "description" : "إذا لم تكن هذه الصورة بالمقاس المناسب، يُمكنك المحاولة مرة ثانية مع صورة أخرى.",
       "primaryCTA" : "تحميل صورة أخرى"
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "تم إلغاء تحميل صورة شاشة القَفل على Ledger Stax",
+      "title" : "Loading of lock screen picture cancelled on {{productName}}",
       "description" : "إذا لم تكن هذه الصورة بالمقاس المناسب، يُمكنك المحاولة مرة ثانية مع صورة أخرى.",
       "primaryCTA" : "تحميل صورة أخرى"
     },
@@ -484,7 +485,7 @@
       "description" : "يُرجى إرسال بعض EGLD إلى حسابك للدفع مقابل المعاملات."
     },
     "NotEnoughBalance" : {
-      "title" : "عفواً، الأموال المتوفرة غير كافية",
+      "title" : "عذراً، الرصيد غير كافٍ شاملاً رسوم الشبكة. عدّل المبلغ أو تحقق من الرصيد",
       "description" : "يرجى التأكد من أن الحساب به أموال كافية."
     },
     "NoSuchAppOnProvider" : {
@@ -911,6 +912,10 @@
     "FirmwareNotRecognized" : {
       "title" : "مزوّد غير صالح",
       "description" : "يجب عليك تغيير إعداد \"My Ledger Provider (مزوّد جهازي Ledger)\". لتغييره، افتح \"Settings (إعدادات)\" في Ledger Live، واختر \"Experimental features (الميزات التجريبية)\"، ثم اختر مزوّداً آخر."
+    },
+    "SequenceNumberError" : {
+      "title" : "خطأ في رقم التسلسل",
+      "description" : "يُرجى إغلاق النافذة وإعادة المحاولة لاحقاً"
     }
   },
   "crash" : {
@@ -928,6 +933,10 @@
     "noConnectionError" : {
       "title" : "لا يوجد اتصال",
       "description" : "يبدو أنه ليس لديك اتصال بالإنترنت. يرجى التحقق من اتصالك وحاول مرة أخرى."
+    },
+    "noAccounts" : {
+      "title" : "أنت بحاجة إلى حساب للوصول إلى هذا التطبيق.",
+      "add" : "إضافة حساب"
     }
   },
   "location" : {
@@ -1248,6 +1257,9 @@
       "referralProgram" : {
         "title" : "رشّح صديق",
         "desc" : "عندما يشتري صديقك جهاز Ledger، كلاكما سيكسب ما يساوي 20$ من BTC."
+      },
+      "filter" : {
+        "all" : "الكل"
       }
     },
     "comingSoon" : "قريباً",
@@ -1962,9 +1974,8 @@
   "earlySecurityCheck" : {
     "title" : "اختبار الأصالة والتحقق من تحديث نظام التشغيل",
     "idle" : {
-      "description" : "هذا يتأكد من أن جهازك Ledger Stax هو جهاز Ledger أصلي.",
       "learnMore" : "تعرّف على المزيد حول اختبار الأصالة",
-      "checkCta" : "فحص Ledger Stax"
+      "checkCta" : "Check {{ productName }}"
     },
     "completed" : {
       "continueCta" : "المتابعة إلى الإعداد"
@@ -1987,7 +1998,7 @@
       }
     },
     "genuineCheckNonGenuineDrawer" : {
-      "title" : "فشل Ledger Stax هذا في اختبار الأصالة",
+      "title" : "This {{ productName }} failed the Genuine Check",
       "description" : "{{productName}} هذا غير آمن للاستخدام. يُرجى التواصل مع دعم Ledger.",
       "supportCta" : "تواصل مع دعم Ledger"
     },
@@ -2035,12 +2046,12 @@
       "refused" : {
         "title" : "الإصدار {{firmwareVersion}} من نظام التشغيل متاح",
         "description" : "نوصي بإجراء هذا التحديث للاستفادة من أحدث إصدارات الأمان والوظائف.",
-        "updateCta" : "تحديث Ledger Stax",
+        "updateCta" : "تحديث {{ productName }}",
         "skipCta" : "تخطي التحديث"
       },
       "inactive" : {
         "title" : "التحقق من تحديث نظام التشغيل",
-        "description" : "يتحقق هذا مما إذا كان نظام تشغيل جهازك Ledger Stax مُحدَّث إلى آخر إصدار أم لا. "
+        "description" : "يتحقق هذا مما إذا كان نظام تشغيل جهازك {{productName}} مُحدَّث إلى آخر إصدار أم لا. "
       }
     },
     "firmwareUpdateAvailableDrawer" : {
@@ -2142,21 +2153,6 @@
       "restoreChoiceRecoverTitle" : "استعادة باستخدام Ledger Recover",
       "restoreChoiceRecoverDescription" : "إذا كنت مشتركاً في Ledger Recover، قم بتسجيل الدخول إلى اشتراكك لبدء عملية الاستعادة للنسخة الاحتياطية لعبارة الاسترداد السرية الخاصة بك."
     },
-    "softwareChecksSteps" : {
-      "title" : "التحقق من الجهاز والبرمجيات",
-      "description" : "تأكد أن جهازك آمن للاستخدام وبه أحدث ميزات الأمان.",
-      "doneTitle" : "{{productName}} أصلي ومُحدَّث",
-      "genuineCheckRequestDrawer" : {
-        "iconText" : "اختبار الأصالة",
-        "title" : "هذا الفحص يُؤكِّد أن Ledger Stax الخاص بك هو جهاز Ledger أصلي.",
-        "checkCta" : "بدء اختبار الأصالة"
-      },
-      "updateAvailableDrawer" : {
-        "title" : "تم العثور على برنامج جديد",
-        "description" : "لتصل إلى أحدث ميزات الأمان، نوصي بشدة بتحديث {{productName}} خاصتك",
-        "updateCta" : "تحديث"
-      }
-    },
     "appsStep" : {
       "title" : "تثبيت التطبيقات على {{productName}}"
     },
@@ -2178,15 +2174,7 @@
     "discover" : "اكتشف",
     "nanoX" : "Nano X",
     "market" : "السوق",
-    "earn" : "اكسب",
-    "learn" : "تعلّم"
-  },
-  "learn" : {
-    "pageTitle" : "تعلّم",
-    "sectionShows" : "العروض",
-    "sectionVideo" : "فيديو",
-    "sectionPodcast" : "البودكاست",
-    "sectionArticles" : "المقالات"
+    "earn" : "اكسب"
   },
   "portfolio" : {
     "totalBalance" : "إجمالي الرصيد",
@@ -2267,7 +2255,7 @@
     "description" : "يمكنك اختيار إضافة أصول مشفرة مباشرةً عن طريق Ledger الخاصة بك، أو استيرادهم من Ledger Live لسطح المكتب.",
     "add" : {
       "title" : "مع Ledger خاصتك",
-      "description" : "إنشاء أو استيراد أصل عن طريق Ledger الخاصة بك"
+      "description" : "Create or import an account for your asset with your Ledger"
     },
     "import" : {
       "title" : "قم بالاستيراد من سطح المكتب",
@@ -2513,10 +2501,6 @@
       "currency" : {
         "title" : "العملة"
       },
-      "endpointConfig" : {
-        "title" : "عقدة",
-        "desc" : "عقدة API المراد استخدامها"
-      },
       "delete" : {
         "title" : "إزالة الحساب من المحفظة الاستثمارية",
         "desc" : "ستتم إزالة البيانات المخزنة.",
@@ -2666,6 +2650,7 @@
     "moreAssets" : "إضافة المزيد"
   },
   "help" : {
+    "chatbot" : "روبوت دردشة Ledger",
     "gettingStarted" : {
       "title" : "بدء التشغيل",
       "desc" : "ابدأ هنا"
@@ -2842,7 +2827,7 @@
       },
       "largeMover" : {
         "title" : "تحرك كبير في السعر",
-        "desc" : "سيتم إخطارك بوجود تحركات مهمة في سعر BTC وETH"
+        "desc" : "سيتم إخطارك بالتحركات المهمة في السعر إذا كنت تمتلك BTC أو ETH أو SOL أو ADA أو XRP"
       },
       "transactionsAlerts" : {
         "title" : "تنبيهات المعاملات (بيتا)",
@@ -3887,7 +3872,7 @@
     "allowAppPermissionSubtitleToken" : "لإدارة رموزك {{token}}",
     "allowManagerPermission" : "السماح بالاتصال الآمن مع Ledger",
     "allowRenaming" : "اسمح بإعادة التسمية على جهازك {{productName}}",
-    "allowRemoveCustomLockscreen" : "قم بتأكيد إزالة الصورة على Ledger Stax الخاص بك",
+    "allowRemoveCustomLockscreen" : "Confirm removal of image on your {{productName}}",
     "allowSecureConnection" : "السماح باتصال آمن مع Ledger",
     "loading" : "جاري التحميل...",
     "turnOnAndUnlockDevice" : "قم بتشغيل وإلغاء قفل جهازك",
@@ -4268,8 +4253,8 @@
     "viewUpdateChangelog" : "عرض سِجل تغييرات التحديث",
     "waitForFirmwareUpdate" : "انتظر حتى انتهاء تحديث البرنامج الثابت على جهازك",
     "waitForInstallationToFinish" : "انتظر حتى انتهاء التثبيت على جهازك {{deviceName}}",
-    "staxBatteryLow" : "مستوى بطارية Ledger Stax منخفضة جداً ليتم التحديث",
-    "staxBatteryLowDescription" : "لبدء تحديث نظام التشغيل، مطلوب حد أدنى %{{lowBatteryPercentage}} من الشحن، أو أن يكون جهازك Ledger Stax قيد الشحن.",
+    "batteryLow" : "{{productName}} battery too low to update",
+    "batteryLowDescription" : "To start the OS update, a minimum of {{lowBatteryPercentage}}% charge is needed, or your {{productName}} must be charging.",
     "updateCancelled" : "تم إلغاء تثبيت تحديث نظام التشغيل على {{deviceName}}",
     "updateCancelledDescription" : "إذا كان هذا خطأ، قم بإعادة بدء التحديث.",
     "updateNotYetComplete" : "تحديث نظام التشغيل قيد التنفيذ",
@@ -6367,41 +6352,23 @@
     "commitRequested" : "يُعجبك ما تراه؟\nاحتفظ بها!",
     "confirmPicture" : "قم بالتأكيد على {{productName}}",
     "landingPage" : {
-      "title" : "اختر أي فن رقمي أو صورة.\nقم بتخصيص Ledger Stax الخاص بك.\nاجعله يعبّر عنك.",
+      "title" : "Choose any digital art or photo.\nCustomize your {{productName}}.\nMake it yours.",
       "choosePicture" : "اختر صورة"
     },
     "confirmCrop" : "تأكيد القص",
     "confirmContrast" : "تأكيد التباين",
-    "nftEntryPointButtonLabel" : "تعيين كصورة شاشة قَفل Ledger Stax",
+    "nftEntryPointButtonLabel" : "Set as lockscreen picture",
     "customImage" : "صورة مخصصة",
     "doThisLater" : "ربّما في وقت لاحق",
     "preview" : {
       "title" : "معاينة",
       "loading" : "جاري تحميل المعاينة",
       "setPicture" : "تعيين كشاشة القَفل",
-      "editPicture" : "تعديل الصورة"
+      "editPicture" : "تعديل الصورة",
+      "pickDeviceModel" : "Choose a device"
     },
     "nftGallery" : {
       "title" : "رموزي غير القابلة للاستبدال"
-    }
-  },
-  "claimNft" : {
-    "welcomePage" : {
-      "title" : "وصول مجاني إلى أكثر سوق آمن في الكون للرموز غير القابلة للاستبدال",
-      "description" : {
-        "title" : "تتيح لك بطاقة Ledger Infinity Pass الوصول إلى:",
-        "1" : "لك الأسبقية لأحدث توزيعات الرموز غير القابلة للاستبدال",
-        "2" : "أكثر سوق آمن على الإطلاق للرموز غير القابلة للاستبدال",
-        "3" : "NFT مجاني لك لتطالب به"
-      },
-      "claimButton" : "المطالبة ببطاقة سوق Ledger",
-      "backButton" : "لقد طالبت بالفعل ببطاقة السوق خاصتي"
-    },
-    "qrScan" : {
-      "title" : "امسح ضوئياً كود QR على بطاقة سوق Ledger الخاصة بك",
-      "description" : {
-        "1" : "ستجد بطاقة سوق Ledger الحصرية خاصتك في صندوق Ledger Stax الخاص بك.\n\nابدأ بموضعة كود QR الموجود على ظهر البطاقة في إطار الكاميرا. استخدم منطقة مُضاءة جيداً وخلفية فاتحة وبسيطة."
-      }
     }
   },
   "postOnboarding" : {
@@ -6422,13 +6389,6 @@
         "titleCompleted" : "تم تعيين صورة شاشة القَفل",
         "description" : "اختر أي فن رقمي أو صورة للتعيين كشاشة قَفل.",
         "popupLabel" : "تم إعداد شاشة القَفل"
-      },
-      "claimNft" : {
-        "title" : "قم بالمطالبة برمز Infinity غير القابل للاستبدال",
-        "titleCompleted" : "تمت المطالبة برمز Infinity غير القابل للاستبدال",
-        "description" : "هذا الرمز غير القابل للاستبدال يمنحك وصولاً إلى سوق [ Ledger ]، سوقنا التجاري للرموز غير القابلة للاستبدال.",
-        "popupLabel" : "تمت المطالبة بالرمز غير القابل للاستبدال",
-        "tagLabel" : "هدية"
       },
       "assetsTransfer" : {
         "title" : "قم بتحويل أصولك إلى Ledger",
