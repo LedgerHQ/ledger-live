@@ -2,7 +2,8 @@ import { Flex } from "@ledgerhq/react-ui";
 import React from "react";
 import Input from "~/renderer/components/Input";
 import Switch from "~/renderer/components/Switch";
-import Text from "~/renderer/components/Text";
+import FormLiveAppHeader from "./FormLiveAppHeader";
+import { DESCRIPTIONS } from "./defaultValues";
 
 type Props = {
   type: string;
@@ -29,13 +30,11 @@ function FormLiveAppInput({
 }: Props) {
   return (
     <Flex flexDirection={"column"}>
-      <Text marginLeft={1} ff="Inter|Medium" fontSize={4}>
-        {`${fieldName} (${type}) `}
-        {!optional && <span style={{ color: "red" }}>*</span>}
-      </Text>
-      <Text marginBottom={1} color={"grey"} marginLeft={1} ff="Inter|Medium" fontSize={2}>
-        {`Here is my description`}
-      </Text>
+      <FormLiveAppHeader
+        fieldName={fieldName}
+        description={DESCRIPTIONS[fieldName]}
+        optional={optional}
+      />
       {typeof value === "boolean" ? (
         <Flex width={"max-content"} marginLeft={1}>
           <Switch
