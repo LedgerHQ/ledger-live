@@ -34,7 +34,6 @@ import { urls } from "~/config/urls";
 import { useDateFromNow } from "~/renderer/hooks/useDateFormatter";
 import { tronStakingProvider } from "../AccountHeaderManageActions";
 import { useHistory } from "react-router";
-import noop from "lodash/noop";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 import { track } from "~/renderer/analytics/segment";
 
@@ -170,9 +169,7 @@ const Delegation = ({ account }: { account: TronAccount }) => {
             }
           >
             <Button
-              onClick={
-                hasRewards && canClaimRewards ? () => claimOnClick(tronStakingProvider) : noop
-              }
+              onClick={() => claimOnClick(tronStakingProvider)}
               color="palette.primary.main"
               disabled={!hasRewards || !canClaimRewards}
               small
