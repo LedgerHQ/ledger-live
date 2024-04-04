@@ -1,54 +1,54 @@
 import React, { useState } from "react";
 import { StyleSheet } from "react-native";
 import { Button, Divider, Flex, Switch, Text } from "@ledgerhq/native-ui";
-import { TFunction, useTranslation } from "react-i18next";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Slider from "react-native-slider";
-import NavigationScrollView from "~/components/NavigationScrollView";
 import {
-  transferConfig,
-  previewConfig,
-  StaxFramedImageWithContext,
-  ImageSourceContext,
-} from "~/components/CustomImage/StaxFramedImage";
+  CLSSupportedDeviceModelId,
+  supportedDeviceModelIds,
+} from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
+import NavigationScrollView from "~/components/NavigationScrollView";
+import { FramedImageWithContext, ImageSourceContext } from "~/components/CustomImage/FramedPicture";
 import confirmLockscreen from "~/animations/stax/customimage/confirmLockscreen.json";
 import allowConnection from "~/animations/stax/customimage/allowConnection.json";
-import { StaxFramedLottieWithContext } from "~/components/CustomImage/StaxFramedLottie";
+import { FramedLottieWithContext } from "~/components/CustomImage/FramedLottie";
 import {
-  renderImageCommitRequested,
-  renderImageLoadRequested,
-  renderLoadingImage,
-} from "~/components/DeviceAction/rendering";
+  RenderImageCommitRequested,
+  RenderImageLoadRequested,
+  RenderLoadingImage,
+} from "~/components/CustomLockScreenDeviceAction/stepsRendering";
 import imageSource from "~/components/CustomImage/assets/examplePicture2.webp";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { getFramedPictureConfig } from "~/components/CustomImage/framedPictureConfigs";
 
-const device = {
+const aStaxDevice: Device = {
   deviceId: "",
   deviceName: "",
   modelId: DeviceModelId.stax,
   wired: false,
 };
 
-type DeviceActionStep = "confirmLoad" | "loading" | "confirmCommit" | "preview";
-const steps: DeviceActionStep[] = ["confirmLoad", "loading", "confirmCommit", "preview"];
+const aEuropaDevice: Device = {
+  deviceId: "",
+  deviceName: "",
+  modelId: DeviceModelId.europa,
+  wired: false,
+};
 
-function getStepRenderFunction(
-  step: DeviceActionStep,
-): (t: TFunction, progress: number) => React.ReactNode {
-  return {
-    confirmLoad: (t: TFunction) => renderImageLoadRequested({ t, device }),
-    loading: (t: TFunction, progress: number) => renderLoadingImage({ t, device, progress }),
-    confirmCommit: (t: TFunction) => renderImageCommitRequested({ t, device }),
-    preview: () => <StaxFramedImageWithContext frameConfig={previewConfig} />,
-  }[step];
-}
+const steps = ["confirmLoad", "loading", "confirmCommit", "preview"] as const;
+type DeviceActionStep = (typeof steps)[number];
 
 export default function DebugCustomImageGraphics() {
   const [showAllAssets, setShowAllAssets] = useState(false);
   const [deviceActionStep, setDeviceActionStep] = useState<DeviceActionStep>("confirmLoad");
   const [progress, setProgress] = useState(0);
 
-  const { t } = useTranslation();
+  const [deviceModelId, setDeviceModelId] = useState<CLSSupportedDeviceModelId>(DeviceModelId.stax);
+  const device = {
+    stax: aStaxDevice,
+    europa: aEuropaDevice,
+  }[deviceModelId];
 
   const insets = useSafeAreaInsets();
 
@@ -62,21 +62,32 @@ export default function DebugCustomImageGraphics() {
     />
   );
 
+  const framedPreviewConfig = getFramedPictureConfig("preview", deviceModelId);
+  const framedTransferConfig = getFramedPictureConfig("transfer", deviceModelId);
+
   return (
     <ImageSourceContext.Provider value={{ source: imageSource }}>
       {showAllAssets ? (
         <NavigationScrollView>
           <Flex style={styles.root}>
             <Text mb={3}>lottie: allowConnection</Text>
-            <StaxFramedLottieWithContext loadingProgress={0} lottieSource={allowConnection} />
+            <FramedLottieWithContext
+              loadingProgress={0}
+              lottieSource={allowConnection}
+              deviceModelId={deviceModelId}
+            />
             <Divider />
             <Text mb={3}>lottie: confirmLockscreen</Text>
-            <StaxFramedLottieWithContext loadingProgress={0.89} lottieSource={confirmLockscreen} />
+            <FramedLottieWithContext
+              loadingProgress={0.89}
+              lottieSource={confirmLockscreen}
+              deviceModelId={deviceModelId}
+            />
             <Divider />
             <Text>FramedImage component, transferConfig</Text>
             <Text mb={3}>progress={Math.round(progress * 100) / 100}</Text>
-            <StaxFramedImageWithContext
-              frameConfig={transferConfig}
+            <FramedImageWithContext
+              framedPictureConfig={framedTransferConfig}
               style={{ backgroundColor: "red" }}
               loadingProgress={progress}
             />
@@ -84,12 +95,22 @@ export default function DebugCustomImageGraphics() {
             {slider}
             <Divider />
             <Text mb={3}>FramedImage component, previewConfig</Text>
-            <StaxFramedImageWithContext frameConfig={previewConfig} />
+            <FramedImageWithContext framedPictureConfig={framedPreviewConfig} />
           </Flex>
         </NavigationScrollView>
       ) : (
         <Flex flex={1} alignItems="center" justifyContent="center">
-          {getStepRenderFunction(deviceActionStep)(t, progress)}
+          {deviceActionStep === "confirmLoad" ? (
+            <RenderImageLoadRequested device={device} deviceModelId={deviceModelId} />
+          ) : deviceActionStep === "loading" ? (
+            <RenderLoadingImage device={device} progress={progress} deviceModelId={deviceModelId} />
+          ) : deviceActionStep === "confirmCommit" ? (
+            <RenderImageCommitRequested device={device} deviceModelId={deviceModelId} />
+          ) : deviceActionStep === "preview" ? (
+            <FramedImageWithContext
+              framedPictureConfig={getFramedPictureConfig("preview", deviceModelId)}
+            />
+          ) : null}
         </Flex>
       )}
       <Flex style={{ paddingBottom: insets.bottom }} borderTopWidth={1} borderColor="neutral.c100">
@@ -108,6 +129,19 @@ export default function DebugCustomImageGraphics() {
                   type="main"
                   size="small"
                   onPress={() => setDeviceActionStep(val)}
+                  mr={3}
+                >
+                  {val}
+                </Button>
+              ))}
+            </Flex>
+            <Flex flexDirection={"row"} flexGrow={1} flexWrap={"wrap"} style={{ rowGap: 3 }}>
+              {supportedDeviceModelIds.map(val => (
+                <Button
+                  key={val}
+                  type="main"
+                  size="small"
+                  onPress={() => setDeviceModelId(val)}
                   mr={3}
                 >
                   {val}

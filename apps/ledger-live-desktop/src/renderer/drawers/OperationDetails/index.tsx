@@ -218,12 +218,11 @@ const OperationD = (props: Props) => {
     [account],
   );
   const openAmountDetails = useCallback(() => {
-    const data = {
+    setDrawer(AmountDetails, {
       operation,
       account,
       onRequestBack: props.onRequestBack,
-    };
-    setDrawer(AmountDetails, data);
+    });
   }, [operation, props, account]);
   const goToMainAccount = useCallback(() => {
     const url = `/account/${mainAccount.id}`;
@@ -544,10 +543,7 @@ const OperationD = (props: Props) => {
             {subOperations.map((op, i) => {
               const opAccount = findSubAccountById(account, op.accountId);
               if (!opAccount) return null;
-              const subAccountName =
-                opAccount.type === "ChildAccount"
-                  ? opAccount.name
-                  : getAccountCurrency(opAccount).name;
+              const subAccountName = getAccountCurrency(opAccount).name;
               return (
                 <div key={`${op.id}`}>
                   <OperationComponent

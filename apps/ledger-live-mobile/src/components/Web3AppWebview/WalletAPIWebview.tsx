@@ -5,13 +5,15 @@ import Config from "react-native-config";
 import { WebviewAPI, WebviewProps } from "./types";
 import { useWebView } from "./helpers";
 import { NetworkError } from "./NetworkError";
-
 import { DEFAULT_MULTIBUY_APP_ID } from "@ledgerhq/live-common/wallet-api/constants";
+import { INJECTED_JAVASCRIPT } from "./dappInject";
+import { NoAccountScreen } from "./NoAccountScreen";
 
 export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
   (
     {
       manifest,
+      currentAccountHistDb,
       inputs = {},
       customHandlers,
       onStateChange,
@@ -19,11 +21,12 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     },
     ref,
   ) => {
-    const { onMessage, onLoadError, webviewProps, webviewRef } = useWebView(
+    const { onMessage, onLoadError, webviewProps, webviewRef, noAccounts } = useWebView(
       {
         manifest,
         inputs,
         customHandlers,
+        currentAccountHistDb,
       },
       ref,
       onStateChange,
@@ -34,6 +37,10 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     };
 
     const javaScriptCanOpenWindowsAutomatically = manifest.id === DEFAULT_MULTIBUY_APP_ID;
+
+    if (!!manifest.dapp && noAccounts) {
+      return <NoAccountScreen manifest={manifest} currentAccountHistDb={currentAccountHistDb} />;
+    }
 
     return (
       <RNWebView
@@ -57,6 +64,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         testID="wallet-api-webview"
         allowsUnsecureHttps={__DEV__ && !!Config.IGNORE_CERTIFICATE_ERRORS}
         javaScriptCanOpenWindowsAutomatically={javaScriptCanOpenWindowsAutomatically}
+        injectedJavaScriptBeforeContentLoaded={manifest.dapp ? INJECTED_JAVASCRIPT : undefined}
         {...webviewProps}
       />
     );

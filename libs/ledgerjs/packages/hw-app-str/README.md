@@ -11,7 +11,7 @@
 import Transport from "@ledgerhq/hw-transport-node-hid";
 // import Transport from "@ledgerhq/hw-transport-u2f"; // for browser
 import Str from "@ledgerhq/hw-app-str";
-import StellarSdk from "stellar-sdk";
+import * as StellarSdk from "@stellar/stellar-sdk";
 
 const getStrAppVersion = async () => {
     const transport = await Transport.create();

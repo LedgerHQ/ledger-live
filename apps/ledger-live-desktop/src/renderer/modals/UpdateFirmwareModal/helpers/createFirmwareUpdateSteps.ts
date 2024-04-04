@@ -1,4 +1,3 @@
-import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/device-core/commands/use-cases/isDeviceLocalizationSupported";
 import { FirmwareUpdateContext } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/devices";
 import StepResetDevice, { StepResetFooter } from "../steps/00-step-reset-device";
@@ -8,6 +7,7 @@ import StepRestore from "../steps/02-step-restore";
 import StepUpdating from "../steps/02-step-updating";
 import StepConfirmation, { StepConfirmFooter } from "../steps/03-step-confirmation";
 import { Step, StepId, STEPS } from "../types";
+import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/device/use-cases/isDeviceLocalizationSupported";
 
 export const createFirmwareUpdateSteps = ({
   firmware,

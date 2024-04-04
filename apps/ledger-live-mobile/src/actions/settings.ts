@@ -211,7 +211,7 @@ const setCustomImageTypeAction = createAction<SettingsSetCustomImageTypePayload>
   SettingsActionTypes.SET_CUSTOM_IMAGE_TYPE,
 );
 export const setCustomImageType = (imageType: ImageType) =>
-  setCustomImageTypeAction({ customImageType: imageType });
+  setCustomImageTypeAction({ customLockScreenType: imageType });
 export const setHasOrderedNano = createAction<SettingsSetHasOrderedNanoPayload>(
   SettingsActionTypes.SET_HAS_ORDERED_NANO,
 );

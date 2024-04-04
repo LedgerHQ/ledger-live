@@ -1,4 +1,3 @@
-import { implicitMigration } from "@ledgerhq/live-common/migrations/accounts";
 import type { Account, AccountRaw } from "@ledgerhq/types-live";
 import { createAction } from "redux-actions";
 import accountModel from "../logic/accountModel";
@@ -30,7 +29,7 @@ export const importStore = (rawAccounts: { active: { data: AccountRaw }[] }) => 
       }
     }
   }
-  return importStoreAction(implicitMigration(accounts));
+  return importStoreAction(accounts);
 };
 export const reorderAccounts = createAction<AccountsReorderPayload>(
   AccountsActionTypes.REORDER_ACCOUNTS,

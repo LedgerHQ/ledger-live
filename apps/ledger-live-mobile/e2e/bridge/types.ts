@@ -8,12 +8,12 @@ import { Subject, Observable } from "rxjs";
 import { ConnectAppEvent } from "@ledgerhq/live-common/hw/connectApp";
 import { ConnectManagerEvent } from "@ledgerhq/live-common/hw/connectManager";
 import { InstallLanguageEvent } from "@ledgerhq/live-common/hw/installLanguage";
-import { LoadImageEvent } from "@ledgerhq/live-common/hw/staxLoadImage";
+import { LoadImageEvent } from "@ledgerhq/live-common/hw/customLockScreenLoad";
 import { SwapRequestEvent } from "@ledgerhq/live-common/exchange/swap/types";
-import { FetchImageEvent } from "@ledgerhq/live-common/hw/staxFetchImage";
+import { FetchImageEvent } from "@ledgerhq/live-common/hw/customLockScreenFetch";
 import { ExchangeRequestEvent } from "@ledgerhq/live-common/hw/actions/startExchange";
 import { CompleteExchangeRequestEvent } from "@ledgerhq/live-common/exchange/platform/types";
-import { RemoveImageEvent } from "@ledgerhq/live-common/hw/staxRemoveImage";
+import { RemoveImageEvent } from "@ledgerhq/live-common/hw/customLockScreenRemove";
 import { RenameDeviceEvent } from "@ledgerhq/live-common/hw/renameDevice";
 
 export type ServerData =

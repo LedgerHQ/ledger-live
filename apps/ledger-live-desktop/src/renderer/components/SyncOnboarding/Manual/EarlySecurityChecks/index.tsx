@@ -4,25 +4,17 @@ import manager from "@ledgerhq/live-common/manager/index";
 import { useGenuineCheck } from "@ledgerhq/live-common/hw/hooks/useGenuineCheck";
 import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/deviceSDK/hooks/useGetLatestAvailableFirmware";
 import Body from "./Body";
-import TroubleshootingDrawer, {
-  Props as TroubleshootingDrawerProps,
-} from "../TroubleshootingDrawer";
-import SoftwareCheckAllowSecureChannelDrawer, {
-  Props as SoftwareCheckAllowSecureChannelDrawerProps,
-} from "./SoftwareCheckAllowSecureChannelDrawer";
+import TroubleshootingDrawer from "../TroubleshootingDrawer";
+import SoftwareCheckAllowSecureChannelDrawer from "./SoftwareCheckAllowSecureChannelDrawer";
 import { Status as SoftwareCheckStatus } from "../types";
 import { getDeviceModel, DeviceModelId } from "@ledgerhq/devices";
 import { openURL } from "~/renderer/linking";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import UpdateFirmwareModal, {
-  Props as UpdateFirmwareModalProps,
-} from "~/renderer/modals/UpdateFirmwareModal";
+import UpdateFirmwareModal from "~/renderer/modals/UpdateFirmwareModal";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { initialStepId } from "~/renderer/screens/manager/FirmwareUpdate";
-import ErrorDrawer, { Props as ErrorDrawerProps } from "./ErrorDrawer";
-import DeviceNotGenuineDrawer, {
-  Props as DeviceNotGenuineDrawerProps,
-} from "./DeviceNotGenuineDrawer";
+import ErrorDrawer from "./ErrorDrawer";
+import DeviceNotGenuineDrawer from "./DeviceNotGenuineDrawer";
 import { useTranslation } from "react-i18next";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
@@ -136,49 +128,52 @@ const EarlySecurityChecks = ({
     if (!deviceInfo || !latestFirmware) return;
     const modal = deviceInfo.isOSU ? "install" : "disclaimer";
     const stepId = initialStepId({ device, deviceInfo });
-    const updateFirmwareModalProps: UpdateFirmwareModalProps = {
-      withAppsToReinstall: false,
-      withResetStep: manager.firmwareUpdateNeedsLegacyBlueResetInstructions(
+
+    setDrawer(
+      UpdateFirmwareModal,
+      {
+        withAppsToReinstall: false,
+        withResetStep: manager.firmwareUpdateNeedsLegacyBlueResetInstructions(
+          deviceInfo,
+          device.modelId,
+        ),
+        onDrawerClose: () => {
+          closeFwUpdateDrawer();
+          setFwUpdateInterrupted(latestFirmware?.final);
+          restartChecksAfterUpdate();
+        },
+        onRequestClose: () => {
+          closeFwUpdateDrawer();
+          setFwUpdateInterrupted(latestFirmware?.final);
+          restartChecksAfterUpdate();
+        },
+        status: modal,
+        stepId,
+        firmware: latestFirmware,
         deviceInfo,
-        device.modelId,
-      ),
-      onDrawerClose: () => {
-        closeFwUpdateDrawer();
-        setFwUpdateInterrupted(latestFirmware?.final);
-        restartChecksAfterUpdate();
-      },
-      onRequestClose: () => {
-        closeFwUpdateDrawer();
-        setFwUpdateInterrupted(latestFirmware?.final);
-        restartChecksAfterUpdate();
-      },
-      status: modal,
-      stepId,
-      firmware: latestFirmware,
-      deviceInfo,
-      device,
-      deviceModelId: deviceModelId,
-      setFirmwareUpdateCompleted: () => null,
+        device,
+        deviceModelId: deviceModelId,
+        setFirmwareUpdateCompleted: () => null,
 
-      finalStepSuccessDescription: t(
-        "syncOnboarding.manual.softwareCheckContent.firmwareUpdate.finalStepSuccessDescription",
-      ),
-      finalStepSuccessButtonLabel: t(
-        "syncOnboarding.manual.softwareCheckContent.firmwareUpdate.finalStepSuccessButtonLabel",
-      ),
-      finalStepSuccessButtonOnClick: () => {
-        closeFwUpdateDrawer();
-        restartChecksAfterUpdate();
+        finalStepSuccessDescription: t(
+          "syncOnboarding.manual.softwareCheckContent.firmwareUpdate.finalStepSuccessDescription",
+        ),
+        finalStepSuccessButtonLabel: t(
+          "syncOnboarding.manual.softwareCheckContent.firmwareUpdate.finalStepSuccessButtonLabel",
+        ),
+        finalStepSuccessButtonOnClick: () => {
+          closeFwUpdateDrawer();
+          restartChecksAfterUpdate();
+        },
+        deviceHasPin: deviceModelId !== DeviceModelId.stax, // early security checks are triggered only if the device is in one of the steps prior to setting a PIN code
       },
-      deviceHasPin: deviceModelId !== DeviceModelId.stax, // early security checks are triggered only if the device is in one of the steps prior to setting a PIN code
-    };
-
-    setDrawer(UpdateFirmwareModal, updateFirmwareModalProps, {
-      preventBackdropClick: true,
-      forceDisableFocusTrap: true,
-      withPaddingTop: false,
-      onRequestClose: undefined,
-    });
+      {
+        preventBackdropClick: true,
+        forceDisableFocusTrap: true,
+        withPaddingTop: false,
+        onRequestClose: undefined,
+      },
+    );
   }, [
     closeFwUpdateDrawer,
     device,
@@ -254,47 +249,62 @@ const EarlySecurityChecks = ({
   /** Opening and closing of drawers */
   useEffect(() => {
     if (disconnectedDeviceModalIsOpen) {
-      const props: TroubleshootingDrawerProps = {
-        lastKnownDeviceId: deviceModelId,
-        onClose: () => {
-          resetGenuineCheckState();
-          history.push("/onboarding/select-device");
+      setDrawer(
+        TroubleshootingDrawer,
+        {
+          lastKnownDeviceId: deviceModelId,
+          onClose: () => {
+            resetGenuineCheckState();
+            history.push("/onboarding/select-device");
+          },
         },
-      };
-      setDrawer(TroubleshootingDrawer, props, commonDrawerProps);
+        commonDrawerProps,
+      );
     } else if (allowSecureChannelIsOpen) {
-      const props: SoftwareCheckAllowSecureChannelDrawerProps = {
-        deviceModelId,
-      };
       // FIXME: drawer is non closeable so we have to handle device disconnection
-      setDrawer(SoftwareCheckAllowSecureChannelDrawer, props, commonDrawerProps);
+      setDrawer(
+        SoftwareCheckAllowSecureChannelDrawer,
+        {
+          deviceModelId,
+        },
+        commonDrawerProps,
+      );
     } else if (notGenuineIsOpen) {
-      const props: DeviceNotGenuineDrawerProps = {
-        productName,
-      };
-      setDrawer(DeviceNotGenuineDrawer, props, commonDrawerProps);
+      setDrawer(
+        DeviceNotGenuineDrawer,
+        {
+          productName,
+        },
+        commonDrawerProps,
+      );
     } else if (genuineCheckError) {
       setGenuineCheckStatus(SoftwareCheckStatus.failed);
-      const props: ErrorDrawerProps = {
-        onClickRetry: () => {
-          resetGenuineCheckState();
-          setGenuineCheckStatus(SoftwareCheckStatus.active);
+      setDrawer(
+        ErrorDrawer,
+        {
+          onClickRetry: () => {
+            resetGenuineCheckState();
+            setGenuineCheckStatus(SoftwareCheckStatus.active);
+          },
+          error: genuineCheckError,
         },
-        error: genuineCheckError,
-      };
-      setDrawer(ErrorDrawer, props, commonDrawerProps);
+        commonDrawerProps,
+      );
     } else if (
       networkStatus === NetworkStatus.OFFLINE &&
       genuineCheckStatus !== SoftwareCheckStatus.inactive
     ) {
-      const props: ErrorDrawerProps = {
-        onClickRetry: () => {
-          resetGenuineCheckState();
-          setGenuineCheckStatus(SoftwareCheckStatus.active);
+      setDrawer(
+        ErrorDrawer,
+        {
+          onClickRetry: () => {
+            resetGenuineCheckState();
+            setGenuineCheckStatus(SoftwareCheckStatus.active);
+          },
+          error: new NetworkDown(),
         },
-        error: new NetworkDown(),
-      };
-      setDrawer(ErrorDrawer, props, commonDrawerProps);
+        commonDrawerProps,
+      );
     } else if (
       getLatestAvailableFirmwareError &&
       !(
@@ -309,14 +319,17 @@ const EarlySecurityChecks = ({
         getLatestAvailableFirmwareError.name,
       );
       setFirmwareUpdateStatus(SoftwareCheckStatus.failed);
-      const props: ErrorDrawerProps = {
-        onClickRetry: () => {
-          setFirmwareUpdateStatus(SoftwareCheckStatus.active);
+      setDrawer(
+        ErrorDrawer,
+        {
+          onClickRetry: () => {
+            setFirmwareUpdateStatus(SoftwareCheckStatus.active);
+          },
+          error: { message: "Unknown error", ...getLatestAvailableFirmwareError },
+          closeable: true,
         },
-        error: { message: "Unknown error", ...getLatestAvailableFirmwareError },
-        closeable: true,
-      };
-      setDrawer(ErrorDrawer, props, { forceDisableFocusTrap: true });
+        { forceDisableFocusTrap: true },
+      );
     }
     return () => setDrawer();
   }, [

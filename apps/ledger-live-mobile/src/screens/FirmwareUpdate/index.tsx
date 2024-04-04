@@ -21,6 +21,10 @@ import { Item } from "@ledgerhq/native-ui/components/Layout/List/types";
 import { DeviceInfo, FirmwareUpdateContext, languageIds } from "@ledgerhq/types-live";
 import { useBatteryStatuses } from "@ledgerhq/live-common/deviceSDK/hooks/useBatteryStatuses";
 import { BatteryStatusTypes } from "@ledgerhq/live-common/hw/getBatteryStatus";
+import {
+  CLSSupportedDeviceModelId,
+  isCustomLockScreenSupported,
+} from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -41,18 +45,20 @@ import { ScreenName } from "~/const";
 import {
   renderAllowLanguageInstallation,
   renderConnectYourDevice,
-  renderImageCommitRequested,
-  renderImageLoadRequested,
 } from "~/components/DeviceAction/rendering";
+import {
+  RenderImageCommitRequested,
+  RenderImageLoadRequested,
+} from "~/components/CustomLockScreenDeviceAction/stepsRendering";
 import {
   UpdateStep,
   useUpdateFirmwareAndRestoreSettings,
 } from "./useUpdateFirmwareAndRestoreSettings";
 import { TrackScreen } from "~/analytics";
 import ImageHexProcessor from "~/components/CustomImage/ImageHexProcessor";
-import { targetDataDimensions } from "../CustomImage/shared";
+import { getScreenDataDimensions } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 import { ProcessorPreviewResult } from "~/components/CustomImage/ImageProcessor";
-import { ImageSourceContext } from "~/components/CustomImage/StaxFramedImage";
+import { ImageSourceContext } from "~/components/CustomImage/FramedPicture";
 import Button from "~/components/wrappedUi/Button";
 import Link from "~/components/wrappedUi/Link";
 import { RestoreStepDenied } from "./RestoreStepDenied";
@@ -584,25 +590,29 @@ export const FirmwareUpdate = ({
     }
 
     if (staxLoadImageState.imageLoadRequested) {
-      return renderImageLoadRequested({
-        t,
-        device,
-        fullScreen: false,
-        wording: t("FirmwareUpdate.steps.restoreSettings.imageLoadRequested", {
-          deviceName: productName,
-        }),
-      });
+      return (
+        <RenderImageLoadRequested
+          device={device}
+          deviceModelId={device.modelId as CLSSupportedDeviceModelId}
+          fullScreen={false}
+          wording={t("FirmwareUpdate.steps.restoreSettings.imageLoadRequested", {
+            deviceName: productName,
+          })}
+        />
+      );
     }
 
     if (staxLoadImageState.imageCommitRequested) {
-      return renderImageCommitRequested({
-        t,
-        device,
-        fullScreen: false,
-        wording: t("FirmwareUpdate.steps.restoreSettings.imageCommitRequested", {
-          deviceName: productName,
-        }),
-      });
+      return (
+        <RenderImageCommitRequested
+          device={device}
+          deviceModelId={device.modelId as CLSSupportedDeviceModelId}
+          fullScreen={false}
+          wording={t("FirmwareUpdate.steps.restoreSettings.imageCommitRequested", {
+            deviceName: productName,
+          })}
+        />
+      );
     }
 
     if (restoreAppsState.allowManagerRequested) {
@@ -846,10 +856,10 @@ export const FirmwareUpdate = ({
           category={"Update device - Step 3d: apps and settings successfully restored"}
         />
       ) : null}
-      {staxFetchImageState.hexImage ? (
+      {isCustomLockScreenSupported(device.modelId) && staxFetchImageState.hexImage ? (
         <ImageHexProcessor
           hexData={staxFetchImageState.hexImage as string}
-          {...targetDataDimensions}
+          {...getScreenDataDimensions(device.modelId)}
           onPreviewResult={handleStaxImageSourceLoaded}
           onError={error => console.error(error)}
         />

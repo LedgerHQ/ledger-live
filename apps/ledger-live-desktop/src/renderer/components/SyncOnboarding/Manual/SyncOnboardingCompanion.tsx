@@ -32,7 +32,7 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import { trackPage } from "~/renderer/analytics/segment";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import LockedDeviceDrawer, { Props as LockedDeviceDrawerProps } from "./LockedDeviceDrawer";
+import LockedDeviceDrawer from "./LockedDeviceDrawer";
 import { LockedDeviceError } from "@ledgerhq/errors";
 import { saveSettings } from "~/renderer/actions/settings";
 
@@ -142,11 +142,9 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
             />
             {/* @ts-expect-error weird props issue with React 18 */}
             <StepText>
-              {
-                t("syncOnboarding.manual.pairedContent.description", {
-                  deviceName: productName,
-                }) as string
-              }
+              {t("syncOnboarding.manual.pairedContent.description", {
+                productName,
+              })}
             </StepText>
             <ContinueOnDeviceWithAnim
               deviceModelId={device.modelId}
@@ -320,13 +318,16 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
 
   useEffect(() => {
     if (lockedDevice) {
-      const props: LockedDeviceDrawerProps = {
-        deviceModelId: device.modelId,
-      };
-      setDrawer(LockedDeviceDrawer, props, {
-        forceDisableFocusTrap: true,
-        preventBackdropClick: true,
-      });
+      setDrawer(
+        LockedDeviceDrawer,
+        {
+          deviceModelId: device.modelId,
+        },
+        {
+          forceDisableFocusTrap: true,
+          preventBackdropClick: true,
+        },
+      );
     }
     return () => setDrawer();
   }, [device.modelId, history, lockedDevice]);

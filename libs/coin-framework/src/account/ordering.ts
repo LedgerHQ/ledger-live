@@ -14,9 +14,6 @@ const sortNameLense = (a: AccountLike): string => {
     case "TokenAccount":
       return a.token.name;
 
-    case "ChildAccount":
-      return a.currency.name;
-
     default:
       return "";
   }

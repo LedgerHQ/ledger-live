@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { Flex, IconsLegacy, Tag, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
@@ -7,13 +7,13 @@ import Touchable from "../Touchable";
 import { track } from "~/analytics";
 import { BaseNavigationComposite, StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { PostOnboardingNavigatorParamList } from "../RootNavigator/types/PostOnboardingNavigator";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 
-export type Props = PostOnboardingAction & PostOnboardingActionState;
+export type Props = PostOnboardingAction &
+  PostOnboardingActionState & { deviceModelId: DeviceModelId };
 
 const PostOnboardingActionRow: React.FC<Props> = props => {
   const {
-    // @ts-expect-error oskour those `any` navigation params are killing us
-    navigationParams,
     Icon,
     title,
     titleCompleted,
@@ -22,6 +22,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
     completed,
     disabled,
     buttonLabelForAnalyticsEvent,
+    deviceModelId,
   } = props;
   const { t } = useTranslation();
   const navigation =
@@ -29,13 +30,13 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
       BaseNavigationComposite<StackNavigatorNavigation<PostOnboardingNavigatorParamList>>
     >();
 
-  const handlePress = useCallback(() => {
-    if (navigationParams) {
-      navigation.navigate(...navigationParams);
+  const handlePress = () => {
+    if ("getNavigationParams" in props) {
+      navigation.navigate(...props.getNavigationParams({ deviceModelId }));
       buttonLabelForAnalyticsEvent &&
         track("button_clicked", { button: buttonLabelForAnalyticsEvent });
     }
-  }, [navigationParams, navigation, buttonLabelForAnalyticsEvent]);
+  };
 
   return (
     <Touchable disabled={disabled} onPress={completed ? undefined : handlePress}>
