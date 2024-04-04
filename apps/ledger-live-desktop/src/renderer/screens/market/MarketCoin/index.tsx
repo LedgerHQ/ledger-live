@@ -151,14 +151,14 @@ export default function MarketCoinScreen() {
         refreshChart={changeRange}
         color={color}
         locale={locale}
-        loading={isLoadingDataChart}
+        loading={isLoadingCurrency || isLoadingDataChart}
         setCounterCurrency={changeCounterCurrency}
         supportedCounterCurrencies={supportedCounterCurrencies}
       />
       <MarketInfo
         locale={locale}
         counterCurrency={counterCurrency}
-        loading={isLoadingData}
+        loading={isLoadingCurrency || isLoadingData}
         {...dataCurrency}
       />
     </Container>
