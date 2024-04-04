@@ -94,6 +94,7 @@
     "comingSoon" : "敬请期待",
     "restart" : "重新启动",
     "loadMore" : "加载更多",
+    "selectAccount" : "选择账户",
     "patterns" : {
       "id" : "ID {{ value }}",
       "times" : "x{{ value }}"
@@ -340,12 +341,12 @@
       "description" : "请重试。如果问题依旧存在，请使用下面的按钮保存您的日志，并将其提供给 Ledger 客服。"
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "已在 Ledger Stax 上弃用锁屏图片",
+      "title" : "Lock screen picture discarded on {{productName}}",
       "description" : "如果这张图片不合适，您可以使用另一张图片重试。",
       "primaryCTA" : "上传另一张图片"
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "已在 Ledger Stax 上取消加载锁屏图片",
+      "title" : "Loading of lock screen picture cancelled on {{productName}}",
       "description" : "如果这张图片不合适，您可以使用另一张图片重试。",
       "primaryCTA" : "上传另一张图片"
     },
@@ -484,7 +485,7 @@
       "description" : "请向您的账户发送一些 EGLD 以支付交易费用。"
     },
     "NotEnoughBalance" : {
-      "title" : "抱歉，资金不足",
+      "title" : "抱歉，余额不足（包括网络费用）。请调整数额或核对余额",
       "description" : "请确保该账户资金充足。"
     },
     "NoSuchAppOnProvider" : {
@@ -911,6 +912,10 @@
     "FirmwareNotRecognized" : {
       "title" : "提供商无效",
       "description" : "您必须更改“我的 Ledger 提供商”设置。要更改该设置，请打开 Ledger Live“设置”，选择“实验性功能”，然后选择其他提供商。"
+    },
+    "SequenceNumberError" : {
+      "title" : "序列号错误",
+      "description" : "请关闭窗口，稍后再重试"
     }
   },
   "crash" : {
@@ -928,6 +933,10 @@
     "noConnectionError" : {
       "title" : "无连接",
       "description" : "您似乎无法访问互联网。请检查您的连接并重试。"
+    },
+    "noAccounts" : {
+      "title" : "您需要使用账户才能访问此应用程序。",
+      "add" : "添加账户"
     }
   },
   "location" : {
@@ -1248,6 +1257,9 @@
       "referralProgram" : {
         "title" : "推荐好友",
         "desc" : "若您的好友购买一个 Ledger 设备，则双方均可赚取价值 20 美元的比特币。"
+      },
+      "filter" : {
+        "all" : "全部"
       }
     },
     "comingSoon" : "敬请期待",
@@ -1962,9 +1974,8 @@
   "earlySecurityCheck" : {
     "title" : "正品检查和操作系统更新检查",
     "idle" : {
-      "description" : "这可以确保您的 Ledger Stax 是官方 Ledger 设备。",
       "learnMore" : "详细了解正品检查",
-      "checkCta" : "检查 Ledger Stax"
+      "checkCta" : "Check {{ productName }}"
     },
     "completed" : {
       "continueCta" : "继续设置"
@@ -1987,7 +1998,7 @@
       }
     },
     "genuineCheckNonGenuineDrawer" : {
-      "title" : "此 Ledger Stax 未通过正品检查",
+      "title" : "This {{ productName }} failed the Genuine Check",
       "description" : "此 {{productName}} 不能安全使用。请联系 Ledger 客服。",
       "supportCta" : "联系 Ledger 客服"
     },
@@ -2035,12 +2046,12 @@
       "refused" : {
         "title" : "操作系统版本 {{firmwareVersion}} 可用",
         "description" : "建议执行此更新以享用最新的安全性和功能。",
-        "updateCta" : "更新 Ledger Stax",
+        "updateCta" : "更新 {{ productName }}",
         "skipCta" : "跳过更新"
       },
       "inactive" : {
         "title" : "操作系统更新检查",
-        "description" : "这将检查 Ledger Stax 操作系统是否为最新。 "
+        "description" : "这将检查您的 {{productName}} 操作系统是否为最新版本。 "
       }
     },
     "firmwareUpdateAvailableDrawer" : {
@@ -2142,21 +2153,6 @@
       "restoreChoiceRecoverTitle" : "使用 Ledger Recover 恢复",
       "restoreChoiceRecoverDescription" : "如果您订阅了 Ledger Recover，请登录您的订阅帐户，启动秘密恢复短语备份的恢复流程。"
     },
-    "softwareChecksSteps" : {
-      "title" : "硬件和软件检查",
-      "description" : "检查您的设备是否可以安全使用并具有最新的安全功能。",
-      "doneTitle" : "{{productName}} 为正品，且是最新版本",
-      "genuineCheckRequestDrawer" : {
-        "iconText" : "检验真伪",
-        "title" : "该检查可确保您的 Ledger Stax 为 Ledger 官方正品。",
-        "checkCta" : "开始正品检查"
-      },
-      "updateAvailableDrawer" : {
-        "title" : "找到新软件",
-        "description" : "要使用最新的安全功能，我们强烈建议更新您的 {{productName}}",
-        "updateCta" : "更新"
-      }
-    },
     "appsStep" : {
       "title" : "在 {{productName}} 上安装应用程序"
     },
@@ -2178,15 +2174,7 @@
     "discover" : "探索",
     "nanoX" : "Nano X",
     "market" : "市场",
-    "earn" : "赚取",
-    "learn" : "学习"
-  },
-  "learn" : {
-    "pageTitle" : "学习",
-    "sectionShows" : "显示",
-    "sectionVideo" : "视频",
-    "sectionPodcast" : "播客",
-    "sectionArticles" : "文章"
+    "earn" : "赚取"
   },
   "portfolio" : {
     "totalBalance" : "总余额",
@@ -2267,7 +2255,7 @@
     "description" : "您可以选择直接使用您的 Ledger 添加加密货币，或从 Ledger Live 桌面版导入加密货币。",
     "add" : {
       "title" : "用您的 Ledger",
-      "description" : "使用您的 Ledger 创建或导入资产"
+      "description" : "Create or import an account for your asset with your Ledger"
     },
     "import" : {
       "title" : "从桌面程序导入",
@@ -2513,10 +2501,6 @@
       "currency" : {
         "title" : "货币"
       },
-      "endpointConfig" : {
-        "title" : "Node（节点）",
-        "desc" : "要使用的 API 节点"
-      },
       "delete" : {
         "title" : "从资产组合中删除账户",
         "desc" : "储存的数据将被删除。",
@@ -2666,6 +2650,7 @@
     "moreAssets" : "添加更多"
   },
   "help" : {
+    "chatbot" : "Ledger 聊天机器人",
     "gettingStarted" : {
       "title" : "快速入门",
       "desc" : "从这里开始"
@@ -2842,7 +2827,7 @@
       },
       "largeMover" : {
         "title" : "大幅波动工具",
-        "desc" : "当比特币和以太币价格出现重要波动时，您会收到通知。"
+        "desc" : "如果您拥有比特币、以太币、SOL、ADA 或瑞波币，您会在价格出现重要波动时收到通知"
       },
       "transactionsAlerts" : {
         "title" : "交易提醒（测试版）",
@@ -3887,7 +3872,7 @@
     "allowAppPermissionSubtitleToken" : "管理您的 {{token}} 代币",
     "allowManagerPermission" : "允许与 Ledger 设备建立安全连接",
     "allowRenaming" : "允许在您的 {{productName}} 上重命名",
-    "allowRemoveCustomLockscreen" : "确认移除 Ledger Stax 上的图片",
+    "allowRemoveCustomLockscreen" : "Confirm removal of image on your {{productName}}",
     "allowSecureConnection" : "允许与 Ledger 设备建立安全连接",
     "loading" : "正在加载……",
     "turnOnAndUnlockDevice" : "开机并解锁您的设备",
@@ -4268,8 +4253,8 @@
     "viewUpdateChangelog" : "查看更新变更日志",
     "waitForFirmwareUpdate" : "等待设备上的固件更新完成",
     "waitForInstallationToFinish" : "等待在 {{deviceName}} 上完成安装",
-    "staxBatteryLow" : "Ledger Stax 电池电量太低，无法更新",
-    "staxBatteryLowDescription" : "要开始更新操作系统，您的 Ledger Stax 必须至少有 {{lowBatteryPercentage}}% 的电量，或者正在充电。",
+    "batteryLow" : "{{productName}} battery too low to update",
+    "batteryLowDescription" : "To start the OS update, a minimum of {{lowBatteryPercentage}}% charge is needed, or your {{productName}} must be charging.",
     "updateCancelled" : "已在 {{deviceName}} 上取消安装操作系统更新",
     "updateCancelledDescription" : "如果是误操作，请重新启动更新。",
     "updateNotYetComplete" : "正在更新操作系统",
@@ -6367,41 +6352,23 @@
     "commitRequested" : "与您看到的一样？\n保存下来！",
     "confirmPicture" : "在 {{productName}} 上确认",
     "landingPage" : {
-      "title" : "选择任意数字艺术或照片。\n自定义您的 Ledger Stax。\n打造您的个性风格。",
+      "title" : "Choose any digital art or photo.\nCustomize your {{productName}}.\nMake it yours.",
       "choosePicture" : "选择图片"
     },
     "confirmCrop" : "确认剪裁",
     "confirmContrast" : "确认对比",
-    "nftEntryPointButtonLabel" : "设置为 Ledger Stax 锁屏图片",
+    "nftEntryPointButtonLabel" : "Set as lockscreen picture",
     "customImage" : "自定义图片",
     "doThisLater" : "以后再说",
     "preview" : {
       "title" : "预览",
       "loading" : "正在加载预览",
       "setPicture" : "设置为锁屏界面",
-      "editPicture" : "编辑图片"
+      "editPicture" : "编辑图片",
+      "pickDeviceModel" : "Choose a device"
     },
     "nftGallery" : {
       "title" : "我的 NFT"
-    }
-  },
-  "claimNft" : {
-    "welcomePage" : {
-      "title" : "免费访问全球最安全的 NFT 市场",
-      "description" : {
-        "title" : "利用 Ledger Infinity Pass（无限通行证），您可以：",
-        "1" : "抢先体验最新 NFT 发布活动",
-        "2" : "访问史上最安全的 NFT 市场",
-        "3" : "免费领取一个 NFT"
-      },
-      "claimButton" : "领取 Ledger Market Pass（市场通行证）",
-      "backButton" : "我已经领取了 Market Pass（市场通行证）"
-    },
-    "qrScan" : {
-      "title" : "扫描 Ledger Market Pass（市场通行证）上的二维码",
-      "description" : {
-        "1" : "您将在 Ledger Stax 的包装盒中找到您的专属 Ledger Market Pass（市场通行证）。\n\n首先将通行证背面的二维码放在框中。请在光线充足且带有简洁浅色背景的区域操作。"
-      }
     }
   },
   "postOnboarding" : {
@@ -6422,13 +6389,6 @@
         "titleCompleted" : "锁屏图片已设置",
         "description" : "选择要设置为锁屏界面的任意数字艺术或图片。",
         "popupLabel" : "锁屏已设置"
-      },
-      "claimNft" : {
-        "title" : "领取 Infinity NFT",
-        "titleCompleted" : "已领取 Infinity NFT",
-        "description" : "您可以凭此 NFT 访问 [ Ledger ] Market，这是我们的 NFT 市场。",
-        "popupLabel" : "已领取 NFT",
-        "tagLabel" : "赠品"
       },
       "assetsTransfer" : {
         "title" : "将您的资产转移至 Ledger",
