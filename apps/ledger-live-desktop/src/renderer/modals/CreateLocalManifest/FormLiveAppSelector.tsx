@@ -2,6 +2,8 @@ import { Flex } from "@ledgerhq/react-ui";
 import React, { useEffect, useState } from "react";
 import Text from "~/renderer/components/Text";
 import { Chip, ChipContainer } from "./Chip";
+import { DESCRIPTIONS } from "./defaultValues";
+import FormLiveAppHeader from "./FormLiveAppHeader";
 
 type Props = {
   fieldName: string;
@@ -44,13 +46,11 @@ function FormLiveAppSelector({
 
   return (
     <Flex flexDirection={"column"}>
-      <Text marginLeft={1} ff="Inter|Medium" fontSize={4}>
-        {`${fieldName} `}
-        {!optional && <span style={{ color: "red" }}>*</span>}
-      </Text>
-      <Text marginBottom={1} color={"grey"} marginLeft={1} ff="Inter|Medium" fontSize={2}>
-        {`Here is my description`}
-      </Text>
+      <FormLiveAppHeader
+        fieldName={fieldName}
+        description={DESCRIPTIONS[fieldName]}
+        optional={optional}
+      />
       <ChipContainer
         style={{
           outline: (!optional && !selectedValues.length && "solid 1px red") || "",

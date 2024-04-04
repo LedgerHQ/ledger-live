@@ -26,77 +26,12 @@ import { useCategories } from "@ledgerhq/live-common/wallet-api/react";
 import { useManifests } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import FormLiveAppArraySelect from "./FormLiveAppArraySelect";
 import { Separator } from "~/renderer/components/Onboarding/Screens/SelectUseCase/Separator";
-
-const DEFAULT_VALUES = {
-  permissions: [
-    "account.list",
-    "account.receive",
-    "account.request",
-    "currency.list",
-    "device.close",
-    "device.exchange",
-    "device.transport",
-    "message.sign",
-    "transaction.sign",
-    "transaction.signAndBroadcast",
-    "wallet.capabilities",
-    "wallet.info",
-    "wallet.userId",
-    "storage.get",
-    "storage.set",
-  ],
-  visibility: ["complete", "searchable", "deep"],
-  branch: ["stable", "experimental", "soon", "debug"],
-  platforms: ["ios", "android", "desktop"],
-  categories: [""],
-  provider: ["evm"],
-};
-
-const DEFAULT_FORM: LiveAppManifest = {
-  id: "ReplaceAppName",
-  author: "",
-  private: false,
-  name: "ReplaceAppName",
-  url: "http://localhost:3000",
-  homepageUrl: "http://localhost:3000/",
-  supportUrl: "",
-  icon: "",
-  platforms: ["ios", "android", "desktop"],
-  apiVersion: "^2.0.0",
-  manifestVersion: "2",
-  branch: "stable",
-  categories: ["DeFi"],
-  currencies: ["*"],
-  highlight: false,
-  content: {
-    cta: { en: "" },
-    subtitle: { en: "" },
-    shortDescription: {
-      en: "shortDescription",
-    },
-    description: {
-      en: "description",
-    },
-  },
-  domains: ["http://*"],
-  visibility: "complete",
-  permissions: [],
-  dapp: {
-    provider: "evm",
-    nanoApp: "Ethereum",
-    networks: [
-      {
-        currency: "ethereum",
-        chainID: 1,
-        nodeURL: "https://eth-dapps.api.live.ledger.com",
-      },
-    ],
-  },
-};
+import { DEFAULT_FORM, DEFAULT_VALUES } from "./defaultValues";
 
 function createLocalManifest() {
   return (
     <Modal
+      width={600}
       name="MODAL_CREATE_LOCAL_APP"
       centered
       render={({ data, onClose }) => <FormLocalManifest data={data} onClose={onClose} />}
@@ -138,7 +73,7 @@ function FormLocalManifest({
   }, []);
 
   return (
-    <form>
+    <form style={{ width: "90%", margin: "auto" }}>
       <ModalBody
         onClose={onClose}
         title={<Trans i18nKey={`settings.developer.createLocalAppModal.title.create`} />}
@@ -422,7 +357,7 @@ function FormLocalManifest({
                   disabled={!formIsValid}
                   primary
                   onClick={() => {
-                    formIsValid && addLocalManifest(form, true);
+                    formIsValid && addLocalManifest(form);
                     onClose();
                   }}
                 >
