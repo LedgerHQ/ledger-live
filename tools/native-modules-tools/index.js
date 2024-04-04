@@ -1,13 +1,14 @@
 const path = require("path");
 const fs = require("fs");
-const { cp } = require("fs/promises");
+const { cpSync } = require("fs");
 
 // Copy a folder and its contents recursively.
 async function copyFolderRecursively(source, target) {
   if (fs.existsSync(target) && !fs.lstatSync(target).isDirectory()) {
     return; // we skip if the top level folder already exists and isn't a dir (e.g. a symlink)
   }
-  await cp(source, target, {
+
+  cpSync(source, target, {
     recursive: true,
     filter: (src, dest) => {
       if (fs.existsSync(dest) && fs.lstatSync(dest).isSymbolicLink()) {

@@ -186,7 +186,7 @@ const Fields: Props = ({
           {messageGas && (
             <Flex onClick={onBuyClick}>
               <Alert type="warning">
-                <TranslatedError error={messageGas} noLink />
+                <TranslatedError error={messageGas} />
               </Alert>
             </Flex>
           )}
