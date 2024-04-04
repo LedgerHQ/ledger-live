@@ -1,5 +1,15 @@
 # live-mobile
 
+## 3.43.0-nightly.2
+
+### Patch Changes
+
+- [#6595](https://github.com/LedgerHQ/ledger-live/pull/6595) [`2d5359b`](https://github.com/LedgerHQ/ledger-live/commit/2d5359b3c85a52b02b351a64074d85fd55f06d69) Thanks [@LucasWerey](https://github.com/LucasWerey)! - change translation
+
+- [#6599](https://github.com/LedgerHQ/ledger-live/pull/6599) [`d73e3e9`](https://github.com/LedgerHQ/ledger-live/commit/d73e3e9ce053786ed3c0293f76c00116a3f3ad41) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Update traduction on swap in TR
+
+- [#6593](https://github.com/LedgerHQ/ledger-live/pull/6593) [`b3ddbc9`](https://github.com/LedgerHQ/ledger-live/commit/b3ddbc90da342f716d84b86fe47a91ab9bb30221) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Remove hard coded recover card on my ledger page. Add CC component to my ledger page (deleted in previous PR).
+
 ## 3.43.0-nightly.1
 
 ### Minor Changes

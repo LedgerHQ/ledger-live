@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.79.0-nightly.2
+
+### Patch Changes
+
+- [#6576](https://github.com/LedgerHQ/ledger-live/pull/6576) [`0dd3f34`](https://github.com/LedgerHQ/ledger-live/commit/0dd3f34964e242871c47063984b74998b21048e5) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Fix unworking links in TranslatedError
+
 ## 2.79.0-nightly.1
 
 ### Minor Changes
