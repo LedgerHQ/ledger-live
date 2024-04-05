@@ -97,5 +97,4 @@ function OperationComponent({
     </OperationRow>
   );
 }
-const ConnectedOperationComponent: React.ComponentType<OwnProps> = OperationComponent;
-export default ConnectedOperationComponent;
+export default React.memo(OperationComponent);

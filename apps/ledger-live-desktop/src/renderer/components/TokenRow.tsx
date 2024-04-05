@@ -41,13 +41,14 @@ const NestedRow = styled(Box)`
 
 function TokenRow(props: Props) {
   const { account, parentAccount, onClick, range, nested, disableRounding } = props;
-  const onClickRow = () => {
-    onClick(account, parentAccount);
-  };
+
+  const onClickRow = () => onClick(account, parentAccount);
+
   const mainAccount = getMainAccount(account, parentAccount);
   const unit = useAccountUnit(mainAccount);
   const currency = mainAccount.currency;
   const Row = nested ? NestedRow : TableRow;
+
   return (
     <Row className="token-row" onClick={onClickRow} tabIndex={-1}>
       <Header nested={nested} account={account} />
@@ -61,4 +62,5 @@ function TokenRow(props: Props) {
     </Row>
   );
 }
-export default TokenRow;
+
+export default React.memo(TokenRow);

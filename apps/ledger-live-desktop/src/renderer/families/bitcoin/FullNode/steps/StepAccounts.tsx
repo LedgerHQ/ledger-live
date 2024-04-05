@@ -15,7 +15,7 @@ import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
 import { FullNodeSteps } from "..";
 import styled from "styled-components";
-import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { useMaybeAccountUnit } from "~/renderer/hooks/useAccountUnit";
 const Row = styled(Box).attrs(() => ({
   horizontal: true,
   alignItems: "center",
@@ -39,8 +39,8 @@ const Accounts = ({
   const currency = getCryptoCurrencyById("bitcoin");
 
   const bitcoinAccounts = accounts.filter(a => getAccountCurrency(a) === currency);
-
-  const unit = useAccountUnit(bitcoinAccounts[0]);
+  const firstNonFalsyAccount = bitcoinAccounts.find(account => !!account);
+  const unit = useMaybeAccountUnit(firstNonFalsyAccount);
 
   const onUpdateNumberOfAccountsToScan = useCallback(
     (value: string) => {
