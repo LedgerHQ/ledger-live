@@ -70,6 +70,19 @@ target 'ledgerlivemobile' do
     # Workaround build error for classic quoted imports
     # See: https://github.com/expo/expo/issues/15622#issuecomment-997225774
     installer.pods_project.targets.each do |target|
+
+      # TODO: remove when updating to at least React Native 0.73.6
+      if target.name == 'Flipper'
+        file_path = 'Pods/Flipper/xplat/Flipper/FlipperTransportTypes.h'
+        contents = File.read(file_path)
+        unless contents.include?('#include <functional>')
+          File.open(file_path, 'w') do |file|
+            file.puts('#include <functional>')
+            file.puts(contents)
+          end
+        end
+      end
+
       target.build_configurations.each do |config|
         if ['react-native-fast-crypto'].include? target.name
           config.build_settings["USE_HEADERMAP"] = "NO"
