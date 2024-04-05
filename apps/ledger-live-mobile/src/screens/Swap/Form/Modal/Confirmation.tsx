@@ -103,7 +103,17 @@ export function Confirmation({
        * since the partner will never receive the funds
        */
       if (getEnv("DISABLE_TRANSACTION_BROADCAST")) {
-        postSwapCancelled({ provider, swapId });
+        postSwapCancelled({
+          provider,
+          swapId,
+          swapStep: "SIGN_COIN_TRANSACTION",
+          statusCode: "DISABLE_TRANSACTION_BROADCAST",
+          errorMessage: "DISABLE_TRANSACTION_BROADCAST",
+          sourceCurrencyId: swapTx.current.swap.from.account?.id,
+          targetCurrencyId: swapTx.current.swap.to.account?.id,
+          hardwareWalletType: deviceMeta.device.modelId,
+          swapType: exchangeRate.current.tradeMethod,
+        });
       } else {
         postSwapAccepted({
           provider,
@@ -112,6 +122,7 @@ export function Confirmation({
           sourceCurrencyId: swapTx.current.swap.from.account?.id,
           targetCurrencyId: swapTx.current.swap.to.account?.id,
           hardwareWalletType: deviceMeta.device.modelId,
+          swapType: exchangeRate.current.tradeMethod,
         });
       }
 

@@ -121,6 +121,7 @@ export default function ExchangeDrawer({ swapTransaction, exchangeRate, onComple
         sourceCurrencyId: swapTransaction.swap.from.currency?.id,
         targetCurrencyId: swapTransaction.swap.to.currency?.id,
         hardwareWalletType: device?.modelId,
+        swapType: selectedExchangeRate?.tradeMethod,
       });
       const params = getUpdateAccountWithUpdaterParams({
         result,

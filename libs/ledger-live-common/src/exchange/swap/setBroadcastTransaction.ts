@@ -2,6 +2,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { Operation } from "@ledgerhq/types-live";
 import { postSwapAccepted, postSwapCancelled } from "./index";
 import { DeviceModelId } from "@ledgerhq/devices";
+import { TradeMethod } from "./types";
 
 export const setBroadcastTransaction = ({
   result,
@@ -9,12 +10,14 @@ export const setBroadcastTransaction = ({
   sourceCurrencyId,
   targetCurrencyId,
   hardwareWalletType,
+  swapType,
 }: {
   result: { operation: Operation; swapId: string };
   provider: string;
   sourceCurrencyId?: string;
   targetCurrencyId?: string;
   hardwareWalletType?: DeviceModelId;
+  swapType?: TradeMethod;
 }) => {
   const { operation, swapId } = result;
 
@@ -26,6 +29,13 @@ export const setBroadcastTransaction = ({
     postSwapCancelled({
       provider,
       swapId,
+      swapStep: "SIGN_COIN_TRANSACTION",
+      statusCode: "DISABLE_TRANSACTION_BROADCAST",
+      errorMessage: "DISABLE_TRANSACTION_BROADCAST",
+      sourceCurrencyId,
+      targetCurrencyId,
+      hardwareWalletType,
+      swapType: swapType,
     });
   } else {
     postSwapAccepted({
@@ -35,6 +45,7 @@ export const setBroadcastTransaction = ({
       sourceCurrencyId,
       targetCurrencyId,
       hardwareWalletType,
+      swapType,
     });
   }
 };
