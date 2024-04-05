@@ -122,11 +122,6 @@ apps/ledger-live-mobile/src/components/ServicesWidget/Protect/          @ledgerh
 apps/ledger-live-mobile/src/components/WebRecoverPlayer/                @ledgerhq/recover-software
 apps/ledger-live-mobile/src/screens/Protect/                            @ledgerhq/recover-software
 libs/ledger-live-common/src/hooks/recoverFeatureFlag.ts                 @ledgerhq/recover-software
-
-# UI tests
-apps/ledger-live-desktop/tests/                          @ledgerhq/live-hub @ledgerhq/live-qa
-apps/ledger-live-mobile/e2e/                             @ledgerhq/live-hub @ledgerhq/live-qa
-
 # Cross-team generic files can be opted out (no strict ownership when it concerns everyone)
 apps/ledger-live-desktop/static/i18n/
 apps/ledger-live-mobile/src/locales/
@@ -137,3 +132,6 @@ libs/ledgerjs/packages/errors/src/index.ts
 libs/ledger-live-common/src/config/sharedConfig.ts
 libs/ledger-live-common/package.json
 **/generated/
+# UI tests are concerned by all teams, therefore have no strict ownership, devs generally write tests in context of feature, therefore the PR bringing features will only get ownership through the src/* changes which generally relates to the same tests modified
+apps/ledger-live-desktop/tests/
+apps/ledger-live-mobile/e2e/
