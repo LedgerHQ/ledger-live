@@ -1,25 +1,19 @@
 import { BigNumber } from "bignumber.js";
-// import sample from "lodash/sample";
 import invariant from "invariant";
 import expect from "expect";
-import sortBy from "lodash/sortBy";
-import sampleSize from "lodash/sampleSize";
-import get from "lodash/get";
-import type { Transaction, TronAccount } from "./types";
+import type { Transaction } from "./types";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
-import { botTest, expectSiblingsHaveSpendablePartGreaterThan, pickSiblings } from "../../bot/specs";
+import { botTest, pickSiblings } from "../../bot/specs";
 import type { AppSpec, TransactionDestinationTestInput } from "../../bot/types";
-import { getUnfreezeData, getNextRewardDate } from "./react";
+// import { getUnfreezeData, getNextRewardDate } from "./react";
 import { DeviceModelId } from "@ledgerhq/devices";
-// import { SubAccount } from "@ledgerhq/types-live";
 import { acceptTransaction } from "./speculos-deviceActions";
-// import { toAccountRaw } from "../../account";
 const currency = getCryptoCurrencyById("tron");
 const minimalAmount = parseCurrencyUnit(currency.units[0], "1");
 const maxAccount = 10;
 
-const getDecimalPart = (value: BigNumber, magnitude: number) =>
-  value.minus(value.modulo(10 ** magnitude));
+/*const getDecimalPart = (value: BigNumber, magnitude: number) =>
+  value.minus(value.modulo(10 ** magnitude));*/
 
 // FIXME TRON have a bug where the amounts from the API have imprecisions
 const expectedApproximate = (value: BigNumber, expected: BigNumber, delta = 50) => {
