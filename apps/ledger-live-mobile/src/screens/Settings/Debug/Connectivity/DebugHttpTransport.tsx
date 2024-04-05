@@ -41,8 +41,8 @@ const DebugHttpTransport = () => {
       }),
     );
 
-    navigation.navigate(NavigatorName.Manager, {
-      screen: ScreenName.Manager,
+    navigation.navigate(NavigatorName.MyLedger, {
+      screen: ScreenName.MyLedgerChooseDevice,
     });
   }, [address, dispatch, model, name, navigation]);
 
