@@ -363,7 +363,7 @@
       }
     },
     "history": {
-      "disclaimer": "Your swap desktop transactions are not synchronized with the Ledger Live mobile application",
+      "disclaimer": "Transactions might not show in swap history but are processed securely. Check ‘Latest Operations Details’ in your account for all transactions",
       "empty": {
         "title": "Your previous swaps will appear here",
         "description": "Either you have not made any swaps yet, or Ledger Live has been reset in the meantime."
