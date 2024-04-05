@@ -47,8 +47,10 @@ const tron: AppSpec<Transaction> = {
   name: "Tron",
   currency,
   appQuery: {
-    model: DeviceModelId.nanoS,
+    model: DeviceModelId.nanoSP,
     appName: "Tron",
+    firmware: "1.1.1",
+    appVersion: "0.5.0",
   },
   genericDeviceAction: acceptTransaction,
   testTimeout: 2 * 60 * 1000,
