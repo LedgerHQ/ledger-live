@@ -24,12 +24,13 @@ const Separator = styled.div`
 export default class StepSummary extends PureComponent<StepProps> {
   render() {
     const { account, transaction, status, error } = this.props;
-    const { estimatedFees } = status;
+    const { estimatedFees, errors } = status;
     if (!account) return null;
     if (!transaction) return null;
     const accountUnit = getAccountUnit(account);
     const feesCurrency = getAccountCurrency(account);
     const stakeKeyDeposit = account.cardanoResources?.protocolParams.stakeKeyDeposit;
+    const displayError = errors.amount?.message ? errors.amount : "";
     return (
       <Box flow={4} mx={40}>
         {error && <ErrorBanner error={error} />}
@@ -92,17 +93,6 @@ export default class StepSummary extends PureComponent<StepProps> {
             </Box>
           </Box>
         </FromToWrapper>
-      </Box>
-    );
-  }
-}
-export function StepSummaryFooter({ transitionTo, status, bridgePending, transaction }: StepProps) {
-  const { errors } = status;
-  const canNext = !errors.amount && !bridgePending && !errors.validators && transaction;
-  const displayError = errors.amount?.message ? errors.amount : "";
-  return (
-    <>
-      <Box horizontal alignItems="center" flow={2} grow>
         {displayError ? (
           <Box grow>
             <Alert type="error">
@@ -110,16 +100,33 @@ export function StepSummaryFooter({ transitionTo, status, bridgePending, transac
             </Alert>
           </Box>
         ) : null}
-        <Box horizontal>
-          <Button
-            id="undelegate-continue-button"
-            disabled={!canNext}
-            primary
-            onClick={() => transitionTo("connectDevice")}
-          >
-            <Trans i18nKey="common.continue" />
-          </Button>
-        </Box>
+      </Box>
+    );
+  }
+}
+export function StepSummaryFooter({
+  transitionTo,
+  status,
+  bridgePending,
+  transaction,
+  onClose,
+}: StepProps) {
+  const { errors } = status;
+  const canNext = !errors.amount && !bridgePending && !errors.validators && transaction;
+  return (
+    <>
+      <Box horizontal justifyContent="flex-end" flow={2} grow>
+        <Button mr={1} secondary onClick={onClose}>
+          <Trans i18nKey="common.cancel" />
+        </Button>
+        <Button
+          id="undelegate-continue-button"
+          disabled={!canNext}
+          primary
+          onClick={() => transitionTo("connectDevice")}
+        >
+          <Trans i18nKey="common.continue" />
+        </Button>
       </Box>
     </>
   );

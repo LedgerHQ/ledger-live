@@ -29,6 +29,9 @@ export default function StepDelegation({
   invariant(cardanoResources, "cardanoResources required");
   const delegation = cardanoResources.delegation;
 
+  const { errors } = status;
+  const displayError = errors.amount?.message ? errors.amount : "";
+
   const selectPool = (stakePool: StakePool) => {
     setSelectedPool(stakePool);
     const bridge: AccountBridge<CardanoTransaction> = getAccountBridge(account);
@@ -55,6 +58,11 @@ export default function StepDelegation({
         onChangeValidator={selectPool}
         selectedPoolId={selectedPoolId as string}
       />
+      {displayError ? (
+        <Alert type="error">
+          <TranslatedError error={displayError} field="title" />
+        </Alert>
+      ) : null}
     </Box>
   );
 }
@@ -65,34 +73,26 @@ export function StepDelegationFooter({
   status,
   bridgePending,
   transaction,
+  onClose,
 }: StepProps) {
   invariant(account, "account required");
   const { errors } = status;
   const canNext = !bridgePending && !errors.amount && transaction;
-  const displayError = errors.amount?.message ? errors.amount : "";
 
   return (
-    <Box horizontal alignItems="center" flow={2} grow>
-      {displayError ? (
-        <Box grow>
-          <Alert type="error">
-            <TranslatedError error={displayError} field="title" />
-          </Alert>
-        </Box>
-      ) : (
-        <AccountFooter account={account} status={status} />
-      )}
-
-      <Box horizontal>
-        <Button
-          id="delegate-continue-button"
-          disabled={!canNext}
-          primary
-          onClick={() => transitionTo("summary")}
-        >
-          <Trans i18nKey="common.continue" />
-        </Button>
-      </Box>
+    <Box horizontal justifyContent="flex-end" flow={2} grow>
+      <AccountFooter account={account} status={status} />
+      <Button mr={1} secondary onClick={onClose}>
+        <Trans i18nKey="common.cancel" />
+      </Button>
+      <Button
+        id="delegate-continue-button"
+        disabled={!canNext}
+        primary
+        onClick={() => transitionTo("summary")}
+      >
+        <Trans i18nKey="common.continue" />
+      </Button>
     </Box>
   );
 }
