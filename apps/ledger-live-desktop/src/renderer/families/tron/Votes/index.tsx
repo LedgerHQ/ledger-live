@@ -32,9 +32,7 @@ import { TronAccount } from "@ledgerhq/live-common/families/tron/types";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { urls } from "~/config/urls";
 import { useDateFromNow } from "~/renderer/hooks/useDateFormatter";
-import { tronStakingProvider } from "../AccountHeaderManageActions";
 import { useHistory } from "react-router";
-import noop from "lodash/noop";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 import { track } from "~/renderer/analytics/segment";
 
@@ -81,8 +79,8 @@ const Delegation = ({ account }: { account: TronAccount }) => {
   );
   const formattedNextRewardDate = useDateFromNow(nextRewardD);
 
-  const voteOnClick = ({ liveAppId }: { liveAppId: string }) => {
-    const value = `/platform/${liveAppId}`;
+  const voteOnClick = () => {
+    const value = "/platform/stakekit";
 
     track("button_clicked2", {
       ...stakeDefaultTrack,
@@ -103,8 +101,8 @@ const Delegation = ({ account }: { account: TronAccount }) => {
     });
   };
 
-  const claimOnClick = ({ liveAppId }: { liveAppId: string }) => {
-    const value = `/platform/${liveAppId}`;
+  const claimOnClick = () => {
+    const value = "/platform/stakekit";
     track("button_clicked2", {
       ...stakeDefaultTrack,
       delegation: "stake",
@@ -134,12 +132,7 @@ const Delegation = ({ account }: { account: TronAccount }) => {
         }}
       >
         {tronPower > 0 && formattedVotes.length > 0 ? (
-          <Button
-            small
-            color="palette.primary.main"
-            onClick={() => voteOnClick(tronStakingProvider)}
-            mr={2}
-          >
+          <Button small color="palette.primary.main" onClick={() => voteOnClick()} mr={2}>
             <Box horizontal flow={1} alignItems="center">
               <Vote size={12} />
               <Box>
@@ -170,9 +163,7 @@ const Delegation = ({ account }: { account: TronAccount }) => {
             }
           >
             <Button
-              onClick={
-                hasRewards && canClaimRewards ? () => claimOnClick(tronStakingProvider) : noop
-              }
+              onClick={() => claimOnClick()}
               color="palette.primary.main"
               disabled={!hasRewards || !canClaimRewards}
               small

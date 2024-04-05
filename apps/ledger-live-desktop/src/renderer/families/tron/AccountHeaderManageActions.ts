@@ -13,10 +13,6 @@ type Props = {
   parentAccount: TronAccount | undefined | null;
 };
 
-export const tronStakingProvider = {
-  liveAppId: "stakekit",
-};
-
 const AccountHeaderManageActions = ({
   account,
   parentAccount,
@@ -27,8 +23,8 @@ const AccountHeaderManageActions = ({
   const { tronResources } = mainAccount;
   if (!tronResources || parentAccount) return null;
 
-  const stakeOnClick = ({ liveAppId }: { liveAppId: string }) => {
-    const value = `/platform/${liveAppId}`;
+  const stakeOnClick = () => {
+    const value = "/platform/stakekit";
 
     track("button_clicked2", {
       ...stakeDefaultTrack,
@@ -57,7 +53,7 @@ const AccountHeaderManageActions = ({
       eventProperties: {
         button: "stake",
       },
-      onClick: () => stakeOnClick(tronStakingProvider),
+      onClick: () => stakeOnClick(),
     },
   ];
 };
