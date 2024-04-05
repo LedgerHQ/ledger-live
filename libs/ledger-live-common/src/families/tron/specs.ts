@@ -112,6 +112,8 @@ const tron: AppSpec<Transaction> = {
         );
       },
     },
+    /*
+    We do not manage staking anymore
     {
       name: "freeze 25% to bandwidth | energy",
       maxRun: 1,
@@ -245,7 +247,7 @@ const tron: AppSpec<Transaction> = {
         const currentVotes = sortBy(get(account, "tronResources.votes", []), ["address"]);
         botTest("current votes", () => expect(currentVotes).toEqual(votes));
       },
-    },
+    },*/
 
     /**
      * FIXME
@@ -419,7 +421,8 @@ const tron: AppSpec<Transaction> = {
     //     }
     //   },
     // },
-
+    /*
+    We do not manage staking anymore
     {
       name: "claim rewards",
       maxRun: 1,
@@ -451,7 +454,7 @@ const tron: AppSpec<Transaction> = {
           expect(nextRewardDate && nextRewardDate > Date.now()).toBe(true),
         );
       },
-    },
+    },*/
   ],
 };
 export default {
