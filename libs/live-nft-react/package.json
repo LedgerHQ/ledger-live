@@ -21,14 +21,14 @@
   "types": "lib/index.d.ts",
   "license": "Apache-2.0",
   "peerDependencies": {
-    "react": ">=16"
+    "react": ">=16",
+    "@tanstack/react-query": ">=5"
   },
   "dependencies": {
     "@ledgerhq/cryptoassets": "workspace:*",
     "@ledgerhq/live-nft": "workspace:*",
     "@ledgerhq/types-cryptoassets": "workspace:*",
-    "@ledgerhq/types-live": "workspace:*",
-    "@tanstack/react-query": "^5.17.19"
+    "@ledgerhq/types-live": "workspace:*"
   },
   "devDependencies": {
     "@testing-library/react": "14",
@@ -39,6 +39,7 @@
     "react-dom": "^18.2.0",
     "ts-jest": "^29.1.1",
     "@ledgerhq/coin-framework": "workspace:*",
+    "@tanstack/react-query": "^5.28.9",
     "bignumber.js": "9"
   },
   "scripts": {

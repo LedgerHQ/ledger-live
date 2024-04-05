@@ -121,7 +121,7 @@ function useQuickActions() {
         route: [
           NavigatorName.Base,
           {
-            screen: ScreenName.Manager,
+            screen: ScreenName.MyLedgerChooseDevice,
           },
         ],
         icon: IconsLegacy.ShieldCheckMedium,

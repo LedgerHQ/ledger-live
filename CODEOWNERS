@@ -96,7 +96,7 @@ apps/cli/src/commands/devices                            			@ledgerhq/live-devic
 **/screens/CustomImage																				@ledgerhq/live-devices
 **/components/CustomImage																	  	@ledgerhq/live-devices								
 apps/**/components/DeviceAction/                         			@ledgerhq/live-devices
-apps/ledger-live-mobile/src/screens/Manager/             			@ledgerhq/live-devices
+apps/ledger-live-mobile/src/screens/MyLedger*/             		@ledgerhq/live-devices
 apps/ledger-live-mobile/src/newArch/features/FirmwareUpdate/	@ledgerhq/live-devices
 apps/web-tools/repl/                                     			@ledgerhq/live-devices
 libs/**/devices/                                         			@ledgerhq/live-devices

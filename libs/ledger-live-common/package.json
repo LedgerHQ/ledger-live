@@ -88,7 +88,8 @@
     "react-native": ">=0.65.1",
     "react-native-svg": ">=12.1.1",
     "react-redux": "^7.2.9",
-    "redux-actions": "2.6.5"
+    "redux-actions": "2.6.5",
+    "@tanstack/react-query": ">=5"
   },
   "peerDependenciesMeta": {
     "react": {
@@ -256,6 +257,7 @@
     "@ledgerhq/types-live": "workspace:^",
     "@ledgerhq/device-react": "workspace:^",
     "@svgr/core": "^5.5.0",
+    "@tanstack/react-query": "^5.28.9",
     "@testing-library/react": "^14.1.2",
     "@types/bn.js": "^5.1.1",
     "@types/bs58": "^4.0.1",
