@@ -19,7 +19,7 @@ import { saveBleDeviceName } from "~/actions/ble";
 import { setHasConnectedDevice, updateMainNavigatorVisibility } from "~/actions/appstate";
 import { setLastConnectedDevice, setReadOnlyMode } from "~/actions/settings";
 import { BaseComposite, StackNavigatorProps } from "../RootNavigator/types/helpers";
-import { ManagerNavigatorStackParamList } from "../RootNavigator/types/ManagerNavigator";
+import { MyLedgerNavigatorStackParamList } from "../RootNavigator/types/MyLedgerNavigator";
 import { MainNavigatorParamList } from "../RootNavigator/types/MainNavigator";
 import PostOnboardingEntryPointCard from "../PostOnboarding/PostOnboardingEntryPointCard";
 import BleDevicePairingFlow, { SetHeaderOptionsRequest } from "../BleDevicePairingFlow";
@@ -34,7 +34,7 @@ export type { SetHeaderOptionsRequest };
 
 type Navigation = BaseComposite<
   CompositeScreenProps<
-    StackNavigatorProps<ManagerNavigatorStackParamList>,
+    StackNavigatorProps<MyLedgerNavigatorStackParamList>,
     StackNavigatorProps<MainNavigatorParamList>
   >
 >;

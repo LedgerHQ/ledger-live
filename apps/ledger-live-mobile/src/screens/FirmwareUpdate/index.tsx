@@ -16,7 +16,7 @@ import {
   ItemStatus,
   Icons,
 } from "@ledgerhq/native-ui";
-import { useTheme, useNavigation, useRoute } from "@react-navigation/native";
+import { useTheme, useNavigation } from "@react-navigation/native";
 import { Item } from "@ledgerhq/native-ui/components/Layout/List/types";
 import { DeviceInfo, FirmwareUpdateContext, languageIds } from "@ledgerhq/types-live";
 import { useBatteryStatuses } from "@ledgerhq/live-common/deviceSDK/hooks/useBatteryStatuses";
@@ -39,8 +39,7 @@ import {
   DeviceActionError,
 } from "~/components/DeviceAction/common";
 import QueuedDrawer from "~/components/QueuedDrawer";
-import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import { ManagerNavigatorStackParamList } from "~/components/RootNavigator/types/ManagerNavigator";
+import { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
 import {
   renderAllowLanguageInstallation,
@@ -67,6 +66,7 @@ import { GenericInformationBody } from "~/components/GenericInformationBody";
 import BatteryWarningDrawer from "./BatteryWarningDrawer";
 import { setLastConnectedDevice, setLastSeenDeviceInfo } from "~/actions/settings";
 import { lastSeenDeviceSelector } from "~/reducers/settings";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 
 const requiredBatteryStatuses = [
   BatteryStatusTypes.BATTERY_PERCENTAGE,
@@ -102,8 +102,8 @@ export type FirmwareUpdateProps = {
   updateFirmwareAction?: (args: updateFirmwareActionArgs) => Observable<UpdateFirmwareActionState>;
 };
 
-type NavigationProps = BaseComposite<
-  StackNavigatorProps<ManagerNavigatorStackParamList, ScreenName.FirmwareUpdate>
+type NavigationProps = RootComposite<
+  StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.FirmwareUpdate>
 >;
 
 type UpdateSteps = {
@@ -868,8 +868,8 @@ export const FirmwareUpdate = ({
   );
 };
 
-const FirmwareUpdateScreen = () => {
-  const { params } = useRoute<NavigationProps["route"]>();
+const FirmwareUpdateScreen = ({ route }: NavigationProps) => {
+  const { params } = route;
 
   if (!params.device || !params.firmwareUpdateContext || !params.deviceInfo) return null;
 
