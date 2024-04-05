@@ -21,7 +21,7 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { useMemo } from "react";
 
 import { currencyFormatter, format } from "../utils/currencyFormatter";
-import { BASIC_REFETCH, REFETCH_TIME_ONE_MINUTE } from "../utils/timers";
+import { BASIC_REFETCH, REFETCH_TIME_ONE_MINUTE } from "./timers";
 
 const cryptoCurrenciesList = [...listCryptoCurrencies(), ...listTokens()];
 

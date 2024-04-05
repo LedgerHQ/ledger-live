@@ -3,7 +3,7 @@ import { MarketItemResponse, MarketPerformersParams } from "../types";
 import { QUERY_KEY } from "./queryKeys";
 import { useQuery } from "@tanstack/react-query";
 import { formatPerformer } from "../utils/currencyFormatter";
-import { REFETCH_TIME_ONE_MINUTE } from "../utils/timers";
+import { REFETCH_TIME_ONE_MINUTE } from "./timers";
 
 export function useMarketPerformers({
   counterCurrency,
