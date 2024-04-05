@@ -1,6 +1,5 @@
 import React, { useMemo, memo, useCallback } from "react";
 import { Flex, Text, Bar } from "@ledgerhq/react-ui";
-import { TFunction } from "i18next";
 import { SwitchTransition, Transition } from "react-transition-group";
 import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
@@ -8,8 +7,9 @@ import FormattedVal from "~/renderer/components/FormattedVal";
 import styled from "styled-components";
 import Chart from "~/renderer/components/Chart";
 import { dayFormat, hourFormat, useDateFormatter } from "~/renderer/hooks/useDateFormatter";
-import ChartPlaceholder from "../assets/ChartPlaceholder";
-import CountervalueSelect from "../CountervalueSelect";
+import ChartPlaceholder from "../../assets/ChartPlaceholder";
+import CountervalueSelect from "../../components/CountervalueSelect";
+import { useTranslation } from "react-i18next";
 
 const Title = styled(Text).attrs({ variant: "h3", color: "neutral.c100", mt: 1, mb: 5 })`
   font-size: 28px;
@@ -44,19 +44,15 @@ const FadeIn = styled.div.attrs<{ state: string }>(p => ({
 
 const ranges = Object.keys(rangeDataTable);
 
-function Tooltip({
-  data,
-  counterCurrency,
-  locale,
-  formatDay,
-  formatHour,
-}: {
+type TooltipProps = {
   data: { date: Date; value: number };
   counterCurrency: string;
   locale: string;
   formatDay: (date: Date) => string;
   formatHour: (date: Date) => string;
-}) {
+};
+
+function Tooltip({ data, counterCurrency, locale, formatDay, formatHour }: TooltipProps) {
   return (
     <Flex flexDirection="column" p={1}>
       <TooltipText variant="large">
@@ -77,45 +73,47 @@ type Props = {
   price?: number;
   priceChangePercentage?: number;
   chartData?: Record<string, [number, number][]>;
-  chartRequestParams: { range?: string | undefined; counterCurrency?: string | undefined };
-  refreshChart: (params: { range: string }) => void;
+  range: string;
+  counterCurrency: string;
+  refreshChart: (range: string) => void;
   color?: string;
-  t: TFunction;
   locale: string;
   loading: boolean;
   setCounterCurrency: (currency: string) => void;
-  supportedCounterCurrencies: string[];
+  supportedCounterCurrencies?: string[];
 };
 
 function MarkeCoinChartComponent({
   chartData,
   price,
   priceChangePercentage,
-  chartRequestParams,
+  range,
+  counterCurrency,
   refreshChart,
   color,
-  t,
   locale,
   loading,
   setCounterCurrency,
   supportedCounterCurrencies,
 }: Props) {
-  const { range, counterCurrency } = chartRequestParams;
-  const { scale } = (range && rangeDataTable[range]) || { scale: undefined };
-  const activeRangeIndex = (range && ranges.indexOf(range)) || -1;
+  const { t } = useTranslation();
+
+  const { scale } = rangeDataTable[range] || { scale: undefined };
+  const activeRangeIndex = ranges.indexOf(range);
+
   const data: { date: Date; value: number }[] = useMemo(() => {
-    return range && chartData?.[range]
-      ? chartData[range].map(([date, value]) => ({
+    return chartData
+      ? Object.values(chartData ?? [])[0].map(([date, value]) => ({
           date: new Date(date),
           value,
         }))
       : [];
-  }, [chartData, range]);
+  }, [chartData]);
 
   const setRange = useCallback(
     (index: number) => {
       const newRange = ranges[index];
-      if (range !== newRange) refreshChart({ range: newRange });
+      if (range !== newRange) refreshChart(newRange);
     },
     [refreshChart, range],
   );
@@ -148,14 +146,14 @@ function MarkeCoinChartComponent({
       <Flex mb={2} flexDirection="row" justifyContent="space-between" alignItems="flex-end">
         <Flex flexDirection="column">
           <SubTitle>{t("market.marketList.price")}</SubTitle>
-          <Title>
+          <Title data-test-id={"market-price"}>
             {counterValueFormatter({
               currency: counterCurrency,
               value: price,
               locale,
             })}
           </Title>
-          <Flex>
+          <Flex data-test-id={"market-price-delta"}>
             {priceChangePercentage && (
               <FormattedVal
                 isPercent

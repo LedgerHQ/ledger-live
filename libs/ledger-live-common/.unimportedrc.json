@@ -311,7 +311,8 @@
     "src/postOnboarding/mock.ts",
     "src/reactNativeSvg.d.ts",
     "src/currencies/mock.ts",
-    "src/families/tezos/fixtures/*"
+    "src/families/tezos/fixtures/*",
+    "src/market/v2/**"
   ],
   "ignoreUnused": [
     "@types/bchaddrjs",
@@ -319,6 +320,7 @@
     "@types/pako",
     "@types/qs",
     "@ledgerhq/hw-transport-mocker",
+    "@tanstack/react-query",
     "bip32",
     "bip39",
     "yargs",
