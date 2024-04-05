@@ -18,14 +18,17 @@ export const useResize = (
   }, [myRef]);
 
   useEffect(() => {
-    window.addEventListener("load", handleResize);
+    if (width === 0 && height === 0 && myRef.current) {
+      setWidth(myRef.current.offsetWidth);
+      setHeight(myRef.current.offsetHeight);
+    }
+
     window.addEventListener("resize", handleResize);
 
     return () => {
-      window.removeEventListener("load", handleResize);
       window.removeEventListener("resize", handleResize);
     };
-  }, [myRef, handleResize]);
+  }, [myRef, handleResize, width, height]);
 
   return { width, height };
 };
