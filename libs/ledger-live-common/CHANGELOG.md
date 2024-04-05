@@ -1,5 +1,29 @@
 # @ledgerhq/live-common
 
+## 34.1.0-nightly.2
+
+### Minor Changes
+
+- [#6603](https://github.com/LedgerHQ/ledger-live/pull/6603) [`df1dcbf`](https://github.com/LedgerHQ/ledger-live/commit/df1dcbffe901d7c4baddb46a06b08a4ed5b7a17e) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for failed operations in Cosmos chains. Fix breaking change in the `GetTxsEvent` Cosmos SDK endpoint after v0.47. Fix incorrect transaction simulation in Cosmos chains. Add types to all Cosmos SDK endpoint for better analysis of SDK breaking changes and depreciations.
+
+### Patch Changes
+
+- Updated dependencies [[`d766a94`](https://github.com/LedgerHQ/ledger-live/commit/d766a94232dab571f01f4622679f65d651faef3c), [`df1dcbf`](https://github.com/LedgerHQ/ledger-live/commit/df1dcbffe901d7c4baddb46a06b08a4ed5b7a17e)]:
+  - @ledgerhq/wallet-api-exchange-module@0.5.0-nightly.1
+  - @ledgerhq/live-env@2.0.1-nightly.0
+  - @ledgerhq/coin-framework@0.11.4-nightly.1
+  - @ledgerhq/coin-algorand@0.4.1-nightly.1
+  - @ledgerhq/coin-bitcoin@0.4.0-nightly.10
+  - @ledgerhq/coin-evm@1.0.1-nightly.1
+  - @ledgerhq/coin-near@0.3.12-nightly.1
+  - @ledgerhq/coin-polkadot@0.6.1-nightly.1
+  - @ledgerhq/live-countervalues@0.1.4-nightly.1
+  - @ledgerhq/live-network@1.2.1-nightly.1
+  - @ledgerhq/live-nft@0.3.1-nightly.1
+  - @ledgerhq/live-countervalues-react@0.1.4-nightly.1
+  - @ledgerhq/hw-app-eth@6.35.8-nightly.1
+  - @ledgerhq/device-core@0.1.1-nightly.1
+
 ## 34.1.0-nightly.1
 
 ### Minor Changes

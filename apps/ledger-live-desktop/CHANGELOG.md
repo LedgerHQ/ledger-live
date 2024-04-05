@@ -1,5 +1,23 @@
 # ledger-live-desktop
 
+## 2.79.0-nightly.3
+
+### Patch Changes
+
+- [#6425](https://github.com/LedgerHQ/ledger-live/pull/6425) [`58c6936`](https://github.com/LedgerHQ/ledger-live/commit/58c69362a21c2f50ef5a12811ebffdf54b53c03b) Thanks [@gre](https://github.com/gre)! - Unify rendering of Recover Banner.
+
+- Updated dependencies [[`df1dcbf`](https://github.com/LedgerHQ/ledger-live/commit/df1dcbffe901d7c4baddb46a06b08a4ed5b7a17e), [`df1dcbf`](https://github.com/LedgerHQ/ledger-live/commit/df1dcbffe901d7c4baddb46a06b08a4ed5b7a17e)]:
+  - @ledgerhq/live-common@34.1.0-nightly.2
+  - @ledgerhq/live-env@2.0.1-nightly.0
+  - @ledgerhq/coin-framework@0.11.4-nightly.1
+  - @ledgerhq/coin-bitcoin@0.4.0-nightly.10
+  - @ledgerhq/coin-evm@1.0.1-nightly.1
+  - @ledgerhq/live-countervalues@0.1.4-nightly.1
+  - @ledgerhq/live-network@1.2.1-nightly.1
+  - @ledgerhq/live-nft@0.3.1-nightly.1
+  - @ledgerhq/live-countervalues-react@0.1.4-nightly.1
+  - @ledgerhq/live-nft-react@0.3.1-nightly.1
+
 ## 2.79.0-nightly.2
 
 ### Patch Changes
