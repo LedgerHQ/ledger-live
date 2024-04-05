@@ -1,12 +1,14 @@
+import { AxiosError } from "axios";
 import network from "@ledgerhq/live-network/network";
 import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Operation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import { SequenceNumberError } from "@ledgerhq/errors";
 import { patchOperationWithHash } from "../../../operation";
 import cryptoFactory from "../chain/chain";
 import cosmosBase from "../chain/cosmosBase";
-import { SequenceNumberError } from "@ledgerhq/errors";
+import * as CosmosSDKTypes from "./types";
 import {
   CosmosDelegation,
   CosmosDelegationStatus,
@@ -14,9 +16,7 @@ import {
   CosmosTx,
   CosmosUnbonding,
 } from "../types";
-import { AxiosError } from "axios";
 
-type Rewards = { denom: string; amount: string };
 const USDC_DENOM = "ibc/8E27BA2D5493AF5636760E354E46004562C46AB7EC0CC4C1CA14E9E20E2545B5";
 
 export class CosmosAPI {
@@ -85,6 +85,10 @@ export class CosmosAPI {
     }
   };
 
+  /**
+   * @sdk https://docs.cosmos.network/api#tag/Query/operation/Account
+   * @warning return is technically "any" based on documentation and may differ depending on the chain
+   */
   getAccount = async (
     address: string,
   ): Promise<{ accountNumber: number; sequence: number; pubKeyType: string; pubKey: string }> => {
@@ -96,13 +100,16 @@ export class CosmosAPI {
     };
 
     try {
-      const { data } = await network({
+      const {
+        data: { account },
+      } = await network<CosmosSDKTypes.GetAccountDetails>({
         method: "GET",
         url: `${this.defaultEndpoint}/cosmos/auth/${this.version}/accounts/${address}`,
       });
 
       // We use base_account for Ethermint chains and account for the rest
-      const srcAccount = data.account.base_account || data.account;
+      const srcAccount =
+        account["@type"] === "/cosmos.auth.v1beta1.BaseAccount" ? account : account.base_account;
 
       if (srcAccount.account_number) {
         accountData.accountNumber = parseInt(srcAccount.account_number);
@@ -127,51 +134,84 @@ export class CosmosAPI {
     return accountData;
   };
 
+  /**
+   * @sdk https://docs.cosmos.network/api#tag/Service/operation/GetNodeInfo
+   * @notice returns { application_versoin: { ..., cosmos_sdk_version } } (Since: cosmos-sdk 0.43)
+   */
   getChainId = async (): Promise<string> => {
-    const { data } = await network({
+    const {
+      data: { default_node_info: defaultNodeInfo },
+    } = await network<CosmosSDKTypes.GetNodeInfosSDK>({
       method: "GET",
       url: `${this.defaultEndpoint}/cosmos/base/tendermint/${this.version}/node_info`,
     });
 
-    return data.default_node_info.network;
+    return defaultNodeInfo.network;
   };
 
+  /**
+   * @sdk https://docs.cosmos.network/api#tag/Service/operation/GetLatestBlock
+   * @warning returns { ..., block } (Deprecated: please use `sdk_block` instead)
+   * @notice returns { ..., sdk_block } (Since: cosmos-sdk:0.47)
+   */
   getHeight = async (): Promise<number> => {
-    const { data } = await network({
+    const {
+      data: { block, sdk_block },
+    } = await network<CosmosSDKTypes.GetLatestBlockSDK>({
       method: "GET",
       url: `${this.defaultEndpoint}/cosmos/base/tendermint/${this.version}/blocks/latest`,
     });
 
-    return parseInt(data.block.header.height);
+    return sdk_block ? parseInt(sdk_block.header.height) : parseInt(block.header.height);
   };
 
+  /**
+   * @sdk https://docs.cosmos.network/api#tag/Query/operation/AllBalances
+   * @notice query params { pagination: { ..., reverse } } (Since: cosmos-sdk 0.43)
+   * @notice query params { pagination: {..., resolve_denom } } (Since: cosmos-sdk 0.50)
+   */
   getAllBalances = async (address: string, currency: CryptoCurrency): Promise<BigNumber> => {
-    const { data } = await network({
+    const {
+      data: { balances },
+    } = await network<CosmosSDKTypes.GetAllBalancesSDK>({
       method: "GET",
       url: `${this.defaultEndpoint}/cosmos/bank/${this.version}/balances/${address}`,
     });
 
-    let amount = new BigNumber(0);
-
-    for (const elem of data.balances) {
-      if (elem.denom === currency.units[1].code) amount = amount.plus(elem.amount);
+    let totalAmount = new BigNumber(0);
+    for (const { denom, amount } of balances) {
+      if (denom === currency.units[1].code) {
+        totalAmount = totalAmount.plus(amount);
+      }
     }
 
-    return amount;
+    return totalAmount;
   };
 
+  /**
+   * @sdk https://docs.cosmos.network/api#tag/Query/operation/DelegatorDelegations
+   * @notice query params { pagination: { ..., reverse } } (Since: cosmos-sdk 0.43)
+   * @sdk https://docs.cosmos.network/api#tag/Query/operation/Validator
+   * @sdk https://docs.cosmos.network/api#tag/Query/operation/DelegationTotalRewards
+   *
+   * @warning This call should use a Promise.all on all non dependent requests in order to improve performances
+   */
   getDelegations = async (
     address: string,
     currency: CryptoCurrency,
   ): Promise<CosmosDelegation[]> => {
     const delegations: Array<CosmosDelegation> = [];
 
-    const { data: data1 } = await network({
+    const {
+      data: { delegation_responses: delegationResponses },
+    } = await network<CosmosSDKTypes.GetDelegatorDelegations>({
       method: "GET",
       url: `${this.defaultEndpoint}/cosmos/staking/${this.version}/delegations/${address}`,
     });
 
-    data1.delegation_responses = data1.delegation_responses.filter(d => d.balance.amount !== "0");
+    const filteredDelegationResponses = delegationResponses.filter(
+      delegation => delegation.balance.amount !== "0",
+    );
 
     let status = "unbonded";
     const statusMap = {
@@ -180,31 +220,36 @@ export class CosmosAPI {
       BOND_STATUS_BONDED: "bonded",
     };
 
-    for (const d of data1.delegation_responses) {
-      const { data: data2 } = await network({
+    for (const { delegation, balance } of filteredDelegationResponses) {
+      const {
+        data: { validator },
+      } = await network<CosmosSDKTypes.GetValidatorSDK>({
         method: "GET",
-        url: `${this.defaultEndpoint}/cosmos/staking/${this.version}/validators/${d.delegation.validator_address}`,
+        url: `${this.defaultEndpoint}/cosmos/staking/${this.version}/validators/${delegation.validator_address}`,
       });
 
-      status = statusMap[data2.validator.status] || "unbonded";
+      status = statusMap[validator.status] || "unbonded";
 
       delegations.push({
-        validatorAddress: d.delegation.validator_address,
+        validatorAddress: delegation.validator_address,
         amount:
-          d.balance.denom === currency.units[1].code
-            ? new BigNumber(d.balance.amount)
+          balance.denom === currency.units[1].code
+            ? new BigNumber(balance.amount)
             : new BigNumber(0),
         pendingRewards: new BigNumber(0),
         status: status as CosmosDelegationStatus,
       });
     }
 
-    const { data: data3 } = await network({
+    const {
+      data: { rewards },
+    } = await network<CosmosSDKTypes.GetDelegationTotalReward>({
       method: "GET",
       url: `${this.defaultEndpoint}/cosmos/distribution/${this.version}/delegators/${address}/rewards`,
     });
 
-    for (const r of data3.rewards) {
+    // 3 for loops imbricated ? :exploding_head:
+    for (const r of rewards) {
       for (const d of delegations) {
         if (r.validator_address === d.validatorAddress) {
           for (const reward of r.reward) {
@@ -220,21 +265,27 @@ export class CosmosAPI {
     return delegations;
   };
 
+  /**
+   * @sdk https://docs.cosmos.network/api#tag/Query/operation/Redelegations
+   * @notice query params { pagination: { ..., reverse } } (Since: cosmos-sdk 0.43)
+   */
   getRedelegations = async (address: string): Promise<CosmosRedelegation[]> => {
     const redelegations: Array<CosmosRedelegation> = [];
 
-    const { data } = await network({
+    const {
+      data: { redelegation_responses: redelegationResponses },
+    } = await network<CosmosSDKTypes.GetRedelegations>({
       method: "GET",
       url: `${this.defaultEndpoint}/cosmos/staking/${this.version}/delegators/${address}/redelegations`,
     });
 
-    for (const r of data.redelegation_responses) {
-      for (const entry of r.entries) {
+    for (const { entries, redelegation } of redelegationResponses) {
+      for (const { initial_balance: initalBalance, completion_time: completionTime } of entries) {
         redelegations.push({
-          validatorSrcAddress: r.redelegation.validator_src_address,
-          validatorDstAddress: r.redelegation.validator_dst_address,
-          amount: new BigNumber(entry.redelegation_entry.initial_balance),
-          completionDate: new Date(entry.redelegation_entry.completion_time),
+          validatorSrcAddress: redelegation.validator_src_address,
+          validatorDstAddress: redelegation.validator_dst_address,
+          amount: new BigNumber(initalBalance),
+          completionDate: new Date(completionTime),
         });
       }
     }
@@ -242,20 +293,26 @@ export class CosmosAPI {
     return redelegations;
   };
 
+  /**
+   * @sdk https://docs.cosmos.network/api#tag/Query/operation/ValidatorUnbondingDelegations
+   * @notice query params { pagination: { ..., reverse } } (Since: cosmos-sdk 0.43)
+   */
   getUnbondings = async (address: string): Promise<CosmosUnbonding[]> => {
     const unbondings: Array<CosmosUnbonding> = [];
 
-    const { data } = await network({
+    const {
+      data: { unbonding_responses: unbondingResponses },
+    } = await network<CosmosSDKTypes.GetValidatorUnbondingDelegations>({
       method: "GET",
       url: `${this.defaultEndpoint}/cosmos/staking/${this.version}/delegators/${address}/unbonding_delegations`,
     });
 
-    for (const u of data.unbonding_responses) {
-      for (const entry of u.entries) {
+    for (const { validator_address: validatorAddress, entries } of unbondingResponses) {
+      for (const { initial_balance: initialBalance, completion_time: completionTime } of entries) {
         unbondings.push({
-          validatorAddress: u.validator_address,
-          amount: new BigNumber(entry.initial_balance),
-          completionDate: new Date(entry.completion_time),
+          validatorAddress,
+          amount: new BigNumber(initialBalance),
+          completionDate: new Date(completionTime),
         });
       }
     }
@@ -263,13 +320,18 @@ export class CosmosAPI {
     return unbondings;
   };
 
+  /**
+   * @sdk https://docs.cosmos.network/api#tag/Query/operation/DelegatorWithdrawAddress
+   */
   getWithdrawAddress = async (address: string): Promise<string> => {
-    const { data } = await network({
+    const {
+      data: { withdraw_address: withdrawAddress },
+    } = await network<CosmosSDKTypes.GetDelegatorWithdrawAddress>({
       method: "GET",
       url: `${this.defaultEndpoint}/cosmos/distribution/${this.version}/delegators/${address}/withdraw_address`,
     });
 
-    return data.withdraw_address;
+    return withdrawAddress;
   };
 
   getTransactions = async (address: string, paginationSize: number): Promise<CosmosTx[]> => {
@@ -288,46 +350,44 @@ export class CosmosAPI {
     filterOn: "message.sender" | "transfer.recipient",
     paginationSize: number,
   ) {
-    let txs: CosmosTx[] = [];
     try {
-      let total: number;
-      let previousTxCall: CosmosTx[] | null = null;
+      let allTxs: CosmosTx[] = [];
       let paginationOffset = 0;
+      let maxTxs = 0;
 
       do {
-        const response: {
-          txs: CosmosTx[];
-          nextPageToken: string | undefined;
-          total: number;
-        } = await this.fetchTransactions(this.defaultEndpoint, filterOn, address, {
-          "pagination.limit": paginationSize,
-          "pagination.offset": paginationOffset,
-          "pagination.reverse": true,
-        });
-
-        if (
-          previousTxCall &&
-          previousTxCall.length === txs.length &&
-          response.txs[0] &&
-          previousTxCall[0].txhash === response.txs[0].txhash
-        ) {
-          // Means we are getting the same thing... prevents an infinite loop
-          break;
-        }
+        const { txs, total } = await this.fetchTransactions(
+          this.defaultEndpoint,
+          filterOn,
+          address,
+          {
+            "pagination.limit": paginationSize,
+            "pagination.offset": paginationOffset,
+            "pagination.reverse": true,
+          },
+        );
 
         paginationOffset += paginationSize;
-        total = response.total;
-        previousTxCall = response.txs;
-        txs = [...txs, ...response.txs];
-      } while (txs.length < total);
-      // The right condition should be nextPageToken != null but next_key isn't returned by the node for some reason
+        maxTxs = total;
+        allTxs = allTxs.concat(txs);
+      } while (allTxs.length < maxTxs);
+
+      return allTxs;
     } catch (e) {
+      log("debug", "Could not fetch txs", { e });
       // Tx fetching failed, we return an empty array
       return [];
     }
-    return txs;
   }
 
+  /**
+   * @sdk https://docs.cosmos.network/api#tag/Service/operation/GetTxsEvent
+   * @warning query param { ..., events } (Deprecated: post v0.47.x use query instead, which should contain a valid events query)
+   * @warning returns { ..., pagination } (Deprecated: post v0.46.x use total instead)
+   * @notice returns { ..., total } (Since: cosmos-sdk 0.46.x)
+   * @notice query params { ..., query } (Since: cosmos-sdk 0.50)
+   * @notice query params { pagination: { ..., reverse } } (Since: cosmos-sdk 0.43)
+   */
   private async fetchTransactions(
     nodeUrl: string,
     filterOn: "message.sender" | "transfer.recipient",
@@ -339,19 +399,13 @@ export class CosmosAPI {
     },
   ): Promise<{
     txs: CosmosTx[];
-    nextPageToken: string | undefined;
     total: number;
   }> {
     let serializedOptions = "";
     for (const key of Object.keys(options)) {
       serializedOptions += options[key] != null ? `&${key}=${options[key]}` : "";
     }
-    const response: {
-      data: {
-        tx_responses: CosmosTx[];
-        pagination: { total: number; next_key: string | undefined };
-      };
-    } = await network({
+    const { data } = await network<CosmosSDKTypes.GetTxsEvents>({
       method: "GET",
       url:
         `${nodeUrl}/cosmos/tx/${this.version}/txs?events=` +
@@ -360,14 +414,20 @@ export class CosmosAPI {
     });
 
     return {
-      txs: response.data.tx_responses,
-      nextPageToken: response.data.pagination.next_key,
-      total: response.data.pagination.total,
+      txs: data.tx_responses,
+      total: "total" in data ? data.total : data.pagination.total,
     };
   }
 
+  /**
+   * @sdk https://docs.cosmos.network/api#tag/Service/operation/BroadcastTx
+   * @depreacted body {..., mode } -> BROADCAST_MODE_BLOCK (Deprecated: post v0.47 use BROADCAST_MODE_SYNC instead)
+   * @notice returns {..., events } (Since: cosmos-sdk 0.42.11, 0.44.5, 0.45)
+   */
   broadcast = async ({ signedOperation: { operation, signature } }): Promise<Operation> => {
-    const { data } = await network({
+    const {
+      data: { tx_response: txResponse },
+    } = await network<CosmosSDKTypes.PostBroadcast>({
       method: "POST",
       url: `${this.defaultEndpoint}/cosmos/tx/${this.version}/txs`,
       data: {
@@ -376,29 +436,36 @@ export class CosmosAPI {
       },
     });
 
-    if (data.tx_response.code != 0) {
+    if (txResponse.code != 0) {
       // error codes: https://github.com/cosmos/cosmos-sdk/blob/master/types/errors/errors.go
       // Handle cosmos sequence mismatch error(error code 32) because the backend returns a wrong sequence sometimes
       // This is a temporary fix until we have a better backend
-      if (data.tx_response.code === 32) {
+      if (txResponse.code === 32) {
         throw new SequenceNumberError();
       }
       throw new Error(
         "invalid broadcast return (code: " +
-          (data.tx_response.code || "?") +
+          (txResponse.code || "?") +
           ", message: '" +
-          (data.tx_response.raw_log || "") +
+          (txResponse.raw_log || "") +
           "')",
       );
     }
 
-    return patchOperationWithHash(operation, data.tx_response.txhash);
+    return patchOperationWithHash(operation, txResponse.txhash);
   };
 
-  /** Simulate a transaction on the node to get a precise estimation of gas used */
+  /**
+   * Simulate a transaction on the node to get a precise estimation of gas used
+   * @sdk https://docs.cosmos.network/api#tag/Service/operation/Simulate
+   * @notice body {..., tx_bytes } (Since: cosmos-sdk 0.43)
+   * @notice returns {..., result: {..., msg_responses } } (Since: cosmos-sdk 0.46)
+   */
   simulate = async (tx_bytes: number[]): Promise<BigNumber> => {
     try {
-      const { data } = await network({
+      const {
+        data: { gas_info: gasInfo },
+      } = await network<CosmosSDKTypes.PostSimulate>({
         method: "POST",
         url: `${this.defaultEndpoint}/cosmos/tx/${this.version}/simulate`,
         data: {
@@ -406,8 +473,8 @@ export class CosmosAPI {
         },
       });
 
-      if (data && data.gas_info && data.gas_info.gas_used) {
-        return new BigNumber(data.gas_info.gas_used);
+      if (gasInfo.gas_used) {
+        return new BigNumber(gasInfo.gas_used);
       } else {
         throw new Error("No gas used returned from lcd");
       }
@@ -422,18 +489,18 @@ export class CosmosAPI {
    */
   getUsdcRewards = async (address: string): Promise<BigNumber> => {
     try {
-      const { data } = await network({
+      const {
+        data: { total },
+      } = await network<CosmosSDKTypes.GetDelegationTotalReward>({
         method: "GET",
         url: `${this.defaultEndpoint}/cosmos/distribution/v1beta1/delegators/${address}/rewards`,
       });
 
-      const usdcRewards: Rewards = data?.total?.find(
-        (reward: Rewards) => reward.denom === USDC_DENOM,
+      const usdcRewards: CosmosSDKTypes.Balance | undefined = total.find(
+        (reward: CosmosSDKTypes.Balance) => reward.denom === USDC_DENOM,
       );
 
-      const usdcRewardsAmount = new BigNumber(usdcRewards?.amount || "0");
-
-      return usdcRewardsAmount;
+      return new BigNumber(usdcRewards?.amount || "0");
     } catch (e) {
       throw new Error(`Can't fetch usdc rewards for address ${address}`);
     }

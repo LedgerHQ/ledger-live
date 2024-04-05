@@ -85,6 +85,7 @@ function mockCosmosTx(tx: Partial<CosmosTx>) {
       },
       body: {},
     },
+    code: 0,
     ...tx,
   } as unknown as CosmosTx;
 }
@@ -344,6 +345,122 @@ describe("getAccountShape", () => {
         amount: new BigNumber(7),
       },
     ]);
+  });
+
+  it("should parse an operation correctly when the operation failed)", async () => {
+    const failedOperation = mockCosmosTx({
+      tx: {
+        body: { memo: "memo" },
+        auth_info: baseTxMock.tx.auth_info,
+      },
+      events: [
+        {
+          type: "coin_spent",
+          attributes: [
+            {
+              key: "spender",
+              value: "spenderAddress",
+              index: true,
+            },
+            {
+              key: "amount",
+              value: "10uatom",
+              index: true,
+            },
+          ],
+        },
+        {
+          type: "coin_received",
+          attributes: [
+            {
+              key: "receiver",
+              value: "receiverAddress",
+              index: true,
+            },
+            {
+              key: "amount",
+              value: "10uatom",
+              index: true,
+            },
+          ],
+        },
+        {
+          type: "transfer",
+          attributes: [
+            {
+              key: "recipient",
+              value: "receiverAddress",
+              index: true,
+            },
+            {
+              key: "sender",
+              value: "address",
+              index: true,
+            },
+            {
+              key: "amount",
+              value: "10uatom",
+              index: true,
+            },
+          ],
+        },
+        {
+          type: "message",
+          attributes: [
+            {
+              key: "sender",
+              value: "address",
+              index: true,
+            },
+          ],
+        },
+        {
+          type: "tx",
+          attributes: [
+            {
+              key: "fee",
+              value: "10uatom",
+              index: true,
+            },
+            {
+              key: "fee_payer",
+              value: "address",
+              index: true,
+            },
+          ],
+        },
+        {
+          type: "tx",
+          attributes: [
+            {
+              key: "acc_seq",
+              value: "address/18",
+              index: true,
+            },
+          ],
+        },
+        {
+          type: "tx",
+          attributes: [
+            {
+              key: "signature",
+              value: "base64Sig",
+              index: true,
+            },
+          ],
+        },
+      ],
+      code: 11,
+    } as Partial<CosmosTx>);
+
+    mockAccountInfo({
+      txs: [failedOperation],
+    });
+
+    const account = await getAccountShape(infoMock, syncConfig);
+    expect((account.operations as CosmosOperation[])[0].value).toEqual(new BigNumber(1));
+    expect((account.operations as CosmosOperation[])[0].type).toEqual("OUT");
+    expect((account.operations as CosmosOperation[])[0].hasFailed).toEqual(true);
   });
 
   it("should parse an operation correctly with multiple transfers(received operations)", async () => {
