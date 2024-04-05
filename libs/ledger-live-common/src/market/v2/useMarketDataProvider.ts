@@ -21,12 +21,9 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { useMemo } from "react";
 
 import { currencyFormatter, format } from "../utils/currencyFormatter";
+import { BASIC_REFETCH, REFETCH_TIME_ONE_MINUTE } from "../utils/timers";
 
 const cryptoCurrenciesList = [...listCryptoCurrencies(), ...listTokens()];
-
-const REFETCH_TIME_ONE_MINUTE = 60 * 1000;
-
-const BASIC_REFETCH = 3; // nb minutes
 
 export function useMarketDataProvider() {
   const supportedCurrenciesInLIve = listSupportedCurrencies();

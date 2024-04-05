@@ -12,7 +12,6 @@ type Props = {
 
 export function Error({ title, description, top, range }: Props) {
   const { t } = useTranslation();
-  console.log(top, range);
   return (
     <Flex flexDirection="column" alignItems="center" justifyContent="center" flex={1}>
       <Flex
