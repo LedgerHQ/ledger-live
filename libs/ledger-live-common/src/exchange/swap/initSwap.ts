@@ -103,7 +103,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
 
           if (unsubscribed || !res || !res.data) return;
         } catch (e: any) {
-          if (e.messageKey == "WRONG_OR_EXPIRED_RATE_ID") {
+          if (e.msg.messageKey == "WRONG_OR_EXPIRED_RATE_ID") {
             o.next({
               type: "init-swap-error",
               error: new SwapRateExpiredError(),

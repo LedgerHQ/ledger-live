@@ -118,6 +118,7 @@ const makeError = (msg: string, status: number, url: string | undefined, method:
     status,
     url,
     method,
+    msg,
   };
   return (status || "").toString().startsWith("4")
     ? new LedgerAPI4xx(msg, obj)
