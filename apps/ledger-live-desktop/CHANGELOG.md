@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.79.0-next.2
+
+### Patch Changes
+
+- [#6621](https://github.com/LedgerHQ/ledger-live/pull/6621) [`495ce02`](https://github.com/LedgerHQ/ledger-live/commit/495ce021083a2529884c736d3b391b0e2ae8ab1b) Thanks [@sarneijim](https://github.com/sarneijim)! - Update history banner text
+
 ## 2.79.0-next.1
 
 ### Patch Changes
