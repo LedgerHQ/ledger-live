@@ -1,5 +1,22 @@
 # ledger-live-desktop
 
+## 2.79.0-nightly.4
+
+### Minor Changes
+
+- [#6613](https://github.com/LedgerHQ/ledger-live/pull/6613) [`f1bc716`](https://github.com/LedgerHQ/ledger-live/commit/f1bc7169aa83d05d2cb57ddcf2e41c2dcca8b145) Thanks [@Philippoes](https://github.com/Philippoes)! - Feat: Enable Tron 2.0 staking via Stakekit
+
+### Patch Changes
+
+- [#6340](https://github.com/LedgerHQ/ledger-live/pull/6340) [`433bfec`](https://github.com/LedgerHQ/ledger-live/commit/433bfecf77f85601c4974984fa8342b5e2513469) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Use new Hook for Market and Remove MarketDataProvider
+
+- [#6622](https://github.com/LedgerHQ/ledger-live/pull/6622) [`6b41b3a`](https://github.com/LedgerHQ/ledger-live/commit/6b41b3adfcd3e19ef17ebe6fdd0d1e95cec5a13f) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix E2E market test
+
+- [#6612](https://github.com/LedgerHQ/ledger-live/pull/6612) [`12daa05`](https://github.com/LedgerHQ/ledger-live/commit/12daa05e5f924a483d305417540ce9c83034b977) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Add additional properties to the accepted and cancelled swap api calls
+
+- Updated dependencies [[`433bfec`](https://github.com/LedgerHQ/ledger-live/commit/433bfecf77f85601c4974984fa8342b5e2513469), [`12daa05`](https://github.com/LedgerHQ/ledger-live/commit/12daa05e5f924a483d305417540ce9c83034b977)]:
+  - @ledgerhq/live-common@34.1.0-nightly.3
+
 ## 2.79.0-nightly.3
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @ledgerhq/live-common
 
+## 34.1.0-nightly.3
+
+### Patch Changes
+
+- [#6340](https://github.com/LedgerHQ/ledger-live/pull/6340) [`433bfec`](https://github.com/LedgerHQ/ledger-live/commit/433bfecf77f85601c4974984fa8342b5e2513469) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - New hooks to fecth Data from CVS and update Market without using MarketDataProvider
+
+- [#6612](https://github.com/LedgerHQ/ledger-live/pull/6612) [`12daa05`](https://github.com/LedgerHQ/ledger-live/commit/12daa05e5f924a483d305417540ce9c83034b977) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Add additional properties to the accepted and cancelled swap api calls
+
 ## 34.1.0-nightly.2
 
 ### Minor Changes

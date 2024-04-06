@@ -1,5 +1,16 @@
 # live-mobile
 
+## 3.43.0-nightly.4
+
+### Patch Changes
+
+- [#6536](https://github.com/LedgerHQ/ledger-live/pull/6536) [`3e2194d`](https://github.com/LedgerHQ/ledger-live/commit/3e2194d9bb4d6241644e2514844f029af5c691e1) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Firmware update: fix navigation
+
+- [#6612](https://github.com/LedgerHQ/ledger-live/pull/6612) [`12daa05`](https://github.com/LedgerHQ/ledger-live/commit/12daa05e5f924a483d305417540ce9c83034b977) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Add additional properties to the accepted and cancelled swap api calls
+
+- Updated dependencies [[`433bfec`](https://github.com/LedgerHQ/ledger-live/commit/433bfecf77f85601c4974984fa8342b5e2513469), [`12daa05`](https://github.com/LedgerHQ/ledger-live/commit/12daa05e5f924a483d305417540ce9c83034b977)]:
+  - @ledgerhq/live-common@34.1.0-nightly.3
+
 ## 3.43.0-nightly.3
 
 ### Patch Changes
