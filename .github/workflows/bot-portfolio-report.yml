@@ -24,7 +24,7 @@ permissions:
 
 jobs:
   portfolio:
-    runs-on: [ledger-live-medium-linux]
+    runs-on: [ledger-live-medium]
     steps:
       - name: generate token
         id: generate-token

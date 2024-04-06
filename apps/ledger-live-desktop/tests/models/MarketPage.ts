@@ -77,6 +77,10 @@ export class MarketPage {
 
   async waitForLoading() {
     await this.loadingPlaceholder.first().waitFor({ state: "detached" });
+  }
+
+  async waitForLoadingWithSwapbtn() {
+    await this.loadingPlaceholder.first().waitFor({ state: "detached" });
     await this.swapButton("btc").waitFor({ state: "attached" }); // swap buttons are displayed few seconds after
   }
 

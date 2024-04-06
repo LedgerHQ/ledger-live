@@ -3,17 +3,16 @@ import { TouchableOpacity } from "react-native";
 import styled, { useTheme } from "styled-components/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useSelector } from "react-redux";
-import { Box, IconsLegacy, Flex, Button } from "@ledgerhq/native-ui";
+import { Box, IconsLegacy, Flex } from "@ledgerhq/native-ui";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { ScreenName } from "~/const";
 import { hasAvailableUpdateSelector, lastSeenDeviceSelector } from "~/reducers/settings";
-import Manager, { managerHeaderOptions } from "~/screens/Manager";
-import ManagerMain from "~/screens/Manager/Manager";
+import MyLedgerChooseDeviceScreen, { headerOptions } from "~/screens/MyLedgerChooseDevice";
+import MyLedgerDeviceScreen from "~/screens/MyLedgerDevice";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import TabIcon from "../TabIcon";
 import { useIsNavLocked } from "./CustomBlockRouterNavigator";
-import { ManagerNavigatorStackParamList } from "./types/ManagerNavigator";
-import FirmwareUpdateScreen from "~/screens/FirmwareUpdate";
+import { MyLedgerNavigatorStackParamList } from "./types/MyLedgerNavigator";
 
 const BadgeContainer = styled(Flex).attrs({
   position: "absolute",
@@ -37,7 +36,7 @@ const Badge = () => {
   );
 };
 
-export default function ManagerNavigator() {
+export default function MyLedgerNavigator() {
   const { colors } = useTheme();
   const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [colors]);
 
@@ -48,29 +47,23 @@ export default function ManagerNavigator() {
       }}
     >
       <Stack.Screen
-        name={ScreenName.FirmwareUpdate}
-        component={FirmwareUpdateScreen}
+        name={ScreenName.MyLedgerChooseDevice}
+        component={MyLedgerChooseDeviceScreen}
         options={{
+          ...headerOptions,
           gestureEnabled: false,
-          headerTitle: () => null,
-          headerLeft: () => null,
-          headerRight: () => <Button Icon={IconsLegacy.CloseMedium} />,
         }}
       />
       <Stack.Screen
-        name={ScreenName.Manager}
-        component={Manager}
-        options={{
-          ...managerHeaderOptions,
-          gestureEnabled: false,
-        }}
+        name={ScreenName.MyLedgerDevice}
+        component={MyLedgerDeviceScreen}
+        options={{ title: "" }}
       />
-      <Stack.Screen name={ScreenName.ManagerMain} component={ManagerMain} options={{ title: "" }} />
     </Stack.Navigator>
   );
 }
 
-const Stack = createStackNavigator<ManagerNavigatorStackParamList>();
+const Stack = createStackNavigator<MyLedgerNavigatorStackParamList>();
 
 const DeviceIcon = ({ color, size = 16 }: { color?: string; size?: number }) => {
   const hasAvailableUpdate = useSelector(hasAvailableUpdateSelector);

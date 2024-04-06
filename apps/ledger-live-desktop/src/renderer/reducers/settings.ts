@@ -89,6 +89,7 @@ export type SettingsState = {
   fullNodeEnabled: boolean;
   // developer settings
   allowDebugApps: boolean;
+  allowReactQueryDebug: boolean;
   allowExperimentalApps: boolean;
   enablePlatformDevTools: boolean;
   catalogProvider: string;
@@ -99,7 +100,6 @@ export type SettingsState = {
     selectableCurrencies: string[];
     acceptedProviders: string[];
   };
-  starredMarketCoins: string[];
   overriddenFeatureFlags: {
     [key in FeatureId]: Feature;
   };
@@ -176,6 +176,7 @@ const INITIAL_STATE: SettingsState = {
   fullNodeEnabled: false,
   // developer settings
   allowDebugApps: false,
+  allowReactQueryDebug: false,
   allowExperimentalApps: false,
   enablePlatformDevTools: false,
   catalogProvider: "production",
@@ -186,7 +187,6 @@ const INITIAL_STATE: SettingsState = {
     acceptedProviders: [],
     selectableCurrencies: [],
   },
-  starredMarketCoins: [],
   overriddenFeatureFlags: {} as Record<FeatureId, Feature>,
   featureFlagsButtonVisible: false,
 
@@ -222,8 +222,6 @@ type HandlersPayloads = {
   SET_SWAP_ACCEPTED_IP_SHARING: boolean;
   ACCEPT_SWAP_PROVIDER: string;
   DEBUG_TICK: never;
-  ADD_STARRED_MARKET_COINS: string;
-  REMOVE_STARRED_MARKET_COINS: string;
   SET_LAST_SEEN_CUSTOM_IMAGE: {
     imageSize: number;
     imageHash: string;
@@ -361,14 +359,6 @@ const handlers: SettingsHandlers = {
   // used to debug performance of redux updates
   DEBUG_TICK: state => ({
     ...state,
-  }),
-  ADD_STARRED_MARKET_COINS: (state: SettingsState, { payload }) => ({
-    ...state,
-    starredMarketCoins: [...state.starredMarketCoins, payload],
-  }),
-  REMOVE_STARRED_MARKET_COINS: (state: SettingsState, { payload }) => ({
-    ...state,
-    starredMarketCoins: state.starredMarketCoins.filter(id => id !== payload),
   }),
   SET_LAST_SEEN_CUSTOM_IMAGE: (state: SettingsState, { payload }) => ({
     ...state,
@@ -642,6 +632,7 @@ export const hasInstalledAppsSelector = (state: State) => state.settings.hasInst
 export const USBTroubleshootingIndexSelector = (state: State) =>
   state.settings.USBTroubleshootingIndex;
 export const allowDebugAppsSelector = (state: State) => state.settings.allowDebugApps;
+export const allowDebugReactQuerySelector = (state: State) => state.settings.allowReactQueryDebug;
 export const allowExperimentalAppsSelector = (state: State) => state.settings.allowExperimentalApps;
 export const enablePlatformDevToolsSelector = (state: State) =>
   state.settings.enablePlatformDevTools;
@@ -709,7 +700,6 @@ export const exportSettingsSelector = createSelector(
     blacklistedTokenIds,
   }),
 );
-export const starredMarketCoinsSelector = (state: State) => state.settings.starredMarketCoins;
 export const overriddenFeatureFlagsSelector = (state: State) =>
   state.settings.overriddenFeatureFlags;
 export const featureFlagsButtonVisibleSelector = (state: State) =>

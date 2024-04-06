@@ -79,7 +79,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
       expectedValue: ({ account }) => account.freshAddress,
     },
     {
-      title: "Send To",
+      title: "To",
       button: SpeculosButton.RIGHT,
       expectedValue: ({ transaction }) => transaction.recipient,
     },

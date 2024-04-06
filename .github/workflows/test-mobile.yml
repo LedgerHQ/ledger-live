@@ -46,7 +46,7 @@ jobs:
         id: toolchain
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
         with:
-          skip_turbo_cache: "false"
+          skip-turbo-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}

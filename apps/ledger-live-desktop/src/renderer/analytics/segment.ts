@@ -272,11 +272,6 @@ export const track = (
     page: currentRouteNameRef.current,
   };
 
-  console.log(
-    "getMandatoryProperties(storeInstance)",
-    mandatory,
-    getMandatoryProperties(storeInstance),
-  );
   const allProperties = {
     ...eventPropertiesWithoutExtra,
     ...(mandatory ? getMandatoryProperties(storeInstance) : extraProperties(storeInstance)),

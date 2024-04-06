@@ -16,19 +16,21 @@ import {
   ReactNavigationHeaderOptions,
   StackNavigatorProps,
 } from "~/components/RootNavigator/types/helpers";
-import { ManagerNavigatorStackParamList } from "~/components/RootNavigator/types/ManagerNavigator";
+
+import { MyLedgerNavigatorStackParamList } from "~/components/RootNavigator/types/MyLedgerNavigator";
+
 import { useManagerDeviceAction } from "~/hooks/deviceActions";
 import ContentCardsLocation from "~/dynamicContent/ContentCardsLocation";
 import { ContentCardLocation } from "~/dynamicContent/types";
 
 type NavigationProps = BaseComposite<
-  StackNavigatorProps<ManagerNavigatorStackParamList, ScreenName.Manager>
+  StackNavigatorProps<MyLedgerNavigatorStackParamList, ScreenName.MyLedgerChooseDevice>
 >;
 
 type Props = NavigationProps;
 
 // Defines here some of the header options for this screen to be able to reset back to them.
-export const managerHeaderOptions: ReactNavigationHeaderOptions = {
+export const headerOptions: ReactNavigationHeaderOptions = {
   headerShown: false,
 };
 
@@ -59,7 +61,7 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
       // FIXME: nullable stuff not taken into account here?
       // `result` overrides values from `params` (prop `device` for ex)
       // @ts-expect-error Result has nullable fields
-      navigation.navigate(ScreenName.ManagerMain, {
+      navigation.navigate(ScreenName.MyLedgerDevice, {
         ...params,
         ...result,
         searchQuery: params?.searchQuery || params?.installApp,
@@ -100,7 +102,7 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
         navigation.setOptions({
           headerLeft: () => null,
           headerRight: () => null,
-          ...managerHeaderOptions,
+          ...headerOptions,
         });
         setIsHeaderOverridden(false);
       }
@@ -145,7 +147,7 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
   );
 };
 
-export default function Screen(props: Props) {
+export default function MyLedgerChooseDeviceScreen(props: Props) {
   const isFocused = useIsFocused();
   return <ChooseDevice {...props} isFocused={isFocused} />;
 }

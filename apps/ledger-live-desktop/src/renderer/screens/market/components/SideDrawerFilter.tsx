@@ -1,13 +1,14 @@
 import React, { useCallback } from "react";
 import { TFunction } from "i18next";
 import Dropdown from "./DropDown";
+import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
 
 export default function SideDrawerFilter({
   refresh,
   filters,
   t,
 }: {
-  refresh: (params?: { starred: []; liveCompatible: boolean }) => void;
+  refresh: (params: MarketListRequestParams) => void;
   filters: Record<
     "starred" | "liveCompatible",
     { value: boolean; toggle: () => void; disabled?: boolean }
