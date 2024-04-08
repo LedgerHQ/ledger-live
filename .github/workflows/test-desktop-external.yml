@@ -52,7 +52,7 @@ jobs:
         run: pnpm desktop prettier:check
       - name: typecheck
         run: pnpm desktop typecheck
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         name: upload eslint json output
         if: ${{ !cancelled() }}
         with:
@@ -127,12 +127,12 @@ jobs:
           group-name: ${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_number }}
       - name: upload ci suggested screenshots
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: images
           path: images-linux.json
       - name: Upload playwright test results [On Failure]
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: failure() && !cancelled()
         with:
           name: playwright-results-linux
@@ -144,7 +144,7 @@ jobs:
             apps/ledger-live-desktop/tests/artifacts/logs
       - name: Upload Allure Report
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: allure-results-linux
           path: apps/ledger-live-desktop/allure-results
@@ -159,11 +159,11 @@ jobs:
           ref: ${{ github.ref_name }}
           persist-credentials: false
       - name: "download linter results"
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: lint
       - name: download images artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: images
       - name: parse images
@@ -317,7 +317,7 @@ jobs:
             };
 
             fs.writeFileSync("summary.json", JSON.stringify(output), "utf-8");
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         name: upload summary
         with:
           name: summary.json

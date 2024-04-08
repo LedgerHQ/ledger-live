@@ -79,7 +79,7 @@ jobs:
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile
       - name: upload Android app
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.post-version.outputs.version }}-release
           path: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/build/outputs/apk/release
@@ -201,7 +201,7 @@ jobs:
               }],
             }
             fs.writeFileSync("summary.json", JSON.stringify(output), "utf-8");
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         name: upload output
         with:
           path: ${{ github.workspace }}/summary.json

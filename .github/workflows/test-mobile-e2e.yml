@@ -122,19 +122,19 @@ jobs:
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
         run: pnpm dlx allure-commandline generate apps/ledger-live-mobile/allure-results --single-file
       - name: Upload Allure single file report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
         with:
           name: 1-global-ios-report
           path: allure-report/index.html
       - name: Upload test artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
         with:
           name: 2-test-ios-artifacts
           path: apps/ledger-live-mobile/artifacts
       - name: Upload Allure report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
         with:
           name: "allure-ios-reports"
@@ -248,19 +248,19 @@ jobs:
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
         run: pnpm dlx allure-commandline generate apps/ledger-live-mobile/allure-results --single-file
       - name: Upload Allure single file report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
         with:
           name: 1-global-android-report
           path: allure-report/index.html
       - name: Upload test artifacts
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: 2-test-android-artifacts
           path: apps/ledger-live-mobile/artifacts/
       - name: Upload Allure Report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
         with:
           name: "allure-android-reports"
@@ -349,7 +349,7 @@ jobs:
             };
 
             fs.writeFileSync("summary.json", JSON.stringify(output), "utf-8");
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         name: upload summary
         with:
           name: summary.json
