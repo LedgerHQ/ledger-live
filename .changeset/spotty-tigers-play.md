@@ -2,4 +2,4 @@
 "live-mobile": patch
 ---
 
-remove max toggle button on llm
+hide max toggle button on llm instead of disabling for current filter
