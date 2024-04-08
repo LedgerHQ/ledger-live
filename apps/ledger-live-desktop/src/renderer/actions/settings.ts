@@ -355,3 +355,13 @@ export const setHasSeenAnalyticsOptInPrompt = (hasSeenAnalyticsOptInPrompt: bool
   type: "SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT",
   payload: hasSeenAnalyticsOptInPrompt,
 });
+
+export const setDismissedContentCard = (payload: { id: string; timestamp: number }) => ({
+  type: "SET_CONTENT_CARDS_DISMISSED",
+  payload,
+});
+
+export const clearDismissedContentCards = (payload: string[]) => ({
+  type: "CLEAR_CONTENT_CARDS_DISMISSED",
+  payload,
+});

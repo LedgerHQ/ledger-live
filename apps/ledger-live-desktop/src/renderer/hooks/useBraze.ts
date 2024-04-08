@@ -17,8 +17,14 @@ import {
   setPortfolioCards,
 } from "../actions/dynamicContent";
 import getUser from "~/helpers/user";
-import { developerModeSelector } from "../reducers/settings";
+import {
+  developerModeSelector,
+  trackingEnabledSelector,
+  contentCardsDismissedSelector,
+} from "../reducers/settings";
+import { clearDismissedContentCards } from "../actions/settings";
 import { getEnv } from "@ledgerhq/live-env";
+import { generateAnonymousId, getOldCampaignIds } from "@ledgerhq/live-common/braze/anonymousUsers";
 
 const getDesktopCards = (elem: braze.ContentCards) =>
   elem.cards.filter(card => card.extras?.platform === Platform.Desktop);
@@ -80,6 +86,8 @@ export const mapAsNotificationContentCard = (card: ClassicCard): NotificationCon
 export async function useBraze() {
   const dispatch = useDispatch();
   const devMode = useSelector(developerModeSelector);
+  const contentCardsDissmissed = useSelector(contentCardsDismissedSelector);
+  const isUntrackedUser = !useSelector(trackingEnabledSelector);
 
   const initBraze = useCallback(async () => {
     const user = await getUser();
@@ -99,8 +107,10 @@ export async function useBraze() {
       return;
     }
 
-    if (user) {
+    if (user && !isUntrackedUser) {
       braze.changeUser(user.id);
+    } else {
+      braze.changeUser(generateAnonymousId());
     }
 
     braze.requestPushPermission();
@@ -109,12 +119,16 @@ export async function useBraze() {
 
     braze.subscribeToContentCardsUpdates(cards => {
       const desktopCards = getDesktopCards(cards);
+      dispatch(clearDismissedContentCards(getOldCampaignIds(contentCardsDissmissed)));
+      const dismissedCardIds = Object.keys(contentCardsDissmissed);
 
       const portfolioCards = filterByPage(desktopCards, LocationContentCard.Portfolio)
+        .filter(card => !dismissedCardIds.includes(String(card.id)))
         .map(card => mapAsPortfolioContentCard(card as ClassicCard))
         .sort(compareCards);
 
       const actionCards = filterByPage(desktopCards, LocationContentCard.Action)
+        .filter(card => !dismissedCardIds.includes(String(card.id)))
         .map(card => mapAsActionContentCard(card as ClassicCard))
         .sort(compareCards);
 
@@ -129,7 +143,7 @@ export async function useBraze() {
 
     braze.automaticallyShowInAppMessages();
     braze.openSession();
-  }, [dispatch, devMode]);
+  }, [dispatch, devMode, isUntrackedUser, contentCardsDissmissed]);
 
   useEffect(() => {
     initBraze();

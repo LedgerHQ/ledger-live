@@ -6,6 +6,11 @@ import { useDispatch, useSelector } from "react-redux";
 import * as braze from "@braze/web-sdk";
 import { PortfolioContentCard } from "~/types/dynamicContent";
 import { setPortfolioCards } from "~/renderer/actions/dynamicContent";
+import {
+  trackingEnabledSelector,
+  contentCardsDismissedSelector,
+} from "~/renderer/reducers/settings";
+import { setDismissedContentCard } from "~/renderer/actions/settings";
 
 export const getTransitions = (transition: "slide" | "flip", reverse = false) => {
   const mult = reverse ? -1 : 1;
@@ -55,12 +60,14 @@ export const useDefaultSlides = (): {
 } => {
   const [cachedContentCards, setCachedContentCards] = useState<braze.Card[]>([]);
   const portfolioCards = useSelector(portfolioContentCardSelector);
+  const isTrackedUser = useSelector(trackingEnabledSelector);
+  const contentCardsDismissed = useSelector(contentCardsDismissedSelector);
   const dispatch = useDispatch();
 
   useEffect(() => {
     const cards = braze.getCachedContentCards().cards;
     setCachedContentCards(cards);
-  }, []);
+  }, [contentCardsDismissed]);
 
   const logSlideImpression = useCallback(
     (index: number) => {
@@ -70,12 +77,12 @@ export const useDefaultSlides = (): {
           const currentCard = cachedContentCards.find(card => card.id === slide.id);
 
           if (currentCard) {
-            braze.logContentCardImpressions([currentCard]);
+            isTrackedUser && braze.logContentCardImpressions([currentCard]);
           }
         }
       }
     },
-    [portfolioCards, cachedContentCards],
+    [portfolioCards, cachedContentCards, isTrackedUser],
   );
 
   const dismissCard = useCallback(
@@ -86,14 +93,17 @@ export const useDefaultSlides = (): {
           const currentCard = cachedContentCards.find(card => card.id === slide.id);
 
           if (currentCard) {
-            braze.logCardDismissal(currentCard);
+            isTrackedUser
+              ? braze.logCardDismissal(currentCard)
+              : currentCard.id &&
+                dispatch(setDismissedContentCard({ id: currentCard.id, timestamp: Date.now() }));
             setCachedContentCards(cachedContentCards.filter(n => n.id !== currentCard.id));
             dispatch(setPortfolioCards(portfolioCards.filter(n => n.id !== slide.id)));
           }
         }
       }
     },
-    [portfolioCards, cachedContentCards, dispatch],
+    [portfolioCards, cachedContentCards, isTrackedUser, dispatch],
   );
 
   const logSlideClick = useCallback(
@@ -106,10 +116,10 @@ export const useDefaultSlides = (): {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         currentCard.url = currentCard.id;
-        braze.logContentCardClick(currentCard);
+        isTrackedUser && braze.logContentCardClick(currentCard);
       }
     },
-    [cachedContentCards],
+    [cachedContentCards, isTrackedUser],
   );
   const slides = useMemo(
     () =>

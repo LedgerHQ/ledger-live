@@ -107,6 +107,7 @@ export type SettingsState = {
   vaultSigner: VaultSigner;
   supportedCounterValues: SupportedCountervaluesData[];
   hasSeenAnalyticsOptInPrompt: boolean;
+  contentCardsDismissed: { [key: string]: number };
 };
 
 export const getInitialLanguageAndLocale = (): { language: Language; locale: Locale } => {
@@ -193,6 +194,7 @@ const INITIAL_STATE: SettingsState = {
   // Vault
   vaultSigner: { enabled: false, host: "", token: "", workspace: "" },
   supportedCounterValues: [],
+  contentCardsDismissed: {} as Record<string, number>,
 };
 
 /* Handlers */
@@ -241,6 +243,10 @@ type HandlersPayloads = {
   SET_VAULT_SIGNER: VaultSigner;
   SET_SUPPORTED_COUNTER_VALUES: SupportedCountervaluesData[];
   SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT: boolean;
+  SET_CONTENT_CARDS_DISMISSED: {
+    [key: string]: number;
+  };
+  CLEAR_CONTENT_CARDS_DISMISSED: never;
 };
 type SettingsHandlers<PreciseKey = true> = Handlers<SettingsState, HandlersPayloads, PreciseKey>;
 
@@ -404,7 +410,25 @@ const handlers: SettingsHandlers = {
     ...state,
     hasSeenAnalyticsOptInPrompt: payload,
   }),
+  SET_CONTENT_CARDS_DISMISSED: (state: SettingsState, { payload }) => ({
+    ...state,
+    contentCardsDismissed: {
+      ...state.contentCardsDismissed,
+      [payload.id]: payload.timestamp,
+    },
+  }),
+
+  CLEAR_CONTENT_CARDS_DISMISSED: (state: SettingsState, { payload }: { payload?: string[] }) => {
+    const newState = { ...state };
+    if (payload) {
+      payload.forEach(id => {
+        delete newState.contentCardsDismissed[id];
+      });
+    }
+    return newState;
+  },
 };
+
 export default handleActions<SettingsState, HandlersPayloads[keyof HandlersPayloads]>(
   handlers as unknown as SettingsHandlers<false>,
   INITIAL_STATE,
@@ -709,3 +733,4 @@ export const supportedCounterValuesSelector = (state: State) =>
   state.settings.supportedCounterValues;
 export const hasSeenAnalyticsOptInPromptSelector = (state: State) =>
   state.settings.hasSeenAnalyticsOptInPrompt;
+export const contentCardsDismissedSelector = (state: State) => state.settings.contentCardsDismissed;
