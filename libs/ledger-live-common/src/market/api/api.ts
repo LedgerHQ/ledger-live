@@ -11,6 +11,7 @@ import {
   MarketPerformersParams,
   MarketItemResponse,
   SupportedCoins,
+  MarketCurrencyRequestParams,
 } from "../types";
 import { rangeDataTable } from "../utils/rangeDataTable";
 import { currencyFormatter } from "../utils/currencyFormatter";
@@ -244,7 +245,7 @@ export async function fetchCurrencyData({
   counterCurrency,
   range = "24h",
   id,
-}: MarketCurrencyChartDataRequestParams): Promise<RawCurrencyData> {
+}: MarketCurrencyRequestParams): Promise<RawCurrencyData> {
   const url = URL.format({
     pathname: `${ROOT_PATH}/coins/markets`,
     query: {
@@ -264,9 +265,7 @@ export async function fetchCurrencyData({
   return data[0];
 }
 
-export async function fetchCurrency({
-  id,
-}: MarketCurrencyChartDataRequestParams): Promise<RawCurrencyData> {
+export async function fetchCurrency({ id }: MarketCurrencyRequestParams): Promise<RawCurrencyData> {
   const url = `${ROOT_PATH}/coins/${id}`;
 
   const { data } = await network({
