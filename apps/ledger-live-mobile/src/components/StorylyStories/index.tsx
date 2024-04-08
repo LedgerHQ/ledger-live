@@ -7,8 +7,8 @@ import { ScrollView, StyleProp, ViewStyle } from "react-native";
 import Animated, { Easing, Layout } from "react-native-reanimated";
 import { Storyly } from "storyly-react-native";
 import styled from "styled-components/native";
-import StoryGroupItem from "./StoryGroupItem";
-import StorylyLocalizedWrapper, { Props as StorylyWrapperProps } from "./StorylyWrapper";
+import StoryGroupItem, { type Props as StoryGroupItemProps } from "./StoryGroupItem";
+import StorylyLocalizedWrapper, { type Props as StorylyWrapperProps } from "./StorylyWrapper";
 
 type Props = StorylyWrapperProps & {
   /**
@@ -31,6 +31,11 @@ type Props = StorylyWrapperProps & {
    * container.
    */
   horizontalScrollContentContainerStyle?: StyleProp<ViewStyle>;
+
+  /**
+   * Custom component to render the story group item.
+   */
+  StoryGroupItemComponent?: React.ComponentType<StoryGroupItemProps>;
 };
 
 type StoryGroupInfo = {
@@ -93,6 +98,7 @@ const Stories: React.FC<Props> = props => {
     keepOriginalOrder = false,
     vertical = false,
     horizontalScrollContentContainerStyle = defaultScrollContainerStyle,
+    StoryGroupItemComponent = StoryGroupItem,
   } = props;
 
   const storylyRef = useRef<Storyly>(null);
@@ -142,7 +148,7 @@ const Stories: React.FC<Props> = props => {
               isLast={index === arr.length - 1}
               vertical={vertical}
             >
-              <StoryGroupItem
+              <StoryGroupItemComponent
                 {...storyGroup}
                 titlePosition={vertical ? "right" : "bottom"}
                 onPress={() => handleStoryGroupPressed(storyGroup.id, nextStoryToShowId)}
@@ -150,7 +156,7 @@ const Stories: React.FC<Props> = props => {
             </AnimatedStoryGroupWrapper>
           );
         }),
-    [storyGroupList, keepOriginalOrder, vertical, handleStoryGroupPressed],
+    [storyGroupList, keepOriginalOrder, vertical, StoryGroupItemComponent, handleStoryGroupPressed],
   );
 
   return (
@@ -173,6 +179,8 @@ const Stories: React.FC<Props> = props => {
       <Box height={0} opacity={0}>
         <StorylyLocalizedWrapper
           ref={storylyRef}
+          storyItemTextColor="#00000000"
+          storyHeaderIconIsVisible={false}
           {...props}
           onEvent={handleEvent}
           onFail={handleFail}
