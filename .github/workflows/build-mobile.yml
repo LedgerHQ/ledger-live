@@ -37,7 +37,7 @@ permissions:
 jobs:
   build-mobile-app-android:
     name: "Build Ledger Live Mobile (Android)"
-    runs-on: [ledger-live-4xlarge-linux]
+    runs-on: [ledger-live-4xlarge]
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
     steps:

@@ -132,7 +132,7 @@ jobs:
       FORCE_COLOR: 3
       CI_OS: ubuntu-latest
 
-    runs-on: [ledger-live-4xlarge-linux]
+    runs-on: [ledger-live-4xlarge]
     steps:
       - uses: actions/checkout@v4
         with:

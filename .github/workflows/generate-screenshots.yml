@@ -32,7 +32,7 @@ jobs:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-    runs-on: [ledger-live-4xlarge-linux]
+    runs-on: [ledger-live-4xlarge]
     steps:
       - name: generate token
         id: generate-token

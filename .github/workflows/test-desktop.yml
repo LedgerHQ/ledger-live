@@ -111,7 +111,7 @@ jobs:
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       # DEBUG: "pw:browser*"
       # DEBUG_LOGS: 1
-    runs-on: [ledger-live-4xlarge-linux]
+    runs-on: [ledger-live-4xlarge]
     steps:
       - uses: actions/checkout@v4
         with:
