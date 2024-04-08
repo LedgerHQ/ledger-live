@@ -100,13 +100,13 @@ jobs:
           GENERATE_METAFILES: 1
 
       - name: Upload ${{ matrix.config.name }} app
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.build-desktop.outputs.version }}-${{ matrix.config.image }}
           path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-${{ matrix.config.image }}
 
       - name: Upload bundle metafiles
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
           name: ${{ matrix.config.name }}-js-bundle-metafiles
@@ -134,15 +134,15 @@ jobs:
           app_id: ${{ secrets.GH_BOT_APP_ID }}
           private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: linux-js-bundle-metafiles
           path: linux-js-bundle-metafiles
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: win-js-bundle-metafiles
           path: win-js-bundle-metafiles
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: mac-js-bundle-metafiles
           path: mac-js-bundle-metafiles
@@ -175,7 +175,7 @@ jobs:
           prNumber: ${{ inputs.prNumber }}
           mode: desktop
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         name: Upload output
         with:
           path: ${{ github.workspace }}/summary.json
