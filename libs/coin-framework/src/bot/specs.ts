@@ -148,6 +148,8 @@ export function deviceActionFlow<T extends TransactionCommon>(
 type DeviceAmountFormatOptions = {
   // the ticker of the coin is AFTER the amount on the device (e.g. "600.1 USDT")
   postfixCode: boolean;
+  // the ticker of the coin is BEFORE the amount on the device (e.g. "FIL 40.1")
+  prefixCode: boolean;
   // the device shows "42" as "42.0"
   forceFloating: boolean;
   // device don't even display the code (unit ticker)
@@ -157,6 +159,7 @@ type DeviceAmountFormatOptions = {
 };
 const defaultFormatOptions: DeviceAmountFormatOptions = {
   postfixCode: false,
+  prefixCode: true,
   forceFloating: false,
   hideCode: false,
   showAllDigits: false,
@@ -183,6 +186,7 @@ export function formatDeviceAmount(
     }
   }
   if (options.hideCode) return v;
+  if (options.prefixCode) return code + sep + v;
   return options.postfixCode ? v + sep + code : code + sep + v;
 }
 
