@@ -266,7 +266,6 @@ function FormLocalManifest({
 
                     const value = form[key];
                     const isArray = Array.isArray(value);
-                    const valueType = isArray ? "comma-separated list" : typeof value;
                     const formKeySchema =
                       LiveAppManifestSchema.shape[key as keyof LiveAppManifestSchemaType];
                     const parseCheck = formKeySchema.safeParse(value).success;
@@ -286,6 +285,10 @@ function FormLocalManifest({
                           initalValue={form[key]}
                         ></FormLiveAppSelector>
                       );
+                    }
+
+                    if (key === "apiVersion" || key === "manifestVersion") {
+                      return <></>;
                     }
 
                     if (key === "visibility" || key === "branch") {
@@ -337,7 +340,7 @@ function FormLocalManifest({
                     return (
                       <FormLiveAppInput
                         key={key as string}
-                        type={valueType}
+                        type={typeof value}
                         fieldName={key as string}
                         value={value}
                         optional={optional}
