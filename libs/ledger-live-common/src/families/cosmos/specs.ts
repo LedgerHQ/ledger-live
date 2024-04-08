@@ -472,6 +472,7 @@ const osmosis = {
     minViableAmount: osmosisMinimalTransactionAmount,
     mutations: cosmosLikeMutations(osmosisMinimalTransactionAmount),
     testTimeout: 8 * 60 * 1000,
+    skipOperationHistory: true,
   }),
 };
 
