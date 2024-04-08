@@ -1,8 +1,9 @@
 import BigNumber from "bignumber.js";
 import { stringCamelCase } from "@polkadot/util";
-import type { PalletMethod, PolkadotOperationMode } from "../types";
+import type { CoreTransaction, PalletMethod, PolkadotOperationMode } from "../types";
 import { loadPolkadotCrypto } from "./polkadot-crypto";
 import polkadotAPI from "../network";
+import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/index";
 
 const EXTRINSIC_VERSION = 4;
 // Default values for tx parameters, if the user doesn't specify any
@@ -164,7 +165,7 @@ export async function craftTransaction(
   nonceToUse: number,
   extractExtrinsicArg: CreateExtrinsicArg,
   forceLatestParams: boolean = false,
-) {
+): Promise<CoreTransaction> {
   await loadPolkadotCrypto();
 
   const { extrinsics, registry } = await polkadotAPI.getRegistry();
@@ -183,7 +184,7 @@ export async function craftTransaction(
     .toHex();
   const nonce = registry.createType("Compact<Index>", nonceToUse).toHex();
   const specVersion = registry.createType("u32", info.specVersion).toHex();
-  const tip = registry.createType("Compact<Balance>", info.tip || DEFAULTS.tip).toHex();
+  const tip = registry.createType("Compact<Balance>", DEFAULTS.tip).toHex();
   const transactionVersion = registry.createType("u32", info.transactionVersion).toHex();
   const methodFunction = extrinsics[extrinsicParams.pallet][extrinsicParams.name];
   const methodArgs = methodFunction.meta.args;
@@ -222,4 +223,20 @@ export async function craftTransaction(
     registry,
     unsigned,
   };
+}
+
+/**
+ * Transasction using a fake recipient to estimate fees
+ * @param account source address
+ * @param amount
+ */
+export async function craftEstimationTransaction(
+  account: string,
+  amount: bigint,
+): Promise<CoreTransaction> {
+  return await craftTransaction(
+    account,
+    0,
+    defaultExtrinsicArg(amount, getAbandonSeedAddress("polkadot")),
+  );
 }

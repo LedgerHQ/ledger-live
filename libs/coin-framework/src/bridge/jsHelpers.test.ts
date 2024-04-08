@@ -2,6 +2,7 @@ import BigNumber from "bignumber.js";
 import { AccountShapeInfo, defaultUpdateTransaction, makeSync } from "./jsHelpers";
 import type { Account, SyncConfig, TransactionCommon } from "@ledgerhq/types-live";
 import { listCryptoCurrencies } from "../currencies";
+import { firstValueFrom } from "rxjs";
 
 describe("jsHelpers", () => {
   describe("defaultUpdateTransaction", () => {
@@ -40,7 +41,7 @@ describe("jsHelpers", () => {
   });
 
   describe("makeSync", () => {
-    it("returns a function to update account that give a new instance of account", done => {
+    it("returns a function to update account that give a new instance of account", async () => {
       // Given
       const account = createAccount("12");
 
@@ -48,15 +49,24 @@ describe("jsHelpers", () => {
       const accountUpdater = makeSync({
         getAccountShape: (_accountShape: AccountShapeInfo) => Promise.resolve({} as Account),
       })(account, {} as SyncConfig);
+      const updater = await firstValueFrom(accountUpdater);
+      const newAccount = updater(account);
 
-      accountUpdater.subscribe(updater => {
-        // Then
-        expect(updater(account)).not.toBe(account);
-        done();
-      });
+      // Then
+      const nonUpdatedFields = {
+        ...account,
+        id: expect.any(String),
+        creationDate: expect.any(Date),
+        lastSyncDate: expect.any(Date),
+        subAccounts: undefined,
+      };
+      expect(newAccount).toEqual(nonUpdatedFields);
+      expect(newAccount.id).not.toEqual(account.id);
+      expect(newAccount.creationDate).not.toEqual(account.creationDate);
+      expect(newAccount.lastSyncDate).not.toEqual(account.lastSyncDate);
     });
 
-    it("returns a account with a corrected formatted id", done => {
+    it("returns a account with a corrected formatted id", async () => {
       // Given
       const account = createAccount("12");
 
@@ -64,17 +74,16 @@ describe("jsHelpers", () => {
       const accountUpdater = makeSync({
         getAccountShape: (_accountShape: AccountShapeInfo) => Promise.resolve({} as Account),
       })(account, {} as SyncConfig);
+      const updater = await firstValueFrom(accountUpdater);
+      const newAccount = updater(account);
 
+      // Then
       const expectedAccount = {
         ...account,
         id: "js:2:bitcoin::",
         subAccounts: undefined,
       };
-      accountUpdater.subscribe(updater => {
-        // Then
-        expect(updater(account).id).toEqual(expectedAccount.id);
-        done();
-      });
+      expect(newAccount.id).toEqual(expectedAccount.id);
     });
   });
 });
@@ -94,8 +103,10 @@ const emptyHistoryCache = {
   },
 };
 
+// Call once for all tests the currencies. Relies on real implementation to check also consistency.
+const bitcoinCurrency = listCryptoCurrencies(true).find(c => c.id === "bitcoin")!;
 function createAccount(id: string): Account {
-  const currency = listCryptoCurrencies(true).find(c => c.id === "bitcoin")!;
+  const currency = bitcoinCurrency;
 
   return {
     type: "Account",

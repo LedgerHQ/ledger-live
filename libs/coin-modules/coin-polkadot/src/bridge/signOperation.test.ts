@@ -115,17 +115,22 @@ describe("signOperation", () => {
       });
 
       // WHEN & THEN
-      signOperation({ account, deviceId, transaction }).subscribe((e: SignOperationEvent) => {
-        if (e.type === "signed") {
-          const { operation } = e.signedOperation;
-          expect(operation.recipients[0]).toEqual(transaction.recipient);
-          expect(operation.fee).toEqual(new BigNumber(0));
-          expect(operation.type).toEqual(type);
-          const extra = operation.extra as PolkadotOperationExtra;
-          expect(extra.palletMethod).toEqual(palletMethod);
-          done();
-        }
-      });
+      const subscriber = signOperation({ account, deviceId, transaction }).subscribe(
+        (e: SignOperationEvent) => {
+          if (e.type === "signed") {
+            const { operation } = e.signedOperation;
+            expect(operation.recipients[0]).toEqual(transaction.recipient);
+            expect(operation.fee).toEqual(new BigNumber(0));
+            expect(operation.type).toEqual(type);
+            const extra = operation.extra as PolkadotOperationExtra;
+            expect(extra.palletMethod).toEqual(palletMethod);
+
+            // Cleanup
+            subscriber.unsubscribe();
+            done();
+          }
+        },
+      );
     },
   );
 
@@ -136,16 +141,21 @@ describe("signOperation", () => {
     const transaction = createFixtureTransaction({ fees: new BigNumber(0), mode: "send", amount });
 
     // WHEN & THEN
-    signOperation({ account, deviceId, transaction }).subscribe((e: SignOperationEvent) => {
-      if (e.type === "signed") {
-        const extra = e.signedOperation.operation.extra as PolkadotOperationExtra;
-        expect(extra).toEqual({
-          palletMethod: "balances.transferKeepAlive",
-          transferAmount: amount,
-        });
-        done();
-      }
-    });
+    const subscriber = signOperation({ account, deviceId, transaction }).subscribe(
+      (e: SignOperationEvent) => {
+        if (e.type === "signed") {
+          const extra = e.signedOperation.operation.extra as PolkadotOperationExtra;
+          expect(extra).toEqual({
+            palletMethod: "balances.transferKeepAlive",
+            transferAmount: amount,
+          });
+
+          // Cleanup
+          subscriber.unsubscribe();
+          done();
+        }
+      },
+    );
   });
 
   it("returns expected extra operation with bondedAmount when tx mode is bond", done => {
@@ -155,16 +165,21 @@ describe("signOperation", () => {
     const transaction = createFixtureTransaction({ fees: new BigNumber(0), mode: "bond", amount });
 
     // WHEN & THEN
-    signOperation({ account, deviceId, transaction }).subscribe((e: SignOperationEvent) => {
-      if (e.type === "signed") {
-        const extra = e.signedOperation.operation.extra as PolkadotOperationExtra;
-        expect(extra).toEqual({
-          palletMethod: "staking.bond",
-          bondedAmount: amount,
-        });
-        done();
-      }
-    });
+    const subscriber = signOperation({ account, deviceId, transaction }).subscribe(
+      (e: SignOperationEvent) => {
+        if (e.type === "signed") {
+          const extra = e.signedOperation.operation.extra as PolkadotOperationExtra;
+          expect(extra).toEqual({
+            palletMethod: "staking.bond",
+            bondedAmount: amount,
+          });
+
+          // Cleanup
+          subscriber.unsubscribe();
+          done();
+        }
+      },
+    );
   });
 
   it("returns expected extra operation with unbondedAmount when tx mode is unbond", done => {
@@ -178,16 +193,21 @@ describe("signOperation", () => {
     });
 
     // WHEN & THEN
-    signOperation({ account, deviceId, transaction }).subscribe((e: SignOperationEvent) => {
-      if (e.type === "signed") {
-        const extra = e.signedOperation.operation.extra as PolkadotOperationExtra;
-        expect(extra).toEqual({
-          palletMethod: "staking.unbond",
-          unbondedAmount: amount,
-        });
-        done();
-      }
-    });
+    const subscriber = signOperation({ account, deviceId, transaction }).subscribe(
+      (e: SignOperationEvent) => {
+        if (e.type === "signed") {
+          const extra = e.signedOperation.operation.extra as PolkadotOperationExtra;
+          expect(extra).toEqual({
+            palletMethod: "staking.unbond",
+            unbondedAmount: amount,
+          });
+
+          // Cleanup
+          subscriber.unsubscribe();
+          done();
+        }
+      },
+    );
   });
 
   it("returns expected extra operation with withdrawUnbondedAmount when tx mode is withdrawUnbonded", done => {
@@ -201,16 +221,21 @@ describe("signOperation", () => {
     });
 
     // WHEN & THEN
-    signOperation({ account, deviceId, transaction }).subscribe((e: SignOperationEvent) => {
-      if (e.type === "signed") {
-        const extra = e.signedOperation.operation.extra as PolkadotOperationExtra;
-        expect(extra).toEqual({
-          palletMethod: "staking.withdrawUnbonded",
-          withdrawUnbondedAmount: account.polkadotResources.unlockedBalance,
-        });
-        done();
-      }
-    });
+    const subscriber = signOperation({ account, deviceId, transaction }).subscribe(
+      (e: SignOperationEvent) => {
+        if (e.type === "signed") {
+          const extra = e.signedOperation.operation.extra as PolkadotOperationExtra;
+          expect(extra).toEqual({
+            palletMethod: "staking.withdrawUnbonded",
+            withdrawUnbondedAmount: account.polkadotResources.unlockedBalance,
+          });
+
+          // Cleanup
+          subscriber.unsubscribe();
+          done();
+        }
+      },
+    );
   });
 
   it("returns expected extra operation with withdrawUnbondedAmount when tx mode is nominate", done => {
@@ -226,15 +251,20 @@ describe("signOperation", () => {
     });
 
     // WHEN & THEN
-    signOperation({ account, deviceId, transaction }).subscribe((e: SignOperationEvent) => {
-      if (e.type === "signed") {
-        const extra = e.signedOperation.operation.extra as PolkadotOperationExtra;
-        expect(extra).toEqual({
-          palletMethod: "staking.nominate",
-          validators: ["111B8CxcmnWbuDLyGvgUmRezDCK1brRZmvUuQ6SrFdMyc3S"],
-        });
-        done();
-      }
-    });
+    const subscriber = signOperation({ account, deviceId, transaction }).subscribe(
+      (e: SignOperationEvent) => {
+        if (e.type === "signed") {
+          const extra = e.signedOperation.operation.extra as PolkadotOperationExtra;
+          expect(extra).toEqual({
+            palletMethod: "staking.nominate",
+            validators: ["111B8CxcmnWbuDLyGvgUmRezDCK1brRZmvUuQ6SrFdMyc3S"],
+          });
+
+          // Cleanup
+          subscriber.unsubscribe();
+          done();
+        }
+      },
+    );
   });
 });

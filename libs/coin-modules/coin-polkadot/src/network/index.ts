@@ -74,9 +74,7 @@ export default {
   getRegistry,
   getStakingProgress: sidecarGetStakingProgress,
   getValidators: sidecarGetValidators,
-  getTransactionParams: async (
-    { force }: CacheOpts = { force: false },
-  ): Promise<Record<string, any>> => {
+  getTransactionParams: async ({ force }: CacheOpts = { force: false }) => {
     return force ? getTransactionParamsFn.force() : getTransactionParamsFn();
   },
   getPaymentInfo,

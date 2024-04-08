@@ -2,7 +2,8 @@ import { BigNumber } from "bignumber.js";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
 import type { PolkadotAccount, Transaction } from "../types";
 import { calculateAmount } from "./utils";
-import { estimatedFees } from "../logic";
+import { buildTransaction } from "./buildTransaction";
+import { estimateFees } from "../logic";
 import { loadPolkadotCrypto } from "../logic/polkadot-crypto";
 
 /**
@@ -30,9 +31,7 @@ export default async function getEstimatedFees({
     }), // Remove fees if present since we are fetching fees
   };
 
-  const fees = await estimatedFees({
-    accountAddress: a.freshAddress,
-    amount: BigInt(transaction.amount.toString()),
-  });
+  const tx = await buildTransaction(a, transaction);
+  const fees = await estimateFees(tx);
   return new BigNumber(fees.toString());
 }

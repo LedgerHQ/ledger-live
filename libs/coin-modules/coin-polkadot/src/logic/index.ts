@@ -8,6 +8,6 @@ export { craftTransaction, type CreateExtrinsicArg } from "./craftTransaction";
 export { signExtrinsic } from "./signTransaction";
 
 import broadcast from "./broadcast";
-import estimatedFees from "./estimatedFees";
+import estimateFees from "./estimateFees";
 
-export { broadcast, estimatedFees };
+export { broadcast, estimateFees };

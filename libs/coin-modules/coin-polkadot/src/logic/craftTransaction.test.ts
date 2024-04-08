@@ -11,7 +11,6 @@ const mockGetTransactionParams = jest.fn().mockResolvedValue({
   genesisHash: "0x83835154a54",
   blockNumber: 12,
   specVersion: 42,
-  tip: 8,
   transactionVersion: 22,
 });
 
@@ -71,7 +70,7 @@ describe("craftTransaction", () => {
       period: 64,
     });
     expect(spyRegistry).toHaveBeenCalledWith("u32", 42);
-    expect(spyRegistry).toHaveBeenCalledWith("Compact<Balance>", 8);
+    expect(spyRegistry).toHaveBeenCalledWith("Compact<Balance>", 0);
     expect(spyRegistry).toHaveBeenCalledWith("u32", 22);
     expect(mockCodec).toHaveBeenCalledTimes(6);
     expect(mockExtrinsics).toHaveBeenCalledTimes(1);
