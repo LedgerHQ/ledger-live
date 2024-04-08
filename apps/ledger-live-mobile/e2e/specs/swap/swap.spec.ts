@@ -43,10 +43,6 @@ describe("Swap", () => {
     await swapPage.selectAccount("Ethereum");
   });
 
-  it("should not have a max toggle button", async () => {
-    await expect(swapPage.sendMaxToggle()).not.toExist();
-  });
-
   it("should have the send max toggle switch removed", async () => {
     await expect(swapPage.sendMaxToggle()).not.toExist();
     await swapPage.openSourceAccountSelector();
