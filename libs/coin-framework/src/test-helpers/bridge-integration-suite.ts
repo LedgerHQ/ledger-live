@@ -771,7 +771,7 @@ export function testBridge<T extends TransactionCommon, U extends TransactionCom
           test("assign account is consistent", () => {
             const account = fromAccountRaw(accountData.raw);
             accountBridge.assignFromAccountRaw?.(accountData.raw, account);
-            expect(initialAccount).toBe(account);
+            expect(initialAccount).toEqual(account);
             expect(true).toBeFalsy();
           });
         });
