@@ -37,6 +37,8 @@ const Carousel = ContentLayoutBuilder<Props>(({ items, styles: _styles = default
 
   const width = useWindowDimensions().width * styles.widthFactor;
 
+  const isFullWidth = styles.widthFactor === WidthFactor.Full;
+
   const separatorWidth = useTheme().space[styles.gap];
 
   const isPaginationEnabled = styles.pagination;
@@ -62,7 +64,9 @@ const Carousel = ContentLayoutBuilder<Props>(({ items, styles: _styles = default
         bounces={false}
         snapToInterval={width - separatorWidth * 1.5}
         decelerationRate={0}
-        contentContainerStyle={{ paddingHorizontal: separatorWidth }}
+        contentContainerStyle={{
+          paddingHorizontal: isFullWidth ? separatorWidth : separatorWidth / 2,
+        }}
         data={items}
         ItemSeparatorComponent={() => <View style={{ width: separatorWidth / 2 }} />}
         renderItem={({ item }: ListRenderItemInfo<ContentCardItem>) => (

@@ -44,10 +44,7 @@ const Grid = ContentLayoutBuilder<Props>(({ items, styles: _styles = defaultStyl
       {items.map((item, index) => {
         return (
           <Flex key={item.props.metadata.id} style={{ width: cardWidth }}>
-            <item.component
-              {...item.props}
-              itemStyle={getItemStyle(items.length === 1, index === 0, index === items.length - 1)}
-            />
+            <item.component {...item.props} itemStyle={getItemStyle(index, items.length)} />
           </Flex>
         );
       })}

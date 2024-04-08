@@ -11,21 +11,22 @@ export const ImageStyles: {
 } = {
   L: {
     flex: 1,
-    borderTopLeftRadius: 12,
-    borderTopRightRadius: 12,
     width: "100%",
+    maxHeight: 260,
     marginBottom: 32,
     marginTop: 24,
   },
   M: {
     flex: 1,
     aspectRatio: 1,
+    maxHeight: 160,
     marginBottom: 32,
     marginTop: 24,
   },
   S: {
     flex: 1,
     aspectRatio: 1,
+    maxHeight: 90,
     marginTop: 10,
   },
 };
@@ -39,7 +40,7 @@ type ImageProps = {
 export const Image = ({ uri, size, filledImage }: ImageProps) => {
   const isBigCardAndFilled = (size === "L" && filledImage) || false;
   const stylesBigCard = isBigCardAndFilled
-    ? { marginBottom: 24, marginTop: 0 }
+    ? { marginBottom: 24, marginTop: 0, borderTopLeftRadius: 12, borderTopRightRadius: 12 }
     : { aspectRatio: 1 };
   return (
     <NativeImage

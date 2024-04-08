@@ -1,7 +1,11 @@
 import { useTheme } from "styled-components/native";
 
-export const useItemStyle = (isSingleCard: boolean, isFirstItem: boolean, isLastItem: boolean) => {
+export const useItemStyle = (index: number, length: number) => {
   const { colors } = useTheme();
+
+  const isSingleCard = length === 1;
+  const isFirstItem = index === 0;
+  const isLastItem = index === length - 1;
 
   const stylesMap = {
     singleCard: {
@@ -26,10 +30,7 @@ export const useItemStyle = (isSingleCard: boolean, isFirstItem: boolean, isLast
   };
 
   if (isSingleCard) return stylesMap.singleCard;
-
   if (isLastItem) return stylesMap.lastStackCard;
-
   if (isFirstItem) return stylesMap.firstStackCard;
-
   return stylesMap.middleCards;
 };

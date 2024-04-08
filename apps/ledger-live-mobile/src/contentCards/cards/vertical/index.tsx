@@ -48,11 +48,10 @@ const VerticalCard = ContentCardBuilder<Props>(
       <TouchableOpacity onPress={metadata.actions?.onClick}>
         {tag && <Tag size={size} label={tag} />}
         {metadata.actions?.onDismiss && <Close onPress={metadata.actions?.onDismiss} />}
-
         <Container size={size} widthFactor={widthFactor}>
           <Flex alignItems="center" width={"100%"} height={"100%"}>
             <Image uri={image} size={size} filledImage={filledImage} />
-            <Flex px={5} alignItems="center">
+            <Flex alignItems="center" px={6}>
               <Title size={size} label={title} />
               <Subtitle size={size} label={subtitle} />
               {hasPrice && <Price size={size} label={price} />}

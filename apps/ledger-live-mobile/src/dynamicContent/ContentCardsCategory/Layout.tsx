@@ -131,6 +131,7 @@ const Layout = ({ category, cards }: LayoutProps) => {
           styles={{
             widthFactor: cardsSorted[0].carouselWidthFactor || WidthFactor.Full,
             pagination: category.hasPagination,
+            gap: cardsSorted[0].gridWidthFactor === WidthFactor.Full ? 6 : 8,
           }}
         />
       );
