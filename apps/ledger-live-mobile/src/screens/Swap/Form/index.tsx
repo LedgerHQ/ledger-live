@@ -46,6 +46,8 @@ import { useSelectedSwapRate } from "./useSelectedSwapRate";
 
 type Navigation = StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.Account>;
 
+const IS_MAX_TOGGLE_DISABLED = true;
+
 export function SwapForm({
   route: { params },
 }: MaterialTopTabNavigatorProps<SwapFormNavigatorParamList, ScreenName.SwapForm>) {
@@ -352,7 +354,7 @@ export function SwapForm({
           </Flex>
 
           <Flex paddingY={4}>
-            <Max swapTx={swapTransaction} />
+            {!IS_MAX_TOGGLE_DISABLED && <Max swapTx={swapTransaction} />}
 
             <Button type="main" disabled={!isSwapReady} onPress={onSubmit} testID="exchange-button">
               {t("transfer.swap2.form.cta")}
