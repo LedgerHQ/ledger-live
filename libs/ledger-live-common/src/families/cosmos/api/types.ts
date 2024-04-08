@@ -264,14 +264,27 @@ export type GetRedelegations = {
       delegator_address: string;
       validator_src_address: string;
       validator_dst_address: string;
+      entries:
+        | {
+            creation_height: string;
+            completion_time: string;
+            initial_balance: string;
+            shares_dst: string;
+            unbonding_id: string;
+            unbonding_on_hold_ref_count: string;
+          }[]
+        | null;
     };
     entries: {
-      creation_height: string;
-      completion_time: string;
-      initial_balance: string;
-      shares_dst: string;
-      unbonding_id: string;
-      unbonding_on_hold_ref_count: string;
+      redelegation_entry: {
+        creation_height: string;
+        completion_time: string;
+        initial_balance: string;
+        shares_dst: string;
+        unbonding_id: string;
+        unbonding_on_hold_ref_count: string;
+      };
+      balance: string;
     }[];
   }[];
   pagination: {
