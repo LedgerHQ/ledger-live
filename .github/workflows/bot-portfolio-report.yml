@@ -77,7 +77,7 @@ jobs:
         shell: bash
 
       - name: upload reports
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: reports
           path: libs/ledger-live-common/reports

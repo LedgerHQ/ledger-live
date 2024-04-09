@@ -108,12 +108,12 @@ runs:
       shell: bash
     - name: upload logs to github artifacts
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: details
         path: libs/ledger-live-common/botreport/
     - name: upload report.json
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: report
         path: libs/ledger-live-common/report.json
