@@ -1,5 +1,14 @@
 # ledger-live-desktop
 
+## 2.79.0-nightly.5
+
+### Patch Changes
+
+- [#6601](https://github.com/LedgerHQ/ledger-live/pull/6601) [`6066acb`](https://github.com/LedgerHQ/ledger-live/commit/6066acb2fd824739ec0a38f056e6a59392bb7075) Thanks [@CremaFR](https://github.com/CremaFR)! - stop closing drawer after start exchange
+
+- Updated dependencies [[`06f4606`](https://github.com/LedgerHQ/ledger-live/commit/06f4606f354496bc322be34932260eb9a1cdac42)]:
+  - @ledgerhq/live-common@34.1.0-nightly.4
+
 ## 2.79.0-nightly.4
 
 ### Minor Changes
