@@ -1,4 +1,4 @@
-import React, { Fragment, Component, useMemo } from "react";
+import React, { Fragment, Component, useMemo, useState } from "react";
 import { ObjectInspector } from "react-inspector";
 import ReactTable from "react-table";
 import styled from "styled-components";
@@ -8,6 +8,72 @@ import { decodeAccountId } from "@ledgerhq/coin-framework/lib/account/index";
 
 export const getStaticProps = async () => ({ props: {} });
 
+const blockExplorerUrls: any = {
+  "algorand": "https://allo.info/account/[ADDRESS]",
+  "astar": "https://blockscout.com/astar/address/[ADDRESS]",
+  "avalanche_c_chain": "https://snowtrace.io/address/[ADDRESS]",
+  "axelar": "https://www.mintscan.io/axelar/account/[ADDRESS]",
+  "bittorrent": "https://bttcscan.com/address/[ADDRESS]",
+  "bsc": "https://bscscan.com/address/[ADDRESS]",
+  "casper": "https://cspr.live/account/[ADDRESS]",
+  "celo": "https://explorer.celo.org/address/[ADDRESS]/transactions",
+  "coreum": "https://explorer.coreum.com/coreum/accounts/[ADDRESS]",
+  "cosmos": "https://www.mintscan.io/cosmos/account/[ADDRESS]",
+  "cronos": "https://cronoscan.com/address/[ADDRESS]",
+  "desmos": "https://www.mintscan.io/desmos/account/[ADDRESS]",
+  "elrond": "https://explorer.elrond.com/accounts/[ADDRESS]",
+  "energy_web": "https://explorer.energyweb.org/address/[ADDRESS]/transactions",
+  "ethereum": "https://etherscan.io/address/[ADDRESS]",
+  "ethereum_classic": "https://blockscout.com/etc/mainnet/address/[ADDRESS]/transactions",
+  "evmos_evm": "https://evm.evmos.org/address/[ADDRESS]",
+  "fantom": "https://ftmscan.com/address/[ADDRESS]",
+  "filecoin": "https://filfox.info/en/address/[ADDRESS]",
+  "flare": "https://flare-explorer.flare.network/address/[ADDRESS]",
+  "hedera": "https://hashscan.io/mainnet/account/[ADDRESS]",
+  "injective": "https://explorer.injective.network/account/[ADDRESS]",
+  "internet_computer": "https://dashboard.internetcomputer.org/account/[ADDRESS]",
+  "kava_evm": "https://explorer.kava.io/address/[ADDRESS]",
+  "klaytn": "https://scope.klaytn.com/account/[ADDRESS]",
+  "lukso": "https://explorer.execution.mainnet.lukso.network/address/[ADDRESS]",
+  "metis": "https://andromeda-explorer.metis.io/address/[ADDRESS]",
+  "moonbeam": "https://moonscan.io/address/[ADDRESS]",
+  "moonriver": "https://moonriver.moonscan.io/address/[ADDRESS]",
+  "near": "https://nearblocks.io/address/[ADDRESS]",
+  "neon_evm": "https://neonscan.org/address/[ADDRESS]",
+  "onomy": "https://www.mintscan.io/onomy-protocol/address/[ADDRESS]",
+  "persistence": "https://www.mintscan.io/persistence/account/[ADDRESS]",
+  "polkadot": "https://polkadot.subscan.io/account/[ADDRESS]",
+  "polygon": "https://polygonscan.com/address/[ADDRESS]",
+  "quicksilver": "https://www.mintscan.io/quicksilver/address/[ADDRESS]",
+  "ripple": "https://xrpscan.com/account/[ADDRESS]",
+  "secretnetwork": "https://secretnodes.com/secret/chains/secret-2/accounts/[ADDRESS]",
+  "solana": "https://solana.fm/address/[ADDRESS]",
+  "songbird": "https://songbird-explorer.flare.network/address/[ADDRESS]",
+  "stargaze": "https://www.mintscan.io/stargaze/account/[ADDRESS]",
+  "stellar": "https://blockchair.com/stellar/account/[ADDRESS]",
+  "syscoin": "https://explorer.syscoin.org/address/[ADDRESS]",
+  "telos_evm": "https://teloscan.io/address/[ADDRESS]",
+  "tezos": "https://tzkt.io/[ADDRESS]/operations",
+  "tron": "https://tronscan.org/#/address/[ADDRESS]",
+  "umee": "https://www.mintscan.io/umee/account/[ADDRESS]",
+  "vechain": "https://explore.vechain.org/accounts/[ADDRESS]",
+  "arbitrum": "https://arbiscan.io/address/[ADDRESS]",
+  "base": "https://basescan.org/address/[ADDRESS]",
+  "boba": "https://blockexplorer.boba.network/address/[ADDRESS]",
+  "linea": "https://lineaexplorer.com/address/[ADDRESS]",
+  "optimism": "https://optimistic.etherscan.io/address/[ADDRESS]",
+  "osmo": "https://www.mintscan.io/osmosis/address/[ADDRESS]",
+  "crypto_org": "https://www.mintscan.io/crypto-org/address/[ADDRESS]"
+};
+
+type App = {
+  name: string;
+  updated: boolean;
+  blocks: number;
+  hash: string;
+  version: string;
+  availableVersion: string;
+};
 type Log = {
   type: string;
   level: string;
@@ -16,7 +82,18 @@ type Log = {
   timestamp: string;
   index: number;
   error?: Error;
+  data?: Data;
 };
+
+type Data = {
+  deviceModelId?: string;
+  deviceVersion?: string;
+  modelIdList?: string[];
+  result?: {
+    installed?: App[];
+  };
+};
+
 type LogMeta = {
   env: { [key: string]: string };
   userAgent: string;
@@ -79,6 +156,63 @@ const Header = ({
   logsMeta?: LogMeta;
   onFiles: (files: FileList) => void;
 }) => {
+
+  const deviceLog: any = logs.find(log => log.data?.deviceModelId && log.data?.deviceVersion && log.data?.modelIdList);
+  const installedApps: any = logs.find(log => log.data?.result?.installed);
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+  const [lastClickedButton, setLastClickedButton] = useState<string | null>(null);
+
+  const handleCopyClick = (accountId: string, index: number, onlyXpubOrAddress: boolean) => {
+    try {
+      const tempInput = document.createElement("input");
+      document.body.appendChild(tempInput);
+      if (onlyXpubOrAddress) {
+        tempInput.value = decodeAccountId(accountId).xpubOrAddress;
+      } else {
+        const cmdStart = `ledger-live sync --id ${decodeAccountId(accountId).xpubOrAddress} --currency ${decodeAccountId(accountId).currencyId}`;
+        tempInput.value = decodeAccountId(accountId).derivationMode ? `${cmdStart} -s ${decodeAccountId(accountId).derivationMode}` : cmdStart;
+      }
+      tempInput.select();
+      document.execCommand("copy");
+      document.body.removeChild(tempInput);
+      setLastClickedButton(onlyXpubOrAddress ? "address" : "xpub");
+      setCopiedIndex(index);
+      setTimeout(() => {
+        setCopiedIndex(null);
+        setLastClickedButton(null);
+      }, 2000);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+  
+  const linkToExplorer = (accountId: string) => {
+    try {
+      const {currencyId, xpubOrAddress} = decodeAccountId(accountId);
+      if (currencyId in blockExplorerUrls) {
+        const url: string = blockExplorerUrls[currencyId].replace('[ADDRESS]', xpubOrAddress);
+        window.open(url, '_blank');
+      } else {
+        throw new Error("currencyID must be within blockExplorerUrls");
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const isValidCurrency = (accountId: string) => {
+    try {
+      const currencyId = decodeAccountId(accountId).currencyId;
+      if(currencyId in blockExplorerUrls) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch(e) {
+      console.error(e)
+    }
+  };
+
   const apdusLogs = useMemo(
     () =>
       logs
@@ -180,9 +314,9 @@ const Header = ({
 
         {apdusLogs.length ? (
           <Button download="apdus" href={href}>
-            {apdusLogs.length} APDUs
+            {apdusLogs.length} APDUs 
           </Button>
-        ) : null}
+        ) : null} 
 
         <Button download="app.json" href={appJsonHref}>
           app.json with user accounts
@@ -192,6 +326,77 @@ const Header = ({
       {logsMeta ? (
         <HeaderRow>
           <strong>user is on</strong> {logsMeta.userAgent}
+        </HeaderRow>
+      ) : null}
+
+      {logs && installedApps ? (
+        <HeaderRow>
+          <details>
+            <summary>
+              <strong>user has {installedApps.data?.result?.installed?.length} apps installed</strong>
+            </summary>
+            <ul>
+              <li>
+                <pre>
+                  <code style={{color: 'red'}}>NOTE </code>
+                  <code> 
+                    apps could be outdated if firmware is outdated, and might still say &quot;latest version&quot;
+                  </code>
+                </pre>
+              </li>
+              {installedApps.data?.result?.installed?.map((app: App, i: number) => {
+                const isLatestVersion = app.updated
+                const versionStatusStyle = {
+                  color: isLatestVersion ? 'green' : 'red'
+                };
+                return (
+                  <li key={i}>
+                    <pre>
+                      <code>
+                        {app.name} | {app.version}
+                        <span style={versionStatusStyle}>
+                          {isLatestVersion ? ' - latest version' : ` - ${app.availableVersion} update available`}
+                        </span>
+                      </code>
+                    </pre>
+                  </li>
+                );
+              })}
+            </ul>
+          </details>
+        </HeaderRow>
+      ) : null}
+
+      {logs && deviceLog ? (
+        <HeaderRow>
+          <details>
+            <summary>
+              <strong>device information</strong>
+            </summary>
+            <ul>
+              <li>
+                <pre>
+                  <code>
+                    last connected: {deviceLog.deviceModelId} | {deviceLog.deviceVersion}
+                  </code>
+                </pre>
+              </li>
+              {deviceLog.modelIdList && deviceLog.modelIdList.length > 0 ? (
+                <li>
+                  <code>all devices:</code>
+                  <ul>
+                    {deviceLog.modelIdList.map((id: string, i: number) => (
+                      <li key={i}>
+                        <pre>
+                          <code>{id}</code>
+                        </pre>
+                      </li>
+                    ))}
+                  </ul>
+                </li>
+              ) : null}
+            </ul>
+          </details>
         </HeaderRow>
       ) : null}
 
@@ -206,6 +411,16 @@ const Header = ({
                 <li key={i}>
                   <pre>
                     <code>{id}</code>
+                    <button onClick={() => handleCopyClick(id, i, true)}>Copy</button>
+                    {copiedIndex === i && lastClickedButton === "address" && <span>Copied!</span>}
+                    {isValidCurrency(id) == true? (
+                      <button onClick={() => linkToExplorer(id)}>View on explorer</button>
+                    ):(
+                      <>
+                        <button onClick={() => handleCopyClick(id, i, false)}>Copy xpub command</button>
+                        {copiedIndex === i && lastClickedButton === "xpub" && <span>Copied!</span>}
+                      </>
+                    )}
                   </pre>
                 </li>
               ))}
@@ -408,6 +623,10 @@ class LogsViewer extends Component {
         const logs = (obj as Omit<Log, "index">[]).map((l, index) => ({
           index,
           ...l,
+          deviceModelId: l.data?.deviceModelId,
+          deviceVersion: l.data?.deviceVersion,
+          modelIdList: l.data?.modelIdList,
+          installed: l.data?.result?.installed,
         }));
         console.log({ logs }); // eslint-disable-line no-console
         this.setState({ logs });
