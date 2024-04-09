@@ -72,9 +72,9 @@ const BackupBody: React.FC<ChoiceBodyProps> = ({ isOpened, device }) => {
       screen: ScreenName.Recover,
       params: {
         device,
-        // platform: "protect-prod",
-        redirectTo: "upsell",
-        platform: servicesConfig?.params?.protectId,
+        redirectTo: "activate",
+        platform: "protect-staging", // TODO: remove this, only for testing in debug
+        // platform: servicesConfig?.params?.protectId, // TODO: reenable this
         date: new Date().toISOString(), // adding a date to reload the page in case of same device restored again
       },
     });
@@ -103,6 +103,8 @@ const BackupBody: React.FC<ChoiceBodyProps> = ({ isOpened, device }) => {
       <StoryGroup
         instanceID={StorylyInstanceID.backupRecoverySeed}
         StoryGroupItemComponent={VideoLink}
+        storyItemTextColor="#00000000"
+        storyHeaderIconIsVisible={false}
       />
     </Flex>
   ) : (

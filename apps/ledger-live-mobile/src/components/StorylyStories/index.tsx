@@ -179,8 +179,6 @@ const Stories: React.FC<Props> = props => {
       <Box height={0} opacity={0}>
         <StorylyLocalizedWrapper
           ref={storylyRef}
-          storyItemTextColor="#00000000"
-          storyHeaderIconIsVisible={false}
           {...props}
           onEvent={handleEvent}
           onFail={handleFail}

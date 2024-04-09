@@ -364,8 +364,8 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
         deviceOnboardingState?.currentOnboardingStep === DeviceOnboardingStep.WelcomeScreen1
       ) {
         // switch to the apps step
-        setCompanionStepKey(CompanionStepKey.Backup);
-        // setCompanionStepKey(CompanionStepKey.Apps);
+        setCompanionStepKey(CompanionStepKey.Backup); // TODO: remove this
+        // setCompanionStepKey(CompanionStepKey.Apps); // TODO: reenable this
         seededDeviceHandled.current = true;
         return;
       }
