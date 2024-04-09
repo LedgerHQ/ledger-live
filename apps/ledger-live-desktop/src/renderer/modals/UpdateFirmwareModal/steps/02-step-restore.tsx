@@ -47,13 +47,19 @@ const StepRestore = ({
       return;
     }
 
-    if (pendingRestoreCLS) {
+    if (pendingRestoreCLS && isCustomLockScreenSupported(deviceModelId)) {
       setCurrentRestoreStep("CLS");
       return;
     }
 
     transitionTo("finish");
-  }, [pendingRestoreCLS, pendingRestoreLanguage, setCurrentRestoreStep, transitionTo]);
+  }, [
+    deviceModelId,
+    pendingRestoreCLS,
+    pendingRestoreLanguage,
+    setCurrentRestoreStep,
+    transitionTo,
+  ]);
 
   return (
     <Flex key={`nonce_${nonce}`}>

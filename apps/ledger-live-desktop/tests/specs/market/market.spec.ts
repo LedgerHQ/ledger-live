@@ -137,10 +137,10 @@ test("Market", async ({ page }) => {
     await expect.soft(page).toHaveScreenshot("market-page-btc-star.png", maskItems);
   });
 
-  await test.step("search bi", async () => {
-    await marketPage.search("bi");
+  await test.step("search bitcoin", async () => {
+    await marketPage.search("bitcoin");
     await marketPage.waitForLoading();
-    await expect.soft(page).toHaveScreenshot("market-page-search-bi.png", maskItems);
+    await expect.soft(page).toHaveScreenshot("market-page-search-bitcoin.png", maskItems);
   });
 
   await test.step("filter starred", async () => {
