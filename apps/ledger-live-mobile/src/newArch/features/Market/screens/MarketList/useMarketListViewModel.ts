@@ -36,9 +36,9 @@ function useMarketListViewModel() {
     ...marketParams,
     liveCoinsList,
     supportedCoinsList: supportedCurrencies,
-    refreshTime: llmRefreshMarketDataFeature?.enabled
-      ? Number(llmRefreshMarketDataFeature?.params?.refreshTime)
-      : undefined,
+    // refreshTime: llmRefreshMarketDataFeature?.enabled
+    //   ? Number(llmRefreshMarketDataFeature?.params?.refreshTime)
+    //   : undefined,
   });
 
   const marketDataFiltered = filterByStarredAccount
@@ -76,7 +76,7 @@ function useMarketListViewModel() {
     filterByStarredAccount,
     starredMarketCoins,
     search,
-    loading: marketResult.loading,
+    loading: marketResult.isLoading,
     refresh,
     counterCurrency,
     range,

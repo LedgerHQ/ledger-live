@@ -8,7 +8,7 @@ import useNotifications from "~/logic/notifications";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { MarketNavigatorStackParamList } from "LLM/features/Market/Navigator";
 import { removeStarredMarketCoins, addStarredMarketCoins } from "~/actions/market";
-import { RANGES } from "../../utils";
+
 import {
   useCurrencyChartData,
   useCurrencyData,
@@ -35,35 +35,19 @@ function useMarketDetailViewModel({ navigation, route }: NavigationProps) {
   const resCurrencyChartData = useCurrencyChartData({
     counterCurrency,
     id: currencyId,
-    ranges: RANGES,
+    range,
   });
 
-  const { currencyDataByRanges } = useCurrencyData({
+  const { currencyData, currencyInfo } = useCurrencyData({
     counterCurrency,
     id: currencyId,
-    ranges: RANGES,
+    range,
   });
 
-  const dataChart = useMemo(
-    () => resCurrencyChartData?.[RANGES.indexOf(range)].data,
-    [range, resCurrencyChartData],
-  );
-  const isLoadingDataChart = useMemo(
-    () => resCurrencyChartData?.[RANGES.indexOf(range)].isLoading,
-    [range, resCurrencyChartData],
-  );
+  const currency = useMemo(() => currencyInfo?.data, [currencyInfo]);
+  const isLoadingCurrency = useMemo(() => currencyInfo?.isLoading, [currencyInfo]);
 
-  const dataCurrency = useMemo(
-    () => currencyDataByRanges?.[RANGES.indexOf(range)].data,
-    [range, currencyDataByRanges],
-  );
-
-  const isLoadingData = useMemo(
-    () => currencyDataByRanges?.[RANGES.indexOf(range)].isLoading,
-    [range, currencyDataByRanges],
-  );
-
-  const { name, internalCurrency } = dataCurrency || {};
+  const { name, internalCurrency } = currency || {};
 
   useEffect(() => {
     if (name) {
@@ -111,16 +95,17 @@ function useMarketDetailViewModel({ navigation, route }: NavigationProps) {
   }, [dispatch, isStarred, currencyId, triggerMarketPushNotificationModal]);
 
   return {
-    loading: isLoadingData,
-    loadingChart: isLoadingDataChart,
     defaultAccount,
     isStarred,
     accounts: filteredAccounts,
     counterCurrency,
     allAccounts,
-    currency: dataCurrency,
-    dataChart,
     range,
+    dataCurrency: currencyData.data,
+    dataChart: resCurrencyChartData.data,
+    loadingChart: resCurrencyChartData.isLoading,
+    loading: currencyData.isLoading || isLoadingCurrency,
+
     refresh,
     toggleStar,
   };
