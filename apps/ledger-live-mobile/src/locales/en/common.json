@@ -2153,6 +2153,26 @@
       "restoreChoiceRecoverTitle": "Restore using Ledger Recover",
       "restoreChoiceRecoverDescription": "If you’re subscribed to Ledger Recover, log in to your subscription to initiate the restore process for the backup for your Secret Recovery Phrase."
     },
+    "backup": {
+      "title": "Backup for your Secret Recovery Phrase",
+      "description": "Having a backup ensures you never get locked out of your wallet when you can’t access your Phrase and your Ledger.\n\nChoose how you’d like to back up your Phrase:",
+      "backupChoice": {
+        "title": "Ledger Recover",
+        "tag": "Popular",
+        "shortDescription": "Lets you restore wallet access anytime with an encrypted Phrase backup.",
+        "longDescription": "Get a secure and encrypted backup with a free 30-day trial, then $9.99/m.",
+        "tryCta": "Try it for free",
+        "redeemCodeCta": "Apply your redeem code",
+        "howItWorksCta": "How it works?"
+      },
+      "manualBackup": {
+        "title": "Manual backup",
+        "tag": "Advanced",
+        "shortDescription": "Create your own paper backup to the Recovery Sheet and secure it at a different location.",
+        "longDescription": "Keep it on paper and place it in a safe location.",
+        "cta": "Keep it on paper"
+      }
+    },
     "appsStep": {
       "title": "Install apps on {{productName}}"
     },
