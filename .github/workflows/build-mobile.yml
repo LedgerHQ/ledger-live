@@ -46,7 +46,7 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
       - name: Setup git user
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
-      - name: Setup the toolchain
+      - name: Setup the caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         id: caches
         with:
@@ -55,17 +55,6 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 3.2.2
-        env:
-          ImageOS: ubuntu20
-      - uses: actions/setup-java@v3
-        with:
-          distribution: "zulu" # See 'Supported distributions' for available options
-          java-version: "11"
-      - name: setup Android SDK
-        uses: android-actions/setup-android@v2.0.10
       - name: install dependencies
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
       - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
