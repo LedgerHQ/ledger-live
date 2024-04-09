@@ -20,7 +20,7 @@ export async function getTransactions(
     // we found the last transaction
     if (tmpTxs.transactions.length === 1) break;
     // it should always match
-    if (hash !== tmpTxs[0].hash) throw Error("[ton] transaction hash does not match");
+    if (hash !== tmpTxs.transactions[0].hash) throw Error("[ton] transaction hash does not match");
     tmpTxs.transactions.shift(); // first element is repeated
     txs.transactions.push(...tmpTxs.transactions);
     txs.address_book = { ...txs.address_book, ...tmpTxs.address_book };
@@ -67,7 +67,6 @@ export function mapTxToOps(
 
     const date = new Date(tx.now * 1000); // now is defined in seconds
     const hash = tx.in_msg?.hash ?? tx.hash; // this is the hash we know in signature time
-
     if (isReceiving) {
       if (tx.total_fees !== "0") {
         // these are small amount of fees payed when receiving
