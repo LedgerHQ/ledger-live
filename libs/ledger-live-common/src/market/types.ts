@@ -172,10 +172,10 @@ export type MarketItemResponse = {
   maxSupply: number;
   allTimeHigh: number;
   allTimeLow: number;
-  allTimeHighDate: Date;
-  allTimeLowDate: Date;
+  allTimeHighDate: string;
+  allTimeLowDate: string;
   sparkline: number[];
-  updatedAt: Date;
+  updatedAt: string;
 };
 export type MarketItemPerformer = {
   name: string;
