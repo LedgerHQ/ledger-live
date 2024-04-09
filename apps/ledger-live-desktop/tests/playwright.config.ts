@@ -37,7 +37,7 @@ const config: PlaywrightTestConfig = {
         ["line"],
         ["allure-playwright"],
       ]
-    : "list",
+    : "allure-playwright",
 };
 
 export default config;
