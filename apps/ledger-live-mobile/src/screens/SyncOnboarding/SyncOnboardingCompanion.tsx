@@ -37,6 +37,7 @@ import Stories from "~/components/StorylyStories";
 import { TrackScreen, screen } from "~/analytics";
 import ContinueOnStax from "./assets/ContinueOnStax";
 import type { SyncOnboardingScreenProps } from "./SyncOnboardingScreenProps";
+import Backup from "./companionSteps/Backup";
 
 const { BodyText, SubtitleText } = VerticalTimeline;
 
@@ -105,6 +106,7 @@ enum CompanionStepKey {
   EarlySecurityCheckCompleted = 0,
   Pin,
   Seed,
+  Backup,
   Apps,
   Ready,
   Exit,
@@ -345,18 +347,28 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
     lastCompanionStepKey.current = companionStepKey;
   }, [companionStepKey, productName]);
 
+  const seededDeviceHandled = useRef(false);
+
   useEffect(() => {
     // When the device is seeded, there are 2 cases before triggering the applications install step:
     // - the user came to the sync onboarding with an non-seeded device and did a full onboarding: onboarding flag `Ready`
     // - the user came to the sync onboarding with an already seeded device: onboarding flag `WelcomeScreen1`
-    if (
-      deviceOnboardingState?.isOnboarded &&
-      [DeviceOnboardingStep.Ready, DeviceOnboardingStep.WelcomeScreen1].includes(
-        deviceOnboardingState?.currentOnboardingStep,
-      )
-    ) {
-      setCompanionStepKey(CompanionStepKey.Apps);
-      return;
+
+    if (deviceOnboardingState?.isOnboarded && !seededDeviceHandled.current) {
+      if (deviceOnboardingState?.currentOnboardingStep === DeviceOnboardingStep.Ready) {
+        // device was just seeded
+        setCompanionStepKey(CompanionStepKey.Backup);
+        seededDeviceHandled.current = true;
+        return;
+      } else if (
+        deviceOnboardingState?.currentOnboardingStep === DeviceOnboardingStep.WelcomeScreen1
+      ) {
+        // switch to the apps step
+        setCompanionStepKey(CompanionStepKey.Backup);
+        // setCompanionStepKey(CompanionStepKey.Apps);
+        seededDeviceHandled.current = true;
+        return;
+      }
     }
 
     // case DeviceOnboardingStep.SafetyWarning not handled so the previous step (new seed, restore, recover) is kept
@@ -610,6 +622,17 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
                 </Flex>
               )}
             </Flex>
+          ),
+        },
+        {
+          key: CompanionStepKey.Backup,
+          title: t("syncOnboarding.backup.title"),
+          doneTitle: t("syncOnboarding.backup.title"),
+          renderBody: () => (
+            <Backup
+              device={device}
+              onPressKeepManualBackup={() => setCompanionStepKey(CompanionStepKey.Apps)}
+            />
           ),
         },
         ...(deviceInitialApps?.enabled
