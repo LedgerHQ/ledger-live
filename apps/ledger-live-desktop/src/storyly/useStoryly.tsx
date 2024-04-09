@@ -2,34 +2,9 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { StorylyInstanceID } from "@ledgerhq/types-live";
 import { useLayoutEffect, useRef } from "react";
 import { useSelector } from "react-redux";
-import { Language } from "~/config/languages";
 import { languageSelector } from "~/renderer/reducers/settings";
 import { StorylyStyleProps, useStorylyDefaultStyleProps } from "./style";
-
-/**
- * Storyly Options
- */
-export type StorylyOptions = {
-  layout: "classic" | "modern";
-
-  token: string;
-
-  // Internationalization
-  lang?: Language;
-  segments?: string[];
-
-  // Styles
-  props?: StorylyStyleProps;
-};
-
-/**
- * Storyly Ref
- */
-type StorylyRef = {
-  init: (options: StorylyOptions) => void;
-  setSegments: (options: StorylyOptions["segments"]) => void;
-  setLang: (options: { language: StorylyOptions["lang"] }) => void;
-};
+import { StorylyRef, StorylyData } from "storyly-web";
 
 /**
  * Hook to use Storyly
@@ -40,8 +15,12 @@ type StorylyRef = {
  *
  * @returns a ref to be used to manage the Storyly's instance associated with it.
  */
-export const useStoryly = (instanceId: StorylyInstanceID) => {
+export const useStoryly = (
+  instanceId: StorylyInstanceID,
+  options?: { styleProps: StorylyStyleProps },
+) => {
   const ref = useRef<StorylyRef>();
+  const dataRef = useRef<StorylyData>();
   const props = useStorylyDefaultStyleProps();
   const language = useSelector(languageSelector);
 
@@ -49,15 +28,26 @@ export const useStoryly = (instanceId: StorylyInstanceID) => {
 
   useLayoutEffect(() => {
     if (!storyly) return;
+    console.log(
+      "initializing storyly",
+      instanceId,
+      storyly.params?.stories[instanceId].token,
+      language,
+      props,
+    );
     ref.current?.init({
       layout: "classic",
-      //
       token: storyly.params?.stories[instanceId].token || "",
-      //
       lang: language,
       segments: [`lang_${language}`],
-      //
-      props,
+      events: {
+        isReady: data => {
+          console.log("storyly isReady", data);
+          dataRef.current = data;
+          // Triggered when story is ready.
+        },
+      },
+      props: { ...props, ...options?.styleProps },
     });
   });
 
@@ -69,5 +59,5 @@ export const useStoryly = (instanceId: StorylyInstanceID) => {
     ref.current?.setSegments([`lang_${language}`]);
   }, [language]);
 
-  return { ref };
+  return { ref, dataRef };
 };
