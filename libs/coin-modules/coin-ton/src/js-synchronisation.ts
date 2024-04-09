@@ -1,13 +1,18 @@
-import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+// import type { Account } from "@ledgerhq/types-live";
+// import { encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
+// import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+// import { makeSync, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+// import { getAccount, getOperations } from "./api";
+import { decodeAccountId, encodeAccountId } from "@ledgerhq/coin-framework/account/index";
+import { GetAccountShape, makeSync, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { log } from "@ledgerhq/logs";
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import flatMap from "lodash/flatMap";
-import { decodeAccountId, encodeAccountId } from "../../../../account";
-import { TonOperation } from "../../types";
-import { fetchAccountInfo, fetchLastBlockNumber } from "./api";
-import { TonTransactionsList } from "./api.types";
-import { getTransactions, mapTxToOps } from "./txn";
+import { fetchAccountInfo, fetchLastBlockNumber } from "./bridge/bridgeHelpers/api";
+import { TonTransactionsList } from "./bridge/bridgeHelpers/api.types";
+import { getTransactions, mapTxToOps } from "./bridge/bridgeHelpers/txn";
+import { TonOperation } from "./types";
 
 export const getAccountShape: GetAccountShape = async info => {
   const { address, rest, currency, derivationMode, initialAccount } = info;
@@ -60,6 +65,13 @@ export const getAccountShape: GetAccountShape = async info => {
   };
 };
 
+const postSync = (_initial: Account, synced: Account): Account => {
+  const operations = synced.operations || [];
+  const initialPendingOps = synced.pendingOperations || [];
+  const pendingOperations = initialPendingOps.filter(pOp => !operations.some(o => o.id === pOp.id));
+  return { ...synced, pendingOperations };
+};
+
 function reconciliatePubkey(publicKey?: string, initialAccount?: Account): string {
   if (publicKey?.length === 64) return publicKey;
   if (initialAccount) {
@@ -69,3 +81,5 @@ function reconciliatePubkey(publicKey?: string, initialAccount?: Account): strin
   }
   throw Error("[ton] pubkey was not properly restored");
 }
+
+export const sync = makeSync({ getAccountShape, postSync });

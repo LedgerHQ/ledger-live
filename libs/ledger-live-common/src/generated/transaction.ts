@@ -15,6 +15,7 @@ import cardano from "@ledgerhq/coin-cardano/transaction";
 import evm from "@ledgerhq/coin-evm/transaction";
 import near from "@ledgerhq/coin-near/transaction";
 import polkadot from "@ledgerhq/coin-polkadot/transaction";
+import ton from "@ledgerhq/coin-ton/transaction";
 import solana from "@ledgerhq/coin-solana/transaction";
 import stellar from "@ledgerhq/coin-stellar/transaction";
 import tezos from "@ledgerhq/coin-tezos/transaction";
@@ -40,6 +41,7 @@ export default {
   evm,
   near,
   polkadot,
+  ton,
   solana,
   stellar,
   tezos,
