@@ -12,8 +12,8 @@ describe("signMessage", () => {
       getWalletPublicKey: jest.fn(),
       signMessage: jest.fn().mockResolvedValue({
         v: 1,
-        r: "RRRRRSSSSSRRRRRSSSSS",
-        s: "SSSSSRRRRRSSSSSRRRRR",
+        r: "407c9da9dadf23a2d7e863f51aa3512fe3c86619f1d57b16e5d0659155e83888",
+        s: "207c9da9dadf736839484733637aba12fe3c86619f1d57b16e5d0659155e8388",
       }),
       splitTransaction: jest.fn(),
       createPaymentTransaction: jest.fn(),
@@ -34,10 +34,11 @@ describe("signMessage", () => {
     expect(signature).toEqual({
       rsv: {
         v: 1,
-        r: "RRRRRSSSSSRRRRRSSSSS",
-        s: "SSSSSRRRRRSSSSSRRRRR",
+        r: "407c9da9dadf23a2d7e863f51aa3512fe3c86619f1d57b16e5d0659155e83888",
+        s: "207c9da9dadf736839484733637aba12fe3c86619f1d57b16e5d0659155e8388",
       },
-      signature: "IA==",
+      signature:
+        "1407c9da9dadf23a2d7e863f51aa3512fe3c86619f1d57b16e5d0659155e83888207c9da9dadf736839484733637aba12fe3c86619f1d57b16e5d0659155e8388",
     });
   });
 });
