@@ -767,12 +767,15 @@ export function testBridge<T extends TransactionCommon, U extends TransactionCom
           }); // NB for now we are not going farther because most is covered by bash tests
         });
 
-        describe("assignToAccountRaw", () => {
-          test("assign account is consistent", () => {
+        describe("assignToAccountRaw / assignFromAccountRaw", () => {
+          test("account serialization is consistent", () => {
             const account = fromAccountRaw(accountData.raw);
             accountBridge.assignFromAccountRaw?.(accountData.raw, account);
-            expect(initialAccount).toEqual(account);
-            expect(true).toBeFalsy();
+
+            const newAccountRaw = toAccountRaw(account);
+            accountBridge.assignToAccountRaw?.(account, newAccountRaw);
+
+            expect(accountData.raw).toEqual(newAccountRaw);
           });
         });
       });
