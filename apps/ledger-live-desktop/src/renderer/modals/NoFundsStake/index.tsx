@@ -13,10 +13,10 @@ import EntryButton from "~/renderer/components/EntryButton/EntryButton";
 import CoinsIcon from "./assets/CoinsIcon";
 import { trackPage, track } from "~/renderer/analytics/segment";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 
-const useText = (entryPoint: "noFunds" | "getFunds", currency: CryptoCurrency) => {
+const useText = (entryPoint: "noFunds" | "getFunds", currency: CryptoCurrency | TokenCurrency) => {
   const { t } = useTranslation();
 
   const textMap = {
@@ -44,8 +44,12 @@ const NoFundsStakeModal = ({ account, parentAccount, entryPoint }: NoFundsStakeM
   const dispatch = useDispatch();
   const history = useHistory();
   const { data: currenciesAll } = useFetchCurrencyAll();
+  const isEthereumMaticTokenAccount =
+    account?.type === "TokenAccount" && account.token.id === "ethereum/erc20/matic";
 
-  const currency: CryptoCurrency = parentAccount?.currency || (account as Account).currency;
+  const currency: CryptoCurrency | TokenCurrency = isEthereumMaticTokenAccount
+    ? account.token
+    : parentAccount?.currency || (account as Account).currency;
 
   const { isCurrencyAvailable } = useRampCatalog();
 
