@@ -90,4 +90,4 @@ for (const currency of currencies) {
     });
   });
 }
-//BUG avec les versions de la nanoAPP ?
+//BUG avec les versions de la nanoAPP (ETH) ?
