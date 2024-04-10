@@ -111,6 +111,101 @@ describe("CosmosApi", () => {
     });
   });
 
+  describe("getRedelegations", () => {
+    it("should return redelegations correctly (sdk v0.41/0.42/0.44/0.45)", async () => {
+      const getApiResponseSinceSdk041 = {
+        redelegation_responses: [
+          {
+            redelegation: {
+              delegator_address: "cosmosDelegatorAddress",
+              validator_src_address: "cosmosValidatorSrcAddress",
+              validator_dst_address: "cosmosValidatorDstAddress",
+              entries: [
+                {
+                  creation_height: "1",
+                  completion_time: "2023-06-04T15:12:58.567Z",
+                  initial_balance: "100",
+                  shares_dst: "100",
+                },
+              ],
+            },
+            entries: [
+              {
+                redelegation_entry: {
+                  creation_height: "1",
+                  completion_time: "2023-06-04T15:12:58.567Z",
+                  initial_balance: "100",
+                  shares_dst: "100",
+                },
+                balance: "100",
+              },
+            ],
+          },
+        ],
+        pagination: {
+          next_key: null,
+          total: "1",
+        },
+      };
+      mockedNetwork.mockResolvedValue({
+        data: getApiResponseSinceSdk041,
+      } as AxiosResponse);
+      const cosmosRedelegations = await cosmosApi.getRedelegations("cosmosDelegatorAddress");
+      expect(cosmosRedelegations[0].amount).toEqual(new BigNumber(100));
+      expect(cosmosRedelegations[0].completionDate).toEqual(new Date("2023-06-04T15:12:58.567Z"));
+      expect(cosmosRedelegations[0].validatorDstAddress).toEqual("cosmosValidatorDstAddress");
+      expect(cosmosRedelegations[0].validatorSrcAddress).toEqual("cosmosValidatorSrcAddress");
+    });
+
+    it("should return redelegations correctly (sdk v0.46/0.47)", async () => {
+      const getApiResponseSinceSdk046 = {
+        redelegation_responses: [
+          {
+            redelegation: {
+              delegator_address: "cosmosDelegatorAddress",
+              validator_src_address: "cosmosValidatorSrcAddress",
+              validator_dst_address: "cosmosValidatorDstAddress",
+              entries: null,
+            },
+            entries: [
+              {
+                redelegation_entry: {
+                  creation_height: 42,
+                  completion_time: "2024-04-29T09:38:35.273743543Z",
+                  initial_balance: "100",
+                  shares_dst: "100.000000000000000000",
+                  unbonding_id: 394,
+                },
+                balance: "100",
+              },
+            ],
+          },
+        ],
+        pagination: { next_key: null, total: "1" },
+      };
+      mockedNetwork.mockResolvedValue({
+        data: getApiResponseSinceSdk046,
+      } as AxiosResponse);
+
+      const cosmosRedelegations = await cosmosApi.getRedelegations("cosmosDelegatorAddress");
+      expect(cosmosRedelegations[0].amount).toEqual(new BigNumber(100));
+      expect(cosmosRedelegations[0].completionDate).toEqual(
+        new Date("2024-04-29T09:38:35.273743543Z"),
+      );
+      expect(cosmosRedelegations[0].validatorDstAddress).toEqual("cosmosValidatorDstAddress");
+      expect(cosmosRedelegations[0].validatorSrcAddress).toEqual("cosmosValidatorSrcAddress");
+    });
+
+    it("should return no redelegations if there are none", async () => {
+      mockedNetwork.mockResolvedValue({
+        data: { redelegation_responses: [], pagination: { next_key: null, total: "0" } },
+      } as AxiosResponse);
+
+      const cosmosRedelegations = await cosmosApi.getRedelegations("cosmosDelegatorAddress");
+      expect(cosmosRedelegations.length).toEqual(0);
+    });
+  });
+
   describe("simulate", () => {
     it("should return gas used when the network call returns gas used", async () => {
       mockedNetwork.mockResolvedValue({
