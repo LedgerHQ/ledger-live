@@ -6,11 +6,8 @@ import { useDispatch, useSelector } from "react-redux";
 import * as braze from "@braze/web-sdk";
 import { PortfolioContentCard } from "~/types/dynamicContent";
 import { setPortfolioCards } from "~/renderer/actions/dynamicContent";
-import {
-  trackingEnabledSelector,
-  contentCardsDismissedSelector,
-} from "~/renderer/reducers/settings";
-import { setDismissedContentCard } from "~/renderer/actions/settings";
+import { trackingEnabledSelector } from "~/renderer/reducers/settings";
+import { setDismissedContentCards } from "~/renderer/actions/settings";
 
 export const getTransitions = (transition: "slide" | "flip", reverse = false) => {
   const mult = reverse ? -1 : 1;
@@ -61,13 +58,12 @@ export const useDefaultSlides = (): {
   const [cachedContentCards, setCachedContentCards] = useState<braze.Card[]>([]);
   const portfolioCards = useSelector(portfolioContentCardSelector);
   const isTrackedUser = useSelector(trackingEnabledSelector);
-  const contentCardsDismissed = useSelector(contentCardsDismissedSelector);
   const dispatch = useDispatch();
 
   useEffect(() => {
     const cards = braze.getCachedContentCards().cards;
     setCachedContentCards(cards);
-  }, [contentCardsDismissed]);
+  }, []);
 
   const logSlideImpression = useCallback(
     (index: number) => {
@@ -75,7 +71,6 @@ export const useDefaultSlides = (): {
         const slide = portfolioCards[index];
         if (slide?.id) {
           const currentCard = cachedContentCards.find(card => card.id === slide.id);
-
           if (currentCard) {
             isTrackedUser && braze.logContentCardImpressions([currentCard]);
           }
@@ -91,12 +86,11 @@ export const useDefaultSlides = (): {
         const slide = portfolioCards[index];
         if (slide?.id) {
           const currentCard = cachedContentCards.find(card => card.id === slide.id);
-
           if (currentCard) {
             isTrackedUser
               ? braze.logCardDismissal(currentCard)
               : currentCard.id &&
-                dispatch(setDismissedContentCard({ id: currentCard.id, timestamp: Date.now() }));
+                dispatch(setDismissedContentCards({ id: currentCard.id, timestamp: Date.now() }));
             setCachedContentCards(cachedContentCards.filter(n => n.id !== currentCard.id));
             dispatch(setPortfolioCards(portfolioCards.filter(n => n.id !== slide.id)));
           }

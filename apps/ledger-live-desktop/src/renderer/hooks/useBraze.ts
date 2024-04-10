@@ -20,11 +20,11 @@ import getUser from "~/helpers/user";
 import {
   developerModeSelector,
   trackingEnabledSelector,
-  contentCardsDismissedSelector,
+  dismissedContentCardsSelector,
 } from "../reducers/settings";
 import { clearDismissedContentCards } from "../actions/settings";
 import { getEnv } from "@ledgerhq/live-env";
-import { generateAnonymousId, getOldCampaignIds } from "@ledgerhq/live-common/braze/anonymousUsers";
+import { getOldCampaignIds, generateAnonymousId } from "@ledgerhq/live-common/braze/anonymousUsers";
 
 const getDesktopCards = (elem: braze.ContentCards) =>
   elem.cards.filter(card => card.extras?.platform === Platform.Desktop);
@@ -86,13 +86,14 @@ export const mapAsNotificationContentCard = (card: ClassicCard): NotificationCon
 export async function useBraze() {
   const dispatch = useDispatch();
   const devMode = useSelector(developerModeSelector);
-  const contentCardsDissmissed = useSelector(contentCardsDismissedSelector);
-  const isUntrackedUser = !useSelector(trackingEnabledSelector);
+  const contentCardsDissmissed = useSelector(dismissedContentCardsSelector);
+  const isTrackedUser = useSelector(trackingEnabledSelector);
 
   const initBraze = useCallback(async () => {
     const user = await getUser();
     const brazeConfig = getBrazeConfig();
     const isPlaywright = !!getEnv("PLAYWRIGHT_RUN");
+    dispatch(clearDismissedContentCards(getOldCampaignIds(contentCardsDissmissed)));
 
     braze.initialize(brazeConfig.apiKey, {
       baseUrl: brazeConfig.endpoint,
@@ -107,11 +108,7 @@ export async function useBraze() {
       return;
     }
 
-    if (user && !isUntrackedUser) {
-      braze.changeUser(user.id);
-    } else {
-      braze.changeUser(generateAnonymousId());
-    }
+    if (user) braze.changeUser(isTrackedUser ? user.id : generateAnonymousId());
 
     braze.requestPushPermission();
 
@@ -119,20 +116,23 @@ export async function useBraze() {
 
     braze.subscribeToContentCardsUpdates(cards => {
       const desktopCards = getDesktopCards(cards);
-      dispatch(clearDismissedContentCards(getOldCampaignIds(contentCardsDissmissed)));
       const dismissedCardIds = Object.keys(contentCardsDissmissed);
+      const filteredDesktopCards = desktopCards.filter(
+        card => !dismissedCardIds.includes(String(card.id)),
+      );
 
-      const portfolioCards = filterByPage(desktopCards, LocationContentCard.Portfolio)
-        .filter(card => !dismissedCardIds.includes(String(card.id)))
+      const portfolioCards = filterByPage(filteredDesktopCards, LocationContentCard.Portfolio)
         .map(card => mapAsPortfolioContentCard(card as ClassicCard))
         .sort(compareCards);
 
-      const actionCards = filterByPage(desktopCards, LocationContentCard.Action)
-        .filter(card => !dismissedCardIds.includes(String(card.id)))
+      const actionCards = filterByPage(filteredDesktopCards, LocationContentCard.Action)
         .map(card => mapAsActionContentCard(card as ClassicCard))
         .sort(compareCards);
 
-      const notificationsCards = filterByPage(desktopCards, LocationContentCard.NotificationCenter)
+      const notificationsCards = filterByPage(
+        filteredDesktopCards,
+        LocationContentCard.NotificationCenter,
+      )
         .map(card => mapAsNotificationContentCard(card as ClassicCard))
         .sort(compareCards);
 
@@ -143,7 +143,7 @@ export async function useBraze() {
 
     braze.automaticallyShowInAppMessages();
     braze.openSession();
-  }, [dispatch, devMode, isUntrackedUser, contentCardsDissmissed]);
+  }, [dispatch, devMode, isTrackedUser, contentCardsDissmissed]);
 
   useEffect(() => {
     initBraze();

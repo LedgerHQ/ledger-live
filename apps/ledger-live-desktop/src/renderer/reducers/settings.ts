@@ -107,7 +107,7 @@ export type SettingsState = {
   vaultSigner: VaultSigner;
   supportedCounterValues: SupportedCountervaluesData[];
   hasSeenAnalyticsOptInPrompt: boolean;
-  contentCardsDismissed: { [key: string]: number };
+  dismissedContentCards: { [key: string]: number };
 };
 
 export const getInitialLanguageAndLocale = (): { language: Language; locale: Locale } => {
@@ -194,7 +194,7 @@ const INITIAL_STATE: SettingsState = {
   // Vault
   vaultSigner: { enabled: false, host: "", token: "", workspace: "" },
   supportedCounterValues: [],
-  contentCardsDismissed: {} as Record<string, number>,
+  dismissedContentCards: {} as Record<string, number>,
 };
 
 /* Handlers */
@@ -243,10 +243,10 @@ type HandlersPayloads = {
   SET_VAULT_SIGNER: VaultSigner;
   SET_SUPPORTED_COUNTER_VALUES: SupportedCountervaluesData[];
   SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT: boolean;
-  SET_CONTENT_CARDS_DISMISSED: {
+  SET_DISMISSED_CONTENT_CARDS: {
     [key: string]: number;
   };
-  CLEAR_CONTENT_CARDS_DISMISSED: never;
+  CLEAR_DISMISSED_CONTENT_CARDS: never;
 };
 type SettingsHandlers<PreciseKey = true> = Handlers<SettingsState, HandlersPayloads, PreciseKey>;
 
@@ -410,19 +410,19 @@ const handlers: SettingsHandlers = {
     ...state,
     hasSeenAnalyticsOptInPrompt: payload,
   }),
-  SET_CONTENT_CARDS_DISMISSED: (state: SettingsState, { payload }) => ({
+  SET_DISMISSED_CONTENT_CARDS: (state: SettingsState, { payload }) => ({
     ...state,
-    contentCardsDismissed: {
-      ...state.contentCardsDismissed,
+    dismissedContentCards: {
+      ...state.dismissedContentCards,
       [payload.id]: payload.timestamp,
     },
   }),
 
-  CLEAR_CONTENT_CARDS_DISMISSED: (state: SettingsState, { payload }: { payload?: string[] }) => {
+  CLEAR_DISMISSED_CONTENT_CARDS: (state: SettingsState, { payload }: { payload?: string[] }) => {
     const newState = { ...state };
     if (payload) {
       payload.forEach(id => {
-        delete newState.contentCardsDismissed[id];
+        delete newState.dismissedContentCards[id];
       });
     }
     return newState;
@@ -733,4 +733,4 @@ export const supportedCounterValuesSelector = (state: State) =>
   state.settings.supportedCounterValues;
 export const hasSeenAnalyticsOptInPromptSelector = (state: State) =>
   state.settings.hasSeenAnalyticsOptInPrompt;
-export const contentCardsDismissedSelector = (state: State) => state.settings.contentCardsDismissed;
+export const dismissedContentCardsSelector = (state: State) => state.settings.dismissedContentCards;

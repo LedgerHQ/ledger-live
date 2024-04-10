@@ -48,6 +48,15 @@ export const filterCategoriesByLocation = (
   return categoriesToDisplay;
 };
 
+export const filterCardsThatHaveBeenDismissed = (
+  cards: BrazeContentCard[],
+  dismissedContentCardsIds: string[],
+) => {
+  const filteredCards = cards.filter(card => !dismissedContentCardsIds.includes(card.id));
+
+  return filteredCards;
+};
+
 export const formatCategories = (
   categories: CategoryContentCard[],
   mobileCards: BrazeContentCard[],

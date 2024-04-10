@@ -7,7 +7,7 @@ import { setActionCards } from "~/renderer/actions/dynamicContent";
 import { openURL } from "~/renderer/linking";
 import { track } from "../analytics/segment";
 import { trackingEnabledSelector } from "../reducers/settings";
-import { setDismissedContentCard } from "../actions/settings";
+import { setDismissedContentCards } from "../actions/settings";
 
 const useActionCards = () => {
   const dispatch = useDispatch();
@@ -35,7 +35,7 @@ const useActionCards = () => {
       isTrackedUser
         ? braze.logCardDismissal(currentCard)
         : currentCard.id &&
-          dispatch(setDismissedContentCard({ id: currentCard.id, timestamp: Date.now() }));
+          dispatch(setDismissedContentCards({ id: currentCard.id, timestamp: Date.now() }));
       setCachedContentCards(cachedContentCards.filter(n => n.id !== currentCard.id));
       dispatch(setActionCards(actionCards.filter(n => n.id !== currentCard.id)));
     }
