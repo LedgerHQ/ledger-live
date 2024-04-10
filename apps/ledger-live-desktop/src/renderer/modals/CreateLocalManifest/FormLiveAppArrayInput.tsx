@@ -38,7 +38,7 @@ function FormLiveAppArray({
   };
 
   const handleOnEnter = () => {
-    if (selectedValues.includes(inputValue)) return;
+    if (selectedValues.includes(inputValue) || inputValue.trim() === "") return;
     setSelectedValues((prev: string[]) => {
       const newSelectedvalues = prev;
       newSelectedvalues.push(inputValue);
