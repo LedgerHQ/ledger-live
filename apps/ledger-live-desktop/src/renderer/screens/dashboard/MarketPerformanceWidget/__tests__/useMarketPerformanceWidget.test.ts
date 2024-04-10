@@ -83,7 +83,7 @@ describe("useMarketPerformanceWidget", () => {
       expect(list).toHaveLength(2);
     });
 
-    it("Should return a list of 2 negative elements sorted", () => {
+    it("Should return a list of 2 negative elements on day", () => {
       const DATA = [
         createElem(-20),
         createElem(50),
@@ -111,7 +111,7 @@ describe("useMarketPerformanceWidget", () => {
       expect(list).toHaveLength(4);
     });
 
-    it("Should return a list of32 negative elements on week", () => {
+    it("Should return a list of 3 negative elements on week", () => {
       const DATA = [
         createElem(-50),
         createElem(-10),
