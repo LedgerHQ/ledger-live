@@ -41,13 +41,7 @@ const LabelContainer = styled(Flex).attrs({
   paddingHorizontal: 12,
 })``;
 
-export default memo(function AppRow({
-  app,
-  state,
-  dispatch,
-  setStorageWarning,
-  optimisticState,
-}: Props) {
+export default memo(function ({ app, state, dispatch, setStorageWarning, optimisticState }: Props) {
   const { name: appName, version: appVersion, displayName, authorName } = app;
   const { installed, deviceInfo, deviceModel } = state;
   const canBeInstalled = useMemo(() => manager.canHandleInstall(app), [app]);
