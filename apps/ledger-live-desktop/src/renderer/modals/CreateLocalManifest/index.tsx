@@ -72,6 +72,14 @@ function FormLocalManifest({
     });
   }, []);
 
+  const submitHandler = (e: KeyboardEvent) => {
+    e.preventDefault();
+    if (e.detail !== 0) {
+      formIsValid && addLocalManifest(form);
+      onClose();
+    }
+  };
+
   return (
     <form style={{ width: "90%", margin: "auto" }}>
       <ModalBody
@@ -193,7 +201,7 @@ function FormLocalManifest({
                                     optional={optional}
                                     fieldName={dappKey}
                                     key={dappKey}
-                                    choices={DEFAULT_VALUES[dappKey]}
+                                    choices={[...DEFAULT_VALUES[dappKey]]}
                                     path={path}
                                     handleChange={handleChange}
                                     multipleChoices={false}
@@ -310,7 +318,7 @@ function FormLocalManifest({
                       return (
                         <FormLiveAppArraySelect
                           key={key as string}
-                          options={DEFAULT_VALUES[key]}
+                          options={[...DEFAULT_VALUES[key]]}
                           fieldName={key as string}
                           initialValue={value as string[]}
                           optional={optional}
@@ -328,7 +336,7 @@ function FormLocalManifest({
                         <FormLiveAppArrayInput
                           key={key as string}
                           fieldName={key as string}
-                          initialValue={value}
+                          initialValue={[...value]}
                           optional={optional}
                           parseCheck={parseCheck}
                           path={path}
@@ -355,15 +363,7 @@ function FormLocalManifest({
             </ScrollArea>
             <Flex marginTop={4} width={"100%"} justifyContent={"center"}>
               <Flex width={"100%"} flexDirection={"row"} columnGap={3} justifyContent={"center"}>
-                <Button
-                  small
-                  disabled={!formIsValid}
-                  primary
-                  onClick={() => {
-                    formIsValid && addLocalManifest(form);
-                    onClose();
-                  }}
-                >
+                <Button small disabled={!formIsValid} primary onClick={submitHandler}>
                   {<Trans i18nKey={`settings.developer.createLocalAppModal.create`} />}
                 </Button>
               </Flex>
