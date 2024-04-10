@@ -8,7 +8,7 @@ import { useTranslation } from "react-i18next";
 import { Pressable } from "react-native";
 import styled, { useTheme } from "styled-components/native";
 import Button from "~/components/Button";
-import StoryGroup from "~/components/StorylyStories/index";
+import Stories from "~/components/StorylyStories/index";
 import Link from "~/components/wrappedUi/Link";
 import { NavigatorName, ScreenName } from "~/const";
 import { SyncOnboardingScreenProps } from "../SyncOnboardingScreenProps";
@@ -100,11 +100,12 @@ const BackupBody: React.FC<ChoiceBodyProps> = ({ isOpened, device }) => {
         event="button_clicked"
         eventProperties={{ button: "Apply your redeem code", flow: "Device onboarding" }}
       />
-      <StoryGroup
+      <Stories
         instanceID={StorylyInstanceID.backupRecoverySeed}
         StoryGroupItemComponent={VideoLink}
         storyItemTextColor="#00000000"
         storyHeaderIconIsVisible={false}
+        noLoadingPlaceholder
       />
     </Flex>
   ) : (
