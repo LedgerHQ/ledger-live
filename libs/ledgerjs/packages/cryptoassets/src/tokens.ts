@@ -3,11 +3,12 @@ import { findCryptoCurrencyById, getCryptoCurrencyById } from "./currencies";
 import asatokens, { AlgorandASAToken } from "./data/asa";
 import bep20tokens, { BEP20Token } from "./data/bep20";
 import cardanoNativeTokens, { CardanoNativeToken } from "./data/cardanoNative";
+import casperTokens, { CasperToken } from "./data/casper";
 import erc20tokens, { ERC20Token } from "./data/erc20";
 import esdttokens, { ElrondESDTToken } from "./data/esdt";
+import jettonTokens, { JettonToken } from "./data/jetton";
 import polygonTokens, { PolygonERC20Token } from "./data/polygon-erc20";
 import stellarTokens, { StellarToken } from "./data/stellar";
-import casperTokens, { CasperToken } from "./data/casper";
 import trc10tokens, { TRC10Token } from "./data/trc10";
 import trc20tokens, { TRC20Token } from "./data/trc20";
 import vechainTokens, { vip180Token } from "./data/vip180";
@@ -34,6 +35,7 @@ addTokens(cardanoNativeTokens.map(convertCardanoNativeTokens));
 addTokens(stellarTokens.map(convertStellarTokens));
 addTokens(casperTokens.map(convertCasperTokens));
 addTokens(vechainTokens.map(convertVechainToken));
+addTokens(jettonTokens.map(convertJettonToken));
 
 type TokensListOptions = {
   withDelisted: boolean;
@@ -260,6 +262,34 @@ export function convertERC20([
     ticker,
     delisted,
     disableCountervalue: !!parentCurrency.isTestnetFor || !!disableCountervalue,
+    units: [
+      {
+        name,
+        code: ticker,
+        magnitude,
+      },
+    ],
+  };
+}
+
+export function convertJettonToken([address, name, ticker, magnitude, delisted]: JettonToken):
+  | TokenCurrency
+  | undefined {
+  const parentCurrency = findCryptoCurrencyById("ton");
+
+  if (!parentCurrency) {
+    return;
+  }
+
+  return {
+    type: "TokenCurrency",
+    id: "ton/jetton/" + address,
+    contractAddress: address,
+    parentCurrency,
+    tokenType: "jetton",
+    name,
+    ticker,
+    delisted,
     units: [
       {
         name,
