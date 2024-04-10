@@ -327,7 +327,7 @@ export default function SelectDevice({
       ) : (
         <Flex flex={1}>
           <ScrollContainer
-            my={4}
+            mb={4}
             contentContainerStyle={{
               flexGrow: 1,
               justifyContent: "space-between",
@@ -425,7 +425,7 @@ export default function SelectDevice({
                 {children}
               </Flex>
             </Flex>
-            <Flex alignItems="center" mt={10} mb={8}>
+            <Flex alignItems="center" mt={10}>
               <BuyDeviceCTA />
             </Flex>
           </ScrollContainer>

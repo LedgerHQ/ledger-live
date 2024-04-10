@@ -10,7 +10,7 @@ import { PostOnboardingNavigatorParamList } from "../RootNavigator/types/PostOnb
 import { DeviceModelId } from "@ledgerhq/types-devices";
 
 export type Props = PostOnboardingAction &
-  PostOnboardingActionState & { deviceModelId: DeviceModelId };
+  PostOnboardingActionState & { deviceModelId: DeviceModelId; productName: string };
 
 const PostOnboardingActionRow: React.FC<Props> = props => {
   const {
@@ -23,6 +23,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
     disabled,
     buttonLabelForAnalyticsEvent,
     deviceModelId,
+    productName,
   } = props;
   const { t } = useTranslation();
   const navigation =
@@ -34,7 +35,10 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
     if ("getNavigationParams" in props) {
       navigation.navigate(...props.getNavigationParams({ deviceModelId }));
       buttonLabelForAnalyticsEvent &&
-        track("button_clicked", { button: buttonLabelForAnalyticsEvent });
+        track("button_clicked", {
+          button: buttonLabelForAnalyticsEvent,
+          deviceModelId,
+        });
     }
   };
 
@@ -48,7 +52,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
         opacity={disabled ? 0.5 : 1}
       >
         <Flex flexDirection="row" alignItems="flex-start" flexShrink={1}>
-          <Icon size={"M"} color={completed || disabled ? "neutral.c70" : "primary.c80"} />
+          <Icon size={"M"} color={"primary.c80"} />
           <Flex ml={6} flexDirection="column" justifyContent="center" flex={1}>
             <Flex flexDirection="row" alignItems="center">
               <Text
@@ -66,7 +70,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
             </Flex>
             {completed ? null : (
               <Text variant="body" fontWeight="medium" color="neutral.c70">
-                {t(description)}
+                {t(description, { productName })}
               </Text>
             )}
           </Flex>
