@@ -804,7 +804,7 @@ const envDefinitions = {
     desc: "Enable logs for drawers",
   },
   API_TON_ENDPOINT: {
-    def: "https://toncenter.com/api/v3",
+    def: "https://testnet.toncenter.com/api/v3",
     parser: stringParser,
     desc: "Toncenter API for TON",
   },
