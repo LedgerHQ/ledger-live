@@ -2,7 +2,7 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Flex, Icons, IconsLegacy, Link, Tag, Text } from "@ledgerhq/react-ui";
 import { StorylyInstanceID } from "@ledgerhq/types-live";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { ComponentProps, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import styled, { useTheme } from "styled-components";
 import { track } from "~/renderer/analytics/segment";
@@ -10,7 +10,7 @@ import ButtonV3 from "../../ButtonV3";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { useStoryly } from "~/storyly/useStoryly";
 
-import { StepText as BodyText, StepSubtitleText as SubtitleText } from "./shared";
+import { StepText, StepSubtitleText } from "./shared";
 import { useCustomPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router";
@@ -31,9 +31,7 @@ type Choice = {
   id: "backup" | "keep_on_paper";
   icon: React.ReactNode;
   title: string;
-  tag: string;
-  tagColor?: string;
-  tagType: React.ComponentProps<typeof Tag>["type"];
+  tag: React.ReactNode;
   body: React.ComponentType<ChoiceBodyProps>;
 };
 
@@ -44,19 +42,13 @@ const ChoiceText = styled(Text).attrs({
 
 const VideoLink = () => {
   const { t } = useTranslation();
-  const { ref: storylyRef, dataRef } = useStoryly(StorylyInstanceID.backupRecoverySeed, {
-    styleProps: {
-      storyGroupTextVisibility: false,
-      storyItemTextColor: "#00000000",
-      storyHeaderIconIsVisible: false,
-    },
-  });
+  const { ref: storylyRef, dataRef } = useStoryly(StorylyInstanceID.backupRecoverySeed);
   return (
     <Flex my={4} alignSelf={"center"}>
-      {/* invisible div */}
-      {/* <div style={{ display: "none" }}> */}
-      <storyly-web ref={storylyRef} />
-      {/* </div> */}
+      <div style={{ display: "none" }}>
+        {/* @ts-expect-error the `storyly-web` package doesn't provide any typings yet. */}
+        <storyly-web ref={storylyRef} />
+      </div>
       <Link
         size="small"
         Icon={IconsLegacy.PlayMedium}
@@ -165,22 +157,51 @@ const KeepOnPaperBody: React.FC<ChoiceBodyProps> = ({ isOpened, onPressKeepManua
   );
 };
 
+const WrappedTag: React.FC<{ text: string } & ComponentProps<typeof Tag>> = ({
+  text,
+  ...props
+}) => {
+  const { t } = useTranslation();
+  return (
+    <Tag
+      size="tiny"
+      active
+      {...props}
+      textProps={{ uppercase: true, fontWeight: "semiBold", lineHeight: "normal" }}
+    >
+      {t(text)}
+    </Tag>
+  );
+};
+
 const choices: Choice[] = [
   {
     id: "backup",
     title: "syncOnboarding.manual.backup.backupChoice.title",
     icon: <Icons.ShieldCheck size={"S"} color="primary.c80" />,
-    tag: "syncOnboarding.manual.backup.backupChoice.tag",
-    tagType: "color",
+    tag: (
+      <WrappedTag
+        text={"syncOnboarding.manual.backup.backupChoice.tag"}
+        type="plain"
+        active
+        bg="primary.c80"
+      />
+    ),
     body: BackupBody,
   },
   {
     id: "keep_on_paper",
     title: "syncOnboarding.manual.backup.manualBackup.title",
     icon: <Icons.Note size={"S"} color="neutral.c80" />,
-    tag: "syncOnboarding.manual.backup.manualBackup.tag",
-    tagType: "shade",
-    tagColor: "opacityDefault.c10",
+    tag: (
+      <WrappedTag
+        text={"syncOnboarding.manual.backup.manualBackup.tag"}
+        type="opacity"
+        active
+        disabled
+        bg="opacityDefault.c10"
+      />
+    ),
     body: KeepOnPaperBody,
   },
 ];
@@ -188,7 +209,7 @@ const choices: Choice[] = [
 const BackupStep: React.FC<Props> = props => {
   const { device, onPressKeepManualBackup } = props;
   const [choice, setChoice] = useState<Choice["id"] | null>(null);
-  const { space, radii } = useTheme();
+  const { radii } = useTheme();
 
   const { t } = useTranslation();
 
@@ -203,8 +224,8 @@ const BackupStep: React.FC<Props> = props => {
   return (
     <Flex rowGap={5} flex={1} flexDirection={"column"}>
       <TrackPage flow="Device onboarding" category="Backup for your Secret Recovery Phrase" />
-      <BodyText mb={2}>{t("syncOnboarding.manual.backup.description")}</BodyText>
-      {choices.map(({ id, title, icon, tag, tagColor, tagType, body: Body }) => (
+      <StepText mb={2}>{t("syncOnboarding.manual.backup.description")}</StepText>
+      {choices.map(({ id, title, icon, tag, body: Body }) => (
         <div key={id} onClick={() => setChoice(id)}>
           <Flex
             flexDirection={"column"}
@@ -218,17 +239,9 @@ const BackupStep: React.FC<Props> = props => {
             <Flex flexDirection="row" alignItems="center" justifyContent="flex-end" mb={3}>
               <Flex flexDirection="row" alignItems="center" columnGap={3} flex={1}>
                 {icon}
-                <SubtitleText m={0}>{t(title)}</SubtitleText>
+                <StepSubtitleText m={0}>{t(title)}</StepSubtitleText>
               </Flex>
-              <Tag
-                size="small"
-                style={{ textTransform: "uppercase" }}
-                type="plain"
-                active
-                backgroundColor={"primary.c80"}
-              >
-                {t(tag)}
-              </Tag>
+              {tag}
             </Flex>
             <Body
               isOpened={choice === id}
