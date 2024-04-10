@@ -66,7 +66,7 @@ const VideoLink = () => {
   );
 };
 
-const BackupBody: React.FC<ChoiceBodyProps> = ({ isOpened, device }) => {
+const BackupBody: React.FC<ChoiceBodyProps> = ({ isOpened }) => {
   const { t } = useTranslation();
 
   const dispatch = useDispatch();
@@ -75,20 +75,7 @@ const BackupBody: React.FC<ChoiceBodyProps> = ({ isOpened, device }) => {
   const servicesConfig = useFeature("protectServicesDesktop");
 
   const recoverActivatePath =
-    useCustomPath(
-      {
-        ...servicesConfig,
-        params: {
-          ...servicesConfig?.params,
-          protectId:
-            servicesConfig?.params.protectId === "protect-local-dev"
-              ? "protect-staging"
-              : servicesConfig?.params.protectId,
-        },
-      },
-      "activate",
-      "lld-stax-onboarding",
-    ) || "";
+    useCustomPath(servicesConfig, "activate", "lld-stax-onboarding") || "";
 
   const navigateToRecover = useCallback(() => {
     console.log("recoverActivatePath", recoverActivatePath);
@@ -224,6 +211,7 @@ const BackupStep: React.FC<Props> = props => {
   return (
     <Flex rowGap={5} flex={1} flexDirection={"column"}>
       <TrackPage flow="Device onboarding" category="Backup for your Secret Recovery Phrase" />
+      {/* @ts-expect-error weird props issue with React 18 */}
       <StepText mb={2}>{t("syncOnboarding.manual.backup.description")}</StepText>
       {choices.map(({ id, title, icon, tag, body: Body }) => (
         <div key={id} onClick={() => setChoice(id)}>
@@ -239,6 +227,7 @@ const BackupStep: React.FC<Props> = props => {
             <Flex flexDirection="row" alignItems="center" justifyContent="flex-end" mb={3}>
               <Flex flexDirection="row" alignItems="center" columnGap={3} flex={1}>
                 {icon}
+                {/* @ts-expect-error weird props issue with React 18 */}
                 <StepSubtitleText m={0}>{t(title)}</StepSubtitleText>
               </Flex>
               {tag}
