@@ -1,10 +1,17 @@
+import { decodeAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { Address } from "@ton/ton";
 import BigNumber from "bignumber.js";
+import { findTokenByAddressInCurrency } from "../../../../../ledgerjs/packages/cryptoassets/lib";
 import { TonOperation } from "../../types";
-import { isAddressValid } from "../../utils";
-import { fetchTransactions } from "./api";
-import { TonAddressBook, TonTransaction, TonTransactionsList } from "./api.types";
+import { addressesAreEqual, isAddressValid } from "../../utils";
+import { fetchJettonTransactions, fetchTransactions } from "./api";
+import {
+  TonAddressBook,
+  TonJettonTransfer,
+  TonTransaction,
+  TonTransactionsList,
+} from "./api.types";
 
 export async function getTransactions(
   addr: string,
@@ -28,11 +35,33 @@ export async function getTransactions(
   return txs;
 }
 
+export async function getJettonTransfers(
+  addr: string,
+  startLt?: string,
+): Promise<TonJettonTransfer[]> {
+  const txs = await fetchJettonTransactions(addr, { startLt });
+  if (txs.length === 0) return txs;
+  let tmpTxs: TonJettonTransfer[];
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    const { transaction_hash, transaction_lt } = txs[txs.length - 1];
+    tmpTxs = await fetchJettonTransactions(addr, { startLt, endLt: transaction_lt });
+    // we found the last transaction
+    if (tmpTxs.length === 1) break;
+    // it should always match
+    if (transaction_hash !== tmpTxs[0].transaction_hash)
+      throw Error("[ton] transaction hash does not match");
+    tmpTxs.shift(); // first element is repeated
+    txs.push(...tmpTxs);
+  }
+  return txs;
+}
+
 function getFriendlyAddress(addressBook: TonAddressBook, rawAddr?: string | null): string[] {
   if (!rawAddr) return [];
   if (addressBook[rawAddr]) return [addressBook[rawAddr].user_friendly];
   if (!isAddressValid(rawAddr)) throw new Error("[ton] address is not valid");
-  return [Address.parse(rawAddr).toString({ urlSafe: true, bounceable: false })];
+  return [Address.parse(rawAddr).toString({ urlSafe: true, bounceable: true })];
 }
 
 export function mapTxToOps(
@@ -144,6 +173,87 @@ export function mapTxToOps(
               tx.out_msgs[0].message_content?.decoded?.type === "text_comment"
                 ? tx.out_msgs[0].message_content.decoded.comment
                 : "",
+          },
+        },
+      });
+    }
+
+    return ops;
+  };
+}
+
+export function mapJettonTxToOps(
+  accountId: string,
+  addr: string,
+  addressBook: TonAddressBook,
+): (tx: TonJettonTransfer) => TonOperation[] {
+  return (tx: TonJettonTransfer): TonOperation[] => {
+    const accountAddr = Address.parse(addr).toString({ urlSafe: true, bounceable: false });
+    if (accountAddr !== addr) throw Error(`[ton] unexpected address ${accountAddr} ${addr}`);
+
+    const tokenCurrency = findTokenByAddressInCurrency(
+      tx.jetton_master,
+      decodeAccountId(accountId).currencyId,
+    );
+    if (!tokenCurrency) return [];
+    const tokenAccountId = encodeTokenAccountId(accountId, tokenCurrency);
+
+    const ops: TonOperation[] = [];
+
+    const isReceiving = addressesAreEqual(accountAddr, tx.destination);
+    const isSending = addressesAreEqual(accountAddr, tx.source);
+    if (!isSending && !isReceiving) throw Error("[ton] unexpected addresses");
+
+    const date = new Date(tx.transaction_now * 1000); // now is defined in seconds
+    const hash = tx.transaction_hash;
+
+    if (isReceiving) {
+      ops.push({
+        id: encodeOperationId(tokenAccountId, hash, "IN"),
+        hash,
+        type: "IN",
+        value: BigNumber(tx.amount),
+        fee: BigNumber(0),
+        blockHeight: 1, // we don't have block info
+        blockHash: null,
+        hasFailed: false,
+        accountId: tokenAccountId,
+        senders: getFriendlyAddress(addressBook, tx.source),
+        recipients: [accountAddr],
+        date,
+        extra: {
+          lt: tx.transaction_lt,
+          explorerHash: hash,
+          // TODO add comment decoding
+          comment: {
+            isEncrypted: false,
+            text: "",
+          },
+        },
+      });
+    }
+
+    if (isSending) {
+      ops.push({
+        id: encodeOperationId(tokenAccountId, hash, "OUT"),
+        hash,
+        type: "OUT",
+        value: BigNumber(tx.amount),
+        fee: BigNumber(0),
+        blockHeight: 1, // we don't have block info
+        blockHash: null,
+        hasFailed: false,
+        accountId: tokenAccountId,
+        senders: [accountAddr],
+        recipients: getFriendlyAddress(addressBook, tx.destination),
+        date,
+        extra: {
+          lt: tx.transaction_lt,
+          explorerHash: hash,
+          // TODO add comment decoding
+          comment: {
+            isEncrypted: false,
+            text: "",
           },
         },
       });
