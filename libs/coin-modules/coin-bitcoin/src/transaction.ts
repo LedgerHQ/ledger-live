@@ -10,13 +10,13 @@ import type {
 } from "./types";
 import { bitcoinPickingStrategy } from "./types";
 import { getEnv } from "@ledgerhq/live-env";
+import { formatTransactionStatus as formatTransactionStatusCommon } from "@ledgerhq/coin-framework/formatters";
 import {
-  formatTransactionStatusCommon,
   fromTransactionCommonRaw,
   fromTransactionStatusRawCommon,
   toTransactionCommonRaw,
   toTransactionStatusRawCommon,
-} from "@ledgerhq/coin-framework/transaction/common";
+} from "@ledgerhq/coin-framework/serialization";
 import { getAccountUnit } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import type { Account } from "@ledgerhq/types-live";
