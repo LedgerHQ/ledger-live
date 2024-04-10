@@ -152,7 +152,7 @@ const choices: Choice[] = [
   },
 ];
 
-const Backup: React.FC<Props> = props => {
+const BackupStep: React.FC<Props> = props => {
   const { device, onPressKeepManualBackup } = props;
   const [choice, setChoice] = useState<Choice["id"] | null>(null);
   const { space, radii } = useTheme();
@@ -202,4 +202,4 @@ const Backup: React.FC<Props> = props => {
   );
 };
 
-export default Backup;
+export default BackupStep;

@@ -37,7 +37,7 @@ import Stories from "~/components/StorylyStories";
 import { TrackScreen, screen } from "~/analytics";
 import ContinueOnStax from "./assets/ContinueOnStax";
 import type { SyncOnboardingScreenProps } from "./SyncOnboardingScreenProps";
-import Backup from "./companionSteps/Backup";
+import BackupStep from "./companionSteps/BackupStep";
 
 const { BodyText, SubtitleText } = VerticalTimeline;
 
@@ -631,7 +631,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
           title: t("syncOnboarding.backup.title"),
           doneTitle: t("syncOnboarding.backup.title"),
           renderBody: () => (
-            <Backup
+            <BackupStep
               device={device}
               onPressKeepManualBackup={() => setCompanionStepKey(CompanionStepKey.Apps)}
             />
