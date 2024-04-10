@@ -36,6 +36,11 @@ type Props = StorylyWrapperProps & {
    * Custom component to render the story group item.
    */
   StoryGroupItemComponent?: React.ComponentType<StoryGroupItemProps>;
+
+  /**
+   * If true, the story will not be shown until the stories are loaded.
+   */
+  noLoadingPlaceholder?: boolean;
 };
 
 type StoryGroupInfo = {
@@ -99,10 +104,13 @@ const Stories: React.FC<Props> = props => {
     vertical = false,
     horizontalScrollContentContainerStyle = defaultScrollContainerStyle,
     StoryGroupItemComponent = StoryGroupItem,
+    noLoadingPlaceholder,
   } = props;
 
   const storylyRef = useRef<Storyly>(null);
-  const [storyGroupList, setStoryGroupList] = useState<StoryGroupInfo[]>(placeholderContent);
+  const [storyGroupList, setStoryGroupList] = useState<StoryGroupInfo[]>(
+    noLoadingPlaceholder ? [] : placeholderContent,
+  );
 
   const handleFail = useCallback(() => {
     setStoryGroupList(placeholderContent);
