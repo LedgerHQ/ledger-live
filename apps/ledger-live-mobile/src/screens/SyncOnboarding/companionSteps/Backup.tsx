@@ -73,8 +73,8 @@ const BackupBody: React.FC<ChoiceBodyProps> = ({ isOpened, device }) => {
       params: {
         device,
         redirectTo: "activate",
-        platform: "protect-staging", // TODO: remove this, only for testing in debug
-        // platform: servicesConfig?.params?.protectId, // TODO: reenable this
+        // platform: "protect-staging", // TODO: remove this, only for testing in debug
+        platform: servicesConfig?.params?.protectId, // TODO: reenable this
         date: new Date().toISOString(), // adding a date to reload the page in case of same device restored again
       },
     });
