@@ -178,7 +178,7 @@ export const DEFAULT_FEATURES: Features = {
   },
 
   storyly: {
-    enabled: true,
+    enabled: false,
     params: {
       stories: {
         recoverySeed: {
