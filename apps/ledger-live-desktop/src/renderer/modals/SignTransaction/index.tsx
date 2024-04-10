@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { DomainServiceProvider } from "@ledgerhq/domain-service/hooks/index";
 import Modal from "~/renderer/components/Modal";
 import Body from "./Body";
 import { StepId } from "./types";
-import { ipcRenderer } from "electron";
 type Props = {
   stepId?: StepId;
   canEditFees?: boolean;
@@ -14,9 +13,6 @@ const SignTransactionModal = ({ stepId }: Props) => {
     stepId: stepId || "summary",
     error: undefined as Error | undefined,
   });
-  useEffect(() => {
-    ipcRenderer.send("ready-to-show", {});
-  }, []);
   const handleReset = () => {
     setState({
       ...state,
