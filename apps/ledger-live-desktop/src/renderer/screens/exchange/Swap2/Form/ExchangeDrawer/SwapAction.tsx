@@ -23,6 +23,7 @@ import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import initSwap from "@ledgerhq/live-common/exchange/swap/initSwap";
 import { Device } from "@ledgerhq/types-devices";
 import { BigNumber } from "bignumber.js";
+import { track } from "~/renderer/analytics/segment";
 
 const transactionAction = transactionCreateAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
 const initAction = initSwapCreateAction(
@@ -100,6 +101,8 @@ export default function SwapAction({
       const { swapId, magnitudeAwareRate } = initData;
       broadcast(signedOperation).then(
         operation => {
+          track("swap_broadcast_succeed");
+
           onCompletion({
             operation,
             swapId,
@@ -107,6 +110,8 @@ export default function SwapAction({
           });
         },
         error => {
+          track("swap_broadcast_failed");
+
           onError({
             error,
             swapId,

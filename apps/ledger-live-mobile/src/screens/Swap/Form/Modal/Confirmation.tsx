@@ -31,6 +31,7 @@ import { ScreenName } from "~/const";
 import type { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 import { useInitSwapDeviceAction, useTransactionDeviceAction } from "~/hooks/deviceActions";
 import { BigNumber } from "bignumber.js";
+import { track } from "~/analytics";
 
 export type DeviceMeta = {
   result: { installed: InstalledItem[] } | null | undefined;
@@ -188,9 +189,11 @@ export function Confirmation({
       const { swapId, magnitudeAwareRate } = swapData;
       broadcast(signedOperation).then(
         operation => {
+          track("swap_broadcast_succeed");
           onComplete({ operation, swapId, magnitudeAwareRate });
         },
         error => {
+          track("swap_broadcast_failed");
           onError(error);
         },
       );
