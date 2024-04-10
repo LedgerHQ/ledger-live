@@ -8,9 +8,14 @@ export enum PostOnboardingActionId {
   claimMock = "claimMock",
   migrateAssetsMock = "migrateAssetsMock",
   personalizeMock = "personalizeMock",
+  assetsTransferMock = "assetsTransferMock",
+  buyCryptoMock = "buyCryptoMock",
+  customImageMock = "customImageMock",
+  recoverMock = "recoverMock",
   customImage = "customImage",
   assetsTransfer = "assetsTransfer",
   buyCrypto = "buyCrypto",
+  recover = "recover",
 }
 
 export type WithNavigationParams = {

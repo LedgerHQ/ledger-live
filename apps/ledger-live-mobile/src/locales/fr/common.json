@@ -6367,7 +6367,7 @@
     "commitRequested" : "C’est parfait ?\nValidez !",
     "confirmPicture" : "Confirmez sur votre {{productName}}",
     "landingPage" : {
-      "title" : "Choisissez une œuvre d’art numérique ou une image.\nPersonnalisez votre Ledger Stax.\nCréez votre style.",
+      "title" : "Choisissez une œuvre d’art numérique ou une image.\nPersonnalisez votre {{productName}}.\nCréez votre style.",
       "choosePicture" : "Choisissez une image"
     },
     "confirmCrop" : "Confirmer le recadrage",

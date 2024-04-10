@@ -6379,34 +6379,40 @@
   },
   "postOnboarding": {
     "hub": {
-      "title": "Next up, use your {{productName}} to:",
-      "allDoneTitle": "and that’s a wrap!",
+      "title": "Next up, use your {{productName}} to...",
+      "allDoneTitle": "You're all set! Keep going and explore your portfolio",
       "skip": "I’ll do this later",
-      "viewWallet": "View my wallet"
+      "viewWallet": "Explore my portfolio"
     },
     "entryPointCard": {
       "title": "What's next for your {{productName}}?",
-      "description": "Claim the Infinity NFT, customize its lock screen, or transfer your assets from other exchanges.",
+      "description": "Transfer your assets from any exchange or wallet, buy crypto, customize its lock screen, or subscribe to Ledger Recover.",
       "buttonLabel": "See what's next"
     },
     "actions": {
-      "customImage": {
-        "title": "Set a lock screen picture",
-        "titleCompleted": "Lock screen picture set",
-        "description": "Choose any digital art or picture to set as the lock screen.",
-        "popupLabel": "Lockscreen set"
-      },
       "assetsTransfer": {
         "title": "Transfer your assets to Ledger",
         "titleCompleted": "Assets transferred to Ledger",
-        "description": "Easily transfer assets from Coinbase or any other exchange or wallet.",
+        "description": "From any exchange or wallet, directly to your Ledger.",
         "popupLabel": "Assets transferred"
       },
       "buyCrypto": {
         "title": "Buy Crypto",
-        "titleCompleted": "Assets transferred to Ledger",
-        "description": "Choose from 500+ coins and the best quotes from buy-providers, tailored to your preferences.",
+        "titleCompleted": "Crypto bought",
+        "description": "Choose from 500+ coins and the best quotes, tailored to your preferences.",
         "popupLabel": "Crypto bought"
+      },
+      "customImage": {
+        "title": "Customize the lock screen",
+        "titleCompleted": "Lock screen customized",
+        "description": "Choose any digital art or picture to set as your {{productName}}'s lock screen.",
+        "popupLabel": "Lock screen customized successfully"
+      },
+      "recover": {
+        "title": "Subscribe to Ledger Recover",
+        "titleCompleted": "Subscribed to Ledger Recover",
+        "description": "Restore access to your wallet without needing your Secret Recovery Phrase.",
+        "popupLabel": "Successfully subscribed to Ledger Recover"
       }
     }
   },

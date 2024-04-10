@@ -6,7 +6,7 @@ export const assetsTransferAction: PostOnboardingAction = {
   id: PostOnboardingActionId.assetsTransfer,
   disabled: false,
   featureFlagId: "postOnboardingAssetsTransfer",
-  Icon: Icons.ArrowDown,
+  Icon: Icons.Lock,
   title: "postOnboarding.actions.assetsTransfer.title",
   titleCompleted: "postOnboarding.actions.assetsTransfer.titleCompleted",
   description: "postOnboarding.actions.assetsTransfer.description",
@@ -26,7 +26,7 @@ export const assetsTransferAction: PostOnboardingAction = {
 export const buyCryptoAction: PostOnboardingAction = {
   id: PostOnboardingActionId.buyCrypto,
   disabled: false,
-  Icon: Icons.Plus,
+  Icon: Icons.Dollar,
   title: "postOnboarding.actions.buyCrypto.title",
   titleCompleted: "postOnboarding.actions.buyCrypto.titleCompleted",
   description: "postOnboarding.actions.buyCrypto.description",
@@ -50,6 +50,7 @@ export const customImageAction: PostOnboardingAction = {
   titleCompleted: "postOnboarding.actions.customImage.titleCompleted",
   description: "postOnboarding.actions.customImage.description",
   actionCompletedPopupLabel: "postOnboarding.actions.customImage.popupLabel",
+  buttonLabelForAnalyticsEvent: "Set lock screen picture",
   getNavigationParams: ({ deviceModelId }) => [
     NavigatorName.CustomImage,
     {
@@ -60,5 +61,24 @@ export const customImageAction: PostOnboardingAction = {
       },
     },
   ],
-  buttonLabelForAnalyticsEvent: "Set lock screen picture",
+};
+
+export const recoverAction: PostOnboardingAction = {
+  id: PostOnboardingActionId.recover,
+  Icon: Icons.ShieldCheck,
+  title: "postOnboarding.actions.recover.title",
+  titleCompleted: "postOnboarding.actions.recover.titleCompleted",
+  description: "postOnboarding.actions.recover.description",
+  actionCompletedPopupLabel: "postOnboarding.actions.recover.popupLabel",
+  buttonLabelForAnalyticsEvent: "Subscribe to Ledger Recover",
+  getNavigationParams: () => [
+    NavigatorName.Base,
+    {
+      screen: ScreenName.Recover,
+      params: {
+        platform: "protect-prod",
+        redirectTo: "upsell",
+      },
+    },
+  ],
 };
