@@ -39,6 +39,7 @@ interface ViewProps {
   range: string;
   dataChart?: Record<string, [number, number][]>;
   currency?: CurrencyData;
+  dataCurrency?: CurrencyData;
 }
 
 function View({
@@ -48,6 +49,7 @@ function View({
   defaultAccount,
   toggleStar,
   currency,
+  dataCurrency,
   dataChart,
   isStarred,
   accounts,
@@ -55,7 +57,9 @@ function View({
   allAccounts,
   range,
 }: ViewProps) {
-  const { name, image, price, priceChangePercentage, internalCurrency } = currency || {};
+  const { name, image, internalCurrency } = currency || {};
+  const { price, priceChangePercentage } = dataCurrency || {};
+
   const { handlePullToRefresh, refreshControlVisible } = usePullToRefresh({ loading, refresh });
   const [hoveredItem, setHoverItem] = useState<Item | null | undefined>(null);
   const { t } = useTranslation();
@@ -183,8 +187,8 @@ function View({
             />
           </Flex>
         ) : null}
-        {currency && counterCurrency && (
-          <MarketStats currency={currency} counterCurrency={counterCurrency} />
+        {dataCurrency && counterCurrency && (
+          <MarketStats currency={dataCurrency} counterCurrency={counterCurrency} />
         )}
       </ScrollContainerHeader>
     </SafeAreaView>

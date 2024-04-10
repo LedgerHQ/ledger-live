@@ -101,11 +101,11 @@ function useMarketDetailViewModel({ navigation, route }: NavigationProps) {
     counterCurrency,
     allAccounts,
     range,
+    currency,
     dataCurrency: currencyData.data,
     dataChart: resCurrencyChartData.data,
     loadingChart: resCurrencyChartData.isLoading,
     loading: currencyData.isLoading || isLoadingCurrency,
-
     refresh,
     toggleStar,
   };
