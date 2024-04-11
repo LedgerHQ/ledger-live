@@ -32,6 +32,6 @@ export function useCompleteActionCallback() {
         title: t(action.actionCompletedPopupLabel),
       });
     },
-    [dispatch, getPostOnboardingAction, pushToast, t],
+    [dispatch, getPostOnboardingAction, pushToast, t, deviceModelId],
   );
 }
