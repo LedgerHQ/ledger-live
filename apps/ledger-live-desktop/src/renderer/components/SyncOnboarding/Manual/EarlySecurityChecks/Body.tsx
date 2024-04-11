@@ -147,7 +147,6 @@ const SoftwareCheckContent = ({
               <Link
                 ml={7}
                 type="shade"
-                // variant="shade"
                 size="medium"
                 onClick={onClickSkipUpdate}
                 Icon={loading ? InfiniteLoader : undefined}
