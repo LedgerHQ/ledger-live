@@ -48,7 +48,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
   };
 
   return (
-    <Touchable disabled={disabled} onPress={completed ? undefined : handlePress}>
+    <Touchable disabled={disabled || completed} onPress={completed ? undefined : handlePress}>
       <Flex
         flexDirection="row"
         alignItems="center"
