@@ -369,7 +369,14 @@
         "description": "Either you have not made any swaps yet, or Ledger Live has been reset in the meantime."
       },
       "export": "Export operations",
-      "exporting": "Exporting..."
+      "exporting": "Exporting...",
+      "status": {
+        "pending": "Pending",
+        "onhold": "Onhold",
+        "expired": "Expired",
+        "finished": "Finished",
+        "refunded": "Refunded"
+      }
     },
     "exchangeDrawer": {
       "title": "Confirm your Exchange",
