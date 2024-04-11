@@ -340,7 +340,7 @@ const AppsScreen = ({
           keys: ["name"],
           shouldSort: false,
         }}
-        value={query}
+        value={query.trim()}
         items={enabledApps}
         render={renderList}
         renderEmptySearch={renderList}

@@ -138,14 +138,6 @@ export function relativeTime(currentDate: Date, targetDate: Date): string {
   const years = Math.round(months / 12);
 
   const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
-  console.log({
-    years,
-    months,
-    days,
-    hours,
-    minutes,
-    seconds,
-  });
   if (years) {
     return rtf.format(years, Math.abs(years) > 1 ? "years" : "year");
   } else if (months) {
