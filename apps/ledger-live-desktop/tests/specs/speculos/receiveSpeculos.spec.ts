@@ -79,7 +79,7 @@ for (const currency of currencies) {
 
     await test.step(`[${currency}] Validate message`, async () => {
       await speculosModal.pressRight();
-      if (currency === "ETH") {
+      if (currency === "ETH" || currency === "Holesky") {
         await speculosModal.pressRight();
         await speculosModal.pressBoth();
       } else {
