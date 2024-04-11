@@ -91,7 +91,7 @@ export type PostOnboardingAction = {
    * Will appear in an success alert at the bottom of the post-onboarding hub
    * after completing this action.
    * */
-  actionCompletedPopupLabel: string;
+  actionCompletedPopupLabel?: string;
 
   /**
    * Used to set the action as complete when clicking on it.
