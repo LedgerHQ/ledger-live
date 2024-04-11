@@ -150,6 +150,7 @@ Ledger Live main types.
     *   [description](#description)
     *   [tagLabel](#taglabel)
     *   [actionCompletedPopupLabel](#actioncompletedpopuplabel)
+    *   [shouldCompleteOnStart](#shouldcompleteonstart)
     *   [buttonLabelForAnalyticsEvent](#buttonlabelforanalyticsevent)
 *   [PostOnboardingActionState](#postonboardingactionstate)
     *   [Properties](#properties-40)
@@ -1128,7 +1129,7 @@ Type: function (options: {deviceModelId: DeviceModelId}): (\[any] | \[any, any])
 
 The function to call when the user presses the button for this action
 
-Type: function (args: {openModalCallback: function (modalName: any): void, navigationCallback: function (route: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)): void, deviceModelId: DeviceModelId}): void
+Type: function (args: {openModalCallback: function (modalName: any): void, navigationCallback: function (location: (Record<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), any> | [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String))): void, deviceModelId: DeviceModelId}): void
 
 ###
 
@@ -1191,6 +1192,14 @@ Will appear in an success alert at the bottom of the post-onboarding hub
 after completing this action.
 
 Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
+
+#### shouldCompleteOnStart
+
+Used to set the action as complete when clicking on it.
+Especially useful when the action opens a live app and we can't know
+when the action as been successfully finished
+
+Type: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
 
 #### buttonLabelForAnalyticsEvent
 
