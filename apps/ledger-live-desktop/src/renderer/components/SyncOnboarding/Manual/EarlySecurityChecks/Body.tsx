@@ -12,8 +12,8 @@ export type Props = {
   firmwareUpdateStatus: SoftwareCheckStatus;
   availableFirmwareVersion: string;
   modelName: string;
-  updateSkippable?: boolean;
-  loading?: boolean;
+  updateSkippable: boolean;
+  updateInterrupted: boolean;
   onClickStartChecks: () => void;
   onClickWhyPerformSecurityChecks: () => void;
   onClickResumeGenuineCheck: () => void;
@@ -21,6 +21,7 @@ export type Props = {
   onClickSkipUpdate: () => void;
   onClickContinueToSetup: () => void;
   onClickRetryUpdate: () => void;
+  loading?: boolean;
 };
 
 const ConfettiAnimation = styled(Animation)`
@@ -39,6 +40,7 @@ const SoftwareCheckContent = ({
   availableFirmwareVersion,
   modelName,
   updateSkippable,
+  updateInterrupted,
   loading,
   onClickStartChecks,
   onClickWhyPerformSecurityChecks,
@@ -135,22 +137,23 @@ const SoftwareCheckContent = ({
         {firmwareUpdateStatus === SoftwareCheckStatus.updateAvailable ? (
           <Flex flexDirection="row" alignItems="center" columnGap={6}>
             <Button variant="main" size="medium" outline={false} onClick={onClickViewUpdate}>
-              {updateSkippable
+              {updateInterrupted
                 ? t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.resumeUpdateCTA")
                 : t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.viewUpdateCTA", {
                     modelName,
                   })}
             </Button>
-            {updateSkippable ? (
-              <Button
-                variant="shade"
+            {updateInterrupted && updateSkippable ? (
+              <Link
+                ml={7}
+                type="shade"
+                // variant="shade"
                 size="medium"
-                outline
                 onClick={onClickSkipUpdate}
                 Icon={loading ? InfiniteLoader : undefined}
               >
                 {t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.skipUpdateCTA")}
-              </Button>
+              </Link>
             ) : null}
           </Flex>
         ) : firmwareUpdateStatus === SoftwareCheckStatus.failed ? (
