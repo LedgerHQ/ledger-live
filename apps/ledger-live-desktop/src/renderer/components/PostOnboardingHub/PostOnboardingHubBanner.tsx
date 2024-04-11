@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
-import { Flex } from "@ledgerhq/react-ui";
+import { Flex, Theme } from "@ledgerhq/react-ui";
 import { hidePostOnboardingWalletEntryPoint } from "@ledgerhq/live-common/postOnboarding/actions";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { DeviceModelId } from "@ledgerhq/types-devices";
