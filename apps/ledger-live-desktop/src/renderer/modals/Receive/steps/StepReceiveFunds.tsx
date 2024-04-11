@@ -36,7 +36,7 @@ import { openModal } from "~/renderer/actions/modals";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getLLDCoinFamily } from "~/renderer/families";
 import { firstValueFrom } from "rxjs";
-import { setPostOnboardingActionCompleted } from "@ledgerhq/live-common/postOnboarding/actions";
+import { useCompleteActionCallback } from "~/renderer/components/PostOnboardingHub/logic/useCompleteAction";
 
 const Separator = styled.div`
   border-top: 1px solid #99999933;
@@ -156,6 +156,8 @@ const StepReceiveFunds = (props: StepProps) => {
     isFromPostOnboardingEntryPoint,
   } = props;
   const dispatch = useDispatch();
+  const completeAction = useCompleteActionCallback();
+
   const receiveStakingFlowConfig = useFeature("receiveStakingFlowConfigDesktop");
   const receivedCurrencyId: string | undefined =
     account && account.type !== "TokenAccount" ? account?.currency?.id : undefined;
@@ -211,7 +213,7 @@ const StepReceiveFunds = (props: StepProps) => {
   }, [device, onChangeAddressVerified, onResetSkip, transitionTo, isAddressVerified]);
 
   const onFinishReceiveFlow = useCallback(() => {
-    dispatch(setPostOnboardingActionCompleted({ actionId: PostOnboardingActionId.assetsTransfer }));
+    completeAction(PostOnboardingActionId.assetsTransfer);
     const dismissModal =
       global.localStorage.getItem(`${LOCAL_STORAGE_KEY_PREFIX}${receivedCurrencyId}`) === "true";
     if (
@@ -261,6 +263,7 @@ const StepReceiveFunds = (props: StepProps) => {
     mainAccount,
     onClose,
     transitionTo,
+    completeAction,
   ]);
 
   // when address need verification we trigger it on device

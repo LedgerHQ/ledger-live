@@ -10,7 +10,7 @@ import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
 import { AllModalNames } from "~/renderer/modals/types";
 import { useHistory } from "react-router";
-import { setPostOnboardingActionCompleted } from "@ledgerhq/live-common/postOnboarding/actions";
+import { useCompleteActionCallback } from "./logic/useCompleteAction";
 
 export type Props = PostOnboardingAction &
   PostOnboardingActionState & {
@@ -36,6 +36,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const history = useHistory();
+  const completeAction = useCompleteActionCallback();
 
   const handleStartAction = useCallback(() => {
     const openModalCallback = (modalName: AllModalNames) => {
@@ -49,15 +50,20 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
     if ("startAction" in props && deviceModelId !== null) {
       props.startAction({ openModalCallback, navigationCallback, deviceModelId });
       buttonLabelForAnalyticsEvent &&
-        track("button_clicked2", { button: buttonLabelForAnalyticsEvent, flow: "post-onboarding" });
+        track("button_clicked2", {
+          button: buttonLabelForAnalyticsEvent,
+          deviceModelId,
+          flow: "post-onboarding",
+        });
     }
-    shouldCompleteOnStart && dispatch(setPostOnboardingActionCompleted({ actionId: id }));
+    shouldCompleteOnStart && completeAction(id);
   }, [
     props,
     dispatch,
     history,
     buttonLabelForAnalyticsEvent,
     deviceModelId,
+    completeAction,
     id,
     shouldCompleteOnStart,
   ]);

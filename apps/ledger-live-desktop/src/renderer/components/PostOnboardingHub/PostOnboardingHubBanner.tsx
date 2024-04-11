@@ -42,13 +42,14 @@ const PostOnboardingHubBanner = () => {
   const { deviceModelId } = usePostOnboardingHubState();
 
   const handleNavigateToPostOnboardingHub = useCallback(() => {
-    track("button_clicked2", { button: "What’s next for your device" });
+    track("button_clicked2", { button: "What’s next for your device", deviceModelId });
     navigateToPostOnboardingHub();
-  }, [navigateToPostOnboardingHub]);
+  }, [navigateToPostOnboardingHub, deviceModelId]);
 
   const handleHidePostOnboardingHubBanner = useCallback(() => {
+    track("button_clicked2", { button: "Dismiss post onboarding banner", deviceModelId });
     dispatch(hidePostOnboardingWalletEntryPoint());
-  }, [dispatch]);
+  }, [dispatch, deviceModelId]);
 
   return (
     <Wrapper>
