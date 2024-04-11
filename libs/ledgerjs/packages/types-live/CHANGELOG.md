@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.46.0-nightly.1
+
+### Patch Changes
+
+- [#6517](https://github.com/LedgerHQ/ledger-live/pull/6517) [`33c4239`](https://github.com/LedgerHQ/ledger-live/commit/33c42392386e5e8ebf9f3251ccf1ade3af11644d) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update MarketPerformers Endpoint
+
 ## 6.46.0-nightly.0
 
 ### Minor Changes

@@ -1,5 +1,26 @@
 # @ledgerhq/live-common
 
+## 34.1.0-nightly.5
+
+### Patch Changes
+
+- [#6517](https://github.com/LedgerHQ/ledger-live/pull/6517) [`33c4239`](https://github.com/LedgerHQ/ledger-live/commit/33c42392386e5e8ebf9f3251ccf1ade3af11644d) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update MarketPerformers Endpoint
+
+- [#6608](https://github.com/LedgerHQ/ledger-live/pull/6608) [`1197168`](https://github.com/LedgerHQ/ledger-live/commit/1197168817b37ae5432df3e6c2668e8694497787) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Disable storyly feature flag + protect testing in settings with feature flag enabler
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@0.11.4-nightly.2
+  - @ledgerhq/coin-algorand@0.4.1-nightly.2
+  - @ledgerhq/coin-bitcoin@0.4.0-nightly.11
+  - @ledgerhq/coin-evm@1.0.1-nightly.2
+  - @ledgerhq/coin-near@0.3.12-nightly.2
+  - @ledgerhq/coin-polkadot@0.6.1-nightly.2
+  - @ledgerhq/device-core@0.1.1-nightly.2
+  - @ledgerhq/hw-app-eth@6.35.8-nightly.2
+  - @ledgerhq/live-countervalues@0.1.4-nightly.2
+  - @ledgerhq/live-countervalues-react@0.1.4-nightly.2
+  - @ledgerhq/live-nft@0.3.1-nightly.2
+
 ## 34.1.0-nightly.4
 
 ### Patch Changes

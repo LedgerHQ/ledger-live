@@ -1,5 +1,22 @@
 # live-mobile
 
+## 3.43.0-nightly.6
+
+### Patch Changes
+
+- [#6640](https://github.com/LedgerHQ/ledger-live/pull/6640) [`47660b9`](https://github.com/LedgerHQ/ledger-live/commit/47660b9f47b7bf0d26256e3e59817bb9309183e0) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Fix search query no trim bug
+
+- Updated dependencies [[`33c4239`](https://github.com/LedgerHQ/ledger-live/commit/33c42392386e5e8ebf9f3251ccf1ade3af11644d), [`1197168`](https://github.com/LedgerHQ/ledger-live/commit/1197168817b37ae5432df3e6c2668e8694497787)]:
+  - @ledgerhq/types-live@6.46.0-nightly.1
+  - @ledgerhq/live-common@34.1.0-nightly.5
+  - @ledgerhq/coin-framework@0.11.4-nightly.2
+  - @ledgerhq/coin-evm@1.0.1-nightly.2
+  - @ledgerhq/domain-service@1.1.20-nightly.1
+  - @ledgerhq/live-countervalues@0.1.4-nightly.2
+  - @ledgerhq/live-countervalues-react@0.1.4-nightly.2
+  - @ledgerhq/live-nft@0.3.1-nightly.2
+  - @ledgerhq/live-nft-react@0.3.1-nightly.2
+
 ## 3.43.0-nightly.5
 
 ### Patch Changes

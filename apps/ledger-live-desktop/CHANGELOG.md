@@ -1,5 +1,27 @@
 # ledger-live-desktop
 
+## 2.79.0-nightly.7
+
+### Patch Changes
+
+- [#6517](https://github.com/LedgerHQ/ledger-live/pull/6517) [`33c4239`](https://github.com/LedgerHQ/ledger-live/commit/33c42392386e5e8ebf9f3251ccf1ade3af11644d) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update MarketPerformers Endpoint
+
+- [#6637](https://github.com/LedgerHQ/ledger-live/pull/6637) [`5bd34c5`](https://github.com/LedgerHQ/ledger-live/commit/5bd34c542ccc7ef36a6236b2e9ff0859ecc36487) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Remove the spams NFT in custom lock screen on LLD
+
+- [#6608](https://github.com/LedgerHQ/ledger-live/pull/6608) [`1197168`](https://github.com/LedgerHQ/ledger-live/commit/1197168817b37ae5432df3e6c2668e8694497787) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Disable storyly feature flag + protect testing in settings with feature flag enabler
+
+- Updated dependencies [[`33c4239`](https://github.com/LedgerHQ/ledger-live/commit/33c42392386e5e8ebf9f3251ccf1ade3af11644d), [`1197168`](https://github.com/LedgerHQ/ledger-live/commit/1197168817b37ae5432df3e6c2668e8694497787)]:
+  - @ledgerhq/types-live@6.46.0-nightly.1
+  - @ledgerhq/live-common@34.1.0-nightly.5
+  - @ledgerhq/coin-framework@0.11.4-nightly.2
+  - @ledgerhq/coin-bitcoin@0.4.0-nightly.11
+  - @ledgerhq/coin-evm@1.0.1-nightly.2
+  - @ledgerhq/domain-service@1.1.20-nightly.1
+  - @ledgerhq/live-countervalues@0.1.4-nightly.2
+  - @ledgerhq/live-countervalues-react@0.1.4-nightly.2
+  - @ledgerhq/live-nft@0.3.1-nightly.2
+  - @ledgerhq/live-nft-react@0.3.1-nightly.2
+
 ## 2.79.0-nightly.6
 
 ### Patch Changes
