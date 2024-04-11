@@ -8,12 +8,14 @@ import { track } from "~/analytics";
 import { BaseNavigationComposite, StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { PostOnboardingNavigatorParamList } from "../RootNavigator/types/PostOnboardingNavigator";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { useCompleteActionCallback } from "~/logic/postOnboarding/useCompleteAction";
 
 export type Props = PostOnboardingAction &
   PostOnboardingActionState & { deviceModelId: DeviceModelId; productName: string };
 
 const PostOnboardingActionRow: React.FC<Props> = props => {
   const {
+    id,
     Icon,
     title,
     titleCompleted,
@@ -24,12 +26,14 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
     buttonLabelForAnalyticsEvent,
     deviceModelId,
     productName,
+    shouldCompleteOnStart,
   } = props;
   const { t } = useTranslation();
   const navigation =
     useNavigation<
       BaseNavigationComposite<StackNavigatorNavigation<PostOnboardingNavigatorParamList>>
     >();
+  const completeAction = useCompleteActionCallback();
 
   const handlePress = () => {
     if ("getNavigationParams" in props) {
@@ -40,6 +44,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
           deviceModelId,
         });
     }
+    shouldCompleteOnStart && completeAction(id);
   };
 
   return (
