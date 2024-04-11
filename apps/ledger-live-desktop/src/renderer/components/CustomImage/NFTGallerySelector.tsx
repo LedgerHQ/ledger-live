@@ -45,12 +45,18 @@ const NFTGallerySelector = ({ handlePickNft, selectedNftId }: Props) => {
     [accounts],
   );
 
-  const { nfts, fetchNextPage, hasNextPage } = useNftGalleryFilter({
+  const {
+    nfts: nftsFiltered,
+    fetchNextPage,
+    hasNextPage,
+  } = useNftGalleryFilter({
     nftsOwned: nftsOrdered || [],
     addresses: addresses,
     chains: ["ethereum", "polygon"],
     threshold: isThresholdValid(threshold) ? Number(threshold) : 75,
   });
+
+  const nfts = nftsFromSimplehashFeature?.enabled ? nftsFiltered : nftsOrdered;
 
   const { t } = useTranslation();
 
@@ -58,22 +64,20 @@ const NFTGallerySelector = ({ handlePickNft, selectedNftId }: Props) => {
 
   const content = useMemo(
     () =>
-      (nftsFromSimplehashFeature?.enabled ? nfts : nftsOrdered)
-        .slice(0, displayedCount)
-        .map((nft, index) => {
-          const { id } = nft;
-          return (
-            <NFTItem
-              key={id}
-              id={id}
-              selected={selectedNftId === id}
-              onItemClick={handlePickNft}
-              testId={`custom-image-nft-card-${index}`}
-              index={index}
-            />
-          );
-        }),
-    [nfts, nftsFromSimplehashFeature, nftsOrdered, displayedCount, selectedNftId, handlePickNft],
+      nfts.slice(0, displayedCount).map((nft, index) => {
+        const { id } = nft;
+        return (
+          <NFTItem
+            key={id}
+            id={id}
+            selected={selectedNftId === id}
+            onItemClick={handlePickNft}
+            testId={`custom-image-nft-card-${index}`}
+            index={index}
+          />
+        );
+      }),
+    [nfts, displayedCount, selectedNftId, handlePickNft],
   );
 
   const loaderContainerRef = useRef<HTMLDivElement>(null);
