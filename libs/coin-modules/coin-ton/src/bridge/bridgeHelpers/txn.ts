@@ -1,8 +1,8 @@
 import { decodeAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
 import { Address } from "@ton/ton";
 import BigNumber from "bignumber.js";
-import { findTokenByAddressInCurrency } from "../../../../../ledgerjs/packages/cryptoassets/lib";
 import { TonOperation } from "../../types";
 import { addressesAreEqual, isAddressValid } from "../../utils";
 import { fetchJettonTransactions, fetchTransactions } from "./api";
@@ -191,17 +191,26 @@ export function mapJettonTxToOps(
     const accountAddr = Address.parse(addr).toString({ urlSafe: true, bounceable: false });
     if (accountAddr !== addr) throw Error(`[ton] unexpected address ${accountAddr} ${addr}`);
 
+    const jettonMasterAddr = Address.parse(tx.jetton_master).toString({
+      urlSafe: true,
+      bounceable: true,
+    });
     const tokenCurrency = findTokenByAddressInCurrency(
-      tx.jetton_master,
+      jettonMasterAddr.toLowerCase(),
       decodeAccountId(accountId).currencyId,
     );
     if (!tokenCurrency) return [];
     const tokenAccountId = encodeTokenAccountId(accountId, tokenCurrency);
 
     const ops: TonOperation[] = [];
-
-    const isReceiving = addressesAreEqual(accountAddr, tx.destination);
-    const isSending = addressesAreEqual(accountAddr, tx.source);
+    const isReceiving = addressesAreEqual(
+      accountAddr,
+      Address.parse(tx.destination).toString({ urlSafe: true, bounceable: false }),
+    );
+    const isSending = addressesAreEqual(
+      accountAddr,
+      Address.parse(tx.source).toString({ urlSafe: true, bounceable: false }),
+    );
     if (!isSending && !isReceiving) throw Error("[ton] unexpected addresses");
 
     const date = new Date(tx.transaction_now * 1000); // now is defined in seconds

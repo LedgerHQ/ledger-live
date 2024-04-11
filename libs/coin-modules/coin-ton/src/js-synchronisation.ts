@@ -1,6 +1,7 @@
 import {
   decodeAccountId,
   decodeTokenAccountId,
+  emptyHistoryCache,
   encodeAccountId,
   encodeTokenAccountId,
 } from "@ledgerhq/coin-framework/account/index";
@@ -10,13 +11,11 @@ import {
   makeSync,
   mergeOps,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { listTokensForCryptoCurrency } from "@ledgerhq/coin-framework/currencies/index";
 import { decodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { log } from "@ledgerhq/logs";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, SubAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import murmurhash from "imurmurhash";
 import flatMap from "lodash/flatMap";
 import {
   fetchAccountInfo,
@@ -30,22 +29,8 @@ import {
   mapJettonTxToOps,
   mapTxToOps,
 } from "./bridge/bridgeHelpers/txn";
+import { getSyncHash } from "./logic";
 import { TonOperation } from "./types";
-
-const simpleSyncHashMemoize: Record<string, string> = {};
-function getSyncHash(currency: CryptoCurrency, blacklistedList: string[]): string {
-  const tokens = listTokensForCryptoCurrency(currency).filter(
-    token => !blacklistedList.includes(token.id),
-  );
-  const stringToHash = tokens
-    .map(token => token.id + token.contractAddress + token.name + token.ticker + token.units)
-    .join("");
-
-  if (!simpleSyncHashMemoize[stringToHash]) {
-    simpleSyncHashMemoize[stringToHash] = `0x${murmurhash(stringToHash).result().toString(16)}`;
-  }
-  return simpleSyncHashMemoize[stringToHash];
-}
 
 export const getAccountShape: GetAccountShape = async (info, { blacklistedTokenIds }) => {
   const { address, rest, currency, derivationMode, initialAccount } = info;
@@ -62,7 +47,6 @@ export const getAccountShape: GetAccountShape = async (info, { blacklistedTokenI
   });
 
   log("debug", `Generation account shape for ${address}`);
-
   const syncHash = getSyncHash(currency, blacklistedTokenIds ?? []);
   const shouldSyncFromScratch = syncHash !== initialAccount?.syncHash;
 
@@ -117,6 +101,7 @@ export const getAccountShape: GetAccountShape = async (info, { blacklistedTokenI
     subAccounts,
     blockHeight,
     xpub: publicKey,
+    lastSyncDate: new Date(), //TODO: review if it's necessary
   } as Partial<Account>;
   return toReturn;
 };
@@ -147,6 +132,9 @@ export const getSubaccountShape = async (
     spendableBalance: new BigNumber(balance),
     operations,
     operationsCount: operations.length,
+    pendingOperations: [],
+    balanceHistoryCache: emptyHistoryCache, // calculated in the jsHelpers
+    swapHistory: [],
   };
 };
 
@@ -174,11 +162,44 @@ async function getSubaccounts(
   return Promise.all(subAccountsPromises);
 }
 
-const postSync = (_initial: Account, synced: Account): Account => {
-  const operations = synced.operations || [];
-  const initialPendingOps = synced.pendingOperations || [];
-  const pendingOperations = initialPendingOps.filter(pOp => !operations.some(o => o.id === pOp.id));
-  return { ...synced, pendingOperations };
+const postSync = (initial: Account, synced: Account): Account => {
+  // Set of ids from the already existing subAccount from previous sync
+  const initialSubAccountsIds = new Set();
+  for (const subAccount of initial.subAccounts || []) {
+    initialSubAccountsIds.add(subAccount.id);
+  }
+  const initialPendingOperations = initial.pendingOperations || [];
+  const { operations } = synced;
+  const pendingOperations = initialPendingOperations.filter(
+    op => !operations.some(o => o.hash === op.hash) && op.transactionSequenceNumber !== undefined,
+  );
+  // Set of hashes from the pending operations of the main account
+  const coinPendingOperationsHashes = new Set();
+  for (const op of pendingOperations) {
+    coinPendingOperationsHashes.add(op.hash);
+  }
+
+  return {
+    ...synced,
+    pendingOperations,
+    subAccounts: synced.subAccounts?.map(subAccount => {
+      // If the subAccount is new, just return the freshly synced subAccount
+      if (!initialSubAccountsIds.has(subAccount.id)) return subAccount;
+
+      return {
+        ...subAccount,
+        pendingOperations: subAccount.pendingOperations.filter(
+          tokenPendingOperation =>
+            // if the pending operation got removed from the main account, remove it as well
+            coinPendingOperationsHashes.has(tokenPendingOperation.hash) &&
+            // if the transaction has been confirmed, remove it
+            !subAccount.operations.some(op => op.hash === tokenPendingOperation.hash) &&
+            // if the nonce is still lower than the last one in operations, keep it
+            tokenPendingOperation.transactionSequenceNumber !== undefined,
+        ),
+      };
+    }),
+  };
 };
 
 function reconciliatePubkey(publicKey?: string, initialAccount?: Account): string {
