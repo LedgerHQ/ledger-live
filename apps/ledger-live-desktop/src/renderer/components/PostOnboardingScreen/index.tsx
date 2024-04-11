@@ -35,6 +35,7 @@ const PostOnboardingScreen = () => {
             allDone ? "User has completed all post-onboarding actions" : "Post-onboarding hub"
           }
           flow={"post-onboarding"}
+          deviceModelId={deviceModelId}
         />
 
         <Text
