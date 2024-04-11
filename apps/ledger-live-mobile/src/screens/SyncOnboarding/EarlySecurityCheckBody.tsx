@@ -1,6 +1,6 @@
 import React from "react";
 import { ScrollView } from "react-native";
-import { Flex, Link, Text } from "@ledgerhq/native-ui";
+import { Flex, InfiniteLoader, Link, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import Button from "~/components/wrappedUi/Button";
 import type { Step, UiCheckStatus } from "./EarlySecurityCheck";
@@ -21,6 +21,7 @@ export type Props = {
   notifyOnboardingEarlyCheckEnded: () => void;
   onSkipFirmwareUpdate: () => void;
   onUpdateFirmware: () => void;
+  updateSkippable: boolean;
 };
 
 /**
@@ -39,6 +40,7 @@ const EarlySecurityCheckBody: React.FC<Props> = ({
   notifyOnboardingEarlyCheckEnded,
   onSkipFirmwareUpdate,
   onUpdateFirmware,
+  updateSkippable,
 }) => {
   const { t } = useTranslation();
 
@@ -152,17 +154,24 @@ const EarlySecurityCheckBody: React.FC<Props> = ({
           { productName },
         );
       }
-
-      secondaryBottomCta = (
-        <OnePressCta
-          PressableComponent={({ pending, ...props }) => (
-            <Link size="large" disabled={pending} {...props} />
-          )}
-          onPress={onSkipFirmwareUpdate}
-        >
-          {t("earlySecurityCheck.firmwareUpdateCheckStep.refused.skipCta")}
-        </OnePressCta>
-      );
+      if (updateSkippable) {
+        secondaryBottomCta = (
+          <OnePressCta
+            PressableComponent={({ pending, ...props }) => (
+              <Link
+                type="shade"
+                size="large"
+                disabled={pending}
+                {...props}
+                Icon={pending ? InfiniteLoader : undefined}
+              />
+            )}
+            onPress={onSkipFirmwareUpdate}
+          >
+            {t("earlySecurityCheck.firmwareUpdateCheckStep.refused.skipCta")}
+          </OnePressCta>
+        );
+      }
 
       break;
     case "inactive":
