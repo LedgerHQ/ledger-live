@@ -4,7 +4,7 @@
 [Ledger Devs Discord](https://developers.ledger.com/discord-pro),
 [Developer Portal](https://developers.ledger.com/)
 
-## @ledgerhq/hw-transport-u2f
+## @ledgerhq/react-native-hid
 
 Allows to communicate with Ledger Hardware Wallets.
 
