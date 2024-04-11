@@ -51,7 +51,15 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
         track("button_clicked2", { button: buttonLabelForAnalyticsEvent, flow: "post-onboarding" });
     }
     shouldCompleteOnStart && dispatch(setPostOnboardingActionCompleted({ actionId: id }));
-  }, [props, dispatch, history, buttonLabelForAnalyticsEvent, deviceModelId]);
+  }, [
+    props,
+    dispatch,
+    history,
+    buttonLabelForAnalyticsEvent,
+    deviceModelId,
+    id,
+    shouldCompleteOnStart,
+  ]);
 
   return (
     <ActionRowWrapper
