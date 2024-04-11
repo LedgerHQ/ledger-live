@@ -21,7 +21,7 @@ import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import Receive2NoDevice from "~/renderer/components/Receive2NoDevice";
 import { renderVerifyUnwrapped } from "~/renderer/components/DeviceAction/rendering";
 import { StepProps } from "../Body";
-import { AccountLike } from "@ledgerhq/types-live";
+import { AccountLike, PostOnboardingActionId } from "@ledgerhq/types-live";
 import { track } from "~/renderer/analytics/segment";
 import Modal from "~/renderer/components/Modal";
 import Alert from "~/renderer/components/Alert";
@@ -36,6 +36,7 @@ import { openModal } from "~/renderer/actions/modals";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getLLDCoinFamily } from "~/renderer/families";
 import { firstValueFrom } from "rxjs";
+import { setPostOnboardingActionCompleted } from "@ledgerhq/live-common/postOnboarding/actions";
 
 const Separator = styled.div`
   border-top: 1px solid #99999933;
@@ -209,6 +210,7 @@ const StepReceiveFunds = (props: StepProps) => {
   }, [device, onChangeAddressVerified, onResetSkip, transitionTo, isAddressVerified]);
 
   const onFinishReceiveFlow = useCallback(() => {
+    dispatch(setPostOnboardingActionCompleted({ actionId: PostOnboardingActionId.assetsTransfer }));
     const dismissModal =
       global.localStorage.getItem(`${LOCAL_STORAGE_KEY_PREFIX}${receivedCurrencyId}`) === "true";
     if (!dismissModal && !receiveNFTMode && !receiveTokenMode && isStakingEnabledForAccount) {

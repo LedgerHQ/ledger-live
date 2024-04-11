@@ -35,7 +35,7 @@ type WithStartActionFunction = {
    */
   startAction: (args: {
     openModalCallback: (modalName: any) => void;
-    navigationCallback: (route: string) => void;
+    navigationCallback: (location: Record<string, unknown> | string) => void;
     deviceModelId: DeviceModelId;
   }) => void;
   /**
@@ -92,6 +92,13 @@ export type PostOnboardingAction = {
    * after completing this action.
    * */
   actionCompletedPopupLabel: string;
+
+  /**
+   * Used to set the action as complete when clicking on it.
+   * Especially useful when the action opens a live app and we can't know
+   * when the action as been successfully finished
+   */
+  shouldCompleteOnStart?: boolean;
 
   /**
    * Value to use in the "button" property of the event sent when the user

@@ -14,38 +14,72 @@ const PostOnboardingHubTester = () => {
   const handleInitPostOnboarding = useStartPostOnboardingCallback();
 
   return (
-    <SettingsSectionRow
-      title={t("settings.experimental.features.testPostonboarding.title")}
-      desc={t("settings.experimental.features.testPostonboarding.description")}
-    >
-      <Flex flexDirection={"row"} columnGap={3}>
-        <Button
-          data-test-id="postonboarding-tester-button"
-          onClick={() =>
-            handleInitPostOnboarding({
-              deviceModelId: DeviceModelId.stax,
-              mock: true,
-              fallbackIfNoAction: () => history.push("/"),
-            })
-          }
-          primary
-        >
-          {t("postOnboardingDebugger.buttonTitle")} (mock)
-        </Button>
-        <Button
-          onClick={() =>
-            handleInitPostOnboarding({
-              deviceModelId: DeviceModelId.stax,
-              mock: false,
-              fallbackIfNoAction: () => history.push("/"),
-            })
-          }
-          primary
-        >
-          {t("postOnboardingDebugger.buttonTitle")}
-        </Button>
-      </Flex>
-    </SettingsSectionRow>
+    <>
+      <SettingsSectionRow
+        title={t("settings.experimental.features.testStaxPostonboarding.title")}
+        desc={t("settings.experimental.features.testStaxPostonboarding.description")}
+      >
+        <Flex flexDirection={"row"} columnGap={3}>
+          <Button
+            data-test-id="stax-postonboarding-tester-button"
+            onClick={() =>
+              handleInitPostOnboarding({
+                deviceModelId: DeviceModelId.stax,
+                mock: true,
+                fallbackIfNoAction: () => history.push("/"),
+              })
+            }
+            primary
+          >
+            {t("postOnboardingDebugger.buttonTitle")} (mock)
+          </Button>
+          <Button
+            onClick={() =>
+              handleInitPostOnboarding({
+                deviceModelId: DeviceModelId.stax,
+                mock: false,
+                fallbackIfNoAction: () => history.push("/"),
+              })
+            }
+            primary
+          >
+            {t("postOnboardingDebugger.buttonTitle")}
+          </Button>
+        </Flex>
+      </SettingsSectionRow>
+      <SettingsSectionRow
+        title={t("settings.experimental.features.testEuropaPostonboarding.title")}
+        desc={t("settings.experimental.features.testEuropaPostonboarding.description")}
+      >
+        <Flex flexDirection={"row"} columnGap={3}>
+          <Button
+            data-test-id="europa-postonboarding-tester-button"
+            onClick={() =>
+              handleInitPostOnboarding({
+                deviceModelId: DeviceModelId.europa,
+                mock: true,
+                fallbackIfNoAction: () => history.push("/"),
+              })
+            }
+            primary
+          >
+            {t("postOnboardingDebugger.buttonTitle")} (mock)
+          </Button>
+          <Button
+            onClick={() =>
+              handleInitPostOnboarding({
+                deviceModelId: DeviceModelId.europa,
+                mock: false,
+                fallbackIfNoAction: () => history.push("/"),
+              })
+            }
+            primary
+          >
+            {t("postOnboardingDebugger.buttonTitle")}
+          </Button>
+        </Flex>
+      </SettingsSectionRow>
+    </>
   );
 };
 

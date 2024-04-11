@@ -10,6 +10,7 @@ import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
 import { AllModalNames } from "~/renderer/modals/types";
 import { useHistory } from "react-router";
+import { setPostOnboardingActionCompleted } from "@ledgerhq/live-common/postOnboarding/actions";
 
 export type Props = PostOnboardingAction &
   PostOnboardingActionState & {
@@ -30,6 +31,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
     buttonLabelForAnalyticsEvent,
     completed,
     deviceModelId,
+    shouldCompleteOnStart,
   } = props;
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -39,10 +41,8 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
     const openModalCallback = (modalName: AllModalNames) => {
       dispatch(openModal(modalName, undefined));
     };
-    const navigationCallback = (route: string) => {
-      history.push({
-        pathname: route,
-      });
+    const navigationCallback = (location: Record<string, unknown> | string) => {
+      history.push(location);
     };
 
     if ("startAction" in props && deviceModelId !== null) {
@@ -50,6 +50,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
       buttonLabelForAnalyticsEvent &&
         track("button_clicked2", { button: buttonLabelForAnalyticsEvent, flow: "post-onboarding" });
     }
+    shouldCompleteOnStart && dispatch(setPostOnboardingActionCompleted({ actionId: id }));
   }, [props, dispatch, history, buttonLabelForAnalyticsEvent, deviceModelId]);
 
   return (
@@ -71,7 +72,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
           })}
     >
       <Flex flexDirection="row" alignItems="flex-start" flexShrink={1}>
-        <Icon size="M" color={completed ? "neutral.c60" : "primary.c80"} />
+        <Icon size="M" color={"primary.c80"} />
         <Flex ml={6} flexDirection="column" justifyContent="center" flex={1}>
           <Text
             variant="largeLineHeight"

@@ -19,7 +19,9 @@ export class PostOnboarding {
   constructor(page: Page) {
     this.page = page;
     this.sideDrawerContainer = page.locator("data-test-id=side-drawer-container");
-    this.postOnboardingHubTesterButton = page.locator("data-test-id=postonboarding-tester-button");
+    this.postOnboardingHubTesterButton = page.locator(
+      "data-test-id=stax-postonboarding-tester-button",
+    );
     this.postOnboardingHubContainer = page.locator("data-test-id=post-onboarding-hub-container");
     this.postOnboardingHubActionRowClaimMock = page.locator(
       "data-test-id=postonboarding-action-row-claimMock",
