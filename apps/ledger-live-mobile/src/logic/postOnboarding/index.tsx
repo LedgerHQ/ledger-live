@@ -1,6 +1,14 @@
 import { DeviceModelId } from "@ledgerhq/devices";
 import { PostOnboardingAction, PostOnboardingActionId } from "@ledgerhq/types-live";
-import { assetsTransferMock, buyCryptoMock, claimMock, customImageMock, migrateAssetsMock, personalizeMock, recoverMock } from "./mockActions";
+import {
+  assetsTransferMock,
+  buyCryptoMock,
+  claimMock,
+  customImageMock,
+  migrateAssetsMock,
+  personalizeMock,
+  recoverMock,
+} from "./mockActions";
 import { assetsTransferAction, customImageAction, buyCryptoAction, recoverAction } from "./actions";
 
 /**
