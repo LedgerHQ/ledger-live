@@ -314,7 +314,7 @@ function FormLocalManifest({
                       );
                     }
 
-                    if (key === "permissions" || key === "categories") {
+                    if (key === "permissions" || key === "categories" || key === "currencies") {
                       return (
                         <FormLiveAppArraySelect
                           key={key as string}
