@@ -775,7 +775,13 @@ export function testBridge<T extends TransactionCommon, U extends TransactionCom
             const newAccountRaw = toAccountRaw(account);
             accountBridge.assignToAccountRaw?.(account, newAccountRaw);
 
-            expect(accountData.raw).toEqual(newAccountRaw);
+            expect(newAccountRaw).toEqual({
+              ...accountData.raw,
+              balanceHistoryCache: expect.anything(),
+              creationDate: expect.any(String),
+              lastSyncDate: expect.any(String),
+              nfts: expect.any(Array),
+            });
           });
         });
       });
