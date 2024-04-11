@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 34.1.0-next.2
+
+### Patch Changes
+
+- [#6653](https://github.com/LedgerHQ/ledger-live/pull/6653) [`194cb09`](https://github.com/LedgerHQ/ledger-live/commit/194cb09b5ec1c07536ce8b47bba49abd9ca80b4b) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Fix getRedelegations cosmos coin-module
+
 ## 34.1.0-next.1
 
 ### Minor Changes
