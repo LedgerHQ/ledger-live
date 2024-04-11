@@ -10,7 +10,6 @@ export const assetsTransferAction: PostOnboardingAction = {
   title: "postOnboarding.actions.assetsTransfer.title",
   titleCompleted: "postOnboarding.actions.assetsTransfer.titleCompleted",
   description: "postOnboarding.actions.assetsTransfer.description",
-  actionCompletedPopupLabel: "postOnboarding.actions.assetsTransfer.popupLabel",
   buttonLabelForAnalyticsEvent: "Secure your assets on Ledger",
   getNavigationParams: () => [
     NavigatorName.ReceiveFunds,
@@ -30,8 +29,8 @@ export const buyCryptoAction: PostOnboardingAction = {
   title: "postOnboarding.actions.buyCrypto.title",
   titleCompleted: "postOnboarding.actions.buyCrypto.titleCompleted",
   description: "postOnboarding.actions.buyCrypto.description",
-  actionCompletedPopupLabel: "postOnboarding.actions.buyCrypto.popupLabel",
   buttonLabelForAnalyticsEvent: "Buy Crypto",
+  shouldCompleteOnStart: true,
   getNavigationParams: () => [
     NavigatorName.Exchange,
     {
@@ -49,7 +48,7 @@ export const customImageAction: PostOnboardingAction = {
   title: "postOnboarding.actions.customImage.title",
   titleCompleted: "postOnboarding.actions.customImage.titleCompleted",
   description: "postOnboarding.actions.customImage.description",
-  actionCompletedPopupLabel: "postOnboarding.actions.customImage.popupLabel",
+  actionCompletedPopupLabel: "postOnboarding.actions.customImage.titleCompleted",
   buttonLabelForAnalyticsEvent: "Set lock screen picture",
   getNavigationParams: ({ deviceModelId }) => [
     NavigatorName.CustomImage,
@@ -69,8 +68,8 @@ export const recoverAction: PostOnboardingAction = {
   title: "postOnboarding.actions.recover.title",
   titleCompleted: "postOnboarding.actions.recover.titleCompleted",
   description: "postOnboarding.actions.recover.description",
-  actionCompletedPopupLabel: "postOnboarding.actions.recover.popupLabel",
   buttonLabelForAnalyticsEvent: "Subscribe to Ledger Recover",
+  shouldCompleteOnStart: true,
   getNavigationParams: () => [
     NavigatorName.Base,
     {

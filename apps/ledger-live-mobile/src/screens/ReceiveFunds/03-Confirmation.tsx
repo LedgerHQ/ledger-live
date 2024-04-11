@@ -5,6 +5,7 @@ import QRCode from "react-native-qrcode-svg";
 import { useTranslation } from "react-i18next";
 import ReactNativeHapticFeedback from "react-native-haptic-feedback";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
+import { PostOnboardingActionId } from "@ledgerhq/types-live";
 import type { CryptoOrTokenCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   makeEmptyTokenAccount,
@@ -37,6 +38,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { hasClosedWithdrawBannerSelector } from "~/reducers/settings";
 import { setCloseWithdrawBanner } from "~/actions/settings";
 import * as Animatable from "react-native-animatable";
+import { useCompleteActionCallback } from "~/logic/postOnboarding/useCompleteAction";
 
 const AnimatedView = Animatable.View;
 
@@ -149,6 +151,12 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
       }
     }
   }, [currency, route.params?.createTokenAccount, mainAccount, dispatch, hasAddedTokenAccount]);
+
+  const completeAction = useCompleteActionCallback();
+
+  useEffect(() => {
+    completeAction(PostOnboardingActionId.assetsTransfer);
+  }, [completeAction]);
 
   useEffect(() => {
     navigation.setOptions({
