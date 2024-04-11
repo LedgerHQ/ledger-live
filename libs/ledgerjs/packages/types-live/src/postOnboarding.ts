@@ -101,6 +101,13 @@ export type PostOnboardingAction = {
   shouldCompleteOnStart?: boolean;
 
   /**
+   * Used to set the action as complete when clicking on it.
+   * Especially useful when the action opens a live app and we can't know
+   * when the action as been successfully finished
+   */
+  shouldCompleteOnStart?: boolean;
+
+  /**
    * Value to use in the "button" property of the event sent when the user
    * triggers the action by pressing the button in the post onboarding hub.
    */
