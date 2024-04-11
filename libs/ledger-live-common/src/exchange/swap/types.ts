@@ -5,6 +5,14 @@ import { Transaction, TransactionRaw } from "../../generated/types";
 import { Result as UseBridgeTransactionResult } from "../../bridge/useBridgeTransaction";
 import { DeviceModelId } from "@ledgerhq/devices";
 
+export type SwapLiveError = {
+  type?: string;
+  cause: {
+    message?: string;
+    swapCode?: string;
+  };
+};
+
 export type ExchangeSwap = {
   fromParentAccount: Account | null | undefined;
   fromAccount: AccountLike;

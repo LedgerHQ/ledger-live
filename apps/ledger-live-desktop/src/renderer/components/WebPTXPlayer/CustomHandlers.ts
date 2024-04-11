@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import React, { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import {
@@ -12,10 +12,13 @@ import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { openExchangeDrawer } from "~/renderer/actions/UI";
 import { WebviewProps } from "../Web3AppWebview/types";
+import { context } from "~/renderer/drawers/Provider";
+import WebviewErrorDrawer from "~/renderer/screens/exchange/Swap2/Form/WebviewErrorDrawer";
 
 export function usePTXCustomHandlers(manifest: WebviewProps["manifest"]) {
   const dispatch = useDispatch();
   const accounts = useSelector(flattenAccountsSelector);
+  const { setDrawer } = React.useContext(context);
 
   const tracking = useMemo(
     () =>
@@ -76,6 +79,10 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"]) {
                 },
               }),
             );
+          },
+          "custom.exchange.error": ({ error }) => {
+            setDrawer(WebviewErrorDrawer, error);
+            return Promise.resolve();
           },
         },
       }),
