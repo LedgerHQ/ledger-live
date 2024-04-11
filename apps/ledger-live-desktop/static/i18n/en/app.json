@@ -1465,13 +1465,20 @@
       },
       "missingData": {
         "gainers": {
-          "title": "No assets among the top 50 experienced gains in the last 24 hours",
+          "title": "No assets among the top {{count}} experienced gains in the last {{trend}}",
           "description": "Consider viewing top losers or come back later"
         },
         "losers": {
-          "title": "No assets among the top 50 experienced losses in the last 24 hours",
+          "title": "No assets among the top {{count}} experienced losses in the last {{trend}}",
           "description": "Consider viewing top gainers or come back later"
         }
+      },
+      "trend": {
+        "day": "24 hours",
+        "week": "7 days",
+        "month": "30 days",
+        "year": "year",
+        "all": "year"
       }
     }
   },
@@ -5461,6 +5468,10 @@
     "SatStackDescriptorNotImported": {
       "title": "Account not scanned by full node",
       "description": "Please configure your full node to scan for the accounts associated with this device. Your full node must first scan the blockchain for this account before you can add it to your portfolio."
+    },
+    "SwapRateExpiredError": {
+      "title": "Rate Expired",
+      "description": "The exchange transaction could not be completed as the rate has expired. Please refresh the rates and try your swap again."
     },
     "SwapGenericAPIError": {
       "title": "Something went wrong",
