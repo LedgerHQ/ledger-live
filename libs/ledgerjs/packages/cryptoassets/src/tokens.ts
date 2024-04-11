@@ -91,7 +91,6 @@ export function listTokensForCryptoCurrency(
   options?: Partial<TokensListOptions>,
 ): TokenCurrency[] {
   const { withDelisted } = { ...defaultTokenListOptions, ...options };
-
   if (withDelisted) {
     return tokensByCryptoCurrencyWithDelisted[currency.id] || emptyArray;
   }
@@ -272,9 +271,14 @@ export function convertERC20([
   };
 }
 
-export function convertJettonToken([address, name, ticker, magnitude, delisted]: JettonToken):
-  | TokenCurrency
-  | undefined {
+export function convertJettonToken([
+  address,
+  name,
+  ticker,
+  magnitude,
+  delisted,
+  enableCountervalues,
+]: JettonToken): TokenCurrency | undefined {
   const parentCurrency = findCryptoCurrencyById("ton");
 
   if (!parentCurrency) {
@@ -283,13 +287,14 @@ export function convertJettonToken([address, name, ticker, magnitude, delisted]:
 
   return {
     type: "TokenCurrency",
-    id: "ton/jetton/" + address,
+    id: "ton/jetton/" + address.toLocaleLowerCase(),
     contractAddress: address,
     parentCurrency,
     tokenType: "jetton",
     name,
     ticker,
     delisted,
+    disableCountervalue: !enableCountervalues,
     units: [
       {
         name,
