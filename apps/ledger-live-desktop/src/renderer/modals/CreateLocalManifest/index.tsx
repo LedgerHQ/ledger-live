@@ -22,7 +22,9 @@ import NestedFormCategory from "./NestedFormCategory";
 import updateObjectAtPath from "lodash/set";
 import FormLiveAppSelector from "./FormLiveAppSelector";
 import FormLiveAppArrayInput from "./FormLiveAppArrayInput";
-import { useCategories } from "@ledgerhq/live-common/wallet-api/react";
+import { useCategories, useWalletAPICurrencies } from "@ledgerhq/live-common/wallet-api/react";
+import { WalletAPICurrency } from "@ledgerhq/live-common/wallet-api/types";
+
 import { useManifests } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import FormLiveAppArraySelect from "./FormLiveAppArraySelect";
 import { Separator } from "~/renderer/components/Onboarding/Screens/SelectUseCase/Separator";
@@ -51,8 +53,10 @@ function FormLocalManifest({
 
   const completeManifests = useManifests({ visibility: ["complete"] });
   const { categories } = useCategories(completeManifests);
+  const walletAPICurrencies: WalletAPICurrency[] = useWalletAPICurrencies();
 
   DEFAULT_VALUES.categories = categories.filter((category: string) => category !== "all");
+  DEFAULT_VALUES.currencies = walletAPICurrencies.map(currency => currency.id);
 
   const handleSwitchEthDapp = () => {
     setIsDapp(prevState => !prevState);
