@@ -3992,7 +3992,14 @@
         "eventType": "Event Type",
         "eventTypeDesc": "Type of report you want to make",
         "success": "The report was sent successfully. It may take between 5 and 10 minutes for it to take effect.",
-        "error": "An error occurred while sending the report. Please try again later."
+        "error": "An error occurred while sending the report. Please try again later.",
+        "reportType": {
+          "title": "What would you like to report?",
+          "desc": "Select the type of report you want to make",
+          "individual": "Spam report for an individual NFT",
+          "contract": "Spam report for a contract",
+          "collection": "Spam report for a collection"
+        }
       },
       "experimentalApps": "Allow experimental apps",
       "experimentalAppsDesc": "Display and allow opening experimental tagged platform apps.",

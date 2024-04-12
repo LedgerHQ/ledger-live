@@ -4,10 +4,11 @@ import { useTranslation } from "react-i18next";
 import { Text, Flex } from "@ledgerhq/react-ui";
 import Switch from "~/renderer/components/Switch";
 import Button from "~/renderer/components/ButtonV3";
-import Input from "~/renderer/components/Input";
-import Select from "~/renderer/components/Select";
 import { useSpamReportNft } from "@ledgerhq/live-nft-react";
 import { NftSpamReportOpts, EventType } from "@ledgerhq/live-nft/api/simplehash";
+import { InputRow } from "./InputRow";
+import { SelectRow } from "./SelectRow";
+import { ReportOption, SelectOption } from "./type";
 
 export default function SpamReportNtf() {
   const { t } = useTranslation();
@@ -31,6 +32,7 @@ function Body({ allowReport }: { allowReport: boolean }) {
   const { t } = useTranslation();
   const [displayInfo, setDisplayInfo] = useState(false);
   const spamReportMutation = useSpamReportNft();
+  const [reportType, setReportType] = useState<ReportOption>(ReportOption.contract);
   const [collectionId, setCollectionId] = useState("");
   const [contractAddress, setContractAddress] = useState("");
   const [chainId, setChainId] = useState("");
@@ -43,6 +45,8 @@ function Body({ allowReport }: { allowReport: boolean }) {
   const handleChainIdChange = (option: SelectOption) => setChainId(option.value);
   const handleTokenIdChange = (value: string) => setTokenId(value);
   const handleReportChange = (option: SelectOption) => setReport(option.value as EventType);
+  const handleReportTypeChange = (option: SelectOption) =>
+    setReportType(option.value as ReportOption);
 
   const onClick = () => {
     const data: NftSpamReportOpts = {
@@ -66,36 +70,66 @@ function Body({ allowReport }: { allowReport: boolean }) {
       <div>{t("settings.developer.debugSpamNft.debugNFTSpamReportDesc")}</div>
       {allowReport && (
         <Flex mt={3} flexDirection="column" justifyContent="space-between">
-          <InputRow
-            title={t("settings.developer.debugSpamNft.collectionId")}
-            desc={t("settings.developer.debugSpamNft.collectionIdDesc")}
-            value={collectionId}
-            onChange={handleCollectionIdChange}
-          />
-          <InputRow
-            title={t("settings.developer.debugSpamNft.contractAddress")}
-            desc={t("settings.developer.debugSpamNft.contractAddressDesc")}
-            value={contractAddress}
-            onChange={handleContractAddressChange}
-          />
-
           <SelectRow
-            title={t("settings.developer.debugSpamNft.chainId")}
-            desc={t("settings.developer.debugSpamNft.chainIdDesc")}
-            value={{ label: chainId, value: chainId }}
+            title={""}
+            desc={t("settings.developer.debugSpamNft.reportType.desc")}
+            value={{ label: reportType, value: reportType }}
             options={[
-              { label: "Ethereum", value: "ethereum" },
-              { label: "Polygon", value: "polygon" },
+              {
+                label: t(`settings.developer.debugSpamNft.reportType.${ReportOption.individual}`),
+                value: ReportOption.individual,
+              },
+              {
+                label: t(`settings.developer.debugSpamNft.reportType.${ReportOption.contract}`),
+                value: ReportOption.contract,
+              },
+              {
+                label: t(`settings.developer.debugSpamNft.reportType.${ReportOption.collection}`),
+                value: ReportOption.collection,
+              },
             ]}
-            onChange={handleChainIdChange}
+            onChange={handleReportTypeChange}
           />
 
-          <InputRow
-            title={t("settings.developer.debugSpamNft.tokenId")}
-            desc={t("settings.developer.debugSpamNft.tokenIdDesc")}
-            value={tokenId}
-            onChange={handleTokenIdChange}
-          />
+          {reportType === ReportOption.collection && (
+            <InputRow
+              title={t("settings.developer.debugSpamNft.collectionId")}
+              desc={t("settings.developer.debugSpamNft.collectionIdDesc")}
+              value={collectionId}
+              onChange={handleCollectionIdChange}
+            />
+          )}
+
+          {(reportType === ReportOption.contract || reportType === ReportOption.individual) && (
+            <>
+              <InputRow
+                title={t("settings.developer.debugSpamNft.contractAddress")}
+                desc={t("settings.developer.debugSpamNft.contractAddressDesc")}
+                value={contractAddress}
+                onChange={handleContractAddressChange}
+              />
+
+              <SelectRow
+                title={t("settings.developer.debugSpamNft.chainId")}
+                desc={t("settings.developer.debugSpamNft.chainIdDesc")}
+                value={{ label: chainId, value: chainId }}
+                options={[
+                  { label: "Ethereum", value: "ethereum" },
+                  { label: "Polygon", value: "polygon" },
+                ]}
+                onChange={handleChainIdChange}
+              />
+            </>
+          )}
+
+          {reportType === ReportOption.individual && (
+            <InputRow
+              title={t("settings.developer.debugSpamNft.tokenId")}
+              desc={t("settings.developer.debugSpamNft.tokenIdDesc")}
+              value={tokenId}
+              onChange={handleTokenIdChange}
+            />
+          )}
 
           <SelectRow
             title={t("settings.developer.debugSpamNft.eventType")}
@@ -131,53 +165,3 @@ function Body({ allowReport }: { allowReport: boolean }) {
     </Flex>
   );
 }
-
-const InputRow = ({
-  title,
-  desc,
-  value,
-  onChange,
-}: {
-  title: string;
-  desc: string;
-  value: string;
-  onChange: (value: string) => void;
-}) => {
-  return (
-    <Flex flexDirection="column" mb={2}>
-      <Text mb={2}>{title}</Text>
-      <Input placeholder={desc} value={value} onChange={onChange} />
-    </Flex>
-  );
-};
-
-type SelectOption = { value: string; label: string };
-const SelectRow = ({
-  title,
-  desc,
-  value,
-  options,
-  onChange,
-}: {
-  title: string;
-  desc: string;
-  options: SelectOption[];
-  value: SelectOption;
-  onChange: (value: SelectOption) => void;
-}) => {
-  const avoidEmptyValue = (option?: SelectOption | null) => option && onChange(option);
-  return (
-    <Flex flexDirection="column" mb={2}>
-      <Text mb={2}>{title}</Text>
-      <Text mb={2}>{desc}</Text>
-      <Select
-        onChange={avoidEmptyValue}
-        options={options}
-        value={value}
-        isSearchable={false}
-        defaultValue={options[0]}
-        required
-      />
-    </Flex>
-  );
-};
