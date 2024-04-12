@@ -92,6 +92,9 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"]) {
               },
             });
           },
+          "custom.exchange.error": ({ error, onSuccess, onCancel }) => {
+            // todo add screen for LLM
+          },
         },
       }),
     };
