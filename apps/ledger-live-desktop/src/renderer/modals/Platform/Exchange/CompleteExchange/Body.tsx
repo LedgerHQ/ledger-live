@@ -163,6 +163,7 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
       setResult,
       onResult,
       onCancel,
+      onClose,
       updateAccount,
       magnitudeAwareRate,
       provider,
