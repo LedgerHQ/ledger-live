@@ -85,3 +85,40 @@ export function buildFilters(filters: Record<string, string>, opts: Record<strin
   }
   return `&filters=${bufferFilters.join(",")}`;
 }
+
+export enum EventType {
+  mark_as_not_spam = "mark_as_not_spam",
+  mark_as_spam = "mark_as_spam",
+}
+export type NftSpamReportOpts = {
+  contractAddress?: string;
+  chainId?: string;
+  collectionId?: string;
+  tokenId?: string;
+  eventType: EventType;
+};
+/**
+ * Fetch NFTs for a list of wallets and chains of interest.
+ * using SimpleHash API.
+ */
+export async function reportSpamNtf(opts: NftSpamReportOpts): Promise<SimpleHashResponse> {
+  const url = `${getEnv("SIMPLE_HASH_API_BASE")}/nfts/report/spam`;
+  const { data } = await network<SimpleHashResponse>({
+    method: "POST",
+    url,
+    headers: {
+      accept: "application/json",
+      "X-API-KEY": "sh_sk1_Z4jhWXXBE09em",
+      "content-type": "application/json",
+    },
+    data: JSON.stringify({
+      contract_address: opts.contractAddress,
+      chain_id: opts.chainId,
+      token_id: opts.tokenId,
+      collection_id: opts.collectionId,
+      event_type: opts.eventType,
+    }),
+  });
+
+  return data;
+}

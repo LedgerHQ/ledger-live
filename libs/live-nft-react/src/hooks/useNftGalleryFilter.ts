@@ -3,6 +3,7 @@ import { InfiniteData, useInfiniteQuery, UseInfiniteQueryResult } from "@tanstac
 import { fetchNftsFromSimpleHash } from "@ledgerhq/live-nft/api/simplehash";
 import { SimpleHashResponse } from "@ledgerhq/live-nft/api/types";
 import { ProtoNFT } from "@ledgerhq/types-live";
+import { NFTS_QUERY_KEY } from "../queryKeys";
 
 export type HookProps = {
   addresses: string;
@@ -34,7 +35,7 @@ export function useNftGalleryFilter({
   threshold,
 }: HookProps): NftGalleryFilterResult {
   const queryResult = useInfiniteQuery({
-    queryKey: [addresses, chains],
+    queryKey: [NFTS_QUERY_KEY.SpamFilter, addresses, chains],
     queryFn: ({ pageParam }: { pageParam: string | undefined }) =>
       fetchNftsFromSimpleHash({ addresses, chains, cursor: pageParam, threshold }),
     initialPageParam: undefined,
