@@ -1,6 +1,6 @@
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
-import { reduce, filter, map, tap, catchError } from "rxjs/operators";
+import { reduce, filter, map, catchError } from "rxjs/operators";
 import flatMap from "lodash/flatMap";
 import omit from "lodash/omit";
 import { InvalidAddress, RecipientRequired, AmountRequired } from "@ledgerhq/errors";
@@ -775,13 +775,10 @@ export function testBridge<T extends TransactionCommon, U extends TransactionCom
             const newAccountRaw = toAccountRaw(account);
             accountBridge.assignToAccountRaw?.(account, newAccountRaw);
 
-            expect(newAccountRaw).toEqual({
-              ...accountData.raw,
-              balanceHistoryCache: expect.anything(),
-              creationDate: expect.any(String),
-              lastSyncDate: expect.any(String),
-              nfts: expect.any(Array),
-            });
+            const { lastSyncDate, ...expectedAccountRaw } = accountData.raw;
+            // We're using toMatch as some optional properties may have been defined with default value.
+            // (ex: balanceHistoryCache, nfts, used)
+            expect(newAccountRaw).toMatchObject(expectedAccountRaw);
           });
         });
       });
