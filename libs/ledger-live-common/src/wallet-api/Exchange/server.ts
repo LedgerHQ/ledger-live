@@ -21,6 +21,7 @@ import {
   ExchangeStartResult,
   ExchangeType,
   ExchangeStartSellParams,
+  SwapLiveError,
 } from "@ledgerhq/wallet-api-exchange-module";
 import { decodePayloadProtobuf } from "@ledgerhq/hw-app-exchange";
 import { TrackingAPI } from "./tracking";
@@ -31,7 +32,6 @@ import {
 } from "../converters";
 import { getAccountBridge } from "../../bridge";
 import { Exchange } from "../../exchange/types";
-import { SwapLiveError } from "../../exchange/swap/types";
 import { Transaction } from "../../generated/types";
 import {
   ExchangeError,
