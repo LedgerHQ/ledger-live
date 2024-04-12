@@ -29,6 +29,7 @@ export default function SpamReportNtf() {
 
 function Body({ allowReport }: { allowReport: boolean }) {
   const { t } = useTranslation();
+  const [displayInfo, setDisplayInfo] = useState(false);
   const spamReportMutation = useSpamReportNft();
   const [collectionId, setCollectionId] = useState("");
   const [contractAddress, setContractAddress] = useState("");
@@ -38,11 +39,8 @@ function Body({ allowReport }: { allowReport: boolean }) {
   const [report, setReport] = useState<EventType>(EventType.mark_as_not_spam);
 
   const handleCollectionIdChange = (value: string) => setCollectionId(value);
-
   const handleContractAddressChange = (value: string) => setContractAddress(value);
-
   const handleChainIdChange = (option: SelectOption) => setChainId(option.value);
-
   const handleTokenIdChange = (value: string) => setTokenId(value);
   const handleReportChange = (option: SelectOption) => setReport(option.value as EventType);
 
@@ -55,8 +53,14 @@ function Body({ allowReport }: { allowReport: boolean }) {
       eventType: report,
     };
 
-    spamReportMutation.mutate(data);
+    spamReportMutation.mutateAsync(data).finally(() => {
+      setDisplayInfo(true);
+      setTimeout(() => {
+        setDisplayInfo(false);
+      }, 5000);
+    });
   };
+
   return (
     <Flex flexDirection="column" pt={2} rowGap={2} alignSelf="stretch">
       <div>{t("settings.developer.debugSpamNft.debugNFTSpamReportDesc")}</div>
@@ -103,6 +107,21 @@ function Body({ allowReport }: { allowReport: boolean }) {
               { label: "mark_as_spam", value: "mark_as_spam" },
             ]}
           />
+
+          {displayInfo && (
+            <Flex flexDirection="column">
+              <Text color={spamReportMutation.isSuccess ? "success.c70" : "error.c70"}>
+                {spamReportMutation.isSuccess
+                  ? t("settings.developer.debugSpamNft.success")
+                  : t("settings.developer.debugSpamNft.error")}
+              </Text>
+              {spamReportMutation.isError && (
+                <Text color="error.c70" mt={2}>
+                  {spamReportMutation.error?.message}
+                </Text>
+              )}
+            </Flex>
+          )}
 
           <Button alignSelf={"flex-start"} mt={3} variant="color" onClick={onClick}>
             {t("settings.developer.debugSpamNft.report")}

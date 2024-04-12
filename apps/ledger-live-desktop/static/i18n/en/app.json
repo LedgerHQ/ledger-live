@@ -3990,7 +3990,9 @@
         "tokenId": "Token ID",
         "tokenIdDesc": "token_id of the NFT reported",
         "eventType": "Event Type",
-        "eventTypeDesc": "Type of report you want to make"
+        "eventTypeDesc": "Type of report you want to make",
+        "success": "The report was sent successfully. It may take between 5 and 10 minutes for it to take effect.",
+        "error": "An error occurred while sending the report. Please try again later."
       },
       "experimentalApps": "Allow experimental apps",
       "experimentalAppsDesc": "Display and allow opening experimental tagged platform apps.",
