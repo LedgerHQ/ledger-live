@@ -5,4 +5,6 @@ export const QUERY_KEY = {
   SupportedCounterCurrencies: "SupportedCounterCurrencies",
   SupportedCurrencies: "SupportedCurrencies",
   MarketData: "MarketData",
+
+  MarketPerformers: "MarketPerformers",
 };
