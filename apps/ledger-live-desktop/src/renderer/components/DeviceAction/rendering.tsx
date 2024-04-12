@@ -17,7 +17,11 @@ import {
   LockedDeviceError,
   FirmwareNotRecognized,
 } from "@ledgerhq/errors";
-import { LatestFirmwareVersionRequired, DeviceNotOnboarded } from "@ledgerhq/live-common/errors";
+import {
+  LatestFirmwareVersionRequired,
+  DeviceNotOnboarded,
+  TransactionRefusedOnDevice,
+} from "@ledgerhq/live-common/errors";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import {
@@ -67,6 +71,10 @@ import Installing from "~/renderer/modals/UpdateFirmwareModal/Installing";
 import { ErrorBody } from "../ErrorBody";
 import LinkWithExternalIcon from "../LinkWithExternalIcon";
 import { closePlatformAppDrawer } from "~/renderer/actions/UI";
+import { CompleteExchangeError } from "@ledgerhq/live-common/exchange/error";
+import WebviewErrorDrawer, {
+  SwapLiveError,
+} from "~/renderer/screens/exchange/Swap2/Form/WebviewErrorDrawer";
 
 export const AnimationWrapper = styled.div`
   width: 600px;
@@ -581,9 +589,9 @@ export const renderWarningOutdated = ({
   </Wrapper>
 );
 
-// Quick fix: the error LockedDeviceError should be catched
+// Quick fix: the tmpError LockedDeviceError should be catched
 // inside all the device actions and mapped to an event of type "lockedDevice".
-// With this fix, we can catch all the device action error that were not catched upstream.
+// With this fix, we can catch all the device action tmpError that were not catched upstream.
 // If LockedDeviceError is thrown from outside a device action and renderError was not called
 // it is still handled by GenericErrorView.
 export const renderLockedDeviceError = ({
@@ -733,18 +741,23 @@ export const renderError = ({
   withDescription?: boolean;
   Icon?: (props: { color?: string | undefined; size?: number | undefined }) => JSX.Element;
 }) => {
+  let tmpError = error;
   // Redirects from renderError and not from DeviceActionDefaultRendering because renderError
   // can be used directly by other component
-  if (error instanceof LockedDeviceError) {
+  if (tmpError instanceof LockedDeviceError) {
     return renderLockedDeviceError({ t, onRetry, device, inlineRetry });
-  } else if (error instanceof DeviceNotOnboarded) {
+  } else if (tmpError instanceof DeviceNotOnboarded) {
     return <DeviceNotOnboardedErrorComponent t={t} device={device} />;
-  } else if (error instanceof FirmwareNotRecognized) {
+  } else if (tmpError instanceof FirmwareNotRecognized) {
     return <FirmwareNotRecognizedErrorComponent onRetry={onRetry} />;
+  } else if (tmpError instanceof CompleteExchangeError) {
+    if (tmpError.message === "User refused") {
+      tmpError = new TransactionRefusedOnDevice();
+    }
   }
 
   // if no supportLink is provided, we fallback on the related url linked to
-  // error name, if any
+  // tmpError name, if any
   const supportLinkUrl = supportLink ?? urls.errors[error?.name];
 
   return (
@@ -759,16 +772,16 @@ export const renderError = ({
                 </Logo>
               )
         }
-        title={<TranslatedError error={error as unknown as Error} noLink />}
+        title={<TranslatedError error={tmpError as unknown as Error} noLink />}
         description={
           withDescription && (
-            <TranslatedError error={error as unknown as Error} field="description" />
+            <TranslatedError error={tmpError as unknown as Error} field="description" />
           )
         }
         list={
           list ? (
             <ol style={{ textAlign: "justify" }}>
-              <TranslatedError error={error as unknown as Error} field="list" />
+              <TranslatedError error={tmpError as unknown as Error} field="list" />
             </ol>
           ) : undefined
         }
@@ -777,8 +790,8 @@ export const renderError = ({
         {managerAppName || requireFirmwareUpdate ? (
           <OpenManagerButton
             appName={managerAppName}
-            updateApp={error instanceof UpdateYourApp}
-            firmwareUpdate={error instanceof LatestFirmwareVersionRequired}
+            updateApp={tmpError instanceof UpdateYourApp}
+            firmwareUpdate={tmpError instanceof LatestFirmwareVersionRequired}
           />
         ) : (
           <>
