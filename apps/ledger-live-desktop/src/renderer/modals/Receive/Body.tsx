@@ -29,6 +29,7 @@ export type Data = {
   receiveTokenMode?: boolean;
   receiveNFTMode?: boolean;
   eventType?: string;
+  isFromPostOnboardingEntryPoint: boolean;
 };
 
 type OwnProps = {
