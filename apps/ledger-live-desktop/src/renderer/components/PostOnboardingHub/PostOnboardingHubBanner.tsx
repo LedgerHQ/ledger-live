@@ -75,10 +75,12 @@ const PostOnboardingHubBanner = () => {
           primary: {
             label: t("postOnboarding.postOnboardingBanner.link"),
             action: handleNavigateToPostOnboardingHub,
+            dataTestId: "postonboarding-banner-entry-point",
           },
           dismiss: {
             label: t("postOnboarding.postOnboardingBanner.dismiss"),
             action: handleHidePostOnboardingHubBanner,
+            dataTestId: "postonboarding-banner-entry-point-close-button",
           },
         }}
       />

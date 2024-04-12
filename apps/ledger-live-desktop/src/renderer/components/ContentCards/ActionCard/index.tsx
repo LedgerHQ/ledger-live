@@ -15,10 +15,12 @@ type Props = {
     primary: {
       label?: string;
       action: Function;
+      dataTestId?: string;
     };
     dismiss: {
       label?: string;
       action: Function;
+      dataTestId?: string;
     };
   };
 
@@ -40,12 +42,21 @@ const ActionCard = ({ img, leftContent, title, description, actions, onView }: P
         <Description>{description}</Description>
       </Body>
       <Actions>
-        <Link size="small" onClick={() => actions.dismiss.action()}>
+        <Link
+          size="small"
+          onClick={() => actions.dismiss.action()}
+          data-test-id={actions.dismiss.dataTestId}
+        >
           {actions.dismiss.label}
         </Link>
 
         {actions.primary.label && (
-          <ButtonV3 big variant="main" onClick={() => actions.primary.action()}>
+          <ButtonV3
+            big
+            variant="main"
+            onClick={() => actions.primary.action()}
+            data-test-id={actions.primary.dataTestId}
+          >
             {actions.primary.label}
           </ButtonV3>
         )}
