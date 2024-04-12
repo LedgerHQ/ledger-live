@@ -1,5 +1,14 @@
 # live-mobile
 
+## 3.43.0-nightly.7
+
+### Patch Changes
+
+- [#6659](https://github.com/LedgerHQ/ledger-live/pull/6659) [`5f7570f`](https://github.com/LedgerHQ/ledger-live/commit/5f7570fdea755d8c1f26940e89b3ce4f1d43cccd) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Remove the spams NFT in custom lock screen on LLM
+
+- Updated dependencies [[`21f9d07`](https://github.com/LedgerHQ/ledger-live/commit/21f9d07785dc3f162626f37a42ebe692037c9b2a)]:
+  - @ledgerhq/live-common@34.1.0-nightly.6
+
 ## 3.43.0-nightly.6
 
 ### Patch Changes

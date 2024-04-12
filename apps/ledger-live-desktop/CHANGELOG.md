@@ -1,5 +1,16 @@
 # ledger-live-desktop
 
+## 2.79.0-nightly.8
+
+### Patch Changes
+
+- [#6592](https://github.com/LedgerHQ/ledger-live/pull/6592) [`21f9d07`](https://github.com/LedgerHQ/ledger-live/commit/21f9d07785dc3f162626f37a42ebe692037c9b2a) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - Add expired message error
+
+- [#6632](https://github.com/LedgerHQ/ledger-live/pull/6632) [`2f23141`](https://github.com/LedgerHQ/ledger-live/commit/2f23141cec8d29fb4ba1e187f6e19d893b5b0b37) Thanks [@RamyEB](https://github.com/RamyEB)! - Focus on Ledger Live when modal opens
+
+- Updated dependencies [[`21f9d07`](https://github.com/LedgerHQ/ledger-live/commit/21f9d07785dc3f162626f37a42ebe692037c9b2a)]:
+  - @ledgerhq/live-common@34.1.0-nightly.6
+
 ## 2.79.0-nightly.7
 
 ### Patch Changes

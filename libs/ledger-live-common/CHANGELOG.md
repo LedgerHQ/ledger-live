@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 34.1.0-nightly.6
+
+### Patch Changes
+
+- [#6592](https://github.com/LedgerHQ/ledger-live/pull/6592) [`21f9d07`](https://github.com/LedgerHQ/ledger-live/commit/21f9d07785dc3f162626f37a42ebe692037c9b2a) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - Add expired message error
+
 ## 34.1.0-nightly.5
 
 ### Patch Changes
