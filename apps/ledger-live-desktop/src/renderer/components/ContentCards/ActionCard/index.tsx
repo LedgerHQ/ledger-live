@@ -55,7 +55,7 @@ const ActionCard = ({ img, leftContent, title, description, actions, onView }: P
             big
             variant="main"
             onClick={() => actions.primary.action()}
-            data-test-id={actions.primary.dataTestId}
+            buttonTestId={actions.primary.dataTestId}
           >
             {actions.primary.label}
           </ButtonV3>
