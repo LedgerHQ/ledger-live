@@ -16,6 +16,7 @@ import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 const ButtonContainer = styled.div`
   display: flex;
   flex-direction: row;
+  gap: 15px;
 `;
 const RunLocalAppButton = () => {
   const dispatch = useDispatch();
@@ -40,8 +41,6 @@ const RunLocalAppButton = () => {
         })
         .then(function (response) {
           if (!response.canceled && response.filePath) {
-            console.log("id", id);
-
             const exportedManifest = liveAppByIndex.find(
               (manifest: LiveAppManifest) => manifest.id === id,
             );
@@ -120,9 +119,7 @@ const RunLocalAppButton = () => {
           <Button
             small
             primary
-            onClick={() => {
-              onOpenModal();
-            }}
+            onClick={onOpenModal}
             data-test-id="settings-enable-platform-dev-tools-apps"
           >
             {t("settings.developer.createLocalAppModal.create")}
@@ -131,7 +128,7 @@ const RunLocalAppButton = () => {
       </Row>
       {liveAppByIndex.map((manifest: LiveAppManifest) => (
         <Row key={manifest.id} title={manifest.name} desc={manifest.url as string}>
-          <ButtonContainer style={{ display: "flex", gap: 16 }}>
+          <ButtonContainer>
             <Button small primary onClick={() => history.push(`/platform/${manifest.id}`)}>
               {t("settings.developer.runLocalAppOpenButton")}
             </Button>
