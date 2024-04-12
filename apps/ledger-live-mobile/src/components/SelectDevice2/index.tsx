@@ -326,39 +326,6 @@ export default function SelectDevice({
         />
       ) : (
         <Flex flex={1}>
-          {isPostOnboardingVisible && (
-            <Box mb={8}>
-              <PostOnboardingEntryPointCard />
-            </Box>
-          )}
-          <Flex
-            flexDirection="row"
-            justifyContent="space-between"
-            alignItems="center"
-            mb={1}
-            px={16}
-          >
-            <Text variant="h5" fontWeight="semiBold">
-              <Trans i18nKey="manager.selectDevice.title" />
-            </Text>
-            {deviceList.length > 0 && (
-              <Touchable
-                onPress={isChoiceDrawerDisplayedOnAddDevice ? onAddNewPress : openBlePairingFlow}
-                {...addNewButtonEventProps}
-              >
-                <Flex flexDirection="row" alignItems="center">
-                  <Text color="primary.c90" mr={3} fontWeight="semiBold">
-                    <Trans
-                      i18nKey={`manager.selectDevice.${
-                        Platform.OS === "android" ? "addWithBluetooth" : "addNewCTA"
-                      }`}
-                    />
-                  </Text>
-                  <IconsLegacy.PlusMedium color="primary.c90" size={15} />
-                </Flex>
-              </Touchable>
-            )}
-          </Flex>
           <ScrollContainer
             my={4}
             contentContainerStyle={{
@@ -367,6 +334,40 @@ export default function SelectDevice({
               flexDirection: "column",
             }}
           >
+            {isPostOnboardingVisible && (
+              <Box mb={8}>
+                <PostOnboardingEntryPointCard />
+              </Box>
+            )}
+            <Flex
+              flexDirection="row"
+              justifyContent="space-between"
+              alignItems="center"
+              mb={1}
+              px={16}
+            >
+              <Text variant="h5" fontWeight="semiBold">
+                <Trans i18nKey="manager.selectDevice.title" />
+              </Text>
+              {deviceList.length > 0 && (
+                <Touchable
+                  onPress={isChoiceDrawerDisplayedOnAddDevice ? onAddNewPress : openBlePairingFlow}
+                  {...addNewButtonEventProps}
+                >
+                  <Flex flexDirection="row" alignItems="center">
+                    <Text color="primary.c90" mr={3} fontWeight="semiBold">
+                      <Trans
+                        i18nKey={`manager.selectDevice.${
+                          Platform.OS === "android" ? "addWithBluetooth" : "addNewCTA"
+                        }`}
+                      />
+                    </Text>
+                    <IconsLegacy.PlusMedium color="primary.c90" size={15} />
+                  </Flex>
+                </Touchable>
+              )}
+            </Flex>
+
             <Flex>
               <Flex px={16}>
                 {deviceList.length > 0 ? (
