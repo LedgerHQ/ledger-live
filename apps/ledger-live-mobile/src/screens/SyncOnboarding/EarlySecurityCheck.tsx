@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
+import { getDeviceModel } from "@ledgerhq/devices";
 import { log } from "@ledgerhq/logs";
 import { useGenuineCheck } from "@ledgerhq/live-common/hw/hooks/useGenuineCheck";
 import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/deviceSDK/hooks/useGetLatestAvailableFirmware";

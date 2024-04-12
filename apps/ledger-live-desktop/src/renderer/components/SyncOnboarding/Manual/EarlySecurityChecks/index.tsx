@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState } from "react";
-import semver from "semver";
 import { Flex } from "@ledgerhq/react-ui";
 import manager from "@ledgerhq/live-common/manager/index";
 import { useGenuineCheck } from "@ledgerhq/live-common/hw/hooks/useGenuineCheck";
