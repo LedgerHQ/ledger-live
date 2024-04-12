@@ -152,6 +152,7 @@ const StepReceiveFunds = (props: StepProps) => {
     currencyName,
     receiveTokenMode,
     receiveNFTMode,
+    isFromPostOnboardingEntryPoint,
   } = props;
   const dispatch = useDispatch();
   const receiveStakingFlowConfig = useFeature("receiveStakingFlowConfigDesktop");
@@ -222,8 +223,8 @@ const StepReceiveFunds = (props: StepProps) => {
         modal: "receive",
         account: name,
       });
-      // Only open EVM staking modal if the user received ETH or an EVM currency supported by the providers
-      if (isDirectStakingEnabledForAccount) {
+      // Only open EVM staking modal if the user received ETH or an EVM currency supported by the providers, and the user is not in the post-onboarding flow.
+      if (isDirectStakingEnabledForAccount && !isFromPostOnboardingEntryPoint) {
         dispatch(
           openModal("MODAL_EVM_STAKE", {
             account: mainAccount,
@@ -241,6 +242,7 @@ const StepReceiveFunds = (props: StepProps) => {
     }
   }, [
     receivedCurrencyId,
+    isFromPostOnboardingEntryPoint,
     receiveNFTMode,
     receiveTokenMode,
     isStakingEnabledForAccount,
