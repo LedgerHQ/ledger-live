@@ -149,7 +149,7 @@ export function testBridge<T extends TransactionCommon, U extends TransactionCom
             filter(e => e.type === "discovered"),
             map(e => e.account),
             reduce((all, a) => all.concat(a), [] as Account[]),
-            catchError(e => {
+            catchError(_ => {
               return [];
             }),
           ),
