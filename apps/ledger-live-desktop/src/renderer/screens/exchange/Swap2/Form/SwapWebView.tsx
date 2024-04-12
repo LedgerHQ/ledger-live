@@ -36,10 +36,6 @@ export class UnableToLoadSwapLiveError extends Error {
   }
 }
 
-type CustomHandlersParams<Params> = {
-  params: Params;
-};
-
 export type SwapProps = {
   provider: string;
   fromAccountId: string;
