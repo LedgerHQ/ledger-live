@@ -171,7 +171,7 @@ const postSync = (initial: Account, synced: Account): Account => {
   const initialPendingOperations = initial.pendingOperations || [];
   const { operations } = synced;
   const pendingOperations = initialPendingOperations.filter(
-    op => !operations.some(o => o.hash === op.hash) && op.transactionSequenceNumber !== undefined,
+    op => !operations.some(o => o.id === op.id),
   );
   // Set of hashes from the pending operations of the main account
   const coinPendingOperationsHashes = new Set();
