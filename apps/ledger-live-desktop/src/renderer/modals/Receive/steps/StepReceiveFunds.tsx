@@ -212,7 +212,13 @@ const StepReceiveFunds = (props: StepProps) => {
   const onFinishReceiveFlow = useCallback(() => {
     const dismissModal =
       global.localStorage.getItem(`${LOCAL_STORAGE_KEY_PREFIX}${receivedCurrencyId}`) === "true";
-    if (!dismissModal && !receiveNFTMode && !receiveTokenMode && isStakingEnabledForAccount) {
+    if (
+      !dismissModal &&
+      !receiveNFTMode &&
+      !receiveTokenMode &&
+      isStakingEnabledForAccount &&
+      !isFromPostOnboardingEntryPoint
+    ) {
       track("button_clicked2", {
         button: "continue",
         page: window.location.hash
@@ -223,8 +229,8 @@ const StepReceiveFunds = (props: StepProps) => {
         modal: "receive",
         account: name,
       });
-      // Only open EVM staking modal if the user received ETH or an EVM currency supported by the providers, and the user is not in the post-onboarding flow.
-      if (isDirectStakingEnabledForAccount && !isFromPostOnboardingEntryPoint) {
+      // Only open EVM staking modal if the user received ETH or an EVM currency supported by the providers
+      if (isDirectStakingEnabledForAccount) {
         dispatch(
           openModal("MODAL_EVM_STAKE", {
             account: mainAccount,
