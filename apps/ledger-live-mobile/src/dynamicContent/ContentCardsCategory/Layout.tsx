@@ -18,7 +18,8 @@ import {
   mapAsBigSquareContentCard,
   mapAsHeroContentCard,
 } from "~/dynamicContent/utils";
-import Carousel, { WidthFactor } from "../../contentCards/layouts/carousel";
+import Carousel from "../../contentCards/layouts/carousel";
+import { WidthFactor } from "~/contentCards/layouts/types";
 import useDynamicContent from "../useDynamicContent";
 import { ContentCardsType } from "../types";
 import Grid from "~/contentCards/layouts/grid";
@@ -106,6 +107,10 @@ const Layout = ({ category, cards }: LayoutProps) => {
   const items = cardsSorted.map(card =>
     contentCardItem(contentCardsType.contentCardComponent, {
       ...card,
+      widthFactor:
+        category.cardsLayout === ContentCardsLayout.carousel
+          ? card.carouselWidthFactor
+          : card.gridWidthFactor,
 
       metadata: {
         id: card.id,
@@ -123,11 +128,15 @@ const Layout = ({ category, cards }: LayoutProps) => {
       return (
         <Carousel
           items={items}
-          styles={{ widthFactor: cardsSorted[0].carouselWidthFactor || WidthFactor.Full }}
+          styles={{
+            widthFactor: cardsSorted[0].carouselWidthFactor || WidthFactor.Full,
+            pagination: category.hasPagination,
+            gap: cardsSorted[0].gridWidthFactor === WidthFactor.Full ? 6 : 8,
+          }}
         />
       );
     case ContentCardsLayout.grid:
-      return <Grid items={items} />;
+      return <Grid items={items} styles={{ widthFactor: cardsSorted[0].gridWidthFactor }} />;
     case ContentCardsLayout.unique:
     default:
       return <Flex mx={6}>{items[0].component(items[0].props)}</Flex>;
