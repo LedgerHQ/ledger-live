@@ -1,5 +1,19 @@
 # ledger-live-desktop
 
+## 2.79.0-nightly.9
+
+### Patch Changes
+
+- [#6658](https://github.com/LedgerHQ/ledger-live/pull/6658) [`be3748b`](https://github.com/LedgerHQ/ledger-live/commit/be3748b35eea0b0a68de6825feed7ba2925f057e) Thanks [@sarneijim](https://github.com/sarneijim)! - Fix swap history status translations
+
+- [#6657](https://github.com/LedgerHQ/ledger-live/pull/6657) [`b129df5`](https://github.com/LedgerHQ/ledger-live/commit/b129df5f9e601b05ded2c756f3b1764afbc796e0) Thanks [@sarneijim](https://github.com/sarneijim)! - Update error literal
+
+- [#6662](https://github.com/LedgerHQ/ledger-live/pull/6662) [`1bc09ce`](https://github.com/LedgerHQ/ledger-live/commit/1bc09ce84d1d579a253d0239747ad969e9613b52) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - feat(earlysecuritychecks): make stax update from <=1.3.0 unskippable
+
+- Updated dependencies [[`be3748b`](https://github.com/LedgerHQ/ledger-live/commit/be3748b35eea0b0a68de6825feed7ba2925f057e), [`0db1bf8`](https://github.com/LedgerHQ/ledger-live/commit/0db1bf8cd57d6a38e1f2b3fe56183fb1fc59a9ca), [`1bc09ce`](https://github.com/LedgerHQ/ledger-live/commit/1bc09ce84d1d579a253d0239747ad969e9613b52), [`c47f372`](https://github.com/LedgerHQ/ledger-live/commit/c47f372705cd251e17bea08589d5cfe9930108e9)]:
+  - @ledgerhq/live-common@34.1.0-nightly.7
+  - @ledgerhq/coin-bitcoin@0.4.0-nightly.12
+
 ## 2.79.0-nightly.8
 
 ### Patch Changes

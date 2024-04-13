@@ -1,5 +1,11 @@
 # @ledgerhq/coin-bitcoin
 
+## 0.4.0-nightly.12
+
+### Minor Changes
+
+- [#6642](https://github.com/LedgerHQ/ledger-live/pull/6642) [`0db1bf8`](https://github.com/LedgerHQ/ledger-live/commit/0db1bf8cd57d6a38e1f2b3fe56183fb1fc59a9ca) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix bitcoin signmessage return from base64 to hex
+
 ## 0.4.0-nightly.11
 
 ### Patch Changes

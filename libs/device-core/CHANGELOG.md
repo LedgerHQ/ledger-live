@@ -1,5 +1,11 @@
 # @ledgerhq/device-core
 
+## 0.1.1-nightly.3
+
+### Patch Changes
+
+- [#6662](https://github.com/LedgerHQ/ledger-live/pull/6662) [`1bc09ce`](https://github.com/LedgerHQ/ledger-live/commit/1bc09ce84d1d579a253d0239747ad969e9613b52) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - feat(earlysecuritychecks): make stax update from <=1.3.0 unskippable
+
 ## 0.1.1-nightly.2
 
 ### Patch Changes
