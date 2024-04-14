@@ -67,6 +67,7 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   songbird: EVM_DEAD_ADDRESS,
   flare: EVM_DEAD_ADDRESS,
   optimism: EVM_DEAD_ADDRESS,
+  optimism_sepolia: EVM_DEAD_ADDRESS,
   arbitrum: EVM_DEAD_ADDRESS,
   arbitrum_sepolia: EVM_DEAD_ADDRESS,
   rsk: EVM_DEAD_ADDRESS,

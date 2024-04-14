@@ -71,6 +71,7 @@ export const getAdditionalLayer2Fees = async (
 ): Promise<BigNumber | undefined> => {
   switch (currency.id) {
     case "optimism":
+    case "optimism_sepolia":
     case "base":
     case "base_sepolia": {
       const nodeApi = getNodeApi(currency);

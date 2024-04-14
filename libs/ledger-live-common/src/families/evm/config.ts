@@ -403,6 +403,14 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       },
     },
   },
+  config_currency_optimism_sepolia: {
+    type: "object",
+    default: {
+      status: { type: "active" },
+      node: { type: "external", uri: "https://sepolia.optimism.io" },
+      explorer: { type: "etherscan", uri: "https://api-sepolia-optimistic.etherscan.io/api" },
+    },
+  },
   config_currency_energy_web: {
     type: "object",
     default: {

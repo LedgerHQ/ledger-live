@@ -3859,6 +3859,29 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     keywords: ["optimism"],
   },
+  optimism_sepolia: {
+    type: "CryptoCurrency",
+    id: "optimism_sepolia",
+    coinType: CoinType.ETH,
+    name: "OP Sepolia",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    scheme: "optimism_sepolia",
+    color: "#FF0000",
+    family: "evm",
+    units: ethereumUnits("ether", "ETH").map(makeTestnetUnit),
+    isTestnetFor: "optimism",
+    ethereumLikeInfo: {
+      chainId: 11155420,
+    },
+    explorerViews: [
+      {
+        tx: "https://sepolia-optimism.etherscan.io/tx/$hash",
+        address: "https://sepolia-optimism.etherscan.io/address/$address",
+        token: "https://sepolia-optimism.etherscan.io/token/$contractAddress?a=$address",
+      },
+    ],
+  },
   energy_web: {
     type: "CryptoCurrency",
     id: "energy_web",
@@ -4237,9 +4260,9 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     },
     explorerViews: [
       {
-        tx: "https://testnet.lineascan.build/tx/$hash",
-        address: "https://testnet.lineascan.build/address/$address",
-        token: "https://testnet.lineascan.build/token/$address",
+        tx: "https://sepolia.lineascan.build/tx/$hash",
+        address: "https://sepolia.lineascan.build/address/$address",
+        token: "https://sepolia.lineascan.build/token/$address",
       },
     ],
   },

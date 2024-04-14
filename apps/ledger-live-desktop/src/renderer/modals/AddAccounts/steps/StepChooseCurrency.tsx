@@ -48,6 +48,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const avaxCChain = useFeature("currencyAvalancheCChain");
   const stacks = useFeature("currencyStacks");
   const optimism = useFeature("currencyOptimism");
+  const optimismSepolia = useFeature("currencyOptimismSepolia");
   const arbitrum = useFeature("currencyArbitrum");
   const arbitrumSepolia = useFeature("currencyArbitrumSepolia");
   const rsk = useFeature("currencyRsk");
@@ -90,6 +91,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       avalanche_c_chain: avaxCChain,
       stacks,
       optimism,
+      optimism_sepolia: optimismSepolia,
       arbitrum,
       arbitrum_sepolia: arbitrumSepolia,
       rsk,
@@ -131,6 +133,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       avaxCChain,
       stacks,
       optimism,
+      optimismSepolia,
       arbitrum,
       arbitrumSepolia,
       rsk,

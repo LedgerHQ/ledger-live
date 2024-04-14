@@ -141,6 +141,7 @@ export type CryptoCurrencyId =
   | "rsk"
   | "bittorrent"
   | "optimism"
+  | "optimism_sepolia"
   | "energy_web"
   | "astar"
   | "metis"

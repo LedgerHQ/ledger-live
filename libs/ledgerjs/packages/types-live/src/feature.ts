@@ -76,6 +76,7 @@ export type CurrencyFeatures = {
   currencyAvalancheCChain: DefaultFeature;
   currencyStacks: DefaultFeature;
   currencyOptimism: DefaultFeature;
+  currencyOptimismSepolia: DefaultFeature;
   currencyArbitrum: DefaultFeature;
   currencyArbitrumSepolia: DefaultFeature;
   currencyRsk: DefaultFeature;

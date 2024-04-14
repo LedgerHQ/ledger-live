@@ -61,6 +61,7 @@ setSupportedCurrencies([
   "flare",
   "near",
   "optimism",
+  "optimism_sepolia",
   "arbitrum",
   "arbitrum_sepolia",
   "rsk",

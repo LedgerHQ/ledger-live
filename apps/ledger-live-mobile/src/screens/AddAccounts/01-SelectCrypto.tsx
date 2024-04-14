@@ -70,6 +70,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const avaxCChain = useFeature("currencyAvalancheCChain");
   const stacks = useFeature("currencyStacks");
   const optimism = useFeature("currencyOptimism");
+  const optimismSepolia = useFeature("currencyOptimismSepolia");
   const arbitrum = useFeature("currencyArbitrum");
   const arbitrumSepolia = useFeature("currencyArbitrumSepolia");
   const rsk = useFeature("currencyRsk");
@@ -112,6 +113,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       avalanche_c_chain: avaxCChain,
       stacks,
       optimism,
+      optimism_sepolia: optimismSepolia,
       arbitrum,
       arbitrum_sepolia: arbitrumSepolia,
       rsk,
@@ -153,6 +155,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       avaxCChain,
       stacks,
       optimism,
+      optimismSepolia,
       arbitrum,
       arbitrumSepolia,
       rsk,

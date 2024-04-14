@@ -10,6 +10,7 @@ export const currenciesSupportedOnWalletConnect = [
   "polygon",
   "bsc",
   "optimism",
+  "optimism_sepolia",
   "arbitrum",
   "arbitrum_sepolia",
   "avalanche_c_chain",

@@ -29,6 +29,7 @@ const minBalancePerCurrencyId: Partial<Record<CryptoCurrency["id"], number>> = {
   arbitrum: 0.001,
   arbitrum_sepolia: 0.001,
   optimism: 0.001,
+  optimism_sepolia: 0.001,
   boba: 0.001,
   metis: 0.01,
   moonriver: 0.1,
