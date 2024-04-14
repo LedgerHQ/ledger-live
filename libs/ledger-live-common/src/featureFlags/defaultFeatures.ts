@@ -53,7 +53,6 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyMoonriver: DEFAULT_FEATURE,
   currencyOnomy: DEFAULT_FEATURE,
   currencyOptimism: DEFAULT_FEATURE,
-  currencyOptimismGoerli: DEFAULT_FEATURE,
   currencyPersistence: DEFAULT_FEATURE,
   currencyPolygonZkEvm: DEFAULT_FEATURE,
   currencyPolygonZkEvmTestnet: DEFAULT_FEATURE,
@@ -71,7 +70,6 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyCasper: DEFAULT_FEATURE,
   currencyNeonEvm: DEFAULT_FEATURE,
   currencyLinea: DEFAULT_FEATURE,
-  currencyLineaGoerli: DEFAULT_FEATURE,
 };
 
 /**

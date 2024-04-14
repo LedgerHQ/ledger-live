@@ -29,7 +29,6 @@ const minBalancePerCurrencyId: Partial<Record<CryptoCurrency["id"], number>> = {
   arbitrum: 0.001,
   arbitrum_sepolia: 0.001,
   optimism: 0.001,
-  optimism_goerli: 0.001,
   boba: 0.001,
   metis: 0.01,
   moonriver: 0.1,
@@ -42,13 +41,11 @@ const minBalancePerCurrencyId: Partial<Record<CryptoCurrency["id"], number>> = {
   bsc: 0.005,
   polygon: 0.005,
   ethereum: 0.001,
-  ethereum_goerli: 0.001,
   ethereum_sepolia: 0.001,
   ethereum_holesky: 0.001,
   ethereum_classic: 0.05,
   lukso: 0.01,
   linea: 0.001,
-  linea_goerli: 0.001,
 };
 
 /**
@@ -150,7 +147,7 @@ const testCoinBalance: MutationSpec<EvmTransaction>["test"] = ({
   // Klaytn is not providing the right gasPrice either at the moment
   // and their explorers are using the transaction gasPrice
   // instead of the effectiveGasPrice from the receipt
-  const underValuedFeesCurrencies = ["optimism", "optimism_goerli", "base", "base_sepolia"];
+  const underValuedFeesCurrencies = ["optimism", "base", "base_sepolia"];
   const overValuedFeesCurrencies = ["arbitrum", "arbitrum_sepolia", "klaytn"];
   const currenciesWithFlakyBehaviour = [...underValuedFeesCurrencies, ...overValuedFeesCurrencies];
 

@@ -52,8 +52,6 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   celo: "0xE70E8AfeF87CC8F0D7a61F58535F6EC99cd860cA",
   elrond: "erd1sqhjrtmsn5yjk6w85099p8v0ly0g8z9pxeqe5dvu5rlf2n7vq3vqytny9g",
   ethereum_classic: EVM_DEAD_ADDRESS,
-  ethereum_ropsten: EVM_DEAD_ADDRESS,
-  ethereum_goerli: EVM_DEAD_ADDRESS,
   ethereum_sepolia: EVM_DEAD_ADDRESS,
   ethereum_holesky: EVM_DEAD_ADDRESS,
   hedera: "0.0.163372",
@@ -69,7 +67,6 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   songbird: EVM_DEAD_ADDRESS,
   flare: EVM_DEAD_ADDRESS,
   optimism: EVM_DEAD_ADDRESS,
-  optimism_goerli: EVM_DEAD_ADDRESS,
   arbitrum: EVM_DEAD_ADDRESS,
   arbitrum_sepolia: EVM_DEAD_ADDRESS,
   rsk: EVM_DEAD_ADDRESS,
@@ -107,7 +104,6 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   vechain: EVM_DEAD_ADDRESS,
   lukso: EVM_DEAD_ADDRESS,
   linea: EVM_DEAD_ADDRESS,
-  linea_goerli: EVM_DEAD_ADDRESS,
 };
 
 /**

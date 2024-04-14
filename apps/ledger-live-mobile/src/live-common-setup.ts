@@ -80,8 +80,6 @@ setSupportedCurrencies([
   "peercoin",
   "viacoin",
   "bitcoin_testnet",
-  "ethereum_ropsten",
-  "ethereum_goerli",
   "ethereum_sepolia",
   "ethereum_holesky",
   "elrond",
@@ -96,7 +94,6 @@ setSupportedCurrencies([
   "flare",
   "near",
   "optimism",
-  "optimism_goerli",
   "arbitrum",
   "arbitrum_sepolia",
   "rsk",
@@ -123,7 +120,6 @@ setSupportedCurrencies([
   "neon_evm",
   "lukso",
   "linea",
-  "linea_goerli",
 ]);
 
 if (Config.BLE_LOG_LEVEL) BluetoothTransport.setLogLevel(Config.BLE_LOG_LEVEL);

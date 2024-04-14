@@ -345,7 +345,7 @@ export const getOptimismAdditionalFees: NodeApi["getOptimismAdditionalFees"] = a
     throw new LedgerNodeUsedIncorrectly();
   }
 
-  if (!["optimism", "optimism_goerli"].includes(currency.id)) {
+  if (!["optimism"].includes(currency.id)) {
     return new BigNumber(0);
   }
 

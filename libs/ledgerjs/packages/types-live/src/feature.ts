@@ -76,7 +76,6 @@ export type CurrencyFeatures = {
   currencyAvalancheCChain: DefaultFeature;
   currencyStacks: DefaultFeature;
   currencyOptimism: DefaultFeature;
-  currencyOptimismGoerli: DefaultFeature;
   currencyArbitrum: DefaultFeature;
   currencyArbitrumSepolia: DefaultFeature;
   currencyRsk: DefaultFeature;
@@ -112,7 +111,6 @@ export type CurrencyFeatures = {
   currencyNeonEvm: DefaultFeature;
   currencyLukso: DefaultFeature;
   currencyLinea: DefaultFeature;
-  currencyLineaGoerli: DefaultFeature;
 };
 
 /**

@@ -51,8 +51,6 @@ setSupportedCurrencies([
   "algorand",
   "polkadot",
   "bitcoin_testnet",
-  "ethereum_ropsten",
-  "ethereum_goerli",
   "ethereum_sepolia",
   "ethereum_holesky",
   "crypto_org_croeseid",
@@ -72,7 +70,7 @@ setSupportedCurrencies([
   "flare",
   "near",
   "optimism",
-  "optimism_goerli",
+  "arbitrum",
   "arbitrum_sepolia",
   "rsk",
   "bittorrent",
@@ -98,7 +96,6 @@ setSupportedCurrencies([
   "neon_evm",
   "lukso",
   "linea",
-  "linea_goerli",
 ]);
 LiveConfig.setConfig(liveConfig);
 
