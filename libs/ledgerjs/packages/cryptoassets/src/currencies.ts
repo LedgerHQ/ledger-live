@@ -4219,6 +4219,30 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  linea_sepolia: {
+    type: "CryptoCurrency",
+    id: "linea_sepolia",
+    coinType: CoinType.ETH,
+    name: "Linea Sepolia",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    scheme: "linea_sepolia",
+    color: "#ff0000",
+    family: "evm",
+    units: ethereumUnits("ETH", "ETH").map(makeTestnetUnit),
+    disableCountervalue: false,
+    isTestnetFor: "linea",
+    ethereumLikeInfo: {
+      chainId: 59141,
+    },
+    explorerViews: [
+      {
+        tx: "https://testnet.lineascan.build/tx/$hash",
+        address: "https://testnet.lineascan.build/address/$address",
+        token: "https://testnet.lineascan.build/token/$address",
+      },
+    ],
+  },
   // Keep it at the bottom
   // Tickers dup
   binance_beacon_chain: {

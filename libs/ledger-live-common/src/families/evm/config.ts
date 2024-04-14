@@ -669,6 +669,14 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       explorer: { type: "etherscan", uri: "https://api-sepolia.basescan.org/api" },
     },
   },
+  config_currency_linea_sepolia: {
+    type: "object",
+    default: {
+      status: { type: "active" },
+      node: { type: "external", uri: "https://rpc.sepolia.linea.build" },
+      explorer: { type: "etherscan", uri: "https://api-sepolia.lineascan.build/api" },
+    },
+  },
 };
 
 export { evmConfig };

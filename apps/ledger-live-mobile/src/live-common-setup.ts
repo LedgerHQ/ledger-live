@@ -120,6 +120,7 @@ setSupportedCurrencies([
   "neon_evm",
   "lukso",
   "linea",
+  "linea_sepolia",
 ]);
 
 if (Config.BLE_LOG_LEVEL) BluetoothTransport.setLogLevel(Config.BLE_LOG_LEVEL);

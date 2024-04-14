@@ -68,4 +68,6 @@ setSupportedCurrencies([
   "near",
   "coreum",
   "vechain",
+  "linea",
+  "linea_sepolia"
 ]);

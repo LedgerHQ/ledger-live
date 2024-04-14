@@ -93,6 +93,7 @@ setSupportedCurrencies([
   "lukso",
   "filecoin",
   "linea",
+  "linea_sepolia",
 ]);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);

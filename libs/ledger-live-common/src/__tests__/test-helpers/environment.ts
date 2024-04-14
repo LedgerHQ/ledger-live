@@ -96,6 +96,7 @@ setSupportedCurrencies([
   "neon_evm",
   "lukso",
   "linea",
+  "linea_sepolia",
 ]);
 LiveConfig.setConfig(liveConfig);
 
