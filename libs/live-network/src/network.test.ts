@@ -137,6 +137,7 @@ describe("network", () => {
           method: "GET",
           url: "https://google.com",
         });
+        // eslint-disable-next-line no-empty
       } catch {}
       expect(mockedAxios).toHaveBeenCalledTimes(DEFAULT_GET_CALLS_RETRY + 1);
     });
@@ -160,6 +161,7 @@ describe("network", () => {
           method: "GET",
           url: "https://google.com",
         });
+        // eslint-disable-next-line no-empty
       } catch {}
       expect(mockedAxios).toHaveBeenCalledTimes(1);
     });
