@@ -84,15 +84,15 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
   // Checks that we support EIP 6963
   await webview.click("#provider > button");
 
-  await webview.getByText("Name: Ledger Live");
-  await webview.getByText("Network: 1");
-  await webview.getByText("ChainId: 0x1");
-  await webview.getByText("Accounts: 0x6EB963EFD0FEF7A4CFAB6CE6F1421C3279D11707");
+  webview.getByText("Name: Ledger Live");
+  webview.getByText("Network: 1");
+  webview.getByText("ChainId: 0x1");
+  webview.getByText("Accounts: 0x6EB963EFD0FEF7A4CFAB6CE6F1421C3279D11707");
 
   // Checks that getAccounts returns the correct account
   await webview.click("#getAccounts");
 
-  await webview.getByText("eth_accounts result: 0x6EB963EFD0FEF7A4CFAB6CE6F1421C3279D11707");
+  webview.getByText("eth_accounts result: 0x6EB963EFD0FEF7A4CFAB6CE6F1421C3279D11707");
 
   // Checks that personalSign works
   await webview.click("#personalSign");
