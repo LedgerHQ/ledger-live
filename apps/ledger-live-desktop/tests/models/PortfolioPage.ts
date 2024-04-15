@@ -39,7 +39,7 @@ export class PortfolioPage {
   }
 
   async navigateToAsset(currency: string) {
-    this.assetRow(currency).click();
+    await this.assetRow(currency).click();
   }
 
   async scrollToOperations() {
