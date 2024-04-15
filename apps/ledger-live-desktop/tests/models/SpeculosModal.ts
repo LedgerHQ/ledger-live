@@ -9,14 +9,17 @@ export class SpeculosModal {
   }
 
   async pressRight() {
+    await this.page.waitForTimeout(500);
     await this.sendRequest("button/right");
   }
 
   async pressLeft() {
+    await this.page.waitForTimeout(500);
     await this.sendRequest("button/left");
   }
 
   async pressBoth() {
+    await this.page.waitForTimeout(500);
     await this.sendRequest("button/both");
   }
 
