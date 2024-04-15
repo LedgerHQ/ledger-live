@@ -1,4 +1,4 @@
-import { Page, Locator } from "@playwright/test";
+import { Locator, Page } from "@playwright/test";
 import { Modal } from "./Modal";
 
 export class AddAccountModal extends Modal {
@@ -27,7 +27,7 @@ export class AddAccountModal extends Modal {
 
   async select(currency: string) {
     await this.selectAccount.click();
-    await this.selectAccountInput.type(currency);
+    await this.selectAccountInput.fill(currency);
     await this.selectAccountInput.press("Enter");
   }
 
@@ -37,8 +37,7 @@ export class AddAccountModal extends Modal {
 
   async getFirstAccountName() {
     await this.page.waitForTimeout(500);
-    const firstAccountName = await this.accountsList.locator("input").first().inputValue();
-    return firstAccountName;
+    return await this.accountsList.locator("input").first().inputValue();
   }
 
   async done() {
