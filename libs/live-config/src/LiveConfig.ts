@@ -56,10 +56,9 @@ export class LiveConfig {
       return LiveConfig.instance.config[key]?.default;
     }
 
-    const providerValue = LiveConfig.instance.provider.getValueByKey(
-      key,
-      LiveConfig.instance.config[key],
-    );
+    const providerValue =
+      LiveConfig.instance.provider.getValueByKey(key, LiveConfig.instance.config[key]) ??
+      LiveConfig.instance.config[key]?.default;
 
     if (LiveConfig.instance.config[key]?.type === "object") {
       // we spread the default values first and then the values from the provider

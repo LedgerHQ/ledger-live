@@ -15,8 +15,8 @@ let first = true;
 
 describe("Receive different currency", () => {
   beforeAll(async () => {
-    loadConfig("onboardingcompleted", true);
-    loadBleState({ knownDevices: [knownDevice] });
+    await loadConfig("onboardingcompleted", true);
+    await loadBleState({ knownDevices: [knownDevice] });
 
     portfolioPage = new PortfolioPage();
     deviceAction = new DeviceAction(knownDevice);

@@ -11,7 +11,7 @@ import { isTokenAccount, getMainAccount, isAccount } from "../account/index";
 import { getAccountBridge } from "../bridge/index";
 import { Transaction } from "../generated/types";
 import { prepareMessageToSign } from "../hw/signMessage/index";
-import { Exchange } from "../exchange/platform/types";
+import { Exchange } from "../exchange/types";
 
 export function translateContent(content: string | TranslatableString, locale = "en"): string {
   if (!content || typeof content === "string") return content;
@@ -154,7 +154,7 @@ export type CompleteExchangeUiRequest = {
   feesStrategy: string;
   exchangeType: number;
   swapId?: string;
-  rate?: number;
+  amountExpectedTo?: number;
 };
 export function completeExchangeLogic(
   { manifest, accounts, tracking }: WebPlatformContext,

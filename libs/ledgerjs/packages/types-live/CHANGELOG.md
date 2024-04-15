@@ -1,5 +1,33 @@
 # @ledgerhq/types-live
 
+## 6.45.0
+
+### Minor Changes
+
+- [#6195](https://github.com/LedgerHQ/ledger-live/pull/6195) [`dfac39b`](https://github.com/LedgerHQ/ledger-live/commit/dfac39b2086f0475d1bc8065032bfe27cbf424f6) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for Base Sepolia & Arbitrum Sepolia
+
+### Patch Changes
+
+- [#6238](https://github.com/LedgerHQ/ledger-live/pull/6238) [`6de15bc`](https://github.com/LedgerHQ/ledger-live/commit/6de15bc96e8b97a2a6815cf3fb1da874f7044b49) Thanks [@mle-gall](https://github.com/mle-gall)! - Adding new analytics opt in prompt for existing users
+
+- [#5974](https://github.com/LedgerHQ/ledger-live/pull/5974) [`b34f5cd`](https://github.com/LedgerHQ/ledger-live/commit/b34f5cdda0b7bf34750d258cc8b1c91304516360) Thanks [@cng-ledger](https://github.com/cng-ledger)! - feat(LIVE-10989): dynamic manifest id for swap live app in feature flag
+
+- [#6144](https://github.com/LedgerHQ/ledger-live/pull/6144) [`d870e90`](https://github.com/LedgerHQ/ledger-live/commit/d870e904a0dde5f8abf05f930f5f545828eccbc9) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update Feature flag to handle threshold spam filter directly from FF
+
+## 6.45.0-next.0
+
+### Minor Changes
+
+- [#6195](https://github.com/LedgerHQ/ledger-live/pull/6195) [`dfac39b`](https://github.com/LedgerHQ/ledger-live/commit/dfac39b2086f0475d1bc8065032bfe27cbf424f6) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for Base Sepolia & Arbitrum Sepolia
+
+### Patch Changes
+
+- [#6238](https://github.com/LedgerHQ/ledger-live/pull/6238) [`6de15bc`](https://github.com/LedgerHQ/ledger-live/commit/6de15bc96e8b97a2a6815cf3fb1da874f7044b49) Thanks [@mle-gall](https://github.com/mle-gall)! - Adding new analytics opt in prompt for existing users
+
+- [#5974](https://github.com/LedgerHQ/ledger-live/pull/5974) [`b34f5cd`](https://github.com/LedgerHQ/ledger-live/commit/b34f5cdda0b7bf34750d258cc8b1c91304516360) Thanks [@cng-ledger](https://github.com/cng-ledger)! - feat(LIVE-10989): dynamic manifest id for swap live app in feature flag
+
+- [#6144](https://github.com/LedgerHQ/ledger-live/pull/6144) [`d870e90`](https://github.com/LedgerHQ/ledger-live/commit/d870e904a0dde5f8abf05f930f5f545828eccbc9) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update Feature flag to handle threshold spam filter directly from FF
+
 ## 6.44.1
 
 ### Patch Changes

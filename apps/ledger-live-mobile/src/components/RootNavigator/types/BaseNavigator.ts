@@ -1,4 +1,10 @@
-import type { Operation, AccountLike, Account, DeviceInfo } from "@ledgerhq/types-live";
+import type {
+  Operation,
+  AccountLike,
+  Account,
+  DeviceInfo,
+  FirmwareUpdateContext,
+} from "@ledgerhq/types-live";
 import type { NavigatorScreenParams, ParamListBase } from "@react-navigation/native";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { DeviceModelId } from "@ledgerhq/types-devices";
@@ -9,6 +15,7 @@ import { MappedSwapOperation } from "@ledgerhq/live-common/exchange/swap/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { NavigatorName, ScreenName } from "~/const";
+import type { FirmwareUpdateProps } from "~/screens/FirmwareUpdate";
 import type { AccountSettingsNavigatorParamList } from "./AccountSettingsNavigator";
 import type { AccountsNavigatorParamList } from "./AccountsNavigator";
 import type { ImportAccountsNavigatorParamList } from "./ImportAccountsNavigator";
@@ -287,4 +294,12 @@ export type BaseNavigatorStackParamList = {
   [ScreenName.RedirectToOnboardingRecoverFlow]: undefined;
 
   [NavigatorName.AnalyticsOptInPrompt]: NavigatorScreenParams<AnalyticsOptInPromptNavigatorParamList>;
+
+  [ScreenName.FirmwareUpdate]: {
+    deviceInfo?: DeviceInfo | null;
+    firmwareUpdateContext?: FirmwareUpdateContext | null;
+    device?: Device | null;
+    onBackFromUpdate: FirmwareUpdateProps["onBackFromUpdate"];
+    isBeforeOnboarding?: boolean;
+  };
 };

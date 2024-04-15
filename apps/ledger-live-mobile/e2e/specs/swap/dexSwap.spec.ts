@@ -11,7 +11,7 @@ let liveAppWebview: LiveAppWebview;
 
 describe("DEX Swap", () => {
   beforeAll(async () => {
-    loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
+    await loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
 
     portfolioPage = new PortfolioPage();
     swapPage = new SwapFormPage();
@@ -27,7 +27,7 @@ describe("DEX Swap", () => {
     await swapPage.selectAccount("Ethereum 2");
     await swapPage.openDestinationAccountSelector();
     await swapPage.selectAccount("Tether USD");
-    await swapPage.sendMax();
+    await swapPage.enterSourceAmount("1");
     await swapPage.goToProviderSelection();
     await swapPage.chooseProvider("1inch");
   });

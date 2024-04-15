@@ -1,1 +1,1 @@
-export { isSyncOnboardingSupported } from "../../device-core/capabilities/isSyncOnboardingSupported";
+export { isSyncOnboardingSupported } from "@ledgerhq/device-core";

@@ -83,6 +83,11 @@ export default class ReceivePage {
     jestExpect(await getTextOfElement(this.accountFreshAddress)).toEqual(address);
   }
 
+  async expectAddressIsDisplayed(address: string) {
+    await waitForElementById(this.accountAddress);
+    jestExpect(await getTextOfElement(this.accountAddress)).toEqual(address);
+  }
+
   async expectNumberOfAccountInListIsDisplayed(currencyName: string, accountNumber: number) {
     //set "account" in plural or not in fonction of number account
     const accountCount: string = accountNumber + " account" + (accountNumber > 1 ? "s" : "");

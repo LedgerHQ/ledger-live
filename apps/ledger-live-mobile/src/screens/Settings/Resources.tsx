@@ -13,9 +13,11 @@ import {
 import SettingsNavigationScrollView from "./SettingsNavigationScrollView";
 import SettingsCard from "~/components/SettingsCard";
 import { urls } from "~/utils/urls";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const Resources = () => {
   const { t } = useTranslation();
+  const chatbotSupportFeature = useFeature("llmChatbotSupport");
 
   return (
     <SettingsNavigationScrollView>
@@ -25,12 +27,21 @@ const Resources = () => {
         Icon={NanoSFoldedMedium}
         onClick={() => Linking.openURL(urls.resources.gettingStarted)}
       />
-      <SettingsCard
-        title={t("help.helpCenter.title")}
-        desc={t("help.helpCenter.desc")}
-        Icon={LifeRingMedium}
-        onClick={() => Linking.openURL(urls.resources.helpCenter)}
-      />
+      {chatbotSupportFeature?.enabled ? (
+        <SettingsCard
+          title={t("help.chatbot")}
+          desc={t("help.helpCenter.desc")}
+          Icon={LifeRingMedium}
+          onClick={() => Linking.openURL(urls.chatbot)}
+        />
+      ) : (
+        <SettingsCard
+          title={t("help.helpCenter.title")}
+          desc={t("help.helpCenter.desc")}
+          Icon={LifeRingMedium}
+          onClick={() => Linking.openURL(urls.resources.helpCenter)}
+        />
+      )}
       <SettingsCard
         title={t("help.ledgerAcademy.title")}
         desc={t("help.ledgerAcademy.desc")}

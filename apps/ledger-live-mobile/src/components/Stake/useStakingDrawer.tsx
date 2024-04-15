@@ -57,6 +57,18 @@ export function useStakingDrawer({
 
       const [name, options] = stakeFlow;
 
+      // one level deep navigation
+      if (!options.screen) {
+        return navigation.navigate(NavigatorName.Base, {
+          screen: name,
+          params: {
+            ...(options?.params || {}),
+            account,
+            parentAccount,
+          },
+        });
+      }
+
       // open staking drawer (or stake flow screens) for the specific currency, inside the current navigator
       navigation.navigate(NavigatorName.Base, {
         screen: name,

@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { ScrollView } from "react-native";
-import { useTranslation, Trans } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { getCryptoCurrencyById, toLocaleString } from "@ledgerhq/live-common/currencies/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/reactNative";
@@ -14,8 +14,6 @@ import BandwidthIcon from "~/icons/Bandwidth";
 import EnergyIcon from "~/icons/Energy";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import InfoItem from "~/components/BalanceSummaryInfoItem";
-import Alert from "~/components/Alert";
-import { urls } from "~/utils/urls";
 import { useSettings } from "~/hooks";
 
 type Props = {
@@ -45,9 +43,6 @@ function AccountBalanceSummaryFooter({ account }: Props) {
   const onPressInfoCreator = useCallback((infoName: InfoName) => () => setInfoName(infoName), []);
   return (
     <>
-      <Alert type="warning" learnMoreUrl={urls.TronStakingDisable}>
-        <Trans i18nKey="tron.voting.warnDisableStakingMessage" />
-      </Alert>
       <InfoModal
         isOpened={!!infoName}
         onClose={onCloseModal}

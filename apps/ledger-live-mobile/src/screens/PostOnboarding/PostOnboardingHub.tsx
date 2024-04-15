@@ -10,7 +10,6 @@ import {
 import { clearPostOnboardingLastActionCompleted } from "@ledgerhq/live-common/postOnboarding/actions";
 import { useDispatch } from "react-redux";
 import { getDeviceModel } from "@ledgerhq/devices";
-import { DeviceModelId } from "@ledgerhq/types-devices";
 import PostOnboardingActionRow from "~/components/PostOnboarding/PostOnboardingActionRow";
 import { TrackScreen } from "~/analytics";
 import Link from "~/components/wrappedUi/Link";
@@ -39,12 +38,12 @@ const PostOnboardingHub = () => {
     closePostOnboarding();
   }, [closePostOnboarding]);
 
-  const allDone = useAllPostOnboardingActionsCompleted();
-
-  const productName = getDeviceModel(deviceModelId || DeviceModelId.nanoX)?.productName;
-
   const safeAreaInsets = useSafeAreaInsets();
+  const allDone = useAllPostOnboardingActionsCompleted() || !deviceModelId;
 
+  if (!deviceModelId) return null; // this will never happen in practice
+
+  const productName = getDeviceModel(deviceModelId).productName;
   return (
     <>
       <TrackScreen
@@ -73,7 +72,7 @@ const PostOnboardingHub = () => {
           <ScrollView>
             {actionsState.map((action, index, arr) => (
               <React.Fragment key={index}>
-                <PostOnboardingActionRow {...action} />
+                <PostOnboardingActionRow {...action} deviceModelId={deviceModelId} />
                 {index !== arr.length - 1 && <Divider />}
               </React.Fragment>
             ))}

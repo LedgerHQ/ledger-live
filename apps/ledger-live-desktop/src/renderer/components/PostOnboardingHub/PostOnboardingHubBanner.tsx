@@ -4,6 +4,9 @@ import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import { Box, Flex, IconsLegacy, Link, Text } from "@ledgerhq/react-ui";
 import { hidePostOnboardingWalletEntryPoint } from "@ledgerhq/live-common/postOnboarding/actions";
+import { getDeviceModel } from "@ledgerhq/devices";
+import { DeviceModelId } from "@ledgerhq/types-devices";
+import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { useNavigateToPostOnboardingHubCallback } from "./logic/useNavigateToPostOnboardingHubCallback";
 import Illustration from "~/renderer/components/Illustration";
 import bannerStaxLight from "./assets/bannerStaxLight.svg";
@@ -22,6 +25,7 @@ const PostOnboardingHubBanner = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const navigateToPostOnboardingHub = useNavigateToPostOnboardingHubCallback();
+  const { deviceModelId } = usePostOnboardingHubState();
 
   const handleNavigateToPostOnboardingHub = useCallback(() => {
     track("button_clicked2", { button: "What’s next for your device" });
@@ -43,7 +47,9 @@ const PostOnboardingHubBanner = () => {
     >
       <Flex flexDirection="column" justifyContent="center" alignItems="flex-start">
         <Text color="neutral.c00" variant="paragraph" fontSize={6}>
-          {t("postOnboarding.postOnboardingBanner.title")}
+          {t("postOnboarding.postOnboardingBanner.title", {
+            productName: getDeviceModel(deviceModelId ?? DeviceModelId.stax).productName,
+          })}
         </Text>
         <Text mt={3} mb={4} color="neutral.c50" whiteSpace="pre-wrap" variant="h5Inter">
           {t("postOnboarding.postOnboardingBanner.description")}

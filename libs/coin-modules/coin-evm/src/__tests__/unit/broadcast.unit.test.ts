@@ -19,17 +19,17 @@ import {
   erc20TokenTransactionRaw,
   erc721TokenTransactionRaw,
 } from "../fixtures/transaction.fixtures";
+import { getCoinConfig } from "../../config";
 
 jest.useFakeTimers();
+
+jest.mock("../../config");
+const mockGetConfig = jest.mocked(getCoinConfig);
 
 const currency: CryptoCurrency = {
   ...getCryptoCurrencyById("ethereum"),
   ethereumLikeInfo: {
     ...getCryptoCurrencyById("ethereum").ethereumLikeInfo,
-    node: {
-      type: "external",
-      uri: "any-uri",
-    },
   } as any,
 };
 const tokenCurrency = getTokenById("ethereum/erc20/usd__coin");
@@ -45,6 +45,23 @@ const account: Account = makeAccount(
 const mockedBroadcastResponse = "0xH4sH";
 
 describe("EVM Family", () => {
+  beforeAll(() => {
+    mockGetConfig.mockImplementation((): any => {
+      return {
+        info: {
+          node: {
+            type: "external",
+            uri: "https://my-rpc.com",
+          },
+          explorer: {
+            type: "etherscan",
+            uri: "https://api.com",
+          },
+        },
+      };
+    });
+  });
+
   describe("broadcast.ts", () => {
     beforeAll(() => {
       jest

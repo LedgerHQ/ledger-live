@@ -47,7 +47,7 @@ jobs:
             core.exportVariable("head_branch", newHeadBranch);
             core.exportVariable("base_branch", newBaseBranch);
 
-      - uses: ./tools/actions/turbo-affected
+      - uses: LedgerHQ/ledger-live/tools/actions/turbo-affected@develop
         id: affected
         with:
           ref: ${{ format('origin/{0}', env.base_branch) }}
@@ -58,7 +58,7 @@ jobs:
             const fs = require("fs");
             const affected = ${{ steps.affected.outputs.affected }};
             fs.writeFileSync("affected.json", JSON.stringify(affected), "utf-8");
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: affected.json
           path: affected.json
@@ -77,7 +77,7 @@ jobs:
               is_fork: ${{ env.is_fork }},
               ref: "${{ env.ref }}"
             }), "utf-8");
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: pr_metadata.json
           path: pr_metadata.json

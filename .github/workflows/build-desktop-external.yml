@@ -48,12 +48,12 @@ jobs:
             } else if ("${{ matrix.os }}" === "windows-latest") {
               return "win"
             }
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+      - uses: actions/checkout@v4
         with:
           ref: ${{ github.ref_name }}
-          base: ${{ inputs.base_ref }}
+          persist-credentials: false
       - name: Setup git user
-        uses: ./tools/actions/composites/setup-git-user
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
       - uses: actions/setup-python@v4
         with:
           python-version: "3.x"
@@ -62,11 +62,11 @@ jobs:
           ruby-version: 3.2.2
           bundler-cache: true
       - name: Setup the toolchain
-        uses: ./tools/actions/composites/setup-toolchain
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
         with:
           upgrade_npm: ${{ matrix.os == 'windows-latest' }}
       - name: Build desktop
-        uses: ./tools/actions/composites/setup-build-desktop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-build-desktop@develop
         id: build-desktop
         with:
           os: ${{ steps.os.outputs.result }}
@@ -81,19 +81,19 @@ jobs:
           echo "${{matrix.os}}=${{steps.build-app.outcome}}" >> $GITHUB_OUTPUT
       - name: Upload linux app
         if: matrix.os == 'ubuntu-latest'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
           path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-linux-x86_64.AppImage
       - name: Upload macOS app
         if: matrix.os == 'macos-latest'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.build-desktop.outputs.version }}-mac.dmg
           path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-mac.dmg
       - name: Upload windows
         if: matrix.os == 'windows-latest'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.build-desktop.outputs.version }}-win-x64.exe
           path: ${{ github.workspace }}/apps/ledger-live-desktop/dist/${{ steps.build-desktop.outputs.name }}-${{ steps.build-desktop.outputs.version }}-win-x64.exe
@@ -188,7 +188,7 @@ jobs:
               summary,
             }
             fs.writeFileSync("summary.json", JSON.stringify(data), "utf-8");
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         name: Upload output
         with:
           path: ${{ github.workspace }}/summary.json

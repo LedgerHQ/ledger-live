@@ -1,7 +1,7 @@
 import { AssertionError, fail } from "assert";
 import axios from "axios";
 import { delay } from "@ledgerhq/live-promise";
-import { CryptoCurrency, EthereumLikeInfo } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { EtherscanLikeExplorerUsedIncorrectly } from "../../../../errors";
 import * as ETHERSCAN_API from "../../../../api/explorer/etherscan";
@@ -20,6 +20,7 @@ import {
   etherscanInternalTransactionToOperations,
   etherscanOperationToOperations,
 } from "../../../../adapters";
+import { getCoinConfig } from "../../../../config";
 
 jest.mock("axios");
 jest.mock("@ledgerhq/live-promise");
@@ -27,23 +28,36 @@ jest.mock("@ledgerhq/live-promise");
   () => new Promise(resolve => setTimeout(resolve, 1)), // mocking the delay supposed to happen after each try
 );
 
+jest.mock("../../../../config");
+const mockGetConfig = jest.mocked(getCoinConfig);
+
 const currency: CryptoCurrency = {
   ...getCryptoCurrencyById("ethereum"),
   ethereumLikeInfo: {
     chainId: 1,
-    explorer: {
-      type: "etherscan",
-      uri: "mock",
-    },
-    node: {
-      type: "external",
-      uri: "mock",
-    },
   },
 };
+
 const account = makeAccount("0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d", currency);
 
 describe("EVM Family", () => {
+  beforeEach(() => {
+    mockGetConfig.mockImplementation((): any => {
+      return {
+        info: {
+          explorer: {
+            type: "etherscan",
+            uri: "mock",
+          },
+          node: {
+            type: "external",
+            uri: "mock",
+          },
+        },
+      };
+    });
+  });
+
   describe("api/explorer/etherscan.ts", () => {
     afterAll(() => {
       jest.restoreAllMocks();
@@ -115,6 +129,18 @@ describe("EVM Family", () => {
       });
 
       it("should throw an error if the currency is misconfigured", async () => {
+        mockGetConfig.mockImplementationOnce((): any => {
+          // no explorer
+          return {
+            info: {
+              node: {
+                type: "external",
+                uri: "mock",
+              },
+            },
+          };
+        });
+
         jest.spyOn(axios, "request").mockImplementation(async () => ({
           data: {
             result: etherscanCoinOperations,
@@ -122,13 +148,12 @@ describe("EVM Family", () => {
         }));
 
         try {
-          await await ETHERSCAN_API.getLastCoinOperations(
+          await ETHERSCAN_API.getLastCoinOperations(
             {
               ...currency,
               ethereumLikeInfo: {
                 chainId: 1,
-                // no explorer
-              } as EthereumLikeInfo,
+              },
             },
             account.freshAddress,
             account.id,
@@ -242,6 +267,18 @@ describe("EVM Family", () => {
       });
 
       it("should throw if the currency is misconfigured", async () => {
+        mockGetConfig.mockImplementationOnce((): any => {
+          // no explorer
+          return {
+            info: {
+              node: {
+                type: "external",
+                uri: "mock",
+              },
+            },
+          };
+        });
+
         jest.spyOn(axios, "request").mockImplementation(async () => ({
           data: {
             result: etherscanTokenOperations,
@@ -254,8 +291,7 @@ describe("EVM Family", () => {
               ...currency,
               ethereumLikeInfo: {
                 chainId: 1,
-                // no explorer
-              } as EthereumLikeInfo,
+              },
             },
             account.freshAddress,
             account.id,
@@ -378,6 +414,18 @@ describe("EVM Family", () => {
       });
 
       it("should return an empty array if the currency is misconfigured", async () => {
+        mockGetConfig.mockImplementationOnce((): any => {
+          // no explorer
+          return {
+            info: {
+              node: {
+                type: "external",
+                uri: "mock",
+              },
+            },
+          };
+        });
+
         jest.spyOn(axios, "request").mockImplementation(async () => ({
           data: {
             result: etherscanERC721Operations,
@@ -390,8 +438,7 @@ describe("EVM Family", () => {
               ...currency,
               ethereumLikeInfo: {
                 chainId: 1,
-                // no explorer
-              } as EthereumLikeInfo,
+              },
             },
             account.freshAddress,
             account.id,
@@ -514,6 +561,18 @@ describe("EVM Family", () => {
       });
 
       it("should return an empty array if the currency is misconfigured", async () => {
+        mockGetConfig.mockImplementationOnce((): any => {
+          // no explorer
+          return {
+            info: {
+              node: {
+                type: "external",
+                uri: "mock",
+              },
+            },
+          };
+        });
+
         jest.spyOn(axios, "request").mockImplementation(async () => ({
           data: {
             result: etherscanERC721Operations,
@@ -526,8 +585,7 @@ describe("EVM Family", () => {
               ...currency,
               ethereumLikeInfo: {
                 chainId: 1,
-                // no explorer
-              } as EthereumLikeInfo,
+              },
             },
             account.freshAddress,
             account.id,
@@ -673,6 +731,18 @@ describe("EVM Family", () => {
       });
 
       it("should throw if the currency is misconfigured", async () => {
+        mockGetConfig.mockImplementationOnce((): any => {
+          // no explorer
+          return {
+            info: {
+              node: {
+                type: "external",
+                uri: "mock",
+              },
+            },
+          };
+        });
+
         jest.spyOn(axios, "request").mockImplementation(async () => ({
           data: {
             result: etherscanInternalOperations,
@@ -685,8 +755,7 @@ describe("EVM Family", () => {
               ...currency,
               ethereumLikeInfo: {
                 chainId: 1,
-                // no explorer
-              } as EthereumLikeInfo,
+              },
             },
             account.freshAddress,
             account.id,

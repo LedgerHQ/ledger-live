@@ -124,7 +124,7 @@ export const TransportOpenUserCancelled = createCustomErrorClass("TransportOpenU
 export const TransportInterfaceNotAvailable = createCustomErrorClass(
   "TransportInterfaceNotAvailable",
 );
-export const TransportRaceCondition = createCustomErrorClass("TransportRaceCondition");
+export const TransportPendingOperation = createCustomErrorClass("TransportPendingOperation");
 export const TransportWebUSBGestureRequired = createCustomErrorClass(
   "TransportWebUSBGestureRequired",
 );
@@ -175,6 +175,9 @@ export const DBWrongPassword = createCustomErrorClass("DBWrongPassword");
 export const DBNotReset = createCustomErrorClass("DBNotReset");
 
 export const SequenceNumberError = createCustomErrorClass("SequenceNumberError");
+export const DisabledTransactionBroadcastError = createCustomErrorClass(
+  "DisabledTransactionBroadcastError",
+);
 
 // Represents the type of all the classes created with createCustomErrorClass
 export type CustomErrorClassType = ReturnType<typeof createCustomErrorClass>;

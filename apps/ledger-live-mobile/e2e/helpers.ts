@@ -41,11 +41,13 @@ export function tapByElement(elem: Detox.NativeElement) {
   return elem.tap();
 }
 
-export async function typeTextById(id: string | RegExp, text: string, focus = true) {
-  if (focus) {
-    await tapById(id);
-  }
-  return getElementById(id).typeText(text);
+export async function typeTextById(
+  id: string | RegExp,
+  text: string,
+  closeKeyboard = true,
+  focus = true,
+) {
+  await typeTextByElement(getElementById(id), text, closeKeyboard, focus);
 }
 
 export async function typeTextByElement(

@@ -19,7 +19,7 @@ class BitcoinLikeStorage implements IStorage {
   // accounting
   unspentUtxos: { [key: string]: Output[] } = {};
 
-  addressCache: Record<string, Promise<string>> = {};
+  addressCache: Record<string, string> = {};
 
   // only needed to handle the case when the input
   // is seen before the output (typically explorer
@@ -213,17 +213,17 @@ class BitcoinLikeStorage implements IStorage {
     if (!this.addressCache) {
       this.addressCache = {};
     }
-    this.addressCache[key] = Promise.resolve(address);
+    this.addressCache[key] = address;
   }
 
-  exportSync(): { txs: TX[]; addressCache: Record<string, Promise<string>> } {
+  exportSync(): { txs: TX[]; addressCache: Record<string, string> } {
     return {
       txs: this.txs,
       addressCache: this.addressCache,
     };
   }
 
-  loadSync(data: { txs: TX[]; addressCache: Record<string, Promise<string>> }) {
+  loadSync(data: { txs: TX[]; addressCache: Record<string, string> }) {
     this.txs = [];
     this.primaryIndex = {};
     this.accountIndex = {};
@@ -237,7 +237,19 @@ class BitcoinLikeStorage implements IStorage {
     });
     this.appendTxs(data.txs);
     this.addressCache = data.addressCache;
-    Base.addressCache = { ...Base.addressCache, ...this.addressCache };
+    const addressCacheConverted: Record<string, Promise<string>> = Object.keys(
+      this.addressCache,
+    ).reduce(
+      (acc, key) => ({
+        ...acc,
+        [key]: Promise.resolve(this.addressCache[key]),
+      }),
+      {},
+    );
+    Base.addressCache = {
+      ...Base.addressCache,
+      ...addressCacheConverted,
+    };
   }
 
   /**
@@ -245,7 +257,7 @@ class BitcoinLikeStorage implements IStorage {
    */
   async export(): Promise<{
     txs: TX[];
-    addressCache: Record<string, Promise<string>>;
+    addressCache: Record<string, string>;
   }> {
     return this.exportSync();
   }
@@ -253,7 +265,7 @@ class BitcoinLikeStorage implements IStorage {
   /**
    * load account data(txs, UTXOs, index...) from app.json
    */
-  async load(data: { txs: TX[]; addressCache: Record<string, Promise<string>> }): Promise<void> {
+  async load(data: { txs: TX[]; addressCache: Record<string, string> }): Promise<void> {
     return this.loadSync(data);
   }
 

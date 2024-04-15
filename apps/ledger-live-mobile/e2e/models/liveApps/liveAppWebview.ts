@@ -46,7 +46,12 @@ export default class LiveAppWebview {
 
     const response = firstValueFrom(
       e2eBridgeServer.pipe(
-        filter(msg => msg.type === "walletAPIResponse"),
+        filter(
+          (
+            msg,
+          ): msg is { type: "walletAPIResponse"; id: string; payload: Record<string, unknown> } =>
+            msg.type === "walletAPIResponse",
+        ),
         first(),
         map(msg => msg.payload),
       ),

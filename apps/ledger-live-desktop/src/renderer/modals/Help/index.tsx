@@ -17,6 +17,8 @@ import { SideDrawer } from "~/renderer/components/SideDrawer";
 import Box from "~/renderer/components/Box";
 import { urls } from "~/config/urls";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+
 const ItemContainer = styled.a`
   flex: 1;
   display: flex;
@@ -75,6 +77,7 @@ const Item = ({
 };
 const HelpSideDrawer = ({ isOpened, onClose }: { isOpened: boolean; onClose: () => void }) => {
   const { t } = useTranslation();
+  const chatbotSupportFeature = useFeature("lldChatbotSupport");
 
   const gettingStartedUrl = useLocalizedUrl(urls.helpModal.gettingStarted);
   const helpCenterUrl = useLocalizedUrl(urls.helpModal.helpCenter);
@@ -95,12 +98,21 @@ const HelpSideDrawer = ({ isOpened, onClose }: { isOpened: boolean; onClose: () 
             url={gettingStartedUrl}
             Icon={IconNano}
           />
-          <Item
-            title={t("help.helpCenter.title")}
-            desc={t("help.helpCenter.desc")}
-            url={helpCenterUrl}
-            Icon={IconHelp}
-          />
+          {chatbotSupportFeature?.enabled ? (
+            <Item
+              title={t("settings.help.chatbot")}
+              desc={t("help.helpCenter.desc")}
+              url={urls.chatbot}
+              Icon={IconHelp}
+            />
+          ) : (
+            <Item
+              title={t("help.helpCenter.title")}
+              desc={t("help.helpCenter.desc")}
+              url={helpCenterUrl}
+              Icon={IconHelp}
+            />
+          )}
           <Item
             title={t("help.ledgerAcademy.title")}
             desc={t("help.ledgerAcademy.desc")}

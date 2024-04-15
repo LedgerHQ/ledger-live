@@ -2,34 +2,33 @@ import React from "react";
 import { PropsBody, PropsBodyElem } from "../types";
 import { Flex, Text } from "@ledgerhq/react-ui";
 import styled from "@ledgerhq/react-ui/components/styled";
-import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import FormattedVal from "~/renderer/components/FormattedVal";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import CurrencyUnitValue from "~/renderer/components/CurrencyUnitValue";
-import { usePrice } from "~/renderer/hooks/usePrice";
 import { MissingData } from "./MissingData";
 import { fontSizes } from "@ledgerhq/react-ui/styles/theme";
+import { counterValueCurrencySelector, localeSelector } from "~/renderer/reducers/settings";
+import { useSelector } from "react-redux";
+import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
+import { getChangePercentage } from "~/renderer/screens/dashboard/MarketPerformanceWidget/utils";
 
-export function WidgetList({ data, order }: PropsBody) {
+export function WidgetList({ data, order, range, top }: PropsBody) {
   const noData = data.length === 0;
 
   return (
     <Flex flexDirection="column" flex={1} height={275}>
       {noData ? (
-        <MissingData order={order} />
+        <MissingData order={order} range={range} top={top} />
       ) : (
-        data.map((elem, i) => <WidgetRow key={i} index={i + 1} data={elem} isFirst={i === 0} />)
+        data.map((elem, i) => (
+          <WidgetRow key={i} index={i + 1} data={elem} isFirst={i === 0} range={range} />
+        ))
       )}
     </Flex>
   );
 }
 
-function WidgetRow({ data, index, isFirst }: PropsBodyElem) {
-  const { currency, change } = data;
-
-  const cryptCurrency = currency as CryptoCurrency;
-  const { counterValue, counterValueCurrency } = usePrice(cryptCurrency);
-  const subMagnitude = counterValue && counterValue.lt(1) ? 1 : 0;
+function WidgetRow({ data, index, isFirst, range }: PropsBodyElem) {
+  const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const locale = useSelector(localeSelector);
 
   return (
     <Flex alignItems="center" mt={isFirst ? 0 : 2} justifyContent="space-between">
@@ -39,14 +38,7 @@ function WidgetRow({ data, index, isFirst }: PropsBodyElem) {
         </Text>
 
         <CryptoCurrencyIconWrapper>
-          <CryptoCurrencyIcon
-            currency={currency}
-            size={32}
-            circle
-            fallback={
-              <img width="32px" height="32px" src={cryptCurrency.ticker} alt={"currency logo"} />
-            }
-          />
+          <img width="32px" height="32px" src={data.image} alt={"currency logo"} />
         </CryptoCurrencyIconWrapper>
 
         <Flex ml={2} overflow="hidden" flexDirection="column" alignItems="left">
@@ -56,7 +48,7 @@ function WidgetRow({ data, index, isFirst }: PropsBodyElem) {
             color="neutral.c100"
             fontSize={fontSizes.paragraph}
           >
-            {cryptCurrency.name}
+            {data.name}
           </EllipsisText>
 
           <EllipsisText
@@ -65,24 +57,25 @@ function WidgetRow({ data, index, isFirst }: PropsBodyElem) {
             fontWeight="medium"
             fontSize={fontSizes.small}
           >
-            {cryptCurrency.ticker.toUpperCase()}
+            {data.ticker.toUpperCase()}
           </EllipsisText>
         </Flex>
       </Flex>
 
       <Flex flexDirection="column">
-        <FormattedVal
-          isPercent
-          isNegative
-          val={parseFloat((Math.round(change * 10000) / 100).toFixed(2))}
-          inline
-          withIcon
-          style={{
-            fontSize: fontSizes.paragraph,
-            fontWeight: "medium",
-          }}
-        />
-
+        <Text textAlign="right">
+          <FormattedVal
+            isPercent
+            isNegative
+            val={Number(parseFloat(String(getChangePercentage(data, range))).toFixed(2))}
+            inline
+            withIcon
+            style={{
+              fontSize: fontSizes.paragraph,
+              fontWeight: "medium",
+            }}
+          />
+        </Text>
         <EllipsisText
           variant="small"
           textAlign="right"
@@ -90,17 +83,13 @@ function WidgetRow({ data, index, isFirst }: PropsBodyElem) {
           fontWeight="medium"
           fontSize={fontSizes.small}
         >
-          {!counterValue ? (
-            "-"
-          ) : (
-            <CurrencyUnitValue
-              unit={counterValueCurrency.units[0]}
-              value={counterValue || 0}
-              disableRounding={!!subMagnitude}
-              subMagnitude={subMagnitude}
-              showCode
-            />
-          )}
+          {!data.price
+            ? "-"
+            : counterValueFormatter({
+                value: Number(parseFloat(String(data.price)).toFixed(data.price > 1 ? 2 : 8)),
+                currency: counterValueCurrency.ticker,
+                locale,
+              })}
         </EllipsisText>
       </Flex>
     </Flex>

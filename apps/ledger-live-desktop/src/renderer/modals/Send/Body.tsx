@@ -33,6 +33,7 @@ import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmati
 import StepWarning, { StepWarningFooter } from "./steps/StepWarning";
 import { St, StepId } from "./types";
 import { getLLDCoinFamily } from "~/renderer/families";
+import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 
 export type Data = {
   account?: AccountLike | undefined | null;
@@ -179,7 +180,8 @@ const Body = ({
     const nft = getNFT(contract, tokenId, mainAccount.nfts);
     const nftCapabilities = getNftCapabilities(nft);
 
-    return !currency.ethereumLikeInfo?.gasTracker && !nftCapabilities.hasQuantity;
+    const config = getCurrencyConfiguration(currency);
+    return !config?.gasTracker && !nftCapabilities.hasQuantity;
   }, [isNFTSend, params?.parentAccount, params?.account, accounts, maybeNFTId]);
 
   const [steps] = useState(() => createSteps(params.disableBacks, shouldSkipAmount));

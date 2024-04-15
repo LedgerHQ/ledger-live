@@ -5,6 +5,10 @@ import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
 
 LiveConfig.setConfig(liveConfig);
+LiveConfig.setAppinfo({
+  platform: "web",
+});
+
 setWalletAPIVersion(WALLET_API_VERSION);
 
 setSupportedCurrencies([

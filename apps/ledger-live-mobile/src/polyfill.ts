@@ -37,6 +37,23 @@ if (!console.assert) {
   console.assert = () => {};
 }
 
+Promise.allSettled =
+  Promise.allSettled ||
+  ((promises: Promise<unknown>[]) =>
+    Promise.all(
+      promises.map(p =>
+        p
+          .then(value => ({
+            status: "fulfilled",
+            value,
+          }))
+          .catch(reason => ({
+            status: "rejected",
+            reason,
+          })),
+      ),
+    ));
+
 process.browser = true; // for readable-stream/lib/_stream_writable.js
 
 // FIXME shim want to set it to false tho...

@@ -134,6 +134,15 @@ export default (
     return customImageUri;
   }, [metadata]);
 
+  const devicesModelList = useSelector(devicesModelListSelector);
+  const customImageDeviceModelIds = devicesModelList.filter(deviceModelId =>
+    isCustomLockScreenSupported(deviceModelId),
+  );
+  // if user previously connected e.g. a Stax and a Europa we don't pre-select a device model
+  const customImageDeviceModelId =
+    customImageDeviceModelIds.length === 1 ? customImageDeviceModelIds[0] : null;
+  const showCustomImageButton = Boolean(customImageUri) && customImageDeviceModelIds.length > 0;
+
   const customImage = useMemo(() => {
     const img: ContextMenuItemType = {
       id: "custom-image",
@@ -145,6 +154,7 @@ export default (
             CustomImage,
             {
               imageUri: customImageUri,
+              deviceModelId: customImageDeviceModelId,
               isFromNFTEntryPoint: true,
               reopenPreviousDrawer: isInsideDrawer
                 ? () =>
@@ -164,27 +174,11 @@ export default (
       },
     };
     return img;
-  }, [account, customImageUri, isInsideDrawer, nft.id, t]);
+  }, [account, customImageDeviceModelId, customImageUri, isInsideDrawer, nft.id, t]);
 
-  const devicesModelList = useSelector(devicesModelListSelector);
   const links = useMemo(() => {
     const metadataLinks = linksPerCurrency[account.currency.id]?.(t, metadata?.links) || [];
-    return [
-      ...metadataLinks,
-      ...(devicesModelList?.some(deviceModelId => isCustomLockScreenSupported(deviceModelId)) &&
-      customImageUri
-        ? [customImage]
-        : []),
-      hideCollection,
-    ];
-  }, [
-    account.currency.id,
-    t,
-    metadata?.links,
-    devicesModelList,
-    customImageUri,
-    customImage,
-    hideCollection,
-  ]);
+    return [...metadataLinks, ...(showCustomImageButton ? [customImage] : []), hideCollection];
+  }, [account.currency.id, t, metadata?.links, showCustomImageButton, customImage, hideCollection]);
   return links;
 };

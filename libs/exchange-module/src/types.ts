@@ -54,7 +54,6 @@ export type ExchangeCompleteSwapParams = ExchangeCompleteBaseParams & {
   exchangeType: "SWAP";
   toAccountId: string;
   swapId: string;
-  rate: number;
 };
 
 export type ExchangeCompleteParams =

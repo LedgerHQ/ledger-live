@@ -158,7 +158,7 @@ const UpdateModal = ({
     } else if (cancel || isDeviceDisconnected) {
       return <Cancel onContinue={onContinue} onCancel={onRequestClose} />;
     } else if (showDisclaimer) {
-      return <Disclaimer onContinue={() => setShowDisclaimer(false)} t={t} firmware={firmware} />;
+      return <Disclaimer onContinue={() => setShowDisclaimer(false)} firmware={firmware} />;
     } else {
       return (
         <FlowStepper.Indexed

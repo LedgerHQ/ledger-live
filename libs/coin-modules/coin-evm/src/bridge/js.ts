@@ -19,6 +19,7 @@ import { hydrate, preload } from "../preload";
 import nftResolvers from "../nftResolvers";
 import { broadcast } from "../broadcast";
 import resolver from "../hw-getAddress";
+import { setCoinConfig, type CoinConfig } from "../config";
 
 export function buildCurrencyBridge(
   signerContext: SignerContext<EvmSigner, EvmAddress | EvmSignature>,
@@ -61,7 +62,10 @@ export function buildAccountBridge(
 
 export function createBridges(
   signerContext: SignerContext<EvmSigner, EvmAddress | EvmSignature>,
+  coinConfig: CoinConfig,
 ): Bridge<EvmTransaction> {
+  setCoinConfig(coinConfig);
+
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),

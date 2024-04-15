@@ -16,7 +16,7 @@ import {
 import { Transaction } from "../generated/types";
 import { prepareMessageToSign } from "../hw/signMessage/index";
 import { getAccountBridge } from "../bridge";
-import { Exchange } from "../exchange/swap/types";
+import { Exchange } from "../exchange/types";
 import { findTokenById } from "@ledgerhq/cryptoassets";
 
 export function translateContent(content: string | TranslatableString, locale = "en"): string {

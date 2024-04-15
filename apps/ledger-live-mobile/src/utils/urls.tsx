@@ -1,5 +1,7 @@
 export const urls = {
   faq: "https://support.ledgerwallet.com/hc/en-us?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=faq",
+  chatbot:
+    "https://live-chat-static.sprinklr.com/test-html/index.html?appId=633307d2cd91267be7d0eea7_app_300078095&env=prod3&skin=MODERN&variant=PAGE&scope=CONVERSATION",
   contact:
     "https://support.ledger.com/hc/en-us/requests/new?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=contact",
   terms: {
@@ -13,6 +15,7 @@ export const urls = {
     zh: "https://shop.ledger.com/zh-cn/pages/ledger-live-terms-of-use",
     ko: "https://shop.ledger.com/ko/pages/ledger-live-terms-of-use",
     ru: "https://shop.ledger.com/ru/pages/ledger-live-terms-of-use",
+    pt: "https://shop.ledger.com/pt-br/pages/ledger-live-terms-of-use",
   },
   privacyPolicy: {
     en: "https://www.ledger.com/privacy-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
@@ -25,6 +28,7 @@ export const urls = {
     zh: "https://www.ledger.com/zh-hans/privacy-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
     ko: "https://www.ledger.com/ko/privacy-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
     ru: "https://www.ledger.com/ru/privacy-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
+    pt: "https://www.ledger.com/pt-br/privacy-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
   },
   contactSupportWebview: {
     ar: "https://support.ledger.com/hc/ar/articles/4423020306705-%D8%AA%D9%88%D8%A7%D8%B5%D9%84-%D9%85%D8%B9%D9%86%D8%A7?support=true",

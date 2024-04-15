@@ -11,13 +11,17 @@ import PasswordButton from "./PasswordButton";
 import PasswordAutoLockSelect from "./PasswordAutoLockSelect";
 import SentryLogsButton from "./SentryLogsButton";
 import ShareAnalyticsButton from "./ShareAnalyticsButton";
+import SharePersonnalRecoButtonFF from "./SharePersonalRecoButtonFF";
+import ShareAnalyticsButtonFF from "./ShareAnalyticsButtonFF";
 import { hasPasswordSelector } from "~/renderer/reducers/application";
 import { useInitSupportedCounterValues } from "~/renderer/hooks/useInitSupportedCounterValues";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const SectionGeneral = () => {
   const hasPassword = useSelector(hasPasswordSelector);
   const { t } = useTranslation();
   useInitSupportedCounterValues();
+  const lldAnalyticsOptInPromptFlag = useFeature("lldAnalyticsOptInPrompt");
 
   return (
     <>
@@ -68,9 +72,26 @@ const SectionGeneral = () => {
         >
           <SentryLogsButton />
         </Row>
-        <Row title={t("settings.profile.analytics")} desc={t("settings.profile.analyticsDesc")}>
-          <ShareAnalyticsButton />
-        </Row>
+        {lldAnalyticsOptInPromptFlag?.enabled ? (
+          <>
+            <Row
+              title={t("analyticsOptInPrompt.profileSettings.analytics")}
+              desc={t("analyticsOptInPrompt.profileSettings.analyticsDesc")}
+            >
+              <ShareAnalyticsButtonFF />
+            </Row>
+            <Row
+              title={t("analyticsOptInPrompt.profileSettings.personalizedExp")}
+              desc={t("analyticsOptInPrompt.profileSettings.personalizedExpDesc")}
+            >
+              <SharePersonnalRecoButtonFF />
+            </Row>
+          </>
+        ) : (
+          <Row title={t("settings.profile.analytics")} desc={t("settings.profile.analyticsDesc")}>
+            <ShareAnalyticsButton />
+          </Row>
+        )}
       </Body>
     </>
   );

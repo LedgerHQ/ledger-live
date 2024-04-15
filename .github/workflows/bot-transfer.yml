@@ -25,7 +25,7 @@ permissions:
 
 jobs:
   run-bot:
-    runs-on: [ledger-live-medium-linux]
+    runs-on: [ledger-live-medium]
     steps:
       - name: generate token
         id: generate-token
@@ -42,7 +42,7 @@ jobs:
           token: ${{ steps.generate-token.outputs.token }}
           path: coin-apps
       - name: Setup the toolchain
-        uses: ./tools/actions/composites/setup-toolchain
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
@@ -69,7 +69,7 @@ jobs:
         timeout-minutes: 200
       - name: upload logs
         if: failure() || success()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: bot-transfer.txt
           path: bot-transfer.txt

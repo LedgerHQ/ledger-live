@@ -209,7 +209,7 @@ const prepareTransaction = async (a: Account, t: Transaction): Promise<Transacti
 
   if (!networkInfo) {
     try {
-      const info = await getServerInfo(a.endpointConfig);
+      const info = await getServerInfo();
       const serverFee = parseAPIValue(info.info.validated_ledger.base_fee_xrp.toString());
       networkInfo = {
         family: "ripple",
@@ -239,7 +239,7 @@ const getTransactionStatus = async (a: Account, t: Transaction) => {
   const warnings: {
     feeTooHigh?: Error;
   } = {};
-  const r = await getServerInfo(a.endpointConfig);
+  const r = await getServerInfo();
   const reserveBaseXRP = parseAPIValue(r.info.validated_ledger.reserve_base_xrp.toString());
   const estimatedFees = new BigNumber(t.fee || 0);
   const totalSpent = new BigNumber(t.amount).plus(estimatedFees);
@@ -308,7 +308,7 @@ const estimateMaxSpendable = async ({
   transaction,
 }): Promise<BigNumber> => {
   const mainAccount = getMainAccount(account, parentAccount);
-  const r = await getServerInfo(mainAccount.endpointConfig);
+  const r = await getServerInfo();
   const reserveBaseXRP = parseAPIValue(r.info.validated_ledger.reserve_base_xrp.toString());
   const t = await prepareTransaction(mainAccount, {
     ...createTransaction(),

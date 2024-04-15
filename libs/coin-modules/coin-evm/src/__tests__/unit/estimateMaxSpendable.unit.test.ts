@@ -5,15 +5,15 @@ import { makeAccount, makeTokenAccount } from "../fixtures/common.fixtures";
 import { EvmTransactionEIP1559, EvmTransactionLegacy } from "../../types";
 import { estimateMaxSpendable } from "../../estimateMaxSpendable";
 import * as nodeApi from "../../api/node/rpc.common";
+import { getCoinConfig } from "../../config";
+
+jest.mock("../../config");
+const mockGetConfig = jest.mocked(getCoinConfig);
 
 const currency: CryptoCurrency = {
   ...getCryptoCurrencyById("ethereum"),
   ethereumLikeInfo: {
     ...getCryptoCurrencyById("ethereum").ethereumLikeInfo,
-    node: {
-      type: "external",
-      uri: "any-uri",
-    },
   } as any,
 };
 const tokenAccount = {
@@ -34,6 +34,23 @@ jest.spyOn(nodeApi, "getFeeData").mockImplementation(async () => ({
 }));
 
 describe("EVM Family", () => {
+  beforeAll(() => {
+    mockGetConfig.mockImplementation((): any => {
+      return {
+        info: {
+          node: {
+            type: "external",
+            uri: "https://my-rpc.com",
+          },
+          explorer: {
+            type: "etherscan",
+            uri: "https://api.com",
+          },
+        },
+      };
+    });
+  });
+
   describe("estimateMaxSpendable.ts", () => {
     it("should get a max spendable of the account balance minus the EIP1559 coin tx", async () => {
       const eip1559Tx: EvmTransactionEIP1559 = {

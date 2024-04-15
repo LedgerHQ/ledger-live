@@ -1,4 +1,4 @@
-import { getElementById, typeTextByElement } from "../helpers";
+import { getElementById, typeTextByElement, waitForElementById } from "../helpers";
 import { Unit } from "@ledgerhq/types-cryptoassets";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { BigNumber } from "bignumber.js";
@@ -8,6 +8,7 @@ export default class Common {
   searchBar = () => getElementById(this.searchBarId);
 
   async performSearch(text: string) {
+    await waitForElementById(this.searchBarId);
     return typeTextByElement(this.searchBar(), text, false);
   }
 }

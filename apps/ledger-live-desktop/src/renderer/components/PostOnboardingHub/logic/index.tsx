@@ -45,10 +45,13 @@ const customImage: PostOnboardingAction = {
   titleCompleted: "customImage.postOnboarding.title",
   description: "customImage.postOnboarding.description",
   actionCompletedPopupLabel: "customImage.postOnboarding.actionCompletedPopupLabel",
-  startAction: () =>
+  startAction: ({ deviceModelId }) =>
     setDrawer(
       CustomImage,
-      { isFromPostOnboardingEntryPoint: true },
+      {
+        isFromPostOnboardingEntryPoint: true,
+        deviceModelId,
+      },
       { forceDisableFocusTrap: true },
     ),
   buttonLabelForAnalyticsEvent: "Set lock screen picture",

@@ -9,7 +9,7 @@ import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import NavigationScrollView from "~/components/NavigationScrollView";
 import InstallSetOfApps from "~/components/DeviceAction/InstallSetOfApps";
-import SelectDevice from "~/components/SelectDevice";
+import SelectDevice2 from "~/components/SelectDevice2";
 
 export default function DebugMultiAppInstall() {
   const feature = useFeature("deviceInitialApps");
@@ -126,7 +126,7 @@ export default function DebugMultiAppInstall() {
           />
         ) : (
           <Flex>
-            <SelectDevice onSelect={setDevice} />
+            <SelectDevice2 onSelect={setDevice} requestToSetHeaderOptions={() => undefined} />
             <Button type="main" onPress={onOverrideDependencies}>
               {override ? "Use app list from feature flag" : "Use known bad app list"}
             </Button>

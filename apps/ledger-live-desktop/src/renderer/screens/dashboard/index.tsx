@@ -32,6 +32,8 @@ import ActionContentCards from "~/renderer/screens/dashboard/ActionContentCards"
 import MarketPerformanceWidget from "~/renderer/screens/dashboard/MarketPerformanceWidget";
 import { useMarketPerformanceFeatureFlag } from "~/renderer/actions/marketperformance";
 import { Grid } from "@ledgerhq/react-ui";
+import AnalyticsOptInPrompt from "LLD/AnalyticsOptInPrompt/screens";
+import { useDisplayOnPortfolioAnalytics } from "LLD/AnalyticsOptInPrompt/hooks/useDisplayOnPortfolio";
 import Carousel from "~/renderer/components/Carousel";
 import useActionCards from "~/renderer/hooks/useActionCards";
 
@@ -53,6 +55,7 @@ export default function DashboardPage() {
   const hasInstalledApps = useSelector(hasInstalledAppsSelector);
   const totalAccounts = accounts.length;
   const portfolioExchangeBanner = useFeature("portfolioExchangeBanner");
+  const lldActionCarousel = useFeature("lldActionCarousel");
   const totalCurrencies = useMemo(() => uniq(accounts.map(a => a.currency.id)).length, [accounts]);
   const totalOperations = useMemo(
     () => accounts.reduce((sum, a) => sum + a.operations.length, 0),
@@ -80,19 +83,23 @@ export default function DashboardPage() {
     useMarketPerformanceFeatureFlag();
   const isActionCardsCampainRunning = useActionCards().length > 0;
 
+  const { isFeatureFlagsAnalyticsPrefDisplayed, analyticsOptInPromptProps } =
+    useDisplayOnPortfolioAnalytics();
+
   return (
     <>
       <TopBannerContainer>
         <ClearCacheBanner />
         <CurrencyDownStatusAlert currencies={currencies} hideStatusIncidents />
       </TopBannerContainer>
-      <Box gap={"20px"}>
-        <RecoverBanner />
-        {isActionCardsCampainRunning ? (
-          <ActionContentCards variant={ABTestingVariants.variantA} />
-        ) : (
-          <Carousel />
-        )}
+      <Box>
+        <RecoverBanner>
+          {isActionCardsCampainRunning && lldActionCarousel?.enabled ? (
+            <ActionContentCards variant={ABTestingVariants.variantA} />
+          ) : (
+            <Carousel />
+          )}
+        </RecoverBanner>
       </Box>
       {isPostOnboardingBannerVisible && <PostOnboardingHubBanner />}
       <FeaturedButtons />
@@ -144,6 +151,9 @@ export default function DashboardPage() {
           <EmptyStateAccounts />
         )}
       </Box>
+      {isFeatureFlagsAnalyticsPrefDisplayed && (
+        <AnalyticsOptInPrompt {...analyticsOptInPromptProps} />
+      )}
     </>
   );
 }

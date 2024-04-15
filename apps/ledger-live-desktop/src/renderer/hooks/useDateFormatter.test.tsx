@@ -9,7 +9,17 @@ import * as redux from "react-redux";
 import { Provider } from "react-redux";
 import { combineReducers, legacy_createStore as createStore } from "redux";
 import settings from "../reducers/settings";
-import { dateEq, getDatesAround, useDateFormatter, useCalendarFormatter } from "./useDateFormatter";
+import {
+  dateEq,
+  getDatesAround,
+  useDateFormatter,
+  useCalendarFormatter,
+  useTechnicalDateTimeFn,
+  useTechnicalDateFn,
+  relativeTime,
+  fromNow,
+} from "./useDateFormatter";
+import Prando from "prando";
 
 const MILLISECOND = 1000;
 const SECOND = 1 * MILLISECOND;
@@ -195,5 +205,78 @@ describe("useCalendarFormatter", () => {
     expect(f(yesterday)).toEqual("1/31/2000 – calendar.yesterday");
     expect(f(today)).toEqual("2/1/2000 – calendar.today");
     expect(f(tomorrow)).toEqual("2/2/2000 – calendar.tomorrow");
+  });
+});
+
+describe("technical dates", () => {
+  test("useTechnicalDateTimeFn", () => {
+    const d1 = new Date("January 31, 2001 10:02:09 UTC");
+    const d2 = new Date("February 1, 2003 23:07:10 UTC");
+    const d3 = new Date("March 2, 2020 10:00:00 UTC");
+
+    const { result } = renderHook(() => useTechnicalDateTimeFn());
+    const f = result.current;
+
+    expect(f(d1)).toEqual("2001.01.31-10.02.09");
+    expect(f(d2)).toEqual("2003.02.01-23.07.10");
+    expect(f(d3)).toEqual("2020.03.02-10.00.00");
+  });
+
+  test("useTechnicalDateFn", () => {
+    const d1 = new Date("January 31, 2001 10:02:09 UTC");
+    const d2 = new Date("February 1, 2003 23:07:10 UTC");
+    const d3 = new Date("March 2, 2020 10:00:00 UTC");
+
+    const { result } = renderHook(() => useTechnicalDateFn());
+    const f = result.current;
+
+    expect(f(d1)).toEqual("2001.01.31");
+    expect(f(d2)).toEqual("2003.02.01");
+    expect(f(d3)).toEqual("2020.03.02");
+  });
+});
+
+describe("relative time", () => {
+  test("relativeTime in the past", () => {
+    const now = new Date();
+    const d1 = new Date(now.getTime() - 23 * 1000);
+    const d2 = new Date(now.getTime() - 3 * 60 * 1000);
+    const d3 = new Date(now.getTime() - 2 * 60 * 60 * 1000);
+    const d4 = new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000);
+    const d5 = new Date(now.getTime() - 2 * 30 * 24 * 60 * 60 * 1000);
+    const d6 = new Date(now.getTime() - 2 * 365 * 24 * 60 * 60 * 1000);
+    expect(relativeTime(now, d1)).toEqual("23 seconds ago");
+    expect(relativeTime(now, d2)).toEqual("3 minutes ago");
+    expect(relativeTime(now, d3)).toEqual("2 hours ago");
+    expect(relativeTime(now, d4)).toEqual("2 days ago");
+    expect(relativeTime(now, d5)).toEqual("2 months ago");
+    expect(relativeTime(now, d6)).toEqual("2 years ago");
+  });
+
+  test("relativeTime in the future", () => {
+    const now = new Date();
+    const d1 = new Date(now.getTime() + 23 * 1000);
+    const d2 = new Date(now.getTime() + 3 * 60 * 1000);
+    const d3 = new Date(now.getTime() + 2 * 60 * 60 * 1000);
+    const d4 = new Date(now.getTime() + 2 * 24 * 60 * 60 * 1000);
+    const d5 = new Date(now.getTime() + 2 * 30 * 24 * 60 * 60 * 1000);
+    const d6 = new Date(now.getTime() + 2 * 365 * 24 * 60 * 60 * 1000);
+    expect(relativeTime(now, d1)).toEqual("in 23 seconds");
+    expect(relativeTime(now, d2)).toEqual("in 3 minutes");
+    expect(relativeTime(now, d3)).toEqual("in 2 hours");
+    expect(relativeTime(now, d4)).toEqual("in 2 days");
+    expect(relativeTime(now, d5)).toEqual("in 2 months");
+    expect(relativeTime(now, d6)).toEqual("in 2 years");
+  });
+
+  test("fromNow is equivalent to relativeTime", () => {
+    const now = new Date();
+    const prando = new Prando();
+    for (let i = 0; i < 100; i++) {
+      const d = new Date(
+        now.getTime() + prando.nextInt(-500 * 24 * 60 * 60 * 1000, 500 * 24 * 60 * 60 * 1000),
+      );
+      expect(relativeTime(now, d)).toEqual(fromNow(d));
+    }
   });
 });

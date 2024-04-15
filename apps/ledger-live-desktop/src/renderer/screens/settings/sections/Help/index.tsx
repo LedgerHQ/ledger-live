@@ -12,17 +12,27 @@ import RepairDeviceButton from "./RepairDeviceButton";
 import LaunchOnboardingBtn from "./LaunchOnboardingBtn";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { urls } from "~/config/urls";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const SectionHelp = () => {
   const { t } = useTranslation();
 
   const urlFaq = useLocalizedUrl(urls.faq);
+  const chatbotSupportFeature = useFeature("lldChatbotSupport");
 
   return (
     <>
       <TrackPage category="Settings" name="Help" />
       <Body>
-        <RowItem title={t("settings.help.faq")} desc={t("settings.help.faqDesc")} url={urlFaq} />
+        {chatbotSupportFeature?.enabled ? (
+          <RowItem
+            title={t("settings.help.chatbot")}
+            desc={t("settings.help.faqDesc")}
+            url={urls.chatbot}
+          />
+        ) : (
+          <RowItem title={t("settings.help.faq")} desc={t("settings.help.faqDesc")} url={urlFaq} />
+        )}
         <Row
           title={t("settings.profile.softResetTitle")}
           desc={t("settings.profile.softResetDesc")}

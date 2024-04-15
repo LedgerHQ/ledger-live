@@ -1,16 +1,11 @@
-import React, { useMemo, useCallback } from "react";
+import React, { useEffect } from "react";
 import { Flex, Button as BaseButton, Text, SearchInput, Dropdown } from "@ledgerhq/react-ui";
-import { useSelector } from "react-redux";
-import { starredMarketCoinsSelector } from "~/renderer/reducers/settings";
-import { useTranslation } from "react-i18next";
-import { useMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import styled from "styled-components";
-import CounterValueSelect from "./CountervalueSelect";
-import MarketList from "./MarketList";
-import SideDrawerFilter from "./SideDrawerFilter";
-import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
+import CounterValueSelect from "./components/CountervalueSelect";
+import SideDrawerFilter from "./components/SideDrawerFilter";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { useInitSupportedCounterValues } from "~/renderer/hooks/useInitSupportedCounterValues";
+import MarketList from "./MarketList";
+import { useMarket } from "./hooks/useMarket";
 
 const Container = styled(Flex).attrs({
   flex: "1",
@@ -60,56 +55,44 @@ const SelectBarContainer = styled(Flex)`
 `;
 
 export default function Market() {
-  const { t } = useTranslation();
   const {
-    requestParams,
     refresh,
-    counterCurrency,
     setCounterCurrency,
+    updateSearch,
+    updateTimeRange,
+    toggleFilterByStarredAccounts,
+    toggleLiveCompatible,
+    resetMarketPage,
+    refetchData,
+    marketParams,
     supportedCounterCurrencies,
-  } = useMarketData();
-  const { search = "", range, starred = [], liveCompatible, order } = requestParams;
-  const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
-  const starFilterOn = starred.length > 0;
+    timeRangeValue,
+    starFilterOn,
+    starredMarketCoins,
+    timeRanges,
+    refreshRate,
+    marketCurrentPage,
+    t,
+  } = useMarket();
 
-  useInitSupportedCounterValues();
+  /**
+   * Reset the page to 1 when the component mounts to only refetch first page
+   * */
+  useEffect(() => {
+    resetMarketPage(marketParams.page ?? 1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const updateSearch = useCallback(
-    (value: string) => {
-      refresh({ search: value, starred: [], liveCompatible: false });
-    },
-    [refresh],
-  );
+  /**
+   * Try to Refetch data every REFRESH_RATE time
+   */
+  useEffect(() => {
+    const intervalId = setInterval(() => refetchData(marketCurrentPage ?? 1), refreshRate);
 
-  const updateTimeRange = useCallback(
-    (e: { value: string; label: string } | null) => {
-      if (!e) return;
-      const { value } = e;
-      refresh({ range: value });
-    },
-    [refresh],
-  );
+    return () => clearInterval(intervalId);
+  }, [marketCurrentPage, refetchData, refreshRate]);
 
-  const toggleFilterByStarredAccounts = useCallback(() => {
-    if (starredMarketCoins.length > 0 || starFilterOn) {
-      const starred = starFilterOn ? [] : starredMarketCoins;
-      refresh({ starred, search: "" });
-    }
-  }, [refresh, starFilterOn, starredMarketCoins]);
-
-  const toggleLiveCompatible = useCallback(() => {
-    refresh({ liveCompatible: !liveCompatible });
-  }, [liveCompatible, refresh]);
-
-  const timeRanges = useMemo(
-    () =>
-      Object.keys(rangeDataTable)
-        .filter(k => k !== "1h")
-        .map(value => ({ value, label: t(`market.range.${value}`) })),
-    [t],
-  );
-
-  const timeRangeValue = timeRanges.find(({ value }) => value === range);
+  const { order, range, counterCurrency, search = "", liveCompatible } = marketParams;
 
   return (
     <Container>
@@ -172,10 +155,7 @@ export default function Market() {
           </Flex>
         </SelectBarContainer>
       </Flex>
-      <MarketList
-        starredMarketCoins={starredMarketCoins}
-        toggleStarredAccounts={toggleFilterByStarredAccounts}
-      />
+      <MarketList {...useMarket()} />
     </Container>
   );
 }

@@ -7,12 +7,16 @@ import { getPortfolioRangeConfig } from "@ledgerhq/live-countervalues/portfolio"
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { ABTestingVariants } from "@ledgerhq/types-live";
+import { BASIC_REFETCH } from "../screens/market/utils";
 
 export function useMarketPerformanceFeatureFlag() {
   const marketperformanceWidgetDesktop = useFeature("marketperformanceWidgetDesktop");
   return {
     enabled: marketperformanceWidgetDesktop?.enabled || false,
     variant: marketperformanceWidgetDesktop?.params?.variant || ABTestingVariants.variantA,
+    refreshRate: marketperformanceWidgetDesktop?.params?.refreshRate || BASIC_REFETCH,
+    top: marketperformanceWidgetDesktop?.params?.top || 50,
+    supported: marketperformanceWidgetDesktop?.params?.supported || false,
   };
 }
 

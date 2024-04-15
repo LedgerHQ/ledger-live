@@ -1,14 +1,29 @@
 import { isTransactionConfirmed } from "../../../editTransaction/isTransactionConfirmed";
 import * as nodeApi from "../../../api/node/rpc.common";
+import { getCoinConfig } from "../../../config";
+
+jest.mock("../../../config");
+const mockGetConfig = jest.mocked(getCoinConfig);
 
 describe("isTransactionConfirmed", () => {
   const mockedNodeApi = jest.mocked(nodeApi);
+
+  beforeEach(() => {
+    mockGetConfig.mockImplementation((): any => {
+      return {
+        info: {
+          node: { type: "external" },
+        },
+      };
+    });
+  });
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   test("should return true if blockHeight is not null", async () => {
-    const currency = { ethereumLikeInfo: { node: { type: "external" } } } as any;
+    const currency = { id: "external-coin" } as any;
     const hash = "transactionHash";
     const blockHeight = 12345;
 
@@ -21,7 +36,7 @@ describe("isTransactionConfirmed", () => {
   });
 
   test("should return false if blockHeight is null", async () => {
-    const currency = { ethereumLikeInfo: { node: { type: "external" } } } as any;
+    const currency = { id: "external-coin" } as any;
     const hash = "transactionHash";
     const blockHeight = null;
 

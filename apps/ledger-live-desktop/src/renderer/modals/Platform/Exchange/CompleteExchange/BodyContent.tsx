@@ -1,5 +1,5 @@
 import React from "react";
-import { Exchange } from "@ledgerhq/live-common/exchange/platform/types";
+import { Exchange } from "@ledgerhq/live-common/exchange/types";
 import { Account, AccountLike, SignedOperation } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";

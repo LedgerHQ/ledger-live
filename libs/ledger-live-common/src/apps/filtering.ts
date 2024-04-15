@@ -1,9 +1,7 @@
 import type { InstalledItem } from "./types";
 import { getCryptoCurrencyById, isCurrencySupported } from "../currencies";
 import { useMemo } from "react";
-import type { App, FeatureId } from "@ledgerhq/types-live";
-import { getFeature } from "../featureFlags";
-import camelCase from "lodash/camelCase";
+import type { App } from "@ledgerhq/types-live";
 
 export type SortOptions = {
   type?: "name" | "marketcap" | "default";
@@ -46,31 +44,24 @@ function typeFilter(
   updateAwareInstalledApps: UpdateAwareInstalledApps,
   installQueue: string[] = [],
 ) {
-  return ({ currencyId, name }: App) =>
-    filters.every(filter => {
-      const key = camelCase(`currency_${currencyId}`) as FeatureId;
-      const { enabled: currencyEnabled = true } = getFeature({ key }) ?? {};
+  return (app: App): boolean => {
+    return filters.every(filter => {
       switch (filter) {
         case "installed":
-          return installQueue.includes(name) || name in updateAwareInstalledApps;
+          return installQueue.includes(app.name) || app.name in updateAwareInstalledApps;
         case "not_installed":
-          return !(name in updateAwareInstalledApps);
+          return !(app.name in updateAwareInstalledApps);
         case "updatable":
-          return name in updateAwareInstalledApps && !updateAwareInstalledApps[name];
+          return app.name in updateAwareInstalledApps && !updateAwareInstalledApps[app.name];
         case "supported":
-          return (
-            currencyId && isCurrencySupported(getCryptoCurrencyById(currencyId)) && currencyEnabled
-          );
+          return app.currencyId && isCurrencySupported(getCryptoCurrencyById(app.currencyId));
         case "not_supported":
-          return (
-            !currencyId ||
-            !isCurrencySupported(getCryptoCurrencyById(currencyId)) ||
-            !currencyEnabled
-          );
+          return !app.currencyId || !isCurrencySupported(getCryptoCurrencyById(app.currencyId));
         default:
           return true;
       }
     });
+  };
 }
 
 export const sortApps = (apps: App[], _options: SortOptions): App[] => {

@@ -1,5 +1,6 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { UnknownExplorer } from "../../errors";
+import { getCoinConfig } from "../../config";
 import etherscanLikeApi from "./etherscan";
 import ledgerExplorerApi from "./ledger";
 import { ExplorerApi } from "./types";
@@ -8,7 +9,8 @@ import { ExplorerApi } from "./types";
  * Switch to select one of the compatible explorer
  */
 export const getExplorerApi = (currency: CryptoCurrency): ExplorerApi => {
-  const apiType = currency.ethereumLikeInfo?.explorer?.type;
+  const config = getCoinConfig(currency).info;
+  const apiType = config?.explorer?.type;
 
   switch (apiType) {
     case "etherscan":

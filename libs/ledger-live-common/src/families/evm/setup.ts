@@ -15,12 +15,22 @@ import {
 import { Resolver } from "../../hw/getAddress/types";
 import Transport from "@ledgerhq/hw-transport";
 import { Bridge } from "@ledgerhq/types-live";
+import { getCurrencyConfiguration } from "../../config";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
 
 const createSigner: CreateSigner<Eth> = (transport: Transport) => {
   return new Eth(transport);
 };
 
-const bridge: Bridge<EvmTransaction> = createBridges(executeWithSigner(createSigner));
+const getCurrencyConfig = (currency: CryptoCurrency) => {
+  return { info: getCurrencyConfiguration<EvmConfigInfo>(currency) };
+};
+
+const bridge: Bridge<EvmTransaction> = createBridges(
+  executeWithSigner(createSigner),
+  getCurrencyConfig,
+);
 
 const messageSigner = {
   prepareMessageToSign,

@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import { Account, Operation } from "@ledgerhq/types-live";
 import addToSwapHistory from "./addToSwapHistory";
-import { Exchange, ExchangeRate } from "./types";
+import { ExchangeSwap, ExchangeRate } from "./types";
 import { addPendingOperation } from "../../account/index";
 import { getMainAccount } from "../../account/helpers";
 import { Transaction } from "../../generated/types";
@@ -14,7 +14,7 @@ export const getUpdateAccountWithUpdaterParams = ({
   provider,
 }: {
   result: { operation: Operation; swapId: string };
-  exchange: Exchange;
+  exchange: ExchangeSwap;
   transaction?: Transaction | null;
   magnitudeAwareRate: BigNumber;
   provider: string;

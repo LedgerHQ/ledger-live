@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from "react";
+import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import ImageGrayscalePreview from "~/renderer/components/CustomImage/ImageGrayscalePreview";
 import { ImageBase64Data } from "~/renderer/components/CustomImage/types";
 import { Step, StepProps } from "./types";
@@ -11,6 +12,7 @@ import { analyticsFlowName, analyticsPageNames } from "./shared";
 type Props = StepProps & {
   onResult: React.ComponentProps<typeof ImageGrayscalePreview>["onResult"];
   src?: ImageBase64Data;
+  deviceModelId: CLSSupportedDeviceModelId;
 };
 
 const previousButtonEventProperties = {
@@ -18,7 +20,7 @@ const previousButtonEventProperties = {
 };
 
 const StepChooseContrast: React.FC<Props> = props => {
-  const { onResult, onError, src, setStep } = props;
+  const { onResult, onError, src, setStep, deviceModelId } = props;
   const { t } = useTranslation();
 
   const [contrast, setContrast] = useState<{ index: number; value: number }>();
@@ -59,6 +61,7 @@ const StepChooseContrast: React.FC<Props> = props => {
       {src ? (
         <ImageGrayscalePreview
           {...src}
+          deviceModelId={deviceModelId}
           onResult={onResult}
           onError={onError}
           setLoading={setLoading}

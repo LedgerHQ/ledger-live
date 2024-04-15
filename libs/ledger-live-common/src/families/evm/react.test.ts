@@ -21,14 +21,6 @@ const fakeCurrency: Partial<CryptoCurrency> = {
   id: "my_new_chain" as CryptoCurrencyId,
   ethereumLikeInfo: {
     chainId: 1,
-    node: {
-      type: "ledger",
-      explorerId: "eth",
-    },
-    gasTracker: {
-      type: "ledger",
-      explorerId: "eth",
-    },
   },
   units: [{ code: "ETH", name: "ETH", magnitude: 18 }],
 };

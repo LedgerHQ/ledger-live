@@ -10,15 +10,17 @@ let deviceAction: DeviceAction;
 let receivePage: ReceivePage;
 let common: Common;
 const btcReceiveAddress = "173ej2furpaB8mTtN5m9829MPGMD7kCgSPx";
+let first = true;
 
 describe("Receive Flow", () => {
   beforeAll(async () => {
-    loadConfig("EthAccountXrpAccountReadOnlyFalse", true);
-    loadBleState({ knownDevices: [knownDevice] });
+    await loadConfig("EthAccountXrpAccountReadOnlyFalse", true);
+    await loadBleState({ knownDevices: [knownDevice] });
     portfolioPage = new PortfolioPage();
     deviceAction = new DeviceAction(knownDevice);
     receivePage = new ReceivePage();
     common = new Common();
+    await portfolioPage.waitForPortfolioPageToLoad();
   });
 
   async function openReceive() {
@@ -28,17 +30,19 @@ describe("Receive Flow", () => {
   }
 
   it("Should verify the address after importing an account working on a single network", async () => {
-    await portfolioPage.waitForPortfolioPageToLoad();
     await portfolioPage.openTransferMenu();
     await portfolioPage.navigateToReceiveFromTransferMenu();
     await common.performSearch("Bitcoin");
     await receivePage.selectAsset("BTC");
     await deviceAction.selectMockDevice();
+    first = false;
     await deviceAction.openApp();
     await receivePage.selectAccount("Bitcoin 1");
     await receivePage.selectVerifyAddress();
     await deviceAction.openApp();
     await receivePage.expectAddressIsVerified(btcReceiveAddress);
+    await deviceAction.complete();
+    await receivePage.expectAddressIsDisplayed(btcReceiveAddress);
   });
 
   it("Should display the number of account existing per networks", async () => {
@@ -53,6 +57,10 @@ describe("Receive Flow", () => {
     await receivePage.selectAsset("ETH");
     await receivePage.selectNetwork("OP Mainnet");
     await receivePage.createAccount();
+    if (first) {
+      await deviceAction.selectMockDevice();
+      first = false;
+    }
     await deviceAction.openApp();
     await receivePage.selectAccount("OP Mainnet 1");
     await receivePage.selectAccount("OP Mainnet 2");
@@ -66,6 +74,10 @@ describe("Receive Flow", () => {
     await common.performSearch("Polygon");
     await receivePage.selectAsset("MATIC");
     await receivePage.selectNetwork("Binance Smart Chain");
+    if (first) {
+      await deviceAction.selectMockDevice();
+      first = false;
+    }
     await deviceAction.openApp();
     await receivePage.selectAccount("Binance Smart Chain 1");
     await receivePage.doNotVerifyAddress();

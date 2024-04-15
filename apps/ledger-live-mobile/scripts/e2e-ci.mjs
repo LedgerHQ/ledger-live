@@ -39,10 +39,10 @@ const test_ios = async () => {
     --loglevel error \
     --record-logs all \
     --take-screenshots all \
+    --forceExit \
     --headless \
     --retries 1 \
-    --cleanup \
-    --record-performance all`;
+    --cleanup`;
 };
 
 const build_android = async () => {

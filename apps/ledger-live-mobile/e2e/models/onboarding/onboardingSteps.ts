@@ -8,12 +8,11 @@ import {
 } from "../../helpers";
 import * as bridge from "../../bridge/server";
 import DeviceAction from "../DeviceAction";
-import { ModelId, getUSBDevice } from "../devices";
+import { ModelId, getUSBDevice, knownDevice } from "../devices";
 import { expect } from "detox";
 
 export default class OnboardingSteps {
   getStartedButtonId = "onboarding-getStarted-button";
-  devicePairedContinueButtonId = "onboarding-paired-continue";
   exploreWithoutDeviceButtonId = "discoverLive-exploreWithoutADevice";
   readyToScanButtonID = "onboarding-scan-button";
   scanAndImportAccountsPageID = "onboarding-import-accounts-title";
@@ -27,8 +26,7 @@ export default class OnboardingSteps {
   connectLedgerButton = () => getElementById("Existing Wallet | Connect");
   syncWithLedgerLiveDesktop = () => getElementById("Existing Wallet | Sync");
   readyToScanButton = () => getElementById(this.readyToScanButtonID);
-  continueButton = () => getElementById(this.devicePairedContinueButtonId);
-  pairDeviceButton = () => getElementById("pair-device");
+  addDeviceButton = () => getElementById("connect-with-bluetooth");
   pairNanoButton = () => getElementById("Onboarding-PairNewNano");
   maybeLaterButton = () => getElementById("notifications-prompt-later");
 
@@ -66,8 +64,6 @@ export default class OnboardingSteps {
   quizzSuccessRegex = /onboarding-quizz-.*-success/;
   quizzCta = "onboarding-quizz-cta";
   quizzFinalCta = "onboarding-quizz-final-cta";
-
-  defaultName = "Nano X de David";
 
   async startOnboarding() {
     await waitForElementById(this.getStartedButtonId);
@@ -176,27 +172,26 @@ export default class OnboardingSteps {
     await tapByElement(this.pairNanoButton());
   }
 
-  async addDeviceViaBluetooth(name = this.defaultName) {
-    await tapByElement(this.pairDeviceButton());
-    bridge.addDevicesBT(name);
+  async selectAddDevice() {
+    await tapByElement(this.addDeviceButton());
+  }
+
+  async addDeviceViaBluetooth(name = knownDevice.name) {
+    const deviceAction = new DeviceAction(knownDevice);
+    await bridge.addDevicesBT(name);
     await waitForElementByText(name);
     await tapByText(name);
-    bridge.setInstalledApps(); // tell LLM what apps the mock device has
-    bridge.open(); // Mocked action open ledger manager on the Nano
-    await waitForElementById(this.devicePairedContinue);
+    await bridge.open(); // Mocked action open ledger manager on the Nano
+    await deviceAction.waitForSpinner();
+    await deviceAction.accessManager();
   }
 
   async addDeviceViaUSB(device: ModelId) {
     const nano = getUSBDevice(device);
-    bridge.addDevicesUSB(nano);
+    await bridge.addDevicesUSB(nano);
     await waitForElementByText(nano.deviceName);
     await tapByText(nano.deviceName);
     await new DeviceAction(nano).accessManager();
-  }
-
-  async openLedgerLive() {
-    await waitForElementById(this.devicePairedContinueButtonId);
-    await tapByElement(this.continueButton());
   }
 
   async declineNotifications() {

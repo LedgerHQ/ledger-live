@@ -2,11 +2,14 @@ import { findSubAccountById, getMainAccount } from "@ledgerhq/coin-framework/acc
 import { getEnv } from "@ledgerhq/live-env";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import invariant from "invariant";
+import { getCoinConfig } from "./config";
 
 /**
  * Return weather an operation is editable or not.
  */
 export const isEditableOperation = (account: Account, operation: Operation): boolean => {
+  const config = getCoinConfig(account.currency).info;
+
   const { currency } = account;
 
   if (currency.family !== "evm") {
@@ -15,7 +18,7 @@ export const isEditableOperation = (account: Account, operation: Operation): boo
 
   // gasTracker is needed to perform the edit transaction logic,
   // it is used to estimate the fees and let the user choose them
-  if (!currency.ethereumLikeInfo?.gasTracker) {
+  if (!config?.gasTracker) {
     return false;
   }
 

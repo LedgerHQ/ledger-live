@@ -22,9 +22,13 @@ import {
 } from "../fixtures/synchronization.fixtures";
 import { UnknownNode } from "../../errors";
 import * as logic from "../../logic";
+import { getCoinConfig } from "../../config";
 
 jest.mock("../../api/node/rpc.common");
 jest.useFakeTimers().setSystemTime(new Date("2014-04-21"));
+
+jest.mock("../../config");
+const mockGetConfig = jest.mocked(getCoinConfig);
 
 const getAccountShapeParameters: AccountShapeInfo = {
   address: "0xkvn",
@@ -35,6 +39,23 @@ const getAccountShapeParameters: AccountShapeInfo = {
 };
 
 describe("EVM Family", () => {
+  beforeEach(() => {
+    mockGetConfig.mockImplementation((): any => {
+      return {
+        info: {
+          node: {
+            type: "external",
+            uri: "https://my-rpc.com",
+          },
+          explorer: {
+            type: "etherscan",
+            uri: "https://api.com",
+          },
+        },
+      };
+    });
+  });
+
   describe("synchronization.ts", () => {
     describe("getAccountShape", () => {
       beforeEach(() => {
@@ -52,6 +73,10 @@ describe("EVM Family", () => {
       });
 
       it("should throw for currency without ethereumLikeInfo", async () => {
+        mockGetConfig.mockImplementationOnce((): any => {
+          return { info: {} };
+        });
+
         try {
           await synchronization.getAccountShape(
             {
@@ -73,6 +98,17 @@ describe("EVM Family", () => {
       });
 
       it("should throw for currency with unsupported explorer", async () => {
+        mockGetConfig.mockImplementationOnce((): any => {
+          return {
+            info: {
+              explorer: {
+                uri: "http://nope.com",
+                type: "unsupported" as any,
+              },
+            },
+          };
+        });
+
         try {
           await synchronization.getAccountShape(
             {
@@ -81,10 +117,6 @@ describe("EVM Family", () => {
                 ...currency,
                 ethereumLikeInfo: {
                   chainId: 1,
-                  explorer: {
-                    uri: "http://nope.com",
-                    type: "unsupported" as any,
-                  },
                 } as any,
               },
             },
@@ -209,6 +241,7 @@ describe("EVM Family", () => {
               ...getAccountShapeParameters,
               initialAccount: {
                 ...account,
+                blockHeight: 123,
                 operations: [coinOperations[2]],
                 subAccounts: [{ ...tokenAccount, operations: [tokenOperations[0]] }],
               },
@@ -220,7 +253,7 @@ describe("EVM Family", () => {
             getAccountShapeParameters.currency,
             getAccountShapeParameters.address,
             account.id,
-            coinOperations[2].blockHeight! - synchronization.SAFE_REORG_THRESHOLD,
+            123 - synchronization.SAFE_REORG_THRESHOLD,
             6969,
           );
         });

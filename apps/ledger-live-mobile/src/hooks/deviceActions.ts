@@ -6,16 +6,16 @@ import { createAction as initSwapCreateAction } from "@ledgerhq/live-common/hw/a
 import { createAction as managerCreateAction } from "@ledgerhq/live-common/hw/actions/manager";
 import { createAction as signMessageCreateAction } from "@ledgerhq/live-common/hw/signMessage/index";
 import { createAction as completeExchangeCreateAction } from "@ledgerhq/live-common/hw/actions/completeExchange";
-import { createAction as staxLoadImageCreateAction } from "@ledgerhq/live-common/hw/actions/staxLoadImage";
-import { createAction as staxFetchImageCreateAction } from "@ledgerhq/live-common/hw/actions/staxFetchImage";
+import { createAction as staxLoadImageCreateAction } from "@ledgerhq/live-common/hw/actions/customLockScreenLoad";
+import { createAction as staxFetchImageCreateAction } from "@ledgerhq/live-common/hw/actions/customLockScreenFetch";
 import { createAction as installLanguageCreateAction } from "@ledgerhq/live-common/hw/actions/installLanguage";
-import { createAction as staxRemoveImageCreateAction } from "@ledgerhq/live-common/hw/actions/staxRemoveImage";
+import { createAction as staxRemoveImageCreateAction } from "@ledgerhq/live-common/hw/actions/customLockScreenRemove";
 import { createAction as renameDeviceCreateAction } from "@ledgerhq/live-common/hw/actions/renameDevice";
 import renameDevice from "@ledgerhq/live-common/hw/renameDevice";
-import staxLoadImage from "@ledgerhq/live-common/hw/staxLoadImage";
+import customLockScreenLoad from "@ledgerhq/live-common/hw/customLockScreenLoad";
 import installLanguage from "@ledgerhq/live-common/hw/installLanguage";
-import staxFetchImage from "@ledgerhq/live-common/hw/staxFetchImage";
-import staxRemoveImage from "@ledgerhq/live-common/hw/staxRemoveImage";
+import customLockScreenFetch from "@ledgerhq/live-common/hw/customLockScreenFetch";
+import customLockScreenRemove from "@ledgerhq/live-common/hw/customLockScreenRemove";
 import connectManager from "@ledgerhq/live-common/hw/connectManager";
 import initSwap from "@ledgerhq/live-common/exchange/swap/initSwap";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
@@ -33,7 +33,7 @@ import {
   staxLoadImageExecMock,
   staxRemoveImageExecMock,
   renameDeviceExecMock,
-} from "../../e2e/bridge/client";
+} from "../../e2e/bridge/types";
 
 export function useAppDeviceAction() {
   const mock = useEnv("MOCK");
@@ -77,7 +77,7 @@ export function useInstallLanguageDeviceAction() {
 export function useStaxLoadImageDeviceAction() {
   const mock = useEnv("MOCK");
   return useMemo(
-    () => staxLoadImageCreateAction(mock ? staxLoadImageExecMock : staxLoadImage),
+    () => staxLoadImageCreateAction(mock ? staxLoadImageExecMock : customLockScreenLoad),
     [mock],
   );
 }
@@ -85,7 +85,7 @@ export function useStaxLoadImageDeviceAction() {
 export function useStaxFetchImageDeviceAction() {
   const mock = useEnv("MOCK");
   return useMemo(
-    () => staxFetchImageCreateAction(mock ? staxFetchImageExecMock : staxFetchImage),
+    () => staxFetchImageCreateAction(mock ? staxFetchImageExecMock : customLockScreenFetch),
     [mock],
   );
 }
@@ -93,7 +93,7 @@ export function useStaxFetchImageDeviceAction() {
 export function useStaxRemoveImageDeviceAction() {
   const mock = useEnv("MOCK");
   return useMemo(
-    () => staxRemoveImageCreateAction(mock ? staxRemoveImageExecMock : staxRemoveImage),
+    () => staxRemoveImageCreateAction(mock ? staxRemoveImageExecMock : customLockScreenRemove),
     [mock],
   );
 }

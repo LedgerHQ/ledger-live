@@ -1,6 +1,6 @@
 import { FAMILIES } from "@ledgerhq/live-app-sdk";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { isSubAccount, isTokenAccount } from "../account";
+import { isTokenAccount } from "../account";
 import byFamily from "../generated/platformAdapter";
 import type { Transaction } from "../generated/types";
 import {
@@ -16,7 +16,7 @@ export function accountToPlatformAccount(
   account: AccountLike,
   parentAccount?: Account,
 ): PlatformAccount {
-  if (isSubAccount(account)) {
+  if (isTokenAccount(account)) {
     if (!parentAccount) {
       throw new Error("No 'parentAccount' account provided for token account");
     }
@@ -27,17 +27,9 @@ export function accountToPlatformAccount(
       address: parentAccount.freshAddress,
       blockHeight: parentAccount.blockHeight,
       lastSyncDate: parentAccount.lastSyncDate,
-      ...(isTokenAccount(account)
-        ? {
-            name: `${parentAccount.name} (${account.token.ticker})`,
-            currency: account.token.id,
-            spendableBalance: account.spendableBalance,
-          }
-        : {
-            name: account.name,
-            currency: account.currency.id,
-            spendableBalance: parentAccount.spendableBalance,
-          }),
+      name: `${parentAccount.name} (${account.token.ticker})`,
+      currency: account.token.id,
+      spendableBalance: account.spendableBalance,
     };
   }
 

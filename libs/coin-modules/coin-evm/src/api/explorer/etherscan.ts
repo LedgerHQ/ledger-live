@@ -12,6 +12,7 @@ import {
   etherscanERC1155EventToOperations,
   etherscanInternalTransactionToOperations,
 } from "../../adapters";
+import { getCoinConfig } from "../../config";
 import {
   EtherscanERC1155Event,
   EtherscanERC20Event,
@@ -64,7 +65,8 @@ export const getLastCoinOperations = async (
   fromBlock: number,
   toBlock?: number,
 ): Promise<Operation[]> => {
-  const { explorer } = currency.ethereumLikeInfo || /* istanbul ignore next */ {};
+  const config = getCoinConfig(currency).info;
+  const { explorer } = config || /* istanbul ignore next */ {};
   if (!isEtherscanLikeExplorerConfig(explorer)) {
     throw new EtherscanLikeExplorerUsedIncorrectly();
   }
@@ -94,7 +96,8 @@ export const getLastTokenOperations = async (
   fromBlock: number,
   toBlock?: number,
 ): Promise<Operation[]> => {
-  const { explorer } = currency.ethereumLikeInfo || /* istanbul ignore next */ {};
+  const config = getCoinConfig(currency).info;
+  const { explorer } = config || /* istanbul ignore next */ {};
   if (!isEtherscanLikeExplorerConfig(explorer)) {
     throw new EtherscanLikeExplorerUsedIncorrectly();
   }
@@ -145,7 +148,8 @@ export const getLastERC721Operations = async (
   fromBlock: number,
   toBlock?: number,
 ): Promise<Operation[]> => {
-  const { explorer } = currency.ethereumLikeInfo || /* istanbul ignore next */ {};
+  const config = getCoinConfig(currency).info;
+  const { explorer } = config || /* istanbul ignore next */ {};
   if (!isEtherscanLikeExplorerConfig(explorer)) {
     throw new EtherscanLikeExplorerUsedIncorrectly();
   }
@@ -196,7 +200,8 @@ export const getLastERC1155Operations = async (
   fromBlock: number,
   toBlock?: number,
 ): Promise<Operation[]> => {
-  const { explorer } = currency.ethereumLikeInfo || /* istanbul ignore next */ {};
+  const config = getCoinConfig(currency).info;
+  const { explorer } = config || /* istanbul ignore next */ {};
   if (!isEtherscanLikeExplorerConfig(explorer)) {
     throw new EtherscanLikeExplorerUsedIncorrectly();
   }
@@ -273,7 +278,8 @@ export const getLastInternalOperations = async (
   fromBlock: number,
   toBlock?: number,
 ): Promise<Operation[]> => {
-  const { explorer } = currency.ethereumLikeInfo || /* istanbul ignore next */ {};
+  const config = getCoinConfig(currency).info;
+  const { explorer } = config || /* istanbul ignore next */ {};
   if (!isEtherscanLikeExplorerConfig(explorer)) {
     throw new EtherscanLikeExplorerUsedIncorrectly();
   }

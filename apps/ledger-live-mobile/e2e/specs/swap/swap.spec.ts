@@ -8,7 +8,7 @@ let swapPage: SwapFormPage;
 
 describe("Swap", () => {
   beforeAll(async () => {
-    loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
+    await loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
 
     portfolioPage = new PortfolioPage();
     swapPage = new SwapFormPage();
@@ -43,8 +43,11 @@ describe("Swap", () => {
     await swapPage.selectAccount("Ethereum");
   });
 
-  it("should be able to send the maximum available amount", async () => {
-    await swapPage.sendMax();
+  it("should have the send max toggle switch removed", async () => {
+    await expect(swapPage.sendMaxToggle()).not.toExist();
+    await swapPage.openSourceAccountSelector();
+    await swapPage.selectAccount("Bitcoin 1 (legacy)");
+    await swapPage.enterSourceAmount("0.1");
     await swapPage.startExchange();
     await expect(swapPage.termsAcceptButton()).toBeVisible();
     await expect(swapPage.termsCloseButton()).toBeVisible();

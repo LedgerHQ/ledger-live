@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Alert, Flex, Text } from "@ledgerhq/react-ui";
+import { ImageProcessingError } from "@ledgerhq/live-common/customImage/errors";
+import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
+import { getScreenVisibleAreaDimensions } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 import { ProcessorResult } from "~/renderer/components/CustomImage/ImageGrayscalePreview";
-import { targetDisplayDimensions } from "~/renderer/components/CustomImage/shared";
 import { ImageBase64Data } from "~/renderer/components/CustomImage/types";
 import { createCanvas } from "~/renderer/components/CustomImage/imageUtils";
-import { ImageProcessingError } from "@ledgerhq/live-common/customImage/errors";
 
 export function reconstructImage({
   hexData,
@@ -64,10 +65,11 @@ This should NOT happen, it means that some data has been lost.`;
 type Props = {
   onError: (error: Error) => void;
   result?: ProcessorResult;
+  deviceModelId: CLSSupportedDeviceModelId;
 };
 
 const TestImage: React.FC<Props> = props => {
-  const { result, onError } = props;
+  const { result, onError, deviceModelId } = props;
   const [reconstructedImage, setReconstructedImage] = useState<ImageBase64Data>();
 
   const { rawResult } = result || {};
@@ -95,7 +97,7 @@ const TestImage: React.FC<Props> = props => {
         {reconstructedImage ? (
           <img
             src={reconstructedImage?.imageBase64DataUri}
-            style={{ height: targetDisplayDimensions.height }}
+            style={{ height: getScreenVisibleAreaDimensions(deviceModelId).height }}
           />
         ) : null}
       </Flex>

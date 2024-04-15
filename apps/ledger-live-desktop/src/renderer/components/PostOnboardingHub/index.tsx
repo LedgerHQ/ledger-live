@@ -5,16 +5,16 @@ import PostOnboardingActionRow from "./PostOnboardingActionRow";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 
 const PostOnboardingHub = () => {
-  const { actionsState } = usePostOnboardingHubState();
+  const { actionsState, deviceModelId } = usePostOnboardingHubState();
 
   const postOnboardingRows = useMemo(
     () =>
       actionsState.map((action, index) => (
         <React.Fragment key={index}>
-          <PostOnboardingActionRow {...action} />
+          <PostOnboardingActionRow {...action} deviceModelId={deviceModelId} />
         </React.Fragment>
       )),
-    [actionsState],
+    [actionsState, deviceModelId],
   );
 
   return (

@@ -8,7 +8,7 @@ import { GenericInformationBody } from "~/components/GenericInformationBody";
 import { BluetoothRequired, FirmwareNotRecognized } from "@ledgerhq/errors";
 import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
-import type { SyncOnboardingScreenProps } from ".";
+import type { SyncOnboardingScreenProps } from "./SyncOnboardingScreenProps";
 
 export type Props = {
   /**

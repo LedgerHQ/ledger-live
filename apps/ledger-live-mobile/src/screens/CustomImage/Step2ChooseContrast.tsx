@@ -6,6 +6,7 @@ import { Image, ImageErrorEventData, NativeSyntheticEvent, Pressable } from "rea
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ImagePreviewError } from "@ledgerhq/live-common/customImage/errors";
+import { getScreenVisibleAreaDimensions } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 import useResizedImage, {
   Params as ImageResizerParams,
   ResizeResult,
@@ -15,7 +16,6 @@ import ImageProcessor, {
   ProcessorPreviewResult,
   ProcessorRawResult,
 } from "~/components/CustomImage/ImageProcessor";
-import { targetDisplayDimensions } from "./shared";
 import Button from "~/components/wrappedUi/Button";
 import BottomButtonsContainer from "~/components/CustomImage/BottomButtonsContainer";
 import ContrastChoice from "~/components/CustomImage/ContrastChoice";
@@ -60,7 +60,7 @@ const previewDimensions = {
 const analyticsScreenName = "Choose contrast";
 
 type NavigationProps = BaseComposite<
-  StackNavigatorProps<CustomImageNavigatorParamList, ScreenName.CustomImageStep2Preview>
+  StackNavigatorProps<CustomImageNavigatorParamList, ScreenName.CustomImageStep2ChooseContrast>
 >;
 
 /**
@@ -86,14 +86,14 @@ const Step2ChooseContrast = ({ navigation, route }: NavigationProps) => {
 
   const { params } = route;
 
-  const { cropResult: croppedImage, device, baseImageFile, imageType } = params;
+  const { cropResult: croppedImage, device, deviceModelId, baseImageFile, imageType } = params;
 
   const handleError = useCallback(
     (error: Error) => {
       console.error(error);
-      navigation.navigate(ScreenName.CustomImageErrorScreen, { error, device });
+      navigation.navigate(ScreenName.CustomImageErrorScreen, { error, device, deviceModelId });
     },
-    [navigation, device],
+    [navigation, device, deviceModelId],
   );
 
   /** IMAGE RESIZING */
@@ -105,8 +105,10 @@ const Step2ChooseContrast = ({ navigation, route }: NavigationProps) => {
     [setResizedImage],
   );
 
+  const screenVisibleAreaDimensions = getScreenVisibleAreaDimensions(deviceModelId);
+
   useResizedImage({
-    targetDimensions: targetDisplayDimensions,
+    targetDimensions: screenVisibleAreaDimensions,
     imageFileUri: croppedImage?.imageFileUri,
     onError: handleError,
     onResult: handleResizeResult,
@@ -136,11 +138,12 @@ const Step2ChooseContrast = ({ navigation, route }: NavigationProps) => {
         imagePreview: processorPreviewImage,
         baseImageFile,
         device,
+        deviceModelId,
         imageType,
       });
       setRawResultLoading(false);
     },
-    [navigation, setRawResultLoading, processorPreviewImage, device, baseImageFile, imageType],
+    [processorPreviewImage, navigation, baseImageFile, device, deviceModelId, imageType],
   );
 
   const handlePreviewImageError = useCallback(
@@ -204,7 +207,7 @@ const Step2ChooseContrast = ({ navigation, route }: NavigationProps) => {
             style={{
               width: previewDimensions.width,
               height:
-                (targetDisplayDimensions.height / targetDisplayDimensions.width) *
+                (screenVisibleAreaDimensions.height / screenVisibleAreaDimensions.width) *
                 previewDimensions.width,
             }}
             resizeMode="contain"

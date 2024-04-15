@@ -9,7 +9,7 @@ import styled from "styled-components";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import ProviderIcon from "~/renderer/components/ProviderIcon";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
-import { ExchangeRate, Exchange } from "@ledgerhq/live-common/exchange/swap/types";
+import { ExchangeRate, ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 import { getProviderName, getNoticeType } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import {
   WrongDeviceForAccount,
@@ -61,7 +61,6 @@ import {
 import { LockAltMedium } from "@ledgerhq/react-ui/assets/icons";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import DeviceIllustration from "~/renderer/components/DeviceIllustration";
-import FramedImage from "../CustomImage/FramedImage";
 import { Account } from "@ledgerhq/types-live";
 import { openURL } from "~/renderer/linking";
 import Installing from "~/renderer/modals/UpdateFirmwareModal/Installing";
@@ -511,7 +510,10 @@ export const renderAllowRemoveCustomLockscreen = ({
     </AnimationWrapper>
     <Footer>
       <Title>
-        <Trans i18nKey="removeCustomLockscreen.confirmation" />
+        <Trans
+          i18nKey="removeCustomLockscreen.confirmation"
+          values={{ productName: getDeviceModel(modelId).productName }}
+        />
       </Title>
     </Footer>
   </Wrapper>
@@ -943,7 +945,7 @@ export const renderSwapDeviceConfirmation = ({
   type: Theme["theme"];
   transaction: Transaction;
   exchangeRate: ExchangeRate;
-  exchange: Exchange;
+  exchange: ExchangeSwap;
   amountExpectedTo?: string;
   estimatedFees?: string;
   swapDefaultTrack: Record<string, string | boolean>;
@@ -1104,123 +1106,3 @@ export const renderBootloaderStep = ({ onAutoRepair }: { onAutoRepair: () => voi
     </Button>
   </Wrapper>
 );
-
-export const renderImageLoadRequested = ({
-  t,
-  device,
-  restore,
-  type,
-}: {
-  t: TFunction;
-  device: Device;
-  restore: boolean;
-  type: Theme["theme"];
-}) => {
-  return (
-    <Flex
-      flex={1}
-      flexDirection="column"
-      justifyContent="center"
-      alignItems="center"
-      data-test-id="device-action-image-load-requested"
-    >
-      <DeviceBlocker />
-      <AnimationWrapper>
-        <Animation animation={getDeviceAnimation(device.modelId, type, "allowManager")} />
-      </AnimationWrapper>
-      <Flex justifyContent="center" mt={2}>
-        <Title>
-          {t(
-            restore
-              ? "customImage.steps.transfer.allowConfirmPreview"
-              : "customImage.steps.transfer.allowPreview",
-          )}
-        </Title>
-      </Flex>
-    </Flex>
-  );
-};
-
-export const renderLoadingImage = ({
-  t,
-  device,
-  progress,
-  source,
-}: {
-  t: TFunction;
-  progress?: number;
-  device: Device;
-  source?: string | undefined;
-}) => {
-  return (
-    <Flex
-      flex={1}
-      flexDirection="column"
-      justifyContent="center"
-      alignItems="center"
-      data-test-id={`device-action-image-loading-${progress}`}
-    >
-      <AnimationWrapper>
-        <FramedImage source={source} loadingProgress={progress} />
-      </AnimationWrapper>
-      <Flex justifyContent="center" mt={2}>
-        <Title>
-          {t(
-            progress && progress > 0.9
-              ? "customImage.steps.transfer.voila"
-              : "customImage.steps.transfer.loadingPicture",
-            {
-              productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
-            },
-          )}
-        </Title>
-      </Flex>
-    </Flex>
-  );
-};
-
-export const renderImageCommitRequested = ({
-  t,
-  device,
-  source,
-  restore,
-  type,
-}: {
-  t: TFunction;
-  device: Device;
-  source?: string | undefined;
-  restore: boolean;
-  type: Theme["theme"];
-}) => {
-  return (
-    <Flex
-      flex={1}
-      flexDirection="column"
-      justifyContent="center"
-      alignItems="center"
-      data-test-id="device-action-image-commit-requested"
-    >
-      <DeviceBlocker />
-      <AnimationWrapper>
-        <FramedImage
-          source={source}
-          background={
-            <Animation animation={getDeviceAnimation(device.modelId, type, "confirmLockscreen")} />
-          }
-        />
-      </AnimationWrapper>
-      <Flex justifyContent="center" mt={2}>
-        <Title mb={!restore ? "-24px" : undefined}>
-          {t(
-            restore
-              ? "customImage.steps.transfer.confirmRestorePicture"
-              : "customImage.steps.transfer.confirmPicture",
-            {
-              productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
-            },
-          )}
-        </Title>
-      </Flex>
-    </Flex>
-  );
-};

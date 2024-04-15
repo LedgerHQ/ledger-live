@@ -17,6 +17,6 @@
     "src/signer.ts",
     "src/transaction/common.ts"
   ],
-  "ignoreUnimported": ["src/test-helpers/staticTime.ts"],
+  "ignoreUnimported": ["src/test-helpers/staticTime.ts", "src/config.ts"],
   "ignoreUnresolved": ["follow-redirects"]
 }

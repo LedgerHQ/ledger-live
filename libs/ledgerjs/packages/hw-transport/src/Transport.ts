@@ -1,7 +1,7 @@
 import EventEmitter from "events";
 import type { DeviceModel } from "@ledgerhq/devices";
 import {
-  TransportRaceCondition,
+  TransportPendingOperation,
   TransportError,
   StatusCodes,
   getAltStatusMessage,
@@ -339,7 +339,7 @@ export default class Transport {
 
     if (this.exchangeBusyPromise) {
       tracer.trace("Atomic exchange is already busy");
-      throw new TransportRaceCondition(
+      throw new TransportPendingOperation(
         "An action was already pending on the Ledger device. Please deny or reconnect.",
       );
     }

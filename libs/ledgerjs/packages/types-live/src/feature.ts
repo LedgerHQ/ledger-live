@@ -123,7 +123,6 @@ export type CurrencyFeatures = {
 export type Features = CurrencyFeatures & {
   brazePushNotifications: Feature_BrazePushNotifications;
   brazeLearn: Feature_BrazeLearn;
-  llmNewDeviceSelection: Feature_LlmNewDeviceSelection;
   ratingsPrompt: Feature_RatingsPrompt;
   npsRatingsPrompt: Feature_NpsRatingsPrompt;
   counterValue: Feature_CounterValue;
@@ -155,10 +154,8 @@ export type Features = CurrencyFeatures & {
   newsfeedPage: Feature_NewsfeedPage;
   domainInputResolution: Feature_DomainInputResolution;
   discover: Feature_Discover;
-  protectServicesDiscoverDesktop: Feature_ProtectServicesDiscoverDesktop;
   transactionsAlerts: Feature_TransactionsAlerts;
   listAppsV2minor1: Feature_ListAppsV2minor1;
-  llmWalletQuickActions: Feature_LlmWalletQuickActions;
   fetchAdditionalCoins: Feature_FetchAdditionalCoins;
   ptxSwapLiveApp: Feature_PtxSwapLiveApp;
   ptxSwapLiveAppDemoZero: Feature_PtxSwapLiveAppDemoZero;
@@ -167,12 +164,15 @@ export type Features = CurrencyFeatures & {
   flexibleContentCards: Feature_FlexibleContentCards;
   llmAnalyticsOptInPrompt: Feature_LlmAnalyticsOptInPrompt;
   lldAnalyticsOptInPrompt: Feature_LldAnalyticsOptInPrompt;
+  lldChatbotSupport: Feature_LldChatbotSupport;
+  llmChatbotSupport: Feature_LlmChatbotSupport;
   myLedgerDisplayAppDeveloperName: Feature_MyLedgerDisplayAppDeveloperName;
   nftsFromSimplehash: Feature_NftsFromSimpleHash;
   lldActionCarousel: Feature_lldActionCarousel;
   marketperformanceWidgetDesktop: Feature_MarketperformanceWidgetDesktop;
   supportDeviceStax: Feature_SupportDeviceStax;
   supportDeviceEuropa: Feature_SupportDeviceEuropa;
+  lldRefreshMarketData: Feature_LldRefreshMarketData;
 };
 
 /**
@@ -445,10 +445,17 @@ export type Feature_lldActionCarousel = Feature<{
 
 export type Feature_MarketperformanceWidgetDesktop = Feature<{
   variant: ABTestingVariants;
+  refreshRate: number;
+  top: number;
+  supported: boolean;
 }>;
 
 export type Feature_NftsFromSimpleHash = Feature<{
   threshold: number;
+}>;
+
+export type Feature_LldRefreshMarketData = Feature<{
+  refreshTime: number;
 }>;
 
 export type Feature_CounterValue = DefaultFeature;
@@ -463,16 +470,16 @@ export type Feature_PtxServiceCtaExchangeDrawer = DefaultFeature;
 export type Feature_PtxServiceCtaScreens = DefaultFeature;
 export type Feature_PortfolioExchangeBanner = DefaultFeature;
 export type Feature_Objkt = DefaultFeature;
-export type Feature_ProtectServicesDiscoverDesktop = DefaultFeature;
 export type Feature_ListAppsV2minor1 = DefaultFeature;
 export type Feature_BrazeLearn = DefaultFeature;
-export type Feature_LlmNewDeviceSelection = DefaultFeature;
-export type Feature_LlmWalletQuickActions = DefaultFeature;
 export type Feature_PtxSwapMoonpayProvider = DefaultFeature;
 export type Feature_FlexibleContentCards = DefaultFeature;
 export type Feature_MyLedgerDisplayAppDeveloperName = DefaultFeature;
 export type Feature_SupportDeviceStax = DefaultFeature;
 export type Feature_SupportDeviceEuropa = DefaultFeature;
+export type Feature_LldChatbotSupport = DefaultFeature;
+export type Feature_LlmChatbotSupport = DefaultFeature;
+
 /**
  * Utils types.
  */

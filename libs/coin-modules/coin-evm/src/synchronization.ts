@@ -49,17 +49,11 @@ export const getAccountShape: GetAccountShape = async (infos, { blacklistedToken
   });
   const syncHash = getSyncHash(currency, blacklistedTokenIds);
   // Due to some changes (as of now: new/updated tokens) we could need to force a sync from 0
-  const shouldSyncFromScratch = syncHash !== initialAccount?.syncHash;
+  const shouldSyncFromScratch =
+    syncHash !== initialAccount?.syncHash || initialAccount === undefined;
 
-  // Get the latest stored operation to know where to start the new sync
-  const latestSyncedOperation = shouldSyncFromScratch
-    ? null
-    : initialAccount?.operations?.reduce<Operation | null>((acc, curr) => {
-        if (!acc) {
-          return curr;
-        }
-        return (acc?.blockHeight || 0) > (curr?.blockHeight || 0) ? acc : curr;
-      }, null);
+  // Get the latest block synchronized to know where to start the new sync
+  const latestSyncedHeight = shouldSyncFromScratch ? 0 : initialAccount.blockHeight;
 
   const { lastCoinOperations, lastTokenOperations, lastNftOperations, lastInternalOperations } =
     await (async (): ReturnType<ExplorerApi["getLastOperations"]> => {
@@ -69,9 +63,7 @@ export const getAccountShape: GetAccountShape = async (infos, { blacklistedToken
           currency,
           address,
           accountId,
-          latestSyncedOperation?.blockHeight
-            ? Math.max(latestSyncedOperation.blockHeight - SAFE_REORG_THRESHOLD, 0)
-            : 0,
+          Math.max(latestSyncedHeight - SAFE_REORG_THRESHOLD, 0),
           blockHeight,
         );
       } catch (e) {

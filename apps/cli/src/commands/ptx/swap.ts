@@ -13,7 +13,7 @@ import { delay } from "@ledgerhq/live-common/promise";
 import { scan, scanCommonOpts } from "../../scan";
 import type { ScanCommonOpts } from "../../scan";
 import type {
-  Exchange,
+  ExchangeSwap,
   ExchangeRate,
   InitSwapResult,
 } from "@ledgerhq/live-common/exchange/swap/types";
@@ -95,13 +95,7 @@ const exec = async (opts: SwapJobOpts) => {
     showCode: true,
   });
 
-  if (fromAccount.type !== "ChildAccount") {
-    console.log(
-      "\t:balance:\t",
-      fromAccount.spendableBalance.toString(),
-      ` [ ${formattedAmount} ]`,
-    );
-  }
+  console.log("\t:balance:\t", fromAccount.spendableBalance.toString(), ` [ ${formattedAmount} ]`);
 
   invariant(fromAccount.balance.gte(new BigNumber(amount)), `✖ Not enough balance`);
   console.log("• Open the destination currency app");
@@ -169,7 +163,7 @@ const exec = async (opts: SwapJobOpts) => {
     getMainAccount(fromAccount, fromParentAccount),
     transaction,
   );
-  const exchange: Exchange = {
+  const exchange: ExchangeSwap = {
     fromAccount,
     fromParentAccount,
     toAccount,
