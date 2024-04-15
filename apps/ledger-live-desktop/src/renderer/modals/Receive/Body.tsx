@@ -222,7 +222,7 @@ const Body = ({
     onStepChange: handleStepChange,
     onClose: handleCloseModal,
     currencyName,
-    isFromPostOnboardingEntryPoint: params.isFromPostOnboardingEntryPoint,
+    isFromPostOnboardingEntryPoint: !!params.isFromPostOnboardingEntryPoint,
   };
   return (
     <Stepper {...stepperProps}>
