@@ -1,6 +1,6 @@
 import { Flex, Text } from "@ledgerhq/react-ui";
 import React from "react";
-import Select from "react-select/src/Select";
+import Select from "~/renderer/components/Select";
 import { SelectOption } from "./type";
 
 export const SelectRow = ({
