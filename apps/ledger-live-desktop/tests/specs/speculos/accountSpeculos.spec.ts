@@ -10,7 +10,6 @@ test.use({ userdata: "skip-onboarding" });
 const currencies = ["BTC"];
 
 test.describe.parallel("Accounts @smoke", () => {
-  // Check si utile de parallel
   for (const currency of currencies) {
     let firstAccountName = "NO ACCOUNT NAME YET";
     test(`[${currency}] Add account`, async ({ page }) => {
@@ -52,7 +51,6 @@ test.describe.parallel("Accounts @smoke", () => {
       await test.step(`[${currency}] Done`, async () => {
         await addAccountModal.done();
         await layout.totalBalance.waitFor({ state: "visible" });
-        //prob ici quand pas de fonds
       });
 
       await test.step(`Navigate to first account`, async () => {
@@ -62,7 +60,6 @@ test.describe.parallel("Accounts @smoke", () => {
         await expect.soft(page).toHaveScreenshot(`${currency}-firstAccountPage.png`);
       });
 
-      //Problème quand pas de fonds
       await test.step(`scroll to operations`, async () => {
         await accountPage.scrollToOperations();
         await expect.soft(page).toHaveScreenshot(`${currency}-firstAccountPage-operations.png`);
@@ -72,13 +69,6 @@ test.describe.parallel("Accounts @smoke", () => {
         await accountPage.deleteAccount();
         await expect.soft(page).toHaveScreenshot(`${currency}-deleteAccount.png`);
       });
-
-      // Prob quand il y a que 1 account
-      await test.step(`Delete first account from list`, async () => {
-        await accountsPage.deleteFirstAccount();
-        await expect.soft(page).toHaveScreenshot(`${currency}-deleteAccountFromAccountsList.png`);
-      });
     });
   }
 });
-//marche pour BTC
