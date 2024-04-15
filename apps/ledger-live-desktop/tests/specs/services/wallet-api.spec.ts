@@ -282,7 +282,7 @@ test("Wallet API methods @smoke", async ({ page }) => {
       ),
     };
 
-    await expect(responseFiltred).toStrictEqual({
+    expect(responseFiltred).toStrictEqual({
       id,
       ...account_list_mock,
     });
