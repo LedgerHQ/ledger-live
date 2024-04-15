@@ -90,6 +90,15 @@ export enum EventType {
   mark_as_not_spam = "mark_as_not_spam",
   mark_as_spam = "mark_as_spam",
 }
+
+/**
+ * @contractAddress: The contract address of the NFT reported, or the contract itself.
+ * @chainId: The chain ID (e.g., ethereum) of the NFT or contract reported.
+ * @collectionId: The SimpleHash collection ID of the NFT reported.
+ * @tokenId: The token ID of the NFT reported.
+ * @eventType: The type of event associated with the spam report, which can be one of the following: mark_as_spam or mark_as_not_spam.
+ */
+
 export type NftSpamReportOpts = {
   contractAddress?: string;
   chainId?: string;
@@ -98,8 +107,7 @@ export type NftSpamReportOpts = {
   eventType: EventType;
 };
 /**
- * Fetch NFTs for a list of wallets and chains of interest.
- * using SimpleHash API.
+ * Send Spam Report using SimpleHash API.
  */
 export async function reportSpamNtf(opts: NftSpamReportOpts): Promise<SimpleHashResponse> {
   const url = `${getEnv("SIMPLE_HASH_API_BASE")}/nfts/report/spam`;
@@ -108,7 +116,6 @@ export async function reportSpamNtf(opts: NftSpamReportOpts): Promise<SimpleHash
     url,
     headers: {
       accept: "application/json",
-      "X-API-KEY": "sh_sk1_Z4jhWXXBE09em",
       "content-type": "application/json",
     },
     data: JSON.stringify({
