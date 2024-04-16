@@ -7,6 +7,27 @@ export class SpeculosModal {
   constructor(page: Page) {
     this.page = page;
   }
+  async rejectTransaction() {
+    await this.page.waitForTimeout(500);
+    await this.sendRequest("button/right");
+    await this.page.waitForTimeout(500);
+    await this.sendRequest("button/right");
+    await this.page.waitForTimeout(500);
+    await this.sendRequest("button/right");
+    await this.page.waitForTimeout(500);
+    await this.sendRequest("button/right");
+    await this.page.waitForTimeout(500);
+    await this.sendRequest("button/right");
+  }
+
+  async acceptTransaction() {
+    await this.page.waitForTimeout(500);
+    await this.sendRequest("button/right");
+    await this.page.waitForTimeout(500);
+    await this.sendRequest("button/right");
+    await this.page.waitForTimeout(500);
+    await this.sendRequest("button/right");
+  }
 
   async pressRight() {
     await this.page.waitForTimeout(500);
