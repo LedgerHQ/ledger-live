@@ -64,7 +64,7 @@ const scenarioERC1155Transaction: ScenarioTransaction<Partial<EvmTransaction & E
     },
   };
 
-const defaultNanoAppVersion = { firmware: "2.2.3" as const, version: "1.10.4" as const };
+const defaultNanoApp = { firmware: "2.2.3" as const, version: "1.10.4" as const };
 
 export const scenarioEthereum: Scenario<EvmTransaction> = {
   name: "Ledger Live Basic ETH Transactions",
@@ -72,7 +72,7 @@ export const scenarioEthereum: Scenario<EvmTransaction> = {
     const [{ transport, onSignerConfirmation }] = await Promise.all([
       spawnSigner(
         "speculos",
-        `/${defaultNanoAppVersion.firmware}/Ethereum/app_${defaultNanoAppVersion.version}.elf`,
+        `/${defaultNanoApp.firmware}/Ethereum/app_${defaultNanoApp.version}.elf`,
       ),
       spawnAnvil("https://rpc.ankr.com/eth"),
     ]);

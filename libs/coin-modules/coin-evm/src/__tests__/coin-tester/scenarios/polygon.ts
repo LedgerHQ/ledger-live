@@ -14,7 +14,7 @@ import { ERC20Interface, USDC_ON_POLYGON, polygon } from "../helpers";
 import { clearExplorerAppendix, getLogs, setBlock } from "../indexer";
 import { killAnvil, spawnAnvil } from "../docker";
 
-const defaultNanoAppVersion = { firmware: "2.2.3" as const, version: "1.10.4" as const };
+const defaultNanoApp = { firmware: "2.2.3" as const, version: "1.10.4" as const };
 
 export const scenarioPolygon: Scenario<EvmTransaction> = {
   name: "Ledger Live Basic Polygon Transactions",
@@ -22,7 +22,7 @@ export const scenarioPolygon: Scenario<EvmTransaction> = {
     const [{ transport, onSignerConfirmation }] = await Promise.all([
       spawnSigner(
         "speculos",
-        `/${defaultNanoAppVersion.firmware}/Ethereum/app_${defaultNanoAppVersion.version}.elf`,
+        `/${defaultNanoApp.firmware}/Ethereum/app_${defaultNanoApp.version}.elf`,
       ),
       spawnAnvil("https://rpc.ankr.com/polygon"),
     ]);

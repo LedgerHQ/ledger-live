@@ -3,8 +3,3 @@ export type ENV = {
   SEED: string;
   API_PORT: string;
 };
-
-export type NanoApp = {
-  version: string;
-  firmware: string;
-};
