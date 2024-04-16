@@ -56,7 +56,6 @@ test.describe.parallel("Add a token through parent account", () => {
 
       await test.step(`Check Token USDT`, async () => {
         await expect(page.getByText("Tether USD")).toBeVisible();
-        //Checker si y'a un token en géneral plutot que juste USDT ?
       });
     });
   }
