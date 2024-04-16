@@ -5,62 +5,14 @@ import { AddAccountModal } from "../../models/AddAccountModal";
 import { Layout } from "../../models/Layout";
 import { AccountPage } from "../../models/AccountPage";
 import { AccountsPage } from "../../models/AccountsPage";
-import { spawn } from "child_process";
-import SpeculosTransportHttp from "@ledgerhq/hw-transport-node-speculos-http";
-import SpeculosTransportWebsocket from "@ledgerhq/hw-transport-node-speculos";
 
 test.use({ userdata: "skip-onboarding" });
-const currencies = ["btc"];
+const currencies = ["BTC"];
 
 test.describe.parallel("Accounts @smoke", () => {
+  // Check si utile de parallel
   for (const currency of currencies) {
     let firstAccountName = "NO ACCOUNT NAME YET";
-    //Doit cree le speculos mais marche pas
-    test.beforeAll(async () => {
-      const speculosProcess = spawn(
-        "docker",
-        [
-          "run",
-          "--rm",
-          "-it",
-          "-v",
-          `"$(pwd)"/apps:/speculos/apps`,
-          "-p",
-          "1234:1234",
-          "-p",
-          "5000:5000",
-          "-p",
-          "40000:40000",
-          "-p",
-          "41000:41000",
-          "-e",
-          "SPECULOS_APPNAME=Bitcoin:2.0.1",
-          "speculos",
-          "--model",
-          "nanos",
-          "./apps/btc.elf",
-          "--sdk",
-          "2.0",
-          "--seed",
-          '"SEED SEED SEED SEED ..."',
-          "--display",
-          "headless",
-          "--apdu-port",
-          "40000",
-          "--vnc-port",
-          "41000",
-        ],
-        { shell: true },
-      );
-      await new Promise(resolve => {
-        speculosProcess.on("exit", resolve);
-      });
-    });
-
-    /*afterAll(async () => {
-      kill le speculos
-    });*/
-
     test(`[${currency}] Add account`, async ({ page }) => {
       const portfolioPage = new PortfolioPage(page);
       const addAccountModal = new AddAccountModal(page);
@@ -100,6 +52,7 @@ test.describe.parallel("Accounts @smoke", () => {
       await test.step(`[${currency}] Done`, async () => {
         await addAccountModal.done();
         await layout.totalBalance.waitFor({ state: "visible" });
+        //prob ici quand pas de fonds
       });
 
       await test.step(`Navigate to first account`, async () => {
@@ -109,6 +62,7 @@ test.describe.parallel("Accounts @smoke", () => {
         await expect.soft(page).toHaveScreenshot(`${currency}-firstAccountPage.png`);
       });
 
+      //Problème quand pas de fonds
       await test.step(`scroll to operations`, async () => {
         await accountPage.scrollToOperations();
         await expect.soft(page).toHaveScreenshot(`${currency}-firstAccountPage-operations.png`);
@@ -119,6 +73,7 @@ test.describe.parallel("Accounts @smoke", () => {
         await expect.soft(page).toHaveScreenshot(`${currency}-deleteAccount.png`);
       });
 
+      // Prob quand il y a que 1 account
       await test.step(`Delete first account from list`, async () => {
         await accountsPage.deleteFirstAccount();
         await expect.soft(page).toHaveScreenshot(`${currency}-deleteAccountFromAccountsList.png`);
@@ -126,3 +81,4 @@ test.describe.parallel("Accounts @smoke", () => {
     });
   }
 });
+//marche pour BTC
