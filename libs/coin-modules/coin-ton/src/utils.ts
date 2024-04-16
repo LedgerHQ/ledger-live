@@ -10,6 +10,7 @@ import {
   external,
   internal,
   storeMessage,
+  toNano,
 } from "@ton/ton";
 import BigNumber from "bignumber.js";
 import { estimateFee } from "./bridge/bridgeHelpers/api";
