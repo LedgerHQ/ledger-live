@@ -14,6 +14,7 @@ import cardano from "@ledgerhq/coin-cardano/deviceTransactionConfig";
 import evm from "@ledgerhq/coin-evm/deviceTransactionConfig";
 import near from "@ledgerhq/coin-near/deviceTransactionConfig";
 import polkadot from "@ledgerhq/coin-polkadot/deviceTransactionConfig";
+import ton from "@ledgerhq/coin-ton/deviceTransactionConfig";
 import solana from "@ledgerhq/coin-solana/deviceTransactionConfig";
 import stellar from "@ledgerhq/coin-stellar/deviceTransactionConfig";
 import tezos from "@ledgerhq/coin-tezos/deviceTransactionConfig";

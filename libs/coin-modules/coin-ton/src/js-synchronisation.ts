@@ -14,7 +14,7 @@ import {
 import { decodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { log } from "@ledgerhq/logs";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { Account, SubAccount } from "@ledgerhq/types-live";
+import { Account, Operation, SubAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import flatMap from "lodash/flatMap";
 import {
@@ -133,6 +133,7 @@ export const getSubaccountShape = async (
     operations,
     operationsCount: operations.length,
     pendingOperations: [],
+    creationDate: operations.length > 0 ? operations[operations.length - 1].date : new Date(),
     balanceHistoryCache: emptyHistoryCache, // calculated in the jsHelpers
     swapHistory: [],
   };
@@ -173,6 +174,7 @@ const postSync = (initial: Account, synced: Account): Account => {
   const pendingOperations = initialPendingOperations.filter(
     op => !operations.some(o => o.id === op.id),
   );
+
   // Set of hashes from the pending operations of the main account
   const coinPendingOperationsHashes = new Set();
   for (const op of pendingOperations) {
@@ -185,18 +187,19 @@ const postSync = (initial: Account, synced: Account): Account => {
     subAccounts: synced.subAccounts?.map(subAccount => {
       // If the subAccount is new, just return the freshly synced subAccount
       if (!initialSubAccountsIds.has(subAccount.id)) return subAccount;
-
+      const subAccountPendingOp: Operation[] = [];
+      pendingOperations.forEach(({ subOperations }) => {
+        const operations = subOperations?.filter(
+          ({ accountId, id: tokenOpId }) =>
+            accountId === subAccount.id && !subAccount.operations.some(op => op.id === tokenOpId),
+        );
+        if (operations) {
+          subAccountPendingOp.push(...operations);
+        }
+      });
       return {
         ...subAccount,
-        pendingOperations: subAccount.pendingOperations.filter(
-          tokenPendingOperation =>
-            // if the pending operation got removed from the main account, remove it as well
-            coinPendingOperationsHashes.has(tokenPendingOperation.hash) &&
-            // if the transaction has been confirmed, remove it
-            !subAccount.operations.some(op => op.hash === tokenPendingOperation.hash) &&
-            // if the nonce is still lower than the last one in operations, keep it
-            tokenPendingOperation.transactionSequenceNumber !== undefined,
-        ),
+        pendingOperations: subAccountPendingOp,
       };
     }),
   };
