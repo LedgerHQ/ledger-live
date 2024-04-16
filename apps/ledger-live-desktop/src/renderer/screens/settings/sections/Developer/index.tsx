@@ -95,7 +95,9 @@ const Default = () => {
         </Row>
       )}
 
-      <SpamReportNtf />
+      <FeatureToggle featureId="spamReportNfts">
+        <SpamReportNtf />
+      </FeatureToggle>
     </Body>
   );
 };

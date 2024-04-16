@@ -446,6 +446,7 @@ export const DEFAULT_FEATURES: Features = {
       refreshTime: 3, //nb minutes
     },
   },
+  spamReportNfts: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings
