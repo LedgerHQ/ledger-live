@@ -4,14 +4,7 @@ import { Account, AccountLike, AccountRaw, AccountRawLike, Operation } from "@le
 import { Transaction, TransactionRaw } from "../../generated/types";
 import { Result as UseBridgeTransactionResult } from "../../bridge/useBridgeTransaction";
 import { DeviceModelId } from "@ledgerhq/devices";
-
-export type SwapLiveError = {
-  type?: string;
-  cause: {
-    message?: string;
-    swapCode?: string;
-  };
-};
+export type { SwapLiveError } from "@ledgerhq/wallet-api-exchange-module";
 
 export type ExchangeSwap = {
   fromParentAccount: Account | null | undefined;
