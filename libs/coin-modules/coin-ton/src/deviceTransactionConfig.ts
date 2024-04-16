@@ -1,5 +1,5 @@
+import { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { DeviceTransactionField } from "../../transaction";
 import type { Transaction, TransactionStatus } from "./types";
 
 function getDeviceTransactionConfig(input: {
