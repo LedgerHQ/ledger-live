@@ -79,7 +79,7 @@ export const test = base.extend<TestFixtures>({
       {
         ...process.env,
         VERBOSE: true,
-        //MOCK: false,
+        // MOCK: true,
         SPECULOS_API_PORT: 5000,
         MOCK_COUNTERVALUES: true,
         HIDE_DEBUG_MOCK: true,
