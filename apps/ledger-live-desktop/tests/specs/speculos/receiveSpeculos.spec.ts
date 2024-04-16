@@ -6,6 +6,7 @@ import { Layout } from "../../models/Layout";
 import { AccountPage } from "../../models/AccountPage";
 import { AccountsPage } from "../../models/AccountsPage";
 import { ReceiveModal } from "../../models/ReceiveModal";
+import { SpeculosModal } from "../../models/SpeculosModal";
 
 test.use({ userdata: "skip-onboarding" });
 
@@ -14,13 +15,14 @@ const currencies = ["BTC"];
 for (const currency of currencies) {
   let firstAccountName = "NO ACCOUNT NAME YET";
 
-  test(`[${currency}] Add account`, async ({ page, request }) => {
+  test(`[${currency}] Receive`, async ({ page }) => {
     const portfolioPage = new PortfolioPage(page);
     const addAccountModal = new AddAccountModal(page);
     const layout = new Layout(page);
     const accountsPage = new AccountsPage(page);
     const accountPage = new AccountPage(page);
     const receiveModal = new ReceiveModal(page);
+    const speculosModal = new SpeculosModal(page);
 
     await test.step(`[${currency}] Open modal`, async () => {
       await portfolioPage.openAddAccountModal();
@@ -54,6 +56,7 @@ for (const currency of currencies) {
     await test.step(`[${currency}] Done`, async () => {
       await addAccountModal.done();
       await layout.totalBalance.waitFor({ state: "visible" });
+      // Problème lorsque le solde =0
     });
 
     await test.step(`Navigate to first account`, async () => {
@@ -63,24 +66,28 @@ for (const currency of currencies) {
       await expect.soft(page).toHaveScreenshot(`${currency}-firstAccountPage.png`);
     });
 
-    await test.step(`receive`, async () => {
-      await page.getByRole("button", { name: "receive" }).click();
-      await page.getByRole("button", { name: "continue" }).click();
+    await test.step(`goToReceive`, async () => {
+      await page
+        .locator('[data-test-id="account-buttons-group"]')
+        .getByRole("button", { name: "Receive" })
+        .click();
+      await page.getByRole("button", { name: "Continue" }).click(); //faire avec les ID ?
       await expect(
         page.getByText("Verify that the shared address exactly matches the one on your device"),
       ).toBeVisible();
     });
 
-    await test.step(`[${currency}] Receive`, async () => {
-      //Ajouter methode pour verifier que API repond bien 200 ou 201 (a verifier la valeur)
-      await request.post("http://127.0.0.1:5000/button/right", {
-        data: '{"action":"press-and-release"}',
-      });
-      await request.post("http://127.0.0.1:5000/button/both", {
-        data: '{"action":"press-and-release"}',
-      });
+    await test.step(`[${currency}] Validate message`, async () => {
+      await speculosModal.pressRight();
+      if (currency === "ETH") {
+        await speculosModal.pressRight();
+        await speculosModal.pressBoth();
+      } else {
+        await speculosModal.pressBoth();
+      }
       await expect.soft(receiveModal.container).toHaveScreenshot(`Receive.png`);
       await page.getByRole("button", { name: "done" }).click();
     });
   });
 }
+//BUG avec les versions de la nanoAPP ?
