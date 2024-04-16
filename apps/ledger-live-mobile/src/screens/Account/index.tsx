@@ -9,7 +9,7 @@ import { Flex } from "@ledgerhq/native-ui";
 import debounce from "lodash/debounce";
 import SafeAreaView from "~/components/SafeAreaView";
 import { useTranslation } from "react-i18next";
-import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
+import { getCurrencyColor, isCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -37,6 +37,7 @@ import useAccountActions from "./hooks/useAccountActions";
 import type { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 
 type Props =
   | StackNavigatorProps<AccountsNavigatorParamList, ScreenName.Account>
@@ -145,6 +146,15 @@ const AccountScreenInner = ({
           </Flex>,
         ]),
   ];
+
+  try {
+    if (isCryptoCurrency(currency)) {
+      const currencyConfig = getCurrencyConfiguration(currency);
+      console.log({ currencyConfig });
+    }
+  } catch (err) {
+    console.warn(err);
+  }
 
   return (
     <ReactNavigationPerformanceView screenName={ScreenName.Account} interactive>
