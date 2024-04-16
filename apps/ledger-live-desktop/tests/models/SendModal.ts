@@ -27,4 +27,8 @@ export class SendModal extends Modal {
     await this.recipientInput.clear();
     await this.recipientInput.fill(recipient);
   }
+
+  async sendMax() {
+    await this.page.locator('[data-test-id="modal-max-checkbox"]').first().check();
+  }
 }
