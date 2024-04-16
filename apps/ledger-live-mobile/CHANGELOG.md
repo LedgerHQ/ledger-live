@@ -1,5 +1,15 @@
 # live-mobile
 
+## 3.43.0-nightly.9
+
+### Patch Changes
+
+- [#6674](https://github.com/LedgerHQ/ledger-live/pull/6674) [`0e8e08a`](https://github.com/LedgerHQ/ledger-live/commit/0e8e08a967fd6ec538c55dea8c62e1d319b5cea1) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Set the url pt-br for privacyPolicy and terms. There was no corresponding url.
+
+- [#6648](https://github.com/LedgerHQ/ledger-live/pull/6648) [`65754a6`](https://github.com/LedgerHQ/ledger-live/commit/65754a675b47961f200bea793bc74451744f3706) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Remove Spams NFTs from Account Page
+
+- [#6670](https://github.com/LedgerHQ/ledger-live/pull/6670) [`dc3d932`](https://github.com/LedgerHQ/ledger-live/commit/dc3d9323a8ef4336b1f8e7083382b233b8066a2f) Thanks [@LucasWerey](https://github.com/LucasWerey)! - fix ui reg caused by previous PR on selectDevice2 screen. The ui was correct with CC but wrong without
+
 ## 3.43.0-nightly.8
 
 ### Patch Changes

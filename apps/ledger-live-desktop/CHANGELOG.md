@@ -1,5 +1,13 @@
 # ledger-live-desktop
 
+## 2.79.0-nightly.10
+
+### Patch Changes
+
+- [#6492](https://github.com/LedgerHQ/ledger-live/pull/6492) [`2b8ab19`](https://github.com/LedgerHQ/ledger-live/commit/2b8ab19eea465ce8b62a8fa29b96cd569535fb3b) Thanks [@LucasWerey](https://github.com/LucasWerey)! - fix duplicated learn more link on infra error inside errorbanner
+
+- [#6668](https://github.com/LedgerHQ/ledger-live/pull/6668) [`a1d0668`](https://github.com/LedgerHQ/ledger-live/commit/a1d0668c304f7831a6bb3689488edae6109fe3f0) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Add isFromPostOnboardingEntryPoint param to open modal data. Use this to disable the Grow Your ETH staking modal advert when the user first receives ETH during the Stax onboarding flow.
+
 ## 2.79.0-nightly.9
 
 ### Patch Changes
