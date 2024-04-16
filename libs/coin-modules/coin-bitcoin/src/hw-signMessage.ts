@@ -13,9 +13,7 @@ export const signMessage =
       signer.signMessage(account.freshAddressPath, hexMessage),
     )) as BitcoinSignature;
     const v = result["v"] + 27 + 4;
-    const signature = Buffer.from(`${v.toString(16)}${result["r"]}${result["s"]}`, "hex").toString(
-      "base64",
-    );
+    const signature = `${v.toString(16)}${result["r"]}${result["s"]}`;
     return {
       rsv: result,
       signature,

@@ -77,7 +77,7 @@ export class CustomImageDrawer {
 
   async selectNft(index: number) {
     await this.nftCard(index).waitFor({ state: "attached" });
-    this.nftCard(index).click();
+    await this.nftCard(index).click();
   }
 
   async waitForImportNftConfirmable(): Promise<boolean> {

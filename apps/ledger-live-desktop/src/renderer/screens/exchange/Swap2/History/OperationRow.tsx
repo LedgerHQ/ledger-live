@@ -10,6 +10,7 @@ import {
 import { MappedSwapOperation } from "@ledgerhq/live-common/exchange/swap/types";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import styled, { DefaultTheme } from "styled-components";
 import Box from "~/renderer/components/Box";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
@@ -102,6 +103,7 @@ const OperationRow = ({
   const fromCurrency = getAccountCurrency(fromAccount);
   const toCurrency = getAccountCurrency(toAccount);
   const dateFormatted = useDateFormatted(operation.date, hourFormat);
+  const { t } = useTranslation();
 
   return (
     <Row
@@ -112,17 +114,7 @@ const OperationRow = ({
       alignItems={"center"}
       onClick={() => openSwapOperationDetailsModal(mappedSwapOperation)}
     >
-      <Tooltip
-        content={
-          <span
-            style={{
-              textTransform: "capitalize",
-            }}
-          >
-            {status}
-          </span>
-        }
-      >
+      <Tooltip content={<span>{t(`swap2.history.status.${status}`)}</span>}>
         <Status status={status}>
           <IconSwap size={12} />
           {isSwapOperationPending(status) ? (

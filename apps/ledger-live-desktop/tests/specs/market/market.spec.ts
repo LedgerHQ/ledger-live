@@ -42,6 +42,7 @@ test("Market", async ({ page }) => {
       page.locator("data-test-id=market-coin-price"),
       page.locator("data-test-id=market-cap"),
       page.locator("data-test-id=market-price-change"),
+      page.getByRole("row").filter({ hasText: new RegExp("^(?!.*(?:Bitcoin|Ethereum)).*$") }),
     ],
   };
 
@@ -52,7 +53,7 @@ test("Market", async ({ page }) => {
   });
 
   await page.route(`${getEnv("LEDGER_COUNTERVALUES_API")}/v2/supported-to`, async route => {
-    route.fulfill({
+    await route.fulfill({
       headers: { teststatus: "mocked" },
       body: JSON.stringify([
         "aed",
@@ -159,10 +160,10 @@ test("Market", async ({ page }) => {
     await expect
       .soft(page)
       .toHaveScreenshot("market-btc-buy-page.png", { mask: [page.locator("webview")] });
-    await expect(await liveAppWebview.waitForCorrectTextInWebview("theme: dark")).toBe(true);
-    await expect(await liveAppWebview.waitForCorrectTextInWebview("currency: bitcoin")).toBe(true);
-    await expect(await liveAppWebview.waitForCorrectTextInWebview("mode: buy")).toBe(true);
-    await expect(await liveAppWebview.waitForCorrectTextInWebview("lang: en")).toBe(true);
+    expect(await liveAppWebview.waitForCorrectTextInWebview("theme: dark")).toBe(true);
+    expect(await liveAppWebview.waitForCorrectTextInWebview("currency: bitcoin")).toBe(true);
+    expect(await liveAppWebview.waitForCorrectTextInWebview("mode: buy")).toBe(true);
+    expect(await liveAppWebview.waitForCorrectTextInWebview("lang: en")).toBe(true);
 
     await layout.goToMarket();
   });
@@ -183,9 +184,9 @@ test("Market", async ({ page }) => {
     await expect
       .soft(page)
       .toHaveScreenshot("market-btc-buy-page.png", { mask: [page.locator("webview")] });
-    await expect(await liveAppWebview.waitForCorrectTextInWebview("theme: dark")).toBe(true);
-    await expect(await liveAppWebview.waitForCorrectTextInWebview("currency: bitcoin")).toBe(true);
-    await expect(await liveAppWebview.waitForCorrectTextInWebview("mode: buy")).toBe(true);
-    await expect(await liveAppWebview.waitForCorrectTextInWebview("lang: en")).toBe(true);
+    expect(await liveAppWebview.waitForCorrectTextInWebview("theme: dark")).toBe(true);
+    expect(await liveAppWebview.waitForCorrectTextInWebview("currency: bitcoin")).toBe(true);
+    expect(await liveAppWebview.waitForCorrectTextInWebview("mode: buy")).toBe(true);
+    expect(await liveAppWebview.waitForCorrectTextInWebview("lang: en")).toBe(true);
   });
 });

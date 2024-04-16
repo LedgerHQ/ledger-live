@@ -136,6 +136,7 @@ jobs:
         with:
           images: images.json
           no-actor: true
+
       - name: Zip Allure Results
         run: zip allure-results.zip ./apps/ledger-live-desktop/allure-results -rq
 
@@ -326,6 +327,7 @@ jobs:
               ],
               "color" : ${{ env.STATUS_COLOR }}
             };
+            
             fs.writeFileSync("payload-slack-content.json", JSON.stringify(slackPayload), "utf-8");
       - name: post to a Slack channel
         id: slack

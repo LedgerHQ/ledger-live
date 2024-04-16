@@ -3,6 +3,7 @@ import { getDeviceModel } from "@ledgerhq/devices";
 import { log } from "@ledgerhq/logs";
 import { useGenuineCheck } from "@ledgerhq/live-common/hw/hooks/useGenuineCheck";
 import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/deviceSDK/hooks/useGetLatestAvailableFirmware";
+import { shouldForceFirmwareUpdate } from "@ledgerhq/live-common/device/use-cases/shouldForceFirmwareUpdate";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import AllowManagerDrawer from "./AllowManagerDrawer";
 import GenuineCheckErrorDrawer from "./GenuineCheckErrorDrawer";
@@ -97,7 +98,8 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
   onCancelOnboarding,
   navigation,
 }) => {
-  const productName = getDeviceModel(device.modelId).productName || device.modelId;
+  const deviceModelId = device.modelId;
+  const productName = getDeviceModel(deviceModelId).productName || deviceModelId;
 
   // If the device is genuine, puts the current step to `genuine-check` and it will automatically go to next step
   // as the `genuineCheckStatus` is also set as `completed`.
@@ -375,6 +377,10 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
   const hasLatestAvailableFirmwareStatus =
     getLatestAvailableFirmwareStatus === "available-firmware" && !!latestAvailableFirmwareVersion;
 
+  const forceFirmwareUpdate =
+    deviceInfo?.version &&
+    shouldForceFirmwareUpdate({ currentVersion: deviceInfo.version, deviceModelId });
+
   return (
     <>
       {firmwareUpdateUiStepStatus === "completed" ? (
@@ -422,6 +428,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
         latestAvailableFirmwareVersion={latestAvailableFirmwareVersion}
         notifyOnboardingEarlyCheckEnded={notifyOnboardingEarlyCheckEnded}
         onSkipFirmwareUpdate={onSkipFirmwareUpdate}
+        updateSkippable={!forceFirmwareUpdate}
         onUpdateFirmware={onUpdateFirmware}
       />
       <LanguagePrompt device={device} />

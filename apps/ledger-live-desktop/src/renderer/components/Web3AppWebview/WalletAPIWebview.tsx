@@ -42,6 +42,7 @@ import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { TrackFunction } from "@ledgerhq/live-common/platform/tracking";
 import { useDappLogic } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import { NoAccountOverlay } from "./NoAccountOverlay";
+import { ipcRenderer } from "electron";
 
 const wallet = { name: "ledger-live-desktop", version: __APP_VERSION__ };
 
@@ -53,6 +54,7 @@ function useUiHook(manifest: AppManifest, tracking: Record<string, TrackFunction
   return useMemo(
     () => ({
       "account.request": ({ accounts$, currencies, onSuccess, onCancel }) => {
+        ipcRenderer.send("show-app", {});
         setDrawer(
           SelectAccountAndCurrencyDrawer,
           {
@@ -72,6 +74,7 @@ function useUiHook(manifest: AppManifest, tracking: Record<string, TrackFunction
         );
       },
       "account.receive": ({ account, parentAccount, accountAddress, onSuccess, onError }) => {
+        ipcRenderer.send("show-app", {});
         dispatch(
           openModal("MODAL_EXCHANGE_CRYPTO_DEVICE", {
             account,
@@ -85,6 +88,7 @@ function useUiHook(manifest: AppManifest, tracking: Record<string, TrackFunction
         );
       },
       "message.sign": ({ account, message, onSuccess, onError, onCancel }) => {
+        ipcRenderer.send("show-app", {});
         dispatch(
           openModal("MODAL_SIGN_MESSAGE", {
             account,
@@ -109,6 +113,7 @@ function useUiHook(manifest: AppManifest, tracking: Record<string, TrackFunction
         onSuccess,
         onError,
       }) => {
+        ipcRenderer.send("show-app", {});
         dispatch(
           openModal("MODAL_SIGN_TRANSACTION", {
             canEditFees,
@@ -148,6 +153,7 @@ function useUiHook(manifest: AppManifest, tracking: Record<string, TrackFunction
         });
       },
       "device.transport": ({ appName, onSuccess, onCancel }) => {
+        ipcRenderer.send("show-app", {});
         dispatch(
           openModal("MODAL_CONNECT_DEVICE", {
             appName,
@@ -157,6 +163,7 @@ function useUiHook(manifest: AppManifest, tracking: Record<string, TrackFunction
         );
       },
       "device.select": ({ appName, onSuccess, onCancel }) => {
+        ipcRenderer.send("show-app", {});
         dispatch(
           openModal("MODAL_CONNECT_DEVICE", {
             appName,
@@ -166,6 +173,7 @@ function useUiHook(manifest: AppManifest, tracking: Record<string, TrackFunction
         );
       },
       "exchange.start": ({ exchangeType, onSuccess, onCancel }) => {
+        ipcRenderer.send("show-app", {});
         dispatch(
           openExchangeDrawer({
             type: "EXCHANGE_START",
@@ -180,6 +188,7 @@ function useUiHook(manifest: AppManifest, tracking: Record<string, TrackFunction
         );
       },
       "exchange.complete": ({ exchangeParams, onSuccess, onCancel }) => {
+        ipcRenderer.send("show-app", {});
         dispatch(
           openExchangeDrawer({
             type: "EXCHANGE_COMPLETE",

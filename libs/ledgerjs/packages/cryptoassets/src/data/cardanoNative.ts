@@ -11,4 +11,6 @@ export type CardanoNativeToken = [
 
 import tokens from "./cardanoNative.json";
 
+export { default as hash } from "./cardanoNative-hash.json";
+
 export default tokens as CardanoNativeToken[];

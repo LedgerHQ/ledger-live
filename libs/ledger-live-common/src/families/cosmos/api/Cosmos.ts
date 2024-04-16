@@ -280,7 +280,9 @@ export class CosmosAPI {
     });
 
     for (const { entries, redelegation } of redelegationResponses) {
-      for (const { initial_balance: initalBalance, completion_time: completionTime } of entries) {
+      for (const {
+        redelegation_entry: { initial_balance: initalBalance, completion_time: completionTime },
+      } of entries) {
         redelegations.push({
           validatorSrcAddress: redelegation.validator_src_address,
           validatorDstAddress: redelegation.validator_dst_address,

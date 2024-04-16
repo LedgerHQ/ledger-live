@@ -1,5 +1,6 @@
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { RefetchOptions, QueryObserverResult } from "@tanstack/react-query";
+import { PortfolioRange } from "@ledgerhq/types-live";
 
 export type MarketCoin = {
   id: string;
@@ -25,7 +26,6 @@ export type MarketListRequestParams = {
   top100?: boolean;
   supportedCoinsList?: SupportedCoins;
   liveCoinsList?: string[];
-  refreshTime?: number;
 };
 
 export type MarketListRequestResult = {
@@ -134,6 +134,60 @@ export type State = SingleCoinState & {
   page: number;
   endOfList: boolean;
   totalCoinsAvailable: number;
+};
+
+export type MarketPerformersParams = {
+  limit: number;
+  top: number;
+  sort: "asc" | "desc";
+  range: PortfolioRange;
+  counterCurrency: string;
+  supported: boolean;
+  refreshRate?: number;
+};
+
+export type MarketItemResponse = {
+  id: string;
+  ledgerIds: string[];
+  ticker: string;
+  name: string;
+  image: string;
+  marketCap: number;
+  marketCapRank: number;
+  fullyDilutedValuation: number;
+  totalVolume: number;
+  high24h: number;
+  low24h: number;
+  price: number;
+  priceChange24h: number;
+  priceChangePercentage1h: number;
+  priceChangePercentage24h: number;
+  priceChangePercentage7d: number;
+  priceChangePercentage30d: number;
+  priceChangePercentage1y: number;
+  marketCapChange24h: number;
+  marketCapChangePercentage24h: number;
+  circulatingSupply: number;
+  totalSupply: number;
+  maxSupply: number;
+  allTimeHigh: number;
+  allTimeLow: number;
+  allTimeHighDate: string;
+  allTimeLowDate: string;
+  sparkline: number[];
+  updatedAt: string;
+};
+export type MarketItemPerformer = {
+  name: string;
+  ticker: string;
+  priceChangePercentage1h: number;
+  priceChangePercentage24h: number;
+  priceChangePercentage7d: number;
+  priceChangePercentage30d: number;
+  priceChangePercentage1y: number;
+  image: string;
+  price: number;
+  ledgerIds: string[];
 };
 
 export type MarketDataApi = {

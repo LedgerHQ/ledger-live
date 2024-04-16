@@ -22,7 +22,9 @@ const mockedAxios = jest.spyOn(axios, "get");
 
 describe("import EIP 712 tokens", () => {
   beforeEach(() => {
-    mockedAxios.mockImplementation(() => Promise.resolve({ data: eip712Tokens }));
+    mockedAxios.mockImplementation(() =>
+      Promise.resolve({ data: eip712Tokens, headers: { etag: "etagHash" } }),
+    );
   });
 
   afterEach(() => {
@@ -30,7 +32,10 @@ describe("import EIP 712 tokens", () => {
   });
 
   it("should output the file in the correct format", async () => {
-    const expectedFile = `export default ${JSON.stringify(eip712Tokens, null, 2)};`;
+    const expectedFile = `import EIP712 from "./eip712.json";
+export { default as hash } from "./eip712-hash.json";
+export default EIP712;
+`;
 
     const mockedFs = (fs.writeFileSync = jest.fn());
 
@@ -38,6 +43,7 @@ describe("import EIP 712 tokens", () => {
 
     expect(mockedAxios).toHaveBeenCalledWith(expect.stringMatching(/.*\/eip712.json/));
     expect(mockedFs).toHaveBeenNthCalledWith(1, "eip712.json", JSON.stringify(eip712Tokens));
-    expect(mockedFs).toHaveBeenNthCalledWith(2, "eip712.ts", expectedFile);
+    expect(mockedFs).toHaveBeenNthCalledWith(2, "eip712-hash.json", JSON.stringify("etagHash"));
+    expect(mockedFs).toHaveBeenNthCalledWith(3, "eip712.ts", expectedFile);
   });
 });

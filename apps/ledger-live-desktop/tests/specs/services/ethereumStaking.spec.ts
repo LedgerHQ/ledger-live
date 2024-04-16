@@ -148,16 +148,21 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
   });
 
   await test.step("Market page loads with ETH staking available", async () => {
-    await layout.goToMarket();
-    await marketPage.waitForLoading();
-    await expect.soft(page).toHaveScreenshot("market-loaded-with-eth-stake-button-available.png", {
+    const maskItemsInMarket = {
       mask: [
         page.locator("data-test-id=market-small-graph"),
         page.locator("data-test-id=market-coin-price"),
         page.locator("data-test-id=market-cap"),
         page.locator("data-test-id=market-price-change"),
+        page.getByRole("row").filter({ hasText: new RegExp("^(?!.*(?:Bitcoin|Ethereum)).*$") }),
       ],
-    });
+    };
+
+    await layout.goToMarket();
+    await marketPage.waitForLoading();
+    await expect
+      .soft(page)
+      .toHaveScreenshot("market-loaded-with-eth-stake-button-available.png", maskItemsInMarket);
   });
 
   await test.step("start stake flow via Stake entry button", async () => {
@@ -190,6 +195,6 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
     const dappURL = await liveAppWebview.getLiveAppDappURL();
     await liveAppWebview.waitForCorrectTextInWebview("Ethereum 1");
     expect(dappURL).toContain("?focus=pooled");
-    await expect(await liveAppWebview.getLiveAppTitle()).toBe("Kiln");
+    expect(await liveAppWebview.getLiveAppTitle()).toBe("Kiln");
   });
 });

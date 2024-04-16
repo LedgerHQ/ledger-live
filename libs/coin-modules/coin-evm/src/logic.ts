@@ -14,17 +14,17 @@ import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
 import { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets/tokens";
+import { hashes as tokensHashesByChainId } from "@ledgerhq/cryptoassets/data/evm/index";
 import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { getEIP712FieldsDisplayedOnNano } from "@ledgerhq/evm-tools/message/EIP712/index";
 import { getNodeApi } from "./api/node/index";
+import { getCoinConfig } from "./config";
 import {
   EvmNftTransaction,
   Transaction as EvmTransaction,
   EvmTransactionEIP1559,
   EvmTransactionLegacy,
 } from "./types";
-import { getCoinConfig } from "./config";
 
 /**
  * Helper to check if a legacy transaction has the right fee property
@@ -156,20 +156,35 @@ export const mergeSubAccounts = (
 };
 
 /**
- * A pseudo private Map used to memoize the very long
- * string used to detect a change in the CAL
- * tokens and its corresponding hash.
+ * Map of Crypto Asset List content hash per currency.
+ * Used to detect changes between syncs and trigger
+ * a full synchronization in order to detect
+ * freshly added token definitions
  */
-const simpleSyncHashMemoize: Record<string, string> = {};
+const CALHashByChainIdMap = new Map<CryptoCurrency, string>();
 
 /**
- * Helper clearing the simpleSyncHashMemoize object
- * Exported & used only by test runners
+ * Getter for the CAL content hash
  */
-export const __testOnlyClearSyncHashMemoize = (): void => {
-  for (const key in simpleSyncHashMemoize) {
-    delete simpleSyncHashMemoize[key];
+export const getCALHash = (currency: CryptoCurrency): string => {
+  if (!CALHashByChainIdMap.has(currency)) {
+    CALHashByChainIdMap.set(
+      currency,
+      tokensHashesByChainId[
+        (currency?.ethereumLikeInfo?.chainId || "") as keyof typeof tokensHashesByChainId
+      ],
+    );
   }
+
+  return CALHashByChainIdMap.get(currency) || "";
+};
+
+/**
+ * Setter for the CAL content hash
+ */
+export const setCALHash = (currency: CryptoCurrency, hash: string): string => {
+  CALHashByChainIdMap.set(currency, hash);
+  return CALHashByChainIdMap.get(currency)!;
 };
 
 /**
@@ -183,33 +198,24 @@ export const __testOnlyClearSyncHashMemoize = (): void => {
  * which would mean not seeing some potential new tokens.
  * This can be fixed by simply removing the account
  * and adding it again, now syncing from block 0.
- *
- * This computation could be easily simplified
- * if the CAL files where to include an
- * already crafted hash per token
  */
 export const getSyncHash = (
   currency: CryptoCurrency,
   blacklistedTokenIds: string[] = [],
 ): string => {
-  const tokens = listTokensForCryptoCurrency(currency).filter(
-    token => !blacklistedTokenIds.includes(token.id),
-  );
-  const basicTokensListString = tokens
-    .map(token => token.id + token.contractAddress + token.name + token.ticker)
-    .join("");
   const isNftSupported = isNFTActive(currency);
 
   const config = getCoinConfig(currency).info;
   const { node = {}, explorer = {} } = config;
 
   const stringToHash =
-    basicTokensListString + isNftSupported + JSON.stringify(node) + JSON.stringify(explorer);
+    getCALHash(currency) +
+    blacklistedTokenIds.join("") +
+    isNftSupported +
+    JSON.stringify(node) +
+    JSON.stringify(explorer);
 
-  if (!simpleSyncHashMemoize[stringToHash]) {
-    simpleSyncHashMemoize[stringToHash] = `0x${murmurhash(stringToHash).result().toString(16)}`;
-  }
-  return simpleSyncHashMemoize[stringToHash];
+  return `0x${murmurhash(stringToHash).result().toString(16)}`;
 };
 
 /**
