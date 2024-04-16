@@ -132,7 +132,7 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
 
   const onBroadcastSuccess = useCallback(
     (operation: Operation) => {
-      // Save swap history
+      // If swap we save to swap history and keep open the drawer
       if (swapId && toAccount && magnitudeAwareRate && sourceCurrency && targetCurrency) {
         const newResult = {
           operation,
@@ -152,13 +152,18 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
         if (getEnv("DISABLE_TRANSACTION_BROADCAST")) {
           return onCancel(new DisabledTransactionBroadcastError());
         }
+        onResult(operation);
+        // else not swap i.e card and sell we close the drawer
+      } else {
+        onResult(operation);
+        onClose?.();
       }
-      onResult(operation);
     },
     [
       setResult,
       onResult,
       onCancel,
+      onClose,
       updateAccount,
       magnitudeAwareRate,
       provider,
