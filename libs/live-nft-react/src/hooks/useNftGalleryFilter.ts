@@ -1,25 +1,9 @@
 import { useMemo } from "react";
-import { InfiniteData, useInfiniteQuery, UseInfiniteQueryResult } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { fetchNftsFromSimpleHash } from "@ledgerhq/live-nft/api/simplehash";
-import { SimpleHashResponse } from "@ledgerhq/live-nft/api/types";
 import { ProtoNFT } from "@ledgerhq/types-live";
 import { NFTS_QUERY_KEY } from "../queryKeys";
-
-export type HookProps = {
-  addresses: string;
-  nftsOwned: ProtoNFT[];
-  chains: string[];
-  threshold: number;
-};
-
-export type PartialProtoNFT = Partial<ProtoNFT>;
-
-export type NftGalleryFilterResult = UseInfiniteQueryResult<
-  InfiniteData<SimpleHashResponse, unknown>,
-  Error
-> & {
-  nfts: ProtoNFT[];
-};
+import { NftGalleryFilterResult, HookProps } from "./types";
 
 /**
  * useNftGalleryFilter() will apply a spam filtering on top of existing NFT data.
