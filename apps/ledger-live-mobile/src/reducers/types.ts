@@ -26,6 +26,7 @@ import {
 } from "../dynamicContent/types";
 import { ProtectStateNumberEnum } from "../components/ServicesWidget/types";
 import { ImageType } from "../components/CustomImage/types";
+import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 
 // === ACCOUNT STATE ===
 
@@ -234,8 +235,12 @@ export type SettingsState = {
   sensitiveAnalytics: boolean;
   onboardingHasDevice: boolean | null;
   onboardingType: OnboardingType | null;
-  customImageType: ImageType | null;
-  customImageBackup?: { hex: string; hash: string };
+  customLockScreenType: ImageType | null;
+  customLockScreenBackup: {
+    hex: string;
+    hash: string;
+    deviceModelId: CLSSupportedDeviceModelId;
+  } | null;
   lastSeenCustomImage: {
     size: number;
     hash: string;

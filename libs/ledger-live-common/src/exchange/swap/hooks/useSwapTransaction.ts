@@ -75,7 +75,7 @@ export const useFromAmountStatusMessage = (
         fees: formatCurrencyUnit(getFeesUnit(currency), estimatedFees),
         ticker: currency.ticker,
         cryptoName: currency.name,
-        links: [`/platform/multibuy?${query.toString()}`],
+        links: [`ledgerlive://buy?${query.toString()}`],
       });
     }
 

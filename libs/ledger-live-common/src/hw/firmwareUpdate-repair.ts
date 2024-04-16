@@ -1,7 +1,7 @@
 import { log } from "@ledgerhq/logs";
 import { MCUNotGenuineToDashboard } from "@ledgerhq/errors";
 import { Observable, from, of, EMPTY, concat, throwError } from "rxjs";
-import type { DeviceVersion, FinalFirmware } from "@ledgerhq/types-live";
+import type { DeviceVersion, FinalFirmware, McuVersion } from "@ledgerhq/types-live";
 import { concatMap, delay, filter, map, mergeMap, throttleTime } from "rxjs/operators";
 import semver from "semver";
 import ManagerAPI from "../manager/api";
@@ -152,9 +152,9 @@ const repair = (
                         });
 
                         const mcu = ManagerAPI.findBestMCU(
-                          finalFirmware.mcu_versions
-                            .map(id => validMcusForDeviceInfo.find(mcu => mcu.id === id))
-                            .filter(Boolean),
+                          validMcusForDeviceInfo.filter(({ id }: McuVersion) =>
+                            finalFirmware.mcu_versions.includes(id),
+                          ),
                         );
 
                         log("hw", "firmwareUpdate-repair got mcu", { mcu });

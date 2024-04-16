@@ -387,9 +387,9 @@ const dataset: DatasetTest<Transaction> = {
                 recipient: "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
               }),
               expectedStatus: {
-                // You can get the spenaable balance here
+                // You can get the spendable balance here
                 // https://stellar.expert/explorer/public/account/GAS5NQ2VU6LA3QPDSCVBH66IHP2RE52VFCLFQKSGRF7VKMZA2KTLGI3M
-                amount: new BigNumber(12485498),
+                amount: new BigNumber(12486627),
                 errors: {},
                 warnings: {},
               },

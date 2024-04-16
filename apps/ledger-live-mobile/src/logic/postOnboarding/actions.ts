@@ -12,7 +12,7 @@ export const assetsTransferAction: PostOnboardingAction = {
   description: "postOnboarding.actions.assetsTransfer.description",
   actionCompletedPopupLabel: "postOnboarding.actions.assetsTransfer.popupLabel",
   buttonLabelForAnalyticsEvent: "Secure your assets on Ledger",
-  navigationParams: [
+  getNavigationParams: () => [
     NavigatorName.ReceiveFunds,
     {
       screen: ScreenName.ReceiveSelectCrypto,
@@ -32,7 +32,7 @@ export const buyCryptoAction: PostOnboardingAction = {
   description: "postOnboarding.actions.buyCrypto.description",
   actionCompletedPopupLabel: "postOnboarding.actions.buyCrypto.popupLabel",
   buttonLabelForAnalyticsEvent: "Buy Crypto",
-  navigationParams: [
+  getNavigationParams: () => [
     NavigatorName.Exchange,
     {
       screen: ScreenName.ExchangeBuy,
@@ -50,12 +50,13 @@ export const customImageAction: PostOnboardingAction = {
   titleCompleted: "postOnboarding.actions.customImage.titleCompleted",
   description: "postOnboarding.actions.customImage.description",
   actionCompletedPopupLabel: "postOnboarding.actions.customImage.popupLabel",
-  navigationParams: [
+  getNavigationParams: ({ deviceModelId }) => [
     NavigatorName.CustomImage,
     {
       screen: ScreenName.CustomImageStep0Welcome,
       params: {
         device: null,
+        deviceModelId,
       },
     },
   ],

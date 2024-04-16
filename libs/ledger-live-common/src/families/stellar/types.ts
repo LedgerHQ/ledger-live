@@ -1,4 +1,4 @@
-import { ServerApi } from "stellar-sdk";
+import { Horizon } from "@stellar/stellar-sdk";
 import type { BigNumber } from "bignumber.js";
 import type {
   Operation,
@@ -73,7 +73,7 @@ export type BalanceAsset = {
   liquidity_pool_id?: string;
 };
 
-export type RawOperation = ServerApi.OperationRecord & {
+export type RawOperation = Horizon.ServerApi.OperationRecord & {
   asset_code?: string;
   asset_issuer?: string;
   from?: string;

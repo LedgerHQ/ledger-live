@@ -83,7 +83,7 @@ export function sortAccountsByStatus(accounts: SwapAccount[]) {
       subAccounts = [];
       disabledSubAccounts = [];
     } else if (account.disabled) {
-      // Add TokenAccount and ChildAccount to the subAccounts arrays
+      // Add TokenAccount to the subAccounts arrays
       disabledSubAccounts.unshift(account);
     } else {
       subAccounts.unshift(account);

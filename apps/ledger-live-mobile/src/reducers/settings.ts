@@ -121,8 +121,8 @@ export const INITIAL_STATE: SettingsState = {
   hasAvailableUpdate: false,
   theme: "system",
   osTheme: undefined,
-  customImageType: null,
-  customImageBackup: undefined,
+  customLockScreenType: null,
+  customLockScreenBackup: null,
   lastSeenCustomImage: {
     size: 0,
     hash: "",
@@ -469,7 +469,8 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
 
   [SettingsActionTypes.SET_CUSTOM_IMAGE_TYPE]: (state, action) => ({
     ...state,
-    customImageType: (action as Action<SettingsSetCustomImageTypePayload>).payload.customImageType,
+    customLockScreenType: (action as Action<SettingsSetCustomImageTypePayload>).payload
+      .customLockScreenType,
   }),
 
   [SettingsActionTypes.SET_HAS_SEEN_STAX_ENABLED_NFTS_POPUP]: (state, action) => ({
@@ -509,7 +510,7 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
 
   [SettingsActionTypes.SET_CUSTOM_IMAGE_BACKUP]: (state, action) => ({
     ...state,
-    customImageBackup: (action as Action<SettingsSetCustomImageBackupPayload>).payload,
+    customLockScreenBackup: (action as Action<SettingsSetCustomImageBackupPayload>).payload,
   }),
 
   [SettingsActionTypes.SET_LAST_CONNECTED_DEVICE]: (state, action) => ({
@@ -805,7 +806,7 @@ export const lastSeenDeviceSelector = (state: State) => {
 export const knownDeviceModelIdsSelector = (state: State) => state.settings.knownDeviceModelIds;
 export const hasSeenStaxEnabledNftsPopupSelector = (state: State) =>
   state.settings.hasSeenStaxEnabledNftsPopup;
-export const customImageTypeSelector = (state: State) => state.settings.customImageType;
+export const customImageTypeSelector = (state: State) => state.settings.customLockScreenType;
 export const starredMarketCoinsSelector = (state: State) => state.settings.starredMarketCoins;
 export const lastConnectedDeviceSelector = (state: State) => {
   // Nb workaround to prevent crash for dev/qa that have nanoFTS references.
@@ -826,7 +827,7 @@ export const marketRequestParamsSelector = (state: State) => state.settings.mark
 export const marketCounterCurrencySelector = (state: State) => state.settings.marketCounterCurrency;
 export const marketFilterByStarredAccountsSelector = (state: State) =>
   state.settings.marketFilterByStarredAccounts;
-export const customImageBackupSelector = (state: State) => state.settings.customImageBackup;
+export const customImageBackupSelector = (state: State) => state.settings.customLockScreenBackup;
 export const sensitiveAnalyticsSelector = (state: State) => state.settings.sensitiveAnalytics;
 export const onboardingHasDeviceSelector = (state: State) => state.settings.onboardingHasDevice;
 export const onboardingTypeSelector = (state: State) => state.settings.onboardingType;

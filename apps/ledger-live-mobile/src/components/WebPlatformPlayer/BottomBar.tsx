@@ -1,16 +1,23 @@
 import React, { RefObject, useCallback } from "react";
 import { TouchableOpacity } from "react-native";
-import { Flex } from "@ledgerhq/native-ui";
+import { Flex, Text } from "@ledgerhq/native-ui";
 import { ArrowLeftMedium, ArrowRightMedium, ReverseMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useTheme } from "styled-components/native";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
-import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
+import { useDappCurrentAccount } from "@ledgerhq/live-common/wallet-api/useDappLogic";
+import { safeGetRefValue, CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react";
 import { WebviewAPI, WebviewState } from "../Web3AppWebview/types";
+import Button from "../Button";
+import { Trans } from "react-i18next";
+import { getAccountName } from "@ledgerhq/live-common/account/index";
+import CircleCurrencyIcon from "../CircleCurrencyIcon";
+import { useSelectAccount } from "../Web3AppWebview/helpers";
 
 type BottomBarProps = {
   manifest: AppManifest;
   webviewAPIRef: RefObject<WebviewAPI>;
   webviewState: WebviewState;
+  currentAccountHistDb: CurrentAccountHistDB;
 };
 
 function IconButton({
@@ -34,8 +41,15 @@ function IconButton({
   );
 }
 
-export function BottomBar({ webviewAPIRef, webviewState }: BottomBarProps) {
+export function BottomBar({
+  manifest,
+  webviewAPIRef,
+  webviewState,
+  currentAccountHistDb,
+}: BottomBarProps) {
   const { colors } = useTheme();
+  const { currentAccount } = useDappCurrentAccount(currentAccountHistDb);
+  const shouldDisplaySelectAccount = !!manifest.dapp;
 
   const handleForward = useCallback(() => {
     const webview = safeGetRefValue(webviewAPIRef);
@@ -55,8 +69,10 @@ export function BottomBar({ webviewAPIRef, webviewState }: BottomBarProps) {
     webview.reload();
   }, [webviewAPIRef]);
 
+  const { onSelectAccount } = useSelectAccount({ manifest, currentAccountHistDb });
+
   return (
-    <Flex flexDirection="row" paddingY={4} paddingX={4}>
+    <Flex flexDirection="row" paddingY={4} paddingX={4} alignItems="center">
       <Flex flexDirection="row" flex={1}>
         <IconButton onPress={handleBack} marginRight={4} disabled={!webviewState.canGoBack}>
           <ArrowLeftMedium
@@ -72,6 +88,30 @@ export function BottomBar({ webviewAPIRef, webviewState }: BottomBarProps) {
           />
         </IconButton>
       </Flex>
+
+      {shouldDisplaySelectAccount ? (
+        <Button type="primary" onPress={onSelectAccount}>
+          {!currentAccount ? (
+            <Text>
+              <Trans i18nKey="common.selectAccount" />
+            </Text>
+          ) : (
+            <Flex flexDirection="row" height={50} alignItems="center" justifyContent="center">
+              <CircleCurrencyIcon
+                size={24}
+                currency={
+                  currentAccount.type === "TokenAccount"
+                    ? currentAccount.token
+                    : currentAccount.currency
+                }
+              />
+              <Text color={"neutral.c20"} ml={4}>
+                {getAccountName(currentAccount)}
+              </Text>
+            </Flex>
+          )}
+        </Button>
+      ) : null}
 
       <IconButton onPress={handleReload} alignSelf="flex-end">
         <ReverseMedium size={24} color="neutral.c100" />

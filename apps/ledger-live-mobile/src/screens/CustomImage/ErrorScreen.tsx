@@ -28,7 +28,7 @@ const buttonClickedEventProperties = {
 const ErrorScreen = ({ route, navigation }: NavigationProps) => {
   const [isModalOpened, setIsModalOpened] = useState(false);
   const { params } = route;
-  const { error, device } = params;
+  const { error, device, deviceModelId } = params;
 
   // Only keep 1 instance of error page in the navigation
   useEffect(() => {
@@ -65,7 +65,12 @@ const ErrorScreen = ({ route, navigation }: NavigationProps) => {
   return (
     <Container>
       <TrackScreen category={screenName} />
-      <CustomImageBottomModal isOpened={isModalOpened} onClose={closeModal} device={device} />
+      <CustomImageBottomModal
+        isOpened={isModalOpened}
+        onClose={closeModal}
+        device={device}
+        deviceModelId={deviceModelId}
+      />
       <Flex flex={1} justifyContent="center" alignSelf="center" p={5}>
         <Flex flex={1} justifyContent="center">
           <GenericErrorView error={error} hasExportLogButton={false} />

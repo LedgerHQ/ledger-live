@@ -165,12 +165,14 @@ export type Features = CurrencyFeatures & {
   llmAnalyticsOptInPrompt: Feature_LlmAnalyticsOptInPrompt;
   lldAnalyticsOptInPrompt: Feature_LldAnalyticsOptInPrompt;
   lldChatbotSupport: Feature_LldChatbotSupport;
+  llmChatbotSupport: Feature_LlmChatbotSupport;
   myLedgerDisplayAppDeveloperName: Feature_MyLedgerDisplayAppDeveloperName;
   nftsFromSimplehash: Feature_NftsFromSimpleHash;
   lldActionCarousel: Feature_lldActionCarousel;
   marketperformanceWidgetDesktop: Feature_MarketperformanceWidgetDesktop;
   supportDeviceStax: Feature_SupportDeviceStax;
   supportDeviceEuropa: Feature_SupportDeviceEuropa;
+  lldRefreshMarketData: Feature_LldRefreshMarketData;
 };
 
 /**
@@ -443,10 +445,17 @@ export type Feature_lldActionCarousel = Feature<{
 
 export type Feature_MarketperformanceWidgetDesktop = Feature<{
   variant: ABTestingVariants;
+  refreshRate: number;
+  top: number;
+  supported: boolean;
 }>;
 
 export type Feature_NftsFromSimpleHash = Feature<{
   threshold: number;
+}>;
+
+export type Feature_LldRefreshMarketData = Feature<{
+  refreshTime: number;
 }>;
 
 export type Feature_CounterValue = DefaultFeature;
@@ -469,6 +478,7 @@ export type Feature_MyLedgerDisplayAppDeveloperName = DefaultFeature;
 export type Feature_SupportDeviceStax = DefaultFeature;
 export type Feature_SupportDeviceEuropa = DefaultFeature;
 export type Feature_LldChatbotSupport = DefaultFeature;
+export type Feature_LlmChatbotSupport = DefaultFeature;
 
 /**
  * Utils types.

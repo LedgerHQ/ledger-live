@@ -50,7 +50,11 @@ const txToOps = (info: AccountShapeInfo, accountId: string, txs: CosmosTx[]): Co
 
     const op: CosmosOperation = getBlankOperation(tx, fees, accountId);
 
-    const messages: CosmosMessage[] = tx.logs.map(log => log.events).flat(1);
+    op.hasFailed = tx.code !== 0;
+
+    const messages: CosmosMessage[] = op.hasFailed
+      ? tx.events
+      : tx.logs.map(log => log.events).flat(1);
 
     const mainMessage = getMainMessage(messages);
 
@@ -159,6 +163,10 @@ const txToOps = (info: AccountShapeInfo, accountId: string, txs: CosmosTx[]): Co
         op.extra.validators = unbondShards;
         break;
       }
+    }
+
+    if (op.hasFailed) {
+      op.value = fees;
     }
 
     if (tx.tx.body.memo != null) {

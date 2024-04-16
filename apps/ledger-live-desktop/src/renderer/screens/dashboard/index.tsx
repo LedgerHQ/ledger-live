@@ -55,6 +55,7 @@ export default function DashboardPage() {
   const hasInstalledApps = useSelector(hasInstalledAppsSelector);
   const totalAccounts = accounts.length;
   const portfolioExchangeBanner = useFeature("portfolioExchangeBanner");
+  const lldActionCarousel = useFeature("lldActionCarousel");
   const totalCurrencies = useMemo(() => uniq(accounts.map(a => a.currency.id)).length, [accounts]);
   const totalOperations = useMemo(
     () => accounts.reduce((sum, a) => sum + a.operations.length, 0),
@@ -91,13 +92,14 @@ export default function DashboardPage() {
         <ClearCacheBanner />
         <CurrencyDownStatusAlert currencies={currencies} hideStatusIncidents />
       </TopBannerContainer>
-      <Box gap={"20px"}>
-        <RecoverBanner />
-        {isActionCardsCampainRunning ? (
-          <ActionContentCards variant={ABTestingVariants.variantA} />
-        ) : (
-          <Carousel />
-        )}
+      <Box>
+        <RecoverBanner>
+          {isActionCardsCampainRunning && lldActionCarousel?.enabled ? (
+            <ActionContentCards variant={ABTestingVariants.variantA} />
+          ) : (
+            <Carousel />
+          )}
+        </RecoverBanner>
       </Box>
       {isPostOnboardingBannerVisible && <PostOnboardingHubBanner />}
       <FeaturedButtons />

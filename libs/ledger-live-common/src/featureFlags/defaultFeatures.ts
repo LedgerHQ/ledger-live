@@ -178,7 +178,7 @@ export const DEFAULT_FEATURES: Features = {
   },
 
   storyly: {
-    enabled: true,
+    enabled: false,
     params: {
       stories: {
         recoverySeed: {
@@ -430,12 +430,22 @@ export const DEFAULT_FEATURES: Features = {
     enabled: false,
     params: {
       variant: ABTestingVariants.variantA,
+      refreshRate: 2,
+      top: 50,
+      supported: true,
     },
   },
 
   lldChatbotSupport: DEFAULT_FEATURE,
+  llmChatbotSupport: DEFAULT_FEATURE,
   supportDeviceStax: DEFAULT_FEATURE,
   supportDeviceEuropa: DEFAULT_FEATURE,
+  lldRefreshMarketData: {
+    ...DEFAULT_FEATURE,
+    params: {
+      refreshTime: 3, //nb minutes
+    },
+  },
 };
 
 // Firebase SDK treat JSON values as strings

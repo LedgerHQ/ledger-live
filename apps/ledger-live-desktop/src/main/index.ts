@@ -195,6 +195,12 @@ ipcMain.on("app-reload", () => {
     w.reload();
   }
 });
+ipcMain.on("show-app", () => {
+  const w = getMainWindow();
+  if (w) {
+    show(w);
+  }
+});
 
 ipcMain.on("ready-to-show", () => {
   const w = getMainWindow();

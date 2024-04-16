@@ -152,11 +152,11 @@ export function groupAccountsOperationsByDay(
       day,
       data,
     });
+    data = [];
   }
-
   return {
     sections,
-    completed: !next,
+    completed: !next && data.length === 0,
   };
 }
 

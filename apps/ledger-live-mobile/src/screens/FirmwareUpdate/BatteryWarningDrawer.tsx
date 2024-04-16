@@ -34,11 +34,12 @@ const BatteryWarningDrawer: React.FC<Props> = ({
               Icon={IconsLegacy.BatteryHalfMedium}
             />
             <Text fontSize={7} fontWeight="semiBold" textAlign="center" mt={6}>
-              {t("FirmwareUpdate.staxBatteryLow")}
+              {t("FirmwareUpdate.batteryLow", { productName: device.productName })}
             </Text>
             <Text fontSize={4} textAlign="center" color="neutral.c80" mt={6}>
-              {t("FirmwareUpdate.staxBatteryLowDescription", {
+              {t("FirmwareUpdate.batteryLowDescription", {
                 lowBatteryPercentage,
+                productName: device.productName,
               })}
             </Text>
           </Flex>

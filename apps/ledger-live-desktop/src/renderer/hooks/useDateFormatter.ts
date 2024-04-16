@@ -103,3 +103,63 @@ export const useCalendarFormatted = (
   const dateFormatter = useCalendarFormatter(intlOpts);
   return useMemo(() => (date ? dateFormatter(date) : ""), [date, dateFormatter]);
 };
+
+// make it format for technical usage in a readable way (that can also be put into a file name)
+// using the format YYYY.MM.DD-HH.mm.ss
+export const useTechnicalDateTimeFn = (): ((date?: Date) => string) => {
+  return useCallback(
+    (date?: Date) =>
+      (date || new Date())
+        .toISOString()
+        .slice(0, 19)
+        .replace(/-/g, ".")
+        .replace("T", "-")
+        .replace(/:/g, "."),
+    [],
+  );
+};
+
+// using the format YYYY.MM.DD
+export const useTechnicalDateFn = (): ((date?: Date) => string) => {
+  return useCallback(
+    (date?: Date) => (date || new Date()).toISOString().slice(0, 10).replace(/-/g, "."),
+    [],
+  );
+};
+
+export function relativeTime(currentDate: Date, targetDate: Date): string {
+  const diffMilliseconds = targetDate.getTime() - currentDate.getTime();
+
+  const seconds = Math.round(diffMilliseconds / 1000);
+  const minutes = Math.round(seconds / 60);
+  const hours = Math.round(minutes / 60);
+  const days = Math.round(hours / 24);
+  const months = Math.round(days / 30);
+  const years = Math.round(months / 12);
+
+  const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
+  if (years) {
+    return rtf.format(years, Math.abs(years) > 1 ? "years" : "year");
+  } else if (months) {
+    return rtf.format(months, Math.abs(months) > 1 ? "months" : "month");
+  } else if (days) {
+    return rtf.format(days, Math.abs(days) > 1 ? "days" : "day");
+  } else if (hours) {
+    return rtf.format(hours, Math.abs(hours) > 1 ? "hours" : "hour");
+  } else if (minutes) {
+    return rtf.format(minutes, Math.abs(minutes) > 1 ? "minutes" : "minute");
+  }
+  return rtf.format(seconds, Math.abs(seconds) > 1 ? "seconds" : "second");
+}
+
+export function fromNow(date: Date): string {
+  const currentDate = new Date();
+  const targetDate = new Date(date);
+  return relativeTime(currentDate, targetDate);
+}
+
+export const useDateFromNow = (date?: Date | null | undefined): string =>
+  useMemo(() => (date ? fromNow(date) : ""), [date]);
+
+export const useDateFromNowFn = (): ((date?: Date) => string) =>
+  useCallback(date => (date ? fromNow(date) : ""), []);

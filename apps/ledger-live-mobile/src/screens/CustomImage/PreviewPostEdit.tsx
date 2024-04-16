@@ -9,7 +9,8 @@ import Button from "~/components/wrappedUi/Button";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CustomImageNavigatorParamList } from "~/components/RootNavigator/types/CustomImageNavigator";
 import { NavigatorName, ScreenName } from "~/const";
-import StaxFramedImage, { previewConfig } from "~/components/CustomImage/StaxFramedImage";
+import FramedPicture from "~/components/CustomImage/FramedPicture";
+import { getFramedPictureConfig } from "~/components/CustomImage/framedPictureConfigs";
 import { TrackScreen } from "~/analytics";
 import Link from "~/components/wrappedUi/Link";
 
@@ -28,14 +29,14 @@ const analyticsEditEventProps = {
 const PreviewPostEdit = ({ navigation, route }: NavigationProps) => {
   const { t } = useTranslation();
   const { params } = route;
-  const { baseImageFile, imagePreview, imageData, device, imageType } = params;
+  const { baseImageFile, imagePreview, imageData, device, imageType, deviceModelId } = params;
 
   const handleError = useCallback(
     (error: Error) => {
       console.error(error);
-      navigation.navigate(ScreenName.CustomImageErrorScreen, { error, device });
+      navigation.navigate(ScreenName.CustomImageErrorScreen, { error, device, deviceModelId });
     },
-    [navigation, device],
+    [navigation, device, deviceModelId],
   );
 
   const handleSetPicture = useCallback(() => {
@@ -50,9 +51,10 @@ const PreviewPostEdit = ({ navigation, route }: NavigationProps) => {
       rawData: imageData,
       previewData: imagePreview,
       device,
+      deviceModelId,
       imageType,
     });
-  }, [navigation, device, imagePreview, imageData, imageType]);
+  }, [navigation, device, imagePreview, imageData, imageType, deviceModelId]);
 
   const handlePreviewImageError = useCallback(
     ({ nativeEvent }: NativeSyntheticEvent<ImageErrorEventData>) => {
@@ -67,12 +69,13 @@ const PreviewPostEdit = ({ navigation, route }: NavigationProps) => {
       screen: ScreenName.CustomImageStep1Crop,
       params: {
         device,
+        deviceModelId,
         baseImageFile,
         isPictureFromGallery: false,
         imageType,
       },
     });
-  }, [navigation, device, baseImageFile, imageType]);
+  }, [navigation, device, baseImageFile, imageType, deviceModelId]);
 
   if (!imagePreview) {
     return <InfiniteLoader />;
@@ -84,11 +87,11 @@ const PreviewPostEdit = ({ navigation, route }: NavigationProps) => {
       <Flex flex={1}>
         <Flex flex={1}>
           <Flex flex={1} flexDirection="column" alignItems="center" justifyContent="center">
-            <StaxFramedImage
+            <FramedPicture
               onError={handlePreviewImageError}
               fadeDuration={0}
               source={{ uri: imagePreview?.imageBase64DataUri }}
-              frameConfig={previewConfig}
+              framedPictureConfig={getFramedPictureConfig("preview", deviceModelId)}
             />
           </Flex>
         </Flex>

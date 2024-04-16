@@ -13,7 +13,7 @@
   "license": "MIT",
   "private": true,
   "main": "./.webpack/main.bundle.js",
-  "version": "2.77.2",
+  "version": "2.78.0",
   "scripts": {
     "start:prod": "electron ./.webpack/main.bundle.js",
     "start": "cross-env NODE_ENV=development node ./tools/main.js",
@@ -56,6 +56,7 @@
     "@ledgerhq/devices": "workspace:^",
     "@ledgerhq/domain-service": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/ethereum-provider": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/hw-transport-http": "workspace:^",
     "@ledgerhq/hw-transport-node-hid-singleton": "workspace:^",
@@ -76,7 +77,8 @@
     "@sentry/electron": "^4.15.1",
     "@sentry/node": "7.84.0",
     "@sentry/tracing": "7.84.0",
-    "@tanstack/react-query": "^5.17.19",
+    "@tanstack/react-query": "^5.28.9",
+    "@tanstack/react-query-devtools": "^5.28.9",
     "@tippyjs/react": "^4.2.6",
     "@trust/keyto": "^1.0.1",
     "@types/qrcode": "^1.5.0",
@@ -98,7 +100,6 @@
     "json-rpc-2.0": "^0.2.19",
     "jsqr": "^1.4.0",
     "lodash": "^4.17.21",
-    "moment": "^2.29.4",
     "prando": "^5.1.2",
     "prop-types": "^15.8.1",
     "qrcode": "^1.4.4",
@@ -211,7 +212,7 @@
     "ts-jest": "^29.1.1",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2",
-    "vite": "^4.5.2",
+    "vite": "^4.5.3",
     "vite-plugin-electron": "0.4.9",
     "yargs": "^17.0.0"
   }

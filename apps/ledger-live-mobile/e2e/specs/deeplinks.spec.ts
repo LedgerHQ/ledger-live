@@ -1,4 +1,4 @@
-import { device, expect } from "detox";
+import { device, expect, waitFor } from "detox";
 import { loadConfig } from "../bridge/server";
 import { getElementByText, isAndroid } from "../helpers";
 
@@ -72,10 +72,13 @@ describe("DeepLinks Tests", () => {
     await portfolioPage.waitForPortfolioPageToLoad();
   });
 
-  xit("should open My Ledger page and add a device", async () => {
+  it("should open My Ledger page and add a device", async () => {
     await managerPage.openViaDeeplink();
     await expect(managerPage.managerTitle()).toBeVisible();
-    await onboardingSteps.addDeviceViaBluetooth("David");
+    await onboardingSteps.selectAddDevice();
+    await managerPage.selectConnectDevice();
+    await onboardingSteps.addDeviceViaBluetooth();
+    await waitFor(managerPage.deviceName()).toBeVisible();
   });
 
   it("should open Account page", async () => {
