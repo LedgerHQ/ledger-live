@@ -37,6 +37,8 @@ import { AccountStakeBanner } from "~/renderer/screens/account/AccountStakeBanne
 import { AccountLike, Account, Operation } from "@ledgerhq/types-live";
 import { State } from "~/renderer/reducers";
 import { getLLDCoinFamily } from "~/renderer/families";
+import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
+import { isCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 
 type Params = {
   id: string;
@@ -115,6 +117,16 @@ const AccountPage = ({
 
   const currency = getAccountCurrency(account);
   const color = getCurrencyColor(currency, bgColor);
+
+  try {
+    if (isCryptoCurrency(currency)) {
+      const currencyConfig = getCurrencyConfiguration(currency);
+      console.log({ currencyConfig });
+    }
+  } catch (err) {
+    console.warn(err);
+  }
+
   return (
     <Box key={account.id}>
       <TrackPage
