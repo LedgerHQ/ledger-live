@@ -75,6 +75,7 @@ const Warning = ({
     case "freeze":
     case "unfreeze":
     case "vote":
+    case "legacyUnfreeze":
       return null;
     default:
       return (

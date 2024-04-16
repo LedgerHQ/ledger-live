@@ -51,7 +51,7 @@ const Evm1559CustomFees = ({
 
   // Creating a new transaction to simulate the bridge status response before updating
   // the original transaction
-  const bridge = getAccountBridge<EvmTransactionEIP1559>(account);
+  const bridge = getAccountBridge(account);
 
   const { transaction, setTransaction, status } = useBridgeTransaction<EvmTransactionEIP1559>(
     () => ({

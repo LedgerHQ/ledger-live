@@ -8,22 +8,25 @@ import {
 } from "../../helpers";
 import * as bridge from "../../bridge/server";
 import DeviceAction from "../DeviceAction";
-import { ModelId, getUSBDevice } from "../devices";
+import { ModelId, getUSBDevice, knownDevice } from "../devices";
 import { expect } from "detox";
 
 export default class OnboardingSteps {
   getStartedButtonId = "onboarding-getStarted-button";
-  devicePairedContinueButtonId = "onboarding-paired-continue";
   exploreWithoutDeviceButtonId = "discoverLive-exploreWithoutADevice";
+  readyToScanButtonID = "onboarding-scan-button";
+  scanAndImportAccountsPageID = "onboarding-import-accounts-title";
   discoverLiveTitle = (index: number) => `onboarding-discoverLive-${index}-title`;
   onboardingGetStartedButton = () => getElementById(this.getStartedButtonId);
   accessWalletButton = () => getElementById("onboarding-accessWallet");
   noLedgerYetButton = () => getElementById("onboarding-noLedgerYet");
   exploreAppButton = () => getElementById("onboarding-noLedgerYetModal-explore");
+  buyLedgerButton = () => getElementById("onboarding-noLedgerYetModal-buy");
   exploreWithoutDeviceButton = () => getElementById(this.exploreWithoutDeviceButtonId);
   connectLedgerButton = () => getElementById("Existing Wallet | Connect");
-  continueButton = () => getElementById(this.devicePairedContinueButtonId);
-  pairDeviceButton = () => getElementById("pair-device");
+  syncWithLedgerLiveDesktop = () => getElementById("Existing Wallet | Sync");
+  readyToScanButton = () => getElementById(this.readyToScanButtonID);
+  addDeviceButton = () => getElementById("connect-with-bluetooth");
   pairNanoButton = () => getElementById("Onboarding-PairNewNano");
   maybeLaterButton = () => getElementById("notifications-prompt-later");
 
@@ -62,8 +65,6 @@ export default class OnboardingSteps {
   quizzCta = "onboarding-quizz-cta";
   quizzFinalCta = "onboarding-quizz-final-cta";
 
-  defaultName = "Nano X de David";
-
   async startOnboarding() {
     await waitForElementById(this.getStartedButtonId);
     await tapByElement(this.onboardingGetStartedButton());
@@ -82,6 +83,10 @@ export default class OnboardingSteps {
     await tapById(this.exploreWithoutDeviceButtonId);
   }
 
+  async chooseToBuyLedger() {
+    await tapByElement(this.buyLedgerButton());
+  }
+
   // Accessing existing Wallet
   async chooseToAccessYourWallet() {
     await tapByElement(this.accessWalletButton());
@@ -89,6 +94,18 @@ export default class OnboardingSteps {
 
   async chooseToConnectYourLedger() {
     await tapByElement(this.connectLedgerButton());
+  }
+
+  async chooseToSyncWithLedgerLiveDesktop() {
+    await tapByElement(this.syncWithLedgerLiveDesktop());
+  }
+
+  async goesThroughLedgerLiveDesktopScanning() {
+    await tapByElement(this.readyToScanButton());
+  }
+
+  async waitForScanningPage() {
+    await waitForElementById(this.scanAndImportAccountsPageID);
   }
 
   // Setup new Ledger
@@ -155,27 +172,26 @@ export default class OnboardingSteps {
     await tapByElement(this.pairNanoButton());
   }
 
-  async addDeviceViaBluetooth(name = this.defaultName) {
-    await tapByElement(this.pairDeviceButton());
-    bridge.addDevicesBT(name);
+  async selectAddDevice() {
+    await tapByElement(this.addDeviceButton());
+  }
+
+  async addDeviceViaBluetooth(name = knownDevice.name) {
+    const deviceAction = new DeviceAction(knownDevice);
+    await bridge.addDevicesBT(name);
     await waitForElementByText(name);
     await tapByText(name);
-    bridge.setInstalledApps(); // tell LLM what apps the mock device has
-    bridge.open(); // Mocked action open ledger manager on the Nano
-    await waitForElementById(this.devicePairedContinue);
+    await bridge.open(); // Mocked action open ledger manager on the Nano
+    await deviceAction.waitForSpinner();
+    await deviceAction.accessManager();
   }
 
   async addDeviceViaUSB(device: ModelId) {
     const nano = getUSBDevice(device);
-    bridge.addDevicesUSB(nano);
+    await bridge.addDevicesUSB(nano);
     await waitForElementByText(nano.deviceName);
     await tapByText(nano.deviceName);
     await new DeviceAction(nano).accessManager();
-  }
-
-  async openLedgerLive() {
-    await waitForElementById(this.devicePairedContinueButtonId);
-    await tapByElement(this.continueButton());
   }
 
   async declineNotifications() {

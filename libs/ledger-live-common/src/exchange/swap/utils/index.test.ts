@@ -7,9 +7,9 @@ import { genAccount } from "../../../mock/account";
 import {
   getAccountTuplesForCurrency,
   getAvailableAccountsById,
-  isRegistrationRequired,
-  getProviderName,
   getNoticeType,
+  getProviderName,
+  isRegistrationRequired,
 } from "./index";
 
 /* TODO: Refacto these two function and move them to mock/account.ts if needed */
@@ -190,6 +190,22 @@ describe("swap/utils/getProviderName", () => {
     const expectedResult = "1inch";
 
     const result = getProviderName("oneinch");
+
+    expect(result).toBe(expectedResult);
+  });
+
+  test("should return CIC provider name for cic", () => {
+    const expectedResult = "CIC";
+
+    const result = getProviderName("cic");
+
+    expect(result).toBe(expectedResult);
+  });
+
+  test("should return MoonPay provider name for moonpay", () => {
+    const expectedResult = "MoonPay";
+
+    const result = getProviderName("moonpay");
 
     expect(result).toBe(expectedResult);
   });

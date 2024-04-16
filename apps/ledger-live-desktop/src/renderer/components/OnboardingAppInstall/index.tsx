@@ -4,7 +4,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelInfo } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
-import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import DefaultAppsIllustration from "./DefaultAppsIllustration";
 import RestoreAppsIllustration from "./RestoreAppsIllustration";
 import CancelModal from "./CancelModal";
@@ -87,12 +87,12 @@ const OnboardingAppInstallStep = ({
   );
 
   const handlePressSkip = useCallback(() => {
-    track("button_clicked", { button: "maybe later", flow: analyticsFlowName });
+    track("button_clicked2", { button: "maybe later", flow: analyticsFlowName });
     onComplete();
   }, [onComplete]);
 
   const handlePressInstall = useCallback(() => {
-    track("button_clicked", {
+    track("button_clicked2", {
       button: deviceToRestore ? "Restore applications" : "Install applications",
       flow: analyticsFlowName,
     });
@@ -100,7 +100,7 @@ const OnboardingAppInstallStep = ({
   }, [deviceToRestore]);
 
   const handleCancelModalRetryPressed = useCallback(() => {
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "Install now",
       flow: analyticsFlowName,
     });
@@ -108,7 +108,7 @@ const OnboardingAppInstallStep = ({
   }, [handleRetry]);
 
   const handleCancelModalSkipPressed = useCallback(() => {
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "I'll do this later",
       flow: analyticsFlowName,
     });

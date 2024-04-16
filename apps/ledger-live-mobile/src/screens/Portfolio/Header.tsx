@@ -4,14 +4,13 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 import { CardMedium, SettingsMedium, WalletConnectMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
-import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
 import { StackNavigationProp } from "@react-navigation/stack";
 import Touchable from "~/components/Touchable";
 import { NavigatorName, ScreenName } from "~/const";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import DiscreetModeButton from "~/components/DiscreetModeButton";
 import { track } from "~/analytics";
-import useDynamicContent from "~/dynamicContent/dynamicContent";
+import useDynamicContent from "~/dynamicContent/useDynamicContent";
 import Notifications from "~/icons/Notifications";
 
 const NotificationsButton = () => {
@@ -49,8 +48,6 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
   const navigation = useNavigation();
 
   const { t } = useTranslation();
-
-  const walletConnectEntryPoint = useFeature("walletConnectEntryPoint");
 
   const onNavigate = useCallback(
     (name: string, options?: object) => {
@@ -115,20 +112,20 @@ function PortfolioHeader({ hidePortfolio }: { hidePortfolio: boolean }) {
             <CardMedium size={24} color={"neutral.c100"} />
           </Touchable>
         </Flex>
-        {!!walletConnectEntryPoint?.enabled && (
-          <Flex mr={7}>
-            <Touchable
-              onPress={onWalletConnectPress}
-              event="button_clicked"
-              eventProperties={{
-                button: "Wallet Connect",
-                page: ScreenName.WalletConnectConnect,
-              }}
-            >
-              <WalletConnectMedium size={24} color={"neutral.c100"} />
-            </Touchable>
-          </Flex>
-        )}
+
+        <Flex mr={7}>
+          <Touchable
+            onPress={onWalletConnectPress}
+            event="button_clicked"
+            eventProperties={{
+              button: "Wallet Connect",
+              page: ScreenName.WalletConnectConnect,
+            }}
+          >
+            <WalletConnectMedium size={24} color={"neutral.c100"} />
+          </Touchable>
+        </Flex>
+
         <Flex mr={7}>
           <NotificationsButton />
         </Flex>

@@ -21,7 +21,14 @@ import { BigNumber } from "bignumber.js";
 // NB: these are temporary import for the deprecated fallback mechanism
 import { LedgerEthTransactionResolution, LoadConfig, ResolutionConfig } from "./services/types";
 import { log } from "@ledgerhq/logs";
-import { decodeTxInfo, hexBuffer, intAsHexBytes, maybeHexBuffer, splitPath } from "./utils";
+import {
+  decodeTxInfo,
+  hexBuffer,
+  intAsHexBytes,
+  maybeHexBuffer,
+  padHexString,
+  splitPath,
+} from "./utils";
 import { domainResolutionFlow } from "./modules/Domains";
 import ledgerService from "./services/ledger";
 import { EthAppNftNotSupported, EthAppPleaseEnableContractData } from "./errors";
@@ -106,6 +113,7 @@ export default class Eth {
    * @param path a path in BIP 32 format
    * @option boolDisplay optionally enable or not the display
    * @option boolChaincode optionally enable or not the chaincode request
+   * @option chainId optionally display the network clearly on a Stax device
    * @return an object with a publicKey, address and (optionally) chainCode
    * @example
    * eth.getAddress("44'/60'/0'/0/0").then(o => o.address)
@@ -114,17 +122,30 @@ export default class Eth {
     path: string,
     boolDisplay?: boolean,
     boolChaincode?: boolean,
+    chainId?: string,
   ): Promise<{
     publicKey: string;
     address: string;
     chainCode?: string;
   }> {
     const paths = splitPath(path);
-    const buffer = Buffer.alloc(1 + paths.length * 4);
+    let buffer = Buffer.alloc(1 + paths.length * 4);
     buffer[0] = paths.length;
     paths.forEach((element, index) => {
       buffer.writeUInt32BE(element, 1 + 4 * index);
     });
+
+    if (chainId) {
+      const chainIdBufferMask = Buffer.alloc(8, 0);
+      const chainIdBuffer = Buffer.from(padHexString(new BigNumber(chainId).toString(16)), "hex");
+      chainIdBufferMask.write(
+        chainIdBuffer.toString("hex"),
+        chainIdBufferMask.length - chainIdBuffer.length,
+        "hex",
+      );
+      buffer = Buffer.concat([buffer, chainIdBufferMask]);
+    }
+
     return this.transport
       .send(0xe0, 0x02, boolDisplay ? 0x01 : 0x00, boolChaincode ? 0x01 : 0x00, buffer)
       .then(response => {

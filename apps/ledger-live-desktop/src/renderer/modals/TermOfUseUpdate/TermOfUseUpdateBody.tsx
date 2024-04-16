@@ -5,7 +5,8 @@ import styled from "styled-components";
 import { ModalBody } from "~/renderer/components/Modal";
 import Button from "~/renderer/components/ButtonV3";
 import { openURL } from "~/renderer/linking";
-import { useDynamicUrl } from "~/renderer/terms";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+import { urls } from "~/config/urls";
 
 type Props = {
   onClose: () => void;
@@ -29,7 +30,7 @@ const Update = styled(BodyText).attrs(() => ({
 
 const TermOfUseUpdateBody = ({ onClose }: Props) => {
   const { t } = useTranslation();
-  const termsUrl = useDynamicUrl("terms");
+  const termsUrl = useLocalizedUrl(urls.terms);
 
   const handleExternalLink = () => {
     openURL(termsUrl);

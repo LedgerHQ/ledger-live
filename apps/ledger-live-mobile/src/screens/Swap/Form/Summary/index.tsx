@@ -11,7 +11,7 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import { CompositeScreenProps, useNavigation, useRoute } from "@react-navigation/native";
 import { useSelector } from "react-redux";
-import { useCalculate } from "@ledgerhq/live-common/countervalues/react";
+import { useCalculate } from "@ledgerhq/live-countervalues-react";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import ProviderIcon from "~/components/ProviderIcon";
 import { Item } from "./Item";
@@ -30,6 +30,7 @@ import type { SwapNavigatorParamList } from "~/components/RootNavigator/types/Sw
 import type { SwapFormNavigatorParamList } from "~/components/RootNavigator/types/SwapFormNavigator";
 import { useAnalytics } from "~/analytics";
 import { sharedSwapTracking } from "../../utils";
+import { EDITABLE_FEE_FAMILIES } from "@ledgerhq/live-common/exchange/swap/const/blockchain";
 
 interface Props {
   provider?: string;
@@ -155,6 +156,8 @@ export function Summary({ provider, swapTx: { swap, status, transaction } }: Pro
   const fromUnit = from.currency?.units[0];
   const mainFromAccount = from.account && getMainAccount(from.account, from.parentAccount);
   const mainAccountUnit = mainFromAccount && getAccountUnit(mainFromAccount);
+  const editableFee =
+    mainFromAccount && EDITABLE_FEE_FAMILIES.includes(mainFromAccount.currency.family);
 
   if (
     !provider ||
@@ -203,7 +206,10 @@ export function Summary({ provider, swapTx: { swap, status, transaction } }: Pro
         </Text>
       </Item>
 
-      <Item title={t("transfer.swap2.form.details.label.fees")} onEdit={onEditNetworkFees}>
+      <Item
+        title={t("transfer.swap2.form.details.label.fees")}
+        onEdit={editableFee && onEditNetworkFees}
+      >
         <Text>
           <CurrencyUnitValue unit={mainAccountUnit} value={estimatedFees} />
         </Text>

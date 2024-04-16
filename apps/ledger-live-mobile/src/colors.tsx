@@ -36,7 +36,7 @@ export const lightTheme = {
   dark: false,
   colors: {
     primary: "hsla(247, 56%, 68%, 1)",
-    background: "hsla(0, 0%, 100%, 1)",
+    background: "#FFFFFF",
     card: "#FFFFFF",
     text: "rgb(28, 28, 30)",
     border: "rgb(199, 199, 204)",
@@ -93,7 +93,7 @@ export const darkTheme = {
   colors: {
     primary: "hsla(247, 56%, 68%, 1)",
     card: "#1C1D1F",
-    background: "hsla(0, 0%, 10%, 1)",
+    background: "#131214",
     text: "#FFFFFF",
     border: "rgba(255, 255, 255, 0.1)",
     notification: "rgb(255, 69, 58)",

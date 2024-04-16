@@ -4,8 +4,8 @@ import {
   ConvertToLiveTransaction,
   GetWalletAPITransactionSignFlowInfos,
 } from "../../wallet-api/types";
-import createTransaction from "./js-createTransaction";
-import { Transaction } from "./types";
+import createTransaction from "@ledgerhq/coin-bitcoin/js-createTransaction";
+import { Transaction } from "@ledgerhq/coin-bitcoin/types";
 
 const CAN_EDIT_FEES = true;
 

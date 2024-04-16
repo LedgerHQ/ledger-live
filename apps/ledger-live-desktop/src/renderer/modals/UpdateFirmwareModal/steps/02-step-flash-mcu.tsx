@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import { hasFinalFirmware } from "@ledgerhq/live-common/hw/hasFinalFirmware";
-import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/manager/localization";
+import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/device/use-cases/isDeviceLocalizationSupported";
 import firmwareUpdateMain from "@ledgerhq/live-common/hw/firmwareUpdate-main";
 import { withDevicePolling } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
@@ -16,7 +16,7 @@ import FlashMCU from "~/renderer/components/FlashMCU";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import Installing from "../Installing";
 import { Body as StepUpdatingBody } from "./02-step-updating";
-import { StepProps } from "..";
+import { StepProps } from "../types";
 
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
@@ -30,7 +30,6 @@ type BodyProps = {
   deviceModelId: DeviceModelId;
   firmware?: FirmwareUpdateContext;
   initialDelayPhase: boolean;
-
   current: number;
   total: number;
 };

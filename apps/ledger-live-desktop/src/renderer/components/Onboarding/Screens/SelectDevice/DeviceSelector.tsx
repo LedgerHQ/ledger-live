@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useMemo } from "react";
 import styled from "styled-components";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { Flex } from "@ledgerhq/react-ui";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { DeviceSelectorOption } from "./DeviceSelectorOption";
 import DeviceIllustration from "~/renderer/components/DeviceIllustration";
 
@@ -15,15 +15,15 @@ const DeviceSelectContainer = styled(Flex).attrs({
 
 const allDevices = [
   {
-    id: "nanoS",
+    id: DeviceModelId.nanoS,
     enabled: true,
   },
   {
-    id: "nanoSP",
+    id: DeviceModelId.nanoSP,
     enabled: true,
   },
   {
-    id: "nanoX",
+    id: DeviceModelId.nanoX,
     enabled: true,
   },
 ];
@@ -32,16 +32,17 @@ interface DeviceSelectorProps {
 }
 
 export function DeviceSelector({ onClick }: DeviceSelectorProps) {
-  const syncOnboarding = useFeature("syncOnboarding");
+  const deviceStaxSupported = useFeature("supportDeviceStax");
+  const deviceEuropaSupported = useFeature("supportDeviceEuropa");
 
-  const devices = syncOnboarding?.enabled
-    ? [
-        {
-          id: "stax",
-          enabled: true,
-        },
-      ].concat(allDevices)
-    : allDevices;
+  const devices = useMemo(
+    () => [
+      ...(deviceStaxSupported?.enabled ? [{ id: DeviceModelId.stax, enabled: true }] : []),
+      ...(deviceEuropaSupported?.enabled ? [{ id: DeviceModelId.europa, enabled: true }] : []),
+      ...allDevices,
+    ],
+    [deviceStaxSupported, deviceEuropaSupported],
+  );
 
   return (
     <DeviceSelectContainer>

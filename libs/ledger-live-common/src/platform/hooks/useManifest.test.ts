@@ -1,4 +1,7 @@
-import { renderHook } from "@testing-library/react-hooks";
+/**
+ * @jest-environment jsdom
+ */
+import { renderHook } from "@testing-library/react";
 
 import { LiveAppManifest } from "../types";
 import { useLocalLiveAppManifest } from "../providers/LocalLiveAppProvider";

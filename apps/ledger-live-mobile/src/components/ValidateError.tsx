@@ -14,7 +14,6 @@ type Props = {
 
 function ValidateError({ error, onClose, onRetry }: Props) {
   const { colors } = useTheme();
-
   return (
     <View
       style={[

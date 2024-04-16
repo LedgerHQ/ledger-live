@@ -8,12 +8,13 @@ import { useSelector } from "react-redux";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import Section from "~/screens/OperationDetails/Section";
 import OperationStatusIcon from "~/icons/OperationStatusIcon";
-import { discreetModeSelector, localeSelector } from "~/reducers/settings";
+import { discreetModeSelector } from "~/reducers/settings";
 import {
   AlgorandOperation,
   AlgorandAccount,
   AlgorandOperationExtra,
 } from "@ledgerhq/live-common/families/algorand/types";
+import { useSettings } from "~/hooks";
 
 type Props = {
   operation: AlgorandOperation;
@@ -24,10 +25,10 @@ function OperationDetailsExtra({ operation, account }: Props) {
   const { t } = useTranslation();
   const unit = getAccountUnit(account);
   const discreet = useSelector(discreetModeSelector);
-  const locale = useSelector(localeSelector);
+  const { locale } = useSettings();
   const formattedRewards = operation.extra.rewards?.gt(0)
     ? formatCurrencyUnit(unit, operation.extra.rewards, {
-        locale,
+        locale: locale,
         disableRounding: true,
         alwaysShowSign: false,
         showCode: true,

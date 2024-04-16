@@ -32,7 +32,7 @@ jobs:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-    runs-on: [ledger-live-4xlarge-linux]
+    runs-on: [ledger-live-4xlarge]
     steps:
       - name: generate token
         id: generate-token
@@ -40,6 +40,7 @@ jobs:
         with:
           app_id: ${{ secrets.GH_BOT_APP_ID }}
           private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+
       - uses: actions/checkout@v4
         if: ${{ inputs.ref != null }}
         with:
@@ -51,143 +52,32 @@ jobs:
         with:
           fetch-depth: 0
           token: ${{ steps.generate-token.outputs.token }}
-      - name: Install gh
-        run: |
-          type -p curl >/dev/null || sudo apt install curl -y
-          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
-          && sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
-          && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
-          && sudo apt update \
-          && sudo apt install gh -y
       - name: Checkout PR
-        if: ${{ inputs.number != null && inputs.ref == null }}
+        if: ${{ inputs.number != null }}
         run: gh pr checkout ${{ inputs.number }}
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+
       - name: Setup git user
-        uses: ./tools/actions/composites/setup-git-user
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
       - name: Setup the toolchain
-        id: toolchain
-        uses: ./tools/actions/composites/setup-toolchain
+        id: caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-      - uses: ./tools/actions/composites/setup-test-desktop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@develop
         id: setup-test-desktop
         with:
           skip_ruby: true
           install_playwright: true
-          turborepo-server-port: ${{ steps.toolchain.outputs.port }}
-      - uses: ./tools/actions/composites/update-snapshots-desktop
+          turborepo-server-port: ${{ steps.caches.outputs.port }}
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/update-snapshots-desktop@develop
         id: update-snapshots
         with:
           os: ubuntu-latest
-
-  generate-screenshots-windows:
-    env:
-      NODE_OPTIONS: "--max-old-space-size=7168"
-      FORCE_COLOR: 3
-      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-    runs-on: [ledger-live-4xlarge-windows-2022]
-    steps:
-      - name: generate token
-        id: generate-token
-        uses: tibdex/github-app-token@v1
-        with:
-          app_id: ${{ secrets.GH_BOT_APP_ID }}
-          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-      - uses: actions/checkout@v4
-        if: ${{ inputs.ref != null }}
-        with:
-          ref: ${{ inputs.ref }}
-          fetch-depth: 0
-          token: ${{ steps.generate-token.outputs.token }}
-      - uses: actions/checkout@v4
-        if: ${{ !inputs.ref }}
-        with:
-          fetch-depth: 0
-          token: ${{ steps.generate-token.outputs.token }}
-      - name: Checkout PR
-        if: ${{ inputs.number != null && inputs.ref == null }}
-        run: gh pr checkout ${{ inputs.number }}
-        env:
-          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
-      - name: Setup the toolchain
-        uses: ./tools/actions/composites/setup-toolchain
-        id: toolchain
-        with:
-          upgrade_npm: true
-          skip_turbo_cache: "false"
-          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
-          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-      - uses: ./tools/actions/composites/setup-test-desktop
-        id: setup-test-desktop
-        with:
-          skip_ruby: true
-          install_playwright: true
-          turborepo-server-port: ${{ steps.toolchain.outputs.port }}
-      - name: Setup git user
-        uses: ./tools/actions/composites/setup-git-user
-      - uses: ./tools/actions/composites/update-snapshots-desktop
-        id: update-snapshots
-        with:
-          os: windows-latest
-
-  generate-screenshots-mac:
-    env:
-      NODE_OPTIONS: "--max-old-space-size=7168"
-      FORCE_COLOR: 3
-      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-    runs-on: [m1, ARM64]
-    steps:
-      - name: generate token
-        id: generate-token
-        uses: tibdex/github-app-token@v1
-        with:
-          app_id: ${{ secrets.GH_BOT_APP_ID }}
-          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-      - uses: actions/checkout@v4
-        if: ${{ inputs.ref != null }}
-        with:
-          ref: ${{ inputs.ref }}
-          fetch-depth: 0
-          token: ${{ steps.generate-token.outputs.token }}
-      - uses: actions/checkout@v4
-        if: ${{ !inputs.ref }}
-        with:
-          fetch-depth: 0
-          token: ${{ steps.generate-token.outputs.token }}
-      - name: Checkout PR
-        if: ${{ inputs.number != null && inputs.ref == null }}
-        run: gh pr checkout ${{ inputs.number }}
-        env:
-          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
-      - name: Setup the toolchain
-        uses: ./tools/actions/composites/setup-toolchain
-        id: toolchain
-        with:
-          # skip_pnpm_cache: "true"
-          skip_turbo_cache: "false"
-          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
-          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-      - uses: ./tools/actions/composites/setup-test-desktop
-        id: setup-test-desktop
-        with:
-          skip_ruby: true
-          install_playwright: true
-          turborepo-server-port: ${{ steps.toolchain.outputs.port }}
-      - name: Setup git user
-        uses: ./tools/actions/composites/setup-git-user
-      - uses: ./tools/actions/composites/update-snapshots-desktop
-        id: update-snapshots
-        with:
-          os: macos-latest
 
   report-start:
     name: Report start
@@ -222,14 +112,8 @@ jobs:
             });
 
   report-end:
-    needs:
-      [
-        "generate-screenshots-linux",
-        "generate-screenshots-windows",
-        "generate-screenshots-mac",
-        "report-start",
-      ]
-    if: always()
+    needs: ["generate-screenshots-linux", "report-start"]
+    if: ${{ !cancelled() }}
     name: Report end
     runs-on: "ubuntu-latest"
     steps:
@@ -282,7 +166,7 @@ jobs:
                 body
               });
             }
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         name: upload summary
         with:
           name: summary.json

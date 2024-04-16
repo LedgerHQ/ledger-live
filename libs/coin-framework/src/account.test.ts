@@ -37,6 +37,14 @@ describe("groupAccountOperationsByDay", () => {
       // $FlowFixMe
       flatMap(res1.sections, s => s.data),
     );
+    const res3 = groupAccountOperationsByDay(account, {
+      count: 20,
+    });
+    expect(res3.completed).toBe(true);
+    const res4 = groupAccountOperationsByDay(account, {
+      count: 16,
+    });
+    expect(res4.completed).toBe(false);
   });
   test("basic 2", () => {
     const accounts = Array(10)
@@ -196,7 +204,7 @@ test("withoutToken tron", () => {
     "tron/trc10/1002000",
     "tron/trc10/1002398",
     "tron/trc10/1000226",
-    "tron/trc20/TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
+    "tron/trc20/tla2f6vpqdgre67v1736s7bj8ray5wyju7",
   ];
   const currency = getCryptoCurrencyById("tron");
   const account = genAccount("", {

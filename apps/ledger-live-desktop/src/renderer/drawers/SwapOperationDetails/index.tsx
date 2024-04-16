@@ -21,7 +21,6 @@ import Box from "~/renderer/components/Box";
 import CopyWithFeedback from "~/renderer/components/CopyWithFeedback";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import Ellipsis from "~/renderer/components/Ellipsis";
-import FormattedDate from "~/renderer/components/FormattedDate";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import Link from "~/renderer/components/Link";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
@@ -35,6 +34,7 @@ import {
   OpDetailsSection,
   OpDetailsTitle,
 } from "~/renderer/drawers/OperationDetails/styledComponents";
+import { dayFormat, useDateFormatted } from "~/renderer/hooks/useDateFormatter";
 import useTheme from "~/renderer/hooks/useTheme";
 import IconArrowDown from "~/renderer/icons/ArrowDown";
 import IconClock from "~/renderer/icons/Clock";
@@ -42,6 +42,7 @@ import IconExclamationCircle from "~/renderer/icons/ExclamationCircle";
 import IconSwap from "~/renderer/icons/Swap";
 import { openURL } from "~/renderer/linking";
 import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
+import { languageSelector } from "~/renderer/reducers/settings";
 import { getStatusColor } from "~/renderer/screens/exchange/Swap2/History/OperationRow";
 import { rgba } from "~/renderer/styles/helpers";
 
@@ -112,6 +113,8 @@ const SwapOperationDetails = ({
 }) => {
   const { fromAccount, toAccount, operation, provider, swapId, status, fromAmount, toAmount } =
     mappedSwapOperation;
+  const dateFormatted = useDateFormatted(operation.date, dayFormat);
+  const language = useSelector(languageSelector);
   const history = useHistory();
   const fromUnit = getAccountUnit(fromAccount);
   const fromCurrency = getAccountCurrency(fromAccount);
@@ -149,6 +152,28 @@ const SwapOperationDetails = ({
       ? fromCurrency.parentCurrency.name
       : fromCurrency.name
     : undefined;
+
+  const handleProviderClick = useCallback(() => {
+    if (provider === "moonpay") {
+      const parentAccount =
+        fromAccount.type !== "Account" ? accounts.find(a => a.id === fromAccount.parentId) : null;
+      const mainAccount = getMainAccount(fromAccount, parentAccount);
+      history.push({
+        pathname: "/platform/moonpay",
+        state: {
+          returnTo: "/swap/history",
+          accountId: mainAccount.id,
+          customDappUrl: undefined,
+          goToURL: `https://buy.moonpay.com/trade_history?ledgerlive&apiKey=pk_live_j5CLt1qxbqGtYhkxUxyk6VQnSd5CBXI&language=${language}&themeId=92be4cb6-a57f-407b-8b1f-bc8055b60c9b`,
+        },
+      });
+    } else {
+      openURL(urls.swap.providers[provider as keyof typeof urls.swap.providers]?.main);
+    }
+    if (onClose) {
+      onClose();
+    }
+  }, [provider, fromAccount, history, accounts, onClose, language]);
 
   return (
     <Box flow={3} px={20} mt={20}>
@@ -211,12 +236,7 @@ const SwapOperationDetails = ({
           <Trans i18nKey="swap.operationDetailsModal.provider" />
         </OpDetailsTitle>
         <OpDetailsData>
-          <LinkWithExternalIcon
-            fontSize={12}
-            onClick={() =>
-              openURL(urls.swap.providers[provider as keyof typeof urls.swap.providers]?.main)
-            }
-          >
+          <LinkWithExternalIcon fontSize={12} onClick={handleProviderClick}>
             {getProviderName(provider)}
           </LinkWithExternalIcon>
         </OpDetailsData>
@@ -272,9 +292,7 @@ const SwapOperationDetails = ({
           <Trans i18nKey="swap.operationDetailsModal.date" />
         </OpDetailsTitle>
         <OpDetailsData>
-          <Box>
-            <FormattedDate date={operation.date} format="L" />
-          </Box>
+          <Box>{dateFormatted}</Box>
         </OpDetailsData>
       </OpDetailsSection>
       <B />

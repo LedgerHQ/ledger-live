@@ -143,7 +143,7 @@ export async function createSpeculosDevice(
     `SPECULOS_APPNAME=${appName}:${appVersion}`,
     "--name",
     `${speculosID}`,
-    "ghcr.io/ledgerhq/speculos",
+    "ghcr.io/ledgerhq/speculos:sha-e262a0c",
     "--model",
     model.toLowerCase(),
     appPath,

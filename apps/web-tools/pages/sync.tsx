@@ -19,9 +19,8 @@ import {
   getDerivationScheme,
   runDerivationScheme,
   asDerivationMode,
-  DerivationMode,
 } from "@ledgerhq/coin-framework/derivation";
-import { Account } from "@ledgerhq/types-live";
+import type { Account, DerivationMode } from "@ledgerhq/types-live";
 
 export const getStaticProps = async () => ({ props: {} });
 

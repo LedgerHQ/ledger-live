@@ -33,7 +33,7 @@ const AccountSection = ({
   const swapDefaultTrack = useGetSwapTrackingProperties();
 
   const handleChangeAndTrack = useCallback(() => {
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "change target account",
       page: "Page Swap Form",
       ...swapDefaultTrack,
@@ -95,7 +95,7 @@ const SectionTarget = ({
   const swapDefaultTrack = useGetSwapTrackingProperties();
 
   const handleAddAccount = () => {
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "add account",
       page: "Page Swap Form",
       ...swapDefaultTrack,

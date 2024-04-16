@@ -24,7 +24,7 @@ export function NotificationIndicator() {
   const history = useHistory();
 
   const onClickNotificationCenter = useCallback(() => {
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "Notification Center",
       page: history.location.pathname,
     });

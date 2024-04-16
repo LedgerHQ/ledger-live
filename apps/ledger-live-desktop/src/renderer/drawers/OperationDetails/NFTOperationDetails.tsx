@@ -12,10 +12,7 @@ import {
 import { NFTMetadata, Operation } from "@ledgerhq/types-live";
 import Media from "~/renderer/components/Nft/Media";
 import Box from "~/renderer/components/Box";
-import {
-  useNftMetadata,
-  useNftCollectionMetadata,
-} from "@ledgerhq/live-common/nft/NftMetadataProvider/index";
+import { useNftMetadata, useNftCollectionMetadata } from "@ledgerhq/live-nft-react";
 import CopyWithFeedback from "~/renderer/components/CopyWithFeedback";
 import Skeleton from "~/renderer/components/Nft/Skeleton";
 import { centerEllipsis } from "~/renderer/styles/helpers";

@@ -9,6 +9,7 @@ type Props = {
   name?: string;
   refreshSource?: boolean;
   avoidDuplicates?: boolean;
+  mandatory?: boolean;
 };
 
 export default function TrackScreen({
@@ -16,6 +17,7 @@ export default function TrackScreen({
   name,
   refreshSource = true,
   avoidDuplicates = false,
+  mandatory = false,
   ...props
 }: Props) {
   const isFocused = useIsFocused();
@@ -26,10 +28,10 @@ export default function TrackScreen({
     if (isFocusedRef.current !== isFocused) {
       isFocusedRef.current = isFocused;
       if (isFocusedRef.current) {
-        screen(category, name, props, true, refreshSource, avoidDuplicates);
+        screen(category, name, props, true, refreshSource, avoidDuplicates, mandatory);
       }
     }
-  }, [category, name, props, isFocused, refreshSource, avoidDuplicates]);
+  }, [category, name, props, isFocused, refreshSource, avoidDuplicates, mandatory]);
 
   return null;
 }

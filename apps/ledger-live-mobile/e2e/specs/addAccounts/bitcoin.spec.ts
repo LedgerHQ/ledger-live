@@ -15,8 +15,8 @@ let addAccountDrawer: AddAccountDrawer;
 
 describe("Add Bitcoin Accounts", () => {
   beforeAll(async () => {
-    loadConfig("onboardingcompleted", true);
-    loadBleState({ knownDevices: [knownDevice] });
+    await loadConfig("onboardingcompleted", true);
+    await loadBleState({ knownDevices: [knownDevice] });
 
     portfolioPage = new PortfolioPage();
     accountPage = new AccountPage();
@@ -41,7 +41,7 @@ describe("Add Bitcoin Accounts", () => {
   });
 
   it("displays Bitcoin accounts page summary", async () => {
-    await accountPage.waitForAccountAssetsToLoad("Bitcoin");
+    await accountPage.waitForAccountPageToLoad("Bitcoin");
     await waitForElementByText("1.19576\u00a0BTC");
   });
 });

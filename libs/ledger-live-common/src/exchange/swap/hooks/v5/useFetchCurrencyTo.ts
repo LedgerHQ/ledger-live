@@ -4,7 +4,7 @@ import { getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
 import { fetchCurrencyTo } from "../../api/v5";
 import { getAvailableProviders } from "../..";
 import { useAPI } from "../../../../hooks/useAPI";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature } from "../../../../featureFlags";
 
 type Props = {
   fromCurrencyAccount: AccountLike | undefined;

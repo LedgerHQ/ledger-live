@@ -1,7 +1,6 @@
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
-import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
 import CoinWallet from "~/renderer/icons/CoinWallet";
 import Check from "~/renderer/icons/CheckFull";
@@ -11,6 +10,8 @@ import Button from "~/renderer/components/Button";
 import Box from "~/renderer/components/Box";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import { StepProps } from "../types";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+import { urls } from "~/config/urls";
 const Row = styled(Box).attrs(p => ({
   horizontal: true,
   justifyContent: "flex-start",
@@ -28,6 +29,7 @@ const StepStarter = ({ transitionTo, t, openedWithAccount, eventType }: StepProp
     if (openedWithAccount) transitionTo("summary");
     else transitionTo("account");
   }, [transitionTo, openedWithAccount]);
+  const stakingUrl = useLocalizedUrl(urls.stakingTezos);
   return (
     <Box flow={4} mx={4}>
       <TrackPage
@@ -100,7 +102,7 @@ const StepStarter = ({ transitionTo, t, openedWithAccount, eventType }: StepProp
         <Box my={4}>
           <LinkWithExternalIcon
             label={t("delegation.howItWorks")}
-            onClick={() => openURL(urls.stakingTezos)}
+            onClick={() => openURL(stakingUrl)}
           />
         </Box>
         <Button id={"delegate-starter-continue-button"} onClick={onClick} primary>

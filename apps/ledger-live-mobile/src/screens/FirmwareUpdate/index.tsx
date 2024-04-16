@@ -1,5 +1,6 @@
 import { Image } from "react-native";
 import { getDeviceModel } from "@ledgerhq/devices";
+import { isEqual } from "lodash/fp";
 import {
   updateFirmwareActionArgs,
   UpdateFirmwareActionState,
@@ -15,15 +16,19 @@ import {
   ItemStatus,
   Icons,
 } from "@ledgerhq/native-ui";
-import { useTheme, useNavigation, useRoute } from "@react-navigation/native";
+import { useTheme, useNavigation } from "@react-navigation/native";
 import { Item } from "@ledgerhq/native-ui/components/Layout/List/types";
 import { DeviceInfo, FirmwareUpdateContext, languageIds } from "@ledgerhq/types-live";
 import { useBatteryStatuses } from "@ledgerhq/live-common/deviceSDK/hooks/useBatteryStatuses";
 import { BatteryStatusTypes } from "@ledgerhq/live-common/hw/getBatteryStatus";
+import {
+  CLSSupportedDeviceModelId,
+  isCustomLockScreenSupported,
+} from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Observable } from "rxjs";
 import { updateMainNavigatorVisibility } from "~/actions/appstate";
 import {
@@ -34,30 +39,34 @@ import {
   DeviceActionError,
 } from "~/components/DeviceAction/common";
 import QueuedDrawer from "~/components/QueuedDrawer";
-import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import { ManagerNavigatorStackParamList } from "~/components/RootNavigator/types/ManagerNavigator";
+import { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
 import {
   renderAllowLanguageInstallation,
   renderConnectYourDevice,
-  renderImageCommitRequested,
-  renderImageLoadRequested,
 } from "~/components/DeviceAction/rendering";
+import {
+  RenderImageCommitRequested,
+  RenderImageLoadRequested,
+} from "~/components/CustomLockScreenDeviceAction/stepsRendering";
 import {
   UpdateStep,
   useUpdateFirmwareAndRestoreSettings,
 } from "./useUpdateFirmwareAndRestoreSettings";
 import { TrackScreen } from "~/analytics";
 import ImageHexProcessor from "~/components/CustomImage/ImageHexProcessor";
-import { targetDataDimensions } from "../CustomImage/shared";
+import { getScreenDataDimensions } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 import { ProcessorPreviewResult } from "~/components/CustomImage/ImageProcessor";
-import { ImageSourceContext } from "~/components/CustomImage/StaxFramedImage";
+import { ImageSourceContext } from "~/components/CustomImage/FramedPicture";
 import Button from "~/components/wrappedUi/Button";
 import Link from "~/components/wrappedUi/Link";
 import { RestoreStepDenied } from "./RestoreStepDenied";
 import UpdateReleaseNotes from "./UpdateReleaseNotes";
 import { GenericInformationBody } from "~/components/GenericInformationBody";
 import BatteryWarningDrawer from "./BatteryWarningDrawer";
+import { setLastConnectedDevice, setLastSeenDeviceInfo } from "~/actions/settings";
+import { lastSeenDeviceSelector } from "~/reducers/settings";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 
 const requiredBatteryStatuses = [
   BatteryStatusTypes.BATTERY_PERCENTAGE,
@@ -93,8 +102,8 @@ export type FirmwareUpdateProps = {
   updateFirmwareAction?: (args: updateFirmwareActionArgs) => Observable<UpdateFirmwareActionState>;
 };
 
-type NavigationProps = BaseComposite<
-  StackNavigatorProps<ManagerNavigatorStackParamList, ScreenName.FirmwareUpdate>
+type NavigationProps = RootComposite<
+  StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.FirmwareUpdate>
 >;
 
 type UpdateSteps = {
@@ -403,6 +412,37 @@ export const FirmwareUpdate = ({
     return closableSteps.includes(updateActionState.step);
   }, [updateActionState.step]);
 
+  const { updatedDeviceInfo } = updateActionState;
+  const { apps, deviceInfo: lastSeenDeviceInfo } = useSelector(lastSeenDeviceSelector) ?? {};
+  useEffect(() => {
+    if (updatedDeviceInfo && !isEqual(lastSeenDeviceInfo, updatedDeviceInfo)) {
+      dispatch(
+        setLastSeenDeviceInfo({
+          deviceInfo: updatedDeviceInfo,
+          apps: apps ?? [],
+          modelId: device.modelId,
+        }),
+      );
+      dispatch(
+        setLastConnectedDevice({
+          deviceId: device.deviceId,
+          deviceName: device.deviceName,
+          wired: device.wired,
+          modelId: device.modelId,
+        }),
+      );
+    }
+  }, [
+    apps,
+    device.deviceId,
+    device.deviceName,
+    device.modelId,
+    device.wired,
+    dispatch,
+    lastSeenDeviceInfo,
+    updatedDeviceInfo,
+  ]);
+
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -550,25 +590,29 @@ export const FirmwareUpdate = ({
     }
 
     if (staxLoadImageState.imageLoadRequested) {
-      return renderImageLoadRequested({
-        t,
-        device,
-        fullScreen: false,
-        wording: t("FirmwareUpdate.steps.restoreSettings.imageLoadRequested", {
-          deviceName: productName,
-        }),
-      });
+      return (
+        <RenderImageLoadRequested
+          device={device}
+          deviceModelId={device.modelId as CLSSupportedDeviceModelId}
+          fullScreen={false}
+          wording={t("FirmwareUpdate.steps.restoreSettings.imageLoadRequested", {
+            deviceName: productName,
+          })}
+        />
+      );
     }
 
     if (staxLoadImageState.imageCommitRequested) {
-      return renderImageCommitRequested({
-        t,
-        device,
-        fullScreen: false,
-        wording: t("FirmwareUpdate.steps.restoreSettings.imageCommitRequested", {
-          deviceName: productName,
-        }),
-      });
+      return (
+        <RenderImageCommitRequested
+          device={device}
+          deviceModelId={device.modelId as CLSSupportedDeviceModelId}
+          fullScreen={false}
+          wording={t("FirmwareUpdate.steps.restoreSettings.imageCommitRequested", {
+            deviceName: productName,
+          })}
+        />
+      );
     }
 
     if (restoreAppsState.allowManagerRequested) {
@@ -812,10 +856,10 @@ export const FirmwareUpdate = ({
           category={"Update device - Step 3d: apps and settings successfully restored"}
         />
       ) : null}
-      {staxFetchImageState.hexImage ? (
+      {isCustomLockScreenSupported(device.modelId) && staxFetchImageState.hexImage ? (
         <ImageHexProcessor
           hexData={staxFetchImageState.hexImage as string}
-          {...targetDataDimensions}
+          {...getScreenDataDimensions(device.modelId)}
           onPreviewResult={handleStaxImageSourceLoaded}
           onError={error => console.error(error)}
         />
@@ -824,8 +868,8 @@ export const FirmwareUpdate = ({
   );
 };
 
-const FirmwareUpdateScreen = () => {
-  const { params } = useRoute<NavigationProps["route"]>();
+const FirmwareUpdateScreen = ({ route }: NavigationProps) => {
+  const { params } = route;
 
   if (!params.device || !params.firmwareUpdateContext || !params.deviceInfo) return null;
 

@@ -14,9 +14,6 @@ const sortNameLense = (a: AccountLike): string => {
     case "TokenAccount":
       return a.token.name;
 
-    case "ChildAccount":
-      return a.currency.name;
-
     default:
       return "";
   }
@@ -55,7 +52,8 @@ export const sortAccountsComparatorFromOrder = (
     return diff;
   };
 };
-export const comparatorSortAccounts = <TA extends AccountLike>(
+
+const comparatorSortAccounts = <TA extends AccountLike>(
   accounts: TA[],
   comparator: AccountComparator,
 ): TA[] => {

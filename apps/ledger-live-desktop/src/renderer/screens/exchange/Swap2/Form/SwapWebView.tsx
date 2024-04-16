@@ -3,8 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
 import { context } from "~/renderer/drawers/Provider";
 import WebviewErrorDrawer, { SwapLiveError } from "./WebviewErrorDrawer/index";
-import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
-import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
+
 import { counterValueCurrencySelector, languageSelector } from "~/renderer/reducers/settings";
 import useTheme from "~/renderer/hooks/useTheme";
 import { Web3AppWebview } from "~/renderer/components/Web3AppWebview";
@@ -21,6 +20,9 @@ import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-ap
 import { useRedirectToSwapHistory } from "../utils/index";
 
 import { captureException } from "~/sentry/internal";
+import { usePTXCustomHandlers } from "~/renderer/components/WebPTXPlayer/CustomHandlers";
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const isDevelopment = process.env.NODE_ENV === "development";
 
@@ -53,23 +55,39 @@ export type SwapProps = {
   error: boolean;
   providerRedirectURL: string;
   toNewTokenId: string;
+  swapApiBase: string;
 };
 
 export type SwapWebProps = {
+  manifest: LiveAppManifest;
   swapState?: Partial<SwapProps>;
   liveAppUnavailable(): void;
 };
 
-export const SWAP_WEB_MANIFEST_ID = "swap-live-app-demo-0";
+export const SwapWebManifestIDs = {
+  Demo0: "swap-live-app-demo-0",
+  Demo1: "swap-live-app-demo-1",
+};
 
-const SwapWebAppWrapper = styled.div<{ isDevelopment: boolean }>(
-  ({ isDevelopment }) => `
-  ${!isDevelopment ? "height: 0px;" : ""}
+export const useSwapLiveAppManifestID = () => {
+  const demo0 = useFeature("ptxSwapLiveAppDemoZero");
+  const demo1 = useFeature("ptxSwapLiveAppDemoOne");
+  switch (true) {
+    case demo1?.enabled:
+      return demo1?.params?.manifest_id ?? SwapWebManifestIDs.Demo1;
+    case demo0?.enabled:
+      return demo0?.params?.manifest_id ?? SwapWebManifestIDs.Demo0;
+    default:
+      return null;
+  }
+};
+
+const SwapWebAppWrapper = styled.div`
   width: 100%;
-`,
-);
+  flex: 1;
+`;
 
-const SwapWebView = ({ swapState, liveAppUnavailable }: SwapWebProps) => {
+const SwapWebView = ({ manifest, swapState, liveAppUnavailable }: SwapWebProps) => {
   const {
     colors: {
       palette: { type: themeType },
@@ -81,18 +99,14 @@ const SwapWebView = ({ swapState, liveAppUnavailable }: SwapWebProps) => {
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
   const fiatCurrency = useSelector(counterValueCurrencySelector);
   const locale = useSelector(languageSelector);
-  const localManifest = useLocalLiveAppManifest(SWAP_WEB_MANIFEST_ID);
-  const remoteManifest = useRemoteLiveAppManifest(SWAP_WEB_MANIFEST_ID);
   const redirectToHistory = useRedirectToSwapHistory();
 
-  const manifest = localManifest || remoteManifest;
-
-  const hasManifest = !!manifest;
   const hasSwapState = !!swapState;
-
+  const customPTXHandlers = usePTXCustomHandlers(manifest);
   const customHandlers = useMemo(() => {
     return {
       ...loggerHandlers,
+      ...customPTXHandlers,
       "custom.swapStateGet": () => {
         return Promise.resolve(swapState);
       },
@@ -171,7 +185,8 @@ const SwapWebView = ({ swapState, liveAppUnavailable }: SwapWebProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [webviewState.url]);
 
-  if (!hasManifest || !hasSwapState) {
+  // return loader???
+  if (!hasSwapState) {
     return null;
   }
 
@@ -202,7 +217,7 @@ const SwapWebView = ({ swapState, liveAppUnavailable }: SwapWebProps) => {
           webviewState={webviewState}
         />
       )}
-      <SwapWebAppWrapper isDevelopment={isDevelopment}>
+      <SwapWebAppWrapper>
         <Web3AppWebview
           manifest={{ ...manifest, url: `${manifest.url}#${swapState.cacheKey}` }}
           inputs={{

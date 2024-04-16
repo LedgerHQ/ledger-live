@@ -1,12 +1,7 @@
 import * as braze from "@braze/web-sdk";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  LocationContentCard,
-  NotificationContentCard,
-  Platform,
-  ContentCard,
-} from "~/types/dynamicContent";
+import { LocationContentCard, NotificationContentCard, Platform } from "~/types/dynamicContent";
 import { notificationsContentCardSelector } from "~/renderer/reducers/dynamicContent";
 import { setNotificationsCards } from "~/renderer/actions/dynamicContent";
 import { track } from "../analytics/segment";
@@ -41,7 +36,7 @@ export function useNotifications() {
     const notifsByDay: Record<string, NotificationContentCard[]> = notifs.reduce(
       (sum: Record<string, NotificationContentCard[]>, notif: NotificationContentCard) => {
         // group by publication date
-        const k = startOfDayTime(notif.createdAt);
+        const k = startOfDayTime(notif.created);
 
         return { ...sum, [`${k}`]: [...(sum[k] || []), notif] };
       },
@@ -85,7 +80,7 @@ export function useNotifications() {
   );
 
   const onClickNotif = useCallback(
-    (card: ContentCard) => {
+    (card: NotificationContentCard) => {
       const currentCard = cachedNotifications.find(c => c.id === card.id);
 
       if (currentCard) {

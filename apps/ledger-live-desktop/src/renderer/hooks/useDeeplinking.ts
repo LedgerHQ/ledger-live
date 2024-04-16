@@ -15,6 +15,7 @@ import { track } from "~/renderer/analytics/segment";
 import { setTrackingSource } from "../analytics/TrackPage";
 import { CryptoOrTokenCurrency, Currency } from "@ledgerhq/types-cryptoassets";
 import { Account, SubAccount } from "@ledgerhq/types-live";
+import { useStorylyContext } from "~/storyly/StorylyProvider";
 
 const getAccountsOrSubAccountsByCurrency = (
   currency: CryptoOrTokenCurrency,
@@ -41,6 +42,8 @@ export function useDeepLinkHandler() {
   const accounts = useSelector(accountsSelector);
   const location = useLocation();
   const history = useHistory();
+  const { setUrl } = useStorylyContext();
+
   const navigate = useCallback(
     (
       pathname: string,
@@ -303,6 +306,17 @@ export function useDeepLinkHandler() {
           }
           break;
         case "wc": {
+          // Only prevent requests if already on the wallet connect live-app
+          if (location.pathname === "/platform/ledger-wallet-connect") {
+            try {
+              // Prevent a request from updating the live-app url and reloading it
+              if (!query.uri || new URL(query.uri).searchParams.get("requestId")) {
+                return;
+              }
+            } catch {
+              // Fall back on navigation to the live-app in case of an invalid URL
+            }
+          }
           setTrackingSource("deeplink");
           navigate("/platform/ledger-wallet-connect", query);
 
@@ -317,13 +331,16 @@ export function useDeepLinkHandler() {
         case "recover-restore-flow":
           navigate("/recover-restore");
           break;
+        case "storyly":
+          setUrl(deeplink);
+          break;
         case "portfolio":
         default:
           navigate("/");
           break;
       }
     },
-    [accounts, dispatch, navigate],
+    [accounts, dispatch, location.pathname, navigate, setUrl],
   );
   return {
     handler,

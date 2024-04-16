@@ -1,0 +1,1 @@
+{"request":{"url":"https://stargaze-api.polkachu.com/cosmos/auth/v1beta1/accounts/stars1v2mp0m7k96dm9qv60fkspcqlzpkzrwnekeys8l","method":"GET"},"response":{"body":{"code":5,"message":"rpc error: code = NotFound desc = account stars1v2mp0m7k96dm9qv60fkspcqlzpkzrwnekeys8l not found: key not found","details":[]}}}

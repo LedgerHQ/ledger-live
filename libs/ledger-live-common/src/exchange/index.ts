@@ -3,7 +3,6 @@ import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets
 import { findExchangeCurrencyConfig as findProdExchangeCurrencyConfig } from "@ledgerhq/cryptoassets";
 import { getEnv } from "@ledgerhq/live-env";
 import { findTestExchangeCurrencyConfig } from "./testCurrencyConfig";
-import { PartnerKeyInfo } from "@ledgerhq/hw-app-exchange";
 // Minimum version of a currency app which has exchange capabilities, meaning it can be used
 // for sell/swap, and do silent signing.
 const exchangeSupportAppVersions = {
@@ -46,20 +45,6 @@ type ExchangeCurrencyNameAndSignature = {
   config: Buffer;
   signature: Buffer;
 };
-export type ExchangeProviderNameAndSignature = {
-  name: string;
-  publicKey: {
-    curve: "secp256k1" | "secp256r1";
-    data: Buffer;
-  };
-  version?: number;
-  signature: Buffer;
-};
-
-export type SwapProviderConfig = ExchangeProviderNameAndSignature & {
-  needsKYC: boolean;
-  needsBearerToken: boolean;
-};
 
 export const isExchangeSupportedByApp = (appName: string, appVersion: string): boolean => {
   const minVersion = exchangeSupportAppVersions[appName];
@@ -84,13 +69,3 @@ export const getCurrencyExchangeConfig = (
 export const isCurrencyExchangeSupported = (currency: CryptoCurrency | TokenCurrency): boolean => {
   return !!findExchangeCurrencyConfig(currency.id);
 };
-
-export function convertToAppExchangePartnerKey(
-  provider: ExchangeProviderNameAndSignature,
-): PartnerKeyInfo {
-  return {
-    name: provider.name,
-    curve: provider.publicKey.curve,
-    publicKey: provider.publicKey.data,
-  };
-}

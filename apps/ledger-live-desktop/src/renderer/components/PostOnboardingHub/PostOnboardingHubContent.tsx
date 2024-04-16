@@ -14,12 +14,12 @@ const PostOnboardingHubContent = () => {
   const allDone = useAllPostOnboardingActionsCompleted();
 
   const handleSkipButton = useCallback(() => {
-    track("button_clicked", { button: "I'll do this later", flow: "post-onboarding" });
+    track("button_clicked2", { button: "I'll do this later", flow: "post-onboarding" });
     history.push("/");
   }, [history]);
 
   const handleOnboardingOver = useCallback(() => {
-    track("button_clicked", { button: "Explore wallet", flow: "post-onboarding" });
+    track("button_clicked2", { button: "Explore wallet", flow: "post-onboarding" });
     history.push("/");
   }, [history]);
 

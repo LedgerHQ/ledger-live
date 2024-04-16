@@ -77,11 +77,52 @@ export const loadWindow = async () => {
     fullUrl.searchParams.append("appDirname", app.dirname || "");
     fullUrl.searchParams.append("theme", theme || "");
     fullUrl.searchParams.append("appLocale", app.getLocale());
-    fullUrl.searchParams.append("pathUserdata", app.getPath("userData"));
-    fullUrl.searchParams.append("pathHome", app.getPath("home"));
     await mainWindow.loadURL(fullUrl.href);
   }
 };
+
+function restorePosition(
+  previousPosition?: { x: number; y: number },
+  previousDimensions?: { width: number; height: number },
+) {
+  let width = DEFAULT_WINDOW_WIDTH;
+  let height = DEFAULT_WINDOW_HEIGHT;
+  let x, y;
+  if (previousDimensions) {
+    width = previousDimensions.width;
+    height = previousDimensions.height;
+  }
+  if (previousPosition) {
+    x = previousPosition.x;
+    y = previousPosition.y;
+  } else {
+    const windowPosition = getWindowPosition(width, height);
+    x = windowPosition.x;
+    y = windowPosition.y;
+  }
+
+  const bounds = { x, y, width, height };
+
+  const area = screen.getDisplayMatching(bounds).workArea;
+
+  // If the saved position still valid (the window is entirely inside the display area), use it.
+  if (
+    bounds.x >= area.x &&
+    bounds.y >= area.y &&
+    bounds.x + bounds.width <= area.x + area.width &&
+    bounds.y + bounds.height <= area.y + area.height
+  ) {
+    x = bounds.x;
+    y = bounds.y;
+  }
+  // If the saved size is still valid, use it.
+  if (bounds.width <= area.width || bounds.height <= area.height) {
+    width = bounds.width;
+    height = bounds.height;
+  }
+
+  return { x, y, width, height };
+}
 
 export async function createMainWindow(
   {
@@ -95,22 +136,15 @@ export async function createMainWindow(
       ? settings.theme
       : "null";
 
-  // TODO renderer should provide the saved window rectangle
-  const width = dimensions ? dimensions.width : DEFAULT_WINDOW_WIDTH;
-  const height = dimensions ? dimensions.height : DEFAULT_WINDOW_HEIGHT;
-  const windowPosition = positions || getWindowPosition(width, height);
   const windowOptions = {
     ...defaultWindowOptions,
-    x: windowPosition.x,
-    y: windowPosition.y,
+    ...restorePosition(positions, dimensions),
     ...(process.platform === "darwin"
       ? {
           frame: false,
           titleBarStyle: "hiddenInset" as const,
         }
       : {}),
-    width,
-    height,
     minWidth: MIN_WIDTH,
     minHeight: MIN_HEIGHT,
     show: false,

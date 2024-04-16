@@ -12,7 +12,7 @@ export function isALog(log: unknown): log is Log {
 }
 
 /**
- * Simple logger recording logs in memory (in the main thread)
+ * Simple logger recording logs in memory (in the main process)
  *
  * Used to record logs coming from the internal process.
  * The logs follow the structure of `Log` from `@ledgerhq/logs`
@@ -62,7 +62,7 @@ export class InMemoryLogger {
 }
 
 /**
- * Simple logger displaying on the console/stdout logs from the main thread
+ * Simple logger displaying on the console/stdout logs from the main process
  *
  * The filtering is set from the `VERBOSE` env variable.
  *
@@ -110,7 +110,7 @@ export class ConsoleLogger {
     }
 
     console.log(
-      `Logs console display setup (main thread): ${JSON.stringify({
+      `Logs console display setup (main process): ${JSON.stringify({
         everyLogs: this.everyLogs,
         filters: this.filters,
       })}`,

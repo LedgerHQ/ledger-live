@@ -1,22 +1,23 @@
 import React from "react";
 import { palettes } from "@ledgerhq/ui-shared";
-import CenterView, { FontProvider, Main } from "../storybook/stories/CenterView";
+import { FontProvider, Main } from "../storybook/stories/CenterView";
+import { useDarkMode } from "storybook-dark-mode";
 import { StyleProvider } from "../src/styles/StyleProvider";
 
 export const decorators = [
-  (Story, { globals }) => {
-    const backgrounds = globals?.backgrounds ?? {};
-    const theme = backgrounds?.value === palettes.dark.background.main ? "dark" : "light";
-
+  (Story) => {
+    const theme = useDarkMode() ? "dark" : "light";
     return (
       <div
         style={{ display: "flex", flexDirection: "column", height: "100vh", overflow: "hidden" }}
       >
-        <style> {`body { padding: 0!important;}
+        <style>
+          {
+            `body { padding: 0!important;}
           *:focus, *:active {
             outline: none !important;
           }` /* outline custom styling used to mask focus boxes on safari & chrome */
-        }
+          }
         </style>
         <StyleProvider selectedPalette={theme}>
           <FontProvider>
@@ -50,5 +51,5 @@ export const parameters = {
       color: /(background|color)$/i,
       date: /Date$/,
     },
-  }
+  },
 };

@@ -42,7 +42,7 @@ const SummaryAmountSection = ({ account, amount, overrideAmountLabel }: Props) =
           </LText>
         ) : (
           <>
-            <LText style={styles.valueText} semiBold>
+            <LText style={styles.valueText} semiBold testID="send-summary-amount">
               <CurrencyUnitValue unit={unit} value={amount} disableRounding />
             </LText>
             <LText style={styles.counterValueText} color="grey" semiBold>

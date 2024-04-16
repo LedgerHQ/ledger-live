@@ -6,7 +6,6 @@ import { Handlers } from "./types";
 export type ApplicationState = {
   isLocked?: boolean;
   hasPassword?: boolean;
-  dismissedCarousel?: boolean;
   osDarkMode?: boolean;
   osLanguage?: LangAndRegion;
   navigationLocked?: boolean;
@@ -24,7 +23,6 @@ const state: ApplicationState = {
     useSystem: true,
   },
   hasPassword: false,
-  dismissedCarousel: false,
   debug: {
     alwaysShowSkeletons: false,
   },
@@ -54,8 +52,6 @@ export const isLocked = (state: { application: ApplicationState }) =>
   state.application.isLocked === true;
 export const hasPasswordSelector = (state: { application: ApplicationState }) =>
   state.application.hasPassword === true;
-export const hasDismissedCarouselSelector = (state: { application: ApplicationState }) =>
-  state.application.dismissedCarousel === true;
 export const osDarkModeSelector = (state: { application: ApplicationState }) =>
   state.application.osDarkMode;
 export const alwaysShowSkeletonsSelector = (state: { application: ApplicationState }) =>

@@ -6,6 +6,7 @@ import { TransportStatusError, UserRefusedAddress } from "@ledgerhq/errors";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "./currencies";
 import { getEnv } from "@ledgerhq/live-env";
+import { DerivationMode } from "@ledgerhq/types-live";
 
 export type ModeSpec = {
   mandatoryEmptyAccountSkip?: number;
@@ -28,10 +29,6 @@ export type ModeSpec = {
   addressFormat?: string;
 };
 
-// FIXME: DerivationMode SHOULD BE IN LIVE-TYPES ?
-// IN LIVE-TYPES DerivationMode = string which does not work
-export type DerivationMode = keyof typeof modes;
-
 export type Result = {
   address: string;
   path: string;
@@ -49,7 +46,7 @@ export type GetAddressOptions = {
   segwit?: boolean;
 };
 
-const modes = Object.freeze({
+const modes: Readonly<Partial<Record<DerivationMode, unknown>>> = Object.freeze({
   // this is "default" by convention
   "": {},
   // MEW legacy derivation
@@ -64,19 +61,6 @@ const modes = Object.freeze({
     skipFirst: true,
     // already included in the normal bip44,
     tag: "metamask",
-  },
-  // Deprecated and should no longer be used.
-  bch_on_bitcoin_segwit: {
-    overridesCoinType: 0,
-    isInvalid: true,
-    isSegwit: true,
-    purpose: 49,
-    addressFormat: "p2sh",
-  },
-  // many users have wrongly sent BTC on BCH paths
-  legacy_on_bch: {
-    overridesCoinType: 145,
-    isInvalid: true,
   },
   // chrome app and LL wrongly used to derivate vertcoin on 128
   vertcoin_128: {
@@ -137,20 +121,6 @@ const modes = Object.freeze({
     tag: "segwit",
     addressFormat: "p2sh",
   },
-  segwit_on_legacy: {
-    isSegwit: true,
-    purpose: 44,
-    addressFormat: "p2sh",
-    isInvalid: true,
-  },
-  legacy_on_segwit: {
-    purpose: 49,
-    isInvalid: true,
-  },
-  legacy_on_native_segwit: {
-    purpose: 84,
-    isInvalid: true,
-  },
   segwit_unsplit: {
     isSegwit: true,
     purpose: 49,
@@ -168,14 +138,21 @@ const modes = Object.freeze({
   polkadotbip44: {
     overridesDerivation: "44'/354'/<account>'/0'/<address>'",
   },
-  gliflegacy: {
+  glifLegacy: {
     overridesDerivation: "44'/1'/0'/0/<account>",
     tag: "legacy",
+    mandatoryEmptyAccountSkip: 5,
   },
   glif: {
     overridesDerivation: "44'/461'/0'/0/<account>",
-    startsAt: 1,
     tag: "third-party",
+    mandatoryEmptyAccountSkip: 5,
+  },
+  filecoinBIP44: {
+    overridesDerivation: "44'/<coin_type>'/<account>'/<node>/<address>",
+    startsAt: 1,
+    tag: "bip44",
+    mandatoryEmptyAccountSkip: 5,
   },
   casper_wallet: {
     overridesDerivation: "44'/506'/0'/0/<account>",
@@ -218,13 +195,12 @@ modes as Record<DerivationMode, ModeSpec>; // eslint-disable-line
 const legacyDerivations: Partial<Record<CryptoCurrency["id"], DerivationMode[]>> = {
   aeternity: ["aeternity"],
   bitcoin_cash: [],
-  bitcoin: ["legacy_on_bch"],
   vertcoin: ["vertcoin_128", "vertcoin_128_segwit"],
   tezos: ["galleonL", "tezboxL", "tezosbip44h", "tezbox"],
   stellar: ["sep5"],
   polkadot: ["polkadotbip44"],
   hedera: ["hederaBip44"],
-  filecoin: ["gliflegacy", "glif"],
+  filecoin: ["glifLegacy", "filecoinBIP44", "glif"],
   internet_computer: ["internet_computer"],
   casper: ["casper_wallet"],
   cardano: ["cardano"],
@@ -376,6 +352,7 @@ const disableBIP44: Record<string, boolean> = {
   vechain: true,
   internet_computer: true,
   casper: true,
+  filecoin: true,
 };
 type SeedInfo = {
   purpose: number;
@@ -421,10 +398,6 @@ export const getDerivationModesForCurrency = (currency: CryptoCurrency): Derivat
     if (currency.supportsSegwit) {
       all.push("segwit_unsplit");
     }
-  }
-
-  if (currency.supportsSegwit) {
-    all.push("segwit_on_legacy", "legacy_on_segwit", "legacy_on_native_segwit");
   }
 
   if (currency.supportsNativeSegwit) {

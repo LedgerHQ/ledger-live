@@ -11,8 +11,8 @@ import {
   getDefaultExplorerView,
   getTransactionExplorer as getDefaultTransactionExplorer,
 } from "@ledgerhq/live-common/explorers";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
-import { useNftMetadata } from "@ledgerhq/live-common/nft/NftMetadataProvider/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useNftMetadata } from "@ledgerhq/live-nft-react";
 import {
   findOperationInAccount,
   getOperationAmountNumber,
@@ -43,7 +43,6 @@ import CounterValue from "~/renderer/components/CounterValue";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import Ellipsis from "~/renderer/components/Ellipsis";
 import FakeLink from "~/renderer/components/FakeLink";
-import FormattedDate from "~/renderer/components/FormattedDate";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import LabelInfoTooltip from "~/renderer/components/LabelInfoTooltip";
 import Link from "~/renderer/components/Link";
@@ -79,6 +78,7 @@ import {
   Separator,
   TextEllipsis,
 } from "./styledComponents";
+import { dayAndHourFormat, useDateFormatted } from "~/renderer/hooks/useDateFormatter";
 
 const mapStateToProps = (
   state: State,
@@ -96,7 +96,9 @@ const mapStateToProps = (
         })
       : undefined;
   let account: AccountLike | undefined | null;
-  if (parentAccount) {
+  if (parentAccount && parentId === accountId) {
+    account = parentAccount;
+  } else if (parentAccount) {
     account = findSubAccountById(parentAccount, accountId);
   } else {
     account = accountSelector(state, {
@@ -144,6 +146,8 @@ const OperationD = (props: Props) => {
   const location = useLocation();
   const mainAccount = getMainAccount(account, parentAccount);
   const { hash, date, senders, type, fee, recipients: _recipients, contract, tokenId } = operation;
+
+  const dateFormatted = useDateFormatted(date, dayAndHourFormat);
   const uniqueSenders = uniq(senders);
   const recipients = _recipients.filter(Boolean);
   const { name } = mainAccount;
@@ -214,12 +218,11 @@ const OperationD = (props: Props) => {
     [account],
   );
   const openAmountDetails = useCallback(() => {
-    const data = {
+    setDrawer(AmountDetails, {
       operation,
       account,
       onRequestBack: props.onRequestBack,
-    };
-    setDrawer(AmountDetails, data);
+    });
   }, [operation, props, account]);
   const goToMainAccount = useCallback(() => {
     const url = `/account/${mainAccount.id}`;
@@ -540,10 +543,7 @@ const OperationD = (props: Props) => {
             {subOperations.map((op, i) => {
               const opAccount = findSubAccountById(account, op.accountId);
               if (!opAccount) return null;
-              const subAccountName =
-                opAccount.type === "ChildAccount"
-                  ? opAccount.name
-                  : getAccountCurrency(opAccount).name;
+              const subAccountName = getAccountCurrency(opAccount).name;
               return (
                 <div key={`${op.id}`}>
                   <OperationComponent
@@ -625,9 +625,7 @@ const OperationD = (props: Props) => {
       {isNftOperation ? <NFTOperationDetails operation={operation} /> : null}
       <OpDetailsSection>
         <OpDetailsTitle>{t("operationDetails.date")}</OpDetailsTitle>
-        <OpDetailsData>
-          <FormattedDate date={date} />
-        </OpDetailsData>
+        <OpDetailsData>{dateFormatted}</OpDetailsData>
       </OpDetailsSection>
       <B />
       <OpDetailsSection>

@@ -145,7 +145,7 @@ const StepChooseImage: React.FC<Props> = props => {
             onResult={onResult}
             onError={onError}
             onClick={() =>
-              track("button_clicked", {
+              track("button_clicked2", {
                 button: "Choose from my picture gallery",
               })
             }
@@ -153,7 +153,7 @@ const StepChooseImage: React.FC<Props> = props => {
           <ImportNFTButton
             onClick={() => {
               setIsShowingNftGallery(true);
-              track("button_clicked", {
+              track("button_clicked2", {
                 button: "Choose from NFT gallery",
               });
             }}

@@ -27,12 +27,11 @@ describe("Onboarding", () => {
     await onboardingSteps.chooseToAccessYourWallet();
     await onboardingSteps.chooseToConnectYourLedger();
     await onboardingSteps.selectPairMyNano();
+    await onboardingSteps.selectAddDevice();
     await onboardingSteps.addDeviceViaBluetooth();
-    await onboardingSteps.openLedgerLive();
     await portfolioPage.waitForPortfolioPageToLoad();
     await expect(portfolioPage.portfolioSettingsButton()).toBeVisible();
-    //should see an empty portfolio page
-    await expect(portfolioPage.emptyPortfolioComponent()).toBeVisible();
+    await expect(portfolioPage.emptyPortfolioList()).toBeVisible();
   });
 
   it("does the Onboarding and choose to restore a Nano X", async () => {
@@ -41,11 +40,11 @@ describe("Onboarding", () => {
     await onboardingSteps.chooseDevice("nanoX");
     await onboardingSteps.goesThroughRestorePhrase();
     await onboardingSteps.selectPairMyNano();
+    await onboardingSteps.selectAddDevice();
     await onboardingSteps.addDeviceViaBluetooth();
-    await onboardingSteps.openLedgerLive();
     await portfolioPage.waitForPortfolioPageToLoad();
     await expect(portfolioPage.portfolioSettingsButton()).toBeVisible();
-    await expect(portfolioPage.emptyPortfolioComponent()).toBeVisible();
+    await expect(portfolioPage.emptyPortfolioList()).toBeVisible();
   });
 
   it("does the Onboarding and choose to restore a Nano SP", async () => {
@@ -70,8 +69,17 @@ describe("Onboarding", () => {
     await onboardingSteps.chooseDevice("nanoX");
     await onboardingSteps.goesThroughCreateWallet();
     await onboardingSteps.selectPairMyNano();
+    await onboardingSteps.selectAddDevice();
     await onboardingSteps.addDeviceViaBluetooth();
-    await onboardingSteps.openLedgerLive();
     await portfolioPage.waitForPortfolioPageToLoad();
+  });
+
+  it("does the Onboarding and choose to synchronize with Ledger Live Desktop", async () => {
+    await device.launchApp({ permissions: { camera: "YES" } }); // Make sure permission is given
+    await onboardingSteps.startOnboarding();
+    await onboardingSteps.chooseToAccessYourWallet();
+    await onboardingSteps.chooseToSyncWithLedgerLiveDesktop();
+    await onboardingSteps.goesThroughLedgerLiveDesktopScanning();
+    await onboardingSteps.waitForScanningPage();
   });
 });

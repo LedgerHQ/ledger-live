@@ -144,7 +144,7 @@
       }
     },
     "ConnectManagerTimeout" : {
-      "title" : "عذراً، فشل اتصال My Ledger (جهازي Ledger)",
+      "title" : "عذراً، فشل الاتصال الآمن مع Ledger",
       "description" : {
         "ios" : {
           "nanoX" : "يرجى أن تتأكد أن {{productName}} الخاص بك غير مُقفل و أنه تم تمكين البلوتوث."
@@ -430,7 +430,7 @@
         "description" : "المغادرة ستقوم بإلغاء عمليات تحديث التطبيقات قيد التقدم.",
         "stay" : "متابعة التحديث"
       },
-      "quit" : "مغادرة My Ledger"
+      "quit" : "مغادرة My Ledger (جهازي Ledger)"
     },
     "ManagerUninstallBTCDep" : {
       "title" : "عفواً، هذا التطبيق مطلوب",
@@ -467,6 +467,18 @@
     "ElrondDelegationBelowMinimumError" : {
       "title" : "لا يمكن أن يكون التفويض المتبقي أقل من {{formattedAmount}}"
     },
+    "NotEnoughVTHO" : {
+      "title" : "عذراً، أرصدة VTHO غير كافية",
+      "description" : "يُرجى التأكد من أن الحساب به ما يكفي من VTHO."
+    },
+    "MustBeVechain" : {
+      "title" : "ليس حساب vechain",
+      "description" : "يُرجى التأكد من أن العملة VTHO أو VET"
+    },
+    "ImpossibleToCalculateAmountAndFees" : {
+      "title" : "من المستحيل حساب المبلغ والرسوم",
+      "description" : "من المستحيل حساب المبلغ والرسوم"
+    },
     "NotEnoughEGLDForFees" : {
       "title" : "لا يوجد ما يكفي من EGLD لدفع رسوم المعاملة",
       "description" : "يُرجى إرسال بعض EGLD إلى حسابك للدفع مقابل المعاملات."
@@ -477,10 +489,10 @@
     },
     "NoSuchAppOnProvider" : {
       "title" : "لا يمكن العثور على التطبيق {{appName}} للتهيئة الخاصة بك.",
-      "description" : "حاول إعادة تثبيت التطبيق من My Ledger"
+      "description" : "حاول إعادة تثبيت التطبيق من My Ledger (جهازي Ledger)"
     },
     "NotEnoughGas" : {
-      "title" : "رصيد الحساب الأصلي غير كاف لرسوم الشبكة",
+      "title" : "تحتاج إلى {{fees}} {{ticker}} في حسابك لدفع رسوم المعاملة على شبكة {{cryptoName}}.  <link0>اشتر {{ticker}}</link0> أو قم بإيداع المزيد في حسابك.",
       "description" : "يرجى إرسال بعض العملات إلى حسابك لسداد قيمة معاملات رموز التوكن."
     },
     "NotEnoughGasSwap" : {
@@ -556,9 +568,9 @@
       "title" : "لا توجد أصول لإزالة تجميدها",
       "description" : "ليس لديك أصول الطاقة لإزالة تجميدها."
     },
-    "TronUnfreezeNotExpired" : {
+    "TronLegacyUnfreezeNotExpired" : {
       "title" : "إزالة التجميد غير متوفر بعد",
-      "description" : "يرجى الانتظار 3 أيام بعد آخر عملية تجميد لديك."
+      "description" : "يرجى الانتظار 3 أيام بعد آخر عملية تجميد قمت بها."
     },
     "TronVoteRequired" : {
       "title" : "مطلوب على الأقل 1 صوت"
@@ -594,14 +606,24 @@
     "TronNotEnoughEnergy" : {
       "title" : "الطاقة أقل من المطلوب. قد تدفع رسوم تصل إلى 50TRX."
     },
+    "TronNoUnfrozenResource" : {
+      "title" : "ليس هناك أصول غير مجمدة لسحبها"
+    },
+    "TronInvalidUnDelegateResourceAmount" : {
+      "title" : "ليس هناك أصول مفوَّضة كافية"
+    },
+    "TronUnfreezeNotExpired" : {
+      "title" : "لم تتم إزالة تجميد الأصول بعد",
+      "description" : "تحتاج إلى الانتظار حتى {{time}} للسحب"
+    },
     "UpdateYourApp" : {
       "title" : "مطلوب تحديث للتطبيق",
       "description" : "يُرجى إلغاء التثبيت ثم إعادة تثبيت تطبيق {{managerAppName}} في My Ledger (جهازي Ledger).",
       "primaryCTA" : "افتح My Ledger (جهازي Ledger)"
     },
     "UserRefusedAllowManager" : {
-      "title" : "تم تعطيل المدير (Manager) على الجهاز",
-      "description" : "يرجى تمكين المدير (Manager) على جهازك، ثم حاول مرة أخرى."
+      "title" : "تم رفض الاتصال الآمن على الجهاز",
+      "description" : "يرجى السماح بالاتصال الآمن على جهازك وإعادة المحاولة."
     },
     "UserRefusedAddress" : {
       "title" : "عنوان التلقي مرفوض",
@@ -751,6 +773,9 @@
     },
     "CardanoNotEnoughFunds" : {
       "title" : "يرجى التأكد أن لديك أرصدة مالية كافية لدفع الرسوم."
+    },
+    "CardanoStakeKeyDepositError" : {
+      "title" : "تأكد أن لديك {{depositAmount}} ADA متاح للإيداع"
     },
     "StacksMemoTooLong" : {
       "title" : "الملاحظة (تسمية الوجهة) طويلة جداً"
@@ -1006,7 +1031,8 @@
     "week" : "1 أسبوع",
     "month" : "1 شهر",
     "year" : "1 سنة",
-    "all" : "الكل"
+    "all" : "الكل",
+    "graphNotSupported" : "الرسم البياني غير متاح لرمز التوكن هذا"
   },
   "carousel" : {
     "title" : "إغلاق الشريط ؟",
@@ -1936,7 +1962,7 @@
   "earlySecurityCheck" : {
     "title" : "اختبار الأصالة والتحقق من تحديث نظام التشغيل",
     "idle" : {
-      "description" : "اختبار الأصالة يتأكد من أن Ledger Stax الخاص بك هو جهاز Ledger أصلي. فحص تحديث نظام التشغيل يتأكد من أن نظام تشغيل Ledger Stax مُحدَّث إلى آخر إصدار.",
+      "description" : "هذا يتأكد من أن جهازك Ledger Stax هو جهاز Ledger أصلي.",
       "learnMore" : "تعرّف على المزيد حول اختبار الأصالة",
       "checkCta" : "فحص Ledger Stax"
     },
@@ -1944,8 +1970,8 @@
       "continueCta" : "المتابعة إلى الإعداد"
     },
     "earlySecurityCheckMandatoryDrawer" : {
-      "title" : "اختبار الأصالة إلزامي",
-      "description" : "لا يمكنك إعداد جهازك {{productName}} بدون السماح بهذا الفحص.",
+      "title" : "إلغاء اختبار الأصالة والتحقق من تحديث نظام التشغيل؟",
+      "description" : "اختبار الأصالة إلزامي لمتابعة إعداد جهازك {{productName}} باستخدام تطبيق Ledger Live.",
       "resumeCta" : "استئناف الفحص",
       "cancelCta" : "إلغاء الفحوصات"
     },
@@ -1966,25 +1992,25 @@
       "supportCta" : "تواصل مع دعم Ledger"
     },
     "allowManagerDrawer" : {
-      "title" : "انقر على 'Allow [سماح]' لتمكين اختبار الأصالة وفحص تحديث نظام التشغيل"
+      "title" : "انقر على ”Allow (سماح)“ لبدء اختبار الأصالة"
     },
     "genuineCheckStep" : {
       "learnMore" : "تعرّف على المزيد حول اختبار الأصالة",
       "inactive" : {
         "title" : "اختبار الأصالة",
-        "description" : "اختبار الأصالة يتأكد من أن {{productName}} الخاص بك هو جهاز Ledger أصلي."
+        "description" : "هذا يتأكد من أن جهازك {{productName}} هو جهاز Ledger أصلي."
       },
       "active" : {
         "title" : "اختبار الأصالة",
-        "description" : "اختبار الأصالة يتأكد من أن {{productName}} الخاص بك هو جهاز Ledger أصلي."
+        "description" : "هذا يتأكد من أن جهازك {{productName}} هو جهاز Ledger أصلي."
       },
       "completed" : {
         "title" : "{{productName}} أصلي",
-        "description" : "اختبار الأصالة يتأكد من أن {{productName}} الخاص بك هو جهاز Ledger أصلي."
+        "description" : ""
       },
       "refused" : {
         "title" : "اختبار الأصالة تم رفضه",
-        "description" : "لا يمكنك إعداد جهازك {{productName}} بدون السماح بهذا الفحص.",
+        "description" : "اختبار الأصالة إلزامي لمتابعة إعداد جهازك {{productName}} باستخدام تطبيق Ledger Live.",
         "cta" : "استئناف الفحص"
       },
       "error" : {
@@ -1995,7 +2021,7 @@
     "firmwareUpdateCheckStep" : {
       "active" : {
         "title" : "التحقق من تحديث نظام التشغيل",
-        "description" : "فحص تحديث نظام التشغيل يتأكد من أن نظام تشغيل {{productName}} مُحدَّث إلى آخر إصدار."
+        "description" : "يتحقق هذا مما إذا كان نظام تشغيل جهازك {{productName}} مُحدَّث إلى آخر إصدار أم لا. "
       },
       "completed" : {
         "noUpdateAvailable" : {
@@ -2014,7 +2040,7 @@
       },
       "inactive" : {
         "title" : "التحقق من تحديث نظام التشغيل",
-        "description" : "فحص تحديث نظام التشغيل يتأكد من أن نظام تشغيل {{productName}} مُحدَّث إلى آخر إصدار."
+        "description" : "يتحقق هذا مما إذا كان نظام تشغيل جهازك Ledger Stax مُحدَّث إلى آخر إصدار أم لا. "
       }
     },
     "firmwareUpdateAvailableDrawer" : {
@@ -2071,7 +2097,7 @@
       "helpCta" : "احصل على مساعدة"
     },
     "resyncOverlay" : {
-      "content" : "انقطع الاتصال مع {{productName}}. جاري محاولة إعادة الاتصال..."
+      "content" : "انقطع الاتصال مع {{productName}}. جارٍ محاولة إعادة الاتصال."
     },
     "helpDrawer" : {
       "title" : "هل تحتاج إلى بعض المساعدة بخصوص كُتيّب الإعداد؟",
@@ -2080,14 +2106,15 @@
       "supportCta" : "التحدث مع شخص"
     },
     "earlySecurityCheckCompletedStep" : {
-      "title" : "جهاز {{productName}} هذا أصلي",
-      "description" : "تابع الإعداد على {{productName}}."
+      "title" : "{{productName}} أصلي",
+      "subtitle" : "من الآمن استخدام جهاز {{productName}} هذا. يمكنك المتابعة إلى إعداده.",
+      "description" : "انقر على {{productName}} لبدء الإعداد."
     },
     "pinStep" : {
       "title" : "كود PIN",
       "doneTitle" : "تم إعداد كود PIN",
-      "description" : "كود PIN الخاص بك يمنع الوصول غير المرغوب به إلى {{productName}} الخاص بك.",
-      "continueOnDevice" : "تعيين كود PIN على {{productName}} خاصتك"
+      "description" : "كما هو الحال مع أي كلمة مرور أو كود مرور، كود PIN يتيح إلغاء قفل جهازك {{productName}} ومنع الوصول غير المرغوب فيه.",
+      "continueOnDevice" : "قم بإعداد كود PIN الخاص بك على جهازك {{productName}}."
     },
     "seedStep" : {
       "title" : "عبارة الاسترداد السرية",
@@ -2095,17 +2122,25 @@
       "description" : "عبارة الاسترداد الخاصة بك هي قائمة سرية من 24 كلمة تقوم بنسخ مفاتيحك الخاصة أحتيطياً. {{productName}} خاصتك تنتج عبارة استرداد فريدة. Ledger لا تحتفظ بنسخة منها",
       "choiceRestoreDirectOrRecover" : "Placeholder - اختيار استعادة مباشرة أو استخدم استرداد",
       "recoverSeed" : "Placeholder: استرداد",
-      "restoreSeed" : "للاسترداد، تأكد من استخدام عبارة استرداد سرية تم إنشاؤها عن طريق جهاز Ledger لأمان مضمون لأصولك.\n\nليس لديك واحد؟ استخدم جهازك {{productName}} لإنشاء عبارة جديدة.",
-      "selection" : "على {{productName}}، اختر خيار الإعداد الأكثر ملائمةً لك.",
-      "selectionContinueOnDevice" : "انقر على خيار في {{productName}}",
-      "newSeedDescription" : "شاهد مقاطع الفيديو أدناه لتعلُّم المزيد حول كلماتك السرية.",
+      "restoreSeed" : "تأكد من استخدام عبارة استرداد سرية تم إنشاؤها عن طريق جهاز Ledger لأقصى درجات الأمان لأصولك. \n\nليس لديك عبارة استرداد؟ استخدم جهازك {{productName}} لإنشاء واحدة جديدة.",
+      "selection" : "اختر خيار الإعداد الأكثر ملائمة لك:",
+      "selectionNewLedger" : {
+        "title" : "الإعداد كجهاز Ledger جديد",
+        "desc" : "يتيح لك إنشاء محفظة جديدة. هذا يُنشئ عبارة استرداد سرية جديدة."
+      },
+      "selectionRestore" : {
+        "title" : "الاستعادة",
+        "desc" : "يتيح لك استعادة الوصول إلى أصولك الحالية بعبارة الاسترداد السرية الخاصة بك، أو باستخدام Ledger Recover."
+      },
+      "selectionContinueOnDevice" : "اختر الخيار ذي الصلة على جهازك {{productName}}.",
+      "newSeedDescription" : "تريد معرفة المزيد عن عبارة الاسترداد السرية؟ شاهد مقاطع الفيديو هذه:",
       "newSeedContinueOnDevice" : "قم بهذا على {{productName}} خاصتك",
-      "recovery" : "للاسترداد، تأكد من استخدام عبارة استرداد سرية تم إنشاؤها عن طريق جهاز Ledger لأمان مضمون لأصولك.\n\nليس لديك واحد؟ استخدم جهاز {{productName}} لإنشاء عبارة جديدة.",
-      "restoreChoiceContinueOnDevice" : "اختر أحد الخيارات على {{productName}} خاصتك",
+      "recovery" : "تأكد من استخدام عبارة استرداد سرية تم إنشاؤها عن طريق جهاز Ledger لأقصى درجات الأمان لأصولك. \n\nليس لديك عبارة استرداد؟ استخدم جهازك {{productName}} لإنشاء واحدة جديدة.",
+      "restoreChoiceContinueOnDevice" : "اختر الخيار ذي الصلة على جهازك {{productName}}.",
       "restoreChoiceSRPTitle" : "الاستعادة باستخدام عبارة الاسترداد السرية",
-      "restoreChoiceSRPDescription" : "تأكد من استخدام عبارة تم إنشاؤها بواسطة Ledger لضمان أمان أصولك.",
+      "restoreChoiceSRPDescription" : "استخدم عبارة استرداد سرية تم إنشاؤها عن طريق جهاز Ledger لأقصى درجات الأمان. ",
       "restoreChoiceRecoverTitle" : "استعادة باستخدام Ledger Recover",
-      "restoreChoiceRecoverDescription" : "استعد النسخة الاحتياطية لعبارة الاسترداد الخاصة بك عن طريق تسجيل الدخول إلى حساب Ledger الخاص بك وتأكيد هويتك."
+      "restoreChoiceRecoverDescription" : "إذا كنت مشتركاً في Ledger Recover، قم بتسجيل الدخول إلى اشتراكك لبدء عملية الاستعادة للنسخة الاحتياطية لعبارة الاسترداد السرية الخاصة بك."
     },
     "softwareChecksSteps" : {
       "title" : "التحقق من الجهاز والبرمجيات",
@@ -2123,7 +2158,7 @@
       }
     },
     "appsStep" : {
-      "title" : "تثبيت تطبيقات سلسلة الكتل (blockchain)"
+      "title" : "تثبيت التطبيقات على {{productName}}"
     },
     "readyStep" : {
       "title" : "نهاية الإعداد",
@@ -2209,6 +2244,20 @@
       "send" : "إرسال",
       "deposit" : "تلقي",
       "stake" : "تكديس"
+    },
+    "recoverBanner" : {
+      "subscribeDone" : {
+        "title" : "أكمِل إضافة بطاقة الدفع الخاصة بك",
+        "description" : "استعد بشكل موثوق مع Ledger Recover."
+      },
+      "verifyIdentity" : {
+        "title" : "أكمِل تأكيد هويتك",
+        "description" : "استعد بشكل موثوق مع Ledger Recover."
+      },
+      "connectDevice" : {
+        "title" : "الخطوة الأخيرة: توصيل جهازك Ledger",
+        "description" : "أنت على بعد خطوة واحدة من Ledger Recover."
+      }
     }
   },
   "addAccountsModal" : {
@@ -2274,6 +2323,9 @@
       "VOTE" : "تم التصويت",
       "FREEZE" : "تجميد",
       "UNFREEZE" : "تمت إزالة التجميد",
+      "UNDELEGATE_RESOURCE" : "غير مفوّض",
+      "WITHDRAW_EXPIRE_UNFREEZE" : "سحب",
+      "LEGACYUNFREEZE" : "تمت إزالة التجميد",
       "REWARD" : "المكافأة المُطالب بها",
       "FEES" : "رسوم",
       "OPT_IN" : "الانضمام",
@@ -2509,6 +2561,7 @@
       }
     },
     "availableBalance" : "الرصيد المتاح",
+    "claimableRewards" : "مكافآت قابلة للمطالبة",
     "totalSupplied" : "المبلغ المودع",
     "tronFrozen" : "تجميد",
     "bandwidth" : "النطاق الترددي (Bandwidth)",
@@ -2676,9 +2729,11 @@
       "reportErrors" : "تقارير الخلل",
       "reportErrorsDesc" : "إرسال التقارير تلقائياً لمساعدة Ledger في تحسين منتجاتها.",
       "developerMode" : "وضع المطور",
-      "developerModeDesc" : "اعرض تطبيقات المطور في My Ledger (جهازي Ledger) وقم بتمكين تطبيقات Testnet.",
+      "developerModeDesc" : "عرض تطبيقات المطور في My Ledger (جهازي Ledger) وتمكين تطبيقات Testnet.",
       "analytics" : "تحليلات",
       "analyticsDesc" : "قم بتمكين التحليلات لمساعدة Ledger على تحسين تجربة المستخدم.",
+      "personalizedRecommendations" : "تجربة مخصصة",
+      "personalizedRecommendationsDesc" : "تلقى توصيات مخصصة تطابق تفضيلاتك.",
       "analyticsModal" : {
         "title" : "مشاركة التحليلات",
         "desc" : "قم بتمكين التحليلات لمساعدة Ledger على تحسين تجربة المستخدم.",
@@ -2785,10 +2840,6 @@
         "title" : "الإعلانات",
         "desc" : "تلقى تحديثات Ledger Live المهمة"
       },
-      "recommendations" : {
-        "title" : "التوصيات",
-        "desc" : "أثري تجربتك مع التوصيات المخصصة والعروض الخاصة"
-      },
       "largeMover" : {
         "title" : "تحرك كبير في السعر",
         "desc" : "سيتم إخطارك بوجود تحركات مهمة في سعر BTC وETH"
@@ -2847,6 +2898,18 @@
         "experimentalExplorers" : {
           "title" : "API للمستكشفين التجريبيين",
           "description" : "جرب نسخة قادمة من متصفح سلسلة كتل Ledger. تغيير هذا الإعداد قد يؤثر على رصيد الحساب ومزامنته وكذلك ميزة الإرسال."
+        },
+        "1559DeactivateGate" : {
+          "title" : "إلغاء تنشيط بوابة الحد الأدنى لرسوم الأولوية الخاصة بـ EIP1559",
+          "description" : "هذا سيسمح بإرسال معاملة دون أي حد أدنى متوقع لرسوم الأولوية. قد يؤدي هذا إلى أن تُعلّق المعاملات في مجمَع الذاكرة (mempool) إلى الأبد."
+        },
+        "1559CustomPriorityLowerGate" : {
+          "title" : "بوابة رسوم أولوية مخصصة",
+          "description" : "قم بتخصيص النسبة المئوية من الحد الأدنى لرسوم الأولوية المُقدَّرة لدينا المسموح بها لمعاملات EIP1559 المتقدمة"
+        },
+        "1559CustomBaseFeeMultiplier" : {
+          "title" : "مُضاعِف مخصَّص للرسوم الأساسية",
+          "description" : "قم بتخصيص المُضاعِف المستخدَم للرسوم الأساسية التي تتكون منها maxFeePerGas لمعاملة EIP1559"
         },
         "experimentalListAppsV2" : {
           "title" : "الإدراج التجريبي للتطبيقات في My Ledger",
@@ -3635,7 +3698,7 @@
       "description" : "قم بتجميد TRX لكسب المكافآت بشكل آمن، مع الاحتفاظ بالسيطرة على أصولك.",
       "steps" : {
         "0" : "الأصول المفوضة تظل ملكك.",
-        "1" : "يمكنك إزالة تجميد أصولك بعد 3 أيام.",
+        "1" : "يمكنك إزالة تجميد أصولك في أي وقت، والوصول إليها بعد مرور فترة إزالة التجميد البالغة 14 يوماً.",
         "2" : "قم بالتجميد والتصويت بأمان مع جهازك Ledger."
       },
       "howVotingWorks" : "كيف يعمل التصويت",
@@ -3789,6 +3852,11 @@
         "title" : "إضافة رمز توكن",
         "disclaimer" : "{{tokenName}} هو رمز BEP-20.\nيمكنك تلقي رموز التوكن مباشرةً في حساب BNB.",
         "learnMore" : "معرفة المزيد عن BEP-20"
+      },
+      "vip180" : {
+        "title" : "إضافة رمز توكن",
+        "disclaimer" : "{{tokenName}} هو رمز VIP180.\nيمكنك تلقي رموز التوكن مباشرةً في حساب VET.",
+        "learnMore" : "معرفة المزيد عن VIP180"
       }
     },
     "showMoreChainType" : "المزيد من أنواع العناوين",
@@ -3817,7 +3885,7 @@
     "stayInTheAppPlz" : "لا تُغادر تطبيق Ledger Live وابق على Ledger خاصتك بالقرب منك.",
     "allowAppPermission" : "افتح تطبيق {{wording}} على جهازك",
     "allowAppPermissionSubtitleToken" : "لإدارة رموزك {{token}}",
-    "allowManagerPermission" : "اسمح بمدير Ledger على جهازك {{productName}}",
+    "allowManagerPermission" : "السماح بالاتصال الآمن مع Ledger",
     "allowRenaming" : "اسمح بإعادة التسمية على جهازك {{productName}}",
     "allowRemoveCustomLockscreen" : "قم بتأكيد إزالة الصورة على Ledger Stax الخاص بك",
     "allowSecureConnection" : "السماح باتصال آمن مع Ledger",
@@ -3827,7 +3895,7 @@
     "connectAnotherDevice" : "توصيل جهاز Ledger آخر",
     "unlockDevice" : "قم بإلغاء قفل جهازك",
     "outdated" : "إصدار التطبيق قديم",
-    "outdatedDesc" : "هناك تحديث مهم لتطبيق {{appName}} متاح على جهازك. يُرجى الانتقال إلى My Ledger لتحديثه.",
+    "outdatedDesc" : "هناك تحديث مهم متاح لتطبيق {{appName}} على جهازك. يُرجى الانتقال إلى My Ledger (جهازي Ledger) لتحديثه.",
     "quitApp" : "الخروج من التطبيق على جهازك",
     "appNotInstalled" : "يُرجى تثبيت تطبيق {{appName}}",
     "appNotInstalled_plural" : "الرجاء تثبيت تطبيقات {{appName}}",
@@ -3994,6 +4062,8 @@
       "addALedger" : "إضافة Ledger",
       "addWithBluetooth" : "الإضافة عن طريق البلوتوث",
       "addNewCTA" : "إضافة جديد",
+      "showAllCTA" : "عرض جميع أجهزة Ledger ({{count}})",
+      "showLessCTA" : "عرض أقل",
       "otgBanner" : "لاستخدام Ledger Nano S أو Ledger Nano S Plus، قم بالتوصيل عن طريق كبل USB.",
       "connectExistingLedger" : "توصيل Ledger موجود بالفعل",
       "connectExistingLedgerDescription" : "إذا كان Ledger الخاص بك تم إعداده بالفعل",
@@ -4199,7 +4269,7 @@
     "waitForFirmwareUpdate" : "انتظر حتى انتهاء تحديث البرنامج الثابت على جهازك",
     "waitForInstallationToFinish" : "انتظر حتى انتهاء التثبيت على جهازك {{deviceName}}",
     "staxBatteryLow" : "مستوى بطارية Ledger Stax منخفضة جداً ليتم التحديث",
-    "staxBatteryLowDescription" : "لبدء تحديث نظام التشغيل، يجب ألا يقل مستوى الشحن عن %20، أو أن يكون جهازك Ledger Stax قيد الشحن.",
+    "staxBatteryLowDescription" : "لبدء تحديث نظام التشغيل، مطلوب حد أدنى %{{lowBatteryPercentage}} من الشحن، أو أن يكون جهازك Ledger Stax قيد الشحن.",
     "updateCancelled" : "تم إلغاء تثبيت تحديث نظام التشغيل على {{deviceName}}",
     "updateCancelledDescription" : "إذا كان هذا خطأ، قم بإعادة بدء التحديث.",
     "updateNotYetComplete" : "تحديث نظام التشغيل قيد التنفيذ",
@@ -4214,6 +4284,7 @@
     "newVersionNumber" : "الإصدار الجديد",
     "success" : "تم تحديث البرنامج الثابت",
     "update" : "تحديث",
+    "retryBatteryCheck" : "حاول مرةً أخرى بعد التوصيل",
     "Notifications" : {
       "confirmOnDevice" : "نتطلب تأكيدك على الجهاز",
       "preparingUpdate" : "جاري نقل التحديث، سنقوم بإعلامك عند الانتهاء من ذلك",
@@ -4832,6 +4903,10 @@
       "delegationUnavailable" : {
         "title" : "التفويض غير متوفر",
         "description" : "لا يتوفر رصيد كافٍ في حسابك لبدء تفويض جديد."
+      },
+      "claimable" : {
+        "title" : "مكافآت قابلة للمطالبة",
+        "description" : "حالياً، خيار المطالبة بمكافآت USDC غير متاح. يًرجى استخدام محفظة طرف ثالث لهذا الغرض."
       }
     },
     "delegation" : {
@@ -5280,7 +5355,7 @@
             "description" : "قم بتفويض TRX إلى مرشح طرف ثالث لكسب المكافآت. انقر على متابعة لتجميد الأصول والتصويت.",
             "bullet" : {
               "delegate" : "الأصول المفوضة تظل ملكك.",
-              "access" : "يمكنك الوصول إلى أصولك بعد 3 أيام من التجميد.",
+              "access" : "الأصول المجمدة يمكن إزالة تجميدها فوراً ويصبح الوصول إليها ممكناً بعد مرور فترة إزالة التجميد البالغة 14 يوماً.",
               "ledger" : "قم بالتفويض بشكل آمن مع جهازك Ledger."
             },
             "button" : {
@@ -5298,7 +5373,7 @@
       },
       "unfreeze" : {
         "title" : "إزالة التجميد",
-        "description" : "قم بإزالة تجميد TRX لإعادتهم مرة أخرى إلى رصيدك المتاح. لن تحصل على مكافآت بعد ذلك."
+        "description" : "قم بإزالة تجميد TRX لإعادتها مرةً أخرى إلى رصيدك المتاح. لن تحصل على مكافآت بعد ذلك. الأصول ستكون متاحةً بعد مرور فترة إزالة التجميد البالغة 14 يوماً"
       },
       "vote" : {
         "title" : "تصويت",
@@ -5652,6 +5727,20 @@
       "totalStake" : "إجمالي التكديس",
       "commission" : "العمولة",
       "stakeActivationState" : "الولاية",
+      "stakeActivePercent" : "نشِط",
+      "stakeAvailableBalance" : "الرصيد المتاح",
+      "actions" : {
+        "activate" : "تنشيط",
+        "deactivate" : "إلغاء تنشيط",
+        "reactivate" : "إعادة تنشيط",
+        "withdraw" : "سحب"
+      },
+      "states" : {
+        "active" : "نشِط",
+        "inactive" : "غير نشِط",
+        "activating" : "جارٍ التنشيط",
+        "deactivating" : "جارٍ إلغاء التنشيط"
+      },
       "delegationEarn" : "يمكنك كسب مكافآت SOL عن طريق تفويض أصولك.",
       "info" : "كيف يعمل التفويض",
       "broadcastSuccessTitle" : "تم إرسال العملية",
@@ -5659,7 +5748,8 @@
       "delegatedTo" : "تم التفويض إلى",
       "started" : {
         "description" : "يمكنك كسب المكافآت عن طريق تفويض أصولك SOL لمدقق."
-      }
+      },
+      "reserveWarning" : "يُرجى التأكد من أنك تحتفظ بـ {{amount}} SOL على الأقل في محفظتك لتغطية رسوم الشبكة المستقبلية من أجل إلغاء تنشيط وسحب حصتك"
     }
   },
   "near" : {
@@ -5841,6 +5931,9 @@
       "freeze" : "يرجى التأكيد على جهازك لإتمام العملية",
       "unfreeze" : "يرجى التأكيد على جهازك لإتمام العملية",
       "claimReward" : "يرجى التأكيد على جهازك لإتمام العملية",
+      "legacyUnfreeze" : "على جهازك، يرجى التأكيد لإتمام العملية",
+      "withdrawExpireUnfreeze" : "على جهازك، يرجى التأكيد لإتمام العملية",
+      "undelegateResource" : "على جهازك، يرجى التأكيد لإتمام العملية",
       "vote" : "يرجى التأكيد على جهازك لإتمام العملية",
       "delegate" : "يرجى التأكيد على جهازك لإتمام العملية",
       "redelegate" : "يرجى التأكيد على جهازك لإتمام العملية",
@@ -5865,18 +5958,16 @@
     "votes" : "الأصوات",
     "validator" : "المدقق",
     "infoWording" : {
-      "freeze" : "يتم قفل رموز التوكن المجمدة لمدة 3 أيام.",
+      "freeze" : "قم بتجميد رموز التوكن للحصول على عرض نطاق ترددي أو طاقة وتلقى مبلغاً مكافئاً من TRON Power (TP).",
       "unfreeze" : "سيتم خفض نقاطك من {{resource}} وجميع أصواتك سيتم إلغائها.",
+      "legacyUnfreeze" : "سيتم خفض نقاطك من {{resource}}، وجميع أصواتك سيتم إلغائها.",
       "claimReward" : "يمكن المطالبة بالمكافآت كل 24 ساعة.",
+      "withdrawExpireUnfreeze" : "أصولك غير المجمدة التي تجاوزت فترة إزالة التجميد سيتم سحبها",
+      "unDelegateResource" : "إلغاء تفويض {{resource}}",
       "cosmos" : {
         "claimReward" : "إذا كان المدقق المحدد لديه مكافآت معلقة، فسيتم المطالبة بهم تلقائياً.",
-        "redelegate" : "سيتعين عليك الانتظار 21 يوماً حتى تعود الأصول التي تم إلغاء تفويضها إلى الرصيد المتاح.",
-        "undelegate" : "سيتعين عليك الانتظار 21 يوماً حتى تعود الأصول التي تم إلغاء تفويضها إلى الرصيد المتاح."
-      },
-      "osmosis" : {
-        "claimReward" : "إذا كان المدقق المحدد لديه مكافآت معلقة، فسيتم المطالبة بهم تلقائياً.",
-        "redelegate" : "سيتعين عليك الانتظار 14 يوماً حتى تعود الأصول التي تم إلغاء تفويضها إلى الرصيد المتاح.",
-        "undelegate" : "سيتعين عليك الانتظار 14 يوماً حتى تعود الأصول التي تم إلغاء تفويضها إلى الرصيد المتاح."
+        "redelegate" : "سيتعين عليك الانتظار {{numberOfDays}} يوماً حتى تعود الأصول التي تم إلغاء تفويضها إلى الرصيد المتاح.",
+        "undelegate" : "سيتعين عليك الانتظار {{numberOfDays}} يوماً حتى تعود الأصول التي تم إلغاء تفويضها إلى الرصيد المتاح."
       },
       "lending" : "تحقق من تفاصيل العملية على جهازك قبل إرسالها."
     },
@@ -6344,6 +6435,12 @@
         "titleCompleted" : "تم تحويل الأصول إلى Ledger",
         "description" : "قم بتحويل الأصول بسهولة من كوينباس (Coinbase) أو أي منصة تداول أخرى أو محفظة.",
         "popupLabel" : "تم تحويل الأصول"
+      },
+      "buyCrypto" : {
+        "title" : "شراء الأصول المشفرة",
+        "titleCompleted" : "تم تحويل الأصول إلى Ledger",
+        "description" : "اختر من بين أكثر من 500 عملة وأفضل عروض الأسعار من مزودي الشراء، الملائمين لتفضيلاتك.",
+        "popupLabel" : "الأصول المشفرة التي تم شراؤها"
       }
     }
   },
@@ -6430,24 +6527,35 @@
     "ethereum" : {
       "title" : "قم بتنمية ما تملك من ETH",
       "subTitle" : "قم بتكديس ETH خاصتك وتنمية ممتلكاتك من خلال كسب مكافآت يومية مباشرةً في Ledger Live لديك.",
+      "tagMinimum" : "يتطلب {{min}} ETH",
       "close" : "إغلاق",
       "providers" : {
-        "lido" : {
-          "title" : "اكسب مع Lido",
-          "description" : "قم بتكديس إيثريوم خاصتك مع Lido واكسب مكافآت يومية. بدون حد أدنى مطلوب من ETH. بدون فترة قَفل.",
-          "supportLink" : "تعرف على المزيد عن Lido"
-        },
-        "kiln" : {
-          "title" : "تكديس Kiln المُخصص",
-          "tag" : "يتطلب 32 ETH",
-          "description" : "التكديس مع مدققين مخصصين. يتطلب مضاعفات 32 ETH. المطالبة بالمكافآت تتم يدوياً. غادِر في أي وقت.",
-          "supportLink" : "تعرف على المزيد عن مدقق Kiln"
-        },
         "kiln_pooling" : {
           "title" : "مُجمِع تكديس Kiln",
-          "description" : "انضم إلى مُجمِع تكديس. لا يوجد حد أدنى مطلوب من ETH. تراكم المكافآت يتم تلقائياً. غادِر في أي وقت.",
-          "supportLink" : "تعرف على المزيد عن مُجمِعات Kiln",
-          "tag" : "ليس هناك حد أدنى"
+          "description" : "قم بالتكديس دون حد أدنى. اكسب مكافآت مُجمّعة تلقائياً بدون فترة قَفل.",
+          "supportLink" : "تعرف على المزيد عن مُجمِعات Kiln"
+        },
+        "stader-eth" : {
+          "title" : "Stader Labs",
+          "description" : "قم بالتكديس دون حد أدنى. اكسب مكافآت مُجمّعة تلقائياً مع وصول إلى سيولة فورية.",
+          "supportLink" : "تعرّف على المزيد عن Stader"
+        },
+        "lido" : {
+          "title" : "Lido",
+          "description" : "قم بتكديس أي مبلغ من ETH من أجل سيولة فورية ومكافآت يومية.",
+          "supportLink" : "تعرف على المزيد عن Lido"
+        },
+        "figment" : {
+          "title" : "Figment",
+          "tag" : "يتطلب 32 ETH",
+          "description" : "قم بتكديس أكثر من 32 ETH على مدققين مخصصين واجعل المكافآت تُرسل تلقائياً إلى حسابك.",
+          "supportLink" : "تعرف على المزيد عن Figment"
+        },
+        "kiln" : {
+          "title" : "تكديس Kiln الفردي",
+          "tag" : "يتطلب 32 ETH",
+          "description" : "قم بتكديس أكثر من 32 ETH على مدققين مخصصين وطالب بالمكافآت بسهولة.",
+          "supportLink" : "تعرّف على المزيد عن Kiln"
         }
       }
     },
@@ -6474,6 +6582,92 @@
     "getFundsModal" : {
       "text" : "احصل على {{coin}} للتكديس",
       "description" : "قم بشراء أو مبادلة أو تلقى الأصول المشفرة مباشرةً إلى جهازك Ledger باستخدام Ledger Live."
+    }
+  },
+  "analyticsOptIn" : {
+    "variantA" : {
+      "main" : {
+        "title" : "ساعدنا على التحسن وتخصيص تجربتك",
+        "subtitle" : "مشاركة بيانات Ledger Live الخاصة بك تساعدنا على فهم تفضيلاتك، وعرض محتوى مناسب لك، وإصلاح المشكلات التقنية.",
+        "content" : {
+          "able" : {
+            "title" : "بموافقتك، Ledger ستكون قادرةً على تتبع:",
+            "diagAndUsage" : "بيانات التحليلات، بما فيها زيارات الصفحات والنقرات.",
+            "personnalizationData" : "بيانات التخصيص، بما فيها النقرات وزيارات الصفحات وبيانات التحويل."
+          },
+          "unable" : {
+            "title" : "Ledger لن تتبع أبداً معلومات متعلقة بما يلي:",
+            "adresses" : "أصولك.",
+            "balance" : "محفظتك الاستثمارية.",
+            "personnalInfos" : "معلومات التعريف الشخصية الخاصة بك."
+          },
+          "moreOptions" : "إدارة تفضيلاتك",
+          "ctas" : {
+            "refuse" : "رفض الكل",
+            "accept" : "قبول الكل"
+          },
+          "infoText" : {
+            "info" : "يمكنك إلغاء موافقتك في أي وقت من إعدادات التطبيق.",
+            "link" : "تعرّف على المزيد حول سياسة التتبع لدينا"
+          }
+        }
+      },
+      "details" : {
+        "title" : "إدارة تفضيلاتك",
+        "analytics" : {
+          "title" : "بيانات التحليلات",
+          "description" : "للمساعدة في تحسين Ledger Live، شارك بيانات تحليلات التطبيق، بما فيها زيارات الصفحات والنقرات."
+        },
+        "personalizedExp" : {
+          "title" : "بيانات التخصيص",
+          "description" : "للحصول على توصيات مخصصة، شارك بيانات تخصيص التطبيق، بما فيها بيانات التحويل والنقرات وزيارات الصفحات."
+        },
+        "ctas" : {
+          "notNow" : "ليس الآن",
+          "accept" : "قبول",
+          "acceptAll" : "قبول الكل",
+          "confirm" : "مشاركة"
+        },
+        "infoText" : {
+          "info" : "يمكنك إلغاء موافقتك في أي وقت من إعدادات التطبيق.",
+          "link" : "تعرّف على المزيد حول سياسة التتبع لدينا"
+        }
+      }
+    },
+    "variantB" : {
+      "main" : {
+        "title" : "لنجعل Ledger Live أفضل معاً",
+        "description" : "مشاركة بيانات تحليلات Ledger Live الخاصة بك تساعدنا على فهم كيف يستخدم الناس Ledger Live وإصلاح الأخطاء وتقديم تجربة مستخدم مُحسّنة.",
+        "bulletPoints" : {
+          "1" : "بيانات التحليلات تشمل زيارات الصفحات والنقرات.",
+          "2" : "نحن لن نجمع أو نرى أي معلومات متعلقة برصيدك وحساباتك ومحفظتك الاستثمارية.",
+          "3" : "التحليلات مجهولة تماماً. لا يمكننا رؤية أو جمع بياناتك الشخصية."
+        },
+        "ctas" : {
+          "refuse" : "رفض",
+          "share" : "مشاركة"
+        },
+        "infoText" : {
+          "info" : "يمكنك إلغاء موافقتك في أي وقت من إعدادات التطبيق.",
+          "link" : "تعرّف على المزيد حول سياسة التتبع لدينا"
+        }
+      },
+      "details" : {
+        "title" : "احصل على تجربة مخصصة",
+        "description" : "مشاركة بيانات تخصيص Ledger Live الخاصة بك تسمح لنا بعرض محتوى يطابق تفضيلاتك.",
+        "bulletPoints" : {
+          "1" : "بيانات التخصيص تشمل بيانات التحويل والنقرات وزيارات الصفحات.",
+          "2" : "لا يمكننا تتبع أو جمع أياً من معلوماتك الشخصية أو معلومات محفظتك الاستثمارية."
+        },
+        "ctas" : {
+          "refuse" : "رفض",
+          "allow" : "سماح"
+        },
+        "infoText" : {
+          "info" : "يمكنك إلغاء موافقتك في أي وقت من إعدادات التطبيق.",
+          "link" : "تعرّف على المزيد حول سياسة التتبع لدينا"
+        }
+      }
     }
   }
 }

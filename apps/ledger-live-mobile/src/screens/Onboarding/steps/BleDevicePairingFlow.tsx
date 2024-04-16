@@ -4,7 +4,7 @@ import BleDevicePairingFlowComponent, {
   SetHeaderOptionsRequest,
 } from "~/components/BleDevicePairingFlow";
 import React, { useCallback } from "react";
-import { Device, DeviceModelId } from "@ledgerhq/types-devices";
+import { Device } from "@ledgerhq/types-devices";
 import { NavigatorName, ScreenName } from "~/const";
 import { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
@@ -16,7 +16,9 @@ export type Props = RootComposite<
   StackNavigatorProps<OnboardingNavigatorParamList, ScreenName.OnboardingBleDevicePairingFlow>
 >;
 
-const OnboardingBleDevicePairingFlow: React.FC<Props> = ({ navigation }) => {
+const OnboardingBleDevicePairingFlow: React.FC<Props> = ({ navigation, route }) => {
+  const { filterByDeviceModelId } = route.params;
+
   const onPairingSuccess = useCallback(
     (device: Device) => {
       navigation.push(NavigatorName.BaseOnboarding, {
@@ -54,7 +56,7 @@ const OnboardingBleDevicePairingFlow: React.FC<Props> = ({ navigation }) => {
         <BleDevicePairingFlowComponent
           areKnownDevicesDisplayed
           areKnownDevicesPairable={!hasCompletedOnboarding}
-          filterByDeviceModelId={DeviceModelId.stax}
+          filterByDeviceModelId={filterByDeviceModelId}
           onPairingSuccess={onPairingSuccess}
           requestToSetHeaderOptions={requestToSetHeaderOptions}
         />

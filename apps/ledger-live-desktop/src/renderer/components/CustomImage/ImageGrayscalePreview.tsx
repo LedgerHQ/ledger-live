@@ -1,11 +1,13 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Flex, Theme } from "@ledgerhq/react-ui";
 import { ImageProcessingError } from "@ledgerhq/live-common/customImage/errors";
+import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import { createCanvas } from "./imageUtils";
 import { ImageBase64Data, ImageDimensions } from "./types";
 import ContrastChoice from "./ContrastChoice";
-import FramedImage from "./FramedImage";
+import FramedPicture from "./FramedPicture";
 import { useTheme } from "styled-components";
+import { getFramedPictureConfig } from "./framedPictureConfigs";
 
 export type ProcessorPreviewResult = ImageBase64Data & ImageDimensions;
 export type ProcessorRawResult = { hexData: string } & ImageDimensions;
@@ -165,10 +167,12 @@ export type Props = ImageBase64Data & {
   onResult: (_: ProcessorResult) => void;
   setLoading: (_: boolean) => void;
   onContrastChanged: (_: { index: number; value: number }) => void;
+  deviceModelId: CLSSupportedDeviceModelId;
 };
 
 const ImageGrayscalePreview: React.FC<Props> = props => {
-  const { onError, imageBase64DataUri, onResult, setLoading, onContrastChanged } = props;
+  const { onError, imageBase64DataUri, onResult, setLoading, onContrastChanged, deviceModelId } =
+    props;
   const [contrastIndex, setContrastIndex] = useState<number>(0);
   const [sourceUriLoaded, setSourceUriLoaded] = useState<string | null>(null);
   const [previewResult, setPreviewResult] = useState<ProcessorPreviewResult | null>(null);
@@ -223,7 +227,12 @@ const ImageGrayscalePreview: React.FC<Props> = props => {
         style={{ opacity: 0, position: "absolute", pointerEvents: "none" }}
         onLoad={handleSourceLoaded}
       />
-      {previewResult ? <FramedImage source={previewResult?.imageBase64DataUri} /> : null}
+      {previewResult ? (
+        <FramedPicture
+          frameConfig={getFramedPictureConfig("transfer", deviceModelId)}
+          source={previewResult?.imageBase64DataUri}
+        />
+      ) : null}
       <Flex alignSelf="center" flexDirection="row" mt={8} columnGap={2}>
         {contrasts.map(({ val, color }, index) => (
           <ContrastChoice

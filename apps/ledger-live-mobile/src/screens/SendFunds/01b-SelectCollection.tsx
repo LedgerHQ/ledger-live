@@ -1,11 +1,8 @@
 import React, { useCallback, useMemo, useState, memo } from "react";
 
 import { View, StyleSheet, FlatList, TouchableOpacity, Platform } from "react-native";
-import {
-  nftsByCollections,
-  useNftCollectionMetadata,
-  useNftMetadata,
-} from "@ledgerhq/live-common/nft/index";
+import { nftsByCollections } from "@ledgerhq/live-nft";
+import { useNftCollectionMetadata, useNftMetadata } from "@ledgerhq/live-nft-react";
 import type { Account, ProtoNFT } from "@ledgerhq/types-live";
 import { useSelector } from "react-redux";
 import { useNavigation, useTheme } from "@react-navigation/native";

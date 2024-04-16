@@ -14,7 +14,7 @@ import {
 } from "@ledgerhq/live-common/currencies/index";
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/hooks";
 import { useTheme } from "@react-navigation/native";
-import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { ScreenName } from "~/const";
 import { TrackScreen } from "~/analytics";
@@ -72,11 +72,9 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const optimism = useFeature("currencyOptimism");
   const optimismGoerli = useFeature("currencyOptimismGoerli");
   const arbitrum = useFeature("currencyArbitrum");
-  const arbitrumGoerli = useFeature("currencyArbitrumGoerli");
+  const arbitrumSepolia = useFeature("currencyArbitrumSepolia");
   const rsk = useFeature("currencyRsk");
   const bittorrent = useFeature("currencyBittorrent");
-  const kavaEvm = useFeature("currencyKavaEvm");
-  const evmosEvm = useFeature("currencyEvmosEvm");
   const energyWeb = useFeature("currencyEnergyWeb");
   const astar = useFeature("currencyAstar");
   const metis = useFeature("currencyMetis");
@@ -90,13 +88,15 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const polygonZkEvm = useFeature("currencyPolygonZkEvm");
   const polygonZkEvmTestnet = useFeature("currencyPolygonZkEvmTestnet");
   const base = useFeature("currencyBase");
-  const baseGoerli = useFeature("currencyBaseGoerli");
+  const baseSepolia = useFeature("currencyBaseSepolia");
   const klaytn = useFeature("currencyKlaytn");
   const injective = useFeature("currencyInjective");
   const vechain = useFeature("currencyVechain");
   const casper = useFeature("currencyCasper");
   const neonEvm = useFeature("currencyNeonEvm");
   const lukso = useFeature("currencyLukso");
+  const linea = useFeature("currencyLinea");
+  const lineaGoerli = useFeature("currencyLineaGoerli");
 
   const featureFlaggedCurrencies = useMemo(
     (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
@@ -115,11 +115,9 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       optimism,
       optimism_goerli: optimismGoerli,
       arbitrum,
-      arbitrum_goerli: arbitrumGoerli,
+      arbitrum_sepolia: arbitrumSepolia,
       rsk,
       bittorrent,
-      kava_evm: kavaEvm,
-      evmos_evm: evmosEvm,
       energy_web: energyWeb,
       astar,
       metis,
@@ -133,13 +131,15 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       polygon_zk_evm: polygonZkEvm,
       polygon_zk_evm_testnet: polygonZkEvmTestnet,
       base,
-      base_goerli: baseGoerli,
+      base_sepolia: baseSepolia,
       klaytn,
       injective,
       vechain,
       casper,
       neon_evm: neonEvm,
       lukso,
+      linea,
+      linea_goerli: lineaGoerli,
     }),
     [
       axelar,
@@ -157,11 +157,9 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       optimism,
       optimismGoerli,
       arbitrum,
-      arbitrumGoerli,
+      arbitrumSepolia,
       rsk,
       bittorrent,
-      kavaEvm,
-      evmosEvm,
       energyWeb,
       astar,
       metis,
@@ -175,13 +173,15 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       polygonZkEvm,
       polygonZkEvmTestnet,
       base,
-      baseGoerli,
+      baseSepolia,
       klaytn,
       injective,
       vechain,
       casper,
       neonEvm,
       lukso,
+      linea,
+      lineaGoerli,
     ],
   );
 

@@ -1,19 +1,15 @@
 import React, { useCallback, useEffect, useMemo } from "react";
 import isEqual from "lodash/isEqual";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  FeatureFlagsProvider,
-  isFeature,
-  getFeature,
-} from "@ledgerhq/live-config/featureFlags/index";
-import type { FirebaseFeatureFlagsProviderProps as Props } from "@ledgerhq/live-config/featureFlags/index";
+import { FeatureFlagsProvider, isFeature } from "@ledgerhq/live-common/featureFlags/index";
+import type { FirebaseFeatureFlagsProviderProps as Props } from "@ledgerhq/live-common/featureFlags/index";
 import { Feature, FeatureId, Features } from "@ledgerhq/types-live";
 import { useFirebaseRemoteConfig } from "./FirebaseRemoteConfig";
 import { overriddenFeatureFlagsSelector } from "../reducers/settings";
 import { setOverriddenFeatureFlag, setOverriddenFeatureFlags } from "../actions/settings";
 import { setAnalyticsFeatureFlagMethod } from "../analytics/segment";
 
-export const FirebaseFeatureFlagsProvider = ({ children }: Props): JSX.Element => {
+export const FirebaseFeatureFlagsProvider = ({ children, getFeature }: Props): JSX.Element => {
   const remoteConfig = useFirebaseRemoteConfig();
 
   const localOverrides = useSelector(overriddenFeatureFlagsSelector);
@@ -30,7 +26,7 @@ export const FirebaseFeatureFlagsProvider = ({ children }: Props): JSX.Element =
         dispatch(setOverriddenFeatureFlag({ key, value: undefined }));
       }
     },
-    [dispatch],
+    [dispatch, getFeature],
   );
 
   const resetFeature = useCallback(
@@ -46,7 +42,7 @@ export const FirebaseFeatureFlagsProvider = ({ children }: Props): JSX.Element =
 
   const wrappedGetFeature = useCallback(
     <T extends FeatureId>(key: T): Features[T] => getFeature({ key, localOverrides }),
-    [localOverrides],
+    [getFeature, localOverrides],
   );
 
   useEffect(() => {

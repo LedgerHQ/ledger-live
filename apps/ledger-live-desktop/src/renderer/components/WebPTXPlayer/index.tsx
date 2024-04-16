@@ -5,6 +5,7 @@ import { TopBar } from "./TopBar";
 import Box from "../Box";
 import { WebviewAPI, WebviewProps, WebviewState } from "../Web3AppWebview/types";
 import { initialWebviewState } from "../Web3AppWebview/helpers";
+import { usePTXCustomHandlers } from "./CustomHandlers";
 
 export const Container = styled.div`
   display: flex;
@@ -23,6 +24,8 @@ export default function WebPTXPlayer({ manifest, inputs }: WebviewProps) {
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
 
+  const customHandlers = usePTXCustomHandlers(manifest);
+
   return (
     <Container>
       <Wrapper>
@@ -32,6 +35,7 @@ export default function WebPTXPlayer({ manifest, inputs }: WebviewProps) {
           inputs={inputs}
           onStateChange={setWebviewState}
           ref={webviewAPIRef}
+          customHandlers={customHandlers}
         />
       </Wrapper>
     </Container>

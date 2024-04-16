@@ -1,4 +1,4 @@
-import { flatMap } from "lodash";
+import flatMap from "lodash/flatMap";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import { encodeAccountId } from "../../../../account";

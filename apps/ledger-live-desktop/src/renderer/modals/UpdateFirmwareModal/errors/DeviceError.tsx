@@ -67,7 +67,9 @@ const DeviceCancel = ({
       <ErrorDisplay
         error={error}
         warning={isUserRefusedFirmwareUpdate}
-        withExportLogs={!isUserRefusedFirmwareUpdate && !isRestoreStepRefusedOnDevice}
+        withExportLogs={
+          !isUserRefusedFirmwareUpdate && !isRestoreStepRefusedOnDevice && !isDeviceLockedError
+        }
       />
     </UpdateFirmwareError>
   );

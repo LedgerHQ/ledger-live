@@ -17,6 +17,7 @@ test("Unsupported OS", async ({ page }) => {
     await expect(layout.renderError).toBeVisible();
     await expect(page).toHaveScreenshot("error-os-unsupported.png", {
       clip: { x: 0, y: 0, width: 1024, height: 400 },
+      mask: [layout.appVersion],
     });
   });
 });

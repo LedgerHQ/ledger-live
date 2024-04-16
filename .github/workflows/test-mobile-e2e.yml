@@ -50,21 +50,16 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.ref || github.sha }}
-      - name: Setup the toolchain
-        uses: ./tools/actions/composites/setup-toolchain
-        id: toolchain
+      - name: setup caches
+        id: caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
-          skip_pod_cache: "false"
-          skip_turbo_cache: "false"
+          skip-pod-cache: "false"
+          skip-turbo-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-      - name: Install applesimutils
-        run: |
-          brew update
-          brew tap wix/brew
-          brew install applesimutils
       - name: Cache LLM pods
         uses: actions/cache@v3
         with:
@@ -73,26 +68,33 @@ jobs:
             ~/Library/Caches/CocoaPods
             ~/.cocoapods
           key: ${{ runner.os }}-pods-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock') }}
-
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        id: aws
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
+          aws-region: ${{ secrets.AWS_CACHE_REGION }}
       - name: cache detox build
         uses: tespkg/actions-cache@v1
+        if: steps.aws.conclusion == 'success'
         id: detox-build
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
           key: ${{ runner.os }}-detox-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/ledgerlivemobile.xcodeproj/project.pbxproj') }}
           restore-keys: |
             ${{ runner.os }}-detox-
-          accessKey: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          secretKey: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
           bucket: ll-gha-s3-cache
-          region: eu-west-1
+          region: ${{ secrets.AWS_CACHE_REGION }}
           use-fallback: false
       - name: install dependencies
         run: |
-          pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="dummy-*-app..." --no-frozen-lockfile --unsafe-perm
+          pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm
       - name: Build dependencies
         run: |
-          pnpm build:llm:deps --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+          pnpm build:llm:deps --api="http://127.0.0.1:${{ steps.caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
       - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
         run: |
           pnpm build:dummy-apps
@@ -104,55 +106,39 @@ jobs:
           echo "id=$ID" >> $GITHUB_OUTPUT
       - name: Build iOS app for Detox test run
         if: steps.detox-build.outputs.cache-hit != 'true'
-        run: |
-          pnpm mobile e2e:build -c ios.sim.release
-
+        run: pnpm mobile e2e:ci -p ios -b
       - name: Build JS Bundle app for Detox test run
         if: steps.detox-build.outputs.cache-hit == 'true'
-        run: |
-          pnpm mobile bundle:ios --dev false --minify false
-          pnpm mobile exec detox clean-framework-cache
-          pnpm mobile exec detox build-framework-cache
-          cd apps/ledger-live-mobile
-          cp main.jsbundle ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app/main.jsbundle
-          mv main.jsbundle ios/build/Build/Products/Release-iphonesimulator/main.jsbundle
+        run: pnpm mobile e2e:ci -p ios --bundle
       - name: Test iOS app
         id: detox
-        timeout-minutes: 45
-        run: |
-          pnpm mobile e2e:test -c ios.sim.release --loglevel error --record-logs all --take-screenshots all --headless --retries 1 --cleanup --record-performance all
+        timeout-minutes: 75
+        run: pnpm mobile e2e:ci -p ios -t
       - name: Delete iOS simulator
-        if: always()
+        if: ${{ always() && steps.simulator.outputs.id }}
         run: |
           xcrun simctl delete ${{ steps.simulator.outputs.id }}
-      - name: Upload test artifacts
-        uses: actions/upload-artifact@v3
-        if: always()
+      - name: Generate single file Allure report
+        if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
+        run: pnpm dlx allure-commandline generate apps/ledger-live-mobile/allure-results --single-file
+      - name: Upload Allure single file report
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
         with:
-          name: test-ios-artifacts
+          name: 1-global-ios-report
+          path: allure-report/index.html
+      - name: Upload test artifacts
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
+        with:
+          name: 2-test-ios-artifacts
           path: apps/ledger-live-mobile/artifacts
       - name: Upload Allure report
-        uses: actions/upload-artifact@v3
-        if: always()
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
         with:
           name: "allure-ios-reports"
           path: apps/ledger-live-mobile/allure-results
-
-  allure-report-ios:
-    name: "Allure Reports Export on Server"
-    runs-on: [ledger-live-medium-linux]
-    if: ${{ always() && !cancelled() && github.ref_name == 'develop' }}
-    needs: [detox-tests-ios]
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
-      - uses: ./tools/actions/composites/upload-allure-report
-        with:
-          platform: ios
-          login: ${{ secrets.ALLURE_LOGIN }}
-          password: ${{ secrets.ALLURE_PASSWORD }}
-          path: allure-ios-reports
 
   detox-tests-android:
     name: "Ledger Live Mobile - Android Detox Tests"
@@ -162,6 +148,14 @@ jobs:
       LANG: en_US.UTF-8
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
+      AVD_API: 32
+      AVD_ARCH: x86_64
+      AVD_PROFILE: pixel_6_pro
+      AVD_TARGET: google_apis
+      AVD_NAME: "Pixel_6_Pro_API_32"
+      AVD_CORES: 4
+      AVD_RAM_SIZE: 4096M
+      AVD_OPTIONS: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
     outputs:
       status: ${{ steps.detox.outcome }}
     steps:
@@ -170,9 +164,9 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
       - name: Setup the toolchain
         id: toolchain
-        uses: ./tools/actions/composites/setup-toolchain
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
         with:
-          skip_turbo_cache: "false"
+          skip-turbo-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
@@ -194,10 +188,13 @@ jobs:
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
+      - name: Fix emulator directory permissions
+        continue-on-error: true
+        run: sudo chown -R $(whoami):$(id -ng) /usr/local/lib/android/sdk/emulator/
 
       - name: Install dependencies
         run: |
-          pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="dummy-*-app..." --no-frozen-lockfile --unsafe-perm
+          pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm
       - name: Build dependencies
         run: |
           pnpm build:llm:deps --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
@@ -207,19 +204,19 @@ jobs:
         shell: bash
       - name: Build Android app for Detox test run
         run: |
-          pnpm mobile e2e:build -c android.emu.release
+          pnpm mobile e2e:ci -p android -b
       - name: cache android emulator
+        timeout-minutes: 5
         uses: tespkg/actions-cache@v1
         id: detox-avd
+        continue-on-error: true
         with:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-          key: ${{ runner.os }}-detox-avd-${{ hashFiles('~/.android/avd/*/config.ini') }}
-          restore-keys: |
-            ${{ runner.os }}-detox-avd-
-
-          # envs set by setup-toolchain
+            /usr/local/lib/android/sdk/system-images/android-${{ env.AVD_API }}/${{ env.AVD_TARGET }}/${{ env.AVD_ARCH }}/*
+            /usr/local/lib/android/sdk/emulator/*
+          key: ${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN }}
@@ -230,69 +227,49 @@ jobs:
         if: steps.detox-avd.outputs.cache-hit != 'true'
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 32
-          arch: x86_64
-          profile: pixel_6_pro
-          target: google_apis
-          avd-name: "Pixel_6_Pro_API_32"
+          api-level: ${{ env.AVD_API }}
+          arch: ${{ env.AVD_ARCH }}
+          profile: ${{ env.AVD_PROFILE }}
+          target: ${{ env.AVD_TARGET }}
+          avd-name: ${{ env.AVD_NAME }}
           force-avd-creation: true
-          cores: 4
-          ram-size: 8192M
+          cores: ${{ env.AVD_CORES }}
+          ram-size: ${{ env.AVD_RAM_SIZE }}
           disable-linux-hw-accel: false
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          emulator-options: ${{ env.AVD_OPTIONS }}
           script: ./tools/scripts/wait_emulator_idle.sh
-      - name: Start Emulator and Run Android Tests
+      - name: Run Android Tests
         id: detox
-        uses: reactivecircus/android-emulator-runner@v2
+        run: pnpm mobile e2e:ci -p android -t
         timeout-minutes: 45
         env:
           DETOX_INSTALL_TIMEOUT: 120000
+      - name: Generate single file Allure report
+        if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
+        run: pnpm dlx allure-commandline generate apps/ledger-live-mobile/allure-results --single-file
+      - name: Upload Allure single file report
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
         with:
-          api-level: 32
-          arch: x86_64
-          profile: pixel_6_pro
-          target: google_apis
-          avd-name: "Pixel_6_Pro_API_32"
-          force-avd-creation: false
-          cores: 4
-          ram-size: 8192M
-          disable-linux-hw-accel: false
-          emulator-options: -read-only -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          script: pnpm mobile e2e:test -c android.emu.release --loglevel error --record-logs all --take-screenshots all --forceExit --headless --retries 1 --cleanup
+          name: 1-global-android-report
+          path: allure-report/index.html
       - name: Upload test artifacts
-        if: always()
-        uses: actions/upload-artifact@v3
+        if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
+        uses: actions/upload-artifact@v4
         with:
-          name: test-android-artifacts
+          name: 2-test-android-artifacts
           path: apps/ledger-live-mobile/artifacts/
       - name: Upload Allure Report
-        uses: actions/upload-artifact@v3
-        if: always()
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
         with:
           name: "allure-android-reports"
           path: apps/ledger-live-mobile/allure-results
 
-  allure-report-android:
-    name: "Allure Reports Export on Server"
-    runs-on: [ledger-live-medium-linux]
-    if: ${{ always() && !cancelled() && github.ref_name == 'develop' }}
-    needs: [detox-tests-android]
-    steps:
-      - name: checkout
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
-      - uses: ./tools/actions/composites/upload-allure-report
-        with:
-          platform: android
-          login: ${{ secrets.ALLURE_LOGIN }}
-          password: ${{ secrets.ALLURE_PASSWORD }}
-          path: allure-android-reports
-
   report:
     needs: [detox-tests-android, detox-tests-ios]
     runs-on: ubuntu-latest
-    if: always() && !cancelled() && github.event_name == 'workflow_dispatch'
+    if: ${{ !cancelled() && github.event_name == 'workflow_dispatch' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -372,7 +349,7 @@ jobs:
             };
 
             fs.writeFileSync("summary.json", JSON.stringify(output), "utf-8");
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         name: upload summary
         with:
           name: summary.json

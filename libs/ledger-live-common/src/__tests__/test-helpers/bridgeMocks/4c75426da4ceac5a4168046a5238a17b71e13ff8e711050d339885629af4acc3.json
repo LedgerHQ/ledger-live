@@ -1,0 +1,1 @@
+{"request":{"url":"https://osmosis-api.polkachu.com/cosmos/auth/v1beta1/accounts/osmo1xx72kqjlf2qqj88h0wakwv6rp0v8fwh74z9q89","method":"GET"},"response":{"body":{"account":{"@type":"/cosmos.auth.v1beta1.BaseAccount","address":"osmo1xx72kqjlf2qqj88h0wakwv6rp0v8fwh74z9q89","pub_key":null,"account_number":"619455","sequence":"0"}}}}

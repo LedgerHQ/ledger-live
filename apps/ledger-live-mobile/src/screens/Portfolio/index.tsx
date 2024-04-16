@@ -7,7 +7,7 @@ import { Box, Flex } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { ReactNavigationPerformanceView } from "@shopify/react-native-performance-navigation";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import WalletTabSafeAreaView from "~/components/WalletTab/WalletTabSafeAreaView";
 import {
   useAlreadyOnboardedURI,
@@ -25,7 +25,7 @@ import {
 import { setHasBeenUpsoldProtect } from "~/actions/settings";
 import Carousel from "~/components/Carousel";
 import { ScreenName } from "~/const";
-import FirmwareUpdateBanner from "~/components/FirmwareUpdateBanner";
+import FirmwareUpdateBanner from "~/newArch/features/FirmwareUpdate/components/UpdateBanner";
 import CheckLanguageAvailability from "~/components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "~/components/CheckTermOfUseUpdate";
 import RecoverBanner from "~/components/RecoverBanner";
@@ -43,7 +43,7 @@ import { WalletTabNavigatorStackParamList } from "~/components/RootNavigator/typ
 import AddAccountsModal from "../AddAccounts/AddAccountsModal";
 import CollapsibleHeaderFlatList from "~/components/WalletTab/CollapsibleHeaderFlatList";
 import globalSyncRefreshControl from "~/components/globalSyncRefreshControl";
-import useDynamicContent from "~/dynamicContent/dynamicContent";
+import useDynamicContent from "~/dynamicContent/useDynamicContent";
 import PortfolioOperationsHistorySection from "./PortfolioOperationsHistorySection";
 import PortfolioGraphCard from "./PortfolioGraphCard";
 import {
@@ -55,6 +55,9 @@ import PortfolioAssets from "./PortfolioAssets";
 import { internetReachable } from "~/logic/internetReachable";
 import { UpdateStep } from "../FirmwareUpdate";
 import { OnboardingType } from "~/reducers/types";
+import ContentCardsLocation from "~/dynamicContent/ContentCardsLocation";
+import { ContentCardLocation } from "~/dynamicContent/types";
+import usePortfolioAnalyticsOptInPrompt from "~/hooks/analyticsOptInPrompt/usePorfolioAnalyticsOptInPrompt";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
@@ -118,6 +121,8 @@ function PortfolioScreen({ navigation }: NavigationProps) {
     protectFeature?.enabled,
   ]);
 
+  usePortfolioAnalyticsOptInPrompt();
+
   const openAddModal = useCallback(() => {
     track("button_clicked", {
       button: "Add Account",
@@ -147,6 +152,13 @@ function PortfolioScreen({ navigation }: NavigationProps) {
           <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
         </Flex>
         <PortfolioGraphCard showAssets={showAssets} key="PortfolioGraphCard" />
+        {showAssets ? (
+          <ContentCardsLocation
+            key="contentCardsLocationPortfolio"
+            locationId={ContentCardLocation.TopWallet}
+            mt={7}
+          />
+        ) : null}
       </WalletTabSafeAreaView>,
       showAssets ? (
         <Box background={colors.background.main} px={6} mt={6} key="PortfolioAssets">
@@ -213,7 +225,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
         }}
         keyExtractor={(_: unknown, index: number) => String(index)}
         showsVerticalScrollIndicator={false}
-        testID={showAssets ? "PortfolioAccountsList" : "PortfolioEmptyAccount"}
+        testID={showAssets ? "PortfolioAccountsList" : "PortfolioEmptyList"}
       />
       <AddAccountsModal
         navigation={navigation as unknown as BaseNavigation}

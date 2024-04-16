@@ -2,7 +2,7 @@ import type Transport from "@ledgerhq/hw-transport";
 import { bip32asBuffer } from "./bip32";
 
 /**
- * address format is one of legacy | p2sh | bech32 | cashaddr
+ * address format is one of legacy | p2sh | bech32 | bech32m | cashaddr
  */
 export type AddressFormat = "legacy" | "p2sh" | "bech32" | "bech32m" | "cashaddr";
 const addressFormatMap = {

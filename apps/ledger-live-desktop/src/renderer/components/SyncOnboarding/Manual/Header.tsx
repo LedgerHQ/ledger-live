@@ -59,7 +59,7 @@ const Header = ({ onClose, device, displayTitle }: Props) => {
         type="shade"
         Icon={ExitIcon}
         onClick={() => {
-          track("button_clicked", { button: "Exit setup" });
+          track("button_clicked2", { button: "Exit setup" });
           onClose();
         }}
         iconPosition="left"

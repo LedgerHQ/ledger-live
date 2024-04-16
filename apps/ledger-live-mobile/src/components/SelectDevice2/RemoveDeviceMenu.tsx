@@ -11,6 +11,7 @@ import Button from "../Button";
 
 import NanoS from "~/images/devices/NanoS";
 import Stax from "~/images/devices/Stax";
+import Europa from "~/images/devices/Europa";
 import NanoX from "~/images/devices/NanoX";
 
 import Trash from "~/icons/Trash";
@@ -23,6 +24,7 @@ const illustrations = {
   [DeviceModelId.nanoX]: NanoX,
   [DeviceModelId.blue]: NanoS,
   [DeviceModelId.stax]: Stax,
+  [DeviceModelId.europa]: Europa,
 };
 
 const RemoveDeviceMenu = ({

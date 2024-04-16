@@ -1,7 +1,7 @@
-import { getCurrentNearPreloadData } from "./preload";
-import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "./constants";
-import { canStake, canUnstake } from "./logic";
-import type { NearAccount, NearValidatorItem } from "./types";
+import { getCurrentNearPreloadData } from "@ledgerhq/coin-near/preload";
+import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/coin-near/constants";
+import { canStake, canUnstake } from "@ledgerhq/coin-near/logic";
+import type { NearAccount, NearValidatorItem } from "@ledgerhq/coin-near/types";
 
 export interface AccountBannerState {
   display: boolean;

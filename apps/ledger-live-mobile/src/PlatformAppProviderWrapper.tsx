@@ -5,6 +5,7 @@ import { LocalLiveAppProvider } from "@ledgerhq/live-common/platform/providers/L
 import { RampCatalogProvider } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { Platform } from "react-native";
+import { useLocale } from "./context/Locale";
 
 type PlatformAppProviderWrapperProps = {
   children: ReactNode;
@@ -17,7 +18,7 @@ export default function PlatformAppProviderWrapper({ children }: PlatformAppProv
   const isExperimentalAppEnabled = useEnv<"PLATFORM_EXPERIMENTAL_APPS">(
     "PLATFORM_EXPERIMENTAL_APPS",
   ) as boolean;
-
+  const { locale: lang } = useLocale();
   const isDebugAppEnabled = useEnv<"PLATFORM_DEBUG">("PLATFORM_DEBUG") as boolean;
 
   return (
@@ -28,6 +29,7 @@ export default function PlatformAppProviderWrapper({ children }: PlatformAppProv
         allowDebugApps: isDebugAppEnabled,
         allowExperimentalApps: isExperimentalAppEnabled,
         llVersion: VersionNumber.appVersion,
+        lang,
       }}
     >
       <LocalLiveAppProvider>

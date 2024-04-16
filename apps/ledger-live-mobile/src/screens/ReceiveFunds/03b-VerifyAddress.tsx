@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { of, Subscription } from "rxjs";
-import { delay } from "rxjs/operators";
+import { Subscription } from "rxjs";
+import { filter, first, map } from "rxjs/operators";
 import { TouchableOpacity, Linking } from "react-native";
 import { useSelector } from "react-redux";
 import { useTranslation, Trans } from "react-i18next";
@@ -26,6 +26,7 @@ import Illustration from "~/images/illustration/Illustration";
 import { urls } from "~/utils/urls";
 import { ReceiveFundsStackParamList } from "~/components/RootNavigator/types/ReceiveFundsNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { e2eBridgeClient } from "../../../e2e/bridge/client";
 
 const illustrations = {
   dark: require("~/images/illustration/Dark/_080.png"),
@@ -67,7 +68,12 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
 
       sub.current = (
         mainAccount.id.startsWith("mock")
-          ? of({}).pipe(delay(5000), rejectionOp())
+          ? e2eBridgeClient.pipe(
+              filter(msg => msg.type === "mockDeviceEvent"),
+              first(),
+              map(() => ({})),
+              rejectionOp(),
+            )
           : getAccountBridge(mainAccount).receive(mainAccount, {
               deviceId: device.deviceId,
               verify: true,

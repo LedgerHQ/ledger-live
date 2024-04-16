@@ -10,15 +10,17 @@ let deviceAction: DeviceAction;
 let receivePage: ReceivePage;
 let common: Common;
 const btcReceiveAddress = "173ej2furpaB8mTtN5m9829MPGMD7kCgSPx";
+let first = true;
 
 describe("Receive Flow", () => {
   beforeAll(async () => {
-    loadConfig("EthAccountXrpAccountReadOnlyFalse", true);
-    loadBleState({ knownDevices: [knownDevice] });
+    await loadConfig("EthAccountXrpAccountReadOnlyFalse", true);
+    await loadBleState({ knownDevices: [knownDevice] });
     portfolioPage = new PortfolioPage();
     deviceAction = new DeviceAction(knownDevice);
     receivePage = new ReceivePage();
     common = new Common();
+    await portfolioPage.waitForPortfolioPageToLoad();
   });
 
   async function openReceive() {
@@ -28,31 +30,37 @@ describe("Receive Flow", () => {
   }
 
   it("Should verify the address after importing an account working on a single network", async () => {
-    await portfolioPage.waitForPortfolioPageToLoad();
     await portfolioPage.openTransferMenu();
     await portfolioPage.navigateToReceiveFromTransferMenu();
-    await common.performSearch("bitcoin");
+    await common.performSearch("Bitcoin");
     await receivePage.selectAsset("BTC");
     await deviceAction.selectMockDevice();
+    first = false;
     await deviceAction.openApp();
     await receivePage.selectAccount("Bitcoin 1");
     await receivePage.selectVerifyAddress();
     await deviceAction.openApp();
     await receivePage.expectAddressIsVerified(btcReceiveAddress);
+    await deviceAction.complete();
+    await receivePage.expectAddressIsDisplayed(btcReceiveAddress);
   });
 
   it("Should display the number of account existing per networks", async () => {
     await openReceive();
     await receivePage.selectAsset("ETH");
-    await receivePage.expectNumberOfAccountInListIsDisplayed("ethereum", 3);
-    await receivePage.expectNumberOfAccountInListIsDisplayed("optimism", 1);
+    await receivePage.expectNumberOfAccountInListIsDisplayed("Ethereum", 3);
+    await receivePage.expectNumberOfAccountInListIsDisplayed("OP Mainnet", 1);
   });
 
   it("Should create an account on a network", async () => {
     await openReceive();
     await receivePage.selectAsset("ETH");
-    await receivePage.selectCurrency("optimism");
+    await receivePage.selectNetwork("OP Mainnet");
     await receivePage.createAccount();
+    if (first) {
+      await deviceAction.selectMockDevice();
+      first = false;
+    }
     await deviceAction.openApp();
     await receivePage.selectAccount("OP Mainnet 1");
     await receivePage.selectAccount("OP Mainnet 2");
@@ -63,13 +71,16 @@ describe("Receive Flow", () => {
 
   it("Should access to receive after importing a cryptocurrency on a selected network", async () => {
     await openReceive();
-    await common.performSearch("pol");
+    await common.performSearch("Polygon");
     await receivePage.selectAsset("MATIC");
-    await receivePage.selectCurrency("bsc");
+    await receivePage.selectNetwork("Binance Smart Chain");
+    if (first) {
+      await deviceAction.selectMockDevice();
+      first = false;
+    }
     await deviceAction.openApp();
     await receivePage.selectAccount("Binance Smart Chain 1");
-    await receivePage.selectDontVerifyAddress();
-    await receivePage.selectReconfirmDontVerify();
+    await receivePage.doNotVerifyAddress();
     await receivePage.expectReceivePageIsDisplayed("BNB", "Binance Smart Chain 1");
   });
 
@@ -77,8 +88,7 @@ describe("Receive Flow", () => {
     await openReceive();
     await receivePage.selectAsset("XRP");
     await receivePage.selectAccount("XRP 2");
-    await receivePage.selectDontVerifyAddress();
-    await receivePage.selectReconfirmDontVerify();
+    await receivePage.doNotVerifyAddress();
     await receivePage.expectReceivePageIsDisplayed("XRP", "XRP 2");
   });
 });

@@ -72,7 +72,7 @@ export function BaseButton({
   event,
   eventProperties,
   type,
-  outline = true,
+  outline,
   containerStyle,
   children,
   ...otherProps

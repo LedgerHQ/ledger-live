@@ -7,6 +7,6 @@ exports[`all USDT are countervalue enabled 1`] = `
   "elrond/esdt/555344542d663863303863",
   "ethereum/erc20/usd_tether__erc20_",
   "polygon/erc20/(pos)_tether_usd",
-  "tron/trc20/TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
+  "tron/trc20/tr7nhqjekqxgtci8q8zy4pl8otszgjlj6t",
 ]
 `;

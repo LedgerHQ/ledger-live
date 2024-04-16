@@ -2,8 +2,9 @@ import React, { useState, useCallback } from "react";
 import { Flex, IconsLegacy, Text } from "@ledgerhq/react-ui";
 import EditDeviceName from "./EditDeviceName";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { identifyTargetId, DeviceModelId } from "@ledgerhq/devices";
+import { identifyTargetId } from "@ledgerhq/devices";
 import { DeviceInfo } from "@ledgerhq/types-live";
+import { isEditDeviceNameSupported } from "@ledgerhq/live-common/device/use-cases/isEditDeviceNameSupported";
 import { track } from "~/renderer/analytics/segment";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import { setDrawer } from "~/renderer/drawers/Provider";
@@ -15,6 +16,7 @@ type Props = {
   deviceInfo: DeviceInfo;
   deviceName: string;
   onRefreshDeviceInfo: () => void;
+  setPreventResetOnDeviceChange: (state: boolean) => void;
   device: Device;
   disabled?: boolean;
 };
@@ -32,9 +34,11 @@ const DeviceName: React.FC<Props> = ({
   device,
   disabled,
   onRefreshDeviceInfo,
+  setPreventResetOnDeviceChange,
 }: Props) => {
   const model = identifyTargetId(deviceInfo.targetId as number);
-  const editSupported = model?.id && [DeviceModelId.stax, DeviceModelId.nanoX].includes(model.id);
+  const editSupported = model?.id && isEditDeviceNameSupported(model.id);
+  const editEnabled = !disabled && editSupported;
 
   const [name, setName] = useState(editSupported ? deviceName : model?.productName);
 
@@ -48,22 +52,33 @@ const DeviceName: React.FC<Props> = ({
   );
 
   const openDeviceRename = useCallback(() => {
+    // Prevents manager from reacting to device changes
+    setPreventResetOnDeviceChange(true);
+
     name &&
-      setDrawer(EditDeviceName, {
-        key: name,
-        device,
-        onSetName: onSuccess,
-        deviceName: name,
-        deviceInfo,
-      });
+      setDrawer(
+        EditDeviceName,
+        {
+          device,
+          onSetName: onSuccess,
+          deviceName: name,
+          deviceInfo,
+        },
+        {
+          onRequestClose: () => {
+            setPreventResetOnDeviceChange(false);
+            setDrawer();
+          },
+        },
+      );
     track("Page Manager RenameDeviceEntered");
-  }, [device, deviceInfo, name, onSuccess]);
+  }, [device, deviceInfo, name, onSuccess, setPreventResetOnDeviceChange]);
 
   const { t } = useTranslation();
 
   return (
     <Flex alignItems="center">
-      <Flex onClick={!disabled ? openDeviceRename : undefined}>
+      <Flex onClick={editEnabled ? openDeviceRename : undefined}>
         <Flex mb={2} alignItems="center">
           <Text variant="large" fontWeight="semiBold" mr={3}>
             {name || deviceInfo.version}

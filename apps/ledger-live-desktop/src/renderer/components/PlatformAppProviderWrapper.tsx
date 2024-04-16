@@ -3,6 +3,7 @@ import {
   allowDebugAppsSelector,
   allowExperimentalAppsSelector,
   catalogProviderSelector,
+  languageSelector,
 } from "~/renderer/reducers/settings";
 import { useSelector } from "react-redux";
 import { RemoteLiveAppProvider } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
@@ -19,6 +20,7 @@ export function PlatformAppProviderWrapper({ children }: PlatformAppProviderWrap
   const allowDebugApps = useSelector(allowDebugAppsSelector);
   const allowExperimentalApps = useSelector(allowExperimentalAppsSelector);
   const provider = useSelector(catalogProviderSelector);
+  const locale = useSelector(languageSelector);
 
   return (
     <RemoteLiveAppProvider
@@ -27,6 +29,7 @@ export function PlatformAppProviderWrapper({ children }: PlatformAppProviderWrap
         allowDebugApps,
         allowExperimentalApps,
         llVersion: __APP_VERSION__,
+        lang: locale,
       }}
       updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}
     >

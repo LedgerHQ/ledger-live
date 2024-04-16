@@ -1,3 +1,4 @@
+import semver from "semver";
 import type Transport from "@ledgerhq/hw-transport";
 import BtcNew from "./BtcNew";
 import BtcOld from "./BtcOld";
@@ -15,17 +16,22 @@ import { signP2SHTransaction } from "./signP2SHTransaction";
 import { checkIsBtcLegacy, getAppAndVersion } from "./getAppAndVersion";
 
 /**
- * Bitcoin API.
- *
+ * @class Btc
+ * @description Bitcoin API.
+ * @param transport The transport layer used for communication.
+ * @param scrambleKey This parameter is deprecated and no longer needed.
+ * @param currency The currency to use, defaults to "bitcoin".
  * @example
  * import Btc from "@ledgerhq/hw-app-btc";
  * const btc = new Btc({ transport, currency: "bitcoin" });
  */
 
 export default class Btc {
+  // Transport instance
   private _transport: Transport;
+  // The specific implementation used, determined by the nano app and its version.
+  // It chooses between BtcNew (new interface) and BtcOld (old interface).
   private _impl: BtcOld | BtcNew;
-
   constructor({
     transport,
     scrambleKey = "BTC",
@@ -49,19 +55,28 @@ export default class Btc {
       ],
       scrambleKey,
     );
-    // new APDU (nano app API) for bitcoin and old APDU for altcoin
-    if (currency === "bitcoin" || currency === "bitcoin_testnet") {
-      this._impl = new BtcNew(new AppClient(this._transport));
-    } else {
-      this._impl = new BtcOld(this._transport);
-    }
+
+    this._impl = (() => {
+      switch (currency) {
+        case "bitcoin":
+        case "bitcoin_testnet":
+        case "qtum":
+          // new APDU (nano app API) for currencies using app-bitcoin-new implementation
+          return new BtcNew(new AppClient(this._transport));
+        default:
+          // old APDU (legacy API) for currencies using legacy bitcoin app implementation
+          return new BtcOld(this._transport);
+      }
+    })();
   }
 
   /**
    * Get an XPUB with a ledger device
    * @param arg derivation parameter
-   * - path: a BIP 32 path of the account level. e.g. `84'/0'/0'`
-   * - xpubVersion: the XPUBVersion of the coin used. (use @ledgerhq/currencies if needed)
+   * - path: a BIP 32 path of the account level. (e.g. The derivation path `84'/0'/0'`
+   * follows the `purpose' / coin_type' / account'` standard, with purpose=84, coin_type=0, account=0)
+   * - xpubVersion: the XPUBVersion of the coin used. (refer to ledgerjs/packages/cryptoassets/src/currencies.ts
+   * for the XPUBVersion value if needed)
    * @returns XPUB of the account
    */
   getWalletXpub(arg: { path: string; xpubVersion: number }): Promise<string> {
@@ -71,10 +86,10 @@ export default class Btc {
   }
 
   /**
-   * @param path a BIP 32 path
+   * @param path a BIP 32 path (i.e. the `purpose’ / coin_type’ / account’ / change / address_index` standard)
    * @param options an object with optional these fields:
    *
-   * - verify (boolean) will ask user to confirm the address on the device
+   * - verify (boolean) whether ask user to confirm the address on the device
    *
    * - format ("legacy" | "p2sh" | "bech32" | "bech32m" | "cashaddr") to use different bitcoin address formatter.
    *
@@ -85,6 +100,8 @@ export default class Btc {
    * - p2sh format with 49' paths
    *
    * - bech32 format with 84' paths
+   *
+   * - bech32m format with 86' paths
    *
    * - cashaddr in case of Bitcoin Cash
    *
@@ -167,6 +184,8 @@ export default class Btc {
    * - "bech32m" for spending segwit v1+ outputs
    * - "abc" for bch
    * - "gold" for btg
+   * - "decred" for decred
+   * - "zcash" for zcash
    * - "bipxxx" for using BIPxxx
    * - "sapling" to indicate a zec transaction is supporting sapling (to be set over block 419200)
    * @param expiryHeight is an optional Buffer for zec overwinter / sapling Txs
@@ -215,6 +234,12 @@ export default class Btc {
 
   /**
    * For each UTXO included in your transaction, create a transaction object from the raw serialized version of the transaction used in this UTXO.
+   * @param transactionHex a raw hexadecimal serialized transaction
+   * @param isSegwitSupported is a boolean indicating if the segwit is supported
+   * @param hasTimestamp is a boolean (peercoin includes timestamp in their transactions, others don't)
+   * @param hasExtraData is a boolean (komodo, zencash and zcash include extraData in their transactions, others don't)
+   * @param additionals list of additionnal options
+   * @return the transaction object deserialized from the raw hexadecimal transaction
    * @example
   const tx1 = btc.splitTransaction("01000000014ea60aeac5252c14291d428915bd7ccd1bfc4af009f4d4dc57ae597ed0420b71010000008a47304402201f36a12c240dbf9e566bc04321050b1984cd6eaf6caee8f02bb0bfec08e3354b022012ee2aeadcbbfd1e92959f57c15c1c6debb757b798451b104665aa3010569b49014104090b15bde569386734abf2a2b99f9ca6a50656627e77de663ca7325702769986cf26cc9dd7fdea0af432c8e2becc867c932e1b9dd742f2a108997c2252e2bdebffffffff0281b72e00000000001976a91472a5d75c8d2d0565b656a5232703b167d50d5a2b88aca0860100000000001976a9144533f5fb9b4817f713c48f0bfe96b9f50c476c9b88ac00000000");
    */
@@ -235,7 +260,8 @@ export default class Btc {
   }
 
   /**
-  @example
+   * Serialize a transaction's outputs to hexadecimal
+   * @example
   const tx1 = btc.splitTransaction("01000000014ea60aeac5252c14291d428915bd7ccd1bfc4af009f4d4dc57ae597ed0420b71010000008a47304402201f36a12c240dbf9e566bc04321050b1984cd6eaf6caee8f02bb0bfec08e3354b022012ee2aeadcbbfd1e92959f57c15c1c6debb757b798451b104665aa3010569b49014104090b15bde569386734abf2a2b99f9ca6a50656627e77de663ca7325702769986cf26cc9dd7fdea0af432c8e2becc867c932e1b9dd742f2a108997c2252e2bdebffffffff0281b72e00000000001976a91472a5d75c8d2d0565b656a5232703b167d50d5a2b88aca0860100000000001976a9144533f5fb9b4817f713c48f0bfe96b9f50c476c9b88ac00000000");
   const outputScript = btc.serializeTransactionOutputs(tx1).toString('hex');
   */
@@ -243,6 +269,11 @@ export default class Btc {
     return serializeTransactionOutputs(t);
   }
 
+  /**
+   * Trusted input is the hash of a UTXO that needs to be signed
+   * For Legacy transactions, the app has some APDUs flows that do the amount check for an UTXO,
+   * by parsing the transaction that created this UTXO
+   */
   getTrustedInput(
     indexLookup: number,
     transaction: Transaction,
@@ -251,6 +282,9 @@ export default class Btc {
     return getTrustedInput(this._transport, indexLookup, transaction, additionals);
   }
 
+  /**
+   * Trusted input is the hash of a UTXO that needs to be signed. BIP143 is used for Segwit inputs.
+   */
   getTrustedInputBIP143(
     indexLookup: number,
     transaction: Transaction,
@@ -263,25 +297,31 @@ export default class Btc {
     // if BtcOld was instantiated, stick with it
     if (this._impl instanceof BtcOld) return this._impl;
 
-    const appAndVersion = await getAppAndVersion(this._transport);
-    let isBtcLegacy = true; // default for all altcoins
+    const { name, version } = await getAppAndVersion(this._transport);
 
-    if (appAndVersion.name === "Bitcoin" || appAndVersion.name === "Bitcoin Test") {
-      const [major, minor] = appAndVersion.version.split(".");
-      // we use the legacy protocol for versions below 2.1.0 of the Bitcoin app.
-      isBtcLegacy = parseInt(major) <= 1 || (parseInt(major) == 2 && parseInt(minor) == 0);
-    } else if (
-      appAndVersion.name === "Bitcoin Legacy" ||
-      appAndVersion.name === "Bitcoin Test Legacy"
-    ) {
-      // the "Bitcoin Legacy" and "Bitcoin Testnet Legacy" app use the legacy protocol, regardless of the version
-      isBtcLegacy = true;
-    } else if (appAndVersion.name === "Exchange") {
-      // We can't query the version of the Bitcoin app if we're coming from Exchange;
-      // therefore, we use a workaround to distinguish legacy and new versions.
-      // This can be removed once Ledger Live enforces minimum bitcoin version >= 2.1.0.
-      isBtcLegacy = await checkIsBtcLegacy(this._transport);
-    }
+    const isBtcLegacy = await (async () => {
+      switch (name) {
+        case "Bitcoin":
+        case "Bitcoin Test": {
+          // we use the legacy protocol for versions below 2.1.0 of the Bitcoin app.
+          return semver.lt(version, "2.1.0");
+        }
+        case "Bitcoin Legacy":
+        case "Bitcoin Test Legacy":
+          // the "Bitcoin Legacy" and "Bitcoin Testnet Legacy" app use the legacy protocol, regardless of the version
+          return true;
+        case "Exchange":
+          // We can't query the version of the Bitcoin app if we're coming from Exchange;
+          // therefore, we use a workaround to distinguish legacy and new versions.
+          // This can be removed once Ledger Live enforces minimum bitcoin version >= 2.1.0.
+          return await checkIsBtcLegacy(this._transport);
+        case "Qtum":
+          // we use the legacy protocol for versions below 3.0.0 of the Qtum app.
+          return semver.lt(version, "3.0.0");
+        default:
+          return true;
+      }
+    })();
 
     if (isBtcLegacy) {
       this._impl = new BtcOld(this._transport);

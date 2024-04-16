@@ -42,9 +42,11 @@ export interface ITxnHistoryData {
     };
     target: {
       parsed: string;
-      cl_type: {
-        ByteArray: number;
-      };
+      cl_type:
+        | {
+            ByteArray: number;
+          }
+        | string;
     };
   };
   amount: string;

@@ -18,11 +18,14 @@ import type {
   SignOperationEvent,
 } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+
 type State = {
   signedOperation: SignedOperation | null | undefined;
   deviceSignatureRequested: boolean;
   deviceStreamingProgress: number | null | undefined;
   transactionSignError: Error | null | undefined;
+  manifestId?: string;
+  manifestName?: string;
 };
 type TransactionState = AppState & State;
 type TransactionRequest = {
@@ -34,6 +37,8 @@ type TransactionRequest = {
   appName?: string;
   dependencies?: AppRequest[];
   requireLatestFirmware?: boolean;
+  manifestId?: string;
+  manifestName?: string;
 };
 type TransactionResult =
   | {
@@ -110,7 +115,8 @@ export const createAction = (
     reduxDevice: Device | null | undefined,
     txRequest: TransactionRequest,
   ): TransactionState => {
-    const { transaction, appName, dependencies, requireLatestFirmware } = txRequest;
+    const { transaction, appName, dependencies, requireLatestFirmware, manifestId, manifestName } =
+      txRequest;
     const mainAccount = getMainAccount(txRequest.account, txRequest.parentAccount);
     const appState = createAppAction(connectAppExec).useHook(reduxDevice, {
       account: mainAccount,
@@ -151,6 +157,8 @@ export const createAction = (
     return {
       ...appState,
       ...state,
+      manifestId,
+      manifestName,
       deviceStreamingProgress:
         state.signedOperation || state.transactionSignError
           ? null // when good app is opened, we start the progress so it doesn't "blink"

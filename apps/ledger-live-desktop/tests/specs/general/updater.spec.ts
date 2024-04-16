@@ -1,7 +1,6 @@
 import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
 import { Layout } from "../../models/Layout";
-import { SettingsPage } from "../../models/SettingsPage";
 import { AppUpdater } from "../../models/AppUpdater";
 
 test.use({
@@ -11,7 +10,6 @@ test.use({
 
 test("Updater", async ({ page }) => {
   const layout = new Layout(page);
-  const settingsPage = new SettingsPage(page);
   const appUpdater = new AppUpdater(page);
 
   await test.step("[idle] state should not be visible", async () => {
@@ -51,9 +49,6 @@ test("Updater", async ({ page }) => {
   });
 
   await test.step("[error] state (any) should be visible, without the carousel", async () => {
-    await layout.goToSettings();
-    await settingsPage.carouselSwitchButton.click();
-    await expect(settingsPage.carouselSwitchButton.locator("input")).not.toBeChecked();
     await layout.goToPortfolio();
     await layout.appUpdateBanner.isVisible();
     await expect.soft(page).toHaveScreenshot("app-updater-error-without-carousel.png", {

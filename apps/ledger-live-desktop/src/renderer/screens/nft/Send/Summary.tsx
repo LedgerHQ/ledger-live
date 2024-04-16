@@ -7,11 +7,11 @@ import Text from "~/renderer/components/Text";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import Media from "~/renderer/components/Nft/Media";
 import Skeleton from "~/renderer/components/Nft/Skeleton";
-import { useNftMetadata } from "@ledgerhq/live-common/nft/NftMetadataProvider/index";
+import { useNftMetadata } from "@ledgerhq/live-nft-react";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { centerEllipsis } from "~/renderer/styles/helpers";
 import { NFTMetadata, ProtoNFT } from "@ledgerhq/types-live";
-import { getNFT } from "@ledgerhq/live-common/nft/index";
+import { getNFT } from "@ledgerhq/live-nft";
 import { getLLDCoinFamily } from "~/renderer/families";
 
 type Props = {

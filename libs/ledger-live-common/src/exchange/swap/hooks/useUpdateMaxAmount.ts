@@ -45,7 +45,7 @@ export const useUpdateMaxAmount = ({
         }));
         return next;
       }),
-    [setFromAmount],
+    [bridge, setFromAmount],
   );
 
   /* UPDATE from amount to the estimate max spendable on account

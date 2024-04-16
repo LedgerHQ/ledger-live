@@ -466,6 +466,50 @@ describe("Eth app biding", () => {
       });
     });
 
+    test("getAddress with chain ID", async () => {
+      const transportHolesky = await openTransportReplayer(
+        RecordStore.fromString(`
+        => e00201001d058000002c8000003c8000000000000000000000000000000000004268
+        <= 41047d8d3c470d1cfd8525d9537efdb92319a13a9bc9e336b6621fa5a664d2591b60fcd4f7882b0ff07d5ea0697050c7d23428daa5beaf6268cbac1369c278c6d8ea28366342434437334344386538613432383434363632663041306537364437463739416664393333649000
+      `),
+      );
+      const ethHolesky = new Eth(transportHolesky);
+      const resultHolesky = await ethHolesky.getAddress("44'/60'/0'/0/0", true, false, "17000");
+      expect(resultHolesky).toEqual({
+        address: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+        publicKey:
+          "047d8d3c470d1cfd8525d9537efdb92319a13a9bc9e336b6621fa5a664d2591b60fcd4f7882b0ff07d5ea0697050c7d23428daa5beaf6268cbac1369c278c6d8ea",
+      });
+
+      const transportPolygon = await openTransportReplayer(
+        RecordStore.fromString(`
+        => e00201001d058000002c8000003c8000000000000000000000000000000000000089
+        <= 41047d8d3c470d1cfd8525d9537efdb92319a13a9bc9e336b6621fa5a664d2591b60fcd4f7882b0ff07d5ea0697050c7d23428daa5beaf6268cbac1369c278c6d8ea28366342434437334344386538613432383434363632663041306537364437463739416664393333649000
+      `),
+      );
+      const ethPolygon = new Eth(transportPolygon);
+      const resultPolygon = await ethPolygon.getAddress("44'/60'/0'/0/0", true, false, "137");
+      expect(resultPolygon).toEqual({
+        address: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+        publicKey:
+          "047d8d3c470d1cfd8525d9537efdb92319a13a9bc9e336b6621fa5a664d2591b60fcd4f7882b0ff07d5ea0697050c7d23428daa5beaf6268cbac1369c278c6d8ea",
+      });
+
+      const transportGoerli = await openTransportReplayer(
+        RecordStore.fromString(`
+        => e00201001d058000002c8000003c8000000000000000000000000000000000000005
+        <= 41047d8d3c470d1cfd8525d9537efdb92319a13a9bc9e336b6621fa5a664d2591b60fcd4f7882b0ff07d5ea0697050c7d23428daa5beaf6268cbac1369c278c6d8ea28366342434437334344386538613432383434363632663041306537364437463739416664393333649000
+      `),
+      );
+      const ethGoerli = new Eth(transportGoerli);
+      const resultGoerli = await ethGoerli.getAddress("44'/60'/0'/0/0", true, false, "5");
+      expect(resultGoerli).toEqual({
+        address: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+        publicKey:
+          "047d8d3c470d1cfd8525d9537efdb92319a13a9bc9e336b6621fa5a664d2591b60fcd4f7882b0ff07d5ea0697050c7d23428daa5beaf6268cbac1369c278c6d8ea",
+      });
+    });
+
     test("signTransaction", async () => {
       const transport = await openTransportReplayer(
         RecordStore.fromString(`

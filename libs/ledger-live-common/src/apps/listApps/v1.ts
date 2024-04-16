@@ -2,11 +2,11 @@ import Transport from "@ledgerhq/hw-transport";
 import { DeviceModelId, getDeviceModel, identifyTargetId } from "@ledgerhq/devices";
 import { UnexpectedBootloader } from "@ledgerhq/errors";
 import { Observable, throwError } from "rxjs";
-import { App, AppType, DeviceInfo } from "@ledgerhq/types-live";
+import { App, AppType, DeviceInfo, idsToLanguage, languageIds } from "@ledgerhq/types-live";
 import { LocalTracer } from "@ledgerhq/logs";
 import type { ListAppsEvent, ListAppsResult } from "../types";
-import manager, { getProviderId } from "../../manager";
-import staxFetchImageSize from "../../hw/staxFetchImageSize";
+import { getProviderId } from "../../manager";
+import customLockScreenFetchSize from "../../hw/customLockScreenFetchSize";
 import {
   listCryptoCurrencies,
   currenciesByMarketcap,
@@ -16,7 +16,9 @@ import ManagerAPI from "../../manager/api";
 import { getEnv } from "@ledgerhq/live-env";
 
 import { calculateDependencies, polyfillApp, polyfillApplication } from "../polyfill";
-import getDeviceName from "../../hw/getDeviceName";
+import { getDeviceName } from "../../device/use-cases/getDeviceNameUseCase";
+import { getLatestFirmwareForDeviceUseCase } from "../../device/use-cases/getLatestFirmwareForDeviceUseCase";
+import { ManagerApiRepository } from "../../device/factories/HttpManagerApiRepositoryFactory";
 
 const appsThatKeepChangingHashes = ["Fido U2F", "Security Key"];
 
@@ -24,7 +26,11 @@ const emptyHashData = "000000000000000000000000000000000000000000000000000000000
 
 //TODO if you are reading this, don't worry, a big rewrite is coming and we'll be able
 //to simplify this a lot. Stay calm.
-const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<ListAppsEvent> => {
+export const listApps = (
+  transport: Transport,
+  deviceInfo: DeviceInfo,
+  managerApiRepository: ManagerApiRepository,
+): Observable<ListAppsEvent> => {
   const tracer = new LocalTracer("list-apps", { transport: transport.getTraceContext() });
   tracer.trace("Using legacy version", { deviceInfo });
 
@@ -86,7 +92,10 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
         }),
       );
 
-      const latestFirmwareForDeviceP = manager.getLatestFirmwareForDevice(deviceInfo);
+      const latestFirmwareForDeviceP = getLatestFirmwareForDeviceUseCase(
+        deviceInfo,
+        managerApiRepository,
+      );
 
       const firmwareP = Promise.all([firmwareDataP, latestFirmwareForDeviceP]).then(
         ([firmwareData, updateAvailable]) => ({
@@ -104,18 +113,22 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
           }),
       );
 
+      const languagePackForDeviceP = ManagerAPI.getLanguagePackagesForDevice(deviceInfo);
+
       const [
         [partialInstalledList, installedAvailable],
         applicationsList,
         compatibleAppVersionsList,
         firmware,
         sortedCryptoCurrencies,
+        languages,
       ] = await Promise.all([
         installedP,
         ManagerAPI.listApps().then(apps => apps.map(polyfillApplication)),
         applicationsByDeviceP,
         firmwareP,
         currenciesByMarketcap(listCryptoCurrencies(getEnv("MANAGER_DEV_MODE"), true)),
+        languagePackForDeviceP,
       ]);
       calculateDependencies();
 
@@ -156,25 +169,6 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
           }
 
           const indexOfMarketCap = crypto ? sortedCryptoCurrencies.indexOf(crypto) : -1;
-          const compatibleWallets: { name: string; url: string }[] = [];
-
-          if (application.compatibleWalletsJSON) {
-            try {
-              const parsed = JSON.parse(application.compatibleWalletsJSON);
-              if (parsed && Array.isArray(parsed)) {
-                parsed.forEach(w => {
-                  if (w && typeof w === "object" && w.name) {
-                    compatibleWallets.push({
-                      name: w.name,
-                      url: w.url,
-                    });
-                  }
-                });
-              }
-            } catch (e) {
-              console.error("invalid compatibleWalletsJSON for " + version.name, e);
-            }
-          }
 
           const type =
             application.description &&
@@ -196,7 +190,6 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
             supportURL: application.supportURL,
             contactURL: application.contactURL,
             sourceURL: application.sourceURL,
-            compatibleWallets,
             hash: version.hash,
             perso: version.perso,
             firmware: version.firmware,
@@ -266,11 +259,16 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
 
       let customImageBlocks = 0;
       if (deviceModelId === DeviceModelId.stax && !deviceInfo.isRecoveryMode) {
-        const customImageSize = await staxFetchImageSize(transport);
+        const customImageSize = await customLockScreenFetchSize(transport);
         if (customImageSize) {
           customImageBlocks = Math.ceil(customImageSize / bytesPerBlock);
         }
       }
+
+      const languageId: number = deviceInfo.languageId || languageIds.english;
+      const installedLanguagePack = languages.find(
+        lang => lang.language === idsToLanguage[languageId],
+      );
 
       // Harmless to run here since we are already in a secure channel, leading to
       // no prompt for the user. Introduced for the device renaming for LLD.
@@ -285,6 +283,7 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
         deviceModelId,
         firmware,
         customImageBlocks,
+        installedLanguagePack,
         deviceName,
       };
       o.next({
@@ -306,5 +305,3 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
     };
   });
 };
-
-export default listApps;

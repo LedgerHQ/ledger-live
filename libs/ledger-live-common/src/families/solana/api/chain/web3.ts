@@ -12,7 +12,7 @@ import {
   SystemProgram,
   TransactionInstruction,
 } from "@solana/web3.js";
-import { chunk } from "lodash";
+import chunk from "lodash/chunk";
 import { ChainAPI } from ".";
 import { Awaited } from "../../logic";
 import {

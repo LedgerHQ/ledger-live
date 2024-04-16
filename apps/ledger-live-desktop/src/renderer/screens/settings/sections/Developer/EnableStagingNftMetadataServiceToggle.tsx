@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import Switch from "~/renderer/components/Switch";
 import { setEnvUnsafe, getEnv } from "@ledgerhq/live-env";
-import { useNftAPI } from "@ledgerhq/live-common/nft/NftMetadataProvider/index";
+import { useNftAPI } from "@ledgerhq/live-nft-react";
 
 const PRODUCTION_URL = "https://nft.api.live.ledger.com";
 const STAGING_URL = "https://nft.api.live.ledger-stg.com";

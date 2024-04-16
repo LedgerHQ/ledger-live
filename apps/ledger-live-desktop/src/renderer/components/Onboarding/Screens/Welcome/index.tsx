@@ -8,8 +8,13 @@ import { saveSettings } from "~/renderer/actions/settings";
 import LangSwitcher from "~/renderer/components/Onboarding/LangSwitcher";
 import { openURL } from "~/renderer/linking";
 import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
-import { acceptTerms, useDynamicUrl } from "~/renderer/terms";
+import { acceptTerms } from "~/renderer/terms";
 import BuyNanoX from "./assets/buyNanoX.webm";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+import { urls } from "~/config/urls";
+import AnalyticsOptInPrompt from "LLD/AnalyticsOptInPrompt/screens";
+import { useAnalyticsOptInPrompt } from "LLD/AnalyticsOptInPrompt/hooks/useCommonLogic";
+import { EntryPoint } from "LLD/AnalyticsOptInPrompt/types/AnalyticsOptInPromptNavigator";
 
 const StyledLink = styled(Text)`
   text-decoration: underline;
@@ -28,7 +33,7 @@ const LeftContainer = styled(Flex).attrs({
   width: "386px",
   height: "100%",
   padding: "40px",
-  zIndex: 999,
+  zIndex: 49,
 })``;
 
 const Presentation = styled(Flex).attrs({ flexDirection: "column" })``;
@@ -91,13 +96,13 @@ export function Welcome() {
     }
   }, [hasCompletedOnboarding, history]);
 
-  const urlBuyNew = useDynamicUrl("buyNew");
+  const urlBuyNew = useLocalizedUrl(urls.buyNew);
   const buyNanoX = () => openURL(urlBuyNew);
 
-  const urlTerms = useDynamicUrl("terms");
+  const urlTerms = useLocalizedUrl(urls.terms);
   const openTermsAndConditions = () => openURL(urlTerms);
 
-  const urlPrivacyPolicy = useDynamicUrl("privacyPolicy");
+  const urlPrivacyPolicy = useLocalizedUrl(urls.privacyPolicy);
   const openPrivacyPolicy = () => openURL(urlPrivacyPolicy);
 
   const countTitle = useRef(0);
@@ -138,6 +143,20 @@ export function Welcome() {
     };
   }, []);
 
+  const {
+    analyticsOptInPromptProps,
+    isFeatureFlagsAnalyticsPrefDisplayed,
+    openAnalitycsOptInPrompt,
+    onSubmit,
+  } = useAnalyticsOptInPrompt({
+    entryPoint: EntryPoint.onboarding,
+  });
+
+  const extendedAnalyticsOptInPromptProps = {
+    ...analyticsOptInPromptProps,
+    onSubmit,
+  };
+
   return (
     <WelcomeContainer>
       <LeftContainer>
@@ -161,7 +180,11 @@ export function Welcome() {
             iconPosition="right"
             Icon={IconsLegacy.ArrowRightMedium}
             variant="main"
-            onClick={handleAcceptTermsAndGetStarted}
+            onClick={_ => {
+              isFeatureFlagsAnalyticsPrefDisplayed
+                ? openAnalitycsOptInPrompt("Onboarding", handleAcceptTermsAndGetStarted)
+                : handleAcceptTermsAndGetStarted();
+            }}
             mb="5"
           >
             {t("onboarding.screens.welcome.nextButton")}
@@ -169,7 +192,11 @@ export function Welcome() {
           <Button
             iconPosition="right"
             variant="main"
-            onClick={buyNanoX}
+            onClick={_ => {
+              isFeatureFlagsAnalyticsPrefDisplayed
+                ? openAnalitycsOptInPrompt("Onboarding", buyNanoX)
+                : buyNanoX();
+            }}
             outline={true}
             flexDirection="column"
             whiteSpace="normal"
@@ -221,6 +248,9 @@ export function Welcome() {
             <source src={BuyNanoX} type="video/webm" />
           </video>
         </VideoWrapper>
+        {isFeatureFlagsAnalyticsPrefDisplayed && (
+          <AnalyticsOptInPrompt {...extendedAnalyticsOptInPromptProps} />
+        )}
       </RightContainer>
     </WelcomeContainer>
   );

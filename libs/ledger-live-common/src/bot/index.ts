@@ -26,8 +26,8 @@ import {
   initialState,
   loadCountervalues,
   inferTrackingPairForAccounts,
-} from "../countervalues/logic";
-import { getPortfolio } from "../portfolio/v2";
+} from "@ledgerhq/live-countervalues/logic";
+import { getPortfolio } from "@ledgerhq/live-countervalues/portfolio";
 import { Account } from "@ledgerhq/types-live";
 import { getContext } from "@ledgerhq/coin-framework/bot/bot-test-context";
 import { Transaction } from "../generated/types";

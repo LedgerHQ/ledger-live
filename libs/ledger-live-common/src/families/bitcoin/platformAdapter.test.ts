@@ -2,7 +2,7 @@ import btc from "./platformAdapter";
 import { BitcoinTransaction as PlatformTransaction } from "@ledgerhq/live-app-sdk";
 import { FAMILIES } from "@ledgerhq/live-app-sdk";
 import BigNumber from "bignumber.js";
-import { Transaction } from "./types";
+import { Transaction } from "@ledgerhq/coin-bitcoin/types";
 
 describe("getPlatformTransactionSignFlowInfos", () => {
   describe("should properly get infos for BTC platform tx", () => {

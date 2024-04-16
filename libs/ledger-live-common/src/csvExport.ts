@@ -3,8 +3,8 @@ import type { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { formatCurrencyUnit } from "./currencies";
 import { getAccountCurrency, getMainAccount, flattenAccounts } from "./account";
 import { flattenOperationWithInternalsAndNfts } from "./operation";
-import { calculate } from "./countervalues/logic";
-import type { CounterValuesState } from "./countervalues/types";
+import { calculate } from "@ledgerhq/live-countervalues/logic";
+import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
 
 type Field = {
@@ -26,6 +26,12 @@ const fields: Field[] = [
     cell: (_account, _parentAccount, op) => op.date.toISOString(),
   },
   {
+    title: "Status",
+    cell: (_account, _parentAccount, op) => {
+      return op.hasFailed ? "Failed" : "Confirmed";
+    },
+  },
+  {
     title: "Currency Ticker",
     cell: account => getAccountCurrency(account).ticker,
   },
@@ -44,7 +50,7 @@ const fields: Field[] = [
   {
     title: "Operation Fees",
     cell: (account, parentAccount, op) =>
-      ["TokenAccount", "ChildAccount"].includes(account.type)
+      "TokenAccount" === account.type
         ? ""
         : formatCurrencyUnit(getAccountCurrency(account).units[0], op.fee, {
             disableRounding: true,

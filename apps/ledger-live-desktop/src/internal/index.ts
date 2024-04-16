@@ -2,7 +2,7 @@ import { captureException, getSentryIfAvailable } from "../sentry/internal";
 import { unsubscribeSetup } from "./live-common-setup";
 import { setEnvUnsafe } from "@ledgerhq/live-env";
 import { serializeError } from "@ledgerhq/errors";
-import { log } from "@ledgerhq/logs";
+import { log, trace } from "@ledgerhq/logs";
 import sentry, { setTags } from "~/sentry/internal";
 import {
   transportClose,
@@ -23,12 +23,16 @@ import {
   transportOpenChannel,
 } from "~/config/transportChannels";
 import { Message } from "./types";
+import { LOG_TYPE_INTERNAL } from "./logger";
+
 process.on("exit", () => {
   console.debug("exiting process, unsubscribing all...");
   unsubscribeSetup();
   getSentryIfAvailable()?.close(2000);
 });
+
 process.title = "Ledger Live Internal";
+
 process.on("uncaughtException", err => {
   process.send &&
     process.send({
@@ -52,28 +56,144 @@ if (INITIAL_SENTRY_TAGS) {
   if (parsed) setTags(parsed);
 }
 
+// Handles messages from the `main` process
 process.on("message", (m: Message) => {
   switch (m.type) {
     case transportOpenChannel:
-      transportOpen(m);
+      transportOpen(m).subscribe({
+        next: ({ type, ...response }) => {
+          process.send?.({
+            type: transportOpenChannel,
+            requestId: m.requestId,
+            ...response,
+          });
+        },
+        error: error => {
+          trace({
+            type: LOG_TYPE_INTERNAL,
+            message: `Unhandled error: ${error}`,
+            data: { error },
+            context: { function: "transportOpen" },
+          });
+        },
+      });
       break;
     case transportExchangeChannel:
-      transportExchange(m);
+      transportExchange(m).subscribe({
+        next: ({ type, ...response }) => {
+          process.send?.({
+            type: transportExchangeChannel,
+            requestId: m.requestId,
+            ...response,
+          });
+        },
+        error: error => {
+          trace({
+            type: LOG_TYPE_INTERNAL,
+            message: `Unhandled error: ${error}`,
+            data: { error },
+            context: { function: "transportExchangeChannel" },
+          });
+        },
+      });
+
       break;
     case transportExchangeBulkChannel:
-      transportExchangeBulk(m);
+      transportExchangeBulk(m).subscribe({
+        next: ({ type, ...response }) => {
+          process.send?.({
+            type: transportExchangeBulkChannel,
+            requestId: m.requestId,
+            ...response,
+          });
+        },
+        error: error => {
+          trace({
+            type: LOG_TYPE_INTERNAL,
+            message: `Unhandled error: ${error}`,
+            data: { error },
+            context: { function: "transportExchangeBulk" },
+          });
+        },
+        complete: () => {
+          process.send?.({
+            type: transportExchangeBulkChannel,
+            requestId: m.requestId,
+          });
+        },
+      });
+
       break;
     case transportExchangeBulkUnsubscribeChannel:
-      transportExchangeBulkUnsubscribe(m);
+      transportExchangeBulkUnsubscribe(m).subscribe({
+        next: ({ type, ...response }) => {
+          process.send?.({
+            type: transportExchangeBulkChannel,
+            requestId: m.requestId,
+            ...response,
+          });
+        },
+        error: error => {
+          trace({
+            type: LOG_TYPE_INTERNAL,
+            message: `Unhandled error: ${error}`,
+            data: { error },
+            context: { function: "transportExchangeBulkUnsubscribe" },
+          });
+        },
+      });
+
       break;
     case transportListenChannel:
-      transportListen(m);
+      transportListen(m).subscribe({
+        next: ({ type, ...response }) => {
+          process.send?.({
+            type: transportListenChannel,
+            requestId: m.requestId,
+            ...response,
+          });
+        },
+        error: error => {
+          trace({
+            type: LOG_TYPE_INTERNAL,
+            message: `Unhandled error: ${error}`,
+            data: { error },
+            context: { function: "transportListenChannel" },
+          });
+        },
+      });
+
       break;
     case transportListenUnsubscribeChannel:
-      transportListenUnsubscribe(m);
+      transportListenUnsubscribe(m).subscribe({
+        error: error => {
+          trace({
+            type: LOG_TYPE_INTERNAL,
+            message: `Unhandled error: ${error}`,
+            data: { error },
+            context: { function: "transportListenUnsubscribe" },
+          });
+        },
+      });
       break;
     case transportCloseChannel:
-      transportClose(m);
+      transportClose(m).subscribe({
+        next: ({ type, ...response }) => {
+          process.send?.({
+            type: transportCloseChannel,
+            requestId: m.requestId,
+            ...response,
+          });
+        },
+        error: error => {
+          trace({
+            type: LOG_TYPE_INTERNAL,
+            message: `Unhandled error: ${error}`,
+            data: { error },
+            context: { function: "transportClose" },
+          });
+        },
+      });
       break;
     case "sentryLogsChanged": {
       const { payload } = m;
@@ -94,10 +214,12 @@ process.on("message", (m: Message) => {
       break;
     }
     default:
-      log("error", `internal thread: '${(m as { type: string }).type}' event not supported`);
+      log("error", `internal process: '${(m as { type: string }).type}' event not supported`);
   }
 });
+
 process.on("disconnect", () => {
   process.exit(0);
 });
+
 log("internal", "Internal process is up!");

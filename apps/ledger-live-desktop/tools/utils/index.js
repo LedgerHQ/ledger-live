@@ -1,7 +1,7 @@
 const childProcess = require("child_process");
 const { prerelease } = require("semver");
 const path = require("path");
-const { DotEnvPlugin, nodeExternals } = require("esbuild-utils");
+const { DotEnvPlugin, nodeExternals } = require("@ledgerhq/esbuild-utils");
 const electronPlugin = require("vite-plugin-electron/renderer");
 const reactPlugin = require("@vitejs/plugin-react");
 const { defineConfig } = require("vite");
@@ -83,6 +83,7 @@ const buildViteConfig = argv =>
       conditions: ["node", "import", "module", "browser", "default"],
       alias: {
         "~": path.resolve(lldRoot, "src"),
+        LLD: [path.resolve(lldRoot, "src", "newArch")],
         qrloop: require.resolve("qrloop"),
         "@ledgerhq/react-ui": path.join(
           path.dirname(require.resolve("@ledgerhq/react-ui/package.json")),

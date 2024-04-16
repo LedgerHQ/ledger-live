@@ -37,7 +37,7 @@ const StepConfirmation = (props: StepProps) => {
           name="Step Confirmed"
           flow="stake"
           action="withdraw"
-          currency="egld"
+          currency="MultiversX"
         />
         <SyncOneAccountOnMount priority={10} accountId={optimisticOperation.accountId} />
         <SuccessDisplay
@@ -66,7 +66,7 @@ const StepConfirmation = (props: StepProps) => {
           name="Step Confirmation Error"
           flow="stake"
           action="withdraw"
-          currency="egld"
+          currency="MultiversX"
         />
         {signed ? (
           <BroadcastErrorDisclaimer

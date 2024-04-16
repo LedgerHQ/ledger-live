@@ -1,0 +1,1 @@
+{"request":{"url":"https://stargaze-api.polkachu.com/cosmos/staking/v1beta1/delegations/stars1v2mp0m7k96dm9qv60fkspcqlzpkzrwnekeys8l","method":"GET"},"response":{"body":{"delegation_responses":[],"pagination":{"next_key":null,"total":"0"}}}}

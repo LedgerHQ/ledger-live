@@ -3,7 +3,7 @@ import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account, AccountLike, NFTStandard, Operation, ProtoNFT } from "@ledgerhq/types-live";
 import { cryptocurrenciesById } from "@ledgerhq/cryptoassets";
 import Prando from "prando";
-import { inferSubOperations } from "../../account";
+import { inferSubOperations } from "../../serialization";
 import { genAddress, genHex } from "../helpers";
 import { encodeNftId } from "../../nft/nftId";
 

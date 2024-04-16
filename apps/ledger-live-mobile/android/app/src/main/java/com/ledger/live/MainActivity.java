@@ -102,15 +102,19 @@ public class MainActivity extends ReactActivity {
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    public void onWindowFocusChanged(boolean hasFocus) {
+    super.onWindowFocusChanged(hasFocus);
+    if (!hasFocus && !BuildConfig.DEBUG) {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+        } else {
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
+        }
     }
+
 
     @Override
     protected void onResume() {
         super.onResume();
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SECURE);
 
         /*
          * Override the detected language to english if it's a RTL language. TODO if we

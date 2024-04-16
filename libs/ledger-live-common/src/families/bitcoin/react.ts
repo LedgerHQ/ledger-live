@@ -1,5 +1,5 @@
 import type { Account, FeeStrategy } from "@ledgerhq/types-live";
-import type { NetworkInfo, Transaction } from "./types";
+import type { NetworkInfo, Transaction } from "@ledgerhq/coin-bitcoin/types";
 export const useFeesStrategy = (a: Account, t: Transaction): FeeStrategy[] => {
   const networkInfo = t.networkInfo;
 

@@ -35,7 +35,7 @@ describe("Check SWAP until payload signature", () => {
 
     const amount = new BigNumber(100000);
     const amountToWallet = new BigNumber(1000);
-    const encodedPayload = await generatePayloadProtobuf({
+    const encodedPayload = await generateSwapPayloadProtobuf({
       payinAddress: "0xd692Cb1346262F584D17B4B470954501f6715a82",
       refundAddress: "0xDad77910DbDFdE764fC21FCD4E74D71bBACA6D8D",
       payoutAddress: "bc1qer57ma0fzhqys2cmydhuj9cprf9eg0nw922a8j",
@@ -71,7 +71,7 @@ describe("Check SWAP until payload signature", () => {
 
     const amount = new BigNumber(100_000);
     const amountToWallet = new BigNumber(100_000_000_000);
-    let encodedPayload = await generatePayloadProtobuf({
+    let encodedPayload = await generateSwapPayloadProtobuf({
       payinAddress: "0xd692Cb1346262F584D17B4B470954501f6715a82",
       refundAddress: "0xDad77910DbDFdE764fC21FCD4E74D71bBACA6D8D",
       payoutAddress: "bc1qer57ma0fzhqys2cmydhuj9cprf9eg0nw922a8j",
@@ -110,7 +110,7 @@ describe("Check SWAP until payload signature", () => {
     const amount = new BigNumber(100_000);
     const amountToWallet = new BigNumber(100_000_000_000);
     // Extra properties have a limited size of 20 (i.e. app-exchange/src/proto/protocol.options)
-    let encodedPayload = await generatePayloadProtobuf({
+    let encodedPayload = await generateSwapPayloadProtobuf({
       payinAddress: "0xd692Cb1346262F584D17B4B470954501f6715a82",
       payinExtraId: '{ extraInfo: "Go" }',
       refundAddress: "0xDad77910DbDFdE764fC21FCD4E74D71bBACA6D8D",
@@ -160,6 +160,48 @@ describe("Check SWAP until payload signature", () => {
       "zGcNUYKM8sLxvT7zPU1C8vrMmanVlUroELnAeil4weo1LCk0zUBRse5-3Acv7I7II90xVTIxm26BnxRbZvVmTQ==",
       "base64url",
     );
+    await exchange.checkTransactionSignature(payloadSignature);
+  });
+
+  it("NG Sell", async () => {
+    // Given
+    const exchange = new Exchange(transport, ExchangeTypes.SellNg);
+
+    // When
+    const transactionId = await exchange.startNewTransaction();
+
+    // Then
+    expect(transactionId).toEqual(expect.any(String));
+    expect(transactionId).toHaveLength(64);
+
+    const { partnerInfo, partnerSigned, partnerPrivKey } =
+      await appExchangeSellDataset(ngSignFormat);
+    await exchange.setPartnerKey(partnerInfo);
+    console.log("DEBUG - Sell partner info:", partnerInfo);
+    console.log("DEBUG - Sell partner info:", partnerInfo.publicKey.toString("hex"));
+    console.log("DEBUG - Sell partner signed:", Buffer.from(partnerSigned).toString("hex"));
+
+    await exchange.checkPartner(partnerSigned);
+
+    const amount = new BigNumber(100_000);
+    let encodedPayload = await generateSellPayloadProtobuf({
+      traderEmail: "test@ledger.fr",
+      inCurrency: "ETH",
+      inAmount: Buffer.from(amount.toString(16), "hex"),
+      inAddress: "0xd692Cb1346262F584D17B4B470954501f6715a82",
+      outCurrency: "EUR",
+      outAmount: {
+        coefficient: Buffer.from("1", "hex"),
+        exponent: 1,
+      },
+      deviceTransactionId: Buffer.from(transactionId.padStart(32, "0"), "hex"),
+    });
+    encodedPayload = convertToJWSPayload(encodedPayload);
+
+    const estimatedFees = new BigNumber(0);
+    await exchange.processTransaction(encodedPayload, estimatedFees, "jws");
+
+    const payloadSignature = await signMessage(encodedPayload, partnerPrivKey, "rs");
     await exchange.checkTransactionSignature(payloadSignature);
   });
 });
@@ -233,8 +275,33 @@ async function appExchangeDataset(signFormat: PartnerSignFormat) {
     partnerSigned: sig,
   };
 }
+async function appExchangeSellDataset(signFormat: PartnerSignFormat) {
+  const privKey = Buffer.from(
+    "308f6a5369aea611d89abf937d0ffaf0b43b457d42cbf0cf754786b3088f17ae",
+    "hex",
+  );
+  const pubKey = Buffer.from(
+    "0478d5facdae2305f48795d3ce7d9244f5060d2f800901da5746d1f4177ae8d7bbe63f3870efc0d36af8f91962811e1d8d9df91ce3b3ea2cd9f550c7d465f8b7b3",
+    "hex",
+  );
+  secp256k1.publicKeyVerify(pubKey);
 
-type PayloadCore = {
+  const partnerInfo = {
+    name: "SELL_TEST",
+    curve: "secp256k1",
+    publicKey: pubKey,
+  };
+  const msg = signFormat(partnerInfo);
+
+  const sig = await signMessage(msg, LEDGER_FAKE_PRIVATE_KEY, "der");
+
+  return {
+    partnerInfo,
+    partnerSigned: sig,
+    partnerPrivKey: privKey,
+  };
+}
+type SwapPayloadCore = {
   payinAddress: string;
   payinExtraId?: string;
   refundAddress: string;
@@ -246,14 +313,14 @@ type PayloadCore = {
   amountToProvider: Buffer;
   amountToWallet: Buffer;
 };
-type PayloadLegacy = PayloadCore & {
+type SwapPayloadLegacy = SwapPayloadCore & {
   deviceTransactionId?: string;
 };
-type PayloadNg = PayloadCore & {
+type SwapPayloadNg = SwapPayloadCore & {
   deviceTransactionIdNg?: Buffer;
 };
-type Payload = PayloadLegacy | PayloadNg;
-async function generatePayloadProtobuf(payload: Payload): Promise<Buffer> {
+type SwapPayload = SwapPayloadLegacy | SwapPayloadNg;
+async function generateSwapPayloadProtobuf(payload: SwapPayload): Promise<Buffer> {
   const root = await protobuf.load("protocol.proto");
   const TransactionResponse = root.lookupType("ledger_swap.NewTransactionResponse");
   const err = TransactionResponse.verify(payload);
@@ -262,6 +329,32 @@ async function generatePayloadProtobuf(payload: Payload): Promise<Buffer> {
   }
   const message = TransactionResponse.create(payload);
   const messageEncoded = TransactionResponse.encode(message).finish();
+
+  return Buffer.from(messageEncoded);
+}
+
+type UDecimal = {
+  coefficient: Buffer;
+  exponent: number;
+};
+type SellPayload = {
+  traderEmail: string;
+  inCurrency: string;
+  inAmount: Buffer;
+  inAddress: string;
+  outCurrency: string;
+  outAmount: UDecimal;
+  deviceTransactionId: Buffer;
+};
+async function generateSellPayloadProtobuf(payload: SellPayload): Promise<Buffer> {
+  const root = await protobuf.load("protocol.proto");
+  const SellResponse = root.lookupType("ledger_swap.NewSellResponse");
+  const err = SellResponse.verify(payload);
+  if (err) {
+    throw Error(err);
+  }
+  const message = SellResponse.create(payload);
+  const messageEncoded = SellResponse.encode(message).finish();
 
   return Buffer.from(messageEncoded);
 }

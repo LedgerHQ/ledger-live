@@ -28,7 +28,6 @@
       "discreetMode": false,
       "preferredDeviceModel": "nanoX",
       "hasInstalledApps": true,
-      "carouselVisibility": 0,
       "lastSeenDevice": {
         "modelId": "nanoX",
         "deviceInfo": {
@@ -51,15 +50,36 @@
           "languageId": 0
         },
         "apps": [
-          { "name": "Cosmos", "version": "2.34.9" },
-          { "name": "Ethereum", "version": "1.10.2" },
-          { "name": "Polygon", "version": "1.10.2" },
-          { "name": "Komodo", "version": "2.1.0" },
-          { "name": "Bitcoin", "version": "2.1.2" },
-          { "name": "NEAR", "version": "1.2.1" }
+          {
+            "name": "Cosmos",
+            "version": "2.34.9"
+          },
+          {
+            "name": "Ethereum",
+            "version": "1.10.2"
+          },
+          {
+            "name": "Polygon",
+            "version": "1.10.2"
+          },
+          {
+            "name": "Komodo",
+            "version": "2.1.0"
+          },
+          {
+            "name": "Bitcoin",
+            "version": "2.1.2"
+          },
+          {
+            "name": "NEAR",
+            "version": "1.2.1"
+          }
         ]
       },
-      "lastSeenCustomImage": { "size": 0, "hash": "" },
+      "lastSeenCustomImage": {
+        "size": 0,
+        "hash": ""
+      },
       "latestFirmware": null,
       "blacklistedTokenIds": [],
       "hiddenNftCollections": [],
@@ -78,12 +98,11 @@
         "selectableCurrencies": []
       },
       "starredMarketCoins": [],
-      "overriddenFeatureFlags": {
-        "ptxEarn": { "enabled": false }
-      },
       "featureFlagsButtonVisible": false
     },
-    "user": { "id": "09bd3c68-18ed-4ecf-b9d9-534b38c21165" },
+    "user": {
+      "id": "09bd3c68-18ed-4ecf-b9d9-534b38c21165"
+    },
     "announcements": {
       "announcements": [],
       "seenIds": [],

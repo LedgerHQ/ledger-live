@@ -1,6 +1,7 @@
 {
   "extends": "../../tsconfig.base",
   "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
     "incremental": true,
     "module": "commonjs",
     "lib": ["es2015", "es2017"],

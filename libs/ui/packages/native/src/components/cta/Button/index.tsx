@@ -18,7 +18,6 @@ import { IconType } from "../../Icon/type";
 
 export type ButtonProps = TouchableOpacityProps &
   BaseStyledProps & {
-    Icon?: IconType;
     onPressWhenDisabled?: TouchableOpacityProps["onPress"];
     iconName?: string;
     type?: "main" | "shade" | "error" | "color" | "default";
@@ -31,6 +30,8 @@ export type ButtonProps = TouchableOpacityProps &
     pending?: boolean;
     displayContentWhenPending?: boolean;
     buttonTestId?: string;
+    isNewIcon?: boolean;
+    Icon?: IconType | JSX.Element;
   };
 
 const IconContainer = styled.View<{
@@ -104,6 +105,7 @@ const SpinnerContainer = styled.View<{
 const ButtonContainer = (props: ButtonProps & { hide?: boolean }): React.ReactElement => {
   const {
     Icon,
+    isNewIcon,
     iconPosition = "right",
     children,
     hide = false,
@@ -116,12 +118,15 @@ const ButtonContainer = (props: ButtonProps & { hide?: boolean }): React.ReactEl
   const theme = useTheme();
   const { text } = getButtonColorStyle(theme.colors, props);
 
-  const IconNode = useMemo(
-    () =>
+  const IconNode = useMemo(() => {
+    if (isNewIcon) {
+      return Icon;
+    }
+    return (
       (iconName && <IconComponent name={iconName} size={ctaIconSize[size]} color={text.color} />) ||
-      (Icon && <Icon size={ctaIconSize[size]} color={text.color} />),
-    [iconName, size, Icon, text.color],
-  );
+      (typeof Icon === "function" && <Icon size={ctaIconSize[size]} color={text.color} />)
+    );
+  }, [iconName, size, Icon, text.color, isNewIcon]);
 
   const textColor = useMemo(
     () => (pending ? theme.colors.neutral.c50 : text.color),
@@ -148,7 +153,7 @@ const ButtonContainer = (props: ButtonProps & { hide?: boolean }): React.ReactEl
         </IconContainer>
       ) : IconNode ? (
         <IconContainer iconButton={!children} iconPosition={iconPosition}>
-          {IconNode}
+          {IconNode as JSX.Element}
         </IconContainer>
       ) : null}
       {iconPosition === "left" && children ? (

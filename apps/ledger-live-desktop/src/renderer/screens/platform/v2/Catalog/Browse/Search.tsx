@@ -13,8 +13,13 @@ export function Search({ categories, search }: Props) {
   const { t } = useTranslation();
 
   const options = useMemo(
-    () => categories.categories.map(value => ({ value: value, label: value.toUpperCase() })),
-    [categories],
+    () =>
+      categories.categories.map((value: string) => ({
+        value: value,
+        label:
+          value === "all" ? t("platform.catalog.filter.all").toUpperCase() : value.toUpperCase(),
+      })),
+    [categories.categories, t],
   );
 
   const onChange = useCallback(
@@ -37,6 +42,7 @@ export function Search({ categories, search }: Props) {
         </Text>
 
         <SelectInput
+          isDisabled={!!search.input.length}
           options={options}
           defaultValue={options[0]}
           // @ts-expect-error another SelectInput hell

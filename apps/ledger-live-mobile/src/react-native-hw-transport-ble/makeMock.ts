@@ -47,12 +47,13 @@ export default (opts: Opts) => {
         .subscribe(msg => {
           if (msg.type === "add") {
             observer.next({
-              type: msg.type,
+              type: "add",
               descriptor: createTransportDeviceMock(
                 msg.payload.id,
                 msg.payload.name,
                 msg.payload.serviceUUID,
               ),
+              deviceModel: undefined,
             });
           }
         });

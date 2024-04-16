@@ -43,7 +43,7 @@ export default async function getTransactionStatus(
     errors.amount = new NotEnoughBalance("");
   }
 
-  const estimatedFees = await getEstimatedFees();
+  const estimatedFees = await getEstimatedFees(account);
 
   return {
     amount,

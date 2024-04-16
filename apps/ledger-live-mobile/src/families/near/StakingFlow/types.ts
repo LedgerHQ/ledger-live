@@ -20,6 +20,7 @@ export type NearStakingFlowParamList = {
     transaction?: Transaction;
     fromSelectAmount?: boolean;
     source?: RouteProp<ParamListBase, ScreenName>;
+    skipStartedStep?: boolean;
   };
   [ScreenName.NearStakingValidatorSelect]: {
     accountId: string;

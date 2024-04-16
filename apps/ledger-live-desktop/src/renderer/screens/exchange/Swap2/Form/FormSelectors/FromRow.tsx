@@ -130,7 +130,7 @@ function FromRow({
   usePickDefaultAccount(accounts, fromAccount, setFromAccount);
 
   const trackEditAccount = () => {
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "Edit source account",
       page: "Page Swap Form",
       ...swapDefaultTrack,
@@ -140,7 +140,7 @@ function FromRow({
   const setAccountAndTrack = (account: AccountLike) => {
     updateSelectedRate();
     const name = account ? getAccountName(account) : undefined;
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "New source account",
       page: "Page Swap Form",
       ...swapDefaultTrack,
@@ -150,7 +150,7 @@ function FromRow({
   };
 
   const setValue = (fromAmount: BigNumber) => {
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "Amount input",
       page: "Page Swap Form",
       ...swapDefaultTrack,
@@ -161,7 +161,7 @@ function FromRow({
   };
 
   const toggleMaxAndTrack = (state: unknown) => {
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "max",
       page: "Page Swap Form",
       ...swapDefaultTrack,

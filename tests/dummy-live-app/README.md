@@ -9,7 +9,7 @@ The app is a simple [Create React App](https://github.com/facebook/create-react-
 
 ## How to run locally for development
 
-Run `pnpm --filter="dummy-*" install` and `pnpm dummy-live-app start`
+Run `pnpm --filter="@ledgerhq/dummy-*" install` and `pnpm dummy-live-app start`
 
 ## Quick script to build the app from scratch
 

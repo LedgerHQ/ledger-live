@@ -1,4 +1,5 @@
-import { uniq, isEmpty } from "lodash";
+import isEmpty from "lodash/isEmpty";
+import uniq from "lodash/uniq";
 import { CurrenciesPerProvider, RampCatalog } from "./types";
 import { CryptoCurrency } from "@ledgerhq/wallet-api-core/lib/currencies/types";
 

@@ -19,7 +19,7 @@ import { Account, Operation, AccountLike } from "@ledgerhq/types-live";
 import { Box, Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { WarningMedium } from "@ledgerhq/native-ui/assets/icons";
 import debounce from "lodash/debounce";
-import { isEqual } from "lodash";
+import isEqual from "lodash/isEqual";
 import { useSelector } from "react-redux";
 import CurrencyUnitValue from "../CurrencyUnitValue";
 import CounterValue from "../CounterValue";
@@ -236,7 +236,13 @@ function OperationRow({
           </BodyRightContainer>
         ) : amount.isZero() ? null : (
           <BodyRightContainer>
-            <Text numberOfLines={1} color={valueColor} variant="body" fontWeight="semiBold">
+            <Text
+              numberOfLines={1}
+              color={valueColor}
+              variant="body"
+              fontWeight="semiBold"
+              testID="portfolio-operation-amount"
+            >
               <CurrencyUnitValue showCode unit={unit} value={amount} alwaysShowSign />
             </Text>
             <Text variant="paragraph" fontWeight="medium" color={colors.neutral.c70}>

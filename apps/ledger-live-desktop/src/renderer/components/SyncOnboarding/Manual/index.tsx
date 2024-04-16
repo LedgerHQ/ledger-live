@@ -18,17 +18,13 @@ import { setDrawer } from "~/renderer/drawers/Provider";
 import connectManager from "@ledgerhq/live-common/hw/connectManager";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import { getEnv } from "@ledgerhq/live-env";
-import ExitChecksDrawer, {
-  Props as ExitChecksDrawerProps,
-} from "./EarlySecurityChecks/ExitChecksDrawer";
+import ExitChecksDrawer from "./EarlySecurityChecks/ExitChecksDrawer";
 import { renderError } from "../../DeviceAction/rendering";
 import { useTranslation } from "react-i18next";
 import { useChangeLanguagePrompt } from "./EarlySecurityChecks/useChangeLanguagePrompt";
 import DeviceAction from "../../DeviceAction";
-import TroubleshootingDrawer, {
-  Props as TroubleshootingDrawerProps,
-} from "./TroubleshootingDrawer";
-import LockedDeviceDrawer, { Props as LockedDeviceDrawerProps } from "./LockedDeviceDrawer";
+import TroubleshootingDrawer from "./TroubleshootingDrawer";
+import LockedDeviceDrawer from "./LockedDeviceDrawer";
 import { LockedDeviceError, UnexpectedBootloader } from "@ledgerhq/errors";
 import { FinalFirmware } from "@ledgerhq/types-live";
 
@@ -124,22 +120,33 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
 
   useEffect(() => {
     if (lockedDevice) {
-      const props: LockedDeviceDrawerProps = {
-        deviceModelId,
-      };
-      setDrawer(LockedDeviceDrawer, props, {
-        forceDisableFocusTrap: true,
-        preventBackdropClick: true,
-      });
-    } else if (isTroubleshootingDrawerOpen) {
-      const props: TroubleshootingDrawerProps = {
-        lastKnownDeviceId: deviceModelId,
-        onClose: () => {
-          history.push("/onboarding/select-device");
-          setDrawer();
+      setDrawer(
+        LockedDeviceDrawer,
+        {
+          deviceModelId,
         },
-      };
-      setDrawer(TroubleshootingDrawer, props, { forceDisableFocusTrap: true });
+        {
+          forceDisableFocusTrap: true,
+          preventBackdropClick: true,
+        },
+      );
+    } else if (isTroubleshootingDrawerOpen) {
+      setDrawer(
+        TroubleshootingDrawer,
+        {
+          lastKnownDeviceId: deviceModelId,
+          onClose: () => {
+            history.push("/onboarding/select-device");
+            setDrawer();
+          },
+        },
+        {
+          forceDisableFocusTrap: true,
+          onRequestClose: () => {
+            history.push("/onboarding/select-device");
+          },
+        },
+      );
     }
     return () => setDrawer();
   }, [deviceModelId, history, isTroubleshootingDrawerOpen, lockedDevice]);
@@ -240,18 +247,22 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
   const handleClose = useCallback(() => {
     const exit = () => history.push("/onboarding/select-device");
     if (isEarlySecurityChecks) {
-      const props: ExitChecksDrawerProps = {
-        onClose: () => setDrawer(),
-        onClickExit: () => {
-          exit();
-          setDrawer();
+      setDrawer(
+        ExitChecksDrawer,
+        {
+          onClose: () => setDrawer(),
+          onClickExit: () => {
+            exit();
+            setDrawer();
+          },
+          deviceModelId,
         },
-      };
-      setDrawer(ExitChecksDrawer, props, { forceDisableFocusTrap: true });
+        { forceDisableFocusTrap: true },
+      );
     } else {
       exit();
     }
-  }, [history, isEarlySecurityChecks]);
+  }, [deviceModelId, history, isEarlySecurityChecks]);
 
   const [contentScroll, setContentScroll] = useState(0);
 

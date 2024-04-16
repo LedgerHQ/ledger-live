@@ -47,7 +47,7 @@ const AccountHeaderManageActions: CeloFamily["accountHeaderManageActions"] = ({
       disabled: isRegistrationPending,
       label: t("account.stake"),
       tooltip: disabledLabel,
-      event: "button_clicked",
+      event: "button_clicked2",
       eventProperties: {
         button: "stake",
       },

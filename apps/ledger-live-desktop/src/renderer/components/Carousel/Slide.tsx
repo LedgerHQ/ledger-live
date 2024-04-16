@@ -8,7 +8,7 @@ import { Wrapper, Label, IllustrationWrapper } from "~/renderer/components/Carou
 import { useHistory } from "react-router-dom";
 import Image from "../Image";
 import { track } from "~/renderer/analytics/segment";
-import { ContentCard } from "~/types/dynamicContent";
+import { PortfolioContentCard } from "~/types/dynamicContent";
 
 const Layer = styled(animated.div)<{
   image: string;
@@ -35,7 +35,7 @@ const EllipsedText = styled(Text)`
   -webkit-box-orient: vertical;
 `;
 
-type Props = ContentCard;
+type Props = PortfolioContentCard;
 
 const Slide = ({ id, url, path, title, description, image, imgs, onClickOnSlide }: Props) => {
   const history = useHistory();
@@ -82,6 +82,7 @@ const Slide = ({ id, url, path, title, description, image, imgs, onClickOnSlide 
       link: path || url,
       campaign: id,
       page: "Portfolio",
+      type: "portfolio_carousel",
     });
   }, [history, id, path, title, url, onClickOnSlide]);
 

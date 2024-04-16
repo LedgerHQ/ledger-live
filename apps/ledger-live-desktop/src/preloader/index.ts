@@ -33,8 +33,6 @@ const openWindow = (id: number) => ipcRenderer.send("webview-dom-ready", id);
 
 // TODO in future, we should use contextBridge
 window.api = {
-  pathUserdata: params.get("pathUserdata") || "",
-  pathHome: params.get("pathHome") || "",
   appDirname: params.get("appDirname") || "",
   appLoaded,
   reloadRenderer,

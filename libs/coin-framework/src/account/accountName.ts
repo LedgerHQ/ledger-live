@@ -12,7 +12,6 @@ export const getAccountPlaceholderName = ({
 }): string => {
   return `${currency.name} ${index + 1}`;
 };
-export const getNewAccountPlaceholderName = getAccountPlaceholderName; // same naming
 
 export const validateNameEdition = (account: Account, name?: string | null | undefined): string =>
   (

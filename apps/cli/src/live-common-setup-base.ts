@@ -62,11 +62,9 @@ setSupportedCurrencies([
   "optimism",
   "optimism_goerli",
   "arbitrum",
-  "arbitrum_goerli",
+  "arbitrum_sepolia",
   "rsk",
   "bittorrent",
-  "kava_evm",
-  "evmos_evm",
   "energy_web",
   "astar",
   "metis",
@@ -90,7 +88,7 @@ setSupportedCurrencies([
   "polygon_zk_evm",
   "polygon_zk_evm_testnet",
   "base",
-  "base_goerli",
+  "base_sepolia",
   "stacks",
   "telos_evm",
   "coreum",
@@ -98,6 +96,9 @@ setSupportedCurrencies([
   "casper",
   "neon_evm",
   "lukso",
+  "filecoin",
+  "linea",
+  "linea_goerli",
 ]);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);

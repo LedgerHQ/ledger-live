@@ -16,7 +16,6 @@ import { updateUserPreferences } from "~/notifications/braze";
 const notificationsMapping = {
   areNotificationsAllowed: "allowed",
   announcementsCategory: "announcements",
-  recommendationsCategory: "recommendations",
   largeMoverCategory: "largeMover",
   transactionsAlertsCategory: "transactionsAlerts",
 };
@@ -162,13 +161,6 @@ function NotificationsSettings() {
             !notificationsCategoriesHidden.includes("announcementsCategory") ? (
               <NotificationSettingsRow
                 notificationKey={"announcementsCategory"}
-                disabled={disableSubSettings}
-              />
-            ) : null}
-            {!notificationsCategoriesHidden ||
-            !notificationsCategoriesHidden.includes("recommendationsCategory") ? (
-              <NotificationSettingsRow
-                notificationKey={"recommendationsCategory"}
                 disabled={disableSubSettings}
               />
             ) : null}

@@ -3,7 +3,7 @@ import { Linking, Platform, ScrollView } from "react-native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
-import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { StackNavigationProp } from "@react-navigation/stack";
 import TabBarSafeAreaView from "~/components/TabBar/TabBarSafeAreaView";
 import Illustration from "~/images/illustration/Illustration";
@@ -14,7 +14,7 @@ import { TrackScreen, track } from "~/analytics";
 import { AnalyticsContext } from "~/analytics/AnalyticsContext";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { MainNavigatorParamList } from "~/components/RootNavigator/types/MainNavigator";
-import useDynamicContent from "~/dynamicContent/dynamicContent";
+import useDynamicContent from "~/dynamicContent/useDynamicContent";
 import { useIsNewsfeedAvailable } from "~/hooks/newsfeed/useIsNewsfeedAvailable";
 
 const images = {
@@ -41,7 +41,6 @@ function Discover() {
 
   const learn = useFeature("brazeLearn");
   const isNewsfeedAvailable = useIsNewsfeedAvailable();
-  const referralProgramConfig = useFeature("referralProgramDiscoverCard");
   const isNFTDisabled = useFeature("disableNftLedgerMarket")?.enabled && Platform.OS === "ios";
 
   const readOnlyTrack = useCallback((bannerName: string) => {
@@ -196,38 +195,31 @@ function Discover() {
                 ),
               },
             ]),
-        ...(referralProgramConfig?.enabled && referralProgramConfig?.params?.url
-          ? [
-              {
-                title: t("discover.sections.referralProgram.title"),
-                subTitle: t("discover.sections.referralProgram.desc"),
-                onPress: () => {
-                  readOnlyTrack("referralProgram");
-                  track("Discover - Refer Program - OpenUrl", {
-                    url: referralProgramConfig?.params?.url,
-                  });
-                  // @ts-expect-error TYPINGS
-                  Linking.openURL(referralProgramConfig?.params?.url);
-                },
-                disabled: false,
-                Image: (
-                  <Illustration
-                    size={110}
-                    darkSource={images.dark.referralImg}
-                    lightSource={images.light.referralImg}
-                  />
-                ),
-              },
-            ]
-          : []),
+        {
+          title: t("discover.sections.referralProgram.title"),
+          subTitle: t("discover.sections.referralProgram.desc"),
+          onPress: () => {
+            readOnlyTrack("referralProgram");
+            track("Discover - Refer Program - OpenUrl", {
+              url: urls.referralProgram,
+            });
+            Linking.openURL(urls.referralProgram);
+          },
+          disabled: false,
+          Image: (
+            <Illustration
+              size={110}
+              darkSource={images.dark.referralImg}
+              lightSource={images.light.referralImg}
+            />
+          ),
+        },
       ].sort((a, b) => (b.disabled ? -1 : 0)),
     [
       t,
       learn?.enabled,
       learnCards,
       isNFTDisabled,
-      referralProgramConfig?.enabled,
-      referralProgramConfig?.params?.url,
       navigation,
       readOnlyTrack,
       isNewsfeedAvailable,

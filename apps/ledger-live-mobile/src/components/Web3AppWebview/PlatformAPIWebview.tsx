@@ -59,23 +59,14 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
   ({ manifest, inputs = {}, onStateChange }, ref) => {
     const tracking = useMemo(
       () =>
-        trackingWrapper(
-          (
-            eventName: string,
-            properties?: Record<string, unknown> | null,
-            mandatory?: boolean | null,
-          ) =>
-            track(
-              eventName,
-              {
-                ...properties,
-                flowInitiatedFrom:
-                  currentRouteNameRef.current === "Platform Catalog"
-                    ? "Discover"
-                    : currentRouteNameRef.current,
-              },
-              mandatory,
-            ),
+        trackingWrapper((eventName: string, properties?: Record<string, unknown> | null) =>
+          track(eventName, {
+            ...properties,
+            flowInitiatedFrom:
+              currentRouteNameRef.current === "Platform Catalog"
+                ? "Discover"
+                : currentRouteNameRef.current,
+          }),
         ),
       [],
     );
@@ -332,7 +323,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     );
 
     const startExchange = useCallback(
-      ({ exchangeType }: { exchangeType: number }) => {
+      ({ exchangeType, provider }: { exchangeType: number; provider?: string }) => {
         tracking.platformStartExchangeRequested(manifest);
 
         return new Promise((resolve, reject) => {
@@ -341,6 +332,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
             params: {
               request: {
                 exchangeType,
+                provider,
               },
               onResult: (result: {
                 startExchangeResult?: string;

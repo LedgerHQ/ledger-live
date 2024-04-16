@@ -50,7 +50,11 @@ const txToOps = (info: AccountShapeInfo, accountId: string, txs: CosmosTx[]): Co
 
     const op: CosmosOperation = getBlankOperation(tx, fees, accountId);
 
-    const messages: CosmosMessage[] = tx.logs.map(log => log.events).flat(1);
+    op.hasFailed = tx.code !== 0;
+
+    const messages: CosmosMessage[] = op.hasFailed
+      ? tx.events
+      : tx.logs.map(log => log.events).flat(1);
 
     const mainMessage = getMainMessage(messages);
 
@@ -161,6 +165,10 @@ const txToOps = (info: AccountShapeInfo, accountId: string, txs: CosmosTx[]): Co
       }
     }
 
+    if (op.hasFailed) {
+      op.value = fees;
+    }
+
     if (tx.tx.body.memo != null) {
       op.extra.memo = tx.tx.body.memo;
     }
@@ -194,6 +202,7 @@ export const getAccountShape: GetAccountShape = async info => {
     unbondings,
     withdrawAddress,
   } = await new CosmosAPI(currency.id).getAccountInfo(address, currency);
+
   const oldOperations = initialAccount?.operations || [];
   const newOperations = txToOps(info, accountId, txs);
   const operations = mergeOps(oldOperations, newOperations);

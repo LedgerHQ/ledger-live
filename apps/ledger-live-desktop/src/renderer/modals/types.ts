@@ -6,6 +6,7 @@ import { Data as SendData } from "./Send/Body";
 import { Data as ReceiveData } from "./Receive/Body";
 import { Data as SignMessageData } from "./SignMessage/Body";
 import { DataProp as ExchangeCryptoDeviceDataProp } from "./ExchangeDeviceConfirm/index";
+import { Data as PlatformExchangeStartData } from "./Platform/Exchange/StartExchange/index";
 import { Data as PlatformExchangeCompleteData } from "./Platform/Exchange/CompleteExchange/Body";
 import { Data as ConnectDeviceData } from "./ConnectDevice/index";
 import { Params as SignTransactionData } from "./SignTransaction/Body";
@@ -52,7 +53,6 @@ export type GlobalModalData = {
   };
   MODAL_STORYLY_DEBUGGER: undefined;
   MODAL_LOTTIE_DEBUGGER: undefined;
-  MODAL_PLATFORM_EXCHANGE_COMPLETE: PlatformExchangeCompleteData;
   MODAL_EXPORT_ACCOUNTS: undefined;
   MODAL_EXPORT_OPERATIONS: undefined;
   MODAL_START_STAKE: ModalStartStakeProps;
@@ -66,11 +66,8 @@ export type GlobalModalData = {
   };
   MODAL_PASSWORD: undefined;
   MODAL_DISABLE_PASSWORD: undefined;
-  MODAL_PLATFORM_EXCHANGE_START: {
-    onCancel?: (error: Error) => void;
-    exchangeType: unknown;
-    onResult: (startExchangeResult: string) => void;
-  };
+  MODAL_PLATFORM_EXCHANGE_START: PlatformExchangeStartData;
+  MODAL_PLATFORM_EXCHANGE_COMPLETE: PlatformExchangeCompleteData;
   MODAL_CONNECT_DEVICE: ConnectDeviceData;
   MODAL_EXCHANGE_CRYPTO_DEVICE: ExchangeCryptoDeviceDataProp;
   MODAL_HIDE_NFT_COLLECTION: {

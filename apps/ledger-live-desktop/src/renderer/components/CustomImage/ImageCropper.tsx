@@ -28,6 +28,7 @@ export type Props = ImageBase64Data & {
   setLoading: (_: boolean) => void;
   withButton?: boolean;
   initialCropParams?: CropParams;
+  children?: React.ReactNode;
 };
 
 /**
@@ -136,6 +137,7 @@ const ImageCropper: React.FC<Props> = props => {
     initialCropParams,
     setCropParams,
     setLoading,
+    children,
   } = props;
 
   const track = useTrack();
@@ -185,7 +187,7 @@ const ImageCropper: React.FC<Props> = props => {
   }, [debouncedCompleteCropPixel, targetDimensions, onResult, setLoading]);
 
   const rotateCounterClockwise: () => void = useCallback(() => {
-    track("button_clicked", { button: "Rotate" });
+    track("button_clicked2", { button: "Rotate" });
     setLoading(true);
     /** the increments are of 90° so 360°/4 */
     setRotationIncrements((rotationIncrements - 1) % 4);
@@ -255,17 +257,19 @@ const ImageCropper: React.FC<Props> = props => {
           objectFit="vertical-cover"
         />
       </Flex>
-      <Button
-        mt={10}
-        variant="shade"
-        outline
-        backgroundColor="transparent"
-        onClick={rotateCounterClockwise}
-        Icon={IconsLegacy.ReverseMedium}
-        data-test-id="custom-image-crop-rotate-button"
-      >
-        Rotate
-      </Button>
+      <Flex mt={10} flexDirection={"row"} columnGap={4} alignItems={"center"}>
+        {children}
+        <Button
+          variant="shade"
+          outline
+          backgroundColor="transparent"
+          onClick={rotateCounterClockwise}
+          Icon={IconsLegacy.ReverseMedium}
+          data-test-id="custom-image-crop-rotate-button"
+        >
+          Rotate
+        </Button>
+      </Flex>
     </Flex>
   );
 };

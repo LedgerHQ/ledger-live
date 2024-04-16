@@ -16,7 +16,7 @@ import { CompositeScreenProps } from "@react-navigation/native";
 import { useLocale } from "~/context/Locale";
 import { languages, supportedLocales, localeIdToDeviceLanguage, Locale } from "../../../languages";
 import { ScreenName } from "~/const";
-import { setLanguage, setLastSeenDevice } from "~/actions/settings";
+import { setLanguage, setLastSeenDeviceInfo } from "~/actions/settings";
 import { lastConnectedDeviceSelector, lastSeenDeviceSelector } from "~/reducers/settings";
 import ChangeDeviceLanguageAction from "~/components/ChangeDeviceLanguageAction";
 import ChangeDeviceLanguagePrompt from "~/components/ChangeDeviceLanguagePrompt";
@@ -53,7 +53,13 @@ function OnboardingStepLanguage({ navigation }: NavigationProps) {
       firstValueFrom(
         withDevice(lastConnectedDevice?.deviceId)(transport => from(getDeviceInfo(transport))),
       ).then(deviceInfo => {
-        dispatch(setLastSeenDevice(deviceInfo));
+        dispatch(
+          setLastSeenDeviceInfo({
+            deviceInfo,
+            apps: [],
+            modelId: lastConnectedDevice.modelId,
+          }),
+        );
       });
     }
   }, [lastConnectedDevice, lastSeenDevice, dispatch]);

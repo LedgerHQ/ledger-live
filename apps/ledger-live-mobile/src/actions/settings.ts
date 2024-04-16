@@ -16,9 +16,9 @@ import {
   SettingsImportPayload,
   SettingsSetHasInstalledAnyAppPayload,
   SettingsLastSeenDeviceInfoPayload,
-  SettingsLastSeenDevicePayload,
   SettingsRemoveStarredMarketcoinsPayload,
   SettingsSetAnalyticsPayload,
+  SettingsSetPersonalizedRecommendationsPayload,
   SettingsSetAvailableUpdatePayload,
   SettingsSetLastSeenCustomImagePayload,
   SettingsSetCountervaluePayload,
@@ -68,6 +68,7 @@ import {
   SettingsSetClosedWithdrawBannerPayload,
   SettingsSetUserNps,
   SettingsSetSupportedCounterValues,
+  SettingsSetHasSeenAnalyticsOptInPrompt,
 } from "./types";
 import { ImageType } from "~/components/CustomImage/types";
 
@@ -93,6 +94,10 @@ export const setReportErrors = createAction<SettingsSetReportErrorsPayload>(
 export const setAnalytics = createAction<SettingsSetAnalyticsPayload>(
   SettingsActionTypes.SETTINGS_SET_ANALYTICS,
 );
+export const setPersonalizedRecommendations =
+  createAction<SettingsSetPersonalizedRecommendationsPayload>(
+    SettingsActionTypes.SETTINGS_SET_PERSONALIZED_RECOMMENDATIONS,
+  );
 export const setReadOnlyMode = createAction<SettingsSetReadOnlyModePayload>(
   SettingsActionTypes.SETTINGS_SET_READONLY_MODE,
 );
@@ -170,9 +175,6 @@ export const setSwapSelectableCurrencies = createAction<SettingsSetSwapSelectabl
 export const swapAcceptProvider = createAction<SettingsAcceptSwapProviderPayload>(
   SettingsActionTypes.ACCEPT_SWAP_PROVIDER,
 );
-export const setLastSeenDevice = createAction<SettingsLastSeenDevicePayload>(
-  SettingsActionTypes.LAST_SEEN_DEVICE,
-);
 export const setLastSeenDeviceInfo = createAction<SettingsLastSeenDeviceInfoPayload>(
   SettingsActionTypes.LAST_SEEN_DEVICE_INFO,
 );
@@ -209,7 +211,7 @@ const setCustomImageTypeAction = createAction<SettingsSetCustomImageTypePayload>
   SettingsActionTypes.SET_CUSTOM_IMAGE_TYPE,
 );
 export const setCustomImageType = (imageType: ImageType) =>
-  setCustomImageTypeAction({ customImageType: imageType });
+  setCustomImageTypeAction({ customLockScreenType: imageType });
 export const setHasOrderedNano = createAction<SettingsSetHasOrderedNanoPayload>(
   SettingsActionTypes.SET_HAS_ORDERED_NANO,
 );
@@ -282,6 +284,10 @@ export const setUserNps = createAction<SettingsSetUserNps>(SettingsActionTypes.S
 
 export const setSupportedCounterValues = createAction<SettingsSetSupportedCounterValues>(
   SettingsActionTypes.SET_SUPPORTED_COUNTER_VALUES,
+);
+
+export const setHasSeenAnalyticsOptInPrompt = createAction<SettingsSetHasSeenAnalyticsOptInPrompt>(
+  SettingsActionTypes.SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT,
 );
 
 type PortfolioRangeOption = {

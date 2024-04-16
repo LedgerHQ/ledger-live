@@ -106,9 +106,28 @@ const OperationDetailsExtra = ({
   type,
   account,
 }: OperationDetailsExtraProps<TronAccount, TronOperation>) => {
-  const amount = operation.extra?.frozenAmount
+  const frozenAmount = operation.extra?.frozenAmount
     ? (operation.extra.frozenAmount as BigNumber)
     : new BigNumber(0);
+
+  const unfreezeAmount = operation.extra?.unfreezeAmount
+    ? (operation.extra.unfreezeAmount as BigNumber)
+    : new BigNumber(10);
+
+  const unDelegatedAmount = operation.extra?.unDelegatedAmount
+    ? (operation.extra.unDelegatedAmount as BigNumber)
+    : new BigNumber(0);
+
+  const receiverAddress = operation.extra?.receiverAddress ? operation.extra.receiverAddress : "";
+
+  const redirectAddress = useCallback(
+    (address: string) => {
+      const url = getAddressExplorer(getDefaultExplorerView(account.currency), address);
+      if (url) openURL(url);
+    },
+    [account],
+  );
+
   switch (type) {
     case "VOTE": {
       const votes = operation.extra?.votes;
@@ -124,7 +143,7 @@ const OperationDetailsExtra = ({
           <OpDetailsData>
             <Box>
               <FormattedVal
-                val={amount}
+                val={frozenAmount}
                 unit={account.unit}
                 showCode
                 fontSize={4}
@@ -143,7 +162,59 @@ const OperationDetailsExtra = ({
           <OpDetailsData>
             <Box>
               <FormattedVal
-                val={amount}
+                val={unfreezeAmount}
+                unit={account.unit}
+                showCode
+                fontSize={4}
+                color="palette.text.shade60"
+              />
+            </Box>
+          </OpDetailsData>
+        </OpDetailsSection>
+      );
+    case "UNDELEGATE_RESOURCE":
+      return (
+        <>
+          <OpDetailsSection>
+            <OpDetailsTitle>
+              <Trans i18nKey="operationDetails.extra.undelegatedAmount" />
+            </OpDetailsTitle>
+            <OpDetailsData>
+              <Box>
+                <FormattedVal
+                  val={unDelegatedAmount}
+                  unit={account.unit}
+                  showCode
+                  fontSize={4}
+                  color="palette.text.shade60"
+                />
+              </Box>
+            </OpDetailsData>
+          </OpDetailsSection>
+          <OpDetailsSection>
+            <OpDetailsTitle>
+              <Trans i18nKey="operationDetails.extra.undelegatedFrom" />
+            </OpDetailsTitle>
+            <OpDetailsData>
+              <Box>
+                <Address onClick={() => redirectAddress(receiverAddress)}>
+                  {receiverAddress}
+                </Address>
+              </Box>
+            </OpDetailsData>
+          </OpDetailsSection>
+        </>
+      );
+    case "LEGACY_UNFREEZE":
+      return (
+        <OpDetailsSection>
+          <OpDetailsTitle>
+            <Trans i18nKey="operationDetails.extra.unfreezeAmount" />
+          </OpDetailsTitle>
+          <OpDetailsData>
+            <Box>
+              <FormattedVal
+                val={unfreezeAmount}
                 unit={account.unit}
                 showCode
                 fontSize={4}
@@ -179,6 +250,7 @@ const FreezeAmountCell = ({ operation, currency, unit }: Props) => {
     </>
   ) : null;
 };
+
 const UnfreezeAmountCell = ({ operation, currency, unit }: Props) => {
   const amount = operation.extra?.unfreezeAmount;
   return amount && !amount.isZero() ? (
@@ -215,6 +287,7 @@ const VoteAmountCell = ({ operation }: Props) => {
 const amountCellExtra = {
   FREEZE: FreezeAmountCell,
   UNFREEZE: UnfreezeAmountCell,
+  LEGACY_UNFREEZE: UnfreezeAmountCell,
   VOTE: VoteAmountCell,
 };
 export default {

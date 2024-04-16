@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Provider, useSelector } from "react-redux";
 import { Store } from "redux";
 import { HashRouter as Router } from "react-router-dom";
-import { NftMetadataProvider } from "@ledgerhq/live-common/nft/NftMetadataProvider/index";
+import { NftMetadataProvider } from "@ledgerhq/live-nft-react";
+import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
+import { getFeature } from "@ledgerhq/live-common/featureFlags/index";
 import "./global.css";
 import "tippy.js/dist/tippy.css";
 import "tippy.js/animations/shift-away.css";
@@ -16,26 +18,35 @@ import LiveStyleSheetManager from "~/renderer/styles/LiveStyleSheetManager";
 import { FirebaseRemoteConfigProvider } from "~/renderer/components/FirebaseRemoteConfig";
 import { FirebaseFeatureFlagsProvider } from "~/renderer/components/FirebaseFeatureFlags";
 import CountervaluesProvider from "~/renderer/components/CountervaluesProvider";
+import { CountervaluesMarketcap } from "@ledgerhq/live-countervalues-react";
 import DrawerProvider from "~/renderer/drawers/Provider";
 import Default from "./Default";
 import { AnnouncementProviderWrapper } from "~/renderer/components/AnnouncementProviderWrapper";
 import { PlatformAppProviderWrapper } from "~/renderer/components/PlatformAppProviderWrapper";
 import { ToastProvider } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { themeSelector } from "./actions/general";
-import MarketDataProvider from "~/renderer/screens/market/MarketDataProviderWrapper";
 import { ConnectEnvsToSentry } from "~/renderer/components/ConnectEnvsToSentry";
 import PostOnboardingProviderWrapped from "~/renderer/components/PostOnboardingHub/logic/PostOnboardingProviderWrapped";
 import { useBraze } from "./hooks/useBraze";
-import { CounterValuesStateRaw } from "@ledgerhq/live-common/countervalues/types";
+import { StorylyProvider } from "~/storyly/StorylyProvider";
+import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
+import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { allowDebugReactQuerySelector } from "./reducers/settings";
+
 const reloadApp = (event: KeyboardEvent) => {
   if ((event.ctrlKey || event.metaKey) && event.key === "r") {
     window.api?.reloadRenderer();
   }
 };
+
 type Props = {
   store: Store<State>;
   initialCountervalues: CounterValuesStateRaw;
 };
+
+const queryClient = new QueryClient();
+
 const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValuesStateRaw }) => {
   const [reloadEnabled, setReloadEnabled] = useState(true);
 
@@ -50,7 +61,9 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
     window.addEventListener("keydown", reload);
     return () => window.removeEventListener("keydown", reload);
   }, [reloadEnabled]);
+
   const selectedPalette = useSelector(themeSelector) || "light";
+
   return (
     <StyleProvider selectedPalette={selectedPalette}>
       <ThrowBlock
@@ -61,28 +74,33 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
         }}
       >
         <FirebaseRemoteConfigProvider>
-          <FirebaseFeatureFlagsProvider>
+          <FirebaseFeatureFlagsProvider getFeature={getFeature}>
             <ConnectEnvsToSentry />
             <UpdaterProvider>
-              <CountervaluesProvider initialState={initialCountervalues}>
-                <ToastProvider>
-                  <AnnouncementProviderWrapper>
-                    <Router>
-                      <PostOnboardingProviderWrapped>
-                        <PlatformAppProviderWrapper>
-                          <DrawerProvider>
-                            <NftMetadataProvider>
-                              <MarketDataProvider>
-                                <Default />
-                              </MarketDataProvider>
-                            </NftMetadataProvider>
-                          </DrawerProvider>
-                        </PlatformAppProviderWrapper>
-                      </PostOnboardingProviderWrapped>
-                    </Router>
-                  </AnnouncementProviderWrapper>
-                </ToastProvider>
-              </CountervaluesProvider>
+              <CountervaluesMarketcap>
+                <CountervaluesProvider initialState={initialCountervalues}>
+                  <ToastProvider>
+                    <AnnouncementProviderWrapper>
+                      <Router>
+                        <PostOnboardingProviderWrapped>
+                          <PlatformAppProviderWrapper>
+                            <DrawerProvider>
+                              <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
+                                <StorylyProvider>
+                                  <QueryClientProvider client={queryClient}>
+                                    <Default />
+                                    <ReactQueryDevtoolsProvider />
+                                  </QueryClientProvider>
+                                </StorylyProvider>
+                              </NftMetadataProvider>
+                            </DrawerProvider>
+                          </PlatformAppProviderWrapper>
+                        </PostOnboardingProviderWrapped>
+                      </Router>
+                    </AnnouncementProviderWrapper>
+                  </ToastProvider>
+                </CountervaluesProvider>
+              </CountervaluesMarketcap>
             </UpdaterProvider>
           </FirebaseFeatureFlagsProvider>
         </FirebaseRemoteConfigProvider>
@@ -90,6 +108,7 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
     </StyleProvider>
   );
 };
+
 const App = ({ store, initialCountervalues }: Props) => {
   return (
     <LiveStyleSheetManager>
@@ -99,4 +118,11 @@ const App = ({ store, initialCountervalues }: Props) => {
     </LiveStyleSheetManager>
   );
 };
+
+const ReactQueryDevtoolsProvider = () => {
+  const allowDebugReactQuery = useSelector(allowDebugReactQuerySelector);
+  if (!allowDebugReactQuery) return null;
+  return <ReactQueryDevtools initialIsOpen={false} />;
+};
+
 export default App;

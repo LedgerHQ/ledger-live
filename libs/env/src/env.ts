@@ -43,7 +43,7 @@ const stringArrayParser = (v: unknown): string[] | undefined => {
 
 const envDefinitions = {
   ADDRESS_POISONING_FAMILIES: {
-    def: "ethereum,evm,tron",
+    def: "evm,tron",
     parser: stringParser,
     desc: "List of families impacted by the address poisoning attack",
   },
@@ -88,7 +88,7 @@ const envDefinitions = {
     desc: "Node endpoint for celo",
   },
   COSMOS_GAS_AMPLIFIER: {
-    def: 1.5,
+    def: 1.3, // Same as Keplr
     parser: intParser,
     desc: "Cosmos gas estimate multiplier",
   },
@@ -111,11 +111,6 @@ const envDefinitions = {
     def: "https://near.coin.ledger.com/indexer/",
     parser: stringParser,
     desc: "Datahub Indexer API for NEAR",
-  },
-  API_NEAR_STAKING_POSITIONS_API: {
-    def: "https://validators-near.coin.ledger.com/",
-    parser: stringParser,
-    desc: "NEAR staking positions API",
   },
   API_STACKS_ENDPOINT: {
     parser: stringParser,
@@ -189,8 +184,13 @@ const envDefinitions = {
   },
   SOLANA_VALIDATORS_APP_BASE_URL: {
     parser: stringParser,
-    def: "https://validators-solana.coin.ledger.com/api/v1/validators",
+    def: "https://earn.api.live.ledger.com/v0/network/solana/validator-details",
     desc: "base url for validators.app validator list",
+  },
+  SOLANA_TESTNET_VALIDATORS_APP_BASE_URL: {
+    parser: stringParser,
+    def: "https://validators-solana.coin.ledger.com/api/v1/validators",
+    desc: "base url for testnet validators.app validator list",
   },
   SOLANA_TX_CONFIRMATION_TIMEOUT: {
     def: 100 * 1000,
@@ -334,11 +334,6 @@ const envDefinitions = {
     parser: boolParser,
     desc: "disable the version check for firmware update eligibility",
   },
-  EIP1559_ENABLED_CURRENCIES: {
-    def: "ethereum,ethereum_goerli,ethereum_sepolia,ethereum_holesky,polygon",
-    parser: stringArrayParser,
-    desc: "set the currency ids where EIP1559 is enabled",
-  },
   EIP1559_MINIMUM_FEES_GATE: {
     def: true,
     parser: boolParser,
@@ -353,11 +348,6 @@ const envDefinitions = {
     def: 1.5,
     parser: floatParser,
     desc: "mutiplier for the base fee that is composing the maxFeePerGas property",
-  },
-  ETHEREUM_GAS_LIMIT_AMPLIFIER: {
-    def: 1.2,
-    parser: floatParser,
-    desc: "Ethereum gasLimit multiplier for contracts to prevent out of gas issue",
   },
   EXPERIMENTAL_BLE: {
     def: false,
@@ -598,6 +588,11 @@ const envDefinitions = {
     parser: boolParser,
     desc: "allow the creation of legacy accounts",
   },
+  SIMPLE_HASH_API_BASE: {
+    def: "https://simplehash.api.live.ledger.com/api/v0",
+    parser: stringParser,
+    desc: "SimpleHash API base url",
+  },
   SKIP_ONBOARDING: {
     def: false,
     parser: boolParser,
@@ -764,11 +759,6 @@ const envDefinitions = {
     def: "https://cdn.live.ledger.com/cryptoassets",
     parser: stringParser,
     desc: "bucket S3 of the dynamic cryptoassets list",
-  },
-  CURRENCY_CONFIG_BASE_URL: {
-    def: "https://ledger-live-production-default-rtdb.europe-west1.firebasedatabase.app/",
-    parser: stringParser,
-    desc: "Currency config firebase url",
   },
   FEATURE_FLAGS: {
     def: "{}",

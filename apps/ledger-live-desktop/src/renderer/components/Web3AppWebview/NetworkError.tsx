@@ -4,12 +4,13 @@ import { useTranslation } from "react-i18next";
 import ErrorNoBorder from "~/renderer/icons/ErrorNoBorder";
 import { openURL } from "~/renderer/linking";
 import ExportLogsButton from "~/renderer/components/ExportLogsButton";
-import { useDynamicUrl } from "~/renderer/terms";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+import { urls } from "~/config/urls";
 
 export const NetworkErrorScreen = ({ refresh }: { refresh: () => void }) => {
   const { t } = useTranslation();
 
-  const urlContactSupportWebview = useDynamicUrl("contactSupportWebview");
+  const urlContactSupportWebview = useLocalizedUrl(urls.contactSupportWebview);
 
   const handleContactSupport = () => openURL(urlContactSupportWebview);
 

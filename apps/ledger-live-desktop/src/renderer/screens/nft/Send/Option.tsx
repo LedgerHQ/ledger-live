@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { BigNumber } from "bignumber.js";
-import { useNftMetadata } from "@ledgerhq/live-common/nft/NftMetadataProvider/index";
+import { useNftMetadata } from "@ledgerhq/live-nft-react";
 import { centerEllipsis } from "~/renderer/styles/helpers";
 import Text from "~/renderer/components/Text";
 import Box from "~/renderer/components/Box";

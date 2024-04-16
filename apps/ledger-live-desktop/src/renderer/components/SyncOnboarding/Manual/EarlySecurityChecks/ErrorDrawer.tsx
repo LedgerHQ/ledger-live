@@ -10,7 +10,7 @@ import { DeviceBlocker } from "../../../DeviceAction/DeviceBlocker";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
-import { ErrorBody } from "~/renderer/components/DeviceAction/rendering";
+import { ErrorBody } from "~/renderer/components/ErrorBody";
 import { FirmwareNotRecognized } from "@ledgerhq/errors";
 
 export type Props = {
@@ -71,7 +71,7 @@ const ErrorDrawer: React.FC<Props> = ({ error, onClickRetry, closeable = false }
           size="large"
           type="shade"
           onClick={() => {
-            track("button_clicked", { button: "Quit setup", drawer: drawerAnalyticsName });
+            track("button_clicked2", { button: "Quit setup", drawer: drawerAnalyticsName });
             exit();
           }}
         >
@@ -82,7 +82,7 @@ const ErrorDrawer: React.FC<Props> = ({ error, onClickRetry, closeable = false }
             size="large"
             variant="main"
             onClick={() => {
-              track("button_clicked", { button: "Go to settings", drawer: drawerAnalyticsName });
+              track("button_clicked2", { button: "Go to settings", drawer: drawerAnalyticsName });
               goToExperimentalSettings();
             }}
           >
@@ -95,7 +95,7 @@ const ErrorDrawer: React.FC<Props> = ({ error, onClickRetry, closeable = false }
             size="large"
             variant="main"
             onClick={() => {
-              track("button_clicked", { button: "Retry", drawer: drawerAnalyticsName });
+              track("button_clicked2", { button: "Retry", drawer: drawerAnalyticsName });
               onClickRetry();
             }}
           >

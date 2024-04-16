@@ -5,13 +5,13 @@ import {
   sortAccountsComparatorFromOrder,
 } from "@ledgerhq/live-common/account/index";
 import type { FlattenAccountsOptions } from "@ledgerhq/live-common/account/index";
-import type { TrackingPair } from "@ledgerhq/live-common/countervalues/types";
+import type { TrackingPair } from "@ledgerhq/live-countervalues/types";
 import {
   useCalculateCountervalueCallback as useCalculateCountervalueCallbackCommon,
   useCountervaluesPolling,
   useTrackingPairForAccounts,
-} from "@ledgerhq/live-common/countervalues/react";
-import { useDistribution as useDistributionCommon } from "@ledgerhq/live-common/portfolio/v2/react";
+} from "@ledgerhq/live-countervalues-react";
+import { useDistribution as useDistributionCommon } from "@ledgerhq/live-countervalues-react/portfolio";
 import { BehaviorSubject } from "rxjs";
 import { cleanCache, reorderAccounts } from "./accounts";
 import { accountsSelector } from "../reducers/accounts";

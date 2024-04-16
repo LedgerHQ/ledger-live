@@ -6,7 +6,13 @@ import {
   InvalidAddress,
   FeeTooHigh,
 } from "@ledgerhq/errors";
-import type { CosmosAccount, CosmosValidatorItem, StatusErrorMap, Transaction } from "../types";
+import type {
+  CosmosAccount,
+  CosmosValidatorItem,
+  StatusErrorMap,
+  Transaction,
+  CosmosCurrencyConfig,
+} from "../types";
 import {
   scanAccounts,
   signOperation,
@@ -23,6 +29,10 @@ import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-liv
 import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
 import { CosmosValidatorsManager } from "../CosmosValidatorsManager";
 import { getCryptoCurrencyById } from "../../../currencies";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { getCurrencyConfiguration } from "../../../config";
+import cryptoFactory from "../chain/chain";
+
 const receive = makeAccountBridgeReceive();
 
 const defaultGetFees = (a, t) => (t.fees || new BigNumber(0)).times(t.gas || new BigNumber(0));
@@ -119,12 +129,20 @@ const accountBridge: AccountBridge<Transaction> = {
 };
 const currencyBridge: CurrencyBridge = {
   scanAccounts,
-  preload: () => {
+  preload: (currency: CryptoCurrency) => {
+    const config = getCurrencyConfiguration(currency);
     setCosmosPreloadData("cosmos", mockPreloadedData);
-    return Promise.resolve(mockPreloadedData);
+    return Promise.resolve({ validators: mockPreloadedData, config });
   },
-  hydrate: (data: { validators?: CosmosValidatorItem[] }) => {
+  hydrate: (
+    data: { validators?: CosmosValidatorItem[]; config: CosmosCurrencyConfig },
+    currency: CryptoCurrency,
+  ) => {
     if (!data || typeof data !== "object") return;
+    const relatedImpl = cryptoFactory(currency.id);
+    relatedImpl.lcd = data.config.lcd;
+    relatedImpl.minGasPrice = data.config.minGasPrice;
+    relatedImpl.ledgerValidator = data.config.ledgerValidator;
     const { validators } = data;
     if (!validators || typeof validators !== "object" || !Array.isArray(validators)) return;
     const cosmosValidatorsManager = new CosmosValidatorsManager(getCryptoCurrencyById("cosmos"));

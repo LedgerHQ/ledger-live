@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { accountSelector } from "~/renderer/reducers/accounts";
 import { openModal } from "~/renderer/actions/modals";
-import { nftsByCollections } from "@ledgerhq/live-common/nft/index";
+import { nftsByCollections } from "@ledgerhq/live-nft";
 import { hiddenNftCollectionsSelector } from "~/renderer/reducers/settings";
 import styled from "styled-components";
 import IconSend from "~/renderer/icons/Send";
@@ -20,6 +20,8 @@ import { State } from "~/renderer/reducers";
 import { ProtoNFT } from "@ledgerhq/types-live";
 import theme from "@ledgerhq/react-ui/styles/theme";
 import { useOnScreen } from "../useOnScreen";
+import { isThresholdValid, useNftGalleryFilter } from "@ledgerhq/live-nft-react";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const SpinnerContainer = styled.div`
   display: flex;
@@ -50,6 +52,9 @@ const Footer = styled.footer`
 `;
 
 const Gallery = () => {
+  const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
+  const thresold = nftsFromSimplehashFeature?.params?.threshold;
+
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { id } = useParams<{ id: string }>();
@@ -60,12 +65,20 @@ const Gallery = () => {
   );
   const history = useHistory();
   const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
+
+  const { nfts, fetchNextPage, hasNextPage } = useNftGalleryFilter({
+    nftsOwned: account?.nfts || [],
+    addresses: account?.freshAddress || "",
+    chains: [account?.currency.id ?? "ethereum"],
+    threshold: isThresholdValid(thresold) ? Number(thresold) : 75,
+  });
+
   const collections = useMemo(
     () =>
-      Object.entries(nftsByCollections(account?.nfts)).filter(
-        ([contract]) => !hiddenNftCollections.includes(`${account?.id}|${contract}`),
-      ),
-    [account?.id, account?.nfts, hiddenNftCollections],
+      Object.entries(
+        nftsByCollections(nftsFromSimplehashFeature?.enabled ? nfts : account?.nfts),
+      ).filter(([contract]) => !hiddenNftCollections.includes(`${account?.id}|${contract}`)),
+    [account?.id, account?.nfts, hiddenNftCollections, nfts, nftsFromSimplehashFeature?.enabled],
   );
 
   // Should redirect to the account page if there is not NFT anymore in the page.
@@ -92,7 +105,12 @@ const Gallery = () => {
   );
   const listFooterRef = useRef<HTMLDivElement>(null);
   const [maxVisibleNFTs, setMaxVisibleNFTs] = useState(1);
-  const updateMaxVisibleNtfs = () => setMaxVisibleNFTs(maxVisibleNFTs => maxVisibleNFTs + 5);
+  const updateMaxVisibleNtfs = () => {
+    setMaxVisibleNFTs(maxVisibleNFTs => maxVisibleNFTs + 5);
+    if (hasNextPage) {
+      fetchNextPage();
+    }
+  };
 
   useOnScreen({
     enabled: maxVisibleNFTs < (account?.nfts?.length ?? 0),

@@ -31,6 +31,8 @@ import {
   UserRefusedFirmwareUpdate,
   UserRefusedOnDevice,
   UserRefusedDeviceNameChange,
+  UnresponsiveDeviceError,
+  TransportPendingOperation,
 } from "@ledgerhq/errors";
 import {
   InstallingApp,
@@ -51,7 +53,7 @@ import {
   renderInstallingLanguage,
   renderAllowRemoveCustomLockscreen,
   renderLockedDeviceError,
-  RenderDeviceNotOnboardedError,
+  DeviceNotOnboardedErrorComponent,
 } from "./rendering";
 import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils";
 import {
@@ -61,7 +63,11 @@ import {
   DeviceInfo,
   DeviceModelInfo,
 } from "@ledgerhq/types-live";
-import { Exchange, ExchangeRate, InitSwapResult } from "@ledgerhq/live-common/exchange/swap/types";
+import {
+  ExchangeSwap,
+  ExchangeRate,
+  InitSwapResult,
+} from "@ledgerhq/live-common/exchange/swap/types";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { AppAndVersion } from "@ledgerhq/live-common/hw/connectApp";
 import { Device } from "@ledgerhq/types-devices";
@@ -130,6 +136,8 @@ type States = PartialNullable<{
   loadingImage: boolean;
   imageLoaded: boolean;
   imageCommitRequested: boolean;
+  manifestName: string;
+  manifestId: string;
 }>;
 
 type InnerProps<P> = {
@@ -211,6 +219,8 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     completeExchangeError,
     allowOpeningGranted,
     signMessageRequested,
+    manifestId,
+    manifestName,
   } = hookState;
 
   const dispatch = useDispatch();
@@ -220,6 +230,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   const type = useTheme().colors.palette.type;
 
   const modelId = device ? device.modelId : overridesPreferredDeviceModel || preferredDeviceModel;
+
   useEffect(() => {
     if (modelId !== preferredDeviceModel) {
       dispatch(setPreferredDeviceModel(modelId));
@@ -332,7 +343,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
           amountExpectedTo = 0,
         } = request as {
           transaction: Transaction;
-          exchange: Exchange;
+          exchange: ExchangeSwap;
           provider: string;
           rate: number;
           amountExpectedTo: number;
@@ -370,7 +381,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   if (initSwapRequested && !initSwapResult && !initSwapError) {
     const { transaction, exchange, exchangeRate } = request as {
       transaction: Transaction;
-      exchange: Exchange;
+      exchange: ExchangeSwap;
       exchangeRate: ExchangeRate;
     };
     const { amountExpectedTo, estimatedFees } = hookState;
@@ -408,6 +419,15 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     });
   }
 
+  if (unresponsive || error instanceof TransportPendingOperation) {
+    return renderError({
+      t,
+      error: new UnresponsiveDeviceError(),
+      onRetry,
+      withExportLogs: false,
+    });
+  }
+
   if (!isLoading && error) {
     const e = error as unknown;
     if (
@@ -418,7 +438,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
       return renderError({
         t,
         error,
-        managerAppName: error.managerAppName,
+        managerAppName: (error as { managerAppName: string }).managerAppName,
       });
     }
 
@@ -433,7 +453,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     // NB Until we find a better way, remap the error if it's 6d06 (LNS, LNSP, LNX) or 6d07 (Stax) and we haven't fallen
     // into another handled case.
     if (isDeviceNotOnboardedError(e)) {
-      return <RenderDeviceNotOnboardedError t={t} device={device} />;
+      return <DeviceNotOnboardedErrorComponent t={t} device={device} />;
     }
 
     if (e instanceof NoSuchAppOnProvider) {
@@ -446,7 +466,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     }
 
     // workaround to catch ECONNRESET error and show better message
-    if (error?.message?.includes("ECONNRESET")) {
+    if ((error as Error)?.message?.includes("ECONNRESET")) {
       return renderError({
         t,
         error: new EConnResetError(),
@@ -457,11 +477,12 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
 
     let withExportLogs = true;
     let warning = false;
+    let withDescription = true;
     // User rejections, should be rendered as warnings and not export logs.
     // All the error rendering needs to be unified, the same way we do for ErrorIcon
     // not handled here.
     if (
-      error instanceof UserRefusedFirmwareUpdate ||
+      (error as unknown) instanceof UserRefusedFirmwareUpdate ||
       (error as unknown) instanceof UserRefusedAllowManager ||
       (error as unknown) instanceof UserRefusedOnDevice ||
       (error as unknown) instanceof UserRefusedAddress ||
@@ -472,6 +493,10 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
       warning = true;
     }
 
+    if ((error as unknown) instanceof UserRefusedDeviceNameChange) {
+      withDescription = false;
+    }
+
     return renderError({
       t,
       error,
@@ -480,6 +505,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
       withExportLogs,
       device: device ?? undefined,
       inlineRetry,
+      withDescription,
     });
   }
 
@@ -488,7 +514,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     return renderLockedDeviceError({ t, device, onRetry, inlineRetry });
   }
 
-  if ((!isLoading && !device) || unresponsive) {
+  if (!isLoading && !device) {
     return renderConnectYourDevice({
       modelId,
       type,
@@ -521,6 +547,8 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
           parentAccount={parentAccount}
           transaction={transaction}
           status={status}
+          manifestId={manifestId}
+          manifestName={manifestName}
         />
       );
     }

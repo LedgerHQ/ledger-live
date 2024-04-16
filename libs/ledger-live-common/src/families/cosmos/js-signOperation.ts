@@ -1,16 +1,17 @@
 import { RETURN_CODES, Transaction } from "./types";
 import { Observable } from "rxjs";
-import { withDevice } from "../../hw/deviceAccess";
-import { encodeOperationId } from "../../operation";
-import { txToMessages, buildTransaction } from "./js-buildTransaction";
 import BigNumber from "bignumber.js";
-import type { Operation, OperationType, SignOperationFnSignature } from "@ledgerhq/types-live";
-import { CosmosAPI } from "./api/Cosmos";
-import cryptoFactory from "./chain/chain";
 import { Secp256k1Signature } from "@cosmjs/crypto";
 import { CosmosApp } from "@zondax/ledger-cosmos-js";
 import { serializeSignDoc, makeSignDoc } from "@cosmjs/amino";
 import { UserRefusedOnDevice, ExpertModeRequired } from "@ledgerhq/errors";
+import { Coin } from "@keplr-wallet/proto-types/cosmos/base/v1beta1/coin";
+import type { Operation, OperationType, SignOperationFnSignature } from "@ledgerhq/types-live";
+import { withDevice } from "../../hw/deviceAccess";
+import { encodeOperationId } from "../../operation";
+import { txToMessages, buildTransaction } from "./js-buildTransaction";
+import { CosmosAPI } from "./api/Cosmos";
+import cryptoFactory from "./chain/chain";
 
 const signOperation: SignOperationFnSignature<Transaction> = ({ account, deviceId, transaction }) =>
   withDevice(deviceId)(
@@ -80,7 +81,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({ account, deviceI
             memo: transaction.memo || "",
             pubKeyType,
             pubKey,
-            feeAmount: signDoc.fee.amount as any,
+            feeAmount: signDoc.fee.amount as Coin[],
             gasLimit: signDoc.fee.gas,
             sequence: signDoc.sequence,
             signature,

@@ -1,10 +1,9 @@
-import { ipcRenderer, shell } from "electron";
+import { ipcRenderer } from "electron";
 import { useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { log } from "@ledgerhq/logs";
 import { delay } from "@ledgerhq/live-common/promise";
-import { useCountervaluesPolling } from "@ledgerhq/live-common/countervalues/react";
-import resolveUserDataDirectory from "~/helpers/resolveUserDataDirectory";
+import { useCountervaluesPolling } from "@ledgerhq/live-countervalues-react";
 import { resetAll, cleanCache } from "~/renderer/storage";
 import { resetStore } from "~/renderer/store";
 import { cleanAccountsCache } from "~/renderer/actions/accounts";
@@ -54,6 +53,6 @@ export function useSoftReset() {
   }, [dispatch, wipe]);
 }
 export async function openUserDataFolderAndQuit() {
-  shell.showItemInFolder(resolveUserDataDirectory());
+  await ipcRenderer.invoke("openUserDataDirectory");
   ipcRenderer.send("app-quit");
 }

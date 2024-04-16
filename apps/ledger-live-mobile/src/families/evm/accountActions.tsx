@@ -6,6 +6,12 @@ import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
 import { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions";
 import { NavigatorName, ScreenName } from "~/const";
+import BigNumber from "bignumber.js";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+
+const ethMagnitude = getCryptoCurrencyById("ethereum").units[0].magnitude ?? 18;
+
+const ETH_LIMIT = BigNumber(32).times(BigNumber(10).pow(ethMagnitude));
 
 type Props = {
   account: Account;
@@ -34,6 +40,7 @@ function getNavigatorParams({ parentRoute, account, parentAccount }: Props): Nav
       props: {
         singleProviderRedirectMode: true,
         accountId: account.id,
+        has32Eth: account.spendableBalance.gt(ETH_LIMIT),
       },
     },
     params: {
@@ -69,11 +76,8 @@ const getMainActions = ({ account, parentAccount, parentRoute }: Props): ActionB
         navigationParams,
         label: <Trans i18nKey="account.stake" />,
         Icon: IconsLegacy.CoinsMedium,
-        event: "button_clicked",
         eventProperties: {
-          button: "stake",
           currency: "ETH",
-          page: "Account Page",
         },
       },
     ];

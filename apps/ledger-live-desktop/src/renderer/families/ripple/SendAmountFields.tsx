@@ -30,7 +30,7 @@ function FeesField({ account, transaction, onChange, status, trackProperties = {
   const bridge = getAccountBridge(account);
   const onChangeFee = useCallback(
     (fee: BigNumber) => {
-      track("button_clicked", {
+      track("button_clicked2", {
         ...trackProperties,
         fee,
         button: "input",

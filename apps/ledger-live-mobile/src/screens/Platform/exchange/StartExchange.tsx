@@ -1,4 +1,3 @@
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useIsFocused } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
@@ -11,7 +10,6 @@ import {
   PlatformExchangeNavigatorParamList,
   ResultStart,
 } from "~/components/RootNavigator/types/PlatformExchangeNavigator";
-import SelectDevice from "~/components/SelectDevice";
 import SelectDevice2 from "~/components/SelectDevice2";
 import { ScreenName } from "~/const";
 import { useStartExchangeDeviceAction } from "~/hooks/deviceActions";
@@ -21,12 +19,10 @@ type Props = StackNavigatorProps<
   ScreenName.PlatformStartExchange
 >;
 
-const PlatformStartExchange: React.FC<Props> = ({ navigation, route }) => {
+export default function PlatformStartExchange({ navigation, route }: Props) {
   const action = useStartExchangeDeviceAction();
   const [device, setDevice] = useState<Device>();
-
   const isFocused = useIsFocused();
-  const newDeviceSelectionFeatureFlag = useFeature("llmNewDeviceSelection");
 
   const onClose = useCallback(() => {
     navigation.pop();
@@ -44,17 +40,13 @@ const PlatformStartExchange: React.FC<Props> = ({ navigation, route }) => {
   const request = useMemo(() => route.params.request, [route.params.request]);
   return (
     <SafeAreaView style={styles.root}>
-      {newDeviceSelectionFeatureFlag?.enabled ? (
-        <Flex px={16} py={8} flex={1}>
-          <SelectDevice2
-            onSelect={setDevice}
-            stopBleScanning={!!device || !isFocused}
-            requestToSetHeaderOptions={requestToSetHeaderOptions}
-          />
-        </Flex>
-      ) : (
-        <SelectDevice onSelect={setDevice} autoSelectOnAdd />
-      )}
+      <Flex px={16} py={8} flex={1}>
+        <SelectDevice2
+          onSelect={setDevice}
+          stopBleScanning={!!device || !isFocused}
+          requestToSetHeaderOptions={requestToSetHeaderOptions}
+        />
+      </Flex>
       <DeviceActionModal
         device={device}
         action={action}
@@ -64,7 +56,7 @@ const PlatformStartExchange: React.FC<Props> = ({ navigation, route }) => {
       />
     </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   root: {
@@ -72,5 +64,3 @@ const styles = StyleSheet.create({
     padding: 32,
   },
 });
-
-export default PlatformStartExchange;

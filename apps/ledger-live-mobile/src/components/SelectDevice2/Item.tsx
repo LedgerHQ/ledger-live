@@ -33,6 +33,8 @@ const Item = ({ device, onPress }: Props) => {
         return <IconsLegacy.NanoSFoldedMedium size={24} />;
       case DeviceModelId.stax:
         return <IconsLegacy.StaxMedium size={24} />;
+      case DeviceModelId.europa:
+        return <IconsLegacy.EuropaMedium size={24} />;
       case DeviceModelId.nanoX:
       default:
         return <IconsLegacy.NanoXFoldedMedium size={24} />;
@@ -61,16 +63,18 @@ const Item = ({ device, onPress }: Props) => {
         </Flex>
 
         {!wired ? (
-          <Touchable event="ItemForget" onPress={onItemContextPress}>
-            <OthersMedium size={24} color={"neutral.c100"} />
-          </Touchable>
+          <>
+            <Touchable event="ItemForget" onPress={onItemContextPress}>
+              <OthersMedium size={24} color={"neutral.c100"} />
+            </Touchable>
+            <RemoveDeviceMenu
+              open={isRemoveDeviceMenuOpen}
+              device={device}
+              onHideMenu={() => setIsRemoveDeviceMenuOpen(false)}
+            />
+          </>
         ) : null}
       </Flex>
-      <RemoveDeviceMenu
-        open={isRemoveDeviceMenuOpen}
-        device={device}
-        onHideMenu={() => setIsRemoveDeviceMenuOpen(false)}
-      />
     </Touchable>
   );
 };

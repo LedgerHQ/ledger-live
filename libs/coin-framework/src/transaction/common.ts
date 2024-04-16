@@ -7,8 +7,7 @@ import type {
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import { mapValues } from "lodash";
-
+import mapValues from "lodash/mapValues";
 import { getAccountUnit } from "../account";
 import { formatCurrencyUnit } from "../currencies";
 

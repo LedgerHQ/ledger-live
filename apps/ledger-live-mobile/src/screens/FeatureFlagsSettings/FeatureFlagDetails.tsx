@@ -1,6 +1,6 @@
 import React from "react";
 import { Pressable, View } from "react-native";
-import { useFeatureFlags } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
 import type { FeatureId } from "@ledgerhq/types-live";
 
 import { Flex, Divider, Tag } from "@ledgerhq/native-ui";

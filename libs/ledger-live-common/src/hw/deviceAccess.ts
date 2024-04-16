@@ -17,7 +17,7 @@ import {
 } from "@ledgerhq/errors";
 import { LocalTracer, TraceContext, trace } from "@ledgerhq/logs";
 import { getEnv } from "@ledgerhq/live-env";
-import { open, close, setAllowAutoDisconnect } from ".";
+import { open, close } from ".";
 
 const LOG_TYPE = "hw";
 
@@ -193,15 +193,18 @@ export const withDevice =
       tracer.trace(`New job for device: ${deviceId || "USB"}`);
 
       // To call to cleanup the current transport
-      const finalize = (transport: Transport, cleanups: Array<() => void>) => {
-        tracer.trace("Closing and cleaning transport");
+      const finalize = async (transport: Transport, cleanups: Array<() => void>) => {
+        tracer.trace("Closing and cleaning transport", { function: "finalize" });
 
-        setAllowAutoDisconnect(transport, deviceId, true);
-        return close(transport, deviceId)
-          .catch(() => {})
-          .then(() => {
-            cleanups.forEach(c => c());
+        try {
+          await close(transport, deviceId);
+        } catch (error) {
+          tracer.trace(`An error occurred when closing transport (ignoring it): ${error}`, {
+            error,
+            function: "finalize",
           });
+        }
+        cleanups.forEach(c => c());
       };
 
       let unsubscribed;
@@ -227,7 +230,6 @@ export const withDevice =
             // It was unsubscribed prematurely
             return finalize(transport, [resolveQueuedJob]);
           }
-          setAllowAutoDisconnect(transport, deviceId, false);
 
           if (needsCleanup[identifyTransport(transport)]) {
             delete needsCleanup[identifyTransport(transport)];
@@ -275,7 +277,11 @@ export const withDevice =
               },
               error: error => {
                 tracer.trace("Job error", { error });
-                o.error(error);
+                if (error.statusCode) {
+                  o.error(new TransportStatusError(error.statusCode));
+                } else {
+                  o.error(error);
+                }
               },
               complete: () => {
                 o.complete();

@@ -2,7 +2,7 @@ import React from "react";
 import { VideoProperties } from "react-native-video";
 import { FastImageProps } from "react-native-fast-image";
 import { NFTMediaSize, NFTMetadata } from "@ledgerhq/types-live";
-import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
+import { NFTResource } from "@ledgerhq/live-nft/types";
 import { Theme } from "@react-navigation/native";
 import { StyleProp, ViewStyle } from "react-native";
 import { getMetadataMediaType } from "~/logic/nft";

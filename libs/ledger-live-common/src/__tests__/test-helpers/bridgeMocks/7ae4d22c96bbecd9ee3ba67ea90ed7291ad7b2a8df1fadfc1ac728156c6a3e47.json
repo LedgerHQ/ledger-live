@@ -1,0 +1,1 @@
+{"request":{"url":"https://osmosis-api.polkachu.com/cosmos/bank/v1beta1/balances/osmo1xx72kqjlf2qqj88h0wakwv6rp0v8fwh74z9q89","method":"GET"},"response":{"body":{"balances":[{"denom":"uosmo","amount":"200250"}],"pagination":{"next_key":null,"total":"1"}}}}

@@ -4,7 +4,6 @@ import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import { multiline } from "~/renderer/styles/helpers";
-import { urls } from "~/config/urls";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
 import Box from "~/renderer/components/Box";
@@ -20,6 +19,8 @@ import { setDrawer } from "~/renderer/drawers/Provider";
 import { StepProps } from "../types";
 import { useEffect } from "react";
 import { useBaker } from "@ledgerhq/live-common/families/tezos/bakers";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+import { urls } from "~/config/urls";
 
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
@@ -121,6 +122,7 @@ export const StepConfirmationFooter = ({
   error,
   onClose,
 }: StepProps) => {
+  const stakingUrl = useLocalizedUrl(urls.stakingTezos);
   const concernedOperation = optimisticOperation
     ? optimisticOperation.subOperations && optimisticOperation.subOperations.length > 0
       ? optimisticOperation.subOperations[0]
@@ -131,7 +133,7 @@ export const StepConfirmationFooter = ({
       <Box mr={2} ff="Inter|SemiBold" fontSize={4}>
         <LinkWithExternalIcon
           label={<Trans i18nKey="delegation.howItWorks" />}
-          onClick={() => openURL(urls.stakingTezos)}
+          onClick={() => openURL(stakingUrl)}
         />
       </Box>
       {concernedOperation ? (

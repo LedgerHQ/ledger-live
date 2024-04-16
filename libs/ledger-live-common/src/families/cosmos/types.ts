@@ -3,6 +3,8 @@ import {
   Account,
   AccountRaw,
   Operation,
+  OperationExtra,
+  OperationExtraRaw,
   OperationRaw,
   TransactionCommon,
   TransactionCommonRaw,
@@ -135,21 +137,43 @@ export type NetworkInfoRaw = CosmosLikeNetworkInfoRaw & {
 export type CosmosOperation = Operation<CosmosOperationExtra>;
 export type CosmosOperationRaw = OperationRaw<CosmosOperationExtraRaw>;
 
-export type CosmosOperationExtra = {
+export type CosmosOperationExtra = OperationExtra & {
   validators?: CosmosDelegationInfo[];
   validator?: CosmosDelegationInfo;
   sourceValidator?: string;
   autoClaimedRewards?: string; // this is experimental to better represent auto claimed rewards
   memo?: string;
 };
+export function isCosmosOperationExtra(op: OperationExtra): op is CosmosOperationExtra {
+  return (
+    op !== null &&
+    typeof op === "object" &&
+    ("validators" in op ||
+      "validator" in op ||
+      "sourceValidator" in op ||
+      "autoClaimedRewards" in op ||
+      "memo" in op)
+  );
+}
 
-export type CosmosOperationExtraRaw = {
+export type CosmosOperationExtraRaw = OperationExtraRaw & {
   validators?: CosmosDelegationInfoRaw[];
   validator?: CosmosDelegationInfoRaw;
   sourceValidator?: string;
   autoClaimedRewards?: string; // this is experimental to better represent auto claimed rewards
   memo?: string;
 };
+export function isCosmosOperationExtraRaw(op: OperationExtraRaw): op is CosmosOperationExtraRaw {
+  return (
+    op !== null &&
+    typeof op === "object" &&
+    ("validators" in op ||
+      "validator" in op ||
+      "sourceValidator" in op ||
+      "autoClaimedRewards" in op ||
+      "memo" in op)
+  );
+}
 
 export type CosmosDelegationInfo = {
   address: string;

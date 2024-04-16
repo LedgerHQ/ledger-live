@@ -55,10 +55,6 @@ export const setDiscreetMode = (discreetMode: boolean) =>
   saveSettings({
     discreetMode,
   });
-export const setCarouselVisibility = (carouselVisibility: number) =>
-  saveSettings({
-    carouselVisibility,
-  });
 export const setSentryLogs = (sentryLogs: boolean) =>
   saveSettings({
     sentryLogs,
@@ -70,6 +66,10 @@ export const setFullNodeEnabled = (fullNodeEnabled: boolean) =>
 export const setShareAnalytics = (shareAnalytics: boolean) =>
   saveSettings({
     shareAnalytics,
+  });
+export const setSharePersonalizedRecommendations = (sharePersonalizedRecommandations: boolean) =>
+  saveSettings({
+    sharePersonalizedRecommandations,
   });
 export const setAutoLockTimeout = (autoLockTimeout: number) =>
   saveSettings({
@@ -84,6 +84,11 @@ export const setHasInstalledApps = (hasInstalledApps: boolean) =>
 export const setAllowDebugApps = (allowDebugApps: boolean) =>
   saveSettings({
     allowDebugApps,
+  });
+
+export const setAllowDebugReactQuery = (allowReactQueryDebug: boolean) =>
+  saveSettings({
+    allowReactQueryDebug,
   });
 export const setAllowExperimentalApps = (allowExperimentalApps: boolean) =>
   saveSettings({
@@ -305,14 +310,6 @@ export const setSwapHasAcceptedIPSharing = (hasAcceptedIPSharing: boolean) => ({
   type: "SET_SWAP_ACCEPTED_IP_SHARING",
   payload: hasAcceptedIPSharing,
 });
-export const addStarredMarketCoins = (payload: string) => ({
-  type: "ADD_STARRED_MARKET_COINS",
-  payload,
-});
-export const removeStarredMarketCoins = (payload: string) => ({
-  type: "REMOVE_STARRED_MARKET_COINS",
-  payload,
-});
 export const toggleStarredMarketCoins = (payload: string) => ({
   type: "TOGGLE_STARRED_MARKET_COINS",
   payload,
@@ -352,4 +349,9 @@ export const setVaultSigner = (payload: VaultSigner) => ({
 export const setSupportedCounterValues = (payload: SupportedCountervaluesData[]) => ({
   type: "SET_SUPPORTED_COUNTER_VALUES",
   payload,
+});
+
+export const setHasSeenAnalyticsOptInPrompt = (hasSeenAnalyticsOptInPrompt: boolean) => ({
+  type: "SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT",
+  payload: hasSeenAnalyticsOptInPrompt,
 });

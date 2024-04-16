@@ -1,80 +1,97 @@
-import app from "./commands/app";
-import appUninstallAll from "./commands/appUninstallAll";
-import appsCheckAllAppVersions from "./commands/appsCheckAllAppVersions";
-import appsInstallAll from "./commands/appsInstallAll";
-import appsUpdateTestAll from "./commands/appsUpdateTestAll";
-import balanceHistory from "./commands/balanceHistory";
-import bot from "./commands/bot";
-import botPortfolio from "./commands/botPortfolio";
-import botTransfer from "./commands/botTransfer";
-import broadcast from "./commands/broadcast";
-import cleanSpeculos from "./commands/cleanSpeculos";
-import confirmOp from "./commands/confirmOp";
-import countervalues from "./commands/countervalues";
-import derivation from "./commands/derivation";
-import devDeviceAppsScenario from "./commands/devDeviceAppsScenario";
-import deviceAppVersion from "./commands/deviceAppVersion";
-import deviceInfo from "./commands/deviceInfo";
-import deviceSDKFirmwareUpdate from "./commands/deviceSDKFirmwareUpdate";
-import deviceSDKGetBatteryStatuses from "./commands/deviceSDKGetBatteryStatuses";
-import deviceSDKGetDeviceInfo from "./commands/deviceSDKGetDeviceInfo";
-import deviceSDKToggleOnboardingEarlyCheck from "./commands/deviceSDKToggleOnboardingEarlyCheck";
-import deviceVersion from "./commands/deviceVersion";
-import discoverDevices from "./commands/discoverDevices";
-import envs from "./commands/envs";
-import estimateMaxSpendable from "./commands/estimateMaxSpendable";
-import exportAccounts from "./commands/exportAccounts";
-import firmwareRepair from "./commands/firmwareRepair";
-import firmwareUpdate from "./commands/firmwareUpdate";
-import generateTestScanAccounts from "./commands/generateTestScanAccounts";
-import generateTestTransaction from "./commands/generateTestTransaction";
-import genuineCheck from "./commands/genuineCheck";
-import getAddress from "./commands/getAddress";
-import getBatteryStatus from "./commands/getBatteryStatus";
-import getDeviceRunningMode from "./commands/getDeviceRunningMode";
-import getTransactionStatus from "./commands/getTransactionStatus";
-import i18n from "./commands/i18n";
-import listApps from "./commands/listApps";
-import liveData from "./commands/liveData";
-import managerListApps from "./commands/managerListApps";
-import portfolio from "./commands/portfolio";
-import proxy from "./commands/proxy";
-import receive from "./commands/receive";
-import repl from "./commands/repl";
-import satstack from "./commands/satstack";
-import satstackStatus from "./commands/satstackStatus";
-import scanDescriptors from "./commands/scanDescriptors";
-import send from "./commands/send";
-import signMessage from "./commands/signMessage";
-import speculosList from "./commands/speculosList";
-import staxFetchAndRestoreDemo from "./commands/staxFetchAndRestoreDemo";
-import staxFetchImage from "./commands/staxFetchImage";
-import staxFetchImageHash from "./commands/staxFetchImageHash";
-import staxLoadImage from "./commands/staxLoadImage";
-import staxRemoveImage from "./commands/staxRemoveImage";
-import swap from "./commands/swap";
-import sync from "./commands/sync";
-import synchronousOnboarding from "./commands/synchronousOnboarding";
-import testDetectOpCollision from "./commands/testDetectOpCollision";
-import testGetTrustedInputFromTxHash from "./commands/testGetTrustedInputFromTxHash";
-import user from "./commands/user";
-import version from "./commands/version";
+import bot from "./commands/blockchain/bot";
+import botPortfolio from "./commands/blockchain/botPortfolio";
+import botTransfer from "./commands/blockchain/botTransfer";
+import broadcast from "./commands/blockchain/broadcast";
+import confirmOp from "./commands/blockchain/confirmOp";
+import derivation from "./commands/blockchain/derivation";
+import estimateMaxSpendable from "./commands/blockchain/estimateMaxSpendable";
+import generateTestScanAccounts from "./commands/blockchain/generateTestScanAccounts";
+import generateTestTransaction from "./commands/blockchain/generateTestTransaction";
+import getAddress from "./commands/blockchain/getAddress";
+import getTransactionStatus from "./commands/blockchain/getTransactionStatus";
+import receive from "./commands/blockchain/receive";
+import satstack from "./commands/blockchain/satstack";
+import satstackStatus from "./commands/blockchain/satstackStatus";
+import scanDescriptors from "./commands/blockchain/scanDescriptors";
+import send from "./commands/blockchain/send";
+import signMessage from "./commands/blockchain/signMessage";
+import sync from "./commands/blockchain/sync";
+import testDetectOpCollision from "./commands/blockchain/testDetectOpCollision";
+import testGetTrustedInputFromTxHash from "./commands/blockchain/testGetTrustedInputFromTxHash";
+import app from "./commands/device/app";
+import appUninstallAll from "./commands/device/appUninstallAll";
+import appsCheckAllAppVersions from "./commands/device/appsCheckAllAppVersions";
+import appsInstallAll from "./commands/device/appsInstallAll";
+import appsUpdateTestAll from "./commands/device/appsUpdateTestAll";
+import cleanSpeculos from "./commands/device/cleanSpeculos";
+import customLockScreenFetch from "./commands/device/customLockScreenFetch";
+import customLockScreenFetchAndRestore from "./commands/device/customLockScreenFetchAndRestore";
+import customLockScreenFetchHash from "./commands/device/customLockScreenFetchHash";
+import customLockScreenLoad from "./commands/device/customLockScreenLoad";
+import customLockScreenRemove from "./commands/device/customLockScreenRemove";
+import devDeviceAppsScenario from "./commands/device/devDeviceAppsScenario";
+import deviceAppVersion from "./commands/device/deviceAppVersion";
+import deviceInfo from "./commands/device/deviceInfo";
+import deviceSDKFirmwareUpdate from "./commands/device/deviceSDKFirmwareUpdate";
+import deviceSDKGetBatteryStatuses from "./commands/device/deviceSDKGetBatteryStatuses";
+import deviceSDKGetDeviceInfo from "./commands/device/deviceSDKGetDeviceInfo";
+import deviceSDKToggleOnboardingEarlyCheck from "./commands/device/deviceSDKToggleOnboardingEarlyCheck";
+import deviceVersion from "./commands/device/deviceVersion";
+import discoverDevices from "./commands/device/discoverDevices";
+import firmwareRepair from "./commands/device/firmwareRepair";
+import firmwareUpdate from "./commands/device/firmwareUpdate";
+import genuineCheck from "./commands/device/genuineCheck";
+import getBatteryStatus from "./commands/device/getBatteryStatus";
+import getDeviceRunningMode from "./commands/device/getDeviceRunningMode";
+import i18n from "./commands/device/i18n";
+import listApps from "./commands/device/listApps";
+import managerListApps from "./commands/device/managerListApps";
+import proxy from "./commands/device/proxy";
+import repl from "./commands/device/repl";
+import speculosList from "./commands/device/speculosList";
+import balanceHistory from "./commands/live/balanceHistory";
+import countervalues from "./commands/live/countervalues";
+import envs from "./commands/live/envs";
+import exportAccounts from "./commands/live/exportAccounts";
+import liveData from "./commands/live/liveData";
+import portfolio from "./commands/live/portfolio";
+import synchronousOnboarding from "./commands/live/synchronousOnboarding";
+import user from "./commands/live/user";
+import version from "./commands/live/version";
+import swap from "./commands/ptx/swap";
 
 export default {
+  bot,
+  botPortfolio,
+  botTransfer,
+  broadcast,
+  confirmOp,
+  derivation,
+  estimateMaxSpendable,
+  generateTestScanAccounts,
+  generateTestTransaction,
+  getAddress,
+  getTransactionStatus,
+  receive,
+  satstack,
+  satstackStatus,
+  scanDescriptors,
+  send,
+  signMessage,
+  sync,
+  testDetectOpCollision,
+  testGetTrustedInputFromTxHash,
   app,
   appUninstallAll,
   appsCheckAllAppVersions,
   appsInstallAll,
   appsUpdateTestAll,
-  balanceHistory,
-  bot,
-  botPortfolio,
-  botTransfer,
-  broadcast,
   cleanSpeculos,
-  confirmOp,
-  countervalues,
-  derivation,
+  customLockScreenFetch,
+  customLockScreenFetchAndRestore,
+  customLockScreenFetchHash,
+  customLockScreenLoad,
+  customLockScreenRemove,
   devDeviceAppsScenario,
   deviceAppVersion,
   deviceInfo,
@@ -84,42 +101,25 @@ export default {
   deviceSDKToggleOnboardingEarlyCheck,
   deviceVersion,
   discoverDevices,
-  envs,
-  estimateMaxSpendable,
-  exportAccounts,
   firmwareRepair,
   firmwareUpdate,
-  generateTestScanAccounts,
-  generateTestTransaction,
   genuineCheck,
-  getAddress,
   getBatteryStatus,
   getDeviceRunningMode,
-  getTransactionStatus,
   i18n,
   listApps,
-  liveData,
   managerListApps,
-  portfolio,
   proxy,
-  receive,
   repl,
-  satstack,
-  satstackStatus,
-  scanDescriptors,
-  send,
-  signMessage,
   speculosList,
-  staxFetchAndRestoreDemo,
-  staxFetchImage,
-  staxFetchImageHash,
-  staxLoadImage,
-  staxRemoveImage,
-  swap,
-  sync,
+  balanceHistory,
+  countervalues,
+  envs,
+  exportAccounts,
+  liveData,
+  portfolio,
   synchronousOnboarding,
-  testDetectOpCollision,
-  testGetTrustedInputFromTxHash,
   user,
   version,
+  swap,
 };

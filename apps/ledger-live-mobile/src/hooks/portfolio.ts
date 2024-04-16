@@ -5,8 +5,8 @@ import {
   useBalanceHistoryWithCountervalue as useBalanceHistoryWithCountervalueCommon,
   useCurrencyPortfolio as useCurrencyPortfolioCommon,
   usePortfolioThrottled,
-} from "@ledgerhq/live-common/portfolio/v2/react";
-import { GetPortfolioOptionsType } from "@ledgerhq/live-common/portfolio/v2/index";
+} from "@ledgerhq/live-countervalues-react/portfolio";
+import { GetPortfolioOptionsType } from "@ledgerhq/live-countervalues/portfolio";
 import { selectedTimeRangeSelector, counterValueCurrencySelector } from "../reducers/settings";
 import { accountsSelector } from "../reducers/accounts";
 

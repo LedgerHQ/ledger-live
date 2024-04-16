@@ -11,7 +11,7 @@ export default class LiveAppWebview {
 
   async startLiveApp(liveAppDirectory: string, liveAppPort = 3000) {
     try {
-      const port = await startDummyServer(`${liveAppDirectory}/build`, liveAppPort);
+      const port = await startDummyServer(`${liveAppDirectory}/dist`, liveAppPort);
 
       const url = `http://localhost:${port}`;
       const response = await fetch(url);
@@ -46,7 +46,12 @@ export default class LiveAppWebview {
 
     const response = firstValueFrom(
       e2eBridgeServer.pipe(
-        filter(msg => msg.type === "walletAPIResponse"),
+        filter(
+          (
+            msg,
+          ): msg is { type: "walletAPIResponse"; id: string; payload: Record<string, unknown> } =>
+            msg.type === "walletAPIResponse",
+        ),
         first(),
         map(msg => msg.payload),
       ),

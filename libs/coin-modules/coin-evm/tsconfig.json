@@ -1,0 +1,13 @@
+{
+  "extends": "../../../tsconfig.base",
+  "compilerOptions": {
+    "declaration": true,
+    "declarationMap": true,
+    "module": "commonjs",
+    "downlevelIteration": true,
+    "lib": ["es2020", "dom"],
+    "outDir": "lib"
+  },
+  "files": ["node_modules/jest-expect-message/types/index.d.ts"],
+  "include": ["src/**/*"]
+}

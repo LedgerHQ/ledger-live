@@ -5,7 +5,7 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 import { TFunction } from "i18next";
 import { Trans, withTranslation } from "react-i18next";
-import { Account } from "@ledgerhq/types-live";
+import type { Account, DerivationMode } from "@ledgerhq/types-live";
 import { Unit } from "@ledgerhq/types-cryptoassets";
 import { validateNameEdition } from "@ledgerhq/live-common/account/index";
 import { AccountNameRequiredError } from "@ledgerhq/errors";
@@ -23,13 +23,11 @@ import Spoiler from "~/renderer/components/Spoiler";
 import ConfirmModal from "~/renderer/modals/ConfirmModal";
 import Space from "~/renderer/components/Space";
 import Button from "~/renderer/components/Button";
-import { DerivationMode, getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
+import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
 type State = {
   accountName: string | undefined | null;
   accountUnit: Unit | undefined | null;
-  endpointConfig: string | undefined | null;
   accountNameError: Error | undefined | null;
-  endpointConfigError: Error | undefined | null;
   isRemoveAccountModalOpen: boolean;
 };
 type OwnProps = {
@@ -52,9 +50,7 @@ const mapDispatchToProps = {
 const defaultState = {
   accountName: null,
   accountUnit: null,
-  endpointConfig: null,
   accountNameError: null,
-  endpointConfigError: null,
   isRemoveAccountModalOpen: false,
 };
 class AccountSettingRenderBody extends PureComponent<Props, State> {
@@ -85,21 +81,18 @@ class AccountSettingRenderBody extends PureComponent<Props, State> {
     (e: React.SyntheticEvent<HTMLFormElement | HTMLInputElement>) => {
       e.preventDefault();
       const { updateAccount, setDataModal } = this.props;
-      const { accountName, accountUnit, endpointConfig, endpointConfigError } = this.state;
+      const { accountName, accountUnit } = this.state;
       if (!account.name.length) {
         this.setState({
           accountNameError: new AccountNameRequiredError(),
         });
-      } else if (!endpointConfigError) {
+      } else {
         const name = validateNameEdition(account, accountName);
         account = {
           ...account,
           unit: accountUnit || account.unit,
           name,
         };
-        if (endpointConfig && !endpointConfigError) {
-          account.endpointConfig = endpointConfig;
-        }
         updateAccount(account);
         setDataModal("MODAL_SETTINGS_ACCOUNT", {
           account,
@@ -114,11 +107,6 @@ class AccountSettingRenderBody extends PureComponent<Props, State> {
       case "accountName":
         this.setState({
           accountNameError: null,
-        });
-        break;
-      case "endpointConfig":
-        this.setState({
-          endpointConfigError: null,
         });
         break;
       default:

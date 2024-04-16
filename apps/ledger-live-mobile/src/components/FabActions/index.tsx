@@ -11,6 +11,7 @@ import InfoModal from "../InfoModal";
 import { useAnalytics } from "~/analytics";
 import { WrappedButtonProps } from "../wrappedUi/Button";
 import { NavigatorName } from "~/const";
+import { useRoute } from "@react-navigation/native";
 
 export type ModalOnDisabledClickComponentProps = {
   account?: AccountLike;
@@ -95,6 +96,8 @@ export const FabButtonBarProvider = ({
 
   const navigation = useNavigation<StackNavigationProp<ParamListBase, string, NavigatorName>>();
 
+  const router = useRoute();
+
   const onNavigate = useCallback(
     (name: string, options?: object) => {
       const parent = navigation.getParent(NavigatorName.RootNavigator);
@@ -103,17 +106,26 @@ export const FabButtonBarProvider = ({
           ? parent.setParams({ drawer: options.drawer })
           : navigation.navigate(NavigatorName.Base, options);
       }
+
+      const typedOpts = options as { screen?: string; params?: object } | undefined;
+
       (
         navigation as StackNavigationProp<{
           [key: string]: object | undefined;
         }>
-      ).navigate(name, {
-        ...options,
-        params: {
-          ...(options ? (options as { params: object }).params : {}),
-          ...navigationProps,
-        },
-      });
+      ).navigate(
+        name,
+        // one level deep navigation
+        typedOpts && !typedOpts?.screen
+          ? { ...typedOpts?.params }
+          : {
+              ...typedOpts,
+              params: {
+                ...(typedOpts ? typedOpts.params : {}),
+                ...navigationProps,
+              },
+            },
+      );
     },
     [navigation, navigationProps],
   );
@@ -124,10 +136,15 @@ export const FabButtonBarProvider = ({
 
       if (!confirmModalProps) {
         if (event) {
-          track(event, { ...globalEventProperties, ...eventProperties });
+          track(event, { page: router.name, ...globalEventProperties, ...eventProperties });
         }
         if (id) {
-          track("button_clicked", { ...globalEventProperties, button: id });
+          track("button_clicked", {
+            page: router.name,
+            ...globalEventProperties,
+            ...eventProperties,
+            button: id,
+          });
         }
         setInfoModalProps(undefined);
         if (linkUrl) {
@@ -140,7 +157,7 @@ export const FabButtonBarProvider = ({
         setIsModalInfoOpened(true);
       }
     },
-    [globalEventProperties, onNavigate, track],
+    [globalEventProperties, onNavigate, track, router.name],
   );
 
   const onContinue = useCallback(() => {

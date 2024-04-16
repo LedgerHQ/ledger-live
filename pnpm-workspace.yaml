@@ -2,6 +2,7 @@ packages:
   - "apps/*"
   - "libs/*"
   - "tests/*"
+  - "libs/coin-modules/*"
   - "libs/ledgerjs/**"
   - "libs/ui/packages/*"
   - "libs/ui/examples/*"

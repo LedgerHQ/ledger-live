@@ -1,4 +1,3 @@
-import moment from "moment";
 import { ipcRenderer, webFrame } from "electron";
 import React, { useState, useCallback } from "react";
 import { useSelector } from "react-redux";
@@ -10,6 +9,7 @@ import logger, { memoryLogger } from "~/renderer/logger";
 import getUser from "~/helpers/user";
 import Button, { Props as ButtonProps } from "~/renderer/components/Button";
 import { accountsSelector } from "~/renderer/reducers/accounts";
+import { useTechnicalDateTimeFn } from "../hooks/useDateFormatter";
 
 const saveLogs = async (path: Electron.SaveDialogReturnValue) => {
   const memoryLogs = memoryLogger.getMemoryLogs();
@@ -18,10 +18,10 @@ const saveLogs = async (path: Electron.SaveDialogReturnValue) => {
     // Serializes ourself with `stringify` to avoid "object could not be cloned" errors from the electron IPC serializer.
     const memoryLogsStr = JSON.stringify(memoryLogs, null, 2);
 
-    // Requests the main thread to save logs in a file
+    // Requests the main process to save logs in a file
     await ipcRenderer.invoke("save-logs", path, memoryLogsStr);
   } catch (error) {
-    console.error("Error while requesting to save logs from the renderer thread", error);
+    console.error("Error while requesting to save logs from the renderer process", error);
   }
 };
 
@@ -70,6 +70,7 @@ const ExportLogsBtn = ({
 }: Props) => {
   const { t } = useTranslation();
   const [exporting, setExporting] = useState(false);
+  const getDateTxt = useTechnicalDateTimeFn();
   const exportLogs = useCallback(async () => {
     const resourceUsage = webFrame.getResourceUsage();
     const user = await getUser();
@@ -87,9 +88,7 @@ const ExportLogsBtn = ({
     });
     const path = await ipcRenderer.invoke("show-save-dialog", {
       title: "Export logs",
-      defaultPath: `ledgerlive-logs-${moment().format("YYYY.MM.DD-HH.mm.ss")}-${
-        __GIT_REVISION__ || "unversioned"
-      }.json`,
+      defaultPath: `ledgerlive-logs-${getDateTxt()}-${__GIT_REVISION__ || "unversioned"}.json`,
       filters: [
         {
           name: "All Files",
@@ -100,7 +99,7 @@ const ExportLogsBtn = ({
     if (path) {
       await saveLogs(path);
     }
-  }, [accounts]);
+  }, [accounts, getDateTxt]);
   const handleExportLogs = useCallback(async () => {
     if (exporting) return;
     setExporting(true);

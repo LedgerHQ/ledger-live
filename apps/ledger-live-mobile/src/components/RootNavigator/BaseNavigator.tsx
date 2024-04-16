@@ -9,6 +9,7 @@ import { useTranslation } from "react-i18next";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
 import { useSelector } from "react-redux";
+import { Button, IconsLegacy } from "@ledgerhq/native-ui";
 
 import { ScreenName, NavigatorName } from "~/const";
 import * as families from "~/families";
@@ -51,21 +52,18 @@ import RequestAccountNavigator from "./RequestAccountNavigator";
 import VerifyAccount from "~/screens/VerifyAccount";
 import { LiveApp } from "~/screens/Platform";
 import AccountsNavigator from "./AccountsNavigator";
-import MarketCurrencySelect from "~/screens/Market/MarketCurrencySelect";
+import MarketNavigator from "LLM/features/Market/Navigator";
 import {
   BleDevicePairingFlow,
   bleDevicePairingFlowHeaderOptions,
 } from "~/screens/BleDevicePairingFlow";
 
 import PostBuyDeviceScreen from "~/screens/PostBuyDeviceScreen";
-import LearnWebView from "~/screens/Learn/index";
 import { useNoNanoBuyNanoWallScreenOptions } from "~/context/NoNanoBuyNanoWall";
 import PostBuyDeviceSetupNanoWallScreen from "~/screens/PostBuyDeviceSetupNanoWallScreen";
-import MarketDetail from "~/screens/Market/MarketDetail";
 import CurrencySettings from "~/screens/Settings/CryptoAssets/Currencies/CurrencySettings";
 import WalletConnectLiveAppNavigator from "./WalletConnectLiveAppNavigator";
 import CustomImageNavigator from "./CustomImageNavigator";
-import ClaimNftNavigator from "./ClaimNftNavigator";
 import PostOnboardingNavigator from "./PostOnboardingNavigator";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { hasNoAccountsSelector } from "~/reducers/accounts";
@@ -84,6 +82,8 @@ import {
 import { RootDrawer } from "../RootDrawer/RootDrawer";
 import EditTransactionNavigator from "~/families/evm/EditTransactionFlow/EditTransactionNavigator";
 import { DrawerProps } from "../RootDrawer/types";
+import AnalyticsOptInPromptNavigator from "./AnalyticsOptInPromptNavigator";
+import FirmwareUpdateScreen from "~/screens/FirmwareUpdate";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
@@ -190,11 +190,6 @@ export default function BaseNavigator() {
             headerStyle: styles.headerNoShadow,
           }}
           {...noNanoBuyNanoWallScreenOptions}
-        />
-        <Stack.Screen
-          name={ScreenName.LearnWebView}
-          component={LearnWebView}
-          options={{ headerShown: false }}
         />
         <Stack.Screen
           name={NavigatorName.ExploreTab}
@@ -308,6 +303,7 @@ export default function BaseNavigator() {
                         ? t(`operations.types.${route.params.operation.type}`)
                         : ""
                     }
+                    testID="operationDetails-title"
                   />
                 ),
                 headerLeft: () => <NavigationHeaderBackButton />,
@@ -324,6 +320,7 @@ export default function BaseNavigator() {
                       ? t(`operations.types.${route.params.operation.type}`)
                       : ""
                   }
+                  testID="operationDetails-title"
                 />
               ),
               headerLeft: () => <NavigationHeaderBackButton />,
@@ -388,16 +385,7 @@ export default function BaseNavigator() {
             cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
           }}
         />
-        <Stack.Screen
-          name={ScreenName.MarketCurrencySelect}
-          component={MarketCurrencySelect}
-          options={{
-            title: t("market.filters.currency"),
-            headerLeft: () => null,
-            // FIXME: ONLY ON BOTTOM TABS AND DRAWER NAVIGATION
-            // unmountOnBlur: true,
-          }}
-        />
+        {MarketNavigator({ Stack })}
         <Stack.Screen
           name={ScreenName.PortfolioOperationHistory}
           component={PortfolioHistory}
@@ -453,20 +441,8 @@ export default function BaseNavigator() {
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name={ScreenName.MarketDetail}
-          component={MarketDetail}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
           name={NavigatorName.CustomImage}
           component={CustomImageNavigator}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name={NavigatorName.ClaimNft}
-          component={ClaimNftNavigator}
           options={{ headerShown: false }}
         />
         {/* This is a freaking hack… */}
@@ -537,6 +513,21 @@ export default function BaseNavigator() {
           name={NavigatorName.EvmEditTransaction}
           options={{ headerShown: false }}
           component={EditTransactionNavigator}
+        />
+        <Stack.Screen
+          name={NavigatorName.AnalyticsOptInPrompt}
+          options={{ headerShown: false }}
+          component={AnalyticsOptInPromptNavigator}
+        />
+        <Stack.Screen
+          name={ScreenName.FirmwareUpdate}
+          component={FirmwareUpdateScreen}
+          options={{
+            gestureEnabled: false,
+            headerTitle: () => null,
+            headerLeft: () => null,
+            headerRight: () => <Button Icon={IconsLegacy.CloseMedium} />,
+          }}
         />
       </Stack.Navigator>
     </>

@@ -13,7 +13,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { Linking, TouchableOpacity } from "react-native";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useSelector } from "react-redux";
 
 import Button from "~/components/wrappedUi/Button";
@@ -210,7 +210,7 @@ export default function GetDeviceScreen() {
           type="main"
           outline={false}
           event="button_clicked"
-          testID="market-place-btn"
+          testID="getDevice-buy-button"
           eventProperties={{
             button: "Buy your Ledger now",
             page: ScreenName.GetDevice,

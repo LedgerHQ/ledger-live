@@ -33,6 +33,7 @@ import DelegatingContainer from "../../tezos/DelegatingContainer";
 import ValidatorImage from "../shared/ValidatorImage";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { DelegationAction, SolanaDelegationFlowParamList } from "./types";
+import TranslatedError from "../../../components/TranslatedError";
 
 type Props = StackNavigatorProps<SolanaDelegationFlowParamList, ScreenName.DelegationSummary>;
 
@@ -158,6 +159,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
   ]);
 
   const hasErrors = Object.keys(status.errors).length > 0;
+  const error = Object.values(status.errors)[0];
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
@@ -222,6 +224,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
         </View>
       </View>
       <View style={styles.footer}>
+        <TranslatedError error={error} />
         <Button
           event="SummaryContinue"
           type="primary"

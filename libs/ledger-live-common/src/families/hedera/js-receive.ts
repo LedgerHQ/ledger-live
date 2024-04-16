@@ -1,9 +1,9 @@
 import { WrongDeviceForAccount } from "@ledgerhq/errors";
 import { Observable } from "rxjs";
 import { withDevice } from "../../hw/deviceAccess";
-import { DerivationMode, isSegwitDerivationMode } from "@ledgerhq/coin-framework/derivation";
+import { isSegwitDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import getAddress from "../../hw/getAddress";
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, DerivationMode } from "@ledgerhq/types-live";
 
 const receive = (
   account: Account,

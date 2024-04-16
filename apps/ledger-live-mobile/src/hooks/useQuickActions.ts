@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { type ParamListBase } from "@react-navigation/native";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
-import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { NavigatorName, ScreenName } from "~/const";
 import { accountsCountSelector, areAccountsEmptySelector } from "../reducers/accounts";
 import { readOnlyModeEnabledSelector } from "../reducers/settings";
@@ -33,7 +33,6 @@ function useQuickActions() {
   const accountsCount: number = useSelector(accountsCountSelector);
   const areAccountsEmpty = useSelector(areAccountsEmptySelector);
 
-  const walletConnectEntryPoint = useFeature("walletConnectEntryPoint");
   const recoverEntryPoint = useFeature("protectServicesMobile");
   const stakePrograms = useFeature("stakePrograms");
 
@@ -105,18 +104,16 @@ function useQuickActions() {
       };
     }
 
-    if (walletConnectEntryPoint?.enabled) {
-      list.WALLET_CONNECT = {
-        disabled: readOnlyModeEnabled,
-        route: [
-          NavigatorName.WalletConnect,
-          {
-            screen: ScreenName.WalletConnectConnect,
-          },
-        ],
-        icon: IconsLegacy.WalletConnectMedium,
-      };
-    }
+    list.WALLET_CONNECT = {
+      disabled: readOnlyModeEnabled,
+      route: [
+        NavigatorName.WalletConnect,
+        {
+          screen: ScreenName.WalletConnectConnect,
+        },
+      ],
+      icon: IconsLegacy.WalletConnectMedium,
+    };
 
     if (recoverEntryPoint?.enabled) {
       list.RECOVER = {
@@ -124,7 +121,7 @@ function useQuickActions() {
         route: [
           NavigatorName.Base,
           {
-            screen: ScreenName.Manager,
+            screen: ScreenName.MyLedgerChooseDevice,
           },
         ],
         icon: IconsLegacy.ShieldCheckMedium,
@@ -139,7 +136,6 @@ function useQuickActions() {
     readOnlyModeEnabled,
     route,
     stakePrograms?.enabled,
-    walletConnectEntryPoint?.enabled,
     recoverEntryPoint?.enabled,
   ]);
 

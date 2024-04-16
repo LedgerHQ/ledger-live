@@ -87,7 +87,7 @@ export default function FormInputs({
 }: FormInputsProps) {
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const reverseSwapAndTrack = () => {
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "switch",
       page: "Page Swap Form",
       ...swapDefaultTrack,

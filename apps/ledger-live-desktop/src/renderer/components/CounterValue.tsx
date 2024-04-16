@@ -1,14 +1,14 @@
 import { BigNumber } from "bignumber.js";
-import React, { useEffect, useMemo } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
 import { Currency } from "@ledgerhq/types-cryptoassets";
-import { useCalculate, useCountervaluesPolling } from "@ledgerhq/live-common/countervalues/react";
+import { useCalculate } from "@ledgerhq/live-countervalues-react";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import FormattedVal, { OwnProps as FormattedValProps } from "~/renderer/components/FormattedVal";
 import ToolTip from "./Tooltip";
 import { Trans } from "react-i18next";
 import useTheme from "~/renderer/hooks/useTheme";
-import { addExtraSessionTrackingPair, useTrackingPairs } from "../actions/general";
+import { useOnDemandCurrencyCountervalues } from "../actions/deprecated/ondemand-countervalues";
 
 type Props = {
   // wich market to query
@@ -69,22 +69,9 @@ export default function CounterValue({
 }: Props) {
   const value = valueProp instanceof BigNumber ? valueProp.toNumber() : valueProp;
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
-  const trackingPairs = useTrackingPairs();
-  const cvPolling = useCountervaluesPolling();
-  const hasTrackingPair = useMemo(
-    () => trackingPairs.some(tp => tp.from === currency && tp.to === counterValueCurrency),
-    [counterValueCurrency, currency, trackingPairs],
-  );
-  useEffect(() => {
-    if (!hasTrackingPair) {
-      addExtraSessionTrackingPair({
-        from: currency,
-        to: counterValueCurrency,
-      });
-      const t = setTimeout(cvPolling.poll, 2000); // poll after 2s to ensure debounced CV userSettings are effective after this update
-      return () => clearTimeout(t);
-    }
-  }, [counterValueCurrency, currency, cvPolling, cvPolling.poll, hasTrackingPair, trackingPairs]);
+
+  useOnDemandCurrencyCountervalues(currency, counterValueCurrency);
+
   const countervalue = useCalculate({
     from: currency,
     to: counterValueCurrency,

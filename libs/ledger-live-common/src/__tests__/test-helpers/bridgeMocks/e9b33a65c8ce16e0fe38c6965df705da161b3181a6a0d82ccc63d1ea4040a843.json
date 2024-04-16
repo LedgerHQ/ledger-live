@@ -1,0 +1,1 @@
+{"request":{"url":"https://osmosis-api.polkachu.com/cosmos/staking/v1beta1/delegators/osmo10h50supk4en682vrjkc6wkgkpcyxyqn4vxjy2c/redelegations","method":"GET"},"response":{"body":{"redelegation_responses":[],"pagination":{"next_key":null,"total":"0"}}}}

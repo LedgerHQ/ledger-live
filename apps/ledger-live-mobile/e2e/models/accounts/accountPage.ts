@@ -1,11 +1,12 @@
-import { currencyParam, openDeeplink, waitForElementById } from "../../helpers";
+import { currencyParam, openDeeplink, waitForElementById, getElementById } from "../../helpers";
 
 const baseLink = "account";
 
 export default class accountPage {
-  async openViaDeeplink(currencyName?: string) {
-    const link = currencyName ? baseLink + currencyParam + currencyName : baseLink;
-    await openDeeplink(link);
+  accountSettingsButton = () => getElementById("accounts-settings");
+
+  async waitForAccountPageToLoad(coin: string) {
+    await waitForElementById(`accounts-title-${coin}`);
   }
 
   async waitForAccountsPageToLoad() {
@@ -15,5 +16,14 @@ export default class accountPage {
   async waitForAccountAssetsToLoad(currencyName: string) {
     await waitForElementById(`account-assets-${currencyName}`);
     await waitForElementById(`accounts-title-${currencyName}`);
+  }
+
+  async openViaDeeplink(currencyLong?: string) {
+    const link = currencyLong ? baseLink + currencyParam + currencyLong : baseLink;
+    await openDeeplink(link);
+  }
+
+  async openAccountSettings() {
+    await this.accountSettingsButton().tap();
   }
 }

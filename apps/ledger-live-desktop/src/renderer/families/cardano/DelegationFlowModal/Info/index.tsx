@@ -7,6 +7,7 @@ import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import { CardanoAccount } from "@ledgerhq/live-common/families/cardano/types";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 
 export type CardanoEarnRewardsInfoModalProps = {
   account: CardanoAccount;
@@ -23,9 +24,11 @@ export default function CardanoEarnRewardsInfoModal({ account }: CardanoEarnRewa
       }),
     );
   }, [account, dispatch]);
-  const onLearnMore = useCallback(() => {
-    openURL(urls.cardanoStakingRewards);
-  }, []);
+
+  const cardanoStakingRewards = useLocalizedUrl(urls.cardanoStakingRewards);
+  const onLearnMore = () => {
+    openURL(cardanoStakingRewards);
+  };
   return (
     <EarnRewardsInfoModal
       name="MODAL_CARDANO_REWARDS_INFO"

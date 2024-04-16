@@ -27,7 +27,7 @@ const MemoValueField = ({
   const bridge = getAccountBridge(account);
   const onMemoValueChange = useCallback(
     (memo: string) => {
-      track("button_clicked", {
+      track("button_clicked2", {
         ...trackProperties,
         button: "input",
         memo,

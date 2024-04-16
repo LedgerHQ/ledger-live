@@ -1,5 +1,5 @@
 import React, { memo, useMemo } from "react";
-import { useNftCollectionMetadata } from "@ledgerhq/live-common/nft/index";
+import { useNftCollectionMetadata } from "@ledgerhq/live-nft-react";
 import { Account, ProtoNFT } from "@ledgerhq/types-live";
 import NFTCollectionContextMenu from "~/renderer/components/ContextMenu/NFTCollectionContextMenu";
 import Skeleton from "~/renderer/components/Nft/Skeleton";

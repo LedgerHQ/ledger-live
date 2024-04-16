@@ -71,11 +71,9 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   optimism: EVM_DEAD_ADDRESS,
   optimism_goerli: EVM_DEAD_ADDRESS,
   arbitrum: EVM_DEAD_ADDRESS,
-  arbitrum_goerli: EVM_DEAD_ADDRESS,
+  arbitrum_sepolia: EVM_DEAD_ADDRESS,
   rsk: EVM_DEAD_ADDRESS,
   bittorrent: EVM_DEAD_ADDRESS,
-  kava_evm: EVM_DEAD_ADDRESS,
-  evmos_evm: EVM_DEAD_ADDRESS,
   energy_web: EVM_DEAD_ADDRESS,
   astar: EVM_DEAD_ADDRESS,
   metis: EVM_DEAD_ADDRESS,
@@ -94,7 +92,7 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   polygon_zk_evm: EVM_DEAD_ADDRESS,
   polygon_zk_evm_testnet: EVM_DEAD_ADDRESS,
   base: EVM_DEAD_ADDRESS,
-  base_goerli: EVM_DEAD_ADDRESS,
+  base_sepolia: EVM_DEAD_ADDRESS,
   stacks: "SP3KS7VMY2ZNE6SB88PHR4SKRK2EEPHS8N8MCCBR9",
   secret_network: "secret19rl4cm2hmr8afy4kldpxz3fka4jguq0a79e5zf",
   stargaze: "stars19rl4cm2hmr8afy4kldpxz3fka4jguq0agu6q5y",
@@ -110,6 +108,8 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   lukso: EVM_DEAD_ADDRESS,
   icon: "hxd3f4224ffb2cfd354f8db2eef39e12aadb7a4ebb",
   icon_berlin_testnet: "hxd3f4224ffb2cfd354f8db2eef39e12aadb7a4ebb",
+  linea: EVM_DEAD_ADDRESS,
+  linea_goerli: EVM_DEAD_ADDRESS,
 };
 
 /**

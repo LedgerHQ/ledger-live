@@ -2,6 +2,8 @@ import type {
   Account,
   AccountRaw,
   Operation,
+  OperationExtra,
+  OperationExtraRaw,
   OperationRaw,
   TransactionCommon,
   TransactionCommonRaw,
@@ -218,6 +220,13 @@ export type ElrondOperationRaw = OperationRaw<ElrondOperationExtraRaw>;
 export type ElrondOperationExtra = {
   amount?: BigNumber;
 };
+export function isElrondOperationExtra(op: OperationExtra): op is ElrondOperationExtra {
+  return op !== null && typeof op === "object" && "amount" in op;
+}
+
 export type ElrondOperationExtraRaw = {
   amount?: string;
 };
+export function isElrondOperationExtraRaw(op: OperationExtraRaw): op is ElrondOperationExtraRaw {
+  return op !== null && typeof op === "object" && "amount" in op;
+}

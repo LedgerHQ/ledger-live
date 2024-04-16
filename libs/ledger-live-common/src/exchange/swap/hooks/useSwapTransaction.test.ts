@@ -1,4 +1,8 @@
-import { renderHook } from "@testing-library/react-hooks";
+/**
+ * @jest-environment jsdom
+ */
+import "../../../__tests__/test-helpers/dom-polyfill";
+import { renderHook } from "@testing-library/react";
 import { AmountRequired, NotEnoughGas, NotEnoughGasSwap } from "@ledgerhq/errors";
 
 import { useFromAmountStatusMessage } from "./useSwapTransaction";

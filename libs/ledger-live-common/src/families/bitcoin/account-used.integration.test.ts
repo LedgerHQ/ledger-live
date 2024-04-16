@@ -4,7 +4,7 @@ import { fromAccountRaw } from "../../account";
 import { getAccountBridge } from "../../bridge";
 import { accountDataToAccount, accountToAccountData } from "../../cross";
 import "../../__tests__/test-helpers/setup";
-import { bitcoin1 } from "./datasets/bitcoin";
+import { bitcoin1 } from "@ledgerhq/coin-bitcoin/datasets/bitcoin";
 import { firstValueFrom } from "rxjs";
 
 async function syncAccount(initialAccount: Account): Promise<Account> {

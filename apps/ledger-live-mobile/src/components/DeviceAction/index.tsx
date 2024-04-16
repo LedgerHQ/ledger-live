@@ -19,7 +19,11 @@ import type { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { AccountLike, AnyMessage, DeviceInfo } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
-import { Exchange, ExchangeRate, InitSwapResult } from "@ledgerhq/live-common/exchange/swap/types";
+import {
+  ExchangeSwap,
+  ExchangeRate,
+  InitSwapResult,
+} from "@ledgerhq/live-common/exchange/swap/types";
 import { AppAndVersion } from "@ledgerhq/live-common/hw/connectApp";
 import { LedgerErrorConstructor } from "@ledgerhq/errors/lib/helpers";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -44,9 +48,6 @@ import {
   AutoRepair,
   renderAllowLanguageInstallation,
   renderAllowRemoveCustomLockscreen,
-  renderImageLoadRequested,
-  renderLoadingImage,
-  renderImageCommitRequested,
   RequiredFirmwareUpdate,
 } from "./rendering";
 import PreventNativeBack from "../PreventNativeBack";
@@ -210,9 +211,6 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     installingApp,
     progress,
     listingApps,
-    imageLoadRequested,
-    loadingImage,
-    imageCommitRequested,
   } = status;
 
   useEffect(() => {
@@ -387,7 +385,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
       device: Device;
       transaction: Transaction;
       exchangeRate: ExchangeRate;
-      exchange: Exchange;
+      exchange: ExchangeSwap;
       amountExpectedTo?: string;
       estimatedFees?: string;
     };
@@ -426,16 +424,6 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
       colors,
       theme,
     });
-  }
-
-  if (imageLoadRequested && device) {
-    return renderImageLoadRequested({ t, device });
-  }
-  if (loadingImage && device && typeof progress === "number") {
-    return renderLoadingImage({ t, device, progress });
-  }
-  if (imageCommitRequested && device) {
-    return renderImageCommitRequested({ t, device });
   }
 
   if (!isLoading && error) {

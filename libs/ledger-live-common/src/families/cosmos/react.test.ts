@@ -1,12 +1,17 @@
+/**
+ * @jest-environment jsdom
+ */
+import "../../__tests__/test-helpers/dom-polyfill";
 import invariant from "invariant";
-import { renderHook, act } from "@testing-library/react-hooks";
+import { renderHook, act } from "@testing-library/react";
 import { getAccountUnit } from "../../account";
 import { getAccountBridge, getCurrencyBridge } from "../../bridge";
 import { getCryptoCurrencyById } from "../../currencies";
 import { setEnv } from "@ledgerhq/live-env";
 import { makeBridgeCacheSystem } from "../../bridge/cache";
 import { genAccount, genAddingOperationsInAccount } from "../../mock/account";
-import defaultConfig from "../../config/defaultConfig";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { liveConfig } from "../../config/sharedConfig";
 import cryptoFactory from "./chain/chain";
 import type {
   CosmosAccount,
@@ -20,6 +25,7 @@ import { getCurrentCosmosPreloadData } from "./preloadedData";
 import preloadedMockData from "./preloadedData.mock";
 import * as hooks from "./react";
 import { CurrencyBridge } from "@ledgerhq/types-live";
+
 const localCache = {};
 const cache = makeBridgeCacheSystem({
   saveData(c, d) {
@@ -31,13 +37,14 @@ const cache = makeBridgeCacheSystem({
     return Promise.resolve(localCache[c.id]);
   },
 });
+
 describe("cosmos/react", () => {
   beforeAll(() => {
-    // FIXME cryptoFactory should just be replaced with defaultConfig
+    LiveConfig.setConfig(liveConfig);
     const cosmos = cryptoFactory("cosmos");
-    cosmos.lcd = defaultConfig.config.cosmos.cosmos.lcd;
-    cosmos.minGasPrice = defaultConfig.config.cosmos.cosmos.minGasPrice;
-    cosmos.ledgerValidator = defaultConfig.config.cosmos.cosmos.ledgerValidator;
+    cosmos.lcd = LiveConfig.getValueByKey("config_currency_cosmos").lcd;
+    cosmos.minGasPrice = LiveConfig.getValueByKey("config_currency_cosmos").minGasPrice;
+    cosmos.ledgerValidator = LiveConfig.getValueByKey("config_currency_cosmos").ledgerValidator;
   });
 
   describe("useCosmosFamilyPreloadData", () => {
@@ -50,6 +57,7 @@ describe("cosmos/react", () => {
       expect(result.current).toStrictEqual(preloadedMockData);
     });
   });
+
   describe("useCosmosFormattedDelegations", () => {
     it("should return formatted delegations", async () => {
       const { account, prepare } = setup();
@@ -68,6 +76,7 @@ describe("cosmos/react", () => {
         (delegations as CosmosDelegation[])[0].validatorAddress,
       );
     });
+
     describe("mode: claimReward", () => {
       it("should only return delegations which have some pending rewards", async () => {
         const { account, prepare } = setup();
@@ -79,6 +88,7 @@ describe("cosmos/react", () => {
       });
     });
   });
+
   describe("useCosmosFamilyDelegationsQuerySelector", () => {
     it("should return delegations filtered by query as options", async () => {
       const { account, transaction, prepare } = setup();
@@ -150,6 +160,7 @@ describe("cosmos/react", () => {
       ).toBe(sourceValidator);
     });
   });
+
   describe("useSortedValidators", () => {
     it("should reutrn sorted validators", async () => {
       const { account, prepare } = setup();

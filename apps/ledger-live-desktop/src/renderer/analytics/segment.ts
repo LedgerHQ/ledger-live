@@ -13,6 +13,9 @@ import {
   localeSelector,
   languageSelector,
   devicesModelListSelector,
+  sharePersonalizedRecommendationsSelector,
+  hasSeenAnalyticsOptInPromptSelector,
+  trackingEnabledSelector,
 } from "~/renderer/reducers/settings";
 import { State } from "~/renderer/reducers";
 import { AccountLike, Feature, FeatureId, Features, idsToLanguage } from "@ledgerhq/types-live";
@@ -22,7 +25,7 @@ import {
   GENESIS_PASS_COLLECTION_CONTRACT,
   hasNftInAccounts,
   INFINITY_PASS_COLLECTION_CONTRACT,
-} from "@ledgerhq/live-common/nft/helpers";
+} from "@ledgerhq/live-nft";
 import createStore from "../createStore";
 import { currentRouteNameRef, previousRouteNameRef } from "./screenRefs";
 import { useCallback, useContext } from "react";
@@ -55,46 +58,63 @@ export function setAnalyticsFeatureFlagMethod(method: typeof analyticsFeatureFla
   analyticsFeatureFlagMethod = method;
 }
 
-const getFeatureFlagProperties = () => {
+const getPtxAttributes = () => {
   if (!analyticsFeatureFlagMethod) return {};
-  (async () => {
-    const { id } = await user();
-    const analytics = getAnalytics();
-    const ptxEarnFeatureFlag = analyticsFeatureFlagMethod("ptxEarn");
-    const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
+  const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
+  const stakingProviders = analyticsFeatureFlagMethod("ethStakingProviders");
+  const ptxSwapMoonpayProviderFlag = analyticsFeatureFlagMethod("ptxSwapMoonpayProvider");
 
-    const isBatch1Enabled =
-      !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
-    const isBatch2Enabled =
-      !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 2;
-    const isBatch3Enabled =
-      !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 3;
-
-    analytics.identify(
-      id,
-      {
-        ptxEarnEnabled: !!ptxEarnFeatureFlag?.enabled,
-        isBatch1Enabled,
-        isBatch2Enabled,
-        isBatch3Enabled,
-      },
-      {
-        context: getContext(),
-      },
-    );
-  })();
+  const isBatch1Enabled: boolean =
+    !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
+  const isBatch2Enabled: boolean =
+    !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 2;
+  const isBatch3Enabled: boolean =
+    !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 3;
+  const stakingProvidersEnabled: number | string =
+    !!stakingProviders?.enabled &&
+    stakingProviders?.params &&
+    stakingProviders?.params?.listProvider?.length > 0
+      ? stakingProviders?.params?.listProvider.length
+      : "flag not loaded";
+  const ptxSwapMoonpayProviderEnabled: boolean = !!ptxSwapMoonpayProviderFlag?.enabled;
+  return {
+    isBatch1Enabled,
+    isBatch2Enabled,
+    isBatch3Enabled,
+    stakingProvidersEnabled,
+    ptxSwapMoonpayProviderEnabled,
+  };
 };
 
-runOnceWhen(() => !!analyticsFeatureFlagMethod && !!getAnalytics(), getFeatureFlagProperties);
+const getMandatoryProperties = (store: ReduxStore) => {
+  const state: State = store.getState();
+  const analyticsEnabled = shareAnalyticsSelector(state);
+  const personalizedRecommendationsEnabled = sharePersonalizedRecommendationsSelector(state);
+  const hasSeenAnalyticsOptInPrompt = hasSeenAnalyticsOptInPromptSelector(state);
+
+  return {
+    optInAnalytics: analyticsEnabled,
+    optInPersonalRecommendations: personalizedRecommendationsEnabled,
+    hasSeenAnalyticsOptInPrompt,
+  };
+};
 
 const extraProperties = (store: ReduxStore) => {
   const state: State = store.getState();
+  const mandatoryProperties = getMandatoryProperties(store);
   const language = languageSelector(state);
   const region = (localeSelector(state).split("-")[1] || "").toUpperCase() || null;
   const systemLocale = getParsedSystemLocale();
   const device = lastSeenDeviceSelector(state);
   const devices = devicesModelListSelector(state);
   const accounts = accountsSelector(state);
+  const {
+    isBatch1Enabled,
+    isBatch2Enabled,
+    isBatch3Enabled,
+    stakingProvidersEnabled,
+    ptxSwapMoonpayProviderEnabled,
+  } = getPtxAttributes();
 
   const deviceInfo = device
     ? {
@@ -129,6 +149,7 @@ const extraProperties = (store: ReduxStore) => {
   const hasInfinityPass = hasNftInAccounts(INFINITY_PASS_COLLECTION_CONTRACT, accounts);
 
   return {
+    ...mandatoryProperties,
     appVersion: __APP_VERSION__,
     language,
     appLanguage: language, // Needed for braze
@@ -145,6 +166,11 @@ const extraProperties = (store: ReduxStore) => {
     hasGenesisPass,
     hasInfinityPass,
     modelIdList: devices,
+    stakingProvidersEnabled,
+    isBatch1Enabled,
+    isBatch2Enabled,
+    isBatch3Enabled,
+    ptxSwapMoonpayProviderEnabled,
     ...deviceInfo,
   };
 };
@@ -164,6 +190,7 @@ export const start = async (store: ReduxStore) => {
   if (!analytics) return;
   const allProperties = {
     ...extraProperties(store),
+    userId: id,
     braze_external_id: id, // Needed for braze with this exact name
   };
   logger.analyticsStart(id, allProperties);
@@ -215,26 +242,28 @@ const confidentialityFilter = (properties?: Record<string, unknown> | null) => {
 };
 
 export const updateIdentify = async () => {
-  if (!storeInstance || !shareAnalyticsSelector(storeInstance.getState())) return;
-
+  if (!storeInstance || !trackingEnabledSelector(storeInstance.getState())) return;
   const analytics = getAnalytics();
   const { id } = await user();
 
   const allProperties = {
     ...extraProperties(storeInstance),
+    userId: id,
     braze_external_id: id, // Needed for braze with this exact name
   };
   analytics.identify(id, allProperties, {
     context: getContext(),
   });
 };
+/** Ensure PTX flag attributes are set as soon as feature flags load */
+runOnceWhen(() => !!analyticsFeatureFlagMethod && !!getAnalytics(), updateIdentify);
 
 export const track = (
   eventName: string,
   properties?: Record<string, unknown> | null,
   mandatory?: boolean | null,
 ) => {
-  if (!storeInstance || (!mandatory && !shareAnalyticsSelector(storeInstance.getState()))) {
+  if (!storeInstance || (!mandatory && !trackingEnabledSelector(storeInstance.getState()))) {
     return;
   }
 
@@ -242,9 +271,10 @@ export const track = (
     ...properties,
     page: currentRouteNameRef.current,
   };
+
   const allProperties = {
     ...eventPropertiesWithoutExtra,
-    ...extraProperties(storeInstance),
+    ...(mandatory ? getMandatoryProperties(storeInstance) : extraProperties(storeInstance)),
     ...confidentialityFilter(properties),
   };
 
@@ -321,7 +351,7 @@ export const trackPage = (
    */
   refreshSource?: boolean,
 ) => {
-  if (!storeInstance || !shareAnalyticsSelector(storeInstance.getState())) {
+  if (!storeInstance || !trackingEnabledSelector(storeInstance.getState())) {
     return;
   }
 

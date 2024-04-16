@@ -1,6 +1,6 @@
 import { StorylyInstanceID } from "@ledgerhq/types-live";
-import { useFeatureFlags } from "@ledgerhq/live-config/featureFlags/index";
-import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
+import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import React, { useCallback, useState } from "react";
 import { Camera } from "expo-camera";
 import { Flex, Switch, BaseInput, Text, IconsLegacy } from "@ledgerhq/native-ui";

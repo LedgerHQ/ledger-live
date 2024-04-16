@@ -1,4 +1,3 @@
-import bitcoin from "../families/bitcoin/hw-getAddress";
 import cardano from "../families/cardano/hw-getAddress";
 import casper from "../families/casper/hw-getAddress";
 import celo from "../families/celo/hw-getAddress";
@@ -9,7 +8,6 @@ import filecoin from "../families/filecoin/hw-getAddress";
 import hedera from "../families/hedera/hw-getAddress";
 import icon from "../families/icon/hw-getAddress";
 import internet_computer from "../families/internet_computer/hw-getAddress";
-import near from "../families/near/hw-getAddress";
 import ripple from "../families/ripple/hw-getAddress";
 import solana from "../families/solana/hw-getAddress";
 import stacks from "../families/stacks/hw-getAddress";
@@ -18,11 +16,12 @@ import tezos from "../families/tezos/hw-getAddress";
 import tron from "../families/tron/hw-getAddress";
 import vechain from "../families/vechain/hw-getAddress";
 import { resolver as algorand } from "../families/algorand/setup";
+import { resolver as bitcoin } from "../families/bitcoin/setup";
 import { resolver as evm } from "../families/evm/setup";
+import { resolver as near } from "../families/near/setup";
 import { resolver as polkadot } from "../families/polkadot/setup";
 
 export default {
-  bitcoin,
   cardano,
   casper,
   celo,
@@ -33,7 +32,6 @@ export default {
   hedera,
   icon,
   internet_computer,
-  near,
   ripple,
   solana,
   stacks,
@@ -42,6 +40,8 @@ export default {
   tron,
   vechain,
   algorand,
+  bitcoin,
   evm,
+  near,
   polkadot,
 };

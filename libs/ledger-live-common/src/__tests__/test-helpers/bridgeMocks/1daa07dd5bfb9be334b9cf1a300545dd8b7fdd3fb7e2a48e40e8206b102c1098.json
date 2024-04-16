@@ -1,0 +1,1 @@
+{"request":{"url":"https://stargaze-api.polkachu.com/cosmos/bank/v1beta1/balances/stars1v2mp0m7k96dm9qv60fkspcqlzpkzrwnekeys8l","method":"GET"},"response":{"body":{"balances":[],"pagination":{"next_key":null,"total":"0"}}}}

@@ -1,6 +1,6 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { DeviceModel, DeviceModelId } from "@ledgerhq/devices";
-import { App, DeviceInfo, FinalFirmware } from "@ledgerhq/types-live";
+import { App, DeviceInfo, FinalFirmware, LanguagePackage } from "@ledgerhq/types-live";
 import type { Observable, Subject } from "rxjs";
 export type Exec = (
   appOp: AppOp,
@@ -75,6 +75,7 @@ export type ListAppsResult = {
   appsListNames: string[];
   installedAvailable: boolean;
   installed: InstalledItem[];
+  installedLanguagePack: LanguagePackage | undefined;
   deviceInfo: DeviceInfo;
   deviceModelId: DeviceModelId;
   deviceName: string;
@@ -90,6 +91,7 @@ export type State = {
   customImageBlocks: number;
   installedAvailable: boolean;
   installed: InstalledItem[];
+  installedLanguagePack: LanguagePackage | undefined;
   recentlyInstalledApps: string[];
   installQueue: string[];
   uninstallQueue: string[];
@@ -209,4 +211,5 @@ export type AppsDistribution = {
   freeSpaceBytes: number;
   shouldWarnMemory: boolean;
   customImageBlocks: number;
+  languagePackBlocks: number;
 };

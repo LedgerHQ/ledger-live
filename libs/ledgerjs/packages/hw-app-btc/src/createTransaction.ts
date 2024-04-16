@@ -173,7 +173,8 @@ export async function createTransaction(
 
     if (expiryHeight && !isDecred) {
       targetTransaction.nVersionGroupId = Buffer.from(
-        // nVersionGroupId is 0x26A7270A for zcash from https://z.cash/upgrade/nu5/
+        // nVersionGroupId is 0x26A7270A for zcash NU5 upgrade
+        // refer to https://github.com/zcash/zcash/blob/master/src/primitives/transaction.h
         isZcash
           ? [0x0a, 0x27, 0xa7, 0x26]
           : sapling

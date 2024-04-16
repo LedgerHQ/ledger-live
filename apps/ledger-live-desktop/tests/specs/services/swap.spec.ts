@@ -242,7 +242,7 @@ test.describe.parallel("Swap", () => {
       await swapPage.waitForExchangeDetails();
       await expect.soft(swapPage.detailsSwapId).toHaveText("12345");
       await expect.soft(drawer.swapAmountFrom).toContainText("-1.280"); // regex /-1.280\d+ BTC/ not working with toHaveText() and value can change after the first 3 decimals so this will have to do for now - see LIVE-8642
-      await expect.soft(drawer.swapAmountTo).toContainText("+17.898");
+      await expect.soft(drawer.swapAmountTo).toContainText("+17.8943438531 ETH");
       await expect.soft(drawer.swapAccountFrom).toHaveText("Bitcoin 2 (legacy)");
       await expect.soft(drawer.swapAccountTo).toHaveText("Ethereum 2");
 

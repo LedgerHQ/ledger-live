@@ -1,5 +1,6 @@
 export enum LocationContentCard {
   Portfolio = "portfolio",
+  Action = "action",
   NotificationCenter = "notification_center",
 }
 
@@ -8,28 +9,43 @@ export enum Platform {
   Desktop = "desktop",
 }
 
-export type Img = {
-  source: string;
-  transform: [number, number, number, number];
-  size: { width: number; height: number };
-};
-
 export type ContentCard = {
   id: string;
+  title: string;
+  description: string;
   location?: LocationContentCard;
-  imgs?: Img[];
+  order?: number;
+  created: Date;
+};
+
+export type ActionContentCard = ContentCard & {
+  image?: string;
+  mainCta?: string;
+  link?: string;
+  secondaryCta?: string;
+};
+
+export type NotificationContentCard = ContentCard & {
+  cta: string;
+  viewed: boolean;
+  url?: string;
+  path?: string;
+};
+
+export type PortfolioContentCard = ContentCard & {
+  id: string;
+  location?: LocationContentCard;
+  imgs?: {
+    source: string;
+    transform: [number, number, number, number];
+    size: { width: number; height: number };
+  }[];
   title: React.ReactNode;
   description: React.ReactNode;
-  createdAt: Date;
   url?: string;
   path?: string;
   image?: string;
   onClickOnSlide?: (cardId: string) => void;
   order?: number;
-};
-
-export type PortfolioContentCard = ContentCard;
-export type NotificationContentCard = ContentCard & {
-  cta: string;
-  viewed: boolean;
+  created: Date;
 };

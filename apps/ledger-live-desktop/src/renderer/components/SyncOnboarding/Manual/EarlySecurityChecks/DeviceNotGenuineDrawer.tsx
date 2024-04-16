@@ -7,12 +7,11 @@ import { useHistory } from "react-router";
 import { DeviceBlocker } from "../../../DeviceAction/DeviceBlocker";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { openURL } from "~/renderer/linking";
-import { useSelector } from "react-redux";
-import { localeSelector } from "~/renderer/reducers/settings";
 import { urls } from "~/config/urls";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
-import { ErrorBody } from "~/renderer/components/DeviceAction/rendering";
+import { ErrorBody } from "~/renderer/components/ErrorBody";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 
 export type Props = {
   productName: string;
@@ -26,12 +25,8 @@ const ErrorIcon = ({ size }: { size?: number }) => (
 
 const GenuineCheckErrorDrawer: React.FC<Props> = ({ productName }) => {
   const { t } = useTranslation();
-  const locale = useSelector(localeSelector);
   const history = useHistory();
-  const supportUrl =
-    locale in urls.contactSupportWebview
-      ? urls.contactSupportWebview[locale as keyof typeof urls.contactSupportWebview]
-      : urls.contactSupportWebview.en;
+  const supportUrl = useLocalizedUrl(urls.contactSupportWebview);
 
   const exit = () => {
     setDrawer();
@@ -68,7 +63,7 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({ productName }) => {
           size="large"
           variant="main"
           onClick={() => {
-            track("button_clicked", {
+            track("button_clicked2", {
               button: "Contact Ledger support",
               drawer: analyticsDrawerName,
             });

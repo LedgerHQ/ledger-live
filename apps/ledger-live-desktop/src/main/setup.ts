@@ -1,21 +1,20 @@
 import "./env";
 import "~/live-common-setup-base";
 import { captureException } from "~/sentry/main";
-import { ipcMain } from "electron";
+import { app, ipcMain, shell } from "electron";
 import contextMenu from "electron-context-menu";
 import { log } from "@ledgerhq/logs";
 import fs from "fs/promises";
 import updater from "./updater";
-import resolveUserDataDirectory from "~/helpers/resolveUserDataDirectory";
 import path from "path";
 import { InMemoryLogger } from "./logger";
 import { setEnvUnsafe } from "@ledgerhq/live-env";
 
 /**
- * Sets env variables for the main thread.
+ * Sets env variables for the main process.
  *
- * The renderer thread will also set some env variables via the `setEnv` IPC channel
- * but we might need some envs before the renderer thread is spawned.
+ * The renderer process will also set some env variables via the `setEnv` IPC channel
+ * but we might need some envs before the renderer process is spawned.
  */
 for (const k in process.env) {
   setEnvUnsafe(k, process.env[k]);
@@ -30,7 +29,7 @@ ipcMain.on("updater", (e, type) => {
 });
 
 /**
- * Saves logs from the renderer thread and logs recorded from the internal thread to a file.
+ * Saves logs from the renderer process and logs recorded from the internal process to a file.
  */
 ipcMain.handle(
   "save-logs",
@@ -45,19 +44,19 @@ ipcMain.handle(
       try {
         rendererLogs = JSON.parse(rendererLogsStr) as unknown[];
       } catch (error) {
-        console.error("Error while parsing logs from the renderer thread", error);
+        console.error("Error while parsing logs from the renderer process", error);
         return;
       }
 
       console.log(
-        `Saving ${rendererLogs.length} logs from the renderer thread and ${internalLogs.length} logs from the internal thread`,
+        `Saving ${rendererLogs.length} logs from the renderer process and ${internalLogs.length} logs from the internal process`,
       );
 
       // Merging according to a `date` (internal logs) / `timestamp` (most of renderer logs) does not seem necessary.
       // Simply pushes all the internal logs after the renderer logs.
       // Note: this is not respecting the `EXPORT_MAX_LOGS` env var, but this is fine.
       rendererLogs.push(
-        { type: "logs-separator", message: "Logs coming from the internal thread" },
+        { type: "logs-separator", message: "Logs coming from the internal process" },
         ...internalLogs,
       );
 
@@ -67,6 +66,12 @@ ipcMain.handle(
     }
   },
 );
+
+ipcMain.handle("openUserDataDirectory", () => shell.openPath(app.getPath("userData")));
+
+ipcMain.handle("getPathUserData", () => app.getPath("userData"));
+
+ipcMain.handle("getPathHome", () => app.getPath("home"));
 
 ipcMain.handle(
   "export-operations",
@@ -92,7 +97,7 @@ ipcMain.handle(
 
 const lssFileName = "lss.json";
 ipcMain.handle("generate-lss-config", async (event, data: string): Promise<boolean> => {
-  const userDataDirectory = resolveUserDataDirectory();
+  const userDataDirectory = app.getPath("userData");
   const filePath = path.resolve(userDataDirectory, lssFileName);
   if (filePath) {
     if (filePath && data) {
@@ -105,7 +110,7 @@ ipcMain.handle("generate-lss-config", async (event, data: string): Promise<boole
 });
 
 ipcMain.handle("delete-lss-config", async (): Promise<boolean> => {
-  const userDataDirectory = resolveUserDataDirectory();
+  const userDataDirectory = app.getPath("userData");
   const filePath = path.resolve(userDataDirectory, lssFileName);
   if (filePath) {
     await fs.unlink(filePath);
@@ -117,7 +122,7 @@ ipcMain.handle("delete-lss-config", async (): Promise<boolean> => {
 
 ipcMain.handle("load-lss-config", async (): Promise<string | undefined | null> => {
   try {
-    const userDataDirectory = resolveUserDataDirectory();
+    const userDataDirectory = app.getPath("userData");
     const filePath = path.resolve(userDataDirectory, lssFileName);
     if (filePath) {
       const contents = await fs.readFile(filePath, "utf8");

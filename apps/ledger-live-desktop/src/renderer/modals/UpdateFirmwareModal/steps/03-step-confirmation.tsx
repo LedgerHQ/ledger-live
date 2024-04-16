@@ -6,7 +6,7 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import Track from "~/renderer/analytics/Track";
 import { getDeviceModel } from "@ledgerhq/devices";
 import Box from "~/renderer/components/Box";
-import { StepProps } from "../";
+import { StepProps } from "../types";
 import { BoxedIcon, Button, IconsLegacy } from "@ledgerhq/react-ui";
 
 const Container = styled(Box).attrs(() => ({

@@ -1,6 +1,11 @@
 import invariant from "invariant";
 import React, { useCallback, useMemo, useState } from "react";
-import type { Account, AccountLike, FeeStrategy } from "@ledgerhq/types-live";
+import type {
+  Account,
+  AccountLike,
+  FeeStrategy,
+  TransactionStatusCommon,
+} from "@ledgerhq/types-live";
 import { Trans } from "react-i18next";
 import type { Transaction as BitcoinTransaction } from "@ledgerhq/live-common/families/bitcoin/types";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
@@ -21,6 +26,7 @@ type Props = {
   account: AccountLike;
   parentAccount?: Account | null;
   setTransaction: (..._: Array<Transaction>) => void;
+  status?: TransactionStatusCommon;
 } & CompositeScreenProps<
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
   | StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.SignTransactionSummary>
@@ -35,6 +41,7 @@ export default function BitcoinSendRowsFee({
   setTransaction,
   route,
   navigation,
+  status,
   ...props
 }: Props) {
   invariant(account.type === "Account", "account not found");
@@ -88,6 +95,7 @@ export default function BitcoinSendRowsFee({
       parentAccount={parentAccount}
       transaction={transaction}
       forceUnitLabel={<Trans i18nKey="common.satPerByte" />}
+      status={status}
     />
   );
 }

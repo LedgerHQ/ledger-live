@@ -2,6 +2,7 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { NavigatorScreenParams } from "@react-navigation/native";
 
 import { NavigatorName, ScreenName } from "~/const";
+import { AnalyticsOptInPromptNavigatorParamList } from "./AnalyticsOptInPromptNavigator";
 
 export type OnboardingPreQuizModalNavigatorParamList = {
   [ScreenName.OnboardingPreQuizModal]: { onNext?: () => void };
@@ -54,5 +55,8 @@ export type OnboardingNavigatorParamList = {
     success: boolean;
     deviceModelId: DeviceModelId;
   };
-  [ScreenName.OnboardingBleDevicePairingFlow]: undefined;
+  [ScreenName.OnboardingBleDevicePairingFlow]: {
+    filterByDeviceModelId: DeviceModelId;
+  };
+  [NavigatorName.AnalyticsOptInPrompt]: NavigatorScreenParams<AnalyticsOptInPromptNavigatorParamList>;
 };

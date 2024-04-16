@@ -68,14 +68,14 @@ function ToRow({
   const unit = toCurrency?.units[0];
   usePickDefaultCurrency(currencies, toCurrency, setToCurrency);
   const trackEditCurrency = () =>
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "Edit target currency",
       page: "Page Swap Form",
       ...swapDefaultTrack,
     });
   const setCurrencyAndTrack = (currency: CryptoOrTokenCurrency | null | undefined) => {
     updateSelectedRate();
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "New target currency",
       page: "Page Swap Form",
       ...swapDefaultTrack,

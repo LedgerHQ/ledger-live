@@ -1,12 +1,12 @@
 import { BigNumber } from "bignumber.js";
 import { Observable, from, defer, of, throwError, concat } from "rxjs";
 import { skip, take, reduce, mergeMap, map, filter, concatMap } from "rxjs/operators";
-import type { Account, SyncConfig } from "@ledgerhq/types-live";
+import type { Account, DerivationMode, SyncConfig } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { encodeAccountId, decodeAccountId } from "@ledgerhq/live-common/account/index";
 import { emptyHistoryCache } from "@ledgerhq/live-common/account/index";
 import { fromAccountRaw } from "@ledgerhq/live-common/account/serialization";
-import { asDerivationMode, DerivationMode } from "@ledgerhq/coin-framework/derivation";
+import { asDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { getAccountBridge, getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import {
   findCryptoCurrencyByKeyword,

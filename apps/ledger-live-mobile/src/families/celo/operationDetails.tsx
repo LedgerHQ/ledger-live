@@ -11,10 +11,11 @@ import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import { useRoute } from "@react-navigation/native";
 import Section from "~/screens/OperationDetails/Section";
-import { discreetModeSelector, localeSelector } from "~/reducers/settings";
+import { discreetModeSelector } from "~/reducers/settings";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { ScreenName } from "~/const";
+import { useSettings } from "~/hooks";
 
 type Props = {
   operation: CeloOperation;
@@ -27,7 +28,7 @@ type Navigation = StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.Op
 const OperationDetailsExtra = ({ operation, type, account }: Props) => {
   const { t } = useTranslation();
   const discreet = useSelector(discreetModeSelector);
-  const locale = useSelector(localeSelector);
+  const { locale } = useSettings();
   const unit = getAccountUnit(account);
   const { validatorGroups: celoValidators } = useCeloPreloadData();
   const { extra } = operation;
@@ -62,7 +63,7 @@ const OperationDetailsExtra = ({ operation, type, account }: Props) => {
     alwaysShowSign: false,
     showCode: true,
     discreet,
-    locale,
+    locale: locale,
   });
 
   switch (type) {

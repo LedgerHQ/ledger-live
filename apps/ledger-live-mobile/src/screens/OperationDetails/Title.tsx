@@ -82,6 +82,7 @@ const Title = ({
             color: valueColor,
           },
         ]}
+        testID="operationDetails-amount"
       >
         <CurrencyUnitValue
           showCode

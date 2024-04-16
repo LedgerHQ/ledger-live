@@ -11,8 +11,8 @@ import {
 import { getAccountBridge } from "../bridge";
 import perFamilyMock from "../generated/mock";
 import { CosmosAccount } from "../families/cosmos/types";
-import { BitcoinAccount } from "../families/bitcoin/types";
-import { PolkadotAccount } from "@ledgerhq/coin-polkadot/types";
+import { BitcoinAccount } from "@ledgerhq/coin-bitcoin/types";
+import { PolkadotAccount } from "@ledgerhq/coin-polkadot/types/index";
 import { TezosAccount } from "../families/tezos/types";
 import { TronAccount } from "../families/tron/types";
 import { CardanoAccount, PaymentChain } from "../families/cardano/types";
@@ -92,7 +92,15 @@ export function genAccount(id: number | string, opts: GenAccountOptions = {}): A
               bandwidth: null,
               energy: null,
             },
+            unFrozen: {
+              bandwidth: null,
+              energy: null,
+            },
             delegatedFrozen: {
+              bandwidth: null,
+              energy: null,
+            },
+            legacyFrozen: {
               bandwidth: null,
               energy: null,
             },

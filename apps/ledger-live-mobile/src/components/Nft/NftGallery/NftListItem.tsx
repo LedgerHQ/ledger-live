@@ -1,12 +1,12 @@
 import React, { memo, useCallback } from "react";
 import { StyleSheet } from "react-native";
-import { useNftMetadata } from "@ledgerhq/live-common/nft/index";
+import { useNftMetadata } from "@ledgerhq/live-nft-react";
 import { NFTMetadata, ProtoNFT } from "@ledgerhq/types-live";
-import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
+import { NFTResource } from "@ledgerhq/live-nft/types";
 import { Box, Flex, Tag, Text } from "@ledgerhq/native-ui";
 import styled, { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
 import { useTranslation } from "react-i18next";
-import { FeatureToggle } from "@ledgerhq/live-config/featureFlags/index";
+import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import { useTheme } from "styled-components/native";
 import { useSelector } from "react-redux";
 

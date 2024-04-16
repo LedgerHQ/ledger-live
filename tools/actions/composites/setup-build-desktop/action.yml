@@ -21,12 +21,12 @@ runs:
         LANG: en_US.UTF-8
       run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --unsafe-perm
       shell: bash
-    - uses: ./tools/actions/get-package-infos
+    - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
       id: version
       with:
         path: ${{ github.workspace }}/apps/ledger-live-desktop
     - name: set beta name
-      uses: ./tools/actions/change-product-name
+      uses: LedgerHQ/ledger-live/tools/actions/change-product-name@develop
       with:
         path: ${{ github.workspace }}/apps/ledger-live-desktop
     - name: make local version (workflow dispatch)
@@ -47,7 +47,7 @@ runs:
         VERSION: ${{ steps.version.outputs.clean }}-sha.${{ github.sha }}
       run: cd apps/ledger-live-desktop && npm version $VERSION
       shell: bash
-    - uses: ./tools/actions/get-package-infos
+    - uses: LedgerHQ/ledger-live/tools/actions/get-package-infos@develop
       id: post-version
       with:
         path: ${{ github.workspace }}/apps/ledger-live-desktop

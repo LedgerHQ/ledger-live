@@ -19,7 +19,7 @@ import {
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import CounterValue from "~/components/CounterValue";
 import Section from "~/screens/OperationDetails/Section";
-import { discreetModeSelector, localeSelector } from "~/reducers/settings";
+import { discreetModeSelector } from "~/reducers/settings";
 import { urls } from "~/utils/urls";
 
 import BondIcon from "~/icons/LinkIcon";
@@ -33,6 +33,7 @@ import SetControllerIcon from "~/icons/Manager";
 import OperationStatusWrapper from "~/icons/OperationStatusIcon/Wrapper";
 
 import NominationInfo from "./components/NominationInfo";
+import { useSettings } from "~/hooks";
 
 function getURLWhatIsThis(op: PolkadotOperation): string | undefined {
   if (op.type !== "IN" && op.type !== "OUT") {
@@ -56,7 +57,7 @@ type OperationDetailsExtraProps = {
 function OperationDetailsExtra({ operation, type, account }: OperationDetailsExtraProps) {
   const { t } = useTranslation();
   const discreet = useSelector(discreetModeSelector);
-  const locale = useSelector(localeSelector);
+  const { locale } = useSettings();
   const { extra } = operation;
 
   switch (type) {
@@ -66,7 +67,7 @@ function OperationDetailsExtra({ operation, type, account }: OperationDetailsExt
         showCode: true,
         discreet,
         disableRounding: true,
-        locale,
+        locale: locale,
       });
       return (
         <>
@@ -91,7 +92,7 @@ function OperationDetailsExtra({ operation, type, account }: OperationDetailsExt
         showCode: true,
         discreet,
         disableRounding: true,
-        locale,
+        locale: locale,
       });
       return (
         <>
@@ -105,7 +106,7 @@ function OperationDetailsExtra({ operation, type, account }: OperationDetailsExt
         showCode: true,
         discreet,
         disableRounding: true,
-        locale,
+        locale: locale,
       });
       return (
         <>
@@ -122,7 +123,7 @@ function OperationDetailsExtra({ operation, type, account }: OperationDetailsExt
           showCode: true,
           discreet,
           disableRounding: true,
-          locale,
+          locale: locale,
         },
       );
       return (

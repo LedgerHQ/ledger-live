@@ -2,17 +2,13 @@ import Prando from "prando";
 import { BigNumber } from "bignumber.js";
 import { listCryptoCurrencies, listTokensForCryptoCurrency } from "../currencies";
 import { getOperationAmountNumber } from "../operation";
-import {
-  inferSubOperations,
-  isAccountEmpty,
-  emptyHistoryCache,
-  generateHistoryFromOperations,
-} from "../account";
+import { isAccountEmpty, emptyHistoryCache, generateHistoryFromOperations } from "../account";
 import { getDerivationScheme, runDerivationScheme } from "../derivation";
 import { genHex, genAddress } from "./helpers";
 import type { Account, AccountLike, Operation, TokenAccount } from "@ledgerhq/types-live";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { createFixtureNFT, genNFTOperation } from "./fixtures/nfts";
+import { inferSubOperations } from "../serialization";
 
 export function ensureNoNegative(operations: Operation[]) {
   let total = new BigNumber(0);
@@ -66,7 +62,6 @@ const hardcodedMarketcap = [
   "qtum",
   "ethereum/erc20/huobitoken",
   "bitcoin_gold",
-  "kava_evm",
   "optimism",
   "ethereum/erc20/paxos_standard__pax_",
   "ethereum/erc20/trueusd",
@@ -182,7 +177,6 @@ const currencyIdApproxMarketPrice: Record<string, number> = {
   polygon: 1.0e-15,
   bsc: 5.0e-14,
   optimism: 2.0e-15,
-  kava_evm: 2.0e-16,
 };
 // mock only use subset of cryptocurrencies to not affect tests when adding coins
 const currencies = listCryptoCurrencies().filter(c => currencyIdApproxMarketPrice[c.id]);

@@ -2,7 +2,7 @@ import React, { useState, useCallback } from "react";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { useBridgeSync, useGlobalSyncState } from "@ledgerhq/live-common/bridge/react/index";
-import { useCountervaluesPolling } from "@ledgerhq/live-common/countervalues/react";
+import { useCountervaluesPolling } from "@ledgerhq/live-countervalues-react";
 import { getEnv } from "@ledgerhq/live-env";
 import { track } from "~/renderer/analytics/segment";
 import { isUpToDateSelector } from "~/renderer/reducers/accounts";
@@ -45,6 +45,7 @@ export default function ActivityIndicatorInner() {
       data-test-id="topbar-synchronize-button"
       disabled={isDisabled}
       onClick={isDisabled ? undefined : onClick}
+      isInteractive
     >
       <Rotating
         size={16}
@@ -89,6 +90,7 @@ export default function ActivityIndicatorInner() {
               style={{
                 textDecoration: "underline",
                 pointerEvents: "all",
+                cursor: "pointer",
               }}
               onClick={onClick}
             >

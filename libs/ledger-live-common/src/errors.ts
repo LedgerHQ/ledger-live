@@ -6,7 +6,6 @@ export const ConnectManagerTimeout = createCustomErrorClass("ConnectManagerTimeo
 export const GetAppAndVersionUnsupportedFormat = createCustomErrorClass(
   "GetAppAndVersionUnsupportedFormat",
 );
-export const AccountNeedResync = createCustomErrorClass("AccountNeedResync");
 
 export const LatestFirmwareVersionRequired = createCustomErrorClass(
   "LatestFirmwareVersionRequired",
@@ -33,21 +32,7 @@ export const DeviceAlreadySetup = createCustomErrorClass("DeviceAlreadySetup");
 export const InvalidAddressBecauseAlreadyDelegated = createCustomErrorClass(
   "InvalidAddressBecauseAlreadyDelegated",
 );
-export const TronNoFrozenForBandwidth = createCustomErrorClass("TronNoFrozenForBandwidth");
-export const TronNoFrozenForEnergy = createCustomErrorClass("TronNoFrozenForEnergy");
-export const TronUnfreezeNotExpired = createCustomErrorClass("TronUnfreezeNotExpired");
-export const TronVoteRequired = createCustomErrorClass("TronVoteRequired");
-export const TronInvalidVoteCount = createCustomErrorClass("TronInvalidVoteCount");
-export const TronRewardNotAvailable = createCustomErrorClass("TronRewardNotAvailable");
-export const TronNoReward = createCustomErrorClass("TronNoReward");
-export const TronInvalidFreezeAmount = createCustomErrorClass("TronInvalidFreezeAmount");
-export const TronSendTrc20ToNewAccountForbidden = createCustomErrorClass(
-  "TronSendTrc20ToNewAccountForbidden",
-);
-export const TronUnexpectedFees = createCustomErrorClass("TronUnexpectedFees");
-export const TronNotEnoughTronPower = createCustomErrorClass("TronNotEnoughTronPower");
-export const TronTransactionExpired = createCustomErrorClass("TronTransactionExpired");
-export const TronNotEnoughEnergy = createCustomErrorClass("TronNotEnoughEnergy");
+
 export const AccountAwaitingSendPendingOperations = createCustomErrorClass(
   "AccountAwaitingSendPendingOperations",
 );
@@ -119,6 +104,7 @@ export const SwapExchangeRateAmountTooLowOrTooHigh = createCustomErrorClass(
 );
 
 export const SwapGenericAPIError = createCustomErrorClass("SwapGenericAPIError");
+export const SwapRateExpiredError = createCustomErrorClass("SwapRateExpiredError");
 
 export const JSONRPCResponseError = createCustomErrorClass("JSONRPCResponseError");
 export const JSONDecodeError = createCustomErrorClass("JSONDecodeError");
@@ -151,5 +137,6 @@ export * from "@ledgerhq/coin-algorand/errors";
 export * from "./families/stellar/errors";
 export * from "./families/solana/errors";
 export * from "./families/cardano/errors";
-export * from "./families/near/errors";
+export * from "@ledgerhq/coin-near/errors";
 export * from "@ledgerhq/coin-evm/errors";
+export * from "@ledgerhq/coin-bitcoin/errors";

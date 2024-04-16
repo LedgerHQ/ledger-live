@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { StyleSheet } from "react-native";
-import { useNftCollectionMetadata, useNftMetadata } from "@ledgerhq/live-common/nft/index";
+import { useNftCollectionMetadata, useNftMetadata } from "@ledgerhq/live-nft-react";
 import { NFTMetadata, ProtoNFT } from "@ledgerhq/types-live";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import Skeleton from "../Skeleton";

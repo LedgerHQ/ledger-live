@@ -18,7 +18,7 @@ import {
 import { Account, AccountRaw } from "@ledgerhq/types-live";
 import { DataModel } from "@ledgerhq/live-common/DataModel";
 import { Announcement } from "@ledgerhq/live-common/notifications/AnnouncementProvider/types";
-import { CounterValuesStatus, RateMapRaw } from "@ledgerhq/live-common/countervalues/types";
+import { CounterValuesStatus, RateMapRaw } from "@ledgerhq/live-countervalues/types";
 import { hubStateSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { settingsExportSelector } from "./reducers/settings";
 import logger from "./logger";

@@ -12,7 +12,8 @@ import type { ElrondPreloadData } from "@ledgerhq/live-common/families/elrond/ty
 import type { DetailsPropsType } from "./types";
 
 import Section from "~/screens/OperationDetails/Section";
-import { discreetModeSelector, localeSelector } from "~/reducers/settings";
+import { discreetModeSelector } from "~/reducers/settings";
+import { useSettings } from "~/hooks";
 
 /*
  * Handle the component declaration.
@@ -23,7 +24,7 @@ const Details = (props: DetailsPropsType) => {
   const { t } = useTranslation();
 
   const discreet = useSelector(discreetModeSelector);
-  const locale = useSelector(localeSelector);
+  const { locale } = useSettings();
   const unit = getAccountUnit(account);
 
   const { extra } = operation;
@@ -37,7 +38,7 @@ const Details = (props: DetailsPropsType) => {
     alwaysShowSign: false,
     showCode: true,
     discreet,
-    locale,
+    locale: locale,
   });
 
   /*

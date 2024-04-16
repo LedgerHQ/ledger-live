@@ -5,15 +5,14 @@ import { Trans } from "react-i18next";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { Transaction as RippleTransaction } from "@ledgerhq/live-common/families/ripple/types";
-import { useSelector } from "react-redux";
 import LText from "~/components/LText";
 import { ScreenName } from "~/const";
 import SummaryRow from "~/screens/SendFunds/SummaryRow";
-import { localeSelector } from "~/reducers/settings";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
 import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
+import { useSettings } from "~/hooks";
 
 type Navigation = BaseComposite<
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
@@ -29,7 +28,7 @@ export default function RippleTagRow({ account, transaction }: Props) {
   const { colors } = useTheme();
   const navigation = useNavigation<Navigation["navigation"]>();
   const route = useRoute<Navigation["route"]>();
-  const locale = useSelector(localeSelector);
+  const { locale } = useSettings();
   const editTag = useCallback(() => {
     navigation.navigate(ScreenName.RippleEditTag, {
       ...route.params,

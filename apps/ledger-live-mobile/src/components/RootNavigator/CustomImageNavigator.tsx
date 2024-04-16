@@ -32,7 +32,7 @@ export default function CustomImageNavigator() {
         options={{ title: t("customImage.cropImage"), headerRight: undefined }}
       />
       <Stack.Screen
-        name={ScreenName.CustomImageStep2Preview}
+        name={ScreenName.CustomImageStep2ChooseContrast}
         component={Step2ChooseContrast}
         options={{
           title: t("customImage.chooseConstrast"),

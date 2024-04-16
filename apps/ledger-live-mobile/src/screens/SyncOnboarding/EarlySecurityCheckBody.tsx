@@ -142,7 +142,7 @@ const EarlySecurityCheckBody: React.FC<Props> = ({
 
         primaryBottomCta = (
           <Button type="main" size="large" onPress={onUpdateFirmware}>
-            {t("earlySecurityCheck.firmwareUpdateCheckStep.refused.updateCta")}
+            {t("earlySecurityCheck.firmwareUpdateCheckStep.refused.updateCta", { productName })}
           </Button>
         );
       } else {
@@ -180,7 +180,7 @@ const EarlySecurityCheckBody: React.FC<Props> = ({
   if (currentStep === "idle") {
     primaryBottomCta = (
       <Button type="main" size="large" onPress={onStartChecks}>
-        {t("earlySecurityCheck.idle.checkCta")}
+        {t("earlySecurityCheck.idle.checkCta", { productName })}
       </Button>
     );
   }

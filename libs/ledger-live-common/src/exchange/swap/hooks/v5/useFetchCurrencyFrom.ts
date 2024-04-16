@@ -1,5 +1,5 @@
 import { getAvailableProviders } from "../..";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature } from "../../../../featureFlags";
 import { useAPI } from "../../../../hooks/useAPI";
 import { fetchCurrencyFrom } from "../../api/v5/fetchCurrencyFrom";
 

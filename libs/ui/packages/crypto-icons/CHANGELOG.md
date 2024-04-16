@@ -1,5 +1,77 @@
 # @ledgerhq/icons-ui
 
+## 1.1.0
+
+### Minor Changes
+
+- [#6195](https://github.com/LedgerHQ/ledger-live/pull/6195) [`dfac39b`](https://github.com/LedgerHQ/ledger-live/commit/dfac39b2086f0475d1bc8065032bfe27cbf424f6) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for Base Sepolia & Arbitrum Sepolia
+
+### Patch Changes
+
+- [#5987](https://github.com/LedgerHQ/ledger-live/pull/5987) [`97bafa2`](https://github.com/LedgerHQ/ledger-live/commit/97bafa2573436572fca63469b13214bfcd7eb85c) Thanks [@gre](https://github.com/gre)! - fix icon of PYUSD
+
+- [#6159](https://github.com/LedgerHQ/ledger-live/pull/6159) [`4715e4c`](https://github.com/LedgerHQ/ledger-live/commit/4715e4c411fa2396330ebcb810aeb6bfc9892e88) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update Linea icons
+
+- [#6068](https://github.com/LedgerHQ/ledger-live/pull/6068) [`8096795`](https://github.com/LedgerHQ/ledger-live/commit/80967954758a5e1d2960ac593fc6314391737558) Thanks [@mle-gall](https://github.com/mle-gall)! - Fixed source SVG causing storybook build error
+
+## 1.1.0-next.0
+
+### Minor Changes
+
+- [#6195](https://github.com/LedgerHQ/ledger-live/pull/6195) [`dfac39b`](https://github.com/LedgerHQ/ledger-live/commit/dfac39b2086f0475d1bc8065032bfe27cbf424f6) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for Base Sepolia & Arbitrum Sepolia
+
+### Patch Changes
+
+- [#5987](https://github.com/LedgerHQ/ledger-live/pull/5987) [`97bafa2`](https://github.com/LedgerHQ/ledger-live/commit/97bafa2573436572fca63469b13214bfcd7eb85c) Thanks [@gre](https://github.com/gre)! - fix icon of PYUSD
+
+- [#6159](https://github.com/LedgerHQ/ledger-live/pull/6159) [`4715e4c`](https://github.com/LedgerHQ/ledger-live/commit/4715e4c411fa2396330ebcb810aeb6bfc9892e88) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update Linea icons
+
+- [#6068](https://github.com/LedgerHQ/ledger-live/pull/6068) [`8096795`](https://github.com/LedgerHQ/ledger-live/commit/80967954758a5e1d2960ac593fc6314391737558) Thanks [@mle-gall](https://github.com/mle-gall)! - Fixed source SVG causing storybook build error
+
+## 1.0.2
+
+### Patch Changes
+
+- [#6165](https://github.com/LedgerHQ/ledger-live/pull/6165) [`26f343b`](https://github.com/LedgerHQ/ledger-live/commit/26f343b3c08d06ce6e812947d4c63a6e5bae8a9e) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - fix icon of PYUSD
+
+- [#6165](https://github.com/LedgerHQ/ledger-live/pull/6165) [`f882dde`](https://github.com/LedgerHQ/ledger-live/commit/f882dde22ec194c5cd3dd9413b8c103108eba820) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fixed source SVG causing storybook build error
+
+## 1.0.2-next.0
+
+### Patch Changes
+
+- [#5987](https://github.com/LedgerHQ/ledger-live/pull/5987) [`97bafa2`](https://github.com/LedgerHQ/ledger-live/commit/97bafa2573436572fca63469b13214bfcd7eb85c) Thanks [@gre](https://github.com/gre)! - fix icon of PYUSD
+
+- [#6068](https://github.com/LedgerHQ/ledger-live/pull/6068) [`8096795`](https://github.com/LedgerHQ/ledger-live/commit/80967954758a5e1d2960ac593fc6314391737558) Thanks [@mle-gall](https://github.com/mle-gall)! - Fixed source SVG causing storybook build error
+
+## 1.0.1
+
+### Patch Changes
+
+- [#5820](https://github.com/LedgerHQ/ledger-live/pull/5820) [`fc2cf04`](https://github.com/LedgerHQ/ledger-live/commit/fc2cf04c8d3cd55503ea19aeb21fd12ee55046f6) Thanks [@lvndry](https://github.com/lvndry)! - Rename Coreum ticker to COREUM
+
+## 1.0.1-next.0
+
+### Patch Changes
+
+- [#5820](https://github.com/LedgerHQ/ledger-live/pull/5820) [`fc2cf04`](https://github.com/LedgerHQ/ledger-live/commit/fc2cf04c8d3cd55503ea19aeb21fd12ee55046f6) Thanks [@lvndry](https://github.com/lvndry)! - Rename Coreum ticker to COREUM
+
+## 1.0.0
+
+### Major Changes
+
+- [#5394](https://github.com/LedgerHQ/ledger-live/pull/5394) [`0e2287b`](https://github.com/LedgerHQ/ledger-live/commit/0e2287b1ce4200004ed2c06f3e74cd3b03100784) Thanks [@KaliszukTomasz](https://github.com/KaliszukTomasz)! - Add logo for GSWIFT token to ledger. Support for tokens was added to ledger live desktop already
+  Contract address (arbitrum):
+  GSWIFT - 0x580e933d90091b9ce380740e3a4a39c67eb85b4c
+
+## 1.0.0-next.0
+
+### Major Changes
+
+- [#5394](https://github.com/LedgerHQ/ledger-live/pull/5394) [`0e2287b`](https://github.com/LedgerHQ/ledger-live/commit/0e2287b1ce4200004ed2c06f3e74cd3b03100784) Thanks [@KaliszukTomasz](https://github.com/KaliszukTomasz)! - Add logo for GSWIFT token to ledger. Support for tokens was added to ledger live desktop already
+  Contract address (arbitrum):
+  GSWIFT - 0x580e933d90091b9ce380740e3a4a39c67eb85b4c
+
 ## 0.7.0
 
 ### Minor Changes

@@ -17,10 +17,6 @@ import NANO_S_LIGHT_quitApp from "~/renderer/animations/nanoS/4QuitApp/light.jso
 // @ts-ignore
 import NANO_S_DARK_quitApp from "~/renderer/animations/nanoS/4QuitApp/dark.json";
 // @ts-ignore
-import NANO_S_LIGHT_allowManager from "~/renderer/animations/nanoS/7Validate/light.json";
-// @ts-ignore
-import NANO_S_DARK_allowManager from "~/renderer/animations/nanoS/7Validate/dark.json";
-// @ts-ignore
 import NANO_S_LIGHT_openApp from "~/renderer/animations/nanoS/6OpenApp/light.json";
 // @ts-ignore
 import NANO_S_DARK_openApp from "~/renderer/animations/nanoS/6OpenApp/dark.json";
@@ -50,10 +46,6 @@ import NANO_X_DARK_enterPinCode from "~/renderer/animations/nanoX/3EnterPinCode/
 import NANO_X_LIGHT_quitApp from "~/renderer/animations/nanoX/4QuitApp/light.json";
 // @ts-ignore
 import NANO_X_DARK_quitApp from "~/renderer/animations/nanoX/4QuitApp/dark.json";
-// @ts-ignore
-import NANO_X_LIGHT_allowManager from "~/renderer/animations/nanoX/7Validate/light.json";
-// @ts-ignore
-import NANO_X_DARK_allowManager from "~/renderer/animations/nanoX/7Validate/dark.json";
 // @ts-ignore
 import NANO_X_LIGHT_openApp from "~/renderer/animations/nanoX/6OpenApp/light.json";
 // @ts-ignore
@@ -87,10 +79,6 @@ import NANO_SP_DARK_enterPinCode from "~/renderer/animations/nanoSP/3EnterPinCod
 import NANO_SP_LIGHT_quitApp from "~/renderer/animations/nanoSP/4QuitApp/light.json";
 // @ts-ignore
 import NANO_SP_DARK_quitApp from "~/renderer/animations/nanoSP/4QuitApp/dark.json";
-// @ts-ignore
-import NANO_SP_LIGHT_allowManager from "~/renderer/animations/nanoSP/7Validate/light.json";
-// @ts-ignore
-import NANO_SP_DARK_allowManager from "~/renderer/animations/nanoSP/7Validate/dark.json";
 // @ts-ignore
 import NANO_SP_LIGHT_openApp from "~/renderer/animations/nanoSP/6OpenApp/light.json";
 // @ts-ignore
@@ -171,8 +159,8 @@ const nanoS: DeviceAnimations = {
     dark: NANO_S_DARK_quitApp,
   },
   allowManager: {
-    light: NANO_S_LIGHT_allowManager,
-    dark: NANO_S_DARK_allowManager,
+    light: NANO_S_LIGHT_validate,
+    dark: NANO_S_DARK_validate,
   },
   openApp: {
     light: NANO_S_LIGHT_openApp,
@@ -222,8 +210,8 @@ const nanoX: DeviceAnimations = {
     dark: NANO_X_DARK_quitApp,
   },
   allowManager: {
-    light: NANO_X_LIGHT_allowManager,
-    dark: NANO_X_DARK_allowManager,
+    light: NANO_X_LIGHT_validate,
+    dark: NANO_X_DARK_validate,
   },
   openApp: {
     light: NANO_X_LIGHT_openApp,
@@ -273,8 +261,8 @@ const nanoSP: DeviceAnimations = {
     dark: NANO_SP_DARK_quitApp,
   },
   allowManager: {
-    light: NANO_SP_LIGHT_allowManager,
-    dark: NANO_SP_DARK_allowManager,
+    light: NANO_SP_LIGHT_validate,
+    dark: NANO_SP_DARK_validate,
   },
   openApp: {
     light: NANO_SP_LIGHT_openApp,
@@ -416,7 +404,7 @@ const blue: DeviceAnimations = {
 type Animations = {
   [modelId in DeviceModelId]: DeviceAnimations;
 };
-const animations: Animations = { nanoX, nanoS, nanoSP, stax, blue };
+const animations: Animations = { nanoX, nanoS, nanoSP, stax, europa: stax, blue };
 
 export const getDeviceAnimation = (
   modelId: DeviceModelId,

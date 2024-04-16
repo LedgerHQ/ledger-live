@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -16,17 +16,38 @@ import ExternalLink from "./ExternalLink/index";
 import LiveAppDisclaimer from "./WebPlatformPlayer/LiveAppDisclaimer";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import DeviceAction from "~/renderer/components/DeviceAction";
-import { createAction } from "@ledgerhq/live-common/hw/actions/startExchange";
+import {
+  createAction,
+  Result as StartExchangeResult,
+} from "@ledgerhq/live-common/hw/actions/startExchange";
 import startExchange from "@ledgerhq/live-common/exchange/platform/startExchange";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
+
 import CompleteExchange, {
   Data as CompleteExchangeData,
+  isCompleteExchangeData,
 } from "~/renderer/modals/Platform/Exchange/CompleteExchange/Body";
-import { Operation } from "@ledgerhq/types-live";
+import { ExchangeType } from "@ledgerhq/live-common/wallet-api/Exchange/server";
+import { Exchange } from "@ledgerhq/live-common/exchange/types";
 
 const Divider = styled(Box)`
   border: 1px solid ${p => p.theme.colors.palette.divider};
 `;
+
+export type StartExchangeData = {
+  onCancel?: (error: Error) => void;
+  exchangeType: ExchangeType;
+  provider?: string;
+  exchange?: Exchange;
+  onResult: (startExchangeResult: string) => void;
+};
+
+export function isStartExchangeData(data: unknown): data is StartExchangeData {
+  if (data === null || typeof data !== "object") {
+    return false;
+  }
+  return "exchangeType" in data;
+}
 
 export const LiveAppDrawer = () => {
   const [dismissDisclaimerChecked, setDismissDisclaimerChecked] = useState<boolean>(false);
@@ -41,7 +62,7 @@ export const LiveAppDrawer = () => {
       type: string;
       manifest: AppManifest;
       disclaimerId: string;
-      data?: CompleteExchangeData;
+      data?: StartExchangeData | CompleteExchangeData;
       next: (manifest: AppManifest, isChecked: boolean) => void;
     };
   } = useSelector(platformAppDrawerStateSelector);
@@ -58,7 +79,7 @@ export const LiveAppDrawer = () => {
       next(manifest, dismissDisclaimerChecked);
     }
   }, [dismissDisclaimerChecked, dispatch, payload]);
-  const drawerContent = useCallback(() => {
+  const drawerContent = useMemo(() => {
     if (!payload) {
       return null;
     }
@@ -124,27 +145,36 @@ export const LiveAppDrawer = () => {
           </>
         );
       case "EXCHANGE_START":
-        return data ? (
+        return data && isStartExchangeData(data) ? (
           <Box alignItems={"center"} height={"100%"} px={32}>
             <DeviceAction
               action={action}
-              request={{
-                exchangeType: data.exchangeType,
-              }}
-              onResult={result => {
+              request={data}
+              onResult={(result: StartExchangeResult) => {
                 if ("startExchangeResult" in result) {
-                  data.onResult(result.startExchangeResult as unknown as Operation);
+                  data.onResult(result.startExchangeResult as unknown as string);
+                }
+                if ("startExchangeError" in result) {
+                  data.onCancel?.(result.startExchangeError as unknown as Error);
+                  dispatch(closePlatformAppDrawer());
                 }
               }}
             />
           </Box>
         ) : null;
       case "EXCHANGE_COMPLETE":
-        return data ? <CompleteExchange data={data} /> : null;
+        return data && isCompleteExchangeData(data) ? (
+          <CompleteExchange
+            data={data}
+            onClose={() => {
+              dispatch(closePlatformAppDrawer());
+            }}
+          />
+        ) : null;
       default:
         return null;
     }
-  }, [payload, dismissDisclaimerChecked, onContinue, t]);
+  }, [payload, t, dismissDisclaimerChecked, onContinue, dispatch]);
 
   return (
     <SideDrawer
@@ -156,7 +186,7 @@ export const LiveAppDrawer = () => {
       direction="left"
     >
       <Box flex="1" justifyContent="space-between">
-        {drawerContent()}
+        {drawerContent}
       </Box>
     </SideDrawer>
   );

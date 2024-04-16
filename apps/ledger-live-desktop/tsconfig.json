@@ -5,13 +5,14 @@
     "composite": true,
     "module": "es2020",
     "jsx": "react",
-    "lib": ["es6", "dom"],
+    "lib": ["ES2021", "dom"],
     "target": "esnext",
     "baseUrl": ".",
     "rootDir": ".",
     "paths": {
       "~/*": ["src/*"],
-      "tests/*": ["tests/*"]
+      "tests/*": ["tests/*"],
+      "LLD/*": ["src/newArch/*"]
     },
     "outDir": "dist",
     "typeRoots": ["index-types.d.ts"]

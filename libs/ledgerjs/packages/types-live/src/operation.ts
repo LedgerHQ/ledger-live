@@ -20,6 +20,9 @@ export type OperationType =
   | "FEES"
   | "FREEZE"
   | "UNFREEZE"
+  | "WITHDRAW_EXPIRE_UNFREEZE"
+  | "UNDELEGATE_RESOURCE"
+  | "LEGACY_UNFREEZE"
   // POLKADOT
   | "VOTE"
   | "REWARD_PAYOUT"
@@ -50,10 +53,11 @@ export type OperationType =
   | "UNSTAKE"
   | "WITHDRAW_UNSTAKED";
 
+export type OperationExtra = unknown;
 /**
  * An Operation is the Ledger Live abstraction of a transaction for any blockchain
  */
-export type Operation<Extra = unknown> = {
+export type Operation<Extra = OperationExtra> = {
   // unique identifier (usually hash)
   id: string;
   // transaction hash
@@ -107,7 +111,8 @@ export type Operation<Extra = unknown> = {
   extra: Extra;
 };
 
-export type OperationRaw<ExtraRaw = unknown> = {
+export type OperationExtraRaw = unknown;
+export type OperationRaw<ExtraRaw = OperationExtraRaw> = {
   id: string;
   hash: string;
   type: OperationType;

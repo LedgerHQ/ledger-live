@@ -1,5 +1,6 @@
 import { TokenAccount } from "@ledgerhq/types-live";
-import { encodeAccountId, inferSubOperations } from "@ledgerhq/coin-framework/account/index";
+import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
+import { inferSubOperations } from "@ledgerhq/coin-framework/serialization/index";
 import type { GetAccountShape } from "../../bridge/jsHelpers";
 import { makeScanAccounts, makeSync, mergeOps } from "../../bridge/jsHelpers";
 import { getAccount, getAccountDelegations, getEGLDOperations, hasESDTTokens } from "./api";

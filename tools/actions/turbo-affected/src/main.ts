@@ -1,14 +1,16 @@
 import { execSync } from "child_process";
 import * as core from "@actions/core";
+import packageJson from "../../../../package.json";
 
 async function main() {
   const ref = core.getInput("ref");
   const pkg = core.getInput("package") || "";
   const command = core.getInput("command");
+  const turboVersion = packageJson.devDependencies.turbo;
 
   try {
     const turboOutput = execSync(
-      `npx turbo@^1.10.1 run ${command} --filter=...[${ref}] --dry=json`,
+      `npx turbo@${turboVersion} run ${command} --filter=...[${ref}] --dry=json`,
       {
         encoding: "utf-8",
         maxBuffer: 2048 * 1024,

@@ -23,6 +23,7 @@ import * as S from "./Row.styles";
 import ManageDropDown from "./ManageDropDown";
 import { ModalActions } from "../modals";
 import { DropDownItemType } from "~/renderer/components/DropDownSelector";
+import Discreet from "~/renderer/components/Discreet";
 const voteActions = (vote: CeloVote): Array<{ key: ModalActions; label: React.ReactNode }> => {
   const actions: Array<{ key: ModalActions; label: React.ReactNode }> = [];
   if (vote.activatable)
@@ -108,7 +109,9 @@ export const Row = ({ account, vote, onManageAction, onExternalLink }: Props) =>
           <Trans i18nKey={`celo.revoke.steps.vote.${status}`} />
         </Box>
       </S.Column>
-      <S.Column>{formatAmount(vote.amount.toNumber() ?? 0)}</S.Column>
+      <S.Column>
+        <Discreet>{formatAmount(vote.amount.toNumber() ?? 0)}</Discreet>
+      </S.Column>
       <S.Column>
         {actions.length > 0 && <ManageDropDown actions={actions} onSelect={onSelect} />}
         {actions.length === 0 && (

@@ -3,7 +3,7 @@ import React, { memo, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { View, StyleSheet } from "react-native";
 import { useTheme } from "@react-navigation/native";
-import { useNftMetadata } from "@ledgerhq/live-common/nft/index";
+import { useNftMetadata } from "@ledgerhq/live-nft-react";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import LText from "~/components/LText";

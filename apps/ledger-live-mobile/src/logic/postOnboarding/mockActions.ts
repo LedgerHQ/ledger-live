@@ -11,7 +11,7 @@ export const claimMock: PostOnboardingAction = {
   description: "A special NFT for you.",
   tagLabel: "Free",
   actionCompletedPopupLabel: "NFT claimed",
-  navigationParams: [
+  getNavigationParams: () => [
     NavigatorName.PostOnboarding,
     {
       screen: ScreenName.PostOnboardingMockActionScreen,
@@ -26,12 +26,11 @@ export const claimMock: PostOnboardingAction = {
 export const personalizeMock: PostOnboardingAction = {
   id: PostOnboardingActionId.personalizeMock,
   Icon: Icons.PictureImage,
-  featureFlagId: "customImage",
   title: `Personalize my ${getDeviceModel(DeviceModelId.stax).productName}`,
   titleCompleted: `Device personalized`,
   description: "By customizing the screen.",
   actionCompletedPopupLabel: "Device personalized",
-  navigationParams: [
+  getNavigationParams: () => [
     NavigatorName.PostOnboarding,
     {
       screen: ScreenName.PostOnboardingMockActionScreen,
@@ -50,7 +49,7 @@ export const migrateAssetsMock: PostOnboardingAction = {
   titleCompleted: "Assets transfered",
   description: "Easily secure assets from coinbase or another exchange.",
   actionCompletedPopupLabel: "Assets transfered",
-  navigationParams: [
+  getNavigationParams: () => [
     NavigatorName.PostOnboarding,
     {
       screen: ScreenName.PostOnboardingMockActionScreen,

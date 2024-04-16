@@ -1,5 +1,5 @@
 {
-  "name": "metro-extra-config",
+  "name": "@ledgerhq/metro-extra-config",
   "version": "1.0.1",
   "description": "Extra helpers for configuring the metro bundler",
   "main": "index.js",

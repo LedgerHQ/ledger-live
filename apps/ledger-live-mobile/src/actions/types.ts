@@ -15,6 +15,8 @@ import type {
 import type { Payload as PostOnboardingPayload } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
+import { DeviceModelId } from "@ledgerhq/types-devices";
+import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import type {
   AppState,
   FwUpdateBackgroundEvent,
@@ -35,7 +37,6 @@ import type {
   NftState,
 } from "../reducers/types";
 import type { Unpacked } from "../types/helpers";
-import { DeviceModelId } from "@ledgerhq/types-devices";
 
 //  === ACCOUNTS ACTIONS ===
 
@@ -169,6 +170,8 @@ export enum DynamicContentActionTypes {
   DYNAMIC_CONTENT_SET_ASSET_CARDS = "DYNAMIC_CONTENT_SET_ASSET_CARDS",
   DYNAMIC_CONTENT_SET_LEARN_CARDS = "DYNAMIC_CONTENT_SET_LEARN_CARDS",
   DYNAMIC_CONTENT_SET_NOTIFICATION_CARDS = "DYNAMIC_CONTENT_SET_NOTIFICATION_CARDS",
+  DYNAMIC_CONTENT_SET_CATEGORIES_CARDS = "DYNAMIC_CONTENT_SET_CATEGORIES_CARDS",
+  DYNAMIC_CONTENT_SET_MOBILE_CARDS = "DYNAMIC_CONTENT_SET_MOBILE_CARDS",
 }
 
 export type DynamicContentSetWalletCardsPayload = DynamicContentState["walletCards"];
@@ -179,11 +182,17 @@ export type DynamicContentSetLearnCardsPayload = DynamicContentState["learnCards
 
 export type DynamicContentSetNotificationCardsPayload = DynamicContentState["notificationCards"];
 
+export type DynamicContentSetCategoriesCardsPayload = DynamicContentState["categoriesCards"];
+
+export type DynamicContentSetMobileCardsPayload = DynamicContentState["mobileCards"];
+
 export type DynamicContentPayload =
   | DynamicContentSetWalletCardsPayload
   | DynamicContentSetAssetCardsPayload
   | DynamicContentSetLearnCardsPayload
-  | DynamicContentSetNotificationCardsPayload;
+  | DynamicContentSetNotificationCardsPayload
+  | DynamicContentSetCategoriesCardsPayload
+  | DynamicContentSetMobileCardsPayload;
 
 // === RATINGS ACTIONS ===
 
@@ -219,6 +228,7 @@ export enum SettingsActionTypes {
   SETTINGS_DISABLE_PRIVACY = "SETTINGS_DISABLE_PRIVACY",
   SETTINGS_SET_REPORT_ERRORS = "SETTINGS_SET_REPORT_ERRORS",
   SETTINGS_SET_ANALYTICS = "SETTINGS_SET_ANALYTICS",
+  SETTINGS_SET_PERSONALIZED_RECOMMENDATIONS = "SETTINGS_SET_PERSONALIZED_RECOMMENDATIONS",
   SETTINGS_SET_COUNTERVALUE = "SETTINGS_SET_COUNTERVALUE",
   SETTINGS_SET_ORDER_ACCOUNTS = "SETTINGS_SET_ORDER_ACCOUNTS",
   SETTINGS_SET_PAIRS = "SETTINGS_SET_PAIRS",
@@ -240,7 +250,6 @@ export enum SettingsActionTypes {
   DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
   SETTINGS_SET_THEME = "SETTINGS_SET_THEME",
   SETTINGS_SET_OS_THEME = "SETTINGS_SET_OS_THEME",
-  SETTINGS_SET_CAROUSEL_VISIBILITY = "SETTINGS_SET_CAROUSEL_VISIBILITY",
   SETTINGS_SET_DISMISSED_DYNAMIC_CARDS = "SETTINGS_SET_DISMISSED_DYNAMIC_CARDS",
   SETTINGS_SET_DISCREET_MODE = "SETTINGS_SET_DISCREET_MODE",
   SETTINGS_SET_LANGUAGE = "SETTINGS_SET_LANGUAGE",
@@ -248,7 +257,6 @@ export enum SettingsActionTypes {
   SETTINGS_SET_DATE_FORMAT = "SETTINGS_SET_DATE_FORMAT",
   SET_SWAP_SELECTABLE_CURRENCIES = "SET_SWAP_SELECTABLE_CURRENCIES",
   ACCEPT_SWAP_PROVIDER = "ACCEPT_SWAP_PROVIDER",
-  LAST_SEEN_DEVICE = "LAST_SEEN_DEVICE",
   LAST_SEEN_DEVICE_INFO = "LAST_SEEN_DEVICE_INFO",
   LAST_SEEN_DEVICE_LANGUAGE_ID = "LAST_SEEN_DEVICE_LANGUAGE_ID",
   SET_KNOWN_DEVICE_MODEL_IDS = "SET_KNOWN_DEVICE_MODEL_IDS",
@@ -280,6 +288,7 @@ export enum SettingsActionTypes {
   SET_CLOSED_WITHDRAW_BANNER = "SET_CLOSED_WITHDRAW_BANNER",
   SET_USER_NPS = "SET_USER_NPS",
   SET_SUPPORTED_COUNTER_VALUES = "SET_SUPPORTED_COUNTER_VALUES",
+  SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT = "SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT",
 }
 
 export type SettingsImportPayload = Partial<SettingsState>;
@@ -295,6 +304,8 @@ export type SettingsSetPrivacyPayload = Privacy;
 export type SettingsSetPrivacyBiometricsPayload = boolean;
 export type SettingsSetReportErrorsPayload = SettingsState["reportErrorsEnabled"];
 export type SettingsSetAnalyticsPayload = SettingsState["analyticsEnabled"];
+export type SettingsSetPersonalizedRecommendationsPayload =
+  SettingsState["personalizedRecommendationsEnabled"];
 export type SettingsSetCountervaluePayload = SettingsState["counterValue"];
 export type SettingsSetOrderAccountsPayload = SettingsState["orderAccounts"];
 export type SettingsSetPairsPayload = { pairs: Array<Pair> };
@@ -341,8 +352,9 @@ export type SettingsSetHasSeenStaxEnabledNftsPopupPayload = Pick<
 export type SettingsSetCustomImageBackupPayload = {
   hex: string;
   hash: string;
-};
-export type SettingsSetCustomImageTypePayload = Pick<SettingsState, "customImageType">;
+  deviceModelId: CLSSupportedDeviceModelId;
+} | null;
+export type SettingsSetCustomImageTypePayload = Pick<SettingsState, "customLockScreenType">;
 export type SettingsSetHasOrderedNanoPayload = SettingsState["hasOrderedNano"];
 export type SettingsSetMarketRequestParamsPayload = SettingsState["marketRequestParams"];
 export type SettingsSetMarketCounterCurrencyPayload = SettingsState["marketCounterCurrency"];
@@ -380,6 +392,7 @@ export type SettingsCompleteOnboardingPayload = void | SettingsState["hasComplet
 export type SettingsSetGeneralTermsVersionAccepted = SettingsState["generalTermsVersionAccepted"];
 export type SettingsSetUserNps = number;
 export type SettingsSetSupportedCounterValues = SettingsState["supportedCounterValues"];
+export type SettingsSetHasSeenAnalyticsOptInPrompt = SettingsState["hasSeenAnalyticsOptInPrompt"];
 
 export type SettingsPayload =
   | SettingsImportPayload
@@ -389,6 +402,7 @@ export type SettingsPayload =
   | SettingsSetPrivacyBiometricsPayload
   | SettingsSetReportErrorsPayload
   | SettingsSetAnalyticsPayload
+  | SettingsSetPersonalizedRecommendationsPayload
   | SettingsSetCountervaluePayload
   | SettingsSetOrderAccountsPayload
   | SettingsSetPairsPayload
@@ -435,7 +449,8 @@ export type SettingsPayload =
   | SettingsSetOnboardingTypePayload
   | SettingsSetClosedNetworkBannerPayload
   | SettingsSetUserNps
-  | SettingsSetSupportedCounterValues;
+  | SettingsSetSupportedCounterValues
+  | SettingsSetHasSeenAnalyticsOptInPrompt;
 
 // === WALLET CONNECT ACTIONS ===
 export enum WalletConnectActionTypes {

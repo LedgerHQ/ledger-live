@@ -1,0 +1,1 @@
+{"request":{"url":"https://osmosis-api.polkachu.com/cosmos/tx/v1beta1/txs?events=message.sender=%27osmo10h50supk4en682vrjkc6wkgkpcyxyqn4vxjy2c%27&pagination.limit=100&pagination.offset=0&pagination.reverse=true","method":"GET"},"response":{"body":{"txs":[],"tx_responses":[],"pagination":null,"total":"0"}}}

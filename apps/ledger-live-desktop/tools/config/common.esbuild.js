@@ -1,5 +1,5 @@
 const path = require("path");
-const { AliasPlugin } = require("esbuild-utils");
+const { AliasPlugin } = require("@ledgerhq/esbuild-utils");
 
 const rootFolder = path.resolve(__dirname, "..", "..");
 const srcFolder = path.resolve(rootFolder, "src");

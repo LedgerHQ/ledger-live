@@ -1,5 +1,9 @@
+/**
+ * @jest-environment jsdom
+ */
+import "../__tests__/test-helpers/dom-polyfill";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import { renderHook } from "@testing-library/react-hooks";
+import { renderHook, waitFor } from "@testing-library/react";
 import { genAccount } from "../mock/account";
 import { getAccountBridge } from ".";
 import useBridgeTransaction, {
@@ -15,19 +19,19 @@ setSupportedCurrencies(["bitcoin"]);
 describe("useBridgeTransaction", () => {
   test("initialize with a BTC account settles the transaction", async () => {
     const mainAccount = genAccount("mocked-account-1", { currency: BTC });
-    const { result, waitForNextUpdate } = renderHook(() =>
-      useBridgeTransaction(() => ({ account: mainAccount })),
-    );
-    await waitForNextUpdate();
-    expect(result.current.bridgePending).toBeFalsy();
-    expect(result.current.bridgeError).toBeFalsy();
-    expect(result.current.transaction).not.toBeFalsy();
-    expect(result.current.account).not.toBeFalsy();
+    const { result } = renderHook(() => useBridgeTransaction(() => ({ account: mainAccount })));
+
+    await waitFor(() => {
+      expect(result.current.bridgePending).toBeFalsy();
+      expect(result.current.bridgeError).toBeFalsy();
+      expect(result.current.transaction).not.toBeFalsy();
+      expect(result.current.account).not.toBeFalsy();
+    });
   });
 
   test("bridgeError go through", async () => {
     const mainAccount = genAccount("mocked-account-1", { currency: BTC });
-    const { result, waitForNextUpdate } = renderHook(() =>
+    const { result } = renderHook(() =>
       useBridgeTransaction(() => {
         const bridge = getAccountBridge(mainAccount);
         const transaction = bridge.updateTransaction(bridge.createTransaction(mainAccount), {
@@ -36,8 +40,7 @@ describe("useBridgeTransaction", () => {
         return { account: mainAccount, transaction };
       }),
     );
-    await waitForNextUpdate();
-    expect(result.current.bridgeError).not.toBeFalsy();
+    await waitFor(() => expect(result.current.bridgeError).not.toBeFalsy());
   });
 
   test("bridgeError can be caught with globalOnBridgeError", async () => {
@@ -46,7 +49,7 @@ describe("useBridgeTransaction", () => {
       const errors: Array<any> = [];
       setGlobalOnBridgeError(error => errors.push(error));
       const mainAccount = genAccount("mocked-account-1", { currency: BTC });
-      const { waitForNextUpdate } = renderHook(() =>
+      renderHook(() =>
         useBridgeTransaction(() => {
           const bridge = getAccountBridge(mainAccount);
           const transaction = bridge.updateTransaction(bridge.createTransaction(mainAccount), {
@@ -55,9 +58,8 @@ describe("useBridgeTransaction", () => {
           return { account: mainAccount, transaction };
         }),
       );
-      await waitForNextUpdate();
 
-      expect(errors.length).toBe(1);
+      await waitFor(() => expect(errors.length).toBe(1));
       expect(errors[0]).toMatchObject(new Error("isInvalidRecipient_mock_criticalcrash"));
     } finally {
       setGlobalOnBridgeError(before);

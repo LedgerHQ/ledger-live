@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { Switch } from "@ledgerhq/native-ui";
 import { setEnvUnsafe, getEnv } from "@ledgerhq/live-env";
-import { useNftAPI } from "@ledgerhq/live-common/nft/NftMetadataProvider/index";
+import { useNftAPI } from "@ledgerhq/live-nft-react";
 
 import SettingsRow from "~/components/SettingsRow";
 

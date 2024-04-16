@@ -7,7 +7,8 @@ export default class NftGalleryPage {
   root = () => getElementById("wallet-nft-gallery-screen");
   emptyScreen = () => getElementById("wallet-nft-gallery-empty");
   emptyScreenResetButton = () => getElementById("wallet-nft-gallery-empty-reset-button");
-  nftListComponent = () => getElementById("wallet-nft-gallery-list");
+  nftListComponentId = "wallet-nft-gallery-list";
+  nftListComponent = () => getElementById(this.nftListComponentId);
   nftAddNewListItem = () => getElementById("wallet-nft-gallery-add-new-list-item");
   receiveNftButton = () => getElementById("wallet-nft-gallery-receive-nft-button");
   nftReceiveModalContinueButton = () =>

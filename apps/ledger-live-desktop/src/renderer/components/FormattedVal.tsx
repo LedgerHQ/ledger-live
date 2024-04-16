@@ -10,10 +10,9 @@ import { localeSelector, discreetModeSelector } from "~/renderer/reducers/settin
 import { getMarketColor } from "~/renderer/styles/helpers";
 import Box from "~/renderer/components/Box";
 import FlipTicker from "~/renderer/components/FlipTicker";
-import IconBottom from "~/renderer/icons/ArrowDownRight";
-import IconTop from "~/renderer/icons/ArrowUpRight";
 import Ellipsis from "~/renderer/components/Ellipsis";
 import { BoxProps } from "./Box/Box";
+import { Icons } from "@ledgerhq/react-ui";
 
 const T = styled(Box).attrs((p: { color?: string; inline?: boolean; ff?: string } & BoxProps) => ({
   ff: p.ff || "Inter|Medium",
@@ -133,7 +132,11 @@ function FormattedVal(props: Props) {
         <Box horizontal alignItems="center">
           <Box mr={1}>
             <I color={marketColor}>
-              {isNegative ? <IconBottom size={24} /> : isZero ? null : <IconTop size={24} />}
+              {isNegative ? (
+                <Icons.ArrowDownRight size={"M"} />
+              ) : isZero ? null : (
+                <Icons.ArrowUpRight size={"M"} />
+              )}
             </I>
           </Box>
           <Box horizontal alignItems="center">

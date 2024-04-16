@@ -1,10 +1,10 @@
 import { getAccountBannerState } from "./banner";
-import * as preloadedData from "./preload";
-import * as logic from "./logic";
+import * as preloadedData from "@ledgerhq/coin-near/preload";
+import * as logic from "@ledgerhq/coin-near/logic";
 
 import { BigNumber } from "bignumber.js";
-import type { NearAccount, NearValidatorItem } from "./types";
-import type { NearStakingPosition } from "./api/sdk.types";
+import type { NearAccount, NearValidatorItem } from "@ledgerhq/coin-near/types";
+import type { NearStakingPosition } from "@ledgerhq/coin-near/api/sdk.types";
 
 const ledgerValidator: NearValidatorItem = {
   validatorAddress: "ledgerbyfigment.poolv1.near",

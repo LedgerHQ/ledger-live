@@ -1,14 +1,13 @@
 // Goal of this file is to inject all necessary device/signer dependency to coin-modules
 
-import { createBridges } from "@ledgerhq/coin-polkadot/bridge/js";
-import makeCliTools from "@ledgerhq/coin-polkadot/cli-transaction";
-import polkadotResolver from "@ledgerhq/coin-polkadot/hw-getAddress";
-import { Transaction } from "@ledgerhq/coin-polkadot/types";
+import { createBridges } from "@ledgerhq/coin-polkadot/bridge/index";
+import type { Transaction } from "@ledgerhq/coin-polkadot/types/index";
+import makeCliTools from "@ledgerhq/coin-polkadot/test/cli";
+import type { CliTools } from "@ledgerhq/coin-polkadot/test/cli";
+import polkadotResolver from "@ledgerhq/coin-polkadot/signer/index";
 import Polkadot from "@ledgerhq/hw-app-polkadot";
 import Transport from "@ledgerhq/hw-transport";
-import { makeLRUCache } from "@ledgerhq/live-network/cache";
-import network from "@ledgerhq/live-network/network";
-import { Bridge } from "@ledgerhq/types-live";
+import type { Bridge } from "@ledgerhq/types-live";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
 import { Resolver } from "../../hw/getAddress/types";
 
@@ -16,14 +15,10 @@ const createSigner: CreateSigner<Polkadot> = (transport: Transport) => {
   return new Polkadot(transport);
 };
 
-const bridge: Bridge<Transaction> = createBridges(
-  executeWithSigner(createSigner),
-  network,
-  makeLRUCache,
-);
+const bridge: Bridge<Transaction> = createBridges(executeWithSigner(createSigner));
 
 const resolver: Resolver = createResolver(createSigner, polkadotResolver);
 
-const cliTools = makeCliTools(network, makeLRUCache);
+const cliTools: CliTools = makeCliTools();
 
 export { bridge, cliTools, resolver };

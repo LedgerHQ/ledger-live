@@ -6,7 +6,7 @@ const {
   JsonPlugin,
   electronRendererExternals,
   nodeExternals,
-} = require("esbuild-utils");
+} = require("@ledgerhq/esbuild-utils");
 const { DOTENV_FILE } = require("../utils");
 const common = require("./common.esbuild");
 
@@ -16,7 +16,7 @@ module.exports = {
   entryNames: "renderer.bundle",
   jsx: "automatic",
   platform: "browser",
-  target: ["chrome114"],
+  target: ["chrome120"],
   format: "iife",
   mainFields: ["browser", "module", "main"],
   assetNames: "assets/[name]-[hash]",

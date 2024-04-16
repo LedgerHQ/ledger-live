@@ -11,7 +11,7 @@ import React, {
 } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
+import { Operation } from "@ledgerhq/types-live";
 import { addPendingOperation } from "@ledgerhq/live-common/account/index";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import {
@@ -40,13 +40,13 @@ import getUser from "~/helpers/user";
 import { openExchangeDrawer } from "~/renderer/actions/UI";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { TrackFunction } from "@ledgerhq/live-common/platform/tracking";
+import { useDappLogic } from "@ledgerhq/live-common/wallet-api/useDappLogic";
+import { NoAccountOverlay } from "./NoAccountOverlay";
+import { ipcRenderer } from "electron";
 
 const wallet = { name: "ledger-live-desktop", version: __APP_VERSION__ };
 
-function useUiHook(
-  manifest: AppManifest,
-  tracking: Record<string, TrackFunction>,
-): Partial<UiHook> {
+function useUiHook(manifest: AppManifest, tracking: Record<string, TrackFunction>): UiHook {
   const { pushToast } = useToasts();
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -54,11 +54,12 @@ function useUiHook(
   return useMemo(
     () => ({
       "account.request": ({ accounts$, currencies, onSuccess, onCancel }) => {
+        ipcRenderer.send("show-app", {});
         setDrawer(
           SelectAccountAndCurrencyDrawer,
           {
             currencies,
-            onAccountSelected: (account: AccountLike, parentAccount: Account | undefined) => {
+            onAccountSelected: (account, parentAccount) => {
               setDrawer();
               onSuccess(account, parentAccount);
             },
@@ -73,6 +74,7 @@ function useUiHook(
         );
       },
       "account.receive": ({ account, parentAccount, accountAddress, onSuccess, onError }) => {
+        ipcRenderer.send("show-app", {});
         dispatch(
           openModal("MODAL_EXCHANGE_CRYPTO_DEVICE", {
             account,
@@ -86,6 +88,7 @@ function useUiHook(
         );
       },
       "message.sign": ({ account, message, onSuccess, onError, onCancel }) => {
+        ipcRenderer.send("show-app", {});
         dispatch(
           openModal("MODAL_SIGN_MESSAGE", {
             account,
@@ -110,6 +113,7 @@ function useUiHook(
         onSuccess,
         onError,
       }) => {
+        ipcRenderer.send("show-app", {});
         dispatch(
           openModal("MODAL_SIGN_TRANSACTION", {
             canEditFees,
@@ -120,6 +124,8 @@ function useUiHook(
             parentAccount,
             onResult: onSuccess,
             onCancel: onError,
+            manifestId: manifest.id,
+            manifestName: manifest.name,
           }),
         );
       },
@@ -147,6 +153,7 @@ function useUiHook(
         });
       },
       "device.transport": ({ appName, onSuccess, onCancel }) => {
+        ipcRenderer.send("show-app", {});
         dispatch(
           openModal("MODAL_CONNECT_DEVICE", {
             appName,
@@ -156,6 +163,7 @@ function useUiHook(
         );
       },
       "device.select": ({ appName, onSuccess, onCancel }) => {
+        ipcRenderer.send("show-app", {});
         dispatch(
           openModal("MODAL_CONNECT_DEVICE", {
             appName,
@@ -165,6 +173,7 @@ function useUiHook(
         );
       },
       "exchange.start": ({ exchangeType, onSuccess, onCancel }) => {
+        ipcRenderer.send("show-app", {});
         dispatch(
           openExchangeDrawer({
             type: "EXCHANGE_START",
@@ -179,6 +188,7 @@ function useUiHook(
         );
       },
       "exchange.complete": ({ exchangeParams, onSuccess, onCancel }) => {
+        ipcRenderer.send("show-app", {});
         dispatch(
           openExchangeDrawer({
             type: "EXCHANGE_COMPLETE",
@@ -187,7 +197,6 @@ function useUiHook(
               onSuccess(operation.hash);
             },
             onCancel: (error: Error) => {
-              console.error(error);
               onCancel(error);
             },
           }),
@@ -215,7 +224,11 @@ const useGetUserId = () => {
 };
 
 function useWebView(
-  { manifest, customHandlers }: Pick<WebviewProps, "manifest" | "customHandlers">,
+  {
+    manifest,
+    customHandlers,
+    currentAccountHistDb,
+  }: Pick<WebviewProps, "manifest" | "customHandlers" | "currentAccountHistDb">,
   webviewRef: RefObject<WebviewTag>,
   tracking: TrackingAPI,
   serverRef: React.MutableRefObject<WalletAPIServer | undefined>,
@@ -262,13 +275,25 @@ function useWebView(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [server]);
 
+  const { onDappMessage, noAccounts } = useDappLogic({
+    manifest,
+    accounts,
+    uiHook,
+    postMessage: webviewHook.postMessage,
+    currentAccountHistDb,
+    tracking,
+  });
+
   const handleMessage = useCallback(
     (event: Electron.IpcMessageEvent) => {
       if (event.channel === "webviewToParent") {
         onMessage(event.args[0]);
       }
+      if (event.channel === "dappToParent") {
+        onDappMessage(event.args[0]);
+      }
     },
-    [onMessage],
+    [onDappMessage, onMessage],
   );
 
   const handleDomReady = useCallback(() => {
@@ -288,9 +313,6 @@ function useWebView(
     const webview = webviewRef.current;
 
     if (webview) {
-      // For mysterious reasons, the webpreferences attribute does not
-      // pass through the styled component when added in the JSX.
-      webview.webpreferences = "nativeWindowOpen=no";
       webview.addEventListener("did-finish-load", onLoad);
       webview.addEventListener("ipc-message", handleMessage);
       webview.addEventListener("dom-ready", handleDomReady);
@@ -311,16 +333,17 @@ function useWebView(
       opacity: widgetLoaded ? 1 : 0,
       border: "none",
       width: "100%",
+      height: "100%",
       flex: 1,
       transition: "opacity 200ms ease-out",
     };
   }, [widgetLoaded]);
 
-  return { webviewRef, widgetLoaded, onReload, webviewStyle };
+  return { webviewRef, widgetLoaded, onReload, webviewStyle, noAccounts };
 }
 
 export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
-  ({ manifest, inputs = {}, customHandlers, onStateChange }, ref) => {
+  ({ manifest, inputs = {}, currentAccountHistDb, customHandlers, onStateChange }, ref) => {
     const tracking = useMemo(
       () =>
         trackingWrapper(
@@ -357,15 +380,23 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       }
     }, [webviewState, onStateChange]);
 
-    const { webviewStyle, widgetLoaded } = useWebView(
+    const { webviewStyle, widgetLoaded, noAccounts } = useWebView(
       {
         manifest,
         customHandlers,
+        currentAccountHistDb,
       },
       webviewRef,
       tracking,
       serverRef,
     );
+
+    const isDapp = !!manifest.dapp;
+    const preloader = isDapp ? "webviewDappPreloader" : "webviewPreloader";
+
+    if (isDapp && noAccounts) {
+      return <NoAccountOverlay manifest={manifest} currentAccountHistDb={currentAccountHistDb} />;
+    }
 
     return (
       <>
@@ -382,7 +413,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
            */
           style={webviewStyle}
           // eslint-disable-next-line react/no-unknown-property
-          preload={`file://${window.api.appDirname}/webviewPreloader.bundle.js`}
+          preload={`file://${window.api.appDirname}/${preloader}.bundle.js`}
           /**
            * There seems to be an issue between Electron webview and react
            * Hence, the normal `allowpopups` prop does not work and we need to
@@ -392,6 +423,8 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
           // @ts-expect-error: see above comment
           // eslint-disable-next-line react/no-unknown-property
           allowpopups="true"
+          // eslint-disable-next-line react/no-unknown-property
+          webpreferences={`nativeWindowOpen=no${isDapp ? ", contextIsolation=no" : ""}`}
           {...webviewProps}
         />
         {!widgetLoaded ? (

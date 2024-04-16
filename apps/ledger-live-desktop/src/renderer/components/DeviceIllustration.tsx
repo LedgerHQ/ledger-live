@@ -2,6 +2,8 @@ import React from "react";
 import styled, { DefaultTheme, StyledComponent, ThemeProps } from "styled-components";
 import stax from "~/renderer/images/stax.svg";
 import staxDark from "~/renderer/images/staxDark.svg";
+import europa from "~/renderer/images/europa.svg";
+import europaDark from "~/renderer/images/europaDark.svg";
 import nanoX from "~/renderer/images/nanoX.v3.svg";
 import nanoS from "~/renderer/images/nanoS.v3.svg";
 import nanoS2 from "~/renderer/images/nanoS2.v3.svg";
@@ -39,6 +41,11 @@ const Stax = styled.div`
   background: url('${p => makeAssetSelector(stax, staxDark)(p)}') no-repeat center;
 `;
 
+const Europa = styled.div`
+  // prettier-ignore
+  background: url('${p => makeAssetSelector(europa, europaDark)(p)}') no-repeat center;
+`;
+
 type Illustration = {
   Illustration: StyledComponent<"div", DefaultTheme, Record<string, unknown>, never>;
   width: number;
@@ -63,6 +70,11 @@ const illustrations: { [key in DeviceModelId]: Illustration } = {
   },
   stax: {
     Illustration: Stax,
+    width: 240,
+    height: 240,
+  },
+  europa: {
+    Illustration: Europa,
     width: 240,
     height: 240,
   },

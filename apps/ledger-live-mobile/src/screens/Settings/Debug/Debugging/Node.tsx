@@ -3,7 +3,7 @@ import { useTheme } from "@react-navigation/native";
 import { StyleSheet, View } from "react-native";
 import { Text, IconsLegacy, Flex } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
-import { isEmpty } from "lodash";
+import isEmpty from "lodash/isEmpty";
 import { State } from "~/reducers/types";
 import Touchable from "~/components/Touchable";
 

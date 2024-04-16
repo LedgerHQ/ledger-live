@@ -11,7 +11,7 @@ export function useSearch<Item, T extends TextInput | undefined = undefined>({
   list: Item[];
   defaultInput?: string;
   options: Fuse.IFuseOptions<Item>;
-  filter?: (item: Item) => void;
+  filter?: (item: Item, input: string) => void;
 }): SearchRaw<Item, T> {
   const inputRef = useRef<T>(null);
   const [isActive, setIsActive] = useState(false);
@@ -63,7 +63,7 @@ export function useSearch<Item, T extends TextInput | undefined = undefined>({
   const resultOut = useMemo(() => {
     const res = input === "" ? list : result;
 
-    return filter ? res.filter(filter) : res;
+    return filter ? res.filter(item => filter(item, input)) : res;
   }, [list, result, input, filter]);
 
   return {

@@ -1,4 +1,4 @@
-import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { Flex } from "@ledgerhq/native-ui";
 import { Feature_Storyly, StorylyInstanceType } from "@ledgerhq/types-live";
 import React, { createContext, useState, useContext, ReactNode, useRef, useEffect } from "react";
@@ -29,10 +29,8 @@ const StorylyProvider: React.FC<StorylyProviderProps> = ({ children }) => {
 
   const storylyRef = useRef<Storyly>(null);
 
-  const {
-    // @ts-expect-error TYPINGS
-    params: { stories },
-  } = useFeature("storyly") || {};
+  const { params } = useFeature("storyly") || {};
+  const stories = params?.stories;
 
   useEffect(() => {
     if (url) {

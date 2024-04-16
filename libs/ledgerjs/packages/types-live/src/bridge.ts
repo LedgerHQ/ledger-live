@@ -13,7 +13,7 @@ import type {
   TransactionCommon,
   TransactionStatusCommon,
 } from "./transaction";
-import type { Operation } from "./operation";
+import type { Operation, OperationExtra, OperationExtraRaw } from "./operation";
 import type { DerivationMode } from "./derivation";
 import type { SyncConfig } from "./pagination";
 import {
@@ -51,7 +51,7 @@ export type PreloadStrategy = Partial<{
 /**
  *
  */
-export type BroadcastArg0 = {
+export type BroadcastArg = {
   account: Account;
   signedOperation: SignedOperation;
 };
@@ -72,7 +72,7 @@ export type SignOperationFnSignature<T> = (
   arg0: SignOperationArg0<T>,
 ) => Observable<SignOperationEvent>;
 
-export type BroadcastFnSignature = (arg0: BroadcastArg0) => Promise<Operation>;
+export type BroadcastFnSignature = (arg0: BroadcastArg) => Promise<Operation>;
 
 export type Bridge<T extends TransactionCommon> = {
   currencyBridge: CurrencyBridge;
@@ -196,6 +196,8 @@ export interface AccountBridge<T extends TransactionCommon> {
   // broadcasting a signed transaction to network
   // returns an optimistic Operation that this transaction is likely to create in the future
   broadcast: BroadcastFnSignature;
+  fromOperationExtraRaw?: (extraRaw: OperationExtraRaw) => OperationExtra;
+  toOperationExtraRaw?: (extra: OperationExtra) => OperationExtraRaw;
 }
 
 type ExpectFn = (...args: Array<any>) => any;

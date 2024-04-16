@@ -1,0 +1,1 @@
+{"request":{"url":"https://osmosis-api.polkachu.com/cosmos/staking/v1beta1/delegations/osmo19h8cennrkf09sjxqt36lmk93fzyrcwrfxw784y","method":"GET"},"response":{"body":{"delegation_responses":[],"pagination":{"next_key":null,"total":"0"}}}}

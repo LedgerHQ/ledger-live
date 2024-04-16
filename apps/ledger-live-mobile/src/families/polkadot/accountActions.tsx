@@ -87,11 +87,8 @@ const getMainActions = (args: {
       navigationParams,
       label: <Trans i18nKey="account.stake" />,
       Icon: IconsLegacy.CoinsMedium,
-      event: "button_clicked",
       eventProperties: {
-        button: "stake",
         currency: "DOT",
-        page: "Account Page",
       },
     },
   ];
@@ -112,7 +109,7 @@ const getSecondaryActions = (args: {
   const hasPendingBondOperation = hasPendingOperationType(account, "BOND");
   const hasPendingWithdrawUnbondedOperation = hasPendingOperationType(account, "WITHDRAW_UNBONDED");
   const nominationEnabled = !electionOpen && canNominate(account);
-  const chillEnabled = !electionOpen && canNominate(account) && nominations?.length;
+  const chillEnabled = !electionOpen && nominations?.length;
   const bondingEnabled =
     !electionOpen &&
     ((!hasBondedBalance && !hasPendingBondOperation) || (hasBondedBalance && canBond(account)));

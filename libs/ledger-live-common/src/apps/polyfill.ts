@@ -40,17 +40,21 @@ export function declareDep(name: string, dep: string): void {
   ["APWine", "Ethereum"],
   ["ArtBlocks", "Ethereum"],
   ["ARTIS sigma1", "Ethereum"],
+  ["Astar EVM", "Ethereum"],
   ["cBridge", "Ethereum"],
   ["Cometh", "Ethereum"],
   ["Compound", "Ethereum"],
   ["DODO", "Ethereum"],
   ["EnergyWebChain", "Ethereum"],
   ["Euler", "Ethereum"],
+  ["Flare", "Ethereum"],
   ["Harvest", "Ethereum"],
   ["Kiln", "Ethereum"],
   ["kUSD", "Ethereum"],
   ["Lido", "Ethereum"],
   ["Morpho", "Ethereum"],
+  ["Moonbeam", "Ethereum"],
+  ["Moonriver", "Ethereum"],
   ["Nested", "Ethereum"],
   ["OlympusDAO", "Ethereum"],
   ["Opensea", "Ethereum"],
@@ -66,6 +70,7 @@ export function declareDep(name: string, dep: string): void {
   ["StakeDAO", "Ethereum"],
   ["ThunderCore", "Ethereum"],
   ["Volta", "Ethereum"],
+  ["XDC Network", "Ethereum"],
   ["Yearn", "Ethereum"],
 ].forEach(([name, dep]) => declareDep(name, dep));
 
@@ -139,7 +144,6 @@ export const mapApplicationV2ToApp = ({
   firmwareKey: firmware_key, // No point in refactoring since api wont change.
   deleteKey: delete_key,
   applicationType: type,
-  compatibleWallets,
   parentName,
   currencyId,
   ...rest
@@ -151,10 +155,14 @@ export const mapApplicationV2ToApp = ({
   delete_key,
   dependencies: parentName ? [parentName] : [],
   indexOfMarketCap: -1, // We don't know at this point.
-  type: name === "Exchange" ? AppType.swap : type,
+  type:
+    name === "Exchange"
+      ? AppType.swap
+      : Object.values(AppType).includes(type)
+      ? type
+      : AppType.currency,
   ...rest,
   currencyId: findCryptoCurrencyById(currencyId) ? currencyId : getCurrencyIdFromAppName(name),
-  compatibleWallets: parseCompatibleWallets(compatibleWallets, name),
 });
 
 export const calculateDependencies = (): void => {
@@ -176,31 +184,6 @@ export const calculateDependencies = (): void => {
       declareDep(currency.managerAppName + " Test", family.managerAppName);
     }
   });
-};
-
-export const parseCompatibleWallets = (
-  compatibleWalletsJSON: string | undefined,
-  appName: string,
-): Array<{ name: string; url: string }> => {
-  const compatibleWallets: Array<{ name: string; url: string }> = [];
-  if (compatibleWalletsJSON) {
-    try {
-      const parsed = JSON.parse(compatibleWalletsJSON);
-      if (parsed && Array.isArray(parsed)) {
-        parsed.forEach(({ name, url }) => {
-          compatibleWallets.push({
-            name,
-            url,
-          });
-        });
-      }
-      return parsed;
-    } catch (e) {
-      console.error("invalid compatibleWalletsJSON for " + appName, e);
-    }
-  }
-
-  return compatibleWallets;
 };
 
 export const polyfillApp = (app: App): App => {

@@ -138,3 +138,4 @@ ui-lib/storybook-static/*
 release-notes.json
 
 metafile.*.json
+lint.json

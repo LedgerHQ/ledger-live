@@ -1,8 +1,7 @@
 import type { Transaction } from "../../generated/types";
-import type { Exchange, ExchangeRate } from "./types";
+import type { ExchangeSwap, ExchangeRate } from "./types";
 import { getAccountCurrency, getMainAccount } from "../../account";
-import type { SwapOperation } from "../swap/types";
-import type { Account, Operation, SubAccount } from "@ledgerhq/types-live";
+import type { Account, Operation, SubAccount, SwapOperation } from "@ledgerhq/types-live";
 
 export default ({
   account,
@@ -15,7 +14,7 @@ export default ({
   operation: Operation;
   transaction: Transaction;
   swap: {
-    exchange: Exchange;
+    exchange: ExchangeSwap;
     exchangeRate: ExchangeRate;
   };
   swapId: string;

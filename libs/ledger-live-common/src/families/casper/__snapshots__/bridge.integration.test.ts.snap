@@ -103,7 +103,7 @@ exports[`casper currency bridge scanAccounts casper seed 1 2`] = `
         "f74845d90933546a90faec6a605961d078b0fbf1a3b954cee8cd982e43b7c09d",
       ],
       "senders": [
-        "79e548dd1AEd87E79e797704c1175266eB705757Ba52d786784A72655eB53e7f",
+        "79e548dd1aed87e79e797704c1175266eb705757ba52d786784a72655eb53e7f",
       ],
       "standard": undefined,
       "tokenId": undefined,
@@ -127,7 +127,7 @@ exports[`casper currency bridge scanAccounts casper seed 1 2`] = `
         "f74845d90933546a90faec6a605961d078b0fbf1a3b954cee8cd982e43b7c09d",
       ],
       "senders": [
-        "79e548dd1AEd87E79e797704c1175266eB705757Ba52d786784A72655eB53e7f",
+        "79e548dd1aed87e79e797704c1175266eb705757ba52d786784a72655eb53e7f",
       ],
       "standard": undefined,
       "tokenId": undefined,
@@ -153,7 +153,7 @@ exports[`casper currency bridge scanAccounts casper seed 1 2`] = `
         "f74845d90933546a90faec6a605961d078b0fbf1a3b954cee8cd982e43b7c09d",
       ],
       "senders": [
-        "79e548dd1AEd87E79e797704c1175266eB705757Ba52d786784A72655eB53e7f",
+        "79e548dd1aed87e79e797704c1175266eb705757ba52d786784a72655eb53e7f",
       ],
       "standard": undefined,
       "tokenId": undefined,
@@ -177,7 +177,7 @@ exports[`casper currency bridge scanAccounts casper seed 1 2`] = `
         "79e548dd1aed87e79e797704c1175266eb705757ba52d786784a72655eb53e7f",
       ],
       "senders": [
-        "947cC343545C8215f1612F199B417e6fC1000139Bb451c1554e63123ac9FB66E",
+        "947cc343545c8215f1612f199b417e6fc1000139bb451c1554e63123ac9fb66e",
       ],
       "standard": undefined,
       "tokenId": undefined,
@@ -201,7 +201,7 @@ exports[`casper currency bridge scanAccounts casper seed 1 2`] = `
         "f74845d90933546a90faec6a605961d078b0fbf1a3b954cee8cd982e43b7c09d",
       ],
       "senders": [
-        "79e548dd1AEd87E79e797704c1175266eB705757Ba52d786784A72655eB53e7f",
+        "79e548dd1aed87e79e797704c1175266eb705757ba52d786784a72655eb53e7f",
       ],
       "standard": undefined,
       "tokenId": undefined,
@@ -225,7 +225,7 @@ exports[`casper currency bridge scanAccounts casper seed 1 2`] = `
         "79e548dd1aed87e79e797704c1175266eb705757ba52d786784a72655eb53e7f",
       ],
       "senders": [
-        "947cC343545C8215f1612F199B417e6fC1000139Bb451c1554e63123ac9FB66E",
+        "947cc343545c8215f1612f199b417e6fc1000139bb451c1554e63123ac9fb66e",
       ],
       "standard": undefined,
       "tokenId": undefined,

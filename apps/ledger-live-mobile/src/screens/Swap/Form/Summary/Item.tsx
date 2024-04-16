@@ -5,7 +5,7 @@ import { Flex, Icon, Text } from "@ledgerhq/native-ui";
 interface RowProps {
   title: string;
   children: React.ReactNode;
-  onEdit?: () => void;
+  onEdit?: false | (() => void);
   testID?: string;
 }
 

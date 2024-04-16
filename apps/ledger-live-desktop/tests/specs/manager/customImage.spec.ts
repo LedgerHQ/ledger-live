@@ -7,7 +7,7 @@ import { CustomImageDrawer } from "../../models/CustomImageDrawer";
 import { DeviceModelId } from "@ledgerhq/devices";
 import padStart from "lodash/padStart";
 
-test.use({ userdata: "skip-onboarding", featureFlags: { customImage: { enabled: true } } });
+test.use({ userdata: "skip-onboarding" });
 
 test("Custom image", async ({ page }) => {
   const managerPage = new ManagerPage(page);

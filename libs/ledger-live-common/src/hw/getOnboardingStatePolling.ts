@@ -1,6 +1,6 @@
 import { from, of, throwError, Observable, TimeoutError, timer } from "rxjs";
 import { map, catchError, first, timeout, repeat } from "rxjs/operators";
-import getVersion from "./getVersion";
+import { getVersion } from "../device/use-cases/getVersionUseCase";
 import { withDevice } from "./deviceAccess";
 import {
   TransportStatusError,
@@ -8,10 +8,11 @@ import {
   DeviceExtractOnboardingStateError,
   DisconnectedDevice,
   CantOpenDevice,
-  TransportRaceCondition,
+  TransportPendingOperation,
   LockedDeviceError,
   UnexpectedBootloader,
   TransportExchangeTimeoutError,
+  DisconnectedDeviceDuringOperation,
 } from "@ledgerhq/errors";
 import { FirmwareInfo } from "@ledgerhq/types-live";
 import { extractOnboardingState, OnboardingState } from "./extractOnboardingState";
@@ -136,8 +137,9 @@ export const isAllowedOnboardingStatePollingError = (error: unknown): boolean =>
     (error instanceof TimeoutError ||
       error instanceof TransportExchangeTimeoutError ||
       error instanceof DisconnectedDevice ||
+      error instanceof DisconnectedDeviceDuringOperation ||
       error instanceof CantOpenDevice ||
-      error instanceof TransportRaceCondition ||
+      error instanceof TransportPendingOperation ||
       error instanceof TransportStatusError ||
       // A locked device is handled as an allowed error
       error instanceof LockedDeviceError)

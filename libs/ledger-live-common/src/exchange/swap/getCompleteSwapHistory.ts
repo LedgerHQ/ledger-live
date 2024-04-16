@@ -1,7 +1,7 @@
 import { findTokenById } from "@ledgerhq/cryptoassets";
-import type { SwapHistorySection, SwapOperation, MappedSwapOperation } from "./types";
+import type { SwapHistorySection, MappedSwapOperation } from "./types";
 import { accountWithMandatoryTokens, getAccountCurrency } from "../../account";
-import type { AccountLike } from "@ledgerhq/types-live";
+import type { AccountLike, SwapOperation } from "@ledgerhq/types-live";
 
 const getSwapOperationMap =
   (account: AccountLike, accounts: AccountLike[]) =>
@@ -16,7 +16,7 @@ const getSwapOperationMap =
       status,
       tokenId,
     } = swapOperation;
-    const operation = account.operations.find(o => o.id === operationId);
+    const operation = account.operations.find(o => o.id.startsWith(operationId));
     const optimisticOperation = !operation
       ? account.pendingOperations.find(o => o.id === operationId)
       : null;
@@ -27,6 +27,9 @@ const getSwapOperationMap =
       let toParentAccount;
       let toExists = !optimisticOperation;
 
+      if (toAccount?.type === "Account" && account.type === "TokenAccount") {
+        toExists = true;
+      }
       if (toAccount && tokenId) {
         const token = findTokenById(tokenId);
 

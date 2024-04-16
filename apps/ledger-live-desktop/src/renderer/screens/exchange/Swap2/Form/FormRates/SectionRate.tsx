@@ -11,8 +11,7 @@ export type SectionRateProps = {
   ratesState: RatesReducerState;
   fromCurrency: SwapSelectorStateType["currency"];
   toCurrency: SwapSelectorStateType["currency"];
-  refreshTime: number;
-  countdown: boolean;
+  countdownSecondsToRefresh: number | undefined;
 };
 
 const SectionRate = ({
@@ -20,8 +19,7 @@ const SectionRate = ({
   fromCurrency,
   toCurrency,
   ratesState,
-  refreshTime,
-  countdown,
+  countdownSecondsToRefresh,
 }: SectionRateProps) => {
   const rates = ratesState.value;
 
@@ -33,8 +31,7 @@ const SectionRate = ({
           toCurrency,
           rates,
           provider,
-          refreshTime,
-          countdown,
+          countdownSecondsToRefresh,
         }}
       />
     </ProvidersSection>

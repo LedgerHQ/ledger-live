@@ -8,7 +8,7 @@ import type {
 } from "@ledgerhq/types-cryptoassets";
 import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/index";
 import debounce from "lodash/debounce";
-
+import SafeAreaView from "~/components/SafeAreaView";
 import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { useSelector } from "react-redux";
 import { ScreenName } from "~/const";
@@ -22,8 +22,6 @@ import { getEnv } from "@ledgerhq/live-env";
 import { findAccountByCurrency } from "~/logic/deposit";
 
 import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/deposit/index";
-import DepositFromCoinbaseButton from "./DepositFromCoinbaseButton";
-import { CexDepositEntryPointsLocationsMobile } from "@ledgerhq/types-live/lib/cexDeposit";
 
 const SEARCH_KEYS = getEnv("CRYPTO_ASSET_SEARCH_KEYS");
 
@@ -120,12 +118,6 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
         keyExtractor={keyExtractor}
         showsVerticalScrollIndicator={false}
         keyboardDismissMode="on-drag"
-        ListHeaderComponent={
-          <DepositFromCoinbaseButton
-            location={CexDepositEntryPointsLocationsMobile.selectCrypto}
-            source="Choose a crypto to secure"
-          />
-        }
       />
     ),
     [onPressItem],
@@ -140,26 +132,26 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   );
 
   return (
-    <>
+    <SafeAreaView edges={["left", "right"]} isFlex>
       <TrackScreen category="Deposit" name="Choose a crypto to secure" />
-      <Text variant="h4" fontWeight="semiBold" mx={6} mb={3} testID="receive-header-step1-title">
+      <Text variant="h4" fontWeight="semiBold" mx={6} testID="receive-header-step1-title">
         {t("transfer.receive.selectCrypto.title")}
       </Text>
       {list.length > 0 ? (
-        <FilteredSearchBar
-          keys={SEARCH_KEYS}
-          inputWrapperStyle={{ marginHorizontal: 16, marginBottom: 8 }}
-          list={list}
-          renderList={renderList}
-          renderEmptySearch={renderEmptyList}
-          newSearchBar
-          onSearchChange={debounceTrackOnSearchChange}
-        />
+        <Flex flex={1} ml={6} mr={6} mt={3}>
+          <FilteredSearchBar
+            keys={SEARCH_KEYS}
+            list={list}
+            renderList={renderList}
+            renderEmptySearch={renderEmptyList}
+            onSearchChange={debounceTrackOnSearchChange}
+          />
+        </Flex>
       ) : (
         <Flex flex={1} mt={6}>
           <InfiniteLoader />
         </Flex>
       )}
-    </>
+    </SafeAreaView>
   );
 }

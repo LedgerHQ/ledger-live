@@ -7,7 +7,7 @@ import Video from "react-native-video";
 import { Linking, StyleSheet } from "react-native";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { useDispatch } from "react-redux";
-import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { NavigatorName, ScreenName } from "~/const";
 import StyledStatusBar from "~/components/StyledStatusBar";
 import { urls } from "~/utils/urls";
@@ -42,6 +42,7 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const acceptTerms = useAcceptGeneralTerms();
+  const llmAnalyticsOptInPromptFeature = useFeature("llmAnalyticsOptInPrompt");
 
   const {
     i18n: { language: locale },
@@ -62,15 +63,31 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
 
   const next = useCallback(() => {
     acceptTerms();
-    dispatch(setAnalytics(true));
+    const entryPoints = llmAnalyticsOptInPromptFeature?.params?.entryPoints || [];
 
-    navigation.navigate({
-      name: ScreenName.OnboardingPostWelcomeSelection,
-      params: {
-        userHasDevice: true,
-      },
-    });
-  }, [acceptTerms, dispatch, navigation]);
+    if (llmAnalyticsOptInPromptFeature?.enabled && entryPoints.includes("Onboarding")) {
+      navigation.navigate(NavigatorName.AnalyticsOptInPrompt, {
+        screen: ScreenName.AnalyticsOptInPromptMain,
+        params: {
+          entryPoint: "Onboarding",
+        },
+      });
+    } else {
+      dispatch(setAnalytics(true));
+      navigation.navigate({
+        name: ScreenName.OnboardingPostWelcomeSelection,
+        params: {
+          userHasDevice: true,
+        },
+      });
+    }
+  }, [
+    acceptTerms,
+    llmAnalyticsOptInPromptFeature?.enabled,
+    llmAnalyticsOptInPromptFeature?.params?.entryPoints,
+    navigation,
+    dispatch,
+  ]);
 
   const videoMounted = !useIsAppInBackground();
 

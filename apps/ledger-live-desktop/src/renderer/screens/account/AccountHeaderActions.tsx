@@ -226,7 +226,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   const onBuySell = useCallback(
     (mode = "buy") => {
       setTrackingSource("account header actions");
-      track("button_clicked", {
+      track("button_clicked2", {
         button: mode,
         ...buttonSharedTrackingFields,
       });
@@ -243,7 +243,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   );
 
   const onSwap = useCallback(() => {
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "swap",
       ...buttonSharedTrackingFields,
       ...swapDefaultTrack,
@@ -260,7 +260,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   }, [currency, swapDefaultTrack, history, account, parentAccount, buttonSharedTrackingFields]);
 
   const onSend = useCallback(() => {
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "send",
       ...buttonSharedTrackingFields,
     });
@@ -271,7 +271,7 @@ const AccountHeaderActions = ({ account, parentAccount, openModal }: Props) => {
   }, [openModal, parentAccount, account, buttonSharedTrackingFields]);
 
   const onReceive = useCallback(() => {
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "receive",
       ...buttonSharedTrackingFields,
     });

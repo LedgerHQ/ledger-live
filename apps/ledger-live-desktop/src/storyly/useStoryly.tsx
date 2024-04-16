@@ -1,4 +1,4 @@
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { StorylyInstanceID } from "@ledgerhq/types-live";
 import { useLayoutEffect, useRef } from "react";
 import { useSelector } from "react-redux";
@@ -9,14 +9,14 @@ import { StorylyStyleProps, useStorylyDefaultStyleProps } from "./style";
 /**
  * Storyly Options
  */
-type StorylyOptions = {
+export type StorylyOptions = {
   layout: "classic" | "modern";
 
   token: string;
 
   // Internationalization
   lang?: Language;
-  segments: string[];
+  segments?: string[];
 
   // Styles
   props?: StorylyStyleProps;

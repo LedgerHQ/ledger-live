@@ -39,34 +39,30 @@ const searchFilter =
     return queries.some(query => terms.toLowerCase().includes(query));
   };
 
-const typeFilter =
-  (
-    filters: AppType[] = ["all"],
-    updateAwareInstalledApps: UpdateAwareInstalledApps,
-    installQueue: string[] = [],
-  ) =>
-  app =>
-    filters.every(filter => {
+function typeFilter(
+  filters: AppType[] = ["all"],
+  updateAwareInstalledApps: UpdateAwareInstalledApps,
+  installQueue: string[] = [],
+) {
+  return (app: App): boolean => {
+    return filters.every(filter => {
       switch (filter) {
         case "installed":
           return installQueue.includes(app.name) || app.name in updateAwareInstalledApps;
-
         case "not_installed":
           return !(app.name in updateAwareInstalledApps);
-
         case "updatable":
           return app.name in updateAwareInstalledApps && !updateAwareInstalledApps[app.name];
-
         case "supported":
           return app.currencyId && isCurrencySupported(getCryptoCurrencyById(app.currencyId));
-
         case "not_supported":
-          return !(app.currencyId && isCurrencySupported(getCryptoCurrencyById(app.currencyId)));
-
+          return !app.currencyId || !isCurrencySupported(getCryptoCurrencyById(app.currencyId));
         default:
           return true;
       }
     });
+  };
+}
 
 export const sortApps = (apps: App[], _options: SortOptions): App[] => {
   const { type, order } = _options;

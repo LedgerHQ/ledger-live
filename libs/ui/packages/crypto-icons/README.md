@@ -1,4 +1,4 @@
-# `@ledgerhq/icons-ui`
+# `@ledgerhq/crypto-icons-ui`
 
 [![npm](https://img.shields.io/npm/v/@ledgerhq/crypto-icons-ui)](https://www.npmjs.com/package/@ledgerhq/crypto-icons-ui)
 
@@ -8,7 +8,7 @@
 
 ## Reference
 
-[**🔗 Icons list**](https://react-ui-storybook.vercel.app/?path=/story/crypto-icons--list)
+[**🔗 Icons list**](https://react-ui-storybook.vercel.app/?path=/story/asorted-cryptoicons--list-crypto-icons)
 
 ## Installation
 

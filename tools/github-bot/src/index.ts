@@ -1,12 +1,12 @@
 import { Probot } from "probot";
 import { upToDate } from "./features/upToDate";
 import { orchestrator } from "./features/orchestrator";
-import { autoClose } from "./features/autoClose";
 import { lintCommits } from "./features/lintCommits";
 import { generateScreenshots } from "./commands/generate-screenshots";
 import { runDesktopTestSuite } from "./commands/full-suite";
 import { regenPods } from "./commands/regen-pods";
 import { regenDoc } from "./commands/regen-doc";
+import { autoClose } from "./features/autoClose";
 
 export default (app: Probot) => {
   /* Commands */
@@ -35,6 +35,7 @@ export default (app: Probot) => {
   orchestrator(app);
 
   /* Log errors */
+
   app.onError(error => {
     app.log.error("[ERROR] Unhandled error");
     app.log.error(error);

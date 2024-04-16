@@ -4,7 +4,7 @@ import { State as StoreState } from "~/renderer/reducers";
 import App from "./App";
 import "./global.css";
 import { Countervalues } from "./storage";
-import { CounterValuesStateRaw } from "@ledgerhq/live-common/countervalues/types";
+import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 
 type State = {
   error: unknown;

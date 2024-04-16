@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import styled from "styled-components";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { Flex, Text } from "@ledgerhq/react-ui";
+import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-cases/isSyncOnboardingSupported";
 import { DeviceSelector } from "./DeviceSelector";
 import { track } from "~/renderer/analytics/segment";
 import OnboardingNavHeader from "../../OnboardingNavHeader";
@@ -39,7 +40,7 @@ export function SelectDevice() {
     (deviceModelId: DeviceModelId) => {
       // TODO: use a feature flag to do this properly
       track("Onboarding Device - Selection", { deviceModelId });
-      if (deviceModelId === "stax") {
+      if (isSyncOnboardingSupported(deviceModelId)) {
         history.push(`/onboarding/sync/${deviceModelId}`);
       } else {
         setDeviceModelId(deviceModelId);

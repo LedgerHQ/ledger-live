@@ -17,7 +17,6 @@ import { getOperationAmountNumber } from "../../operation";
 import { fromTransactionRaw, toTransactionRaw, toTransactionStatusRaw } from "../../transaction";
 import { getAccountBridge, getCurrencyBridge } from "../../bridge";
 import { mockDeviceWithAPDUs, releaseMockDevice } from "./mockDevice";
-import { implicitMigration } from "../../migrations/accounts";
 import type {
   Account,
   AccountBridge,
@@ -128,7 +127,7 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
               reduce((all, a) => all.concat(a), [] as Account[]),
             ),
         );
-        return implicitMigration(accounts);
+        return accounts;
       } catch (e: any) {
         console.error(e.message);
         throw e;
@@ -363,8 +362,7 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
         describe("sync", () => {
           makeTest("succeed", async () => {
             const account = await getSynced();
-            const [account2] = implicitMigration([account]);
-            expect(fromAccountRaw(toAccountRaw(account2))).toBeDefined();
+            expect(fromAccountRaw(toAccountRaw(account))).toBeDefined();
           });
 
           if (impl !== "mock") {

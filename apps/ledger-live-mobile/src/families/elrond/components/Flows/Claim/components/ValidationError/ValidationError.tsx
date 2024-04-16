@@ -54,7 +54,7 @@ const ValidationError = (props: ValidationErrorPropsType) => {
         name="ValidationError"
         flow="stake"
         action="claim"
-        currency="egld"
+        currency="MultiversX"
       />
       <ValidateError error={error} onRetry={retry} onClose={onClose} />
     </View>

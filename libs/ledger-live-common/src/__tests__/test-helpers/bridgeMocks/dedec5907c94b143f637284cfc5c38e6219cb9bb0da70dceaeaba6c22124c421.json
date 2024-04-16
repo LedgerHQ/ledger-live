@@ -1,0 +1,1 @@
+{"request":{"url":"https://stargaze-api.polkachu.com/cosmos/distribution/v1beta1/delegators/stars1gyauvl44q2apn3u3aujm36q8zrj74vrypyf2yc/rewards","method":"GET"},"response":{"body":{"rewards":[],"total":[]}}}

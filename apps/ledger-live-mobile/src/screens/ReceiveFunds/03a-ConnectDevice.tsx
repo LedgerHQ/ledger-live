@@ -6,16 +6,13 @@ import {
   getMainAccount,
   getReceiveFlowError,
 } from "@ledgerhq/live-common/account/index";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Flex } from "@ledgerhq/native-ui";
 
 import { accountScreenSelector } from "~/reducers/accounts";
 import { ScreenName } from "~/const";
 import { TrackScreen, track } from "~/analytics";
-import SelectDevice from "~/components/SelectDevice";
 import SelectDevice2, { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
-import NavigationScrollView from "~/components/NavigationScrollView";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import ReadOnlyWarning from "./ReadOnlyWarning";
 import NotSyncedWarning from "./NotSyncedWarning";
@@ -47,7 +44,6 @@ export default function ConnectDevice({
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const [device, setDevice] = useState<Device | undefined>();
-  const newDeviceSelectionFeatureFlag = useFeature("llmNewDeviceSelection");
   const action = useAppDeviceAction();
 
   useEffect(() => {
@@ -151,22 +147,13 @@ export default function ConnectDevice({
     <>
       <TrackScreen category="Deposit" name="Device Selection" />
       <SkipSelectDevice route={route} onResult={setDevice} />
-      {newDeviceSelectionFeatureFlag?.enabled ? (
-        <Flex px={16} py={5} flex={1}>
-          <SelectDevice2
-            onSelect={setDevice}
-            stopBleScanning={!!device}
-            requestToSetHeaderOptions={requestToSetHeaderOptions}
-          />
-        </Flex>
-      ) : (
-        <NavigationScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
-          <SelectDevice
-            onSelect={setDevice}
-            onWithoutDevice={route.params?.notSkippable ? undefined : onSkipDevice}
-          />
-        </NavigationScrollView>
-      )}
+      <Flex px={16} py={5} flex={1}>
+        <SelectDevice2
+          onSelect={setDevice}
+          stopBleScanning={!!device}
+          requestToSetHeaderOptions={requestToSetHeaderOptions}
+        />
+      </Flex>
       <DeviceActionModal
         action={action}
         device={device}

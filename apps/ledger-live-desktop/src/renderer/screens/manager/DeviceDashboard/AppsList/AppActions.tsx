@@ -138,10 +138,13 @@ const AppActions = React.memo(
     const showLearnMore = type === AppType.tool || (isCurrencyApp && !isLiveSupported);
     const hasSpecificAction =
       [AppType.swap, AppType.plugin].includes(type) || (isCurrencyApp && isLiveSupported);
-    const hasTwoCTAS = showLearnMore || installed;
+
+    // FIXME: given the heavy use of conditions in the rendering logic below,
+    // it would be better to derive this value from the same rendering logic...
+    const hasTwoItems = showLearnMore || (hasSpecificAction && installed && featureFlagActivated);
 
     return (
-      <AppActionsWrapper right={!hasTwoCTAS}>
+      <AppActionsWrapper right={!hasTwoItems}>
         {showLearnMore ? (
           <Button
             color={"palette.primary.main"}

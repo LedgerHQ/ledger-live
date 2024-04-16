@@ -1,6 +1,6 @@
 const path = require("path");
 const fs = require("fs");
-const { processNativeModules } = require("native-modules-tools");
+const { processNativeModules } = require("@ledgerhq/native-modules-tools");
 const lldRoot = path.resolve(__dirname, "..");
 
 exports.default = async function (context) {

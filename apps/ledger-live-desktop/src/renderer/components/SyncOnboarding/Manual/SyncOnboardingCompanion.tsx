@@ -18,7 +18,7 @@ import {
   OnboardingStep as DeviceOnboardingStep,
   fromSeedPhraseTypeToNbOfSeedWords,
 } from "@ledgerhq/live-common/hw/extractOnboardingState";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useCustomPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
 import { DesyncOverlay } from "./DesyncOverlay";
@@ -32,16 +32,18 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import { trackPage } from "~/renderer/analytics/segment";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import LockedDeviceDrawer, { Props as LockedDeviceDrawerProps } from "./LockedDeviceDrawer";
+import LockedDeviceDrawer from "./LockedDeviceDrawer";
 import { LockedDeviceError } from "@ledgerhq/errors";
 import { saveSettings } from "~/renderer/actions/settings";
 
 const READY_REDIRECT_DELAY_MS = 2000;
 const POLLING_PERIOD_MS = 1000;
+
 const DESYNC_TIMEOUT_MS = 60000;
-const LONG_DESYNC_TIMEOUT_MS = 100000;
+const LONG_DESYNC_TIMEOUT_MS = 120000;
+
 const DESYNC_OVERLAY_DELAY_MS = 1000;
-const LONG_DESYNC_OVERLAY_DELAY_MS = 30000;
+const LONG_DESYNC_OVERLAY_DELAY_MS = 60000;
 
 enum StepKey {
   Paired = 0,
@@ -140,11 +142,9 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
             />
             {/* @ts-expect-error weird props issue with React 18 */}
             <StepText>
-              {
-                t("syncOnboarding.manual.pairedContent.description", {
-                  deviceName: productName,
-                }) as string
-              }
+              {t("syncOnboarding.manual.pairedContent.description", {
+                productName,
+              })}
             </StepText>
             <ContinueOnDeviceWithAnim
               deviceModelId={device.modelId}
@@ -318,13 +318,16 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
 
   useEffect(() => {
     if (lockedDevice) {
-      const props: LockedDeviceDrawerProps = {
-        deviceModelId: device.modelId,
-      };
-      setDrawer(LockedDeviceDrawer, props, {
-        forceDisableFocusTrap: true,
-        preventBackdropClick: true,
-      });
+      setDrawer(
+        LockedDeviceDrawer,
+        {
+          deviceModelId: device.modelId,
+        },
+        {
+          forceDisableFocusTrap: true,
+          preventBackdropClick: true,
+        },
+      );
     }
     return () => setDrawer();
   }, [device.modelId, history, lockedDevice]);

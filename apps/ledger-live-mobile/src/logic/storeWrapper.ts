@@ -6,7 +6,7 @@
 // with the new React-native-async-store package
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { KeyValuePair } from "@react-native-async-storage/async-storage/lib/typescript/types";
-import { merge } from "lodash";
+import merge from "lodash/merge";
 
 const CHUNKED_KEY = "_-_CHUNKED";
 const CHUNK_SIZE = 1000000;

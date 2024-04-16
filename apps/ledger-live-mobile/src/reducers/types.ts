@@ -21,9 +21,12 @@ import {
   AssetContentCard,
   LearnContentCard,
   NotificationContentCard,
+  CategoryContentCard,
+  BrazeContentCard,
 } from "../dynamicContent/types";
 import { ProtectStateNumberEnum } from "../components/ServicesWidget/types";
 import { ImageType } from "../components/CustomImage/types";
+import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 
 // === ACCOUNT STATE ===
 
@@ -118,6 +121,10 @@ export type DynamicContentState = {
   learnCards: LearnContentCard[];
   /** Dynamic content cards displayed in Notification Center */
   notificationCards: NotificationContentCard[];
+  /** Dynamic content cards handling flexible categories throughout the app */
+  categoriesCards: CategoryContentCard[];
+  /** Dynamic content cards for Ledger Live Mobile */
+  mobileCards: BrazeContentCard[];
 };
 
 // === RATINGS STATE ===
@@ -185,6 +192,7 @@ export type SettingsState = {
   counterValueExchange: string | null | undefined;
   reportErrorsEnabled: boolean;
   analyticsEnabled: boolean;
+  personalizedRecommendationsEnabled: boolean;
   privacy: Privacy | null | undefined;
   currenciesSettings: Record<string, CurrencySettings>;
   pairExchanges: Record<string, string | null | undefined>;
@@ -216,19 +224,23 @@ export type SettingsState = {
     acceptedProviders: string[];
     selectableCurrencies: string[];
   };
-  lastSeenDevice: DeviceModelInfo | null | undefined;
+  lastSeenDevice: DeviceModelInfo | null;
   knownDeviceModelIds: Record<DeviceModelId, boolean>;
   hasSeenStaxEnabledNftsPopup: boolean;
   starredMarketCoins: string[];
-  lastConnectedDevice: Device | null | undefined;
+  lastConnectedDevice: Device | null;
   marketRequestParams: MarketListRequestParams;
   marketCounterCurrency: string | null | undefined;
   marketFilterByStarredAccounts: boolean;
   sensitiveAnalytics: boolean;
   onboardingHasDevice: boolean | null;
   onboardingType: OnboardingType | null;
-  customImageType: ImageType | null;
-  customImageBackup?: { hex: string; hash: string };
+  customLockScreenType: ImageType | null;
+  customLockScreenBackup: {
+    hex: string;
+    hash: string;
+    deviceModelId: CLSSupportedDeviceModelId;
+  } | null;
   lastSeenCustomImage: {
     size: number;
     hash: string;
@@ -249,12 +261,12 @@ export type SettingsState = {
   };
   userNps: number | null;
   supportedCounterValues: supportedCountervaluesData[];
+  hasSeenAnalyticsOptInPrompt: boolean;
 };
 
 export type NotificationsSettings = {
   areNotificationsAllowed: boolean;
   announcementsCategory: boolean;
-  recommendationsCategory: boolean;
   largeMoverCategory: boolean;
   transactionsAlertsCategory: boolean;
 };

@@ -65,6 +65,7 @@ export type SettingsState = {
   };
   developerMode: boolean;
   shareAnalytics: boolean;
+  sharePersonalizedRecommandations: boolean;
   sentryLogs: boolean;
   lastUsedVersion: string;
   dismissedBanners: string[];
@@ -75,7 +76,6 @@ export type SettingsState = {
   filterTokenOperationsZeroAmount: boolean;
   sidebarCollapsed: boolean;
   discreetMode: boolean;
-  carouselVisibility: number;
   starredAccountIds?: string[];
   blacklistedTokenIds: string[];
   hiddenNftCollections: string[];
@@ -89,6 +89,7 @@ export type SettingsState = {
   fullNodeEnabled: boolean;
   // developer settings
   allowDebugApps: boolean;
+  allowReactQueryDebug: boolean;
   allowExperimentalApps: boolean;
   enablePlatformDevTools: boolean;
   catalogProvider: string;
@@ -99,13 +100,13 @@ export type SettingsState = {
     selectableCurrencies: string[];
     acceptedProviders: string[];
   };
-  starredMarketCoins: string[];
   overriddenFeatureFlags: {
     [key in FeatureId]: Feature;
   };
   featureFlagsButtonVisible: boolean;
   vaultSigner: VaultSigner;
   supportedCounterValues: SupportedCountervaluesData[];
+  hasSeenAnalyticsOptInPrompt: boolean;
 };
 
 export const getInitialLanguageAndLocale = (): { language: Language; locale: Locale } => {
@@ -145,7 +146,9 @@ const INITIAL_STATE: SettingsState = {
   pairExchanges: {},
   developerMode: !!process.env.__DEV__,
   loaded: false,
-  shareAnalytics: true,
+  shareAnalytics: false,
+  sharePersonalizedRecommandations: false,
+  hasSeenAnalyticsOptInPrompt: false,
   sentryLogs: true,
   lastUsedVersion: __APP_VERSION__,
   dismissedBanners: [],
@@ -158,7 +161,6 @@ const INITIAL_STATE: SettingsState = {
   discreetMode: false,
   preferredDeviceModel: DeviceModelId.nanoS,
   hasInstalledApps: true,
-  carouselVisibility: 0,
   lastSeenDevice: null,
   devicesModelList: [],
   lastSeenCustomImage: {
@@ -174,6 +176,7 @@ const INITIAL_STATE: SettingsState = {
   fullNodeEnabled: false,
   // developer settings
   allowDebugApps: false,
+  allowReactQueryDebug: false,
   allowExperimentalApps: false,
   enablePlatformDevTools: false,
   catalogProvider: "production",
@@ -184,7 +187,6 @@ const INITIAL_STATE: SettingsState = {
     acceptedProviders: [],
     selectableCurrencies: [],
   },
-  starredMarketCoins: [],
   overriddenFeatureFlags: {} as Record<FeatureId, Feature>,
   featureFlagsButtonVisible: false,
 
@@ -220,8 +222,6 @@ type HandlersPayloads = {
   SET_SWAP_ACCEPTED_IP_SHARING: boolean;
   ACCEPT_SWAP_PROVIDER: string;
   DEBUG_TICK: never;
-  ADD_STARRED_MARKET_COINS: string;
-  REMOVE_STARRED_MARKET_COINS: string;
   SET_LAST_SEEN_CUSTOM_IMAGE: {
     imageSize: number;
     imageHash: string;
@@ -240,6 +240,7 @@ type HandlersPayloads = {
   };
   SET_VAULT_SIGNER: VaultSigner;
   SET_SUPPORTED_COUNTER_VALUES: SupportedCountervaluesData[];
+  SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT: boolean;
 };
 type SettingsHandlers<PreciseKey = true> = Handlers<SettingsState, HandlersPayloads, PreciseKey>;
 
@@ -359,14 +360,6 @@ const handlers: SettingsHandlers = {
   DEBUG_TICK: state => ({
     ...state,
   }),
-  ADD_STARRED_MARKET_COINS: (state: SettingsState, { payload }) => ({
-    ...state,
-    starredMarketCoins: [...state.starredMarketCoins, payload],
-  }),
-  REMOVE_STARRED_MARKET_COINS: (state: SettingsState, { payload }) => ({
-    ...state,
-    starredMarketCoins: state.starredMarketCoins.filter(id => id !== payload),
-  }),
   SET_LAST_SEEN_CUSTOM_IMAGE: (state: SettingsState, { payload }) => ({
     ...state,
     lastSeenCustomImage: {
@@ -407,6 +400,10 @@ const handlers: SettingsHandlers = {
       counterValue: activeCounterValue,
     };
   },
+  SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT: (state: SettingsState, { payload }) => ({
+    ...state,
+    hasSeenAnalyticsOptInPrompt: payload,
+  }),
 };
 export default handleActions<SettingsState, HandlersPayloads[keyof HandlersPayloads]>(
   handlers as unknown as SettingsHandlers<false>,
@@ -624,12 +621,18 @@ export const nftsViewModeSelector = (state: State) => state.settings.nftsViewMod
 export const sentryLogsSelector = (state: State) => state.settings.sentryLogs;
 export const autoLockTimeoutSelector = (state: State) => state.settings.autoLockTimeout;
 export const shareAnalyticsSelector = (state: State) => state.settings.shareAnalytics;
+export const sharePersonalizedRecommendationsSelector = (state: State) =>
+  state.settings.sharePersonalizedRecommandations;
+export const trackingEnabledSelector = createSelector(
+  storeSelector,
+  s => s.shareAnalytics || s.sharePersonalizedRecommandations,
+);
 export const selectedTimeRangeSelector = (state: State) => state.settings.selectedTimeRange;
 export const hasInstalledAppsSelector = (state: State) => state.settings.hasInstalledApps;
-export const carouselVisibilitySelector = (state: State) => state.settings.carouselVisibility;
 export const USBTroubleshootingIndexSelector = (state: State) =>
   state.settings.USBTroubleshootingIndex;
 export const allowDebugAppsSelector = (state: State) => state.settings.allowDebugApps;
+export const allowDebugReactQuerySelector = (state: State) => state.settings.allowReactQueryDebug;
 export const allowExperimentalAppsSelector = (state: State) => state.settings.allowExperimentalApps;
 export const enablePlatformDevToolsSelector = (state: State) =>
   state.settings.enablePlatformDevTools;
@@ -697,7 +700,6 @@ export const exportSettingsSelector = createSelector(
     blacklistedTokenIds,
   }),
 );
-export const starredMarketCoinsSelector = (state: State) => state.settings.starredMarketCoins;
 export const overriddenFeatureFlagsSelector = (state: State) =>
   state.settings.overriddenFeatureFlags;
 export const featureFlagsButtonVisibleSelector = (state: State) =>
@@ -705,3 +707,5 @@ export const featureFlagsButtonVisibleSelector = (state: State) =>
 export const vaultSignerSelector = (state: State) => state.settings.vaultSigner;
 export const supportedCounterValuesSelector = (state: State) =>
   state.settings.supportedCounterValues;
+export const hasSeenAnalyticsOptInPromptSelector = (state: State) =>
+  state.settings.hasSeenAnalyticsOptInPrompt;

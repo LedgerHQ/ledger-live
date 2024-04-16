@@ -15,8 +15,6 @@ export enum ScreenName {
   Assets = "Assets",
   BenchmarkQRStream = "BenchmarkQRStream",
   BitcoinEditCustomFees = "BitcoinEditCustomFees",
-  ClaimNftWelcome = "ClaimNftWelcome",
-  ClaimNftQrScan = "ClaimNftQrScan",
   ClaimRewardsConnectDevice = "ClaimRewardsConnectDevice",
   ClaimRewardsSelectDevice = "ClaimRewardsSelectDevice",
   ClaimRewardsValidationError = "ClaimRewardsValidationError",
@@ -94,9 +92,8 @@ export enum ScreenName {
   GetDevice = "GetDevice",
   HelpSettings = "HelpSettings",
   HiddenNftCollections = "HiddenNftCollections",
-  Manager = "Manager",
-  ManagerDevice = "ManagerDevice",
-  ManagerMain = "ManagerMain",
+  MyLedgerChooseDevice = "MyLedgerChooseDevice",
+  MyLedgerDevice = "MyLedgerDevice",
   MigrateAccountsConnectDevice = "MigrateAccountsConnectDevice",
   MigrateAccountsOverview = "MigrateAccountsOverview",
   MigrateAccountsProgress = "MigrateAccountsProgress",
@@ -487,15 +484,12 @@ export enum ScreenName {
 
   CustomImageStep0Welcome = "CustomImageStep0Welcome",
   CustomImageStep1Crop = "CustomImageStep1Crop",
-  CustomImageStep2Preview = "CustomImageStep2Preview",
+  CustomImageStep2ChooseContrast = "CustomImageStep2ChooseContrast",
   CustomImageStep3Transfer = "CustomImageStep3Transfer",
   CustomImageErrorScreen = "CustomImageErrorScreen",
   CustomImagePreviewPreEdit = "CustomImagePreviewPreEdit",
   CustomImagePreviewPostEdit = "CustomImagePreviewPostEdit",
   CustomImageNFTGallery = "CustomImageNFTGallery",
-
-  ClaimNftWelcomeScreen = "ClaimNftWelcomeScreen",
-  ClaimNftQrScanScreen = "ClaimNftQrScanScreen",
 
   PostOnboardingHub = "PostOnboardingHub",
   PostOnboardingDebugScreen = "PostOnboardingDebugScreen",
@@ -505,6 +499,9 @@ export enum ScreenName {
   Stake = "Stake",
 
   RedirectToOnboardingRecoverFlow = "RedirectToOnboardingRecoverFlow",
+
+  AnalyticsOptInPromptMain = "AnalyticsOptInPromptMain",
+  AnalyticsOptInPromptDetails = "AnalyticsOptInPromptDetails",
 }
 
 export enum NavigatorName {
@@ -538,8 +535,7 @@ export enum NavigatorName {
   ClaimRewards = "ClaimRewards",
   Freeze = "Freeze",
   ImportAccounts = "ImportAccounts",
-  Manager = "ManagerNavigator",
-  ManagerStack = "ManagerStack",
+  MyLedger = "MyLedger",
   NftNavigator = "NftNavigator",
   Onboarding = "Onboarding",
   OnboardingCarefulWarning = "OnboardingCarefulWarning",
@@ -608,11 +604,10 @@ export enum NavigatorName {
   // Custom Image
   CustomImage = "CustomImage",
 
-  // Claim NFT
-  ClaimNft = "ClaimNft",
-
   WalletConnect = "WalletConnect",
 
   PostOnboarding = "PostOnboarding",
   SyncOnboarding = "SyncOnboarding",
+
+  AnalyticsOptInPrompt = "AnalyticsOptInPrompt",
 }

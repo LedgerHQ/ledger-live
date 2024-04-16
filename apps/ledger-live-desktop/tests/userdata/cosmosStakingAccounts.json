@@ -31,7 +31,6 @@
       "discreetMode": false,
       "preferredDeviceModel": "nanoS",
       "hasInstalledApps": true,
-      "carouselVisibility": 99999999999,
       "hasAcceptedSwapKYC": false,
       "lastSeenDevice": null,
       "blacklistedTokenIds": [],
@@ -72,12 +71,18 @@
               "id": "js:2:cosmos:cosmos18z67x9eag38z83sw2urpjhx89qzewa3stex66x:-365CEBB7629A12F79B3BF68FBD19F7169EAAD420B0C8AD32FD6B403A74C1D2BF-OUT",
               "hash": "365CEBB7629A12F79B3BF68FBD19F7169EAAD420B0C8AD32FD6B403A74C1D2BF",
               "type": "OUT",
-              "senders": ["cosmos18z67x9eag38z83sw2urpjhx89qzewa3stex66x"],
-              "recipients": ["cosmos1q0d6glgvrud7gnc9g5qg2tqa6kem6rrpa274yc"],
+              "senders": [
+                "cosmos18z67x9eag38z83sw2urpjhx89qzewa3stex66x"
+              ],
+              "recipients": [
+                "cosmos1q0d6glgvrud7gnc9g5qg2tqa6kem6rrpa274yc"
+              ],
               "accountId": "js:2:cosmos:cosmos18z67x9eag38z83sw2urpjhx89qzewa3stex66x:",
               "blockHash": null,
               "blockHeight": "14119493",
-              "extra": { "validators": [] },
+              "extra": {
+                "validators": []
+              },
               "date": "2023-02-17T12:53:48.000Z",
               "value": "146550",
               "fee": "2250",
@@ -87,12 +92,18 @@
               "id": "js:2:cosmos:cosmos18z67x9eag38z83sw2urpjhx89qzewa3stex66x:-DEC6E9D488EB0BFA5002BEA7BE002014675BD1D00F28ED32EFB6E1B7BA8A9592-OUT",
               "hash": "DEC6E9D488EB0BFA5002BEA7BE002014675BD1D00F28ED32EFB6E1B7BA8A9592",
               "type": "OUT",
-              "senders": ["cosmos18z67x9eag38z83sw2urpjhx89qzewa3stex66x"],
-              "recipients": ["cosmos1gtuwnas9wdlqc9kar2ppu5qrgpy7r4zsu385hh"],
+              "senders": [
+                "cosmos18z67x9eag38z83sw2urpjhx89qzewa3stex66x"
+              ],
+              "recipients": [
+                "cosmos1gtuwnas9wdlqc9kar2ppu5qrgpy7r4zsu385hh"
+              ],
               "accountId": "js:2:cosmos:cosmos18z67x9eag38z83sw2urpjhx89qzewa3stex66x:",
               "blockHash": null,
               "blockHeight": "14119459",
-              "extra": { "validators": [] },
+              "extra": {
+                "validators": []
+              },
               "date": "2023-02-17T12:50:15.000Z",
               "value": "146550",
               "fee": "2250",
@@ -102,12 +113,18 @@
               "id": "js:2:cosmos:cosmos18z67x9eag38z83sw2urpjhx89qzewa3stex66x:-439EC6C895B3D793DB80467DF49DB2AE656D7F8770C1C07458950B28A1D51151-OUT",
               "hash": "439EC6C895B3D793DB80467DF49DB2AE656D7F8770C1C07458950B28A1D51151",
               "type": "OUT",
-              "senders": ["cosmos18z67x9eag38z83sw2urpjhx89qzewa3stex66x"],
-              "recipients": ["cosmos1gtuwnas9wdlqc9kar2ppu5qrgpy7r4zsu385hh"],
+              "senders": [
+                "cosmos18z67x9eag38z83sw2urpjhx89qzewa3stex66x"
+              ],
+              "recipients": [
+                "cosmos1gtuwnas9wdlqc9kar2ppu5qrgpy7r4zsu385hh"
+              ],
               "accountId": "js:2:cosmos:cosmos18z67x9eag38z83sw2urpjhx89qzewa3stex66x:",
               "blockHash": null,
               "blockHeight": "14119448",
-              "extra": { "validators": [] },
+              "extra": {
+                "validators": []
+              },
               "date": "2023-02-17T12:49:05.000Z",
               "value": "74400",
               "fee": "2250",
@@ -117,12 +134,18 @@
               "id": "js:2:cosmos:cosmos18z67x9eag38z83sw2urpjhx89qzewa3stex66x:-4B2B4127F0E44F8D7E6E6418863C672C6CE41ABE5DA11ACC7C12E3417E45C21A-OUT",
               "hash": "4B2B4127F0E44F8D7E6E6418863C672C6CE41ABE5DA11ACC7C12E3417E45C21A",
               "type": "OUT",
-              "senders": ["cosmos18z67x9eag38z83sw2urpjhx89qzewa3stex66x"],
-              "recipients": ["cosmos1edm0apu6xqwn2rprph4skerhm8eljda8g66fmf"],
+              "senders": [
+                "cosmos18z67x9eag38z83sw2urpjhx89qzewa3stex66x"
+              ],
+              "recipients": [
+                "cosmos1edm0apu6xqwn2rprph4skerhm8eljda8g66fmf"
+              ],
               "accountId": "js:2:cosmos:cosmos18z67x9eag38z83sw2urpjhx89qzewa3stex66x:",
               "blockHash": null,
               "blockHeight": "14119340",
-              "extra": { "validators": [] },
+              "extra": {
+                "validators": []
+              },
               "date": "2023-02-17T12:37:40.000Z",
               "value": "38325",
               "fee": "2250",
@@ -132,12 +155,18 @@
               "id": "js:2:cosmos:cosmos18z67x9eag38z83sw2urpjhx89qzewa3stex66x:-59F6193F6B01D254B5641B604D301EF9CF9859CBC463DCB0D8E6D82AF27F84EE-IN",
               "hash": "59F6193F6B01D254B5641B604D301EF9CF9859CBC463DCB0D8E6D82AF27F84EE",
               "type": "IN",
-              "senders": ["cosmos10l0em534cvlvz9aplu2lqle8v26fcs9wlw5wnt"],
-              "recipients": ["cosmos18z67x9eag38z83sw2urpjhx89qzewa3stex66x"],
+              "senders": [
+                "cosmos10l0em534cvlvz9aplu2lqle8v26fcs9wlw5wnt"
+              ],
+              "recipients": [
+                "cosmos18z67x9eag38z83sw2urpjhx89qzewa3stex66x"
+              ],
               "accountId": "js:2:cosmos:cosmos18z67x9eag38z83sw2urpjhx89qzewa3stex66x:",
               "blockHash": null,
               "blockHeight": "14119193",
-              "extra": { "validators": [] },
+              "extra": {
+                "validators": []
+              },
               "date": "2023-02-17T12:22:10.000Z",
               "value": "500000",
               "fee": "2250",
@@ -147,12 +176,18 @@
               "id": "js:2:cosmos:cosmos18z67x9eag38z83sw2urpjhx89qzewa3stex66x:-0EAA7438FE03B324D6C9A8FEFBD61E10B61851368E6404C31FBDCA419172C63E-IN",
               "hash": "0EAA7438FE03B324D6C9A8FEFBD61E10B61851368E6404C31FBDCA419172C63E",
               "type": "IN",
-              "senders": ["cosmos1usn93v3u0ul0f6hsv4f0jya8rm79vp693at49y"],
-              "recipients": ["cosmos18z67x9eag38z83sw2urpjhx89qzewa3stex66x"],
+              "senders": [
+                "cosmos1usn93v3u0ul0f6hsv4f0jya8rm79vp693at49y"
+              ],
+              "recipients": [
+                "cosmos18z67x9eag38z83sw2urpjhx89qzewa3stex66x"
+              ],
               "accountId": "js:2:cosmos:cosmos18z67x9eag38z83sw2urpjhx89qzewa3stex66x:",
               "blockHash": null,
               "blockHeight": "14119044",
-              "extra": { "validators": [] },
+              "extra": {
+                "validators": []
+              },
               "date": "2023-02-17T12:06:18.000Z",
               "value": "450785",
               "fee": "2250",
@@ -166,9 +201,26 @@
           "balance": "544960",
           "spendableBalance": "544960",
           "balanceHistoryCache": {
-            "HOUR": { "balances": [0, 544960, 544960], "latestDate": 1676642400000 },
-            "DAY": { "balances": [0], "latestDate": 1676588400000 },
-            "WEEK": { "balances": [0], "latestDate": 1676156400000 }
+            "HOUR": {
+              "balances": [
+                0,
+                544960,
+                544960
+              ],
+              "latestDate": 1676642400000
+            },
+            "DAY": {
+              "balances": [
+                0
+              ],
+              "latestDate": 1676588400000
+            },
+            "WEEK": {
+              "balances": [
+                0
+              ],
+              "latestDate": 1676156400000
+            }
           },
           "xpub": "cosmos18z67x9eag38z83sw2urpjhx89qzewa3stex66x",
           "cosmosResources": {
@@ -231,12 +283,18 @@
               "id": "js:2:cosmos:cosmos1gtuwnas9wdlqc9kar2ppu5qrgpy7r4zsu385hh:-DEC6E9D488EB0BFA5002BEA7BE002014675BD1D00F28ED32EFB6E1B7BA8A9592-IN",
               "hash": "DEC6E9D488EB0BFA5002BEA7BE002014675BD1D00F28ED32EFB6E1B7BA8A9592",
               "type": "IN",
-              "senders": ["cosmos18z67x9eag38z83sw2urpjhx89qzewa3stex66x"],
-              "recipients": ["cosmos1gtuwnas9wdlqc9kar2ppu5qrgpy7r4zsu385hh"],
+              "senders": [
+                "cosmos18z67x9eag38z83sw2urpjhx89qzewa3stex66x"
+              ],
+              "recipients": [
+                "cosmos1gtuwnas9wdlqc9kar2ppu5qrgpy7r4zsu385hh"
+              ],
               "accountId": "js:2:cosmos:cosmos1gtuwnas9wdlqc9kar2ppu5qrgpy7r4zsu385hh:",
               "blockHash": null,
               "blockHeight": "14119459",
-              "extra": { "validators": [] },
+              "extra": {
+                "validators": []
+              },
               "date": "2023-02-17T12:50:15.000Z",
               "value": "144300",
               "fee": "2250",
@@ -246,12 +304,18 @@
               "id": "js:2:cosmos:cosmos1gtuwnas9wdlqc9kar2ppu5qrgpy7r4zsu385hh:-439EC6C895B3D793DB80467DF49DB2AE656D7F8770C1C07458950B28A1D51151-IN",
               "hash": "439EC6C895B3D793DB80467DF49DB2AE656D7F8770C1C07458950B28A1D51151",
               "type": "IN",
-              "senders": ["cosmos18z67x9eag38z83sw2urpjhx89qzewa3stex66x"],
-              "recipients": ["cosmos1gtuwnas9wdlqc9kar2ppu5qrgpy7r4zsu385hh"],
+              "senders": [
+                "cosmos18z67x9eag38z83sw2urpjhx89qzewa3stex66x"
+              ],
+              "recipients": [
+                "cosmos1gtuwnas9wdlqc9kar2ppu5qrgpy7r4zsu385hh"
+              ],
               "accountId": "js:2:cosmos:cosmos1gtuwnas9wdlqc9kar2ppu5qrgpy7r4zsu385hh:",
               "blockHash": null,
               "blockHeight": "14119448",
-              "extra": { "validators": [] },
+              "extra": {
+                "validators": []
+              },
               "date": "2023-02-17T12:49:05.000Z",
               "value": "72150",
               "fee": "2250",
@@ -265,9 +329,26 @@
           "balance": "210200",
           "spendableBalance": "174125",
           "balanceHistoryCache": {
-            "HOUR": { "balances": [0, 210200, 210200], "latestDate": 1676642400000 },
-            "DAY": { "balances": [0], "latestDate": 1676588400000 },
-            "WEEK": { "balances": [0], "latestDate": 1676156400000 }
+            "HOUR": {
+              "balances": [
+                0,
+                210200,
+                210200
+              ],
+              "latestDate": 1676642400000
+            },
+            "DAY": {
+              "balances": [
+                0
+              ],
+              "latestDate": 1676588400000
+            },
+            "WEEK": {
+              "balances": [
+                0
+              ],
+              "latestDate": 1676156400000
+            }
           },
           "xpub": "cosmos1gtuwnas9wdlqc9kar2ppu5qrgpy7r4zsu385hh",
           "cosmosResources": {
@@ -337,12 +418,18 @@
               "id": "js:2:cosmos:cosmos1q0d6glgvrud7gnc9g5qg2tqa6kem6rrpa274yc:-365CEBB7629A12F79B3BF68FBD19F7169EAAD420B0C8AD32FD6B403A74C1D2BF-IN",
               "hash": "365CEBB7629A12F79B3BF68FBD19F7169EAAD420B0C8AD32FD6B403A74C1D2BF",
               "type": "IN",
-              "senders": ["cosmos18z67x9eag38z83sw2urpjhx89qzewa3stex66x"],
-              "recipients": ["cosmos1q0d6glgvrud7gnc9g5qg2tqa6kem6rrpa274yc"],
+              "senders": [
+                "cosmos18z67x9eag38z83sw2urpjhx89qzewa3stex66x"
+              ],
+              "recipients": [
+                "cosmos1q0d6glgvrud7gnc9g5qg2tqa6kem6rrpa274yc"
+              ],
               "accountId": "js:2:cosmos:cosmos1q0d6glgvrud7gnc9g5qg2tqa6kem6rrpa274yc:",
               "blockHash": null,
               "blockHeight": "14119493",
-              "extra": { "validators": [] },
+              "extra": {
+                "validators": []
+              },
               "date": "2023-02-17T12:53:48.000Z",
               "value": "144300",
               "fee": "2250",
@@ -356,9 +443,26 @@
           "balance": "138050",
           "spendableBalance": "101975",
           "balanceHistoryCache": {
-            "HOUR": { "balances": [0, 138050, 138050], "latestDate": 1676642400000 },
-            "DAY": { "balances": [0], "latestDate": 1676588400000 },
-            "WEEK": { "balances": [0], "latestDate": 1676156400000 }
+            "HOUR": {
+              "balances": [
+                0,
+                138050,
+                138050
+              ],
+              "latestDate": 1676642400000
+            },
+            "DAY": {
+              "balances": [
+                0
+              ],
+              "latestDate": 1676588400000
+            },
+            "WEEK": {
+              "balances": [
+                0
+              ],
+              "latestDate": 1676156400000
+            }
           },
           "xpub": "cosmos1q0d6glgvrud7gnc9g5qg2tqa6kem6rrpa274yc",
           "cosmosResources": {
@@ -428,12 +532,18 @@
               "id": "js:2:cosmos:cosmos1pwvkthf3j9llynlelkk3p7h8pt8q4g44zvz78q:-245303F798871AB159C0BA4DD87BD2FFB7D46E969DAED083D097C84B0D9C5DFA-IN",
               "hash": "245303F798871AB159C0BA4DD87BD2FFB7D46E969DAED083D097C84B0D9C5DFA",
               "type": "IN",
-              "senders": ["cosmos1edm0apu6xqwn2rprph4skerhm8eljda8g66fmf"],
-              "recipients": ["cosmos1pwvkthf3j9llynlelkk3p7h8pt8q4g44zvz78q"],
+              "senders": [
+                "cosmos1edm0apu6xqwn2rprph4skerhm8eljda8g66fmf"
+              ],
+              "recipients": [
+                "cosmos1pwvkthf3j9llynlelkk3p7h8pt8q4g44zvz78q"
+              ],
               "accountId": "js:2:cosmos:cosmos1pwvkthf3j9llynlelkk3p7h8pt8q4g44zvz78q:",
               "blockHash": null,
               "blockHeight": "14119395",
-              "extra": { "validators": [] },
+              "extra": {
+                "validators": []
+              },
               "date": "2023-02-17T12:43:26.000Z",
               "value": "33825",
               "fee": "2250",
@@ -447,9 +557,26 @@
           "balance": "27575",
           "spendableBalance": "0",
           "balanceHistoryCache": {
-            "HOUR": { "balances": [0, 27575, 27575], "latestDate": 1676642400000 },
-            "DAY": { "balances": [0], "latestDate": 1676588400000 },
-            "WEEK": { "balances": [0], "latestDate": 1676156400000 }
+            "HOUR": {
+              "balances": [
+                0,
+                27575,
+                27575
+              ],
+              "latestDate": 1676642400000
+            },
+            "DAY": {
+              "balances": [
+                0
+              ],
+              "latestDate": 1676588400000
+            },
+            "WEEK": {
+              "balances": [
+                0
+              ],
+              "latestDate": 1676156400000
+            }
           },
           "xpub": "cosmos1pwvkthf3j9llynlelkk3p7h8pt8q4g44zvz78q",
           "cosmosResources": {
@@ -497,12 +624,18 @@
               "id": "js:2:cosmos:cosmos1edm0apu6xqwn2rprph4skerhm8eljda8g66fmf:-245303F798871AB159C0BA4DD87BD2FFB7D46E969DAED083D097C84B0D9C5DFA-OUT",
               "hash": "245303F798871AB159C0BA4DD87BD2FFB7D46E969DAED083D097C84B0D9C5DFA",
               "type": "OUT",
-              "senders": ["cosmos1edm0apu6xqwn2rprph4skerhm8eljda8g66fmf"],
-              "recipients": ["cosmos1pwvkthf3j9llynlelkk3p7h8pt8q4g44zvz78q"],
+              "senders": [
+                "cosmos1edm0apu6xqwn2rprph4skerhm8eljda8g66fmf"
+              ],
+              "recipients": [
+                "cosmos1pwvkthf3j9llynlelkk3p7h8pt8q4g44zvz78q"
+              ],
               "accountId": "js:2:cosmos:cosmos1edm0apu6xqwn2rprph4skerhm8eljda8g66fmf:",
               "blockHash": null,
               "blockHeight": "14119395",
-              "extra": { "validators": [] },
+              "extra": {
+                "validators": []
+              },
               "date": "2023-02-17T12:43:26.000Z",
               "value": "36075",
               "fee": "2250",
@@ -512,12 +645,18 @@
               "id": "js:2:cosmos:cosmos1edm0apu6xqwn2rprph4skerhm8eljda8g66fmf:-4B2B4127F0E44F8D7E6E6418863C672C6CE41ABE5DA11ACC7C12E3417E45C21A-IN",
               "hash": "4B2B4127F0E44F8D7E6E6418863C672C6CE41ABE5DA11ACC7C12E3417E45C21A",
               "type": "IN",
-              "senders": ["cosmos18z67x9eag38z83sw2urpjhx89qzewa3stex66x"],
-              "recipients": ["cosmos1edm0apu6xqwn2rprph4skerhm8eljda8g66fmf"],
+              "senders": [
+                "cosmos18z67x9eag38z83sw2urpjhx89qzewa3stex66x"
+              ],
+              "recipients": [
+                "cosmos1edm0apu6xqwn2rprph4skerhm8eljda8g66fmf"
+              ],
               "accountId": "js:2:cosmos:cosmos1edm0apu6xqwn2rprph4skerhm8eljda8g66fmf:",
               "blockHash": null,
               "blockHeight": "14119340",
-              "extra": { "validators": [] },
+              "extra": {
+                "validators": []
+              },
               "date": "2023-02-17T12:37:40.000Z",
               "value": "36075",
               "fee": "2250",
@@ -531,9 +670,26 @@
           "balance": "0",
           "spendableBalance": "0",
           "balanceHistoryCache": {
-            "HOUR": { "balances": [0, 0, 0], "latestDate": 1676642400000 },
-            "DAY": { "balances": [0], "latestDate": 1676588400000 },
-            "WEEK": { "balances": [0], "latestDate": 1676156400000 }
+            "HOUR": {
+              "balances": [
+                0,
+                0,
+                0
+              ],
+              "latestDate": 1676642400000
+            },
+            "DAY": {
+              "balances": [
+                0
+              ],
+              "latestDate": 1676588400000
+            },
+            "WEEK": {
+              "balances": [
+                0
+              ],
+              "latestDate": 1676156400000
+            }
           },
           "xpub": "cosmos1edm0apu6xqwn2rprph4skerhm8eljda8g66fmf",
           "cosmosResources": {
@@ -577,9 +733,18 @@
           "balance": "0",
           "spendableBalance": "0",
           "balanceHistoryCache": {
-            "HOUR": { "balances": [], "latestDate": 1676642400000 },
-            "DAY": { "balances": [], "latestDate": 1676588400000 },
-            "WEEK": { "balances": [], "latestDate": 1676156400000 }
+            "HOUR": {
+              "balances": [],
+              "latestDate": 1676642400000
+            },
+            "DAY": {
+              "balances": [],
+              "latestDate": 1676588400000
+            },
+            "WEEK": {
+              "balances": [],
+              "latestDate": 1676156400000
+            }
           },
           "xpub": "cosmos154v9yakpvtrnen03n00ypgd6sdfwklavasezlg",
           "cosmosResources": {

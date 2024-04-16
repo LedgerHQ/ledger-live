@@ -12,34 +12,26 @@ let userSupportedCurrencies: CryptoCurrency[] = [];
 let userSupportedFiats: FiatCurrency[] | null = null;
 
 // The API returns Coingeko countervalues tickers, but getFiatCurrencyByTicker might not support each of those.
-const locallySupportedFiats = [
+export const locallySupportedFiats = [
   "AED",
   "AUD",
-  "BGN",
   "BHD",
   "BRL",
   "CAD",
   "CHF",
   "CLP",
   "CNY",
-  "CRC",
   "CZK",
   "DKK",
   "EUR",
   "GBP",
-  "GHS",
   "HKD",
-  "HRK",
   "HUF",
   "IDR",
   "ILS",
   "INR",
-  "IRR",
   "JPY",
-  "KES",
-  "KHR",
   "KRW",
-  "MUR",
   "MXN",
   "MYR",
   "NGN",
@@ -48,40 +40,39 @@ const locallySupportedFiats = [
   "PHP",
   "PKR",
   "PLN",
-  "RON",
   "RUB",
   "SEK",
   "SGD",
   "THB",
   "TRY",
-  "TZS",
   "UAH",
-  "UGX",
   "USD",
-  "VES",
   "VND",
-  "VUV",
   "ZAR",
 ];
 
 async function initializeUserSupportedFiats() {
-  try {
-    const ids = await fetchSupportedFiatsTokens();
-    const idsToUpper = ids.map(id => id.toUpperCase());
+  const remoteSupportedTokens = await fetchSupportedFiatsTokens();
+  let supportedTokens = [] as string[];
 
-    // This makes sure we only keep the elements supported in our API and that are available for getFiatCurrencyByTicker
-    const supportedTokens = idsToUpper.filter(token => locallySupportedFiats.includes(token));
-    userSupportedFiats = supportedTokens.map(id => {
-      return getFiatCurrencyByTicker(id);
+  if (remoteSupportedTokens.length !== 0) {
+    remoteSupportedTokens.forEach(id => {
+      const token = id.toUpperCase();
+      if (locallySupportedFiats.includes(token)) {
+        supportedTokens.push(token);
+      }
     });
-  } catch (error) {
-    throw new Error(`Failed to get supported Fiats. Error Message: ${error}`);
+  } else {
+    supportedTokens = locallySupportedFiats;
   }
+  userSupportedFiats = supportedTokens.map(id => {
+    return getFiatCurrencyByTicker(id);
+  });
 }
 
 export async function fetchSupportedFiatsTokens(): Promise<string[]> {
   try {
-    const response = await fetch("https://countervalues.live.ledger.com/v2/supported-to", {
+    const response = await fetch(`${getEnv("LEDGER_COUNTERVALUES_API")}/v2/supported-to`, {
       method: "GET",
       headers: {
         accept: "application/json",
@@ -95,9 +86,8 @@ export async function fetchSupportedFiatsTokens(): Promise<string[]> {
     const data: string[] = await response.json();
     return data;
   } catch (error) {
-    // Handle any network or parsing errors here
-    console.error("Error:", error);
-    throw error;
+    log("debug", `Failed to fetch supported fiat tokens. Error Message: ${error}`);
+    return [];
   }
 }
 
@@ -114,7 +104,7 @@ export async function listSupportedFiats(): Promise<FiatCurrency[]> {
     } catch (error) {
       // Handle initialization error
       log("debug", `Failed to initialize userSupportedFiats. Error Message: ${error}`);
-      return [];
+      return userSupportedFiats || [];
     }
     return userSupportedFiats || [];
   }

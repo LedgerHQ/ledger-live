@@ -194,7 +194,8 @@ export default function DelegationSummary({ navigation, route }: Props) {
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <TrackScreen
         category="DelegationFlow"
-        name="Summary"
+        name={route.params.skipStartedStep ? "Step Starter" : "Summary"}
+        screen="Summary"
         flow="stake"
         action="delegation"
         currency={ticker}

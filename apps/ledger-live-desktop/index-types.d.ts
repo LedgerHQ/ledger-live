@@ -40,8 +40,6 @@ interface Window {
   __REDUX_DEVTOOLS_EXTENSION_COMPOSE__: any;
 
   api: {
-    pathUserdata: string;
-    pathHome: string;
     appDirname: string;
     appLoaded: () => void;
     reloadRenderer: () => void;

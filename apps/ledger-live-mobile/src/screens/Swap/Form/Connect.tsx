@@ -1,9 +1,7 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import SelectDevice from "~/components/SelectDevice";
 import SelectDevice2, { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
 import DeviceActionModal from "~/components/DeviceActionModal";
 import { TrackScreen } from "~/analytics";
@@ -22,8 +20,6 @@ export function Connect({
 
   const [device, setDevice] = useState<Device>();
   const [result] = useState();
-
-  const newDeviceSelectionFeatureFlag = useFeature("llmNewDeviceSelection");
 
   const onModalHide = useCallback(() => {
     if (result) {
@@ -69,17 +65,13 @@ export function Connect({
     <Flex padding={4}>
       <TrackScreen category="Swap Form" name="ConnectDeviceListApps" provider={provider} />
       <SkipSelectDevice onResult={setDevice} />
-      {newDeviceSelectionFeatureFlag?.enabled ? (
-        <Flex height="100%" px={2} py={2}>
-          <SelectDevice2
-            onSelect={setDevice}
-            stopBleScanning={!!device}
-            requestToSetHeaderOptions={requestToSetHeaderOptions}
-          />
-        </Flex>
-      ) : (
-        <SelectDevice onSelect={setDevice} autoSelectOnAdd />
-      )}
+      <Flex height="100%" px={2} py={2}>
+        <SelectDevice2
+          onSelect={setDevice}
+          stopBleScanning={!!device}
+          requestToSetHeaderOptions={requestToSetHeaderOptions}
+        />
+      </Flex>
       <DeviceActionModal
         onClose={() => setDevice(undefined)}
         onModalHide={onModalHide}

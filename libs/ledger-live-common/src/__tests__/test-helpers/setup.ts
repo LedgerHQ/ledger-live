@@ -1,5 +1,4 @@
 import "./environment";
-
 import BigNumber from "bignumber.js";
 
 jest.setTimeout(360000);

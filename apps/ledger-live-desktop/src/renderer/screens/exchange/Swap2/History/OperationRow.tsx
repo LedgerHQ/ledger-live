@@ -14,7 +14,6 @@ import styled, { DefaultTheme } from "styled-components";
 import Box from "~/renderer/components/Box";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import Ellipsis from "~/renderer/components/Ellipsis";
-import FormattedDate from "~/renderer/components/FormattedDate";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import Text from "~/renderer/components/Text";
 import Tooltip from "~/renderer/components/Tooltip";
@@ -22,6 +21,7 @@ import IconArrowRight from "~/renderer/icons/ArrowRight";
 import IconClock from "~/renderer/icons/Clock";
 import IconSwap from "~/renderer/icons/Swap";
 import { rgba } from "~/renderer/styles/helpers";
+import { hourFormat, useDateFormatted } from "~/renderer/hooks/useDateFormatter";
 
 export const getStatusColor = (status: string, theme: DefaultTheme) => {
   if (isSwapOperationPending(status)) {
@@ -101,6 +101,8 @@ const OperationRow = ({
   } = mappedSwapOperation;
   const fromCurrency = getAccountCurrency(fromAccount);
   const toCurrency = getAccountCurrency(toAccount);
+  const dateFormatted = useDateFormatted(operation.date, hourFormat);
+
   return (
     <Row
       className={"swap-history-row"}
@@ -135,7 +137,7 @@ const OperationRow = ({
           {getProviderName(provider)}
         </Text>
         <Text ff={"Inter|Regular"} color={"palette.text.shade50"} fontSize={3}>
-          <FormattedDate date={operation.date} format="LT" />
+          {dateFormatted}
         </Text>
       </Box>
       <Box horizontal mx={20}>

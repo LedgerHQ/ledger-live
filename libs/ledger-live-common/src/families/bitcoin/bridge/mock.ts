@@ -7,8 +7,7 @@ import {
   AmountRequired,
   DustLimit,
 } from "@ledgerhq/errors";
-import type { Transaction } from "../types";
-import { getFeeItems } from "../api";
+import type { Transaction } from "@ledgerhq/coin-bitcoin/types";
 import {
   makeAccountBridgeReceive,
   scanAccounts,
@@ -20,9 +19,10 @@ import {
 import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getMainAccount } from "../../../account";
 import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import cryptoFactory from "../wallet-btc/crypto/factory";
-import { Currency } from "../wallet-btc";
-import { computeDustAmount } from "../wallet-btc/utils";
+import cryptoFactory from "@ledgerhq/coin-bitcoin/wallet-btc/crypto/factory";
+import { Currency } from "@ledgerhq/coin-bitcoin/wallet-btc/index";
+import { computeDustAmount } from "@ledgerhq/coin-bitcoin/wallet-btc/utils";
+import { getFeeItems } from "./api";
 
 const receive = makeAccountBridgeReceive();
 
@@ -109,7 +109,7 @@ const prepareTransaction = async (
       ...transaction,
       networkInfo: {
         family: "bitcoin",
-        feeItems,
+        feeItems: feeItems,
       },
     };
   }

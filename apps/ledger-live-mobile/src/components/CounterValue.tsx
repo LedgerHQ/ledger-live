@@ -2,7 +2,7 @@ import React, { useState, useCallback, useMemo, useEffect } from "react";
 import { BigNumber } from "bignumber.js";
 import { useSelector } from "react-redux";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
-import { useCalculate, useCountervaluesPolling } from "@ledgerhq/live-common/countervalues/react";
+import { useCalculate, useCountervaluesPolling } from "@ledgerhq/live-countervalues-react";
 import { TouchableOpacity, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
@@ -82,6 +82,7 @@ export default function CounterValue({
       addExtraSessionTrackingPair({
         from: currency,
         to: counterValueCurrency,
+        startDate: new Date(),
       });
       t = setTimeout(cvPolling.poll, 2000); // poll after 2s to ensure debounced CV userSettings are effective after this update
     }

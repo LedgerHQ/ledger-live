@@ -1,4 +1,5 @@
 import { expect } from "@playwright/test";
+import { getEnv } from "@ledgerhq/live-env";
 import test from "../../fixtures/common";
 import { MarketPage } from "../../models/MarketPage";
 import { Layout } from "../../models/Layout";
@@ -35,13 +36,22 @@ test("Market", async ({ page }) => {
   const layout = new Layout(page);
   const liveAppWebview = new LiveAppWebview(page);
 
+  const maskItems = {
+    mask: [
+      page.locator("data-test-id=market-small-graph"),
+      page.locator("data-test-id=market-coin-price"),
+      page.locator("data-test-id=market-cap"),
+      page.locator("data-test-id=market-price-change"),
+    ],
+  };
+
   await test.step("go to market", async () => {
     await layout.goToMarket();
-    await marketPage.waitForLoading();
-    await expect.soft(page).toHaveScreenshot("market-page-no-scrollbar.png");
+    await marketPage.waitForLoadingWithSwapbtn();
+    await expect.soft(page).toHaveScreenshot("market-page-no-scrollbar.png", maskItems);
   });
 
-  await page.route("https://countervalues.live.ledger.com/v2/supported-to", async route => {
+  await page.route(`${getEnv("LEDGER_COUNTERVALUES_API")}/v2/supported-to`, async route => {
     route.fulfill({
       headers: { teststatus: "mocked" },
       body: JSON.stringify([
@@ -112,32 +122,32 @@ test("Market", async ({ page }) => {
 
   await test.step("change countervalue", async () => {
     await marketPage.switchCountervalue("THB");
-    await marketPage.waitForLoading();
-    await expect.soft(page).toHaveScreenshot("market-page-thb-countervalue.png");
+    await marketPage.waitForLoadingWithSwapbtn();
+    await expect.soft(page).toHaveScreenshot("market-page-thb-countervalue.png", maskItems);
   });
 
   await test.step("change market range", async () => {
     await marketPage.switchMarketRange("7d");
-    await marketPage.waitForLoading();
-    await expect.soft(page).toHaveScreenshot("market-page-7d-range.png");
+    await marketPage.waitForLoadingWithSwapbtn();
+    await expect.soft(page).toHaveScreenshot("market-page-7d-range.png", maskItems);
   });
 
   await test.step("star bitcoin", async () => {
     await marketPage.starCoin("btc");
-    await expect.soft(page).toHaveScreenshot("market-page-btc-star.png");
+    await expect.soft(page).toHaveScreenshot("market-page-btc-star.png", maskItems);
   });
 
-  await test.step("search bi", async () => {
-    await marketPage.search("bi");
+  await test.step("search bitcoin", async () => {
+    await marketPage.search("bitcoin");
     await marketPage.waitForLoading();
-    await expect.soft(page).toHaveScreenshot("market-page-search-bi.png");
+    await expect.soft(page).toHaveScreenshot("market-page-search-bitcoin.png", maskItems);
   });
 
   await test.step("filter starred", async () => {
     await marketPage.toggleStarFilter();
-    await marketPage.waitForLoading();
-    await marketPage.waitForSearchBarToBeEmpty(); // windows was showing the search bar still containing text. This wait prevents that
-    await expect.soft(page).toHaveScreenshot("market-page-filter-starred.png");
+    await marketPage.waitForLoadingWithSwapbtn();
+    // await marketPage.waitForSearchBarToBeEmpty(); // windows was showing the search bar still containing text. This wait prevents that
+    await expect.soft(page).toHaveScreenshot("market-page-filter-starred.png", maskItems);
   });
 
   await test.step("swap available to bitcoin", async () => {
@@ -159,7 +169,13 @@ test("Market", async ({ page }) => {
 
   await test.step("go to bitcoin page", async () => {
     await marketPage.openCoinPage("btc");
-    await expect.soft(page).toHaveScreenshot("market-btc-page.png");
+    await expect.soft(page).toHaveScreenshot("market-btc-page.png", {
+      mask: [
+        page.locator("data-test-id=chart-container"),
+        page.locator("data-test-id=market-price-delta"),
+        page.locator("data-test-id= market-price"),
+      ],
+    });
   });
 
   await test.step("buy bitcoin from coin page", async () => {

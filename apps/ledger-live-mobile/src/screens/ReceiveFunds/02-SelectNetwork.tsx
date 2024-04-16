@@ -17,10 +17,10 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Animatable from "react-native-animatable";
 import { setCloseNetworkBanner } from "~/actions/settings";
 import { hasClosedNetworkBannerSelector } from "~/reducers/settings";
-import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
 import BigCurrencyRow from "~/components/BigCurrencyRow";
 import { findAccountByCurrency } from "~/logic/deposit";
 import { AccountLike } from "@ledgerhq/types-live";
+import { urls } from "~/utils/urls";
 
 type CryptoWithAccounts = { crypto: CryptoCurrency; accounts: AccountLike[] };
 
@@ -48,8 +48,6 @@ export default function SelectNetwork({ navigation, route }: Props) {
 
   const hasClosedNetworkBanner = useSelector(hasClosedNetworkBannerSelector);
   const [displayBanner, setBanner] = useState(!hasClosedNetworkBanner);
-
-  const depositNetworkBannerMobile = useFeature("depositNetworkBannerMobile");
 
   const { t } = useTranslation();
 
@@ -148,15 +146,14 @@ export default function SelectNetwork({ navigation, route }: Props) {
     setBanner(false);
   }, [dispatch]);
 
-  const clickLearn = useCallback(() => {
+  const clickLearn = () => {
     track("button_clicked", {
       button: "Choose a network article",
       type: "card",
       page: "Choose a network",
     });
-    // @ts-expect-error TYPINGS
-    Linking.openURL(depositNetworkBannerMobile?.params?.url);
-  }, [depositNetworkBannerMobile?.params?.url]);
+    Linking.openURL(urls.chooseNetwork);
+  };
 
   const renderItem = useCallback(
     ({ item }: { item: CryptoWithAccounts }) => (
@@ -189,28 +186,26 @@ export default function SelectNetwork({ navigation, route }: Props) {
           {t("transfer.receive.selectNetwork.subtitle")}
         </Text>
       </Flex>
-
-      <FlatList
-        testID="receive-header-step2-networks"
-        contentContainerStyle={styles.list}
-        data={sortedCryptoCurrenciesWithAccounts}
-        renderItem={renderItem}
-        keyExtractor={keyExtractor}
-        showsVerticalScrollIndicator={false}
-        keyboardDismissMode="on-drag"
-      />
-
-      {depositNetworkBannerMobile?.enabled ? (
-        displayBanner ? (
-          <AnimatedView animation="fadeInUp" delay={50} duration={300}>
-            <NetworkBanner hideBanner={hideBanner} onPress={clickLearn} />
-          </AnimatedView>
-        ) : (
-          <AnimatedView animation="fadeOutDown" delay={50} duration={300}>
-            <NetworkBanner hideBanner={hideBanner} onPress={clickLearn} />
-          </AnimatedView>
-        )
-      ) : null}
+      <Flex ml={16} mr={16} flex={1}>
+        <FlatList
+          testID="receive-header-step2-networks"
+          contentContainerStyle={styles.list}
+          data={sortedCryptoCurrenciesWithAccounts}
+          renderItem={renderItem}
+          keyExtractor={keyExtractor}
+          showsVerticalScrollIndicator={false}
+          keyboardDismissMode="on-drag"
+        />
+      </Flex>
+      {displayBanner ? (
+        <AnimatedView animation="fadeInUp" delay={50} duration={300}>
+          <NetworkBanner hideBanner={hideBanner} onPress={clickLearn} />
+        </AnimatedView>
+      ) : (
+        <AnimatedView animation="fadeOutDown" delay={50} duration={300}>
+          <NetworkBanner hideBanner={hideBanner} onPress={clickLearn} />
+        </AnimatedView>
+      )}
     </>
   );
 }

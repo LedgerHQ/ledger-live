@@ -8,6 +8,8 @@ import nanoX from "~/renderer/images/devices/nanoX.png";
 import nanoXDark from "~/renderer/images/devices/nanoX_dark.png";
 import stax from "~/renderer/images/devices/stax.png";
 import staxDark from "~/renderer/images/devices/stax_dark.png";
+import europa from "~/renderer/images/devices/europa.png";
+import europaDark from "~/renderer/images/devices/europa_dark.png";
 import blue from "~/renderer/images/devices/blue.png";
 
 const illustrations = {
@@ -26,6 +28,10 @@ const illustrations = {
   stax: {
     light: stax,
     dark: staxDark,
+  },
+  europa: {
+    light: europa,
+    dark: europaDark,
   },
   blue: {
     light: blue,

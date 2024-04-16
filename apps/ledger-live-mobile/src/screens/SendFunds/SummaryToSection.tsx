@@ -2,17 +2,16 @@ import React, { memo, useMemo } from "react";
 
 import { StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { isLoaded } from "@ledgerhq/domain-service/hooks/logic";
 import { useDomain } from "@ledgerhq/domain-service/hooks/index";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-
 import SummaryRowCustom from "./SummaryRowCustom";
 import Circle from "~/components/Circle";
 import LText from "~/components/LText";
-import QRcode from "~/icons/QRcode";
+import QrCode from "@ledgerhq/icons-ui/native/QrCode";
 
 type Props = {
   transaction: Transaction;
@@ -83,8 +82,8 @@ function SummaryToSection({ transaction, currency }: Props) {
     <SummaryRowCustom
       label={t("send.summary.to")}
       iconLeft={
-        <Circle bg={colors.lightLive} size={34}>
-          <QRcode size={16} />
+        <Circle bg={colors.palette.opacityDefault.c05} size={34}>
+          <QrCode size="S" color={colors.palette.primary.c80} />
         </Circle>
       }
       data={

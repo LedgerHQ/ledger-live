@@ -8,7 +8,7 @@ import {
 } from "@ledgerhq/errors";
 import { DeviceInfo } from "@ledgerhq/types-live";
 import type { ListAppsEvent } from "../apps";
-import { listApps } from "../apps/hw";
+import { listAppsUseCase } from "../device/use-cases/listAppsUseCase";
 import { withDevice } from "./deviceAccess";
 import getDeviceInfo from "./getDeviceInfo";
 import getAppAndVersion from "./getAppAndVersion";
@@ -78,7 +78,7 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectManagerEvent> =>
                   type: "listingApps",
                   deviceInfo,
                 } as ConnectManagerEvent),
-                listApps(transport, deviceInfo),
+                listAppsUseCase(transport, deviceInfo),
               );
             }),
             catchError((e: unknown) => {

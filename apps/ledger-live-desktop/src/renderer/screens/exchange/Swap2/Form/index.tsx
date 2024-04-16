@@ -5,12 +5,11 @@ import {
   SetExchangeRateCallback,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import {
-  getCustomFeesPerFamily,
   convertToNonAtomicUnit,
+  getCustomFeesPerFamily,
 } from "@ledgerhq/live-common/exchange/swap/webApp/index";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import React, { useCallback, useEffect, useRef, useState, useMemo } from "react";
-import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import styled from "styled-components";
@@ -19,26 +18,26 @@ import { rateSelector, updateRateAction, updateTransactionAction } from "~/rende
 import { track } from "~/renderer/analytics/segment";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
-import ButtonBase from "~/renderer/components/Button";
 import { context } from "~/renderer/drawers/Provider";
-import { shallowAccountsSelector, flattenAccountsSelector } from "~/renderer/reducers/accounts";
+import { flattenAccountsSelector, shallowAccountsSelector } from "~/renderer/reducers/accounts";
 import { trackSwapError, useGetSwapTrackingProperties } from "../utils/index";
 import ExchangeDrawer from "./ExchangeDrawer/index";
 import SwapFormSelectors from "./FormSelectors";
-import SwapFormSummary from "./FormSummary";
-import SwapFormRates from "./FormRates";
-import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
-import useRefreshRates from "./hooks/useRefreshRates";
 import LoadingState from "./Rates/LoadingState";
 import EmptyState from "./Rates/EmptyState";
 import { AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { SWAP_RATES_TIMEOUT } from "../../config";
 import { OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
-import { v4 } from "uuid";
-import SwapWebView, { SWAP_WEB_MANIFEST_ID, SwapWebProps } from "./SwapWebView";
+import SwapWebView, { SwapWebProps, useSwapLiveAppManifestID } from "./SwapWebView";
+import { SwapMigrationUI } from "./Migrations/SwapMigrationUI";
+import { useSwapLiveAppHook } from "~/renderer/hooks/swap-migrations/useSwapLiveAppHook";
+import SwapFormSummary from "./FormSummary";
+import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
+import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
+import { languageSelector } from "~/renderer/reducers/settings";
 
 const DAPP_PROVIDERS = ["paraswap", "oneinch", "moonpay"];
 
@@ -50,24 +49,16 @@ const Wrapper = styled(Box).attrs({
   max-width: 37rem;
 `;
 
-const Hide = styled.div`
-  opacity: 0;
-`;
-
 const idleTime = 60 * 60000; // 1 hour
 
-const Button = styled(ButtonBase)`
-  justify-content: center;
-`;
-
 const SwapForm = () => {
+  const language = useSelector(languageSelector);
   const [idleState, setIdleState] = useState(false);
-  const { t } = useTranslation();
   const dispatch = useDispatch();
   const { state: locationState } = useLocation();
   const history = useHistory();
-  const accounts = useSelector(shallowAccountsSelector);
   const totalListedAccounts = useSelector(flattenAccountsSelector);
+  const accounts = useSelector(shallowAccountsSelector);
   const exchangeRate = useSelector(rateSelector);
   const walletApiPartnerList = useFeature("swapWalletApiPartnerList");
   const swapDefaultTrack = useGetSwapTrackingProperties();
@@ -96,13 +87,10 @@ const SwapForm = () => {
     setExchangeRate,
     onNoRates,
     ...(locationState as object),
-    timeout: SWAP_RATES_TIMEOUT,
-    timeoutErrorMessage: t("swap2.form.timeout.message"),
   });
 
   const isSwapLiveAppEnabled = useIsSwapLiveApp({
     currencyFrom: swapTransaction.swap.from.currency,
-    swapWebManifestId: SWAP_WEB_MANIFEST_ID,
   });
 
   // @TODO: Try to check if we can directly have the right state from `useSwapTransaction`
@@ -126,13 +114,7 @@ const SwapForm = () => {
   const [swapWebProps, setSwapWebProps] = useState<SwapWebProps["swapState"] | undefined>(
     undefined,
   );
-
   const { setDrawer } = React.useContext(context);
-
-  const pauseRefreshing = !!swapError || idleState;
-  const refreshTime = useRefreshRates(swapTransaction.swap, {
-    pause: pauseRefreshing,
-  });
 
   const getExchangeSDKParams = useCallback(() => {
     const { swap, transaction } = swapTransaction;
@@ -198,9 +180,14 @@ const SwapForm = () => {
             ...[key, typeof value === "object" ? JSON.stringify(value) : value],
           ),
       );
+      moonpayURL.searchParams.set("language", language);
+
+      // Theme ID is defined by moonpay to tweak styling to more more closely match
+      // the existing theming within ledger live.
+      moonpayURL.searchParams.set("themeId", "92be4cb6-a57f-407b-8b1f-bc8055b60c9b");
       return moonpayURL;
     },
-    [],
+    [language],
   );
 
   const getProviderRedirectURLSearch = useCallback(() => {
@@ -227,7 +214,7 @@ const SwapForm = () => {
       exchangeRate?.providerURL && providerRedirectURLSearch.set("goToURL", moonpayURL.toString());
     } else {
       exchangeRate?.providerURL &&
-        providerRedirectURLSearch.set("goToURL", exchangeRate.providerURL || "");
+        providerRedirectURLSearch.set("customDappUrl", exchangeRate.providerURL || "");
     }
 
     providerRedirectURLSearch.set("returnTo", "/swap");
@@ -354,7 +341,7 @@ const SwapForm = () => {
   const onSubmit = () => {
     if (!exchangeRate) return;
 
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "Request",
       page: "Page Swap Form",
       ...swapDefaultTrack,
@@ -368,6 +355,10 @@ const SwapForm = () => {
     } else {
       // Fix LIVE-9064, prevent the transaction from being updated when using useAllAmount
       swapTransaction.transaction ? (swapTransaction.transaction.useAllAmount = false) : null;
+      // Fix LIVE-11660, remove the margin from thec fees
+      swapTransaction.transaction && swapTransaction.transaction.family === "evm"
+        ? (swapTransaction.transaction.additionalFees = undefined)
+        : null;
       setDrawer(
         ExchangeDrawer,
         {
@@ -394,7 +385,12 @@ const SwapForm = () => {
     // eslint-disable-next-line
   }, [exchangeRate]);
 
+  const untickMax = () => {
+    swapTransaction.transaction?.useAllAmount ? swapTransaction.toggleMax() : null;
+  };
+
   const setFromAccount = (account: AccountLike | undefined) => {
+    untickMax();
     swapTransaction.setFromAccount(account);
   };
 
@@ -410,36 +406,25 @@ const SwapForm = () => {
     swapTransaction.toggleMax();
   };
 
-  useEffect(() => {
-    if (isSwapLiveAppEnabled.enabled) {
-      const providerRedirectURLSearch = getProviderRedirectURLSearch();
-      const { parentAccount: fromParentAccount } = swapTransaction.swap.from;
-      const fromParentAccountId = fromParentAccount
-        ? accountToWalletAPIAccount(fromParentAccount)?.id
-        : undefined;
-      const providerRedirectURL = `ledgerlive://discover/${getProviderName(
-        provider ?? "",
-      ).toLowerCase()}?${providerRedirectURLSearch.toString()}`;
-      setSwapWebProps({
-        provider,
-        ...getExchangeSDKParams(),
-        fromParentAccountId,
-        cacheKey: v4(),
-        error: !!swapError,
-        loading: swapTransaction.bridgePending || exchangeRatesState.status === "loading",
-        providerRedirectURL,
-      });
-    }
-  }, [
-    provider,
-    isSwapLiveAppEnabled.enabled,
+  const reverseSwap = () => {
+    untickMax();
+    swapTransaction.reverseSwap();
+  };
+
+  const swapLiveAppManifestID = useSwapLiveAppManifestID();
+  const localManifest = useLocalLiveAppManifest(swapLiveAppManifestID || undefined);
+  const remoteManifest = useRemoteLiveAppManifest(swapLiveAppManifestID || undefined);
+
+  const manifest = localManifest || remoteManifest;
+  useSwapLiveAppHook({
+    isSwapLiveAppEnabled: isSwapLiveAppEnabled.enabled,
+    manifestID: swapLiveAppManifestID,
+    swapTransaction,
+    updateSwapWebProps: setSwapWebProps,
+    swapError,
     getExchangeSDKParams,
     getProviderRedirectURLSearch,
-    swapTransaction.swap.from,
-    swapError,
-    swapTransaction.bridgePending,
-    exchangeRatesState.status,
-  ]);
+  });
 
   return (
     <Wrapper>
@@ -458,7 +443,7 @@ const SwapForm = () => {
         fromAmountError={swapError}
         fromAmountWarning={swapWarning}
         isSwapReversable={swapTransaction.swap.isSwapReversable}
-        reverseSwap={swapTransaction.reverseSwap}
+        reverseSwap={reverseSwap}
         provider={provider}
         loadingRates={swapTransaction.swap.rates.status === "loading"}
         isSendMaxLoading={swapTransaction.swap.isMaxLoading}
@@ -466,36 +451,33 @@ const SwapForm = () => {
       />
       {pageState === "empty" && <EmptyState />}
       {pageState === "loading" && <LoadingState />}
-      {pageState === "initial" && (
-        <Hide>
-          <LoadingState />
-        </Hide>
-      )}
 
       {pageState === "loaded" && (
         <>
           <SwapFormSummary swapTransaction={swapTransaction} provider={provider} />
-          <SwapFormRates
-            swap={swapTransaction.swap}
-            provider={provider}
-            refreshTime={refreshTime}
-            countdown={!pauseRefreshing}
-          />
         </>
       )}
-
-      {isSwapLiveAppEnabled.enabled ? (
-        <SwapWebView
-          swapState={swapWebProps}
-          liveAppUnavailable={isSwapLiveAppEnabled.onLiveAppCrashed}
-        />
-      ) : (
-        <Box>
-          <Button primary disabled={!isSwapReady} onClick={onSubmit} data-test-id="exchange-button">
-            {t("common.exchange")}
-          </Button>
-        </Box>
-      )}
+      <SwapMigrationUI
+        manifestID={swapLiveAppManifestID}
+        liveAppEnabled={isSwapLiveAppEnabled.enabled}
+        liveApp={
+          swapLiveAppManifestID && manifest ? (
+            <SwapWebView
+              manifest={manifest}
+              swapState={swapWebProps}
+              // When live app crash, it should disable live app and fall back to native UI
+              liveAppUnavailable={isSwapLiveAppEnabled.onLiveAppCrashed}
+            />
+          ) : null
+        }
+        // Demo 1 props
+        pageState={pageState}
+        swapTransaction={swapTransaction}
+        provider={provider}
+        // Demo 0 props
+        disabled={!isSwapReady}
+        onClick={onSubmit}
+      />
     </Wrapper>
   );
 };

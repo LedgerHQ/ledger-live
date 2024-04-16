@@ -51,16 +51,16 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
       - name: Setup git user
-        uses: ./tools/actions/composites/setup-git-user
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-git-user@develop
       - name: Setup the toolchain
-        uses: ./tools/actions/composites/setup-toolchain
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
         id: toolchain
         with:
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-          skip_turbo_cache: "false"
+          skip-turbo-cache: "false"
       - name: Install dependencies
         run: pnpm i --filter="!./apps/**"
       - name: run doc
@@ -109,8 +109,8 @@ jobs:
 
             @${{ inputs.login }}: the documentation is already up to date.`;
             fs.writeFileSync("summary.txt", body, "utf8");
-      - uses: actions/upload-artifact@v3
-        if: always()
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
         name: upload summary
         with:
           name: summary.txt
@@ -152,7 +152,7 @@ jobs:
   report-end:
     name: Report end
     needs: [regen-doc, report-start]
-    if: always()
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     steps:
       - name: generate token
@@ -161,7 +161,7 @@ jobs:
         with:
           app_id: ${{ secrets.GH_BOT_APP_ID }}
           private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         name: download summary
         with:
           name: summary.txt
@@ -196,7 +196,7 @@ jobs:
                 body
               });
             }
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         name: upload summary
         with:
           name: summary.json

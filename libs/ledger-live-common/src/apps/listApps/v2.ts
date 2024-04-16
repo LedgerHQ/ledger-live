@@ -2,21 +2,23 @@ import Transport from "@ledgerhq/hw-transport";
 import { DeviceModelId, getDeviceModel, identifyTargetId } from "@ledgerhq/devices";
 import { UnexpectedBootloader } from "@ledgerhq/errors";
 import { Observable, throwError, Subscription } from "rxjs";
-import { App, DeviceInfo } from "@ledgerhq/types-live";
+import { App, DeviceInfo, idsToLanguage, languageIds } from "@ledgerhq/types-live";
 import { LocalTracer } from "@ledgerhq/logs";
 import type { ListAppsEvent, ListAppsResult, ListAppResponse } from "../types";
-import manager, { getProviderId } from "../../manager";
 import hwListApps from "../../hw/listApps";
-import staxFetchImageSize from "../../hw/staxFetchImageSize";
+import customLockScreenFetchSize from "../../hw/customLockScreenFetchSize";
 import {
   listCryptoCurrencies,
   currenciesByMarketcap,
   findCryptoCurrencyById,
 } from "../../currencies";
 import ManagerAPI from "../../manager/api";
-import { getEnv } from "@ledgerhq/live-env";
 
-import getDeviceName from "../../hw/getDeviceName";
+import { getDeviceName } from "../../device/use-cases/getDeviceNameUseCase";
+import { getLatestFirmwareForDeviceUseCase } from "../../device/use-cases/getLatestFirmwareForDeviceUseCase";
+import { getProviderIdUseCase } from "../../device/use-cases/getProviderIdUseCase";
+import { mapApplicationV2ToApp } from "../polyfill";
+import { ManagerApiRepository } from "../../device/factories/HttpManagerApiRepositoryFactory";
 
 // Hash discrepancies for these apps do NOT indicate a potential update,
 // these apps have a mechanism that makes their hash change every time.
@@ -25,7 +27,23 @@ const appsWithDynamicHashes = ["Fido U2F", "Security Key"];
 // Empty hash data means we won't have information on the app.
 const emptyHashData = "0".repeat(64);
 
-const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<ListAppsEvent> => {
+type ListAppsParams = {
+  transport: Transport;
+  deviceInfo: DeviceInfo;
+  deviceProxyModel?: DeviceModelId;
+  managerDevModeEnabled?: boolean;
+  forceProvider: number;
+  managerApiRepository: ManagerApiRepository;
+};
+
+export const listApps = ({
+  transport,
+  deviceInfo,
+  deviceProxyModel,
+  managerDevModeEnabled,
+  forceProvider,
+  managerApiRepository,
+}: ListAppsParams): Observable<ListAppsEvent> => {
   const tracer = new LocalTracer("list-apps", { transport: transport.getTraceContext() });
   tracer.trace("Using new version", { deviceInfo });
 
@@ -34,15 +52,16 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
   }
 
   const deviceModelId =
-    (transport.deviceModel && transport.deviceModel.id) ||
-    (deviceInfo && identifyTargetId(deviceInfo.targetId as number))?.id ||
-    (getEnv("DEVICE_PROXY_MODEL") as DeviceModelId);
+    transport?.deviceModel?.id ||
+    identifyTargetId(deviceInfo.targetId as number)?.id ||
+    deviceProxyModel;
 
   return new Observable(o => {
     let sub: Subscription;
     async function main() {
-      const isDevMode = getEnv("MANAGER_DEV_MODE");
-      const provider = getProviderId(deviceInfo);
+      const provider = getProviderIdUseCase({ deviceInfo, forceProvider });
+
+      if (!deviceModelId) throw new Error("Bad usage of listAppsV2: missing deviceModelId");
       const deviceModel = getDeviceModel(deviceModelId);
       const bytesPerBlock = deviceModel.getBlockSize(deviceInfo.version);
 
@@ -67,6 +86,7 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
         tracer.trace("Using scriptrunner listapps");
 
         listAppsResponsePromise = new Promise<ListAppResponse>((resolve, reject) => {
+          // TODO: migrate this ManagerAPI call to ManagerApiRepository
           sub = ManagerAPI.listInstalledApps(transport, {
             targetId: deviceInfo.targetId,
             perso: "perso_11",
@@ -97,7 +117,11 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
 
       const listAppsAndMatchesPromise = filteredListAppsPromise.then(result => {
         const hashes = result.map(({ hash }) => hash);
-        const matches = result.length ? ManagerAPI.getAppsByHash(hashes) : [];
+        const matches = result.length
+          ? managerApiRepository
+              .getAppsByHash(hashes)
+              .then(matches => matches.map(appV2 => (appV2 ? mapApplicationV2ToApp(appV2) : null)))
+          : [];
         return Promise.all([result, matches]);
       });
 
@@ -106,48 +130,65 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
        * for the device
        */
 
-      const deviceVersionPromise = ManagerAPI.getDeviceVersion(deviceInfo.targetId, provider);
+      const deviceVersionPromise = managerApiRepository.getDeviceVersion({
+        targetId: deviceInfo.targetId,
+        providerId: provider,
+      });
 
       const currentFirmwarePromise = deviceVersionPromise.then(deviceVersion =>
-        ManagerAPI.getCurrentFirmware({
+        managerApiRepository.getCurrentFirmware({
           deviceId: deviceVersion.id,
           version: deviceInfo.version,
-          provider,
+          providerId: provider,
         }),
       );
 
       const latestFirmwarePromise = currentFirmwarePromise.then(currentFirmware =>
-        manager.getLatestFirmwareForDevice(deviceInfo).then(updateAvailable => ({
-          ...currentFirmware,
-          updateAvailable,
-        })),
+        getLatestFirmwareForDeviceUseCase(deviceInfo, managerApiRepository).then(
+          updateAvailable => ({
+            ...currentFirmware,
+            updateAvailable,
+          }),
+        ),
       );
 
       /**
        * Sequence 3: get catalog of apps available for the device
        */
 
-      const catalogForDevicesPromise = ManagerAPI.catalogForDevice({
-        provider,
-        targetId: deviceInfo.targetId,
-        firmwareVersion: deviceInfo.version,
-      });
+      const catalogForDevicesPromise = managerApiRepository
+        .catalogForDevice({
+          provider,
+          targetId: deviceInfo.targetId,
+          firmwareVersion: deviceInfo.version,
+        })
+        .then(apps => apps.map(mapApplicationV2ToApp));
 
       /**
        * Sequence 4: list all currencies, sorted by market cp
        */
 
       const sortedCryptoCurrenciesPromise = currenciesByMarketcap(
-        listCryptoCurrencies(isDevMode, true),
+        listCryptoCurrencies(managerDevModeEnabled, true),
       );
 
-      /* Running all sequences 1 2 3 4 defined above in parallel */
-      const [[listApps, matches], catalogForDevice, firmware, sortedCryptoCurrencies] =
+      /**
+       * Sequence 5: get language pack available for the device
+       */
+
+      const languagePackForDevicePromise = managerApiRepository.getLanguagePackagesForDevice(
+        deviceInfo,
+        forceProvider,
+      );
+
+      /* Running all sequences 1 2 3 4 5 defined above in parallel */
+      const [[listApps, matches], catalogForDevice, firmware, sortedCryptoCurrencies, languages] =
         await Promise.all([
           listAppsAndMatchesPromise,
           catalogForDevicesPromise,
           latestFirmwarePromise,
           sortedCryptoCurrenciesPromise,
+          languagePackForDevicePromise,
         ]);
 
       /**
@@ -222,23 +263,32 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
 
       // Used to hide apps that are dev tools if user didn't opt-in.
       const appsListNames = catalogForDevice
-        .filter(({ isDevTools, name }) => isDevMode || !isDevTools || name in installedAppNames)
+        .filter(
+          ({ isDevTools, name }) =>
+            managerDevModeEnabled || !isDevTools || name in installedAppNames,
+        )
         .map(({ name }) => name);
 
       /**
        * Obtain remaining metadata:
        * - Ledger Stax custom picture: number of blocks taken in storage
+       * - Installed language pack
        * - Device name
        * */
 
       // Stax specific, account for the size of the CLS for the storage bar.
       let customImageBlocks = 0;
       if (deviceModelId === DeviceModelId.stax && !deviceInfo.isRecoveryMode) {
-        const customImageSize = await staxFetchImageSize(transport);
+        const customImageSize = await customLockScreenFetchSize(transport);
         if (customImageSize) {
           customImageBlocks = Math.ceil(customImageSize / bytesPerBlock);
         }
       }
+
+      const languageId: number = deviceInfo.languageId || languageIds.english;
+      const installedLanguagePack = languages.find(
+        lang => lang.language === idsToLanguage[languageId],
+      );
 
       // Will not prompt user since we've allowed secure channel already.
       const deviceName = await getDeviceName(transport);
@@ -250,6 +300,7 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
         deviceModelId,
         installed,
         installedAvailable: !!installedList,
+        installedLanguagePack,
 
         // Not strictly listApps content.
         firmware,
@@ -277,5 +328,3 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
     };
   });
 };
-
-export default listApps;

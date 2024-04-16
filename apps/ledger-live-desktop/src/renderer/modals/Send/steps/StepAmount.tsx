@@ -1,7 +1,7 @@
 import React, { Fragment, PureComponent, useMemo } from "react";
 import invariant from "invariant";
 import { ProtoNFT } from "@ledgerhq/types-live";
-import { getNFT } from "@ledgerhq/live-common/nft/index";
+import { getNFT } from "@ledgerhq/live-nft";
 import { Trans } from "react-i18next";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -132,18 +132,14 @@ export class StepAmountFooter extends PureComponent<StepProps> {
     const isTerminated = mainAccount.currency.terminated;
     const hasErrors = Object.keys(errors).length;
     const canNext = !bridgePending && !hasErrors && !isTerminated;
-    const {
-      gasPrice: gasPriceError,
-      maxPriorityFee: maxPriorityFeeError,
-      maxFee: maxFeeError,
-    } = errors;
+    const { maxPriorityFee: maxPriorityFeeError, maxFee: maxFeeError } = errors;
 
     return (
       <>
         {!isNFTSend ? (
           <AccountFooter parentAccount={parentAccount} account={account} status={status} />
         ) : null}
-        {gasPriceError || maxPriorityFeeError || maxFeeError ? (
+        {maxPriorityFeeError || maxFeeError ? (
           <BuyButton currency={mainAccount.currency} account={mainAccount} />
         ) : null}
         <Button

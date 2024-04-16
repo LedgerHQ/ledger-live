@@ -5,11 +5,11 @@ import Button from "~/components/PreventDoubleClickButton";
 
 const items = [
   {
-    title: "onboarding.stepSetupDevice.recoveryPhraseSetup.bullets.0.title",
-    desc: "onboarding.stepSetupDevice.recoveryPhraseSetup.bullets.0.label",
+    title: "onboarding.stepSetupDevice.recoveryPhraseSetup.bullets.2.title",
+    desc: "onboarding.stepSetupDevice.recoveryPhraseSetup.bullets.2.label",
   },
   {
-    title: "onboarding.stepSetupDevice.recoveryPhraseSetup.bullets.1.title",
+    title: "onboarding.stepSetupDevice.recoveryPhraseSetup.bullets.3.title",
   },
 ];
 

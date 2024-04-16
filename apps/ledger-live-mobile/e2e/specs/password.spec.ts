@@ -14,43 +14,36 @@ let passwordEntryPage: PasswordEntryPage;
 
 describe("Password Lock Screen", () => {
   beforeAll(async () => {
-    loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
+    await loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
 
     portfolioPage = new PortfolioPage();
     settingsPage = new SettingsPage();
     generalSettingsPage = new GeneralSettingsPage();
     passwordEntryPage = new PasswordEntryPage();
-  });
-
-  it("should open on Portfolio page", async () => {
     await portfolioPage.waitForPortfolioPageToLoad();
   });
 
-  it("should go to Settings", async () => {
+  it("should ask for the password when lock is toggled", async () => {
     await portfolioPage.navigateToSettings();
-  });
-
-  it("should go navigate to General settings", async () => {
     await settingsPage.navigateToGeneralSettings();
-  });
-
-  it("should toggle Password lock", async () => {
     await generalSettingsPage.togglePassword();
-  });
-
-  it("should enter password twice", async () => {
-    await generalSettingsPage.enterNewPassword(CORRECT_PASSWORD + "\n"); // use a linebreak instead of pressing the confirm button to handle the keyboard if it appears
-    await generalSettingsPage.enterNewPassword(CORRECT_PASSWORD + "\n"); // confirm password step
-  });
-
-  it("should need to enter password to unlock app", async () => {
+    await generalSettingsPage.enterNewPassword(CORRECT_PASSWORD);
+    await generalSettingsPage.enterNewPassword(CORRECT_PASSWORD); // confirm password step
     await device.sendToHome();
     await device.launchApp(); // restart LLM
-    await passwordEntryPage.enterPassword(CORRECT_PASSWORD);
-    await passwordEntryPage.login();
+    await expect(passwordEntryPage.getPasswordTextInput()).toBeVisible();
   });
 
-  it("should be back on General Settings page", async () => {
+  it("should stay locked with incorrect password", async () => {
+    await passwordEntryPage.enterPassword("INCORRECT_PASSWORD");
+    await passwordEntryPage.login();
+    await expect(passwordEntryPage.getPasswordTextInput()).toBeVisible();
+  });
+
+  it("should unlock with correct password", async () => {
+    await passwordEntryPage.enterPassword(CORRECT_PASSWORD);
+    await passwordEntryPage.login();
+    await expect(passwordEntryPage.getPasswordTextInput()).not.toBeVisible();
     await expect(generalSettingsPage.preferredCurrencyButton()).toBeVisible();
   });
 });

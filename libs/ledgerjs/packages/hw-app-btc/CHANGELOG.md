@@ -1,5 +1,77 @@
 # @ledgerhq/hw-app-btc
 
+## 10.2.3
+
+### Patch Changes
+
+- [#6105](https://github.com/LedgerHQ/ledger-live/pull/6105) [`6d40673`](https://github.com/LedgerHQ/ledger-live/commit/6d4067382b55827b00806a1b71ac0b249563d90f) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - update hw-app-btc doc
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.30.5
+
+## 10.2.3-next.0
+
+### Patch Changes
+
+- [#6105](https://github.com/LedgerHQ/ledger-live/pull/6105) [`6d40673`](https://github.com/LedgerHQ/ledger-live/commit/6d4067382b55827b00806a1b71ac0b249563d90f) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - update hw-app-btc doc
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.30.5-next.0
+
+## 10.2.2
+
+### Patch Changes
+
+- [#6165](https://github.com/LedgerHQ/ledger-live/pull/6165) [`71b7001`](https://github.com/LedgerHQ/ledger-live/commit/71b70016650b5239b35ad2fb75d415ac092358d1) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - update hw-app-btc doc
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.30.4
+
+## 10.2.2-next.0
+
+### Patch Changes
+
+- [#6105](https://github.com/LedgerHQ/ledger-live/pull/6105) [`6d40673`](https://github.com/LedgerHQ/ledger-live/commit/6d4067382b55827b00806a1b71ac0b249563d90f) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - update hw-app-btc doc
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.30.4-next.0
+
+## 10.2.1
+
+### Patch Changes
+
+- Updated dependencies [[`eadebff`](https://github.com/LedgerHQ/ledger-live/commit/eadebff3fe58aef6a5befb033d5147afc49663d3)]:
+  - @ledgerhq/hw-transport@6.30.3
+
+## 10.2.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`eadebff`](https://github.com/LedgerHQ/ledger-live/commit/eadebff3fe58aef6a5befb033d5147afc49663d3)]:
+  - @ledgerhq/hw-transport@6.30.3-next.0
+
+## 10.2.0
+
+### Minor Changes
+
+- [#5675](https://github.com/LedgerHQ/ledger-live/pull/5675) [`5fdd5f0`](https://github.com/LedgerHQ/ledger-live/commit/5fdd5f0acab5f990d46ad20d245315f38be0f08a) Thanks [@chabroA](https://github.com/chabroA)! - make Qtum work with old and new nano app interfaces
+
+### Patch Changes
+
+- Updated dependencies [[`16b4d7a`](https://github.com/LedgerHQ/ledger-live/commit/16b4d7ab4702022d4967f3c054d3c62a76716947)]:
+  - @ledgerhq/hw-transport@6.30.2
+
+## 10.2.0-next.0
+
+### Minor Changes
+
+- [#5675](https://github.com/LedgerHQ/ledger-live/pull/5675) [`5fdd5f0`](https://github.com/LedgerHQ/ledger-live/commit/5fdd5f0acab5f990d46ad20d245315f38be0f08a) Thanks [@chabroA](https://github.com/chabroA)! - make Qtum work with old and new nano app interfaces
+
+### Patch Changes
+
+- Updated dependencies [[`16b4d7a`](https://github.com/LedgerHQ/ledger-live/commit/16b4d7ab4702022d4967f3c054d3c62a76716947)]:
+  - @ledgerhq/hw-transport@6.30.2-next.0
+
 ## 10.1.1
 
 ### Patch Changes

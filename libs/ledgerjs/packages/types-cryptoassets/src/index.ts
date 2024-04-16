@@ -134,7 +134,7 @@ export type CryptoCurrencyId =
   | "solana_devnet"
   | "filecoin"
   | "arbitrum"
-  | "arbitrum_goerli"
+  | "arbitrum_sepolia"
   | "cronos"
   | "fantom"
   | "flare"
@@ -143,8 +143,6 @@ export type CryptoCurrencyId =
   | "near"
   | "rsk"
   | "bittorrent"
-  | "kava_evm"
-  | "evmos_evm"
   | "optimism"
   | "optimism_goerli"
   | "energy_web"
@@ -161,10 +159,12 @@ export type CryptoCurrencyId =
   | "polygon_zk_evm"
   | "polygon_zk_evm_testnet"
   | "base"
-  | "base_goerli"
+  | "base_sepolia"
   | "casper"
   | "neon_evm"
-  | "lukso";
+  | "lukso"
+  | "linea"
+  | "linea_goerli";
 
 export type LedgerExplorerId =
   | "btc"
@@ -273,31 +273,6 @@ export type ExplorerView = {
 
 export type EthereumLikeInfo = {
   chainId: number;
-  // used by evm coin integration
-  node:
-    | {
-        type: "external";
-        uri: string;
-      }
-    | {
-        type: "ledger";
-        explorerId: LedgerExplorerId;
-      };
-  // used by evm coin integration
-  explorer?:
-    | {
-        type: "etherscan" | "blockscout" | "teloscan" | "klaytnfinder";
-        uri: string;
-      }
-    | {
-        type: "ledger";
-        explorerId: LedgerExplorerId;
-      };
-  // used by evm coin integration
-  gasTracker?: {
-    type: "ledger";
-    explorerId: LedgerExplorerId;
-  };
 };
 
 export type BitcoinLikeInfo = {

@@ -5,14 +5,11 @@ import { useSelector } from "react-redux";
 import { useTheme } from "@react-navigation/native";
 import { getMainAccount, getReceiveFlowError } from "@ledgerhq/live-common/account/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import { Flex } from "@ledgerhq/native-ui";
 import { accountScreenSelector } from "~/reducers/accounts";
 import { TrackScreen } from "~/analytics";
-import SelectDevice from "~/components/SelectDevice";
 import SelectDevice2 from "~/components/SelectDevice2";
 import DeviceActionModal from "~/components/DeviceActionModal";
-import NavigationScrollView from "~/components/NavigationScrollView";
 import GenericErrorView from "~/components/GenericErrorView";
 import SkipDeviceVerification from "./SkipDeviceVerification";
 import VerifyAddress from "./VerifyAddress";
@@ -32,8 +29,6 @@ export default function VerifyAccount({ navigation, route }: NavigationProps) {
   const { parentAccount } = useSelector(accountScreenSelector(route));
   const [device, setDevice] = useState<Device | null | undefined>();
   const [skipDevice, setSkipDevice] = useState(false);
-
-  const newDeviceSelectionFeatureFlag = useFeature("llmNewDeviceSelection");
 
   const { account, onSuccess, onError } = route.params;
   const mainAccount = getMainAccount(account, parentAccount);
@@ -61,10 +56,6 @@ export default function VerifyAccount({ navigation, route }: NavigationProps) {
     onSuccess(account);
     onDone();
   }, [account, onSuccess, onDone]);
-
-  const onSkipDevice = useCallback(() => {
-    setSkipDevice(true);
-  }, []);
 
   const handleSkipClose = useCallback(() => {
     setSkipDevice(false);
@@ -100,20 +91,13 @@ export default function VerifyAccount({ navigation, route }: NavigationProps) {
       ]}
     >
       <TrackScreen category="VerifyAccount" name="ConnectDevice" />
-      {newDeviceSelectionFeatureFlag?.enabled ? (
-        <Flex px={16} py={8} flex={1}>
-          <SelectDevice2
-            onSelect={setDevice}
-            stopBleScanning={!!device}
-            requestToSetHeaderOptions={requestToSetHeaderOptions}
-          />
-        </Flex>
-      ) : (
-        <NavigationScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
-          <SelectDevice onSelect={setDevice} onWithoutDevice={onSkipDevice} />
-        </NavigationScrollView>
-      )}
-
+      <Flex px={16} py={8} flex={1}>
+        <SelectDevice2
+          onSelect={setDevice}
+          stopBleScanning={!!device}
+          requestToSetHeaderOptions={requestToSetHeaderOptions}
+        />
+      </Flex>
       {device ? (
         <DeviceActionModal
           action={action}

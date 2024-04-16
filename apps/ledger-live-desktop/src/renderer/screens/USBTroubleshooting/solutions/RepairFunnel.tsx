@@ -8,6 +8,7 @@ import { DeviceSelector } from "~/renderer/components/Onboarding/Screens/SelectD
 import { openURL } from "~/renderer/linking";
 import { urls } from "~/config/urls";
 import RepairDeviceButton from "~/renderer/components/RepairDeviceButton";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 const RepairFunnelSolution = ({
   sendEvent,
   done,
@@ -17,9 +18,10 @@ const RepairFunnelSolution = ({
 }) => {
   const { t } = useTranslation();
   const repairRef = useRef<HTMLButtonElement>(null);
-  const onContactSupport = useCallback(() => {
-    openURL(urls.contactSupport);
-  }, []);
+  const contactSupportUrl = useLocalizedUrl(urls.contactSupport);
+  const onContactSupport = () => {
+    openURL(contactSupportUrl);
+  };
   const onBack = useCallback(() => {
     sendEvent("PREVIOUS");
   }, [sendEvent]);

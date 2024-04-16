@@ -6,7 +6,7 @@ import { useLocale } from "~/context/Locale";
 import { urls } from "~/utils/urls";
 import { generalTermsVersionAcceptedSelector } from "~/reducers/settings";
 import { setGeneralTermsVersionAccepted } from "~/actions/settings";
-import { StoreType } from "~/context/LedgerStore";
+import { StoreType } from "~/context/store";
 
 const generalTermsVersionRequired = "2022-05-10";
 

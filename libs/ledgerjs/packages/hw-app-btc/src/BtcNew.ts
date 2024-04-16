@@ -27,8 +27,9 @@ import { serializeTransaction } from "./serializeTransaction";
 import type { Transaction } from "./types";
 
 /**
- * This class implements the same interface as BtcOld (formerly
- * named Btc), but interacts with Bitcoin hardware app version 2+
+ * @class BtcNew
+ * @description This class implements the same interface as BtcOld (formerly
+ * named Btc), but interacts with Bitcoin hardware app version 2.1.0+
  * which uses a totally new APDU protocol. This new
  * protocol is documented at
  * https://github.com/LedgerHQ/app-bitcoin-new/blob/master/doc/bitcoin.md
@@ -38,6 +39,7 @@ import type { Transaction } from "./types";
  * input data into the PSBT process. In the future, a new interface should
  * be developed that exposes PSBT to the outer world, which would render
  * a much cleaner implementation.
+ *
  */
 export default class BtcNew {
   constructor(private client: Client) {}
@@ -423,6 +425,11 @@ export default class BtcNew {
   }
 }
 
+/**
+ * This function returns a descriptor template based on the address format.
+ * See https://github.com/LedgerHQ/app-bitcoin-new/blob/develop/doc/wallet.md for details of
+ * the bitcoin descriptor template.
+ */
 function descrTemplFrom(addressFormat: AddressFormat): DefaultDescriptorTemplate {
   if (addressFormat == "legacy") return "pkh(@0)";
   if (addressFormat == "p2sh") return "sh(wpkh(@0))";
@@ -445,11 +452,11 @@ function accountTypeFromArg(
 /*
   The new protocol only allows standard path.
   Standard paths are (currently):
-  M/44'/(1|0)'/X'
-  M/49'/(1|0)'/X'
-  M/84'/(1|0)'/X'
-  M/86'/(1|0)'/X'
-  M/48'/(1|0)'/X'/Y'
+  M/44'/(1|0|88)'/X'
+  M/49'/(1|0|88)'/X'
+  M/84'/(1|0|88)'/X'
+  M/86'/(1|0|88)'/X'
+  M/48'/(1|0|88)'/X'/Y'
   followed by "", "(0|1)", or "(0|1)/b", where a and b are 
   non-hardened. For example, the following paths are standard
   M/48'/1'/99'/7'
@@ -460,32 +467,60 @@ function accountTypeFromArg(
   M/48'/0'/99'/7'/1/17/2 // Too many non-hardened derivation steps
   M/199'/0'/1'/0/88      // Not a known purpose 199
   M/86'/1'/99'/2         // Change path item must be 0 or 1
+
+  Useful resource on derivation paths: https://learnmeabitcoin.com/technical/derivation-paths
 */
-function isPathNormal(path: string): boolean {
-  //path is not deepest hardened node of a standard path or deeper, use BtcOld
-  const h = 0x80000000; //HARDENED from bip32
+
+//path is not deepest hardened node of a standard path or deeper, use BtcOld
+const H = 0x80000000; //HARDENED from bip32
+
+const VALID_COIN_TYPES = [
+  0, // Bitcoin
+  1, // Bitcoin (Testnet)
+  88, // Qtum
+];
+
+const VALID_SINGLE_SIG_PURPOSES = [
+  44, // BIP44 - https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki
+  49, // BIP49 - https://github.com/bitcoin/bips/blob/master/bip-0049.mediawiki
+  84, // BIP84 - https://github.com/bitcoin/bips/blob/master/bip-0084.mediawiki
+  86, // BIP86 - https://github.com/bitcoin/bips/blob/master/bip-0086.mediawiki
+];
+
+const VALID_MULTISIG_PURPOSES = [
+  48, // BIP48 - https://github.com/bitcoin/bips/blob/master/bip-0048.mediawiki
+];
+
+const hard = (n: number) => n >= H;
+const soft = (n: number | undefined) => n === undefined || n < H;
+const change = (n: number | undefined) => n === undefined || n === 0 || n === 1;
+
+const validCoinPathPartsSet = new Set(VALID_COIN_TYPES.map(t => t + H));
+const validSingleSigPurposePathPartsSet = new Set(VALID_SINGLE_SIG_PURPOSES.map(t => t + H));
+const validMultiSigPurposePathPartsSet = new Set(VALID_MULTISIG_PURPOSES.map(t => t + H));
+
+export function isPathNormal(path: string): boolean {
   const pathElems = pathStringToArray(path);
 
-  const hard = (n: number) => n >= h;
-  const soft = (n: number | undefined) => n === undefined || n < h;
-  const change = (n: number | undefined) => n === undefined || n === 0 || n === 1;
-
+  // Single sig
   if (
     pathElems.length >= 3 &&
     pathElems.length <= 5 &&
-    [44 + h, 49 + h, 84 + h, 86 + h].some(v => v == pathElems[0]) &&
-    [0 + h, 1 + h].some(v => v == pathElems[1]) &&
+    validSingleSigPurposePathPartsSet.has(pathElems[0]) &&
+    validCoinPathPartsSet.has(pathElems[1]) &&
     hard(pathElems[2]) &&
     change(pathElems[3]) &&
     soft(pathElems[4])
   ) {
     return true;
   }
+
+  // Multi sig
   if (
     pathElems.length >= 4 &&
     pathElems.length <= 6 &&
-    48 + h == pathElems[0] &&
-    [0 + h, 1 + h].some(v => v == pathElems[1]) &&
+    validMultiSigPurposePathPartsSet.has(pathElems[0]) &&
+    validCoinPathPartsSet.has(pathElems[1]) &&
     hard(pathElems[2]) &&
     hard(pathElems[3]) &&
     change(pathElems[4]) &&

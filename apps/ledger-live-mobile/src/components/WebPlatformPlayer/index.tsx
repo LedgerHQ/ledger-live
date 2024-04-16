@@ -1,10 +1,11 @@
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { StyleSheet, SafeAreaView, BackHandler, Platform } from "react-native";
 
 import { useNavigation } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
-import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
+import { CurrentAccountHistDB, safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
+import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";
 import { WebviewAPI, WebviewState } from "../Web3AppWebview/types";
 
 import { Web3AppWebview } from "../Web3AppWebview";
@@ -15,6 +16,9 @@ import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigato
 import HeaderTitle from "../HeaderTitle";
 import { initialWebviewState } from "../Web3AppWebview/helpers";
 import { InfoPanel } from "./InfoPanel";
+import { usePTXCustomHandlers } from "../WebPTXPlayer/CustomHandlers";
+import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
+import { useCurrentAccountHistDB } from "~/screens/Platform/v2/hooks";
 
 type Props = {
   manifest: LiveAppManifest;
@@ -28,6 +32,8 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
 
   const navigation =
     useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
+
+  const currentAccountHistDb: CurrentAccountHistDB = useCurrentAccountHistDB();
 
   const handleHardwareBackPress = useCallback(() => {
     const webview = safeGetRefValue(webviewAPIRef);
@@ -72,15 +78,31 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
     });
   }, [manifest, navigation, webviewState]);
 
+  const customPTXHandlers = usePTXCustomHandlers(manifest);
+
+  const customHandlers = useMemo<WalletAPICustomHandlers>(() => {
+    return {
+      ...loggerHandlers,
+      ...customPTXHandlers,
+    };
+  }, [customPTXHandlers]);
+
   return (
     <SafeAreaView style={[styles.root]}>
       <Web3AppWebview
         ref={webviewAPIRef}
         manifest={manifest}
+        currentAccountHistDb={currentAccountHistDb}
         inputs={inputs}
         onStateChange={setWebviewState}
+        customHandlers={customHandlers}
       />
-      <BottomBar manifest={manifest} webviewAPIRef={webviewAPIRef} webviewState={webviewState} />
+      <BottomBar
+        manifest={manifest}
+        currentAccountHistDb={currentAccountHistDb}
+        webviewAPIRef={webviewAPIRef}
+        webviewState={webviewState}
+      />
       <InfoPanel
         name={manifest.name}
         icon={manifest.icon}

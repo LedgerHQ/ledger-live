@@ -1,24 +1,54 @@
-import { CASPER_CHECKSUM_HEX_LEN, CASPER_SMALL_BYTES_COUNT } from "../../consts";
-
 import { Account, Address } from "@ledgerhq/types-live";
 import { CLPublicKey, CLPublicKeyTag } from "casper-js-sdk";
 import { blake2bFinal, blake2bInit, blake2bUpdate } from "blakejs";
-import { InvalidAddress } from "@ledgerhq/errors";
+import { CASPER_CHECKSUM_HEX_LEN } from "../../consts";
 
 export const getAddress = (a: Account): Address =>
   a.freshAddresses.length > 0
     ? a.freshAddresses[0]
     : { address: a.freshAddress, derivationPath: a.freshAddressPath };
 
-export const getPubKeySignature = (pubKey: string): CLPublicKeyTag => {
-  const signature = pubKey.substring(0, 2);
+export function isAddressValid(pubKey: string): boolean {
+  try {
+    casperGetCLPublicKey(pubKey);
+    return true;
+  } catch (err) {
+    return false;
+  }
+}
 
-  if (signature === "01") return CLPublicKeyTag.ED25519;
+export function casperGetCLPublicKey(pubkey: string): CLPublicKey {
+  let checksummed = true;
 
-  if (signature === "02") return CLPublicKeyTag.SECP256K1;
+  if (pubkey.toLowerCase() === pubkey) checksummed = false;
+  if (pubkey.toUpperCase() === pubkey) checksummed = false;
 
-  throw new Error("casper pubkey signature not know");
-};
+  return CLPublicKey.fromHex(pubkey, checksummed);
+}
+
+export function casperAccountHashFromPublicKey(
+  pubKey: string,
+  checksummed: boolean = false,
+): string {
+  const accountHashBuff = casperGetCLPublicKey(pubKey).toAccountHash();
+
+  if (checksummed === false) return Buffer.from(accountHashBuff).toString("hex");
+
+  return casperAddressEncode(Buffer.from(accountHashBuff));
+}
+
+export function casperAddressFromPubKey(pubkey: Buffer, keySig: CLPublicKeyTag): string {
+  return `${keySig.toString()}${pubkey}`;
+}
+
+export function getCLPublicKey(address: string): CLPublicKey {
+  let checksummed = true;
+
+  if (address.toLowerCase() === address) checksummed = false;
+  if (address.toUpperCase() === address) checksummed = false;
+
+  return CLPublicKey.fromHex(address, checksummed);
+}
 
 function numberToBin(num: number) {
   let binStr = (num >>> 0).toString(2);
@@ -68,53 +98,4 @@ export function casperAddressEncode(inputBytes: Buffer): string {
   }
 
   return res.join("");
-}
-
-// Decodes a mixed-case hexadecimal string
-// Checksum hex encoding for casper docs: https://docs.casperlabs.io/design/checksummed-hex/
-function casperAddressDecode(inputString: string): string {
-  if (Buffer.from(inputString, "hex").length > CASPER_SMALL_BYTES_COUNT) return inputString;
-
-  if (inputString.toLowerCase() === inputString) return inputString;
-  if (inputString.toUpperCase() === inputString) return inputString;
-
-  const encoded = casperAddressEncode(Buffer.from(inputString, "hex"));
-
-  for (let i = 0; i < encoded.length; i++) {
-    if (encoded.charAt(i) !== inputString.charAt(i))
-      throw Error("Checksum invalid, decoding failed.");
-  }
-
-  return inputString;
-}
-
-export function isAddressValid(address: string): boolean {
-  try {
-    const pubKey = getPublicKeyFromCasperAddress(address);
-    new CLPublicKey(Buffer.from(pubKey, "hex"), getPubKeySignature(address));
-    casperAddressDecode(pubKey);
-    return true;
-  } catch (err) {
-    return false;
-  }
-}
-
-export function getPublicKeyFromCasperAddress(address: string): string {
-  if (address.length !== 68) throw new InvalidAddress("Invalid address size, expected 34 bytes");
-  return address.substring(2);
-}
-
-export function casperAddressFromPubKey(pubkey: Buffer): string {
-  const checksumed = casperAddressEncode(pubkey);
-
-  return `02${checksumed}`;
-}
-
-export function casperPubKeyToAccountHash(pubKey: string): string {
-  const clPubKey = new CLPublicKey(
-    Buffer.from(pubKey.substring(2), "hex"),
-    getPubKeySignature(pubKey),
-  );
-
-  return casperAddressEncode(Buffer.from(clPubKey.toAccountRawHashStr(), "hex"));
 }

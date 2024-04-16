@@ -4,6 +4,8 @@ import { setSupportedCurrencies } from "../../currencies";
 import { EnvName, setEnvUnsafe, setEnv } from "@ledgerhq/live-env";
 import { setWalletAPIVersion } from "../../wallet-api/version";
 import { WALLET_API_VERSION } from "../../wallet-api/constants";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { liveConfig } from "../../config/sharedConfig";
 
 setWalletAPIVersion(WALLET_API_VERSION);
 setSupportedCurrencies([
@@ -73,11 +75,9 @@ setSupportedCurrencies([
   "icon_berlin_testnet",
   "optimism",
   "optimism_goerli",
-  "arbitrum_goerli",
+  "arbitrum_sepolia",
   "rsk",
   "bittorrent",
-  "kava_evm",
-  "evmos_evm",
   "energy_web",
   "astar",
   "metis",
@@ -90,7 +90,7 @@ setSupportedCurrencies([
   "polygon_zk_evm",
   "polygon_zk_evm_testnet",
   "base",
-  "base_goerli",
+  "base_sepolia",
   "stacks",
   "telos_evm",
   "coreum",
@@ -99,7 +99,10 @@ setSupportedCurrencies([
   "casper",
   "neon_evm",
   "lukso",
+  "linea",
+  "linea_goerli",
 ]);
+LiveConfig.setConfig(liveConfig);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);
 

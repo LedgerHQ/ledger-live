@@ -4,7 +4,9 @@ import { SubAccount } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
 import IconCoins from "~/renderer/icons/Coins";
 import { ManageAction } from "../types";
-import noop from "lodash/noop";
+import { useHistory } from "react-router";
+import { track } from "~/renderer/analytics/segment";
+import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 
 type Props = {
   account: TronAccount | SubAccount;
@@ -15,23 +17,43 @@ const AccountHeaderManageActions = ({
   account,
   parentAccount,
 }: Props): ManageAction[] | null | undefined => {
+  const history = useHistory();
   const { t } = useTranslation();
   const mainAccount = getMainAccount(account, parentAccount);
   const { tronResources } = mainAccount;
   if (!tronResources || parentAccount) return null;
-  const disabledLabel = t("tron.voting.warnDisableStaking");
+
+  const stakeOnClick = () => {
+    const value = "/platform/stakekit";
+
+    track("button_clicked2", {
+      ...stakeDefaultTrack,
+      delegation: "stake",
+      page: "Page Account",
+      button: "delegate",
+      provider: "Stakekit",
+      currency: "TRX",
+    });
+    history.push({
+      pathname: value,
+      state: {
+        yieldId: "tron-trx-native-staking",
+        accountId: account.id,
+        returnTo: `/account/${account.id}`,
+      },
+    });
+  };
+
   return [
     {
       key: "Stake",
-      disabled: true,
       icon: IconCoins,
       label: t("account.stake"),
-      tooltip: disabledLabel,
-      event: "button_clicked",
+      event: "button_clicked2",
       eventProperties: {
         button: "stake",
       },
-      onClick: noop,
+      onClick: () => stakeOnClick(),
     },
   ];
 };

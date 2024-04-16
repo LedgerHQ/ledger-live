@@ -29,6 +29,7 @@ import type {
   SettingsPayload,
   SettingsRemoveStarredMarketcoinsPayload,
   SettingsSetAnalyticsPayload,
+  SettingsSetPersonalizedRecommendationsPayload,
   SettingsSetAvailableUpdatePayload,
   SettingsSetCountervaluePayload,
   SettingsSetDiscreetModePayload,
@@ -77,6 +78,7 @@ import type {
   SettingsSetClosedWithdrawBannerPayload,
   SettingsSetUserNps,
   SettingsSetSupportedCounterValues,
+  SettingsSetHasSeenAnalyticsOptInPrompt,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -97,7 +99,8 @@ export const INITIAL_STATE: SettingsState = {
   counterValueExchange: null,
   privacy: null,
   reportErrorsEnabled: true,
-  analyticsEnabled: true,
+  analyticsEnabled: false,
+  personalizedRecommendationsEnabled: false,
   currenciesSettings: {},
   pairExchanges: {},
   selectedTimeRange: "month",
@@ -118,8 +121,8 @@ export const INITIAL_STATE: SettingsState = {
   hasAvailableUpdate: false,
   theme: "system",
   osTheme: undefined,
-  customImageType: null,
-  customImageBackup: undefined,
+  customLockScreenType: null,
+  customLockScreenBackup: null,
   lastSeenCustomImage: {
     size: 0,
     hash: "",
@@ -141,6 +144,7 @@ export const INITIAL_STATE: SettingsState = {
     nanoSP: false,
     nanoX: false,
     stax: false,
+    europa: false,
   },
   hasSeenStaxEnabledNftsPopup: false,
   starredMarketCoins: [],
@@ -160,7 +164,6 @@ export const INITIAL_STATE: SettingsState = {
   notifications: {
     areNotificationsAllowed: true,
     announcementsCategory: true,
-    recommendationsCategory: true,
     largeMoverCategory: true,
     transactionsAlertsCategory: false,
   },
@@ -178,6 +181,7 @@ export const INITIAL_STATE: SettingsState = {
   },
   userNps: null,
   supportedCounterValues: [],
+  hasSeenAnalyticsOptInPrompt: false,
 };
 
 const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
@@ -251,6 +255,13 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
   [SettingsActionTypes.SETTINGS_SET_ANALYTICS]: (state, action) => ({
     ...state,
     analyticsEnabled: (action as Action<SettingsSetAnalyticsPayload>).payload,
+  }),
+
+  [SettingsActionTypes.SETTINGS_SET_PERSONALIZED_RECOMMENDATIONS]: (state, action) => ({
+    ...state,
+    personalizedRecommendationsEnabled: (
+      action as Action<SettingsSetPersonalizedRecommendationsPayload>
+    ).payload,
   }),
 
   [SettingsActionTypes.SETTINGS_SET_COUNTERVALUE]: (state, action) => ({
@@ -458,7 +469,8 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
 
   [SettingsActionTypes.SET_CUSTOM_IMAGE_TYPE]: (state, action) => ({
     ...state,
-    customImageType: (action as Action<SettingsSetCustomImageTypePayload>).payload.customImageType,
+    customLockScreenType: (action as Action<SettingsSetCustomImageTypePayload>).payload
+      .customLockScreenType,
   }),
 
   [SettingsActionTypes.SET_HAS_SEEN_STAX_ENABLED_NFTS_POPUP]: (state, action) => ({
@@ -498,7 +510,7 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
 
   [SettingsActionTypes.SET_CUSTOM_IMAGE_BACKUP]: (state, action) => ({
     ...state,
-    customImageBackup: (action as Action<SettingsSetCustomImageBackupPayload>).payload,
+    customLockScreenBackup: (action as Action<SettingsSetCustomImageBackupPayload>).payload,
   }),
 
   [SettingsActionTypes.SET_LAST_CONNECTED_DEVICE]: (state, action) => ({
@@ -637,6 +649,10 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     supportedCounterValues: (action as Action<SettingsSetSupportedCounterValues>).payload,
   }),
+  [SettingsActionTypes.SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT]: (state, action) => ({
+    ...state,
+    hasSeenAnalyticsOptInPrompt: (action as Action<SettingsSetHasSeenAnalyticsOptInPrompt>).payload,
+  }),
 };
 
 export default handleActions<SettingsState, SettingsPayload>(handlers, INITIAL_STATE);
@@ -684,6 +700,14 @@ export const reportErrorsEnabledSelector = createSelector(
   s => s.reportErrorsEnabled,
 );
 export const analyticsEnabledSelector = createSelector(storeSelector, s => s.analyticsEnabled);
+export const personalizedRecommendationsEnabledSelector = createSelector(
+  storeSelector,
+  s => s.personalizedRecommendationsEnabled,
+);
+export const trackingEnabledSelector = createSelector(
+  storeSelector,
+  s => s.analyticsEnabled || s.personalizedRecommendationsEnabled,
+);
 export const lastSeenCustomImageSelector = createSelector(
   storeSelector,
   s => s.lastSeenCustomImage,
@@ -782,7 +806,7 @@ export const lastSeenDeviceSelector = (state: State) => {
 export const knownDeviceModelIdsSelector = (state: State) => state.settings.knownDeviceModelIds;
 export const hasSeenStaxEnabledNftsPopupSelector = (state: State) =>
   state.settings.hasSeenStaxEnabledNftsPopup;
-export const customImageTypeSelector = (state: State) => state.settings.customImageType;
+export const customImageTypeSelector = (state: State) => state.settings.customLockScreenType;
 export const starredMarketCoinsSelector = (state: State) => state.settings.starredMarketCoins;
 export const lastConnectedDeviceSelector = (state: State) => {
   // Nb workaround to prevent crash for dev/qa that have nanoFTS references.
@@ -803,7 +827,7 @@ export const marketRequestParamsSelector = (state: State) => state.settings.mark
 export const marketCounterCurrencySelector = (state: State) => state.settings.marketCounterCurrency;
 export const marketFilterByStarredAccountsSelector = (state: State) =>
   state.settings.marketFilterByStarredAccounts;
-export const customImageBackupSelector = (state: State) => state.settings.customImageBackup;
+export const customImageBackupSelector = (state: State) => state.settings.customLockScreenBackup;
 export const sensitiveAnalyticsSelector = (state: State) => state.settings.sensitiveAnalytics;
 export const onboardingHasDeviceSelector = (state: State) => state.settings.onboardingHasDevice;
 export const onboardingTypeSelector = (state: State) => state.settings.onboardingType;
@@ -827,4 +851,7 @@ export const hasBeenUpsoldProtectSelector = (state: State) => state.settings.has
 export const generalTermsVersionAcceptedSelector = (state: State) =>
   state.settings.generalTermsVersionAccepted;
 export const userNpsSelector = (state: State) => state.settings.userNps;
-export const getSupportedCounterValues = (state: State) => state.settings.supportedCounterValues;
+export const supportedCounterValuesSelector = (state: State) =>
+  state.settings.supportedCounterValues;
+export const hasSeenAnalyticsOptInPromptSelector = (state: State) =>
+  state.settings.hasSeenAnalyticsOptInPrompt;

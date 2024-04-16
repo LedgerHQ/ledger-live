@@ -1,6 +1,7 @@
 import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { getNftCapabilities, useNftMetadata } from "@ledgerhq/live-common/nft/index";
+import { getNftCapabilities } from "@ledgerhq/coin-framework/nft/support";
+import { useNftMetadata } from "@ledgerhq/live-nft-react";
 import { Account, ProtoNFT } from "@ledgerhq/types-live";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import BigNumber from "bignumber.js";
@@ -32,7 +33,7 @@ const NftRow = memo(({ account, nft }: { account: Account; nft: ProtoNFT }) => {
     // Only evm family handles nft as of today. If later we have other family,
     // we will need to rework the NFT send flow by implementing family specific
     // logic under their "src/families" respective folder.
-    const bridge = getAccountBridge<EvmTransaction>(account);
+    const bridge = getAccountBridge(account);
 
     const defaultTransaction = bridge.createTransaction(account);
 
