@@ -2508,73 +2508,6 @@ importers:
         specifier: ^5.1.3
         version: 5.4.3
 
-  libs/coin-tester:
-    dependencies:
-      '@ledgerhq/coin-framework':
-        specifier: workspace:^
-        version: link:../coin-framework
-      '@ledgerhq/cryptoassets':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/cryptoassets
-      '@ledgerhq/hw-app-eth':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/hw-app-eth
-      '@ledgerhq/hw-transport':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/hw-transport
-      '@ledgerhq/hw-transport-node-speculos-http':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/hw-transport-node-speculos-http
-      axios:
-        specifier: ^1.5.0
-        version: 1.6.5
-      bignumber.js:
-        specifier: ^9.1.1
-        version: 9.1.2
-      docker-compose:
-        specifier: ^0.24.2
-        version: 0.24.3
-      ethers:
-        specifier: 5.7.2
-        version: 5.7.2
-      lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
-      rxjs:
-        specifier: 7.8.1
-        version: 7.8.1
-    devDependencies:
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/types-cryptoassets
-      '@ledgerhq/types-live':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/types-live
-      '@types/jest':
-        specifier: ^28.1.8
-        version: 28.1.8
-      '@types/lodash':
-        specifier: ^4.14.202
-        version: 4.14.202
-      '@types/node':
-        specifier: ^18.15.7
-        version: 18.16.19
-      chalk:
-        specifier: ^4.1.2
-        version: 4.1.2
-      jest:
-        specifier: ^28.1.3
-        version: 28.1.3(@types/node@18.16.19)
-      msw:
-        specifier: ^2.0.10
-        version: 2.0.10(typescript@5.3.3)
-      ts-jest:
-        specifier: ^28.0.8
-        version: 28.0.8(jest@28.1.3)(typescript@5.3.3)
-      typescript:
-        specifier: ^5.1.3
-        version: 5.3.3
-
   libs/device-core:
     dependencies:
       '@ledgerhq/devices':
@@ -18625,17 +18558,6 @@ packages:
     resolution: {integrity: sha512-ok9AWwhcgYuGG3Zfhyqg+zwl+Wn5uE+dwC0NV/2qQkx4dABbb/bx96vWu8NSj+BNjjSjno+JRYRjle1jV08k3g==}
     dev: false
 
-<<<<<<< HEAD
-=======
-  /@scure/bip32@1.3.2:
-    resolution: {integrity: sha512-N1ZhksgwD3OBlwTv3R6KFEcPojl/W4ElJOeCZdi+vuI5QmTFwLq3OFf2zd2ROpKvxFdgZ6hUpb0dx9bVNEwYCA==}
-    dependencies:
-      '@noble/curves': 1.2.0
-      '@noble/hashes': 1.3.2
-      '@scure/base': 1.1.3
-    dev: false
-
->>>>>>> 9f77c90674 (coin-evm coin-tester implementation)
   /@scure/bip32@1.4.0:
     resolution: {integrity: sha512-sVUpc0Vq3tXCkDGYVWGIZTRfnvu8LoTDaev7vbwh0omSvVORONr960MQWdKqJDCReIEmTj3PAr73O3aoxz7OPg==}
     dependencies:
@@ -18647,18 +18569,7 @@ packages:
   /@scure/bip39@1.3.0:
     resolution: {integrity: sha512-disdg7gHuTDZtY+ZdkmLpPCk7fxZSu3gBiEGuoC1XYxv9cGx3Z6cpTggCgW6odSOOIXCiDjuGejW+aJKCY/pIQ==}
     dependencies:
-<<<<<<< HEAD
       '@noble/hashes': 1.4.0
-=======
-      '@noble/hashes': 1.3.2
-      '@scure/base': 1.1.3
-    dev: false
-
-  /@scure/bip39@1.2.2:
-    resolution: {integrity: sha512-HYf9TUXG80beW+hGAt3TRM8wU6pQoYur9iNypTROm42dorCGmLnFe3eWjz3gOq6G62H2WRh0FCzAR1PI+29zIA==}
-    dependencies:
-      '@noble/hashes': 1.3.3
->>>>>>> 9f77c90674 (coin-evm coin-tester implementation)
       '@scure/base': 1.1.6
     dev: false
 
@@ -25726,12 +25637,8 @@ packages:
     resolution: {integrity: sha512-FAzX6IBit2POXYGnTCT8YHFO/lr5AapAII6zzhQO3Rw4cEDOgK+t1xhLc5tNcKlicTHlo9zxIwnYCX9X2DLkig==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
-<<<<<<< HEAD
       dmg-builder: 24.13.3
       electron-builder-squirrel-windows: 24.13.3
-=======
-      dmg-builder: 24.9.1
->>>>>>> 9f77c90674 (coin-evm coin-tester implementation)
       lodash: '*'
     peerDependenciesMeta:
       lodash:
@@ -37482,261 +37389,7 @@ packages:
       pretty-format: 29.7.0
       slash: 3.0.0
       strip-json-comments: 3.1.1
-<<<<<<< HEAD
       ts-node: 10.9.2(typescript@5.4.3)
-=======
-      ts-node: 10.7.0(@types/node@20.8.10)(typescript@5.1.3)
-    transitivePeerDependencies:
-      - babel-plugin-macros
-      - metro
-      - supports-color
-    dev: true
-
-  /jest-config@29.7.0(@types/node@20.11.30)(ts-node@10.9.1):
-    resolution: {integrity: sha512-uXbpfeQ7R6TZBqI3/TxCU4q4ttk3u0PJeC+E0zbfSoSjq6bJ7buBPxzQPL0ifrkY4DNu4JUdk0ImlBUYi840eQ==}
-    engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
-    peerDependencies:
-      '@types/node': '*'
-      ts-node: '>=9.0.0'
-    peerDependenciesMeta:
-      '@types/node':
-        optional: true
-      ts-node:
-        optional: true
-    dependencies:
-      '@babel/core': 7.23.2
-      '@jest/test-sequencer': 29.7.0
-      '@jest/types': 29.6.3
-      '@types/node': 20.11.30
-      babel-jest: 29.7.0(@babel/core@7.23.2)
-      chalk: 4.1.2
-      ci-info: 3.9.0
-      deepmerge: 4.3.1
-      glob: 7.2.3
-      graceful-fs: 4.2.11
-      jest-circus: 29.7.0
-      jest-environment-node: 29.7.0
-      jest-get-type: 29.6.3
-      jest-regex-util: 29.6.3
-      jest-resolve: 29.7.0
-      jest-runner: 29.7.0
-      jest-util: 29.7.0
-      jest-validate: 29.7.0
-      micromatch: 4.0.5
-      parse-json: 5.2.0
-      pretty-format: 29.7.0
-      slash: 3.0.0
-      strip-json-comments: 3.1.1
-      ts-node: 10.9.1(typescript@5.2.2)
-    transitivePeerDependencies:
-      - babel-plugin-macros
-      - metro
-      - supports-color
-    dev: true
-
-  /jest-config@29.7.0(@types/node@20.11.30)(ts-node@10.9.2):
-    resolution: {integrity: sha512-uXbpfeQ7R6TZBqI3/TxCU4q4ttk3u0PJeC+E0zbfSoSjq6bJ7buBPxzQPL0ifrkY4DNu4JUdk0ImlBUYi840eQ==}
-    engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
-    peerDependencies:
-      '@types/node': '*'
-      ts-node: '>=9.0.0'
-    peerDependenciesMeta:
-      '@types/node':
-        optional: true
-      ts-node:
-        optional: true
-    dependencies:
-      '@babel/core': 7.23.2
-      '@jest/test-sequencer': 29.7.0
-      '@jest/types': 29.6.3
-      '@types/node': 20.11.30
-      babel-jest: 29.7.0(@babel/core@7.23.2)
-      chalk: 4.1.2
-      ci-info: 3.9.0
-      deepmerge: 4.3.1
-      glob: 7.2.3
-      graceful-fs: 4.2.11
-      jest-circus: 29.7.0
-      jest-environment-node: 29.7.0
-      jest-get-type: 29.6.3
-      jest-regex-util: 29.6.3
-      jest-resolve: 29.7.0
-      jest-runner: 29.7.0
-      jest-util: 29.7.0
-      jest-validate: 29.7.0
-      micromatch: 4.0.5
-      parse-json: 5.2.0
-      pretty-format: 29.7.0
-      slash: 3.0.0
-      strip-json-comments: 3.1.1
-      ts-node: 10.9.2(typescript@5.3.3)
-    transitivePeerDependencies:
-      - babel-plugin-macros
-      - metro
-      - supports-color
-    dev: true
-
-  /jest-config@29.7.0(@types/node@20.8.10):
-    resolution: {integrity: sha512-uXbpfeQ7R6TZBqI3/TxCU4q4ttk3u0PJeC+E0zbfSoSjq6bJ7buBPxzQPL0ifrkY4DNu4JUdk0ImlBUYi840eQ==}
-    engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
-    peerDependencies:
-      '@types/node': '*'
-      ts-node: '>=9.0.0'
-    peerDependenciesMeta:
-      '@types/node':
-        optional: true
-      ts-node:
-        optional: true
-    dependencies:
-      '@babel/core': 7.23.2
-      '@jest/test-sequencer': 29.7.0
-      '@jest/types': 29.6.3
-      '@types/node': 20.8.10
-      babel-jest: 29.7.0(@babel/core@7.23.2)
-      chalk: 4.1.2
-      ci-info: 3.9.0
-      deepmerge: 4.3.1
-      glob: 7.2.3
-      graceful-fs: 4.2.11
-      jest-circus: 29.7.0
-      jest-environment-node: 29.7.0
-      jest-get-type: 29.6.3
-      jest-regex-util: 29.6.3
-      jest-resolve: 29.7.0
-      jest-runner: 29.7.0
-      jest-util: 29.7.0
-      jest-validate: 29.7.0
-      micromatch: 4.0.5
-      parse-json: 5.2.0
-      pretty-format: 29.7.0
-      slash: 3.0.0
-      strip-json-comments: 3.1.1
-    transitivePeerDependencies:
-      - babel-plugin-macros
-      - metro
-      - supports-color
-    dev: true
-
-  /jest-config@29.7.0(@types/node@20.8.10)(ts-node@10.7.0):
-    resolution: {integrity: sha512-uXbpfeQ7R6TZBqI3/TxCU4q4ttk3u0PJeC+E0zbfSoSjq6bJ7buBPxzQPL0ifrkY4DNu4JUdk0ImlBUYi840eQ==}
-    engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
-    peerDependencies:
-      '@types/node': '*'
-      ts-node: '>=9.0.0'
-    peerDependenciesMeta:
-      '@types/node':
-        optional: true
-      ts-node:
-        optional: true
-    dependencies:
-      '@babel/core': 7.23.2
-      '@jest/test-sequencer': 29.7.0
-      '@jest/types': 29.6.3
-      '@types/node': 20.8.10
-      babel-jest: 29.7.0(@babel/core@7.23.2)
-      chalk: 4.1.2
-      ci-info: 3.9.0
-      deepmerge: 4.3.1
-      glob: 7.2.3
-      graceful-fs: 4.2.11
-      jest-circus: 29.7.0
-      jest-environment-node: 29.7.0
-      jest-get-type: 29.6.3
-      jest-regex-util: 29.6.3
-      jest-resolve: 29.7.0
-      jest-runner: 29.7.0
-      jest-util: 29.7.0
-      jest-validate: 29.7.0
-      micromatch: 4.0.5
-      parse-json: 5.2.0
-      pretty-format: 29.7.0
-      slash: 3.0.0
-      strip-json-comments: 3.1.1
-      ts-node: 10.7.0(@types/node@20.8.10)(typescript@5.1.3)
-    transitivePeerDependencies:
-      - babel-plugin-macros
-      - metro
-      - supports-color
-    dev: true
-
-  /jest-config@29.7.0(@types/node@20.8.10)(ts-node@10.9.1):
-    resolution: {integrity: sha512-uXbpfeQ7R6TZBqI3/TxCU4q4ttk3u0PJeC+E0zbfSoSjq6bJ7buBPxzQPL0ifrkY4DNu4JUdk0ImlBUYi840eQ==}
-    engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
-    peerDependencies:
-      '@types/node': '*'
-      ts-node: '>=9.0.0'
-    peerDependenciesMeta:
-      '@types/node':
-        optional: true
-      ts-node:
-        optional: true
-    dependencies:
-      '@babel/core': 7.23.2
-      '@jest/test-sequencer': 29.7.0
-      '@jest/types': 29.6.3
-      '@types/node': 20.8.10
-      babel-jest: 29.7.0(@babel/core@7.23.2)
-      chalk: 4.1.2
-      ci-info: 3.9.0
-      deepmerge: 4.3.1
-      glob: 7.2.3
-      graceful-fs: 4.2.11
-      jest-circus: 29.7.0
-      jest-environment-node: 29.7.0
-      jest-get-type: 29.6.3
-      jest-regex-util: 29.6.3
-      jest-resolve: 29.7.0
-      jest-runner: 29.7.0
-      jest-util: 29.7.0
-      jest-validate: 29.7.0
-      micromatch: 4.0.5
-      parse-json: 5.2.0
-      pretty-format: 29.7.0
-      slash: 3.0.0
-      strip-json-comments: 3.1.1
-      ts-node: 10.9.1(@types/node@20.8.10)(source-map-support@0.5.21)(typescript@5.1.3)
-    transitivePeerDependencies:
-      - babel-plugin-macros
-      - metro
-      - supports-color
-    dev: true
-
-  /jest-config@29.7.0(ts-node@10.9.1):
-    resolution: {integrity: sha512-uXbpfeQ7R6TZBqI3/TxCU4q4ttk3u0PJeC+E0zbfSoSjq6bJ7buBPxzQPL0ifrkY4DNu4JUdk0ImlBUYi840eQ==}
-    engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
-    peerDependencies:
-      '@types/node': '*'
-      ts-node: '>=9.0.0'
-    peerDependenciesMeta:
-      '@types/node':
-        optional: true
-      ts-node:
-        optional: true
-    dependencies:
-      '@babel/core': 7.23.2
-      '@jest/test-sequencer': 29.7.0
-      '@jest/types': 29.6.3
-      babel-jest: 29.7.0(@babel/core@7.23.2)
-      chalk: 4.1.2
-      ci-info: 3.9.0
-      deepmerge: 4.3.1
-      glob: 7.2.3
-      graceful-fs: 4.2.11
-      jest-circus: 29.7.0
-      jest-environment-node: 29.7.0
-      jest-get-type: 29.6.3
-      jest-regex-util: 29.6.3
-      jest-resolve: 29.7.0
-      jest-runner: 29.7.0
-      jest-util: 29.7.0
-      jest-validate: 29.7.0
-      micromatch: 4.0.5
-      parse-json: 5.2.0
-      pretty-format: 29.7.0
-      slash: 3.0.0
-      strip-json-comments: 3.1.1
-      ts-node: 10.9.1(typescript@5.2.2)
->>>>>>> 9f77c90674 (coin-evm coin-tester implementation)
     transitivePeerDependencies:
       - babel-plugin-macros
       - metro
@@ -37997,11 +37650,7 @@ packages:
       '@jest/fake-timers': 29.7.0
       '@jest/types': 29.6.3
       '@types/jsdom': 20.0.1
-<<<<<<< HEAD
       '@types/node': 20.12.12
-=======
-      '@types/node': 20.8.10
->>>>>>> 9f77c90674 (coin-evm coin-tester implementation)
       jest-mock: 29.7.0
       jest-util: 29.7.0
       jsdom: 20.0.3
@@ -39321,7 +38970,6 @@ packages:
     peerDependencies:
       '@babel/preset-env': ^7.1.6
     dependencies:
-<<<<<<< HEAD
       '@babel/core': 7.24.3
       '@babel/parser': 7.24.1
       '@babel/plugin-proposal-class-properties': 7.18.6(@babel/core@7.24.3)
@@ -39332,18 +38980,6 @@ packages:
       '@babel/preset-typescript': 7.24.1(@babel/core@7.24.3)
       '@babel/register': 7.23.7(@babel/core@7.24.3)
       babel-core: 7.0.0-bridge.0(@babel/core@7.24.3)
-=======
-      '@babel/core': 7.23.2
-      '@babel/parser': 7.23.0
-      '@babel/plugin-proposal-class-properties': 7.18.6(@babel/core@7.23.2)
-      '@babel/plugin-proposal-nullish-coalescing-operator': 7.18.6(@babel/core@7.23.2)
-      '@babel/plugin-proposal-optional-chaining': 7.21.0(@babel/core@7.23.2)
-      '@babel/plugin-transform-modules-commonjs': 7.23.3(@babel/core@7.23.2)
-      '@babel/preset-flow': 7.23.3(@babel/core@7.23.2)
-      '@babel/preset-typescript': 7.23.3(@babel/core@7.23.2)
-      '@babel/register': 7.17.7(@babel/core@7.23.2)
-      babel-core: 7.0.0-bridge.0(@babel/core@7.23.2)
->>>>>>> 9f77c90674 (coin-evm coin-tester implementation)
       chalk: 4.1.2
       flow-parser: 0.232.0
       graceful-fs: 4.2.11
@@ -39362,7 +38998,6 @@ packages:
     peerDependencies:
       '@babel/preset-env': ^7.1.6
     dependencies:
-<<<<<<< HEAD
       '@babel/core': 7.24.3
       '@babel/parser': 7.24.1
       '@babel/plugin-proposal-class-properties': 7.18.6(@babel/core@7.24.3)
@@ -39374,19 +39009,6 @@ packages:
       '@babel/preset-typescript': 7.24.1(@babel/core@7.24.3)
       '@babel/register': 7.23.7(@babel/core@7.24.3)
       babel-core: 7.0.0-bridge.0(@babel/core@7.24.3)
-=======
-      '@babel/core': 7.23.2
-      '@babel/parser': 7.23.0
-      '@babel/plugin-proposal-class-properties': 7.18.6(@babel/core@7.23.2)
-      '@babel/plugin-proposal-nullish-coalescing-operator': 7.18.6(@babel/core@7.23.2)
-      '@babel/plugin-proposal-optional-chaining': 7.21.0(@babel/core@7.23.2)
-      '@babel/plugin-transform-modules-commonjs': 7.23.3(@babel/core@7.23.2)
-      '@babel/preset-env': 7.17.10(@babel/core@7.23.2)
-      '@babel/preset-flow': 7.23.3(@babel/core@7.23.2)
-      '@babel/preset-typescript': 7.23.3(@babel/core@7.23.2)
-      '@babel/register': 7.17.7(@babel/core@7.23.2)
-      babel-core: 7.0.0-bridge.0(@babel/core@7.23.2)
->>>>>>> 9f77c90674 (coin-evm coin-tester implementation)
       chalk: 4.1.2
       flow-parser: 0.232.0
       graceful-fs: 4.2.11
@@ -39408,7 +39030,6 @@ packages:
       '@babel/preset-env':
         optional: true
     dependencies:
-<<<<<<< HEAD
       '@babel/core': 7.24.3
       '@babel/parser': 7.24.6
       '@babel/plugin-transform-class-properties': 7.24.1(@babel/core@7.24.3)
@@ -39421,19 +39042,6 @@ packages:
       '@babel/preset-typescript': 7.24.1(@babel/core@7.24.3)
       '@babel/register': 7.23.7(@babel/core@7.24.3)
       babel-core: 7.0.0-bridge.0(@babel/core@7.24.3)
-=======
-      '@babel/core': 7.23.2
-      '@babel/parser': 7.23.0
-      '@babel/plugin-proposal-class-properties': 7.18.6(@babel/core@7.23.2)
-      '@babel/plugin-proposal-nullish-coalescing-operator': 7.18.6(@babel/core@7.23.2)
-      '@babel/plugin-proposal-optional-chaining': 7.21.0(@babel/core@7.23.2)
-      '@babel/plugin-transform-modules-commonjs': 7.23.3(@babel/core@7.23.2)
-      '@babel/preset-env': 7.23.2(@babel/core@7.23.2)
-      '@babel/preset-flow': 7.23.3(@babel/core@7.23.2)
-      '@babel/preset-typescript': 7.23.3(@babel/core@7.23.2)
-      '@babel/register': 7.17.7(@babel/core@7.23.2)
-      babel-core: 7.0.0-bridge.0(@babel/core@7.23.2)
->>>>>>> 9f77c90674 (coin-evm coin-tester implementation)
       chalk: 4.1.2
       flow-parser: 0.232.0
       graceful-fs: 4.2.11
@@ -39545,7 +39153,7 @@ packages:
       whatwg-encoding: 1.0.5
       whatwg-mimetype: 2.3.0
       whatwg-url: 9.1.0
-      ws: 8.14.1
+      ws: 8.16.0
       xml-name-validator: 3.0.0
     transitivePeerDependencies:
       - bufferutil
@@ -39628,7 +39236,7 @@ packages:
       whatwg-encoding: 2.0.0
       whatwg-mimetype: 3.0.0
       whatwg-url: 11.0.0
-      ws: 8.14.1
+      ws: 8.16.0
       xml-name-validator: 4.0.0
     transitivePeerDependencies:
       - bufferutil
@@ -51633,46 +51241,8 @@ packages:
       - source-map-support
     dev: true
 
-<<<<<<< HEAD
   /ts-node@10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3):
     resolution: {integrity: sha512-f0FFpIdcHgn8zcPSbf1dRevwt047YMnaiJM3u2w2RewrB+fob/zePZcrOyQoLMMO7aBIddLcQIEK5dYjkLnGrQ==}
-=======
-  /ts-node@10.9.1(@types/node@20.11.30)(typescript@4.9.5):
-    resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
-    hasBin: true
-    peerDependencies:
-      '@swc/core': '>=1.2.50'
-      '@swc/wasm': '>=1.2.50'
-      '@types/node': '*'
-      typescript: '>=2.7'
-    peerDependenciesMeta:
-      '@swc/core':
-        optional: true
-      '@swc/wasm':
-        optional: true
-    dependencies:
-      '@cspotcode/source-map-support': 0.8.1
-      '@tsconfig/node10': 1.0.8
-      '@tsconfig/node12': 1.0.9
-      '@tsconfig/node14': 1.0.1
-      '@tsconfig/node16': 1.0.2
-      '@types/node': 20.11.30
-      acorn: 8.10.0
-      acorn-walk: 8.2.0
-      arg: 4.1.3
-      create-require: 1.1.1
-      diff: 4.0.2
-      make-error: 1.3.6
-      typescript: 4.9.5
-      v8-compile-cache-lib: 3.0.1
-      yn: 3.1.1
-    transitivePeerDependencies:
-      - source-map-support
-    dev: true
-
-  /ts-node@10.9.1(@types/node@20.8.10)(source-map-support@0.5.21)(typescript@5.1.3):
-    resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
->>>>>>> 9f77c90674 (coin-evm coin-tester implementation)
     hasBin: true
     peerDependencies:
       '@swc/core': '>=1.2.50'
