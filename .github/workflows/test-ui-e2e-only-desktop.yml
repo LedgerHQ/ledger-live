@@ -238,6 +238,7 @@ jobs:
             }
 
             summary += `
+              ${{ env.TEST_RESULT || 'No test results' }}
             |`;
 
             Object.entries(report).forEach(([os, values]) => {
