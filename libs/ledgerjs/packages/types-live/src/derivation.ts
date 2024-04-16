@@ -36,4 +36,5 @@ export type DerivationMode =
   | "nearbip44h"
   | "vechain"
   | "internet_computer"
-  | "stacks_wallet";
+  | "stacks_wallet"
+  | "icon";
