@@ -91,7 +91,11 @@ export const MarketRow = memo<Props>(function MarketRowItem({
           <TableCell loading />
         </TableRow>
       ) : (
-        <TableRow data-test-id={`market-${currency?.ticker}-row`} onClick={onCurrencyClick}>
+        <TableRow
+          data-test-id={`market-${currency?.ticker}-row`}
+          onClick={onCurrencyClick}
+          role="row"
+        >
           <TableCell>{currency?.marketcapRank ?? "-"}</TableCell>
           <TableCell mr={3}>
             <CryptoCurrencyIconWrapper>
