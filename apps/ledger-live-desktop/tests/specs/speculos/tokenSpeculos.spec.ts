@@ -8,7 +8,7 @@ import { AccountsPage } from "../../models/AccountsPage";
 
 test.use({ userdata: "skip-onboarding" });
 
-const currencies = ["ETH"];
+const currencies = ["Ethereum"]; //Todo: change method, for now we have to change manually the currencies
 
 test.describe.parallel("Add a token through parent account", () => {
   for (const currency of currencies) {
