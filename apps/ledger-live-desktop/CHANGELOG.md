@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.79.0-next.4
+
+### Patch Changes
+
+- [#6693](https://github.com/LedgerHQ/ledger-live/pull/6693) [`ba007c4`](https://github.com/LedgerHQ/ledger-live/commit/ba007c41699583f8a35f951d0df19c18c8a77dee) Thanks [@CremaFR](https://github.com/CremaFR)! - bugfix: close exchangeComplete for card sell
+
 ## 2.79.0-next.3
 
 ### Patch Changes
