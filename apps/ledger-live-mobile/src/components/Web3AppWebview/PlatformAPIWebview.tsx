@@ -35,7 +35,10 @@ import {
 } from "@ledgerhq/live-common/platform/react";
 import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
 import BigNumber from "bignumber.js";
-import { DEFAULT_MULTIBUY_APP_ID } from "@ledgerhq/live-common/wallet-api/constants";
+import {
+  DEFAULT_MULTIBUY_APP_ID,
+  BUY_SELL_UI_APP_ID,
+} from "@ledgerhq/live-common/wallet-api/constants";
 import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 import { NavigatorName, ScreenName } from "~/const";
 import { broadcastSignedTx } from "~/logic/screenTransactionHooks";
@@ -508,7 +511,8 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       tracking.platformLoad(manifest);
     }, [manifest, tracking]);
 
-    const javaScriptCanOpenWindowsAutomatically = manifest.id === DEFAULT_MULTIBUY_APP_ID;
+    const javaScriptCanOpenWindowsAutomatically =
+      manifest.id === DEFAULT_MULTIBUY_APP_ID || manifest.id === BUY_SELL_UI_APP_ID;
 
     return (
       <RNWebView

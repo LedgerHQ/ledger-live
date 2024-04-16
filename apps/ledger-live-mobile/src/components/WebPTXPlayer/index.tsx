@@ -16,6 +16,7 @@ import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 import {
   DEFAULT_MULTIBUY_APP_ID,
   INTERNAL_APP_IDS,
+  BUY_SELL_UI_APP_ID,
 } from "@ledgerhq/live-common/wallet-api/constants";
 import { safeUrl } from "@ledgerhq/live-common/wallet-api/helpers";
 
@@ -77,7 +78,11 @@ function BackToInternalDomain({
           referrer: "isExternal",
         },
       });
-    } else if (manifest.id === DEFAULT_MULTIBUY_APP_ID && lastMatchingURL && webviewURL) {
+    } else if (
+      (manifest.id === DEFAULT_MULTIBUY_APP_ID || manifest.id === BUY_SELL_UI_APP_ID) &&
+      lastMatchingURL &&
+      webviewURL
+    ) {
       const currentHostname = new URL(webviewURL).hostname;
       const url = new URL(lastMatchingURL);
       const urlParams = new URLSearchParams(url.searchParams);

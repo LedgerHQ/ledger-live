@@ -15,9 +15,11 @@ import { LiveAppManifest, Loadable } from "@ledgerhq/live-common/platform/types"
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 import {
   DEFAULT_MULTIBUY_APP_ID,
+  BUY_SELL_UI_APP_ID,
   INTERNAL_APP_IDS,
   WALLET_API_VERSION,
 } from "@ledgerhq/live-common/wallet-api/constants";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 export type DProps = {
   defaultCurrencyId?: string | null;
@@ -105,7 +107,9 @@ export type ExchangeComponentParams = {
 
 const Exchange = ({ match }: RouteComponentProps<ExchangeComponentParams>) => {
   const appId = match?.params?.appId;
+  const buySellUiFlag = useFeature("buySellUi");
+  const defaultPlatform = buySellUiFlag?.enabled ? BUY_SELL_UI_APP_ID : DEFAULT_MULTIBUY_APP_ID;
 
-  return <LiveAppExchange appId={appId || DEFAULT_MULTIBUY_APP_ID} />;
+  return <LiveAppExchange appId={appId || defaultPlatform} />;
 };
 export default Exchange;

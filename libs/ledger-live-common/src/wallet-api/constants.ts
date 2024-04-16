@@ -33,4 +33,6 @@ export const DISCOVER_INITIAL_CATEGORY = "all";
 
 export const DEFAULT_MULTIBUY_APP_ID = "multibuy-v2";
 
-export const INTERNAL_APP_IDS = [DEFAULT_MULTIBUY_APP_ID];
+export const BUY_SELL_UI_APP_ID = "buy-sell-ui";
+
+export const INTERNAL_APP_IDS = [DEFAULT_MULTIBUY_APP_ID, BUY_SELL_UI_APP_ID];
