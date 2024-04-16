@@ -9,7 +9,7 @@ import { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { TonCommentInvalid } from "./errors";
 import type { Transaction, TransactionStatus } from "./types";
-import { addressesAreEqual, commentIsValid, getAddress, isAddressValid } from "./utils";
+import { addressesAreEqual, commentIsValid, getAddress, getSubAccount, isAddressValid } from "./utils";
 
 const getTransactionStatus = async (a: Account, t: Transaction): Promise<TransactionStatus> => {
   const errors: TransactionStatus["errors"] = {};
@@ -54,6 +54,18 @@ const getTransactionStatus = async (a: Account, t: Transaction): Promise<Transac
     if (amount.eq(0)) {
       errors.amount = new AmountRequired();
     }
+  }
+
+  const subAccount = getSubAccount(t, a);
+  if (subAccount) {
+    const spendable = subAccount.spendableBalance;
+    if (t.amount.gt(spendable)) {
+      errors.amount = new NotEnoughBalance();
+    }
+    if (useAllAmount) {
+      amount = spendable;
+    }
+    totalSpent = amount;
   }
 
   if (t.comment.isEncrypted || !commentIsValid(t.comment)) {

@@ -1,9 +1,9 @@
 import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { fetchAccountInfo } from "./bridge/bridgeHelpers/api";
 import type { Transaction } from "./types";
-import { getAddress, getTonEstimatedFees, transactionToHwParams } from "./utils";
+import { getAddress, getSubAccount, getTonEstimatedFees, transactionToHwParams } from "./utils";
 
 const estimateMaxSpendable = async ({
   account,
@@ -20,6 +20,22 @@ const estimateMaxSpendable = async ({
   if (balance.eq(0)) return balance;
 
   const accountInfo = await fetchAccountInfo(getAddress(a).address);
+
+  if (transaction && !transaction.subAccountId) {
+    transaction.subAccountId = account.type === "Account" ? null : account.id;
+  }
+
+  let tokenAccountTxn: boolean = false;
+  let subAccount: TokenAccount | undefined | null;
+  if (account.type === "TokenAccount") {
+    tokenAccountTxn = true;
+    subAccount = account;
+  }
+  if (transaction?.subAccountId && !subAccount) {
+    tokenAccountTxn = true;
+    subAccount = getSubAccount(transaction, a) ?? null;
+  }
+
   const estimatedFees = transaction
     ? transaction.fees ??
       (await getTonEstimatedFees(
@@ -32,6 +48,10 @@ const estimateMaxSpendable = async ({
   if (balance.lte(estimatedFees)) return new BigNumber(0);
 
   balance = balance.minus(estimatedFees);
+
+  if (tokenAccountTxn && subAccount) {
+    return subAccount.spendableBalance;
+  }
 
   return balance;
 };
