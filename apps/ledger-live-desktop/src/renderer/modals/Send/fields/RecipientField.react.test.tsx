@@ -300,10 +300,11 @@ describe("RecipientField", () => {
             recipientDomain: undefined,
           });
         });
-        expect(
-          screen.getByText("send.steps.recipient.domainService.noResolution.title"),
-        ).toBeTruthy();
-
+        await waitFor(() =>
+          expect(
+            screen.getByText("send.steps.recipient.domainService.noResolution.title"),
+          ).toBeTruthy(),
+        );
         expect(screen.getByTestId("domain-error-no-resolution")).toBeTruthy();
       });
 

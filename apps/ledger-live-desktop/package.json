@@ -74,7 +74,7 @@
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "@sentry/electron": "4.21.0",
+    "@sentry/electron": "4.22.0",
     "@sentry/node": "7.109.0",
     "@sentry/tracing": "7.109.0",
     "@tanstack/react-query": "^5.28.9",
