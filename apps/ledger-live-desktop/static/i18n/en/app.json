@@ -5297,8 +5297,8 @@
       "description": "Please use My Ledger to uninstall all apps then check if a firmware update is available before reinstalling them"
     },
     "LatestFirmwareVersionRequired": {
-      "title": "Update Nano Firmware",
-      "description": "Please update your devices Firmware to the latest version to access this feature"
+      "title": "Update Device Firmware",
+      "description": "Please update your device firmware to the latest version to access this feature"
     },
     "FirmwareNotRecognized": {
       "title": "Invalid Provider",
