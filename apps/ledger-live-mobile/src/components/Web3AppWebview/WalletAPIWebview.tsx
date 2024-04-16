@@ -5,7 +5,10 @@ import Config from "react-native-config";
 import { WebviewAPI, WebviewProps } from "./types";
 import { useWebView } from "./helpers";
 import { NetworkError } from "./NetworkError";
-import { DEFAULT_MULTIBUY_APP_ID } from "@ledgerhq/live-common/wallet-api/constants";
+import {
+  DEFAULT_MULTIBUY_APP_ID,
+  BUY_SELL_UI_APP_ID,
+} from "@ledgerhq/live-common/wallet-api/constants";
 import { INJECTED_JAVASCRIPT } from "./dappInject";
 import { NoAccountScreen } from "./NoAccountScreen";
 
@@ -36,7 +39,8 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       webviewRef.current?.reload();
     };
 
-    const javaScriptCanOpenWindowsAutomatically = manifest.id === DEFAULT_MULTIBUY_APP_ID;
+    const javaScriptCanOpenWindowsAutomatically =
+      manifest.id === DEFAULT_MULTIBUY_APP_ID || manifest.id === BUY_SELL_UI_APP_ID;
 
     if (!!manifest.dapp && noAccounts) {
       return <NoAccountScreen manifest={manifest} currentAccountHistDb={currentAccountHistDb} />;
