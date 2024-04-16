@@ -53,7 +53,7 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
     type: "object",
     default: {
       status: {
-        type: "active",
+        type: "deprecated",
       },
     },
   },
@@ -101,7 +101,7 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
     type: "object",
     default: {
       status: {
-        type: "active",
+        type: "deprecated",
       },
     },
   },
@@ -133,7 +133,7 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
     type: "object",
     default: {
       status: {
-        type: "active",
+        type: "deprecated",
       },
     },
   },
@@ -141,7 +141,7 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
     type: "object",
     default: {
       status: {
-        type: "active",
+        type: "deprecated",
       },
     },
   },
@@ -205,7 +205,7 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
     type: "object",
     default: {
       status: {
-        type: "active",
+        type: "deprecated",
       },
     },
   },
@@ -213,7 +213,7 @@ const bitcoinConfig: Record<string, ConfigInfo> = {
     type: "object",
     default: {
       status: {
-        type: "active",
+        type: "deprecated",
       },
     },
   },
