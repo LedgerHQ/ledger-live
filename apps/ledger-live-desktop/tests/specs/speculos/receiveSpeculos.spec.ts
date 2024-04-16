@@ -8,7 +8,7 @@ import { SpeculosModal } from "../../models/SpeculosModal";
 
 test.use({ userdata: "speculos" });
 
-const currencies = ["Bitcoin"];
+const currencies = ["Bitcoin"]; //Todo: change method, for now we have to change manually the currencies
 
 for (const currency of currencies) {
   test(`[${currency}] Receive @smoke`, async ({ page }) => {
@@ -34,7 +34,7 @@ for (const currency of currencies) {
 
     await test.step(`[${currency}] Validate message`, async () => {
       await speculosModal.pressRight();
-      if (currency === "ETH" || currency === "Holesky") {
+      if (currency === "Ethereum" || currency === "Ethereum Holesky") {
         await speculosModal.pressRight();
         await speculosModal.pressBoth();
       } else {
@@ -45,4 +45,4 @@ for (const currency of currencies) {
     });
   });
 }
-//BUG (sometime) with nanoApp version (getAppAndVersion)
+//BUG with nanoApp version (GetAppAndVersionUnsupportedFormat: getAppAndVersion: format not supported)
