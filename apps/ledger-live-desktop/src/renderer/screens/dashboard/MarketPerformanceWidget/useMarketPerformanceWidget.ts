@@ -30,10 +30,7 @@ export function useMarketPerformanceWidget() {
     refreshRate,
   });
 
-  const sliced = useMemo(
-    () => getSlicedList(data ?? [], order, timeRange),
-    [data, order, timeRange],
-  );
+  const sliced = getSlicedList(data ?? [], order, timeRange);
 
   return {
     list: sliced,
