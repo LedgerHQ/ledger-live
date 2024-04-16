@@ -1,5 +1,5 @@
 import { NftSpamReportOpts } from "@ledgerhq/live-nft/api/simplehash";
-import { SimpleHashResponse } from "@ledgerhq/live-nft/api/types";
+import { SimpleHashResponse, SimpleHashSpamReportResponse } from "@ledgerhq/live-nft/api/types";
 import { ProtoNFT } from "@ledgerhq/types-live";
 import { UseInfiniteQueryResult, InfiniteData, UseMutationResult } from "@tanstack/react-query";
 
@@ -22,7 +22,7 @@ export type NftGalleryFilterResult = UseInfiniteQueryResult<
 
 // SpamReportNft
 export type SpamReportNftResult = UseMutationResult<
-  SimpleHashResponse,
+  SimpleHashSpamReportResponse,
   Error,
   NftSpamReportOpts,
   unknown

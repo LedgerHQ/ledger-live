@@ -1,5 +1,5 @@
 import network from "@ledgerhq/live-network/network";
-import { SimpleHashResponse } from "./types";
+import { SimpleHashResponse, SimpleHashSpamReportResponse } from "./types";
 import { getEnv } from "@ledgerhq/live-env";
 
 /**
@@ -109,9 +109,11 @@ export type NftSpamReportOpts = {
 /**
  * Send Spam Report using SimpleHash API.
  */
-export async function reportSpamNtf(opts: NftSpamReportOpts): Promise<SimpleHashResponse> {
+export async function reportSpamNtf(
+  opts: NftSpamReportOpts,
+): Promise<SimpleHashSpamReportResponse> {
   const url = `${getEnv("SIMPLE_HASH_API_BASE")}/nfts/report/spam`;
-  const { data } = await network<SimpleHashResponse>({
+  const { data } = await network<SimpleHashSpamReportResponse>({
     method: "POST",
     url,
     headers: {
