@@ -4,6 +4,12 @@ module.exports = {
     es6: true,
   },
   plugins: ["import"],
+  rules: {
+    "no-console": ["error", { allow: ["warn", "error"] }],
+    "@typescript-eslint/no-empty-function": "off",
+    "@typescript-eslint/explicit-function-return-type": "error",
+    "import/order": ["error"],
+  },
   overrides: [
     {
       files: ["src/**/*.test.{ts,tsx}"],
@@ -17,13 +23,8 @@ module.exports = {
       files: ["*/__tests__/**/*.{ts,tsx}"],
       rules: {
         "@typescript-eslint/no-explicit-any": "warn",
+        "no-console": "off",
       },
     },
   ],
-  rules: {
-    "no-console": ["error", { allow: ["warn", "error"] }],
-    "@typescript-eslint/no-empty-function": "off",
-    "@typescript-eslint/explicit-function-return-type": "error",
-    "import/order": ["error"],
-  },
 };
