@@ -9,7 +9,8 @@ import {
 } from "./algodv2.types";
 
 const BASE_URL = getEnv("API_ALGORAND_BLOCKCHAIN_EXPLORER_API_ENDPOINT");
-const NODE_URL = `${BASE_URL}/ps2/v2`;
+const API_TOKEN = getEnv("API_ALGORAND_TOKEN");
+const NODE_URL = `${BASE_URL}/ps/v2`;
 
 const fullUrl = (route: string): string => `${NODE_URL}${route}`;
 
@@ -19,6 +20,9 @@ export const getAccount =
     const { data } = await network({
       method: "GET",
       url: fullUrl(`/accounts/${address}`),
+      headers: {
+        "X-Algo-API-Token": API_TOKEN,
+      },
     });
 
     const assets: AlgoAsset[] = data.assets
@@ -45,6 +49,9 @@ export const getTransactionParams =
     const { data } = await network({
       method: "GET",
       url: fullUrl(`/transactions/params`),
+      headers: {
+        "X-Algo-API-Token": API_TOKEN,
+      },
     });
 
     return {
@@ -64,7 +71,10 @@ export const broadcastTransaction =
       method: "POST",
       url: fullUrl(`/transactions`),
       data: payload,
-      headers: { "Content-Type": "application/x-binary" },
+      headers: {
+        "Content-Type": "application/x-binary",
+        "X-Algo-API-Token": API_TOKEN,
+      },
     });
 
     return data.txId;

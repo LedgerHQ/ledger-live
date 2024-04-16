@@ -11,7 +11,7 @@ import {
 const LIMIT = 100; // Max nb of transactions per request
 
 const BASE_URL = getEnv("API_ALGORAND_BLOCKCHAIN_EXPLORER_API_ENDPOINT");
-const INDEXER_URL = `${BASE_URL}/idx2/v2`;
+const INDEXER_URL = `${BASE_URL}/idx/v2`;
 
 const fullUrl = (route: string): string => `${INDEXER_URL}${route}?limit=${LIMIT}`;
 

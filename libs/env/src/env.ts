@@ -77,6 +77,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Node API endpoint for algorand",
   },
+  API_ALGORAND_TOKEN: {
+    def: "",
+    parser: stringParser,
+    desc: "Algorand API token",
+  },
   API_CELO_INDEXER: {
     def: "https://celo.coin.ledger.com/indexer/",
     parser: stringParser,
