@@ -19,10 +19,13 @@ type PolygonToken = [
 export const importPolygonTokens = async (outputDir: string) => {
   try {
     console.log("importing polygon tokens...");
-    const polygonTokens = await fetchTokens<PolygonToken[]>("polygon-erc20.json");
+    const [polygonTokens, hash] = await fetchTokens<PolygonToken[]>("polygon-erc20.json");
 
     const filePath = path.join(outputDir, "polygon-erc20");
     fs.writeFileSync(`${filePath}.json`, JSON.stringify(polygonTokens));
+    if (hash) {
+      fs.writeFileSync(`${filePath}-hash.json`, JSON.stringify(hash));
+    }
 
     const tokenTypeStringified = `export type PolygonERC20Token = [
   string, // parent currency id
@@ -43,6 +46,8 @@ export const importPolygonTokens = async (outputDir: string) => {
       `${tokenTypeStringified}
 
 import tokens from "./polygon-erc20.json";
+
+${hash ? `export { default as hash } from "./polygon-erc20-hash.json";` : null}
 
 export default tokens as PolygonERC20Token[];
 `,

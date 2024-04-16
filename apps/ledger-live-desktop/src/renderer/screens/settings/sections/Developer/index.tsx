@@ -20,6 +20,7 @@ import LottieTester from "../Experimental/LottieTester";
 import StorylyTester from "../Experimental/StorylyTester";
 import PostOnboardingHubTester from "../Experimental/PostOnboardingHubTester";
 import AllowDebugReactQueryToggle from "./AllowDebugReactQueryToggle";
+import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 
 const Default = () => {
   const { t } = useTranslation();
@@ -79,7 +80,9 @@ const Default = () => {
       </Row>
       <LottieTester />
       <PostOnboardingHubTester />
-      <StorylyTester />
+      <FeatureToggle featureId="storyly">
+        <StorylyTester />
+      </FeatureToggle>
       <ExchangeDeveloperMode />
 
       {__DEV__ && (

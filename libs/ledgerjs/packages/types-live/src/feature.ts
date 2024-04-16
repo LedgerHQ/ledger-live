@@ -446,6 +446,9 @@ export type Feature_lldActionCarousel = Feature<{
 
 export type Feature_MarketperformanceWidgetDesktop = Feature<{
   variant: ABTestingVariants;
+  refreshRate: number;
+  top: number;
+  supported: boolean;
 }>;
 
 export type Feature_NftsFromSimpleHash = Feature<{

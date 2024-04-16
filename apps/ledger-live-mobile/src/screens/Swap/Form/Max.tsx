@@ -10,17 +10,17 @@ export function Max({ swapTx }: { swapTx: SwapTransactionType }) {
   const { t } = useTranslation();
   const { track } = useAnalytics();
 
-  const isMaxButtonDisabled = useMemo(
+  const isMaxButtonHidden = useMemo(
     () => isAccount(swapTx.swap.from.account),
     [swapTx.swap.from.account],
   );
 
   useEffect(() => {
-    if (isMaxButtonDisabled && swapTx.swap.isMaxEnabled) {
+    if (isMaxButtonHidden && swapTx.swap.isMaxEnabled) {
       swapTx.toggleMax();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isMaxButtonDisabled, swapTx.swap.isMaxEnabled]);
+  }, [isMaxButtonHidden, swapTx.swap.isMaxEnabled]);
 
   const onToggle = (event: boolean) => {
     track("button_clicked", {
@@ -32,19 +32,20 @@ export function Max({ swapTx }: { swapTx: SwapTransactionType }) {
   };
 
   return (
-    <Flex alignSelf="flex-end" flexDirection="row" alignItems="center">
-      <Flex flexDirection="row" alignItems="center" paddingY={4}>
-        <Text variant="small" paddingRight={2}>
-          {t("transfer.swap2.form.amount.useMax")}
-        </Text>
+    !isMaxButtonHidden && (
+      <Flex alignSelf="flex-end" flexDirection="row" alignItems="center">
+        <Flex flexDirection="row" alignItems="center" paddingY={4}>
+          <Text variant="small" paddingRight={2}>
+            {t("transfer.swap2.form.amount.useMax")}
+          </Text>
 
-        <Switch
-          disabled={isMaxButtonDisabled}
-          testID="exchange-send-max-toggle"
-          checked={swapTx.swap.isMaxEnabled}
-          onChange={onToggle}
-        />
+          <Switch
+            testID="exchange-send-max-toggle"
+            checked={swapTx.swap.isMaxEnabled}
+            onChange={onToggle}
+          />
+        </Flex>
       </Flex>
-    </Flex>
+    )
   );
 }
