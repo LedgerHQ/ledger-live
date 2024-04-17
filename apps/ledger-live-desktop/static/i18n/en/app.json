@@ -737,6 +737,9 @@
         "description3": "This integration has been carried out by {{team}} in collaboration with Ledger"
       }
     },
+    "willBeDeprecatedBanner": {
+      "title": "{{currencyName}} doesn’t have an integrator identified and the support cannot be blablabla long term. We expect to unsupport the coin starting {{deprecateDate}}"
+    },
     "lastOperations": "Latest operations",
     "contractAddress": "Contract:",
     "openInExplorer": "Open in explorer",

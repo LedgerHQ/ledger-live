@@ -153,10 +153,12 @@ const IconButton = styled(Tabbable).attrs(() => ({
     background: ${p => (p.disabled ? "" : rgba(p.theme.colors.palette.divider, 0.3))};
   }
 `;
+
 type Props = {
   account: AccountLike;
   parentAccount: Account | undefined | null;
 };
+
 const AccountHeader: React.ComponentType<Props> = React.memo(function AccountHeader({
   account,
   parentAccount,
@@ -180,6 +182,7 @@ const AccountHeader: React.ComponentType<Props> = React.memo(function AccountHea
       dispatch(updateAccount(updatedAccount));
     }
   };
+
   const submitNameChangeOnEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.currentTarget.blur();
@@ -197,6 +200,7 @@ const AccountHeader: React.ComponentType<Props> = React.memo(function AccountHea
       setName(getAccountName(account));
     }
   }, [editingName, account]);
+
   return (
     <Box horizontal shrink alignItems="center" flow={3}>
       <Box>
@@ -278,4 +282,5 @@ const AccountHeader: React.ComponentType<Props> = React.memo(function AccountHea
     </Box>
   );
 });
+
 export default AccountHeader;
