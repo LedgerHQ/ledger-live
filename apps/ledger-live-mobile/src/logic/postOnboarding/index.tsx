@@ -1,23 +1,12 @@
 import { DeviceModelId } from "@ledgerhq/devices";
 import { PostOnboardingAction, PostOnboardingActionId } from "@ledgerhq/types-live";
-import {
-  assetsTransferMock,
-  buyCryptoMock,
-  claimMock,
-  customImageMock,
-  migrateAssetsMock,
-  personalizeMock,
-  recoverMock,
-} from "./mockActions";
+import { assetsTransferMock, buyCryptoMock, customImageMock, recoverMock } from "./mockActions";
 import { assetsTransferAction, customImageAction, buyCryptoAction, recoverAction } from "./actions";
 
 /**
  * All implemented post onboarding actions.
  */
-const postOnboardingActions: Record<PostOnboardingActionId, PostOnboardingAction> = {
-  claimMock,
-  migrateAssetsMock,
-  personalizeMock,
+const postOnboardingActions: { [id in PostOnboardingActionId]?: PostOnboardingAction } = {
   assetsTransferMock,
   buyCryptoMock,
   customImageMock,
@@ -32,15 +21,17 @@ const postOnboardingActions: Record<PostOnboardingActionId, PostOnboardingAction
  * Mock of post onboarding actions for DeviceModelId.stax
  */
 const staxPostOnboardingActionsMock: PostOnboardingAction[] = [
-  claimMock,
-  personalizeMock,
-  migrateAssetsMock,
+  assetsTransferMock,
+  buyCryptoMock,
+  customImageMock,
+  recoverMock,
 ];
 
 const staxPostOnboardingActions: PostOnboardingAction[] = [
   assetsTransferAction,
   buyCryptoAction,
   customImageAction,
+  recoverAction,
 ];
 
 /**
@@ -60,7 +51,9 @@ const europaPostOnboardingActions: PostOnboardingAction[] = [
   recoverAction,
 ];
 
-export function getPostOnboardingAction(id: PostOnboardingActionId): PostOnboardingAction {
+export function getPostOnboardingAction(
+  id: PostOnboardingActionId,
+): PostOnboardingAction | undefined {
   return postOnboardingActions[id];
 }
 

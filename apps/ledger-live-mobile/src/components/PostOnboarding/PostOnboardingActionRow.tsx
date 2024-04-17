@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Flex, IconsLegacy, Tag, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
@@ -9,6 +9,7 @@ import { BaseNavigationComposite, StackNavigatorNavigation } from "../RootNaviga
 import { PostOnboardingNavigatorParamList } from "../RootNavigator/types/PostOnboardingNavigator";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { useCompleteActionCallback } from "~/logic/postOnboarding/useCompleteAction";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 export type Props = PostOnboardingAction &
   PostOnboardingActionState & { deviceModelId: DeviceModelId; productName: string };
@@ -22,6 +23,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
     description,
     tagLabel,
     completed,
+    getIsAlreadyCompleted,
     disabled,
     buttonLabelForAnalyticsEvent,
     deviceModelId,
@@ -29,15 +31,27 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
     shouldCompleteOnStart,
   } = props;
   const { t } = useTranslation();
+  const recoverServices = useFeature("protectServicesMobile");
+  const protectId = recoverServices?.params?.protectId ?? "protect-prod";
+
   const navigation =
     useNavigation<
       BaseNavigationComposite<StackNavigatorNavigation<PostOnboardingNavigatorParamList>>
     >();
   const completeAction = useCompleteActionCallback();
+  const [isActionCompleted, setIsActionCompleted] = useState(false);
+
+  const initIsActionCompleted = useCallback(async () => {
+    setIsActionCompleted(completed || !!(await getIsAlreadyCompleted?.({ protectId })));
+  }, [setIsActionCompleted, completed, getIsAlreadyCompleted, protectId]);
+
+  useEffect(() => {
+    initIsActionCompleted();
+  }, [initIsActionCompleted]);
 
   const handlePress = () => {
     if ("getNavigationParams" in props) {
-      navigation.navigate(...props.getNavigationParams({ deviceModelId }));
+      navigation.navigate(...props.getNavigationParams({ deviceModelId, protectId }));
       buttonLabelForAnalyticsEvent &&
         track("button_clicked", {
           button: buttonLabelForAnalyticsEvent,
@@ -48,7 +62,10 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
   };
 
   return (
-    <Touchable disabled={disabled || completed} onPress={completed ? undefined : handlePress}>
+    <Touchable
+      disabled={disabled || isActionCompleted}
+      onPress={isActionCompleted ? undefined : handlePress}
+    >
       <Flex
         flexDirection="row"
         alignItems="center"
@@ -63,9 +80,9 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
               <Text
                 variant="largeLineHeight"
                 fontWeight="medium"
-                color={completed ? "neutral.c70" : "neutral.c100"}
+                color={isActionCompleted ? "neutral.c70" : "neutral.c100"}
               >
-                {t(completed ? titleCompleted : title)}
+                {t(isActionCompleted ? titleCompleted : title)}
               </Text>
               {tagLabel ? (
                 <Tag size="small" ml={3} type="color" uppercase={false}>
@@ -73,7 +90,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
                 </Tag>
               ) : null}
             </Flex>
-            {completed ? null : (
+            {isActionCompleted ? null : (
               <Text variant="body" fontWeight="medium" color="neutral.c70">
                 {t(description, { productName })}
               </Text>
@@ -81,7 +98,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
           </Flex>
         </Flex>
         <Flex flexDirection="row" alignItems="center" flexShrink={0} flexGrow={1} pl={6}>
-          {disabled ? null : completed ? (
+          {disabled ? null : isActionCompleted ? (
             <IconsLegacy.CheckAloneMedium color="success.c50" size={20} />
           ) : (
             <IconsLegacy.ChevronRightMedium color="neutral.c70" size={24} />

@@ -26,6 +26,7 @@ export type WithNavigationParams = {
    */
   getNavigationParams: (options: {
     deviceModelId: DeviceModelId;
+    protectId: string;
   }) => [screen: any] | [screen: any, navigationParams: any];
 };
 
@@ -37,6 +38,7 @@ type WithStartActionFunction = {
     openModalCallback: (modalName: any) => void;
     navigationCallback: (location: Record<string, unknown> | string) => void;
     deviceModelId: DeviceModelId;
+    protectId: string;
   }) => void;
   /**
    * Optional Redux dispatch function
@@ -92,6 +94,12 @@ export type PostOnboardingAction = {
    * after completing this action.
    * */
   actionCompletedPopupLabel?: string;
+
+  /**
+   * Async function that returns true if the action has already been completed prior to entering
+   * the post-onboarding and false otherwise
+   */
+  getIsAlreadyCompleted?: (args: { protectId: string }) => Promise<boolean>;
 
   /**
    * Used to set the action as complete when clicking on it.

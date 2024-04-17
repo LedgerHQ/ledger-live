@@ -1,6 +1,7 @@
 import { PostOnboardingAction, PostOnboardingActionId } from "@ledgerhq/types-live";
 import { Icons } from "@ledgerhq/native-ui";
 import { NavigatorName, ScreenName } from "~/const";
+import { getStoreValue } from "~/store";
 
 export const assetsTransferAction: PostOnboardingAction = {
   id: PostOnboardingActionId.assetsTransfer,
@@ -70,13 +71,19 @@ export const recoverAction: PostOnboardingAction = {
   description: "postOnboarding.actions.recover.description",
   buttonLabelForAnalyticsEvent: "Subscribe to Ledger Recover",
   shouldCompleteOnStart: true,
-  getNavigationParams: () => [
+  getIsAlreadyCompleted: async ({ protectId }) => {
+    const recoverSubscriptionState = await getStoreValue("SUBSCRIPTION_STATE", protectId);
+
+    return recoverSubscriptionState === "BACKUP_DONE";
+  },
+  getNavigationParams: ({ protectId }) => [
     NavigatorName.Base,
     {
       screen: ScreenName.Recover,
       params: {
-        platform: "protect-prod",
+        platform: protectId,
         redirectTo: "upsell",
+        source: "llm-postonboarding-banner",
       },
     },
   ],

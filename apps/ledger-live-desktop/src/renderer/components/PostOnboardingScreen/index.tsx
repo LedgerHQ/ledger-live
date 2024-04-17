@@ -12,7 +12,7 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 
 const PostOnboardingScreen = () => {
   const { t } = useTranslation();
-  const allDone = useAllPostOnboardingActionsCompleted();
+  const areAllPostOnboardingActionsCompleted = useAllPostOnboardingActionsCompleted();
 
   const { deviceModelId } = usePostOnboardingHubState();
 
@@ -32,7 +32,9 @@ const PostOnboardingScreen = () => {
       >
         <TrackPage
           category={
-            allDone ? "User has completed all post-onboarding actions" : "Post-onboarding hub"
+            areAllPostOnboardingActionsCompleted
+              ? "User has completed all post-onboarding actions"
+              : "Post-onboarding hub"
           }
           flow={"post-onboarding"}
           deviceModelId={deviceModelId}
@@ -46,7 +48,7 @@ const PostOnboardingScreen = () => {
           lineHeight="120%"
           whiteSpace="pre-wrap"
         >
-          {allDone
+          {areAllPostOnboardingActionsCompleted
             ? t("postOnboarding.postOnboardingScreen.titleCompleted")
             : t("postOnboarding.postOnboardingScreen.title", {
                 productName: getDeviceModel(deviceModelId ?? DeviceModelId.stax).productName,

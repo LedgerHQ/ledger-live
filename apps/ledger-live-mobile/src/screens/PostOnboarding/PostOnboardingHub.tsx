@@ -39,7 +39,8 @@ const PostOnboardingHub = () => {
   }, [closePostOnboarding]);
 
   const safeAreaInsets = useSafeAreaInsets();
-  const allDone = useAllPostOnboardingActionsCompleted() || !deviceModelId;
+  const areAllPostOnboardingActionsCompleted =
+    useAllPostOnboardingActionsCompleted() || !deviceModelId;
 
   if (!deviceModelId) return null; // this will never happen in practice
 
@@ -47,9 +48,11 @@ const PostOnboardingHub = () => {
   return (
     <>
       <TrackScreen
-        key={allDone.toString()}
+        key={areAllPostOnboardingActionsCompleted.toString()}
         category={
-          allDone ? "User has completed all post-onboarding actions" : "Post-onboarding hub"
+          areAllPostOnboardingActionsCompleted
+            ? "User has completed all post-onboarding actions"
+            : "Post-onboarding hub"
         }
         deviceModelId={deviceModelId}
       />
@@ -62,8 +65,8 @@ const PostOnboardingHub = () => {
       >
         <Flex pb={8}>
           <Text variant="h1Inter" fontWeight="semiBold">
-            {allDone
-              ? t("postOnboarding.hub.allDoneTitle", {
+            {areAllPostOnboardingActionsCompleted
+              ? t("postOnboarding.hub.areAllPostOnboardingActionsCompletedTitle", {
                   productName,
                 })
               : t("postOnboarding.hub.title", { productName })}
@@ -90,7 +93,7 @@ const PostOnboardingHub = () => {
             ))}
           </Flex>
           <Flex my={7} alignItems="center" justifyContent="center">
-            {allDone ? (
+            {areAllPostOnboardingActionsCompleted ? (
               <Button
                 alignSelf="stretch"
                 size="large"

@@ -1,42 +1,10 @@
-import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
+import { DeviceModelId } from "@ledgerhq/devices";
 import { PostOnboardingAction, PostOnboardingActionId } from "@ledgerhq/types-live";
 import { Icons } from "@ledgerhq/react-ui";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import PostOnboardingMockAction from "~/renderer/components/PostOnboardingHub/PostOnboardingMockAction";
 import CustomImage from "~/renderer/screens/customImage";
-
-const claimMock: PostOnboardingAction = {
-  id: PostOnboardingActionId.claimMock,
-  Icon: Icons.Gift,
-  title: "Claim my NFT",
-  titleCompleted: "Claim my NFT",
-  description: "A special NFT for you.",
-  tagLabel: "Free",
-  actionCompletedPopupLabel: "NFT claimed",
-  startAction: () => setDrawer(PostOnboardingMockAction, { id: PostOnboardingActionId.claimMock }),
-};
-
-const personalizeMock: PostOnboardingAction = {
-  id: PostOnboardingActionId.personalizeMock,
-  Icon: Icons.PictureImage,
-  title: `Personalize my ${getDeviceModel(DeviceModelId.stax).productName}`,
-  titleCompleted: `Personalize my ${getDeviceModel(DeviceModelId.stax).productName}`,
-  description: "By customizing the screen.",
-  actionCompletedPopupLabel: "Device personalized",
-  startAction: () =>
-    setDrawer(PostOnboardingMockAction, { id: PostOnboardingActionId.personalizeMock }),
-};
-
-const migrateAssetsMock: PostOnboardingAction = {
-  id: PostOnboardingActionId.migrateAssetsMock,
-  Icon: Icons.ArrowDown,
-  title: "Transfer assets to my Ledger",
-  titleCompleted: "Transfer assets to my Ledger",
-  description: "Easily secure assets from coinbase or another exchange.",
-  actionCompletedPopupLabel: "Assets transfered",
-  startAction: () =>
-    setDrawer(PostOnboardingMockAction, { id: PostOnboardingActionId.migrateAssetsMock }),
-};
+import { getStoreValue } from "~/renderer/store";
 
 const customImage: PostOnboardingAction = {
   id: PostOnboardingActionId.customImage,
@@ -90,8 +58,13 @@ const recover: PostOnboardingAction = {
   actionCompletedPopupLabel: "postOnboarding.actions.recover.popupLabel",
   buttonLabelForAnalyticsEvent: "Subscribe to Recover",
   shouldCompleteOnStart: true,
-  startAction: ({ navigationCallback }) =>
-    navigationCallback("/recover/protect-prod?redirectTo=upsell&source=lld-post-onboarding-banner"),
+  getIsAlreadyCompleted: async ({ protectId }) => {
+    const recoverSubscriptionState = await getStoreValue("SUBSCRIPTION_STATE", protectId);
+
+    return recoverSubscriptionState === "BACKUP_DONE";
+  },
+  startAction: ({ navigationCallback, protectId }) =>
+    navigationCallback(`/recover/${protectId}?redirectTo=upsell&source=lld-post-onboarding-banner`),
 };
 
 const customImageMock: PostOnboardingAction = {
@@ -143,9 +116,6 @@ const recoverMock: PostOnboardingAction = {
  * All implemented post onboarding actions.
  */
 const postOnboardingActions: { [id in PostOnboardingActionId]?: PostOnboardingAction } = {
-  claimMock,
-  migrateAssetsMock,
-  personalizeMock,
   customImage,
   assetsTransfer,
   buyCrypto,
@@ -160,9 +130,10 @@ const postOnboardingActions: { [id in PostOnboardingActionId]?: PostOnboardingAc
  * Mock of post onboarding actions for DeviceModelId.stax
  */
 const staxPostOnboardingActionsMock: PostOnboardingAction[] = [
-  claimMock,
-  personalizeMock,
-  migrateAssetsMock,
+  assetsTransferMock,
+  buyCryptoMock,
+  customImageMock,
+  recoverMock,
 ];
 
 /**

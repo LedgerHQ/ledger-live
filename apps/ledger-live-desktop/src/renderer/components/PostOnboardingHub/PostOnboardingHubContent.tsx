@@ -14,7 +14,7 @@ import ButtonV3 from "~/renderer/components/ButtonV3";
 const PostOnboardingHubContent = () => {
   const { t } = useTranslation();
   const history = useHistory();
-  const allDone = useAllPostOnboardingActionsCompleted();
+  const areAllPostOnboardingActionsCompleted = useAllPostOnboardingActionsCompleted();
   const { deviceModelId } = usePostOnboardingHubState();
 
   const handleSkipButton = useCallback(() => {
@@ -42,7 +42,7 @@ const PostOnboardingHubContent = () => {
       maxWidth={450}
     >
       <PostOnboardingHub />
-      {!allDone ? (
+      {!areAllPostOnboardingActionsCompleted ? (
         <Link onClick={handleSkipButton} data-test-id={"postonboarding-hub-skip-button"} mt={5}>
           {t("postOnboarding.postOnboardingContent.skipLink")}
         </Link>

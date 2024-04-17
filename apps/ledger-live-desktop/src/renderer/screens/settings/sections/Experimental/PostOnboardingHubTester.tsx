@@ -13,72 +13,57 @@ const PostOnboardingHubTester = () => {
 
   const handleInitPostOnboarding = useStartPostOnboardingCallback();
 
+  const devicesSupportedByPostOnboarding = [
+    {
+      deviceModelId: DeviceModelId.stax,
+      translationKey: "testStaxPostonboarding",
+      dataTestId: "stax-postonboarding-tester-button",
+    },
+    {
+      deviceModelId: DeviceModelId.europa,
+      translationKey: "testEuropaPostonboarding",
+      dataTestId: "europa-postonboarding-tester-button",
+    },
+  ];
+
   return (
     <>
-      <SettingsSectionRow
-        title={t("settings.experimental.features.testStaxPostonboarding.title")}
-        desc={t("settings.experimental.features.testStaxPostonboarding.description")}
-      >
-        <Flex flexDirection={"row"} columnGap={3}>
-          <Button
-            data-test-id="stax-postonboarding-tester-button"
-            onClick={() =>
-              handleInitPostOnboarding({
-                deviceModelId: DeviceModelId.stax,
-                mock: true,
-                fallbackIfNoAction: () => history.push("/"),
-              })
-            }
-            primary
+      {devicesSupportedByPostOnboarding.map(({ deviceModelId, translationKey, dataTestId }) => (
+        <Flex key={deviceModelId}>
+          <SettingsSectionRow
+            title={t(`settings.experimental.features.${translationKey}.title`)}
+            desc={t(`settings.experimental.features.${translationKey}.description`)}
           >
-            {t("postOnboardingDebugger.buttonTitle")} (mock)
-          </Button>
-          <Button
-            onClick={() =>
-              handleInitPostOnboarding({
-                deviceModelId: DeviceModelId.stax,
-                mock: false,
-                fallbackIfNoAction: () => history.push("/"),
-              })
-            }
-            primary
-          >
-            {t("postOnboardingDebugger.buttonTitle")}
-          </Button>
+            <Flex flexDirection={"row"} columnGap={3}>
+              <Button
+                data-test-id={dataTestId}
+                onClick={() =>
+                  handleInitPostOnboarding({
+                    deviceModelId: DeviceModelId.stax,
+                    mock: true,
+                    fallbackIfNoAction: () => history.push("/"),
+                  })
+                }
+                primary
+              >
+                {t("postOnboardingDebugger.buttonTitle")} (mock)
+              </Button>
+              <Button
+                onClick={() =>
+                  handleInitPostOnboarding({
+                    deviceModelId,
+                    mock: false,
+                    fallbackIfNoAction: () => history.push("/"),
+                  })
+                }
+                primary
+              >
+                {t("postOnboardingDebugger.buttonTitle")}
+              </Button>
+            </Flex>
+          </SettingsSectionRow>
         </Flex>
-      </SettingsSectionRow>
-      <SettingsSectionRow
-        title={t("settings.experimental.features.testEuropaPostonboarding.title")}
-        desc={t("settings.experimental.features.testEuropaPostonboarding.description")}
-      >
-        <Flex flexDirection={"row"} columnGap={3}>
-          <Button
-            data-test-id="europa-postonboarding-tester-button"
-            onClick={() =>
-              handleInitPostOnboarding({
-                deviceModelId: DeviceModelId.europa,
-                mock: true,
-                fallbackIfNoAction: () => history.push("/"),
-              })
-            }
-            primary
-          >
-            {t("postOnboardingDebugger.buttonTitle")} (mock)
-          </Button>
-          <Button
-            onClick={() =>
-              handleInitPostOnboarding({
-                deviceModelId: DeviceModelId.europa,
-                mock: false,
-                fallbackIfNoAction: () => history.push("/"),
-              })
-            }
-            primary
-          >
-            {t("postOnboardingDebugger.buttonTitle")}
-          </Button>
-        </Flex>
-      </SettingsSectionRow>
+      ))}
     </>
   );
 };

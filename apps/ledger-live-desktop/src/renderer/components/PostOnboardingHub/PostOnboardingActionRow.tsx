@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Flex, Icons, Tag, Text } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import { PostOnboardingActionState, PostOnboardingAction } from "@ledgerhq/types-live";
@@ -11,6 +11,7 @@ import { openModal } from "~/renderer/actions/modals";
 import { AllModalNames } from "~/renderer/modals/types";
 import { useHistory } from "react-router";
 import { useCompleteActionCallback } from "./logic/useCompleteAction";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 export type Props = PostOnboardingAction &
   PostOnboardingActionState & {
@@ -30,13 +31,26 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
     tagLabel,
     buttonLabelForAnalyticsEvent,
     completed,
+    getIsAlreadyCompleted,
     deviceModelId,
     shouldCompleteOnStart,
   } = props;
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const history = useHistory();
+  const recoverServices = useFeature("protectServicesDesktop");
+  const protectId = recoverServices?.params?.protectId ?? "protect-prod";
+
   const completeAction = useCompleteActionCallback();
+  const [isActionCompleted, setIsActionCompleted] = useState(false);
+
+  const initIsActionCompleted = useCallback(async () => {
+    setIsActionCompleted(completed || !!(await getIsAlreadyCompleted?.({ protectId })));
+  }, [setIsActionCompleted, completed, getIsAlreadyCompleted, protectId]);
+
+  useEffect(() => {
+    initIsActionCompleted();
+  }, [initIsActionCompleted]);
 
   const handleStartAction = useCallback(() => {
     const openModalCallback = (modalName: AllModalNames) => {
@@ -48,7 +62,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
     };
 
     if ("startAction" in props && deviceModelId !== null) {
-      props.startAction({ openModalCallback, navigationCallback, deviceModelId });
+      props.startAction({ openModalCallback, navigationCallback, deviceModelId, protectId });
       buttonLabelForAnalyticsEvent &&
         track("button_clicked2", {
           button: buttonLabelForAnalyticsEvent,
@@ -66,6 +80,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
     completeAction,
     id,
     shouldCompleteOnStart,
+    protectId,
   ]);
 
   return (
@@ -76,9 +91,9 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
       backgroundColor="neutral.c30"
       borderRadius={3}
       marginBottom={4}
-      completed={completed}
+      completed={isActionCompleted}
       padding="32px 24px 32px 24px"
-      {...(completed
+      {...(isActionCompleted
         ? undefined
         : {
             onClick: () => {
@@ -92,11 +107,11 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
           <Text
             variant="largeLineHeight"
             fontWeight="medium"
-            color={completed ? "neutral.c70" : "neutral.c100"}
+            color={isActionCompleted ? "neutral.c70" : "neutral.c100"}
           >
             {t(title)}
           </Text>
-          {!completed ? (
+          {!isActionCompleted ? (
             <Text variant="body" fontWeight="medium" color="neutral.c70">
               {t(description, {
                 productName: getDeviceModel(deviceModelId ?? DeviceModelId.stax).productName,
@@ -118,7 +133,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
             {tagLabel}
           </Tag>
         ) : null}
-        {completed ? (
+        {isActionCompleted ? (
           <Icons.Check color="success.c70" size={"M"} />
         ) : (
           <Icons.ChevronRight color="neutral.c100" size={"M"} />
