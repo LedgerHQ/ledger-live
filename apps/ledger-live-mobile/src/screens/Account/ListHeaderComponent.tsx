@@ -35,6 +35,7 @@ import { ActionButtonEvent } from "~/components/FabActions";
 import { EditOperationCard } from "~/components/EditOperationCard";
 import Alert from "~/components/Alert";
 import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
+import { urls } from "~/utils/urls";
 
 type Props = {
   account?: AccountLike;
@@ -144,7 +145,12 @@ export function getListHeaderComponents({
       </Box>,
       currencyConfig?.status.type === "will_be_deprecated" && (
         <View style={{ marginTop: 16 }}>
-          <Alert key="deprecated_banner" type="warning">
+          <Alert
+            key="deprecated_banner"
+            type="warning"
+            learnMoreKey="account.willBedeprecatedBanner.contactSupport"
+            learnMoreUrl={urls.contactSupportWebview.en}
+          >
             {t("account.willBedeprecatedBanner.title", {
               currencyName: currency.name,
               deprecatedDate: currencyConfig.status.deprecated_date,

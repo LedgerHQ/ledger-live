@@ -37,6 +37,7 @@ import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
 import { View } from "react-native-animatable";
 import Alert from "~/components/Alert";
+import { urls } from "~/utils/urls";
 
 const AnimatedFlatListWithRefreshControl = Animated.createAnimatedComponent(
   accountSyncRefreshControl(FlatList),
@@ -138,7 +139,12 @@ const AssetScreen = ({ route }: NavigationProps) => {
       ) : null,
       currencyConfig?.status.type === "will_be_deprecated" && (
         <View style={{ marginTop: 16 }}>
-          <Alert key="deprecated_banner" type="warning">
+          <Alert
+            key="deprecated_banner"
+            type="warning"
+            learnMoreKey="account.willBedeprecatedBanner.contactSupport"
+            learnMoreUrl={urls.contactSupportWebview.en}
+          >
             {t("account.willBedeprecatedBanner.title", {
               currencyName: currency.name,
               deprecatedDate: currencyConfig.status.deprecated_date,
