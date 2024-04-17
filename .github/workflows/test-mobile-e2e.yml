@@ -171,6 +171,14 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+      - name: setup JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: "zulu"
+          java-version: "17"
+          cache: "gradle"
+      - name: setup Android SDK
+        uses: android-actions/setup-android@v2.0.10
       - name: Gradle cache
         uses: gradle/gradle-build-action@v2
 

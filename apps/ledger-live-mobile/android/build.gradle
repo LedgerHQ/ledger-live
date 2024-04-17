@@ -52,6 +52,7 @@ allprojects {
             url REPOSITORY_URL
         }
         mavenLocal()
+        google()
         maven {
             url "$rootDir/../node_modules/detox/Detox-android"
         }
