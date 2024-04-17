@@ -1,5 +1,16 @@
 # @ledgerhq/live-nft-react
 
+## 0.3.1-nightly.3
+
+### Patch Changes
+
+- [#6667](https://github.com/LedgerHQ/ledger-live/pull/6667) [`9f90797`](https://github.com/LedgerHQ/ledger-live/commit/9f90797d00a96674025ca8d1c7d9c5df9f435e24) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add Nft Spam report in LLD in Developer Tab
+
+- Updated dependencies [[`9f90797`](https://github.com/LedgerHQ/ledger-live/commit/9f90797d00a96674025ca8d1c7d9c5df9f435e24), [`0dae8e5`](https://github.com/LedgerHQ/ledger-live/commit/0dae8e5a33704eaee5976e8ae2cbe29c6f458167), [`0dae8e5`](https://github.com/LedgerHQ/ledger-live/commit/0dae8e5a33704eaee5976e8ae2cbe29c6f458167)]:
+  - @ledgerhq/live-nft@0.3.1-nightly.3
+  - @ledgerhq/cryptoassets@12.1.0-nightly.0
+  - @ledgerhq/types-live@6.46.0-nightly.2
+
 ## 0.3.1-nightly.2
 
 ### Patch Changes

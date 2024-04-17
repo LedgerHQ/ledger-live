@@ -1,5 +1,19 @@
 # @ledgerhq/coin-evm
 
+## 1.1.0-nightly.3
+
+### Minor Changes
+
+- [#6567](https://github.com/LedgerHQ/ledger-live/pull/6567) [`0dae8e5`](https://github.com/LedgerHQ/ledger-live/commit/0dae8e5a33704eaee5976e8ae2cbe29c6f458167) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update `getSyncHash` method to use new hash files provided by token importers instead of manually serializing each token. This greatly improve performances of that method.
+
+### Patch Changes
+
+- Updated dependencies [[`0dae8e5`](https://github.com/LedgerHQ/ledger-live/commit/0dae8e5a33704eaee5976e8ae2cbe29c6f458167), [`0dae8e5`](https://github.com/LedgerHQ/ledger-live/commit/0dae8e5a33704eaee5976e8ae2cbe29c6f458167)]:
+  - @ledgerhq/cryptoassets@12.1.0-nightly.0
+  - @ledgerhq/coin-framework@0.11.4-nightly.3
+  - @ledgerhq/evm-tools@1.0.18-nightly.1
+  - @ledgerhq/domain-service@1.1.20-nightly.2
+
 ## 1.0.1-nightly.2
 
 ### Patch Changes

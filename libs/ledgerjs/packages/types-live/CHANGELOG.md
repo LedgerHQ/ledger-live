@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.46.0-nightly.2
+
+### Patch Changes
+
+- [#6567](https://github.com/LedgerHQ/ledger-live/pull/6567) [`0dae8e5`](https://github.com/LedgerHQ/ledger-live/commit/0dae8e5a33704eaee5976e8ae2cbe29c6f458167) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update Account Bridge `preload` signature which was wrong
+
 ## 6.46.0-nightly.1
 
 ### Patch Changes

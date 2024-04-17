@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 12.1.0-nightly.0
+
+### Minor Changes
+
+- [#6567](https://github.com/LedgerHQ/ledger-live/pull/6567) [`0dae8e5`](https://github.com/LedgerHQ/ledger-live/commit/0dae8e5a33704eaee5976e8ae2cbe29c6f458167) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update importers to include hash files in order to detect changes while requesting CDN with `If-None-Match` header
+
 ## 12.0.0
 
 ### Major Changes

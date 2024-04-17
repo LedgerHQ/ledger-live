@@ -1,5 +1,12 @@
 # @ledgerhq/hw-app-vet
 
+## 0.1.7-nightly.1
+
+### Patch Changes
+
+- Updated dependencies [[`0dae8e5`](https://github.com/LedgerHQ/ledger-live/commit/0dae8e5a33704eaee5976e8ae2cbe29c6f458167)]:
+  - @ledgerhq/cryptoassets@12.1.0-nightly.0
+
 ## 0.1.7-nightly.0
 
 ### Patch Changes

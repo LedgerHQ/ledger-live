@@ -1,5 +1,28 @@
 # @ledgerhq/live-common
 
+## 34.1.0-nightly.8
+
+### Patch Changes
+
+- [#6683](https://github.com/LedgerHQ/ledger-live/pull/6683) [`d26bd9e`](https://github.com/LedgerHQ/ledger-live/commit/d26bd9e9352d664af7c2acb3170f2a2afe8b0972) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - MarketPerf Widget wasn't updated well when Top 5 crypto is the same for multiples minutes
+
+- [#6567](https://github.com/LedgerHQ/ledger-live/pull/6567) [`0dae8e5`](https://github.com/LedgerHQ/ledger-live/commit/0dae8e5a33704eaee5976e8ae2cbe29c6f458167) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update Account Bridge `preload` signature which was wrong
+
+- Updated dependencies [[`0dae8e5`](https://github.com/LedgerHQ/ledger-live/commit/0dae8e5a33704eaee5976e8ae2cbe29c6f458167), [`9f90797`](https://github.com/LedgerHQ/ledger-live/commit/9f90797d00a96674025ca8d1c7d9c5df9f435e24), [`0dae8e5`](https://github.com/LedgerHQ/ledger-live/commit/0dae8e5a33704eaee5976e8ae2cbe29c6f458167), [`0dae8e5`](https://github.com/LedgerHQ/ledger-live/commit/0dae8e5a33704eaee5976e8ae2cbe29c6f458167)]:
+  - @ledgerhq/coin-evm@1.1.0-nightly.3
+  - @ledgerhq/live-nft@0.3.1-nightly.3
+  - @ledgerhq/cryptoassets@12.1.0-nightly.0
+  - @ledgerhq/coin-framework@0.11.4-nightly.3
+  - @ledgerhq/coin-algorand@0.4.1-nightly.3
+  - @ledgerhq/coin-bitcoin@0.4.0-nightly.13
+  - @ledgerhq/coin-polkadot@0.6.1-nightly.3
+  - @ledgerhq/hw-app-eth@6.35.8-nightly.3
+  - @ledgerhq/hw-app-vet@0.1.7-nightly.1
+  - @ledgerhq/live-countervalues@0.1.4-nightly.3
+  - @ledgerhq/live-countervalues-react@0.1.4-nightly.3
+  - @ledgerhq/coin-near@0.3.12-nightly.3
+  - @ledgerhq/device-core@0.1.1-nightly.4
+
 ## 34.1.0-nightly.7
 
 ### Patch Changes
