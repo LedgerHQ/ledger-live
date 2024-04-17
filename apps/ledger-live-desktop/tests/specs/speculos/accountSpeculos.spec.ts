@@ -35,9 +35,7 @@ test.describe.parallel("Accounts @smoke", () => {
       await test.step(`[${currency}] Open device app`, async () => {
         await addAccountModal.waitForSync();
         const name = await addAccountModal.getFirstAccountName();
-        if (typeof name === "string") {
-          firstAccountName = name;
-        }
+        firstAccountName = name;
         await expect
           .soft(addAccountModal.container)
           .toHaveScreenshot(`${currency}-accounts-list.png`);

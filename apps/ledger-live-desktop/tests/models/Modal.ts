@@ -29,6 +29,7 @@ export class Modal {
   readonly signNetworkWarning: Locator;
   readonly signContinueButton: Locator;
   readonly confirmText: Locator;
+  readonly verifyAddress: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -64,6 +65,9 @@ export class Modal {
     this.signContinueButton = page.locator("text=Continue");
     this.confirmText = page.locator(
       "text=Please confirm the operation on your device to finalize it",
+    );
+    this.verifyAddress = page.locator(
+      "text=Verify that the shared address exactly matches the one on your device",
     );
   }
 
