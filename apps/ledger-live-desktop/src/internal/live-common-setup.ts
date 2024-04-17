@@ -36,7 +36,7 @@ setErrorRemapping(e => {
 });
 
 if (getEnv("SPECULOS_API_PORT")) {
-  const req: Record<string, any> = {
+  const req: Record<string, number> = {
     apiPort: getEnv("SPECULOS_API_PORT"),
   };
 

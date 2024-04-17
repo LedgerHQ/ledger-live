@@ -6,13 +6,13 @@ import { SendModal } from "../../models/SendModal";
 import { SpeculosModal } from "../../models/SpeculosModal";
 
 test.use({ userdata: "speculos" });
-
-//receive address:
-//BTC 2: bc1q7ezsfc44adw2gyzqjmwhuh2e83uk8u5hrw590r
-//BTC Testnet 2: "tb1q8kkh3hkwaq6frqrfdkhpmxzzhe5dtclzwlu4y9"
-//Holesky 2: "0x43047a5023D55a8658Fcb1c1Cea468311AdAA3Ad"
-//Ethereum 2: "0x43047a5023D55a8658Fcb1c1Cea468311AdAA3Ad"
-const currencies = ["Ethereum Holesky"]; //Todo: change method, for now we have to change manually the currencies
+const currencies = ["Ethereum Holesky", "Ethereum"];
+const addresses = {
+  "Bitcoin": "bc1q7ezsfc44adw2gyzqjmwhuh2e83uk8u5hrw590r",
+  "Bitcoin Testnet": "tb1q8kkh3hkwaq6frqrfdkhpmxzzhe5dtclzwlu4y9",
+  "Ethereum": "0x43047a5023D55a8658Fcb1c1Cea468311AdAA3Ad",
+  "Ethereum Holesky": "0x43047a5023D55a8658Fcb1c1Cea468311AdAA3Ad",
+};
 
 for (const currency of currencies) {
   test(`[${currency}] send @smoke`, async ({ page }) => {
@@ -29,7 +29,8 @@ for (const currency of currencies) {
     await test.step(`send`, async () => {
       await page.getByRole("button", { name: "Send" }).click();
       await expect(page.getByText("Recipient address")).toBeVisible();
-      await sendModal.fillRecipient("0x43047a5023D55a8658Fcb1c1Cea468311AdAA3Ad"); //Todo: change method, for now we have to change manually the address
+      const address = addresses[currency.split(" ")[0]];
+      await sendModal.fillRecipient(address);
       await page.getByRole("button", { name: "continue" }).click();
       await page.locator('[data-test-id="modal-amount-field"]').fill("0,00001");
       await sendModal.countinueSendAmount();
