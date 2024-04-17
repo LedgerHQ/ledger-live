@@ -40,7 +40,7 @@ const PostOnboardingHubTester = () => {
                 data-test-id={dataTestId}
                 onClick={() =>
                   handleInitPostOnboarding({
-                    deviceModelId: DeviceModelId.stax,
+                    deviceModelId,
                     mock: true,
                     fallbackIfNoAction: () => history.push("/"),
                   })

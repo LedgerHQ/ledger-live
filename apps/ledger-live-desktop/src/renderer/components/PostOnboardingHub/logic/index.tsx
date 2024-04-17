@@ -149,6 +149,9 @@ const recoverMock: PostOnboardingAction = {
  * All implemented post onboarding actions.
  */
 const postOnboardingActions: { [id in PostOnboardingActionId]?: PostOnboardingAction } = {
+  claimMock,
+  personalizeMock,
+  migrateAssetsMock,
   customImage,
   assetsTransfer,
   buyCrypto,
