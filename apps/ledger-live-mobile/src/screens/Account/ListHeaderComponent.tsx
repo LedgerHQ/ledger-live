@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { LayoutChangeEvent } from "react-native";
+import { LayoutChangeEvent, View } from "react-native";
 import { isAccountEmpty, getMainAccount } from "@ledgerhq/live-common/account/index";
 import {
   AccountLike,
@@ -8,7 +8,7 @@ import {
   PortfolioRange,
   BalanceHistoryWithCountervalue,
 } from "@ledgerhq/types-live";
-import { Currency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Box, ColorPalette } from "@ledgerhq/native-ui";
 import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
 import { TFunction } from "react-i18next";
@@ -33,10 +33,14 @@ import {
 } from "~/components/FabActions/actionsList/account";
 import { ActionButtonEvent } from "~/components/FabActions";
 import { EditOperationCard } from "~/components/EditOperationCard";
+import Alert from "~/components/Alert";
+import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
 
 type Props = {
   account?: AccountLike;
   parentAccount?: Account;
+  currency: TokenCurrency | CryptoCurrency;
+  currencyConfig: (CurrencyConfig & Record<string, unknown>) | undefined;
   countervalueAvailable: boolean;
   useCounterValue: boolean;
   range: PortfolioRange;
@@ -64,6 +68,8 @@ type MaybeComponent =
 export function getListHeaderComponents({
   account,
   parentAccount,
+  currency,
+  currencyConfig,
   countervalueAvailable,
   useCounterValue,
   range,
@@ -136,6 +142,15 @@ export function getListHeaderComponents({
           parentAccount={parentAccount}
         />
       </Box>,
+      currencyConfig?.status.type === "will_be_deprecated" && (
+        <View style={{ marginTop: 16 }}>
+          <Alert key="deprecated_banner" type="warning">
+            {t("account.willBedeprecatedBanner.title", {
+              currencyName: currency.name,
+            })}
+          </Alert>
+        </View>
+      ),
       <Header key="Header" />,
       !!AccountSubHeader && (
         <Box bg={colors.background.main} key="AccountSubHeader">

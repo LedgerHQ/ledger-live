@@ -738,7 +738,7 @@
       }
     },
     "willBeDeprecatedBanner": {
-      "title": "{{currencyName}} doesn’t have an integrator identified and the support cannot be blablabla long term. We expect to unsupport the coin starting {{deprecateDate}}"
+      "title": "{{currencyName}} doesn’t have an integrator identified and the support cannot be blablabla long term. We expect to unsupport the coin starting {{deprecatedDate}}"
     },
     "lastOperations": "Latest operations",
     "contractAddress": "Contract:",

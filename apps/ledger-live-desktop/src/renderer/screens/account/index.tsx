@@ -177,7 +177,7 @@ const AccountPage = ({
           content={{
             message: t("account.willBeDeprecatedBanner.title", {
               currencyName: currency.name,
-              deprecateDate: currencyConfig.status.deprecateDate,
+              deprecatedDate: currencyConfig.status.deprecated_date,
             }),
           }}
         />

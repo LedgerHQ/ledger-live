@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { FlatList, LayoutChangeEvent, ListRenderItemInfo } from "react-native";
 import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
 import { useDispatch, useSelector } from "react-redux";
@@ -38,6 +38,7 @@ import type { AccountsNavigatorParamList } from "~/components/RootNavigator/type
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
+import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
 
 type Props =
   | StackNavigatorProps<AccountsNavigatorParamList, ScreenName.Account>
@@ -73,6 +74,7 @@ const AccountScreenInner = ({
   const useCounterValue = useSelector(countervalueFirstSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const isEmpty = isAccountEmpty(account);
+  const [currencyConfig, setCurrencyConfig] = useState<CurrencyConfig & Record<string, unknown>>();
 
   const onSwitchAccountCurrency = useCallback(() => {
     dispatch(switchCountervalueFirst());
@@ -92,14 +94,6 @@ const AccountScreenInner = ({
 
   const currency = getAccountCurrency(account);
 
-  const analytics = (
-    <TrackScreen
-      category="Account"
-      currency={currency.name}
-      operationsSize={account.operations.length}
-    />
-  );
-
   const [graphCardEndPosition, setGraphCardEndPosition] = useState(100);
   const currentPositionY = useSharedValue(0);
   const handleScroll = useAnimatedScrollHandler(event => {
@@ -113,9 +107,22 @@ const AccountScreenInner = ({
 
   const { secondaryActions } = useAccountActions({ account, parentAccount });
 
+  useEffect(() => {
+    try {
+      if (isCryptoCurrency(currency)) {
+        const config = getCurrencyConfiguration(currency);
+        setCurrencyConfig(config);
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  }, [currency]);
+
   const { listHeaderComponents } = getListHeaderComponents({
     account,
     parentAccount,
+    currency,
+    currencyConfig,
     countervalueAvailable: countervalueAvailable || account.balance.eq(0),
     useCounterValue,
     range,
@@ -147,19 +154,14 @@ const AccountScreenInner = ({
         ]),
   ];
 
-  try {
-    if (isCryptoCurrency(currency)) {
-      const currencyConfig = getCurrencyConfiguration(currency);
-      console.log({ currencyConfig });
-    }
-  } catch (err) {
-    console.warn(err);
-  }
-
   return (
     <ReactNavigationPerformanceView screenName={ScreenName.Account} interactive>
       <SafeAreaView isFlex>
-        {analytics}
+        <TrackScreen
+          category="Account"
+          currency={currency.name}
+          operationsSize={account.operations.length}
+        />
         <CurrencyBackgroundGradient
           currentPositionY={currentPositionY}
           graphCardEndPosition={graphCardEndPosition}

@@ -2433,6 +2433,9 @@
         "description3": "This integration has been carried out by {{team}} in collaboration with Ledger"
       }
     },
+    "willBedeprecatedBanner": {
+      "title": "{{currencyName}} will be deprecated" 
+    },
     "tokens": {
       "contractAddress": "Contract address",
       "viewInExplorer": "View in explorer",
