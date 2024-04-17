@@ -337,7 +337,7 @@ export default function SelectDevice({
             <Flex>
               <Flex>
                 {isPostOnboardingVisible && (
-                  <Box mb={8}>
+                  <Box mx={4} mb={8}>
                     <PostOnboardingEntryPointCard />
                   </Box>
                 )}
