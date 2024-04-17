@@ -6,6 +6,7 @@ import { dismissBanner } from "~/renderer/actions/settings";
 import { radii } from "~/renderer/styles/theme";
 import IconCross from "~/renderer/icons/Cross";
 import Box from "~/renderer/components/Box";
+import { Link } from "@ledgerhq/react-ui";
 
 const IconContainer = styled.div`
   margin-right: 12px;
@@ -60,6 +61,10 @@ const CloseContainer = styled(Box).attrs(() => ({
   }
 `;
 
+const LinkContainer = styled.div`
+  padding: 0px 8px;
+`;
+
 export type Content = {
   Icon?: React.ComponentType<{ size: number }>;
   message: React.ReactNode;
@@ -70,12 +75,24 @@ type Props = {
   content?: Content;
   status?: string;
   dismissable?: boolean;
+  link?: {
+    text: string;
+    href: string;
+  };
   bannerId?: string;
   id?: string;
   testId?: string;
 };
 
-const TopBanner = ({ id, testId, content, status = "", dismissable = false, bannerId }: Props) => {
+const TopBanner = ({
+  id,
+  testId,
+  content,
+  status = "",
+  dismissable = false,
+  bannerId,
+  link,
+}: Props) => {
   const dispatch = useDispatch();
   const dismissedBanners = useSelector(dismissedBannersSelector);
   const onDismiss = useCallback(() => {
@@ -83,8 +100,11 @@ const TopBanner = ({ id, testId, content, status = "", dismissable = false, bann
       dispatch(dismissBanner(bannerId));
     }
   }, [bannerId, dispatch]);
+
   if (!content || (bannerId && dismissedBanners.includes(bannerId))) return null;
+
   const { Icon, message, right } = content;
+
   return (
     <Container status={status} id={id} data-test-id={testId}>
       {Icon && (
@@ -94,6 +114,15 @@ const TopBanner = ({ id, testId, content, status = "", dismissable = false, bann
       )}
       {message}
       <RightContainer>{right}</RightContainer>
+      {link && (
+        <LinkContainer>
+          <p>
+            <Link href={link.href} style={{ color: "black" }} alwaysUnderline>
+              {link.text}
+            </Link>
+          </p>
+        </LinkContainer>
+      )}
       {dismissable && (
         <CloseContainer id={`dismiss-${bannerId || ""}-banner`} onClick={onDismiss}>
           <IconCross size={14} />

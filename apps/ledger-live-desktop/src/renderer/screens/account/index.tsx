@@ -41,6 +41,8 @@ import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 import { isCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import TopBanner from "~/renderer/components/TopBanner";
 import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+import { urls } from "~/config/urls";
 
 type Params = {
   id: string;
@@ -133,6 +135,8 @@ const AccountPage = ({
     }
   }, [currency]);
 
+  const localizedContactSupportURL = useLocalizedUrl(urls.contactSupportWebview);
+
   if (!account || !mainAccount) {
     return <Redirect to="/accounts" />;
   }
@@ -179,6 +183,10 @@ const AccountPage = ({
               currencyName: currency.name,
               deprecatedDate: currencyConfig.status.deprecated_date,
             }),
+          }}
+          link={{
+            text: "Contact Support",
+            href: localizedContactSupportURL,
           }}
         />
       )}
