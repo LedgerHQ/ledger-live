@@ -18,6 +18,7 @@ import { context } from "~/renderer/drawers/Provider";
 import { track } from "~/renderer/analytics/segment";
 import { LocalTracer } from "@ledgerhq/logs";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+import { useKeepScreenAwake } from "~/renderer/hooks/useKeepScreenAwake";
 
 type Props = {
   deviceInfo: DeviceInfo;
@@ -71,23 +72,26 @@ const FirmwareUpdate = (props: Props) => {
   const isDeprecated = manager.firmwareUnsupported(device.modelId, deviceInfo);
   const [tracer] = useState(() => new LocalTracer("manager", { component: "FirmwareUpdate" }));
   const contactSupportUrl = useLocalizedUrl(urls.contactSupport);
-  const onDrawerClose = useCallback(() => {
+  const { activateKeepAwake, deactivateKeepAwake } = useKeepScreenAwake();
+  const onDrawerClose = useCallback(async () => {
     onReset((installed || []).map(({ name }) => name));
-  }, [installed, onReset]);
+    await deactivateKeepAwake();
+  }, [deactivateKeepAwake, installed, onReset]);
 
   const setFirmwareUpdateCompleted = useCallback((completed: boolean) => {
     firmwareUpdateCompletedRef.current = completed;
   }, []);
 
-  const onRequestClose = useCallback(() => {
+  const onRequestClose = useCallback(async () => {
     setPreventResetOnDeviceChange(false);
     setDrawer();
+    await deactivateKeepAwake();
     if (firmwareUpdateCompletedRef.current) {
       onReset([]);
     }
-  }, [onReset, setDrawer, setPreventResetOnDeviceChange]);
+  }, [deactivateKeepAwake, onReset, setDrawer, setPreventResetOnDeviceChange]);
 
-  const onOpenDrawer = useCallback(() => {
+  const onOpenDrawer = useCallback(async () => {
     tracer.trace("Opening drawer", { hasFirmware: !!firmware, function: "onOpenDrawer" });
 
     if (!firmware) return;
@@ -126,7 +130,9 @@ const FirmwareUpdate = (props: Props) => {
       onRequestClose: undefined,
       withPaddingTop: false,
     });
+    await activateKeepAwake();
   }, [
+    activateKeepAwake,
     device,
     deviceInfo,
     deviceSpecs.id,

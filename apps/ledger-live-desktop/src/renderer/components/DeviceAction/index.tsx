@@ -74,6 +74,7 @@ import { Device } from "@ledgerhq/types-devices";
 import { LedgerErrorConstructor } from "@ledgerhq/errors/lib/helpers";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { isDeviceNotOnboardedError } from "./utils";
+import { useKeepScreenAwake } from "~/renderer/hooks/useKeepScreenAwake";
 
 type LedgerError = InstanceType<LedgerErrorConstructor<{ [key: string]: unknown }>>;
 
@@ -617,6 +618,15 @@ export default function DeviceAction<R, H extends States, P>({
   const device = useSelector(getCurrentDevice);
   const hookState = action.useHook(device, request);
   const payload = action.mapResult(hookState);
+  const { activateKeepAwake, deactivateKeepAwake } = useKeepScreenAwake();
+
+  useEffect(() => {
+    activateKeepAwake;
+
+    return () => {
+      deactivateKeepAwake();
+    };
+  }, [activateKeepAwake, deactivateKeepAwake]);
 
   return (
     <DeviceActionDefaultRendering
