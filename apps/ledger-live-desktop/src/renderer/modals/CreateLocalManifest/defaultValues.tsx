@@ -6,9 +6,6 @@ export const DEFAULT_VALUES = {
     "account.receive",
     "account.request",
     "currency.list",
-    "device.close",
-    "device.exchange",
-    "device.transport",
     "message.sign",
     "transaction.sign",
     "transaction.signAndBroadcast",
@@ -39,7 +36,7 @@ export const DEFAULT_FORM: LiveAppManifest = {
   manifestVersion: "2",
   branch: "stable",
   categories: ["DeFi"],
-  currencies: ["*"],
+  currencies: ["ethereum"],
   highlight: false,
   content: {
     description: {
