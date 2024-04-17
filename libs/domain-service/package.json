@@ -38,6 +38,10 @@
     "./lib/*.js": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
     "./lib-es/*.js": "./lib-es/*.js",
+    "./signers/*": {
+      "require": "./lib/signers/*.js",
+      "default": "./lib-es/signers/*.js"
+    },
     "./*": {
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"
