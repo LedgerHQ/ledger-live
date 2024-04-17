@@ -3,6 +3,10 @@ export interface SimpleHashResponse {
   readonly nfts: SimpleHashNft[];
 }
 
+export interface SimpleHashSpamReportResponse {
+  readonly message: string;
+}
+
 export interface SimpleHashNft {
   readonly nft_id: string;
   readonly chain: string;

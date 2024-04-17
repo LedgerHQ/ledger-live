@@ -8,7 +8,9 @@ const mockedAxios = jest.spyOn(axios, "get");
 
 describe("import ESDT tokens", () => {
   beforeEach(() => {
-    mockedAxios.mockImplementation(() => Promise.resolve({ data: trc20Tokens }));
+    mockedAxios.mockImplementation(() =>
+      Promise.resolve({ data: trc20Tokens, headers: { etag: "etagHash" } }),
+    );
   });
 
   afterEach(() => {
@@ -29,6 +31,8 @@ describe("import ESDT tokens", () => {
 
 import tokens from "./trc20.json";
 
+export { default as hash } from "./trc20-hash.json";
+
 export default tokens as TRC20Token[];
 `;
 
@@ -38,6 +42,7 @@ export default tokens as TRC20Token[];
 
     expect(mockedAxios).toHaveBeenCalledWith(expect.stringMatching(/.*\/trc20.json/));
     expect(mockedFs).toHaveBeenNthCalledWith(1, "trc20.json", JSON.stringify(trc20Tokens));
-    expect(mockedFs).toHaveBeenNthCalledWith(2, "trc20.ts", expectedFile);
+    expect(mockedFs).toHaveBeenNthCalledWith(2, "trc20-hash.json", JSON.stringify("etagHash"));
+    expect(mockedFs).toHaveBeenNthCalledWith(3, "trc20.ts", expectedFile);
   });
 });

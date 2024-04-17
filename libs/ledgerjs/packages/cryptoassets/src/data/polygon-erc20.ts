@@ -14,4 +14,6 @@ export type PolygonERC20Token = [
 
 import tokens from "./polygon-erc20.json";
 
+export { default as hash } from "./polygon-erc20-hash.json";
+
 export default tokens as PolygonERC20Token[];
