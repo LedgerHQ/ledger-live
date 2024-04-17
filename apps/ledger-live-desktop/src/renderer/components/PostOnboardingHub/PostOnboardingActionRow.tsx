@@ -37,7 +37,8 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
 
   const handleStartAction = useCallback(() => {
     const openModalCallback = (modalName: AllModalNames) => {
-      dispatch(openModal(modalName, undefined));
+      // isFromPostOnboardingEntryPoint param can be used to e.g. hide staking step in the receive ETH flow modals.
+      dispatch(openModal(modalName, { isFromPostOnboardingEntryPoint: true }));
     };
     const navigationCallback = (route: string) => {
       history.push({

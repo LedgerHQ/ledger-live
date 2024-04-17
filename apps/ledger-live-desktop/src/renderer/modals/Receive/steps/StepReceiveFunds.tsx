@@ -152,6 +152,7 @@ const StepReceiveFunds = (props: StepProps) => {
     currencyName,
     receiveTokenMode,
     receiveNFTMode,
+    isFromPostOnboardingEntryPoint,
   } = props;
   const dispatch = useDispatch();
   const receiveStakingFlowConfig = useFeature("receiveStakingFlowConfigDesktop");
@@ -211,7 +212,13 @@ const StepReceiveFunds = (props: StepProps) => {
   const onFinishReceiveFlow = useCallback(() => {
     const dismissModal =
       global.localStorage.getItem(`${LOCAL_STORAGE_KEY_PREFIX}${receivedCurrencyId}`) === "true";
-    if (!dismissModal && !receiveNFTMode && !receiveTokenMode && isStakingEnabledForAccount) {
+    if (
+      !dismissModal &&
+      !receiveNFTMode &&
+      !receiveTokenMode &&
+      isStakingEnabledForAccount &&
+      !isFromPostOnboardingEntryPoint
+    ) {
       track("button_clicked2", {
         button: "continue",
         page: window.location.hash
@@ -241,6 +248,7 @@ const StepReceiveFunds = (props: StepProps) => {
     }
   }, [
     receivedCurrencyId,
+    isFromPostOnboardingEntryPoint,
     receiveNFTMode,
     receiveTokenMode,
     isStakingEnabledForAccount,

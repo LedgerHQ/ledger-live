@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Flex } from "@ledgerhq/react-ui";
 import manager from "@ledgerhq/live-common/manager/index";
 import { useGenuineCheck } from "@ledgerhq/live-common/hw/hooks/useGenuineCheck";
+import { shouldForceFirmwareUpdate } from "@ledgerhq/live-common/device/use-cases/shouldForceFirmwareUpdate";
 import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/deviceSDK/hooks/useGetLatestAvailableFirmware";
 import Body from "./Body";
 import TroubleshootingDrawer from "../TroubleshootingDrawer";
@@ -346,6 +347,13 @@ const EarlySecurityChecks = ({
     genuineCheckStatus,
   ]);
 
+  const forceFirmwareUpdate =
+    deviceInfo?.version !== undefined &&
+    shouldForceFirmwareUpdate({
+      currentVersion: deviceInfo.version,
+      deviceModelId,
+    });
+
   return (
     <Flex flex={1} flexDirection="column" alignItems="center" marginTop="64px">
       {isInitialRunOfSecurityChecks && (
@@ -377,7 +385,8 @@ const EarlySecurityChecks = ({
         }
         availableFirmwareVersion={availableFirmwareVersion}
         modelName={productName}
-        updateSkippable={latestFirmware?.final.id === fwUpdateInterrupted?.id}
+        updateInterrupted={latestFirmware?.final.id === fwUpdateInterrupted?.id}
+        updateSkippable={!forceFirmwareUpdate}
         onClickStartChecks={() => {
           track("button_clicked2", { button: "Start checks" });
           setGenuineCheckStatus(SoftwareCheckStatus.active);

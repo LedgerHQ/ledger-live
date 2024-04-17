@@ -173,6 +173,7 @@ export type Features = CurrencyFeatures & {
   supportDeviceStax: Feature_SupportDeviceStax;
   supportDeviceEuropa: Feature_SupportDeviceEuropa;
   lldRefreshMarketData: Feature_LldRefreshMarketData;
+  spamReportNfts: Feature_SpamReportNfts;
 };
 
 /**
@@ -479,7 +480,7 @@ export type Feature_SupportDeviceStax = DefaultFeature;
 export type Feature_SupportDeviceEuropa = DefaultFeature;
 export type Feature_LldChatbotSupport = DefaultFeature;
 export type Feature_LlmChatbotSupport = DefaultFeature;
-
+export type Feature_SpamReportNfts = DefaultFeature;
 /**
  * Utils types.
  */

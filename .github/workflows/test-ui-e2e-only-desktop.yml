@@ -1,0 +1,288 @@
+name: "@Desktop • UI e2e • Test App"
+run-name: "@Desktop • UI e2e • Test App triggered by ${{ inputs.login || github.actor }} ${{ format('on ref {0}', github.ref_name) }}"
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: the branch which triggered this workflow
+        required: false
+      login:
+        description: The GitHub username that triggered the workflow
+        required: false
+      base_ref:
+        description: The base branch to merge the head into when checking out the code
+        required: false
+      test_filter:
+        description: Filter test pattern to execute only tests suites named according to pattern(s) separated by '|' (e.g. to execute accounts and settings describe blocks "Accounts @smoke" or "Accounts @smoke|Settings")
+        required: false
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
+  cancel-in-progress: true
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  e2e-tests-linux:
+    name: "Desktop Tests E2E (Ubuntu)"
+    outputs:
+      status: ${{ steps.tests.outcome }}
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      INSTRUMENT_BUILD: true
+      FORCE_COLOR: 3
+      CI_OS: "ubuntu-latest"
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+      # DEBUG: "pw:browser*"
+      # DEBUG_LOGS: 1
+    runs-on: [ledger-live-4xlarge]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+      - name: Setup caches
+        id: caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        with:
+          skip-turbo-cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@develop
+        id: setup-test-desktop
+        with:
+          skip_ruby: true
+          install_playwright: true
+          turborepo-server-port: ${{ steps.caches.outputs.port }}
+      - name: Run playwright tests [Linux => xvfb-run]
+        id: tests
+        run: |
+          xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright ${INPUTS_TEST_FILTER:+--grep} "${{ inputs.test_filter }}"
+        env:
+          INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
+      - name: upload diffs to s3
+        if: ${{ !cancelled() }}
+        uses: LedgerHQ/ledger-live/tools/actions/upload-images@develop
+        id: s3
+        with:
+          path: apps/ledger-live-desktop/tests/artifacts/test-results
+          workspace: ${{ github.workspace }}
+          os: linux
+          group-name: ${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_number }}
+      - name: upload ci suggested screenshots
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: images
+          path: images-linux.json
+      - name: Upload playwright test results [On Failure]
+        uses: actions/upload-artifact@v4
+        if: failure() && !cancelled()
+        with:
+          name: playwright-results-linux
+          path: |
+            apps/ledger-live-desktop/tests/artifacts/test-results
+            apps/ledger-live-desktop/tests/artifacts/html-report
+            apps/ledger-live-desktop/tests/artifacts/coverage
+            apps/ledger-live-desktop/tests/artifacts/videos
+            apps/ledger-live-desktop/tests/artifacts/logs
+            apps/ledger-live-desktop/tests/artifacts/*.log
+      - name: Upload Allure Report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-linux
+          path: apps/ledger-live-desktop/allure-results
+  report:
+    needs: [e2e-tests-linux]
+    runs-on: ubuntu-latest
+    if: ${{ !cancelled() }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+      - name: download images artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: images
+      - name: parse images
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require("fs");
+            const files = ["images-linux"];
+            let result = {};
+            for (const file of files) {
+              try {
+                const raw = JSON.parse(fs.readFileSync("${{github.workspace}}/" + file + ".json"));
+                const key = file.replace("images-", "").replace("-latest", "").trim()
+                result[key] = raw;
+              } catch (err) {
+                console.log(err);
+              }
+            }
+            fs.writeFileSync("./images.json", JSON.stringify(result, null, 2));
+      - name: prepare comment with screenshots
+        id: comment
+        uses: LedgerHQ/ledger-live/tools/actions/prepare-comment-screenshots@develop
+        with:
+          images: images.json
+          no-actor: true
+      - uses: actions/github-script@v6
+        name: prepare status
+        id: status
+        with:
+          script: |
+            const fs = require("fs");
+            const path = require("path");
+
+            const [ owner, repo ] = "${{ github.repository }}".split("/");
+
+            const jobs = await github.paginate(github.rest.actions.listJobsForWorkflowRunAttempt, {
+              owner,
+              repo,
+              run_id: "${{ github.run_id }}",
+              attempt_number: "${{ github.run_attempt }}",
+            });
+
+            const findJobUrl = os =>
+              jobs.find(job => job.name == `Live Desktop Tests (${os})`)?.html_url;
+
+            const keys = {
+              linux: {
+                symbol: "🐧",
+                name: "Linux",
+                jobUrl: findJobUrl("Linux")
+              },
+            };
+
+            const report = {
+              linux: {
+                pass: ${{ needs.e2e-tests-linux.outputs.status == 'success' }},
+                status: "${{ needs.e2e-tests-linux.outputs.status }}",
+              }
+            };
+
+            let summary = `### Screenshot Tests (Playwright)
+            `
+
+            summary += `|`
+
+            const reportKeys = Object.keys(report);
+            const playwrightSuccess = Object.entries(report).every(([os, values]) => !!values.pass);
+
+            reportKeys.forEach((k) => {
+              summary += ` [${keys[k].symbol} ${keys[k].name}](${keys[k].jobUrl}) |`;
+            });
+
+            summary += `
+            |`;
+
+            for (let i = 0; i < reportKeys.length; i++) {
+              summary += ` :--: |`;
+            }
+
+            summary += `
+            |`;
+
+            Object.entries(report).forEach(([os, values]) => {
+              summary += ` ${values.pass ? "✅" : "❌"} (${values.status}) |`;
+            });
+
+            summary += `
+            ${{ steps.comment.outputs.body }}
+            `
+
+            const output = {
+              summary,
+              actions: [{
+                // 20 chars max
+                label: "Regen. Screenshots",
+                // 20 chars max
+                identifier: "regen_screenshots",
+                // 40 chars max
+                description: "Will regenerate playwright screenshots",
+              }, {
+                // 20 chars max
+                label: "Run full LLD suite",
+                // 20 chars max
+                identifier: "lld_full_suite",
+                // 40 chars max
+                description: "Run the full e2e test suite for LLD",
+              }],
+            };
+
+            fs.writeFileSync("summary.json", JSON.stringify(output), "utf-8");
+
+            if (${{ github.event_name != 'push' }}) return;
+
+            const slackPayload = {
+              "text": "[Alert] Ledger Live Desktop tests failed on ${{github.ref_name}}",
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": ":warning: [Alert] Ledger Live Desktop tests failed on ${{ github.ref_name }}",
+                    "emoji": true
+                  }
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "Checks"
+                  }
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "E2E Tests"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": `- 🐧 linux: ${report.linux.pass ? "✅" : "❌"}\n`
+                  }
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "Commit by ${{ github.event.head_commit.author.username || '' }}\nhttps://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                  }
+                }
+              ]
+            };
+
+            fs.writeFileSync("payload-slack-content.json", JSON.stringify(slackPayload), "utf-8");
+      - name: post to a Slack channel
+        id: slack
+        uses: slackapi/slack-github-action@v1.23.0
+        if: ${{ !cancelled() && github.event_name == 'push' && contains(join(needs.*.result, ','), 'failure') }}
+        with:
+          channel-id: "C05FKJ7DFAP"
+          payload-file-path: ${{ github.workspace }}/payload-slack-content.json
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
+      - uses: actions/upload-artifact@v4
+        name: upload summary
+        with:
+          name: summary.json
+          path: ${{ github.workspace }}/summary.json
