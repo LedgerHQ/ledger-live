@@ -150,6 +150,7 @@ Ledger Live main types.
     *   [description](#description)
     *   [tagLabel](#taglabel)
     *   [actionCompletedPopupLabel](#actioncompletedpopuplabel)
+    *   [getIsAlreadyCompleted](#getisalreadycompleted)
     *   [shouldCompleteOnStart](#shouldcompleteonstart)
     *   [buttonLabelForAnalyticsEvent](#buttonlabelforanalyticsevent)
 *   [PostOnboardingActionState](#postonboardingactionstate)
@@ -1123,13 +1124,13 @@ Navigation params when the user presses the button for this action
 *   In LLM, this will be used like this:
     `navigation.navigate(...getNavigationParams)`
 
-Type: function (options: {deviceModelId: DeviceModelId}): (\[any] | \[any, any])
+Type: function (options: {deviceModelId: DeviceModelId, protectId: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}): (\[any] | \[any, any])
 
 ### startAction
 
 The function to call when the user presses the button for this action
 
-Type: function (args: {openModalCallback: function (modalName: any): void, navigationCallback: function (location: (Record<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), any> | [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String))): void, deviceModelId: DeviceModelId}): void
+Type: function (args: {openModalCallback: function (modalName: any): void, navigationCallback: function (location: (Record<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), any> | [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String))): void, deviceModelId: DeviceModelId, protectId: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}): void
 
 ###
 
@@ -1192,6 +1193,13 @@ Will appear in an success alert at the bottom of the post-onboarding hub
 after completing this action.
 
 Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
+
+#### getIsAlreadyCompleted
+
+Async function that returns true if the action has already been completed prior to entering
+the post-onboarding and false otherwise
+
+Type: function (args: {protectId: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}): [Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)>
 
 #### shouldCompleteOnStart
 
