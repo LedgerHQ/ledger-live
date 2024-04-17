@@ -29,8 +29,9 @@ const PostOnboardingHubTester = () => {
   return (
     <>
       {devicesSupportedByPostOnboarding.map(({ deviceModelId, translationKey, dataTestId }) => (
-        <Flex key={deviceModelId}>
+        <>
           <SettingsSectionRow
+            key={`post-onboarding-hub-test-row-${deviceModelId}`}
             title={t(`settings.experimental.features.${translationKey}.title`)}
             desc={t(`settings.experimental.features.${translationKey}.description`)}
           >
@@ -62,7 +63,7 @@ const PostOnboardingHubTester = () => {
               </Button>
             </Flex>
           </SettingsSectionRow>
-        </Flex>
+        </>
       ))}
     </>
   );
