@@ -8,39 +8,33 @@ export class SpeculosModal {
     this.page = page;
   }
   async rejectTransaction() {
-    await this.page.waitForTimeout(500);
+    //REVIEW TRANSACTION (sur 2 ligne sur le nano)
     await this.sendRequest("button/right");
-    await this.page.waitForTimeout(500);
+    //Amount ETH 0.0001
     await this.sendRequest("button/right");
-    await this.page.waitForTimeout(500);
+    //Address "address"
     await this.sendRequest("button/right");
-    await this.page.waitForTimeout(500);
+    //Network Holesky
     await this.sendRequest("button/right");
-    await this.page.waitForTimeout(500);
+    //Max fees ETH (voir montant depuis le front puis comparer avec le device)
     await this.sendRequest("button/right");
   }
-
+  // Verifier dans tous les cas (accept, reject)
   async acceptTransaction() {
-    await this.page.waitForTimeout(500);
     await this.sendRequest("button/right");
-    await this.page.waitForTimeout(500);
     await this.sendRequest("button/right");
-    await this.page.waitForTimeout(500);
     await this.sendRequest("button/right");
   }
 
   async pressRight() {
-    await this.page.waitForTimeout(500);
     await this.sendRequest("button/right");
   }
 
   async pressLeft() {
-    await this.page.waitForTimeout(500);
     await this.sendRequest("button/left");
   }
 
   async pressBoth() {
-    await this.page.waitForTimeout(500);
     await this.sendRequest("button/both");
   }
 

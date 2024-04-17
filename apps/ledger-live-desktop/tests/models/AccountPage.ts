@@ -13,6 +13,8 @@ export class AccountPage {
   readonly stakeBanner: Locator;
   readonly stakeBannerButton: Locator;
   readonly stakeButtonCosmos: Locator;
+  readonly receiveButton: Locator;
+  readonly sendButton: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -27,6 +29,10 @@ export class AccountPage {
     this.stakeButtonCosmos = page.locator("data-test-id=stake-button-cosmos");
     this.stakeBanner = page.locator("data-test-id=account-stake-banner");
     this.stakeBannerButton = page.locator("data-test-id=account-stake-banner-button");
+    this.receiveButton = page
+      .locator("data-test-id=account-buttons-group")
+      .getByRole("button", { name: "Receive" });
+    this.sendButton = page.getByRole("button", { name: "Send" });
   }
 
   async navigateToSwap() {
@@ -48,6 +54,11 @@ export class AccountPage {
   async clickBannerCTA() {
     await this.stakeBannerButton.scrollIntoViewIfNeeded();
     await this.stakeBannerButton.click();
+  }
+
+  async scrollToTokens() {
+    const tokenList = this.page.locator("text=Add token");
+    await tokenList.scrollIntoViewIfNeeded();
   }
 
   async scrollToOperations() {

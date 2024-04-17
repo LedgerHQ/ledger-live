@@ -32,9 +32,7 @@ test(`[${currency}] Add account with token`, async ({ page }) => {
   await test.step(`[${currency}] Open device app`, async () => {
     await addAccountModal.waitForSync();
     const name = await addAccountModal.getFirstAccountName();
-    if (typeof name === "string") {
-      firstAccountName = name;
-    }
+    firstAccountName = name;
   });
 
   await test.step(`[${currency}] Scan and add accounts`, async () => {
@@ -52,7 +50,8 @@ test(`[${currency}] Add account with token`, async ({ page }) => {
     await accountPage.settingsButton.waitFor({ state: "visible" });
   });
 
-  await test.step(`Check Token USDT`, async () => {
-    await expect(page.getByText("Tether USD")).toBeVisible();
+  await test.step(`Check Token`, async () => {
+    await accountPage.scrollToTokens();
+    await expect.soft(page).toHaveScreenshot(`${currency}-token.png`);
   });
 });
