@@ -11,4 +11,6 @@ export type TRC20Token = [
 
 import tokens from "./trc20.json";
 
+export { default as hash } from "./trc20-hash.json";
+
 export default tokens as TRC20Token[];

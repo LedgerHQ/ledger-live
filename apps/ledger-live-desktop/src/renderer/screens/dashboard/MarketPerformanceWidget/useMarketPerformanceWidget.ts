@@ -3,7 +3,7 @@ import {
   counterValueCurrencySelector,
   selectedTimeRangeSelector,
 } from "~/renderer/reducers/settings";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Order } from "./types";
 
 import { useMarketPerformers } from "@ledgerhq/live-common/market/v2/useMarketPerformers";
@@ -30,10 +30,7 @@ export function useMarketPerformanceWidget() {
     refreshRate,
   });
 
-  const sliced = useMemo(
-    () => getSlicedList(data ?? [], order, timeRange),
-    [data, order, timeRange],
-  );
+  const sliced = getSlicedList(data ?? [], order, timeRange);
 
   return {
     list: sliced,

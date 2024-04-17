@@ -21,6 +21,7 @@ import StorylyTester from "../Experimental/StorylyTester";
 import PostOnboardingHubTester from "../Experimental/PostOnboardingHubTester";
 import AllowDebugReactQueryToggle from "./AllowDebugReactQueryToggle";
 import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
+import SpamReportNtf from "./SpamReportNtf";
 
 const Default = () => {
   const { t } = useTranslation();
@@ -93,6 +94,10 @@ const Default = () => {
           <AllowDebugReactQueryToggle />
         </Row>
       )}
+
+      <FeatureToggle featureId="spamReportNfts">
+        <SpamReportNtf />
+      </FeatureToggle>
     </Body>
   );
 };
