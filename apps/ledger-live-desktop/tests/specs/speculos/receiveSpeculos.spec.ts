@@ -8,7 +8,7 @@ import { SpeculosModal } from "../../models/SpeculosModal";
 
 test.use({ userdata: "speculos" });
 
-const currencies = ["Bitcoin"]; //Todo: change method, for now we have to change manually the currencies
+const currencies = ["Ethereum", "Ethereum Holesky"];
 
 for (const currency of currencies) {
   test(`[${currency}] Receive @smoke`, async ({ page }) => {

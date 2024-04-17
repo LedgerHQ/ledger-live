@@ -8,55 +8,51 @@ import { AccountsPage } from "../../models/AccountsPage";
 
 test.use({ userdata: "skip-onboarding" });
 
-const currencies = ["Ethereum"]; //Todo: change method, for now we have to change manually the currencies
+const currency = "Ethereum";
 
-test.describe.parallel("Add a token through parent account", () => {
-  for (const currency of currencies) {
-    let firstAccountName = "NO ACCOUNT NAME YET";
-    test(`[${currency}] Add account`, async ({ page }) => {
-      const portfolioPage = new PortfolioPage(page);
-      const addAccountModal = new AddAccountModal(page);
-      const layout = new Layout(page);
-      const accountsPage = new AccountsPage(page);
-      const accountPage = new AccountPage(page);
+let firstAccountName = "NO ACCOUNT NAME YET";
+test(`[${currency}] Add account with token`, async ({ page }) => {
+  const portfolioPage = new PortfolioPage(page);
+  const addAccountModal = new AddAccountModal(page);
+  const layout = new Layout(page);
+  const accountsPage = new AccountsPage(page);
+  const accountPage = new AccountPage(page);
 
-      await test.step(`[${currency}] Open modal`, async () => {
-        await portfolioPage.openAddAccountModal();
-        expect(await addAccountModal.title.textContent()).toBe("Add accounts");
-      });
+  await test.step(`[${currency}] Open modal`, async () => {
+    await portfolioPage.openAddAccountModal();
+    expect(await addAccountModal.title.textContent()).toBe("Add accounts");
+  });
 
-      await test.step(`[${currency}] Select currency`, async () => {
-        await addAccountModal.select(currency);
-        await page.mouse.move(0, 0); // prevent instability if select is hovered
-        await addAccountModal.continue();
-      });
+  await test.step(`[${currency}] Select currency`, async () => {
+    await addAccountModal.select(currency);
+    await page.mouse.move(0, 0); // prevent instability if select is hovered
+    await addAccountModal.continue();
+  });
 
-      await test.step(`[${currency}] Open device app`, async () => {
-        await addAccountModal.waitForSync();
-        const name = await addAccountModal.getFirstAccountName();
-        if (typeof name === "string") {
-          firstAccountName = name;
-        }
-      });
+  await test.step(`[${currency}] Open device app`, async () => {
+    await addAccountModal.waitForSync();
+    const name = await addAccountModal.getFirstAccountName();
+    if (typeof name === "string") {
+      firstAccountName = name;
+    }
+  });
 
-      await test.step(`[${currency}] Scan and add accounts`, async () => {
-        await addAccountModal.addAccounts();
-      });
+  await test.step(`[${currency}] Scan and add accounts`, async () => {
+    await addAccountModal.addAccounts();
+  });
 
-      await test.step(`[${currency}] Done`, async () => {
-        await addAccountModal.done();
-        await layout.totalBalance.waitFor({ state: "visible" });
-      });
+  await test.step(`[${currency}] Done`, async () => {
+    await addAccountModal.done();
+    await layout.totalBalance.waitFor({ state: "visible" });
+  });
 
-      await test.step(`Navigate to first account`, async () => {
-        await layout.goToAccounts();
-        await accountsPage.navigateToAccountByName(firstAccountName);
-        await accountPage.settingsButton.waitFor({ state: "visible" });
-      });
+  await test.step(`Navigate to first account`, async () => {
+    await layout.goToAccounts();
+    await accountsPage.navigateToAccountByName(firstAccountName);
+    await accountPage.settingsButton.waitFor({ state: "visible" });
+  });
 
-      await test.step(`Check Token USDT`, async () => {
-        await expect(page.getByText("Tether USD")).toBeVisible();
-      });
-    });
-  }
+  await test.step(`Check Token USDT`, async () => {
+    await expect(page.getByText("Tether USD")).toBeVisible();
+  });
 });
