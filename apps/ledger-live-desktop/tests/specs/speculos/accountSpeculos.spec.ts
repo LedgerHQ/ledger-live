@@ -7,7 +7,7 @@ import { AccountPage } from "../../models/AccountPage";
 import { AccountsPage } from "../../models/AccountsPage";
 
 test.use({ userdata: "skip-onboarding" });
-const currencies = ["Bitcoin"]; //Todo: change method, for now we have to change manually the currencies
+const currencies = ["Ethereum", "Ethereum Holesky"];
 
 test.describe.parallel("Accounts @smoke", () => {
   for (const currency of currencies) {
