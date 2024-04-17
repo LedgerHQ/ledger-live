@@ -185,7 +185,7 @@ const AccountPage = ({
             }),
           }}
           link={{
-            text: "Contact Support",
+            text: t("account.willBeDeprecatedBanner.contactSupport"),
             href: localizedContactSupportURL,
           }}
         />
