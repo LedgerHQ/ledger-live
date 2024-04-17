@@ -13,8 +13,12 @@ import Link from "~/components/wrappedUi/Link";
 import { NavigatorName, ScreenName } from "~/const";
 import { SyncOnboardingScreenProps } from "../SyncOnboardingScreenProps";
 import { TrackScreen, track } from "~/analytics";
+import { useDispatch } from "react-redux";
+import { completeOnboarding, setHasOrderedNano, setReadOnlyMode } from "~/actions/settings";
+import { RootNavigation } from "~/components/RootNavigator/types/helpers";
 
 const { BodyText, SubtitleText } = VerticalTimeline;
+
 
 type Props = {
   device: Device;
@@ -63,11 +67,34 @@ const VideoLink = ({ onPress }: { onPress(): void }) => {
 const BackupBody: React.FC<ChoiceBodyProps> = ({ isOpened, device }) => {
   const { t } = useTranslation();
   const { space } = useTheme();
+  const dispatchRedux = useDispatch();
+
   const navigation = useNavigation<SyncOnboardingScreenProps["navigation"]>();
 
   const servicesConfig = useFeature("protectServicesMobile");
 
   const navigateToRecover = useCallback(() => {
+    //Consider Onboarding as completed when user navigates to recover
+    dispatchRedux(setReadOnlyMode(false));
+    dispatchRedux(setHasOrderedNano(false));
+    dispatchRedux(completeOnboarding());
+    (navigation as unknown as RootNavigation).reset({
+      index: 0,
+      routes: [
+        {
+          name: NavigatorName.Base,
+          state: {
+            routes: [
+              {
+                name: NavigatorName.Main,
+              },
+            ],
+          },
+        },
+      ],
+    });
+
+    //Open Live App Recover
     navigation.navigate(NavigatorName.Base, {
       screen: ScreenName.Recover,
       params: {
@@ -78,7 +105,7 @@ const BackupBody: React.FC<ChoiceBodyProps> = ({ isOpened, device }) => {
         date: new Date().toISOString(), // adding a date to reload the page in case of same device restored again
       },
     });
-  }, [device, navigation, servicesConfig?.params?.protectId]);
+  }, [device, dispatchRedux, navigation, servicesConfig?.params?.protectId]);
 
   return isOpened ? (
     <Flex rowGap={space[3]}>

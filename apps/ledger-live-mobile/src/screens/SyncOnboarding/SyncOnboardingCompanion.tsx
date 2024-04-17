@@ -449,8 +449,8 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
 
   const addedToKnownDevices = useRef(false);
   useEffect(() => {
-    if (companionStepKey >= CompanionStepKey.Apps) {
-      // Stops the polling once the installation apps step is reached
+    if (companionStepKey >= CompanionStepKey.Backup) {
+      // Stops the polling once the device is seeded
       setIsPollingOn(false);
       // At this step, device has been successfully setup so it can be saved in
       // the list of known devices
