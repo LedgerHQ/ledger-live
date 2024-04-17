@@ -17,7 +17,7 @@ const PostOnboardingHubTester = () => {
     {
       deviceModelId: DeviceModelId.stax,
       translationKey: "testStaxPostonboarding",
-      dataTestId: "stax-postonboarding-tester-button",
+      dataTestId: "postonboarding-tester-button",
     },
     {
       deviceModelId: DeviceModelId.europa,
