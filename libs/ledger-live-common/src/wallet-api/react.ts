@@ -20,7 +20,7 @@ import {
   currencyToWalletAPICurrency,
   getAccountIdFromWalletAccountId,
 } from "./converters";
-import { isWalletAPISupportedCurrency } from "./helpers";
+import { isWalletAPISupportedCurrency, matchCurrencies } from "./helpers";
 import { WalletAPICurrency, AppManifest, WalletAPIAccount, WalletAPICustomHandlers } from "./types";
 import { getMainAccount, getParentAccount } from "../account";
 import { listCurrencies, findCryptoCurrencyById, findTokenById } from "../currencies";
@@ -45,7 +45,7 @@ import { Transaction } from "../generated/types";
 import { DISCOVER_INITIAL_CATEGORY, MAX_RECENTLY_USED_LENGTH } from "./constants";
 import { DiscoverDB } from "./types";
 
-export function safeGetRefValue<T>(ref: RefObject<T>): T {
+export function safeGetRefValue<T>(ref: RefObject<T>): NonNullable<T> {
   if (!ref.current) {
     throw new Error("Ref objects doesn't have a current value");
   }
@@ -62,15 +62,25 @@ export function useWalletAPIAccounts(accounts: AccountLike[]): WalletAPIAccount[
   }, [accounts]);
 }
 
+const allCurrenciesAndTokens = listCurrencies(true);
+
 export function useWalletAPICurrencies(): WalletAPICurrency[] {
   return useMemo(() => {
-    return listCurrencies(true).reduce<WalletAPICurrency[]>((filtered, currency) => {
+    return allCurrenciesAndTokens.reduce<WalletAPICurrency[]>((filtered, currency) => {
       if (isWalletAPISupportedCurrency(currency)) {
         filtered.push(currencyToWalletAPICurrency(currency));
       }
       return filtered;
     }, []);
   }, []);
+}
+
+export function useManifestCurrencies(manifest: AppManifest) {
+  return useMemo(() => {
+    return manifest.currencies === "*"
+      ? allCurrenciesAndTokens
+      : matchCurrencies(allCurrenciesAndTokens, manifest.currencies);
+  }, [manifest.currencies]);
 }
 
 export function useGetAccountIds(
@@ -106,7 +116,7 @@ export function useGetAccountIds(
 
 export interface UiHook {
   "account.request": (params: {
-    accounts$: Observable<WalletAPIAccount[]>;
+    accounts$?: Observable<WalletAPIAccount[]>;
     currencies: CryptoOrTokenCurrency[];
     onSuccess: (account: AccountLike, parentAccount: Account | undefined) => void;
     onCancel: () => void;
@@ -168,7 +178,7 @@ export interface UiHook {
   }) => void;
 }
 
-function usePermission(manifest: AppManifest): Permission {
+export function usePermission(manifest: AppManifest): Permission {
   return useMemo(
     () => ({
       currencyIds: manifest.currencies === "*" ? ["**"] : manifest.currencies,
@@ -258,8 +268,6 @@ function useDeviceTransport({ manifest, tracking }) {
 
   return useMemo(() => ({ ref, subscribe, close, exchange }), [close, exchange, subscribe]);
 }
-
-const allCurrenciesAndTokens = listCurrencies(true);
 
 export type useWalletAPIServerOptions = {
   manifest: AppManifest;
@@ -831,6 +839,7 @@ export function useCategories(manifests): Categories {
 }
 
 export type RecentlyUsedDB = StateDB<DiscoverDB, DiscoverDB["recentlyUsed"]>;
+export type CurrentAccountHistDB = StateDB<DiscoverDB, DiscoverDB["currentAccountHist"]>;
 
 export interface RecentlyUsed {
   data: RecentlyUsedManifest[];
@@ -868,7 +877,6 @@ function calculateTimeDiff(usedAt: string) {
 
   return timeDiff;
 }
-
 export function useRecentlyUsed(
   manifests: AppManifest[],
   [recentlyUsedManifestsDb, setState]: RecentlyUsedDB,

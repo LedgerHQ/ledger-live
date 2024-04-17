@@ -4,6 +4,7 @@
     "src/renderer/index.ts",
     "src/preloader/index.ts",
     "src/renderer/webworkers/workers/*.ts",
+    "src/webviewPreloader/dappPreloader.ts",
     "src/webviewPreloader/index.ts"
   ],
   "extensions": [".ts", ".js", ".jsx", ".tsx"],

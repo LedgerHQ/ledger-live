@@ -1,3 +1,11 @@
+# 2.79.0
+
+### 🐛 Fixes
+
+We've resolved the bug that caused an error when sending ATOM.
+
+This release also includes minor bug fixes and improvements.
+
 # 2.77.2
 
 ### 🐛 Fix

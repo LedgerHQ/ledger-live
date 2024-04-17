@@ -174,3 +174,11 @@ function useDiscoverDB() {
     state => state.recentlyUsed,
   );
 }
+
+export function useCurrentAccountHistDB() {
+  return useDB<DiscoverDB, DiscoverDB["currentAccountHist"]>(
+    DISCOVER_STORE_KEY,
+    INITIAL_PLATFORM_STATE,
+    state => state.currentAccountHist,
+  );
+}

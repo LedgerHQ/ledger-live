@@ -94,6 +94,7 @@
     "comingSoon": "Coming soon",
     "restart": "Restart",
     "loadMore": "Load more",
+    "selectAccount": "Select an account",
     "patterns": {
       "id": "ID {{ value }}",
       "times": "x{{ value }}"
@@ -932,6 +933,10 @@
     "noConnectionError": {
       "title": "No connection",
       "description": "It seems you don't have access to the Internet. Please check your connection and try again."
+    },
+    "noAccounts": {
+      "title": "You need an account to access this app.",
+      "add": "Add Account"
     }
   },
   "location": {

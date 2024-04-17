@@ -123,6 +123,7 @@
     "dummy-live-app": "pnpm --filter dummy-live-app",
     "dummy-wallet-app": "pnpm --filter dummy-wallet-app",
     "dummy-ptx-app": "pnpm --filter dummy-ptx-app",
+    "ethereum-provider": "pnpm --filter ethereum-provider",
     "ui": "pnpm --filter ui",
     "ui:react": "pnpm --filter react-ui",
     "ui:native": "pnpm --filter native-ui",
