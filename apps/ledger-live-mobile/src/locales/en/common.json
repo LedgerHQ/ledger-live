@@ -2434,7 +2434,7 @@
       }
     },
     "willBedeprecatedBanner": {
-      "title": "{{currencyName}} will be deprecated" 
+      "title": "Support for {{currencyName}} ends on {{deprecatedDate}} due to integration challenges. We apologize for any inconvenience. We are contacting the foundation."
     },
     "tokens": {
       "contractAddress": "Contract address",

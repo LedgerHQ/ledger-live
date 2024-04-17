@@ -147,6 +147,7 @@ export function getListHeaderComponents({
           <Alert key="deprecated_banner" type="warning">
             {t("account.willBedeprecatedBanner.title", {
               currencyName: currency.name,
+              deprecatedDate: currencyConfig.status.deprecated_date,
             })}
           </Alert>
         </View>
