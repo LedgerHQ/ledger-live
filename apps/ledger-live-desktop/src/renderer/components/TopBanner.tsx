@@ -62,7 +62,7 @@ const CloseContainer = styled(Box).attrs(() => ({
 `;
 
 const LinkContainer = styled.div`
-  padding: 0px 8px;
+  align-self: flex-end;
 `;
 
 export type Content = {
@@ -113,14 +113,12 @@ const TopBanner = ({
         </IconContainer>
       )}
       {message}
-      <RightContainer>{right}</RightContainer>
+      {right && <RightContainer>{right}</RightContainer>}
       {link && (
         <LinkContainer>
-          <p>
-            <Link href={link.href} style={{ color: "black" }} alwaysUnderline>
-              {link.text}
-            </Link>
-          </p>
+          <Link href={link.href} style={{ color: "black" }} alwaysUnderline>
+            {link.text}
+          </Link>
         </LinkContainer>
       )}
       {dismissable && (
@@ -131,4 +129,5 @@ const TopBanner = ({
     </Container>
   );
 };
+
 export default TopBanner;
