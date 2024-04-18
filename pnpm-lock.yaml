@@ -1000,8 +1000,8 @@ importers:
         specifier: ^3.0.1
         version: 3.0.1(react-native@0.73.6)
       react-native-ble-plx:
-        specifier: 3.1.2
-        version: 3.1.2(react-native@0.73.6)(react@18.2.0)
+        specifier: 3.1.1
+        version: 3.1.1(react-native@0.73.6)(react@18.2.0)
       react-native-config:
         specifier: 1.5.1
         version: 1.5.1(react-native@0.73.6)
@@ -4290,8 +4290,8 @@ importers:
         specifier: workspace:^
         version: link:../logs
       react-native-ble-plx:
-        specifier: 3.1.2
-        version: 3.1.2
+        specifier: 3.1.1
+        version: 3.1.1
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
@@ -44405,8 +44405,8 @@ packages:
       react-native: 0.73.6(@babel/core@7.24.3)(react@18.2.0)
     dev: false
 
-  /react-native-ble-plx@3.1.2:
-    resolution: {integrity: sha512-QgukxgjrZYMUxyZ9w4XEiR9QdbdKLibhggE+sPRxp6q11rZG9upU5aricnVB2CiSbn164nlYx3j+GNlJKSlaLg==}
+  /react-native-ble-plx@3.1.1:
+    resolution: {integrity: sha512-mdyvT9zRP6IGkzE+ukkcPSQGFUORstcK94vnKlBXAKMUN58RNGXhGCjelHgisRkp0k6XTECgms7BZfzIDFRVyA==}
     engines: {node: '>= 16.0.0'}
     peerDependencies:
       react: '*'
@@ -44417,8 +44417,8 @@ packages:
       - supports-color
     dev: false
 
-  /react-native-ble-plx@3.1.2(react-native@0.73.6)(react@18.2.0):
-    resolution: {integrity: sha512-QgukxgjrZYMUxyZ9w4XEiR9QdbdKLibhggE+sPRxp6q11rZG9upU5aricnVB2CiSbn164nlYx3j+GNlJKSlaLg==}
+  /react-native-ble-plx@3.1.1(react-native@0.73.6)(react@18.2.0):
+    resolution: {integrity: sha512-mdyvT9zRP6IGkzE+ukkcPSQGFUORstcK94vnKlBXAKMUN58RNGXhGCjelHgisRkp0k6XTECgms7BZfzIDFRVyA==}
     engines: {node: '>= 16.0.0'}
     peerDependencies:
       react: '*'
