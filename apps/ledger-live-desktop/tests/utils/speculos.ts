@@ -59,6 +59,51 @@ export const specs: Specs = {
     },
     dependency: "",
   },
+  Bitcoin_Testnet: {
+    currency: getCryptoCurrencyById("bitcoin_testnet"),
+    appQuery: {
+      model: DeviceModelId.nanoSP,
+      appName: "Bitcoin Test",
+      appVersion: "2.2.1",
+    },
+    dependency: "",
+  },
+  Solana: {
+    currency: getCryptoCurrencyById("solana"),
+    appQuery: {
+      model: DeviceModelId.nanoSP,
+      appName: "Solana",
+      appVersion: "1.4.1",
+    },
+    dependency: "",
+  },
+  Cardano: {
+    currency: getCryptoCurrencyById("cardano"),
+    appQuery: {
+      model: DeviceModelId.nanoSP,
+      appName: "CardanoADA",
+      appVersion: "5.0.1",
+    },
+    dependency: "",
+  },
+  Polkadot: {
+    currency: getCryptoCurrencyById("polkadot"),
+    appQuery: {
+      model: DeviceModelId.nanoSP,
+      appName: "Polkadot",
+      appVersion: "25.10100.1",
+    },
+    dependency: "",
+  },
+  Tron: {
+    currency: getCryptoCurrencyById("tron"),
+    appQuery: {
+      model: DeviceModelId.nanoSP,
+      appName: "Tron",
+      appVersion: "0.5.0",
+    },
+    dependency: "",
+  },
 };
 
 export async function startSpeculos(testName: string, spec: Specs[keyof Specs]) {
