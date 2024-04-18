@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useRef } from "react";
 import * as braze from "@braze/web-sdk";
 import { ClassicCard } from "@braze/web-sdk";
 import { getBrazeConfig } from "~/braze-setup";
@@ -21,8 +21,9 @@ import {
   developerModeSelector,
   trackingEnabledSelector,
   dismissedContentCardsSelector,
+  anonymousBrazeIdSelector,
 } from "../reducers/settings";
-import { clearDismissedContentCards } from "../actions/settings";
+import { clearDismissedContentCards, setAnonymousBrazeId } from "../actions/settings";
 import { getEnv } from "@ledgerhq/live-env";
 import { getOldCampaignIds, generateAnonymousId } from "@ledgerhq/live-common/braze/anonymousUsers";
 
@@ -88,12 +89,18 @@ export async function useBraze() {
   const devMode = useSelector(developerModeSelector);
   const contentCardsDissmissed = useSelector(dismissedContentCardsSelector);
   const isTrackedUser = useSelector(trackingEnabledSelector);
+  const anonymousBrazeId = useRef(useSelector(anonymousBrazeIdSelector));
 
   const initBraze = useCallback(async () => {
     const user = await getUser();
     const brazeConfig = getBrazeConfig();
     const isPlaywright = !!getEnv("PLAYWRIGHT_RUN");
     dispatch(clearDismissedContentCards(getOldCampaignIds(contentCardsDissmissed)));
+
+    if (!anonymousBrazeId.current) {
+      anonymousBrazeId.current = generateAnonymousId();
+      dispatch(setAnonymousBrazeId(anonymousBrazeId.current));
+    }
 
     braze.initialize(brazeConfig.apiKey, {
       baseUrl: brazeConfig.endpoint,
@@ -108,7 +115,7 @@ export async function useBraze() {
       return;
     }
 
-    if (user) braze.changeUser(isTrackedUser ? user.id : generateAnonymousId());
+    if (user) braze.changeUser(isTrackedUser ? user.id : anonymousBrazeId.current);
 
     braze.requestPushPermission();
 
@@ -143,7 +150,7 @@ export async function useBraze() {
 
     braze.automaticallyShowInAppMessages();
     braze.openSession();
-  }, [dispatch, devMode, isTrackedUser, contentCardsDissmissed]);
+  }, [dispatch, devMode, isTrackedUser, contentCardsDissmissed, anonymousBrazeId]);
 
   useEffect(() => {
     initBraze();

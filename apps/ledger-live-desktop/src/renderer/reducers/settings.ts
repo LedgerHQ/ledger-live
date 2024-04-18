@@ -108,6 +108,7 @@ export type SettingsState = {
   supportedCounterValues: SupportedCountervaluesData[];
   hasSeenAnalyticsOptInPrompt: boolean;
   dismissedContentCards: { [key: string]: number };
+  anonymousBrazeId: string | null;
 };
 
 export const getInitialLanguageAndLocale = (): { language: Language; locale: Locale } => {
@@ -195,6 +196,7 @@ const INITIAL_STATE: SettingsState = {
   vaultSigner: { enabled: false, host: "", token: "", workspace: "" },
   supportedCounterValues: [],
   dismissedContentCards: {} as Record<string, number>,
+  anonymousBrazeId: null,
 };
 
 /* Handlers */
@@ -247,6 +249,7 @@ type HandlersPayloads = {
     [key: string]: number;
   };
   CLEAR_DISMISSED_CONTENT_CARDS: never;
+  SET_ANONYMOUS_BRAZE_ID: string;
 };
 type SettingsHandlers<PreciseKey = true> = Handlers<SettingsState, HandlersPayloads, PreciseKey>;
 
@@ -427,6 +430,10 @@ const handlers: SettingsHandlers = {
     }
     return newState;
   },
+  SET_ANONYMOUS_BRAZE_ID: (state: SettingsState, { payload }) => ({
+    ...state,
+    anonymousBrazeId: payload,
+  }),
 };
 
 export default handleActions<SettingsState, HandlersPayloads[keyof HandlersPayloads]>(
@@ -734,3 +741,4 @@ export const supportedCounterValuesSelector = (state: State) =>
 export const hasSeenAnalyticsOptInPromptSelector = (state: State) =>
   state.settings.hasSeenAnalyticsOptInPrompt;
 export const dismissedContentCardsSelector = (state: State) => state.settings.dismissedContentCards;
+export const anonymousBrazeIdSelector = (state: State) => state.settings.anonymousBrazeId;

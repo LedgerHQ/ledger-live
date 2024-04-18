@@ -365,3 +365,8 @@ export const clearDismissedContentCards = (payload: string[]) => ({
   type: "CLEAR_DISMISSED_CONTENT_CARDS",
   payload,
 });
+
+export const setAnonymousBrazeId = (payload: string) => ({
+  type: "SET_ANONYMOUS_BRAZE_ID",
+  payload,
+});
