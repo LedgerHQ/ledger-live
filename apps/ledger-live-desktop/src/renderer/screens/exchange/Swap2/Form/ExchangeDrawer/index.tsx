@@ -77,14 +77,15 @@ export default function ExchangeDrawer({ swapTransaction, exchangeRate, onComple
   ) as ExchangeSwap;
 
   const onError = useCallback(
-    (errorResult: { error: Error; swapId?: string }) => {
+    (errorResult: { error: Error | CompleteExchangeError; swapId?: string }) => {
       const { error, swapId } = errorResult;
-
       // Consider the swap as cancelled (on provider perspective) in case of error
       postSwapCancelled({
         provider: exchangeRate.provider,
         swapId: swapId ?? "",
-        ...(error instanceof CompleteExchangeError ? { swapStep: error.step } : {}),
+        ...((error as CompleteExchangeError).step
+          ? { swapStep: (error as CompleteExchangeError).step }
+          : {}),
         statusCode: error.name,
         errorMessage: error.message,
         sourceCurrencyId: swapTransaction.swap.from.currency?.id,

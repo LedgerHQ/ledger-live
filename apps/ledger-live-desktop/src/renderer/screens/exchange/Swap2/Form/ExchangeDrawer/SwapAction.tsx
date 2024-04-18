@@ -23,6 +23,7 @@ import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import initSwap from "@ledgerhq/live-common/exchange/swap/initSwap";
 import { Device } from "@ledgerhq/types-devices";
 import { BigNumber } from "bignumber.js";
+import { CompleteExchangeError } from "@ledgerhq/live-common/exchange/error";
 
 const transactionAction = transactionCreateAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
 const initAction = initSwapCreateAction(
@@ -61,7 +62,7 @@ type Props = {
     swapId: string;
     magnitudeAwareRate: BigNumber;
   }) => void;
-  onError: (a: { error: Error; swapId?: string }) => void;
+  onError: (a: { error: Error | CompleteExchangeError; swapId?: string }) => void;
 };
 
 export default function SwapAction({
