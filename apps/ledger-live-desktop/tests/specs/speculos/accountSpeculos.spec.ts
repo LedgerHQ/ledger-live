@@ -8,7 +8,8 @@ import { AccountsPage } from "../../models/AccountsPage";
 import { Device, specs, startSpeculos, stopSpeculos } from "../../utils/speculos";
 
 test.use({ userdata: "skip-onboarding" });
-const currencies = ["Ethereum", "Ethereum Holesky"];
+//const currencies = ["Tron", "Cardano", "Bitcoin", "Ethereum", "Solana", "Polkadot"]; //TODO: Add XRP
+const currencies = ["Cardano"]; //TODO: Add XRP
 let device: Device | null;
 
 test.describe.parallel("Accounts @smoke", () => {
