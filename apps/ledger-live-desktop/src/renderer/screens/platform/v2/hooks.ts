@@ -53,9 +53,12 @@ export function useCatalog(db: RecentlyUsedDB) {
   };
 }
 
-// TODO: rename to useRecentlyUsedDB
-export function useDiscoverDB() {
+export function useRecentlyUsedDB() {
   return useDB("app", DISCOVER_STORE_KEY, INITIAL_PLATFORM_STATE, state => state.recentlyUsed);
+}
+
+export function useLocalLiveAppDB() {
+  return useDB("app", DISCOVER_STORE_KEY, INITIAL_PLATFORM_STATE, state => state.localLiveApp);
 }
 
 export function useCurrentAccountHistDB() {
