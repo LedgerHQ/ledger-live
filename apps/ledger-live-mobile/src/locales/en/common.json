@@ -2155,22 +2155,20 @@
     },
     "backup": {
       "title": "Backup for your Secret Recovery Phrase",
-      "description": "Having a backup ensures you never get locked out of your wallet when you can’t access your Phrase and your Ledger.\n\nChoose how you’d like to back up your Phrase:",
+      "description": "With a digital encrypted backup, restore access to your wallet without your Secret Recovery Phrase.\n\nChoose if you’d like a digital backup:",
       "backupChoice": {
-        "title": "Ledger Recover",
+        "title": "I want a digital backup",
+        "titleSelected": "Ledger Recover",
         "tag": "Popular",
-        "shortDescription": "Lets you restore wallet access anytime with an encrypted Phrase backup.",
-        "longDescription": "Get a secure and encrypted backup with a free 30-day trial, then $9.99/m.",
+        "description": "Subscribe to Ledger Recover for $9.99 per month. Start for free. Cancel anytime!",
         "tryCta": "Try it for free",
-        "redeemCodeCta": "Apply your redeem code",
-        "howItWorksCta": "How it works?"
+        "redeemCodeCta": "I have a redeem code",
+        "howItWorksCta": "I want to know more"
       },
       "manualBackup": {
-        "title": "Manual backup",
-        "tag": "Advanced",
-        "shortDescription": "Create your own paper backup to the Recovery Sheet and secure it at a different location.",
-        "longDescription": "Keep it on paper and place it in a safe location.",
-        "cta": "Keep it on paper"
+        "title": "No, I’m good with paper",
+        "description": "Without a digital backup, the Recovery Sheet is your only way to restore wallet access. Don’t lose it.",
+        "cta": "I understand"
       }
     },
     "appsStep": {
