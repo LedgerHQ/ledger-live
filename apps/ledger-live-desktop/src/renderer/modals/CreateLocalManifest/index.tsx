@@ -31,6 +31,10 @@ import FormLiveAppArraySelect from "./FormLiveAppArraySelect";
 import { Separator } from "~/renderer/components/Onboarding/Screens/SelectUseCase/Separator";
 import { DEFAULT_FORM, DEFAULT_VALUES } from "./defaultValues";
 
+export const objectKeys = <Type extends object>(value: Type): Array<keyof Type> => {
+  return Object.keys(value) as Array<keyof Type>;
+};
+
 function createLocalManifest() {
   return (
     <Modal
@@ -86,8 +90,7 @@ function FormLocalManifest({
   };
 
   const contentInput = useCallback(() => {
-    return Object.keys(form.content).map(uncastedContentKey => {
-      const contentKey = uncastedContentKey as keyof LiveAppManifest["content"];
+    return objectKeys(form.content).map(contentKey => {
       const value = form.content[contentKey]?.en;
       if (value === undefined) return <></>;
 
@@ -112,26 +115,23 @@ function FormLocalManifest({
     });
   }, [form.content, handleChange]);
 
-  const dappInput = useCallback(() => {
-    return (
-      <>
-        <Separator></Separator>
-        <Text ff="Inter|Bold" fontSize={4}>
-          {`ETH Dapp`}
-        </Text>
-        {Object.keys(form.dapp!).map(uncastedDappKey => {
-          const dappKey = uncastedDappKey as keyof LiveAppManifestDapp;
-
-          if (dappKey === "networks") {
-            return form.dapp?.networks.map(
-              (networks: LiveAppManifestParamsNetwork, index: number) => {
+  const dappInput = useCallback(
+    (dapp: NonNullable<LiveAppManifest["dapp"]>) => {
+      return (
+        <>
+          <Separator></Separator>
+          <Text ff="Inter|Bold" fontSize={4}>
+            {`ETH Dapp`}
+          </Text>
+          {objectKeys(dapp).map(dappKey => {
+            if (dappKey === "networks") {
+              return dapp.networks.map((networks: LiveAppManifestParamsNetwork, index: number) => {
                 return (
                   <NestedFormCategory key={dappKey + index}>
                     <Text ff="Inter|Bold" fontSize={4}>
                       {`${dappKey} ${index + 1}`}
                     </Text>
-                    {Object.keys(networks).map(uncastedNetworkKey => {
-                      const networkKey = uncastedNetworkKey as keyof LiveAppManifestParamsNetwork;
+                    {objectKeys(networks).map(networkKey => {
                       const value = form.dapp?.networks[index][networkKey];
                       if (value === undefined) return <></>;
 
@@ -157,84 +157,85 @@ function FormLocalManifest({
                     })}
                   </NestedFormCategory>
                 );
-              },
-            );
-          }
+              });
+            }
 
-          const value = form.dapp![dappKey];
-          const path = `dapp.${dappKey as string}`;
-          const shape = LiveAppManifestDappSchema.shape[dappKey];
-          const parseCheck = shape.safeParse(value).success;
-          const optional = shape.isOptional();
+            const value = form.dapp![dappKey];
+            const path = `dapp.${dappKey as string}`;
+            const shape = LiveAppManifestDappSchema.shape[dappKey];
+            const parseCheck = shape.safeParse(value).success;
+            const optional = shape.isOptional();
 
-          if (dappKey === "provider") {
+            if (dappKey === "provider") {
+              return (
+                <FormLiveAppSelector
+                  optional={optional}
+                  fieldName={dappKey}
+                  key={dappKey}
+                  choices={[...DEFAULT_VALUES[dappKey]]}
+                  path={path}
+                  handleChange={handleChange}
+                  multipleChoices={false}
+                  initalValue={value}
+                ></FormLiveAppSelector>
+              );
+            }
+
             return (
-              <FormLiveAppSelector
+              <FormLiveAppInput
+                key={dappKey as string}
+                type={typeof value}
+                fieldName={dappKey as string}
+                value={value}
                 optional={optional}
-                fieldName={dappKey}
-                key={dappKey}
-                choices={[...DEFAULT_VALUES[dappKey]]}
+                parseCheck={parseCheck}
                 path={path}
                 handleChange={handleChange}
-                multipleChoices={false}
-                initalValue={value}
-              ></FormLiveAppSelector>
+                autoFocus={false}
+              />
             );
-          }
+          })}
 
-          return (
-            <FormLiveAppInput
-              key={dappKey as string}
-              type={typeof value}
-              fieldName={dappKey as string}
-              value={value}
-              optional={optional}
-              parseCheck={parseCheck}
-              path={path}
-              handleChange={handleChange}
-              autoFocus={false}
-            />
-          );
-        })}
-
-        <Flex columnGap={2} justifyContent={"center"}>
-          <Button
-            small
-            primary
-            onClick={() => {
-              setForm((prevState: LiveAppManifest) => {
-                const newNetwork = [...prevState.dapp!.networks];
-                newNetwork.push({ ...DEFAULT_FORM.dapp!.networks[0] });
-                return {
-                  ...prevState,
-                  dapp: { ...prevState.dapp, networks: newNetwork },
-                } as LiveAppManifest;
-              });
-            }}
-          >
-            {<Trans i18nKey={`settings.developer.createLocalAppModal.addNetwork`} />}
-          </Button>
-          <Button
-            small
-            danger
-            disabled={form.dapp?.networks.length === 1}
-            onClick={() => {
-              setForm((prevState: LiveAppManifest) => {
-                const newNetwork = [...prevState.dapp!.networks];
-                newNetwork.pop();
-                return {
-                  ...prevState,
-                  dapp: { ...prevState.dapp, networks: newNetwork },
-                } as LiveAppManifest;
-              });
-            }}
-          >
-            {<Trans i18nKey={`settings.developer.createLocalAppModal.removeNetwork`} />}
-          </Button>
-        </Flex>
-      </>
-    );
-  }, [form.dapp, handleChange]);
+          <Flex columnGap={2} justifyContent={"center"}>
+            <Button
+              small
+              primary
+              onClick={() => {
+                setForm((prevState: LiveAppManifest) => {
+                  const newNetwork = [...prevState.dapp!.networks];
+                  newNetwork.push({ ...DEFAULT_FORM.dapp!.networks[0] });
+                  return {
+                    ...prevState,
+                    dapp: { ...prevState.dapp, networks: newNetwork },
+                  } as LiveAppManifest;
+                });
+              }}
+            >
+              {<Trans i18nKey={`settings.developer.createLocalAppModal.addNetwork`} />}
+            </Button>
+            <Button
+              small
+              danger
+              disabled={form.dapp?.networks.length === 1}
+              onClick={() => {
+                setForm((prevState: LiveAppManifest) => {
+                  const newNetwork = [...prevState.dapp!.networks];
+                  newNetwork.pop();
+                  return {
+                    ...prevState,
+                    dapp: { ...prevState.dapp, networks: newNetwork },
+                  } as LiveAppManifest;
+                });
+              }}
+            >
+              {<Trans i18nKey={`settings.developer.createLocalAppModal.removeNetwork`} />}
+            </Button>
+          </Flex>
+        </>
+      );
+    },
+    [form.dapp, handleChange],
+  );
 
   return (
     <form style={{ width: "90%", margin: "auto" }}>
@@ -255,14 +256,13 @@ function FormLocalManifest({
                   </Text>
                 </Flex>
 
-                {Object.keys(form).map((uncastedKey, index) => {
-                  const key = uncastedKey as keyof LiveAppManifestSchemaType;
+                {objectKeys(form).map((key, index) => {
                   if (key === "content") {
                     return contentInput();
                   }
 
                   if (key === "dapp") {
-                    return dappInput();
+                    return dappInput(form.dapp!);
                   }
 
                   const value = form[key];
