@@ -1,4 +1,4 @@
-import React, { useMemo, memo } from "react";
+import React, { useMemo, memo, useEffect } from "react";
 import type { App } from "@ledgerhq/types-live";
 import type { Action, State } from "@ledgerhq/live-common/apps/index";
 import { Flex } from "@ledgerhq/native-ui";
@@ -9,6 +9,7 @@ import AppUninstallButton from "./AppUninstallButton";
 import AppUpdateButton from "./AppUpdateButton";
 
 import AppProgressButton from "./AppProgressButton";
+import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
 
 type Props = {
   app: App;
@@ -47,6 +48,20 @@ const AppStateButton = ({
     () => installed.some(({ name, updated }) => name === app.name && !updated),
     [app.name, installed],
   );
+
+  const { activateKeepScreenAwake, deactivateKeepScreenAwake } = useKeepScreenAwake();
+
+  useEffect(() => {
+    if (installing || uninstalling || updating) {
+      activateKeepScreenAwake();
+    } else {
+      deactivateKeepScreenAwake();
+    }
+
+    return () => {
+      deactivateKeepScreenAwake();
+    };
+  }, [activateKeepScreenAwake, deactivateKeepScreenAwake, installing, uninstalling, updating]);
 
   const renderAppState = () => {
     switch (true) {

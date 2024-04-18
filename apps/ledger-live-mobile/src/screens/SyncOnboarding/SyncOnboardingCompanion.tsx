@@ -38,6 +38,8 @@ import { TrackScreen, screen } from "~/analytics";
 import ContinueOnStax from "./assets/ContinueOnStax";
 import type { SyncOnboardingScreenProps } from "./SyncOnboardingScreenProps";
 import BackupStep from "./companionSteps/BackupStep";
+import { useFocusEffect } from "@react-navigation/native";
+import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
 
 const { BodyText, SubtitleText } = VerticalTimeline;
 
@@ -158,6 +160,17 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
   >("choice_new_or_restore");
 
   const servicesConfig = useFeature("protectServicesMobile");
+
+  const { activateKeepScreenAwake, deactivateKeepScreenAwake } = useKeepScreenAwake();
+  useFocusEffect(
+    useCallback(() => {
+      activateKeepScreenAwake();
+
+      return () => {
+        deactivateKeepScreenAwake();
+      };
+    }, [activateKeepScreenAwake, deactivateKeepScreenAwake]),
+  );
 
   const getNextStepKey = useCallback(
     (step: CompanionStepKey) => {
