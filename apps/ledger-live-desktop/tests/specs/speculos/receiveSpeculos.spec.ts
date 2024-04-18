@@ -7,8 +7,10 @@ import { ReceiveModal } from "../../models/ReceiveModal";
 import { SpeculosModal } from "../../models/SpeculosModal";
 import { Modal } from "../../models/Modal";
 import { Currency } from "../../enum/Currency";
+import { Device, specs, startSpeculos, stopSpeculos } from "../../utils/speculos";
 
 test.use({ userdata: "speculos" });
+let device: Device | null;
 
 const currencies: Currency[] = [Currency.ETH];
 
@@ -20,6 +22,7 @@ for (const currency of currencies) {
     const receiveModal = new ReceiveModal(page);
     const speculosModal = new SpeculosModal(page);
     const modal = new Modal(page);
+    device = await startSpeculos(test.name, specs[currency.uiName.replace(/ /g, "_")]);
 
     await test.step(`Navigate to first account`, async () => {
       await layout.goToAccounts();
@@ -43,6 +46,9 @@ for (const currency of currencies) {
       }
       await expect.soft(receiveModal.container).toHaveScreenshot(`Receive.png`);
     });
+  });
+  test.afterAll(async () => {
+    await stopSpeculos(device);
   });
 }
 //BUG with nanoApp version (GetAppAndVersionUnsupportedFormat: getAppAndVersion: format not supported)

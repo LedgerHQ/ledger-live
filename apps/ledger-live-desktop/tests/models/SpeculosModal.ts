@@ -7,6 +7,7 @@ export class SpeculosModal {
   constructor(page: Page) {
     this.page = page;
   }
+
   async rejectTransaction() {
     //REVIEW TRANSACTION (sur 2 ligne sur le nano)
     await this.sendRequest("button/right");
@@ -27,6 +28,7 @@ export class SpeculosModal {
   }
 
   async pressRight() {
+    await this.readScreen();
     await this.sendRequest("button/right");
   }
 
@@ -42,7 +44,7 @@ export class SpeculosModal {
     const requestOptions: http.RequestOptions = {
       method: "POST",
       hostname: "127.0.0.1",
-      port: 5000,
+      port: process.env.SPECULOS_API_PORT,
       path: `/${endpoint}`,
       headers: {
         "Content-Type": "application/json",
@@ -63,6 +65,38 @@ export class SpeculosModal {
       });
 
       req.write('{"action":"press-and-release"}');
+      req.end();
+    });
+  }
+
+  private async readScreen() {
+    const requestOptions: http.RequestOptions = {
+      method: "GET",
+      hostname: "127.0.0.1",
+      port: process.env.SPECULOS_API_PORT,
+      path: "/events?stream=false&currentscreenonly=true",
+    };
+
+    return new Promise<void>((resolve, reject) => {
+      const req = http.request(requestOptions, res => {
+        if (res.statusCode === 200) {
+          let data = "";
+          res.on("data", chunk => {
+            data += chunk;
+          });
+          res.on("end", () => {
+            console.log(data);
+            resolve();
+          });
+        } else {
+          reject(new Error(`Request failed with status code ${res.statusCode}`));
+        }
+      });
+
+      req.on("error", err => {
+        reject(err);
+      });
+
       req.end();
     });
   }
