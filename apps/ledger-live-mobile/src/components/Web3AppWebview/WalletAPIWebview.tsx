@@ -41,8 +41,8 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     };
 
     const buySellUiFlag = useFeature("buySellUi");
-    const buySellAppIds = buySellUiFlag?.manifestId
-      ? [buySellUiFlag.manifestId, DEFAULT_MULTIBUY_APP_ID, BUY_SELL_UI_APP_ID]
+    const buySellAppIds = buySellUiFlag?.params?.manifestId
+      ? [buySellUiFlag.params.manifestId, DEFAULT_MULTIBUY_APP_ID, BUY_SELL_UI_APP_ID]
       : [DEFAULT_MULTIBUY_APP_ID, BUY_SELL_UI_APP_ID];
 
     const javaScriptCanOpenWindowsAutomatically = buySellAppIds.includes(manifest.id);
