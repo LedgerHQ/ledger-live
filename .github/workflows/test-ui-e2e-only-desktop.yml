@@ -16,6 +16,10 @@ on:
       test_filter:
         description: Filter test pattern to execute only tests suites named according to pattern(s) separated by '|' (e.g. to execute accounts and settings describe blocks "Accounts @smoke" or "Accounts @smoke|Settings")
         required: false
+      use_mocks:
+        description: Run the tests with the mocks
+        type: boolean
+        default: true
       report_path:
         description: Path where you want to store this execution's results
         required: false
@@ -67,12 +71,31 @@ jobs:
           skip_ruby: true
           install_playwright: true
           turborepo-server-port: ${{ steps.caches.outputs.port }}
+      - name: generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_BOT_APP_ID }}
+          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+      - name: Retrieving coin apps
+        uses: actions/checkout@v4
+        with:
+          ref: generated/ledger-live-bot
+          repository: LedgerHQ/coin-apps
+          token: ${{ steps.generate-token.outputs.token }}
+          path: coin-apps
+      - name: pull docker image
+        run: docker pull ghcr.io/ledgerhq/speculos:sha-e262a0c
+        shell: bash
       - name: Run playwright tests [Linux => xvfb-run]
         id: tests
         run: |
+          export COINAPPS=$PWD/coin-apps
+          if [ "${{ inputs.use_mocks }}" = false ]; then export MOCK=0; fi
           xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright ${INPUTS_TEST_FILTER:+--grep} "${{ inputs.test_filter }}"
         env:
           INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
+          SEED: ${{ secrets.SEED_QAA_B2C }}
       - name: upload diffs to s3
         if: ${{ !cancelled() }}
         uses: LedgerHQ/ledger-live/tools/actions/upload-images@develop
