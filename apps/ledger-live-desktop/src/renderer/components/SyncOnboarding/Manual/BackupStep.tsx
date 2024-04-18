@@ -30,8 +30,8 @@ type ChoiceBodyProps = {
 type Choice = {
   id: "backup" | "keep_on_paper";
   icon: React.ReactNode;
-  title: string;
-  tag: React.ReactNode;
+  getTitle: (selected?: boolean) => string;
+  tag?: React.ReactNode;
   body: React.ComponentType<ChoiceBodyProps>;
 };
 
@@ -94,9 +94,7 @@ const BackupBody: React.FC<ChoiceBodyProps> = ({ isOpened }) => {
 
   return isOpened ? (
     <Flex rowGap={3} flexDirection={"column"}>
-      <ChoiceText mb={3}>
-        {t("syncOnboarding.manual.backup.backupChoice.longDescription")}
-      </ChoiceText>
+      <ChoiceText mb={3}>{t("syncOnboarding.manual.backup.backupChoice.description")}</ChoiceText>
       <ButtonV3
         size="small"
         variant="main"
@@ -117,18 +115,14 @@ const BackupBody: React.FC<ChoiceBodyProps> = ({ isOpened }) => {
       </ButtonV3>
       <VideoLink />
     </Flex>
-  ) : (
-    <ChoiceText>{t("syncOnboarding.manual.backup.backupChoice.shortDescription")}</ChoiceText>
-  );
+  ) : null;
 };
 
 const KeepOnPaperBody: React.FC<ChoiceBodyProps> = ({ isOpened, onPressKeepManualBackup }) => {
   const { t } = useTranslation();
   return isOpened ? (
-    <Flex flexDirection={"column"}>
-      <ChoiceText mb={6}>
-        {t("syncOnboarding.manual.backup.manualBackup.longDescription")}
-      </ChoiceText>
+    <Flex flexDirection={"column"} mt={3}>
+      <ChoiceText mb={6}>{t("syncOnboarding.manual.backup.manualBackup.description")}</ChoiceText>
       <ButtonV3
         size="small"
         variant="main"
@@ -139,9 +133,7 @@ const KeepOnPaperBody: React.FC<ChoiceBodyProps> = ({ isOpened, onPressKeepManua
         {t("syncOnboarding.manual.backup.manualBackup.cta")}
       </ButtonV3>
     </Flex>
-  ) : (
-    <ChoiceText>{t("syncOnboarding.manual.backup.manualBackup.shortDescription")}</ChoiceText>
-  );
+  ) : null;
 };
 
 const WrappedTag: React.FC<{ text: string } & ComponentProps<typeof Tag>> = ({
@@ -164,7 +156,10 @@ const WrappedTag: React.FC<{ text: string } & ComponentProps<typeof Tag>> = ({
 const choices: Choice[] = [
   {
     id: "backup",
-    title: "syncOnboarding.manual.backup.backupChoice.title",
+    getTitle: selected =>
+      selected
+        ? "syncOnboarding.manual.backup.backupChoice.titleSelected"
+        : "syncOnboarding.manual.backup.backupChoice.title",
     icon: <Icons.ShieldCheck size={"S"} color="primary.c80" />,
     tag: (
       <WrappedTag
@@ -178,17 +173,8 @@ const choices: Choice[] = [
   },
   {
     id: "keep_on_paper",
-    title: "syncOnboarding.manual.backup.manualBackup.title",
+    getTitle: () => "syncOnboarding.manual.backup.manualBackup.title",
     icon: <Icons.Note size={"S"} color="neutral.c80" />,
-    tag: (
-      <WrappedTag
-        text={"syncOnboarding.manual.backup.manualBackup.tag"}
-        type="opacity"
-        active
-        disabled
-        bg="opacityDefault.c10"
-      />
-    ),
     body: KeepOnPaperBody,
   },
 ];
@@ -213,7 +199,7 @@ const BackupStep: React.FC<Props> = props => {
       <TrackPage flow="Device onboarding" category="Backup for your Secret Recovery Phrase" />
       {/* @ts-expect-error weird props issue with React 18 */}
       <StepText mb={2}>{t("syncOnboarding.manual.backup.description")}</StepText>
-      {choices.map(({ id, title, icon, tag, body: Body }) => (
+      {choices.map(({ id, getTitle, icon, tag, body: Body }) => (
         <div key={id} onClick={() => setChoice(id)}>
           <Flex
             flexDirection={"column"}
@@ -224,13 +210,15 @@ const BackupStep: React.FC<Props> = props => {
             borderRadius={radii[2]}
             p={6}
           >
-            <Flex flexDirection="row" alignItems="center" justifyContent="flex-end" mb={3}>
+            <Flex flexDirection="row" alignItems="center" justifyContent="flex-end">
               <Flex flexDirection="row" alignItems="center" columnGap={3} flex={1}>
                 {icon}
                 {/* @ts-expect-error weird props issue with React 18 */}
-                <StepSubtitleText m={0}>{t(title)}</StepSubtitleText>
+                <StepSubtitleText m={0} ml={3}>
+                  {t(getTitle(choice === id))}
+                </StepSubtitleText>
               </Flex>
-              {tag}
+              {tag ?? null}
             </Flex>
             <Body
               isOpened={choice === id}
