@@ -1,5 +1,5 @@
-import { decodeAccountId } from "@ledgerhq/coin-framework/account/index";
-import { Account, Address, TokenAccount } from "@ledgerhq/types-live";
+import { decodeAccountId, findSubAccountById } from "@ledgerhq/coin-framework/account/index";
+import { Account, Address } from "@ledgerhq/types-live";
 import {
   Cell,
   SendMode,
@@ -29,11 +29,7 @@ export const addressesAreEqual = (addr1: string, addr2: string) =>
   isAddressValid(addr2) &&
   TonAddress.parse(addr1).equals(TonAddress.parse(addr2));
 
-export const transactionToHwParams = (
-  t: Transaction,
-  seqno: number,
-  tokenAccount?: TokenAccount,
-): TonHwParams => {
+export const transactionToHwParams = (t: Transaction, seqno: number, a: Account): TonHwParams => {
   let recipient = t.recipient;
   // if recipient is not valid calculate fees with empty address
   // we handle invalid addresses in account bridge
@@ -43,19 +39,21 @@ export const transactionToHwParams = (
     recipient = new TonAddress(0, Buffer.alloc(32)).toRawString();
   }
 
-  const amount = tokenAccount
-    ? toNano("0.5")
+  // if there is a subaccount, the transaction is a token transfer
+  const subAccount = findSubAccountById(a, t.subAccountId || "");
+
+  const amount = subAccount
+    ? toNano("0.05") // for commission fees, excess will be returned
     : t.useAllAmount
     ? BigInt(0)
     : BigInt(t.amount.toFixed());
+  const to = subAccount ? subAccount.token.contractAddress : recipient;
 
   const tonHwParams: TonHwParams = {
-    to: TonAddress.parse(recipient),
+    to: TonAddress.parse(to),
     seqno,
     amount,
-    bounce: TonAddress.isFriendly(recipient)
-      ? TonAddress.parseFriendly(recipient).isBounceable
-      : true,
+    bounce: TonAddress.isFriendly(to) ? TonAddress.parseFriendly(to).isBounceable : true,
     timeout: getTransferExpirationTime(),
     sendMode: t.useAllAmount
       ? SendMode.CARRY_ALL_REMAINING_BALANCE
@@ -65,13 +63,13 @@ export const transactionToHwParams = (
   if (t.comment.text.length) {
     tonHwParams.payload = { type: "comment", text: t.comment.text };
   }
-  if (tokenAccount) {
+  if (subAccount) {
     tonHwParams.payload = {
       type: "jetton-transfer",
-      queryId: null,
+      queryId: BigInt(1),
       amount: t.useAllAmount ? BigInt(0) : BigInt(t.amount.toFixed()),
       destination: TonAddress.parse(recipient),
-      responseDestination: TonAddress.parse(recipient),
+      responseDestination: TonAddress.parse(getAddress(a).address),
       customPayload: null,
       forwardAmount: BigInt(1),
       forwardPayload: null,
@@ -148,6 +146,3 @@ export const getLedgerTonPath = (path: string): number[] => {
   }
   return numPath;
 };
-
-export const getSubAccount = (t: Transaction, a: Account): TokenAccount | null =>
-  !t.subAccountId ? null : a.subAccounts?.find(ta => ta.id === t.subAccountId) ?? null;

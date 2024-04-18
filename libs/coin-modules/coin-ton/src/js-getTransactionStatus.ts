@@ -1,3 +1,4 @@
+import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 import {
   AmountRequired,
   InvalidAddress,
@@ -9,7 +10,7 @@ import { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { TonCommentInvalid } from "./errors";
 import type { Transaction, TransactionStatus } from "./types";
-import { addressesAreEqual, commentIsValid, getAddress, getSubAccount, isAddressValid } from "./utils";
+import { addressesAreEqual, commentIsValid, getAddress, isAddressValid } from "./utils";
 
 const getTransactionStatus = async (a: Account, t: Transaction): Promise<TransactionStatus> => {
   const errors: TransactionStatus["errors"] = {};
@@ -56,7 +57,7 @@ const getTransactionStatus = async (a: Account, t: Transaction): Promise<Transac
     }
   }
 
-  const subAccount = getSubAccount(t, a);
+  const subAccount = findSubAccountById(a, t.subAccountId ?? "");
   if (subAccount) {
     const spendable = subAccount.spendableBalance;
     if (t.amount.gt(spendable)) {
