@@ -261,7 +261,7 @@ exports[`getFormattedFeeFields with tx type 0 with locale de-DE should correctly
 }
 `;
 
-exports[`getFormattedFeeFields with tx type 0 with locale de-DE should correctly format fee fields for Linea Testnet unit 1`] = `
+exports[`getFormattedFeeFields with tx type 0 with locale de-DE should correctly format fee fields for Linea Sepolia unit 1`] = `
 {
   "formattedFeeValue": "0,000105 𝚝ETH",
   "formattedGasPrice": "5 𝚝Gwei",
@@ -756,7 +756,7 @@ exports[`getFormattedFeeFields with tx type 0 with locale en-US should correctly
 }
 `;
 
-exports[`getFormattedFeeFields with tx type 0 with locale en-US should correctly format fee fields for Linea Testnet unit 1`] = `
+exports[`getFormattedFeeFields with tx type 0 with locale en-US should correctly format fee fields for Linea Sepolia unit 1`] = `
 {
   "formattedFeeValue": "0.000105 𝚝ETH",
   "formattedGasPrice": "5 𝚝Gwei",
@@ -1251,7 +1251,7 @@ exports[`getFormattedFeeFields with tx type 0 with locale es-ES should correctly
 }
 `;
 
-exports[`getFormattedFeeFields with tx type 0 with locale es-ES should correctly format fee fields for Linea Testnet unit 1`] = `
+exports[`getFormattedFeeFields with tx type 0 with locale es-ES should correctly format fee fields for Linea Sepolia unit 1`] = `
 {
   "formattedFeeValue": "0,000105 𝚝ETH",
   "formattedGasPrice": "5 𝚝Gwei",
@@ -1746,7 +1746,7 @@ exports[`getFormattedFeeFields with tx type 0 with locale fr-FR should correctly
 }
 `;
 
-exports[`getFormattedFeeFields with tx type 0 with locale fr-FR should correctly format fee fields for Linea Testnet unit 1`] = `
+exports[`getFormattedFeeFields with tx type 0 with locale fr-FR should correctly format fee fields for Linea Sepolia unit 1`] = `
 {
   "formattedFeeValue": "0,000105 𝚝ETH",
   "formattedGasPrice": "5 𝚝Gwei",
@@ -2241,7 +2241,7 @@ exports[`getFormattedFeeFields with tx type 0 with locale ja-JP should correctly
 }
 `;
 
-exports[`getFormattedFeeFields with tx type 0 with locale ja-JP should correctly format fee fields for Linea Testnet unit 1`] = `
+exports[`getFormattedFeeFields with tx type 0 with locale ja-JP should correctly format fee fields for Linea Sepolia unit 1`] = `
 {
   "formattedFeeValue": "0.000105 𝚝ETH",
   "formattedGasPrice": "5 𝚝Gwei",
@@ -2736,7 +2736,7 @@ exports[`getFormattedFeeFields with tx type 0 with locale ko-KR should correctly
 }
 `;
 
-exports[`getFormattedFeeFields with tx type 0 with locale ko-KR should correctly format fee fields for Linea Testnet unit 1`] = `
+exports[`getFormattedFeeFields with tx type 0 with locale ko-KR should correctly format fee fields for Linea Sepolia unit 1`] = `
 {
   "formattedFeeValue": "0.000105 𝚝ETH",
   "formattedGasPrice": "5 𝚝Gwei",
@@ -3231,7 +3231,7 @@ exports[`getFormattedFeeFields with tx type 0 with locale pt-BR should correctly
 }
 `;
 
-exports[`getFormattedFeeFields with tx type 0 with locale pt-BR should correctly format fee fields for Linea Testnet unit 1`] = `
+exports[`getFormattedFeeFields with tx type 0 with locale pt-BR should correctly format fee fields for Linea Sepolia unit 1`] = `
 {
   "formattedFeeValue": "0,000105 𝚝ETH",
   "formattedGasPrice": "5 𝚝Gwei",
@@ -3726,7 +3726,7 @@ exports[`getFormattedFeeFields with tx type 0 with locale ru-RU should correctly
 }
 `;
 
-exports[`getFormattedFeeFields with tx type 0 with locale ru-RU should correctly format fee fields for Linea Testnet unit 1`] = `
+exports[`getFormattedFeeFields with tx type 0 with locale ru-RU should correctly format fee fields for Linea Sepolia unit 1`] = `
 {
   "formattedFeeValue": "0,000105 𝚝ETH",
   "formattedGasPrice": "5 𝚝Gwei",
@@ -4221,7 +4221,7 @@ exports[`getFormattedFeeFields with tx type 0 with locale tr-TR should correctly
 }
 `;
 
-exports[`getFormattedFeeFields with tx type 0 with locale tr-TR should correctly format fee fields for Linea Testnet unit 1`] = `
+exports[`getFormattedFeeFields with tx type 0 with locale tr-TR should correctly format fee fields for Linea Sepolia unit 1`] = `
 {
   "formattedFeeValue": "0,000105 𝚝ETH",
   "formattedGasPrice": "5 𝚝Gwei",
@@ -4716,7 +4716,7 @@ exports[`getFormattedFeeFields with tx type 0 with locale zh-CN should correctly
 }
 `;
 
-exports[`getFormattedFeeFields with tx type 0 with locale zh-CN should correctly format fee fields for Linea Testnet unit 1`] = `
+exports[`getFormattedFeeFields with tx type 0 with locale zh-CN should correctly format fee fields for Linea Sepolia unit 1`] = `
 {
   "formattedFeeValue": "0.000105 𝚝ETH",
   "formattedGasPrice": "5 𝚝Gwei",
@@ -5211,7 +5211,7 @@ exports[`getFormattedFeeFields with tx type 2 with locale de-DE should correctly
 }
 `;
 
-exports[`getFormattedFeeFields with tx type 2 with locale de-DE should correctly format fee fields for Linea Testnet unit 1`] = `
+exports[`getFormattedFeeFields with tx type 2 with locale de-DE should correctly format fee fields for Linea Sepolia unit 1`] = `
 {
   "formattedFeeValue": "0,000042 𝚝ETH",
   "formattedGasPrice": "0 𝚝Gwei",
@@ -5706,7 +5706,7 @@ exports[`getFormattedFeeFields with tx type 2 with locale en-US should correctly
 }
 `;
 
-exports[`getFormattedFeeFields with tx type 2 with locale en-US should correctly format fee fields for Linea Testnet unit 1`] = `
+exports[`getFormattedFeeFields with tx type 2 with locale en-US should correctly format fee fields for Linea Sepolia unit 1`] = `
 {
   "formattedFeeValue": "0.000042 𝚝ETH",
   "formattedGasPrice": "0 𝚝Gwei",
@@ -6201,7 +6201,7 @@ exports[`getFormattedFeeFields with tx type 2 with locale es-ES should correctly
 }
 `;
 
-exports[`getFormattedFeeFields with tx type 2 with locale es-ES should correctly format fee fields for Linea Testnet unit 1`] = `
+exports[`getFormattedFeeFields with tx type 2 with locale es-ES should correctly format fee fields for Linea Sepolia unit 1`] = `
 {
   "formattedFeeValue": "0,000042 𝚝ETH",
   "formattedGasPrice": "0 𝚝Gwei",
@@ -6696,7 +6696,7 @@ exports[`getFormattedFeeFields with tx type 2 with locale fr-FR should correctly
 }
 `;
 
-exports[`getFormattedFeeFields with tx type 2 with locale fr-FR should correctly format fee fields for Linea Testnet unit 1`] = `
+exports[`getFormattedFeeFields with tx type 2 with locale fr-FR should correctly format fee fields for Linea Sepolia unit 1`] = `
 {
   "formattedFeeValue": "0,000042 𝚝ETH",
   "formattedGasPrice": "0 𝚝Gwei",
@@ -7191,7 +7191,7 @@ exports[`getFormattedFeeFields with tx type 2 with locale ja-JP should correctly
 }
 `;
 
-exports[`getFormattedFeeFields with tx type 2 with locale ja-JP should correctly format fee fields for Linea Testnet unit 1`] = `
+exports[`getFormattedFeeFields with tx type 2 with locale ja-JP should correctly format fee fields for Linea Sepolia unit 1`] = `
 {
   "formattedFeeValue": "0.000042 𝚝ETH",
   "formattedGasPrice": "0 𝚝Gwei",
@@ -7686,7 +7686,7 @@ exports[`getFormattedFeeFields with tx type 2 with locale ko-KR should correctly
 }
 `;
 
-exports[`getFormattedFeeFields with tx type 2 with locale ko-KR should correctly format fee fields for Linea Testnet unit 1`] = `
+exports[`getFormattedFeeFields with tx type 2 with locale ko-KR should correctly format fee fields for Linea Sepolia unit 1`] = `
 {
   "formattedFeeValue": "0.000042 𝚝ETH",
   "formattedGasPrice": "0 𝚝Gwei",
@@ -8181,7 +8181,7 @@ exports[`getFormattedFeeFields with tx type 2 with locale pt-BR should correctly
 }
 `;
 
-exports[`getFormattedFeeFields with tx type 2 with locale pt-BR should correctly format fee fields for Linea Testnet unit 1`] = `
+exports[`getFormattedFeeFields with tx type 2 with locale pt-BR should correctly format fee fields for Linea Sepolia unit 1`] = `
 {
   "formattedFeeValue": "0,000042 𝚝ETH",
   "formattedGasPrice": "0 𝚝Gwei",
@@ -8676,7 +8676,7 @@ exports[`getFormattedFeeFields with tx type 2 with locale ru-RU should correctly
 }
 `;
 
-exports[`getFormattedFeeFields with tx type 2 with locale ru-RU should correctly format fee fields for Linea Testnet unit 1`] = `
+exports[`getFormattedFeeFields with tx type 2 with locale ru-RU should correctly format fee fields for Linea Sepolia unit 1`] = `
 {
   "formattedFeeValue": "0,000042 𝚝ETH",
   "formattedGasPrice": "0 𝚝Gwei",
@@ -9171,7 +9171,7 @@ exports[`getFormattedFeeFields with tx type 2 with locale tr-TR should correctly
 }
 `;
 
-exports[`getFormattedFeeFields with tx type 2 with locale tr-TR should correctly format fee fields for Linea Testnet unit 1`] = `
+exports[`getFormattedFeeFields with tx type 2 with locale tr-TR should correctly format fee fields for Linea Sepolia unit 1`] = `
 {
   "formattedFeeValue": "0,000042 𝚝ETH",
   "formattedGasPrice": "0 𝚝Gwei",
@@ -9666,7 +9666,7 @@ exports[`getFormattedFeeFields with tx type 2 with locale zh-CN should correctly
 }
 `;
 
-exports[`getFormattedFeeFields with tx type 2 with locale zh-CN should correctly format fee fields for Linea Testnet unit 1`] = `
+exports[`getFormattedFeeFields with tx type 2 with locale zh-CN should correctly format fee fields for Linea Sepolia unit 1`] = `
 {
   "formattedFeeValue": "0.000042 𝚝ETH",
   "formattedGasPrice": "0 𝚝Gwei",
