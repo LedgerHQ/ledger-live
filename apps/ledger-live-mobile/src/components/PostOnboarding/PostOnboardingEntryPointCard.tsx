@@ -22,6 +22,7 @@ const PostOnboardingEntryPointCard: React.FC<Record<string, never>> = () => {
     track("button_clicked", {
       button: "Dismiss post onboarding",
       deviceModelId,
+      flow: "post-onboarding",
     });
   }, [dispatch, deviceModelId]);
   const visible = usePostOnboardingEntryPointVisibleOnWallet();
@@ -48,7 +49,11 @@ const PostOnboardingEntryPointCard: React.FC<Record<string, never>> = () => {
           outline
           onPress={() => openHub()}
           event="button_clicked"
-          eventProperties={{ button: "Access post onboarding", deviceModelId }}
+          eventProperties={{
+            button: "Access post onboarding",
+            deviceModelId,
+            flow: "post-onboarding",
+          }}
         >
           {t("postOnboarding.entryPointCard.buttonLabel")}
         </Button>

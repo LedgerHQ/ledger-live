@@ -23,6 +23,7 @@ export function useCompleteActionCallback() {
       track("User has completed a post-onboarding action", {
         action: actionId,
         deviceModelId,
+        flow: "post-onboarding",
       });
       if (!action?.actionCompletedPopupLabel) return;
       pushToast({

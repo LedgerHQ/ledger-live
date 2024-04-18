@@ -55,6 +55,7 @@ const PostOnboardingHub = () => {
             : "Post-onboarding hub"
         }
         deviceModelId={deviceModelId}
+        flow="post-onboarding"
       />
       <Flex
         px={6}
@@ -111,6 +112,7 @@ const PostOnboardingHub = () => {
                 eventProperties={{
                   button: "I'll do this later",
                   deviceModelId,
+                  flow: "post-onboarding",
                 }}
               >
                 {t("postOnboarding.hub.skip")}

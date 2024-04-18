@@ -156,7 +156,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
 
   useEffect(() => {
     completeAction(PostOnboardingActionId.assetsTransfer);
-  }, [completeAction]);
+  }, []);
 
   useEffect(() => {
     navigation.setOptions({
