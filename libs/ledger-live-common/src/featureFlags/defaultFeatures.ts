@@ -86,7 +86,6 @@ export const DEFAULT_FEATURES: Features = {
   postOnboardingAssetsTransfer: DEFAULT_FEATURE,
   counterValue: DEFAULT_FEATURE,
   mockFeature: DEFAULT_FEATURE,
-  buySellUi: DEFAULT_FEATURE,
   multibuyNavigation: DEFAULT_FEATURE,
   ptxServiceCtaExchangeDrawer: DEFAULT_FEATURE,
   ptxServiceCtaScreens: DEFAULT_FEATURE,
@@ -375,6 +374,13 @@ export const DEFAULT_FEATURES: Features = {
 
   fetchAdditionalCoins: {
     enabled: false,
+  },
+
+  buySellUi: {
+    enabled: false,
+    params: {
+      manifestId: "multibuy-v2", // Update to "buy-sell-ui" after rollout
+    },
   },
 
   ptxSwapLiveApp: {
