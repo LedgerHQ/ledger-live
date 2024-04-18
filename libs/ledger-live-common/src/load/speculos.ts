@@ -143,7 +143,7 @@ export async function createSpeculosDevice(
     `SPECULOS_APPNAME=${appName}:${appVersion}`,
     "--name",
     `${speculosID}`,
-    "ghcr.io/ledgerhq/speculos:sha-e262a0c",
+    process.env.CI ? "ghcr.io/ledgerhq/speculos:sha-e262a0c" : "speculos",
     "--model",
     model.toLowerCase(),
     appPath,
@@ -219,7 +219,7 @@ export async function createSpeculosDevice(
       log("speculos-stderr", `${speculosID}: ${String(data).trim()}`);
     }
 
-    if (data.includes("using SDK")) {
+    if (/using\s(?:SDK|API_LEVEL)/.test(data)) {
       setTimeout(() => resolveReady(true), 500);
     } else if (data.includes("is already in use by container")) {
       rejectReady(
