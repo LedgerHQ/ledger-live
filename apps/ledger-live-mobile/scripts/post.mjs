@@ -139,6 +139,9 @@ BRAZE_CUSTOM_ENDPOINT="sdk.fra-02.braze.eu"`;
 
   if (os.platform() === "darwin" && !process.env["SKIP_BUNDLE_CHECK"] && !hashesAreEquals) {
     cd("ios");
+
+    await $`pod env`;
+
     try {
       await $`bundle exec pod install --deployment --repo-update`;
       try {
