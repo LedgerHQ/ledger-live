@@ -11,6 +11,7 @@ import * as path from "path";
 import * as crypto from "crypto";
 import { OptionalFeatureMap } from "@ledgerhq/types-live";
 import { responseLogfilePath } from "../utils/networkResponseLogger";
+import { setEnv } from "@ledgerhq/live-env";
 
 export function generateUUID(): string {
   return crypto.randomBytes(16).toString("hex");
@@ -36,6 +37,10 @@ type TestFixtures = {
 };
 
 const IS_DEBUG_MODE = !!process.env.PWDEBUG;
+const randomNumber = Math.floor(Math.random() * 100) + 1;
+setEnv("SPECULOS_PID_OFFSET", randomNumber);
+process.env.SPECULOS_API_PORT = (30001 + randomNumber).toString();
+setEnv("DISABLE_APP_VERSION_REQUIREMENTS", true);
 
 export const test = base.extend<TestFixtures>({
   env: undefined,
@@ -80,7 +85,6 @@ export const test = base.extend<TestFixtures>({
         ...process.env,
         VERBOSE: true,
         // MOCK: true,
-        SPECULOS_API_PORT: 5000,
         MOCK_COUNTERVALUES: true,
         HIDE_DEBUG_MOCK: true,
         CI: process.env.CI || undefined,

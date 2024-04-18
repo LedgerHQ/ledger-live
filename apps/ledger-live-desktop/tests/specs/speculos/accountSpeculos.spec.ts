@@ -5,9 +5,11 @@ import { AddAccountModal } from "../../models/AddAccountModal";
 import { Layout } from "../../models/Layout";
 import { AccountPage } from "../../models/AccountPage";
 import { AccountsPage } from "../../models/AccountsPage";
+import { Device, specs, startSpeculos, stopSpeculos } from "../../utils/speculos";
 
 test.use({ userdata: "skip-onboarding" });
 const currencies = ["Ethereum", "Ethereum Holesky"];
+let device: Device | null;
 
 test.describe.parallel("Accounts @smoke", () => {
   for (const currency of currencies) {
@@ -18,6 +20,7 @@ test.describe.parallel("Accounts @smoke", () => {
       const layout = new Layout(page);
       const accountsPage = new AccountsPage(page);
       const accountPage = new AccountPage(page);
+      device = await startSpeculos(test.name, specs[currency.replace(/ /g, "_")]);
 
       await test.step(`[${currency}] Open modal`, async () => {
         await portfolioPage.openAddAccountModal();
@@ -67,6 +70,9 @@ test.describe.parallel("Accounts @smoke", () => {
         await accountPage.deleteAccount();
         await expect.soft(page).toHaveScreenshot(`${currency}-deleteAccount.png`);
       });
+    });
+    test.afterAll(async () => {
+      await stopSpeculos(device);
     });
   }
 });
