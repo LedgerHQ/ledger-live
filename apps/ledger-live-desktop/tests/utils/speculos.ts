@@ -119,7 +119,6 @@ export async function startSpeculos(testName: string, spec: Specs[keyof Specs]) 
 
   if (!appCandidates) {
     appCandidates = await listAppCandidates(coinapps);
-    console.error(JSON.stringify(appCandidates, undefined, 2));
   }
 
   const { appQuery, dependency, onSpeculosDeviceCreated } = spec;
