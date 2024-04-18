@@ -5,10 +5,12 @@ import { AddAccountModal } from "../../models/AddAccountModal";
 import { Layout } from "../../models/Layout";
 import { AccountPage } from "../../models/AccountPage";
 import { AccountsPage } from "../../models/AccountsPage";
+import { Device, specs, startSpeculos, stopSpeculos } from "../../utils/speculos";
 
 test.use({ userdata: "skip-onboarding" });
 
 const currency = "Ethereum";
+let device: Device | null;
 
 let firstAccountName = "NO ACCOUNT NAME YET";
 test(`[${currency}] Add account with token`, async ({ page }) => {
@@ -17,6 +19,7 @@ test(`[${currency}] Add account with token`, async ({ page }) => {
   const layout = new Layout(page);
   const accountsPage = new AccountsPage(page);
   const accountPage = new AccountPage(page);
+  device = await startSpeculos(test.name, specs[currency.replace(/ /g, "_")]);
 
   await test.step(`[${currency}] Open modal`, async () => {
     await portfolioPage.openAddAccountModal();
@@ -54,4 +57,7 @@ test(`[${currency}] Add account with token`, async ({ page }) => {
     await accountPage.scrollToTokens();
     await expect.soft(page).toHaveScreenshot(`${currency}-token.png`);
   });
+});
+test.afterAll(async () => {
+  await stopSpeculos(device);
 });
