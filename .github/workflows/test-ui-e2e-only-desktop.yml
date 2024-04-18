@@ -19,7 +19,7 @@ on:
       report_path:
         description: Path where you want to store this execution's results
         required: false
-        default: "lld"
+        default: "allure-results-linux"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
@@ -148,13 +148,12 @@ jobs:
 
       - name: Publish report on Allure Server
         id: allure-server
-        uses: LedgerHQ/send-to-allure-server-action@2.1.2
+        if: ${{ !cancelled() }}
+        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
         with:
-          allure-server-url: "https://vault.allure.green.ledgerlabs.net"
-          build-name: ${{ github.workflow }}
-          build-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          username: ${{ vars.ALLURE_USERNAME }}
-          password: ${{ secrets.ALLURE_VAULT_PASSWORD }}
+          platform: linux
+          login: ${{ vars.ALLURE_USERNAME }}
+          password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
           path: ${{ inputs.report_path }}
 
       - name: Write Allure report in summary
@@ -251,8 +250,6 @@ jobs:
             
             summary += `
             |`;
-            
-            summary += `${{ env.TEST_RESULT || 'No test results' }}`;
 
             const output = {
               summary,
@@ -312,7 +309,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": `- 🐧 linux: ${report.linux.pass ? "✅" : "❌"}\n`
+                    "text": `- 🐧 linux: ${report.linux.pass ? "✅" : "❌"} ${{ env.TEST_RESULT || 'No test results' }}\n`
                   }
                 },
                 {
