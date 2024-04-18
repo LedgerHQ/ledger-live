@@ -403,6 +403,14 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       },
     },
   },
+  config_currency_optimism_sepolia: {
+    type: "object",
+    default: {
+      status: { type: "active" },
+      node: { type: "external", uri: "https://sepolia.optimism.io" },
+      explorer: { type: "etherscan", uri: "https://api-sepolia-optimistic.etherscan.io/api" },
+    },
+  },
   config_currency_energy_web: {
     type: "object",
     default: {
@@ -628,24 +636,6 @@ const evmConfig: CurrencyLiveConfigDefinition = {
     },
   },
   // testnets
-  config_currency_ethereum_ropsten: {
-    type: "object",
-    default: {
-      status: { type: "active" },
-      node: { type: "ledger", explorerId: "eth_ropsten" },
-      explorer: { type: "ledger", explorerId: "eth_ropsten" },
-      gasTracker: { type: "ledger", explorerId: "eth_ropsten" },
-    },
-  },
-  config_currency_ethereum_goerli: {
-    type: "object",
-    default: {
-      status: { type: "active" },
-      node: { type: "ledger", explorerId: "eth_goerli" },
-      explorer: { type: "ledger", explorerId: "eth_goerli" },
-      gasTracker: { type: "ledger", explorerId: "eth_goerli" },
-    },
-  },
   config_currency_ethereum_sepolia: {
     type: "object",
     default: {
@@ -671,14 +661,6 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       explorer: { type: "etherscan", uri: "https://api-sepolia.arbiscan.io/api" },
     },
   },
-  config_currency_optimism_goerli: {
-    type: "object",
-    default: {
-      status: { type: "active" },
-      node: { type: "external", uri: "https://goerli.optimism.io" },
-      explorer: { type: "etherscan", uri: "https://api-goerli-optimistic.etherscan.io/api" },
-    },
-  },
   config_currency_polygon_zk_evm_testnet: {
     type: "object",
     default: {
@@ -695,12 +677,12 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       explorer: { type: "etherscan", uri: "https://api-sepolia.basescan.org/api" },
     },
   },
-  config_currency_linea_goerli: {
+  config_currency_linea_sepolia: {
     type: "object",
     default: {
       status: { type: "active" },
-      node: { type: "external", uri: "https://rpc.goerli.linea.build" },
-      explorer: { type: "etherscan", uri: "https://api-testnet.lineascan.build/api" },
+      node: { type: "external", uri: "https://rpc.sepolia.linea.build" },
+      explorer: { type: "etherscan", uri: "https://api-sepolia.lineascan.build/api" },
     },
   },
 };

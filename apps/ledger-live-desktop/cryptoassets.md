@@ -144,7 +144,7 @@
 | lisk | LSK | NO | lisk |
 | æternity | AE | NO | aeternity |
 
-## Tokens (17803)
+## Tokens (17763)
 | parent currency | ticker | contract | name | status | ledger id |
 |--|--|--|--|--|--|
 | Algorand | GEMS | 5XU7ASL2PLB2C43N6JNFPMSXGATO2VIVNF7X6NTJ4BRCCKRGETEYS3LOAQ | AlgoGems |  | algorand/asa/230946361 |
@@ -13573,46 +13573,6 @@
 | Ethereum | ZOM | 0x5091aEd52Ad421969254E48d29aa1d1807E1870b | zom.health |  | ethereum/erc20/zom_health |
 | Ethereum | ZYRO | 0x1f6bd8766f8a8AA58F7441C8dd3709aFA3a56202 | zyro |  | ethereum/erc20/zyro |
 | Ethereum | ZZZ | 0xc75F15AdA581219c95485c578E124df3985e4CE0 | zzz.finance |  | ethereum/erc20/zzz_finance |
-| Ethereum Goerli | tLINK | 0x326C977E6efc84E512bB9C30f76E30c160eD06FB | ChainLink Token |  | ethereum_goerli/erc20/chainlink_token |
-| Ethereum Goerli | tDAI | 0x0089Ed33ED517F58a064D0ef56C9E89Dc01EE9A2 | Dai Stablecoin |  | ethereum_goerli/erc20/dai_stablecoin |
-| Ethereum Goerli | tFAU | 0xBA62BCfcAaFc6622853cca2BE6Ac7d845BC0f2Dc | FaucetToken |  | ethereum_goerli/erc20/faucettoken |
-| Ethereum Goerli | tFNCT | 0xFdF06C1eB3ffd195dc515Fa128700a578460f504 | FiNANCiE Token |  | ethereum_goerli/erc20/financie_token |
-| Ethereum Goerli | tICBT | 0x2448Dc1022061b22b60ce0b240cB9c386a10B8f9 | ICB Token |  | ethereum_goerli/erc20/icb_token |
-| Ethereum Goerli | tMUSDC | 0xc2D1d0492A5C9AC735e5Fa08Eb9376f850222ebF | Mock USDC |  | ethereum_goerli/erc20/mock_usdc |
-| Ethereum Goerli | tUSDC | 0x07865c6E87B9F70255377e024ace6630C1Eaa37F | USDC |  | ethereum_goerli/erc20/usdc |
-| Ethereum Goerli | tWETH | 0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6 | Wrapped Ether |  | ethereum_goerli/erc20/wrapped_ether |
-| Ethereum Ropsten | t*PLASMA | 0x95D7321EdCe519419ba1DbC60A89bAfbF55EAC0D | *PLASMA |  | ethereum_ropsten/erc20/_plasma |
-| Ethereum Ropsten | tWRHL1 | 0x19795e1B0F81C437ec3FCe77fD7ab43920606971 | 17 Small Electric Chairs |  | ethereum_ropsten/erc20/17_small_electric_chairs |
-| Ethereum Ropsten | tCOMP | 0xf76D4a441E4ba86A923ce32B89AFF89dBccAA075 | Compound |  | ethereum_ropsten/erc20/compound |
-| Ethereum Ropsten | tCDAI | 0xbc689667C13FB2a04f09272753760E38a95B998C | Compound DAI | delisted | ethereum_ropsten/erc20/compound_dai |
-| Ethereum Ropsten | tCETH | 0x859e9d8a4edadfEDb5A2fF311243af80F85A91b8 | Compound Ether |  | ethereum_ropsten/erc20/compound_ether |
-| Ethereum Ropsten | tCSAI | 0x7Ac65E0f6dBA0EcB8845f17d07bF0776842690f8 | Compound SAI | delisted | ethereum_ropsten/erc20/compound_sai |
-| Ethereum Ropsten | tCUSDC | 0x2973e69b20563bcc66dC63Bde153072c33eF37fe | Compound USD Coin | delisted | ethereum_ropsten/erc20/compound_usd_coin |
-| Ethereum Ropsten | tCUSDT | 0xF6958Cf3127e62d3EB26c79F4f45d3F3b2CcdeD4 | Compound USDT | delisted | ethereum_ropsten/erc20/compound_usdt |
-| Ethereum Ropsten | tSAI | 0x63F7AB2f24322Ae2eaD6b971Cb9a71A1CC2eee03 | Dai Stablecoin v1.0 | delisted | ethereum_ropsten/erc20/dai_stablecoin_v1_0 |
-| Ethereum Ropsten | tDAI | 0x31F42841c2db5173425b5223809CF3A38FEde360 | Dai Stablecoin v2.0 |  | ethereum_ropsten/erc20/dai_stablecoin_v2_0 |
-| Ethereum Ropsten | tFAU | 0xFab46E002BbF0b4509813474841E0716E6730136 | Faucet |  | ethereum_ropsten/erc20/faucet_token |
-| Ethereum Ropsten | tGIGCOIN | 0xc6B0581f3C15B56040ac4513931138D6acd5975e | GIGCoin |  | ethereum_ropsten/erc20/gigcoin |
-| Ethereum Ropsten | tJUNOT | 0xbd812aae7735b6e7BcC3eF8DFB3CB0457CFc2ad7 | Juno Test | delisted | ethereum_ropsten/erc20/juno_test |
-| Ethereum Ropsten | tLGC18 | 0x57e8ba2A915285f984988282aB9346c1336a4E11 | LGC18 |  | ethereum_ropsten/erc20/ledgercoin18 |
-| Ethereum Ropsten | tCBDC | 0x1A418118F7b1904cA86144C2Df14840CE823Bfb0 | MER3 | delisted | ethereum_ropsten/erc20/mer3 |
-| Ethereum Ropsten | tCBDC | 0xDea7739bD921a562b94cDe6af39b752c31f83488 | MER4 | delisted | ethereum_ropsten/erc20/mer4 |
-| Ethereum Ropsten | tMER1 | 0xc5E05Ca4CDD5985442935eDB8F902F9b983f9138 | Mercure 1 | delisted | ethereum_ropsten/erc20/mercure_1 |
-| Ethereum Ropsten | tMER2 | 0xa24499C79A6fFB4453879fb8517f8d4c7F798C15 | Mercure 2 | delisted | ethereum_ropsten/erc20/mercure_2 |
-| Ethereum Ropsten | tNGL | 0x1532811bA6c508569280FFf3931C69F930F90810 | NANGALANGA |  | ethereum_ropsten/erc20/nangalanga |
-| Ethereum Ropsten | tTK19 | 0xe033AF8C9d32358e2a029C9A6968eED4c90fd561 | TK19 |  | ethereum_ropsten/erc20/tk19 |
-| Ethereum Ropsten | tTK20 | 0x54bAf7CE2e968B902D81272B8D94E1f612D40307 | TK20 |  | ethereum_ropsten/erc20/tk20 |
-| Ethereum Ropsten | tTOKO1 | 0x792158ac86641f560eA4821e93C8A8B3bDA254Df | TOKO1 | delisted | ethereum_ropsten/erc20/toko1 |
-| Ethereum Ropsten | tTOKO2 | 0xD3CA569AE40ff5Ee1D1E77cF88b1Ce0Aa7F3A465 | TOKO2 | delisted | ethereum_ropsten/erc20/toko2 |
-| Ethereum Ropsten | tTK24 | 0x0f7Bc0eB6CEdf87b357a4Db8e2bA8d557a0fd6b2 | TOKO24 |  | ethereum_ropsten/erc20/toko24 |
-| Ethereum Ropsten | tTK25 | 0xFb3DD742Ce9F30ba56423734de733819d0026159 | TOKO25 |  | ethereum_ropsten/erc20/toko25 |
-| Ethereum Ropsten | tUSDT | 0x110a13FC3efE6A245B50102D2d79B3E76125Ae83 | Tether USD |  | ethereum_ropsten/erc20/usd_tether__erc20_ |
-| Ethereum Ropsten | tUSDC | 0x07865c6E87B9F70255377e024ace6630C1Eaa37F | USDC | delisted | ethereum_ropsten/erc20/usdc |
-| Ethereum Ropsten | tUNI | 0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984 | Uniswap |  | ethereum_ropsten/erc20/uniswap |
-| Ethereum Ropsten | tDAI | 0xaD6D458402F60fD3Bd25163575031ACDce07538D | Uniswap DAI | delisted | ethereum_ropsten/erc20/uniswap_dai |
-| Ethereum Ropsten | tWETH | 0xc778417E063141139Fce010982780140Aa0cD5Ab | Uniswap Wrapped Ether | delisted | ethereum_ropsten/erc20/uniswap_weth |
-| Ethereum Ropsten | tVLC | 0xF62ef17b7c919b84A9D9f33609bb2cf4405a5682 | Vault Coin |  | ethereum_ropsten/erc20/vault_coin |
-| Ethereum Ropsten | tHASKELL | 0x63652B9Dd39565332B22BB815104c8210934Ae45 | haskell | delisted | ethereum_ropsten/erc20/haskell |
 | Ethereum Sepolia | tYSS | 0xDA3f792Ec1fF2072ECeA9757B065b76337a9b0CC | YassToken |  | ethereum_sepolia/erc20/yasstoken |
 | MultiversX | AERO | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | Aerovek |  | elrond/esdt/4145524f2d343538626266 |
 | MultiversX | ASH | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | AshSwap |  | elrond/esdt/4153482d346365343434 |

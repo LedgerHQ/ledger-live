@@ -190,13 +190,13 @@ describe("EVM Family", () => {
             currency: fakeCurrency as CryptoCurrency,
             options: {
               useEIP1559: true,
-              overrideGasTracker: { type: "ledger", explorerId: "eth_goerli" },
+              overrideGasTracker: { type: "ledger", explorerId: "eth_sepolia" },
             },
           });
 
           expect(mockedNetwork).toHaveBeenCalledWith({
             method: "GET",
-            url: "https://explorers.api.live.ledger.com/blockchain/v4/eth_goerli/gastracker/barometer?display=eip1559",
+            url: "https://explorers.api.live.ledger.com/blockchain/v4/eth_sepolia/gastracker/barometer?display=eip1559",
           });
         });
       });
@@ -323,13 +323,13 @@ describe("EVM Family", () => {
             currency: fakeCurrency as CryptoCurrency,
             options: {
               useEIP1559: false,
-              overrideGasTracker: { type: "ledger", explorerId: "eth_goerli" },
+              overrideGasTracker: { type: "ledger", explorerId: "eth_sepolia" },
             },
           });
 
           expect(mockedNetwork).toHaveBeenCalledWith({
             method: "GET",
-            url: "https://explorers.api.live.ledger.com/blockchain/v4/eth_goerli/gastracker/barometer",
+            url: "https://explorers.api.live.ledger.com/blockchain/v4/eth_sepolia/gastracker/barometer",
           });
         });
       });
