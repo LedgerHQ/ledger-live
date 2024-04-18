@@ -115,7 +115,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
   const [seedPathStatus, setSeedPathStatus] = useState<SeedPathStatus>("choice_new_or_restore");
 
   const servicesConfig = useFeature("protectServicesDesktop");
-  const recoverRestoreStaxPath = useCustomPath(servicesConfig, "restore", "lld-stax-onboarding");
+  const recoverRestoreStaxPath = useCustomPath(servicesConfig, "restore", "lld-onboarding-24");
 
   const productName = device
     ? getDeviceModel(device.modelId).productName || device.modelId
