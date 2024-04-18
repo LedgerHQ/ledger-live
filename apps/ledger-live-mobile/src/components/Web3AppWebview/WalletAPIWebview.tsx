@@ -11,6 +11,7 @@ import {
 } from "@ledgerhq/live-common/wallet-api/constants";
 import { INJECTED_JAVASCRIPT } from "./dappInject";
 import { NoAccountScreen } from "./NoAccountScreen";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
   (
@@ -39,8 +40,12 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       webviewRef.current?.reload();
     };
 
-    const javaScriptCanOpenWindowsAutomatically =
-      manifest.id === DEFAULT_MULTIBUY_APP_ID || manifest.id === BUY_SELL_UI_APP_ID;
+    const buySellUiFlag = useFeature("buySellUi");
+    const buySellAppIds = buySellUiFlag?.manifestId
+      ? [buySellUiFlag.manifestId, DEFAULT_MULTIBUY_APP_ID, BUY_SELL_UI_APP_ID]
+      : [DEFAULT_MULTIBUY_APP_ID, BUY_SELL_UI_APP_ID];
+
+    const javaScriptCanOpenWindowsAutomatically = buySellAppIds.includes(manifest.id);
 
     if (!!manifest.dapp && noAccounts) {
       return <NoAccountScreen manifest={manifest} currentAccountHistDb={currentAccountHistDb} />;

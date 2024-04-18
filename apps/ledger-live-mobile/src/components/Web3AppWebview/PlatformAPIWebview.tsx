@@ -50,6 +50,7 @@ import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigato
 import { WebviewAPI, WebviewProps } from "./types";
 import { useWebviewState } from "./helpers";
 import { currentRouteNameRef } from "~/analytics/screenRefs";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 function renderLoading() {
   return (
@@ -511,8 +512,12 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       tracking.platformLoad(manifest);
     }, [manifest, tracking]);
 
-    const javaScriptCanOpenWindowsAutomatically =
-      manifest.id === DEFAULT_MULTIBUY_APP_ID || manifest.id === BUY_SELL_UI_APP_ID;
+    const buySellUiFlag = useFeature("buySellUi");
+    const buySellAppIds = buySellUiFlag?.manifestId
+      ? [buySellUiFlag.manifestId, DEFAULT_MULTIBUY_APP_ID, BUY_SELL_UI_APP_ID]
+      : [DEFAULT_MULTIBUY_APP_ID, BUY_SELL_UI_APP_ID];
+
+    const javaScriptCanOpenWindowsAutomatically = buySellAppIds.includes(manifest.id);
 
     return (
       <RNWebView
