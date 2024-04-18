@@ -72,9 +72,6 @@ import { ErrorBody } from "../ErrorBody";
 import LinkWithExternalIcon from "../LinkWithExternalIcon";
 import { closePlatformAppDrawer } from "~/renderer/actions/UI";
 import { CompleteExchangeError } from "@ledgerhq/live-common/exchange/error";
-import WebviewErrorDrawer, {
-  SwapLiveError,
-} from "~/renderer/screens/exchange/Swap2/Form/WebviewErrorDrawer";
 
 export const AnimationWrapper = styled.div`
   width: 600px;
