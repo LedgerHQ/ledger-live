@@ -107,7 +107,7 @@ export type ExchangeComponentParams = {
 const Exchange = ({ match }: RouteComponentProps<ExchangeComponentParams>) => {
   const appId = match?.params?.appId;
   const buySellUiFlag = useFeature("buySellUi");
-  const defaultPlatform = buySellUiFlag?.manifestId || DEFAULT_MULTIBUY_APP_ID;
+  const defaultPlatform = buySellUiFlag?.params?.manifestId || DEFAULT_MULTIBUY_APP_ID;
 
   return <LiveAppExchange appId={appId || defaultPlatform} />;
 };
