@@ -2434,7 +2434,7 @@
       }
     },
     "willBedeprecatedBanner": {
-      "title": "Support for {{currencyName}} ends on {{deprecatedDate}} due to integration challenges. We apologize for any inconvenience. We are contacting the foundation.",
+      "title": "To optimize efficiencies, {{currencyName}} will not be supported on Ledger Live as of {{deprecatedDate}}. However, it will still be supported on Ledger hardware wallets. Please contact Ledger Customer Support if you would like assistance on this.",
       "contactSupport": "Contact support"
     },
     "tokens": {
