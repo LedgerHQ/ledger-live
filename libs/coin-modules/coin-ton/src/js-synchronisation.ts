@@ -14,7 +14,7 @@ import {
 import { decodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { log } from "@ledgerhq/logs";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { Account, Operation, SubAccount } from "@ledgerhq/types-live";
+import { Account, SubAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import flatMap from "lodash/flatMap";
 import {
@@ -36,7 +36,7 @@ export const getAccountShape: GetAccountShape = async (info, { blacklistedTokenI
   const { address, rest, currency, derivationMode, initialAccount } = info;
 
   const publicKey = reconciliatePubkey(rest?.publicKey, initialAccount);
-
+  
   const blockHeight = await fetchLastBlockNumber();
   const accountId = encodeAccountId({
     type: "js",
@@ -119,20 +119,24 @@ export const getSubaccountShape = async (
     jettonMaster: token.contractAddress,
   });
   if (walletsInfo.length !== 1) throw new Error("[ton] unexpected api response");
-  const { balance } = walletsInfo[0];
+  const { balance, address: jettonWalletAddress } = walletsInfo[0];
   const oldOps = info.initialAccount?.subAccounts?.find(a => a.id === tokenAccountId)?.operations;
   const operations = !oldOps || shouldSyncFromScratch ? ops : mergeOps(oldOps, ops);
+  const maybeExistingSubAccount =
+    info.initialAccount &&
+    info.initialAccount.subAccounts &&
+    info.initialAccount.subAccounts.find(a => a.id === tokenAccountId);
 
   return {
     type: "TokenAccount",
     id: tokenAccountId,
     parentId,
-    token,
+    token: { ...token, contractAddress: jettonWalletAddress }, // the contract address is replaced for the jetton wallet address, it will be use for the token transfer
     balance: new BigNumber(balance),
     spendableBalance: new BigNumber(balance),
     operations,
     operationsCount: operations.length,
-    pendingOperations: [],
+    pendingOperations: maybeExistingSubAccount ? maybeExistingSubAccount.pendingOperations : [],
     creationDate: operations.length > 0 ? operations[operations.length - 1].date : new Date(),
     balanceHistoryCache: emptyHistoryCache, // calculated in the jsHelpers
     swapHistory: [],
@@ -174,7 +178,6 @@ const postSync = (initial: Account, synced: Account): Account => {
   const pendingOperations = initialPendingOperations.filter(
     op => !operations.some(o => o.id === op.id),
   );
-
   // Set of hashes from the pending operations of the main account
   const coinPendingOperationsHashes = new Set();
   for (const op of pendingOperations) {
@@ -187,19 +190,15 @@ const postSync = (initial: Account, synced: Account): Account => {
     subAccounts: synced.subAccounts?.map(subAccount => {
       // If the subAccount is new, just return the freshly synced subAccount
       if (!initialSubAccountsIds.has(subAccount.id)) return subAccount;
-      const subAccountPendingOp: Operation[] = [];
-      pendingOperations.forEach(({ subOperations }) => {
-        const operations = subOperations?.filter(
-          ({ accountId, id: tokenOpId }) =>
-            accountId === subAccount.id && !subAccount.operations.some(op => op.id === tokenOpId),
-        );
-        if (operations) {
-          subAccountPendingOp.push(...operations);
-        }
-      });
       return {
         ...subAccount,
-        pendingOperations: subAccountPendingOp,
+        pendingOperations: subAccount.pendingOperations.filter(
+          tokenPendingOperation =>
+            // if the pending operation got removed from the main account, remove it as well
+            coinPendingOperationsHashes.has(tokenPendingOperation.hash) &&
+            // if the transaction has been confirmed, remove it
+            !subAccount.operations.some(op => op.id === tokenPendingOperation.id),
+        ),
       };
     }),
   };
