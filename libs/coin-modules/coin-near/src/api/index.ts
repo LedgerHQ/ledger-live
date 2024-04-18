@@ -1,4 +1,4 @@
-export { getOperations } from "./datahub-indexer-sdk";
+export { getOperations } from "./indexer";
 export {
   getAccount,
   fetchAccountDetails,
@@ -9,4 +9,4 @@ export {
   getStakingPositions,
   getValidators,
   getCommission,
-} from "./archive-node-sdk";
+} from "./node";
