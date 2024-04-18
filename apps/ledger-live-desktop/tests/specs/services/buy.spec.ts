@@ -95,7 +95,7 @@ test("Buy / Sell @smoke", async ({ page }) => {
     expect(await liveAppWebview.waitForCorrectTextInWebview("theme: dark")).toBe(true);
     expect(await liveAppWebview.waitForCorrectTextInWebview("currency: bitcoin")).toBe(true);
     expect(
-      await liveAppWebview.waitForCorrectTextInWebview("account: mock:1:bitcoin:true_bitcoin_0:")
+      await liveAppWebview.waitForCorrectTextInWebview("account: mock:1:bitcoin:true_bitcoin_0:"),
     ).toBe(true);
     expect(await liveAppWebview.waitForCorrectTextInWebview("lang: en")).toBe(true);
     expect(await liveAppWebview.waitForCorrectTextInWebview("mode: buy")).toBe(true);
@@ -109,7 +109,7 @@ test("Buy / Sell @smoke", async ({ page }) => {
     expect(await liveAppWebview.waitForCorrectTextInWebview("theme: dark")).toBe(true);
     expect(await liveAppWebview.waitForCorrectTextInWebview("currency: bitcoin")).toBe(true);
     expect(
-      await liveAppWebview.waitForCorrectTextInWebview("account: mock:1:bitcoin:true_bitcoin_0:")
+      await liveAppWebview.waitForCorrectTextInWebview("account: mock:1:bitcoin:true_bitcoin_0:"),
     ).toBe(true);
     expect(await liveAppWebview.waitForCorrectTextInWebview("lang: en")).toBe(true);
     expect(await liveAppWebview.waitForCorrectTextInWebview("mode: sell")).toBe(true);
