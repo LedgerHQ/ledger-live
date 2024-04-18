@@ -1,5 +1,15 @@
 # @ledgerhq/coin-polkadot
 
+## 0.6.1-nightly.4
+
+### Patch Changes
+
+- [#6556](https://github.com/LedgerHQ/ledger-live/pull/6556) [`8c42c2c`](https://github.com/LedgerHQ/ledger-live/commit/8c42c2c2b718c392833206a33d8b97043daa7b81) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix Polkadot (DOT): Bonded balance
+
+- Updated dependencies [[`2f2ef00`](https://github.com/LedgerHQ/ledger-live/commit/2f2ef001145469870ac703b6af28fdf8f0d70945)]:
+  - @ledgerhq/cryptoassets@12.1.0-nightly.1
+  - @ledgerhq/coin-framework@0.11.4-nightly.4
+
 ## 0.6.1-nightly.3
 
 ### Patch Changes

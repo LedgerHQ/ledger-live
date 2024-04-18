@@ -1,5 +1,26 @@
 # @ledgerhq/live-common
 
+## 34.1.0-nightly.9
+
+### Patch Changes
+
+- [#6675](https://github.com/LedgerHQ/ledger-live/pull/6675) [`f87990f`](https://github.com/LedgerHQ/ledger-live/commit/f87990ff29e0a7db6f9ff34e10bce1ff99289b35) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Fix infinit loop bug in LLM
+
+- Updated dependencies [[`8c42c2c`](https://github.com/LedgerHQ/ledger-live/commit/8c42c2c2b718c392833206a33d8b97043daa7b81), [`d9d8902`](https://github.com/LedgerHQ/ledger-live/commit/d9d890272167aec86db19f028b64314f65a9bf14), [`2f2ef00`](https://github.com/LedgerHQ/ledger-live/commit/2f2ef001145469870ac703b6af28fdf8f0d70945)]:
+  - @ledgerhq/coin-polkadot@0.6.1-nightly.4
+  - @ledgerhq/wallet-api-exchange-module@0.5.0-nightly.3
+  - @ledgerhq/cryptoassets@12.1.0-nightly.1
+  - @ledgerhq/coin-framework@0.11.4-nightly.4
+  - @ledgerhq/coin-algorand@0.4.1-nightly.4
+  - @ledgerhq/coin-bitcoin@0.4.0-nightly.14
+  - @ledgerhq/coin-evm@1.1.0-nightly.4
+  - @ledgerhq/hw-app-eth@6.35.8-nightly.4
+  - @ledgerhq/hw-app-vet@0.1.7-nightly.2
+  - @ledgerhq/live-countervalues@0.1.4-nightly.4
+  - @ledgerhq/live-countervalues-react@0.1.4-nightly.4
+  - @ledgerhq/live-nft@0.3.1-nightly.4
+  - @ledgerhq/coin-near@0.3.12-nightly.4
+
 ## 34.1.0-nightly.8
 
 ### Patch Changes

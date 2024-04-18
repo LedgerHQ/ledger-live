@@ -1,5 +1,11 @@
 # @ledgerhq/wallet-api-exchange-module
 
+## 0.5.0-nightly.3
+
+### Minor Changes
+
+- [#6654](https://github.com/LedgerHQ/ledger-live/pull/6654) [`d9d8902`](https://github.com/LedgerHQ/ledger-live/commit/d9d890272167aec86db19f028b64314f65a9bf14) Thanks [@CremaFR](https://github.com/CremaFR)! - added error management
+
 ## 0.5.0-nightly.2
 
 ### Patch Changes

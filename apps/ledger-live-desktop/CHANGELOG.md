@@ -1,5 +1,25 @@
 # ledger-live-desktop
 
+## 2.79.0-nightly.12
+
+### Patch Changes
+
+- [#6654](https://github.com/LedgerHQ/ledger-live/pull/6654) [`d9d8902`](https://github.com/LedgerHQ/ledger-live/commit/d9d890272167aec86db19f028b64314f65a9bf14) Thanks [@CremaFR](https://github.com/CremaFR)! - support new error management
+
+- [#6695](https://github.com/LedgerHQ/ledger-live/pull/6695) [`601f493`](https://github.com/LedgerHQ/ledger-live/commit/601f493d9e94bd17c8c2ea33cc7bdc5de1d496ad) Thanks [@cksanders](https://github.com/cksanders)! - Fix the Recover Restore Onboarding source & enable stax.
+
+- [#6671](https://github.com/LedgerHQ/ledger-live/pull/6671) [`66a4172`](https://github.com/LedgerHQ/ledger-live/commit/66a4172f5b52b479400500b5d0d78c6ba6b18757) Thanks [@RamyEB](https://github.com/RamyEB)! - Fix ui cta card on discover
+
+- Updated dependencies [[`f87990f`](https://github.com/LedgerHQ/ledger-live/commit/f87990ff29e0a7db6f9ff34e10bce1ff99289b35)]:
+  - @ledgerhq/live-common@34.1.0-nightly.9
+  - @ledgerhq/coin-framework@0.11.4-nightly.4
+  - @ledgerhq/coin-bitcoin@0.4.0-nightly.14
+  - @ledgerhq/coin-evm@1.1.0-nightly.4
+  - @ledgerhq/live-countervalues@0.1.4-nightly.4
+  - @ledgerhq/live-countervalues-react@0.1.4-nightly.4
+  - @ledgerhq/live-nft@0.3.1-nightly.4
+  - @ledgerhq/live-nft-react@0.3.1-nightly.4
+
 ## 2.79.0-nightly.11
 
 ### Patch Changes

@@ -1,5 +1,12 @@
 # @ledgerhq/coin-near
 
+## 0.3.12-nightly.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@0.11.4-nightly.4
+
 ## 0.3.12-nightly.3
 
 ### Patch Changes

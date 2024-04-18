@@ -1,5 +1,22 @@
 # live-mobile
 
+## 3.43.0-nightly.11
+
+### Patch Changes
+
+- [#6690](https://github.com/LedgerHQ/ledger-live/pull/6690) [`8dbb76b`](https://github.com/LedgerHQ/ledger-live/commit/8dbb76b888a66b7cd345523939ff8ee857e04412) Thanks [@RamyEB](https://github.com/RamyEB)! - fix untranslated cta
+
+- [#6675](https://github.com/LedgerHQ/ledger-live/pull/6675) [`f87990f`](https://github.com/LedgerHQ/ledger-live/commit/f87990ff29e0a7db6f9ff34e10bce1ff99289b35) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Fix infinit loop bug in LLM
+
+- Updated dependencies [[`f87990f`](https://github.com/LedgerHQ/ledger-live/commit/f87990ff29e0a7db6f9ff34e10bce1ff99289b35)]:
+  - @ledgerhq/live-common@34.1.0-nightly.9
+  - @ledgerhq/coin-framework@0.11.4-nightly.4
+  - @ledgerhq/coin-evm@1.1.0-nightly.4
+  - @ledgerhq/live-countervalues@0.1.4-nightly.4
+  - @ledgerhq/live-countervalues-react@0.1.4-nightly.4
+  - @ledgerhq/live-nft@0.3.1-nightly.4
+  - @ledgerhq/live-nft-react@0.3.1-nightly.4
+
 ## 3.43.0-nightly.10
 
 ### Patch Changes

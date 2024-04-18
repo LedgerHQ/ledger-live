@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 12.1.0-nightly.1
+
+### Minor Changes
+
+- [#6676](https://github.com/LedgerHQ/ledger-live/pull/6676) [`2f2ef00`](https://github.com/LedgerHQ/ledger-live/commit/2f2ef001145469870ac703b6af28fdf8f0d70945) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Adding support for TRC20 exchange importing
+
 ## 12.1.0-nightly.0
 
 ### Minor Changes
