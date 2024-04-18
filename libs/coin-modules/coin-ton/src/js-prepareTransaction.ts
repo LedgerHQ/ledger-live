@@ -1,20 +1,25 @@
+import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { Account } from "@ledgerhq/types-live";
 import { fetchAccountInfo } from "./bridge/bridgeHelpers/api";
 import type { Transaction } from "./types";
-import { getAddress, getSubAccount, getTonEstimatedFees, transactionToHwParams } from "./utils";
+import { getAddress, getTonEstimatedFees, transactionToHwParams } from "./utils";
 
 const prepareTransaction = async (a: Account, t: Transaction): Promise<Transaction> => {
   const accountInfo = await fetchAccountInfo(getAddress(a).address);
-  const fees = await getTonEstimatedFees(
-    a,
-    accountInfo.status === "uninit",
-    transactionToHwParams(t, accountInfo.seqno),
-  );
-  const subAccount = getSubAccount(t, a);
+
+  const subAccount = findSubAccountById(a, t.subAccountId || "");
+  const tokenTransfer = Boolean(subAccount && subAccount.type === "TokenAccount");
+
+  const simpleTx = transactionToHwParams(t, accountInfo.seqno, a);
+  if (tokenTransfer && simpleTx.payload?.type === "jetton-transfer") {
+    simpleTx.payload = undefined;
+  }
+  const fees = await getTonEstimatedFees(a, accountInfo.status === "uninit", simpleTx);
+
   let amount;
   if (t.useAllAmount) {
-    amount = subAccount ? subAccount.spendableBalance : a.spendableBalance.minus(t.fees);
+    amount = subAccount ? subAccount.spendableBalance : a.spendableBalance.minus(fees);
   } else {
     amount = t.amount;
   }

@@ -1,3 +1,4 @@
+import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type {
@@ -10,13 +11,7 @@ import { Observable } from "rxjs";
 import { fetchAccountInfo } from "./bridge/bridgeHelpers/api";
 import type { TonAddress, TonSignature, TonSigner } from "./signer";
 import type { TonOperation, Transaction } from "./types";
-import {
-  getAddress,
-  getLedgerTonPath,
-  getSubAccount,
-  packTransaction,
-  transactionToHwParams,
-} from "./utils";
+import { getAddress, getLedgerTonPath, packTransaction, transactionToHwParams } from "./utils";
 
 /**
  * Sign Transaction with Ledger hardware
@@ -40,14 +35,8 @@ export const buildSignOperation =
         const { address, derivationPath } = getAddress(account);
         const accountInfo = await fetchAccountInfo(address);
 
-        const subAccount = getSubAccount(transaction, account);
-        const tokenTransfer = Boolean(subAccount && subAccount.type === "TokenAccount");
+        const tonTx = transactionToHwParams(transaction, accountInfo.seqno, account);
 
-        const tonTx = transactionToHwParams(
-          transaction,
-          accountInfo.seqno,
-          tokenTransfer && subAccount ? subAccount : undefined,
-        );
         const ledgerPath = getLedgerTonPath(derivationPath);
 
         o.next({ type: "device-signature-requested" });
@@ -93,17 +82,17 @@ const buildOptimisticOperation = (
   address: string,
   hash: string,
 ): TonOperation => {
-  const { recipient, amount, fees, comment, useAllAmount } = transaction;
+  const { recipient, amount, fees, comment, useAllAmount, subAccountId } = transaction;
   const { id: accountId } = account;
 
-  const subAccount = getSubAccount(transaction, account);
+  const subAccount = findSubAccountById(account, subAccountId || "");
   const tokenTransfer = subAccount?.type === "TokenAccount";
 
   const value = tokenTransfer ? fees : amount.plus(fees);
 
   const op: TonOperation = {
-    id: hash,
-    hash,
+    id: "",
+    hash: "",
     type: "OUT",
     senders: [address],
     recipients: [recipient],
@@ -120,14 +109,13 @@ const buildOptimisticOperation = (
       comment: comment,
     },
   };
-
   if (tokenTransfer && subAccount) {
     op.subOperations = [
       {
-        id: encodeOperationId(subAccount.id, hash, "OUT"),
-        hash,
+        id: encodeOperationId(subAccount.id, "", "OUT"),
+        hash: "",
         type: "OUT",
-        value: useAllAmount ? subAccount.balance : transaction.amount,
+        value: useAllAmount ? subAccount.balance : amount,
         fee: fees,
         blockHash: null,
         blockHeight: null,
