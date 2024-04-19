@@ -369,7 +369,14 @@
         "description" : "まだスワップを行っていないか、Ledger Liveがリセットされています。"
       },
       "export" : "エクスポート処理",
-      "exporting" : "エクスポートしています..."
+      "exporting" : "エクスポートしています...",
+      "status" : {
+        "pending" : "Pending",
+        "onhold" : "Onhold",
+        "expired" : "Expired",
+        "finished" : "Finished",
+        "refunded" : "Refunded"
+      }
     },
     "exchangeDrawer" : {
       "title" : "取引を確認",
@@ -1297,27 +1304,33 @@
   "postOnboarding" : {
     "postOnboardingScreen" : {
       "title" : "次に、{{productName}}を使用して... ",
-      "titleCompleted" : "準備完了！\n引き続きウォレットの使用をお楽しみください。",
-      "exploreCTA" : "ウォレットを探索"
+      "titleCompleted" : "You're all set !\nKeep going and explore your portfolio.",
+      "exploreCTA" : "Explore my portfolio"
     },
     "postOnboardingContent" : {
       "skipLink" : "後で行う"
     },
     "postOnboardingBanner" : {
       "title" : "{{productName}}の次のステップは？",
-      "description" : "Infinity NFTを獲得したり、ロック画面をカスタマイズしたり、\n他の取引所から資産を転送したりできます。",
-      "link" : "次のステップを見る"
+      "description" : "Transfer your assets from any exchange or wallet, buy crypto, customize its lock screen, or subscribe to Ledger Recover.",
+      "link" : "次のステップを見る",
+      "dismiss" : "Maybe later"
     },
     "actions" : {
       "buyCrypto" : {
         "title" : "暗号資産を購入する",
-        "description" : "500種類以上のコインと、購入プロバイダーによる見積もりから、お好みに合わせて選択できます。",
+        "description" : "Choose from 500+ coins and the best quotes, tailored to your preferences.",
         "actionCompletedPopupLabel" : "購入済み暗号資産"
       },
       "assetsTransfer" : {
         "title" : "資産をLedgerに転送する",
-        "description" : "Coinbaseやその他の取引所、またはウォレットから資産を簡単に転送できます。",
+        "description" : "From any exchange or wallet, directly to your Ledger.",
         "actionCompletedPopupLabel" : "転送済み資産"
+      },
+      "recover" : {
+        "title" : "Subscribe to Ledger Recover",
+        "description" : "Restore access to your wallet without needing your Secret Recovery Phrase.",
+        "actionCompletedPopupLabel" : "Successfully subscribed to Ledger Recover"
       }
     }
   },
@@ -1465,13 +1478,20 @@
       },
       "missingData" : {
         "gainers" : {
-          "title" : "上位50資産で過去24時間に上昇したものはありません",
+          "title" : "上位{{count}}資産で過去{{trend}}に上昇したものはありません",
           "description" : "上位敗者を表示するか、後でまたご確認ください"
         },
         "losers" : {
-          "title" : "上位50資産で過去24時間に下落したものはありません",
+          "title" : "上位{{count}}資産で過去{{trend}}に下落したものはありません",
           "description" : "上位勝者を表示するか、後でまたご確認ください"
         }
+      },
+      "trend" : {
+        "day" : "24時間",
+        "week" : "7日間",
+        "month" : "30日間",
+        "year" : "年",
+        "all" : "年"
       }
     }
   },
@@ -3941,6 +3961,32 @@
       "userId" : "ユーザーID",
       "debugApps" : "デバッグアプリを許可する",
       "debugAppsDesc" : "デバッグとしてタグ付けされたプラットフォームアプリの表示と実行を許可します。",
+      "debugReactQuery" : "ReactQueryのデバッグを許可する",
+      "debugReactQueryDesc" : "ReactQueryデバッグコンソールを表示し、開くことを許可します。",
+      "debugSpamNft" : {
+        "debugNFTSpamReport" : "Allow NFT Spam Report (Beta)",
+        "debugNFTSpamReportDesc" : "Display a form to report an NFT as spam or to stop it being displayed as spam",
+        "report" : "Report",
+        "contractAddress" : "Contract Address",
+        "contractAddressDesc" : "contract_address of the NFT reported, or the contract itself",
+        "chainId" : "Chain ID",
+        "chainIdDesc" : "chain_id (e.g., ethereum) of the NFT or contract reported",
+        "collectionId" : "Collection ID",
+        "collectionIdDesc" : "SimpleHash collection id of the NFT reported",
+        "tokenId" : "Token ID",
+        "tokenIdDesc" : "token_id of the NFT reported",
+        "eventType" : "Event Type",
+        "eventTypeDesc" : "Type of report you want to make",
+        "success" : "The report was sent successfully. It may take between 5 and 10 minutes for it to take effect.",
+        "error" : "An error occurred while sending the report. Please try again later.",
+        "reportType" : {
+          "title" : "What would you like to report?",
+          "desc" : "Select the type of report you want to make",
+          "individual" : "Spam report for an individual NFT",
+          "contract" : "Spam report for a contract",
+          "collection" : "Spam report for a collection"
+        }
+      },
       "experimentalApps" : "試験的なアプリを許可する",
       "experimentalAppsDesc" : "試験的とタグ付けされたプラットフォームアプリの表示と実行を許可する",
       "catalogUrl" : "カタログアプリプロバイダーを設定",
@@ -4067,9 +4113,13 @@
           "description" : "Ledger Liveで使用される全ストーリーをテストする",
           "longDesc" : "これは、アプリで使用されるStorylyのストーリーをチームが検証するためにそのまま提供されるツールです。"
         },
-        "testPostonboarding" : {
-          "title" : "ポストオンボーディングをテストする",
-          "description" : "すべてのポストオンボーディング機能をテストする"
+        "testStaxPostonboarding" : {
+          "title" : "Test Stax Post Onboarding",
+          "description" : "Test all stax post onboarding features"
+        },
+        "testEuropaPostonboarding" : {
+          "title" : "Test Europa Post Onboarding",
+          "description" : "Test all europa post onboarding features"
         },
         "1559DeactivateGate" : {
           "title" : "EIP1559最低優先手数料ゲートを無効にする",
@@ -5382,7 +5432,7 @@
       "description" : "金額と手数料を算出できません"
     },
     "NotEnoughBalance" : {
-      "title" : "申し訳ありませんが、ネットワーク手数料を含む残高が不足しています。数量を調整するか、残高を確認してください。",
+      "title" : "Sorry, insufficient balance including network fees. Adjust amount or verify balance.",
       "description" : "アカウントに十分な資金があることを確認してください。"
     },
     "NotEnoughBalanceBecauseDestinationNotCreated" : {
@@ -5436,6 +5486,10 @@
     "SatStackDescriptorNotImported" : {
       "title" : "アカウントがフルノードによってスキャンされていません。",
       "description" : "このデバイスのアカウントがスキャンされるように、フルノードを設定してください。ポートフォリオに追加する前に、フルノードでこのアカウントのブロックチェーンをスキャンする必要があります。"
+    },
+    "SwapRateExpiredError" : {
+      "title" : "レートの有効期限切れ",
+      "description" : "レートの有効期限が切れたため、取引のトランザクションを完了できませんでした。レートを更新してスワップを再試行してください。"
     },
     "SwapGenericAPIError" : {
       "title" : "問題が発生しました。",
@@ -6037,7 +6091,7 @@
     },
     "postOnboarding" : {
       "title" : "ロック画面をカスタマイズ",
-      "description" : "Ledger Staxのロック画面として設定するNFTまたは写真を選択する。",
+      "description" : "Choose any digital art or picture to set as your {{productName}}'s lock screen.",
       "actionCompletedPopupLabel" : "デバイスがパーソナライズされました"
     },
     "customImageSet" : "ロック画面がカスタマイズされました",
