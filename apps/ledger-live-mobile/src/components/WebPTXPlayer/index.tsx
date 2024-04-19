@@ -13,13 +13,9 @@ import { Flex, Icon, Text } from "@ledgerhq/native-ui";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
-import {
-  DEFAULT_MULTIBUY_APP_ID,
-  INTERNAL_APP_IDS,
-  BUY_SELL_UI_APP_ID,
-} from "@ledgerhq/live-common/wallet-api/constants";
+import { INTERNAL_APP_IDS } from "@ledgerhq/live-common/wallet-api/constants";
+import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds";
 import { safeUrl } from "@ledgerhq/live-common/wallet-api/helpers";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
@@ -53,10 +49,7 @@ function BackToInternalDomain({
     useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
   const [buttonText, setButtonText] = useState("");
 
-  const buySellUiFlag = useFeature("buySellUi");
-  const buySellAppIds = buySellUiFlag?.params?.manifestId
-    ? [buySellUiFlag.params.manifestId, DEFAULT_MULTIBUY_APP_ID, BUY_SELL_UI_APP_ID]
-    : [DEFAULT_MULTIBUY_APP_ID, BUY_SELL_UI_APP_ID];
+  const internalAppIds = useInternalAppIds() || INTERNAL_APP_IDS;
 
   useEffect(() => {
     (async () => {
@@ -84,7 +77,7 @@ function BackToInternalDomain({
           referrer: "isExternal",
         },
       });
-    } else if (buySellAppIds.includes(manifest.id) && lastMatchingURL && webviewURL) {
+    } else if (internalAppIds.includes(manifest.id) && lastMatchingURL && webviewURL) {
       const currentHostname = new URL(webviewURL).hostname;
       const url = new URL(lastMatchingURL);
       const urlParams = new URLSearchParams(url.searchParams);
@@ -130,9 +123,10 @@ export const WebPTXPlayer = ({ manifest, inputs, disableHeader }: Props) => {
   const lastMatchingURL = useRef<string | null>(null);
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
+  const internalAppIds = useInternalAppIds();
 
   const isInternalApp = useMemo(() => {
-    if (!INTERNAL_APP_IDS.includes(manifest.id)) {
+    if (!internalAppIds.includes(manifest.id)) {
       return false;
     }
 
@@ -144,7 +138,7 @@ export const WebPTXPlayer = ({ manifest, inputs, disableHeader }: Props) => {
     const currentHostname = new URL(webviewState.url).hostname;
 
     return manifestHostname === currentHostname;
-  }, [manifest.id, manifest.url, webviewState.url]);
+  }, [internalAppIds, manifest.id, manifest.url, webviewState.url]);
 
   const navigation =
     useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
