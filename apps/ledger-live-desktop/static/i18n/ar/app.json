@@ -369,7 +369,14 @@
         "description" : "إما أنك لم تقم بأي مبادلات بعد، أو تمت إعادة تعيين Ledger Live في هذه الأثناء."
       },
       "export" : "تصدير العمليات",
-      "exporting" : "جاري التصدير..."
+      "exporting" : "جاري التصدير...",
+      "status" : {
+        "pending" : "Pending",
+        "onhold" : "Onhold",
+        "expired" : "Expired",
+        "finished" : "Finished",
+        "refunded" : "Refunded"
+      }
     },
     "exchangeDrawer" : {
       "title" : "قم بتأكيد عملية التداول الخاصة بك.",
@@ -1297,27 +1304,33 @@
   "postOnboarding" : {
     "postOnboardingScreen" : {
       "title" : "قريباً، استخدم {{productName}}\nالخاص بك من أجل... ",
-      "titleCompleted" : "أنت مُستعد الآن!\nتابع واستكشف محفظتك.",
-      "exploreCTA" : "استكشاف المحفظة"
+      "titleCompleted" : "You're all set !\nKeep going and explore your portfolio.",
+      "exploreCTA" : "Explore my portfolio"
     },
     "postOnboardingContent" : {
       "skipLink" : "سأقوم بذلك في وقت لاحق"
     },
     "postOnboardingBanner" : {
       "title" : "ما التالي بالنسبة لـ {{productName}} الخاص بك؟",
-      "description" : "قم بالمطالبة برمز Infinity غير القابل للاستبدال، أو قم بتخصيص شاشة القَفل الخاصة به،\n و قم بتحويل أصولك من منصات تداول أخرى.",
-      "link" : "تعرف على التالي"
+      "description" : "Transfer your assets from any exchange or wallet, buy crypto, customize its lock screen, or subscribe to Ledger Recover.",
+      "link" : "تعرف على التالي",
+      "dismiss" : "Maybe later"
     },
     "actions" : {
       "buyCrypto" : {
         "title" : "شراء الأصول المشفرة",
-        "description" : "اختر من بين أكثر من 500 عملة وأفضل عروض الأسعار من مزودي الشراء، الملائمين لتفضيلاتك.",
+        "description" : "Choose from 500+ coins and the best quotes, tailored to your preferences.",
         "actionCompletedPopupLabel" : "الأصول المشفرة التي تم شراؤها"
       },
       "assetsTransfer" : {
         "title" : "قم بتحويل أصولك إلى Ledger",
-        "description" : "قم بتحويل الأصول بسهولة من كوينباس (Coinbase) أو أي منصة تداول أخرى أو محفظة.",
+        "description" : "From any exchange or wallet, directly to your Ledger.",
         "actionCompletedPopupLabel" : "تم تحويل الأصول"
+      },
+      "recover" : {
+        "title" : "Subscribe to Ledger Recover",
+        "description" : "Restore access to your wallet without needing your Secret Recovery Phrase.",
+        "actionCompletedPopupLabel" : "Successfully subscribed to Ledger Recover"
       }
     }
   },
@@ -1465,13 +1478,20 @@
       },
       "missingData" : {
         "gainers" : {
-          "title" : "ليس هناك أصول بين أعلى 50 حققت مكاسب خلال آخر 24 ساعة",
+          "title" : "No assets among the top {{count}} experienced gains in the last {{trend}}",
           "description" : "فكِّر في عرض أعلى الخاسرين أو عُد مرةً أخرى لاحقاً"
         },
         "losers" : {
-          "title" : "ليس هناك أصول بين أعلى 50 حققت خسائر خلال آخر 24 ساعة",
+          "title" : "No assets among the top {{count}} experienced losses in the last {{trend}}",
           "description" : "فكِّر في عرض أعلى الرابحين أو عُد مرةً أخرى لاحقاً"
         }
+      },
+      "trend" : {
+        "day" : "24 hours",
+        "week" : "7 days",
+        "month" : "30 days",
+        "year" : "سنة",
+        "all" : "سنة"
       }
     }
   },
@@ -3941,6 +3961,32 @@
       "userId" : "مُعرّف المستخدم",
       "debugApps" : "السماح لتطبيقات تصحيح الأخطاء",
       "debugAppsDesc" : "عرض تطبيقات المنصة لتصحيح الأخطاء والسماح بفتحها.",
+      "debugReactQuery" : "السماح بتصحيح أخطاء ReactQuery",
+      "debugReactQueryDesc" : "عرض والسماح بفتح وحدة تحكم تصحيح أخطاء ReactQuery.",
+      "debugSpamNft" : {
+        "debugNFTSpamReport" : "Allow NFT Spam Report (Beta)",
+        "debugNFTSpamReportDesc" : "Display a form to report an NFT as spam or to stop it being displayed as spam",
+        "report" : "Report",
+        "contractAddress" : "Contract Address",
+        "contractAddressDesc" : "contract_address of the NFT reported, or the contract itself",
+        "chainId" : "Chain ID",
+        "chainIdDesc" : "chain_id (e.g., ethereum) of the NFT or contract reported",
+        "collectionId" : "Collection ID",
+        "collectionIdDesc" : "SimpleHash collection id of the NFT reported",
+        "tokenId" : "Token ID",
+        "tokenIdDesc" : "token_id of the NFT reported",
+        "eventType" : "Event Type",
+        "eventTypeDesc" : "Type of report you want to make",
+        "success" : "The report was sent successfully. It may take between 5 and 10 minutes for it to take effect.",
+        "error" : "An error occurred while sending the report. Please try again later.",
+        "reportType" : {
+          "title" : "What would you like to report?",
+          "desc" : "Select the type of report you want to make",
+          "individual" : "Spam report for an individual NFT",
+          "contract" : "Spam report for a contract",
+          "collection" : "Spam report for a collection"
+        }
+      },
       "experimentalApps" : "السماح بالتطبيقات التجريبية",
       "experimentalAppsDesc" : "عرض تطبيقات المنصة التجريبية والسماح بفتحها.",
       "catalogUrl" : "تعيين مزود تطبيقات الكتالوج",
@@ -4067,9 +4113,13 @@
           "description" : "اختبر جميع القصص المستخدمة في Ledger Live",
           "longDesc" : "هذه أداة تُقدم كما هي للفريق للتحقق من قصص storyly المُستخدَمة في التطبيق."
         },
-        "testPostonboarding" : {
-          "title" : "اختبر ما بعد التهيئة (post onboarding)",
-          "description" : "اختبر جميع ميزات ما بعد التهيئة (post onboarding)"
+        "testStaxPostonboarding" : {
+          "title" : "Test Stax Post Onboarding",
+          "description" : "Test all stax post onboarding features"
+        },
+        "testEuropaPostonboarding" : {
+          "title" : "Test Europa Post Onboarding",
+          "description" : "Test all europa post onboarding features"
         },
         "1559DeactivateGate" : {
           "title" : "إلغاء تنشيط بوابة EIP1559 للحد الأدنى لرسوم الأولوية",
@@ -5382,7 +5432,7 @@
       "description" : "من المستحيل حساب المبلغ والرسوم"
     },
     "NotEnoughBalance" : {
-      "title" : "عذراً، الرصيد غير كافٍ شاملاً رسوم الشبكة. عدّل المبلغ أو تحقق من الرصيد",
+      "title" : "Sorry, insufficient balance including network fees. Adjust amount or verify balance.",
       "description" : "يرجى التأكد من أن الحساب به أموال كافية."
     },
     "NotEnoughBalanceBecauseDestinationNotCreated" : {
@@ -5436,6 +5486,10 @@
     "SatStackDescriptorNotImported" : {
       "title" : "لم يتم فحص الحساب بواسطة العقدة الكاملة",
       "description" : "يرجى تكوين العقدة الكاملة الخاصة بك للبحث عن الحسابات المرتبطة بهذا الجهاز. يجب أن تقوم العقدة الكاملة الخاصة بك أولاً بالبحث عن هذا الحساب في سلسلة الكتل (blockchain) قبل أن تتمكن من إضافته إلى محفظتك الاستثمارية."
+    },
+    "SwapRateExpiredError" : {
+      "title" : "انتهت صلاحية المعدَّل",
+      "description" : "تعذر إكمال عملية التداول لأن المعدَّل انتهت صلاحيته. يُرجى تحديث المُعدلات ومحاولة إجراء مبادلتك مجدداً."
     },
     "SwapGenericAPIError" : {
       "title" : "حدث خطأ ما",
@@ -6037,7 +6091,7 @@
     },
     "postOnboarding" : {
       "title" : "قم بتخصيص شاشة القَفل",
-      "description" : "اختر أي رمز غير قابل للاستبدال أو صورة لتعيينها كشاشة قَفل Ledger Stax الخاص بك.",
+      "description" : "Choose any digital art or picture to set as your {{productName}}'s lock screen.",
       "actionCompletedPopupLabel" : "تم تخصيص الجهاز"
     },
     "customImageSet" : "تم تخصيص شاشة القَفل",
