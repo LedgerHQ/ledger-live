@@ -7,6 +7,7 @@ import { radii } from "~/renderer/styles/theme";
 import IconCross from "~/renderer/icons/Cross";
 import Box from "~/renderer/components/Box";
 import { Link } from "@ledgerhq/react-ui";
+import theme from "@ledgerhq/react-ui/styles/theme";
 
 const IconContainer = styled.div`
   margin-right: 12px;
@@ -116,7 +117,7 @@ const TopBanner = ({
       {right && <RightContainer>{right}</RightContainer>}
       {link && (
         <LinkContainer>
-          <Link href={link.href} style={{ color: "black" }} alwaysUnderline>
+          <Link href={link.href} style={{ color: theme.colors.neutral.c100 }} alwaysUnderline>
             {link.text}
           </Link>
         </LinkContainer>
