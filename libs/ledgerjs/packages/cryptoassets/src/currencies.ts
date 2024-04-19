@@ -2387,8 +2387,54 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         tx: "https://bithomp.com/explorer/$hash",
         address: "https://bithomp.com/explorer/$address",
       },
+      {
+        tx: "https://xrpscan.com/tx/$hash",
+        address: "https://xrpscan.com/account/$address",
+      },
+      {
+        tx: "https://xrplwin.com/tx/$hash",
+        address: "https://xrplwin.com/account/$address",
+      },
     ],
     keywords: ["xrp", "ripple"],
+  },
+  xahau: {
+    type: "CryptoCurrency",
+    id: "xahau",
+    coinType: CoinType.XAHAU,
+    name: "Xahau",
+    managerAppName: "XAH",
+    ticker: "XAH",
+    scheme: "ripple",
+    color: "#0E0143",
+    units: [
+      {
+        name: "XAH",
+        code: "XAH",
+        magnitude: 6,
+      },
+      {
+        name: "drop",
+        code: "drop",
+        magnitude: 0,
+      },
+    ],
+    family: "ripple",
+    explorerViews: [
+      {
+        tx: "https://xahauexplorer.com/explorer/$hash",
+        address: "https://xahauexplorer.com/explorer/$address",
+      },
+      {
+        tx: "https://xahau.xrplwin.com/tx/$hash",
+        address: "https://xahau.xrplwin.com/account/$address",
+      },
+      {
+        tx: "https://xahscan.com/tx/$hash",
+        address: "https://xahscan.com/account/$address",
+      },
+    ],
+    keywords: ["xah", "xahau"],
   },
   rise: {
     type: "CryptoCurrency",

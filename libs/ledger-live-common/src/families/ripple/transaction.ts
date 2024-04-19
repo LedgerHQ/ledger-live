@@ -10,6 +10,9 @@ import {
 import type { Account } from "@ledgerhq/types-live";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
+
+// TODO: Pick different RPC endpoint if on another XRPL Protocol based chain
+
 export const formatTransaction = (
   { amount, recipient, fee, tag, useAllAmount }: Transaction,
   account: Account,
@@ -43,6 +46,7 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     // FIXME remove this field. this is not good.. we're dereferencing here. we should instead store an index (to lookup in currency.units on UI)
     networkInfo: networkInfo && {
       family: networkInfo.family,
+      networkId: networkInfo?.networkId || 0,
       serverFee: new BigNumber(networkInfo.serverFee),
       baseReserve: new BigNumber(networkInfo.baseReserve),
     },
@@ -61,6 +65,7 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
     networkInfo: networkInfo && {
       family: networkInfo.family,
       serverFee: networkInfo.serverFee.toString(),
+      networkId: networkInfo?.networkId || 0,
       baseReserve: networkInfo.baseReserve.toString(),
     },
   };

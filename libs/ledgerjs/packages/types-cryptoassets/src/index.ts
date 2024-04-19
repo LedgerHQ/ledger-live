@@ -91,6 +91,7 @@ export type CryptoCurrencyId =
   | "quicksilver"
   | "ravencoin"
   | "ripple"
+  | "xahau"
   | "rise"
   | "reosc"
   | "resistance"

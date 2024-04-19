@@ -11,6 +11,7 @@ type Resolver = (
 ) => Promise<string>;
 const all = {
   ripple,
+  xahau: ripple, // Alias, same codec, same protocol, different network
   tron,
 };
 

@@ -54,6 +54,7 @@ setSupportedCurrencies([
   "polkadot",
   "solana",
   "ripple",
+  "xahau",
   "litecoin",
   "polygon",
   "bitcoin_cash",

@@ -11,6 +11,7 @@ export interface TxXRPL {
   tx: {
     TransactionType: string;
     Fee: string;
+    NetworkID?: number;
     Account: string;
     Destination: string;
     DestinationTag?: number;
@@ -18,6 +19,7 @@ export interface TxXRPL {
     Sequence: number;
     date: number;
     inLedger: number;
+    ctid?: string;
     hash: string;
   };
 }

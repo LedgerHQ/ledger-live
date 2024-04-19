@@ -97,6 +97,11 @@ const envDefinitions = {
     def: "https://xrplcluster.com/ledgerlive",
     desc: "XRP Ledger full history open JSON-RPC endpoint",
   },
+  API_XAHAU_RPC: {
+    parser: stringParser,
+    def: "https://xahau.org/?r=ledgerlive",
+    desc: "XAHAU full history open WebSocket/JSON-RPC endpoint",
+  },
   API_FILECOIN_ENDPOINT: {
     parser: stringParser,
     def: "https://filecoin.coin.ledger.com",

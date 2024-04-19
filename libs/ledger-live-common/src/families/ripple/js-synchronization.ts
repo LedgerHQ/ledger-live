@@ -1,11 +1,18 @@
 import BigNumber from "bignumber.js";
 import { getAccountInfo, getServerInfo, getTransactions } from "./api";
-import { GetAccountShape, makeScanAccounts, makeSync, mergeOps } from "../../bridge/jsHelpers";
+import { AccountShapeInfo, GetAccountShape, makeScanAccounts, makeSync, mergeOps } from "../../bridge/jsHelpers";
 import { encodeOperationId } from "../../operation";
 import { Account, Operation } from "@ledgerhq/types-live";
 import { encodeAccountId } from "../../account";
 import { NEW_ACCOUNT_ERROR_MESSAGE } from "./bridge/js";
+import { getEnv } from "@ledgerhq/live-env";
 import { TxXRPL } from "./types.api";
+
+export const getEndpoint = (info: AccountShapeInfo | string) => {
+  return (typeof info === 'string' ? info : info.currency.id).toUpperCase() === 'XAHAU'
+    ? getEnv('API_XAHAU_RPC')
+    : getEnv('API_RIPPLE_RPC')
+}
 
 const txToOperation =
   (accountId: string, address: string) =>
@@ -67,7 +74,7 @@ const getAccountShape: GetAccountShape = async (info): Promise<Partial<Account>>
     xpubOrAddress: address,
     derivationMode,
   });
-  const accountInfo = await getAccountInfo(address);
+  const accountInfo = await getAccountInfo(address, undefined, getEndpoint(info));
 
   if (!accountInfo || accountInfo.error === NEW_ACCOUNT_ERROR_MESSAGE) {
     return {
@@ -81,7 +88,7 @@ const getAccountShape: GetAccountShape = async (info): Promise<Partial<Account>>
     };
   }
 
-  const serverInfo = await getServerInfo();
+  const serverInfo = await getServerInfo(getEndpoint(info));
 
   const oldOperations = initialAccount?.operations || [];
   const startAt = oldOperations.length ? (oldOperations[0].blockHeight || 0) + 1 : 0;
@@ -99,7 +106,7 @@ const getAccountShape: GetAccountShape = async (info): Promise<Partial<Account>>
         minLedgerVersion,
       ),
       ledger_index_max: maxLedgerVersion,
-    })) || [];
+    }, getEndpoint(info))) || [];
 
   const newOperations = filterOperations(newTransactions, accountId, address);
 
