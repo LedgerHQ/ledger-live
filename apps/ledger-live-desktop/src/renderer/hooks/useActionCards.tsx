@@ -6,11 +6,14 @@ import * as braze from "@braze/web-sdk";
 import { setActionCards } from "~/renderer/actions/dynamicContent";
 import { openURL } from "~/renderer/linking";
 import { track } from "../analytics/segment";
+import { trackingEnabledSelector } from "../reducers/settings";
+import { setDismissedContentCards } from "../actions/settings";
 
 const useActionCards = () => {
   const dispatch = useDispatch();
   const [cachedContentCards, setCachedContentCards] = useState(braze.getCachedContentCards().cards);
   const actionCards = useSelector(actionContentCardSelector);
+  const isTrackedUser = useSelector(trackingEnabledSelector);
 
   useEffect(() => {
     setCachedContentCards(braze.getCachedContentCards().cards);
@@ -21,7 +24,7 @@ const useActionCards = () => {
 
   const onImpression = (cardId: string) => {
     const currentCard = findCard(cardId);
-    currentCard && braze.logContentCardImpressions([currentCard]);
+    isTrackedUser && currentCard && braze.logContentCardImpressions([currentCard]);
   };
 
   const onDismiss = (cardId: string) => {
@@ -29,7 +32,10 @@ const useActionCards = () => {
     const actionCard = findActionCard(cardId);
 
     if (currentCard) {
-      braze.logCardDismissal(currentCard);
+      isTrackedUser
+        ? braze.logCardDismissal(currentCard)
+        : currentCard.id &&
+          dispatch(setDismissedContentCards({ id: currentCard.id, timestamp: Date.now() }));
       setCachedContentCards(cachedContentCards.filter(n => n.id !== currentCard.id));
       dispatch(setActionCards(actionCards.filter(n => n.id !== currentCard.id)));
     }
@@ -48,7 +54,7 @@ const useActionCards = () => {
     const actionCard = findActionCard(cardId);
 
     if (currentCard) {
-      braze.logContentCardClick(currentCard);
+      isTrackedUser && braze.logContentCardClick(currentCard);
       link && openURL(link);
     }
     if (actionCard) {
