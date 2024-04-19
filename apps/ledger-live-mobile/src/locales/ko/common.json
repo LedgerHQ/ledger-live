@@ -94,6 +94,7 @@
     "comingSoon" : "곧 출시 예정",
     "restart" : "재시작",
     "loadMore" : "더 보기",
+    "selectAccount" : "계정 선택",
     "patterns" : {
       "id" : "ID {{ value }}",
       "times" : "x{{ value }}"
@@ -340,12 +341,12 @@
       "description" : "다시 시도해 주세요. 문제가 지속될 경우, 아래 버튼을 이용해 로그를 저장하고 Ledger 지원 부서로 보내주세요."
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "Ledger Stax에서 잠금 화면 사진이 삭제되었습니다",
+      "title" : "{{productName}}에서 잠금 화면 사진이 삭제되었습니다",
       "description" : "적합한 이미지가 아니라면 다른 이미지로 다시 시도해볼 수 있습니다.",
       "primaryCTA" : "다른 사진을 업로드하세요"
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "Ledger Stax에서 잠금 화면 사진 로드가 취소되었습니다",
+      "title" : "{{productName}}에서 잠금 화면 사진 로딩이 취소되었습니다",
       "description" : "적합한 이미지가 아니라면 다른 이미지로 다시 시도해볼 수 있습니다.",
       "primaryCTA" : "다른 사진을 업로드하세요"
     },
@@ -484,7 +485,7 @@
       "description" : "계정에 EGLD를 전송하여 트랜잭션 수수료를 지불하세요."
     },
     "NotEnoughBalance" : {
-      "title" : "죄송하지만 자금이 부족합니다",
+      "title" : "Sorry, insufficient balance including network fees. Adjust amount or verify balance.",
       "description" : "계정에 자금이 충분한지 확인해 주세요."
     },
     "NoSuchAppOnProvider" : {
@@ -911,6 +912,10 @@
     "FirmwareNotRecognized" : {
       "title" : "유효하지 않은 공급자",
       "description" : "\"My Ledger 공급자\" 설정을 변경해야 합니다. 이를 변경하려면 Ledger Live \"설정\"을 열고 \"실험 기능\"을 선택한 다음 다른 공급자를 선택합니다."
+    },
+    "SequenceNumberError" : {
+      "title" : "시퀀스 번호 오류",
+      "description" : "창을 닫고 나중에 다시 시도하세요"
     }
   },
   "crash" : {
@@ -928,6 +933,10 @@
     "noConnectionError" : {
       "title" : "연결 없음",
       "description" : "인터넷에 액세스할 수 없습니다. 연결을 확인하고 다시 시도하세요."
+    },
+    "noAccounts" : {
+      "title" : "이 앱에 액세스하려면 계정이 필요합니다.",
+      "add" : "계정 추가"
     }
   },
   "location" : {
@@ -1248,6 +1257,9 @@
       "referralProgram" : {
         "title" : "친구 추천",
         "desc" : "친구가 Ledger를 구매하면 두 명 다 $20의 BTC를 받습니다."
+      },
+      "filter" : {
+        "all" : "전체"
       }
     },
     "comingSoon" : "곧 출시 예정",
@@ -1962,9 +1974,8 @@
   "earlySecurityCheck" : {
     "title" : "정품 확인 및\nOS 업데이트 확인",
     "idle" : {
-      "description" : "이를 통해 보유하신 Ledger Stax가 공식 Ledger 제품인지 여부를 확인합니다.",
       "learnMore" : "정품 확인 자세히 알아보기",
-      "checkCta" : "Ledger Stax 점검"
+      "checkCta" : "{{ productName }} 확인하기"
     },
     "completed" : {
       "continueCta" : "설정 계속하기"
@@ -1987,7 +1998,7 @@
       }
     },
     "genuineCheckNonGenuineDrawer" : {
-      "title" : "이 Ledger Stax는 정품 확인에 실패했습니다.",
+      "title" : " {{ productName }}의 정품 확인에 실패했습니다.",
       "description" : "이 {{productName}} 장치는 사용하기에 안전합니다.\nLedger 지원 부서로 문의하세요",
       "supportCta" : "Ledger 지원 부서에 하세요"
     },
@@ -2035,12 +2046,12 @@
       "refused" : {
         "title" : "OS 버전 {{firmwareVersion}} 사용 가능",
         "description" : "이 업데이트를 수행하여 최신 보안 및 기능 개선 혜택을 누리세요.",
-        "updateCta" : "Ledger Stax 업데이트",
+        "updateCta" : "{{ productName }} 업데이트",
         "skipCta" : "업데이트 건너뛰기"
       },
       "inactive" : {
         "title" : "OS 업데이트 확인",
-        "description" : "이를 통해 사용 중인 Ledger Stax 운영 시스템이 최신 상태인지 확인합니다. "
+        "description" : "이를 통해 사용 중인 {{productName}} 운영 시스템이 최신 상태인지 확인합니다. "
       }
     },
     "firmwareUpdateAvailableDrawer" : {
@@ -2142,21 +2153,6 @@
       "restoreChoiceRecoverTitle" : "Ledger Recover를 이용한 복구",
       "restoreChoiceRecoverDescription" : "Ledger Recover를 구독하는 경우 구독 서비스에 로그인하여 비밀 복구 문구의 백업 복구 프로세스를 시작하세요."
     },
-    "softwareChecksSteps" : {
-      "title" : "하드웨어 및 소프트웨어 점검",
-      "description" : "장치에 최신 보안 기능이 있고 사용하기에 안전한지 확인하세요.",
-      "doneTitle" : "{{productName}}는 정품이며 최신 상태입니다",
-      "genuineCheckRequestDrawer" : {
-        "iconText" : "정품 확인",
-        "title" : "본 점검을 통해 귀하의 Ledger Stax가 공식 Ledger 제품임을 확인합니다.",
-        "checkCta" : "정품 확인 시작하기"
-      },
-      "updateAvailableDrawer" : {
-        "title" : "새로운 소프트웨어를 찾았습니다.",
-        "description" : "최신 보안 기능에 액세스하려면 {{productName}}을(를) 업데이트하는 것이 좋습니다.",
-        "updateCta" : "업데이트"
-      }
-    },
     "appsStep" : {
       "title" : "{{productName}}에 앱 설치하기"
     },
@@ -2178,15 +2174,7 @@
     "discover" : "탐색",
     "nanoX" : "Nano X",
     "market" : "마켓",
-    "earn" : "수익",
-    "learn" : "알아보기"
-  },
-  "learn" : {
-    "pageTitle" : "알아보기",
-    "sectionShows" : "쇼",
-    "sectionVideo" : "동영상",
-    "sectionPodcast" : "팟캐스트",
-    "sectionArticles" : "기사"
+    "earn" : "수익"
   },
   "portfolio" : {
     "totalBalance" : "총 잔액",
@@ -2267,7 +2255,7 @@
     "description" : "Ledger에 직접 암호화폐를 추가하거나 Ledger Live 데스크탑에서 가져올 수 있습니다.",
     "add" : {
       "title" : "Ledger를 통해",
-      "description" : "Ledger를 통해 자산 생성 또는 가져오기"
+      "description" : "Ledger를 통해 내 계정 생성 또는 가져오기"
     },
     "import" : {
       "title" : "데스크탑에서 가져오기",
@@ -2513,10 +2501,6 @@
       "currency" : {
         "title" : "통화"
       },
-      "endpointConfig" : {
-        "title" : "노드(Node)",
-        "desc" : "사용할 API 노드"
-      },
       "delete" : {
         "title" : "포트폴리오에서 계정을 제거하세요",
         "desc" : "저장된 데이터가 제거됩니다.",
@@ -2666,6 +2650,7 @@
     "moreAssets" : "더 추가하기"
   },
   "help" : {
+    "chatbot" : "Ledger 챗봇",
     "gettingStarted" : {
       "title" : "시작하기",
       "desc" : "여기에서 시작하세요"
@@ -2842,7 +2827,7 @@
       },
       "largeMover" : {
         "title" : "가격 변동폭이 큰 자산",
-        "desc" : "BTC 및 ETH의 중요한 가격 변동에 대한 알림을 보내드립니다."
+        "desc" : "BTC, ETH, SOL, ADA, XRP를 보유하고 있다면 중요한 가격 변동에 대한 알림을 보내드립니다."
       },
       "transactionsAlerts" : {
         "title" : "트랜잭션 알림(베타)",
@@ -3887,7 +3872,7 @@
     "allowAppPermissionSubtitleToken" : "나의 {{token}} 토큰 관리",
     "allowManagerPermission" : "Ledger와 보안 연결을 허용",
     "allowRenaming" : "{{productName}}의 이름 변경을 허용하세요",
-    "allowRemoveCustomLockscreen" : "Ledger Stax에서 이미지 삭제 확인",
+    "allowRemoveCustomLockscreen" : "{{productName}}에서 이미지 삭제 확인",
     "allowSecureConnection" : "Ledger와 보안 연결을 허용",
     "loading" : "로딩...",
     "turnOnAndUnlockDevice" : "장치를 켜고 잠금을 해제하세요",
@@ -4268,8 +4253,8 @@
     "viewUpdateChangelog" : "업데이트 변경 로그 보기",
     "waitForFirmwareUpdate" : "장치에서 펌웨어 업데이트가 완료될 때까지 기다리세요.",
     "waitForInstallationToFinish" : "{{deviceName}}에 설치를 완료할 때까지 기다려주세요",
-    "staxBatteryLow" : "Ledger Stax 배터리 부족으로 업데이트 불가",
-    "staxBatteryLowDescription" : "OS 업데이트를 시작하려면 최소 {{lowBatteryPercentage}}%의 충전이 필요하거나 Ledger Stax가 충전 중이어야 합니다.",
+    "batteryLow" : "{{productName}} 배터리 부족으로 업데이트 불가",
+    "batteryLowDescription" : "OS 업데이트를 시작하려면 배터리 잔량이 최소 {{lowBatteryPercentage}}% 이거나 {{productName}} 장치가 충전 중이어야 합니다.",
     "updateCancelled" : "{{deviceName}}에서 OS 업데이트 설치가 취소되었습니다",
     "updateCancelledDescription" : "실수로 거절한 경우, 업데이트를 다시 시작하세요.",
     "updateNotYetComplete" : "OS 업데이트가 진행 중입니다",
@@ -6367,80 +6352,61 @@
     "commitRequested" : "마음에 드시나요?\n그러면 저장하세요!",
     "confirmPicture" : "{{productName}}에서 확인",
     "landingPage" : {
-      "title" : "디지털 아트나 사진을 선택하세요.\nLedger Stax를 원하는 대로 꾸미세요.\n자신만의 것으로 만들어 보세요.",
+      "title" : "디지털 아트나 사진을 선택하고\n원하는 대로 {{productName}} 장치를 꾸며보세요.\n오직 나만의 장치를 만들어 보세요.",
       "choosePicture" : "사진 선택"
     },
     "confirmCrop" : "크롭한 이미지를 확인하세요",
     "confirmContrast" : "대비를 확인하세요",
-    "nftEntryPointButtonLabel" : "Ledger Stax 잠금화면 사진으로 설정하세요",
+    "nftEntryPointButtonLabel" : "잠금 화면 사진으로 설정하기",
     "customImage" : "커스텀 사진",
     "doThisLater" : "다음에 결정하기",
     "preview" : {
       "title" : "미리보기",
       "loading" : "미리보기 로드 중",
       "setPicture" : "잠금화면으로 설정하세요",
-      "editPicture" : "사진 편집"
+      "editPicture" : "사진 편집",
+      "pickDeviceModel" : "장치 선택하기"
     },
     "nftGallery" : {
       "title" : "내 NFT"
     }
   },
-  "claimNft" : {
-    "welcomePage" : {
-      "title" : "지구상에서 가장 안전한 NFT 마켓플레이스에 무료로 액세스하세요",
-      "description" : {
-        "title" : "Ledger Infinity 패스의 혜택은 다음과 같습니다:",
-        "1" : "최신 NFT 드롭 선점권",
-        "2" : "가장 안전한 NFT 마켓플레이스",
-        "3" : "무료 NFT 신청 가능"
-      },
-      "claimButton" : "Ledger Market 패스 신청",
-      "backButton" : "이미 Market 패스를 신청했습니다"
-    },
-    "qrScan" : {
-      "title" : "Ledger Market 패스의 QR 코드를 스캔하세요",
-      "description" : {
-        "1" : "특별 Ledger Market 패스는 Ledger Stax 구성품 박스안에 있습니다.\n\n패스 뒷면에 있는 QR코드를 프레임 안에 오게 해주세요. 조명이 환한 곳에서 단순하고 밝은 배경을 사용해 주세요."
-      }
-    }
-  },
   "postOnboarding" : {
     "hub" : {
-      "title" : "다음으로 {{productName}}를 사용해 다음을 수행하세요.",
-      "allDoneTitle" : "이상입니다!",
+      "title" : "다음으로 {{productName}}를 사용해...",
+      "allDoneTitle" : "You're all set! Keep going and explore your portfolio",
       "skip" : "나중에 할께요",
-      "viewWallet" : "내 지갑 보기"
+      "viewWallet" : "Explore my portfolio"
     },
     "entryPointCard" : {
       "title" : "{{productName}}의 다음 단계는 무엇인가요?",
-      "description" : "Infinity NFT를 신청하거나 잠금화면을 나만의 취향으로 꾸미거나 다른 거래소의 자산을 이체해보세요.",
+      "description" : "Transfer your assets from any exchange or wallet, buy crypto, customize its lock screen, or subscribe to Ledger Recover.",
       "buttonLabel" : "다음 단계를 확인하세요"
     },
     "actions" : {
-      "customImage" : {
-        "title" : "잠금 화면 사진을 설정하세요",
-        "titleCompleted" : "잠금 화면 사진 설정",
-        "description" : "잠금 화면으로 설정할 디지털 아트나 사진을 선택하세요.",
-        "popupLabel" : "잠금화면을 설정하세요"
-      },
-      "claimNft" : {
-        "title" : "Infinity NFT를 신청하세요",
-        "titleCompleted" : "Infinity NFT 신청 완료",
-        "description" : "이 NFT를 통해 NFT 마켓플레이스인 [ Ledger ] Market에 액세스할 수 있습니다.",
-        "popupLabel" : "NFT 신청 완료",
-        "tagLabel" : "기프트"
-      },
       "assetsTransfer" : {
         "title" : "자산을 Ledger로 이체하세요",
         "titleCompleted" : "Ledger로 자산 이체 완료",
-        "description" : "코인베이스나 기타 거래소, 또는 지갑에서 자산을 쉽게 전송하세요.",
+        "description" : "From any exchange or wallet, directly to your Ledger.",
         "popupLabel" : "자산 이체 완료"
       },
       "buyCrypto" : {
         "title" : "암호화폐 구매",
-        "titleCompleted" : "Ledger로 자산 이체 완료",
-        "description" : "500가지 이상의 코인과 다양한 구매 서비스 제공업체의 견적을 살펴보고 내 선호에 맞게 선택하세요.",
+        "titleCompleted" : "Crypto bought",
+        "description" : "Choose from 500+ coins and the best quotes, tailored to your preferences.",
         "popupLabel" : "구매한 암호화폐"
+      },
+      "customImage" : {
+        "title" : "잠금화면을 취향대로 꾸며보세요",
+        "titleCompleted" : "잠금화면 꾸미기 완료",
+        "description" : "Choose any digital art or picture to set as your {{productName}}'s lock screen.",
+        "popupLabel" : "Lock screen customized successfully"
+      },
+      "recover" : {
+        "title" : "Subscribe to Ledger Recover",
+        "titleCompleted" : "Subscribed to Ledger Recover",
+        "description" : "Restore access to your wallet without needing your Secret Recovery Phrase.",
+        "popupLabel" : "Successfully subscribed to Ledger Recover"
       }
     }
   },
