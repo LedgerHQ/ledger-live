@@ -20,14 +20,14 @@ import {
 import { clearExplorerAppendix, getLogs, setBlock } from "../indexer";
 import { killAnvil, spawnAnvil } from "../docker";
 
-const scenarioSendTransaction: ScenarioTransaction<Partial<EvmTransaction>> = {
+const scenarioSendTransaction: ScenarioTransaction<EvmTransaction> = {
   name: "Send ethereum",
   amount: new BigNumber(100),
   recipient: "0x6bfD74C0996F269Bcece59191EFf667b3dFD73b9",
 };
 
 // use function createTransaction
-const scenarioUSDCTransaction: ScenarioTransaction<Partial<EvmTransaction>> = {
+const scenarioUSDCTransaction: ScenarioTransaction<EvmTransaction> = {
   name: "Send USDC",
   amount: new BigNumber(100),
   recipient: "0x6bfD74C0996F269Bcece59191EFf667b3dFD73b9",
@@ -35,34 +35,35 @@ const scenarioUSDCTransaction: ScenarioTransaction<Partial<EvmTransaction>> = {
     "js:2:ethereum:0x3313797c7B45F34c56Bdedc0179992A4d435AF25:",
     USDC_ON_ETHEREUM,
   ),
+  expect: account => {
+    console.log(account);
+  },
 };
 
-const scenarioERC721Transaction: ScenarioTransaction<Partial<EvmTransaction & EvmNftTransaction>> =
-  {
-    name: "Send NFT",
-    recipient: "0x6bfD74C0996F269Bcece59191EFf667b3dFD73b9",
-    mode: "erc721",
-    nft: {
-      tokenId: "3368",
-      contract: "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
-      quantity: new BigNumber(1),
-      collectionName: "Bored Ape",
-    },
-  };
+const scenarioERC721Transaction: ScenarioTransaction<EvmTransaction & EvmNftTransaction> = {
+  name: "Send NFT",
+  recipient: "0x6bfD74C0996F269Bcece59191EFf667b3dFD73b9",
+  mode: "erc721",
+  nft: {
+    tokenId: "3368",
+    contract: "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
+    quantity: new BigNumber(1),
+    collectionName: "Bored Ape",
+  },
+};
 
-const scenarioERC1155Transaction: ScenarioTransaction<Partial<EvmTransaction & EvmNftTransaction>> =
-  {
-    name: "Send ERC1155",
-    recipient: "0x6bfD74C0996F269Bcece59191EFf667b3dFD73b9",
-    mode: "erc1155",
-    nft: {
-      tokenId: "951",
-      collectionName: "Clone X",
-      // EIP55 checksum of 0x348fc118bcc65a92dc033a951af153d14d945312
-      contract: "0x348FC118bcC65a92dC033A951aF153d14D945312",
-      quantity: new BigNumber(2),
-    },
-  };
+const scenarioERC1155Transaction: ScenarioTransaction<EvmTransaction & EvmNftTransaction> = {
+  name: "Send ERC1155",
+  recipient: "0x6bfD74C0996F269Bcece59191EFf667b3dFD73b9",
+  mode: "erc1155",
+  nft: {
+    tokenId: "951",
+    collectionName: "Clone X",
+    // EIP55 checksum of 0x348fc118bcc65a92dc033a951af153d14d945312
+    contract: "0x348FC118bcC65a92dC033A951aF153d14D945312",
+    quantity: new BigNumber(2),
+  },
+};
 
 const defaultNanoApp = { firmware: "2.2.3" as const, version: "1.10.4" as const };
 
@@ -186,6 +187,9 @@ export const scenarioEthereum: Scenario<EvmTransaction> = {
     await getLogs();
 
     return { currencyBridge, accountBridge, account: scenarioAccount, onSignerConfirmation };
+  },
+  beforeAll: account => {
+    expect(account.nfts?.length).toBe(2);
   },
   transactions: [
     scenarioSendTransaction,

@@ -9,7 +9,7 @@ import { AssertionError } from "assert";
 import chalk from "chalk";
 import { first, firstValueFrom, map, reduce } from "rxjs";
 
-export type ScenarioTransaction<T> = T & {
+export type ScenarioTransaction<T extends TransactionCommon> = Partial<T> & {
   name: string;
   expect?: (account: Account) => void;
 };
@@ -24,10 +24,11 @@ export type Scenario<T extends TransactionCommon> = {
     retryInterval?: number;
     onSignerConfirmation?: (e?: SignOperationEvent) => Awaited<void>;
   }>;
-  transactions: ScenarioTransaction<Partial<T>>[];
-  beforeAll?: () => Awaited<void>;
-  afterAll?: () => Awaited<void>;
-  afterEach?: () => Awaited<void>;
+  transactions: ScenarioTransaction<T>[];
+  beforeAll?: (account: Account) => Awaited<void>;
+  afterAll?: (account: Account) => Awaited<void>;
+  beforeEach?: (account: Account) => Awaited<void>;
+  afterEach?: (account: Account) => Awaited<void>;
   teardown?: () => void;
 };
 
@@ -36,9 +37,6 @@ export async function executeScenario<T extends TransactionCommon>(scenario: Sce
     await scenario.setup();
 
   console.log("Setup completed ✓");
-
-  await scenario.beforeAll?.();
-  console.log("BeforeAll completed ✓");
 
   console.log("\n");
   console.log(
@@ -59,6 +57,9 @@ export async function executeScenario<T extends TransactionCommon>(scenario: Sce
   );
   console.log("Synchronization completed ✓");
 
+  await scenario.beforeAll?.(scenarioAccount);
+  console.log("BeforeAll completed ✓");
+
   console.log("\n\n");
   console.log(
     chalk.bgCyan.black.bold(" ✧ "),
@@ -75,6 +76,7 @@ export async function executeScenario<T extends TransactionCommon>(scenario: Sce
     console.log("\n");
     console.log(chalk.cyan("Transaction:", chalk.bold(testTransaction.name), "◌"));
 
+    scenario.beforeEach?.(scenarioAccount);
     if (scenario.transactions.indexOf(testTransaction) > 0) {
       scenarioAccount = await firstValueFrom(
         accountBridge
@@ -161,13 +163,13 @@ export async function executeScenario<T extends TransactionCommon>(scenario: Sce
     };
 
     expcectHandler();
-    scenario.afterEach?.();
+    scenario.afterEach?.(scenarioAccount);
     console.log(chalk.green("Transaction:", chalk.bold(testTransaction.name), "completed  ✓⃝"));
   }
 
   console.log("\n");
 
-  await scenario.afterAll?.();
+  await scenario.afterAll?.(scenarioAccount);
   await scenario.teardown?.();
 
   console.log(

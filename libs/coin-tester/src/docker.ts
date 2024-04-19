@@ -35,7 +35,7 @@ export const spawnSigner = async (
 
   await compose.upOne("speculos", {
     cwd,
-    // log: true,
+    log: true,
     env: process.env,
   });
 
@@ -84,7 +84,7 @@ export const killSpeculos = async () => {
   console.log("Stopping speculos...");
   await compose.down({
     cwd,
-    // log: true,
+    log: true,
     env: process.env,
   });
 };
