@@ -23,7 +23,6 @@ import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import initSwap from "@ledgerhq/live-common/exchange/swap/initSwap";
 import { Device } from "@ledgerhq/types-devices";
 import { BigNumber } from "bignumber.js";
-import { CompleteExchangeError } from "@ledgerhq/live-common/exchange/error";
 
 const transactionAction = transactionCreateAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
 const initAction = initSwapCreateAction(
