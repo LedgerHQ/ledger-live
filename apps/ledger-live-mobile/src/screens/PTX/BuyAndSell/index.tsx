@@ -21,6 +21,7 @@ import { ScreenName } from "~/const";
 import { accountsSelector } from "~/reducers/accounts";
 import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds";
+import { INTERNAL_APP_IDS } from "@ledgerhq/live-common/wallet-api/constants";
 
 export type Props = StackNavigatorProps<
   ExchangeNavigatorParamList,
@@ -41,7 +42,7 @@ export function BuyAndSellScreen({ route }: Props) {
   const { state: remoteLiveAppState } = useRemoteLiveAppContext();
   const { locale } = useLocale();
   const manifest = localManifest || remoteManifest;
-  const internalAppIds = useInternalAppIds();
+  const internalAppIds = useInternalAppIds() || INTERNAL_APP_IDS;
 
   /**
    * Pass correct account ID
