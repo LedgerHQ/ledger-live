@@ -1,7 +1,7 @@
 import React, { useEffect, lazy, Suspense } from "react";
 import styled from "styled-components";
 import { ipcRenderer } from "electron";
-import { Redirect, Route, Switch, useHistory } from "react-router-dom";
+import { Redirect, Route, Switch, useHistory, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import TrackAppStart from "~/renderer/components/TrackAppStart";
 import { LiveApp } from "~/renderer/screens/platform";
@@ -37,7 +37,6 @@ import Drawer from "~/renderer/drawers/Drawer";
 import UpdateBanner from "~/renderer/components/Updater/Banner";
 import FirmwareUpdateBanner from "~/renderer/components/FirmwareUpdateBanner";
 import VaultSignerBanner from "~/renderer/components/VaultSignerBanner";
-import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
 import { updateIdentify } from "./analytics/segment";
 import { useFeature, FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import { enableListAppsV2 } from "@ledgerhq/live-common/device/use-cases/listAppsUseCase";
@@ -48,6 +47,8 @@ import {
 import { Flex, InfiniteLoader } from "@ledgerhq/react-ui";
 import useAccountsWithFundsListener from "@ledgerhq/live-common/hooks/useAccountsWithFundsListener";
 import { accountsSelector } from "./reducers/accounts";
+import { useRecoverRestoreOnboarding } from "~/renderer/hooks/useRecoverRestoreOnboarding";
+import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
 
 const PlatformCatalog = lazy(() => import("~/renderer/screens/platform"));
 const Dashboard = lazy(() => import("~/renderer/screens/dashboard"));
@@ -176,6 +177,8 @@ const NightlyLayerR = () => {
 const NightlyLayer = React.memo(NightlyLayerR);
 
 export default function Default() {
+  const location = useLocation();
+  const { pathname } = location;
   const history = useHistory();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const accounts = useSelector(accountsSelector);
@@ -186,19 +189,27 @@ export default function Default() {
   useUSBTroubleshooting();
   useFetchCurrencyAll();
   useFetchCurrencyFrom();
+  useRecoverRestoreOnboarding();
 
   const listAppsV2 = useFeature("listAppsV2minor1");
+
   useEffect(() => {
     if (!listAppsV2) return;
     enableListAppsV2(listAppsV2.enabled);
   }, [listAppsV2]);
 
   useEffect(() => {
-    if (!hasCompletedOnboarding) {
+    const userIsOnboardingOrSettingUp =
+      pathname.includes("onboarding") ||
+      pathname.includes("recover") ||
+      pathname.includes("settings");
+
+    if (!userIsOnboardingOrSettingUp && !hasCompletedOnboarding) {
       history.push("/onboarding");
     }
     updateIdentify();
-  }, [history, hasCompletedOnboarding]);
+  }, [history, pathname, hasCompletedOnboarding]);
+
   return (
     <>
       <TriggerAppReady />
@@ -252,8 +263,14 @@ export default function Default() {
                   <USBTroubleshooting onboarding={!hasCompletedOnboarding} />
                 </Suspense>
               </Route>
+
               {!hasCompletedOnboarding ? (
-                <Route path="/settings" render={withSuspense(WelcomeScreenSettings)} />
+                <Switch>
+                  <Route path="/settings" render={withSuspense(WelcomeScreenSettings)} />
+                  <FeatureToggle featureId="protectServicesDesktop">
+                    <Route path="/recover/:appId" render={withSuspense(RecoverPlayer)} />
+                  </FeatureToggle>
+                </Switch>
               ) : (
                 <Route>
                   <Switch>
