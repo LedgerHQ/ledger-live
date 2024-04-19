@@ -10,11 +10,13 @@ import type {
 export type NetworkInfo = {
   family: "ripple";
   serverFee: BigNumber;
+  networkId: number;
   baseReserve: BigNumber;
 };
 export type NetworkInfoRaw = {
   family: "ripple";
   serverFee: string;
+  networkId: number;
   baseReserve: string;
 };
 export type Transaction = TransactionCommon & {

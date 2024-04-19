@@ -31,7 +31,7 @@ import type {
   SignOperationFnSignature,
 } from "@ledgerhq/types-live";
 
-import { scanAccounts, sync } from "../js-synchronization";
+import { scanAccounts, sync, getEndpoint } from "../js-synchronization";
 import type { NetworkInfo, Transaction } from "../types";
 
 export const NEW_ACCOUNT_ERROR_MESSAGE = "actNotFound";
@@ -48,7 +48,7 @@ const validateTag = tag => {
 };
 
 const getNextValidSequence = async (account: Account) => {
-  const accInfo = await getAccountInfo(account.freshAddress, true);
+  const accInfo = await getAccountInfo(account.freshAddress, true, getEndpoint(account.currency.id));
   return accInfo.account_data.Sequence;
 };
 
@@ -64,6 +64,11 @@ const signOperation: SignOperationFnSignature<Transaction> = ({ account, transac
           try {
             const tag = transaction.tag ? transaction.tag : undefined;
             const nextSequenceNumber = await getNextValidSequence(account);
+            const NetworkID = // XRPL mainnet = 0, other networks may need NetworkID
+              transaction.networkInfo?.networkId || 0 > 1024
+                ? transaction.networkInfo?.networkId
+                : undefined;
+
             const payment = {
               TransactionType: "Payment",
               Account: account.freshAddress,
@@ -71,9 +76,10 @@ const signOperation: SignOperationFnSignature<Transaction> = ({ account, transac
               Destination: transaction.recipient,
               DestinationTag: tag,
               Fee: fee.toString(),
+              NetworkID,
               Flags: 2147483648,
               Sequence: nextSequenceNumber,
-              LastLedgerSequence: (await getLedgerIndex()) + LEDGER_OFFSET,
+              LastLedgerSequence: (await getLedgerIndex(getEndpoint(account.currency.id))) + LEDGER_OFFSET,
             };
             if (tag)
               invariant(
@@ -110,7 +116,9 @@ const signOperation: SignOperationFnSignature<Transaction> = ({ account, transac
               recipients: [transaction.recipient],
               date: new Date(),
               transactionSequenceNumber: nextSequenceNumber,
-              extra: {},
+              extra: {
+                currencyId: account.currency.id
+              },
             };
 
             o.next({
@@ -137,7 +145,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({ account, transac
   );
 
 const broadcast = async ({ signedOperation: { signature, operation } }): Promise<Operation> => {
-  const submittedPayment = await submit(signature);
+  const submittedPayment = await submit(signature, getEndpoint(operation.extra.currencyId));
 
   if (
     submittedPayment.engine_result !== "tesSUCCESS" &&
@@ -159,10 +167,10 @@ function isRecipientValid(recipient: string): boolean {
   }
 }
 
-const recipientIsNew = async (recipient: string): Promise<boolean> => {
+const recipientIsNew = async (recipient: string, account: Account): Promise<boolean> => {
   if (!isRecipientValid(recipient)) return false;
 
-  const info = await getAccountInfo(recipient);
+  const info = await getAccountInfo(recipient, undefined, getEndpoint(account.currency.id));
   if (info.error === NEW_ACCOUNT_ERROR_MESSAGE) {
     return true;
   }
@@ -182,9 +190,9 @@ const remapError = error => {
 
 const cacheRecipientsNew = {};
 
-const cachedRecipientIsNew = (recipient: string) => {
+const cachedRecipientIsNew = (recipient: string, account: Account) => {
   if (recipient in cacheRecipientsNew) return cacheRecipientsNew[recipient];
-  cacheRecipientsNew[recipient] = recipientIsNew(recipient);
+  cacheRecipientsNew[recipient] = recipientIsNew(recipient, account);
   return cacheRecipientsNew[recipient];
 };
 
@@ -209,11 +217,12 @@ const prepareTransaction = async (a: Account, t: Transaction): Promise<Transacti
 
   if (!networkInfo) {
     try {
-      const info = await getServerInfo();
+      const info = await getServerInfo(getEndpoint(a.currency.id));
       const serverFee = parseAPIValue(info.info.validated_ledger.base_fee_xrp.toString());
       networkInfo = {
         family: "ripple",
         serverFee,
+        networkId: info.info?.network_id || 0,
         baseReserve: new BigNumber(0), // NOT USED. will refactor later.
       };
     } catch (e) {
@@ -239,7 +248,7 @@ const getTransactionStatus = async (a: Account, t: Transaction) => {
   const warnings: {
     feeTooHigh?: Error;
   } = {};
-  const r = await getServerInfo();
+  const r = await getServerInfo(getEndpoint(a.currency.id));
   const reserveBaseXRP = parseAPIValue(r.info.validated_ledger.reserve_base_xrp.toString());
   const estimatedFees = new BigNumber(t.fee || 0);
   const totalSpent = new BigNumber(t.amount).plus(estimatedFees);
@@ -263,7 +272,7 @@ const getTransactionStatus = async (a: Account, t: Transaction) => {
     });
   } else if (
     t.recipient &&
-    (await cachedRecipientIsNew(t.recipient)) &&
+    (await cachedRecipientIsNew(t.recipient, a)) &&
     t.amount.lt(reserveBaseXRP)
   ) {
     errors.amount = new NotEnoughBalanceBecauseDestinationNotCreated("", {
@@ -308,7 +317,7 @@ const estimateMaxSpendable = async ({
   transaction,
 }): Promise<BigNumber> => {
   const mainAccount = getMainAccount(account, parentAccount);
-  const r = await getServerInfo();
+  const r = await getServerInfo(getEndpoint(account));
   const reserveBaseXRP = parseAPIValue(r.info.validated_ledger.reserve_base_xrp.toString());
   const t = await prepareTransaction(mainAccount, {
     ...createTransaction(),

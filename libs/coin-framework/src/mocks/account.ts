@@ -170,6 +170,7 @@ const currencyIdApproxMarketPrice: Record<string, number> = {
   bitcoin_gold: 0.00005004,
   litecoin: 0.00011728,
   ripple: 0.000057633,
+  xahau: 0.000057633,
   dogecoin: 4.9e-9,
   dash: 0.0003367,
   peercoin: 0.000226,

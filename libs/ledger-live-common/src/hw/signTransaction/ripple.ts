@@ -1,7 +1,8 @@
-import BinaryCodec from "ripple-binary-codec";
+import { encode } from "xrpl-binary-codec-prerelease";
 import Xrp from "@ledgerhq/hw-app-xrp";
 import Transport from "@ledgerhq/hw-transport";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+
 export default async (
   currency: CryptoCurrency,
   transport: Transport,
@@ -12,7 +13,7 @@ export default async (
   const xrp = new Xrp(transport);
   const { publicKey } = await xrp.getAddress(path);
   tx.SigningPubKey = publicKey.toUpperCase();
-  const rawTxHex = BinaryCodec.encode(tx).toUpperCase();
+  const rawTxHex = encode(tx).toUpperCase();
   tx.TxnSignature = (await xrp.signTransaction(path, rawTxHex)).toUpperCase();
-  return BinaryCodec.encode(tx).toUpperCase();
+  return encode(tx).toUpperCase();
 };

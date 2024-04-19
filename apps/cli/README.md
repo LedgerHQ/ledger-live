@@ -276,7 +276,7 @@ Usage: ledger-live generateTestTransaction # Generate a test for transaction (li
      --nonce <String>         : set a nonce for this transaction
      --data <String>          : set the transaction data to use for signing the ETH transaction
      --fee <String>           : how much fee
-     --tag <Number>           : ripple tag
+     --tag <Number>           : ripple/xahau tag
      --solanaValidator <String>: validator address to delegate to
      --solanaStakeAccount <String>: stake account address to use in the transaction
      --memoType <String>      : stellar memo type

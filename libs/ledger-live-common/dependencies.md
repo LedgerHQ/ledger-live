@@ -99,7 +99,7 @@ yarn upgrade-interactive -i --latest
 | redux                                       | general react helper                                              | monthly                                                              |
 | reselect                                    | general react helper                                              | monthly                                                              |
 | ripemd160                                   | Bitcoin coin integration                                          | monthly                                                              |
-| ripple-binary-codec                         | XRP coin integration                                              | monthly                                                              |
+| xrpl-binary-codec-prerelease                | XRP coin & Xahau (XAH coin) integration                           | monthly                                                              |
 | ripple-bs58check                            | XRP coin integration                                              | monthly                                                              |
 | ripple-lib                                  | XRP coin integration                                              | monthly                                                              |
 | rlp                                         | Ethereum coin integration                                         | monthly                                                              |
