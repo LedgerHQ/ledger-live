@@ -2537,6 +2537,7 @@
     "src/families/cardano/datasets",
     "src/families/cardano/datasets/rawAccount.1.ts",
     "src/families/cardano/datasets/scanAccounts.ts",
+    "src/families/cardano/js-getTransactionStatus.unit.test.ts",
     "src/families/cardano/js-synchronisation.unit.test.ts",
     "src/families/cardano/logic.unit.test.ts",
     "src/families/casper/__snapshots__/bridge.integration.test.ts.snap",
