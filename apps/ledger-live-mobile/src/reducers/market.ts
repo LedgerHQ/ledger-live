@@ -58,7 +58,7 @@ const handlers: ReducerMap<MarketState, MarketStatePayload> = {
 
 // Selectors
 
-export const marketRequestParamsSelector = (state: State) => state.market.marketParams;
+export const marketParamsSelector = (state: State) => state.market.marketParams;
 export const starredMarketCoinsSelector = (state: State) => state.market.starredMarketCoins;
 export const marketFilterByStarredAccountsSelector = (state: State) =>
   state.market.marketFilterByStarredAccounts;

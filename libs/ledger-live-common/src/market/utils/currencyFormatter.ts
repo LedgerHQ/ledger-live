@@ -57,7 +57,7 @@ export const format = (
   currency: RawCurrencyData,
   range: string,
   cryptoCurrenciesList: (CryptoCurrency | TokenCurrency)[],
-) => ({
+): CurrencyData => ({
   id: currency.id,
   name: currency.name,
   image: typeof currency.image === "string" ? currency.image : currency.image?.thumb,

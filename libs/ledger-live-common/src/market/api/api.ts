@@ -262,7 +262,7 @@ export async function fetchCurrencyData({
     url,
   });
 
-  return data[0];
+  return data[0] as RawCurrencyData;
 }
 
 export async function fetchCurrency({ id }: MarketCurrencyRequestParams): Promise<RawCurrencyData> {

@@ -6,7 +6,7 @@ import { setMarketRequestParams } from "~/actions/market";
 import {
   starredMarketCoinsSelector,
   marketFilterByStarredAccountsSelector,
-  marketRequestParamsSelector,
+  marketParamsSelector,
 } from "~/reducers/market";
 
 export function useMarket() {
@@ -15,7 +15,7 @@ export function useMarket() {
     useMarketDataProvider();
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
   const filterByStarredAccount: boolean = useSelector(marketFilterByStarredAccountsSelector);
-  const marketParams = useSelector(marketRequestParamsSelector);
+  const marketParams = useSelector(marketParamsSelector);
 
   const refresh = useCallback(
     (payload?: MarketListRequestParams) => {

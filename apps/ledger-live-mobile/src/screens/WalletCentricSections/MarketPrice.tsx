@@ -4,16 +4,16 @@ import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { SingleCoinProviderData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import { ScreenName } from "~/const";
 import DeltaVariation from "LLM/features/Market/components/DeltaVariation";
 import Touchable from "~/components/Touchable";
 import { useSettings } from "~/hooks";
+import { CurrencyData } from "@ledgerhq/live-common/market/types";
 
 type Props = {
   currency: CryptoOrTokenCurrency;
-  selectedCoinData: SingleCoinProviderData["selectedCoinData"];
+  selectedCoinData: CurrencyData;
   counterCurrency: string | undefined;
 };
 

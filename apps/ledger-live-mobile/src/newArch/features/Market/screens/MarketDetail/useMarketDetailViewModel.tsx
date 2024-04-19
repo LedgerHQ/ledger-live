@@ -9,11 +9,8 @@ import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/t
 import { MarketNavigatorStackParamList } from "LLM/features/Market/Navigator";
 import { removeStarredMarketCoins, addStarredMarketCoins } from "~/actions/market";
 
-import {
-  useCurrencyChartData,
-  useCurrencyData,
-} from "@ledgerhq/live-common/market/v2/useMarketDataProvider";
-import { useMarket } from "../../hooks/useMarket";
+import { useMarket } from "LLM/features/Market/hooks/useMarket";
+import { useMarketCoinData } from "LLM/features/Market/hooks/useMarketCoinData";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<MarketNavigatorStackParamList, ScreenName.MarketDetail>
@@ -22,30 +19,21 @@ type NavigationProps = BaseComposite<
 function useMarketDetailViewModel({ navigation, route }: NavigationProps) {
   const { params } = route;
   const { currencyId, resetSearchOnUmount } = params;
+
+  const { marketParams, dataCurrency, dataChart, loadingChart, loading, currency } =
+    useMarketCoinData({
+      currencyId,
+    });
+
   const dispatch = useDispatch();
   const { triggerMarketPushNotificationModal } = useNotifications();
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
 
-  const { marketParams, starredMarketCoins, refresh } = useMarket();
+  const { starredMarketCoins, refresh } = useMarket();
 
   const isStarred = starredMarketCoins.includes(currencyId);
 
   const { counterCurrency = "usd", range = "24h" } = marketParams;
-
-  const resCurrencyChartData = useCurrencyChartData({
-    counterCurrency,
-    id: currencyId,
-    range,
-  });
-
-  const { currencyData, currencyInfo } = useCurrencyData({
-    counterCurrency,
-    id: currencyId,
-    range,
-  });
-
-  const currency = useMemo(() => currencyInfo?.data, [currencyInfo]);
-  const isLoadingCurrency = useMemo(() => currencyInfo?.isLoading, [currencyInfo]);
 
   const { name, internalCurrency } = currency || {};
 
@@ -102,10 +90,10 @@ function useMarketDetailViewModel({ navigation, route }: NavigationProps) {
     allAccounts,
     range,
     currency,
-    dataCurrency: currencyData.data,
-    dataChart: resCurrencyChartData.data,
-    loadingChart: resCurrencyChartData.isLoading,
-    loading: currencyData.isLoading || isLoadingCurrency,
+    dataCurrency,
+    dataChart,
+    loadingChart,
+    loading,
     refresh,
     toggleStar,
   };

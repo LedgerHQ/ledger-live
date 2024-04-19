@@ -6,14 +6,14 @@ import { getAnalyticsProperties } from "LLM/features/Market/utils";
 import { setMarketFilterByStarredAccounts, setMarketRequestParams } from "~/actions/market";
 import {
   marketFilterByStarredAccountsSelector,
-  marketRequestParamsSelector,
+  marketParamsSelector,
   starredMarketCoinsSelector,
 } from "~/reducers/market";
 
 function useBottomSectionViewModel() {
   const dispatch = useDispatch();
 
-  const marketParams = useSelector(marketRequestParamsSelector);
+  const marketParams = useSelector(marketParamsSelector);
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
   const filterByStarredAccount: boolean = useSelector(marketFilterByStarredAccountsSelector);
 
