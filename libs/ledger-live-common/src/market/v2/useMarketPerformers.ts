@@ -18,5 +18,6 @@ export const useMarketPerformers = ({
     queryKey: [QUERY_KEY.MarketPerformers, counterCurrency, range, sort],
     queryFn: () => fetchMarketPerformers({ counterCurrency, range, limit, top, sort, supported }),
     refetchInterval: REFETCH_TIME_ONE_MINUTE * Number(refreshRate),
+    staleTime: REFETCH_TIME_ONE_MINUTE * Number(refreshRate),
     select: data => data.map((currency: MarketItemResponse) => formatPerformer(currency)),
   });

@@ -1,5 +1,5 @@
 import network from "@ledgerhq/live-network/network";
-import { SimpleHashResponse } from "./types";
+import { SimpleHashResponse, SimpleHashSpamReportResponse } from "./types";
 import { getEnv } from "@ledgerhq/live-env";
 
 /**
@@ -84,4 +84,50 @@ export function buildFilters(filters: Record<string, string>, opts: Record<strin
     bufferFilters.push(filter);
   }
   return `&filters=${bufferFilters.join(",")}`;
+}
+
+export enum EventType {
+  mark_as_not_spam = "mark_as_not_spam",
+  mark_as_spam = "mark_as_spam",
+}
+
+/**
+ * @contractAddress: The contract address of the NFT reported, or the contract itself.
+ * @chainId: The chain ID (e.g., ethereum) of the NFT or contract reported.
+ * @collectionId: The SimpleHash collection ID of the NFT reported.
+ * @tokenId: The token ID of the NFT reported.
+ * @eventType: The type of event associated with the spam report, which can be one of the following: mark_as_spam or mark_as_not_spam.
+ */
+
+export type NftSpamReportOpts = {
+  contractAddress?: string;
+  chainId?: string;
+  collectionId?: string;
+  tokenId?: string;
+  eventType: EventType;
+};
+/**
+ * Send Spam Report using SimpleHash API.
+ */
+export async function reportSpamNtf(
+  opts: NftSpamReportOpts,
+): Promise<SimpleHashSpamReportResponse> {
+  const url = `${getEnv("SIMPLE_HASH_API_BASE")}/nfts/report/spam`;
+  const { data } = await network<SimpleHashSpamReportResponse>({
+    method: "POST",
+    url,
+    headers: {
+      accept: "application/json",
+      "content-type": "application/json",
+    },
+    data: JSON.stringify({
+      contract_address: opts.contractAddress,
+      chain_id: opts.chainId,
+      token_id: opts.tokenId,
+      collection_id: opts.collectionId,
+      event_type: opts.eventType,
+    }),
+  });
+
+  return data;
 }

@@ -76,7 +76,7 @@ export type CurrencyFeatures = {
   currencyAvalancheCChain: DefaultFeature;
   currencyStacks: DefaultFeature;
   currencyOptimism: DefaultFeature;
-  currencyOptimismGoerli: DefaultFeature;
+  currencyOptimismSepolia: DefaultFeature;
   currencyArbitrum: DefaultFeature;
   currencyArbitrumSepolia: DefaultFeature;
   currencyRsk: DefaultFeature;
@@ -112,7 +112,7 @@ export type CurrencyFeatures = {
   currencyNeonEvm: DefaultFeature;
   currencyLukso: DefaultFeature;
   currencyLinea: DefaultFeature;
-  currencyLineaGoerli: DefaultFeature;
+  currencyLineaTesnet: DefaultFeature;
 };
 
 /**
@@ -173,6 +173,7 @@ export type Features = CurrencyFeatures & {
   supportDeviceStax: Feature_SupportDeviceStax;
   supportDeviceEuropa: Feature_SupportDeviceEuropa;
   lldRefreshMarketData: Feature_LldRefreshMarketData;
+  spamReportNfts: Feature_SpamReportNfts;
 };
 
 /**
@@ -479,7 +480,7 @@ export type Feature_SupportDeviceStax = DefaultFeature;
 export type Feature_SupportDeviceEuropa = DefaultFeature;
 export type Feature_LldChatbotSupport = DefaultFeature;
 export type Feature_LlmChatbotSupport = DefaultFeature;
-
+export type Feature_SpamReportNfts = DefaultFeature;
 /**
  * Utils types.
  */

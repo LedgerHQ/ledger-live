@@ -6,6 +6,7 @@ import Box from "~/renderer/components/Box";
 import { useGetSwapTrackingProperties } from "../../utils/index";
 import { Text } from "@ledgerhq/react-ui";
 import ErrorNoBorder from "~/renderer/icons/ErrorNoBorder";
+import { SwapLiveError } from "@ledgerhq/live-common/exchange/swap/types";
 
 const ContentBox = styled(Box)`
   display: flex;
@@ -42,14 +43,6 @@ const ErrorDescription = styled(Text).attrs({
 })`
   user-select: text;
 `;
-
-export type SwapLiveError = {
-  type?: string;
-  cause: {
-    message?: string;
-    swapCode?: string;
-  };
-};
 
 export default function WebviewErrorDrawer(error?: SwapLiveError) {
   const swapDefaultTrack = useGetSwapTrackingProperties();

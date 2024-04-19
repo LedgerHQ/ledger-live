@@ -36,6 +36,16 @@ export default () => {
         onPress={() => handleInitPostOnboardingHub(DeviceModelId.stax, false)}
       />
       <SettingsRow
+        title="Start (mock) post onboarding for europa"
+        desc="Pressing this should trigger navigation to the post onboarding hub populated with a list of actions."
+        onPress={() => handleInitPostOnboardingHub(DeviceModelId.europa, true)}
+      />
+      <SettingsRow
+        title="Start post onboarding for europa"
+        desc="Pressing this should trigger navigation to the post onboarding hub populated with a list of actions."
+        onPress={() => handleInitPostOnboardingHub(DeviceModelId.europa, false)}
+      />
+      <SettingsRow
         title="Start (mock) post onboarding for nanoX"
         desc="Pressing this should not do anything. (no actions configured for this device)."
         onPress={() => handleInitPostOnboardingHub(DeviceModelId.nanoX, true)}
