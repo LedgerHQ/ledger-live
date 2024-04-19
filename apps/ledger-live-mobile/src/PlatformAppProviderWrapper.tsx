@@ -5,7 +5,7 @@ import { LocalLiveAppProvider } from "@ledgerhq/live-common/platform/providers/L
 import { RampCatalogProvider } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { Platform } from "react-native";
-import { useLocale } from "./context/Locale";
+import { useLocale } from "~/context/Locale";
 
 type PlatformAppProviderWrapperProps = {
   children: ReactNode;

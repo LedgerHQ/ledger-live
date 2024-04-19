@@ -206,8 +206,10 @@ export function SelectUseCase({ setUseCase, setOpenedPedagogyModal }: Props) {
                 onClick={() => {
                   track("Onboarding - Restore With Recover");
 
-                  // An array is used here because we'll have to allow Stax later
-                  if (deviceModelId && [DeviceModelId.nanoX].includes(deviceModelId)) {
+                  if (
+                    deviceModelId &&
+                    [DeviceModelId.nanoX, DeviceModelId.stax].includes(deviceModelId)
+                  ) {
                     setUseCase(UseCase.recover);
                     history.push(`/onboarding/${UseCase.recover}/${ScreenId.pairMyNano}`);
                   } else {

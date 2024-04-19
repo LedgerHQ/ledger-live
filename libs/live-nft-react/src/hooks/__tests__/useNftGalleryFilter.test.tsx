@@ -1,12 +1,12 @@
-import React, { ReactNode } from "react";
 import { BigNumber } from "bignumber.js";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { renderHook, waitFor, act } from "@testing-library/react";
-import { isThresholdValid, useNftGalleryFilter } from "./useNftGalleryFilter";
+import { waitFor, act, renderHook } from "@testing-library/react";
+import { isThresholdValid, useNftGalleryFilter } from "../useNftGalleryFilter";
 import { NFTs } from "@ledgerhq/coin-framework/mocks/fixtures/nfts";
 import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
 import { SimpleHashResponse } from "@ledgerhq/live-nft/api/types";
 import { notifyManager } from "@tanstack/react-query";
+
+import { wrapper } from "../../tools/helperTests";
 
 jest.setTimeout(30000);
 
@@ -70,12 +70,6 @@ describe("useNftGalleryFilter", () => {
   test("fetches multiple page", async () => {
     const addresses = "...";
     const chains = ["ethereum"];
-
-    const queryClient = new QueryClient();
-
-    const wrapper = ({ children }: { children: ReactNode }) => (
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-    );
 
     const { result } = renderHook(
       () =>

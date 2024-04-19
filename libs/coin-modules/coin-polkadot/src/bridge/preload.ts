@@ -80,8 +80,7 @@ const shouldRefreshValidators = (
 export const preload = async (): Promise<PolkadotPreloadData> => {
   await loadPolkadotCrypto();
   await polkadotAPI.getRegistry(); // ensure registry is already in cache.
-  const minimumBondBalance = await polkadotAPI.getMinimumBondBalance().toString();
-
+  const minimumBondBalance = await polkadotAPI.getMinimumBondBalance();
   const currentStakingProgress = await polkadotAPI.getStakingProgress();
   const { validators: previousValidators, staking: previousStakingProgress } =
     getCurrentPolkadotPreloadData();
@@ -106,7 +105,7 @@ export const preload = async (): Promise<PolkadotPreloadData> => {
   return {
     validators,
     staking: currentStakingProgress,
-    minimumBondBalance,
+    minimumBondBalance: minimumBondBalance.toString(),
   };
 };
 

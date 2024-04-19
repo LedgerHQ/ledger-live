@@ -1304,27 +1304,33 @@
   "postOnboarding": {
     "postOnboardingScreen": {
       "title": "Next up, use your\n{{productName}} to... ",
-      "titleCompleted": "You're all set !\nKeep going and explore your wallet.",
-      "exploreCTA": "Explore wallet"
+      "titleCompleted": "You're all set !\nKeep going and explore your portfolio.",
+      "exploreCTA": "Explore my portfolio"
     },
     "postOnboardingContent": {
       "skipLink": "I'll do this later"
     },
     "postOnboardingBanner": {
       "title": "What's next for your {{productName}}?",
-      "description": "Claim the Infinity NFT, customize it's lock screen, or\ntransfer your assets from other exchanges.",
-      "link": "See what's next"
+      "description": "Transfer your assets from any exchange or wallet, buy crypto, customize its lock screen, or subscribe to Ledger Recover.",
+      "link": "See what's next",
+      "dismiss": "Maybe later"
     },
     "actions": {
       "buyCrypto": {
         "title": "Buy Crypto",
-        "description": "Choose from 500+ coins and the best quotes from buy-providers, tailored to your preferences.",
+        "description": "Choose from 500+ coins and the best quotes, tailored to your preferences.",
         "actionCompletedPopupLabel": "Crypto bought"
       },
       "assetsTransfer": {
         "title": "Transfer your assets to Ledger",
-        "description": "Easily transfer assets from Coinbase or any other exchange or wallet.",
+        "description": "From any exchange or wallet, directly to your Ledger.",
         "actionCompletedPopupLabel": "Assets transferred"
+      },
+      "recover": {
+        "title": "Subscribe to Ledger Recover",
+        "description": "Restore access to your wallet without needing your Secret Recovery Phrase.",
+        "actionCompletedPopupLabel": "Successfully subscribed to Ledger Recover"
       }
     }
   },
@@ -3977,6 +3983,30 @@
       "debugAppsDesc": "Display and allow opening debug tagged platform apps.",
       "debugReactQuery": "Allow debug ReactQuery",
       "debugReactQueryDesc": "Display and allow opening debug ReactQuery console.",
+      "debugSpamNft": {
+        "debugNFTSpamReport": "Allow NFT Spam Report (Beta)",
+        "debugNFTSpamReportDesc": "Display a form to report an NFT as spam or to stop it being displayed as spam",
+        "report": "Report",
+        "contractAddress": "Contract Address",
+        "contractAddressDesc": "contract_address of the NFT reported, or the contract itself",
+        "chainId": "Chain ID",
+        "chainIdDesc": "chain_id (e.g., ethereum) of the NFT or contract reported",
+        "collectionId": "Collection ID",
+        "collectionIdDesc": "SimpleHash collection id of the NFT reported",
+        "tokenId": "Token ID",
+        "tokenIdDesc": "token_id of the NFT reported",
+        "eventType": "Event Type",
+        "eventTypeDesc": "Type of report you want to make",
+        "success": "The report was sent successfully. It may take between 5 and 10 minutes for it to take effect.",
+        "error": "An error occurred while sending the report. Please try again later.",
+        "reportType": {
+          "title": "What would you like to report?",
+          "desc": "Select the type of report you want to make",
+          "individual": "Spam report for an individual NFT",
+          "contract": "Spam report for a contract",
+          "collection": "Spam report for a collection"
+        }
+      },
       "experimentalApps": "Allow experimental apps",
       "experimentalAppsDesc": "Display and allow opening experimental tagged platform apps.",
       "catalogUrl": "Set the catalog apps provider",
@@ -4103,9 +4133,13 @@
           "description": "Test all stories used in Ledger Live",
           "longDesc": "This is a tool provided as-is for the team to validate storyly stories used in the app."
         },
-        "testPostonboarding": {
-          "title": "Test Post Onboarding",
-          "description": "Test all post onboarding features"
+        "testStaxPostonboarding": {
+          "title": "Test Stax Post Onboarding",
+          "description": "Test all stax post onboarding features"
+        },
+        "testEuropaPostonboarding": {
+          "title": "Test Europa Post Onboarding",
+          "description": "Test all europa post onboarding features"
         },
         "1559DeactivateGate": {
           "title": "Deactivate EIP1559 minimum priority fee gate",
@@ -6080,7 +6114,7 @@
     },
     "postOnboarding": {
       "title": "Customize the lock screen",
-      "description": "Choose any NFT or picture to set as the lock screen of your Ledger Stax.",
+      "description": "Choose any digital art or picture to set as your {{productName}}'s lock screen.",
       "actionCompletedPopupLabel": "Device personalized"
     },
     "customImageSet": "Lock screen customized",

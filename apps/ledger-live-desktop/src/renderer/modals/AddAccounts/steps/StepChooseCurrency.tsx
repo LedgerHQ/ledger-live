@@ -48,7 +48,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const avaxCChain = useFeature("currencyAvalancheCChain");
   const stacks = useFeature("currencyStacks");
   const optimism = useFeature("currencyOptimism");
-  const optimismGoerli = useFeature("currencyOptimismGoerli");
+  const optimismSepolia = useFeature("currencyOptimismSepolia");
   const arbitrum = useFeature("currencyArbitrum");
   const arbitrumSepolia = useFeature("currencyArbitrumSepolia");
   const rsk = useFeature("currencyRsk");
@@ -74,7 +74,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const neonEvm = useFeature("currencyNeonEvm");
   const lukso = useFeature("currencyLukso");
   const linea = useFeature("currencyLinea");
-  const lineaGoerli = useFeature("currencyLineaGoerli");
+  const lineaSepolia = useFeature("currencyLineaTesnet");
 
   const featureFlaggedCurrencies = useMemo(
     (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
@@ -91,7 +91,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       avalanche_c_chain: avaxCChain,
       stacks,
       optimism,
-      optimism_goerli: optimismGoerli,
+      optimism_sepolia: optimismSepolia,
       arbitrum,
       arbitrum_sepolia: arbitrumSepolia,
       rsk,
@@ -117,7 +117,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       neon_evm: neonEvm,
       lukso,
       linea,
-      linea_goerli: lineaGoerli,
+      linea_sepolia: lineaSepolia,
     }),
     [
       axelar,
@@ -133,7 +133,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       avaxCChain,
       stacks,
       optimism,
-      optimismGoerli,
+      optimismSepolia,
       arbitrum,
       arbitrumSepolia,
       rsk,
@@ -159,7 +159,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       neonEvm,
       lukso,
       linea,
-      lineaGoerli,
+      lineaSepolia,
     ],
   );
 
