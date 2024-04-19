@@ -1,5 +1,23 @@
 # @ledgerhq/coin-evm
 
+## 2.0.0-nightly.5
+
+### Major Changes
+
+- [#6669](https://github.com/LedgerHQ/ledger-live/pull/6669) [`fdb76a7`](https://github.com/LedgerHQ/ledger-live/commit/fdb76a7c3a8459a50b22b3e5a5a3002932805bcd) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Removing support for Goerli & Ropsten networks and their Layer 2 variants (Linea Goerli & Optimism Goerli) and replace them by Linea Sepolia & Optimism Sepolia
+
+### Patch Changes
+
+- [#6684](https://github.com/LedgerHQ/ledger-live/pull/6684) [`96029e1`](https://github.com/LedgerHQ/ledger-live/commit/96029e1396be2f283f0345a59e08009b0a6a96db) Thanks [@CremaFR](https://github.com/CremaFR)! - Allow additional fees when using maxButton
+
+- Updated dependencies [[`fdb76a7`](https://github.com/LedgerHQ/ledger-live/commit/fdb76a7c3a8459a50b22b3e5a5a3002932805bcd), [`fdb76a7`](https://github.com/LedgerHQ/ledger-live/commit/fdb76a7c3a8459a50b22b3e5a5a3002932805bcd), [`cfb97f7`](https://github.com/LedgerHQ/ledger-live/commit/cfb97f7d5c81824815522e8699b7469047b1513a)]:
+  - @ledgerhq/coin-framework@0.12.0-nightly.5
+  - @ledgerhq/cryptoassets@13.0.0-nightly.2
+  - @ledgerhq/live-network@1.2.1-nightly.2
+  - @ledgerhq/live-promise@0.0.4-nightly.0
+  - @ledgerhq/domain-service@1.1.20-nightly.3
+  - @ledgerhq/evm-tools@1.0.18-nightly.3
+
 ## 1.1.0-nightly.4
 
 ### Patch Changes

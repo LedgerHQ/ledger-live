@@ -1,5 +1,15 @@
 # @ledgerhq/types-live
 
+## 6.46.0-nightly.3
+
+### Minor Changes
+
+- [#6646](https://github.com/LedgerHQ/ledger-live/pull/6646) [`b0ebe3a`](https://github.com/LedgerHQ/ledger-live/commit/b0ebe3acea586afbdeddb5877c15bcfc28f43016) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Added europa support to post onboarding
+
+- [#6669](https://github.com/LedgerHQ/ledger-live/pull/6669) [`fdb76a7`](https://github.com/LedgerHQ/ledger-live/commit/fdb76a7c3a8459a50b22b3e5a5a3002932805bcd) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Upading test snapshots & adding types for new testnet currencies and their feature flags
+
+- [#6646](https://github.com/LedgerHQ/ledger-live/pull/6646) [`c930c6e`](https://github.com/LedgerHQ/ledger-live/commit/c930c6e833bb29456e543b47e83de425ae6eeefa) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - postonboarding - added europa support, updated copy, added recover entry point
+
 ## 6.46.0-nightly.2
 
 ### Patch Changes

@@ -1,5 +1,36 @@
 # @ledgerhq/live-common
 
+## 34.1.0-nightly.10
+
+### Minor Changes
+
+- [#6669](https://github.com/LedgerHQ/ledger-live/pull/6669) [`fdb76a7`](https://github.com/LedgerHQ/ledger-live/commit/fdb76a7c3a8459a50b22b3e5a5a3002932805bcd) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Removing support for Ropsten & Goerli networks and adding Sepolia variants
+
+- [#6682](https://github.com/LedgerHQ/ledger-live/pull/6682) [`10df676`](https://github.com/LedgerHQ/ledger-live/commit/10df67625e4affedd143d0e3c574677d6bf1a6e5) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fixed bug regarding invalid data supplied to ledger and added error message for mobile and desktop
+
+### Patch Changes
+
+- [#6711](https://github.com/LedgerHQ/ledger-live/pull/6711) [`417c180`](https://github.com/LedgerHQ/ledger-live/commit/417c180bf2c82dddd5a217139bdb90aaf54ec116) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - Bug moonpay FF
+
+- [#6684](https://github.com/LedgerHQ/ledger-live/pull/6684) [`96029e1`](https://github.com/LedgerHQ/ledger-live/commit/96029e1396be2f283f0345a59e08009b0a6a96db) Thanks [@CremaFR](https://github.com/CremaFR)! - Allow additional fees when using maxButton
+
+- Updated dependencies [[`fdb76a7`](https://github.com/LedgerHQ/ledger-live/commit/fdb76a7c3a8459a50b22b3e5a5a3002932805bcd), [`96029e1`](https://github.com/LedgerHQ/ledger-live/commit/96029e1396be2f283f0345a59e08009b0a6a96db), [`fdb76a7`](https://github.com/LedgerHQ/ledger-live/commit/fdb76a7c3a8459a50b22b3e5a5a3002932805bcd), [`cfb97f7`](https://github.com/LedgerHQ/ledger-live/commit/cfb97f7d5c81824815522e8699b7469047b1513a)]:
+  - @ledgerhq/coin-framework@0.12.0-nightly.5
+  - @ledgerhq/coin-evm@2.0.0-nightly.5
+  - @ledgerhq/cryptoassets@13.0.0-nightly.2
+  - @ledgerhq/live-network@1.2.1-nightly.2
+  - @ledgerhq/live-promise@0.0.4-nightly.0
+  - @ledgerhq/coin-algorand@0.4.1-nightly.5
+  - @ledgerhq/coin-bitcoin@0.4.0-nightly.15
+  - @ledgerhq/coin-near@0.3.12-nightly.5
+  - @ledgerhq/coin-polkadot@0.6.1-nightly.5
+  - @ledgerhq/device-core@0.1.1-nightly.5
+  - @ledgerhq/hw-app-eth@6.35.8-nightly.5
+  - @ledgerhq/live-countervalues@0.1.4-nightly.5
+  - @ledgerhq/live-countervalues-react@0.1.4-nightly.5
+  - @ledgerhq/live-nft@0.3.1-nightly.5
+  - @ledgerhq/hw-app-vet@0.1.7-nightly.3
+
 ## 34.1.0-nightly.9
 
 ### Patch Changes

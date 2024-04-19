@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 13.0.0-nightly.2
+
+### Major Changes
+
+- [#6669](https://github.com/LedgerHQ/ledger-live/pull/6669) [`fdb76a7`](https://github.com/LedgerHQ/ledger-live/commit/fdb76a7c3a8459a50b22b3e5a5a3002932805bcd) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Removing support for Goerli & Ropsten networks and their Layer 2 variants (Linea Goerli & Optimism Goerli) and replace them by Linea Sepolia & Optimism Sepolia
+
 ## 12.1.0-nightly.1
 
 ### Minor Changes

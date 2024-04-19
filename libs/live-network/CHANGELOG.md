@@ -1,5 +1,14 @@
 # @ledgerhq/live-network
 
+## 1.2.1-nightly.2
+
+### Patch Changes
+
+- [#6566](https://github.com/LedgerHQ/ledger-live/pull/6566) [`cfb97f7`](https://github.com/LedgerHQ/ledger-live/commit/cfb97f7d5c81824815522e8699b7469047b1513a) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Prevent unnecessary http retries when 422
+
+- Updated dependencies [[`cfb97f7`](https://github.com/LedgerHQ/ledger-live/commit/cfb97f7d5c81824815522e8699b7469047b1513a)]:
+  - @ledgerhq/live-promise@0.0.4-nightly.0
+
 ## 1.2.1-nightly.1
 
 ### Patch Changes

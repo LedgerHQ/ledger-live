@@ -1,5 +1,21 @@
 # @ledgerhq/live-cli
 
+## 24.1.0-nightly.10
+
+### Minor Changes
+
+- [#6669](https://github.com/LedgerHQ/ledger-live/pull/6669) [`fdb76a7`](https://github.com/LedgerHQ/ledger-live/commit/fdb76a7c3a8459a50b22b3e5a5a3002932805bcd) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Removing support for Ropsten & Goerli networks and adding Sepolia variants
+
+### Patch Changes
+
+- Updated dependencies [[`fdb76a7`](https://github.com/LedgerHQ/ledger-live/commit/fdb76a7c3a8459a50b22b3e5a5a3002932805bcd), [`fdb76a7`](https://github.com/LedgerHQ/ledger-live/commit/fdb76a7c3a8459a50b22b3e5a5a3002932805bcd), [`10df676`](https://github.com/LedgerHQ/ledger-live/commit/10df67625e4affedd143d0e3c574677d6bf1a6e5), [`417c180`](https://github.com/LedgerHQ/ledger-live/commit/417c180bf2c82dddd5a217139bdb90aaf54ec116), [`96029e1`](https://github.com/LedgerHQ/ledger-live/commit/96029e1396be2f283f0345a59e08009b0a6a96db), [`fdb76a7`](https://github.com/LedgerHQ/ledger-live/commit/fdb76a7c3a8459a50b22b3e5a5a3002932805bcd), [`cfb97f7`](https://github.com/LedgerHQ/ledger-live/commit/cfb97f7d5c81824815522e8699b7469047b1513a)]:
+  - @ledgerhq/live-common@34.1.0-nightly.10
+  - @ledgerhq/coin-framework@0.12.0-nightly.5
+  - @ledgerhq/cryptoassets@13.0.0-nightly.2
+  - @ledgerhq/live-network@1.2.1-nightly.2
+  - @ledgerhq/coin-bitcoin@0.4.0-nightly.15
+  - @ledgerhq/live-countervalues@0.1.4-nightly.5
+
 ## 24.0.1-nightly.9
 
 ### Patch Changes
