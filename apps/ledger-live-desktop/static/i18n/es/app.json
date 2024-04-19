@@ -369,7 +369,14 @@
         "description" : "No has hecho ninguna permuta todavía o Ledger Live ha sido restablecido en el interín."
       },
       "export" : "Exportar operaciones",
-      "exporting" : "Exportando..."
+      "exporting" : "Exportando...",
+      "status" : {
+        "pending" : "Pendiente",
+        "onhold" : "Onhold",
+        "expired" : "Expired",
+        "finished" : "Finished",
+        "refunded" : "Refunded"
+      }
     },
     "exchangeDrawer" : {
       "title" : "Confirma tu Exchange",
@@ -1297,27 +1304,33 @@
   "postOnboarding" : {
     "postOnboardingScreen" : {
       "title" : "A continuación, usa tu {{productName}} para... ",
-      "titleCompleted" : "¡Ya está todo!\nYa puedes explorar tu billetera.",
-      "exploreCTA" : "Explorar billetera"
+      "titleCompleted" : "You're all set !\nKeep going and explore your portfolio.",
+      "exploreCTA" : "Explore my portfolio"
     },
     "postOnboardingContent" : {
       "skipLink" : "Lo haré más adelante"
     },
     "postOnboardingBanner" : {
       "title" : "¿Qué es lo próximo que puedes hacer con tu {{productName}}?",
-      "description" : "Reclama el NFT Infinity, personaliza su pantalla de bloqueo o\ntransfiere tus activos desde otros exchanges.",
-      "link" : "Mira lo que puedes hacer ahora"
+      "description" : "Transfer your assets from any exchange or wallet, buy crypto, customize its lock screen, or subscribe to Ledger Recover.",
+      "link" : "Mira lo que puedes hacer ahora",
+      "dismiss" : "Quizás más tarde"
     },
     "actions" : {
       "buyCrypto" : {
         "title" : "Comprar cripto",
-        "description" : "Elige entre más de 500 monedas y las mejores ofertas de proveedores de compras, adaptadas a tus preferencias.",
+        "description" : "Choose from 500+ coins and the best quotes, tailored to your preferences.",
         "actionCompletedPopupLabel" : "Cripto comprada"
       },
       "assetsTransfer" : {
         "title" : "Transferir tus activos al Ledger",
-        "description" : "Transfiere fácilmente activos desde Coinbase o cualquier otro exchange o billetera.",
+        "description" : "From any exchange or wallet, directly to your Ledger.",
         "actionCompletedPopupLabel" : "Activos transferidos"
+      },
+      "recover" : {
+        "title" : "Subscribe to Ledger Recover",
+        "description" : "Restore access to your wallet without needing your Secret Recovery Phrase.",
+        "actionCompletedPopupLabel" : "Successfully subscribed to Ledger Recover"
       }
     }
   },
@@ -1465,13 +1478,20 @@
       },
       "missingData" : {
         "gainers" : {
-          "title" : "No hay ningún activo entre los 50 principales ganadores de las últimas 24 horas",
+          "title" : "No hay ningún activo entre los {{count}} principales ganadores en el último periodo de {{trend}}",
           "description" : "Considera consultar los principales perdedores o vuelve más tarde"
         },
         "losers" : {
-          "title" : "No hay ningún activo entre los 50 principales perdedores de las últimas 24 horas",
+          "title" : "No hay ningún activo entre los {{count}} principales perdedores en el último periodo de {{trend}}",
           "description" : "Considera consultar los principales ganadores o vuelve más tarde"
         }
+      },
+      "trend" : {
+        "day" : "24 horas",
+        "week" : "7 días",
+        "month" : "30 días",
+        "year" : "año",
+        "all" : "año"
       }
     }
   },
@@ -3941,6 +3961,32 @@
       "userId" : "ID del usuario",
       "debugApps" : "Permitir aplicaciones de depuración",
       "debugAppsDesc" : "Mostrar y permitir la utilización de aplicaciones de plataforma etiquetadas como de depuración.",
+      "debugReactQuery" : "Permitir ReactQuery de depuración",
+      "debugReactQueryDesc" : "Mostrar y permitir abrir la consola ReactQuery de depuración.",
+      "debugSpamNft" : {
+        "debugNFTSpamReport" : "Allow NFT Spam Report (Beta)",
+        "debugNFTSpamReportDesc" : "Display a form to report an NFT as spam or to stop it being displayed as spam",
+        "report" : "Report",
+        "contractAddress" : "Dirección del contrato",
+        "contractAddressDesc" : "contract_address of the NFT reported, or the contract itself",
+        "chainId" : "Chain ID",
+        "chainIdDesc" : "chain_id (e.g., ethereum) of the NFT or contract reported",
+        "collectionId" : "Collection ID",
+        "collectionIdDesc" : "SimpleHash collection id of the NFT reported",
+        "tokenId" : "ID de token",
+        "tokenIdDesc" : "token_id of the NFT reported",
+        "eventType" : "Event Type",
+        "eventTypeDesc" : "Type of report you want to make",
+        "success" : "The report was sent successfully. It may take between 5 and 10 minutes for it to take effect.",
+        "error" : "An error occurred while sending the report. Please try again later.",
+        "reportType" : {
+          "title" : "What would you like to report?",
+          "desc" : "Select the type of report you want to make",
+          "individual" : "Spam report for an individual NFT",
+          "contract" : "Spam report for a contract",
+          "collection" : "Spam report for a collection"
+        }
+      },
       "experimentalApps" : "Permitir aplicaciones experimentales",
       "experimentalAppsDesc" : "Mostrar y permitir la utilización de aplicaciones de plataforma etiquetadas como experimentales.",
       "catalogUrl" : "Definir el proveedor del catálogo de aplicaciones",
@@ -4067,9 +4113,13 @@
           "description" : "Probar todas las historias usadas en Ledger Live",
           "longDesc" : "Esta herramienta se proporciona tal cual para que el equipo valide las historias de storyly usadas en la aplicación."
         },
-        "testPostonboarding" : {
-          "title" : "Probar el Post Onboarding",
-          "description" : "Probar todas las funciones de Post Onboarding"
+        "testStaxPostonboarding" : {
+          "title" : "Test Stax Post Onboarding",
+          "description" : "Test all stax post onboarding features"
+        },
+        "testEuropaPostonboarding" : {
+          "title" : "Test Europa Post Onboarding",
+          "description" : "Test all europa post onboarding features"
         },
         "1559DeactivateGate" : {
           "title" : "Desactivar umbral de tarifa de prioridad mínima EIP1559",
@@ -5382,7 +5432,7 @@
       "description" : "No es posible calcular la cantidad y las tarifas"
     },
     "NotEnoughBalance" : {
-      "title" : "Lo sentimos, el saldo es insuficiente con las tarifas de red incluidas. Ajusta el importe o verifica el saldo",
+      "title" : "Sorry, insufficient balance including network fees. Adjust amount or verify balance.",
       "description" : "Asegúrate de que la cuenta tenga fondos suficientes."
     },
     "NotEnoughBalanceBecauseDestinationNotCreated" : {
@@ -5436,6 +5486,10 @@
     "SatStackDescriptorNotImported" : {
       "title" : "Cuenta no escaneada por el nodo completo",
       "description" : "Configura el nodo completo para buscar las cuentas asociadas a este dispositivo. El nodo completo debe buscar esta cuenta primero en la cadena de bloques, antes de agregarla a tu Portfolio."
+    },
+    "SwapRateExpiredError" : {
+      "title" : "Tasa caducada",
+      "description" : "La transacción de intercambio no pudo completarse porque la tasa ha caducado. Actualiza las tasas e intenta la permuta de nuevo."
     },
     "SwapGenericAPIError" : {
       "title" : "Algo ha salido mal",
@@ -6037,7 +6091,7 @@
     },
     "postOnboarding" : {
       "title" : "Personalizar la pantalla de bloqueo",
-      "description" : "Elige el NFT o la imagen que quieres usar como pantalla de bloqueo de tu Ledger Stax.",
+      "description" : "Choose any digital art or picture to set as your {{productName}}'s lock screen.",
       "actionCompletedPopupLabel" : "Dispositivo personalizado"
     },
     "customImageSet" : "Pantalla de bloqueo personalizada",
