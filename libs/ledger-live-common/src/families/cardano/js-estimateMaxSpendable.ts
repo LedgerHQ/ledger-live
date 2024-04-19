@@ -25,13 +25,18 @@ const estimateMaxSpendable = async ({
   parentAccount?: Account;
   transaction?: Transaction;
 }): Promise<BigNumber> => {
+  const mainAccount = getMainAccount(account, parentAccount);
+
+  if ((mainAccount as CardanoAccount).cardanoResources.utxos.length === 0) {
+    return new BigNumber(0);
+  }
+
   if (account.type === "TokenAccount") {
     return account.balance;
   }
 
   const dummyRecipient =
     "addr1qyqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqv2t5am";
-  const a = getMainAccount(account, parentAccount);
   const t: Transaction = {
     ...createTransaction(),
     ...transaction,
@@ -42,7 +47,7 @@ const estimateMaxSpendable = async ({
   };
   let typhonTransaction: TyphonTransaction;
   try {
-    typhonTransaction = await buildTransaction(a as CardanoAccount, t);
+    typhonTransaction = await buildTransaction(mainAccount as CardanoAccount, t);
   } catch (error) {
     log("cardano-error", "Failed to estimate max spendable: " + String(error));
     return new BigNumber(0);

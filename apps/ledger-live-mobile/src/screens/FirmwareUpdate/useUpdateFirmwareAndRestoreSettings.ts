@@ -61,7 +61,7 @@ export const userSolvableErrorClasses: Array<CustomErrorClassType | TransportSta
 export type FirmwareUpdateParams = {
   device: Device;
   deviceInfo: DeviceInfo;
-  updateFirmwareAction?: (args: updateFirmwareActionArgs) => Observable<UpdateFirmwareActionState>;
+  updateFirmwareAction?(args: updateFirmwareActionArgs): Observable<UpdateFirmwareActionState>;
   isBeforeOnboarding?: boolean;
 };
 
@@ -121,7 +121,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     staxFetchImageRequest,
   );
 
-  const { triggerUpdate, updateState: updateActionState } = useUpdateFirmware({
+  const { updateState: updateActionState, triggerUpdate } = useUpdateFirmware({
     deviceId: device?.deviceId ?? "",
     updateFirmwareAction,
   });

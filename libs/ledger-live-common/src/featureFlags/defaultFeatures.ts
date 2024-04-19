@@ -53,7 +53,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyMoonriver: DEFAULT_FEATURE,
   currencyOnomy: DEFAULT_FEATURE,
   currencyOptimism: DEFAULT_FEATURE,
-  currencyOptimismGoerli: DEFAULT_FEATURE,
+  currencyOptimismSepolia: DEFAULT_FEATURE,
   currencyPersistence: DEFAULT_FEATURE,
   currencyPolygonZkEvm: DEFAULT_FEATURE,
   currencyPolygonZkEvmTestnet: DEFAULT_FEATURE,
@@ -71,7 +71,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyCasper: DEFAULT_FEATURE,
   currencyNeonEvm: DEFAULT_FEATURE,
   currencyLinea: DEFAULT_FEATURE,
-  currencyLineaGoerli: DEFAULT_FEATURE,
+  currencyLineaTesnet: DEFAULT_FEATURE,
 };
 
 /**
@@ -178,7 +178,7 @@ export const DEFAULT_FEATURES: Features = {
   },
 
   storyly: {
-    enabled: true,
+    enabled: false,
     params: {
       stories: {
         recoverySeed: {
@@ -430,6 +430,9 @@ export const DEFAULT_FEATURES: Features = {
     enabled: false,
     params: {
       variant: ABTestingVariants.variantA,
+      refreshRate: 2,
+      top: 50,
+      supported: true,
     },
   },
 
@@ -437,6 +440,13 @@ export const DEFAULT_FEATURES: Features = {
   llmChatbotSupport: DEFAULT_FEATURE,
   supportDeviceStax: DEFAULT_FEATURE,
   supportDeviceEuropa: DEFAULT_FEATURE,
+  lldRefreshMarketData: {
+    ...DEFAULT_FEATURE,
+    params: {
+      refreshTime: 3, //nb minutes
+    },
+  },
+  spamReportNfts: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings

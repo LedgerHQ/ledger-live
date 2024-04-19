@@ -9,6 +9,7 @@ import { postOnboardingDeviceModelIdSelector } from "@ledgerhq/live-common/postO
 import { useNavigateToPostOnboardingHubCallback } from "~/logic/postOnboarding/useNavigateToPostOnboardingHubCallback";
 import Touchable from "../Touchable";
 import Button from "../wrappedUi/Button";
+import { track } from "~/analytics";
 
 const PostOnboardingEntryPointCard: React.FC<Record<string, never>> = () => {
   const { t } = useTranslation();
@@ -18,7 +19,12 @@ const PostOnboardingEntryPointCard: React.FC<Record<string, never>> = () => {
   const openHub = useNavigateToPostOnboardingHubCallback();
   const dismissCard = useCallback(() => {
     dispatch(hidePostOnboardingWalletEntryPoint());
-  }, [dispatch]);
+    track("button_clicked", {
+      button: "Dismiss post onboarding",
+      deviceModelId,
+      flow: "post-onboarding",
+    });
+  }, [dispatch, deviceModelId]);
   const visible = usePostOnboardingEntryPointVisibleOnWallet();
   if (!visible) return null;
   return (
@@ -43,7 +49,11 @@ const PostOnboardingEntryPointCard: React.FC<Record<string, never>> = () => {
           outline
           onPress={() => openHub()}
           event="button_clicked"
-          eventProperties={{ button: "Access" }}
+          eventProperties={{
+            button: "Access post onboarding",
+            deviceModelId,
+            flow: "post-onboarding",
+          }}
         >
           {t("postOnboarding.entryPointCard.buttonLabel")}
         </Button>

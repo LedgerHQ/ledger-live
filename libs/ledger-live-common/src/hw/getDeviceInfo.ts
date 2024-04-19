@@ -9,9 +9,11 @@ import { PROVIDERS } from "../manager/provider";
 import { isDashboardName } from "./isDashboardName";
 import { DeviceNotOnboarded } from "../errors";
 import type { DeviceInfo } from "@ledgerhq/types-live";
+
 const ManagerAllowedFlag = 0x08;
 const PinValidatedFlag = 0x80;
-export default async function getDeviceInfo(transport: Transport): Promise<DeviceInfo> {
+
+export default async function (transport: Transport): Promise<DeviceInfo> {
   const tracer = new LocalTracer("hw", {
     ...transport.getTraceContext(),
     function: "getDeviceInfo",

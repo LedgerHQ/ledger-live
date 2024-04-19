@@ -61,7 +61,7 @@ const SwapWeb = lazy(() => import("~/renderer/screens/swapWeb"));
 const Swap2 = lazy(() => import("~/renderer/screens/exchange/Swap2"));
 
 const Market = lazy(() => import("~/renderer/screens/market"));
-const MarketCoinScreen = lazy(() => import("~/renderer/screens/market/MarketCoinScreen"));
+const MarketCoin = lazy(() => import("~/renderer/screens/market/MarketCoin"));
 const WelcomeScreenSettings = lazy(
   () => import("~/renderer/screens/settings/WelcomeScreenSettings"),
 );
@@ -310,10 +310,7 @@ export default function Default() {
                             <Route path="/account/:id" render={withSuspense(Account)} />
                             <Route path="/asset/:assetId+" render={withSuspense(Asset)} />
                             <Route path="/swap" render={withSuspense(Swap2)} />
-                            <Route
-                              path="/market/:currencyId"
-                              render={withSuspense(MarketCoinScreen)}
-                            />
+                            <Route path="/market/:currencyId" render={withSuspense(MarketCoin)} />
                             <Route path="/market" render={withSuspense(Market)} />
                           </Switch>
                         </Page>

@@ -51,8 +51,6 @@ setSupportedCurrencies([
   "peercoin",
   "viacoin",
   "bitcoin_testnet",
-  "ethereum_ropsten",
-  "ethereum_goerli",
   "ethereum_sepolia",
   "ethereum_holesky",
   "crypto_org",
@@ -70,4 +68,8 @@ setSupportedCurrencies([
   "near",
   "coreum",
   "vechain",
+  "optimism",
+  "optimism_sepolia",
+  "linea",
+  "linea_sepolia"
 ]);

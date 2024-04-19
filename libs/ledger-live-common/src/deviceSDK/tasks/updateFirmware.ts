@@ -187,10 +187,8 @@ export function getFlashMcuOrBootloaderDetails(
   mcuFromBootloaderVersion: string,
 ): { bootloaderVersion: string; isMcuUpdate: boolean } {
   // converts the version into the majMin format
-  const bootloaderVersion = (mcuFromBootloaderVersion || "").split(".").slice(0, 2).join(".");
-
+  const bootloaderVersion = (mcuFromBootloaderVersion ?? "").split(".").slice(0, 3).join(".");
   const isMcuUpdate = deviceMajMin === bootloaderVersion;
-
   return { bootloaderVersion, isMcuUpdate };
 }
 
@@ -227,14 +225,14 @@ const flashMcuOrBootloader = (
 
     ManagerAPI.retrieveMcuVersion(updateContext.final).then(mcuVersion => {
       if (mcuVersion && !subscriber.closed) {
-        const majMinRegexMatch = firmwareInfo.rawVersion.match(/([0-9]+.[0-9]+)(.[0-9]+)?(-(.*))?/);
+        const majMinRegexMatch = firmwareInfo.rawVersion.match(
+          /([0-9]+.[0-9]+(.[0-9]+){0,1})?(-(.*))?/,
+        );
         const [, majMin] = majMinRegexMatch ?? [];
-
         const { bootloaderVersion, isMcuUpdate } = getFlashMcuOrBootloaderDetails(
           majMin,
           mcuVersion.from_bootloader_version,
         );
-
         flashMcuOrBootloaderCommand(transportRef.current, {
           targetId: firmwareInfo.targetId,
           version: isMcuUpdate ? mcuVersion.name : bootloaderVersion,
