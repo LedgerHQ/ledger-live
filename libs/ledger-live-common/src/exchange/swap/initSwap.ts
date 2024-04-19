@@ -273,7 +273,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         if (ignoreTransportError) return;
 
         if (e instanceof TransportStatusError && e.statusCode === 0x6a84) {
-          throw new TransactionRefusedOnDevice();
+          throw new TransactionRefusedOnDevice("", { step: "SIGN_COIN_TRANSACTION" });
         }
 
         throw e;
