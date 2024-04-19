@@ -62,7 +62,7 @@ type Props = {
     swapId: string;
     magnitudeAwareRate: BigNumber;
   }) => void;
-  onError: (a: { error: Error | CompleteExchangeError; swapId?: string }) => void;
+  onError: (a: { error: Error; swapId?: string }) => void;
 };
 
 export default function SwapAction({
