@@ -35,10 +35,8 @@ import {
 } from "@ledgerhq/live-common/platform/react";
 import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
 import BigNumber from "bignumber.js";
-import {
-  DEFAULT_MULTIBUY_APP_ID,
-  BUY_SELL_UI_APP_ID,
-} from "@ledgerhq/live-common/wallet-api/constants";
+import { INTERNAL_APP_IDS } from "@ledgerhq/live-common/wallet-api/constants";
+import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds";
 import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 import { NavigatorName, ScreenName } from "~/const";
 import { broadcastSignedTx } from "~/logic/screenTransactionHooks";
@@ -50,7 +48,6 @@ import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigato
 import { WebviewAPI, WebviewProps } from "./types";
 import { useWebviewState } from "./helpers";
 import { currentRouteNameRef } from "~/analytics/screenRefs";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 function renderLoading() {
   return (
@@ -512,12 +509,9 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       tracking.platformLoad(manifest);
     }, [manifest, tracking]);
 
-    const buySellUiFlag = useFeature("buySellUi");
-    const buySellAppIds = buySellUiFlag?.params?.manifestId
-      ? [buySellUiFlag.params.manifestId, DEFAULT_MULTIBUY_APP_ID, BUY_SELL_UI_APP_ID]
-      : [DEFAULT_MULTIBUY_APP_ID, BUY_SELL_UI_APP_ID];
+    const internalAppIds = useInternalAppIds() || INTERNAL_APP_IDS;
 
-    const javaScriptCanOpenWindowsAutomatically = buySellAppIds.includes(manifest.id);
+    const javaScriptCanOpenWindowsAutomatically = internalAppIds.includes(manifest.id);
 
     return (
       <RNWebView
