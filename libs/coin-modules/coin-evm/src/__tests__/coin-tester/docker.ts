@@ -11,7 +11,7 @@ export const spawnAnvil = async (rpc: string): Promise<void> => {
   console.log("Starting anvil...");
   await compose.upOne("anvil", {
     cwd,
-    // log: true,
+    log: true,
     env: {
       ...process.env,
       RPC: rpc,
@@ -43,7 +43,7 @@ export const killAnvil = async (): Promise<void> => {
   console.log("Stopping anvil...");
   await compose.down({
     cwd,
-    // log: true,
+    log: true,
     env: process.env,
   });
 };
