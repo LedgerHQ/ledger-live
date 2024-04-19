@@ -16,4 +16,5 @@ type ConfigStatus =
 
 export type CurrencyConfig = {
   status: ConfigStatus;
+  [key: string]: unknown;
 };

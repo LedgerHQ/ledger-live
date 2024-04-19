@@ -74,7 +74,7 @@ const AccountScreenInner = ({
   const useCounterValue = useSelector(countervalueFirstSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const isEmpty = isAccountEmpty(account);
-  const [currencyConfig, setCurrencyConfig] = useState<CurrencyConfig & Record<string, unknown>>();
+  const [currencyConfig, setCurrencyConfig] = useState<CurrencyConfig>();
 
   const onSwitchAccountCurrency = useCallback(() => {
     dispatch(switchCountervalueFirst());
@@ -93,6 +93,14 @@ const AccountScreenInner = ({
   }, 300);
 
   const currency = getAccountCurrency(account);
+
+  const analytics = (
+    <TrackScreen
+      category="Account"
+      currency={currency.name}
+      operationsSize={account.operations.length}
+    />
+  );
 
   const [graphCardEndPosition, setGraphCardEndPosition] = useState(100);
   const currentPositionY = useSharedValue(0);
@@ -157,11 +165,7 @@ const AccountScreenInner = ({
   return (
     <ReactNavigationPerformanceView screenName={ScreenName.Account} interactive>
       <SafeAreaView isFlex>
-        <TrackScreen
-          category="Account"
-          currency={currency.name}
-          operationsSize={account.operations.length}
-        />
+        {analytics}
         <CurrencyBackgroundGradient
           currentPositionY={currentPositionY}
           graphCardEndPosition={graphCardEndPosition}

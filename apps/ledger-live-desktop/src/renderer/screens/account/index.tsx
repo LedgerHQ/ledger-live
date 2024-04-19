@@ -11,7 +11,6 @@ import { getCurrencyColor } from "~/renderer/getCurrencyColor";
 import { accountSelector } from "~/renderer/reducers/accounts";
 import {
   findSubAccountById,
-  getAccountCurrency,
   getMainAccount,
   isAccountEmpty,
 } from "@ledgerhq/live-common/account/index";
@@ -38,7 +37,6 @@ import { AccountLike, Account, Operation } from "@ledgerhq/types-live";
 import { State } from "~/renderer/reducers";
 import { getLLDCoinFamily } from "~/renderer/families";
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
-import { isCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import TopBanner from "~/renderer/components/TopBanner";
 import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
@@ -106,7 +104,7 @@ const AccountPage = ({
   const bgColor = useTheme().colors.palette.background.paper;
   const [shouldFilterTokenOpsZeroAmount] = useFilterTokenOperationsZeroAmount();
   const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
-  const [currencyConfig, setCurrencyConfig] = useState<CurrencyConfig & Record<string, unknown>>();
+  const [currencyConfig, setCurrencyConfig] = useState<CurrencyConfig>();
   const filterOperations = useCallback(
     (operation: Operation, account: AccountLike) => {
       // Remove operations linked to address poisoning
@@ -121,14 +119,13 @@ const AccountPage = ({
     [hiddenNftCollections, shouldFilterTokenOpsZeroAmount],
   );
 
-  const currency = getAccountCurrency(account);
+  const currency = mainAccount?.currency;
 
   useEffect(() => {
     try {
-      if (isCryptoCurrency(currency)) {
+      if (currency) {
         const currencyConfig = getCurrencyConfiguration(currency);
         setCurrencyConfig(currencyConfig);
-        console.log({ currencyConfig });
       }
     } catch (err) {
       console.warn(err);
@@ -137,7 +134,7 @@ const AccountPage = ({
 
   const localizedContactSupportURL = useLocalizedUrl(urls.contactSupportWebview);
 
-  if (!account || !mainAccount) {
+  if (!account || !mainAccount || !currency) {
     return <Redirect to="/accounts" />;
   }
 

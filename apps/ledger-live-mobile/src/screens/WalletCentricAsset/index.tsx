@@ -57,7 +57,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
     flattenAccountsByCryptoCurrencyScreenSelector(currency),
     isEqual,
   );
-  const [currencyConfig, setCurrencyConfig] = useState<CurrencyConfig & Record<string, unknown>>();
+  const [currencyConfig, setCurrencyConfig] = useState<CurrencyConfig>();
 
   const defaultAccount = cryptoAccounts?.length === 1 ? cryptoAccounts[0] : undefined;
 
