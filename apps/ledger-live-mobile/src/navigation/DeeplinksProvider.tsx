@@ -12,6 +12,7 @@ import {
 import Config from "react-native-config";
 import { useFlipper } from "@react-navigation/devtools";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import {
   DEFAULT_MULTIBUY_APP_ID,
   BUY_SELL_UI_APP_ID,
@@ -58,7 +59,7 @@ function isStorylyLink(url: string) {
   return url.startsWith("ledgerlive://storyly?");
 }
 
-function getProxyURL(url: string) {
+function getProxyURL(url: string, customBuySellUiAppId?: string) {
   const uri = new URL(url);
   const { hostname, pathname } = uri;
   const platform = pathname.split("/")[1];
@@ -71,10 +72,14 @@ function getProxyURL(url: string) {
     return `ledgerlive://wc?uri=${encodeURIComponent(url)}`;
   }
 
+  const buySellAppIds = customBuySellUiAppId
+    ? [customBuySellUiAppId, DEFAULT_MULTIBUY_APP_ID, BUY_SELL_UI_APP_ID]
+    : [DEFAULT_MULTIBUY_APP_ID, BUY_SELL_UI_APP_ID];
+
   // This is to handle links set in the useFromAmountStatusMessage in LLC.
   // Also handles a difference in paths between LLD on LLD /platform/:app_id
   // but on LLM /discover/:app_id
-  if (hostname === "platform" && [DEFAULT_MULTIBUY_APP_ID, BUY_SELL_UI_APP_ID].includes(platform)) {
+  if (hostname === "platform" && buySellAppIds.includes(platform)) {
     return url.replace("://platform", "://discover");
   }
 
@@ -410,6 +415,8 @@ export const DeeplinksProvider = ({
   // Can be either true, false or null, meaning we don't know yet
   const userAcceptedTerms = useGeneralTermsAccepted();
   const storylyContext = useStorylyContext();
+  const buySellUiFlag = useFeature("buySellUi");
+  const buySellUiManifestId = buySellUiFlag?.params?.manifestId;
 
   const linking = useMemo<LinkingOptions<ReactNavigation.RootParamList>>(
     () =>
@@ -438,7 +445,7 @@ export const DeeplinksProvider = ({
               storylyContext.setUrl(url);
             }
 
-            listener(getProxyURL(url));
+            listener(getProxyURL(url, buySellUiManifestId));
           });
           // Clean up the event listeners
           return () => {
@@ -533,6 +540,7 @@ export const DeeplinksProvider = ({
       storylyContext,
       liveAppProviderInitialized,
       manifests,
+      buySellUiManifestId,
     ],
   );
   const [isReady, setIsReady] = React.useState(false);
