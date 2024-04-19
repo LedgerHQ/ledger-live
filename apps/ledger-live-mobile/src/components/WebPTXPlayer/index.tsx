@@ -123,7 +123,7 @@ export const WebPTXPlayer = ({ manifest, inputs, disableHeader }: Props) => {
   const lastMatchingURL = useRef<string | null>(null);
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
-  const internalAppIds = useInternalAppIds();
+  const internalAppIds = useInternalAppIds() || INTERNAL_APP_IDS;
 
   const isInternalApp = useMemo(() => {
     if (!internalAppIds.includes(manifest.id)) {
