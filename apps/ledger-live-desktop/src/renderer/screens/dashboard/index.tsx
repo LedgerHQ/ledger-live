@@ -93,15 +93,18 @@ export default function DashboardPage() {
         <CurrencyDownStatusAlert currencies={currencies} hideStatusIncidents />
       </TopBannerContainer>
       <Box>
-        <RecoverBanner>
-          {isActionCardsCampainRunning && lldActionCarousel?.enabled ? (
-            <ActionContentCards variant={ABTestingVariants.variantA} />
-          ) : (
-            <Carousel />
-          )}
-        </RecoverBanner>
+        {isPostOnboardingBannerVisible ? (
+          <PostOnboardingHubBanner />
+        ) : (
+          <RecoverBanner>
+            {isActionCardsCampainRunning && lldActionCarousel?.enabled ? (
+              <ActionContentCards variant={ABTestingVariants.variantA} />
+            ) : (
+              <Carousel />
+            )}
+          </RecoverBanner>
+        )}
       </Box>
-      {isPostOnboardingBannerVisible && <PostOnboardingHubBanner />}
       <FeaturedButtons />
       <TrackPage
         category="Portfolio"
