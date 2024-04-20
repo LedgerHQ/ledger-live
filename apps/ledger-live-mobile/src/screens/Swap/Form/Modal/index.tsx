@@ -69,7 +69,9 @@ export function Modal({
       postSwapCancelled({
         provider: exchangeRate.provider,
         swapId: swapId ?? "",
-        ...(error instanceof CompleteExchangeError ? { swapStep: error.step } : {}),
+        ...((error as CompleteExchangeError).step
+          ? { swapStep: (error as CompleteExchangeError).step }
+          : {}),
         statusCode: error?.name,
         errorMessage: error?.message,
         sourceCurrencyId: swapTx.swap.from.currency?.id,

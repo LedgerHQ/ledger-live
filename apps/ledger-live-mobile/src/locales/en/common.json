@@ -329,8 +329,8 @@
       "description": "Please use My Ledger to uninstall all apps then check if a firmware update is available before reinstalling them."
     },
     "LatestFirmwareVersionRequired": {
-      "title": "Device update required on desktop",
-      "description": "Please update your Nano X firmware on Ledger Live Desktop"
+      "title": "Update Device Firmware",
+      "description": "Please update your device firmware to the latest version to access this feature"
     },
     "GenuineCheckFailed": {
       "title": "Device authentication failed",
@@ -3830,6 +3830,11 @@
         "title": "Add Token",
         "disclaimer": "{{tokenName}} is a TRC20 Token.\nYou can receive tokens directly in a Tron account.",
         "learnMore": "Learn more about TRC20"
+      },
+      "asa": {
+        "title": "Add Token",
+        "disclaimer": "{{tokenName}} is an ASA Token.\nYou can receive tokens directly on an Algorand account.",
+        "learnMore": "Learn more"
       },
       "bep20": {
         "title": "Add Token",
