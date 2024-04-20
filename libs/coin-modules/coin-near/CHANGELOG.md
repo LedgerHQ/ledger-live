@@ -1,5 +1,11 @@
 # @ledgerhq/coin-near
 
+## 0.4.0-nightly.6
+
+### Minor Changes
+
+- [#6712](https://github.com/LedgerHQ/ledger-live/pull/6712) [`e7ed028`](https://github.com/LedgerHQ/ledger-live/commit/e7ed028716bccb9dc29aa2fc672ecc7a3e78276a) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fix everything broken in the Near coin-module. Upgrade to the new broadcast endpoint because the old was deprecated, introduce 2 types of nodes used in different conditions (based on data sensitivity) and fix transaction building using Numbers for BigNumbers.
+
 ## 0.3.12-nightly.5
 
 ### Patch Changes

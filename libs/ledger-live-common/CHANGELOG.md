@@ -1,5 +1,19 @@
 # @ledgerhq/live-common
 
+## 34.1.0-nightly.11
+
+### Minor Changes
+
+- [#6712](https://github.com/LedgerHQ/ledger-live/pull/6712) [`e7ed028`](https://github.com/LedgerHQ/ledger-live/commit/e7ed028716bccb9dc29aa2fc672ecc7a3e78276a) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add CoinConfig to Near module
+
+### Patch Changes
+
+- [#6713](https://github.com/LedgerHQ/ledger-live/pull/6713) [`cc8c36d`](https://github.com/LedgerHQ/ledger-live/commit/cc8c36d65aad93f6090a696d9b9b2273cd193be2) Thanks [@CremaFR](https://github.com/CremaFR)! - added step to userRefused error
+
+- Updated dependencies [[`e7ed028`](https://github.com/LedgerHQ/ledger-live/commit/e7ed028716bccb9dc29aa2fc672ecc7a3e78276a), [`e7ed028`](https://github.com/LedgerHQ/ledger-live/commit/e7ed028716bccb9dc29aa2fc672ecc7a3e78276a)]:
+  - @ledgerhq/hw-app-near@6.28.7-nightly.1
+  - @ledgerhq/coin-near@0.4.0-nightly.6
+
 ## 34.1.0-nightly.10
 
 ### Minor Changes

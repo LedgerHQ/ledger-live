@@ -1,5 +1,22 @@
 # live-mobile
 
+## 3.43.0-nightly.13
+
+### Minor Changes
+
+- [#6716](https://github.com/LedgerHQ/ledger-live/pull/6716) [`81706ce`](https://github.com/LedgerHQ/ledger-live/commit/81706ce2a1940a4de267f50a53b8bad85463e671) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Add a Braze Plugin to segment to debounce the identify traits and reduce the data points usage
+
+### Patch Changes
+
+- [#6697](https://github.com/LedgerHQ/ledger-live/pull/6697) [`82c537e`](https://github.com/LedgerHQ/ledger-live/commit/82c537ecc0fc60f30c10694b69edaf6d924d639b) Thanks [@lvndry](https://github.com/lvndry)! - Add translation in addAccount for asa tokens
+
+- [#6629](https://github.com/LedgerHQ/ledger-live/pull/6629) [`75015c8`](https://github.com/LedgerHQ/ledger-live/commit/75015c88d272ee746cea2675282d55ae97ab0ff0) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Privacy enhancement: users won't be tracked with braze if both analytics and personalization are false. Each one of them will have a random id for braze to still receive CC
+
+- [#6681](https://github.com/LedgerHQ/ledger-live/pull/6681) [`6c60a22`](https://github.com/LedgerHQ/ledger-live/commit/6c60a225c67dc477ed3973a67a1cf1af9888fd45) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Fix wording errors
+
+- Updated dependencies [[`cc8c36d`](https://github.com/LedgerHQ/ledger-live/commit/cc8c36d65aad93f6090a696d9b9b2273cd193be2), [`e7ed028`](https://github.com/LedgerHQ/ledger-live/commit/e7ed028716bccb9dc29aa2fc672ecc7a3e78276a)]:
+  - @ledgerhq/live-common@34.1.0-nightly.11
+
 ## 3.43.0-nightly.12
 
 ### Minor Changes

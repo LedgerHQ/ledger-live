@@ -1,5 +1,20 @@
 # ledger-live-desktop
 
+## 2.79.0-nightly.14
+
+### Patch Changes
+
+- [#6713](https://github.com/LedgerHQ/ledger-live/pull/6713) [`cc8c36d`](https://github.com/LedgerHQ/ledger-live/commit/cc8c36d65aad93f6090a696d9b9b2273cd193be2) Thanks [@CremaFR](https://github.com/CremaFR)! - added step to userRefused error
+
+- [#6638](https://github.com/LedgerHQ/ledger-live/pull/6638) [`7bbc032`](https://github.com/LedgerHQ/ledger-live/commit/7bbc032cfac046f9cfdf051a6ec7882013381689) Thanks [@cksanders](https://github.com/cksanders)! - Fix the Recover Restore Onboarding status to ensure no false positives.
+
+- [#6629](https://github.com/LedgerHQ/ledger-live/pull/6629) [`75015c8`](https://github.com/LedgerHQ/ledger-live/commit/75015c88d272ee746cea2675282d55ae97ab0ff0) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Privacy enhancement: users won't be tracked with braze if both analytics and personalization are false. Each one of them will have a random id for braze to still receive CC
+
+- [#6681](https://github.com/LedgerHQ/ledger-live/pull/6681) [`6c60a22`](https://github.com/LedgerHQ/ledger-live/commit/6c60a225c67dc477ed3973a67a1cf1af9888fd45) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Fix wording errors
+
+- Updated dependencies [[`cc8c36d`](https://github.com/LedgerHQ/ledger-live/commit/cc8c36d65aad93f6090a696d9b9b2273cd193be2), [`e7ed028`](https://github.com/LedgerHQ/ledger-live/commit/e7ed028716bccb9dc29aa2fc672ecc7a3e78276a)]:
+  - @ledgerhq/live-common@34.1.0-nightly.11
+
 ## 2.79.0-nightly.13
 
 ### Minor Changes
