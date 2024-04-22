@@ -34,7 +34,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import LockedDeviceDrawer from "./LockedDeviceDrawer";
 import { LockedDeviceError } from "@ledgerhq/errors";
-import { saveSettings } from "~/renderer/actions/settings";
+import { useRecoverRestoreOnboarding } from "~/renderer/hooks/useRecoverRestoreOnboarding";
 
 const READY_REDIRECT_DELAY_MS = 2000;
 const POLLING_PERIOD_MS = 1000;
@@ -479,14 +479,12 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
     };
   }, [device, allowedError, handleDesyncTimerRunsOut, desyncTimeout]);
 
+  useRecoverRestoreOnboarding(seedPathStatus);
+
   useEffect(() => {
     if (seedPathStatus === "recover_seed" && recoverRestoreStaxPath) {
       const [pathname, search] = recoverRestoreStaxPath.split("?");
-      dispatch(
-        saveSettings({
-          hasCompletedOnboarding: true,
-        }),
-      );
+
       history.push({
         pathname,
         search: search ? `?${search}` : undefined,

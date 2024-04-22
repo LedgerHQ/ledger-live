@@ -355,3 +355,18 @@ export const setHasSeenAnalyticsOptInPrompt = (hasSeenAnalyticsOptInPrompt: bool
   type: "SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT",
   payload: hasSeenAnalyticsOptInPrompt,
 });
+
+export const setDismissedContentCards = (payload: { id: string; timestamp: number }) => ({
+  type: "SET_DISMISSED_CONTENT_CARDS",
+  payload,
+});
+
+export const clearDismissedContentCards = (payload: string[]) => ({
+  type: "CLEAR_DISMISSED_CONTENT_CARDS",
+  payload,
+});
+
+export const setAnonymousBrazeId = (payload: string) => ({
+  type: "SET_ANONYMOUS_BRAZE_ID",
+  payload,
+});

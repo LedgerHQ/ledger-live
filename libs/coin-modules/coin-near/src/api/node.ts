@@ -1,7 +1,7 @@
+import { log } from "@ledgerhq/logs";
 import network from "@ledgerhq/live-network/network";
 import { BigNumber } from "bignumber.js";
 import * as nearAPI from "near-api-js";
-import { getEnv } from "@ledgerhq/live-env";
 import { canUnstake, canWithdraw, getYoctoThreshold } from "../logic";
 import { getCurrentNearPreloadData } from "../preload";
 import { NearAccount } from "../types";
@@ -13,13 +13,15 @@ import {
   NearRawValidator,
   NearStakingPosition,
 } from "./sdk.types";
-import { MIN_ACCOUNT_BALANCE_BUFFER } from "../constants";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
+import { MIN_ACCOUNT_BALANCE_BUFFER } from "../constants";
+import { getCoinConfig } from "../config";
 
 export const fetchAccountDetails = async (address: string): Promise<NearAccountDetails> => {
+  const currencyConfig = getCoinConfig();
   const { data } = await network({
     method: "POST",
-    url: getEnv("API_NEAR_ARCHIVE_NODE"),
+    url: currencyConfig.infra.API_NEAR_PRIVATE_NODE,
     data: {
       jsonrpc: "2.0",
       id: "id",
@@ -78,9 +80,10 @@ export const getAccount = async (address: string): Promise<Partial<NearAccount>>
 };
 
 export const getProtocolConfig = async (): Promise<NearProtocolConfig> => {
+  const currencyConfig = getCoinConfig();
   const { data } = await network({
     method: "POST",
-    url: getEnv("API_NEAR_ARCHIVE_NODE"),
+    url: currencyConfig.infra.API_NEAR_PRIVATE_NODE,
     data: {
       jsonrpc: "2.0",
       id: "id",
@@ -95,9 +98,10 @@ export const getProtocolConfig = async (): Promise<NearProtocolConfig> => {
 };
 
 export const getGasPrice = async (): Promise<string> => {
+  const currencyConfig = getCoinConfig();
   const { data } = await network({
     method: "POST",
-    url: getEnv("API_NEAR_ARCHIVE_NODE"),
+    url: currencyConfig.infra.API_NEAR_PRIVATE_NODE,
     data: {
       jsonrpc: "2.0",
       id: "id",
@@ -116,9 +120,10 @@ export const getAccessKey = async ({
   address: string;
   publicKey: string;
 }): Promise<NearAccessKey> => {
+  const currencyConfig = getCoinConfig();
   const { data } = await network({
     method: "POST",
-    url: getEnv("API_NEAR_ARCHIVE_NODE"),
+    url: currencyConfig.infra.API_NEAR_PRIVATE_NODE,
     data: {
       jsonrpc: "2.0",
       id: "id",
@@ -134,20 +139,52 @@ export const getAccessKey = async ({
 
   return data.result || {};
 };
-
-export const broadcastTransaction = async (transaction: string): Promise<string> => {
+/**
+ * Implements a retry mechanism for broadcasting a transaction
+ * based on the near documentation: https://docs.near.org/api/rpc/transactions#what-could-go-wrong-send-tx
+ *
+ * `TIMEOUT_ERROR` can be thrown when the transaction is not yet executed in less than 10 seconds.
+ * Documentation advises to "re-submit the request with the identical transaction" in this case.
+ */
+export const broadcastTransaction = async (transaction: string, retries = 6): Promise<string> => {
+  const currencyConfig = getCoinConfig();
   const { data } = await network({
     method: "POST",
-    url: getEnv("API_NEAR_ARCHIVE_NODE"),
+    url: currencyConfig.infra.API_NEAR_PRIVATE_NODE,
     data: {
       jsonrpc: "2.0",
       id: "id",
-      method: "broadcast_tx_async",
-      params: [transaction],
+      method: "send_tx",
+      params: {
+        signed_tx_base64: transaction,
+        wait_until: "EXECUTED_OPTIMISTIC",
+      },
     },
   });
 
-  return data.result;
+  if (data.error) {
+    if (data.error?.cause?.name === "TIMEOUT_ERROR" && retries > 0) {
+      log("Near", "broadcastTransaction retrying after error", {
+        data,
+        payload: {
+          jsonrpc: "2.0",
+          id: "id",
+          method: "send_tx",
+          params: {
+            signed_tx_base64: transaction,
+            wait_until: "EXECUTED_OPTIMISTIC",
+          },
+        },
+        retries,
+      });
+      return broadcastTransaction(transaction, retries - 1);
+    }
+
+    log("Near", "broadcastTransaction error", data.error);
+    throw new Error((data.error?.cause?.name || "UNKOWWN CAUSE") + ": " + data.error.message);
+  }
+
+  return data.result.transaction.hash;
 };
 
 export const getStakingPositions = async (
@@ -158,12 +195,13 @@ export const getStakingPositions = async (
   totalAvailable: BigNumber;
   totalPending: BigNumber;
 }> => {
+  const currencyConfig = getCoinConfig();
   const { connect, keyStores } = nearAPI;
 
   const config = {
     networkId: "mainnet",
     keyStore: new keyStores.InMemoryKeyStore(),
-    nodeUrl: getEnv("API_NEAR_ARCHIVE_NODE"),
+    nodeUrl: currencyConfig.infra.API_NEAR_PRIVATE_NODE,
     headers: {},
   };
 
@@ -188,15 +226,17 @@ export const getStakingPositions = async (
         useLocalViewExecution: false,
       }) as NearContract;
 
-      const rawStaked = await contract.get_account_staked_balance({
-        account_id: address,
-      });
-      const rawUnstaked = await contract.get_account_unstaked_balance({
-        account_id: address,
-      });
-      const isAvailable = await contract.is_account_unstaked_balance_available({
-        account_id: address,
-      });
+      const [rawStaked, rawUnstaked, isAvailable] = await Promise.all([
+        contract.get_account_staked_balance({
+          account_id: address,
+        }),
+        contract.get_account_unstaked_balance({
+          account_id: address,
+        }),
+        contract.is_account_unstaked_balance_available({
+          account_id: address,
+        }),
+      ]);
 
       const unstaked = new BigNumber(rawUnstaked);
 
@@ -247,9 +287,10 @@ export const getStakingPositions = async (
 
 export const getValidators = makeLRUCache(
   async (): Promise<NearRawValidator[]> => {
+    const currencyConfig = getCoinConfig();
     const { data } = await network({
       method: "POST",
-      url: getEnv("API_NEAR_ARCHIVE_NODE"),
+      url: currencyConfig.infra.API_NEAR_PUBLIC_NODE,
       data: {
         jsonrpc: "2.0",
         id: "id",
@@ -265,17 +306,18 @@ export const getValidators = makeLRUCache(
 );
 
 export const getCommission = makeLRUCache(
-  async (address: string): Promise<number | null> => {
+  async (validatorAddress: string): Promise<number | null> => {
+    const currencyConfig = getCoinConfig();
     const { data } = await network({
       method: "POST",
-      url: getEnv("API_NEAR_ARCHIVE_NODE"),
+      url: currencyConfig.infra.API_NEAR_PUBLIC_NODE,
       data: {
         jsonrpc: "2.0",
         id: "id",
         method: "query",
         params: {
           request_type: "call_function",
-          account_id: address,
+          account_id: validatorAddress,
           method_name: "get_reward_fee_fraction",
           args_base64: "e30=",
           finality: "optimistic",

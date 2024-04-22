@@ -129,6 +129,7 @@ export type Features = CurrencyFeatures & {
   deviceInitialApps: Feature_DeviceInitialApps;
   buyDeviceFromLive: Feature_BuyDeviceFromLive;
   mockFeature: Feature_MockFeature;
+  buySellUi: Feature_BuySellUiManifest;
   multibuyNavigation: Feature_MultibuyNavigation;
   referralProgramDesktopSidebar: Feature_ReferralProgramDesktopSidebar;
   referralProgramMobile: Feature_ReferralProgramMobile;
@@ -461,6 +462,10 @@ export type Feature_LldRefreshMarketData = Feature<{
 }>;
 export type Feature_LlmRefreshMarketData = Feature<{
   refreshTime: number;
+}>;
+
+export type Feature_BuySellUiManifest = Feature<{
+  manifestId: string; // id of the app to use for the Buy/Sell UI, e.g. "multibuy-v2"
 }>;
 
 export type Feature_CounterValue = DefaultFeature;

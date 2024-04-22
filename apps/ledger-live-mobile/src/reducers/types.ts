@@ -260,6 +260,7 @@ export type SettingsState = {
   userNps: number | null;
   supportedCounterValues: supportedCountervaluesData[];
   hasSeenAnalyticsOptInPrompt: boolean;
+  dismissedContentCards: { [id: string]: number };
 };
 
 export type NotificationsSettings = {

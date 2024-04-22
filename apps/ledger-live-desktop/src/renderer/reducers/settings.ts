@@ -107,6 +107,8 @@ export type SettingsState = {
   vaultSigner: VaultSigner;
   supportedCounterValues: SupportedCountervaluesData[];
   hasSeenAnalyticsOptInPrompt: boolean;
+  dismissedContentCards: { [key: string]: number };
+  anonymousBrazeId: string | null;
 };
 
 export const getInitialLanguageAndLocale = (): { language: Language; locale: Locale } => {
@@ -193,6 +195,8 @@ const INITIAL_STATE: SettingsState = {
   // Vault
   vaultSigner: { enabled: false, host: "", token: "", workspace: "" },
   supportedCounterValues: [],
+  dismissedContentCards: {} as Record<string, number>,
+  anonymousBrazeId: null,
 };
 
 /* Handlers */
@@ -241,6 +245,11 @@ type HandlersPayloads = {
   SET_VAULT_SIGNER: VaultSigner;
   SET_SUPPORTED_COUNTER_VALUES: SupportedCountervaluesData[];
   SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT: boolean;
+  SET_DISMISSED_CONTENT_CARDS: {
+    [key: string]: number;
+  };
+  CLEAR_DISMISSED_CONTENT_CARDS: never;
+  SET_ANONYMOUS_BRAZE_ID: string;
 };
 type SettingsHandlers<PreciseKey = true> = Handlers<SettingsState, HandlersPayloads, PreciseKey>;
 
@@ -404,7 +413,29 @@ const handlers: SettingsHandlers = {
     ...state,
     hasSeenAnalyticsOptInPrompt: payload,
   }),
+  SET_DISMISSED_CONTENT_CARDS: (state: SettingsState, { payload }) => ({
+    ...state,
+    dismissedContentCards: {
+      ...state.dismissedContentCards,
+      [payload.id]: payload.timestamp,
+    },
+  }),
+
+  CLEAR_DISMISSED_CONTENT_CARDS: (state: SettingsState, { payload }: { payload?: string[] }) => {
+    const newState = { ...state };
+    if (payload) {
+      payload.forEach(id => {
+        delete newState.dismissedContentCards[id];
+      });
+    }
+    return newState;
+  },
+  SET_ANONYMOUS_BRAZE_ID: (state: SettingsState, { payload }) => ({
+    ...state,
+    anonymousBrazeId: payload,
+  }),
 };
+
 export default handleActions<SettingsState, HandlersPayloads[keyof HandlersPayloads]>(
   handlers as unknown as SettingsHandlers<false>,
   INITIAL_STATE,
@@ -709,3 +740,5 @@ export const supportedCounterValuesSelector = (state: State) =>
   state.settings.supportedCounterValues;
 export const hasSeenAnalyticsOptInPromptSelector = (state: State) =>
   state.settings.hasSeenAnalyticsOptInPrompt;
+export const dismissedContentCardsSelector = (state: State) => state.settings.dismissedContentCards;
+export const anonymousBrazeIdSelector = (state: State) => state.settings.anonymousBrazeId;

@@ -13,10 +13,8 @@ import { Flex, Icon, Text } from "@ledgerhq/native-ui";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
-import {
-  DEFAULT_MULTIBUY_APP_ID,
-  INTERNAL_APP_IDS,
-} from "@ledgerhq/live-common/wallet-api/constants";
+import { INTERNAL_APP_IDS } from "@ledgerhq/live-common/wallet-api/constants";
+import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds";
 import { safeUrl } from "@ledgerhq/live-common/wallet-api/helpers";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -51,6 +49,8 @@ function BackToInternalDomain({
     useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
   const [buttonText, setButtonText] = useState("");
 
+  const internalAppIds = useInternalAppIds() || INTERNAL_APP_IDS;
+
   useEffect(() => {
     (async () => {
       const lastScreen = (await AsyncStorage.getItem("last-screen")) || "";
@@ -77,7 +77,7 @@ function BackToInternalDomain({
           referrer: "isExternal",
         },
       });
-    } else if (manifest.id === DEFAULT_MULTIBUY_APP_ID && lastMatchingURL && webviewURL) {
+    } else if (internalAppIds.includes(manifest.id) && lastMatchingURL && webviewURL) {
       const currentHostname = new URL(webviewURL).hostname;
       const url = new URL(lastMatchingURL);
       const urlParams = new URLSearchParams(url.searchParams);
@@ -123,9 +123,10 @@ export const WebPTXPlayer = ({ manifest, inputs, disableHeader }: Props) => {
   const lastMatchingURL = useRef<string | null>(null);
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
+  const internalAppIds = useInternalAppIds() || INTERNAL_APP_IDS;
 
   const isInternalApp = useMemo(() => {
-    if (!INTERNAL_APP_IDS.includes(manifest.id)) {
+    if (!internalAppIds.includes(manifest.id)) {
       return false;
     }
 
@@ -137,7 +138,7 @@ export const WebPTXPlayer = ({ manifest, inputs, disableHeader }: Props) => {
     const currentHostname = new URL(webviewState.url).hostname;
 
     return manifestHostname === currentHostname;
-  }, [manifest.id, manifest.url, webviewState.url]);
+  }, [internalAppIds, manifest.id, manifest.url, webviewState.url]);
 
   const navigation =
     useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();

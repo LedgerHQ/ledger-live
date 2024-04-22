@@ -376,6 +376,13 @@ export const DEFAULT_FEATURES: Features = {
     enabled: false,
   },
 
+  buySellUi: {
+    enabled: false,
+    params: {
+      manifestId: "multibuy-v2", // Update to "buy-sell-ui" after rollout
+    },
+  },
+
   ptxSwapLiveApp: {
     enabled: false,
   },
