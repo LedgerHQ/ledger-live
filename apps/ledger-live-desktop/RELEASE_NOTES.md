@@ -1,3 +1,7 @@
+# 2.79.1
+
+This release includes minor bug fixes and security improvements.
+
 # 2.79.0
 
 ### 🐛 Fixes
