@@ -94,6 +94,7 @@
     "comingSoon" : "Próximamente",
     "restart" : "Reiniciar",
     "loadMore" : "Cargar más",
+    "selectAccount" : "Selecciona una cuenta",
     "patterns" : {
       "id" : "ID {{ value }}",
       "times" : "x{{ value }}"
@@ -247,7 +248,7 @@
       "description" : "Se produjo un error inesperado. Inténtalo de nuevo."
     },
     "DeviceAlreadySetup" : {
-      "title" : "Tu {{device}} ya está configurado con una Frase de recuperación secreta.",
+      "title" : "Tu {{device}} ya está configurado con una Frase de Recuperación secreta.",
       "description" : "Conecta un Ledger que aún no esté configurado."
     },
     "DeviceNotGenuine" : {
@@ -328,8 +329,8 @@
       "description" : "Utiliza Mi Ledger para desinstalar todas las aplicaciones y comprobar si hay alguna actualización de firmware disponible antes de instalarlas de nuevo."
     },
     "LatestFirmwareVersionRequired" : {
-      "title" : "Actualización de dispositivo necesaria para Desktop",
-      "description" : "Por favor, actualiza el firmware de tu Nano X en Ledger Live Desktop"
+      "title" : "Update Device Firmware",
+      "description" : "Please update your device firmware to the latest version to access this feature"
     },
     "GenuineCheckFailed" : {
       "title" : "La autenticación del dispositivo ha fallado",
@@ -340,12 +341,12 @@
       "description" : "Inténtalo de nuevo. Si el problema persiste, guarda los registros con el botón que aparece a continuación y envíalos al Soporte de Ledger."
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "Imagen de pantalla de bloqueo descartada en Ledger Stax",
+      "title" : "Imagen de pantalla de bloqueo descartada en {{productName}}",
       "description" : "Si la imagen no era la adecuada, puedes intentarlo de nuevo con una diferente.",
       "primaryCTA" : "Cargar otra imagen"
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "Carga de imagen de pantalla de bloqueo cancelada en Ledger Stax",
+      "title" : "Carga de imagen de pantalla de bloqueo cancelada en {{productName}}",
       "description" : "Si la imagen no era la adecuada, puedes intentarlo de nuevo con una diferente.",
       "primaryCTA" : "Cargar otra imagen"
     },
@@ -484,7 +485,7 @@
       "description" : "Envía EGLD a tu cuenta para pagar las transacciones."
     },
     "NotEnoughBalance" : {
-      "title" : "Fondos insuficientes",
+      "title" : "Sorry, insufficient balance including network fees. Adjust amount or verify balance.",
       "description" : "Asegúrate de que la cuenta tenga fondos suficientes."
     },
     "NoSuchAppOnProvider" : {
@@ -655,7 +656,7 @@
     },
     "WrongDeviceForAccount" : {
       "title" : "Algo ha salido mal",
-      "description" : "Comprueba que tu billetera de hardware esté configurada con la Frase de recuperación o Passphrase asociada a la cuenta seleccionada."
+      "description" : "Comprueba que tu billetera de hardware esté configurada con la Frase de Recuperación o Passphrase asociada a la cuenta seleccionada."
     },
     "WebPTXPlayerNetworkFail" : {
       "title" : "Error de red",
@@ -911,6 +912,10 @@
     "FirmwareNotRecognized" : {
       "title" : "Proveedor no válido",
       "description" : "Tienes que cambiar el ajuste \"Proveedor de Mi Ledger\". Para cambiarlo, abre los \"Ajustes\" de Ledger Live, selecciona \"Funciones experimentales\" y, a continuación, elige un proveedor distinto."
+    },
+    "SequenceNumberError" : {
+      "title" : "Error de número de secuencia",
+      "description" : "Cierra la ventana e inténtalo de nuevo más tarde"
     }
   },
   "crash" : {
@@ -928,6 +933,10 @@
     "noConnectionError" : {
       "title" : "No hay conexión",
       "description" : "Parece que no tienes acceso a Internet. Comprueba tu conexión e inténtalo de nuevo."
+    },
+    "noAccounts" : {
+      "title" : "Necesitas una cuenta para poder acceder a esta aplicación.",
+      "add" : "Agregar cuenta"
     }
   },
   "location" : {
@@ -1248,6 +1257,9 @@
       "referralProgram" : {
         "title" : "Recomiéndanos a un amigo",
         "desc" : "Si tu amigo compra un Ledger, ambos recibirán $20 USD en BTC"
+      },
+      "filter" : {
+        "all" : "Todas"
       }
     },
     "comingSoon" : "próximamente",
@@ -1384,7 +1396,7 @@
         "subTitle" : "Elige esta opción si estás configurando tu Ledger por primera vez"
       },
       "desktopSync" : {
-        "title" : "¿Ya tienes una Frase de recuperación?",
+        "title" : "¿Ya tienes una Frase de Recuperación?",
         "label" : "Sincronización con PC",
         "subTitle" : "Sincroniza tus cripto desde tu aplicación Desktop",
         "desc" : "¿Ya tienes la aplicación Desktop? ¡Sincronízala para administrar tus cripto desde tu teléfono!"
@@ -1393,9 +1405,9 @@
         "label" : "Restaurar dispositivo",
         "title" : "Restaurar con Frase de Recuperación Secreta",
         "subTitle" : "Necesitarás acceso a tu Frase de Recuperación Secreta.",
-        "desc" : "¡Utiliza una Frase de recuperación existente para restaurar tus claves privadas a un nuevo Nano!"
+        "desc" : "¡Utiliza una Frase de Recuperación existente para restaurar tus claves privadas a un nuevo Nano!"
       },
-      "recovery" : "¿Ya tienes una Frase de recuperación?",
+      "recovery" : "¿Ya tienes una Frase de Recuperación?",
       "protect" : {
         "title" : "Restaurar con Ledger Recover",
         "subTitle" : "Debes tener una suscripción a Ledger Recover.",
@@ -1480,7 +1492,7 @@
             "label" : "Aprende a interactuar con tu dispositivo mediante las instrucciones en pantalla."
           },
           "2" : {
-            "title" : "Selecciona “Set up as new device”",
+            "title" : "Selecciona “Set up as new device” (Configurar como dispositivo nuevo)",
             "label" : "Presiona ambos botones simultáneamente para validar la selección."
           },
           "3" : {
@@ -1499,12 +1511,12 @@
       "pinCodeSetup" : {
         "bullets" : {
           "0" : {
-            "title" : "Elige un código PIN",
+            "title" : "Crea un código PIN",
             "label" : "Presiona el botón izquierdo o derecho para cambiar números. Presiona ambos botones para confirmar un número. Selecciona <0></0> para confirmar tu código PIN. Selecciona <1></1> para borrar un número.",
             "desc" : "Presiona el botón izquierdo o derecho para desplazarte por los números. Presiona ambos botones para confirmar un número. Selecciona <validIcon></validIcon>para confirmar tu código PIN. Selecciona <cancelIcon></cancelIcon>para borrar un número."
           },
           "1" : {
-            "title" : "Confirma código PIN",
+            "title" : "Confirma el código PIN",
             "label" : "Ingresa tu código PIN para confirmarlo.",
             "desc" : "Ingresa tu código PIN para confirmarlo."
           }
@@ -1534,7 +1546,7 @@
               "label" : "Nunca utilices un código PIN que no hayas elegido tú personalmente."
             },
             "7" : {
-              "label" : "Nunca almacenes tu código PIN en una PC o un teléfono."
+              "label" : "Nunca almacenes tu código PIN en tu PC o un teléfono."
             }
           }
         },
@@ -1549,20 +1561,20 @@
       },
       "recoveryPhraseSetup" : {
         "infoModal" : {
-          "title" : "¿Cómo funciona una Frase de recuperación?",
-          "desc" : "Tu Frase de recuperación funciona como una llave maestra única. Tu dispositivo Ledger la utiliza para calcular las claves privadas de cada activo cripto que posees.",
-          "desc_1" : "Para restaurar el acceso a tus cripto, cualquier billetera puede calcular las mismas claves privadas a partir de tu Frase de recuperación.",
-          "link" : "Más información acerca del funcionamiento de la Frase de recuperación",
+          "title" : "¿Cómo funciona una Frase de Recuperación?",
+          "desc" : "Tu Frase de Recuperación funciona como una llave maestra única. Tu dispositivo Ledger la utiliza para calcular las claves privadas de cada activo cripto que posees.",
+          "desc_1" : "Para restaurar el acceso a tus cripto, cualquier billetera puede calcular las mismas claves privadas a partir de tu Frase de Recuperación.",
+          "link" : "Más información acerca del funcionamiento de la Frase de Recuperación",
           "title_1" : "¿Qué pasa si pierdo el acceso a mi Nano?",
           "bullets" : {
             "0" : {
               "label" : "Utiliza una billetera de hardware distinta."
             },
             "1" : {
-              "label" : "Selecciona “Restore recovery phrase on a new device” en la aplicación Ledger."
+              "label" : "Selecciona “Restore recovery phrase on a new device”  (Restaurar la Frase de Recuperación a un dispositivo nuevo) en la aplicación Ledger."
             },
             "2" : {
-              "label" : "Ingresa tu Frase de recuperación en tu nuevo dispositivo para restaurar el acceso a tus cripto."
+              "label" : "Ingresa tu Frase de Recuperación en tu nuevo dispositivo para restaurar el acceso a tus cripto."
             }
           }
         },
@@ -1577,22 +1589,22 @@
             "label_1" : "Repite este proceso para todas las Palabras, respetando cuidadosamente el orden y la ortografía. Presiona el botón izquierdo de tu Nano para volver a la Palabra anterior y comprobar si has cometido algún error."
           },
           "2" : {
-            "title" : "Confirma tu Frase de recuperación",
+            "title" : "Confirma tu Frase de Recuperación",
             "label" : "Desplázate por las Palabras con el botón derecho hasta que encuentres la “Word #1”. Valida presionando ambos botones."
           },
           "3" : {
             "title" : "¡Repite lo mismo con todas las Palabras!"
           }
         },
-        "cta" : "Confirma tu Frase de recuperación",
+        "cta" : "Confirma tu Frase de Recuperación",
         "nextStep" : "Siguiente paso"
       },
       "hideRecoveryPhrase" : {
-        "title" : "Oculta tu Frase de recuperación",
-        "desc" : "Tu Frase de recuperación es la única manera de recuperar tus cripto, en caso de no ser posible utilizar tu Nano. Debes conservarla en un lugar seguro.",
+        "title" : "Oculta tu Frase de Recuperación",
+        "desc" : "Tu Frase de Recuperación es la única manera de recuperar tus cripto, en caso de no ser posible utilizar tu Nano. Debes conservarla en un lugar seguro.",
         "bullets" : {
           "0" : {
-            "label" : "Ingresa estas Palabras únicamente en una billetera de hardware, no la ingreses en una PC, ni en otros dispositivos como un smartphone."
+            "label" : "Ingresa estas palabras únicamente en una billetera de hardware, no la ingreses en tu PC, ni en otros dispositivos como un smartphone."
           },
           "1" : {
             "label" : "Nunca compartas tus 24 Palabras con nadie, ni siquiera con Ledger."
@@ -1602,10 +1614,10 @@
         "finalCta" : "Bien, ¡he terminado!",
         "infoModal" : {
           "label" : "Aprende cómo ocultarla",
-          "title" : "¿Dónde debo guardar mi Frase de recuperación?",
+          "title" : "¿Dónde debo guardar mi Frase de Recuperación?",
           "bullets" : {
             "0" : {
-              "label" : "<bold>NUNCA</bold> la ingreses en una PC, teléfono o cualquier otro dispositivo. No le tomes fotografías."
+              "label" : "<bold>NUNCA</bold> la ingreses en tu PC, teléfono o cualquier otro dispositivo. No le tomes fotografías."
             },
             "1" : {
               "label" : "<bold>NUNCA</bold> compartas tus 24 Palabras con NADIE."
@@ -1614,7 +1626,7 @@
               "label" : "Guárdala <bold>EN TODO MOMENTO</bold> en un lugar seguro, fuera de la vista."
             },
             "3" : {
-              "label" : "Ledger nunca te pedirá tu Frase de recuperación."
+              "label" : "Ledger nunca te pedirá tu Frase de Recuperación."
             },
             "4" : {
               "label" : "Si alguien (o alguna aplicación) te la pide, ¡tiene fines deshonestos!"
@@ -1651,13 +1663,13 @@
     },
     "stepRecoveryPhrase" : {
       "importRecoveryPhrase" : {
-        "title" : "Restaurar a partir de Frase de recuperación",
-        "desc" : "Restaura tu Nano a partir de tu Frase de recuperación para restaurar, reemplazar o hacer una copia de seguridad de tu billetera de hardware Ledger.",
+        "title" : "Restaurar a partir de Frase de Recuperación",
+        "desc" : "Restaura tu Nano a partir de tu Frase de Recuperación para restaurar, reemplazar o hacer una copia de seguridad de tu billetera de hardware Ledger.",
         "desc_1" : "Tu Nano restaurará tus claves privadas y podrás acceder a tus cripto y administrarlas.",
         "cta" : "De acuerdo, ¡todo listo!",
         "warning" : {
           "title" : "Recomendamos utilizar únicamente Frases de recuperación generadas por Ledger",
-          "desc" : "Ledger no puede garantizar la seguridad de las Frases de recuperación ajenas a Ledger. Te recomendamos configurar tu Nano como un dispositivo nuevo si tu Frase de recuperación no ha sido generada por Ledger.",
+          "desc" : "Ledger no puede garantizar la seguridad de las Frases de recuperación ajenas a Ledger. Te recomendamos configurar tu Nano como un dispositivo nuevo si tu Frase de Recuperación no ha sido generada por Ledger.",
           "cta" : "¡Entendido!"
         },
         "nextStep" : "Siguiente paso",
@@ -1692,16 +1704,16 @@
         }
       },
       "existingRecoveryPhrase" : {
-        "title" : "Ingresa tu Frase de recuperación",
-        "paragraph1" : "Tu Frase de recuperación es la lista secreta de Palabras de la que se guardó una copia de seguridad cuando configuraste tu billetera por primera vez.",
-        "paragraph2" : "Ledger no conserva copias de tu Frase de recuperación.",
-        "checkboxDesc" : "Comprendo que, si pierdo mi Frase de recuperación, no podré acceder a mis cripto en caso de que pierda acceso a mi Nano.",
+        "title" : "Ingresa tu Frase de Recuperación",
+        "paragraph1" : "Tu Frase de Recuperación es la lista secreta de Palabras de la que se guardó una copia de seguridad cuando configuraste tu billetera por primera vez.",
+        "paragraph2" : "Ledger no conserva copias de tu Frase de Recuperación.",
+        "checkboxDesc" : "Comprendo que, si pierdo mi Frase de Recuperación, no podré acceder a mis cripto en caso de que pierda acceso a mi Nano.",
         "bullets" : {
           "0" : {
-            "title" : "Toma tu Frase de recuperación"
+            "title" : "Toma tu Frase de Recuperación"
           },
           "1" : {
-            "title" : "Selecciona la cantidad de Palabras de la Frase de recuperación",
+            "title" : "Selecciona la cantidad de Palabras de la Frase de Recuperación",
             "label" : "Tus frases de recuperación pueden tener 12, 18 o 24 Palabras. Debes ingresar todas las palabras para acceder a tus cripto."
           },
           "2" : {
@@ -1822,7 +1834,7 @@
       "step1" : "Enciende tu {{fullDeviceName}} y sigue las instrucciones.",
       "step1-nanoS" : "Conecta tu {{fullDeviceName}} a tu teléfono por medio de un cable OTG.",
       "step2" : "Presiona ambos botones al mismo tiempo para seleccionar <1><1>Setup as a new device (Configurar como nuevo dispositivo).</1></1>",
-      "step2-restore" : "Presiona ambos botones al mismo tiempo para seleccionar <1><1>Restore from recovery phrase (Restaurar con Frase de recuperación).",
+      "step2-restore" : "Presiona ambos botones al mismo tiempo para seleccionar <1><1>Restore from recovery phrase (Restaurar con Frase de Recuperación).",
       "step3" : "Presiona el botón izquierdo o derecho para seleccionar un dígito. Presiona los dos botones a la vez para confirmar.",
       "step4prefix" : "Seleccionar ",
       "step4suffix1" : " para confirmar tu PIN.",
@@ -1830,18 +1842,18 @@
       "modal" : {
         "step1" : "Siempre elige <1><1>tu propio</1></1> PIN",
         "step2" : "Utiliza 8 dígitos para mayor seguridad",
-        "step3" : "No utilices nunca un dispositivo con un PIN o una Frase de recuperación ya configurados"
+        "step3" : "No utilices nunca un dispositivo con un PIN o una Frase de Recuperación ya configurados"
       }
     },
     "stepWriteRecovery" : {
       "step1" : "Escribe la <1><1>Word #1</1></1> en la posición 1 de una Hoja de recuperación en blanco",
       "step2" : "Presiona el botón derecho y continúa escribiendo las 24 Palabras.",
-      "step3" : "Confirma cada Palabra de la Frase de recuperación: selecciónala presionando ambos botones a la vez.",
+      "step3" : "Confirma cada Palabra de la Frase de Recuperación: selecciónala presionando ambos botones a la vez.",
       "modal" : {
-        "step1" : "Guarda la Frase de recuperación de 24 Palabras en un lugar seguro, fuera de la vista.",
-        "step2" : "Asegúrate de que seas el único que tenga acceso a la Frase de recuperación.",
-        "step3" : "Ledger no guarda tu Frase de recuperación.",
-        "step4" : "No utilices nunca un dispositivo con una Frase de recuperación o un PIN ya configurados."
+        "step1" : "Guarda la Frase de Recuperación de 24 Palabras en un lugar seguro, fuera de la vista.",
+        "step2" : "Asegúrate de que seas el único que tenga acceso a la Frase de Recuperación.",
+        "step3" : "Ledger no guarda tu Frase de Recuperación.",
+        "step4" : "No utilices nunca un dispositivo con una Frase de Recuperación o un PIN ya configurados."
       }
     },
     "stepPassword" : {
@@ -1884,7 +1896,7 @@
           "wrong" : "…no pasa nada, siempre que yo siga teniendo la Frase correcta."
         },
         "modal" : {
-          "text" : "Cualquier persona que conozca tu Frase de recuperación puede robar tus activos cripto.\nSi la pierdes, debes transferir rápidamente tus criptomonedas a un lugar seguro.",
+          "text" : "Cualquier persona que conozca tu Frase de Recuperación puede robar tus activos cripto.\nSi la pierdes, debes transferir rápidamente tus criptomonedas a un lugar seguro.",
           "cta" : "Siguiente pregunta"
         }
       },
@@ -1911,14 +1923,14 @@
     },
     "warning" : {
       "recoveryPhrase" : {
-        "title" : "No utilices una Frase de recuperación que no hayas generado tú mismo.",
-        "desc" : "Tú y solo tú debes inicializar el código PIN y la Frase de recuperación de la billetera de hardware Ledger. Si has recibido un dispositivo con una Frase semilla existente o un código PIN ya inicializado, no utilices el producto y ponte en contacto con el Soporte.",
+        "title" : "No utilices una Frase de Recuperación que no hayas generado tú mismo.",
+        "desc" : "Tú y solo tú debes inicializar el código PIN y la Frase de Recuperación de la billetera de hardware Ledger. Si has recibido un dispositivo con una Frase semilla existente o un código PIN ya inicializado, no utilices el producto y ponte en contacto con el Soporte.",
         "supportLink" : "Ponte en contacto con Soporte"
       },
       "seed" : {
         "title" : "Por favor, verifica los contenidos de la caja",
-        "desc" : "Si tu {{deviceName}} ya tiene un código PIN o una Frase de recuperación, no es seguro usarlo y deberías ponerte en contacto con el Soporte de Ledger.",
-        "warning" : "Usa solo la Frase de recuperación que haya generado tu dispositivo al configurarlo por primera vez",
+        "desc" : "Si tu {{deviceName}} ya tiene un código PIN o una Frase de Recuperación, no es seguro usarlo y deberías ponerte en contacto con el Soporte de Ledger.",
+        "warning" : "Usa solo la Frase de Recuperación que haya generado tu dispositivo al configurarlo por primera vez",
         "continueCTA" : "Continuar",
         "contactSupportCTA" : "Ponte en contacto con Soporte"
       }
@@ -1962,9 +1974,8 @@
   "earlySecurityCheck" : {
     "title" : "Verificación de Autenticidad y de actualización del SO",
     "idle" : {
-      "description" : "Este proceso verifica si tu Ledger Stax es un dispositivo Ledger auténtico.",
       "learnMore" : "Más información sobre la Verificación de Autenticidad",
-      "checkCta" : "Verificar Ledger Stax"
+      "checkCta" : "Verificar {{ productName }}"
     },
     "completed" : {
       "continueCta" : "Continuar a la configuración"
@@ -1987,7 +1998,7 @@
       }
     },
     "genuineCheckNonGenuineDrawer" : {
-      "title" : "El Ledger Stax no superó la Verificación de Autenticidad",
+      "title" : "Este {{ productName }} no ha superado la Verificación de Autenticidad",
       "description" : "No es seguro usar este {{productName}}. Ponte en contacto con el Soporte de Ledger",
       "supportCta" : "Ponte en contacto con el Soporte de Ledger"
     },
@@ -2035,12 +2046,12 @@
       "refused" : {
         "title" : "Está disponible la versión {{firmwareVersion}} del SO",
         "description" : "Te recomendamos aplicar esta actualización para disfrutar de la funcionalidad y la seguridad más modernas.",
-        "updateCta" : "Actualizar Ledger Stax",
+        "updateCta" : "Actualizar {{ productName }}",
         "skipCta" : "Omitir actualización"
       },
       "inactive" : {
         "title" : "Verificación de actualización del SO",
-        "description" : "Se verificará si el sistema operativo de tu Ledger Stax está actualizado o no. "
+        "description" : "Se verificará si el sistema operativo de tu {{productName}} está actualizado o no. "
       }
     },
     "firmwareUpdateAvailableDrawer" : {
@@ -2117,45 +2128,30 @@
       "continueOnDevice" : "Configura el PIN en tu {{productName}}."
     },
     "seedStep" : {
-      "title" : "Frase de recuperación secreta",
-      "doneTitle" : "Frase de recuperación secreta confirmada",
-      "description" : "Tu Frase de recuperación es una lista secreta de 24 Palabras que genera una copia de respaldo de tus claves privadas. Tu {{productName}} genera una Frase de recuperación única. Ledger no conserva ninguna copia.",
+      "title" : "Frase de Recuperación secreta",
+      "doneTitle" : "Frase de Recuperación secreta confirmada",
+      "description" : "Tu Frase de Recuperación es una lista secreta de 24 Palabras que genera una copia de respaldo de tus claves privadas. Tu {{productName}} genera una Frase de Recuperación única. Ledger no conserva ninguna copia.",
       "choiceRestoreDirectOrRecover" : "Marcador de posición: elige la restauración directa o usa Recover.",
       "recoverSeed" : "Marcador de posición: Recover",
-      "restoreSeed" : "Para que tus activos estén lo más seguros posible, utiliza una Frase de recuperación secreta generada por un dispositivo Ledger. \n\n¿No tienes una? Usa tu {{productName}} para generar una Frase nueva.",
+      "restoreSeed" : "Para que tus activos estén lo más seguros posible, utiliza una Frase de Recuperación secreta generada por un dispositivo Ledger. \n\n¿No tienes una? Usa tu {{productName}} para generar una Frase nueva.",
       "selection" : "Elige la opción de configuración que mejor se ajuste a tus necesidades:",
       "selectionNewLedger" : {
         "title" : "Configurar como nuevo Ledger",
-        "desc" : "Te permite crear una billetera nueva. Esta acción generará una Frase de recuperación secreta nueva."
+        "desc" : "Te permite crear una billetera nueva. Esta acción generará una Frase de Recuperación secreta nueva."
       },
       "selectionRestore" : {
         "title" : "Restaurar",
-        "desc" : "Te permitirá restaurar el acceso a activos que ya tengas con tu Frase de recuperación secreta o mediante Ledger Recover."
+        "desc" : "Te permitirá restaurar el acceso a activos que ya tengas con tu Frase de Recuperación secreta o mediante Ledger Recover."
       },
       "selectionContinueOnDevice" : "Elige la opción que prefieras en tu {{productName}}.",
-      "newSeedDescription" : "¿Quieres obtener más información sobre la Frase de recuperación secreta? Mira estos videos:",
+      "newSeedDescription" : "¿Quieres obtener más información sobre la Frase de Recuperación secreta? Mira estos videos:",
       "newSeedContinueOnDevice" : "Haz esto en tu {{productName}}",
-      "recovery" : "Para que tus activos estén lo más seguros posible, utiliza una Frase de recuperación secreta generada por un dispositivo Ledger. \n\n¿No tienes una? Usa tu {{productName}} para generar una Frase nueva.",
+      "recovery" : "Para que tus activos estén lo más seguros posible, utiliza una Frase de Recuperación secreta generada por un dispositivo Ledger. \n\n¿No tienes una? Usa tu {{productName}} para generar una Frase nueva.",
       "restoreChoiceContinueOnDevice" : "Elige la opción que prefieras en tu {{productName}}.",
-      "restoreChoiceSRPTitle" : "Restauración con la Frase de recuperación secreta",
-      "restoreChoiceSRPDescription" : "Para garantizar la máxima seguridad, utiliza una Frase de recuperación secreta generada por un dispositivo Ledger. ",
+      "restoreChoiceSRPTitle" : "Restauración con la Frase de Recuperación secreta",
+      "restoreChoiceSRPDescription" : "Para garantizar la máxima seguridad, utiliza una Frase de Recuperación secreta generada por un dispositivo Ledger. ",
       "restoreChoiceRecoverTitle" : "Restaurar con Ledger Recover",
-      "restoreChoiceRecoverDescription" : "Si te has suscrito a Ledger Recover, inicia sesión en tu suscripción para iniciar el proceso de restauración de la copia de respaldo de tu Frase de recuperación secreta."
-    },
-    "softwareChecksSteps" : {
-      "title" : "Comprobaciones de hardware y software",
-      "description" : "Comprueba que sea seguro utilizar tu dispositivo y que éste cuente con las más recientes opciones de seguridad.",
-      "doneTitle" : "Tu {{productName}} es auténtico y está actualizado",
-      "genuineCheckRequestDrawer" : {
-        "iconText" : "Verificación de autenticidad",
-        "title" : "Esta comprobación garantiza que tu Ledger Stax es un Ledger oficial.",
-        "checkCta" : "Iniciar verificación de autenticidad"
-      },
-      "updateAvailableDrawer" : {
-        "title" : "Nuevo software encontrado",
-        "description" : "Para acceder a las últimas funciones de seguridad, te recomendamos encarecidamente que actualices tu {{productName}}",
-        "updateCta" : "Actualizar"
-      }
+      "restoreChoiceRecoverDescription" : "Si te has suscrito a Ledger Recover, inicia sesión en tu suscripción para iniciar el proceso de restauración de la copia de respaldo de tu Frase de Recuperación secreta."
     },
     "appsStep" : {
       "title" : "Instalar aplicaciones en {{productName}}"
@@ -2178,15 +2174,7 @@
     "discover" : "Discover",
     "nanoX" : "Nano X",
     "market" : "Mercado",
-    "earn" : "Earn",
-    "learn" : "Información"
-  },
-  "learn" : {
-    "pageTitle" : "Información",
-    "sectionShows" : "Muestra",
-    "sectionVideo" : "Vídeo",
-    "sectionPodcast" : "Podcast",
-    "sectionArticles" : "Artículos"
+    "earn" : "Earn"
   },
   "portfolio" : {
     "totalBalance" : "Saldo total",
@@ -2267,7 +2255,7 @@
     "description" : "Puedes elegir añadir cripto directamente desde tu Ledger, o importarlas desde Ledger Live Desktop.",
     "add" : {
       "title" : "Con tu Ledger",
-      "description" : "Crea o importa cuentas con tu Ledger"
+      "description" : "Crea o importa una cuenta para tu activo con tu Ledger"
     },
     "import" : {
       "title" : "Importar desde Desktop",
@@ -2513,10 +2501,6 @@
       "currency" : {
         "title" : "Divisa"
       },
-      "endpointConfig" : {
-        "title" : "Nodo",
-        "desc" : "El nodo API a utilizar"
-      },
       "delete" : {
         "title" : "Eliminar cuenta del Portfolio",
         "desc" : "Se eliminarán los datos guardados.",
@@ -2666,6 +2650,7 @@
     "moreAssets" : "Agregar más"
   },
   "help" : {
+    "chatbot" : "Bot de chat de Ledger",
     "gettingStarted" : {
       "title" : "Primeros pasos",
       "desc" : "Comenzar aquí"
@@ -2842,7 +2827,7 @@
       },
       "largeMover" : {
         "title" : "Grandes movimientos",
-        "desc" : "Te notificaremos si ocurren variaciones importantes en los precios de BTC o ETH"
+        "desc" : "Te notificaremos si ocurren variaciones importantes en los precios de BTC, ETH, SOL, ADA o XRP."
       },
       "transactionsAlerts" : {
         "title" : "Avisos sobre transacciones (Beta)",
@@ -3848,6 +3833,11 @@
         "disclaimer" : "{{tokenName}} es un Token TRC20.\nPuedes recibir tokens directamente en una cuenta de Tron.",
         "learnMore" : "Aprender más acerca de TRC20"
       },
+      "asa" : {
+        "title" : "Agregar token",
+        "disclaimer" : "{{tokenName}} is an ASA Token.\nYou can receive tokens directly on an Algorand account.",
+        "learnMore" : "Más información"
+      },
       "bep20" : {
         "title" : "Agregar token",
         "disclaimer" : "{{tokenName}} es un token BEP-20.\nPuedes recibir tokens directamente en una cuenta de BNB.",
@@ -3887,7 +3877,7 @@
     "allowAppPermissionSubtitleToken" : "para administrar los tokens {{token}}",
     "allowManagerPermission" : "Permitir una conexión segura con Ledger",
     "allowRenaming" : "Permite el cambio de nombre en tu {{productName}}",
-    "allowRemoveCustomLockscreen" : "Confirmar eliminación de imagen en tu Ledger Stax",
+    "allowRemoveCustomLockscreen" : "Confirma la eliminación de la imagen en tu {{productName}}",
     "allowSecureConnection" : "Permitir una conexión segura con Ledger",
     "loading" : "Cargando...",
     "turnOnAndUnlockDevice" : "Enciende y desbloquea tu dispositivo",
@@ -4268,8 +4258,8 @@
     "viewUpdateChangelog" : "Ver registro de cambios de la actualización",
     "waitForFirmwareUpdate" : "Espera a que finalice la actualización de firmware en tu dispositivo",
     "waitForInstallationToFinish" : "Espera a que finalice la instalación en {{deviceName}}",
-    "staxBatteryLow" : "Ledger Stax no tiene suficiente batería para realizar la actualización",
-    "staxBatteryLowDescription" : "Para iniciar la actualización del SO, necesitas una carga mínima del {{lowBatteryPercentage}} % o mantener tu Ledger Stax cargando.",
+    "batteryLow" : "El {{productName}} no tiene suficiente batería para la actualización",
+    "batteryLowDescription" : "Para iniciar la actualización del SO, se necesita una carga mínima del {{lowBatteryPercentage}}% o tu {{productName}} debe estar cargándose.",
     "updateCancelled" : "Instalación de actualización de SO cancelada en {{deviceName}}",
     "updateCancelledDescription" : "Si se trata de un error, vuelve a iniciar la actualización.",
     "updateNotYetComplete" : "La actualización del SO está en curso",
@@ -4381,8 +4371,8 @@
   },
   "FirmwareUpdateReleaseNotes" : {
     "introTitle" : "Actualiza {{deviceName}} a la versión {{version}}",
-    "recoveryPhraseBackupInstructions" : "Como precaución, asegúrate de que la Frase de recuperación de 24 Palabras esté escrita en la Hoja de recuperación y de tener fácil acceso a ella.",
-    "confirmRecoveryPhrase" : "Tengo mi Frase de recuperación",
+    "recoveryPhraseBackupInstructions" : "Como precaución, asegúrate de que la Frase de Recuperación de 24 Palabras esté escrita en la Hoja de recuperación y de tener fácil acceso a ella.",
+    "confirmRecoveryPhrase" : "Tengo mi Frase de Recuperación",
     "introDescription1" : "Ten en cuenta que se eliminarán todas las aplicaciones de tu dispositivo. Puedes volver a instalar las aplicaciones después de actualizar el firmware.",
     "introDescription2" : "Esto no afecta de ninguna manera tus activos cripto.",
     "action" : "Continuar con la actualización"
@@ -6367,80 +6357,61 @@
     "commitRequested" : "¿Te gusta lo que ves?\n¡Pues consérvalo!",
     "confirmPicture" : "Confirmar en {{productName}}",
     "landingPage" : {
-      "title" : "Elige cualquier ejemplo de arte digital o foto.\nPersonaliza tu Ledger Stax.\nHazlo tuyo.",
+      "title" : "Elige cualquier ejemplo de arte digital o foto.\nPersonaliza tu {{productName}}.\nHazlo tuyo.",
       "choosePicture" : "Elige una imagen"
     },
     "confirmCrop" : "Confirmar recorte",
     "confirmContrast" : "Confirmar contraste",
-    "nftEntryPointButtonLabel" : "Establecer como imagen de la pantalla de bloqueo del Ledger Stax",
+    "nftEntryPointButtonLabel" : "Definir como imagen de pantalla de bloqueo",
     "customImage" : "Imagen personalizada",
     "doThisLater" : "Quizás más tarde",
     "preview" : {
       "title" : "Vista previa",
       "loading" : "Cargando vista previa",
       "setPicture" : "Establecer como pantalla de bloqueo",
-      "editPicture" : "Editar imagen"
+      "editPicture" : "Editar imagen",
+      "pickDeviceModel" : "Selecciona un dispositivo"
     },
     "nftGallery" : {
       "title" : "Mis NFTs"
     }
   },
-  "claimNft" : {
-    "welcomePage" : {
-      "title" : "Acceso gratuito al mercado de NFTs más seguro del mundo",
-      "description" : {
-        "title" : "Ledger Infinity Pass te da acceso a:",
-        "1" : "Los drops de NFTs más recientes en primicia",
-        "2" : "El mercado de NFTs más seguro hasta la fecha",
-        "3" : "Un NFT gratis para que lo pidas"
-      },
-      "claimButton" : "Solicitar Ledger Market Pass",
-      "backButton" : "Ya he solicitado mi Market Pass"
-    },
-    "qrScan" : {
-      "title" : "Escanea el código QR de tu Ledger Market Pass",
-      "description" : {
-        "1" : "Encontrarás tu Ledger Market Pass exclusivo en la caja de tu Ledger Stax.\n\nPara comenzar, haz coincidir el código QR que aparece en la parte trasera del Pass con el recuadro. Usa un área bien iluminada y un fondo claro y sencillo."
-      }
-    }
-  },
   "postOnboarding" : {
     "hub" : {
-      "title" : "A continuación, usa tu {{productName}} para:",
-      "allDoneTitle" : "¡y eso es todo!",
+      "title" : "A continuación, usa tu {{productName}} para...",
+      "allDoneTitle" : "You're all set! Keep going and explore your portfolio",
       "skip" : "Lo haré más tarde",
-      "viewWallet" : "Ver mi billetera"
+      "viewWallet" : "Explore my portfolio"
     },
     "entryPointCard" : {
       "title" : "¿Qué es lo próximo que puedes hacer con tu {{productName}}?",
-      "description" : "Reclama el NFT Infinity, personaliza su pantalla de bloqueo o transfiere tus activos desde otros exchanges.",
+      "description" : "Transfer your assets from any exchange or wallet, buy crypto, customize its lock screen, or subscribe to Ledger Recover.",
       "buttonLabel" : "Mira lo que puedes hacer ahora"
     },
     "actions" : {
-      "customImage" : {
-        "title" : "Seleccionar una imagen de pantalla de bloqueo",
-        "titleCompleted" : "Imagen de pantalla de bloqueo seleccionada",
-        "description" : "Elige cualquier ejemplo de arte digital o imagen como pantalla de bloqueo.",
-        "popupLabel" : "Pantalla de bloqueo establecida"
-      },
-      "claimNft" : {
-        "title" : "Reclamar el NFT Infinity",
-        "titleCompleted" : "NFT Infinity reclamado",
-        "description" : "Este NFT te concede acceso a [ Ledger ] Market, nuestro mercado de NFTs.",
-        "popupLabel" : "NFT reclamado",
-        "tagLabel" : "Regalo"
-      },
       "assetsTransfer" : {
         "title" : "Transferir tus activos al Ledger",
         "titleCompleted" : "Activos transferidos al Ledger",
-        "description" : "Transfiere fácilmente activos desde Coinbase o cualquier otro exchange o billetera.",
+        "description" : "From any exchange or wallet, directly to your Ledger.",
         "popupLabel" : "Activos transferidos"
       },
       "buyCrypto" : {
         "title" : "Comprar cripto",
-        "titleCompleted" : "Activos transferidos al Ledger",
-        "description" : "Elige entre más de 500 monedas y las mejores ofertas de proveedores de compras, adaptadas a tus preferencias.",
+        "titleCompleted" : "Cripto comprada",
+        "description" : "Choose from 500+ coins and the best quotes, tailored to your preferences.",
         "popupLabel" : "Cripto comprada"
+      },
+      "customImage" : {
+        "title" : "Personalizar la pantalla de bloqueo",
+        "titleCompleted" : "Pantalla de bloqueo personalizada",
+        "description" : "Choose any digital art or picture to set as your {{productName}}'s lock screen.",
+        "popupLabel" : "Lock screen customized successfully"
+      },
+      "recover" : {
+        "title" : "Subscribe to Ledger Recover",
+        "titleCompleted" : "Subscribed to Ledger Recover",
+        "description" : "Restore access to your wallet without needing your Secret Recovery Phrase.",
+        "popupLabel" : "Successfully subscribed to Ledger Recover"
       }
     }
   },
@@ -6506,7 +6477,7 @@
       "status" : {
         "new" : {
           "title" : "Nuevo",
-          "desc" : "Recupera el acceso a tu billetera sin tu Frase de recuperación secreta.",
+          "desc" : "Recupera el acceso a tu billetera sin tu Frase de Recuperación secreta.",
           "actions" : {
             "learnMore" : "Conoce Ledger Recover",
             "alreadySubscribed" : "¿Ya tienes una suscripción? <LinkAccount>Ver suscripción</LinkAccount>"
