@@ -102,6 +102,10 @@ const Container = styled(Box).attrs(() => ({
   pb: 4,
 }))``;
 
+const FIELDS_TO_DISPLAY_BY_MODE: Record<string, string[]> = {
+  send: ["Data", "Amount", "Max fees", "Type"],
+};
+
 type Props = {
   device: Device;
   account: AccountLike;
@@ -130,10 +134,6 @@ const TransactionConfirm = ({
     status,
   });
 
-  const displayedFields = useMemo(() => {
-    return fields.filter(field => field.label !== "Address");
-  }, [fields]);
-
   const typeTransaction: string | undefined = useMemo(() => {
     const typeField = fields.find(field => field.label && field.label === "Type");
 
@@ -141,6 +141,19 @@ const TransactionConfirm = ({
       return typeField.value;
     }
   }, [fields]);
+
+  const displayedFields = useMemo(() => {
+    if ("mode" in transaction) {
+      const mode = transaction?.mode;
+      if (mode && Object.keys(FIELDS_TO_DISPLAY_BY_MODE).includes(mode)) {
+        if (typeTransaction === "Approve") {
+          return fields;
+        }
+        return fields.filter(field => FIELDS_TO_DISPLAY_BY_MODE[mode].includes(field.label));
+      }
+    }
+    return fields;
+  }, [transaction, typeTransaction, fields]);
 
   if (!device) return null;
   const specific = getLLDCoinFamily(mainAccount.currency.family);
