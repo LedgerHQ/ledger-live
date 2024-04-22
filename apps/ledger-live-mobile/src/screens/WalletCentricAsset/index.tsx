@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback, useRef, useEffect } from "react";
+import React, { useMemo, useState, useCallback, useRef } from "react";
 import { FlatList, LayoutChangeEvent, ListRenderItemInfo } from "react-native";
 import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
 import { useSelector } from "react-redux";
@@ -34,10 +34,10 @@ import AssetMarketSection from "./AssetMarketSection";
 import AssetGraph from "./AssetGraph";
 import { ReferralProgram } from "./referralProgram";
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
-import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
 import { View } from "react-native-animatable";
 import Alert from "~/components/Alert";
 import { urls } from "~/utils/urls";
+import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
 
 const AnimatedFlatListWithRefreshControl = Animated.createAnimatedComponent(
   accountSyncRefreshControl(FlatList),
@@ -57,7 +57,6 @@ const AssetScreen = ({ route }: NavigationProps) => {
     flattenAccountsByCryptoCurrencyScreenSelector(currency),
     isEqual,
   );
-  const [currencyConfig, setCurrencyConfig] = useState<CurrencyConfig>();
 
   const defaultAccount = cryptoAccounts?.length === 1 ? cryptoAccounts[0] : undefined;
 
@@ -104,16 +103,10 @@ const AssetScreen = ({ route }: NavigationProps) => {
     }
   }, [currency, navigation]);
 
-  useEffect(() => {
-    try {
-      if (isCryptoCurrency(currency)) {
-        const config = getCurrencyConfiguration(currency);
-        setCurrencyConfig(config);
-      }
-    } catch (err) {
-      console.warn(err);
-    }
-  }, [currency]);
+  let currencyConfig: CurrencyConfig | undefined = undefined;
+  if (isCryptoCurrency(currency)) {
+    currencyConfig = getCurrencyConfiguration(currency);
+  }
 
   const data = useMemo(
     () => [
