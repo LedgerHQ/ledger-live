@@ -2,7 +2,7 @@ import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { SOLANA_DELEGATION_RESERVE } from "@ledgerhq/live-common/families/solana/utils";
+import { SOLANA_DELEGATION_RESERVE } from "@ledgerhq/live-common/families/solana/logic";
 import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
