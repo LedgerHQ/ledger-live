@@ -28,13 +28,6 @@ export const useStoryly = (
 
   useLayoutEffect(() => {
     if (!storyly) return;
-    console.log(
-      "initializing storyly",
-      instanceId,
-      storyly.params?.stories[instanceId].token,
-      language,
-      props,
-    );
     ref.current?.init({
       layout: "classic",
       token: storyly.params?.stories[instanceId].token || "",
@@ -42,7 +35,6 @@ export const useStoryly = (
       segments: [`lang_${language}`],
       events: {
         isReady: data => {
-          console.log("storyly isReady", data);
           dataRef.current = data;
           // Triggered when story is ready.
         },
