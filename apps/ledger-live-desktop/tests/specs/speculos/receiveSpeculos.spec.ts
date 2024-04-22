@@ -4,15 +4,14 @@ import { Layout } from "../../models/Layout";
 import { AccountPage } from "../../models/AccountPage";
 import { AccountsPage } from "../../models/AccountsPage";
 import { ReceiveModal } from "../../models/ReceiveModal";
-import { SpeculosModal } from "../../models/SpeculosModal";
 import { Modal } from "../../models/Modal";
 import { Currency } from "../../enum/Currency";
-import { Device, specs, startSpeculos, stopSpeculos } from "../../utils/speculos";
+import { Device, specs, startSpeculos, stopSpeculos, pressRightUntil } from "../../utils/speculos";
 
 test.use({ userdata: "speculos" });
 let device: Device | null;
 
-const currencies: Currency[] = [Currency.ETH];
+const currencies: Currency[] = [Currency.BTC];
 
 for (const currency of currencies) {
   test(`[${currency.uiName}] Receive @smoke`, async ({ page }) => {
@@ -20,7 +19,6 @@ for (const currency of currencies) {
     const accountsPage = new AccountsPage(page);
     const accountPage = new AccountPage(page);
     const receiveModal = new ReceiveModal(page);
-    const speculosModal = new SpeculosModal(page);
     const modal = new Modal(page);
     device = await startSpeculos(test.name, specs[currency.uiName.replace(/ /g, "_")]);
 
@@ -37,13 +35,10 @@ for (const currency of currencies) {
     });
 
     await test.step(`[${currency.uiName}] Validate message`, async () => {
-      await speculosModal.pressRight();
-      if (currency === Currency.ETH || currency === Currency.tETH) {
-        await speculosModal.pressRight();
-        await speculosModal.pressBoth();
-      } else {
-        await speculosModal.pressBoth();
-      }
+      await pressRightUntil("Approve"); //TODO: Check if it "Approve" or something else
+    });
+
+    await test.step(`[${currency.uiName}] check screenshot`, async () => {
       await expect.soft(receiveModal.container).toHaveScreenshot(`Receive.png`);
     });
   });

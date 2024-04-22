@@ -21,7 +21,7 @@ export class SendModal extends Modal {
     this.verifyTotalDebit = page.locator("text=Total to debit");
     this.checkDevice = page.locator("text=Sign transaction on your Ledger Device");
     this.checkTransactionbroadcast = page.locator("text=Transaction sent");
-    this.checkTransactionDenied = page.locator("Operation denied on device");
+    this.checkTransactionDenied = page.locator("text=Operation denied on device");
   }
 
   async selectAccount(name: string) {
