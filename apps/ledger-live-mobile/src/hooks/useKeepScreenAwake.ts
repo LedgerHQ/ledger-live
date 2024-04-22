@@ -1,4 +1,4 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import {
   activateKeepAwakeAsync,
   deactivateKeepAwake as deactivateKeepAwakeExpo,
@@ -20,7 +20,12 @@ export function useKeepScreenAwake() {
       blockerId.current = uuid_v4();
       await activateKeepAwakeAsync(blockerId.current);
     }
-    return () => deactivateKeepScreenAwake();
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      deactivateKeepScreenAwake;
+    };
   }, [deactivateKeepScreenAwake]);
 
   return { activateKeepScreenAwake, deactivateKeepScreenAwake };
