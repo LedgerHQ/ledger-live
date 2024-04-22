@@ -1,6 +1,6 @@
-import React, { useCallback, useContext } from "react";
+import React, { MutableRefObject, useCallback, useContext, useEffect } from "react";
 import { Flex } from "@ledgerhq/native-ui";
-import { Platform, RefreshControl } from "react-native";
+import { Platform, RefreshControl, ViewToken } from "react-native";
 import { TAB_BAR_SAFE_HEIGHT } from "~/components/TabBar/TabBarSafeAreaView";
 import { CurrencyData, MarketListRequestParams } from "@ledgerhq/live-common/market/types";
 import { useFocusEffect } from "@react-navigation/native";
@@ -36,6 +36,17 @@ interface ViewProps {
   counterCurrency?: string;
   range?: string;
   onEndReached?: () => void;
+  refetchData: (pageToRefetch: number) => void;
+  refreshRate: number;
+  marketCurrentPage: number;
+  viewabilityConfigCallbackPairs: MutableRefObject<
+    {
+      onViewableItemsChanged: ({ viewableItems }: { viewableItems: ViewToken[] }) => void;
+      viewabilityConfig: {
+        viewAreaCoveragePercentThreshold: number;
+      };
+    }[]
+  >;
 }
 function View({
   marketData,
@@ -47,6 +58,10 @@ function View({
   counterCurrency,
   range,
   onEndReached,
+  refreshRate,
+  marketCurrentPage,
+  refetchData,
+  viewabilityConfigCallbackPairs,
 }: ViewProps) {
   const { colors } = useTheme();
   const { handlePullToRefresh, refreshControlVisible } = usePullToRefresh({ loading, refresh });
@@ -75,6 +90,15 @@ function View({
     }, [setScreen, setSource]),
   );
 
+  /**
+   * Try to Refetch data every REFRESH_RATE time
+   */
+  useEffect(() => {
+    const intervalId = setInterval(() => refetchData(marketCurrentPage ?? 1), refreshRate);
+
+    return () => clearInterval(intervalId);
+  }, [marketCurrentPage, refetchData, refreshRate]);
+
   const listProps = {
     contentContainerStyle: {
       paddingHorizontal: 16,
@@ -85,10 +109,12 @@ function View({
       <ListRow item={item} index={index} counterCurrency={counterCurrency} range={range} />
     ),
     onEndReached,
+    maxToRenderPerBatch: 50,
     onEndReachedThreshold: 0.5,
     scrollEventThrottle: 50,
     initialNumToRender: 50,
     keyExtractor,
+    viewabilityConfigCallbackPairs: viewabilityConfigCallbackPairs.current,
     ListFooterComponent: <ListFooter isLoading={loading} />,
     ListEmptyComponent: (
       <ListEmpty

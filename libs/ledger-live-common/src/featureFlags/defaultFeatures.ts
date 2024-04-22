@@ -449,7 +449,7 @@ export const DEFAULT_FEATURES: Features = {
   llmRefreshMarketData: {
     ...DEFAULT_FEATURE,
     params: {
-      refreshTime: 60000,
+      refreshTime: 3, //nb minutes
     },
   },
   spamReportNfts: DEFAULT_FEATURE,

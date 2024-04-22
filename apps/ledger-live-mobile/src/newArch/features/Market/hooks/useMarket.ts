@@ -7,6 +7,7 @@ import {
   starredMarketCoinsSelector,
   marketFilterByStarredAccountsSelector,
   marketParamsSelector,
+  marketCurrentPageSelector,
 } from "~/reducers/market";
 
 export function useMarket() {
@@ -16,6 +17,7 @@ export function useMarket() {
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
   const filterByStarredAccount: boolean = useSelector(marketFilterByStarredAccountsSelector);
   const marketParams = useSelector(marketParamsSelector);
+  const marketCurrentPage = useSelector(marketCurrentPageSelector);
 
   const refresh = useCallback(
     (payload?: MarketListRequestParams) => {
@@ -33,5 +35,6 @@ export function useMarket() {
     liveCoinsList,
     supportedCurrencies,
     supportedCounterCurrencies,
+    marketCurrentPage,
   };
 }

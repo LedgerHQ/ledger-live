@@ -3,6 +3,7 @@ import { MarketState, State } from "./types";
 import {
   MarketAddStarredMarketcoinsPayload,
   MarketRemoveStarredMarketcoinsPayload,
+  MarketSetCurrentPagePayload,
   MarketSetMarketFilterByStarredAccountsPayload,
   MarketSetMarketRequestParamsPayload,
   MarketStateActionTypes,
@@ -12,7 +13,7 @@ import {
 const INITIAL_STATE: MarketState = {
   marketParams: {
     range: "24h",
-    limit: 50,
+    limit: 25,
     ids: [],
     starred: [],
     orderBy: "market_cap",
@@ -26,6 +27,7 @@ const INITIAL_STATE: MarketState = {
   },
   starredMarketCoins: [],
   marketFilterByStarredAccounts: false,
+  marketCurrentPage: 1,
 };
 
 const handlers: ReducerMap<MarketState, MarketStatePayload> = {
@@ -54,6 +56,11 @@ const handlers: ReducerMap<MarketState, MarketStatePayload> = {
     marketFilterByStarredAccounts: (action as Action<MarketSetMarketFilterByStarredAccountsPayload>)
       .payload,
   }),
+
+  [MarketStateActionTypes.MARKET_SET_CURRENT_PAGE]: (state, action) => ({
+    ...state,
+    marketCurrentPage: (action as Action<MarketSetCurrentPagePayload>).payload,
+  }),
 };
 
 // Selectors
@@ -62,6 +69,7 @@ export const marketParamsSelector = (state: State) => state.market.marketParams;
 export const starredMarketCoinsSelector = (state: State) => state.market.starredMarketCoins;
 export const marketFilterByStarredAccountsSelector = (state: State) =>
   state.market.marketFilterByStarredAccounts;
+export const marketCurrentPageSelector = (state: State) => state.market.marketCurrentPage;
 
 // Exporting reducer
 

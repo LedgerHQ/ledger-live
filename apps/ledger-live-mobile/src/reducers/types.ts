@@ -336,6 +336,7 @@ export type MarketState = {
   marketParams: MarketListRequestParams;
   starredMarketCoins: string[];
   marketFilterByStarredAccounts: boolean;
+  marketCurrentPage: number;
 };
 
 // === ROOT STATE ===
