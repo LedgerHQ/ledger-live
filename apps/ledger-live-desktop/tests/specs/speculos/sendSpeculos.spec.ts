@@ -4,21 +4,15 @@ import { Layout } from "../../models/Layout";
 import { AccountsPage } from "../../models/AccountsPage";
 import { AccountPage } from "../../models/AccountPage";
 import { SendModal } from "../../models/SendModal";
-import { SpeculosModal } from "../../models/SpeculosModal";
 import { Modal } from "../../models/Modal";
 import { Currency } from "../../enum/Currency";
+import { Device, specs, startSpeculos, stopSpeculos, pressRightUntil } from "../../utils/speculos";
+import { addresses } from "../../enum/Address";
 
 test.use({ userdata: "speculos" });
+let device: Device | null;
 
 const currencies: Currency[] = [Currency.tETH];
-
-const addresses: { [key in Currency["uiName"]]: string } = {
-  [Currency.BTC.uiName]: "bc1q7ezsfc44adw2gyzqjmwhuh2e83uk8u5hrw590r",
-  [Currency.tBTC.uiName]: "tb1q8kkh3hkwaq6frqrfdkhpmxzzhe5dtclzwlu4y9",
-  [Currency.ETH.uiName]: "0x43047a5023D55a8658Fcb1c1Cea468311AdAA3Ad",
-  [Currency.tETH.uiName]: "0x43047a5023D55a8658Fcb1c1Cea468311AdAA3Ad",
-  [Currency.SOL.uiName]: "TODO",
-};
 
 for (const currency of currencies) {
   test(`[${currency.uiName}] send @smoke`, async ({ page }) => {
@@ -26,8 +20,8 @@ for (const currency of currencies) {
     const accountsPage = new AccountsPage(page);
     const accountPage = new AccountPage(page);
     const sendModal = new SendModal(page);
-    const speculosModal = new SpeculosModal(page);
     const modal = new Modal(page);
+    device = await startSpeculos(test.name, specs[currency.uiName.replace(/ /g, "_")]);
 
     await test.step(`Navigate to account`, async () => {
       await layout.goToAccounts();
@@ -48,28 +42,19 @@ for (const currency of currencies) {
     await test.step(`[${currency.uiName}] Validate or reject message`, async () => {
       await expect(sendModal.checkDevice).toBeVisible();
       if (currency === Currency.tBTC || currency === Currency.tETH) {
-        await speculosModal.acceptTransaction();
-        if (currency === Currency.tETH) {
-          await speculosModal.pressRight();
-          await speculosModal.pressRight();
-          await speculosModal.pressBoth();
-        } else {
-          await speculosModal.pressBoth();
-        }
+        console.log("Accept SITUATION");
+        await pressRightUntil("Accept"); //TODO: Check if it's "Accept" or "Approve" => BTC Relou car Approve... (checker version nanoAPP)
         await expect(sendModal.checkTransactionbroadcast).toBeVisible();
         await expect.soft(sendModal.container).toHaveScreenshot(`validate.png`);
       } else {
-        await speculosModal.rejectTransaction();
-        if (currency === Currency.ETH) {
-          await speculosModal.pressRight();
-          await speculosModal.pressRight();
-          await speculosModal.pressBoth();
-        } else {
-          await speculosModal.pressBoth();
-        }
+        console.log("REJECT SITUATION");
+        await pressRightUntil("Reject");
         await expect(sendModal.checkTransactionDenied).toBeVisible();
         await expect.soft(sendModal.container).toHaveScreenshot(`denied.png`);
       }
     });
+  });
+  test.afterAll(async () => {
+    await stopSpeculos(device);
   });
 }
