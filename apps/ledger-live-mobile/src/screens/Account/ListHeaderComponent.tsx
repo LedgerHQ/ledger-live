@@ -8,7 +8,7 @@ import {
   PortfolioRange,
   BalanceHistoryWithCountervalue,
 } from "@ledgerhq/types-live";
-import { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
 import { Box, ColorPalette } from "@ledgerhq/native-ui";
 import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
 import { TFunction } from "react-i18next";
@@ -41,7 +41,7 @@ type Props = {
   account?: AccountLike;
   parentAccount?: Account;
   currency: CryptoCurrency;
-  currencyConfig: (CurrencyConfig & Record<string, unknown>) | undefined;
+  currencyConfig?: (CurrencyConfig & Record<string, unknown>) | undefined;
   countervalueAvailable: boolean;
   useCounterValue: boolean;
   range: PortfolioRange;

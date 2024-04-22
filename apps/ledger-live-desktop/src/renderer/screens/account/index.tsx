@@ -40,6 +40,7 @@ import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 import TopBanner from "~/renderer/components/TopBanner";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { urls } from "~/config/urls";
+import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
 
 type Params = {
   id: string;
@@ -120,7 +121,13 @@ const AccountPage = ({
 
   const currency = mainAccount?.currency;
 
-  const currencyConfig = getCurrencyConfiguration(currency!);
+  let currencyConfig: CurrencyConfig;
+
+  try {
+    currencyConfig = getCurrencyConfiguration(currency!);
+  } catch (err) {
+    console.warn(err);
+  }
 
   const localizedContactSupportURL = useLocalizedUrl(urls.contactSupportWebview);
 
