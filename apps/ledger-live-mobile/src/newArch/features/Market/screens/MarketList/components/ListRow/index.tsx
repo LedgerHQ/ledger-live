@@ -3,7 +3,7 @@ import { TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { ScreenName } from "~/const";
 import MarketRowItem from "LLM/features/Market/components/MarketRowItem";
-import { CurrencyData } from "@ledgerhq/live-common/market/types";
+import { CurrencyData } from "@ledgerhq/live-common/market/utils/types";
 
 interface ListRowProps {
   item: CurrencyData;

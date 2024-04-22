@@ -5,7 +5,7 @@ import {
   MarketItemResponse,
   RawCurrencyData,
   SparklineSvgData,
-} from "../types";
+} from "./types";
 
 function distributedCopy(items: number[], n: number): number[] {
   if (!items) return [];

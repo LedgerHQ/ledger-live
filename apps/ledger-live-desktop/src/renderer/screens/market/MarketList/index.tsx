@@ -7,7 +7,7 @@ import AutoSizer from "react-virtualized-auto-sizer";
 import {
   MarketListRequestParams,
   MarketListRequestResult,
-} from "@ledgerhq/live-common/market/types";
+} from "@ledgerhq/live-common/market/utils/types";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { SortTableCell } from "../components/SortTableCell";
 import { TableCell, TableRow, listItemHeight } from "../components/Table";

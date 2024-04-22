@@ -1,7 +1,7 @@
 import {
   useCurrencyChartData,
   useCurrencyData,
-} from "@ledgerhq/live-common/market/v2/useMarketDataProvider";
+} from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
 import { marketParamsSelector } from "~/reducers/market";

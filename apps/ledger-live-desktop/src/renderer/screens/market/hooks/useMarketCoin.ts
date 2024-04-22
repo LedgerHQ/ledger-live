@@ -8,7 +8,7 @@ import {
   useCurrencyChartData,
   useCurrencyData,
   useMarketDataProvider,
-} from "@ledgerhq/live-common/market/v2/useMarketDataProvider";
+} from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
 import { Page, useMarketActions } from "./useMarketActions";
 import {
   removeStarredMarketCoins,

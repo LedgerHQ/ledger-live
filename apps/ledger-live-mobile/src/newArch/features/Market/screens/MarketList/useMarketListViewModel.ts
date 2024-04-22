@@ -4,7 +4,7 @@ import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/t
 import { MarketNavigatorStackParamList } from "LLM/features/Market/Navigator";
 import { ScreenName } from "~/const";
 import { useRoute } from "@react-navigation/native";
-import { useMarketData as useMarketDataHook } from "@ledgerhq/live-common/market/v2/useMarketDataProvider";
+import { useMarketData as useMarketDataHook } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
 import { setMarketCurrentPage, setMarketRequestParams } from "~/actions/market";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { useMarket } from "../../hooks/useMarket";

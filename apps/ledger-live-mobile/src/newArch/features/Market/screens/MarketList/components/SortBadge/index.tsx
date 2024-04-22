@@ -3,7 +3,7 @@ import { TouchableOpacity } from "react-native";
 import { Flex, Text, Icon as IconUI } from "@ledgerhq/native-ui";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
 import QueuedDrawer from "~/components/QueuedDrawer";
-import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
+import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
 import { StyledBadge, StyledCheckIconContainer } from "./SortBadge.styled";
 
 type Option = {

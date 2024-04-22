@@ -213,8 +213,7 @@
     "src/manager/index.ts",
     "src/manager/localization.ts",
     "src/manager/provider.ts",
-    "src/market/api/api.mock.ts",
-    "src/market/MarketDataProvider.tsx",
+    "src/market/api/index.mock.ts",
     "src/market/types.ts",
     "src/market/utils/countervalueFormatter.ts",
     "src/market/utils/rangeDataTable.ts",
@@ -282,15 +281,8 @@
     "src/wallet-api/types.ts",
     "src/wallet-api/version.ts"
   ],
-  "extensions": [
-    ".ts",
-    ".js",
-    ".jsx",
-    ".tsx"
-  ],
-  "ignorePatterns": [
-    "**/node_modules/**"
-  ],
+  "extensions": [".ts", ".js", ".jsx", ".tsx"],
+  "ignorePatterns": ["**/node_modules/**"],
   "ignoreUnimported": [
     "lib-es/__tests__",
     "lib-es/__tests__/accounts",
@@ -2696,11 +2688,11 @@
     "src/index.ts",
     "src/jest.d.ts",
     "src/manager/index.test.ts",
-    "src/market/v2",
-    "src/market/v2/queryKeys.ts",
-    "src/market/v2/timers.ts",
-    "src/market/v2/useMarketDataProvider.ts",
-    "src/market/v2/useMarketPerformers.ts",
+    "src/market/*",
+    "src/market/utils/queryKeys.ts",
+    "src/market/utils/timers.ts",
+    "src/market/hooks/useMarketDataProvider.ts",
+    "src/market/hooks/useMarketPerformers.ts",
     "src/mock/fixtures",
     "src/mock/fixtures/aDeviceInfo.ts",
     "src/mock/fixtures/aLatestFirmwareContext.ts",

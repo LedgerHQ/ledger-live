@@ -9,7 +9,7 @@ import { ScreenName } from "~/const";
 import DeltaVariation from "LLM/features/Market/components/DeltaVariation";
 import Touchable from "~/components/Touchable";
 import { useSettings } from "~/hooks";
-import { CurrencyData } from "@ledgerhq/live-common/market/types";
+import { CurrencyData } from "@ledgerhq/live-common/market/utils/types";
 
 type Props = {
   currency: CryptoOrTokenCurrency;

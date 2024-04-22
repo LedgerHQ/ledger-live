@@ -10,7 +10,7 @@ import {
   MarketStatePayload,
 } from "~/actions/types";
 
-const INITIAL_STATE: MarketState = {
+export const INITIAL_STATE: MarketState = {
   marketParams: {
     range: "24h",
     limit: 25,

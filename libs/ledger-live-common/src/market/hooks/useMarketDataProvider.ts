@@ -6,7 +6,15 @@ import {
   fetchList,
   getSupportedCoinsList,
   supportedCounterCurrencies,
-} from "../api/api";
+} from "../api";
+
+import { QUERY_KEY } from "../utils/queryKeys";
+import { listCryptoCurrencies, listSupportedCurrencies, listTokens } from "../../currencies";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { useMemo } from "react";
+
+import { currencyFormatter, format } from "../utils/currencyFormatter";
+import { BASIC_REFETCH, REFETCH_TIME_ONE_MINUTE } from "../utils/timers";
 import {
   CurrencyData,
   HashMapBody,
@@ -14,14 +22,7 @@ import {
   MarketListRequestParams,
   MarketListRequestResult,
   RawCurrencyData,
-} from "../types";
-import { QUERY_KEY } from "./queryKeys";
-import { listCryptoCurrencies, listSupportedCurrencies, listTokens } from "../../currencies";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { useMemo } from "react";
-
-import { currencyFormatter, format } from "../utils/currencyFormatter";
-import { BASIC_REFETCH, REFETCH_TIME_ONE_MINUTE } from "./timers";
+} from "../utils/types";
 
 const cryptoCurrenciesList = [...listCryptoCurrencies(), ...listTokens()];
 

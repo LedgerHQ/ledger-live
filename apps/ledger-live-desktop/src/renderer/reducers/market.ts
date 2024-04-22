@@ -1,6 +1,6 @@
 import { handleActions } from "redux-actions";
 import { Handlers } from "./types";
-import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
+import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
 
 export type MarketState = {
   marketParams: MarketListRequestParams;

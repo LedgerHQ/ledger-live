@@ -1,4 +1,4 @@
-import { CurrencyData, MarketCoin, MarketListRequestParams, SupportedCoins } from "../types";
+import { CurrencyData, MarketCoin, MarketListRequestParams, SupportedCoins } from "../utils/types";
 import { listCryptoCurrencies, listTokens } from "../../currencies";
 
 const cryptoCurrenciesList = [...listCryptoCurrencies(), ...listTokens()];

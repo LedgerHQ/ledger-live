@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
+import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
 import { track } from "~/analytics";
 import { getAnalyticsProperties } from "LLM/features/Market/utils";
 import { setMarketFilterByStarredAccounts, setMarketRequestParams } from "~/actions/market";

@@ -12,7 +12,7 @@ import { TouchableOpacity } from "react-native";
 import SortBadge from "../SortBadge";
 import { StyledBadge } from "../SortBadge/SortBadge.styled";
 import { ScreenName } from "~/const";
-import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
+import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
 import TrackScreen from "~/analytics/TrackScreen";
 import useBottomSectionViewModel from "./useBottomSectionViewModel";
 import { RANGES } from "~/newArch/features/Market/utils";

@@ -285,7 +285,6 @@ export default class Root extends Component {
                                 <StylesProvider>
                                   <StyledStatusBar />
                                   <NavBarColorHandler />
-
                                   <AuthPass>
                                     <AppProviders initialCountervalues={initialCountervalues}>
                                       <App />

@@ -1,6 +1,6 @@
 import React from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { CurrencyData } from "@ledgerhq/live-common/market/types";
+import { CurrencyData } from "@ledgerhq/live-common/market/utils/types";
 import { Image } from "react-native";
 import { useTranslation } from "react-i18next";
 import CircleCurrencyIcon from "~/components/CircleCurrencyIcon";

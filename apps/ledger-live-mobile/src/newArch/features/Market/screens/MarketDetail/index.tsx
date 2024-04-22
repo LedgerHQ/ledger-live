@@ -22,7 +22,7 @@ import { Item } from "~/components/Graph/types";
 import {
   CurrencyData,
   MarketCurrencyChartDataRequestParams,
-} from "@ledgerhq/live-common/market/types";
+} from "@ledgerhq/live-common/market/utils/types";
 import usePullToRefresh from "../../hooks/usePullToRefresh";
 import useMarketDetailViewModel from "./useMarketDetailViewModel";
 

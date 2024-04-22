@@ -12,7 +12,7 @@ import {
   MarketItemResponse,
   SupportedCoins,
   MarketCurrencyRequestParams,
-} from "../types";
+} from "../utils/types";
 import { rangeDataTable } from "../utils/rangeDataTable";
 import { currencyFormatter } from "../utils/currencyFormatter";
 import URL from "url";

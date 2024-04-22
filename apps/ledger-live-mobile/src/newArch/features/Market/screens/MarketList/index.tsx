@@ -2,7 +2,7 @@ import React, { MutableRefObject, useCallback, useContext, useEffect } from "rea
 import { Flex } from "@ledgerhq/native-ui";
 import { Platform, RefreshControl, ViewToken } from "react-native";
 import { TAB_BAR_SAFE_HEIGHT } from "~/components/TabBar/TabBarSafeAreaView";
-import { CurrencyData, MarketListRequestParams } from "@ledgerhq/live-common/market/types";
+import { CurrencyData, MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
 import { useFocusEffect } from "@react-navigation/native";
 import { AnalyticsContext } from "~/analytics/AnalyticsContext";
 import CollapsibleHeaderFlatList from "~/components/WalletTab/CollapsibleHeaderFlatList";

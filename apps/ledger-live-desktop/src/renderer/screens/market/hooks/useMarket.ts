@@ -1,11 +1,11 @@
 import { useFetchCurrencyFrom } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
+import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
 import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
 import {
   useMarketDataProvider,
   useMarketData as useMarketDataHook,
-} from "@ledgerhq/live-common/market/v2/useMarketDataProvider";
+} from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
 import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";

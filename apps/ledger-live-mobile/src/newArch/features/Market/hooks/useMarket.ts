@@ -1,5 +1,5 @@
-import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
-import { useMarketDataProvider } from "@ledgerhq/live-common/market/v2/useMarketDataProvider";
+import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
+import { useMarketDataProvider } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setMarketRequestParams } from "~/actions/market";
