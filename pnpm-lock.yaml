@@ -2798,9 +2798,6 @@ importers:
       minimatch:
         specifier: ^5.1.0
         version: 5.1.6
-      object-hash:
-        specifier: ^2.2.0
-        version: 2.2.0
       pako:
         specifier: ^2.0.4
         version: 2.1.0
@@ -2919,9 +2916,6 @@ importers:
       '@types/node':
         specifier: ^20.8.10
         version: 20.12.8
-      '@types/object-hash':
-        specifier: ^2.1.0
-        version: 2.2.1
       '@types/react':
         specifier: ^18.2.21
         version: 18.2.79
