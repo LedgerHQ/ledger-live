@@ -31,9 +31,7 @@ import FormLiveAppArraySelect from "./FormLiveAppArraySelect";
 import { Separator } from "~/renderer/components/Onboarding/Screens/SelectUseCase/Separator";
 import { DEFAULT_FORM, DEFAULT_VALUES } from "./defaultValues";
 
-export const objectKeys = <Type extends object>(value: Type): Array<keyof Type> => {
-  return Object.keys(value) as Array<keyof Type>;
-};
+import { objectKeysType } from "@ledgerhq/live-common/helpers";
 
 function createLocalManifest() {
   return (
@@ -90,7 +88,7 @@ function FormLocalManifest({
   };
 
   const contentInput = useCallback(() => {
-    return objectKeys(form.content).map(contentKey => {
+    return objectKeysType(form.content).map(contentKey => {
       const value = form.content[contentKey]?.en;
       if (value === undefined) return <></>;
 
@@ -123,7 +121,7 @@ function FormLocalManifest({
           <Text ff="Inter|Bold" fontSize={4}>
             {`ETH Dapp`}
           </Text>
-          {objectKeys(dapp).map(dappKey => {
+          {objectKeysType(dapp).map(dappKey => {
             if (dappKey === "networks") {
               return dapp.networks.map((networks: LiveAppManifestParamsNetwork, index: number) => {
                 return (
@@ -131,7 +129,7 @@ function FormLocalManifest({
                     <Text ff="Inter|Bold" fontSize={4}>
                       {`${dappKey} ${index + 1}`}
                     </Text>
-                    {objectKeys(networks).map(networkKey => {
+                    {objectKeysType(networks).map(networkKey => {
                       const value = form.dapp?.networks[index][networkKey];
                       if (value === undefined) return <></>;
 
@@ -256,7 +254,7 @@ function FormLocalManifest({
                   </Text>
                 </Flex>
 
-                {objectKeys(form).map((key, index) => {
+                {objectKeysType(form).map((key, index) => {
                   if (key === "content") {
                     return contentInput();
                   }
