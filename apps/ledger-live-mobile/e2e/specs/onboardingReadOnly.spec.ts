@@ -26,6 +26,7 @@ describe("Onboarding - Read Only", () => {
   });
 
   it("goes through discover app and should see an empty portfolio page", async () => {
+    await device.launchApp();
     await device.reloadReactNative();
     await onboardingSteps.startOnboarding();
     await onboardingSteps.chooseNoLedgerYet();
