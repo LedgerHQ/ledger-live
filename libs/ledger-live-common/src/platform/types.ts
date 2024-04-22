@@ -141,7 +141,7 @@ export const LiveAppManifestSchema = z
     author: z.string().optional(),
     private: z.boolean().optional(),
     name: z.string().trim().min(1),
-    url: z.string().trim().min(1).or(z.instanceof(URL)),
+    url: z.string().trim().min(1),
     dapp: LiveAppManifestDappSchema.optional(),
     homepageUrl: z.string().trim().min(1),
     supportUrl: z.string().optional(),
