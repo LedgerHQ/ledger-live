@@ -78,7 +78,7 @@ export const buildSignOperation =
         });
 
         const { signature } = (await signerContext(deviceId, signer =>
-          signer.sign(account.freshAddressPath, Buffer.from(tx.message.serialize())),
+          signer.signTransaction(account.freshAddressPath, Buffer.from(tx.message.serialize())),
         )) as SolanaSignature;
 
         subscriber.next({

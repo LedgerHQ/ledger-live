@@ -16,6 +16,8 @@ import { getEnv } from "@ledgerhq/live-env";
 import { Awaited } from "../../logic";
 import { NetworkError } from "@ledgerhq/errors";
 
+export const LATEST_BLOCKHASH_MOCK = "EEbZs6DmDyDjucyYbo3LwVJU7pQYuVopYcYTSEZXskW3";
+
 export type Config = {
   readonly endpoint: string;
 };

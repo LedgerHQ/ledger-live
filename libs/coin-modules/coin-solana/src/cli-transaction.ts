@@ -237,9 +237,10 @@ function inferMode(input?: string): Mode {
 
   return mode;
 }
-
-export default {
-  options,
-  inferAccounts,
-  inferTransactions,
-};
+export default function makeCliTools() {
+  return {
+    options,
+    inferAccounts,
+    inferTransactions,
+  };
+}

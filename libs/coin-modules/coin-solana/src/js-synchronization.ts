@@ -678,7 +678,7 @@ async function getAccount(
 }> {
   const balanceLamportsWithContext = await api.getBalanceAndContext(address);
 
-  const tokenAccounts = [];
+  const tokenAccounts: ParsedOnChainTokenAccountWithInfo[] = [];
 
   // no tokens for the first release
   /*await api

@@ -1,9 +1,18 @@
 import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 import { Message } from "@solana/web3.js";
 import { flow, isArray, isEqual, isObject, isUndefined, mapValues, omitBy } from "lodash/fp";
-import { ChainAPI, Config, cached, getChainAPI, logged, queued } from "../api";
-import { Functions } from "../utils";
-import { makeBridges } from "./bridge";
+import {
+  ChainAPI,
+  Config,
+  cached,
+  getChainAPI,
+  logged,
+  queued,
+} from "@ledgerhq/coin-solana/api/index";
+import { Functions } from "@ledgerhq/coin-solana/utils";
+import { makeBridges } from "@ledgerhq/coin-solana/bridge/bridge";
+import { SolanaAddress, SolanaSignature, SolanaSigner } from "@ledgerhq/coin-solana/signer";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { getMockedMethods } from "./mock-data";
 
 function mockChainAPI(config: Config): ChainAPI {
@@ -77,7 +86,17 @@ function createMockDataForAPI() {
 }
 
 function getMockedAPIs() {
-  const signerContext: SignerContext<SolanaSigner, SolanaAddress | SolanaSignature>
+  const signer = {
+    getAddress: (_path: string, _display?: boolean) => Promise.resolve({ address: Buffer.from("") }),
+    signTransaction: (_path: string, _txBuffer: Buffer) =>
+      Promise.resolve({ signature: Buffer.from("") }),
+  };
+  const signerContext = (
+    deviceId: string,
+    fn: (signer: SolanaSigner) => Promise<SolanaAddress | SolanaSignature>,
+  ): Promise<SolanaAddress | SolanaSignature> => {
+    return fn(signer);
+  };
   const mockedAPI = mockChainAPI({ cluster: "mock" } as any);
   return {
     getAPI: (_: Config) => Promise.resolve(mockedAPI),

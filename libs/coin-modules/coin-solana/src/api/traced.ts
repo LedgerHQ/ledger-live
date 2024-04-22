@@ -40,6 +40,8 @@ export function traced(api: ChainAPI): ChainAPI {
           log("network", formatMsg({ reqId, msg: `calling <${propKey}>` }), {
             args,
           });
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore: TS-2683
           const result = targetValue.apply(this, args);
           if (result instanceof Promise) {
             return result

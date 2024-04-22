@@ -41,7 +41,7 @@ import getTransactionStatus from "./js-getTransactionStatus";
 import { prepareTransaction } from "./js-prepareTransaction";
 import type { Account, CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
-import { LATEST_BLOCKHASH_MOCK } from "./bridge/mock-data";
+import { LATEST_BLOCKHASH_MOCK } from "./api/chain";
 
 // do not change real properties or the test will break
 const testOnChainData = {

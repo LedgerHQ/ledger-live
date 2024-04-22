@@ -15,7 +15,7 @@ export type SolanaSignature = {
 // };
 export interface SolanaSigner {
   getAddress(path: string, display?: boolean): Promise<SolanaAddress>;
-  sign(path: string, txBuffer: Buffer): Promise<SolanaSignature>;
+  signTransaction(path: string, txBuffer: Buffer): Promise<SolanaSignature>;
   // signOffchainMessage(path: string, msgBuffer: Buffer): Promise<SolanaSignature>;
   // getAppConfiguration(): Promise<AppConfig>;
 }

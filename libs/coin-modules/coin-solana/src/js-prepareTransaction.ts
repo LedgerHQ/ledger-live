@@ -6,8 +6,8 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/errors";
-import { findSubAccountById } from "../../account";
 import type { Account } from "@ledgerhq/types-live";
+import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 import { ChainAPI } from "./api";
 import {
   getMaybeTokenAccount,
