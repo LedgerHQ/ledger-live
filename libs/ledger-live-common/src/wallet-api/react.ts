@@ -847,17 +847,17 @@ export function useCategories(manifests): Categories {
 }
 
 export type RecentlyUsedDB = StateDB<DiscoverDB, DiscoverDB["recentlyUsed"]>;
-export type LocalLiveAppDb = StateDB<DiscoverDB, DiscoverDB["localLiveApp"]>;
+export type LocalLiveAppDB = StateDB<DiscoverDB, DiscoverDB["localLiveApp"]>;
 export type CurrentAccountHistDB = StateDB<DiscoverDB, DiscoverDB["currentAccountHist"]>;
 
-interface LocalLiveApp {
+export interface LocalLiveApp {
   state: LiveAppManifest[];
   addLocalManifest: (LiveAppManifest) => void;
   removeLocalManifestById: (string) => void;
   getLocalLiveAppManifestById: (string) => LiveAppManifest | undefined;
 }
 
-export function useLocalLiveApp([LocalLiveAppDb, setState]: LocalLiveAppDb): LocalLiveApp {
+export function useLocalLiveApp([LocalLiveAppDb, setState]: LocalLiveAppDB): LocalLiveApp {
   const addLocalManifest = useCallback(
     (newLocalManifest: LiveAppManifest) => {
       setState(discoverDB => {
