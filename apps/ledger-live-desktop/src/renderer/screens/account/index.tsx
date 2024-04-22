@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback } from "react";
 import { compose } from "redux";
 import { connect, useSelector } from "react-redux";
 import { withTranslation } from "react-i18next";
@@ -38,7 +38,6 @@ import { State } from "~/renderer/reducers";
 import { getLLDCoinFamily } from "~/renderer/families";
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 import TopBanner from "~/renderer/components/TopBanner";
-import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { urls } from "~/config/urls";
 
@@ -104,7 +103,7 @@ const AccountPage = ({
   const bgColor = useTheme().colors.palette.background.paper;
   const [shouldFilterTokenOpsZeroAmount] = useFilterTokenOperationsZeroAmount();
   const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
-  const [currencyConfig, setCurrencyConfig] = useState<CurrencyConfig>();
+
   const filterOperations = useCallback(
     (operation: Operation, account: AccountLike) => {
       // Remove operations linked to address poisoning
@@ -121,16 +120,7 @@ const AccountPage = ({
 
   const currency = mainAccount?.currency;
 
-  useEffect(() => {
-    try {
-      if (currency) {
-        const currencyConfig = getCurrencyConfiguration(currency);
-        setCurrencyConfig(currencyConfig);
-      }
-    } catch (err) {
-      console.warn(err);
-    }
-  }, [currency]);
+  const currencyConfig = getCurrencyConfiguration(currency!);
 
   const localizedContactSupportURL = useLocalizedUrl(urls.contactSupportWebview);
 

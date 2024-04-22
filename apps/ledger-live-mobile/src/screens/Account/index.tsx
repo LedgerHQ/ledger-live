@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback } from "react";
 import { FlatList, LayoutChangeEvent, ListRenderItemInfo } from "react-native";
 import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,9 +9,9 @@ import { Flex } from "@ledgerhq/native-ui";
 import debounce from "lodash/debounce";
 import SafeAreaView from "~/components/SafeAreaView";
 import { useTranslation } from "react-i18next";
-import { getCurrencyColor, isCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
+import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
-import { isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
+import { getMainAccount, isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { ReactNavigationPerformanceView } from "@shopify/react-native-performance-navigation";
 import { switchCountervalueFirst } from "~/actions/settings";
@@ -38,7 +38,6 @@ import type { AccountsNavigatorParamList } from "~/components/RootNavigator/type
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
-import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
 
 type Props =
   | StackNavigatorProps<AccountsNavigatorParamList, ScreenName.Account>
@@ -74,7 +73,6 @@ const AccountScreenInner = ({
   const useCounterValue = useSelector(countervalueFirstSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const isEmpty = isAccountEmpty(account);
-  const [currencyConfig, setCurrencyConfig] = useState<CurrencyConfig>();
 
   const onSwitchAccountCurrency = useCallback(() => {
     dispatch(switchCountervalueFirst());
@@ -115,16 +113,8 @@ const AccountScreenInner = ({
 
   const { secondaryActions } = useAccountActions({ account, parentAccount });
 
-  useEffect(() => {
-    try {
-      if (isCryptoCurrency(currency)) {
-        const config = getCurrencyConfiguration(currency);
-        setCurrencyConfig(config);
-      }
-    } catch (err) {
-      console.warn(err);
-    }
-  }, [currency]);
+  const mainAccount = getMainAccount(account);
+  const currencyConfig = getCurrencyConfiguration(mainAccount.currency);
 
   const { listHeaderComponents } = getListHeaderComponents({
     account,
