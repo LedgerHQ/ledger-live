@@ -422,7 +422,7 @@
       "cta" : "Ir para Minha Ledger"
     },
     "providers" : {
-      "title" : "Escolha um provedor para trocar criptos",
+      "title" : "Escolha um provedor para trocar cripto",
       "learnMore" : "O que é Troca (Swap)?",
       "cta" : "Continuar",
       "filter" : {
@@ -1077,7 +1077,7 @@
     },
     "emptyAccountDeposit" : {
       "title" : "Você não tem uma conta {{ asset }}.",
-      "description" : "Para depositar fundos e emprestar criptos, você precisa de uma conta {{ asset }}. Receba fundos em seu endereço Ethereum.",
+      "description" : "Para depositar fundos e emprestar criptomoedas, você precisa de uma conta {{ asset }}. Receba fundos em seu endereço Ethereum.",
       "ctaBuy" : "Comprar {{ asset }}",
       "ctaReceive" : "Receber {{ asset }}"
     }
@@ -1363,7 +1363,7 @@
     },
     "sell" : {
       "title" : "vender cripto",
-      "description" : "Venda Bitcoin com nosso parceiro diretamente do Ledger Live"
+      "description" : "Venda Bitcoin pelo nosso provedor diretamente no Ledger Live"
     },
     "stakeAlgorand" : {
       "title" : "Staking de ALGORAND",
@@ -1430,7 +1430,7 @@
       },
       "earn" : {
         "title" : "Aplicar",
-        "description" : "Multiplique suas criptos com a Ledger"
+        "description" : "Multiplique sua cripto com a Ledger"
       }
     },
     "recoverBanner" : {
@@ -4355,7 +4355,7 @@
     "screens" : {
       "welcome" : {
         "title" : "A mais segura carteira de criptomoedas e NFTs.",
-        "description" : "Gerencie, compre e multiplique suas criptos e NFTs de forma segura no Ledger Live.",
+        "description" : "Gerencie, compre e multiplique suas criptomoedas e NFTs com segurança no Ledger Live.",
         "nextButton" : "Começar",
         "noDevice" : "Sem dispositivo?",
         "buyLink" : "Sem dispositivo? Compre uma Ledger",
@@ -4365,7 +4365,7 @@
         "privacyPolicy" : "Política de privacidade",
         "steps" : {
           "0" : {
-            "title" : "Acesse suas criptos",
+            "title" : "Acesse sua cripto",
             "desc" : "Seus criptoativos estão armazenados na blockchain. Use sua chave privada para acessá-los e gerenciá-los"
           },
           "1" : {
@@ -4424,7 +4424,7 @@
           "importYourRecoveryPhrase" : {
             "title" : "Restaurar a partir da frase de recuperação",
             "paragraph1" : "Restaure sua Nano usando sua frase de recuperação para recuperar, substituir ou fazer backup da sua carteira hardware Ledger.",
-            "paragraph2" : "Sua Nano irá restaurar suas chaves privadas e você poderá acessar e administrar suas criptos.",
+            "paragraph2" : "Sua Nano irá restaurar suas chaves privadas e você poderá acessar e administrar seus criptoativos.",
             "buttons" : {
               "next" : "OK, vamos lá!",
               "prev" : "Passo Anterior",
@@ -4453,7 +4453,7 @@
               "descr" : "Conecte seu dispositivo ao computador usando o cabo USB."
             },
             "browse" : {
-              "title" : "Navegue",
+              "title" : "Interaja",
               "descr" : "Aprenda a interagir com seu dispositivo lendo as instruções na tela."
             },
             "select" : {
@@ -4481,7 +4481,7 @@
               "descr" : "Conecte seu dispositivo ao computador usando o cabo USB."
             },
             "browse" : {
-              "title" : "Navegue",
+              "title" : "Interaja",
               "descr" : "Aprenda a interagir com seu dispositivo lendo as instruções na tela."
             },
             "select" : {
@@ -4631,7 +4631,7 @@
             },
             "selectLength" : {
               "title" : "Selecione o comprimento da frase de recuperação",
-              "descr" : "Suas frases de recuperação podem ter 12, 18 ou 24 palavras. Você deve inserir todas as palavras para acessar suas criptos."
+              "descr" : "Suas frases de recuperação podem ter 12, 18 ou 24 palavras. Você deve inserir todas as palavras para acessar suas criptomoedas."
             },
             "enterWord" : {
               "title" : "Insira a palavra nº 1...",
@@ -4719,7 +4719,7 @@
       "heading" : "Noções Básicas",
       "screens" : {
         "accessYourCoins" : {
-          "title" : "Acesse suas criptos",
+          "title" : "Acesse sua cripto",
           "description" : "Seus criptoativos estão armazenados na blockchain. Você precisa de uma chave privada para acessá-los e gerenciá-los."
         },
         "ownYourPrivateKey" : {
