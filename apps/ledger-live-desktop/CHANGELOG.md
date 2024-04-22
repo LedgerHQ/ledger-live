@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.79.1
+
+### Patch Changes
+
+- [#6717](https://github.com/LedgerHQ/ledger-live/pull/6717) [`59a00c8`](https://github.com/LedgerHQ/ledger-live/commit/59a00c819373ca104f915f6d80cf3df9e5a2d363) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix display of restore settings drawer after os update
+
 ## 2.79.1-hotfix.0
 
 ### Patch Changes
