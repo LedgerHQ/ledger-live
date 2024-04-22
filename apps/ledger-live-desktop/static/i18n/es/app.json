@@ -3968,7 +3968,7 @@
       "firebaseProject" : "Proyecto de Firebase al que se refiere esta compilación:",
       "addLocalApp" : "Añadir una aplicación local",
       "addLocalAppDesc" : "Explorar archivos locales y añadir una aplicación local usando un manifiesto local",
-      "addLocalAppButton" : "Navegar",
+      "addLocalAppButton" : "Explorar",
       "runLocalAppDeleteButton" : "Borrar",
       "runLocalAppOpenButton" : "Abrir",
       "enableLearnStagingUrl" : "URL de ensayo de la página Learn",
@@ -4296,7 +4296,7 @@
         "title" : "Protege tu código PIN",
         "intro" : "Durante el proceso de configuración debes elegir un código PIN.",
         "rules" : {
-          "1" : "<0>Siempre</0> elige un código PIN por ti mismo.",
+          "1" : "<0>Nunca</0> elijas un código PIN que no hayas creado tú.",
           "2" : "<0>Siempre</0> ingresa tu código PIN fuera de la vista de los demás.",
           "3" : "Si es necesario, puedes modificar tu código PIN.",
           "4" : "El dispositivo se reiniciará si introduces tres veces seguidas un código PIN incorrecto.",
@@ -4359,7 +4359,7 @@
         "nextButton" : "Comenzar",
         "noDevice" : "¿No tienes un dispositivo?",
         "buyLink" : "¿No tienes un dispositivo? Compra un Ledger Nano X",
-        "byTapping" : "Al tocar “Comenzar” otorgas tu consentimiento y aceptas nuestros",
+        "byTapping" : "Al tocar “Comenzar”, otorgas tu consentimiento y aceptas nuestros",
         "termsAndConditions" : "Términos y condiciones",
         "and" : "y",
         "privacyPolicy" : "Política de Privacidad",
@@ -4453,11 +4453,11 @@
               "descr" : "Conecta tu dispositivo a tu PC mediante el cable USB."
             },
             "browse" : {
-              "title" : "Navegar",
+              "title" : "Explorar",
               "descr" : "Aprende a interactuar con tu dispositivo mediante las instrucciones en pantalla."
             },
             "select" : {
-              "title" : "Selecciona “Set up as new device”",
+              "title" : "Selecciona “Set up as new device” (Configurar como dispositivo nuevo)",
               "descr" : "Presiona ambos botones simultáneamente para validar la selección."
             },
             "follow" : {
@@ -4481,7 +4481,7 @@
               "descr" : "Conecta tu dispositivo a tu PC mediante el cable USB."
             },
             "browse" : {
-              "title" : "Navegar",
+              "title" : "Explorar",
               "descr" : "Aprende a interactuar con tu dispositivo mediante las instrucciones en pantalla."
             },
             "select" : {
@@ -4539,11 +4539,11 @@
           },
           "pinCodeHowTo" : {
             "setUp" : {
-              "title" : "Elige un código PIN",
+              "title" : "Crea un código PIN",
               "descr" : "Presiona el botón izquierdo o derecho para desplazarte por los números. Presiona ambos botones para confirmar un número. Selecciona <0></0> para confirmar tu código PIN. Selecciona <1></1> para borrar un número."
             },
             "confirm" : {
-              "title" : "Confirma código PIN",
+              "title" : "Confirma el código PIN",
               "descr" : "Ingresa tu código PIN para confirmarlo."
             },
             "buttons" : {
@@ -4737,7 +4737,7 @@
         "setUpNanoWallet" : {
           "title" : "Configuremos tu Nano.",
           "description" : "Empecemos por la seguridad de tu Nano",
-          "CTA" : "Vamos."
+          "CTA" : "Continuar"
         }
       }
     },
