@@ -44,8 +44,19 @@ export const useRecoverRestoreOnboarding = (seedPathStatus?: string) => {
     const syncOnboardingFromRestoreStax =
       seedPathStatus === "recover_seed" && recoverRestoreStaxPath;
 
+    // Temp hardcode success recover onboarding due to local mismatch on userId.
+    if (syncOnboardingFromRestoreStax) {
+      setOnboardedViaRecoverRestore(true);
+
+      dispatch(
+          saveSettings({
+            hasCompletedOnboarding: true,
+          }),
+      );
+    }
+
     if (
-      (!userIsOnboardingOrSettingUp || syncOnboardingFromRestoreStax) &&
+      (!userIsOnboardingOrSettingUp /*|| syncOnboardingFromRestoreStax*/) &&
       !hasCompletedOnboarding
     ) {
       confirmRecoverOnboardingStatus();

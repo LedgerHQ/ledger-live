@@ -484,12 +484,15 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
   useEffect(() => {
     if (seedPathStatus === "recover_seed" && recoverRestoreStaxPath) {
       const [pathname, search] = recoverRestoreStaxPath.split("?");
+      console.log("#SyncOnboardingCompanion:: pathname", pathname);
+      console.log("#SyncOnboardingCompanion:: search", search);
 
-      history.push({
-        pathname,
-        search: search ? `?${search}` : undefined,
-        state: { fromOnboarding: true },
-      });
+      setStepKey(StepKey.Applications);
+      // history.push({
+      //   pathname,
+      //   search: search ? `?${search}` : undefined,
+      //   state: { fromOnboarding: true },
+      // });
     }
   }, [dispatch, history, recoverRestoreStaxPath, seedPathStatus]);
 
