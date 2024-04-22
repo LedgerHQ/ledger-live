@@ -1106,7 +1106,7 @@
     "contextMenu" : {
       "star" : "お気に入り",
       "receive" : "受け取る",
-      "send" : "送信",
+      "send" : "送付",
       "swap" : "スワップ",
       "stake" : "ステーキング",
       "buy" : "購入",
@@ -1587,7 +1587,7 @@
   "NFT" : {
     "viewer" : {
       "actions" : {
-        "send" : "送信",
+        "send" : "送付",
         "open" : "{{viewer}}で開く"
       },
       "attributes" : {
@@ -1612,7 +1612,7 @@
       "title" : "全てのNFT",
       "collection" : {
         "header" : {
-          "sendCTA" : "送信",
+          "sendCTA" : "送付",
           "contract" : "コントラクト：{{contract}}"
         },
         "operationList" : {
@@ -2198,7 +2198,7 @@
     }
   },
   "send" : {
-    "title" : "送信",
+    "title" : "送付",
     "titleNft" : "NFTを送付",
     "totalSpent" : "合計出金額",
     "steps" : {
