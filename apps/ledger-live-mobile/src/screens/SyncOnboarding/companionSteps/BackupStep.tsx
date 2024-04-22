@@ -33,10 +33,10 @@ type ChoiceBodyProps = {
 type Choice = {
   id: "backup" | "keep_on_paper";
   icon: React.ReactNode;
-  title: string;
-  tag: string;
+  getTitle: (selected?: boolean) => string;
+  tag?: string;
   tagColor?: string;
-  tagType: React.ComponentProps<typeof Tag>["type"];
+  tagType?: React.ComponentProps<typeof Tag>["type"];
   body: React.ComponentType<ChoiceBodyProps>;
 };
 
@@ -107,8 +107,8 @@ const BackupBody: React.FC<ChoiceBodyProps> = ({ isOpened, device }) => {
   }, [device, dispatchRedux, navigation, servicesConfig?.params?.protectId]);
 
   return isOpened ? (
-    <Flex rowGap={space[3]}>
-      <ChoiceText mb={3}>{t("syncOnboarding.backup.backupChoice.longDescription")}</ChoiceText>
+    <Flex mt={3} rowGap={space[3]}>
+      <ChoiceText mb={3}>{t("syncOnboarding.backup.backupChoice.description")}</ChoiceText>
       <Button
         size="small"
         type="main"
@@ -134,16 +134,14 @@ const BackupBody: React.FC<ChoiceBodyProps> = ({ isOpened, device }) => {
         noLoadingPlaceholder
       />
     </Flex>
-  ) : (
-    <ChoiceText>{t("syncOnboarding.backup.backupChoice.shortDescription")}</ChoiceText>
-  );
+  ) : null;
 };
 
 const KeepOnPaperBody: React.FC<ChoiceBodyProps> = ({ isOpened, onPressKeepManualBackup }) => {
   const { t } = useTranslation();
   return isOpened ? (
-    <Flex>
-      <ChoiceText mb={3}>{t("syncOnboarding.backup.manualBackup.longDescription")}</ChoiceText>
+    <Flex mt={3}>
+      <ChoiceText mb={3}>{t("syncOnboarding.backup.manualBackup.description")}</ChoiceText>
       <Button
         type="main"
         size="small"
@@ -154,15 +152,16 @@ const KeepOnPaperBody: React.FC<ChoiceBodyProps> = ({ isOpened, onPressKeepManua
         {t("syncOnboarding.backup.manualBackup.cta")}
       </Button>
     </Flex>
-  ) : (
-    <ChoiceText>{t("syncOnboarding.backup.manualBackup.shortDescription")}</ChoiceText>
-  );
+  ) : null;
 };
 
 const choices: Choice[] = [
   {
     id: "backup",
-    title: "syncOnboarding.backup.backupChoice.title",
+    getTitle: selected =>
+      selected
+        ? "syncOnboarding.backup.backupChoice.titleSelected"
+        : "syncOnboarding.backup.backupChoice.title",
     icon: <Icons.ShieldCheck size={"S"} color="primary.c80" />,
     tag: "syncOnboarding.backup.backupChoice.tag",
     tagType: "color",
@@ -170,11 +169,8 @@ const choices: Choice[] = [
   },
   {
     id: "keep_on_paper",
-    title: "syncOnboarding.backup.manualBackup.title",
+    getTitle: () => "syncOnboarding.backup.manualBackup.title",
     icon: <Icons.Note size={"S"} color="neutral.c80" />,
-    tag: "syncOnboarding.backup.manualBackup.tag",
-    tagType: "shade",
-    tagColor: "opacityDefault.c10",
     body: KeepOnPaperBody,
   },
 ];
@@ -197,9 +193,9 @@ const BackupStep: React.FC<Props> = props => {
   return (
     <Flex rowGap={space[5]}>
       <TrackScreen flow="Device onboarding" category="Backup for your Secret Recovery Phrase" />
-      <BodyText mb={2}>{t("syncOnboarding.backup.description")}</BodyText>
-      {choices.map(({ id, title, icon, tag, tagColor, tagType, body: Body }) => (
-        <Pressable key={id} onPress={() => setChoice(id)}>
+      <BodyText>{t("syncOnboarding.backup.description")}</BodyText>
+      {choices.map(({ id, getTitle, icon, tag, tagColor, tagType, body: Body }) => (
+        <Pressable key={`${id}`} onPress={() => setChoice(id)}>
           <Flex
             flexDirection={"column"}
             borderWidth="1px"
@@ -208,14 +204,18 @@ const BackupStep: React.FC<Props> = props => {
             borderRadius={radii[2]}
             p={6}
           >
-            <Flex flexDirection="row" alignItems="center" justifyContent="flex-end" mb={3}>
+            <Flex flexDirection="row" alignItems="center" justifyContent="flex-end">
               <Flex flexDirection="row" alignItems="center" columnGap={3} flex={1}>
                 {icon}
-                <SubtitleText m={0}>{t(title)}</SubtitleText>
+                <SubtitleText m={0} ml={2}>
+                  {t(getTitle(choice === id))}
+                </SubtitleText>
               </Flex>
-              <Tag type={tagType} size="small" {...(tagColor ? { bg: tagColor } : {})}>
-                {t(tag)}
-              </Tag>
+              {tag && (
+                <Tag type={tagType} size="small" {...(tagColor ? { bg: tagColor } : {})}>
+                  {t(tag)}
+                </Tag>
+              )}
             </Flex>
             <Body
               isOpened={choice === id}
