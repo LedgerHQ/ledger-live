@@ -40,7 +40,7 @@ const ChoiceText = styled(Text).attrs({
   color: "neutral.c70",
 })``;
 
-const VideoLink: React.FC<void> = () => {
+const VideoLink: React.FC<{}> = () => {
   const { t } = useTranslation();
   const { ref: storylyRef, dataRef } = useStoryly(StorylyInstanceID.backupRecoverySeed);
   return (
