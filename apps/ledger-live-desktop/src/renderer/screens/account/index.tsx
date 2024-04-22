@@ -121,7 +121,7 @@ const AccountPage = ({
 
   const currency = mainAccount?.currency;
 
-  let currencyConfig: CurrencyConfig;
+  let currencyConfig: CurrencyConfig | undefined = undefined;
 
   try {
     currencyConfig = getCurrencyConfiguration(currency!);
