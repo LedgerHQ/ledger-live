@@ -11,6 +11,7 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import SpeculosHttpTransport from "@ledgerhq/hw-transport-node-speculos-http";
+import axios from "axios";
 
 type Specs = {
   [key: string]: {
@@ -104,6 +105,15 @@ export const specs: Specs = {
     },
     dependency: "",
   },
+  Ripple: {
+    currency: getCryptoCurrencyById("ripple"),
+    appQuery: {
+      model: DeviceModelId.nanoSP,
+      appName: "XRP",
+      appVersion: "2.2.3",
+    },
+    dependency: "",
+  },
 };
 
 export async function startSpeculos(testName: string, spec: Specs[keyof Specs]) {
@@ -160,5 +170,38 @@ export async function stopSpeculos(device: Device | null) {
   if (device) {
     log("engine", `test ${device.id} finished`);
     await releaseSpeculosDevice(device.id);
+  }
+}
+
+interface Event {
+  text: string;
+}
+
+interface ResponseData {
+  events: Event[];
+}
+
+export async function pressRightUntil(text: string, maxNumber: number = 10) {
+  let pressNb = 0;
+  const speculosApiPort = process.env.SPECULOS_API_PORT;
+  while (pressNb < maxNumber) {
+    await axios.post(`http://127.0.0.1:${speculosApiPort}/button/right`, {
+      action: "press-and-release",
+    });
+    //await new Promise(resolve => setTimeout(resolve, 1000)); //Remove par la suite
+    const response = await axios.get<ResponseData>(
+      `http://127.0.0.1:${speculosApiPort}/events?stream=false&currentscreenonly=true`,
+    );
+    const responseData = response.data;
+    console.log(responseData);
+    const texts = responseData.events.map(event => event.text);
+    if (texts.includes(text)) {
+      console.log(`Text "${text}" found on the screen`);
+      await axios.post(`http://127.0.0.1:${speculosApiPort}/button/both`, {
+        action: "press-and-release",
+      });
+      return;
+    }
+    pressNb++;
   }
 }
