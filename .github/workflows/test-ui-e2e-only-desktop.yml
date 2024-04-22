@@ -100,10 +100,10 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: allure-results-linux
-          path: apps/ledger-live-desktop/allure-results
+          path: apps/ledger-live-desktop/tests/allure-results
   report:
     needs: [e2e-tests-linux]
-    runs-on: ubuntu-latest
+    runs-on: [ledger-live-medium]
     if: ${{ !cancelled() }}
     steps:
       - uses: actions/checkout@v4
@@ -138,7 +138,7 @@ jobs:
           no-actor: true
 
       - name: Zip Allure Results
-        run: zip allure-results.zip ./apps/ledger-live-desktop/allure-results -rq
+        run: zip allure-results.zip ./apps/ledger-live-desktop/tests/allure-results -rq
 
       - name: Upload Allure Results
         uses: actions/upload-artifact@v4.3.0
