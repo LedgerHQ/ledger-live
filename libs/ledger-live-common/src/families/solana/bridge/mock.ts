@@ -12,7 +12,6 @@ import {
 import { Functions } from "@ledgerhq/coin-solana/utils";
 import { makeBridges } from "@ledgerhq/coin-solana/bridge/bridge";
 import { SolanaAddress, SolanaSignature, SolanaSigner } from "@ledgerhq/coin-solana/signer";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { getMockedMethods } from "./mock-data";
 
 function mockChainAPI(config: Config): ChainAPI {
@@ -87,7 +86,8 @@ function createMockDataForAPI() {
 
 function getMockedAPIs() {
   const signer = {
-    getAddress: (_path: string, _display?: boolean) => Promise.resolve({ address: Buffer.from("") }),
+    getAddress: (_path: string, _display?: boolean) =>
+      Promise.resolve({ address: Buffer.from("") }),
     signTransaction: (_path: string, _txBuffer: Buffer) =>
       Promise.resolve({ signature: Buffer.from("") }),
   };
