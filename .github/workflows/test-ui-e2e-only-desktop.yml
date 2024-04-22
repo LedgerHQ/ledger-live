@@ -16,6 +16,10 @@ on:
       test_filter:
         description: Filter test pattern to execute only tests suites named according to pattern(s) separated by '|' (e.g. to execute accounts and settings describe blocks "Accounts @smoke" or "Accounts @smoke|Settings")
         required: false
+      invert_filter:
+        description: Only run tests not matching the previous filter
+        type: boolean
+        default: false
       use_mocks:
         description: Run the tests with the mocks
         type: boolean
@@ -92,9 +96,10 @@ jobs:
         run: |
           export COINAPPS=$PWD/coin-apps
           if [ "${{ inputs.use_mocks }}" = false ]; then export MOCK=0; fi
-          xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright ${INPUTS_TEST_FILTER:+--grep} "${{ inputs.test_filter }}"
+          xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright ${INPUTS_TEST_FILTER:+--grep${INPUTS_INVERT_FILTER:+-invert}} "${{ inputs.test_filter }}"
         env:
           INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
+          INPUTS_INVERT_FILTER: ${{ inputs.invert_filter }}
           SEED: ${{ secrets.SEED_QAA_B2C }}
       - name: upload diffs to s3
         if: ${{ !cancelled() }}
