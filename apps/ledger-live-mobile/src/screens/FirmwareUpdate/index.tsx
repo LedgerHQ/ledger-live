@@ -182,6 +182,7 @@ export const FirmwareUpdate = ({
   const [fullUpdateComplete, setFullUpdateComplete] = useState(false);
   const [showBatteryWarningDrawer, setShowBatteryWarningDrawer] = useState<boolean>(false);
   const [showReleaseNotes, setShowReleaseNotes] = useState<boolean>(true);
+  const [keepScreenAwake, setKeepScreenAwake] = useState(true);
 
   const {
     requestCompleted: batteryRequestCompleted,
@@ -217,14 +218,7 @@ export const FirmwareUpdate = ({
     deviceInfo,
     isBeforeOnboarding,
   });
-  const { activateKeepScreenAwake, deactivateKeepScreenAwake } = useKeepScreenAwake();
-
-  useEffect(() => {
-    activateKeepScreenAwake();
-    return () => {
-      deactivateKeepScreenAwake();
-    };
-  }, [activateKeepScreenAwake, deactivateKeepScreenAwake]);
+  useKeepScreenAwake(keepScreenAwake);
 
   const [staxImageSource, setStaxImageSource] =
     useState<React.ComponentProps<typeof Image>["source"]>();
@@ -241,20 +235,13 @@ export const FirmwareUpdate = ({
   const quitUpdate = useCallback(async () => {
     if (!batteryRequestCompleted) cancelBatteryCheck();
 
-    deactivateKeepScreenAwake();
+    setKeepScreenAwake(false);
     if (onBackFromUpdate) {
       onBackFromUpdate(updateStep);
     } else {
       navigation.goBack();
     }
-  }, [
-    batteryRequestCompleted,
-    cancelBatteryCheck,
-    navigation,
-    onBackFromUpdate,
-    updateStep,
-    deactivateKeepScreenAwake,
-  ]);
+  }, [batteryRequestCompleted, cancelBatteryCheck, navigation, onBackFromUpdate, updateStep]);
 
   useEffect(() => {
     if (updateStep === "completed") {

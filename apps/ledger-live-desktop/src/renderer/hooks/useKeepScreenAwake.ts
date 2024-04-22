@@ -1,7 +1,7 @@
 import { ipcRenderer } from "electron";
 import { useCallback, useEffect, useRef } from "react";
 
-export const useKeepScreenAwake = () => {
+export const useKeepScreenAwake = (enabled: boolean) => {
   const blockerId = useRef(Number.NaN);
 
   const deactivateKeepAwake = useCallback(async () => {
@@ -18,10 +18,16 @@ export const useKeepScreenAwake = () => {
   }, []);
 
   useEffect(() => {
+    if (enabled) {
+      activateKeepAwake();
+    } else {
+      deactivateKeepAwake();
+    }
+  }, [activateKeepAwake, deactivateKeepAwake, enabled]);
+
+  useEffect(() => {
     return () => {
       deactivateKeepAwake();
     };
   }, [deactivateKeepAwake]);
-
-  return { activateKeepAwake, deactivateKeepAwake };
 };

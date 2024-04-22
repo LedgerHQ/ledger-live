@@ -5,7 +5,7 @@ import {
 } from "expo-keep-awake";
 import { v4 as uuid_v4 } from "uuid";
 
-export function useKeepScreenAwake() {
+export function useKeepScreenAwake(enabled: boolean) {
   const blockerId = useRef("");
 
   const deactivateKeepScreenAwake = useCallback(async () => {
@@ -23,10 +23,16 @@ export function useKeepScreenAwake() {
   }, []);
 
   useEffect(() => {
+    if (enabled) {
+      activateKeepScreenAwake();
+    } else {
+      deactivateKeepScreenAwake();
+    }
+  }, [activateKeepScreenAwake, deactivateKeepScreenAwake, enabled]);
+
+  useEffect(() => {
     return () => {
-      deactivateKeepScreenAwake;
+      deactivateKeepScreenAwake();
     };
   }, [deactivateKeepScreenAwake]);
-
-  return { activateKeepScreenAwake, deactivateKeepScreenAwake };
 }

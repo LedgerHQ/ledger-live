@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Flex } from "@ledgerhq/react-ui";
 import { Route, Switch, useRouteMatch, RouteComponentProps } from "react-router-dom";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
@@ -14,14 +14,7 @@ export type ManualRouteProps = RouteComponentProps<SyncOnboardingScreenProps>;
 
 const SyncOnboarding = () => {
   const { path } = useRouteMatch();
-  const { activateKeepAwake, deactivateKeepAwake } = useKeepScreenAwake();
-
-  useEffect(() => {
-    activateKeepAwake();
-    return () => {
-      deactivateKeepAwake();
-    };
-  }, [activateKeepAwake, deactivateKeepAwake]);
+  useKeepScreenAwake(true);
 
   return (
     <Flex width="100%" height="100%" position="relative">

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { State } from "@ledgerhq/live-common/apps/types";
@@ -24,13 +24,8 @@ type Props = {
 }; // we can forward appOp from state.currentAppOp if it matches the contextual app
 const Progress = ({ state, name, updating, installing, uninstalling, isCurrent }: Props) => {
   const progress = useAppInstallProgress(state, name);
-  const { activateKeepAwake, deactivateKeepAwake } = useKeepScreenAwake();
-  useEffect(() => {
-    activateKeepAwake();
-    return () => {
-      deactivateKeepAwake();
-    };
-  }, [activateKeepAwake, deactivateKeepAwake]);
+  useKeepScreenAwake(true);
+
   return (
     <Box flex="1" horizontal justifyContent="flex-end" overflow="hidden">
       <Box flex="0 0 auto" alignItems="flex-end" justifyContent="center">

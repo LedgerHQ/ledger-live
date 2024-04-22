@@ -157,17 +157,14 @@ export default function FirmwareUpdate({
 
   const onCloseAndReinstall = useCallback(() => onTryClose(true), [onTryClose]);
   const onCloseSilently = useCallback(() => onTryClose(false), [onTryClose]);
-  const { activateKeepScreenAwake, deactivateKeepScreenAwake } = useKeepScreenAwake();
+  useKeepScreenAwake(isOpen);
 
   useEffect(() => {
     // reset the state whenever we re-open the modal
     if (isOpen) {
-      activateKeepScreenAwake();
       onReset();
-    } else {
-      deactivateKeepScreenAwake();
     }
-  }, [activateKeepScreenAwake, deactivateKeepScreenAwake, isOpen, onReset]);
+  }, [isOpen, onReset]);
 
   useEffect(() => {
     if (!nextBackgroundEvent) return;
