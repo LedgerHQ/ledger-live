@@ -274,31 +274,32 @@ export default class Root extends Component {
                 <HookNotifications />
                 <HookDynamicContentCards />
                 <TermsAndConditionMigrateLegacyData />
-                <PlatformAppProviderWrapper>
-                  <FirebaseRemoteConfigProvider>
-                    <FirebaseFeatureFlagsProvider getFeature={getFeature}>
-                      <SafeAreaProvider>
-                        <PerformanceProvider>
-                          <StorylyProvider>
-                            <StylesProvider>
-                              <StyledStatusBar />
-                              <NavBarColorHandler />
-                              <I18nextProvider i18n={i18n}>
-                                <LocaleProvider>
+                <I18nextProvider i18n={i18n}>
+                  <LocaleProvider>
+                    <PlatformAppProviderWrapper>
+                      <FirebaseRemoteConfigProvider>
+                        <FirebaseFeatureFlagsProvider getFeature={getFeature}>
+                          <SafeAreaProvider>
+                            <PerformanceProvider>
+                              <StorylyProvider>
+                                <StylesProvider>
+                                  <StyledStatusBar />
+                                  <NavBarColorHandler />
+
                                   <AuthPass>
                                     <AppProviders initialCountervalues={initialCountervalues}>
                                       <App />
                                     </AppProviders>
                                   </AuthPass>
-                                </LocaleProvider>
-                              </I18nextProvider>
-                            </StylesProvider>
-                          </StorylyProvider>
-                        </PerformanceProvider>
-                      </SafeAreaProvider>
-                    </FirebaseFeatureFlagsProvider>
-                  </FirebaseRemoteConfigProvider>
-                </PlatformAppProviderWrapper>
+                                </StylesProvider>
+                              </StorylyProvider>
+                            </PerformanceProvider>
+                          </SafeAreaProvider>
+                        </FirebaseFeatureFlagsProvider>
+                      </FirebaseRemoteConfigProvider>
+                    </PlatformAppProviderWrapper>
+                  </LocaleProvider>
+                </I18nextProvider>
               </>
             ) : (
               <LoadingApp />

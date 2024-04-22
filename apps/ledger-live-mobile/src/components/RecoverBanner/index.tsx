@@ -18,7 +18,7 @@ function RecoverBanner() {
   const recoverServices = useFeature("protectServicesMobile");
 
   const bannerIsEnabled = recoverServices?.params?.bannerSubscriptionNotification;
-  const protectID = recoverServices?.params?.protectId ?? "";
+  const protectID = recoverServices?.params?.protectId ?? "protect-prod";
   const maxStepNumber = 5;
 
   const recoverUnfinishedOnboardingPath = useCustomURI(

@@ -17,7 +17,7 @@ const ErrorBanner = ({ error, warning, fallback }: Props) => {
   return (
     <Alert
       type={warning ? "warning" : "error"}
-      title={<TranslatedError error={error} field="title" fallback={fallback?.title} />}
+      title={<TranslatedError error={error} field="title" fallback={fallback?.title} noLink />}
       learnMoreUrl={maybeUrl}
       mb={4}
     >

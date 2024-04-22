@@ -104,6 +104,7 @@ export const SwapExchangeRateAmountTooLowOrTooHigh = createCustomErrorClass(
 );
 
 export const SwapGenericAPIError = createCustomErrorClass("SwapGenericAPIError");
+export const SwapRateExpiredError = createCustomErrorClass("SwapRateExpiredError");
 
 export const JSONRPCResponseError = createCustomErrorClass("JSONRPCResponseError");
 export const JSONDecodeError = createCustomErrorClass("JSONDecodeError");

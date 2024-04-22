@@ -76,7 +76,7 @@ export type CurrencyFeatures = {
   currencyAvalancheCChain: DefaultFeature;
   currencyStacks: DefaultFeature;
   currencyOptimism: DefaultFeature;
-  currencyOptimismGoerli: DefaultFeature;
+  currencyOptimismSepolia: DefaultFeature;
   currencyArbitrum: DefaultFeature;
   currencyArbitrumSepolia: DefaultFeature;
   currencyRsk: DefaultFeature;
@@ -112,7 +112,7 @@ export type CurrencyFeatures = {
   currencyNeonEvm: DefaultFeature;
   currencyLukso: DefaultFeature;
   currencyLinea: DefaultFeature;
-  currencyLineaGoerli: DefaultFeature;
+  currencyLineaTesnet: DefaultFeature;
 };
 
 /**
@@ -129,6 +129,7 @@ export type Features = CurrencyFeatures & {
   deviceInitialApps: Feature_DeviceInitialApps;
   buyDeviceFromLive: Feature_BuyDeviceFromLive;
   mockFeature: Feature_MockFeature;
+  buySellUi: Feature_BuySellUiManifest;
   multibuyNavigation: Feature_MultibuyNavigation;
   referralProgramDesktopSidebar: Feature_ReferralProgramDesktopSidebar;
   referralProgramMobile: Feature_ReferralProgramMobile;
@@ -172,6 +173,8 @@ export type Features = CurrencyFeatures & {
   marketperformanceWidgetDesktop: Feature_MarketperformanceWidgetDesktop;
   supportDeviceStax: Feature_SupportDeviceStax;
   supportDeviceEuropa: Feature_SupportDeviceEuropa;
+  lldRefreshMarketData: Feature_LldRefreshMarketData;
+  spamReportNfts: Feature_SpamReportNfts;
 };
 
 /**
@@ -444,10 +447,21 @@ export type Feature_lldActionCarousel = Feature<{
 
 export type Feature_MarketperformanceWidgetDesktop = Feature<{
   variant: ABTestingVariants;
+  refreshRate: number;
+  top: number;
+  supported: boolean;
 }>;
 
 export type Feature_NftsFromSimpleHash = Feature<{
   threshold: number;
+}>;
+
+export type Feature_LldRefreshMarketData = Feature<{
+  refreshTime: number;
+}>;
+
+export type Feature_BuySellUiManifest = Feature<{
+  manifestId: string; // id of the app to use for the Buy/Sell UI, e.g. "multibuy-v2"
 }>;
 
 export type Feature_CounterValue = DefaultFeature;
@@ -471,7 +485,7 @@ export type Feature_SupportDeviceStax = DefaultFeature;
 export type Feature_SupportDeviceEuropa = DefaultFeature;
 export type Feature_LldChatbotSupport = DefaultFeature;
 export type Feature_LlmChatbotSupport = DefaultFeature;
-
+export type Feature_SpamReportNfts = DefaultFeature;
 /**
  * Utils types.
  */

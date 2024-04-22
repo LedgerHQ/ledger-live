@@ -15,7 +15,11 @@ import { getCurrencyExchangeConfig } from "../";
 import { getAccountCurrency, getAccountUnit, getMainAccount } from "../../account";
 import { getAccountBridge } from "../../bridge";
 import { getEnv } from "@ledgerhq/live-env";
-import { SwapGenericAPIError, TransactionRefusedOnDevice } from "../../errors";
+import {
+  SwapGenericAPIError,
+  SwapRateExpiredError,
+  TransactionRefusedOnDevice,
+} from "../../errors";
 import perFamily from "../../generated/exchange";
 import { withDevice } from "../../hw/deviceAccess";
 import { delay } from "../../promise";
@@ -98,7 +102,14 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
           });
 
           if (unsubscribed || !res || !res.data) return;
-        } catch (e) {
+        } catch (e: any) {
+          if (e.msg.messageKey == "WRONG_OR_EXPIRED_RATE_ID") {
+            o.next({
+              type: "init-swap-error",
+              error: new SwapRateExpiredError(),
+              swapId,
+            });
+          }
           o.next({
             type: "init-swap-error",
             error: new SwapGenericAPIError(),
@@ -262,7 +273,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         if (ignoreTransportError) return;
 
         if (e instanceof TransportStatusError && e.statusCode === 0x6a84) {
-          throw new TransactionRefusedOnDevice();
+          throw new TransactionRefusedOnDevice("", { step: "SIGN_COIN_TRANSACTION" });
         }
 
         throw e;

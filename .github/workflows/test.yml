@@ -49,7 +49,7 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-          skip_turbo_cache: "false"
+          skip-turbo-cache: "false"
       - name: Install dependencies
         run: pnpm i --filter="!./apps/**"
       - name: run doc
@@ -75,7 +75,7 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
         id: toolchain
         with:
-          skip_turbo_cache: "false"
+          skip-turbo-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
@@ -106,7 +106,7 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-          skip_turbo_cache: "false"
+          skip-turbo-cache: "false"
       - name: Install dependencies
         run: pnpm i -F "live-cli..." -F "ledger-live"
       - name: build cli
@@ -132,7 +132,7 @@ jobs:
       FORCE_COLOR: 3
       CI_OS: ubuntu-latest
 
-    runs-on: [ledger-live-4xlarge-linux]
+    runs-on: [ledger-live-4xlarge]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -142,7 +142,7 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
         id: toolchain
         with:
-          skip_turbo_cache: "false"
+          skip-turbo-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
@@ -154,7 +154,7 @@ jobs:
         run: pnpm run test --continue --filter="!./apps/**" --filter="!./libs/ui/**" --filter="!./tools/**" --filter="!ledger-live...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
         shell: bash
       - name: (On Failure) Upload live-common snapshots and source
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: live-common-src
@@ -166,10 +166,10 @@ jobs:
           script: |
             const fs = require("fs");
             fs.writeFileSync("summary-tests.txt", "${{ steps.test-libs.outcome }}", "utf-8");
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
-          name: outputs
+          name: outputs-test-libraries
           path: ${{ github.workspace }}/summary-tests.txt
 
   test-ui:
@@ -190,7 +190,7 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
         id: toolchain
         with:
-          skip_turbo_cache: "false"
+          skip-turbo-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
@@ -202,7 +202,7 @@ jobs:
         run: pnpm run test --continue --filter="./libs/ui/**" --filter="!ledger-live...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
         shell: bash
       - name: (On Failure) Upload react-ui test results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: react-ui-test-results-ubuntu-latest
@@ -215,10 +215,10 @@ jobs:
           script: |
             const fs = require("fs");
             fs.writeFileSync("summary-ui-ubuntu-latest.txt", "${{ steps.test-ui.outcome }}", "utf-8");
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
-          name: outputs
+          name: outputs-test-ui
           path: ${{ github.workspace }}/summary-ui-ubuntu-latest.txt
 
   codecheck-libraries:
@@ -242,7 +242,7 @@ jobs:
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-          skip_turbo_cache: "false"
+          skip-turbo-cache: "false"
       - name: Install dependencies
         run: pnpm i --filter="!./apps/**"
       - name: Lint affected libraries
@@ -262,10 +262,10 @@ jobs:
             const fs = require("fs");
             fs.writeFileSync("summary-typecheck.txt", "${{ steps.typecheck-libs.outcome }}", "utf-8");
             fs.writeFileSync("summary-lint.txt", "${{ steps.lint-libs.outcome }}", "utf-8");
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
-          name: outputs
+          name: outputs-codecheck
           path: |
             ${{ github.workspace }}/summary-typecheck.txt
             ${{ github.workspace }}/summary-lint.txt
@@ -275,18 +275,20 @@ jobs:
     if: ${{ !cancelled() && github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
-          name: outputs
+          pattern: outputs-*
+          merge-multiple: true
+          path: outputs
       - uses: actions/github-script@v6
         name: build summary
         with:
           script: |
             const fs = require("fs");
-            const resultTests = fs.readFileSync("${{ github.workspace }}/summary-tests.txt", "utf-8");
-            const resultLint = fs.readFileSync("${{ github.workspace }}/summary-lint.txt", "utf-8");
-            const resultTypecheck = fs.readFileSync("${{ github.workspace }}/summary-typecheck.txt", "utf-8");
-            const resultUILinux = fs.readFileSync("${{ github.workspace }}/summary-ui-ubuntu-latest.txt", "utf-8");
+            const resultTests = fs.readFileSync("${{ github.workspace }}/outputs/summary-tests.txt", "utf-8");
+            const resultLint = fs.readFileSync("${{ github.workspace }}/outputs/summary-lint.txt", "utf-8");
+            const resultTypecheck = fs.readFileSync("${{ github.workspace }}/outputs/summary-typecheck.txt", "utf-8");
+            const resultUILinux = fs.readFileSync("${{ github.workspace }}/outputs/summary-ui-ubuntu-latest.txt", "utf-8");
             const statuses = {
               doc: {
                 pass: ${{ needs.test-docs.outputs.fail != '1' }},
@@ -376,7 +378,7 @@ jobs:
             };
 
             fs.writeFileSync("summary.json", JSON.stringify(output), "utf-8");
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         name: Upload output
         with:
           path: ${{ github.workspace }}/summary.json

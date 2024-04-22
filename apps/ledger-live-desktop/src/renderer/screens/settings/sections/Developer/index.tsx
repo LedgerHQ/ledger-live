@@ -19,6 +19,9 @@ import ExchangeDeveloperMode from "./ExchangeDeveloperMode";
 import LottieTester from "../Experimental/LottieTester";
 import StorylyTester from "../Experimental/StorylyTester";
 import PostOnboardingHubTester from "../Experimental/PostOnboardingHubTester";
+import AllowDebugReactQueryToggle from "./AllowDebugReactQueryToggle";
+import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
+import SpamReportNtf from "./SpamReportNtf";
 
 const Default = () => {
   const { t } = useTranslation();
@@ -78,8 +81,23 @@ const Default = () => {
       </Row>
       <LottieTester />
       <PostOnboardingHubTester />
-      <StorylyTester />
+      <FeatureToggle featureId="storyly">
+        <StorylyTester />
+      </FeatureToggle>
       <ExchangeDeveloperMode />
+
+      {__DEV__ && (
+        <Row
+          title={t("settings.developer.debugReactQuery")}
+          desc={t("settings.developer.debugReactQueryDesc")}
+        >
+          <AllowDebugReactQueryToggle />
+        </Row>
+      )}
+
+      <FeatureToggle featureId="spamReportNfts">
+        <SpamReportNtf />
+      </FeatureToggle>
     </Body>
   );
 };

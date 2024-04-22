@@ -3119,13 +3119,13 @@
       "broadcasting" : "Takas işlemi yayınlanıyor",
       "loadingFees" : "Ağ ücretleri yükleniyor...",
       "landing" : {
-        "header" : "Takas edin",
+        "header" : "Takas et",
         "title" : "Takas İşlemlerine Hoş Geldiniz",
         "whatIsSwap" : "Takas (Swap) nedir?",
         "disclaimer" : "Kripto takas işlemlerinizi doğrudan Ledger cihazınızdan yapın. Bu hizmet ABD de dahil olmak üzere bazı ülkelerde kullanılamaz."
       },
       "main" : {
-        "header" : "Takas edin"
+        "header" : "Takas et"
       },
       "notAvailable" : {
         "title" : "Hizmet geçici olarak kullanılamıyor veya ülkenize açık değil"
@@ -3263,7 +3263,7 @@
           "receive" : "Al"
         },
         "placeholder" : "Seç",
-        "title" : "Takas edin",
+        "title" : "Takas et",
         "cta" : "Takas et",
         "from" : "Gönderici",
         "to" : "Alıcı",
@@ -6569,7 +6569,7 @@
           "body" : "Güvenilir sağlayıcılarla satın alın"
         },
         "swap" : {
-          "title" : "Takas edin",
+          "title" : "Takas et",
           "label" : "Popüler",
           "body" : "Bir kriptoyu diğerine güvenle dönüştürün"
         },

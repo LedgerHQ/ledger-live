@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
 import { context } from "~/renderer/drawers/Provider";
-import WebviewErrorDrawer, { SwapLiveError } from "./WebviewErrorDrawer/index";
+import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
 
 import { counterValueCurrencySelector, languageSelector } from "~/renderer/reducers/settings";
 import useTheme from "~/renderer/hooks/useTheme";
@@ -23,6 +23,7 @@ import { captureException } from "~/sentry/internal";
 import { usePTXCustomHandlers } from "~/renderer/components/WebPTXPlayer/CustomHandlers";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { SwapLiveError } from "@ledgerhq/live-common/exchange/swap/types";
 
 const isDevelopment = process.env.NODE_ENV === "development";
 
@@ -34,10 +35,6 @@ export class UnableToLoadSwapLiveError extends Error {
     this.message = message;
   }
 }
-
-type CustomHandlersParams<Params> = {
-  params: Params;
-};
 
 export type SwapProps = {
   provider: string;
@@ -56,6 +53,8 @@ export type SwapProps = {
   providerRedirectURL: string;
   toNewTokenId: string;
   swapApiBase: string;
+  estimatedFees: BigNumber;
+  estimatedFeesUnit: string;
 };
 
 export type SwapWebProps = {
@@ -114,12 +113,6 @@ const SwapWebView = ({ manifest, swapState, liveAppUnavailable }: SwapWebProps) 
       // "custom.swapStateSet": (params: CustomHandlersParams<unknown>) => {
       //   return Promise.resolve();
       // },
-      "custom.throwExchangeErrorToLedgerLive": ({
-        params,
-      }: CustomHandlersParams<SwapLiveError>) => {
-        onSwapWebviewError(params);
-        return Promise.resolve();
-      },
       "custom.saveSwapToHistory": ({
         params,
       }: {
@@ -164,10 +157,6 @@ const SwapWebView = ({ manifest, swapState, liveAppUnavailable }: SwapWebProps) 
               : { ...account, swapHistory: [...account.swapHistory, swapOperation] };
           }),
         );
-        return Promise.resolve();
-      },
-      "custom.throwGenericErrorToLedgerLive": () => {
-        onSwapWebviewError();
         return Promise.resolve();
       },
       "custom.swapRedirectToHistory": () => {

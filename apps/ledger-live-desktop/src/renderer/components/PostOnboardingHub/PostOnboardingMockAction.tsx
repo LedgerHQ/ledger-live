@@ -1,31 +1,26 @@
 import React, { useCallback } from "react";
-import { useDispatch } from "react-redux";
 import { Button, Flex, Text } from "@ledgerhq/react-ui";
-import { setPostOnboardingActionCompleted } from "@ledgerhq/live-common/postOnboarding/actions";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
 import { getPostOnboardingAction } from "./logic";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { useNavigateToPostOnboardingHubCallback } from "./logic/useNavigateToPostOnboardingHubCallback";
+import { useCompleteActionCallback } from "./logic/useCompleteAction";
 
 type Props = {
   id: PostOnboardingActionId;
 };
 
 const PostOnboardingMockAction = ({ id }: Props) => {
-  const dispatch = useDispatch();
   const action = getPostOnboardingAction(id);
   const navigateToPostOnboardingHub = useNavigateToPostOnboardingHubCallback();
 
-  const completeAction = useCallback(
-    () => dispatch(setPostOnboardingActionCompleted({ actionId: id })),
-    [dispatch, id],
-  );
+  const completeAction = useCompleteActionCallback();
 
   const handleCompleteAndGoToHub = useCallback(() => {
-    completeAction();
+    completeAction(id);
     setDrawer();
     navigateToPostOnboardingHub();
-  }, [completeAction, navigateToPostOnboardingHub]);
+  }, [completeAction, navigateToPostOnboardingHub, id]);
 
   return (
     <Flex p={6} flexDirection="column" height="100%" justifyContent="center" alignItems="center">
