@@ -40,7 +40,7 @@ import { urls } from "~/utils/urls";
 type Props = {
   account?: AccountLike;
   parentAccount?: Account;
-  currency: TokenCurrency | CryptoCurrency;
+  currency: CryptoCurrency;
   currencyConfig: (CurrencyConfig & Record<string, unknown>) | undefined;
   countervalueAvailable: boolean;
   useCounterValue: boolean;

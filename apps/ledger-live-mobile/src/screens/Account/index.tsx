@@ -90,8 +90,6 @@ const AccountScreenInner = ({
     });
   }, 300);
 
-  const currency = getAccountCurrency(account);
-
   const analytics = (
     <TrackScreen
       category="Account"
@@ -115,6 +113,7 @@ const AccountScreenInner = ({
 
   const mainAccount = getMainAccount(account);
   const currencyConfig = getCurrencyConfiguration(mainAccount.currency);
+  const currency = mainAccount.currency;
 
   const { listHeaderComponents } = getListHeaderComponents({
     account,
