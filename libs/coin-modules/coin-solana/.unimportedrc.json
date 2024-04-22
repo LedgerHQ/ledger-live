@@ -1,15 +1,16 @@
 {
   "entry": [
-    "src/bridge/index.ts",
-    "src/bridge/deviceTransactionConfig.ts",
-    "src/bridge/formatters.ts",
-    "src/signer/index.ts",
-    "src/test/cli.ts",
-    "src/test/index.ts",
-    "src/test/specs.ts",
-    "src/types/errors.ts",
-    "src/index.ts"
+    "src/api/index.ts",
+    "src/bridge/js.ts",
+    "src/cli-transaction.ts",
+    "src/deviceTransactionConfig.ts",
+    "src/errors.ts",
+    "src/hw-getAddress.ts",
+    "src/serialization.ts",
+    "src/specs.ts",
+    "src/transaction.ts"
   ],
   "ignorePatterns": ["**/node_modules/**", "**/*.fixture.ts", "**/*.mock.ts", "**/*.test.{js,jsx,ts,tsx}"],
-  "ignoreUnresolved": []
+  "ignoreUnresolved": [],
+  "ignoreUnimported": ["src/datasets/solana.scanAccounts.1.ts"]
 }

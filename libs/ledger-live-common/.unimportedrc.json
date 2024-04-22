@@ -126,8 +126,6 @@
     "src/families/solana/logic.ts",
     "src/families/solana/react.ts",
     "src/families/solana/types.ts",
-    "src/families/solana/utils.ts",
-    "src/families/solana/validator-app/index.ts",
     "src/families/stacks/deviceTransactionConfig.ts",
     "src/families/stacks/types.ts",
     "src/families/stellar/types.ts",
