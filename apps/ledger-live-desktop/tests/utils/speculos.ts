@@ -188,7 +188,6 @@ export async function pressRightUntil(text: string, maxNumber: number = 10) {
     await axios.post(`http://127.0.0.1:${speculosApiPort}/button/right`, {
       action: "press-and-release",
     });
-    //await new Promise(resolve => setTimeout(resolve, 1000)); //Remove par la suite
     const response = await axios.get<ResponseData>(
       `http://127.0.0.1:${speculosApiPort}/events?stream=false&currentscreenonly=true`,
     );
