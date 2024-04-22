@@ -16,7 +16,7 @@ import { useDispatch } from "react-redux";
 import { useHistory } from "react-router";
 import { saveSettings } from "~/renderer/actions/settings";
 
-type Props = {
+type BackupStepProps = {
   device: Device;
   onPressKeepManualBackup(): void;
 };
@@ -40,7 +40,7 @@ const ChoiceText = styled(Text).attrs({
   color: "neutral.c70",
 })``;
 
-const VideoLink = () => {
+const VideoLink: React.FC<void> = () => {
   const { t } = useTranslation();
   const { ref: storylyRef, dataRef } = useStoryly(StorylyInstanceID.backupRecoverySeed);
   return (
@@ -179,7 +179,7 @@ const choices: Choice[] = [
   },
 ];
 
-const BackupStep: React.FC<Props> = props => {
+const BackupStep: React.FC<BackupStepProps> = props => {
   const { device, onPressKeepManualBackup } = props;
   const [choice, setChoice] = useState<Choice["id"] | null>(null);
   const { radii } = useTheme();

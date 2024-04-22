@@ -19,7 +19,7 @@ import { RootNavigation } from "~/components/RootNavigator/types/helpers";
 
 const { BodyText, SubtitleText } = VerticalTimeline;
 
-type Props = {
+type BackupStepProps = {
   device: Device;
   onPressKeepManualBackup(): void;
 };
@@ -45,7 +45,11 @@ const ChoiceText = styled(Text).attrs({
   color: "neutral.c70",
 })``;
 
-const VideoLink = ({ onPress }: { onPress(): void }) => {
+type VideoLinkProps = {
+  onPress(): void;
+};
+
+const VideoLink: React.FC<VideoLinkProps> = ({ onPress }) => {
   const { t } = useTranslation();
   return (
     <Flex my={4}>
@@ -175,7 +179,7 @@ const choices: Choice[] = [
   },
 ];
 
-const BackupStep: React.FC<Props> = props => {
+const BackupStep: React.FC<BackupStepProps> = props => {
   const { device, onPressKeepManualBackup } = props;
   const [choice, setChoice] = useState<Choice["id"] | null>(null);
   const { space, radii } = useTheme();
