@@ -369,7 +369,14 @@
         "description" : "Você ainda não fez nenhuma troca ou o Ledger Live foi redefinido nesse meio tempo."
       },
       "export" : "Exportar Operações",
-      "exporting" : "Exportando..."
+      "exporting" : "Exportando...",
+      "status" : {
+        "pending" : "Pending",
+        "onhold" : "Onhold",
+        "expired" : "Expired",
+        "finished" : "Finished",
+        "refunded" : "Refunded"
+      }
     },
     "exchangeDrawer" : {
       "title" : "Confirme sua negociação",
@@ -422,7 +429,7 @@
       "cta" : "Ir para Minha Ledger"
     },
     "providers" : {
-      "title" : "Escolha um provedor para trocar criptos",
+      "title" : "Escolha um provedor para trocar cripto",
       "learnMore" : "O que é Troca (Swap)?",
       "cta" : "Continuar",
       "filter" : {
@@ -729,6 +736,10 @@
         "description2" : "Desenvolvedores de qualquer lugar do mundo podem se integrar com a nossa Ledger Live",
         "description3" : "Esta integração foi realizada por {{team}} em colaboração com a Ledger"
       }
+    },
+    "willBeDeprecatedBanner" : {
+      "title" : "To optimize efficiencies, {{currencyName}} will not be supported on Ledger Live as of {{deprecatedDate}}. However, it will still be supported on Ledger hardware wallets. Please contact Ledger Customer Support if you would like assistance on this.",
+      "contactSupport" : "Contact Support"
     },
     "lastOperations" : "Últimas Operações",
     "contractAddress" : "Contrato:",
@@ -1077,7 +1088,7 @@
     },
     "emptyAccountDeposit" : {
       "title" : "Você não tem uma conta {{ asset }}.",
-      "description" : "Para depositar fundos e emprestar criptos, você precisa de uma conta {{ asset }}. Receba fundos em seu endereço Ethereum.",
+      "description" : "Para depositar fundos e emprestar criptomoedas, você precisa de uma conta {{ asset }}. Receba fundos em seu endereço Ethereum.",
       "ctaBuy" : "Comprar {{ asset }}",
       "ctaReceive" : "Receber {{ asset }}"
     }
@@ -1198,6 +1209,24 @@
         "restoreChoiceRecoverDescription" : "Se você se inscreveu no Ledger Recover, entre com os seus dados para restaurar a sua Frase de Recuperação Secreta.",
         "followInstructions" : "Siga as instruções que aparecem em sua {{productName}}."
       },
+      "backup" : {
+        "title" : "Backup for your Secret Recovery Phrase",
+        "description" : "With a digital encrypted backup, restore access to your wallet without your Secret Recovery Phrase.\n\nChoose if you’d like a digital backup:",
+        "backupChoice" : {
+          "title" : "I want a digital backup",
+          "titleSelected" : "Ledger Recover",
+          "tag" : "Popular",
+          "description" : "Subscribe to Ledger Recover for $9.99 per month. Start for free. Cancel anytime!",
+          "tryCta" : "Try it for free",
+          "redeemCodeCta" : "I have a redeem code",
+          "howItWorksCta" : "I want to know more"
+        },
+        "manualBackup" : {
+          "title" : "No, I’m good with paper",
+          "description" : "Without a digital backup, the Recovery Sheet is your only way to restore wallet access. Don’t lose it.",
+          "cta" : "I understand"
+        }
+      },
       "softwareCheckContent" : {
         "title" : {
           "active" : "Verificação de autenticidade e\nde atualização do sistema operacional",
@@ -1297,27 +1326,33 @@
   "postOnboarding" : {
     "postOnboardingScreen" : {
       "title" : "Em seguida, use sua {{productName}} para... ",
-      "titleCompleted" : "Tudo pronto!\nContinue a explorar sua carteira.",
-      "exploreCTA" : "Explorar carteira"
+      "titleCompleted" : "You're all set !\nKeep going and explore your portfolio.",
+      "exploreCTA" : "Explore my portfolio"
     },
     "postOnboardingContent" : {
       "skipLink" : "Farei isso mais tarde."
     },
     "postOnboardingBanner" : {
       "title" : "O que fazer agora com sua {{productName}}?",
-      "description" : "Resgate o Infinity NFT, personalize sua tela de bloqueio ou\ntransfira seus ativos de outras corretoras.",
-      "link" : "Veja os próximos passos"
+      "description" : "Transfer your assets from any exchange or wallet, buy crypto, customize its lock screen, or subscribe to Ledger Recover.",
+      "link" : "Veja os próximos passos",
+      "dismiss" : "Maybe later"
     },
     "actions" : {
       "buyCrypto" : {
         "title" : "Comprar cripto",
-        "description" : "Escolha entre mais de 500 moedas e as melhores cotações de provedores, personalizadas de acordo com suas preferências.",
+        "description" : "Choose from 500+ coins and the best quotes, tailored to your preferences.",
         "actionCompletedPopupLabel" : "Cripto comprada"
       },
       "assetsTransfer" : {
         "title" : "Transfira seus ativos para a Ledger",
-        "description" : "Transfira facilmente ativos da Coinbase ou de qualquer outra corretora ou carteira.",
+        "description" : "From any exchange or wallet, directly to your Ledger.",
         "actionCompletedPopupLabel" : "Ativos transferidos"
+      },
+      "recover" : {
+        "title" : "Subscribe to Ledger Recover",
+        "description" : "Restore access to your wallet without needing your Secret Recovery Phrase.",
+        "actionCompletedPopupLabel" : "Successfully subscribed to Ledger Recover"
       }
     }
   },
@@ -1363,7 +1398,7 @@
     },
     "sell" : {
       "title" : "vender cripto",
-      "description" : "Venda Bitcoin com nosso parceiro diretamente do Ledger Live"
+      "description" : "Venda Bitcoin pelo nosso provedor diretamente no Ledger Live"
     },
     "stakeAlgorand" : {
       "title" : "Staking de ALGORAND",
@@ -1430,7 +1465,7 @@
       },
       "earn" : {
         "title" : "Aplicar",
-        "description" : "Multiplique suas criptos com a Ledger"
+        "description" : "Multiplique sua cripto com a Ledger"
       }
     },
     "recoverBanner" : {
@@ -1465,13 +1500,20 @@
       },
       "missingData" : {
         "gainers" : {
-          "title" : "Nenhum ativo dentre os 50 principais apresentou alta nas últimas 24 horas",
+          "title" : "Nenhum ativo dentre os {{count}} principais apresentou alta em {{trend}}",
           "description" : "Tente visualizar as principais baixas ou volte mais tarde"
         },
         "losers" : {
-          "title" : "Nenhum ativo dentre os 50 principais apresentou baixa nas últimas 24 horas",
+          "title" : "Nenhum ativo dentre os {{count}} principais apresentou baixa em {{trend}}",
           "description" : "Tente visualizar as principais altas ou volte mais tarde"
         }
+      },
+      "trend" : {
+        "day" : "24 horas",
+        "week" : "7 dias",
+        "month" : "30 dias",
+        "year" : "ano",
+        "all" : "ano"
       }
     }
   },
@@ -3941,6 +3983,32 @@
       "userId" : "ID de usuário",
       "debugApps" : "Permitir debug de aplicativos",
       "debugAppsDesc" : "Exibe e permite abrir aplicativos da plataforma marcados como 'debug'.",
+      "debugReactQuery" : "Permitir debug do ReactQuery",
+      "debugReactQueryDesc" : "Exibir e permitir a abertura do console de debug do ReactQuery.",
+      "debugSpamNft" : {
+        "debugNFTSpamReport" : "Allow NFT Spam Report (Beta)",
+        "debugNFTSpamReportDesc" : "Display a form to report an NFT as spam or to stop it being displayed as spam",
+        "report" : "Report",
+        "contractAddress" : "Contract Address",
+        "contractAddressDesc" : "contract_address of the NFT reported, or the contract itself",
+        "chainId" : "Chain ID",
+        "chainIdDesc" : "chain_id (e.g., ethereum) of the NFT or contract reported",
+        "collectionId" : "Collection ID",
+        "collectionIdDesc" : "SimpleHash collection id of the NFT reported",
+        "tokenId" : "Token ID",
+        "tokenIdDesc" : "token_id of the NFT reported",
+        "eventType" : "Event Type",
+        "eventTypeDesc" : "Type of report you want to make",
+        "success" : "The report was sent successfully. It may take between 5 and 10 minutes for it to take effect.",
+        "error" : "An error occurred while sending the report. Please try again later.",
+        "reportType" : {
+          "title" : "What would you like to report?",
+          "desc" : "Select the type of report you want to make",
+          "individual" : "Spam report for an individual NFT",
+          "contract" : "Spam report for a contract",
+          "collection" : "Spam report for a collection"
+        }
+      },
       "experimentalApps" : "Permitir aplicativos experimentais",
       "experimentalAppsDesc" : "Exibe e permite abrir aplicativos da plataforma marcados como 'experimentais'.",
       "catalogUrl" : "Definir o provedor do catálogo de aplicativos",
@@ -3969,6 +4037,17 @@
       "addLocalApp" : "Adicionar um aplicativo local",
       "addLocalAppDesc" : "Navegue por arquivos locais e adicione um aplicativo local usando um manifesto local",
       "addLocalAppButton" : "Navegar",
+      "createLocalAppModal" : {
+        "title" : {
+          "create" : "Criar um aplicativo local",
+          "modify" : "Modificar um aplicativo local"
+        },
+        "addNetwork" : "Adicionar uma nova rede",
+        "removeNetwork" : "Remover a última rede",
+        "export" : "Exportar",
+        "modify" : "Modificar",
+        "create" : "Criar"
+      },
       "runLocalAppDeleteButton" : "Excluir",
       "runLocalAppOpenButton" : "Abrir",
       "enableLearnStagingUrl" : "Staging URL da página Aprender",
@@ -4067,9 +4146,13 @@
           "description" : "Testar todos os stories usadas no Ledger Live",
           "longDesc" : "Esta é uma ferramenta disponibilizada tal como se encontra para a equipe validar stories storyly usados no aplicativo."
         },
-        "testPostonboarding" : {
-          "title" : "Testar pós-introdução",
-          "description" : "Testar todos os recursos pós-introdução"
+        "testStaxPostonboarding" : {
+          "title" : "Test Stax Post Onboarding",
+          "description" : "Test all stax post onboarding features"
+        },
+        "testEuropaPostonboarding" : {
+          "title" : "Test Europa Post Onboarding",
+          "description" : "Test all europa post onboarding features"
         },
         "1559DeactivateGate" : {
           "title" : "Desativar taxa de prioridade mínima (EIP1559)",
@@ -4355,7 +4438,7 @@
     "screens" : {
       "welcome" : {
         "title" : "A mais segura carteira de criptomoedas e NFTs.",
-        "description" : "Gerencie, compre e multiplique suas criptos e NFTs de forma segura no Ledger Live.",
+        "description" : "Gerencie, compre e multiplique suas criptomoedas e NFTs com segurança no Ledger Live.",
         "nextButton" : "Começar",
         "noDevice" : "Sem dispositivo?",
         "buyLink" : "Sem dispositivo? Compre uma Ledger",
@@ -4365,7 +4448,7 @@
         "privacyPolicy" : "Política de privacidade",
         "steps" : {
           "0" : {
-            "title" : "Acesse suas criptos",
+            "title" : "Acesse sua cripto",
             "desc" : "Seus criptoativos estão armazenados na blockchain. Use sua chave privada para acessá-los e gerenciá-los"
           },
           "1" : {
@@ -4424,7 +4507,7 @@
           "importYourRecoveryPhrase" : {
             "title" : "Restaurar a partir da frase de recuperação",
             "paragraph1" : "Restaure sua Nano usando sua frase de recuperação para recuperar, substituir ou fazer backup da sua carteira hardware Ledger.",
-            "paragraph2" : "Sua Nano irá restaurar suas chaves privadas e você poderá acessar e administrar suas criptos.",
+            "paragraph2" : "Sua Nano irá restaurar suas chaves privadas e você poderá acessar e administrar seus criptoativos.",
             "buttons" : {
               "next" : "OK, vamos lá!",
               "prev" : "Passo Anterior",
@@ -4453,7 +4536,7 @@
               "descr" : "Conecte seu dispositivo ao computador usando o cabo USB."
             },
             "browse" : {
-              "title" : "Navegue",
+              "title" : "Interaja",
               "descr" : "Aprenda a interagir com seu dispositivo lendo as instruções na tela."
             },
             "select" : {
@@ -4481,7 +4564,7 @@
               "descr" : "Conecte seu dispositivo ao computador usando o cabo USB."
             },
             "browse" : {
-              "title" : "Navegue",
+              "title" : "Interaja",
               "descr" : "Aprenda a interagir com seu dispositivo lendo as instruções na tela."
             },
             "select" : {
@@ -4631,7 +4714,7 @@
             },
             "selectLength" : {
               "title" : "Selecione o comprimento da frase de recuperação",
-              "descr" : "Suas frases de recuperação podem ter 12, 18 ou 24 palavras. Você deve inserir todas as palavras para acessar suas criptos."
+              "descr" : "Suas frases de recuperação podem ter 12, 18 ou 24 palavras. Você deve inserir todas as palavras para acessar suas criptomoedas."
             },
             "enterWord" : {
               "title" : "Insira a palavra nº 1...",
@@ -4719,7 +4802,7 @@
       "heading" : "Noções Básicas",
       "screens" : {
         "accessYourCoins" : {
-          "title" : "Acesse suas criptos",
+          "title" : "Acesse sua cripto",
           "description" : "Seus criptoativos estão armazenados na blockchain. Você precisa de uma chave privada para acessá-los e gerenciá-los."
         },
         "ownYourPrivateKey" : {
@@ -5258,8 +5341,8 @@
       "description" : "Use o My Ledger para desinstalar todos os aplicativos e verifique se há uma atualização de firmware disponível antes de reinstalá-los"
     },
     "LatestFirmwareVersionRequired" : {
-      "title" : "Atualizar firmware da Nano",
-      "description" : "Para acessar este recurso, atualize o firmware do seu dispositivo para a versão mais recente"
+      "title" : "Update Device Firmware",
+      "description" : "Please update your device firmware to the latest version to access this feature"
     },
     "FirmwareNotRecognized" : {
       "title" : "Provedor Inválido",
@@ -5382,7 +5465,7 @@
       "description" : "Impossível calcular quantia e taxas"
     },
     "NotEnoughBalance" : {
-      "title" : "Saldo insuficiente, incluindo taxas de rede. Ajuste a quantia ou verifique o saldo",
+      "title" : "Sorry, insufficient balance including network fees. Adjust amount or verify balance.",
       "description" : "Certifique-se de que a conta tem fundos suficientes."
     },
     "NotEnoughBalanceBecauseDestinationNotCreated" : {
@@ -5436,6 +5519,10 @@
     "SatStackDescriptorNotImported" : {
       "title" : "Conta não buscada pelo node completo",
       "description" : "Configure seu node completo para buscar as contas associadas a este dispositivo. Seu node completo deve primeiro buscar esta conta na blockchain para que você possa adicioná-la ao seu portfólio."
+    },
+    "SwapRateExpiredError" : {
+      "title" : "Cotação Expirada",
+      "description" : "A transação de troca não pôde ser concluída porque a cotação expirou. Atualize a cotação e tente fazer a troca novamente."
     },
     "SwapGenericAPIError" : {
       "title" : "Algo deu errado",
@@ -6037,7 +6124,7 @@
     },
     "postOnboarding" : {
       "title" : "Personalizar a tela de bloqueio",
-      "description" : "Escolha qualquer NFT ou foto como a tela de bloqueio de sua Ledger Stax.",
+      "description" : "Choose any digital art or picture to set as your {{productName}}'s lock screen.",
       "actionCompletedPopupLabel" : "Dispositivo personalizado"
     },
     "customImageSet" : "Tela de bloqueio personalizada",
