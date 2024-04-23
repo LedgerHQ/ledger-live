@@ -10,7 +10,7 @@ const supportedDevices = [
 const unsupportedDevices = [DeviceModelId.blue];
 
 const supportedNanoSVersions = ["1.2.0", "1.2.0-whatever", "1.3.0", "1.3.0-whatever"];
-const unsupportedNanoSVersions = ["1.1.0", "1.1.0-whatever"];
+const unsupportedNanoSVersions = ["1.1.0", "1.1.0-whatever", "whatever"];
 
 describe("isEditDeviceNameSupported", () => {
   it("should return true for supported devices", () => {
