@@ -11,7 +11,7 @@ import * as path from "path";
 import * as crypto from "crypto";
 import { OptionalFeatureMap } from "@ledgerhq/types-live";
 import { responseLogfilePath } from "../utils/networkResponseLogger";
-import { setEnv } from "@ledgerhq/live-env";
+import { getEnv, setEnv } from "@ledgerhq/live-env";
 
 export function generateUUID(): string {
   return crypto.randomBytes(16).toString("hex");
@@ -37,9 +37,7 @@ type TestFixtures = {
 };
 
 const IS_DEBUG_MODE = !!process.env.PWDEBUG;
-const randomNumber = Math.floor(Math.random() * 100) + 1;
-setEnv("SPECULOS_PID_OFFSET", randomNumber);
-process.env.SPECULOS_API_PORT = (30001 + randomNumber).toString();
+setEnv("SPECULOS_PID_OFFSET", Math.floor(Math.random() * 1000));
 setEnv("DISABLE_APP_VERSION_REQUIREMENTS", true);
 
 export const test = base.extend<TestFixtures>({
@@ -93,9 +91,11 @@ export const test = base.extend<TestFixtures>({
         LEDGER_MIN_HEIGHT: 768,
         FEATURE_FLAGS: JSON.stringify(featureFlags),
         MANAGER_DEV_MODE: true,
+        SPECULOS_API_PORT: (30001 + getEnv("SPECULOS_PID_OFFSET")).toString(),
       },
       env,
     );
+    setEnv("SPECULOS_PID_OFFSET", getEnv("SPECULOS_PID_OFFSET") + 1);
 
     // launch app
     const windowSize = { width: 1024, height: 768 };
