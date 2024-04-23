@@ -10,7 +10,11 @@ import { Device, specs, startSpeculos, stopSpeculos } from "../../utils/speculos
 test.use({ userdata: "skip-onboarding" });
 //const currencies = ["Tron", "Cardano", "Bitcoin", "Ethereum", "Solana", "Polkadot"]; //Prob avec Ripple(XRP)
 const currencies = ["Ethereum Holesky"];
-let device: Device | null;
+let device: Device | undefined;
+
+test.afterEach(async () => {
+  await stopSpeculos(device);
+});
 
 test.describe.parallel("Accounts @smoke", () => {
   for (const currency of currencies) {
@@ -71,9 +75,6 @@ test.describe.parallel("Accounts @smoke", () => {
         await accountPage.deleteAccount();
         await expect.soft(page).toHaveScreenshot(`${currency}-deleteAccount.png`);
       });
-    });
-    test.afterAll(async () => {
-      await stopSpeculos(device);
     });
   }
 });
