@@ -1,8 +1,13 @@
 import { DeviceModelId } from "@ledgerhq/devices";
 import { isEditDeviceNameSupported } from "./isEditDeviceNameSupported";
 
-const supportedDevices = [DeviceModelId.stax, DeviceModelId.nanoX, DeviceModelId.europa];
-const unsupportedDevices = [DeviceModelId.nanoS, DeviceModelId.blue, DeviceModelId.nanoSP];
+const supportedDevices = [
+  DeviceModelId.stax,
+  DeviceModelId.nanoX,
+  DeviceModelId.europa,
+  DeviceModelId.nanoSP,
+];
+const unsupportedDevices = [DeviceModelId.nanoS, DeviceModelId.blue];
 
 describe("isEditDeviceNameSupported", () => {
   it("should return true for supported devices", () => {

@@ -1,5 +1,10 @@
 import { DeviceModelId } from "@ledgerhq/devices";
 
 export function isEditDeviceNameSupported(deviceModelId: DeviceModelId) {
-  return [DeviceModelId.stax, DeviceModelId.nanoX, DeviceModelId.europa].includes(deviceModelId);
+  return [
+    DeviceModelId.nanoX,
+    DeviceModelId.nanoSP,
+    DeviceModelId.stax,
+    DeviceModelId.europa,
+  ].includes(deviceModelId);
 }
