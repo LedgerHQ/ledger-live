@@ -1,6 +1,4 @@
 import ethereum_tokens from "./1/erc20.json";
-import ethereum_ropsten_tokens from "./3/erc20.json";
-import ethereum_goerli_tokens from "./5/erc20.json";
 import optimism_tokens from "./10/erc20.json";
 import cronos_tokens from "./25/erc20.json";
 import rsk_tokens from "./30/erc20.json";
@@ -12,7 +10,6 @@ import polygon_tokens from "./137/erc20.json";
 import bittorrent_tokens from "./199/erc20.json";
 import energy_web_tokens from "./246/erc20.json";
 import fantom_tokens from "./250/erc20.json";
-import optimism_goerli_tokens from "./420/erc20.json";
 import astar_tokens from "./592/erc20.json";
 import metis_tokens from "./1088/erc20.json";
 import polygon_zk_evm_tokens from "./1101/erc20.json";
@@ -27,8 +24,6 @@ import ethereum_sepolia_tokens from "./11155111/erc20.json";
 import neon_evm_tokens from "./245022934/erc20.json";
 
 import ethereum_tokens_hash from "./1/erc20-hash.json";
-import ethereum_ropsten_tokens_hash from "./3/erc20-hash.json";
-import ethereum_goerli_tokens_hash from "./5/erc20-hash.json";
 import optimism_tokens_hash from "./10/erc20-hash.json";
 import cronos_tokens_hash from "./25/erc20-hash.json";
 import rsk_tokens_hash from "./30/erc20-hash.json";
@@ -40,7 +35,6 @@ import polygon_tokens_hash from "./137/erc20-hash.json";
 import bittorrent_tokens_hash from "./199/erc20-hash.json";
 import energy_web_tokens_hash from "./246/erc20-hash.json";
 import fantom_tokens_hash from "./250/erc20-hash.json";
-import optimism_goerli_tokens_hash from "./420/erc20-hash.json";
 import astar_tokens_hash from "./592/erc20-hash.json";
 import metis_tokens_hash from "./1088/erc20-hash.json";
 import polygon_zk_evm_tokens_hash from "./1101/erc20-hash.json";
@@ -55,8 +49,6 @@ import ethereum_sepolia_tokens_hash from "./11155111/erc20-hash.json";
 import neon_evm_tokens_hash from "./245022934/erc20-hash.json";
 
 import ethereum_signatures from "./1/erc20-signatures.json";
-import ethereum_ropsten_signatures from "./3/erc20-signatures.json";
-import ethereum_goerli_signatures from "./5/erc20-signatures.json";
 import optimism_signatures from "./10/erc20-signatures.json";
 import cronos_signatures from "./25/erc20-signatures.json";
 import rsk_signatures from "./30/erc20-signatures.json";
@@ -68,7 +60,6 @@ import polygon_signatures from "./137/erc20-signatures.json";
 import bittorrent_signatures from "./199/erc20-signatures.json";
 import energy_web_signatures from "./246/erc20-signatures.json";
 import fantom_signatures from "./250/erc20-signatures.json";
-import optimism_goerli_signatures from "./420/erc20-signatures.json";
 import astar_signatures from "./592/erc20-signatures.json";
 import metis_signatures from "./1088/erc20-signatures.json";
 import polygon_zk_evm_signatures from "./1101/erc20-signatures.json";
@@ -83,8 +74,6 @@ import ethereum_sepolia_signatures from "./11155111/erc20-signatures.json";
 import neon_evm_signatures from "./245022934/erc20-signatures.json";
 
 import ethereum_signatures_hash from "./1/erc20-signatures-hash.json";
-import ethereum_ropsten_signatures_hash from "./3/erc20-signatures-hash.json";
-import ethereum_goerli_signatures_hash from "./5/erc20-signatures-hash.json";
 import optimism_signatures_hash from "./10/erc20-signatures-hash.json";
 import cronos_signatures_hash from "./25/erc20-signatures-hash.json";
 import rsk_signatures_hash from "./30/erc20-signatures-hash.json";
@@ -96,7 +85,6 @@ import polygon_signatures_hash from "./137/erc20-signatures-hash.json";
 import bittorrent_signatures_hash from "./199/erc20-signatures-hash.json";
 import energy_web_signatures_hash from "./246/erc20-signatures-hash.json";
 import fantom_signatures_hash from "./250/erc20-signatures-hash.json";
-import optimism_goerli_signatures_hash from "./420/erc20-signatures-hash.json";
 import astar_signatures_hash from "./592/erc20-signatures-hash.json";
 import metis_signatures_hash from "./1088/erc20-signatures-hash.json";
 import polygon_zk_evm_signatures_hash from "./1101/erc20-signatures-hash.json";
@@ -112,8 +100,6 @@ import neon_evm_signatures_hash from "./245022934/erc20-signatures-hash.json";
 
 export const tokens = {
   1: ethereum_tokens,
-  3: ethereum_ropsten_tokens,
-  5: ethereum_goerli_tokens,
   10: optimism_tokens,
   25: cronos_tokens,
   30: rsk_tokens,
@@ -125,7 +111,6 @@ export const tokens = {
   199: bittorrent_tokens,
   246: energy_web_tokens,
   250: fantom_tokens,
-  420: optimism_goerli_tokens,
   592: astar_tokens,
   1088: metis_tokens,
   1101: polygon_zk_evm_tokens,
@@ -142,8 +127,6 @@ export const tokens = {
 
 export const signatures = {
   1: ethereum_signatures,
-  3: ethereum_ropsten_signatures,
-  5: ethereum_goerli_signatures,
   10: optimism_signatures,
   25: cronos_signatures,
   30: rsk_signatures,
@@ -155,7 +138,6 @@ export const signatures = {
   199: bittorrent_signatures,
   246: energy_web_signatures,
   250: fantom_signatures,
-  420: optimism_goerli_signatures,
   592: astar_signatures,
   1088: metis_signatures,
   1101: polygon_zk_evm_signatures,
@@ -172,8 +154,6 @@ export const signatures = {
 
 export const hashes = {
   1: ethereum_tokens_hash,
-  3: ethereum_ropsten_tokens_hash,
-  5: ethereum_goerli_tokens_hash,
   10: optimism_tokens_hash,
   25: cronos_tokens_hash,
   30: rsk_tokens_hash,
@@ -185,7 +165,6 @@ export const hashes = {
   199: bittorrent_tokens_hash,
   246: energy_web_tokens_hash,
   250: fantom_tokens_hash,
-  420: optimism_goerli_tokens_hash,
   592: astar_tokens_hash,
   1088: metis_tokens_hash,
   1101: polygon_zk_evm_tokens_hash,
@@ -202,8 +181,6 @@ export const hashes = {
 
 export const signatureHashes = {
   1: ethereum_signatures_hash,
-  3: ethereum_ropsten_signatures_hash,
-  5: ethereum_goerli_signatures_hash,
   10: optimism_signatures_hash,
   25: cronos_signatures_hash,
   30: rsk_signatures_hash,
@@ -215,7 +192,6 @@ export const signatureHashes = {
   199: bittorrent_signatures_hash,
   246: energy_web_signatures_hash,
   250: fantom_signatures_hash,
-  420: optimism_goerli_signatures_hash,
   592: astar_signatures_hash,
   1088: metis_signatures_hash,
   1101: polygon_zk_evm_signatures_hash,
