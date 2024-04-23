@@ -41,7 +41,6 @@ interface ViewProps {
   range: string;
   dataChart?: MarketCoinDataChart;
   currency?: CurrencyData;
-  dataCurrency?: CurrencyData;
 }
 
 function View({
@@ -51,7 +50,6 @@ function View({
   defaultAccount,
   toggleStar,
   currency,
-  dataCurrency,
   dataChart,
   isStarred,
   accounts,
@@ -192,7 +190,13 @@ function View({
             />
           </Flex>
         ) : null}
-        <MarketStats currency={dataCurrency} counterCurrency={counterCurrency} />
+        {currency && counterCurrency && (
+          <MarketStats
+            currency={currency}
+            counterCurrency={counterCurrency}
+            priceChangePercentage={priceChangePercentage ?? 0}
+          />
+        )}
       </ScrollContainerHeader>
     </SafeAreaView>
   );
