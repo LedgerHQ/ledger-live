@@ -370,3 +370,12 @@ export const setAnonymousBrazeId = (payload: string) => ({
   type: "SET_ANONYMOUS_BRAZE_ID",
   payload,
 });
+
+export const addStarredMarketCoins = (payload: string) => ({
+  type: "ADD_STARRED_MARKET_COINS",
+  payload,
+});
+export const removeStarredMarketCoins = (payload: string) => ({
+  type: "REMOVE_STARRED_MARKET_COINS",
+  payload,
+});

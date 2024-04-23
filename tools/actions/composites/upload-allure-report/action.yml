@@ -30,9 +30,9 @@ runs:
         name: ${{ inputs.path }}
         path: ${{ inputs.path }}
     - name: Publish report on Allure Server
-      uses: LedgerHQ/send-to-allure-server-action@2.0.0
+      uses: LedgerHQ/send-to-allure-server-action@2.1.2
       with:
-        allure-server-url: "https://ledger-live.ars.green.ledgerlabs.net"
+        allure-server-url: "https://ledger-live.allure.green.ledgerlabs.net"
         build-name: ${{ github.workflow }}-${{ inputs.platform }}
         build-url: https://github.com/LedgerHQ/ledger-live/actions/runs/${{ github.run_id }}
         username: ${{ inputs.login }}

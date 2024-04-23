@@ -53,6 +53,8 @@ export type SwapProps = {
   providerRedirectURL: string;
   toNewTokenId: string;
   swapApiBase: string;
+  estimatedFees: BigNumber;
+  estimatedFeesUnit: string;
 };
 
 export type SwapWebProps = {
