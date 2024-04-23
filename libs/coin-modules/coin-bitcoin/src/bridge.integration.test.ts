@@ -181,7 +181,16 @@ const mockSignerContext = <T>(
     createPaymentTransaction: (_arg: CreateTransaction): Promise<string> => Promise.resolve(""),
   });
 
-const bitcoinBridge = createBridges(mockSignerContext, { startSpan: mockStartSpan });
+const fakeCoinConfig = (
+  _currency: CryptoCurrency,
+): { info: { status: { type: "active" | "under_maintenance" } } } => ({
+  info: { status: { type: "active" } },
+});
+const bitcoinBridge = createBridges(
+  mockSignerContext,
+  { startSpan: mockStartSpan },
+  fakeCoinConfig,
+);
 
 testBridge({
   implementations: ["js", "mock"],
