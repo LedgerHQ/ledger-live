@@ -26,17 +26,15 @@ const scenarioSendTransaction: ScenarioTransaction<EvmTransaction> = {
   recipient: "0x6bfD74C0996F269Bcece59191EFf667b3dFD73b9",
   expect: account => {
     const { operations } = account;
-    const sendOperations = operations.filter(operation => operation.type === "OUT");
-    expect(
-      sendOperations.find(operation => operation.transactionRaw?.amount === "100"),
-    ).toBeDefined();
+    const sendOperation = operations.find(operation => operation.transactionSequenceNumber === 0);
+    expect(sendOperation?.transactionRaw?.amount === "100").toBeDefined();
   },
 };
 
 // use function createTransaction
 const scenarioUSDCTransaction: ScenarioTransaction<EvmTransaction> = {
   name: "Send USDC",
-  amount: new BigNumber(100),
+  amount: new BigNumber(80),
   recipient: "0x6bfD74C0996F269Bcece59191EFf667b3dFD73b9",
   subAccountId: encodeTokenAccountId(
     "js:2:ethereum:0x3313797c7B45F34c56Bdedc0179992A4d435AF25",
@@ -44,15 +42,13 @@ const scenarioUSDCTransaction: ScenarioTransaction<EvmTransaction> = {
   ),
   expect: account => {
     const { operations } = account;
-    const [sendOperation] = operations.filter(operation =>
-      operation.accountId.includes("0x3313797c7B45F34c56Bdedc0179992A4d435AF25"),
-    );
-    expect(sendOperation.transactionRaw?.amount).toBe("100");
+    const sendOperation = operations.find(operation => operation.transactionSequenceNumber === 1);
+    expect(sendOperation?.transactionRaw?.amount).toBe("80");
   },
 };
 
 const scenarioERC721Transaction: ScenarioTransaction<EvmTransaction & EvmNftTransaction> = {
-  name: "Send NFT",
+  name: "Send ERC721",
   recipient: "0x6bfD74C0996F269Bcece59191EFf667b3dFD73b9",
   mode: "erc721",
   nft: {
@@ -62,12 +58,13 @@ const scenarioERC721Transaction: ScenarioTransaction<EvmTransaction & EvmNftTran
     collectionName: "Bored Ape",
   },
   expect: account => {
+    const sendOperation = account.operations.find(
+      operation => operation.transactionSequenceNumber === 2,
+    );
+
     expect(
-      account.operations.find(
-        operation =>
-          operation.nftOperations?.find(
-            op => op.contract === "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
-          ),
+      sendOperation?.nftOperations?.find(
+        op => op.contract === "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
       ),
     ).toBeDefined();
   },
@@ -84,12 +81,12 @@ const scenarioERC1155Transaction: ScenarioTransaction<EvmTransaction & EvmNftTra
     quantity: new BigNumber(2),
   },
   expect: account => {
+    const sendOperation = account.operations.find(
+      operation => operation.transactionSequenceNumber === 3,
+    );
     expect(
-      account.operations.find(
-        operation =>
-          operation.nftOperations?.find(
-            op => op.contract === "0x348FC118bcC65a92dC033A951aF153d14D945312",
-          ),
+      sendOperation?.nftOperations?.find(
+        op => op.contract === "0x348FC118bcC65a92dC033A951aF153d14D945312",
       ),
     ).toBeDefined();
   },

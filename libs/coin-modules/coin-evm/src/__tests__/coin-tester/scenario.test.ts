@@ -1,8 +1,8 @@
 import { killSpeculos } from "@ledgerhq/coin-tester/docker";
 import { executeScenario } from "@ledgerhq/coin-tester/main";
 import { killAnvil } from "./docker";
-import { scenarioPolygon } from "./scenarios/polygon";
 import { scenarioEthereum } from "./scenarios/ethereum";
+import { scenarioPolygon } from "./scenarios/polygon";
 
 jest.setTimeout(600_000); // 10 Min
 global.console = require("console");

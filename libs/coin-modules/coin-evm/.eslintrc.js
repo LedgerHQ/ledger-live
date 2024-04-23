@@ -22,8 +22,9 @@ module.exports = {
       // allow, as warning, only any in tests
       files: ["*/__tests__/**/*.{ts,tsx}"],
       rules: {
-        "@typescript-eslint/no-explicit-any": "warn",
         "no-console": "off",
+        "@typescript-eslint/no-explicit-any": "warn",
+        "@typescript-eslint/explicit-function-return-type": "off",
       },
     },
   ],

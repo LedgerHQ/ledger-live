@@ -94,11 +94,23 @@ export const scenarioPolygon: Scenario<EvmTransaction> = {
       name: "Send 1 Matic",
       amount: new BigNumber(ethers.utils.parseEther("1").toString()),
       recipient: ethers.constants.AddressZero,
+      expect: account => {
+        expect(
+          account.operations.find(operation => operation.transactionSequenceNumber === 0)
+            ?.transactionRaw?.amount,
+        ).toBe("1000000000000000000");
+      },
     },
     {
       name: "Send 10 Matic",
       amount: new BigNumber(ethers.utils.parseEther("10").toString()),
       recipient: ethers.constants.AddressZero,
+      expect: account => {
+        expect(
+          account.operations.find(operation => operation.transactionSequenceNumber === 1)
+            ?.transactionRaw?.amount,
+        ).toBe("10000000000000000000");
+      },
     },
     {
       name: "Send 100 USDC",
@@ -110,8 +122,17 @@ export const scenarioPolygon: Scenario<EvmTransaction> = {
         "js:2:polygon:0x2FBde3Ac8F867e5ED06e4C7060d0df00D87E2C35:",
         USDC_ON_POLYGON,
       ),
+      expect: account => {
+        expect(
+          account.operations.find(operation => operation.transactionSequenceNumber === 2)
+            ?.transactionRaw?.amount,
+        ).toBe("100000000");
+      },
     },
   ],
+  afterAll: account => {
+    expect(account.operations.filter(operation => operation.type === "OUT").length).toBe(3);
+  },
   teardown: async () => {
     await Promise.all([killSpeculos(), killAnvil()]);
     clearExplorerAppendix();
