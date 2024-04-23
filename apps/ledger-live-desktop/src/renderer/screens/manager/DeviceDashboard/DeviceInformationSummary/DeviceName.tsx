@@ -37,7 +37,7 @@ const DeviceName: React.FC<Props> = ({
   setPreventResetOnDeviceChange,
 }: Props) => {
   const model = identifyTargetId(deviceInfo.targetId as number);
-  const editSupported = model?.id && isEditDeviceNameSupported(model.id);
+  const editSupported = model?.id && isEditDeviceNameSupported(model.id, deviceInfo.version);
   const editEnabled = !disabled && editSupported;
 
   const [name, setName] = useState(editSupported ? deviceName : model?.productName);

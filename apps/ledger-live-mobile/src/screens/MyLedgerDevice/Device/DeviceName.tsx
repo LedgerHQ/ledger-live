@@ -32,7 +32,7 @@ export default function DeviceName({ device, initialDeviceName, disabled, device
     ? getDeviceModel(device.modelId).productName || device.modelId
     : "Ledger Device";
 
-  const isEditSupported = isEditDeviceNameSupported(device.modelId);
+  const isEditSupported = isEditDeviceNameSupported(device.modelId, deviceInfo.version);
 
   const onPress = useCallback(
     () =>
