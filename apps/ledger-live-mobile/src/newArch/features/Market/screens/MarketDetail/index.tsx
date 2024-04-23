@@ -163,6 +163,7 @@ function View({
           refreshChart={refresh}
           chartData={dataChart}
           range={range}
+          currency={internalCurrency}
         />
 
         {accounts?.length > 0 ? (
