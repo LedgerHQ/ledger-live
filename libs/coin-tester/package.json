@@ -14,10 +14,6 @@
     "test": "jest"
   },
   "dependencies": {
-    "@ledgerhq/coin-framework": "workspace:^",
-    "@ledgerhq/cryptoassets": "workspace:^",
-    "@ledgerhq/hw-app-eth": "workspace:^",
-    "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/hw-transport-node-speculos-http": "workspace:^",
     "axios": "^1.5.0",
     "bignumber.js": "^9.1.1",

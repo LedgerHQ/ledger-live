@@ -136,7 +136,7 @@ export async function executeScenario<T extends TransactionCommon>(scenario: Sce
 
       const retry_limit = 10;
 
-      const expcectHandler = async (retry: number) => {
+      const expectHandler = async (retry: number) => {
         scenarioAccount = await firstValueFrom(
           accountBridge
             .sync(
@@ -157,14 +157,14 @@ export async function executeScenario<T extends TransactionCommon>(scenario: Sce
 
             console.warn("Test asssertion failed. Retrying...");
             await new Promise(resolve => setTimeout(resolve, retryInterval || 5000));
-            await expcectHandler(retry - 1);
+            await expectHandler(retry - 1);
           }
 
           throw err;
         }
       };
 
-      await expcectHandler(retry_limit);
+      await expectHandler(retry_limit);
 
       scenario.afterEach?.(scenarioAccount);
       console.log(chalk.green("Transaction:", chalk.bold(testTransaction.name), "completed  ✓"));
