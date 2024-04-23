@@ -52,11 +52,12 @@ function useMarketListViewModel() {
     ...marketParams,
     liveCoinsList,
     supportedCoinsList: supportedCurrencies,
+    starred: filterByStarredAccount ? starredMarketCoins : [],
   });
 
-  const marketDataFiltered = filterByStarredAccount
-    ? marketResult.data?.filter(d => starredMarketCoins.includes(d.id)) ?? undefined
-    : marketResult.data;
+  // const marketDataFiltered = filterByStarredAccount
+  //   ? marketResult.data?.filter(d => starredMarketCoins.includes(d.id)) ?? undefined
+  //   : marketResult.data;
 
   useEffect(() => {
     if (initialTop100) {
@@ -73,12 +74,6 @@ function useMarketListViewModel() {
       });
     }
   }, [initialTop100, refresh]);
-
-  useEffect(() => {
-    if (filterByStarredAccount && starredMarketCoins.length > 0) {
-      refresh({ starred: starredMarketCoins });
-    }
-  }, [refresh, starredMarketCoins, filterByStarredAccount]);
 
   const onEndReached = useCallback(() => {
     dispatch(setMarketRequestParams({ page: (marketParams?.page || 1) + 1 }));
@@ -122,7 +117,7 @@ function useMarketListViewModel() {
   const viewabilityConfigCallbackPairs = useRef([{ onViewableItemsChanged, viewabilityConfig }]);
 
   return {
-    marketData: marketDataFiltered,
+    marketData: marketResult.data,
     filterByStarredAccount,
     starredMarketCoins,
     search,

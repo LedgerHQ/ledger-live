@@ -524,6 +524,7 @@ export enum MarketStateActionTypes {
   REMOVE_STARRED_MARKET_COINS = "REMOVE_STARRED_MARKET_COINS",
   SET_MARKET_FILTER_BY_STARRED_ACCOUNTS = "SET_MARKET_FILTER_BY_STARRED_ACCOUNTS",
   MARKET_SET_CURRENT_PAGE = "MARKET_SET_CURRENT_PAGE",
+  MARKET_IMPORT = "MARKET_IMPORT",
 }
 
 export type MarketSetMarketFilterByStarredAccountsPayload =
@@ -539,3 +540,5 @@ export type MarketStatePayload =
   | MarketAddStarredMarketcoinsPayload
   | MarketRemoveStarredMarketcoinsPayload
   | MarketSetCurrentPagePayload;
+
+export type MarketImportPayload = Partial<MarketState>;

@@ -110,30 +110,33 @@ function View({
         }
         BottomSection={
           <>
-            <Flex justifyContent="center" alignItems="flex-start" pb={3}>
-              <Text variant="h1" mb={1}>
-                {counterValueFormatter({
-                  currency: counterCurrency,
-                  value: hoveredItem?.value ? hoveredItem.value : price || 0,
-                  locale,
-                  t,
-                })}
-              </Text>
-              <Flex height={20}>
-                {hoveredItem && hoveredItem.date ? (
-                  <Text variant="body" color="neutral.c70">
-                    {dateRangeFormatter.format(hoveredItem.date)}
-                  </Text>
-                ) : priceChangePercentage && !isNaN(priceChangePercentage) ? (
-                  <DeltaVariation percent value={priceChangePercentage} />
-                ) : (
-                  <Text variant="body" color="neutral.c70">
-                    {" "}
-                    -
-                  </Text>
-                )}
+            {!loading && (
+              <Flex justifyContent="center" alignItems="flex-start" pb={3}>
+                <Text variant="h1" mb={1}>
+                  {counterValueFormatter({
+                    currency: counterCurrency,
+                    value: hoveredItem?.value ? hoveredItem.value : price || 0,
+                    locale,
+                    t,
+                  })}
+                </Text>
+
+                <Flex height={20}>
+                  {hoveredItem && hoveredItem.date ? (
+                    <Text variant="body" color="neutral.c70">
+                      {dateRangeFormatter.format(hoveredItem.date)}
+                    </Text>
+                  ) : priceChangePercentage && !isNaN(priceChangePercentage) ? (
+                    <DeltaVariation percent value={priceChangePercentage} />
+                  ) : (
+                    <Text variant="body" color="neutral.c70">
+                      {" "}
+                      -
+                    </Text>
+                  )}
+                </Flex>
               </Flex>
-            </Flex>
+            )}
             {internalCurrency ? (
               <Flex mb={6}>
                 <FabMarketActions

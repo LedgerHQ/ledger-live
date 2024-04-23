@@ -11,7 +11,7 @@ import { useDBRaw } from "@ledgerhq/live-common/hooks/useDBRaw";
 import { Dispatch, SetStateAction } from "react";
 import store from "./logic/storeWrapper";
 import type { User } from "./types/store";
-import type { BleState, ProtectState, SettingsState } from "./reducers/types";
+import type { BleState, MarketState, ProtectState, SettingsState } from "./reducers/types";
 
 export type Notifications = {
   announcements: Announcement[];
@@ -44,6 +44,14 @@ export async function getSettings(): Promise<Partial<SettingsState>> {
 }
 export async function saveSettings(obj: Partial<SettingsState>): Promise<void> {
   await store.save("settings", obj);
+}
+
+export async function getMarket(): Promise<Partial<MarketState>> {
+  const settings = (await store.get("market")) as Partial<SettingsState>;
+  return settings;
+}
+export async function saveMarket(obj: Partial<MarketState>): Promise<void> {
+  await store.save("market", obj);
 }
 export async function getWCSession(): Promise<unknown> {
   const wcsession = await store.get("wcsession");

@@ -2,6 +2,7 @@ import { Action, ReducerMap, handleActions } from "redux-actions";
 import { MarketState, State } from "./types";
 import {
   MarketAddStarredMarketcoinsPayload,
+  MarketImportPayload,
   MarketRemoveStarredMarketcoinsPayload,
   MarketSetCurrentPagePayload,
   MarketSetMarketFilterByStarredAccountsPayload,
@@ -9,6 +10,7 @@ import {
   MarketStateActionTypes,
   MarketStatePayload,
 } from "~/actions/types";
+import { saveMarket } from "~/db";
 
 export const INITIAL_STATE: MarketState = {
   marketParams: {
@@ -38,19 +40,29 @@ const handlers: ReducerMap<MarketState, MarketStatePayload> = {
       ...(action as Action<MarketSetMarketRequestParamsPayload>).payload,
     },
   }),
-  [MarketStateActionTypes.ADD_STARRED_MARKET_COINS]: (state, action) => ({
-    ...state,
-    starredMarketCoins: [
+  [MarketStateActionTypes.ADD_STARRED_MARKET_COINS]: (state, action) => {
+    const newStarred = [
       ...state.starredMarketCoins,
       (action as Action<MarketAddStarredMarketcoinsPayload>).payload,
-    ],
-  }),
-  [MarketStateActionTypes.REMOVE_STARRED_MARKET_COINS]: (state, action) => ({
-    ...state,
-    starredMarketCoins: state.starredMarketCoins.filter(
+    ];
+
+    saveMarket({ starredMarketCoins: newStarred });
+    return {
+      ...state,
+      starredMarketCoins: newStarred,
+    };
+  },
+  [MarketStateActionTypes.REMOVE_STARRED_MARKET_COINS]: (state, action) => {
+    const newStarred = state.starredMarketCoins.filter(
       id => id !== (action as Action<MarketRemoveStarredMarketcoinsPayload>).payload,
-    ),
-  }),
+    );
+
+    saveMarket({ starredMarketCoins: newStarred });
+    return {
+      ...state,
+      starredMarketCoins: newStarred,
+    };
+  },
   [MarketStateActionTypes.SET_MARKET_FILTER_BY_STARRED_ACCOUNTS]: (state, action) => ({
     ...state,
     marketFilterByStarredAccounts: (action as Action<MarketSetMarketFilterByStarredAccountsPayload>)
@@ -60,6 +72,10 @@ const handlers: ReducerMap<MarketState, MarketStatePayload> = {
   [MarketStateActionTypes.MARKET_SET_CURRENT_PAGE]: (state, action) => ({
     ...state,
     marketCurrentPage: (action as Action<MarketSetCurrentPagePayload>).payload,
+  }),
+  [MarketStateActionTypes.MARKET_IMPORT]: (state, action) => ({
+    ...state,
+    ...(action as Action<MarketImportPayload>).payload,
   }),
 };
 

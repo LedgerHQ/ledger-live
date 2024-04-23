@@ -3,7 +3,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
 import { track } from "~/analytics";
 import { getAnalyticsProperties } from "LLM/features/Market/utils";
-import { setMarketFilterByStarredAccounts, setMarketRequestParams } from "~/actions/market";
+import {
+  setMarketCurrentPage,
+  setMarketFilterByStarredAccounts,
+  setMarketRequestParams,
+} from "~/actions/market";
 import {
   marketFilterByStarredAccountsSelector,
   marketParamsSelector,
@@ -29,6 +33,8 @@ function useBottomSectionViewModel() {
       );
     }
     dispatch(setMarketFilterByStarredAccounts(!filterByStarredAccount));
+    dispatch(setMarketCurrentPage(1));
+    dispatch(setMarketRequestParams({ ...marketParams, page: 1 }));
   }, [dispatch, filterByStarredAccount, marketParams, starredMarketCoins]);
 
   const onFilterChange = useCallback(
