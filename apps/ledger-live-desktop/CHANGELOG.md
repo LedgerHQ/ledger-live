@@ -1,5 +1,31 @@
 # ledger-live-desktop
 
+## 2.79.0-nightly.15
+
+### Patch Changes
+
+- [#6718](https://github.com/LedgerHQ/ledger-live/pull/6718) [`438e7f5`](https://github.com/LedgerHQ/ledger-live/commit/438e7f536b6c44acbc00cc1489a31d47f3e652e3) Thanks [@Wozacosta](https://github.com/Wozacosta)! - filter which fields to display when confirming a transaction
+
+- [#6686](https://github.com/LedgerHQ/ledger-live/pull/6686) [`bbe790e`](https://github.com/LedgerHQ/ledger-live/commit/bbe790ef2efdb0d8bdd57829b6543c3baab5dfb9) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Add buy-sell-ui feature flag to enable progressive roll out of new manifest ID.
+
+- [#6665](https://github.com/LedgerHQ/ledger-live/pull/6665) [`07d85e8`](https://github.com/LedgerHQ/ledger-live/commit/07d85e8bf154899a7d4b279a612ebb7f84d398c7) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Correct translations for user refused from swap-live-app
+
+- [#6726](https://github.com/LedgerHQ/ledger-live/pull/6726) [`9593f88`](https://github.com/LedgerHQ/ledger-live/commit/9593f8852532502e193e849364057cccb6a4b636) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix starred coins in market
+
+- [#6685](https://github.com/LedgerHQ/ledger-live/pull/6685) [`68e2e47`](https://github.com/LedgerHQ/ledger-live/commit/68e2e47f96a93b454106ac5162012631727531b1) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - send addition data to swap live app
+
+- Updated dependencies [[`bbe790e`](https://github.com/LedgerHQ/ledger-live/commit/bbe790ef2efdb0d8bdd57829b6543c3baab5dfb9)]:
+  - @ledgerhq/types-live@6.46.0-nightly.4
+  - @ledgerhq/live-common@34.1.0-nightly.12
+  - @ledgerhq/coin-framework@0.12.0-nightly.6
+  - @ledgerhq/coin-bitcoin@0.4.0-nightly.16
+  - @ledgerhq/coin-evm@2.0.0-nightly.6
+  - @ledgerhq/domain-service@1.1.20-nightly.4
+  - @ledgerhq/live-countervalues@0.1.4-nightly.6
+  - @ledgerhq/live-countervalues-react@0.1.4-nightly.6
+  - @ledgerhq/live-nft@0.3.1-nightly.6
+  - @ledgerhq/live-nft-react@0.3.1-nightly.6
+
 ## 2.79.0-nightly.14
 
 ### Patch Changes

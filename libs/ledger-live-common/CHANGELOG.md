@@ -1,5 +1,24 @@
 # @ledgerhq/live-common
 
+## 34.1.0-nightly.12
+
+### Patch Changes
+
+- [#6686](https://github.com/LedgerHQ/ledger-live/pull/6686) [`bbe790e`](https://github.com/LedgerHQ/ledger-live/commit/bbe790ef2efdb0d8bdd57829b6543c3baab5dfb9) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Add buy-sell-ui feature flag to enable progressive roll out of new manifest ID.
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@0.12.0-nightly.6
+  - @ledgerhq/coin-algorand@0.4.1-nightly.6
+  - @ledgerhq/coin-bitcoin@0.4.0-nightly.16
+  - @ledgerhq/coin-evm@2.0.0-nightly.6
+  - @ledgerhq/coin-near@0.4.0-nightly.7
+  - @ledgerhq/coin-polkadot@0.6.1-nightly.6
+  - @ledgerhq/device-core@0.1.1-nightly.6
+  - @ledgerhq/hw-app-eth@6.35.8-nightly.6
+  - @ledgerhq/live-countervalues@0.1.4-nightly.6
+  - @ledgerhq/live-countervalues-react@0.1.4-nightly.6
+  - @ledgerhq/live-nft@0.3.1-nightly.6
+
 ## 34.1.0-nightly.11
 
 ### Minor Changes

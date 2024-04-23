@@ -1,5 +1,22 @@
 # live-mobile
 
+## 3.43.0-nightly.14
+
+### Patch Changes
+
+- [#6686](https://github.com/LedgerHQ/ledger-live/pull/6686) [`bbe790e`](https://github.com/LedgerHQ/ledger-live/commit/bbe790ef2efdb0d8bdd57829b6543c3baab5dfb9) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Add buy-sell-ui feature flag to enable progressive roll out of new manifest ID.
+
+- Updated dependencies [[`bbe790e`](https://github.com/LedgerHQ/ledger-live/commit/bbe790ef2efdb0d8bdd57829b6543c3baab5dfb9)]:
+  - @ledgerhq/types-live@6.46.0-nightly.4
+  - @ledgerhq/live-common@34.1.0-nightly.12
+  - @ledgerhq/coin-framework@0.12.0-nightly.6
+  - @ledgerhq/coin-evm@2.0.0-nightly.6
+  - @ledgerhq/domain-service@1.1.20-nightly.4
+  - @ledgerhq/live-countervalues@0.1.4-nightly.6
+  - @ledgerhq/live-countervalues-react@0.1.4-nightly.6
+  - @ledgerhq/live-nft@0.3.1-nightly.6
+  - @ledgerhq/live-nft-react@0.3.1-nightly.6
+
 ## 3.43.0-nightly.13
 
 ### Minor Changes

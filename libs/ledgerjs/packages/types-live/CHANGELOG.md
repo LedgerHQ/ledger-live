@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.46.0-nightly.4
+
+### Patch Changes
+
+- [#6686](https://github.com/LedgerHQ/ledger-live/pull/6686) [`bbe790e`](https://github.com/LedgerHQ/ledger-live/commit/bbe790ef2efdb0d8bdd57829b6543c3baab5dfb9) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Add buy-sell-ui feature flag to enable progressive roll out of new manifest ID.
+
 ## 6.46.0-nightly.3
 
 ### Minor Changes
