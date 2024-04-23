@@ -2433,6 +2433,10 @@
         "description3": "This integration has been carried out by {{team}} in collaboration with Ledger"
       }
     },
+    "willBedeprecatedBanner": {
+      "title": "To optimize efficiencies, {{currencyName}} will not be supported on Ledger Live as of {{deprecatedDate}}. However, it will still be supported on Ledger hardware wallets. Please contact Ledger Customer Support if you would like assistance on this.",
+      "contactSupport": "Contact support"
+    },
     "tokens": {
       "contractAddress": "Contract address",
       "viewInExplorer": "View in explorer",
