@@ -258,7 +258,6 @@
     "@svgr/core": "^5.5.0",
     "@tanstack/react-query": "^5.28.9",
     "@testing-library/react": "^14.1.2",
-    "@types/bn.js": "^5.1.1",
     "@types/bs58": "^4.0.1",
     "@types/cbor": "^6.0.0",
     "@types/invariant": "^2.2.36",
