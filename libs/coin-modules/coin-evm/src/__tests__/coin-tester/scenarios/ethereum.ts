@@ -24,6 +24,13 @@ const scenarioSendTransaction: ScenarioTransaction<EvmTransaction> = {
   name: "Send ethereum",
   amount: new BigNumber(100),
   recipient: "0x6bfD74C0996F269Bcece59191EFf667b3dFD73b9",
+  expect: account => {
+    const { operations } = account;
+    const sendOperations = operations.filter(operation => operation.type === "OUT");
+    expect(
+      sendOperations.find(operation => operation.transactionRaw?.amount === "100"),
+    ).toBeDefined();
+  },
 };
 
 // use function createTransaction
@@ -32,11 +39,15 @@ const scenarioUSDCTransaction: ScenarioTransaction<EvmTransaction> = {
   amount: new BigNumber(100),
   recipient: "0x6bfD74C0996F269Bcece59191EFf667b3dFD73b9",
   subAccountId: encodeTokenAccountId(
-    "js:2:ethereum:0x3313797c7B45F34c56Bdedc0179992A4d435AF25:",
+    "js:2:ethereum:0x3313797c7B45F34c56Bdedc0179992A4d435AF25",
     USDC_ON_ETHEREUM,
   ),
   expect: account => {
-    console.log(account);
+    const { operations } = account;
+    const [sendOperation] = operations.filter(operation =>
+      operation.accountId.includes("0x3313797c7B45F34c56Bdedc0179992A4d435AF25"),
+    );
+    expect(sendOperation.transactionRaw?.amount).toBe("100");
   },
 };
 
@@ -50,6 +61,16 @@ const scenarioERC721Transaction: ScenarioTransaction<EvmTransaction & EvmNftTran
     quantity: new BigNumber(1),
     collectionName: "Bored Ape",
   },
+  expect: account => {
+    expect(
+      account.operations.find(
+        operation =>
+          operation.nftOperations?.find(
+            op => op.contract === "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
+          ),
+      ),
+    ).toBeDefined();
+  },
 };
 
 const scenarioERC1155Transaction: ScenarioTransaction<EvmTransaction & EvmNftTransaction> = {
@@ -59,9 +80,18 @@ const scenarioERC1155Transaction: ScenarioTransaction<EvmTransaction & EvmNftTra
   nft: {
     tokenId: "951",
     collectionName: "Clone X",
-    // EIP55 checksum of 0x348fc118bcc65a92dc033a951af153d14d945312
-    contract: "0x348FC118bcC65a92dC033A951aF153d14D945312",
+    contract: "0x348FC118bcC65a92dC033A951aF153d14D945312", // EIP55 checksum of 0x348fc118bcc65a92dc033a951af153d14d945312
     quantity: new BigNumber(2),
+  },
+  expect: account => {
+    expect(
+      account.operations.find(
+        operation =>
+          operation.nftOperations?.find(
+            op => op.contract === "0x348FC118bcC65a92dC033A951aF153d14D945312",
+          ),
+      ),
+    ).toBeDefined();
   },
 };
 
@@ -197,6 +227,17 @@ export const scenarioEthereum: Scenario<EvmTransaction> = {
     scenarioERC721Transaction,
     scenarioERC1155Transaction,
   ],
+  afterAll: account => {
+    expect(account.operations.filter(operation => operation.type === "OUT").length).toBe(2);
+    expect(
+      account.operations
+        .filter(operation => operation.type === "FEES")
+        .filter(
+          feesOperations =>
+            feesOperations.nftOperations?.find(nftOperation => nftOperation.type === "NFT_OUT"),
+        ).length,
+    ).toBe(2);
+  },
   teardown: async () => {
     await Promise.all([killSpeculos(), killAnvil()]);
     clearExplorerAppendix();

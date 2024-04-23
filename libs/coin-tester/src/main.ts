@@ -5,7 +5,6 @@ import {
   SignOperationEvent,
   CurrencyBridge,
 } from "@ledgerhq/types-live";
-import { AssertionError } from "assert";
 import chalk from "chalk";
 import { first, firstValueFrom, map, reduce } from "rxjs";
 
@@ -132,9 +131,9 @@ export async function executeScenario<T extends TransactionCommon>(scenario: Sce
 
     console.log(" → ", "🛫 ", chalk.bold("Broadcated the transaction"), "✓");
 
-    const rety_limit = 10;
+    const retry_limit = 10;
 
-    const expcectHandler = async (retry = rety_limit) => {
+    const expcectHandler = async (retry: number) => {
       scenarioAccount = await firstValueFrom(
         accountBridge
           .sync(
@@ -146,23 +145,24 @@ export async function executeScenario<T extends TransactionCommon>(scenario: Sce
 
       try {
         testTransaction.expect?.(scenarioAccount);
-      } catch (e) {
-        if (e instanceof AssertionError) {
+      } catch (err) {
+        if (!(err as { matcherResult?: { pass: boolean } })?.matcherResult?.pass) {
           if (retry === 0) {
             console.error("Retried 10 times and could not assert this test");
-            throw e;
+            throw err;
           }
 
           console.warn("Test asssertion failed. Retrying...");
           await new Promise(resolve => setTimeout(resolve, retryInterval || 5000));
-          expcectHandler(retry - 1);
+          await expcectHandler(retry - 1);
         }
 
-        throw e;
+        throw err;
       }
     };
 
-    expcectHandler();
+    await expcectHandler(retry_limit);
+
     scenario.afterEach?.(scenarioAccount);
     console.log(chalk.green("Transaction:", chalk.bold(testTransaction.name), "completed  ✓⃝"));
   }
