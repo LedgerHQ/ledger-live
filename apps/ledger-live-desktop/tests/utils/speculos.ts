@@ -5,12 +5,12 @@ import {
   createSpeculosDevice,
   releaseSpeculosDevice,
   findAppCandidate,
+  SpeculosTransport,
 } from "@ledgerhq/live-common/load/speculos";
 import type { AppCandidate } from "@ledgerhq/coin-framework/bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import SpeculosHttpTransport from "@ledgerhq/hw-transport-node-speculos-http";
 import axios from "axios";
 
 type Specs = {
@@ -22,15 +22,11 @@ type Specs = {
       appVersion: string;
     };
     dependency: string;
-    onSpeculosDeviceCreated?: Promise<void>;
+    onSpeculosDeviceCreated?: (device: Device) => Promise<void>;
   };
 };
 
-export type Device = {
-  transport: SpeculosHttpTransport;
-  id: string;
-  appPath: string;
-};
+export type Device = { transport: SpeculosTransport; id: string; appPath: string };
 
 export const specs: Specs = {
   Bitcoin: {
@@ -166,7 +162,7 @@ export async function startSpeculos(testName: string, spec: Specs[keyof Specs]) 
   }
 }
 
-export async function stopSpeculos(device: Device | null) {
+export async function stopSpeculos(device: Device | undefined) {
   if (device) {
     log("engine", `test ${device.id} finished`);
     await releaseSpeculosDevice(device.id);
