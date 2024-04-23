@@ -369,7 +369,14 @@
         "description" : "要么您还未进行过任何互换，亦或 Ledger Live 在此期间被重置了。"
       },
       "export" : "导出操作",
-      "exporting" : "正在导出……"
+      "exporting" : "正在导出……",
+      "status" : {
+        "pending" : "待处理",
+        "onhold" : "Onhold",
+        "expired" : "Expired",
+        "finished" : "Finished",
+        "refunded" : "Refunded"
+      }
     },
     "exchangeDrawer" : {
       "title" : "确认您的交易",
@@ -729,6 +736,10 @@
         "description2" : "全球各地的开发者都可以与我们的 Ledger Live 相集成",
         "description3" : "此集成由 {{team}} 与 Ledger 协作实施。"
       }
+    },
+    "willBeDeprecatedBanner" : {
+      "title" : "To optimize efficiencies, {{currencyName}} will not be supported on Ledger Live as of {{deprecatedDate}}. However, it will still be supported on Ledger hardware wallets. Please contact Ledger Customer Support if you would like assistance on this.",
+      "contactSupport" : "联系客服"
     },
     "lastOperations" : "近期操作",
     "contractAddress" : "合约：",
@@ -1198,6 +1209,24 @@
         "restoreChoiceRecoverDescription" : "如果您订阅了 Ledger Recover，请登录您的订阅帐户，恢复秘密恢复短语备份。",
         "followInstructions" : "按照 {{productName}} 上的说明进行操作。"
       },
+      "backup" : {
+        "title" : "Backup for your Secret Recovery Phrase",
+        "description" : "With a digital encrypted backup, restore access to your wallet without your Secret Recovery Phrase.\n\nChoose if you’d like a digital backup:",
+        "backupChoice" : {
+          "title" : "I want a digital backup",
+          "titleSelected" : "Ledger Recover",
+          "tag" : "热门",
+          "description" : "Subscribe to Ledger Recover for $9.99 per month. Start for free. Cancel anytime!",
+          "tryCta" : "Try it for free",
+          "redeemCodeCta" : "I have a redeem code",
+          "howItWorksCta" : "I want to know more"
+        },
+        "manualBackup" : {
+          "title" : "No, I’m good with paper",
+          "description" : "Without a digital backup, the Recovery Sheet is your only way to restore wallet access. Don’t lose it.",
+          "cta" : "I understand"
+        }
+      },
       "softwareCheckContent" : {
         "title" : {
           "active" : "正品检查和\n操作系统更新检查",
@@ -1297,27 +1326,33 @@
   "postOnboarding" : {
     "postOnboardingScreen" : {
       "title" : "接下来，使用您的\n {{productName}} ... ",
-      "titleCompleted" : "一切准备就绪！\n继续探索您的钱包。",
-      "exploreCTA" : "探索钱包"
+      "titleCompleted" : "You're all set !\nKeep going and explore your portfolio.",
+      "exploreCTA" : "Explore my portfolio"
     },
     "postOnboardingContent" : {
       "skipLink" : "我以后再下载"
     },
     "postOnboardingBanner" : {
       "title" : "使用 {{productName}} 的下一步操作是什么？",
-      "description" : "领取 Infinity NFT，定制其锁屏界面，或将您的资产从其他交易所转出。",
-      "link" : "查看后续步骤"
+      "description" : "Transfer your assets from any exchange or wallet, buy crypto, customize its lock screen, or subscribe to Ledger Recover.",
+      "link" : "查看后续步骤",
+      "dismiss" : "以后再说"
     },
     "actions" : {
       "buyCrypto" : {
         "title" : "购买加密货币",
-        "description" : "从买入服务提供商根据您的偏好提供的 500 多种币和最佳报价中进行选择",
+        "description" : "Choose from 500+ coins and the best quotes, tailored to your preferences.",
         "actionCompletedPopupLabel" : "已购买的加密货币"
       },
       "assetsTransfer" : {
         "title" : "将您的资产转移至 Ledger",
-        "description" : "轻松从比特币基地 (Coinbase) 或任何其他交易所或钱包转移资产。",
+        "description" : "From any exchange or wallet, directly to your Ledger.",
         "actionCompletedPopupLabel" : "资产已转移"
+      },
+      "recover" : {
+        "title" : "Subscribe to Ledger Recover",
+        "description" : "Restore access to your wallet without needing your Secret Recovery Phrase.",
+        "actionCompletedPopupLabel" : "Successfully subscribed to Ledger Recover"
       }
     }
   },
@@ -1465,13 +1500,20 @@
       },
       "missingData" : {
         "gainers" : {
-          "title" : "过去 24 小时内，排名前 50 的资产中无一获利",
+          "title" : "过去 {{trend}} 内，排名前 {{count}} 的资产中无一获利",
           "description" : "考虑查看亏损最多的资产，或稍后再来查看"
         },
         "losers" : {
-          "title" : "过去 24 小时内，排名前 50 的资产中无一亏损",
+          "title" : "过去 {{trend}} 内，排名前 {{count}} 的资产中无一亏损",
           "description" : "考虑查看获利最多的资产，或稍后再来查看"
         }
+      },
+      "trend" : {
+        "day" : "24 小时",
+        "week" : "7 天",
+        "month" : "30 天",
+        "year" : "年",
+        "all" : "年"
       }
     }
   },
@@ -3941,6 +3983,32 @@
       "userId" : "用户 ID",
       "debugApps" : "允许调试应用程序",
       "debugAppsDesc" : "显示并允许打开调试标记的平台应用程序。",
+      "debugReactQuery" : "允许调试 ReactQuery",
+      "debugReactQueryDesc" : "显示并允许打开调试 ReactQuery 控制台。",
+      "debugSpamNft" : {
+        "debugNFTSpamReport" : "Allow NFT Spam Report (Beta)",
+        "debugNFTSpamReportDesc" : "Display a form to report an NFT as spam or to stop it being displayed as spam",
+        "report" : "Report",
+        "contractAddress" : "合约地址",
+        "contractAddressDesc" : "contract_address of the NFT reported, or the contract itself",
+        "chainId" : "Chain ID",
+        "chainIdDesc" : "chain_id (e.g., ethereum) of the NFT or contract reported",
+        "collectionId" : "Collection ID",
+        "collectionIdDesc" : "SimpleHash collection id of the NFT reported",
+        "tokenId" : "代币 ID",
+        "tokenIdDesc" : "token_id of the NFT reported",
+        "eventType" : "Event Type",
+        "eventTypeDesc" : "Type of report you want to make",
+        "success" : "The report was sent successfully. It may take between 5 and 10 minutes for it to take effect.",
+        "error" : "An error occurred while sending the report. Please try again later.",
+        "reportType" : {
+          "title" : "What would you like to report?",
+          "desc" : "Select the type of report you want to make",
+          "individual" : "Spam report for an individual NFT",
+          "contract" : "Spam report for a contract",
+          "collection" : "Spam report for a collection"
+        }
+      },
       "experimentalApps" : "允许实验性应用程序",
       "experimentalAppsDesc" : "显示并允许打开实验性标记的平台应用程序。",
       "catalogUrl" : "设置目录应用程序提供商",
@@ -3969,6 +4037,17 @@
       "addLocalApp" : "添加一个本地应用程序",
       "addLocalAppDesc" : "浏览本地文件并使用本地清单添加本地应用程序",
       "addLocalAppButton" : "浏览",
+      "createLocalAppModal" : {
+        "title" : {
+          "create" : "创建本地应用程序",
+          "modify" : "修改本地应用程序"
+        },
+        "addNetwork" : "添加新网络",
+        "removeNetwork" : "移除上次使用的网络",
+        "export" : "导出",
+        "modify" : "修改",
+        "create" : "创建"
+      },
       "runLocalAppDeleteButton" : "删除",
       "runLocalAppOpenButton" : "打开",
       "enableLearnStagingUrl" : "学习页面的模拟环境 URL 网页地址",
@@ -4067,9 +4146,13 @@
           "description" : "测试 Ledger Live 中使用的所有文章",
           "longDesc" : "这是“按原样”提供的工具，供团队验证应用程序中使用的故事。"
         },
-        "testPostonboarding" : {
-          "title" : "测试新手引导后的功能",
-          "description" : "测试新手引导后的所有功能"
+        "testStaxPostonboarding" : {
+          "title" : "Test Stax Post Onboarding",
+          "description" : "Test all stax post onboarding features"
+        },
+        "testEuropaPostonboarding" : {
+          "title" : "Test Europa Post Onboarding",
+          "description" : "Test all europa post onboarding features"
         },
         "1559DeactivateGate" : {
           "title" : "停用 EIP1559 最低优先费用限额",
@@ -5258,8 +5341,8 @@
       "description" : "请使用 My Ledger（我的 Ledger）卸载所有应用程序，然后检查是否有固件更新，再重新安装应用程序"
     },
     "LatestFirmwareVersionRequired" : {
-      "title" : "更新 Nano 的固件",
-      "description" : "请更新您的设备固件到最新版本以访问此功能"
+      "title" : "Update Device Firmware",
+      "description" : "Please update your device firmware to the latest version to access this feature"
     },
     "FirmwareNotRecognized" : {
       "title" : "提供商无效",
@@ -5382,7 +5465,7 @@
       "description" : "无法计算金额和费用"
     },
     "NotEnoughBalance" : {
-      "title" : "抱歉，余额不足（包括网络费用）。请调整数额或核对余额",
+      "title" : "Sorry, insufficient balance including network fees. Adjust amount or verify balance.",
       "description" : "请确保该账户资金充足。"
     },
     "NotEnoughBalanceBecauseDestinationNotCreated" : {
@@ -5436,6 +5519,10 @@
     "SatStackDescriptorNotImported" : {
       "title" : "账户未经完整节点扫描",
       "description" : "请配置您的完整节点以扫描与此设备相关联的账户。您的完整节点必须先扫描此账户的区块链，然后才能将其添加到您的资产组合中。"
+    },
+    "SwapRateExpiredError" : {
+      "title" : "费率已过期",
+      "description" : "费率已过期，兑换交易无法完成。请刷新费率后再重试互换。"
     },
     "SwapGenericAPIError" : {
       "title" : "出错了",
@@ -6037,7 +6124,7 @@
     },
     "postOnboarding" : {
       "title" : "自定义锁屏界面",
-      "description" : "选择任意 NFT 或图片，将其设置为 Ledger Stax 的锁屏界面。",
+      "description" : "Choose any digital art or picture to set as your {{productName}}'s lock screen.",
       "actionCompletedPopupLabel" : "设备已个性化"
     },
     "customImageSet" : "已自定义锁屏界面",
