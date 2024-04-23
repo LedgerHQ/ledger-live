@@ -2,7 +2,6 @@ import { UseQueryResult, useQueries, useQuery } from "@tanstack/react-query";
 import {
   fetchCurrency,
   fetchCurrencyChartData,
-  fetchCurrencyData,
   fetchList,
   getSupportedCoinsList,
   supportedCounterCurrencies,
@@ -18,11 +17,11 @@ import { QUERY_KEY } from "../utils/queryKeys";
 import { REFETCH_TIME_ONE_MINUTE, BASIC_REFETCH, ONE_DAY } from "../utils/timers";
 import {
   MarketCurrencyRequestParams,
-  RawCurrencyData,
   MarketListRequestParams,
-  MarketListRequestResult,
   CurrencyData,
   HashMapBody,
+  MarketItemResponse,
+  MarketListRequestResult,
 } from "../utils/types";
 
 const cryptoCurrenciesList = [...listCryptoCurrencies(), ...listTokens()];
@@ -59,25 +58,14 @@ export const useCurrencyChartData = ({ id, counterCurrency, range }: MarketCurre
     staleTime: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
   });
 
-export function useCurrencyData({ id, counterCurrency, range }: MarketCurrencyRequestParams) {
-  const resultCurrencyData = useQuery({
-    queryKey: [QUERY_KEY.CurrencyData, id, counterCurrency, range],
-    queryFn: () => fetchCurrencyData({ counterCurrency, range, id }),
+export const useCurrencyData = ({ id, counterCurrency, name }: MarketCurrencyRequestParams) =>
+  useQuery({
+    queryKey: [QUERY_KEY.CurrencyDataRaw, id, name, counterCurrency],
+    queryFn: () => fetchCurrency({ id, counterCurrency, name }),
     refetchInterval: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
     staleTime: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
-    select: (data: RawCurrencyData) => format(data, range ?? "24h", cryptoCurrenciesList),
+    select: data => format(data, cryptoCurrenciesList),
   });
-
-  const resultCurrency = useQuery({
-    queryKey: [QUERY_KEY.CurrencyDataRaw, id],
-    queryFn: () => fetchCurrency({ id }),
-    refetchInterval: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
-    staleTime: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
-    select: data => format(data, "24h", cryptoCurrenciesList),
-  });
-
-  return { currencyData: resultCurrencyData, currencyInfo: resultCurrency };
-}
 
 export const useSupportedCounterCurrencies = () =>
   useQuery({
@@ -97,14 +85,19 @@ export const useSupportedCurrencies = () =>
 
 export function useMarketData(props: MarketListRequestParams): MarketListRequestResult {
   return useQueries({
-    queries: Array.from({ length: props.page ?? 1 }, (_, i) => i + 1).map(page => ({
+    queries: Array.from({ length: props.page ?? 1 }, (_, i) => i).map(page => ({
       queryKey: [
         QUERY_KEY.MarketData,
-        { ...props, page, liveCoinsList: [], supportedCoinsList: [] },
+        page,
+        {
+          counterCurrency: props.counterCurrency,
+          liveCompatible: props.liveCompatible,
+          ...(props.search && props.search?.length > 1 && { search: props.search }),
+        },
       ],
       queryFn: () => fetchList({ ...props, page }),
-      select: (data: RawCurrencyData[]) => ({
-        formattedData: currencyFormatter(data, props.range ?? "24h", cryptoCurrenciesList),
+      select: (data: MarketItemResponse[]) => ({
+        formattedData: currencyFormatter(data, cryptoCurrenciesList),
         page,
       }),
       refetchOnMount: false,
@@ -142,4 +135,22 @@ function combineMarketData(
     isError: results.some(result => result.isError),
     cachedMetadataMap: hashMap,
   };
+}
+
+export function useStarredCurrencies(props: MarketListRequestParams): MarketListRequestResult {
+  return useQueries({
+    queries: Array.from({ length: props.starred?.length ?? 1 }, (_, i) => i).map((name, index) => ({
+      queryKey: [QUERY_KEY.CurrencyDataRaw, props.counterCurrency, name],
+      queryFn: () => fetchCurrency({ ...props }),
+      select: (data: MarketItemResponse) => ({
+        formattedData: [format(data, cryptoCurrenciesList)],
+        page: index,
+      }),
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+      enabled: Boolean(props.starred?.length),
+    })),
+    combine: combineMarketData,
+  });
 }

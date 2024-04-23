@@ -15,7 +15,6 @@ export type SupportedCoins = MarketCoin[];
 
 export type MarketListRequestParams = {
   counterCurrency?: string;
-  ids?: string[];
   starred?: string[];
   page?: number;
   limit?: number;
@@ -27,7 +26,6 @@ export type MarketListRequestParams = {
   sparkline?: boolean;
   liveCompatible?: boolean;
   top100?: boolean;
-  supportedCoinsList?: SupportedCoins;
   liveCoinsList?: string[];
 };
 
@@ -60,6 +58,7 @@ export type MarketCurrencyChartDataRequestParams = {
 };
 
 export type MarketCurrencyRequestParams = {
+  name?: string;
   id?: string;
   counterCurrency?: string;
   range?: string;
@@ -71,6 +70,7 @@ export type SparklineSvgData = {
   isPositive: boolean;
 };
 
+export type KeysPriceChange = "1h" | "24h" | "7d" | "30d" | "1y";
 export type CurrencyData = {
   id: string;
   name: string;
@@ -83,7 +83,7 @@ export type CurrencyData = {
   low24h: number;
   ticker: string;
   price: number;
-  priceChangePercentage: number;
+  priceChangePercentage: Record<KeysPriceChange, number>;
   marketCapChangePercentage24h: number;
   circulatingSupply: number;
   totalSupply: number;
@@ -94,29 +94,6 @@ export type CurrencyData = {
   atlDate: Date;
   sparklineIn7d?: SparklineSvgData;
   chartData: MarketCoinDataChart;
-};
-
-export type RawCurrencyData = {
-  [x: string]: any;
-  id: string;
-  name: string;
-  image?: string | { thumb: string; small: string; large: string };
-  ["market_cap"]: number;
-  ["market_cap_rank"]: number;
-  ["total_volume"]: number;
-  ["high_24h"]: number;
-  ["low_24h"]: number;
-  symbol: string;
-  ["current_price"]: number;
-  ["market_cap_change_percentage_24h"]: number;
-  ["circulating_supply"]: number;
-  ["total_supply"]: number;
-  ["max_supply"]: number;
-  ath: number;
-  ["ath_date"]: Date;
-  atl: number;
-  ["atl_date"]: Date;
-  ["sparkline_in_7d"]: { price: any };
 };
 
 export type SingleCoinState = {
@@ -150,34 +127,34 @@ export type MarketPerformersParams = {
 };
 
 export type MarketItemResponse = {
-  id: string;
-  ledgerIds: string[];
-  ticker: string;
-  name: string;
-  image: string;
-  marketCap: number;
-  marketCapRank: number;
+  allTimeHigh: number;
+  allTimeHighDate: string;
+  allTimeLow: number;
+  allTimeLowDate: string;
+  circulatingSupply: number;
   fullyDilutedValuation: number;
-  totalVolume: number;
   high24h: number;
+  id: string;
+  image: string;
+  ledgerIds: string[];
   low24h: number;
+  marketCap: number;
+  marketCapChange24h: number;
+  marketCapChangePercentage24h: number;
+  marketCapRank: number;
+  maxSupply: number;
+  name: string;
   price: number;
   priceChange24h: number;
   priceChangePercentage1h: number;
   priceChangePercentage24h: number;
-  priceChangePercentage7d: number;
   priceChangePercentage30d: number;
+  priceChangePercentage7d: number;
   priceChangePercentage1y: number;
-  marketCapChange24h: number;
-  marketCapChangePercentage24h: number;
-  circulatingSupply: number;
-  totalSupply: number;
-  maxSupply: number;
-  allTimeHigh: number;
-  allTimeLow: number;
-  allTimeHighDate: string;
-  allTimeLowDate: string;
   sparkline: number[];
+  ticker: string;
+  totalSupply: number;
+  totalVolume: number;
   updatedAt: string;
 };
 export type MarketItemPerformer = {

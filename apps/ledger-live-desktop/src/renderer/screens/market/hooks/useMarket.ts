@@ -29,13 +29,11 @@ export function useMarket() {
 
   const { data: fromCurrencies } = useFetchCurrencyFrom();
 
-  const { supportedCurrencies, liveCoinsList, supportedCounterCurrencies } =
-    useMarketDataProvider();
+  const { liveCoinsList, supportedCounterCurrencies } = useMarketDataProvider();
 
   const marketResult = useMarketDataHook({
     ...marketParams,
     liveCoinsList,
-    supportedCoinsList: supportedCurrencies,
   });
 
   const REFRESH_RATE =
@@ -208,7 +206,7 @@ export function useMarket() {
     t,
     liveCompatible,
     starFilterOn,
-    marketResult,
+    marketData: marketResult.data,
     starredMarketCoins,
     timeRanges,
     marketParams,

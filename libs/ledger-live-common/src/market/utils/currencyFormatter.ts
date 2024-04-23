@@ -1,11 +1,5 @@
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import {
-  CurrencyData,
-  MarketItemPerformer,
-  MarketItemResponse,
-  RawCurrencyData,
-  SparklineSvgData,
-} from "./types";
+import { CurrencyData, MarketItemPerformer, MarketItemResponse, SparklineSvgData } from "./types";
 
 function distributedCopy(items: number[], n: number): number[] {
   if (!items) return [];
@@ -46,42 +40,46 @@ function sparklineAsSvgData(points: number[]): SparklineSvgData {
 }
 
 export function currencyFormatter(
-  data: RawCurrencyData[],
-  range: string,
+  data: MarketItemResponse[],
   cryptoCurrenciesList: (CryptoCurrency | TokenCurrency)[],
 ): CurrencyData[] {
-  return data.map((currency: RawCurrencyData) => format(currency, range, cryptoCurrenciesList));
+  return data.map((currency: MarketItemResponse) => format(currency, cryptoCurrenciesList));
 }
 
 export const format = (
-  currency: RawCurrencyData,
-  range: string,
+  currency: MarketItemResponse,
   cryptoCurrenciesList: (CryptoCurrency | TokenCurrency)[],
 ): CurrencyData => ({
   id: currency.id,
   name: currency.name,
-  image: typeof currency.image === "string" ? currency.image : currency.image?.thumb,
+  image: currency.image,
   internalCurrency: cryptoCurrenciesList.find(
-    ({ ticker }) => ticker.toLowerCase() === currency.symbol,
+    ({ ticker }) => ticker.toLowerCase() === currency.ticker,
   ),
-  marketcap: currency.market_cap,
-  marketcapRank: currency.market_cap_rank,
-  totalVolume: currency.total_volume,
-  high24h: currency.high_24h,
-  low24h: currency.low_24h,
-  ticker: currency.symbol,
-  price: currency.current_price,
-  priceChangePercentage: currency[`price_change_percentage_${range}_in_currency`],
-  marketCapChangePercentage24h: currency.market_cap_change_percentage_24h,
-  circulatingSupply: currency.circulating_supply,
-  totalSupply: currency.total_supply,
-  maxSupply: currency.max_supply,
-  ath: currency.ath,
-  athDate: currency.ath_date,
-  atl: currency.atl,
-  atlDate: currency.atl_date,
-  sparklineIn7d: currency?.sparkline_in_7d?.price
-    ? sparklineAsSvgData(distributedCopy(currency.sparkline_in_7d.price, 6 * 7)) // keep 6 points per day
+  marketcap: currency.marketCap,
+  marketcapRank: currency.marketCapRank,
+  totalVolume: currency.totalVolume,
+  high24h: currency.high24h,
+  low24h: currency.low24h,
+  ticker: currency.ticker,
+  price: currency.price,
+  priceChangePercentage: {
+    "1h": currency.priceChangePercentage1h,
+    "24h": currency.priceChangePercentage24h,
+    "30d": currency.priceChangePercentage30d,
+    "7d": currency.priceChangePercentage7d,
+    "1y": currency.priceChangePercentage1y,
+  },
+  marketCapChangePercentage24h: currency.marketCapChangePercentage24h,
+  circulatingSupply: currency.circulatingSupply,
+  totalSupply: currency.totalSupply,
+  maxSupply: currency.maxSupply,
+  ath: currency.allTimeHigh,
+  athDate: new Date(currency.allTimeHighDate),
+  atl: currency.allTimeLow,
+  atlDate: new Date(currency.allTimeLowDate),
+  sparklineIn7d: currency.sparkline
+    ? sparklineAsSvgData(distributedCopy(currency.sparkline, 6 * 7)) // keep 6 points per day
     : undefined,
   chartData: {},
 });
