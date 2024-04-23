@@ -879,7 +879,7 @@ export function useLocalLiveApp([LocalLiveAppDb, setState]: LocalLiveAppDB): Loc
           manifest => manifest.id !== manifestId,
         );
 
-        return { ...discoverDB, newLocalLiveAppList };
+        return { ...discoverDB, localLiveApp: newLocalLiveAppList };
       });
     },
     [setState],

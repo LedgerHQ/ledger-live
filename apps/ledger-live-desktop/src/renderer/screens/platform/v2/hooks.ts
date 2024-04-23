@@ -63,12 +63,7 @@ export function useRecentlyUsedDB() {
 
 export function useLocalLiveAppDB() {
   //TODO : Change key to DISCOVER_STORE_KEY
-  return useDB(
-    "app",
-    "localApps" as keyof DatabaseValues,
-    INITIAL_PLATFORM_STATE,
-    state => state.localLiveApp,
-  );
+  return useDB("app", "toReplace", INITIAL_PLATFORM_STATE, state => state.localLiveApp);
 }
 
 export function useCurrentAccountHistDB() {

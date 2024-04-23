@@ -1,5 +1,5 @@
 import React from "react";
-import { Flex, Text } from "@ledgerhq/react-ui";
+import { Flex } from "@ledgerhq/react-ui";
 import { MinimumCard } from "./Card";
 import styled from "styled-components";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
