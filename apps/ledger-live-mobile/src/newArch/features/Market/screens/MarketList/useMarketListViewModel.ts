@@ -39,9 +39,7 @@ function useMarketListViewModel() {
   const {
     marketParams,
     starredMarketCoins,
-    supportedCurrencies,
     filterByStarredCurrencies,
-    liveCoinsList,
     marketCurrentPage,
     refresh,
   } = useMarket();
@@ -50,8 +48,6 @@ function useMarketListViewModel() {
 
   const marketResult = useMarketDataHook({
     ...marketParams,
-    liveCoinsList,
-    supportedCoinsList: supportedCurrencies,
     starred: filterByStarredCurrencies ? starredMarketCoins : [],
   });
 
@@ -63,13 +59,11 @@ function useMarketListViewModel() {
     if (initialTop100) {
       refresh({
         limit: 100,
-        ids: [],
         starred: [],
         orderBy: "market_cap",
         order: "desc",
         search: "",
         liveCompatible: false,
-        sparkline: false,
         top100: true,
       });
     }

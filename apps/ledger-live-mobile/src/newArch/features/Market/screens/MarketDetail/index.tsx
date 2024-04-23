@@ -22,6 +22,7 @@ import { Item } from "~/components/Graph/types";
 import {
   CurrencyData,
   MarketCoinDataChart,
+  KeysPriceChange,
   MarketCurrencyChartDataRequestParams,
 } from "@ledgerhq/live-common/market/utils/types";
 import usePullToRefresh from "../../hooks/usePullToRefresh";
@@ -58,8 +59,7 @@ function View({
   allAccounts,
   range,
 }: ViewProps) {
-  const { name, image, internalCurrency } = currency || {};
-  const { price, priceChangePercentage } = dataCurrency || {};
+  const { name, image, internalCurrency, price } = currency || {};
 
   const { handlePullToRefresh, refreshControlVisible } = usePullToRefresh({ loading, refresh });
   const [hoveredItem, setHoverItem] = useState<Item | null | undefined>(null);
@@ -71,6 +71,8 @@ function View({
     () => getDateFormatter(locale, range as string),
     [locale, range],
   );
+
+  const priceChangePercentage = currency?.priceChangePercentage[range as KeysPriceChange];
 
   return (
     <SafeAreaView edges={["top", "left", "right"]} isFlex>

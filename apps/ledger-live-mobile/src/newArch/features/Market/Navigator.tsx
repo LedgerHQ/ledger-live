@@ -11,6 +11,7 @@ export type MarketNavigatorStackParamList = {
   [ScreenName.MarketCurrencySelect]: undefined;
   [ScreenName.MarketDetail]: {
     currencyId: string;
+    currencyName: string;
     resetSearchOnUmount?: boolean;
   };
 };

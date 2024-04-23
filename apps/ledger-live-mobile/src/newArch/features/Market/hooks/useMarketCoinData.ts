@@ -2,15 +2,16 @@ import {
   useCurrencyChartData,
   useCurrencyData,
 } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
-import { useMemo } from "react";
+
 import { useSelector } from "react-redux";
 import { marketParamsSelector } from "~/reducers/market";
 
 type HookProps = {
   currencyId: string;
+  currencyName: string;
 };
 
-export const useMarketCoinData = ({ currencyId }: HookProps) => {
+export const useMarketCoinData = ({ currencyId, currencyName }: HookProps) => {
   const marketParams = useSelector(marketParamsSelector);
 
   const { counterCurrency = "usd", range = "24h" } = marketParams;
@@ -21,23 +22,21 @@ export const useMarketCoinData = ({ currencyId }: HookProps) => {
     range,
   });
 
-  const { currencyData, currencyInfo } = useCurrencyData({
+  const { data: currency, isLoading } = useCurrencyData({
     counterCurrency,
     id: currencyId,
     range,
+    name: currencyName,
   });
-
-  const currency = useMemo(() => currencyInfo?.data, [currencyInfo]);
-  const isLoadingCurrency = useMemo(() => currencyInfo?.isLoading, [currencyInfo]);
 
   return {
     counterCurrency,
     range,
     currency,
-    dataCurrency: currencyData.data,
+
     dataChart: resCurrencyChartData.data,
     loadingChart: resCurrencyChartData.isLoading,
-    loading: currencyData.isLoading || isLoadingCurrency,
+    loading: isLoading,
     marketParams,
   };
 };

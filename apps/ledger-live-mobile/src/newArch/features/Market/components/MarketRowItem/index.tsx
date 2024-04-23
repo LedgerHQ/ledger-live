@@ -1,6 +1,6 @@
 import React from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { CurrencyData } from "@ledgerhq/live-common/market/utils/types";
+import { CurrencyData, KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
 import { Image } from "react-native";
 import { useTranslation } from "react-i18next";
 import CircleCurrencyIcon from "~/components/CircleCurrencyIcon";
@@ -13,21 +13,15 @@ type Props = {
   index: number;
   item: CurrencyData;
   counterCurrency?: string;
+  range?: string;
 };
 
-function MarketRowItem({ item, index, counterCurrency }: Props) {
+function MarketRowItem({ item, index, counterCurrency, range }: Props) {
   const { locale } = useLocale();
   const { t } = useTranslation();
-  const {
-    internalCurrency,
-    image,
-    name,
-    marketcap,
-    marketcapRank,
-    price,
-    priceChangePercentage,
-    ticker,
-  } = item;
+  const { internalCurrency, image, name, marketcap, marketcapRank, price, ticker } = item;
+
+  const priceChangePercentage = item?.priceChangePercentage[range as KeysPriceChange];
 
   return (
     <Flex

@@ -18,6 +18,7 @@ function ListRow({ item, index, counterCurrency }: ListRowProps) {
       onPress={() => {
         navigation.navigate(ScreenName.MarketDetail, {
           currencyId: item.id,
+          currencyName: item.name,
         });
       }}
     >
