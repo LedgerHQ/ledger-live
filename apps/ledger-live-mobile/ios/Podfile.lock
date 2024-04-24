@@ -32,6 +32,8 @@ PODS:
   - ExpoImageManipulator (11.3.0):
     - EXImageLoader
     - ExpoModulesCore
+  - ExpoKeepAwake (12.3.0):
+    - ExpoModulesCore
   - ExpoModulesCore (1.5.11):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
@@ -784,6 +786,7 @@ DEPENDENCIES:
   - "EXImageLoader (from `../../../node_modules/.pnpm/expo-image-loader@4.3.0_expo-modules-core@1.5.11_expo@49.0.13_react-native@0.72.6_react@18.2.0/node_modules/expo-image-loader/ios`)"
   - "Expo (from `../../../node_modules/.pnpm/expo@49.0.13_@babel+core@7.23.2_expo-modules-autolinking@1.5.1_expo-modules-core@1.5.11_react-native@0.72.6_react@18.2.0/node_modules/expo`)"
   - "ExpoImageManipulator (from `../../../node_modules/.pnpm/expo-image-manipulator@11.3.0_expo-modules-core@1.5.11_expo@49.0.13_react-native@0.72.6_react@18.2.0/node_modules/expo-image-manipulator/ios`)"
+  - "ExpoKeepAwake (from `../../../node_modules/.pnpm/expo-keep-awake@12.3.0_expo-modules-core@1.5.11_expo@49.0.13_react-native@0.72.6_react@18.2.0/node_modules/expo-keep-awake/ios`)"
   - "ExpoModulesCore (from `../../../node_modules/.pnpm/expo-modules-core@1.5.11_react-native@0.72.6_react@18.2.0/node_modules/expo-modules-core`)"
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - FBReactNativeSpec (from `../node_modules/react-native/React/FBReactNativeSpec`)
@@ -956,6 +959,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/expo@49.0.13_@babel+core@7.23.2_expo-modules-autolinking@1.5.1_expo-modules-core@1.5.11_react-native@0.72.6_react@18.2.0/node_modules/expo"
   ExpoImageManipulator:
     :path: "../../../node_modules/.pnpm/expo-image-manipulator@11.3.0_expo-modules-core@1.5.11_expo@49.0.13_react-native@0.72.6_react@18.2.0/node_modules/expo-image-manipulator/ios"
+  ExpoKeepAwake:
+    :path: "../../../node_modules/.pnpm/expo-keep-awake@12.3.0_expo-modules-core@1.5.11_expo@49.0.13_react-native@0.72.6_react@18.2.0/node_modules/expo-keep-awake/ios"
   ExpoModulesCore:
     :path: "../../../node_modules/.pnpm/expo-modules-core@1.5.11_react-native@0.72.6_react@18.2.0/node_modules/expo-modules-core"
   FBLazyVector:
@@ -1145,6 +1150,7 @@ SPEC CHECKSUMS:
   EXImageLoader: 34b214f9387e98f3c73989f15d8d5b399c9ab3f7
   Expo: e7d2116b947e2e6fdeb09ee4f2754f819426d1b6
   ExpoImageManipulator: 851be0965dd9f78019771b140282f1816dcc25ea
+  ExpoKeepAwake: be4cbd52d9b177cde0fd66daa1913afa3161fc1d
   ExpoModulesCore: 51cb2e7ab4c8da14be3f40b66d54c1781002e99d
   FBLazyVector: 748c0ef74f2bf4b36cfcccf37916806940a64c32
   FBReactNativeSpec: 32d6a753b515035a2a6d1e8339d47eae6bcd62fe

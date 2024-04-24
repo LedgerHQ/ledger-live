@@ -18,6 +18,8 @@ import {
   INTERNAL_APP_IDS,
   WALLET_API_VERSION,
 } from "@ledgerhq/live-common/wallet-api/constants";
+import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 export type DProps = {
   defaultCurrencyId?: string | null;
@@ -41,6 +43,7 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
   const remoteManifest = useRemoteLiveAppManifest(appId);
   const manifest = localManifest || mockManifest || remoteManifest;
   const themeType = useTheme().colors.palette.type;
+  const internalAppIds = useInternalAppIds() || INTERNAL_APP_IDS;
 
   /**
    * Pass correct account ID
@@ -69,7 +72,7 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
    * to ensure the context is reset. last-screen is used to give an external app's webview context
    * of the last screen the user was on before navigating to the external app screen.
    */
-  if (manifest?.id && INTERNAL_APP_IDS.includes(manifest.id)) {
+  if (manifest?.id && internalAppIds.includes(manifest.id)) {
     const { localStorage } = window;
     localStorage.removeItem("last-screen");
     localStorage.removeItem("manifest-id");
@@ -105,7 +108,9 @@ export type ExchangeComponentParams = {
 
 const Exchange = ({ match }: RouteComponentProps<ExchangeComponentParams>) => {
   const appId = match?.params?.appId;
+  const buySellUiFlag = useFeature("buySellUi");
+  const defaultPlatform = buySellUiFlag?.params?.manifestId || DEFAULT_MULTIBUY_APP_ID;
 
-  return <LiveAppExchange appId={appId || DEFAULT_MULTIBUY_APP_ID} />;
+  return <LiveAppExchange appId={appId || defaultPlatform} />;
 };
 export default Exchange;

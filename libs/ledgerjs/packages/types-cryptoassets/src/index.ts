@@ -123,8 +123,6 @@ export type CryptoCurrencyId =
   | "zilliqa"
   | "crypto_org"
   | "bitcoin_testnet"
-  | "ethereum_ropsten"
-  | "ethereum_goerli"
   | "ethereum_sepolia"
   | "ethereum_holesky"
   | "stacks"
@@ -143,7 +141,7 @@ export type CryptoCurrencyId =
   | "rsk"
   | "bittorrent"
   | "optimism"
-  | "optimism_goerli"
+  | "optimism_sepolia"
   | "energy_web"
   | "astar"
   | "metis"
@@ -163,7 +161,7 @@ export type CryptoCurrencyId =
   | "neon_evm"
   | "lukso"
   | "linea"
-  | "linea_goerli";
+  | "linea_sepolia";
 
 export type LedgerExplorerId =
   | "btc"
@@ -191,8 +189,6 @@ export type LedgerExplorerId =
   | "zen"
   | "avax"
   | "eth"
-  | "eth_ropsten"
-  | "eth_goerli"
   | "eth_sepolia"
   | "eth_holesky"
   | "etc"

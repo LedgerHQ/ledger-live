@@ -1,9 +1,5 @@
 lockfileVersion: '6.0'
 
-settings:
-  autoInstallPeers: false
-  excludeLinksFromLockfile: false
-
 neverBuiltDependencies:
   - blake2
 
@@ -352,6 +348,9 @@ importers:
       dotenv:
         specifier: ^16.0.3
         version: 16.0.3
+      electron-app-universal-protocol-client:
+        specifier: ^1.3.0
+        version: 1.3.0(electron@28.2.3)
       electron-context-menu:
         specifier: ^3.6.0
         version: 3.6.1
@@ -929,6 +928,9 @@ importers:
       expo-image-manipulator:
         specifier: ~11.3.0
         version: 11.3.0(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
+      expo-keep-awake:
+        specifier: ~12.3.0
+        version: 12.3.0(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
       expo-modules-autolinking:
         specifier: ^1.5.0
         version: 1.5.1(expo-modules-core@1.5.11)(react-native@0.72.6)(react@18.2.0)
@@ -1944,9 +1946,6 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
-      '@ledgerhq/live-env':
-        specifier: workspace:^
-        version: link:../../env
       '@ledgerhq/live-network':
         specifier: workspace:^
         version: link:../../live-network
@@ -12982,7 +12981,6 @@ packages:
       global-agent: 3.0.0
     transitivePeerDependencies:
       - supports-color
-    dev: true
 
   /@electron/notarize@2.1.0:
     resolution: {integrity: sha512-Q02xem1D0sg4v437xHgmBLxI2iz/fc0D4K7fiVWHa/AnW8o7D751xyKNXgziA6HrTOme9ul1JfWN5ark8WH1xA==}
@@ -21383,7 +21381,6 @@ packages:
   /@sindresorhus/is@4.6.0:
     resolution: {integrity: sha512-t09vSN3MdfsyCHoFcTRCH/iUtG7OJ0CsjzB8cjAmKc/va/kIgeDI/TxsigdncE/4be734m0cvIYwNaV4i2XqAw==}
     engines: {node: '>=10'}
-    dev: true
 
   /@sinonjs/commons@1.8.6:
     resolution: {integrity: sha512-Ky+XkAkqPZSm3NLBeUng77EBQl3cmeJhITaGHdYH8kjVB+aun3S4XBRti2zt17mtt0mIUDiNxYeoJm6drVvBJQ==}
@@ -24428,7 +24425,6 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       defer-to-connect: 2.0.1
-    dev: true
 
   /@tanstack/query-core@5.28.9:
     resolution: {integrity: sha512-hNlfCiqZevr3GRVPXS3MhaGW5hjcxvCsIQ4q6ff7EPlvFwYZaS+0d9EIIgofnegDaU2BbCDlyURoYfRl5rmzow==}
@@ -24895,7 +24891,6 @@ packages:
       '@types/keyv': 3.1.4
       '@types/node': 20.11.30
       '@types/responselike': 1.0.3
-    dev: true
 
   /@types/cashaddrjs@0.3.3:
     resolution: {integrity: sha512-eZ4NOd1bR5SCccmb3y76BSTPfFGHNe6G7dcJq4OuGV5mt7NNnLhl/UCWz5WJNdpqochsm09czLJY+I+/OsKv2g==}
@@ -25188,7 +25183,6 @@ packages:
 
   /@types/http-cache-semantics@4.0.4:
     resolution: {integrity: sha512-1m0bIFVc7eJWyve9S0RnuRgcQqF/Xd5QsUZAZeQFr1Q3/p9JWoQQEqmVy+DPTNpGXwhgIetAoYF8JSc33q29QA==}
-    dev: true
 
   /@types/http-proxy@1.17.9:
     resolution: {integrity: sha512-QsbSjA/fSk7xB+UXlCT3wHBy5ai9wOcNDWwZAtud+jXhwOM3l+EYZh8Lng4+/6n8uar0J7xILzqftJdJ/Wdfkw==}
@@ -25854,7 +25848,6 @@ packages:
     resolution: {integrity: sha512-H/+L+UkTV33uf49PH5pCAUBVPNj2nDBXTN+qS1dOwyyg24l3CcicicCA7ca+HMvJBZcFgl5r8e+RR6elsb4Lyw==}
     dependencies:
       '@types/node': 20.11.30
-    dev: true
 
   /@types/retry@0.12.0:
     resolution: {integrity: sha512-wWKOClTTiizcZhXnPY4wikVAwmdYHp8q6DmC+EJUzAMsycb7HB32Kh9RN4+0gExjmPmZSAQjgURXIGATPegAvA==}
@@ -26112,7 +26105,6 @@ packages:
     requiresBuild: true
     dependencies:
       '@types/node': 20.11.30
-    dev: true
     optional: true
 
   /@typescript-eslint/eslint-plugin@5.62.0(@typescript-eslint/parser@5.62.0)(eslint@8.52.0)(typescript@5.1.3):
@@ -29143,7 +29135,7 @@ packages:
       babel-plugin-syntax-jsx: 6.18.0
       lodash: 4.17.21
       picomatch: 2.3.1
-      styled-components: 5.3.5(react-dom@18.2.0)(react-is@17.0.2)(react@18.2.0)
+      styled-components: 5.3.5(react-is@18.1.0)(react@18.2.0)
 
   /babel-plugin-syntax-jsx@6.18.0:
     resolution: {integrity: sha512-qrPaCSo9c8RHNRHIotaufGbuOBN8rtdC4QrrFFc43vyWCCz7Kl7GL1PGaXtMGQZUXrkCjNEgxDfmAuAabr/rlw==}
@@ -29785,7 +29777,6 @@ packages:
   /boolean@3.2.0:
     resolution: {integrity: sha512-d0II/GO9uf9lfUHH2BQsjxzRJZBdsjgsBiW4BvhWk/3qoKwQFjIDVN19PfX8F2D/r9PCMTtLWjYVCFrpeYUzsw==}
     requiresBuild: true
-    dev: true
     optional: true
 
   /borc@2.1.2:
@@ -30074,7 +30065,6 @@ packages:
 
   /buffer-crc32@0.2.13:
     resolution: {integrity: sha512-VO9Ht/+p3SN7SKWqcrgEzjGbRSJYTx+Q1pTQC0wrWqHx0vpJraQ6GtHx8tvcg1rlK1byhU5gccxgOgj7B0TDkQ==}
-    dev: true
 
   /buffer-equal-constant-time@1.0.1:
     resolution: {integrity: sha512-zRpUiDwd/xk6ADqPMATG8vc9VPrkck7T07OIx0gnjmJAnHnTVXNQG3vfvWNuiZIkwu9KrKdA1iJKfsfTVxE6NA==}
@@ -30408,7 +30398,6 @@ packages:
   /cacheable-lookup@5.0.4:
     resolution: {integrity: sha512-2/kNscPhpcxrOigMZzbiWF7dz8ilhb/nIHU3EyZiXWXpeq/au8qJ8VhdftMkty3n7Gj6HIGalQG8oiBNB3AJgA==}
     engines: {node: '>=10.6.0'}
-    dev: true
 
   /cacheable-request@6.1.0:
     resolution: {integrity: sha512-Oj3cAGPCqOZX7Rz64Uny2GYAZNliQSqfbePrgAQ1wKAihYmCUnraBtJtKcGR4xz7wF+LoJC+ssFZvv5BgF9Igg==}
@@ -30434,7 +30423,6 @@ packages:
       lowercase-keys: 2.0.0
       normalize-url: 6.1.0
       responselike: 2.0.1
-    dev: true
 
   /cached-path-relative@1.1.0:
     resolution: {integrity: sha512-WF0LihfemtesFcJgO7xfOoOcnWzY/QHR4qeDqV44jPU3HTI54+LnfXK3SA27AVVGCdZFgjjFFaqUA9Jx7dMJZA==}
@@ -33480,7 +33468,6 @@ packages:
   /defer-to-connect@2.0.1:
     resolution: {integrity: sha512-4tvttepXG1VaYGrRibk5EwJd1t4udunSOVMdLSAL6mId1ix438oPwPZMALY41FCijukO1L0twNcGsdzS7dHgDg==}
     engines: {node: '>=10'}
-    dev: true
 
   /deferred-leveldown@0.2.0:
     resolution: {integrity: sha1-LO8fER4cV4cNi7uK8mUOWHzS9bQ=}
@@ -34206,6 +34193,18 @@ packages:
     dependencies:
       jake: 10.8.7
 
+  /electron-app-universal-protocol-client@1.3.0(electron@28.2.3):
+    resolution: {integrity: sha512-8txI5+PP4sFIYooTmBOP1imsMx1Mov7ouEebT+mwikoENq70e6tflOOXBCNJVxsbp93+BQ/l/+WT5BiPvRFXZA==}
+    requiresBuild: true
+    peerDependencies:
+      electron: '>12.0.0'
+    dependencies:
+      electron: 28.2.3
+      node-addon-api: 2.0.2
+      node-gyp-build: 4.6.0
+      typed-emitter: 2.1.0
+    dev: false
+
   /electron-builder@24.9.1(lodash@4.17.21):
     resolution: {integrity: sha512-v7BuakDuY6sKMUYM8mfQGrwyjBpZ/ObaqnenU0H+igEL10nc6ht049rsCw2HghRBdEwJxGIBuzs3jbEhNaMDmg==}
     engines: {node: '>=14.0.0'}
@@ -34309,7 +34308,6 @@ packages:
       extract-zip: 2.0.1
     transitivePeerDependencies:
       - supports-color
-    dev: true
 
   /elegant-spinner@1.0.1:
     resolution: {integrity: sha1-2wQ1IcldfjA/2PNFvtwzSc+wcp4=}
@@ -34704,7 +34702,6 @@ packages:
   /es6-error@4.1.1:
     resolution: {integrity: sha512-Um/+FxMr9CISWh0bi5Zv0iOD+4cFh5qLeks1qhAopKVAJw3drgKbKySikp7wGhDL0HPeaja0P5ULZrxLkniUVg==}
     requiresBuild: true
-    dev: true
     optional: true
 
   /es6-iterator@2.0.3:
@@ -36414,6 +36411,40 @@ packages:
       url-parse: 1.5.10
     transitivePeerDependencies:
       - expo
+    dev: true
+
+  /expo-asset@8.10.1(expo-file-system@15.4.4)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0):
+    resolution: {integrity: sha512-5VMTESxgY9GBsspO/esY25SKEa7RyascVkLe/OcL1WgblNFm7xCCEEUIW8VWS1nHJQGYxpMZPr3bEfjMpdWdyA==}
+    peerDependencies:
+      expo-file-system: '*'
+      expo-modules-core: '*'
+      react: '*'
+      react-native: '*'
+    peerDependenciesMeta:
+      expo-constants:
+        optional: true
+      expo-file-system:
+        optional: true
+      expo-modules-core:
+        optional: true
+      react:
+        optional: true
+      react-native:
+        optional: true
+    dependencies:
+      blueimp-md5: 2.19.0
+      expo-constants: 14.4.2(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
+      expo-file-system: 15.4.4(expo-constants@14.4.2)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
+      expo-modules-core: 1.5.11(react-native@0.72.6)(react@18.2.0)
+      invariant: 2.2.4
+      md5-file: 3.2.3
+      path-browserify: 1.0.1
+      react: 18.2.0
+      react-native: 0.72.6(@babel/core@7.23.2)(react@18.2.0)
+      url-parse: 1.5.10
+    transitivePeerDependencies:
+      - expo
+      - supports-color
 
   /expo-barcode-scanner@12.5.3(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0):
     resolution: {integrity: sha512-aIeTiOUzPdngTIhZHhM1mOMx9CPtmYEtEkK8pAgyua3NiAKgsUN8z8bpiQWuZTrxSaqkU8fG1zGOk9E4VnNwyA==}
@@ -36587,7 +36618,7 @@ packages:
         optional: true
     dependencies:
       expo: 49.0.13(@babel/core@7.23.2)(expo-modules-autolinking@1.5.1)(expo-modules-core@1.5.11)(react-native@0.72.6)(react@18.2.0)
-      expo-asset: 8.10.1(expo-constants@14.4.2)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
+      expo-asset: 8.10.1(expo-file-system@15.4.4)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
       expo-constants: 14.4.2(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
       expo-modules-core: 1.5.11(react-native@0.72.6)(react@18.2.0)
       fontfaceobserver: 2.1.0
@@ -36697,6 +36728,30 @@ packages:
       react: 18.2.0
       react-native: 0.72.6(@babel/core@7.23.2)(react@18.2.0)
 
+  /expo-keep-awake@12.3.0(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0):
+    resolution: {integrity: sha512-ujiJg1p9EdCOYS05jh5PtUrfiZnK0yyLy+UewzqrjUqIT8eAGMQbkfOn3C3fHE7AKd5AefSMzJnS3lYZcZYHDw==}
+    peerDependencies:
+      expo: '*'
+      expo-constants: '*'
+      expo-modules-core: '*'
+      react: '*'
+      react-native: '*'
+    peerDependenciesMeta:
+      expo-constants:
+        optional: true
+      expo-modules-core:
+        optional: true
+      react:
+        optional: true
+      react-native:
+        optional: true
+    dependencies:
+      expo: 49.0.13(@babel/core@7.23.2)(expo-modules-autolinking@1.5.1)(expo-modules-core@1.5.11)(react-native@0.72.6)(react@18.2.0)
+      expo-modules-core: 1.5.11(react-native@0.72.6)(react@18.2.0)
+      react: 18.2.0
+      react-native: 0.72.6(@babel/core@7.23.2)(react@18.2.0)
+    dev: false
+
   /expo-modules-autolinking@1.5.1(expo-modules-core@1.5.11)(react-native@0.72.6)(react@18.2.0):
     resolution: {integrity: sha512-yt5a1VCp2BF9CrsO689PCD5oXKP14MMhnOanQMvDn4BDpURYfzAlDVGC5fZrNQKtwn/eq3bcrxIwZ7D9QjVVRg==}
     hasBin: true
@@ -36750,6 +36805,7 @@ packages:
       invariant: 2.2.4
       react: 18.2.0
       react-native: 0.72.6(@babel/core@7.23.2)(@babel/preset-env@7.17.10)(metro-resolver@0.80.0)(metro-transform-worker@0.80.0)(react@18.2.0)
+    dev: true
 
   /expo-modules-core@1.5.11(react-native@0.72.6)(react@18.2.0):
     resolution: {integrity: sha512-1Dj2t74nVjxq6xEQf2b9WFfAMhPzVnR0thY0PfRFgob4STyj3sq1U4PIHVWvKQBtDKIa227DrNRb+Hu+LqKWQg==}
@@ -36856,7 +36912,7 @@ packages:
       '@expo/vector-icons': 13.0.0
       babel-preset-expo: 9.5.2(@babel/core@7.23.2)
       expo-application: 5.3.1(expo-constants@14.4.2)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
-      expo-asset: 8.10.1(expo-constants@14.4.2)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
+      expo-asset: 8.10.1(expo-file-system@15.4.4)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
       expo-constants: 14.4.2(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
       expo-file-system: 15.4.4(expo-constants@14.4.2)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
       expo-font: 11.4.0(expo-asset@8.10.1)(expo-constants@14.4.2)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
@@ -37067,7 +37123,6 @@ packages:
       '@types/yauzl': 2.10.3
     transitivePeerDependencies:
       - supports-color
-    dev: true
 
   /extsprintf@1.3.0:
     resolution: {integrity: sha512-11Ndz7Nv+mvAC1j0ktTa7fAb0vLyGGX+rMHNBYQviQDGU0Hw7lhctJANqbPhu9nV9/izT/IntTgZ7Im/9LJs9g==}
@@ -37228,7 +37283,6 @@ packages:
     resolution: {integrity: sha512-cE1qsB/VwyQozZ+q1dGxR8LBYNZeofhEdUNGSMbQD3Gw2lAzX9Zb3uIU6Ebc/Fmyjo9AWWfnn0AUCHqtevs/8g==}
     dependencies:
       pend: 1.2.0
-    dev: true
 
   /fecha@4.2.3:
     resolution: {integrity: sha512-OP2IUU6HeYKJi3i0z4A19kHMQoLVs4Hc+DPqqxI2h/DPZHTm/vjsfC6P0b4jCMy14XizLBqvndQ+UilD7707Jw==}
@@ -38391,7 +38445,6 @@ packages:
       roarr: 2.15.4
       semver: 7.3.7
       serialize-error: 7.0.1
-    dev: true
     optional: true
 
   /global-dirs@0.1.1:
@@ -38524,7 +38577,6 @@ packages:
       lowercase-keys: 2.0.0
       p-cancelable: 2.1.1
       responselike: 2.0.1
-    dev: true
 
   /got@7.1.0:
     resolution: {integrity: sha512-Y5WMo7xKKq1muPsxD+KmrR8DH5auG7fBdDVueZwETwV6VytKyU9OX/ddpq2/1hp1vIPvVb4T81dKQz3BivkNLw==}
@@ -39320,7 +39372,6 @@ packages:
     dependencies:
       quick-lru: 5.1.1
       resolve-alpn: 1.2.1
-    dev: true
 
   /https-browserify@1.0.0:
     resolution: {integrity: sha1-7AbBDgo0wPL68Zn3/X/Hj//QPHM=}
@@ -41276,7 +41327,7 @@ packages:
       pretty-format: 29.7.0
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.7.0(@types/node@20.8.10)(typescript@5.1.3)
+      ts-node: 10.7.0(@types/node@20.8.10)(source-map-support@0.5.21)(typescript@5.1.3)
     transitivePeerDependencies:
       - babel-plugin-macros
       - metro
@@ -41318,7 +41369,7 @@ packages:
       pretty-format: 29.7.0
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.9.1(typescript@5.2.2)
+      ts-node: 10.9.1(@swc/core@1.3.95)(typescript@5.1.3)
     transitivePeerDependencies:
       - babel-plugin-macros
       - metro
@@ -41401,7 +41452,7 @@ packages:
       pretty-format: 29.7.0
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.7.0(@types/node@20.8.10)(typescript@5.1.3)
+      ts-node: 10.7.0(@types/node@20.8.10)(source-map-support@0.5.21)(typescript@5.1.3)
     transitivePeerDependencies:
       - babel-plugin-macros
       - metro
@@ -41484,7 +41535,7 @@ packages:
       pretty-format: 29.7.0
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.9.1(typescript@5.2.2)
+      ts-node: 10.9.1(@swc/core@1.3.95)(typescript@5.1.3)
     transitivePeerDependencies:
       - babel-plugin-macros
       - metro
@@ -43278,7 +43329,6 @@ packages:
 
   /json-buffer@3.0.1:
     resolution: {integrity: sha512-4bV5BfR2mqfQTJm+V5tPPdf+ZpuhiIvTuAB5g8kcrXOZpTT/QwwVRWBywX1ozr6lEuPdbHxwaJlm9G6mI2sfSQ==}
-    dev: true
 
   /json-cycle@1.3.0:
     resolution: {integrity: sha512-FD/SedD78LCdSvJaOUQAXseT8oQBb5z6IVYaQaCrVUlu9zOAr1BDdKyVYQaSD/GDsAMrXpKcOyBD4LIl8nfjHw==}
@@ -43524,7 +43574,6 @@ packages:
     resolution: {integrity: sha512-oxVHkHR/EJf2CNXnWxRLW6mg7JyCCUcG0DtEGmL2ctUo1PNTin1PUil+r/+4r5MpVgC/fn1kjsx7mjSujKqIpw==}
     dependencies:
       json-buffer: 3.0.1
-    dev: true
 
   /khroma@2.0.0:
     resolution: {integrity: sha512-2J8rDNlQWbtiNYThZRvmMv5yt44ZakX+Tz5ZIp/mN1pt4snn+m030Va5Z4v8xA0cQFDXBwO/8i42xL4QPsVk3g==}
@@ -44850,7 +44899,6 @@ packages:
     requiresBuild: true
     dependencies:
       escape-string-regexp: 4.0.0
-    dev: true
     optional: true
 
   /mathml-tag-names@2.1.3:
@@ -47971,7 +48019,6 @@ packages:
   /p-cancelable@2.1.1:
     resolution: {integrity: sha512-BZOr3nRQHOntUjTrH8+Lh54smKHoHyur8We1V8DSMVrl5A2malOOwuJRnKRDjSnkoeBh4at6BwEnb5I7Jl31wg==}
     engines: {node: '>=8'}
-    dev: true
 
   /p-filter@2.1.0:
     resolution: {integrity: sha512-ZBxxZ5sL2HghephhpGAQdoskxplTwr7ICaehZwLIlfL6acuVgZPm8yBNuRAFBGEqtD/hmUeq9eqLg2ys9Xr/yw==}
@@ -48379,7 +48426,6 @@ packages:
 
   /pend@1.2.0:
     resolution: {integrity: sha512-F3asv42UuXchdzt+xXqfW1OGlVBe+mxa2mqI0pg5yAHZPvFmY3Y6drSf/GQ1A86WgWEN9Kzh/WrgKa6iGcHXLg==}
-    dev: true
 
   /performance-now@0.2.0:
     resolution: {integrity: sha1-M+8wxcd9TqIcWlOGnZG1bY8lVeU=}
@@ -50541,7 +50587,6 @@ packages:
   /quick-lru@5.1.1:
     resolution: {integrity: sha512-WuyALRjWPDGtt/wzJiadO5AXY+8hZ80hVpe6MyivgraREW751X3SbhRvG3eLKOYN+8VEvqLcf3wdnt44Z4S4SA==}
     engines: {node: '>=10'}
-    dev: true
 
   /raf@3.4.1:
     resolution: {integrity: sha512-Sq4CW4QhwOHE8ucn6J34MqtZCeWFP2aQSmrlroYgqAV1PjStIhJXxYuTgUIfkEk7zTLjmIjLmU5q+fbD1NnOJA==}
@@ -52783,7 +52828,6 @@ packages:
 
   /resolve-alpn@1.2.1:
     resolution: {integrity: sha512-0a1F4l73/ZFZOakJnQ3FvkJ2+gSTQWz/r2KE5OdDY0TxPm5h4GkqkWWfM47T7HsbnOtcJVEF4epCVy6u7Q3K+g==}
-    dev: true
 
   /resolve-cwd@3.0.0:
     resolution: {integrity: sha512-OrZaX2Mb+rJCpH/6CpSqt9xFVpN++x01XnN2ie9g6P5/3xelLAkXWVADpdz1IHD/KFfEXyE6V0U01OQ3UO2rEg==}
@@ -52910,7 +52954,6 @@ packages:
     resolution: {integrity: sha512-4gl03wn3hj1HP3yzgdI7d3lCkF95F21Pz4BPGvKHinyQzALR5CapwC8yIi0Rh58DEMQ/SguC03wFj2k0M/mHhw==}
     dependencies:
       lowercase-keys: 2.0.0
-    dev: true
 
   /restore-cursor@2.0.0:
     resolution: {integrity: sha512-6IzJLuGi4+R14vwagDHX+JrXmPVtPpn4mffDJ1UdR7/Edm87fl6yi8mMBIVvFtJaNTUvjughmW4hwLhRG7gC1Q==}
@@ -53088,7 +53131,6 @@ packages:
       json-stringify-safe: 5.0.1
       semver-compare: 1.0.0
       sprintf-js: 1.1.3
-    dev: true
     optional: true
 
   /robust-predicates@3.0.2:
@@ -53485,7 +53527,6 @@ packages:
   /semver-compare@1.0.0:
     resolution: {integrity: sha512-YM3/ITh2MJ5MtzaM429anh+x2jiLVjqILF4m4oyQB18W7Ggea7BfqdH/wGMK7dDiMghv/6WG7znWMwUDzJiXow==}
     requiresBuild: true
-    dev: true
     optional: true
 
   /semver@2.3.2:
@@ -53585,7 +53626,6 @@ packages:
     requiresBuild: true
     dependencies:
       type-fest: 0.13.1
-    dev: true
     optional: true
 
   /serialize-error@8.1.0:
@@ -54289,7 +54329,6 @@ packages:
   /sprintf-js@1.1.3:
     resolution: {integrity: sha512-Oo+0REFV59/rz3gfJNKQiBlwfHaSESl1pcGyABQsnnIfWOFt6JNj5gCog2U6MLZ//IGYD+nA8nI+mTShREReaA==}
     requiresBuild: true
-    dev: true
     optional: true
 
   /sshpk@1.17.0:
@@ -54942,7 +54981,6 @@ packages:
       react-is: 18.1.0
       shallowequal: 1.1.0
       supports-color: 5.5.0
-    dev: false
 
   /styled-components@6.0.7(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-xIwWuiRMYR43mskVsW9MGTRjSo7ol4bcVjT595fGUp3OLBJOlOgaiKaxsHdC4a2HqWKqKnh0CmcRbk5ogyDjTg==}
@@ -55164,7 +55202,6 @@ packages:
       debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
-    dev: true
 
   /superagent@6.1.0:
     resolution: {integrity: sha512-OUDHEssirmplo3F+1HWKUrUjvnQuA+nZI6i/JJBdXb5eq9IyEQwPyPpqND+SSsxf6TygpBEkUjISVRN4/VOpeg==}
@@ -57068,7 +57105,6 @@ packages:
     resolution: {integrity: sha512-34R7HTnG0XIJcBSn5XhDd7nNFPRcXYRZrBB2O2jdKqYODldSzBAqzsWoZYYvduky73toYS/ESqxPvkDf/F0XMg==}
     engines: {node: '>=10'}
     requiresBuild: true
-    dev: true
 
   /type-fest@0.16.0:
     resolution: {integrity: sha512-eaBzG6MxNzEn9kiwvtre90cXaNLkmadMWa1zQMs3XORCXNbsH/OewwbxC5ia9dCxIxnTAsSxXJaa/p5y8DlvJg==}
@@ -57163,6 +57199,12 @@ packages:
       call-bind: 1.0.5
       for-each: 0.3.3
       is-typed-array: 1.1.12
+
+  /typed-emitter@2.1.0:
+    resolution: {integrity: sha512-g/KzbYKbH5C2vPkaXGu8DJlHrGKHLsM25Zg9WuC9pMGfuvT+X25tZQWo5fK1BjBm8+UrVE9LDCvaY0CQk+fXDA==}
+    optionalDependencies:
+      rxjs: 7.8.1
+    dev: false
 
   /typedarray-to-buffer@3.1.5:
     resolution: {integrity: sha512-zdu8XMNEDepKKR+XYOXAVPtWui0ly0NtohUscw+UmaHiAWT8hrV1rr//H6V+0DvJ3OQ19S979M0laLfX8rm82Q==}
@@ -61162,7 +61204,6 @@ packages:
     dependencies:
       buffer-crc32: 0.2.13
       fd-slicer: 1.1.0
-    dev: true
 
   /ylru@1.3.2:
     resolution: {integrity: sha512-RXRJzMiK6U2ye0BlGGZnmpwJDPgakn6aNQ0A7gHRbD4I0uvK4TW6UqkK1V0pp9jskjJBAXd3dRrbzWkqJ+6cxA==}
@@ -61223,6 +61264,7 @@ packages:
     resolution: {directory: libs/ui/packages/crypto-icons, type: directory}
     id: file:libs/ui/packages/crypto-icons
     name: '@ledgerhq/crypto-icons-ui'
+    version: 1.1.0
     peerDependencies:
       '@types/react': '*'
       react: '*'
@@ -61242,6 +61284,7 @@ packages:
     resolution: {directory: libs/ui/packages/icons, type: directory}
     id: file:libs/ui/packages/icons
     name: '@ledgerhq/icons-ui'
+    version: 0.6.4
     peerDependencies:
       '@types/react': '*'
       react: '*'

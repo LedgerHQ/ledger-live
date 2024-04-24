@@ -363,7 +363,7 @@
       }
     },
     "history": {
-      "disclaimer": "Your swap desktop transactions are not synchronized with the Ledger Live mobile application",
+      "disclaimer": "Transactions might not show in swap history but are processed securely. Check ‘Latest Operations Details’ in your account for all transactions",
       "empty": {
         "title": "Your previous swaps will appear here",
         "description": "Either you have not made any swaps yet, or Ledger Live has been reset in the meantime."
@@ -736,6 +736,10 @@
         "description2": "Developers from anywhere in the world can integrate with our Ledger Live",
         "description3": "This integration has been carried out by {{team}} in collaboration with Ledger"
       }
+    },
+    "willBeDeprecatedBanner": {
+      "title": "To optimize efficiencies, {{currencyName}} will not be supported on Ledger Live as of {{deprecatedDate}}. However, it will still be supported on Ledger hardware wallets. Please contact Ledger Customer Support if you would like assistance on this.",
+      "contactSupport": "Contact Support"
     },
     "lastOperations": "Latest operations",
     "contractAddress": "Contract:",
@@ -1205,6 +1209,24 @@
         "restoreChoiceRecoverDescription": "If you’re subscribed to Ledger Recover, log in to your subscription to restore the backup for your Secret Recovery Phrase.",
         "followInstructions": "Follow instruction appearing on your {{productName}}."
       },
+      "backup": {
+        "title": "Backup for your Secret Recovery Phrase",
+        "description": "With a digital encrypted backup, restore access to your wallet without your Secret Recovery Phrase.\n\nChoose if you’d like a digital backup:",
+        "backupChoice": {
+          "title": "I want a digital backup",
+          "titleSelected": "Ledger Recover",
+          "tag": "Popular",
+          "description": "Subscribe to Ledger Recover for $9.99 per month. Start for free. Cancel anytime!",
+          "tryCta": "Try it for free",
+          "redeemCodeCta": "I have a redeem code",
+          "howItWorksCta": "I want to know more"
+        },
+        "manualBackup": {
+          "title": "No, I’m good with paper",
+          "description": "Without a digital backup, the Recovery Sheet is your only way to restore wallet access. Don’t lose it.",
+          "cta": "I understand"
+        }
+      },
       "softwareCheckContent": {
         "title": {
           "active": "Genuine check and\nOS update check",
@@ -1304,27 +1326,33 @@
   "postOnboarding": {
     "postOnboardingScreen": {
       "title": "Next up, use your\n{{productName}} to... ",
-      "titleCompleted": "You're all set !\nKeep going and explore your wallet.",
-      "exploreCTA": "Explore wallet"
+      "titleCompleted": "You're all set !\nKeep going and explore your portfolio.",
+      "exploreCTA": "Explore my portfolio"
     },
     "postOnboardingContent": {
       "skipLink": "I'll do this later"
     },
     "postOnboardingBanner": {
       "title": "What's next for your {{productName}}?",
-      "description": "Claim the Infinity NFT, customize it's lock screen, or\ntransfer your assets from other exchanges.",
-      "link": "See what's next"
+      "description": "Transfer your assets from any exchange or wallet, buy crypto, customize its lock screen, or subscribe to Ledger Recover.",
+      "link": "See what's next",
+      "dismiss": "Maybe later"
     },
     "actions": {
       "buyCrypto": {
         "title": "Buy Crypto",
-        "description": "Choose from 500+ coins and the best quotes from buy-providers, tailored to your preferences.",
+        "description": "Choose from 500+ coins and the best quotes, tailored to your preferences.",
         "actionCompletedPopupLabel": "Crypto bought"
       },
       "assetsTransfer": {
         "title": "Transfer your assets to Ledger",
-        "description": "Easily transfer assets from Coinbase or any other exchange or wallet.",
+        "description": "From any exchange or wallet, directly to your Ledger.",
         "actionCompletedPopupLabel": "Assets transferred"
+      },
+      "recover": {
+        "title": "Subscribe to Ledger Recover",
+        "description": "Restore access to your wallet without needing your Secret Recovery Phrase.",
+        "actionCompletedPopupLabel": "Successfully subscribed to Ledger Recover"
       }
     }
   },
@@ -4127,9 +4155,13 @@
           "description": "Test all stories used in Ledger Live",
           "longDesc": "This is a tool provided as-is for the team to validate storyly stories used in the app."
         },
-        "testPostonboarding": {
-          "title": "Test Post Onboarding",
-          "description": "Test all post onboarding features"
+        "testStaxPostonboarding": {
+          "title": "Test Stax Post Onboarding",
+          "description": "Test all stax post onboarding features"
+        },
+        "testEuropaPostonboarding": {
+          "title": "Test Europa Post Onboarding",
+          "description": "Test all europa post onboarding features"
         },
         "1559DeactivateGate": {
           "title": "Deactivate EIP1559 minimum priority fee gate",
@@ -5321,8 +5353,8 @@
       "description": "Please use My Ledger to uninstall all apps then check if a firmware update is available before reinstalling them"
     },
     "LatestFirmwareVersionRequired": {
-      "title": "Update Nano Firmware",
-      "description": "Please update your devices Firmware to the latest version to access this feature"
+      "title": "Update Device Firmware",
+      "description": "Please update your device firmware to the latest version to access this feature"
     },
     "FirmwareNotRecognized": {
       "title": "Invalid Provider",
@@ -6104,7 +6136,7 @@
     },
     "postOnboarding": {
       "title": "Customize the lock screen",
-      "description": "Choose any NFT or picture to set as the lock screen of your Ledger Stax.",
+      "description": "Choose any digital art or picture to set as your {{productName}}'s lock screen.",
       "actionCompletedPopupLabel": "Device personalized"
     },
     "customImageSet": "Lock screen customized",

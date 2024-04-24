@@ -7,8 +7,8 @@ import { ScrollView, StyleProp, ViewStyle } from "react-native";
 import Animated, { Easing, Layout } from "react-native-reanimated";
 import { Storyly } from "storyly-react-native";
 import styled from "styled-components/native";
-import StoryGroupItem from "./StoryGroupItem";
-import StorylyLocalizedWrapper, { Props as StorylyWrapperProps } from "./StorylyWrapper";
+import StoryGroupItem, { type Props as StoryGroupItemProps } from "./StoryGroupItem";
+import StorylyLocalizedWrapper, { type Props as StorylyWrapperProps } from "./StorylyWrapper";
 
 type Props = StorylyWrapperProps & {
   /**
@@ -31,6 +31,16 @@ type Props = StorylyWrapperProps & {
    * container.
    */
   horizontalScrollContentContainerStyle?: StyleProp<ViewStyle>;
+
+  /**
+   * Custom component to render the story group item.
+   */
+  StoryGroupItemComponent?: React.ComponentType<StoryGroupItemProps>;
+
+  /**
+   * If true, the story will not be shown until the stories are loaded.
+   */
+  noLoadingPlaceholder?: boolean;
 };
 
 type StoryGroupInfo = {
@@ -93,10 +103,14 @@ const Stories: React.FC<Props> = props => {
     keepOriginalOrder = false,
     vertical = false,
     horizontalScrollContentContainerStyle = defaultScrollContainerStyle,
+    StoryGroupItemComponent = StoryGroupItem,
+    noLoadingPlaceholder,
   } = props;
 
   const storylyRef = useRef<Storyly>(null);
-  const [storyGroupList, setStoryGroupList] = useState<StoryGroupInfo[]>(placeholderContent);
+  const [storyGroupList, setStoryGroupList] = useState<StoryGroupInfo[]>(
+    noLoadingPlaceholder ? [] : placeholderContent,
+  );
 
   const handleFail = useCallback(() => {
     setStoryGroupList(placeholderContent);
@@ -142,7 +156,7 @@ const Stories: React.FC<Props> = props => {
               isLast={index === arr.length - 1}
               vertical={vertical}
             >
-              <StoryGroupItem
+              <StoryGroupItemComponent
                 {...storyGroup}
                 titlePosition={vertical ? "right" : "bottom"}
                 onPress={() => handleStoryGroupPressed(storyGroup.id, nextStoryToShowId)}
@@ -150,7 +164,7 @@ const Stories: React.FC<Props> = props => {
             </AnimatedStoryGroupWrapper>
           );
         }),
-    [storyGroupList, keepOriginalOrder, vertical, handleStoryGroupPressed],
+    [storyGroupList, keepOriginalOrder, vertical, StoryGroupItemComponent, handleStoryGroupPressed],
   );
 
   return (

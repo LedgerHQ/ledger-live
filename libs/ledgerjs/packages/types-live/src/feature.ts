@@ -76,7 +76,7 @@ export type CurrencyFeatures = {
   currencyAvalancheCChain: DefaultFeature;
   currencyStacks: DefaultFeature;
   currencyOptimism: DefaultFeature;
-  currencyOptimismGoerli: DefaultFeature;
+  currencyOptimismSepolia: DefaultFeature;
   currencyArbitrum: DefaultFeature;
   currencyArbitrumSepolia: DefaultFeature;
   currencyRsk: DefaultFeature;
@@ -112,7 +112,7 @@ export type CurrencyFeatures = {
   currencyNeonEvm: DefaultFeature;
   currencyLukso: DefaultFeature;
   currencyLinea: DefaultFeature;
-  currencyLineaGoerli: DefaultFeature;
+  currencyLineaTesnet: DefaultFeature;
 };
 
 /**
@@ -129,6 +129,7 @@ export type Features = CurrencyFeatures & {
   deviceInitialApps: Feature_DeviceInitialApps;
   buyDeviceFromLive: Feature_BuyDeviceFromLive;
   mockFeature: Feature_MockFeature;
+  buySellUi: Feature_BuySellUiManifest;
   multibuyNavigation: Feature_MultibuyNavigation;
   referralProgramDesktopSidebar: Feature_ReferralProgramDesktopSidebar;
   referralProgramMobile: Feature_ReferralProgramMobile;
@@ -457,6 +458,10 @@ export type Feature_NftsFromSimpleHash = Feature<{
 
 export type Feature_LldRefreshMarketData = Feature<{
   refreshTime: number;
+}>;
+
+export type Feature_BuySellUiManifest = Feature<{
+  manifestId: string; // id of the app to use for the Buy/Sell UI, e.g. "multibuy-v2"
 }>;
 
 export type Feature_CounterValue = DefaultFeature;

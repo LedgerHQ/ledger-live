@@ -29,7 +29,7 @@ export default function RecoverBanner({ children }: { children?: React.ReactNode
   const recoverServices = useFeature("protectServicesDesktop");
 
   const recoverBannerIsEnabled = recoverServices?.params?.bannerSubscriptionNotification;
-  const protectID = recoverServices?.params?.protectId ?? "";
+  const protectID = recoverServices?.params?.protectId ?? "protect-prod";
   const recoverUnfinishedOnboardingPath = useCustomPath(
     recoverServices,
     "activate",

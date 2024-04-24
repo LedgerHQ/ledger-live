@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
 import { useTransition, animated } from "react-spring";
 import IconArrowRight from "~/renderer/icons/ArrowRight";
@@ -205,6 +205,8 @@ const Carousel = ({
     });
   }, [index, slides.length, changeVisibleSlide]);
 
+  const canceled = useMemo(() => slides.length === 1, [slides.length]);
+
   if (!slides.length) {
     // No slides or dismissed, no problem
     return null;
@@ -218,15 +220,12 @@ const Carousel = ({
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      {slides.length > 1 ? (
-        <ProgressBarWrapper>
-          <TimeBasedProgressBar onComplete={onNext} duration={speed} paused={paused} />
-        </ProgressBarWrapper>
-      ) : null}
+      <ProgressBarWrapper>
+        <TimeBasedProgressBar onComplete={onNext} duration={speed} paused={paused || canceled} />
+      </ProgressBarWrapper>
       <Slides>
         {transitions.map(({ item, props, key }) => {
           if (!slides?.[item]) return null;
-
           const { Component } = slides[item];
           return (
             <animated.div key={key} style={{ ...props }}>

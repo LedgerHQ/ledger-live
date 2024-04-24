@@ -169,6 +169,14 @@ const implementation = <T = any>(arg: AxiosRequestConfig): AxiosPromise<T> => {
 
     promise = retry(() => axios(arg), {
       maxRetry: getEnv("GET_CALLS_RETRY"),
+      retryCondition: error => {
+        if (error && error.status) {
+          // A 422 shouldn't be retried without change as explained in this documentation
+          // https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/422
+          return error.status !== 422;
+        }
+        return true;
+      },
     });
   } else {
     promise = axios(arg);

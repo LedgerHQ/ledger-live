@@ -90,7 +90,7 @@ const fromTransactionStatusRaw = (tr: TransactionStatusRaw): TransactionStatus =
   };
 };
 
-const toTransactionStatusRaw = (t: TransactionStatus): TransactionStatusRaw => {
+export const toTransactionStatusRaw = (t: TransactionStatus): TransactionStatusRaw => {
   const common = toTransactionStatusRawCommon(t);
   return {
     ...common,

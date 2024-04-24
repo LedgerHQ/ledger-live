@@ -5,11 +5,13 @@ import { LocationContentCard, NotificationContentCard, Platform } from "~/types/
 import { notificationsContentCardSelector } from "~/renderer/reducers/dynamicContent";
 import { setNotificationsCards } from "~/renderer/actions/dynamicContent";
 import { track } from "../analytics/segment";
+import { trackingEnabledSelector } from "../reducers/settings";
 
 export function useNotifications() {
   const [cachedNotifications, setCachedNotifications] = useState<braze.Card[]>([]);
   const dispatch = useDispatch();
   const notificationsCards = useSelector(notificationsContentCardSelector);
+  const isTrackedUser = useSelector(trackingEnabledSelector);
 
   useEffect(() => {
     const cards = braze
@@ -64,7 +66,7 @@ export function useNotifications() {
     (cardId: string) => {
       const currentCard = cachedNotifications.find(card => card.id === cardId);
 
-      braze.logContentCardImpressions(currentCard ? [currentCard] : []);
+      isTrackedUser && braze.logContentCardImpressions(currentCard ? [currentCard] : []);
 
       const cards = (notificationsCards ?? []).map(n => {
         if (n.id === cardId) {
@@ -76,7 +78,7 @@ export function useNotifications() {
 
       dispatch(setNotificationsCards(cards));
     },
-    [notificationsCards, cachedNotifications, dispatch],
+    [notificationsCards, cachedNotifications, dispatch, isTrackedUser],
   );
 
   const onClickNotif = useCallback(
@@ -89,7 +91,7 @@ export function useNotifications() {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         currentCard.url = currentCard.id;
-        braze.logContentCardClick(currentCard);
+        isTrackedUser && braze.logContentCardClick(currentCard);
       }
 
       track("contentcard_clicked", {
@@ -99,7 +101,7 @@ export function useNotifications() {
         page: "notification_center",
       });
     },
-    [cachedNotifications],
+    [cachedNotifications, isTrackedUser],
   );
 
   return {

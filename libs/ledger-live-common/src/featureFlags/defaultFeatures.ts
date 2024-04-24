@@ -53,7 +53,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyMoonriver: DEFAULT_FEATURE,
   currencyOnomy: DEFAULT_FEATURE,
   currencyOptimism: DEFAULT_FEATURE,
-  currencyOptimismGoerli: DEFAULT_FEATURE,
+  currencyOptimismSepolia: DEFAULT_FEATURE,
   currencyPersistence: DEFAULT_FEATURE,
   currencyPolygonZkEvm: DEFAULT_FEATURE,
   currencyPolygonZkEvmTestnet: DEFAULT_FEATURE,
@@ -71,7 +71,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyCasper: DEFAULT_FEATURE,
   currencyNeonEvm: DEFAULT_FEATURE,
   currencyLinea: DEFAULT_FEATURE,
-  currencyLineaGoerli: DEFAULT_FEATURE,
+  currencyLineaTesnet: DEFAULT_FEATURE,
 };
 
 /**
@@ -186,6 +186,12 @@ export const DEFAULT_FEATURES: Features = {
           instanceId: "14829",
           token:
             "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NfaWQiOjY5NDgsImFwcF9pZCI6MTE0MjIsImluc19pZCI6MTQ4Mjl9.iak4gUnizDdPrEXJEV3wszzJ2YkYX-RIWDXv31aJkiE",
+        },
+        backupRecoverySeed: {
+          testingEnabled: false,
+          instanceId: "19768",
+          token:
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NfaWQiOjY5NDgsImFwcF9pZCI6MTE0MjIsImluc19pZCI6MTk3Njh9.cXofdXH2klFGH5PmkzIC5w-dgOMrrma8RpGksi0iMlk",
         },
         storylyExample: {
           testingEnabled: false,
@@ -374,6 +380,13 @@ export const DEFAULT_FEATURES: Features = {
 
   fetchAdditionalCoins: {
     enabled: false,
+  },
+
+  buySellUi: {
+    enabled: false,
+    params: {
+      manifestId: "multibuy-v2", // Update to "buy-sell-ui" after rollout
+    },
   },
 
   ptxSwapLiveApp: {

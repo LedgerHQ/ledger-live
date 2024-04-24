@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
-import { localeSelector } from "~/renderer/reducers/settings";
+import { localeSelector, starredMarketCoinsSelector } from "~/renderer/reducers/settings";
 import { useCallback, useMemo } from "react";
 import { useTheme } from "styled-components";
 import { getCurrencyColor } from "~/renderer/getCurrencyColor";
@@ -10,12 +10,9 @@ import {
   useMarketDataProvider,
 } from "@ledgerhq/live-common/market/v2/useMarketDataProvider";
 import { Page, useMarketActions } from "./useMarketActions";
-import {
-  removeStarredMarketCoins,
-  addStarredMarketCoins,
-  setMarketOptions,
-} from "~/renderer/actions/market";
-import { marketParamsSelector, starredMarketCoinsSelector } from "~/renderer/reducers/market";
+import { setMarketOptions } from "~/renderer/actions/market";
+import { marketParamsSelector } from "~/renderer/reducers/market";
+import { removeStarredMarketCoins, addStarredMarketCoins } from "~/renderer/actions/settings";
 
 export const useMarketCoin = () => {
   const marketParams = useSelector(marketParamsSelector);

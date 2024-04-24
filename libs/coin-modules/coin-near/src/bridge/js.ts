@@ -17,6 +17,7 @@ import estimateMaxSpendable from "../js-estimateMaxSpendable";
 import { preload, hydrate, getPreloadStrategy } from "../preload";
 import { assignToAccountRaw, assignFromAccountRaw } from "../serialization";
 import { NearAddress, NearSignature, NearSigner } from "../signer";
+import { NearCoinConfig, setCoinConfig } from "../config";
 
 export function buildCurrencyBridge(
   signerContext: SignerContext<NearSigner, NearAddress | NearSignature>,
@@ -61,7 +62,10 @@ export function buildAccountBridge(
 
 export function createBridges(
   signerContext: SignerContext<NearSigner, NearAddress | NearSignature>,
+  coinConfig: NearCoinConfig,
 ) {
+  setCoinConfig(coinConfig);
+
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),

@@ -29,6 +29,7 @@ import { FwUpdateForegroundEvent } from "./types";
 import { FwUpdateBackgroundEvent } from "~/reducers/types";
 import { setLastConnectedDevice, setLastSeenDeviceInfo } from "~/actions/settings";
 import { lastSeenDeviceSelector } from "~/reducers/settings";
+import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
 
 type Props = {
   device: Device;
@@ -156,6 +157,7 @@ export default function FirmwareUpdate({
 
   const onCloseAndReinstall = useCallback(() => onTryClose(true), [onTryClose]);
   const onCloseSilently = useCallback(() => onTryClose(false), [onTryClose]);
+  useKeepScreenAwake(isOpen);
 
   useEffect(() => {
     // reset the state whenever we re-open the modal
