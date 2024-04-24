@@ -148,6 +148,7 @@ export type BaseNavigatorStackParamList = {
     device: Device;
     deviceName: string;
     deviceInfo: DeviceInfo;
+    onNameChange(name: string): void;
   };
   [ScreenName.MarketCurrencySelect]: undefined;
   [ScreenName.PortfolioOperationHistory]: undefined;

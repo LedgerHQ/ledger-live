@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import { Flex, Text } from "@ledgerhq/native-ui";
@@ -27,7 +27,7 @@ const hitSlop = {
 
 export default function DeviceName({ device, initialDeviceName, disabled, deviceInfo }: Props) {
   const navigation = useNavigation();
-  const savedName = useSelector(deviceNameByDeviceIdSelectorCreator(device.deviceId));
+  const [deviceName, setDeviceName] = useState(initialDeviceName || "");
   const productName = device
     ? getDeviceModel(device.modelId).productName || device.modelId
     : "Ledger Device";
@@ -38,13 +38,14 @@ export default function DeviceName({ device, initialDeviceName, disabled, device
     () =>
       navigation.navigate(ScreenName.EditDeviceName, {
         device,
-        deviceName: savedName,
+        deviceName,
         deviceInfo,
+        onNameChange: setDeviceName,
       }),
-    [navigation, device, savedName, deviceInfo],
+    [navigation, device, deviceName, deviceInfo],
   );
 
-  const displayedName = savedName || initialDeviceName || productName;
+  const displayedName = deviceName || productName;
 
   return (
     <Flex flexDirection={"row"} flexWrap={"nowrap"} alignItems="center">
