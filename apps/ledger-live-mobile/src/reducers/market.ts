@@ -38,7 +38,7 @@ const handlers: ReducerMap<MarketState, MarketStatePayload> = {
   }),
   [MarketStateActionTypes.SET_MARKET_FILTER_BY_STARRED_CURRENCIES]: (state, action) => ({
     ...state,
-    marketFilterByStarredAccounts: (
+    marketFilterByStarredCurrencies: (
       action as Action<MarketSetMarketFilterByStarredCurrenciesPayload>
     ).payload,
   }),
