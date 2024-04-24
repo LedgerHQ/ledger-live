@@ -1,6 +1,5 @@
 import React, { useCallback, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { useSelector } from "react-redux";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { PenMedium } from "@ledgerhq/native-ui/assets/icons";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -8,7 +7,6 @@ import { isEditDeviceNameSupported } from "@ledgerhq/live-common/device/use-case
 import { getDeviceModel } from "@ledgerhq/devices";
 import { TouchableOpacity } from "react-native";
 import { DeviceInfo } from "@ledgerhq/types-live";
-import { deviceNameByDeviceIdSelectorCreator } from "~/reducers/ble";
 import { ScreenName } from "~/const";
 
 type Props = {

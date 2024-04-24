@@ -98,7 +98,7 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
     });
 
     navigation.goBack();
-  }, [device.deviceId, name, navigation, pushToast, saveBleDeviceName, t]);
+  }, [device.deviceId, name, navigation, onNameChange, pushToast, saveBleDeviceName, t]);
 
   const onClose = useCallback(() => {
     if (completed) {
