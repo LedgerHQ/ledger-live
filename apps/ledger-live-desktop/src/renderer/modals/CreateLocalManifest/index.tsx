@@ -354,7 +354,13 @@ function FormLocalManifest({
             </ScrollArea>
             <Flex marginTop={4} width={"100%"} justifyContent={"center"}>
               <Flex width={"100%"} flexDirection={"row"} columnGap={3} justifyContent={"center"}>
-                <Button small disabled={!formIsValid} primary onClick={submitHandler}>
+                <Button
+                  small
+                  disabled={!formIsValid}
+                  primary
+                  onClick={submitHandler}
+                  data-test-id="create-local-manifest"
+                >
                   {<Trans i18nKey={`settings.developer.createLocalAppModal.create`} />}
                 </Button>
               </Flex>

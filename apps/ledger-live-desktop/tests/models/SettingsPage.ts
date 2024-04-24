@@ -16,6 +16,9 @@ export class SettingsPage {
   readonly versionRow: Locator;
   readonly developerTab: Locator;
   readonly deviceLanguagesDrawer: Locator;
+  readonly openLocalManifestFormButton: Locator;
+  readonly createLocalManifestButton: Locator;
+  readonly exportLocalManifestButton: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -42,6 +45,14 @@ export class SettingsPage {
     this.deviceLanguagesDrawer = page.locator(
       "data-test-id=device-language-installation-container",
     );
+
+    this.openLocalManifestFormButton = page.locator(
+      "data-test-id=settings-open-local-manifest-form",
+    );
+
+    this.exportLocalManifestButton = page.locator("data-test-id=settings-export-local-manifest");
+
+    this.createLocalManifestButton = page.locator("data-test-id=create-local-manifest");
   }
 
   async goToAccountsTab() {
