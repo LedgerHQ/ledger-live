@@ -23,7 +23,7 @@ on:
       use_mocks:
         description: Run the tests with the mocks
         type: boolean
-        default: true
+        default: false
       report_path:
         description: Path where you want to store this execution's results
         required: false
@@ -96,7 +96,7 @@ jobs:
         run: |
           export COINAPPS=$PWD/coin-apps
           if [ "${{ inputs.use_mocks }}" = false ]; then export MOCK=0; fi
-          xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright ${INPUTS_TEST_FILTER:+--grep${INPUTS_INVERT_FILTER:+-invert}} "${{ inputs.test_filter }}"
+          xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright:speculos ${INPUTS_TEST_FILTER:+--grep${INPUTS_INVERT_FILTER:+-invert}} "${{ inputs.test_filter }}"
         env:
           INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
           INPUTS_INVERT_FILTER: ${{ inputs.invert_filter }}
