@@ -1,5 +1,14 @@
 # @ledgerhq/coin-framework
 
+## 0.12.1-nightly.0
+
+### Patch Changes
+
+- [#6692](https://github.com/LedgerHQ/ledger-live/pull/6692) [`3896648`](https://github.com/LedgerHQ/ledger-live/commit/389664874b98074905a7f8f8e5a845bb76908f13) Thanks [@lvndry](https://github.com/lvndry)! - Add support for will_be_deprecated status
+
+- Updated dependencies [[`d37d8df`](https://github.com/LedgerHQ/ledger-live/commit/d37d8df2482d1c7494401201c215b0a941bdb9f1)]:
+  - @ledgerhq/types-live@6.46.1-nightly.0
+
 ## 0.12.0
 
 ### Minor Changes

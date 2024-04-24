@@ -1,5 +1,14 @@
 # @ledgerhq/hw-app-eth
 
+## 6.36.1-nightly.0
+
+### Patch Changes
+
+- Updated dependencies [[`d37d8df`](https://github.com/LedgerHQ/ledger-live/commit/d37d8df2482d1c7494401201c215b0a941bdb9f1)]:
+  - @ledgerhq/types-live@6.46.1-nightly.0
+  - @ledgerhq/domain-service@1.1.21-nightly.0
+  - @ledgerhq/evm-tools@1.0.18
+
 ## 6.36.0
 
 ### Minor Changes

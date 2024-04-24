@@ -1,5 +1,14 @@
 # @ledgerhq/coin-evm
 
+## 1.1.1-nightly.0
+
+### Patch Changes
+
+- Updated dependencies [[`3896648`](https://github.com/LedgerHQ/ledger-live/commit/389664874b98074905a7f8f8e5a845bb76908f13)]:
+  - @ledgerhq/coin-framework@0.12.1-nightly.0
+  - @ledgerhq/domain-service@1.1.21-nightly.0
+  - @ledgerhq/evm-tools@1.0.18
+
 ## 1.1.0
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.46.1-nightly.0
+
+### Patch Changes
+
+- [#6645](https://github.com/LedgerHQ/ledger-live/pull/6645) [`d37d8df`](https://github.com/LedgerHQ/ledger-live/commit/d37d8df2482d1c7494401201c215b0a941bdb9f1) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add new storyly instance id
+
 ## 6.46.0
 
 ### Minor Changes

@@ -1,5 +1,26 @@
 # @ledgerhq/live-common
 
+## 34.1.1-nightly.0
+
+### Patch Changes
+
+- [#6645](https://github.com/LedgerHQ/ledger-live/pull/6645) [`d37d8df`](https://github.com/LedgerHQ/ledger-live/commit/d37d8df2482d1c7494401201c215b0a941bdb9f1) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add new storyly instance id
+
+- [#6692](https://github.com/LedgerHQ/ledger-live/pull/6692) [`3896648`](https://github.com/LedgerHQ/ledger-live/commit/389664874b98074905a7f8f8e5a845bb76908f13) Thanks [@lvndry](https://github.com/lvndry)! - Add support for coin config in bitcoin family
+
+- Updated dependencies [[`3896648`](https://github.com/LedgerHQ/ledger-live/commit/389664874b98074905a7f8f8e5a845bb76908f13), [`3896648`](https://github.com/LedgerHQ/ledger-live/commit/389664874b98074905a7f8f8e5a845bb76908f13)]:
+  - @ledgerhq/coin-framework@0.12.1-nightly.0
+  - @ledgerhq/coin-bitcoin@0.4.1-nightly.0
+  - @ledgerhq/coin-algorand@0.4.2-nightly.0
+  - @ledgerhq/coin-evm@1.1.1-nightly.0
+  - @ledgerhq/coin-near@0.3.13-nightly.0
+  - @ledgerhq/coin-polkadot@0.6.2-nightly.0
+  - @ledgerhq/device-core@0.1.2-nightly.0
+  - @ledgerhq/hw-app-eth@6.36.1-nightly.0
+  - @ledgerhq/live-countervalues@0.1.5-nightly.0
+  - @ledgerhq/live-countervalues-react@0.1.5-nightly.0
+  - @ledgerhq/live-nft@0.3.2-nightly.0
+
 ## 34.1.0
 
 ### Minor Changes

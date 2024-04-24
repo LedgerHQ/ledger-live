@@ -1,5 +1,30 @@
 # ledger-live-desktop
 
+## 2.79.2-nightly.0
+
+### Patch Changes
+
+- [#6709](https://github.com/LedgerHQ/ledger-live/pull/6709) [`7f5fb20`](https://github.com/LedgerHQ/ledger-live/commit/7f5fb208f7361ac916952ef09ed6c4a8918cf148) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Backup companion refinements
+
+- [#6645](https://github.com/LedgerHQ/ledger-live/pull/6645) [`3cf92aa`](https://github.com/LedgerHQ/ledger-live/commit/3cf92aa96e6e704037b684d453730103c1f5c9ed) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Sync onboarding: add a "Backup SRP with Recover" step
+
+- [#6692](https://github.com/LedgerHQ/ledger-live/pull/6692) [`3896648`](https://github.com/LedgerHQ/ledger-live/commit/389664874b98074905a7f8f8e5a845bb76908f13) Thanks [@lvndry](https://github.com/lvndry)! - Add banner to warn users a coin will be deprecated
+
+- [#6698](https://github.com/LedgerHQ/ledger-live/pull/6698) [`78443f7`](https://github.com/LedgerHQ/ledger-live/commit/78443f72c96de18c931aa697c079f82684dbe6e3) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Prevent the screen from locking for firmware update and app installation/update
+
+- Updated dependencies [[`d37d8df`](https://github.com/LedgerHQ/ledger-live/commit/d37d8df2482d1c7494401201c215b0a941bdb9f1), [`31388be`](https://github.com/LedgerHQ/ledger-live/commit/31388bea3577680ab1070baefb47997535160bf3), [`3896648`](https://github.com/LedgerHQ/ledger-live/commit/389664874b98074905a7f8f8e5a845bb76908f13), [`3896648`](https://github.com/LedgerHQ/ledger-live/commit/389664874b98074905a7f8f8e5a845bb76908f13)]:
+  - @ledgerhq/types-live@6.46.1-nightly.0
+  - @ledgerhq/live-common@34.1.1-nightly.0
+  - @ledgerhq/react-ui@0.14.18-nightly.0
+  - @ledgerhq/coin-framework@0.12.1-nightly.0
+  - @ledgerhq/coin-bitcoin@0.4.1-nightly.0
+  - @ledgerhq/coin-evm@1.1.1-nightly.0
+  - @ledgerhq/domain-service@1.1.21-nightly.0
+  - @ledgerhq/live-countervalues@0.1.5-nightly.0
+  - @ledgerhq/live-countervalues-react@0.1.5-nightly.0
+  - @ledgerhq/live-nft@0.3.2-nightly.0
+  - @ledgerhq/live-nft-react@0.3.2-nightly.0
+
 ## 2.79.1
 
 ### Patch Changes

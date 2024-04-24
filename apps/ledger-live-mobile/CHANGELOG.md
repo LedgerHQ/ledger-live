@@ -1,5 +1,28 @@
 # live-mobile
 
+## 3.43.1-nightly.0
+
+### Patch Changes
+
+- [#6692](https://github.com/LedgerHQ/ledger-live/pull/6692) [`3896648`](https://github.com/LedgerHQ/ledger-live/commit/389664874b98074905a7f8f8e5a845bb76908f13) Thanks [@lvndry](https://github.com/lvndry)! - Add banner to warn users a coin will be deprecated
+
+- [#6698](https://github.com/LedgerHQ/ledger-live/pull/6698) [`1355189`](https://github.com/LedgerHQ/ledger-live/commit/13551891b0ac9d96a86c0a57e1e2e1b790bfadda) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Prevent the screen from locking for firmware update and app installation/update
+
+- [#6645](https://github.com/LedgerHQ/ledger-live/pull/6645) [`3b0d18a`](https://github.com/LedgerHQ/ledger-live/commit/3b0d18a5eb743f85590ae3c560471d6a3b82284f) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Sync onboarding: add a "Backup SRP with Recover" step
+
+- [#6709](https://github.com/LedgerHQ/ledger-live/pull/6709) [`9729cb9`](https://github.com/LedgerHQ/ledger-live/commit/9729cb93a447c04092ab1918e87164141ececd06) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Copy for recover during onboarding flow to be updated to latest version
+
+- Updated dependencies [[`d37d8df`](https://github.com/LedgerHQ/ledger-live/commit/d37d8df2482d1c7494401201c215b0a941bdb9f1), [`3896648`](https://github.com/LedgerHQ/ledger-live/commit/389664874b98074905a7f8f8e5a845bb76908f13), [`3896648`](https://github.com/LedgerHQ/ledger-live/commit/389664874b98074905a7f8f8e5a845bb76908f13)]:
+  - @ledgerhq/types-live@6.46.1-nightly.0
+  - @ledgerhq/live-common@34.1.1-nightly.0
+  - @ledgerhq/coin-framework@0.12.1-nightly.0
+  - @ledgerhq/coin-evm@1.1.1-nightly.0
+  - @ledgerhq/domain-service@1.1.21-nightly.0
+  - @ledgerhq/live-countervalues@0.1.5-nightly.0
+  - @ledgerhq/live-countervalues-react@0.1.5-nightly.0
+  - @ledgerhq/live-nft@0.3.2-nightly.0
+  - @ledgerhq/live-nft-react@0.3.2-nightly.0
+
 ## 3.43.0
 
 ### Minor Changes
