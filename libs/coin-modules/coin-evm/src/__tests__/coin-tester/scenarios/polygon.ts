@@ -3,7 +3,7 @@ import { BigNumber } from "bignumber.js";
 import { ethers, providers } from "ethers";
 import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
-import { Scenario } from "@ledgerhq/coin-tester/main";
+import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { buildAccountBridge, buildCurrencyBridge } from "../../../bridge/js";
 import { makeAccount } from "../../fixtures/common.fixtures";
@@ -13,6 +13,45 @@ import { setCoinConfig } from "../../../config";
 import { ERC20Interface, USDC_ON_POLYGON, polygon } from "../helpers";
 import { clearExplorerAppendix, getLogs, setBlock } from "../indexer";
 import { killAnvil, spawnAnvil } from "../anvil";
+
+const send1MaticTransaction: ScenarioTransaction<EvmTransaction> = {
+  name: "Send 1 Matic",
+  amount: new BigNumber(ethers.utils.parseEther("1").toString()),
+  recipient: ethers.constants.AddressZero,
+  expect: (initialAccount, currentAccount) => {
+    const [latestOperation] = currentAccount.operations;
+    expect(latestOperation.transactionSequenceNumber).toBe(0);
+    expect(latestOperation.transactionRaw?.amount).toBe("1000000000000000000");
+  },
+};
+
+const send10MaticTransaction: ScenarioTransaction<EvmTransaction> = {
+  name: "Send 10 Matic",
+  amount: new BigNumber(ethers.utils.parseEther("10").toString()),
+  recipient: ethers.constants.AddressZero,
+  expect: (initialAccount, currentAccount) => {
+    const [latestOperation] = currentAccount.operations;
+    expect(latestOperation.transactionSequenceNumber).toBe(1);
+    expect(latestOperation.transactionRaw?.amount).toBe("10000000000000000000");
+  },
+};
+
+const send100USDCTransaction: ScenarioTransaction<EvmTransaction> = {
+  name: "Send 100 USDC",
+  recipient: "0x47ac0Fb4F2D84898e4D9E7b4DaB3C24507a6D503", // Random Receiver
+  amount: new BigNumber(
+    ethers.utils.parseUnits("100", USDC_ON_POLYGON.units[0].magnitude).toString(),
+  ),
+  subAccountId: encodeTokenAccountId(
+    "js:2:polygon:0x2FBde3Ac8F867e5ED06e4C7060d0df00D87E2C35:",
+    USDC_ON_POLYGON,
+  ),
+  expect: (initialAccount, currentAccount) => {
+    const [latestOperation] = currentAccount.operations;
+    expect(latestOperation.transactionSequenceNumber).toBe(2);
+    expect(latestOperation.transactionRaw?.amount).toBe("100000000");
+  },
+};
 
 const defaultNanoApp = { firmware: "2.2.3" as const, version: "1.10.4" as const };
 
@@ -92,47 +131,7 @@ export const scenarioPolygon: Scenario<EvmTransaction> = {
 
     return { currencyBridge, accountBridge, account: scenarioAccount, onSignerConfirmation };
   },
-  transactions: [
-    {
-      name: "Send 1 Matic",
-      amount: new BigNumber(ethers.utils.parseEther("1").toString()),
-      recipient: ethers.constants.AddressZero,
-      expect: account => {
-        expect(
-          account.operations.find(operation => operation.transactionSequenceNumber === 0)
-            ?.transactionRaw?.amount,
-        ).toBe("1000000000000000000");
-      },
-    },
-    {
-      name: "Send 10 Matic",
-      amount: new BigNumber(ethers.utils.parseEther("10").toString()),
-      recipient: ethers.constants.AddressZero,
-      expect: account => {
-        expect(
-          account.operations.find(operation => operation.transactionSequenceNumber === 1)
-            ?.transactionRaw?.amount,
-        ).toBe("10000000000000000000");
-      },
-    },
-    {
-      name: "Send 100 USDC",
-      recipient: "0x47ac0Fb4F2D84898e4D9E7b4DaB3C24507a6D503", // Random Receiver
-      amount: new BigNumber(
-        ethers.utils.parseUnits("100", USDC_ON_POLYGON.units[0].magnitude).toString(),
-      ),
-      subAccountId: encodeTokenAccountId(
-        "js:2:polygon:0x2FBde3Ac8F867e5ED06e4C7060d0df00D87E2C35:",
-        USDC_ON_POLYGON,
-      ),
-      expect: account => {
-        expect(
-          account.operations.find(operation => operation.transactionSequenceNumber === 2)
-            ?.transactionRaw?.amount,
-        ).toBe("100000000");
-      },
-    },
-  ],
+  transactions: [send1MaticTransaction, send10MaticTransaction, send100USDCTransaction],
   afterAll: account => {
     expect(account.operations.filter(operation => operation.type === "OUT").length).toBe(3);
   },
