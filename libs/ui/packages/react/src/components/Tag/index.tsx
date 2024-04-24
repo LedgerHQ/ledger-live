@@ -1,10 +1,9 @@
 import React from "react";
-import { TextVariants } from "../../styles/theme";
 import { border, BorderProps } from "styled-system";
 import Text, { TextProps } from "../asorted/Text";
 import baseStyled, { BaseStyledProps } from "../styled";
 
-export type Size = "large" | "medium" | "small";
+export type Size = "large" | "medium" | "small" | "tiny";
 export type Type = "plain" | "opacity" | "outlined" | "outlinedOpacity";
 
 export type TagProps = BaseStyledProps &
@@ -63,28 +62,29 @@ function getBorderColor({ type, active, disabled }: TagProps) {
 }
 
 function getPadding({ size }: TagProps) {
+  // Padding is 1px less than what's indicated in the design because of the 1px wide border.
   switch (size) {
+    case "tiny":
+      return "1px 3px";
     case "small":
-      return "3px 5px";
+      return "2px 4px";
     case "medium":
-      return "6px 8px";
+      return "5px 7px";
     case "large":
     default:
-      return "9px 10px 10px";
+      return "8px 9px 9px";
   }
 }
 
-function getTextProps({ size }: TagProps): {
-  variant: TextVariants;
-  fontWeight?: string;
-  uppercase?: boolean;
-} {
+function getTextProps({ size }: TagProps): TextProps {
   switch (size) {
+    case "tiny":
     case "small":
     case "medium":
       return {
         variant: "tiny",
         fontWeight: "semiBold",
+        lineHeight: "normal",
       };
     case "large":
     default:

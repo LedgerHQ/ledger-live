@@ -67,6 +67,7 @@ import BatteryWarningDrawer from "./BatteryWarningDrawer";
 import { setLastConnectedDevice, setLastSeenDeviceInfo } from "~/actions/settings";
 import { lastSeenDeviceSelector } from "~/reducers/settings";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
 
 const requiredBatteryStatuses = [
   BatteryStatusTypes.BATTERY_PERCENTAGE,
@@ -181,6 +182,7 @@ export const FirmwareUpdate = ({
   const [fullUpdateComplete, setFullUpdateComplete] = useState(false);
   const [showBatteryWarningDrawer, setShowBatteryWarningDrawer] = useState<boolean>(false);
   const [showReleaseNotes, setShowReleaseNotes] = useState<boolean>(true);
+  const [keepScreenAwake, setKeepScreenAwake] = useState(true);
 
   const {
     requestCompleted: batteryRequestCompleted,
@@ -216,6 +218,7 @@ export const FirmwareUpdate = ({
     deviceInfo,
     isBeforeOnboarding,
   });
+  useKeepScreenAwake(keepScreenAwake);
 
   const [staxImageSource, setStaxImageSource] =
     useState<React.ComponentProps<typeof Image>["source"]>();
@@ -229,9 +232,10 @@ export const FirmwareUpdate = ({
     [staxImageSource],
   );
 
-  const quitUpdate = useCallback(() => {
+  const quitUpdate = useCallback(async () => {
     if (!batteryRequestCompleted) cancelBatteryCheck();
 
+    setKeepScreenAwake(false);
     if (onBackFromUpdate) {
       onBackFromUpdate(updateStep);
     } else {

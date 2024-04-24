@@ -363,7 +363,7 @@
       }
     },
     "history": {
-      "disclaimer": "Your swap desktop transactions are not synchronized with the Ledger Live mobile application",
+      "disclaimer": "Transactions might not show in swap history but are processed securely. Check ‘Latest Operations Details’ in your account for all transactions",
       "empty": {
         "title": "Your previous swaps will appear here",
         "description": "Either you have not made any swaps yet, or Ledger Live has been reset in the meantime."
@@ -736,6 +736,10 @@
         "description2": "Developers from anywhere in the world can integrate with our Ledger Live",
         "description3": "This integration has been carried out by {{team}} in collaboration with Ledger"
       }
+    },
+    "willBeDeprecatedBanner": {
+      "title": "To optimize efficiencies, {{currencyName}} will not be supported on Ledger Live as of {{deprecatedDate}}. However, it will still be supported on Ledger hardware wallets. Please contact Ledger Customer Support if you would like assistance on this.",
+      "contactSupport": "Contact Support"
     },
     "lastOperations": "Latest operations",
     "contractAddress": "Contract:",
@@ -1204,6 +1208,24 @@
         "restoreChoiceRecoverTitle": "Restore using Ledger Recover",
         "restoreChoiceRecoverDescription": "If you’re subscribed to Ledger Recover, log in to your subscription to restore the backup for your Secret Recovery Phrase.",
         "followInstructions": "Follow instruction appearing on your {{productName}}."
+      },
+      "backup": {
+        "title": "Backup for your Secret Recovery Phrase",
+        "description": "With a digital encrypted backup, restore access to your wallet without your Secret Recovery Phrase.\n\nChoose if you’d like a digital backup:",
+        "backupChoice": {
+          "title": "I want a digital backup",
+          "titleSelected": "Ledger Recover",
+          "tag": "Popular",
+          "description": "Subscribe to Ledger Recover for $9.99 per month. Start for free. Cancel anytime!",
+          "tryCta": "Try it for free",
+          "redeemCodeCta": "I have a redeem code",
+          "howItWorksCta": "I want to know more"
+        },
+        "manualBackup": {
+          "title": "No, I’m good with paper",
+          "description": "Without a digital backup, the Recovery Sheet is your only way to restore wallet access. Don’t lose it.",
+          "cta": "I understand"
+        }
       },
       "softwareCheckContent": {
         "title": {

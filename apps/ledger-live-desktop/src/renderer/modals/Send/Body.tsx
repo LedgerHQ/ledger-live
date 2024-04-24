@@ -180,8 +180,12 @@ const Body = ({
     const nft = getNFT(contract, tokenId, mainAccount.nfts);
     const nftCapabilities = getNftCapabilities(nft);
 
-    const config = getCurrencyConfiguration(currency);
-    return !config?.gasTracker && !nftCapabilities.hasQuantity;
+    try {
+      const config = getCurrencyConfiguration(currency);
+      return !config?.gasTracker && !nftCapabilities.hasQuantity;
+    } catch (err) {
+      console.warn(err);
+    }
   }, [isNFTSend, params?.parentAccount, params?.account, accounts, maybeNFTId]);
 
   const [steps] = useState(() => createSteps(params.disableBacks, shouldSkipAmount));

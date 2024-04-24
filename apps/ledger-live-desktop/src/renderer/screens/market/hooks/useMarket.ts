@@ -9,20 +9,12 @@ import {
 import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  addStarredMarketCoins,
-  removeStarredMarketCoins,
-  setMarketCurrentPage,
-  setMarketOptions,
-} from "~/renderer/actions/market";
+import { setMarketCurrentPage, setMarketOptions } from "~/renderer/actions/market";
 import { useInitSupportedCounterValues } from "~/renderer/hooks/useInitSupportedCounterValues";
-import {
-  marketCurrentPageSelector,
-  marketParamsSelector,
-  starredMarketCoinsSelector,
-} from "~/renderer/reducers/market";
-import { localeSelector } from "~/renderer/reducers/settings";
+import { marketCurrentPageSelector, marketParamsSelector } from "~/renderer/reducers/market";
+import { localeSelector, starredMarketCoinsSelector } from "~/renderer/reducers/settings";
 import { BASIC_REFETCH, REFETCH_TIME_ONE_MINUTE, getCurrentPage, isDataStale } from "../utils";
+import { removeStarredMarketCoins, addStarredMarketCoins } from "~/renderer/actions/settings";
 
 export function useMarket() {
   const lldRefreshMarketDataFeature = useFeature("lldRefreshMarketData");
