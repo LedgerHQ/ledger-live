@@ -18,7 +18,7 @@ import {
   ERC1155Interface,
 } from "../helpers";
 import { clearExplorerAppendix, getLogs, setBlock } from "../indexer";
-import { killAnvil, spawnAnvil } from "../docker";
+import { killAnvil, spawnAnvil } from "../anvil";
 
 const scenarioSendTransaction: ScenarioTransaction<EvmTransaction> = {
   name: "Send ethereum",

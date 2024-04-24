@@ -12,7 +12,7 @@ import resolver from "../../../hw-getAddress";
 import { setCoinConfig } from "../../../config";
 import { ERC20Interface, USDC_ON_POLYGON, polygon } from "../helpers";
 import { clearExplorerAppendix, getLogs, setBlock } from "../indexer";
-import { killAnvil, spawnAnvil } from "../docker";
+import { killAnvil, spawnAnvil } from "../anvil";
 
 const defaultNanoApp = { firmware: "2.2.3" as const, version: "1.10.4" as const };
 
