@@ -1,8 +1,17 @@
 import { PlaywrightTestConfig } from "@playwright/test";
 
 const config: PlaywrightTestConfig = {
-  testDir: "specs/",
-  testIgnore: "specs/recorder.spec.ts",
+  projects: [
+    {
+      name: "speculos_tests",
+      testDir: "specs/speculos/",
+    },
+    {
+      name: "mocked_tests",
+      testDir: "specs/",
+      testIgnore: ["**/speculos/**", "specs/recorder.spec.ts"],
+    },
+  ],
   outputDir: "./artifacts/test-results",
   timeout: process.env.CI ? 190000 : 600000,
   expect: {
