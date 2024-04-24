@@ -284,6 +284,7 @@ jobs:
                       }
                     }
                   ],
+                  "mrkdwn_in": ["text"],
                   "color": "${{ env.STATUS_COLOR }}"
                 }
               ]
