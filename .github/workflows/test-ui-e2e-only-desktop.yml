@@ -96,10 +96,10 @@ jobs:
         run: |
           export COINAPPS=$PWD/coin-apps
           if [ "${{ inputs.use_mocks }}" = false ]; then export MOCK=0; fi
-          xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright:speculos ${INPUTS_TEST_FILTER:+--grep${INPUTS_INVERT_FILTER:+-invert}} "${{ inputs.test_filter }}"
+          if [ "${{ inputs.invert_filter }}" = true ]; then export INPUTS_INVERT_FILTER="-invert"; fi
+          xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright:speculos ${INPUTS_TEST_FILTER:+--grep$INPUTS_INVERT_FILTER} "${{ inputs.test_filter }}"
         env:
           INPUTS_TEST_FILTER: ${{ inputs.test_filter }}
-          INPUTS_INVERT_FILTER: ${{ inputs.invert_filter }}
           SEED: ${{ secrets.SEED_QAA_B2C }}
       - name: upload diffs to s3
         if: ${{ !cancelled() }}
