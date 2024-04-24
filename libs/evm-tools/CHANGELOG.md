@@ -1,32 +1,26 @@
 # @ledgerhq/evm-tools
 
-## 1.0.18-nightly.3
+## 1.0.18
 
 ### Patch Changes
 
-- Updated dependencies [[`fdb76a7`](https://github.com/LedgerHQ/ledger-live/commit/fdb76a7c3a8459a50b22b3e5a5a3002932805bcd)]:
-  - @ledgerhq/cryptoassets@13.0.0-nightly.2
+- Updated dependencies [[`3c15515`](https://github.com/LedgerHQ/ledger-live/commit/3c155155f2d45fb85f8900e7e77c1b5ab1c7ad67), [`762dea1`](https://github.com/LedgerHQ/ledger-live/commit/762dea1c52ef0537961d058f7ba81fa399663ac1), [`5848f9e`](https://github.com/LedgerHQ/ledger-live/commit/5848f9e247f169eb7a4aff322253937214b9efdd)]:
+  - @ledgerhq/cryptoassets@12.1.0
+  - @ledgerhq/live-env@2.0.1
 
-## 1.0.18-nightly.2
-
-### Patch Changes
-
-- Updated dependencies [[`2f2ef00`](https://github.com/LedgerHQ/ledger-live/commit/2f2ef001145469870ac703b6af28fdf8f0d70945)]:
-  - @ledgerhq/cryptoassets@12.1.0-nightly.1
-
-## 1.0.18-nightly.1
+## 1.0.18-next.1
 
 ### Patch Changes
 
-- Updated dependencies [[`0dae8e5`](https://github.com/LedgerHQ/ledger-live/commit/0dae8e5a33704eaee5976e8ae2cbe29c6f458167)]:
-  - @ledgerhq/cryptoassets@12.1.0-nightly.0
+- Updated dependencies [[`762dea1`](https://github.com/LedgerHQ/ledger-live/commit/762dea1c52ef0537961d058f7ba81fa399663ac1)]:
+  - @ledgerhq/live-env@2.0.1-next.0
 
-## 1.0.18-nightly.0
+## 1.0.18-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`df1dcbf`](https://github.com/LedgerHQ/ledger-live/commit/df1dcbffe901d7c4baddb46a06b08a4ed5b7a17e)]:
-  - @ledgerhq/live-env@2.0.1-nightly.0
+- Updated dependencies [[`3c15515`](https://github.com/LedgerHQ/ledger-live/commit/3c155155f2d45fb85f8900e7e77c1b5ab1c7ad67), [`5848f9e`](https://github.com/LedgerHQ/ledger-live/commit/5848f9e247f169eb7a4aff322253937214b9efdd)]:
+  - @ledgerhq/cryptoassets@12.1.0-next.0
 
 ## 1.0.17
 

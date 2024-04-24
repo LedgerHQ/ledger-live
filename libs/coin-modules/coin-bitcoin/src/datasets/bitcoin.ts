@@ -94,6 +94,7 @@ const dataset: CurrenciesData<Transaction> = {
   scanAccounts: [scanAccounts1],
   accounts: [
     {
+      raw: bitcoin1,
       transactions: [
         {
           name: "on legacy recipient",
@@ -341,7 +342,6 @@ const dataset: CurrenciesData<Transaction> = {
           },
         },
       ],
-      raw: bitcoin1,
     },
     {
       raw: bitcoin2,

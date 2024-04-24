@@ -1,10 +1,16 @@
 # @ledgerhq/live-env
 
-## 2.0.1-nightly.0
+## 2.0.1
 
 ### Patch Changes
 
-- [#6603](https://github.com/LedgerHQ/ledger-live/pull/6603) [`df1dcbf`](https://github.com/LedgerHQ/ledger-live/commit/df1dcbffe901d7c4baddb46a06b08a4ed5b7a17e) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Change `COSMOS_GAS_AMPLIFIER` from 1.5 to 1.3 to match what Keplr is doing
+- [#6614](https://github.com/LedgerHQ/ledger-live/pull/6614) [`762dea1`](https://github.com/LedgerHQ/ledger-live/commit/762dea1c52ef0537961d058f7ba81fa399663ac1) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Change `COSMOS_GAS_AMPLIFIER` from 1.5 to 1.3 to match what Keplr is doing
+
+## 2.0.1-next.0
+
+### Patch Changes
+
+- [#6614](https://github.com/LedgerHQ/ledger-live/pull/6614) [`762dea1`](https://github.com/LedgerHQ/ledger-live/commit/762dea1c52ef0537961d058f7ba81fa399663ac1) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Change `COSMOS_GAS_AMPLIFIER` from 1.5 to 1.3 to match what Keplr is doing
 
 ## 2.0.0
 

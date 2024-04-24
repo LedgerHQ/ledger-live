@@ -19,6 +19,7 @@ import { perCoinLogic } from "../logic";
 import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
 import resolver from "../hw-getAddress";
 import { SignerContext } from "../signer";
+import { CoinConfig, setCoinConfig } from "../config";
 
 function buildCurrencyBridge(signerContext: SignerContext, perfLogger: PerfLogger) {
   const getAddress = resolver(signerContext);
@@ -88,7 +89,14 @@ function buildAccountBridge(signerContext: SignerContext, perfLogger: PerfLogger
 export type PerfLogger = {
   startSpan: StartSpan;
 };
-export function createBridges(signerContext: SignerContext, perfLogger: PerfLogger) {
+
+export function createBridges(
+  signerContext: SignerContext,
+  perfLogger: PerfLogger,
+  coinConfig: CoinConfig,
+) {
+  setCoinConfig(coinConfig);
+
   return {
     currencyBridge: buildCurrencyBridge(signerContext, perfLogger),
     accountBridge: buildAccountBridge(signerContext, perfLogger),

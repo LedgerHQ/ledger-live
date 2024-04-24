@@ -224,6 +224,14 @@ type CurrencyTransaction<T extends TransactionCommon> = {
   ) => any;
 };
 
+export type AccountTestData<T extends TransactionCommon> = {
+  raw: AccountRaw;
+  implementations?: string[];
+  FIXME_tests?: Array<string | RegExp>;
+  transactions?: Array<CurrencyTransaction<T>>;
+  test?: (arg0: ExpectFn, arg1: Account, arg2: AccountBridge<T>) => any;
+};
+
 /**
  *
  */
@@ -239,13 +247,7 @@ export type CurrenciesData<T extends TransactionCommon> = {
     unstableAccounts?: boolean;
     test?: (expect: ExpectFn, scanned: Account[], bridge: CurrencyBridge) => any;
   }>;
-  accounts?: Array<{
-    implementations?: string[];
-    raw: AccountRaw;
-    FIXME_tests?: Array<string | RegExp>;
-    transactions?: Array<CurrencyTransaction<T>>;
-    test?: (arg0: ExpectFn, arg1: Account, arg2: AccountBridge<T>) => any;
-  }>;
+  accounts?: Array<AccountTestData<T>>;
   test?: (arg0: ExpectFn, arg1: CurrencyBridge) => any;
 };
 

@@ -1,17 +1,18 @@
 # @ledgerhq/hw-app-near
 
-## 6.28.7-nightly.1
-
-### Patch Changes
-
-- [#6712](https://github.com/LedgerHQ/ledger-live/pull/6712) [`e7ed028`](https://github.com/LedgerHQ/ledger-live/commit/e7ed028716bccb9dc29aa2fc672ecc7a3e78276a) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Increase chunk size in order to prevent a nano app bug from happening too quickly (should be fixed after nano app v1.3.0)
-
-## 6.28.7-nightly.0
+## 6.28.7
 
 ### Patch Changes
 
 - Updated dependencies []:
-  - @ledgerhq/hw-transport@6.30.6-nightly.0
+  - @ledgerhq/hw-transport@6.30.6
+
+## 6.28.7-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.30.6-next.0
 
 ## 6.28.6
 

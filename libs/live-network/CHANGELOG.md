@@ -1,27 +1,26 @@
 # @ledgerhq/live-network
 
-## 1.2.1-nightly.2
+## 1.2.1
 
 ### Patch Changes
 
-- [#6566](https://github.com/LedgerHQ/ledger-live/pull/6566) [`cfb97f7`](https://github.com/LedgerHQ/ledger-live/commit/cfb97f7d5c81824815522e8699b7469047b1513a) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - Prevent unnecessary http retries when 422
+- Updated dependencies [[`762dea1`](https://github.com/LedgerHQ/ledger-live/commit/762dea1c52ef0537961d058f7ba81fa399663ac1), [`fc4f83e`](https://github.com/LedgerHQ/ledger-live/commit/fc4f83e26d9f00b7c518f28157e8d9da55ce3685), [`dd1d17f`](https://github.com/LedgerHQ/ledger-live/commit/dd1d17fd3ce7ed42558204b2f93707fb9b1599de), [`26b3a5d`](https://github.com/LedgerHQ/ledger-live/commit/26b3a5d7d6e11efc226403707d683f3d0098a1c1)]:
+  - @ledgerhq/live-env@2.0.1
+  - @ledgerhq/errors@6.16.4
 
-- Updated dependencies [[`cfb97f7`](https://github.com/LedgerHQ/ledger-live/commit/cfb97f7d5c81824815522e8699b7469047b1513a)]:
-  - @ledgerhq/live-promise@0.0.4-nightly.0
-
-## 1.2.1-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [[`df1dcbf`](https://github.com/LedgerHQ/ledger-live/commit/df1dcbffe901d7c4baddb46a06b08a4ed5b7a17e)]:
-  - @ledgerhq/live-env@2.0.1-nightly.0
-
-## 1.2.1-nightly.0
+## 1.2.1-next.1
 
 ### Patch Changes
 
-- Updated dependencies [[`dd1d17f`](https://github.com/LedgerHQ/ledger-live/commit/dd1d17fd3ce7ed42558204b2f93707fb9b1599de)]:
-  - @ledgerhq/errors@6.16.4-nightly.0
+- Updated dependencies [[`762dea1`](https://github.com/LedgerHQ/ledger-live/commit/762dea1c52ef0537961d058f7ba81fa399663ac1)]:
+  - @ledgerhq/live-env@2.0.1-next.0
+
+## 1.2.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`fc4f83e`](https://github.com/LedgerHQ/ledger-live/commit/fc4f83e26d9f00b7c518f28157e8d9da55ce3685), [`dd1d17f`](https://github.com/LedgerHQ/ledger-live/commit/dd1d17fd3ce7ed42558204b2f93707fb9b1599de), [`26b3a5d`](https://github.com/LedgerHQ/ledger-live/commit/26b3a5d7d6e11efc226403707d683f3d0098a1c1)]:
+  - @ledgerhq/errors@6.16.4-next.0
 
 ## 1.2.0
 

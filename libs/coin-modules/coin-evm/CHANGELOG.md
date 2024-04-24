@@ -1,85 +1,73 @@
 # @ledgerhq/coin-evm
 
-## 2.0.0-nightly.6
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/coin-framework@0.12.0-nightly.6
-  - @ledgerhq/domain-service@1.1.20-nightly.4
-  - @ledgerhq/evm-tools@1.0.18-nightly.3
-
-## 2.0.0-nightly.5
-
-### Major Changes
-
-- [#6669](https://github.com/LedgerHQ/ledger-live/pull/6669) [`fdb76a7`](https://github.com/LedgerHQ/ledger-live/commit/fdb76a7c3a8459a50b22b3e5a5a3002932805bcd) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Removing support for Goerli & Ropsten networks and their Layer 2 variants (Linea Goerli & Optimism Goerli) and replace them by Linea Sepolia & Optimism Sepolia
-
-### Patch Changes
-
-- [#6684](https://github.com/LedgerHQ/ledger-live/pull/6684) [`96029e1`](https://github.com/LedgerHQ/ledger-live/commit/96029e1396be2f283f0345a59e08009b0a6a96db) Thanks [@CremaFR](https://github.com/CremaFR)! - Allow additional fees when using maxButton
-
-- Updated dependencies [[`fdb76a7`](https://github.com/LedgerHQ/ledger-live/commit/fdb76a7c3a8459a50b22b3e5a5a3002932805bcd), [`fdb76a7`](https://github.com/LedgerHQ/ledger-live/commit/fdb76a7c3a8459a50b22b3e5a5a3002932805bcd), [`cfb97f7`](https://github.com/LedgerHQ/ledger-live/commit/cfb97f7d5c81824815522e8699b7469047b1513a)]:
-  - @ledgerhq/coin-framework@0.12.0-nightly.5
-  - @ledgerhq/cryptoassets@13.0.0-nightly.2
-  - @ledgerhq/live-network@1.2.1-nightly.2
-  - @ledgerhq/live-promise@0.0.4-nightly.0
-  - @ledgerhq/domain-service@1.1.20-nightly.3
-  - @ledgerhq/evm-tools@1.0.18-nightly.3
-
-## 1.1.0-nightly.4
-
-### Patch Changes
-
-- Updated dependencies [[`2f2ef00`](https://github.com/LedgerHQ/ledger-live/commit/2f2ef001145469870ac703b6af28fdf8f0d70945)]:
-  - @ledgerhq/cryptoassets@12.1.0-nightly.1
-  - @ledgerhq/coin-framework@0.11.4-nightly.4
-  - @ledgerhq/evm-tools@1.0.18-nightly.2
-
-## 1.1.0-nightly.3
+## 1.1.0
 
 ### Minor Changes
 
-- [#6567](https://github.com/LedgerHQ/ledger-live/pull/6567) [`0dae8e5`](https://github.com/LedgerHQ/ledger-live/commit/0dae8e5a33704eaee5976e8ae2cbe29c6f458167) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Update `getSyncHash` method to use new hash files provided by token importers instead of manually serializing each token. This greatly improve performances of that method.
+- [#6309](https://github.com/LedgerHQ/ledger-live/pull/6309) [`5848f9e`](https://github.com/LedgerHQ/ledger-live/commit/5848f9e247f169eb7a4aff322253937214b9efdd) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Removes never publicly exposed Evmos & Kava currencies. Also fixes multiple Etherscan based explorers URI (Lukso, RSK, Astar & Boba).
+
+- [#6290](https://github.com/LedgerHQ/ledger-live/pull/6290) [`08c9779`](https://github.com/LedgerHQ/ledger-live/commit/08c9779659628e4e22ac99a152049ac3fa2745fa) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add `chainId` while using the `hw-getAddress` method to display the network name and logo on a Stax device
+
+- [#6422](https://github.com/LedgerHQ/ledger-live/pull/6422) [`381023d`](https://github.com/LedgerHQ/ledger-live/commit/381023de2617aa09829a8b5dad7b0ba2c846328e) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fix Operations' amount depending if failure and remove internal operations from a failed coin operation
+
+- [#6482](https://github.com/LedgerHQ/ledger-live/pull/6482) [`83d0bc6`](https://github.com/LedgerHQ/ledger-live/commit/83d0bc67979159044a7785b5cb4cbda8ed78ebf4) Thanks [@vbergeron-ledger](https://github.com/vbergeron-ledger)! - EVM coin synchronozation is now optimized to start from the latest sync rather than from the latest operation
 
 ### Patch Changes
 
-- Updated dependencies [[`0dae8e5`](https://github.com/LedgerHQ/ledger-live/commit/0dae8e5a33704eaee5976e8ae2cbe29c6f458167), [`0dae8e5`](https://github.com/LedgerHQ/ledger-live/commit/0dae8e5a33704eaee5976e8ae2cbe29c6f458167)]:
-  - @ledgerhq/cryptoassets@12.1.0-nightly.0
-  - @ledgerhq/coin-framework@0.11.4-nightly.3
-  - @ledgerhq/evm-tools@1.0.18-nightly.1
-  - @ledgerhq/domain-service@1.1.20-nightly.2
+- [#6501](https://github.com/LedgerHQ/ledger-live/pull/6501) [`5e939e0`](https://github.com/LedgerHQ/ledger-live/commit/5e939e0540cabb8d9931794b79909fe0a353a179) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add missing index to Ledger ERC20 operations' ids, leading to missing token ops in history
 
-## 1.0.1-nightly.2
+- [#6341](https://github.com/LedgerHQ/ledger-live/pull/6341) [`92e9d19`](https://github.com/LedgerHQ/ledger-live/commit/92e9d194313ffd1542b676c59ae2d34e861f698f) Thanks [@sarneijim](https://github.com/sarneijim)! - Fix swap history
 
-### Patch Changes
+- [#6370](https://github.com/LedgerHQ/ledger-live/pull/6370) [`3c15515`](https://github.com/LedgerHQ/ledger-live/commit/3c155155f2d45fb85f8900e7e77c1b5ab1c7ad67) Thanks [@lvndry](https://github.com/lvndry)! - Get evm node, explorer and gasTracker information from liveconfig
 
-- Updated dependencies []:
-  - @ledgerhq/coin-framework@0.11.4-nightly.2
-  - @ledgerhq/domain-service@1.1.20-nightly.1
-  - @ledgerhq/evm-tools@1.0.18-nightly.0
+- Updated dependencies [[`1aa8ef4`](https://github.com/LedgerHQ/ledger-live/commit/1aa8ef404411c31f6ac4cf09fba453042db8b955), [`3c15515`](https://github.com/LedgerHQ/ledger-live/commit/3c155155f2d45fb85f8900e7e77c1b5ab1c7ad67), [`762dea1`](https://github.com/LedgerHQ/ledger-live/commit/762dea1c52ef0537961d058f7ba81fa399663ac1), [`fc4f83e`](https://github.com/LedgerHQ/ledger-live/commit/fc4f83e26d9f00b7c518f28157e8d9da55ce3685), [`dd1d17f`](https://github.com/LedgerHQ/ledger-live/commit/dd1d17fd3ce7ed42558204b2f93707fb9b1599de), [`26b3a5d`](https://github.com/LedgerHQ/ledger-live/commit/26b3a5d7d6e11efc226403707d683f3d0098a1c1), [`5848f9e`](https://github.com/LedgerHQ/ledger-live/commit/5848f9e247f169eb7a4aff322253937214b9efdd), [`a8138f9`](https://github.com/LedgerHQ/ledger-live/commit/a8138f9ec0cff714d9745012eb91a09713ffbbd2), [`ebb45be`](https://github.com/LedgerHQ/ledger-live/commit/ebb45be56c6b1fdb3c36a8c20a16b41600baa264), [`53da330`](https://github.com/LedgerHQ/ledger-live/commit/53da3301aaceeb16e6b1f96b1ea44428fbeb4483), [`abb1bbb`](https://github.com/LedgerHQ/ledger-live/commit/abb1bbb09c52a3d08577ba622c6cb0f44aab36c1)]:
+  - @ledgerhq/coin-framework@0.12.0
+  - @ledgerhq/cryptoassets@12.1.0
+  - @ledgerhq/live-env@2.0.1
+  - @ledgerhq/errors@6.16.4
+  - @ledgerhq/devices@8.3.0
+  - @ledgerhq/domain-service@1.1.20
+  - @ledgerhq/evm-tools@1.0.18
+  - @ledgerhq/live-network@1.2.1
 
-## 1.0.1-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [[`df1dcbf`](https://github.com/LedgerHQ/ledger-live/commit/df1dcbffe901d7c4baddb46a06b08a4ed5b7a17e)]:
-  - @ledgerhq/live-env@2.0.1-nightly.0
-  - @ledgerhq/coin-framework@0.11.4-nightly.1
-  - @ledgerhq/evm-tools@1.0.18-nightly.0
-  - @ledgerhq/live-network@1.2.1-nightly.1
-
-## 1.0.1-nightly.0
+## 1.1.0-next.1
 
 ### Patch Changes
 
-- Updated dependencies [[`dd1d17f`](https://github.com/LedgerHQ/ledger-live/commit/dd1d17fd3ce7ed42558204b2f93707fb9b1599de)]:
-  - @ledgerhq/errors@6.16.4-nightly.0
-  - @ledgerhq/coin-framework@0.11.4-nightly.0
-  - @ledgerhq/domain-service@1.1.20-nightly.0
-  - @ledgerhq/devices@8.2.3-nightly.0
-  - @ledgerhq/live-network@1.2.1-nightly.0
-  - @ledgerhq/evm-tools@1.0.17
+- Updated dependencies [[`762dea1`](https://github.com/LedgerHQ/ledger-live/commit/762dea1c52ef0537961d058f7ba81fa399663ac1)]:
+  - @ledgerhq/live-env@2.0.1-next.0
+  - @ledgerhq/coin-framework@0.12.0-next.1
+  - @ledgerhq/evm-tools@1.0.18-next.1
+  - @ledgerhq/live-network@1.2.1-next.1
+
+## 1.1.0-next.0
+
+### Minor Changes
+
+- [#6309](https://github.com/LedgerHQ/ledger-live/pull/6309) [`5848f9e`](https://github.com/LedgerHQ/ledger-live/commit/5848f9e247f169eb7a4aff322253937214b9efdd) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Removes never publicly exposed Evmos & Kava currencies. Also fixes multiple Etherscan based explorers URI (Lukso, RSK, Astar & Boba).
+
+- [#6290](https://github.com/LedgerHQ/ledger-live/pull/6290) [`08c9779`](https://github.com/LedgerHQ/ledger-live/commit/08c9779659628e4e22ac99a152049ac3fa2745fa) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add `chainId` while using the `hw-getAddress` method to display the network name and logo on a Stax device
+
+- [#6422](https://github.com/LedgerHQ/ledger-live/pull/6422) [`381023d`](https://github.com/LedgerHQ/ledger-live/commit/381023de2617aa09829a8b5dad7b0ba2c846328e) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fix Operations' amount depending if failure and remove internal operations from a failed coin operation
+
+- [#6482](https://github.com/LedgerHQ/ledger-live/pull/6482) [`83d0bc6`](https://github.com/LedgerHQ/ledger-live/commit/83d0bc67979159044a7785b5cb4cbda8ed78ebf4) Thanks [@vbergeron-ledger](https://github.com/vbergeron-ledger)! - EVM coin synchronozation is now optimized to start from the latest sync rather than from the latest operation
+
+### Patch Changes
+
+- [#6501](https://github.com/LedgerHQ/ledger-live/pull/6501) [`5e939e0`](https://github.com/LedgerHQ/ledger-live/commit/5e939e0540cabb8d9931794b79909fe0a353a179) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add missing index to Ledger ERC20 operations' ids, leading to missing token ops in history
+
+- [#6341](https://github.com/LedgerHQ/ledger-live/pull/6341) [`92e9d19`](https://github.com/LedgerHQ/ledger-live/commit/92e9d194313ffd1542b676c59ae2d34e861f698f) Thanks [@sarneijim](https://github.com/sarneijim)! - Fix swap history
+
+- [#6370](https://github.com/LedgerHQ/ledger-live/pull/6370) [`3c15515`](https://github.com/LedgerHQ/ledger-live/commit/3c155155f2d45fb85f8900e7e77c1b5ab1c7ad67) Thanks [@lvndry](https://github.com/lvndry)! - Get evm node, explorer and gasTracker information from liveconfig
+
+- Updated dependencies [[`1aa8ef4`](https://github.com/LedgerHQ/ledger-live/commit/1aa8ef404411c31f6ac4cf09fba453042db8b955), [`3c15515`](https://github.com/LedgerHQ/ledger-live/commit/3c155155f2d45fb85f8900e7e77c1b5ab1c7ad67), [`fc4f83e`](https://github.com/LedgerHQ/ledger-live/commit/fc4f83e26d9f00b7c518f28157e8d9da55ce3685), [`dd1d17f`](https://github.com/LedgerHQ/ledger-live/commit/dd1d17fd3ce7ed42558204b2f93707fb9b1599de), [`26b3a5d`](https://github.com/LedgerHQ/ledger-live/commit/26b3a5d7d6e11efc226403707d683f3d0098a1c1), [`5848f9e`](https://github.com/LedgerHQ/ledger-live/commit/5848f9e247f169eb7a4aff322253937214b9efdd), [`a8138f9`](https://github.com/LedgerHQ/ledger-live/commit/a8138f9ec0cff714d9745012eb91a09713ffbbd2), [`ebb45be`](https://github.com/LedgerHQ/ledger-live/commit/ebb45be56c6b1fdb3c36a8c20a16b41600baa264), [`53da330`](https://github.com/LedgerHQ/ledger-live/commit/53da3301aaceeb16e6b1f96b1ea44428fbeb4483), [`abb1bbb`](https://github.com/LedgerHQ/ledger-live/commit/abb1bbb09c52a3d08577ba622c6cb0f44aab36c1)]:
+  - @ledgerhq/coin-framework@0.12.0-next.0
+  - @ledgerhq/cryptoassets@12.1.0-next.0
+  - @ledgerhq/errors@6.16.4-next.0
+  - @ledgerhq/devices@8.3.0-next.0
+  - @ledgerhq/domain-service@1.1.20-next.0
+  - @ledgerhq/evm-tools@1.0.18-next.0
+  - @ledgerhq/live-network@1.2.1-next.0
 
 ## 1.0.0
 
