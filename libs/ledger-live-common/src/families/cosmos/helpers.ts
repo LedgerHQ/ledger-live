@@ -1,12 +1,17 @@
-import { CosmosMessage } from "./types";
+interface CosmosEventMessage {
+  type: string;
+  [key: string]: any;
+}
 
-export const getMainMessage = (messages: CosmosMessage[]): CosmosMessage => {
+export const getMainMessage = (messages: CosmosEventMessage[]): CosmosEventMessage => {
   const messagePriorities: string[] = [
-    "unbond",
-    "redelegate",
-    "delegate",
-    "withdraw_rewards",
-    "transfer",
+    "MsgUndelegate",
+    "MsgBeginRedelegate",
+    "MsgDelegate",
+    "MsgWithdrawDelegatorReward",
+    "MsgTransfer",
+    "MsgRecvPacket",
+    "MsgSend",
   ];
   const sortedTypes = messages
     .filter(m => messagePriorities.includes(m.type))

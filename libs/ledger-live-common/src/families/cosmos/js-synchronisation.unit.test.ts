@@ -56,34 +56,42 @@ function mockAccountInfo(
 
 function mockCosmosTx(tx: Partial<CosmosTx>) {
   return {
-    logs: [
+    events: [
       {
         type: "withdraw_rewards",
-        events: [
+        attributes: [
           {
-            type: "withdraw_rewards",
-            attributes: [
-              {
-                key: "amount",
-                value: "10uatom",
-              },
-              {
-                key: "validator",
-                value: "validatorAddressHehe",
-              },
-            ],
+            key: "amount",
+            value: "10uatom",
+          },
+          {
+            key: "validator",
+            value: "validatorAddressHehe",
           },
         ],
-        attributes: [],
       },
     ],
+    logs: [],
     txhash: "2",
     tx: {
+      "@type": "/cosmos.tx.v1beta1.Tx",
+      body: {
+        messages: [
+          {
+            "@type": "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
+            delegator_address: "address",
+            validator_address: "validatorAddressHehe",
+          },
+        ],
+        memo: "Ledger Live",
+        timeout_height: "0",
+        extension_options: [],
+        non_critical_extension_options: [],
+      },
       auth_info: {
         signer_infos: [{ sequence: "seq" }],
         fee: { amount: [{ denom: "uatom", amount: new BigNumber(0) }] },
       },
-      body: {},
     },
     code: 0,
     ...tx,
@@ -218,47 +226,50 @@ describe("getAccountShape", () => {
     expect(mergeOpsSpy.mock.calls[0][1]).toBeTruthy();
   });
 
-  it("should assign memo correctly", async () => {
-    const memo = "i am a memo :)";
-    mockAccountInfo({
-      txs: [
-        mockCosmosTx({
-          tx: {
-            body: { memo },
-            auth_info: baseTxMock.tx.auth_info,
-          },
-        } as Partial<CosmosTx>),
-      ],
-    });
+  it("should get the memo correctly", async () => {
+    mockAccountInfo({ txs: [mockCosmosTx({})] });
     const account = await getAccountShape(infoMock, syncConfig);
-    expect((account.operations as CosmosOperation[])[0].extra.memo).toEqual(memo);
+    expect((account.operations as CosmosOperation[])[0].extra.memo).toEqual("Ledger Live");
   });
 
   it("should list claim reward operations correctly with one delegation", async () => {
     mockAccountInfo({
       txs: [
         mockCosmosTx({
-          logs: [
+          events: [
             {
               type: "withdraw_rewards",
-              events: [
+              attributes: [
                 {
-                  type: "withdraw_rewards",
-                  attributes: [
-                    {
-                      key: "amount",
-                      value: "3uatom",
-                    },
-                    {
-                      key: "validator",
-                      value: "validatorAddressNumeroUno",
-                    },
-                  ],
+                  key: "amount",
+                  value: "3uatom",
+                },
+                {
+                  key: "validator",
+                  value: "validatorAddressNumeroUno",
                 },
               ],
-              attributes: [],
             },
           ],
+          logs: [],
+          tx: {
+            "@type": "/cosmos.tx.v1beta1.Tx",
+            body: {
+              messages: [
+                {
+                  "@type": "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
+                  delegator_address: "address",
+                  validator_address: "cosmosvaloper1crqm3598z6qmyn2kkcl9dz7uqs4qdqnr6s8jdn",
+                },
+              ],
+              memo: "Ledger Live",
+              timeout_height: "0",
+              extension_options: [],
+              non_critical_extension_options: [],
+            },
+            auth_info: [],
+            signatures: [],
+          },
         } as Partial<CosmosTx>),
       ],
     });
@@ -277,54 +288,76 @@ describe("getAccountShape", () => {
     mockAccountInfo({
       txs: [
         mockCosmosTx({
-          logs: [
+          events: [
             {
               type: "withdraw_rewards",
-              events: [
+              attributes: [
                 {
-                  type: "withdraw_rewards",
-                  attributes: [
-                    {
-                      key: "amount",
-                      value: "10uatom",
-                    },
-                    {
-                      key: "validator",
-                      value: "validatorAddressHehe",
-                    },
-                  ],
+                  key: "amount",
+                  value: "10uatom",
                 },
                 {
-                  type: "withdraw_rewards",
-                  attributes: [
-                    {
-                      key: "amount",
-                      value: "5uatom",
-                    },
-                    {
-                      key: "validator",
-                      value: "validatorAddressTwo",
-                    },
-                  ],
-                },
-                {
-                  type: "withdraw_rewards",
-                  attributes: [
-                    {
-                      key: "amount",
-                      value:
-                        "56ibc/0025F8A87464A471E66B234C4F93AEC5B4DA3D42D7986451A059273426290DD5,512ibc/6B8A3F5C2AD51CD6171FA41A7E8C35AD594AB69226438DB94450436EA57B3A89,7uatom",
-                    },
-                    {
-                      key: "validator",
-                      value: "validatorAddressThree",
-                    },
-                  ],
+                  key: "validator",
+                  value: "validatorAddressHehe",
                 },
               ],
-              attributes: [],
+            },
+            {
+              type: "withdraw_rewards",
+              attributes: [
+                {
+                  key: "amount",
+                  value: "5uatom",
+                },
+                {
+                  key: "validator",
+                  value: "validatorAddressTwo",
+                },
+              ],
+            },
+            {
+              type: "withdraw_rewards",
+              attributes: [
+                {
+                  key: "amount",
+                  value:
+                    "56ibc/0025F8A87464A471E66B234C4F93AEC5B4DA3D42D7986451A059273426290DD5,512ibc/6B8A3F5C2AD51CD6171FA41A7E8C35AD594AB69226438DB94450436EA57B3A89,7uatom",
+                },
+                {
+                  key: "validator",
+                  value: "validatorAddressThree",
+                },
+              ],
             },
           ],
+          tx: {
+            "@type": "/cosmos.tx.v1beta1.Tx",
+            body: {
+              messages: [
+                {
+                  "@type": "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
+                  delegator_address: "address",
+                  validator_address: "validatorAddressHehe",
+                },
+                {
+                  "@type": "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
+                  delegator_address: "address",
+                  validator_address: "validatorAddressTwo",
+                },
+                {
+                  "@type": "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
+                  delegator_address: "address",
+                  validator_address: "validatorAddressThree",
+                },
+              ],
+              memo: "Ledger Live",
+              timeout_height: "0",
+              extension_options: [],
+              non_critical_extension_options: [],
+            },
+            auth_info: [],
+            signatures: [],
+          },
         } as Partial<CosmosTx>),
       ],
     });
