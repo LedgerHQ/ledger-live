@@ -13,6 +13,8 @@ const config: PlaywrightTestConfig = {
     },
   ],
   outputDir: "./artifacts/test-results",
+  snapshotPathTemplate:
+    "{snapshotDir}/{testFileDir}/{testFileName}-snapshots/{arg}{-platform}{ext}",
   timeout: process.env.CI ? 190000 : 600000,
   expect: {
     timeout: 41000,
