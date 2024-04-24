@@ -1,16 +1,13 @@
 import { Action, ReducerMap, handleActions } from "redux-actions";
 import { MarketState, State } from "./types";
 import {
-  MarketAddStarredMarketcoinsPayload,
   MarketImportPayload,
-  MarketRemoveStarredMarketcoinsPayload,
   MarketSetCurrentPagePayload,
-  MarketSetMarketFilterByStarredAccountsPayload,
+  MarketSetMarketFilterByStarredCurrenciesPayload,
   MarketSetMarketRequestParamsPayload,
   MarketStateActionTypes,
   MarketStatePayload,
 } from "~/actions/types";
-import { saveMarket } from "~/db";
 
 export const INITIAL_STATE: MarketState = {
   marketParams: {
@@ -27,8 +24,7 @@ export const INITIAL_STATE: MarketState = {
     sparkline: false,
     top100: false,
   },
-  starredMarketCoins: [],
-  marketFilterByStarredAccounts: false,
+  marketFilterByStarredCurrencies: false,
   marketCurrentPage: 1,
 };
 
@@ -40,33 +36,11 @@ const handlers: ReducerMap<MarketState, MarketStatePayload> = {
       ...(action as Action<MarketSetMarketRequestParamsPayload>).payload,
     },
   }),
-  [MarketStateActionTypes.ADD_STARRED_MARKET_COINS]: (state, action) => {
-    const newStarred = [
-      ...state.starredMarketCoins,
-      (action as Action<MarketAddStarredMarketcoinsPayload>).payload,
-    ];
-
-    saveMarket({ starredMarketCoins: newStarred });
-    return {
-      ...state,
-      starredMarketCoins: newStarred,
-    };
-  },
-  [MarketStateActionTypes.REMOVE_STARRED_MARKET_COINS]: (state, action) => {
-    const newStarred = state.starredMarketCoins.filter(
-      id => id !== (action as Action<MarketRemoveStarredMarketcoinsPayload>).payload,
-    );
-
-    saveMarket({ starredMarketCoins: newStarred });
-    return {
-      ...state,
-      starredMarketCoins: newStarred,
-    };
-  },
-  [MarketStateActionTypes.SET_MARKET_FILTER_BY_STARRED_ACCOUNTS]: (state, action) => ({
+  [MarketStateActionTypes.SET_MARKET_FILTER_BY_STARRED_CURRENCIES]: (state, action) => ({
     ...state,
-    marketFilterByStarredAccounts: (action as Action<MarketSetMarketFilterByStarredAccountsPayload>)
-      .payload,
+    marketFilterByStarredAccounts: (
+      action as Action<MarketSetMarketFilterByStarredCurrenciesPayload>
+    ).payload,
   }),
 
   [MarketStateActionTypes.MARKET_SET_CURRENT_PAGE]: (state, action) => ({
@@ -82,9 +56,8 @@ const handlers: ReducerMap<MarketState, MarketStatePayload> = {
 // Selectors
 
 export const marketParamsSelector = (state: State) => state.market.marketParams;
-export const starredMarketCoinsSelector = (state: State) => state.market.starredMarketCoins;
-export const marketFilterByStarredAccountsSelector = (state: State) =>
-  state.market.marketFilterByStarredAccounts;
+export const marketFilterByStarredCurrenciesSelector = (state: State) =>
+  state.market.marketFilterByStarredCurrencies;
 export const marketCurrentPageSelector = (state: State) => state.market.marketCurrentPage;
 
 // Exporting reducer

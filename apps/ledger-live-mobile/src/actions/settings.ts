@@ -67,6 +67,8 @@ import {
   SettingsSetHasSeenAnalyticsOptInPrompt,
   SettingsSetDismissedContentCardsPayload,
   SettingsClearDismissedContentCardsPayload,
+  SettingsAddStarredMarketcoinsPayload,
+  SettingsRemoveStarredMarketcoinsPayload,
 } from "./types";
 import { ImageType } from "~/components/CustomImage/types";
 
@@ -281,6 +283,13 @@ export const setDismissedContentCard = createAction<SettingsSetDismissedContentC
 
 export const clearDismissedContentCards = createAction<SettingsClearDismissedContentCardsPayload>(
   SettingsActionTypes.CLEAR_DISMISSED_CONTENT_CARDS,
+);
+
+export const addStarredMarketCoins = createAction<SettingsAddStarredMarketcoinsPayload>(
+  SettingsActionTypes.ADD_STARRED_MARKET_COINS,
+);
+export const removeStarredMarketCoins = createAction<SettingsRemoveStarredMarketcoinsPayload>(
+  SettingsActionTypes.REMOVE_STARRED_MARKET_COINS,
 );
 
 type PortfolioRangeOption = {

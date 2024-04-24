@@ -4,18 +4,18 @@ import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setMarketRequestParams } from "~/actions/market";
 import {
-  starredMarketCoinsSelector,
-  marketFilterByStarredAccountsSelector,
   marketParamsSelector,
   marketCurrentPageSelector,
+  marketFilterByStarredCurrenciesSelector,
 } from "~/reducers/market";
+import { starredMarketCoinsSelector } from "~/reducers/settings";
 
 export function useMarket() {
   const dispatch = useDispatch();
   const { supportedCurrencies, liveCoinsList, supportedCounterCurrencies } =
     useMarketDataProvider();
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
-  const filterByStarredAccount: boolean = useSelector(marketFilterByStarredAccountsSelector);
+  const filterByStarredCurrencies: boolean = useSelector(marketFilterByStarredCurrenciesSelector);
   const marketParams = useSelector(marketParamsSelector);
   const marketCurrentPage = useSelector(marketCurrentPageSelector);
 
@@ -30,7 +30,7 @@ export function useMarket() {
     dispatch,
     refresh,
     starredMarketCoins,
-    filterByStarredAccount,
+    filterByStarredCurrencies,
     marketParams,
     liveCoinsList,
     supportedCurrencies,

@@ -227,7 +227,6 @@ export type SettingsState = {
   lastSeenDevice: DeviceModelInfo | null;
   knownDeviceModelIds: Record<DeviceModelId, boolean>;
   hasSeenStaxEnabledNftsPopup: boolean;
-  starredMarketCoins: string[];
   lastConnectedDevice: Device | null;
   marketCounterCurrency: string | null | undefined;
   sensitiveAnalytics: boolean;
@@ -261,6 +260,7 @@ export type SettingsState = {
   supportedCounterValues: supportedCountervaluesData[];
   hasSeenAnalyticsOptInPrompt: boolean;
   dismissedContentCards: { [id: string]: number };
+  starredMarketCoins: string[];
 };
 
 export type NotificationsSettings = {
@@ -335,8 +335,7 @@ export type NftGalleryChainFiltersState = Pick<
 
 export type MarketState = {
   marketParams: MarketListRequestParams;
-  starredMarketCoins: string[];
-  marketFilterByStarredAccounts: boolean;
+  marketFilterByStarredCurrencies: boolean;
   marketCurrentPage: number;
 };
 

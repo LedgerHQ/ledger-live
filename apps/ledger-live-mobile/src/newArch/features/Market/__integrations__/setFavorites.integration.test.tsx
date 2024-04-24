@@ -13,22 +13,21 @@ describe("Market integration test", () => {
     await user.press(screen.getByText("Bitcoin (BTC)"));
     await user.press(await screen.findByTestId("star-asset"));
     await user.press(screen.getByTestId("market-back-btn"));
-
     const ethRow = await screen.findByText("Ethereum (ETH)");
 
-    await user.press(await screen.findByTestId("starred"));
-
     expect(await screen.findByText("Bitcoin (BTC)")).toBeOnTheScreen();
+    await user.press(await screen.findByTestId("toggle-starred-currencies"));
+
     expect(ethRow).not.toBeOnTheScreen();
 
     //Set BNB as favorite
-    await user.press(await screen.findByTestId("starred"));
+    await user.press(await screen.findByTestId("toggle-starred-currencies"));
     await user.press(await screen.findByText("BNB (BNB)"));
     await user.press(await screen.findByTestId("star-asset"));
     await user.press(screen.getByTestId("market-back-btn"));
     const ethRow2 = await screen.findByText("Ethereum (ETH)");
 
-    await user.press(await screen.findByTestId("starred"));
+    await user.press(await screen.findByTestId("toggle-starred-currencies"));
 
     expect(await screen.findByText("Bitcoin (BTC)")).toBeOnTheScreen();
     expect(await screen.findByText("BNB (BNB)")).toBeOnTheScreen();

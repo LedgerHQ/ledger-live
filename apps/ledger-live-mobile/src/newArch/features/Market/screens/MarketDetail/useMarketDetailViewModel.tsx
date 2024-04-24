@@ -7,10 +7,10 @@ import { ScreenName } from "~/const";
 import useNotifications from "~/logic/notifications";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { MarketNavigatorStackParamList } from "LLM/features/Market/Navigator";
-import { removeStarredMarketCoins, addStarredMarketCoins } from "~/actions/market";
 
 import { useMarket } from "LLM/features/Market/hooks/useMarket";
 import { useMarketCoinData } from "LLM/features/Market/hooks/useMarketCoinData";
+import { addStarredMarketCoins, removeStarredMarketCoins } from "~/actions/settings";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<MarketNavigatorStackParamList, ScreenName.MarketDetail>

@@ -5,26 +5,23 @@ import { track } from "~/analytics";
 import { getAnalyticsProperties } from "LLM/features/Market/utils";
 import {
   setMarketCurrentPage,
-  setMarketFilterByStarredAccounts,
+  setMarketFilterByStarredCurrencies,
   setMarketRequestParams,
 } from "~/actions/market";
-import {
-  marketFilterByStarredAccountsSelector,
-  marketParamsSelector,
-  starredMarketCoinsSelector,
-} from "~/reducers/market";
+import { marketFilterByStarredCurrenciesSelector, marketParamsSelector } from "~/reducers/market";
+import { starredMarketCoinsSelector } from "~/reducers/settings";
 
 function useBottomSectionViewModel() {
   const dispatch = useDispatch();
 
   const marketParams = useSelector(marketParamsSelector);
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
-  const filterByStarredAccount: boolean = useSelector(marketFilterByStarredAccountsSelector);
+  const filterByStarredCurrencies: boolean = useSelector(marketFilterByStarredCurrenciesSelector);
 
   const { range, orderBy, order, top100, counterCurrency } = marketParams;
 
-  const toggleFilterByStarredAccounts = useCallback(() => {
-    if (!filterByStarredAccount) {
+  const toggleFilterByStarredCurrencies = useCallback(() => {
+    if (!filterByStarredCurrencies) {
       track(
         "Page Market Favourites",
         getAnalyticsProperties(marketParams, {
@@ -32,10 +29,11 @@ function useBottomSectionViewModel() {
         }),
       );
     }
-    dispatch(setMarketFilterByStarredAccounts(!filterByStarredAccount));
+    console.log("toggleFilterByStarredAccounts", filterByStarredCurrencies);
+    dispatch(setMarketFilterByStarredCurrencies(!filterByStarredCurrencies));
     dispatch(setMarketCurrentPage(1));
     dispatch(setMarketRequestParams({ ...marketParams, page: 1 }));
-  }, [dispatch, filterByStarredAccount, marketParams, starredMarketCoins]);
+  }, [dispatch, filterByStarredCurrencies, marketParams, starredMarketCoins]);
 
   const onFilterChange = useCallback(
     (value: MarketListRequestParams) => {
@@ -53,8 +51,8 @@ function useBottomSectionViewModel() {
 
   return {
     onFilterChange,
-    filterByStarredAccount,
-    toggleFilterByStarredAccounts,
+    filterByStarredCurrencies,
+    toggleFilterByStarredCurrencies,
     range,
     orderBy,
     order,

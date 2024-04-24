@@ -28,7 +28,7 @@ const keyExtractor = (item: CurrencyData, index: number) => item.id + index;
 
 interface ViewProps {
   marketData?: CurrencyData[];
-  filterByStarredAccount: boolean;
+  filterByStarredCurrencies: boolean;
   starredMarketCoins: string[];
   search?: string;
   loading: boolean;
@@ -50,7 +50,7 @@ interface ViewProps {
 }
 function View({
   marketData,
-  filterByStarredAccount,
+  filterByStarredCurrencies,
   starredMarketCoins,
   search,
   loading,
@@ -118,8 +118,8 @@ function View({
     ListFooterComponent: <ListFooter isLoading={loading} />,
     ListEmptyComponent: (
       <ListEmpty
-        hasNoSearchResult={Boolean(marketData?.length === 0 && search?.length && !loading)}
-        hasEmptyStarredCoins={filterByStarredAccount && starredMarketCoins.length <= 0}
+        hasNoSearchResult={Boolean(marketData?.length === 0 && search && !loading)}
+        hasEmptyStarredCoins={filterByStarredCurrencies && starredMarketCoins.length <= 0}
         search={search}
         resetSearch={resetSearch}
       />

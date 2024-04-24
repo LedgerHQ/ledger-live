@@ -289,6 +289,9 @@ export enum SettingsActionTypes {
   SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT = "SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT",
   SET_DISMISSED_CONTENT_CARD = "SET_DISMISSED_CONTENT_CARD",
   CLEAR_DISMISSED_CONTENT_CARDS = "CLEAR_DISMISSED_CONTENT_CARDS",
+
+  ADD_STARRED_MARKET_COINS = "ADD_STARRED_MARKET_COINS",
+  REMOVE_STARRED_MARKET_COINS = "REMOVE_STARRED_MARKET_COINS",
 }
 
 export type SettingsImportPayload = Partial<SettingsState>;
@@ -391,6 +394,9 @@ export type SettingsSetHasSeenAnalyticsOptInPrompt = SettingsState["hasSeenAnaly
 export type SettingsSetDismissedContentCardsPayload = SettingsState["dismissedContentCards"];
 export type SettingsClearDismissedContentCardsPayload = string[];
 
+export type SettingsAddStarredMarketcoinsPayload = Unpacked<SettingsState["starredMarketCoins"]>;
+export type SettingsRemoveStarredMarketcoinsPayload = Unpacked<SettingsState["starredMarketCoins"]>;
+
 export type SettingsPayload =
   | SettingsImportPayload
   | SettingsImportDesktopPayload
@@ -445,7 +451,9 @@ export type SettingsPayload =
   | SettingsSetSupportedCounterValues
   | SettingsSetHasSeenAnalyticsOptInPrompt
   | SettingsSetDismissedContentCardsPayload
-  | SettingsClearDismissedContentCardsPayload;
+  | SettingsClearDismissedContentCardsPayload
+  | SettingsAddStarredMarketcoinsPayload
+  | SettingsRemoveStarredMarketcoinsPayload;
 
 // === WALLET CONNECT ACTIONS ===
 export enum WalletConnectActionTypes {
@@ -520,25 +528,19 @@ export type NftStatePayload =
 // === MARKET ACTIONS ===
 export enum MarketStateActionTypes {
   SET_MARKET_REQUEST_PARAMS = "SET_MARKET_REQUEST_PARAMS",
-  ADD_STARRED_MARKET_COINS = "ADD_STARRED_MARKET_COINS",
-  REMOVE_STARRED_MARKET_COINS = "REMOVE_STARRED_MARKET_COINS",
-  SET_MARKET_FILTER_BY_STARRED_ACCOUNTS = "SET_MARKET_FILTER_BY_STARRED_ACCOUNTS",
+  SET_MARKET_FILTER_BY_STARRED_CURRENCIES = "SET_MARKET_FILTER_BY_STARRED_CURRENCIES",
   MARKET_SET_CURRENT_PAGE = "MARKET_SET_CURRENT_PAGE",
   MARKET_IMPORT = "MARKET_IMPORT",
 }
 
-export type MarketSetMarketFilterByStarredAccountsPayload =
-  MarketState["marketFilterByStarredAccounts"];
+export type MarketSetMarketFilterByStarredCurrenciesPayload =
+  MarketState["marketFilterByStarredCurrencies"];
 export type MarketSetCurrentPagePayload = MarketState["marketCurrentPage"];
 export type MarketSetMarketRequestParamsPayload = MarketState["marketParams"];
-export type MarketAddStarredMarketcoinsPayload = Unpacked<MarketState["starredMarketCoins"]>;
-export type MarketRemoveStarredMarketcoinsPayload = Unpacked<MarketState["starredMarketCoins"]>;
 
 export type MarketStatePayload =
-  | MarketSetMarketFilterByStarredAccountsPayload
+  | MarketSetMarketFilterByStarredCurrenciesPayload
   | MarketSetMarketRequestParamsPayload
-  | MarketAddStarredMarketcoinsPayload
-  | MarketRemoveStarredMarketcoinsPayload
   | MarketSetCurrentPagePayload;
 
 export type MarketImportPayload = Partial<MarketState>;

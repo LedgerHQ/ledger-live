@@ -11,7 +11,6 @@ import {
   getBle,
   getPostOnboardingState,
   getProtect,
-  getMarket,
 } from "../db";
 import { importSettings, setSupportedCounterValues } from "~/actions/settings";
 import { importStore as importAccounts } from "~/actions/accounts";
@@ -20,7 +19,6 @@ import { updateProtectData, updateProtectStatus } from "~/actions/protect";
 import { INITIAL_STATE as settingsState } from "~/reducers/settings";
 import { listCachedCurrencyIds, hydrateCurrency } from "~/bridge/cache";
 import { getCryptoCurrencyById, listSupportedFiats } from "@ledgerhq/live-common/currencies/index";
-import { importMarket } from "~/actions/market";
 
 export default class LedgerStoreProvider extends Component<
   {
@@ -51,9 +49,6 @@ export default class LedgerStoreProvider extends Component<
     const bleData = await getBle();
     this.props.store.dispatch(importBle(bleData));
     const settingsData = await getSettings();
-    const marketData = await getMarket();
-
-    this.props.store.dispatch(importMarket(marketData));
 
     const cachedCurrencyIds = await listCachedCurrencyIds();
     // hydrate the store with the bridge/cache

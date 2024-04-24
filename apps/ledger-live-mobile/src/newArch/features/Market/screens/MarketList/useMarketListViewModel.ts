@@ -40,7 +40,7 @@ function useMarketListViewModel() {
     marketParams,
     starredMarketCoins,
     supportedCurrencies,
-    filterByStarredAccount,
+    filterByStarredCurrencies,
     liveCoinsList,
     marketCurrentPage,
     refresh,
@@ -52,10 +52,10 @@ function useMarketListViewModel() {
     ...marketParams,
     liveCoinsList,
     supportedCoinsList: supportedCurrencies,
-    starred: filterByStarredAccount ? starredMarketCoins : [],
+    starred: filterByStarredCurrencies ? starredMarketCoins : [],
   });
 
-  const marketDataFiltered = filterByStarredAccount
+  const marketDataFiltered = filterByStarredCurrencies
     ? marketResult.data?.filter(d => starredMarketCoins.includes(d.id)) ?? undefined
     : marketResult.data;
 
@@ -116,9 +116,10 @@ function useMarketListViewModel() {
   };
   const viewabilityConfigCallbackPairs = useRef([{ onViewableItemsChanged, viewabilityConfig }]);
 
+  console.log("is filterByStarredAccount", filterByStarredCurrencies);
   return {
     marketData: marketDataFiltered,
-    filterByStarredAccount,
+    filterByStarredCurrencies,
     starredMarketCoins,
     search,
     loading: marketResult.isLoading,

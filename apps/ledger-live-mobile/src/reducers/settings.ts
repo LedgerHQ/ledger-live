@@ -77,6 +77,8 @@ import type {
   SettingsSetHasSeenAnalyticsOptInPrompt,
   SettingsSetDismissedContentCardsPayload,
   SettingsClearDismissedContentCardsPayload,
+  SettingsAddStarredMarketcoinsPayload,
+  SettingsRemoveStarredMarketcoinsPayload,
 } from "../actions/types";
 import {
   SettingsActionTypes,
@@ -145,7 +147,6 @@ export const INITIAL_STATE: SettingsState = {
     europa: false,
   },
   hasSeenStaxEnabledNftsPopup: false,
-  starredMarketCoins: [],
   lastConnectedDevice: null,
   marketCounterCurrency: null,
   sensitiveAnalytics: false,
@@ -172,6 +173,7 @@ export const INITIAL_STATE: SettingsState = {
   supportedCounterValues: [],
   hasSeenAnalyticsOptInPrompt: false,
   dismissedContentCards: {},
+  starredMarketCoins: [],
 };
 
 const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
@@ -635,6 +637,21 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
       dismissedContentCards,
     };
   },
+
+  [SettingsActionTypes.ADD_STARRED_MARKET_COINS]: (state, action) => ({
+    ...state,
+    starredMarketCoins: [
+      ...state.starredMarketCoins,
+      (action as Action<SettingsAddStarredMarketcoinsPayload>).payload,
+    ],
+  }),
+
+  [SettingsActionTypes.REMOVE_STARRED_MARKET_COINS]: (state, action) => ({
+    ...state,
+    starredMarketCoins: state.starredMarketCoins.filter(
+      id => id !== (action as Action<SettingsRemoveStarredMarketcoinsPayload>).payload,
+    ),
+  }),
 };
 
 export default handleActions<SettingsState, SettingsPayload>(handlers, INITIAL_STATE);
@@ -789,7 +806,6 @@ export const knownDeviceModelIdsSelector = (state: State) => state.settings.know
 export const hasSeenStaxEnabledNftsPopupSelector = (state: State) =>
   state.settings.hasSeenStaxEnabledNftsPopup;
 export const customImageTypeSelector = (state: State) => state.settings.customLockScreenType;
-export const starredMarketCoinsSelector = (state: State) => state.settings.starredMarketCoins;
 export const lastConnectedDeviceSelector = (state: State) => {
   // Nb workaround to prevent crash for dev/qa that have nanoFTS references.
   // to be removed in a while.
@@ -835,3 +851,5 @@ export const supportedCounterValuesSelector = (state: State) =>
 export const hasSeenAnalyticsOptInPromptSelector = (state: State) =>
   state.settings.hasSeenAnalyticsOptInPrompt;
 export const dismissedContentCardsSelector = (state: State) => state.settings.dismissedContentCards;
+
+export const starredMarketCoinsSelector = (state: State) => state.settings.starredMarketCoins;

@@ -70,8 +70,8 @@ interface ViewProps {
   range?: string;
   counterCurrency?: string;
   onFilterChange: (_: MarketListRequestParams) => void;
-  toggleFilterByStarredAccounts: () => void;
-  filterByStarredAccount: boolean;
+  toggleFilterByStarredCurrencies: () => void;
+  filterByStarredCurrencies: boolean;
 }
 
 function View({
@@ -81,8 +81,8 @@ function View({
   range,
   counterCurrency,
   onFilterChange,
-  toggleFilterByStarredAccounts,
-  filterByStarredAccount,
+  toggleFilterByStarredCurrencies,
+  filterByStarredCurrencies,
 }: ViewProps) {
   const navigation = useNavigation();
   const { t } = useTranslation();
@@ -104,11 +104,17 @@ function View({
       showsHorizontalScrollIndicator={false}
     >
       <TrackScreen category="Page" name={"Market"} access={true} />
-      <TouchableOpacity onPress={toggleFilterByStarredAccounts} testID="starred">
-        <StyledBadge bg={filterByStarredAccount ? "primary.c80" : "neutral.c30"}>
+      <TouchableOpacity
+        onPress={() => {
+          console.log("onpress");
+          toggleFilterByStarredCurrencies();
+        }}
+        testID="toggle-starred-currencies"
+      >
+        <StyledBadge bg={filterByStarredCurrencies ? "primary.c80" : "neutral.c30"}>
           <Icon
-            name={filterByStarredAccount ? "StarSolid" : "Star"}
-            color={filterByStarredAccount ? "background.main" : "neutral.c100"}
+            name={filterByStarredCurrencies ? "StarSolid" : "Star"}
+            color={filterByStarredCurrencies ? "background.main" : "neutral.c100"}
           />
         </StyledBadge>
       </TouchableOpacity>
