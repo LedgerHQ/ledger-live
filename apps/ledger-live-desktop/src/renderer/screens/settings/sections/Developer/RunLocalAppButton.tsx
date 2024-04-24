@@ -107,12 +107,7 @@ const RunLocalAppButton = () => {
         desc={t("settings.developer.addLocalAppDesc")}
       >
         <Flex flexDirection={"row"} columnGap={3}>
-          <Button
-            small
-            primary
-            onClick={onBrowseLocalManifest}
-            data-test-id="settings-enable-platform-dev-tools-apps"
-          >
+          <Button small primary onClick={onBrowseLocalManifest}>
             {t("settings.developer.addLocalAppButton")}
           </Button>
 
@@ -120,7 +115,7 @@ const RunLocalAppButton = () => {
             small
             primary
             onClick={onOpenModal}
-            data-test-id="settings-enable-platform-dev-tools-apps"
+            data-test-id="settings-open-local-manifest-form"
           >
             {t("settings.developer.createLocalAppModal.create")}
           </Button>
@@ -138,7 +133,7 @@ const RunLocalAppButton = () => {
               onClick={() => {
                 onExportLocalManifest(manifest);
               }}
-              data-test-id="settings-enable-platform-dev-tools-apps"
+              data-test-id="settings-export-local-manifest"
             >
               {t("settings.developer.createLocalAppModal.export")}
             </Button>
