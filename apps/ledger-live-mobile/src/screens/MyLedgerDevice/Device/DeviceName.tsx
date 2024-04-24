@@ -43,7 +43,7 @@ export default function DeviceName({ device, initialDeviceName, disabled, device
     [navigation, device, deviceName, deviceInfo],
   );
 
-  const displayedName = deviceName || productName;
+  const displayedName = (isEditSupported && deviceName) || productName;
 
   return (
     <Flex flexDirection={"row"} flexWrap={"nowrap"} alignItems="center">
