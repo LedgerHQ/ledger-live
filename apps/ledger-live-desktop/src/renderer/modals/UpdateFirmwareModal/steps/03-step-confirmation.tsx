@@ -87,8 +87,8 @@ export const StepConfirmFooter = ({
         {finalStepSuccessButtonLabel
           ? finalStepSuccessButtonLabel
           : appsToBeReinstalled
-          ? t("manager.modal.sucessCTAApps")
-          : t("manager.modal.SuccessCTANoApps")}
+            ? t("manager.modal.sucessCTAApps")
+            : t("manager.modal.SuccessCTANoApps")}
       </Button>
     </>
   );

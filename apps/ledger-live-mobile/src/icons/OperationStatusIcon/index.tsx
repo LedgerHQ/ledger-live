@@ -67,8 +67,8 @@ const OperationStatusIcon = ({
     (failed
       ? IconsLegacy.CircledCrossSolidMedium
       : confirmed
-      ? undefined
-      : IconsLegacy.HistoryMedium);
+        ? undefined
+        : IconsLegacy.HistoryMedium);
   const borderColor = failed ? "error.c40" : confirmed ? "neutral.c40" : "warning.c40";
   const iconColor = failed ? "error.c50" : confirmed ? "neutral.c100" : "warning.c50";
   const badgeColor = failed ? "error.c50" : "neutral.c70";

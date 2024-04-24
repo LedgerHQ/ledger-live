@@ -38,7 +38,7 @@ function render(
     ...renderOptions
   }: ExtraOptions = {},
 ): RenderReturn {
-  function Wrapper({ children }: ChildrenProps) {
+  function Wrapper({ children }: ChildrenProps): JSX.Element {
     return (
       <I18nextProvider i18n={i18n}>
         <Provider store={store}>
@@ -49,10 +49,11 @@ function render(
       </I18nextProvider>
     );
   }
+
   return {
     store,
     user: userEvent.setup(userEventOptions),
-    ...rtlRender(ui, { wrapper: Wrapper, ...renderOptions }),
+    ...rtlRender(ui, { wrapper: Wrapper as React.ComponentType, ...renderOptions }),
   };
 }
 export * from "@testing-library/react";

@@ -7,7 +7,6 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { Device, DeviceModelId } from "@ledgerhq/types-devices";
-import { useNavigation } from "@react-navigation/native";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import TransportBLE from "../../react-native-hw-transport-ble";
 import { knownDevicesSelector } from "~/reducers/ble";
@@ -50,7 +49,6 @@ export default function BleDevicesScanning({
   areKnownDevicesPairable,
 }: BleDevicesScanningProps) {
   const { t } = useTranslation();
-  const navigation = useNavigation();
 
   const productName = filterByDeviceModelId
     ? getDeviceModel(filterByDeviceModelId).productName || filterByDeviceModelId
@@ -60,7 +58,7 @@ export default function BleDevicesScanning({
   const [locationUnauthorizedError, setLocationUnauthorizedError] = useState<boolean>(false);
 
   // Nb Will reset when we regain focus to start scanning again.
-  const [stopBleScanning, setStopBleScanning] = useResetOnNavigationFocusState(navigation, false);
+  const [stopBleScanning, setStopBleScanning] = useResetOnNavigationFocusState(false);
 
   const [isCantSeeDeviceShown, setIsCantSeeDeviceShown] = useState<boolean>(false);
   useEffect(() => {

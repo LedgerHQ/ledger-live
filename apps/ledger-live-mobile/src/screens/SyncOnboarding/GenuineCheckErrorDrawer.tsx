@@ -83,8 +83,8 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({
   const screenName = isNotFoundEntity
     ? "Error: Device OS version not recognized"
     : error
-    ? "`Error: ${(error as unknown as Error).name}`"
-    : "Error: unknown error";
+      ? "`Error: ${(error as unknown as Error).name}`"
+      : "Error: unknown error";
 
   const handleRetry = () => {
     track("button_clicked", {

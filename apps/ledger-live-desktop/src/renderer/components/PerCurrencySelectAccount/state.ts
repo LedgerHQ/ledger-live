@@ -78,8 +78,8 @@ export function useCurrencyAccountSelect({
     const currency = defaultCurrencyId
       ? allCurrencies.find(currency => currency.id === defaultCurrencyId)
       : allCurrencies.length > 0
-      ? allCurrencies[0]
-      : undefined;
+        ? allCurrencies[0]
+        : undefined;
     if (!currency) {
       return {
         currency: null,
@@ -92,10 +92,10 @@ export function useCurrencyAccountSelect({
           accountId: defaultAccountId,
         }
       : availableAccounts.length
-      ? getIdsFromTuple(availableAccounts[0])
-      : {
-          accountId: null,
-        };
+        ? getIdsFromTuple(availableAccounts[0])
+        : {
+            accountId: null,
+          };
     return {
       currency,
       accountId,

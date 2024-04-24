@@ -49,8 +49,8 @@ const getTransactionStatus = (a, t) => {
   const totalSpent = useAllAmount
     ? account.balance
     : tokenAccount
-    ? new BigNumber(t.amount)
-    : new BigNumber(t.amount).plus(estimatedFees);
+      ? new BigNumber(t.amount)
+      : new BigNumber(t.amount).plus(estimatedFees);
   const amount = useAllAmount
     ? tokenAccount
       ? new BigNumber(t.amount)

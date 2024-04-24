@@ -24,8 +24,8 @@ const FormatDay = ({ day }: Props) => {
     dateFormat === Format.default
       ? dateTimeFormat
       : dateFormat === Format.ddmmyyyy
-      ? ddmmyyyyFormatter
-      : mmddyyyyFormatter;
+        ? ddmmyyyyFormatter
+        : mmddyyyyFormatter;
 
   const dayDiff = differenceInCalendarDays(Date.now(), day);
   const suffix =

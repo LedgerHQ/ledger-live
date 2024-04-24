@@ -121,8 +121,8 @@ export default function BalanceSummary({
               discreetMode
                 ? () => ""
                 : displayCountervalue
-                ? renderTickYCounterValue
-                : renderTickYCryptoValue
+                  ? renderTickYCounterValue
+                  : renderTickYCryptoValue
             }
             renderTooltip={renderTooltip}
           />
