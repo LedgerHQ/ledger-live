@@ -16,6 +16,15 @@ on:
       test_filter:
         description: Filter test pattern to execute only tests suites named according to pattern(s) separated by '|' (e.g. to execute accounts and settings describe blocks "Accounts @smoke" or "Accounts @smoke|Settings")
         required: false
+      report_path:
+        description: Path where you want to store this execution's results
+        required: false
+        default: "allure-results-linux"
+      slack_notif:
+        description: "Send notification to Slack?"
+        required: false
+        type: boolean
+        default: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
@@ -97,42 +106,58 @@ jobs:
         with:
           name: allure-results-linux
           path: apps/ledger-live-desktop/allure-results
-  report:
-    needs: [e2e-tests-linux]
-    runs-on: ubuntu-latest
-    if: ${{ !cancelled() }}
-    steps:
-      - uses: actions/checkout@v4
+
+      - name: Upload Allure Results
+        uses: actions/upload-artifact@v4.3.0
         with:
-          ref: ${{ inputs.ref || github.sha }}
-      - name: download images artifacts
-        uses: actions/download-artifact@v4
+          name: "allure-results"
+          path: "apps/ledger-live-desktop/allure-results"
+
+      - name: Publish report on Allure Server
+        id: allure-server
+        if: ${{ !cancelled() }}
+        uses: LedgerHQ/send-to-allure-server-action@2.1.2
         with:
-          name: images
-      - name: parse images
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const fs = require("fs");
-            const files = ["images-linux"];
-            let result = {};
-            for (const file of files) {
-              try {
-                const raw = JSON.parse(fs.readFileSync("${{github.workspace}}/" + file + ".json"));
-                const key = file.replace("images-", "").replace("-latest", "").trim()
-                result[key] = raw;
-              } catch (err) {
-                console.log(err);
-              }
-            }
-            fs.writeFileSync("./images.json", JSON.stringify(result, null, 2));
-      - name: prepare comment with screenshots
-        id: comment
-        uses: LedgerHQ/ledger-live/tools/actions/prepare-comment-screenshots@develop
-        with:
-          images: images.json
-          no-actor: true
+          allure-server-url: "https://ledger-live.allure.green.ledgerlabs.net"
+          build-name: ${{ github.workflow }}
+          build-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          username: ${{ vars.ALLURE_USERNAME }}
+          password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
+          path: ${{ github.ref_name }}/linux
+          allure-results: "apps/ledger-live-desktop/allure-results"
+
+      - name: Write Allure report in summary
+        if: ${{ !cancelled() }}
+        shell: bash
+        run: echo "::notice title=Allure report URL::${{ steps.allure-server.outputs.report-url }}"
+
+      - name: Get summary
+        if: ${{ !cancelled() }}
+        shell: bash
+        run: |
+          cd apps/ledger-live-desktop
+          allure generate
+          cd allure-report/widgets
+          passedTests=$(jq '.statistic.passed' summary.json)
+          failedTests=$(jq '.statistic.failed' summary.json)
+          brokenTests=$(jq '.statistic.broken' summary.json)
+          skippedTests=$(jq '.statistic.skipped' summary.json)
+          totalTests=$(jq '.statistic.total' summary.json)
+          echo "TEST_RESULT=$passedTests passed, $failedTests failed, $brokenTests broken, $skippedTests skipped, $totalTests total" >> $GITHUB_ENV
+
+      - name: Get status color
+        if: ${{ !cancelled() }}
+        shell: bash
+        run: >
+          if ${{ steps.tests.outcome == 'success' }};
+          then echo "STATUS_COLOR=good" >> $GITHUB_ENV;
+          elif ${{ steps.tests.outcome == 'failure' }};
+          then echo "STATUS_COLOR=danger" >> $GITHUB_ENV;
+          else echo "STATUS_COLOR=warning" >> $GITHUB_ENV;
+          fi
+
       - uses: actions/github-script@v6
+        if: ${{ !cancelled() }}
         name: prepare status
         id: status
         with:
@@ -167,7 +192,7 @@ jobs:
               }
             };
 
-            let summary = `### Screenshot Tests (Playwright)
+            let summary = `### Playwright Tests
             `
 
             summary += `|`
@@ -215,74 +240,64 @@ jobs:
                 description: "Run the full e2e test suite for LLD",
               }],
             };
-
-            fs.writeFileSync("summary.json", JSON.stringify(output), "utf-8");
-
-            if (${{ github.event_name != 'push' }}) return;
+            
+            if (${{ !inputs.slack_notif }}) return;
 
             const slackPayload = {
-              "text": "[Alert] Ledger Live Desktop tests failed on ${{github.ref_name}}",
-              "blocks": [
+              "text": "Ledger Live Desktop tests results on ${{github.ref_name}}",
+              "attachments": [
                 {
-                  "type": "header",
-                  "text": {
-                    "type": "plain_text",
-                    "text": ":warning: [Alert] Ledger Live Desktop tests failed on ${{ github.ref_name }}",
-                    "emoji": true
-                  }
-                },
-                {
-                  "type": "divider"
-                },
-                {
-                  "type": "header",
-                  "text": {
-                    "type": "plain_text",
-                    "text": "Checks"
-                  }
-                },
-                {
-                  "type": "divider"
-                },
-                {
-                  "type": "header",
-                  "text": {
-                    "type": "plain_text",
-                    "text": "E2E Tests"
-                  }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": `- 🐧 linux: ${report.linux.pass ? "✅" : "❌"}\n`
-                  }
-                },
-                {
-                  "type": "divider"
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "Commit by ${{ github.event.head_commit.author.username || '' }}\nhttps://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-                  }
+                  "blocks": [
+                    {
+                      "type": "header",
+                      "text": {
+                        "type": "plain_text",
+                        "text": ":ledger-logo: Ledger Live Desktop tests results on ${{ github.ref_name }}",
+                        "emoji": true
+                      }
+                    },
+                    {
+                      "type": "divider"
+                    },
+                    {
+                      "type": "header",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "E2E Tests"
+                      }
+                    },
+                    {
+                      "type": "section",
+                      "text": {
+                        "type": "mrkdwn",
+                        "text": `- 🐧 linux: ${report.linux.pass ? "✅" : "❌"} ${process.env.TEST_RESULT || 'No test results'}`
+                      }
+                    },
+                    {
+                      "type": "divider"
+                    },
+                    {
+                      "type": "section",
+                      "text": {
+                        "type": "mrkdwn",
+                        "text": "Commit by ${{ github.event.head_commit.author.username || '' }}\nhttps://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\n${{ steps.allure-server.outputs.report-url }}"
+                      }
+                    }
+                  ],
+                  "color": "${{ env.STATUS_COLOR }}"
                 }
               ]
             };
-
             fs.writeFileSync("payload-slack-content.json", JSON.stringify(slackPayload), "utf-8");
+      - name: Print Slack Payload Content
+        if: ${{ !cancelled() }}
+        run: cat ${{ github.workspace }}/payload-slack-content.json
       - name: post to a Slack channel
         id: slack
         uses: slackapi/slack-github-action@v1.23.0
-        if: ${{ !cancelled() && github.event_name == 'push' && contains(join(needs.*.result, ','), 'failure') }}
+        if: ${{ !cancelled() }}
         with:
           channel-id: "C05FKJ7DFAP"
           payload-file-path: ${{ github.workspace }}/payload-slack-content.json
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
-      - uses: actions/upload-artifact@v4
-        name: upload summary
-        with:
-          name: summary.json
-          path: ${{ github.workspace }}/summary.json
