@@ -6,18 +6,24 @@ type TRC20Exchange = [string, string, string];
 export const importTRC20Exchange = async (outputDir: string) => {
   console.log("importing TRC20 exchange...");
   try {
-    const trc20Exchange = await fetchTokens<TRC20Exchange>("exchange/trc20.json");
+    const [trc20Exchange, hash] = await fetchTokens<TRC20Exchange>("exchange/trc20.json");
     fs.writeFileSync(`${outputDir}/exchange/trc20.json`, JSON.stringify(trc20Exchange));
+    if (hash) {
+      fs.writeFileSync(`${outputDir}/exchange/trc20-hash.json`, JSON.stringify(hash));
+    }
 
     const trc20typeStringified = `export type TRC20Exchange = [string, string, string];`;
-    const tokensStringified = `import exchanges from "./trc20.json";`;
+    const hashStringified = hash ? `export { default as hash } from "./trc20-hash.json";` : "";
+    const exchangesStringified = `import exchanges from "./trc20.json";`;
     const exportStringified = `export default exchanges as TRC20Exchange[];`;
 
     fs.writeFileSync(
       `${outputDir}/exchange/trc20.ts`,
       `${trc20typeStringified}
 
-${tokensStringified}
+${hashStringified}
+
+${exchangesStringified}
 
 ${exportStringified}
 `,
