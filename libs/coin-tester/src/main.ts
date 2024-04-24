@@ -10,7 +10,13 @@ import { first, firstValueFrom, map, reduce } from "rxjs";
 
 export type ScenarioTransaction<T extends TransactionCommon> = Partial<T> & {
   name: string;
-  expect?: (account: Account) => void;
+  /**
+   *
+   * @param initialAccount initialAccount returned by the latest sync before the transaction broadcast
+   * @param currentAccount currentAccount updated after completting the latest transaction
+   * @returns void
+   */
+  expect?: (initialAccount: Account, currentAccount: Account) => void;
 };
 
 export type Scenario<T extends TransactionCommon> = {
@@ -87,6 +93,8 @@ export async function executeScenario<T extends TransactionCommon>(scenario: Sce
         );
       }
 
+      const initialAccount = Object.freeze({ ...scenarioAccount });
+
       const defaultTransaction = accountBridge.createTransaction(scenarioAccount);
       const transaction = await accountBridge.prepareTransaction(scenarioAccount, {
         ...defaultTransaction,
@@ -147,7 +155,7 @@ export async function executeScenario<T extends TransactionCommon>(scenario: Sce
         );
 
         try {
-          testTransaction.expect?.(scenarioAccount);
+          testTransaction.expect?.(initialAccount, scenarioAccount);
         } catch (err) {
           if (!(err as { matcherResult?: { pass: boolean } })?.matcherResult?.pass) {
             if (retry === 0) {

@@ -20,14 +20,18 @@ import {
 import { clearExplorerAppendix, getLogs, setBlock } from "../indexer";
 import { killAnvil, spawnAnvil } from "../anvil";
 
-const scenarioSendTransaction: ScenarioTransaction<EvmTransaction> = {
+const scenarioSendEthTransaction: ScenarioTransaction<EvmTransaction> = {
   name: "Send ethereum",
   amount: new BigNumber(100),
   recipient: "0x6bfD74C0996F269Bcece59191EFf667b3dFD73b9",
-  expect: account => {
-    const { operations } = account;
-    const sendOperation = operations.find(operation => operation.transactionSequenceNumber === 0);
-    expect(sendOperation?.transactionRaw?.amount === "100").toBeDefined();
+  expect: (initialAccount, currentAccount) => {
+    const [latestOperation] = currentAccount.operations;
+    expect(currentAccount.operations.length - initialAccount.operations.length).toBe(1);
+    expect(latestOperation.transactionSequenceNumber).toBe(0);
+    expect(latestOperation.type).toBe("OUT");
+    expect(latestOperation.value.toString()).toBe(
+      latestOperation.fee.plus(new BigNumber(100)).toString(),
+    );
   },
 };
 
@@ -40,10 +44,13 @@ const scenarioUSDCTransaction: ScenarioTransaction<EvmTransaction> = {
     "js:2:ethereum:0x3313797c7B45F34c56Bdedc0179992A4d435AF25",
     USDC_ON_ETHEREUM,
   ),
-  expect: account => {
-    const { operations } = account;
-    const sendOperation = operations.find(operation => operation.transactionSequenceNumber === 1);
-    expect(sendOperation?.transactionRaw?.amount).toBe("80");
+  expect: (initialAccount, currentAccount) => {
+    const [latestOperation] = currentAccount.operations;
+    expect(latestOperation.transactionSequenceNumber).toBe(1);
+    expect(latestOperation.type).toBe("OUT");
+    expect(latestOperation.value.toString()).toBe(
+      latestOperation.fee.plus(new BigNumber(80)).toString(),
+    );
   },
 };
 
@@ -57,13 +64,12 @@ const scenarioERC721Transaction: ScenarioTransaction<EvmTransaction & EvmNftTran
     quantity: new BigNumber(1),
     collectionName: "Bored Ape",
   },
-  expect: account => {
-    const sendOperation = account.operations.find(
-      operation => operation.transactionSequenceNumber === 2,
-    );
-
+  expect: (initialAccount, currentAccount) => {
+    const [latestOperation] = currentAccount.operations;
+    expect(latestOperation.transactionSequenceNumber).toBe(2);
+    expect(latestOperation.type).toBe("FEES");
     expect(
-      sendOperation?.nftOperations?.find(
+      latestOperation?.nftOperations?.find(
         op => op.contract === "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
       ),
     ).toBeDefined();
@@ -80,12 +86,12 @@ const scenarioERC1155Transaction: ScenarioTransaction<EvmTransaction & EvmNftTra
     contract: "0x348FC118bcC65a92dC033A951aF153d14D945312", // EIP55 checksum of 0x348fc118bcc65a92dc033a951af153d14d945312
     quantity: new BigNumber(2),
   },
-  expect: account => {
-    const sendOperation = account.operations.find(
-      operation => operation.transactionSequenceNumber === 3,
-    );
+  expect: (initialAccount, currentAccount) => {
+    const [latestOperation] = currentAccount.operations;
+    expect(latestOperation.transactionSequenceNumber).toBe(3);
+    expect(latestOperation.type).toBe("FEES");
     expect(
-      sendOperation?.nftOperations?.find(
+      latestOperation?.nftOperations?.find(
         op => op.contract === "0x348FC118bcC65a92dC033A951aF153d14D945312",
       ),
     ).toBeDefined();
@@ -223,13 +229,18 @@ export const scenarioEthereum: Scenario<EvmTransaction> = {
 
     await getLogs();
 
-    return { currencyBridge, accountBridge, account: scenarioAccount, onSignerConfirmation };
+    return {
+      currencyBridge,
+      accountBridge,
+      account: scenarioAccount,
+      onSignerConfirmation,
+    };
   },
   beforeAll: account => {
     expect(account.nfts?.length).toBe(2);
   },
   transactions: [
-    scenarioSendTransaction,
+    scenarioSendEthTransaction,
     scenarioUSDCTransaction,
     scenarioERC721Transaction,
     scenarioERC1155Transaction,

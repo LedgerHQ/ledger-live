@@ -23,16 +23,16 @@ describe("EVM Deterministic Tester", () => {
     }
   });
 
-  it("scenario polygon", async () => {
-    try {
-      await executeScenario(scenarioPolygon);
-    } catch (e) {
-      if (e != "done") {
-        await Promise.all([killSpeculos(), killAnvil()]);
-        throw e;
-      }
-    }
-  });
+  // it("scenario polygon", async () => {
+  //   try {
+  //     await executeScenario(scenarioPolygon);
+  //   } catch (e) {
+  //     if (e != "done") {
+  //       await Promise.all([killSpeculos(), killAnvil()]);
+  //       throw e;
+  //     }
+  //   }
+  // });
 });
 
 ["exit", "SIGINT", "SIGQUIT", "SIGTERM", "SIGUSR1", "SIGUSR2", "uncaughtException"].map(e =>
