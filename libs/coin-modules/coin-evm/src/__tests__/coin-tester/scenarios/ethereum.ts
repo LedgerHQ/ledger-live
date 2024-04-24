@@ -35,8 +35,7 @@ const scenarioSendEthTransaction: ScenarioTransaction<EvmTransaction> = {
   },
 };
 
-// use function createTransaction
-const scenarioUSDCTransaction: ScenarioTransaction<EvmTransaction> = {
+const scenarioSendUSDCTransaction: ScenarioTransaction<EvmTransaction> = {
   name: "Send USDC",
   amount: new BigNumber(80),
   recipient: "0x6bfD74C0996F269Bcece59191EFf667b3dFD73b9",
@@ -54,7 +53,7 @@ const scenarioUSDCTransaction: ScenarioTransaction<EvmTransaction> = {
   },
 };
 
-const scenarioERC721Transaction: ScenarioTransaction<EvmTransaction & EvmNftTransaction> = {
+const scenarioSendERC721Transaction: ScenarioTransaction<EvmTransaction & EvmNftTransaction> = {
   name: "Send ERC721",
   recipient: "0x6bfD74C0996F269Bcece59191EFf667b3dFD73b9",
   mode: "erc721",
@@ -73,10 +72,15 @@ const scenarioERC721Transaction: ScenarioTransaction<EvmTransaction & EvmNftTran
         op => op.contract === "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
       ),
     ).toBeDefined();
+    expect(
+      currentAccount.nfts?.find(
+        nft => nft.contract === "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
+      ),
+    ).toBe(undefined);
   },
 };
 
-const scenarioERC1155Transaction: ScenarioTransaction<EvmTransaction & EvmNftTransaction> = {
+const scenarioSendERC1155Transaction: ScenarioTransaction<EvmTransaction & EvmNftTransaction> = {
   name: "Send ERC1155",
   recipient: "0x6bfD74C0996F269Bcece59191EFf667b3dFD73b9",
   mode: "erc1155",
@@ -95,6 +99,11 @@ const scenarioERC1155Transaction: ScenarioTransaction<EvmTransaction & EvmNftTra
         op => op.contract === "0x348FC118bcC65a92dC033A951aF153d14D945312",
       ),
     ).toBeDefined();
+    expect(
+      currentAccount.nfts?.find(
+        nft => nft.contract === "0x348FC118bcC65a92dC033A951aF153d14D945312",
+      ),
+    ).toBe(undefined);
   },
 };
 
@@ -188,7 +197,7 @@ export const scenarioEthereum: Scenario<EvmTransaction> = {
     ]);
 
     const provider = new providers.StaticJsonRpcProvider("http://127.0.0.1:8545");
-    const signerContext = (deviceId: string, fn: any): any => fn(new Eth(transport));
+    const signerContext: Parameters<typeof resolver>[0] = (deviceId, fn) => fn(new Eth(transport));
 
     setCoinConfig(() => ({
       info: {
@@ -236,25 +245,18 @@ export const scenarioEthereum: Scenario<EvmTransaction> = {
       onSignerConfirmation,
     };
   },
-  beforeAll: account => {
+  beforeAll: async account => {
     expect(account.nfts?.length).toBe(2);
   },
   transactions: [
     scenarioSendEthTransaction,
-    scenarioUSDCTransaction,
-    scenarioERC721Transaction,
-    scenarioERC1155Transaction,
+    scenarioSendUSDCTransaction,
+    scenarioSendERC721Transaction,
+    scenarioSendERC1155Transaction,
   ],
-  afterAll: account => {
-    expect(account.operations.filter(operation => operation.type === "OUT").length).toBe(2);
-    expect(
-      account.operations
-        .filter(operation => operation.type === "FEES")
-        .filter(
-          feesOperations =>
-            feesOperations.nftOperations?.find(nftOperation => nftOperation.type === "NFT_OUT"),
-        ).length,
-    ).toBe(2);
+  afterAll: async account => {
+    expect(account.nfts?.length).toBe(0);
+    expect(account.operations.length).toBe(7);
   },
   teardown: async () => {
     await Promise.all([killSpeculos(), killAnvil()]);

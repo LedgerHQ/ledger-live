@@ -53,8 +53,6 @@ const send100USDCTransaction: ScenarioTransaction<EvmTransaction> = {
   },
 };
 
-const defaultNanoApp = { firmware: "2.2.3" as const, version: "1.10.4" as const };
-
 const initUSDCAccount = async (provider: ethers.providers.JsonRpcProvider, address: string) => {
   const addressToImpersonate = "0x45dDa9cb7c25131DF268515131f647d726f50608"; // Random owner of 8M USDC
   await provider.send("anvil_impersonateAccount", [addressToImpersonate]);
@@ -79,6 +77,8 @@ const initUSDCAccount = async (provider: ethers.providers.JsonRpcProvider, addre
   await provider.waitForTransaction(hash);
 };
 
+const defaultNanoApp = { firmware: "2.2.3" as const, version: "1.10.4" as const };
+
 export const scenarioPolygon: Scenario<EvmTransaction> = {
   name: "Ledger Live Basic Polygon Transactions",
   setup: async () => {
@@ -91,7 +91,7 @@ export const scenarioPolygon: Scenario<EvmTransaction> = {
     ]);
 
     const provider = new providers.StaticJsonRpcProvider("http://127.0.0.1:8545");
-    const signerContext = (deviceId: string, fn: any): any => fn(new Eth(transport));
+    const signerContext: Parameters<typeof resolver>[0] = (deviceId, fn) => fn(new Eth(transport));
 
     setCoinConfig(() => ({
       info: {

@@ -27,14 +27,14 @@ export type Scenario<T extends TransactionCommon> = {
     account: Account;
     testTimeout?: number;
     retryInterval?: number;
-    onSignerConfirmation?: (e?: SignOperationEvent) => Awaited<void>;
+    onSignerConfirmation?: (e?: SignOperationEvent) => Promise<void>;
   }>;
   transactions: ScenarioTransaction<T>[];
-  beforeAll?: (account: Account) => Awaited<void>;
-  afterAll?: (account: Account) => Awaited<void>;
-  beforeEach?: (account: Account) => Awaited<void>;
-  afterEach?: (account: Account) => Awaited<void>;
-  teardown?: () => void;
+  beforeAll?: (account: Account) => Promise<void> | void;
+  afterAll?: (account: Account) => Promise<void> | void;
+  beforeEach?: (account: Account) => Promise<void> | void;
+  afterEach?: (account: Account) => Promise<void> | void;
+  teardown?: () => Promise<void> | void;
 };
 
 export async function executeScenario<T extends TransactionCommon>(scenario: Scenario<T>) {
