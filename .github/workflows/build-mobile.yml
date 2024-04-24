@@ -91,7 +91,7 @@ jobs:
           path: ${{ github.workspace }}/apps/ledger-live-mobile/android/app/build/outputs/apk/stagingRelease
 
   build-mobile-app-ios:
-    runs-on: macos-latest
+    runs-on: macos-14
     name: "Build Ledger Live Mobile (Mac OS X)"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
@@ -113,7 +113,7 @@ jobs:
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.2.2
+          ruby-version: 3.3.0
       - name: install dependencies
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
       - name: bundle ios and android js
