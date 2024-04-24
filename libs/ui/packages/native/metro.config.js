@@ -1,34 +1,32 @@
-const extraConfig = require("@ledgerhq/metro-extra-config");
-const { mergeConfig } = require("metro-config");
-// const duplicatesChecker = extraConfig.duplicatesChecker();
+/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable no-console */
 
-const options = {
-  projectRoot: __dirname,
-  forcedDependencies: [
-    "react-native-svg",
-    "react-native",
-    "react",
-    // "react-native-reanimated",
-    // "expo",
-    // "expo-asset",
-    // "expo-file-system",
-    // "expo-font",
-    // "expo-modules-core",
-    // "expo-constants",
-    // "@babel/runtime",
-  ],
-};
+const path = require("path");
+const projectRootDir = path.join(__dirname, "..", "..", "..", "..");
 
-const config = extraConfig(options, {
-  resolver: {
-    resolverMainFields: ["sbmodern", "typescriptMain", "react-native", "browser", "main"],
+const nodeModulesPaths = [
+  path.resolve(__dirname, "node_modules"),
+  path.resolve(projectRootDir, "node_modules"),
+  path.resolve(projectRootDir, "node_modules", ".pnpm"),
+];
+
+module.exports = {
+  projectRoot: path.resolve(__dirname),
+  watchFolders: [projectRootDir],
+  transformer: {
+    getTransformOptions: async () => ({
+      transform: {
+        experimentalImportSupport: false,
+        inlineRequires: true,
+      },
+    }),
   },
-});
-
-const resolver = config.resolver.resolveRequest;
-
-module.exports = mergeConfig(config, {
   resolver: {
+    unstable_enableSymlinks: true,
+    unstable_enablePackageExports: true,
+    unstable_conditionNames: ["require", "react-native", "browser"],
+    nodeModulesPaths,
+    resolverMainFields: ["sbmodern", "typescriptMain", "react-native", "browser", "main"],
     extraNodeModules: {
       assert: require.resolve("assert/"),
       util: require.resolve("util/"),
@@ -37,12 +35,11 @@ module.exports = mergeConfig(config, {
       let resolution;
       // Necessary because expo removed the ability to override package.json main field…
       if (moduleName === "./lib/index") {
-        resolution = resolver(context, "./index", platform);
+        resolution = context.resolveRequest(context, "./index", platform);
       } else {
-        resolution = resolver(context, moduleName, platform);
+        resolution = context.resolveRequest(context, moduleName, platform);
       }
-      // duplicatesChecker({ context, moduleName, resolution });
       return resolution;
     },
   },
-});
+};
