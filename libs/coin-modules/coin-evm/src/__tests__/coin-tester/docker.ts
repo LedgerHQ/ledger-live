@@ -1,6 +1,6 @@
 import { v2 as compose } from "docker-compose";
 import chalk from "chalk";
-import { killSpeculos } from "@ledgerhq/coin-tester/lib/docker";
+import { killSpeculos } from "@ledgerhq/coin-tester/lib/signers/speculos";
 
 const cwd = __dirname;
 

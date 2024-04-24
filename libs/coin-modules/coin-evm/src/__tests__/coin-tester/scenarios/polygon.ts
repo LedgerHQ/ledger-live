@@ -1,7 +1,7 @@
 import Eth from "@ledgerhq/hw-app-eth";
 import { BigNumber } from "bignumber.js";
 import { ethers, providers } from "ethers";
-import { killSpeculos, spawnSigner } from "@ledgerhq/coin-tester/docker";
+import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { Scenario } from "@ledgerhq/coin-tester/main";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
@@ -44,7 +44,7 @@ export const scenarioPolygon: Scenario<EvmTransaction> = {
   name: "Ledger Live Basic Polygon Transactions",
   setup: async () => {
     const [{ transport, onSignerConfirmation }] = await Promise.all([
-      spawnSigner(
+      spawnSpeculos(
         "speculos",
         `/${defaultNanoApp.firmware}/Ethereum/app_${defaultNanoApp.version}.elf`,
       ),

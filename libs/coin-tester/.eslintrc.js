@@ -3,6 +3,7 @@ module.exports = {
     browser: true,
     es6: true,
   },
+  ignorePatterns: ["lib", "lib-es", ".turbo"],
   overrides: [
     {
       files: ["src/**/*.test.{ts,tsx}"],

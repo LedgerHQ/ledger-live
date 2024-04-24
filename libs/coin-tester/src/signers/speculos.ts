@@ -3,7 +3,7 @@ import axios from "axios";
 import fs from "fs/promises";
 import { v2 as compose } from "docker-compose";
 import SpeculosTransportHttp from "@ledgerhq/hw-transport-node-speculos-http";
-import { ENV } from "./types";
+import { ENV } from "../types";
 import chalk from "chalk";
 import { SignOperationEvent } from "@ledgerhq/types-live";
 
@@ -12,7 +12,7 @@ const cwd = path.join(__dirname);
 
 const delay = (timing: number) => new Promise(resolve => setTimeout(resolve, timing));
 
-export const spawnSigner = async (
+export const spawnSpeculos = async (
   service: "speculos",
   nanoAppEndpoint: `/${string}`,
 ): Promise<{
