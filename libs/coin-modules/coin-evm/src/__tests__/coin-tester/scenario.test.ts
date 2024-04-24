@@ -1,4 +1,4 @@
-import { killSpeculos } from "@ledgerhq/coin-tester/docker";
+import { killSpeculos } from "@ledgerhq/coin-tester/lib/signers/speculos";
 import { executeScenario } from "@ledgerhq/coin-tester/main";
 import { killAnvil } from "./docker";
 import { scenarioEthereum } from "./scenarios/ethereum";
