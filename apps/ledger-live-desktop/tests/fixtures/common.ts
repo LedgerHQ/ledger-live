@@ -76,6 +76,8 @@ export const test = base.extend<TestFixtures>({
     if (userdata) {
       await fsPromises.copyFile(userdataOriginalFile, `${userdataDestinationPath}/app.json`);
     }
+    setEnv("SPECULOS_API_PORT", 30001 + getEnv("SPECULOS_PID_OFFSET"));
+    setEnv("SPECULOS_PID_OFFSET", getEnv("SPECULOS_PID_OFFSET") + 1);
 
     // default environment variables
     env = Object.assign(
@@ -91,11 +93,10 @@ export const test = base.extend<TestFixtures>({
         LEDGER_MIN_HEIGHT: 768,
         FEATURE_FLAGS: JSON.stringify(featureFlags),
         MANAGER_DEV_MODE: true,
-        SPECULOS_API_PORT: (30001 + getEnv("SPECULOS_PID_OFFSET")).toString(),
+        SPECULOS_API_PORT: getEnv("SPECULOS_API_PORT").toString(),
       },
       env,
     );
-    setEnv("SPECULOS_PID_OFFSET", getEnv("SPECULOS_PID_OFFSET") + 1);
 
     // launch app
     const windowSize = { width: 1024, height: 768 };
