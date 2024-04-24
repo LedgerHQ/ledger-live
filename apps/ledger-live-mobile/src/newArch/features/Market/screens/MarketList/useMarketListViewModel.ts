@@ -55,9 +55,9 @@ function useMarketListViewModel() {
     starred: filterByStarredAccount ? starredMarketCoins : [],
   });
 
-  // const marketDataFiltered = filterByStarredAccount
-  //   ? marketResult.data?.filter(d => starredMarketCoins.includes(d.id)) ?? undefined
-  //   : marketResult.data;
+  const marketDataFiltered = filterByStarredAccount
+    ? marketResult.data?.filter(d => starredMarketCoins.includes(d.id)) ?? undefined
+    : marketResult.data;
 
   useEffect(() => {
     if (initialTop100) {
@@ -117,7 +117,7 @@ function useMarketListViewModel() {
   const viewabilityConfigCallbackPairs = useRef([{ onViewableItemsChanged, viewabilityConfig }]);
 
   return {
-    marketData: marketResult.data,
+    marketData: marketDataFiltered,
     filterByStarredAccount,
     starredMarketCoins,
     search,

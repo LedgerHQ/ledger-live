@@ -118,7 +118,7 @@ function View({
     ListFooterComponent: <ListFooter isLoading={loading} />,
     ListEmptyComponent: (
       <ListEmpty
-        hasNoSearchResult={Boolean(marketData?.length === 0 && search && !loading)}
+        hasNoSearchResult={Boolean(marketData?.length === 0 && search?.length && !loading)}
         hasEmptyStarredCoins={filterByStarredAccount && starredMarketCoins.length <= 0}
         search={search}
         resetSearch={resetSearch}
