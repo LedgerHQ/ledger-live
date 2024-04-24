@@ -1,6 +1,6 @@
 import { killSpeculos } from "@ledgerhq/coin-tester/lib/signers/speculos";
 import { executeScenario } from "@ledgerhq/coin-tester/main";
-import { killAnvil } from "./docker";
+import { killAnvil } from "./anvil";
 import { scenarioEthereum } from "./scenarios/ethereum";
 import { scenarioPolygon } from "./scenarios/polygon";
 
