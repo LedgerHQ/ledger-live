@@ -19,6 +19,7 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import BigNumber from "bignumber.js";
+import { getCurrentDevice } from "~/renderer/reducers/devices";
 
 export type UseSwapLiveAppHookProps = {
   manifestID: string | null;
@@ -42,6 +43,7 @@ export const useSwapLiveAppHook = (props: UseSwapLiveAppHookProps) => {
     getExchangeSDKParams,
     getProviderRedirectURLSearch,
   } = props;
+  const device = useSelector(getCurrentDevice);
   const exchangeRate = useSelector(rateSelector);
   const provider = exchangeRate?.provider;
   const exchangeRatesState = swapTransaction.swap?.rates;
@@ -82,6 +84,8 @@ export const useSwapLiveAppHook = (props: UseSwapLiveAppHookProps) => {
         swapApiBase: SWAP_API_BASE,
         estimatedFees,
         estimatedFeesUnit: estimatedFeesUnit?.id,
+        hardwareWalletType: device?.modelId,
+        swapType: exchangeRate?.tradeMethod,
       };
 
       if (!isEqual(newSwapWebProps, swapWebPropsRef.current)) {
@@ -102,5 +106,7 @@ export const useSwapLiveAppHook = (props: UseSwapLiveAppHookProps) => {
     updateSwapWebProps,
     estimatedFees,
     estimatedFeesUnit?.id,
+    device?.modelId,
+    exchangeRate?.tradeMethod,
   ]);
 };

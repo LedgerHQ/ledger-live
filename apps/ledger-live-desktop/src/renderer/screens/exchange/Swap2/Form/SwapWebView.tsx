@@ -55,6 +55,8 @@ export type SwapProps = {
   swapApiBase: string;
   estimatedFees: BigNumber;
   estimatedFeesUnit: string;
+  hardwareWalletType: string;
+  swapType: string;
 };
 
 export type SwapWebProps = {
