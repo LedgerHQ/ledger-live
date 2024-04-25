@@ -1,5 +1,14 @@
 # web-tools
 
+## 0.4.6-nightly.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@0.12.1-nightly.1
+  - @ledgerhq/live-common@34.1.1-nightly.1
+  - @ledgerhq/hw-app-eth@6.36.1-nightly.1
+
 ## 0.4.6-nightly.0
 
 ### Patch Changes

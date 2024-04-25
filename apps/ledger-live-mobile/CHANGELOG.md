@@ -1,5 +1,18 @@
 # live-mobile
 
+## 3.43.1-nightly.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@0.12.1-nightly.1
+  - @ledgerhq/coin-evm@1.1.1-nightly.1
+  - @ledgerhq/live-common@34.1.1-nightly.1
+  - @ledgerhq/live-countervalues@0.1.5-nightly.1
+  - @ledgerhq/live-countervalues-react@0.1.5-nightly.1
+  - @ledgerhq/live-nft@0.3.2-nightly.1
+  - @ledgerhq/live-nft-react@0.3.2-nightly.1
+
 ## 3.43.1-nightly.0
 
 ### Patch Changes

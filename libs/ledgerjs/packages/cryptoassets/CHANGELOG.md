@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 12.1.1-nightly.0
+
+### Patch Changes
+
+- [`fda6a81`](https://github.com/LedgerHQ/ledger-live/commit/fda6a814544b3a1debceab22f69485911e76cadc) Thanks [@valpinkman](https://github.com/valpinkman)! - Update TRC20 exchange importer not compatible with the new `fetchTokens` return
+
 ## 12.1.0
 
 ### Minor Changes

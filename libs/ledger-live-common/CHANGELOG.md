@@ -1,5 +1,23 @@
 # @ledgerhq/live-common
 
+## 34.1.1-nightly.1
+
+### Patch Changes
+
+- Updated dependencies [[`fda6a81`](https://github.com/LedgerHQ/ledger-live/commit/fda6a814544b3a1debceab22f69485911e76cadc)]:
+  - @ledgerhq/cryptoassets@12.1.1-nightly.0
+  - @ledgerhq/coin-framework@0.12.1-nightly.1
+  - @ledgerhq/coin-algorand@0.4.2-nightly.1
+  - @ledgerhq/coin-bitcoin@0.4.1-nightly.1
+  - @ledgerhq/coin-evm@1.1.1-nightly.1
+  - @ledgerhq/coin-polkadot@0.6.2-nightly.1
+  - @ledgerhq/hw-app-eth@6.36.1-nightly.1
+  - @ledgerhq/hw-app-vet@0.1.8-nightly.0
+  - @ledgerhq/live-countervalues@0.1.5-nightly.1
+  - @ledgerhq/live-countervalues-react@0.1.5-nightly.1
+  - @ledgerhq/live-nft@0.3.2-nightly.1
+  - @ledgerhq/coin-near@0.3.13-nightly.1
+
 ## 34.1.1-nightly.0
 
 ### Patch Changes

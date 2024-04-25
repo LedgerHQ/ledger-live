@@ -1,5 +1,13 @@
 # @ledgerhq/live-countervalues
 
+## 0.1.5-nightly.1
+
+### Patch Changes
+
+- Updated dependencies [[`fda6a81`](https://github.com/LedgerHQ/ledger-live/commit/fda6a814544b3a1debceab22f69485911e76cadc)]:
+  - @ledgerhq/cryptoassets@12.1.1-nightly.0
+  - @ledgerhq/coin-framework@0.12.1-nightly.1
+
 ## 0.1.5-nightly.0
 
 ### Patch Changes
