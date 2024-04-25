@@ -4,7 +4,7 @@ export default class MarketPage {
   searchBar = () => getElementById("search-box");
   starButton = () => getElementById("star-asset");
   assetCardBackBtn = () => getElementById("market-back-btn");
-  starMarketListButton = () => getElementById("toggle-starred-currencies");
+  starMarketListButton = () => getElementById("starred");
   buyAssetButton = () => getElementById("market-buy-btn");
 
   searchAsset(asset: string) {
