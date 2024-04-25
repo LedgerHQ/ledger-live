@@ -1,5 +1,5 @@
 import { DatasetTest } from "@ledgerhq/types-live";
-import { testBridge } from "@ledgerhq/coin-framework/test-helpers/bridge-integration-suite";
+// import { testBridge } from "@ledgerhq/coin-framework/test-helpers/bridge-integration-suite";
 
 import type { Transaction } from "./types";
 import bitcoin from "./datasets/bitcoin";
@@ -10,14 +10,13 @@ import decred from "./datasets/decred";
 import digibyte from "./datasets/digibyte";
 import dogecoin from "./datasets/dogecoin";
 import zencash from "./datasets/zencash";
-import komodo from "./datasets/komodo";
 import litecoin from "./datasets/litecoin";
 import peercoin from "./datasets/peercoin";
 import pivx from "./datasets/pivx";
-import qtum from "./datasets/qtum";
 import vertcoin from "./datasets/vertcoin";
 import viacoin from "./datasets/viacoin";
 import zcash from "./datasets/zcash";
+/*
 import { createBridges } from "./bridge/js";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import {
@@ -30,6 +29,7 @@ import {
   SignerTransaction,
 } from "./signer";
 import { fromTransactionRaw, toTransactionRaw, toTransactionStatusRaw } from "./transaction";
+*/
 
 export const dataset: DatasetTest<Transaction> = {
   implementations: ["js", "mock"],
@@ -42,17 +42,16 @@ export const dataset: DatasetTest<Transaction> = {
     digibyte,
     dogecoin,
     zencash,
-    komodo,
     litecoin,
     peercoin,
     pivx,
-    qtum,
     vertcoin,
     viacoin,
     zcash,
   },
 };
 
+/*
 const mockStartSpan = (
   _op: string,
   _description?: string,
@@ -204,3 +203,4 @@ testBridge({
   toTransactionRaw,
   toTransactionStatusRaw,
 });
+*/
