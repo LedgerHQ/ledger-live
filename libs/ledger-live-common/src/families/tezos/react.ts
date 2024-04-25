@@ -5,13 +5,13 @@ import {
   getAccountDelegationSync,
   getBakerSync,
   listBakers,
+  listBakersWithDefault,
   loadAccountDelegation,
   loadBaker,
-  whitelist,
 } from "@ledgerhq/coin-tezos/api/index";
 
 export function useBakers(whitelistAddresses: string[]): Baker[] {
-  const [bakers, setBakers] = useState<Baker[]>(() => whitelist(_lastBakers, whitelistAddresses));
+  const [bakers, setBakers] = useState<Baker[]>(() => listBakersWithDefault(whitelistAddresses));
   useEffect(() => {
     listBakers(whitelistAddresses).then(setBakers);
   }, [whitelistAddresses]);

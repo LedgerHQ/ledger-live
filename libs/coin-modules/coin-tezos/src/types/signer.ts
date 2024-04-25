@@ -30,11 +30,6 @@ export type LedgerSigner = {
   secretKey(): Promise<string | undefined>;
 };
 export interface TezosSigner {
-  createTezosSigner(
-    freshAddressPath: string,
-    arg1: boolean,
-    ED25519: DerivationType,
-  ): Promise<TezosAddress | TezosSignature>;
   getAddress(
     path: string,
     options: {

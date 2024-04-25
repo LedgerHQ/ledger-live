@@ -34,7 +34,7 @@ const createSigner: CreateSigner<TezosSigner> = (transport: Transport) => {
     createLedgerSigner: (path: string, prompt: boolean, derivationType: DerivationType) => {
       return new LedgerSigner(xtz.transport, path, prompt, derivationType);
     },
-  }
+  };
 };
 
 const bridge: Bridge<Transaction> = createBridges(executeWithSigner(createSigner));

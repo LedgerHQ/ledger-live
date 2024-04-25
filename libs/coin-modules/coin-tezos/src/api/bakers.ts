@@ -44,9 +44,12 @@ export const fetchAllBakers = async (): Promise<Baker[]> => {
   return allBakers;
 };
 
-export function whitelist(all: Baker[], addresses: string[]) {
+function whitelist(all: Baker[], addresses: string[]) {
   return all.filter(baker => addresses.includes(baker.address));
 }
+export const listBakersWithDefault = (whitelistAddresses: string[]): Baker[] => {
+  return whitelist(_lastBakers, whitelistAddresses);
+};
 
 export const listBakers = async (whitelistAddresses: string[]): Promise<Baker[]> => {
   _lastBakers = await cache();
