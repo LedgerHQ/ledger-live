@@ -29,7 +29,7 @@ function useBottomSectionViewModel() {
         }),
       );
     }
-    console.log("toggleFilterByStarredAccounts", filterByStarredCurrencies);
+
     dispatch(setMarketFilterByStarredCurrencies(!filterByStarredCurrencies));
     dispatch(setMarketCurrentPage(1));
     dispatch(setMarketRequestParams({ ...marketParams, page: 1 }));

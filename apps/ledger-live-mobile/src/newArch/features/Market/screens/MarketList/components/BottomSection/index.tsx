@@ -105,10 +105,7 @@ function View({
     >
       <TrackScreen category="Page" name={"Market"} access={true} />
       <TouchableOpacity
-        onPress={() => {
-          console.log("onpress");
-          toggleFilterByStarredCurrencies();
-        }}
+        onPress={toggleFilterByStarredCurrencies}
         testID="toggle-starred-currencies"
       >
         <StyledBadge bg={filterByStarredCurrencies ? "primary.c80" : "neutral.c30"}>

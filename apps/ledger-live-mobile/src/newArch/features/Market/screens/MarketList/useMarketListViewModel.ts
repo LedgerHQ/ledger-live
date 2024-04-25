@@ -116,7 +116,6 @@ function useMarketListViewModel() {
   };
   const viewabilityConfigCallbackPairs = useRef([{ onViewableItemsChanged, viewabilityConfig }]);
 
-  console.log("is filterByStarredAccount", filterByStarredCurrencies);
   return {
     marketData: marketDataFiltered,
     filterByStarredCurrencies,

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { screen } from "@testing-library/react-native";
+import { screen, waitFor } from "@testing-library/react-native";
 import { render } from "@tests/test-renderer";
 import { MarketPages } from "./shared";
 
@@ -9,15 +9,16 @@ describe("Market integration test", () => {
 
     //Set BTC as favorite
     expect(await screen.findByText("Bitcoin (BTC)")).toBeOnTheScreen();
-
     await user.press(screen.getByText("Bitcoin (BTC)"));
     await user.press(await screen.findByTestId("star-asset"));
     await user.press(screen.getByTestId("market-back-btn"));
+
+    await waitFor(() => screen.findByTestId("toggle-starred-currencies"));
+
     const ethRow = await screen.findByText("Ethereum (ETH)");
-
     expect(await screen.findByText("Bitcoin (BTC)")).toBeOnTheScreen();
-    await user.press(await screen.findByTestId("toggle-starred-currencies"));
 
+    await user.press(await screen.findByTestId("toggle-starred-currencies"));
     expect(ethRow).not.toBeOnTheScreen();
 
     //Set BNB as favorite
@@ -25,6 +26,8 @@ describe("Market integration test", () => {
     await user.press(await screen.findByText("BNB (BNB)"));
     await user.press(await screen.findByTestId("star-asset"));
     await user.press(screen.getByTestId("market-back-btn"));
+
+    await waitFor(() => screen.findByTestId("toggle-starred-currencies"));
     const ethRow2 = await screen.findByText("Ethereum (ETH)");
 
     await user.press(await screen.findByTestId("toggle-starred-currencies"));

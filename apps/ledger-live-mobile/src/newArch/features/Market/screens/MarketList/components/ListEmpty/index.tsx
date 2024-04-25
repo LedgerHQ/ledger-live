@@ -48,6 +48,15 @@ function ListEmpty({
         onButtonClick={resetSearch}
       />
     );
+  } else if (!isConnected) {
+    // Network down
+    return (
+      <EmptyState
+        illustrationSource={noNetworkIllustration}
+        title={t("errors.NetworkDown.title")}
+        description={t("errors.NetworkDown.description")}
+      />
+    );
   } else if (hasEmptyStarredCoins) {
     // Empty starred coins
     return <EmptyStarredCoins />;
