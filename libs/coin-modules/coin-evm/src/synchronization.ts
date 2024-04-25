@@ -17,7 +17,7 @@ import { Account, Operation, SubAccount } from "@ledgerhq/types-live";
 import { decodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { nftsFromOperations } from "@ledgerhq/coin-framework/nft/helpers";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { attachOperations, getSyncHash, mergeSubAccounts } from "./logic";
+import { attachOperations, getSyncHash, createAndKeepSwapHistory, mergeSubAccounts } from "./logic";
 import { ExplorerApi } from "./api/explorer/types";
 import { getExplorerApi } from "./api/explorer";
 import { getNodeApi } from "./api/node/index";
@@ -83,9 +83,8 @@ export const getAccountShape: GetAccountShape = async (infos, { blacklistedToken
     blacklistedTokenIds,
   );
   const subAccounts = shouldSyncFromScratch
-    ? newSubAccounts
+    ? createAndKeepSwapHistory(initialAccount, newSubAccounts) // Keep swap history from all account but still create a new subAccount
     : mergeSubAccounts(initialAccount, newSubAccounts); // Merging potential new subAccouns while preserving the references
-
   // Trying to confirm pending operations that we are sure of
   // because they were made in the live
   // Useful for integrations without explorers
