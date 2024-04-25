@@ -1,8 +1,8 @@
 import BigNumber from "bignumber.js";
-import { makeAccount } from "./fixtures/makeAccount";
-import { getOperationContents } from "./signOperation";
-import { Transaction } from "./types";
 import { OpKind, TezosToolkit } from "@taquito/taquito";
+import { makeAccount } from "../fixtures/makeAccount";
+import { getOperationContents } from "./signOperation";
+import { Transaction } from "../types";
 
 const tezos = new TezosToolkit("MOCK_API_KEY");
 

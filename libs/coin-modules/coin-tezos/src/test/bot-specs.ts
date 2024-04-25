@@ -1,21 +1,24 @@
-// @flow
 import sample from "lodash/sample";
 import invariant from "invariant";
-import type { Transaction } from "./types";
-import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
-import { genericTestDestination, pickSiblings } from "../../bot/specs";
-import type { AppSpec } from "../../bot/types";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import { genericTestDestination, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
+import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { getAccountDelegationSync, isAccountDelegating } from "./bakers";
-import whitelist from "./bakers.whitelist-default";
-import { acceptTransaction } from "./speculos-deviceActions";
+import { isTezosAccount, type Transaction } from "../types";
+import { getAccountDelegationSync, isAccountDelegating } from "../api/bakers";
+import whitelist from "../api/bakers.whitelist-default";
+import { acceptTransaction } from "./bot-deviceActions";
+import { Account } from "@ledgerhq/types-live";
 
 const maxAccount = 12;
 
-function expectUnrevealed(account) {
+function expectUnrevealed(account: Account) {
+  if (!isTezosAccount(account)) throw Error("Not TezosAccount type");
   invariant(account.tezosResources?.revealed === false, "account must be unreleaved");
 }
-function expectRevealed(account) {
+function expectRevealed(account: Account) {
+  if (!isTezosAccount(account)) throw Error("Not TezosAccount type");
   invariant(account.tezosResources?.revealed === true, "account must be releaved");
 }
 

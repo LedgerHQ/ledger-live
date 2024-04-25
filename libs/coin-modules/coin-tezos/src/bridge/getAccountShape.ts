@@ -1,19 +1,19 @@
-// @flow
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
-import { log } from "@ledgerhq/logs";
 import bs58check from "bs58check";
 import blake2b from "blake2b";
-import { encodeAccountId } from "../../account";
-import { mergeOps } from "../../bridge/jsHelpers";
-import type { GetAccountShape } from "../../bridge/jsHelpers";
-import { encodeOperationId } from "../../operation";
-import { areAllOperationsLoaded, decodeAccountId } from "../../account";
-import type { Account } from "@ledgerhq/types-live";
-import api from "./api/tzkt";
-import type { APIOperation } from "./api/tzkt";
-import { TezosOperation } from "./types";
+import { log } from "@ledgerhq/logs";
 import { getEnv } from "@ledgerhq/live-env";
+import type { Account, OperationType, TokenAccount } from "@ledgerhq/types-live";
+import {
+  areAllOperationsLoaded,
+  decodeAccountId,
+  encodeAccountId,
+} from "@ledgerhq/coin-framework/account/index";
+import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import api, { type APIOperation } from "../api/tzkt";
+import { TezosOperation } from "../types";
 
 function reconciliatePublicKey(
   publicKey: string | undefined,
@@ -32,7 +32,7 @@ const encodeAddress = (publicKey: Buffer) => {
   const curveData = {
     pkB58Prefix: Buffer.from([13, 15, 37, 217]),
     pkhB58Prefix: Buffer.from([6, 161, 159]),
-    compressPublicKey: (publicKey: Buffer, curve) => {
+    compressPublicKey: (publicKey: Buffer, curve: number) => {
       publicKey = publicKey.slice(0);
       publicKey[0] = curve;
       return publicKey;
@@ -41,10 +41,14 @@ const encodeAddress = (publicKey: Buffer) => {
   const publicKeyBuf = curveData.compressPublicKey(publicKey, curve);
   const key = publicKeyBuf.slice(1);
   const keyHashSize = 20;
+  // eslint-disable-next-line prefer-const
   let hash = blake2b(keyHashSize);
   hash.update(key);
-  hash.digest((hash = Buffer.alloc(keyHashSize)));
-  const address = bs58check.encode(Buffer.concat([curveData.pkhB58Prefix, hash]));
+  //FIXME
+  // hash.digest((hash = Buffer.alloc(keyHashSize)));
+  const address = bs58check.encode(
+    Buffer.concat([curveData.pkhB58Prefix, hash.digest(Buffer.alloc(keyHashSize))]),
+  );
   return address;
 };
 
@@ -120,9 +124,11 @@ export const getAccountShape: GetAccountShape = async infoInput => {
   };
 
   const balance = new BigNumber(apiAccount.balance);
-  const subAccounts = [];
+  const subAccounts: TokenAccount[] = [];
 
-  const newOps: any[] = apiOperations.map(txToOp({ address, accountId })).filter(Boolean);
+  const newOps = apiOperations
+    .map(txToOp({ address, accountId }))
+    .filter(Boolean) as unknown as TezosOperation[]; // force cast because `filter(Boolean)` remove undefined and null value
 
   const operations = mergeOps(initialStableOperations, newOps);
 
@@ -143,9 +149,9 @@ export const getAccountShape: GetAccountShape = async infoInput => {
 };
 
 const txToOp =
-  ({ address, accountId }) =>
+  ({ address, accountId }: { address: string; accountId: string }) =>
   (tx: APIOperation): TezosOperation | null | undefined => {
-    let type;
+    let type: OperationType;
     let maybeValue;
     let senders: string[] = [];
     let recipients: string[] = [];

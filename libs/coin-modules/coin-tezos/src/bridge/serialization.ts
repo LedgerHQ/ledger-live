@@ -1,4 +1,4 @@
-import type { TezosAccount, TezosAccountRaw, TezosResources, TezosResourcesRaw } from "./types";
+import type { TezosAccount, TezosAccountRaw, TezosResources, TezosResourcesRaw } from "../types";
 import { Account, AccountRaw } from "@ledgerhq/types-live";
 
 export function toTezosResourcesRaw(r: TezosResources): TezosResourcesRaw {
