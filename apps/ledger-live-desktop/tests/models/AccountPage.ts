@@ -15,6 +15,8 @@ export class AccountPage {
   readonly stakeButtonCosmos: Locator;
   readonly receiveButton: Locator;
   readonly sendButton: Locator;
+  readonly accountName: (name: string) => Locator;
+  readonly lastOperation: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -33,6 +35,8 @@ export class AccountPage {
       .locator("data-test-id=account-buttons-group")
       .getByRole("button", { name: "Receive" });
     this.sendButton = page.getByRole("button", { name: "Send" });
+    this.accountName = name => page.locator(`text=${name}`);
+    this.lastOperation = page.locator("text=Latest operations");
   }
 
   async navigateToSwap() {
