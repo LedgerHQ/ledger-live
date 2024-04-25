@@ -11,7 +11,6 @@ const initialState: MarketState = {
   marketParams: {
     range: "24h",
     limit: 50,
-    ids: [],
     starred: [],
     orderBy: "market_cap",
     order: "desc",

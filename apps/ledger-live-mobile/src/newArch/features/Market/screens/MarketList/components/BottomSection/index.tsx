@@ -20,13 +20,11 @@ import { RANGES } from "~/newArch/features/Market/utils";
 const SORT_OPTIONS = {
   top100: {
     requestParam: {
-      ids: [],
       starred: [],
       orderBy: "market_cap",
       order: "desc",
       search: "",
       liveCompatible: false,
-      sparkline: false,
       top100: true,
     },
     value: "top100",

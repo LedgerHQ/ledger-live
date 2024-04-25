@@ -91,8 +91,10 @@ export function useMarketData(props: MarketListRequestParams): MarketListRequest
         page,
         {
           counterCurrency: props.counterCurrency,
-          liveCompatible: props.liveCompatible,
           ...(props.search && props.search?.length > 1 && { search: props.search }),
+          ...(props.starred && props.starred?.length >= 1 && { starred: props.starred }),
+          ...(props.liveCoinsList &&
+            props.liveCoinsList?.length >= 1 && { liveCoinsList: props.liveCoinsList }),
         },
       ],
       queryFn: () => fetchList({ ...props, page }),

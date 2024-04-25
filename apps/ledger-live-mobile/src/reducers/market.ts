@@ -13,7 +13,6 @@ export const INITIAL_STATE: MarketState = {
   marketParams: {
     range: "24h",
     limit: 25,
-    ids: [],
     starred: [],
     orderBy: "market_cap",
     order: "desc",
@@ -21,7 +20,6 @@ export const INITIAL_STATE: MarketState = {
     liveCompatible: false,
     page: 1,
     counterCurrency: "usd",
-    sparkline: false,
     top100: false,
   },
   marketFilterByStarredCurrencies: false,

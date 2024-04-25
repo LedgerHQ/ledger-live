@@ -10,6 +10,8 @@ import DeltaVariation from "LLM/features/Market/components/DeltaVariation";
 import Touchable from "~/components/Touchable";
 import { useSettings } from "~/hooks";
 import { CurrencyData } from "@ledgerhq/live-common/market/utils/types";
+import { useTimeRange } from "~/actions/settings";
+import { PortfolioRange } from "@ledgerhq/types-live";
 
 type Props = {
   currency: CryptoOrTokenCurrency;
@@ -22,12 +24,31 @@ const MarketPrice = ({ currency, selectedCoinData, counterCurrency }: Props) => 
   const { locale } = useSettings();
   const navigation = useNavigation();
 
+  const [range] = useTimeRange();
+
   const goToMarketPage = useCallback(() => {
     navigation.navigate(ScreenName.MarketDetail, {
       currencyId: currency.id,
+      currencyName: currency.name,
     });
   }, [currency, navigation]);
 
+  const getPrice = (selectedCoinData: CurrencyData, range: PortfolioRange) => {
+    switch (range) {
+      case "all":
+      case "year":
+        return selectedCoinData.priceChangePercentage["1y"];
+      case "month":
+        return selectedCoinData.priceChangePercentage["30d"];
+      case "week":
+        return selectedCoinData.priceChangePercentage["7d"];
+      default:
+      case "day":
+        return selectedCoinData.priceChangePercentage["24h"];
+    }
+  };
+
+  const priceChange = getPrice(selectedCoinData, range);
   return (
     <Flex flex={1} mt={6}>
       <Touchable
@@ -54,7 +75,7 @@ const MarketPrice = ({ currency, selectedCoinData, counterCurrency }: Props) => 
             <Text variant="small" fontWeight="medium" lineHeight="20px" color="neutral.c70">
               {t("portfolio.marketPriceSection.currencyPriceChange")}
             </Text>
-            <DeltaVariation percent value={selectedCoinData?.priceChangePercentage || 0} />
+            <DeltaVariation percent value={priceChange || 0} />
           </Flex>
           <IconsLegacy.ChevronRightMedium size={24} />
         </Flex>

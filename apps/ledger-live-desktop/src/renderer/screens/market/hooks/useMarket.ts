@@ -25,17 +25,6 @@ export function useMarket() {
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
   const locale = useSelector(localeSelector);
 
-  useInitSupportedCounterValues();
-
-  const { data: fromCurrencies } = useFetchCurrencyFrom();
-
-  const { liveCoinsList, supportedCounterCurrencies } = useMarketDataProvider();
-
-  const marketResult = useMarketDataHook({
-    ...marketParams,
-    liveCoinsList,
-  });
-
   const REFRESH_RATE =
     Number(lldRefreshMarketDataFeature?.params?.refreshTime) > 0
       ? REFETCH_TIME_ONE_MINUTE * Number(lldRefreshMarketDataFeature?.params?.refreshTime)
@@ -44,6 +33,17 @@ export function useMarket() {
   const { range, starred = [], liveCompatible, orderBy, order, search = "" } = marketParams;
 
   const starFilterOn = starred.length > 0;
+
+  useInitSupportedCounterValues();
+
+  const { data: fromCurrencies } = useFetchCurrencyFrom();
+
+  const { liveCoinsList, supportedCounterCurrencies } = useMarketDataProvider();
+
+  const marketResult = useMarketDataHook({
+    ...marketParams,
+    liveCoinsList: liveCompatible ? liveCoinsList : [],
+  });
 
   const timeRanges = useMemo(
     () =>

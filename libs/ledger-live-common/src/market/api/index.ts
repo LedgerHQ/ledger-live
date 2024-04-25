@@ -29,7 +29,6 @@ export async function fetchList({
   page = 1,
   order = "desc",
   search = "",
-  liveCompatible = false,
   liveCoinsList = [],
   starred = [],
 }: MarketListRequestParams): Promise<MarketItemResponse[]> {
@@ -41,6 +40,8 @@ export async function fetchList({
       to: counterCurrency,
       sort: "market-cap-rank",
       ...(search.length > 1 && { filter: search }),
+      ...(starred.length > 1 && { ids: starred.join(",") }),
+      ...(liveCoinsList.length > 1 && { ids: liveCoinsList.join(",") }),
     },
   });
 

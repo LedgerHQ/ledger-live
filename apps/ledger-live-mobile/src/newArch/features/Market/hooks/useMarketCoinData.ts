@@ -33,7 +33,6 @@ export const useMarketCoinData = ({ currencyId, currencyName }: HookProps) => {
     counterCurrency,
     range,
     currency,
-
     dataChart: resCurrencyChartData.data,
     loadingChart: resCurrencyChartData.isLoading,
     loading: isLoading,
