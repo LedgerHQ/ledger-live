@@ -383,6 +383,10 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
 
+  buySellShortcut: {
+    enabled: false,
+  },
+
   ptxSwapLiveApp: {
     enabled: false,
   },
