@@ -36,9 +36,12 @@ type TestFixtures = {
   simulateCamera: string;
 };
 
+const IS_MOCK = process.env.MOCK == "0";
 const IS_DEBUG_MODE = !!process.env.PWDEBUG;
-setEnv("SPECULOS_PID_OFFSET", Math.floor(Math.random() * 1000));
-setEnv("DISABLE_APP_VERSION_REQUIREMENTS", true);
+if (IS_MOCK) {
+  setEnv("SPECULOS_PID_OFFSET", Math.floor(Math.random() * 1000));
+  setEnv("DISABLE_APP_VERSION_REQUIREMENTS", true);
+}
 
 export const test = base.extend<TestFixtures>({
   env: undefined,
@@ -76,15 +79,18 @@ export const test = base.extend<TestFixtures>({
     if (userdata) {
       await fsPromises.copyFile(userdataOriginalFile, `${userdataDestinationPath}/app.json`);
     }
-    setEnv("SPECULOS_API_PORT", 30001 + getEnv("SPECULOS_PID_OFFSET"));
-    setEnv("SPECULOS_PID_OFFSET", getEnv("SPECULOS_PID_OFFSET") + 1);
+
+    if (IS_MOCK) {
+      setEnv("SPECULOS_API_PORT", 30001 + getEnv("SPECULOS_PID_OFFSET"));
+      setEnv("SPECULOS_PID_OFFSET", getEnv("SPECULOS_PID_OFFSET") + 1);
+    }
 
     // default environment variables
     env = Object.assign(
       {
         ...process.env,
         VERBOSE: true,
-        MOCK: process.env.MOCK == "0" ? "" : "1",
+        MOCK: IS_MOCK ? undefined : true,
         MOCK_COUNTERVALUES: true,
         HIDE_DEBUG_MOCK: true,
         CI: process.env.CI || undefined,
@@ -92,8 +98,8 @@ export const test = base.extend<TestFixtures>({
         CRASH_ON_INTERNAL_CRASH: true,
         LEDGER_MIN_HEIGHT: 768,
         FEATURE_FLAGS: JSON.stringify(featureFlags),
-        MANAGER_DEV_MODE: true,
-        SPECULOS_API_PORT: getEnv("SPECULOS_API_PORT").toString(),
+        MANAGER_DEV_MODE: IS_MOCK ? true : undefined,
+        SPECULOS_API_PORT: IS_MOCK ? getEnv("SPECULOS_API_PORT").toString() : undefined,
       },
       env,
     );
