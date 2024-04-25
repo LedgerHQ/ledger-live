@@ -71,7 +71,7 @@ import { ErrorBody } from "../ErrorBody";
 import LinkWithExternalIcon from "../LinkWithExternalIcon";
 import { closePlatformAppDrawer } from "~/renderer/actions/UI";
 import { CompleteExchangeError } from "@ledgerhq/live-common/exchange/error";
-import { CurrencySettings } from "~/renderer/reducers/settings";
+import { SettingsState, currencySettingsLocaleSelector } from "~/renderer/reducers/settings";
 
 export const AnimationWrapper = styled.div`
   width: 600px;
@@ -950,7 +950,7 @@ export const renderSwapDeviceConfirmation = ({
   amountExpectedTo,
   estimatedFees,
   swapDefaultTrack,
-  getCurrencySettings,
+  stateSettings,
 }: {
   modelId: DeviceModelId;
   type: Theme["theme"];
@@ -960,7 +960,7 @@ export const renderSwapDeviceConfirmation = ({
   amountExpectedTo?: string;
   estimatedFees?: string;
   swapDefaultTrack: Record<string, string | boolean>;
-  getCurrencySettings: (currency: Currency) => CurrencySettings;
+  stateSettings: SettingsState;
 }) => {
   const fromAccountCurrency = getAccountCurrency(exchange.fromAccount);
   const toAccountCurrency = getAccountCurrency(exchange.toAccount);
@@ -978,9 +978,10 @@ export const renderSwapDeviceConfirmation = ({
   const noticeType = getNoticeType(exchangeRate.provider);
   const alertProperties = noticeType.learnMore ? { learnMoreUrl: urls.swap.learnMore } : {};
 
-  const unitFromExchange = getCurrencySettings(fromAccountCurrency).unit;
-  const unitToExchange = getCurrencySettings(toAccountCurrency).unit;
-  const unitMainAccount = getCurrencySettings(
+  const unitFromExchange = currencySettingsLocaleSelector(stateSettings, fromAccountCurrency).unit;
+  const unitToExchange = currencySettingsLocaleSelector(stateSettings, toAccountCurrency).unit;
+  const unitMainAccount = currencySettingsLocaleSelector(
+    stateSettings,
     getMainAccount(exchange.fromAccount, exchange.fromParentAccount).currency,
   ).unit;
 

@@ -18,8 +18,7 @@ import {
   addNewDeviceModel,
 } from "~/renderer/actions/settings";
 import {
-  CurrencySettings,
-  currencySettingsLocaleSelector,
+  storeSelector as settingsSelector,
   preferredDeviceModelSelector,
 } from "~/renderer/reducers/settings";
 import { DeviceModelId } from "@ledgerhq/devices";
@@ -76,10 +75,9 @@ import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/
 import { AppAndVersion } from "@ledgerhq/live-common/hw/connectApp";
 import { Device } from "@ledgerhq/types-devices";
 import { LedgerErrorConstructor } from "@ledgerhq/errors/lib/helpers";
-import { Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { isDeviceNotOnboardedError } from "./utils";
 import { useKeepScreenAwake } from "~/renderer/hooks/useKeepScreenAwake";
-import { State } from "~/renderer/reducers";
 
 type LedgerError = InstanceType<LedgerErrorConstructor<{ [key: string]: unknown }>>;
 
@@ -232,14 +230,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
   const dispatch = useDispatch();
   const preferredDeviceModel = useSelector(preferredDeviceModelSelector);
   const swapDefaultTrack = useGetSwapTrackingProperties();
-
-  const useCurrencySettingsSelector = (currency: Currency): CurrencySettings => {
-    const currencySettings = useSelector((state: State) =>
-      currencySettingsLocaleSelector(state.settings, currency),
-    );
-
-    return currencySettings;
-  };
+  const stateSettings = useSelector(settingsSelector);
 
   const type = useTheme().colors.palette.type;
 
@@ -376,7 +367,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
           swapDefaultTrack,
           amountExpectedTo: amountExpectedTo.toString() ?? undefined,
           estimatedFees: estimatedFees?.toString() ?? undefined,
-          getCurrencySettings: useCurrencySettingsSelector,
+          stateSettings,
         });
       }
 
@@ -409,7 +400,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
       amountExpectedTo: amountExpectedTo ?? undefined,
       estimatedFees: estimatedFees ?? undefined,
       swapDefaultTrack,
-      getCurrencySettings: useCurrencySettingsSelector,
+      stateSettings,
     });
   }
 
