@@ -389,6 +389,10 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
 
+  buySellShortcut: {
+    enabled: false,
+  },
+
   ptxSwapLiveApp: {
     enabled: false,
   },
@@ -461,6 +465,7 @@ export const DEFAULT_FEATURES: Features = {
   },
   spamReportNfts: DEFAULT_FEATURE,
   lldWalletSync: DEFAULT_FEATURE,
+  lldNftsGalleryNewArch: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings
