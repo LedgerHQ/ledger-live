@@ -9,7 +9,7 @@ import {
 import {
   assertUnreachable,
   ValidatorsAppValidator,
-} from "@ledgerhq/live-common/families/solana/logic";
+} from "@ledgerhq/live-common/families/solana/staking";
 import { AccountLike } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";

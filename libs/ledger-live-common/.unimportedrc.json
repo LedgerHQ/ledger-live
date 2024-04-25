@@ -125,6 +125,7 @@
     "src/families/solana/banner.ts",
     "src/families/solana/logic.ts",
     "src/families/solana/react.ts",
+    "src/families/solana/staking.ts",
     "src/families/solana/types.ts",
     "src/families/stacks/deviceTransactionConfig.ts",
     "src/families/stacks/types.ts",

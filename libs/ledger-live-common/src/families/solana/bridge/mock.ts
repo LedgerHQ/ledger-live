@@ -16,7 +16,7 @@ import { getMockedMethods } from "./mock-data";
 
 function mockChainAPI(config: Config): ChainAPI {
   const mockedMethods = getMockedMethods();
-  const api: any = new Proxy(
+  const api = new Proxy(
     { config },
     {
       get(_, propKey) {
