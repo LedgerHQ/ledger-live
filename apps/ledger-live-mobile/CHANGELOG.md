@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.44.0-next.1
+
+### Patch Changes
+
+- [#6750](https://github.com/LedgerHQ/ledger-live/pull/6750) [`af4c6ff`](https://github.com/LedgerHQ/ledger-live/commit/af4c6ff6ad022e31b55f02f441858fdb24edd528) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - App crashes when tapping 'Learn how to withdraw from exchange' in receive flow
+
 ## 3.44.0-next.0
 
 ### Minor Changes
