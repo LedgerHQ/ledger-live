@@ -80,11 +80,21 @@ export default function RecoverPlayer({
       lang: locale,
       availableOnDesktop,
       deviceId: state?.deviceId,
+      deviceModelId: device?.modelId,
       currency,
       ...params,
       ...queryParams,
     }),
-    [availableOnDesktop, locale, params, queryParams, state?.deviceId, currency, theme],
+    [
+      theme,
+      locale,
+      availableOnDesktop,
+      device?.modelId,
+      state?.deviceId,
+      currency,
+      params,
+      queryParams,
+    ],
   );
 
   return manifest ? (
