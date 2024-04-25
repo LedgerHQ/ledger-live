@@ -11,6 +11,9 @@ export class AddAccountModal extends Modal {
   readonly addMoreButton: Locator;
   readonly doneButton: Locator;
   readonly accountsList: Locator;
+  readonly selectedCurrency: (currency: string) => Locator;
+  readonly addNewAccount: Locator;
+  readonly successAdd: Locator;
 
   constructor(page: Page) {
     super(page);
@@ -23,6 +26,9 @@ export class AddAccountModal extends Modal {
     this.stopButton = page.locator("data-test-id=add-accounts-import-stop-button");
     this.addMoreButton = page.locator("data-test-id=add-accounts-finish-add-more-button");
     this.doneButton = page.locator("data-test-id=add-accounts-finish-close-button");
+    this.selectedCurrency = currency => page.locator(`text=${currency}`);
+    this.addNewAccount = page.locator("text=Add new account");
+    this.successAdd = page.locator("text=Account added successfully");
   }
 
   async select(currency: string) {

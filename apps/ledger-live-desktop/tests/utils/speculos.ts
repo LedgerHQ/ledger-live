@@ -12,6 +12,7 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import axios from "axios";
+import { getEnv } from "@ledgerhq/live-env";
 
 type Specs = {
   [key: string]: {
@@ -79,7 +80,7 @@ export const specs: Specs = {
     appQuery: {
       model: DeviceModelId.nanoSP,
       appName: "CardanoADA",
-      appVersion: "5.0.1",
+      appVersion: "7.1.0",
     },
     dependency: "",
   },
@@ -177,26 +178,54 @@ interface ResponseData {
   events: Event[];
 }
 
-export async function pressRightUntil(text: string, maxNumber: number = 10) {
-  let pressNb = 0;
-  const speculosApiPort = process.env.SPECULOS_API_PORT;
-  while (pressNb < maxNumber) {
-    await axios.post(`http://127.0.0.1:${speculosApiPort}/button/right`, {
-      action: "press-and-release",
-    });
+export async function pressBoth() {
+  const speculosApiPort = getEnv("SPECULOS_API_PORT");
+  await axios.post(`http://127.0.0.1:${speculosApiPort}/button/both`, {
+    action: "press-and-release",
+  });
+}
+
+export async function pressRightUntil(text: string, maxAttempts: number = 10): Promise<string[]> {
+  const speculosApiPort = getEnv("SPECULOS_API_PORT");
+  let attempts = 0;
+  let textFound: boolean = false;
+  while (attempts < maxAttempts && !textFound) {
     const response = await axios.get<ResponseData>(
       `http://127.0.0.1:${speculosApiPort}/events?stream=false&currentscreenonly=true`,
     );
     const responseData = response.data;
-    console.log(responseData);
     const texts = responseData.events.map(event => event.text);
-    if (texts.includes(text)) {
-      console.log(`Text "${text}" found on the screen`);
-      await axios.post(`http://127.0.0.1:${speculosApiPort}/button/both`, {
-        action: "press-and-release",
-      });
-      return;
+
+    if (texts[0].includes(text)) {
+      textFound = true;
+      return texts;
     }
-    pressNb++;
+
+    await axios.post(`http://127.0.0.1:${speculosApiPort}/button/right`, {
+      action: "press-and-release",
+    });
+    attempts++;
   }
+  if (attempts == maxAttempts) {
+    throw new Error(
+      `ElementNotFoundException: Element with text "${text}" not found on speculos device`,
+    );
+  }
+  return [];
+}
+
+export function verifyAddress(address: string, text: string[]): boolean {
+  const textConcat = text.slice(1).join("");
+  if (textConcat.includes(address)) {
+    return true;
+  }
+  return false;
+}
+
+export function verifyAmount(amount: string, text: string[]): boolean {
+  const amountDevice = text[1];
+  if (amountDevice.includes(amount)) {
+    return true;
+  }
+  return false;
 }

@@ -6,12 +6,25 @@ import { AccountPage } from "../../models/AccountPage";
 import { SendModal } from "../../models/SendModal";
 import { Modal } from "../../models/Modal";
 import { Currency } from "../../enum/Currency";
-import { Device, specs, startSpeculos, stopSpeculos, pressRightUntil } from "../../utils/speculos";
-import { addresses } from "../../enum/Address";
+import {
+  Device,
+  specs,
+  startSpeculos,
+  stopSpeculos,
+  pressRightUntil,
+  pressBoth,
+  verifyAddress,
+} from "../../utils/speculos";
 
 test.use({ userdata: "speculos" });
-let device: Device | null;
 
+let device: Device | undefined;
+
+test.afterEach(async () => {
+  await stopSpeculos(device);
+});
+
+// ONLY TESTNET (SEND WILL BE APPROVED ON DEVICE)
 const currencies: Currency[] = [Currency.tETH];
 
 for (const currency of currencies) {
@@ -30,31 +43,26 @@ for (const currency of currencies) {
 
     await test.step(`send`, async () => {
       await accountPage.sendButton.click();
-      const address = addresses[currency.uiName];
+      const address = currency.address2;
       await sendModal.fillRecipient(address);
       await sendModal.continueButton.click();
-      await modal.cryptoAmountField.fill("0,00001");
+      await modal.cryptoAmountField.fill("0.00001");
       await sendModal.countinueSendAmount();
       await expect(sendModal.verifyTotalDebit).toBeVisible();
+      expect(await sendModal.checkAddress(currency.address2)).toBeVisible();
       await sendModal.continueButton.click();
     });
 
-    await test.step(`[${currency.uiName}] Validate or reject message`, async () => {
+    await test.step(`[${currency.uiName}] Validate message on device`, async () => {
       await expect(sendModal.checkDevice).toBeVisible();
-      if (currency === Currency.tBTC || currency === Currency.tETH) {
-        console.log("Accept SITUATION");
-        await pressRightUntil("Accept"); //TODO: Check if it's "Accept" or "Approve" => BTC Relou car Approve... (checker version nanoAPP)
-        await expect(sendModal.checkTransactionbroadcast).toBeVisible();
-        await expect.soft(sendModal.container).toHaveScreenshot(`validate.png`);
-      } else {
-        console.log("REJECT SITUATION");
-        await pressRightUntil("Reject");
-        await expect(sendModal.checkTransactionDenied).toBeVisible();
-        await expect.soft(sendModal.container).toHaveScreenshot(`denied.png`);
-      }
+      await expect(sendModal.checkAmount(currency.deviceName)).toBeVisible();
+      const amountScreen = await pressRightUntil("Amount");
+      expect(verifyAddress("0.00001", amountScreen)).toBe(true);
+      const addressScreen = await pressRightUntil("Address");
+      expect(verifyAddress(currency.address2, addressScreen)).toBe(true);
+      await pressRightUntil("Accept"); //TODO: Check if it's "Accept" or "Approve" => nanoApp version
+      await pressBoth();
+      await expect(sendModal.checkTransactionbroadcast).toBeVisible();
     });
-  });
-  test.afterAll(async () => {
-    await stopSpeculos(device);
   });
 }
