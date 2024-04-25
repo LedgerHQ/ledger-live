@@ -427,6 +427,9 @@ export const createAndKeepSwapHistory = (
     oldSubAccountsById[oldSubAccount.id!] = oldSubAccount;
   }
 
+  // Creating a new map to not returned deleted accounts
+  const returnAccount: { [key: string]: Partial<SubAccount> } = {};
+
   // Looping on new sub accounts to compare them with already existing ones
   // Already existing will be updated if necessary (see `updatableSubAccountProperties`)
   // Fresh new sub accounts will be added/pushed after already existing
@@ -447,11 +450,11 @@ export const createAndKeepSwapHistory = (
     updates.swapHistory = duplicatedAccount.swapHistory || [];
 
     // Modifying the Map with the updated sub account with a new ref
-    oldSubAccountsById[newSubAccount.id!] = {
+    returnAccount[newSubAccount.id!] = {
       ...newSubAccount,
       ...updates,
     };
   }
-  const updatedSubAccounts = Object.values(oldSubAccountsById);
+  const updatedSubAccounts = Object.values(returnAccount);
   return [...updatedSubAccounts, ...newSubAccountsToAdd];
 };
