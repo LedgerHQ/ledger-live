@@ -688,7 +688,7 @@ export const unitForCurrencySelector = (
   },
 ): Unit => {
   const obj = state.settings.currenciesSettings[currency.ticker];
-  if (obj) return obj.unit;
+  if (obj?.unit) return obj.unit;
   const defs = currencySettingsDefaults(currency);
   return defs.unit;
 };
