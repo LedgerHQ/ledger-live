@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+import "../../__tests__/test-helpers/dom-polyfill";
 import { renderHook } from "@testing-library/react";
 import { getAccountBridge, getCurrencyBridge } from "../../bridge";
 import { getCryptoCurrencyById } from "../../currencies";

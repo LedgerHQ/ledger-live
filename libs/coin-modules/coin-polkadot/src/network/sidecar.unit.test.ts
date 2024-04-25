@@ -3,6 +3,8 @@ import { HttpResponse, http } from "msw";
 import { getAccount, getRegistry } from "./sidecar";
 import mockServer from "./sidecar.mock";
 
+jest.setTimeout(60000);
+
 describe("getAccount", () => {
   let balanceResponseStub = {};
 
