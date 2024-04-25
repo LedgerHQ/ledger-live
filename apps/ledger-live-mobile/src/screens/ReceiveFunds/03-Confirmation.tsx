@@ -39,6 +39,7 @@ import { hasClosedWithdrawBannerSelector } from "~/reducers/settings";
 import { setCloseWithdrawBanner } from "~/actions/settings";
 import * as Animatable from "react-native-animatable";
 import { useCompleteActionCallback } from "~/logic/postOnboarding/useCompleteAction";
+import { urls } from "~/utils/urls";
 
 const AnimatedView = Animatable.View;
 
@@ -121,7 +122,6 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
       type: "card",
       page: "Receive Account Qr Code",
     });
-    // @ts-expect-error TYPINGS
     Linking.openURL(urls.withdrawCrypto);
   };
   useEffect(() => {
