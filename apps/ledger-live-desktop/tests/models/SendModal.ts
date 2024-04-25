@@ -11,6 +11,8 @@ export class SendModal extends Modal {
   readonly checkDevice: Locator;
   readonly checkTransactionbroadcast: Locator;
   readonly checkTransactionDenied: Locator;
+  readonly checkAddress: (address: string) => Locator;
+  readonly checkAmount: (currency: string) => Locator;
 
   constructor(page: Page) {
     super(page);
@@ -22,6 +24,9 @@ export class SendModal extends Modal {
     this.checkDevice = page.locator("text=Sign transaction on your Ledger Device");
     this.checkTransactionbroadcast = page.locator("text=Transaction sent");
     this.checkTransactionDenied = page.locator("text=Operation denied on device");
+    this.checkAddress = address =>
+      page.locator('[data-test-id="modal-content"]').locator(`text=${address}`);
+    this.checkAmount = currency => page.locator(`text=0.00001 ${currency}`);
   }
 
   async selectAccount(name: string) {
