@@ -53,9 +53,8 @@ export const buildSignOperation =
         }
 
         const signature = packTransaction(account, accountInfo.status === "uninit", sig);
-        const hash = sig.hash().toString("hex");
 
-        const operation = buildOptimisticOperation(account, transaction, address, hash);
+        const operation = buildOptimisticOperation(account, transaction, address);
 
         o.next({
           type: "signed",
@@ -80,7 +79,6 @@ const buildOptimisticOperation = (
   account: Account,
   transaction: Transaction,
   address: string,
-  hash: string,
 ): TonOperation => {
   const { recipient, amount, fees, comment, useAllAmount, subAccountId } = transaction;
   const { id: accountId } = account;
