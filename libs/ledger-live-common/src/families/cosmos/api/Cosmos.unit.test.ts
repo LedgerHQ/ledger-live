@@ -260,6 +260,14 @@ describe("CosmosApi", () => {
               ],
             },
           });
+        } else if (networkOptions.url.includes("node_info")) {
+          return Promise.resolve({
+            data: {
+              application_version: {
+                cosmos_sdk_version: "0.44.0",
+              },
+            },
+          });
         } else {
           return Promise.resolve({
             data: {
@@ -279,20 +287,32 @@ describe("CosmosApi", () => {
       const simulatedTotal = 500;
       // @ts-expect-error method is mocked
       network.mockImplementation((networkOptions: { method: string; url: string }) => {
-        const pageOffset: string = networkOptions.url.split("pagination.offset=")[1].split("&")[0];
+        if (networkOptions.url.includes("recipient") || networkOptions.url.includes("sender")) {
+          const pageOffset: string = networkOptions.url
+            .split("pagination.offset=")[1]
+            .split("&")[0];
 
-        const pageSize = Number(networkOptions.url.split("pagination.limit=")[1].split("&")[0]);
+          const pageSize = Number(networkOptions.url.split("pagination.limit=")[1].split("&")[0]);
 
-        return Promise.resolve({
-          data: {
-            pagination: { total: simulatedTotal },
-            tx_responses: Array(pageSize)
-              .fill({})
-              .map((_, i) => ({
-                txhash: `${pageOffset}_${i}`,
-              })),
-          },
-        });
+          return Promise.resolve({
+            data: {
+              pagination: { total: simulatedTotal },
+              tx_responses: Array(pageSize)
+                .fill({})
+                .map((_, i) => ({
+                  txhash: `${pageOffset}_${i}`,
+                })),
+            },
+          });
+        } else if (networkOptions.url.includes("node_info")) {
+          return Promise.resolve({
+            data: {
+              application_version: {
+                cosmos_sdk_version: "0.44.0",
+              },
+            },
+          });
+        }
       });
       const txs = await cosmosApi.getTransactions("address", 10);
       // sender + recipient
@@ -310,7 +330,7 @@ describe("CosmosApi", () => {
         reverse: true,
       };
       // @ts-expect-error method is mocked
-      network.mockImplementationOnce(({ url }) => {
+      network.mockImplementation(({ url }) => {
         if (
           url ===
           `${nodeUrl}/cosmos/tx/v1beta1/txs?events=message.sender='${sender}'&pagination.limit=${pagination.limit}&pagination.offset=${pagination.offset}&pagination.reverse=${pagination.reverse}`
@@ -580,6 +600,14 @@ describe("CosmosApi", () => {
               total: "1",
             },
           };
+        } else if (url.includes("node_info")) {
+          return Promise.resolve({
+            data: {
+              application_version: {
+                cosmos_sdk_version: "0.44.0",
+              },
+            },
+          });
         }
       });
       // using as object to access private method
