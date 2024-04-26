@@ -17,6 +17,7 @@ export class AccountPage {
   readonly sendButton: Locator;
   readonly accountName: (name: string) => Locator;
   readonly lastOperation: Locator;
+  readonly token: (tokenName: string) => Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -37,6 +38,14 @@ export class AccountPage {
     this.sendButton = page.getByRole("button", { name: "Send" });
     this.accountName = name => page.locator(`text=${name}`);
     this.lastOperation = page.locator("text=Latest operations");
+    this.token = tokenName =>
+      page
+        .locator(`//span/span[text()="Ethereum 1"]/following::div/span[text()="${tokenName}"]`) //todo: update locator
+        .first();
+  }
+
+  async navigateToToken(token: string) {
+    await this.token(token).click();
   }
 
   async navigateToSwap() {
@@ -58,11 +67,6 @@ export class AccountPage {
   async clickBannerCTA() {
     await this.stakeBannerButton.scrollIntoViewIfNeeded();
     await this.stakeBannerButton.click();
-  }
-
-  async scrollToTokens() {
-    const tokenList = this.page.locator("text=Add token");
-    await tokenList.scrollIntoViewIfNeeded();
   }
 
   async scrollToOperations() {

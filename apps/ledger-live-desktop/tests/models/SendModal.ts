@@ -26,7 +26,7 @@ export class SendModal extends Modal {
     this.checkTransactionDenied = page.locator("text=Operation denied on device");
     this.checkAddress = address =>
       page.locator('[data-test-id="modal-content"]').locator(`text=${address}`);
-    this.checkAmount = currency => page.locator(`text=0.00001 ${currency}`);
+    this.checkAmount = currency => page.locator(`text=0.00001 ${currency}`).first();
   }
 
   async selectAccount(name: string) {

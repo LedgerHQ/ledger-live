@@ -49,18 +49,18 @@ for (const currency of currencies) {
       await modal.cryptoAmountField.fill("0.00001");
       await sendModal.countinueSendAmount();
       await expect(sendModal.verifyTotalDebit).toBeVisible();
-      expect(await sendModal.checkAddress(currency.address2)).toBeVisible();
+      await expect(sendModal.checkAddress(currency.address2)).toBeVisible();
+      await expect(sendModal.checkAmount(currency.deviceName)).toBeVisible();
       await sendModal.continueButton.click();
     });
 
     await test.step(`[${currency.uiName}] Validate message on device`, async () => {
       await expect(sendModal.checkDevice).toBeVisible();
-      await expect(sendModal.checkAmount(currency.deviceName)).toBeVisible();
       const amountScreen = await pressRightUntil("Amount");
       expect(verifyAddress("0.00001", amountScreen)).toBe(true);
       const addressScreen = await pressRightUntil("Address");
       expect(verifyAddress(currency.address2, addressScreen)).toBe(true);
-      await pressRightUntil("Accept"); //TODO: Check if it's "Accept" or "Approve" => nanoApp version
+      await pressRightUntil("Accept"); //TODO: Check method (BTC => "Continue" then "Sign Transaction")
       await pressBoth();
       await expect(sendModal.checkTransactionbroadcast).toBeVisible();
     });
