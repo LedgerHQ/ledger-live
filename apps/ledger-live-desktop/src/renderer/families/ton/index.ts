@@ -3,11 +3,11 @@ import {
   Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/ton/types";
+import { Account } from "@ledgerhq/types-live";
 import { LLDCoinFamily } from "../types";
-import operationDetails from "./operationDetails";
 import AccountSubHeader from "./AccountSubHeader";
 import sendAmountFields from "./SendAmountFields";
-import { Account } from "@ledgerhq/types-live";
+import operationDetails from "./operationDetails";
 
 const family: LLDCoinFamily<Account, Transaction, TransactionStatus, TonOperation> = {
   operationDetails,
@@ -16,7 +16,12 @@ const family: LLDCoinFamily<Account, Transaction, TransactionStatus, TonOperatio
   getTransactionExplorer: (explorerView, operation) =>
     explorerView &&
     explorerView.tx &&
-    explorerView.tx.replace("$hash", operation.extra.explorerHash),
+    explorerView.tx.replace(
+      "$hash",
+      operation.extra.explorerHash && operation.extra.explorerHash !== ""
+        ? operation.extra.explorerHash
+        : `by-msg-hash/${operation.hash}`,
+    ),
 };
 
 export default family;
