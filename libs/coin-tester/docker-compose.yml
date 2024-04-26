@@ -7,7 +7,7 @@ services:
     # image: ghcr.io/ledgerhq/speculos:latest
     image: ${SPECULOS_IMAGE:-ghcr.io/ledgerhq/speculos}:latest
     volumes:
-      - ./lib/tmp:/speculos/apps
+      - ./lib/signers/tmp:/speculos/apps
     ports:
       - "${API_PORT}:${API_PORT}"
     build:

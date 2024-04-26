@@ -12,11 +12,11 @@ export type ScenarioTransaction<T extends TransactionCommon> = Partial<T> & {
   name: string;
   /**
    *
-   * @param initialAccount initialAccount returned by the latest sync before the transaction broadcast
-   * @param currentAccount currentAccount updated after completting the latest transaction
+   * @param previousAccount previousAccount returned by the latest sync before broadcasting this transaction
+   * @param currentAccount currentAccount synced after broadcasting this transaction
    * @returns void
    */
-  expect?: (initialAccount: Account, currentAccount: Account) => void;
+  expect?: (previousAccount: Account, currentAccount: Account) => void;
 };
 
 export type Scenario<T extends TransactionCommon> = {
@@ -27,9 +27,10 @@ export type Scenario<T extends TransactionCommon> = {
     account: Account;
     testTimeout?: number;
     retryInterval?: number;
+    retryLimit?: number;
     onSignerConfirmation?: (e?: SignOperationEvent) => Promise<void>;
   }>;
-  transactions: ScenarioTransaction<T>[];
+  getTransactions: (address: string) => ScenarioTransaction<T>[];
   beforeAll?: (account: Account) => Promise<void> | void;
   afterAll?: (account: Account) => Promise<void> | void;
   beforeEach?: (account: Account) => Promise<void> | void;
@@ -39,8 +40,14 @@ export type Scenario<T extends TransactionCommon> = {
 
 export async function executeScenario<T extends TransactionCommon>(scenario: Scenario<T>) {
   try {
-    const { accountBridge, currencyBridge, account, retryInterval, onSignerConfirmation } =
-      await scenario.setup();
+    const {
+      accountBridge,
+      currencyBridge,
+      account,
+      retryInterval,
+      retryLimit,
+      onSignerConfirmation,
+    } = await scenario.setup();
 
     console.log("Setup completed ✓");
 
@@ -80,12 +87,14 @@ export async function executeScenario<T extends TransactionCommon>(scenario: Sce
       chalk.bold.cyan(" Starting  ◌"),
     );
 
-    for (const testTransaction of scenario.transactions) {
+    const scenarioTransactions = scenario.getTransactions(account.freshAddress);
+
+    for (const testTransaction of scenarioTransactions) {
       console.log("\n");
       console.log(chalk.cyan("Transaction:", chalk.bold(testTransaction.name), "◌"));
 
       scenario.beforeEach?.(scenarioAccount);
-      if (scenario.transactions.indexOf(testTransaction) > 0) {
+      if (scenarioTransactions.indexOf(testTransaction) > 0) {
         scenarioAccount = await firstValueFrom(
           accountBridge
             .sync(scenarioAccount, { paginationConfig: {} })
@@ -93,7 +102,7 @@ export async function executeScenario<T extends TransactionCommon>(scenario: Sce
         );
       }
 
-      const initialAccount = Object.freeze({ ...scenarioAccount });
+      const previousAccount = Object.freeze(scenarioAccount);
 
       const defaultTransaction = accountBridge.createTransaction(scenarioAccount);
       const transaction = await accountBridge.prepareTransaction(scenarioAccount, {
@@ -142,7 +151,7 @@ export async function executeScenario<T extends TransactionCommon>(scenario: Sce
 
       console.log(" → ", "🛫 ", chalk.bold("Broadcated the transaction"), "✓");
 
-      const retry_limit = 10;
+      const retry_limit = retryLimit ?? 10;
 
       const expectHandler = async (retry: number) => {
         scenarioAccount = await firstValueFrom(
@@ -155,7 +164,7 @@ export async function executeScenario<T extends TransactionCommon>(scenario: Sce
         );
 
         try {
-          testTransaction.expect?.(initialAccount, scenarioAccount);
+          testTransaction.expect?.(previousAccount, scenarioAccount);
         } catch (err) {
           if (!(err as { matcherResult?: { pass: boolean } })?.matcherResult?.pass) {
             if (retry === 0) {
@@ -164,7 +173,7 @@ export async function executeScenario<T extends TransactionCommon>(scenario: Sce
             }
 
             console.warn("Test asssertion failed. Retrying...");
-            await new Promise(resolve => setTimeout(resolve, retryInterval || 5000));
+            await new Promise(resolve => setTimeout(resolve, retryInterval ?? 5000));
             await expectHandler(retry - 1);
           }
 

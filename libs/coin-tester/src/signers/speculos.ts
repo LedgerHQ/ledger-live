@@ -13,13 +13,12 @@ const cwd = path.join(__dirname);
 const delay = (timing: number) => new Promise(resolve => setTimeout(resolve, timing));
 
 export const spawnSpeculos = async (
-  service: "speculos",
   nanoAppEndpoint: `/${string}`,
 ): Promise<{
   transport: SpeculosTransportHttp;
   onSignerConfirmation: (e?: SignOperationEvent) => Promise<void>;
 }> => {
-  console.log(`Starting ${service}...`);
+  console.log(`Starting speculos...`);
 
   const { data: blob } = await axios({
     url: `https://raw.githubusercontent.com/LedgerHQ/coin-apps/master/nanox${nanoAppEndpoint}`,

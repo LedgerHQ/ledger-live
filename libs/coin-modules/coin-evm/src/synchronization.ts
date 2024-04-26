@@ -1,4 +1,5 @@
 import { log } from "@ledgerhq/logs";
+import BigNumber from "bignumber.js";
 import {
   decodeAccountId,
   decodeTokenAccountId,
@@ -212,7 +213,8 @@ export const getOperationStatus = async (
 ): Promise<Operation | null> => {
   try {
     const nodeApi = getNodeApi(currency);
-    const { blockHeight, blockHash, nonce } = await nodeApi.getTransaction(currency, op.hash);
+    const { blockHeight, blockHash, nonce, gasPrice, gasUsed, value } =
+      await nodeApi.getTransaction(currency, op.hash);
 
     if (!blockHeight) {
       throw new Error("getOperationStatus: Transaction has no block");
@@ -220,6 +222,7 @@ export const getOperationStatus = async (
 
     const { timestamp } = await nodeApi.getBlockByHeight(currency, blockHeight);
     const date = new Date(timestamp);
+    const fee = new BigNumber(gasPrice).multipliedBy(gasUsed);
 
     return {
       ...op,
@@ -227,6 +230,8 @@ export const getOperationStatus = async (
       blockHash,
       blockHeight,
       date,
+      fee,
+      value: new BigNumber(value).plus(fee),
       subOperations: op.subOperations?.map(subOp => ({
         ...subOp,
         transactionSequenceNumber: nonce,

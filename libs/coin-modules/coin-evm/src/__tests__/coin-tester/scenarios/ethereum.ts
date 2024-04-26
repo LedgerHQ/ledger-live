@@ -20,91 +20,102 @@ import {
 import { clearExplorerAppendix, getLogs, setBlock } from "../indexer";
 import { killAnvil, spawnAnvil } from "../anvil";
 
-const scenarioSendEthTransaction: ScenarioTransaction<EvmTransaction> = {
-  name: "Send ethereum",
-  amount: new BigNumber(100),
-  recipient: "0x6bfD74C0996F269Bcece59191EFf667b3dFD73b9",
-  expect: (initialAccount, currentAccount) => {
-    const [latestOperation] = currentAccount.operations;
-    expect(currentAccount.operations.length - initialAccount.operations.length).toBe(1);
-    expect(latestOperation.transactionSequenceNumber).toBe(0);
-    expect(latestOperation.type).toBe("OUT");
-    expect(latestOperation.value.toString()).toBe(
-      latestOperation.fee.plus(new BigNumber(100)).toString(),
-    );
-  },
-};
+const makeScenarioTransactions = ({
+  address,
+}: {
+  address: string;
+}): ScenarioTransaction<EvmTransaction>[] => {
+  const scenarioSendEthTransaction: ScenarioTransaction<EvmTransaction> = {
+    name: "Send ethereum",
+    amount: new BigNumber(100),
+    recipient: "0x6bfD74C0996F269Bcece59191EFf667b3dFD73b9",
+    expect: (previousAccount, currentAccount) => {
+      const [latestOperation] = currentAccount.operations;
+      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
+      expect(latestOperation.transactionSequenceNumber).toBe(0);
+      expect(latestOperation.type).toBe("OUT");
+      expect(latestOperation.value.toFixed()).toBe(latestOperation.fee.plus(100).toFixed());
+      expect(currentAccount.balance.toFixed()).toBe(
+        previousAccount.balance.minus(latestOperation.value).toFixed(),
+      );
+    },
+  };
 
-const scenarioSendUSDCTransaction: ScenarioTransaction<EvmTransaction> = {
-  name: "Send USDC",
-  amount: new BigNumber(80),
-  recipient: "0x6bfD74C0996F269Bcece59191EFf667b3dFD73b9",
-  subAccountId: encodeTokenAccountId(
-    "js:2:ethereum:0x3313797c7B45F34c56Bdedc0179992A4d435AF25",
-    USDC_ON_ETHEREUM,
-  ),
-  expect: (initialAccount, currentAccount) => {
-    const [latestOperation] = currentAccount.operations;
-    expect(latestOperation.transactionSequenceNumber).toBe(1);
-    expect(latestOperation.type).toBe("OUT");
-    expect(latestOperation.value.toString()).toBe(
-      latestOperation.fee.plus(new BigNumber(80)).toString(),
-    );
-  },
-};
+  const scenarioSendUSDCTransaction: ScenarioTransaction<EvmTransaction> = {
+    name: "Send USDC",
+    amount: new BigNumber(80),
+    recipient: "0x6bfD74C0996F269Bcece59191EFf667b3dFD73b9",
+    subAccountId: encodeTokenAccountId(`js:2:ethereum:${address}:`, USDC_ON_ETHEREUM),
+    expect: (previousAccount, currentAccount) => {
+      const [latestOperation] = currentAccount.operations;
+      expect(latestOperation.transactionSequenceNumber).toBe(1);
+      expect(latestOperation.type).toBe("FEES");
+      expect(latestOperation.value.toFixed()).toBe(latestOperation.fee.toFixed());
+      expect(latestOperation.subOperations?.[0].type).toBe("OUT");
+      expect(latestOperation.subOperations?.[0].value.toFixed()).toBe("80");
+    },
+  };
 
-const scenarioSendERC721Transaction: ScenarioTransaction<EvmTransaction & EvmNftTransaction> = {
-  name: "Send ERC721",
-  recipient: "0x6bfD74C0996F269Bcece59191EFf667b3dFD73b9",
-  mode: "erc721",
-  nft: {
-    tokenId: "3368",
-    contract: "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
-    quantity: new BigNumber(1),
-    collectionName: "Bored Ape",
-  },
-  expect: (initialAccount, currentAccount) => {
-    const [latestOperation] = currentAccount.operations;
-    expect(latestOperation.transactionSequenceNumber).toBe(2);
-    expect(latestOperation.type).toBe("FEES");
-    expect(
-      latestOperation?.nftOperations?.find(
-        op => op.contract === "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
-      ),
-    ).toBeDefined();
-    expect(
-      currentAccount.nfts?.find(
-        nft => nft.contract === "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
-      ),
-    ).toBe(undefined);
-  },
-};
+  const scenarioSendERC721Transaction: ScenarioTransaction<EvmTransaction & EvmNftTransaction> = {
+    name: "Send ERC721",
+    recipient: "0x6bfD74C0996F269Bcece59191EFf667b3dFD73b9",
+    mode: "erc721",
+    nft: {
+      tokenId: "3368",
+      contract: "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
+      quantity: new BigNumber(1),
+      collectionName: "Bored Ape",
+    },
+    expect: (previousAccount, currentAccount) => {
+      const [latestOperation] = currentAccount.operations;
+      expect(latestOperation.transactionSequenceNumber).toBe(2);
+      expect(latestOperation.type).toBe("FEES");
+      expect(
+        latestOperation?.nftOperations?.find(
+          op => op.contract === "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
+        ),
+      ).toBeDefined();
+      expect(
+        currentAccount.nfts?.find(
+          nft => nft.contract === "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
+        ),
+      ).toBe(undefined);
+    },
+  };
 
-const scenarioSendERC1155Transaction: ScenarioTransaction<EvmTransaction & EvmNftTransaction> = {
-  name: "Send ERC1155",
-  recipient: "0x6bfD74C0996F269Bcece59191EFf667b3dFD73b9",
-  mode: "erc1155",
-  nft: {
-    tokenId: "951",
-    collectionName: "Clone X",
-    contract: "0x348FC118bcC65a92dC033A951aF153d14D945312", // EIP55 checksum of 0x348fc118bcc65a92dc033a951af153d14d945312
-    quantity: new BigNumber(2),
-  },
-  expect: (initialAccount, currentAccount) => {
-    const [latestOperation] = currentAccount.operations;
-    expect(latestOperation.transactionSequenceNumber).toBe(3);
-    expect(latestOperation.type).toBe("FEES");
-    expect(
-      latestOperation?.nftOperations?.find(
-        op => op.contract === "0x348FC118bcC65a92dC033A951aF153d14D945312",
-      ),
-    ).toBeDefined();
-    expect(
-      currentAccount.nfts?.find(
-        nft => nft.contract === "0x348FC118bcC65a92dC033A951aF153d14D945312",
-      ),
-    ).toBe(undefined);
-  },
+  const scenarioSendERC1155Transaction: ScenarioTransaction<EvmTransaction & EvmNftTransaction> = {
+    name: "Send ERC1155",
+    recipient: "0x6bfD74C0996F269Bcece59191EFf667b3dFD73b9",
+    mode: "erc1155",
+    nft: {
+      tokenId: "951",
+      collectionName: "Clone X",
+      contract: "0x348FC118bcC65a92dC033A951aF153d14D945312", // EIP55 checksum of 0x348fc118bcc65a92dc033a951af153d14d945312
+      quantity: new BigNumber(2),
+    },
+    expect: (previousAccount, currentAccount) => {
+      const [latestOperation] = currentAccount.operations;
+      expect(latestOperation.transactionSequenceNumber).toBe(3);
+      expect(latestOperation.type).toBe("FEES");
+      expect(
+        latestOperation?.nftOperations?.find(
+          op => op.contract === "0x348FC118bcC65a92dC033A951aF153d14D945312",
+        ),
+      ).toBeDefined();
+      expect(
+        currentAccount.nfts?.find(
+          nft => nft.contract === "0x348FC118bcC65a92dC033A951aF153d14D945312",
+        ),
+      ).toBe(undefined);
+    },
+  };
+
+  return [
+    scenarioSendEthTransaction,
+    scenarioSendUSDCTransaction,
+    scenarioSendERC721Transaction,
+    scenarioSendERC1155Transaction,
+  ];
 };
 
 const initUSDCAccount = async (provider: ethers.providers.JsonRpcProvider, address: string) => {
@@ -189,10 +200,7 @@ export const scenarioEthereum: Scenario<EvmTransaction> = {
   name: "Ledger Live Basic ETH Transactions",
   setup: async () => {
     const [{ transport, onSignerConfirmation }] = await Promise.all([
-      spawnSpeculos(
-        "speculos",
-        `/${defaultNanoApp.firmware}/Ethereum/app_${defaultNanoApp.version}.elf`,
-      ),
+      spawnSpeculos(`/${defaultNanoApp.firmware}/Ethereum/app_${defaultNanoApp.version}.elf`),
       spawnAnvil("https://rpc.ankr.com/eth"),
     ]);
 
@@ -248,12 +256,7 @@ export const scenarioEthereum: Scenario<EvmTransaction> = {
   beforeAll: async account => {
     expect(account.nfts?.length).toBe(2);
   },
-  transactions: [
-    scenarioSendEthTransaction,
-    scenarioSendUSDCTransaction,
-    scenarioSendERC721Transaction,
-    scenarioSendERC1155Transaction,
-  ],
+  getTransactions: address => makeScenarioTransactions({ address }),
   afterAll: async account => {
     expect(account.nfts?.length).toBe(0);
     expect(account.operations.length).toBe(7);

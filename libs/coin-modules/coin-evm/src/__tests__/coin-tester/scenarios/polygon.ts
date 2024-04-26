@@ -14,43 +14,48 @@ import { ERC20Interface, USDC_ON_POLYGON, polygon } from "../helpers";
 import { clearExplorerAppendix, getLogs, setBlock } from "../indexer";
 import { killAnvil, spawnAnvil } from "../anvil";
 
-const send1MaticTransaction: ScenarioTransaction<EvmTransaction> = {
-  name: "Send 1 Matic",
-  amount: new BigNumber(ethers.utils.parseEther("1").toString()),
-  recipient: ethers.constants.AddressZero,
-  expect: (initialAccount, currentAccount) => {
-    const [latestOperation] = currentAccount.operations;
-    expect(latestOperation.transactionSequenceNumber).toBe(0);
-    expect(latestOperation.transactionRaw?.amount).toBe("1000000000000000000");
-  },
-};
+const makeScenarioTransactions = ({ address }: { address: string }) => {
+  console.log({ address });
+  const send1MaticTransaction: ScenarioTransaction<EvmTransaction> = {
+    name: "Send 1 Matic",
+    amount: new BigNumber(ethers.utils.parseEther("1").toString()),
+    recipient: ethers.constants.AddressZero,
+    expect: (initialAccount, currentAccount) => {
+      const [latestOperation] = currentAccount.operations;
+      expect(latestOperation.transactionSequenceNumber).toBe(0);
+      expect(latestOperation.transactionRaw?.amount).toBe("1000000000000000000");
+    },
+  };
 
-const send10MaticTransaction: ScenarioTransaction<EvmTransaction> = {
-  name: "Send 10 Matic",
-  amount: new BigNumber(ethers.utils.parseEther("10").toString()),
-  recipient: ethers.constants.AddressZero,
-  expect: (initialAccount, currentAccount) => {
-    const [latestOperation] = currentAccount.operations;
-    expect(latestOperation.transactionSequenceNumber).toBe(1);
-    expect(latestOperation.transactionRaw?.amount).toBe("10000000000000000000");
-  },
-};
+  const send10MaticTransaction: ScenarioTransaction<EvmTransaction> = {
+    name: "Send 10 Matic",
+    amount: new BigNumber(ethers.utils.parseEther("10").toString()),
+    recipient: ethers.constants.AddressZero,
+    expect: (initialAccount, currentAccount) => {
+      const [latestOperation] = currentAccount.operations;
+      expect(latestOperation.transactionSequenceNumber).toBe(1);
+      expect(latestOperation.transactionRaw?.amount).toBe("10000000000000000000");
+    },
+  };
 
-const send100USDCTransaction: ScenarioTransaction<EvmTransaction> = {
-  name: "Send 100 USDC",
-  recipient: "0x47ac0Fb4F2D84898e4D9E7b4DaB3C24507a6D503", // Random Receiver
-  amount: new BigNumber(
-    ethers.utils.parseUnits("100", USDC_ON_POLYGON.units[0].magnitude).toString(),
-  ),
-  subAccountId: encodeTokenAccountId(
-    "js:2:polygon:0x2FBde3Ac8F867e5ED06e4C7060d0df00D87E2C35:",
-    USDC_ON_POLYGON,
-  ),
-  expect: (initialAccount, currentAccount) => {
-    const [latestOperation] = currentAccount.operations;
-    expect(latestOperation.transactionSequenceNumber).toBe(2);
-    expect(latestOperation.transactionRaw?.amount).toBe("100000000");
-  },
+  const send100USDCTransaction: ScenarioTransaction<EvmTransaction> = {
+    name: "Send 100 USDC",
+    recipient: "0x47ac0Fb4F2D84898e4D9E7b4DaB3C24507a6D503", // Random Receiver
+    amount: new BigNumber(
+      ethers.utils.parseUnits("100", USDC_ON_POLYGON.units[0].magnitude).toString(),
+    ),
+    subAccountId: encodeTokenAccountId(
+      `js:2:polygon:0x2FBde3Ac8F867e5ED06e4C7060d0df00D87E2C35:`,
+      USDC_ON_POLYGON,
+    ),
+    expect: (initialAccount, currentAccount) => {
+      const [latestOperation] = currentAccount.operations;
+      expect(latestOperation.transactionSequenceNumber).toBe(2);
+      expect(latestOperation.transactionRaw?.amount).toBe("100000000");
+    },
+  };
+
+  return [send1MaticTransaction, send10MaticTransaction, send100USDCTransaction];
 };
 
 const initUSDCAccount = async (provider: ethers.providers.JsonRpcProvider, address: string) => {
@@ -83,10 +88,7 @@ export const scenarioPolygon: Scenario<EvmTransaction> = {
   name: "Ledger Live Basic Polygon Transactions",
   setup: async () => {
     const [{ transport, onSignerConfirmation }] = await Promise.all([
-      spawnSpeculos(
-        "speculos",
-        `/${defaultNanoApp.firmware}/Ethereum/app_${defaultNanoApp.version}.elf`,
-      ),
+      spawnSpeculos(`/${defaultNanoApp.firmware}/Ethereum/app_${defaultNanoApp.version}.elf`),
       spawnAnvil("https://rpc.ankr.com/polygon"),
     ]);
 
@@ -122,6 +124,7 @@ export const scenarioPolygon: Scenario<EvmTransaction> = {
       derivationMode: "",
     });
 
+    console.log({ address });
     const scenarioAccount = makeAccount(address, polygon);
 
     await setBlock();
@@ -131,7 +134,7 @@ export const scenarioPolygon: Scenario<EvmTransaction> = {
 
     return { currencyBridge, accountBridge, account: scenarioAccount, onSignerConfirmation };
   },
-  transactions: [send1MaticTransaction, send10MaticTransaction, send100USDCTransaction],
+  getTransactions: address => makeScenarioTransactions({ address }),
   afterAll: account => {
     expect(account.operations.filter(operation => operation.type === "OUT").length).toBe(3);
   },
