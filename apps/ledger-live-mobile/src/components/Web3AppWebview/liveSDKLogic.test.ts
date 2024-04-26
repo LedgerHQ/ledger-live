@@ -101,7 +101,6 @@ const createAccount = (id: string, crypto: CryptoCurrency = defaultEthCryptoFami
   index: 0,
   freshAddress: "0x01",
   freshAddressPath: "44'/60'/0'/0/0",
-  freshAddresses: [],
   name: "Ethereum 1",
   starred: false,
   used: false,

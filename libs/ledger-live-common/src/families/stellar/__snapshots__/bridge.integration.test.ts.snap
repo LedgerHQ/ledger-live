@@ -8,12 +8,6 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 1`] = `
     "derivationMode": "sep5",
     "freshAddress": "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
     "freshAddressPath": "44'/148'/0'",
-    "freshAddresses": [
-      {
-        "address": "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
-        "derivationPath": "44'/148'/0'",
-      },
-    ],
     "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
     "index": 0,
     "name": "Stellar 1",
@@ -35,12 +29,6 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 1`] = `
     "derivationMode": "sep5",
     "freshAddress": "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
     "freshAddressPath": "44'/148'/1'",
-    "freshAddresses": [
-      {
-        "address": "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
-        "derivationPath": "44'/148'/1'",
-      },
-    ],
     "id": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5",
     "index": 1,
     "name": "Stellar 2",
@@ -62,12 +50,6 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 1`] = `
     "derivationMode": "sep5",
     "freshAddress": "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
     "freshAddressPath": "44'/148'/2'",
-    "freshAddresses": [
-      {
-        "address": "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
-        "derivationPath": "44'/148'/2'",
-      },
-    ],
     "id": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5",
     "index": 2,
     "name": "Stellar 3",
@@ -89,12 +71,6 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 1`] = `
     "derivationMode": "sep5",
     "freshAddress": "GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC",
     "freshAddressPath": "44'/148'/3'",
-    "freshAddresses": [
-      {
-        "address": "GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC",
-        "derivationPath": "44'/148'/3'",
-      },
-    ],
     "id": "js:2:stellar:GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC:sep5",
     "index": 3,
     "name": "Stellar 4",
@@ -116,12 +92,6 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 1`] = `
     "derivationMode": "sep5",
     "freshAddress": "GBQMOU2WYJUP6AKY53FFKZJGQMDWCMTWSOUTZ5DVIAQPVW7AJUHSX2M5",
     "freshAddressPath": "44'/148'/4'",
-    "freshAddresses": [
-      {
-        "address": "GBQMOU2WYJUP6AKY53FFKZJGQMDWCMTWSOUTZ5DVIAQPVW7AJUHSX2M5",
-        "derivationPath": "44'/148'/4'",
-      },
-    ],
     "id": "js:2:stellar:GBQMOU2WYJUP6AKY53FFKZJGQMDWCMTWSOUTZ5DVIAQPVW7AJUHSX2M5:sep5",
     "index": 4,
     "name": "Stellar 5",
@@ -143,12 +113,6 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 1`] = `
     "derivationMode": "sep5",
     "freshAddress": "GAJEKFXY76YWDSKJESDOKS2EGKRMCHSIC5AU32SU7OF54E5VVREUHXLH",
     "freshAddressPath": "44'/148'/5'",
-    "freshAddresses": [
-      {
-        "address": "GAJEKFXY76YWDSKJESDOKS2EGKRMCHSIC5AU32SU7OF54E5VVREUHXLH",
-        "derivationPath": "44'/148'/5'",
-      },
-    ],
     "id": "js:2:stellar:GAJEKFXY76YWDSKJESDOKS2EGKRMCHSIC5AU32SU7OF54E5VVREUHXLH:sep5",
     "index": 5,
     "name": "Stellar 6",
