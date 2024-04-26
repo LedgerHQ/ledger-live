@@ -1,5 +1,13 @@
 # live-mobile
 
+## 3.44.0-next.2
+
+### Patch Changes
+
+- [#6731](https://github.com/LedgerHQ/ledger-live/pull/6731) [`d5b459f`](https://github.com/LedgerHQ/ledger-live/commit/d5b459f540a1b5d2a2a69b3e5f21c0d4abfbc3b2) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - update changeset for a working changelog
+
+- [#6760](https://github.com/LedgerHQ/ledger-live/pull/6760) [`987feb2`](https://github.com/LedgerHQ/ledger-live/commit/987feb297af96ff159d7456399914d35f771093b) Thanks [@cksanders](https://github.com/cksanders)! - Ensure we send the device model id to recover webview
+
 ## 3.44.0-next.1
 
 ### Patch Changes

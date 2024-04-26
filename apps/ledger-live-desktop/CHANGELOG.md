@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.80.0-next.1
+
+### Patch Changes
+
+- [#6760](https://github.com/LedgerHQ/ledger-live/pull/6760) [`987feb2`](https://github.com/LedgerHQ/ledger-live/commit/987feb297af96ff159d7456399914d35f771093b) Thanks [@cksanders](https://github.com/cksanders)! - Ensure we send the device model id to recover webview
+
 ## 2.80.0-next.0
 
 ### Minor Changes
