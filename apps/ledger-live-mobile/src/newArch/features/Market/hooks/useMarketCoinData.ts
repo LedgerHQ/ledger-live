@@ -8,10 +8,9 @@ import { marketParamsSelector } from "~/reducers/market";
 
 type HookProps = {
   currencyId: string;
-  currencyName: string;
 };
 
-export const useMarketCoinData = ({ currencyId, currencyName }: HookProps) => {
+export const useMarketCoinData = ({ currencyId }: HookProps) => {
   const marketParams = useSelector(marketParamsSelector);
 
   const { counterCurrency = "usd", range = "24h" } = marketParams;
@@ -26,7 +25,6 @@ export const useMarketCoinData = ({ currencyId, currencyName }: HookProps) => {
     counterCurrency,
     id: currencyId,
     range,
-    name: currencyName,
   });
 
   return {

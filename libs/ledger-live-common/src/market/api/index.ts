@@ -27,7 +27,7 @@ export async function fetchList({
   counterCurrency,
   limit = 50,
   page = 1,
-  order = "desc",
+  order = "desc", // TO UPDATE WITH NEW PARAM
   search = "",
   liveCoinsList = [],
   starred = [],
@@ -91,13 +91,13 @@ export async function fetchCurrencyChartData({
 
 export async function fetchCurrency({
   counterCurrency,
-  name,
+  id,
 }: MarketCurrencyRequestParams): Promise<MarketItemResponse> {
   const url = URL.format({
     pathname: `${baseURL()}/v3/markets`,
     query: {
       to: counterCurrency,
-      filter: name,
+      ids: id,
       pageSize: 1,
       limit: 1,
     },

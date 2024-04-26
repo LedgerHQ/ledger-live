@@ -15,22 +15,19 @@ const tokenIDToMarketID = {
 
 const AssetMarketSection = ({ currency }: { currency: CryptoOrTokenCurrency }) => {
   const { t } = useTranslation();
-  const [selectedCurrency, setSelectedCurrency] = useState<{ id: string; name: string }>({
-    ...currency,
-  });
+  const [selectedCurrency, setSelectedCurrency] = useState<string>(currency.id);
   const { currency: fetchedCurrency, counterCurrency } = useMarketCoinData({
-    currencyId: selectedCurrency.id,
-    currencyName: selectedCurrency.name,
+    currencyId: selectedCurrency,
   });
 
   useEffect(() => {
-    setSelectedCurrency({
-      id: tokenIDToMarketID[currency.id as keyof typeof tokenIDToMarketID] || currency.id,
-      name: currency.name,
-    });
+    setSelectedCurrency(
+      tokenIDToMarketID[currency.id as keyof typeof tokenIDToMarketID] || currency.id,
+    );
   }, [currency]);
 
   if (!fetchedCurrency?.price) return null;
+
   return (
     <SectionContainer px={6}>
       <SectionTitle

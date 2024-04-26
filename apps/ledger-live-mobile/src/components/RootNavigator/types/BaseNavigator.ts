@@ -186,7 +186,6 @@ export type BaseNavigatorStackParamList = {
   };
   [ScreenName.MarketDetail]: {
     currencyId: string;
-    currencyName: string;
     resetSearchOnUmount?: boolean;
   };
 

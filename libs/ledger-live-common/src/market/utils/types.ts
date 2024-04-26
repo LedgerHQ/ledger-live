@@ -57,7 +57,6 @@ export type MarketCurrencyChartDataRequestParams = {
 };
 
 export type MarketCurrencyRequestParams = {
-  name?: string;
   id?: string;
   counterCurrency?: string;
   range?: string;

@@ -18,11 +18,10 @@ type NavigationProps = BaseComposite<
 
 function useMarketDetailViewModel({ navigation, route }: NavigationProps) {
   const { params } = route;
-  const { currencyId, resetSearchOnUmount, currencyName } = params;
+  const { currencyId, resetSearchOnUmount } = params;
 
   const { marketParams, dataChart, loadingChart, loading, currency } = useMarketCoinData({
     currencyId,
-    currencyName,
   });
 
   const dispatch = useDispatch();

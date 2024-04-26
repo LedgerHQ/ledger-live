@@ -29,7 +29,6 @@ const MarketPrice = ({ currency, selectedCoinData, counterCurrency }: Props) => 
   const goToMarketPage = useCallback(() => {
     navigation.navigate(ScreenName.MarketDetail, {
       currencyId: currency.id,
-      currencyName: currency.name,
     });
   }, [currency, navigation]);
 

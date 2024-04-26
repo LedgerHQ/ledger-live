@@ -58,10 +58,10 @@ export const useCurrencyChartData = ({ id, counterCurrency, range }: MarketCurre
     staleTime: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
   });
 
-export const useCurrencyData = ({ id, counterCurrency, name }: MarketCurrencyRequestParams) =>
+export const useCurrencyData = ({ id, counterCurrency }: MarketCurrencyRequestParams) =>
   useQuery({
-    queryKey: [QUERY_KEY.CurrencyDataRaw, id, name, counterCurrency],
-    queryFn: () => fetchCurrency({ id, counterCurrency, name }),
+    queryKey: [QUERY_KEY.CurrencyDataRaw, id, counterCurrency],
+    queryFn: () => fetchCurrency({ id, counterCurrency }),
     refetchInterval: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
     staleTime: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
     select: data => format(data, cryptoCurrenciesList),
@@ -137,22 +137,4 @@ function combineMarketData(
     isError: results.some(result => result.isError),
     cachedMetadataMap: hashMap,
   };
-}
-
-export function useStarredCurrencies(props: MarketListRequestParams): MarketListRequestResult {
-  return useQueries({
-    queries: Array.from({ length: props.starred?.length ?? 1 }, (_, i) => i).map((name, index) => ({
-      queryKey: [QUERY_KEY.CurrencyDataRaw, props.counterCurrency, name],
-      queryFn: () => fetchCurrency({ ...props }),
-      select: (data: MarketItemResponse) => ({
-        formattedData: [format(data, cryptoCurrenciesList)],
-        page: index,
-      }),
-      refetchOnMount: false,
-      refetchOnReconnect: false,
-      refetchOnWindowFocus: false,
-      enabled: Boolean(props.starred?.length),
-    })),
-    combine: combineMarketData,
-  });
 }
