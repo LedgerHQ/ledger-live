@@ -6,22 +6,15 @@ import BigNumber from "bignumber.js";
 
 export default function prepareSignTransaction(
   account: AccountLike,
-  parentAccount: Account | undefined,
-  liveTx: Partial<Transaction & { gasLimit: BigNumber }>,
+  parentAccount: Account | null | undefined,
+  liveTx: Partial<
+    Transaction & {
+      gasLimit: BigNumber;
+    }
+  >,
 ): TransactionCommon {
   const bridge = getAccountBridge(account, parentAccount);
-  const t = bridge.createTransaction(account);
-  const { recipient, ...txData } = liveTx;
-  const t2 = bridge.updateTransaction(t, {
-    recipient,
+  return bridge.updateTransaction(liveTx, {
     subAccountId: isTokenAccount(account) ? account.id : undefined,
-  });
-
-  return bridge.updateTransaction(t2, {
-    customGasLimit: txData.gasLimit,
-    type: 1,
-    maxFeePerGas: undefined,
-    maxPriorityFeePerGas: undefined,
-    ...txData,
   });
 }
