@@ -14,7 +14,7 @@ import { ERC20Interface, USDC_ON_POLYGON, polygon } from "../helpers";
 import { clearExplorerAppendix, getLogs, setBlock } from "../indexer";
 import { killAnvil, spawnAnvil } from "../anvil";
 
-const makeScenarioTransactions = ({ _address }: { _address: string }) => {
+const makeScenarioTransactions = ({ address }: { address: string }) => {
   const send1MaticTransaction: ScenarioTransaction<EvmTransaction> = {
     name: "Send 1 Matic",
     amount: new BigNumber(ethers.utils.parseEther("1").toString()),
@@ -22,8 +22,16 @@ const makeScenarioTransactions = ({ _address }: { _address: string }) => {
     expect: (previousAccount, currentAccount) => {
       const [latestOperation] = currentAccount.operations;
       expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
-      expect(latestOperation.transactionSequenceNumber).toBe(0);
-      expect(latestOperation.transactionRaw?.amount).toBe("1000000000000000000");
+      expect(latestOperation.type).toBe("OUT");
+      expect(latestOperation.value.toFixed()).toBe(
+        latestOperation.fee.plus(new BigNumber("1000000000000000000")).toFixed(),
+      );
+      expect(currentAccount.balance.toFixed()).toBe(
+        previousAccount.balance.minus(latestOperation.value).toFixed(),
+      );
+      expect(currentAccount.balance.toFixed()).toBe(
+        previousAccount.balance.minus(latestOperation.value).toFixed(),
+      );
     },
   };
 
@@ -34,8 +42,13 @@ const makeScenarioTransactions = ({ _address }: { _address: string }) => {
     expect: (previousAccount, currentAccount) => {
       const [latestOperation] = currentAccount.operations;
       expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
-      expect(latestOperation.transactionSequenceNumber).toBe(1);
-      expect(latestOperation.transactionRaw?.amount).toBe("10000000000000000000");
+      expect(latestOperation.type).toBe("OUT");
+      expect(latestOperation.value.toFixed()).toBe(
+        latestOperation.fee.plus(new BigNumber("10000000000000000000")).toFixed(),
+      );
+      expect(currentAccount.balance.toFixed()).toBe(
+        previousAccount.balance.minus(latestOperation.value).toFixed(),
+      );
     },
   };
 
@@ -45,15 +58,13 @@ const makeScenarioTransactions = ({ _address }: { _address: string }) => {
     amount: new BigNumber(
       ethers.utils.parseUnits("100", USDC_ON_POLYGON.units[0].magnitude).toString(),
     ),
-    subAccountId: encodeTokenAccountId(
-      `js:2:polygon:0x2FBde3Ac8F867e5ED06e4C7060d0df00D87E2C35:`,
-      USDC_ON_POLYGON,
-    ),
+    subAccountId: encodeTokenAccountId(`js:2:polygon:${address}:`, USDC_ON_POLYGON),
     expect: (previousAccount, currentAccount) => {
       const [latestOperation] = currentAccount.operations;
       expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
-      expect(latestOperation.transactionSequenceNumber).toBe(2);
-      expect(latestOperation.transactionRaw?.amount).toBe("100000000");
+      expect(latestOperation.type).toBe("FEES");
+      expect(latestOperation.subOperations?.[0].type).toBe("OUT");
+      expect(latestOperation.subOperations?.[0].value.toFixed()).toBe("100000000");
     },
   };
 
@@ -135,9 +146,9 @@ export const scenarioPolygon: Scenario<EvmTransaction> = {
 
     return { currencyBridge, accountBridge, account: scenarioAccount, onSignerConfirmation };
   },
-  getTransactions: address => makeScenarioTransactions({ _address: address }),
+  getTransactions: address => makeScenarioTransactions({ address }),
   afterAll: account => {
-    expect(account.operations.filter(operation => operation.type === "OUT").length).toBe(3);
+    expect(account.operations.length).toBe(4);
   },
   teardown: async () => {
     await Promise.all([killSpeculos(), killAnvil()]);

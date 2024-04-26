@@ -68,6 +68,11 @@ const makeScenarioTransactions = ({
     expect: (previousAccount, currentAccount) => {
       const [latestOperation] = currentAccount.operations;
       expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
+      expect(
+        currentAccount.nfts?.every(
+          nft => nft.contract !== "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
+        ),
+      ).toBe(true);
       expect(latestOperation.type).toBe("FEES");
       expect(
         latestOperation?.nftOperations?.find(
@@ -75,10 +80,10 @@ const makeScenarioTransactions = ({
         ),
       ).toBeDefined();
       expect(
-        currentAccount.nfts?.find(
-          nft => nft.contract === "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
+        latestOperation.nftOperations?.find(
+          operation => operation.contract === "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
         ),
-      ).toBe(undefined);
+      ).toBeDefined();
     },
   };
 
@@ -95,17 +100,22 @@ const makeScenarioTransactions = ({
     expect: (previousAccount, currentAccount) => {
       const [latestOperation] = currentAccount.operations;
       expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
+      expect(
+        currentAccount.nfts?.every(
+          nft => nft.contract !== "0x348FC118bcC65a92dC033A951aF153d14D945312",
+        ),
+      ).toBe(true);
       expect(latestOperation.type).toBe("FEES");
       expect(
         latestOperation?.nftOperations?.find(
           op => op.contract === "0x348FC118bcC65a92dC033A951aF153d14D945312",
         ),
       ).toBeDefined();
-      expect(
-        currentAccount.nfts?.find(
-          nft => nft.contract === "0x348FC118bcC65a92dC033A951aF153d14D945312",
-        ),
-      ).toBe(undefined);
+      const latestNFTOperation = latestOperation.nftOperations?.find(
+        operation => operation.contract === "0x348FC118bcC65a92dC033A951aF153d14D945312",
+      );
+      expect(latestNFTOperation).toBeDefined();
+      expect(latestNFTOperation?.value.toFixed()).toBe("2");
     },
   };
 
