@@ -1,4 +1,5 @@
 import { makeLRUCache, minutes, seconds } from "@ledgerhq/live-network/cache";
+import { PublicKey, TransactionInstruction, TransactionMessage } from "@solana/web3.js";
 import hash from "object-hash";
 import { ChainAPI } from "./chain";
 
@@ -8,6 +9,17 @@ const cacheKeyAssocTokenAccAddress = (owner: string, mint: string) => `${owner}:
 const cacheKeyMinimumBalanceForRentExemption = (dataLengt: number) => dataLengt.toString();
 
 const cacheKeyTransactions = (signatures: string[]) => hash([...signatures].sort());
+const cacheKeyInstructions = (ixs: TransactionInstruction[], payer: PublicKey) => {
+  return hash(
+    new TransactionMessage({
+      instructions: ixs,
+      payerKey: payer,
+      recentBlockhash: payer.toString(),
+    })
+      .compileToLegacyMessage()
+      .serialize(),
+  );
+};
 
 const cacheKeyByArgs = (...args: any[]) => hash(args);
 
@@ -77,6 +89,12 @@ export function cached(api: ChainAPI): ChainAPI {
     getRecentPrioritizationFees: makeLRUCache(
       api.getRecentPrioritizationFees,
       cacheKeyByArgs,
+      seconds(30),
+    ),
+
+    getSimulationComputeUnits: makeLRUCache(
+      api.getSimulationComputeUnits,
+      cacheKeyInstructions,
       seconds(30),
     ),
 
