@@ -41,8 +41,6 @@ const polkadot: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoSP,
     appName: "Polkadot",
-    // latest non-generic app
-    appVersion: "24.9430.3",
   },
   testTimeout: 2 * 60 * 1000,
   genericDeviceAction: acceptTransaction,
