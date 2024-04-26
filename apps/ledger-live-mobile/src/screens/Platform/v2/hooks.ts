@@ -5,6 +5,7 @@ import {
   useDisclaimerRaw,
   useRecentlyUsed,
   DisclaimerRaw,
+  useLocalLiveApp,
 } from "@ledgerhq/live-common/wallet-api/react";
 import {
   INITIAL_PLATFORM_STATE,
@@ -24,12 +25,18 @@ import { NavigationProps } from "./types";
 import { useManifests } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 
 export function useCatalog() {
-  const db = useDiscoverDB();
+  const recentlyUsedDB = useRecentlyUsedDB();
+  const localLiveAppDB = useLocalLiveAppDB();
   const allManifests = useManifests();
   const completeManifests = useManifests({ visibility: ["complete"] });
   const combinedManifests = useManifests({ visibility: ["searchable", "complete"] });
   const categories = useCategories(completeManifests);
-  const recentlyUsed = useRecentlyUsed(combinedManifests, db);
+  const recentlyUsed = useRecentlyUsed(combinedManifests, recentlyUsedDB);
+  const { state: localLiveApps, addLocalManifest } = useLocalLiveApp(localLiveAppDB);
+
+  useEffect(() => {
+    addLocalManifest({ id: "test", name: "Test", url: "localhost" });
+  }, []);
 
   const search = useSearch<AppManifest, TextInput>({
     list: combinedManifests,
@@ -62,8 +69,9 @@ export function useCatalog() {
       recentlyUsed,
       search,
       disclaimer,
+      localLiveApps,
     }),
-    [categories, recentlyUsed, search, disclaimer],
+    [categories, recentlyUsed, search, disclaimer, localLiveApps],
   );
 }
 
@@ -167,11 +175,19 @@ function useDisclaimer(appendRecentlyUsed: (manifest: AppManifest) => void): Dis
   };
 }
 
-function useDiscoverDB() {
+function useRecentlyUsedDB() {
   return useDB<DiscoverDB, DiscoverDB["recentlyUsed"]>(
     DISCOVER_STORE_KEY,
     INITIAL_PLATFORM_STATE,
     state => state.recentlyUsed,
+  );
+}
+
+function useLocalLiveAppDB() {
+  return useDB<DiscoverDB, DiscoverDB["localLiveApp"]>(
+    DISCOVER_STORE_KEY,
+    INITIAL_PLATFORM_STATE,
+    state => state.localLiveApp,
   );
 }
 
