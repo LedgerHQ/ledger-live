@@ -21,23 +21,15 @@ describe("prepareSignTransaction", () => {
     // Given
     const parentAccount = createAccount("12");
     const childAccount = createTokenAccount("22", "js:2:ethereum:0x012:");
-    const expectedResult: EvmTransaction = {
+    const expectedResult: Partial<EvmTransaction> = {
       amount: new BigNumber("1000"),
       data: Buffer.from([]),
       family: "evm",
-      feesStrategy: "medium",
-      gasPrice: new BigNumber("700000"),
       gasLimit: new BigNumber("1200000"),
-      customGasLimit: new BigNumber("1200000"),
-      mode: "send",
+      gasPrice: new BigNumber("700000"),
       nonce: 8,
       recipient: "0x0123456",
       subAccountId: "js:2:ethereum:0x022:",
-      useAllAmount: false,
-      maxFeePerGas: undefined,
-      maxPriorityFeePerGas: undefined,
-      type: 1,
-      chainId: 0,
     };
 
     // When
@@ -49,7 +41,11 @@ describe("prepareSignTransaction", () => {
 });
 
 // *** UTIL FUNCTIONS ***
-function createEtherumTransaction(): Partial<Transaction & { gasLimit: BigNumber }> {
+function createEtherumTransaction(): Partial<
+  Transaction & {
+    gasLimit: BigNumber;
+  }
+> {
   return {
     family: "evm",
     amount: new BigNumber("1000"),
@@ -149,9 +145,18 @@ function createTokenAccount(id = "32", parentId = "whatever"): TokenAccount {
     pendingOperations: [],
     starred: false,
     balanceHistoryCache: {
-      WEEK: { latestDate: null, balances: [] },
-      HOUR: { latestDate: null, balances: [] },
-      DAY: { latestDate: null, balances: [] },
+      WEEK: {
+        latestDate: null,
+        balances: [],
+      },
+      HOUR: {
+        latestDate: null,
+        balances: [],
+      },
+      DAY: {
+        latestDate: null,
+        balances: [],
+      },
     },
     swapHistory: [],
   };
