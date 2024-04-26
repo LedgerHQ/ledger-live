@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react";
 import { getAccountSpendableBalance } from "@ledgerhq/live-common/account/index";
-import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/helpers";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { AccountLike, Account, DerivationMode } from "@ledgerhq/types-live";
 import { Flex, Tag, Text } from "@ledgerhq/native-ui";
@@ -13,6 +13,7 @@ import CurrencyIcon from "./CurrencyIcon";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import CounterValue from "./CounterValue";
 import { useMaybeAccountName } from "~/reducers/wallet";
+import { useMaybeAccountUnit } from "~/hooks/useAccountUnit";
 
 export type Props = CardProps & {
   account?: AccountLike | null;
@@ -41,9 +42,9 @@ const AccountCard = ({
   const accountNameFromStore = useMaybeAccountName(account);
   const accountName = overridesName || accountNameFromStore;
   const parentName = useMaybeAccountName(parentAccount);
-  if (!account) return null;
+  const unit = useMaybeAccountUnit(account);
+  if (!account || !unit) return null;
   const currency = getAccountCurrency(account);
-  const unit = getAccountUnit(account);
   const tag =
     account.type === "Account" &&
     account?.derivationMode !== undefined &&

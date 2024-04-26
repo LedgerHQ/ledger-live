@@ -27,7 +27,6 @@ exports[`polkadot currency bridge scanAccounts polkadot seed 1 1`] = `
     "starred": undefined,
     "swapHistory": [],
     "syncHash": undefined,
-    "unitMagnitude": 10,
     "used": true,
   },
   {
@@ -55,7 +54,6 @@ exports[`polkadot currency bridge scanAccounts polkadot seed 1 1`] = `
     "starred": undefined,
     "swapHistory": [],
     "syncHash": undefined,
-    "unitMagnitude": 10,
     "used": true,
   },
   {
@@ -83,7 +81,6 @@ exports[`polkadot currency bridge scanAccounts polkadot seed 1 1`] = `
     "starred": undefined,
     "swapHistory": [],
     "syncHash": undefined,
-    "unitMagnitude": 10,
     "used": true,
   },
   {
@@ -111,7 +108,6 @@ exports[`polkadot currency bridge scanAccounts polkadot seed 1 1`] = `
     "starred": undefined,
     "swapHistory": [],
     "syncHash": undefined,
-    "unitMagnitude": 10,
     "used": false,
   },
 ]

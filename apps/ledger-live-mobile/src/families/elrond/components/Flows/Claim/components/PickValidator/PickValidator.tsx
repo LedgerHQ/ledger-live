@@ -2,7 +2,7 @@ import React, { useMemo, useCallback } from "react";
 import { View, FlatList } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { getMainAccount, getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import BigNumber from "bignumber.js";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 
@@ -12,6 +12,7 @@ import Item from "./components/Item";
 import type { onSelectType, PickValidatorPropsType } from "./types";
 
 import styles from "./styles";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 /*
  * Handle the component declaration.
@@ -24,7 +25,7 @@ const PickValidator = (props: PickValidatorPropsType) => {
 
   const mainAccount = getMainAccount(account, undefined);
   const bridge = getAccountBridge(account, undefined);
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
 
   /*
    * Initialize a new transaction on mount and set the mode to "claimRewards".

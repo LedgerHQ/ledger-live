@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
-import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { TokenAccount, AccountLike, DerivationMode } from "@ledgerhq/types-live";
 import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { useSelector } from "react-redux";
@@ -14,6 +14,7 @@ import { track } from "~/analytics";
 import { useNavigation } from "@react-navigation/native";
 import { State } from "~/reducers/types";
 import { useAccountName, useMaybeAccountName } from "~/reducers/wallet";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props = {
   account: AccountLike;
@@ -46,7 +47,7 @@ const AccountRow = ({
 
   const name = useAccountName(account);
   const parentName = useMaybeAccountName(parentAccount);
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
 
   const tag =
     account.type === "Account" &&

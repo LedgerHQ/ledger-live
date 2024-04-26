@@ -132,7 +132,6 @@ export const scanAccounts: CurrencyBridge["scanAccounts"] = ({ currency }) =>
           operationsSize: isLast ? 0 : 100,
           currency,
         });
-        account.unit = currency.units[0];
         account.index = i;
         account.operations = isLast
           ? []

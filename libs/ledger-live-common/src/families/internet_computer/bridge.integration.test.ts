@@ -52,7 +52,6 @@ const internet_computer: CurrenciesData<Transaction> = {
         spendableBalance: "1000000",
         swapHistory: [],
         syncHash: undefined,
-        unitMagnitude: 8,
         used: true,
         xpub: SEED_IDENTIFIER,
       },

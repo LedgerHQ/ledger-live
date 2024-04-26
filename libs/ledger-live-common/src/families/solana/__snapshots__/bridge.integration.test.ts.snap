@@ -23,7 +23,6 @@ exports[`solana currency bridge scanAccounts solana seed 1 1`] = `
     "starred": undefined,
     "swapHistory": [],
     "syncHash": undefined,
-    "unitMagnitude": 9,
     "used": true,
   },
   {
@@ -47,7 +46,6 @@ exports[`solana currency bridge scanAccounts solana seed 1 1`] = `
     "starred": undefined,
     "swapHistory": [],
     "syncHash": undefined,
-    "unitMagnitude": 9,
     "used": false,
   },
 ]

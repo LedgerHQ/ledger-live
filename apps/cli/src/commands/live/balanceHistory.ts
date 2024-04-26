@@ -11,17 +11,17 @@ import {
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { scan, scanCommonOpts } from "../../scan";
 import type { ScanCommonOpts } from "../../scan";
-import type { PortfolioRange } from "@ledgerhq/types-live";
+import type { Account, BalanceHistory, PortfolioRange } from "@ledgerhq/types-live";
 import { getDefaultAccountNameForCurrencyIndex } from "@ledgerhq/live-wallet/accountName";
 
-const histoFormatters = {
+const histoFormatters: Record<string, (histo: BalanceHistory, account: Account) => unknown> = {
   default: (histo, account) =>
     histo
       .map(
         ({ date, value }) =>
           date.toISOString() +
           " " +
-          formatCurrencyUnit(account.unit, new BigNumber(value), {
+          formatCurrencyUnit(account.currency.units[0], new BigNumber(value), {
             showCode: true,
             disableRounding: true,
           }),
@@ -33,19 +33,21 @@ const histoFormatters = {
     "".padStart(22) +
     getDefaultAccountNameForCurrencyIndex(account) +
     ": " +
-    formatCurrencyUnit(account.unit, account.balance, {
+    formatCurrencyUnit(account.currency.units[0], account.balance, {
       showCode: true,
       disableRounding: true,
     }) +
     "\n" +
     asciichart.plot(
-      history.map(h => h.value.div(new BigNumber(10).pow(account.unit.magnitude)).toNumber()),
+      history.map(
+        h => h.value / new BigNumber(10).pow(account.currency.units[0].magnitude).toNumber(),
+      ),
       {
         height: 10,
         format: value =>
           formatCurrencyUnit(
-            account.unit,
-            new BigNumber(value).times(new BigNumber(10).pow(account.unit.magnitude)),
+            account.currency.units[0],
+            new BigNumber(value).times(new BigNumber(10).pow(account.currency.units[0].magnitude)),
             {
               showCode: true,
               disableRounding: true,

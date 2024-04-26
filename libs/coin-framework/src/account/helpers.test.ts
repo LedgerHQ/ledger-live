@@ -1,4 +1,4 @@
-import { CryptoCurrency, TokenCurrency, Unit } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, Operation, SubAccount, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import {
@@ -6,7 +6,6 @@ import {
   emptyHistoryCache,
   getAccountCurrency,
   getAccountSpendableBalance,
-  getAccountUnit,
   getFeesCurrency,
 } from ".";
 import { isAccountEmpty, isAccountBalanceSignificant, clearAccount } from "./helpers";
@@ -37,46 +36,6 @@ describe(getAccountCurrency.name, () => {
       const sampleToken = { id: "tokenId" } as TokenCurrency;
       tokenAccount.token = sampleToken;
       expect(getAccountCurrency(tokenAccount)).toEqual(sampleToken);
-    });
-  });
-});
-
-describe(getAccountUnit.name, () => {
-  describe("given an Account", () => {
-    beforeEach(() => {
-      mockAccount.type = "Account";
-    });
-    it("should return the unit", () => {
-      const sampleUnit = { name: "unit" } as Unit;
-      mockAccount.unit = sampleUnit;
-      expect(getAccountUnit(mockAccount)).toEqual(sampleUnit);
-    });
-  });
-
-  describe("given a TokenAccount", () => {
-    it("should return the token unit", () => {
-      const sampleUnit = { name: "unit" } as Unit;
-      tokenAccount.token = { units: [sampleUnit] } as TokenCurrency;
-      expect(getAccountUnit(tokenAccount)).toEqual(sampleUnit);
-    });
-  });
-
-  describe("given an unknown type Account", () => {
-    beforeEach(() => {
-      (mockAccount as any).type = "DefinitelyNotAStandardAccount";
-    });
-
-    it("should throw an error", () => {
-      expect(() => getAccountUnit(mockAccount)).toThrow(Error);
-    });
-
-    it("should display the account type in the error message", () => {
-      expect.assertions(1);
-      try {
-        getAccountUnit(mockAccount);
-      } catch (e: unknown) {
-        expect((e as Error).message.includes(mockAccount.type)).toEqual(true);
-      }
     });
   });
 });

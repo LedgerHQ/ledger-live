@@ -51,7 +51,6 @@ export const makeAccount = (
     id,
     derivationMode,
     currency,
-    unit: currency.units[0],
     index,
     nfts: [],
     freshAddress: xpubOrAddress,

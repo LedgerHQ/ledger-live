@@ -29,7 +29,6 @@ import { DownloadMedium } from "@ledgerhq/native-ui/assets/icons";
 import BigNumber from "bignumber.js";
 import { ExchangeRate, ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 import {
-  getAccountUnit,
   getMainAccount,
   getAccountCurrency,
   getFeesCurrency,
@@ -42,7 +41,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { ParamListBase } from "@react-navigation/native";
 import isFirmwareUpdateVersionSupported from "@ledgerhq/live-common/hw/isFirmwareUpdateVersionSupported";
 import ProviderIcon from "../ProviderIcon";
-import { lastSeenDeviceSelector } from "~/reducers/settings";
+import { currencySettingsForAccountSelector, lastSeenDeviceSelector } from "~/reducers/settings";
 import { urls } from "~/utils/urls";
 import Alert from "../Alert";
 import { lighten, Theme } from "../../colors";
@@ -62,6 +61,7 @@ import CurrencyIcon from "../CurrencyIcon";
 import ModalLock from "../ModalLock";
 import Config from "react-native-config";
 import { WalletState, accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
+import { SettingsState } from "~/reducers/types";
 
 export const Wrapper = styled(Flex).attrs({
   flex: 1,
@@ -242,6 +242,7 @@ export function renderConfirmSwap({
   amountExpectedTo,
   estimatedFees,
   walletState,
+  settingsState,
 }: RawProps & {
   device: Device;
   transaction: Transaction;
@@ -250,12 +251,21 @@ export function renderConfirmSwap({
   amountExpectedTo?: string | null;
   estimatedFees?: string | null;
   walletState: WalletState;
+  settingsState: SettingsState;
 }) {
   const providerName = getProviderName(exchangeRate.provider);
   const noticeType = getNoticeType(exchangeRate.provider);
   const alertProperties = noticeType.learnMore ? { learnMoreUrl: urls.swap.learnMore } : {};
   const fromAccountName = accountNameWithDefaultSelector(walletState, exchange.fromAccount);
   const toAccountName = accountNameWithDefaultSelector(walletState, exchange.toAccount);
+
+  const unitFrom = currencySettingsForAccountSelector(settingsState, {
+    account: exchange.fromAccount,
+  }).unit;
+  const unitTo = currencySettingsForAccountSelector(settingsState, {
+    account: exchange.toAccount,
+  }).unit;
+
   return (
     <ScrollView>
       <Wrapper width="100%">
@@ -277,7 +287,7 @@ export function renderConfirmSwap({
             <Text>
               <CurrencyUnitValue
                 value={transaction.amount}
-                unit={getAccountUnit(exchange.fromAccount)}
+                unit={unitFrom}
                 disableRounding
                 showCode
               />
@@ -287,7 +297,7 @@ export function renderConfirmSwap({
           <FieldItem title={t("DeviceAction.swap2.amountReceived")}>
             <Text>
               <CurrencyUnitValue
-                unit={getAccountUnit(exchange.toAccount)}
+                unit={unitTo}
                 value={amountExpectedTo ? new BigNumber(amountExpectedTo) : exchangeRate.toAmount}
                 disableRounding
                 showCode

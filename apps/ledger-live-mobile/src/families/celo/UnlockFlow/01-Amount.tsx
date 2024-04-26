@@ -14,7 +14,7 @@ import { Trans } from "react-i18next";
 import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
-import { getAccountUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { Transaction as CeloTransaction } from "@ledgerhq/live-common/families/celo/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { accountScreenSelector } from "~/reducers/accounts";
@@ -30,6 +30,7 @@ import { getFirstStatusError, hasStatusError } from "../../helpers";
 import SendRowsFee from "../SendRowsFee";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { CeloUnlockFlowParamList } from "./types";
+import { useMaybeAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props = BaseComposite<
   StackNavigatorProps<CeloUnlockFlowParamList, ScreenName.CeloUnlockAmount>
@@ -109,11 +110,12 @@ export default function UnlockAmount({ navigation, route }: Props) {
 
   const blur = useCallback(() => Keyboard.dismiss(), []);
 
-  if (!account || !transaction) return null;
+  const unit = useMaybeAccountUnit(account);
+
+  if (!account || !transaction || !unit) return null;
 
   const { useAllAmount } = transaction;
   const { amount } = status;
-  const unit = getAccountUnit(account);
 
   const error = amount.eq(0) || bridgePending ? null : getFirstStatusError(status, "errors");
   const warning = getFirstStatusError(status, "warnings");

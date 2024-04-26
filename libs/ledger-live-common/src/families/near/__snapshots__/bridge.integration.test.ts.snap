@@ -34,7 +34,6 @@ exports[`near currency bridge scanAccounts near seed 1 1`] = `
     "starred": undefined,
     "swapHistory": [],
     "syncHash": undefined,
-    "unitMagnitude": 24,
     "used": true,
   },
   {
@@ -61,7 +60,6 @@ exports[`near currency bridge scanAccounts near seed 1 1`] = `
     "starred": undefined,
     "swapHistory": [],
     "syncHash": undefined,
-    "unitMagnitude": 24,
     "used": false,
   },
   {
@@ -88,7 +86,6 @@ exports[`near currency bridge scanAccounts near seed 1 1`] = `
     "starred": undefined,
     "swapHistory": [],
     "syncHash": undefined,
-    "unitMagnitude": 24,
     "used": false,
   },
 ]

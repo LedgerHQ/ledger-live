@@ -19,7 +19,6 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
     "starred": undefined,
     "swapHistory": [],
     "syncHash": undefined,
-    "unitMagnitude": 8,
     "used": true,
   },
 ]

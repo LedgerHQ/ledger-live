@@ -153,7 +153,6 @@ const getMockAccount = (currencyId: string, address: string): Account => {
     operations: [],
     currency,
     creationDate: new Date(0),
-    unit: currency.units[0],
     balance: new BigNumber(0),
     spendableBalance: new BigNumber(0),
     blockHeight: 0,

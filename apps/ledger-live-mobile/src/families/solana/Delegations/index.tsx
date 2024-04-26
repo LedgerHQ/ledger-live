@@ -1,8 +1,4 @@
-import {
-  getAccountCurrency,
-  getAccountUnit,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 import { stakeActions, stakeActivePercent } from "@ledgerhq/live-common/families/solana/logic";
@@ -42,6 +38,7 @@ import UndelegateIcon from "~/icons/Undelegate";
 import ValidatorImage from "../shared/ValidatorImage";
 import DelegationLabelRight from "./LabelRight";
 import DelegationRow from "./Row";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props = {
   account: SolanaAccount;
@@ -63,7 +60,7 @@ function Delegations({ account }: Props) {
     mainAccount.solanaResources?.stakes ?? [],
   );
 
-  const unit = getAccountUnit(mainAccount);
+  const unit = useAccountUnit(mainAccount);
   const navigation = useNavigation();
 
   const [selectedStakeWithMeta, setSelectedStakeWithMeta] = useState<

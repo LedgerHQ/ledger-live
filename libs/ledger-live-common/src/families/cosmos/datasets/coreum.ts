@@ -56,7 +56,6 @@ const dataset: CurrenciesData<Transaction> = {
         ],
         pendingOperations: [],
         currencyId: "coreum",
-        unitMagnitude: 6,
         lastSyncDate: "2023-07-26T05:46:40.684Z",
         balance: "1000000",
         spendableBalance: "1000000",

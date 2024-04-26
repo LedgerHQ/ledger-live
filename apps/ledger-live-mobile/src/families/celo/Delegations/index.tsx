@@ -38,6 +38,7 @@ import { formatAmount } from "./utils";
 import CheckCircle from "~/icons/CheckCircle";
 import Loader from "~/icons/Loader";
 import { useAccountName } from "~/reducers/wallet";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props = {
   account: Account;
@@ -132,6 +133,7 @@ function Delegations({ account }: Props) {
   );
 
   const accountName = useAccountName(account);
+  const unit = useAccountUnit(account);
 
   const data = useMemo<DelegationDrawerProps["data"]>(() => {
     const v = vote;
@@ -230,7 +232,7 @@ function Delegations({ account }: Props) {
                   Component: (
                     <>
                       <LText numberOfLines={1} semiBold style={[styles.valueText]}>
-                        {formatAmount(account as CeloAccount, vote.amount ?? 0)}
+                        {formatAmount(vote.amount ?? 0, unit)}
                       </LText>
                     </>
                   ),
@@ -244,10 +246,10 @@ function Delegations({ account }: Props) {
     t,
     getValidatorName,
     accountName,
-    account,
     colors.green,
     colors.warning,
     colors.grey,
+    unit,
     onOpenExplorer,
   ]);
 

@@ -9,11 +9,7 @@ import {
   isEditableOperation,
   isStuckOperation,
 } from "@ledgerhq/live-common/operation";
-import {
-  getMainAccount,
-  getAccountCurrency,
-  getAccountUnit,
-} from "@ledgerhq/live-common/account/index";
+import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { Account, Operation, AccountLike } from "@ledgerhq/types-live";
 import { Box, Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { WarningMedium } from "@ledgerhq/native-ui/assets/icons";
@@ -33,6 +29,7 @@ import { BaseNavigation } from "../RootNavigator/types/helpers";
 import { currencySettingsForAccountSelector } from "~/reducers/settings";
 import type { State } from "~/reducers/types";
 import { useAccountName } from "~/reducers/wallet";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type FamilyOperationDetailsIntersection = UnionToIntersection<
   (typeof perFamilyOperationDetails)[keyof typeof perFamilyOperationDetails]
@@ -124,10 +121,12 @@ function OperationRow({
   const isNftOperation =
     ["NFT_IN", "NFT_OUT"].includes(operation.type) && operation.contract && operation.tokenId;
 
+  const unit = useAccountUnit(account);
+
   const renderAmountCellExtra = useCallback(() => {
     const mainAccount = getMainAccount(account, parentAccount);
     const currency = getAccountCurrency(account);
-    const unit = getAccountUnit(account);
+
     const specific = mainAccount?.currency?.family
       ? (perFamilyOperationDetails[
           mainAccount.currency.family as keyof typeof perFamilyOperationDetails
@@ -142,7 +141,7 @@ function OperationRow({
     return SpecificAmountCell ? (
       <SpecificAmountCell operation={operation} unit={unit} currency={currency} />
     ) : null;
-  }, [account, operation, parentAccount]);
+  }, [account, operation, parentAccount, unit]);
 
   const { colors } = useTheme();
   const amount = getOperationAmountNumber(operation);
@@ -150,7 +149,7 @@ function OperationRow({
   const mainAccount = getMainAccount(account, parentAccount);
   const accountName = useAccountName(account);
   const currencySettings = useSelector((s: State) =>
-    currencySettingsForAccountSelector(s, {
+    currencySettingsForAccountSelector(s.settings, {
       account: mainAccount,
     }),
   );
@@ -165,7 +164,6 @@ function OperationRow({
     ? colors.success.c50
     : colors.warning.c50;
 
-  const unit = getAccountUnit(account);
   const text = <Trans i18nKey={`operations.types.${operation.type}`} />;
   const isOptimistic = operation.blockHeight === null;
   const isOperationStuck =

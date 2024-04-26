@@ -67,7 +67,7 @@ export function formatReportForConsole<T extends Transaction>({
   }
 
   if (account && maxSpendable) {
-    str += `max spendable ~${formatCurrencyUnit(account.unit, maxSpendable)}\n`;
+    str += `max spendable ~${formatCurrencyUnit(account.currency.units[0], maxSpendable)}\n`;
   }
 
   if (unavailableMutationReasons) {

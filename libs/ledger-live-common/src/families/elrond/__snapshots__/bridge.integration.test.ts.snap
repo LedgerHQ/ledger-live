@@ -25,7 +25,6 @@ exports[`elrond currency bridge scanAccounts elrond seed 1 1`] = `
     "subAccounts": [],
     "swapHistory": [],
     "syncHash": undefined,
-    "unitMagnitude": 18,
     "used": true,
   },
   {
@@ -51,7 +50,6 @@ exports[`elrond currency bridge scanAccounts elrond seed 1 1`] = `
     "subAccounts": [],
     "swapHistory": [],
     "syncHash": undefined,
-    "unitMagnitude": 18,
     "used": false,
   },
 ]

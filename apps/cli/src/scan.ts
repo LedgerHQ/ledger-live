@@ -324,7 +324,6 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
               id,
               derivationMode,
               currency,
-              unit: currency.units[0],
               index,
               freshAddress: xpubOrAddress,
               freshAddressPath,

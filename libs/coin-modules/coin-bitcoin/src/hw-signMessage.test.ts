@@ -69,7 +69,6 @@ function createFixtureAccount(account?: Partial<BitcoinAccount>): BitcoinAccount
     creationDate: new Date(),
     blockHeight: 100_000,
     currency,
-    unit: currency.units[0],
     operationsCount: 0,
     operations: [],
     pendingOperations: [],

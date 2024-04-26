@@ -36,7 +36,6 @@ const dataset: CurrenciesData<Transaction> = {
         operations: [],
         pendingOperations: [],
         currencyId: "quicksilver",
-        unitMagnitude: 6,
         lastSyncDate: "2023-04-25T15:22:47.450Z",
         balance: "9998269",
         spendableBalance: "8998269",

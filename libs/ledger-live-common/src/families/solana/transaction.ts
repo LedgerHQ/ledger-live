@@ -20,7 +20,7 @@ import {
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/coin-framework/serialization";
 import type { Account } from "@ledgerhq/types-live";
-import { findSubAccountById, getAccountUnit } from "../../account";
+import { findSubAccountById, getAccountCurrency } from "../../account";
 import { formatCurrencyUnit, getTokenById } from "../../currencies";
 import { assertUnreachable } from "./utils";
 import { toTokenId } from "./logic";
@@ -46,7 +46,7 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
 };
 
 const lamportsToSOL = (account: Account, amount: number) => {
-  return formatCurrencyUnit(getAccountUnit(account), new BigNumber(amount), {
+  return formatCurrencyUnit(getAccountCurrency(account).units[0], new BigNumber(amount), {
     showCode: true,
     disableRounding: true,
   });
@@ -127,10 +127,14 @@ function formatTokenTransfer(mainAccount: Account, tx: Transaction, command: Tok
   if (!subAccount || subAccount.type !== "TokenAccount") {
     throw new Error("token subaccount expected");
   }
-  const amount = formatCurrencyUnit(getAccountUnit(subAccount), new BigNumber(command.amount), {
-    showCode: true,
-    disableRounding: true,
-  });
+  const amount = formatCurrencyUnit(
+    getAccountCurrency(subAccount).units[0],
+    new BigNumber(command.amount),
+    {
+      showCode: true,
+      disableRounding: true,
+    },
+  );
   const recipient = command.recipientDescriptor.walletAddress;
   const str = [
     `  SEND: ${amount}${tx.useAllAmount ? " (ALL)" : ""}`,

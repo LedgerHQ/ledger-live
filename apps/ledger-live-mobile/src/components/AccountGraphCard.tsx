@@ -8,7 +8,7 @@ import {
   BalanceHistoryWithCountervalue,
 } from "@ledgerhq/types-live";
 import { Unit, Currency } from "@ledgerhq/types-cryptoassets";
-import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { Box, Flex, Text, Transitions, InfiniteLoader, GraphTabs, Tag } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
@@ -31,6 +31,7 @@ import { BaseNavigatorStackParamList } from "./RootNavigator/types/BaseNavigator
 import { GraphPlaceholder } from "./Graph/Placeholder";
 import { tokensWithUnsupportedGraph } from "./Graph/tokensWithUnsupportedGraph";
 import { useAccountName, useMaybeAccountName } from "~/reducers/wallet";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 const { width } = getWindowDimensions();
 
@@ -80,7 +81,7 @@ function AccountGraphCard({
   parentAccount,
 }: Props) {
   const currency = getAccountCurrency(account);
-
+  const unit = useAccountUnit(account);
   const { colors } = useTheme();
   const { t } = useTranslation();
 
@@ -143,7 +144,7 @@ function AccountGraphCard({
         onSwitchAccountCurrency={onSwitchAccountCurrency}
         counterValueUnit={counterValueCurrency.units[0]}
         useCounterValue={useCounterValue}
-        cryptoCurrencyUnit={getAccountUnit(account)}
+        cryptoCurrencyUnit={unit}
         item={hoveredItem || history[history.length - 1]}
         valueChange={valueChange}
         parentAccount={parentAccount}

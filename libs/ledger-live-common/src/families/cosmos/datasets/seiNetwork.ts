@@ -36,7 +36,6 @@ const dataset: CurrenciesData<Transaction> = {
         blockHeight: 30141265,
         creationDate: "2023-10-05T07:51:50.000Z",
         currencyId: "sei_network",
-        unitMagnitude: 6,
         lastSyncDate: "2023-10-05T07:57:42.286Z",
         balance: "278991",
         spendableBalance: "128991",

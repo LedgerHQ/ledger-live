@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import type { Account, Operation, AccountLike, NFTMetadataResponse } from "@ledgerhq/types-live";
-import { getAccountUnit, getFeesCurrency, getFeesUnit } from "@ledgerhq/live-common/account/index";
+import { getFeesCurrency, getFeesUnit } from "@ledgerhq/live-common/account/index";
 import {
   getOperationAmountNumber,
   isConfirmedOperation,
@@ -43,6 +43,7 @@ import type {
 } from "~/components/RootNavigator/types/helpers";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { useAccountName } from "~/reducers/wallet";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type HelpLinkProps = {
   event: string;
@@ -104,14 +105,14 @@ export default function Content({
   }, []);
 
   const currencySettings = useSelector((s: State) =>
-    currencySettingsForAccountSelector(s, {
+    currencySettingsForAccountSelector(s.settings, {
       account: mainAccount,
     }),
   );
 
   const isToken = currency.type === "TokenCurrency";
   const accountName = useAccountName(account);
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const feeCurrency = getFeesCurrency(mainAccount);
   const feeUnit = getFeesUnit(feeCurrency);
   const amount = getOperationAmountNumber(operation);

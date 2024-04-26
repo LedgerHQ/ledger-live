@@ -26,11 +26,11 @@ import { Flex } from "@ledgerhq/native-ui";
 
 const SEARCH_KEYS = [
   "name",
-  "account.unit.code",
+  "account.currency.name",
+  "account.currency.ticker",
   "account.token.name",
   "account.token.ticker",
   "subAccount.name",
-  "subAccount.unit.code",
   "subAccount.token.name",
   "subAccount.token.ticker",
 ];

@@ -122,7 +122,6 @@ function createAccount(id: string): Account {
     creationDate: new Date(),
     blockHeight: 0,
     currency,
-    unit: currency.units[0],
     operationsCount: 0,
     operations: [],
     pendingOperations: [],

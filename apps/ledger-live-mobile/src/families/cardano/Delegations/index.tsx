@@ -2,7 +2,7 @@ import React, { useCallback, useState, useMemo } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
-import { getAccountUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import type {
   CardanoAccount,
   CardanoDelegation,
@@ -30,6 +30,7 @@ import DelegationRow from "./Row";
 import PoolImage from "../shared/PoolImage";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import { useAccountName } from "~/reducers/wallet";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props = {
   account: CardanoAccount;
@@ -44,7 +45,7 @@ function Delegations({ account }: Props) {
 
   const mainAccount = getMainAccount(account, undefined);
 
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const navigation = useNavigation();
 
   const { cardanoResources } = account;

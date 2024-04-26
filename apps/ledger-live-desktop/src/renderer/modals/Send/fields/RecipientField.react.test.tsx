@@ -53,11 +53,6 @@ const ethMockAccount: Account = {
   operations: [],
   operationsCount: 0,
   pendingOperations: [],
-  unit: {
-    name: "ether",
-    code: "ETH",
-    magnitude: 18,
-  },
   currency: eth,
   lastSyncDate: new Date("2023-02-14T11:01:19.252Z"),
   swapHistory: [],
@@ -86,11 +81,6 @@ const polygonMockAccount: Account = {
   operations: [],
   operationsCount: 0,
   pendingOperations: [],
-  unit: {
-    name: "matic",
-    code: "MATIC",
-    magnitude: 18,
-  },
   currency: polygon,
   lastSyncDate: new Date("2023-02-14T11:01:19.252Z"),
   swapHistory: [],

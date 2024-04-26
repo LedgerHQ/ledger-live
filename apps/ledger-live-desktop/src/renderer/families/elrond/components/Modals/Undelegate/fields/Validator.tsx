@@ -41,7 +41,7 @@ const Item = (item: { data: DelegationType }) => {
       </Box>
 
       <Text ff="Inter|Regular">
-        {amount} {"EGLD"} {/* FIXME Should be getAccountUnit(account).code */}
+        {amount} {"EGLD"}
       </Text>
     </Box>
   );

@@ -12,14 +12,11 @@ import {
 } from "~/renderer/screens/exchange/Swap2/Form/SwapWebView";
 import { rateSelector } from "~/renderer/actions/swap";
 import { getEnv } from "@ledgerhq/live-env";
-import {
-  getAccountUnit,
-  getFeesCurrency,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
+import { getFeesCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import BigNumber from "bignumber.js";
 import { walletSelector } from "~/renderer/reducers/wallet";
+import { useMaybeAccountUnit } from "../useAccountUnit";
 
 export type UseSwapLiveAppHookProps = {
   manifestID: string | null;
@@ -51,10 +48,11 @@ export const useSwapLiveAppHook = (props: UseSwapLiveAppHookProps) => {
     swapTransaction.swap.from.account &&
     getMainAccount(swapTransaction.swap.from.account, swapTransaction.swap.from.parentAccount);
   const estimatedFeesUnit = mainFromAccount && getFeesCurrency(mainFromAccount);
+
+  const unit = useMaybeAccountUnit(mainFromAccount);
   const estimatedFees = useMemo(() => {
-    const unit = mainFromAccount && getAccountUnit(mainFromAccount);
     return unit && BigNumber(formatCurrencyUnit(unit, swapTransaction.status.estimatedFees));
-  }, [mainFromAccount, swapTransaction.status.estimatedFees]);
+  }, [swapTransaction.status.estimatedFees, unit]);
 
   const walletState = useSelector(walletSelector);
 

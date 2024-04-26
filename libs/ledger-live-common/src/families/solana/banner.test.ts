@@ -55,7 +55,6 @@ const account: SolanaAccount = {
   operations: [],
   operationsCount: 2,
   pendingOperations: [],
-  unit: { name: "SOL", code: "SOL", magnitude: 9 },
   currency: {
     type: "CryptoCurrency",
     id: "solana",

@@ -6,11 +6,7 @@ import { Trans, useTranslation } from "react-i18next";
 import invariant from "invariant";
 import Icon from "react-native-vector-icons/Feather";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import {
-  getAccountCurrency,
-  getAccountUnit,
-  shortAddressPreview,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, shortAddressPreview } from "@ledgerhq/live-common/account/index";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import type { Transaction as TezosTransaction } from "@ledgerhq/live-common/families/tezos/types";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -35,11 +31,12 @@ import BakerImage from "../BakerImage";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { TezosDelegationFlowParamList } from "./types";
 import { useAccountName } from "~/reducers/wallet";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props = StackNavigatorProps<TezosDelegationFlowParamList, ScreenName.DelegationSummary>;
 
 const AccountBalanceTag = ({ account }: { account: AccountLike }) => {
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const { colors } = useTheme();
   return (
     <View style={[styles.accountBalanceTag, { backgroundColor: colors.lightFog }]}>

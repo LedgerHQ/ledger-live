@@ -35,7 +35,6 @@ const hedera: CurrenciesData<Transaction> = {
         operations: [],
         pendingOperations: [],
         currencyId: "hedera",
-        unitMagnitude: 8,
         lastSyncDate: "",
         balance: "0",
       },

@@ -12,7 +12,7 @@ import invariant from "invariant";
 import { Observable, firstValueFrom, from } from "rxjs";
 import secp256k1 from "secp256k1";
 import { getCurrencyExchangeConfig } from "../";
-import { getAccountCurrency, getAccountUnit, getMainAccount } from "../../account";
+import { getAccountCurrency, getMainAccount } from "../../account";
 import { getAccountBridge } from "../../bridge";
 import { getEnv } from "@ledgerhq/live-env";
 import {
@@ -63,7 +63,7 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
         const { fromParentAccount, fromAccount, toParentAccount, toAccount } = exchange;
         const { amount } = transaction;
         const refundCurrency = getAccountCurrency(fromAccount);
-        const unitFrom = getAccountUnit(exchange.fromAccount);
+        const unitFrom = getAccountCurrency(exchange.fromAccount).units[0];
         const payoutCurrency = getAccountCurrency(toAccount);
         const refundAccount = getMainAccount(fromAccount, fromParentAccount);
         const payoutAccount = getMainAccount(toAccount, toParentAccount);

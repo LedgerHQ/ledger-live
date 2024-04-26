@@ -4,7 +4,7 @@ import { BigNumber } from "bignumber.js";
 import { Flex, Icon, Text } from "@ledgerhq/native-ui";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
-import { getAccountUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { CompositeScreenProps, useNavigation, useRoute } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import { useCalculate } from "@ledgerhq/live-countervalues-react";
@@ -28,6 +28,7 @@ import { useAnalytics } from "~/analytics";
 import { sharedSwapTracking } from "../../utils";
 import { EDITABLE_FEE_FAMILIES } from "@ledgerhq/live-common/exchange/swap/const/blockchain";
 import { useMaybeAccountName } from "~/reducers/wallet";
+import { useMaybeAccountUnit } from "~/hooks/useAccountUnit";
 
 interface Props {
   provider?: string;
@@ -152,7 +153,7 @@ export function Summary({ provider, swapTx: { swap, status, transaction } }: Pro
 
   const fromUnit = from.currency?.units[0];
   const mainFromAccount = from.account && getMainAccount(from.account, from.parentAccount);
-  const mainAccountUnit = mainFromAccount && getAccountUnit(mainFromAccount);
+  const mainAccountUnit = useMaybeAccountUnit(mainFromAccount);
   const editableFee =
     mainFromAccount && EDITABLE_FEE_FAMILIES.includes(mainFromAccount.currency.family);
 

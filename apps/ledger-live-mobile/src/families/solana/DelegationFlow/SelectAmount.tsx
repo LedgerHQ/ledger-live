@@ -1,4 +1,3 @@
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -37,6 +36,7 @@ import QueuedDrawer from "~/components/QueuedDrawer";
 import { GenericInformationBody } from "~/components/GenericInformationBody";
 import { ExternalLinkMedium, InformationFill } from "@ledgerhq/native-ui/assets/icons";
 import { urls } from "~/utils/urls";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props = StackNavigatorProps<SolanaDelegationFlowParamList, ScreenName.SolanaEditAmount>;
 
@@ -122,7 +122,7 @@ export default function DelegationSelectAmount({ navigation, route }: Props) {
 
   const { useAllAmount } = transaction;
   const { amount } = status;
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const currency = getAccountCurrency(account);
   const onMaxSpendableLearnMore = useCallback(() => Linking.openURL(urls.maxSpendable), []);
 

@@ -56,19 +56,6 @@ export const getAccountCurrency = (account?: AccountLike): TokenCurrency | Crypt
   }
 };
 
-export const getAccountUnit = (account: AccountLike): Unit => {
-  switch (account.type) {
-    case "Account":
-      return account.unit;
-
-    case "TokenAccount":
-      return account.token.units[0];
-
-    default:
-      throw new Error("invalid account.type=" + (account as AccountLike).type);
-  }
-};
-
 export const getAccountSpendableBalance = (account: AccountLike): BigNumber =>
   account.spendableBalance;
 

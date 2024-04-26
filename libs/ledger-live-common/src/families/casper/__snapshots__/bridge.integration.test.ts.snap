@@ -19,7 +19,6 @@ exports[`casper currency bridge scanAccounts casper seed 1 1`] = `
     "starred": undefined,
     "swapHistory": [],
     "syncHash": undefined,
-    "unitMagnitude": 9,
     "used": true,
   },
   {
@@ -39,7 +38,6 @@ exports[`casper currency bridge scanAccounts casper seed 1 1`] = `
     "starred": undefined,
     "swapHistory": [],
     "syncHash": undefined,
-    "unitMagnitude": 9,
     "used": true,
   },
   {
@@ -59,7 +57,6 @@ exports[`casper currency bridge scanAccounts casper seed 1 1`] = `
     "starred": undefined,
     "swapHistory": [],
     "syncHash": undefined,
-    "unitMagnitude": 9,
     "used": false,
   },
 ]

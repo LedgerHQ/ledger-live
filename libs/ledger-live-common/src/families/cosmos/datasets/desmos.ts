@@ -36,7 +36,6 @@ const dataset: CurrenciesData<Transaction> = {
         operations: [],
         pendingOperations: [],
         currencyId: "desmos",
-        unitMagnitude: 6,
         lastSyncDate: "2023-04-19T08:50:37.675Z",
         balance: "9998421",
         spendableBalance: "9898421",

@@ -45,7 +45,6 @@ export function fromAccountRaw(rawAccount: AccountRaw, fromRaw?: FromFamiliyRaw)
     blockHeight,
     currencyId,
     feesCurrencyId,
-    unitMagnitude,
     operations,
     operationsCount,
     pendingOperations,
@@ -78,7 +77,6 @@ export function fromAccountRaw(rawAccount: AccountRaw, fromRaw?: FromFamiliyRaw)
   const feesCurrency =
     (feesCurrencyId && (findCryptoCurrencyById(feesCurrencyId) || findTokenById(feesCurrencyId))) ||
     undefined;
-  const unit = currency.units.find(u => u.magnitude === unitMagnitude) || currency.units[0];
 
   const res: Account = {
     type: "Account",
@@ -97,7 +95,6 @@ export function fromAccountRaw(rawAccount: AccountRaw, fromRaw?: FromFamiliyRaw)
     operations: (operations || []).map(convertOperation),
     operationsCount: operationsCount || (operations && operations.length) || 0,
     pendingOperations: (pendingOperations || []).map(convertOperation),
-    unit,
     currency,
     feesCurrency,
     lastSyncDate: new Date(lastSyncDate || 0),
@@ -160,7 +157,6 @@ export function toAccountRaw(
     operationsCount,
     operations,
     pendingOperations,
-    unit,
     lastSyncDate,
     balance,
     balanceHistoryCache,
@@ -198,7 +194,6 @@ export function toAccountRaw(
     operations: (operations || []).map(convertOperation),
     pendingOperations: (pendingOperations || []).map(convertOperation),
     currencyId: currency.id,
-    unitMagnitude: unit.magnitude,
     lastSyncDate: lastSyncDate.toISOString(),
     balance: balance.toFixed(),
     spendableBalance: spendableBalance.toFixed(),
