@@ -56,8 +56,7 @@ async function initializeUserSupportedFiats() {
   let supportedTokens = [] as string[];
 
   if (remoteSupportedTokens.length !== 0) {
-    remoteSupportedTokens.forEach(id => {
-      const token = id.toUpperCase();
+    remoteSupportedTokens.forEach(token => {
       if (locallySupportedFiats.includes(token)) {
         supportedTokens.push(token);
       }
@@ -72,7 +71,7 @@ async function initializeUserSupportedFiats() {
 
 export async function fetchSupportedFiatsTokens(): Promise<string[]> {
   try {
-    const response = await fetch(`${getEnv("LEDGER_COUNTERVALUES_API")}/v2/supported-to`, {
+    const response = await fetch(`${getEnv("LEDGER_COUNTERVALUES_API")}/v3/supported/fiat`, {
       method: "GET",
       headers: {
         accept: "application/json",
