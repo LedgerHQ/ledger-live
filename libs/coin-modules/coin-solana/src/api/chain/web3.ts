@@ -14,7 +14,7 @@ import {
   ComputeBudgetProgram,
 } from "@solana/web3.js";
 import chunk from "lodash/chunk";
-import uniqBy from "lodash/uniqBy";
+import uniq from "lodash/uniq";
 import { ChainAPI } from ".";
 import { Awaited } from "../../logic";
 import {
@@ -153,7 +153,7 @@ export const buildTransferInstructions = async (
     instructions.push(memoIx);
   }
 
-  return appendMaybePriorityFeeInstruction(api, [fromPublicKey, toPublicKey], instructions);
+  return appendMaybePriorityFeeInstructions(api, instructions, fromPublicKey);
 };
 
 export const buildTokenTransferInstructions = async (
@@ -272,18 +272,31 @@ export async function getStakeAccountAddressWithSeed({
   return pubkey.toBase58();
 }
 
-export async function getPriorityFee(api: ChainAPI, accounts: PublicKey[]): Promise<number> {
-  const uniqAccs = uniqBy(accounts, acc => acc.toBase58());
-  const recentFees = await api.getRecentPrioritizationFees({
-    lockedWritableAccounts: uniqAccs,
-  });
-
+export async function getPriorityFee(api: ChainAPI, accounts: string[]): Promise<number> {
+  const recentFees = await api.getRecentPrioritizationFees(uniq(accounts));
   return median(recentFees.map(item => item.prioritizationFee));
+}
+
+export async function appendMaybePriorityFeeInstructions(
+  api: ChainAPI,
+  ixs: TransactionInstruction[],
+  payer: PublicKey,
+): Promise<TransactionInstruction[]> {
+  const instructions = [...ixs];
+  const writableAccs = instructions
+    .map(ix => ix.keys.filter(acc => acc.isWritable).map(acc => acc.pubkey.toBase58()))
+    .flat();
+  const priorityFeeIx = await buildMaybePriorityFeeInstruction(api, writableAccs);
+  if (priorityFeeIx) instructions.unshift(priorityFeeIx);
+  const computeUnitsIx = await buildComputeUnitInstruction(api, instructions, payer);
+
+  if (computeUnitsIx) instructions.unshift(computeUnitsIx);
+  return instructions;
 }
 
 export async function buildMaybePriorityFeeInstruction(
   api: ChainAPI,
-  accounts: PublicKey[],
+  accounts: string[],
 ): Promise<TransactionInstruction | null> {
   const priorityFee = await getPriorityFee(api, accounts);
   if (priorityFee === 0) return null;
@@ -292,14 +305,16 @@ export async function buildMaybePriorityFeeInstruction(
     microLamports: priorityFee,
   });
 }
-
-export async function appendMaybePriorityFeeInstruction(
+export async function buildComputeUnitInstruction(
   api: ChainAPI,
-  accounts: PublicKey[],
   ixs: TransactionInstruction[],
-): Promise<TransactionInstruction[]> {
-  const priorityFeeIx = await buildMaybePriorityFeeInstruction(api, accounts);
-  return priorityFeeIx ? [priorityFeeIx, ...ixs] : ixs;
+  payer: PublicKey,
+): Promise<TransactionInstruction | null> {
+  const computeUnits = await api.getSimulationComputeUnits(ixs, payer);
+  // adding 10% more CPU to make sure it will work
+  return computeUnits
+    ? ComputeBudgetProgram.setComputeUnitLimit({ units: computeUnits * 0.1 + computeUnits })
+    : null;
 }
 
 export function buildCreateAssociatedTokenAccountInstruction({
@@ -336,7 +351,7 @@ export async function buildStakeDelegateInstructions(
     votePubkey: voteAcc,
   });
 
-  return appendMaybePriorityFeeInstruction(api, [withdrawAuthority, stakeAcc], tx.instructions);
+  return appendMaybePriorityFeeInstructions(api, tx.instructions, withdrawAuthority);
 }
 
 export async function buildStakeUndelegateInstructions(
@@ -350,7 +365,7 @@ export async function buildStakeUndelegateInstructions(
     stakePubkey: stakeAcc,
   });
 
-  return appendMaybePriorityFeeInstruction(api, [withdrawAuthority, stakeAcc], tx.instructions);
+  return appendMaybePriorityFeeInstructions(api, tx.instructions, withdrawAuthority);
 }
 
 export async function buildStakeWithdrawInstructions(
@@ -367,7 +382,7 @@ export async function buildStakeWithdrawInstructions(
     toPubkey: recipient,
   });
 
-  return appendMaybePriorityFeeInstruction(api, [withdrawAuthority, stakeAcc], tx.instructions);
+  return appendMaybePriorityFeeInstructions(api, tx.instructions, withdrawAuthority);
 }
 
 export async function buildStakeSplitInstructions(
@@ -385,7 +400,7 @@ export async function buildStakeSplitInstructions(
     basePubkey: basePk,
     seed,
   });
-  return appendMaybePriorityFeeInstruction(api, [basePk, stakePk], splitIx.instructions);
+  return appendMaybePriorityFeeInstructions(api, splitIx.instructions, basePk);
 }
 
 export async function buildStakeCreateAccountInstructions(
@@ -421,5 +436,5 @@ export async function buildStakeCreateAccountInstructions(
       votePubkey: new PublicKey(delegate.voteAccAddress),
     }),
   );
-  return appendMaybePriorityFeeInstruction(api, [fromPubkey, stakePubkey], tx.instructions);
+  return appendMaybePriorityFeeInstructions(api, tx.instructions, fromPubkey);
 }

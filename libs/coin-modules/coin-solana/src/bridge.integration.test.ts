@@ -964,6 +964,7 @@ const baseAPI = {
       },
     ]);
   },
+  getSimulationComputeUnits: (_ixs: any[], _payer: any) => Promise.resolve(1000),
 } as ChainAPI;
 
 type StakeTestSpec = {
