@@ -4,9 +4,9 @@
 import { renderHook } from "@testing-library/react";
 
 import { LiveAppManifest } from "../types";
-import { useLocalLiveAppManifest } from "../providers/LocalLiveAppProvider";
 import { useRemoteLiveAppManifest } from "../providers/RemoteLiveAppProvider";
 import { useManifest } from "./useManifest";
+import { useLocalLiveAppManifest } from "../../wallet-api/LocalLiveAppProvider";
 
 jest.mock("../providers/LocalLiveAppProvider");
 jest.mock("../providers/RemoteLiveAppProvider");

@@ -32,11 +32,7 @@ export function useCatalog() {
   const combinedManifests = useManifests({ visibility: ["searchable", "complete"] });
   const categories = useCategories(completeManifests);
   const recentlyUsed = useRecentlyUsed(combinedManifests, recentlyUsedDB);
-  const { state: localLiveApps, addLocalManifest } = useLocalLiveApp(localLiveAppDB);
-
-  useEffect(() => {
-    addLocalManifest({ id: "test", name: "Test", url: "localhost" });
-  }, []);
+  const { state: localLiveApps } = useLocalLiveApp(localLiveAppDB);
 
   const search = useSearch<AppManifest, TextInput>({
     list: combinedManifests,

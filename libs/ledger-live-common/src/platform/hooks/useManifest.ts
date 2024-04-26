@@ -1,7 +1,7 @@
 import { useMemo } from "react";
-import { useLocalLiveAppManifest } from "../providers/LocalLiveAppProvider";
 import { useRemoteLiveAppManifest } from "../providers/RemoteLiveAppProvider";
 import { LiveAppManifest } from "../types";
+import { useLocalLiveAppManifest } from "../../wallet-api/LocalLiveAppProvider";
 
 export function useManifest(appId: string): LiveAppManifest | undefined {
   const remoteManifest = useRemoteLiveAppManifest(appId);
