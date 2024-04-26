@@ -1,5 +1,16 @@
 # @ledgerhq/live-common
 
+## 34.1.1-nightly.2
+
+### Patch Changes
+
+- [#6452](https://github.com/LedgerHQ/ledger-live/pull/6452) [`7dab046`](https://github.com/LedgerHQ/ledger-live/commit/7dab04608e62b586e213aaf90e319f06676b52e5) Thanks [@RamyEB](https://github.com/RamyEB)! - Add zod Schema for LiveApp
+
+- [#6733](https://github.com/LedgerHQ/ledger-live/pull/6733) [`bfca25b`](https://github.com/LedgerHQ/ledger-live/commit/bfca25b975e00c057da3a7ec82a9b05a0e5d5cf7) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Device renaming: add Nano S Plus compatibility
+
+- Updated dependencies [[`bfca25b`](https://github.com/LedgerHQ/ledger-live/commit/bfca25b975e00c057da3a7ec82a9b05a0e5d5cf7)]:
+  - @ledgerhq/device-core@0.1.2-nightly.1
+
 ## 34.1.1-nightly.1
 
 ### Patch Changes

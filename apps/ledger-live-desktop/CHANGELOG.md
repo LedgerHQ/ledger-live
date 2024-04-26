@@ -1,5 +1,18 @@
 # ledger-live-desktop
 
+## 2.79.2-nightly.2
+
+### Patch Changes
+
+- [#6736](https://github.com/LedgerHQ/ledger-live/pull/6736) [`882c77d`](https://github.com/LedgerHQ/ledger-live/commit/882c77d74d7812116d6820e3f76f74bfa67a609b) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update NoCryptoPlaceholder Icon on market using right Theme
+
+- [#6452](https://github.com/LedgerHQ/ledger-live/pull/6452) [`7dab046`](https://github.com/LedgerHQ/ledger-live/commit/7dab04608e62b586e213aaf90e319f06676b52e5) Thanks [@RamyEB](https://github.com/RamyEB)! - Create, modify and export a local manifest inside LL
+
+- [#6733](https://github.com/LedgerHQ/ledger-live/pull/6733) [`bfca25b`](https://github.com/LedgerHQ/ledger-live/commit/bfca25b975e00c057da3a7ec82a9b05a0e5d5cf7) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Device renaming: add Nano S Plus compatibility
+
+- Updated dependencies [[`7dab046`](https://github.com/LedgerHQ/ledger-live/commit/7dab04608e62b586e213aaf90e319f06676b52e5), [`bfca25b`](https://github.com/LedgerHQ/ledger-live/commit/bfca25b975e00c057da3a7ec82a9b05a0e5d5cf7)]:
+  - @ledgerhq/live-common@34.1.1-nightly.2
+
 ## 2.79.2-nightly.1
 
 ### Patch Changes

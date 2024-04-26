@@ -1,5 +1,11 @@
 # @ledgerhq/device-core
 
+## 0.1.2-nightly.1
+
+### Patch Changes
+
+- [#6733](https://github.com/LedgerHQ/ledger-live/pull/6733) [`bfca25b`](https://github.com/LedgerHQ/ledger-live/commit/bfca25b975e00c057da3a7ec82a9b05a0e5d5cf7) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Device renaming: add Nano S Plus compatibility
+
 ## 0.1.2-nightly.0
 
 ### Patch Changes
