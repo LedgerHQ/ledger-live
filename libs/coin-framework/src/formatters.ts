@@ -41,7 +41,7 @@ export const formatTransactionStatus = (
 
   str +=
     "\n" +
-    `errors: ${Object.entries(warnings)
+    `warnings: ${Object.entries(warnings)
       .map(([key, warning]) => `${key} ${formatErrorSmall(warning)}`)
       .join(", ")}`;
 
