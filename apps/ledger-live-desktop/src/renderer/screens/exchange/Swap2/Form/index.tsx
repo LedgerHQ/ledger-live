@@ -35,9 +35,9 @@ import SwapWebView, { SwapWebProps, useSwapLiveAppManifestID } from "./SwapWebVi
 import { SwapMigrationUI } from "./Migrations/SwapMigrationUI";
 import { useSwapLiveAppHook } from "~/renderer/hooks/swap-migrations/useSwapLiveAppHook";
 import SwapFormSummary from "./FormSummary";
-import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { languageSelector } from "~/renderer/reducers/settings";
+import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { walletSelector } from "~/renderer/reducers/wallet";
 
 const DAPP_PROVIDERS = ["paraswap", "oneinch", "moonpay"];

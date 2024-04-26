@@ -4,18 +4,15 @@ import { Text, Flex } from "@ledgerhq/react-ui";
 import { RecentlyUsed } from "./RecentlyUsed";
 import { Browse } from "./Browse";
 import { useTranslation } from "react-i18next";
-import { useCatalog, useRecentlyUsedDB, useLocalLiveAppDB } from "../hooks";
+import { useCatalog, useRecentlyUsedDB } from "../hooks";
 import { LocalLiveAppSection } from "./LocalLiveAppSection";
 
 export function Catalog() {
   const recentlyUsedDB = useRecentlyUsedDB();
-  const localLiveAppDB = useLocalLiveAppDB();
 
   const { t } = useTranslation();
-  const { categories, recentlyUsed, disclaimer, search, localLiveApps } = useCatalog(
-    recentlyUsedDB,
-    localLiveAppDB,
-  );
+  const { categories, recentlyUsed, disclaimer, search, localLiveApps } =
+    useCatalog(recentlyUsedDB);
 
   return (
     <Flex flexDirection="column" paddingBottom={100}>

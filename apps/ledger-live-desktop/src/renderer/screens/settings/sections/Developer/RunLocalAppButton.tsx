@@ -12,6 +12,7 @@ import { Flex } from "@ledgerhq/react-ui";
 import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import { useLocalLiveAppContext } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 
 const ButtonContainer = styled.div`
   display: flex;

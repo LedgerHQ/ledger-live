@@ -8,7 +8,6 @@ import { languageSelector } from "~/renderer/reducers/settings";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import useTheme from "~/renderer/hooks/useTheme";
-import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import WebPTXPlayer from "~/renderer/components/WebPTXPlayer";
 import { getParentAccount, isTokenAccount } from "@ledgerhq/live-common/account/index";
 import { LiveAppManifest, Loadable } from "@ledgerhq/live-common/platform/types";
@@ -20,6 +19,7 @@ import {
 } from "@ledgerhq/live-common/wallet-api/constants";
 import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { walletSelector } from "~/renderer/reducers/wallet";
 
 export type DProps = {
