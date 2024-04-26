@@ -163,16 +163,33 @@ export async function executeScenario<T extends TransactionCommon>(scenario: Sce
             .pipe(reduce((acc, f) => f(acc), scenarioAccount)),
         );
 
+        if (!testTransaction.expect) {
+          console.warn(
+            chalk.yellow(
+              `No expects for the transaction ${chalk.bold(
+                testTransaction.name,
+              )}. You might want to add tests on this transaction.`,
+            ),
+          );
+        }
+
         try {
           testTransaction.expect?.(previousAccount, scenarioAccount);
         } catch (err) {
           if (!(err as { matcherResult?: { pass: boolean } })?.matcherResult?.pass) {
             if (retry === 0) {
-              console.error("Retried 10 times and could not assert this test");
+              console.error(
+                chalk.red(
+                  `Retried 10 times and could not assert all expects for transaction ${chalk.bold(
+                    testTransaction.name,
+                  )}`,
+                ),
+              );
+
               throw err;
             }
 
-            console.warn("Test asssertion failed. Retrying...");
+            console.warn(chalk.magenta("Test asssertion failed. Retrying..."));
             await new Promise(resolve => setTimeout(resolve, retryInterval ?? 5000));
             await expectHandler(retry - 1);
           }
@@ -206,7 +223,7 @@ export async function executeScenario<T extends TransactionCommon>(scenario: Sce
       "\n\n",
     );
   } catch (err) {
-    console.log(
+    console.error(
       "\n\n",
       chalk.bgRed.black.bold(" ✧ "),
       " ",

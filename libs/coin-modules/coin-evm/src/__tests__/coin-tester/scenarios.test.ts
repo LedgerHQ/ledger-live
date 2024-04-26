@@ -12,7 +12,7 @@ afterAll(async () => {
 });
 
 describe("EVM Deterministic Tester", () => {
-  xit("scenario Ethereum", async () => {
+  it("scenario Ethereum", async () => {
     try {
       await executeScenario(scenarioEthereum);
     } catch (e) {

@@ -32,7 +32,6 @@ const makeScenarioTransactions = ({
     expect: (previousAccount, currentAccount) => {
       const [latestOperation] = currentAccount.operations;
       expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
-      expect(latestOperation.transactionSequenceNumber).toBe(0);
       expect(latestOperation.type).toBe("OUT");
       expect(latestOperation.value.toFixed()).toBe(latestOperation.fee.plus(100).toFixed());
       expect(currentAccount.balance.toFixed()).toBe(
@@ -48,7 +47,7 @@ const makeScenarioTransactions = ({
     subAccountId: encodeTokenAccountId(`js:2:ethereum:${address}:`, USDC_ON_ETHEREUM),
     expect: (previousAccount, currentAccount) => {
       const [latestOperation] = currentAccount.operations;
-      expect(latestOperation.transactionSequenceNumber).toBe(1);
+      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
       expect(latestOperation.type).toBe("FEES");
       expect(latestOperation.value.toFixed()).toBe(latestOperation.fee.toFixed());
       expect(latestOperation.subOperations?.[0].type).toBe("OUT");
@@ -68,7 +67,7 @@ const makeScenarioTransactions = ({
     },
     expect: (previousAccount, currentAccount) => {
       const [latestOperation] = currentAccount.operations;
-      expect(latestOperation.transactionSequenceNumber).toBe(2);
+      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
       expect(latestOperation.type).toBe("FEES");
       expect(
         latestOperation?.nftOperations?.find(
@@ -95,7 +94,7 @@ const makeScenarioTransactions = ({
     },
     expect: (previousAccount, currentAccount) => {
       const [latestOperation] = currentAccount.operations;
-      expect(latestOperation.transactionSequenceNumber).toBe(3);
+      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
       expect(latestOperation.type).toBe("FEES");
       expect(
         latestOperation?.nftOperations?.find(

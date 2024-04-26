@@ -14,14 +14,14 @@ import { ERC20Interface, USDC_ON_POLYGON, polygon } from "../helpers";
 import { clearExplorerAppendix, getLogs, setBlock } from "../indexer";
 import { killAnvil, spawnAnvil } from "../anvil";
 
-const makeScenarioTransactions = ({ address }: { address: string }) => {
-  console.log({ address });
+const makeScenarioTransactions = ({ _address }: { _address: string }) => {
   const send1MaticTransaction: ScenarioTransaction<EvmTransaction> = {
     name: "Send 1 Matic",
     amount: new BigNumber(ethers.utils.parseEther("1").toString()),
     recipient: ethers.constants.AddressZero,
-    expect: (initialAccount, currentAccount) => {
+    expect: (previousAccount, currentAccount) => {
       const [latestOperation] = currentAccount.operations;
+      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
       expect(latestOperation.transactionSequenceNumber).toBe(0);
       expect(latestOperation.transactionRaw?.amount).toBe("1000000000000000000");
     },
@@ -31,8 +31,9 @@ const makeScenarioTransactions = ({ address }: { address: string }) => {
     name: "Send 10 Matic",
     amount: new BigNumber(ethers.utils.parseEther("10").toString()),
     recipient: ethers.constants.AddressZero,
-    expect: (initialAccount, currentAccount) => {
+    expect: (previousAccount, currentAccount) => {
       const [latestOperation] = currentAccount.operations;
+      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
       expect(latestOperation.transactionSequenceNumber).toBe(1);
       expect(latestOperation.transactionRaw?.amount).toBe("10000000000000000000");
     },
@@ -48,8 +49,9 @@ const makeScenarioTransactions = ({ address }: { address: string }) => {
       `js:2:polygon:0x2FBde3Ac8F867e5ED06e4C7060d0df00D87E2C35:`,
       USDC_ON_POLYGON,
     ),
-    expect: (initialAccount, currentAccount) => {
+    expect: (previousAccount, currentAccount) => {
       const [latestOperation] = currentAccount.operations;
+      expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
       expect(latestOperation.transactionSequenceNumber).toBe(2);
       expect(latestOperation.transactionRaw?.amount).toBe("100000000");
     },
@@ -124,7 +126,6 @@ export const scenarioPolygon: Scenario<EvmTransaction> = {
       derivationMode: "",
     });
 
-    console.log({ address });
     const scenarioAccount = makeAccount(address, polygon);
 
     await setBlock();
@@ -134,7 +135,7 @@ export const scenarioPolygon: Scenario<EvmTransaction> = {
 
     return { currencyBridge, accountBridge, account: scenarioAccount, onSignerConfirmation };
   },
-  getTransactions: address => makeScenarioTransactions({ address }),
+  getTransactions: address => makeScenarioTransactions({ _address: address }),
   afterAll: account => {
     expect(account.operations.filter(operation => operation.type === "OUT").length).toBe(3);
   },
