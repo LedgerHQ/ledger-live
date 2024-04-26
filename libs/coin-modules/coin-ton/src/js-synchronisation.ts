@@ -84,7 +84,7 @@ export const getAccountShape: GetAccountShape = async (info, { blacklistedTokenI
     mapJettonTxToOps(accountId, address, newTxs.address_book),
   );
   const operations = shouldSyncFromScratch ? newOps : mergeOps(oldOps, newOps);
-  const subAccounts = await getSubaccounts(
+  const subAccounts = await getSubAccounts(
     info,
     accountId,
     newJettonOps,
@@ -106,7 +106,7 @@ export const getAccountShape: GetAccountShape = async (info, { blacklistedTokenI
   return toReturn;
 };
 
-export const getSubaccountShape = async (
+export const getSubAccountShape = async (
   info: AccountShapeInfo,
   parentId: string,
   token: TokenCurrency,
@@ -143,7 +143,7 @@ export const getSubaccountShape = async (
   };
 };
 
-async function getSubaccounts(
+async function getSubAccounts(
   info: AccountShapeInfo,
   accountId: string,
   newOps: TonOperation[],
@@ -161,7 +161,7 @@ async function getSubaccounts(
   const subAccountsPromises: Promise<Partial<SubAccount>>[] = [];
   for (const [token, ops] of opsPerToken.entries()) {
     subAccountsPromises.push(
-      getSubaccountShape(info, accountId, token, ops, shouldSyncFromScratch),
+      getSubAccountShape(info, accountId, token, ops, shouldSyncFromScratch),
     );
   }
   return Promise.all(subAccountsPromises);

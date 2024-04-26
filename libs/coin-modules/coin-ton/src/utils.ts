@@ -39,7 +39,7 @@ export const transactionToHwParams = (t: Transaction, seqno: number, a: Account)
     recipient = new TonAddress(0, Buffer.alloc(32)).toRawString();
   }
 
-  // if there is a subaccount, the transaction is a token transfer
+  // if there is a sub account, the transaction is a token transfer
   const subAccount = findSubAccountById(a, t.subAccountId || "");
 
   const amount = subAccount
