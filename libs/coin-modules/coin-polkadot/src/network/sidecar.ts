@@ -1,9 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import querystring from "querystring";
 import { TypeRegistry } from "@polkadot/types";
-import { getSpecTypes } from "@polkadot/types-known";
-import { Metadata } from "@polkadot/types/metadata";
-import { expandMetadata } from "@polkadot/types/metadata/decorate";
 import { Extrinsics } from "@polkadot/types/metadata/decorate/types";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
@@ -29,6 +26,7 @@ import type {
   SidecarPaymentInfo,
   SidecarRuntimeSpec,
 } from "./sidecar.types";
+import { createRegistryAndExtrinsics } from "./common";
 
 /**
  * Get indexer base url.
@@ -623,31 +621,7 @@ export const getRegistry = async (): Promise<{
     getTransactionMaterialWithMetadata(),
     fetchChainSpec(),
   ]);
-  const registry: any = new TypeRegistry();
-  const metadata = new Metadata(registry, material.metadata);
-  // Register types specific to chain/runtimeVersion
-  registry.register(
-    getSpecTypes(
-      registry,
-      material.chainName,
-      material.specName,
-      Number(material.specVersion),
-    ) as any,
-  );
-  // Register the chain properties for this registry
-  registry.setChainProperties(
-    registry.createType("ChainProperties", {
-      ss58Format: Number(spec.properties.ss58Format),
-      tokenDecimals: Number(spec.properties.tokenDecimals),
-      tokenSymbol: spec.properties.tokenSymbol,
-    }),
-  );
-  registry.setMetadata(metadata);
-  const extrinsics = expandMetadata(registry, metadata).tx;
-  return {
-    registry,
-    extrinsics,
-  };
+  return createRegistryAndExtrinsics(material, spec);
 };
 
 /*
