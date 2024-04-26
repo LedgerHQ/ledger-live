@@ -3,11 +3,7 @@ import React, { useCallback, useState, useMemo, useEffect } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
-import {
-  getAccountCurrency,
-  getAccountUnit,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
 import {
   useCosmosFamilyMappedDelegations,
@@ -60,6 +56,7 @@ import { getAccountBannerProps as getCosmosBannerProps } from "../utils";
 import ValidatorImage from "../shared/ValidatorImage";
 import { useCanShowStake } from "~/screens/Account/hooks/useCanShowStake";
 import { useAccountName } from "~/reducers/wallet";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props = {
   account: CosmosAccount;
@@ -75,7 +72,7 @@ function Delegations({ account }: Props) {
   const delegations: CosmosMappedDelegation[] = useCosmosFamilyMappedDelegations(mainAccount);
 
   const currency = getAccountCurrency(mainAccount);
-  const unit = getAccountUnit(mainAccount);
+  const unit = useAccountUnit(account);
   const navigation = useNavigation();
   const route = useRoute();
 

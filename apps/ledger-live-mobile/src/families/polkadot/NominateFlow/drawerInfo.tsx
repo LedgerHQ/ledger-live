@@ -1,6 +1,6 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useTheme } from "@react-navigation/native";
 import type { TFunction } from "i18next";
 import type { AccountLike } from "@ledgerhq/types-live";
@@ -12,6 +12,7 @@ import CounterValue from "~/components/CounterValue";
 import ExternalLink from "~/icons/ExternalLink";
 import NominationDrawer from "../components/NominationDrawer";
 import { Unpacked } from "~/types/helpers";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type NominationDrawerData = React.ComponentProps<typeof NominationDrawer>["data"];
 type NominationDrawerDatum = Unpacked<NominationDrawerData>;
@@ -32,7 +33,7 @@ export function getDrawerInfo({
   onOpenExplorer,
 }: Props): NominationDrawerData {
   const currency = getAccountCurrency(account);
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const totalStake = validator.totalBonded;
   const formattedCommission = validator.commission
     ? `${validator.commission.multipliedBy(100).toFixed(2)} %`

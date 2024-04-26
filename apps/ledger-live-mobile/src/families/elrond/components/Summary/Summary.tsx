@@ -2,7 +2,6 @@ import React, { useCallback, useMemo, useEffect, useState, FC } from "react";
 import { ScrollView } from "react-native";
 import { useTranslation } from "react-i18next";
 import { BigNumber } from "bignumber.js";
-import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 
 import type { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
 import type { DelegationType } from "../../types";
@@ -13,6 +12,7 @@ import InfoItem from "~/components/BalanceSummaryInfoItem";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 
 import styles from "./styles";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 /*
  * Create a higher order component that will return null if balance is zero (thus unable to delegate).
@@ -29,7 +29,7 @@ const Summary = (props: SummaryPropsType) => {
   const { t } = useTranslation();
 
   const account = props.account as ElrondAccount;
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
 
   /*
    * Declare the data state (for the dynamic information modal) and the delegation resources state (tracking server updates).

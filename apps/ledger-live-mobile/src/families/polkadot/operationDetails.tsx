@@ -34,6 +34,7 @@ import OperationStatusWrapper from "~/icons/OperationStatusIcon/Wrapper";
 
 import NominationInfo from "./components/NominationInfo";
 import { useSettings } from "~/hooks";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 function getURLWhatIsThis(op: PolkadotOperation): string | undefined {
   if (op.type !== "IN" && op.type !== "OUT") {
@@ -59,11 +60,12 @@ function OperationDetailsExtra({ operation, type, account }: OperationDetailsExt
   const discreet = useSelector(discreetModeSelector);
   const { locale } = useSettings();
   const { extra } = operation;
+  const unit = useAccountUnit(account);
 
   switch (type) {
     case "OUT":
     case "IN": {
-      const value = formatCurrencyUnit(account.unit, extra.transferAmount ?? new BigNumber(0), {
+      const value = formatCurrencyUnit(unit, extra.transferAmount ?? new BigNumber(0), {
         showCode: true,
         discreet,
         disableRounding: true,
@@ -88,7 +90,7 @@ function OperationDetailsExtra({ operation, type, account }: OperationDetailsExt
       );
     }
     case "BOND": {
-      const value = formatCurrencyUnit(account.unit, extra.bondedAmount ?? new BigNumber(0), {
+      const value = formatCurrencyUnit(unit, extra.bondedAmount ?? new BigNumber(0), {
         showCode: true,
         discreet,
         disableRounding: true,
@@ -102,7 +104,7 @@ function OperationDetailsExtra({ operation, type, account }: OperationDetailsExt
       );
     }
     case "UNBOND": {
-      const value = formatCurrencyUnit(account.unit, extra.unbondedAmount ?? new BigNumber(0), {
+      const value = formatCurrencyUnit(unit, extra.unbondedAmount ?? new BigNumber(0), {
         showCode: true,
         discreet,
         disableRounding: true,
@@ -116,16 +118,12 @@ function OperationDetailsExtra({ operation, type, account }: OperationDetailsExt
       );
     }
     case "WITHDRAW_UNBONDED": {
-      const value = formatCurrencyUnit(
-        account.unit,
-        extra.withdrawUnbondedAmount ?? new BigNumber(0),
-        {
-          showCode: true,
-          discreet,
-          disableRounding: true,
-          locale: locale,
-        },
-      );
+      const value = formatCurrencyUnit(unit, extra.withdrawUnbondedAmount ?? new BigNumber(0), {
+        showCode: true,
+        discreet,
+        disableRounding: true,
+        locale: locale,
+      });
       return (
         <>
           <OperationDetailsPalletMethod palletMethod={extra.palletMethod} />

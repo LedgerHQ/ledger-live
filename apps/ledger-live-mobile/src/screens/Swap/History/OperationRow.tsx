@@ -3,7 +3,6 @@ import { TouchableOpacity, StyleSheet, View } from "react-native";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { Icon } from "@ledgerhq/native-ui";
 import type { MappedSwapOperation } from "@ledgerhq/live-common/exchange/swap/types";
-import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import LText from "~/components/LText";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import { SwapStatusIndicator } from "../SwapStatusIndicator";
@@ -11,6 +10,7 @@ import { ScreenName } from "~/const";
 import type { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 import type { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { useAccountName } from "~/reducers/wallet";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 const OperationRow = ({ item }: { item: MappedSwapOperation }) => {
   const { colors } = useTheme();
@@ -31,6 +31,9 @@ const OperationRow = ({ item }: { item: MappedSwapOperation }) => {
   const fromAccountName = useAccountName(fromAccount);
   const toAccountName = useAccountName(toAccount);
 
+  const unitFrom = useAccountUnit(fromAccount);
+  const unitTo = useAccountUnit(toAccount);
+
   return (
     <TouchableOpacity key={swapId} onPress={onOpenOperationDetails}>
       <View
@@ -42,7 +45,7 @@ const OperationRow = ({ item }: { item: MappedSwapOperation }) => {
             {fromAccountName}
           </LText>
           <LText style={styles.amount}>
-            <CurrencyUnitValue showCode unit={getAccountUnit(fromAccount)} value={fromAmount} />
+            <CurrencyUnitValue showCode unit={unitFrom} value={fromAmount} />
           </LText>
         </View>
         <View style={styles.arrow}>
@@ -53,7 +56,7 @@ const OperationRow = ({ item }: { item: MappedSwapOperation }) => {
             {toAccountName}
           </LText>
           <LText style={styles.amount} color="grey">
-            <CurrencyUnitValue showCode unit={getAccountUnit(toAccount)} value={toAmount} />
+            <CurrencyUnitValue showCode unit={unitTo} value={toAmount} />
           </LText>
         </View>
       </View>

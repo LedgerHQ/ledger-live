@@ -2,7 +2,6 @@ import React, { useCallback } from "react";
 import { Linking, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useElrondPreloadData } from "@ledgerhq/live-common/families/elrond/react";
-import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { BigNumber } from "bignumber.js";
 import { useSelector } from "react-redux";
@@ -14,6 +13,7 @@ import type { DetailsPropsType } from "./types";
 import Section from "~/screens/OperationDetails/Section";
 import { discreetModeSelector } from "~/reducers/settings";
 import { useSettings } from "~/hooks";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 /*
  * Handle the component declaration.
@@ -25,7 +25,7 @@ const Details = (props: DetailsPropsType) => {
 
   const discreet = useSelector(discreetModeSelector);
   const { locale } = useSettings();
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
 
   const { extra } = operation;
   const contract = operation && operation.contract ? operation.contract : "";

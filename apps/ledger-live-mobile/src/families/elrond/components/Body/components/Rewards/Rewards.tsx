@@ -2,11 +2,7 @@ import React, { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { View } from "react-native";
 import { useTranslation } from "react-i18next";
-import {
-  getAccountCurrency,
-  getAccountUnit,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import BigNumber from "bignumber.js";
 
 import type { StackNavigationProp } from "@react-navigation/stack";
@@ -21,6 +17,7 @@ import LText from "~/components/LText";
 import { ScreenName, NavigatorName } from "~/const";
 
 import styles from "./styles";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 /*
  * Handle the component declaration.
@@ -30,7 +27,7 @@ const Rewards = (props: RewardsPropsType) => {
   const { account, delegations } = props;
   const { t } = useTranslation();
 
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const navigation: StackNavigationProp<NavigationType> = useNavigation();
   const currency = getAccountCurrency(getMainAccount(account, undefined));
 

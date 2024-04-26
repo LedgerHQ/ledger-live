@@ -56,6 +56,7 @@ import DeviceActionProgress from "../DeviceActionProgress";
 import { PartialNullable } from "~/types/helpers";
 import ModalLock from "../ModalLock";
 import { walletSelector } from "~/reducers/wallet";
+import { settingsStoreSelector } from "~/reducers/settings";
 
 type LedgerError = InstanceType<LedgerErrorConstructor<{ [key: string]: unknown }>>;
 
@@ -233,6 +234,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   }, [error, onError]);
 
   const walletState = useSelector(walletSelector);
+  const settingsState = useSelector(settingsStoreSelector);
 
   if (displayUpgradeWarning && appAndVersion) {
     return renderWarningOutdated({
@@ -403,6 +405,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
       amountExpectedTo: status.amountExpectedTo,
       estimatedFees: status.estimatedFees,
       walletState,
+      settingsState,
     });
   }
 

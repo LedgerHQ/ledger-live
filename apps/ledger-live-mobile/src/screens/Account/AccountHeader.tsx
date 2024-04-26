@@ -1,7 +1,7 @@
 import React from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
-import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { AccountLike, Account, BalanceHistoryWithCountervalue } from "@ledgerhq/types-live";
 import Animated from "react-native-reanimated";
@@ -12,6 +12,7 @@ import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import Placeholder from "~/components/Placeholder";
 import AccountHeaderLeft from "./AccountHeaderLeft";
 import { useAccountName, useMaybeAccountName } from "~/reducers/wallet";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 function AccountHeader({
   currentPositionY,
@@ -33,7 +34,7 @@ function AccountHeader({
   parentAccount?: Account;
 }) {
   const item = history[history.length - 1];
-  const cryptoCurrencyUnit = getAccountUnit(account);
+  const cryptoCurrencyUnit = useAccountUnit(account);
   const items = [
     {
       unit: cryptoCurrencyUnit,

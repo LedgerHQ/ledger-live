@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
-import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import { Linking } from "react-native";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 
@@ -15,6 +14,7 @@ import Touchable from "~/components/Touchable";
 
 import styles from "../styles";
 import { useAccountName } from "~/reducers/wallet";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 /*
  * Handle the hook declaration.
@@ -24,7 +24,7 @@ const useDrawerItems = (data: DrawerPropsType["data"], account: ElrondAccount) =
   const { type, validator, claimableRewards, seconds } = data;
   const { t } = useTranslation();
 
-  const unit = useMemo(() => getAccountUnit(account), [account]);
+  const unit = useAccountUnit(account);
   const [isDelegation, isUndelegation] = useMemo(
     () => [type === "delegation", type === "undelegation"],
     [type],

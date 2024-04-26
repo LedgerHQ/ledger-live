@@ -3,7 +3,7 @@ import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { ParamListBase, useNavigation, useTheme } from "@react-navigation/native";
 import { Trans, useTranslation } from "react-i18next";
 import { BigNumber } from "bignumber.js";
-import { getAccountUnit, getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import {
   useTronSuperRepresentatives,
   formatVotes,
@@ -29,6 +29,7 @@ import AccountSectionLabel from "~/components/AccountSectionLabel";
 import { useManifest } from "@ledgerhq/live-common/platform/hooks/useManifest";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { ScreenName } from "../../../const";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props = {
   account: TronAccount;
@@ -45,7 +46,7 @@ const Delegation = ({ account }: Props) => {
   const lastDate = lastVotedDate ? <DateFromNow date={lastVotedDate.valueOf()} /> : null;
 
   const currency = getAccountCurrency(account);
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const explorerView = getDefaultExplorerView(account.currency);
 
   const { spendableBalance, tronResources } = account;
