@@ -36,7 +36,7 @@ export const getAccountShape: GetAccountShape = async (info, { blacklistedTokenI
   const { address, rest, currency, derivationMode, initialAccount } = info;
 
   const publicKey = reconciliatePubkey(rest?.publicKey, initialAccount);
-  
+
   const blockHeight = await fetchLastBlockNumber();
   const accountId = encodeAccountId({
     type: "js",
