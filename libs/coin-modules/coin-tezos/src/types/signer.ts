@@ -1,5 +1,3 @@
-import { DerivationType } from "@taquito/ledger-signer";
-
 export type TezosAddress = {
   address: string;
   publicKey: string;

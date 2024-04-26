@@ -18,7 +18,7 @@ import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { StepProps } from "../types";
 import { useEffect } from "react";
-import { useBaker } from "@ledgerhq/live-common/families/tezos/bakers";
+import { useBaker } from "@ledgerhq/live-common/families/tezos/react";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { urls } from "~/config/urls";
 

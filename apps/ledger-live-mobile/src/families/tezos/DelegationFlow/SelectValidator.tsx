@@ -19,8 +19,8 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import type { Transaction as TezosTransaction } from "@ledgerhq/live-common/families/tezos/types";
 import type { Baker } from "@ledgerhq/live-common/families/tezos/types";
-import { useBakers } from "@ledgerhq/live-common/families/tezos/bakers";
-import whitelist from "@ledgerhq/live-common/families/tezos/bakers.whitelist-default";
+import { useBakers } from "@ledgerhq/live-common/families/tezos/react";
+import { whitelist } from "@ledgerhq/live-common/families/tezos/staking";
 import { useTheme } from "@react-navigation/native";
 import { accountScreenSelector } from "~/reducers/accounts";
 import { TrackScreen } from "~/analytics";

@@ -42,13 +42,11 @@ const encodeAddress = (publicKey: Buffer) => {
   const key = publicKeyBuf.slice(1);
   const keyHashSize = 20;
   // eslint-disable-next-line prefer-const
-  let hash = blake2b(keyHashSize);
-  hash.update(key);
-  //FIXME
-  // hash.digest((hash = Buffer.alloc(keyHashSize)));
-  const address = bs58check.encode(
-    Buffer.concat([curveData.pkhB58Prefix, hash.digest(Buffer.alloc(keyHashSize))]),
-  );
+  const hash = Buffer.alloc(keyHashSize);
+  const blakHash = blake2b(keyHashSize);
+  blakHash.update(key);
+  blakHash.digest(hash);
+  const address = bs58check.encode(Buffer.concat([curveData.pkhB58Prefix, hash]));
   return address;
 };
 

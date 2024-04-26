@@ -1,14 +1,19 @@
-import { fromAccountRaw } from "../../account";
-import { loadAccountDelegation, listBakers } from "./bakers";
-import whitelist from "./bakers.whitelist-default";
+import { fromAccountRaw } from "@ledgerhq/coin-framework/serialization";
+import { loadAccountDelegation, listBakers } from "../api/bakers";
+import whitelist from "../api/bakers.whitelist-default";
 
 import { AmountRequired, NotEnoughBalance } from "@ledgerhq/errors";
-import type { DatasetTest } from "@ledgerhq/types-live";
-import type { TezosAccountRaw, Transaction } from "./types";
+import type { DatasetTest, DerivationMode } from "@ledgerhq/types-live";
+import type { TezosAccountRaw, Transaction } from "../types";
 
-import tezosScanAccounts1 from "./datasets/tezos.scanAccounts.1";
+import tezosScanAccounts1 from "../datasets/tezos.scanAccounts.1";
 
-function makeAccountRaw(name, pubkey, address, derivationMode): TezosAccountRaw {
+function makeAccountRaw(
+  name: string,
+  pubkey: string,
+  address: string,
+  derivationMode: DerivationMode,
+): TezosAccountRaw {
   return {
     id: `js:2:tezos:${pubkey}:${derivationMode}`,
     seedIdentifier: address,
