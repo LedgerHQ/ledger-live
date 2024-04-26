@@ -1,5 +1,11 @@
 # @ledgerhq/live-promise
 
+## 0.0.4-next.1
+
+### Patch Changes
+
+- [#6731](https://github.com/LedgerHQ/ledger-live/pull/6731) [`5552ca0`](https://github.com/LedgerHQ/ledger-live/commit/5552ca0542d5734b845ed23dae2f02c6d1b8ba2d) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix error should be thrown instead of returned in retry mechanism
+
 ## 0.0.4-next.0
 
 ### Patch Changes

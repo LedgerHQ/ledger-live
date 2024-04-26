@@ -1,5 +1,22 @@
 # @ledgerhq/live-common
 
+## 34.2.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`5552ca0`](https://github.com/LedgerHQ/ledger-live/commit/5552ca0542d5734b845ed23dae2f02c6d1b8ba2d)]:
+  - @ledgerhq/live-promise@0.0.4-next.1
+  - @ledgerhq/coin-algorand@0.4.2-next.1
+  - @ledgerhq/coin-evm@2.0.0-next.1
+  - @ledgerhq/live-countervalues@0.1.5-next.1
+  - @ledgerhq/live-network@1.2.2-next.1
+  - @ledgerhq/live-countervalues-react@0.1.5-next.1
+  - @ledgerhq/coin-bitcoin@0.5.0-next.1
+  - @ledgerhq/coin-near@0.4.0-next.1
+  - @ledgerhq/coin-polkadot@0.6.2-next.1
+  - @ledgerhq/device-core@0.1.2-next.1
+  - @ledgerhq/live-nft@0.3.2-next.1
+
 ## 34.2.0-next.0
 
 ### Minor Changes

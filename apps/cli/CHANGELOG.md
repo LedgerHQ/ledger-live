@@ -1,5 +1,15 @@
 # @ledgerhq/live-cli
 
+## 24.2.0-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.2.0-next.1
+  - @ledgerhq/live-countervalues@0.1.5-next.1
+  - @ledgerhq/live-network@1.2.2-next.1
+  - @ledgerhq/coin-bitcoin@0.5.0-next.1
+
 ## 24.2.0-next.0
 
 ### Minor Changes

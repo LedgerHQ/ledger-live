@@ -1,5 +1,13 @@
 # @ledgerhq/coin-algorand
 
+## 0.4.2-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`5552ca0`](https://github.com/LedgerHQ/ledger-live/commit/5552ca0542d5734b845ed23dae2f02c6d1b8ba2d)]:
+  - @ledgerhq/live-promise@0.0.4-next.1
+  - @ledgerhq/live-network@1.2.2-next.1
+
 ## 0.4.2-next.0
 
 ### Patch Changes

@@ -1,5 +1,19 @@
 # ledger-live-desktop
 
+## 2.80.0-next.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-evm@2.0.0-next.1
+  - @ledgerhq/live-common@34.2.0-next.1
+  - @ledgerhq/live-countervalues@0.1.5-next.1
+  - @ledgerhq/live-network@1.2.2-next.1
+  - @ledgerhq/live-countervalues-react@0.1.5-next.1
+  - @ledgerhq/coin-bitcoin@0.5.0-next.1
+  - @ledgerhq/live-nft@0.3.2-next.1
+  - @ledgerhq/live-nft-react@0.3.2-next.1
+
 ## 2.80.0-next.1
 
 ### Patch Changes

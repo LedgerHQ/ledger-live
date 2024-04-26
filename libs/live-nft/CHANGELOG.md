@@ -1,5 +1,12 @@
 # @ledgerhq/live-nft
 
+## 0.3.2-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-network@1.2.2-next.1
+
 ## 0.3.2-next.0
 
 ### Patch Changes

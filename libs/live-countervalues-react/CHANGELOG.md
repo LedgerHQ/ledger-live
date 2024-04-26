@@ -1,5 +1,12 @@
 # @ledgerhq/live-countervalues-react
 
+## 0.1.5-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-countervalues@0.1.5-next.1
+
 ## 0.1.5-next.0
 
 ### Patch Changes
