@@ -202,6 +202,7 @@ export const scenarioEthereum: Scenario<EvmTransaction> = {
 
     await setBlock();
 
+    // Binance account
     await impersonnateAccount({
       provider,
       data: ERC20Interface.encodeFunctionData("transfer", [
@@ -212,6 +213,7 @@ export const scenarioEthereum: Scenario<EvmTransaction> = {
       addressToImpersonnate: "0x47ac0Fb4F2D84898e4D9E7b4DaB3C24507a6D503", // binance
     });
 
+    // Bored Ape
     await impersonnateAccount({
       provider,
       data: ERC721Interface.encodeFunctionData("transferFrom", [
@@ -223,6 +225,7 @@ export const scenarioEthereum: Scenario<EvmTransaction> = {
       addressToImpersonnate: "0x440Bcc7a1CF465EAFaBaE301D1D7739cbFe09dDA",
     });
 
+    // Clone X
     await impersonnateAccount({
       provider,
       data: ERC1155Interface.encodeFunctionData("safeTransferFrom", [
@@ -233,7 +236,7 @@ export const scenarioEthereum: Scenario<EvmTransaction> = {
         "0x",
       ]),
       to: "0x348fc118bcc65a92dc033a951af153d14d945312",
-      addressToImpersonnate: "0xa3cd1123f4860C0cC512C775Ab6DB6A3E3d1B1Ee", // binance
+      addressToImpersonnate: "0xa3cd1123f4860C0cC512C775Ab6DB6A3E3d1B1Ee",
     });
 
     await getLogs();
@@ -245,11 +248,11 @@ export const scenarioEthereum: Scenario<EvmTransaction> = {
       onSignerConfirmation,
     };
   },
-  beforeAll: async account => {
+  beforeAll: account => {
     expect(account.nfts?.length).toBe(2);
   },
   getTransactions: address => makeScenarioTransactions({ address }),
-  afterAll: async account => {
+  afterAll: account => {
     expect(account.nfts?.length).toBe(0);
     expect(account.operations.length).toBe(7);
   },

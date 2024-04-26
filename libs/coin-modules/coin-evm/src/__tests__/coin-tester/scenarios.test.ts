@@ -4,7 +4,6 @@ import { killAnvil } from "./anvil";
 import { scenarioEthereum } from "./scenarios/ethereum";
 import { scenarioPolygon } from "./scenarios/polygon";
 
-jest.setTimeout(600_000); // 10 Min
 global.console = require("console");
 
 afterAll(async () => {

@@ -25,7 +25,6 @@ export type Scenario<T extends TransactionCommon> = {
     accountBridge: AccountBridge<T>;
     currencyBridge: CurrencyBridge;
     account: Account;
-    testTimeout?: number;
     retryInterval?: number;
     retryLimit?: number;
     onSignerConfirmation?: (e?: SignOperationEvent) => Promise<void>;
@@ -61,7 +60,6 @@ export async function executeScenario<T extends TransactionCommon>(scenario: Sce
 
     const data = await currencyBridge.preload(account.currency);
     currencyBridge.hydrate(data, account.currency);
-
     console.log("Preload + hydrate completed ✓");
 
     console.log("Running a synchronization on the account...");
@@ -94,6 +92,8 @@ export async function executeScenario<T extends TransactionCommon>(scenario: Sce
       console.log(chalk.cyan("Transaction:", chalk.bold(testTransaction.name), "◌"));
 
       scenario.beforeEach?.(scenarioAccount);
+      console.log("Before each ✔️");
+
       if (scenarioTransactions.indexOf(testTransaction) > 0) {
         scenarioAccount = await firstValueFrom(
           accountBridge
@@ -140,16 +140,12 @@ export async function executeScenario<T extends TransactionCommon>(scenario: Sce
 
       console.log(" → ", "🔏 ", chalk.bold("Signed the transaction"), "✓");
 
-      if (!signedOperation) {
-        throw new Error("Could not sign operation");
-      }
-
       const optimisticOperation = await accountBridge.broadcast({
         account: scenarioAccount,
         signedOperation,
       });
 
-      console.log(" → ", "🛫 ", chalk.bold("Broadcated the transaction"), "✓");
+      console.log(" → ", "🛫 ", chalk.bold("Broadcasted the transaction"), "✓");
 
       const retry_limit = retryLimit ?? 10;
 
@@ -166,9 +162,9 @@ export async function executeScenario<T extends TransactionCommon>(scenario: Sce
         if (!testTransaction.expect) {
           console.warn(
             chalk.yellow(
-              `No expects for the transaction ${chalk.bold(
+              `No expects in the transaction ${chalk.bold(
                 testTransaction.name,
-              )}. You might want to add tests on this transaction.`,
+              )}. You might want to add tests in this transaction.`,
             ),
           );
         }
@@ -201,6 +197,7 @@ export async function executeScenario<T extends TransactionCommon>(scenario: Sce
       await expectHandler(retry_limit);
 
       scenario.afterEach?.(scenarioAccount);
+      console.log("After each ✔️");
       console.log(chalk.green("Transaction:", chalk.bold(testTransaction.name), "completed  ✓"));
     }
 
