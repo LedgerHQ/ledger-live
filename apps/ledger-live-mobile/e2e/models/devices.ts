@@ -2,7 +2,7 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 
 export const knownDevice = {
-  name: "Nano X de test",
+  name: "Mock device name",
   id: "mock_1",
   modelId: DeviceModelId.nanoX,
 };

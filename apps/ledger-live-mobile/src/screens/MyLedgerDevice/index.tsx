@@ -46,7 +46,8 @@ const Manager = ({ navigation, route }: NavigationProps) => {
     tab = "CATALOG",
   } = route.params;
 
-  const { deviceId, deviceName, modelId } = device;
+  const { deviceId, modelId } = device;
+  const { deviceName } = result;
   const [state, dispatch] = useApps(result, deviceId, appsToRestore);
   const reduxDispatch = useDispatch();
 

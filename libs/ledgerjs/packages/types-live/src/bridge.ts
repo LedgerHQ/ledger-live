@@ -238,7 +238,7 @@ export type AccountTestData<T extends TransactionCommon> = {
 export type CurrenciesData<T extends TransactionCommon> = {
   FIXME_ignoreAccountFields?: string[];
   FIXME_ignoreOperationFields?: string[];
-  FIXME_ignorePreloadFields?: string[];
+  FIXME_ignorePreloadFields?: string[] | true;
   IgnorePrepareTransactionFields?: string[];
   mockDeviceOptions?: any;
   scanAccounts?: Array<{
