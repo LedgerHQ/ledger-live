@@ -45,7 +45,8 @@ runs:
       uses: moonrepo/setup-toolchain@v0
 
     - name: Update proto
-      run: proto update
+      run: proto upgrade
+      shell: bash
 
     - name: Setup the toolchain
       shell: bash
