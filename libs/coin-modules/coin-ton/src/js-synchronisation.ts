@@ -1,8 +1,3 @@
-// import type { Account } from "@ledgerhq/types-live";
-// import { encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
-// import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-// import { makeSync, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-// import { getAccount, getOperations } from "./api";
 import { decodeAccountId, encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { GetAccountShape, makeSync, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { log } from "@ledgerhq/logs";
