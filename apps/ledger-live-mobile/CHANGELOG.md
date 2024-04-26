@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.44.0-next.4
+
+### Patch Changes
+
+- [#6767](https://github.com/LedgerHQ/ledger-live/pull/6767) [`ce0dcb0`](https://github.com/LedgerHQ/ledger-live/commit/ce0dcb0b2c15fa4092a07c868384baf3e3525192) Thanks [@lvndry](https://github.com/lvndry)! - [bugfix] add parentAccount to getMainAccount
+
 ## 3.44.0-next.3
 
 ### Patch Changes
