@@ -8,12 +8,6 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
     "freshAddressPath": "44'/195'/0'/0/0",
-    "freshAddresses": [
-      {
-        "address": "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
-        "derivationPath": "44'/195'/0'/0/0",
-      },
-    ],
     "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
     "index": 0,
     "name": "Tron 1",
@@ -190,12 +184,6 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi",
     "freshAddressPath": "44'/195'/1'/0/0",
-    "freshAddresses": [
-      {
-        "address": "THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi",
-        "derivationPath": "44'/195'/1'/0/0",
-      },
-    ],
     "id": "js:2:tron:THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi:",
     "index": 1,
     "name": "Tron 2",
@@ -440,12 +428,6 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "TWepUnyBzHx2aoEgNGotZHCybZJZe1AHdW",
     "freshAddressPath": "44'/195'/2'/0/0",
-    "freshAddresses": [
-      {
-        "address": "TWepUnyBzHx2aoEgNGotZHCybZJZe1AHdW",
-        "derivationPath": "44'/195'/2'/0/0",
-      },
-    ],
     "id": "js:2:tron:TWepUnyBzHx2aoEgNGotZHCybZJZe1AHdW:",
     "index": 2,
     "name": "Tron 3",
@@ -515,12 +497,6 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "TTBPBK1n8nX1VkYPh7fsM56KL6G9HRM7Vc",
     "freshAddressPath": "44'/195'/3'/0/0",
-    "freshAddresses": [
-      {
-        "address": "TTBPBK1n8nX1VkYPh7fsM56KL6G9HRM7Vc",
-        "derivationPath": "44'/195'/3'/0/0",
-      },
-    ],
     "id": "js:2:tron:TTBPBK1n8nX1VkYPh7fsM56KL6G9HRM7Vc:",
     "index": 3,
     "name": "Tron 4",
@@ -577,12 +553,6 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "TRzAd8k78ob5wTWHepeDpQruUuKYffh48x",
     "freshAddressPath": "44'/195'/4'/0/0",
-    "freshAddresses": [
-      {
-        "address": "TRzAd8k78ob5wTWHepeDpQruUuKYffh48x",
-        "derivationPath": "44'/195'/4'/0/0",
-      },
-    ],
     "id": "js:2:tron:TRzAd8k78ob5wTWHepeDpQruUuKYffh48x:",
     "index": 4,
     "name": "Tron 5",
@@ -652,12 +622,6 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "TCKFUfFr8EU9CVfKzq8vLPxkZVG4vAewTd",
     "freshAddressPath": "44'/195'/5'/0/0",
-    "freshAddresses": [
-      {
-        "address": "TCKFUfFr8EU9CVfKzq8vLPxkZVG4vAewTd",
-        "derivationPath": "44'/195'/5'/0/0",
-      },
-    ],
     "id": "js:2:tron:TCKFUfFr8EU9CVfKzq8vLPxkZVG4vAewTd:",
     "index": 5,
     "name": "Tron 6",
@@ -714,12 +678,6 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "TReR4zdFE78NaKgUUUeHiVGXSGcCD4cNyj",
     "freshAddressPath": "44'/195'/6'/0/0",
-    "freshAddresses": [
-      {
-        "address": "TReR4zdFE78NaKgUUUeHiVGXSGcCD4cNyj",
-        "derivationPath": "44'/195'/6'/0/0",
-      },
-    ],
     "id": "js:2:tron:TReR4zdFE78NaKgUUUeHiVGXSGcCD4cNyj:",
     "index": 6,
     "name": "Tron 7",
@@ -776,12 +734,6 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "TXFeV31qgUQYMLog3axKJeEBbXpQFtHsXD",
     "freshAddressPath": "44'/195'/7'/0/0",
-    "freshAddresses": [
-      {
-        "address": "TXFeV31qgUQYMLog3axKJeEBbXpQFtHsXD",
-        "derivationPath": "44'/195'/7'/0/0",
-      },
-    ],
     "id": "js:2:tron:TXFeV31qgUQYMLog3axKJeEBbXpQFtHsXD:",
     "index": 7,
     "name": "Tron 8",

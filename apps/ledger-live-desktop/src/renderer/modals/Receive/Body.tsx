@@ -29,6 +29,7 @@ export type Data = {
   receiveTokenMode?: boolean;
   receiveNFTMode?: boolean;
   eventType?: string;
+  isFromPostOnboardingEntryPoint?: boolean;
 };
 
 type OwnProps = {
@@ -68,6 +69,7 @@ export type StepProps = {
   onChangeAddressVerified: (b?: boolean | null, a?: Error | null) => void;
   onClose: () => void;
   currencyName: string | undefined | null;
+  isFromPostOnboardingEntryPoint?: boolean;
 };
 export type St = Step<StepId, StepProps>;
 const createSteps = (): Array<St> => [
@@ -160,6 +162,7 @@ const Body = ({
     }
     onChangeStepId("receive");
   }, [onChangeAddressVerified, setDisabledSteps, steps, onChangeStepId]);
+
   useEffect(() => {
     const stepId =
       params && params.startWithWarning ? "warning" : params.receiveTokenMode ? "account" : null;
@@ -219,6 +222,7 @@ const Body = ({
     onStepChange: handleStepChange,
     onClose: handleCloseModal,
     currencyName,
+    isFromPostOnboardingEntryPoint: !!params.isFromPostOnboardingEntryPoint,
   };
   return (
     <Stepper {...stepperProps}>

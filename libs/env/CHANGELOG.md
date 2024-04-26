@@ -1,5 +1,37 @@
 # @ledgerhq/live-env
 
+## 2.0.1
+
+### Patch Changes
+
+- [#6614](https://github.com/LedgerHQ/ledger-live/pull/6614) [`762dea1`](https://github.com/LedgerHQ/ledger-live/commit/762dea1c52ef0537961d058f7ba81fa399663ac1) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Change `COSMOS_GAS_AMPLIFIER` from 1.5 to 1.3 to match what Keplr is doing
+
+## 2.0.1-next.0
+
+### Patch Changes
+
+- [#6614](https://github.com/LedgerHQ/ledger-live/pull/6614) [`762dea1`](https://github.com/LedgerHQ/ledger-live/commit/762dea1c52ef0537961d058f7ba81fa399663ac1) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Change `COSMOS_GAS_AMPLIFIER` from 1.5 to 1.3 to match what Keplr is doing
+
+## 2.0.0
+
+### Major Changes
+
+- [#5682](https://github.com/LedgerHQ/ledger-live/pull/5682) [`4744c31`](https://github.com/LedgerHQ/ledger-live/commit/4744c3136021f1f47ad1617f2c84f47ac0647370) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Removing unused env var related to `Ethereum` transactions crafted with the old `ethereum` family
+
+### Patch Changes
+
+- [#6262](https://github.com/LedgerHQ/ledger-live/pull/6262) [`0dd1546`](https://github.com/LedgerHQ/ledger-live/commit/0dd15467070cbf7fcbb9d9055a4535f6a25b2ad0) Thanks [@JesseKuntz](https://github.com/JesseKuntz)! - Updating the near-api-js library and fetching the NEAR staking positions from the node rather than the kitwallet API.
+
+## 2.0.0-next.0
+
+### Major Changes
+
+- [#5682](https://github.com/LedgerHQ/ledger-live/pull/5682) [`4744c31`](https://github.com/LedgerHQ/ledger-live/commit/4744c3136021f1f47ad1617f2c84f47ac0647370) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Removing unused env var related to `Ethereum` transactions crafted with the old `ethereum` family
+
+### Patch Changes
+
+- [#6262](https://github.com/LedgerHQ/ledger-live/pull/6262) [`0dd1546`](https://github.com/LedgerHQ/ledger-live/commit/0dd15467070cbf7fcbb9d9055a4535f6a25b2ad0) Thanks [@JesseKuntz](https://github.com/JesseKuntz)! - Updating the near-api-js library and fetching the NEAR staking positions from the node rather than the kitwallet API.
+
 ## 1.0.1
 
 ### Patch Changes

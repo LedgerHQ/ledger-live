@@ -207,6 +207,34 @@ export default function trackingWrapper(trackCall: TrackWalletAPI) {
     bitcoinFamillyAccountXpubSuccess: (manifest: AppManifest) => {
       track("WalletAPI bitcoin familly account xpub success", getEventData(manifest));
     },
+
+    dappSendTransactionRequested: (manifest: AppManifest) => {
+      track("dApp SendTransaction requested", getEventData(manifest));
+    },
+    dappSendTransactionSuccess: (manifest: AppManifest) => {
+      track("dApp SendTransaction success", getEventData(manifest));
+    },
+    dappSendTransactionFail: (manifest: AppManifest) => {
+      track("dApp SendTransaction fail", getEventData(manifest));
+    },
+    dappPersonalSignRequested: (manifest: AppManifest) => {
+      track("dApp PersonalSign requested", getEventData(manifest));
+    },
+    dappPersonalSignSuccess: (manifest: AppManifest) => {
+      track("dApp PersonalSign success", getEventData(manifest));
+    },
+    dappPersonalSignFail: (manifest: AppManifest) => {
+      track("dApp PersonalSign fail", getEventData(manifest));
+    },
+    dappSignTypedDataRequested: (manifest: AppManifest) => {
+      track("dApp SignTypedData requested", getEventData(manifest));
+    },
+    dappSignTypedDataSuccess: (manifest: AppManifest) => {
+      track("dApp SignTypedData success", getEventData(manifest));
+    },
+    dappSignTypedDataFail: (manifest: AppManifest) => {
+      track("dApp SignTypedData fail", getEventData(manifest));
+    },
   } as const;
 }
 

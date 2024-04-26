@@ -32,9 +32,10 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import { trackPage } from "~/renderer/analytics/segment";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import LockedDeviceDrawer, { Props as LockedDeviceDrawerProps } from "./LockedDeviceDrawer";
+import LockedDeviceDrawer from "./LockedDeviceDrawer";
 import { LockedDeviceError } from "@ledgerhq/errors";
-import { saveSettings } from "~/renderer/actions/settings";
+import { useRecoverRestoreOnboarding } from "~/renderer/hooks/useRecoverRestoreOnboarding";
+import BackupStep from "./BackupStep";
 
 const READY_REDIRECT_DELAY_MS = 2000;
 const POLLING_PERIOD_MS = 1000;
@@ -49,7 +50,8 @@ enum StepKey {
   Paired = 0,
   Pin,
   Seed,
-  Applications,
+  Backup,
+  Apps,
   Ready,
   Exit,
 }
@@ -115,7 +117,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
   const [seedPathStatus, setSeedPathStatus] = useState<SeedPathStatus>("choice_new_or_restore");
 
   const servicesConfig = useFeature("protectServicesDesktop");
-  const recoverRestoreStaxPath = useCustomPath(servicesConfig, "restore", "lld-stax-onboarding");
+  const recoverRestoreStaxPath = useCustomPath(servicesConfig, "restore", "lld-onboarding-24");
 
   const productName = device
     ? getDeviceModel(device.modelId).productName || device.modelId
@@ -123,7 +125,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
   const deviceName = device?.deviceName || productName;
 
   const handleInstallRecommendedApplicationComplete = useCallback(() => {
-    setTimeout(() => setStepKey(nextStepKey(StepKey.Applications)), READY_REDIRECT_DELAY_MS);
+    setTimeout(() => setStepKey(nextStepKey(StepKey.Apps)), READY_REDIRECT_DELAY_MS);
   }, []);
 
   const defaultSteps: Step[] = useMemo(
@@ -142,11 +144,9 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
             />
             {/* @ts-expect-error weird props issue with React 18 */}
             <StepText>
-              {
-                t("syncOnboarding.manual.pairedContent.description", {
-                  deviceName: productName,
-                }) as string
-              }
+              {t("syncOnboarding.manual.pairedContent.description", {
+                productName,
+              })}
             </StepText>
             <ContinueOnDeviceWithAnim
               deviceModelId={device.modelId}
@@ -190,7 +190,16 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
         ),
       },
       {
-        key: StepKey.Applications,
+        key: StepKey.Backup,
+        status: "inactive",
+        title: t("syncOnboarding.manual.backup.title"),
+        titleCompleted: t("syncOnboarding.manual.backup.title"),
+        renderBody: () => (
+          <BackupStep device={device} onPressKeepManualBackup={() => setStepKey(StepKey.Apps)} />
+        ),
+      },
+      {
+        key: StepKey.Apps,
         status: "inactive",
         hasLoader: hasAppLoader,
         title: t("syncOnboarding.manual.installApplications.title", { productName }),
@@ -320,29 +329,40 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
 
   useEffect(() => {
     if (lockedDevice) {
-      const props: LockedDeviceDrawerProps = {
-        deviceModelId: device.modelId,
-      };
-      setDrawer(LockedDeviceDrawer, props, {
-        forceDisableFocusTrap: true,
-        preventBackdropClick: true,
-      });
+      setDrawer(
+        LockedDeviceDrawer,
+        {
+          deviceModelId: device.modelId,
+        },
+        {
+          forceDisableFocusTrap: true,
+          preventBackdropClick: true,
+        },
+      );
     }
     return () => setDrawer();
   }, [device.modelId, history, lockedDevice]);
+
+  const seededDeviceHandled = useRef(false);
 
   useEffect(() => {
     // When the device is seeded, there are 2 cases before triggering the application install step:
     // - the user came to the sync onboarding with an non-seeded device and did a full onboarding: onboarding flag `Ready`
     // - the user came to the sync onboarding with an already seeded device: onboarding flag `WelcomeScreen1`
-    if (
-      deviceOnboardingState?.isOnboarded &&
-      [DeviceOnboardingStep.Ready, DeviceOnboardingStep.WelcomeScreen1].includes(
-        deviceOnboardingState?.currentOnboardingStep,
-      )
-    ) {
-      setStepKey(StepKey.Applications);
-      return;
+    if (deviceOnboardingState?.isOnboarded && !seededDeviceHandled.current) {
+      if (deviceOnboardingState?.currentOnboardingStep === DeviceOnboardingStep.Ready) {
+        // device was just seeded
+        setStepKey(StepKey.Backup);
+        seededDeviceHandled.current = true;
+        return;
+      } else if (
+        deviceOnboardingState?.currentOnboardingStep === DeviceOnboardingStep.WelcomeScreen1
+      ) {
+        // switch to the apps step
+        __DEV__ ? setStepKey(StepKey.Backup) : setStepKey(StepKey.Apps); // for ease of testing in dev mode without having to reset the device
+        seededDeviceHandled.current = true;
+        return;
+      }
     }
 
     // case DeviceOnboardingStep.SafetyWarning not handled so the previous step (new seed, restore, recover) is kept
@@ -417,7 +437,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
   }, [deviceOnboardingState]);
 
   useEffect(() => {
-    if (stepKey >= StepKey.Applications) {
+    if (stepKey >= StepKey.Apps) {
       setIsPollingOn(false);
     }
 
@@ -478,14 +498,12 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
     };
   }, [device, allowedError, handleDesyncTimerRunsOut, desyncTimeout]);
 
+  useRecoverRestoreOnboarding(seedPathStatus);
+
   useEffect(() => {
     if (seedPathStatus === "recover_seed" && recoverRestoreStaxPath) {
       const [pathname, search] = recoverRestoreStaxPath.split("?");
-      dispatch(
-        saveSettings({
-          hasCompletedOnboarding: true,
-        }),
-      );
+
       history.push({
         pathname,
         search: search ? `?${search}` : undefined,

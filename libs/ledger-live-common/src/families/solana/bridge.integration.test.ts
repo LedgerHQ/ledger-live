@@ -152,7 +152,6 @@ function makeAccount(freshAddress: string) {
     index: 0,
     freshAddress,
     freshAddressPath: "",
-    freshAddresses: [],
     blockHeight: 0,
     operations: [],
     pendingOperations: [],

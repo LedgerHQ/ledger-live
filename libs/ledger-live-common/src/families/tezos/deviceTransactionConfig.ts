@@ -24,7 +24,7 @@ function getDeviceTransactionConfig({
   status: TransactionStatus;
 }): Array<DeviceTransactionField> {
   const mainAccount = getMainAccount(account, parentAccount);
-  const source = account.type === "ChildAccount" ? account.address : mainAccount.freshAddress;
+  const source = mainAccount.freshAddress;
   const isDelegateOperation = mode === "delegate";
   const fields: Array<DeviceTransactionField> = [
     {

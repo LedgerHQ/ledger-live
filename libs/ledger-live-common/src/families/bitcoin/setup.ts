@@ -15,6 +15,8 @@ import { GetAddressOptions, Resolver } from "../../hw/getAddress/types";
 import { withDevice } from "../../hw/deviceAccess";
 import { startSpan } from "../../performance";
 import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
+import { getCurrencyConfiguration } from "../../config";
+import { BitcoinConfigInfo } from "@ledgerhq/coin-bitcoin/lib/config";
 
 const signerContext: SignerContext = <T>(
   deviceId: string,
@@ -31,9 +33,15 @@ const createSigner = (transport: Transport, currency: CryptoCurrency) => {
   return new Btc({ transport, currency: currency.id });
 };
 
-const bridge: Bridge<Transaction> = createBridges(signerContext, {
+const getCurrencyConfig = (currency: CryptoCurrency) => {
+  return { info: getCurrencyConfiguration<BitcoinConfigInfo>(currency) };
+};
+
+const perfLogger = {
   startSpan,
-});
+};
+
+const bridge: Bridge<Transaction> = createBridges(signerContext, perfLogger, getCurrencyConfig);
 
 const messageSigner = {
   signMessage: signMessage(signerContext),

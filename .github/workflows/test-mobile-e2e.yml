@@ -50,22 +50,16 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.ref || github.sha }}
-      - name: Setup the toolchain
-        uses: ./tools/actions/composites/setup-toolchain
-        id: toolchain
+      - name: setup caches
+        id: caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
-          skip_pod_cache: "false"
-          skip_turbo_cache: "false"
+          skip-pod-cache: "false"
+          skip-turbo-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-      - name: Install applesimutils
-        run: |
-          brew update
-          brew tap wix/brew
-          brew install applesimutils
-
       - name: Cache LLM pods
         uses: actions/cache@v3
         with:
@@ -74,14 +68,12 @@ jobs:
             ~/Library/Caches/CocoaPods
             ~/.cocoapods
           key: ${{ runner.os }}-pods-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock') }}
-
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v3
         id: aws
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
           aws-region: ${{ secrets.AWS_CACHE_REGION }}
-
       - name: cache detox build
         uses: tespkg/actions-cache@v1
         if: steps.aws.conclusion == 'success'
@@ -97,13 +89,12 @@ jobs:
           bucket: ll-gha-s3-cache
           region: ${{ secrets.AWS_CACHE_REGION }}
           use-fallback: false
-
       - name: install dependencies
         run: |
           pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm
       - name: Build dependencies
         run: |
-          pnpm build:llm:deps --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+          pnpm build:llm:deps --api="http://127.0.0.1:${{ steps.caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
       - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
         run: |
           pnpm build:dummy-apps
@@ -116,7 +107,6 @@ jobs:
       - name: Build iOS app for Detox test run
         if: steps.detox-build.outputs.cache-hit != 'true'
         run: pnpm mobile e2e:ci -p ios -b
-
       - name: Build JS Bundle app for Detox test run
         if: steps.detox-build.outputs.cache-hit == 'true'
         run: pnpm mobile e2e:ci -p ios --bundle
@@ -128,34 +118,43 @@ jobs:
         if: ${{ always() && steps.simulator.outputs.id }}
         run: |
           xcrun simctl delete ${{ steps.simulator.outputs.id }}
-      - name: setup JRE 11 for Allure
-        uses: actions/setup-java@v3
-        if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
-        with:
-          distribution: "zulu"
-          java-version: "11"
-          java-package: "jre"
       - name: Generate single file Allure report
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
         run: pnpm dlx allure-commandline generate apps/ledger-live-mobile/allure-results --single-file
       - name: Upload Allure single file report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
         with:
           name: 1-global-ios-report
           path: allure-report/index.html
       - name: Upload test artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
         with:
           name: 2-test-ios-artifacts
           path: apps/ledger-live-mobile/artifacts
       - name: Upload Allure report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
         with:
           name: "allure-ios-reports"
           path: apps/ledger-live-mobile/allure-results
+
+  allure-report-ios:
+    name: "Allure Reports Export on Server"
+    runs-on: [ledger-live-medium]
+    if: ${{ !cancelled() && github.ref_name == 'develop' }}
+    needs: [detox-tests-ios]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+        with:
+          platform: ios
+          login: ${{ vars.ALLURE_USERNAME }}
+          password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
+          path: allure-ios-reports
 
   detox-tests-android:
     name: "Ledger Live Mobile - Android Detox Tests"
@@ -181,9 +180,9 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
       - name: Setup the toolchain
         id: toolchain
-        uses: ./tools/actions/composites/setup-toolchain
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
         with:
-          skip_turbo_cache: "false"
+          skip-turbo-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
@@ -234,7 +233,6 @@ jobs:
             /usr/local/lib/android/sdk/system-images/android-${{ env.AVD_API }}/${{ env.AVD_TARGET }}/${{ env.AVD_ARCH }}/*
             /usr/local/lib/android/sdk/emulator/*
           key: ${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}
-          # envs set by setup-toolchain
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
           sessionToken: ${{ env.AWS_SESSION_TOKEN }}
@@ -266,23 +264,40 @@ jobs:
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
         run: pnpm dlx allure-commandline generate apps/ledger-live-mobile/allure-results --single-file
       - name: Upload Allure single file report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
         with:
           name: 1-global-android-report
           path: allure-report/index.html
       - name: Upload test artifacts
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: 2-test-android-artifacts
           path: apps/ledger-live-mobile/artifacts/
       - name: Upload Allure Report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: ${{ !cancelled() || steps.detox.outcome == 'cancelled' }}
         with:
           name: "allure-android-reports"
           path: apps/ledger-live-mobile/allure-results
+
+  allure-report-android:
+    name: "Allure Reports Export on Server"
+    runs-on: [ledger-live-medium]
+    if: ${{ !cancelled() && github.ref_name == 'develop' }}
+    needs: [detox-tests-android]
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+        with:
+          platform: android
+          login: ${{ vars.ALLURE_USERNAME }}
+          password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
+          path: allure-android-reports
 
   report:
     needs: [detox-tests-android, detox-tests-ios]
@@ -367,7 +382,7 @@ jobs:
             };
 
             fs.writeFileSync("summary.json", JSON.stringify(output), "utf-8");
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         name: upload summary
         with:
           name: summary.json

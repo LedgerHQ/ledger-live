@@ -53,7 +53,6 @@ export function runDesktopTestSuite(app: Probot) {
     });
   });
 
-  // @ts-expect-error ts pls
   app.on("check_run.requested_action", async context => {
     const { payload } = context;
 

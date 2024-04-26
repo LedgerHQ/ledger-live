@@ -15,6 +15,8 @@ import type {
 import type { Payload as PostOnboardingPayload } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
+import { DeviceModelId } from "@ledgerhq/types-devices";
+import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import type {
   AppState,
   FwUpdateBackgroundEvent,
@@ -35,7 +37,6 @@ import type {
   NftState,
 } from "../reducers/types";
 import type { Unpacked } from "../types/helpers";
-import { DeviceModelId } from "@ledgerhq/types-devices";
 
 //  === ACCOUNTS ACTIONS ===
 
@@ -288,6 +289,8 @@ export enum SettingsActionTypes {
   SET_USER_NPS = "SET_USER_NPS",
   SET_SUPPORTED_COUNTER_VALUES = "SET_SUPPORTED_COUNTER_VALUES",
   SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT = "SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT",
+  SET_DISMISSED_CONTENT_CARD = "SET_DISMISSED_CONTENT_CARD",
+  CLEAR_DISMISSED_CONTENT_CARDS = "CLEAR_DISMISSED_CONTENT_CARDS",
 }
 
 export type SettingsImportPayload = Partial<SettingsState>;
@@ -351,8 +354,9 @@ export type SettingsSetHasSeenStaxEnabledNftsPopupPayload = Pick<
 export type SettingsSetCustomImageBackupPayload = {
   hex: string;
   hash: string;
-};
-export type SettingsSetCustomImageTypePayload = Pick<SettingsState, "customImageType">;
+  deviceModelId: CLSSupportedDeviceModelId;
+} | null;
+export type SettingsSetCustomImageTypePayload = Pick<SettingsState, "customLockScreenType">;
 export type SettingsSetHasOrderedNanoPayload = SettingsState["hasOrderedNano"];
 export type SettingsSetMarketRequestParamsPayload = SettingsState["marketRequestParams"];
 export type SettingsSetMarketCounterCurrencyPayload = SettingsState["marketCounterCurrency"];
@@ -391,6 +395,8 @@ export type SettingsSetGeneralTermsVersionAccepted = SettingsState["generalTerms
 export type SettingsSetUserNps = number;
 export type SettingsSetSupportedCounterValues = SettingsState["supportedCounterValues"];
 export type SettingsSetHasSeenAnalyticsOptInPrompt = SettingsState["hasSeenAnalyticsOptInPrompt"];
+export type SettingsSetDismissedContentCardsPayload = SettingsState["dismissedContentCards"];
+export type SettingsClearDismissedContentCardsPayload = string[];
 
 export type SettingsPayload =
   | SettingsImportPayload
@@ -448,7 +454,9 @@ export type SettingsPayload =
   | SettingsSetClosedNetworkBannerPayload
   | SettingsSetUserNps
   | SettingsSetSupportedCounterValues
-  | SettingsSetHasSeenAnalyticsOptInPrompt;
+  | SettingsSetHasSeenAnalyticsOptInPrompt
+  | SettingsSetDismissedContentCardsPayload
+  | SettingsClearDismissedContentCardsPayload;
 
 // === WALLET CONNECT ACTIONS ===
 export enum WalletConnectActionTypes {

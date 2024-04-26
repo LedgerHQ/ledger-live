@@ -94,6 +94,7 @@
     "comingSoon": "Coming soon",
     "restart": "Restart",
     "loadMore": "Load more",
+    "selectAccount": "Select an account",
     "patterns": {
       "id": "ID {{ value }}",
       "times": "x{{ value }}"
@@ -328,8 +329,8 @@
       "description": "Please use My Ledger to uninstall all apps then check if a firmware update is available before reinstalling them."
     },
     "LatestFirmwareVersionRequired": {
-      "title": "Device update required on desktop",
-      "description": "Please update your Nano X firmware on Ledger Live Desktop"
+      "title": "Update Device Firmware",
+      "description": "Please update your device firmware to the latest version to access this feature"
     },
     "GenuineCheckFailed": {
       "title": "Device authentication failed",
@@ -340,12 +341,12 @@
       "description": "Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
     },
     "ImageCommitRefusedOnDevice": {
-      "title": "Lock screen picture discarded on Ledger Stax",
+      "title": "Lock screen picture discarded on {{productName}}",
       "description": "If this image wasn't the right fit, you can try again with another image.",
       "primaryCTA": "Upload another picture"
     },
     "ImageLoadRefusedOnDevice": {
-      "title": "Loading of lock screen picture cancelled on Ledger Stax",
+      "title": "Loading of lock screen picture cancelled on {{productName}}",
       "description": "If this image wasn't the right fit, you can try again with another image.",
       "primaryCTA": "Upload another picture"
     },
@@ -484,7 +485,7 @@
       "description": "Please send some EGLD to your account to pay for transactions."
     },
     "NotEnoughBalance": {
-      "title": "Sorry, insufficient balance including network fees. Adjust amount or verify balance",
+      "title": "Sorry, insufficient balance including network fees. Adjust amount or verify balance.",
       "description": "Please make sure the account has enough funds."
     },
     "NoSuchAppOnProvider": {
@@ -932,6 +933,10 @@
     "noConnectionError": {
       "title": "No connection",
       "description": "It seems you don't have access to the Internet. Please check your connection and try again."
+    },
+    "noAccounts": {
+      "title": "You need an account to access this app.",
+      "add": "Add Account"
     }
   },
   "location": {
@@ -1969,9 +1974,8 @@
   "earlySecurityCheck": {
     "title": "Genuine Check and OS update check",
     "idle": {
-      "description": "This makes sure your Ledger Stax is an official Ledger.",
       "learnMore": "Learn more about Genuine Check",
-      "checkCta": "Check Ledger Stax"
+      "checkCta": "Check {{ productName }}"
     },
     "completed": {
       "continueCta": "Continue to setup"
@@ -1994,7 +1998,7 @@
       }
     },
     "genuineCheckNonGenuineDrawer": {
-      "title": "This Ledger Stax failed the Genuine Check",
+      "title": "This {{ productName }} failed the Genuine Check",
       "description": "This {{productName}} is not safe to use. Please contact Ledger Support.",
       "supportCta": "Contact Ledger Support"
     },
@@ -2042,12 +2046,12 @@
       "refused": {
         "title": "OS version {{firmwareVersion}} is available",
         "description": "We recommend performing this update to benefit from the latest security and functionality.",
-        "updateCta": "Update Ledger Stax",
+        "updateCta": "Update {{ productName }}",
         "skipCta": "Skip update"
       },
       "inactive": {
         "title": "OS update check",
-        "description": "This checks if your Ledger Stax Operating System is up to date or not. "
+        "description": "This checks if your {{productName}} Operating System is up to date or not. "
       }
     },
     "firmwareUpdateAvailableDrawer": {
@@ -2149,19 +2153,22 @@
       "restoreChoiceRecoverTitle": "Restore using Ledger Recover",
       "restoreChoiceRecoverDescription": "If you’re subscribed to Ledger Recover, log in to your subscription to initiate the restore process for the backup for your Secret Recovery Phrase."
     },
-    "softwareChecksSteps": {
-      "title": "Hardware and Software checks",
-      "description": "Check that your device is safe to use and has the latest security features.",
-      "doneTitle": "{{productName}} is genuine and up to date",
-      "genuineCheckRequestDrawer": {
-        "iconText": "Genuine Check",
-        "title": "This check assures that your Ledger Stax is an official Ledger.",
-        "checkCta": "Start Genuine Check"
+    "backup": {
+      "title": "Backup for your Secret Recovery Phrase",
+      "description": "With a digital encrypted backup, restore access to your wallet without your Secret Recovery Phrase.\n\nChoose if you’d like a digital backup:",
+      "backupChoice": {
+        "title": "I want a digital backup",
+        "titleSelected": "Ledger Recover",
+        "tag": "Popular",
+        "description": "Subscribe to Ledger Recover for $9.99 per month. Start for free. Cancel anytime!",
+        "tryCta": "Try it for free",
+        "redeemCodeCta": "I have a redeem code",
+        "howItWorksCta": "I want to know more"
       },
-      "updateAvailableDrawer": {
-        "title": "New software found",
-        "description": "To access the latest security features, we highly recommend updating your {{productName}}",
-        "updateCta": "Update"
+      "manualBackup": {
+        "title": "No, I’m good with paper",
+        "description": "Without a digital backup, the Recovery Sheet is your only way to restore wallet access. Don’t lose it.",
+        "cta": "I understand"
       }
     },
     "appsStep": {
@@ -2266,7 +2273,7 @@
     "description": "You can choose to add crypto directly with your Ledger, or import them from Ledger Live Desktop.",
     "add": {
       "title": "With your Ledger",
-      "description": "Create or import asset with your Ledger"
+      "description": "Create or import an account for your asset with your Ledger"
     },
     "import": {
       "title": "Import from desktop",
@@ -2444,6 +2451,10 @@
         "description3": "This integration has been carried out by {{team}} in collaboration with Ledger"
       }
     },
+    "willBedeprecatedBanner": {
+      "title": "To optimize efficiencies, {{currencyName}} will not be supported on Ledger Live as of {{deprecatedDate}}. However, it will still be supported on Ledger hardware wallets. Please contact Ledger Customer Support if you would like assistance on this.",
+      "contactSupport": "Contact support"
+    },
     "tokens": {
       "contractAddress": "Contract address",
       "viewInExplorer": "View in explorer",
@@ -2511,10 +2522,6 @@
       },
       "currency": {
         "title": "Currency"
-      },
-      "endpointConfig": {
-        "title": "Node",
-        "desc": "The API node to use"
       },
       "delete": {
         "title": "Remove account from the Portfolio",
@@ -2665,6 +2672,7 @@
     "moreAssets": "Add more"
   },
   "help": {
+    "chatbot": "Ledger Chatbot",
     "gettingStarted": {
       "title": "Getting started",
       "desc": "Start here"
@@ -3845,6 +3853,11 @@
         "disclaimer": "{{tokenName}} is a TRC20 Token.\nYou can receive tokens directly in a Tron account.",
         "learnMore": "Learn more about TRC20"
       },
+      "asa": {
+        "title": "Add Token",
+        "disclaimer": "{{tokenName}} is an ASA Token.\nYou can receive tokens directly on an Algorand account.",
+        "learnMore": "Learn more"
+      },
       "bep20": {
         "title": "Add Token",
         "disclaimer": "{{tokenName}} is a BEP-20 Token.\nYou can receive tokens directly in a BNB account.",
@@ -3884,7 +3897,7 @@
     "allowAppPermissionSubtitleToken": "to manage your {{token}} tokens",
     "allowManagerPermission": "Allow a secure connection with Ledger",
     "allowRenaming": "Allow renaming on your {{productName}}",
-    "allowRemoveCustomLockscreen": "Confirm removal of image on your Ledger Stax",
+    "allowRemoveCustomLockscreen": "Confirm removal of image on your {{productName}}",
     "allowSecureConnection": "Allow a secure connection with Ledger",
     "loading": "Loading...",
     "turnOnAndUnlockDevice": "Switch on and unlock your device",
@@ -4265,8 +4278,8 @@
     "viewUpdateChangelog": "View update changelog",
     "waitForFirmwareUpdate": "Wait for the firmware update to finish on your device",
     "waitForInstallationToFinish": "Wait for installation to finish on your {{deviceName}}",
-    "staxBatteryLow": "Ledger Stax battery too low to update",
-    "staxBatteryLowDescription": "To start the OS update, a minimum of {{lowBatteryPercentage}}% charge is needed, or your Ledger Stax must be charging.",
+    "batteryLow": "{{productName}} battery too low to update",
+    "batteryLowDescription": "To start the OS update, a minimum of {{lowBatteryPercentage}}% charge is needed, or your {{productName}} must be charging.",
     "updateCancelled": "OS update install cancelled on {{deviceName}}",
     "updateCancelledDescription": "If this was a mistake, restart the update.",
     "updateNotYetComplete": "OS update is in progress",
@@ -6372,19 +6385,20 @@
     "commitRequested": "Like what you see?\nKeep it!",
     "confirmPicture": "Confirm on {{productName}}",
     "landingPage": {
-      "title": "Choose any digital art or photo.\nCustomize your Ledger Stax.\nMake it yours.",
+      "title": "Choose any digital art or photo.\nCustomize your {{productName}}.\nMake it yours.",
       "choosePicture": "Choose a picture"
     },
     "confirmCrop": "Confirm crop",
     "confirmContrast": "Confirm contrast",
-    "nftEntryPointButtonLabel": "Set as Ledger Stax lockscreen picture",
+    "nftEntryPointButtonLabel": "Set as lockscreen picture",
     "customImage": "Custom picture",
     "doThisLater": "Maybe later",
     "preview": {
       "title": "Preview",
       "loading": "Loading preview",
       "setPicture": "Set as lock screen",
-      "editPicture": "Edit picture"
+      "editPicture": "Edit picture",
+      "pickDeviceModel": "Choose a device"
     },
     "nftGallery": {
       "title": "My NFTs"
@@ -6392,34 +6406,40 @@
   },
   "postOnboarding": {
     "hub": {
-      "title": "Next up, use your {{productName}} to:",
-      "allDoneTitle": "and that’s a wrap!",
+      "title": "Next up, use your {{productName}} to...",
+      "allDoneTitle": "You're all set! Keep going and explore your portfolio",
       "skip": "I’ll do this later",
-      "viewWallet": "View my wallet"
+      "viewWallet": "Explore my portfolio"
     },
     "entryPointCard": {
       "title": "What's next for your {{productName}}?",
-      "description": "Claim the Infinity NFT, customize its lock screen, or transfer your assets from other exchanges.",
+      "description": "Transfer your assets from any exchange or wallet, buy crypto, customize its lock screen, or subscribe to Ledger Recover.",
       "buttonLabel": "See what's next"
     },
     "actions": {
-      "customImage": {
-        "title": "Set a lock screen picture",
-        "titleCompleted": "Lock screen picture set",
-        "description": "Choose any digital art or picture to set as the lock screen.",
-        "popupLabel": "Lockscreen set"
-      },
       "assetsTransfer": {
         "title": "Transfer your assets to Ledger",
         "titleCompleted": "Assets transferred to Ledger",
-        "description": "Easily transfer assets from Coinbase or any other exchange or wallet.",
+        "description": "From any exchange or wallet, directly to your Ledger.",
         "popupLabel": "Assets transferred"
       },
       "buyCrypto": {
         "title": "Buy Crypto",
-        "titleCompleted": "Assets transferred to Ledger",
-        "description": "Choose from 500+ coins and the best quotes from buy-providers, tailored to your preferences.",
+        "titleCompleted": "Crypto bought",
+        "description": "Choose from 500+ coins and the best quotes, tailored to your preferences.",
         "popupLabel": "Crypto bought"
+      },
+      "customImage": {
+        "title": "Customize the lock screen",
+        "titleCompleted": "Lock screen customized",
+        "description": "Choose any digital art or picture to set as your {{productName}}'s lock screen.",
+        "popupLabel": "Lock screen customized successfully"
+      },
+      "recover": {
+        "title": "Subscribe to Ledger Recover",
+        "titleCompleted": "Subscribed to Ledger Recover",
+        "description": "Restore access to your wallet without needing your Secret Recovery Phrase.",
+        "popupLabel": "Successfully subscribed to Ledger Recover"
       }
     }
   },

@@ -12,7 +12,7 @@ import Box from "~/renderer/components/Box";
 import { BodyContent, BodyContentProps } from "./BodyContent";
 import { BigNumber } from "bignumber.js";
 import { AccountLike } from "@ledgerhq/types-live";
-import { UserRefusedOnDevice } from "@ledgerhq/errors";
+import { DisabledTransactionBroadcastError } from "@ledgerhq/errors";
 import { useRedirectToSwapHistory } from "~/renderer/screens/exchange/Swap2/utils";
 import { getEnv } from "@ledgerhq/live-env";
 
@@ -66,7 +66,6 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
   const getCurrencyByAccount = useCallback((account: AccountLike) => {
     switch (account.type) {
       case "Account":
-      case "ChildAccount":
         return account.currency;
       case "TokenAccount":
         return account.token;
@@ -133,7 +132,7 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
 
   const onBroadcastSuccess = useCallback(
     (operation: Operation) => {
-      // Save swap history
+      // If swap we save to swap history and keep open the drawer
       if (swapId && toAccount && magnitudeAwareRate && sourceCurrency && targetCurrency) {
         const newResult = {
           operation,
@@ -151,15 +150,20 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
         });
 
         if (getEnv("DISABLE_TRANSACTION_BROADCAST")) {
-          return onCancel(new UserRefusedOnDevice());
+          return onCancel(new DisabledTransactionBroadcastError());
         }
+        onResult(operation);
+        // else not swap i.e card and sell we close the drawer
+      } else {
+        onResult(operation);
+        onClose?.();
       }
-      onResult(operation);
     },
     [
       setResult,
       onResult,
       onCancel,
+      onClose,
       updateAccount,
       magnitudeAwareRate,
       provider,
@@ -170,18 +174,11 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
     ],
   );
 
-  // useEffect(() => {
-  //   /**
-  //    * If we want to close the drawer automatically, we need to ensure onCancel is also called
-  //    * this will gives the "control" back to live app.
-  //    *
-  //    * On drawer manually closed, we send an error back ("Interrupted by user")
-  //    */
-  //   if ([error instanceof SOME_ERROR_WE_WANT_LIVE_APP_TO_HANDLE]) {
-  //     onCancel(error);
-  //     onClose(error)
-  //   }
-  // }, [onCancel, error]);
+  useEffect(() => {
+    if (error) {
+      onCancel(error);
+    }
+  }, [onCancel, error]);
 
   useEffect(() => {
     if (broadcastRef.current || !signedOperation) return;

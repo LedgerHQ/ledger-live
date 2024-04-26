@@ -13,6 +13,7 @@ export const dataset: DatasetTest<Transaction> = {
   implementations: ["mock", "js"],
   currencies: {
     ethereum: {
+      FIXME_ignorePreloadFields: true, // FIXME LIVE-12356 : preload data seems instable between two calls
       IgnorePrepareTransactionFields: ["maxFeePerGas", "maxPriorityFeePerGas"],
       accounts: [
         {

@@ -9,7 +9,7 @@ import AllowDebugAppsToggle from "./AllowDebugAppsToggle";
 import EnablePlatformDevToolsToggle from "./EnablePlatformDevToolsToggle";
 import CatalogProviderInput from "./CatalogProviderInput";
 import CustomLockScreenToggle from "./CustomLockScreenToggle";
-import CustomLockScreen from "./CustomLockScreen";
+import CustomLockScreenAssets from "./CustomLockScreenAssets";
 import RunLocalAppButton from "./RunLocalAppButton";
 import FeatureFlagsSettings from "./FeatureFlagsSettings";
 import EnableLearnPageStagingUrlToggle from "./EnableLearnPageStagingUrlToggle";
@@ -19,6 +19,9 @@ import ExchangeDeveloperMode from "./ExchangeDeveloperMode";
 import LottieTester from "../Experimental/LottieTester";
 import StorylyTester from "../Experimental/StorylyTester";
 import PostOnboardingHubTester from "../Experimental/PostOnboardingHubTester";
+import AllowDebugReactQueryToggle from "./AllowDebugReactQueryToggle";
+import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
+import SpamReportNtf from "./SpamReportNtf";
 
 const Default = () => {
   const { t } = useTranslation();
@@ -78,8 +81,23 @@ const Default = () => {
       </Row>
       <LottieTester />
       <PostOnboardingHubTester />
-      <StorylyTester />
+      <FeatureToggle featureId="storyly">
+        <StorylyTester />
+      </FeatureToggle>
       <ExchangeDeveloperMode />
+
+      {__DEV__ && (
+        <Row
+          title={t("settings.developer.debugReactQuery")}
+          desc={t("settings.developer.debugReactQueryDesc")}
+        >
+          <AllowDebugReactQueryToggle />
+        </Row>
+      )}
+
+      <FeatureToggle featureId="spamReportNfts">
+        <SpamReportNtf />
+      </FeatureToggle>
     </Body>
   );
 };
@@ -87,7 +105,10 @@ const SectionDeveloper = () => (
   <>
     <TrackPage category="Settings" name="Developer" />
     <Switch>
-      <Route path="/settings/developer/custom-locksscreen-assets" component={CustomLockScreen} />
+      <Route
+        path="/settings/developer/custom-locksscreen-assets"
+        component={CustomLockScreenAssets}
+      />
       <Route component={Default} />
     </Switch>
   </>

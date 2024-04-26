@@ -220,6 +220,19 @@ const getTransactionStatus = async (
     throw new AccountAwaitingSendPendingOperations();
   }
 
+  if (a.cardanoResources.utxos.length === 0) {
+    const errors = {
+      amount: new CardanoNotEnoughFunds(),
+    };
+    return Promise.resolve({
+      errors,
+      warnings: {},
+      estimatedFees: new BigNumber(0),
+      amount: new BigNumber(t.amount),
+      totalSpent: new BigNumber(t.amount),
+    });
+  }
+
   if (t.mode === "send") {
     return getSendTransactionStatus(a, t);
   } else if (t.mode === "delegate") {

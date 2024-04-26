@@ -1,5 +1,5 @@
 import { Action, handleActions, ReducerMap } from "redux-actions";
-import { DEFAULT_SWAP_RATES_INTERVAL_MS } from "@ledgerhq/live-common/exchange/swap/const/timeout";
+import { DEFAULT_SWAP_RATES_LLM_INTERVAL_MS } from "@ledgerhq/live-common/exchange/swap/const/timeout";
 import { AvailableProviderV3, Pair } from "@ledgerhq/live-common/exchange/swap/types";
 import { SwapStateType } from "./types";
 import {
@@ -49,7 +49,7 @@ const handlers: ReducerMap<SwapStateType, SwapPayload> = {
       exchangeRate: payload,
       exchangeRateExpiration:
         payload?.tradeMethod === "fixed"
-          ? new Date(new Date().getTime() + DEFAULT_SWAP_RATES_INTERVAL_MS)
+          ? new Date(new Date().getTime() + DEFAULT_SWAP_RATES_LLM_INTERVAL_MS)
           : undefined,
     };
   },

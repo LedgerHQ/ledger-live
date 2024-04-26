@@ -1,7 +1,10 @@
 import isUpdateAvailable from "./isUpdateAvailable";
 import { deviceInfo155, deviceInfo222 } from "../apps/mock";
 import { AppAndVersion } from "../hw/connectApp";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { appConfig } from "../apps/config";
 
+LiveConfig.setConfig(appConfig);
 describe("isUpdateAvailable tests", () => {
   const scenarios = [
     {

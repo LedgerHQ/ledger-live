@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Flex, IconsLegacy, Tag, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
@@ -7,38 +7,66 @@ import Touchable from "../Touchable";
 import { track } from "~/analytics";
 import { BaseNavigationComposite, StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { PostOnboardingNavigatorParamList } from "../RootNavigator/types/PostOnboardingNavigator";
+import { DeviceModelId } from "@ledgerhq/types-devices";
+import { useCompleteActionCallback } from "~/logic/postOnboarding/useCompleteAction";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
-export type Props = PostOnboardingAction & PostOnboardingActionState;
+export type Props = PostOnboardingAction &
+  PostOnboardingActionState & { deviceModelId: DeviceModelId; productName: string };
 
 const PostOnboardingActionRow: React.FC<Props> = props => {
   const {
-    // @ts-expect-error oskour those `any` navigation params are killing us
-    navigationParams,
+    id,
     Icon,
     title,
     titleCompleted,
     description,
     tagLabel,
     completed,
+    getIsAlreadyCompleted,
     disabled,
     buttonLabelForAnalyticsEvent,
+    deviceModelId,
+    productName,
+    shouldCompleteOnStart,
   } = props;
   const { t } = useTranslation();
+  const recoverServices = useFeature("protectServicesMobile");
+  const protectId = recoverServices?.params?.protectId ?? "protect-prod";
+
   const navigation =
     useNavigation<
       BaseNavigationComposite<StackNavigatorNavigation<PostOnboardingNavigatorParamList>>
     >();
+  const completeAction = useCompleteActionCallback();
+  const [isActionCompleted, setIsActionCompleted] = useState(false);
 
-  const handlePress = useCallback(() => {
-    if (navigationParams) {
-      navigation.navigate(...navigationParams);
+  const initIsActionCompleted = useCallback(async () => {
+    setIsActionCompleted(completed || !!(await getIsAlreadyCompleted?.({ protectId })));
+  }, [setIsActionCompleted, completed, getIsAlreadyCompleted, protectId]);
+
+  useEffect(() => {
+    initIsActionCompleted();
+  }, [initIsActionCompleted]);
+
+  const handlePress = () => {
+    if ("getNavigationParams" in props) {
+      navigation.navigate(...props.getNavigationParams({ deviceModelId, protectId }));
       buttonLabelForAnalyticsEvent &&
-        track("button_clicked", { button: buttonLabelForAnalyticsEvent });
+        track("button_clicked", {
+          button: buttonLabelForAnalyticsEvent,
+          deviceModelId,
+          flow: "post-onboarding",
+        });
     }
-  }, [navigationParams, navigation, buttonLabelForAnalyticsEvent]);
+    shouldCompleteOnStart && completeAction(id);
+  };
 
   return (
-    <Touchable disabled={disabled} onPress={completed ? undefined : handlePress}>
+    <Touchable
+      disabled={disabled || isActionCompleted}
+      onPress={isActionCompleted ? undefined : handlePress}
+    >
       <Flex
         flexDirection="row"
         alignItems="center"
@@ -47,15 +75,15 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
         opacity={disabled ? 0.5 : 1}
       >
         <Flex flexDirection="row" alignItems="flex-start" flexShrink={1}>
-          <Icon size={"M"} color={completed || disabled ? "neutral.c70" : "primary.c80"} />
+          <Icon size={"M"} color={"primary.c80"} />
           <Flex ml={6} flexDirection="column" justifyContent="center" flex={1}>
             <Flex flexDirection="row" alignItems="center">
               <Text
                 variant="largeLineHeight"
                 fontWeight="medium"
-                color={completed ? "neutral.c70" : "neutral.c100"}
+                color={isActionCompleted ? "neutral.c70" : "neutral.c100"}
               >
-                {t(completed ? titleCompleted : title)}
+                {t(isActionCompleted ? titleCompleted : title)}
               </Text>
               {tagLabel ? (
                 <Tag size="small" ml={3} type="color" uppercase={false}>
@@ -63,15 +91,15 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
                 </Tag>
               ) : null}
             </Flex>
-            {completed ? null : (
+            {isActionCompleted ? null : (
               <Text variant="body" fontWeight="medium" color="neutral.c70">
-                {t(description)}
+                {t(description, { productName })}
               </Text>
             )}
           </Flex>
         </Flex>
         <Flex flexDirection="row" alignItems="center" flexShrink={0} flexGrow={1} pl={6}>
-          {disabled ? null : completed ? (
+          {disabled ? null : isActionCompleted ? (
             <IconsLegacy.CheckAloneMedium color="success.c50" size={20} />
           ) : (
             <IconsLegacy.ChevronRightMedium color="neutral.c70" size={24} />

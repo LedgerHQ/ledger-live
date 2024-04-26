@@ -91,9 +91,6 @@ function makeEstimateMaxSpendable(getChainAPI: (config: Config) => Promise<Chain
     account: AccountLike;
     transaction?: Transaction | null;
   }) => {
-    if (account.type === "ChildAccount") {
-      throw new Error("unsupported account type");
-    }
     return `${account.id}:${account.spendableBalance.toString()}:tx:${
       transaction?.model.kind ?? "<no transaction>"
     }`;

@@ -16,11 +16,15 @@ import {
   ItemStatus,
   Icons,
 } from "@ledgerhq/native-ui";
-import { useTheme, useNavigation, useRoute } from "@react-navigation/native";
+import { useTheme, useNavigation } from "@react-navigation/native";
 import { Item } from "@ledgerhq/native-ui/components/Layout/List/types";
 import { DeviceInfo, FirmwareUpdateContext, languageIds } from "@ledgerhq/types-live";
 import { useBatteryStatuses } from "@ledgerhq/live-common/deviceSDK/hooks/useBatteryStatuses";
 import { BatteryStatusTypes } from "@ledgerhq/live-common/hw/getBatteryStatus";
+import {
+  CLSSupportedDeviceModelId,
+  isCustomLockScreenSupported,
+} from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -35,24 +39,25 @@ import {
   DeviceActionError,
 } from "~/components/DeviceAction/common";
 import QueuedDrawer from "~/components/QueuedDrawer";
-import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import { ManagerNavigatorStackParamList } from "~/components/RootNavigator/types/ManagerNavigator";
+import { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
 import {
   renderAllowLanguageInstallation,
   renderConnectYourDevice,
-  renderImageCommitRequested,
-  renderImageLoadRequested,
 } from "~/components/DeviceAction/rendering";
+import {
+  RenderImageCommitRequested,
+  RenderImageLoadRequested,
+} from "~/components/CustomLockScreenDeviceAction/stepsRendering";
 import {
   UpdateStep,
   useUpdateFirmwareAndRestoreSettings,
 } from "./useUpdateFirmwareAndRestoreSettings";
 import { TrackScreen } from "~/analytics";
 import ImageHexProcessor from "~/components/CustomImage/ImageHexProcessor";
-import { targetDataDimensions } from "../CustomImage/shared";
+import { getScreenDataDimensions } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 import { ProcessorPreviewResult } from "~/components/CustomImage/ImageProcessor";
-import { ImageSourceContext } from "~/components/CustomImage/StaxFramedImage";
+import { ImageSourceContext } from "~/components/CustomImage/FramedPicture";
 import Button from "~/components/wrappedUi/Button";
 import Link from "~/components/wrappedUi/Link";
 import { RestoreStepDenied } from "./RestoreStepDenied";
@@ -61,6 +66,8 @@ import { GenericInformationBody } from "~/components/GenericInformationBody";
 import BatteryWarningDrawer from "./BatteryWarningDrawer";
 import { setLastConnectedDevice, setLastSeenDeviceInfo } from "~/actions/settings";
 import { lastSeenDeviceSelector } from "~/reducers/settings";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
 
 const requiredBatteryStatuses = [
   BatteryStatusTypes.BATTERY_PERCENTAGE,
@@ -75,13 +82,11 @@ export type FirmwareUpdateProps = {
   device: Device;
   deviceInfo: DeviceInfo;
   firmwareUpdateContext: FirmwareUpdateContext;
-
   /**
    * To adapt the firmware update in case the device is starting its onboarding and it's normal it is not yet seeded.
    * If set to true, short-circuit some steps that are unnecessary
    */
   isBeforeOnboarding?: boolean;
-
   /**
    * Called when the user leaves the firmware update screen
    *
@@ -91,13 +96,12 @@ export type FirmwareUpdateProps = {
    *
    * @param updateState The current state of the update when the user leaves the screen
    */
-  onBackFromUpdate?: (updateState: UpdateStep) => void;
-
-  updateFirmwareAction?: (args: updateFirmwareActionArgs) => Observable<UpdateFirmwareActionState>;
+  onBackFromUpdate?(updateState: UpdateStep): void;
+  updateFirmwareAction?(args: updateFirmwareActionArgs): Observable<UpdateFirmwareActionState>;
 };
 
-type NavigationProps = BaseComposite<
-  StackNavigatorProps<ManagerNavigatorStackParamList, ScreenName.FirmwareUpdate>
+type NavigationProps = RootComposite<
+  StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.FirmwareUpdate>
 >;
 
 type UpdateSteps = {
@@ -178,6 +182,7 @@ export const FirmwareUpdate = ({
   const [fullUpdateComplete, setFullUpdateComplete] = useState(false);
   const [showBatteryWarningDrawer, setShowBatteryWarningDrawer] = useState<boolean>(false);
   const [showReleaseNotes, setShowReleaseNotes] = useState<boolean>(true);
+  const [keepScreenAwake, setKeepScreenAwake] = useState(true);
 
   const {
     requestCompleted: batteryRequestCompleted,
@@ -213,6 +218,7 @@ export const FirmwareUpdate = ({
     deviceInfo,
     isBeforeOnboarding,
   });
+  useKeepScreenAwake(keepScreenAwake);
 
   const [staxImageSource, setStaxImageSource] =
     useState<React.ComponentProps<typeof Image>["source"]>();
@@ -226,9 +232,10 @@ export const FirmwareUpdate = ({
     [staxImageSource],
   );
 
-  const quitUpdate = useCallback(() => {
+  const quitUpdate = useCallback(async () => {
     if (!batteryRequestCompleted) cancelBatteryCheck();
 
+    setKeepScreenAwake(false);
     if (onBackFromUpdate) {
       onBackFromUpdate(updateStep);
     } else {
@@ -326,6 +333,9 @@ export const FirmwareUpdate = ({
     deviceInfo.languageId,
   ]);
 
+  // this will depend on the steps we go through during the update
+  const [totalNumberOfSteps, setTotalNumberOfSteps] = useState(2);
+
   const defaultSteps: UpdateSteps = useMemo(
     () => ({
       prepareUpdate: {
@@ -380,7 +390,7 @@ export const FirmwareUpdate = ({
         ),
       },
     }),
-    [t, isBeforeOnboarding, productName, restoreSteps],
+    [isBeforeOnboarding, t, productName, restoreSteps],
   );
 
   useEffect(() => {
@@ -454,10 +464,7 @@ export const FirmwareUpdate = ({
     });
   }, [navigation, quitUpdate, isAllowedToClose]);
 
-  // this will depend on the steps we go through during the update
-  const [totalNumberOfSteps, setTotalNumberOfSteps] = useState(2);
-
-  const steps = useMemo(() => {
+  const steps: Item[] = useMemo(() => {
     const newSteps: UpdateSteps = {
       prepareUpdate: { ...defaultSteps.prepareUpdate },
       installUpdate: { ...defaultSteps.installUpdate },
@@ -584,25 +591,29 @@ export const FirmwareUpdate = ({
     }
 
     if (staxLoadImageState.imageLoadRequested) {
-      return renderImageLoadRequested({
-        t,
-        device,
-        fullScreen: false,
-        wording: t("FirmwareUpdate.steps.restoreSettings.imageLoadRequested", {
-          deviceName: productName,
-        }),
-      });
+      return (
+        <RenderImageLoadRequested
+          device={device}
+          deviceModelId={device.modelId as CLSSupportedDeviceModelId}
+          fullScreen={false}
+          wording={t("FirmwareUpdate.steps.restoreSettings.imageLoadRequested", {
+            deviceName: productName,
+          })}
+        />
+      );
     }
 
     if (staxLoadImageState.imageCommitRequested) {
-      return renderImageCommitRequested({
-        t,
-        device,
-        fullScreen: false,
-        wording: t("FirmwareUpdate.steps.restoreSettings.imageCommitRequested", {
-          deviceName: productName,
-        }),
-      });
+      return (
+        <RenderImageCommitRequested
+          device={device}
+          deviceModelId={device.modelId as CLSSupportedDeviceModelId}
+          fullScreen={false}
+          wording={t("FirmwareUpdate.steps.restoreSettings.imageCommitRequested", {
+            deviceName: productName,
+          })}
+        />
+      );
     }
 
     if (restoreAppsState.allowManagerRequested) {
@@ -846,10 +857,10 @@ export const FirmwareUpdate = ({
           category={"Update device - Step 3d: apps and settings successfully restored"}
         />
       ) : null}
-      {staxFetchImageState.hexImage ? (
+      {isCustomLockScreenSupported(device.modelId) && staxFetchImageState.hexImage ? (
         <ImageHexProcessor
           hexData={staxFetchImageState.hexImage as string}
-          {...targetDataDimensions}
+          {...getScreenDataDimensions(device.modelId)}
           onPreviewResult={handleStaxImageSourceLoaded}
           onError={error => console.error(error)}
         />
@@ -858,11 +869,10 @@ export const FirmwareUpdate = ({
   );
 };
 
-const FirmwareUpdateScreen = () => {
-  const { params } = useRoute<NavigationProps["route"]>();
-
-  if (!params.device || !params.firmwareUpdateContext || !params.deviceInfo) return null;
-
+export default function FirmwareUpdateScreen({ route: { params } }: NavigationProps) {
+  if (!params.device || !params.firmwareUpdateContext || !params.deviceInfo) {
+    return null;
+  }
   return (
     <Flex flex={1}>
       <FirmwareUpdate
@@ -874,6 +884,4 @@ const FirmwareUpdateScreen = () => {
       />
     </Flex>
   );
-};
-
-export default FirmwareUpdateScreen;
+}

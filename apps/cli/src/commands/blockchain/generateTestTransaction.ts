@@ -123,7 +123,6 @@ ${apdus.map(a => "  " + a).join("\n")}
     toAccountRaw({
       ...account,
       operations: [],
-      freshAddresses: [],
     }),
   )},
   transactions: [

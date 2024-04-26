@@ -7,10 +7,13 @@ import React, {
   useState,
 } from "react";
 import { BoxedIcon, Flex, FlowStepper, IconsLegacy, Text } from "@ledgerhq/react-ui";
-import { useDispatch } from "react-redux";
+import { DeviceModelId } from "@ledgerhq/devices";
 import { ImageDownloadError } from "@ledgerhq/live-common/customImage/errors";
+import {
+  isCustomLockScreenSupported,
+  CLSSupportedDeviceModelId,
+} from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
-import { setPostOnboardingActionCompleted } from "@ledgerhq/live-common/postOnboarding/actions";
 import { useTranslation } from "react-i18next";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import { ImageBase64Data } from "~/renderer/components/CustomImage/types";
@@ -31,12 +34,15 @@ import { useNavigateToPostOnboardingHubCallback } from "~/renderer/components/Po
 import { analyticsPageNames, analyticsFlowName, analyticsDrawerName } from "./shared";
 import TrackPage, { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { useTrack } from "~/renderer/analytics/segment";
+import DeviceModelPicker from "~/renderer/components/CustomImage/DeviceModelPicker";
+import { useCompleteActionCallback } from "~/renderer/components/PostOnboardingHub/logic/useCompleteAction";
 
 type Props = {
   imageUri?: string;
   isFromNFTEntryPoint?: boolean;
   isFromPostOnboardingEntryPoint?: boolean;
   reopenPreviousDrawer?: () => void;
+  deviceModelId: DeviceModelId | null;
 };
 
 const orderedSteps: Step[] = [
@@ -54,6 +60,14 @@ const CustomImage: React.FC<Props> = props => {
   const { t } = useTranslation();
   const track = useTrack();
   const { setAnalyticsDrawerName } = useContext(analyticsDrawerContext);
+
+  const isDeviceModelIdUndefined =
+    !props.deviceModelId || !isCustomLockScreenSupported(props.deviceModelId);
+  const [deviceModelId, setDeviceModelId] = useState<CLSSupportedDeviceModelId>(
+    props.deviceModelId && isCustomLockScreenSupported(props.deviceModelId)
+      ? props.deviceModelId
+      : DeviceModelId.stax,
+  );
 
   useEffect(() => setAnalyticsDrawerName(analyticsDrawerName), [setAnalyticsDrawerName]);
 
@@ -170,16 +184,16 @@ const CustomImage: React.FC<Props> = props => {
   const previousStep: Step | undefined = orderedSteps[orderedSteps.findIndex(s => s === step) - 1];
 
   const openPostOnboarding = useNavigateToPostOnboardingHubCallback();
-  const dispatch = useDispatch();
+  const completeAction = useCompleteActionCallback();
 
   const handleDone = useCallback(() => {
     exit();
-    dispatch(setPostOnboardingActionCompleted({ actionId: PostOnboardingActionId.customImage }));
+    completeAction(PostOnboardingActionId.customImage);
     if (isFromPostOnboardingEntryPoint) {
       setTrackingSource(analyticsPageNames.success);
       openPostOnboarding();
     }
-  }, [exit, dispatch, isFromPostOnboardingEntryPoint, openPostOnboarding]);
+  }, [exit, completeAction, isFromPostOnboardingEntryPoint, openPostOnboarding]);
 
   const renderError = useMemo(
     () =>
@@ -211,6 +225,10 @@ const CustomImage: React.FC<Props> = props => {
         : undefined,
     [error, previousStep, t, setStepWrapper, handleErrorRetryClicked],
   );
+
+  const deviceModelPicker = isDeviceModelIdUndefined ? (
+    <DeviceModelPicker deviceModelId={deviceModelId} onChange={setDeviceModelId} />
+  ) : null;
 
   return (
     <Flex
@@ -254,11 +272,13 @@ const CustomImage: React.FC<Props> = props => {
           >
             <StepAdjustImage
               src={loadedImage}
+              deviceModelId={deviceModelId}
               onError={errorHandlers[Step.adjustImage]}
               onResult={handleStepAdjustImageResult}
               setStep={setStepWrapper}
               initialCropParams={initialCropParams}
               setCropParams={setInitialCropParams}
+              deviceModelPicker={deviceModelPicker}
             />
           </FlowStepper.Indexed.Step>
           <FlowStepper.Indexed.Step
@@ -266,6 +286,7 @@ const CustomImage: React.FC<Props> = props => {
             label={t("customImage.steps.contrast.stepLabel")}
           >
             <StepChooseContrast
+              deviceModelId={deviceModelId}
               src={croppedImage}
               onResult={handleStepChooseContrastResult}
               onError={errorHandlers[Step.chooseContrast]}
@@ -277,6 +298,7 @@ const CustomImage: React.FC<Props> = props => {
             label={t("customImage.steps.transfer.stepLabel")}
           >
             <StepTransfer
+              deviceModelId={deviceModelId}
               result={finalResult}
               onError={errorHandlers[Step.transferImage]}
               setStep={setStepWrapper}

@@ -11,7 +11,6 @@ import { getCurrencyColor } from "~/renderer/getCurrencyColor";
 import { accountSelector } from "~/renderer/reducers/accounts";
 import {
   findSubAccountById,
-  getAccountCurrency,
   getMainAccount,
   isAccountEmpty,
 } from "@ledgerhq/live-common/account/index";
@@ -37,11 +36,17 @@ import { AccountStakeBanner } from "~/renderer/screens/account/AccountStakeBanne
 import { AccountLike, Account, Operation } from "@ledgerhq/types-live";
 import { State } from "~/renderer/reducers";
 import { getLLDCoinFamily } from "~/renderer/families";
+import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
+import TopBanner from "~/renderer/components/TopBanner";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+import { urls } from "~/config/urls";
+import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
 
 type Params = {
   id: string;
   parentId: string;
 };
+
 const mapStateToProps = (
   state: State,
   {
@@ -65,15 +70,18 @@ const mapStateToProps = (
       accountId: id,
     });
   }
+
   return {
     parentAccount,
     account,
     countervalueFirst: countervalueFirstSelector(state),
   };
 };
+
 const mapDispatchToProps = {
   setCountervalueFirst,
 };
+
 type Props = {
   t: TFunction;
   account?: AccountLike;
@@ -81,6 +89,7 @@ type Props = {
   countervalueFirst: boolean;
   setCountervalueFirst: (a: boolean) => void;
 };
+
 const AccountPage = ({
   account,
   parentAccount,
@@ -95,6 +104,7 @@ const AccountPage = ({
   const bgColor = useTheme().colors.palette.background.paper;
   const [shouldFilterTokenOpsZeroAmount] = useFilterTokenOperationsZeroAmount();
   const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
+
   const filterOperations = useCallback(
     (operation: Operation, account: AccountLike) => {
       // Remove operations linked to address poisoning
@@ -109,12 +119,24 @@ const AccountPage = ({
     [hiddenNftCollections, shouldFilterTokenOpsZeroAmount],
   );
 
-  if (!account || !mainAccount) {
+  const currency = mainAccount?.currency;
+
+  let currencyConfig: CurrencyConfig | undefined = undefined;
+
+  try {
+    currencyConfig = getCurrencyConfiguration(currency!);
+  } catch (err) {
+    console.warn(err);
+  }
+
+  const localizedContactSupportURL = useLocalizedUrl(urls.contactSupportWebview);
+
+  if (!account || !mainAccount || !currency) {
     return <Redirect to="/accounts" />;
   }
 
-  const currency = getAccountCurrency(account);
   const color = getCurrencyColor(currency, bgColor);
+
   return (
     <Box key={account.id}>
       <TrackPage
@@ -147,6 +169,21 @@ const AccountPage = ({
       >
         <AccountHeaderActions account={account} parentAccount={parentAccount} />
       </Box>
+      {currencyConfig?.status.type === "will_be_deprecated" && (
+        <TopBanner
+          status="warning"
+          content={{
+            message: t("account.willBeDeprecatedBanner.title", {
+              currencyName: currency.name,
+              deprecatedDate: currencyConfig.status.deprecated_date,
+            }),
+          }}
+          link={{
+            text: t("account.willBeDeprecatedBanner.contactSupport"),
+            href: localizedContactSupportURL,
+          }}
+        />
+      )}
       {AccountSubHeader ? (
         <AccountSubHeader account={account} parentAccount={parentAccount} />
       ) : null}
@@ -184,8 +221,10 @@ const AccountPage = ({
     </Box>
   );
 };
+
 const ConnectedAccountPage = compose<React.ComponentType<Props>>(
   connect(mapStateToProps, mapDispatchToProps),
   withTranslation(),
 )(AccountPage);
+
 export default ConnectedAccountPage;

@@ -46,7 +46,7 @@ runs:
         echo ""
       shell: bash
     - name: Upload playwright results [On Failure]
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: failure() && !cancelled()
       with:
         name: ${{ format('playwright-results-{0}', inputs.os) }}

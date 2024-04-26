@@ -48,7 +48,7 @@ const GenuineCheckNonGenuineDrawer: React.FC<Props> = ({ isOpen, onClose, produc
       <TrackScreen category="Device not genuine" type="drawer" refreshSource={false} />
       <Flex justifyContent="center" alignItems="center" mt={7}>
         <GenericInformationBody
-          title={t("earlySecurityCheck.genuineCheckNonGenuineDrawer.title")}
+          title={t("earlySecurityCheck.genuineCheckNonGenuineDrawer.title", { productName })}
           description={t("earlySecurityCheck.genuineCheckNonGenuineDrawer.description", {
             productName,
           })}

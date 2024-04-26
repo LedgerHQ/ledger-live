@@ -430,7 +430,6 @@ Usage: ledger-live receive    # Receive crypto-assets (verify on device)
  -l, --length <Number>        : set the number of accounts after the index. Defaults to 1 if index was provided, Infinity otherwise.
      --paginateOperations <Number>: if defined, will paginate operations
      --qr                     : also display a QR Code
-     --freshAddressIndex <Number>: Change fresh address index
 
 Usage: ledger-live repl       # Low level exchange with the device. Send APDUs from stdin.
  -d, --device <String>        : provide a specific HID path of a device
@@ -523,14 +522,14 @@ Usage: ledger-live staxFetchAndRestoreDemo # Conditionally backup, delete, and r
  -d, --device <String>        : provide a specific HID path of a device
  -i, --fileInput <String>     : Text file containing the hex data of the image to load on Stax
 
-Usage: ledger-live staxFetchImage # Test functionality lock screen customization on Stax for fetching an image
+Usage: ledger-live customLockScreenFetch # Test functionality lock screen customization on Stax for fetching an image
  -d, --device <String>        : provide a specific HID path of a device
  -o, --fileOutput <String>    : Output file path in case you want to save Hex string image
 
-Usage: ledger-live staxFetchImageHash # Fetch the hash of the custom image
+Usage: ledger-live customLockScreenFetchHash # Fetch the hash of the custom image
  -d, --device <String>        : provide a specific HID path of a device
 
-Usage: ledger-live staxLoadImage # Test functionality lock screen customization on Stax for loading an image
+Usage: ledger-live customLockScreenLoad # Test functionality lock screen customization on Stax for loading an image
  -d, --device <String>        : provide a specific HID path of a device
  -i, --fileInput <String>     : Text file containing the hex data of the image to load on Stax
 

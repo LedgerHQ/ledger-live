@@ -1,7 +1,6 @@
 import { Dispatch } from "redux";
 import { Account, SubAccount } from "@ledgerhq/types-live";
 import { AccountComparator } from "@ledgerhq/live-common/account/index";
-import { implicitMigration } from "@ledgerhq/live-common/migrations/accounts";
 import { getKey } from "~/renderer/storage";
 
 export const replaceAccounts = (payload: Account[]) => ({
@@ -31,7 +30,7 @@ export const reorderAccounts = (comparator: AccountComparator) => (dispatch: Dis
   });
 
 export const fetchAccounts = () => async (dispatch: Dispatch) => {
-  const accounts = implicitMigration(await getKey("app", "accounts", []));
+  const accounts = await getKey("app", "accounts", []);
   return dispatch({
     type: "SET_ACCOUNTS",
     payload: accounts,

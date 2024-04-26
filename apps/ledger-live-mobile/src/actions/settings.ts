@@ -69,6 +69,8 @@ import {
   SettingsSetUserNps,
   SettingsSetSupportedCounterValues,
   SettingsSetHasSeenAnalyticsOptInPrompt,
+  SettingsSetDismissedContentCardsPayload,
+  SettingsClearDismissedContentCardsPayload,
 } from "./types";
 import { ImageType } from "~/components/CustomImage/types";
 
@@ -211,7 +213,7 @@ const setCustomImageTypeAction = createAction<SettingsSetCustomImageTypePayload>
   SettingsActionTypes.SET_CUSTOM_IMAGE_TYPE,
 );
 export const setCustomImageType = (imageType: ImageType) =>
-  setCustomImageTypeAction({ customImageType: imageType });
+  setCustomImageTypeAction({ customLockScreenType: imageType });
 export const setHasOrderedNano = createAction<SettingsSetHasOrderedNanoPayload>(
   SettingsActionTypes.SET_HAS_ORDERED_NANO,
 );
@@ -288,6 +290,14 @@ export const setSupportedCounterValues = createAction<SettingsSetSupportedCounte
 
 export const setHasSeenAnalyticsOptInPrompt = createAction<SettingsSetHasSeenAnalyticsOptInPrompt>(
   SettingsActionTypes.SET_HAS_SEEN_ANALYTICS_OPT_IN_PROMPT,
+);
+
+export const setDismissedContentCard = createAction<SettingsSetDismissedContentCardsPayload>(
+  SettingsActionTypes.SET_DISMISSED_CONTENT_CARD,
+);
+
+export const clearDismissedContentCards = createAction<SettingsClearDismissedContentCardsPayload>(
+  SettingsActionTypes.CLEAR_DISMISSED_CONTENT_CARDS,
 );
 
 type PortfolioRangeOption = {

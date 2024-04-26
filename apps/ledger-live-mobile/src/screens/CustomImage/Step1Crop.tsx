@@ -3,12 +3,12 @@ import { Box, Flex, IconsLegacy, InfiniteLoader, Text } from "@ledgerhq/native-u
 import { CropView } from "react-native-image-crop-tools";
 import { useTranslation } from "react-i18next";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { getScreenVisibleAreaDimensions } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 import ImageCropper, {
   Props as ImageCropperProps,
   CropResult,
 } from "~/components/CustomImage/ImageCropper";
 import { ImageDimensions } from "~/components/CustomImage/types";
-import { targetDisplayDimensions } from "./shared";
 import Button from "~/components/wrappedUi/Button";
 import { ScreenName } from "~/const";
 import BottomContainer from "~/components/CustomImage/BottomButtonsContainer";
@@ -44,20 +44,22 @@ const Step1Cropping = ({ navigation, route }: NavigationProps) => {
 
   const { params } = route;
 
-  const { device, baseImageFile } = params;
+  const { device, deviceModelId, baseImageFile } = params;
+
+  const targetDisplayDimensions = getScreenVisibleAreaDimensions(deviceModelId);
 
   const handleError = useCallback(
     (error: Error) => {
       console.error(error);
-      navigation.navigate(ScreenName.CustomImageErrorScreen, { error, device });
+      navigation.navigate(ScreenName.CustomImageErrorScreen, { error, device, deviceModelId });
     },
-    [navigation, device],
+    [navigation, device, deviceModelId],
   );
 
   /** CROP IMAGE HANDLING */
   const handleCropResult: ImageCropperProps["onResult"] = useCallback(
     (cropResult: CropResult) => {
-      navigation.navigate(ScreenName.CustomImageStep2Preview, {
+      navigation.navigate(ScreenName.CustomImageStep2ChooseContrast, {
         ...params,
         cropResult,
       });

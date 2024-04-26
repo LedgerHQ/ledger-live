@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Box, Flex } from "@ledgerhq/native-ui";
-import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
+import { getCurrencyColor, isCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
 import { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
@@ -33,6 +33,11 @@ import AssetDynamicContent from "./AssetDynamicContent";
 import AssetMarketSection from "./AssetMarketSection";
 import AssetGraph from "./AssetGraph";
 import { ReferralProgram } from "./referralProgram";
+import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
+import { View } from "react-native-animatable";
+import Alert from "~/components/Alert";
+import { urls } from "~/utils/urls";
+import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
 
 const AnimatedFlatListWithRefreshControl = Animated.createAnimatedComponent(
   accountSyncRefreshControl(FlatList),
@@ -98,6 +103,11 @@ const AssetScreen = ({ route }: NavigationProps) => {
     }
   }, [currency, navigation]);
 
+  let currencyConfig: CurrencyConfig | undefined = undefined;
+  if (isCryptoCurrency(currency)) {
+    currencyConfig = getCurrencyConfiguration(currency);
+  }
+
   const data = useMemo(
     () => [
       <Box
@@ -120,6 +130,21 @@ const AssetScreen = ({ route }: NavigationProps) => {
       currency.ticker === "BTC" ? (
         <ReferralProgram key="ReferralProgram" />
       ) : null,
+      currencyConfig?.status.type === "will_be_deprecated" && (
+        <View style={{ marginTop: 16 }}>
+          <Alert
+            key="deprecated_banner"
+            type="warning"
+            learnMoreKey="account.willBedeprecatedBanner.contactSupport"
+            learnMoreUrl={urls.contactSupportWebview.en}
+          >
+            {t("account.willBedeprecatedBanner.title", {
+              currencyName: currency.name,
+              deprecatedDate: currencyConfig.status.deprecated_date,
+            })}
+          </Alert>
+        </View>
+      ),
       <SectionContainer px={6} isFirst key="AssetDynamicContent">
         <SectionTitle title={t("account.quickActions")} containerProps={{ mb: 6 }} />
         <FabAssetActions
@@ -169,6 +194,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
       onAddAccount,
       featureReferralProgramMobile?.enabled,
       featureReferralProgramMobile?.params?.path,
+      currencyConfig,
     ],
   );
 

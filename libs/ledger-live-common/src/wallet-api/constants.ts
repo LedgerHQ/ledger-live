@@ -21,7 +21,7 @@ export const HTTP_REGEX = new RegExp(
   /[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)?/gi,
 );
 
-export const INITIAL_PLATFORM_STATE = { recentlyUsed: [] };
+export const INITIAL_PLATFORM_STATE = { recentlyUsed: [], currentAccountHist: {} };
 
 export const MAX_RECENTLY_USED_LENGTH = 10;
 
@@ -33,4 +33,6 @@ export const DISCOVER_INITIAL_CATEGORY = "all";
 
 export const DEFAULT_MULTIBUY_APP_ID = "multibuy-v2";
 
-export const INTERNAL_APP_IDS = [DEFAULT_MULTIBUY_APP_ID];
+export const BUY_SELL_UI_APP_ID = "buy-sell-ui";
+
+export const INTERNAL_APP_IDS = [DEFAULT_MULTIBUY_APP_ID, BUY_SELL_UI_APP_ID];

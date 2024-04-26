@@ -55,6 +55,12 @@ const startDev = async argv => {
     plugins: [...(require("./config/webviewPreloader.esbuild").plugins || []), OnRebuildPlugin],
     minify: false,
   };
+  const webviewDappPreloaderConfig = {
+    ...require("./config/webviewDappPreloader.esbuild"),
+    define: buildMainEnv("development", argv),
+    plugins: [...(require("./config/webviewDappPreloader.esbuild").plugins || []), OnRebuildPlugin],
+    minify: false,
+  };
 
   try {
     await processReleaseNotes();
@@ -68,6 +74,7 @@ const startDev = async argv => {
     esbuild.context(mainConfig),
     esbuild.context(preloaderConfig),
     esbuild.context(webviewPreloaderConfig),
+    esbuild.context(webviewDappPreloaderConfig),
   ]);
 
   await rendererServer.listen();
@@ -119,6 +126,10 @@ const build = async argv => {
       define: buildMainEnv("production", argv),
     }),
     esbuild.build({
+      ...require("./config/webviewDappPreloader.esbuild"),
+      define: buildMainEnv("production", argv),
+    }),
+    esbuild.build({
       ...require("./config/renderer.esbuild"),
       define: buildRendererEnv("production"),
     }),
@@ -144,8 +155,13 @@ const build = async argv => {
       JSON.stringify(results[2].metafile),
       "utf-8",
     );
-    fs.writeFileSync("metafile.renderer.json", JSON.stringify(results[3].metafile), "utf-8");
-    fs.writeFileSync("metafile.renderer.worker.json", JSON.stringify(results[4].metafile), "utf-8");
+    fs.writeFileSync(
+      "metafile.webviewDappPreloader.json",
+      JSON.stringify(results[3].metafile),
+      "utf-8",
+    );
+    fs.writeFileSync("metafile.renderer.json", JSON.stringify(results[4].metafile), "utf-8");
+    fs.writeFileSync("metafile.renderer.worker.json", JSON.stringify(results[5].metafile), "utf-8");
   }
 };
 

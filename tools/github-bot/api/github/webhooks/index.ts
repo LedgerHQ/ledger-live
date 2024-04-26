@@ -1,10 +1,5 @@
-import { createNodeMiddleware, createProbot, ProbotOctokit } from "probot";
-import { retry } from "@octokit/plugin-retry";
+import { createNodeMiddleware, createProbot } from "probot";
 import app from "../../../src/index";
-
-const myOctokit = ProbotOctokit.plugin(retry).defaults({
-  request: { retries: 3 },
-});
 
 export default createNodeMiddleware(app, {
   probot: createProbot({
@@ -12,7 +7,9 @@ export default createNodeMiddleware(app, {
       logLevel: "info",
     },
     defaults: {
-      Octokit: myOctokit,
+      request: {
+        retries: 3,
+      },
     },
   }),
   webhooksPath: "/api/github/webhooks",

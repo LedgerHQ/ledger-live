@@ -6,6 +6,17 @@ import { BOT_APP_ID, REF_PREFIX, WATCHER_CHECK_RUN_NAME, WORKFLOWS } from "./con
 
 type Octokit = InstanceType<typeof ProbotOctokit>;
 
+type Status = "queued" | "in_progress" | "completed";
+type Conclusion =
+  | "action_required"
+  | "cancelled"
+  | "failure"
+  | "neutral"
+  | "success"
+  | "skipped"
+  | "stale"
+  | "timed_out";
+
 export async function updateWatcherCheckRun(
   octokit: Octokit,
   owner: string,
@@ -116,7 +127,7 @@ export async function updateWatcherCheckRun(
           repo,
           check_run_id: watcherId,
           status: "completed",
-          conclusion: aggregatedConclusion,
+          conclusion: aggregatedConclusion as Conclusion,
           output: {
             title: formatConclusion(aggregatedConclusion),
             summary,
@@ -141,7 +152,7 @@ export async function updateWatcherCheckRun(
           owner,
           repo,
           check_run_id: watcherId,
-          status: aggregatedStatus,
+          status: aggregatedStatus as Status,
           output: {
             title: "⚙️ Running",
             summary,

@@ -25,13 +25,14 @@ import { AnnouncementProviderWrapper } from "~/renderer/components/AnnouncementP
 import { PlatformAppProviderWrapper } from "~/renderer/components/PlatformAppProviderWrapper";
 import { ToastProvider } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { themeSelector } from "./actions/general";
-import MarketDataProvider from "~/renderer/screens/market/MarketDataProviderWrapper";
 import { ConnectEnvsToSentry } from "~/renderer/components/ConnectEnvsToSentry";
 import PostOnboardingProviderWrapped from "~/renderer/components/PostOnboardingHub/logic/PostOnboardingProviderWrapped";
 import { useBraze } from "./hooks/useBraze";
 import { StorylyProvider } from "~/storyly/StorylyProvider";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { allowDebugReactQuerySelector } from "./reducers/settings";
 
 const reloadApp = (event: KeyboardEvent) => {
   if ((event.ctrlKey || event.metaKey) && event.key === "r") {
@@ -85,13 +86,12 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
                           <PlatformAppProviderWrapper>
                             <DrawerProvider>
                               <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
-                                <MarketDataProvider>
-                                  <StorylyProvider>
-                                    <QueryClientProvider client={queryClient}>
-                                      <Default />
-                                    </QueryClientProvider>
-                                  </StorylyProvider>
-                                </MarketDataProvider>
+                                <StorylyProvider>
+                                  <QueryClientProvider client={queryClient}>
+                                    <Default />
+                                    <ReactQueryDevtoolsProvider />
+                                  </QueryClientProvider>
+                                </StorylyProvider>
                               </NftMetadataProvider>
                             </DrawerProvider>
                           </PlatformAppProviderWrapper>
@@ -118,4 +118,11 @@ const App = ({ store, initialCountervalues }: Props) => {
     </LiveStyleSheetManager>
   );
 };
+
+const ReactQueryDevtoolsProvider = () => {
+  const allowDebugReactQuery = useSelector(allowDebugReactQuerySelector);
+  if (!allowDebugReactQuery) return null;
+  return <ReactQueryDevtools initialIsOpen={false} />;
+};
+
 export default App;

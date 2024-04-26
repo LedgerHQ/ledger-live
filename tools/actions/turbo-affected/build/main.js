@@ -18602,6 +18602,8 @@ var package_default = {
     doc: "pnpm --filter docs",
     mobile: "pnpm --filter live-mobile",
     common: "pnpm --filter live-common",
+    "device-core": "pnpm --filter device-core",
+    "device-react": "pnpm --filter device-react",
     "web-tools": "pnpm --filter web-tools",
     "live-env": "pnpm --filter live-env",
     portfolio: "pnpm --filter live-portfolio",
@@ -18656,6 +18658,7 @@ var package_default = {
     "dummy-live-app": "pnpm --filter dummy-live-app",
     "dummy-wallet-app": "pnpm --filter dummy-wallet-app",
     "dummy-ptx-app": "pnpm --filter dummy-ptx-app",
+    "ethereum-provider": "pnpm --filter ethereum-provider",
     ui: "pnpm --filter ui",
     "ui:react": "pnpm --filter react-ui",
     "ui:native": "pnpm --filter native-ui",
@@ -18706,7 +18709,7 @@ var package_default = {
       "react-native-image-crop-tools@1.6.4": "patches/react-native-image-crop-tools@1.6.4.patch",
       "react-native-webview@11.26.1": "patches/react-native-webview@11.26.1.patch",
       "asyncstorage-down@4.2.0": "patches/asyncstorage-down@4.2.0.patch",
-      "detox@20.16.0": "patches/detox@20.16.0.patch",
+      "detox@20.18.4": "patches/detox@20.18.4.patch",
       "usb@2.9.0": "patches/usb@2.9.0.patch"
     },
     packageExtensions: {

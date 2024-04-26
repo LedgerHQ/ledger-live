@@ -115,7 +115,7 @@ const Root: NonNullable<EvmFamily["sendAmountFields"]>["component"] = props => {
       {messageGas && (
         <Flex onClick={onBuyClick}>
           <Alert type="warning">
-            <TranslatedError error={messageGas} noLink />
+            <TranslatedError error={messageGas} />
           </Alert>
         </Flex>
       )}

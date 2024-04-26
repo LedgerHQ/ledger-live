@@ -6,7 +6,7 @@ import { App, AppType, DeviceInfo, idsToLanguage, languageIds } from "@ledgerhq/
 import { LocalTracer } from "@ledgerhq/logs";
 import type { ListAppsEvent, ListAppsResult } from "../types";
 import { getProviderId } from "../../manager";
-import staxFetchImageSize from "../../hw/staxFetchImageSize";
+import customLockScreenFetchSize from "../../hw/customLockScreenFetchSize";
 import {
   listCryptoCurrencies,
   currenciesByMarketcap,
@@ -18,7 +18,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { calculateDependencies, polyfillApp, polyfillApplication } from "../polyfill";
 import { getDeviceName } from "../../device/use-cases/getDeviceNameUseCase";
 import { getLatestFirmwareForDeviceUseCase } from "../../device/use-cases/getLatestFirmwareForDeviceUseCase";
-import { ManagerApiRepository } from "../../device-core/managerApi/repositories/ManagerApiRepository";
+import { ManagerApiRepository } from "../../device/factories/HttpManagerApiRepositoryFactory";
 
 const appsThatKeepChangingHashes = ["Fido U2F", "Security Key"];
 
@@ -259,7 +259,7 @@ export const listApps = (
 
       let customImageBlocks = 0;
       if (deviceModelId === DeviceModelId.stax && !deviceInfo.isRecoveryMode) {
-        const customImageSize = await staxFetchImageSize(transport);
+        const customImageSize = await customLockScreenFetchSize(transport);
         if (customImageSize) {
           customImageBlocks = Math.ceil(customImageSize / bytesPerBlock);
         }

@@ -17,7 +17,6 @@ import Box from "~/renderer/components/Box";
 import Alert from "~/renderer/components/Alert";
 import SectionTitle from "~/renderer/components/OperationsList/SectionTitle";
 import { FakeLink } from "~/renderer/components/Link";
-import moment from "moment";
 import styled from "styled-components";
 import IconDownloadCloud from "~/renderer/icons/DownloadCloud";
 import { setDrawer } from "~/renderer/drawers/Provider";
@@ -26,6 +25,8 @@ import HistoryLoading from "./HistoryLoading";
 import HistoryPlaceholder from "./HistoryPlaceholder";
 import { useHistory } from "react-router-dom";
 import TrackPage from "~/renderer/analytics/TrackPage";
+import { useTechnicalDateFn } from "~/renderer/hooks/useDateFormatter";
+
 const Head = styled(Box)`
   border-bottom: 1px solid ${p => p.theme.colors.palette.divider};
 `;
@@ -59,11 +60,12 @@ const History = () => {
   const { t } = useTranslation();
   const defaultOpenedOnce = useRef(false);
   const defaultOpenedSwapOperationId = history?.location?.state?.swapId;
+  const getDateTxt = useTechnicalDateFn();
   const onExportOperations = useCallback(() => {
     async function asyncExport() {
       const path = await ipcRenderer.invoke("show-save-dialog", {
         title: "Exported swap history",
-        defaultPath: `ledgerlive-swap-history-${moment().format("YYYY.MM.DD")}.csv`,
+        defaultPath: `ledgerlive-swap-history-${getDateTxt()}.csv`,
         filters: [
           {
             name: "All Files",
@@ -88,7 +90,7 @@ const History = () => {
           setExporting(false);
         });
     }
-  }, [exporting, mappedSwapOperations]);
+  }, [exporting, mappedSwapOperations, getDateTxt]);
   useEffect(() => {
     (async function asyncGetCompleteSwapHistory() {
       if (!accounts) return;

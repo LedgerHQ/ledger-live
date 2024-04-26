@@ -1,15 +1,19 @@
 name: "Setup Caches"
 description: "Setup caches for faster running time"
 inputs:
-  skip_pnpm_cache:
+  install-proto:
+    description: "true to install proto, false by default"
+    required: false
+    default: "false"
+  skip-pnpm-cache:
     description: "true to skip pnpm caching, false by default"
     required: false
     default: "false"
-  skip_pod_cache:
+  skip-pod-cache:
     description: "false to get cache, true by default"
     required: false
     default: "true"
-  skip_turbo_cache:
+  skip-turbo-cache:
     description: "false to get cache, true by default"
     required: false
     default: "true"
@@ -28,9 +32,22 @@ inputs:
     required: false
     default: "yolo"
 
+outputs:
+  port:
+    description: "The port the local server runs on"
+    value: ${{ steps.turborepo-cache-server.outputs.port }}
+
 runs:
   using: "composite"
   steps:
+    - name: Setup proto
+      if: inputs.install-proto == 'true'
+      uses: moonrepo/setup-toolchain@v0
+
+    - name: Update proto
+      run: proto upgrade
+      shell: bash
+
     - name: Setup the toolchain
       shell: bash
       run: proto use
@@ -50,7 +67,7 @@ runs:
 
     - name: Cache pnpm store
       uses: tespkg/actions-cache@v1
-      if: steps.aws.conclusion == 'success' && inputs.skip_pnpm_cache != 'false'
+      if: steps.aws.conclusion == 'success' && inputs.skip-pnpm-cache != 'false'
       with:
         path: ${{ env.STORE_PATH }}
         key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
@@ -65,7 +82,7 @@ runs:
 
     - name: Cache LLM pods
       uses: actions/cache@v3
-      if: inputs.skip_pod_cache != 'true'
+      if: inputs.skip-pod-cache != 'true'
       with:
         path: |
           apps/ledger-live-mobile/ios/Pods
@@ -76,7 +93,7 @@ runs:
     - name: TurboRepo local caching server
       id: turborepo-cache-server
       if: steps.aws.conclusion == 'success' && inputs.skip_turbo_cache != 'true'
-      uses: ./tools/actions/turborepo-s3-cache
+      uses: LedgerHQ/ledger-live/tools/actions/turborepo-s3-cache@develop
       with:
         server-token: "${{ inputs.turbo-server-token }}"
         cleanup-cache-folder: "true"

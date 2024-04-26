@@ -1,23 +1,31 @@
 import BigNumber from "bignumber.js";
 import { loadPolkadotCrypto } from "./polkadot-crypto";
 import getEstimatedFees from "./getFeesForTransaction";
-import { fixtureChainSpec, fixtureTxMaterialWithMetadata } from "../network/sidecar.fixture";
+import {
+  fixtureChainSpec,
+  fixtureTxMaterialWithMetadata,
+  fixtureTransactionParams,
+} from "../network/sidecar.fixture";
 import { createFixtureAccount, createFixtureTransaction } from "../types/model.fixture";
+import { createRegistryAndExtrinsics } from "../network/common";
 
 jest.mock("./polkadot-crypto");
-const mockPaymentInfo = jest.fn();
-jest.mock("../network/sidecar", () => ({
-  ...jest.requireActual("../network/sidecar"),
-  fetchChainSpec: () => jest.fn().mockResolvedValue(fixtureChainSpec),
-  getTransactionMaterialWithMetadata: () =>
-    jest.fn().mockResolvedValue(fixtureTxMaterialWithMetadata),
-  paymentInfo: (args: any) => mockPaymentInfo(args),
-}));
-mockPaymentInfo.mockResolvedValue({
+
+const mockPaymentInfo = jest.fn().mockResolvedValue({
   weight: "WHATEVER",
   class: "WHATEVER",
   partialFee: "155099814",
 });
+const mockRegistry = jest
+  .fn()
+  .mockResolvedValue(createRegistryAndExtrinsics(fixtureTxMaterialWithMetadata, fixtureChainSpec));
+const mockTransactionParams = jest.fn().mockResolvedValue(fixtureTransactionParams);
+
+jest.mock("../network/sidecar", () => ({
+  getRegistry: () => mockRegistry(),
+  paymentInfo: (args: any) => mockPaymentInfo(args),
+  getTransactionParams: () => mockTransactionParams(),
+}));
 
 describe("getEstimatedFees", () => {
   const transaction = createFixtureTransaction();

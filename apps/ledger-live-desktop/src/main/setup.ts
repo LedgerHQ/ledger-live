@@ -1,7 +1,7 @@
 import "./env";
 import "~/live-common-setup-base";
 import { captureException } from "~/sentry/main";
-import { app, ipcMain, shell } from "electron";
+import { app, ipcMain, powerSaveBlocker, shell } from "electron";
 import contextMenu from "electron-context-menu";
 import { log } from "@ledgerhq/logs";
 import fs from "fs/promises";
@@ -133,6 +133,16 @@ ipcMain.handle("load-lss-config", async (): Promise<string | undefined | null> =
     log("satstack", "tried to load lss.json");
   }
   return undefined;
+});
+
+ipcMain.handle("activate-keep-screen-awake", () => {
+  return powerSaveBlocker.start("prevent-display-sleep");
+});
+
+ipcMain.handle("deactivate-keep-screen-awake", (_ev, id?: number) => {
+  if (id !== undefined && !Number.isNaN(id)) {
+    powerSaveBlocker.stop(id as number);
+  }
 });
 
 process.setMaxListeners(0);

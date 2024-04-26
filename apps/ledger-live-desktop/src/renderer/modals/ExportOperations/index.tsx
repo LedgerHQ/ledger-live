@@ -3,7 +3,6 @@ import React, { memo, useState, useCallback } from "react";
 import { Trans } from "react-i18next";
 import { connect } from "react-redux";
 import styled from "styled-components";
-import moment from "moment";
 import { createStructuredSelector } from "reselect";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
 import { accountsOpToCSV } from "@ledgerhq/live-common/csvExport";
@@ -23,6 +22,7 @@ import IconDownloadCloud from "~/renderer/icons/DownloadCloud";
 import IconCheckCircle from "~/renderer/icons/CheckCircle";
 import Alert from "~/renderer/components/Alert";
 import { ModalData } from "../types";
+import { useTechnicalDateFn } from "~/renderer/hooks/useDateFormatter";
 
 type OwnProps = {};
 type Props = OwnProps & {
@@ -56,10 +56,11 @@ function ExportOperations({ accounts, closeModal, countervalueCurrency }: Props)
   const [checkedIds, setCheckedIds] = useState<string[]>([]);
   const [success, setSuccess] = useState(false);
   const countervalueState = useCountervaluesState();
+  const getDateTxt = useTechnicalDateFn();
   const exportCsv = useCallback(async () => {
     const path = await ipcRenderer.invoke("show-save-dialog", {
       title: "Exported account transactions",
-      defaultPath: `ledgerlive-operations-${moment().format("YYYY.MM.DD")}.csv`,
+      defaultPath: `ledgerlive-operations-${getDateTxt()}.csv`,
       filters: [
         {
           name: "All Files",
@@ -80,7 +81,7 @@ function ExportOperations({ accounts, closeModal, countervalueCurrency }: Props)
         },
       );
     }
-  }, [accounts, checkedIds, countervalueCurrency, countervalueState]);
+  }, [accounts, checkedIds, countervalueCurrency, countervalueState, getDateTxt]);
   const onClose = useCallback(() => closeModal("MODAL_EXPORT_OPERATIONS"), [closeModal]);
   const handleButtonClick = useCallback(() => {
     let exporting = false;

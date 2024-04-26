@@ -13,7 +13,12 @@ import NavigationScrollView from "~/components/NavigationScrollView";
 import { NavigatorName, ScreenName } from "~/const";
 
 const DebugHttpTransport = () => {
-  const models = [DeviceModelId.nanoX, DeviceModelId.nanoSP, DeviceModelId.stax];
+  const models = [
+    DeviceModelId.nanoX,
+    DeviceModelId.nanoSP,
+    DeviceModelId.stax,
+    DeviceModelId.europa,
+  ];
   const navigation = useNavigation<StackNavigationProp<Record<string, object | undefined>>>();
   const dispatch = useDispatch();
   const [address, setAddress] = useState("");
@@ -36,8 +41,8 @@ const DebugHttpTransport = () => {
       }),
     );
 
-    navigation.navigate(NavigatorName.Manager, {
-      screen: ScreenName.Manager,
+    navigation.navigate(NavigatorName.MyLedger, {
+      screen: ScreenName.MyLedgerChooseDevice,
     });
   }, [address, dispatch, model, name, navigation]);
 
@@ -53,7 +58,8 @@ const DebugHttpTransport = () => {
           {models.map(modelId => (
             <Button
               key={modelId}
-              type={modelId === model ? "primary" : "secondary"}
+              type="main"
+              outline={modelId === model}
               title={modelId}
               onPress={() => {
                 setModelId(modelId as DeviceModelId);

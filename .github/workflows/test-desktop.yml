@@ -41,16 +41,16 @@ jobs:
         with:
           ref: ${{ inputs.ref || github.sha }}
       - name: Setup the toolchain
-        uses: ./tools/actions/composites/setup-toolchain
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
         id: toolchain
         with:
-          install_dotnet: true
-          skip_turbo_cache: "false"
+          install-dotnet: true
+          skip-turbo-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-      - uses: ./tools/actions/composites/setup-test-desktop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@develop
         id: setup-test-desktop
         with:
           skip_builds: true
@@ -61,7 +61,7 @@ jobs:
         run: pnpm desktop prettier:check
       - name: typecheck
         run: pnpm desktop typecheck
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         name: upload eslint json output
         if: ${{ !cancelled() }}
         with:
@@ -84,14 +84,14 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
       - name: Setup the toolchain
         id: toolchain
-        uses: ./tools/actions/composites/setup-toolchain
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
         with:
-          skip_turbo_cache: "false"
+          skip-turbo-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-      - uses: ./tools/actions/composites/setup-test-desktop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@develop
         id: setup-test-desktop
         with:
           skip_builds: true
@@ -111,33 +111,33 @@ jobs:
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       # DEBUG: "pw:browser*"
       # DEBUG_LOGS: 1
-    runs-on: [ledger-live-4xlarge-linux]
+    runs-on: [ledger-live-4xlarge]
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.ref || github.sha }}
-      - name: Setup the toolchain
-        id: toolchain
-        uses: ./tools/actions/composites/setup-toolchain
+      - name: Setup caches
+        id: caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
-          skip_turbo_cache: "false"
+          skip-turbo-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-      - uses: ./tools/actions/composites/setup-test-desktop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@develop
         id: setup-test-desktop
         with:
           skip_ruby: true
           install_playwright: true
-          turborepo-server-port: ${{ steps.toolchain.outputs.port }}
+          turborepo-server-port: ${{ steps.caches.outputs.port }}
       - name: Run playwright tests [Linux => xvfb-run]
         id: tests
         run: |
           xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright
       - name: upload diffs to s3
         if: ${{ !cancelled() }}
-        uses: ./tools/actions/upload-images
+        uses: LedgerHQ/ledger-live/tools/actions/upload-images@develop
         id: s3
         with:
           path: apps/ledger-live-desktop/tests/artifacts/test-results
@@ -146,12 +146,12 @@ jobs:
           group-name: ${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_number }}
       - name: upload ci suggested screenshots
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: images
           path: images-linux.json
       - name: Upload playwright test results [On Failure]
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: failure() && !cancelled()
         with:
           name: playwright-results-linux
@@ -164,7 +164,7 @@ jobs:
             apps/ledger-live-desktop/tests/artifacts/*.log
       - name: Upload Allure Report
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: allure-results-linux
           path: apps/ledger-live-desktop/allure-results
@@ -177,11 +177,11 @@ jobs:
         with:
           ref: ${{ inputs.ref || github.sha }}
       - name: "download linter results"
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: lint
       - name: download images artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: images
       - name: parse images
@@ -203,7 +203,7 @@ jobs:
             fs.writeFileSync("./images.json", JSON.stringify(result, null, 2));
       - name: prepare comment with screenshots
         id: comment
-        uses: ./tools/actions/prepare-comment-screenshots
+        uses: LedgerHQ/ledger-live/tools/actions/prepare-comment-screenshots@develop
         with:
           images: images.json
           no-actor: true
@@ -407,8 +407,27 @@ jobs:
           payload-file-path: ${{ github.workspace }}/payload-slack-content.json
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         name: upload summary
         with:
           name: summary.json
           path: ${{ github.workspace }}/summary.json
+
+  allure-report:
+    name: "Allure Reports Export on Server"
+    needs: e2e-tests-linux
+    runs-on: [ledger-live-medium]
+    if: ${{ !cancelled() && github.ref_name == 'develop' }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
+      - name: Send Results and Generate Allure Report - Linux
+        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+        if: ${{ !cancelled() }}
+        with:
+          platform: linux
+          login: ${{ vars.ALLURE_USERNAME }}
+          password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
+          path: allure-results-linux

@@ -8,12 +8,6 @@ exports[`casper currency bridge scanAccounts casper seed 1 1`] = `
     "derivationMode": "casper_wallet",
     "freshAddress": "02038C8cb0f62b4EFcD0C7868c2e749Dda649aFFE30fF0f95fc91CE48EA67F077D16",
     "freshAddressPath": "44'/506'/0'/0/0",
-    "freshAddresses": [
-      {
-        "address": "02038C8cb0f62b4EFcD0C7868c2e749Dda649aFFE30fF0f95fc91CE48EA67F077D16",
-        "derivationPath": "44'/506'/0'/0/0",
-      },
-    ],
     "id": "js:2:casper:02038C8cb0f62b4EFcD0C7868c2e749Dda649aFFE30fF0f95fc91CE48EA67F077D16:casper_wallet",
     "index": 0,
     "name": "Casper 1",
@@ -34,12 +28,6 @@ exports[`casper currency bridge scanAccounts casper seed 1 1`] = `
     "derivationMode": "casper_wallet",
     "freshAddress": "0202bA6DC98cbE677711a45bf028A03646F9e588996eB223fad2485e8bc391b01581",
     "freshAddressPath": "44'/506'/0'/0/1",
-    "freshAddresses": [
-      {
-        "address": "0202bA6DC98cbE677711a45bf028A03646F9e588996eB223fad2485e8bc391b01581",
-        "derivationPath": "44'/506'/0'/0/1",
-      },
-    ],
     "id": "js:2:casper:0202bA6DC98cbE677711a45bf028A03646F9e588996eB223fad2485e8bc391b01581:casper_wallet",
     "index": 1,
     "name": "Casper 2",
@@ -60,12 +48,6 @@ exports[`casper currency bridge scanAccounts casper seed 1 1`] = `
     "derivationMode": "casper_wallet",
     "freshAddress": "02022AAB9B6ED404f8CFFE76ce493E1995d195B5F141Ee7D5B7fb20FCE60f2A49691",
     "freshAddressPath": "44'/506'/0'/0/2",
-    "freshAddresses": [
-      {
-        "address": "02022AAB9B6ED404f8CFFE76ce493E1995d195B5F141Ee7D5B7fb20FCE60f2A49691",
-        "derivationPath": "44'/506'/0'/0/2",
-      },
-    ],
     "id": "js:2:casper:02022AAB9B6ED404f8CFFE76ce493E1995d195B5F141Ee7D5B7fb20FCE60f2A49691:casper_wallet",
     "index": 2,
     "name": "Casper 3",

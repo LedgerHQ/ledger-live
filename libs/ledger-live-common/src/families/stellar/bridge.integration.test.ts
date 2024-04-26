@@ -54,12 +54,6 @@ const dataset: DatasetTest<Transaction> = {
             index: 0,
             freshAddress: "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
             freshAddressPath: "44'/148'/0'",
-            freshAddresses: [
-              {
-                address: "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
-                derivationPath: "44'/148'/0'",
-              },
-            ],
             // @ts-expect-error wat
             unit: {
               name: "Lumen",
@@ -269,12 +263,6 @@ const dataset: DatasetTest<Transaction> = {
             index: 2,
             freshAddress: "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
             freshAddressPath: "44'/148'/2'",
-            freshAddresses: [
-              {
-                address: "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
-                derivationPath: "44'/148'/2'",
-              },
-            ],
             name: "Stellar 3",
             // @ts-expect-error wat
             unit: {
@@ -321,7 +309,6 @@ const dataset: DatasetTest<Transaction> = {
             index: 1,
             freshAddress: "",
             freshAddressPath: "44'/148'/1'",
-            freshAddresses: [],
             balance: "0",
             blockHeight: 0,
             currencyId: "stellar",
@@ -342,7 +329,6 @@ const dataset: DatasetTest<Transaction> = {
             index: 1,
             freshAddress: "",
             freshAddressPath: "44'/148'/1'",
-            freshAddresses: [],
             balance: "0",
             blockHeight: 0,
             currencyId: "stellar",
@@ -363,12 +349,6 @@ const dataset: DatasetTest<Transaction> = {
             index: 0,
             freshAddress: "GAS5NQ2VU6LA3QPDSCVBH66IHP2RE52VFCLFQKSGRF7VKMZA2KTLGI3M",
             freshAddressPath: "44'/148'/0'",
-            freshAddresses: [
-              {
-                address: "GAS5NQ2VU6LA3QPDSCVBH66IHP2RE52VFCLFQKSGRF7VKMZA2KTLGI3M",
-                derivationPath: "44'/148'/0'",
-              },
-            ],
             balance: "0",
             blockHeight: 0,
             currencyId: "stellar",
@@ -387,9 +367,9 @@ const dataset: DatasetTest<Transaction> = {
                 recipient: "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
               }),
               expectedStatus: {
-                // You can get the spenaable balance here
+                // You can get the spendable balance here
                 // https://stellar.expert/explorer/public/account/GAS5NQ2VU6LA3QPDSCVBH66IHP2RE52VFCLFQKSGRF7VKMZA2KTLGI3M
-                amount: new BigNumber(12485498),
+                amount: new BigNumber(12486627),
                 errors: {},
                 warnings: {},
               },

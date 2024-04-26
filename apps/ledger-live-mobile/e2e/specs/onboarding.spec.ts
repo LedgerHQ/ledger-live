@@ -22,27 +22,26 @@ describe("Onboarding", () => {
     } else isFirstTest = false;
   });
 
-  xit("does the Onboarding and choose to access wallet", async () => {
+  it("does the Onboarding and choose to access wallet", async () => {
     await onboardingSteps.startOnboarding();
     await onboardingSteps.chooseToAccessYourWallet();
     await onboardingSteps.chooseToConnectYourLedger();
     await onboardingSteps.selectPairMyNano();
+    await onboardingSteps.selectAddDevice();
     await onboardingSteps.addDeviceViaBluetooth();
-    await onboardingSteps.openLedgerLive();
     await portfolioPage.waitForPortfolioPageToLoad();
     await expect(portfolioPage.portfolioSettingsButton()).toBeVisible();
-    //should see an empty portfolio page
     await expect(portfolioPage.emptyPortfolioList()).toBeVisible();
   });
 
-  xit("does the Onboarding and choose to restore a Nano X", async () => {
+  it("does the Onboarding and choose to restore a Nano X", async () => {
     await onboardingSteps.startOnboarding();
     await onboardingSteps.chooseSetupLedger();
     await onboardingSteps.chooseDevice("nanoX");
     await onboardingSteps.goesThroughRestorePhrase();
     await onboardingSteps.selectPairMyNano();
+    await onboardingSteps.selectAddDevice();
     await onboardingSteps.addDeviceViaBluetooth();
-    await onboardingSteps.openLedgerLive();
     await portfolioPage.waitForPortfolioPageToLoad();
     await expect(portfolioPage.portfolioSettingsButton()).toBeVisible();
     await expect(portfolioPage.emptyPortfolioList()).toBeVisible();
@@ -64,14 +63,14 @@ describe("Onboarding", () => {
     }
   });
 
-  xit("does the Onboarding and choose to setup a new Nano X", async () => {
+  it("does the Onboarding and choose to setup a new Nano X", async () => {
     await onboardingSteps.startOnboarding();
     await onboardingSteps.chooseSetupLedger();
     await onboardingSteps.chooseDevice("nanoX");
     await onboardingSteps.goesThroughCreateWallet();
     await onboardingSteps.selectPairMyNano();
+    await onboardingSteps.selectAddDevice();
     await onboardingSteps.addDeviceViaBluetooth();
-    await onboardingSteps.openLedgerLive();
     await portfolioPage.waitForPortfolioPageToLoad();
   });
 

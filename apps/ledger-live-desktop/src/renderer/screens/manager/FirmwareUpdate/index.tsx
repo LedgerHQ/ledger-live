@@ -18,6 +18,7 @@ import { context } from "~/renderer/drawers/Provider";
 import { track } from "~/renderer/analytics/segment";
 import { LocalTracer } from "@ledgerhq/logs";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+import { useKeepScreenAwake } from "~/renderer/hooks/useKeepScreenAwake";
 
 type Props = {
   deviceInfo: DeviceInfo;
@@ -71,8 +72,11 @@ const FirmwareUpdate = (props: Props) => {
   const isDeprecated = manager.firmwareUnsupported(device.modelId, deviceInfo);
   const [tracer] = useState(() => new LocalTracer("manager", { component: "FirmwareUpdate" }));
   const contactSupportUrl = useLocalizedUrl(urls.contactSupport);
+  const [keepScreenAwake, setKeepScreenAwake] = useState(false);
+  useKeepScreenAwake(keepScreenAwake);
   const onDrawerClose = useCallback(() => {
     onReset((installed || []).map(({ name }) => name));
+    setKeepScreenAwake(false);
   }, [installed, onReset]);
 
   const setFirmwareUpdateCompleted = useCallback((completed: boolean) => {
@@ -82,6 +86,7 @@ const FirmwareUpdate = (props: Props) => {
   const onRequestClose = useCallback(() => {
     setPreventResetOnDeviceChange(false);
     setDrawer();
+    setKeepScreenAwake(false);
     if (firmwareUpdateCompletedRef.current) {
       onReset([]);
     }
@@ -126,6 +131,7 @@ const FirmwareUpdate = (props: Props) => {
       onRequestClose: undefined,
       withPaddingTop: false,
     });
+    setKeepScreenAwake(true);
   }, [
     device,
     deviceInfo,

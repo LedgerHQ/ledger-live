@@ -95,7 +95,7 @@ export interface CurrencyBridge {
   // Assume to call it at every load time but as lazy as possible (if user have such account already AND/OR if user is about to scanAccounts)
   // returned value is a serializable object
   // fail if data was not able to load.
-  preload(currency: CryptoCurrency): Promise<Record<string, any>>;
+  preload(currency: CryptoCurrency): Promise<Record<string, any> | Array<unknown> | void>;
   // reinject the preloaded data (typically if it was cached)
   // method need to treat the data object as unsafe and validate all fields / be backward compatible.
   hydrate(data: unknown, currency: CryptoCurrency): void;
@@ -224,13 +224,21 @@ type CurrencyTransaction<T extends TransactionCommon> = {
   ) => any;
 };
 
+export type AccountTestData<T extends TransactionCommon> = {
+  raw: AccountRaw;
+  implementations?: string[];
+  FIXME_tests?: Array<string | RegExp>;
+  transactions?: Array<CurrencyTransaction<T>>;
+  test?: (arg0: ExpectFn, arg1: Account, arg2: AccountBridge<T>) => any;
+};
+
 /**
  *
  */
 export type CurrenciesData<T extends TransactionCommon> = {
   FIXME_ignoreAccountFields?: string[];
   FIXME_ignoreOperationFields?: string[];
-  FIXME_ignorePreloadFields?: string[];
+  FIXME_ignorePreloadFields?: string[] | true;
   IgnorePrepareTransactionFields?: string[];
   mockDeviceOptions?: any;
   scanAccounts?: Array<{
@@ -239,13 +247,7 @@ export type CurrenciesData<T extends TransactionCommon> = {
     unstableAccounts?: boolean;
     test?: (expect: ExpectFn, scanned: Account[], bridge: CurrencyBridge) => any;
   }>;
-  accounts?: Array<{
-    implementations?: string[];
-    raw: AccountRaw;
-    FIXME_tests?: Array<string | RegExp>;
-    transactions?: Array<CurrencyTransaction<T>>;
-    test?: (arg0: ExpectFn, arg1: Account, arg2: AccountBridge<T>) => any;
-  }>;
+  accounts?: Array<AccountTestData<T>>;
   test?: (arg0: ExpectFn, arg1: CurrencyBridge) => any;
 };
 

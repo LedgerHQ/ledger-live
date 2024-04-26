@@ -34,15 +34,15 @@ jobs:
       CI_OS: ubuntu-latest
     runs-on: ubuntu-latest
     steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+      - uses: actions/checkout@v4
         with:
           ref: ${{ github.ref_name }}
-          base: ${{ inputs.base_ref }}
+          persist-credentials: false
       - name: Setup the toolchain
-        uses: ./tools/actions/composites/setup-toolchain
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
         with:
-          install_dotnet: true
-      - uses: ./tools/actions/composites/setup-test-desktop
+          install-dotnet: true
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@develop
         id: setup-test-desktop
         with:
           skip_builds: true
@@ -52,7 +52,7 @@ jobs:
         run: pnpm desktop prettier:check
       - name: typecheck
         run: pnpm desktop typecheck
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         name: upload eslint json output
         if: ${{ !cancelled() }}
         with:
@@ -70,13 +70,13 @@ jobs:
       CI_OS: ubuntu-latest
     runs-on: ubuntu-latest
     steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+      - uses: actions/checkout@v4
         with:
           ref: ${{ github.ref_name }}
-          base: ${{ inputs.base_ref }}
+          persist-credentials: false
       - name: Setup the toolchain
-        uses: ./tools/actions/composites/setup-toolchain
-      - uses: ./tools/actions/composites/setup-test-desktop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@develop
         id: setup-test-desktop
         with:
           skip_builds: true
@@ -96,18 +96,18 @@ jobs:
     outputs:
       status: ${{ steps.tests.outcome }}
     steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+      - uses: actions/checkout@v4
         with:
           ref: ${{ github.ref_name }}
-          base: ${{ inputs.base_ref }}
+          persist-credentials: false
       - name: Setup the toolchain
-        uses: ./tools/actions/composites/setup-toolchain
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
         with:
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-      - uses: ./tools/actions/composites/setup-test-desktop
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/setup-test-desktop@develop
         id: setup-test-desktop
         with:
           skip_ruby: true
@@ -118,7 +118,7 @@ jobs:
           xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright
       - name: upload diffs to s3
         if: ${{ !cancelled() }}
-        uses: ./tools/actions/upload-images
+        uses: LedgerHQ/ledger-live/tools/actions/upload-images@develop
         id: s3
         with:
           path: apps/ledger-live-desktop/tests/artifacts/test-results
@@ -127,12 +127,12 @@ jobs:
           group-name: ${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_number }}
       - name: upload ci suggested screenshots
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: images
           path: images-linux.json
       - name: Upload playwright test results [On Failure]
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: failure() && !cancelled()
         with:
           name: playwright-results-linux
@@ -144,7 +144,7 @@ jobs:
             apps/ledger-live-desktop/tests/artifacts/logs
       - name: Upload Allure Report
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: allure-results-linux
           path: apps/ledger-live-desktop/allure-results
@@ -154,16 +154,16 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ !cancelled() && github.event_name == 'workflow_dispatch' }}
     steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+      - uses: actions/checkout@v4
         with:
           ref: ${{ github.ref_name }}
-          base: ${{ inputs.base_ref }}
+          persist-credentials: false
       - name: "download linter results"
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: lint
       - name: download images artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: images
       - name: parse images
@@ -185,7 +185,7 @@ jobs:
             fs.writeFileSync("./images.json", JSON.stringify(result, null, 2));
       - name: prepare comment with screenshots
         id: comment
-        uses: ./tools/actions/prepare-comment-screenshots
+        uses: LedgerHQ/ledger-live/tools/actions/prepare-comment-screenshots@develop
         with:
           images: images.json
           no-actor: true
@@ -317,8 +317,27 @@ jobs:
             };
 
             fs.writeFileSync("summary.json", JSON.stringify(output), "utf-8");
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         name: upload summary
         with:
           name: summary.json
           path: ${{ github.workspace }}/summary.json
+
+  allure-report:
+    name: "Allure Reports Export on Server"
+    needs: [e2e-tests-linux]
+    runs-on: [ledger-live-medium]
+    if: ${{ !cancelled() && github.ref_name == 'develop' }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - name: Send Results and Generate Allure Report - Linux
+        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+        if: ${{ !cancelled() }}
+        with:
+          platform: linux
+          login: ${{ vars.ALLURE_USERNAME }}
+          password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
+          path: allure-results-linux

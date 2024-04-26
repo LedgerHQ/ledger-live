@@ -8,12 +8,6 @@ exports[`persistence currency bridge scanAccounts persistence seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "persistence1gyauvl44q2apn3u3aujm36q8zrj74vrym5cypd",
     "freshAddressPath": "44'/118'/0'/0/0",
-    "freshAddresses": [
-      {
-        "address": "persistence1gyauvl44q2apn3u3aujm36q8zrj74vrym5cypd",
-        "derivationPath": "44'/118'/0'/0/0",
-      },
-    ],
     "id": "js:2:persistence:persistence1gyauvl44q2apn3u3aujm36q8zrj74vrym5cypd:",
     "index": 0,
     "name": "Persistence 1",
@@ -34,12 +28,6 @@ exports[`persistence currency bridge scanAccounts persistence seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "persistence1v2mp0m7k96dm9qv60fkspcqlzpkzrwnevf47z2",
     "freshAddressPath": "44'/118'/1'/0/0",
-    "freshAddresses": [
-      {
-        "address": "persistence1v2mp0m7k96dm9qv60fkspcqlzpkzrwnevf47z2",
-        "derivationPath": "44'/118'/1'/0/0",
-      },
-    ],
     "id": "js:2:persistence:persistence1v2mp0m7k96dm9qv60fkspcqlzpkzrwnevf47z2:",
     "index": 1,
     "name": "Persistence 2",
@@ -60,12 +48,6 @@ exports[`persistence currency bridge scanAccounts persistence seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "persistence17r56udl09ssv88x85cxftx7su0rgv4v27ej3p0",
     "freshAddressPath": "44'/118'/2'/0/0",
-    "freshAddresses": [
-      {
-        "address": "persistence17r56udl09ssv88x85cxftx7su0rgv4v27ej3p0",
-        "derivationPath": "44'/118'/2'/0/0",
-      },
-    ],
     "id": "js:2:persistence:persistence17r56udl09ssv88x85cxftx7su0rgv4v27ej3p0:",
     "index": 2,
     "name": "Persistence 3",
