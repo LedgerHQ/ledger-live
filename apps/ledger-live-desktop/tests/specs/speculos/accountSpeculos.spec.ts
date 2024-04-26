@@ -9,7 +9,13 @@ import { Device, specs, startSpeculos, stopSpeculos } from "../../utils/speculos
 import { Currency } from "../../enum/Currency";
 
 test.use({ userdata: "skip-onboarding" });
-const currencies = [Currency.BTC, Currency.ETH, Currency.SOL, Currency.DOT, Currency.TRX]; //XRP et ADA(prob) ?
+const currencies: Currency[] = [
+  Currency.BTC,
+  Currency.ETH,
+  Currency.SOL,
+  Currency.DOT,
+  Currency.TRX,
+]; //XRP et ADA(prob) ?
 
 let device: Device | undefined;
 

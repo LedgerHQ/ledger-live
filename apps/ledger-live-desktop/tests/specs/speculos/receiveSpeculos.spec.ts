@@ -24,7 +24,13 @@ test.afterEach(async () => {
   await stopSpeculos(device);
 });
 
-const currencies: Currency[] = [Currency.ETH];
+const currencies: Currency[] = [
+  Currency.ETH,
+  Currency.tETH,
+  Currency.tBTC,
+  Currency.BTC,
+  Currency.TRX,
+];
 
 for (const currency of currencies) {
   test(`[${currency.uiName}] Receive @smoke`, async ({ page }) => {
@@ -49,11 +55,12 @@ for (const currency of currencies) {
     });
 
     await test.step(`[${currency.uiName}] Validate message`, async () => {
-      const addressScreen = await pressRightUntil("Address");
+      const addressScreen = await pressRightUntil("Address"); //Todo: method (PUBKEY on SOL)
       expect(verifyAddress(currency.address1, addressScreen)).toBe(true);
-      await pressRightUntil("Accept");
+      await pressRightUntil("Approve"); //Todo: method (APPROVE on DOT)
       await pressBoth();
       await expect(receiveModal.approve).toBeVisible();
     });
   });
 }
+//BTC and tBTC => Fail (GetAppAndVersion issue)
