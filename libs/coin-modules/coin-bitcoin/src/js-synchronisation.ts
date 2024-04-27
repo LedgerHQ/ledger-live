@@ -238,10 +238,6 @@ export const postSync = (initial: Account, synced: Account) => {
 
     if (syncReplaceAddress) {
       syncedBtc.freshAddress = syncReplaceAddress(syncedBtc.freshAddress);
-      syncedBtc.freshAddresses = syncedBtc.freshAddresses.map(a => ({
-        ...a,
-        address: syncReplaceAddress(a.address),
-      }));
       if (syncedBtc.bitcoinResources) {
         syncedBtc.bitcoinResources.utxos = syncedBtc.bitcoinResources?.utxos.map(u => ({
           ...u,

@@ -10,12 +10,6 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
     "freshAddressPath": "44'/283'/0'/0/0",
-    "freshAddresses": [
-      {
-        "address": "ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q",
-        "derivationPath": "44'/283'/0'/0/0",
-      },
-    ],
     "id": "js:2:algorand:ZC3HFULMJF53BF5ER4E2TTGPBRGH2Y4RVS32JZ6NH4RW7LN67HCE6UBS3Q:",
     "index": 0,
     "name": "Algorand 1",
@@ -105,12 +99,6 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "EGZQNDFCXGR3BMP4NDM6ZPLBMY7WSV6GRKOHM6VBJKFLWQ3RQDTE3JYNFE",
     "freshAddressPath": "44'/283'/1'/0/0",
-    "freshAddresses": [
-      {
-        "address": "EGZQNDFCXGR3BMP4NDM6ZPLBMY7WSV6GRKOHM6VBJKFLWQ3RQDTE3JYNFE",
-        "derivationPath": "44'/283'/1'/0/0",
-      },
-    ],
     "id": "js:2:algorand:EGZQNDFCXGR3BMP4NDM6ZPLBMY7WSV6GRKOHM6VBJKFLWQ3RQDTE3JYNFE:",
     "index": 1,
     "name": "Algorand 2",
@@ -134,12 +122,6 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "ZQVVJ2S4XWS542KXBBVIINOEHIDOEZKZWK725PWFNN2I5RNCUBI53RT2EY",
     "freshAddressPath": "44'/283'/2'/0/0",
-    "freshAddresses": [
-      {
-        "address": "ZQVVJ2S4XWS542KXBBVIINOEHIDOEZKZWK725PWFNN2I5RNCUBI53RT2EY",
-        "derivationPath": "44'/283'/2'/0/0",
-      },
-    ],
     "id": "js:2:algorand:ZQVVJ2S4XWS542KXBBVIINOEHIDOEZKZWK725PWFNN2I5RNCUBI53RT2EY:",
     "index": 2,
     "name": "Algorand 3",
@@ -163,12 +145,6 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI",
     "freshAddressPath": "44'/283'/3'/0/0",
-    "freshAddresses": [
-      {
-        "address": "MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI",
-        "derivationPath": "44'/283'/3'/0/0",
-      },
-    ],
     "id": "js:2:algorand:MECOWMKPKH2NWVZTS5V5RQDGFFYBT25KNLOPHG2KUMMNKU6FOHGJT24WBI:",
     "index": 3,
     "name": "Algorand 4",
@@ -203,12 +179,6 @@ exports[`algorand currency bridge scanAccounts algorand seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "MVE6C3XB4JBKXKORC3NLAWFW4M7EY3MADU6L72DADFP4NZBJIAYXGSLN3Y",
     "freshAddressPath": "44'/283'/4'/0/0",
-    "freshAddresses": [
-      {
-        "address": "MVE6C3XB4JBKXKORC3NLAWFW4M7EY3MADU6L72DADFP4NZBJIAYXGSLN3Y",
-        "derivationPath": "44'/283'/4'/0/0",
-      },
-    ],
     "id": "js:2:algorand:MVE6C3XB4JBKXKORC3NLAWFW4M7EY3MADU6L72DADFP4NZBJIAYXGSLN3Y:",
     "index": 4,
     "name": "Algorand 5",

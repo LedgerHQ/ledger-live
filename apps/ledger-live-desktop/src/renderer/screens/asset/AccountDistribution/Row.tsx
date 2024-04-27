@@ -58,7 +58,10 @@ export default function Row({
   const icon = <ParentCryptoCurrencyIcon currency={currency} />;
   return (
     <AccountContextMenu account={account} parentAccount={parentAccount} withStar>
-      <Wrapper onClick={() => onAccountClick(account)}>
+      <Wrapper
+        onClick={() => onAccountClick(account)}
+        data-test-id={`account-row-${currency.name.toLowerCase()}`}
+      >
         <AccountWrapper>
           {icon}
           <Box>
