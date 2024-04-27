@@ -1,5 +1,11 @@
 # @ledgerhq/coin-polkadot
 
+## 0.6.2-nightly.2
+
+### Patch Changes
+
+- [#6758](https://github.com/LedgerHQ/ledger-live/pull/6758) [`d90a17d`](https://github.com/LedgerHQ/ledger-live/commit/d90a17d1fe8b1bc3fe002f0aa28ed1cbca3cc9f8) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Fix test flakiness
+
 ## 0.6.2-nightly.1
 
 ### Patch Changes
