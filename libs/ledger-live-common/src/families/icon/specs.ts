@@ -10,6 +10,7 @@ import expect from "expect";
 import { acceptTransaction } from "./speculos-deviceActions";
 import { isAccountEmpty } from "../../account";
 import { convertICXtoLoop } from "./logic";
+import { AccountLike } from "@ledgerhq/types-live";
 
 const ICON_MIN_SAFE = new BigNumber(1);
 const maxAccounts = 6;
@@ -28,7 +29,7 @@ const expectedApproximate = (
   }
 };
 
-const checkSendableToEmptyAccount = (amount, recipient) => {
+const checkSendableToEmptyAccount = (amount: BigNumber, recipient: AccountLike) => {
   if (isAccountEmpty(recipient) && amount.lte(minBalanceNewAccount)) {
     invariant(amount.gt(minBalanceNewAccount), "not enough funds to send to new account");
   }
