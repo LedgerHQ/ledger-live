@@ -176,7 +176,7 @@ const modes: Readonly<Partial<Record<DerivationMode, unknown>>> = Object.freeze(
     mandatoryEmptyAccountSkip: 1,
   },
   icon: {
-    overridesDerivation: "44'/74'/0'/0'/<account>'",
+    overridesDerivation: "44'/4801368'/0'/0'/<account>'",
   },
   vechain: {
     overridesDerivation: "44'/818'/0'/0/<account>",
