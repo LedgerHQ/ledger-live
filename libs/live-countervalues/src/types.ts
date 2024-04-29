@@ -4,8 +4,14 @@ import type { Currency } from "@ledgerhq/types-cryptoassets";
 
 // we generally will just infer it from Accounts
 export type CountervaluesSettings = {
+  // the list of pairs we need to load
   trackingPairs: TrackingPair[];
+  // if true, we will autofill gaps in the data (a missing datapoint between two day). This is typically needed to have smooth graphs.
   autofillGaps: boolean;
+  // preference that define the general refresh rate of countervalues (how often loadCountervalues loop is recalled)
+  refreshRate: number;
+  // in the hybrid batching strategy implementation of latest fetching, defines after which rank we start to batch
+  marketCapBatchingAfterRank: number;
   // throw exception in "loadCountervalues" if ANY error occurs (for test purpose)
   disableAutoRecoverErrors?: boolean;
 };

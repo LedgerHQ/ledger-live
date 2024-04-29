@@ -62,6 +62,8 @@ export default {
           loadCountervalues(initialState, {
             trackingPairs: inferTrackingPairForAccounts(accounts, countervalue as Currency),
             autofillGaps: !opts.disableAutofillGaps,
+            refreshRate: 60000,
+            marketCapBatchingAfterRank: 20,
           }),
         ).pipe(
           map(state => {

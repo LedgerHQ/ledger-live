@@ -70,8 +70,11 @@ const CountervaluesPollingContext = createContext<Polling>({
 });
 
 const CountervaluesUserSettingsContext = createContext<CountervaluesSettings>({
+  // dummy values that are overriden by the context provider
   trackingPairs: [],
   autofillGaps: true,
+  refreshRate: 0,
+  marketCapBatchingAfterRank: 0,
 });
 
 const CountervaluesContext = createContext<CounterValuesState>(initialState);
