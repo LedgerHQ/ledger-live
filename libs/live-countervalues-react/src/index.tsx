@@ -167,10 +167,10 @@ export function Countervalues({
   children,
   userSettings,
   pollInitDelay = 3 * 1000,
-  autopollInterval = 8 * 60 * 1000,
   debounceDelay = 1000,
   savedState,
 }: Props): ReactElement {
+  const autopollInterval = userSettings.refreshRate;
   const debouncedUserSettings = useDebounce(userSettings, debounceDelay);
   const [{ state, pending, error }, dispatch] = useReducer(fetchReducer, initialFetchState);
 
