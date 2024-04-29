@@ -132,8 +132,8 @@ const repair = (
                         mcu.providers.includes(provider) && mcu.from_bootloader_version !== "none",
                     );
 
-                    log("hw", "firmwareUpdate-repair valid mcus for device", {
-                      validMcusForDeviceInfo,
+                    log("hw", `firmwareUpdate-repair available mcus on provider ${provider}`, {
+                      availableMcus,
                     });
 
                     return from(
