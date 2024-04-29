@@ -55,7 +55,7 @@ describe("estimatedFees", () => {
       class: "WHATEVER",
       partialFee,
     });
-    const tx = await craftEstimationTransaction(account.freshAddress, BigInt(1000));
+    const tx = await craftEstimationTransaction(account.freshAddress, BigInt(10000));
 
     // When
     const result = await estimateFees(tx);

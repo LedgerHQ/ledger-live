@@ -10,6 +10,28 @@ import type {
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 import buildSignOperation from "./signOperation";
 import { SignOperationEvent } from "@ledgerhq/types-live";
+import { createRegistryAndExtrinsics } from "../network/common";
+import {
+  fixtureChainSpec,
+  fixtureTransactionParams,
+  fixtureTxMaterialWithMetadata,
+} from "../network/sidecar.fixture";
+
+const mockPaymentInfo = jest.fn().mockResolvedValue({
+  weight: "WHATEVER",
+  class: "WHATEVER",
+  partialFee: "155099814",
+});
+const mockRegistry = jest
+  .fn()
+  .mockResolvedValue(createRegistryAndExtrinsics(fixtureTxMaterialWithMetadata, fixtureChainSpec));
+const mockTransactionParams = jest.fn().mockResolvedValue(fixtureTransactionParams);
+
+jest.mock("../network/sidecar", () => ({
+  getRegistry: () => mockRegistry(),
+  paymentInfo: (args: any) => mockPaymentInfo(args),
+  getTransactionParams: () => mockTransactionParams(),
+}));
 
 describe("signOperation", () => {
   // Global setup
