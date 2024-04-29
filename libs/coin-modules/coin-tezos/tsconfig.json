@@ -6,7 +6,8 @@
     "module": "commonjs",
     "downlevelIteration": true,
     "lib": ["es2020", "dom"],
-    "outDir": "lib"
+    "outDir": "lib",
+    "typeRoots": ["./node_modules/@types", "./types/@taquito"]
   },
   "include": ["src/**/*"]
 }

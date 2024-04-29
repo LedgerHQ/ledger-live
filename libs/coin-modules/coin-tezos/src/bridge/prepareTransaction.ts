@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import { DEFAULT_FEE, DEFAULT_STORAGE_LIMIT, Estimate, TezosToolkit } from "@taquito/taquito";
 import { DerivationType } from "@taquito/ledger-signer";
-import { compressPublicKey } from "@taquito/ledger-signer/dist/types/utils";
+import { compressPublicKey } from "@taquito/ledger-signer/dist/lib/utils";
 import { b58cencode, prefix, Prefix, validateAddress, ValidationResult } from "@taquito/utils";
 import { InvalidAddress, RecipientRequired } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
