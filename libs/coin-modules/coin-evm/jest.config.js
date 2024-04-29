@@ -5,6 +5,7 @@ module.exports = {
   testPathIgnorePatterns: ["lib/", "lib-es/"],
   modulePathIgnorePatterns: [
     "__tests__/fixtures",
+    "__tests__/coin-tester",
     "__tests__/integration/bridge.integration.test.ts", // this file is tested at the live-common level
   ],
   setupFilesAfterEnv: ["jest-expect-message", "dotenv/config"],
