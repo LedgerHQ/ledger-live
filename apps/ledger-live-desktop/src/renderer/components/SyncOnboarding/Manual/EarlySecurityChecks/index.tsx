@@ -166,7 +166,6 @@ const EarlySecurityChecks = ({
           closeFwUpdateDrawer();
           restartChecksAfterUpdate();
         },
-        deviceHasPin: deviceModelId !== DeviceModelId.stax, // early security checks are triggered only if the device is in one of the steps prior to setting a PIN code
       },
       {
         preventBackdropClick: true,
