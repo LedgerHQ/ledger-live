@@ -46,7 +46,11 @@ type PollingImplementationConfig = {
 
 type PollingImplementationParams<Request, EmittedEvents> = {
   deviceSubject: ReplaySubject<Device | null | undefined>;
-  task: (params: { deviceId: string; request: Request }) => Observable<EmittedEvents>;
+  task: (params: {
+    deviceId: string;
+    request: Request;
+    wired: boolean;
+  }) => Observable<EmittedEvents>;
   request: Request;
   config?: PollingImplementationConfig;
   // retryableWithDelayDisconnectedErrors has default value of [DisconnectedDevice, DisconnectedDeviceDuringOperation]
@@ -120,7 +124,7 @@ const pollingImplementation: Implementation = <SpecificType, GenericRequestType>
             device: currentDevice,
             replaceable: !firstRound,
           }),
-          task({ deviceId: currentDevice.deviceId, request }),
+          task({ deviceId: currentDevice.deviceId, request, wired: currentDevice.wired }),
         )
           .pipe(
             // Any event should clear the initialTimeout.
@@ -230,7 +234,7 @@ const eventImplementation: Implementation = <SpecificType, GenericRequestType>(
 
             return concat(
               initialEvent,
-              !device ? EMPTY : task({ deviceId: device.deviceId, request }),
+              !device ? EMPTY : task({ deviceId: device.deviceId, request, wired: device.wired }),
             );
           }),
           catchError((error: Error) =>

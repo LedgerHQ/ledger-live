@@ -1,9 +1,11 @@
 import { Observable, concat, from, of } from "rxjs";
-import { map, catchError } from "rxjs/operators";
+import { map, catchError, switchMap, delay } from "rxjs/operators";
 import { withDevice } from "./deviceAccess";
 import editDeviceName from "./editDeviceName";
+import quitApp from "./quitApp";
 
 export type RenameDeviceEvent =
+  | { type: "quitApp" }
   | {
       type: "unresponsiveDevice";
     }
@@ -19,15 +21,29 @@ export type RenameDeviceRequest = { name: string };
 export type Input = {
   deviceId: string;
   request: RenameDeviceRequest;
+  wired: boolean;
 };
 
-export default function renameDevice({ deviceId, request }: Input): Observable<RenameDeviceEvent> {
+export default function renameDevice({
+  deviceId,
+  request,
+  wired,
+}: Input): Observable<RenameDeviceEvent> {
   const { name } = request;
 
-  const sub = withDevice(deviceId)(
+  const quitAppFlow = withDevice(deviceId)(transport =>
+    concat(
+      from(quitApp(transport)).pipe(delay(wired ? 100 : 3000)),
+      of(<RenameDeviceEvent>{
+        type: "quitApp",
+      }),
+    ),
+  );
+
+  const renameAppFlow = withDevice(deviceId)(
     transport =>
       new Observable(o => {
-        const sub = concat(
+        const innerSub = concat(
           of(<RenameDeviceEvent>{
             type: "permission-requested",
           }),
@@ -45,10 +61,12 @@ export default function renameDevice({ deviceId, request }: Input): Observable<R
           .subscribe(e => o.next(e));
 
         return () => {
-          sub.unsubscribe();
+          innerSub.unsubscribe();
         };
       }),
   );
+
+  const sub = quitAppFlow.pipe(switchMap(_ => concat(renameAppFlow)));
 
   return sub as Observable<RenameDeviceEvent>;
 }
