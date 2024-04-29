@@ -116,7 +116,6 @@ function createAccount(id: string): Account {
     index: 0,
     freshAddress: "",
     freshAddressPath: "",
-    freshAddresses: [],
     name: "",
     starred: false,
     used: true,
