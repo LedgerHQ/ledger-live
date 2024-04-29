@@ -70,5 +70,10 @@ export type SwapLiveError = {
   cause: {
     message?: string;
     swapCode?: string;
+    response?: {
+      data?: {
+        error?: { messageKey?: string; message?: string };
+      };
+    };
   };
 };
