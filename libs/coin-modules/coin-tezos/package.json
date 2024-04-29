@@ -72,7 +72,6 @@
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
-    "@ledgerhq/live-config": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
@@ -85,7 +84,6 @@
     "bignumber.js": "^9.1.2",
     "blake2b": "^2.1.4",
     "bs58check": "^2.1.2",
-    "expect": "^27.4.6",
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
     "rxjs": "^7.8.1"
