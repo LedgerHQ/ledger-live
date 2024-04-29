@@ -101,7 +101,7 @@ export const getAccountShape: GetAccountShape = async (info, { blacklistedTokenI
     subAccounts,
     blockHeight,
     xpub: publicKey,
-    lastSyncDate: new Date(), //TODO: review if it's necessary
+    lastSyncDate: new Date(),
   } as Partial<Account>;
   return toReturn;
 };

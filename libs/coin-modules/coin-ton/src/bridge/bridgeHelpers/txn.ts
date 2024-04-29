@@ -233,7 +233,6 @@ export function mapJettonTxToOps(
         extra: {
           lt: tx.transaction_lt,
           explorerHash: hash,
-          // TODO add comment decoding
           comment: {
             isEncrypted: false,
             text: "",
@@ -259,7 +258,6 @@ export function mapJettonTxToOps(
         extra: {
           lt: tx.transaction_lt,
           explorerHash: hash,
-          // TODO add comment decoding
           comment: {
             isEncrypted: false,
             text: "",
