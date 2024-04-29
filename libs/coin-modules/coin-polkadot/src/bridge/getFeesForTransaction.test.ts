@@ -1,21 +1,23 @@
 import BigNumber from "bignumber.js";
 import getEstimatedFees from "./getFeesForTransaction";
-import { fixtureChainSpec, fixtureTxMaterialWithMetadata } from "../network/sidecar.fixture";
+import {
+  fixtureChainSpec,
+  fixtureTransactionParams,
+  fixtureTxMaterialWithMetadata,
+} from "../network/sidecar.fixture";
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
+import { createRegistryAndExtrinsics } from "../network/common";
 
 const mockPaymentInfo = jest.fn();
+const mockRegistry = jest
+  .fn()
+  .mockResolvedValue(createRegistryAndExtrinsics(fixtureTxMaterialWithMetadata, fixtureChainSpec));
+const mockTransactionParams = jest.fn().mockResolvedValue(fixtureTransactionParams);
 jest.mock("../network/sidecar", () => ({
-  ...jest.requireActual("../network/sidecar"),
-  fetchChainSpec: () => jest.fn().mockResolvedValue(fixtureChainSpec),
-  getTransactionMaterialWithMetadata: () =>
-    jest.fn().mockResolvedValue(fixtureTxMaterialWithMetadata),
+  getRegistry: () => mockRegistry(),
   paymentInfo: (args: any) => mockPaymentInfo(args),
+  getTransactionParams: () => mockTransactionParams(),
 }));
-mockPaymentInfo.mockResolvedValue({
-  weight: "WHATEVER",
-  class: "WHATEVER",
-  partialFee: "155099814",
-});
 
 describe("getEstimatedFees", () => {
   const transaction = createFixtureTransaction();
