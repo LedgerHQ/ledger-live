@@ -14,9 +14,6 @@ import {
   DISCOVER_STORE_KEY,
   INITIAL_PLATFORM_STATE,
 } from "@ledgerhq/live-common/wallet-api/constants";
-import { StateDB } from "@ledgerhq/live-common/hooks/useDBRaw";
-import { DiscoverDB } from "@ledgerhq/live-common/wallet-api/types";
-import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
 type PlatformAppProviderWrapperProps = {
   children: ReactNode;

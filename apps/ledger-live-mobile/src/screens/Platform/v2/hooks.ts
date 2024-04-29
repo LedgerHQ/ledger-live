@@ -5,8 +5,9 @@ import {
   useDisclaimerRaw,
   useRecentlyUsed,
   DisclaimerRaw,
-  useLocalLiveApp,
 } from "@ledgerhq/live-common/wallet-api/react";
+import { useLocalLiveAppContext } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
+
 import {
   INITIAL_PLATFORM_STATE,
   DAPP_DISCLAIMER_ID,
@@ -26,13 +27,12 @@ import { useManifests } from "@ledgerhq/live-common/platform/providers/RemoteLiv
 
 export function useCatalog() {
   const recentlyUsedDB = useRecentlyUsedDB();
-  const localLiveAppDB = useLocalLiveAppDB();
+  const { state: localLiveApps } = useLocalLiveAppContext();
   const allManifests = useManifests();
   const completeManifests = useManifests({ visibility: ["complete"] });
   const combinedManifests = useManifests({ visibility: ["searchable", "complete"] });
   const categories = useCategories(completeManifests);
   const recentlyUsed = useRecentlyUsed(combinedManifests, recentlyUsedDB);
-  const { state: localLiveApps } = useLocalLiveApp(localLiveAppDB);
 
   const search = useSearch<AppManifest, TextInput>({
     list: combinedManifests,
@@ -176,14 +176,6 @@ function useRecentlyUsedDB() {
     DISCOVER_STORE_KEY,
     INITIAL_PLATFORM_STATE,
     state => state.recentlyUsed,
-  );
-}
-
-function useLocalLiveAppDB() {
-  return useDB<DiscoverDB, DiscoverDB["localLiveApp"]>(
-    DISCOVER_STORE_KEY,
-    INITIAL_PLATFORM_STATE,
-    state => state.localLiveApp,
   );
 }
 
