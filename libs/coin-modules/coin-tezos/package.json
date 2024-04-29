@@ -44,6 +44,10 @@
   "exports": {
     "./lib/*": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
+    "./deviceTransactionConfig": {
+      "require": "./lib/bridge/deviceTransactionConfig.js",
+      "default": "./lib-es/bridge/deviceTransactionConfig.js"
+    },
     "./errors": {
       "require": "./lib/types/errors.js",
       "default": "./lib-es/types/errors.js"
@@ -51,6 +55,10 @@
     "./specs": {
       "require": "./lib/test/bot-specs.js",
       "default": "./lib-es/test/bot-specs.js"
+    },
+    "./transaction": {
+      "require": "./lib/bridge/transaction.js",
+      "default": "./lib-es/bridge/transaction.js"
     },
     "./*": {
       "require": "./lib/*.js",
