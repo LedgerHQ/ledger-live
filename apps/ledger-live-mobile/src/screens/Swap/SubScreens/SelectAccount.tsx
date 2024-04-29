@@ -206,7 +206,13 @@ export function SelectAccount({ navigation, route: { params } }: SelectAccountPa
     <KeyboardView>
       <TrackScreen category="Swap Form" name="Edit Source Account" provider={provider} />
       <FilteredSearchBar
-        keys={["name", "account.unit.code", "account.token.name", "account.token.ticker"]}
+        keys={[
+          "name",
+          "account.currency.name",
+          "account.currency.ticker",
+          "account.token.name",
+          "account.token.ticker",
+        ]}
         list={allAccounts}
         renderList={renderList}
         renderEmptySearch={() => (
