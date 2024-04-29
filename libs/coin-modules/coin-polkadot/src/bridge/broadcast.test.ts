@@ -1,4 +1,4 @@
-import { createFixtureOperation } from "../types/model.fixture";
+import { createFixtureOperation } from "../types/bridge.fixture";
 import broadcast from "./broadcast";
 
 const mockSubmitExtrinsic = jest.fn();
