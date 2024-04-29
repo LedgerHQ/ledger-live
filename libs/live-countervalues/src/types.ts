@@ -40,12 +40,20 @@ export type TrackingPair = {
   to: Currency;
   startDate: Date;
 };
+
+export type BatchStrategySolver = {
+  shouldBatchCurrencyFrom: (from: Currency) => boolean;
+};
+
 export type CounterValuesAPI = {
   fetchHistorical: (
     granularity: RateGranularity,
     pair: TrackingPair,
   ) => Promise<Record<string, number>>;
-  fetchLatest: (pairs: TrackingPair[]) => Promise<Array<number | null | undefined>>;
+  fetchLatest: (
+    pairs: TrackingPair[],
+    batchStrategySolver?: BatchStrategySolver,
+  ) => Promise<Array<number | null | undefined>>;
   fetchIdsSortedByMarketcap: () => Promise<string[]>;
 };
 export type CounterValuesStatus = Record<

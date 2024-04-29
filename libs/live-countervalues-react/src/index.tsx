@@ -174,6 +174,19 @@ export function Countervalues({
   const debouncedUserSettings = useDebounce(userSettings, debounceDelay);
   const [{ state, pending, error }, dispatch] = useReducer(fetchReducer, initialFetchState);
 
+  const marketcapIds = useContext(CountervaluesMarketcapIdsContext);
+
+  const { marketCapBatchingAfterRank } = userSettings;
+  const batchStrategySolver = useMemo(() => {
+    return {
+      shouldBatchCurrencyFrom: (currency: Currency) => {
+        if (currency.type === "FiatCurrency") return false;
+        const i = marketcapIds.indexOf(currency.id);
+        return i === -1 || i > marketCapBatchingAfterRank;
+      },
+    };
+  }, [marketCapBatchingAfterRank, marketcapIds]);
+
   // flag used to trigger a loadCountervalues
   const [triggerLoad, setTriggerLoad] = useState(false);
   // trigger poll only when userSettings changes. in a debounced way.
@@ -189,7 +202,7 @@ export function Countervalues({
       type: "pending",
     });
 
-    loadCountervalues(state, userSettings).then(
+    loadCountervalues(state, userSettings, batchStrategySolver).then(
       state => {
         dispatch({
           type: "success",
@@ -203,7 +216,7 @@ export function Countervalues({
         });
       },
     );
-  }, [pending, state, userSettings, triggerLoad]);
+  }, [pending, state, userSettings, triggerLoad, batchStrategySolver]);
 
   // save the state when it changes
   useEffect(() => {
