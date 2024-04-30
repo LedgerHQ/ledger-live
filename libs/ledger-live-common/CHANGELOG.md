@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 34.2.0-next.2
+
+### Patch Changes
+
+- [#6783](https://github.com/LedgerHQ/ledger-live/pull/6783) [`b6b5d5c`](https://github.com/LedgerHQ/ledger-live/commit/b6b5d5c9664ff6840689b401176a62beff1079c9) Thanks [@CremaFR](https://github.com/CremaFR)! - bugfix: infinite spinner when fund after reject tx
+
 ## 34.2.0-next.1
 
 ### Patch Changes
