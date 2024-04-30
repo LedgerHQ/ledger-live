@@ -420,10 +420,7 @@ export const createSwapHistoryMap = (
 
   const swapHistoryMap = new Map<TokenCurrency, TokenAccount["swapHistory"]>();
   for (const subAccount of initialAccount.subAccounts) {
-    if (subAccount.type === "TokenAccount") {
-      // <-- not even necessary anymore since we removed the `SubAccount` type now
-      swapHistoryMap.set(subAccount.token, subAccount.swapHistory);
-    }
+    swapHistoryMap.set(subAccount.token, subAccount.swapHistory);
   }
 
   return swapHistoryMap;
