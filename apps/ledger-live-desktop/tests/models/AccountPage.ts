@@ -38,10 +38,11 @@ export class AccountPage {
     this.sendButton = page.getByRole("button", { name: "Send" });
     this.accountName = name => page.locator(`text=${name}`);
     this.lastOperation = page.locator("text=Latest operations");
-    this.token = tokenName =>
+    /*this.token = tokenName =>
       page
-        .locator(`//span/span[text()="Ethereum 1"]/following::div/span[text()="${tokenName}"]`) //todo: update locator
-        .first();
+        .locator(`//span/span[text()="Ethereum 1"]/following::div/span[text()="${tokenName}"]`)
+        .first();*/
+    this.token = tokenName => page.locator(`data-test-id=account-row-${tokenName.toLowerCase()}`);
   }
 
   async navigateToToken(token: string) {

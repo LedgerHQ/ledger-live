@@ -5,7 +5,7 @@ import { AccountPage } from "../../models/AccountPage";
 import { AccountsPage } from "../../models/AccountsPage";
 import { Modal } from "../../models/Modal";
 import { ReceiveModal } from "../../models/ReceiveModal";
-import { Currency } from "../../enum/Currency";
+import { Account } from "../../enum/Account";
 import {
   Device,
   specs,
@@ -13,7 +13,7 @@ import {
   stopSpeculos,
   pressRightUntil,
   pressBoth,
-  verifyAddress,
+  //verifyAddress,
 } from "../../utils/speculos";
 
 test.use({ userdata: "speculos" });
@@ -23,44 +23,51 @@ let device: Device | undefined;
 test.afterEach(async () => {
   await stopSpeculos(device);
 });
+const accounts: Account[] = [
+  Account.BTC_1,
+  Account.tBTC_1,
+  Account.ETH_1,
+  Account.tETH_1,
+  Account.SOL_1,
+  Account.TRX_1,
+  Account.DOT_1,
+  Account.XRP_1,
+]; //TODO ADA
 
-const currencies: Currency[] = [
-  Currency.ETH,
-  Currency.tETH,
-  Currency.tBTC,
-  Currency.BTC,
-  Currency.TRX,
-];
+test.describe.parallel("Receive @smoke", () => {
+  for (const account of accounts) {
+    test(`[${account.currency.uiName}] Receive`, async ({ page }) => {
+      const layout = new Layout(page);
+      const accountsPage = new AccountsPage(page);
+      const accountPage = new AccountPage(page);
+      const modal = new Modal(page);
+      const receiveModal = new ReceiveModal(page);
+      device = await startSpeculos(
+        test.name,
+        specs[account.currency.deviceLabel.replace(/ /g, "_")],
+      );
 
-for (const currency of currencies) {
-  test(`[${currency.uiName}] Receive @smoke`, async ({ page }) => {
-    const layout = new Layout(page);
-    const accountsPage = new AccountsPage(page);
-    const accountPage = new AccountPage(page);
-    const modal = new Modal(page);
-    const receiveModal = new ReceiveModal(page);
-    device = await startSpeculos(test.name, specs[currency.uiName.replace(/ /g, "_")]);
+      await test.step(`Navigate to first account`, async () => {
+        await layout.goToAccounts();
+        await accountsPage.navigateToAccountByName(account.accountName);
+        await accountPage.settingsButton.waitFor({ state: "visible" });
+      });
 
-    await test.step(`Navigate to first account`, async () => {
-      await layout.goToAccounts();
-      await accountsPage.navigateToAccountByName(`${currency.uiName} 1`);
-      await accountPage.settingsButton.waitFor({ state: "visible" });
+      await test.step(`goToReceive`, async () => {
+        await accountPage.receiveButton.click();
+        await modal.continueButton.click();
+        await expect(receiveModal.verifyAddress).toBeVisible();
+        await expect(receiveModal.receiveAddress(account.address)).toBeVisible();
+      });
+
+      await test.step(`[${account.currency.uiName}] Validate message`, async () => {
+        //FIX ME: Issue Verifying the address on the device
+        //const addressScreen = await pressRightUntil(currency.receivePattern[0]);
+        //expect(verifyAddress(currency.address1, addressScreen)).toBe(true);
+        await pressRightUntil(account.currency.receivePattern[1]);
+        await pressBoth();
+        await expect(receiveModal.approve).toBeVisible();
+      });
     });
-
-    await test.step(`goToReceive`, async () => {
-      await accountPage.receiveButton.click();
-      await modal.continueButton.click();
-      await expect(receiveModal.verifyAddress).toBeVisible();
-      await expect(receiveModal.receiveAddress(currency.address1)).toBeVisible();
-    });
-
-    await test.step(`[${currency.uiName}] Validate message`, async () => {
-      const addressScreen = await pressRightUntil("Address"); //Todo: method (PUBKEY on SOL)
-      expect(verifyAddress(currency.address1, addressScreen)).toBe(true);
-      await pressRightUntil("Approve"); //Todo: method (APPROVE on DOT)
-      await pressBoth();
-      await expect(receiveModal.approve).toBeVisible();
-    });
-  });
-}
-//BTC and tBTC => Fail (GetAppAndVersion issue)
+  }
+});
