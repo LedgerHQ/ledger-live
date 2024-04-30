@@ -11,11 +11,14 @@ import { Currency } from "../../enum/Currency";
 test.use({ userdata: "skip-onboarding" });
 const currencies: Currency[] = [
   Currency.BTC,
+  Currency.tBTC,
   Currency.ETH,
+  Currency.tETH,
   Currency.SOL,
   Currency.DOT,
   Currency.TRX,
-]; //XRP et ADA(prob) ?
+  Currency.XRP,
+]; //ADA ?
 
 let device: Device | undefined;
 
@@ -33,7 +36,7 @@ test.describe.parallel("Accounts @smoke", () => {
       const layout = new Layout(page);
       const accountsPage = new AccountsPage(page);
       const accountPage = new AccountPage(page);
-      device = await startSpeculos(test.name, specs[currency.uiName.replace(/ /g, "_")]);
+      device = await startSpeculos(test.name, specs[currency.deviceLabel.replace(/ /g, "_")]);
 
       await test.step(`[${currency.uiName}] Open modal`, async () => {
         await portfolioPage.openAddAccountModal();
