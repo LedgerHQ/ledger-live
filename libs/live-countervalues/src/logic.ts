@@ -166,7 +166,6 @@ export async function loadCountervalues(
   rateGranularities.forEach((granularity: RateGranularity) => {
     const format = formatPerGranularity[granularity];
     const earliestHisto = format(nowDate);
-    log("countervalues", "earliestHisto=" + earliestHisto);
     const limit = datapointLimits[granularity];
 
     settings.trackingPairs.forEach(({ from, to, startDate }) => {
