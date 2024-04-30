@@ -4,7 +4,13 @@
  * and therefore can be used with "any Ledger product"
  */
 
-export { craftTransaction, type CreateExtrinsicArg } from "./craftTransaction";
+export {
+  craftTransaction,
+  craftEstimationTransaction,
+  defaultExtrinsicArg,
+  rawEncode,
+  type CreateExtrinsicArg,
+} from "./craftTransaction";
 export { signExtrinsic } from "./signTransaction";
 
 import broadcast from "./broadcast";
