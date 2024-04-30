@@ -1,5 +1,27 @@
 # @ledgerhq/live-common
 
+## 34.1.1-nightly.4
+
+### Patch Changes
+
+- [#6663](https://github.com/LedgerHQ/ledger-live/pull/6663) [`de5de2d`](https://github.com/LedgerHQ/ledger-live/commit/de5de2d273ed6966c82bde2c3a95b98ba594204f) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Reorganize coin serializaiton code
+
+- [#6583](https://github.com/LedgerHQ/ledger-live/pull/6583) [`83e5690`](https://github.com/LedgerHQ/ledger-live/commit/83e5690429e41ecd1c508b3398904ae747085cf7) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Expose Polkadot crafting functions to external components
+
+- Updated dependencies [[`de5de2d`](https://github.com/LedgerHQ/ledger-live/commit/de5de2d273ed6966c82bde2c3a95b98ba594204f), [`83e5690`](https://github.com/LedgerHQ/ledger-live/commit/83e5690429e41ecd1c508b3398904ae747085cf7), [`5d18b4f`](https://github.com/LedgerHQ/ledger-live/commit/5d18b4ff4d1745e7c32993a8d94bb1dc5529391f)]:
+  - @ledgerhq/coin-algorand@0.4.2-nightly.2
+  - @ledgerhq/coin-polkadot@0.7.0-nightly.3
+  - @ledgerhq/coin-bitcoin@0.4.1-nightly.2
+  - @ledgerhq/coin-near@0.3.13-nightly.2
+  - @ledgerhq/coin-evm@1.1.1-nightly.2
+  - @ledgerhq/coin-framework@0.12.1-nightly.2
+  - @ledgerhq/wallet-api-exchange-module@0.5.1-nightly.0
+  - @ledgerhq/live-countervalues@0.1.5-nightly.2
+  - @ledgerhq/live-countervalues-react@0.1.5-nightly.2
+  - @ledgerhq/live-nft@0.3.2-nightly.2
+  - @ledgerhq/device-core@0.1.2-nightly.2
+  - @ledgerhq/hw-app-eth@6.36.1-nightly.2
+
 ## 34.1.1-nightly.3
 
 ### Patch Changes

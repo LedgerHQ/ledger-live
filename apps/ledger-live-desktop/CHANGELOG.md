@@ -1,5 +1,25 @@
 # ledger-live-desktop
 
+## 2.79.2-nightly.4
+
+### Patch Changes
+
+- [#6772](https://github.com/LedgerHQ/ledger-live/pull/6772) [`de91141`](https://github.com/LedgerHQ/ledger-live/commit/de91141e1c909d1f8bd2ff90a54cf601bbdc8853) Thanks [@CremaFR](https://github.com/CremaFR)! - close drawer before opening an error drawer for swap live apps LIVE-12405
+
+- [#6766](https://github.com/LedgerHQ/ledger-live/pull/6766) [`5d18b4f`](https://github.com/LedgerHQ/ledger-live/commit/5d18b4ff4d1745e7c32993a8d94bb1dc5529391f) Thanks [@CremaFR](https://github.com/CremaFR)! - fixed error message for rate expired
+
+- Updated dependencies [[`de5de2d`](https://github.com/LedgerHQ/ledger-live/commit/de5de2d273ed6966c82bde2c3a95b98ba594204f), [`83e5690`](https://github.com/LedgerHQ/ledger-live/commit/83e5690429e41ecd1c508b3398904ae747085cf7)]:
+  - @ledgerhq/coin-bitcoin@0.4.1-nightly.2
+  - @ledgerhq/coin-evm@1.1.1-nightly.2
+  - @ledgerhq/live-common@34.1.1-nightly.4
+  - @ledgerhq/coin-framework@0.12.1-nightly.2
+  - @ledgerhq/types-live@6.46.1-nightly.1
+  - @ledgerhq/live-countervalues@0.1.5-nightly.2
+  - @ledgerhq/live-countervalues-react@0.1.5-nightly.2
+  - @ledgerhq/live-nft@0.3.2-nightly.2
+  - @ledgerhq/live-nft-react@0.3.2-nightly.2
+  - @ledgerhq/domain-service@1.1.21-nightly.1
+
 ## 2.79.2-nightly.3
 
 ### Patch Changes

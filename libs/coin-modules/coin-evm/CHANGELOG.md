@@ -1,5 +1,16 @@
 # @ledgerhq/coin-evm
 
+## 1.1.1-nightly.2
+
+### Patch Changes
+
+- [#6663](https://github.com/LedgerHQ/ledger-live/pull/6663) [`de5de2d`](https://github.com/LedgerHQ/ledger-live/commit/de5de2d273ed6966c82bde2c3a95b98ba594204f) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Reorganize coin serializaiton code
+
+- Updated dependencies [[`de5de2d`](https://github.com/LedgerHQ/ledger-live/commit/de5de2d273ed6966c82bde2c3a95b98ba594204f), [`83e5690`](https://github.com/LedgerHQ/ledger-live/commit/83e5690429e41ecd1c508b3398904ae747085cf7)]:
+  - @ledgerhq/coin-framework@0.12.1-nightly.2
+  - @ledgerhq/domain-service@1.1.21-nightly.1
+  - @ledgerhq/evm-tools@1.0.19-nightly.0
+
 ## 1.1.1-nightly.1
 
 ### Patch Changes

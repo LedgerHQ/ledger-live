@@ -1,5 +1,11 @@
 # @ledgerhq/wallet-api-exchange-module
 
+## 0.5.1-nightly.0
+
+### Patch Changes
+
+- [#6766](https://github.com/LedgerHQ/ledger-live/pull/6766) [`5d18b4f`](https://github.com/LedgerHQ/ledger-live/commit/5d18b4ff4d1745e7c32993a8d94bb1dc5529391f) Thanks [@CremaFR](https://github.com/CremaFR)! - fixed error message for rate expired
+
 ## 0.5.0
 
 ### Minor Changes

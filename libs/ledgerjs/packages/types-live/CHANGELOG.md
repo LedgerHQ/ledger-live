@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.46.1-nightly.1
+
+### Patch Changes
+
+- [#6583](https://github.com/LedgerHQ/ledger-live/pull/6583) [`83e5690`](https://github.com/LedgerHQ/ledger-live/commit/83e5690429e41ecd1c508b3398904ae747085cf7) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Expose Polkadot crafting functions to external components
+
 ## 6.46.1-nightly.0
 
 ### Patch Changes
