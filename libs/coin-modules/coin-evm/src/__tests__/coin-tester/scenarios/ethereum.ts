@@ -74,16 +74,12 @@ const makeScenarioTransactions = ({
         ),
       ).toBe(true);
       expect(latestOperation.type).toBe("FEES");
-      expect(
-        latestOperation?.nftOperations?.find(
-          op => op.contract === "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
-        ),
-      ).toBeDefined();
-      expect(
-        latestOperation.nftOperations?.find(
-          operation => operation.contract === "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
-        ),
-      ).toBeDefined();
+      const lastNftOperation = latestOperation.nftOperations?.[0];
+      expect(lastNftOperation).toMatchObject({
+        contract: "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
+        tokenId: "3368",
+        value: new BigNumber(1),
+      });
     },
   };
 
@@ -106,16 +102,12 @@ const makeScenarioTransactions = ({
         ),
       ).toBe(true);
       expect(latestOperation.type).toBe("FEES");
-      expect(
-        latestOperation?.nftOperations?.find(
-          op => op.contract === "0x348FC118bcC65a92dC033A951aF153d14D945312",
-        ),
-      ).toBeDefined();
-      const latestNFTOperation = latestOperation.nftOperations?.find(
-        operation => operation.contract === "0x348FC118bcC65a92dC033A951aF153d14D945312",
-      );
-      expect(latestNFTOperation).toBeDefined();
-      expect(latestNFTOperation?.value.toFixed()).toBe("2");
+      const lastNftOperation = latestOperation.nftOperations?.[0];
+      expect(lastNftOperation).toMatchObject({
+        contract: "0x348FC118bcC65a92dC033A951aF153d14D945312",
+        tokenId: "951",
+        value: new BigNumber(2),
+      });
     },
   };
 
@@ -253,6 +245,8 @@ export const scenarioEthereum: Scenario<EvmTransaction> = {
   },
   getTransactions: address => makeScenarioTransactions({ address }),
   afterAll: account => {
+    expect(account.subAccounts?.length).toBe(1);
+    expect(account.subAccounts?.[0].balance.toFixed()).toBe("99999920"); // 10 000 000 - 80
     expect(account.nfts?.length).toBe(0);
     expect(account.operations.length).toBe(7);
   },

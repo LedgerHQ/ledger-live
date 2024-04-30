@@ -7,10 +7,6 @@ import { scenarioPolygon } from "./scenarios/polygon";
 global.console = require("console");
 jest.setTimeout(100_000);
 
-afterAll(async () => {
-  await Promise.all([killSpeculos(), killAnvil()]);
-});
-
 describe("EVM Deterministic Tester", () => {
   it("scenario Ethereum", async () => {
     try {
