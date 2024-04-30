@@ -20,33 +20,23 @@
   },
   "typesVersions": {
     "*": {
-      "*.json": [
-        "*.json"
-      ],
-      "*": [
-        "lib/*"
-      ],
       "lib/*": [
         "lib/*"
       ],
       "lib-es/*": [
         "lib-es/*"
+      ],
+      "serialization": [
+        "lib/serialization/index"
+      ],
+      "*": [
+        "lib/*"
       ]
     }
   },
   "exports": {
     "./lib/*": "./lib/*.js",
-    "./lib/*.js": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
-    "./lib-es/*.js": "./lib-es/*.js",
-    "./*": {
-      "require": "./lib/*.js",
-      "default": "./lib-es/*.js"
-    },
-    "./*.js": {
-      "require": "./lib/*.js",
-      "default": "./lib-es/*.js"
-    },
     "./account/*": {
       "require": "./lib/account/*.js",
       "default": "./lib-es/account/*.js"
@@ -71,9 +61,17 @@
       "require": "./lib/nft/*.js",
       "default": "./lib-es/nft/*.js"
     },
+    "./serialization": {
+      "require": "./lib/serialization/index.js",
+      "default": "./lib-es/serialization/index.js"
+    },
     "./transaction/*": {
       "require": "./lib/transaction/*.js",
       "default": "./lib-es/transaction/*.js"
+    },
+    "./*": {
+      "require": "./lib/*.js",
+      "default": "./lib-es/*.js"
     },
     "./package.json": "./package.json"
   },

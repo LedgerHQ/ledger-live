@@ -1,13 +1,13 @@
-import BigNumber from "bignumber.js";
 import { loadPolkadotCrypto } from "./polkadot-crypto";
-import getEstimatedFees from "./getFeesForTransaction";
+import estimateFees from "./estimateFees";
 import {
   fixtureChainSpec,
   fixtureTxMaterialWithMetadata,
   fixtureTransactionParams,
 } from "../network/sidecar.fixture";
-import { createFixtureAccount, createFixtureTransaction } from "../types/model.fixture";
 import { createRegistryAndExtrinsics } from "../network/common";
+import { createFixtureAccount } from "../types/bridge.fixture";
+import { craftEstimationTransaction } from "./craftTransaction";
 
 jest.mock("./polkadot-crypto");
 
@@ -27,9 +27,7 @@ jest.mock("../network/sidecar", () => ({
   getTransactionParams: () => mockTransactionParams(),
 }));
 
-describe("getEstimatedFees", () => {
-  const transaction = createFixtureTransaction();
-
+describe("estimatedFees", () => {
   beforeEach(() => {
     mockPaymentInfo.mockClear();
   });
@@ -38,9 +36,10 @@ describe("getEstimatedFees", () => {
     // Given
     const account = createFixtureAccount();
     const mockLoadPolkadotCrypto = jest.mocked(loadPolkadotCrypto);
+    const tx = await craftEstimationTransaction(account.freshAddress, BigInt(1000));
 
     // When
-    await getEstimatedFees({ a: account, t: transaction });
+    await estimateFees(tx);
 
     // Then
     // Test to comply with existing code. Should be 1 time only.
@@ -56,14 +55,15 @@ describe("getEstimatedFees", () => {
       class: "WHATEVER",
       partialFee,
     });
+    const tx = await craftEstimationTransaction(account.freshAddress, BigInt(10000));
 
     // When
-    const result = await getEstimatedFees({
-      a: account,
-      t: transaction,
-    });
+    const result = await estimateFees(tx);
 
     // Then
-    expect(result).toEqual(new BigNumber(partialFee));
+    expect(mockPaymentInfo).toHaveBeenCalledTimes(1);
+    // Receive hex signature computed by Polkadot lib
+    expect(mockPaymentInfo.mock.lastCall).not.toBeNull();
+    expect(result).toEqual(BigInt(partialFee));
   });
 });

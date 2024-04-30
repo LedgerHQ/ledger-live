@@ -1,12 +1,12 @@
 import { BigNumber } from "bignumber.js";
 import type { Transaction, TransactionRaw } from "./types";
+import { formatTransactionStatus } from "@ledgerhq/coin-framework/formatters";
 import {
-  formatTransactionStatusCommon as formatTransactionStatus,
   fromTransactionCommonRaw,
   fromTransactionStatusRawCommon as fromTransactionStatusRaw,
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
-} from "@ledgerhq/coin-framework/transaction/common";
+} from "@ledgerhq/coin-framework/serialization";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 import { Account } from "@ledgerhq/types-live";

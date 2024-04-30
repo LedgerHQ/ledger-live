@@ -1,11 +1,10 @@
 import { BigNumber } from "bignumber.js";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
-import { loadPolkadotCrypto } from "./polkadot-crypto";
 import type { PolkadotAccount, Transaction } from "../types";
 import { calculateAmount } from "./utils";
 import { buildTransaction } from "./buildTransaction";
-import { fakeSignExtrinsic } from "./signTransaction";
-import polkadotAPI from "../network";
+import { estimateFees } from "../logic";
+import { loadPolkadotCrypto } from "../logic/polkadot-crypto";
 
 /**
  * Fetch the transaction fees for a transaction
@@ -13,13 +12,13 @@ import polkadotAPI from "../network";
  * @param {Account} a
  * @param {Transaction} t
  */
-const getEstimatedFees = async ({
+export default async function getEstimatedFees({
   a,
   t,
 }: {
   a: PolkadotAccount;
   t: Transaction;
-}): Promise<BigNumber> => {
+}): Promise<BigNumber> {
   await loadPolkadotCrypto();
 
   const transaction = {
@@ -31,14 +30,8 @@ const getEstimatedFees = async ({
       t: { ...t, fees: new BigNumber(0) },
     }), // Remove fees if present since we are fetching fees
   };
-  const { unsigned, registry } = await buildTransaction(a, transaction);
-  const fakeSignedTx = await fakeSignExtrinsic(unsigned, registry);
-  const payment = await polkadotAPI.getPaymentInfo({
-    a,
-    t: transaction,
-    signedTx: fakeSignedTx,
-  });
-  return new BigNumber(payment.partialFee);
-};
 
-export default getEstimatedFees;
+  const tx = await buildTransaction(a, transaction);
+  const fees = await estimateFees(tx);
+  return new BigNumber(fees.toString());
+}
