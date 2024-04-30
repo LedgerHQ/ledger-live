@@ -190,7 +190,7 @@ export default class Polkadot {
     });
   }
 
-  async getMajorAppVersion(): Promise<number> {
+  private async getMajorAppVersion(): Promise<number> {
     const response = await this.transport.send(CLA, INS.GET_VERSION, 0, 0);
     const majorVersion = response[1] * 256 + response[2];
     return majorVersion;
