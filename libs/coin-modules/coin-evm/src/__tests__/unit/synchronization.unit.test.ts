@@ -563,7 +563,7 @@ describe("EVM Family", () => {
           operations: [tokenOperations[0], tokenOperations[1]],
           operationsCount: 2,
           starred: undefined,
-          swapHistory: swapHistory,
+          swapHistory,
         };
         const expectedUsdtAccount = {
           ...makeTokenAccount(account.freshAddress, tokenCurrencies[1]),
