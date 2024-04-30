@@ -128,8 +128,8 @@ export default class Polkadot {
     const chunks: Buffer[] = [];
     let buffer = Buffer.from(message);
     const appMajorVersion = await this.getMajorAppVersion();
-    if (appMajorVersion >= 6) {
-      // metadata is required for app version >= 6 (new polkadot generic nano app)
+    if (appMajorVersion >= 26) {
+      // metadata is required for app version >= 26 (new polkadot generic nano app)
       const blobLen = Buffer.alloc(2);
       blobLen.writeUInt16LE(buffer.length);
       chunks.push(Buffer.concat([serializedPath, blobLen]));
@@ -172,7 +172,6 @@ export default class Polkadot {
       if (returnCode === SW_CANCEL) {
         throw new UserRefusedOnDevice();
       }
-
       if (returnCode === SW_ERROR_DATA_INVALID || returnCode === SW_ERROR_BAD_KEY_HANDLE) {
         const errorMessage = response.slice(0, response.length - 2).toString("ascii");
         throw new TransportError(errorMessage, "Sign");
