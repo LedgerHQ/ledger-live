@@ -119,35 +119,6 @@ const makeScenarioTransactions = ({
   ];
 };
 
-const impersonnateAccount = async ({
-  provider,
-  addressToImpersonnate,
-  to,
-  data,
-}: {
-  provider: ethers.providers.JsonRpcProvider;
-  addressToImpersonnate: string;
-  to: string;
-  data: string;
-}) => {
-  await provider.send("anvil_impersonateAccount", [addressToImpersonnate]);
-  const impersonatedAccount = {
-    from: addressToImpersonnate,
-    to,
-    data,
-    value: ethers.BigNumber.from(0).toHexString(),
-    gas: ethers.BigNumber.from(1_000_000).toHexString(),
-    type: "0x0",
-    gasPrice: (await provider.getGasPrice()).toHexString(),
-    nonce: "0x" + (await provider.getTransactionCount(addressToImpersonnate)).toString(16),
-    chainId: "0x" + (await provider.getNetwork()).chainId.toString(16),
-  };
-
-  const hash = await provider.send("eth_sendTransaction", [impersonatedAccount]);
-  await provider.send("anvil_stopImpersonatingAccount", [addressToImpersonnate]);
-  await provider.waitForTransaction(hash);
-};
-
 const defaultNanoApp = { firmware: "2.2.3" as const, version: "1.10.4" as const };
 
 export const scenarioEthereum: Scenario<EvmTransaction> = {
