@@ -7,7 +7,6 @@ import filecoin from "../families/filecoin/transaction";
 import hedera from "../families/hedera/transaction";
 import internet_computer from "../families/internet_computer/transaction";
 import stacks from "../families/stacks/transaction";
-import icon from "../families/icon/transaction";
 import near from "@ledgerhq/coin-near/transaction";
 import stellar from "../families/stellar/transaction";
 import tron from "../families/tron/transaction";
@@ -19,6 +18,7 @@ import evm from "@ledgerhq/coin-evm/transaction";
 import polkadot from "@ledgerhq/coin-polkadot/transaction";
 import tezos from "@ledgerhq/coin-tezos/transaction";
 import xrp from "@ledgerhq/coin-xrp/transaction";
+import icon from "@ledgerhq/coin-icon/transaction";
 
 export default {
   casper,
@@ -42,4 +42,5 @@ export default {
   polkadot,
   tezos,
   xrp,
+  icon,
 };

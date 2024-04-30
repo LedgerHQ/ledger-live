@@ -6,7 +6,6 @@ import type { Account } from "@ledgerhq/types-live";
 import type { IconAccount, Transaction } from "./types";
 const { IconAmount } = IconService;
 import { BERLIN_TESTNET_NID, MAINNET_NID } from "./constants";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 
 /**
  * @param {string|number|BigNumber} value value as loop
@@ -24,8 +23,8 @@ export const convertICXtoLoop = (value: string | number | BigNumber): BigNumber 
   return new BigNumber(IconAmount.toLoop(value, IconAmount.Unit.ICX.toString()));
 };
 
-export const EXISTENTIAL_DEPOSIT = convertICXtoLoop(0);
-export const EXISTENTIAL_DEPOSIT_RECOMMENDED_MARGIN = convertICXtoLoop(0);
+export const EXISTENTIAL_DEPOSIT = convertICXtoLoop(0.1);
+export const EXISTENTIAL_DEPOSIT_RECOMMENDED_MARGIN = convertICXtoLoop(0.00125);
 export const FEES_SAFETY_BUFFER = convertICXtoLoop(0.00125); // Arbitrary buffer for paying fees of next transactions
 export const MAX_AMOUNT_INPUT = convertICXtoLoop(5000);
 /**

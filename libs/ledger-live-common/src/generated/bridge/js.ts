@@ -7,7 +7,6 @@ import filecoin from "../../families/filecoin/bridge/js";
 import hedera from "../../families/hedera/bridge/js";
 import internet_computer from "../../families/internet_computer/bridge/js";
 import stacks from "../../families/stacks/bridge/js";
-import icon from "../../families/icon/bridge/js";
 import stellar from "../../families/stellar/bridge/js";
 import tron from "../../families/tron/bridge/js";
 import vechain from "../../families/vechain/bridge/js";
@@ -20,6 +19,7 @@ import { bridge as polkadot } from "../../families/polkadot/setup";
 import { bridge as solana } from "../../families/solana/setup";
 import { bridge as tezos } from "../../families/tezos/setup";
 import { bridge as xrp } from "../../families/xrp/setup";
+import { bridge as icon } from "../../families/icon/setup";
 
 export default {
   casper,
@@ -29,7 +29,6 @@ export default {
   elrond,
   filecoin,
   hedera,
-  icon,
   internet_computer,
   stacks,
   near,
@@ -44,4 +43,5 @@ export default {
   bitcoin,
   cardano,
   xrp,
+  icon,
 };

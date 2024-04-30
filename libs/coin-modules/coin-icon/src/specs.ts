@@ -1,24 +1,23 @@
-import type { Transaction } from "../../families/icon/types";
 import invariant from "invariant";
-import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
-import { botTest, pickSiblings } from "../../bot/specs";
-import type { AppSpec } from "../../bot/types";
-import { toOperationRaw } from "../../account";
+import { getCryptoCurrencyById } from "@ledgerhq/coin-framework/currencies/index";
+import { botTest, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
+import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
+import { toOperationRaw } from "@ledgerhq/coin-framework/serialization/index";
 import { DeviceModelId } from "@ledgerhq/devices";
 import BigNumber from "bignumber.js";
 import expect from "expect";
 import { acceptTransaction } from "./speculos-deviceActions";
-import { isAccountEmpty } from "../../account";
-import { convertICXtoLoop } from "./logic";
-import { AccountLike } from "@ledgerhq/types-live";
+import {
+  EXISTENTIAL_DEPOSIT,
+  EXISTENTIAL_DEPOSIT_RECOMMENDED_MARGIN,
+  convertICXtoLoop,
+} from "./logic";
+import { Transaction } from "./types";
 
-const ICON_MIN_SAFE = new BigNumber(1);
 const maxAccounts = 6;
 const currency = getCryptoCurrencyById("icon");
 
-const minBalanceNewAccount = parseCurrencyUnit(currency.units[0], "0.1");
-
-// FIXME ICON have a bug where the amounts from the API have imprecisions
+// FIX ME ICON have a bug where the amounts from the API have imprecisions
 const expectedApproximate = (
   value: BigNumber,
   expected: BigNumber,
@@ -29,23 +28,17 @@ const expectedApproximate = (
   }
 };
 
-const checkSendableToEmptyAccount = (amount: BigNumber, recipient: AccountLike) => {
-  if (isAccountEmpty(recipient) && amount.lte(minBalanceNewAccount)) {
-    invariant(amount.gt(minBalanceNewAccount), "not enough funds to send to new account");
-  }
-};
 const icon: AppSpec<Transaction> = {
   name: "Icon",
-  currency: getCryptoCurrencyById("icon"),
+  currency,
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "Icon",
   },
   genericDeviceAction: acceptTransaction,
   testTimeout: 2 * 60 * 1000,
-  skipOperationHistory: true,
   transactionCheck: ({ maxSpendable }) => {
-    invariant(maxSpendable.gt(ICON_MIN_SAFE), "balance is too low");
+    invariant(maxSpendable.gt(EXISTENTIAL_DEPOSIT_RECOMMENDED_MARGIN), "balance is too low");
   },
   test: ({ operation, optimisticOperation }) => {
     const opExpected: Record<string, any> = toOperationRaw({
@@ -69,13 +62,13 @@ const icon: AppSpec<Transaction> = {
         invariant(account.spendableBalance.gt(0), "balance is 0");
         const sibling = pickSiblings(siblings, maxAccounts);
         let amount = account.spendableBalance.div(2).integerValue();
-        checkSendableToEmptyAccount(amount, sibling);
-        if (!sibling.used && amount.lt(ICON_MIN_SAFE)) {
+
+        if (!sibling.used && amount.lt(EXISTENTIAL_DEPOSIT)) {
           invariant(
-            account.spendableBalance.gt(ICON_MIN_SAFE),
+            account.spendableBalance.gt(EXISTENTIAL_DEPOSIT),
             "send is too low to activate account",
           );
-          amount = ICON_MIN_SAFE;
+          amount = EXISTENTIAL_DEPOSIT;
         }
 
         return {

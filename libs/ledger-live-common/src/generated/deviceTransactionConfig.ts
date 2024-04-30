@@ -7,7 +7,6 @@ import filecoin from "../families/filecoin/deviceTransactionConfig";
 import hedera from "../families/hedera/deviceTransactionConfig";
 import internet_computer from "../families/internet_computer/deviceTransactionConfig";
 import stacks from "../families/stacks/deviceTransactionConfig";
-import icon from "../families/icon/deviceTransactionConfig";
 import stellar from "../families/stellar/deviceTransactionConfig";
 import tron from "../families/tron/deviceTransactionConfig";
 import algorand from "@ledgerhq/coin-algorand/deviceTransactionConfig";
@@ -17,6 +16,9 @@ import evm from "@ledgerhq/coin-evm/deviceTransactionConfig";
 import solana from "@ledgerhq/coin-solana/deviceTransactionConfig";
 import tezos from "@ledgerhq/coin-tezos/deviceTransactionConfig";
 import xrp from "@ledgerhq/coin-xrp/deviceTransactionConfig";
+import near from "@ledgerhq/coin-near/deviceTransactionConfig";
+import polkadot from "@ledgerhq/coin-polkadot/deviceTransactionConfig";
+import icon from "@ledgerhq/coin-icon/deviceTransactionConfig";
 
 export default {
   casper,
@@ -38,16 +40,18 @@ export default {
   evm,
   tezos,
   xrp,
+  near,
+  polkadot,
 };
 
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_casper } from "../families/casper/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_cosmos } from "../families/cosmos/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_filecoin } from "../families/filecoin/deviceTransactionConfig";
-import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_icon } from "../families/icon/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_stacks } from "../families/stacks/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_stellar } from "../families/stellar/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_tron } from "../families/tron/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_polkadot } from "@ledgerhq/coin-polkadot/bridge/deviceTransactionConfig";
+import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_icon } from "@ledgerhq/coin-icon/bridge/deviceTransactionConfig";
 
 export type ExtraDeviceTransactionField =
   | ExtraDeviceTransactionField_casper

@@ -18,6 +18,7 @@ import { cliTools as polkadot } from "../families/polkadot/setup";
 import { cliTools as solana } from "../families/solana/setup";
 import { cliTools as tezos } from "../families/tezos/setup";
 import { cliTools as xrp } from "../families/xrp/setup";
+import { cliTools as icon } from "../families/icon/setup";
 
 export default {
   celo,

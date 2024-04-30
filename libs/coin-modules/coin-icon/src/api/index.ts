@@ -2,7 +2,7 @@ import network from "@ledgerhq/live-network/network";
 import { BigNumber } from "bignumber.js";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import { getEnv } from "@ledgerhq/live-env";
-import { encodeOperationId } from "../../../operation";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { LIMIT } from "../constants";
 import { isTestnet } from "../logic";

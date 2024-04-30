@@ -1,15 +1,11 @@
-import type { DeviceAction } from "../../bot/types";
+import type { DeviceAction } from "@ledgerhq/coin-framework/bot/types";
 import type { Transaction } from "./types";
-import { formatCurrencyUnit } from "../../currencies";
-import { deviceActionFlow, SpeculosButton } from "../../bot/specs";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import { deviceActionFlow, SpeculosButton } from "@ledgerhq/coin-framework/bot/specs";
+import { getAccountUnit } from "@ledgerhq/coin-framework/account/index";
 
-const expectedAmount = ({ account, status }) => {
-  return (
-    "ICX " +
-    formatCurrencyUnit(account.unit, status.amount, {
-      disableRounding: true,
-    })
-  );
+const confirmWording: Record<string, string> = {
+  send: "transfer",
 };
 
 export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
@@ -17,11 +13,15 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
     {
       title: "Confirm",
       button: SpeculosButton.RIGHT,
+      expectedValue: ({ transaction }) => confirmWording[transaction.mode],
     },
     {
       title: "Amount",
       button: SpeculosButton.RIGHT,
-      expectedValue: expectedAmount,
+      expectedValue: ({ transaction, account }) =>
+        formatCurrencyUnit(getAccountUnit(account), transaction.amount, {
+          disableRounding: true,
+        }),
     },
     {
       title: "Address",
