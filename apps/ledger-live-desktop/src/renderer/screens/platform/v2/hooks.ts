@@ -30,8 +30,6 @@ export function useCatalog(recentlyUsedDB: RecentlyUsedDB) {
   const recentlyUsed = useRecentlyUsed(combinedManifests, recentlyUsedDB);
   const { state: localLiveApps } = useLocalLiveAppContext();
 
-  console.log(useLocalLiveAppContext());
-
   const search = useSearch({
     list: combinedManifests,
     options: BROWSE_SEARCH_OPTIONS,

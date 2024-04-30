@@ -8,7 +8,6 @@ import { SectionHeader } from "./SectionHeader";
 import { useTranslation } from "react-i18next";
 
 export function LocalLiveAppSection({ localLiveApps }: { localLiveApps: LiveAppManifest[] }) {
-  console.log("localLiveApps", localLiveApps);
   const history = useHistory();
   const { t } = useTranslation();
 
