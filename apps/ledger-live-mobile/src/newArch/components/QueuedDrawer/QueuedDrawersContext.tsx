@@ -39,7 +39,9 @@ type QueuedDrawersContextType = {
   _clearQueueDIRTYDONOTUSE(): void;
 };
 
-const QueuedDrawersContext = React.createContext<QueuedDrawersContextType | undefined>(undefined);
+export const QueuedDrawersContext = React.createContext<QueuedDrawersContextType | undefined>(
+  undefined,
+);
 
 export function useQueuedDrawerContext() {
   const contextValue = React.useContext(QueuedDrawersContext);
