@@ -9,8 +9,7 @@
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
     "lint": "eslint .",
-    "lint:fix": "pnpm lint --fix",
-    "test": "jest"
+    "lint:fix": "pnpm lint --fix"
   },
   "dependencies": {
     "@ledgerhq/hw-transport-node-speculos-http": "workspace:^",
