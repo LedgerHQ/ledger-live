@@ -294,4 +294,4 @@ const AccountRowItem = (props: Props) => {
     </div>
   );
 };
-export default AccountRowItem;
+export default React.memo(AccountRowItem);

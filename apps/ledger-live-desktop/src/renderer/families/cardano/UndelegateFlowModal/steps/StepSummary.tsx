@@ -22,7 +22,7 @@ const Separator = styled.div`
   margin: 15px 0;
 `;
 
-export default function StepSummary(props: StepProps) {
+function StepSummary(props: StepProps) {
   const { account, transaction, status, error } = props;
   const { estimatedFees, errors } = status;
   const displayError = errors.amount?.message ? errors.amount : "";
@@ -104,6 +104,8 @@ export default function StepSummary(props: StepProps) {
     </Box>
   );
 }
+export default React.memo(StepSummary);
+
 export function StepSummaryFooter({
   transitionTo,
   status,

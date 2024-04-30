@@ -21,7 +21,7 @@ const Separator = styled.div`
   margin: 15px 0;
 `;
 
-export default function StepSummary(props: StepProps) {
+function StepSummary(props: StepProps) {
   const { account, transaction, status, selectedPool } = props;
 
   const feesUnit = useMaybeAccountUnit(account);
@@ -151,3 +151,5 @@ export function StepSummaryFooter({ transitionTo }: StepProps) {
     </>
   );
 }
+
+export default React.memo(StepSummary);

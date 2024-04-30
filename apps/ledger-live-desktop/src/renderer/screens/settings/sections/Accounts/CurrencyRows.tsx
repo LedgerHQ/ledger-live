@@ -21,7 +21,7 @@ type Props = {
 
 type Key = keyof CurrencySettings;
 
-export default function CurrencyRows({ currency }: Props) {
+function CurrencyRows({ currency }: Props) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
@@ -101,3 +101,5 @@ export default function CurrencyRows({ currency }: Props) {
     </>
   );
 }
+
+export default React.memo(CurrencyRows);

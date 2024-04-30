@@ -190,7 +190,7 @@ function AccountSettingRenderBody(props: Props) {
   );
 }
 
-export default AccountSettingRenderBody;
+export default React.memo(AccountSettingRenderBody);
 
 const AdvancedLogsContainer = styled.div`
   border: 1px dashed ${p => p.theme.colors.palette.background.default};

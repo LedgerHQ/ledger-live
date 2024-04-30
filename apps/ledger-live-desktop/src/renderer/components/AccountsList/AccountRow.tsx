@@ -26,7 +26,14 @@ type Props = {
   onEditName?: (b: Account, a: string) => void;
   hideAmount?: boolean;
 };
-export default function AccountRow(props: Props) {
+
+const overflowStyles: React.CSSProperties = {
+  textOverflow: "ellipsis",
+  overflow: "hidden",
+  whiteSpace: "nowrap",
+};
+
+function AccountRow(props: Props) {
   const {
     account,
     isChecked,
@@ -70,12 +77,6 @@ export default function AccountRow(props: Props) {
       // don't leave an empty input on blur
       onEditName(account, getDefaultAccountName(account));
     }
-  };
-
-  const overflowStyles: React.CSSProperties = {
-    textOverflow: "ellipsis",
-    overflow: "hidden",
-    whiteSpace: "nowrap",
   };
 
   const tokenCount = (account.subAccounts && account.subAccounts.length) || 0;
@@ -145,6 +146,8 @@ export default function AccountRow(props: Props) {
     </AccountRowContainer>
   );
 }
+
+export default React.memo(AccountRow);
 
 const AccountRowContainer = styled(Tabbable).attrs(() => ({
   horizontal: true,
