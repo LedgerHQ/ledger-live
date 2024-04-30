@@ -58,6 +58,13 @@ export function setAnalyticsFeatureFlagMethod(method: typeof analyticsFeatureFla
   analyticsFeatureFlagMethod = method;
 }
 
+const getMarketWidgetAnalytics = () => {
+  if (!analyticsFeatureFlagMethod) return false;
+  const marketWidget = analyticsFeatureFlagMethod("marketperformanceWidgetDesktop");
+
+  return !!marketWidget?.enabled;
+};
+
 const getPtxAttributes = () => {
   if (!analyticsFeatureFlagMethod) return {};
   const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
@@ -165,6 +172,7 @@ const extraProperties = (store: ReduxStore) => {
     blockchainsWithNftsOwned,
     hasGenesisPass,
     hasInfinityPass,
+    hasSeenMarketWidget: getMarketWidgetAnalytics(),
     modelIdList: devices,
     stakingProvidersEnabled,
     isBatch1Enabled,
