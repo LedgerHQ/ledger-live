@@ -481,8 +481,8 @@ describe("EVM Family", () => {
               swapId: "6342cd15-5aa9-4c8c-9fb3-0b67e9b0714a",
               receiverAccountId: "js:2:ethereum:0xkvn:",
               tokenId: "ethereum/erc20/usd__coin",
-              fromAmount: BigNumber("200000"),
-              toAmount: BigNumber("129430000"),
+              fromAmount: new BigNumber("200000"),
+              toAmount: new BigNumber("129430000"),
             },
           ],
         };
