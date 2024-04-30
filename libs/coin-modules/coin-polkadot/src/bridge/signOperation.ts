@@ -22,7 +22,7 @@ import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { buildTransaction } from "./buildTransaction";
 import { calculateAmount, getNonce, isFirstBond } from "./utils";
 import { signExtrinsic } from "../logic";
-import { shortenMetadata } from "../network/sidecar";
+import polkadotAPI from "../network";
 
 const MODE_TO_TYPE = {
   send: "OUT",
@@ -161,7 +161,7 @@ const buildSignOperation =
             method: true,
           });
         const payloadString = Buffer.from(payload).toString("hex");
-        const metadata = await shortenMetadata(payloadString);
+        const metadata = await polkadotAPI.shortenMetadata(payloadString);
         const r = (await signerContext(deviceId, signer =>
           signer.sign(account.freshAddressPath, payload, metadata),
         )) as PolkadotSignature;

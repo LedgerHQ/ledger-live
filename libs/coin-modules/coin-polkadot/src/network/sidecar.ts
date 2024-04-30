@@ -655,25 +655,3 @@ export const getTransactionMaterialWithMetadata = makeLRUCache(
   () => "polkadot",
   hours(1),
 );
-
-/**
- * Retrieve shortened metadata for a transaction
- *
- * @async
- * @param {string} transaction - the transaction to shorten
- *
- * @returns {string>} - the shortened metadata for a transaction
- */
-export const shortenMetadata = async (transaction: string): Promise<string> => {
-  const res: any = await network({
-    method: "POST",
-    url: "https://api.zondax.ch/polkadot/transaction/metadata",
-    data: {
-      chain: {
-        id: "dot",
-      },
-      txBlob: transaction,
-    },
-  });
-  return res.data.txMetadata;
-};

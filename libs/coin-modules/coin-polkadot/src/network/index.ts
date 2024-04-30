@@ -16,6 +16,7 @@ import {
 } from "./sidecar";
 import BigNumber from "bignumber.js";
 import { PolkadotAccount, PolkadotNomination, PolkadotUnlocking, Transaction } from "../types";
+import network from "@ledgerhq/live-network/network";
 
 type PolkadotAPIAccount = {
   blockHeight: number;
@@ -67,6 +68,20 @@ const isControllerAddress = makeLRUCache(
 const isElectionClosed = makeLRUCache(sidecarIsElectionClosed, () => "", minutes(1));
 const isNewAccount = makeLRUCache(sidecarIsNewAccount, address => address, minutes(1));
 
+const shortenMetadata = async (transaction: string): Promise<string> => {
+  const res: any = await network({
+    method: "POST",
+    url: "https://api.zondax.ch/polkadot/transaction/metadata",
+    data: {
+      chain: {
+        id: "dot",
+      },
+      txBlob: transaction,
+    },
+  });
+  return res.data.txMetadata;
+};
+
 export default {
   getAccount: async (address: string): Promise<PolkadotAPIAccount> => sidecardGetAccount(address),
   getOperations: bisonGetOperations,
@@ -82,6 +97,7 @@ export default {
   isControllerAddress,
   isElectionClosed,
   isNewAccount,
+  shortenMetadata,
   submitExtrinsic: async (extrinsic: string) => sidecarSubmitExtrinsic(extrinsic),
   verifyValidatorAddresses: async (validators: string[]): Promise<string[]> =>
     sidecarVerifyValidatorAddresses(validators),
