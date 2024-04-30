@@ -680,6 +680,9 @@ describe("EVM Family", () => {
           blockHash: "hash",
           timestamp: Date.now(),
           nonce: 123,
+          gasPrice: "0",
+          gasUsed: "0",
+          value: "0",
         }));
 
         const expectedAddition = {
@@ -717,6 +720,9 @@ describe("EVM Family", () => {
           blockHeight: 10,
           blockHash: "hash",
           nonce: 123,
+          gasPrice: "0",
+          gasUsed: "0",
+          value: "0",
         }));
         jest
           .spyOn(nodeApi, "getBlockByHeight")
