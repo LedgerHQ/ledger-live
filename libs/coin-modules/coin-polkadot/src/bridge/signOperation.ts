@@ -20,6 +20,7 @@ import type {
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { buildTransaction, calculateAmount, getNonce, isFirstBond, signExtrinsic } from "../logic";
+import { shortenMetadata } from "../network/sidecar";
 
 const MODE_TO_TYPE = {
   send: "OUT",
@@ -157,10 +158,15 @@ const buildSignOperation =
           .toU8a({
             method: true,
           });
-
+        const payloadString = Buffer.from(payload).toString("hex");
+        console.log("payloadString");
+        const metadata = await shortenMetadata(payloadString);
+        console.log("payloadString shortened");
+        //const version = await signerContext(deviceId, signer => signer.getMajorVersion());
+        //console.log("curent version", version);
         const r = (await signerContext(deviceId, signer =>
           // FIXME: the type of payload Uint8Array is not compatible with the signature of sign which accept a string
-          signer.sign(account.freshAddressPath, payload as any),
+          signer.sign(account.freshAddressPath, payload, metadata),
         )) as PolkadotSignature;
 
         const signed = await signExtrinsic(unsigned, r.signature, registry);

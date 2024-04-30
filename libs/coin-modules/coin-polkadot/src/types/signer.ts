@@ -9,5 +9,6 @@ export type PolkadotSignature = {
 };
 export interface PolkadotSigner {
   getAddress(path: string, ss58prefix: number, showAddrInDevice: boolean): Promise<PolkadotAddress>;
-  sign(path: string, message: string): Promise<PolkadotSignature>;
+  sign(path: string, message: Uint8Array, metadata: string): Promise<PolkadotSignature>;
+  getMajorVersion(): Promise<number>;
 }

@@ -117,7 +117,8 @@ export default class Polkadot {
    */
   async sign(
     path: string,
-    message: string,
+    message: Uint8Array,
+    metadata: string,
   ): Promise<{
     signature: null | string;
     return_code: number;
@@ -125,8 +126,21 @@ export default class Polkadot {
     const bipPath = BIPPath.fromString(path).toPathArray();
     const serializedPath = this.serializePath(bipPath);
     const chunks: Buffer[] = [];
-    chunks.push(serializedPath);
-    const buffer = Buffer.from(message);
+    let buffer = Buffer.from(message);
+    console.log("getting major app version");
+    //const appMajorVersion = await this.getMajorAppVersion();
+    const appMajorVersion = 0;
+    console.log("got major app version: ", appMajorVersion);
+    if (appMajorVersion >= 6) {
+      // metadata is required for app version >= 6 (new polkadot generic nano app)
+      const blobLen = Buffer.alloc(2);
+      blobLen.writeUInt16LE(buffer.length);
+      chunks.push(Buffer.concat([serializedPath, blobLen]));
+      const metadataBuffer = Buffer.from(metadata.slice(2), "hex"); // remove 0x prefix
+      buffer = Buffer.concat([buffer, metadataBuffer]);
+    } else {
+      chunks.push(serializedPath);
+    }
 
     for (let i = 0; i < buffer.length; i += CHUNK_SIZE) {
       let end = i + CHUNK_SIZE;
@@ -178,5 +192,11 @@ export default class Polkadot {
         return_code: returnCode,
       };
     });
+  }
+
+  async getMajorAppVersion(): Promise<number> {
+    const response = await this.transport.send(CLA, INS.GET_VERSION, 0, 0);
+    const majorVersion = response[1] * 256 + response[2];
+    return majorVersion;
   }
 }
