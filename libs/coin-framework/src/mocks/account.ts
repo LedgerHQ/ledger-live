@@ -316,9 +316,9 @@ export function genAccount(
   const outdated = ["ethereum_classic", "dogecoin"].includes(currency.id) && `${id}`.endsWith("_2");
   const accountId = `mock:${outdated ? 0 : 1}:${currency.id}:${id}:`;
   const xpub = genHex(64, rng);
-  rng.nextString(rng.nextInt(4, 34)); // to not break the determinism, we will still run this code that used to generate fake account names
+  rng.nextString(rng.nextInt(4, 34)); // to not break the determinism, we will still run this code that used to generate fake account names. remove it when we allow ourself a breaking change.
   const blockHeight = rng.nextInt(100000, 200000);
-  const unit = rng.nextArrayItem(currency.units);
+  rng.nextArrayItem(currency.units); // to not break the determinism, we still run this code. remove it when we allow ourself a breaking change.
   const account: Account = {
     type: "Account",
     id: accountId,
@@ -333,7 +333,6 @@ export function genAccount(
     spendableBalance: new BigNumber(0),
     blockHeight,
     currency,
-    unit,
     operationsCount: 0,
     operations: [],
     pendingOperations: [],

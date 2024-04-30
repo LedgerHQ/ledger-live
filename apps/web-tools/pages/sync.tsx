@@ -57,7 +57,6 @@ function inferAccount(id: string): Account {
     id,
     derivationMode,
     currency,
-    unit: currency.units[0],
     index,
     freshAddress: xpubOrAddress,
     freshAddressPath,

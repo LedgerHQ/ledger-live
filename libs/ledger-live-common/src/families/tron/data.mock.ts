@@ -229,7 +229,6 @@ export const mockAccount = fromAccountRaw({
   operationsCount: 12,
   pendingOperations: [],
   currencyId: "tron",
-  unitMagnitude: 6,
   lastSyncDate: "2020-03-18T09:22:46.747Z",
   subAccounts: [],
   // @ts-expect-error wat
@@ -452,7 +451,6 @@ export const mockAccountNoReward = fromAccountRaw({
   operationsCount: 12,
   pendingOperations: [],
   currencyId: "tron",
-  unitMagnitude: 6,
   lastSyncDate: "2020-03-18T09:22:46.747Z",
   subAccounts: [],
   // @ts-expect-error wat
@@ -624,7 +622,6 @@ export const mockAccountNoVote = fromAccountRaw({
   operationsCount: 12,
   pendingOperations: [],
   currencyId: "tron",
-  unitMagnitude: 6,
   lastSyncDate: "2020-03-18T09:22:46.747Z",
   subAccounts: [],
   // @ts-expect-error wat
@@ -706,7 +703,6 @@ export const mockAccountV2 = fromAccountRaw({
     cacheTransactionInfoById: {},
   },
   currencyId: "tron",
-  unitMagnitude: 6,
   lastSyncDate: "2023-12-21T09:22:46.747Z",
   blockHeight: 57506253,
   operationsCount: 96,

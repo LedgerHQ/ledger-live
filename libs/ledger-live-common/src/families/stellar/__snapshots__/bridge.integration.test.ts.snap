@@ -20,7 +20,6 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 1`] = `
     "subAccounts": [],
     "swapHistory": [],
     "syncHash": undefined,
-    "unitMagnitude": 7,
     "used": true,
   },
   {
@@ -41,7 +40,6 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 1`] = `
     "subAccounts": [],
     "swapHistory": [],
     "syncHash": undefined,
-    "unitMagnitude": 7,
     "used": true,
   },
   {
@@ -62,7 +60,6 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 1`] = `
     "subAccounts": [],
     "swapHistory": [],
     "syncHash": undefined,
-    "unitMagnitude": 7,
     "used": true,
   },
   {
@@ -83,7 +80,6 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 1`] = `
     "subAccounts": [],
     "swapHistory": [],
     "syncHash": undefined,
-    "unitMagnitude": 7,
     "used": true,
   },
   {
@@ -104,7 +100,6 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 1`] = `
     "subAccounts": [],
     "swapHistory": [],
     "syncHash": undefined,
-    "unitMagnitude": 7,
     "used": true,
   },
   {
@@ -125,7 +120,6 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 1`] = `
     "subAccounts": [],
     "swapHistory": [],
     "syncHash": undefined,
-    "unitMagnitude": 7,
     "used": false,
   },
 ]

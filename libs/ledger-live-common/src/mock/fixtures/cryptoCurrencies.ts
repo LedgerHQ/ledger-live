@@ -92,11 +92,6 @@ export function createFixtureAccount(
     blockHeight: 8168983,
     currency,
     xpub: currency.family === "bitcoin" ? "testxpub" : undefined,
-    unit: {
-      name: "satoshi",
-      code: "BTC",
-      magnitude: 5,
-    },
     operationsCount: 0,
     operations: [],
     pendingOperations: [],

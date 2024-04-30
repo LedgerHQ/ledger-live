@@ -19,7 +19,6 @@ exports[`vechain currency bridge scanAccounts vechain seed 1 1`] = `
     "subAccounts": [],
     "swapHistory": [],
     "syncHash": undefined,
-    "unitMagnitude": 18,
     "used": true,
   },
   {
@@ -50,7 +49,6 @@ exports[`vechain currency bridge scanAccounts vechain seed 1 1`] = `
     "subAccounts": [],
     "swapHistory": [],
     "syncHash": undefined,
-    "unitMagnitude": 18,
     "used": true,
   },
   {
@@ -81,7 +79,6 @@ exports[`vechain currency bridge scanAccounts vechain seed 1 1`] = `
     "subAccounts": [],
     "swapHistory": [],
     "syncHash": undefined,
-    "unitMagnitude": 18,
     "used": false,
   },
   {

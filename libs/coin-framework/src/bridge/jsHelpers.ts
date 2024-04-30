@@ -365,7 +365,6 @@ export const makeScanAccounts =
           operations: [],
           swapHistory: [],
           pendingOperations: [],
-          unit: currency.units[0],
           lastSyncDate: new Date(),
           creationDate,
           // overrides

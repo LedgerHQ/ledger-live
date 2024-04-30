@@ -142,7 +142,6 @@ const Header = ({
           operations: [],
           pendingOperations: [],
           swapHistory: [],
-          unitMagnitude: 0,
           lastSyncDate: "0",
         };
         return {

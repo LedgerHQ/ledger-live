@@ -40,7 +40,6 @@ const account: NearAccount = {
   operations: [],
   operationsCount: 3,
   pendingOperations: [],
-  unit: { name: "NEAR", code: "NEAR", magnitude: 24 },
   currency: {
     type: "CryptoCurrency",
     id: "near",

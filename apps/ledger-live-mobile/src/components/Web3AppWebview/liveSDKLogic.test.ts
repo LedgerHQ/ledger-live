@@ -107,11 +107,6 @@ const createAccount = (id: string, crypto: CryptoCurrency = defaultEthCryptoFami
   creationDate: new Date(),
   blockHeight: 8168983,
   currency: crypto,
-  unit: {
-    name: "satoshi",
-    code: "BTC",
-    magnitude: 5,
-  },
   operationsCount: 0,
   operations: [],
   pendingOperations: [],

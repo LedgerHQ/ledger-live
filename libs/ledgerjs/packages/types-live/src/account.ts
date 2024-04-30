@@ -1,5 +1,5 @@
 import type { BigNumber } from "bignumber.js";
-import type { CryptoCurrency, TokenCurrency, Unit } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { OperationRaw, Operation } from "./operation";
 import type { DerivationMode } from "./derivation";
 import type { SwapOperation, SwapOperationRaw } from "./swap";
@@ -106,8 +106,6 @@ export type Account = {
   currency: CryptoCurrency;
   // Some blockchains may use a different currency than the main one to pay fees
   feesCurrency?: CryptoCurrency | TokenCurrency;
-  // user preferred unit to use. unit is coming from currency.units. You can assume currency.units.indexOf(unit) will work. (make sure to preserve reference)
-  unit: Unit;
   // The total number of operations (operations[] can be partial)
   operationsCount: number;
   // lazy list of operations that exists on the blockchain.
@@ -204,7 +202,6 @@ export type AccountRaw = {
   feesCurrencyId?: string;
   operations: OperationRaw[];
   pendingOperations: OperationRaw[];
-  unitMagnitude: number;
   lastSyncDate: string;
   subAccounts?: TokenAccountRaw[];
   balanceHistoryCache?: BalanceHistoryCache;

@@ -42,7 +42,6 @@ const account: CosmosAccount = {
   operations: [],
   operationsCount: 1,
   pendingOperations: [],
-  unit: { name: "Atom", code: "ATOM", magnitude: 6 },
   currency: {
     type: "CryptoCurrency",
     id: "cosmos",

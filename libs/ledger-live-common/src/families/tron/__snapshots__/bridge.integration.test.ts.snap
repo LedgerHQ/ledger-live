@@ -58,7 +58,6 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
         },
       ],
     },
-    "unitMagnitude": 6,
     "used": true,
   },
   {
@@ -224,7 +223,6 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
       },
       "votes": [],
     },
-    "unitMagnitude": 6,
     "used": true,
   },
   {
@@ -462,7 +460,6 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
       },
       "votes": [],
     },
-    "unitMagnitude": 6,
     "used": true,
   },
   {
@@ -531,7 +528,6 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
       },
       "votes": [],
     },
-    "unitMagnitude": 6,
     "used": true,
   },
   {
@@ -587,7 +583,6 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
       },
       "votes": [],
     },
-    "unitMagnitude": 6,
     "used": true,
   },
   {
@@ -656,7 +651,6 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
       },
       "votes": [],
     },
-    "unitMagnitude": 6,
     "used": true,
   },
   {
@@ -712,7 +706,6 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
       },
       "votes": [],
     },
-    "unitMagnitude": 6,
     "used": true,
   },
   {
@@ -767,7 +760,6 @@ exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
       },
       "votes": [],
     },
-    "unitMagnitude": 6,
     "used": false,
   },
 ]

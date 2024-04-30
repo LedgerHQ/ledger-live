@@ -27,7 +27,13 @@ const account: Account = {
     explorerViews: [],
     name: "",
     ticker: "",
-    units: [],
+    units: [
+      {
+        name: "",
+        code: "",
+        magnitude: 0,
+      },
+    ],
   },
   operationsCount: 0,
   operations: [],
@@ -39,13 +45,6 @@ const account: Account = {
     WEEK: { latestDate: null, balances: [] },
   },
   swapHistory: [],
-  unit: {
-    name: "",
-    code: "",
-    magnitude: 0,
-    showAllDigits: undefined,
-    prefixCode: undefined,
-  },
 };
 
 const transaction: Transaction = {

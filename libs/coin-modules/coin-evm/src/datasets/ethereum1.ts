@@ -13,7 +13,6 @@ export const ethereum1: AccountRaw = {
   pendingOperations: [],
   operations: [],
   currencyId: "ethereum",
-  unitMagnitude: 18,
   balance: "",
   blockHeight: 0,
   lastSyncDate: "",

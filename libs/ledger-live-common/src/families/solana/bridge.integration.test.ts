@@ -156,7 +156,6 @@ function makeAccount(freshAddress: string) {
     operations: [],
     pendingOperations: [],
     currencyId: "solana",
-    unitMagnitude: 9,
     lastSyncDate: "",
     balance: "0",
   };

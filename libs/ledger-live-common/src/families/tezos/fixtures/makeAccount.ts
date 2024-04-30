@@ -27,7 +27,6 @@ export function makeAccount(
     spendableBalance: new BigNumber(100),
     creationDate: new Date(),
     currency: getCryptoCurrencyById("tezos"),
-    unit: { name: "xtz", code: "xtz", magnitude: 6 },
     operationsCount: 0,
     swapHistory: [],
     balanceHistoryCache: {

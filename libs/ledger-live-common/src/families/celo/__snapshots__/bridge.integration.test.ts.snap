@@ -46,7 +46,6 @@ exports[`celo currency bridge scanAccounts Celo 1 1`] = `
     "starred": undefined,
     "swapHistory": [],
     "syncHash": undefined,
-    "unitMagnitude": 18,
     "used": true,
   },
   {
@@ -76,7 +75,6 @@ exports[`celo currency bridge scanAccounts Celo 1 1`] = `
     "starred": undefined,
     "swapHistory": [],
     "syncHash": undefined,
-    "unitMagnitude": 18,
     "used": false,
   },
 ]

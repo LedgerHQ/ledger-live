@@ -11,7 +11,12 @@ import { accountsSelector } from "~/reducers/accounts";
 import { walletSelector } from "~/reducers/wallet";
 import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 
-const SEARCH_KEYS = ["name", "account.unit.code", "account.token.name", "account.token.ticker"];
+const SEARCH_KEYS = [
+  "name",
+  "account.currency.units[0].code",
+  "account.token.name",
+  "account.token.ticker",
+];
 
 type Props = {
   list: AccountLike[];

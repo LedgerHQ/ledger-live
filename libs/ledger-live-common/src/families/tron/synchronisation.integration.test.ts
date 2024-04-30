@@ -32,7 +32,6 @@ const dummyAccount: Account = {
   operationsCount: 0,
   operations: [],
   pendingOperations: [],
-  unit: tron.units[0],
   lastSyncDate: new Date(0),
   creationDate: new Date(),
   balanceHistoryCache: {

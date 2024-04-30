@@ -377,7 +377,6 @@ export const accountDataToAccount = ({
     operationsCount: 0,
     operations: [],
     pendingOperations: [],
-    unit: currency.units[0],
     lastSyncDate: new Date(0),
     creationDate: new Date(),
     balanceHistoryCache: emptyHistoryCache,

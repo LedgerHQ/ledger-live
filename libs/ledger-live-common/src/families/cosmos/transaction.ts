@@ -7,7 +7,7 @@ import {
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/coin-framework/transaction/common";
-import { getAccountUnit } from "../../account";
+import { getAccountCurrency } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 import { Account } from "@ledgerhq/types-live";
 
@@ -21,7 +21,7 @@ ${mode.toUpperCase()} ${
     : amount.isZero()
     ? ""
     : " " +
-      formatCurrencyUnit(getAccountUnit(account), amount, {
+      formatCurrencyUnit(getAccountCurrency(account).units[0], amount, {
         showCode: true,
         disableRounding: true,
       })
@@ -34,7 +34,7 @@ ${
         .map(
           v =>
             "  " +
-            formatCurrencyUnit(getAccountUnit(account), v.amount, {
+            formatCurrencyUnit(getAccountCurrency(account).units[0], v.amount, {
               disableRounding: true,
             }) +
             " -> " +
@@ -42,7 +42,7 @@ ${
         )
         .join("\n")
 }${!sourceValidator ? "" : "\n  source validator=" + sourceValidator}
-with fees=${fees ? formatCurrencyUnit(getAccountUnit(account), fees) : "?"}${
+with fees=${fees ? formatCurrencyUnit(getAccountCurrency(account).units[0], fees) : "?"}${
   !memo ? "" : `\n  memo=${memo}`
 }`;
 

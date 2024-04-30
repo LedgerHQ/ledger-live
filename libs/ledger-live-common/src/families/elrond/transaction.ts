@@ -8,7 +8,7 @@ import {
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/coin-framework/transaction/common";
 import type { Account } from "@ledgerhq/types-live";
-import { getAccountUnit } from "../../account";
+import { getAccountCurrency } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 export const formatTransaction = (
   { mode, amount, recipient, useAllAmount, subAccountId }: Transaction,
@@ -24,7 +24,7 @@ ${mode.toUpperCase()} ${
       : amount.isZero()
       ? ""
       : " " +
-        formatCurrencyUnit(getAccountUnit(account), amount, {
+        formatCurrencyUnit(getAccountCurrency(account).units[0], amount, {
           showCode: true,
           disableRounding: true,
         })

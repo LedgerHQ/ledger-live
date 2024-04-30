@@ -35,7 +35,6 @@ const dataset: CurrenciesData<Transaction> = {
         operations: [],
         pendingOperations: [],
         currencyId: "injective",
-        unitMagnitude: 18,
         lastSyncDate: "2023-09-18T06:38:17.652Z",
         balance: "607564000000000",
         spendableBalance: "506564000000000",

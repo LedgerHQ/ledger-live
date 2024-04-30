@@ -7,11 +7,11 @@ import {
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/coin-framework/transaction/common";
 import type { Account } from "@ledgerhq/types-live";
-import { getAccountUnit } from "../../account";
+import { getAccountCurrency } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 
 export function formatTransaction(transaction: Transaction, account: Account): string {
-  const amount = formatCurrencyUnit(getAccountUnit(account), transaction.amount, {
+  const amount = formatCurrencyUnit(getAccountCurrency(account).units[0], transaction.amount, {
     showCode: true,
     disableRounding: true,
   });

@@ -6,7 +6,6 @@ import { CosmosAccount } from "../families/cosmos/types";
 import {
   getMainAccount,
   getAccountCurrency,
-  getAccountUnit,
   getFeesCurrency,
   getFeesUnit,
   getAccountSpendableBalance,
@@ -35,7 +34,6 @@ import {
 export {
   getMainAccount,
   getAccountCurrency,
-  getAccountUnit,
   getFeesCurrency,
   getFeesUnit,
   getAccountSpendableBalance,

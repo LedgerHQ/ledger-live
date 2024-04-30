@@ -8,7 +8,7 @@ import type {
 } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import mapValues from "lodash/mapValues";
-import { getAccountUnit } from "../account";
+import { getAccountCurrency } from "../account";
 import { formatCurrencyUnit } from "../currencies";
 
 type tooltipArgs = Record<string, string>;
@@ -118,19 +118,19 @@ export const formatTransactionStatusCommon = (
 
   str +=
     "\n  amount: " +
-    formatCurrencyUnit(getAccountUnit(account), amount, {
+    formatCurrencyUnit(getAccountCurrency(account).units[0], amount, {
       showCode: true,
       disableRounding: true,
     });
   str +=
     "\n  estimated fees: " +
-    formatCurrencyUnit(getAccountUnit(mainAccount), estimatedFees, {
+    formatCurrencyUnit(getAccountCurrency(mainAccount).units[0], estimatedFees, {
       showCode: true,
       disableRounding: true,
     });
   str +=
     "\n  total spent: " +
-    formatCurrencyUnit(getAccountUnit(account), totalSpent, {
+    formatCurrencyUnit(getAccountCurrency(account).units[0], totalSpent, {
       showCode: true,
       disableRounding: true,
     });

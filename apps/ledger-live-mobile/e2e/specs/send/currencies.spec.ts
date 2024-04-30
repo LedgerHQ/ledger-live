@@ -5,6 +5,7 @@ import {
   getCryptoCurrencyById,
   setSupportedCurrencies,
 } from "@ledgerhq/live-common/currencies/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { loadAccounts, loadBleState, loadConfig } from "../../bridge/server";
 import PortfolioPage from "../../models/wallet/portfolioPage";
 import SendPage from "../../models/trade/sendPage";
@@ -64,9 +65,11 @@ describe("Send flow", () => {
       const halfBalance = account.balance.div(2);
       const amount =
         // half of the balance, formatted with the same unit as what the input should use
-        formatCurrencyUnit(account.unit, halfBalance, { useGrouping: false });
+        formatCurrencyUnit(getAccountCurrency(account).units[0], halfBalance, {
+          useGrouping: false,
+        });
 
-      const amountWithCode = formattedAmount(account.unit, halfBalance);
+      const amountWithCode = formattedAmount(getAccountCurrency(account).units[0], halfBalance);
 
       await portfolioPage.openViaDeeplink();
       await sendPage.openViaDeeplink();

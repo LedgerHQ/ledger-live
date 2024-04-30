@@ -45,7 +45,6 @@ export function createFixtureAccount(account?: Partial<PolkadotAccount>): Polkad
     creationDate: faker.date.past(),
     blockHeight: faker.number.int({ min: 100_000, max: 200_000 }),
     currency,
-    unit: currency.units[0],
     operationsCount: 0,
     operations: [],
     pendingOperations: [],
