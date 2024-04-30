@@ -128,9 +128,11 @@ export default class Polkadot {
     const chunks: Buffer[] = [];
     let buffer = Buffer.from(message);
     console.log("getting major app version");
+    //const polkadot = new Polkadot(this.transport);
+    //const appMajorVersion = await polkadot.getMajorAppVersion();
     //const appMajorVersion = await this.getMajorAppVersion();
-    const appMajorVersion = 0;
-    console.log("got major app version: ", appMajorVersion);
+    //console.log("got major app version: ", appMajorVersion);
+    const appMajorVersion = 6;
     if (appMajorVersion >= 6) {
       // metadata is required for app version >= 6 (new polkadot generic nano app)
       const blobLen = Buffer.alloc(2);
