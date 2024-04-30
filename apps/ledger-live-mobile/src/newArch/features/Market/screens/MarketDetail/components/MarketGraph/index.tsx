@@ -5,7 +5,8 @@ import { useTranslation } from "react-i18next";
 import Graph from "~/components/Graph";
 import getWindowDimensions from "~/logic/getWindowDimensions";
 import { Item } from "~/components/Graph/types";
-import { RANGES } from "~/newArch/features/Market/utils";
+import { RANGES } from "LLM/features/Market/utils";
+import { MarketCoinDataChart } from "@ledgerhq/live-common/market/utils/types";
 
 const { width } = getWindowDimensions();
 
@@ -19,7 +20,7 @@ function MarketGraph({
   setHoverItem: (_: Item | null | undefined) => void;
   isLoading?: boolean;
   refreshChart: (_: { range: string }) => void;
-  chartData?: Record<string, [number, number][]>;
+  chartData?: MarketCoinDataChart;
   range: string;
 }) {
   const { t } = useTranslation();

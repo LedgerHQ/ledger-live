@@ -9,6 +9,7 @@ import {
   MarketItemResponse,
   SupportedCoins,
   MarketCurrencyRequestParams,
+  MarketCoinDataChart,
 } from "../utils/types";
 import { rangeDataTable } from "../utils/rangeDataTable";
 import URL from "url";
@@ -125,7 +126,7 @@ export async function fetchCurrencyChartData({
   id,
   counterCurrency,
   range = "24h",
-}: MarketCurrencyChartDataRequestParams): Promise<Record<string, [number, number][]>> {
+}: MarketCurrencyChartDataRequestParams): Promise<MarketCoinDataChart> {
   const { days, interval } = rangeDataTable[range];
 
   const url = `${ROOT_PATH}/coins/${id}/market_chart?vs_currency=${counterCurrency}&days=${days}&interval=${interval}`;

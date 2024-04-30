@@ -10,6 +10,7 @@ import { dayFormat, hourFormat, useDateFormatter } from "~/renderer/hooks/useDat
 import ChartPlaceholder from "../../assets/ChartPlaceholder";
 import CountervalueSelect from "../../components/CountervalueSelect";
 import { useTranslation } from "react-i18next";
+import { MarketCoinDataChart } from "@ledgerhq/live-common/market/utils/types";
 
 const Title = styled(Text).attrs({ variant: "h3", color: "neutral.c100", mt: 1, mb: 5 })`
   font-size: 28px;
@@ -72,7 +73,7 @@ function Tooltip({ data, counterCurrency, locale, formatDay, formatHour }: Toolt
 type Props = {
   price?: number;
   priceChangePercentage?: number;
-  chartData?: Record<string, [number, number][]>;
+  chartData?: MarketCoinDataChart;
   range: string;
   counterCurrency: string;
   refreshChart: (range: string) => void;

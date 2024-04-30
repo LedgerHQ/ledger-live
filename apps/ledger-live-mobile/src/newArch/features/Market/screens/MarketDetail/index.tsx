@@ -21,6 +21,7 @@ import BackButton from "./components/BackButton";
 import { Item } from "~/components/Graph/types";
 import {
   CurrencyData,
+  MarketCoinDataChart,
   MarketCurrencyChartDataRequestParams,
 } from "@ledgerhq/live-common/market/utils/types";
 import usePullToRefresh from "../../hooks/usePullToRefresh";
@@ -37,7 +38,7 @@ interface ViewProps {
   counterCurrency?: string;
   allAccounts: AccountLike[];
   range: string;
-  dataChart?: Record<string, [number, number][]>;
+  dataChart?: MarketCoinDataChart;
   currency?: CurrencyData;
   dataCurrency?: CurrencyData;
 }

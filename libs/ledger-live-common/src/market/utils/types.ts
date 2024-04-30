@@ -8,6 +8,9 @@ export type MarketCoin = {
   symbol: string;
 };
 
+export type ChartDataPoint = [number, number];
+export type MarketCoinDataChart = Record<string, Array<ChartDataPoint>>;
+
 export type SupportedCoins = MarketCoin[];
 
 export type MarketListRequestParams = {
@@ -90,7 +93,7 @@ export type CurrencyData = {
   atl: number;
   atlDate: Date;
   sparklineIn7d?: SparklineSvgData;
-  chartData: Record<string, [number, number][]>;
+  chartData: MarketCoinDataChart;
 };
 
 export type RawCurrencyData = {
