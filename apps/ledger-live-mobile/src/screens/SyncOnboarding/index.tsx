@@ -7,10 +7,8 @@ import { useToggleOnboardingEarlyCheck } from "@ledgerhq/live-common/deviceSDK/h
 import { log } from "@ledgerhq/logs";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { LockedDeviceError, UnexpectedBootloader } from "@ledgerhq/errors";
-import {
-  SyncOnboardingCompanion,
-  NORMAL_DESYNC_OVERLAY_DISPLAY_DELAY_MS,
-} from "./SyncOnboardingCompanion";
+import { NORMAL_DESYNC_OVERLAY_DISPLAY_DELAY_MS } from "./SyncOnboardingCompanion";
+import { SyncOnboardingCompanion } from "./SyncOnboardingCompanion";
 import { EarlySecurityCheck } from "./EarlySecurityCheck";
 import DesyncDrawer from "./DesyncDrawer";
 import EarlySecurityCheckMandatoryDrawer from "./EarlySecurityCheckMandatoryDrawer";

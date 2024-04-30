@@ -322,3 +322,22 @@ jobs:
         with:
           name: summary.json
           path: ${{ github.workspace }}/summary.json
+
+  allure-report:
+    name: "Allure Reports Export on Server"
+    needs: [e2e-tests-linux]
+    runs-on: [ledger-live-medium]
+    if: ${{ !cancelled() && github.ref_name == 'develop' }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - name: Send Results and Generate Allure Report - Linux
+        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
+        if: ${{ !cancelled() }}
+        with:
+          platform: linux
+          login: ${{ vars.ALLURE_USERNAME }}
+          password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
+          path: allure-results-linux

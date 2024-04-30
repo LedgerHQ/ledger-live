@@ -24,14 +24,13 @@ import {
   recalculateAccountBalanceHistories,
   encodeAccountId,
 } from "../account";
-import { FreshAddressIndexInvalid, UnsupportedDerivation } from "../errors";
+import { UnsupportedDerivation } from "../errors";
 import getAddressWrapper, { GetAddressFn } from "./getAddressWrapper";
 import type { Result } from "../derivation";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type {
   Account,
   AccountBridge,
-  Address,
   CurrencyBridge,
   DerivationMode,
   Operation,
@@ -188,7 +187,7 @@ export const makeSync =
     shouldMergeOps?: boolean;
   }): AccountBridge<any>["sync"] =>
   (initial, syncConfig): Observable<AccountUpdater> =>
-    Observable.create((o: Observer<(acc: Account) => Account>) => {
+    new Observable((o: Observer<(acc: Account) => Account>) => {
       async function main() {
         const accountId = encodeAccountId({
           type: "js",
@@ -359,12 +358,6 @@ export const makeScanAccounts =
           seedIdentifier,
           freshAddress,
           freshAddressPath,
-          freshAddresses: [
-            {
-              address: freshAddress,
-              derivationPath: freshAddressPath,
-            },
-          ],
           derivationMode,
           name: "",
           starred: false,
@@ -539,33 +532,22 @@ export function makeAccountBridgeReceive(
     verify?: boolean;
     deviceId: string;
     subAccountId?: string;
-    freshAddressIndex?: number;
   },
 ) => Observable<{
   address: string;
   path: string;
 }> {
-  return (account, { verify, deviceId, freshAddressIndex }) => {
-    let freshAddress: Address | undefined;
-
-    if (freshAddressIndex !== undefined && freshAddressIndex !== null) {
-      freshAddress = account.freshAddresses[freshAddressIndex];
-
-      if (freshAddress === undefined) {
-        throw new FreshAddressIndexInvalid();
-      }
-    }
-
+  return (account, { verify, deviceId }) => {
     const arg = {
       verify,
       currency: account.currency,
       derivationMode: account.derivationMode,
-      path: freshAddress ? freshAddress.derivationPath : account.freshAddressPath,
+      path: account.freshAddressPath,
       ...(injectGetAddressParams && injectGetAddressParams(account)),
     };
     return from(
       getAddressFn(deviceId, arg).then(r => {
-        const accountAddress = freshAddress ? freshAddress.address : account.freshAddress;
+        const accountAddress = account.freshAddress;
 
         if (r.address !== accountAddress) {
           throw new WrongDeviceForAccount(`WrongDeviceForAccount ${account.name}`, {

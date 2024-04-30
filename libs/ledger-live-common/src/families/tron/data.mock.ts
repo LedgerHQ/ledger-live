@@ -13,12 +13,6 @@ export const mockAccount = fromAccountRaw({
   index: 0,
   freshAddress: "TRON_ID",
   freshAddressPath: "44'/195'/0'/0/0",
-  freshAddresses: [
-    {
-      address: "TRON_ID",
-      derivationPath: "44'/195'/0'/0/0",
-    },
-  ],
   name: "Tron 1",
   blockHeight: 0,
   balance: "375978130",
@@ -288,12 +282,6 @@ export const mockAccountNoReward = fromAccountRaw({
   index: 0,
   freshAddress: "TRON_ID",
   freshAddressPath: "44'/195'/0'/0/0",
-  freshAddresses: [
-    {
-      address: "TRON_ID",
-      derivationPath: "44'/195'/0'/0/0",
-    },
-  ],
   name: "Tron 1",
   blockHeight: 0,
   balance: "375978130",
@@ -519,12 +507,6 @@ export const mockAccountNoVote = fromAccountRaw({
   index: 0,
   freshAddress: "TRON_ID",
   freshAddressPath: "44'/195'/0'/0/0",
-  freshAddresses: [
-    {
-      address: "TRON_ID",
-      derivationPath: "44'/195'/0'/0/0",
-    },
-  ],
   name: "Tron 1",
   blockHeight: 0,
   balance: "375978130",
@@ -701,7 +683,6 @@ export const mockAccountV2 = fromAccountRaw({
   derivationMode: "",
   index: 0,
   freshAddress: "TRON_ID",
-  freshAddresses: [],
   freshAddressPath: "44'/195'/0'/0/0",
   subAccounts: [],
   name: "Tron 2",

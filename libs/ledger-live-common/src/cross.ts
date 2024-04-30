@@ -357,8 +357,6 @@ export const accountDataToAccount = ({
     freshAddress,
     freshAddressPath,
     swapHistory: [],
-    // these fields will be completed as we will sync
-    freshAddresses: [],
     blockHeight: 0,
     balance: balanceBN,
     spendableBalance: balanceBN,

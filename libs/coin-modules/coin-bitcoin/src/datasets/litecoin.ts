@@ -133,12 +133,6 @@ const dataset: CurrenciesData<Transaction> = {
         index: 0,
         freshAddress: "ltc1qx2wxzwmpg4m8tr9d7rharerxaqj50jkdasvxmx",
         freshAddressPath: "84'/2'/0'/0/3",
-        freshAddresses: [
-          {
-            address: "ltc1qx2wxzwmpg4m8tr9d7rharerxaqj50jkdasvxmx",
-            derivationPath: "84'/2'/0'/0/3",
-          },
-        ],
         blockHeight: 0,
         operations: [],
         pendingOperations: [],
@@ -162,12 +156,6 @@ const dataset: CurrenciesData<Transaction> = {
         index: 2,
         freshAddress: "MKLFUqcvJkqqvF48BFTFLxDvJk43cqbhk1",
         freshAddressPath: "49'/2'/2'/0/1",
-        freshAddresses: [
-          {
-            address: "MKLFUqcvJkqqvF48BFTFLxDvJk43cqbhk1",
-            derivationPath: "49'/2'/2'/0/1",
-          },
-        ],
         blockHeight: 0,
         operations: [],
         pendingOperations: [],

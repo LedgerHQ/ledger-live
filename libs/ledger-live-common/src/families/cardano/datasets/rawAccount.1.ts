@@ -9,13 +9,6 @@ export const cardanoRawAccount1: AccountRaw = {
   freshAddress:
     "addr_test1qpj84xm4jlpcsvmrnldj86zz7g4mwzr7qg90wdjpn64uea44mcsd3mzvmr9qhfscxkyla3aqnzttwepay9mt3fz84smqyjvhh4",
   freshAddressPath: "1852'/1815'/0'/0/2",
-  freshAddresses: [
-    {
-      derivationPath: "1852'/1815'/0'/0/2",
-      address:
-        "addr_test1qpj84xm4jlpcsvmrnldj86zz7g4mwzr7qg90wdjpn64uea44mcsd3mzvmr9qhfscxkyla3aqnzttwepay9mt3fz84smqyjvhh4",
-    },
-  ],
   blockHeight: 0,
   operations: [],
   pendingOperations: [],

@@ -47,12 +47,6 @@ const ethMockAccount: Account = {
   index: 0,
   freshAddress: "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3",
   freshAddressPath: "44'/60'/0'/0/0",
-  freshAddresses: [
-    {
-      address: "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3",
-      derivationPath: "44'/60'/0'/0/0",
-    },
-  ],
   name: "Ethereum 1",
   blockHeight: 16626551,
   creationDate: new Date("2021-03-23T14:17:07.001Z"),
@@ -88,12 +82,6 @@ const polygonMockAccount: Account = {
   index: 0,
   freshAddress: "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3",
   freshAddressPath: "44'/60'/0'/0/0",
-  freshAddresses: [
-    {
-      address: "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3",
-      derivationPath: "44'/60'/0'/0/0",
-    },
-  ],
   name: "Polygon 1",
   blockHeight: 16626551,
   creationDate: new Date("2021-03-23T14:17:07.001Z"),

@@ -3,7 +3,6 @@ import { FlatList, LayoutChangeEvent, ListRenderItemInfo } from "react-native";
 import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { Flex } from "@ledgerhq/native-ui";
 import debounce from "lodash/debounce";
@@ -11,7 +10,7 @@ import SafeAreaView from "~/components/SafeAreaView";
 import { useTranslation } from "react-i18next";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
-import { isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
+import { getMainAccount, isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { ReactNavigationPerformanceView } from "@shopify/react-native-performance-navigation";
 import { switchCountervalueFirst } from "~/actions/settings";
@@ -37,6 +36,8 @@ import useAccountActions from "./hooks/useAccountActions";
 import type { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
+import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
 
 type Props =
   | StackNavigatorProps<AccountsNavigatorParamList, ScreenName.Account>
@@ -89,7 +90,8 @@ const AccountScreenInner = ({
     });
   }, 300);
 
-  const currency = getAccountCurrency(account);
+  const mainAccount = getMainAccount(account, parentAccount);
+  const currency = mainAccount.currency;
 
   const analytics = (
     <TrackScreen
@@ -112,9 +114,18 @@ const AccountScreenInner = ({
 
   const { secondaryActions } = useAccountActions({ account, parentAccount });
 
+  let currencyConfig: CurrencyConfig | undefined = undefined;
+  try {
+    currencyConfig = getCurrencyConfiguration(mainAccount.currency);
+  } catch (err) {
+    console.warn(err);
+  }
+
   const { listHeaderComponents } = getListHeaderComponents({
     account,
     parentAccount,
+    currency,
+    currencyConfig,
     countervalueAvailable: countervalueAvailable || account.balance.eq(0),
     useCounterValue,
     range,

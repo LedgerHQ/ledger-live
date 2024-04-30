@@ -1,6 +1,5 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { useSelector } from "react-redux";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { PenMedium } from "@ledgerhq/native-ui/assets/icons";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -8,7 +7,6 @@ import { isEditDeviceNameSupported } from "@ledgerhq/live-common/device/use-case
 import { getDeviceModel } from "@ledgerhq/devices";
 import { TouchableOpacity } from "react-native";
 import { DeviceInfo } from "@ledgerhq/types-live";
-import { deviceNameByDeviceIdSelectorCreator } from "~/reducers/ble";
 import { ScreenName } from "~/const";
 
 type Props = {
@@ -27,7 +25,7 @@ const hitSlop = {
 
 export default function DeviceName({ device, initialDeviceName, disabled, deviceInfo }: Props) {
   const navigation = useNavigation();
-  const savedName = useSelector(deviceNameByDeviceIdSelectorCreator(device.deviceId));
+  const [deviceName, setDeviceName] = useState(initialDeviceName || "");
   const productName = device
     ? getDeviceModel(device.modelId).productName || device.modelId
     : "Ledger Device";
@@ -38,13 +36,14 @@ export default function DeviceName({ device, initialDeviceName, disabled, device
     () =>
       navigation.navigate(ScreenName.EditDeviceName, {
         device,
-        deviceName: savedName,
+        deviceName,
         deviceInfo,
+        onNameChange: setDeviceName,
       }),
-    [navigation, device, savedName, deviceInfo],
+    [navigation, device, deviceName, deviceInfo],
   );
 
-  const displayedName = savedName || initialDeviceName || productName;
+  const displayedName = (isEditSupported && deviceName) || productName;
 
   return (
     <Flex flexDirection={"row"} flexWrap={"nowrap"} alignItems="center">

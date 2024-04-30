@@ -1,4 +1,16 @@
-export const fixtureChainSpec = {
+import { SidecarRuntimeSpec, SidecarTransactionMaterial } from "./sidecar.types";
+
+export const fixtureTransactionParams = {
+  blockHash: "0x7346af1ba9531cffafd7b5cb30632ccf920f0770832b4215a49fe34519479c7a",
+  blockNumber: "20500869",
+  chainName: "Polkadot",
+  genesisHash: "0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3",
+  specName: "polkadot",
+  transactionVersion: "25",
+  specVersion: "1002000",
+};
+
+export const fixtureChainSpec: SidecarRuntimeSpec = {
   at: {
     height: "19695906",
     hash: "0x6e0f5d7af7d5c659e10fe91666356201c11e3aef090f1fb236fe0dddcd584b38",
@@ -8,11 +20,11 @@ export const fixtureChainSpec = {
   implVersion: "0",
   specName: "polkadot",
   specVersion: "1001002",
-  chainType: { live: null },
-  properties: { ss58Format: "0", tokenDecimals: ["10"], tokenSymbol: ["DOT"] },
+  chainType: {},
+  properties: { ss58Format: "0", tokenDecimals: "10", tokenSymbol: "DOT" },
 };
 
-export const fixtureTxMaterialWithMetadata = {
+export const fixtureTxMaterialWithMetadata: SidecarTransactionMaterial = {
   at: {
     hash: "0xc111b08b2493bc251b62e37e7b6c8ac097ef8311004b81d522778f4d1ed025f3",
     height: "19696491",

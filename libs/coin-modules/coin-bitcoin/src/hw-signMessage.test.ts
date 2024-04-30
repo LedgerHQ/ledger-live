@@ -63,7 +63,6 @@ function createFixtureAccount(account?: Partial<BitcoinAccount>): BitcoinAccount
     index: 0,
     freshAddress: freshAddress.address,
     freshAddressPath: freshAddress.derivationPath,
-    freshAddresses: [freshAddress],
     name: "bitcoin account name",
     starred: false,
     used: true,

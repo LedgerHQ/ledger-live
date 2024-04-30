@@ -12,12 +12,6 @@ const account = fromAccountRaw({
   index: 2,
   freshAddress: "me",
   freshAddressPath: "44'/1729'/2'/0'",
-  freshAddresses: [
-    {
-      address: "me",
-      derivationPath: "44'/1729'/2'/0'",
-    },
-  ],
   blockHeight: 140408643618744,
   operations: [
     {

@@ -2,12 +2,14 @@ import { useEffect } from "react";
 import { useDynamicContentLogic } from "./useDynamicContentLogic";
 
 const HookDynamicContentCards = () => {
-  const { refreshDynamicContent, fetchData } = useDynamicContentLogic();
+  const { refreshDynamicContent, fetchData, clearOldDismissedContentCards } =
+    useDynamicContentLogic();
 
   useEffect(() => {
+    clearOldDismissedContentCards();
     refreshDynamicContent();
     fetchData();
-  }, [fetchData, refreshDynamicContent]);
+  }, [fetchData, refreshDynamicContent, clearOldDismissedContentCards]);
 
   return null;
 };

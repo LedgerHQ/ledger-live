@@ -8,12 +8,6 @@ exports[`sei_network currency bridge scanAccounts sei_network seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "sei1gyauvl44q2apn3u3aujm36q8zrj74vryc50pfg",
     "freshAddressPath": "44'/118'/0'/0/0",
-    "freshAddresses": [
-      {
-        "address": "sei1gyauvl44q2apn3u3aujm36q8zrj74vryc50pfg",
-        "derivationPath": "44'/118'/0'/0/0",
-      },
-    ],
     "id": "js:2:sei_network:sei1gyauvl44q2apn3u3aujm36q8zrj74vryc50pfg:",
     "index": 0,
     "name": "SeiNetwork 1",
@@ -33,12 +27,6 @@ exports[`sei_network currency bridge scanAccounts sei_network seed 1 1`] = `
     "derivationMode": "",
     "freshAddress": "sei1v2mp0m7k96dm9qv60fkspcqlzpkzrwne0fzm20",
     "freshAddressPath": "44'/118'/1'/0/0",
-    "freshAddresses": [
-      {
-        "address": "sei1v2mp0m7k96dm9qv60fkspcqlzpkzrwne0fzm20",
-        "derivationPath": "44'/118'/1'/0/0",
-      },
-    ],
     "id": "js:2:sei_network:sei1v2mp0m7k96dm9qv60fkspcqlzpkzrwne0fzm20:",
     "index": 1,
     "name": "SeiNetwork 2",
