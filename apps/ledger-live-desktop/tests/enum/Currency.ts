@@ -12,7 +12,7 @@ export class Currency {
     "BTC",
     "Bitcoin",
     "BTC",
-    ["Amount", "Address", "Continue", "Reject"],
+    ["Amount", "Address", "Continue", "Reject", "Sign"],
     ["Address", "Approve", "Reject"],
   );
   static readonly tBTC = new Currency(
@@ -20,7 +20,7 @@ export class Currency {
     "𝚝BTC",
     "Bitcoin Testnet",
     "𝚝BTC",
-    ["Amount", "Address", "Continue", "Reject"],
+    ["Amount", "Address", "Continue", "Reject", "Sign"],
     ["Address", "Approve", "Reject"],
   );
   static readonly ETH = new Currency(

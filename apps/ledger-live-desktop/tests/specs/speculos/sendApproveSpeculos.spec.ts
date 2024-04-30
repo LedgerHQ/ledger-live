@@ -26,7 +26,7 @@ test.afterEach(async () => {
 });
 
 // ONLY TESTNET (SEND WILL BE APPROVED ON DEVICE)
-const accounts: Account[] = [Account.tETH_1];
+const accounts: Account[] = [Account.tBTC_1, Account.tETH_1];
 
 test.describe.parallel("Send Approve @smoke", () => {
   for (const account of accounts) {
@@ -67,6 +67,18 @@ test.describe.parallel("Send Approve @smoke", () => {
         expect(verifyAddress(account.addressForSendTest, addressScreen)).toBe(true);
         await pressRightUntil(account.currency.sendPattern[2]);
         await pressBoth();
+        switch (account.currency.uiName) {
+          case "Bitcoin Testnet":
+            await pressRightUntil(account.currency.sendPattern[2]);
+            await pressBoth();
+            await pressRightUntil(account.currency.sendPattern[2]);
+            await pressBoth();
+            await pressRightUntil(account.currency.sendPattern[4]);
+            await pressBoth();
+            break;
+          default:
+            break;
+        }
         await expect(sendModal.checkTransactionbroadcast).toBeVisible();
       });
     });
