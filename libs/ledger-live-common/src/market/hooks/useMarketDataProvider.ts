@@ -89,6 +89,7 @@ export function useMarketData(props: MarketListRequestParams): MarketListRequest
       queryKey: [
         QUERY_KEY.MarketData,
         page,
+        props.order,
         {
           counterCurrency: props.counterCurrency,
           ...(props.search && props.search?.length > 1 && { search: props.search }),

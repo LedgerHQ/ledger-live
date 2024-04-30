@@ -8,6 +8,7 @@ import {
   SupportedCoins,
   MarketCurrencyRequestParams,
   MarketCoinDataChart,
+  Order,
 } from "../utils/types";
 import { rangeDataTable } from "../utils/rangeDataTable";
 import URL from "url";
@@ -27,18 +28,31 @@ export async function fetchList({
   counterCurrency,
   limit = 50,
   page = 1,
-  order = "desc", // TO UPDATE WITH NEW PARAM
+  order = Order.MarketCapDesc,
   search = "",
   liveCoinsList = [],
   starred = [],
 }: MarketListRequestParams): Promise<MarketItemResponse[]> {
+  const getSortParam = (order: Order) => {
+    switch (order) {
+      default:
+      case Order.MarketCapDesc:
+        return "market-cap-rank";
+      case Order.MarketCapAsc:
+        return "market-cap-rank-desc";
+      case Order.topLosers:
+        return "top-losers";
+      case Order.topGainers:
+        return "top-gainers";
+    }
+  };
   const url = URL.format({
     pathname: `${baseURL()}/v3/markets`,
     query: {
       page: page,
       pageSize: limit,
       to: counterCurrency,
-      sort: "market-cap-rank",
+      sort: getSortParam(order),
       ...(search.length > 1 && { filter: search }),
       ...(starred.length > 1 && { ids: starred.join(",") }),
       ...(liveCoinsList.length > 1 && { ids: liveCoinsList.join(",") }),

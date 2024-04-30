@@ -11,6 +11,13 @@ export type MarketCoin = {
 export type ChartDataPoint = [number, number];
 export type MarketCoinDataChart = Record<string, Array<ChartDataPoint>>;
 
+export enum Order {
+  MarketCapDesc = "desc",
+  MarketCapAsc = "asc",
+  topLosers = "topLosers",
+  topGainers = "topGainers",
+}
+
 export type SupportedCoins = MarketCoin[];
 
 export type MarketListRequestParams = {
@@ -20,7 +27,7 @@ export type MarketListRequestParams = {
   limit?: number;
   range?: string;
   orderBy?: string;
-  order?: string;
+  order?: Order;
   search?: string;
   lastRequestTime?: Date;
   liveCompatible?: boolean;

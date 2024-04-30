@@ -137,9 +137,8 @@ export function useMarket() {
       const isFreshSort = newOrderBy !== orderBy;
       refresh(
         isFreshSort
-          ? { orderBy: newOrderBy, order: "desc" }
+          ? { order: "desc" }
           : {
-              orderBy: newOrderBy,
               order: order === "asc" ? "desc" : "asc",
             },
       );

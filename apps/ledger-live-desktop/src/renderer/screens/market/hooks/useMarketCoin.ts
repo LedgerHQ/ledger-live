@@ -7,9 +7,8 @@ import {
   useMarketDataProvider,
 } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
 import { Page, useMarketActions } from "./useMarketActions";
-import { CurrencyData } from "@ledgerhq/live-common/market/utils/types";
 import { useCallback } from "react";
-import { useLocation, useParams } from "react-router";
+import { useParams } from "react-router";
 import { setMarketOptions } from "~/renderer/actions/market";
 import { removeStarredMarketCoins, addStarredMarketCoins } from "~/renderer/actions/settings";
 import { marketParamsSelector } from "~/renderer/reducers/market";
@@ -19,7 +18,6 @@ export const useMarketCoin = () => {
   const marketParams = useSelector(marketParamsSelector);
   const { colors } = useTheme();
   const dispatch = useDispatch();
-  const location = useLocation();
   const { currencyId } = useParams<{ currencyId: string }>();
 
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
@@ -40,7 +38,6 @@ export const useMarketCoin = () => {
     counterCurrency,
     id: currencyId,
     range,
-    name: (location.state as CurrencyData).name,
   });
   const { id, internalCurrency } = currency || {};
 
