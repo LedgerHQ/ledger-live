@@ -3,6 +3,8 @@ import BigNumber from "bignumber.js";
 import { getEnv } from "@ledgerhq/live-env";
 import { decodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { TokenAccount } from "@ledgerhq/types-live";
 import { makeTokenAccount } from "../fixtures/common.fixtures";
 import * as etherscanAPI from "../../api/explorer/etherscan";
 import * as synchronization from "../../synchronization";
@@ -24,8 +26,6 @@ import {
 import { UnknownNode } from "../../errors";
 import * as logic from "../../logic";
 import { getCoinConfig } from "../../config";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { TokenAccount } from "@ledgerhq/types-live";
 import { createSwapHistoryMap } from "../../logic";
 
 jest.mock("../../api/node/rpc.common");
