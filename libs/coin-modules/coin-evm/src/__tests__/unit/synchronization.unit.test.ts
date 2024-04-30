@@ -19,12 +19,14 @@ import {
   tokenCurrencies,
   tokenOperations,
   internalOperations,
+  swapHistory,
 } from "../fixtures/synchronization.fixtures";
 import { UnknownNode } from "../../errors";
 import * as logic from "../../logic";
 import { getCoinConfig } from "../../config";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { TokenAccount } from "@ledgerhq/types-live";
+import { createSwapHistoryMap } from "../../logic";
 
 jest.mock("../../api/node/rpc.common");
 jest.useFakeTimers().setSystemTime(new Date("2014-04-21"));
@@ -542,7 +544,7 @@ describe("EVM Family", () => {
       });
 
       it("should return the right subAccounts", async () => {
-        const swapHistoryMap = new Map<TokenCurrency, TokenAccount["swapHistory"]>();
+        const swapHistoryMap = createSwapHistoryMap(account);
         const tokenAccounts = await synchronization.getSubAccounts(
           {
             ...getAccountShapeParameters,
@@ -561,7 +563,7 @@ describe("EVM Family", () => {
           operations: [tokenOperations[0], tokenOperations[1]],
           operationsCount: 2,
           starred: undefined,
-          swapHistory: [],
+          swapHistory: swapHistory,
         };
         const expectedUsdtAccount = {
           ...makeTokenAccount(account.freshAddress, tokenCurrencies[1]),
