@@ -8,7 +8,7 @@ import { useRemoteLiveAppManifest } from "../providers/RemoteLiveAppProvider";
 import { useManifest } from "./useManifest";
 import { useLocalLiveAppManifest } from "../../wallet-api/LocalLiveAppProvider";
 
-jest.mock("../providers/LocalLiveAppProvider");
+jest.mock("../../wallet-api/LocalLiveAppProvider");
 jest.mock("../providers/RemoteLiveAppProvider");
 
 const mockUseLocalLiveAppManifest = useLocalLiveAppManifest as jest.Mock;
