@@ -1,15 +1,20 @@
 import BigNumber from "bignumber.js";
 import { faker } from "@faker-js/faker";
 import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/currencies";
-import { PolkadotAccount, PolkadotOperationExtra, PolkadotResources, Transaction } from "../types";
+import {
+  PolkadotAccount,
+  PolkadotOperation,
+  PolkadotOperationExtra,
+  PolkadotResources,
+  Transaction,
+} from "../types";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/abandonseed";
-import { Operation } from "@ledgerhq/types-live";
 
 export function createFixtureAccount(account?: Partial<PolkadotAccount>): PolkadotAccount {
   const currency = listCryptoCurrencies(true).find(c => c.id === "polkadot")!;
 
   const polkadotResources: PolkadotResources = account?.polkadotResources || {
-    controller: undefined,
+    controller: account?.polkadotResources?.controller || undefined,
     stash: account?.polkadotResources?.stash || undefined,
     nonce: faker.number.int(100_000),
     lockedBalance: new BigNumber(faker.string.numeric()),
@@ -17,7 +22,7 @@ export function createFixtureAccount(account?: Partial<PolkadotAccount>): Polkad
     unlockingBalance: new BigNumber(faker.string.numeric()),
     unlockings: undefined,
     nominations: undefined,
-    numSlashingSpans: faker.number.int(),
+    numSlashingSpans: faker.number.int(10),
   };
 
   const freshAddress = {
@@ -43,9 +48,9 @@ export function createFixtureAccount(account?: Partial<PolkadotAccount>): Polkad
     blockHeight: faker.number.int({ min: 100_000, max: 200_000 }),
     currency,
     unit: currency.units[0],
-    operationsCount: 0,
-    operations: [],
-    pendingOperations: [],
+    operationsCount: account?.operationsCount || 0,
+    operations: account?.operations || [],
+    pendingOperations: account?.pendingOperations || [],
     lastSyncDate: new Date(),
     balanceHistoryCache: emptyHistoryCache,
     swapHistory: [],
@@ -84,25 +89,25 @@ export function createFixtureTransaction(tx?: Partial<Transaction>): Transaction
   };
 }
 
-export function createFixtureOperation(): Operation {
+export function createFixtureOperation(operation?: Partial<PolkadotOperation>): PolkadotOperation {
   const extra: PolkadotOperationExtra = {
-    transferAmount: new BigNumber(0),
-    palletMethod: "",
+    transferAmount: operation?.extra?.transferAmount || new BigNumber(0),
+    palletMethod: operation?.extra?.palletMethod || "",
   };
 
   return {
-    id: faker.string.uuid(),
-    hash: faker.string.uuid(),
-    type: "ACTIVATE",
-    value: new BigNumber(0),
-    fee: new BigNumber(0),
+    id: operation?.id || faker.string.uuid(),
+    hash: operation?.hash || faker.string.uuid(),
+    type: operation?.type || "ACTIVATE",
+    value: operation?.value || new BigNumber(faker.string.numeric()),
+    fee: operation?.fee || new BigNumber(0),
     // senders & recipients addresses
-    senders: [],
-    recipients: [],
-    blockHeight: undefined,
-    blockHash: undefined,
-    accountId: faker.string.uuid(),
-    date: faker.date.past(),
+    senders: operation?.senders || [],
+    recipients: operation?.recipients || [],
+    blockHeight: operation?.blockHeight || undefined,
+    blockHash: operation?.blockHash || undefined,
+    accountId: operation?.accountId || faker.string.uuid(),
+    date: operation?.date || faker.date.past(),
     extra,
   };
 }

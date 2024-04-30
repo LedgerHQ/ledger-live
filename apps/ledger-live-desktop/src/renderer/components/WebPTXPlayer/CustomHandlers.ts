@@ -10,7 +10,7 @@ import { Operation } from "@ledgerhq/types-live";
 import { track } from "~/renderer/analytics/segment";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
-import { openExchangeDrawer } from "~/renderer/actions/UI";
+import { closePlatformAppDrawer, openExchangeDrawer } from "~/renderer/actions/UI";
 import { WebviewProps } from "../Web3AppWebview/types";
 import { context } from "~/renderer/drawers/Provider";
 import WebviewErrorDrawer from "~/renderer/screens/exchange/Swap2/Form/WebviewErrorDrawer";
@@ -81,6 +81,7 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"]) {
             );
           },
           "custom.exchange.error": ({ error }) => {
+            dispatch(closePlatformAppDrawer());
             setDrawer(WebviewErrorDrawer, error);
             return Promise.resolve();
           },

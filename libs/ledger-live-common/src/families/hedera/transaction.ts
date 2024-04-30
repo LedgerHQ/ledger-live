@@ -1,11 +1,11 @@
 import type { Transaction, TransactionRaw } from "./types";
+import { formatTransactionStatus } from "@ledgerhq/coin-framework/formatters";
 import {
-  formatTransactionStatusCommon as formatTransactionStatus,
   fromTransactionCommonRaw,
   fromTransactionStatusRawCommon as fromTransactionStatusRaw,
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
-} from "@ledgerhq/coin-framework/transaction/common";
+} from "@ledgerhq/coin-framework/serialization";
 import type { Account } from "@ledgerhq/types-live";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
