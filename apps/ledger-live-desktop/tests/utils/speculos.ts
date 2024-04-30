@@ -62,7 +62,7 @@ export const specs: Specs = {
     appQuery: {
       model: DeviceModelId.nanoSP,
       appName: "Bitcoin Test",
-      appVersion: "2.2.1",
+      appVersion: "2.2.2",
     },
     dependency: "",
   },
