@@ -2211,9 +2211,6 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
-      '@ledgerhq/live-config':
-        specifier: workspace:^
-        version: link:../../live-config
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../env
@@ -2250,9 +2247,6 @@ importers:
       bs58check:
         specifier: ^2.1.2
         version: 2.1.2
-      expect:
-        specifier: ^27.4.6
-        version: 27.5.1
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
@@ -2902,9 +2896,6 @@ importers:
       bip39:
         specifier: ^3.0.4
         version: 3.0.4
-      blake2b:
-        specifier: ^2.1.4
-        version: 2.1.4
       blakejs:
         specifier: ^1.2.1
         version: 1.2.1
