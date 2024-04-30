@@ -1,11 +1,15 @@
-import { Observable, concat, from, of } from "rxjs";
-import { map, catchError, switchMap, delay } from "rxjs/operators";
-import { withDevice } from "./deviceAccess";
+import { Observable, concat, defer, from, of } from "rxjs";
+import { catchError, concatMap, map, retry, switchMap } from "rxjs/operators";
+import { retryWhileErrors, withDevice } from "./deviceAccess";
 import editDeviceName from "./editDeviceName";
+import getAppAndVersion from "./getAppAndVersion";
+import { isDashboardName } from "./isDashboardName";
+// import attemptToQuitApp from "./attemptToQuitApp";
 import quitApp from "./quitApp";
 
 export type RenameDeviceEvent =
-  | { type: "quitApp" }
+  | { type: "attemptToQuitApp" }
+  | { type: "onDashboard" }
   | {
       type: "unresponsiveDevice";
     }
@@ -26,47 +30,142 @@ export type Input = {
 
 export default function renameDevice({
   deviceId,
-  request,
-  wired,
+  request, // wired,
 }: Input): Observable<RenameDeviceEvent> {
   const { name } = request;
 
-  const quitAppFlow = withDevice(deviceId)(transport =>
-    concat(
-      from(quitApp(transport)).pipe(delay(wired ? 100 : 3000)),
-      of(<RenameDeviceEvent>{
-        type: "quitApp",
-      }),
-    ),
-  );
+  // const sub: Observable<RenameDeviceEvent> = withDevice(deviceId)((transport): any => {
+  //   const innerSub = () =>
+  //     defer(() => from(getAppAndVersion(transport))).pipe(
+  //       concatMap(appAndVersion => {
+  //         if (!isDashboardName(appAndVersion.name)) {
+  //           return concat(
+  //             attemptToQuitApp(transport),
+  //             of(<RenameDeviceEvent>{
+  //               type: "attemptToQuitApp",
+  //             }),
+  //             innerSub(),
+  //           );
+  //         }
 
-  const renameAppFlow = withDevice(deviceId)(
-    transport =>
-      new Observable(o => {
-        const innerSub = concat(
+  //         return new Observable(o => {
+  //           return concat(
+  //             of(<RenameDeviceEvent>{
+  //               type: "permission-requested",
+  //             }),
+  //             from(editDeviceName(transport, name)),
+  //           )
+  //             .pipe(
+  //               map(e => e || { type: "device-renamed", name }),
+  //               catchError((error: Error) =>
+  //                 of({
+  //                   type: "error",
+  //                   error,
+  //                 }),
+  //               ),
+  //             )
+  //             .subscribe(e => o.next(e));
+  //         });
+  //       }),
+  //     );
+
+  //   return innerSub;
+  // });
+
+  const sub = withDevice(deviceId)(transport =>
+    defer(() => from(getAppAndVersion(transport))).pipe(
+      switchMap(appAndVersion => {
+        if (!isDashboardName(appAndVersion.name)) {
+          return from(quitApp(transport)).pipe(
+            switchMap(() => {
+              throw new Error("not on dashboard");
+            }),
+          );
+        }
+
+        return concat(
           of(<RenameDeviceEvent>{
             type: "permission-requested",
           }),
           from(editDeviceName(transport, name)),
-        )
-          .pipe(
-            map(e => e || { type: "device-renamed", name }),
-            catchError((error: Error) =>
-              of({
-                type: "error",
-                error,
-              }),
-            ),
-          )
-          .subscribe(e => o.next(e));
-
-        return () => {
-          innerSub.unsubscribe();
-        };
+        );
       }),
-  );
+    ),
+  ).pipe(retryWhileErrors((_e: Error) => true));
 
-  const sub = quitAppFlow.pipe(switchMap(_ => concat(renameAppFlow)));
+  // const sub = withDevice(deviceId)(transport =>
+  //   defer(() => from(quitApp(transport)))
+  //     .pipe(
+  //       switchMap(() => {
+  //         return from(getAppAndVersion(transport)).pipe(
+  //           map(appAndVersion => {
+  //             if (!isDashboardName(appAndVersion.name)) {
+  //               throw new Error("not on dashboard");
+  //             }
+
+  //             return of(<RenameDeviceEvent>{
+  //               type: "onDashboard",
+  //             });
+  //           }),
+  //           retry({ delay: 500 }),
+  //         );
+  //       }),
+  //     )
+  //     .pipe(
+  //       switchMap(() => {
+  //         return new Observable(o => {
+  //           const innerSub = concat(
+  //             of(<RenameDeviceEvent>{
+  //               type: "permission-requested",
+  //             }),
+  //             from(editDeviceName(transport, name)),
+  //           )
+  //             .pipe(
+  //               map(e => e || { type: "device-renamed", name }),
+  //               catchError((error: Error) =>
+  //                 of({
+  //                   type: "error",
+  //                   error,
+  //                 }),
+  //               ),
+  //             )
+  //             .subscribe(e => o.next(e));
+
+  //           return () => {
+  //             innerSub.unsubscribe();
+  //           };
+  //         });
+  //       }),
+  //     ),
+  // );
+
+  // const renameAppFlow = withDevice(deviceId)(
+  //   transport =>
+  //     new Observable(o => {
+  //       const innerSub = concat(
+  //         of(<RenameDeviceEvent>{
+  //           type: "permission-requested",
+  //         }),
+  //         from(editDeviceName(transport, name)),
+  //       )
+  //         .pipe(
+  //           map(e => e || { type: "device-renamed", name }),
+  //           catchError((error: Error) =>
+  //             of({
+  //               type: "error",
+  //               error,
+  //             }),
+  //           ),
+  //         )
+  //         .subscribe(e => o.next(e));
+
+  //       return () => {
+  //         innerSub.unsubscribe();
+  //       };
+  //     }),
+  // );
+
+  // const sub = quitAppFlow.pipe(switchMap(_ => concat(renameAppFlow)));
 
   return sub as Observable<RenameDeviceEvent>;
 }
