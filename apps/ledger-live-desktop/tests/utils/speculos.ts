@@ -13,6 +13,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import axios from "axios";
 import { getEnv } from "@ledgerhq/live-env";
+import { waitForTimeOut } from "./waitFor";
 
 type Specs = {
   [key: string]: {
@@ -211,6 +212,7 @@ export async function pressRightUntil(text: string, maxAttempts: number = 10): P
       `ElementNotFoundException: Element with text "${text}" not found on speculos device`,
     );
   }
+  waitForTimeOut(100);
   return [];
 }
 

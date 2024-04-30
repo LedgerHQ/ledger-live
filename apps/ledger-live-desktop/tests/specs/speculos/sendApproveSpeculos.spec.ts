@@ -6,6 +6,8 @@ import { AccountPage } from "../../models/AccountPage";
 import { SendModal } from "../../models/SendModal";
 import { Modal } from "../../models/Modal";
 import { Account } from "../../enum/Account";
+import { Currency } from "../../enum/Currency";
+import { Transaction } from "../../models/Transaction";
 import {
   Device,
   specs,
@@ -16,6 +18,7 @@ import {
   verifyAddress,
   verifyAmount,
 } from "../../utils/speculos";
+import { DeviceLabels } from "tests/enum/DeviceLabels";
 
 test.use({ userdata: "speculos" });
 
@@ -26,11 +29,14 @@ test.afterEach(async () => {
 });
 
 // ONLY TESTNET (SEND WILL BE APPROVED ON DEVICE)
-const accounts: Account[] = [Account.tBTC_1, Account.tETH_1];
+const transactions = [
+  new Transaction(Account.tBTC_1, Account.tBTC_2, "0.00001", "medium"),
+  new Transaction(Account.tETH_1, Account.tETH_2, "0.00001", "medium"),
+];
 
 test.describe.parallel("Send Approve @smoke", () => {
-  for (const account of accounts) {
-    test(`[${account.currency.uiName}] send Approve`, async ({ page }) => {
+  for (const transaction of transactions) {
+    test(`[${transaction.accountToDebit.accountName}] send Approve`, async ({ page }) => {
       const layout = new Layout(page);
       const accountsPage = new AccountsPage(page);
       const accountPage = new AccountPage(page);
@@ -38,42 +44,44 @@ test.describe.parallel("Send Approve @smoke", () => {
       const modal = new Modal(page);
       device = await startSpeculos(
         test.name,
-        specs[account.currency.deviceLabel.replace(/ /g, "_")],
+        specs[transaction.accountToDebit.currency.deviceLabel.replace(/ /g, "_")],
       );
 
       await test.step(`Navigate to account`, async () => {
         await layout.goToAccounts();
-        await accountsPage.navigateToAccountByName(account.accountName);
+        await accountsPage.navigateToAccountByName(transaction.accountToDebit.accountName);
       });
 
       await test.step(`send`, async () => {
         await accountPage.sendButton.click();
-        const address = account.addressForSendTest;
+        const address = transaction.accountToCredit.address;
         await sendModal.fillRecipient(address);
         await sendModal.continueButton.click();
-        await modal.cryptoAmountField.fill("0.00001");
+        await modal.cryptoAmountField.fill(transaction.amount);
         await sendModal.countinueSendAmount();
         await expect(sendModal.verifyTotalDebit).toBeVisible();
-        await expect(sendModal.checkAddress(account.addressForSendTest)).toBeVisible();
-        await expect(sendModal.checkAmount(account.currency.uiLabel)).toBeVisible();
+        await expect(sendModal.checkAddress(transaction.accountToCredit.address)).toBeVisible();
+        await expect(
+          sendModal.checkAmount(transaction.accountToCredit.currency.uiLabel),
+        ).toBeVisible(); //changer pour lui passer la currency
         await sendModal.continueButton.click();
       });
 
-      await test.step(`[${account.currency.uiName}] Validate message on device`, async () => {
+      await test.step(`[${transaction.accountToDebit.accountName}] Validate message on device`, async () => {
         await expect(sendModal.checkDevice).toBeVisible();
         const amountScreen = await pressRightUntil("Amount");
         expect(verifyAmount("0.00001", amountScreen)).toBe(true);
         const addressScreen = await pressRightUntil("Address");
-        expect(verifyAddress(account.addressForSendTest, addressScreen)).toBe(true);
-        await pressRightUntil(account.currency.sendPattern[2]);
+        expect(verifyAddress(transaction.accountToCredit.address, addressScreen)).toBe(true);
+        await pressRightUntil(transaction.accountToCredit.currency.sendPattern[2]); //Soit continue soit Accept
         await pressBoth();
-        switch (account.currency.uiName) {
-          case "Bitcoin Testnet":
-            await pressRightUntil(account.currency.sendPattern[2]);
+        switch (transaction.accountToDebit.currency.uiName) {
+          case Currency.tBTC.uiName:
+            await pressRightUntil(DeviceLabels.Continue);
             await pressBoth();
-            await pressRightUntil(account.currency.sendPattern[2]);
+            await pressRightUntil(DeviceLabels.Continue);
             await pressBoth();
-            await pressRightUntil(account.currency.sendPattern[4]);
+            await pressRightUntil(transaction.accountToCredit.currency.sendPattern[4]);
             await pressBoth();
             break;
           default:
