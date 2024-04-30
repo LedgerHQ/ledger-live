@@ -4,15 +4,14 @@ import React, { useCallback } from "react";
 import Button from "~/renderer/components/Button";
 import { useTranslation } from "react-i18next";
 import { readFile, writeFile } from "fs";
-import { useLocalLiveAppContext } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import { SettingsSectionRow as Row } from "../../SettingsSection";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import { Flex } from "@ledgerhq/react-ui";
 import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
-import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { useLocalLiveAppContext } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -24,9 +23,11 @@ const RunLocalAppButton = () => {
   const { t } = useTranslation();
   const {
     addLocalManifest,
-    state: { liveAppByIndex },
+    state: localLiveApps,
     removeLocalManifestById,
   } = useLocalLiveAppContext();
+
+  console.log("state localLiveApps", localLiveApps);
 
   const history = useHistory();
 
@@ -42,7 +43,7 @@ const RunLocalAppButton = () => {
         })
         .then(function (response) {
           if (!response.canceled && response.filePath) {
-            const exportedManifest = liveAppByIndex.find(
+            const exportedManifest = localLiveApps.find(
               (manifest: LiveAppManifest) => manifest.id === id,
             );
 
@@ -57,7 +58,7 @@ const RunLocalAppButton = () => {
           }
         });
     },
-    [liveAppByIndex],
+    [localLiveApps],
   );
 
   const onBrowseLocalManifest = useCallback(() => {
@@ -122,7 +123,7 @@ const RunLocalAppButton = () => {
           </Button>
         </Flex>
       </Row>
-      {liveAppByIndex.map((manifest: LiveAppManifest) => (
+      {localLiveApps.map((manifest: LiveAppManifest) => (
         <Row key={manifest.id} title={manifest.name} desc={manifest.url as string}>
           <ButtonContainer>
             <Button small primary onClick={() => history.push(`/platform/${manifest.id}`)}>
