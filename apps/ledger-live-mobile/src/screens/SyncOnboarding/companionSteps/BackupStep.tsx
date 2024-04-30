@@ -102,7 +102,7 @@ const BackupBody: React.FC<ChoiceBodyProps> = ({ isOpened, device }) => {
       screen: ScreenName.Recover,
       params: {
         device,
-        redirectTo: "activate",
+        redirectTo: "upsell",
         // platform: "protect-staging", // TODO: remove this, only for testing in debug
         platform: servicesConfig?.params?.protectId, // TODO: reenable this
         date: new Date().toISOString(), // adding a date to reload the page in case of same device restored again
