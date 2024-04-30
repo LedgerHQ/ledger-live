@@ -3,7 +3,7 @@ import BigNumber from "bignumber.js";
 import { getEnv } from "@ledgerhq/live-env";
 import { decodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { makeAccount, makeTokenAccount } from "../fixtures/common.fixtures";
+import { makeTokenAccount } from "../fixtures/common.fixtures";
 import * as etherscanAPI from "../../api/explorer/etherscan";
 import * as synchronization from "../../synchronization";
 import * as nodeApi from "../../api/node/rpc.common";
@@ -25,8 +25,6 @@ import * as logic from "../../logic";
 import { getCoinConfig } from "../../config";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { TokenAccount } from "@ledgerhq/types-live";
-import { getTokenById } from "@ledgerhq/cryptoassets/tokens";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 
 jest.mock("../../api/node/rpc.common");
 jest.useFakeTimers().setSystemTime(new Date("2014-04-21"));
