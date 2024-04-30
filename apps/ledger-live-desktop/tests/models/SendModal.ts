@@ -21,7 +21,9 @@ export class SendModal extends Modal {
     this.recipientInput = this.page.getByPlaceholder("Enter");
     this.continueButton = page.getByRole("button", { name: "continue" });
     this.verifyTotalDebit = page.locator("text=Total to debit");
-    this.checkDevice = page.locator("text=Sign transaction on your Ledger Device");
+    this.checkDevice = page.locator(
+      "text=Double-check the transaction details on your Ledger device before signing.",
+    );
     this.checkTransactionbroadcast = page.locator("text=Transaction sent");
     this.checkTransactionDenied = page.locator("text=Operation denied on device");
     this.checkAddress = address =>
