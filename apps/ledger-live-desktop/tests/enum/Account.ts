@@ -12,7 +12,6 @@ export class Account {
     Currency.BTC,
     "Bitcoin 1",
     "bc1qx7f9plgr8msjatkv0dw2ne8gguwfjqr6xyjp50",
-    //Account.BTC_2.address,
     "bc1q7ezsfc44adw2gyzqjmwhuh2e83uk8u5hrw590r",
   );
 
