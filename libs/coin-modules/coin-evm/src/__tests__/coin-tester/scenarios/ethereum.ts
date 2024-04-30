@@ -16,6 +16,7 @@ import {
   USDC_ON_ETHEREUM,
   ERC721Interface,
   ERC1155Interface,
+  impersonnateAccount,
 } from "../helpers";
 import { clearExplorerAppendix, getLogs, setBlock } from "../indexer";
 import { killAnvil, spawnAnvil } from "../anvil";
@@ -42,7 +43,9 @@ const makeScenarioTransactions = ({
 
   const scenarioSendUSDCTransaction: ScenarioTransaction<EvmTransaction> = {
     name: "Send USDC",
-    amount: new BigNumber(80),
+    amount: new BigNumber(
+      ethers.utils.parseUnits("80", USDC_ON_ETHEREUM.units[0].magnitude).toString(),
+    ),
     recipient: "0x6bfD74C0996F269Bcece59191EFf667b3dFD73b9",
     subAccountId: encodeTokenAccountId(`js:2:ethereum:${address}:`, USDC_ON_ETHEREUM),
     expect: (previousAccount, currentAccount) => {
@@ -51,7 +54,12 @@ const makeScenarioTransactions = ({
       expect(latestOperation.type).toBe("FEES");
       expect(latestOperation.value.toFixed()).toBe(latestOperation.fee.toFixed());
       expect(latestOperation.subOperations?.[0].type).toBe("OUT");
-      expect(latestOperation.subOperations?.[0].value.toFixed()).toBe("80");
+      expect(latestOperation.subOperations?.[0].value.toFixed()).toBe(
+        ethers.utils.parseUnits("80", USDC_ON_ETHEREUM.units[0].magnitude).toString(),
+      );
+      expect(currentAccount.subAccounts?.[0].balance.toFixed()).toBe(
+        ethers.utils.parseUnits("20", USDC_ON_ETHEREUM.units[0].magnitude).toString(),
+      );
     },
   };
 
@@ -212,15 +220,19 @@ export const scenarioEthereum: Scenario<EvmTransaction> = {
     };
   },
   beforeAll: account => {
-    expect(account.balance.toFixed()).toBe("10000000000000000000000");
+    expect(account.balance.toFixed()).toBe(ethers.utils.parseEther("10000").toString());
     expect(account.subAccounts?.[0].type).toBe("TokenAccount");
-    expect(account.subAccounts?.[0].balance.toFixed()).toBe("100000000");
+    expect(account.subAccounts?.[0].balance.toFixed()).toBe(
+      ethers.utils.parseUnits("100", USDC_ON_ETHEREUM.units[0].magnitude).toString(),
+    );
     expect(account.nfts?.length).toBe(2);
   },
   getTransactions: address => makeScenarioTransactions({ address }),
   afterAll: account => {
     expect(account.subAccounts?.length).toBe(1);
-    expect(account.subAccounts?.[0].balance.toFixed()).toBe("99999920"); // 10 000 000 - 80
+    expect(account.subAccounts?.[0].balance.toFixed()).toBe(
+      ethers.utils.parseUnits("20", USDC_ON_ETHEREUM.units[0].magnitude).toString(),
+    );
     expect(account.nfts?.length).toBe(0);
     expect(account.operations.length).toBe(7);
   },
