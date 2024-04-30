@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useCallback, useContext, useState } from "react";
+import React, { Dispatch, SetStateAction, useCallback, useState } from "react";
 import Button from "~/components/Button";
 import QueuedDrawer from ".";
 import { Flex, Tag, Text } from "@ledgerhq/native-ui";
@@ -10,7 +10,7 @@ import { useNavigation } from "@react-navigation/core";
 import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
 import { ScreenName } from "~/const";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
-import { QueuedDrawersContext } from "./QueuedDrawersContext";
+import { useQueuedDrawerContext } from "./QueuedDrawersContext";
 
 export enum TestIdPrefix {
   Main = "main",
@@ -49,7 +49,7 @@ type ButtonsProps = {
 };
 
 const Buttons: React.FC<ButtonsProps> = React.memo(props => {
-  const { _clearQueueDIRTYDONOTUSE, closeAllDrawers } = useContext(QueuedDrawersContext);
+  const { _clearQueueDIRTYDONOTUSE, closeAllDrawers } = useQueuedDrawerContext();
   const navigation = useNavigation<StackNavigatorNavigation<SettingsNavigatorStackParamList>>();
   const navigateToTestScreenWithDrawerRequestingToBeOpened = useCallback(() => {
     navigation.navigate(ScreenName.DebugQueuedDrawerScreen1);

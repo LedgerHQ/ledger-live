@@ -13,7 +13,7 @@ import { SkipLockContext } from "~/components/behaviour/SkipLock";
 import type { Privacy, State as GlobalState, AppState as EventState } from "~/reducers/types";
 import AuthScreen from "./AuthScreen";
 import RequestBiometricAuth from "~/components/RequestBiometricAuth";
-import { QueuedDrawersContext } from "~/newArch/components/QueuedDrawer/QueuedDrawersContext";
+import { useQueuedDrawerContext } from "~/newArch/components/QueuedDrawer/QueuedDrawersContext";
 
 const mapDispatchToProps = {
   setPrivacy,
@@ -242,7 +242,7 @@ export default compose<React.ComponentType<OwnProps>>(
   connect(mapStateToProps, mapDispatchToProps),
   (Component: React.FC<{ closeAllDrawers(): void }>) => {
     return (props: Props) => {
-      const { closeAllDrawers } = useContext(QueuedDrawersContext);
+      const { closeAllDrawers } = useQueuedDrawerContext();
       return <Component {...props} closeAllDrawers={closeAllDrawers} />;
     };
   },

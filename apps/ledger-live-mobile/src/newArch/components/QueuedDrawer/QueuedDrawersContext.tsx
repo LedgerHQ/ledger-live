@@ -39,22 +39,11 @@ type QueuedDrawersContextType = {
   _clearQueueDIRTYDONOTUSE(): void;
 };
 
-const defaultContextValue: QueuedDrawersContextType = {
-  addDrawerToQueue: () => ({
-    removeDrawerFromQueue: () => {
-      throw new Error("removeDrawerFromQueue not implemented");
-    },
-    getPositionInQueue: () => {
-      throw new Error("getPositionInQueue not implemented");
-    },
-  }),
-  closeAllDrawers: () => {
-    throw new Error("closeAllDrawers not implemented");
-  },
-  _clearQueueDIRTYDONOTUSE: () => {
-    throw new Error("_clearQueueDIRTYDONOTUSE not implemented");
-  },
-};
+const QueuedDrawersContext = React.createContext<QueuedDrawersContextType | undefined>(undefined);
 
-export const QueuedDrawersContext =
-  React.createContext<QueuedDrawersContextType>(defaultContextValue);
+export function useQueuedDrawerContext() {
+  const contextValue = React.useContext(QueuedDrawersContext);
+  if (contextValue === undefined)
+    throw new Error("useQueuedDrawerContext must be used within a QueuedDrawersContextProvider");
+  return contextValue;
+}

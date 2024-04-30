@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { StyleProp, ViewStyle } from "react-native";
 import { BottomDrawer } from "@ledgerhq/native-ui";
 import { useIsFocused } from "@react-navigation/native";
@@ -7,7 +7,7 @@ import { useSelector } from "react-redux";
 import { isModalLockedSelector } from "~/reducers/appstate";
 import { Merge } from "~/types/helpers";
 import { IsInDrawerProvider } from "~/context/IsInDrawerContext";
-import { DrawerInQueue, QueuedDrawersContext } from "./QueuedDrawersContext";
+import { DrawerInQueue, useQueuedDrawerContext } from "./QueuedDrawersContext";
 import { logDrawer } from "./QueuedDrawersContextProvider";
 
 // Purposefully removes isOpen prop so consumers can't use it directly
@@ -72,7 +72,7 @@ const QueuedDrawer = ({
   ...rest
 }: Props) => {
   const [isDisplayed, setIsDisplayed] = useState(false);
-  const { addDrawerToQueue } = useContext(QueuedDrawersContext);
+  const { addDrawerToQueue } = useQueuedDrawerContext();
   const drawerInQueueRef = useRef<DrawerInQueue>();
 
   const isFocused = useIsFocused();
