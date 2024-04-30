@@ -18,7 +18,7 @@ export const getAccountShape: GetAccountShape = async (info: AccountShapeInfo) =
     xpubOrAddress: address,
     derivationMode,
   });
-  let blockHeight = 0;
+  const blockHeight = 0;
   try {
     const oldOperations = initialAccount?.operations || [];
 
