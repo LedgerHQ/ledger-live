@@ -61,9 +61,9 @@ test.describe.parallel("Receive @smoke", () => {
       });
 
       await test.step(`[${account.currency.uiName}] Validate message`, async () => {
-        //FIX ME: Issue Verifying the address on the device
-        //const addressScreen = await pressRightUntil(currency.receivePattern[0]);
-        //expect(verifyAddress(currency.address1, addressScreen)).toBe(true);
+        //FIX ME: Issue Verifying the address on the device (on SOLANA and BTC/tBTC)
+        //const addressScreen = await pressRightUntil(account.currency.receivePattern[0]);
+        //expect(verifyAddress(account.address, addressScreen)).toBe(true);
         await pressRightUntil(account.currency.receivePattern[1]);
         await pressBoth();
         await expect(receiveModal.approve).toBeVisible();
