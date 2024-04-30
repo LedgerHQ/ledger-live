@@ -39,7 +39,7 @@ import FlowErrorBottomModal from "../components/FlowErrorBottomModal";
 import SendRowsFee from "../SendRowsFee";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { PolkadotBondFlowParamList } from "./types";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useMaybeAccountUnit } from "~/hooks/useAccountUnit";
 
 const options = [
   {
@@ -164,10 +164,10 @@ export default function PolkadotBondAmount({ navigation, route }: Props) {
     },
     [bridge, transaction, setTransaction],
   );
-  if (!account || !transaction) return null;
+  const unit = useMaybeAccountUnit(account);
+  if (!account || !transaction || !unit) return null;
   const { useAllAmount } = transaction;
   const { amount } = status;
-  const unit = useAccountUnit(account);
   const rewardDestination = (transaction as { rewardDestination?: string }).rewardDestination || "";
   const firstBond = isFirstBond(mainAccount);
   const error = amount.eq(0) || bridgePending ? null : getFirstStatusError(status, "errors");

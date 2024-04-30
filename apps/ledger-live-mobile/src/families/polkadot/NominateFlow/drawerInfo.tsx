@@ -12,7 +12,7 @@ import CounterValue from "~/components/CounterValue";
 import ExternalLink from "~/icons/ExternalLink";
 import NominationDrawer from "../components/NominationDrawer";
 import { Unpacked } from "~/types/helpers";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { Unit } from "@ledgerhq/types-cryptoassets";
 
 type NominationDrawerData = React.ComponentProps<typeof NominationDrawer>["data"];
 type NominationDrawerDatum = Unpacked<NominationDrawerData>;
@@ -23,6 +23,7 @@ type Props = {
   validator: PolkadotValidator;
   maxNominatorRewardedPerValidator: number;
   onOpenExplorer: (address: string) => void;
+  unit: Unit;
 };
 
 export function getDrawerInfo({
@@ -31,9 +32,10 @@ export function getDrawerInfo({
   validator,
   maxNominatorRewardedPerValidator,
   onOpenExplorer,
+  unit,
 }: Props): NominationDrawerData {
   const currency = getAccountCurrency(account);
-  const unit = useAccountUnit(account);
+
   const totalStake = validator.totalBonded;
   const formattedCommission = validator.commission
     ? `${validator.commission.multipliedBy(100).toFixed(2)} %`

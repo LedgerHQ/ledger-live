@@ -221,9 +221,10 @@ function NominateSelectValidator({ navigation, route }: Props) {
             onOpenExplorer,
             maxNominatorRewardedPerValidator,
             validator: drawerValidator,
+            unit,
           })
         : [],
-    [drawerValidator, t, account, maxNominatorRewardedPerValidator, onOpenExplorer],
+    [drawerValidator, t, account, onOpenExplorer, maxNominatorRewardedPerValidator, unit],
   );
   const renderItem: SectionListRenderItem<PolkadotValidator> = useCallback(
     ({ item }) => {

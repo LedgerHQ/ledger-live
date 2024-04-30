@@ -16,7 +16,6 @@ type Props = {
 function CurrencyUnitsRow({ currency }: Props) {
   const { colors } = useTheme();
   const navigation = useNavigation();
-  console.log(navigation);
   const currencySettings = useSelector((s: State) =>
     currencySettingsSelector(s.settings, {
       currency,

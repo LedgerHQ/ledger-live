@@ -14,7 +14,7 @@ import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import CounterValue from "~/components/CounterValue";
 import ExternalLink from "~/icons/ExternalLink";
 import NominationDrawer from "../components/NominationDrawer";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { Unit } from "@ledgerhq/types-cryptoassets";
 
 type NominationDrawerData = React.ComponentProps<typeof NominationDrawer>["data"];
 
@@ -24,6 +24,7 @@ type Props = {
   validator?: PolkadotValidator;
   nomination: PolkadotNomination;
   onOpenExplorer: (address: string) => void;
+  unit: Unit;
 };
 
 export function getDrawerInfo({
@@ -32,9 +33,9 @@ export function getDrawerInfo({
   nomination,
   validator,
   onOpenExplorer,
+  unit,
 }: Props): NominationDrawerData {
   const currency = getAccountCurrency(account);
-  const unit = useAccountUnit(account);
   const amount = nomination.value;
   const totalStake = validator?.totalBonded;
   const formattedCommission = validator?.commission

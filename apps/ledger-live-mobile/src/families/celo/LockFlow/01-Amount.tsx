@@ -31,7 +31,7 @@ import { getFirstStatusError, hasStatusError } from "../../helpers";
 import SendRowsFee from "../SendRowsFee";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CeloLockFlowParamList } from "./types";
-import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { useMaybeAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props = BaseComposite<StackNavigatorProps<CeloLockFlowParamList, ScreenName.CeloLockAmount>>;
 
@@ -109,12 +109,11 @@ export default function LockAmount({ navigation, route }: Props) {
   }, [account, navigation, transaction, status]);
 
   const blur = useCallback(() => Keyboard.dismiss(), []);
-
-  if (!account || !transaction) return null;
+  const unit = useMaybeAccountUnit(account);
+  if (!account || !transaction || !unit) return null;
 
   const { useAllAmount } = transaction;
   const { amount } = status;
-  const unit = useAccountUnit(account);
 
   const error = amount.eq(0) || bridgePending ? null : getFirstStatusError(status, "errors");
   const warning = getFirstStatusError(status, "warnings");
