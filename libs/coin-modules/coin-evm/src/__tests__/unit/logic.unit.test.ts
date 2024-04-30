@@ -6,7 +6,7 @@ import * as RPC_API from "../../api/node/rpc.common";
 import { getCoinConfig } from "../../config";
 import {
   attachOperations,
-  createAndKeepSwapHistory,
+  createSwapHistoryMap,
   eip1559TransactionHasFees,
   getAdditionalLayer2Fees,
   getDefaultFeeUnit,
@@ -447,37 +447,65 @@ describe("EVM Family", () => {
       });
     });
 
-    describe("createAndKeepSwapHistory", () => {
-      it("should erase unkeept account", () => {
-        const tokenAccount1 = {
-          ...makeTokenAccount("0xkvn", getTokenById("ethereum/erc20/usd__coin")),
-          balance: new BigNumber(1),
-          operations: [],
-        };
-        const tokenAccount2 = {
-          ...makeTokenAccount("0xkvn", getTokenById("ethereum/erc20/weth")),
-          balance: new BigNumber(2),
-          operations: [],
-        };
-        const account = makeAccount("0xkvn", getCryptoCurrencyById("ethereum"), [tokenAccount1]);
-
-        const newSubAccounts = createAndKeepSwapHistory(account, [tokenAccount2]);
-        expect(newSubAccounts).toEqual([tokenAccount2]);
-        expect(newSubAccounts).not.toBe(account.subAccounts); // shouldn't mutate original account
-        expect(account.subAccounts).toEqual([tokenAccount1]); // shouldn't mutate original account
+    describe("createSwapHistoryMap", () => {
+      it("returns an empty map if initialAccount is undefined", () => {
+        const swapHistory = createSwapHistoryMap(undefined);
+        expect(swapHistory.size).toBe(0);
+      });
+      it("returns an empty map if there are no subAccounts", () => {
+        const account = makeAccount("0xCrema", getCryptoCurrencyById("ethereum"), []);
+        const swapHistory = createSwapHistoryMap(account);
+        expect(swapHistory.size).toBe(0);
       });
 
-      it("should merge 2 different sub accounts and update the first one", () => {
+      it("maps TokenAccounts to their swapHistory", () => {
         const tokenAccount1 = {
-          ...makeTokenAccount("0xkvn", getTokenById("ethereum/erc20/usd__coin")),
-          balance: new BigNumber(1),
-          operations: [],
+          ...makeTokenAccount("0xCrema1", getTokenById("ethereum/erc20/usd__coin")),
           swapHistory: [
             {
               status: "pending",
               provider: "moonpay",
-              operationId:
-                "js:2:ethereum:0xkvn:+ethereum%2Ferc20%2Fusd~!underscore!~tether~!underscore!~~!underscore!~erc20~!underscore!~-0x2eb9257e7c218c24de1618ab46bf7a0284ff3f0bed2f297904684265278ea6fb-OUT",
+              operationId: "js:2:ethereum:0xkvn:+ethereum%2Ferc20%2Fusd__coin-OUT",
+              swapId: "swap1",
+              receiverAccountId: "js:2:ethereum:0xkvn:",
+              fromAmount: new BigNumber("200000"),
+              toAmount: new BigNumber("129430000"),
+            },
+          ],
+        };
+        const tokenAccount2 = {
+          ...makeTokenAccount("0xCrema2", getTokenById("ethereum/erc20/weth")),
+          swapHistory: [
+            {
+              status: "pending",
+              provider: "moonpay",
+              operationId: "js:2:ethereum:0xkvn:+ethereum%2Ferc20%2Fweth-OUT",
+              swapId: "swap2",
+              receiverAccountId: "js:2:ethereum:0xkvn:",
+              fromAmount: new BigNumber("200000"),
+              toAmount: new BigNumber("129430000"),
+            },
+          ],
+        };
+
+        const account = makeAccount("0xCrema", getCryptoCurrencyById("ethereum"), [
+          tokenAccount1,
+          tokenAccount2,
+        ]);
+        const swapHistory = createSwapHistoryMap(account);
+
+        expect(swapHistory.size).toBe(2);
+        expect(swapHistory.get(tokenAccount1.token)).toEqual(tokenAccount1.swapHistory);
+        expect(swapHistory.get(tokenAccount2.token)).toEqual(tokenAccount2.swapHistory);
+      });
+      it("should include correct swapHistory for a token account", () => {
+        const tokenAccount = {
+          ...makeTokenAccount("0xCrema", getTokenById("ethereum/erc20/usd__coin")),
+          swapHistory: [
+            {
+              status: "pending",
+              provider: "moonpay",
+              operationId: "js:2:ethereum:0xkvn:+ethereum%2Ferc20%2Fusd__coin-OUT",
               swapId: "6342cd15-5aa9-4c8c-9fb3-0b67e9b0714a",
               receiverAccountId: "js:2:ethereum:0xkvn:",
               tokenId: "ethereum/erc20/usd__coin",
@@ -486,99 +514,10 @@ describe("EVM Family", () => {
             },
           ],
         };
-        const tokenAccount1Bis = {
-          ...tokenAccount1,
-          balance: new BigNumber(10),
-          spendableBalance: new BigNumber(11),
-          operationsCount: 0,
-          balanceHistoryCache: {
-            HOUR: {
-              latestDate: 123,
-              balances: [123],
-            },
-            DAY: {
-              latestDate: 234,
-              balances: [234],
-            },
-            WEEK: {
-              latestDate: 345,
-              balances: [345],
-            },
-          },
-          operations: [],
-        };
-        const tokenAccount2 = {
-          ...makeTokenAccount("0xkvn", getTokenById("ethereum/erc20/weth")),
-          balance: new BigNumber(2),
-          operations: [],
-        };
-        const account = makeAccount("0xkvn", getCryptoCurrencyById("ethereum"), [tokenAccount1]);
+        const account = makeAccount("0xCrema", getCryptoCurrencyById("ethereum"), [tokenAccount]);
 
-        const newSubAccounts = createAndKeepSwapHistory(account, [tokenAccount1Bis, tokenAccount2]);
-        expect(newSubAccounts).toEqual([tokenAccount1Bis, tokenAccount2]);
-        expect(newSubAccounts).not.toBe(account.subAccounts); // shouldn't mutate original account
-        expect(account.subAccounts).toEqual([tokenAccount1]); // shouldn't mutate original account
-        expect(newSubAccounts[0]).not.toBe(account.subAccounts?.[0]); // changing the ref as a change happened in tokenAccount1
-      });
-
-      it("should update subAccount ops", () => {
-        const op1 = makeOperation();
-        const op2 = makeOperation({
-          hash: "0xdiffHash",
-        });
-        const op3 = makeOperation({
-          hash: "0xAgAinAnotHeRH4sh",
-        });
-        const tokenAccount1 = {
-          ...makeTokenAccount("0xkvn", getTokenById("ethereum/erc20/usd__coin")),
-          balance: new BigNumber(1),
-          operations: [op1, op2],
-          operationsCount: 2,
-        };
-        const tokenAccount1Bis = {
-          ...tokenAccount1,
-          operations: [op3, op1, op2],
-          operationsCount: 3,
-        };
-        const account = makeAccount("0xkvn", getCryptoCurrencyById("ethereum"), [tokenAccount1]);
-
-        const newSubAccounts = createAndKeepSwapHistory(account, [tokenAccount1Bis]);
-        expect(newSubAccounts).not.toBe(account.subAccounts); // shouldn't mutate original account
-        expect(account.subAccounts).toEqual([tokenAccount1]); // shouldn't mutate original account
-        expect(newSubAccounts[0]).not.toBe(account.subAccounts?.[0]); // changing the ref as change happened
-        expect(newSubAccounts[0]?.operations?.[1]).toBe(account.subAccounts?.[0]?.operations?.[0]); // keeping the reference for the ops though
-        expect(newSubAccounts[0]?.operations?.[2]).toBe(account.subAccounts?.[0]?.operations?.[1]); // keeping the reference for the ops though
-        expect(newSubAccounts).toEqual([tokenAccount1Bis]);
-      });
-
-      it("should return only new sub accounts", () => {
-        const tokenAccount = {
-          ...makeTokenAccount("0xkvn", getTokenById("ethereum/erc20/usd__coin")),
-          balance: new BigNumber(1),
-        };
-        const account = {
-          ...makeAccount("0xkvn", getCryptoCurrencyById("ethereum")),
-        };
-        delete account.subAccounts;
-
-        const newSubAccounts = createAndKeepSwapHistory(account, [tokenAccount]);
-        expect(newSubAccounts).toEqual([tokenAccount]);
-        expect(account.subAccounts).toBe(undefined); // shouldn't mutate original account
-      });
-
-      it("should dedup sub accounts", () => {
-        const tokenAccount = {
-          ...makeTokenAccount("0xkvn", getTokenById("ethereum/erc20/usd__coin")),
-          balance: new BigNumber(1),
-        };
-        const account = makeAccount("0xkvn", getCryptoCurrencyById("ethereum"), [tokenAccount]);
-
-        const newSubAccounts = createAndKeepSwapHistory(account, [
-          tokenAccount,
-          { ...tokenAccount },
-          { ...tokenAccount },
-        ]);
-        expect(newSubAccounts).toEqual([tokenAccount]);
+        const swapHistoryMap = createSwapHistoryMap(account);
+        expect(swapHistoryMap.get(tokenAccount.token)).toEqual(tokenAccount.swapHistory);
       });
     });
     describe("getSyncHash", () => {

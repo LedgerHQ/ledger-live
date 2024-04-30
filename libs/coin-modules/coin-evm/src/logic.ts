@@ -6,12 +6,13 @@ import {
   MessageProperties,
   Operation,
   SubAccount,
+  TokenAccount,
 } from "@ledgerhq/types-live";
 import murmurhash from "imurmurhash";
 import { log } from "@ledgerhq/logs";
 import { getEnv } from "@ledgerhq/live-env";
 import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
-import { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, TokenCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { hashes as tokensHashesByChainId } from "@ledgerhq/cryptoassets/data/evm/index";
@@ -411,50 +412,19 @@ export const safeEncodeEIP55 = (addr: string): string => {
 /**
  * Similar to mergeAccount but used to keep previous data we can't fetch on chain
  */
-export const createAndKeepSwapHistory = (
+// logic.ts
+export const createSwapHistoryMap = (
   initialAccount: Account | undefined,
-  newSubAccounts: Partial<SubAccount>[],
-): Array<Partial<SubAccount> | SubAccount> => {
-  const oldSubAccounts: Array<Partial<SubAccount> | SubAccount> | undefined =
-    initialAccount?.subAccounts;
-  if (!oldSubAccounts) {
-    return newSubAccounts;
-  }
+): Map<TokenCurrency, TokenAccount["swapHistory"]> => {
+  if (!initialAccount?.subAccounts) return new Map();
 
-  // Creating a map of already existing sub accounts by id
-  const oldSubAccountsById: { [key: string]: Partial<SubAccount> } = {};
-  for (const oldSubAccount of oldSubAccounts) {
-    oldSubAccountsById[oldSubAccount.id!] = oldSubAccount;
-  }
-
-  // Creating a new map to not returned deleted accounts
-  const returnAccount: { [key: string]: Partial<SubAccount> } = {};
-
-  // Looping on new sub accounts to compare them with already existing ones
-  // Already existing will be updated if necessary (see `updatableSubAccountProperties`)
-  // Fresh new sub accounts will be added/pushed after already existing
-  const newSubAccountsToAdd: Partial<SubAccount>[] = [];
-  for (const newSubAccount of newSubAccounts) {
-    const duplicatedAccount: Partial<SubAccount> | undefined =
-      oldSubAccountsById[newSubAccount.id!];
-
-    // If this sub account was not already in the initialAccount
-    if (!duplicatedAccount) {
-      // We'll add it later
-      newSubAccountsToAdd.push(newSubAccount);
-      continue;
+  const swapHistoryMap = new Map<TokenCurrency, TokenAccount["swapHistory"]>();
+  for (const subAccount of initialAccount.subAccounts) {
+    if (subAccount.type === "TokenAccount") {
+      // <-- not even necessary anymore since we removed the `SubAccount` type now
+      swapHistoryMap.set(subAccount.token, subAccount.swapHistory);
     }
-
-    const updates: Partial<SubAccount> = {};
-
-    updates.swapHistory = duplicatedAccount.swapHistory || [];
-
-    // Modifying the Map with the updated sub account with a new ref
-    returnAccount[newSubAccount.id!] = {
-      ...newSubAccount,
-      ...updates,
-    };
   }
-  const updatedSubAccounts = Object.values(returnAccount);
-  return [...updatedSubAccounts, ...newSubAccountsToAdd];
+
+  return swapHistoryMap;
 };

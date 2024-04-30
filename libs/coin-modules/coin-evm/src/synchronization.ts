@@ -13,11 +13,11 @@ import {
   mergeOps,
   mergeNfts,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { Account, Operation, SubAccount } from "@ledgerhq/types-live";
+import { Account, Operation, SubAccount, TokenAccount } from "@ledgerhq/types-live";
 import { decodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { nftsFromOperations } from "@ledgerhq/coin-framework/nft/helpers";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { attachOperations, getSyncHash, createAndKeepSwapHistory, mergeSubAccounts } from "./logic";
+import { attachOperations, getSyncHash, mergeSubAccounts, createSwapHistoryMap } from "./logic";
 import { ExplorerApi } from "./api/explorer/types";
 import { getExplorerApi } from "./api/explorer";
 import { getNodeApi } from "./api/node/index";
@@ -75,15 +75,16 @@ export const getAccountShape: GetAccountShape = async (infos, { blacklistedToken
         throw e;
       }
     })();
-
+  const swapHistoryMap = createSwapHistoryMap(initialAccount);
   const newSubAccounts = await getSubAccounts(
     infos,
     accountId,
     lastTokenOperations,
     blacklistedTokenIds,
+    swapHistoryMap,
   );
   const subAccounts = shouldSyncFromScratch
-    ? createAndKeepSwapHistory(initialAccount, newSubAccounts) // Keep swap history from all account but still create a new subAccount
+    ? newSubAccounts
     : mergeSubAccounts(initialAccount, newSubAccounts); // Merging potential new subAccouns while preserving the references
   // Trying to confirm pending operations that we are sure of
   // because they were made in the live
@@ -143,6 +144,7 @@ export const getSubAccounts = async (
   accountId: string,
   lastTokenOperations: Operation[],
   blacklistedTokenIds: string[] = [],
+  swapHistoryMap: Map<TokenCurrency, TokenAccount["swapHistory"]>,
 ): Promise<Partial<SubAccount>[]> => {
   const { currency } = infos;
 
@@ -166,7 +168,8 @@ export const getSubAccounts = async (
   // Fetching all TokenAccounts possible and providing already filtered operations
   const subAccountsPromises: Promise<Partial<SubAccount>>[] = [];
   for (const [token, ops] of erc20OperationsByToken.entries()) {
-    subAccountsPromises.push(getSubAccountShape(currency, accountId, token, ops));
+    const swapHistory = swapHistoryMap.get(token) || [];
+    subAccountsPromises.push(getSubAccountShape(currency, accountId, token, ops, swapHistory));
   }
 
   return Promise.all(subAccountsPromises);
@@ -180,6 +183,7 @@ export const getSubAccountShape = async (
   parentId: string,
   token: TokenCurrency,
   operations: Operation[],
+  swapHistory: TokenAccount["swapHistory"],
 ): Promise<Partial<SubAccount>> => {
   const nodeApi = getNodeApi(currency);
   const { xpubOrAddress: address } = decodeAccountId(parentId);
@@ -198,7 +202,7 @@ export const getSubAccountShape = async (
     operationsCount: operations.length,
     pendingOperations: [],
     balanceHistoryCache: emptyHistoryCache,
-    swapHistory: [],
+    swapHistory,
   };
 };
 
