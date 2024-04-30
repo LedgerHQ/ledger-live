@@ -6,7 +6,6 @@ import crypto_org from "../families/crypto_org/specs";
 import elrond from "../families/elrond/specs";
 import filecoin from "../families/filecoin/specs";
 import hedera from "../families/hedera/specs";
-import icon from "../families/icon/specs";
 import internet_computer from "../families/internet_computer/specs";
 import ripple from "../families/ripple/specs";
 import solana from "../families/solana/specs";
@@ -20,6 +19,7 @@ import bitcoin from "@ledgerhq/coin-bitcoin/specs";
 import evm from "@ledgerhq/coin-evm/specs";
 import near from "@ledgerhq/coin-near/specs";
 import polkadot from "@ledgerhq/coin-polkadot/specs";
+import icon from "@ledgerhq/coin-icon/specs";
 
 export default {
   cardano,
@@ -30,7 +30,6 @@ export default {
   elrond,
   filecoin,
   hedera,
-  icon,
   internet_computer,
   ripple,
   solana,
@@ -44,4 +43,5 @@ export default {
   evm,
   near,
   polkadot,
+  icon,
 };

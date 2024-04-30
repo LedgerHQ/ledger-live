@@ -1,12 +1,12 @@
 import { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
-import { patchOperationWithHash } from "../../operation";
+import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
 
 import { broadcastTransaction } from "./api/node";
 
 /**
  * Broadcast the signed transaction
  */
-export default async function broadcast({
+export async function broadcast({
   account,
   signedOperation,
 }: {

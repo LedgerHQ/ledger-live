@@ -17,6 +17,7 @@ import { cliTools as bitcoin } from "../families/bitcoin/setup";
 import { cliTools as evm } from "../families/evm/setup";
 import { cliTools as near } from "../families/near/setup";
 import { cliTools as polkadot } from "../families/polkadot/setup";
+import { cliTools as icon } from "../families/icon/setup";
 
 export default {
   cardano,
@@ -38,4 +39,5 @@ export default {
   evm,
   near,
   polkadot,
+  icon,
 };

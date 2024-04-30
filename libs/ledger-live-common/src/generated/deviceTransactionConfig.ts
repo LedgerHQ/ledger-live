@@ -6,7 +6,6 @@ import crypto_org from "../families/crypto_org/deviceTransactionConfig";
 import elrond from "../families/elrond/deviceTransactionConfig";
 import filecoin from "../families/filecoin/deviceTransactionConfig";
 import hedera from "../families/hedera/deviceTransactionConfig";
-import icon from "../families/icon/deviceTransactionConfig";
 import internet_computer from "../families/internet_computer/deviceTransactionConfig";
 import ripple from "../families/ripple/deviceTransactionConfig";
 import solana from "../families/solana/deviceTransactionConfig";
@@ -19,6 +18,7 @@ import bitcoin from "@ledgerhq/coin-bitcoin/deviceTransactionConfig";
 import evm from "@ledgerhq/coin-evm/deviceTransactionConfig";
 import near from "@ledgerhq/coin-near/deviceTransactionConfig";
 import polkadot from "@ledgerhq/coin-polkadot/deviceTransactionConfig";
+import icon from "@ledgerhq/coin-icon/deviceTransactionConfig";
 
 export default {
   cardano,
@@ -29,7 +29,6 @@ export default {
   elrond,
   filecoin,
   hedera,
-  icon,
   internet_computer,
   ripple,
   solana,
@@ -42,11 +41,11 @@ export default {
   evm,
   near,
   polkadot,
+  icon,
 };
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_casper } from "../families/casper/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_cosmos } from "../families/cosmos/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_filecoin } from "../families/filecoin/deviceTransactionConfig";
-import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_icon } from "../families/icon/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_stacks } from "../families/stacks/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_stellar } from "../families/stellar/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_tezos } from "../families/tezos/deviceTransactionConfig";
@@ -57,7 +56,6 @@ export type ExtraDeviceTransactionField =
   | ExtraDeviceTransactionField_casper
   | ExtraDeviceTransactionField_cosmos
   | ExtraDeviceTransactionField_filecoin
-  | ExtraDeviceTransactionField_icon
   | ExtraDeviceTransactionField_stacks
   | ExtraDeviceTransactionField_stellar
   | ExtraDeviceTransactionField_tezos

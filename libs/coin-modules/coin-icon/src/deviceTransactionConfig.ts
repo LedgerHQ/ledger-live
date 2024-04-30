@@ -1,7 +1,7 @@
 import type { AccountLike, Account } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "./types";
-import type { DeviceTransactionField } from "../../transaction";
-import { getMainAccount } from "../../account";
+import type { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
+import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
 
 export type ExtraDeviceTransactionField = {
   type: "icon.fees";

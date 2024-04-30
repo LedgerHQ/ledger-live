@@ -24,7 +24,7 @@ import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { IconAllFundsWarning, IconDoMaxSendInstead } from "./errors";
 import { getAccount } from "./api";
 
-const getSendTransactionStatus = async (
+export const getSendTransactionStatus = async (
   a: IconAccount,
   t: Transaction,
 ): Promise<TransactionStatus> => {
@@ -97,7 +97,7 @@ const getSendTransactionStatus = async (
   if (totalSpent.gt(a.spendableBalance)) {
     errors.amount = new NotEnoughBalance();
   }
-  
+
   return Promise.resolve({
     errors,
     warnings,
@@ -107,7 +107,7 @@ const getSendTransactionStatus = async (
   });
 };
 
-const getTransactionStatus = async (a: IconAccount, t: Transaction): Promise<TransactionStatus> => {
+export const getTransactionStatus = async (a: IconAccount, t: Transaction): Promise<TransactionStatus> => {
   const errors: {
     staking?: Error;
     amount?: Error;
@@ -144,5 +144,3 @@ const getTransactionStatus = async (a: IconAccount, t: Transaction): Promise<Tra
     totalSpent,
   });
 };
-
-export default getTransactionStatus;
