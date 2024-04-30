@@ -59,7 +59,6 @@ export const tokenCurrencies = [
   Object.freeze(getTokenById("ethereum/erc20/usd_tether__erc20_")),
 ];
 
-// export const tokenAccount = makeTokenAccount("0xkvn", tokenCurrencies[0]);
 export const tokenAccount = {
   ...makeTokenAccount("0xkvn", tokenCurrencies[0]),
   swapHistory,
@@ -68,10 +67,6 @@ export const account = Object.freeze({
   ...makeAccount("0xkvn", currency, [tokenAccount]),
   syncHash: logic.getSyncHash(currency),
 });
-// export const accountWithTokenSwapHistory = Object.freeze({
-//   ...makeAccount("0xCrema", currency, [tokenAccountWithSwapHistory]),
-//   syncHash: logic.getSyncHash(currency),
-// });
 
 export const coinOperations = [
   makeOperation({
