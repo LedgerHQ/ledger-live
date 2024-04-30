@@ -147,6 +147,11 @@ export const scenarioPolygon: Scenario<EvmTransaction> = {
     return { currencyBridge, accountBridge, account: scenarioAccount, onSignerConfirmation };
   },
   getTransactions: address => makeScenarioTransactions({ address }),
+  beforeAll: account => {
+    expect(account.balance.toFixed()).toBe("10000000000000000000000");
+    expect(account.subAccounts?.[0].type).toBe("TokenAccount");
+    expect(account.subAccounts?.[0].balance.toFixed()).toBe("100000000");
+  },
   afterAll: account => {
     expect(account.operations.length).toBe(4);
   },
