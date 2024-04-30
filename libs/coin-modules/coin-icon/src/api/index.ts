@@ -24,24 +24,6 @@ function getApiUrl(currency: CryptoCurrency): string {
   return apiUrl;
 }
 
-async function post(url: string, body: Record<string, any>) {
-  const { data } = await network({
-    method: "POST",
-    url,
-    data: body,
-  });
-
-  if (data.Error) {
-    log("icon-error", data.Error, {
-      url,
-      body,
-    });
-    throw new Error(data.Error);
-  }
-
-  return data;
-}
-
 async function fetch(url: string) {
   const { data } = await network({
     method: "GET",

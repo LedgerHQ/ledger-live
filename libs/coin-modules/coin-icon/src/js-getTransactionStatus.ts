@@ -107,7 +107,10 @@ export const getSendTransactionStatus = async (
   });
 };
 
-export const getTransactionStatus = async (a: IconAccount, t: Transaction): Promise<TransactionStatus> => {
+export const getTransactionStatus = async (
+  a: IconAccount,
+  t: Transaction,
+): Promise<TransactionStatus> => {
   const errors: {
     staking?: Error;
     amount?: Error;

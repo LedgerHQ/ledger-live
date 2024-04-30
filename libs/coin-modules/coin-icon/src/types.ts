@@ -6,7 +6,7 @@ import {
   TransactionCommonRaw,
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
-  Operation
+  Operation,
 } from "@ledgerhq/types-live";
 
 /**
