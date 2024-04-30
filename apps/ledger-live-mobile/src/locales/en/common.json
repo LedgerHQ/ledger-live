@@ -5285,17 +5285,6 @@
       "btn": "Earn rewards"
     }
   },
-  "icon": {
-    "account": {
-      "availableBalance": "Available balance"
-    },
-    "info": {
-      "available": {
-        "title": "ICX available",
-        "description": "This amount is disposable."
-      }
-    }
-  },
   "tron": {
     "voting": {
       "earnRewars": "Earn rewards",
