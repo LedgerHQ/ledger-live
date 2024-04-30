@@ -3987,7 +3987,9 @@
       "region": "Region",
       "regionDesc": "Choose your region to update formats of dates, time and currencies.",
       "stock": "Regional market indicator",
-      "stockDesc": "Choose Western to display market increases in blue or Eastern to display them in red."
+      "stockDesc": "Choose Western to display market increases in blue or Eastern to display them in red.",
+      "walletSync": "Wallet Sync",
+      "walletSyncDesc": "Backup your app data and synchronize multiple Ledger Live instances."
     },
     "developer": {
       "search": "Search",
