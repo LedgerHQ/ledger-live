@@ -13,6 +13,12 @@ export * from "./types";
 
 // TODO maybe find a better way to type the available custom requests with correct types
 export class ExchangeModule extends CustomModule {
+  async getDevice() {
+    return this.request<undefined, { deviceId?: string; modelId?: string }>(
+      "custom.device.get",
+      undefined,
+    );
+  }
   /**
    * Start the exchange process by generating a nonce on Ledger device
    * @param exchangeType - used by the exchange transport to discern between swap/sell/fund

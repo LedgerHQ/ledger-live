@@ -43,7 +43,6 @@ export const useSwapLiveAppHook = (props: UseSwapLiveAppHookProps) => {
     getExchangeSDKParams,
     getProviderRedirectURLSearch,
   } = props;
-  const device = useSelector(getCurrentDevice);
   const exchangeRate = useSelector(rateSelector);
   const provider = exchangeRate?.provider;
   const exchangeRatesState = swapTransaction.swap?.rates;
@@ -84,8 +83,6 @@ export const useSwapLiveAppHook = (props: UseSwapLiveAppHookProps) => {
         swapApiBase: SWAP_API_BASE,
         estimatedFees,
         estimatedFeesUnit: estimatedFeesUnit?.id,
-        hardwareWalletType: device?.modelId,
-        swapType: exchangeRate?.tradeMethod,
       };
 
       if (!isEqual(newSwapWebProps, swapWebPropsRef.current)) {
@@ -106,7 +103,5 @@ export const useSwapLiveAppHook = (props: UseSwapLiveAppHookProps) => {
     updateSwapWebProps,
     estimatedFees,
     estimatedFeesUnit?.id,
-    device?.modelId,
-    exchangeRate?.tradeMethod,
   ]);
 };
