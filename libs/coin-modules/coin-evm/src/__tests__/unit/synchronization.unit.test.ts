@@ -3,6 +3,8 @@ import BigNumber from "bignumber.js";
 import { getEnv } from "@ledgerhq/live-env";
 import { decodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { TokenAccount } from "@ledgerhq/types-live";
 import { makeTokenAccount } from "../fixtures/common.fixtures";
 import * as etherscanAPI from "../../api/explorer/etherscan";
 import * as synchronization from "../../synchronization";
@@ -19,10 +21,12 @@ import {
   tokenCurrencies,
   tokenOperations,
   internalOperations,
+  swapHistory,
 } from "../fixtures/synchronization.fixtures";
 import { UnknownNode } from "../../errors";
 import * as logic from "../../logic";
 import { getCoinConfig } from "../../config";
+import { createSwapHistoryMap } from "../../logic";
 
 jest.mock("../../api/node/rpc.common");
 jest.useFakeTimers().setSystemTime(new Date("2014-04-21"));
@@ -540,6 +544,7 @@ describe("EVM Family", () => {
       });
 
       it("should return the right subAccounts", async () => {
+        const swapHistoryMap = createSwapHistoryMap(account);
         const tokenAccounts = await synchronization.getSubAccounts(
           {
             ...getAccountShapeParameters,
@@ -547,6 +552,8 @@ describe("EVM Family", () => {
           },
           account.id,
           [tokenOperations[0], tokenOperations[1], tokenOperations[3]],
+          undefined,
+          swapHistoryMap,
         );
 
         const expectedUsdcAccount = {
@@ -556,7 +563,7 @@ describe("EVM Family", () => {
           operations: [tokenOperations[0], tokenOperations[1]],
           operationsCount: 2,
           starred: undefined,
-          swapHistory: [],
+          swapHistory,
         };
         const expectedUsdtAccount = {
           ...makeTokenAccount(account.freshAddress, tokenCurrencies[1]),
@@ -572,6 +579,7 @@ describe("EVM Family", () => {
       });
 
       it("should return filtered subAccounts from blacklistedTokenIds", async () => {
+        const swapHistoryMap = new Map<TokenCurrency, TokenAccount["swapHistory"]>();
         const tokenAccounts = await synchronization.getSubAccounts(
           {
             ...getAccountShapeParameters,
@@ -580,6 +588,7 @@ describe("EVM Family", () => {
           account.id,
           [tokenOperations[0], tokenOperations[1], tokenOperations[3]],
           [tokenCurrencies[0].id],
+          swapHistoryMap,
         );
 
         const expectedUsdtAccount = {
@@ -619,6 +628,7 @@ describe("EVM Family", () => {
           account.id,
           tokenCurrencies[0],
           [tokenOperations[0], tokenOperations[1], tokenOperations[2]],
+          [],
         );
 
         expect(subAccount).toEqual({
@@ -670,6 +680,9 @@ describe("EVM Family", () => {
           blockHash: "hash",
           timestamp: Date.now(),
           nonce: 123,
+          gasPrice: "0",
+          gasUsed: "0",
+          value: "0",
         }));
 
         const expectedAddition = {
@@ -707,6 +720,9 @@ describe("EVM Family", () => {
           blockHeight: 10,
           blockHash: "hash",
           nonce: 123,
+          gasPrice: "0",
+          gasUsed: "0",
+          value: "0",
         }));
         jest
           .spyOn(nodeApi, "getBlockByHeight")

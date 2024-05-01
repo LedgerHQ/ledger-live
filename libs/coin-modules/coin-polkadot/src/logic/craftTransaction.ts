@@ -240,3 +240,13 @@ export async function craftEstimationTransaction(
     defaultExtrinsicArg(amount, getAbandonSeedAddress("polkadot")),
   );
 }
+
+/**
+ * Return transaction in raw encoded format (i.e. hexa)
+ */
+export function rawEncode({ unsigned, registry }: CoreTransaction): string {
+  const extrinsic = registry.createType("Extrinsic", unsigned, {
+    version: unsigned.version,
+  });
+  return extrinsic.toHex();
+}
