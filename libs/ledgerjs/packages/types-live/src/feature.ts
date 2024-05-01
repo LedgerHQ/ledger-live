@@ -130,6 +130,7 @@ export type Features = CurrencyFeatures & {
   buyDeviceFromLive: Feature_BuyDeviceFromLive;
   mockFeature: Feature_MockFeature;
   buySellUi: Feature_BuySellUiManifest;
+  buySellShortcut: DefaultFeature;
   multibuyNavigation: Feature_MultibuyNavigation;
   referralProgramDesktopSidebar: Feature_ReferralProgramDesktopSidebar;
   referralProgramMobile: Feature_ReferralProgramMobile;

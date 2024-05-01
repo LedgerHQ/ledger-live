@@ -113,6 +113,7 @@ export const createAction = (
       if (!exchange || !mainFromAccount || !mainToAccount) {
         return {
           appName: "Exchange",
+          requireLatestFirmware,
         };
       } else {
         return {
