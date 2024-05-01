@@ -1,5 +1,15 @@
 # @ledgerhq/coin-polkadot
 
+## 0.7.0-nightly.4
+
+### Patch Changes
+
+- [#6777](https://github.com/LedgerHQ/ledger-live/pull/6777) [`0fcce49`](https://github.com/LedgerHQ/ledger-live/commit/0fcce49ae1770682837d9df8df57ba5a81330e87) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Expose necessary function for lama
+
+- Updated dependencies [[`f17a3cb`](https://github.com/LedgerHQ/ledger-live/commit/f17a3cbc16abf7fadf686025a5ca56ec1a1e7bb6)]:
+  - @ledgerhq/types-live@6.46.1-nightly.2
+  - @ledgerhq/coin-framework@0.12.1-nightly.3
+
 ## 0.7.0-nightly.3
 
 ### Minor Changes

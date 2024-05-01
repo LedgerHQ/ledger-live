@@ -1,5 +1,16 @@
 # @ledgerhq/coin-evm
 
+## 1.1.1-nightly.3
+
+### Patch Changes
+
+- [#6752](https://github.com/LedgerHQ/ledger-live/pull/6752) [`434262d`](https://github.com/LedgerHQ/ledger-live/commit/434262db4560f62113002fbb607bd1a8da0712b4) Thanks [@CremaFR](https://github.com/CremaFR)! - bugfix, keep swap history for token when deep cleaning
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@0.12.1-nightly.3
+  - @ledgerhq/domain-service@1.1.21-nightly.2
+  - @ledgerhq/evm-tools@1.0.19-nightly.0
+
 ## 1.1.1-nightly.2
 
 ### Patch Changes

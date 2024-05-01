@@ -1,5 +1,23 @@
 # ledger-live-desktop
 
+## 2.79.2-nightly.5
+
+### Patch Changes
+
+- [#6763](https://github.com/LedgerHQ/ledger-live/pull/6763) [`cd01c18`](https://github.com/LedgerHQ/ledger-live/commit/cd01c18c9fce510245d2fccdb8a1a6f946c08bce) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Add Wallet Sync in settings.
+
+- Updated dependencies [[`bd57754`](https://github.com/LedgerHQ/ledger-live/commit/bd577542ce0648e41da6ac7c5502aa87e91324fa), [`434262d`](https://github.com/LedgerHQ/ledger-live/commit/434262db4560f62113002fbb607bd1a8da0712b4), [`37836b3`](https://github.com/LedgerHQ/ledger-live/commit/37836b35c97a1540681eadb451e19c44466a3826), [`f17a3cb`](https://github.com/LedgerHQ/ledger-live/commit/f17a3cbc16abf7fadf686025a5ca56ec1a1e7bb6)]:
+  - @ledgerhq/live-common@34.1.1-nightly.5
+  - @ledgerhq/coin-evm@1.1.1-nightly.3
+  - @ledgerhq/types-live@6.46.1-nightly.2
+  - @ledgerhq/coin-framework@0.12.1-nightly.3
+  - @ledgerhq/coin-bitcoin@0.4.1-nightly.3
+  - @ledgerhq/domain-service@1.1.21-nightly.2
+  - @ledgerhq/live-countervalues@0.1.5-nightly.3
+  - @ledgerhq/live-countervalues-react@0.1.5-nightly.3
+  - @ledgerhq/live-nft@0.3.2-nightly.3
+  - @ledgerhq/live-nft-react@0.3.2-nightly.3
+
 ## 2.79.2-nightly.4
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.46.1-nightly.2
+
+### Patch Changes
+
+- [#6757](https://github.com/LedgerHQ/ledger-live/pull/6757) [`f17a3cb`](https://github.com/LedgerHQ/ledger-live/commit/f17a3cbc16abf7fadf686025a5ca56ec1a1e7bb6) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Add buy sell shortcut feature flag to toggle intro screen flow on buy sell ui live app.
+
 ## 6.46.1-nightly.1
 
 ### Patch Changes

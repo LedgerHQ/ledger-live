@@ -1,5 +1,28 @@
 # @ledgerhq/live-common
 
+## 34.1.1-nightly.5
+
+### Patch Changes
+
+- [#6770](https://github.com/LedgerHQ/ledger-live/pull/6770) [`bd57754`](https://github.com/LedgerHQ/ledger-live/commit/bd577542ce0648e41da6ac7c5502aa87e91324fa) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add missing nano app dep Oasys & Shiden
+
+- [#6781](https://github.com/LedgerHQ/ledger-live/pull/6781) [`37836b3`](https://github.com/LedgerHQ/ledger-live/commit/37836b35c97a1540681eadb451e19c44466a3826) Thanks [@CremaFR](https://github.com/CremaFR)! - bugfix: infinite spinner when fund after reject tx
+
+- [#6757](https://github.com/LedgerHQ/ledger-live/pull/6757) [`f17a3cb`](https://github.com/LedgerHQ/ledger-live/commit/f17a3cbc16abf7fadf686025a5ca56ec1a1e7bb6) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Add buy sell shortcut feature flag to toggle intro screen flow on buy sell ui live app.
+
+- Updated dependencies [[`0fcce49`](https://github.com/LedgerHQ/ledger-live/commit/0fcce49ae1770682837d9df8df57ba5a81330e87), [`434262d`](https://github.com/LedgerHQ/ledger-live/commit/434262db4560f62113002fbb607bd1a8da0712b4)]:
+  - @ledgerhq/coin-polkadot@0.7.0-nightly.4
+  - @ledgerhq/coin-evm@1.1.1-nightly.3
+  - @ledgerhq/coin-framework@0.12.1-nightly.3
+  - @ledgerhq/coin-algorand@0.4.2-nightly.3
+  - @ledgerhq/coin-bitcoin@0.4.1-nightly.3
+  - @ledgerhq/coin-near@0.3.13-nightly.3
+  - @ledgerhq/device-core@0.1.2-nightly.3
+  - @ledgerhq/hw-app-eth@6.36.1-nightly.3
+  - @ledgerhq/live-countervalues@0.1.5-nightly.3
+  - @ledgerhq/live-countervalues-react@0.1.5-nightly.3
+  - @ledgerhq/live-nft@0.3.2-nightly.3
+
 ## 34.1.1-nightly.4
 
 ### Patch Changes

@@ -133,7 +133,8 @@
     "@ledgerhq/coin-bitcoin": "0.3.9",
     "@ledgerhq/device-core": "0.1.0",
     "@ledgerhq/device-react": "0.1.0",
-    "@ledgerhq/ethereum-provider": "0.1.0"
+    "@ledgerhq/ethereum-provider": "0.1.0",
+    "@ledgerhq/coin-tester": "0.1.0"
   },
   "changesets": [
     "angry-shrimps-work",
@@ -143,6 +144,7 @@
     "cyan-deers-remember",
     "cyan-points-obey",
     "dirty-beds-eat",
+    "dry-kangaroos-brush",
     "dull-clouds-yell",
     "dull-jeans-attack",
     "eighty-crabs-search",
@@ -153,6 +155,7 @@
     "fifty-emus-itch",
     "fifty-forks-add",
     "flat-experts-complain",
+    "flat-panthers-agree",
     "forty-clouds-do",
     "forty-elephants-jump",
     "four-bears-shop",
@@ -189,6 +192,7 @@
     "moody-adults-roll",
     "nice-rats-hunt",
     "ninety-falcons-hope",
+    "odd-pumas-grab",
     "perfect-knives-help",
     "plenty-ways-switch",
     "poor-pears-taste",
@@ -217,6 +221,7 @@
     "small-birds-remain",
     "small-zebras-join",
     "soft-hats-invent",
+    "sour-actors-exist",
     "sour-turtles-search",
     "spicy-planes-lie",
     "spotty-fireants-sin",
@@ -226,6 +231,7 @@
     "strong-moose-report",
     "sweet-laws-lie",
     "tall-cherries-allow",
+    "tasty-balloons-report",
     "tasty-pigs-pretend",
     "ten-camels-complain",
     "thick-dolls-sing",
@@ -238,6 +244,7 @@
     "warm-readers-whisper",
     "weak-tomatoes-travel",
     "weak-tools-swim",
+    "wicked-feet-fly",
     "yellow-pandas-tan",
     "yellow-parents-dance"
   ]
