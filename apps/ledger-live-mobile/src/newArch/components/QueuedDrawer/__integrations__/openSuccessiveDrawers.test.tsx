@@ -149,33 +149,191 @@ describe("QueuedDrawer", () => {
     expect(screen.queryByText("Drawer 3")).toBeNull();
   });
 
-  test("open one drawer, then navigate to another screen", async () => {
-    // open first drawer
-    // expect first visible
-    // click navigate to another screen
-    // expect other screen to be visible
-    // expect first drawer to not be visible
-  });
+  test("open a drawer, queue a second drawer, then navigate to another screen with no drawers", async () => {
+    const { user } = render(<TestPages />);
 
-  test("open two drawers, then navigate to another screen", async () => {
-    // ... first steps
-    // expect no drawer visible
+    // expect to be on main screen
+    expect(await screen.findByText("Main screen")).toBeVisible();
+    // open first drawer
+    expect(await screen.findByTestId(testIds(TestIdPrefix.Main).drawer1Button)).toBeVisible();
+    await user.press(screen.getByTestId(testIds(TestIdPrefix.Main).drawer1Button));
+
+    // expect first visible
+    expect(await screen.findByText("Drawer 1")).toBeVisible();
+
+    // request open second drawer (button in first drawer)
+    await user.press(screen.getByTestId(testIds(TestIdPrefix.InDrawer1).drawer2Button));
+
+    // expect second not visible
+    expect(screen.queryByText("Drawer 2")).toBeNull();
+
+    // click navigate to another screen
+    await user.press(
+      screen.getByTestId(testIds(TestIdPrefix.InDrawer1).navigateToEmptyTestScreenButton),
+    );
+
+    // wait for main screen to disappear
+    waitForElementToBeRemoved(() => screen.getByText("Main screen"));
+
+    // expect first drawer to not be visible
+    expect(screen.queryByText("Drawer 1")).toBeNull();
+    // expect other screen to be visible
+    expect(await screen.findByText("Empty screen")).toBeVisible();
   });
 
   test("open two drawers, then navigate to another screen that has a drawer opened, then close it", async () => {
-    // ... first steps
-    // expect drawer of 2nd screen visible
-    // expect drawers of first screen not vislbe
+    const { user } = render(<TestPages />);
+    // open first drawer
+    expect(await screen.findByTestId(testIds(TestIdPrefix.Main).drawer1Button)).toBeVisible();
+    await user.press(screen.getByTestId(testIds(TestIdPrefix.Main).drawer1Button));
+
+    // expect first is visible
+    expect(await screen.findByText("Drawer 1")).toBeVisible();
+
+    // request open second drawer (button in first drawer)
+    await user.press(screen.getByTestId(testIds(TestIdPrefix.InDrawer1).drawer2Button));
+
+    // expect second not visible
+    expect(screen.queryByText("Drawer 2")).toBeNull();
+
+    // click navigate to another screen
+    await user.press(
+      screen.getByTestId(
+        testIds(TestIdPrefix.InDrawer1).navigateToTestScreenWithDrawerRequestingToBeOpenedButton,
+      ),
+    );
+
+    // wait for main screen to disappear
+    waitForElementToBeRemoved(() => screen.getByText("Main screen"));
+
+    // expect other screen to be visible
+    expect(await screen.findByText("Screen 1")).toBeVisible();
+
+    // expect first and second drawers to not be visible
+    expect(screen.queryByText("Drawer 1")).toBeNull();
+    expect(screen.queryByText("Drawer 2")).toBeNull();
+
+    // expect drawer of screen 1 to be visible
+    expect(await screen.findByText("Drawer on screen 1")).toBeVisible();
+
     // close drawer
-    // wait drawer content not visible
+    await user.press(screen.getByTestId("modal-close-button"));
+
+    // wait for drawer to disappear
+    await waitForElementToBeRemoved(() => screen.getByText("Drawer on screen 1"));
+
+    // expect no drawers visible
+    expect(await screen.queryByText("Drawer 1")).toBeNull();
+    expect(await screen.queryByText("Drawer 2")).toBeNull();
+    expect(await screen.queryByText("Drawer on screen 1")).toBeNull();
   });
 
   test("open two drawers, force open another one, navigate to other screen", async () => {
-    //
+    const { user } = render(<TestPages />);
+    // open first drawer
+    expect(await screen.findByTestId(testIds(TestIdPrefix.Main).drawer1Button)).toBeVisible();
+    await user.press(screen.getByTestId(testIds(TestIdPrefix.Main).drawer1Button));
+
+    // expect first is visible
+    expect(await screen.findByText("Drawer 1")).toBeVisible();
+
+    // request open second drawer (button in first drawer)
+    await user.press(screen.getByTestId(testIds(TestIdPrefix.InDrawer1).drawer2Button));
+
+    // expect second not visible
+    expect(screen.queryByText("Drawer 2")).toBeNull();
+
+    // force open third drawer
+    await user.press(screen.getByTestId(testIds(TestIdPrefix.InDrawer1).drawer4Button));
+
+    // wait for 1st drawer to disappear
+    await waitForElementToBeRemoved(() => screen.getByText("Drawer 1"));
+
+    // expect third visible
+    expect(await screen.findByText("Drawer 4")).toBeVisible();
+
+    // expect first 2 drawers not visible
+    expect(screen.queryByText("Drawer 1")).toBeNull();
+    expect(screen.queryByText("Drawer 2")).toBeNull();
+
+    // click navigate to another screen
+    await user.press(
+      screen.getByTestId(
+        testIds(TestIdPrefix.InDrawer4).navigateToTestScreenWithDrawerRequestingToBeOpenedButton,
+      ),
+    );
+
+    // wait for main screen to disappear
+    waitForElementToBeRemoved(() => screen.getByText("Main screen"));
+
+    // expect other screen to be visible
+    expect(await screen.findByText("Screen 1")).toBeVisible();
+
+    // expect no drawers visible
+    expect(screen.queryByText("Drawer 1")).toBeNull();
+    expect(screen.queryByText("Drawer 2")).toBeNull();
+    expect(screen.queryByText("Drawer 4")).toBeNull();
   });
 
   test("open two drawers, force open another one, navigate to other screen with a drawer opened", async () => {
-    //
+    const { user } = render(<TestPages />);
+    // open first drawer
+    expect(await screen.findByTestId(testIds(TestIdPrefix.Main).drawer1Button)).toBeVisible();
+    await user.press(screen.getByTestId(testIds(TestIdPrefix.Main).drawer1Button));
+
+    // expect first is visible
+    expect(await screen.findByText("Drawer 1")).toBeVisible();
+
+    // request open second drawer (button in first drawer)
+    await user.press(screen.getByTestId(testIds(TestIdPrefix.InDrawer1).drawer2Button));
+
+    // expect second not visible
+    expect(screen.queryByText("Drawer 2")).toBeNull();
+
+    // force open third drawer
+    await user.press(screen.getByTestId(testIds(TestIdPrefix.InDrawer1).drawer4Button));
+
+    // wait for 1st drawer to disappear
+    await waitForElementToBeRemoved(() => screen.getByText("Drawer 1"));
+
+    // expect third visible
+    expect(await screen.findByText("Drawer 4")).toBeVisible();
+
+    // expect first 2 drawers not visible
+    expect(screen.queryByText("Drawer 1")).toBeNull();
+    expect(screen.queryByText("Drawer 2")).toBeNull();
+
+    // click navigate to another screen
+    await user.press(
+      screen.getByTestId(
+        testIds(TestIdPrefix.InDrawer4).navigateToTestScreenWithDrawerRequestingToBeOpenedButton,
+      ),
+    );
+
+    // wait for main screen to disappear
+    waitForElementToBeRemoved(() => screen.getByText("Main screen"));
+
+    // expect other screen to be visible
+    expect(await screen.findByText("Screen 1")).toBeVisible();
+
+    // expect drawer of screen 2 to be visible
+    expect(await screen.findByText("Drawer on screen 1")).toBeVisible();
+
+    // expect no drawers visible
+    expect(screen.queryByText("Drawer 1")).toBeNull();
+    expect(screen.queryByText("Drawer 2")).toBeNull();
+    expect(screen.queryByText("Drawer 4")).toBeNull();
+
+    // close drawer
+    await user.press(screen.getByTestId("modal-close-button"));
+
+    // wait for drawer to disappear
+    await waitForElementToBeRemoved(() => screen.getByText("Drawer on screen 1"));
+
+    // expect no drawers visible
+    expect(await screen.queryByText("Drawer 1")).toBeNull();
+    expect(await screen.queryByText("Drawer 2")).toBeNull();
+    expect(await screen.queryByText("Drawer on screen 1")).toBeNull();
   });
 
   test("open one drawer at app level (out of navigation stack) and navigate to another screen", async () => {

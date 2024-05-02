@@ -67,6 +67,7 @@ import CameraPermissions from "~/screens/Settings/Debug/Debugging/CameraPermissi
 import BleEDevicePairingScreen from "~/screens/Settings/Debug/Features/BleDevicePairingScreen";
 import EditCurrencyUnits from "~/screens/Settings/CryptoAssets/Currencies/EditCurrencyUnits";
 import {
+  EmptyScreen,
   MainTestScreen,
   TestScreenWithDrawerForcingToBeOpened,
   TestScreenWithDrawerRequestingToBeOpened,
@@ -465,6 +466,13 @@ export default function SettingsNavigator() {
         component={MainTestScreen}
         options={{
           title: "QueuedDrawers",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugQueuedDrawerScreen0}
+        component={EmptyScreen}
+        options={{
+          title: "Empty screen",
         }}
       />
       <Stack.Screen

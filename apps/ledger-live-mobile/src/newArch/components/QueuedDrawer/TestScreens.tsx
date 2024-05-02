@@ -29,6 +29,7 @@ export function testIds(testIdPrefix: TestIdPrefix) {
     drawer4Button: `${testIdPrefix}_drawer4-button`,
     lockDrawersButton: `${testIdPrefix}_lock-drawers-button`,
     debugAppLevelDrawerButton: `${testIdPrefix}_debug-app-level-drawer-button`,
+    navigateToEmptyTestScreenButton: `${testIdPrefix}_navigate-to-empty-test-screen-button`,
     navigateToTestScreenWithDrawerRequestingToBeOpenedButton: `${testIdPrefix}_navigate-to-test-screen-with-drawer-requesting-to-be-opened-button`,
     navigateToTestScreenWithDrawerForcingToBeOpenedButton: `${testIdPrefix}_navigate-to-test-screen-with-drawer-forcing-to-be-opened-button`,
   };
@@ -50,13 +51,20 @@ type ButtonsProps = {
 
 const Buttons: React.FC<ButtonsProps> = React.memo(props => {
   const { _clearQueueDIRTYDONOTUSE, closeAllDrawers } = useQueuedDrawerContext();
+
+  // navigation
   const navigation = useNavigation<StackNavigatorNavigation<SettingsNavigatorStackParamList>>();
+  const navigateToEmptyTestScreen = useCallback(() => {
+    navigation.navigate(ScreenName.DebugQueuedDrawerScreen0);
+  }, [navigation]);
   const navigateToTestScreenWithDrawerRequestingToBeOpened = useCallback(() => {
     navigation.navigate(ScreenName.DebugQueuedDrawerScreen1);
   }, [navigation]);
   const navigationToTestScreenWithDrawerForcingToBeOpened = useCallback(() => {
     navigation.navigate(ScreenName.DebugQueuedDrawerScreen2);
   }, [navigation]);
+
+  // app level drawer
   const isDebugAppLevelDrawerOpened = useSelector(debugAppLevelDrawerOpenedSelector);
   const dispatch = useDispatch();
   const handleDebugAppLevelDrawerOpenedChange = useCallback(
@@ -139,6 +147,13 @@ const Buttons: React.FC<ButtonsProps> = React.memo(props => {
             : "Open Debug App Level Drawer"
         }
         onPress={() => handleDebugAppLevelDrawerOpenedChange(!isDebugAppLevelDrawerOpened)}
+      />
+      <Button
+        size="small"
+        testID={testIds(props.testIdPrefix).navigateToEmptyTestScreenButton}
+        type="main"
+        title="Navigate to Empty Test Screen"
+        onPress={navigateToEmptyTestScreen}
       />
       <Button
         size="small"
@@ -238,6 +253,8 @@ export const MainTestScreen = () => {
     </Flex>
   );
 };
+
+export const EmptyScreen = () => null;
 
 export const TestScreenWithDrawerRequestingToBeOpened = () => {
   const [drawerRequestingToBeOpened, setDrawerRequestingToBeOpened] = useState(true);
