@@ -26,9 +26,10 @@ import IlluRewards from "~/icons/images/Rewards";
 import ProgressCircle from "~/components/ProgressCircle";
 import AccountDelegationInfo from "~/components/AccountDelegationInfo";
 import AccountSectionLabel from "~/components/AccountSectionLabel";
-import { useManifest } from "@ledgerhq/live-common/platform/hooks/useManifest";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { ScreenName } from "../../../const";
+import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider";
+import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider";
 import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props = {
@@ -62,8 +63,9 @@ const Delegation = ({ account }: Props) => {
   const totalVotesUsed = votes.reduce((sum, { voteCount }) => sum + voteCount, 0);
   const hasRewards = BigNumber(unwithdrawnReward).gt(0);
   const percentVotesUsed = totalVotesUsed / tronPower;
-
-  const manifest = useManifest("stakekit");
+  const localManifest = useLocalLiveAppManifest("stakekit");
+  const remoteManifest = useRemoteLiveAppManifest("stakekit");
+  const manifest = remoteManifest || localManifest;
 
   const navigation = useNavigation<StackNavigationProp<ParamListBase, string, ScreenName>>();
 
