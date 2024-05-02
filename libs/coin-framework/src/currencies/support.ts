@@ -2,6 +2,7 @@ import {
   getFiatCurrencyByTicker,
   getCryptoCurrencyById,
   hasCryptoCurrencyId,
+  hasFiatCurrencyTicker,
 } from "@ledgerhq/cryptoassets";
 import { CryptoCurrency, CryptoCurrencyId, FiatCurrency } from "@ledgerhq/types-cryptoassets";
 import { getEnv } from "@ledgerhq/live-env";
@@ -57,16 +58,14 @@ async function initializeUserSupportedFiats() {
 
   if (remoteSupportedTokens.length !== 0) {
     remoteSupportedTokens.forEach(token => {
-      if (locallySupportedFiats.includes(token)) {
+      if (hasFiatCurrencyTicker(token)) {
         supportedTokens.push(token);
       }
     });
   } else {
     supportedTokens = locallySupportedFiats;
   }
-  userSupportedFiats = supportedTokens.map(id => {
-    return getFiatCurrencyByTicker(id);
-  });
+  userSupportedFiats = supportedTokens.map(getFiatCurrencyByTicker);
 }
 
 export async function fetchSupportedFiatsTokens(): Promise<string[]> {
