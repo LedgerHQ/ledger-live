@@ -3,3 +3,4 @@ export * from "./usePostOnboardingContext";
 export * from "./usePostOnboardingEntryPointVisibleOnWallet";
 export * from "./usePostOnboardingHubState";
 export * from "./useStartPostOnboardingCallback";
+export * from "./useAutoDismissPostOnboardingEntryPoint";
