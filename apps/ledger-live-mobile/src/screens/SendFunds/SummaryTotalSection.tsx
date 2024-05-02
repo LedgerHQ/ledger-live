@@ -87,4 +87,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withTheme(SummaryTotalSection);
+export default withTheme(React.memo(SummaryTotalSection));
