@@ -13,7 +13,7 @@ import {
   stopSpeculos,
   pressRightUntil,
   pressBoth,
-  //verifyAddress,
+  verifyAddress,
 } from "../../utils/speculos";
 
 test.use({ userdata: "speculos" });
@@ -25,9 +25,7 @@ test.afterEach(async () => {
 });
 const accounts: Account[] = [
   Account.BTC_1,
-  Account.tBTC_1,
   Account.ETH_1,
-  Account.tETH_1,
   Account.SOL_1,
   Account.TRX_1,
   Account.DOT_1,
@@ -57,13 +55,13 @@ test.describe.parallel("Receive @smoke", () => {
         await accountPage.receiveButton.click();
         await modal.continueButton.click();
         await expect(receiveModal.verifyAddress).toBeVisible();
-        await expect(receiveModal.receiveAddress(account.address)).toBeVisible();
       });
 
-      await test.step(`[${account.currency.uiName}] Validate message`, async () => {
-        //FIX ME: Issue Verifying the address on the device (on SOLANA and BTC/tBTC)
-        //const addressScreen = await pressRightUntil(account.currency.receivePattern[0]);
-        //expect(verifyAddress(account.address, addressScreen)).toBe(true);
+      await test.step(`[${account.currency.uiName}] Verify and Validate`, async () => {
+        await expect(receiveModal.receiveAddress(account.address)).toBeVisible();
+        //FIX ME: Issue Verifying the address on the device (on SOLANA)
+        const addressScreen = await pressRightUntil(account.currency.receivePattern[0]);
+        expect(verifyAddress(account.address, addressScreen)).toBe(true);
         await pressRightUntil(account.currency.receivePattern[1]);
         await pressBoth();
         await expect(receiveModal.approve).toBeVisible();

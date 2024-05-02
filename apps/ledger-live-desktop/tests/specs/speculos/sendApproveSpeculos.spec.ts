@@ -73,7 +73,8 @@ test.describe.parallel("Send Approve @smoke", () => {
         expect(verifyAmount("0.00001", amountScreen)).toBe(true);
         const addressScreen = await pressRightUntil("Address");
         expect(verifyAddress(transaction.accountToCredit.address, addressScreen)).toBe(true);
-        await pressRightUntil(transaction.accountToCredit.currency.sendPattern[2]); //Soit continue soit Accept
+        // TODO: REMOVE SEND PATTERN / issue: can be Conitnue or accept
+        await pressRightUntil(transaction.accountToCredit.currency.sendPattern[2]);
         await pressBoth();
         switch (transaction.accountToDebit.currency.uiName) {
           case Currency.tBTC.uiName:
@@ -81,7 +82,7 @@ test.describe.parallel("Send Approve @smoke", () => {
             await pressBoth();
             await pressRightUntil(DeviceLabels.Continue);
             await pressBoth();
-            await pressRightUntil(transaction.accountToCredit.currency.sendPattern[4]);
+            await pressRightUntil(DeviceLabels.Sign);
             await pressBoth();
             break;
           default:
