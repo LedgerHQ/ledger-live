@@ -1,6 +1,6 @@
 import { DeviceModelId } from "@ledgerhq/devices";
 import { isDeviceLocalizationSupported } from "./isDeviceLocalizationSupported";
-const { nanoS, nanoSP, nanoX, stax } = DeviceModelId;
+const { nanoS, nanoSP, nanoX, stax, europa } = DeviceModelId;
 
 test("isDeviceLocalizationSupported", () => {
   /**
@@ -45,4 +45,10 @@ test("isDeviceLocalizationSupported", () => {
    * */
   expect(isDeviceLocalizationSupported("9.0.0", nanoS)).toBe(false);
   expect(isDeviceLocalizationSupported("9.0.0-whatever", nanoS)).toBe(false);
+
+  /**
+   * Europa
+   * */
+  expect(isDeviceLocalizationSupported("0.0.0", europa)).toBe(true);
+  expect(isDeviceLocalizationSupported("0.0.0-whatever", europa)).toBe(true);
 });
