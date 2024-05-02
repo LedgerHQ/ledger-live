@@ -45,8 +45,8 @@ const byTicker: Record<string, FiatCurrency> = {
   BTC: fiat("Bitcoin", "BTC", "Ƀ", 8),
   BTN: fiat("Bhutanese Ngultrum", "BTN", "Nu.", 1),
   BWP: fiat("Botswana Pula", "BWP", "P", 2),
-  BYR: fiat("Belarusian Ruble (pre-2016)", "BYR", "р.", 2),
   BYN: fiat("Belarusian Ruble", "BYN", "р.", 2),
+  BYR: fiat("Belarusian Ruble (pre-2016)", "BYR", "р.", 2),
   BZD: fiat("Belize Dollar", "BZD", "BZ$", 2),
   CAD: fiat("Canadian Dollar", "CAD", "CA$", 2),
   CDF: fiat("Congolese Franc", "CDF", "FC", 2),
@@ -174,16 +174,16 @@ const byTicker: Record<string, FiatCurrency> = {
   VEF: fiat("Venezuelan Bolívar (2008–2018)", "VEF", "Bs. F.", 2),
   VND: fiat("Vietnamese Dong", "VND", "₫", 0),
   VUV: fiat("Vanuatu Vatu", "VUV", "VT", 0),
+  WON: fiat("North Korean Won", "WON", "₩", 2),
   WST: fiat("Samoan Tala", "WST", "WS$", 2),
   XAF: fiat("Central African CFA Franc", "XAF", "F", 2),
-  XCD: fiat("East Caribbean Dollar", "XCD", "$", 2),
   XBT: fiat("Bitcoin", "XBT", "Ƀ", 2),
+  XCD: fiat("East Caribbean Dollar", "XCD", "$", 2),
   XOF: fiat("West African CFA Franc", "XOF", "F", 2),
   XPF: fiat("CFP Franc", "XPF", "F", 2),
   YER: fiat("Yemeni Rial", "YER", "﷼", 2),
   ZAR: fiat("South African Rand", "ZAR", "R", 2),
   ZMW: fiat("Zambian Kwacha", "ZMW", "ZK", 2),
-  WON: fiat("North Korean Won", "WON", "₩", 2),
 };
 const list = Object.keys(byTicker).map(k => byTicker[k]);
 
