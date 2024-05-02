@@ -1380,6 +1380,9 @@ importers:
       '@ledgerhq/coin-framework':
         specifier: workspace:^
         version: link:../../libs/coin-framework
+      '@ledgerhq/cryptoassets':
+        specifier: workspace:^
+        version: link:../../libs/ledgerjs/packages/cryptoassets
       '@ledgerhq/domain-service':
         specifier: workspace:^
         version: link:../../libs/domain-service
@@ -36410,7 +36413,6 @@ packages:
       is-hex-prefixed: 1.0.0
       strip-hex-prefix: 1.0.0
     dev: false
-    bundledDependencies: false
 
   /ev-emitter@1.1.1:
     resolution: {integrity: sha512-ipiDYhdQSCZ4hSbX4rMW+XzNKMD1prg/sTvoVmSLkuQ1MVlwjJQQA+sW8tMYR3BLUr9KjodFV4pvzunvRhd33Q==}
@@ -41678,7 +41680,7 @@ packages:
       pretty-format: 29.7.0
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.7.0(@types/node@20.8.10)(source-map-support@0.5.21)(typescript@5.1.3)
+      ts-node: 10.7.0(@types/node@20.8.10)(typescript@5.1.3)
     transitivePeerDependencies:
       - babel-plugin-macros
       - metro
@@ -41845,7 +41847,7 @@ packages:
       pretty-format: 29.7.0
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.7.0(@types/node@20.8.10)(source-map-support@0.5.21)(typescript@5.1.3)
+      ts-node: 10.7.0(@types/node@20.8.10)(typescript@5.1.3)
     transitivePeerDependencies:
       - babel-plugin-macros
       - metro

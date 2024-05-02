@@ -10,6 +10,9 @@ export default function Home() {
           <Link href="/domain-tlv-parser">Domain TLV Parser</Link>
         </li>
         <li>
+          <Link href="/derivations">Derivation Paths</Link>
+        </li>
+        <li>
           <Link href="/eth-tx-tools">ETH Tx Tools</Link>
         </li>
         <li>
