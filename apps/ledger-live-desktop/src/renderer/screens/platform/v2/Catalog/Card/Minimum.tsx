@@ -15,11 +15,11 @@ export function MinimumCard(props: PropsCard<RecentlyUsedManifest | LiveAppManif
 
   const lang = useSelector(languageSelector);
   const usedAt = useMemo(() => {
-    if (manifest.usedAt) {
+    if ("usedAt" in manifest) {
       const rtf = new Intl.RelativeTimeFormat(lang);
       return rtf.format(-manifest.usedAt.diff, manifest.usedAt.unit);
     } else return;
-  }, [lang, manifest.usedAt]);
+  }, [lang, manifest]);
 
   return (
     <Container disabled={disabled} onClick={onClick} width={300}>
