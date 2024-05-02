@@ -49,6 +49,7 @@ import useAccountsWithFundsListener from "@ledgerhq/live-common/hooks/useAccount
 import { accountsSelector } from "./reducers/accounts";
 import { useRecoverRestoreOnboarding } from "~/renderer/hooks/useRecoverRestoreOnboarding";
 import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
+import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 
 const PlatformCatalog = lazy(() => import("~/renderer/screens/platform"));
 const Dashboard = lazy(() => import("~/renderer/screens/dashboard"));
@@ -190,6 +191,7 @@ export default function Default() {
   useFetchCurrencyAll();
   useFetchCurrencyFrom();
   useRecoverRestoreOnboarding();
+  useAutoDismissPostOnboardingEntryPoint();
 
   const listAppsV2 = useFeature("listAppsV2minor1");
 
