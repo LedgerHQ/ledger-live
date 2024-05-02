@@ -19,7 +19,6 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import BigNumber from "bignumber.js";
-import { getCurrentDevice } from "~/renderer/reducers/devices";
 
 export type UseSwapLiveAppHookProps = {
   manifestID: string | null;
