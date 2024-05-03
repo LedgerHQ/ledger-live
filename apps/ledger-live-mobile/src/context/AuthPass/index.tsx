@@ -1,4 +1,4 @@
-import React, { PureComponent, useContext } from "react";
+import React, { PureComponent } from "react";
 import { StyleSheet, View, AppState, Platform } from "react-native";
 import * as Keychain from "react-native-keychain";
 import type { TFunction } from "i18next";
