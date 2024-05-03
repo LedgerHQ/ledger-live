@@ -11,6 +11,7 @@ export class SendModal extends Modal {
   readonly checkDevice: Locator;
   readonly checkTransactionbroadcast: Locator;
   readonly checkTransactionDenied: Locator;
+  readonly retryButton: Locator;
   readonly checkAddress: (address: string) => Locator;
   readonly checkAmount: (currency: string) => Locator;
 
@@ -25,7 +26,8 @@ export class SendModal extends Modal {
       "text=Double-check the transaction details on your Ledger device before signing.",
     );
     this.checkTransactionbroadcast = page.locator("text=Transaction sent");
-    this.checkTransactionDenied = page.locator("text=Operation denied on device");
+    this.checkTransactionDenied = page.locator(`div[color="alertRed"]`); //Pas ideal
+    this.retryButton = page.getByRole("button", { name: "Retry" });
     this.checkAddress = address =>
       page.locator('[data-test-id="modal-content"]').locator(`text=${address}`);
     this.checkAmount = currency => page.locator(`text=0.00001 ${currency}`).first();

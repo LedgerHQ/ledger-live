@@ -18,7 +18,8 @@ const currencies: Currency[] = [
   Currency.DOT,
   Currency.TRX,
   Currency.XRP,
-]; //ADA ?
+  Currency.ADA,
+];
 
 let device: Device | undefined;
 

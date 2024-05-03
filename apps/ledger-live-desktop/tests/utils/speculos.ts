@@ -81,7 +81,7 @@ export const specs: Specs = {
     appQuery: {
       model: DeviceModelId.nanoSP,
       appName: "CardanoADA",
-      appVersion: "7.1.0",
+      appVersion: "6.1.2",
     },
     dependency: "",
   },
