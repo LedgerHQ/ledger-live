@@ -16,6 +16,7 @@ import type {
 import {
   fromAccountRaw as commonFromAccountRaw,
   toAccountRaw as commonToAccountRaw,
+  toTokenAccountRaw as commonToTokenAccountRaw,
   fromOperationRaw as commonFromOperationRaw,
   toOperationRaw as commonToOperationRaw,
 } from "@ledgerhq/coin-framework/serialization/index";
@@ -74,12 +75,39 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
 
 export function toAccountRaw(account: Account, userData?: AccountUserData): AccountRaw {
   const bridge = getAccountBridge(account);
-  return commonToAccountRaw(
+
+  const toTokenAccount = (raw, operationRaw) => {
+    const commonTokenAccountRaw = commonToTokenAccountRaw(raw, operationRaw);
+    let starred;
+    if (userData) {
+      starred = userData.starredIds.includes(raw.id);
+    }
+
+    return {
+      ...commonTokenAccountRaw,
+      starred,
+    };
+  };
+
+  const commonAccountRaw = commonToAccountRaw(
     account,
     {
       assignToAccountRaw: bridge.assignToAccountRaw,
       toOperationExtraRaw: bridge.toOperationExtraRaw,
     },
-    userData,
+    toTokenAccount,
   );
+
+  let name = "";
+  let starred;
+  if (userData) {
+    name = userData.name;
+    starred = userData.starredIds.includes(commonAccountRaw.id);
+  }
+
+  return {
+    ...commonAccountRaw,
+    name,
+    starred,
+  };
 }

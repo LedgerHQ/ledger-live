@@ -1,6 +1,5 @@
 import { BigNumber } from "bignumber.js";
 import type {
-  AccountUserData,
   Account,
   AccountBridge,
   AccountRaw,
@@ -139,7 +138,7 @@ export type ToFamiliyRaw = {
 export function toAccountRaw(
   account: Account,
   toFamilyRaw?: ToFamiliyRaw,
-  userData?: AccountUserData,
+  toTokenAccount: typeof toTokenAccountRaw = toTokenAccountRaw,
 ): AccountRaw {
   const {
     id,
@@ -167,21 +166,13 @@ export function toAccountRaw(
     nfts,
   } = account;
 
-  let name = "";
-  let starred;
-  if (userData) {
-    name = userData.name;
-    starred = userData.starredIds.includes(id);
-  }
-
   const convertOperation = (op: Operation) =>
     toOperationRaw(op, undefined, toFamilyRaw?.toOperationExtraRaw);
 
   const res: AccountRaw = {
     id,
     seedIdentifier,
-    name,
-    starred,
+    name: "", //TODO to remove
     used,
     derivationMode,
     index,
@@ -213,9 +204,7 @@ export function toAccountRaw(
   }
 
   if (subAccounts) {
-    res.subAccounts = subAccounts.map(a =>
-      toTokenAccountRaw(a, toFamilyRaw?.toOperationExtraRaw, userData),
-    );
+    res.subAccounts = subAccounts.map(a => toTokenAccount(a, toFamilyRaw?.toOperationExtraRaw));
   }
 
   if (toFamilyRaw?.assignToAccountRaw) {
@@ -231,7 +220,7 @@ export function toAccountRaw(
 
 //-- TokenAccount
 
-function fromTokenAccountRaw(
+export function fromTokenAccountRaw(
   raw: TokenAccountRaw,
   fromOperationExtraRaw?: AccountBridge<TransactionCommon>["fromOperationExtraRaw"],
 ): TokenAccount {
@@ -273,10 +262,9 @@ function fromTokenAccountRaw(
   res.balanceHistoryCache = generateHistoryFromOperations(res as TokenAccount);
   return res as TokenAccount;
 }
-function toTokenAccountRaw(
+export function toTokenAccountRaw(
   ta: TokenAccount,
   toOperationExtraRaw?: AccountBridge<TransactionCommon>["toOperationExtraRaw"],
-  userData?: AccountUserData,
 ): TokenAccountRaw {
   const {
     id,
@@ -292,18 +280,12 @@ function toTokenAccountRaw(
     approvals,
   } = ta;
 
-  let starred;
-  if (userData) {
-    starred = userData.starredIds.includes(id);
-  }
-
   const convertOperation = (op: Operation) => toOperationRaw(op, undefined, toOperationExtraRaw);
 
   return {
     type: "TokenAccountRaw",
     id,
     parentId,
-    starred,
     tokenId: token.id,
     balance: balance.toString(),
     spendableBalance: spendableBalance.toString(),
