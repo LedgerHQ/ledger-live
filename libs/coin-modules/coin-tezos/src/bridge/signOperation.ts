@@ -121,45 +121,55 @@ const buildSignOperation =
 
         const tezos = new TezosToolkit(getEnv("API_TEZOS_NODE"));
 
-        const ledgerSigner = (await signerContext(deviceId, signer =>
-          Promise.resolve(signer.createLedgerSigner(freshAddressPath, false, 0)),
-        )) as LedgerSigner;
+        const signedInfo = await signerContext(deviceId, async signer => {
+          const ledgerSigner = signer.createLedgerSigner(freshAddressPath, false, 0);
 
-        tezos.setProvider({ signer: ledgerSigner });
+          tezos.setProvider({ signer: ledgerSigner });
 
-        const publicKey = await ledgerSigner.publicKey();
-        const publicKeyHash = await ledgerSigner.publicKeyHash();
+          const publicKey = await ledgerSigner.publicKey();
+          const publicKeyHash = await ledgerSigner.publicKeyHash();
 
-        const { rpc } = tezos;
-        const block = await rpc.getBlock();
-        const sourceData = await rpc.getContract(freshAddress);
+          const { rpc } = tezos;
+          const block = await rpc.getBlock();
+          const sourceData = await rpc.getContract(freshAddress);
 
-        o.next({ type: "device-signature-requested" });
+          o.next({ type: "device-signature-requested" });
 
-        if (cancelled) {
+          if (cancelled) {
+            return;
+          }
+
+          const { type, contents } = await getOperationContents({
+            account: account as TezosAccount,
+            transaction,
+            tezos,
+            counter: Number(sourceData.counter),
+            public_key: publicKey,
+            public_key_hash: publicKeyHash,
+          });
+
+          const forgedBytes = await rpc.forgeOperations({
+            branch: block.hash,
+            contents,
+          });
+
+          // 0x03 is a conventional prefix (aka a watermark) for tezos transactions
+          const signature = await ledgerSigner.sign(
+            Buffer.concat([Buffer.from("03", "hex"), Buffer.from(forgedBytes, "hex")]).toString(
+              "hex",
+            ),
+          );
+
+          return {
+            type,
+            signature,
+          };
+        });
+
+        if (!signedInfo) {
           return;
         }
-
-        const { type, contents } = await getOperationContents({
-          account: account as TezosAccount,
-          transaction,
-          tezos,
-          counter: Number(sourceData.counter),
-          public_key: publicKey,
-          public_key_hash: publicKeyHash,
-        });
-
-        const forgedBytes = await rpc.forgeOperations({
-          branch: block.hash,
-          contents,
-        });
-
-        // 0x03 is a conventional prefix (aka a watermark) for tezos transactions
-        const signature = await ledgerSigner.sign(
-          Buffer.concat([Buffer.from("03", "hex"), Buffer.from(forgedBytes, "hex")]).toString(
-            "hex",
-          ),
-        );
+        const { type, signature } = signedInfo;
 
         o.next({ type: "device-signature-granted" });
 

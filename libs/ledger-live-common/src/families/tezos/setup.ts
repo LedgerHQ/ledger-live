@@ -33,7 +33,7 @@ const createSigner: CreateSigner<TezosSigner> = (transport: Transport) => {
     ) => xtz.signOperation(path, rawTxHex, options),
     // Tezos [LedgerSigner](https://www.npmjs.com/package/@taquito/ledger-signer)
     createLedgerSigner: (path: string, prompt: boolean, derivationType: DerivationType) => {
-      return new LedgerSigner(xtz.transport, path, prompt, derivationType);
+      return new LedgerSigner(transport, path, prompt, derivationType);
     },
   };
 };
