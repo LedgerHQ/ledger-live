@@ -12,6 +12,8 @@ import * as crypto from "crypto";
 import { OptionalFeatureMap } from "@ledgerhq/types-live";
 import { responseLogfilePath } from "../utils/networkResponseLogger";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
+import { Device, startSpeculos, stopSpeculos } from "../utils/speculos";
+import { Spec } from "../utils/speculos";
 
 export function generateUUID(): string {
   return crypto.randomBytes(16).toString("hex");
@@ -24,6 +26,7 @@ function appendFileErrorHandler(e: Error | null) {
 type TestFixtures = {
   lang: string;
   theme: "light" | "dark" | "no-preference" | undefined;
+  speculosCurrency: Spec;
   userdata: string;
   userdataDestinationPath: string;
   userdataOriginalFile: string;
@@ -50,6 +53,7 @@ export const test = base.extend<TestFixtures>({
   userdata: undefined,
   featureFlags: undefined,
   simulateCamera: undefined,
+  speculosCurrency: undefined,
   userdataDestinationPath: async ({}, use) => {
     use(path.join(__dirname, "../artifacts/userdata", generateUUID()));
   },
@@ -70,6 +74,7 @@ export const test = base.extend<TestFixtures>({
       env,
       featureFlags,
       simulateCamera,
+      speculosCurrency,
     },
     use,
   ) => {
@@ -80,65 +85,80 @@ export const test = base.extend<TestFixtures>({
       await fsPromises.copyFile(userdataOriginalFile, `${userdataDestinationPath}/app.json`);
     }
 
+    let device: Device | undefined;
     if (IS_MOCK) {
-      setEnv("SPECULOS_API_PORT", 30001 + getEnv("SPECULOS_PID_OFFSET"));
-      setEnv("SPECULOS_PID_OFFSET", getEnv("SPECULOS_PID_OFFSET") + 1);
+      console.log("Avant spéculos");
+      if (speculosCurrency) {
+        device = await startSpeculos("Bitcoin Receive", speculosCurrency);
+        console.log("speculos crée");
+        console.log(device);
+        setEnv("SPECULOS_API_PORT", device?.ports.apiPort?.toString());
+      }
+      //setEnv("SPECULOS_API_PORT", 30001 + getEnv("SPECULOS_PID_OFFSET"));
     }
 
-    // default environment variables
-    env = Object.assign(
-      {
-        ...process.env,
-        VERBOSE: true,
-        MOCK: IS_MOCK ? undefined : true,
-        MOCK_COUNTERVALUES: true,
-        HIDE_DEBUG_MOCK: true,
-        CI: process.env.CI || undefined,
-        PLAYWRIGHT_RUN: true,
-        CRASH_ON_INTERNAL_CRASH: true,
-        LEDGER_MIN_HEIGHT: 768,
-        FEATURE_FLAGS: JSON.stringify(featureFlags),
-        MANAGER_DEV_MODE: IS_MOCK ? true : undefined,
-        SPECULOS_API_PORT: IS_MOCK ? getEnv("SPECULOS_API_PORT").toString() : undefined,
-      },
-      env,
-    );
+    try {
+      // default environment variables
+      env = Object.assign(
+        {
+          ...process.env,
+          VERBOSE: true,
+          MOCK: IS_MOCK ? undefined : true,
+          MOCK_COUNTERVALUES: true,
+          HIDE_DEBUG_MOCK: true,
+          CI: process.env.CI || undefined,
+          PLAYWRIGHT_RUN: true,
+          CRASH_ON_INTERNAL_CRASH: true,
+          LEDGER_MIN_HEIGHT: 768,
+          FEATURE_FLAGS: JSON.stringify(featureFlags),
+          MANAGER_DEV_MODE: IS_MOCK ? true : undefined,
+          SPECULOS_API_PORT: IS_MOCK ? getEnv("SPECULOS_API_PORT")?.toString() : undefined,
+        },
+        env,
+      );
+      console.log(env);
 
-    // launch app
-    const windowSize = { width: 1024, height: 768 };
+      // launch app
+      const windowSize = { width: 1024, height: 768 };
 
-    const electronApp: ElectronApplication = await electron.launch({
-      args: [
-        `${path.join(__dirname, "../../.webpack/main.bundle.js")}`,
-        `--user-data-dir=${userdataDestinationPath}`,
-        // `--window-size=${window.width},${window.height}`, // FIXME: Doesn't work, window size can't be forced?
-        "--force-device-scale-factor=1",
-        "--disable-dev-shm-usage",
-        // "--use-gl=swiftshader"
-        "--no-sandbox",
-        "--enable-logging",
-        ...(simulateCamera
-          ? [
-              "--use-fake-device-for-media-stream",
-              `--use-file-for-fake-video-capture=${simulateCamera}`,
-            ]
-          : []),
-      ],
-      recordVideo: {
-        dir: `${path.join(__dirname, "../artifacts/videos/")}`,
-        size: windowSize, // FIXME: no default value, it could come from viewport property in conf file but it's not the case
-      },
-      env,
-      colorScheme: theme,
-      locale: lang,
-      executablePath: require("electron/index.js"),
-      timeout: 120000,
-    });
+      const electronApp: ElectronApplication = await electron.launch({
+        args: [
+          `${path.join(__dirname, "../../.webpack/main.bundle.js")}`,
+          `--user-data-dir=${userdataDestinationPath}`,
+          // `--window-size=${window.width},${window.height}`, // FIXME: Doesn't work, window size can't be forced?
+          "--force-device-scale-factor=1",
+          "--disable-dev-shm-usage",
+          // "--use-gl=swiftshader"
+          "--no-sandbox",
+          "--enable-logging",
+          ...(simulateCamera
+            ? [
+                "--use-fake-device-for-media-stream",
+                `--use-file-for-fake-video-capture=${simulateCamera}`,
+              ]
+            : []),
+        ],
+        recordVideo: {
+          dir: `${path.join(__dirname, "../artifacts/videos/")}`,
+          size: windowSize, // FIXME: no default value, it could come from viewport property in conf file but it's not the case
+        },
+        env,
+        colorScheme: theme,
+        locale: lang,
+        executablePath: require("electron/index.js"),
+        timeout: 120000,
+      });
 
-    await use(electronApp);
+      await use(electronApp);
 
-    // close app
-    await electronApp.close();
+      // close app
+      await electronApp.close();
+    } finally {
+      if (device) {
+        await stopSpeculos(device);
+        console.log("speculos kill");
+      }
+    }
   },
   page: async ({ electronApp }, use, testInfo) => {
     // app is ready

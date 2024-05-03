@@ -111,6 +111,7 @@ export async function createSpeculosDevice(
   transport: SpeculosTransport;
   id: string;
   appPath: string;
+  ports: ReturnType<typeof getPorts>;
 }> {
   const { model, firmware, appName, appVersion, seed, coinapps, dependency } = arg;
   const speculosID = `speculosID-${++idCounter}`;
@@ -271,6 +272,7 @@ export async function createSpeculosDevice(
     id: speculosID,
     transport,
     appPath,
+    ports,
   };
 
   if (arg.onSpeculosDeviceCreated != null) {
