@@ -9,12 +9,12 @@ import type {
 } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import {
+  defaultUpdateTransaction,
   GetAccountShape,
   makeAccountBridgeReceive,
-  makeScanAccounts as makeScanHelper,
-  makeSync as makeSyncHelper,
-} from "../../../bridge/jsHelpers";
-import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+  makeScanAccounts,
+  makeSync,
+} from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { ChainAPI, Config } from "../api";
 import { minutes } from "@ledgerhq/live-network/cache";
 import { broadcastWithAPI } from "../js-broadcast";
@@ -23,7 +23,7 @@ import estimateMaxSpendableWithAPI from "../js-estimateMaxSpendable";
 import getTransactionStatus from "../js-getTransactionStatus";
 import { PRELOAD_MAX_AGE, hydrate, preloadWithAPI } from "../js-preload";
 import { prepareTransaction as prepareTransactionWithAPI } from "../js-prepareTransaction";
-import { signOperationWithAPI } from "../js-signOperation";
+import { buildSignOperation } from "../js-signOperation";
 import { getAccountShapeWithAPI } from "../js-synchronization";
 import {
   assignFromAccountRaw,
@@ -33,6 +33,10 @@ import {
 } from "../serialization";
 import type { SolanaAccount, SolanaPreloadDataV1, Transaction } from "../types";
 import { endpointByCurrencyId } from "../utils";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { SolanaAddress, SolanaSignature, SolanaSigner } from "../signer";
+import resolver from "../hw-getAddress";
+import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 
 function makePrepare(getChainAPI: (config: Config) => Promise<ChainAPI>) {
   async function prepareTransaction(mainAccount: SolanaAccount, transaction: Transaction) {
@@ -47,7 +51,10 @@ function makePrepare(getChainAPI: (config: Config) => Promise<ChainAPI>) {
   return prepareTransaction;
 }
 
-function makeSyncAndScan(getChainAPI: (config: Config) => Promise<ChainAPI>) {
+function makeSyncAndScan(
+  getChainAPI: (config: Config) => Promise<ChainAPI>,
+  getAddress: GetAddressFn,
+) {
   const getAccountShape: GetAccountShape = async info => {
     const config: Config = {
       endpoint: endpointByCurrencyId(info.currency.id),
@@ -57,8 +64,8 @@ function makeSyncAndScan(getChainAPI: (config: Config) => Promise<ChainAPI>) {
     return getAccountShapeWithAPI(info, chainAPI);
   };
   return {
-    sync: makeSyncHelper({ getAccountShape }),
-    scan: makeScanHelper({ getAccountShape }),
+    sync: makeSync({ getAccountShape }),
+    scan: makeScanAccounts({ getAccountShape, getAddressFn: getAddress }),
   };
 }
 
@@ -111,13 +118,14 @@ function makeBroadcast(getChainAPI: (config: Config) => Promise<ChainAPI>): Broa
 
 function makeSign(
   getChainAPI: (config: Config) => Promise<ChainAPI>,
+  signerContext: SignerContext<SolanaSigner, SolanaAddress | SolanaSignature>,
 ): SignOperationFnSignature<Transaction> {
   return info => {
     const config: Config = {
       endpoint: endpointByCurrencyId(info.account.currency.id),
     };
     const api = () => getChainAPI(config);
-    return signOperationWithAPI(info, api);
+    return buildSignOperation(signerContext, api)(info);
   };
 }
 
@@ -144,15 +152,18 @@ export function makeBridges({
   getAPI,
   getQueuedAPI,
   getQueuedAndCachedAPI,
+  signerContext,
 }: {
   getAPI: (config: Config) => Promise<ChainAPI>;
   getQueuedAPI: (config: Config) => Promise<ChainAPI>;
   getQueuedAndCachedAPI: (config: Config) => Promise<ChainAPI>;
+  signerContext: SignerContext<SolanaSigner, SolanaAddress | SolanaSignature>;
 }): {
   currencyBridge: CurrencyBridge;
   accountBridge: AccountBridge<Transaction>;
 } {
-  const { sync, scan } = makeSyncAndScan(getQueuedAPI);
+  const getAddress = resolver(signerContext);
+  const { sync, scan } = makeSyncAndScan(getQueuedAPI, getAddress);
 
   const accountBridge: AccountBridge<Transaction> = {
     createTransaction,
@@ -160,10 +171,10 @@ export function makeBridges({
     estimateMaxSpendable: makeEstimateMaxSpendable(getQueuedAndCachedAPI),
     getTransactionStatus,
     sync,
-    receive: makeAccountBridgeReceive(),
+    receive: makeAccountBridgeReceive(getAddress),
     prepareTransaction: makePrepare(getQueuedAndCachedAPI),
     broadcast: makeBroadcast(getAPI),
-    signOperation: makeSign(getAPI),
+    signOperation: makeSign(getAPI, signerContext),
     assignFromAccountRaw,
     assignToAccountRaw,
     toOperationExtraRaw,

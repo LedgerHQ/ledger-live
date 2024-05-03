@@ -6,8 +6,10 @@ import {
   Transaction as SolanaTransaction,
   TransactionModel,
 } from "@ledgerhq/live-common/families/solana/types";
-import { assertUnreachable } from "@ledgerhq/live-common/families/solana/utils";
-import { ValidatorsAppValidator } from "@ledgerhq/live-common/families/solana/validator-app/index";
+import {
+  assertUnreachable,
+  ValidatorsAppValidator,
+} from "@ledgerhq/live-common/families/solana/staking";
 import { AccountLike } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";

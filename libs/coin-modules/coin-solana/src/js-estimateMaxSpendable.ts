@@ -3,7 +3,7 @@ import type { Transaction } from "./types";
 import BigNumber from "bignumber.js";
 import { ChainAPI } from "./api";
 import { getStakeAccountMinimumBalanceForRentExemption } from "./api/chain/web3";
-import { getMainAccount } from "../../account";
+import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
 import { estimateTxFee } from "./tx-fees";
 
 export const estimateFeeAndSpendable = async (

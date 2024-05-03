@@ -8,7 +8,6 @@ import filecoin from "../families/filecoin/hw-getAddress";
 import hedera from "../families/hedera/hw-getAddress";
 import internet_computer from "../families/internet_computer/hw-getAddress";
 import ripple from "../families/ripple/hw-getAddress";
-import solana from "../families/solana/hw-getAddress";
 import stacks from "../families/stacks/hw-getAddress";
 import stellar from "../families/stellar/hw-getAddress";
 import tezos from "../families/tezos/hw-getAddress";
@@ -19,6 +18,7 @@ import { resolver as bitcoin } from "../families/bitcoin/setup";
 import { resolver as evm } from "../families/evm/setup";
 import { resolver as near } from "../families/near/setup";
 import { resolver as polkadot } from "../families/polkadot/setup";
+import { resolver as solana } from "../families/solana/setup";
 
 export default {
   cardano,
@@ -31,7 +31,6 @@ export default {
   hedera,
   internet_computer,
   ripple,
-  solana,
   stacks,
   stellar,
   tezos,
@@ -42,4 +41,5 @@ export default {
   evm,
   near,
   polkadot,
+  solana,
 };

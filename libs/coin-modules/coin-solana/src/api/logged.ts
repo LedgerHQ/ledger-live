@@ -2,7 +2,7 @@ import { ChainAPI } from "./chain";
 
 //import fs from "fs";
 import { Message, PublicKey } from "@solana/web3.js";
-import { LATEST_BLOCKHASH_MOCK } from "../bridge/mock-data";
+import { LATEST_BLOCKHASH_MOCK } from "./chain";
 
 /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
 function write(file: string, str: string) {
@@ -20,6 +20,8 @@ export function logged(api: ChainAPI, file: string): ChainAPI {
       if (typeof targetValue === "function") {
         const method: keyof ChainAPI = propKey as any;
         return function (...args: unknown[]) {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore: TS-2683
           const result = targetValue.apply(this, args);
           const log = (answer: unknown) => {
             if (method === "getLatestBlockhash") {
