@@ -12,6 +12,7 @@ import { PostOnboardingNavigatorParamList } from "./types/PostOnboardingNavigato
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import { NavigationHeaderCloseButton } from "../NavigationHeaderCloseButton";
 import { useCompletePostOnboarding } from "~/logic/postOnboarding/useCompletePostOnboarding";
+import PostOnboardingDeeplinkHandler from "~/screens/PostOnboarding/PostOnboardingDeeplinkHandler";
 
 const Stack = createStackNavigator<PostOnboardingNavigatorParamList>();
 
@@ -41,6 +42,10 @@ const PostOnboardingNavigator = () => {
       <Stack.Screen
         name={ScreenName.PostOnboardingDebugScreen}
         component={PostOnboardingDebugScreen}
+      />
+      <Stack.Screen
+        name={ScreenName.PostOnboardingDeeplinkHandler}
+        component={PostOnboardingDeeplinkHandler}
       />
       <Stack.Screen
         name={ScreenName.PostOnboardingMockActionScreen}
