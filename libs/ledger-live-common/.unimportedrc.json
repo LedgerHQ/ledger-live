@@ -2705,6 +2705,7 @@
     "src/postOnboarding/hooks/usePostOnboardingEntryPointVisibleOnWallet.test.ts",
     "src/postOnboarding/hooks/usePostOnboardingHubState.test.ts",
     "src/postOnboarding/hooks/useAutoDismissPostOnboardingEntryPoint.test.ts",
+    "src/postOnboarding/hooks/usePostOnboardingDeeplinkHandler.test.ts",
     "src/postOnboarding/mock.ts",
     "src/postOnboarding/reducer.test.ts",
     "src/reactNativeSvg.d.ts",
