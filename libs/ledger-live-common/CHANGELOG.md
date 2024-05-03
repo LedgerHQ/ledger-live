@@ -1,5 +1,12 @@
 # @ledgerhq/live-common
 
+## 34.1.1-nightly.6
+
+### Patch Changes
+
+- Updated dependencies [[`aa312f9`](https://github.com/LedgerHQ/ledger-live/commit/aa312f9e43740106893602c9edbaeca1d20e1c4e)]:
+  - @ledgerhq/device-core@0.1.2-nightly.4
+
 ## 34.1.1-nightly.5
 
 ### Patch Changes

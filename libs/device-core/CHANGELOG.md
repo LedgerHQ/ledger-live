@@ -1,5 +1,11 @@
 # @ledgerhq/device-core
 
+## 0.1.2-nightly.4
+
+### Patch Changes
+
+- [#6775](https://github.com/LedgerHQ/ledger-live/pull/6775) [`aa312f9`](https://github.com/LedgerHQ/ledger-live/commit/aa312f9e43740106893602c9edbaeca1d20e1c4e) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix getVersion parsing for Europa
+
 ## 0.1.2-nightly.3
 
 ### Patch Changes

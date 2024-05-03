@@ -1,5 +1,16 @@
 # ledger-live-desktop
 
+## 2.79.2-nightly.6
+
+### Patch Changes
+
+- [#6775](https://github.com/LedgerHQ/ledger-live/pull/6775) [`9b340e8`](https://github.com/LedgerHQ/ledger-live/commit/9b340e88acabac3293fedb7a3d9446d7fc6fe4c8) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Firmware update: fix restore step for Europa
+
+- [#6795](https://github.com/LedgerHQ/ledger-live/pull/6795) [`cffc4fb`](https://github.com/LedgerHQ/ledger-live/commit/cffc4fb1f9661b5dea29f43b29b92679ad8cb2e7) Thanks [@cng-ledger](https://github.com/cng-ledger)! - fix(LIVE-12432): pass correct swap base api endpoint to live app
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.1.1-nightly.6
+
 ## 2.79.2-nightly.5
 
 ### Patch Changes
