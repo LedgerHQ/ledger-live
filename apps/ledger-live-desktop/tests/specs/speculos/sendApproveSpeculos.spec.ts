@@ -7,6 +7,7 @@ import { SendModal } from "../../models/SendModal";
 import { Modal } from "../../models/Modal";
 import { Account } from "../../enum/Account";
 import { Currency } from "../../enum/Currency";
+import { DeviceLabels } from "tests/enum/DeviceLabels";
 import { Transaction } from "../../models/Transaction";
 import {
   Device,
@@ -18,7 +19,6 @@ import {
   verifyAddress,
   verifyAmount,
 } from "../../utils/speculos";
-import { DeviceLabels } from "tests/enum/DeviceLabels";
 
 test.use({ userdata: "speculos" });
 
@@ -46,6 +46,7 @@ test.describe.parallel("Send Approve @smoke", () => {
         test.name,
         specs[transaction.accountToDebit.currency.deviceLabel.replace(/ /g, "_")],
       );
+      const receiveAddress = transaction.accountToCredit.address;
 
       await test.step(`Navigate to account`, async () => {
         await layout.goToAccounts();
@@ -54,13 +55,12 @@ test.describe.parallel("Send Approve @smoke", () => {
 
       await test.step(`send`, async () => {
         await accountPage.sendButton.click();
-        const address = transaction.accountToCredit.address;
-        await sendModal.fillRecipient(address);
+        await sendModal.fillRecipient(receiveAddress);
         await sendModal.continueButton.click();
         await modal.cryptoAmountField.fill(transaction.amount);
         await sendModal.countinueSendAmount();
         await expect(sendModal.verifyTotalDebit).toBeVisible();
-        await expect(sendModal.checkAddress(transaction.accountToCredit.address)).toBeVisible();
+        await expect(sendModal.checkAddress(receiveAddress)).toBeVisible();
         await expect(
           sendModal.checkAmount(transaction.accountToCredit.currency.uiLabel),
         ).toBeVisible(); //changer pour lui passer la currency
@@ -69,11 +69,11 @@ test.describe.parallel("Send Approve @smoke", () => {
 
       await test.step(`[${transaction.accountToDebit.accountName}] Validate message on device`, async () => {
         await expect(sendModal.checkDevice).toBeVisible();
-        const amountScreen = await pressRightUntil("Amount");
-        expect(verifyAmount("0.00001", amountScreen)).toBe(true);
-        const addressScreen = await pressRightUntil("Address");
-        expect(verifyAddress(transaction.accountToCredit.address, addressScreen)).toBe(true);
-        // TODO: REMOVE SEND PATTERN / issue: can be Conitnue or accept
+        const amountScreen = await pressRightUntil(DeviceLabels.Amount);
+        expect(verifyAmount(transaction.amount, amountScreen)).toBe(true);
+        const addressScreen = await pressRightUntil(DeviceLabels.Address);
+        expect(verifyAddress(receiveAddress, addressScreen)).toBe(true);
+        // TODO: REMOVE SEND PATTERN / issue: can be Continue or accept
         await pressRightUntil(transaction.accountToCredit.currency.sendPattern[2]);
         await pressBoth();
         switch (transaction.accountToDebit.currency.uiName) {
