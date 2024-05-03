@@ -26,7 +26,7 @@ export function testIds(testIdPrefix: TestIdPrefix) {
     drawer1Button: `${testIdPrefix}_drawer1-button`,
     drawer2Button: `${testIdPrefix}_drawer2-button`,
     drawer3Button: `${testIdPrefix}_drawer3-button`,
-    drawer4Button: `${testIdPrefix}_drawer4-button`,
+    drawer4ForcingButton: `${testIdPrefix}_drawer4-button`,
     lockDrawersButton: `${testIdPrefix}_lock-drawers-button`,
     debugAppLevelDrawerButton: `${testIdPrefix}_debug-app-level-drawer-button`,
     navigateToEmptyTestScreenButton: `${testIdPrefix}_navigate-to-empty-test-screen-button`,
@@ -123,7 +123,7 @@ const Buttons: React.FC<ButtonsProps> = React.memo(props => {
       />
       <Button
         size="small"
-        testID={testIds(props.testIdPrefix).drawer4Button}
+        testID={testIds(props.testIdPrefix).drawer4ForcingButton}
         type="main"
         title={
           props.drawer4ForcingToBeOpened ? "Cancel Force Open Drawer 4" : "Force Open Drawer 4"

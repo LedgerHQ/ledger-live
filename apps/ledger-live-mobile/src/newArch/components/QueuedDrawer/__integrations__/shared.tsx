@@ -8,6 +8,7 @@ import {
   TestScreenWithDrawerForcingToBeOpened,
   TestScreenWithDrawerRequestingToBeOpened,
 } from "../TestScreens";
+import DebugAppLevelDrawer from "../DebugAppLevelDrawer";
 
 const Stack = createStackNavigator<{
   [ScreenName.DebugQueuedDrawers]: undefined;
@@ -19,6 +20,7 @@ const Stack = createStackNavigator<{
 export function TestPages() {
   return (
     <QueuedDrawersContextProvider>
+      <DebugAppLevelDrawer />
       <Stack.Navigator initialRouteName={ScreenName.DebugQueuedDrawers}>
         <Stack.Screen
           name={ScreenName.DebugQueuedDrawers}
