@@ -15,17 +15,19 @@ import axios from "axios";
 import { getEnv } from "@ledgerhq/live-env";
 import { waitForTimeOut } from "./waitFor";
 
-type Specs = {
-  [key: string]: {
-    currency: CryptoCurrency;
-    appQuery: {
-      model: DeviceModelId;
-      appName: string;
-      appVersion: string;
-    };
-    dependency: string;
-    onSpeculosDeviceCreated?: (device: Device) => Promise<void>;
+export type Spec = {
+  currency: CryptoCurrency;
+  appQuery: {
+    model: DeviceModelId;
+    appName: string;
+    appVersion: string;
   };
+  dependency: string;
+  onSpeculosDeviceCreated?: (device: Device) => Promise<void>;
+};
+
+type Specs = {
+  [key: string]: Spec;
 };
 
 export type Device = { transport: SpeculosTransport; id: string; appPath: string };

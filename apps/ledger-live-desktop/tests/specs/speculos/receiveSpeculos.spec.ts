@@ -6,24 +6,10 @@ import { AccountsPage } from "../../models/AccountsPage";
 import { Modal } from "../../models/Modal";
 import { ReceiveModal } from "../../models/ReceiveModal";
 import { Account } from "../../enum/Account";
-import {
-  Device,
-  specs,
-  startSpeculos,
-  stopSpeculos,
-  pressRightUntil,
-  pressBoth,
-  verifyAddress,
-  waitFor,
-} from "../../utils/speculos";
+import { specs, pressRightUntil, pressBoth, verifyAddress, waitFor } from "../../utils/speculos";
 
-test.use({ userdata: "speculos" });
+//loop avec les currencies
 
-let device: Device | undefined;
-
-test.afterEach(async () => {
-  await stopSpeculos(device);
-});
 const accounts: Account[] = [
   Account.BTC_1,
   Account.ETH_1,
@@ -35,16 +21,16 @@ const accounts: Account[] = [
 
 test.describe.parallel("Receive @smoke", () => {
   for (const account of accounts) {
+    test.use({
+      userdata: "speculos",
+      speculosCurrency: specs[account.currency.deviceLabel.replace(/ /g, "_")],
+    });
     test(`[${account.currency.uiName}] Receive`, async ({ page }) => {
       const layout = new Layout(page);
       const accountsPage = new AccountsPage(page);
       const accountPage = new AccountPage(page);
       const modal = new Modal(page);
       const receiveModal = new ReceiveModal(page);
-      device = await startSpeculos(
-        test.name,
-        specs[account.currency.deviceLabel.replace(/ /g, "_")],
-      );
 
       await test.step(`Navigate to first account`, async () => {
         await layout.goToAccounts();
