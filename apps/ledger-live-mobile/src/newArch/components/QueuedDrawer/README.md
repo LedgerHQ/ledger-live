@@ -1,0 +1,12 @@
+### QueuedDrawer logic:
+- **Main principle:** two drawers must never be opened at the same time.
+- Therefore, there is a unique queue of drawers, handled by an orchestrator (a `QueuedDrawerContext.Provider`).
+- The first drawer in the queue opens as soon as it reaches that "first drawer in the queue" position, as the orchestrator signals it to open.
+- When that drawer closes (and only when it effectively is closed), it tells the orchestrator that it is done, so the orchestrator can remove it from the queue, and signal the following drawer to open.
+- Any drawer can ask to be "forced opened".
+  - When this happens, the entire queue is cleared.
+  - The currently open drawer gets closed, and removes itself from the queue onces it's closed.
+  - The "forced" drawer is finally opened.
+- Navigation:
+  - all drawers in a given screen, opened or requesting or forcing to be opened, get closed and removed from the queue as that screen loses focus.
+  - drawers that are not embedded in a navigation screen are not affected by navigation events, but the queuing and forcing logic still fully applies to them.
