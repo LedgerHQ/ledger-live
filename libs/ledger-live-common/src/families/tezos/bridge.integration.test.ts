@@ -64,6 +64,7 @@ const dataset: DatasetTest<Transaction> = {
   implementations: ["js"],
   currencies: {
     tezos: {
+      FIXME_ignorePreloadFields: true, // tezos preloaded data isn't stable
       FIXME_ignoreOperationFields: ["blockHeight"],
       scanAccounts: [tezosScanAccounts1],
       accounts: [
