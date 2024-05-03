@@ -77,6 +77,7 @@ import { getFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { StorylyProvider } from "./components/StorylyStories/StorylyProvider";
 import { useSettings } from "~/hooks";
 import AppProviders from "./AppProviders";
+import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -103,6 +104,7 @@ function App() {
   useFetchCurrencyAll();
   useFetchCurrencyFrom();
   useListenToHidDevices();
+  useAutoDismissPostOnboardingEntryPoint();
 
   const getSettingsChanged = useCallback((a: State, b: State) => a.settings !== b.settings, []);
   const getAccountsChanged = useCallback(
