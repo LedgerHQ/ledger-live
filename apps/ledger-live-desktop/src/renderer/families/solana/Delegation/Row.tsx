@@ -145,7 +145,9 @@ export function Row({ account, stakeWithMeta, onManageAction, onExternalLink }: 
             </ToolTip>
           </Box>
         )}
-        <Box ml={1}>{stake.activation.state}</Box>
+        <Box ml={1}>
+          <Trans i18nKey={`solana.delegation.states.${stake.activation.state}`} />
+        </Box>
       </Column>
       <Column>
         <Discreet>{formatAmount(stake.delegation?.stake ?? 0)}</Discreet>
