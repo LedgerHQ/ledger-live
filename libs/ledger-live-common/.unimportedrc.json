@@ -2151,6 +2151,7 @@
     "lib/postOnboarding/hooks/usePostOnboardingHubState.test.d.ts.map",
     "lib/postOnboarding/hooks/usePostOnboardingHubState.test.js",
     "lib/postOnboarding/hooks/usePostOnboardingHubState.test.js.map",
+    "src/postOnboarding/hooks/usePostOnboardingDeeplinkHandler.test.ts",
     "lib/postOnboarding/reducer.test.d.ts",
     "lib/postOnboarding/reducer.test.d.ts.map",
     "lib/postOnboarding/reducer.test.js",
