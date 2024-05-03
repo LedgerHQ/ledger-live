@@ -254,7 +254,26 @@ export const MainTestScreen = () => {
   );
 };
 
-export const EmptyScreen = () => null;
+const NavigateBackButton = () => {
+  const navigate = useNavigation();
+  return (
+    <Button
+      size="small"
+      type="main"
+      title="Navigate Back"
+      onPress={navigate.goBack}
+      testID="navigate-back-button"
+    />
+  );
+};
+
+export const EmptyScreen = () => {
+  return (
+    <Flex>
+      <NavigateBackButton />
+    </Flex>
+  );
+};
 
 export const TestScreenWithDrawerRequestingToBeOpened = () => {
   const [drawerRequestingToBeOpened, setDrawerRequestingToBeOpened] = useState(true);
@@ -275,6 +294,7 @@ export const TestScreenWithDrawerRequestingToBeOpened = () => {
   return (
     <Flex flexDirection={"column"} rowGap={4} px={6}>
       {buttons}
+      <NavigateBackButton />
       <QueuedDrawer
         isRequestingToBeOpened={drawerRequestingToBeOpened}
         onClose={handleDrawerClose}
@@ -305,6 +325,7 @@ export const TestScreenWithDrawerForcingToBeOpened = () => {
   return (
     <Flex flexDirection={"column"} rowGap={4} px={6}>
       {buttons}
+      <NavigateBackButton />
       <QueuedDrawer
         isForcingToBeOpened={drawerForcingToBeOpened}
         onClose={handleDrawerClose}

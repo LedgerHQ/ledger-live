@@ -19,19 +19,40 @@ describe("QueuedDrawer", () => {
     await user.press(screen.getByTestId("modal-close-button"));
     // expect it's not visible
     await waitForElementToBeRemoved(() => screen.getByText("Drawer 1"));
+
+    // check the queue is empty and ready to be used again
+    // open first drawer
+    await user.press(screen.getByTestId(testIds(TestIdPrefix.Main).drawer1Button));
+    // expect first is visible
+    expect(await screen.findByText("Drawer 1")).toBeVisible();
   });
 
-  test("open one drawer, then close it from outside state (via drawer prop)", async () => {
+  test("open one drawer, queue a second drawer, unqueue it, then close first drawer from outside state (via drawer prop)", async () => {
     const { user } = render(<TestPages />);
     // open drawer
     expect(await screen.findByTestId(testIds(TestIdPrefix.Main).drawer1Button)).toBeVisible();
     await user.press(screen.getByTestId(testIds(TestIdPrefix.Main).drawer1Button));
     // expect it's visible
     expect(await screen.findByText("Drawer 1")).toBeVisible();
+
+    // queue open second drawer
+    await user.press(screen.getByTestId(testIds(TestIdPrefix.InDrawer1).drawer2Button));
+    // expect second not visible
+    expect(screen.queryByText("Drawer 2")).toBeNull();
+    // unqueue second drawer
+    await user.press(screen.getByTestId(testIds(TestIdPrefix.InDrawer1).drawer2Button));
+
     // close drawer from "cancel request open" button
     await user.press(screen.getByTestId(testIds(TestIdPrefix.InDrawer1).drawer1Button));
     // expect it's not visible
     await waitForElementToBeRemoved(() => screen.getByText("Drawer 1"));
+    expect(screen.queryByText("Drawer 2")).toBeNull();
+
+    // check the queue is empty and ready to be used again
+    // open first drawer
+    await user.press(screen.getByTestId(testIds(TestIdPrefix.Main).drawer1Button));
+    // expect first is visible
+    expect(await screen.findByText("Drawer 1")).toBeVisible();
   });
 
   test("open two drawers, then close them consecutively with close button", async () => {
@@ -72,6 +93,12 @@ describe("QueuedDrawer", () => {
     // expect none of the drawers visible
     expect(screen.queryByText("Drawer 1")).toBeNull();
     expect(screen.queryByText("Drawer 2")).toBeNull();
+
+    // check the queue is empty and ready to be used again
+    // open first drawer
+    await user.press(screen.getByTestId(testIds(TestIdPrefix.Main).drawer1Button));
+    // expect first is visible
+    expect(await screen.findByText("Drawer 1")).toBeVisible();
   });
 
   test("open two drawers, then request to close the second one, then close the first one", async () => {
@@ -100,9 +127,15 @@ describe("QueuedDrawer", () => {
 
     // expect second drawer to not be visible
     expect(screen.queryByText("Drawer 2")).toBeNull();
+
+    // check the queue is empty and ready to be used again
+    // open first drawer
+    await user.press(screen.getByTestId(testIds(TestIdPrefix.Main).drawer1Button));
+    // expect first is visible
+    expect(await screen.findByText("Drawer 1")).toBeVisible();
   });
 
-  test("open two drawers, then force open a third one, then close it", async () => {
+  test("force opening a drawer while some are opened/queued", async () => {
     const { user } = render(<TestPages />);
     // open first drawer
     expect(await screen.findByTestId(testIds(TestIdPrefix.Main).drawer1Button)).toBeVisible();
@@ -147,9 +180,15 @@ describe("QueuedDrawer", () => {
     expect(screen.queryByText("Drawer 1")).toBeNull();
     expect(screen.queryByText("Drawer 2")).toBeNull();
     expect(screen.queryByText("Drawer 3")).toBeNull();
+
+    // check the queue is empty and ready to be used again
+    // open first drawer
+    await user.press(screen.getByTestId(testIds(TestIdPrefix.Main).drawer1Button));
+    // expect first is visible
+    expect(await screen.findByText("Drawer 1")).toBeVisible();
   });
 
-  test("open a drawer, queue a second drawer, then navigate to another screen with no drawers", async () => {
+  test("navigating out of a screen closes the drawers and cleanly clears the queue", async () => {
     const { user } = render(<TestPages />);
 
     // expect to be on main screen
@@ -179,6 +218,18 @@ describe("QueuedDrawer", () => {
     expect(screen.queryByText("Drawer 1")).toBeNull();
     // expect other screen to be visible
     expect(await screen.findByText("Empty screen")).toBeVisible();
+
+    // navigate back
+    await user.press(screen.getByTestId("navigate-back-button"));
+    // wait for main screen to appear
+    expect(await screen.queryByText("Screen 1")).toBeNull();
+    expect(await screen.findByText("Main screen")).toBeVisible();
+
+    // check the queue is empty and ready to be used again
+    // open first drawer
+    await user.press(screen.getByTestId(testIds(TestIdPrefix.Main).drawer1Button));
+    // expect first is visible
+    expect(await screen.findByText("Drawer 1")).toBeVisible();
   });
 
   test("open two drawers, then navigate to another screen that has a drawer opened, then close it", async () => {
@@ -226,6 +277,18 @@ describe("QueuedDrawer", () => {
     expect(await screen.queryByText("Drawer 1")).toBeNull();
     expect(await screen.queryByText("Drawer 2")).toBeNull();
     expect(await screen.queryByText("Drawer on screen 1")).toBeNull();
+
+    // navigate back to main screen
+    await user.press(screen.getByTestId("navigate-back-button"));
+    // wait for main screen to appear
+    expect(await screen.queryByText("Screen 1")).toBeNull();
+    expect(await screen.findByText("Main screen")).toBeVisible();
+
+    // check the queue is empty and ready to be used again
+    // open first drawer
+    await user.press(screen.getByTestId(testIds(TestIdPrefix.Main).drawer1Button));
+    // expect first is visible
+    expect(await screen.findByText("Drawer 1")).toBeVisible();
   });
 
   test("open two drawers, force open another one, navigate to other screen", async () => {
@@ -243,13 +306,13 @@ describe("QueuedDrawer", () => {
     // expect second not visible
     expect(screen.queryByText("Drawer 2")).toBeNull();
 
-    // force open third drawer
+    // force open drawer
     await user.press(screen.getByTestId(testIds(TestIdPrefix.InDrawer1).drawer4ForcingButton));
 
     // wait for 1st drawer to disappear
     await waitForElementToBeRemoved(() => screen.getByText("Drawer 1"));
 
-    // expect third visible
+    // expect forced drawer visible
     expect(await screen.findByText("Drawer 4")).toBeVisible();
 
     // expect first 2 drawers not visible
@@ -269,10 +332,30 @@ describe("QueuedDrawer", () => {
     // expect other screen to be visible
     expect(await screen.findByText("Screen 1")).toBeVisible();
 
+    // expect drawer of screen 1 to be visible
+    expect(await screen.findByText("Drawer on screen 1")).toBeVisible();
+    // close drawer
+    await user.press(screen.getByTestId("modal-close-button"));
+    // wait for drawer to disappear
+    await waitForElementToBeRemoved(() => screen.getByText("Drawer on screen 1"));
+
     // expect no drawers visible
     expect(screen.queryByText("Drawer 1")).toBeNull();
     expect(screen.queryByText("Drawer 2")).toBeNull();
     expect(screen.queryByText("Drawer 4")).toBeNull();
+    expect(screen.queryByText("Drawer on screen 1")).toBeNull();
+
+    // navigate back to main screen
+    await user.press(screen.getByTestId("navigate-back-button"));
+    // wait for main screen to appear
+    expect(await screen.queryByText("Screen 1")).toBeNull();
+    expect(await screen.findByText("Main screen")).toBeVisible();
+
+    // check the queue is empty and ready to be used again
+    // open first drawer
+    await user.press(screen.getByTestId(testIds(TestIdPrefix.Main).drawer1Button));
+    // expect first is visible
+    expect(await screen.findByText("Drawer 1")).toBeVisible();
   });
 
   test("open two drawers, force open another one, navigate to other screen with a drawer opened", async () => {
@@ -334,6 +417,18 @@ describe("QueuedDrawer", () => {
     expect(await screen.queryByText("Drawer 1")).toBeNull();
     expect(await screen.queryByText("Drawer 2")).toBeNull();
     expect(await screen.queryByText("Drawer on screen 1")).toBeNull();
+
+    // navigate back to main screen
+    await user.press(screen.getByTestId("navigate-back-button"));
+    // wait for main screen to appear
+    expect(await screen.queryByText("Screen 1")).toBeNull();
+    expect(await screen.findByText("Main screen")).toBeVisible();
+
+    // check the queue is empty and ready to be used again
+    // open first drawer
+    await user.press(screen.getByTestId(testIds(TestIdPrefix.Main).drawer1Button));
+    // expect first is visible
+    expect(await screen.findByText("Drawer 1")).toBeVisible();
   });
 
   test("open one drawer at app level (out of navigation stack) and navigate to another screen", async () => {
@@ -374,7 +469,48 @@ describe("QueuedDrawer", () => {
     await user.press(screen.getByTestId("modal-close-button"));
     // wait for drawer to disappear
     await waitForElementToBeRemoved(() => screen.getByText("This is a drawer at the App level"));
+
+    // expect no drawers visible
+    expect(screen.queryByText("Drawer 1")).toBeNull();
+
+    // navigate back to main screen
+    await user.press(screen.getByTestId("navigate-back-button"));
+    // wait for main screen to appear
+    expect(await screen.queryByText("Empty screen")).toBeNull();
+    expect(await screen.findByText("Main screen")).toBeVisible();
+
+    // check the queue is empty and ready to be used again
+    // open first drawer
+    await user.press(screen.getByTestId(testIds(TestIdPrefix.Main).drawer1Button));
+    // expect first is visible
+    expect(await screen.findByText("Drawer 1")).toBeVisible();
   });
 
-  test("lock drawers", async () => {});
+  test("lock drawers", async () => {
+    // render
+    const { user } = render(<TestPages />);
+
+    // press lock drawers button
+    await user.press(screen.getByTestId(testIds(TestIdPrefix.Main).lockDrawersButton));
+    // open drawer 1
+    await user.press(screen.getByTestId(testIds(TestIdPrefix.Main).drawer1Button));
+    // expect drawer 1 to be visible
+    expect(await screen.findByText("Drawer 1")).toBeVisible();
+    // expect close button to be null
+    expect(screen.queryByTestId("modal-close-button")).toBeNull();
+    // queue open drawer 2
+    await user.press(screen.getByTestId(testIds(TestIdPrefix.InDrawer1).drawer2Button));
+    // close drawer 1 from props (click drawer 1 button)
+    await user.press(screen.getByTestId(testIds(TestIdPrefix.InDrawer1).drawer1Button));
+    // expect drawer 2 to be visible
+    expect(await screen.findByText("Drawer 2")).toBeVisible();
+    // expect close button to not be visible
+    expect(screen.queryByTestId("modal-close-button")).toBeNull();
+    // unlock drawers
+    await user.press(screen.getByTestId(testIds(TestIdPrefix.Main).lockDrawersButton));
+    // expect close button to be visible
+    expect(await screen.findByTestId("modal-close-button")).toBeVisible();
+    // close drawer 2
+    await user.press(screen.getByTestId("modal-close-button"));
+  });
 });
