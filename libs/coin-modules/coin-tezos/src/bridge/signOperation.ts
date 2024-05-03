@@ -9,13 +9,7 @@ import type {
 import { getEnv } from "@ledgerhq/live-env";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import type {
-  LedgerSigner,
-  TezosAccount,
-  TezosOperation,
-  TezosSigner,
-  Transaction,
-} from "../types";
+import type { TezosAccount, TezosOperation, TezosSigner, Transaction } from "../types";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 
 export async function getOperationContents({
