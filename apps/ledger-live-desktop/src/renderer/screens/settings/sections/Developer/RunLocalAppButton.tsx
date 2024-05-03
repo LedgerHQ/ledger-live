@@ -27,8 +27,6 @@ const RunLocalAppButton = () => {
     removeLocalManifestById,
   } = useLocalLiveAppContext();
 
-  console.log("state localLiveApps", localLiveApps);
-
   const history = useHistory();
 
   const onExportLocalManifest = useCallback(

@@ -26,6 +26,7 @@ export function PlatformAppProviderWrapper({ children }: PlatformAppProviderWrap
   const allowExperimentalApps = useSelector(allowExperimentalAppsSelector);
   const provider = useSelector(catalogProviderSelector);
   const locale = useSelector(languageSelector);
+  const localLiveAppDB = useLocalLiveAppDB();
 
   return (
     <RemoteLiveAppProvider
@@ -38,7 +39,7 @@ export function PlatformAppProviderWrapper({ children }: PlatformAppProviderWrap
       }}
       updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}
     >
-      <LocalLiveAppProvider db={useLocalLiveAppDB()}>
+      <LocalLiveAppProvider db={localLiveAppDB}>
         <RampCatalogProvider provider={provider} updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}>
           {children}
         </RampCatalogProvider>

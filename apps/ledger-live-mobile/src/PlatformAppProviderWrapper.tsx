@@ -26,6 +26,7 @@ export default function PlatformAppProviderWrapper({ children }: PlatformAppProv
   ) as boolean;
   const { locale: lang } = useLocale();
   const isDebugAppEnabled = useEnv<"PLATFORM_DEBUG">("PLATFORM_DEBUG") as boolean;
+  const localLiveAppDB = useLocalLiveAppDB();
 
   return (
     <RemoteLiveAppProvider
@@ -38,7 +39,7 @@ export default function PlatformAppProviderWrapper({ children }: PlatformAppProv
         lang,
       }}
     >
-      <LocalLiveAppProvider db={useLocalLiveAppDB()}>
+      <LocalLiveAppProvider db={localLiveAppDB}>
         <RampCatalogProvider updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}>
           {children}
         </RampCatalogProvider>
