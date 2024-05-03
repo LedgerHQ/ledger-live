@@ -8,6 +8,7 @@ import StepUpdating from "../steps/02-step-updating";
 import StepConfirmation, { StepConfirmFooter } from "../steps/03-step-confirmation";
 import { Step, StepId, STEPS } from "../types";
 import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/device/use-cases/isDeviceLocalizationSupported";
+import { isCustomLockScreenSupported } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 
 export const createFirmwareUpdateSteps = ({
   firmware,
@@ -23,7 +24,8 @@ export const createFirmwareUpdateSteps = ({
   stateStepId: StepId;
 }) => {
   const hasRestoreStep =
-    firmware && isDeviceLocalizationSupported(firmware.final.name, deviceModelId);
+    isCustomLockScreenSupported(deviceModelId) ||
+    (firmware && isDeviceLocalizationSupported(firmware.final.name, deviceModelId));
 
   const restoreStepLabel =
     stateStepId === STEPS.FINISH
