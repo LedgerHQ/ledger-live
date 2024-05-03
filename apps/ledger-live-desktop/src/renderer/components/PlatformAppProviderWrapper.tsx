@@ -49,7 +49,10 @@ export function PlatformAppProviderWrapper({ children }: PlatformAppProviderWrap
 }
 
 function useLocalLiveAppDB() {
-  return useDB("app", DISCOVER_STORE_KEY, INITIAL_PLATFORM_STATE, state => {
-    return state.localLiveApp;
-  });
+  return useDB(
+    "app",
+    DISCOVER_STORE_KEY,
+    INITIAL_PLATFORM_STATE,
+    state => state.localLiveApp || INITIAL_PLATFORM_STATE.localLiveApp,
+  );
 }

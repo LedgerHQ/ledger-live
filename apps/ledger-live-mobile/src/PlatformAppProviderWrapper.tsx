@@ -52,6 +52,6 @@ function useLocalLiveAppDB() {
   return useDB<DiscoverDB, DiscoverDB["localLiveApp"]>(
     DISCOVER_STORE_KEY,
     INITIAL_PLATFORM_STATE,
-    state => state.localLiveApp,
+    state => state.localLiveApp || INITIAL_PLATFORM_STATE.localLiveApp,
   );
 }
