@@ -1,5 +1,26 @@
 # live-mobile
 
+## 3.44.0-nightly.7
+
+### Minor Changes
+
+- [#6802](https://github.com/LedgerHQ/ledger-live/pull/6802) [`704c61c`](https://github.com/LedgerHQ/ledger-live/commit/704c61cd2a61b8ad4f99a7ab0c8c30c9a22bc873) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM / LLD - Add a deeplink redirecting to the post onboarding
+
+- [#6721](https://github.com/LedgerHQ/ledger-live/pull/6721) [`1cee8ff`](https://github.com/LedgerHQ/ledger-live/commit/1cee8ff557fdd6e44f55d4d396805e02c2733cc1) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Solana as a coin module
+
+### Patch Changes
+
+- Updated dependencies [[`704c61c`](https://github.com/LedgerHQ/ledger-live/commit/704c61cd2a61b8ad4f99a7ab0c8c30c9a22bc873), [`1cee8ff`](https://github.com/LedgerHQ/ledger-live/commit/1cee8ff557fdd6e44f55d4d396805e02c2733cc1), [`a115d6c`](https://github.com/LedgerHQ/ledger-live/commit/a115d6cd5dcbcc753d02dedb80f5eb1693d1a249)]:
+  - @ledgerhq/live-common@34.2.0-nightly.7
+  - @ledgerhq/types-live@6.47.0-nightly.3
+  - @ledgerhq/coin-framework@0.12.1-nightly.4
+  - @ledgerhq/coin-evm@1.1.1-nightly.4
+  - @ledgerhq/domain-service@1.1.21-nightly.3
+  - @ledgerhq/live-countervalues@0.1.5-nightly.4
+  - @ledgerhq/live-countervalues-react@0.1.5-nightly.4
+  - @ledgerhq/live-nft@0.3.2-nightly.4
+  - @ledgerhq/live-nft-react@0.3.2-nightly.4
+
 ## 3.43.1-nightly.6
 
 ### Patch Changes

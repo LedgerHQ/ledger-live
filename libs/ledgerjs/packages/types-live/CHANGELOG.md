@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.47.0-nightly.3
+
+### Minor Changes
+
+- [#6741](https://github.com/LedgerHQ/ledger-live/pull/6741) [`a115d6c`](https://github.com/LedgerHQ/ledger-live/commit/a115d6cd5dcbcc753d02dedb80f5eb1693d1a249) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLC - Automatically dismiss the PostOnboarding EntryPoint after seven days
+
 ## 6.46.1-nightly.2
 
 ### Patch Changes

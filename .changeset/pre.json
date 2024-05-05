@@ -134,7 +134,8 @@
     "@ledgerhq/device-core": "0.1.0",
     "@ledgerhq/device-react": "0.1.0",
     "@ledgerhq/ethereum-provider": "0.1.0",
-    "@ledgerhq/coin-tester": "0.1.0"
+    "@ledgerhq/coin-tester": "0.1.0",
+    "@ledgerhq/coin-solana": "0.6.0"
   },
   "changesets": [
     "angry-shrimps-work",
@@ -192,9 +193,11 @@
     "modern-apes-switch",
     "modern-clocks-jog",
     "moody-adults-roll",
+    "nice-guests-wave",
     "nice-rats-hunt",
     "ninety-falcons-hope",
     "odd-pumas-grab",
+    "perfect-fishes-develop",
     "perfect-knives-help",
     "plenty-ways-switch",
     "poor-pears-taste",
@@ -240,6 +243,7 @@
     "thick-dolls-sing",
     "thin-ducks-teach",
     "three-geckos-help",
+    "tricky-cycles-knock",
     "twelve-balloons-retire",
     "twelve-rocks-swim",
     "twenty-moose-peel",

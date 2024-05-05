@@ -1,5 +1,31 @@
 # @ledgerhq/live-common
 
+## 34.2.0-nightly.7
+
+### Minor Changes
+
+- [#6802](https://github.com/LedgerHQ/ledger-live/pull/6802) [`704c61c`](https://github.com/LedgerHQ/ledger-live/commit/704c61cd2a61b8ad4f99a7ab0c8c30c9a22bc873) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM / LLD - Add a deeplink redirecting to the post onboarding
+
+- [#6721](https://github.com/LedgerHQ/ledger-live/pull/6721) [`1cee8ff`](https://github.com/LedgerHQ/ledger-live/commit/1cee8ff557fdd6e44f55d4d396805e02c2733cc1) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Solana as a coin module
+
+- [#6741](https://github.com/LedgerHQ/ledger-live/pull/6741) [`a115d6c`](https://github.com/LedgerHQ/ledger-live/commit/a115d6cd5dcbcc753d02dedb80f5eb1693d1a249) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLC - Automatically dismiss the PostOnboarding EntryPoint after seven days
+
+### Patch Changes
+
+- Updated dependencies [[`1cee8ff`](https://github.com/LedgerHQ/ledger-live/commit/1cee8ff557fdd6e44f55d4d396805e02c2733cc1)]:
+  - @ledgerhq/coin-solana@0.7.0-nightly.0
+  - @ledgerhq/coin-framework@0.12.1-nightly.4
+  - @ledgerhq/coin-algorand@0.4.2-nightly.4
+  - @ledgerhq/coin-bitcoin@0.4.1-nightly.4
+  - @ledgerhq/coin-evm@1.1.1-nightly.4
+  - @ledgerhq/coin-near@0.3.13-nightly.4
+  - @ledgerhq/coin-polkadot@0.7.0-nightly.5
+  - @ledgerhq/device-core@0.1.2-nightly.5
+  - @ledgerhq/hw-app-eth@6.36.1-nightly.4
+  - @ledgerhq/live-countervalues@0.1.5-nightly.4
+  - @ledgerhq/live-countervalues-react@0.1.5-nightly.4
+  - @ledgerhq/live-nft@0.3.2-nightly.4
+
 ## 34.1.1-nightly.6
 
 ### Patch Changes
