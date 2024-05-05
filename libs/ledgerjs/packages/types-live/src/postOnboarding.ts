@@ -143,6 +143,12 @@ export type PostOnboardingState = {
   walletEntryPointDismissed: boolean;
 
   /**
+   * Date of when the PostOnboarding banner was first displayed to the user
+   * Used to dismiss it automatically after some time
+   */
+  entryPointFirstDisplayedDate: Date | null;
+
+  /**
    * List of all actions that have to be completed in this post onboarding
    * (whether they are completed or).
    * This is used to populate the list of actions in the post onboarding hub UI.

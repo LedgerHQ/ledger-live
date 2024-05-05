@@ -160,6 +160,7 @@ Ledger Live main types.
     *   [Properties](#properties-41)
     *   [deviceModelId](#devicemodelid)
     *   [walletEntryPointDismissed](#walletentrypointdismissed)
+    *   [entryPointFirstDisplayedDate](#entrypointfirstdisplayeddate)
     *   [actionsToComplete](#actionstocomplete)
     *   [actionsCompleted](#actionscompleted)
     *   [lastActionCompleted](#lastactioncompleted)
@@ -1237,12 +1238,13 @@ To be used for a redux reducer.
 Keeps all necessary information about the state of the post onboarding hub
 and can be persisted in storage.
 
-Type: {deviceModelId: (DeviceModelId | null), walletEntryPointDismissed: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), actionsToComplete: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[PostOnboardingActionId](#postonboardingactionid)>, actionsCompleted: any, lastActionCompleted: ([PostOnboardingActionId](#postonboardingactionid) | null), postOnboardingInProgress: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)}
+Type: {deviceModelId: (DeviceModelId | null), walletEntryPointDismissed: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), entryPointFirstDisplayedDate: ([Date](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Date) | null), actionsToComplete: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[PostOnboardingActionId](#postonboardingactionid)>, actionsCompleted: any, lastActionCompleted: ([PostOnboardingActionId](#postonboardingactionid) | null), postOnboardingInProgress: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)}
 
 #### Properties
 
 *   `deviceModelId` **(DeviceModelId | null)**&#x20;
 *   `walletEntryPointDismissed` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**&#x20;
+*   `entryPointFirstDisplayedDate` **([Date](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Date) | null)**&#x20;
 *   `actionsToComplete` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[PostOnboardingActionId](#postonboardingactionid)>**&#x20;
 *   `actionsCompleted` **any**&#x20;
 *   `lastActionCompleted` **([PostOnboardingActionId](#postonboardingactionid) | null)**&#x20;
@@ -1259,6 +1261,13 @@ Type: (DeviceModelId | null)
 Did the user dismiss the post onboarding entry point on the wallet page.
 
 Type: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+
+#### entryPointFirstDisplayedDate
+
+Date of when the PostOnboarding banner was first displayed to the user
+Used to dismiss it automatically after some time
+
+Type: ([Date](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Date) | null)
 
 #### actionsToComplete
 
@@ -2456,12 +2465,13 @@ To be used for a redux reducer.
 Keeps all necessary information about the state of the post onboarding hub
 and can be persisted in storage.
 
-Type: {deviceModelId: (DeviceModelId | null), walletEntryPointDismissed: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), actionsToComplete: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[PostOnboardingActionId](#postonboardingactionid)>, actionsCompleted: any, lastActionCompleted: ([PostOnboardingActionId](#postonboardingactionid) | null), postOnboardingInProgress: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)}
+Type: {deviceModelId: (DeviceModelId | null), walletEntryPointDismissed: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), entryPointFirstDisplayedDate: ([Date](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Date) | null), actionsToComplete: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[PostOnboardingActionId](#postonboardingactionid)>, actionsCompleted: any, lastActionCompleted: ([PostOnboardingActionId](#postonboardingactionid) | null), postOnboardingInProgress: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)}
 
 #### Properties
 
 *   `deviceModelId` **(DeviceModelId | null)**&#x20;
 *   `walletEntryPointDismissed` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**&#x20;
+*   `entryPointFirstDisplayedDate` **([Date](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Date) | null)**&#x20;
 *   `actionsToComplete` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[PostOnboardingActionId](#postonboardingactionid)>**&#x20;
 *   `actionsCompleted` **any**&#x20;
 *   `lastActionCompleted` **([PostOnboardingActionId](#postonboardingactionid) | null)**&#x20;
@@ -2478,6 +2488,13 @@ Type: (DeviceModelId | null)
 Did the user dismiss the post onboarding entry point on the wallet page.
 
 Type: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+
+#### entryPointFirstDisplayedDate
+
+Date of when the PostOnboarding banner was first displayed to the user
+Used to dismiss it automatically after some time
+
+Type: ([Date](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Date) | null)
 
 #### actionsToComplete
 

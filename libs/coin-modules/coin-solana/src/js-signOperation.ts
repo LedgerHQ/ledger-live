@@ -1,6 +1,11 @@
 import { Observable } from "rxjs";
-import type { Account, OperationType, SignOperationEvent } from "@ledgerhq/types-live";
-import { withDevice } from "../../hw/deviceAccess";
+import type {
+  Account,
+  DeviceId,
+  OperationType,
+  SignOperationEvent,
+  SignOperationFnSignature,
+} from "@ledgerhq/types-live";
 import type {
   Command,
   CommandDescriptor,
@@ -16,11 +21,12 @@ import type {
   TransferCommand,
 } from "./types";
 import { buildTransactionWithAPI } from "./js-buildTransaction";
-import Solana from "@ledgerhq/hw-app-solana";
+import type { SolanaAddress, SolanaSignature, SolanaSigner } from "./signer";
 import BigNumber from "bignumber.js";
-import { encodeOperationId } from "../../operation";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { assertUnreachable } from "./utils";
 import { ChainAPI } from "./api";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
 
 const buildOptimisticOperation = (account: Account, transaction: Transaction): SolanaOperation => {
   if (transaction.model.commandDescriptor === undefined) {
@@ -45,60 +51,56 @@ const buildOptimisticOperation = (account: Account, transaction: Transaction): S
   return optimisticOp;
 };
 
-export const signOperationWithAPI = (
-  {
+export const buildSignOperation =
+  (
+    signerContext: SignerContext<SolanaSigner, SolanaAddress | SolanaSignature>,
+    api: () => Promise<ChainAPI>,
+  ): SignOperationFnSignature<Transaction> =>
+  ({
     account,
     deviceId,
     transaction,
   }: {
     account: Account;
-    deviceId: any;
+    deviceId: DeviceId;
     transaction: Transaction;
-  },
-  api: () => Promise<ChainAPI>,
-): Observable<SignOperationEvent> =>
-  withDevice(deviceId)(
-    transport =>
-      new Observable(subscriber => {
-        const main = async () => {
-          const [tx, signOnChainTransaction] = await buildTransactionWithAPI(
-            account.freshAddress,
-            transaction,
-            await api(),
-          );
-
-          const hwApp = new Solana(transport);
-
-          subscriber.next({
-            type: "device-signature-requested",
-          });
-
-          const { signature } = await hwApp.signTransaction(
-            account.freshAddressPath,
-            Buffer.from(tx.message.serialize()),
-          );
-
-          subscriber.next({
-            type: "device-signature-granted",
-          });
-
-          const signedTx = signOnChainTransaction(signature);
-
-          subscriber.next({
-            type: "signed",
-            signedOperation: {
-              operation: buildOptimisticOperation(account, transaction),
-              signature: Buffer.from(signedTx.serialize()).toString("hex"),
-            },
-          });
-        };
-
-        main().then(
-          () => subscriber.complete(),
-          e => subscriber.error(e),
+  }): Observable<SignOperationEvent> =>
+    new Observable(subscriber => {
+      const main = async () => {
+        const [tx, signOnChainTransaction] = await buildTransactionWithAPI(
+          account.freshAddress,
+          transaction,
+          await api(),
         );
-      }),
-  );
+
+        subscriber.next({
+          type: "device-signature-requested",
+        });
+
+        const { signature } = (await signerContext(deviceId, signer =>
+          signer.signTransaction(account.freshAddressPath, Buffer.from(tx.message.serialize())),
+        )) as SolanaSignature;
+
+        subscriber.next({
+          type: "device-signature-granted",
+        });
+
+        const signedTx = signOnChainTransaction(signature);
+
+        subscriber.next({
+          type: "signed",
+          signedOperation: {
+            operation: buildOptimisticOperation(account, transaction),
+            signature: Buffer.from(signedTx.serialize()).toString("hex"),
+          },
+        });
+      };
+
+      main().then(
+        () => subscriber.complete(),
+        e => subscriber.error(e),
+      );
+    });
 
 function buildOptimisticOperationForCommand(
   account: Account,

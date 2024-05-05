@@ -1,9 +1,8 @@
 import { findTokenById, findTokenByTicker } from "@ledgerhq/cryptoassets";
 import type { Account, AccountLike, AccountLikeArray } from "@ledgerhq/types-live";
 import invariant from "invariant";
-import { getAccountCurrency } from "../../account";
-import type { Transaction } from "../../generated/types";
-import { Transaction as SolanaTransaction } from "./types";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
+import { Transaction } from "./types";
 import { assertUnreachable } from "./utils";
 
 const modes = [
@@ -58,7 +57,7 @@ function inferTransactions(
     switch (mode) {
       case "send":
         if (account.type === "Account") {
-          const solanaTx: SolanaTransaction = {
+          const solanaTx: Transaction = {
             ...transaction,
             model: {
               kind: "transfer",
@@ -73,7 +72,7 @@ function inferTransactions(
             throw new Error("expected token account");
           }
           const subAccountId = account.id;
-          const solanaTx: SolanaTransaction = {
+          const solanaTx: Transaction = {
             ...transaction,
             subAccountId,
             model: {
@@ -101,7 +100,7 @@ function inferTransactions(
           throw new Error(`token <${token}> not found`);
         }
 
-        const solanaTx: SolanaTransaction = {
+        const solanaTx: Transaction = {
           ...transaction,
           model: {
             kind: "token.createATA",
@@ -238,9 +237,10 @@ function inferMode(input?: string): Mode {
 
   return mode;
 }
-
-export default {
-  options,
-  inferAccounts,
-  inferTransactions,
-};
+export default function makeCliTools() {
+  return {
+    options,
+    inferAccounts,
+    inferTransactions,
+  };
+}

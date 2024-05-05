@@ -65,6 +65,7 @@
     "coin:tester": "pnpm --filter coin-tester",
     "coin:near": "pnpm --filter coin-near",
     "coin:polkadot": "pnpm --filter coin-polkadot",
+    "coin:solana": "pnpm --filter coin-solana",
     "evm-tools": "pnpm --filter evm-tools",
     "domain": "pnpm --filter domain-service",
     "doc": "pnpm --filter docs",

@@ -16,7 +16,7 @@ import {
   assertUnreachable,
   sweetch,
   tupleOfUnion,
-} from "@ledgerhq/live-common/families/solana/utils";
+} from "@ledgerhq/live-common/families/solana/staking";
 import { AccountLike } from "@ledgerhq/types-live";
 import { Box, Text } from "@ledgerhq/native-ui";
 import { useNavigation, useTheme } from "@react-navigation/native";

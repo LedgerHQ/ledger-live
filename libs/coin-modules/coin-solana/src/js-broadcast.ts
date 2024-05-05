@@ -1,5 +1,5 @@
 import { log } from "@ledgerhq/logs";
-import { patchOperationWithHash } from "../../operation";
+import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
 import type { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { ChainAPI } from "./api";
 import { SolanaTxConfirmationTimeout, SolanaTxSimulationFailedWhilePendingOp } from "./errors";
