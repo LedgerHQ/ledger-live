@@ -198,6 +198,8 @@ export async function bot({ disabled, filter }: Arg = {}): Promise<void> {
   const countervaluesState = await loadCountervalues(initialState, {
     trackingPairs: inferTrackingPairForAccounts(allAccountsAfter, usd),
     autofillGaps: true,
+    refreshRate: 60000,
+    marketCapBatchingAfterRank: 20,
   }).catch(e => {
     if (process.env.CI) console.error(e);
     countervaluesError = e;
