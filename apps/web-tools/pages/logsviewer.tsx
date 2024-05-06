@@ -145,7 +145,7 @@ const Header = ({
       const currency = findCryptoCurrencyById(currencyId);
       if (currency && currency.explorerViews && currency.explorerViews.length > 0) {
         const explorerView = currency.explorerViews[0];
-        let url: string = explorerView.address;
+        let url: any = explorerView.address;
         if (url) {
           url = url.replace('$address', xpubOrAddress);
           url = url.replace('validators', 'address') //for mintscan explorers linked as /validator 
