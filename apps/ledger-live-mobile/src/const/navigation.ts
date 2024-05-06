@@ -494,6 +494,7 @@ export enum ScreenName {
   PostOnboardingHub = "PostOnboardingHub",
   PostOnboardingDebugScreen = "PostOnboardingDebugScreen",
   PostOnboardingMockActionScreen = "PostOnboardingMockActionScreen",
+  PostOnboardingDeeplinkHandler = "PostOnboardingDeeplinkHandler",
   WalletNftGallery = "WalletNftGallery",
   NoFunds = "NoFunds",
   Stake = "Stake",

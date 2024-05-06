@@ -315,6 +315,8 @@ async function loadCV(a: Account | Account[], cvTicker = "USD") {
   const state = await loadCountervalues(initialState, {
     trackingPairs: inferTrackingPairForAccounts(accounts, to),
     autofillGaps: true,
+    refreshRate: 60000,
+    marketCapBatchingAfterRank: 20,
   });
   return {
     state,

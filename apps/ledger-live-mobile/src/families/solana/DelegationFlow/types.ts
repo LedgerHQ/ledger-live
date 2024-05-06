@@ -5,7 +5,7 @@ import type {
   TransactionStatus,
 } from "@ledgerhq/live-common/families/solana/types";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
-import type { ValidatorsAppValidator } from "@ledgerhq/live-common/families/solana/validator-app/index";
+import type { ValidatorsAppValidator } from "@ledgerhq/live-common/families/solana/staking";
 import type { Operation } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { ScreenName } from "~/const";

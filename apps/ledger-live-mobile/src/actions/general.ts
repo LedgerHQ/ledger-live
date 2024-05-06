@@ -18,6 +18,7 @@ import { accountsSelector } from "../reducers/accounts";
 import { counterValueCurrencySelector, orderAccountsSelector } from "../reducers/settings";
 import { clearBridgeCache } from "../bridge/cache";
 import { flushAll } from "../components/DBSave";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 
 const extraSessionTrackingPairsChanges: BehaviorSubject<TrackingPair[]> = new BehaviorSubject<
   TrackingPair[]
@@ -102,6 +103,10 @@ export function useUserSettings() {
     () => ({
       trackingPairs,
       autofillGaps: true,
+      refreshRate: LiveConfig.getValueByKey("countervalues_refreshRate"),
+      marketCapBatchingAfterRank: LiveConfig.getValueByKey(
+        "countervalues_marketCapBatchingAfterRank",
+      ),
     }),
     [trackingPairs],
   );

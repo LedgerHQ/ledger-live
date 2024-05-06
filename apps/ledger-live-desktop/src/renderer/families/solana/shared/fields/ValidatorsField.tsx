@@ -1,6 +1,6 @@
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { useValidators } from "@ledgerhq/live-common/families/solana/react";
-import { ValidatorsAppValidator } from "@ledgerhq/live-common/families/solana/validator-app/index";
+import { ValidatorsAppValidator } from "@ledgerhq/live-common/families/solana/staking";
 import { SolanaAccount } from "@ledgerhq/live-common/families/solana/types";
 
 import React, { useMemo, useState, useCallback } from "react";

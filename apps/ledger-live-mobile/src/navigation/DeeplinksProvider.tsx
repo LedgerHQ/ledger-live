@@ -238,6 +238,18 @@ const linkingOptions = () => ({
               },
             },
           },
+          [NavigatorName.PostOnboarding]: {
+            screens: {
+              /**
+               * ie: "ledgerlive://post-onboarding" will open the home page as the device parameter is not provided
+               *
+               * @params ?device: string
+               * ie: "ledgerlive://post-onboarding?device=stax" will open post-onboarding for the stax device (it should be a device model id)
+               *
+               */
+              [ScreenName.PostOnboardingDeeplinkHandler]: "post-onboarding",
+            },
+          },
           [NavigatorName.ReceiveFunds]: {
             screens: {
               /**

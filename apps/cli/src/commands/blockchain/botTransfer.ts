@@ -163,6 +163,8 @@ export default {
       const countervaluesState = await loadCountervalues(initialState, {
         trackingPairs: inferTrackingPairForAccounts(accounts, countervalue),
         autofillGaps: true,
+        refreshRate: 60000,
+        marketCapBatchingAfterRank: 20,
       });
 
       await promiseAllBatched(CONCURRENT, accounts, async account => {

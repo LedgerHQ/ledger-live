@@ -1,10 +1,10 @@
+import * as preloadedData from "@ledgerhq/coin-solana/js-preload-data";
+import type { SolanaAccount, SolanaPreloadDataV1, SolanaStake } from "@ledgerhq/coin-solana/types";
+import { ValidatorsAppValidator } from "@ledgerhq/coin-solana/validator-app/index";
 import { getAccountBannerState } from "./banner";
-import * as preloadedData from "./js-preload-data";
 import * as helpers from "../../account/helpers";
-import type { SolanaAccount, SolanaPreloadDataV1, SolanaStake } from "./types";
 
 import { BigNumber } from "bignumber.js";
-import { ValidatorsAppValidator } from "./validator-app";
 
 const ledgerValidator: ValidatorsAppValidator = {
   activeStake: 2030500428402855,
