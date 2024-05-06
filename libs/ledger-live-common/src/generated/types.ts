@@ -6,10 +6,10 @@ import { Transaction as bitcoinTransaction } from "@ledgerhq/coin-bitcoin/types"
 import { TransactionRaw as bitcoinTransactionRaw } from "@ledgerhq/coin-bitcoin/types";
 import { TransactionStatus as bitcoinTransactionStatus } from "@ledgerhq/coin-bitcoin/types";
 import { TransactionStatusRaw as bitcoinTransactionStatusRaw } from "@ledgerhq/coin-bitcoin/types";
-import { Transaction as cardanoTransaction } from "../families/cardano/types";
-import { TransactionRaw as cardanoTransactionRaw } from "../families/cardano/types";
-import { TransactionStatus as cardanoTransactionStatus } from "../families/cardano/types";
-import { TransactionStatusRaw as cardanoTransactionStatusRaw } from "../families/cardano/types";
+import { Transaction as cardanoTransaction } from "@ledgerhq/coin-cardano/types";
+import { TransactionRaw as cardanoTransactionRaw } from "@ledgerhq/coin-cardano/types";
+import { TransactionStatus as cardanoTransactionStatus } from "@ledgerhq/coin-cardano/types";
+import { TransactionStatusRaw as cardanoTransactionStatusRaw } from "@ledgerhq/coin-cardano/types";
 import { Transaction as casperTransaction } from "../families/casper/types";
 import { TransactionRaw as casperTransactionRaw } from "../families/casper/types";
 import { TransactionStatus as casperTransactionStatus } from "../families/casper/types";

@@ -7,7 +7,7 @@ import type {
   CardanoAccount,
   CardanoDelegation,
 } from "@ledgerhq/live-common/families/cardano/types";
-import { LEDGER_POOL_IDS } from "@ledgerhq/live-common/families/cardano/utils";
+import { LEDGER_POOL_IDS } from "@ledgerhq/live-common/families/cardano/staking";
 import { getDefaultExplorerView, getStakePoolExplorer } from "@ledgerhq/live-common/explorers";
 
 import { StackNavigationProp } from "@react-navigation/stack";

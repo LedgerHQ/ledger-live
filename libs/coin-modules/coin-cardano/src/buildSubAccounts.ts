@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { encodeOperationId } from "../../operation";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { APITransaction } from "./api/api-types";
 import { getAccountChange, getMemoFromTx, isHexString } from "./logic";
 import { CardanoOperation, CardanoOperationExtra, PaymentCredential, Token } from "./types";
@@ -12,7 +12,7 @@ import {
 } from "@ledgerhq/coin-framework/account/index";
 import groupBy from "lodash/groupBy";
 import keyBy from "lodash/keyBy";
-import { mergeOps } from "../../bridge/jsHelpers";
+import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 

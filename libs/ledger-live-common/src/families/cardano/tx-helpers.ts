@@ -5,6 +5,7 @@ import {
   StakeRegistrationParams,
   StakeDeregistrationParams,
   Withdrawal,
+  Witness,
 } from "@cardano-foundation/ledgerjs-hw-app-cardano";
 import { str_to_path } from "@cardano-foundation/ledgerjs-hw-app-cardano/dist/utils/address";
 import { types as TyphonTypes, address as TyphonAddress } from "@stricahq/typhonjs";
@@ -17,7 +18,9 @@ import {
   TxOutputDestination,
   TxOutputDestinationType,
 } from "@cardano-foundation/ledgerjs-hw-app-cardano";
-import { getBipPathString } from "./logic";
+import { Bip32PublicKey } from "@stricahq/bip32ed25519";
+import { Transaction as TyphonTransaction } from "@stricahq/typhonjs";
+import { getBipPathString } from "@ledgerhq/coin-cardano/logic";
 
 /**
  * returns the formatted transactionInput for ledger cardano app
@@ -120,6 +123,20 @@ export function prepareLedgerOutput(output: TyphonTypes.Output, accountIndex: nu
     destination,
     tokenBundle,
   };
+}
+
+export function prepareCertificate(cert: TyphonTypes.Certificate) {
+  if (cert.certType === (CertificateType.STAKE_REGISTRATION as number)) {
+    return prepareStakeRegistrationCertificate(cert as TyphonTypes.StakeRegistrationCertificate);
+  } else if (cert.certType === (CertificateType.STAKE_DELEGATION as number)) {
+    return prepareStakeDelegationCertificate(cert as TyphonTypes.StakeDelegationCertificate);
+  } else if (cert.certType === (CertificateType.STAKE_DEREGISTRATION as number)) {
+    return prepareStakeDeRegistrationCertificate(
+      cert as TyphonTypes.StakeDeRegistrationCertificate,
+    );
+  } else {
+    throw new Error("Invalid Certificate type");
+  }
 }
 
 export function prepareStakeRegistrationCertificate(
@@ -233,3 +250,24 @@ export function prepareWithdrawal(withdrawal: TyphonTypes.Withdrawal): Withdrawa
     throw new Error("Invalid stakeKey type");
   }
 }
+
+/**
+ * Adds signatures to unsigned transaction
+ */
+export const signTx = (
+  unsignedTransaction: TyphonTransaction,
+  accountKey: Bip32PublicKey,
+  witnesses: Array<Witness>,
+) => {
+  witnesses.forEach(witness => {
+    const [, , , chainType, index] = witness.path;
+    const publicKey = accountKey.derive(chainType).derive(index).toPublicKey().toBytes();
+    const vKeyWitness: TyphonTypes.VKeyWitness = {
+      signature: Buffer.from(witness.witnessSignatureHex, "hex"),
+      publicKey: Buffer.from(publicKey),
+    };
+    unsignedTransaction.addWitness(vKeyWitness);
+  });
+
+  return unsignedTransaction.buildTransaction();
+};

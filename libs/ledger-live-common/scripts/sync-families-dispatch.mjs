@@ -24,6 +24,7 @@ const targets = [
 const familiesWPackage = [
   "algorand",
   "bitcoin",
+  "cardano",
   "evm",
   "near",
   "polkadot",

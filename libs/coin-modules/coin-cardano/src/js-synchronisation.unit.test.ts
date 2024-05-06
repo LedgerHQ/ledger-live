@@ -1,22 +1,33 @@
 import BigNumber from "bignumber.js";
-import { AccountShapeInfo, GetAccountShape } from "../../bridge/jsHelpers";
+import { AccountShapeInfo, GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { APINetworkInfo } from "./api/api-types";
 import { getDelegationInfo } from "./api/getDelegationInfo";
 import { getNetworkInfo } from "./api/getNetworkInfo";
 import { getTransactions } from "./api/getTransactions";
 import { buildSubAccounts } from "./buildSubAccounts";
-import { makeGetAccountShape, SignerContext } from "./js-synchronisation";
-import { BipPath, CardanoAccount, CardanoDelegation } from "./types";
+import { makeGetAccountShape } from "./js-synchronisation";
+import { BipPath, CardanoAccount, CardanoDelegation, PaymentCredential } from "./types";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import {
+  CardanoAddress,
+  CardanoExtendedPublicKey,
+  CardanoSignature,
+  CardanoSigner,
+} from "./signer";
+import { getBipPath } from "./logic";
 jest.mock("./buildSubAccounts");
 jest.mock("./api/getTransactions");
 jest.mock("./api/getNetworkInfo");
 jest.mock("./api/getDelegationInfo");
 
 describe("makeGetAccountShape", () => {
-  let signerContext: SignerContext;
+  let signerContext: SignerContext<
+    CardanoSigner,
+    CardanoAddress | CardanoExtendedPublicKey | CardanoSignature
+  >;
   let shape: GetAccountShape;
   let accountShapeInfo: AccountShapeInfo;
-  let getTransactionsMock;
+  let getTransactionsMock: jest.MaybeMockedDeep<typeof getTransactions>;
 
   beforeEach(() => {
     const pubKeyMock = {
@@ -93,7 +104,12 @@ describe("makeGetAccountShape", () => {
           externalCredentials: [
             { path: { index: 0 } as BipPath, networkId: "id", isUsed: false, key: "" },
           ],
-          internalCredentials: ["cred"],
+          internalCredentials: [
+            {
+              isUsed: true,
+              key: "cred",
+            } as PaymentCredential,
+          ],
           blockHeight: 0,
         }),
       );

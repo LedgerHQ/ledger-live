@@ -135,6 +135,7 @@
     "@keplr-wallet/proto-types": "^0.12.76",
     "@ledgerhq/coin-algorand": "workspace:^",
     "@ledgerhq/coin-bitcoin": "workspace:^",
+    "@ledgerhq/coin-cardano": "workspace:^",
     "@ledgerhq/coin-evm": "workspace:^",
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/coin-near": "workspace:^",

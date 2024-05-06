@@ -7,7 +7,7 @@ import {
   Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/cardano/types";
-import { StakePool } from "@ledgerhq/live-common/families/cardano/api/api-types";
+import { StakePool } from "@ledgerhq/live-common/families/cardano/staking";
 
 export type StepId = "validator" | "summary" | "connectDevice" | "confirmation";
 

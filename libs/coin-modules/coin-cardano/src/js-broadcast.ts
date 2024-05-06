@@ -1,5 +1,5 @@
 import type { BroadcastFnSignature } from "@ledgerhq/types-live";
-import { patchOperationWithHash } from "../../operation";
+import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
 import { submitTransaction } from "./api/submitTransaction";
 
 /**

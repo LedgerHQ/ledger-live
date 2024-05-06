@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import type { AccountLike, Account } from "@ledgerhq/types-live";
-import { getMainAccount } from "../../account";
+import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
 import type { CardanoAccount, Transaction } from "./types";
 import { createTransaction } from "./js-transaction";
 import {
