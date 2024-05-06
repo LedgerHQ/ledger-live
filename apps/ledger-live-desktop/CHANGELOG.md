@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.80.0-next.6
+
+### Patch Changes
+
+- [#6801](https://github.com/LedgerHQ/ledger-live/pull/6801) [`d4b897f`](https://github.com/LedgerHQ/ledger-live/commit/d4b897f33fac802731f22f6439489bf2163ea3db) Thanks [@cksanders](https://github.com/cksanders)! - Ensure user remains on Recover without reload given device is disconnected
+
 ## 2.80.0-next.5
 
 ### Patch Changes

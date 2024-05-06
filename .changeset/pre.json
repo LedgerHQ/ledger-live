@@ -104,6 +104,7 @@
     "@ledgerhq/react-devtools": "0.0.0"
   },
   "changesets": [
+    "angry-garlics-try",
     "angry-shrimps-work",
     "beige-otters-cheat",
     "big-badgers-argue",
