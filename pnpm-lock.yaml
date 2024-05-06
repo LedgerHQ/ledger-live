@@ -1380,6 +1380,9 @@ importers:
       '@ledgerhq/coin-framework':
         specifier: workspace:^
         version: link:../../libs/coin-framework
+      '@ledgerhq/cryptoassets':
+        specifier: workspace:^
+        version: link:../../libs/ledgerjs/packages/cryptoassets
       '@ledgerhq/domain-service':
         specifier: workspace:^
         version: link:../../libs/domain-service
@@ -36471,7 +36474,6 @@ packages:
       is-hex-prefixed: 1.0.0
       strip-hex-prefix: 1.0.0
     dev: false
-    bundledDependencies: false
 
   /ev-emitter@1.1.1:
     resolution: {integrity: sha512-ipiDYhdQSCZ4hSbX4rMW+XzNKMD1prg/sTvoVmSLkuQ1MVlwjJQQA+sW8tMYR3BLUr9KjodFV4pvzunvRhd33Q==}
