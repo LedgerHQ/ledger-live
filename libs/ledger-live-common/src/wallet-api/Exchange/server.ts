@@ -42,6 +42,7 @@ import {
 
 export { ExchangeType };
 import { BigNumber } from "bignumber.js";
+import { Device } from "../../hw/actions/types";
 
 type Handlers = {
   "custom.exchange.start": RPCHandler<
@@ -50,7 +51,6 @@ type Handlers = {
   >;
   "custom.exchange.complete": RPCHandler<ExchangeCompleteResult, ExchangeCompleteParams>;
   "custom.exchange.error": RPCHandler<void, SwapLiveError>;
-  "custom.device.get": RPCHandler<DeviceGetRequest, void>;
 };
 
 export type CompleteExchangeUiRequest = {
@@ -80,16 +80,11 @@ type ExchangeStartParamsUiRequest =
       exchange: Exchange;
     };
 
-export type DeviceGetRequest = {
-  deviceId?: string;
-  modelId?: string;
-};
-
 type ExchangeUiHooks = {
   "custom.exchange.start": (params: {
     exchangeParams: ExchangeStartParamsUiRequest;
-    onSuccess: (nonce: string) => void;
-    onCancel: (error: Error) => void;
+    onSuccess: (nonce: string, device?: Device | null) => void;
+    onCancel: (error: Error, device?: Device | null) => void;
   }) => void;
   "custom.exchange.complete": (params: {
     exchangeParams: CompleteExchangeUiRequest;
@@ -101,7 +96,6 @@ type ExchangeUiHooks = {
     onSuccess: () => void;
     onCancel: () => void;
   }) => void;
-  "custom.device.get": () => DeviceGetRequest;
 };
 
 export const handlers = ({
@@ -112,7 +106,6 @@ export const handlers = ({
     "custom.exchange.start": uiExchangeStart,
     "custom.exchange.complete": uiExchangeComplete,
     "custom.exchange.error": uiError,
-    "custom.device.get": deviceGet,
   },
 }: {
   accounts: AccountLike[];
@@ -317,7 +310,6 @@ export const handlers = ({
         }),
       );
     }),
-    "custom.device.get": customWrapper<void, DeviceGetRequest>(() => deviceGet()),
   }) as const satisfies Handlers;
 
 function extractSwapStartParam(

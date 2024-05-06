@@ -5,4 +5,4 @@
 "@ledgerhq/wallet-api-exchange-module": minor
 ---
 
-Track swap cancel and accept with custom.device.get handler
+Track swap cancel and accept with by returning device property from custom.exchange.start handler

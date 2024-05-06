@@ -47,13 +47,11 @@ const testAppManifest = {
 const mockUiStartExchange = jest.fn();
 const mockUiCompleteExchange = jest.fn();
 const mockUiError = jest.fn();
-const mockDeviceGet = jest.fn();
 
 const mockUiHooks = {
   "custom.exchange.start": mockUiStartExchange,
   "custom.exchange.complete": mockUiCompleteExchange,
   "custom.exchange.error": mockUiError,
-  "custom.device.get": mockDeviceGet,
 };
 
 // Mock converter id to send back the id received in params.

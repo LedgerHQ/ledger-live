@@ -52,10 +52,6 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"]) {
         tracking,
         manifest,
         uiHooks: {
-          "custom.device.get": () => ({
-            deviceId: device?.deviceId,
-            modelId: device?.modelId,
-          }),
           "custom.exchange.start": ({ exchangeParams, onSuccess, onCancel }) => {
             dispatch(
               openExchangeDrawer({
@@ -63,10 +59,10 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"]) {
                 ...exchangeParams,
                 exchangeType: ExchangeType[exchangeParams.exchangeType],
                 onResult: (nonce: string) => {
-                  onSuccess(nonce);
+                  onSuccess(nonce, device);
                 },
                 onCancel: (error: Error) => {
-                  onCancel(error);
+                  onCancel(error, device);
                 },
               }),
             );

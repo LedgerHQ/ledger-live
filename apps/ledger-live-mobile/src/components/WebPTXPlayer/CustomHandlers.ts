@@ -52,12 +52,12 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"]) {
                 },
                 onResult: result => {
                   if (result.startExchangeError) {
-                    onCancel(result.startExchangeError);
+                    onCancel(result.startExchangeError, result.device);
                   }
 
                   if (result.startExchangeResult) {
                     setDevice(result.device);
-                    onSuccess(result.startExchangeResult);
+                    onSuccess(result.startExchangeResult, result.device);
                   }
 
                   navigation.pop();
@@ -95,10 +95,6 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"]) {
           "custom.exchange.error": () => {
             // todo add screen for LLM
           },
-          "custom.device.get": () => ({
-            deviceId: device?.deviceId,
-            modelId: device?.modelId,
-          }),
         },
       }),
     };
