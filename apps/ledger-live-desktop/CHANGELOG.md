@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.80.0-next.4
+
+### Patch Changes
+
+- [#6809](https://github.com/LedgerHQ/ledger-live/pull/6809) [`d52c84b`](https://github.com/LedgerHQ/ledger-live/commit/d52c84b9ea51578694663bc83f18738c1400f68e) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add analytics for MArketPerformanceWidget
+
 ## 2.80.0-next.3
 
 ### Patch Changes
