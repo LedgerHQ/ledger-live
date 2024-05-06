@@ -142,12 +142,15 @@ const Header = ({
   const linkToExplorer = (accountId: string) => {
     try {
       const {currencyId, xpubOrAddress} = decodeAccountId(accountId);
-      const explorerView = findCryptoCurrencyById(currencyId).explorerViews[0];
-      let url: string = explorerView.address;
-      if (url) {
-        url = url.replace('$address', xpubOrAddress);
-        url = url.replace('validators', 'address') //for mintscan explorers linked as /validator 
-        window.open(url, '_blank');
+      const currency = findCryptoCurrencyById(currencyId);
+      if (currency && currency.explorerViews && currency.explorerViews.length > 0) {
+        const explorerView = currency.explorerViews[0];
+        let url: string = explorerView.address;
+        if (url) {
+          url = url.replace('$address', xpubOrAddress);
+          url = url.replace('validators', 'address') //for mintscan explorers linked as /validator 
+          window.open(url, '_blank');
+        }
       }
     } catch (e) {
       console.error(e);
@@ -156,14 +159,19 @@ const Header = ({
 
   const isValid = (accountId: string) => {
     try {
-      const {currencyId, xpubOrAddress} = decodeAccountId(accountId);
-      const currencyInfo = findCryptoCurrencyById(currencyId)
-      if(!currencyInfo.explorerViews[0].address || currencyInfo.family == "bitcoin" || currencyInfo.family == "cardano") {
-        return false
+      const { currencyId, xpubOrAddress } = decodeAccountId(accountId);
+      const currencyInfo = findCryptoCurrencyById(currencyId);
+      if (currencyInfo && currencyInfo.explorerViews && currencyInfo.explorerViews.length > 0) {
+        const explorerView = currencyInfo.explorerViews[0];
+        if (explorerView.address) {
+          const isValidFamily = ["bitcoin", "cardano", "tezos", "stacks"].includes(currencyInfo.family);
+          return !isValidFamily;
+        }
       }
-      return true
+      return false;
     } catch (e) {
       console.error(e);
+      return false;
     }
   };
 
