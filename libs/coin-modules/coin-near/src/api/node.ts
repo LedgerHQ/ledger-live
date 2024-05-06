@@ -335,6 +335,6 @@ export const getCommission = makeLRUCache(
 
     return null;
   },
-  () => "",
+  validatorAddress => validatorAddress,
   { ttl: 30 * 60 * 1000 },
 );
