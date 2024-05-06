@@ -207,7 +207,8 @@ export async function pressRightUntil(text: string, maxAttempts: number = 10): P
     });
     attempts++;
   }
-  if (attempts == maxAttempts) {
+
+  if (attempts === maxAttempts) {
     throw new Error(
       `ElementNotFoundException: Element with text "${text}" not found on speculos device`,
     );
