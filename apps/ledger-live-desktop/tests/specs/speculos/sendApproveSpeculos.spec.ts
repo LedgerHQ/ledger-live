@@ -53,17 +53,24 @@ test.describe.parallel("Send Approve @smoke", () => {
         await accountsPage.navigateToAccountByName(transaction.accountToDebit.accountName);
       });
 
-      await test.step(`send`, async () => {
+      await test.step(`send and check LL`, async () => {
         await accountPage.sendButton.click();
         await sendModal.fillRecipient(receiveAddress);
         await sendModal.continueButton.click();
         await modal.cryptoAmountField.fill(transaction.amount);
         await sendModal.countinueSendAmount();
         await expect(sendModal.verifyTotalDebit).toBeVisible();
+
         await expect(sendModal.checkAddress(receiveAddress)).toBeVisible();
+        const displayedReceiveAddress = await sendModal.recipientAddressDisplayed.innerText();
+        expect(displayedReceiveAddress).toEqual(transaction.accountToCredit.address);
+
         await expect(
           sendModal.checkAmount(transaction.accountToCredit.currency.uiLabel),
-        ).toBeVisible(); //changer pour lui passer la currency
+        ).toBeVisible();
+        const displayedAmount = await sendModal.amountDisplayed.innerText();
+        expect(displayedAmount).toEqual(expect.stringContaining(transaction.amount));
+
         await sendModal.continueButton.click();
       });
 
@@ -73,7 +80,6 @@ test.describe.parallel("Send Approve @smoke", () => {
         expect(verifyAmount(transaction.amount, amountScreen)).toBe(true);
         const addressScreen = await pressRightUntil(DeviceLabels.Address);
         expect(verifyAddress(receiveAddress, addressScreen)).toBe(true);
-        // TODO: REMOVE SEND PATTERN / issue: can be Continue or accept
         await pressRightUntil(transaction.accountToCredit.currency.sendPattern[2]);
         await pressBoth();
         switch (transaction.accountToDebit.currency.uiName) {

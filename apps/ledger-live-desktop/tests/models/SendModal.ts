@@ -14,6 +14,8 @@ export class SendModal extends Modal {
   readonly retryButton: Locator;
   readonly checkAddress: (address: string) => Locator;
   readonly checkAmount: (currency: string) => Locator;
+  readonly recipientAddressDisplayed: Locator;
+  readonly amountDisplayed: Locator;
 
   constructor(page: Page) {
     super(page);
@@ -26,11 +28,13 @@ export class SendModal extends Modal {
       "text=Double-check the transaction details on your Ledger device before signing.",
     );
     this.checkTransactionbroadcast = page.locator("text=Transaction sent");
-    this.checkTransactionDenied = page.locator(`div[color="alertRed"]`); //Pas ideal
+    this.checkTransactionDenied = page.locator(`div[color="alertRed"]`); //Fix: Change on SendRejectSpeculos PR
     this.retryButton = page.getByRole("button", { name: "Retry" });
     this.checkAddress = address =>
       page.locator('[data-test-id="modal-content"]').locator(`text=${address}`);
     this.checkAmount = currency => page.locator(`text=0.00001 ${currency}`).first();
+    this.recipientAddressDisplayed = page.locator("data-test-id=recipient-address");
+    this.amountDisplayed = page.locator("data-test-id=transaction-amount");
   }
 
   async selectAccount(name: string) {
