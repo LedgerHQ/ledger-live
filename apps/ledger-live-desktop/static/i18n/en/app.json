@@ -6109,7 +6109,7 @@
   },
   "customImage": {
     "title": "Custom lock screen",
-    "cta": "Custom lock screen",
+    "cta": "Set custom lock screen",
     "managerCTA": "Lock screen picture",
     "managerCTARemove": "Remove",
     "steps": {
