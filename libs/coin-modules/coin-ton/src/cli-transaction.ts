@@ -16,15 +16,18 @@ function inferTransactions(
   return flatMap(transactions, ({ transaction, account }) => {
     invariant(transaction.family === "ton", "ton family");
 
-    if (account.type === "TokenAccount") {
+    const isTokenAccount = account.type === "TokenAccount";
+
+    if (isTokenAccount) {
       const isDelisted = account.token.delisted === true;
       invariant(!isDelisted, "token is delisted");
     }
+
     return {
       ...transaction,
       family: "ton",
       mode: opts.mode || "send",
-      subAccountId: account.type === "TokenAccount" ? account.id : null,
+      subAccountId: isTokenAccount ? account.id : null,
     } as Transaction;
   });
 }

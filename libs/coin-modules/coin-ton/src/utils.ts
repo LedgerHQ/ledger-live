@@ -1,5 +1,6 @@
 import { decodeAccountId, findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 import { Account, Address } from "@ledgerhq/types-live";
+import { TonPayloadFormat } from "@ton-community/ton-ledger";
 import {
   Cell,
   SendMode,
@@ -40,15 +41,16 @@ export const transactionToHwParams = (t: Transaction, seqno: number, a: Account)
   }
 
   // if there is a sub account, the transaction is a token transfer
-  const subAccount = findSubAccountById(a, t.subAccountId || "");
+  const subAccount = findSubAccountById(a, t.subAccountId ?? "");
+
+  const maxComissionFee = "0.05";
 
   const amount = subAccount
-    ? toNano("0.05") // for commission fees, excess will be returned
+    ? toNano(maxComissionFee) // for commission fees, excess will be returned
     : t.useAllAmount
     ? BigInt(0)
     : BigInt(t.amount.toFixed());
   const to = subAccount ? subAccount.token.contractAddress : recipient;
-
   const tonHwParams: TonHwParams = {
     to: TonAddress.parse(to),
     seqno,
@@ -146,3 +148,6 @@ export const getLedgerTonPath = (path: string): number[] => {
   }
   return numPath;
 };
+
+export const isJettonTransfer = (payload: TonPayloadFormat): boolean =>
+  payload.type === "jetton-transfer";

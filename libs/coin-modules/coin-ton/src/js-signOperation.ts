@@ -1,5 +1,4 @@
-import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { findSubAccountById, isTokenAccount } from "@ledgerhq/coin-framework/account/index";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type {
   Account,
@@ -83,15 +82,15 @@ const buildOptimisticOperation = (
   const { recipient, amount, fees, comment, useAllAmount, subAccountId } = transaction;
   const { id: accountId } = account;
 
-  const subAccount = findSubAccountById(account, subAccountId || "");
-  const tokenTransfer = subAccount?.type === "TokenAccount";
+  const subAccount = findSubAccountById(account, subAccountId ?? "");
+  const tokenTransfer = Boolean(subAccount && isTokenAccount(subAccount));
 
   const value = tokenTransfer ? fees : amount.plus(fees);
-
+  const type = subAccountId ? "FEES" : "OUT";
   const op: TonOperation = {
     id: "",
     hash: "",
-    type: "OUT",
+    type,
     senders: [address],
     recipients: [recipient],
     accountId,
@@ -108,9 +107,10 @@ const buildOptimisticOperation = (
     },
   };
   if (tokenTransfer && subAccount) {
+    console.log('subAccount.id ', subAccount.id)
     op.subOperations = [
       {
-        id: encodeOperationId(subAccount.id, "", "OUT"),
+        id: "",
         hash: "",
         type: "OUT",
         value: useAllAmount ? subAccount.balance : amount,
