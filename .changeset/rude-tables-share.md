@@ -1,18 +1,18 @@
 ---
-"@ledgerhq/types-live": patch
+"@ledgerhq/types-live": minor
 "@ledgerhq/coin-algorand": patch
 "@ledgerhq/coin-polkadot": patch
 "@ledgerhq/coin-bitcoin": patch
 "@ledgerhq/coin-evm": patch
 "@actions/build-checks": patch
 "@ledgerhq/native-modules-tools": patch
-"ledger-live-desktop": patch
-"live-mobile": patch
-"@ledgerhq/live-common": patch
+"ledger-live-desktop": minor
+"live-mobile": minor
+"@ledgerhq/live-common": minor
 "@ledgerhq/ethereum-provider": patch
 "@ledgerhq/dummy-wallet-app": patch
 "@ledgerhq/wallet-api-exchange-module": patch
-"@ledgerhq/coin-framework": patch
+"@ledgerhq/coin-framework": minor
 "@ledgerhq/live-nft-react": patch
 "@ledgerhq/live-wallet": patch
 "@ledgerhq/live-cli": patch
