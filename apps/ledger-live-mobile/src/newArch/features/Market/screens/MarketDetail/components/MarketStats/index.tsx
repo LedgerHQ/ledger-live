@@ -26,8 +26,8 @@ export default function MarketStats({
   currency,
   counterCurrency,
 }: {
-  currency: CurrencyData;
-  counterCurrency: string;
+  currency?: CurrencyData;
+  counterCurrency?: string;
 }) {
   const { t } = useTranslation();
   const { locale } = useLocale();
@@ -62,19 +62,34 @@ export default function MarketStats({
     [locale],
   );
 
+  function Value({ value, isDefined }: { value?: number; isDefined: boolean }) {
+    return (
+      <StyledTextLabel>
+        {isDefined && value ? (
+          <>
+            {counterValueFormatter({
+              currency: counterCurrency,
+              value: value,
+              locale,
+              t,
+            })}
+          </>
+        ) : (
+          <Text variant="body" color="neutral.c70">
+            -
+          </Text>
+        )}
+      </StyledTextLabel>
+    );
+  }
+
   return (
     <Flex bg="neutral.c30" m={16} px={16} py={24} borderRadius={8}>
       <StyledTitle>{t("market.detailsPage.priceStatistics")}</StyledTitle>
       <StatRow label={t("market.detailsPage.price")}>
-        <StyledTextLabel>
-          {counterValueFormatter({
-            currency: counterCurrency,
-            value: price,
-            locale,
-            t,
-          })}
-        </StyledTextLabel>
-        {priceChangePercentage !== null && !isNaN(priceChangePercentage) ? (
+        <Value value={price} isDefined={!!currency} />
+
+        {!!currency && !!priceChangePercentage && !isNaN(priceChangePercentage) ? (
           <DeltaVariation percent value={priceChangePercentage} />
         ) : (
           <Text variant="body" color="neutral.c70">
@@ -84,52 +99,39 @@ export default function MarketStats({
         )}
       </StatRow>
       <StatRow label={t("market.detailsPage.tradingVolume")}>
-        <StyledTextLabel>
-          {counterValueFormatter({
-            currency: counterCurrency,
-            value: totalVolume,
-            locale,
-            t,
-          })}
-        </StyledTextLabel>
+        <Value value={totalVolume} isDefined={!!currency} />
       </StatRow>
       <StatRow label={t("market.detailsPage.24hLowHight")}>
-        <StyledTextLabel>
-          {counterValueFormatter({
-            currency: counterCurrency,
-            value: low24h,
-            locale,
-            t,
-          })}{" "}
-          /{" "}
-          {counterValueFormatter({
-            currency: counterCurrency,
-            value: high24h,
-            locale,
-            t,
-          })}
-        </StyledTextLabel>
+        {currency && low24h && high24h ? (
+          <StyledTextLabel>
+            {counterValueFormatter({
+              currency: counterCurrency,
+              value: low24h,
+              locale,
+              t,
+            })}{" "}
+            /{" "}
+            {counterValueFormatter({
+              currency: counterCurrency,
+              value: high24h,
+              locale,
+              t,
+            })}
+          </StyledTextLabel>
+        ) : (
+          <Text variant="body" color="neutral.c70">
+            -
+          </Text>
+        )}
       </StatRow>
       <StatRow label={t("market.detailsPage.allTimeHigh")}>
-        <StyledTextLabel>
-          {counterValueFormatter({
-            currency: counterCurrency,
-            value: ath,
-            locale,
-            t,
-          })}{" "}
-        </StyledTextLabel>
+        <Value value={ath} isDefined={!!currency} />
+
         <StyledSubLabel>{athDate ? dateFormatter.format(athDate) : "-"}</StyledSubLabel>
       </StatRow>
       <StatRow label={t("market.detailsPage.allTimeLow")}>
-        <StyledTextLabel>
-          {counterValueFormatter({
-            currency: counterCurrency,
-            value: atl,
-            locale,
-            t,
-          })}{" "}
-        </StyledTextLabel>
+        <Value value={atl} isDefined={!!currency} />
+
         <StyledSubLabel>{atlDate ? dateFormatter.format(atlDate) : "-"}</StyledSubLabel>
       </StatRow>
       <StyledSeparator />
@@ -154,31 +156,13 @@ export default function MarketStats({
       <StyledSeparator />
       <StyledTitle>{t("market.detailsPage.supply")}</StyledTitle>
       <StatRow label={t("market.detailsPage.circulatingSupply")}>
-        <StyledTextLabel>
-          {counterValueFormatter({
-            value: circulatingSupply,
-            locale,
-            t,
-          })}
-        </StyledTextLabel>
+        <Value value={circulatingSupply} isDefined={!!currency} />
       </StatRow>
       <StatRow label={t("market.detailsPage.totalSupply")}>
-        <StyledTextLabel>
-          {counterValueFormatter({
-            value: totalSupply,
-            locale,
-            t,
-          })}
-        </StyledTextLabel>
+        <Value value={totalSupply} isDefined={!!currency} />
       </StatRow>
       <StatRow label={t("market.detailsPage.maxSupply")}>
-        <StyledTextLabel>
-          {counterValueFormatter({
-            value: maxSupply,
-            locale,
-            t,
-          })}
-        </StyledTextLabel>
+        <Value value={maxSupply} isDefined={!!currency} />
       </StatRow>
     </Flex>
   );

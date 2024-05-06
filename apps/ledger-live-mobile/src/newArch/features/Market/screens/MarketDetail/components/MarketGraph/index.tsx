@@ -73,16 +73,15 @@ function MarketGraph({
           <InfiniteLoader size={32} />
         )}
       </Flex>
-      {!isLoading && (
-        <Flex mt={25} mx={6}>
-          <GraphTabs
-            activeIndex={activeRangeIndex}
-            activeBg="neutral.c30"
-            onChange={setRange}
-            labels={rangesLabels}
-          />
-        </Flex>
-      )}
+
+      <Flex mt={25} mx={6}>
+        <GraphTabs
+          activeIndex={activeRangeIndex}
+          activeBg="neutral.c30"
+          onChange={setRange}
+          labels={rangesLabels}
+        />
+      </Flex>
     </Flex>
   );
 }

@@ -111,33 +111,32 @@ function View({
         }
         BottomSection={
           <>
-            {!loading && (
-              <Flex justifyContent="center" alignItems="flex-start" pb={3}>
-                <Text variant="h1" mb={1}>
-                  {counterValueFormatter({
-                    currency: counterCurrency,
-                    value: hoveredItem?.value ? hoveredItem.value : price || 0,
-                    locale,
-                    t,
-                  })}
-                </Text>
+            <Flex justifyContent="center" alignItems="flex-start" pb={3}>
+              <Text variant="h1" mb={1}>
+                {counterValueFormatter({
+                  currency: counterCurrency,
+                  value: hoveredItem?.value ? hoveredItem.value : price || 0,
+                  locale,
+                  t,
+                })}
+              </Text>
 
-                <Flex height={20}>
-                  {hoveredItem && hoveredItem.date ? (
-                    <Text variant="body" color="neutral.c70">
-                      {dateRangeFormatter.format(hoveredItem.date)}
-                    </Text>
-                  ) : priceChangePercentage && !isNaN(priceChangePercentage) ? (
-                    <DeltaVariation percent value={priceChangePercentage} />
-                  ) : (
-                    <Text variant="body" color="neutral.c70">
-                      {" "}
-                      -
-                    </Text>
-                  )}
-                </Flex>
+              <Flex height={20}>
+                {hoveredItem && hoveredItem.date ? (
+                  <Text variant="body" color="neutral.c70">
+                    {dateRangeFormatter.format(hoveredItem.date)}
+                  </Text>
+                ) : priceChangePercentage && !isNaN(priceChangePercentage) ? (
+                  <DeltaVariation percent value={priceChangePercentage} />
+                ) : (
+                  <Text variant="body" color="neutral.c70">
+                    {" "}
+                    -
+                  </Text>
+                )}
               </Flex>
-            )}
+            </Flex>
+
             {internalCurrency ? (
               <Flex mb={6}>
                 <FabMarketActions
@@ -160,7 +159,7 @@ function View({
       >
         <MarketGraph
           setHoverItem={setHoverItem}
-          isLoading={loading || loadingChart}
+          isLoading={loadingChart}
           refreshChart={refresh}
           chartData={dataChart}
           range={range}
@@ -191,9 +190,7 @@ function View({
             />
           </Flex>
         ) : null}
-        {dataCurrency && counterCurrency && (
-          <MarketStats currency={dataCurrency} counterCurrency={counterCurrency} />
-        )}
+        <MarketStats currency={dataCurrency} counterCurrency={counterCurrency} />
       </ScrollContainerHeader>
     </SafeAreaView>
   );
