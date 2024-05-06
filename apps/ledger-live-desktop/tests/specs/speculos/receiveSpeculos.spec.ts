@@ -13,7 +13,8 @@ import {
   stopSpeculos,
   pressRightUntil,
   pressBoth,
-  //verifyAddress,
+  verifyAddress,
+  waitFor,
 } from "../../utils/speculos";
 
 test.use({ userdata: "speculos" });
@@ -63,9 +64,9 @@ test.describe.parallel("Receive @smoke", () => {
       });
 
       await test.step(`[${account.currency.uiName}] Verify and Validate on device`, async () => {
-        //FIX ME: Issue Verifying the address on the device : first device screen skipped
-        //const addressScreen = await pressRightUntil(account.currency.receivePattern[0]);
-        //expect(verifyAddress(account.address, addressScreen)).toBe(true);
+        await waitFor(account.currency.receivePattern[0]);
+        const addressScreen = await pressRightUntil(account.currency.receivePattern[0]);
+        expect(verifyAddress(account.address, addressScreen)).toBe(true);
         await pressRightUntil(account.currency.receivePattern[1]);
         await pressBoth();
         await expect(receiveModal.approve).toBeVisible();

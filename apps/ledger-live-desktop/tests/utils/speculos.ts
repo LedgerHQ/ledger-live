@@ -179,6 +179,28 @@ interface ResponseData {
   events: Event[];
 }
 
+export async function waitFor(text: string, maxAttempts: number = 10): Promise<string[]> {
+  const speculosApiPort = getEnv("SPECULOS_API_PORT");
+  let attempts = 0;
+  let textFound: boolean = false;
+  while (attempts < maxAttempts && !textFound) {
+    const response = await axios.get<ResponseData>(
+      `http://127.0.0.1:${speculosApiPort}/events?stream=false&currentscreenonly=true`,
+    );
+    const responseData = response.data;
+    const texts = responseData.events.map(event => event.text);
+    console.log(texts);
+
+    if (texts[0].includes(text)) {
+      textFound = true;
+      return texts;
+    }
+    attempts++;
+    await waitForTimeOut(500);
+  }
+  return [];
+}
+
 export async function pressBoth() {
   const speculosApiPort = getEnv("SPECULOS_API_PORT");
   await axios.post(`http://127.0.0.1:${speculosApiPort}/button/both`, {
@@ -213,7 +235,7 @@ export async function pressRightUntil(text: string, maxAttempts: number = 10): P
       `ElementNotFoundException: Element with text "${text}" not found on speculos device`,
     );
   }
-  waitForTimeOut(100);
+  await waitForTimeOut(100);
   return [];
 }
 
