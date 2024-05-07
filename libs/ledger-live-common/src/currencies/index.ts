@@ -1,4 +1,4 @@
-import {
+export {
   listFiatCurrencies,
   findFiatCurrencyByTicker,
   getFiatCurrencyByTicker,
@@ -22,57 +22,21 @@ import {
   getTokenById,
   addTokens,
 } from "@ledgerhq/cryptoassets";
-import {
+export {
   encodeURIScheme,
   decodeURIScheme,
   sanitizeValueString,
   formatCurrencyUnit,
   formatCurrencyUnitFragment,
   findCurrencyByTicker,
-} from "@ledgerhq/coin-framework/currencies/index";
-import { getCurrencyColor, ColorableCurrency } from "./color";
-import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/parseCurrencyUnit";
-import { sortCurrenciesByIds, currenciesByMarketcap } from "./sortByMarketcap";
+  parseCurrencyUnit,
+} from "@ledgerhq/coin-framework/currencies";
 
 export * from "@ledgerhq/coin-framework/currencies/BigNumberToLocaleString";
 export * from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 export * from "@ledgerhq/coin-framework/currencies/support";
+export { getCurrencyColor, ColorableCurrency } from "./color";
 export * from "./formatShort";
 export * from "./helpers";
+export { sortCurrenciesByIds, currenciesByMarketcap } from "./sortByMarketcap";
 export * from "./valueFromUnit";
-
-export {
-  sortCurrenciesByIds,
-  currenciesByMarketcap,
-  listFiatCurrencies,
-  listCryptoCurrencies,
-  getFiatCurrencyByTicker,
-  findCurrencyByTicker,
-  findCryptoCurrency,
-  findCryptoCurrencyById,
-  findCryptoCurrencyByTicker,
-  findCryptoCurrencyByScheme,
-  findCryptoCurrencyByKeyword,
-  findFiatCurrencyByTicker,
-  hasFiatCurrencyTicker,
-  listTokensForCryptoCurrency,
-  listTokenTypesForCryptoCurrency,
-  findTokenByAddress,
-  findTokenByTicker,
-  findTokenById,
-  hasTokenId,
-  getTokenById,
-  getAbandonSeedAddress,
-  parseCurrencyUnit,
-  formatCurrencyUnit,
-  formatCurrencyUnitFragment,
-  getCryptoCurrencyById,
-  hasCryptoCurrencyId,
-  encodeURIScheme,
-  decodeURIScheme,
-  sanitizeValueString,
-  getCurrencyColor,
-  ColorableCurrency,
-  listTokens,
-  addTokens,
-};
