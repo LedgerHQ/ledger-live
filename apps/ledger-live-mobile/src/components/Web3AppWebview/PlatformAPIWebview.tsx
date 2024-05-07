@@ -34,7 +34,6 @@ import {
   useListPlatformCurrencies,
 } from "@ledgerhq/live-common/platform/react";
 import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
-import BigNumber from "bignumber.js";
 import { INTERNAL_APP_IDS } from "@ledgerhq/live-common/wallet-api/constants";
 import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds";
 import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
@@ -240,11 +239,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
           accountId,
           transaction,
           (account, parentAccount, { liveTx }) => {
-            const tx = prepareSignTransaction(
-              account,
-              parentAccount,
-              liveTx as Partial<Transaction & { gasLimit: BigNumber }>,
-            );
+            const tx = prepareSignTransaction(account, parentAccount, liveTx);
 
             return new Promise((resolve, reject) => {
               navigation.navigate(NavigatorName.SignTransaction, {
