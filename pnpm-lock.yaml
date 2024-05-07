@@ -2202,9 +2202,6 @@ importers:
       '@ledgerhq/coin-framework':
         specifier: workspace:^
         version: link:../../coin-framework
-      '@ledgerhq/cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/cryptoassets
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../ledgerjs/packages/devices
