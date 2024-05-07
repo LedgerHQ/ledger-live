@@ -14,7 +14,6 @@ import { Operation, SignedOperation } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/tracking";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import BigNumber from "bignumber.js";
 import { useSelector } from "react-redux";
 import { useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { WebViewProps, WebView, WebViewMessageEvent } from "react-native-webview";
@@ -378,11 +377,7 @@ function useUiHook(): UiHook {
         onSuccess,
         onError,
       }) => {
-        const tx = prepareSignTransaction(
-          account,
-          parentAccount,
-          liveTx as Partial<Transaction & { gasLimit: BigNumber }>,
-        );
+        const tx = prepareSignTransaction(account, parentAccount, liveTx);
 
         navigation.navigate(NavigatorName.SignTransaction, {
           screen: ScreenName.SignTransactionSummary,
