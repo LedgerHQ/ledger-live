@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import {
   PolkadotValidator,
@@ -19,6 +18,7 @@ import ToolTip from "~/renderer/components/Tooltip";
 import ExternalLink from "~/renderer/icons/ExternalLink";
 import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
 import { useDateFromNow } from "~/renderer/hooks/useDateFormatter";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const Wrapper = styled.div`
   display: flex;
@@ -91,7 +91,7 @@ export function Row({
   const name = validator?.identity || address;
   const total = validator?.totalBonded ?? null;
   const commission = validator?.commission ?? null;
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const formattedAmount = useMemo(
     () =>
       value && (status === "active" || status === "inactive")
@@ -201,7 +201,7 @@ export function UnlockingRow({
     [completionDate],
   );
 
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const formattedAmount = useMemo(
     () =>
       formatCurrencyUnit(unit, amount, {

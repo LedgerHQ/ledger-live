@@ -4,7 +4,7 @@ import type { AccountLike, Account } from "@ledgerhq/types-live";
 import { Trans } from "react-i18next";
 import type { Transaction as AlgorandTransaction } from "@ledgerhq/live-common/families/algorand/types";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import { getAccountUnit, getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import SummaryRow from "~/screens/SendFunds/SummaryRow";
@@ -19,6 +19,7 @@ import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/typ
 import { ScreenName } from "~/const";
 import type { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
 import type { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props = {
   transaction: Transaction;
@@ -38,7 +39,7 @@ export default function AlgorandFeeRow({ account, parentAccount, transaction }: 
   }, []);
   const fees = (transaction as AlgorandTransaction).fees;
   const mainAccount = getMainAccount(account, parentAccount);
-  const unit = getAccountUnit(mainAccount);
+  const unit = useAccountUnit(mainAccount);
   const currency = getAccountCurrency(account);
 
   return (

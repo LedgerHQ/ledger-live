@@ -19,6 +19,8 @@ import { SelectAccountParamList } from "../types";
 import { NavigatorName, ScreenName } from "~/const";
 import { accountsSelector } from "~/reducers/accounts";
 import { sharedSwapTracking } from "../utils";
+import { walletSelector } from "~/reducers/wallet";
+import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 
 export function SelectAccount({ navigation, route: { params } }: SelectAccountParamList) {
   const { provider, target, selectableCurrencyIds, selectedCurrency } = params;
@@ -50,6 +52,8 @@ export function SelectAccount({ navigation, route: { params } }: SelectAccountPa
     return filteredAccounts;
   }, [accounts, selectedCurrency]);
 
+  const walletState = useSelector(walletSelector);
+
   const allAccounts = useMemo(() => {
     const accounts: AccountLike[] = flattenAccounts(enhancedAccounts);
 
@@ -59,22 +63,30 @@ export function SelectAccount({ navigation, route: { params } }: SelectAccountPa
           const c = getAccountCurrency(a);
           return c.type === "CryptoCurrency" || c.id === selectedCurrency.id;
         })
-        .map(a => {
-          const c = getAccountCurrency(a);
+        .map(account => {
+          const c = getAccountCurrency(account);
           return {
-            ...a,
-            disabled:
-              (selectedCurrency.type === "TokenCurrency" && c.type === "CryptoCurrency") ||
-              c.id !== selectedCurrency.id,
+            name: accountNameWithDefaultSelector(walletState, account),
+            account: {
+              ...account,
+              // FIXME flatten disabled back in the top object
+              disabled:
+                (selectedCurrency.type === "TokenCurrency" && c.type === "CryptoCurrency") ||
+                c.id !== selectedCurrency.id,
+            },
           };
         });
     }
 
     return accounts.map(a => ({
-      ...a,
-      disabled: !a.balance.gt(0) || !selectableCurrencyIds.includes(getAccountCurrency(a).id),
+      name: accountNameWithDefaultSelector(walletState, a),
+      account: {
+        ...a,
+        // FIXME flatten disabled back in the top object
+        disabled: !a.balance.gt(0) || !selectableCurrencyIds.includes(getAccountCurrency(a).id),
+      },
     }));
-  }, [target, selectedCurrency, enhancedAccounts, selectableCurrencyIds]);
+  }, [target, selectedCurrency, enhancedAccounts, selectableCurrencyIds, walletState]);
 
   const { t } = useTranslation();
   const { colors } = useTheme();
@@ -150,7 +162,10 @@ export function SelectAccount({ navigation, route: { params } }: SelectAccountPa
 
   const renderList = useCallback(
     (items: typeof allAccounts) => {
-      const formatedList = formatSearchResults(items, accounts);
+      const formatedList = formatSearchResults(
+        items.map(a => a.account),
+        accounts,
+      );
       return (
         <FlatList
           data={formatedList}
@@ -191,7 +206,13 @@ export function SelectAccount({ navigation, route: { params } }: SelectAccountPa
     <KeyboardView>
       <TrackScreen category="Swap Form" name="Edit Source Account" provider={provider} />
       <FilteredSearchBar
-        keys={["name", "unit.code", "token.name", "token.ticker"]}
+        keys={[
+          "name",
+          "account.currency.name",
+          "account.currency.ticker",
+          "account.token.name",
+          "account.token.ticker",
+        ]}
         list={allAccounts}
         renderList={renderList}
         renderEmptySearch={() => (

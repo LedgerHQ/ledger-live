@@ -50,7 +50,6 @@ const dataset: CurrenciesData<Transaction> = {
         operations: [],
         pendingOperations: [],
         currencyId: "celo",
-        unitMagnitude: 18,
         lastSyncDate: "",
         balance: "399893159500000000",
         celoResources: {
@@ -340,7 +339,6 @@ const dataset: CurrenciesData<Transaction> = {
         operations: [],
         pendingOperations: [],
         currencyId: "celo",
-        unitMagnitude: 18,
         lastSyncDate: "",
         balance: "399893159500000000",
         celoResources: {

@@ -1,8 +1,7 @@
 import React, { useCallback } from "react";
 import styled, { keyframes } from "styled-components";
-import { useSelector, useDispatch } from "react-redux";
-import { toggleStarAction } from "~/renderer/actions/accounts";
-import { isStarredAccountSelector } from "~/renderer/reducers/accounts";
+import { useDispatch, useSelector } from "react-redux";
+import { toggleStarAction } from "~/renderer/actions/wallet";
 import { rgba } from "~/renderer/styles/helpers";
 import starAnim from "~/renderer/images/starAnim.png";
 import starAnim2 from "~/renderer/images/starAnim2.png";
@@ -10,28 +9,27 @@ import { useRefreshAccountsOrdering } from "~/renderer/actions/general";
 import { Transition } from "react-transition-group";
 import { track } from "~/renderer/analytics/segment";
 import { State } from "~/renderer/reducers";
+import { accountStarredSelector } from "~/renderer/reducers/wallet";
 type Props = {
   accountId: string;
-  parentId?: string;
   yellow?: boolean;
   rounded?: boolean;
 };
-export default function Star({ accountId, parentId, yellow, rounded }: Props) {
+export default function Star({ accountId, yellow, rounded }: Props) {
   const isAccountStarred = useSelector((state: State) =>
-    isStarredAccountSelector(state, {
-      accountId,
-    }),
+    accountStarredSelector(state, { accountId }),
   );
+
   const dispatch = useDispatch();
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
   const toggleStar: React.MouseEventHandler<HTMLInputElement> = useCallback(
     e => {
       track(isAccountStarred ? "Account Unstar" : "Account Star");
       e.stopPropagation();
-      dispatch(toggleStarAction(accountId, parentId));
+      dispatch(toggleStarAction(accountId, !isAccountStarred));
       refreshAccountsOrdering();
     },
-    [isAccountStarred, dispatch, accountId, parentId, refreshAccountsOrdering],
+    [dispatch, accountId, refreshAccountsOrdering, isAccountStarred],
   );
   const MaybeButtonWrapper = yellow ? ButtonWrapper : FloatingWrapper;
   return (

@@ -6,7 +6,7 @@ const sortUTXO = (a: BitcoinOutput, b: BitcoinOutput) => b.value.minus(a.value).
 
 export function formatInput(account: BitcoinAccount, input: BitcoinInput): string {
   return `${(input.value
-    ? formatCurrencyUnit(account.unit, input.value, {
+    ? formatCurrencyUnit(account.currency.units[0], input.value, {
         showCode: false,
       })
     : ""
@@ -14,7 +14,7 @@ export function formatInput(account: BitcoinAccount, input: BitcoinInput): strin
 }
 export function formatOutput(account: BitcoinAccount, o: BitcoinOutput): string {
   return [
-    formatCurrencyUnit(account.unit, o.value, {
+    formatCurrencyUnit(account.currency.units[0], o.value, {
       showCode: false,
     }).padEnd(12),
     o.address,

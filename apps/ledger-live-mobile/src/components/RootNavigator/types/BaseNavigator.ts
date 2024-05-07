@@ -181,6 +181,9 @@ export type BaseNavigatorStackParamList = {
     currencyId: string;
     headerTitle?: string | undefined;
   };
+  [ScreenName.EditCurrencyUnits]: {
+    currency: CryptoCurrency;
+  };
   [ScreenName.MarketDetail]: {
     currencyId: string;
     resetSearchOnUmount?: boolean;

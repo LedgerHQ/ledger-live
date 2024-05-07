@@ -13,7 +13,7 @@ import {
   getProtect,
 } from "../db";
 import { importSettings, setSupportedCounterValues } from "~/actions/settings";
-import { importStore as importAccounts } from "~/actions/accounts";
+import { importStore as importAccountsRaw } from "~/actions/accounts";
 import { importBle } from "~/actions/ble";
 import { updateProtectData, updateProtectStatus } from "~/actions/protect";
 import { INITIAL_STATE as settingsState } from "~/reducers/settings";
@@ -99,7 +99,7 @@ export default class LedgerStoreProvider extends Component<
 
     this.props.store.dispatch(importSettings(settingsData));
     const accountsData = await getAccounts();
-    this.props.store.dispatch(importAccounts(accountsData));
+    this.props.store.dispatch(importAccountsRaw(accountsData));
 
     const postOnboardingState = await getPostOnboardingState();
     if (postOnboardingState) {

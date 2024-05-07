@@ -1,4 +1,4 @@
-import { getAccountUnit } from "@ledgerhq/coin-framework/account/index";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
 import { findTokenById, formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import type { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -60,7 +60,7 @@ const getSendFields = (
     fields.push({
       type: "text",
       label: account.type === "TokenAccount" ? "Asset amt" : "Amount",
-      value: formatCurrencyUnit(getAccountUnit(account), amount, {
+      value: formatCurrencyUnit(getAccountCurrency(account).units[0], amount, {
         showCode: true,
         disableRounding: true,
       }),

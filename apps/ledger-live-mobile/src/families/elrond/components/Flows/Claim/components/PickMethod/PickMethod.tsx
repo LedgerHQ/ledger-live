@@ -5,11 +5,7 @@ import { Trans } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { handleTransactionStatus } from "@ledgerhq/live-common/families/elrond/helpers/handleTransactionStatus";
-import {
-  getAccountUnit,
-  getMainAccount,
-  getAccountCurrency,
-} from "@ledgerhq/live-common/account/index";
+import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { MIN_DELEGATION_AMOUNT } from "@ledgerhq/live-common/families/elrond/constants";
 
@@ -31,6 +27,7 @@ import { ScreenName } from "~/const";
 import { TransactionMethodEnum } from "./enums";
 
 import styles from "./styles";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 /*
  * Handle the component declaration.
@@ -47,7 +44,7 @@ const PickMethod = (props: PickMethodPropsType) => {
   const mainAccount = getMainAccount(account, undefined);
   const currency = getAccountCurrency(mainAccount);
   const bridge: AccountBridge<Transaction> = getAccountBridge(account);
-  const unit = getAccountUnit(mainAccount);
+  const unit = useAccountUnit(mainAccount);
   const methods = [TransactionMethodEnum.claimRewards, TransactionMethodEnum.reDelegateRewards];
 
   const currentDelegation = useMemo(

@@ -1,6 +1,6 @@
 import { getAvailableProviders } from "../..";
 import { AccountLike } from "@ledgerhq/types-live";
-import { getAccountCurrency, getAccountUnit } from "@ledgerhq/coin-framework/account/helpers";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { fetchRates } from "../../api/v5/fetchRates";
@@ -22,7 +22,9 @@ export function useFetchRates({
   onSuccess,
 }: Props) {
   const currencyFrom = fromCurrencyAccount ? getAccountCurrency(fromCurrencyAccount).id : undefined;
-  const unitFrom = fromCurrencyAccount ? getAccountUnit(fromCurrencyAccount) : undefined;
+  const unitFrom = fromCurrencyAccount
+    ? getAccountCurrency(fromCurrencyAccount).units[0]
+    : undefined;
   const unitTo = toCurrency?.units[0];
   const moonpayFF = useFeature("ptxSwapMoonpayProvider");
   const formattedCurrencyAmount =

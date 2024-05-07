@@ -14,7 +14,6 @@ import {
   getDerivationModeStartsAt,
 } from "../derivation";
 import {
-  getAccountPlaceholderName,
   shouldRetainPendingOperation,
   isAccountEmpty,
   shouldShowNewAccount,
@@ -359,8 +358,6 @@ export const makeScanAccounts =
           freshAddress,
           freshAddressPath,
           derivationMode,
-          name: "",
-          starred: false,
           used: false,
           index,
           currency,
@@ -368,7 +365,6 @@ export const makeScanAccounts =
           operations: [],
           swapHistory: [],
           pendingOperations: [],
-          unit: currency.units[0],
           lastSyncDate: new Date(),
           creationDate,
           // overrides
@@ -404,12 +400,6 @@ export const makeScanAccounts =
         );
 
         if (!account) return;
-
-        account.name = getAccountPlaceholderName({
-          currency,
-          index,
-          derivationMode,
-        });
 
         const showNewAccount = shouldShowNewAccount(currency, derivationMode);
 
@@ -550,9 +540,7 @@ export function makeAccountBridgeReceive(
         const accountAddress = account.freshAddress;
 
         if (r.address !== accountAddress) {
-          throw new WrongDeviceForAccount(`WrongDeviceForAccount ${account.name}`, {
-            accountName: account.name,
-          });
+          throw new WrongDeviceForAccount();
         }
 
         return r;

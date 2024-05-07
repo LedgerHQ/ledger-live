@@ -38,6 +38,7 @@ import SwapFormSummary from "./FormSummary";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { languageSelector } from "~/renderer/reducers/settings";
+import { walletSelector } from "~/renderer/reducers/wallet";
 
 const DAPP_PROVIDERS = ["paraswap", "oneinch", "moonpay"];
 
@@ -115,6 +116,7 @@ const SwapForm = () => {
     undefined,
   );
   const { setDrawer } = React.useContext(context);
+  const walletState = useSelector(walletSelector);
 
   const getExchangeSDKParams = useCallback(() => {
     const { swap, transaction } = swapTransaction;
@@ -126,10 +128,10 @@ const SwapForm = () => {
 
     const isToAccountValid = totalListedAccounts.some(account => account.id === toAccount?.id);
     const fromAccountId =
-      fromAccount && accountToWalletAPIAccount(fromAccount, fromParentAccount)?.id;
+      fromAccount && accountToWalletAPIAccount(walletState, fromAccount, fromParentAccount)?.id;
     const toAccountId = isToAccountValid
-      ? toAccount && accountToWalletAPIAccount(toAccount, toParentAccount)?.id
-      : toParentAccount && accountToWalletAPIAccount(toParentAccount, undefined)?.id;
+      ? toAccount && accountToWalletAPIAccount(walletState, toAccount, toParentAccount)?.id
+      : toParentAccount && accountToWalletAPIAccount(walletState, toParentAccount, undefined)?.id;
     const toNewTokenId =
       !isToAccountValid && toAccount?.type === "TokenAccount" ? toAccount.token?.id : undefined;
     const fromAmount =
@@ -197,7 +199,7 @@ const SwapForm = () => {
       provider &&
       walletApiPartnerList?.enabled &&
       walletApiPartnerList?.params?.list.includes(provider)
-        ? accountToWalletAPIAccount(fromAccount, fromParentAccount)?.id
+        ? accountToWalletAPIAccount(walletState, fromAccount, fromParentAccount)?.id
         : fromAccount?.id;
 
     const providerRedirectURLSearch = new URLSearchParams();
@@ -220,6 +222,7 @@ const SwapForm = () => {
     providerRedirectURLSearch.set("returnTo", "/swap");
     return providerRedirectURLSearch;
   }, [
+    walletState,
     provider,
     swapTransaction.swap.from,
     exchangeRate?.providerURL,
@@ -253,7 +256,7 @@ const SwapForm = () => {
 
       const accountId =
         walletApiPartnerList?.enabled && walletApiPartnerList?.params?.list.includes(provider)
-          ? accountToWalletAPIAccount(account, parentAccount)?.id
+          ? accountToWalletAPIAccount(walletState, account, parentAccount)?.id
           : fromAccountId;
 
       const state: {
@@ -283,6 +286,7 @@ const SwapForm = () => {
       });
     },
     [
+      walletState,
       accounts,
       exchangeRate,
       generateMoonpayUrl,

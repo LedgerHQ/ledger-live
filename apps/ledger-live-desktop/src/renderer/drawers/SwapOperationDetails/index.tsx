@@ -1,9 +1,4 @@
-import {
-  getAccountCurrency,
-  getAccountName,
-  getAccountUnit,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { isSwapOperationPending } from "@ledgerhq/live-common/exchange/swap/index";
 import { MappedSwapOperation } from "@ledgerhq/live-common/exchange/swap/types";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
@@ -34,6 +29,7 @@ import {
   OpDetailsSection,
   OpDetailsTitle,
 } from "~/renderer/drawers/OperationDetails/styledComponents";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import { dayFormat, useDateFormatted } from "~/renderer/hooks/useDateFormatter";
 import useTheme from "~/renderer/hooks/useTheme";
 import IconArrowDown from "~/renderer/icons/ArrowDown";
@@ -43,6 +39,7 @@ import IconSwap from "~/renderer/icons/Swap";
 import { openURL } from "~/renderer/linking";
 import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
 import { languageSelector } from "~/renderer/reducers/settings";
+import { useAccountName } from "~/renderer/reducers/wallet";
 import { getStatusColor } from "~/renderer/screens/exchange/Swap2/History/OperationRow";
 import { rgba } from "~/renderer/styles/helpers";
 
@@ -113,12 +110,14 @@ const SwapOperationDetails = ({
 }) => {
   const { fromAccount, toAccount, operation, provider, swapId, status, fromAmount, toAmount } =
     mappedSwapOperation;
+  const fromAccountName = useAccountName(fromAccount);
+  const toAccountName = useAccountName(toAccount);
   const dateFormatted = useDateFormatted(operation.date, dayFormat);
   const language = useSelector(languageSelector);
   const history = useHistory();
-  const fromUnit = getAccountUnit(fromAccount);
+  const fromUnit = useAccountUnit(fromAccount);
   const fromCurrency = getAccountCurrency(fromAccount);
-  const toUnit = getAccountUnit(toAccount);
+  const toUnit = useAccountUnit(toAccount);
   const toCurrency = getAccountCurrency(toAccount);
   const accounts = useSelector(shallowAccountsSelector);
   const normalisedFromAmount = fromAmount.times(-1);
@@ -307,7 +306,7 @@ const SwapOperationDetails = ({
             </Box>
             <Box flex={1} color={"palette.text.shade100"} data-test-id="swap-account-from">
               <Ellipsis>
-                <Link onClick={() => openAccount(fromAccount)}>{getAccountName(fromAccount)}</Link>
+                <Link onClick={() => openAccount(fromAccount)}>{fromAccountName}</Link>
               </Ellipsis>
             </Box>
           </Box>
@@ -349,7 +348,7 @@ const SwapOperationDetails = ({
             </Box>
             <Box flex={1} color={"palette.text.shade100"} data-test-id="swap-account-to">
               <Ellipsis>
-                <Link onClick={() => openAccount(toAccount)}>{getAccountName(toAccount)}</Link>
+                <Link onClick={() => openAccount(toAccount)}>{toAccountName}</Link>
               </Ellipsis>
             </Box>
           </Box>

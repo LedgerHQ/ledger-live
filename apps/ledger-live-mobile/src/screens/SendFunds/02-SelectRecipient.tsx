@@ -54,7 +54,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
 
   const mainAccount = getMainAccount(account, parentAccount);
   const currencySettings = useSelector((s: State) =>
-    currencySettingsForAccountSelector(s, {
+    currencySettingsForAccountSelector(s.settings, {
       account: mainAccount,
     }),
   );
