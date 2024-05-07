@@ -9,7 +9,6 @@ import { sanitizeValueString } from "./sanitizeValueString";
 export * from "./support";
 import { parseCurrencyUnit } from "./parseCurrencyUnit";
 import { formatCurrencyUnit, formatCurrencyUnitFragment } from "./formatCurrencyUnit";
-import { valueFromUnit } from "./valueFromUnit";
 
 const findCurrencyByTicker = (ticker: string): Currency | null | undefined =>
   findCryptoCurrencyByTicker(ticker) ||
@@ -23,6 +22,5 @@ export {
   formatCurrencyUnitFragment,
   encodeURIScheme,
   decodeURIScheme,
-  valueFromUnit,
   sanitizeValueString,
 };

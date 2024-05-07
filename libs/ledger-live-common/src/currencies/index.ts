@@ -28,7 +28,6 @@ import {
   sanitizeValueString,
   formatCurrencyUnit,
   formatCurrencyUnitFragment,
-  valueFromUnit,
   findCurrencyByTicker,
 } from "@ledgerhq/coin-framework/currencies/index";
 import { getCurrencyColor, ColorableCurrency } from "./color";
@@ -40,6 +39,7 @@ export * from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 export * from "@ledgerhq/coin-framework/currencies/support";
 export * from "./formatShort";
 export * from "./helpers";
+export * from "./valueFromUnit";
 
 export {
   sortCurrenciesByIds,
@@ -70,7 +70,6 @@ export {
   hasCryptoCurrencyId,
   encodeURIScheme,
   decodeURIScheme,
-  valueFromUnit,
   sanitizeValueString,
   getCurrencyColor,
   ColorableCurrency,
