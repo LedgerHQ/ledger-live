@@ -30,9 +30,9 @@ export {
   formatCurrencyUnitFragment,
   findCurrencyByTicker,
   parseCurrencyUnit,
+  toLocaleString,
 } from "@ledgerhq/coin-framework/currencies";
 
-export * from "@ledgerhq/coin-framework/currencies/BigNumberToLocaleString";
 export * from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 export * from "@ledgerhq/coin-framework/currencies/support";
 export { getCurrencyColor, ColorableCurrency } from "./color";
