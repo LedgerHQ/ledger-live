@@ -7,9 +7,9 @@ import type {
   TezosResources,
   Transaction,
 } from "./model";
-import { emptyHistoryCache } from "@ledgerhq/types-live";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/abandonseed";
 import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/currencies";
+import { emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
 
 const currency = listCryptoCurrencies(true).find(c => c.id === "tezos")!;
 

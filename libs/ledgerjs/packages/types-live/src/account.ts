@@ -22,21 +22,6 @@ export type BalanceHistoryDataCache = {
   balances: number[];
 };
 
-export const emptyHistoryCache = {
-  HOUR: {
-    latestDate: null,
-    balances: [],
-  },
-  DAY: {
-    latestDate: null,
-    balances: [],
-  },
-  WEEK: {
-    latestDate: null,
-    balances: [],
-  },
-};
-
 /** A token belongs to an Account and share the parent account address */
 export type TokenAccount = {
   type: "TokenAccount";

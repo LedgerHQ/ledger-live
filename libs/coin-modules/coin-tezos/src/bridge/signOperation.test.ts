@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import { OpKind, TezosToolkit } from "@taquito/taquito";
 import { SignOperationEvent } from "@ledgerhq/types-live";
 import buildSignOperation, { getOperationContents } from "./signOperation";
-import { TezosSigner, Transaction } from "../types";
+import { TezosSigner } from "../types";
 import { createFixtureAccount, createFixtureTransaction } from "../types/model.fixture";
 
 const mockForgeOperations = jest.fn().mockResolvedValue("FORGED_OP");
