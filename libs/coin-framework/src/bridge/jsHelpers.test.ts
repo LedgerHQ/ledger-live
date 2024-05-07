@@ -1,8 +1,8 @@
 import BigNumber from "bignumber.js";
-import { AccountShapeInfo, defaultUpdateTransaction, makeSync } from "./jsHelpers";
-import type { Account, SyncConfig, TransactionCommon } from "@ledgerhq/types-live";
-import { listCryptoCurrencies } from "../currencies";
 import { firstValueFrom } from "rxjs";
+import type { Account, SyncConfig, TransactionCommon } from "@ledgerhq/types-live";
+import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/currencies";
+import { AccountShapeInfo, defaultUpdateTransaction, makeSync } from "./jsHelpers";
 
 describe("jsHelpers", () => {
   describe("defaultUpdateTransaction", () => {

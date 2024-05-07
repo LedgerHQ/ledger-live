@@ -1,12 +1,12 @@
 import Prando from "prando";
 import { BigNumber } from "bignumber.js";
-import { listCryptoCurrencies, listTokensForCryptoCurrency } from "../currencies";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { listCryptoCurrencies, listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets/index";
 import { getOperationAmountNumber } from "../operation";
 import { isAccountEmpty, emptyHistoryCache, generateHistoryFromOperations } from "../account";
 import { getDerivationScheme, runDerivationScheme } from "../derivation";
 import { genHex, genAddress } from "./helpers";
 import type { Account, AccountLike, Operation, TokenAccount } from "@ledgerhq/types-live";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { createFixtureNFT, genNFTOperation } from "./fixtures/nfts";
 import { inferSubOperations } from "../serialization";
 

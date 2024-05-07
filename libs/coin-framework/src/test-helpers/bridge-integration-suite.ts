@@ -1,20 +1,10 @@
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
+import { firstValueFrom } from "rxjs";
 import { reduce, filter, map, catchError } from "rxjs/operators";
 import flatMap from "lodash/flatMap";
 import omit from "lodash/omit";
 import { InvalidAddress, RecipientRequired, AmountRequired } from "@ledgerhq/errors";
-import {
-  decodeAccountId,
-  encodeAccountId,
-  flattenAccounts,
-  isAccountBalanceUnconfirmed,
-} from "../account";
-import { fromAccountRaw, toAccountRaw } from "../serialization";
-import { getCryptoCurrencyById } from "../currencies";
-import { getOperationAmountNumber } from "../operation";
-// import { mockDeviceWithAPDUs, releaseMockDevice } from "./mockDevice";
-// import { implicitMigration } from "../../migrations/accounts";
 import type {
   Account,
   AccountBridge,
@@ -32,7 +22,15 @@ import type {
   AccountTestData,
 } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { firstValueFrom } from "rxjs";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import {
+  decodeAccountId,
+  encodeAccountId,
+  flattenAccounts,
+  isAccountBalanceUnconfirmed,
+} from "../account";
+import { fromAccountRaw, toAccountRaw } from "../serialization";
+import { getOperationAmountNumber } from "../operation";
 
 const warnDev = process.env.CI ? (_args: string) => {} : (msg: string) => console.warn(msg);
 // FIXME move out into DatasetTest to be defined in
