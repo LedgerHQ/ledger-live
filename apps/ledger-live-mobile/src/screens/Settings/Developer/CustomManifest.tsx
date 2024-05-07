@@ -160,8 +160,7 @@ export default function CustomManifest({ navigation }: Props) {
         <>
           {list.map(m => {
             return (
-              // eslint-disable-next-line react/jsx-key
-              <Box flexDirection="row">
+              <Box key={m.id} flexDirection="row">
                 <TouchableOpacity
                   style={styles.appCardBox}
                   onLongPress={() => {
