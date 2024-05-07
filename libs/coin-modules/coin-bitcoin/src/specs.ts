@@ -11,10 +11,8 @@ import type {
   Transaction,
   TransactionStatus,
 } from "./types";
-import {
-  getCryptoCurrencyById,
-  parseCurrencyUnit,
-} from "@ledgerhq/coin-framework/currencies/index";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { botTest, genericTestDestination, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
 import { bitcoinPickingStrategy } from "./types";
 import type {

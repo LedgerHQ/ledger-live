@@ -20,8 +20,9 @@ import {
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/coin-framework/serialization";
 import type { Account } from "@ledgerhq/types-live";
-import { findSubAccountById, getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
-import { formatCurrencyUnit, getTokenById } from "@ledgerhq/coin-framework/currencies/index";
+import { getTokenById } from "@ledgerhq/cryptoassets/index";
+import { findSubAccountById, getAccountCurrency } from "@ledgerhq/coin-framework/account";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import { assertUnreachable } from "./utils";
 import { toTokenId } from "./logic";
 

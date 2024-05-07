@@ -1,8 +1,6 @@
 import invariant from "invariant";
-import {
-  getCryptoCurrencyById,
-  setSupportedCurrencies,
-} from "@ledgerhq/coin-framework/currencies/index";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { setSupportedCurrencies } from "@ledgerhq/coin-framework/currencies/index";
 import { fromAccountRaw } from "@ledgerhq/coin-framework/serialization/index";
 import { inferDescriptorFromDeviceInfo, inferDescriptorFromAccount } from "./descriptor";
 import bitcoinDatasets from "./datasets/bitcoin";
