@@ -37,6 +37,17 @@ const useAnalyticsOptInPromptLogic = ({ entryPoint, variant }: Props) => {
   const shouldWeTrack = isTrackingEnabled || !hasSeenAnalyticsOptInPrompt;
   const flow = trackingKeysByFlow?.[entryPoint];
 
+  const privacyPolicyUrl =
+    (urls.privacyPolicy as Record<string, string>)[locale] || urls.privacyPolicy.en;
+
+  const trackingPolicyUrl =
+    (urls.trackingPolicy as Record<string, string>)[locale] || urls.trackingPolicy.en;
+
+  const urlByVariant = {
+    [ABTestingVariants.variantA]: trackingPolicyUrl,
+    [ABTestingVariants.variantB]: privacyPolicyUrl,
+  };
+
   const continueOnboarding = () => {
     dispatch(setHasSeenAnalyticsOptInPrompt(true));
 
@@ -68,9 +79,7 @@ const useAnalyticsOptInPromptLogic = ({ entryPoint, variant }: Props) => {
   };
 
   const clickOnLearnMore = () => {
-    Linking.openURL(
-      (urls.privacyPolicy as Record<string, string>)[locale] || urls.privacyPolicy.en,
-    );
+    Linking.openURL(urlByVariant[variant]);
     track(
       "button_clicked",
       {
