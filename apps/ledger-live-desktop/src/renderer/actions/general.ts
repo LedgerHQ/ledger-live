@@ -26,6 +26,7 @@ import {
 import { resolveTrackingPairs } from "@ledgerhq/live-countervalues/logic";
 import { useExtraSessionTrackingPair } from "./deprecated/ondemand-countervalues";
 import { useMarketPerformanceTrackingPairs } from "./marketperformance";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 
 // provide redux states via custom hook wrapper
 
@@ -130,6 +131,10 @@ export function useCalculateCountervaluesUserSettings(): CountervaluesSettings {
     () => ({
       trackingPairs,
       autofillGaps: true,
+      refreshRate: LiveConfig.getValueByKey("countervalues_refreshRate"),
+      marketCapBatchingAfterRank: LiveConfig.getValueByKey(
+        "countervalues_marketCapBatchingAfterRank",
+      ),
     }),
     [trackingPairs],
   );
