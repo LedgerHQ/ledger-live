@@ -2194,6 +2194,64 @@ importers:
         specifier: ^29.1.1
         version: 29.1.2(jest@29.7.0)(typescript@5.1.3)
 
+  libs/coin-modules/coin-xrp:
+    dependencies:
+      '@ledgerhq/coin-framework':
+        specifier: workspace:^
+        version: link:../../coin-framework
+      '@ledgerhq/cryptoassets':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/cryptoassets
+      '@ledgerhq/devices':
+        specifier: workspace:*
+        version: link:../../ledgerjs/packages/devices
+      '@ledgerhq/errors':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/errors
+      '@ledgerhq/live-network':
+        specifier: workspace:^
+        version: link:../../live-network
+      '@ledgerhq/types-live':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/types-live
+      bignumber.js:
+        specifier: ^9.1.2
+        version: 9.1.2
+      invariant:
+        specifier: ^2.2.4
+        version: 2.2.4
+      ripple-address-codec:
+        specifier: ^5.0.0
+        version: 5.0.0
+      ripple-binary-codec:
+        specifier: ^1.3.0
+        version: 1.4.0
+      rxjs:
+        specifier: ^7.8.1
+        version: 7.8.1
+    devDependencies:
+      '@ledgerhq/types-cryptoassets':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/types-cryptoassets
+      '@types/invariant':
+        specifier: ^2.2.37
+        version: 2.2.37
+      '@types/jest':
+        specifier: ^29.5.12
+        version: 29.5.12
+      expect:
+        specifier: ^27.4.6
+        version: 27.5.1
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0
+      ts-jest:
+        specifier: ^29.1.1
+        version: 29.1.2(jest@29.7.0)(typescript@5.4.5)
+      typescript:
+        specifier: ^5.4.5
+        version: 5.4.5
+
   libs/coin-tester:
     dependencies:
       '@ledgerhq/hw-transport-node-speculos-http':
@@ -25606,6 +25664,10 @@ packages:
     resolution: {integrity: sha512-WdRjvN2y1PiXCmCIEBbe+eoHGylBQa2oIBGEQsfKMJzqff7fwv2OhyXcGQn70+dWII6a5W8Y3ipYwVnhf+IXig==}
     dev: true
 
+  /@types/invariant@2.2.37:
+    resolution: {integrity: sha512-IwpIMieE55oGWiXkQPSBY1nw1nFs6bsKXTFskNY8sdS17K24vyEBRQZEwlRS7ZmXCWnJcQtbxWzly+cODWGs2A==}
+    dev: true
+
   /@types/is-ci@3.0.0:
     resolution: {integrity: sha512-Q0Op0hdWbYd1iahB+IFNQcWXFq4O0Q5MwQP7uN0souuQ4rPg1vEYcnIOfr1gY+M+6rc8FGoRaBO1mOOvL29sEQ==}
     dependencies:
@@ -27786,6 +27848,18 @@ packages:
   /@xmldom/xmldom@0.7.9:
     resolution: {integrity: sha512-yceMpm/xd4W2a85iqZyO09gTnHvXF6pyiWjD2jcOJs7hRoZtNNOO1eJlhHj1ixA+xip2hOyGn+LgcvLCMo5zXA==}
     engines: {node: '>=10.0.0'}
+
+  /@xrplf/isomorphic@1.0.0:
+    resolution: {integrity: sha512-IyMsxyjkJK8YWq566KyuFuh/PUiLzQ02RbUO5qa+vEQb6zIAR9MzFwN7wBmBy7wmKkjligcdNDMG5EaBRH8FxQ==}
+    engines: {node: '>=16.0.0'}
+    dependencies:
+      '@noble/hashes': 1.4.0
+      eventemitter3: 5.0.1
+      ws: 8.16.0
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+    dev: false
 
   /@xstate/react@1.6.3(@types/react@18.2.28)(react@18.2.0)(xstate@4.32.0):
     resolution: {integrity: sha512-NCUReRHPGvvCvj2yLZUTfR0qVp6+apc8G83oXSjN4rl89ZjyujiKrTff55bze/HrsvCsP/sUJASf2n0nzMF1KQ==}
@@ -36538,7 +36612,6 @@ packages:
       is-hex-prefixed: 1.0.0
       strip-hex-prefix: 1.0.0
     dev: false
-    bundledDependencies: false
 
   /ev-emitter@1.1.1:
     resolution: {integrity: sha512-ipiDYhdQSCZ4hSbX4rMW+XzNKMD1prg/sTvoVmSLkuQ1MVlwjJQQA+sW8tMYR3BLUr9KjodFV4pvzunvRhd33Q==}
@@ -36577,7 +36650,6 @@ packages:
 
   /eventemitter3@5.0.1:
     resolution: {integrity: sha512-GWkBvjiSZK87ELrYOSESUYeVIc9mvLLf/nXalMOS5dYrgZq9o5OVkbZAVM06CVxYsCwH9BDZFPlQTlPA1j4ahA==}
-    dev: true
 
   /events@1.1.1:
     resolution: {integrity: sha1-nr23Y1rQmccNzEwqH1AEKI6L2SQ=}
@@ -53715,6 +53787,17 @@ packages:
       create-hash: 1.2.0
     dev: false
 
+  /ripple-address-codec@5.0.0:
+    resolution: {integrity: sha512-de7osLRH/pt5HX2xw2TRJtbdLLWHu0RXirpQaEeCnWKY5DYHykh3ETSkofvm0aX0LJiV7kwkegJxQkmbO94gWw==}
+    engines: {node: '>= 16'}
+    dependencies:
+      '@scure/base': 1.1.6
+      '@xrplf/isomorphic': 1.0.0
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+    dev: false
+
   /ripple-binary-codec@1.4.0:
     resolution: {integrity: sha512-pkGWkYtRuEUHEqhb0WqiQ9eE2w1EPeybt1MsnrAN6B3jx9uUfEcsnXQZYvt4f0uxtudrz7XVduqmx0y67DRKQA==}
     engines: {node: '>=10.22.0'}
@@ -57309,6 +57392,39 @@ packages:
       yargs-parser: 21.1.1
     dev: true
 
+  /ts-jest@29.1.2(jest@29.7.0)(typescript@5.4.5):
+    resolution: {integrity: sha512-br6GJoH/WUX4pu7FbZXuWGKGNDuU7b8Uj77g/Sp7puZV6EXzuByl6JrECvm0MzVzSTkSHWTihsXt+5XYER5b+g==}
+    engines: {node: ^16.10.0 || ^18.0.0 || >=20.0.0}
+    hasBin: true
+    peerDependencies:
+      '@babel/core': '>=7.0.0-beta.0 <8'
+      '@jest/types': ^29.0.0
+      babel-jest: ^29.0.0
+      esbuild: '*'
+      jest: ^29.0.0
+      typescript: '>=4.3 <6'
+    peerDependenciesMeta:
+      '@babel/core':
+        optional: true
+      '@jest/types':
+        optional: true
+      babel-jest:
+        optional: true
+      esbuild:
+        optional: true
+    dependencies:
+      bs-logger: 0.2.6
+      fast-json-stable-stringify: 2.1.0
+      jest: 29.7.0
+      jest-util: 29.7.0
+      json5: 2.2.3
+      lodash.memoize: 4.1.2
+      make-error: 1.3.6
+      semver: 7.5.4
+      typescript: 5.4.5
+      yargs-parser: 21.1.1
+    dev: true
+
   /ts-loader@9.4.4(typescript@5.1.3)(webpack@5.88.2):
     resolution: {integrity: sha512-MLukxDHBl8OJ5Dk3y69IsKVFRA/6MwzEqBgh+OXMPB/OD01KQuWPFd1WAQP8a5PeSCAxfnkhiuWqfmFJzJQt9w==}
     engines: {node: '>=12.0.0'}
@@ -58029,6 +58145,12 @@ packages:
 
   /typescript@5.3.3:
     resolution: {integrity: sha512-pXWcraxM0uxAS+tN0AG/BF2TyqmHO014Z070UsJ+pFvYuRSq8KH8DmWpnbXe0pEPDHXZV3FcAbJkijJ5oNEnWw==}
+    engines: {node: '>=14.17'}
+    hasBin: true
+    dev: true
+
+  /typescript@5.4.5:
+    resolution: {integrity: sha512-vcI4UpRgg81oIRUFwR0WSIHKt11nJ7SAVlYNIu+QpqeyXP+gpQJy/Z4+F0aGxSE4MqwjyXvW/TzgkLAx2AGHwQ==}
     engines: {node: '>=14.17'}
     hasBin: true
     dev: true
