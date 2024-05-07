@@ -1,10 +1,8 @@
 import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
 import { getDerivationModesForCurrency } from "@ledgerhq/coin-framework/derivation";
 import { DeviceModelId } from "@ledgerhq/devices";
-import {
-  listCryptoCurrencies,
-  setSupportedCurrencies,
-} from "@ledgerhq/coin-framework/currencies/index";
+import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/index";
+import { setSupportedCurrencies } from "@ledgerhq/coin-framework/currencies/index";
 import { accountDataToAccount, accountToAccountData, encode, decode } from "./cross";
 import { Account } from "@ledgerhq/types-live";
 import { accountUserDataExportSelector, initialState } from "../store";
