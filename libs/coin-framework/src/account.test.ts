@@ -10,7 +10,6 @@ import {
 } from "./account";
 import { genAccount } from "./mocks/account";
 import { Operation } from "@ledgerhq/types-live";
-import { SubAccount } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets/index";
 
 setSupportedCurrencies(["ethereum", "ethereum_classic", "tron"]);
