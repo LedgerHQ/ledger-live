@@ -1,5 +1,16 @@
 # @ledgerhq/coin-framework
 
+## 0.12.1-nightly.5
+
+### Patch Changes
+
+- [#6771](https://github.com/LedgerHQ/ledger-live/pull/6771) [`6c35cc5`](https://github.com/LedgerHQ/ledger-live/commit/6c35cc564cb050614ee571907f628ecf15ec4584) Thanks [@gre](https://github.com/gre)! - LL's preferred countervalues will now have all the possible fiats that our CVS api supports.
+
+- [#6771](https://github.com/LedgerHQ/ledger-live/pull/6771) [`6c35cc5`](https://github.com/LedgerHQ/ledger-live/commit/6c35cc564cb050614ee571907f628ecf15ec4584) Thanks [@gre](https://github.com/gre)! - Countervalues API: upgrade to v3 for fetching supported fiats
+
+- Updated dependencies [[`6c35cc5`](https://github.com/LedgerHQ/ledger-live/commit/6c35cc564cb050614ee571907f628ecf15ec4584)]:
+  - @ledgerhq/cryptoassets@12.1.1-nightly.1
+
 ## 0.12.1-nightly.4
 
 ### Patch Changes

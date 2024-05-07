@@ -1,5 +1,28 @@
 # @ledgerhq/live-common
 
+## 34.2.0-nightly.8
+
+### Patch Changes
+
+- [#6771](https://github.com/LedgerHQ/ledger-live/pull/6771) [`6c35cc5`](https://github.com/LedgerHQ/ledger-live/commit/6c35cc564cb050614ee571907f628ecf15ec4584) Thanks [@gre](https://github.com/gre)! - LL's preferred countervalues will now have all the possible fiats that our CVS api supports.
+
+- [#6771](https://github.com/LedgerHQ/ledger-live/pull/6771) [`6c35cc5`](https://github.com/LedgerHQ/ledger-live/commit/6c35cc564cb050614ee571907f628ecf15ec4584) Thanks [@gre](https://github.com/gre)! - Countervalues performance evolutions. (8min -> 1min refresh rate, more efficient http calls caching,..)
+
+- Updated dependencies [[`6c35cc5`](https://github.com/LedgerHQ/ledger-live/commit/6c35cc564cb050614ee571907f628ecf15ec4584), [`6c35cc5`](https://github.com/LedgerHQ/ledger-live/commit/6c35cc564cb050614ee571907f628ecf15ec4584), [`6c35cc5`](https://github.com/LedgerHQ/ledger-live/commit/6c35cc564cb050614ee571907f628ecf15ec4584)]:
+  - @ledgerhq/cryptoassets@12.1.1-nightly.1
+  - @ledgerhq/live-countervalues-react@0.1.5-nightly.5
+  - @ledgerhq/live-countervalues@0.1.5-nightly.5
+  - @ledgerhq/coin-framework@0.12.1-nightly.5
+  - @ledgerhq/coin-algorand@0.4.2-nightly.5
+  - @ledgerhq/coin-bitcoin@0.4.1-nightly.5
+  - @ledgerhq/coin-evm@1.1.1-nightly.5
+  - @ledgerhq/coin-polkadot@0.7.0-nightly.6
+  - @ledgerhq/coin-solana@0.7.0-nightly.1
+  - @ledgerhq/hw-app-eth@6.36.1-nightly.5
+  - @ledgerhq/hw-app-vet@0.1.8-nightly.1
+  - @ledgerhq/live-nft@0.3.2-nightly.5
+  - @ledgerhq/coin-near@0.3.13-nightly.5
+
 ## 34.2.0-nightly.7
 
 ### Minor Changes
