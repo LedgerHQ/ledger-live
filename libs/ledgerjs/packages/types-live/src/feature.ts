@@ -130,6 +130,7 @@ export type Features = CurrencyFeatures & {
   buyDeviceFromLive: Feature_BuyDeviceFromLive;
   mockFeature: Feature_MockFeature;
   buySellUi: Feature_BuySellUiManifest;
+  buySellShortcut: DefaultFeature;
   multibuyNavigation: Feature_MultibuyNavigation;
   referralProgramDesktopSidebar: Feature_ReferralProgramDesktopSidebar;
   referralProgramMobile: Feature_ReferralProgramMobile;
@@ -176,6 +177,7 @@ export type Features = CurrencyFeatures & {
   lldRefreshMarketData: Feature_LldRefreshMarketData;
   llmRefreshMarketData: Feature_LlmRefreshMarketData;
   spamReportNfts: Feature_SpamReportNfts;
+  lldWalletSync: Feature_LldWalletSync;
 };
 
 /**
@@ -489,7 +491,9 @@ export type Feature_SupportDeviceStax = DefaultFeature;
 export type Feature_SupportDeviceEuropa = DefaultFeature;
 export type Feature_LldChatbotSupport = DefaultFeature;
 export type Feature_LlmChatbotSupport = DefaultFeature;
+export type Feature_LldWalletSync = DefaultFeature;
 export type Feature_SpamReportNfts = DefaultFeature;
+
 /**
  * Utils types.
  */

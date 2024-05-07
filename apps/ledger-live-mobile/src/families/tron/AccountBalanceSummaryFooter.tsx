@@ -2,7 +2,6 @@ import React, { useCallback, useMemo, useState } from "react";
 import { ScrollView } from "react-native";
 import { useTranslation } from "react-i18next";
 import { getCryptoCurrencyById, toLocaleString } from "@ledgerhq/live-common/currencies/index";
-import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/reactNative";
 import type { Account } from "@ledgerhq/types-live";
 import invariant from "invariant";
@@ -15,6 +14,7 @@ import EnergyIcon from "~/icons/Energy";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import InfoItem from "~/components/BalanceSummaryInfoItem";
 import { useSettings } from "~/hooks";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props = {
   account: Account;
@@ -32,7 +32,7 @@ function AccountBalanceSummaryFooter({ account }: Props) {
     tronPower,
   } = (account as TronAccount).tronResources || {};
   const { freeUsed, freeLimit, gainedUsed, gainedLimit } = bandwidth || {};
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const formattedBandwidth = useMemo(
     () => freeLimit.plus(gainedLimit).minus(gainedUsed).minus(freeUsed),
     [freeLimit, gainedLimit, gainedUsed, freeUsed],

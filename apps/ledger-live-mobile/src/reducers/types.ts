@@ -8,7 +8,7 @@ import type {
 } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { DeviceModelId } from "@ledgerhq/devices";
-import type { CryptoCurrencyId, Currency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrencyId, Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
 import { PostOnboardingState } from "@ledgerhq/types-live";
 import { AvailableProviderV3, ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
@@ -27,6 +27,7 @@ import {
 import { ProtectStateNumberEnum } from "../components/ServicesWidget/types";
 import { ImageType } from "../components/CustomImage/types";
 import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
+import { WalletState } from "@ledgerhq/live-wallet/store";
 
 // === ACCOUNT STATE ===
 
@@ -159,8 +160,7 @@ export enum OnboardingType {
 
 export type CurrencySettings = {
   confirmationsNb: number;
-  // FIXME: SEEMS TO NEVER BE USED - DROPPING ?
-  // exchange?: any | null;
+  unit: Unit;
 };
 
 export type Privacy = {
@@ -356,4 +356,5 @@ export type State = {
   protect: ProtectState;
   nft: NftState;
   market: MarketState;
+  wallet: WalletState;
 };

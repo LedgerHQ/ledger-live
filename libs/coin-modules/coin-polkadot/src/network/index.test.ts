@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
-import network from ".";
 import * as sidecar from "./sidecar";
+import network from ".";
 
 jest.mock("./sidecar");
 const mockedSidecar = jest.mocked(sidecar);
@@ -13,13 +13,13 @@ describe("getMinimumBondBalance", () => {
   it("is called once due to cache", async () => {
     mockedSidecar.getMinimumBondBalance.mockResolvedValueOnce(new BigNumber("12"));
     let minBond = await network.getMinimumBondBalance();
-    expect(minBond).toEqual(new BigNumber(12));
+    expect(minBond).toEqual(new BigNumber("12"));
     expect(mockedSidecar.getMinimumBondBalance).toHaveBeenCalledTimes(1);
 
     // This new value should never been called as the previous one is cached
     mockedSidecar.getMinimumBondBalance.mockResolvedValueOnce(new BigNumber("13"));
     minBond = await network.getMinimumBondBalance();
-    expect(minBond).toEqual(new BigNumber(12));
+    expect(minBond).toEqual(new BigNumber("12"));
     expect(mockedSidecar.getMinimumBondBalance).toHaveBeenCalledTimes(1);
   });
 });

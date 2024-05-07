@@ -64,7 +64,7 @@ export default connect((state: State, props: OwnProps) => {
   const { account, parentAccount, operation } = props;
   const { type } = operation;
   const mainAccount = getMainAccount(account, parentAccount);
-  const currencySettings = currencySettingsForAccountSelector(state, props);
+  const currencySettings = currencySettingsForAccountSelector(state.settings, props);
   const isConfirmed = isConfirmedOperation(
     operation,
     mainAccount,

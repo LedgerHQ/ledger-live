@@ -22,7 +22,7 @@ import { accountScreenSelector } from "~/reducers/accounts";
 import CurrencyIcon from "~/components/CurrencyIcon";
 import NavigationScrollView from "~/components/NavigationScrollView";
 import ReceiveSecurityModal from "./ReceiveSecurityModal";
-import { replaceAccounts } from "~/actions/accounts";
+import { addOneAccount } from "~/actions/accounts";
 import { ScreenName } from "~/const";
 import { track, TrackScreen } from "~/analytics";
 import byFamily from "../../generated/Confirmation";
@@ -39,6 +39,8 @@ import { hasClosedWithdrawBannerSelector } from "~/reducers/settings";
 import { setCloseWithdrawBanner } from "~/actions/settings";
 import * as Animatable from "react-native-animatable";
 import { useCompleteActionCallback } from "~/logic/postOnboarding/useCompleteAction";
+import { urls } from "~/utils/urls";
+import { useMaybeAccountName } from "~/reducers/wallet";
 
 const AnimatedView = Animatable.View;
 
@@ -121,7 +123,6 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
       type: "card",
       page: "Receive Account Qr Code",
     });
-    // @ts-expect-error TYPINGS
     Linking.openURL(urls.withdrawCrypto);
   };
   useEffect(() => {
@@ -139,14 +140,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
         );
         newMainAccount.subAccounts = [...(newMainAccount.subAccounts || []), emptyTokenAccount];
 
-        // @TODO create a new action for adding a single account at a time instead of replacing
-        dispatch(
-          replaceAccounts({
-            scannedAccounts: [newMainAccount as Account],
-            selectedIds: [(newMainAccount as Account).id],
-            renamings: {},
-          }),
-        );
+        dispatch(addOneAccount(newMainAccount as Account));
         setHasAddedTokenAccount(true);
       }
     }
@@ -161,7 +155,6 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
 
   useEffect(() => {
     navigation.setOptions({
-      //headerTitle: getAccountName(account as AccountLike),
       headerTitle: () => (
         <ConfirmationHeaderTitle accountCurrency={currency}></ConfirmationHeaderTitle>
       ),
@@ -230,6 +223,8 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
     [mainAccount?.freshAddress, pushToast, t],
   );
 
+  const mainAccountName = useMaybeAccountName(mainAccount);
+
   if (!account || !currency || !mainAccount) return null;
 
   // check for coin specific UI
@@ -289,9 +284,9 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
                   fontWeight={"semiBold"}
                   textAlign={"center"}
                   numberOfLines={1}
-                  testID={"receive-account-name-" + mainAccount.name}
+                  testID={"receive-account-name-" + mainAccountName}
                 >
-                  {mainAccount.name}
+                  {mainAccountName}
                 </Text>
               </Box>
               <Flex

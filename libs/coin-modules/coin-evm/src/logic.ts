@@ -6,12 +6,13 @@ import {
   MessageProperties,
   Operation,
   SubAccount,
+  TokenAccount,
 } from "@ledgerhq/types-live";
 import murmurhash from "imurmurhash";
 import { log } from "@ledgerhq/logs";
 import { getEnv } from "@ledgerhq/live-env";
 import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
-import { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, TokenCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { hashes as tokensHashesByChainId } from "@ledgerhq/cryptoassets/data/evm/index";
@@ -406,4 +407,21 @@ export const safeEncodeEIP55 = (addr: string): string => {
 
     return addr;
   }
+};
+
+/**
+ * Similar to mergeAccount but used to keep previous data we can't fetch on chain
+ */
+// logic.ts
+export const createSwapHistoryMap = (
+  initialAccount: Account | undefined,
+): Map<TokenCurrency, TokenAccount["swapHistory"]> => {
+  if (!initialAccount?.subAccounts) return new Map();
+
+  const swapHistoryMap = new Map<TokenCurrency, TokenAccount["swapHistory"]>();
+  for (const subAccount of initialAccount.subAccounts) {
+    swapHistoryMap.set(subAccount.token, subAccount.swapHistory);
+  }
+
+  return swapHistoryMap;
 };

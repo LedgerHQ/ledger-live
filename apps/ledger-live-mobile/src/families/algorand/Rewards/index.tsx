@@ -2,7 +2,7 @@ import invariant from "invariant";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
-import { getAccountUnit, getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { Box, Button, Flex, Text } from "@ledgerhq/native-ui";
 import { InfoMedium } from "@ledgerhq/native-ui/assets/icons";
 import { AlgorandAccount } from "@ledgerhq/live-common/families/algorand/types";
@@ -11,6 +11,7 @@ import AccountSectionLabel from "~/components/AccountSectionLabel";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import CounterValue from "~/components/CounterValue";
 import { ScreenName, NavigatorName } from "~/const";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props = {
   account: AccountLike;
@@ -21,7 +22,7 @@ const RewardsSection = ({ account }: { account: AlgorandAccount }) => {
   const { rewards } = account.algorandResources;
 
   const currency = getAccountCurrency(account);
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const { t } = useTranslation();
   const navigation = useNavigation();
 

@@ -1,5 +1,4 @@
 import React, { useState, useMemo, Fragment, useCallback } from "react";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box";
@@ -15,6 +14,7 @@ import {
   ElrondProvider,
   Transaction,
 } from "@ledgerhq/live-common/families/elrond/types";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const ValidatorsFieldContainer = styled(Box)`
   border: 1px solid ${p => p.theme.colors.palette.divider};
@@ -50,7 +50,7 @@ const ValidatorList = (props: Props) => {
   const { account, validators, onSelectValidator, transaction } = props;
   const [showAll, setShowAll] = useState(false);
   const [search, setSearch] = useState("");
-  const unit = useMemo(() => getAccountUnit(account), [account]);
+  const unit = useAccountUnit(account);
   const providers = useSearchValidators(validators, search);
   const defaultValidator = useMemo(
     () =>

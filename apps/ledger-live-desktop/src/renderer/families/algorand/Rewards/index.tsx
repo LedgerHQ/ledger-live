@@ -1,8 +1,4 @@
-import {
-  getAccountCurrency,
-  getAccountUnit,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { AlgorandAccount } from "@ledgerhq/live-common/families/algorand/types";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
@@ -17,6 +13,7 @@ import ToolTip from "~/renderer/components/Tooltip";
 import ClaimRewards from "~/renderer/icons/ClaimReward";
 import { AlgorandFamily } from "../types";
 import { SubAccount } from "@ledgerhq/types-live";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 type AccountBodyHeader = NonNullable<AlgorandFamily["AccountBodyHeader"]>;
 
@@ -30,7 +27,7 @@ const RewardsSection = ({
   const mainAccount = getMainAccount(account, parentAccount);
   const { rewards } = mainAccount.algorandResources || {};
   const currency = getAccountCurrency(account);
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const dispatch = useDispatch();
   const onRewardsClick = useCallback(() => {
     dispatch(

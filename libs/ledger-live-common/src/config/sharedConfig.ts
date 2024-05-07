@@ -22,11 +22,23 @@ import { tronConfig } from "../families/tron/config";
 import { vechainConfig } from "../families/vechain/config";
 import { appConfig } from "../apps/config";
 
+const countervaluesConfig: ConfigSchema = {
+  countervalues_refreshRate: {
+    type: "number",
+    default: 60 * 1000,
+  },
+  countervalues_marketCapBatchingAfterRank: {
+    type: "number",
+    default: 20,
+  },
+};
+
 const liveCommonConfig: ConfigSchema = {
   ...appConfig,
 };
 
 export const liveConfig: ConfigSchema = {
+  ...countervaluesConfig,
   ...liveCommonConfig,
   ...algorandConfig,
   ...bitcoinConfig,

@@ -39783,7 +39783,8 @@ var desktopMetafilesKeys = {
   preloader: "metafile.preloader.json",
   renderer: "metafile.renderer.json",
   rendererWorker: "metafile.renderer.worker.json",
-  webviewPreloader: "metafile.webviewPreloader.json"
+  webviewPreloader: "metafile.webviewPreloader.json",
+  webviewDappPreloader: "metafile.webviewDappPreloader.json"
 };
 var mobileMetafileKeys = ["main.ios.jsbundle", "main.android.jsbundle"];
 function getMetafileBundleSize(metafile, slug) {

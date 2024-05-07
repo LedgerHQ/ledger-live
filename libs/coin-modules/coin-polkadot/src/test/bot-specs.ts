@@ -2,8 +2,6 @@ import expect from "expect";
 import invariant from "invariant";
 import sampleSize from "lodash/sampleSize";
 import { BigNumber } from "bignumber.js";
-import { getCurrentPolkadotPreloadData } from "../logic/state";
-import type { PolkadotAccount, PolkadotResources, Transaction } from "../types";
 import {
   getCryptoCurrencyById,
   parseCurrencyUnit,
@@ -16,6 +14,8 @@ import {
 } from "@ledgerhq/coin-framework/bot/specs";
 import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
 import { toOperationRaw } from "@ledgerhq/coin-framework/serialization/index";
+import { getCurrentPolkadotPreloadData } from "../bridge/state";
+import type { PolkadotAccount, PolkadotResources, Transaction } from "../types";
 import {
   canBond,
   canUnbond,
@@ -23,7 +23,7 @@ import {
   isFirstBond,
   hasMinimumBondBalance,
   getMinimumBalance,
-} from "../logic";
+} from "../bridge/utils";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { acceptTransaction } from "./bot-deviceActions";
 

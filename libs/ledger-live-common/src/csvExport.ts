@@ -6,6 +6,7 @@ import { flattenOperationWithInternalsAndNfts } from "./operation";
 import { calculate } from "@ledgerhq/live-countervalues/logic";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
+import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 
 type Field = {
   title: string;
@@ -63,7 +64,8 @@ const fields: Field[] = [
   },
   {
     title: "Account Name",
-    cell: (account, parentAccount) => getMainAccount(account, parentAccount).name,
+    // FIXME: we need to inject wallet state if we want the actual user's account name
+    cell: (account, parentAccount) => getDefaultAccountName(getMainAccount(account, parentAccount)),
   },
   {
     title: "Account xpub",

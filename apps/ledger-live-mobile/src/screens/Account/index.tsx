@@ -90,7 +90,7 @@ const AccountScreenInner = ({
     });
   }, 300);
 
-  const mainAccount = getMainAccount(account);
+  const mainAccount = getMainAccount(account, parentAccount);
   const currency = mainAccount.currency;
 
   const analytics = (

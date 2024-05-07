@@ -2,7 +2,7 @@ import type { DeviceTransactionField } from "../../transaction";
 import type { TransactionStatus, Transaction } from "./types";
 import BigNumber from "bignumber.js";
 import { formatCurrencyUnit } from "../../currencies";
-import { decodeTokenAccountId, getAccountUnit } from "../../account";
+import { decodeTokenAccountId, getAccountCurrency } from "../../account";
 import { Account } from "@ledgerhq/types-live";
 import { isAmountSpentFromBalance } from "./logic";
 
@@ -48,7 +48,7 @@ function getDeviceTransactionConfig({
       fields.push({
         type: "text",
         label: "Amount",
-        value: formatCurrencyUnit(getAccountUnit(account), new BigNumber(0), {
+        value: formatCurrencyUnit(getAccountCurrency(account).units[0], new BigNumber(0), {
           showCode: true,
           disableRounding: true,
         }),

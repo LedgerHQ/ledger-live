@@ -164,16 +164,9 @@ exports[`Portfolio getAssetsDistribution snapshot 1`] = `
           "derivationMode": "",
           "freshAddress": "1qcyBXCGSuaW9AY5c1Eb61XBfShFmg",
           "freshAddressPath": "44'/0'/0'/0/0",
-          "freshAddresses": [
-            {
-              "address": "1qcyBXCGSuaW9AY5c1Eb61XBfShFmg",
-              "derivationPath": "44'/0'/0'/0/0",
-            },
-          ],
           "id": "mock:1:bitcoin:bitcoin_1:",
           "index": 1,
           "lastSyncDate": 2018-03-14T17:34:42.000Z,
-          "name": "iisPu4qdvHcH21Q9xOykvRW9fWwiZk",
           "operations": [
             {
               "accountId": "mock:1:bitcoin:bitcoin_1:",
@@ -630,14 +623,8 @@ exports[`Portfolio getAssetsDistribution snapshot 1`] = `
           "pendingOperations": [],
           "seedIdentifier": "mock",
           "spendableBalance": "6196770",
-          "starred": false,
           "swapHistory": [],
           "type": "Account",
-          "unit": {
-            "code": "bit",
-            "magnitude": 2,
-            "name": "bit",
-          },
           "used": true,
           "xpub": "883D601E6ECDE4B377F2DF9FB473FD7BB975AE7F59FE4465C065743878BBE0F2",
         },
@@ -2477,16 +2464,9 @@ exports[`Portfolio getCurrencyPortfolio snapshot 1`] = `
       "derivationMode": "",
       "freshAddress": "1qcyBXCGSuaW9AY5c1Eb61XBfShFmg",
       "freshAddressPath": "44'/0'/0'/0/0",
-      "freshAddresses": [
-        {
-          "address": "1qcyBXCGSuaW9AY5c1Eb61XBfShFmg",
-          "derivationPath": "44'/0'/0'/0/0",
-        },
-      ],
       "id": "mock:1:bitcoin:bitcoin_1:",
       "index": 1,
       "lastSyncDate": 2018-03-14T17:34:42.000Z,
-      "name": "iisPu4qdvHcH21Q9xOykvRW9fWwiZk",
       "operations": [
         {
           "accountId": "mock:1:bitcoin:bitcoin_1:",
@@ -2943,14 +2923,8 @@ exports[`Portfolio getCurrencyPortfolio snapshot 1`] = `
       "pendingOperations": [],
       "seedIdentifier": "mock",
       "spendableBalance": "6196770",
-      "starred": false,
       "swapHistory": [],
       "type": "Account",
-      "unit": {
-        "code": "bit",
-        "magnitude": 2,
-        "name": "bit",
-      },
       "used": true,
       "xpub": "883D601E6ECDE4B377F2DF9FB473FD7BB975AE7F59FE4465C065743878BBE0F2",
     },
@@ -4815,16 +4789,9 @@ exports[`Portfolio getPortfolio snapshot 1`] = `
       "derivationMode": "",
       "freshAddress": "1qcyBXCGSuaW9AY5c1Eb61XBfShFmg",
       "freshAddressPath": "44'/0'/0'/0/0",
-      "freshAddresses": [
-        {
-          "address": "1qcyBXCGSuaW9AY5c1Eb61XBfShFmg",
-          "derivationPath": "44'/0'/0'/0/0",
-        },
-      ],
       "id": "mock:1:bitcoin:bitcoin_1:",
       "index": 1,
       "lastSyncDate": 2018-03-14T17:34:42.000Z,
-      "name": "iisPu4qdvHcH21Q9xOykvRW9fWwiZk",
       "operations": [
         {
           "accountId": "mock:1:bitcoin:bitcoin_1:",
@@ -5281,14 +5248,8 @@ exports[`Portfolio getPortfolio snapshot 1`] = `
       "pendingOperations": [],
       "seedIdentifier": "mock",
       "spendableBalance": "6196770",
-      "starred": false,
       "swapHistory": [],
       "type": "Account",
-      "unit": {
-        "code": "bit",
-        "magnitude": 2,
-        "name": "bit",
-      },
       "used": true,
       "xpub": "883D601E6ECDE4B377F2DF9FB473FD7BB975AE7F59FE4465C065743878BBE0F2",
     },
@@ -5452,16 +5413,9 @@ exports[`Portfolio getPortfolio snapshot 1`] = `
       "derivationMode": "",
       "freshAddress": "1qcyBXCGSuaW9AY5c1Eb61XBfShFmg",
       "freshAddressPath": "44'/0'/0'/0/0",
-      "freshAddresses": [
-        {
-          "address": "1qcyBXCGSuaW9AY5c1Eb61XBfShFmg",
-          "derivationPath": "44'/0'/0'/0/0",
-        },
-      ],
       "id": "mock:1:bitcoin:bitcoin_1:",
       "index": 1,
       "lastSyncDate": 2018-03-14T17:34:42.000Z,
-      "name": "iisPu4qdvHcH21Q9xOykvRW9fWwiZk",
       "operations": [
         {
           "accountId": "mock:1:bitcoin:bitcoin_1:",
@@ -5918,14 +5872,8 @@ exports[`Portfolio getPortfolio snapshot 1`] = `
       "pendingOperations": [],
       "seedIdentifier": "mock",
       "spendableBalance": "6196770",
-      "starred": false,
       "swapHistory": [],
       "type": "Account",
-      "unit": {
-        "code": "bit",
-        "magnitude": 2,
-        "name": "bit",
-      },
       "used": true,
       "xpub": "883D601E6ECDE4B377F2DF9FB473FD7BB975AE7F59FE4465C065743878BBE0F2",
     },

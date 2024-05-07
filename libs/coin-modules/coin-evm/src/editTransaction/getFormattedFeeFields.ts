@@ -1,4 +1,3 @@
-import { getAccountUnit } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import type { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
@@ -23,16 +22,16 @@ export const getFormattedFeeFields = ({
   formattedMaxFeePerGas: string;
   formattedGasPrice: string;
 } => {
-  const unit = getAccountUnit(mainAccount);
+  const { currency } = mainAccount;
+  const unit = currency.units[0];
   const feeValue = getEstimatedFees(transaction);
   const formattedFeeValue = formatCurrencyUnit(unit, feeValue, {
     showCode: true,
     locale,
   });
 
-  const { currency } = mainAccount;
   // If a lower unit is available, use it to display the fees (e.g. ETH -> GWEI)
-  // This might not be the case for all currencies, so we fallback to the account unit
+  // This might not be the case for all currencies, so we fallback to the general unit
   const feesUnit = currency.units.length > 1 ? currency.units[1] : unit;
 
   const maxPriorityFeePerGas = transaction.maxPriorityFeePerGas ?? new BigNumber(0);

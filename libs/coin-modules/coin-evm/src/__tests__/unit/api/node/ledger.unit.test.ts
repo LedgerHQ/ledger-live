@@ -163,6 +163,9 @@ describe("EVM Family", () => {
 
         const response = await LEDGER_API.getTransaction(currency, "0xHash");
         expect(response).toEqual({
+          gasPrice: "83953611012",
+          gasUsed: "21000",
+          value: "70494048649554430",
           hash: "0x8d5ef4d7673fbfa6a4755cdfdb913742c47c7fdac2d214046387bbcbf10957c9",
           blockHeight: 17586913,
           blockHash: "0x6db17db08345729953a1408a56dcc588aa3d23e8cc917f2624b8bf047148cce2",

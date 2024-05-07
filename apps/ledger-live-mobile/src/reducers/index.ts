@@ -13,6 +13,7 @@ import walletconnect from "./walletconnect";
 import protect from "./protect";
 import nft from "./nft";
 import market from "./market";
+import wallet from "./wallet";
 import { State } from "./types";
 import { ActionsPayload } from "../actions/types";
 
@@ -32,7 +33,7 @@ const appReducer = combineReducers({
   postOnboarding,
   protect,
   nft,
-  market,
+  wallet,
 });
 
 // TODO: EXPORT ALL POSSIBLE ACTION TYPES AND USE ACTION<TYPES>

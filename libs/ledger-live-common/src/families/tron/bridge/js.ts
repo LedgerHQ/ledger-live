@@ -37,11 +37,11 @@ import { makeSync, makeScanAccounts } from "../../../bridge/jsHelpers";
 import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { formatCurrencyUnit } from "../../../currencies";
 import {
-  getAccountUnit,
   getMainAccount,
   encodeTokenAccountId,
   emptyHistoryCache,
   encodeAccountId,
+  getAccountCurrency,
 } from "../../../account";
 import { getOperationsPageSize } from "../../../pagination";
 import {
@@ -468,7 +468,6 @@ const getAccountShape = async (info: AccountShapeInfo, syncConfig) => {
       const sub: TokenAccount = {
         type: "TokenAccount",
         id,
-        starred: false,
         parentId: accountId,
         token,
         balance: bnBalance,
@@ -820,7 +819,7 @@ const getTransactionStatus = async (a: TronAccount, t: Transaction): Promise<Tra
   }
 
   if (!errors.recipient && estimatedFees.gt(0)) {
-    const fees = formatCurrencyUnit(getAccountUnit(a), estimatedFees, {
+    const fees = formatCurrencyUnit(getAccountCurrency(a).units[0], estimatedFees, {
       showCode: true,
       disableRounding: true,
     });

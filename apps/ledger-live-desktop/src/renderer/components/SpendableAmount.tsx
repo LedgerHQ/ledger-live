@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Account, AccountLike, TransactionCommon } from "@ledgerhq/types-live";
 import { useDebounce } from "@ledgerhq/live-common//hooks/useDebounce";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import BigNumber from "bignumber.js";
+import { useAccountUnit } from "../hooks/useAccountUnit";
 
 type Props<T extends TransactionCommon> = {
   account: AccountLike;
@@ -25,6 +25,7 @@ const SpendableAmount = <T extends TransactionCommon>({
 }: Props<T>) => {
   const [maxSpendable, setMaxSpendable] = useState<BigNumber | null>(null);
   const debouncedTransaction = useDebounce(transaction, 500);
+  const accountUnit = useAccountUnit(account);
   useEffect(() => {
     if (!account) return;
     let cancelled = false;
@@ -42,7 +43,7 @@ const SpendableAmount = <T extends TransactionCommon>({
       cancelled = true;
     };
   }, [account, parentAccount, debouncedTransaction]);
-  const accountUnit = getAccountUnit(account);
+
   return maxSpendable ? (
     <FormattedVal
       style={{

@@ -1,29 +1,33 @@
 import BigNumber from "bignumber.js";
-import { createFixtureAccount, createFixtureTransaction } from "../types/model.fixture";
+import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 import prepareTransaction from "./prepareTransaction";
 import { faker } from "@faker-js/faker";
 
-const mockGetEstimatedFees = jest.fn();
+const mockCraftTransaction = jest.fn();
+const mockEstimateFees = jest.fn();
 jest.mock("../logic", () => ({
-  getEstimatedFees: () => mockGetEstimatedFees(),
+  estimateFees: () => mockEstimateFees(),
+  craftTransaction: () => mockCraftTransaction(),
 }));
 
 describe("prepareTransaction", () => {
   afterEach(() => {
-    mockGetEstimatedFees.mockClear();
+    mockCraftTransaction.mockClear();
+    mockEstimateFees.mockClear();
   });
 
   it("returns a new Transaction with new fees", async () => {
     // Given
     const fees = new BigNumber(faker.number.int(50));
-    mockGetEstimatedFees.mockResolvedValue(fees);
+    mockEstimateFees.mockResolvedValue(fees);
     const tx = createFixtureTransaction();
 
     // When
     const newTx = await prepareTransaction(createFixtureAccount(), tx);
 
     // Then
-    expect(mockGetEstimatedFees).toHaveBeenCalledTimes(1);
+    expect(mockCraftTransaction).toHaveBeenCalledTimes(1); // Check that Tx is concerted to core Tx.
+    expect(mockEstimateFees).toHaveBeenCalledTimes(1);
     expect(newTx.fees).toEqual(fees);
     expect(newTx).not.toBe(tx);
     expect(newTx).toMatchObject({
@@ -36,7 +40,7 @@ describe("prepareTransaction", () => {
   it("returns the passed transaction if fees are the same", async () => {
     // Given
     const fees = new BigNumber(faker.number.int(50));
-    mockGetEstimatedFees.mockResolvedValue(fees);
+    mockEstimateFees.mockResolvedValue(fees);
     const tx = createFixtureTransaction({ fees });
 
     // When

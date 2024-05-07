@@ -12,12 +12,6 @@ const account = fromAccountRaw({
   index: 2,
   freshAddress: "me",
   freshAddressPath: "44'/1729'/2'/0'",
-  freshAddresses: [
-    {
-      address: "me",
-      derivationPath: "44'/1729'/2'/0'",
-    },
-  ],
   blockHeight: 140408643618744,
   operations: [
     {
@@ -178,7 +172,6 @@ const account = fromAccountRaw({
     },
   ],
   currencyId: "tezos",
-  unitMagnitude: 6,
   lastSyncDate: "2019-11-27T15:29:51.673Z",
   balance: "278000",
   spendableBalance: "278000",

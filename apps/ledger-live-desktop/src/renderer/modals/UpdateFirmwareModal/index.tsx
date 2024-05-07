@@ -139,7 +139,10 @@ const UpdateModal = ({
     setIsLanguagePromptOpen,
     confirmedPrompt,
     setConfirmedPrompt,
-    deviceHasPin: !(deviceModelId === DeviceModelId.stax && !props.deviceInfo?.onboarded),
+    deviceHasPin: !(
+      [DeviceModelId.stax, DeviceModelId.europa].includes(deviceModelId) &&
+      !props.deviceInfo?.onboarded
+    ),
   };
 
   const getMainContent = () => {
