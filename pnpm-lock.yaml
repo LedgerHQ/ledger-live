@@ -5044,9 +5044,6 @@ importers:
       axios:
         specifier: 0.26.1
         version: 0.26.1
-      invariant:
-        specifier: ^2.2.2
-        version: 2.2.4
       lru-cache:
         specifier: ^7.14.1
         version: 7.18.3

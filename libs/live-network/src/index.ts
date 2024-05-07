@@ -1,2 +1,2 @@
-import network from "./network";
-export default network;
+import { newImplementation } from "./network";
+export default newImplementation;
