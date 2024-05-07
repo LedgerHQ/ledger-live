@@ -27,16 +27,18 @@ export {
   decodeURIScheme,
   sanitizeValueString,
   formatCurrencyUnit,
-  formatCurrencyUnitFragment,
+  type formatCurrencyUnitOptions,
   findCurrencyByTicker,
   parseCurrencyUnit,
   toLocaleString,
+  isCurrencySupported,
+  listSupportedCurrencies,
+  setSupportedCurrencies,
 } from "@ledgerhq/coin-framework/currencies";
 
-export * from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
-export * from "@ledgerhq/coin-framework/currencies/support";
 export { getCurrencyColor, ColorableCurrency } from "./color";
-export * from "./formatShort";
+export { formatShort } from "./formatShort";
 export * from "./helpers";
 export { sortCurrenciesByIds, currenciesByMarketcap } from "./sortByMarketcap";
-export * from "./valueFromUnit";
+export { listSupportedFiats } from "./support";
+export { valueFromUnit } from "./valueFromUnit";

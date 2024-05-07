@@ -1589,9 +1589,6 @@ importers:
       lru-cache:
         specifier: ^7.14.1
         version: 7.14.1
-      numeral:
-        specifier: ^2.0.6
-        version: 2.0.6
       prando:
         specifier: ^6.0.1
         version: 6.0.1
