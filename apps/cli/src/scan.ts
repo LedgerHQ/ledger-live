@@ -3,9 +3,12 @@ import { Observable, from, defer, of, throwError, concat } from "rxjs";
 import { skip, take, reduce, mergeMap, map, filter, concatMap } from "rxjs/operators";
 import type { Account, DerivationMode, SyncConfig } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { encodeAccountId, decodeAccountId } from "@ledgerhq/live-common/account/index";
-import { emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
-import { fromAccountRaw } from "@ledgerhq/live-common/account/serialization";
+import {
+  encodeAccountId,
+  decodeAccountId,
+  emptyHistoryCache,
+  fromAccountRaw,
+} from "@ledgerhq/live-common/account/index";
 import {
   asDerivationMode,
   runDerivationScheme,

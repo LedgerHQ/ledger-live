@@ -10,6 +10,7 @@ export {
   groupAccountOperationsByDay,
   groupAccountsOperationsByDay,
   addPendingOperation,
+  emptyHistoryCache,
 } from "@ledgerhq/coin-framework/account/index";
 export * from "./formatters";
 export * from "./helpers";
