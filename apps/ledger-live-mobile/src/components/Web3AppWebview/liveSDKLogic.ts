@@ -17,11 +17,5 @@ export default function prepareSignTransaction(
     subAccountId: isTokenAccount(account) ? account.id : undefined,
   });
 
-  return bridge.updateTransaction(t2, {
-    customGasLimit: txData.gasLimit,
-    type: 1,
-    maxFeePerGas: undefined,
-    maxPriorityFeePerGas: undefined,
-    ...txData,
-  });
+  return bridge.updateTransaction(t2, txData);
 }
