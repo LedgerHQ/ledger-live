@@ -15,10 +15,10 @@ import BigNumber from "bignumber.js";
 import { estimateFee } from "./bridge/bridgeHelpers/api";
 import { TonComment, TonHwParams, Transaction } from "./types";
 
-export const getAddress = (a: Account): Address =>
-  a.freshAddresses.length > 0
-    ? a.freshAddresses[0]
-    : { address: a.freshAddress, derivationPath: a.freshAddressPath };
+export const getAddress = (a: Account): Address => ({
+  address: a.freshAddress,
+  derivationPath: a.freshAddressPath,
+});
 
 export const isAddressValid = (recipient: string) =>
   TonAddress.isRaw(recipient) || TonAddress.isFriendly(recipient);

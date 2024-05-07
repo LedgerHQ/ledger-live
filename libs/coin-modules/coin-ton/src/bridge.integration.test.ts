@@ -38,12 +38,6 @@ const ton: CurrenciesData<Transaction> = {
         index: 0,
         freshAddress: ADDRESS,
         freshAddressPath: PATH,
-        freshAddresses: [
-          {
-            address: ADDRESS,
-            derivationPath: PATH,
-          },
-        ],
         xpub: PUBKEY,
         blockHeight: 0,
         operations: [],
