@@ -12,7 +12,7 @@ const getWalletAPITransactionSignFlowInfos: GetWalletAPITransactionSignFlowInfos
 > = ({ walletApiTransaction }) => {
   return {
     canEditFees: CAN_EDIT_FEES,
-    liveTx: walletApiTransaction,
+    liveTx: { ...walletApiTransaction, family: "xrp" },
     hasFeesProvided: areFeesProvided(walletApiTransaction),
   };
 };

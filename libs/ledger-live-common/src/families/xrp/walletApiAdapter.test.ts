@@ -16,6 +16,7 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
 
       const expectedLiveTx: Partial<Transaction> = {
         ...xrpPlatformTx,
+        family: "xrp",
       };
 
       const { canEditFees, hasFeesProvided, liveTx } = xrp.getWalletAPITransactionSignFlowInfos({
@@ -41,6 +42,7 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
 
       const expectedLiveTx: Partial<Transaction> = {
         ...xrpPlatformTx,
+        family: "xrp",
       };
 
       const { canEditFees, hasFeesProvided, liveTx } = xrp.getWalletAPITransactionSignFlowInfos({

@@ -33,7 +33,7 @@ export function addNotCreatedRippleMockAddress(addr: string) {
 const defaultGetFees = (a: Account, t: any) => t.fee || new BigNumber(0);
 
 const createTransaction = (): Transaction => ({
-  family: "ripple",
+  family: "xrp",
   amount: new BigNumber(0),
   recipient: "",
   fee: new BigNumber(10),
@@ -121,7 +121,7 @@ const prepareTransaction = async (a, t) => {
     return {
       ...t,
       networkInfo: {
-        family: "ripple",
+        family: "xrp",
         serverFee: new BigNumber(10),
         baseReserve: new BigNumber(20),
       },

@@ -8,7 +8,7 @@ const CAN_EDIT_FEES = true;
 const areFeesProvided = (tx: PlatformTransaction): boolean => !!tx.fee;
 
 const convertToLiveTransaction = (tx: PlatformTransaction): Partial<Transaction> => {
-  return tx;
+  return { ...tx, family: "xrp" };
 };
 
 const getPlatformTransactionSignFlowInfos = (

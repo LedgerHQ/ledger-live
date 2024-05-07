@@ -16,6 +16,7 @@ describe("getPlatformTransactionSignFlowInfos", () => {
 
       const expectedLiveTx: Partial<Transaction> = {
         ...xrpPlatformTx,
+        family: "xrp",
       };
 
       const { canEditFees, hasFeesProvided, liveTx } =
@@ -39,6 +40,7 @@ describe("getPlatformTransactionSignFlowInfos", () => {
 
       const expectedLiveTx: Partial<Transaction> = {
         ...xrpPlatformTx,
+        family: "xrp",
       };
 
       const { canEditFees, hasFeesProvided, liveTx } =
