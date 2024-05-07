@@ -18,20 +18,18 @@
   },
   "typesVersions": {
     "*": {
-      "*.json": [
-        "*.json"
-      ],
-      "batcher": [
-        "lib/batcher/index"
-      ],
-      "*": [
-        "lib/*"
-      ],
       "lib/*": [
         "lib/*"
       ],
       "lib-es/*": [
         "lib-es/*"
+      ],
+      "batcher": [
+        "lib/batcher/index"
+      ],
+      "*": [
+        "lib/*",
+        "lib/batcher/*"
       ]
     }
   },
@@ -40,6 +38,10 @@
     "./lib/*.js": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
     "./lib-es/*.js": "./lib-es/*.js",
+    "./batcher": {
+      "require": "./lib/batcher/index.js",
+      "default": "./lib-es/batcher/index.js"
+    },
     "./batcher/*": {
       "require": "./lib/batcher/*.js",
       "default": "./lib-es/batcher/*.js"
@@ -51,6 +53,10 @@
     "./*.js": {
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"
+    },
+    ".": {
+      "require": "./lib/index.js",
+      "default": "./lib-es/index.js"
     },
     "./package.json": "./package.json"
   },
