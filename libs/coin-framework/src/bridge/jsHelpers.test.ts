@@ -3,6 +3,7 @@ import { firstValueFrom } from "rxjs";
 import type { Account, SyncConfig, TransactionCommon } from "@ledgerhq/types-live";
 import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/currencies";
 import { AccountShapeInfo, defaultUpdateTransaction, makeSync } from "./jsHelpers";
+import { emptyHistoryCache } from "../account";
 
 describe("jsHelpers", () => {
   describe("defaultUpdateTransaction", () => {
@@ -87,21 +88,6 @@ describe("jsHelpers", () => {
     });
   });
 });
-
-const emptyHistoryCache = {
-  HOUR: {
-    latestDate: null,
-    balances: [],
-  },
-  DAY: {
-    latestDate: null,
-    balances: [],
-  },
-  WEEK: {
-    latestDate: null,
-    balances: [],
-  },
-};
 
 // Call once for all tests the currencies. Relies on real implementation to check also consistency.
 const bitcoinCurrency = listCryptoCurrencies(true).find(c => c.id === "bitcoin")!;
