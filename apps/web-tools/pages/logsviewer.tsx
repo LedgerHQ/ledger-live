@@ -302,7 +302,7 @@ const Header = ({
           <Button download="apdus" href={href}>
             {apdusLogs.length} APDUs 
           </Button>
-        ) : null} 
+        ) : null}
 
         <Button download="app.json" href={appJsonHref}>
           app.json with user accounts
