@@ -19,7 +19,12 @@ import { OperationType, SignOperationEvent, SignOperationFnSignature } from "@le
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { HashType } from "@stricahq/typhonjs/dist/types";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { CardanoAddress, CardanoExtendedPublicKey, CardanoSignature, CardanoSigner } from "./signer";
+import {
+  CardanoAddress,
+  CardanoExtendedPublicKey,
+  CardanoSignature,
+  CardanoSigner,
+} from "./signer";
 
 const buildOptimisticOperation = (
   account: CardanoAccount,

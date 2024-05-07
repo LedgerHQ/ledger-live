@@ -14,7 +14,7 @@ import {
   CardanoSignature,
   CardanoSigner,
 } from "./signer";
-import { getBipPath } from "./logic";
+
 jest.mock("./buildSubAccounts");
 jest.mock("./api/getTransactions");
 jest.mock("./api/getNetworkInfo");
