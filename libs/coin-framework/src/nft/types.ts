@@ -1,5 +1,5 @@
 import { NFTCollectionMetadataResponse, NFTMetadataResponse } from "@ledgerhq/types-live";
-import { Batcher } from "../batcher/types";
+import { Batcher } from "@ledgerhq/live-network/batcher/types";
 
 export type NftMetadataInput = {
   contract: string;

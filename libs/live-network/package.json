@@ -21,6 +21,9 @@
       "*.json": [
         "*.json"
       ],
+      "batcher": [
+        "lib/batcher/index"
+      ],
       "*": [
         "lib/*"
       ],
@@ -37,6 +40,10 @@
     "./lib/*.js": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
     "./lib-es/*.js": "./lib-es/*.js",
+    "./batcher/*": {
+      "require": "./lib/batcher/*.js",
+      "default": "./lib-es/batcher/*.js"
+    },
     "./*": {
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"
