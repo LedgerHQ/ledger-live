@@ -28,7 +28,6 @@ import {
   sanitizeValueString,
   formatCurrencyUnit,
   formatCurrencyUnitFragment,
-  formatShort,
   valueFromUnit,
   findCurrencyByTicker,
 } from "@ledgerhq/coin-framework/currencies/index";
@@ -39,6 +38,7 @@ import { sortCurrenciesByIds, currenciesByMarketcap } from "./sortByMarketcap";
 export * from "@ledgerhq/coin-framework/currencies/BigNumberToLocaleString";
 export * from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 export * from "@ledgerhq/coin-framework/currencies/support";
+export * from "./formatShort";
 export * from "./helpers";
 
 export {
@@ -66,7 +66,6 @@ export {
   parseCurrencyUnit,
   formatCurrencyUnit,
   formatCurrencyUnitFragment,
-  formatShort,
   getCryptoCurrencyById,
   hasCryptoCurrencyId,
   encodeURIScheme,
