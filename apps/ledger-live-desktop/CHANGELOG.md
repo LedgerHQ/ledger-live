@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.80.0-next.7
+
+### Patch Changes
+
+- [#6813](https://github.com/LedgerHQ/ledger-live/pull/6813) [`9ce66ff`](https://github.com/LedgerHQ/ledger-live/commit/9ce66ffc48695fd0add96d48091a7d533b2ff091) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix an error that made all analytics disabled on LLD and LLM
+
 ## 2.80.0-next.6
 
 ### Patch Changes
