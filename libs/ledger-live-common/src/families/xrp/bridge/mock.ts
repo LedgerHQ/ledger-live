@@ -9,19 +9,19 @@ import {
   FeeTooHigh,
   AmountRequired,
 } from "@ledgerhq/errors";
-import type { Transaction } from "../types";
+import type { Transaction } from "@ledgerhq/coin-xrp/types";
 import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import { getMainAccount } from "../../../account";
+import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
+import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import {
   scanAccounts,
   signOperation,
   broadcast,
   sync,
   isInvalidRecipient,
+  makeAccountBridgeReceive,
 } from "../../../bridge/mockHelpers";
-import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { formatCurrencyUnit } from "../../../currencies";
-import { makeAccountBridgeReceive } from "../../../bridge/mockHelpers";
 
 const receive = makeAccountBridgeReceive();
 const notCreatedAddresses: string[] = [];

@@ -3,7 +3,7 @@ import invariant from "invariant";
 import styled from "styled-components";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { Account } from "@ledgerhq/types-live";
-import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/ripple/types";
+import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/xrp/types";
 import InputCurrency from "~/renderer/components/InputCurrency";
 import Box from "~/renderer/components/Box";
 import GenericContainer from "~/renderer/components/FeesContainer";

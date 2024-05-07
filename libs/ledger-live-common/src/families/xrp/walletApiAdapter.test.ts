@@ -1,14 +1,14 @@
-import xrp from "./platformAdapter";
-import { RippleTransaction as PlatformTransaction } from "@ledgerhq/live-app-sdk";
-import { FAMILIES } from "@ledgerhq/live-app-sdk";
+import { Account } from "@ledgerhq/types-live";
+import { RippleTransaction as WalletAPITransaction } from "@ledgerhq/wallet-api-core";
 import BigNumber from "bignumber.js";
-import { Transaction } from "./types";
+import { Transaction } from "@ledgerhq/coin-xrp/types";
+import xrp from "./walletApiAdapter";
 
-describe("getPlatformTransactionSignFlowInfos", () => {
+describe("getWalletAPITransactionSignFlowInfos", () => {
   describe("should properly get infos for XRP platform tx", () => {
     it("without fees provided", () => {
-      const xrpPlatformTx: PlatformTransaction = {
-        family: FAMILIES.RIPPLE,
+      const xrpPlatformTx: WalletAPITransaction = {
+        family: "ripple",
         amount: new BigNumber(100000),
         recipient: "0xABCDEF",
         tag: 1,
@@ -18,8 +18,10 @@ describe("getPlatformTransactionSignFlowInfos", () => {
         ...xrpPlatformTx,
       };
 
-      const { canEditFees, hasFeesProvided, liveTx } =
-        xrp.getPlatformTransactionSignFlowInfos(xrpPlatformTx);
+      const { canEditFees, hasFeesProvided, liveTx } = xrp.getWalletAPITransactionSignFlowInfos({
+        walletApiTransaction: xrpPlatformTx,
+        account: {} as Account,
+      });
 
       expect(canEditFees).toBe(true);
 
@@ -29,8 +31,8 @@ describe("getPlatformTransactionSignFlowInfos", () => {
     });
 
     it("with fees provided", () => {
-      const xrpPlatformTx: PlatformTransaction = {
-        family: FAMILIES.RIPPLE,
+      const xrpPlatformTx: WalletAPITransaction = {
+        family: "ripple",
         amount: new BigNumber(100000),
         recipient: "0xABCDEF",
         fee: new BigNumber(300),
@@ -41,8 +43,10 @@ describe("getPlatformTransactionSignFlowInfos", () => {
         ...xrpPlatformTx,
       };
 
-      const { canEditFees, hasFeesProvided, liveTx } =
-        xrp.getPlatformTransactionSignFlowInfos(xrpPlatformTx);
+      const { canEditFees, hasFeesProvided, liveTx } = xrp.getWalletAPITransactionSignFlowInfos({
+        walletApiTransaction: xrpPlatformTx,
+        account: {} as Account,
+      });
 
       expect(canEditFees).toBe(true);
 

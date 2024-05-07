@@ -1,7 +1,7 @@
 // TODO: to remove once live-app-sdk is depreciated and removed from LL
 
 import { RippleTransaction as PlatformTransaction } from "@ledgerhq/live-app-sdk";
-import { Transaction } from "./types";
+import { Transaction } from "@ledgerhq/coin-xrp/types";
 
 const CAN_EDIT_FEES = true;
 
