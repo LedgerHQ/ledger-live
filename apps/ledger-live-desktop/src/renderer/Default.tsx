@@ -2,7 +2,7 @@ import React, { useEffect, lazy, Suspense } from "react";
 import styled from "styled-components";
 import { ipcRenderer } from "electron";
 import { Redirect, Route, Switch, useHistory, useLocation } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import TrackAppStart from "~/renderer/components/TrackAppStart";
 import { LiveApp } from "~/renderer/screens/platform";
 import { BridgeSyncProvider } from "~/renderer/bridge/BridgeSyncContext";
@@ -48,7 +48,11 @@ import { Flex, InfiniteLoader } from "@ledgerhq/react-ui";
 import useAccountsWithFundsListener from "@ledgerhq/live-common/hooks/useAccountsWithFundsListener";
 import { accountsSelector } from "./reducers/accounts";
 import { useRecoverRestoreOnboarding } from "~/renderer/hooks/useRecoverRestoreOnboarding";
-import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
+import {
+  hasCompletedOnboardingSelector,
+  hasSeenAnalyticsOptInPromptSelector,
+} from "~/renderer/reducers/settings";
+import { setShareAnalytics, setSharePersonalizedRecommendations } from "./actions/settings";
 
 const PlatformCatalog = lazy(() => import("~/renderer/screens/platform"));
 const Dashboard = lazy(() => import("~/renderer/screens/dashboard"));
@@ -192,6 +196,15 @@ export default function Default() {
   useRecoverRestoreOnboarding();
 
   const listAppsV2 = useFeature("listAppsV2minor1");
+  const analyticsFF = useFeature("lldAnalyticsOptInPrompt");
+  const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (!analyticsFF?.enabled || hasSeenAnalyticsOptInPrompt) return;
+    dispatch(setShareAnalytics(false));
+    dispatch(setSharePersonalizedRecommendations(false));
+  });
 
   useEffect(() => {
     if (!listAppsV2) return;
