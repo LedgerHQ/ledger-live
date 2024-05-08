@@ -52,12 +52,18 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"]) {
                 },
                 onResult: result => {
                   if (result.startExchangeError) {
-                    onCancel(result.startExchangeError, result.device);
+                    onCancel(
+                      result.startExchangeError.error,
+                      result.startExchangeError.device || device,
+                    );
                   }
 
                   if (result.startExchangeResult) {
                     setDevice(result.device);
-                    onSuccess(result.startExchangeResult, result.device);
+                    onSuccess(
+                      result.startExchangeResult.nonce,
+                      result.startExchangeResult.device || device,
+                    );
                   }
 
                   navigation.pop();
