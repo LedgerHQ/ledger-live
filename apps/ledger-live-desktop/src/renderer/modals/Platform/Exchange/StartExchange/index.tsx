@@ -9,7 +9,7 @@ import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import {
   StartExchangeErrorResult,
   StartExchangeSuccessResult,
-} from "@ledgerhq/live-common/lib/hw/actions/startExchange";
+} from "@ledgerhq/live-common/hw/actions/startExchange";
 
 export type Data = {
   onCancel?: (error: StartExchangeErrorResult) => void;
