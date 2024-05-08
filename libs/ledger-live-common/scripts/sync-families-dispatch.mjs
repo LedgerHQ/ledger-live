@@ -21,12 +21,8 @@ const targets = [
 ];
 
 // Coins using coin-framework
-<<<<<<< HEAD
-const familiesWPackage = ["algorand", "bitcoin", "evm", "near", "polkadot", "icon"];
-=======
-const familiesWPackage = ["algorand", "bitcoin", "evm", "near", "polkadot", "solana"];
->>>>>>> develop
 
+const familiesWPackage = ["algorand", "bitcoin", "evm", "near", "polkadot", "solana", "icon"];
 cd(path.join(__dirname, "..", "src"));
 await rimraf("generated");
 await fs.promises.mkdir("generated");
