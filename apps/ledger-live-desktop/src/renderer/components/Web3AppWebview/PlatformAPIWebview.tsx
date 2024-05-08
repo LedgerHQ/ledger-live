@@ -37,6 +37,7 @@ import { Loader } from "./styled";
 import { WebviewAPI, WebviewProps } from "./types";
 import { useWebviewState } from "./helpers";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
+import { walletSelector } from "~/renderer/reducers/wallet";
 
 export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
   ({ manifest, inputs = {}, onStateChange }, ref) => {
@@ -78,19 +79,21 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
 
     const [widgetLoaded, setWidgetLoaded] = useState(false);
 
-    const listAccounts = useListPlatformAccounts(accounts);
+    const walletState = useSelector(walletSelector);
+    const listAccounts = useListPlatformAccounts(walletState, accounts);
     const listCurrencies = useListPlatformCurrencies();
 
     const requestAccount = useCallback(
       (request: RequestAccountParams) => {
-        return requestAccountLogic({ manifest }, request);
+        return requestAccountLogic(walletState, { manifest }, request);
       },
-      [manifest],
+      [walletState, manifest],
     );
 
     const receiveOnAccount = useCallback(
       ({ accountId }: { accountId: string }) =>
         receiveOnAccountLogic(
+          walletState,
           { manifest, accounts, tracking },
           accountId,
           (account, parentAccount, accountAddress) => {
@@ -114,7 +117,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
             );
           },
         ),
-      [manifest, accounts, dispatch, tracking],
+      [walletState, manifest, accounts, dispatch, tracking],
     );
 
     const signTransaction = useCallback(

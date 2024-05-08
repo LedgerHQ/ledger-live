@@ -3,7 +3,6 @@ import { useDispatch } from "react-redux";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { SubAccount } from "@ledgerhq/types-live";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import {
   useCosmosFamilyPreloadData,
   useCosmosFamilyMappedDelegations,
@@ -29,6 +28,7 @@ import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import { DelegationActionsModalName } from "../modals";
 import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const Wrapper = styled(Box).attrs(() => ({
   p: 3,
@@ -53,7 +53,7 @@ const Delegation = ({ account }: { account: CosmosAccount }) => {
   const mappedDelegations = useCosmosFamilyMappedDelegations(account);
   const currencyId = account.currency.id;
   const { validators } = useCosmosFamilyPreloadData(currencyId);
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const mappedUnbondings = mapUnbondings(unbondings, validators, unit);
   const onEarnRewards = useCallback(() => {
     dispatch(

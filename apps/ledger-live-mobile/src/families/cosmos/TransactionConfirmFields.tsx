@@ -2,7 +2,7 @@ import invariant from "invariant";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { useTranslation } from "react-i18next";
-import { getAccountUnit, shortAddressPreview } from "@ledgerhq/live-common/account/index";
+import { shortAddressPreview } from "@ledgerhq/live-common/account/index";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/families/cosmos/types";
 import { useCosmosFamilyPreloadData } from "@ledgerhq/live-common/families/cosmos/react";
@@ -12,6 +12,7 @@ import LText from "~/components/LText";
 import { DataRow, TextValueField } from "~/components/ValidateOnDeviceDataRow";
 import Info from "~/icons/Info";
 import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type FieldProps = {
   account: Account;
@@ -24,7 +25,7 @@ type FieldProps = {
 
 function CosmosDelegateValidatorsField({ account, transaction }: FieldProps) {
   const { t } = useTranslation();
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const { validators } = useCosmosFamilyPreloadData(account.currency.id);
   const mappedDelegations = mapDelegationInfo(transaction.validators, validators, unit);
   const { validator, formattedAmount, address } = mappedDelegations[0];

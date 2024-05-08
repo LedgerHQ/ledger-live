@@ -18,6 +18,7 @@ import { prepareMessageToSign } from "../hw/signMessage/index";
 import { getAccountBridge } from "../bridge";
 import { Exchange } from "../exchange/types";
 import { findTokenById } from "@ledgerhq/cryptoassets";
+import { WalletState } from "@ledgerhq/live-wallet/store";
 
 export function translateContent(content: string | TranslatableString, locale = "en"): string {
   if (!content || typeof content === "string") return content;
@@ -31,6 +32,7 @@ export type WalletAPIContext = {
 };
 
 export function receiveOnAccountLogic(
+  walletState: WalletState,
   { manifest, accounts, tracking }: WalletAPIContext,
   walletAccountId: string,
   uiNavigation: (
@@ -59,7 +61,7 @@ export function receiveOnAccountLogic(
   const mainAccount = getMainAccount(account, parentAccount);
   const currency = tokenCurrency ? findTokenById(tokenCurrency) : null;
   const receivingAccount = currency ? makeEmptyTokenAccount(mainAccount, currency) : account;
-  const accountAddress = accountToWalletAPIAccount(account, parentAccount).address;
+  const accountAddress = accountToWalletAPIAccount(walletState, account, parentAccount).address;
   return uiNavigation(receivingAccount, parentAccount, accountAddress);
 }
 

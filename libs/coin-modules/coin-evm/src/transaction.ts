@@ -7,8 +7,8 @@ import {
   fromTransactionStatusRawCommon as fromTransactionStatusRaw,
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
-} from "@ledgerhq/coin-framework/serialization/index";
-import { getAccountUnit } from "@ledgerhq/coin-framework/account/index";
+} from "@ledgerhq/coin-framework/serialization";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { transactionToEthersTransaction } from "./adapters";
 import ERC1155ABI from "./abis/erc1155.abi.json";
@@ -43,7 +43,7 @@ ${mode.toUpperCase()} ${
       : amount.isZero()
       ? ""
       : " " +
-        formatCurrencyUnit(getAccountUnit(account), amount, {
+        formatCurrencyUnit(getAccountCurrency(account).units[0], amount, {
           showCode: true,
           disableRounding: true,
         })

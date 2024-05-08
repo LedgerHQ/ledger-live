@@ -9,7 +9,7 @@ import React, {
   useCallback,
   ReactElement,
 } from "react";
-import { getAccountCurrency, getAccountUnit } from "@ledgerhq/coin-framework/account/helpers";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
 import {
   initialState,
   calculate,
@@ -396,7 +396,6 @@ export function useSendAmount({
   fiatCurrency: Currency;
   cryptoAmount: BigNumber;
 }): {
-  cryptoUnit: Unit;
   fiatAmount: BigNumber;
   fiatUnit: Unit;
   calculateCryptoAmount: (fiatAmount: BigNumber) => BigNumber;
@@ -410,7 +409,6 @@ export function useSendAmount({
   });
   const fiatAmount = new BigNumber(fiatCountervalue ?? 0);
   const fiatUnit = fiatCurrency.units[0];
-  const cryptoUnit = getAccountUnit(account);
   const state = useCountervaluesState();
   const calculateCryptoAmount = useCallback(
     (fiatAmount: BigNumber) => {
@@ -427,7 +425,6 @@ export function useSendAmount({
     [state, cryptoCurrency, fiatCurrency],
   );
   return {
-    cryptoUnit,
     fiatAmount,
     fiatUnit,
     calculateCryptoAmount,

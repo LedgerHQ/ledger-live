@@ -13,7 +13,6 @@ import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { Transaction as CeloTransaction } from "@ledgerhq/live-common/families/celo/types";
 import { accountScreenSelector } from "~/reducers/accounts";
@@ -29,6 +28,7 @@ import SendRowsFee from "../SendRowsFee";
 import { getFirstStatusError } from "../../helpers";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CeloRevokeFlowFlowParamList } from "./types";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props = BaseComposite<
   StackNavigatorProps<CeloRevokeFlowFlowParamList, ScreenName.CeloRevokeAmount>
@@ -93,7 +93,7 @@ export default function VoteAmount({ navigation, route }: Props) {
 
   const { useAllAmount } = transaction;
   const { amount } = status;
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const error = amount.eq(0) || bridgePending ? null : getFirstStatusError(status, "errors");
   const warning = getFirstStatusError(status, "warnings");
 

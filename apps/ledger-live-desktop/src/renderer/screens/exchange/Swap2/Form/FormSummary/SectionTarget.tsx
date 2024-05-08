@@ -6,7 +6,6 @@ import SectionInformative from "./SectionInformative";
 import SummaryValue, { NoValuePlaceholder } from "./SummaryValue";
 import { useTranslation } from "react-i18next";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
-import { getAccountName } from "@ledgerhq/live-common/account/index";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import SummarySection from "./SummarySection";
 import { openModal } from "~/renderer/actions/modals";
@@ -18,6 +17,7 @@ import {
 } from "@ledgerhq/live-common/exchange/swap/types";
 import TargetAccountDrawer from "../TargetAccountDrawer";
 import { AccountLike } from "@ledgerhq/types-live";
+import { useMaybeAccountName } from "~/renderer/reducers/wallet";
 
 const AccountSection = ({
   account,
@@ -29,7 +29,8 @@ const AccountSection = ({
   handleChange?: () => void;
 }) => {
   const { t } = useTranslation();
-  const accountName = account ? getAccountName(account) : undefined;
+  const accountName = useMaybeAccountName(account);
+
   const swapDefaultTrack = useGetSwapTrackingProperties();
 
   const handleChangeAndTrack = useCallback(() => {

@@ -1,5 +1,5 @@
 /* eslint-disable consistent-return */
-import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
@@ -34,6 +34,7 @@ import {
 import { openURL } from "~/renderer/linking";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { AmountCellExtraProps, OperationDetailsExtraProps } from "../types";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 function getURLFeesInfo({
   op,
@@ -124,7 +125,7 @@ const OperationDetailsExtra = ({
   type,
   account,
 }: OperationDetailsExtraProps<CosmosAccount, CosmosOperation>) => {
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const currency = getAccountCurrency(account);
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);

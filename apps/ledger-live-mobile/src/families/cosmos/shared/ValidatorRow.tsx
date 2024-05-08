@@ -1,4 +1,3 @@
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { CosmosValidatorItem } from "@ledgerhq/live-common/families/cosmos/types";
 import cosmosBase from "@ledgerhq/live-common/families/cosmos/chain/cosmosBase";
 import { AccountLike } from "@ledgerhq/types-live";
@@ -9,6 +8,7 @@ import { StyleSheet, View } from "react-native";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import Touchable from "~/components/Touchable";
 import ValidatorImage from "./ValidatorImage";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 const ValidatorRow = ({
   onPress,
@@ -22,6 +22,7 @@ const ValidatorRow = ({
   const onPressT = useCallback(() => {
     onPress(validator);
   }, [validator, onPress]);
+  const unit = useAccountUnit(account);
 
   return (
     <Touchable
@@ -49,7 +50,7 @@ const ValidatorRow = ({
         </View>
         <Text fontWeight="semiBold" numberOfLines={1} style={[styles.validatorYield]} color="smoke">
           <Text fontWeight="semiBold" numberOfLines={1}>
-            <CurrencyUnitValue showCode unit={getAccountUnit(account)} value={validator.tokens} />
+            <CurrencyUnitValue showCode unit={unit} value={validator.tokens} />
           </Text>
         </Text>
       </View>

@@ -145,7 +145,6 @@ function makeAccount(freshAddress: string) {
   return {
     id: mainAccId,
     seedIdentifier: "",
-    name: "Solana 1",
     derivationMode: "solanaMain" as const,
     index: 0,
     freshAddress,
@@ -154,7 +153,6 @@ function makeAccount(freshAddress: string) {
     operations: [],
     pendingOperations: [],
     currencyId: "solana",
-    unitMagnitude: 9,
     lastSyncDate: "",
     balance: "0",
   };

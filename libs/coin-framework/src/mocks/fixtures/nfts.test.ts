@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "../../currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { createFixtureNFT, NFTs, NFTs_POLYGON } from "./nfts";
 
 const POL = getCryptoCurrencyById("polygon");

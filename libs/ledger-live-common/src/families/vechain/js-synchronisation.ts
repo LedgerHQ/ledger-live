@@ -70,7 +70,6 @@ const getAccountShape: GetAccountShape = async info => {
         blockHeight,
         pendingOperations:
           (initialAccount?.subAccounts && initialAccount.subAccounts[0]?.pendingOperations) || [],
-        starred: (initialAccount?.subAccounts && initialAccount.subAccounts[0]?.starred) || false,
         balanceHistoryCache:
           (initialAccount?.subAccounts && initialAccount.subAccounts[0]?.balanceHistoryCache) ||
           emptyHistoryCache,

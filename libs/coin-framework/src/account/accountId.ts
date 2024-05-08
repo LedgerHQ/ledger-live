@@ -1,8 +1,11 @@
 import memoize from "lodash/memoize";
 import invariant from "invariant";
 import { asDerivationMode } from "../derivation";
-import { getCryptoCurrencyById, findTokenById } from "../currencies";
-import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
+import {
+  findTokenByAddressInCurrency,
+  findTokenById,
+  getCryptoCurrencyById,
+} from "@ledgerhq/cryptoassets";
 import type { AccountIdParams, DerivationMode } from "@ledgerhq/types-live";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 

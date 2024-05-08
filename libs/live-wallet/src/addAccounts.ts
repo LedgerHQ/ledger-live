@@ -1,7 +1,16 @@
+/**
+ * TODO: rework live-common/addAccounts to take into account the new paradigm.
+ * it will be simpler: Account and AccountUserData are now explicitly separated so we will have less to reconciliate.
+ */
+
+/**
+ * This drives the logic of digesting Add Accounts' result and apply the new accounts and account name editions to the underlying stores.
+ */
+
 import type { Account, DerivationMode } from "@ledgerhq/types-live";
 import uniqWith from "lodash/uniqWith";
-import { validateNameEdition } from "@ledgerhq/coin-framework/account/index";
-import { clearAccount } from "./helpers";
+import { validateNameEdition } from "./accountName";
+
 // Reference all possible support link
 // For now we have only one, but we can union type in future
 // We can map .id to a wording.
@@ -61,12 +70,7 @@ export function groupAddAccounts(
       importableAccounts.push(acc);
     }
   });
-  const sections: Array<{
-    id: string;
-    selectable: boolean;
-    defaultSelected: boolean;
-    data: any;
-  }> = [];
+  const sections: AddAccountsSection[] = [];
 
   if (importableAccounts.length) {
     sections.push({
@@ -116,49 +120,53 @@ export type AddAccountsProps = {
   renamings: Record<string, string>;
 };
 
-const preserveUserData = (update: Account, existing: Account): Account => ({
-  ...update,
-  name: existing.name,
-});
+export type AddAccountsAction = {
+  type: "ADD_ACCOUNTS";
+  payload: {
+    // the full state of all accounts to apply on top of the existing ones
+    // since the add accounts will possibly do a "migrate" of existing accounts
+    allAccounts: Account[];
+    // possible edited names that were done on the accounts
+    editedNames: Map<string, string>;
+  };
+};
 
-export function addAccounts({
-  scannedAccounts,
+export function addAccountsAction({
   existingAccounts,
+  scannedAccounts,
   selectedIds,
   renamings,
-}: AddAccountsProps): Account[] {
+}: AddAccountsProps): AddAccountsAction {
   const newAccounts: Account[] = [];
   // scanned accounts that was selected
   const selected = scannedAccounts.filter(a => selectedIds.includes(a.id));
   existingAccounts.forEach(existing => {
-    // we'll try to find an updated version of the existing account as opportunity to refresh the operations
+    // we try to find an updated version of the existing account as opportunity to refresh its state
     const update = selected.find(a => sameAccountIdentity(a, existing));
-
-    if (update) {
-      // preserve existing name
-      let acc = preserveUserData(update, existing);
-
-      if (update.id !== existing.id) {
-        acc = clearAccount(acc);
-      }
-
-      newAccounts.push(acc);
-    } else {
-      newAccounts.push(existing);
-    }
+    const account = update || existing;
+    newAccounts.push(account);
   });
   // append the new accounts
   selected.forEach(acc => {
-    const alreadyThere = newAccounts.find(a => sameAccountIdentity(a, acc));
-
+    const alreadyThere = newAccounts.find(r => sameAccountIdentity(r, acc));
     if (!alreadyThere) {
       newAccounts.push(acc);
     }
   });
-  // dedup and apply the renaming
-  return uniqWith(newAccounts, sameAccountIdentity).map(a => {
-    const name = validateNameEdition(a, renamings[a.id]);
-    if (name) return { ...a, name };
-    return a;
-  });
+  // deduplicate accounts
+  const allAccounts = uniqWith(newAccounts, sameAccountIdentity);
+  const editedNames = new Map();
+  for (const account of allAccounts) {
+    if (renamings[account.id]) {
+      const name = validateNameEdition(account, renamings[account.id]);
+      editedNames.set(account.id, name);
+    }
+  }
+  return {
+    type: "ADD_ACCOUNTS",
+    payload: {
+      allAccounts,
+      editedNames,
+    },
+  };
 }

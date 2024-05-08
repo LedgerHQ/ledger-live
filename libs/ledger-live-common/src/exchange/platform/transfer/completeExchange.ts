@@ -117,9 +117,7 @@ const completeExchange = (
           );
         } catch (e) {
           if (e instanceof TransportStatusError && e.statusCode === 0x6a83) {
-            throw new WrongDeviceForAccount(undefined, {
-              accountName: mainAccount.name,
-            });
+            throw new WrongDeviceForAccount();
           }
 
           throw convertTransportError(currentStep, e);

@@ -31,7 +31,6 @@ const filecoin: CurrenciesData<Transaction> = {
         operations: [],
         pendingOperations: [],
         currencyId: "filecoin",
-        unitMagnitude: 18,
         lastSyncDate: "",
         balance: "1000",
       },
