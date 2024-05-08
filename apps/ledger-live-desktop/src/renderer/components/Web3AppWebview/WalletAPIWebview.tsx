@@ -181,8 +181,8 @@ function useUiHook(manifest: AppManifest, tracking: Record<string, TrackFunction
             onResult: result => {
               onSuccess(result.nonce);
             },
-            onCancel: (error: Error) => {
-              onCancel(error);
+            onCancel: cancelResult => {
+              onCancel(cancelResult.error);
             },
           }),
         );
