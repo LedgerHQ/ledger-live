@@ -19,7 +19,9 @@ import type {
 } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { buildTransaction, calculateAmount, getNonce, isFirstBond, signExtrinsic } from "../logic";
+import { buildTransaction } from "./buildTransaction";
+import { calculateAmount, getNonce, isFirstBond } from "./utils";
+import { signExtrinsic } from "../logic";
 
 const MODE_TO_TYPE = {
   send: "OUT",

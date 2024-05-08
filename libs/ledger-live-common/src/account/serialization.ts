@@ -5,6 +5,7 @@ import type {
   Account,
   AccountBridge,
   AccountRaw,
+  AccountUserData,
   BalanceHistory,
   BalanceHistoryRaw,
   Operation,
@@ -70,11 +71,23 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
     fromOperationExtraRaw: bridge.fromOperationExtraRaw,
   });
 }
-export function toAccountRaw(account: Account): AccountRaw {
+
+export function toAccountRaw(account: Account, userData?: AccountUserData): AccountRaw {
   const bridge = getAccountBridge(account);
 
-  return commonToAccountRaw(account, {
+  const commonAccountRaw = commonToAccountRaw(account, {
     assignToAccountRaw: bridge.assignToAccountRaw,
     toOperationExtraRaw: bridge.toOperationExtraRaw,
   });
+
+  // extend with user data fields
+  if (userData) {
+    commonAccountRaw.name = userData.name;
+    commonAccountRaw.starred = userData.starredIds.includes(commonAccountRaw.id);
+    for (const tokenAccount of commonAccountRaw.subAccounts || []) {
+      tokenAccount.starred = userData.starredIds.includes(tokenAccount.id);
+    }
+  }
+
+  return commonAccountRaw;
 }

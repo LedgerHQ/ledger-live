@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useRef } from "react";
 import * as braze from "@braze/web-sdk";
 import { ClassicCard } from "@braze/web-sdk";
 import { getBrazeConfig } from "~/braze-setup";
@@ -17,8 +17,15 @@ import {
   setPortfolioCards,
 } from "../actions/dynamicContent";
 import getUser from "~/helpers/user";
-import { developerModeSelector } from "../reducers/settings";
+import {
+  developerModeSelector,
+  trackingEnabledSelector,
+  dismissedContentCardsSelector,
+  anonymousBrazeIdSelector,
+} from "../reducers/settings";
+import { clearDismissedContentCards, setAnonymousBrazeId } from "../actions/settings";
 import { getEnv } from "@ledgerhq/live-env";
+import { getOldCampaignIds, generateAnonymousId } from "@ledgerhq/live-common/braze/anonymousUsers";
 
 const getDesktopCards = (elem: braze.ContentCards) =>
   elem.cards.filter(card => card.extras?.platform === Platform.Desktop);
@@ -80,11 +87,20 @@ export const mapAsNotificationContentCard = (card: ClassicCard): NotificationCon
 export async function useBraze() {
   const dispatch = useDispatch();
   const devMode = useSelector(developerModeSelector);
+  const contentCardsDissmissed = useSelector(dismissedContentCardsSelector);
+  const isTrackedUser = useSelector(trackingEnabledSelector);
+  const anonymousBrazeId = useRef(useSelector(anonymousBrazeIdSelector));
 
   const initBraze = useCallback(async () => {
     const user = await getUser();
     const brazeConfig = getBrazeConfig();
     const isPlaywright = !!getEnv("PLAYWRIGHT_RUN");
+    dispatch(clearDismissedContentCards(getOldCampaignIds(contentCardsDissmissed)));
+
+    if (!anonymousBrazeId.current) {
+      anonymousBrazeId.current = generateAnonymousId();
+      dispatch(setAnonymousBrazeId(anonymousBrazeId.current));
+    }
 
     braze.initialize(brazeConfig.apiKey, {
       baseUrl: brazeConfig.endpoint,
@@ -99,9 +115,7 @@ export async function useBraze() {
       return;
     }
 
-    if (user) {
-      braze.changeUser(user.id);
-    }
+    if (user) braze.changeUser(isTrackedUser ? user.id : anonymousBrazeId.current);
 
     braze.requestPushPermission();
 
@@ -109,16 +123,23 @@ export async function useBraze() {
 
     braze.subscribeToContentCardsUpdates(cards => {
       const desktopCards = getDesktopCards(cards);
+      const dismissedCardIds = Object.keys(contentCardsDissmissed);
+      const filteredDesktopCards = desktopCards.filter(
+        card => !dismissedCardIds.includes(String(card.id)),
+      );
 
-      const portfolioCards = filterByPage(desktopCards, LocationContentCard.Portfolio)
+      const portfolioCards = filterByPage(filteredDesktopCards, LocationContentCard.Portfolio)
         .map(card => mapAsPortfolioContentCard(card as ClassicCard))
         .sort(compareCards);
 
-      const actionCards = filterByPage(desktopCards, LocationContentCard.Action)
+      const actionCards = filterByPage(filteredDesktopCards, LocationContentCard.Action)
         .map(card => mapAsActionContentCard(card as ClassicCard))
         .sort(compareCards);
 
-      const notificationsCards = filterByPage(desktopCards, LocationContentCard.NotificationCenter)
+      const notificationsCards = filterByPage(
+        filteredDesktopCards,
+        LocationContentCard.NotificationCenter,
+      )
         .map(card => mapAsNotificationContentCard(card as ClassicCard))
         .sort(compareCards);
 
@@ -129,7 +150,7 @@ export async function useBraze() {
 
     braze.automaticallyShowInAppMessages();
     braze.openSession();
-  }, [dispatch, devMode]);
+  }, [dispatch, devMode, isTrackedUser, contentCardsDissmissed, anonymousBrazeId]);
 
   useEffect(() => {
     initBraze();

@@ -66,6 +66,7 @@ import DebugTermsOfUse from "~/screens/Settings/Debug/Features/TermsOfUse";
 import CameraPermissions from "~/screens/Settings/Debug/Debugging/CameraPermissions";
 import DebugQueuedDrawers from "~/screens/Settings/Debug/Features/QueuedDrawers";
 import BleEDevicePairingScreen from "~/screens/Settings/Debug/Features/BleDevicePairingScreen";
+import EditCurrencyUnits from "~/screens/Settings/CryptoAssets/Currencies/EditCurrencyUnits";
 
 const Stack = createStackNavigator<SettingsNavigatorStackParamList>();
 
@@ -154,6 +155,15 @@ export default function SettingsNavigator() {
         })}
         {...noNanoBuyNanoWallScreenOptions}
       />
+
+      <Stack.Screen
+        name={ScreenName.EditCurrencyUnits}
+        component={EditCurrencyUnits}
+        options={{
+          title: t("account.settings.accountUnits.title"),
+        }}
+      />
+
       <Stack.Screen
         name={ScreenName.ExperimentalSettings}
         component={ExperimentalSettings}

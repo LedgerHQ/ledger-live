@@ -122,7 +122,7 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
           </Text>
         </Flex>
       ) : null}
-      <Flex flex={1}>
+      <Flex flex={1} mb={8}>
         <SelectDevice2
           onSelect={onSelectDevice}
           stopBleScanning={!!device}
@@ -131,7 +131,11 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
           withMyLedgerTracking
           hasPostOnboardingEntryPointCard
         >
-          <ContentCardsLocation locationId={ContentCardLocation.MyLedger} />
+          <ContentCardsLocation
+            key="contentCardsLocationMyLedger"
+            locationId={ContentCardLocation.MyLedger}
+            mt={3}
+          />
         </SelectDevice2>
       </Flex>
       <DeviceActionModal

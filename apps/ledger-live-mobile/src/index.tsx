@@ -28,7 +28,11 @@ import {
   saveCountervalues,
   savePostOnboardingState,
 } from "./db";
-import { exportSelector as settingsExportSelector, osThemeSelector } from "~/reducers/settings";
+import {
+  exportSelector as settingsExportSelector,
+  osThemeSelector,
+  hasSeenAnalyticsOptInPromptSelector,
+} from "~/reducers/settings";
 import { accountsSelector, exportSelector as accountsExportSelector } from "~/reducers/accounts";
 import { exportSelector as bleSelector } from "~/reducers/ble";
 import LocaleProvider, { i18n } from "~/context/Locale";
@@ -65,7 +69,7 @@ import { useListenToHidDevices } from "~/hooks/useListenToHidDevices";
 import { DeeplinksProvider } from "~/navigation/DeeplinksProvider";
 import StyleProvider from "./StyleProvider";
 import { performanceReportSubject } from "~/components/PerformanceConsole/usePerformanceReportsLog";
-import { setOsTheme } from "~/actions/settings";
+import { setAnalytics, setOsTheme, setPersonalizedRecommendations } from "~/actions/settings";
 import TransactionsAlerts from "~/components/TransactionsAlerts";
 import {
   useFetchCurrencyAll,
@@ -73,10 +77,11 @@ import {
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import useAccountsWithFundsListener from "@ledgerhq/live-common/hooks/useAccountsWithFundsListener";
 import { updateIdentify } from "./analytics";
-import { getFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { getFeature, useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { StorylyProvider } from "./components/StorylyStories/StorylyProvider";
 import { useSettings } from "~/hooks";
 import AppProviders from "./AppProviders";
+import { useAutoDismissPostOnboardingEntryPoint } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -97,12 +102,22 @@ const styles = StyleSheet.create({
 
 function App() {
   const accounts = useSelector(accountsSelector);
+  const analyticsFF = useFeature("llmAnalyticsOptInPrompt");
+  const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (!analyticsFF?.enabled || hasSeenAnalyticsOptInPrompt) return;
+    dispatch(setAnalytics(false));
+    dispatch(setPersonalizedRecommendations(false));
+  }, [analyticsFF?.enabled, dispatch, hasSeenAnalyticsOptInPrompt]);
 
   useAccountsWithFundsListener(accounts, updateIdentify);
   useAppStateListener();
   useFetchCurrencyAll();
   useFetchCurrencyFrom();
   useListenToHidDevices();
+  useAutoDismissPostOnboardingEntryPoint();
 
   const getSettingsChanged = useCallback((a: State, b: State) => a.settings !== b.settings, []);
   const getAccountsChanged = useCallback(
@@ -274,31 +289,32 @@ export default class Root extends Component {
                 <HookNotifications />
                 <HookDynamicContentCards />
                 <TermsAndConditionMigrateLegacyData />
-                <PlatformAppProviderWrapper>
-                  <FirebaseRemoteConfigProvider>
-                    <FirebaseFeatureFlagsProvider getFeature={getFeature}>
-                      <SafeAreaProvider>
-                        <PerformanceProvider>
-                          <StorylyProvider>
-                            <StylesProvider>
-                              <StyledStatusBar />
-                              <NavBarColorHandler />
-                              <I18nextProvider i18n={i18n}>
-                                <LocaleProvider>
+                <I18nextProvider i18n={i18n}>
+                  <LocaleProvider>
+                    <PlatformAppProviderWrapper>
+                      <FirebaseRemoteConfigProvider>
+                        <FirebaseFeatureFlagsProvider getFeature={getFeature}>
+                          <SafeAreaProvider>
+                            <PerformanceProvider>
+                              <StorylyProvider>
+                                <StylesProvider>
+                                  <StyledStatusBar />
+                                  <NavBarColorHandler />
+
                                   <AuthPass>
                                     <AppProviders initialCountervalues={initialCountervalues}>
                                       <App />
                                     </AppProviders>
                                   </AuthPass>
-                                </LocaleProvider>
-                              </I18nextProvider>
-                            </StylesProvider>
-                          </StorylyProvider>
-                        </PerformanceProvider>
-                      </SafeAreaProvider>
-                    </FirebaseFeatureFlagsProvider>
-                  </FirebaseRemoteConfigProvider>
-                </PlatformAppProviderWrapper>
+                                </StylesProvider>
+                              </StorylyProvider>
+                            </PerformanceProvider>
+                          </SafeAreaProvider>
+                        </FirebaseFeatureFlagsProvider>
+                      </FirebaseRemoteConfigProvider>
+                    </PlatformAppProviderWrapper>
+                  </LocaleProvider>
+                </I18nextProvider>
               </>
             ) : (
               <LoadingApp />

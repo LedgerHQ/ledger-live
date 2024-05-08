@@ -1,8 +1,4 @@
-import {
-  getAccountCurrency,
-  getAccountName,
-  getAccountUnit,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import {
   isSwapOperationPending,
   operationStatusList,
@@ -10,6 +6,7 @@ import {
 import { MappedSwapOperation } from "@ledgerhq/live-common/exchange/swap/types";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import styled, { DefaultTheme } from "styled-components";
 import Box from "~/renderer/components/Box";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
@@ -22,6 +19,8 @@ import IconClock from "~/renderer/icons/Clock";
 import IconSwap from "~/renderer/icons/Swap";
 import { rgba } from "~/renderer/styles/helpers";
 import { hourFormat, useDateFormatted } from "~/renderer/hooks/useDateFormatter";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { useAccountName } from "~/renderer/reducers/wallet";
 
 export const getStatusColor = (status: string, theme: DefaultTheme) => {
   if (isSwapOperationPending(status)) {
@@ -102,6 +101,12 @@ const OperationRow = ({
   const fromCurrency = getAccountCurrency(fromAccount);
   const toCurrency = getAccountCurrency(toAccount);
   const dateFormatted = useDateFormatted(operation.date, hourFormat);
+  const { t } = useTranslation();
+
+  const unitFrom = useAccountUnit(fromAccount);
+  const unitTo = useAccountUnit(toAccount);
+  const fromAccountName = useAccountName(fromAccount);
+  const toAccountName = useAccountName(toAccount);
 
   return (
     <Row
@@ -112,17 +117,7 @@ const OperationRow = ({
       alignItems={"center"}
       onClick={() => openSwapOperationDetailsModal(mappedSwapOperation)}
     >
-      <Tooltip
-        content={
-          <span
-            style={{
-              textTransform: "capitalize",
-            }}
-          >
-            {status}
-          </span>
-        }
-      >
+      <Tooltip content={<span>{t(`swap2.history.status.${status}`)}</span>}>
         <Status status={status}>
           <IconSwap size={12} />
           {isSwapOperationPending(status) ? (
@@ -144,9 +139,9 @@ const OperationRow = ({
         <Box alignItems="center" justifyContent="center">
           <CryptoCurrencyIcon size={16} currency={fromCurrency} />
         </Box>
-        <Tooltip delay={1200} content={getAccountName(fromAccount)}>
+        <Tooltip delay={1200} content={fromAccountName}>
           <Ellipsis ff="Inter|SemiBold" ml={1} color="palette.text.shade100" fontSize={3}>
-            {getAccountName(fromAccount)}
+            {fromAccountName}
           </Ellipsis>
         </Tooltip>
       </Box>
@@ -157,22 +152,22 @@ const OperationRow = ({
         <Box alignItems="center" justifyContent="center">
           <CryptoCurrencyIcon size={16} currency={toCurrency} />
         </Box>
-        <Tooltip delay={1200} content={getAccountName(toAccount)}>
+        <Tooltip delay={1200} content={toAccountName}>
           <Ellipsis ff="Inter|SemiBold" ml={1} color="palette.text.shade100" fontSize={3}>
-            {getAccountName(toAccount)}
+            {toAccountName}
           </Ellipsis>
         </Tooltip>
       </Box>
       <Box alignItems={"flex-end"} ml={20}>
         <Text ff={"Inter|SemiBold"} fontSize={4}>
-          <FormattedVal alwaysShowSign val={toAmount} unit={getAccountUnit(toAccount)} showCode />
+          <FormattedVal alwaysShowSign val={toAmount} unit={unitTo} showCode />
         </Text>
         <Text ff={"Inter|SemiBold"} fontSize={3}>
           <FormattedVal
             color="palette.text.shade60"
             alwaysShowSign
             val={fromAmount.times(-1)}
-            unit={getAccountUnit(fromAccount)}
+            unit={unitFrom}
             showCode
           />
         </Text>

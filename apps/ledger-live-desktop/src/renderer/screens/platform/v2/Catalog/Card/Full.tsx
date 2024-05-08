@@ -72,13 +72,19 @@ export function FullCard(props: PropsCard<LiveAppManifest>) {
           <Subtitle>{subtitle || hostname}</Subtitle>
         </Flex>
       </Flex>
-      <Flex flexDirection="row" flexWrap={"wrap"} rowGap={20} columnGap={20} mt={20} mb={0}>
+      <Flex
+        flexDirection={"column"}
+        rowGap={20}
+        justifyContent={"space-between"}
+        columnGap={20}
+        mt={20}
+        mb={0}
+      >
         <Flex flex={3} minWidth={100}>
           <Text fontSize={13} flex={3} color={highlighted ? "white" : "opacityDefault.c70"}>
             {manifest.content.shortDescription[language] ?? manifest.content.shortDescription.en}
           </Text>
         </Flex>
-
         {cta && <Cta text={cta} />}
       </Flex>
     </Container>

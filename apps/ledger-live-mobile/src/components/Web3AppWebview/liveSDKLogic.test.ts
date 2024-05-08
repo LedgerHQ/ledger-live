@@ -6,8 +6,11 @@ import {
   TokenCurrency,
 } from "@ledgerhq/types-cryptoassets";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
-import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
+import { getWalletAPITransactionSignFlowInfos } from "@ledgerhq/live-common/wallet-api/converters";
+import { WalletAPITransaction } from "@ledgerhq/live-common/wallet-api/types";
+import { getPlatformTransactionSignFlowInfos } from "@ledgerhq/live-common/platform/converters";
+import { PLATFORM_FAMILIES_ENUM, PlatformTransaction } from "@ledgerhq/live-common/platform/types";
 
 import prepareSignTransaction from "./liveSDKLogic";
 
@@ -17,7 +20,7 @@ jest.mock("@ledgerhq/coin-framework/currencies/support", () => ({
 }));
 
 describe("prepareSignTransaction", () => {
-  it("returns a Transaction", () => {
+  it("returns a Transaction for platform", () => {
     // Given
     const parentAccount = createAccount("12");
     const childAccount = createTokenAccount("22", "js:2:ethereum:0x012:");
@@ -25,7 +28,7 @@ describe("prepareSignTransaction", () => {
       amount: new BigNumber("1000"),
       data: Buffer.from([]),
       family: "evm",
-      feesStrategy: "medium",
+      feesStrategy: "custom",
       gasPrice: new BigNumber("700000"),
       gasLimit: new BigNumber("1200000"),
       customGasLimit: new BigNumber("1200000"),
@@ -36,12 +39,53 @@ describe("prepareSignTransaction", () => {
       useAllAmount: false,
       maxFeePerGas: undefined,
       maxPriorityFeePerGas: undefined,
-      type: 1,
+      type: 0,
       chainId: 0,
     };
 
     // When
-    const result = prepareSignTransaction(childAccount, parentAccount, createEtherumTransaction());
+    const tx = createPlatformTransaction();
+
+    const { liveTx } = getPlatformTransactionSignFlowInfos(tx);
+
+    const result = prepareSignTransaction(childAccount, parentAccount, liveTx);
+
+    // Then
+    expect(result).toEqual(expectedResult);
+  });
+
+  it("returns a Transaction for wallet-api", () => {
+    // Given
+    const parentAccount = createAccount("12");
+    const childAccount = createTokenAccount("22", "js:2:ethereum:0x012:");
+    const expectedResult: EvmTransaction = {
+      amount: new BigNumber("1000"),
+      data: Buffer.from([]),
+      family: "evm",
+      feesStrategy: "custom",
+      gasPrice: new BigNumber("700000"),
+      gasLimit: new BigNumber("1200000"),
+      customGasLimit: new BigNumber("1200000"),
+      mode: "send",
+      nonce: 8,
+      recipient: "0x0123456",
+      subAccountId: "js:2:ethereum:0x022:",
+      useAllAmount: false,
+      maxFeePerGas: undefined,
+      maxPriorityFeePerGas: undefined,
+      type: 0,
+      chainId: 0,
+    };
+
+    // When
+    const tx = createWalletAPITransaction();
+
+    const { liveTx } = getWalletAPITransactionSignFlowInfos({
+      walletApiTransaction: tx,
+      account: childAccount,
+    });
+
+    const result = prepareSignTransaction(childAccount, parentAccount, liveTx);
 
     // Then
     expect(result).toEqual(expectedResult);
@@ -49,9 +93,21 @@ describe("prepareSignTransaction", () => {
 });
 
 // *** UTIL FUNCTIONS ***
-function createEtherumTransaction(): Partial<Transaction & { gasLimit: BigNumber }> {
+function createWalletAPITransaction(): WalletAPITransaction {
   return {
-    family: "evm",
+    family: "ethereum",
+    amount: new BigNumber("1000"),
+    recipient: "0x0123456",
+    nonce: 8,
+    data: Buffer.from("Some data...", "hex"),
+    gasPrice: new BigNumber("700000"),
+    gasLimit: new BigNumber("1200000"),
+  };
+}
+
+function createPlatformTransaction(): PlatformTransaction {
+  return {
+    family: PLATFORM_FAMILIES_ENUM.ETHEREUM,
     amount: new BigNumber("1000"),
     recipient: "0x0123456",
     nonce: 8,
@@ -101,20 +157,12 @@ const createAccount = (id: string, crypto: CryptoCurrency = defaultEthCryptoFami
   index: 0,
   freshAddress: "0x01",
   freshAddressPath: "44'/60'/0'/0/0",
-  freshAddresses: [],
-  name: "Ethereum 1",
-  starred: false,
   used: false,
   balance: new BigNumber("51281813126095913"),
   spendableBalance: new BigNumber("51281813126095913"),
   creationDate: new Date(),
   blockHeight: 8168983,
   currency: crypto,
-  unit: {
-    name: "satoshi",
-    code: "BTC",
-    magnitude: 5,
-  },
   operationsCount: 0,
   operations: [],
   pendingOperations: [],
@@ -148,7 +196,6 @@ function createTokenAccount(id = "32", parentId = "whatever"): TokenAccount {
     operationsCount: 0,
     operations: [],
     pendingOperations: [],
-    starred: false,
     balanceHistoryCache: {
       WEEK: { latestDate: null, balances: [] },
       HOUR: { latestDate: null, balances: [] },

@@ -2,7 +2,7 @@ import { Account, AccountLike } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import flatMap from "lodash/flatMap";
 import { getAccountCurrency } from "../../account";
-import { TokenAccount } from "../solana/api/chain/account/token";
+import { TokenAccount } from "@ledgerhq/coin-solana/api/chain/account/token";
 import { CardanoAccount, Transaction } from "./types";
 
 const options = [

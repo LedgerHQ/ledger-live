@@ -42,7 +42,7 @@ const renderItem = (item: { data: EnhancedUnbonding }) => {
       </Box>
 
       <Text ff="Inter|Regular">
-        {balance} {"EGLD"} {/* FIXME Should be getAccountUnit(account).code */}
+        {balance} {"EGLD"}
       </Text>
     </Box>
   );

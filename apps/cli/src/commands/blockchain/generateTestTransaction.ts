@@ -10,6 +10,7 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import type { InferTransactionsOpts } from "../../transaction";
 import { inferTransactions, inferTransactionsOpts } from "../../transaction";
 import type { SignedOperation } from "@ledgerhq/types-live";
+import { getDefaultAccountNameForCurrencyIndex } from "@ledgerhq/live-wallet/accountName";
 
 const toJS = obj => {
   if (typeof obj === "object" && obj) {
@@ -118,12 +119,11 @@ ${apdus.map(a => "  " + a).join("\n")}
           reduce((jsCodes, code) => jsCodes.concat(code), []),
           map(
             codes => `{
-  name: "${account.name}",
+  name: "${getDefaultAccountNameForCurrencyIndex(account)}",
   raw: ${JSON.stringify(
     toAccountRaw({
       ...account,
       operations: [],
-      freshAddresses: [],
     }),
   )},
   transactions: [

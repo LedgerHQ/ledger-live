@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import type { Account } from "@ledgerhq/types-live";
-import { getMainAccount, getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import type {
@@ -34,6 +34,7 @@ import {
 } from "~/components/RootNavigator/types/helpers";
 import { UnfreezeNavigatorParamList } from "~/components/RootNavigator/types/UnfreezeNavigator";
 import { getUnfreezeData } from "@ledgerhq/live-common/families/tron/react";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props = StackNavigatorProps<UnfreezeNavigatorParamList, ScreenName.UnfreezeAmount>;
 
@@ -55,7 +56,7 @@ function UnfreezeAmountInner({ account }: InnerProps) {
   const { colors } = useTheme();
   const navigation = useNavigation<StackNavigatorNavigation<UnfreezeNavigatorParamList>>();
   const bridge = getAccountBridge(account, undefined);
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const { tronResources } = account as TronAccount;
   invariant(tronResources, "tron resources expected");
   const { unfreezeBandwidth, unfreezeEnergy, canUnfreezeBandwidth, canUnfreezeEnergy } = useMemo(

@@ -9,7 +9,7 @@ import React, {
   useCallback,
   ReactElement,
 } from "react";
-import { getAccountCurrency, getAccountUnit } from "@ledgerhq/coin-framework/account/helpers";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/helpers";
 import {
   initialState,
   calculate,
@@ -70,8 +70,11 @@ const CountervaluesPollingContext = createContext<Polling>({
 });
 
 const CountervaluesUserSettingsContext = createContext<CountervaluesSettings>({
+  // dummy values that are overriden by the context provider
   trackingPairs: [],
   autofillGaps: true,
+  refreshRate: 0,
+  marketCapBatchingAfterRank: 0,
 });
 
 const CountervaluesContext = createContext<CounterValuesState>(initialState);
@@ -164,12 +167,25 @@ export function Countervalues({
   children,
   userSettings,
   pollInitDelay = 3 * 1000,
-  autopollInterval = 8 * 60 * 1000,
   debounceDelay = 1000,
   savedState,
 }: Props): ReactElement {
+  const autopollInterval = userSettings.refreshRate;
   const debouncedUserSettings = useDebounce(userSettings, debounceDelay);
   const [{ state, pending, error }, dispatch] = useReducer(fetchReducer, initialFetchState);
+
+  const marketcapIds = useContext(CountervaluesMarketcapIdsContext);
+
+  const { marketCapBatchingAfterRank } = userSettings;
+  const batchStrategySolver = useMemo(() => {
+    return {
+      shouldBatchCurrencyFrom: (currency: Currency) => {
+        if (currency.type === "FiatCurrency") return false;
+        const i = marketcapIds.indexOf(currency.id);
+        return i === -1 || i > marketCapBatchingAfterRank;
+      },
+    };
+  }, [marketCapBatchingAfterRank, marketcapIds]);
 
   // flag used to trigger a loadCountervalues
   const [triggerLoad, setTriggerLoad] = useState(false);
@@ -186,7 +202,7 @@ export function Countervalues({
       type: "pending",
     });
 
-    loadCountervalues(state, userSettings).then(
+    loadCountervalues(state, userSettings, batchStrategySolver).then(
       state => {
         dispatch({
           type: "success",
@@ -200,7 +216,7 @@ export function Countervalues({
         });
       },
     );
-  }, [pending, state, userSettings, triggerLoad]);
+  }, [pending, state, userSettings, triggerLoad, batchStrategySolver]);
 
   // save the state when it changes
   useEffect(() => {
@@ -380,7 +396,6 @@ export function useSendAmount({
   fiatCurrency: Currency;
   cryptoAmount: BigNumber;
 }): {
-  cryptoUnit: Unit;
   fiatAmount: BigNumber;
   fiatUnit: Unit;
   calculateCryptoAmount: (fiatAmount: BigNumber) => BigNumber;
@@ -394,7 +409,6 @@ export function useSendAmount({
   });
   const fiatAmount = new BigNumber(fiatCountervalue ?? 0);
   const fiatUnit = fiatCurrency.units[0];
-  const cryptoUnit = getAccountUnit(account);
   const state = useCountervaluesState();
   const calculateCryptoAmount = useCallback(
     (fiatAmount: BigNumber) => {
@@ -411,7 +425,6 @@ export function useSendAmount({
     [state, cryptoCurrency, fiatCurrency],
   );
   return {
-    cryptoUnit,
     fiatAmount,
     fiatUnit,
     calculateCryptoAmount,

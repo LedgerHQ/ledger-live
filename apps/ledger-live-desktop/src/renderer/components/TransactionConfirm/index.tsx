@@ -2,7 +2,7 @@ import invariant from "invariant";
 import React, { useMemo } from "react";
 import styled from "styled-components";
 import { Account, AccountLike, TransactionCommon } from "@ledgerhq/types-live";
-import { getAccountUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getDeviceTransactionConfig } from "@ledgerhq/live-common/transaction/index";
@@ -19,6 +19,7 @@ import { getDeviceAnimation } from "../DeviceAction/animations";
 import { DeviceBlocker } from "../DeviceAction/DeviceBlocker";
 import ConfirmAlert from "./ConfirmAlert";
 import ConfirmTitle from "./ConfirmTitle";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const FieldText = styled(Text).attrs(() => ({
   ml: 1,
@@ -34,24 +35,27 @@ const FieldText = styled(Text).attrs(() => ({
 export type FieldComponentProps = FCPGeneric<Account, TransactionCommon, TransactionStatus>;
 export type FieldComponent = React.ComponentType<FieldComponentProps>;
 
-const AmountField = ({ account, status: { amount }, field }: FieldComponentProps) => (
-  <TransactionConfirmField label={field.label}>
-    <FormattedVal
-      color={"palette.text.shade80"}
-      unit={getAccountUnit(account)}
-      val={amount}
-      fontSize={3}
-      inline
-      showCode
-      alwaysShowValue
-      disableRounding
-    />
-  </TransactionConfirmField>
-);
+const AmountField = ({ account, status: { amount }, field }: FieldComponentProps) => {
+  const unit = useAccountUnit(account);
+  return (
+    <TransactionConfirmField label={field.label}>
+      <FormattedVal
+        color={"palette.text.shade80"}
+        unit={unit}
+        val={amount}
+        fontSize={3}
+        inline
+        showCode
+        alwaysShowValue
+        disableRounding
+      />
+    </TransactionConfirmField>
+  );
+};
 const FeesField = ({ account, parentAccount, status, field }: FieldComponentProps) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const { estimatedFees } = status;
-  const feesUnit = getAccountUnit(mainAccount);
+  const feesUnit = useAccountUnit(mainAccount);
   return (
     <TransactionConfirmField label={field.label}>
       <FormattedVal
@@ -130,6 +134,10 @@ const TransactionConfirm = ({
     status,
   });
 
+  const displayedFields = useMemo(() => {
+    return fields.filter(field => field.label !== "Address");
+  }, [fields]);
+
   const typeTransaction: string | undefined = useMemo(() => {
     const typeField = fields.find(field => field.label && field.label === "Type");
 
@@ -177,7 +185,7 @@ const TransactionConfirm = ({
           }}
           mb={20}
         >
-          {fields.map((field, i) => {
+          {displayedFields.map((field, i) => {
             const MaybeComponent = fieldComponents[field.type];
             if (!MaybeComponent) {
               console.warn(

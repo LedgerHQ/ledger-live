@@ -71,7 +71,6 @@ export default function AccountHeaderRight() {
             <WalletConnectAction currency={currency} event={"WalletConnect Account Button"} />
           </Flex>
         )}
-
         <Touchable
           event="button_clicked"
           eventProperties={{

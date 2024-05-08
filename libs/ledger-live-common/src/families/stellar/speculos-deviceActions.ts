@@ -2,6 +2,7 @@ import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
 import { formatCurrencyUnit } from "../../currencies";
 import { deviceActionFlow, formatDeviceAmount, SpeculosButton } from "../../bot/specs";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
 
 const expectedAmount = ({ account, status, transaction }) => {
   if (transaction.assetCode && transaction.assetIssuer) {
@@ -35,7 +36,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
       title: "Max Fee",
       button: SpeculosButton.RIGHT,
       expectedValue: ({ account, status }) =>
-        formatCurrencyUnit(account.unit, status.estimatedFees, {
+        formatCurrencyUnit(getAccountCurrency(account).units[0], status.estimatedFees, {
           disableRounding: true,
         }) + " XLM",
     },

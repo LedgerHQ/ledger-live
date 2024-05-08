@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import { getAccountUnit } from "../../account";
+import { getAccountCurrency } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 import { CardanoAccount } from "./types";
 
@@ -7,7 +7,7 @@ export function formatAccountSpecifics(account: CardanoAccount): string {
   const { cardanoResources } = account;
   invariant(cardanoResources, "cardano account expected");
 
-  const unit = getAccountUnit(account);
+  const unit = getAccountCurrency(account).units[0];
   const formatConfig = {
     disableRounding: true,
     alwaysShowSign: false,

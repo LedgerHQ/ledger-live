@@ -4,9 +4,9 @@ import { catchError, switchMap, concatMap, takeWhile, map } from "rxjs/operators
 import { log } from "@ledgerhq/logs";
 import { TransportStatusError, UserRefusedAddress } from "@ledgerhq/errors";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { getCryptoCurrencyById } from "./currencies";
 import { getEnv } from "@ledgerhq/live-env";
 import { DerivationMode } from "@ledgerhq/types-live";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 
 export type ModeSpec = {
   mandatoryEmptyAccountSkip?: number;

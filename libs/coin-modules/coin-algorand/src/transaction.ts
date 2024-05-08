@@ -1,12 +1,12 @@
-import { getAccountUnit } from "@ledgerhq/coin-framework/account/index";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import { formatTransactionStatus } from "@ledgerhq/coin-framework/formatters";
 import {
-  formatTransactionStatusCommon as formatTransactionStatus,
   fromTransactionCommonRaw,
   fromTransactionStatusRawCommon as fromTransactionStatusRaw,
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
-} from "@ledgerhq/coin-framework/transaction/common";
+} from "@ledgerhq/coin-framework/serialization";
 import type { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import type { AlgorandTransaction, AlgorandTransactionRaw } from "./types";
@@ -21,7 +21,7 @@ export const formatTransaction = (
     ${mode === "claimReward" ? "CLAIM REWARD" : mode === "optIn" ? "OPT_IN" : "SEND"} ${
       useAllAmount
         ? "MAX"
-        : formatCurrencyUnit(getAccountUnit(account), amount, {
+        : formatCurrencyUnit(getAccountCurrency(account).units[0], amount, {
             showCode: true,
             disableRounding: false,
           })
@@ -30,7 +30,7 @@ export const formatTransaction = (
     with fees=${
       !fees
         ? "?"
-        : formatCurrencyUnit(getAccountUnit(mainAccount), fees, {
+        : formatCurrencyUnit(mainAccount.currency.units[0], fees, {
             showCode: true,
             disableRounding: false,
           })

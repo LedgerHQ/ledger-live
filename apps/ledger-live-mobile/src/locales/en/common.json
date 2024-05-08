@@ -329,8 +329,8 @@
       "description": "Please use My Ledger to uninstall all apps then check if a firmware update is available before reinstalling them."
     },
     "LatestFirmwareVersionRequired": {
-      "title": "Device update required on desktop",
-      "description": "Please update your Nano X firmware on Ledger Live Desktop"
+      "title": "Update Device Firmware",
+      "description": "Please update your device firmware to the latest version to access this feature"
     },
     "GenuineCheckFailed": {
       "title": "Device authentication failed",
@@ -485,7 +485,7 @@
       "description": "Please send some EGLD to your account to pay for transactions."
     },
     "NotEnoughBalance": {
-      "title": "Sorry, insufficient balance including network fees. Adjust amount or verify balance",
+      "title": "Sorry, insufficient balance including network fees. Adjust amount or verify balance.",
       "description": "Please make sure the account has enough funds."
     },
     "NoSuchAppOnProvider": {
@@ -2153,6 +2153,24 @@
       "restoreChoiceRecoverTitle": "Restore using Ledger Recover",
       "restoreChoiceRecoverDescription": "If you’re subscribed to Ledger Recover, log in to your subscription to initiate the restore process for the backup for your Secret Recovery Phrase."
     },
+    "backup": {
+      "title": "Backup for your Secret Recovery Phrase",
+      "description": "With a digital encrypted backup, restore access to your wallet without your Secret Recovery Phrase.\n\nChoose if you’d like a digital backup:",
+      "backupChoice": {
+        "title": "I want a digital backup",
+        "titleSelected": "Ledger Recover",
+        "tag": "Popular",
+        "description": "Subscribe to Ledger Recover for $9.99 per month. Start for free. Cancel anytime!",
+        "tryCta": "Try it for free",
+        "redeemCodeCta": "I have a redeem code",
+        "howItWorksCta": "I want to know more"
+      },
+      "manualBackup": {
+        "title": "No, I’m good with paper",
+        "description": "Without a digital backup, the Recovery Sheet is your only way to restore wallet access. Don’t lose it.",
+        "cta": "I understand"
+      }
+    },
     "appsStep": {
       "title": "Install apps on {{productName}}"
     },
@@ -2432,6 +2450,10 @@
         "description2": "Developers from anywhere in the world can integrate with our Ledger Live",
         "description3": "This integration has been carried out by {{team}} in collaboration with Ledger"
       }
+    },
+    "willBedeprecatedBanner": {
+      "title": "To optimize efficiencies, {{currencyName}} will not be supported on Ledger Live as of {{deprecatedDate}}. However, it will still be supported on Ledger hardware wallets. Please contact Ledger Customer Support if you would like assistance on this.",
+      "contactSupport": "Contact support"
     },
     "tokens": {
       "contractAddress": "Contract address",
@@ -3830,6 +3852,11 @@
         "title": "Add Token",
         "disclaimer": "{{tokenName}} is a TRC20 Token.\nYou can receive tokens directly in a Tron account.",
         "learnMore": "Learn more about TRC20"
+      },
+      "asa": {
+        "title": "Add Token",
+        "disclaimer": "{{tokenName}} is an ASA Token.\nYou can receive tokens directly on an Algorand account.",
+        "learnMore": "Learn more"
       },
       "bep20": {
         "title": "Add Token",
@@ -6379,34 +6406,40 @@
   },
   "postOnboarding": {
     "hub": {
-      "title": "Next up, use your {{productName}} to:",
-      "allDoneTitle": "and that’s a wrap!",
+      "title": "Next up, use your {{productName}} to...",
+      "allDoneTitle": "You're all set! Keep going and explore your portfolio",
       "skip": "I’ll do this later",
-      "viewWallet": "View my wallet"
+      "viewWallet": "Explore my portfolio"
     },
     "entryPointCard": {
       "title": "What's next for your {{productName}}?",
-      "description": "Claim the Infinity NFT, customize its lock screen, or transfer your assets from other exchanges.",
+      "description": "Transfer your assets from any exchange or wallet, buy crypto, customize its lock screen, or subscribe to Ledger Recover.",
       "buttonLabel": "See what's next"
     },
     "actions": {
-      "customImage": {
-        "title": "Set a lock screen picture",
-        "titleCompleted": "Lock screen picture set",
-        "description": "Choose any digital art or picture to set as the lock screen.",
-        "popupLabel": "Lockscreen set"
-      },
       "assetsTransfer": {
         "title": "Transfer your assets to Ledger",
         "titleCompleted": "Assets transferred to Ledger",
-        "description": "Easily transfer assets from Coinbase or any other exchange or wallet.",
+        "description": "From any exchange or wallet, directly to your Ledger.",
         "popupLabel": "Assets transferred"
       },
       "buyCrypto": {
         "title": "Buy Crypto",
-        "titleCompleted": "Assets transferred to Ledger",
-        "description": "Choose from 500+ coins and the best quotes from buy-providers, tailored to your preferences.",
+        "titleCompleted": "Crypto bought",
+        "description": "Choose from 500+ coins and the best quotes, tailored to your preferences.",
         "popupLabel": "Crypto bought"
+      },
+      "customImage": {
+        "title": "Customize the lock screen",
+        "titleCompleted": "Lock screen customized",
+        "description": "Choose any digital art or picture to set as your {{productName}}'s lock screen.",
+        "popupLabel": "Lock screen customized successfully"
+      },
+      "recover": {
+        "title": "Subscribe to Ledger Recover",
+        "titleCompleted": "Subscribed to Ledger Recover",
+        "description": "Restore access to your wallet without needing your Secret Recovery Phrase.",
+        "popupLabel": "Successfully subscribed to Ledger Recover"
       }
     }
   },

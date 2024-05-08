@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/web-tools",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "private": true,
   "browser": {
     "fs": false,
@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@ledgerhq/coin-framework": "workspace:^",
+    "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/domain-service": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-eth": "workspace:^",

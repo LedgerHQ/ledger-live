@@ -5,7 +5,7 @@ import { from } from "rxjs";
 import { reduce, concatMap, map } from "rxjs/operators";
 import type { Account, PortfolioRange } from "@ledgerhq/types-live";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
-import { flattenAccounts, getAccountName } from "@ledgerhq/live-common/account/index";
+import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 import { getPortfolio, getRanges } from "@ledgerhq/live-countervalues/portfolio";
 import { formatCurrencyUnit, findCurrencyByTicker } from "@ledgerhq/live-common/currencies/index";
 import { scan, scanCommonOpts } from "../../scan";
@@ -15,6 +15,7 @@ import {
   loadCountervalues,
   inferTrackingPairForAccounts,
 } from "@ledgerhq/live-countervalues/logic";
+import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 
 function asPortfolioRange(period: string): PortfolioRange {
   const ranges = getRanges();
@@ -62,6 +63,8 @@ export default {
           loadCountervalues(initialState, {
             trackingPairs: inferTrackingPairForAccounts(accounts, countervalue as Currency),
             autofillGaps: !opts.disableAutofillGaps,
+            refreshRate: 60000,
+            marketCapBatchingAfterRank: 20,
           }),
         ).pipe(
           map(state => {
@@ -114,14 +117,15 @@ export default {
 
             let str = "";
             accounts.forEach(top => {
-              str += render("Account " + getAccountName(top), [top]);
+              str += render("Account " + getDefaultAccountName(top), [top]);
               str += "\n";
 
               if (top.subAccounts) {
                 top.subAccounts.forEach(sub => {
-                  str += render("Account " + getAccountName(top) + " > " + getAccountName(sub), [
-                    sub,
-                  ]).replace(/\n/s, "  \n");
+                  str += render(
+                    "Account " + getDefaultAccountName(top) + " > " + getDefaultAccountName(sub),
+                    [sub],
+                  ).replace(/\n/s, "  \n");
                   str += "\n";
                 });
               }

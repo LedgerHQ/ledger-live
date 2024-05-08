@@ -1,5 +1,4 @@
 import { BigNumber } from "bignumber.js";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { NearValidatorItem } from "@ledgerhq/live-common/families/near/types";
 import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/near/constants";
 import { AccountLike } from "@ledgerhq/types-live";
@@ -10,6 +9,7 @@ import { StyleSheet, View } from "react-native";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import Touchable from "~/components/Touchable";
 import ValidatorImage from "./ValidatorImage";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 const ValidatorRow = ({
   onPress,
@@ -23,7 +23,7 @@ const ValidatorRow = ({
   const onPressT = useCallback(() => {
     onPress(validator);
   }, [validator, onPress]);
-
+  const unit = useAccountUnit(account);
   return (
     <Touchable
       event="DelegationFlowChosevalidator"
@@ -50,11 +50,7 @@ const ValidatorRow = ({
         </View>
         <Text fontWeight="semiBold" numberOfLines={1} style={[styles.validatorYield]} color="smoke">
           <Text fontWeight="semiBold" numberOfLines={1}>
-            <CurrencyUnitValue
-              showCode
-              unit={getAccountUnit(account)}
-              value={new BigNumber(validator.tokens)}
-            />
+            <CurrencyUnitValue showCode unit={unit} value={new BigNumber(validator.tokens)} />
           </Text>
         </Text>
       </View>

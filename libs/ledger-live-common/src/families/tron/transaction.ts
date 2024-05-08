@@ -1,14 +1,14 @@
 import { BigNumber } from "bignumber.js";
 import type { Transaction, TransactionRaw } from "./types";
+import { formatTransactionStatus } from "@ledgerhq/coin-framework/formatters";
 import {
-  formatTransactionStatusCommon as formatTransactionStatus,
   fromTransactionCommonRaw,
   fromTransactionStatusRawCommon as fromTransactionStatusRaw,
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
-} from "@ledgerhq/coin-framework/transaction/common";
+} from "@ledgerhq/coin-framework/serialization";
 import type { Account } from "@ledgerhq/types-live";
-import { getAccountUnit } from "../../account";
+import { getAccountCurrency } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 
 export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
@@ -66,7 +66,7 @@ ${t.mode.toUpperCase()}${t.resource ? " " + t.resource : ""} ${
       : t.amount.isZero()
       ? ""
       : " " +
-        formatCurrencyUnit(getAccountUnit(account), t.amount, {
+        formatCurrencyUnit(getAccountCurrency(account).units[0], t.amount, {
           showCode: true,
           disableRounding: true,
         })

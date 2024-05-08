@@ -1,6 +1,6 @@
 {
   "name": "live-mobile",
-  "version": "3.42.0",
+  "version": "3.43.0",
   "private": true,
   "scripts": {
     "postinstall": "zx ./scripts/post.mjs",
@@ -88,6 +88,7 @@
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-nft": "workspace:^",
     "@ledgerhq/live-nft-react": "workspace:^",
+    "@ledgerhq/live-wallet": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/native-ui": "workspace:^",
     "@ledgerhq/react-native-hid": "workspace:^",
@@ -134,6 +135,7 @@
     "expo-file-system": "~15.4.3",
     "expo-image-loader": "~4.3.0",
     "expo-image-manipulator": "~11.3.0",
+    "expo-keep-awake": "~12.3.0",
     "expo-modules-autolinking": "^1.5.0",
     "expo-modules-core": "^1.5.9",
     "fuse.js": "^6.4.6",

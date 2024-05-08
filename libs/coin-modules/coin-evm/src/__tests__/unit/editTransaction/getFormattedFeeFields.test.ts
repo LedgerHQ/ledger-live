@@ -37,7 +37,7 @@ const testCases: {
   .map(currency => {
     return {
       currencyName: currency.name,
-      account: { type: "Account", currency, unit: currency.units[0] } as Account,
+      account: { type: "Account", currency } as Account,
       type2Transaction: dummyType2Transaction,
       type0Transaction: dummyType0Transaction,
     };

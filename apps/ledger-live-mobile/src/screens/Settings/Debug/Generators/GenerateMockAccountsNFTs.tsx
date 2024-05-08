@@ -8,6 +8,10 @@ import SettingsRow from "~/components/SettingsRow";
 import accountModel from "~/logic/accountModel";
 import { saveAccounts } from "../../../../db";
 import { useReboot } from "~/context/Reboot";
+import {
+  initialState as liveWalletInitialState,
+  accountUserDataExportSelector,
+} from "@ledgerhq/live-wallet/store";
 
 const CURRENCIES_FOR_NFT = ["ethereum", "polygon"];
 
@@ -15,16 +19,16 @@ async function injectMockAccountsInDB(count: number) {
   await saveAccounts({
     active: Array(count)
       .fill(null)
-      .map(() =>
-        accountModel.encode(
-          genAccount(String(Math.random()), {
-            currency: sample(
-              listSupportedCurrencies().filter(c => CURRENCIES_FOR_NFT.includes(c.id)),
-            ),
-            withNft: true,
-          }),
-        ),
-      ),
+      .map(() => {
+        const account = genAccount(String(Math.random()), {
+          currency: sample(
+            listSupportedCurrencies().filter(c => CURRENCIES_FOR_NFT.includes(c.id)),
+          ),
+          withNft: true,
+        });
+        const userData = accountUserDataExportSelector(liveWalletInitialState, { account });
+        return accountModel.encode([account, userData]);
+      }),
   });
 }
 

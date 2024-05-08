@@ -68,13 +68,19 @@ export async function withApi<T>(
  */
 export const getTransaction: NodeApi["getTransaction"] = (currency, txHash) =>
   withApi(currency, async api => {
-    const { hash, blockNumber: blockHeight, blockHash, nonce } = await api.getTransaction(txHash);
+    const [
+      { hash, blockNumber: blockHeight, blockHash, nonce, value },
+      { gasUsed, effectiveGasPrice },
+    ] = await Promise.all([api.getTransaction(txHash), api.getTransactionReceipt(txHash)]);
 
     return {
       hash,
       blockHeight,
       blockHash,
       nonce,
+      gasUsed: gasUsed.toString(),
+      gasPrice: effectiveGasPrice.toString(),
+      value: value.toString(),
     };
   });
 
@@ -248,7 +254,7 @@ export const getBlockByHeight: NodeApi["getBlockByHeight"] = (currency, blockHei
 export const getOptimismAdditionalFees: NodeApi["getOptimismAdditionalFees"] = makeLRUCache(
   async (currency, transaction) =>
     withApi(currency, async api => {
-      if (!["optimism", "optimism_goerli", "base", "base_sepolia"].includes(currency.id)) {
+      if (!["optimism", "optimism_sepolia", "base", "base_sepolia"].includes(currency.id)) {
         return new BigNumber(0);
       }
 

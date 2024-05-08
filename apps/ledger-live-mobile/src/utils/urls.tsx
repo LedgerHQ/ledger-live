@@ -15,6 +15,7 @@ export const urls = {
     zh: "https://shop.ledger.com/zh-cn/pages/ledger-live-terms-of-use",
     ko: "https://shop.ledger.com/ko/pages/ledger-live-terms-of-use",
     ru: "https://shop.ledger.com/ru/pages/ledger-live-terms-of-use",
+    pt: "https://shop.ledger.com/pt-br/pages/ledger-live-terms-of-use",
   },
   privacyPolicy: {
     en: "https://www.ledger.com/privacy-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
@@ -27,6 +28,20 @@ export const urls = {
     zh: "https://www.ledger.com/zh-hans/privacy-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
     ko: "https://www.ledger.com/ko/privacy-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
     ru: "https://www.ledger.com/ru/privacy-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
+    pt: "https://www.ledger.com/pt-br/privacy-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
+  },
+  trackingPolicy: {
+    en: "https://shop.ledger.com/pages/ledger-live-tracking-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
+    fr: "https://shop.ledger.com/fr/pages/ledger-live-tracking-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
+    de: "https://shop.ledger.com/de/pages/ledger-live-tracking-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
+    es: "https://shop.ledger.com/es/pages/ledger-live-tracking-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
+    tr: "https://shop.ledger.com/tr/pages/ledger-live-tracking-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
+    ar: "https://shop.ledger.com/ar/pages/ledger-live-tracking-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
+    ja: "https://shop.ledger.com/ja/pages/ledger-live-tracking-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
+    zh: "https://shop.ledger.com/zh-hans/pages/ledger-live-tracking-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
+    ko: "https://shop.ledger.com/ko/pages/ledger-live-tracking-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
+    ru: "https://shop.ledger.com/ru/pages/ledger-live-tracking-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
+    pt: "https://shop.ledger.com/pt-br/pages/ledger-live-tracking-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
   },
   contactSupportWebview: {
     ar: "https://support.ledger.com/hc/ar/articles/4423020306705-%D8%AA%D9%88%D8%A7%D8%B5%D9%84-%D9%85%D8%B9%D9%86%D8%A7?support=true",

@@ -67,6 +67,7 @@ import BatteryWarningDrawer from "./BatteryWarningDrawer";
 import { setLastConnectedDevice, setLastSeenDeviceInfo } from "~/actions/settings";
 import { lastSeenDeviceSelector } from "~/reducers/settings";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
 
 const requiredBatteryStatuses = [
   BatteryStatusTypes.BATTERY_PERCENTAGE,
@@ -81,13 +82,11 @@ export type FirmwareUpdateProps = {
   device: Device;
   deviceInfo: DeviceInfo;
   firmwareUpdateContext: FirmwareUpdateContext;
-
   /**
    * To adapt the firmware update in case the device is starting its onboarding and it's normal it is not yet seeded.
    * If set to true, short-circuit some steps that are unnecessary
    */
   isBeforeOnboarding?: boolean;
-
   /**
    * Called when the user leaves the firmware update screen
    *
@@ -97,9 +96,8 @@ export type FirmwareUpdateProps = {
    *
    * @param updateState The current state of the update when the user leaves the screen
    */
-  onBackFromUpdate?: (updateState: UpdateStep) => void;
-
-  updateFirmwareAction?: (args: updateFirmwareActionArgs) => Observable<UpdateFirmwareActionState>;
+  onBackFromUpdate?(updateState: UpdateStep): void;
+  updateFirmwareAction?(args: updateFirmwareActionArgs): Observable<UpdateFirmwareActionState>;
 };
 
 type NavigationProps = RootComposite<
@@ -184,6 +182,7 @@ export const FirmwareUpdate = ({
   const [fullUpdateComplete, setFullUpdateComplete] = useState(false);
   const [showBatteryWarningDrawer, setShowBatteryWarningDrawer] = useState<boolean>(false);
   const [showReleaseNotes, setShowReleaseNotes] = useState<boolean>(true);
+  const [keepScreenAwake, setKeepScreenAwake] = useState(true);
 
   const {
     requestCompleted: batteryRequestCompleted,
@@ -219,6 +218,7 @@ export const FirmwareUpdate = ({
     deviceInfo,
     isBeforeOnboarding,
   });
+  useKeepScreenAwake(keepScreenAwake);
 
   const [staxImageSource, setStaxImageSource] =
     useState<React.ComponentProps<typeof Image>["source"]>();
@@ -232,9 +232,10 @@ export const FirmwareUpdate = ({
     [staxImageSource],
   );
 
-  const quitUpdate = useCallback(() => {
+  const quitUpdate = useCallback(async () => {
     if (!batteryRequestCompleted) cancelBatteryCheck();
 
+    setKeepScreenAwake(false);
     if (onBackFromUpdate) {
       onBackFromUpdate(updateStep);
     } else {
@@ -332,6 +333,9 @@ export const FirmwareUpdate = ({
     deviceInfo.languageId,
   ]);
 
+  // this will depend on the steps we go through during the update
+  const [totalNumberOfSteps, setTotalNumberOfSteps] = useState(2);
+
   const defaultSteps: UpdateSteps = useMemo(
     () => ({
       prepareUpdate: {
@@ -386,7 +390,7 @@ export const FirmwareUpdate = ({
         ),
       },
     }),
-    [t, isBeforeOnboarding, productName, restoreSteps],
+    [isBeforeOnboarding, t, productName, restoreSteps],
   );
 
   useEffect(() => {
@@ -460,10 +464,7 @@ export const FirmwareUpdate = ({
     });
   }, [navigation, quitUpdate, isAllowedToClose]);
 
-  // this will depend on the steps we go through during the update
-  const [totalNumberOfSteps, setTotalNumberOfSteps] = useState(2);
-
-  const steps = useMemo(() => {
+  const steps: Item[] = useMemo(() => {
     const newSteps: UpdateSteps = {
       prepareUpdate: { ...defaultSteps.prepareUpdate },
       installUpdate: { ...defaultSteps.installUpdate },
@@ -868,11 +869,10 @@ export const FirmwareUpdate = ({
   );
 };
 
-const FirmwareUpdateScreen = ({ route }: NavigationProps) => {
-  const { params } = route;
-
-  if (!params.device || !params.firmwareUpdateContext || !params.deviceInfo) return null;
-
+export default function FirmwareUpdateScreen({ route: { params } }: NavigationProps) {
+  if (!params.device || !params.firmwareUpdateContext || !params.deviceInfo) {
+    return null;
+  }
   return (
     <Flex flex={1}>
       <FirmwareUpdate
@@ -884,6 +884,4 @@ const FirmwareUpdateScreen = ({ route }: NavigationProps) => {
       />
     </Flex>
   );
-};
-
-export default FirmwareUpdateScreen;
+}

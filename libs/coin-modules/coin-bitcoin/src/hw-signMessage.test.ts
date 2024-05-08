@@ -12,8 +12,8 @@ describe("signMessage", () => {
       getWalletPublicKey: jest.fn(),
       signMessage: jest.fn().mockResolvedValue({
         v: 1,
-        r: "RRRRRSSSSSRRRRRSSSSS",
-        s: "SSSSSRRRRRSSSSSRRRRR",
+        r: "407c9da9dadf23a2d7e863f51aa3512fe3c86619f1d57b16e5d0659155e83888",
+        s: "207c9da9dadf736839484733637aba12fe3c86619f1d57b16e5d0659155e8388",
       }),
       splitTransaction: jest.fn(),
       createPaymentTransaction: jest.fn(),
@@ -34,10 +34,11 @@ describe("signMessage", () => {
     expect(signature).toEqual({
       rsv: {
         v: 1,
-        r: "RRRRRSSSSSRRRRRSSSSS",
-        s: "SSSSSRRRRRSSSSSRRRRR",
+        r: "407c9da9dadf23a2d7e863f51aa3512fe3c86619f1d57b16e5d0659155e83888",
+        s: "207c9da9dadf736839484733637aba12fe3c86619f1d57b16e5d0659155e8388",
       },
-      signature: "IA==",
+      signature:
+        "20407c9da9dadf23a2d7e863f51aa3512fe3c86619f1d57b16e5d0659155e83888207c9da9dadf736839484733637aba12fe3c86619f1d57b16e5d0659155e8388",
     });
   });
 });
@@ -62,16 +63,12 @@ function createFixtureAccount(account?: Partial<BitcoinAccount>): BitcoinAccount
     index: 0,
     freshAddress: freshAddress.address,
     freshAddressPath: freshAddress.derivationPath,
-    freshAddresses: [freshAddress],
-    name: "bitcoin account name",
-    starred: false,
     used: true,
     balance: account?.balance || new BigNumber(0),
     spendableBalance: account?.spendableBalance || new BigNumber(0),
     creationDate: new Date(),
     blockHeight: 100_000,
     currency,
-    unit: currency.units[0],
     operationsCount: 0,
     operations: [],
     pendingOperations: [],

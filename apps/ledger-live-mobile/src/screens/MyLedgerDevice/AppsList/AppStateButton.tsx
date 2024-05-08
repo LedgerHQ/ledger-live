@@ -9,6 +9,7 @@ import AppUninstallButton from "./AppUninstallButton";
 import AppUpdateButton from "./AppUpdateButton";
 
 import AppProgressButton from "./AppProgressButton";
+import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
 
 type Props = {
   app: App;
@@ -47,6 +48,8 @@ const AppStateButton = ({
     () => installed.some(({ name, updated }) => name === app.name && !updated),
     [app.name, installed],
   );
+
+  useKeepScreenAwake(installing || uninstalling || updating);
 
   const renderAppState = () => {
     switch (true) {

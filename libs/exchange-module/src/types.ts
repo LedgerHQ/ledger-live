@@ -64,3 +64,16 @@ export type ExchangeCompleteParams =
 export type ExchangeCompleteResult = {
   transactionHash: string;
 };
+
+export type SwapLiveError = {
+  type?: string;
+  cause: {
+    message?: string;
+    swapCode?: string;
+    response?: {
+      data?: {
+        error?: { messageKey?: string; message?: string };
+      };
+    };
+  };
+};

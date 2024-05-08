@@ -1,7 +1,7 @@
 import invariant from "invariant";
 import React, { useEffect, useRef, useCallback, useState } from "react";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { getMainAccount, getAccountName } from "@ledgerhq/live-common/account/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import { DisconnectedDevice } from "@ledgerhq/errors";
@@ -21,7 +21,7 @@ import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import Receive2NoDevice from "~/renderer/components/Receive2NoDevice";
 import { renderVerifyUnwrapped } from "~/renderer/components/DeviceAction/rendering";
 import { StepProps } from "../Body";
-import { AccountLike } from "@ledgerhq/types-live";
+import { AccountLike, PostOnboardingActionId } from "@ledgerhq/types-live";
 import { track } from "~/renderer/analytics/segment";
 import Modal from "~/renderer/components/Modal";
 import Alert from "~/renderer/components/Alert";
@@ -36,6 +36,8 @@ import { openModal } from "~/renderer/actions/modals";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getLLDCoinFamily } from "~/renderer/families";
 import { firstValueFrom } from "rxjs";
+import { useCompleteActionCallback } from "~/renderer/components/PostOnboardingHub/logic/useCompleteAction";
+import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 
 const Separator = styled.div`
   border-top: 1px solid #99999933;
@@ -152,8 +154,11 @@ const StepReceiveFunds = (props: StepProps) => {
     currencyName,
     receiveTokenMode,
     receiveNFTMode,
+    isFromPostOnboardingEntryPoint,
   } = props;
   const dispatch = useDispatch();
+  const completeAction = useCompleteActionCallback();
+
   const receiveStakingFlowConfig = useFeature("receiveStakingFlowConfigDesktop");
   const receivedCurrencyId: string | undefined =
     account && account.type !== "TokenAccount" ? account?.currency?.id : undefined;
@@ -166,7 +171,7 @@ const StepReceiveFunds = (props: StepProps) => {
 
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   invariant(account && mainAccount, "No account given");
-  const name = token ? token.name : getAccountName(account);
+  const name = token ? token.name : getDefaultAccountName(account);
   const initialDevice = useRef(device);
   const address = mainAccount.freshAddress;
   const [modalVisible, setModalVisible] = useState(false);
@@ -209,9 +214,16 @@ const StepReceiveFunds = (props: StepProps) => {
   }, [device, onChangeAddressVerified, onResetSkip, transitionTo, isAddressVerified]);
 
   const onFinishReceiveFlow = useCallback(() => {
+    completeAction(PostOnboardingActionId.assetsTransfer);
     const dismissModal =
       global.localStorage.getItem(`${LOCAL_STORAGE_KEY_PREFIX}${receivedCurrencyId}`) === "true";
-    if (!dismissModal && !receiveNFTMode && !receiveTokenMode && isStakingEnabledForAccount) {
+    if (
+      !dismissModal &&
+      !receiveNFTMode &&
+      !receiveTokenMode &&
+      isStakingEnabledForAccount &&
+      !isFromPostOnboardingEntryPoint
+    ) {
       track("button_clicked2", {
         button: "continue",
         page: window.location.hash
@@ -241,6 +253,7 @@ const StepReceiveFunds = (props: StepProps) => {
     }
   }, [
     receivedCurrencyId,
+    isFromPostOnboardingEntryPoint,
     receiveNFTMode,
     receiveTokenMode,
     isStakingEnabledForAccount,
@@ -251,6 +264,7 @@ const StepReceiveFunds = (props: StepProps) => {
     mainAccount,
     onClose,
     transitionTo,
+    completeAction,
   ]);
 
   // when address need verification we trigger it on device

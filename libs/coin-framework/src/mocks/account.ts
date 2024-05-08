@@ -1,12 +1,12 @@
 import Prando from "prando";
 import { BigNumber } from "bignumber.js";
-import { listCryptoCurrencies, listTokensForCryptoCurrency } from "../currencies";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { listCryptoCurrencies, listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets/index";
 import { getOperationAmountNumber } from "../operation";
 import { isAccountEmpty, emptyHistoryCache, generateHistoryFromOperations } from "../account";
 import { getDerivationScheme, runDerivationScheme } from "../derivation";
 import { genHex, genAddress } from "./helpers";
 import type { Account, AccountLike, Operation, TokenAccount } from "@ledgerhq/types-live";
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { createFixtureNFT, genNFTOperation } from "./fixtures/nfts";
 import { inferSubOperations } from "../serialization";
 
@@ -258,7 +258,6 @@ export function genTokenAccount(
   const rng = new Prando(account.id + "|" + index);
   const tokenAccount: TokenAccount = {
     type: "TokenAccount",
-    starred: false,
     id: account.id + "|" + index,
     parentId: account.id,
     token,
@@ -313,31 +312,27 @@ export function genAccount(
     }),
     currency,
   );
-  const freshAddress = {
-    address,
-    derivationPath,
-  };
   // nb Make the third (ethereum_classic, dogecoin) account originally migratable
   const outdated = ["ethereum_classic", "dogecoin"].includes(currency.id) && `${id}`.endsWith("_2");
   const accountId = `mock:${outdated ? 0 : 1}:${currency.id}:${id}:`;
+  const xpub = genHex(64, rng);
+  rng.nextString(rng.nextInt(4, 34)); // to not break the determinism, we will still run this code that used to generate fake account names. remove it when we allow ourself a breaking change.
+  const blockHeight = rng.nextInt(100000, 200000);
+  rng.nextArrayItem(currency.units); // to not break the determinism, we still run this code. remove it when we allow ourself a breaking change.
   const account: Account = {
     type: "Account",
     id: accountId,
     seedIdentifier: "mock",
     derivationMode: "",
-    xpub: genHex(64, rng),
+    xpub,
     index: 1,
     freshAddress: address,
     freshAddressPath: derivationPath,
-    freshAddresses: [freshAddress],
-    name: rng.nextString(rng.nextInt(4, 34)),
-    starred: false,
     used: false,
     balance: new BigNumber(0),
     spendableBalance: new BigNumber(0),
-    blockHeight: rng.nextInt(100000, 200000),
+    blockHeight,
     currency,
-    unit: rng.nextArrayItem(currency.units),
     operationsCount: 0,
     operations: [],
     pendingOperations: [],
@@ -365,15 +360,7 @@ export function genAccount(
   };
 
   if (
-    [
-      "ethereum",
-      "ethereum_ropsten",
-      "ethereum_goerli",
-      "ethereum_sepolia",
-      "ethereum_holesky",
-      "tron",
-      "algorand",
-    ].includes(currency.id)
+    ["ethereum", "ethereum_sepolia", "ethereum_holesky", "tron", "algorand"].includes(currency.id)
   ) {
     const tokenCount =
       typeof opts.subAccountsCount === "number" ? opts.subAccountsCount : rng.nextInt(0, 8);

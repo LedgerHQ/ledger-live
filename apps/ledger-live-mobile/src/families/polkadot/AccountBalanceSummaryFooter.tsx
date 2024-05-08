@@ -6,7 +6,6 @@ import BigNumber from "bignumber.js";
 import { useTheme } from "@react-navigation/native";
 import { usePolkadotPreloadData } from "@ledgerhq/live-common/families/polkadot/react";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/reactNative";
 import { hasMinimumBondBalance } from "@ledgerhq/live-common/families/polkadot/logic";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
@@ -18,6 +17,7 @@ import BondedIcon from "~/icons/LinkIcon";
 import UnbondingIcon from "~/icons/Clock";
 import Unbonded from "~/icons/Undelegate";
 import WarningIcon from "~/icons/Warning";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props = {
   account: PolkadotAccount;
@@ -38,8 +38,7 @@ function AccountBalanceSummaryFooter({ account }: Props) {
     unlockingBalance: _unlockingBalance,
     unlockedBalance,
   } = polkadotResources || {};
-  const unit = getAccountUnit(account);
-
+  const unit = useAccountUnit(account);
   // NOTE: All balances are including the next one...
   // So we exclude each other for better understanding and ensure sum of all balances
   // is equal to the total balance.
@@ -109,7 +108,7 @@ function useInfo(account: PolkadotAccount): Record<InfoName, ModalInfo[]> {
   const { t } = useTranslation();
   const preloaded = usePolkadotPreloadData();
   const minimumBondBalance = new BigNumber(preloaded.minimumBondBalance);
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const minimumBondBalanceStr = formatCurrencyUnit(unit, minimumBondBalance, {
     disableRounding: true,
     alwaysShowSign: false,

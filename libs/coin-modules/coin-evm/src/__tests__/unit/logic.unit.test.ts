@@ -1,17 +1,12 @@
-import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
-import * as cryptoAssetsTokens from "@ledgerhq/cryptoassets/tokens";
-import { getEnv, setEnv } from "@ledgerhq/live-env";
-import {
-  CryptoCurrency,
-  CryptoCurrencyId,
-  TokenCurrency,
-  Unit,
-} from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
+import { getEnv, setEnv } from "@ledgerhq/live-env";
+import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
+import { CryptoCurrency, CryptoCurrencyId, Unit } from "@ledgerhq/types-cryptoassets";
 import * as RPC_API from "../../api/node/rpc.common";
+import { getCoinConfig } from "../../config";
 import {
-  __testOnlyClearSyncHashMemoize,
   attachOperations,
+  createSwapHistoryMap,
   eip1559TransactionHasFees,
   getAdditionalLayer2Fees,
   getDefaultFeeUnit,
@@ -22,8 +17,8 @@ import {
   mergeSubAccounts,
   padHexString,
   safeEncodeEIP55,
+  setCALHash,
 } from "../../logic";
-
 import {
   deepFreeze,
   makeAccount,
@@ -31,13 +26,11 @@ import {
   makeOperation,
   makeTokenAccount,
 } from "../fixtures/common.fixtures";
-
 import {
   EvmTransactionEIP1559,
   EvmTransactionLegacy,
   Transaction as EvmTransaction,
 } from "../../types";
-import { getCoinConfig } from "../../config";
 
 jest.mock("../../config");
 const mockGetConfig = jest.mocked(getCoinConfig);
@@ -454,6 +447,79 @@ describe("EVM Family", () => {
       });
     });
 
+    describe("createSwapHistoryMap", () => {
+      it("returns an empty map if initialAccount is undefined", () => {
+        const swapHistory = createSwapHistoryMap(undefined);
+        expect(swapHistory.size).toBe(0);
+      });
+      it("returns an empty map if there are no subAccounts", () => {
+        const account = makeAccount("0xCrema", getCryptoCurrencyById("ethereum"), []);
+        const swapHistory = createSwapHistoryMap(account);
+        expect(swapHistory.size).toBe(0);
+      });
+
+      it("maps TokenAccounts to their swapHistory", () => {
+        const tokenAccount1 = {
+          ...makeTokenAccount("0xCrema1", getTokenById("ethereum/erc20/usd__coin")),
+          swapHistory: [
+            {
+              status: "pending",
+              provider: "moonpay",
+              operationId: "js:2:ethereum:0xkvn:+ethereum%2Ferc20%2Fusd__coin-OUT",
+              swapId: "swap1",
+              receiverAccountId: "js:2:ethereum:0xkvn:",
+              fromAmount: new BigNumber("200000"),
+              toAmount: new BigNumber("129430000"),
+            },
+          ],
+        };
+        const tokenAccount2 = {
+          ...makeTokenAccount("0xCrema2", getTokenById("ethereum/erc20/weth")),
+          swapHistory: [
+            {
+              status: "pending",
+              provider: "moonpay",
+              operationId: "js:2:ethereum:0xkvn:+ethereum%2Ferc20%2Fweth-OUT",
+              swapId: "swap2",
+              receiverAccountId: "js:2:ethereum:0xkvn:",
+              fromAmount: new BigNumber("200000"),
+              toAmount: new BigNumber("129430000"),
+            },
+          ],
+        };
+
+        const account = makeAccount("0xCrema", getCryptoCurrencyById("ethereum"), [
+          tokenAccount1,
+          tokenAccount2,
+        ]);
+        const swapHistory = createSwapHistoryMap(account);
+
+        expect(swapHistory.size).toBe(2);
+        expect(swapHistory.get(tokenAccount1.token)).toEqual(tokenAccount1.swapHistory);
+        expect(swapHistory.get(tokenAccount2.token)).toEqual(tokenAccount2.swapHistory);
+      });
+      it("should include correct swapHistory for a token account", () => {
+        const tokenAccount = {
+          ...makeTokenAccount("0xCrema", getTokenById("ethereum/erc20/usd__coin")),
+          swapHistory: [
+            {
+              status: "pending",
+              provider: "moonpay",
+              operationId: "js:2:ethereum:0xkvn:+ethereum%2Ferc20%2Fusd__coin-OUT",
+              swapId: "6342cd15-5aa9-4c8c-9fb3-0b67e9b0714a",
+              receiverAccountId: "js:2:ethereum:0xkvn:",
+              tokenId: "ethereum/erc20/usd__coin",
+              fromAmount: new BigNumber("200000"),
+              toAmount: new BigNumber("129430000"),
+            },
+          ],
+        };
+        const account = makeAccount("0xCrema", getCryptoCurrencyById("ethereum"), [tokenAccount]);
+
+        const swapHistoryMap = createSwapHistoryMap(account);
+        expect(swapHistoryMap.get(tokenAccount.token)).toEqual(tokenAccount.swapHistory);
+      });
+    });
     describe("getSyncHash", () => {
       const currency = getCryptoCurrencyById("ethereum");
 
@@ -465,11 +531,7 @@ describe("EVM Family", () => {
       afterEach(() => {
         jest.restoreAllMocks();
         setEnv("NFT_CURRENCIES", oldEnv);
-      });
-
-      beforeEach(() => {
-        // Clearing the cache of already calculated hashes before each new test
-        __testOnlyClearSyncHashMemoize();
+        setCALHash(currency, "");
       });
 
       it("should provide a valid hex hash", () => {
@@ -477,91 +539,10 @@ describe("EVM Family", () => {
         expect(getSyncHash(currency)).toStrictEqual(expect.stringMatching(/^0x[A-Fa-f0-9]{8}$/));
       });
 
-      // As of today, with respectively 7k tokens on Ethereum, 600 tokens on Polygon
-      // & 1000 tokens on BSC, the CI is taking ~200ms to perform this test.
-      // This test could in theory be flaky depending on the CI perfs
-      // and the number of tokens to hash. Feel free to increase
-      // this 350ms threshold if this test is failing and
-      // you consider it an acceptable behaviour
-      // especially while considering mobile
-      // performances for this action
-      //
-      // EDIT: Since the CAL went from ~9k to 14k+ tokens
-      // this test now takes longer to execute.
-      // Now changing to 1s to hash
-      // when CI generally run it
-      // in under 650ms.
-      it("should have decent performances (10 syncHashes of each major EVM in less than 1s on a computer)", () => {
-        const start = performance.now();
-        for (let i = 0; i < 10; i++) {
-          getSyncHash(getCryptoCurrencyById("ethereum"));
-          getSyncHash(getCryptoCurrencyById("polygon"));
-          getSyncHash(getCryptoCurrencyById("bsc"));
-        }
-        const now = performance.now();
-        expect(now - start).toBeLessThan(1000);
-      });
-
-      it("should provide a hash not dependent on reference", () => {
-        jest
-          .spyOn(cryptoAssetsTokens, "listTokensForCryptoCurrency")
-          .mockImplementationOnce((currency): TokenCurrency[] => {
-            const { listTokensForCryptoCurrency } = jest.requireActual(
-              "@ledgerhq/cryptoassets/tokens",
-            );
-            return listTokensForCryptoCurrency(currency).map((t: TokenCurrency) => ({ ...t }));
-          });
-        expect(getSyncHash(currency)).toEqual(getSyncHash(currency));
-      });
-
-      it("should provide a new hash if a token is removed", () => {
-        jest
-          .spyOn(cryptoAssetsTokens, "listTokensForCryptoCurrency")
-          .mockImplementationOnce(currency => {
-            const { listTokensForCryptoCurrency } = jest.requireActual(
-              "@ledgerhq/cryptoassets/tokens",
-            );
-            const list: TokenCurrency[] = listTokensForCryptoCurrency(currency);
-            return list.slice(0, list.length - 2);
-          });
-        expect(getSyncHash(currency)).not.toEqual(getSyncHash(currency));
-      });
-
-      it("should provide a new hash if a token is modified", () => {
-        jest
-          .spyOn(cryptoAssetsTokens, "listTokensForCryptoCurrency")
-          .mockImplementationOnce(currency => {
-            const { listTokensForCryptoCurrency } = jest.requireActual(
-              "@ledgerhq/cryptoassets/tokens",
-            );
-            const [first, ...rest]: TokenCurrency[] = listTokensForCryptoCurrency(currency);
-            const modifedFirst = { ...first, ticker: "$__NEW__TICKER__$" };
-            return [modifedFirst, ...rest];
-          });
-
-        expect(getSyncHash(currency)).not.toEqual(getSyncHash(currency));
-      });
-
-      it("should provide a new hash if a token is added", () => {
-        jest
-          .spyOn(cryptoAssetsTokens, "listTokensForCryptoCurrency")
-          .mockImplementationOnce(currency => {
-            const { listTokensForCryptoCurrency } = jest.requireActual(
-              "@ledgerhq/cryptoassets/tokens",
-            );
-            return [
-              ...listTokensForCryptoCurrency(currency),
-              {
-                type: "TokenCurrency",
-                id: "test",
-                ledgerSignature: "string",
-                contractAddress: "0x123",
-                parentCurrency: currency,
-                tokenType: "erc20",
-              } as TokenCurrency,
-            ];
-          });
-        expect(getSyncHash(currency)).not.toEqual(getSyncHash(currency));
+      it("should provide a new hash if the CAL hash changed", () => {
+        const initialSyncHash = getSyncHash(currency);
+        setCALHash(currency, "anything");
+        expect(initialSyncHash).not.toEqual(getSyncHash(currency));
       });
 
       it("should provide a new hash if nft support is activated or not", () => {

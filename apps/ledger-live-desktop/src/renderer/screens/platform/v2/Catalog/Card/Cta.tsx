@@ -1,6 +1,7 @@
 import React from "react";
 import { Box, Button } from "@ledgerhq/react-ui";
 import { PropsCta } from "./types";
+import Ellipsis from "~/renderer/components/Ellipsis";
 
 export function Cta({ text }: PropsCta) {
   return (
@@ -9,9 +10,9 @@ export function Cta({ text }: PropsCta) {
       ml={0}
       mt={0}
       minWidth={100}
-      flexWrap={"wrap"}
       alignItems={"center"}
       display={{ _: "none", md: "flex" }}
+      justifyContent={"flex-end"}
     >
       <Button
         style={{
@@ -22,9 +23,10 @@ export function Cta({ text }: PropsCta) {
           background: "linear-gradient(97deg, #8675F1 0.29%, #4531C0 100.29%)",
           color: "white",
           textDecoration: "none",
+          display: "inline-block",
         }}
       >
-        {text}
+        <Ellipsis>{text}</Ellipsis>
       </Button>
     </Box>
   );

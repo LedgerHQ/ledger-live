@@ -5,7 +5,7 @@ import Tag, { Type, Size, TagProps } from "./index";
 import Text from "../asorted/Text";
 import Flex from "../layout/Flex";
 
-const sizes: Size[] = ["large", "medium", "small"];
+const sizes: Size[] = ["large", "medium", "small", "tiny"];
 const types: Type[] = ["plain", "opacity", "outlined", "outlinedOpacity"];
 const states = [{}, { disabled: true }];
 

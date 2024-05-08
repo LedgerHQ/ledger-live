@@ -39,16 +39,9 @@ export const bitcoin1: BitcoinAccountRaw = {
   index: 0,
   freshAddress: "17gPmBH8b6UkvSmxMfVjuLNAqzgAroiPSe",
   freshAddressPath: "44'/0'/0'/0/59",
-  freshAddresses: [
-    {
-      address: "17gPmBH8b6UkvSmxMfVjuLNAqzgAroiPSe",
-      derivationPath: "44'/0'/0'/0/59",
-    },
-  ],
   pendingOperations: [],
   operations: [],
   currencyId: "bitcoin",
-  unitMagnitude: 8,
   balance: "2757",
   blockHeight: 0,
   lastSyncDate: "",
@@ -67,17 +60,10 @@ export const bitcoin2: BitcoinAccountRaw = {
   index: 1,
   freshAddress: "bc1q8vp7v5wyv8nvhsh5p2dvkgalep4q325kd5xk4e",
   freshAddressPath: "84'/0'/1'/0/53",
-  freshAddresses: [
-    {
-      address: "bc1q8vp7v5wyv8nvhsh5p2dvkgalep4q325kd5xk4e",
-      derivationPath: "84'/0'/1'/0/53",
-    },
-  ],
   blockHeight: 0,
   operations: [],
   pendingOperations: [],
   currencyId: "bitcoin",
-  unitMagnitude: 8,
   lastSyncDate: "",
   balance: "2717",
   xpub: "xpub6DEHKg8fgKcb9at2u9Xhjtx4tXGyWqUPQAx2zNCzr41gQRyCqpCn7onSoJU4VS96GXyCtAhhFxErnG2pGVvVexaqF7DEfqGGnGk7Havn7C2",
@@ -94,6 +80,7 @@ const dataset: CurrenciesData<Transaction> = {
   scanAccounts: [scanAccounts1],
   accounts: [
     {
+      raw: bitcoin1,
       transactions: [
         {
           name: "on legacy recipient",
@@ -341,7 +328,6 @@ const dataset: CurrenciesData<Transaction> = {
           },
         },
       ],
-      raw: bitcoin1,
     },
     {
       raw: bitcoin2,

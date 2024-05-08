@@ -40,8 +40,6 @@ setSupportedCurrencies([
   "peercoin",
   "viacoin",
   "bitcoin_testnet",
-  "ethereum_ropsten",
-  "ethereum_goerli",
   "ethereum_sepolia",
   "ethereum_holesky",
   "crypto_org",
@@ -60,7 +58,7 @@ setSupportedCurrencies([
   "icon",
   "icon_berlin_testnet",
   "optimism",
-  "optimism_goerli",
+  "optimism_sepolia",
   "arbitrum",
   "arbitrum_sepolia",
   "rsk",
@@ -98,7 +96,7 @@ setSupportedCurrencies([
   "lukso",
   "filecoin",
   "linea",
-  "linea_goerli",
+  "linea_sepolia",
 ]);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);

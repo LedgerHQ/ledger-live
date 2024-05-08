@@ -10,14 +10,14 @@ import type {
 } from "./types";
 import { bitcoinPickingStrategy } from "./types";
 import { getEnv } from "@ledgerhq/live-env";
+import { formatTransactionStatus as formatTransactionStatusCommon } from "@ledgerhq/coin-framework/formatters";
 import {
-  formatTransactionStatusCommon,
   fromTransactionCommonRaw,
   fromTransactionStatusRawCommon,
   toTransactionCommonRaw,
   toTransactionStatusRawCommon,
-} from "@ledgerhq/coin-framework/transaction/common";
-import { getAccountUnit } from "@ledgerhq/coin-framework/account/index";
+} from "@ledgerhq/coin-framework/serialization";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import type { Account } from "@ledgerhq/types-live";
 import {
@@ -90,7 +90,7 @@ const fromTransactionStatusRaw = (tr: TransactionStatusRaw): TransactionStatus =
   };
 };
 
-const toTransactionStatusRaw = (t: TransactionStatus): TransactionStatusRaw => {
+export const toTransactionStatusRaw = (t: TransactionStatus): TransactionStatusRaw => {
   const common = toTransactionStatusRawCommon(t);
   return {
     ...common,
@@ -152,7 +152,7 @@ export const formatTransaction = (t: Transaction, account: Account): string => {
 SEND ${
     t.useAllAmount
       ? "MAX"
-      : formatCurrencyUnit(getAccountUnit(account), t.amount, {
+      : formatCurrencyUnit(getAccountCurrency(account).units[0], t.amount, {
           showCode: true,
           disableRounding: true,
         })

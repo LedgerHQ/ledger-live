@@ -8,7 +8,6 @@ import filecoin from "../families/filecoin/specs";
 import hedera from "../families/hedera/specs";
 import internet_computer from "../families/internet_computer/specs";
 import ripple from "../families/ripple/specs";
-import solana from "../families/solana/specs";
 import stacks from "../families/stacks/specs";
 import stellar from "../families/stellar/specs";
 import tezos from "../families/tezos/specs";
@@ -20,6 +19,7 @@ import evm from "@ledgerhq/coin-evm/specs";
 import near from "@ledgerhq/coin-near/specs";
 import polkadot from "@ledgerhq/coin-polkadot/specs";
 import icon from "@ledgerhq/coin-icon/specs";
+import solana from "@ledgerhq/coin-solana/specs";
 
 export default {
   cardano,
@@ -32,7 +32,6 @@ export default {
   hedera,
   internet_computer,
   ripple,
-  solana,
   stacks,
   stellar,
   tezos,
@@ -44,4 +43,5 @@ export default {
   near,
   polkadot,
   icon,
+  solana,
 };

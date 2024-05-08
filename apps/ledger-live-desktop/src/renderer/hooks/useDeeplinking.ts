@@ -16,6 +16,8 @@ import { setTrackingSource } from "../analytics/TrackPage";
 import { CryptoOrTokenCurrency, Currency } from "@ledgerhq/types-cryptoassets";
 import { Account, SubAccount } from "@ledgerhq/types-live";
 import { useStorylyContext } from "~/storyly/StorylyProvider";
+import { useNavigateToPostOnboardingHubCallback } from "~/renderer/components/PostOnboardingHub/logic/useNavigateToPostOnboardingHubCallback";
+import { usePostOnboardingDeeplinkHandler } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 
 const getAccountsOrSubAccountsByCurrency = (
   currency: CryptoOrTokenCurrency,
@@ -43,6 +45,12 @@ export function useDeepLinkHandler() {
   const location = useLocation();
   const history = useHistory();
   const { setUrl } = useStorylyContext();
+  const navigateToHome = () => history.push("/");
+  const navigateToPostOnboardingHub = useNavigateToPostOnboardingHubCallback();
+  const postOnboardingDeeplinkHandler = usePostOnboardingDeeplinkHandler(
+    navigateToHome,
+    navigateToPostOnboardingHub,
+  );
 
   const navigate = useCallback(
     (
@@ -334,13 +342,17 @@ export function useDeepLinkHandler() {
         case "storyly":
           setUrl(deeplink);
           break;
+        case "post-onboarding": {
+          postOnboardingDeeplinkHandler(query.device);
+          break;
+        }
         case "portfolio":
         default:
           navigate("/");
           break;
       }
     },
-    [accounts, dispatch, location.pathname, navigate, setUrl],
+    [accounts, dispatch, location.pathname, navigate, postOnboardingDeeplinkHandler, setUrl],
   );
   return {
     handler,

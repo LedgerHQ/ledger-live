@@ -4,12 +4,7 @@ import { ScrollView } from "react-native";
 import { useTranslation } from "react-i18next";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import {
-  getMainAccount,
-  getAccountUnit,
-  getFeesCurrency,
-  getFeesUnit,
-} from "@ledgerhq/live-common/account/index";
+import { getMainAccount, getFeesCurrency, getFeesUnit } from "@ledgerhq/live-common/account/index";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 
 import {
@@ -28,6 +23,7 @@ import { DataRowUnitValue, TextValueField } from "./ValidateOnDeviceDataRow";
 import Animation from "./Animation";
 import { getDeviceAnimation } from "~/helpers/getDeviceAnimation";
 import { TitleText } from "./DeviceAction/rendering";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 export type FieldComponentProps = {
   account: AccountLike;
@@ -46,14 +42,8 @@ const AnimationContainer = styled(Flex).attrs({
   height: "150px",
 })``;
 
-function AmountField({ account, parentAccount, status, field }: FieldComponentProps) {
-  let unit;
-  if (account.type === "TokenAccount") {
-    unit = getAccountUnit(account);
-  } else {
-    const mainAccount = getMainAccount(account, parentAccount);
-    unit = getAccountUnit(mainAccount);
-  }
+function AmountField({ account, status, field }: FieldComponentProps) {
+  const unit = useAccountUnit(account);
   return <DataRowUnitValue label={field.label} unit={unit} value={status.amount} />;
 }
 
