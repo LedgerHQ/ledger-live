@@ -42,7 +42,6 @@ import {
 
 export { ExchangeType };
 import { BigNumber } from "bignumber.js";
-import { Device } from "../../hw/actions/types";
 
 type Handlers = {
   "custom.exchange.start": RPCHandler<
@@ -83,8 +82,8 @@ type ExchangeStartParamsUiRequest =
 type ExchangeUiHooks = {
   "custom.exchange.start": (params: {
     exchangeParams: ExchangeStartParamsUiRequest;
-    onSuccess: (nonce: string, device?: Device | null) => void;
-    onCancel: (error: Error, device?: Device | null) => void;
+    onSuccess: (nonce: string, device?: ExchangeStartResult["device"]) => void;
+    onCancel: (error: Error, device?: ExchangeStartResult["device"]) => void;
   }) => void;
   "custom.exchange.complete": (params: {
     exchangeParams: CompleteExchangeUiRequest;

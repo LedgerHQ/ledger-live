@@ -178,8 +178,8 @@ function useUiHook(manifest: AppManifest, tracking: Record<string, TrackFunction
           openExchangeDrawer({
             type: "EXCHANGE_START",
             exchangeType: ExchangeType[exchangeType],
-            onResult: (nonce: string) => {
-              onSuccess(nonce);
+            onResult: result => {
+              onSuccess(result.nonce);
             },
             onCancel: (error: Error) => {
               onCancel(error);

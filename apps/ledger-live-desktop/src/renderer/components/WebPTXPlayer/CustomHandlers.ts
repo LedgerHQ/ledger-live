@@ -14,13 +14,11 @@ import { closePlatformAppDrawer, openExchangeDrawer } from "~/renderer/actions/U
 import { WebviewProps } from "../Web3AppWebview/types";
 import { context } from "~/renderer/drawers/Provider";
 import WebviewErrorDrawer from "~/renderer/screens/exchange/Swap2/Form/WebviewErrorDrawer";
-import { getCurrentDevice } from "~/renderer/reducers/devices";
 
 export function usePTXCustomHandlers(manifest: WebviewProps["manifest"]) {
   const dispatch = useDispatch();
   const accounts = useSelector(flattenAccountsSelector);
   const { setDrawer } = React.useContext(context);
-  const device = useSelector(getCurrentDevice);
 
   const tracking = useMemo(
     () =>
@@ -58,11 +56,11 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"]) {
                 type: "EXCHANGE_START",
                 ...exchangeParams,
                 exchangeType: ExchangeType[exchangeParams.exchangeType],
-                onResult: (nonce: string) => {
-                  onSuccess(nonce, device);
+                onResult: result => {
+                  onSuccess(result.nonce, result.device);
                 },
-                onCancel: (error: Error) => {
-                  onCancel(error, device);
+                onCancel: cancelResult => {
+                  onCancel(cancelResult.error, cancelResult.device);
                 },
               }),
             );
@@ -90,5 +88,5 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"]) {
         },
       }),
     };
-  }, [accounts, tracking, manifest, device, dispatch, setDrawer]);
+  }, [accounts, tracking, manifest, dispatch, setDrawer]);
 }

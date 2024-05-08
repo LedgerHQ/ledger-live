@@ -18,7 +18,9 @@ import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import {
   createAction,
-  Result as StartExchangeResult,
+  StartExchangeErrorResult,
+  StartExchangeSuccessResult,
+  Result,
 } from "@ledgerhq/live-common/hw/actions/startExchange";
 import startExchange from "@ledgerhq/live-common/exchange/platform/startExchange";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
@@ -35,11 +37,11 @@ const Divider = styled(Box)`
 `;
 
 export type StartExchangeData = {
-  onCancel?: (error: Error) => void;
+  onCancel?: (startExchangeError: StartExchangeErrorResult) => void;
   exchangeType: ExchangeType;
   provider?: string;
   exchange?: Exchange;
-  onResult: (startExchangeResult: string) => void;
+  onResult: (startExchangeResult: StartExchangeSuccessResult) => void;
 };
 
 export function isStartExchangeData(data: unknown): data is StartExchangeData {
@@ -150,12 +152,12 @@ export const LiveAppDrawer = () => {
             <DeviceAction
               action={action}
               request={data}
-              onResult={(result: StartExchangeResult) => {
+              onResult={(result: Result) => {
                 if ("startExchangeResult" in result) {
-                  data.onResult(result.startExchangeResult as unknown as string);
+                  data.onResult(result.startExchangeResult);
                 }
                 if ("startExchangeError" in result) {
-                  data.onCancel?.(result.startExchangeError as unknown as Error);
+                  data.onCancel?.(result.startExchangeError);
                   dispatch(closePlatformAppDrawer());
                 }
               }}
