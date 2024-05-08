@@ -1,5 +1,15 @@
 # @ledgerhq/live-nft-react
 
+## 0.3.2-nightly.6
+
+### Patch Changes
+
+- [#6796](https://github.com/LedgerHQ/ledger-live/pull/6796) [`6552679`](https://github.com/LedgerHQ/ledger-live/commit/65526794bb4d1fbc7e286c0e1c0b6d021413fc8c) Thanks [@gre](https://github.com/gre)! - Drop technical Account#name and Account#starred fields and replace it with a new architecture: a wallet store that contains all user's data.
+
+- Updated dependencies [[`6552679`](https://github.com/LedgerHQ/ledger-live/commit/65526794bb4d1fbc7e286c0e1c0b6d021413fc8c)]:
+  - @ledgerhq/types-live@6.47.0-nightly.4
+  - @ledgerhq/live-nft@0.3.2-nightly.6
+
 ## 0.3.2-nightly.5
 
 ### Patch Changes

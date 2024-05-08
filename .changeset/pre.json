@@ -135,13 +135,15 @@
     "@ledgerhq/device-react": "0.1.0",
     "@ledgerhq/ethereum-provider": "0.1.0",
     "@ledgerhq/coin-tester": "0.1.0",
-    "@ledgerhq/coin-solana": "0.6.0"
+    "@ledgerhq/coin-solana": "0.6.0",
+    "@ledgerhq/live-wallet": "0.1.0"
   },
   "changesets": [
     "angry-shrimps-work",
     "beige-otters-cheat",
     "beige-starfishes-guess",
     "big-badgers-argue",
+    "breezy-coins-talk",
     "curvy-moons-know",
     "cyan-deers-remember",
     "cyan-points-obey",
@@ -177,6 +179,7 @@
     "happy-gorillas-melt",
     "happy-tools-allow",
     "heavy-panthers-hammer",
+    "hip-seals-design",
     "honest-laws-look",
     "hot-eagles-run",
     "hot-pumas-obey",
@@ -204,6 +207,7 @@
     "plenty-ways-switch",
     "poor-pears-taste",
     "popular-horses-sin",
+    "proud-moles-reply",
     "proud-readers-shout",
     "purple-bobcats-fetch",
     "purple-ligers-stare",
@@ -214,6 +218,7 @@
     "rich-windows-rule",
     "rotten-bears-call",
     "rotten-cups-carry",
+    "rude-tables-share",
     "selfish-dolls-explain",
     "serious-coins-dance",
     "sharp-camels-rhyme",
@@ -237,6 +242,7 @@
     "stale-hornets-grab",
     "strange-spoons-dream",
     "strong-moose-report",
+    "strong-spoons-thank",
     "sweet-laws-lie",
     "swift-penguins-act",
     "tall-cherries-allow",
@@ -256,7 +262,9 @@
     "weak-cows-design",
     "weak-tomatoes-travel",
     "weak-tools-swim",
+    "wet-apes-rest",
     "wicked-feet-fly",
+    "wild-geese-tap",
     "yellow-pandas-tan",
     "yellow-parents-dance"
   ]

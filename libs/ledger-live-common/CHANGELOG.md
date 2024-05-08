@@ -1,5 +1,35 @@
 # @ledgerhq/live-common
 
+## 34.2.0-nightly.9
+
+### Minor Changes
+
+- [#6814](https://github.com/LedgerHQ/ledger-live/pull/6814) [`d27b731`](https://github.com/LedgerHQ/ledger-live/commit/d27b731bd581619f61b7c7c88b8f536689950e40) Thanks [@Justkant](https://github.com/Justkant)! - feat: export platform enum for use in LLM test
+
+- [#6796](https://github.com/LedgerHQ/ledger-live/pull/6796) [`6552679`](https://github.com/LedgerHQ/ledger-live/commit/65526794bb4d1fbc7e286c0e1c0b6d021413fc8c) Thanks [@gre](https://github.com/gre)! - Drop technical Account#name and Account#starred fields and replace it with a new architecture: a wallet store that contains all user's data.
+
+- [#6816](https://github.com/LedgerHQ/ledger-live/pull/6816) [`60cd799`](https://github.com/LedgerHQ/ledger-live/commit/60cd799e693e3ae0712a5a9e88206b5304bbc214) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Split currencies utils between CoinFmk and LLC
+
+### Patch Changes
+
+- Updated dependencies [[`6552679`](https://github.com/LedgerHQ/ledger-live/commit/65526794bb4d1fbc7e286c0e1c0b6d021413fc8c), [`60cd799`](https://github.com/LedgerHQ/ledger-live/commit/60cd799e693e3ae0712a5a9e88206b5304bbc214)]:
+  - @ledgerhq/coin-algorand@0.4.2-nightly.6
+  - @ledgerhq/coin-polkadot@0.7.0-nightly.7
+  - @ledgerhq/coin-bitcoin@0.4.1-nightly.6
+  - @ledgerhq/coin-evm@1.1.1-nightly.6
+  - @ledgerhq/wallet-api-exchange-module@0.5.1-nightly.1
+  - @ledgerhq/coin-framework@0.13.0-nightly.6
+  - @ledgerhq/live-wallet@0.1.1-nightly.0
+  - @ledgerhq/live-env@2.0.2-nightly.0
+  - @ledgerhq/coin-solana@0.7.0-nightly.2
+  - @ledgerhq/coin-near@0.3.13-nightly.6
+  - @ledgerhq/device-core@0.1.2-nightly.6
+  - @ledgerhq/hw-app-eth@6.36.1-nightly.6
+  - @ledgerhq/live-countervalues@0.1.5-nightly.6
+  - @ledgerhq/live-countervalues-react@0.1.5-nightly.6
+  - @ledgerhq/live-nft@0.3.2-nightly.6
+  - @ledgerhq/live-network@1.2.2-nightly.0
+
 ## 34.2.0-nightly.8
 
 ### Patch Changes

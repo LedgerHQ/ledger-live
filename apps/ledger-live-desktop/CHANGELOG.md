@@ -1,5 +1,35 @@
 # ledger-live-desktop
 
+## 2.80.0-nightly.9
+
+### Minor Changes
+
+- [#6796](https://github.com/LedgerHQ/ledger-live/pull/6796) [`6552679`](https://github.com/LedgerHQ/ledger-live/commit/65526794bb4d1fbc7e286c0e1c0b6d021413fc8c) Thanks [@gre](https://github.com/gre)! - Drop technical Account#name and Account#starred fields and replace it with a new architecture: a wallet store that contains all user's data.
+
+### Patch Changes
+
+- [#6817](https://github.com/LedgerHQ/ledger-live/pull/6817) [`e4d737d`](https://github.com/LedgerHQ/ledger-live/commit/e4d737de849b21a86c53c1eca5b15657e3b05390) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix analytics problem that made all analytics disabled by default
+
+- [#6815](https://github.com/LedgerHQ/ledger-live/pull/6815) [`2b93ce0`](https://github.com/LedgerHQ/ledger-live/commit/2b93ce0f30a0f1c453af192f17c46a52c4840c0f) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Update trackingPolicy url for variant A in privacy optin
+
+- [#6796](https://github.com/LedgerHQ/ledger-live/pull/6796) [`6552679`](https://github.com/LedgerHQ/ledger-live/commit/65526794bb4d1fbc7e286c0e1c0b6d021413fc8c) Thanks [@gre](https://github.com/gre)! - Remove .unit usage from account.unit
+
+- Updated dependencies [[`d27b731`](https://github.com/LedgerHQ/ledger-live/commit/d27b731bd581619f61b7c7c88b8f536689950e40), [`6552679`](https://github.com/LedgerHQ/ledger-live/commit/65526794bb4d1fbc7e286c0e1c0b6d021413fc8c), [`60cd799`](https://github.com/LedgerHQ/ledger-live/commit/60cd799e693e3ae0712a5a9e88206b5304bbc214)]:
+  - @ledgerhq/live-common@34.2.0-nightly.9
+  - @ledgerhq/types-live@6.47.0-nightly.4
+  - @ledgerhq/coin-bitcoin@0.4.1-nightly.6
+  - @ledgerhq/coin-evm@1.1.1-nightly.6
+  - @ledgerhq/ethereum-provider@0.2.1-nightly.0
+  - @ledgerhq/coin-framework@0.13.0-nightly.6
+  - @ledgerhq/live-nft-react@0.3.2-nightly.6
+  - @ledgerhq/live-wallet@0.1.1-nightly.0
+  - @ledgerhq/live-env@2.0.2-nightly.0
+  - @ledgerhq/domain-service@1.1.21-nightly.4
+  - @ledgerhq/live-countervalues@0.1.5-nightly.6
+  - @ledgerhq/live-countervalues-react@0.1.5-nightly.6
+  - @ledgerhq/live-nft@0.3.2-nightly.6
+  - @ledgerhq/live-network@1.2.2-nightly.0
+
 ## 2.80.0-nightly.8
 
 ### Patch Changes
