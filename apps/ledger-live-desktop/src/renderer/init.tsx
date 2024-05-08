@@ -31,7 +31,7 @@ import { setEnvOnAllThreads } from "~/helpers/env";
 import dbMiddleware from "~/renderer/middlewares/db";
 import createStore from "~/renderer/createStore";
 import events from "~/renderer/events";
-import { setAccounts } from "~/renderer/actions/accounts";
+import { initAccounts } from "~/renderer/actions/accounts";
 import { fetchSettings, setDeepLinkUrl } from "~/renderer/actions/settings";
 import { lock, setOSDarkMode } from "~/renderer/actions/application";
 import {
@@ -152,12 +152,13 @@ async function init() {
       return currency ? hydrateCurrency(currency) : null;
     }),
   );
-  const accounts = await getKey("app", "accounts", []);
-  if (accounts) {
-    store.dispatch(setAccounts(accounts));
+  const accountData = await getKey("app", "accounts", []);
+  if (accountData) {
+    const e = initAccounts(accountData);
+    store.dispatch(e);
 
     // preload currency that's not in accounts list
-    if (accounts.some(a => a.currency.id !== "ethereum")) {
+    if (e.payload.accounts.some(a => a.currency.id !== "ethereum")) {
       prepareCurrency(getCryptoCurrencyById("ethereum"));
     }
   } else {

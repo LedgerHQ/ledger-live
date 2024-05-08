@@ -7,7 +7,7 @@ import {
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/coin-framework/serialization";
 import type { Account } from "@ledgerhq/types-live";
-import { getAccountUnit } from "../../account";
+import { getAccountCurrency } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 import BigNumber from "bignumber.js";
 
@@ -21,7 +21,7 @@ SEND ${
     : amount.isZero()
     ? ""
     : " " +
-      formatCurrencyUnit(getAccountUnit(account), amount, {
+      formatCurrencyUnit(getAccountCurrency(account).units[0], amount, {
         showCode: true,
         disableRounding: true,
       })

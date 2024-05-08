@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { getAccountUnit, getMainAccount } from "../../account";
+import { getAccountCurrency, getMainAccount } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 import { DeviceTransactionField } from "../../transaction";
 import { Account, AccountLike } from "@ledgerhq/types-live";
@@ -33,7 +33,7 @@ function getDeviceTransactionConfig({
     fields.push({
       type: "text",
       label: "Transaction Fee",
-      value: formatCurrencyUnit(getAccountUnit(account), fees, {
+      value: formatCurrencyUnit(getAccountCurrency(account).units[0], fees, {
         showCode: true,
         disableRounding: true,
       }),
@@ -61,10 +61,14 @@ function getDeviceTransactionConfig({
       fields.push({
         type: "text",
         label: "ADA",
-        value: formatCurrencyUnit(getAccountUnit(mainAccount), requiredMinAdaForTokens, {
-          showCode: true,
-          disableRounding: true,
-        }),
+        value: formatCurrencyUnit(
+          getAccountCurrency(mainAccount).units[0],
+          requiredMinAdaForTokens,
+          {
+            showCode: true,
+            disableRounding: true,
+          },
+        ),
       });
       fields.push({
         type: "text",
@@ -74,7 +78,7 @@ function getDeviceTransactionConfig({
       fields.push({
         type: "text",
         label: "Amount",
-        value: formatCurrencyUnit(getAccountUnit(account), transactionAmount, {
+        value: formatCurrencyUnit(getAccountCurrency(account).units[0], transactionAmount, {
           showCode: true,
           disableRounding: true,
         }),
@@ -83,7 +87,7 @@ function getDeviceTransactionConfig({
       fields.push({
         type: "text",
         label: "Amount",
-        value: formatCurrencyUnit(getAccountUnit(account), transaction.amount, {
+        value: formatCurrencyUnit(getAccountCurrency(account).units[0], transaction.amount, {
           showCode: true,
           disableRounding: true,
         }),

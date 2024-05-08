@@ -1,4 +1,4 @@
-import { getAccountUnit } from "@ledgerhq/coin-framework/account/index";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 import invariant from "invariant";
@@ -21,7 +21,7 @@ function formatOperationSpecifics(op: AlgorandOperation, unit: Unit | null | und
 function formatAccountSpecifics(account: AlgorandAccount): string {
   const { algorandResources } = account;
   invariant(algorandResources, "algorand account expected");
-  const unit = getAccountUnit(account);
+  const unit = getAccountCurrency(account).units[0];
   const formatConfig = {
     disableRounding: true,
     alwaysShowSign: false,

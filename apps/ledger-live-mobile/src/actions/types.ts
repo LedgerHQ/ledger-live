@@ -1,9 +1,5 @@
 import type { Action } from "redux-actions";
-import type {
-  AccountComparator,
-  AddAccountsProps,
-  ImportAccountsReduceInput,
-} from "@ledgerhq/live-common/account/index";
+import type { AccountComparator } from "@ledgerhq/live-wallet/ordering";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type {
   Account,
@@ -37,14 +33,16 @@ import type {
   NftState,
 } from "../reducers/types";
 import type { Unpacked } from "../types/helpers";
+import { HandlersPayloads } from "@ledgerhq/live-wallet/store";
+import { ImportAccountsReduceInput } from "@ledgerhq/live-wallet/liveqr/importAccounts";
 
 //  === ACCOUNTS ACTIONS ===
 
 export enum AccountsActionTypes {
   ACCOUNTS_IMPORT = "ACCOUNTS_IMPORT",
   ACCOUNTS_USER_IMPORT = "ACCOUNTS_USER_IMPORT",
+  ADD_ACCOUNT = "ADD_ACCOUNT",
   REORDER_ACCOUNTS = "REORDER_ACCOUNTS",
-  ACCOUNTS_ADD = "ACCOUNTS_ADD",
   SET_ACCOUNTS = "SET_ACCOUNTS",
   UPDATE_ACCOUNT = "UPDATE_ACCOUNT",
   DELETE_ACCOUNT = "DELETE_ACCOUNT",
@@ -52,28 +50,20 @@ export enum AccountsActionTypes {
   DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
 }
 
-export type AccountsImportStorePayload = Account[];
 export type AccountsReorderPayload = AccountComparator;
 export type AccountsImportAccountsPayload = ImportAccountsReduceInput;
-export type AccountsReplaceAccountsPayload = Pick<
-  AddAccountsProps,
-  "scannedAccounts" | "selectedIds" | "renamings"
-> &
-  Partial<AddAccountsProps>;
-export type AccountsSetAccountsPayload = Account[];
 export type AccountsUpdateAccountWithUpdaterPayload = {
   accountId: string;
   updater: (arg0: Account) => Account;
 };
 export type AccountsDeleteAccountPayload = Account;
 export type AccountsPayload =
-  | AccountsImportStorePayload
+  | HandlersPayloads["INIT_ACCOUNTS"]
   | AccountsReorderPayload
   | AccountsImportAccountsPayload
-  | AccountsReplaceAccountsPayload
-  | AccountsSetAccountsPayload
   | AccountsUpdateAccountWithUpdaterPayload
-  | AccountsDeleteAccountPayload;
+  | AccountsDeleteAccountPayload
+  | Account;
 
 // === APPSTATE ACTIONS ===
 

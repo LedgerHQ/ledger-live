@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   flattenSortAccounts,
   sortAccountsComparatorFromOrder,
-} from "@ledgerhq/live-common/account/index";
+} from "@ledgerhq/live-wallet/ordering";
 import type { FlattenAccountsOptions } from "@ledgerhq/live-common/account/index";
 import type { TrackingPair } from "@ledgerhq/live-countervalues/types";
 import {
@@ -19,6 +19,7 @@ import { counterValueCurrencySelector, orderAccountsSelector } from "../reducers
 import { clearBridgeCache } from "../bridge/cache";
 import { flushAll } from "../components/DBSave";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { walletSelector } from "~/reducers/wallet";
 
 const extraSessionTrackingPairsChanges: BehaviorSubject<TrackingPair[]> = new BehaviorSubject<
   TrackingPair[]
@@ -39,7 +40,8 @@ export function useCalculateCountervalueCallback() {
 export function useSortAccountsComparator() {
   const accounts = useSelector(orderAccountsSelector);
   const calc = useCalculateCountervalueCallback();
-  return sortAccountsComparatorFromOrder(accounts, calc);
+  const walletState = useSelector(walletSelector);
+  return sortAccountsComparatorFromOrder(accounts, walletState, calc);
 }
 export function useFlattenSortAccounts(options?: FlattenAccountsOptions) {
   const accounts = useSelector(accountsSelector);

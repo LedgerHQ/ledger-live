@@ -1,7 +1,6 @@
 import {
   findSubAccountById,
   getAccountCurrency,
-  getAccountUnit,
   getFeesCurrency,
   getFeesUnit,
   getMainAccount,
@@ -79,6 +78,8 @@ import {
   TextEllipsis,
 } from "./styledComponents";
 import { dayAndHourFormat, useDateFormatted } from "~/renderer/hooks/useDateFormatter";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { useAccountName } from "~/renderer/reducers/wallet";
 
 const mapStateToProps = (
   state: State,
@@ -150,13 +151,13 @@ const OperationD = (props: Props) => {
   const dateFormatted = useDateFormatted(date, dayAndHourFormat);
   const uniqueSenders = uniq(senders);
   const recipients = _recipients.filter(Boolean);
-  const { name } = mainAccount;
+  const name = useAccountName(mainAccount);
   const isNftOperation = ["NFT_IN", "NFT_OUT"].includes(operation.type);
   const currency = getAccountCurrency(account);
   const mainCurrency = getAccountCurrency(mainAccount);
   const { status, metadata } = useNftMetadata(contract, tokenId, currency.id);
   const show = useMemo(() => status === "loading", [status]);
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const amount = getOperationAmountNumber(operation);
   const isNegative = amount.isNegative();
   const marketColor = getMarketColor({

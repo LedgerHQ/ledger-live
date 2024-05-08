@@ -7,7 +7,7 @@ import {
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/coin-framework/serialization";
-import { getAccountUnit } from "../../account";
+import { getAccountCurrency } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 import type { Account } from "@ledgerhq/types-live";
 
@@ -25,7 +25,7 @@ export const formatTransaction = (
       : amount.isZero()
       ? ""
       : " " +
-        formatCurrencyUnit(getAccountUnit(account), amount, {
+        formatCurrencyUnit(getAccountCurrency(account).units[0], amount, {
           showCode: true,
           disableRounding: true,
         })

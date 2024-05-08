@@ -23,6 +23,7 @@ import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { TrackingAPI } from "./tracking";
 import { cryptocurrenciesById } from "@ledgerhq/cryptoassets/currencies";
 import { setSupportedCurrencies } from "../currencies";
+import { initialState as walletState } from "@ledgerhq/live-wallet/store";
 
 describe("receiveOnAccountLogic", () => {
   // Given
@@ -70,7 +71,12 @@ describe("receiveOnAccountLogic", () => {
       jest.spyOn(converters, "accountToWalletAPIAccount").mockReturnValueOnce(convertedAccount);
 
       // When
-      const result = await receiveOnAccountLogic(context, walletAccountId, uiNavigation);
+      const result = await receiveOnAccountLogic(
+        walletState,
+        context,
+        walletAccountId,
+        uiNavigation,
+      );
 
       // Then
       expect(uiNavigation).toBeCalledTimes(1);
@@ -80,7 +86,7 @@ describe("receiveOnAccountLogic", () => {
 
     it("calls the tracking for success", async () => {
       // When
-      await receiveOnAccountLogic(context, walletAccountId, uiNavigation);
+      await receiveOnAccountLogic(walletState, context, walletAccountId, uiNavigation);
 
       // Then
       expect(mockWalletAPIReceiveRequested).toBeCalledTimes(1);
@@ -99,7 +105,7 @@ describe("receiveOnAccountLogic", () => {
     it("returns an error", async () => {
       // When
       await expect(async () => {
-        await receiveOnAccountLogic(context, walletAccountId, uiNavigation);
+        await receiveOnAccountLogic(walletState, context, walletAccountId, uiNavigation);
       }).rejects.toThrowError(`accountId ${walletAccountId} unknown`);
 
       // Then
@@ -109,7 +115,7 @@ describe("receiveOnAccountLogic", () => {
     it("calls the tracking for error", async () => {
       // When
       await expect(async () => {
-        await receiveOnAccountLogic(context, walletAccountId, uiNavigation);
+        await receiveOnAccountLogic(walletState, context, walletAccountId, uiNavigation);
       }).rejects.toThrow();
 
       // Then
@@ -876,7 +882,6 @@ function createTokenAccount(id = "32"): TokenAccount {
     operationsCount: 0,
     operations: [],
     pendingOperations: [],
-    starred: false,
     balanceHistoryCache: {
       WEEK: { latestDate: null, balances: [] },
       HOUR: { latestDate: null, balances: [] },

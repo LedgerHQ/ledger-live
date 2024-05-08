@@ -2,7 +2,13 @@ import { handleActions, ReducerMap } from "redux-actions";
 import type { Action } from "redux-actions";
 import { createSelector, createSelectorCreator, defaultMemoize, OutputSelector } from "reselect";
 import uniq from "lodash/uniq";
-import { Account, AccountLike, AccountLikeArray, SubAccount } from "@ledgerhq/types-live";
+import {
+  Account,
+  AccountLike,
+  AccountLikeArray,
+  AccountRaw,
+  SubAccount,
+} from "@ledgerhq/types-live";
 import type {
   CryptoCurrency,
   CryptoOrTokenCurrency,
@@ -10,14 +16,11 @@ import type {
 } from "@ledgerhq/types-cryptoassets";
 import isEqual from "lodash/isEqual";
 import {
-  addAccounts,
   isAccountEmpty,
   flattenAccounts,
   getAccountCurrency,
-  importAccountsReduce,
   isUpToDateAccount,
   clearAccount,
-  nestedSortAccounts,
   makeEmptyTokenAccount,
   isAccountBalanceUnconfirmed,
 } from "@ledgerhq/live-common/account/index";
@@ -27,11 +30,8 @@ import type { AccountsState, State } from "./types";
 import type {
   AccountsDeleteAccountPayload,
   AccountsImportAccountsPayload,
-  AccountsImportStorePayload,
   AccountsPayload,
   AccountsReorderPayload,
-  AccountsReplaceAccountsPayload,
-  AccountsSetAccountsPayload,
   AccountsUpdateAccountWithUpdaterPayload,
   SettingsBlacklistTokenPayload,
   DangerouslyOverrideStatePayload,
@@ -40,13 +40,23 @@ import { AccountsActionTypes } from "../actions/types";
 import accountModel from "../logic/accountModel";
 import { blacklistedTokenIdsSelector, hiddenNftCollectionsSelector } from "./settings";
 import { galleryChainFiltersSelector } from "./nft";
+import {
+  accountNameWithDefaultSelector,
+  accountUserDataExportSelector,
+  HandlersPayloads,
+  WalletHandlerType,
+} from "@ledgerhq/live-wallet/store";
+import { importAccountsReduce } from "@ledgerhq/live-wallet/liveqr/importAccounts";
+import { walletSelector } from "./wallet";
+import { nestedSortAccounts } from "@ledgerhq/live-wallet/ordering";
+import { AddAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 
 export const INITIAL_STATE: AccountsState = {
   active: [],
 };
 const handlers: ReducerMap<AccountsState, Payload> = {
-  [AccountsActionTypes.ACCOUNTS_IMPORT]: (_, action) => ({
-    active: (action as Action<AccountsImportStorePayload>).payload,
+  [WalletHandlerType.INIT_ACCOUNTS]: (_, action) => ({
+    active: (action.payload as HandlersPayloads["INIT_ACCOUNTS"]).accounts,
   }),
 
   [AccountsActionTypes.ACCOUNTS_USER_IMPORT]: (s, action) => ({
@@ -56,27 +66,24 @@ const handlers: ReducerMap<AccountsState, Payload> = {
     ),
   }),
 
+  [AccountsActionTypes.ADD_ACCOUNT]: (state, action) => {
+    const account = (action as Action<Account>).payload;
+    if (state.active.some(a => a.id === account.id)) return state;
+    return {
+      active: [...state.active, account],
+    };
+  },
+
   [AccountsActionTypes.REORDER_ACCOUNTS]: (state, action) => ({
     active: nestedSortAccounts(state.active, (action as Action<AccountsReorderPayload>).payload),
   }),
 
-  [AccountsActionTypes.ACCOUNTS_ADD]: (s, action) => {
-    const {
-      payload: { scannedAccounts, selectedIds, renamings },
-    } = action as Action<AccountsReplaceAccountsPayload>;
+  [WalletHandlerType.ADD_ACCOUNTS]: (s, action) => {
+    const { payload } = action as AddAccountsAction;
     return {
-      active: addAccounts({
-        existingAccounts: s.active,
-        scannedAccounts,
-        selectedIds,
-        renamings,
-      }),
+      active: payload.allAccounts,
     };
   },
-
-  [AccountsActionTypes.SET_ACCOUNTS]: (_, action) => ({
-    active: (action as Action<AccountsSetAccountsPayload>).payload,
-  }),
 
   [AccountsActionTypes.UPDATE_ACCOUNT]: (state, action) => {
     const {
@@ -112,9 +119,22 @@ const handlers: ReducerMap<AccountsState, Payload> = {
 };
 
 // Selectors
-export const exportSelector = (s: State) => ({
-  active: s.accounts.active.map(accountModel.encode),
-});
+
+export function exportSelector(state: State): {
+  active: {
+    data: AccountRaw;
+    version: number;
+  }[];
+} {
+  const active = [];
+  for (const account of state.accounts.active) {
+    const accountUserData = accountUserDataExportSelector(state.wallet, { account });
+    if (accountUserData) {
+      active.push(accountModel.encode([account, accountUserData]));
+    }
+  }
+  return { active };
+}
 
 /**
  * Warning: use this selector directly in `useSelector` only if you really need
@@ -133,9 +153,7 @@ export const accountsSelector = (s: State): Account[] => s.accounts.active;
 // NB some components don't need to refresh every time an account is updated, usually it's only
 // when the balance/name/length/starred/swapHistory of accounts changes.
 const accountHash = (a: AccountLike) =>
-  `${a.type === "Account" ? a.name : ""}-${a.id}${
-    a.starred ? "-*" : ""
-  }-${a.balance.toString()}-swapHistory(${a.swapHistory.length})`;
+  `${a.id}-${a.balance.toString()}-swapHistory(${a.swapHistory.length})`;
 
 // TODO can we share with desktop in common?
 const shallowAccountsSelectorCreator = createSelectorCreator(defaultMemoize, (a, b): boolean =>
@@ -171,11 +189,17 @@ export const cryptoCurrenciesSelector = createSelector(accountsSelector, account
   uniq(accounts.map(a => a.currency)).sort((a, b) => a.name.localeCompare(b.name)),
 );
 export const accountsTuplesByCurrencySelector = createSelector(
+  walletSelector,
   accountsSelector,
   (_: State, currency: CryptoCurrency | TokenCurrency) => currency,
   (_: State, currency: CryptoCurrency | TokenCurrency, accountIds?: Map<string, boolean>) =>
     accountIds,
-  (accounts, currency, accountIds): { account: AccountLike; subAccount: SubAccount | null }[] => {
+  (
+    wallet,
+    accounts,
+    currency,
+    accountIds,
+  ): { account: AccountLike; subAccount: SubAccount | null; name: string }[] => {
     if (currency.type === "TokenCurrency") {
       return accounts
         .filter(account => {
@@ -186,6 +210,7 @@ export const accountsTuplesByCurrencySelector = createSelector(
           return account.currency.id === currency.parentCurrency.id;
         })
         .map(account => ({
+          name: accountNameWithDefaultSelector(wallet, account),
           account,
           subAccount:
             (account.subAccounts &&
@@ -203,6 +228,7 @@ export const accountsTuplesByCurrencySelector = createSelector(
           account.currency.id === currency.id && (accountIds ? accountIds.has(account.id) : true),
       )
       .map(account => ({
+        name: accountNameWithDefaultSelector(wallet, account),
         account,
         subAccount: null,
       }));
@@ -476,6 +502,6 @@ export const areSomeAccountsBalanceUnconfirmedSelector = createSelector(
   accounts => accounts.some(isAccountBalanceUnconfirmed),
 );
 
-type Payload = AccountsPayload | SettingsBlacklistTokenPayload;
+type Payload = AccountsPayload | SettingsBlacklistTokenPayload | AddAccountsAction["payload"];
 
 export default handleActions<AccountsState, Payload>(handlers, INITIAL_STATE);

@@ -1,4 +1,4 @@
-import { getAccountUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
@@ -23,6 +23,7 @@ import Line from "../components/Line";
 import Words from "../components/Words";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CeloRevokeFlowFlowParamList } from "./types";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props = BaseComposite<
   StackNavigatorProps<CeloRevokeFlowFlowParamList, ScreenName.CeloRevokeSummary>
@@ -210,7 +211,7 @@ function SummaryWords({
   onChangeValidator: () => void;
   onChangeAmount: () => void;
 }) {
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const formattedAmount = formatCurrencyUnit(unit, new BigNumber(amount), {
     disableRounding: true,
     alwaysShowSign: false,

@@ -20,6 +20,7 @@ import {
   SettingsState,
   VaultSigner,
   SupportedCountervaluesData,
+  CurrencySettings,
 } from "~/renderer/reducers/settings";
 import { useRefreshAccountsOrdering } from "~/renderer/actions/general";
 import { Language, Locale } from "~/config/languages";
@@ -375,7 +376,13 @@ export const addStarredMarketCoins = (payload: string) => ({
   type: "ADD_STARRED_MARKET_COINS",
   payload,
 });
+
 export const removeStarredMarketCoins = (payload: string) => ({
   type: "REMOVE_STARRED_MARKET_COINS",
+  payload,
+});
+
+export const setCurrencySettings = (payload: { key: string; value: CurrencySettings }) => ({
+  type: "SET_CURRENCY_SETTINGS",
   payload,
 });

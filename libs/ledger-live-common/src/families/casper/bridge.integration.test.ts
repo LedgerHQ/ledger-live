@@ -43,7 +43,6 @@ const casper: CurrenciesData<Transaction> = {
         operations: [],
         pendingOperations: [],
         currencyId: "casper",
-        unitMagnitude: 9,
         lastSyncDate: "",
         balance: "1000",
       },

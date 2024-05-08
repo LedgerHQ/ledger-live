@@ -16,6 +16,7 @@ import ErrorBanner from "~/renderer/components/ErrorBanner";
 import * as S from "./StepAmount.styles";
 import { StepProps } from "../types";
 import { fromNow } from "~/renderer/hooks/useDateFormatter";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 export const StepAmountFooter = ({
   transitionTo,
   account,
@@ -65,6 +66,8 @@ const StepAmount = ({
     account && transaction && account.celoResources && account.celoResources.pendingWithdrawals,
     "account with pending withdrawals and transaction required",
   );
+
+  const unit = useAccountUnit(account);
   const bridge = getAccountBridge(account, parentAccount);
   const onChange = useCallback(
     (index: number) => {
@@ -105,7 +108,7 @@ const StepAmount = ({
                 )}
                 <FormattedVal
                   val={value}
-                  unit={account.unit}
+                  unit={unit}
                   style={{
                     textAlign: "right",
                     width: "auto",

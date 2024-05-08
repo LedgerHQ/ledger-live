@@ -10,10 +10,10 @@ import { openURL } from "~/renderer/linking";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import Button from "~/renderer/components/ButtonV3";
 import CheckBox from "~/renderer/components/CheckBox";
-import { getAccountName } from "@ledgerhq/live-common/account/index";
 import { Account } from "@ledgerhq/types-live";
 import { getLLDCoinFamily } from "~/renderer/families";
 import { ManageAction } from "~/renderer/families/types";
+import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 
 export const LOCAL_STORAGE_KEY_PREFIX = "receive_staking_";
 
@@ -130,7 +130,7 @@ export const StepReceiveStakingFooter = (props: StepProps) => {
       currency: account && "currency" in account ? account?.currency?.name : undefined,
       provider: providerName,
       modal: "receive",
-      account: account && getAccountName(account),
+      account: account && getDefaultAccountName(account),
     };
   }, [account]);
 

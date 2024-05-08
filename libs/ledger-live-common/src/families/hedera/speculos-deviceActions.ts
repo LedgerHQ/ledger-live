@@ -2,6 +2,7 @@ import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
 import { formatCurrencyUnit } from "../../currencies";
 import { deviceActionFlow, SpeculosButton } from "../../bot/specs";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
 
 export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
   steps: [
@@ -30,9 +31,9 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
     {
       title: "Amount",
       button: SpeculosButton.RIGHT,
-      expectedValue: ({ account: { unit }, status: { amount } }) => {
+      expectedValue: ({ account, status: { amount } }) => {
         return (
-          formatCurrencyUnit(unit, amount, {
+          formatCurrencyUnit(getAccountCurrency(account).units[0], amount, {
             disableRounding: true,
             showAllDigits: true,
           }) + " hbar"
@@ -42,8 +43,8 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
     {
       title: "Fee",
       button: SpeculosButton.RIGHT,
-      expectedValue: ({ account: { unit }, status: { estimatedFees } }) =>
-        formatCurrencyUnit(unit, estimatedFees, {
+      expectedValue: ({ account, status: { estimatedFees } }) =>
+        formatCurrencyUnit(getAccountCurrency(account).units[0], estimatedFees, {
           disableRounding: true,
           showAllDigits: true,
         }) + " hbar",

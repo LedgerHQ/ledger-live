@@ -1,6 +1,6 @@
 import numeral from "numeral";
 import { BigNumber } from "bignumber.js";
-import { formatCurrencyUnit } from "./formatCurrencyUnit";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 
 /**

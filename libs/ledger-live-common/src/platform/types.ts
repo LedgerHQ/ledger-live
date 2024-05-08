@@ -17,6 +17,8 @@ import { z } from "zod";
  */
 export const PLATFORM_FAMILIES = [...Object.values(FAMILIES), "evm"];
 
+export { FAMILIES as PLATFORM_FAMILIES_ENUM };
+
 export type {
   Account as PlatformAccount,
   Currency as PlatformCurrency,

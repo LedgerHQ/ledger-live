@@ -13,7 +13,6 @@ export const cardanoRawAccount1: AccountRaw = {
   operations: [],
   pendingOperations: [],
   currencyId: "cardano_testnet",
-  unitMagnitude: 6,
   lastSyncDate: "",
   balance: "10098829375",
   xpub: "806499588e0c4a58f4119f7e6e096bf42c3f774a528d2acec9e82ceebf87d1ceb3d4f3622dd2c77c65cc89c123f79337db22cf8a69f122e36dab1bf5083bf82d",

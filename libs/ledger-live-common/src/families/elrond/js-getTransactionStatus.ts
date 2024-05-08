@@ -9,7 +9,7 @@ import {
   AmountRequired,
 } from "@ledgerhq/errors";
 import { formatCurrencyUnit } from "../../currencies";
-import { getAccountUnit } from "../../account";
+import { getAccountCurrency } from "../../account";
 import { DECIMALS_LIMIT, MIN_DELEGATION_AMOUNT } from "./constants";
 import type { ElrondAccount, Transaction, TransactionStatus } from "./types";
 import { isValidAddress, isSelfTransaction, isAmountSpentFromBalance } from "./logic";
@@ -79,9 +79,13 @@ const getTransactionStatus = async (
 
     // All delegate and undelegate transactions must have an amount >= 1 EGLD
     if (!errors.amount && t.amount.lt(MIN_DELEGATION_AMOUNT)) {
-      const formattedAmount = formatCurrencyUnit(getAccountUnit(a), MIN_DELEGATION_AMOUNT, {
-        showCode: true,
-      });
+      const formattedAmount = formatCurrencyUnit(
+        getAccountCurrency(a).units[0],
+        MIN_DELEGATION_AMOUNT,
+        {
+          showCode: true,
+        },
+      );
       if (t.mode === "delegate") {
         errors.amount = new ElrondMinDelegatedAmountError("", {
           formattedAmount,
@@ -103,9 +107,13 @@ const getTransactionStatus = async (
       delegationRemainingBalance.gt(0) && delegationRemainingBalance.lt(MIN_DELEGATION_AMOUNT);
 
     if (!errors.amount && t.mode === "unDelegate" && delegationBalanceForbidden) {
-      const formattedAmount = formatCurrencyUnit(getAccountUnit(a), MIN_DELEGATION_AMOUNT, {
-        showCode: true,
-      });
+      const formattedAmount = formatCurrencyUnit(
+        getAccountCurrency(a).units[0],
+        MIN_DELEGATION_AMOUNT,
+        {
+          showCode: true,
+        },
+      );
       errors.amount = new ElrondDelegationBelowMinimumError("", {
         formattedAmount,
       });

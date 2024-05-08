@@ -50,7 +50,6 @@ const dataset: CurrenciesData<Transaction> = {
         spendableBalance: "2180673",
         blockHeight: 1615299,
         currencyId: "cosmos",
-        unitMagnitude: 6,
         operationsCount: 85,
         operations: [],
         pendingOperations: [],
@@ -364,7 +363,6 @@ const dataset: CurrenciesData<Transaction> = {
         seedIdentifier:
           "cosmospub1addwnpepqd3nvwwx39pqqvw88sg409675u6wyt4wtzqyt2t0e9y4629t50cdzftxnvz",
         name: "Cosmos Static Account",
-        starred: true,
         derivationMode: "",
         index: 0,
         freshAddress: "cosmos10l6h3qw05u7qduqgafj8wlrx3fjhr8523sm0c3",
@@ -375,7 +373,6 @@ const dataset: CurrenciesData<Transaction> = {
         operations: [],
         pendingOperations: [],
         currencyId: "cosmos",
-        unitMagnitude: 6,
         lastSyncDate: "2020-06-11T07:44:10.266Z",
         balance: "1000000",
         spendableBalance: "0",

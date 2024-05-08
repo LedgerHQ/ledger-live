@@ -3,7 +3,6 @@ import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
@@ -14,6 +13,7 @@ import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDiscla
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { StepProps } from "../types";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
   grow: true,
@@ -25,11 +25,12 @@ const Container = styled(Box).attrs(() => ({
 `;
 const StepConfirmation = (props: StepProps) => {
   const { optimisticOperation, error, signed, account, transaction } = props;
+  const unit = useAccountUnit(account);
   if (optimisticOperation && account && transaction) {
     const amount = `${denominate({
       input: String(transaction.amount),
       decimals: 4,
-    })} ${getAccountUnit(account).code || "EGLD"}`;
+    })} ${unit.code || "EGLD"}`;
     return (
       <Container>
         <TrackPage
