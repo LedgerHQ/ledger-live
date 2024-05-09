@@ -17,7 +17,7 @@ import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
 import type { Transaction as PolkadotTransaction } from "@ledgerhq/live-common/families/polkadot/types";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
-import { getAccountUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { isFirstBond } from "@ledgerhq/live-common/families/polkadot/logic";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
@@ -39,6 +39,7 @@ import FlowErrorBottomModal from "../components/FlowErrorBottomModal";
 import SendRowsFee from "../SendRowsFee";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { PolkadotBondFlowParamList } from "./types";
+import { useMaybeAccountUnit } from "~/hooks/useAccountUnit";
 
 const options = [
   {
@@ -163,10 +164,10 @@ export default function PolkadotBondAmount({ navigation, route }: Props) {
     },
     [bridge, transaction, setTransaction],
   );
-  if (!account || !transaction) return null;
+  const unit = useMaybeAccountUnit(account);
+  if (!account || !transaction || !unit) return null;
   const { useAllAmount } = transaction;
   const { amount } = status;
-  const unit = getAccountUnit(account);
   const rewardDestination = (transaction as { rewardDestination?: string }).rewardDestination || "";
   const firstBond = isFirstBond(mainAccount);
   const error = amount.eq(0) || bridgePending ? null : getFirstStatusError(status, "errors");

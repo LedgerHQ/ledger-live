@@ -10,7 +10,6 @@ import { TrackScreen } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 
 import AccountNameRow from "./AccountNameRow";
-import AccountUnitsRow from "./AccountUnitsRow";
 import DeleteAccountRow from "./DeleteAccountRow";
 import DeleteAccountModal from "./DeleteAccountModal";
 import AccountAdvancedLogsRow from "./AccountAdvancedLogsRow";
@@ -86,7 +85,6 @@ class AccountSettings extends PureComponent<Props, State> {
       <SettingsNavigationScrollView>
         <TrackScreen category="Account Settings" />
         <AccountNameRow account={mainAccount} navigation={navigation} />
-        <AccountUnitsRow account={mainAccount} navigation={navigation} />
         <AccountAdvancedLogsRow account={mainAccount} navigation={navigation} />
         <DeleteAccountRow onPress={this.onPress} />
         <DeleteAccountModal

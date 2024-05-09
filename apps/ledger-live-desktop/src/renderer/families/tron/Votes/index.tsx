@@ -9,7 +9,6 @@ import {
   formatVotes,
   getNextRewardDate,
 } from "@ledgerhq/live-common/families/tron/react";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 import { openURL } from "~/renderer/linking";
@@ -35,6 +34,7 @@ import { useDateFromNow } from "~/renderer/hooks/useDateFormatter";
 import { useHistory } from "react-router";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 import { track } from "~/renderer/analytics/segment";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const Wrapper = styled(Box).attrs(() => ({
   p: 3,
@@ -55,7 +55,7 @@ const Delegation = ({ account }: { account: TronAccount }) => {
     const diff = new Date().getTime() - lastVoteDate.getTime();
     return Math.floor(diff / (1000 * 60 * 60 * 24));
   }, [lastVoteDate]);
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const explorerView = getDefaultExplorerView(account.currency);
   const { tronResources } = account;
   const { votes, tronPower, unwithdrawnReward } = tronResources;

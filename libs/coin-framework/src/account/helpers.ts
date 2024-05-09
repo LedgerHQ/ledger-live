@@ -56,32 +56,6 @@ export const getAccountCurrency = (account?: AccountLike): TokenCurrency | Crypt
   }
 };
 
-export const getAccountUnit = (account: AccountLike): Unit => {
-  switch (account.type) {
-    case "Account":
-      return account.unit;
-
-    case "TokenAccount":
-      return account.token.units[0];
-
-    default:
-      throw new Error("invalid account.type=" + (account as AccountLike).type);
-  }
-};
-
-export const getAccountName = (account: AccountLike): string => {
-  switch (account.type) {
-    case "Account":
-      return account.name;
-
-    case "TokenAccount":
-      return account.token.name;
-
-    default:
-      throw new Error("invalid account.type=" + (account as AccountLike).type);
-  }
-};
-
 export const getAccountSpendableBalance = (account: AccountLike): BigNumber =>
   account.spendableBalance;
 
@@ -229,7 +203,6 @@ export const makeEmptyTokenAccount = (account: Account, token: TokenCurrency): T
   creationDate: new Date(),
   operations: [],
   pendingOperations: [],
-  starred: false,
   swapHistory: [],
   balanceHistoryCache: emptyHistoryCache,
 });
@@ -261,7 +234,6 @@ export const accountWithMandatoryTokens = (
       creationDate: new Date(),
       operations: [],
       pendingOperations: [],
-      starred: false,
       swapHistory: [],
       balanceHistoryCache: emptyHistoryCache,
     }));

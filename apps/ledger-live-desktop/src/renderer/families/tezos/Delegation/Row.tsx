@@ -3,7 +3,6 @@ import styled from "styled-components";
 import { Trans } from "react-i18next";
 import {
   getMainAccount,
-  getAccountUnit,
   getAccountCurrency,
   shortAddressPreview,
 } from "@ledgerhq/live-common/account/index";
@@ -22,6 +21,7 @@ import Ellipsis from "~/renderer/components/Ellipsis";
 import BakerImage from "../BakerImage";
 import ContextMenu from "./ContextMenu";
 import { TezosAccount } from "@ledgerhq/live-common/families/tezos/types";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 type Props = {
   delegation: Delegation;
@@ -77,7 +77,7 @@ const CTA = styled.div`
   justify-content: flex-end;
 `;
 const Row = ({ account, parentAccount, delegation }: Props) => {
-  const unit = getAccountUnit(account);
+  const unit = useAccountUnit(account);
   const currency = getAccountCurrency(account);
   const mainAccount = getMainAccount(account, parentAccount);
   const name = delegation.baker ? delegation.baker.name : shortAddressPreview(delegation.address);

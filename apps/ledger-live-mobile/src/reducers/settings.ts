@@ -9,7 +9,7 @@ import { getEnv, setEnvUnsafe } from "@ledgerhq/live-env";
 import { createSelector } from "reselect";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import type { AccountLike } from "@ledgerhq/types-live";
-import type { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { CurrencySettings, SettingsState, State } from "./types";
 import { currencySettingsDefaults } from "../helpers/CurrencySettingsDefaults";
@@ -101,8 +101,8 @@ export const INITIAL_STATE: SettingsState = {
   counterValueExchange: null,
   privacy: null,
   reportErrorsEnabled: true,
-  analyticsEnabled: false,
-  personalizedRecommendationsEnabled: false,
+  analyticsEnabled: true,
+  personalizedRecommendationsEnabled: true,
   currenciesSettings: {},
   pairExchanges: {},
   selectedTimeRange: "month",
@@ -682,22 +682,22 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
 
 export default handleActions<SettingsState, SettingsPayload>(handlers, INITIAL_STATE);
 
-const storeSelector = (state: State): SettingsState => state.settings;
+export const settingsStoreSelector = (state: State): SettingsState => state.settings;
 
-export const exportSelector = storeSelector;
+export const exportSelector = settingsStoreSelector;
 
 const counterValueCurrencyLocalSelector = (state: SettingsState): Currency =>
   findCurrencyByTicker(state.counterValue) || getFiatCurrencyByTicker("USD");
 
 export const counterValueCurrencySelector = createSelector(
-  storeSelector,
+  settingsStoreSelector,
   counterValueCurrencyLocalSelector,
 );
 
 const counterValueExchangeLocalSelector = (s: SettingsState) => s.counterValueExchange;
 
 export const counterValueExchangeSelector = createSelector(
-  storeSelector,
+  settingsStoreSelector,
   counterValueExchangeLocalSelector,
 );
 
@@ -705,40 +705,72 @@ const defaultCurrencySettingsForCurrency: (_: Currency) => CurrencySettings = cr
   const defaults = currencySettingsDefaults(crypto);
   return {
     confirmationsNb: defaults.confirmationsNb ? defaults.confirmationsNb.def : 0,
-    exchange: null,
+    unit: defaults.unit,
   };
 };
 export const currencySettingsSelector = (
-  state: State,
+  state: SettingsState,
   {
     currency,
   }: {
     currency: Currency;
   },
-) => ({
-  ...defaultCurrencySettingsForCurrency(currency),
-  ...state.settings.currenciesSettings[currency.ticker],
-});
-export const privacySelector = createSelector(storeSelector, s => s.privacy);
+) => {
+  const currencySettings = Object.keys(state.currenciesSettings)?.includes(currency.ticker)
+    ? state.currenciesSettings[currency.ticker]
+    : {};
+
+  return {
+    ...defaultCurrencySettingsForCurrency(currency),
+    ...currencySettings,
+  };
+};
+
+export const unitForCurrencySelector = (
+  state: State,
+  {
+    currency,
+  }: {
+    currency: CryptoCurrency;
+  },
+): Unit => {
+  const obj = state.settings.currenciesSettings[currency.ticker];
+  if (obj?.unit) return obj.unit;
+  const defs = currencySettingsDefaults(currency);
+  return defs.unit;
+};
+
+export const accountUnitSelector = (state: State, account: AccountLike): Unit => {
+  if (account.type === "Account") {
+    return unitForCurrencySelector(state, account);
+  } else {
+    return account.token.units[0];
+  }
+};
+
+export const privacySelector = createSelector(settingsStoreSelector, s => s.privacy);
 export const reportErrorsEnabledSelector = createSelector(
-  storeSelector,
+  settingsStoreSelector,
   s => s.reportErrorsEnabled,
 );
-export const analyticsEnabledSelector = createSelector(storeSelector, s => s.analyticsEnabled);
+export const analyticsEnabledSelector = createSelector(
+  settingsStoreSelector,
+  s => s.analyticsEnabled,
+);
 export const personalizedRecommendationsEnabledSelector = createSelector(
-  storeSelector,
+  settingsStoreSelector,
   s => s.personalizedRecommendationsEnabled,
 );
 export const trackingEnabledSelector = createSelector(
-  storeSelector,
+  settingsStoreSelector,
   s => s.analyticsEnabled || s.personalizedRecommendationsEnabled,
 );
 export const lastSeenCustomImageSelector = createSelector(
-  storeSelector,
+  settingsStoreSelector,
   s => s.lastSeenCustomImage,
 );
 export const currencySettingsForAccountSelector = (
-  s: State,
+  s: SettingsState,
   {
     account,
   }: {

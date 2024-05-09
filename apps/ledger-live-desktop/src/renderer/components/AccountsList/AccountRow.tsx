@@ -1,4 +1,4 @@
-import React, { PureComponent } from "react";
+import React from "react";
 import styled from "styled-components";
 import { Account } from "@ledgerhq/types-live";
 import { getEnv } from "@ledgerhq/live-env";
@@ -9,6 +9,8 @@ import CryptoCurrencyIconWithCount from "~/renderer/components/CryptoCurrencyIco
 import FormattedVal from "~/renderer/components/FormattedVal";
 import Input from "~/renderer/components/Input";
 import AccountTagDerivationMode from "../AccountTagDerivationMode";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
+import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 const InputWrapper = styled.div`
   margin-left: 4px;
   width: 100%;
@@ -24,131 +26,129 @@ type Props = {
   onEditName?: (b: Account, a: string) => void;
   hideAmount?: boolean;
 };
-export default class AccountRow extends PureComponent<Props> {
-  handlePreventSubmit = (e: React.SyntheticEvent<HTMLInputElement>) => {
+
+const overflowStyles: React.CSSProperties = {
+  textOverflow: "ellipsis",
+  overflow: "hidden",
+  whiteSpace: "nowrap",
+};
+
+function AccountRow(props: Props) {
+  const {
+    account,
+    isChecked,
+    onEditName,
+    onToggleAccount,
+    accountName,
+    isDisabled,
+    isReadonly,
+    autoFocusInput,
+    hideAmount,
+  } = props;
+
+  const unit = useAccountUnit(account);
+
+  const handlePreventSubmit = (e: React.SyntheticEvent<HTMLInputElement>) => {
     e.preventDefault();
     e.stopPropagation();
   };
 
-  handleKeyPress = (e: React.SyntheticEvent<HTMLInputElement>) => {
+  const handleKeyPress = (e: React.SyntheticEvent<HTMLInputElement>) => {
     // this fixes a bug with the event propagating to the Tabbable
     e.stopPropagation();
   };
 
-  onToggleAccount = () => {
-    const { onToggleAccount, account, isChecked } = this.props;
-    if (onToggleAccount) onToggleAccount(account, !isChecked);
-  };
+  const onClickToggleAccount = () => onToggleAccount?.(account, !isChecked);
 
-  handleChangeName = (name: string) => {
-    const { onEditName, account } = this.props;
-    if (onEditName) onEditName(account, name);
-  };
+  const handleChangeName = (name: string) => onEditName?.(account, name);
 
-  onClickInput = (e: React.SyntheticEvent<HTMLInputElement>) => {
+  const onClickInput = (e: React.SyntheticEvent<HTMLInputElement>) => {
     e.preventDefault();
     e.stopPropagation();
   };
 
-  onFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+  const onFocus = (e: React.FocusEvent<HTMLInputElement>) => {
     e.target.select();
   };
 
-  onBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    const { onEditName, account } = this.props;
+  const onBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     const { value } = e.target;
     if (!value && onEditName) {
       // don't leave an empty input on blur
-      onEditName(account, account.name);
+      onEditName(account, getDefaultAccountName(account));
     }
   };
 
-  _input = null;
-  overflowStyles: React.CSSProperties = {
-    textOverflow: "ellipsis",
-    overflow: "hidden",
-    whiteSpace: "nowrap",
-  };
-
-  render() {
-    const {
-      account,
-      isChecked,
-      onEditName,
-      accountName,
-      isDisabled,
-      isReadonly,
-      autoFocusInput,
-      hideAmount,
-    } = this.props;
-    const tokenCount = (account.subAccounts && account.subAccounts.length) || 0;
-    const tag = <AccountTagDerivationMode account={account} />;
-    return (
-      <AccountRowContainer
-        className="account-row"
-        isDisabled={isDisabled}
-        onClick={isDisabled ? undefined : this.onToggleAccount}
+  const tokenCount = (account.subAccounts && account.subAccounts.length) || 0;
+  const tag = <AccountTagDerivationMode account={account} />;
+  return (
+    <AccountRowContainer
+      className="account-row"
+      isDisabled={isDisabled}
+      onClick={isDisabled ? undefined : onClickToggleAccount}
+    >
+      <CryptoCurrencyIconWithCount currency={account.currency} count={tokenCount} withTooltip />
+      <Box
+        shrink
+        grow
+        ff="Inter|SemiBold"
+        color="palette.text.shade100"
+        horizontal
+        alignItems="center"
+        fontSize={4}
       >
-        <CryptoCurrencyIconWithCount currency={account.currency} count={tokenCount} withTooltip />
-        <Box
-          shrink
-          grow
-          ff="Inter|SemiBold"
-          color="palette.text.shade100"
-          horizontal
-          alignItems="center"
-          fontSize={4}
-        >
-          {onEditName ? (
-            <InputWrapper>
-              <Input
-                style={this.overflowStyles}
-                value={accountName}
-                onChange={this.handleChangeName}
-                onClick={this.onClickInput}
-                onEnter={this.handlePreventSubmit}
-                onFocus={this.onFocus}
-                onBlur={this.onBlur}
-                onKeyPress={this.handleKeyPress}
-                maxLength={getEnv("MAX_ACCOUNT_NAME_SIZE")}
-                editInPlace
-                autoFocus={autoFocusInput}
-                renderRight={tag}
-              />
-            </InputWrapper>
-          ) : (
-            <div
-              style={{
-                ...this.overflowStyles,
-                paddingLeft: 15,
-                marginLeft: 4,
-                width: "100%",
-              }}
-            >
-              {accountName}
-              {tag}
-            </div>
-          )}
-        </Box>
-        {!hideAmount ? (
-          <FormattedVal
-            val={account.balance}
-            unit={account.unit}
+        {onEditName ? (
+          <InputWrapper>
+            <Input
+              style={overflowStyles}
+              value={accountName}
+              onChange={handleChangeName}
+              onClick={onClickInput}
+              onEnter={handlePreventSubmit}
+              onFocus={onFocus}
+              onBlur={onBlur}
+              onKeyPress={handleKeyPress}
+              maxLength={getEnv("MAX_ACCOUNT_NAME_SIZE")}
+              editInPlace
+              autoFocus={autoFocusInput}
+              renderRight={tag}
+            />
+          </InputWrapper>
+        ) : (
+          <div
             style={{
-              textAlign: "right",
-              width: "auto",
-              minWidth: 120,
+              ...overflowStyles,
+              paddingLeft: 15,
+              marginLeft: 4,
+              width: "100%",
             }}
-            showCode
-            fontSize={4}
-            color="palette.text.shade60"
-          />
-        ) : null}
-        {!isDisabled && !isReadonly && <CheckBox disabled isChecked={isChecked || !!isDisabled} />}
-      </AccountRowContainer>
-    );
-  }
+          >
+            {accountName}
+            {tag}
+          </div>
+        )}
+      </Box>
+      {!hideAmount ? (
+        <FormattedVal
+          val={account.balance}
+          unit={unit}
+          style={{
+            textAlign: "right",
+            width: "auto",
+            minWidth: 120,
+          }}
+          showCode
+          fontSize={4}
+          color="palette.text.shade60"
+        />
+      ) : null}
+      {!isDisabled && !isReadonly && <CheckBox disabled isChecked={isChecked || !!isDisabled} />}
+    </AccountRowContainer>
+  );
 }
+
+export default React.memo(AccountRow);
+
 const AccountRowContainer = styled(Tabbable).attrs(() => ({
   horizontal: true,
   alignItems: "center",

@@ -28,9 +28,7 @@ const receive = (
           });
 
           if (r.publicKey !== account.seedIdentifier) {
-            throw new WrongDeviceForAccount(`WrongDeviceForAccount ${account.name}`, {
-              accountName: account.name,
-            });
+            throw new WrongDeviceForAccount();
           }
 
           o.next({

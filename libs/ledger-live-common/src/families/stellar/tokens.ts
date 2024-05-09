@@ -34,7 +34,6 @@ const buildStellarTokenAccount = ({
     type: "TokenAccount",
     id,
     parentId: parentAccountId,
-    starred: false,
     token,
     operationsCount: operations.length,
     operations: operations.map(op => ({

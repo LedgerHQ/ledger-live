@@ -21,6 +21,7 @@ import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpe
 import type { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
 import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
+import { useMaybeAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props = {
   account: AccountLike;
@@ -46,12 +47,14 @@ export default function StellarFeeRow({
   const extraInfoFees = useCallback(() => {
     Linking.openURL(urls.feesMoreInfo);
   }, []);
-  if (transaction.family !== "stellar") return null;
+  const mainAccount = getMainAccount(account, parentAccount);
+  const unit = useMaybeAccountUnit(mainAccount);
+  if (transaction.family !== "stellar" || !unit) return null;
   const bridge = getAccountBridge(account, parentAccount);
   const suggestedFee = transaction.networkInfo?.fees;
   const fees = transaction.fees;
   const isCustomFee = fees && suggestedFee ? !fees.eq(suggestedFee) : false;
-  const mainAccount = getMainAccount(account, parentAccount);
+
   const currency = getAccountCurrency(account);
 
   const onFeeModeChange = (isCustom: boolean) => {
@@ -102,7 +105,7 @@ export default function StellarFeeRow({
           <View style={styles.accountContainer}>
             {fee ? (
               <LText style={styles.valueText}>
-                <CurrencyUnitValue unit={mainAccount.unit} value={fee} />
+                <CurrencyUnitValue unit={unit} value={fee} />
               </LText>
             ) : null}
           </View>

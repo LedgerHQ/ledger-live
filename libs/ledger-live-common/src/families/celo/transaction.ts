@@ -7,14 +7,14 @@ import {
   toTransactionCommonRaw,
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/coin-framework/serialization";
-import { getAccountUnit } from "../../account";
+import { getAccountCurrency } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 import { Account } from "@ledgerhq/types-live";
 export const formatTransaction = (t: Transaction, account: Account): string => `
 SEND ${
   t.useAllAmount
     ? "MAX CELO"
-    : formatCurrencyUnit(getAccountUnit(account), t.amount, {
+    : formatCurrencyUnit(getAccountCurrency(account).units[0], t.amount, {
         showCode: true,
         disableRounding: true,
       })

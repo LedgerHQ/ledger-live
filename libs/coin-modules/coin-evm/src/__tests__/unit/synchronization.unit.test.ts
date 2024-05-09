@@ -562,7 +562,6 @@ describe("EVM Family", () => {
           spendableBalance: new BigNumber(1),
           operations: [tokenOperations[0], tokenOperations[1]],
           operationsCount: 2,
-          starred: undefined,
           swapHistory,
         };
         const expectedUsdtAccount = {
@@ -571,7 +570,6 @@ describe("EVM Family", () => {
           spendableBalance: new BigNumber(2),
           operations: [tokenOperations[3]],
           operationsCount: 1,
-          starred: undefined,
           swapHistory: [],
         };
 
@@ -597,7 +595,6 @@ describe("EVM Family", () => {
           spendableBalance: new BigNumber(2),
           operations: [tokenOperations[3]],
           operationsCount: 1,
-          starred: undefined,
           swapHistory: [],
         };
 
@@ -637,7 +634,6 @@ describe("EVM Family", () => {
           spendableBalance: new BigNumber(1),
           operations: [tokenOperations[0], tokenOperations[1], tokenOperations[2]],
           operationsCount: 3,
-          starred: undefined,
           swapHistory: [],
         });
       });

@@ -1,0 +1,11 @@
+{
+  "entry": [
+    "src/liveqr/cross.ts",
+    "src/liveqr/importAccounts.ts",
+    "src/ordering.ts",
+    "src/addAccounts.ts",
+    "src/store.ts",
+    "src/accountName.ts"
+  ],
+  "ignoreUnused": []
+}

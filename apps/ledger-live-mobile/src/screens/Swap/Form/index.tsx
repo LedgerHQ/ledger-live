@@ -43,6 +43,7 @@ import type { DetailsSwapParamList } from "../types";
 import { getAvailableProviders } from "@ledgerhq/live-common/exchange/swap/index";
 import { DEFAULT_SWAP_RATES_LLM_INTERVAL_MS } from "@ledgerhq/live-common/exchange/swap/const/timeout";
 import { useSelectedSwapRate } from "./useSelectedSwapRate";
+import { walletSelector } from "~/reducers/wallet";
 
 type Navigation = StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.Account>;
 
@@ -206,6 +207,8 @@ export function SwapForm({
     exchangeRate &&
     swapTransaction.swap.to.account;
 
+  const walletState = useSelector(walletSelector);
+
   const onSubmit = useCallback(() => {
     if (!exchangeRate) return;
     const { provider, providerURL, providerType } = exchangeRate;
@@ -239,7 +242,7 @@ export function SwapForm({
         const parentAccount = isTokenAccount(account)
           ? getParentAccount(account, accounts)
           : undefined;
-        const walletApiId = accountToWalletAPIAccount(account, parentAccount)?.id;
+        const walletApiId = accountToWalletAPIAccount(walletState, account, parentAccount)?.id;
         return walletApiId || accountId;
       };
 
@@ -255,6 +258,7 @@ export function SwapForm({
       setConfirmed(true);
     }
   }, [
+    walletState,
     exchangeRate,
     track,
     swapTransaction.transaction,

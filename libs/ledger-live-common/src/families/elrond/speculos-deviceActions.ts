@@ -25,7 +25,7 @@ export const acceptMoveBalanceTransaction: DeviceAction<Transaction, any> = devi
       title: "Fee",
       button: SpeculosButton.RIGHT,
       expectedValue: ({ account, transaction }) =>
-        formatCurrencyUnit(account.unit, transaction.fees || new BigNumber(50000), {
+        formatCurrencyUnit(account.currency.units[0], transaction.fees || new BigNumber(50000), {
           showCode: true,
           disableRounding: true,
           joinFragmentsSeparator: " ",
@@ -59,7 +59,7 @@ export const acceptDelegateTransaction: DeviceAction<Transaction, any> = deviceA
       title: "Amount",
       button: SpeculosButton.RIGHT,
       expectedValue: ({ account, transaction }) =>
-        formatCurrencyUnit(account.unit, transaction.amount, {
+        formatCurrencyUnit(account.currency.units[0], transaction.amount, {
           showCode: true,
           disableRounding: true,
           joinFragmentsSeparator: " ",
@@ -69,7 +69,7 @@ export const acceptDelegateTransaction: DeviceAction<Transaction, any> = deviceA
       title: "Fee",
       button: SpeculosButton.RIGHT,
       expectedValue: ({ account, transaction }) =>
-        formatCurrencyUnit(account.unit, transaction.fees || new BigNumber(50000), {
+        formatCurrencyUnit(account.currency.units[0], transaction.fees || new BigNumber(50000), {
           showCode: true,
           disableRounding: true,
           joinFragmentsSeparator: " ",
@@ -104,7 +104,7 @@ export const acceptUndelegateTransaction: DeviceAction<Transaction, any> = devic
       title: "Amount",
       button: SpeculosButton.RIGHT,
       expectedValue: ({ account }) =>
-        formatCurrencyUnit(account.unit, new BigNumber(0), {
+        formatCurrencyUnit(account.currency.units[0], new BigNumber(0), {
           showCode: true,
           disableRounding: true,
           joinFragmentsSeparator: " ",
@@ -114,7 +114,7 @@ export const acceptUndelegateTransaction: DeviceAction<Transaction, any> = devic
       title: "Fee",
       button: SpeculosButton.RIGHT,
       expectedValue: ({ account, transaction }) =>
-        formatCurrencyUnit(account.unit, transaction.fees || new BigNumber(50000), {
+        formatCurrencyUnit(account.currency.units[0], transaction.fees || new BigNumber(50000), {
           showCode: true,
           disableRounding: true,
           joinFragmentsSeparator: " ",
@@ -148,7 +148,7 @@ export const acceptWithdrawTransaction: DeviceAction<Transaction, any> = deviceA
       title: "Amount",
       button: SpeculosButton.RIGHT,
       expectedValue: ({ account }) =>
-        formatCurrencyUnit(account.unit, new BigNumber(0), {
+        formatCurrencyUnit(account.currency.units[0], new BigNumber(0), {
           showCode: true,
           disableRounding: true,
           joinFragmentsSeparator: " ",
@@ -158,7 +158,7 @@ export const acceptWithdrawTransaction: DeviceAction<Transaction, any> = deviceA
       title: "Fee",
       button: SpeculosButton.RIGHT,
       expectedValue: ({ account, transaction }) =>
-        formatCurrencyUnit(account.unit, transaction.fees || new BigNumber(50000), {
+        formatCurrencyUnit(account.currency.units[0], transaction.fees || new BigNumber(50000), {
           showCode: true,
           disableRounding: true,
           joinFragmentsSeparator: " ",
@@ -237,7 +237,7 @@ export const acceptEsdtTransferTransaction: DeviceAction<Transaction, any> = dev
       title: "Fee",
       button: SpeculosButton.RIGHT,
       expectedValue: ({ account, transaction }) =>
-        formatCurrencyUnit(account.unit, transaction.fees || new BigNumber(50000), {
+        formatCurrencyUnit(account.currency.units[0], transaction.fees || new BigNumber(50000), {
           showCode: true,
           disableRounding: true,
           joinFragmentsSeparator: " ",

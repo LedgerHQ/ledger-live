@@ -23,7 +23,6 @@ function makeAccountRaw(name, pubkey, address, derivationMode): TezosAccountRaw 
     operations: [],
     pendingOperations: [],
     currencyId: "tezos",
-    unitMagnitude: 6,
     lastSyncDate: "",
     balance: "0",
     xpub: pubkey,

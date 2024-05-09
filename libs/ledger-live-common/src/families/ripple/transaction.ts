@@ -8,7 +8,7 @@ import {
   toTransactionStatusRawCommon as toTransactionStatusRaw,
 } from "@ledgerhq/coin-framework/serialization";
 import type { Account } from "@ledgerhq/types-live";
-import { getAccountUnit } from "../../account";
+import { getAccountCurrency } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 export const formatTransaction = (
   { amount, recipient, fee, tag, useAllAmount }: Transaction,
@@ -17,7 +17,7 @@ export const formatTransaction = (
 SEND ${
   useAllAmount
     ? "MAX"
-    : formatCurrencyUnit(getAccountUnit(account), amount, {
+    : formatCurrencyUnit(getAccountCurrency(account).units[0], amount, {
         showCode: true,
         disableRounding: true,
       })
@@ -26,7 +26,7 @@ TO ${recipient}
 with fee=${
   !fee
     ? "?"
-    : formatCurrencyUnit(getAccountUnit(account), fee, {
+    : formatCurrencyUnit(getAccountCurrency(account).units[0], fee, {
         showCode: true,
         disableRounding: true,
       })

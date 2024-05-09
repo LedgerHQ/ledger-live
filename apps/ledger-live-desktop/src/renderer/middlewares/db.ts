@@ -3,9 +3,11 @@ import { Middleware } from "redux";
 import { setKey } from "~/renderer/storage";
 import { postOnboardingSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { actionTypePrefix as postOnboardingActionTypePrefix } from "@ledgerhq/live-common/postOnboarding/actions";
-import { accountsSelector } from "./../reducers/accounts";
+
 import { settingsExportSelector, areSettingsLoaded } from "./../reducers/settings";
 import { State } from "../reducers";
+import { Account, AccountUserData } from "@ledgerhq/types-live";
+import { accountUserDataExportSelector } from "@ledgerhq/live-wallet/store";
 let DB_MIDDLEWARE_ENABLED = true;
 
 // ability to temporary disable the db middleware from outside
@@ -13,6 +15,17 @@ export const disable = (ms = 1000) => {
   DB_MIDDLEWARE_ENABLED = false;
   setTimeout(() => (DB_MIDDLEWARE_ENABLED = true), ms);
 };
+
+function accountsExportSelector(state: State) {
+  const all: [Account, AccountUserData][] = [];
+  for (const account of state.accounts) {
+    const accountUserData = accountUserDataExportSelector(state.wallet, { account });
+    if (accountUserData) {
+      all.push([account, accountUserData]);
+    }
+  }
+  return all;
+}
 
 const DBMiddleware: Middleware<{}, State> = store => next => action => {
   if (DB_MIDDLEWARE_ENABLED && action.type.startsWith("DB:")) {
@@ -22,7 +35,7 @@ const DBMiddleware: Middleware<{}, State> = store => next => action => {
       payload: action.payload,
     });
     const state = store.getState();
-    setKey("app", "accounts", accountsSelector(state));
+    setKey("app", "accounts", accountsExportSelector(state));
     // ^ TODO ultimately we'll do same for accounts to drop DB: pattern
   } else if (DB_MIDDLEWARE_ENABLED && action.type.startsWith(postOnboardingActionTypePrefix)) {
     next(action);

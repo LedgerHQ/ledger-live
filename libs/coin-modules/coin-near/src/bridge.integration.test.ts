@@ -52,7 +52,6 @@ const near: CurrenciesData<Transaction> = {
         operations: [],
         pendingOperations: [],
         currencyId: "near",
-        unitMagnitude: 24,
         lastSyncDate: "",
         balance: "47162281393064900000001",
       },

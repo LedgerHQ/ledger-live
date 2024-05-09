@@ -45,6 +45,7 @@ import Illustration from "~/images/illustration/Illustration";
 import EarnLight from "~/images/illustration/Light/_003.png";
 import EarnDark from "~/images/illustration/Dark/_003.png";
 import FirstLetterIcon from "~/components/FirstLetterIcon";
+import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props = {
   account: AccountLike;
@@ -65,6 +66,8 @@ export default function Nominations(props: Props) {
   const { staking, validators } = usePolkadotPreloadData();
 
   const { polkadotResources } = mainAccount;
+
+  const unit = useAccountUnit(account);
 
   const { lockedBalance, unlockedBalance, nominations, unlockings } = polkadotResources || {};
 
@@ -207,9 +210,10 @@ export default function Nominations(props: Props) {
             onOpenExplorer,
             nomination: mappedNomination?.nomination,
             validator: mappedNomination?.validator,
+            unit,
           })
         : [],
-    [mappedNomination, t, account, onOpenExplorer],
+    [mappedNomination, t, account, onOpenExplorer, unit],
   );
 
   const electionOpen = staking?.electionClosed !== undefined ? !staking?.electionClosed : false;

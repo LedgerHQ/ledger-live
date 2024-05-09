@@ -1,4 +1,3 @@
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import {
   stakeActions as solanaStakeActions,
@@ -23,6 +22,7 @@ import Loader from "~/renderer/icons/Loader";
 import { TableLine } from "./Header";
 import { DelegateModalName } from "../modals";
 import Discreet from "~/renderer/components/Discreet";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 const Wrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -95,7 +95,7 @@ type Props = {
 export function Row({ account, stakeWithMeta, onManageAction, onExternalLink }: Props) {
   const { stake, meta } = stakeWithMeta;
   const stakeActions = solanaStakeActions(stake).map(toStakeDropDownItem);
-
+  const unit = useAccountUnit(account);
   const onSelect = useCallback(
     (action: (typeof stakeActions)[number]) => {
       onManageAction(stakeWithMeta, action.key);
@@ -106,7 +106,6 @@ export function Row({ account, stakeWithMeta, onManageAction, onExternalLink }: 
   const validatorName = meta.validator?.name ?? stake.delegation?.voteAccAddr ?? "-";
   const onExternalLinkClick = () => onExternalLink(stakeWithMeta);
   const formatAmount = (amount: number) => {
-    const unit = getAccountUnit(account);
     return formatCurrencyUnit(unit, new BigNumber(amount), {
       disableRounding: true,
       alwaysShowSign: false,
