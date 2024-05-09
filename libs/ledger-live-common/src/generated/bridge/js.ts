@@ -18,8 +18,8 @@ import { bridge as bitcoin } from "../../families/bitcoin/setup";
 import { bridge as evm } from "../../families/evm/setup";
 import { bridge as near } from "../../families/near/setup";
 import { bridge as polkadot } from "../../families/polkadot/setup";
-import { bridge as icon } from "../../families/icon/setup";
 import { bridge as solana } from "../../families/solana/setup";
+import { bridge as icon } from "../../families/icon/setup";
 
 export default {
   cardano,
@@ -42,6 +42,6 @@ export default {
   evm,
   near,
   polkadot,
-  icon,
   solana,
+  icon,
 };

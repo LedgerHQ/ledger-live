@@ -18,8 +18,8 @@ import { resolver as bitcoin } from "../families/bitcoin/setup";
 import { resolver as evm } from "../families/evm/setup";
 import { resolver as near } from "../families/near/setup";
 import { resolver as polkadot } from "../families/polkadot/setup";
-import { resolver as icon } from "../families/icon/setup";
 import { resolver as solana } from "../families/solana/setup";
+import { resolver as icon } from "../families/icon/setup";
 
 export default {
   cardano,
@@ -42,6 +42,6 @@ export default {
   evm,
   near,
   polkadot,
-  icon,
   solana,
+  icon,
 };

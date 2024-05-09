@@ -2,7 +2,7 @@ import type { DeviceAction } from "@ledgerhq/coin-framework/bot/types";
 import type { Transaction } from "./types";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { deviceActionFlow, SpeculosButton } from "@ledgerhq/coin-framework/bot/specs";
-import { getAccountUnit } from "@ledgerhq/coin-framework/account/index";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
 
 const confirmWording: Record<string, string> = {
   send: "transfer",
@@ -19,7 +19,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
       title: "Amount",
       button: SpeculosButton.RIGHT,
       expectedValue: ({ transaction, account }) =>
-        formatCurrencyUnit(getAccountUnit(account), transaction.amount, {
+        formatCurrencyUnit(getAccountCurrency(account).units[0], transaction.amount, {
           disableRounding: true,
         }),
     },
@@ -34,7 +34,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
       title: "Fees",
       button: SpeculosButton.RIGHT,
       expectedValue: ({ account, status }) =>
-        formatCurrencyUnit(account.unit, status.estimatedFees, {
+        formatCurrencyUnit(getAccountCurrency(account).units[0], status.estimatedFees, {
           disableRounding: true,
         }),
     },

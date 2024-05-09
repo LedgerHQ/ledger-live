@@ -18,8 +18,8 @@ import bitcoin from "@ledgerhq/coin-bitcoin/transaction";
 import evm from "@ledgerhq/coin-evm/transaction";
 import near from "@ledgerhq/coin-near/transaction";
 import polkadot from "@ledgerhq/coin-polkadot/transaction";
-import icon from "@ledgerhq/coin-icon/transaction";
 import solana from "@ledgerhq/coin-solana/transaction";
+import icon from "@ledgerhq/coin-icon/transaction";
 
 export default {
   cardano,
@@ -42,6 +42,6 @@ export default {
   evm,
   near,
   polkadot,
-  icon,
   solana,
+  icon,
 };

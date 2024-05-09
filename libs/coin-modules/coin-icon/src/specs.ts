@@ -1,5 +1,4 @@
 import invariant from "invariant";
-import { getCryptoCurrencyById } from "@ledgerhq/coin-framework/currencies/index";
 import { botTest, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
 import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
 import { toOperationRaw } from "@ledgerhq/coin-framework/serialization/index";
@@ -13,6 +12,7 @@ import {
   convertICXtoLoop,
 } from "./logic";
 import { Transaction } from "./types";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 
 const maxAccounts = 6;
 const currency = getCryptoCurrencyById("icon");

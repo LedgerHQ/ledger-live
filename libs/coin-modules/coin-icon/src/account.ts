@@ -1,4 +1,4 @@
-import { getAccountUnit } from "@ledgerhq/coin-framework/account/index";
+import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
 import { IconAccount } from "./types";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 
@@ -8,7 +8,7 @@ function formatAccountSpecifics(account: IconAccount): string {
     throw new Error("icon account expected");
   }
 
-  const unit = getAccountUnit(account);
+  const unit = getAccountCurrency(account).units[0];
   const formatConfig = {
     disableRounding: true,
     alwaysShowSign: false,

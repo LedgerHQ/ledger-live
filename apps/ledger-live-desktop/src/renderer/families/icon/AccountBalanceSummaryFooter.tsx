@@ -12,6 +12,7 @@ import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { SubAccount } from "@ledgerhq/types-live";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const Wrapper = styled(Box).attrs(() => ({
   horizontal: true,
@@ -56,6 +57,8 @@ type Props = {
 const AccountBalanceSummaryFooter = ({ account }: Props) => {
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
+  const unit = useAccountUnit(account);
+
   if (account.type !== "Account") return null;
 
   const formatConfig = {
@@ -66,7 +69,7 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
     locale,
   };
 
-  const spendableBalance = formatCurrencyUnit(account.unit, account.spendableBalance, formatConfig);
+  const spendableBalance = formatCurrencyUnit(unit, account.spendableBalance, formatConfig);
 
   return (
     <Wrapper>
