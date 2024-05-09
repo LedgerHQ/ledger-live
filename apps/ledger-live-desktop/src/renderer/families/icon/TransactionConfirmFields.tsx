@@ -8,12 +8,13 @@ import Box from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import Alert from "~/renderer/components/Alert";
 import { FieldComponentProps } from "../types";
-import { getMainAccount, getAccountUnit } from "@ledgerhq/live-common/account/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import type {
   IconAccount,
   Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/icon/types";
+import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 
 const Info = styled(Box).attrs(() => ({
   ff: "Inter|SemiBold",
@@ -33,14 +34,15 @@ const IconFreesField = ({
 }: FieldComponentProps<IconAccount, Transaction, TransactionStatus>) => {
   const mainAccount = getMainAccount(account, parentAccount);
   invariant(transaction.family === "icon", "icon transaction");
-  const feesUnit = getAccountUnit(mainAccount);
+  const unit = useAccountUnit(mainAccount);
+
   const { fees } = transaction;
   return (
     <Box horizontal justifyContent="space-between" mb={2}>
       <TransactionConfirmField label={field.label} />
       <FormattedVal
         color={"palette.text.shade80"}
-        unit={feesUnit}
+        unit={unit}
         val={fees || 0}
         fontSize={3}
         inline

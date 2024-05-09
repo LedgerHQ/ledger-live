@@ -43,5 +43,6 @@ export default {
   bitcoin,
   cardano,
   xrp,
+  solana,
   icon,
 };
