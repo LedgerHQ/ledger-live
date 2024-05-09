@@ -41,8 +41,17 @@ export const useUpdateMaxAmount = ({
         }
         bridge.updateTransaction(tx => {
           let additionalFees;
-          if (tx.family === "evm" && next) {
-            additionalFees = new BigNumber(5000000000000000); // 0,005 ETH/BNB/MATIC
+          switch (true) {
+            case tx.family === "evm" && next:
+              additionalFees = new BigNumber(5000000000000000); // 0,005 ETH/BNB/MATIC
+              break;
+            case tx.family === "tron" && next:
+              // https://github.com/tronprotocol/documentation/blob/master/TRX/Tron-overview.md
+              // 1 TRX=1,000,000 sun.
+              additionalFees = new BigNumber(1).multipliedBy(1_000_000); // 1 TRX
+              break;
+            default:
+              break;
           }
           return {
             ...tx,
