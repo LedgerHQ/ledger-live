@@ -27,6 +27,7 @@
       "title": "Discover",
       "section": {
         "recentlyUsed": "Recently used",
+        "locallyLoaded": "Locally Loaded Live Apps",
         "browse": "Browse"
       },
       "filter": {
