@@ -13,13 +13,25 @@ const LATEST_CHUNK = 50;
 const api: CounterValuesAPI = {
   fetchHistorical: async (granularity, { from, to, startDate }) => {
     const format = formatPerGranularity[granularity];
+    const now = new Date();
+    if (now < startDate) {
+      // we can't fetch the future
+      return Promise.resolve({});
+    }
+    const start = format(startDate);
+    const end = format(now);
+    if (start === end) {
+      // if start and end are the same, it's also pointless to fetch
+      return Promise.resolve({});
+    }
+
     const url = URL.format({
       pathname: `${baseURL()}/v3/historical/${granularity}/simple`,
       query: {
         from: inferCurrencyAPIID(from),
         to: inferCurrencyAPIID(to),
-        start: format(startDate),
-        end: format(new Date()),
+        start,
+        end,
       },
     });
     const { data } = await network({ method: "GET", url });
