@@ -21,7 +21,11 @@ export const HTTP_REGEX = new RegExp(
   /[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)?/gi,
 );
 
-export const INITIAL_PLATFORM_STATE = { recentlyUsed: [], currentAccountHist: {} };
+export const INITIAL_PLATFORM_STATE = {
+  recentlyUsed: [],
+  currentAccountHist: {},
+  localLiveApp: [],
+};
 
 export const MAX_RECENTLY_USED_LENGTH = 10;
 
