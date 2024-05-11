@@ -1,5 +1,12 @@
 # @ledgerhq/live-countervalues-react
 
+## 0.1.5-nightly.7
+
+### Patch Changes
+
+- Updated dependencies [[`aedced6`](https://github.com/LedgerHQ/ledger-live/commit/aedced603abbbd0b1ef5afcc5cb83d9520388117)]:
+  - @ledgerhq/live-countervalues@0.1.5-nightly.7
+
 ## 0.1.5-nightly.6
 
 ### Patch Changes

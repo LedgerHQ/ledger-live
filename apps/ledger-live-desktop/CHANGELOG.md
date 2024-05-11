@@ -1,5 +1,18 @@
 # ledger-live-desktop
 
+## 2.80.0-nightly.10
+
+### Patch Changes
+
+- [#6719](https://github.com/LedgerHQ/ledger-live/pull/6719) [`ca42740`](https://github.com/LedgerHQ/ledger-live/commit/ca4274009ae050b30695b7b505241e4530ecbd55) Thanks [@RamyEB](https://github.com/RamyEB)! - Save locally added manifest into the storage on both Mobile and Desktop client
+
+- [#6784](https://github.com/LedgerHQ/ledger-live/pull/6784) [`fae6115`](https://github.com/LedgerHQ/ledger-live/commit/fae6115c070d8e7ea943c227931983095f976d1b) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Moove and refactor medias from nft gallery to newArch. Create a FF to switch between old and new arch
+
+- Updated dependencies [[`aedced6`](https://github.com/LedgerHQ/ledger-live/commit/aedced603abbbd0b1ef5afcc5cb83d9520388117), [`ca42740`](https://github.com/LedgerHQ/ledger-live/commit/ca4274009ae050b30695b7b505241e4530ecbd55), [`796f7d8`](https://github.com/LedgerHQ/ledger-live/commit/796f7d8a14f75a19df92e11811c305426a472cd5)]:
+  - @ledgerhq/live-countervalues@0.1.5-nightly.7
+  - @ledgerhq/live-common@34.2.0-nightly.10
+  - @ledgerhq/live-countervalues-react@0.1.5-nightly.7
+
 ## 2.80.0-nightly.9
 
 ### Minor Changes

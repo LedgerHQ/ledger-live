@@ -1,5 +1,11 @@
 # @ledgerhq/live-countervalues
 
+## 0.1.5-nightly.7
+
+### Patch Changes
+
+- [#6833](https://github.com/LedgerHQ/ledger-live/pull/6833) [`aedced6`](https://github.com/LedgerHQ/ledger-live/commit/aedced603abbbd0b1ef5afcc5cb83d9520388117) Thanks [@gre](https://github.com/gre)! - Fixes countervalues library to work even when computer date is oudated
+
 ## 0.1.5-nightly.6
 
 ### Patch Changes
