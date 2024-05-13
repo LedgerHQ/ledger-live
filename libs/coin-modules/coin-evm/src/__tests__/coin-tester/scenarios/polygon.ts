@@ -126,30 +126,6 @@ const makeScenarioTransactions = ({ address }: { address: string }) => {
 
 const defaultNanoApp = { firmware: "2.2.3" as const, version: "1.10.4" as const };
 
-const initUSDCAccount = async (provider: ethers.providers.JsonRpcProvider, address: string) => {
-  const addressToImpersonate = "0x45dDa9cb7c25131DF268515131f647d726f50608"; // Random owner of 8M USDC
-  await provider.send("anvil_impersonateAccount", [addressToImpersonate]);
-
-  const sendUSDC = {
-    from: addressToImpersonate,
-    to: USDC_ON_POLYGON.contractAddress,
-    data: ERC20Interface.encodeFunctionData("transfer", [
-      address,
-      ethers.utils.parseUnits("100", USDC_ON_POLYGON.units[0].magnitude),
-    ]),
-    value: ethers.BigNumber.from(0).toHexString(),
-    gas: ethers.BigNumber.from(1_000_000).toHexString(),
-    type: "0x0",
-    gasPrice: (await provider.getGasPrice()).toHexString(),
-    nonce: "0x" + (await provider.getTransactionCount(addressToImpersonate)).toString(16),
-    chainId: "0x" + (await provider.getNetwork()).chainId.toString(16),
-  };
-
-  const hash = await provider.send("eth_sendTransaction", [sendUSDC]);
-  await provider.send("anvil_stopImpersonatingAccount", [addressToImpersonate]);
-  await provider.waitForTransaction(hash);
-};
-
 export const scenarioPolygon: Scenario<EvmTransaction> = {
   name: "Ledger Live Basic Polygon Transactions",
   setup: async () => {

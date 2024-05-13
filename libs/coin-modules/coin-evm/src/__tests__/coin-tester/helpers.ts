@@ -12,7 +12,6 @@ export const ERC721Interface = new ethers.utils.Interface(ERC721ABI);
 export const ERC1155Interface = new ethers.utils.Interface(ERC1155ABI);
 export const USDC_ON_ETHEREUM = getTokenById("ethereum/erc20/usd__coin");
 export const USDC_ON_POLYGON = getTokenById("polygon/erc20/usd_coin_(pos)");
-<<<<<<< HEAD
 
 export const impersonnateAccount = async ({
   provider,
@@ -42,5 +41,3 @@ export const impersonnateAccount = async ({
   await provider.send("anvil_stopImpersonatingAccount", [addressToImpersonnate]);
   await provider.waitForTransaction(hash);
 };
-=======
->>>>>>> 1277428a21 (coin-evm coin-tester implementation)
