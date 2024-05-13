@@ -6,6 +6,8 @@ import prepareTransaction from "./prepareTransaction";
 import createTransaction from "./createTransaction";
 import { getTransactionStatus } from "./transactionStatus";
 
+const TEZOS_BURN_ADDRESS = "tz1burnburnburnburnburnburnburjAYjjX";
+
 const estimateMaxSpendable = async ({
   account,
   parentAccount,
@@ -20,7 +22,7 @@ const estimateMaxSpendable = async ({
     ...createTransaction(),
     ...transaction,
     // estimate using a burn address that exists so we don't enter into NotEnoughBalanceBecauseDestinationNotCreated
-    recipient: transaction?.recipient || "tz1burnburnburnburnburnburnburjAYjjX",
+    recipient: transaction?.recipient || TEZOS_BURN_ADDRESS,
     useAllAmount: true,
   });
   const s = await getTransactionStatus(mainAccount, t);

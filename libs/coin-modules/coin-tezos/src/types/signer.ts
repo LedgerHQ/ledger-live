@@ -6,12 +6,12 @@ export type TezosSignature = {
   signature: string;
 };
 // Type coming from hw-app-tezos
-export const TezosCurves = {
-  ED25519: 0x00,
-  SECP256K1: 0x01,
-  SECP256R1: 0x02,
+type TezosCurves = {
+  ED25519: 0x00;
+  SECP256K1: 0x01;
+  SECP256R1: 0x02;
 };
-export type Curve = (typeof TezosCurves)[keyof typeof TezosCurves];
+export type Curve = TezosCurves[keyof TezosCurves];
 
 export type LedgerSigner = {
   publicKey(): Promise<string>;
@@ -46,11 +46,3 @@ export interface TezosSigner {
   // Tezos [LedgerSigner](https://www.npmjs.com/package/@taquito/ledger-signer)
   createLedgerSigner(path: string, prompt: boolean, derivationType: number): LedgerSigner;
 }
-
-// export type SignerContext = <T>(
-//   deviceId: string,
-//   path: string,
-//   prompt: boolean,
-//   derivationType: number,
-//   fn: (signer: TezosSigner) => Promise<T>,
-// ) => Promise<T>;
