@@ -10,6 +10,7 @@ import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { useMarket } from "../../hooks/useMarket";
 import { getCurrentPage, isDataStale } from "../../utils";
 import { ViewToken } from "react-native";
+import { Order } from "@ledgerhq/live-common/market/utils/types";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<MarketNavigatorStackParamList, ScreenName.MarketList>
@@ -60,11 +61,9 @@ function useMarketListViewModel() {
       refresh({
         limit: 100,
         starred: [],
-        orderBy: "market_cap",
-        order: "desc",
+        order: Order.MarketCapDesc,
         search: "",
         liveCompatible: false,
-        top100: true,
       });
     }
   }, [initialTop100, refresh]);

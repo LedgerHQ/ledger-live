@@ -22,6 +22,7 @@ import {
   HashMapBody,
   MarketItemResponse,
   MarketListRequestResult,
+  Order,
 } from "../utils/types";
 
 const cryptoCurrenciesList = [...listCryptoCurrencies(), ...listTokens()];
@@ -96,6 +97,8 @@ export function useMarketData(props: MarketListRequestParams): MarketListRequest
           ...(props.starred && props.starred?.length >= 1 && { starred: props.starred }),
           ...(props.liveCoinsList &&
             props.liveCoinsList?.length >= 1 && { liveCoinsList: props.liveCoinsList }),
+          ...(props.order &&
+            [Order.topLosers, Order.topGainers].includes(props.order) && { range: props.range }),
         },
       ],
       queryFn: () => fetchList({ ...props, page }),

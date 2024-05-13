@@ -18,7 +18,7 @@ function useBottomSectionViewModel() {
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
   const filterByStarredCurrencies: boolean = useSelector(marketFilterByStarredCurrenciesSelector);
 
-  const { range, orderBy, order, top100, counterCurrency } = marketParams;
+  const { range, order, counterCurrency } = marketParams;
 
   const toggleFilterByStarredCurrencies = useCallback(() => {
     if (!filterByStarredCurrencies) {
@@ -44,6 +44,8 @@ function useBottomSectionViewModel() {
           ...value,
         }),
       );
+      dispatch(setMarketCurrentPage(1));
+      dispatch(setMarketRequestParams({ ...marketParams, page: 1 }));
       dispatch(setMarketRequestParams(value));
     },
     [dispatch, marketParams],
@@ -54,9 +56,7 @@ function useBottomSectionViewModel() {
     filterByStarredCurrencies,
     toggleFilterByStarredCurrencies,
     range,
-    orderBy,
     order,
-    top100,
     counterCurrency,
   };
 }

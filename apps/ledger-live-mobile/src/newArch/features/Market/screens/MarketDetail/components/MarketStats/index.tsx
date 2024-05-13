@@ -27,8 +27,8 @@ export default function MarketStats({
   counterCurrency,
   priceChangePercentage,
 }: {
-  currency: CurrencyData;
-  counterCurrency: string;
+  currency?: CurrencyData;
+  counterCurrency?: string;
   priceChangePercentage: number;
 }) {
   const { t } = useTranslation();

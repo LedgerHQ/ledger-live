@@ -32,6 +32,7 @@ export async function fetchList({
   search = "",
   liveCoinsList = [],
   starred = [],
+  range = "24",
 }: MarketListRequestParams): Promise<MarketItemResponse[]> {
   const getSortParam = (order: Order) => {
     switch (order) {
@@ -41,9 +42,9 @@ export async function fetchList({
       case Order.MarketCapAsc:
         return "market-cap-rank-desc";
       case Order.topLosers:
-        return "top-losers";
+        return `negative-price-change-${getRange(range)}`;
       case Order.topGainers:
-        return "top-gainers";
+        return `positive-price-change-${getRange(range)}`;
     }
   };
   const url = URL.format({
@@ -56,8 +57,11 @@ export async function fetchList({
       ...(search.length > 1 && { filter: search }),
       ...(starred.length > 1 && { ids: starred.join(",") }),
       ...(liveCoinsList.length > 1 && { ids: liveCoinsList.join(",") }),
+      ...([Order.topLosers, Order.topGainers].includes(order) && { top: 100 }),
     },
   });
+
+  console.log(url);
 
   const { data } = await network({
     method: "GET",

@@ -6238,9 +6238,10 @@
       },
       "order": {
         "topGainers": "Top gainers",
-        "market_cap": "Rank",
-        "market_cap_asc": "Rank (Market cap) asc.",
-        "market_cap_desc": "Rank (Market cap) desc."
+        "topLosers": "Top losers",
+        "marketCap": "Rank",
+        "asc": "Rank (Market cap) asc.",
+        "desc": "Rank (Market cap) desc."
       },
       "currency": "Currency",
       "time": "Time",

@@ -72,7 +72,6 @@ function View({
         search: "",
         starred: [],
         liveCompatible: false,
-        top100: false,
         limit: 20,
       }),
     [refresh],

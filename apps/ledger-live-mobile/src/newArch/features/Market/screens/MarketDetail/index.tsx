@@ -191,13 +191,12 @@ function View({
             />
           </Flex>
         ) : null}
-        {currency && counterCurrency && (
-          <MarketStats
-            currency={currency}
-            counterCurrency={counterCurrency}
-            priceChangePercentage={priceChangePercentage ?? 0}
-          />
-        )}
+
+        <MarketStats
+          currency={currency}
+          counterCurrency={counterCurrency}
+          priceChangePercentage={priceChangePercentage ?? 0}
+        />
       </ScrollContainerHeader>
     </SafeAreaView>
   );
