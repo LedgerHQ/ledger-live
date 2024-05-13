@@ -32,6 +32,9 @@ patchedDependencies:
   react-native-video@5.2.1:
     hash: vl2q6vd2d45opudk6juqeyavs4
     path: patches/react-native-video@5.2.1.patch
+  react-native-webview@11.26.1:
+    hash: dcex23p4rtl66gnhzv43mcucta
+    path: patches/react-native-webview@11.26.1.patch
   rn-fetch-blob@0.12.0:
     hash: n5yzdsrxz654upecs5xliebtmm
     path: patches/rn-fetch-blob@0.12.0.patch
@@ -1126,8 +1129,8 @@ importers:
         specifier: 5.2.1
         version: 5.2.1(patch_hash=vl2q6vd2d45opudk6juqeyavs4)
       react-native-webview:
-        specifier: 13.8.4
-        version: 13.8.4(react-native@0.73.6)(react@18.2.0)
+        specifier: 11.26.1
+        version: 11.26.1(patch_hash=dcex23p4rtl66gnhzv43mcucta)(react-native@0.73.6)(react@18.2.0)
       react-redux:
         specifier: ^7.2.9
         version: 7.2.9(@types/react@18.2.73)(react@18.2.0)
@@ -45834,8 +45837,8 @@ packages:
       - encoding
     dev: true
 
-  /react-native-webview@13.8.4(react-native@0.73.6)(react@18.2.0):
-    resolution: {integrity: sha512-dFoM9EfkAb++ZzycZyKRnjZtNUn85cf6bWp1iBlkgyNml7ULzR1gfaPT3qESoA3K1RfTmf5Xhw0M2In2A3a3wg==}
+  /react-native-webview@11.26.1(patch_hash=dcex23p4rtl66gnhzv43mcucta)(react-native@0.73.6)(react@18.2.0):
+    resolution: {integrity: sha512-hC7BkxOpf+z0UKhxFSFTPAM4shQzYmZHoELa6/8a/MspcjEP7ukYKpuSUTLDywQditT8yI9idfcKvfZDKQExGw==}
     peerDependencies:
       react: '*'
       react-native: '*'
@@ -45845,6 +45848,7 @@ packages:
       react: 18.2.0
       react-native: 0.73.6(@babel/core@7.24.3)(react@18.2.0)
     dev: false
+    patched: true
 
   /react-native@0.73.6(@babel/core@7.24.3)(@babel/preset-env@7.24.3)(metro-resolver@0.80.8)(metro-transform-worker@0.80.8)(react@18.2.0):
     resolution: {integrity: sha512-oqmZe8D2/VolIzSPZw+oUd6j/bEmeRHwsLn1xLA5wllEYsZ5zNuMsDus235ONOnCRwexqof/J3aztyQswSmiaA==}
