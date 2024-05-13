@@ -369,7 +369,14 @@
         "description" : "No has hecho ninguna permuta todavía o Ledger Live ha sido restablecido en el interín."
       },
       "export" : "Exportar operaciones",
-      "exporting" : "Exportando..."
+      "exporting" : "Exportando...",
+      "status" : {
+        "pending" : "Pendiente",
+        "onhold" : "En espera",
+        "expired" : "Caducado",
+        "finished" : "Finalizado",
+        "refunded" : "Reembolsado"
+      }
     },
     "exchangeDrawer" : {
       "title" : "Confirma tu Exchange",
@@ -608,7 +615,7 @@
             "item2" : "Espera a que el nodo se sincronice completamente.",
             "item3" : "Toma nota de tus credenciales de nodo RPC, dirección de IP y número de puerto."
           },
-          "disclaimer" : "Ejecutar un nodo completo requiere una PC con recursos suficientes y una conexión de banda ancha sin restricciones de datos."
+          "disclaimer" : "Ejecutar un nodo completo requiere que tu PC tenga  recursos suficientes y una conexión de banda ancha sin restricciones de datos."
         },
         "node" : {
           "title" : "Nodo",
@@ -729,6 +736,10 @@
         "description2" : "Los desarrolladores de todo el mundo pueden integrar con Ledger Live",
         "description3" : "Esta integración ha sido llevada adelante por {{team}} en colaboración con Ledger"
       }
+    },
+    "willBeDeprecatedBanner" : {
+      "title" : "Por razones de optimización de eficiencia, {{currencyName}} dejará de ser compatible con Ledger Live el {{deprecatedDate}}. No obstante, seguirá siendo compatible con las billeteras de hardware de Ledger. Ponte en contacto con el servicio de soporte al cliente de Ledger si necesitas ayuda con esto.",
+      "contactSupport" : "Ponte en contacto con Soporte"
     },
     "lastOperations" : "Operaciones recientes",
     "contractAddress" : "Contrato:",
@@ -1198,6 +1209,24 @@
         "restoreChoiceRecoverDescription" : "Si te has suscrito a Ledger Recover, inicia sesión en tu suscripción para restaurar la copia de respaldo de tu Frase de Recuperación secreta.",
         "followInstructions" : "Sigue las instrucciones que aparecen en tu {{productName}}."
       },
+      "backup" : {
+        "title" : "Copia de respaldo para tu Frase de Recuperación Secreta",
+        "description" : "Restaura el acceso a tu billetera sin tu Frase de Recuperación Secreta con una copia de respaldo cifrada digital.\n\nElige si quieres tener una copia de respaldo digital:",
+        "backupChoice" : {
+          "title" : "Quiero tener una copia de respaldo digital",
+          "titleSelected" : "Ledger Recover",
+          "tag" : "Popular",
+          "description" : "Suscríbete a Ledger Recover por $9,99 USD al mes. Empieza gratis. Cancela cuando quieras.",
+          "tryCta" : "Pruébalo gratis",
+          "redeemCodeCta" : "Tengo un código de canje",
+          "howItWorksCta" : "Quiero más información"
+        },
+        "manualBackup" : {
+          "title" : "No, es suficiente con la copia en papel",
+          "description" : "Si no tienes un copia de respaldo digital, la Hoja de Recuperación es la única manera de restaurar el acceso a tu billetera. No la pierdas.",
+          "cta" : "Entiendo"
+        }
+      },
       "softwareCheckContent" : {
         "title" : {
           "active" : "Verificación de \tAutenticidad y\n de actualización del SO",
@@ -1297,27 +1326,33 @@
   "postOnboarding" : {
     "postOnboardingScreen" : {
       "title" : "A continuación, usa tu {{productName}} para... ",
-      "titleCompleted" : "¡Ya está todo!\nYa puedes explorar tu billetera.",
-      "exploreCTA" : "Explorar billetera"
+      "titleCompleted" : "¡Todo listo!\nYa puedes explorar tu portfolio.",
+      "exploreCTA" : "Explorar mi portfolio"
     },
     "postOnboardingContent" : {
       "skipLink" : "Lo haré más adelante"
     },
     "postOnboardingBanner" : {
       "title" : "¿Qué es lo próximo que puedes hacer con tu {{productName}}?",
-      "description" : "Reclama el NFT Infinity, personaliza su pantalla de bloqueo o\ntransfiere tus activos desde otros exchanges.",
-      "link" : "Mira lo que puedes hacer ahora"
+      "description" : "Transfiere tus activos desde cualquier exchange o billetera, compra cripto, personaliza la pantalla de bloqueo o suscríbete a Ledger Recover.",
+      "link" : "Mira lo que puedes hacer ahora",
+      "dismiss" : "Quizás más tarde"
     },
     "actions" : {
       "buyCrypto" : {
         "title" : "Comprar cripto",
-        "description" : "Elige entre más de 500 monedas y las mejores ofertas de proveedores de compras, adaptadas a tus preferencias.",
+        "description" : "Elige entre más de 500 monedas y las mejores cotizaciones, adaptadas a tus preferencias.",
         "actionCompletedPopupLabel" : "Cripto comprada"
       },
       "assetsTransfer" : {
         "title" : "Transferir tus activos al Ledger",
-        "description" : "Transfiere fácilmente activos desde Coinbase o cualquier otro exchange o billetera.",
+        "description" : "Desde cualquier exchange o billetera, directamente a tu Ledger.",
         "actionCompletedPopupLabel" : "Activos transferidos"
+      },
+      "recover" : {
+        "title" : "Suscríbete a Ledger Recover",
+        "description" : "Restaura el acceso a tu billetera sin necesidad de la Frase de Recuperación Secreta.",
+        "actionCompletedPopupLabel" : "Te has suscrito correctamente a Ledger Recover"
       }
     }
   },
@@ -1465,13 +1500,20 @@
       },
       "missingData" : {
         "gainers" : {
-          "title" : "No hay ningún activo entre los 50 principales ganadores de las últimas 24 horas",
+          "title" : "No hay ningún activo entre los {{count}} principales ganadores en el último periodo de {{trend}}",
           "description" : "Considera consultar los principales perdedores o vuelve más tarde"
         },
         "losers" : {
-          "title" : "No hay ningún activo entre los 50 principales perdedores de las últimas 24 horas",
+          "title" : "No hay ningún activo entre los {{count}} principales perdedores en el último periodo de {{trend}}",
           "description" : "Considera consultar los principales ganadores o vuelve más tarde"
         }
+      },
+      "trend" : {
+        "day" : "24 horas",
+        "week" : "7 días",
+        "month" : "30 días",
+        "year" : "año",
+        "all" : "año"
       }
     }
   },
@@ -3925,7 +3967,9 @@
       "region" : "Región",
       "regionDesc" : "Elige tu región para actualizar el formato de fecha, hora y moneda.",
       "stock" : "Indicador de mercado regional",
-      "stockDesc" : "Elige Occidental para mostrar las subidas del mercado en azul u Oriental para mostrarlas en rojo."
+      "stockDesc" : "Elige Occidental para mostrar las subidas del mercado en azul u Oriental para mostrarlas en rojo.",
+      "walletSync" : "Sincronización de billeteras",
+      "walletSyncDesc" : "Haz una copia de respaldo de tus datos de la aplicación y sincroniza varias instancias de Ledger Live."
     },
     "developer" : {
       "search" : "Buscar",
@@ -3941,6 +3985,32 @@
       "userId" : "ID del usuario",
       "debugApps" : "Permitir aplicaciones de depuración",
       "debugAppsDesc" : "Mostrar y permitir la utilización de aplicaciones de plataforma etiquetadas como de depuración.",
+      "debugReactQuery" : "Permitir ReactQuery de depuración",
+      "debugReactQueryDesc" : "Mostrar y permitir abrir la consola ReactQuery de depuración.",
+      "debugSpamNft" : {
+        "debugNFTSpamReport" : "Permitir denunciar un NFT como spam (Beta)",
+        "debugNFTSpamReportDesc" : "Mostrar un formulario para denunciar un NFT como spam o para impedir que se muestre como spam",
+        "report" : "Denunciar",
+        "contractAddress" : "Dirección del contrato",
+        "contractAddressDesc" : "contract_address del NFT denunciado, o del propio contrato",
+        "chainId" : "ID de cadena",
+        "chainIdDesc" : "chain_id (por ejemplo, ethereum) del NFT o contrato denunciado",
+        "collectionId" : "ID de colección",
+        "collectionIdDesc" : "ID de colección de SimpleHash del NFT denunciado",
+        "tokenId" : "ID de token",
+        "tokenIdDesc" : "token_id del NFT denunciado",
+        "eventType" : "Tipo de evento",
+        "eventTypeDesc" : "Tipo de denuncia que quieres hacer",
+        "success" : "La denuncia se ha enviado correctamente. Puede tardar entre 5 y 10 minutos en hacerse efectiva.",
+        "error" : "Se ha producido un error al enviar la denuncia. Inténtalo de nuevo más tarde.",
+        "reportType" : {
+          "title" : "¿Qué quieres denunciar?",
+          "desc" : "Selecciona el tipo de denuncia que quieres hacer",
+          "individual" : "Denuncia de un NFT individual como spam",
+          "contract" : "Denuncia de un contrato como spam",
+          "collection" : "Denuncia de una colección como spam"
+        }
+      },
       "experimentalApps" : "Permitir aplicaciones experimentales",
       "experimentalAppsDesc" : "Mostrar y permitir la utilización de aplicaciones de plataforma etiquetadas como experimentales.",
       "catalogUrl" : "Definir el proveedor del catálogo de aplicaciones",
@@ -3968,7 +4038,18 @@
       "firebaseProject" : "Proyecto de Firebase al que se refiere esta compilación:",
       "addLocalApp" : "Añadir una aplicación local",
       "addLocalAppDesc" : "Explorar archivos locales y añadir una aplicación local usando un manifiesto local",
-      "addLocalAppButton" : "Navegar",
+      "addLocalAppButton" : "Explorar",
+      "createLocalAppModal" : {
+        "title" : {
+          "create" : "Crear una aplicación local",
+          "modify" : "Modificar una aplicación local"
+        },
+        "addNetwork" : "Agregar una nueva red",
+        "removeNetwork" : "Eliminar la última red",
+        "export" : "Exportar",
+        "modify" : "Modificar",
+        "create" : "Crear"
+      },
       "runLocalAppDeleteButton" : "Borrar",
       "runLocalAppOpenButton" : "Abrir",
       "enableLearnStagingUrl" : "URL de ensayo de la página Learn",
@@ -4067,9 +4148,13 @@
           "description" : "Probar todas las historias usadas en Ledger Live",
           "longDesc" : "Esta herramienta se proporciona tal cual para que el equipo valide las historias de storyly usadas en la aplicación."
         },
-        "testPostonboarding" : {
-          "title" : "Probar el Post Onboarding",
-          "description" : "Probar todas las funciones de Post Onboarding"
+        "testStaxPostonboarding" : {
+          "title" : "Test Stax Post Onboarding",
+          "description" : "Test all stax post onboarding features"
+        },
+        "testEuropaPostonboarding" : {
+          "title" : "Test Europa Post Onboarding",
+          "description" : "Test all europa post onboarding features"
         },
         "1559DeactivateGate" : {
           "title" : "Desactivar umbral de tarifa de prioridad mínima EIP1559",
@@ -4296,14 +4381,14 @@
         "title" : "Protege tu código PIN",
         "intro" : "Durante el proceso de configuración debes elegir un código PIN.",
         "rules" : {
-          "1" : "<0>Siempre</0> elige un código PIN por ti mismo.",
+          "1" : "<0>Nunca</0> elijas un código PIN que no hayas creado tú.",
           "2" : "<0>Siempre</0> ingresa tu código PIN fuera de la vista de los demás.",
           "3" : "Si es necesario, puedes modificar tu código PIN.",
           "4" : "El dispositivo se reiniciará si introduces tres veces seguidas un código PIN incorrecto.",
           "5" : "<0>Nunca</0> utilices un código PIN fácil como 0000, 123456 o 55555555.",
           "6" : "<0>Nunca</0> compartas tu código PIN con nadie más. Ni siquiera con Ledger.",
           "7" : "<0>Nunca</0> utilices un código PIN que no hayas elegido tú mismo.",
-          "8" : "<0>Nunca</0> guardes tu código PIN en una PC o teléfono."
+          "8" : "<0>Nunca</0> guardes tu código PIN en tu PC o teléfono."
         }
       },
       "recoverySeed" : {
@@ -4316,14 +4401,14 @@
         "paragraph4" : "Para restaurar el acceso a tus cripto, cualquier billetera puede calcular las mismas claves privadas a partir de tu Frase de Recuperación.",
         "points" : {
           "1" : "Utiliza una billetera de hardware distinta.",
-          "2" : "Selecciona “Restore recovery phrase on a new device” en la aplicación Ledger.",
+          "2" : "Selecciona “Restore recovery phrase on a new device” (Restaurar la Frase de Recuperación a un dispositivo nuevo) en la aplicación Ledger.",
           "3" : "Ingresa tu Frase de Recuperación en tu nuevo dispositivo para restaurar el acceso a tus cripto."
         }
       },
       "whereToHide" : {
         "title" : "¿Dónde debo guardar mi Frase de Recuperación?",
         "points" : {
-          "1" : "<0>NUNCA</0> la ingreses en una PC, smartphone o cualquier otro dispositivo. No le tomes fotografías.",
+          "1" : "<0>NUNCA</0> la ingreses en tu PC, smartphone o cualquier otro dispositivo. No le tomes fotografías.",
           "2" : "<0>NUNCA</0> compartas tus 24 Palabras con nadie.",
           "3" : "<0>SIEMPRE</0> guárdala en un lugar seguro, fuera de la vista.",
           "4" : "Ledger nunca te pedirá tu Frase de Recuperación.",
@@ -4359,7 +4444,7 @@
         "nextButton" : "Comenzar",
         "noDevice" : "¿No tienes un dispositivo?",
         "buyLink" : "¿No tienes un dispositivo? Compra un Ledger Nano X",
-        "byTapping" : "Al tocar “Comenzar” otorgas tu consentimiento y aceptas nuestros",
+        "byTapping" : "Al tocar “Comenzar”, otorgas tu consentimiento y aceptas nuestros",
         "termsAndConditions" : "Términos y condiciones",
         "and" : "y",
         "privacyPolicy" : "Política de Privacidad",
@@ -4453,11 +4538,11 @@
               "descr" : "Conecta tu dispositivo a tu PC mediante el cable USB."
             },
             "browse" : {
-              "title" : "Navegar",
+              "title" : "Explorar",
               "descr" : "Aprende a interactuar con tu dispositivo mediante las instrucciones en pantalla."
             },
             "select" : {
-              "title" : "Selecciona “Set up as new device”",
+              "title" : "Selecciona “Set up as new device” (Configurar como dispositivo nuevo)",
               "descr" : "Presiona ambos botones simultáneamente para validar la selección."
             },
             "follow" : {
@@ -4481,7 +4566,7 @@
               "descr" : "Conecta tu dispositivo a tu PC mediante el cable USB."
             },
             "browse" : {
-              "title" : "Navegar",
+              "title" : "Explorar",
               "descr" : "Aprende a interactuar con tu dispositivo mediante las instrucciones en pantalla."
             },
             "select" : {
@@ -4539,11 +4624,11 @@
           },
           "pinCodeHowTo" : {
             "setUp" : {
-              "title" : "Elige un código PIN",
+              "title" : "Crea un código PIN",
               "descr" : "Presiona el botón izquierdo o derecho para desplazarte por los números. Presiona ambos botones para confirmar un número. Selecciona <0></0> para confirmar tu código PIN. Selecciona <1></1> para borrar un número."
             },
             "confirm" : {
-              "title" : "Confirma código PIN",
+              "title" : "Confirma el código PIN",
               "descr" : "Ingresa tu código PIN para confirmarlo."
             },
             "buttons" : {
@@ -4686,7 +4771,7 @@
           "hideRecoveryPhrase" : {
             "title" : "Oculta tu Frase de Recuperación",
             "paragraph" : "Tu Frase de Recuperación es la única manera de recuperar tus cripto, en caso de no ser posible utilizar tu Nano. Debes conservarla en un lugar seguro.",
-            "keepItOffline" : "Ingresa estas Palabras únicamente en una billetera de hardware, no la ingreses en una PC, ni en otros dispositivos como un smartphone.",
+            "keepItOffline" : "Ingresa estas palabras únicamente en una billetera de hardware, no la ingreses en tu PC, ni en otros dispositivos como un smartphone.",
             "neverShowToAnyone" : "Nunca compartas tus 24 Palabras con nadie, ni siquiera con Ledger.",
             "buttons" : {
               "next" : "Bien, ¡he terminado!",
@@ -4737,7 +4822,7 @@
         "setUpNanoWallet" : {
           "title" : "Configuremos tu Nano.",
           "description" : "Empecemos por la seguridad de tu Nano",
-          "CTA" : "Vamos."
+          "CTA" : "Continuar"
         }
       }
     },
@@ -5258,8 +5343,8 @@
       "description" : "Utiliza Mi Ledger para desinstalar todas las aplicaciones y comprobar si hay alguna actualización de firmware disponible antes de instalarlas de nuevo."
     },
     "LatestFirmwareVersionRequired" : {
-      "title" : "Actualizar el firmware del Nano",
-      "description" : "Actualiza el firmware de tus dispositivos con la última versión para acceder a esta característica"
+      "title" : "Actualizar el firmware del dispositivo",
+      "description" : "Actualiza el firmware de tu dispositivo a la versión más reciente para acceder a esta opción"
     },
     "FirmwareNotRecognized" : {
       "title" : "Proveedor no válido",
@@ -5382,7 +5467,7 @@
       "description" : "No es posible calcular la cantidad y las tarifas"
     },
     "NotEnoughBalance" : {
-      "title" : "Lo sentimos, el saldo es insuficiente con las tarifas de red incluidas. Ajusta el importe o verifica el saldo",
+      "title" : "Lo sentimos, el saldo es insuficiente con las tarifas de red incluidas. Modifica el importe o verifica el saldo.",
       "description" : "Asegúrate de que la cuenta tenga fondos suficientes."
     },
     "NotEnoughBalanceBecauseDestinationNotCreated" : {
@@ -5436,6 +5521,10 @@
     "SatStackDescriptorNotImported" : {
       "title" : "Cuenta no escaneada por el nodo completo",
       "description" : "Configura el nodo completo para buscar las cuentas asociadas a este dispositivo. El nodo completo debe buscar esta cuenta primero en la cadena de bloques, antes de agregarla a tu Portfolio."
+    },
+    "SwapRateExpiredError" : {
+      "title" : "Tasa caducada",
+      "description" : "La transacción de intercambio no pudo completarse porque la tasa ha caducado. Actualiza las tasas e intenta la permuta de nuevo."
     },
     "SwapGenericAPIError" : {
       "title" : "Algo ha salido mal",
@@ -5997,7 +6086,7 @@
   },
   "customImage" : {
     "title" : "Pantalla de bloqueo personalizada",
-    "cta" : "Pantalla de bloqueo personalizada",
+    "cta" : "Definir pantalla de bloqueo personalizada",
     "managerCTA" : "Imagen de pantalla de bloqueo",
     "managerCTARemove" : "Eliminar",
     "steps" : {
@@ -6037,7 +6126,7 @@
     },
     "postOnboarding" : {
       "title" : "Personalizar la pantalla de bloqueo",
-      "description" : "Elige el NFT o la imagen que quieres usar como pantalla de bloqueo de tu Ledger Stax.",
+      "description" : "Elige cualquier obra de arte digital o imagen para establecerla como pantalla de bloqueo de tu {{productName}}.",
       "actionCompletedPopupLabel" : "Dispositivo personalizado"
     },
     "customImageSet" : "Pantalla de bloqueo personalizada",
