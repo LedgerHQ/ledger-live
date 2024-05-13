@@ -20,7 +20,6 @@ import {
   createAction,
   StartExchangeErrorResult,
   StartExchangeSuccessResult,
-  Result,
 } from "@ledgerhq/live-common/hw/actions/startExchange";
 import startExchange from "@ledgerhq/live-common/exchange/platform/startExchange";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
@@ -152,7 +151,7 @@ export const LiveAppDrawer = () => {
             <DeviceAction
               action={action}
               request={data}
-              onResult={(result: Result) => {
+              onResult={result => {
                 if ("startExchangeResult" in result) {
                   data.onResult(result.startExchangeResult);
                 }

@@ -433,11 +433,7 @@ function useUiHook(): UiHook {
             request: {
               exchangeType: ExchangeType[exchangeType],
             },
-            onResult: (result: {
-              startExchangeResult?: { nonce: string; device: Device };
-              startExchangeError?: { error: Error; device?: Device };
-              device?: Device;
-            }) => {
+            onResult: result => {
               if (result.startExchangeError) {
                 onCancel(result.startExchangeError.error);
               }
