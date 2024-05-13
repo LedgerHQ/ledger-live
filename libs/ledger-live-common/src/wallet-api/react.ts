@@ -861,7 +861,7 @@ export function useLocalLiveApp([LocalLiveAppDb, setState]: LocalLiveAppDB): Loc
   const addLocalManifest = useCallback(
     (newLocalManifest: LiveAppManifest) => {
       setState(discoverDB => {
-        const newLocalLiveAppList = discoverDB.localLiveApp.filter(
+        const newLocalLiveAppList = discoverDB.localLiveApp?.filter(
           manifest => manifest.id !== newLocalManifest.id,
         );
 
