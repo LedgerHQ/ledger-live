@@ -24,7 +24,6 @@ let device: Device | undefined;
 test.afterEach(async () => {
   await stopSpeculos(device);
 });
-//TODO Add Account.ADA_1
 const accounts: Account[] = [
   Account.BTC_1,
   Account.ETH_1,
