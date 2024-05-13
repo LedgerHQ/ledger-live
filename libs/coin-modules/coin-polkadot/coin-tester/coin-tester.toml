@@ -3,7 +3,10 @@ timeout = 1000
 
 [relaychain]
 default_image = "paritypr/polkadot-debug:master"
-chain = "rococo-local"
+chain = "polkadot"
 
   [[relaychain.nodes]]
   name = "alice"
+  rpc_port = 31323
+  prometheus_port = 3003
+  ws_port = 1998
