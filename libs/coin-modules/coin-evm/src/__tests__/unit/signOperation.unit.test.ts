@@ -44,9 +44,9 @@ const transactionEIP1559: EvmTransaction = {
 
 const estimatedFees = getEstimatedFees(transactionEIP1559);
 
-const mockSignerContext: SignerContext<EvmSigner, EvmAddress | EvmSignature> = (
+const mockSignerContext: SignerContext<EvmSigner> = <T>(
   _: string,
-  fn: (signer: EvmSigner) => Promise<EvmAddress | EvmSignature>,
+  fn: (signer: EvmSigner) => Promise<T>,
 ) => {
   return fn({
     setLoadConfig: jest.fn(),

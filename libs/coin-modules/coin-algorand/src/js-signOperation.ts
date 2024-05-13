@@ -9,7 +9,7 @@ import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import { buildTransactionPayload, encodeToBroadcast, encodeToSign } from "./buildTransaction";
-import type { AlgorandAddress, AlgorandSignature, AlgorandSigner } from "./signer";
+import type { AlgorandSignature, AlgorandSigner } from "./signer";
 import type { Transaction, AlgorandOperation } from "./types";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 
@@ -17,9 +17,7 @@ import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
  * Sign Transaction with Ledger hardware
  */
 export const buildSignOperation =
-  (
-    signerContext: SignerContext<AlgorandSigner, AlgorandAddress | AlgorandSignature>,
-  ): SignOperationFnSignature<Transaction> =>
+  (signerContext: SignerContext<AlgorandSigner>): SignOperationFnSignature<Transaction> =>
   ({
     account,
     transaction,

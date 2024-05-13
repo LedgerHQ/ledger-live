@@ -43,10 +43,8 @@ describe("signOperation", () => {
       return_code: -1,
     }),
   };
-  const signerContext = (
-    _deviceId: string,
-    fn: (signer: PolkadotSigner) => Promise<PolkadotSignature | PolkadotAddress>,
-  ) => fn(fakeSigner);
+  const signerContext = <T>(_deviceId: string, fn: (signer: PolkadotSigner) => Promise<T>) =>
+    fn(fakeSigner);
   const signOperation = buildSignOperation(signerContext);
   const deviceId = "dummyDeviceId";
 
