@@ -61,8 +61,6 @@ export async function fetchList({
     },
   });
 
-  console.log(url);
-
   const { data } = await network({
     method: "GET",
     url,
