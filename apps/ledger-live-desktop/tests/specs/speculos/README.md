@@ -22,10 +22,31 @@ pnpm build:lld:deps
 ## Speculos
 
 Clone Speculos repository
+
 ```
 git clone https://github.com/LedgerHQ/speculos.git
 ```
-Then, follow the instructions for your device: [Speculos](https://speculos.ledger.com/).
+
+Once the repository is cloned, follow these steps:
+
+- __Open Dockerfile__: Replace line #7
+
+```
+-FROM ghcr.io/ledgerhq/speculos-builder:latest AS builder
++FROM speculos-builder:latest AS builder
+```
+- __On Terminal__
+```
+docker build -t speculos-builder:latest -f build.Dockerfile .
+docker build -f Dockerfile -t speculos:latest .
+```
+- __Test running speculos__
+```
+ docker run  --rm -it -v "$(pwd)"/apps:/speculos/apps \
+-p 1234:1234 -p 5000:5000 -p 40000:40000 -p 41000:41000  -e SPECULOS_APPNAME=Bitcoin:2.0.1 speculos \
+--model nanos ./apps/btc.elf --sdk 2.0 --seed "secret" --display headless --apdu-port 40000
+```
+> 💡 **Make sure AirPlay is disabled on Macs to avoid port conflicts.**
 
 ## Coin APPS
 
@@ -33,9 +54,6 @@ Clone CoinApps repository
 ```
 git clone https://github.com/LedgerHQ/coin-apps.git
 ```
-
-# Setup
-
 
 # Setup
 
@@ -48,7 +66,7 @@ export COINAPPS="/Users/firstname.lastname/coin-apps"
 export SEED="secret"
 ```
 
-"The command export COINAPPS="/Users/firstname.lastname/coin-apps" should be adjusted according to the location where the repository is cloned."
+The command `export COINAPPS="/Users/firstname.lastname/coin-apps` should be adjusted according to the location where the repository is cloned."
 
 # Execution
 
