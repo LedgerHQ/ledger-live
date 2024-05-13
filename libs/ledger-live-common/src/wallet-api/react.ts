@@ -858,7 +858,15 @@ export interface LocalLiveApp {
 }
 
 export function useLocalLiveApp([LocalLiveAppDb, setState]: LocalLiveAppDB): LocalLiveApp {
-  const addLocalManifest = useCallback(
+  useEffect(() => {
+    if (LocalLiveAppDb === undefined) {
+      setState(discoverDB => {
+        return { ...discoverDB, localLiveApp: INITIAL_PLATFORM_STATE.localLiveApp };
+      });
+    }
+  }, [LocalLiveAppDb, setState]);
+  
+    const addLocalManifest = useCallback(
     (newLocalManifest: LiveAppManifest) => {
       setState(discoverDB => {
         const newLocalLiveAppList = discoverDB.localLiveApp?.filter(
