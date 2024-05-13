@@ -42,7 +42,11 @@ import openTransportAsSubject, { BidirectionalEvent } from "../hw/openTransportA
 import { AppResult } from "../hw/actions/app";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { Transaction } from "../generated/types";
-import { DISCOVER_INITIAL_CATEGORY, MAX_RECENTLY_USED_LENGTH } from "./constants";
+import {
+  DISCOVER_INITIAL_CATEGORY,
+  INITIAL_PLATFORM_STATE,
+  MAX_RECENTLY_USED_LENGTH,
+} from "./constants";
 import { DiscoverDB } from "./types";
 import { LiveAppManifest } from "../platform/types";
 import { WalletState } from "@ledgerhq/live-wallet/store";
@@ -865,8 +869,8 @@ export function useLocalLiveApp([LocalLiveAppDb, setState]: LocalLiveAppDB): Loc
       });
     }
   }, [LocalLiveAppDb, setState]);
-  
-    const addLocalManifest = useCallback(
+
+  const addLocalManifest = useCallback(
     (newLocalManifest: LiveAppManifest) => {
       setState(discoverDB => {
         const newLocalLiveAppList = discoverDB.localLiveApp?.filter(
