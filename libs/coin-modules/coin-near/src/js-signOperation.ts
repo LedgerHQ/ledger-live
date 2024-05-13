@@ -13,7 +13,7 @@ import type {
 } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { buildTransaction } from "./js-buildTransaction";
-import { NearAddress, NearSignature, NearSigner } from "./signer";
+import { NearSigner } from "./signer";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 
 const buildOptimisticOperation = (
@@ -61,9 +61,7 @@ const buildOptimisticOperation = (
  * Sign Transaction with Ledger hardware
  */
 export const buildSignOperation =
-  (
-    signerContext: SignerContext<NearSigner, NearAddress | NearSignature>,
-  ): SignOperationFnSignature<Transaction> =>
+  (signerContext: SignerContext<NearSigner>): SignOperationFnSignature<Transaction> =>
   ({
     account,
     transaction,
@@ -81,14 +79,14 @@ export const buildSignOperation =
           throw new FeeNotLoaded();
         }
 
-        const { publicKey } = (await signerContext(deviceId, signer =>
+        const { publicKey } = await signerContext(deviceId, signer =>
           signer.getAddress(account.freshAddressPath),
-        )) as NearAddress;
+        );
         const unsigned = await buildTransaction(account, transaction, publicKey);
 
-        const response = (await signerContext(deviceId, signer =>
+        const response = await signerContext(deviceId, signer =>
           signer.signTransaction(unsigned.encode(), account.freshAddressPath),
-        )) as NearSignature;
+        );
 
         const signedTransaction = new nearAPI.transactions.SignedTransaction({
           transaction: unsigned,

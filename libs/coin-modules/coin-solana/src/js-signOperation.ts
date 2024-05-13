@@ -21,7 +21,7 @@ import type {
   TransferCommand,
 } from "./types";
 import { buildTransactionWithAPI } from "./js-buildTransaction";
-import type { SolanaAddress, SolanaSignature, SolanaSigner } from "./signer";
+import type { SolanaSigner } from "./signer";
 import BigNumber from "bignumber.js";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { assertUnreachable } from "./utils";
@@ -53,7 +53,7 @@ const buildOptimisticOperation = (account: Account, transaction: Transaction): S
 
 export const buildSignOperation =
   (
-    signerContext: SignerContext<SolanaSigner, SolanaAddress | SolanaSignature>,
+    signerContext: SignerContext<SolanaSigner>,
     api: () => Promise<ChainAPI>,
   ): SignOperationFnSignature<Transaction> =>
   ({
@@ -77,9 +77,9 @@ export const buildSignOperation =
           type: "device-signature-requested",
         });
 
-        const { signature } = (await signerContext(deviceId, signer =>
+        const { signature } = await signerContext(deviceId, signer =>
           signer.signTransaction(account.freshAddressPath, Buffer.from(tx.message.serialize())),
-        )) as SolanaSignature;
+        );
 
         subscriber.next({
           type: "device-signature-granted",

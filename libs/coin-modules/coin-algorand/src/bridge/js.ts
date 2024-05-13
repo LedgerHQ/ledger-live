@@ -24,11 +24,9 @@ import {
   toOperationExtraRaw,
 } from "../serialization";
 import type { Transaction } from "../types";
-import { AlgorandAddress, AlgorandSignature, AlgorandSigner } from "../signer";
+import { AlgorandSigner } from "../signer";
 
-export function buildCurrencyBridge(
-  signerContext: SignerContext<AlgorandSigner, AlgorandAddress | AlgorandSignature>,
-): CurrencyBridge {
+export function buildCurrencyBridge(signerContext: SignerContext<AlgorandSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
 
   const scanAccounts = makeScanAccounts({
@@ -44,7 +42,7 @@ export function buildCurrencyBridge(
 }
 
 export function buildAccountBridge(
-  signerContext: SignerContext<AlgorandSigner, AlgorandAddress | AlgorandSignature>,
+  signerContext: SignerContext<AlgorandSigner>,
 ): AccountBridge<Transaction> {
   const getAddress = resolver(signerContext);
 
@@ -70,9 +68,7 @@ export function buildAccountBridge(
   };
 }
 
-export function createBridges(
-  signerContext: SignerContext<AlgorandSigner, AlgorandAddress | AlgorandSignature>,
-) {
+export function createBridges(signerContext: SignerContext<AlgorandSigner>) {
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),
