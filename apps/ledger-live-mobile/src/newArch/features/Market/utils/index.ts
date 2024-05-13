@@ -53,6 +53,7 @@ export const counterValueFormatter = ({
   locale,
   t,
   allowZeroValue = false,
+  ticker = "",
 }: {
   currency?: string;
   value: number;
@@ -60,6 +61,7 @@ export const counterValueFormatter = ({
   locale: string;
   t?: TFunction;
   allowZeroValue?: boolean;
+  ticker?: string;
 }): string => {
   if (isNaN(value) || (!value && !allowZeroValue)) {
     return "-";
@@ -75,7 +77,11 @@ export const counterValueFormatter = ({
     });
   }
 
-  const formatter = currency ? formatters[locale][currency] : undefined;
+  const formatter = currency
+    ? formatters[locale][currency]
+    : ticker
+    ? new Intl.NumberFormat(locale)
+    : undefined;
 
   if (shorten && t && formatter) {
     const sign = value > 0 ? "" : "-";
@@ -95,9 +101,13 @@ export const counterValueFormatter = ({
     return formattedNumber;
   }
 
-  // FIXME: HOW DID THIS WORK WHEN CURRENCY IS EMTPY
-  // PLEASE FIX
-  return formatter ? formatter.format(value) : value + "";
+  if (formatter) {
+    const formattedValue = formatter.format(value);
+    const upperCaseTicker = ticker?.trim()?.toLocaleUpperCase();
+    return `${formattedValue} ${upperCaseTicker}`.trim();
+  }
+
+  return String(value);
 };
 
 export function getAnalyticsProperties<P extends object>(

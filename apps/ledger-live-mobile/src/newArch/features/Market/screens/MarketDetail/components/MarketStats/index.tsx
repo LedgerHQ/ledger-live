@@ -47,6 +47,7 @@ export default function MarketStats({
     atlDate: _atlDate,
     price,
     priceChangePercentage,
+    ticker,
   } = currency || {};
 
   const athDate = _athDate ? new Date(_athDate) : null;
@@ -62,7 +63,15 @@ export default function MarketStats({
     [locale],
   );
 
-  function Value({ value, isDefined }: { value?: number; isDefined: boolean }) {
+  function Value({
+    value,
+    ticker,
+    isDefined,
+  }: {
+    value?: number;
+    ticker?: string;
+    isDefined: boolean;
+  }) {
     return (
       <StyledTextLabel>
         {isDefined && value ? (
@@ -71,6 +80,7 @@ export default function MarketStats({
               currency: counterCurrency,
               value: value,
               locale,
+              ticker,
               t,
             })}
           </>
@@ -156,13 +166,13 @@ export default function MarketStats({
       <StyledSeparator />
       <StyledTitle>{t("market.detailsPage.supply")}</StyledTitle>
       <StatRow label={t("market.detailsPage.circulatingSupply")}>
-        <Value value={circulatingSupply} isDefined={!!currency} />
+        <Value value={circulatingSupply} isDefined={!!currency} ticker={ticker} />
       </StatRow>
       <StatRow label={t("market.detailsPage.totalSupply")}>
-        <Value value={totalSupply} isDefined={!!currency} />
+        <Value value={totalSupply} isDefined={!!currency} ticker={ticker} />
       </StatRow>
       <StatRow label={t("market.detailsPage.maxSupply")}>
-        <Value value={maxSupply} isDefined={!!currency} />
+        <Value value={maxSupply} isDefined={!!currency} ticker={ticker} />
       </StatRow>
     </Flex>
   );
