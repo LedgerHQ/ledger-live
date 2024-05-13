@@ -76,19 +76,19 @@ test.describe.parallel("Send Approve @smoke", () => {
 
       await test.step(`[${transaction.accountToDebit.accountName}] Validate message on device`, async () => {
         await expect(sendModal.checkDevice).toBeVisible();
-        const amountScreen = await pressRightUntil(DeviceLabels.Amount);
+        const amountScreen = await pressRightUntil(DeviceLabels.AMOUT);
         expect(verifyAmount(transaction.amount, amountScreen)).toBe(true);
-        const addressScreen = await pressRightUntil(DeviceLabels.Address);
+        const addressScreen = await pressRightUntil(DeviceLabels.ADDRESS);
         expect(verifyAddress(receiveAddress, addressScreen)).toBe(true);
         await pressRightUntil(transaction.accountToCredit.currency.sendPattern[2]);
         await pressBoth();
         switch (transaction.accountToDebit.currency.uiName) {
           case Currency.tBTC.uiName:
-            await pressRightUntil(DeviceLabels.Continue);
+            await pressRightUntil(DeviceLabels.CONTINUE);
             await pressBoth();
-            await pressRightUntil(DeviceLabels.Continue);
+            await pressRightUntil(DeviceLabels.CONTINUE);
             await pressBoth();
-            await pressRightUntil(DeviceLabels.Sign);
+            await pressRightUntil(DeviceLabels.SIGN);
             await pressBoth();
             break;
           default:

@@ -31,18 +31,6 @@ export class Account {
     "tb1qyjr6hsx3wvsdq998zvn5cusqkdyfvvnpnsz6a5",
   );
 
-  static readonly ADA_1 = new Account(
-    Currency.ADA,
-    "Cardano 1",
-    "addr1q9q9q55zyew785z6c2lnrhnzghy038r6mepmqn6v28kupk5ug4c7v5lwwfjwgn4mnpzgmhrhp8xry804kuvfh6ru2ews8d5td8",
-  );
-
-  static readonly ADA_2 = new Account(
-    Currency.ADA,
-    "Cardano 2",
-    "addr1qyjd47qfktpza4ycjddjadaarzwdumwrqws0xage8gvsmrq5ghmxjmdj4eylq78wur2gmm7gtqfq49v6mtdkaqwqzy2qwzv6ac",
-  );
-
   static readonly ETH_1 = new Account(
     Currency.ETH,
     "Ethereum 1",
