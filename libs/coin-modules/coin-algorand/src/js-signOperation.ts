@@ -9,7 +9,7 @@ import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import { buildTransactionPayload, encodeToBroadcast, encodeToSign } from "./buildTransaction";
-import type { AlgorandSignature, AlgorandSigner } from "./signer";
+import type { AlgorandSigner } from "./signer";
 import type { Transaction, AlgorandOperation } from "./types";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 
@@ -43,9 +43,9 @@ export const buildSignOperation =
 
         o.next({ type: "device-signature-requested" });
 
-        const { signature } = (await signerContext(deviceId, signer =>
+        const { signature } = await signerContext(deviceId, signer =>
           signer.sign(freshAddressPath, toSign),
-        )) as AlgorandSignature;
+        );
 
         if (cancelled) return;
 
