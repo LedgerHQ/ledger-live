@@ -178,6 +178,7 @@ export type Features = CurrencyFeatures & {
   llmRefreshMarketData: Feature_LlmRefreshMarketData;
   spamReportNfts: Feature_SpamReportNfts;
   lldWalletSync: Feature_LldWalletSync;
+  lldNftsGalleryNewArch: DefaultFeature;
 };
 
 /**

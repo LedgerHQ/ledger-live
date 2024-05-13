@@ -2,11 +2,9 @@ import { from, Observable } from "rxjs";
 import { map } from "rxjs/operators";
 import invariant from "invariant";
 import flatMap from "lodash/flatMap";
-import { isAccount } from "@ledgerhq/coin-framework/account/index";
-import {
-  getCryptoCurrencyById,
-  formatCurrencyUnit,
-} from "@ledgerhq/coin-framework/currencies/index";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { isAccount } from "@ledgerhq/coin-framework/account";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import {
   SidecarValidatorsParamAddresses,
   SidecarValidatorsParamStatus,

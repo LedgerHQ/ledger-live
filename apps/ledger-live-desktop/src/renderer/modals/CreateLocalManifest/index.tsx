@@ -15,7 +15,6 @@ import {
   LiveAppManifestSchemaType,
 } from "@ledgerhq/live-common/platform/types";
 import Text from "~/renderer/components/Text";
-import { useLocalLiveAppContext } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import Switch from "~/renderer/components/Switch";
 import FormLiveAppInput from "./FormLiveAppInput";
 import NestedFormCategory from "./NestedFormCategory";
@@ -32,6 +31,7 @@ import { Separator } from "~/renderer/components/Onboarding/Screens/SelectUseCas
 import { DEFAULT_FORM, DEFAULT_VALUES } from "./defaultValues";
 
 import { objectKeysType } from "@ledgerhq/live-common/helpers";
+import { useLocalLiveAppContext } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 
 function createLocalManifest() {
   return (

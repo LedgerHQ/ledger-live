@@ -1,6 +1,7 @@
+import BigNumber from "bignumber.js";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, Operation, SubAccount, TokenAccount } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
+import { getTokenById } from "@ledgerhq/cryptoassets/tokens";
 import {
   areAllOperationsLoaded,
   emptyHistoryCache,
@@ -9,7 +10,6 @@ import {
   getFeesCurrency,
 } from ".";
 import { isAccountEmpty, isAccountBalanceSignificant, clearAccount } from "./helpers";
-import { getTokenById } from "../currencies";
 
 const mockAccount = {} as Account;
 const tokenAccount = {
