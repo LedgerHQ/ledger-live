@@ -67,17 +67,19 @@ export default function MarketStats({
     value,
     ticker,
     isDefined,
+    withCounterValue = true,
   }: {
     value?: number;
     ticker?: string;
     isDefined: boolean;
+    withCounterValue?: boolean;
   }) {
     return (
       <StyledTextLabel>
         {isDefined && value ? (
           <>
             {counterValueFormatter({
-              currency: counterCurrency,
+              currency: withCounterValue ? counterCurrency : undefined,
               value: value,
               locale,
               ticker,
@@ -166,13 +168,23 @@ export default function MarketStats({
       <StyledSeparator />
       <StyledTitle>{t("market.detailsPage.supply")}</StyledTitle>
       <StatRow label={t("market.detailsPage.circulatingSupply")}>
-        <Value value={circulatingSupply} isDefined={!!currency} ticker={ticker} />
+        <Value
+          value={circulatingSupply}
+          isDefined={!!currency}
+          ticker={ticker}
+          withCounterValue={false}
+        />
       </StatRow>
       <StatRow label={t("market.detailsPage.totalSupply")}>
-        <Value value={totalSupply} isDefined={!!currency} ticker={ticker} />
+        <Value
+          value={totalSupply}
+          isDefined={!!currency}
+          ticker={ticker}
+          withCounterValue={false}
+        />
       </StatRow>
       <StatRow label={t("market.detailsPage.maxSupply")}>
-        <Value value={maxSupply} isDefined={!!currency} ticker={ticker} />
+        <Value value={maxSupply} isDefined={!!currency} ticker={ticker} withCounterValue={false} />
       </StatRow>
     </Flex>
   );
