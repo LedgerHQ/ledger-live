@@ -1,15 +1,14 @@
 import BigNumber from "bignumber.js";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { Account, Operation, SubAccount, TokenAccount } from "@ledgerhq/types-live";
+import { Account, SubAccount, TokenAccount } from "@ledgerhq/types-live";
 import { getTokenById } from "@ledgerhq/cryptoassets/tokens";
 import {
-  areAllOperationsLoaded,
   emptyHistoryCache,
   getAccountCurrency,
   getAccountSpendableBalance,
   getFeesCurrency,
 } from ".";
-import { isAccountEmpty, isAccountBalanceSignificant, clearAccount } from "./helpers";
+import { isAccountEmpty, clearAccount } from "./helpers";
 
 const mockAccount = {} as Account;
 const tokenAccount = {
@@ -159,59 +158,6 @@ describe(isAccountEmpty.name, () => {
       it("should return false", () => {
         expect(isAccountEmpty(mockAccount)).toEqual(false);
       });
-    });
-  });
-});
-
-describe(areAllOperationsLoaded.name, () => {
-  describe("given an account with subAccounts", () => {
-    beforeEach(() => {
-      mockAccount.type = "Account";
-      mockAccount.operations = [];
-      mockAccount.operationsCount = 0;
-      mockAccount.subAccounts = [
-        {
-          operations: [],
-          operationsCount: 0,
-        },
-        {
-          operations: [{} as Operation],
-          operationsCount: 1,
-        },
-      ] as SubAccount[];
-    });
-    describe("when sub account operation aren't loaded", () => {
-      beforeEach(() => {
-        (mockAccount.subAccounts as SubAccount[])[1].operations = [];
-      });
-      it("should return false", () => {
-        expect(areAllOperationsLoaded(mockAccount)).toEqual(false);
-      });
-    });
-
-    describe("when sub account operation are loaded", () => {
-      it("should return true", () => {
-        expect(areAllOperationsLoaded(mockAccount)).toEqual(true);
-      });
-    });
-  });
-});
-
-describe(isAccountBalanceSignificant.name, () => {
-  describe("when balance is low", () => {
-    beforeEach(() => {
-      mockAccount.balance = new BigNumber(10);
-    });
-    it("should return false", () => {
-      expect(isAccountBalanceSignificant(mockAccount)).toEqual(false);
-    });
-  });
-  describe("when balance is high", () => {
-    beforeEach(() => {
-      mockAccount.balance = new BigNumber(101);
-    });
-    it("should return true", () => {
-      expect(isAccountBalanceSignificant(mockAccount)).toEqual(true);
     });
   });
 });

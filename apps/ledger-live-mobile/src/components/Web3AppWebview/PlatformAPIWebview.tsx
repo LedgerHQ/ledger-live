@@ -338,20 +338,16 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
                 exchangeType,
                 provider,
               },
-              onResult: (result: {
-                startExchangeResult?: string;
-                startExchangeError?: Error;
-                device?: Device;
-              }) => {
+              onResult: result => {
                 if (result.startExchangeError) {
                   tracking.platformStartExchangeFail(manifest);
-                  reject(result.startExchangeError);
+                  reject(result.startExchangeError.error);
                 }
 
                 if (result.startExchangeResult) {
                   tracking.platformStartExchangeSuccess(manifest);
                   setDevice(result.device);
-                  resolve(result.startExchangeResult);
+                  resolve(result.startExchangeResult.nonce);
                 }
 
                 const n =

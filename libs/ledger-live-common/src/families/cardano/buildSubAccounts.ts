@@ -5,7 +5,11 @@ import { getAccountChange, getMemoFromTx, isHexString } from "./logic";
 import { CardanoOperation, CardanoOperationExtra, PaymentCredential, Token } from "./types";
 import { utils as TyphonUtils } from "@stricahq/typhonjs";
 import { findTokenById } from "@ledgerhq/cryptoassets";
-import { decodeTokenAccountId, emptyHistoryCache, encodeTokenAccountId } from "../../account";
+import {
+  decodeTokenAccountId,
+  emptyHistoryCache,
+  encodeTokenAccountId,
+} from "@ledgerhq/coin-framework/account/index";
 import groupBy from "lodash/groupBy";
 import keyBy from "lodash/keyBy";
 import { mergeOps } from "../../bridge/jsHelpers";

@@ -13,8 +13,8 @@ import {
   NotEnoughBalanceToDelegate,
 } from "@ledgerhq/errors";
 import type { TezosAccount, Transaction } from "../types";
-import type { Account, AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
-import { isAccountBalanceSignificant, getMainAccount } from "../../../account";
+import type { Account, AccountBridge, AccountLike, CurrencyBridge } from "@ledgerhq/types-live";
+import { getMainAccount } from "../../../account";
 import {
   scanAccounts,
   signOperation,
@@ -30,6 +30,8 @@ import {
   // asBaker,
   isAccountDelegating,
 } from "../bakers";
+
+const isAccountBalanceSignificant = (a: AccountLike): boolean => a.balance.gt(100);
 
 const receive = makeAccountBridgeReceive();
 
