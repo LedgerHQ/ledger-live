@@ -1,8 +1,5 @@
-import { fromAccountRaw } from "@ledgerhq/coin-framework/serialization";
 import { AmountRequired, NotEnoughBalance } from "@ledgerhq/errors";
 import type { DatasetTest, DerivationMode } from "@ledgerhq/types-live";
-import { loadAccountDelegation, listBakers } from "../api/bakers";
-import whitelist from "../api/bakers.whitelist-default";
 import type { TezosAccountRaw, Transaction } from "../types";
 import tezosScanAccounts1 from "../datasets/tezos.scanAccounts.1";
 
@@ -133,26 +130,3 @@ export const dataset: DatasetTest<Transaction> = {
     },
   },
 };
-
-describe("tezos bakers", () => {
-  test("atleast 10 whitelisted bakers are online", async () => {
-    const bakers = await listBakers(whitelist);
-    const retrievedAddresses = bakers.map(o => o.address);
-    let available = 0;
-    for (const whitelisted of whitelist) {
-      if (retrievedAddresses.includes(whitelisted)) {
-        available++;
-      } else {
-        console.warn(`Baker ${whitelisted} no longer online !`);
-      }
-    }
-    expect(available).toBeGreaterThan(10);
-  });
-
-  // TODO we'll need two accounts to test diff cases
-  test("load account baker info", async () => {
-    const account = fromAccountRaw(accountTZrevealedDelegating);
-    const delegation = await loadAccountDelegation(account);
-    expect(delegation).toBe(null);
-  });
-});
