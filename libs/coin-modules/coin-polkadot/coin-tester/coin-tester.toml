@@ -1,0 +1,9 @@
+[settings]
+timeout = 1000
+
+[relaychain]
+default_image = "paritypr/polkadot-debug:master"
+chain = "rococo-local"
+
+  [[relaychain.nodes]]
+  name = "alice"
