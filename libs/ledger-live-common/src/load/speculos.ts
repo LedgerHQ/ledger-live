@@ -159,20 +159,10 @@ export async function createSpeculosDevice(
     ...(sdk ? ["--sdk", sdk] : []),
     "--display",
     "headless",
-    "--vnc-password",
-    "live",
+    ...(process.env.CI ? ["--vnc-password", "live", "--vnc-port", "41000"] : []),
     ...(isSpeculosWebsocket
-      ? [
-          "--apdu-port",
-          "40000",
-          "--vnc-port",
-          "41000",
-          "--button-port",
-          "42000",
-          "--automation-port",
-          "43000",
-        ]
-      : ["--api-port", "40000", "--vnc-port", "41000"]),
+      ? ["--apdu-port", "40000", "--button-port", "42000", "--automation-port", "43000"]
+      : ["--api-port", "40000"]),
   ];
 
   log("speculos", `${speculosID}: spawning = ${params.join(" ")}`);
