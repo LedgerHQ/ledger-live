@@ -19,7 +19,7 @@
     "src/generate-cryptoassets-md.ts",
     "src/newArch/Collectibles/**"
   ],
-  "ignoreUnused": ["@types/semver", "@types/qrcode", "@types/react-key-handler", "prop-types"],
+  "ignoreUnused": ["@types/semver", "@types/qrcode", "@types/react-key-handler", "prop-types", "allure-commandline"],
   "aliases": {
     "~/*": ["./src/*"]
   }
