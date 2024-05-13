@@ -34,6 +34,7 @@ const appReducer = combineReducers({
   protect,
   nft,
   wallet,
+  market,
 });
 
 // TODO: EXPORT ALL POSSIBLE ACTION TYPES AND USE ACTION<TYPES>
