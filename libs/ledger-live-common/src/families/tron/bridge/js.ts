@@ -42,7 +42,7 @@ import {
   emptyHistoryCache,
   encodeAccountId,
   getAccountCurrency,
-} from "../../../account";
+} from "@ledgerhq/coin-framework/account/index";
 import { getOperationsPageSize } from "../../../pagination";
 import {
   InvalidAddress,

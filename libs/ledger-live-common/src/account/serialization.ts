@@ -1,6 +1,5 @@
+import memoize from "lodash/memoize";
 import { getCryptoCurrencyById } from "../currencies";
-import { inferFamilyFromAccountId } from "@ledgerhq/coin-framework/account/index";
-
 import type {
   Account,
   AccountBridge,
@@ -13,6 +12,7 @@ import type {
   SubAccount,
   TransactionCommon,
 } from "@ledgerhq/types-live";
+import { decodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import {
   fromAccountRaw as commonFromAccountRaw,
   toAccountRaw as commonToAccountRaw,
@@ -91,3 +91,14 @@ export function toAccountRaw(account: Account, userData?: AccountUserData): Acco
 
   return commonAccountRaw;
 }
+
+const inferFamilyFromAccountId: (accountId: string) => string | null | undefined = memoize(
+  accountId => {
+    try {
+      const { currencyId } = decodeAccountId(accountId);
+      return getCryptoCurrencyById(currencyId).family;
+    } catch (e) {
+      return null;
+    }
+  },
+);

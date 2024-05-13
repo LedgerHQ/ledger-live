@@ -1,15 +1,12 @@
-import { flattenAccounts } from "./helpers";
-import { flattenOperationWithInternalsAndNfts } from "../operation";
 import type {
   AccountLike,
   AccountLikeArray,
   DailyOperations,
   Operation,
 } from "@ledgerhq/types-live";
-
-function startOfDay(t: Date) {
-  return new Date(t.getFullYear(), t.getMonth(), t.getDate());
-}
+import { flattenOperationWithInternalsAndNfts } from "../operation";
+import { flattenAccounts } from "./helpers";
+import { startOfDay } from "./balanceHistoryCache";
 
 const emptyDailyOperations = {
   sections: [],

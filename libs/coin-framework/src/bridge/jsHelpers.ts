@@ -13,16 +13,13 @@ import {
   getMandatoryEmptyAccountSkip,
   getDerivationModeStartsAt,
 } from "../derivation";
+import { isAccountEmpty, clearAccount, emptyHistoryCache, encodeAccountId } from "../account";
 import {
-  shouldRetainPendingOperation,
-  isAccountEmpty,
-  shouldShowNewAccount,
-  clearAccount,
-  emptyHistoryCache,
   generateHistoryFromOperations,
   recalculateAccountBalanceHistories,
-  encodeAccountId,
-} from "../account";
+} from "../account/balanceHistoryCache";
+import { shouldRetainPendingOperation } from "../account/pending";
+import { shouldShowNewAccount } from "../account/support";
 import { UnsupportedDerivation } from "../errors";
 import getAddressWrapper, { GetAddressFn } from "./getAddressWrapper";
 import type { Result } from "../derivation";

@@ -3,17 +3,23 @@ import { Observable, from, defer, of, throwError, concat } from "rxjs";
 import { skip, take, reduce, mergeMap, map, filter, concatMap } from "rxjs/operators";
 import type { Account, DerivationMode, SyncConfig } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { encodeAccountId, decodeAccountId } from "@ledgerhq/live-common/account/index";
-import { emptyHistoryCache } from "@ledgerhq/live-common/account/index";
-import { fromAccountRaw } from "@ledgerhq/live-common/account/serialization";
-import { asDerivationMode } from "@ledgerhq/coin-framework/derivation";
+import {
+  encodeAccountId,
+  decodeAccountId,
+  emptyHistoryCache,
+  fromAccountRaw,
+} from "@ledgerhq/live-common/account/index";
+import {
+  asDerivationMode,
+  runDerivationScheme,
+  getDerivationScheme,
+} from "@ledgerhq/coin-framework/derivation";
 import { getAccountBridge, getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import {
   findCryptoCurrencyByKeyword,
   findCryptoCurrencyById,
   getCryptoCurrencyById,
 } from "@ledgerhq/live-common/currencies/index";
-import { runDerivationScheme, getDerivationScheme } from "@ledgerhq/coin-framework/derivation";
 import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
 import getAppAndVersion from "@ledgerhq/live-common/hw/getAppAndVersion";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";

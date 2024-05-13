@@ -2390,6 +2390,7 @@
     "src/__tests__/test-helpers/staticTime.ts",
     "src/__tests__/test-helpers/types.ts",
     "src/__tests__/user.ts",
+    "src/account/helpers.test.ts",
     "src/account/importAccounts.integration.test.ts",
     "src/account/importAccounts.test.ts",
     "src/appSupportsQuitApp.test.ts",
