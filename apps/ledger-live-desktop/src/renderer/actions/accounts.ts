@@ -2,6 +2,7 @@ import { Dispatch } from "redux";
 import { Account, AccountUserData } from "@ledgerhq/types-live";
 import { AccountComparator } from "@ledgerhq/live-wallet/ordering";
 import { getKey } from "~/renderer/storage";
+import { PasswordIncorrectError } from "@ledgerhq/errors";
 
 export const removeAccount = (payload: Account) => ({
   type: "DB:REMOVE_ACCOUNT",
@@ -27,7 +28,8 @@ export const reorderAccounts = (comparator: AccountComparator) => (dispatch: Dis
   });
 
 export const fetchAccounts = () => async (dispatch: Dispatch) => {
-  const data: [Account, AccountUserData][] = await getKey("app", "accounts", []);
+  const data = await getKey("app", "accounts", []);
+  if (!data) throw new PasswordIncorrectError("app accounts seems to still be encrypted");
   return dispatch(initAccounts(data));
 };
 
