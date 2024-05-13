@@ -189,7 +189,6 @@ export async function waitFor(text: string, maxAttempts: number = 10): Promise<s
     );
     const responseData = response.data;
     const texts = responseData.events.map(event => event.text);
-    console.log(texts);
 
     if (texts[0].includes(text)) {
       textFound = true;
