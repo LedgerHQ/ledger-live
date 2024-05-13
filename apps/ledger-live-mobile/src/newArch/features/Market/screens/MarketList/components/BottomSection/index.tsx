@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  Text,
-  ScrollContainerHeader,
-  Icon,
-  ScrollContainer,
-  IconsLegacy,
-} from "@ledgerhq/native-ui";
+import { Text, ScrollContainerHeader, Icon, ScrollContainer, Icons } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { TouchableOpacity } from "react-native";
@@ -52,12 +46,19 @@ const SORT_OPTIONS = {
   },
 };
 
-const getIcon = (order?: Order) =>
-  Order.topGainers === order || Order.topLosers === order
-    ? IconsLegacy.GraphGrowMedium
-    : Order.MarketCapAsc === order
-      ? IconsLegacy.ArrowTopMedium
-      : IconsLegacy.ArrowBottomMedium;
+const getIcon = (order?: Order) => {
+  switch (order) {
+    case Order.topGainers:
+      return <Icons.GraphAsc size="S" color="primary.c80" />;
+    case Order.topLosers:
+      return <Icons.GraphDesc size="S" color="primary.c80" />;
+    case Order.MarketCapDesc:
+      return <Icons.ArrowDown size="S" color="primary.c80" />;
+    case Order.MarketCapAsc:
+    default:
+      return <Icons.ArrowUp size="S" color="primary.c80" />;
+  }
+};
 
 const TIME_RANGES = RANGES.map(value => ({
   requestParam: { range: value },
