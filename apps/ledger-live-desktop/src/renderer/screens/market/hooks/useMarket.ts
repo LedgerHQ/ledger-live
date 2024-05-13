@@ -1,6 +1,6 @@
 import { useFetchCurrencyFrom } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
+import { MarketListRequestParams, Order } from "@ledgerhq/live-common/market/utils/types";
 import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
 import {
   useMarketDataProvider,
@@ -30,7 +30,7 @@ export function useMarket() {
       ? REFETCH_TIME_ONE_MINUTE * Number(lldRefreshMarketDataFeature?.params?.refreshTime)
       : REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH;
 
-  const { range, starred = [], liveCompatible, orderBy, order, search = "" } = marketParams;
+  const { range, starred = [], liveCompatible, order, search = "" } = marketParams;
 
   const starFilterOn = starred.length > 0;
 
@@ -132,19 +132,11 @@ export function useMarket() {
     [dispatch],
   );
 
-  const toggleSortBy = useCallback(
-    (newOrderBy: string) => {
-      const isFreshSort = newOrderBy !== orderBy;
-      refresh(
-        isFreshSort
-          ? { order: "desc" }
-          : {
-              order: order === "asc" ? "desc" : "asc",
-            },
-      );
-    },
-    [order, orderBy, refresh],
-  );
+  const toggleSortBy = useCallback(() => {
+    refresh({
+      order: order === Order.MarketCapAsc ? Order.MarketCapDesc : Order.MarketCapAsc,
+    });
+  }, [order, refresh]);
 
   const isItemLoaded = useCallback(
     (index: number) => !!marketResult.data[index],

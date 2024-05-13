@@ -1,6 +1,6 @@
 import { handleActions } from "redux-actions";
 import { Handlers } from "./types";
-import { MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
+import { MarketListRequestParams, Order } from "@ledgerhq/live-common/market/utils/types";
 
 export type MarketState = {
   marketParams: MarketListRequestParams;
@@ -12,8 +12,7 @@ const initialState: MarketState = {
     range: "24h",
     limit: 50,
     starred: [],
-    orderBy: "market_cap",
-    order: "desc",
+    order: Order.MarketCapDesc,
     search: "",
     liveCompatible: false,
     page: 1,

@@ -23,7 +23,7 @@ type MarketListProps = {
   marketData: CurrencyData[];
   resetSearch: () => void;
   toggleFilterByStarredAccounts: () => void;
-  toggleSortBy: (newOrderBy: string) => void;
+  toggleSortBy: () => void;
   toggleStar: (id: string, isStarred: boolean) => void;
   t: TFunction;
   isItemLoaded: (index: number) => boolean;
@@ -50,7 +50,7 @@ function MarketList({
   checkIfDataIsStaleAndRefetch,
   t,
 }: MarketListProps) {
-  const { order, orderBy, search, starred, range, counterCurrency } = marketParams;
+  const { order, search, starred, range, counterCurrency } = marketParams;
 
   return (
     <Flex flex="1" flexDirection="column">
@@ -60,13 +60,7 @@ function MarketList({
         <>
           {search && currenciesLength > 0 && <TrackPage category="Market Search" success={true} />}
           <TableRow header>
-            <SortTableCell
-              data-test-id="market-sort-button"
-              onClick={toggleSortBy}
-              orderByKey="market_cap"
-              orderBy={orderBy}
-              order={order}
-            >
+            <SortTableCell data-test-id="market-sort-button" onClick={toggleSortBy} order={order}>
               #
             </SortTableCell>
             <TableCell disabled>{t("market.marketList.crypto")}</TableCell>
