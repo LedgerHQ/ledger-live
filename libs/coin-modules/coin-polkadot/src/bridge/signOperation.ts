@@ -3,10 +3,8 @@ import { Observable } from "rxjs";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import type {
   PolkadotAccount,
-  PolkadotAddress,
   PolkadotOperation,
   PolkadotOperationExtra,
-  PolkadotSignature,
   PolkadotSigner,
   Transaction,
 } from "../types";

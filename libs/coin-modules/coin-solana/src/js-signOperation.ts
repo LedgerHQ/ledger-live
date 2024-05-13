@@ -21,7 +21,7 @@ import type {
   TransferCommand,
 } from "./types";
 import { buildTransactionWithAPI } from "./js-buildTransaction";
-import type { SolanaAddress, SolanaSignature, SolanaSigner } from "./signer";
+import type { SolanaSigner } from "./signer";
 import BigNumber from "bignumber.js";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { assertUnreachable } from "./utils";

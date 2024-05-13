@@ -17,7 +17,7 @@ export type MessageSigner<T> = (signerContext: SignerContext<T>) => MessageSigne
  * @param signerFactory
  * @returns SignerContext
  */
-export function executeWithSigner<T, U>(signerFactory: CreateSigner<T>): SignerContext<T> {
+export function executeWithSigner<T>(signerFactory: CreateSigner<T>): SignerContext<T> {
   return <U>(deviceId: string, fn: PassthroughFn<T, U>): Promise<U> =>
     firstValueFrom(withDevice(deviceId)(transport => from(fn(signerFactory(transport)))));
 }
