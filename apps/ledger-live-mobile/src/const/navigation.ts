@@ -476,6 +476,15 @@ export enum ScreenName {
   SuiUnstakingConnectDevice = "SuiUnstakingConnectDevice",
   SuiUnstakingValidationError = "SuiUnstakingValidationError",
   SuiUnstakingValidationSuccess = "SuiUnstakingValidationSuccess",
+  // mina
+  MinaStakingValidator = "MinaStakingValidator",
+  MinaStakingSummary = "MinaStakingSummary",
+  MinaStakingSelectDevice = "MinaStakingSelectDevice",
+  MinaStakingConnectDevice = "MinaStakingConnectDevice",
+  MinaStakingValidationError = "MinaStakingValidationError",
+  MinaStakingValidationSuccess = "MinaStakingValidationSuccess",
+
+  Newsfeed = "Newsfeed",
 
   CustomImageStep0Welcome = "CustomImageStep0Welcome",
   CustomImageStep1Crop = "CustomImageStep1Crop",
@@ -618,6 +627,12 @@ export enum NavigatorName {
   // SUI
   SuiDelegateFlow = "SuiDelegationFlow",
   SuiUndelegateFlow = "SuiUndelegateFlow",
+  AptosStakingFlow = "AptosStakingFlow",
+  AptosUnstakingFlow = "AptosUnstakingFlow",
+  AptosWithdrawingFlow = "AptosWithdrawingFlow",
+  AptosRestakingFlow = "AptosRestakingFlow",
+  // MINA
+  MinaStakingFlow = "MinaStakingFlow",
 
   CantonOnboard = "CantonOnboard",
 
