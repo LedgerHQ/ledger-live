@@ -7,9 +7,15 @@ import {
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
-import type { Transaction } from "../types/common";
+import type {
+  MinaAccount,
+  MinaAccountRaw,
+  MinaOperation,
+  Transaction,
+  TransactionStatus,
+} from "../types/common";
 import resolver from "../signer/getAddress";
-import { sync, getAccountShape } from "./synchronisation";
+import { sync, getAccountShape, assignToAccountRaw, assignFromAccountRaw } from "./synchronisation";
 import { MinaSigner } from "../types/signer";
 import { MinaCoinConfig, setCoinConfig } from "../config";
 import broadcast from "./broadcast";
@@ -40,7 +46,7 @@ export function buildCurrencyBridge(signerContext: SignerContext<MinaSigner>): C
 
 export function buildAccountBridge(
   signerContext: SignerContext<MinaSigner>,
-): AccountBridge<Transaction> {
+): AccountBridge<Transaction, MinaAccount, TransactionStatus, MinaOperation, MinaAccountRaw> {
   const getAddress = resolver(signerContext);
 
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
@@ -50,6 +56,8 @@ export function buildAccountBridge(
     estimateMaxSpendable,
     createTransaction,
     updateTransaction,
+    assignToAccountRaw,
+    assignFromAccountRaw,
     getTransactionStatus,
     prepareTransaction,
     sync,
