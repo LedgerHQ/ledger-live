@@ -2,8 +2,8 @@ import { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { getAccountNumFromPath } from "../common-logic";
 import { MINA_MAINNET_NETWORK_ID, MINA_PAYMENT_TYPE_ID } from "../consts";
-import { Transaction } from "../types";
 import { buildTransaction } from "./buildTransaction";
+import { Transaction, TxType } from "../types";
 jest.mock("../common-logic");
 
 describe("buildTransaction", () => {
@@ -35,7 +35,7 @@ describe("buildTransaction", () => {
     const result = await buildTransaction(mockAccount as Account, mockTransaction);
 
     expect(result).toEqual({
-      txType: MINA_PAYMENT_TYPE_ID,
+      txType: TxType.PAYMENT,
       senderAccount: 42,
       senderAddress: mockAccount.freshAddress,
       receiverAddress: mockTransaction.recipient,

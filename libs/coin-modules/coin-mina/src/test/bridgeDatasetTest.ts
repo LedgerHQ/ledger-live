@@ -3,18 +3,20 @@ import {
   InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
+  RecipientRequired,
 } from "@ledgerhq/errors";
 import type { DatasetTest, CurrenciesData } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
-import { InvalidMemoMina } from "../bridge/errors";
-import { fromTransactionRaw } from "../bridge/transaction";
 import type { Transaction } from "../types/common";
+import { fromTransactionRaw } from "../bridge/transaction";
+import { InvalidMemoMina, AccountCreationFeeWarning, AmountTooSmall } from "../bridge/errors";
+import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/abandonseed";
 
 const ACCOUNT_ADDRESS = "B62qjWLs1W3J2fFGixeX49w1o7VvSGuMBNotnFhzs3PZ7PbtdFbhdeD";
 const ACCOUNT_ADDRESS_1 = "B62qkWcHhoisWDCR7v3gvWzX6wXEVuGYLHXq3mSym4GEzfYXmSDv314";
+const ACCOUNT_ABANDONED = getAbandonSeedAddress("mina");
 
 const mina: CurrenciesData<Transaction> = {
-  FIXME_ignoreAccountFields: ["blockHash"],
+  FIXME_ignoreAccountFields: ["blockHash", "resources"],
   scanAccounts: [
     {
       name: "mina seed 1",
@@ -145,6 +147,143 @@ const mina: CurrenciesData<Transaction> = {
             errors: {
               recipient: new InvalidAddressBecauseDestinationIsAlsoSource(),
             },
+            warnings: {},
+          },
+        },
+        {
+          name: "recipient required",
+          transaction: fromTransactionRaw({
+            family: "mina",
+            recipient: "",
+            amount: "1000",
+            fees: {
+              fee: new BigNumber(100000).toString(),
+              accountCreationFee: new BigNumber(0).toString(),
+            },
+            memo: undefined,
+            nonce: 0,
+          }),
+          expectedStatus: {
+            errors: {
+              recipient: new RecipientRequired(),
+            },
+            warnings: {},
+          },
+        },
+        {
+          name: "fee loaded when missing",
+          transaction: fromTransactionRaw({
+            family: "mina",
+            recipient: ACCOUNT_ADDRESS_1,
+            amount: "1000",
+            fees: {
+              fee: new BigNumber(0).toString(),
+              accountCreationFee: new BigNumber(0).toString(),
+            },
+            memo: undefined,
+            nonce: 0,
+          }),
+          expectedStatus: {
+            errors: {},
+            warnings: {},
+          },
+        },
+        {
+          name: "account creation fee warning",
+          transaction: fromTransactionRaw({
+            family: "mina",
+            recipient: ACCOUNT_ABANDONED,
+            amount: "1000000",
+            fees: {
+              fee: new BigNumber(100000).toString(),
+              accountCreationFee: new BigNumber(1000000).toString(),
+            },
+            memo: undefined,
+            nonce: 0,
+          }),
+          expectedStatus: {
+            errors: {},
+            warnings: {
+              recipient: new AccountCreationFeeWarning(),
+            },
+          },
+        },
+        {
+          name: "amount too small for account creation",
+          transaction: fromTransactionRaw({
+            family: "mina",
+            recipient: ACCOUNT_ABANDONED,
+            amount: "500000",
+            fees: {
+              fee: new BigNumber(100000).toString(),
+              accountCreationFee: new BigNumber(1000000).toString(),
+            },
+            memo: undefined,
+            nonce: 0,
+          }),
+          expectedStatus: {
+            errors: {
+              amount: new AmountTooSmall(),
+            },
+            warnings: {
+              recipient: new AccountCreationFeeWarning(),
+            },
+          },
+        },
+        {
+          name: "use all amount",
+          transaction: fromTransactionRaw({
+            family: "mina",
+            recipient: ACCOUNT_ADDRESS_1,
+            amount: "0",
+            useAllAmount: true,
+            fees: {
+              fee: new BigNumber(100000).toString(),
+              accountCreationFee: new BigNumber(0).toString(),
+            },
+            memo: undefined,
+            nonce: 0,
+          }),
+          expectedStatus: {
+            errors: {},
+            warnings: {},
+          },
+        },
+        {
+          name: "staking transaction with zero fee",
+          transaction: fromTransactionRaw({
+            family: "mina",
+            recipient: ACCOUNT_ADDRESS_1,
+            amount: "1000",
+            txType: "stake",
+            fees: {
+              fee: new BigNumber(0).toString(),
+              accountCreationFee: new BigNumber(0).toString(),
+            },
+            memo: undefined,
+            nonce: 0,
+          }),
+          expectedStatus: {
+            errors: {},
+            warnings: {},
+          },
+        },
+        {
+          name: "staking transaction with zero amount",
+          transaction: fromTransactionRaw({
+            family: "mina",
+            recipient: ACCOUNT_ADDRESS_1,
+            amount: "0",
+            txType: "stake",
+            fees: {
+              fee: new BigNumber(0).toString(),
+              accountCreationFee: new BigNumber(0).toString(),
+            },
+            memo: undefined,
+            nonce: 0,
+          }),
+          expectedStatus: {
+            errors: {},
             warnings: {},
           },
         },

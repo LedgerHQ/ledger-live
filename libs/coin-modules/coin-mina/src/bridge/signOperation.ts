@@ -1,6 +1,7 @@
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { FeeNotLoaded } from "@ledgerhq/errors";
+import { BigNumber } from "bignumber.js";
+import { Observable } from "rxjs";
+import { FeeNotLoaded, UserRefusedOnDevice } from "@ledgerhq/errors";
+import type { MinaOperation, MinaSignedTransaction, Transaction } from "../types/common";
 import type {
   Account,
   DeviceId,
@@ -8,13 +9,13 @@ import type {
   OperationType,
   AccountBridge,
 } from "@ledgerhq/types-live";
-import { BigNumber } from "bignumber.js";
-import invariant from "invariant";
-import { Observable } from "rxjs";
-import { reEncodeRawSignature } from "../common-logic";
-import type { MinaOperation, MinaSignedTransaction, Transaction } from "../types/common";
-import { MinaSignature, MinaSigner } from "../types/signer";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { MinaSigner } from "../types/signer";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { buildTransaction } from "./buildTransaction";
+import { reEncodeRawSignature } from "../common-logic";
+import invariant from "invariant";
+import { MINA_CANCEL_RETURN_CODE } from "../consts";
 
 export const buildOptimisticOperation = (
   account: Account,
@@ -27,7 +28,7 @@ export const buildOptimisticOperation = (
     value = value.minus(transaction.fees.accountCreationFee);
   }
 
-  const type: OperationType = "OUT";
+  const type: OperationType = transaction.txType === "stake" ? "DELEGATE" : "OUT";
 
   const operation: MinaOperation = {
     id: encodeOperationId(account.id, "", type),
@@ -74,10 +75,15 @@ export const buildSignOperation =
 
         const unsigned = await buildTransaction(account, transaction);
 
-        const { signature } = (await signerContext(deviceId, signer =>
+        const { signature, returnCode, message } = await signerContext(deviceId, signer =>
           signer.signTransaction(unsigned),
-        )) as MinaSignature;
-        invariant(signature, "signature should be defined if user accepted");
+        );
+
+        if (!signature && returnCode === MINA_CANCEL_RETURN_CODE) {
+          throw new UserRefusedOnDevice();
+        }
+
+        invariant(signature, `returnCode: ${returnCode}, message: ${message}`);
         const encodedSignature = reEncodeRawSignature(signature);
 
         const signedTransaction: MinaSignedTransaction = {

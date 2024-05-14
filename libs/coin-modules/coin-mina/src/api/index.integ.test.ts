@@ -8,6 +8,7 @@ describe("backend api tests", () => {
     ...({} as unknown as CurrencyConfig),
     infra: {
       API_MINA_ROSETTA_NODE: "https://mina.coin.ledger.com/node",
+      API_MINA_GRAPHQL_NODE: "https://mina-rosetta-api-mainnet.zondax.dev/graphql",
     },
   });
   const validAddress = ["B62qjWLs1W3J2fFGixeX49w1o7VvSGuMBNotnFhzs3PZ7PbtdFbhdeD"];

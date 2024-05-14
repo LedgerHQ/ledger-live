@@ -1,7 +1,6 @@
-import network from "@ledgerhq/live-network";
-import { LiveNetworkResponse } from "@ledgerhq/live-network/lib/network";
 import { getCoinConfig } from "../../config";
 import { MAX_TRANSACTIONS_PER_PAGE } from "../../consts";
+import { makeNetworkRequest } from "../network";
 import {
   FetchAccountBalanceResponse,
   FetchAccountTransactionsResponse,
@@ -20,23 +19,19 @@ const getRosettaUrl = (route: string): string => {
 };
 
 export const fetchNetworkStatus = async () => {
-  const { data } = await network<FetchNetworkStatusResponse>({
+  return await makeNetworkRequest<FetchNetworkStatusResponse>({
     method: "POST",
     url: getRosettaUrl("/network/status"),
     data: addNetworkIdentifier({}),
   });
-
-  return data;
 };
 
 export const fetchAccountBalance = async (address: string) => {
-  const { data } = await network<FetchAccountBalanceResponse>({
+  return await makeNetworkRequest<FetchAccountBalanceResponse>({
     method: "POST",
     url: getRosettaUrl("/account/balance"),
     data: addNetworkIdentifier(buildAccountIdentifier(address)),
   });
-
-  return data;
 };
 
 export const fetchAccountTransactions = async (
@@ -46,8 +41,8 @@ export const fetchAccountTransactions = async (
   const transactions: RosettaTransaction[] = [];
   let currentOffset: number | undefined = offset;
   while (currentOffset !== undefined) {
-    const response: LiveNetworkResponse<FetchAccountTransactionsResponse> =
-      await network<FetchAccountTransactionsResponse>({
+    const response: FetchAccountTransactionsResponse =
+      await makeNetworkRequest<FetchAccountTransactionsResponse>({
         method: "POST",
         url: getRosettaUrl("/search/transactions"),
         data: {
@@ -57,33 +52,29 @@ export const fetchAccountTransactions = async (
           include_timestamp: true,
         },
       });
-    const { data } = response;
-    transactions.push(...data.transactions);
+    transactions.push(...response.transactions);
 
-    currentOffset = data.next_offset;
+    currentOffset = response.next_offset;
   }
 
   return transactions;
 };
 
 export const rosettaGetBlockInfo = async (blockHeight: number) => {
-  const { data } = await network<RosettaBlockInfoResponse>({
+  return await makeNetworkRequest<RosettaBlockInfoResponse>({
     method: "POST",
     url: getRosettaUrl("/block"),
     data: addNetworkIdentifier({ block_identifier: { index: blockHeight } }),
   });
-  return data;
 };
 
 const rosettaPreprocess = async (from: string, to: string, feeNano: number, valueNano: number) => {
   const payload = makeTransferPayload(from, to, feeNano, valueNano);
-  const { data } = await network<RosettaPreprocessResponse>({
+  return await makeNetworkRequest<RosettaPreprocessResponse>({
     method: "POST",
     url: getRosettaUrl("/construction/preprocess"),
     data: addNetworkIdentifier(payload),
   });
-
-  return data;
 };
 
 export const fetchTransactionMetadata = async (
@@ -94,7 +85,7 @@ export const fetchTransactionMetadata = async (
 ) => {
   const options = await rosettaPreprocess(srcAddress, destAddress, feeNano, valueNano);
   const payload = makeTransferPayload(srcAddress, destAddress, feeNano, valueNano);
-  return await network<RosettaMetadataResponse>({
+  return await makeNetworkRequest<RosettaMetadataResponse>({
     method: "POST",
     url: getRosettaUrl("/construction/metadata"),
     data: addNetworkIdentifier({ ...payload, ...options }),
@@ -102,7 +93,7 @@ export const fetchTransactionMetadata = async (
 };
 
 export const rosettaSubmitTransaction = async (blob: string) => {
-  return await network<RosettaSubmitResponse>({
+  return await makeNetworkRequest<RosettaSubmitResponse>({
     method: "POST",
     url: getRosettaUrl("/construction/submit"),
     data: addNetworkIdentifier({ signed_transaction: blob }),
