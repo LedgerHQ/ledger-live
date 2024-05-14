@@ -108,6 +108,7 @@ setSupportedCurrencies([
   "aptos_testnet",
   "xion",
   "zenrock",
+  "mina",
 ]);
 LiveConfig.setConfig(liveConfig);
 
