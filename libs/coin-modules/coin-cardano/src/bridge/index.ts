@@ -15,21 +15,11 @@ import buildSignOperation from "../js-signOperation";
 import broadcast from "../js-broadcast";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { assignToAccountRaw, assignFromAccountRaw } from "../serialization";
-import {
-  CardanoAddress,
-  CardanoExtendedPublicKey,
-  CardanoSignature,
-  CardanoSigner,
-} from "../signer";
+import { CardanoSigner } from "../signer";
 import resolver from "../hw-getAddress";
 import postSyncPatch from "../postSyncPatch";
 
-export function buildCurrencyBridge(
-  signerContext: SignerContext<
-    CardanoSigner,
-    CardanoAddress | CardanoExtendedPublicKey | CardanoSignature
-  >,
-): CurrencyBridge {
+export function buildCurrencyBridge(signerContext: SignerContext<CardanoSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
   const scanAccounts = makeScanAccounts({
     getAccountShape: makeGetAccountShape(signerContext),
@@ -44,10 +34,7 @@ export function buildCurrencyBridge(
 }
 
 export function buildAccountBridge(
-  signerContext: SignerContext<
-    CardanoSigner,
-    CardanoAddress | CardanoExtendedPublicKey | CardanoSignature
-  >,
+  signerContext: SignerContext<CardanoSigner>,
 ): AccountBridge<Transaction> {
   const sync = makeSync({
     getAccountShape: makeGetAccountShape(signerContext),
@@ -73,12 +60,7 @@ export function buildAccountBridge(
   };
 }
 
-export function createBridges(
-  signerContext: SignerContext<
-    CardanoSigner,
-    CardanoAddress | CardanoExtendedPublicKey | CardanoSignature
-  >,
-) {
+export function createBridges(signerContext: SignerContext<CardanoSigner>) {
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),

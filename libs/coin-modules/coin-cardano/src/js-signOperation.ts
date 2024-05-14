@@ -19,12 +19,7 @@ import { OperationType, SignOperationEvent, SignOperationFnSignature } from "@le
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { HashType } from "@stricahq/typhonjs/dist/types";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import {
-  CardanoAddress,
-  CardanoExtendedPublicKey,
-  CardanoSignature,
-  CardanoSigner,
-} from "./signer";
+import { CardanoSigner } from "./signer";
 
 const buildOptimisticOperation = (
   account: CardanoAccount,
@@ -195,12 +190,7 @@ const buildOptimisticOperation = (
  * Sign Transaction with Ledger hardware
  */
 const buildSignOperation =
-  (
-    signerContext: SignerContext<
-      CardanoSigner,
-      CardanoAddress | CardanoExtendedPublicKey | CardanoSignature
-    >,
-  ): SignOperationFnSignature<Transaction> =>
+  (signerContext: SignerContext<CardanoSigner>): SignOperationFnSignature<Transaction> =>
   ({ account, deviceId, transaction }): Observable<SignOperationEvent> =>
     new Observable(o => {
       async function main() {
@@ -215,14 +205,14 @@ const buildSignOperation =
         const accountPubKey = getExtendedPublicKeyFromHex(account.xpub as string);
         const networkParams = getNetworkParameters(account.currency.id);
 
-        const signed = (await signerContext(deviceId, signer =>
+        const signed = await signerContext(deviceId, signer =>
           signer.sign({
             unsignedTransaction,
             accountPubKey,
             accountIndex: account.index,
             networkParams,
           }),
-        )) as CardanoSignature;
+        );
 
         o.next({ type: "device-signature-granted" });
 

@@ -12,7 +12,7 @@ import { utils as TyphonUtils } from "@stricahq/typhonjs";
 import { address as TyphonAddress } from "@stricahq/typhonjs";
 import Transport from "@ledgerhq/hw-transport";
 import type { Bridge } from "@ledgerhq/types-live";
-import { createBridges } from "@ledgerhq/coin-cardano/bridge/js";
+import { createBridges } from "@ledgerhq/coin-cardano/bridge";
 import makeCliTools from "@ledgerhq/coin-cardano/cli-transaction";
 import cardanoResolver from "@ledgerhq/coin-cardano/hw-getAddress";
 import type { Transaction } from "@ledgerhq/coin-cardano/types";

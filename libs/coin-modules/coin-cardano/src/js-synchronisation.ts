@@ -3,6 +3,7 @@ import uniqBy from "lodash/uniqBy";
 import { utils as TyphonUtils } from "@stricahq/typhonjs";
 import { calculateMinUtxoAmount } from "@stricahq/typhonjs/dist/utils/utils";
 import type { Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
+import { listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets";
 import {
   AccountShapeInfo,
   GetAccountShape,
@@ -12,10 +13,7 @@ import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { inferSubOperations } from "@ledgerhq/coin-framework/serialization/index";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import {
-  formatCurrencyUnit,
-  listTokensForCryptoCurrency,
-} from "@ledgerhq/coin-framework/currencies/index";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { APITransaction, HashType } from "./api/api-types";
 import {
   CardanoAccount,
@@ -41,12 +39,7 @@ import { getNetworkInfo } from "./api/getNetworkInfo";
 import { getTransactions } from "./api/getTransactions";
 import { buildSubAccounts } from "./buildSubAccounts";
 import { getDelegationInfo } from "./api/getDelegationInfo";
-import {
-  CardanoAddress,
-  CardanoExtendedPublicKey,
-  CardanoSignature,
-  CardanoSigner,
-} from "./signer";
+import { CardanoSigner } from "./signer";
 
 function mapTxToAccountOperation(
   tx: APITransaction,
@@ -199,12 +192,7 @@ function prepareUtxos(
 }
 
 export const makeGetAccountShape =
-  (
-    signerContext: SignerContext<
-      CardanoSigner,
-      CardanoAddress | CardanoExtendedPublicKey | CardanoSignature
-    >,
-  ): GetAccountShape =>
+  (signerContext: SignerContext<CardanoSigner>): GetAccountShape =>
   async (info, { blacklistedTokenIds }) => {
     const {
       currency,
@@ -225,9 +213,9 @@ export const makeGetAccountShape =
         // deviceId not provided
         throw new Error("deviceId required to generate the xpub");
       }
-      const extendedPubKeyRes = (await signerContext(deviceId, signer =>
+      const extendedPubKeyRes = await signerContext(deviceId, signer =>
         signer.getPublicKey(accountPath),
-      )) as CardanoExtendedPublicKey;
+      );
       xpub = `${extendedPubKeyRes.publicKeyHex}${extendedPubKeyRes.chainCodeHex}`;
     } else {
       xpub = paramXpub;
