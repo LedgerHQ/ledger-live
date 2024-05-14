@@ -1,5 +1,35 @@
 # @ledgerhq/live-common
 
+## 34.2.0-nightly.11
+
+### Minor Changes
+
+- [#6818](https://github.com/LedgerHQ/ledger-live/pull/6818) [`a18c28e`](https://github.com/LedgerHQ/ledger-live/commit/a18c28e3f6a6132bd5e53d5b61721084b3aa19e8) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Split account utils between coin-fmk and LLC
+
+- [#6799](https://github.com/LedgerHQ/ledger-live/pull/6799) [`b099b70`](https://github.com/LedgerHQ/ledger-live/commit/b099b70c0c5b8b23cae7c9bee6580ad22ace6f4a) Thanks [@andreicovaciu](https://github.com/andreicovaciu)! - Track swap cancel and accept with by returning device property from custom.exchange.start handler
+
+### Patch Changes
+
+- [#6843](https://github.com/LedgerHQ/ledger-live/pull/6843) [`2a689e4`](https://github.com/LedgerHQ/ledger-live/commit/2a689e447250e882a2ed6d091c032074f4280ca0) Thanks [@Wozacosta](https://github.com/Wozacosta)! - fix manifest loading breaking if no cache
+
+- [#6844](https://github.com/LedgerHQ/ledger-live/pull/6844) [`f19960f`](https://github.com/LedgerHQ/ledger-live/commit/f19960f2e7104e5bdf332269fa92fda47455e17d) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Simplify SignerContext generic signature
+
+- [#6840](https://github.com/LedgerHQ/ledger-live/pull/6840) [`77d60e6`](https://github.com/LedgerHQ/ledger-live/commit/77d60e6f61f04b0650947fc56db5052dd4ff7e00) Thanks [@Justkant](https://github.com/Justkant)! - chore: bump wallet-api versions
+
+- Updated dependencies [[`a18c28e`](https://github.com/LedgerHQ/ledger-live/commit/a18c28e3f6a6132bd5e53d5b61721084b3aa19e8), [`f19960f`](https://github.com/LedgerHQ/ledger-live/commit/f19960f2e7104e5bdf332269fa92fda47455e17d), [`77d60e6`](https://github.com/LedgerHQ/ledger-live/commit/77d60e6f61f04b0650947fc56db5052dd4ff7e00), [`b099b70`](https://github.com/LedgerHQ/ledger-live/commit/b099b70c0c5b8b23cae7c9bee6580ad22ace6f4a)]:
+  - @ledgerhq/coin-framework@0.13.0-nightly.7
+  - @ledgerhq/coin-polkadot@0.7.0-nightly.8
+  - @ledgerhq/coin-bitcoin@0.4.1-nightly.7
+  - @ledgerhq/coin-algorand@0.4.2-nightly.7
+  - @ledgerhq/coin-solana@0.7.0-nightly.3
+  - @ledgerhq/coin-near@0.3.13-nightly.7
+  - @ledgerhq/coin-evm@1.1.1-nightly.7
+  - @ledgerhq/wallet-api-exchange-module@0.6.0-nightly.2
+  - @ledgerhq/live-countervalues@0.1.5-nightly.8
+  - @ledgerhq/live-countervalues-react@0.1.5-nightly.8
+  - @ledgerhq/live-nft@0.3.2-nightly.7
+  - @ledgerhq/live-wallet@0.1.1-nightly.1
+
 ## 34.2.0-nightly.10
 
 ### Patch Changes

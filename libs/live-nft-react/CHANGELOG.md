@@ -1,5 +1,12 @@
 # @ledgerhq/live-nft-react
 
+## 0.3.2-nightly.7
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-nft@0.3.2-nightly.7
+
 ## 0.3.2-nightly.6
 
 ### Patch Changes

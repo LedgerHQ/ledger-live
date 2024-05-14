@@ -1,5 +1,14 @@
 # @ledgerhq/coin-bitcoin
 
+## 0.4.1-nightly.7
+
+### Patch Changes
+
+- [#6818](https://github.com/LedgerHQ/ledger-live/pull/6818) [`a18c28e`](https://github.com/LedgerHQ/ledger-live/commit/a18c28e3f6a6132bd5e53d5b61721084b3aa19e8) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Split account utils between coin-fmk and LLC
+
+- Updated dependencies [[`a18c28e`](https://github.com/LedgerHQ/ledger-live/commit/a18c28e3f6a6132bd5e53d5b61721084b3aa19e8), [`f19960f`](https://github.com/LedgerHQ/ledger-live/commit/f19960f2e7104e5bdf332269fa92fda47455e17d)]:
+  - @ledgerhq/coin-framework@0.13.0-nightly.7
+
 ## 0.4.1-nightly.6
 
 ### Patch Changes

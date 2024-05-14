@@ -1,5 +1,28 @@
 # ledger-live-desktop
 
+## 2.80.0-nightly.11
+
+### Minor Changes
+
+- [#6799](https://github.com/LedgerHQ/ledger-live/pull/6799) [`b099b70`](https://github.com/LedgerHQ/ledger-live/commit/b099b70c0c5b8b23cae7c9bee6580ad22ace6f4a) Thanks [@andreicovaciu](https://github.com/andreicovaciu)! - Track swap cancel and accept with by returning device property from custom.exchange.start handler
+
+### Patch Changes
+
+- [#6843](https://github.com/LedgerHQ/ledger-live/pull/6843) [`2a689e4`](https://github.com/LedgerHQ/ledger-live/commit/2a689e447250e882a2ed6d091c032074f4280ca0) Thanks [@Wozacosta](https://github.com/Wozacosta)! - fix manifest loading breaking if no cache
+
+- Modify the wording when a new Ledger Live update is available in LLD
+
+- Updated dependencies [[`2a689e4`](https://github.com/LedgerHQ/ledger-live/commit/2a689e447250e882a2ed6d091c032074f4280ca0), [`a18c28e`](https://github.com/LedgerHQ/ledger-live/commit/a18c28e3f6a6132bd5e53d5b61721084b3aa19e8), [`f19960f`](https://github.com/LedgerHQ/ledger-live/commit/f19960f2e7104e5bdf332269fa92fda47455e17d), [`77d60e6`](https://github.com/LedgerHQ/ledger-live/commit/77d60e6f61f04b0650947fc56db5052dd4ff7e00), [`b099b70`](https://github.com/LedgerHQ/ledger-live/commit/b099b70c0c5b8b23cae7c9bee6580ad22ace6f4a)]:
+  - @ledgerhq/live-common@34.2.0-nightly.11
+  - @ledgerhq/coin-framework@0.13.0-nightly.7
+  - @ledgerhq/coin-bitcoin@0.4.1-nightly.7
+  - @ledgerhq/coin-evm@1.1.1-nightly.7
+  - @ledgerhq/live-countervalues@0.1.5-nightly.8
+  - @ledgerhq/live-countervalues-react@0.1.5-nightly.8
+  - @ledgerhq/live-nft@0.3.2-nightly.7
+  - @ledgerhq/live-nft-react@0.3.2-nightly.7
+  - @ledgerhq/live-wallet@0.1.1-nightly.1
+
 ## 2.80.0-nightly.10
 
 ### Patch Changes

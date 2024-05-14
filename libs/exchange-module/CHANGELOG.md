@@ -1,5 +1,15 @@
 # @ledgerhq/wallet-api-exchange-module
 
+## 0.6.0-nightly.2
+
+### Minor Changes
+
+- [#6799](https://github.com/LedgerHQ/ledger-live/pull/6799) [`b099b70`](https://github.com/LedgerHQ/ledger-live/commit/b099b70c0c5b8b23cae7c9bee6580ad22ace6f4a) Thanks [@andreicovaciu](https://github.com/andreicovaciu)! - Track swap cancel and accept with by returning device property from custom.exchange.start handler
+
+### Patch Changes
+
+- [#6840](https://github.com/LedgerHQ/ledger-live/pull/6840) [`77d60e6`](https://github.com/LedgerHQ/ledger-live/commit/77d60e6f61f04b0650947fc56db5052dd4ff7e00) Thanks [@Justkant](https://github.com/Justkant)! - chore: bump wallet-api versions
+
 ## 0.5.1-nightly.1
 
 ### Patch Changes
