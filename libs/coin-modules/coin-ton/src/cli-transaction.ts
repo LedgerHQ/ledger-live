@@ -4,8 +4,6 @@ import flatMap from "lodash/flatMap";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { Transaction } from "./types";
 
-const options: any = [];
-
 function inferTransactions(
   transactions: Array<{
     account: AccountLike;
@@ -34,7 +32,7 @@ function inferTransactions(
 
 export default function makeCliTools() {
   return {
-    options,
+    options: [],
     inferTransactions,
   };
 }
