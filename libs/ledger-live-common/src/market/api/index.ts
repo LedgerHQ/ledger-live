@@ -42,7 +42,7 @@ export async function fetchList({
       to: counterCurrency,
       sort: getSortParam(order, range),
       ...(search.length > 1 && { filter: search }),
-      ...(starred.length > 1 && { ids: starred.join(",") }),
+      ...(starred.length > 0 && { ids: starred.join(",") }),
       ...(liveCoinsList.length > 1 && { ids: liveCoinsList.join(",") }),
       ...([Order.topLosers, Order.topGainers].includes(order) && { top: 100 }),
     },
