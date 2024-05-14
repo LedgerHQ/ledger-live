@@ -8,7 +8,7 @@ const getAddress = (
 ): GetAddressFn => {
   return async (deviceId: string, { path, verify }: GetAddressOptions) => {
     const r = (await signerContext(deviceId, signer =>
-      signer.getAddress(path, 0, verify === true),
+      signer.getAddress(path, 0, verify),
     )) as PolkadotAddress;
     return {
       address: r.address,
