@@ -14,19 +14,12 @@ import {
 import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import {
-  Account,
-  DerivationMode,
-  Operation,
-  ProtoNFT,
-  SubAccount,
-  TokenAccount,
-} from "@ledgerhq/types-live";
+import { Account, DerivationMode, Operation, ProtoNFT, TokenAccount } from "@ledgerhq/types-live";
 
 export const makeAccount = (
   address: string,
   currency: CryptoCurrency,
-  subAccounts: SubAccount[] = [],
+  subAccounts: TokenAccount[] = [],
 ): Account => {
   const id = `js:2:${currency.id}:${address}:`;
   const { derivationMode, xpubOrAddress } = decodeAccountId(id);

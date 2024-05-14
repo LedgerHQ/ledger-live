@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { Account, SubAccount, TokenAccount } from "@ledgerhq/types-live";
+import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { getTokenById } from "@ledgerhq/cryptoassets/tokens";
 import {
   emptyHistoryCache,
@@ -152,7 +152,7 @@ describe(isAccountEmpty.name, () => {
     });
     describe("when account has subaccounts", () => {
       beforeEach(() => {
-        mockAccount.subAccounts = [{} as SubAccount];
+        mockAccount.subAccounts = [{} as TokenAccount];
       });
 
       it("should return false", () => {
@@ -192,7 +192,7 @@ describe(clearAccount.name, () => {
       subAccounts: [
         {
           token: getTokenById("ethereum/erc20/dao_maker"),
-        } as SubAccount,
+        } as TokenAccount,
       ],
       currency: ethereumCurrency,
     };
